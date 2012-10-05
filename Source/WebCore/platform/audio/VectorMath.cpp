@@ -36,6 +36,10 @@
 #include <emmintrin.h>
 #endif
 
+#if HAVE(ARM_NEON_INTRINSICS)
+#include <arm_neon.h>
+#endif
+
 #include <algorithm>
 #include <math.h>
 
@@ -155,6 +159,24 @@ void vsma(const float* sourceP, int sourceStride, const float* scale, float* des
 
         n = tailFrames;
     }
+#elif HAVE(ARM_NEON_INTRINSICS)
+    if ((sourceStride == 1) && (destStride == 1)) {
+        int tailFrames = n % 4;
+        const float* endP = destP + n - tailFrames;
+
+        float32x4_t k = vdupq_n_f32(*scale);
+        while (destP < endP) {
+            float32x4_t source = vld1q_f32(sourceP);
+            float32x4_t dest = vld1q_f32(destP);
+
+            dest = vmlaq_f32(dest, source, k);
+            vst1q_f32(destP, dest);
+
+            sourceP += 4;
+            destP += 4;
+        }
+        n = tailFrames;
+    }
 #endif
     while (n) {
         *destP += *sourceP * *scale;
@@ -166,10 +188,10 @@ void vsma(const float* sourceP, int sourceStride, const float* scale, float* des
 
 void vsmul(const float* sourceP, int sourceStride, const float* scale, float* destP, int destStride, size_t framesToProcess)
 {
+    int n = framesToProcess;
+
 #ifdef __SSE2__
     if ((sourceStride == 1) && (destStride == 1)) {
-        
-        int n = framesToProcess;
         float k = *scale;
 
         // If the sourceP address is not 16-byte aligned, the first several frames (at most three) should be processed separately.
@@ -217,8 +239,22 @@ void vsmul(const float* sourceP, int sourceStride, const float* scale, float* de
             n--;
         }
     } else { // If strides are not 1, rollback to normal algorithm.
+#elif HAVE(ARM_NEON_INTRINSICS)
+    if ((sourceStride == 1) && (destStride == 1)) {
+        float k = *scale;
+        int tailFrames = n % 4;
+        const float* endP = destP + n - tailFrames;
+
+        while (destP < endP) {
+            float32x4_t source = vld1q_f32(sourceP);
+            vst1q_f32(destP, vmulq_n_f32(source, k));
+
+            sourceP += 4;
+            destP += 4;
+        }
+        n = tailFrames;
+    }
 #endif
-    int n = framesToProcess;
     float k = *scale;
     while (n--) {
         *destP = k * *sourceP;
@@ -232,11 +268,10 @@ void vsmul(const float* sourceP, int sourceStride, const float* scale, float* de
 
 void vadd(const float* source1P, int sourceStride1, const float* source2P, int sourceStride2, float* destP, int destStride, size_t framesToProcess)
 {
+    int n = framesToProcess;
+
 #ifdef __SSE2__
     if ((sourceStride1 ==1) && (sourceStride2 == 1) && (destStride == 1)) {
-
-        int n = framesToProcess;
-
         // If the sourceP address is not 16-byte aligned, the first several frames (at most three) should be processed separately.
         while ((reinterpret_cast<size_t>(source1P) & 0x0F) && n) {
             *destP = *source1P + *source2P;
@@ -315,8 +350,23 @@ void vadd(const float* source1P, int sourceStride1, const float* source2P, int s
             n--;
         }
     } else { // if strides are not 1, rollback to normal algorithm
+#elif HAVE(ARM_NEON_INTRINSICS)
+    if ((sourceStride1 ==1) && (sourceStride2 == 1) && (destStride == 1)) {
+        int tailFrames = n % 4;
+        const float* endP = destP + n - tailFrames;
+
+        while (destP < endP) {
+            float32x4_t source1 = vld1q_f32(source1P);
+            float32x4_t source2 = vld1q_f32(source2P);
+            vst1q_f32(destP, vaddq_f32(source1, source2));
+
+            source1P += 4;
+            source2P += 4;
+            destP += 4;
+        }
+        n = tailFrames;
+    }
 #endif
-    int n = framesToProcess;
     while (n--) {
         *destP = *source1P + *source2P;
         source1P += sourceStride1;
@@ -377,6 +427,22 @@ void vmul(const float* source1P, int sourceStride1, const float* source2P, int s
 
         n = tailFrames;
     }
+#elif HAVE(ARM_NEON_INTRINSICS)
+    if ((sourceStride1 ==1) && (sourceStride2 == 1) && (destStride == 1)) {
+        int tailFrames = n % 4;
+        const float* endP = destP + n - tailFrames;
+
+        while (destP < endP) {
+            float32x4_t source1 = vld1q_f32(source1P);
+            float32x4_t source2 = vld1q_f32(source2P);
+            vst1q_f32(destP, vmulq_f32(source1, source2));
+
+            source1P += 4;
+            source2P += 4;
+            destP += 4;
+        }
+        n = tailFrames;
+    }
 #endif
     while (n) {
         *destP = *source1P * *source2P;
@@ -415,6 +481,22 @@ void zvmul(const float* real1P, const float* imag1P, const float* real2P, const 
             i += 4;
         }
     }
+#elif HAVE(ARM_NEON_INTRINSICS)
+        unsigned endSize = framesToProcess - framesToProcess % 4;
+        while (i < endSize) {
+            float32x4_t real1 = vld1q_f32(real1P + i);
+            float32x4_t real2 = vld1q_f32(real2P + i);
+            float32x4_t imag1 = vld1q_f32(imag1P + i);
+            float32x4_t imag2 = vld1q_f32(imag2P + i);
+
+            float32x4_t realResult = vmlsq_f32(vmulq_f32(real1, real2), imag1, imag2);
+            float32x4_t imagResult = vmlaq_f32(vmulq_f32(real1, imag2), imag1, real2);
+
+            vst1q_f32(realDestP + i, realResult);
+            vst1q_f32(imagDestP + i, imagResult);
+
+            i += 4;
+        }
 #endif
     for (; i < framesToProcess; ++i) {
         // Read and compute result before storing them, in case the
@@ -461,6 +543,25 @@ void vsvesq(const float* sourceP, int sourceStride, float* sumP, size_t framesTo
  
         n = tailFrames; 
     } 
+#elif HAVE(ARM_NEON_INTRINSICS)
+    if (sourceStride == 1) {
+        int tailFrames = n % 4;
+        const float* endP = sourceP + n - tailFrames;
+
+        float32x4_t fourSum = vdupq_n_f32(0);
+        while (sourceP < endP) {
+            float32x4_t source = vld1q_f32(sourceP);
+            fourSum = vmlaq_f32(fourSum, source, source);
+            sourceP += 4;
+        }
+        float32x2_t twoSum = vadd_f32(vget_low_f32(fourSum), vget_high_f32(fourSum));
+
+        float groupSum[2];
+        vst1_f32(groupSum, twoSum);
+        sum += groupSum[0] + groupSum[1];
+
+        n = tailFrames;
+    }
 #endif
 
     while (n--) {
@@ -509,6 +610,25 @@ void vmaxmgv(const float* sourceP, int sourceStride, float* maxP, size_t framesT
         max = std::max(max, groupMaxP[1]);
         max = std::max(max, groupMaxP[2]);
         max = std::max(max, groupMaxP[3]);
+
+        n = tailFrames;
+    }
+#elif HAVE(ARM_NEON_INTRINSICS)
+    if (sourceStride == 1) {
+        int tailFrames = n % 4;
+        const float* endP = sourceP + n - tailFrames;
+
+        float32x4_t fourMax = vdupq_n_f32(0);
+        while (sourceP < endP) {
+            float32x4_t source = vld1q_f32(sourceP);
+            fourMax = vmaxq_f32(fourMax, vabsq_f32(source));
+            sourceP += 4;
+        }
+        float32x2_t twoMax = vmax_f32(vget_low_f32(fourMax), vget_high_f32(fourMax));
+
+        float groupMax[2];
+        vst1_f32(groupMax, twoMax);
+        max = std::max(groupMax[0], groupMax[1]);
 
         n = tailFrames;
     }
