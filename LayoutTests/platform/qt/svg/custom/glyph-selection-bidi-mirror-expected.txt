@@ -10,9 +10,9 @@ layer at (0,0) size 100x100
       RenderSVGText {text} at (20,22) size 54x23 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 54x23
           chunk 1 text run 1 at (20.00,40.00) startOffset 0 endOffset 7 width 54.00 LTR override: "[hello]"
-      RenderSVGText {text} at (80,54) size 20x20 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 20x20
-          chunk 1 text run 1 at (80.00,70.00) startOffset 0 endOffset 6 width 20.00 RTL override: "[\x{5E9}\x{5DC}\x{5D5}\x{5DD}]"
-      RenderSVGText {text} at (86,72) size 14x23 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 14x23
-          chunk 1 text run 1 at (86.00,90.00) startOffset 0 endOffset 6 width 14.00 RTL override: "[\x{5E9}\x{5DC}\x{5D5}\x{5DD}]"
+      RenderSVGText {text} at (35,54) size 65x20 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 65x20
+          chunk 1 text run 1 at (35.00,70.00) startOffset 0 endOffset 6 width 65.00 RTL override: "[\x{5E9}\x{5DC}\x{5D5}\x{5DD}]"
+      RenderSVGText {text} at (41,72) size 59x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 59x23
+          chunk 1 text run 1 at (41.00,90.00) startOffset 0 endOffset 6 width 59.00 RTL override: "[\x{5E9}\x{5DC}\x{5D5}\x{5DD}]"

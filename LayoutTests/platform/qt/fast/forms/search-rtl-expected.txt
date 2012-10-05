@@ -3,61 +3,60 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 57x21
-          text run at (0,0) width 57: "Test for "
-        RenderInline {I} at (0,0) size 759x42
-          RenderInline {A} at (0,0) size 329x21 [color=#0000EE]
-            RenderText {#text} at (57,0) size 329x21
-              text run at (57,0) width 329: "http://bugs.webkit.org/show_bug.cgi?id=11916"
-          RenderText {#text} at (386,0) size 759x42
-            text run at (386,0) width 4: " "
-            text run at (390,0) width 369: "REGRESSION (SearchField): RTL search fields are"
-            text run at (0,21) width 65: "mixed up"
-        RenderText {#text} at (65,21) size 4x21
-          text run at (65,21) width 4: "."
-      RenderBlock {P} at (0,58) size 784x87
-        RenderTextControl {INPUT} at (2,2) size 184x25
-          RenderDeprecatedFlexibleBox {DIV} at (2,2) size 180x21
-            RenderBlock {DIV} at (0,10) size 0x0
-            RenderBlock {DIV} at (0,0) size 169x21
-            RenderBlock {DIV} at (169,5) size 11x11
-        RenderText {#text} at (188,4) size 4x21
-          text run at (188,4) width 4: " "
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 51x19
+          text run at (0,0) width 51: "Test for "
+        RenderInline {I} at (0,0) size 701x19
+          RenderInline {A} at (0,0) size 305x19 [color=#0000EE]
+            RenderText {#text} at (51,0) size 305x19
+              text run at (51,0) width 305: "http://bugs.webkit.org/show_bug.cgi?id=11916"
+          RenderText {#text} at (356,0) size 396x19
+            text run at (356,0) width 4: " "
+            text run at (360,0) width 392: "REGRESSION (SearchField): RTL search fields are mixed up"
+        RenderText {#text} at (752,0) size 4x19
+          text run at (752,0) width 4: "."
+      RenderBlock {P} at (0,35) size 784x81
+        RenderTextControl {INPUT} at (2,2) size 192x23
+          RenderDeprecatedFlexibleBox {DIV} at (2,2) size 188x19
+            RenderBlock {DIV} at (0,9) size 0x0
+            RenderBlock {DIV} at (0,0) size 177x19
+            RenderBlock {DIV} at (177,4) size 11x11
+        RenderText {#text} at (196,4) size 4x19
+          text run at (196,4) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderTextControl {INPUT} at (2,31) size 274x25
-          RenderDeprecatedFlexibleBox {DIV} at (2,2) size 270x21
-            RenderBlock {DIV} at (0,10) size 0x0
-            RenderBlock {DIV} at (0,0) size 259x21
-            RenderBlock {DIV} at (259,5) size 11x11
-        RenderText {#text} at (278,33) size 4x21
-          text run at (278,33) width 4: " "
+        RenderTextControl {INPUT} at (2,29) size 282x23
+          RenderDeprecatedFlexibleBox {DIV} at (2,2) size 278x19
+            RenderBlock {DIV} at (0,9) size 0x0
+            RenderBlock {DIV} at (0,0) size 267x19
+            RenderBlock {DIV} at (267,4) size 11x11
+        RenderText {#text} at (286,31) size 4x19
+          text run at (286,31) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderTextControl {INPUT} at (2,60) size 184x25
-          RenderDeprecatedFlexibleBox {DIV} at (2,2) size 180x21
-            RenderBlock {DIV} at (0,10) size 0x0
-            RenderBlock {DIV} at (0,0) size 169x21
-            RenderBlock {DIV} at (169,5) size 11x11
+        RenderTextControl {INPUT} at (2,56) size 192x23
+          RenderDeprecatedFlexibleBox {DIV} at (2,2) size 188x19
+            RenderBlock {DIV} at (0,9) size 0x0
+            RenderBlock {DIV} at (0,0) size 177x19
+            RenderBlock {DIV} at (177,4) size 11x11
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,161) size 784x21
-        RenderText {#text} at (0,0) size 44x21
-          text run at (0,0) width 44: "PASS"
-layer at (12,70) size 169x21
-  RenderBlock {DIV} at (0,0) size 169x21
-    RenderText {#text} at (41,0) size 128x21
-      text run at (41,0) width 20 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
-      text run at (61,0) width 26: "she"
-      text run at (87,0) width 36 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
-      text run at (123,0) width 18: "he"
-      text run at (141,0) width 28 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
-layer at (12,99) size 259x21
-  RenderBlock {DIV} at (0,0) size 259x21
-    RenderText {#text} at (131,0) size 128x21
-      text run at (131,0) width 20 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
-      text run at (151,0) width 26: "she"
-      text run at (177,0) width 36 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
-      text run at (213,0) width 18: "he"
-      text run at (231,0) width 28 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
-layer at (12,128) size 169x21
-  RenderBlock {DIV} at (0,0) size 169x21
+      RenderBlock {P} at (0,132) size 784x19
+        RenderText {#text} at (0,0) size 38x19
+          text run at (0,0) width 38: "PASS"
+layer at (12,47) size 177x19
+  RenderBlock {DIV} at (0,0) size 177x19
+    RenderText {#text} at (14,0) size 163x19
+      text run at (14,0) width 27 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
+      text run at (41,0) width 20: "she"
+      text run at (61,0) width 55 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (116,0) width 14: "he"
+      text run at (130,0) width 47 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
+layer at (12,74) size 267x19
+  RenderBlock {DIV} at (0,0) size 267x19
+    RenderText {#text} at (104,0) size 163x19
+      text run at (104,0) width 27 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
+      text run at (131,0) width 20: "she"
+      text run at (151,0) width 55 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (206,0) width 14: "he"
+      text run at (220,0) width 47 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
+layer at (12,101) size 177x19
+  RenderBlock {DIV} at (0,0) size 177x19
 caret: position 0 of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#shadow-root} of child 9 {INPUT} of child 3 {P} of body

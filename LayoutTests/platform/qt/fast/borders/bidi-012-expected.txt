@@ -4,10 +4,10 @@ layer at (0,0) size 800x447
   RenderBlock {HTML} at (0,0) size 800x447
     RenderBody {BODY} at (8,16) size 784x19
       RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 471x19
+        RenderText {#text} at (0,0) size 481x19
           text run at (0,0) width 466: "The following two blocks should be identical, including overflow. (Force bidi: "
-          text run at (466,0) width 0 RTL: "\x{5D0}"
-          text run at (466,0) width 5: ")"
+          text run at (466,0) width 10 RTL: "\x{5D0}"
+          text run at (476,0) width 5: ")"
       RenderBlock {DIV} at (0,35) size 784x0
         RenderBlock (floating) {P} at (16,16) size 172x166 [bgcolor=#FFFFCC] [border: (3px solid #000000)]
           RenderInline {SPAN} at (0,0) size 150x37 [color=#000080] [border: (3px solid #000080) none (3px solid #000080)]

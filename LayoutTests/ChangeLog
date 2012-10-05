@@ -1,3 +1,41 @@
+2012-10-05  Marcelo Lira  <marcelo.lira@openbossa.org>
+
+        [Qt] Updates expected test results for the expanded coverage in testfonts
+        https://bugs.webkit.org/show_bug.cgi?id=98425
+
+        Reviewed by Csaba Osztrogonác.
+
+        The Qt testfonts repository was expanded with the croscore set of
+        fonts, which provides a great number of new glyphs (e.g. hebrew
+        characters).
+
+        See the comments in the testfonts commit for detailed information:
+        https://gitorious.org/qtwebkit/testfonts/commit/f11a54548121ee9fb0688dc6f32acdbfec5d2d2f/diffs
+
+        * platform/qt-5.0/css2.1/t0905-c5525-fltblck-00-d-ag-expected.png: Removed.
+        * platform/qt-5.0/css2.1/t0905-c5525-fltblck-00-d-ag-expected.txt: Removed.
+        * platform/qt-5.0/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.txt: Removed.
+        * platform/qt-5.0/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.txt: Removed.
+        * platform/qt-5.0/fast/forms/search-rtl-expected.png: Removed.
+        * platform/qt-5.0/fast/forms/search-rtl-expected.txt: Removed.
+        * platform/qt/css2.1/t0805-c5519-brdr-r-01-e-expected.png:
+        * platform/qt/css2.1/t0805-c5519-brdr-r-01-e-expected.txt:
+        * platform/qt/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.png:
+        * platform/qt/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.txt:
+        * platform/qt/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.png:
+        * platform/qt/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.txt:
+        * platform/qt/fast/borders/bidi-012-expected.txt:
+        * platform/qt/fast/forms/listbox-bidi-align-expected.png:
+        * platform/qt/fast/forms/listbox-bidi-align-expected.txt:
+        * platform/qt/fast/forms/search-rtl-expected.png:
+        * platform/qt/fast/forms/search-rtl-expected.txt:
+        * platform/qt/fast/text/atsui-small-caps-punctuation-size-expected.txt:
+        * platform/qt/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.png:
+        * platform/qt/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.txt:
+        * platform/qt/fast/text/large-text-composed-char-expected.png:
+        * platform/qt/svg/custom/glyph-selection-bidi-mirror-expected.png:
+        * platform/qt/svg/custom/glyph-selection-bidi-mirror-expected.txt:
+
 2012-10-05  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Unreviewed Qt gardening.
