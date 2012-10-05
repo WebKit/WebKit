@@ -40,7 +40,7 @@ module core {
         readonly attribute Node previousSibling;
         readonly attribute Node nextSibling;
 
-        readonly attribute DOMString attributeName;
+        readonly attribute [TreatReturnedNullStringAs=Null] DOMString attributeName;
         readonly attribute [TreatReturnedNullStringAs=Null] DOMString attributeNamespace;
 
         readonly attribute [TreatReturnedNullStringAs=Null] DOMString oldValue;

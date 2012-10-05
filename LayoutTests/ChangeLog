@@ -1,3 +1,13 @@
+2012-10-04  Adam Klein  <adamk@chromium.org>
+
+        MutationRecord attributeName should be null for non attribute changes
+        https://bugs.webkit.org/show_bug.cgi?id=98438
+
+        Reviewed by Ojan Vafai.
+
+        * fast/mutation/mutation-record-nullity-expected.txt: Added.
+        * fast/mutation/mutation-record-nullity.html: Added.
+
 2012-10-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         More Qt rebaselines after r130411.
