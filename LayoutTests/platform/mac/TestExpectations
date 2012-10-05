@@ -1306,3 +1306,6 @@ webkit.org/b/95501 http/tests/security/inactive-document-with-empty-security-ori
 
 # Paints black behind the test image instead of the expected green.
 webkit.org/b/95707 http/tests/images/png-partial-load-no-alpha.html [ ImageOnlyFailure ]
+
+# Requires TestRunner displayInvalidatedRegion() support.
+webkit.org/b/98523 fast/images/repaint-subrect-grid.html [ Failure ]
