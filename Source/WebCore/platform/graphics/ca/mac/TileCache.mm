@@ -61,6 +61,7 @@ TileCache::TileCache(WebTileCacheLayer* tileCacheLayer, const IntSize& tileSize)
     , m_isInWindow(false)
     , m_scrollingPerformanceLoggingEnabled(false)
     , m_acceleratesDrawing(false)
+    , m_tilesAreOpaque(false)
     , m_tileDebugBorderWidth(0)
 {
     [CATransaction begin];
@@ -204,6 +205,19 @@ void TileCache::setAcceleratesDrawing(bool acceleratesDrawing)
 #else
     UNUSED_PARAM(acceleratesDrawing);
 #endif
+}
+
+void TileCache::setTilesOpaque(bool opaque)
+{
+    if (opaque == m_tilesAreOpaque)
+        return;
+
+    m_tilesAreOpaque = opaque;
+
+    for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
+        WebTileLayer* tileLayer = it->second.get();
+        [tileLayer setOpaque:opaque];
+    }
 }
 
 void TileCache::visibleRectChanged(const IntRect& visibleRect)
@@ -442,7 +456,7 @@ RetainPtr<WebTileLayer> TileCache::createTileLayer(const IntRect& tileRect)
     [layer.get() setBorderColor:m_tileDebugBorderColor.get()];
     [layer.get() setBorderWidth:m_tileDebugBorderWidth];
     [layer.get() setEdgeAntialiasingMask:0];
-    [layer.get() setOpaque:YES];
+    [layer.get() setOpaque:m_tilesAreOpaque];
 #ifndef NDEBUG
     [layer.get() setName:@"Tile"];
 #endif

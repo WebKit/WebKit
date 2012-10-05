@@ -65,6 +65,9 @@ public:
     bool acceleratesDrawing() const { return m_acceleratesDrawing; }
     void setAcceleratesDrawing(bool);
 
+    void setTilesOpaque(bool);
+    bool tilesAreOpaque() const { return m_tilesAreOpaque; }
+
     CALayer *tileContainerLayer() const { return m_tileContainerLayer.get(); }
 
     void setTileDebugBorderWidth(float);
@@ -122,6 +125,7 @@ private:
     bool m_isInWindow;
     bool m_scrollingPerformanceLoggingEnabled;
     bool m_acceleratesDrawing;
+    bool m_tilesAreOpaque;
 
     RetainPtr<CGColorRef> m_tileDebugBorderColor;
     float m_tileDebugBorderWidth;

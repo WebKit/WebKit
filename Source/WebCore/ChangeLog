@@ -1,3 +1,34 @@
+2012-10-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't assume that TileCache layers are opaque
+        https://bugs.webkit.org/show_bug.cgi?id=98555
+
+        Reviewed by Dean Jackson.
+
+        TileCache previously set all its tile CALayers as opaque.
+        However, we will need non-opaque tile caches when we use this
+        tile cache for tiled layers, so add a member function to
+        control tile opacity.
+        
+        RenderLayerBacking already calls m_graphicsLayer->setContentsOpaque()
+        using the FrameView's notion of opaqueness, so this change will
+        cause the main tile cache to be non-opaque if external forces have
+        set the FrameView to be non-opaque.
+        
+        Also tweak the layer border widths on tiled layers.
+
+        * platform/graphics/ca/mac/TileCache.h:
+        (TileCache):
+        (WebCore::TileCache::tilesAreOpaque):
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::TileCache):
+        (WebCore::TileCache::setTilesOpaque):
+        (WebCore::TileCache::createTileLayer):
+        * platform/graphics/ca/mac/WebTileCacheLayer.mm:
+        (-[WebTileCacheLayer setOpaque:]):
+        (-[WebTileCacheLayer isOpaque]):
+        (-[WebTileCacheLayer setBorderWidth:]):
+
 2012-10-05  Tony Chang  <tony@chromium.org>
 
         Fix margin box ascent computation in flexbox
