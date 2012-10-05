@@ -3809,6 +3809,7 @@ enable?(WEB_SOCKETS) {
         Modules/websockets/WebSocketDeflateFramer.h \
         Modules/websockets/WebSocketDeflater.h \
         Modules/websockets/WebSocketExtensionDispatcher.h \
+        Modules/websockets/WebSocketExtensionParser.h \
         Modules/websockets/WebSocketExtensionProcessor.h \
         Modules/websockets/WebSocketFrame.h \
         Modules/websockets/WebSocketHandshake.h \
@@ -3823,6 +3824,7 @@ enable?(WEB_SOCKETS) {
         Modules/websockets/WebSocketDeflateFramer.cpp \
         Modules/websockets/WebSocketDeflater.cpp \
         Modules/websockets/WebSocketExtensionDispatcher.cpp \
+        Modules/websockets/WebSocketExtensionParser.cpp \
         Modules/websockets/WebSocketFrame.cpp \
         Modules/websockets/WebSocketHandshake.cpp \
         Modules/websockets/WebSocketHandshakeRequest.cpp \

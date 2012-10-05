@@ -34,112 +34,14 @@
 
 #include "WebSocketExtensionDispatcher.h"
 
+#include "WebSocketExtensionParser.h"
+
 #include <wtf/ASCIICType.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
-
-class ExtensionParser {
-public:
-    ExtensionParser(const char* start, const char* end)
-        : m_current(start)
-        , m_end(end)
-    {
-    }
-    bool finished();
-    bool parsedSuccessfully();
-    const String& currentToken() { return m_currentToken; }
-
-    // The following member functions basically follow the grammer defined
-    // in Section 2.2 of RFC 2616.
-    bool consumeToken();
-    bool consumeQuotedString();
-    bool consumeQuotedStringOrToken();
-    bool consumeCharacter(char);
-
-private:
-    void skipSpaces();
-
-    const char* m_current;
-    const char* m_end;
-    String m_currentToken;
-};
-
-bool ExtensionParser::finished()
-{
-    return m_current >= m_end;
-}
-
-bool ExtensionParser::parsedSuccessfully()
-{
-    return m_current == m_end;
-}
-
-static bool isSeparator(char character)
-{
-    static const char* separatorCharacters = "()<>@,;:\\\"/[]?={} \t";
-    const char* p = strchr(separatorCharacters, character);
-    return p && *p;
-}
-
-void ExtensionParser::skipSpaces()
-{
-    while (m_current < m_end && (*m_current == ' ' || *m_current == '\t'))
-        ++m_current;
-}
-
-bool ExtensionParser::consumeToken()
-{
-    skipSpaces();
-    const char* start = m_current;
-    while (m_current < m_end && isASCIIPrintable(*m_current) && !isSeparator(*m_current))
-        ++m_current;
-    if (start < m_current) {
-        m_currentToken = String(start, m_current - start);
-        return true;
-    }
-    return false;
-}
-
-bool ExtensionParser::consumeQuotedString()
-{
-    skipSpaces();
-    if (m_current >= m_end || *m_current != '"')
-        return false;
-
-    Vector<char> buffer;
-    ++m_current;
-    while (m_current < m_end && *m_current != '"') {
-        if (*m_current == '\\' && ++m_current >= m_end)
-            return false;
-        buffer.append(*m_current);
-        ++m_current;
-    }
-    if (m_current >= m_end || *m_current != '"')
-        return false;
-    m_currentToken = String::fromUTF8(buffer.data(), buffer.size());
-    ++m_current;
-    return true;
-}
-
-bool ExtensionParser::consumeQuotedStringOrToken()
-{
-    // This is ok because consumeQuotedString() doesn't update m_current or
-    // makes it same as m_end on failure.
-    return consumeQuotedString() || consumeToken();
-}
-
-bool ExtensionParser::consumeCharacter(char character)
-{
-    skipSpaces();
-    if (m_current < m_end && *m_current == character) {
-        ++m_current;
-        return true;
-    }
-    return false;
-}
 
 void WebSocketExtensionDispatcher::reset()
 {
@@ -207,35 +109,11 @@ bool WebSocketExtensionDispatcher::processHeaderValue(const String& headerValue)
     }
 
     const CString headerValueData = headerValue.utf8();
-    ExtensionParser parser(headerValueData.data(), headerValueData.data() + headerValueData.length());
+    WebSocketExtensionParser parser(headerValueData.data(), headerValueData.data() + headerValueData.length());
     while (!parser.finished()) {
-        // Parse extension-token.
-        if (!parser.consumeToken()) {
-            fail("Sec-WebSocket-Extensions header is invalid");
-            return false;
-        }
-        String extensionToken = parser.currentToken();
-
-        // Parse extension-parameters if exists.
+        String extensionToken;
         HashMap<String, String> extensionParameters;
-        while (parser.consumeCharacter(';')) {
-            if (!parser.consumeToken()) {
-                fail("Sec-WebSocket-Extensions header is invalid");
-                return false;
-            }
-
-            String parameterToken = parser.currentToken();
-            if (parser.consumeCharacter('=')) {
-                if (parser.consumeQuotedStringOrToken())
-                    extensionParameters.add(parameterToken, parser.currentToken());
-                else {
-                    fail("Sec-WebSocket-Extensions header is invalid");
-                    return false;
-                }
-            } else
-                extensionParameters.add(parameterToken, String());
-        }
-        if (!parser.finished() && !parser.consumeCharacter(',')) {
+        if (!parser.parseExtension(extensionToken, extensionParameters)) {
             fail("Sec-WebSocket-Extensions header is invalid");
             return false;
         }

@@ -968,6 +968,7 @@ SET(WebCore_SOURCES
     Modules/websockets/WebSocketDeflater.cpp
     Modules/websockets/WebSocketDeflateFramer.cpp
     Modules/websockets/WebSocketExtensionDispatcher.cpp
+    Modules/websockets/WebSocketExtensionParser.cpp
     Modules/websockets/WebSocketFrame.cpp
     Modules/websockets/WebSocketHandshake.cpp
     Modules/websockets/WebSocketHandshakeRequest.cpp

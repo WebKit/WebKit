@@ -27,9 +27,11 @@
 
 #include "WebSocketExtensionDispatcher.h"
 
+#include "WebSocketExtensionParser.h"
 #include "WebSocketExtensionProcessor.h"
 
 #include <gtest/gtest.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 
 using namespace WebCore;
@@ -174,6 +176,36 @@ TEST_F(WebSocketExtensionDispatcherTest, TestInvalid)
         EXPECT_FALSE(m_extensions.processHeaderValue(inputs[i]));
         EXPECT_TRUE(m_extensions.acceptedExtensions().isNull());
     }
+}
+
+// Tests for the most complex example at http://tools.ietf.org/html/draft-ietf-hybi-permessage-compression-01#section-3.1
+TEST_F(WebSocketExtensionDispatcherTest, TestPerMessageCompressExample)
+{
+    addMockProcessor("permessage-compress");
+    addMockProcessor("bar");
+    EXPECT_TRUE(m_extensions.processHeaderValue("permessage-compress; method=\"foo; x=\\\"Hello World\\\", bar\""));
+    EXPECT_EQ(1U, m_parsedExtensionTokens.size());
+    EXPECT_EQ("permessage-compress", m_parsedExtensionTokens[0]);
+    String methodParameter = m_parsedParameters[0].find("method")->second;
+    EXPECT_EQ("foo; x=\"Hello World\", bar", methodParameter);
+
+    CString methodValue = methodParameter.ascii();
+    WebSocketExtensionParser parser(methodValue.data(), methodValue.data() + methodValue.length());
+
+    String token1;
+    HashMap<String, String> parameters1;
+    EXPECT_TRUE(parser.parseExtension(token1, parameters1));
+    EXPECT_EQ("foo", token1);
+    EXPECT_EQ(1, parameters1.size());
+    HashMap<String, String>::iterator xparameter = parameters1.find("x");
+    EXPECT_EQ("x", xparameter->first);
+    EXPECT_EQ("Hello World", xparameter->second);
+
+    String token2;
+    HashMap<String, String> parameters2;
+    EXPECT_TRUE(parser.parseExtension(token2, parameters2));
+    EXPECT_EQ("bar", token2);
+    EXPECT_EQ(0, parameters2.size());
 }
 
 }

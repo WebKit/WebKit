@@ -2141,6 +2141,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/websockets/WebSocketDeflater.h \
 	Source/WebCore/Modules/websockets/WebSocketExtensionDispatcher.cpp \
 	Source/WebCore/Modules/websockets/WebSocketExtensionDispatcher.h \
+	Source/WebCore/Modules/websockets/WebSocketExtensionParser.cpp \
+	Source/WebCore/Modules/websockets/WebSocketExtensionParser.h \
 	Source/WebCore/Modules/websockets/WebSocketExtensionProcessor.h \
 	Source/WebCore/Modules/websockets/WebSocketFrame.cpp \
 	Source/WebCore/Modules/websockets/WebSocketFrame.h \

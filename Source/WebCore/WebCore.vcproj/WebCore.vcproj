@@ -25554,6 +25554,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Modules\websockets\WebSocketExtensionParser.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\websockets\WebSocketExtensionParser.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Modules\websockets\WebSocketExtensionProcessor.h"
 					>
 				</File>

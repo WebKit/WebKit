@@ -1,3 +1,41 @@
+2012-10-04  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [WebSocket] ExtensionParser should have its own file
+        https://bugs.webkit.org/show_bug.cgi?id=98475
+
+        Reviewed by Yuta Kitamura.
+
+        Factor out ExtensionParser from WebSocketExtensionDispatcher and rename it as WebSocketExtensionParser.
+        WebSocketExtensionParser has its own file.
+
+        No changes in behavior. Added a test case for parsing Sec-WebSocket-Extensions field as a chromium unit test.
+
+        * CMakeLists.txt: Added WebSocketExtensionParser.
+        * GNUmakefile.list.am: Ditto.
+        * Modules/websockets/WebSocketExtensionDispatcher.cpp:
+        (WebCore::WebSocketExtensionDispatcher::processHeaderValue):
+        Use WebSocketExtensionParser::parseExtension() to parser extension header value.
+        * Modules/websockets/WebSocketExtensionParser.cpp: Added.
+        (WebCore):
+        (WebCore::WebSocketExtensionParser::finished): Moved from ExtensionParser.
+        (WebCore::WebSocketExtensionParser::parsedSuccessfully): Ditto.
+        (WebCore::isSeparator): Ditto.
+        (WebCore::WebSocketExtensionParser::skipSpaces): Ditto.
+        (WebCore::WebSocketExtensionParser::consumeToken): Ditto.
+        (WebCore::WebSocketExtensionParser::consumeQuotedString): Ditto.
+        (WebCore::WebSocketExtensionParser::consumeQuotedStringOrToken): Ditto.
+        (WebCore::WebSocketExtensionParser::consumeCharacter): Ditto.
+        (WebCore::WebSocketExtensionParser::parseExtension): Moved from WebSocketExtensionDispatcher.
+        * Modules/websockets/WebSocketExtensionParser.h: Added.
+        (WebCore):
+        (WebSocketExtensionParser):
+        (WebCore::WebSocketExtensionParser::WebSocketExtensionParser):
+        (WebCore::WebSocketExtensionParser::currentToken):
+        * Target.pri: Added WebSocketExtensionParser.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
 2012-10-04  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         <input> size attribute should throw INDEX_SIZE_ERR when set to 0
