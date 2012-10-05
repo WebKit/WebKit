@@ -280,6 +280,10 @@ webkit.org/b/96580 css3/filters/custom/filter-fallback-to-software.html [ ImageO
 webkit.org/b/96832 fast/loader/images-enabled-unset-can-block-image-and-can-reload-in-place.html [ Failure ]
 webkit.org/b/96832 fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html [ Failure ]
 
+# http/tests/loading/text-content-type-with-binary-extension.html fails on Mac WK2 bots
+# https://bugs.webkit.org/show_bug.cgi?id=98527
+webkit.org/b/98527 http/tests/loading/text-content-type-with-binary-extension.html [ Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
