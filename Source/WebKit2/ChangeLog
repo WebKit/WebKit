@@ -1,3 +1,19 @@
+2012-10-05  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Unskip fullscreen unit tests for EwkView
+        https://bugs.webkit.org/show_bug.cgi?id=98509
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Update 2 fullscreen unit tests for EwkView so that
+        they don't require a call to ecore_evas_fullscreen_set()
+        to succeed. ecore_evas_fullscreen_set() does not
+        seem to work in Xvfb and causes the tests to hang.
+        With this update, we can now run those tests again.
+
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+
 2012-10-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Test /webkit2/WebKitPrintOperation/print-errors gives runtime critical warnings

@@ -310,17 +310,7 @@ static Eina_Bool fullScreenCallback(Ewk_View_Smart_Data* smartData)
     return false;
 }
 
-static void checkFullScreenProperty(Evas_Object* webView, bool expectedState)
-{
-    Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(webView));
-    Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(smartData->base.evas);
-    bool windowState = false;
-    while (((windowState = ecore_evas_fullscreen_get(ecoreEvas)) != expectedState))
-        ecore_main_loop_iterate();
-    ASSERT_TRUE(expectedState == windowState);
-}
-
-TEST_F(EWK2UnitTestBase, DISABLED_ewk_view_full_screen_enter)
+TEST_F(EWK2UnitTestBase, ewk_view_full_screen_enter)
 {
     const char fullscreenHTML[] =
         "<!doctype html><head><script>function makeFullScreen(){"
@@ -337,10 +327,9 @@ TEST_F(EWK2UnitTestBase, DISABLED_ewk_view_full_screen_enter)
     mouseClick(50, 50);
     ASSERT_TRUE(waitUntilTitleChangedTo("fullscreen entered"));
     ASSERT_TRUE(fullScreenCallbackCalled);
-    checkFullScreenProperty(webView(), true);
 }
 
-TEST_F(EWK2UnitTestBase, DISABLED_ewk_view_full_screen_exit)
+TEST_F(EWK2UnitTestBase, ewk_view_full_screen_exit)
 {
     const char fullscreenHTML[] =
         "<!doctype html><head><script>function makeFullScreenAndExit(){"
@@ -358,7 +347,6 @@ TEST_F(EWK2UnitTestBase, DISABLED_ewk_view_full_screen_exit)
     mouseClick(50, 50);
     ASSERT_TRUE(waitUntilTitleChangedTo("fullscreen exited"));
     ASSERT_TRUE(fullScreenCallbackCalled);
-    checkFullScreenProperty(webView(), false);
 }
 
 TEST_F(EWK2UnitTestBase, ewk_view_same_page_navigation)
