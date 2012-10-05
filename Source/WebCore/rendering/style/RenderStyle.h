@@ -523,12 +523,12 @@ public:
     Length minHeight() const { return m_box->minHeight(); }
     Length maxHeight() const { return m_box->maxHeight(); }
     
-    Length logicalWidth() const;
-    Length logicalHeight() const;
-    Length logicalMinWidth() const;
-    Length logicalMaxWidth() const;
-    Length logicalMinHeight() const;
-    Length logicalMaxHeight() const;
+    Length logicalWidth() const { return isHorizontalWritingMode() ? width() : height(); }
+    Length logicalHeight() const { return isHorizontalWritingMode() ? height() : width(); }
+    Length logicalMinWidth() const { return isHorizontalWritingMode() ? minWidth() : minHeight(); }
+    Length logicalMaxWidth() const { return isHorizontalWritingMode() ? maxWidth() : maxHeight(); }
+    Length logicalMinHeight() const { return isHorizontalWritingMode() ? minHeight() : minWidth(); }
+    Length logicalMaxHeight() const { return isHorizontalWritingMode() ? maxHeight() : maxWidth(); }
 
     const BorderData& border() const { return surround->border; }
     const BorderValue& borderLeft() const { return surround->border.left(); }

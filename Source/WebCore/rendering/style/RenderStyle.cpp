@@ -1432,48 +1432,6 @@ Color RenderStyle::visitedDependentColor(int colorProperty) const
     return Color(visitedColor.red(), visitedColor.green(), visitedColor.blue(), unvisitedColor.alpha());
 }
 
-Length RenderStyle::logicalWidth() const
-{
-    if (isHorizontalWritingMode())
-        return width();
-    return height();
-}
-
-Length RenderStyle::logicalHeight() const
-{
-    if (isHorizontalWritingMode())
-        return height();
-    return width();
-}
-
-Length RenderStyle::logicalMinWidth() const
-{
-    if (isHorizontalWritingMode())
-        return minWidth();
-    return minHeight();
-}
-
-Length RenderStyle::logicalMaxWidth() const
-{
-    if (isHorizontalWritingMode())
-        return maxWidth();
-    return maxHeight();
-}
-
-Length RenderStyle::logicalMinHeight() const
-{
-    if (isHorizontalWritingMode())
-        return minHeight();
-    return minWidth();
-}
-
-Length RenderStyle::logicalMaxHeight() const
-{
-    if (isHorizontalWritingMode())
-        return maxHeight();
-    return maxWidth();
-}
-
 const BorderValue& RenderStyle::borderBefore() const
 {
     switch (writingMode()) {
