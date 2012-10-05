@@ -1,3 +1,21 @@
+2012-10-05  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] Find a proper fix for the WebPagePrivate::enqueueRenderingOfClippedContentOfScrollableNodeAfterInRegionScrolling hack
+        https://bugs.webkit.org/show_bug.cgi?id=98517
+        PR #137382
+
+        Reviewed by Yong Li.
+
+        We've generalized composited in-region scrolling, originally only applicable
+        to block elements, to inner frames (see PR #197093). Past that, we no longer
+        need to force repaints of offscreen areas when we finish scrolling, since translating
+        the Layer takes care of properly invalidating it. Thus, remove this method.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::notifyInRegionScrollStopped):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2012-10-05  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Update default input support style for single line inputs.
