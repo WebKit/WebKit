@@ -594,6 +594,8 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         soup_message_headers_append(message->response_headers, "Location", "/simple-style.css");
     } else if (g_str_equal(path, "/invalid.css"))
         soup_message_set_status(message, SOUP_STATUS_CANT_CONNECT);
+    else
+        soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
     soup_message_body_complete(message->response_body);
 }
 

@@ -294,6 +294,8 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, indexHtml, strlen(indexHtml));
     } else if (g_str_equal(path, "/image.png"))
         soup_message_headers_replace(message->response_headers, "Set-Cookie", "baz=qux; Max-Age=60");
+    else
+        soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
     soup_message_body_complete(message->response_body);
 }
 

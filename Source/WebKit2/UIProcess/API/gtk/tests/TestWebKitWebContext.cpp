@@ -293,10 +293,13 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         return;
     }
 
-    soup_message_set_status(message, SOUP_STATUS_OK);
-    const char* acceptLanguage = soup_message_headers_get_one(message->request_headers, "Accept-Language");
-    soup_message_body_append(message->response_body, SOUP_MEMORY_COPY, acceptLanguage, strlen(acceptLanguage));
-    soup_message_body_complete(message->response_body);
+    if (g_str_equal(path, "/")) {
+        const char* acceptLanguage = soup_message_headers_get_one(message->request_headers, "Accept-Language");
+        soup_message_set_status(message, SOUP_STATUS_OK);
+        soup_message_body_append(message->response_body, SOUP_MEMORY_COPY, acceptLanguage, strlen(acceptLanguage));
+        soup_message_body_complete(message->response_body);
+    } else
+        soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
 }
 
 class SecurityPolicyTest: public Test {

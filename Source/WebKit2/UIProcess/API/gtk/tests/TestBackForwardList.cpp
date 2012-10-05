@@ -38,6 +38,11 @@ static void serverCallback(SoupServer* server, SoupMessage* msg, const char* pat
         return;
     }
 
+    if (g_str_has_suffix(path, "favicon.ico")) {
+        soup_message_set_status(msg, SOUP_STATUS_NOT_FOUND);
+        return;
+    }
+
     soup_message_set_status(msg, SOUP_STATUS_OK);
 
     char* body = g_strdup_printf("<html><title>%s</title><body>%s</body></html>", path + 1, path + 1);
