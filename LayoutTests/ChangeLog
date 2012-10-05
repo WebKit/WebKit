@@ -1,5 +1,36 @@
 2012-10-05  Ryosuke Niwa  <rniwa@webkit.org>
 
+        GTK+ and Qt rebaselines after r130532.
+
+        * platform/chromium-linux-x86/editing/pasteboard/interchange-newline-1-expected.txt: Removed.
+        * platform/chromium-linux-x86/editing/pasteboard/paste-text-002-expected.txt: Removed.
+        * platform/chromium-linux-x86/editing/pasteboard/paste-text-003-expected.txt: Removed.
+        * platform/chromium-linux/editing/pasteboard/interchange-newline-1-expected.txt: Removed.
+        * platform/chromium-linux/editing/pasteboard/paste-text-002-expected.txt: Removed.
+        * platform/chromium-linux/editing/pasteboard/paste-text-003-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-text-002-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/editing/pasteboard/paste-text-003-expected.txt: Removed.
+        * platform/chromium-win-xp/editing/pasteboard/interchange-newline-1-expected.txt: Removed.
+        * platform/chromium-win-xp/editing/pasteboard/paste-text-002-expected.txt: Removed.
+        * platform/chromium-win-xp/editing/pasteboard/paste-text-003-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/interchange-newline-1-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-text-002-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-text-003-expected.txt: Removed.
+        * platform/chromium/svg/custom/delete-text-crash-expected.txt: Removed.
+        * platform/chromium/svg/custom/delete-text-innerText-crash-expected.txt: Removed.
+        * platform/gtk/editing/deleting/delete-block-merge-contents-001-expected.txt:
+        * platform/gtk/editing/pasteboard/interchange-newline-1-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/merge-end-blockquote-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-text-002-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/paste-text-003-expected.txt: Removed.
+        * platform/qt/editing/deleting/delete-block-merge-contents-001-expected.txt:
+        * platform/qt/editing/pasteboard/interchange-newline-1-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/merge-end-blockquote-expected.txt:
+        * platform/qt/editing/pasteboard/paste-text-002-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/paste-text-003-expected.txt: Removed.
+
+2012-10-05  Ryosuke Niwa  <rniwa@webkit.org>
+
         Chromium and Mac rebaselines after r130532.
 
         * platform/chromium-linux-x86/editing/pasteboard/interchange-newline-1-expected.txt: Added.

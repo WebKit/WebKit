@@ -1,7 +1,7 @@
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 16 of #text > DIV > BODY > HTML > #document to 16 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 17 of #text > DIV > BODY > HTML > #document to 17 of #text > DIV > BODY > HTML > #document toDOMRange:range from 16 of #text > DIV > BODY > HTML > #document to 16 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
@@ -11,7 +11,7 @@ EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 14 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document to 14 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document to 4 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 14 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document to 14 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document to 3 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -41,4 +41,4 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (0,0) size 704x18
             RenderText {#text} at (0,0) size 49x19
               text run at (0,0) width 49: "barText"
-caret: position 4 of child 0 {#text} of child 0 {DIV} of child 1 {BLOCKQUOTE} of child 10 {DIV} of body
+caret: position 3 of child 0 {#text} of child 0 {DIV} of child 1 {BLOCKQUOTE} of child 10 {DIV} of body
