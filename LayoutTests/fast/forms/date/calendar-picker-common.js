@@ -31,6 +31,7 @@ function selectedDates() {
 }
 
 function openPicker(input) {
+    input.offsetTop; // Force to lay out
     sendKey(input, "Down", false, true);
     popupWindow = document.getElementById('mock-page-popup').contentWindow;
 }
