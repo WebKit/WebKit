@@ -926,6 +926,11 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         # child process (e.g., on win32) and we need to make sure that works and we still
         # see the verbose log output. However, we can't use logging_run() because using
         # outputcapture to capture stdout and stderr latter results in a nonpicklable host.
+
+        # Test is flaky on Windows: https://bugs.webkit.org/show_bug.cgi?id=98559
+        if not self.should_test_processes:
+            return
+
         options, parsed_args = parse_args(['--verbose', '--fully-parallel', '--child-processes', '2', 'passes/text.html', 'passes/image.html'], tests_included=True, print_nothing=False)
         host = MockHost()
         port_obj = host.port_factory.get(port_name=options.platform, options=options)
