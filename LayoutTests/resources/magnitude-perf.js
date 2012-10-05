@@ -35,6 +35,13 @@ Magnitude.LOGARITHMIC = "O(log n)";
 Magnitude.POLYNOMIAL = ">=O(n^2)";
 Magnitude.INDETERMINATE = "indeterminate result";
 
+Magnitude._order = {}
+Magnitude._order[Magnitude.CONSTANT] = 1;
+Magnitude._order[Magnitude.LINEAR] = 2;
+Magnitude._order[Magnitude.LOGARITHMIC] = 3;
+Magnitude._order[Magnitude.POLYNOMIAL] = 4;
+Magnitude._order[Magnitude.INDETERMINATE] = 5;
+
 Magnitude._log = function(msg)
 {
     if (!Magnitude._container)
@@ -71,12 +78,13 @@ Magnitude._run = function(setup, test, expected, numTriesLeft)
 
     numTriesLeft--;
     var bigO = Magnitude._bigOGuess();
-    if (bigO == expected || numTriesLeft < 1) {
-        Magnitude._log(bigO == expected ? "PASS" : "FAIL: got " + bigO + " expected " + expected);
+    var passed = Magnitude._order[bigO] <= Magnitude._order[expected];
+    if (passed || numTriesLeft < 1) {
+        Magnitude._log(passed ? "PASS" : "FAIL: got " + bigO + " expected " + expected);
 
         // By default don't log detailed information to layout test results to keep expected results
         // consistent from run to run.
-        if (!window.testRunner || bigO != expected)
+        if (!window.testRunner || !passed)
             Magnitude._log(Magnitude._debugLog);
     } else {
         Magnitude._debug("numTriesLeft: " + numTriesLeft);
