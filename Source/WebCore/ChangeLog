@@ -1,3 +1,21 @@
+2012-10-05  Andrei Bucur  <abucur@adobe.com>
+
+        Incomplete repaint of boxes with inset box-shadow and padding when resized
+        https://bugs.webkit.org/show_bug.cgi?id=59863
+
+        Reviewed by Simon Fraser.
+
+        The patch extends the repaint rectangle to include the inset shadow extent for renderers that resize and need to be repainted. The rectangle computations are also better fragmented and easier to read.
+
+        New Test: fast/repaint/box-shadow-inset-repaint.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::getShadowInsetExtent):
+        (WebCore):
+        * rendering/style/RenderStyle.h:
+
 2012-10-04  Kent Tamura  <tkent@chromium.org>
 
         Fix sub-field width to the maximum width of a placeholder and the maximum value

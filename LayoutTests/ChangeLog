@@ -1,3 +1,19 @@
+2012-10-05  Andrei Bucur  <abucur@adobe.com>
+
+        Incomplete repaint of boxes with inset box-shadow and padding when resized
+        https://bugs.webkit.org/show_bug.cgi?id=59863
+
+        Reviewed by Simon Fraser.
+
+        The patch adds a new pixel test and expected PNG results for mac and chromium-mac. The test fails on Chromium Linux EWS (and maybe others)
+        so I've added a rule in the TestExpectations file.
+
+        * platform/chromium/TestExpectations:
+        * fast/repaint/box-shadow-inset-repaint.html: Added.
+        * platform/chromium-mac/fast/repaint/box-shadow-inset-repaint-expected.png: Added.
+        * platform/mac/fast/repaint/box-shadow-inset-repaint-expected.png: Added.
+        * platform/mac/fast/repaint/box-shadow-inset-repaint-expected.txt: Added.
+
 2012-10-05  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

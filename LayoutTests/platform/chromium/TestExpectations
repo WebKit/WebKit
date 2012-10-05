@@ -3661,6 +3661,8 @@ webkit.org/b/98481 fast/forms/month-multiple-fields/month-multiple-fields-appear
 webkit.org/b/98481 fast/forms/month-multiple-fields/month-multiple-fields-appearance-style.html [ ImageOnlyFailure Pass ]
 
 
+webkit.org/b/59863 fast/repaint/box-shadow-inset-repaint.html [ ImageOnlyFailure Pass ]
+
 # Numerous failures in software compositing.
 crbug.com/152953 [ Mac ] platform/chromium/virtual/softwarecompositing/geometry/fixed-position-iframe-composited-page-scale-down.html [ ImageOnlyFailure ]
 crbug.com/152953 [ Mac ] platform/chromium/virtual/softwarecompositing/images/direct-image-background-color.html [ ImageOnlyFailure ]
