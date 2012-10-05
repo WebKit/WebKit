@@ -1,3 +1,9 @@
+2012-10-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the Qt build by removing an errant paste at the top of the file.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+
 2012-10-04  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Add APIs to get/set the frame flattening.
