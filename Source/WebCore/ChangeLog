@@ -1,3 +1,42 @@
+2012-10-04  Kent Tamura  <tkent@chromium.org>
+
+        Fix sub-field width to the maximum width of a placeholder and the maximum value
+        https://bugs.webkit.org/show_bug.cgi?id=98481
+
+        Reviewed by Hajime Morita.
+
+        We can't assume a placeholder text is shorter than the width of
+        digits. The placeholder string for the year field of
+        input[type=week] is "----", but input[type=date] will have a
+        localized string for it.
+
+        We should set the 'width' CSS property to the maximum of the
+        placeholder width and the maximum value width in order to prevent
+        the field width from growing/narrowing.
+
+        Before this patch, we secured four digits space for a year field,
+        and allowed the field to grow its width when a larger year is
+        set. After this patch, we don't allow it to grow because the
+        'width' property is set to the maximum width.
+
+        Update week-multiple-fields-appearance-basic.html, and the
+        following tests are affected.
+        - fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes.html
+        - fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements.html
+        - fast/forms/week-multiple-fields/week-multiple-fields-appearance-style.html
+
+        * html/shadow/DateTimeNumericFieldElement.cpp:
+        (WebCore::DateTimeNumericFieldElement::DateTimeNumericFieldElement):
+        Enable customStyleForRenderer.
+        (WebCore::DateTimeNumericFieldElement::customStyleForRenderer):
+        Added. The code is similar to DateTimeSymbolicFieldElement::customStyleForRenderer().
+        (WebCore::DateTimeNumericFieldElement::formatValue):
+        Made a function with the code in value(). This is used in
+        customStyleForRenderer() and value().
+        (WebCore::DateTimeNumericFieldElement::value): Use formatValue().
+        * html/shadow/DateTimeNumericFieldElement.h:
+        (DateTimeNumericFieldElement): Declare new functions.
+
 2012-10-05  Kent Tamura  <tkent@chromium.org>
 
         Improve spelling and performance of Localizer.cpp

@@ -3649,6 +3649,12 @@ webkit.org/b/98390 platform/chromium/fast/forms/date/date-suggestion-picker-appe
 webkit.org/b/98390 platform/chromium/fast/forms/date/date-suggestion-picker-appearance-with-scroll-bar.html [ ImageOnlyFailure Pass ]
 webkit.org/b/98390 platform/chromium/fast/forms/date/date-suggestion-picker-appearance.html [ ImageOnlyFailure Pass ]
 
+# Need rebaseline
+webkit.org/b/98481 fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic.html [ ImageOnlyFailure Pass ]
+webkit.org/b/98481 fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes.html [ ImageOnlyFailure Pass ]
+webkit.org/b/98481 fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements.html [ ImageOnlyFailure Pass ]
+webkit.org/b/98481 fast/forms/week-multiple-fields/week-multiple-fields-appearance-style.html [ ImageOnlyFailure Pass ]
+
 
 # Numerous failures in software compositing.
 crbug.com/152953 [ Mac ] platform/chromium/virtual/softwarecompositing/geometry/fixed-position-iframe-composited-page-scale-down.html [ ImageOnlyFailure ]

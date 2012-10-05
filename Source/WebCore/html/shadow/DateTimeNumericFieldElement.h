@@ -68,6 +68,9 @@ protected:
     virtual String visibleValue() const OVERRIDE FINAL;
 
 private:
+    // Element function.
+    virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE;
+
     // DateTimeFieldElement functions.
     virtual void didBlur() OVERRIDE FINAL;
     virtual void handleKeyboardEvent(KeyboardEvent*) OVERRIDE FINAL;
@@ -76,6 +79,7 @@ private:
     virtual void stepUp() OVERRIDE FINAL;
     virtual String value() const OVERRIDE FINAL;
 
+    String formatValue(int) const;
     Localizer& localizerForOwner() const;
 
     DOMTimeStamp m_lastDigitCharTime;

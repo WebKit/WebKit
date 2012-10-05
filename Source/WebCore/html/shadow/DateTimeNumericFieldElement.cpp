@@ -27,8 +27,12 @@
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "DateTimeNumericFieldElement.h"
 
+#include "FontCache.h"
 #include "KeyboardEvent.h"
 #include "Localizer.h"
+#include "RenderStyle.h"
+#include "StyleResolver.h"
+#include "TextRun.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -62,11 +66,23 @@ DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document* document, Fie
     , m_value(0)
     , m_hasValue(false)
 {
+    setHasCustomCallbacks();
 }
 
 int DateTimeNumericFieldElement::clampValueForHardLimits(int value) const
 {
     return clampValue(value);
+}
+
+PassRefPtr<RenderStyle> DateTimeNumericFieldElement::customStyleForRenderer()
+{
+    FontCachePurgePreventer fontCachePurgePreventer;
+    RefPtr<RenderStyle> originalStyle = document()->styleResolver()->styleForElement(this);
+    RefPtr<RenderStyle> style = RenderStyle::clone(originalStyle.get());
+    float maxiumWidth = style->font().width(m_placeholder);
+    maxiumWidth = std::max(maxiumWidth, style->font().width(formatValue(maximum())));
+    style->setWidth(Length(maxiumWidth, Fixed));
+    return style.release();
 }
 
 int DateTimeNumericFieldElement::defaultValueForStepDown() const
@@ -83,6 +99,16 @@ void DateTimeNumericFieldElement::didBlur()
 {
     m_lastDigitCharTime = 0;
     DateTimeFieldElement::didBlur();
+}
+
+String DateTimeNumericFieldElement::formatValue(int value) const
+{
+    Localizer& localizer = localizerForOwner();
+    if (m_range.maximum > 999)
+        return localizer.convertToLocalizedNumber(String::format("%04d", value));
+    if (m_range.maximum > 99)
+        return localizer.convertToLocalizedNumber(String::format("%03d", value));
+    return localizer.convertToLocalizedNumber(String::format("%02d", value));
 }
 
 void DateTimeNumericFieldElement::handleKeyboardEvent(KeyboardEvent* keyboardEvent)
@@ -173,17 +199,7 @@ void DateTimeNumericFieldElement::stepUp()
 
 String DateTimeNumericFieldElement::value() const
 {
-    if (!m_hasValue)
-        return emptyString();
-
-    Localizer& localizer = localizerForOwner();
-    if (m_range.maximum > 999)
-        return localizer.convertToLocalizedNumber(String::format("%04d", m_value));
-
-    if (m_range.maximum > 99)
-        return localizer.convertToLocalizedNumber(String::format("%03d", m_value));
-
-    return localizer.convertToLocalizedNumber(String::format("%02d", m_value));
+    return m_hasValue ? formatValue(m_value) : emptyString();
 }
 
 int DateTimeNumericFieldElement::valueAsInteger() const
