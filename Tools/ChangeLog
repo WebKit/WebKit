@@ -1,3 +1,23 @@
+2012-10-04  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [EFL][WK2] Fix destination path when download with suggested filename on the Minibrowser
+        https://bugs.webkit.org/show_bug.cgi?id=98334
+
+        Reviewed by Gyuyoung Kim.
+
+        Add callback functions for download requests to Minibrowser to set the destination path for download.
+        Set the destination path with suggested file name as (destination folder) + (suggested file name).
+        The 'destination folder' should be a specific folder user selected, but is set to '/tmp' for now.
+
+        Additionally, for printing out the download status, 
+        use the info macro and set the verbose variable to 1 to enable it.
+
+        * MiniBrowser/efl/main.c:
+        (on_download_request):
+        (on_download_finished):
+        (on_download_failed):
+        (browserCreate):
+
 2012-10-04  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][WKTR] Implement UIClient focus callbacks in WebKitTestRunner

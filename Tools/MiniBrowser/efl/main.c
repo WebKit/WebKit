@@ -36,7 +36,7 @@ static const char APP_NAME[] = "EFL MiniBrowser";
             printf(format, ##args); \
     } while (0)
 
-static int verbose = 0;
+static int verbose = 1;
 
 typedef struct _MiniBrowser {
     Ecore_Evas *ee;
@@ -199,6 +199,41 @@ on_error(void *user_data, Evas_Object *webview, void *event_info)
     eina_strbuf_free(buffer);
 }
 
+static void
+on_download_request(void *user_data, Evas_Object *webview, void *event_info)
+{
+    Ewk_Download_Job *download = (Ewk_Download_Job *)event_info;
+
+    // FIXME: The destination folder should be selected by the user but we set it to '/tmp' for now.
+    Eina_Strbuf *destination_path = eina_strbuf_new();
+    eina_strbuf_append(destination_path, "/tmp/");
+
+    const char *suggested_name = ewk_download_job_suggested_filename_get(download);
+    if (suggested_name && *suggested_name)
+        eina_strbuf_append(destination_path, suggested_name);
+    else {
+        eina_strbuf_append(destination_path, "downloaded-file.XXXXXX");
+        mktemp(eina_strbuf_string_get(destination_path));
+    }
+
+    ewk_download_job_destination_set(download, eina_strbuf_string_get(destination_path));
+    info("Downloading: %s\n", eina_strbuf_string_get(destination_path));
+    eina_strbuf_free(destination_path);
+}
+
+static void
+on_download_finished(void *user_data, Evas_Object *webview, void *event_info)
+{
+    Ewk_Download_Job *download = (Ewk_Download_Job *)event_info;
+    info("Download finished: %s\n",  ewk_download_job_destination_get(download));
+}
+
+static void
+on_download_failed(void *user_data, Evas_Object *webview, void *event_info)
+{
+    info("Download failed!\n");
+}
+
 static int
 quit(Eina_Bool success, const char *msg)
 {
@@ -238,6 +273,9 @@ static MiniBrowser *browserCreate(const char *url, const char *engine, Eina_Bool
     Ewk_Settings *settings = ewk_view_settings_get(app->browser);
     ewk_settings_file_access_from_file_urls_allowed_set(settings, EINA_TRUE);
 
+    evas_object_smart_callback_add(app->browser, "download,failed", on_download_failed, app);
+    evas_object_smart_callback_add(app->browser, "download,finished", on_download_finished, app);
+    evas_object_smart_callback_add(app->browser, "download,request", on_download_request, app);
     evas_object_smart_callback_add(app->browser, "load,error", on_error, app);
     evas_object_smart_callback_add(app->browser, "load,progress", on_progress, app);
     evas_object_smart_callback_add(app->browser, "title,changed", on_title_changed, app);
