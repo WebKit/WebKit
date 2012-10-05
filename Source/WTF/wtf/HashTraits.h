@@ -50,9 +50,7 @@ namespace WTF {
         // The needsDestruction flag is used to optimize destruction and rehashing.
         static const bool needsDestruction = true;
 
-        // The starting table size. Can be overridden when we know beforehand that
-        // a hash table will have at least N entries.
-        static const int minimumTableSize = 8;
+        static const int minimumTableSize = 64;
     };
 
     // Default integer traits disallow both 0 and -1 as keys (max value instead of -1 for unsigned).

@@ -1,3 +1,13 @@
+2012-10-04  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, rolling out r130419.
+        http://trac.webkit.org/changeset/130419
+        https://bugs.webkit.org/show_bug.cgi?id=98406
+
+        broke editing/pasteboard/data-transfer-items.html on chromium
+
+        * wtf/HashTraits.h:
+
 2012-10-04  Andreas Kling  <kling@webkit.org>
 
         Lower minimum table size of WTF::HashTable to reduce memory usage.
