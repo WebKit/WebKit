@@ -1,3 +1,29 @@
+2012-10-05  Kevin Ellis  <kevers@chromium.org>
+
+        [chromium] Only inflate the height of rows in a popup menu when a touch device is detected.
+        https://bugs.webkit.org/show_bug.cgi?id=98515
+
+        Reviewed by Adam Barth.
+
+        Enforces a minimum row height for popup menus when a touch device is
+        detected.  In a previous patch (r127597), the sizing of popup was 
+        consolidated for touch and non-touch.  Based on user feedback, reverting
+        to the old behavior for non-touch and only adding padding for touch
+        devices seems like a much safer strategy.  This patch is not a direct
+        revert of r127567 since the padding previously used for touch is a bit
+        excessive.
+
+        Covered by existing tests.
+
+        * platform/chromium/PopupListBox.cpp:
+        (WebCore::PopupListBox::getRowHeight):
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore):
+        * platform/chromium/PopupMenuChromium.h:
+        (WebCore::PopupMenuChromium::optionRowHeightForTouch):
+        (WebCore::PopupMenuChromium::setOptionRowHeightForTouch):
+        (PopupMenuChromium):
+
 2012-10-05  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Styles] Unable to edit properties in broken stylesheets

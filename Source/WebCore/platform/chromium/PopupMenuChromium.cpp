@@ -40,7 +40,8 @@
 
 namespace WebCore {
 
-int PopupMenuChromium::s_minimumRowHeight = 28;
+int PopupMenuChromium::s_minimumRowHeight = 0;
+int PopupMenuChromium::s_optionRowHeightForTouch = 28;
 
 // The settings used for the drop down menu.
 // This is the delegate used if none is provided.
