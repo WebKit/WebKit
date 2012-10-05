@@ -65,6 +65,7 @@ LinkHighlight::LinkHighlight(Node* node, WebViewImpl* owningWebViewImpl)
     , m_owningWebViewImpl(owningWebViewImpl)
     , m_currentGraphicsLayer(0)
     , m_geometryNeedsUpdate(false)
+    , m_isAnimating(false)
 {
     ASSERT(m_node);
     ASSERT(owningWebViewImpl);
@@ -73,12 +74,11 @@ LinkHighlight::LinkHighlight(Node* node, WebViewImpl* owningWebViewImpl)
     m_clipLayer = adoptPtr(compositorSupport->createLayer());
     m_clipLayer->setAnchorPoint(WebFloatPoint());
     m_clipLayer->addChild(m_contentLayer->layer());
-    m_contentLayer->layer()->setDrawsContent(false);
-
-    // We don't want to show the highlight until startAnimation is called, even though the highlight
-    // layer may be added to the tree immediately.
-    m_contentLayer->layer()->setOpacity(0);
     m_contentLayer->layer()->setAnimationDelegate(this);
+    m_contentLayer->layer()->setDrawsContent(true);
+    m_contentLayer->layer()->setOpacity(1);
+    m_geometryNeedsUpdate = true;
+    updateGeometry();
 }
 
 LinkHighlight::~LinkHighlight()
@@ -194,8 +194,12 @@ void LinkHighlight::paintContents(WebCanvas* canvas, const WebRect& webClipRect,
     gc.fillPath(m_path);
 }
 
-void LinkHighlight::startHighlightAnimation()
+void LinkHighlight::startHighlightAnimationIfNeeded()
 {
+    if (m_isAnimating)
+        return;
+
+    m_isAnimating = true;
     const float startOpacity = 1;
     // FIXME: Should duration be configurable?
     const float duration = 0.1f;

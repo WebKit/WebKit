@@ -8,12 +8,10 @@
 <a href="" id="targetLink" style="-webkit-tap-highlight-color: rgba(0, 255, 0, 0.5)">Target Link.</a>
 </div>
 <div style="position: relative; left: 10px; top: 70px">
-This test is successful if no link highlight appears (in particular, the entire viewport should remain unchanged, and the background
-should be white and not grey).
+This test is successful if no link highlight appears.
 </div>
 <script>
-// This test makes sure a previous highlight does not survive beyond the next GestureTapDown, even
-// if the new event fails to produce a valid target for highlighting.
+// This test makes sure a highlight does not survive beyond GestureLongPress.
 function runTest() {
     var clientRect = document.getElementById('targetLink').getBoundingClientRect();
     x = (clientRect.left + clientRect.right) / 2;
@@ -28,8 +26,8 @@ function runTest() {
         eventSender.gestureTapDown(x, y);
         window.testRunner.display();
 
-        // Generate tap in region with no valid target ... this should cancel the first tap.
-        eventSender.gestureTapDown(150, 150);
+        // Generate long press ... this should cancel highlight.
+        eventSender.gestureLongPress(x, y);
         window.setTimeout(function() { window.testRunner.notifyDone(); }, 0);
     } else {
         debug("This test requires DumpRenderTree.");

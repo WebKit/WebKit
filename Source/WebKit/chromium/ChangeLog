@@ -1,3 +1,23 @@
+2012-10-05  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Modify gesture highlight behaviour. Cancel on GestureLongPress and animate on GestureTapCancel.
+        https://bugs.webkit.org/show_bug.cgi?id=97355
+
+        Reviewed by Adrienne Walker.
+
+        This patch revises the behaviour of GestureTapDown highlighting so that the highlight should disappear if
+        interrupted by GestureTap, and animate away if interrupted by GestureTapCancel.
+
+
+        * src/LinkHighlight.cpp:
+        (WebKit::LinkHighlight::LinkHighlight):
+        (WebKit::LinkHighlight::startHighlightAnimationIfNeeded):
+        * src/LinkHighlight.h:
+        (LinkHighlight):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleGestureEvent):
+        (WebKit::WebViewImpl::enableTouchHighlight):
+
 2012-10-05  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Update some more #includes for Platform/ directory

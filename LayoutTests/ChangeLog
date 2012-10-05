@@ -1,3 +1,21 @@
+2012-10-05  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Modify gesture highlight behaviour. Cancel on GestureLongPress and animate on GestureTapCancel.
+        https://bugs.webkit.org/show_bug.cgi?id=97355
+
+        Reviewed by Adrienne Walker.
+
+        This patch revises the behaviour of GestureTapDown highlighting so that the highlight should disappear if
+        interrupted by GestureTap, and animate away if interrupted by GestureTapCancel.
+
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-cancel.html: removed extra testRunner.display().
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-cancel2.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-longPress.html: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-cancel2-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-cancel2-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-longPress-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-longPress-expected.txt: Added.
+
 2012-10-05  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r129478-r129480): http/tests/loading/text-content-type-with-binary-extension.html failing on Apple MountainLion Debug WK2 (Tests)

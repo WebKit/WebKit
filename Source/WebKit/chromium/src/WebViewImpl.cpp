@@ -659,6 +659,29 @@ void WebViewImpl::scrollBy(const WebCore::IntPoint& delta)
 bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
 {
     bool eventSwallowed = false;
+
+    // Handle link highlighting outside the main switch to avoid getting lost in the
+    // complicated set of cases handled below.
+    switch (event.type) {
+    case WebInputEvent::GestureTapDown:
+        // Queue a highlight animation, then hand off to regular handler.
+#if OS(LINUX)
+        if (settingsImpl()->gestureTapHighlightEnabled())
+            enableTouchHighlight(IntPoint(event.x, event.y));
+#endif
+        break;
+    case WebInputEvent::GestureTapCancel:
+        if (m_linkHighlight)
+            m_linkHighlight->startHighlightAnimationIfNeeded();
+        break;
+    case WebInputEvent::GestureTap:
+        // If a link highlight is active, kill it.
+        m_linkHighlight.clear();
+        break;
+    default:
+        break;
+    }
+
     switch (event.type) {
     case WebInputEvent::GestureFlingStart: {
         m_client->cancelScheduledContentIntents();
@@ -736,11 +759,6 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
     }
     case WebInputEvent::GestureTapDown: {
         m_client->cancelScheduledContentIntents();
-        // Queue a highlight animation, then hand off to regular handler.
-#if OS(LINUX)
-        if (settingsImpl()->gestureTapHighlightEnabled())
-            enableTouchHighlight(IntPoint(event.x, event.y));
-#endif
         PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
         eventSwallowed = mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
         break;
@@ -1197,7 +1215,6 @@ void WebViewImpl::enableTouchHighlight(IntPoint touchEventLocation)
         return;
 
     m_linkHighlight = LinkHighlight::create(touchNode, this);
-    m_linkHighlight->startHighlightAnimation();
 }
 
 #endif
