@@ -647,4 +647,26 @@ TEST_F(WebViewTest, ClientTapHandling)
     webView->close();
 }
 
+#if OS(ANDROID)
+TEST_F(WebViewTest, LongPressSelection)
+{
+    URLTestHelpers::registerMockedURLFromBaseURL(WebString::fromUTF8(m_baseURL.c_str()), WebString::fromUTF8("longpress_selection.html"));
+
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "longpress_selection.html", true);
+    webView->resize(WebSize(500, 300));
+    webView->layout();
+    webkit_support::RunAllPendingMessages();
+
+    WebString target = WebString::fromUTF8("target");
+    WebString onselectstartfalse = WebString::fromUTF8("onselectstartfalse");
+    WebFrameImpl* frame = static_cast<WebFrameImpl*>(webView->mainFrame());
+
+    EXPECT_TRUE(tapElementById(webView, WebInputEvent::GestureLongPress, onselectstartfalse));
+    EXPECT_EQ("", std::string(frame->selectionAsText().utf8().data()));
+    EXPECT_TRUE(tapElementById(webView, WebInputEvent::GestureLongPress, target));
+    EXPECT_EQ("testword", std::string(frame->selectionAsText().utf8().data()));
+    webView->close();
+}
+#endif
+
 }

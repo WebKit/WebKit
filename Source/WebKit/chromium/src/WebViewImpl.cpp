@@ -742,7 +742,18 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
 
         break;
     }
-    case WebInputEvent::GestureTwoFingerTap:
+    case WebInputEvent::GestureTwoFingerTap: {
+        if (!mainFrameImpl() || !mainFrameImpl()->frameView())
+            break;
+
+        m_page->contextMenuController()->clearContextMenu();
+        m_contextMenuAllowed = true;
+        PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
+        eventSwallowed = mainFrameImpl()->frame()->eventHandler()->sendContextMenuEventForGesture(platformEvent);
+        m_contextMenuAllowed = false;
+
+        break;
+    }
     case WebInputEvent::GestureLongPress: {
         if (!mainFrameImpl() || !mainFrameImpl()->frameView())
             break;
@@ -756,7 +767,7 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         m_page->contextMenuController()->clearContextMenu();
         m_contextMenuAllowed = true;
         PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
-        eventSwallowed = mainFrameImpl()->frame()->eventHandler()->sendContextMenuEventForGesture(platformEvent);
+        eventSwallowed = mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
         m_contextMenuAllowed = false;
 
         break;
