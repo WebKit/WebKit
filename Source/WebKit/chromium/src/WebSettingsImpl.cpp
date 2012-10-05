@@ -33,8 +33,8 @@
 
 #include "FontRenderingMode.h"
 #include "Settings.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
+#include <public/WebString.h>
+#include <public/WebURL.h>
 #include <wtf/UnusedParam.h>
 
 #if defined(OS_WIN)

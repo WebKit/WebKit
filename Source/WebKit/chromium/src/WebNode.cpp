@@ -45,7 +45,7 @@
 #include "WebFrameImpl.h"
 #include "WebNodeList.h"
 #include "markup.h"
-#include "platform/WebString.h"
+#include <public/WebString.h>
 #include <public/WebVector.h>
 
 using namespace WebCore;

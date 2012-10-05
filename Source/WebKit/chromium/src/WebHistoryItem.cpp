@@ -36,10 +36,10 @@
 #include "HistoryItem.h"
 #include "KURL.h"
 #include "SerializedScriptValue.h"
-#include "platform/WebHTTPBody.h"
-#include "platform/WebPoint.h"
 #include "platform/WebSerializedScriptValue.h"
-#include "platform/WebString.h"
+#include <public/WebHTTPBody.h>
+#include <public/WebPoint.h>
+#include <public/WebString.h>
 #include <public/WebVector.h>
 
 using namespace WebCore;

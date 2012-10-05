@@ -37,9 +37,9 @@
 #include "KURL.h"
 #include "MediaStreamDescriptor.h"
 #include "MediaStreamRegistry.h"
-#include "platform/WebMediaStreamDescriptor.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
+#include <public/WebMediaStreamDescriptor.h>
+#include <public/WebString.h>
+#include <public/WebURL.h>
 
 using namespace WebCore;
 

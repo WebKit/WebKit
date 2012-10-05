@@ -29,10 +29,10 @@
  */
 
 #include "config.h"
-#include "platform/WebURLLoadTiming.h"
+#include <public/WebURLLoadTiming.h>
 
 #include "ResourceLoadTiming.h"
-#include "platform/WebString.h"
+#include <public/WebString.h>
 
 using namespace WebCore;
 

@@ -38,8 +38,8 @@
 #include "HTMLNames.h"
 #include "WebFormControlElement.h"
 #include "WebInputElement.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
+#include <public/WebString.h>
+#include <public/WebURL.h>
 #include <wtf/PassRefPtr.h>
 
 using namespace WebCore;

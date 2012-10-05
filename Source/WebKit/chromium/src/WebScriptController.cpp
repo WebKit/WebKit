@@ -34,8 +34,7 @@
 #include "ScriptController.h"
 #include "V8Binding.h"
 #include "V8DOMMap.h"
-
-#include "platform/WebString.h"
+#include <public/WebString.h>
 
 using namespace WebCore;
 

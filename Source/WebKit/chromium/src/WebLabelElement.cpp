@@ -33,7 +33,7 @@
 
 #include "HTMLLabelElement.h"
 #include "HTMLNames.h"
-#include "platform/WebString.h"
+#include <public/WebString.h>
 #include <wtf/PassRefPtr.h>
 
 using namespace WebCore;

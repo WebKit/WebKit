@@ -39,13 +39,13 @@
 #include "WebFileInfo.h"
 #include "WebFileSystemCallbacks.h"
 #include "WebFileSystemEntry.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
 #include "WebWorkerBase.h"
 #include "WorkerContext.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerScriptController.h"
 #include "WorkerThread.h"
+#include <public/WebString.h>
+#include <public/WebURL.h>
 #include <wtf/MainThread.h>
 #include <wtf/Threading.h>
 #include <wtf/UnusedParam.h>

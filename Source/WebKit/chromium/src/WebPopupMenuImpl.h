@@ -33,8 +33,8 @@
 
 #include "FramelessScrollViewClient.h"
 #include "WebPopupMenu.h"
-#include "platform/WebPoint.h"
-#include "platform/WebSize.h"
+#include <public/WebPoint.h>
+#include <public/WebSize.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 

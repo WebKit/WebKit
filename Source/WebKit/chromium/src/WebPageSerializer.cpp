@@ -47,9 +47,9 @@
 #include "WebPageSerializerImpl.h"
 #include "WebView.h"
 #include "WebViewImpl.h"
-#include "platform/WebCString.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
+#include <public/WebCString.h>
+#include <public/WebString.h>
+#include <public/WebURL.h>
 #include <public/WebVector.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringConcatenate.h>

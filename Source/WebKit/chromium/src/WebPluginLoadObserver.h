@@ -31,7 +31,7 @@
 #ifndef WebPluginLoadObserver_h
 #define WebPluginLoadObserver_h
 
-#include "platform/WebURL.h"
+#include <public/WebURL.h>
 
 namespace WebKit {
 

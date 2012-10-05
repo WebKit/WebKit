@@ -32,7 +32,7 @@
 #include "WebRegularExpression.h"
 
 #include "RegularExpression.h"
-#include "platform/WebString.h"
+#include <public/WebString.h>
 
 using namespace WebCore;
 

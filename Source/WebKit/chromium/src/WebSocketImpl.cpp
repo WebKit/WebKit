@@ -47,8 +47,8 @@ class WebSocketChannel {
 #include "WebArrayBuffer.h"
 #include "WebDocument.h"
 #include "WebSocketClient.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
+#include <public/WebString.h>
+#include <public/WebURL.h>
 
 using namespace WebCore;
 

@@ -34,12 +34,10 @@
 #include "ImageDecoder.h"
 #include "NativeImageSkia.h"
 #include "SharedBuffer.h"
-
-#include "platform/WebData.h"
-#include "platform/WebSize.h"
-
 #include <algorithm>
+#include <public/WebData.h>
 #include <public/WebImage.h>
+#include <public/WebSize.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>

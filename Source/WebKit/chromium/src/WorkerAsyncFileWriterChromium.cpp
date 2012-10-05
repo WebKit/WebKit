@@ -37,13 +37,13 @@
 #include "Blob.h"
 #include "ScriptExecutionContext.h"
 #include "WebFileWriter.h"
-#include "platform/WebURL.h"
 #include "WebWorkerBase.h"
 #include "WorkerContext.h"
 #include "WorkerFileWriterCallbacksBridge.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"
 #include <public/WebFileSystem.h>
+#include <public/WebURL.h>
 #include <wtf/Assertions.h>
 
 using namespace WebKit;

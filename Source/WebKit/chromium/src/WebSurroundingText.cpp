@@ -33,8 +33,7 @@
 #include "Text.h"
 #include "VisiblePosition.h"
 #include "WebHitTestResult.h"
-
-#include "platform/WebPoint.h"
+#include <public/WebPoint.h>
 
 using namespace WebCore;
 

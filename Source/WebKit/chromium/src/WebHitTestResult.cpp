@@ -33,8 +33,7 @@
 #include "RenderObject.h"
 #include "VisiblePosition.h"
 #include "WebNode.h"
-
-#include "platform/WebPoint.h"
+#include <public/WebPoint.h>
 
 using namespace WebCore;
 

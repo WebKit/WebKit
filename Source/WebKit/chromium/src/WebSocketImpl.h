@@ -31,10 +31,10 @@
 #ifndef WebSocketImpl_h
 #define WebSocketImpl_h
 
-#include "platform/WebCommon.h"
 #include "WebSocket.h"
 #include "WebSocketChannelClient.h"
 #include "WebSocketClient.h"
+#include <public/WebCommon.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 

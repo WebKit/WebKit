@@ -40,8 +40,8 @@
 #include "TextIterator.h"
 #include "WebFrameImpl.h"
 #include "WebNode.h"
-#include "platform/WebFloatQuad.h"
-#include "platform/WebString.h"
+#include <public/WebFloatQuad.h>
+#include <public/WebString.h>
 #include <wtf/PassRefPtr.h>
 
 using namespace WebCore;

@@ -48,7 +48,7 @@
 #include "WebViewClient.h"
 #include "WebWidgetClient.h"
 #include "painting/GraphicsContextBuilder.h"
-#include "platform/WebRect.h"
+#include <public/WebRect.h>
 #include <skia/ext/platform_canvas.h>
 
 #if ENABLE(GESTURE_EVENTS)
