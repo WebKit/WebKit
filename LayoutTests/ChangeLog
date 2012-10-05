@@ -1,3 +1,21 @@
+2012-10-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Deleting across multiple paragraphs can change the style of surrounding text
+        https://bugs.webkit.org/show_bug.cgi?id=97266
+
+        Reviewed by Levi Weintraub.
+
+        Added a regression test and rebaselined tests.
+
+        * editing/deleting/delete-before-block-image-2-expected.txt:
+        * editing/deleting/merge-paragraph-from-p-with-style-expected.txt:
+        * editing/deleting/merge-paragraph-from-p-with-style.html: We changed the behavior. The editing style of p
+        is now preserved when merging paragraphs.
+        * editing/deleting/merge-paragraph-with-style-from-rule-expected.txt: Added.
+        * editing/deleting/merge-paragraph-with-style-from-rule.html: Added.
+        * platform/mac/editing/deleting/delete-block-merge-contents-001-expected.txt:
+        * platform/mac/editing/pasteboard/merge-end-blockquote-expected.txt:
+
 2012-10-05  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed rebaseline after r130355.
