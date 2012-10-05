@@ -157,12 +157,13 @@ private:
 };
 
 struct SVGAttributeHashTranslator {
-    static unsigned hash(QualifiedName key)
+    static unsigned hash(const QualifiedName& key)
     {
-        key.setPrefix(nullAtom);
+        if (key.hasPrefix())
+            return DefaultHash<QualifiedName>::Hash::hash(QualifiedName(nullAtom, key.localName(), key.namespaceURI()));
         return DefaultHash<QualifiedName>::Hash::hash(key);
     }
-    static bool equal(QualifiedName a, QualifiedName b) { return a.matches(b); }
+    static bool equal(const QualifiedName& a, const QualifiedName& b) { return a.matches(b); }
 };
 
 inline SVGElement* toSVGElement(Element* element)
