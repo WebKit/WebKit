@@ -197,26 +197,37 @@ static int inputStyle(BlackBerryInputType type, const Element* element)
     case InputTypeText:
     case InputTypeTextArea:
         {
-            // Regular input mode, disable help if autocomplete is off.
-            int imfMask = 0;
             DOMSupport::AttributeState autoCompleteState = DOMSupport::elementSupportsAutocomplete(element);
-            if (autoCompleteState == DOMSupport::Off)
-                imfMask = NO_AUTO_TEXT | NO_PREDICTION;
-            else if (autoCompleteState != DOMSupport::On
-                     && DOMSupport::elementIdOrNameIndicatesNoAutocomplete(element))
-                imfMask = NO_AUTO_TEXT | NO_PREDICTION;
+            DOMSupport::AttributeState autoCorrectState = DOMSupport::elementSupportsAutocorrect(element);
 
-            // Disable autocorrection if it's specifically off, of if it is in default mode
-            // and we have disabled auto text and prediction.
-            if (DOMSupport::elementSupportsAutocorrect(element) == DOMSupport::Off
-                || (imfMask && DOMSupport::elementSupportsAutocorrect(element) == DOMSupport::Default))
-                imfMask |= NO_AUTO_CORRECTION;
-
-            if (imfMask)
-                return imfMask;
-            if ((type == InputTypeEmail || type == InputTypeURL) && autoCompleteState != DOMSupport::On)
+            // Autocomplete disabled explicitly.
+            if (autoCompleteState == DOMSupport::Off) {
+                if (autoCorrectState == DOMSupport::On)
+                    return NO_PREDICTION;
                 return NO_AUTO_TEXT | NO_PREDICTION | NO_AUTO_CORRECTION;
-            break;
+            }
+
+            // Autocomplete enabled explicitly.
+            if (autoCompleteState == DOMSupport::On) {
+                if (autoCorrectState == DOMSupport::Off)
+                    return NO_AUTO_TEXT | NO_AUTO_CORRECTION;
+                return DEFAULT_STYLE;
+            }
+
+            // Check for reserved strings and known types.
+            if (type == InputTypeEmail || type == InputTypeURL || DOMSupport::elementIdOrNameIndicatesNoAutocomplete(element)) {
+                if (autoCorrectState == DOMSupport::On)
+                    return NO_PREDICTION;
+                return NO_AUTO_TEXT | NO_PREDICTION | NO_AUTO_CORRECTION;
+            }
+
+            // Autocomplete state wasn't provided if it is a text area or autocorrect is on, apply support.
+            if (autoCorrectState == DOMSupport::On || (type == InputTypeTextArea && autoCorrectState != DOMSupport::Off))
+                return DEFAULT_STYLE;
+
+            // Single line text input, without special features explicitly turned on or a textarea
+            // with autocorrect disabled explicitly. Only enable predictions.
+            return NO_AUTO_TEXT | NO_AUTO_CORRECTION;
         }
     case InputTypeIsIndex:
     case InputTypePassword:
