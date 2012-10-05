@@ -1,3 +1,13 @@
+2012-10-05  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed rebaseline after r130355.
+
+        r130447 forgot to update the Snow Leopard pixel baselines. The only differences are due to a different font used.
+
+        * platform/chromium-mac-snowleopard/fast/clip/overflow-border-radius-combinations-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/clip/overflow-border-radius-fixed-position-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/clip/overflow-border-radius-transformed-expected.png: Added.
+
 2012-10-05  Ojan Vafai  <ojan@chromium.org>
 
         Add expected result accidentally left out of http://trac.webkit.org/changeset/130337.
