@@ -1,3 +1,24 @@
+2012-10-05  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed Chromium gardening.
+
+        * platform/chromium/TestExpectations:
+        Updated a wrong bug info and rebaselined 2 tests:
+        fast/reflections/inline-crash.html and fast/backgrounds/solid-color-context-restore.html
+
+        * fast/backgrounds/solid-color-context-restore-expected.txt: Added.
+        * fast/reflections/inline-crash-expected.txt: Added.
+        * platform/chromium-linux/fast/backgrounds/solid-color-context-restore-expected.png: Added.
+        * platform/chromium-linux/fast/reflections/inline-crash-expected.png: Added.
+        * platform/chromium-win/fast/backgrounds/solid-color-context-restore-expected.png: Added.
+        * platform/chromium-win/fast/backgrounds/solid-color-context-restore-expected.txt: Added.
+        * platform/chromium-win/fast/reflections/inline-crash-expected.png: Added.
+        * platform/chromium-win/fast/reflections/inline-crash-expected.txt: Added.
+        * platform/efl/fast/backgrounds/solid-color-context-restore-expected.txt: Removed.
+        * platform/efl/fast/reflections/inline-crash-expected.txt: Removed.
+        * platform/gtk/fast/backgrounds/solid-color-context-restore-expected.txt: Removed.
+        * platform/gtk/fast/reflections/inline-crash-expected.txt: Removed.
+
 2012-10-05  Bear Travis  <betravis@adobe.com>
 
         [CSS Exclusions] Add shape-inside tests for rounded rectangles

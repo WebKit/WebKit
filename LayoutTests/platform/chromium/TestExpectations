@@ -954,9 +954,6 @@ crbug.com/8630 [ Android Linux Win ] fast/repaint/body-background-image.html [ F
 
 # Relies on text metrics to pass. Rework to be meaningful for ports other than platform/mac.
 crbug.com/8630 [ Android Linux Win ] fast/repaint/overflow-outline-repaint.html [ Failure ImageOnlyFailure ]
-crbug.com/8630 [ Android Linux Win ] fast/backgrounds/solid-color-context-restore.html [ Failure ImageOnlyFailure ]
-crbug.com/8630 [ Android Linux Win Release ] fast/reflections/inline-crash.html [ Failure ImageOnlyFailure ]
-crbug.com/8630 [ Android Linux Win Debug ] fast/reflections/inline-crash.html [ Failure ImageOnlyFailure ]
 crbug.com/8630 [ Android Linux Win ] fast/text/font-initial.html [ Failure ImageOnlyFailure ]
 
 # Need a setAuthorAndUserStylesEnabled method in
@@ -972,8 +969,8 @@ crbug.com/24197 fast/css/disabled-author-styles.html
 # Test itself passes, but causes subsequent tests to fail.
 webkit.org/b/83260 fast/text/international/embed-bidi-style-in-isolate-crash.html
 
-# Marking as expected failing until the test can be updated and all platforms rebaselined.
-webkit.org/b/96319 fast/block/float/overhanging-tall-block.html [ Failure ]
+# The test needs to be reworked to work with sub-pixel layout before being rebaselined.
+webkit.org/b/58898 fast/block/float/overhanging-tall-block.html [ Failure ]
 
 # New test added that needs platform specific results
 webkit.org/b/98452 fast/text/vertical-rl-rtl-linebreak.html [ Failure ]
