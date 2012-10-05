@@ -52,11 +52,24 @@ unsigned CSSSelector::specificity() const
 {
     // make sure the result doesn't overflow
     static const unsigned maxValueMask = 0xffffff;
+    static const unsigned idMask = 0xff0000;
+    static const unsigned classMask = 0xff00;
+    static const unsigned elementMask = 0xff;
     unsigned total = 0;
+    unsigned temp = 0;
     for (const CSSSelector* selector = this; selector; selector = selector->tagHistory()) {
         if (selector->m_isForPage)
             return (total + selector->specificityForPage()) & maxValueMask;
-        total = (total + selector->specificityForOneSelector()) & maxValueMask;
+        temp = total + selector->specificityForOneSelector();
+        // Clamp each component to its max in the case of overflow.
+        if ((temp & idMask) < (total & idMask))
+            total |= idMask;
+        else if ((temp & classMask) < (total & classMask))
+            total |= classMask;
+        else if ((temp & elementMask) < (total & elementMask))
+            total |= elementMask;
+        else
+            total = temp;
     }
     return total;
 }

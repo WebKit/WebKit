@@ -1,3 +1,22 @@
+2012-10-04  Tab Atkins  <jackalmage@gmail.com>
+
+        Selector specificity categories "overflow" into higher categories
+        https://bugs.webkit.org/show_bug.cgi?id=98295
+
+        Reviewed by Eric Seidel.
+
+        This patch adds per-component overflow guards for CSS selector specificity.
+        Previously, we didn't guard against overflow. 
+        Since we stored each component as a byte mapped into a single unsigned int for the whole specificity,
+        256 of a particular simple selector was equivalent to 1 of the next-higher-group selector.
+        This violated the Selectors specification,
+        which requires the components to be compared lexicographically.
+
+        Tests: /fast/selectors/specificity-overflow.html
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::specificity):
+
 2012-10-04  Enrica Casucci  <enrica@apple.com>
 
         Font::glyphDataAndPageForCharacter doesn't account for text orientation when using systemFallback on a cold cache.
