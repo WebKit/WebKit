@@ -91,7 +91,7 @@ float Font::getGlyphsAndAdvancesForComplexText(const TextRun& run, int from, int
 
     if (run.rtl()) {
         initialAdvance = controller.totalWidth() + controller.finalRoundingWidth() - afterWidth;
-        for (int i = 0, end = glyphBuffer.size() - 1; i < glyphBuffer.size() / 2; ++i, --end)
+        for (int i = 0, end = glyphBuffer.size() - 1; i < end; ++i, --end)
             glyphBuffer.swap(i, end);
     } else
         initialAdvance = beforeWidth;
