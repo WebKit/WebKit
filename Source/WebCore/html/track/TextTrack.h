@@ -54,7 +54,7 @@ public:
 
 class TextTrack : public TrackBase {
 public:
-    static PassRefPtr<TextTrack> create(ScriptExecutionContext* context, TextTrackClient* client, const String& kind, const String& label, const String& language)
+    static PassRefPtr<TextTrack> create(ScriptExecutionContext* context, TextTrackClient* client, const AtomicString& kind, const AtomicString& label, const AtomicString& language)
     {
         return adoptRef(new TextTrack(context, client, kind, label, language, AddTrack));
     }
@@ -63,28 +63,28 @@ public:
     void setMediaElement(HTMLMediaElement* element) { m_mediaElement = element; }
     HTMLMediaElement* mediaElement() { return m_mediaElement; }
 
-    String kind() const { return m_kind; }
-    void setKind(const String&);
+    AtomicString kind() const { return m_kind; }
+    void setKind(const AtomicString&);
 
     static const AtomicString& subtitlesKeyword();
     static const AtomicString& captionsKeyword();
     static const AtomicString& descriptionsKeyword();
     static const AtomicString& chaptersKeyword();
     static const AtomicString& metadataKeyword();
-    static bool isValidKindKeyword(const String&);
+    static bool isValidKindKeyword(const AtomicString&);
 
-    String label() const { return m_label; }
-    void setLabel(const String& label) { m_label = label; }
+    AtomicString label() const { return m_label; }
+    void setLabel(const AtomicString& label) { m_label = label; }
 
-    String language() const { return m_language; }
-    void setLanguage(const String& language) { m_language = language; }
+    AtomicString language() const { return m_language; }
+    void setLanguage(const AtomicString& language) { m_language = language; }
 
     static const AtomicString& disabledKeyword();
     static const AtomicString& hiddenKeyword();
     static const AtomicString& showingKeyword();
 
-    String mode() const;
-    void setMode(const String&);
+    AtomicString mode() const;
+    void setMode(const AtomicString&);
 
     bool showingByDefault() const { return m_showingByDefault; }
     void setShowingByDefault(bool showing) { m_showingByDefault = showing; }
@@ -116,17 +116,17 @@ public:
     bool isRendered();
 
 protected:
-    TextTrack(ScriptExecutionContext*, TextTrackClient*, const String& kind, const String& label, const String& language, TextTrackType);
+    TextTrack(ScriptExecutionContext*, TextTrackClient*, const AtomicString& kind, const AtomicString& label, const AtomicString& language, TextTrackType);
 
     RefPtr<TextTrackCueList> m_cues;
 
 private:
     TextTrackCueList* ensureTextTrackCueList();
     HTMLMediaElement* m_mediaElement;
-    String m_kind;
-    String m_label;
-    String m_language;
-    String m_mode;
+    AtomicString m_kind;
+    AtomicString m_label;
+    AtomicString m_language;
+    AtomicString m_mode;
     TextTrackClient* m_client;
     TextTrackType m_trackType;
     ReadinessState m_readinessState;

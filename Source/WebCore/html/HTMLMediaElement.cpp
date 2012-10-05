@@ -69,6 +69,7 @@
 #include "MIMETypeRegistry.h"
 #include "NodeRenderingContext.h"
 #include "Page.h"
+#include "RenderTheme.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "ScriptController.h"
@@ -281,6 +282,14 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
 
     setHasCustomCallbacks();
     addElementToDocumentMap(this, document);
+
+#if ENABLE(VIDEO_TRACK)
+    if (document->page()) {
+        RenderTheme* theme = document->page()->theme();
+        if (theme->userHasCaptionPreferences())
+            m_disableCaptions = !theme->userPrefersCaptions();
+    }
+#endif
 }
 
 HTMLMediaElement::~HTMLMediaElement()
@@ -541,6 +550,20 @@ void HTMLMediaElement::attach()
             frame->loader()->client()->hideMediaPlayerProxyPlugin(m_proxyWidget.get());
     }
 #endif
+
+#if ENABLE(VIDEO_TRACK)
+    if (document()->page())
+        document()->page()->theme()->registerForCaptionPreferencesChangedCallbacks(this);
+#endif
+}
+
+void HTMLMediaElement::detach()
+{
+#if ENABLE(VIDEO_TRACK)
+    if (document()->page())
+        document()->page()->theme()->unregisterForCaptionPreferencesChangedCallbacks(this);
+#endif
+    HTMLElement::detach();
 }
 
 void HTMLMediaElement::didRecalcStyle(StyleChange)
@@ -2783,28 +2806,30 @@ void HTMLMediaElement::willRemoveTrack(HTMLTrackElement* trackElement)
         m_textTracksWhenResourceSelectionBegan.remove(index);
 }
 
-bool HTMLMediaElement::userIsInterestedInThisLanguage(const String&) const
+bool HTMLMediaElement::userPrefersCaptions() const
 {
-    // FIXME: check the user's language preference - bugs.webkit.org/show_bug.cgi?id=74121
-    return true;
+    Page* page = document()->page();
+    if (!page)
+        return false;
+
+    RenderTheme* theme = page->theme();
+    return theme->userHasCaptionPreferences() && theme->userPrefersCaptions();
 }
 
 bool HTMLMediaElement::userIsInterestedInThisTrackKind(String kind) const
 {
-    // If ... the user has indicated an interest in having a track with this text track kind, text track language, ... 
     if (m_disableCaptions)
         return false;
 
     Settings* settings = document()->settings();
-    if (!settings)
-        return false;
+    bool userPrefersCaptionsOrSubtitles = m_closedCaptionsVisible || userPrefersCaptions();
 
     if (kind == TextTrack::subtitlesKeyword())
-        return settings->shouldDisplaySubtitles() || m_closedCaptionsVisible;
+        return (settings && settings->shouldDisplaySubtitles()) || userPrefersCaptionsOrSubtitles;
     if (kind == TextTrack::captionsKeyword())
-        return settings->shouldDisplayCaptions() || m_closedCaptionsVisible;
+        return (settings && settings->shouldDisplayCaptions()) || userPrefersCaptionsOrSubtitles;
     if (kind == TextTrack::descriptionsKeyword())
-        return settings->shouldDisplayTextDescriptions() || m_closedCaptionsVisible;
+        return settings && settings->shouldDisplayTextDescriptions();
 
     return false;
 }
@@ -3969,22 +3994,12 @@ void HTMLMediaElement::setClosedCaptionsVisible(bool closedCaptionVisible)
 #if ENABLE(VIDEO_TRACK)
     if (RuntimeEnabledFeatures::webkitVideoTrackEnabled()) {
         m_disableCaptions = !m_closedCaptionsVisible;
-        
-        // Mark all track elements as not "configured" so that configureTextTracks()
-        // will reconsider which tracks to display in light of new user preferences
-        // (e.g. default tracks should not be displayed if the user has turned off
-        // captions and non-default tracks should be displayed based on language
-        // preferences if the user has turned captions on).
-        for (Node* node = firstChild(); node; node = node->nextSibling()) {
-            if (!node->hasTagName(trackTag))
-                continue;
-            HTMLTrackElement* trackElement = static_cast<HTMLTrackElement*>(node);
-            if (trackElement->kind() == TextTrack::captionsKeyword()
-                || trackElement->kind() == TextTrack::subtitlesKeyword())
-                trackElement->setHasBeenConfigured(false);
-        }
 
+        markCaptionAndSubtitleTracksAsUnconfigured();
         configureTextTracks();
+
+        if (!m_disableCaptions && (hasMediaControls() || createMediaControls()))
+            mediaControls()->userCaptionPreferencesChanged();
     }
 #else
     if (hasMediaControls())
@@ -4172,6 +4187,43 @@ void HTMLMediaElement::updateClosedCaptionsControls()
             mediaControls()->updateTextTrackDisplay();
     }
 }
+
+void HTMLMediaElement::captionPreferencesChanged()
+{
+    if (!isVideo())
+        return;
+
+    markCaptionAndSubtitleTracksAsUnconfigured();
+    configureTextTracks();
+
+    if (!hasMediaControls() && !createMediaControls())
+        return;
+    mediaControls()->userCaptionPreferencesChanged();
+}
+
+void HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured()
+{
+    // Mark all track elements as not "configured" so that configureTextTracks()
+    // will reconsider which tracks to display in light of new user preferences
+    // (e.g. default tracks should not be displayed if the user has turned off
+    // captions and non-default tracks should be displayed based on language
+    // preferences if the user has turned captions on).
+    for (RefPtr<Node> node = firstChild(); node; node = node->nextSibling()) {
+        if (!node->hasTagName(trackTag))
+            continue;
+        
+        HTMLTrackElement* trackElement = static_cast<HTMLTrackElement*>(node.get());
+        RefPtr<TextTrack> textTrack = trackElement->track();
+        if (!textTrack)
+            continue;
+        
+        String kind = textTrack->kind();
+
+        if (kind == TextTrack::subtitlesKeyword() || kind == TextTrack::captionsKeyword())
+            trackElement->setHasBeenConfigured(false);
+    }
+}
+
 #endif
 
 void* HTMLMediaElement::preDispatchEventHandler(Event* event)

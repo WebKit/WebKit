@@ -1,3 +1,15 @@
+2012-10-04  Eric Carlson  <eric.carlson@apple.com>
+
+        Allow ports to override text track rendering style
+        https://bugs.webkit.org/show_bug.cgi?id=97800
+        <rdar://problem/12044964>
+
+        Reviewed by Silvia Pfeiffer.
+
+        Update WKSI header with SPI for getting the user caption appearance preferences.
+
+        * WebKitSystemInterface.h:
+
 2012-09-28  Eric Carlson  <eric.carlson@apple.com>
 
         Allow ports to override text track rendering style

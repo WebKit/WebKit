@@ -1,3 +1,14 @@
+2012-10-04  Eric Carlson  <eric.carlson@apple.com>
+
+        Allow ports to override text track rendering style
+        https://bugs.webkit.org/show_bug.cgi?id=97800
+        <rdar://problem/12044964>
+
+        Reviewed by Silvia Pfeiffer.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Initialize new WKSI function pointers.
+
 2012-10-05  José Dapena Paz  <jdapena@igalia.com>
 
         [GTK] Add support for creating EGL contexts

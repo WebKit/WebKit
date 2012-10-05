@@ -537,6 +537,7 @@ class MediaControlTextTrackContainerElement : public MediaControlElement {
 public:
     static PassRefPtr<MediaControlTextTrackContainerElement> create(Document*);
 
+    void userCaptionPreferencesChanged();
     void updateDisplay();
     void updateSizes();
 
@@ -547,7 +548,8 @@ private:
     virtual MediaControlElementType displayType() const { return MediaTextTrackDisplayContainer; }
     virtual const AtomicString& shadowPseudoId() const;
 
-    IntRect m_videoDisplaySize;
+    void updateCaptionAppearance();
+
     float m_fontSize;
 };
 

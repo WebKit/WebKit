@@ -46,6 +46,9 @@ class RenderMeter;
 #if ENABLE(PROGRESS_ELEMENT)
 class RenderProgress;
 #endif
+#if ENABLE(VIDEO_TRACK)
+class CaptionPreferencesChangedListener;
+#endif
 class CSSStyleSheet;
 
 class RenderTheme : public RefCounted<RenderTheme> {
@@ -228,6 +231,15 @@ public:
     // Returns the distance of slider tick origin from the slider track center.
     virtual int sliderTickOffsetFromTrackCenter() const = 0;
     void paintSliderTicks(RenderObject*, const PaintInfo&, const IntRect&);
+#endif
+
+#if ENABLE(VIDEO_TRACK)
+    virtual bool userPrefersCaptions() const { return false; }
+    virtual bool userHasCaptionPreferences() const { return false; }
+    virtual float captionFontSizeScale() const { return 0.05; }
+    virtual String captionsStyleSheetOverride() const { return emptyString(); }
+    virtual void registerForCaptionPreferencesChangedCallbacks(CaptionPreferencesChangedListener*) { }
+    virtual void unregisterForCaptionPreferencesChangedCallbacks(CaptionPreferencesChangedListener*) { }
 #endif
 
     virtual bool shouldShowPlaceholderWhenFocused() const { return false; }

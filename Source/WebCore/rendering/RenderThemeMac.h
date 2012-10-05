@@ -101,6 +101,11 @@ public:
     virtual bool usesTestModeFocusRingColor() const;
     // A view associated to the contained document. Subclasses may not have such a view and return a fake.
     virtual NSView* documentViewFor(RenderObject*) const;
+
+#if ENABLE(VIDEO_TRACK)
+    void captionPreferencesChanged();
+#endif
+
 protected:
     RenderThemeMac();
     virtual ~RenderThemeMac();
@@ -178,6 +183,15 @@ protected:
     virtual void adjustMediaSliderThumbSize(RenderStyle*) const;
     virtual IntPoint volumeSliderOffsetFromMuteButton(RenderBox*, const IntSize&) const OVERRIDE;
 #endif
+
+#if ENABLE(VIDEO_TRACK)
+    virtual bool userPrefersCaptions() const OVERRIDE;
+    virtual bool userHasCaptionPreferences() const OVERRIDE;
+    virtual float captionFontSizeScale() const OVERRIDE;
+    virtual String captionsStyleSheetOverride() const OVERRIDE;
+    virtual void registerForCaptionPreferencesChangedCallbacks(CaptionPreferencesChangedListener*) OVERRIDE;
+    virtual void unregisterForCaptionPreferencesChangedCallbacks(CaptionPreferencesChangedListener*) OVERRIDE;
+#endif
     
     virtual bool shouldShowPlaceholderWhenFocused() const;
 
@@ -237,6 +251,17 @@ private:
     const int* progressBarMargins(NSControlSize) const;
 #endif
 
+#if ENABLE(VIDEO_TRACK)
+    Color captionsWindowColor() const;
+    Color captionsBackgroundColor() const;
+    Color captionsTextColor() const;
+    String captionsDefaultFont() const;
+    Color captionsEdgeColorForTextColor(const Color&) const;
+    String captionsTextEdgeStyle() const;
+    String cssPropertyWithTextEdgeColor(CSSPropertyID, const String&, const Color&) const;
+    String cssColorProperty(CSSPropertyID, const Color&) const;
+#endif
+
 private:
     mutable RetainPtr<NSPopUpButtonCell> m_popupButton;
     mutable RetainPtr<NSSearchFieldCell> m_search;
@@ -252,6 +277,11 @@ private:
     mutable HashMap<int, RGBA32> m_systemColorCache;
 
     RetainPtr<WebCoreRenderThemeNotificationObserver> m_notificationObserver;
+
+#if ENABLE(VIDEO_TRACK)
+    HashSet<CaptionPreferencesChangedListener*> m_captionPreferenceChangeListeners;
+    bool m_listeningForCaptionPreferenceNotifications;
+#endif
 };
 
 } // namespace WebCore

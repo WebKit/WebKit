@@ -630,6 +630,12 @@ void MediaControlRootElement::createTextTrackDisplay()
     insertBefore(textDisplayContainer.release(), m_panel, ec, true);
 }
 
+void MediaControlRootElement::userCaptionPreferencesChanged()
+{
+    if (m_textDisplayContainer)
+        m_textDisplayContainer->userCaptionPreferencesChanged();
+}
+
 void MediaControlRootElement::showTextTrackDisplay()
 {
     if (!m_textDisplayContainer)
@@ -650,7 +656,6 @@ void MediaControlRootElement::updateTextTrackDisplay()
         createTextTrackDisplay();
 
     m_textDisplayContainer->updateDisplay();
-
 }
 #endif
 

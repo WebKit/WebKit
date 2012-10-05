@@ -5856,6 +5856,7 @@
 		CAE9F910146441F000C245B1 /* CSSVariableValue.h in Headers */ = {isa = PBXBuildFile; fileRef = CAE9F90E146441F000C245B1 /* CSSVariableValue.h */; };
 		CD127DED14F3097D00E84779 /* WebCoreFullScreenWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD127DEB14F3097900E84779 /* WebCoreFullScreenWindow.mm */; };
 		CD127DEE14F3098400E84779 /* WebCoreFullScreenWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = CD127DEA14F3097900E84779 /* WebCoreFullScreenWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD2565BA161E46A90055634D /* CaptionPreferencesChangedListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 07EC38B816154C1A00E8146D /* CaptionPreferencesChangedListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD27F6E51457685A0078207D /* JSMediaController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD27F6E2145767580078207D /* JSMediaController.cpp */; };
 		CD27F6E7145770D30078207D /* MediaController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD27F6E6145770D30078207D /* MediaController.cpp */; };
 		CD37B39815C1B971006DC898 /* DiagnosticLoggingKeys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD37B37415C1A7E1006DC898 /* DiagnosticLoggingKeys.cpp */; };
@@ -7147,6 +7148,7 @@
 		07E116B01489C9A100EC5ACE /* JSTextTrackCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextTrackCustom.cpp; sourceTree = "<group>"; };
 		07E117061489EBEB00EC5ACE /* JSTextTrackCueCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextTrackCueCustom.cpp; sourceTree = "<group>"; };
 		07E38A0B148FCF0C006E1ECC /* JSTextTrackCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTextTrackCustom.h; sourceTree = "<group>"; };
+		07EC38B816154C1A00E8146D /* CaptionPreferencesChangedListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CaptionPreferencesChangedListener.h; sourceTree = "<group>"; };
 		0806E57912893045007CED32 /* SVGMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGMatrix.h; sourceTree = "<group>"; };
 		080E49211255F3BD00EFCA27 /* SVGTextLayoutEngineBaseline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTextLayoutEngineBaseline.cpp; sourceTree = "<group>"; };
 		080E49221255F3BD00EFCA27 /* SVGTextLayoutEngineBaseline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTextLayoutEngineBaseline.h; sourceTree = "<group>"; };
@@ -21305,6 +21307,7 @@
 				BCE789851120E7A60060ECE5 /* BidiRun.h */,
 				BCEA4815097D93020094C9E4 /* break_lines.cpp */,
 				BCEA4816097D93020094C9E4 /* break_lines.h */,
+				07EC38B816154C1A00E8146D /* CaptionPreferencesChangedListener.h */,
 				BCDD454D1236C95C009A7985 /* ColumnInfo.h */,
 				9392F14F0AD1862300691BD4 /* CounterNode.cpp */,
 				9392F14B0AD1861B00691BD4 /* CounterNode.h */,
@@ -25537,6 +25540,7 @@
 				931CBD0D161A44E900E4C874 /* ScrollingStateNode.h in Headers */,
 				931CBD0F161A44E900E4C874 /* ScrollingStateScrollingNode.h in Headers */,
 				931CBD11161A44E900E4C874 /* ScrollingStateTree.h in Headers */,
+				CD2565BA161E46A90055634D /* CaptionPreferencesChangedListener.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
