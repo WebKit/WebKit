@@ -617,25 +617,48 @@ EAPI const char  *ewk_view_setting_encoding_custom_get(const Evas_Object *o);
 EAPI Eina_Bool    ewk_view_setting_encoding_custom_set(Evas_Object *o, const char *encoding);
 
 /**
-* Searches the given string in the document.
-*
-* @param o view object to find text
-* @param text text to find
-* @param options options to find
-* @param max count to find, unlimited if 0
-*
-* @return @c EINA_TRUE on success, @c EINA_FALSE on errors
-*/
+ * Searches and hightlights the given string in the document.
+ *
+ * @param o view object to find text
+ * @param text text to find
+ * @param options options to find
+ * @param max_match_count maximum match count to find, unlimited if 0
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on errors
+ */
 EAPI Eina_Bool ewk_view_text_find(Evas_Object *o, const char *text, Ewk_Find_Options options, unsigned max_match_count);
 
 /**
-* Clears the highlight of searched text.
-*
-* @param o view object to find text
-*
-* @return @c EINA_TRUE on success, @c EINA_FALSE on errors
-*/
+ * Clears the highlight of searched text.
+ *
+ * @param o view object to find text
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on errors
+ */
 EAPI Eina_Bool ewk_view_text_find_highlight_clear(Evas_Object *o);
+
+/**
+ * Counts the given string in the document.
+ *
+ * This does not highlight the matched string and just count the matched string.
+ *
+ * As the search is carried out through the whole document,
+ * only the following EWK_FIND_OPTIONS are valid.
+ *  - EWK_FIND_OPTIONS_NONE
+ *  - EWK_FIND_OPTIONS_CASE_INSENSITIVE
+ *  - EWK_FIND_OPTIONS_AT_WORD_START
+ *  - EWK_FIND_OPTIONS_TREAT_MEDIAL_CAPITAL_AS_WORD_START
+ *
+ * The "text,found" callback will be called with the number of matched string.
+ *
+ * @param o view object to find text
+ * @param text text to find
+ * @param options options to find
+ * @param max_match_count maximum match count to find, unlimited if 0
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on errors
+ */
+EAPI Eina_Bool ewk_view_text_matches_count(Evas_Object *o, const char *text, Ewk_Find_Options options, unsigned max_match_count);
 
 /**
  * Selects index of current popup menu.

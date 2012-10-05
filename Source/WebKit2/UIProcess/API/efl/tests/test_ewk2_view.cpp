@@ -798,11 +798,9 @@ TEST_F(EWK2UnitTestBase, ewk_view_text_find)
 {
     const char textFindHTML[] =
         "<!DOCTYPE html>"
-        "<html>"
         "<body>"
         "apple apple apple banana banana coconut"
-        "</body>"
-        "</html>";
+        "</body>";
     ewk_view_html_string_load(webView(), textFindHTML, 0, 0);
     waitUntilLoadFinished();
 
@@ -819,6 +817,58 @@ TEST_F(EWK2UnitTestBase, ewk_view_text_find)
     while (matchCount < 0)
         ecore_main_loop_iterate();
     EXPECT_EQ(0, matchCount);
+
+    evas_object_smart_callback_del(webView(), "text,found", onTextFound);
+}
+
+TEST_F(EWK2UnitTestBase, ewk_view_text_matches_count)
+{
+    const char textFindHTML[] =
+        "<!DOCTYPE html>"
+        "<body>"
+        "apple Apple apple apple banana bananaApple banana coconut"
+        "</body>";
+    ewk_view_html_string_load(webView(), textFindHTML, 0, 0);
+    waitUntilLoadFinished();
+
+    int matchCount = -1;
+    evas_object_smart_callback_add(webView(), "text,found", onTextFound, &matchCount);
+
+    ewk_view_text_matches_count(webView(), "apple", EWK_FIND_OPTIONS_NONE, 100);
+    while (matchCount < 0)
+        ecore_main_loop_iterate();
+    EXPECT_EQ(3, matchCount);
+
+    matchCount = -1;
+    ewk_view_text_matches_count(webView(), "apple", EWK_FIND_OPTIONS_CASE_INSENSITIVE, 100);
+    while (matchCount < 0)
+        ecore_main_loop_iterate();
+    EXPECT_EQ(5, matchCount);
+
+    matchCount = -1;
+    ewk_view_text_matches_count(webView(), "Apple", EWK_FIND_OPTIONS_AT_WORD_STARTS, 100);
+    while (matchCount < 0)
+        ecore_main_loop_iterate();
+    EXPECT_EQ(1, matchCount);
+
+    matchCount = -1;
+    ewk_view_text_matches_count(webView(), "Apple", EWK_FIND_OPTIONS_TREAT_MEDIAL_CAPITAL_AS_WORD_START, 100);
+    while (matchCount < 0)
+        ecore_main_loop_iterate();
+    EXPECT_EQ(2, matchCount);
+
+    matchCount = -1;
+    ewk_view_text_matches_count(webView(), "mango", EWK_FIND_OPTIONS_NONE, 100);
+    while (matchCount < 0)
+        ecore_main_loop_iterate();
+    EXPECT_EQ(0, matchCount);
+
+    // If we have more matches than allowed, -1 is returned as a matched count.
+    matchCount = -2;
+    ewk_view_text_matches_count(webView(), "apple", EWK_FIND_OPTIONS_NONE, 2);
+    while (matchCount < -1)
+        ecore_main_loop_iterate();
+    EXPECT_EQ(-1, matchCount);
 
     evas_object_smart_callback_del(webView(), "text,found", onTextFound);
 }

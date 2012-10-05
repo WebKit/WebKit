@@ -1,3 +1,22 @@
+2012-10-05  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Add API to count the matching text
+        https://bugs.webkit.org/show_bug.cgi?id=97873
+
+        Reviewed by Gyuyoung Kim.
+
+        Add an API, ewk_view_text_matches_count(), to count the matched text in the document.
+        This API does not highlight the matched text in the document unlike ewk_view_text_find().
+
+        ewk_view_text_find() finds the matching text and but also update the UI view,
+        but some applications may not want to affect the view, and just want to know the count.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_text_matches_count):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+
 2012-10-05  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [WK2][GTK][EFL] standard_output returned by g_spawn_sync must be freed

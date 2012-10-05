@@ -1602,6 +1602,17 @@ Eina_Bool ewk_view_text_find_highlight_clear(Evas_Object* ewkView)
     return true;
 }
 
+Eina_Bool ewk_view_text_matches_count(Evas_Object* ewkView, const char* text, Ewk_Find_Options options, unsigned maxMatchCount)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(text, false);
+
+    priv->pageProxy->countStringMatches(String::fromUTF8(text), static_cast<WebKit::FindOptions>(options), maxMatchCount);
+
+    return true;
+}
+
 void ewk_view_contents_size_changed(const Evas_Object* ewkView, const IntSize& size)
 {
 #if USE(COORDINATED_GRAPHICS)
