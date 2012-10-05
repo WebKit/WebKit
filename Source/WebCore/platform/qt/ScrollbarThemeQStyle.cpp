@@ -31,160 +31,139 @@
 #include "GraphicsContext.h"
 #include "PlatformMouseEvent.h"
 #include "RenderThemeQStyle.h"
-#include "RenderThemeQtMobile.h"
 #include "ScrollView.h"
 #include "Scrollbar.h"
 
-#include <QApplication>
-#ifdef Q_WS_MAC
-#include <QMacStyle>
-#endif
-#include <QMenu>
-#include <QPainter>
-#include <QStyle>
-#include <QStyleOptionSlider>
-
 namespace WebCore {
+
+ScrollbarThemeQStyle::ScrollbarThemeQStyle()
+{
+    m_qStyle = adoptPtr(RenderThemeQStyle::styleFactory()(/*page*/ 0));
+}
 
 ScrollbarThemeQStyle::~ScrollbarThemeQStyle()
 {
 }
 
-static QStyle::SubControl scPart(const ScrollbarPart& part)
+static QStyleFacade::SubControl scPart(const ScrollbarPart& part)
 {
     switch (part) {
     case NoPart:
-        return QStyle::SC_None;
+        return QStyleFacade::SC_None;
     case BackButtonStartPart:
     case BackButtonEndPart:
-        return QStyle::SC_ScrollBarSubLine;
+        return QStyleFacade::SC_ScrollBarSubLine;
     case BackTrackPart:
-        return QStyle::SC_ScrollBarSubPage;
+        return QStyleFacade::SC_ScrollBarSubPage;
     case ThumbPart:
-        return QStyle::SC_ScrollBarSlider;
+        return QStyleFacade::SC_ScrollBarSlider;
     case ForwardTrackPart:
-        return QStyle::SC_ScrollBarAddPage;
+        return QStyleFacade::SC_ScrollBarAddPage;
     case ForwardButtonStartPart:
     case ForwardButtonEndPart:
-        return QStyle::SC_ScrollBarAddLine;
+        return QStyleFacade::SC_ScrollBarAddLine;
     }
 
-    return QStyle::SC_None;
+    return QStyleFacade::SC_None;
 }
 
-static ScrollbarPart scrollbarPart(const QStyle::SubControl& sc)
+static ScrollbarPart scrollbarPart(const QStyleFacade::SubControl& sc)
 {
     switch (sc) {
-    case QStyle::SC_None:
+    case QStyleFacade::SC_None:
         return NoPart;
-    case QStyle::SC_ScrollBarSubLine:
+    case QStyleFacade::SC_ScrollBarSubLine:
         return BackButtonStartPart;
-    case QStyle::SC_ScrollBarSubPage:
+    case QStyleFacade::SC_ScrollBarSubPage:
         return BackTrackPart;
-    case QStyle::SC_ScrollBarSlider:
+    case QStyleFacade::SC_ScrollBarSlider:
         return ThumbPart;
-    case QStyle::SC_ScrollBarAddPage:
+    case QStyleFacade::SC_ScrollBarAddPage:
         return ForwardTrackPart;
-    case QStyle::SC_ScrollBarAddLine:
+    case QStyleFacade::SC_ScrollBarAddLine:
         return ForwardButtonStartPart;
     }
     return NoPart;
 }
 
-static QStyleOptionSlider* styleOptionSlider(ScrollbarThemeClient* scrollbar, QWidget* widget = 0)
+static QStyleFacadeOption initSliderStyleOption(ScrollbarThemeClient* scrollbar, QObject* widget = 0)
 {
-    static QStyleOptionSlider opt;
-    if (widget)
-        opt.initFrom(widget);
-    else
-        opt.state |= QStyle::State_Active;
+    QStyleFacadeOption opt;
+    if (widget) {
+        opt.palette = widget->property("palette").value<QPalette>();
+        opt.rect = widget->property("rect").value<QRect>();
+        opt.direction = static_cast<Qt::LayoutDirection>(widget->property("layoutDirection").toInt());
+    } else
+        opt.state |= QStyleFacade::State_Active;
 
-    opt.state &= ~QStyle::State_HasFocus;
+    opt.state &= ~QStyleFacade::State_HasFocus;
 
     opt.rect = scrollbar->frameRect();
     if (scrollbar->enabled())
-        opt.state |= QStyle::State_Enabled;
+        opt.state |= QStyleFacade::State_Enabled;
     if (scrollbar->controlSize() != RegularScrollbar)
-        opt.state |= QStyle::State_Mini;
-    opt.orientation = (scrollbar->orientation() == VerticalScrollbar) ? Qt::Vertical : Qt::Horizontal;
+        opt.state |= QStyleFacade::State_Mini;
+    opt.slider.orientation = (scrollbar->orientation() == VerticalScrollbar) ? Qt::Vertical : Qt::Horizontal;
 
     if (scrollbar->orientation() == HorizontalScrollbar)
-        opt.state |= QStyle::State_Horizontal;
+        opt.state |= QStyleFacade::State_Horizontal;
     else
-        opt.state &= ~QStyle::State_Horizontal;
+        opt.state &= ~QStyleFacade::State_Horizontal;
 
-    opt.sliderValue = scrollbar->value();
-    opt.sliderPosition = opt.sliderValue;
-    opt.pageStep = scrollbar->pageStep();
-    opt.singleStep = scrollbar->lineStep();
-    opt.minimum = 0;
-    opt.maximum = qMax(0, scrollbar->maximum());
+    opt.slider.value = scrollbar->value();
+    opt.slider.position = opt.slider.value;
+    opt.slider.pageStep = scrollbar->pageStep();
+    opt.slider.singleStep = scrollbar->lineStep();
+    opt.slider.minimum = 0;
+    opt.slider.maximum = qMax(0, scrollbar->maximum());
     ScrollbarPart pressedPart = scrollbar->pressedPart();
     ScrollbarPart hoveredPart = scrollbar->hoveredPart();
     if (pressedPart != NoPart) {
-        opt.activeSubControls = scPart(scrollbar->pressedPart());
+        opt.slider.activeSubControls = scPart(scrollbar->pressedPart());
         if (pressedPart == BackButtonStartPart || pressedPart == ForwardButtonStartPart
             || pressedPart == BackButtonEndPart || pressedPart == ForwardButtonEndPart
             || pressedPart == ThumbPart)
-            opt.state |= QStyle::State_Sunken;
+            opt.state |= QStyleFacade::State_Sunken;
     } else
-        opt.activeSubControls = scPart(hoveredPart);
+        opt.slider.activeSubControls = scPart(hoveredPart);
     if (hoveredPart != NoPart)
-        opt.state |= QStyle::State_MouseOver;
-    return &opt;
+        opt.state |= QStyleFacade::State_MouseOver;
+    return opt;
 }
 
 bool ScrollbarThemeQStyle::paint(ScrollbarThemeClient* scrollbar, GraphicsContext* graphicsContext, const IntRect& dirtyRect)
 {
     if (graphicsContext->updatingControlTints()) {
-       scrollbar->invalidateRect(dirtyRect);
-       return false;
+        scrollbar->invalidateRect(dirtyRect);
+        return false;
     }
 
     StylePainterQStyle p(this, graphicsContext);
     if (!p.isValid())
-      return true;
+        return true;
 
     p.painter->save();
-    QStyleOptionSlider* opt = styleOptionSlider(scrollbar, p.widget);
+    p.styleOption = initSliderStyleOption(scrollbar, m_qStyle->widgetForPainter(p.painter));
 
-    p.painter->setClipRect(opt->rect.intersected(dirtyRect), Qt::IntersectClip);
-
-#ifdef Q_WS_MAC
-    // FIXME: We also need to check the widget style but today ScrollbarTheme is not aware of the page so we
-    // can't get the widget.
-    if (qobject_cast<QMacStyle*>(style()))
-        p.drawComplexControl(QStyle::CC_ScrollBar, *opt);
-    else
-#endif
-    {
-        // The QStyle expects the background to be already filled.
-        p.painter->fillRect(opt->rect, opt->palette.background());
-
-        const QPoint topLeft = opt->rect.topLeft();
-        p.painter->translate(topLeft);
-        opt->rect.moveTo(QPoint(0, 0));
-        p.drawComplexControl(QStyle::CC_ScrollBar, *opt);
-        opt->rect.moveTo(topLeft);
-    }
+    p.painter->setClipRect(p.styleOption.rect.intersected(dirtyRect), Qt::IntersectClip);
+    p.paintScrollBar();
     p.painter->restore();
-
     return true;
 }
 
 ScrollbarPart ScrollbarThemeQStyle::hitTest(ScrollbarThemeClient* scrollbar, const PlatformMouseEvent& evt)
 {
-    QStyleOptionSlider* opt = styleOptionSlider(scrollbar);
+    QStyleFacadeOption opt = initSliderStyleOption(scrollbar);
     const QPoint pos = scrollbar->convertFromContainingWindow(evt.position());
-    opt->rect.moveTo(QPoint(0, 0));
-    QStyle::SubControl sc = style()->hitTestComplexControl(QStyle::CC_ScrollBar, opt, pos, 0);
+    opt.rect.moveTo(QPoint(0, 0));
+    QStyleFacade::SubControl sc = m_qStyle->hitTestScrollBar(opt, pos);
     return scrollbarPart(sc);
 }
 
 bool ScrollbarThemeQStyle::shouldCenterOnThumb(ScrollbarThemeClient*, const PlatformMouseEvent& evt)
 {
     // Middle click centers slider thumb (if supported).
-    return style()->styleHint(QStyle::SH_ScrollBar_MiddleClickAbsolutePosition) && evt.button() == MiddleButton;
+    return m_qStyle->scrollBarMiddleClickAbsolutePositionStyleHint() && evt.button() == MiddleButton;
 }
 
 void ScrollbarThemeQStyle::invalidatePart(ScrollbarThemeClient* scrollbar, ScrollbarPart)
@@ -195,12 +174,8 @@ void ScrollbarThemeQStyle::invalidatePart(ScrollbarThemeClient* scrollbar, Scrol
 
 int ScrollbarThemeQStyle::scrollbarThickness(ScrollbarControlSize controlSize)
 {
-    QStyleOptionSlider o;
-    o.orientation = Qt::Vertical;
-    o.state &= ~QStyle::State_Horizontal;
-    if (controlSize != RegularScrollbar)
-        o.state |= QStyle::State_Mini;
-    return style()->pixelMetric(QStyle::PM_ScrollBarExtent, &o, 0);
+    const bool mini = controlSize != RegularScrollbar;
+    return m_qStyle->scrollBarExtent(mini);
 }
 
 int ScrollbarThemeQStyle::thumbPosition(ScrollbarThemeClient* scrollbar)
@@ -214,22 +189,22 @@ int ScrollbarThemeQStyle::thumbPosition(ScrollbarThemeClient* scrollbar)
 
 int ScrollbarThemeQStyle::thumbLength(ScrollbarThemeClient* scrollbar)
 {
-    QStyleOptionSlider* opt = styleOptionSlider(scrollbar);
-    IntRect thumb = style()->subControlRect(QStyle::CC_ScrollBar, opt, QStyle::SC_ScrollBarSlider, 0);
+    QStyleFacadeOption opt = initSliderStyleOption(scrollbar);
+    QRect thumb = m_qStyle->scrollBarSubControlRect(opt, QStyleFacade::SC_ScrollBarSlider);
     return scrollbar->orientation() == HorizontalScrollbar ? thumb.width() : thumb.height();
 }
 
 int ScrollbarThemeQStyle::trackPosition(ScrollbarThemeClient* scrollbar)
 {
-    QStyleOptionSlider* opt = styleOptionSlider(scrollbar);
-    IntRect track = style()->subControlRect(QStyle::CC_ScrollBar, opt, QStyle::SC_ScrollBarGroove, 0);
+    QStyleFacadeOption opt = initSliderStyleOption(scrollbar);
+    QRect track = m_qStyle->scrollBarSubControlRect(opt, QStyleFacade::SC_ScrollBarGroove);
     return scrollbar->orientation() == HorizontalScrollbar ? track.x() - scrollbar->x() : track.y() - scrollbar->y();
 }
 
 int ScrollbarThemeQStyle::trackLength(ScrollbarThemeClient* scrollbar)
 {
-    QStyleOptionSlider* opt = styleOptionSlider(scrollbar);
-    IntRect track = style()->subControlRect(QStyle::CC_ScrollBar, opt, QStyle::SC_ScrollBarGroove, 0);
+    QStyleFacadeOption opt = initSliderStyleOption(scrollbar);
+    QRect track = m_qStyle->scrollBarSubControlRect(opt, QStyleFacade::SC_ScrollBarGroove);
     return scrollbar->orientation() == HorizontalScrollbar ? track.width() : track.height();
 }
 
@@ -239,14 +214,7 @@ void ScrollbarThemeQStyle::paintScrollCorner(ScrollView*, GraphicsContext* conte
     if (!p.isValid())
         return;
 
-    QStyleOption option;
-    option.rect = rect;
-    p.drawPrimitive(QStyle::PE_PanelScrollAreaCorner, option);
-}
-
-QStyle* ScrollbarThemeQStyle::style() const
-{
-    return QApplication::style();
+    p.paintScrollCorner(rect);
 }
 
 }

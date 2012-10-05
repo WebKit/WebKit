@@ -2236,8 +2236,11 @@ HEADERS += \
     platform/qt/ClipboardQt.h \
     platform/qt/CookieJarQt.h \
     platform/qt/QWebPageClient.h \
+    platform/qt/QStyleFacade.h \
+    platform/qt/RenderThemeQStyle.h \
     platform/qt/RenderThemeQt.h \
     platform/qt/RenderThemeQtMobile.h \
+    platform/qt/ScrollbarThemeQStyle.h \
     platform/qt/UserAgentQt.h \
     platform/ScrollableArea.h \
     platform/ScrollAnimator.h \
@@ -2809,8 +2812,11 @@ SOURCES += \
     platform/qt/PasteboardQt.cpp \
     platform/qt/PlatformKeyboardEventQt.cpp \
     platform/qt/PlatformScreenQt.cpp \
+    platform/qt/QStyleFacade.cpp \
+    platform/qt/RenderThemeQStyle.cpp \
     platform/qt/RenderThemeQt.cpp \
     platform/qt/RenderThemeQtMobile.cpp \
+    platform/qt/ScrollbarThemeQStyle.cpp \
     platform/qt/ScrollbarThemeQt.cpp \
     platform/qt/ScrollViewQt.cpp \
     platform/qt/SharedTimerQt.cpp \

@@ -48,9 +48,8 @@ SOURCES += \
     $$PWD/qt/WebCoreSupport/NotificationPresenterClientQt.cpp \
     $$PWD/qt/WebCoreSupport/PageClientQt.cpp \
     $$PWD/qt/WebCoreSupport/PopupMenuQt.cpp \
+    $$PWD/qt/WebCoreSupport/QStyleFacadeImp.cpp \
     $$PWD/qt/WebCoreSupport/QtPlatformPlugin.cpp \
-    $$PWD/qt/WebCoreSupport/RenderThemeQStyle.cpp \
-    $$PWD/qt/WebCoreSupport/ScrollbarThemeQStyle.cpp \
     $$PWD/qt/WebCoreSupport/SearchPopupMenuQt.cpp \
     $$PWD/qt/WebCoreSupport/TextCheckerClientQt.cpp \
     $$PWD/qt/WebCoreSupport/PlatformStrategiesQt.cpp \
@@ -86,9 +85,8 @@ HEADERS += \
     $$PWD/qt/WebCoreSupport/NotificationPresenterClientQt.h \
     $$PWD/qt/WebCoreSupport/PageClientQt.h \
     $$PWD/qt/WebCoreSupport/PopupMenuQt.h \
+    $$PWD/qt/WebCoreSupport/QStyleFacadeImp.h \
     $$PWD/qt/WebCoreSupport/QtPlatformPlugin.h \
-    $$PWD/qt/WebCoreSupport/RenderThemeQStyle.h \
-    $$PWD/qt/WebCoreSupport/ScrollbarThemeQStyle.h \
     $$PWD/qt/WebCoreSupport/SearchPopupMenuQt.h \
     $$PWD/qt/WebCoreSupport/TextCheckerClientQt.h \
     $$PWD/qt/WebCoreSupport/PlatformStrategiesQt.h \
