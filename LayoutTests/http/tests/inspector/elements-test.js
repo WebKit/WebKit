@@ -483,6 +483,83 @@ InspectorTest.generateUndoTest = function(testBody)
     return result;
 }
 
+const indent = "    ";
+
+InspectorTest.dumpRulesArray = function(rules, currentIndent)
+{
+    if (!rules)
+        return;
+    currentIndent = currentIndent || "";
+    for (var i = 0; i < rules.length; ++i)
+        InspectorTest.dumpRule(rules[i], currentIndent);
+}
+
+InspectorTest.dumpRuleMatchesArray = function(matches, currentIndent)
+{
+    if (!matches)
+        return;
+    currentIndent = currentIndent || "";
+    for (var i = 0; i < matches.length; ++i)
+        InspectorTest.dumpRule(matches[i].rule, currentIndent);
+}
+
+InspectorTest.dumpRule = function(rule, currentIndent)
+{
+    currentIndent = currentIndent || "";
+
+    if (!rule.type || rule.type === "style") {
+        InspectorTest.addResult(currentIndent + rule.selectorList.text + ": [" + rule.origin + "] {");
+        InspectorTest.dumpStyle(rule.style, currentIndent + indent);
+        InspectorTest.addResult(currentIndent + "}");
+        return;
+    }
+
+    if (rule.type === "media") {
+        InspectorTest.addResult(currentIndent + "@media " + rule.mediaText + " {");
+        InspectorTest.dumpRulesArray(rule.childRules, currentIndent + indent);
+        InspectorTest.addResult(currentIndent + "}");
+        return;
+    }
+
+    if (rule.type === "import") {
+        InspectorTest.addResult(currentIndent + "@import: header=" + InspectorTest.rangeText(rule.headerRange) + ", body=" + InspectorTest.rangeText(rule.bodyRange));
+        return;
+    }
+
+    if (rule.type === "page" || rule.type === "font-face") {
+        if (rule.type === "page")
+            InspectorTest.addResult(currentIndent + rule.selectorList.text + " {");
+        else
+            InspectorTest.addResult(currentIndent + "@" + rule.type + " " + (rule.selectorList.text ? rule.selectorList.text + " " : "")  + "{");
+        InspectorTest.dumpStyle(rule.style, currentIndent + indent);
+        InspectorTest.addResult(currentIndent + "}");
+        return;
+    }
+
+    if (rule.type === "charset") {
+        InspectorTest.addResult("@charset");
+        return;
+    }
+
+    InspectorTest.addResult(currentIndent + "[UNKNOWN RULE]: header=" + InspectorTest.rangeText(rule.headerRange) + ", body=" + InspectorTest.rangeText(rule.bodyRange));
+}
+
+InspectorTest.dumpStyle = function(style, currentIndent)
+{
+    currentIndent = currentIndent || "";
+    if (!style) {
+        InspectorTest.addResult(currentIndent + "[NO STYLE]");
+        return;
+    }
+    for (var i = 0; i < style.cssProperties.length; ++i) {
+        var property = style.cssProperties[i];
+        if (property.status !== "disabled")
+            InspectorTest.addResult(currentIndent + "['" + property.name + "':'" + property.value + "'" + (property.priority === "important" ? " is-important" : "") + (("parsedOk" in property) ? " non-parsed" : "") +"] @" + InspectorTest.rangeText(property.range) + " " + (property.status || "style"));
+        else
+            InspectorTest.addResult(currentIndent + "[text='" + property.text + "'] " + property.status);
+    }
+}
+
 };
 
 function dumpInspectorHighlightRects()

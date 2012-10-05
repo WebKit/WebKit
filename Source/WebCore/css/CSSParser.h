@@ -344,6 +344,7 @@ public:
     size_t m_parsedTextPrefixLength;
     SourceRange m_propertyRange;
     OwnPtr<RuleSourceDataList> m_currentRuleDataStack;
+    RefPtr<CSSRuleSourceData> m_currentRuleData;
     RuleSourceDataList* m_ruleSourceDataResult;
 
     void fixUnparsedPropertyRanges(CSSRuleSourceData*);

@@ -1,0 +1,94 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function test()
+{
+    WebInspector.showPanel("elements");
+
+    CSSAgent.getAllStyleSheets(headersCallback);
+
+    function headersCallback(error, headers)
+    {
+        if (error) {
+            InspectorTest.addResult("Error loading stylesheet headers: " + error);
+            InspectorTest.completeTest();
+            return;
+        }
+
+        for (var i = 0; i < headers.length; ++i)
+            CSSAgent.getStyleSheet(headers[i].styleSheetId, styleSheetCallback.bind(null, i === headers.length - 1));
+    }
+
+    function styleSheetCallback(isLast, error, styleSheet)
+    {
+        if (error) {
+            InspectorTest.addResult("Error loading stylesheet body: " + error);
+            InspectorTest.completeTest();
+            return;
+        }
+
+        InspectorTest.dumpRulesArray(styleSheet.rules);
+        if (isLast)
+            InspectorTest.completeTest();
+    }
+}
+
+</script>
+
+<style>
+body {
+    color: black;
+}
+
+font-family: serif;
+}
+
+body:hover {
+    color: #CDE;
+}
+
+body {
+    background-color: broken-declaration;
+}
+
+</style>
+<style>
+@import 12;
+body {
+    color: import-error;
+}
+</style>
+<style>
+@import 12 {}
+body {
+    color: import-error-block;
+}
+</style>
+<style>
+@media ;
+body {
+    color: media-empty;
+}
+</style>
+<style>
+@page ;
+body {
+    color: page-error;
+}
+</style>
+<style>
+@page {}
+body {
+    color: page-block;
+}
+</style>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that CSSParser produces source data consistent with CSSOM when parsing broken stylesheets. <a href="https://bugs.webkit.org/show_bug.cgi?id=98246">Bug 98246</a>
+</body>
+</html>

@@ -1,0 +1,24 @@
+Tests that CSSParser produces source data consistent with CSSOM when parsing broken stylesheets. Bug 98246
+
+body: [regular] {
+    ['color':'black'] @[5-18] active
+}
+body: [regular] {
+    ['background-color':'broken-declaration' non-parsed] @[5-42] active
+}
+body: [regular] {
+    ['color':'import-error' non-parsed] @[5-25] active
+}
+body: [regular] {
+    ['color':'import-error-block' non-parsed] @[5-31] active
+}
+body: [regular] {
+    ['color':'media-empty' non-parsed] @[5-24] active
+}
+body: [regular] {
+    ['color':'page-error' non-parsed] @[5-23] active
+}
+body: [regular] {
+    ['color':'page-block' non-parsed] @[5-23] active
+}
+
