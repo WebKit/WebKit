@@ -206,14 +206,15 @@ on_download_request(void *user_data, Evas_Object *webview, void *event_info)
 
     // FIXME: The destination folder should be selected by the user but we set it to '/tmp' for now.
     Eina_Strbuf *destination_path = eina_strbuf_new();
-    eina_strbuf_append(destination_path, "/tmp/");
 
     const char *suggested_name = ewk_download_job_suggested_filename_get(download);
     if (suggested_name && *suggested_name)
-        eina_strbuf_append(destination_path, suggested_name);
+        eina_strbuf_append_printf(destination_path, "/tmp/%s", suggested_name);
     else {
-        eina_strbuf_append(destination_path, "downloaded-file.XXXXXX");
-        mktemp(eina_strbuf_string_get(destination_path));
+        // Generate a unique file name since no name was suggested.
+        char unique_path[] = "/tmp/downloaded-file.XXXXXX";
+        mktemp(unique_path);
+        eina_strbuf_append(destination_path, unique_path);
     }
 
     ewk_download_job_destination_set(download, eina_strbuf_string_get(destination_path));
