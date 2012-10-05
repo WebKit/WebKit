@@ -31,6 +31,6 @@ select[size][multiple] {
     -webkit-appearance: menulist;
     -webkit-box-align: center;
     border: 1px solid;
-    -webkit-border-radius: 5px;
+    border-radius: 5px;
     white-space: pre;
 }

@@ -118,7 +118,7 @@ keygen,
 select, 
 select[size="0"],
 select[size="1"] {
-    -webkit-border-radius: 0;
+    border-radius: 0;
 }
 
 /* Option font must be inherited because we depend on computing the size of the

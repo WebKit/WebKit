@@ -21,7 +21,7 @@ textarea {
 }
 
 input, textarea {
-    -webkit-border-radius: 3px;
+    border-radius: 3px;
 }
 
 input[type="datetime"],

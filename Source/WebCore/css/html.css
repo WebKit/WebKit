@@ -648,7 +648,7 @@ input::-webkit-input-speech-button {
 #endif
 
 keygen, select {
-    -webkit-border-radius: 5px;
+    border-radius: 5px;
 }
 
 keygen::-webkit-keygen-select {
@@ -875,7 +875,7 @@ select[size][multiple] {
     -webkit-appearance: listbox;
     -webkit-box-align: start;
     border: 1px inset gray;
-    -webkit-border-radius: initial;
+    border-radius: initial;
     white-space: initial;
 }
 
@@ -884,7 +884,7 @@ select[size="1"] {
     -webkit-appearance: menulist;
     -webkit-box-align: center;
     border: 1px solid;
-    -webkit-border-radius: 5px;
+    border-radius: 5px;
     white-space: pre;
 }
 
@@ -925,7 +925,7 @@ output {
     border: solid 2px #400;
     background: -webkit-gradient(linear, left top, left bottom, from(#f8ecec), to(#e8cccc));
     padding: 8px;
-    -webkit-border-radius: 8px;
+    border-radius: 8px;
     -webkit-box-shadow: 4px 4px 4px rgba(100,100,100,0.6),
         inset -2px -2px 1px #d0c4c4,
         inset 2px 2px 1px white;

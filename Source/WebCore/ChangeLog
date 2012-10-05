@@ -1,3 +1,32 @@
+2012-10-05  Tab Atkins  <jackalmage@gmail.com>
+
+        Replace uses of prefixed properties with unprefixed versions in the UA stylesheets
+        https://bugs.webkit.org/show_bug.cgi?id=98453
+
+        Reviewed by Ojan Vafai.
+
+        Switched 'border-radius' and 'box-shadow' to their unprefixed version in the UA stylesheets.
+
+        No new tests, because the unprefixed properties have the same behavior as the prefixed.
+
+        * css/fullscreenQuickTime.css:
+        (video:-webkit-full-screen::-webkit-media-controls-panel):
+        * css/html.css:
+        (keygen, select):
+        (select[size][multiple]):
+        (select[size="1"]):
+        (::-webkit-validation-bubble-message):
+        * css/themeBlackBerry.css:
+        (input, textarea):
+        * css/themeChromiumAndroid.css:
+        (select[size][multiple]):
+        * css/themeQtNoListboxes.css:
+        (select[size][multiple]):
+        * css/themeWin.css:
+        (select[size="1"]):
+        * css/view-source.css:
+        (.webkit-html-message-bubble):
+
 2012-10-05  Kevin Ellis  <kevers@chromium.org>
 
         [chromium] Only inflate the height of rows in a popup menu when a touch device is detected.

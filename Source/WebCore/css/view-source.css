@@ -129,8 +129,8 @@ tbody:last-child .webkit-line-content:empty:before {
 }
 
 .webkit-html-message-bubble {
-    -webkit-box-shadow: black 0px 2px 5px;
-    -webkit-border-radius: 9px;
+    box-shadow: black 0px 2px 5px;
+    border-radius: 9px;
     -webkit-border-fit: lines;
     min-height: 13px;
     font-size: 9px;
