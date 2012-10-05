@@ -1,3 +1,14 @@
+2012-10-05  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding platform-specific baselines after r130443 and r130489.
+
+        * platform/gtk/fast/repaint/box-shadow-inset-repaint-expected.png: Added.
+        * platform/gtk/fast/repaint/box-shadow-inset-repaint-expected.txt: Added.
+        * platform/gtk/fast/text/vertical-rl-rtl-linebreak-expected.png: Added.
+        * platform/gtk/fast/text/vertical-rl-rtl-linebreak-expected.txt: Added.
+
 2012-10-05  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][WKTR] Implement UIClient focus callbacks in WebKitTestRunner
