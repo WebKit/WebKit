@@ -1,3 +1,30 @@
+2012-10-05  Eric Seidel  <eric@webkit.org>
+
+        Make tables which don't use col/row span much faster to layout
+        https://bugs.webkit.org/show_bug.cgi?id=98221
+
+        Reviewed by Julien Chaffraix.
+
+        My sense is that most tables on webpages do not use colspan/rowspan
+        so I stole another bit from RenderTableCell::m_column to avoid
+        having to re-parse the colSpan/rowSpan attributes for every cell
+        when doing table layout.
+        This made these symbols disappear from biggrid.html/redraw.html (dglazkov's spreadsheets benchmarks)
+        as well as moved our robohornet/resizecol.html number from an average of 3221ms to 2608ms (~20%!).
+
+        I removed m_hasHTMLTableCellElement (from http://trac.webkit.org/changeset/97691)
+        since it was attempting to do the same sort of optimization.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::RenderTableCell):
+        (WebCore::RenderTableCell::parseColSpanFromDOM):
+        (WebCore::RenderTableCell::parseRowSpanFromDOM):
+        (WebCore::RenderTableCell::layout):
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::colSpan):
+        (WebCore::RenderTableCell::rowSpan):
+        (RenderTableCell):
+
 2012-10-05  Oli Lan  <olilan@chromium.org>
 
         Allow EventHandler to handle longpress gestures, including longpress selection on Android.

@@ -30,8 +30,8 @@
 
 namespace WebCore {
 
-static const unsigned unsetColumnIndex = 0x3FFFFFFF;
-static const unsigned maxColumnIndex = 0x3FFFFFFE; // 1,073,741,823
+static const unsigned unsetColumnIndex = 0x1FFFFFFF;
+static const unsigned maxColumnIndex = 0x1FFFFFFE; // 536,870,910
 
 enum IncludeBorderColorOrNot { DoNotIncludeBorderColor, IncludeBorderColor };
 
@@ -39,8 +39,18 @@ class RenderTableCell : public RenderBlock {
 public:
     explicit RenderTableCell(Node*);
     
-    unsigned colSpan() const;
-    unsigned rowSpan() const;
+    unsigned colSpan() const
+    {
+        if (!m_hasColSpan)
+            return 1;
+        return parseColSpanFromDOM();
+    }
+    unsigned rowSpan() const
+    {
+        if (!m_hasRowSpan)
+            return 1;
+        return parseRowSpanFromDOM();
+    }
 
     // Called from HTMLTableCellElement.
     void colSpanOrRowSpanChanged();
@@ -227,9 +237,16 @@ private:
     CollapsedBorderValue computeCollapsedBeforeBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
     CollapsedBorderValue computeCollapsedAfterBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
 
-    unsigned m_column : 30;
-    bool m_cellWidthChanged : 1;
-    bool m_hasHTMLTableCellElement : 1;
+    void updateColAndRowSpanFlags();
+
+    unsigned parseRowSpanFromDOM() const;
+    unsigned parseColSpanFromDOM() const;
+
+    // Note MSVC will only pack members if they have identical types, hence we use unsigned instead of bool here.
+    unsigned m_column : 29;
+    unsigned m_cellWidthChanged : 1;
+    unsigned m_hasColSpan: 1;
+    unsigned m_hasRowSpan: 1;
     int m_intrinsicPaddingBefore;
     int m_intrinsicPaddingAfter;
 };

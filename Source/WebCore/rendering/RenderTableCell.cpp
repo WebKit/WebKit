@@ -47,14 +47,24 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+struct SameSizeAsRenderTableCell : public RenderBlock {
+    unsigned bitfields;
+    int paddings[2];
+};
+
+COMPILE_ASSERT(sizeof(RenderTableCell) == sizeof(SameSizeAsRenderTableCell), RenderTableCell_should_stay_small);
+
+
 RenderTableCell::RenderTableCell(Node* node)
     : RenderBlock(node)
     , m_column(unsetColumnIndex)
     , m_cellWidthChanged(false)
-    , m_hasHTMLTableCellElement(node && (node->hasTagName(tdTag) || node->hasTagName(thTag)))
     , m_intrinsicPaddingBefore(0)
     , m_intrinsicPaddingAfter(0)
 {
+    // We only update the flags when notified of DOM changes in colSpanOrRowSpanChanged()
+    // so we need to set their initial values here in case something asks for colSpan()/rowSpan() before then.
+    updateColAndRowSpanFlags();
 }
 
 void RenderTableCell::willBeRemovedFromTree()
@@ -65,52 +75,50 @@ void RenderTableCell::willBeRemovedFromTree()
     section()->removeCachedCollapsedBorders(this);
 }
 
-#if ENABLE(MATHML)
-inline bool isMathMLElement(Node* node)
+unsigned RenderTableCell::parseColSpanFromDOM() const
 {
-    return node && node->isElementNode() && toElement(node)->isMathMLElement();
-}
-#endif
-
-unsigned RenderTableCell::colSpan() const
-{
-    if (UNLIKELY(!m_hasHTMLTableCellElement)) {
+    ASSERT(node());
+    if (node()->hasTagName(tdTag) || node()->hasTagName(thTag))
+        return toHTMLTableCellElement(node())->colSpan();
 #if ENABLE(MATHML)
-        if (isMathMLElement(node()))
-            return toMathMLElement(node())->colSpan();
+    if (node()->hasTagName(MathMLNames::mtdTag))
+        return toMathMLElement(node())->colSpan();
 #endif
-        return 1;
-    }
-
-    return toHTMLTableCellElement(node())->colSpan();
+    return 1;
 }
 
-unsigned RenderTableCell::rowSpan() const
+unsigned RenderTableCell::parseRowSpanFromDOM() const
 {
-    if (UNLIKELY(!m_hasHTMLTableCellElement)) {
+    ASSERT(node());
+    if (node()->hasTagName(tdTag) || node()->hasTagName(thTag))
+        return toHTMLTableCellElement(node())->rowSpan();
 #if ENABLE(MATHML)
-        if (isMathMLElement(node()))
-            return toMathMLElement(node())->rowSpan();
+    if (node()->hasTagName(MathMLNames::mtdTag))
+        return toMathMLElement(node())->rowSpan();
 #endif
-        return 1;
-    }
+    return 1;
+}
 
-    return toHTMLTableCellElement(node())->rowSpan();
+void RenderTableCell::updateColAndRowSpanFlags()
+{
+    // The vast majority of table cells do not have a colspan or rowspan,
+    // so we keep a bool to know if we need to bother reading from the DOM.
+    m_hasColSpan = node() && parseColSpanFromDOM() != 1;
+    m_hasRowSpan = node() && parseRowSpanFromDOM() != 1;
 }
 
 void RenderTableCell::colSpanOrRowSpanChanged()
 {
-#if ENABLE(MATHML)
-    ASSERT(m_hasHTMLTableCellElement || isMathMLElement(node()));
-#else
-    ASSERT(m_hasHTMLTableCellElement);
-#endif
     ASSERT(node());
 #if ENABLE(MATHML)
     ASSERT(node()->hasTagName(tdTag) || node()->hasTagName(thTag) || node()->hasTagName(MathMLNames::mtdTag));
 #else
     ASSERT(node()->hasTagName(tdTag) || node()->hasTagName(thTag));
 #endif
+
+    updateColAndRowSpanFlags();
+
+    // FIXME: I suspect that we could return early here if !m_hasColSpan && !m_hasRowSpan.
 
     setNeedsLayoutAndPrefWidthsRecalc();
     if (parent() && section())
