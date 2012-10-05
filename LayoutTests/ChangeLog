@@ -1,3 +1,16 @@
+2012-10-05  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Fix window resizing / moving in WK1 and WKTR
+        https://bugs.webkit.org/show_bug.cgi?id=98486
+
+        Reviewed by Gyuyoung Kim.
+
+        Unskip 2 window resizing / moving tests now that
+        the implementation for those has been fixed in
+        WebKit1 EFL.
+
+        * platform/efl-wk1/TestExpectations:
+
 2012-10-04  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         <input> size attribute should throw INDEX_SIZE_ERR when set to 0

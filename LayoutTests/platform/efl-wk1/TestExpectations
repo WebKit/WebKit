@@ -108,10 +108,6 @@ webkit.org/b/86182 fast/frames/seamless/seamless-inherited-document-style.html [
 # Passes in some machines and fails on other (such as the bots).
 webkit.org/b/97021 fast/events/dont-loose-last-event.html [ Failure ]
 
-# New windows are created with wrong size
-webkit.org/b/53959 fast/dom/Window/window-resize.html [ Failure ]
-webkit.org/b/53959 fast/dom/Window/window-resize-and-move-arguments.html [ Failure ]
-
 # Feature not mature yet and disabled by default on WebCore
 webkit.org/b/87088 fast/js/names.html [ Failure ]
 

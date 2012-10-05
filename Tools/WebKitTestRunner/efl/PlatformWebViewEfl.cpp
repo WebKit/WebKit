@@ -74,16 +74,18 @@ void PlatformWebView::focus()
 
 WKRect PlatformWebView::windowFrame()
 {
-    Evas_Coord x, y, width, height;
-    evas_object_geometry_get(m_view, &x, &y, &width, &height);
+    int x, y, width, height;
+
+    Ecore_Evas* ee = ecore_evas_ecore_evas_get(evas_object_evas_get(m_view));
+    ecore_evas_request_geometry_get(ee, &x, &y, &width, &height);
 
     return WKRectMake(x, y, width, height);
 }
 
 void PlatformWebView::setWindowFrame(WKRect frame)
 {
-    evas_object_move(m_view, frame.origin.x, frame.origin.y);
-    resizeTo(frame.size.width, frame.size.height);
+    Ecore_Evas* ee = ecore_evas_ecore_evas_get(evas_object_evas_get(m_view));
+    ecore_evas_move_resize(ee, frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
 }
 
 void PlatformWebView::addChromeInputField()

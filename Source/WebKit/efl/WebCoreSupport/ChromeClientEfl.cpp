@@ -118,12 +118,12 @@ void ChromeClientEfl::focusedFrameChanged(Frame*)
 
 FloatRect ChromeClientEfl::windowRect()
 {
-    Ecore_Evas* ee = 0;
-    int x, y, w, h;
+    int x, y, width, height;
 
-    ee = ecore_evas_ecore_evas_get(evas_object_evas_get(m_view));
-    ecore_evas_geometry_get(ee, &x, &y, &w, &h);
-    return FloatRect(x, y, w, h);
+    Ecore_Evas* ee = ecore_evas_ecore_evas_get(evas_object_evas_get(m_view));
+    ecore_evas_request_geometry_get(ee, &x, &y, &width, &height);
+
+    return FloatRect(x, y, width, height);
 }
 
 void ChromeClientEfl::setWindowRect(const FloatRect& rect)
@@ -131,12 +131,8 @@ void ChromeClientEfl::setWindowRect(const FloatRect& rect)
     if (!ewk_view_setting_enable_auto_resize_window_get(m_view))
         return;
 
-    Ecore_Evas* ee = 0;
-    IntRect intrect = IntRect(rect);
-
-    ee = ecore_evas_ecore_evas_get(evas_object_evas_get(m_view));
-    ecore_evas_move(ee, intrect.x(), intrect.y());
-    ecore_evas_resize(ee, intrect.width(), intrect.height());
+    Ecore_Evas* ee = ecore_evas_ecore_evas_get(evas_object_evas_get(m_view));
+    ecore_evas_move_resize(ee, rect.x(), rect.y(), rect.width(), rect.height());
 }
 
 FloatRect ChromeClientEfl::pageRect()
