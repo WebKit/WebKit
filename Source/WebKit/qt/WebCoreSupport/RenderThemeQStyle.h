@@ -22,35 +22,33 @@
 #ifndef RenderThemeQStyle_h
 #define RenderThemeQStyle_h
 
-#include "QStyleFacade.h"
 #include "RenderThemeQt.h"
+
+#include <QStyle>
+
+QT_BEGIN_NAMESPACE
+#ifndef QT_NO_LINEEDIT
+class QLineEdit;
+#endif
+class QPainter;
+class QWidget;
+QT_END_NAMESPACE
 
 namespace WebCore {
 
 class ScrollbarThemeQStyle;
 
-class Page;
-class QStyleFacade;
-struct QStyleFacadeOption;
-
-typedef QStyleFacade* (*QtStyleFactoryFunction)(Page*);
-
 class RenderThemeQStyle : public RenderThemeQt {
 private:
-    friend class StylePainterQStyle;
-
     RenderThemeQStyle(Page*);
     virtual ~RenderThemeQStyle();
 
 public:
     static PassRefPtr<RenderTheme> create(Page*);
 
-    static void setStyleFactoryFunction(QtStyleFactoryFunction);
-    static QtStyleFactoryFunction styleFactory();
-
     virtual void adjustSliderThumbSize(RenderStyle*, Element*) const;
 
-    QStyleFacade* qStyle() { return m_qStyle.get(); }
+    QStyle* qStyle() const;
 
 protected:
     virtual void adjustButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
@@ -102,9 +100,13 @@ protected:
     virtual QPalette colorPalette() const;
 
 private:
-    ControlPart initializeCommonQStyleOptions(QStyleFacadeOption&, RenderObject*) const;
+    ControlPart initializeCommonQStyleOptions(QStyleOption&, RenderObject*) const;
 
     void setButtonPadding(RenderStyle*) const;
+
+    int findFrameLineWidth(QStyle*) const;
+
+    QStyle* fallbackStyle() const;
 
     void setPaletteFromPageClientIfExists(QPalette&) const;
 
@@ -112,43 +114,31 @@ private:
     int m_buttonFontPixelSize;
 #endif
 
-    OwnPtr<QStyleFacade> m_qStyle;
+    QStyle* m_fallbackStyle;
+#ifndef QT_NO_LINEEDIT
+    mutable QLineEdit* m_lineEdit;
+#endif
 };
 
 class StylePainterQStyle : public StylePainter {
 public:
-    explicit StylePainterQStyle(RenderThemeQStyle*, const PaintInfo&, RenderObject*);
+    explicit StylePainterQStyle(RenderThemeQStyle*, const PaintInfo&);
     explicit StylePainterQStyle(ScrollbarThemeQStyle*, GraphicsContext*);
 
-    bool isValid() const { return qStyle && qStyle->isValid() && StylePainter::isValid(); }
+    bool isValid() const { return style && StylePainter::isValid(); }
 
-    QStyleFacade* qStyle;
-    QStyleFacadeOption styleOption;
-    ControlPart appearance;
+    QWidget* widget;
+    QStyle* style;
 
-    void paintButton(QStyleFacade::ButtonType type)
-    { qStyle->paintButton(painter, type, styleOption); }
-    void paintTextField()
-    { qStyle->paintTextField(painter, styleOption); }
-    void paintComboBox()
-    { qStyle->paintComboBox(painter, styleOption); }
-    void paintComboBoxArrow()
-    { qStyle->paintComboBoxArrow(painter, styleOption); }
-    void paintSliderTrack()
-    { qStyle->paintSliderTrack(painter, styleOption); }
-    void paintSliderThumb()
-    { qStyle->paintSliderThumb(painter, styleOption); }
-    void paintInnerSpinButton(bool spinBoxUp)
-    { qStyle->paintInnerSpinButton(painter, styleOption, spinBoxUp); }
-    void paintProgressBar(double progress, double animationProgress)
-    { qStyle->paintProgressBar(painter, styleOption, progress, animationProgress); }
-    void paintScrollCorner(const QRect& rect)
-    { qStyle->paintScrollCorner(painter, rect); }
-    void paintScrollBar()
-    { qStyle->paintScrollBar(painter, styleOption); }
+    void drawPrimitive(QStyle::PrimitiveElement pe, const QStyleOption& opt)
+    { style->drawPrimitive(pe, &opt, painter, widget); }
+    void drawControl(QStyle::ControlElement ce, const QStyleOption& opt)
+    { style->drawControl(ce, &opt, painter, widget); }
+    void drawComplexControl(QStyle::ComplexControl cc, const QStyleOptionComplex& opt)
+    { style->drawComplexControl(cc, &opt, painter, widget); }
 
 private:
-    void init(GraphicsContext*);
+    void init(GraphicsContext*, QStyle*);
 
     Q_DISABLE_COPY(StylePainterQStyle)
 };
