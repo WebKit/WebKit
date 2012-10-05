@@ -1,3 +1,10 @@
+2012-10-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove wrong expectations added in r130452.
+
+        * platform/chromium-win-xp/editing/pasteboard/5006779-expected.png: Removed.
+        * platform/chromium-win-xp/editing/pasteboard/5006779-expected.txt: Removed.
+
 2012-10-05  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Styles] Unable to edit properties in broken stylesheets
