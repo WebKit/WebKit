@@ -52,8 +52,8 @@ void WebPage::platformInitialize()
     // entry point to the Web process, and send a message to the UI
     // process to connect the two worlds through the accessibility
     // object there specifically placed for that purpose (the socket).
-    m_accessibilityObject = webPageAccessibilityObjectNew(this);
-    GOwnPtr<gchar> plugID(atk_plug_get_id(ATK_PLUG(m_accessibilityObject)));
+    m_accessibilityObject = adoptGRef(webPageAccessibilityObjectNew(this));
+    GOwnPtr<gchar> plugID(atk_plug_get_id(ATK_PLUG(m_accessibilityObject.get())));
     send(Messages::WebPageProxy::BindAccessibilityTree(String(plugID.get())));
 
 #if USE(TEXTURE_MAPPER_GL)
@@ -66,7 +66,7 @@ void WebPage::updateAccessibilityTree()
     if (!m_accessibilityObject)
         return;
 
-    webPageAccessibilityObjectRefresh(m_accessibilityObject);
+    webPageAccessibilityObjectRefresh(m_accessibilityObject.get());
 }
 
 void WebPage::platformPreferencesDidChange(const WebPreferencesStore&)

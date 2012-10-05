@@ -822,7 +822,7 @@ private:
 
     RefPtr<WebCore::Node> m_gestureTargetNode;
 #elif PLATFORM(GTK)
-    WebPageAccessibilityObject* m_accessibilityObject;
+    GRefPtr<WebPageAccessibilityObject> m_accessibilityObject;
 
 #if USE(TEXTURE_MAPPER_GL)
     // Our view's window in the UI process.
