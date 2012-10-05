@@ -1,3 +1,19 @@
+2012-10-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Updates expected test results for the expanded coverage in testfonts
+        https://bugs.webkit.org/show_bug.cgi?id=98425
+
+        Unreviewed gardening after r130502.
+
+        * platform/qt/css2.1/t0805-c5519-brdr-r-01-e-expected.png:
+        * platform/qt/css2.1/t0805-c5519-brdr-r-01-e-expected.txt:
+        * platform/qt/css2.1/t0905-c5525-fltblck-00-d-ag-expected.png:
+        * platform/qt/css2.1/t0905-c5525-fltblck-00-d-ag-expected.txt:
+        * platform/qt/fast/images/icon-decoding-expected.png: Added.
+        * platform/qt/fast/images/icon-decoding-expected.txt:
+        * platform/qt/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.png:
+        * platform/qt/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.txt:
+
 2012-10-05  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         [chromium] Allow dragging into plugins.
