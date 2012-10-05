@@ -2162,7 +2162,7 @@ Color RenderThemeMac::captionsWindowColor() const
     
     CGFloat opacity;
     if (wkCaptionAppearanceGetWindowOpacity(&opacity))
-        return Color(windowColor.red(), windowColor.green(), windowColor.blue(), opacity * 255);
+        return Color(windowColor.red(), windowColor.green(), windowColor.blue(), static_cast<int>(opacity * 255));
     
     if (!color)
         return Color();

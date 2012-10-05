@@ -1,3 +1,10 @@
+2012-10-05  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix the build.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::captionsWindowColor):
+
 2012-10-05  Eric Seidel  <eric@webkit.org>
 
         Remove needless virtual calls and inline RenderStyle::logical* to make table layout faster
