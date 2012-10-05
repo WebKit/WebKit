@@ -63,6 +63,19 @@ template <> void derefGPtr(GMainLoop* ptr)
         g_main_loop_unref(ptr);
 }
 
+template <> GBytes* refGPtr(GBytes* ptr)
+{
+    if (ptr)
+        g_bytes_ref(ptr);
+    return ptr;
+}
+
+template <> void derefGPtr(GBytes* ptr)
+{
+    if (ptr)
+        g_bytes_unref(ptr);
+}
+
 #if GLIB_CHECK_VERSION(2, 24, 0)
 template <> GVariant* refGPtr(GVariant* ptr)
 {

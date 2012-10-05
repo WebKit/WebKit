@@ -65,6 +65,7 @@ typedef struct _GTimer GTimer;
 typedef struct _GKeyFile GKeyFile;
 typedef struct _GPtrArray GPtrArray;
 typedef struct _GByteArray GByteArray;
+typedef struct _GBytes GBytes;
 
 #if USE(CAIRO)
 typedef struct _cairo_surface cairo_surface_t;
