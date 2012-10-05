@@ -1,3 +1,9 @@
+2012-10-04  Alpha Lam  <hclam@chromium.org>
+
+        Unreviewd. Chromium DEPS roll. Update to r160281.
+
+        * DEPS:
+
 2012-10-04  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Update some #includes for Platform directory
