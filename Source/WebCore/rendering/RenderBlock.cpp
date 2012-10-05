@@ -1543,14 +1543,6 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
         
         setMarginBeforeQuirk(styleToUse->marginBefore().quirk());
         setMarginAfterQuirk(styleToUse->marginAfter().quirk());
-
-        Node* n = node();
-        if (n && n->hasTagName(formTag) && static_cast<HTMLFormElement*>(n)->isMalformed()) {
-            // See if this form is malformed (i.e., unclosed). If so, don't give the form
-            // a bottom margin.
-            setMaxMarginAfterValues(0, 0);
-        }
-        
         setPaginationStrut(0);
     }
 

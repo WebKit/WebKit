@@ -74,7 +74,6 @@ HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document* documen
     , m_isSubmittingOrPreparingForSubmission(false)
     , m_shouldSubmit(false)
     , m_isInResetFunction(false)
-    , m_wasMalformed(false)
     , m_wasDemoted(false)
 {
     ASSERT(hasTagName(formTag));

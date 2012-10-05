@@ -73,11 +73,6 @@ public:
     void submitFromJavaScript();
     void reset();
 
-    // Used to indicate a malformed state to keep from applying the bottom margin of the form.
-    // FIXME: Would probably be better to call this wasUnclosed; that's more specific.
-    void setMalformed(bool malformed) { m_wasMalformed = malformed; }
-    bool isMalformed() const { return m_wasMalformed; }
-
     void setDemoted(bool demoted) { m_wasDemoted = demoted; }
 
     void submitImplicitly(Event*, bool fromImplicitSubmissionTrigger);
@@ -166,7 +161,6 @@ private:
 
     bool m_isInResetFunction;
 
-    bool m_wasMalformed;
     bool m_wasDemoted;
 };
 
