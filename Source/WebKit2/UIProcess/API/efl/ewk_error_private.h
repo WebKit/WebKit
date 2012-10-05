@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ewk_web_error_private_h
-#define ewk_web_error_private_h
+#ifndef ewk_error_private_h
+#define ewk_error_private_h
 
 #include <WKError.h>
 
-typedef struct _Ewk_Web_Error Ewk_Web_Error;
+typedef struct _Ewk_Error Ewk_Error;
 
-Ewk_Web_Error* ewk_web_error_new(WKErrorRef error);
-void ewk_web_error_free(Ewk_Web_Error* error);
+Ewk_Error* ewk_error_new(WKErrorRef error);
+void ewk_error_free(Ewk_Error* error);
 
-#endif // ewk_web_error_private_h
+#endif // ewk_error_private_h

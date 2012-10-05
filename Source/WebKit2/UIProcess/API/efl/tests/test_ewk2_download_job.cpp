@@ -131,7 +131,7 @@ static void on_download_cancelled(void* userData, Evas_Object* webview, void* ev
 static void on_download_failed(void* userData, Evas_Object* webview, void* eventInfo)
 {
     Ewk_Download_Job_Error* downloadError = static_cast<Ewk_Download_Job_Error*>(eventInfo);
-    fprintf(stderr, "Download error: %s\n", ewk_web_error_description_get(downloadError->error));
+    fprintf(stderr, "Download error: %s\n", ewk_error_description_get(downloadError->error));
     ecore_main_loop_quit();
     FAIL();
 }

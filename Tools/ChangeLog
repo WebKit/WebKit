@@ -1,3 +1,16 @@
+2012-10-05  Jongseok Yang  <js45.yang@samsung.com>
+
+        [EFL][WK2] Remove "web" word from ewk_web_error APIs
+        https://bugs.webkit.org/show_bug.cgi?id=97886
+
+        Reviewed by Gyuyoung Kim.
+
+        Remove "web" word from ewk_web_error APIs.
+        "web" word was redundant because "ewk" means "EFL WebKit" and WK APIs for error does not have "web" word.
+
+        * MiniBrowser/efl/main.c:
+        (on_error):
+
 2012-10-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Enable CSS compositing by default

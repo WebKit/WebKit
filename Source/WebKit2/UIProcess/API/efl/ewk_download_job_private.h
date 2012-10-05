@@ -31,7 +31,7 @@
 
 typedef struct _Ewk_Download_Job Ewk_Download_Job;
 typedef struct _Ewk_Url_Response Ewk_Url_Response;
-typedef struct _Ewk_Web_Error Ewk_Web_Error;
+typedef struct _Ewk_Error Ewk_Error;
 
 namespace WebKit {
 class DownloadProxy;

@@ -24,13 +24,13 @@
  */
 
 #include "config.h"
-#include "ewk_web_error.h"
+#include "ewk_error.h"
 
 #include "ErrorsEfl.h"
 #include "WKEinaSharedString.h"
 #include "WKString.h"
 #include "WKURL.h"
-#include "ewk_web_error_private.h"
+#include "ewk_error_private.h"
 #include <WKAPICast.h>
 #include <WKError.h>
 #include <WKRetainPtr.h>
@@ -39,24 +39,24 @@
 using namespace WebCore;
 using namespace WebKit;
 
-struct _Ewk_Web_Error {
+struct _Ewk_Error {
     WKRetainPtr<WKErrorRef> wkError;
 
     WKEinaSharedString url;
     WKEinaSharedString description;
 
-    _Ewk_Web_Error(WKErrorRef errorRef)
+    _Ewk_Error(WKErrorRef errorRef)
         : wkError(errorRef)
         , url(AdoptWK, WKErrorCopyFailingURL(errorRef))
         , description(AdoptWK, WKErrorCopyLocalizedDescription(errorRef))
     { }
 
-    ~_Ewk_Web_Error()
+    ~_Ewk_Error()
     {
     }
 };
 
-#define EWK_WEB_ERROR_WK_GET_OR_RETURN(error, wkError_, ...)    \
+#define EWK_ERROR_WK_GET_OR_RETURN(error, wkError_, ...)    \
     if (!(error)) {                                           \
         EINA_LOG_CRIT("error is NULL.");                      \
         return __VA_ARGS__;                                    \
@@ -71,64 +71,64 @@ struct _Ewk_Web_Error {
  * @internal
  * Frees the given object.
  */
-void ewk_web_error_free(Ewk_Web_Error* error)
+void ewk_error_free(Ewk_Error* error)
 {
     EINA_SAFETY_ON_NULL_RETURN(error);
 
     delete error;
 }
 
-Ewk_Web_Error_Type ewk_web_error_type_get(const Ewk_Web_Error* error)
+Ewk_Error_Type ewk_error_type_get(const Ewk_Error* error)
 {
-    EWK_WEB_ERROR_WK_GET_OR_RETURN(error, wkError, EWK_WEB_ERROR_TYPE_NONE);
+    EWK_ERROR_WK_GET_OR_RETURN(error, wkError, EWK_ERROR_TYPE_NONE);
 
     WKRetainPtr<WKStringRef> wkDomain(AdoptWK, WKErrorCopyDomain(wkError));
     WTF::String errorDomain = toWTFString(wkDomain.get());
 
     if (errorDomain == errorDomainNetwork)
-        return EWK_WEB_ERROR_TYPE_NETWORK;
+        return EWK_ERROR_TYPE_NETWORK;
     if (errorDomain == errorDomainPolicy)
-        return EWK_WEB_ERROR_TYPE_POLICY;
+        return EWK_ERROR_TYPE_POLICY;
     if (errorDomain == errorDomainPlugin)
-        return EWK_WEB_ERROR_TYPE_PLUGIN;
+        return EWK_ERROR_TYPE_PLUGIN;
     if (errorDomain == errorDomainDownload)
-        return EWK_WEB_ERROR_TYPE_DOWNLOAD;
+        return EWK_ERROR_TYPE_DOWNLOAD;
     if (errorDomain == errorDomainPrint)
-        return EWK_WEB_ERROR_TYPE_PRINT;
-    return EWK_WEB_ERROR_TYPE_INTERNAL;
+        return EWK_ERROR_TYPE_PRINT;
+    return EWK_ERROR_TYPE_INTERNAL;
 }
 
-const char* ewk_web_error_url_get(const Ewk_Web_Error* error)
+const char* ewk_error_url_get(const Ewk_Error* error)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(error, 0);
 
     return error->url;
 }
 
-int ewk_web_error_code_get(const Ewk_Web_Error* error)
+int ewk_error_code_get(const Ewk_Error* error)
 {
-    EWK_WEB_ERROR_WK_GET_OR_RETURN(error, wkError, 0);
+    EWK_ERROR_WK_GET_OR_RETURN(error, wkError, 0);
 
     return WKErrorGetErrorCode(wkError);
 }
 
-const char* ewk_web_error_description_get(const Ewk_Web_Error* error)
+const char* ewk_error_description_get(const Ewk_Error* error)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(error, 0);
 
     return error->description;
 }
 
-Eina_Bool ewk_web_error_cancellation_get(const Ewk_Web_Error* error)
+Eina_Bool ewk_error_cancellation_get(const Ewk_Error* error)
 {
-    EWK_WEB_ERROR_WK_GET_OR_RETURN(error, wkError, false);
+    EWK_ERROR_WK_GET_OR_RETURN(error, wkError, false);
 
     return toImpl(wkError)->platformError().isCancellation();
 }
 
-Ewk_Web_Error* ewk_web_error_new(WKErrorRef error)
+Ewk_Error* ewk_error_new(WKErrorRef error)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(error, 0);
 
-    return new Ewk_Web_Error(error);
+    return new Ewk_Error(error);
 }

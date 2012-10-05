@@ -65,7 +65,7 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
     soup_message_body_complete(message->response_body);
 }
 
-static void getAcceptPolicyCallback(Ewk_Cookie_Accept_Policy policy, Ewk_Web_Error* error, void* event_info)
+static void getAcceptPolicyCallback(Ewk_Cookie_Accept_Policy policy, Ewk_Error* error, void* event_info)
 {
     ASSERT_FALSE(error);
     Ewk_Cookie_Accept_Policy* ret = static_cast<Ewk_Cookie_Accept_Policy*>(event_info);
@@ -81,7 +81,7 @@ static Ewk_Cookie_Accept_Policy getAcceptPolicy(Ewk_Cookie_Manager* manager)
     return policy;
 }
 
-static void getHostnamesWithCookiesCallback(Eina_List* hostnames, Ewk_Web_Error* error, void* event_info)
+static void getHostnamesWithCookiesCallback(Eina_List* hostnames, Ewk_Error* error, void* event_info)
 {
     ASSERT_FALSE(error);
 

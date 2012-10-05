@@ -33,10 +33,10 @@
 #include "ewk_context_private.h"
 #include "ewk_download_job.h"
 #include "ewk_download_job_private.h"
+#include "ewk_error_private.h"
 #include "ewk_url_response.h"
 #include "ewk_url_response_private.h"
 #include "ewk_view_private.h"
-#include "ewk_web_error_private.h"
 #include <string.h>
 #include <wtf/text/CString.h>
 
@@ -94,10 +94,10 @@ static void didFail(WKContextRef, WKDownloadRef wkDownload, WKErrorRef error, co
     Ewk_Download_Job* download = ewk_context_download_job_get(toEwkContext(clientInfo), downloadId);
     ASSERT(download);
 
-    Ewk_Web_Error* ewkError = ewk_web_error_new(error);
+    Ewk_Error* ewkError = ewk_error_new(error);
     ewk_download_job_state_set(download, EWK_DOWNLOAD_JOB_STATE_FAILED);
     ewk_view_download_job_failed(ewk_download_job_view_get(download), download, ewkError);
-    ewk_web_error_free(ewkError);
+    ewk_error_free(ewkError);
     ewk_context_download_job_remove(toEwkContext(clientInfo), downloadId);
 }
 

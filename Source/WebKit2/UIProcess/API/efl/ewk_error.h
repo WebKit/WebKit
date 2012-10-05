@@ -24,12 +24,12 @@
  */
 
 /**
- * @file    ewk_web_error.h
+ * @file    ewk_error.h
  * @brief   Describes the Web Error API.
  */
 
-#ifndef ewk_web_error_h
-#define ewk_web_error_h
+#ifndef ewk_error_h
+#define ewk_error_h
 
 #include <Eina.h>
 
@@ -37,19 +37,19 @@
 extern "C" {
 #endif
 
-/** Creates a type name for @a Ewk_Web_Error. */
-typedef struct _Ewk_Web_Error Ewk_Web_Error;
+/** Creates a type name for @a Ewk_Error. */
+typedef struct _Ewk_Error Ewk_Error;
 
-/// Creates a type name for Ewk_Web_Error_Type.
+/// Creates a type name for Ewk_Error_Type.
 typedef enum {
-    EWK_WEB_ERROR_TYPE_NONE,
-    EWK_WEB_ERROR_TYPE_INTERNAL,
-    EWK_WEB_ERROR_TYPE_NETWORK,
-    EWK_WEB_ERROR_TYPE_POLICY,
-    EWK_WEB_ERROR_TYPE_PLUGIN,
-    EWK_WEB_ERROR_TYPE_DOWNLOAD,
-    EWK_WEB_ERROR_TYPE_PRINT
-} Ewk_Web_Error_Type;
+    EWK_ERROR_TYPE_NONE,
+    EWK_ERROR_TYPE_INTERNAL,
+    EWK_ERROR_TYPE_NETWORK,
+    EWK_ERROR_TYPE_POLICY,
+    EWK_ERROR_TYPE_PLUGIN,
+    EWK_ERROR_TYPE_DOWNLOAD,
+    EWK_ERROR_TYPE_PRINT
+} Ewk_Error_Type;
 
 /**
  * Query type for this error.
@@ -62,7 +62,7 @@ typedef enum {
  *         eina_stringshare_ref() instead of eina_stringshare_add() or
  *         strdup().
  */
-EAPI Ewk_Web_Error_Type ewk_web_error_type_get(const Ewk_Web_Error *error);
+EAPI Ewk_Error_Type ewk_error_type_get(const Ewk_Error *error);
 
 /**
  * Query failing URL for this error.
@@ -77,7 +77,7 @@ EAPI Ewk_Web_Error_Type ewk_web_error_type_get(const Ewk_Web_Error *error);
  *         eina_stringshare_ref() instead of eina_stringshare_add() or
  *         strdup().
  */
-EAPI const char *ewk_web_error_url_get(const Ewk_Web_Error *error);
+EAPI const char *ewk_error_url_get(const Ewk_Error *error);
 
 /**
  * Query HTTP error code.
@@ -86,7 +86,7 @@ EAPI const char *ewk_web_error_url_get(const Ewk_Web_Error *error);
  *
  * @return the HTTP error code.
  */
-EAPI int ewk_web_error_code_get(const Ewk_Web_Error *error);
+EAPI int ewk_error_code_get(const Ewk_Error *error);
 
 /**
  * Query description for this error.
@@ -99,7 +99,7 @@ EAPI int ewk_web_error_code_get(const Ewk_Web_Error *error);
  *         eina_stringshare_ref() instead of eina_stringshare_add() or
  *         strdup().
  */
-EAPI const char *ewk_web_error_description_get(const Ewk_Web_Error *error);
+EAPI const char *ewk_error_description_get(const Ewk_Error *error);
 
 /**
  * Query if error should be treated as a cancellation.
@@ -108,10 +108,10 @@ EAPI const char *ewk_web_error_description_get(const Ewk_Web_Error *error);
  *
  * @return @c EINA_TRUE if this error should be treated as a cancellation, @c EINA_FALSE otherwise
  */
-EAPI Eina_Bool ewk_web_error_cancellation_get(const Ewk_Web_Error *error);
+EAPI Eina_Bool ewk_error_cancellation_get(const Ewk_Error *error);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // ewk_web_error_h
+#endif // ewk_error_h

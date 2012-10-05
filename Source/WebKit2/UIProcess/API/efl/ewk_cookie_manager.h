@@ -31,7 +31,7 @@
 #ifndef ewk_cookie_manager_h
 #define ewk_cookie_manager_h
 
-#include "ewk_web_error.h"
+#include "ewk_error.h"
 #include <Eina.h>
 
 #ifdef __cplusplus
@@ -77,7 +77,7 @@ typedef enum _Ewk_Cookie_Persistent_Storage Ewk_Cookie_Persistent_Storage;
  * @typedef Ewk_Cookie_Manager_Async_Policy_Get_Cb Ewk_Cookie_Manager_Async_Policy_Get_Cb
  * @brief Callback type for use with ewk_cookie_manager_async_accept_policy_get
  */
-typedef void (*Ewk_Cookie_Manager_Async_Policy_Get_Cb)(Ewk_Cookie_Accept_Policy policy, Ewk_Web_Error *error, void *event_info);
+typedef void (*Ewk_Cookie_Manager_Async_Policy_Get_Cb)(Ewk_Cookie_Accept_Policy policy, Ewk_Error *error, void *event_info);
 
 /**
  * @typedef Ewk_Cookie_Manager_Async_Hostnames_Get_Cb Ewk_Cookie_Manager_Async_Hostnames_Get_Cb
@@ -87,7 +87,7 @@ typedef void (*Ewk_Cookie_Manager_Async_Policy_Get_Cb)(Ewk_Cookie_Accept_Policy 
  * save yourself some cpu cycles and use eina_stringshare_ref() instead of eina_stringshare_add()
  * or strdup().
  */
-typedef void (*Ewk_Cookie_Manager_Async_Hostnames_Get_Cb)(Eina_List* hostnames, Ewk_Web_Error *error, void *event_info);
+typedef void (*Ewk_Cookie_Manager_Async_Hostnames_Get_Cb)(Eina_List *hostnames, Ewk_Error *error, void *event_info);
 
 /**
  * @typedef Ewk_Cookie_Manager_Changes_Watch_Cb Ewk_Cookie_Manager_Changes_Watch_Cb

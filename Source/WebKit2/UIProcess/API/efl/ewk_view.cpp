@@ -984,7 +984,7 @@ void ewk_view_resource_load_response(Evas_Object* ewkView, uint64_t resourceIden
  *
  * Emits signal: "resource,request,finished" with pointer to the resource load error.
  */
-void ewk_view_resource_load_failed(Evas_Object* ewkView, uint64_t resourceIdentifier, Ewk_Web_Error* error)
+void ewk_view_resource_load_failed(Evas_Object* ewkView, uint64_t resourceIdentifier, Ewk_Error* error)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
@@ -1299,7 +1299,7 @@ void ewk_view_download_job_requested(Evas_Object* ewkView, Ewk_Download_Job* dow
  *
  * Emits signal: "download,failed" with pointer to a Ewk_Download_Job_Error.
  */
-void ewk_view_download_job_failed(Evas_Object* ewkView, Ewk_Download_Job* download, Ewk_Web_Error* error)
+void ewk_view_download_job_failed(Evas_Object* ewkView, Ewk_Download_Job* download, Ewk_Error* error)
 {
     Ewk_Download_Job_Error downloadError = { download, error };
     evas_object_smart_callback_call(ewkView, "download,failed", &downloadError);
@@ -1410,11 +1410,11 @@ void ewk_view_form_submission_request_new(Evas_Object* ewkView, Ewk_Form_Submiss
  * @internal
  * Reports load failed with error information.
  *
- * Emits signal: "load,error" with pointer to Ewk_Web_Error.
+ * Emits signal: "load,error" with pointer to Ewk_Error.
  */
-void ewk_view_load_error(Evas_Object* ewkView, const Ewk_Web_Error* error)
+void ewk_view_load_error(Evas_Object* ewkView, const Ewk_Error* error)
 {
-    evas_object_smart_callback_call(ewkView, "load,error", const_cast<Ewk_Web_Error*>(error));
+    evas_object_smart_callback_call(ewkView, "load,error", const_cast<Ewk_Error*>(error));
 }
 
 /**
@@ -1433,11 +1433,11 @@ void ewk_view_load_finished(Evas_Object* ewkView)
  * @internal
  * Reports view provisional load failed with error information.
  *
- * Emits signal: "load,provisional,failed" with pointer to Ewk_Web_Error.
+ * Emits signal: "load,provisional,failed" with pointer to Ewk_Error.
  */
-void ewk_view_load_provisional_failed(Evas_Object* ewkView, const Ewk_Web_Error* error)
+void ewk_view_load_provisional_failed(Evas_Object* ewkView, const Ewk_Error* error)
 {
-    evas_object_smart_callback_call(ewkView, "load,provisional,failed", const_cast<Ewk_Web_Error*>(error));
+    evas_object_smart_callback_call(ewkView, "load,provisional,failed", const_cast<Ewk_Error*>(error));
 }
 
 /**

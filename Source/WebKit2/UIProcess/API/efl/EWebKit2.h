@@ -33,6 +33,7 @@
 #include "ewk_context.h"
 #include "ewk_cookie_manager.h"
 #include "ewk_download_job.h"
+#include "ewk_error.h"
 #include "ewk_form_submission_request.h"
 #include "ewk_intent.h"
 #include "ewk_intent_service.h"
@@ -46,6 +47,5 @@
 #include "ewk_url_response.h"
 #include "ewk_url_scheme_request.h"
 #include "ewk_view.h"
-#include "ewk_web_error.h"
 
 #endif // EWebKit2_h

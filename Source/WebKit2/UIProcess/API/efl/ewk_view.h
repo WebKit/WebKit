@@ -44,10 +44,10 @@
  *   ewk_form_submission_request_submit() will be called automatically.
  * - "intent,request,new", Ewk_Intent*: reports new Web intent request.
  * - "intent,service,register", Ewk_Intent_Service*: reports new Web intent service registration.
- * - "load,error", const Ewk_Web_Error*: reports main frame load failed.
+ * - "load,error", const Ewk_Error*: reports main frame load failed.
  * - "load,finished", void: reports load finished.
  * - "load,progress", double*: load progress has changed (value from 0.0 to 1.0).
- * - "load,provisional,failed", const Ewk_Web_Error*: view provisional load failed.
+ * - "load,provisional,failed", const Ewk_Error*: view provisional load failed.
  * - "load,provisional,redirect", void: view received redirect for provisional load.
  * - "load,provisional,started", void: view started provisional load.
  * - "policy,decision,navigation", Ewk_Navigation_Policy_Decision*: a navigation policy decision should be taken.
@@ -73,13 +73,13 @@
 #include "ewk_back_forward_list.h"
 #include "ewk_context.h"
 #include "ewk_download_job.h"
+#include "ewk_error.h"
 #include "ewk_intent.h"
 #include "ewk_resource.h"
 #include "ewk_settings.h"
 #include "ewk_touch.h"
 #include "ewk_url_request.h"
 #include "ewk_url_response.h"
-#include "ewk_web_error.h"
 #include <Evas.h>
 
 #ifdef __cplusplus
@@ -234,7 +234,7 @@ typedef struct _Ewk_Resource_Load_Error Ewk_Resource_Load_Error;
  */
 struct _Ewk_Resource_Load_Error {
     Ewk_Resource *resource; /**< resource that failed loading */
-    Ewk_Web_Error *error; /**< load error */
+    Ewk_Error *error; /**< load error */
 };
 
 /// Creates a type name for _Ewk_Download_Job_Error.
@@ -245,7 +245,7 @@ typedef struct _Ewk_Download_Job_Error Ewk_Download_Job_Error;
  */
 struct _Ewk_Download_Job_Error {
     Ewk_Download_Job *download_job; /**< download that failed */
-    Ewk_Web_Error *error; /**< download error */
+    Ewk_Error *error; /**< download error */
 };
 
 /**

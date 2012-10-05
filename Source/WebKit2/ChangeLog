@@ -1,3 +1,53 @@
+2012-10-05  Jongseok Yang  <js45.yang@samsung.com>
+
+        [EFL][WK2] Remove "web" word from ewk_web_error APIs
+        https://bugs.webkit.org/show_bug.cgi?id=97886
+
+        Reviewed by Gyuyoung Kim.
+
+        Remove "web" word from ewk_web_error APIs.
+        "web" word was redundant because "ewk" means "EFL WebKit" and WK APIs for error does not have "web" word.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/ewk_context_download_client.cpp:
+        (didFail):
+        * UIProcess/API/efl/ewk_cookie_manager.cpp:
+        (getAcceptPolicyCallback):
+        (getHostnamesWithCookiesCallback):
+        * UIProcess/API/efl/ewk_cookie_manager.h:
+        * UIProcess/API/efl/ewk_download_job_private.h:
+        * UIProcess/API/efl/ewk_error.cpp: Renamed from Source/WebKit2/UIProcess/API/efl/ewk_web_error.cpp.
+        (_Ewk_Error):
+        (_Ewk_Error::_Ewk_Error):
+        (_Ewk_Error::~_Ewk_Error):
+        (ewk_error_free):
+        (ewk_error_type_get):
+        (ewk_error_url_get):
+        (ewk_error_code_get):
+        (ewk_error_description_get):
+        (ewk_error_cancellation_get):
+        (ewk_error_new):
+        * UIProcess/API/efl/ewk_error.h: Renamed from Source/WebKit2/UIProcess/API/efl/ewk_web_error.h.
+        * UIProcess/API/efl/ewk_error_private.h: Renamed from Source/WebKit2/UIProcess/API/efl/ewk_web_error_private.h.
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_resource_load_failed):
+        (ewk_view_download_job_failed):
+        (ewk_view_load_error):
+        (ewk_view_load_provisional_failed):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_loader_client.cpp:
+        (didFailLoadWithErrorForFrame):
+        (didFailProvisionalLoadWithErrorForFrame):
+        * UIProcess/API/efl/ewk_view_private.h:
+        * UIProcess/API/efl/ewk_view_resource_load_client.cpp:
+        (didFailLoadForResource):
+        * UIProcess/API/efl/tests/test_ewk2_cookie_manager.cpp:
+        (getAcceptPolicyCallback):
+        (getHostnamesWithCookiesCallback):
+        * UIProcess/API/efl/tests/test_ewk2_download_job.cpp:
+        (on_download_failed):
+
 2012-10-05  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [WK2][GTK] WebPageAccessibilityObject leaking

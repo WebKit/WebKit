@@ -33,8 +33,8 @@
 #include "WKRetainPtr.h"
 #include "WKString.h"
 #include "WebCookieManagerProxy.h"
+#include "ewk_error_private.h"
 #include "ewk_private.h"
-#include "ewk_web_error_private.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -142,12 +142,12 @@ struct Get_Policy_Async_Data {
 static void getAcceptPolicyCallback(WKHTTPCookieAcceptPolicy policy, WKErrorRef wkError, void* data)
 {
     Get_Policy_Async_Data* callbackData = static_cast<Get_Policy_Async_Data*>(data);
-    Ewk_Web_Error* ewkError = wkError ? ewk_web_error_new(wkError) : 0;
+    Ewk_Error* ewkError = wkError ? ewk_error_new(wkError) : 0;
 
     callbackData->callback(static_cast<Ewk_Cookie_Accept_Policy>(policy), ewkError, callbackData->userData);
 
     if (ewkError)
-        ewk_web_error_free(ewkError);
+        ewk_error_free(ewkError);
     delete callbackData;
 }
 
@@ -172,7 +172,7 @@ static void getHostnamesWithCookiesCallback(WKArrayRef wkHostnames, WKErrorRef w
 {
     Eina_List* hostnames = 0;
     Get_Hostnames_Async_Data* callbackData = static_cast<Get_Hostnames_Async_Data*>(context);
-    Ewk_Web_Error* ewkError = wkError ? ewk_web_error_new(wkError) : 0;
+    Ewk_Error* ewkError = wkError ? ewk_error_new(wkError) : 0;
 
     const size_t hostnameCount = WKArrayGetSize(wkHostnames);
     for (size_t i = 0; i < hostnameCount; ++i) {
@@ -189,7 +189,7 @@ static void getHostnamesWithCookiesCallback(WKArrayRef wkHostnames, WKErrorRef w
     EINA_LIST_FREE(hostnames, item)
       eina_stringshare_del(static_cast<Eina_Stringshare*>(item));
     if (ewkError)
-        ewk_web_error_free(ewkError);
+        ewk_error_free(ewkError);
     delete callbackData;
 }
 
