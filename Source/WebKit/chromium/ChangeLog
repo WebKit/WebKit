@@ -1,3 +1,20 @@
+2012-10-05  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Enhance support for transforms in LinkHighlight.
+        https://bugs.webkit.org/show_bug.cgi?id=94355
+
+        Reviewed by Adrienne Walker.
+
+        Improved handling of transformed highlight targets, where the transform goes beyond simple translation.
+
+        * src/LinkHighlight.cpp:
+        (WebKit::convertTargetSpaceQuadToCompositedLayer): Converts target space quad to composited layer coordinates.
+        (WebKit):
+        (WebKit::addQuadToPath): Supports adding non-rectilinear quads to Path.
+        (WebKit::LinkHighlight::computeHighlightLayerPathAndPosition): Updated to deal with target's quadlist, transform individual quads according to transforms.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::bestTouchLinkNode):
+
 2012-10-05  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed build fix after r130545.

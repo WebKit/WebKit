@@ -1,0 +1,3 @@
+Long Target
+Link.
+This test is successful if "Long Target Link" above is covered in two transparent green rectangles with square corners.

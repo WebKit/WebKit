@@ -1,0 +1,4 @@
+
+Target
+
+This test is successful if the rotated box labelled "Target" is covered in a transparent green rectangle.

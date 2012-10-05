@@ -1,3 +1,30 @@
+2012-10-05  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Enhance support for transforms in LinkHighlight.
+        https://bugs.webkit.org/show_bug.cgi?id=94355
+
+        Reviewed by Adrienne Walker.
+
+        Improved handling of transformed highlight targets, where the transform goes beyond simple translation.
+
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-multi-line.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-rotated-div.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-rotated-link.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-scaledX.html: Added.
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-scaledY.html: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-ZIndex-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-ZIndex-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-multi-line-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-multi-line-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-rotated-div-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-rotated-div-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-rotated-link-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-rotated-link-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-scaledX-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-scaledX-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-scaledY-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-scaledY-expected.txt: Added.
+
 2012-10-05  Ojan Vafai  <ojan@chromium.org>
 
         Deprecated flexboxes subtract scrollbar width/height twice
