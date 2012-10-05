@@ -477,13 +477,36 @@ datalist {
 #endif
 
 #if defined(ENABLE_INPUT_MULTIPLE_FIELDS_UI) && ENABLE_INPUT_MULTIPLE_FIELDS_UI
-input[type="datetime"],
-input[type="datetime-local"],
-input[type="month"],
-input[type="time"],
+#if defined(ENABLE_INPUT_TYPE_DATE) && ENABLE_INPUT_TYPE_DATE
+input[type="date"] {
+    font-family: monospace;
+}
+#endif
+#if defined(ENABLE_INPUT_TYPE_DATETIME) && ENABLE_INPUT_TYPE_DATETIME
+input[type="datetime"] {
+    font-family: monospace;
+}
+#endif
+#if defined(ENABLE_INPUT_TYPE_DATETIMELOCAL) && ENABLE_INPUT_TYPE_DATETIMELOCAL
+input[type="datetime-local"] {
+    font-family: monospace;
+}
+#endif
+#if defined(ENABLE_INPUT_TYPE_MONTH) && ENABLE_INPUT_TYPE_MONTH
+input[type="month"] {
+    font-family: monospace;
+}
+#endif
+#if defined(ENABLE_INPUT_TYPE_TIME) && ENABLE_INPUT_TYPE_TIME
+input[type="time"] {
+    font-family: monospace;
+}
+#endif
+#if defined(ENABLE_INPUT_TYPE_WEEK) && ENABLE_INPUT_TYPE_WEEK
 input[type="week"] {
     font-family: monospace;
 }
+#endif
 
 input::-webkit-datetime-edit {
     -webkit-user-modify: read-only !important;
