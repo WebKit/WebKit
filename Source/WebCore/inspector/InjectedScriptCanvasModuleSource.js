@@ -569,7 +569,7 @@ Resource.prototype = {
     },
 
     /**
-     * @param {Object} value
+     * @param {*} value
      */
     setWrappedObject: function(value)
     {
@@ -646,7 +646,7 @@ Resource.prototype = {
     /**
      * @param {Object} data
      * @param {Cache} cache
-     * @return {Resource}
+     * @return {Resource|ReplayableResource}
      */
     replay: function(data, cache)
     {
@@ -683,7 +683,7 @@ Resource.prototype = {
     },
 
     /**
-     * @param {Object} object
+     * @param {*} object
      */
     _bindObjectToResource: function(object)
     {

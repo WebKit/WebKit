@@ -1,3 +1,14 @@
+2012-10-05  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed inspector front-end closure compilaiton fixes.
+
+        * inspector/InjectedScriptCanvasModuleSource.js:
+        * inspector/InjectedScriptExterns.js:
+        (InjectedScriptHost.prototype.getInternalProperties):
+        * inspector/front-end/DockController.js:
+        * inspector/front-end/externs.js:
+        (InspectorFrontendHostAPI.prototype.requestSetDockSide):
+
 2012-10-05  Tab Atkins  <jackalmage@gmail.com>
 
         Replace uses of prefixed properties with unprefixed versions in the UA stylesheets

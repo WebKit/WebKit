@@ -144,7 +144,7 @@ WebInspector.DockController.prototype = {
 
     /**
      * @param {WebInspector.StatusBarButton} button
-     * @param {number} state
+     * @param {string} state
      */
     _decorateButtonForTargetState: function(button, state)
     {
