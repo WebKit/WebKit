@@ -60,6 +60,9 @@ public:
     RenderObject* beforePseudoElementRenderer(const RenderObject* owner) const;
     RenderObject* afterPseudoElementRenderer(const RenderObject* owner) const;
 
+public:
+    static bool s_enableUpdateBeforeAfterContent;
+
 private:
     void updateBeforeAfterStyle(RenderObject* child, PseudoId type, RenderStyle* pseudoElementStyle);
 

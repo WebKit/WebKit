@@ -45,6 +45,8 @@
 
 namespace WebCore {
 
+bool RenderObjectChildList::s_enableUpdateBeforeAfterContent = true;
+
 void RenderObjectChildList::destroyLeftoverChildren()
 {
     while (firstChild()) {
@@ -373,6 +375,8 @@ void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, Pseudo
 
     // In CSS2, before/after pseudo-content cannot nest.  Check this first.
     if (owner->style()->styleType() == BEFORE || owner->style()->styleType() == AFTER)
+        return;
+    if (!s_enableUpdateBeforeAfterContent)
         return;
     
     if (!styledObject)

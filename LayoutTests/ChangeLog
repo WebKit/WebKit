@@ -1,3 +1,19 @@
+2012-10-05  Takashi Sakamoto  <tasak@google.com>
+
+        Inline continuations create :after generated content on style recalcs
+        https://bugs.webkit.org/show_bug.cgi?id=93170
+
+        Reviewed by Abhishek Arya.
+
+        * fast/css-generated-content/after-with-inline-continuation-expected.html: Added.
+        * fast/css-generated-content/after-with-inline-continuation.html: Added.
+        * fast/css-generated-content/dynamic-apply-after-for-inline-expected.html: Added.
+        * fast/css-generated-content/dynamic-apply-after-for-inline.html: Added.
+        * http/tests/misc/acid3-expected.txt:
+        The acid3-expected.txt has the duplicate RenderBlock (positioned).
+        Two 'layer at(638, 18) size 20x20, ... text run at (0,0) width 20: "X"'
+        exist. So did reset-results for acid3-expected.txt.
+
 2012-10-05  Tony Chang  <tony@chromium.org>
 
         Fix margin box ascent computation in flexbox

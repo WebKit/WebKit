@@ -1,3 +1,41 @@
+2012-10-05  Takashi Sakamoto  <tasak@google.com>
+
+        Inline continuations create :after generated content on style recalcs
+        https://bugs.webkit.org/show_bug.cgi?id=93170
+
+        Reviewed by Abhishek Arya.
+
+        The bug is caused by RenderInline::styleDidChange's setContinuation(0).
+        RenderObjectChildList uses continuation to know whether the given
+        renderer should have AFTER render object or not.
+        However, setContinuation(0) makes RenderObjectChildList to
+        misunderstand that all continuations are last continuation.
+        To avoid the misunderstanding, added a new flag to class
+        RenderObejctChildList to enable/disable updating :after content (and
+        also :before content).
+
+        Tests: fast/css-generated-content/after-with-inline-continuation.html
+               fast/css-generated-content/dynamic-apply-after-for-inline.html
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::styleDidChange):
+        Disable upating :after content for continuations which are not
+        the last one during setStyle just after setContinuation(0).
+        The setStyle invokes RenderInline::styleDidChange and also invokes
+        updateBeforeAfterContent via the styleDidChange. This means,
+        the last continuation's updateBeforeAfterContent is also invoked
+        after setContinuation(0). We have to update :after for the last
+        continuation.
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore):
+        (WebCore::RenderObjectChildList::updateBeforeAfterContent):
+        If s_updateBeforeAfterContent is false, quickly exit
+        updateBeforeAfterContent.
+        * rendering/RenderObjectChildList.h:
+        (RenderObjectChildList):
+        Added a new flag s_enableUpdateBeforeAfterContent to enable/disable
+        updating :before or :after content.
+
 2012-10-05  Simon Fraser  <simon.fraser@apple.com>
 
         Don't assume that TileCache layers are opaque

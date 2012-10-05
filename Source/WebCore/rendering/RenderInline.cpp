@@ -40,6 +40,8 @@
 #include "TransformState.h"
 #include "VisiblePosition.h"
 
+#include <wtf/TemporaryChange.h>
+
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
 #include "Frame.h"
 #endif
@@ -167,11 +169,18 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
     // need to pass its style on to anyone else.
     RenderStyle* newStyle = style();
     RenderInline* continuation = inlineElementContinuation();
-    for (RenderInline* currCont = continuation; currCont; currCont = currCont->inlineElementContinuation()) {
-        RenderBoxModelObject* nextCont = currCont->continuation();
-        currCont->setContinuation(0);
-        currCont->setStyle(newStyle);
-        currCont->setContinuation(nextCont);
+    {
+        TemporaryChange<bool> enableAfter(RenderObjectChildList::s_enableUpdateBeforeAfterContent, false);
+        RenderInline* nextInlineElementCont = 0;
+        for (RenderInline* currCont = continuation; currCont; currCont = nextInlineElementCont) {
+            nextInlineElementCont = currCont->inlineElementContinuation();
+            // We need to update :after content for the last continuation in the chain.
+            RenderObjectChildList::s_enableUpdateBeforeAfterContent = !nextInlineElementCont;
+            RenderBoxModelObject* nextCont = currCont->continuation();
+            currCont->setContinuation(0);
+            currCont->setStyle(newStyle);
+            currCont->setContinuation(nextCont);
+        }
     }
 
     // If an inline's in-flow positioning has changed then any descendant blocks will need to change their in-flow positioning accordingly.
