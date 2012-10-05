@@ -1,3 +1,15 @@
+2012-10-05  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] fast/xsl/xslt-missing-namespace-in-xslt.xml is failing on the 64-bit Debug builder
+        https://bugs.webkit.org/show_bug.cgi?id=91009
+
+        Reviewed by Martin Robinson.
+
+        Update the test's baselines. The output now properly shows the error.
+
+        * platform/gtk/fast/xsl/xslt-missing-namespace-in-xslt-expected.png:
+        * platform/gtk/fast/xsl/xslt-missing-namespace-in-xslt-expected.txt:
+
 2012-10-05  Dirk Pranke  <dpranke@chromium.org>
 
         Fix lint error in TestExpectations from previous change.

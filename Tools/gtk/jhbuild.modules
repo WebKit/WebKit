@@ -10,6 +10,7 @@
       <dep package="fonts"/>
       <dep package="fontconfig"/>
       <dep package="freetype6"/>
+      <dep package="libxml2"/>
       <dep package="gdk-pixbuf"/>
       <dep package="gtk+"/>
       <dep package="glib"/>
@@ -36,6 +37,8 @@
       href="http://cairographics.org"/>
   <repository type="tarball" name="freedesktop.org"
       href="http://www.freedesktop.org"/>
+  <repository type="tarball" name="xmlsoft.org"
+      href="ftp://xmlsoft.org"/>
 
   <autotools id="make" autogen-sh="configure">
     <branch repo="ftp.gnu.org"
@@ -222,6 +225,13 @@
       <dep package="glib"/>
       <dep package="at-spi2-core"/>
     </dependencies>
+  </autotools>
+
+  <autotools id="libxml2">
+    <branch module="/libxml2/libxml2-2.8.0.tar.gz" version="2.8.0"
+            repo="xmlsoft.org"
+            hash="sha256:f2e2d0e322685193d1affec83b21dc05d599e17a7306d7b90de95bb5b9ac622a"
+            md5sum="c62106f02ee00b6437f0fb9d370c1093"/>
   </autotools>
 
 </moduleset>
