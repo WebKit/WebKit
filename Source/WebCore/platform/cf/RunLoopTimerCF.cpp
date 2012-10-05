@@ -31,6 +31,7 @@
 #if PLATFORM(MAC) && HAVE(RUNLOOP_TIMER)
 
 #include "RunLoopTimer.h"
+#include "AutodrainedPool.h"
 
 namespace WebCore {
 
@@ -41,6 +42,11 @@ RunLoopTimerBase::~RunLoopTimerBase()
 
 static void timerFired(CFRunLoopTimerRef, void* context)
 {
+    // CFRunLoopTimer does not create an NSAutoreleasePool, like NSTimer does. This can lead to
+    // autoreleased objects being pushed into NSAutoreleasePools underneath the run loop, which
+    // are very infrequently drained. Create a new autorelease pool here to give autoreleased objects
+    // a place to collect.
+    AutodrainedPool pool;
     RunLoopTimerBase* timer = static_cast<RunLoopTimerBase*>(context);
     timer->fired();
 }
