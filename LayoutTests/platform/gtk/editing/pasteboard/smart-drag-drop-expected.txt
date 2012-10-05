@@ -4,7 +4,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > DIV > BODY > HTML > #document to 5 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 6 of #text > DIV > BODY > HTML > #document to 6 of #text > DIV > BODY > HTML > #document givenAction:WebViewInsertActionDropped
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 5 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 5 of #text > DIV > BODY > HTML > #document to 10 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -17,9 +17,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 773: "Tests that drag/drop after double-click does a smart drag. Specifically the end result should have a space: \"world hello\". To"
           text run at (0,18) width 434: "test manually double click on the \"hello\" and drag it to after \"world\"."
       RenderBlock {DIV} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 37x19
-          text run at (0,0) width 37: "world"
-        RenderText {#text} at (37,0) size 31x19
-          text run at (37,0) width 31: "hello"
-selection start: position 0 of child 1 {#text} of child 3 {DIV} of body
-selection end:   position 5 of child 1 {#text} of child 3 {DIV} of body
+        RenderText {#text} at (0,0) size 68x19
+          text run at (0,0) width 68: "worldhello"
+selection start: position 5 of child 0 {#text} of child 3 {DIV} of body
+selection end:   position 10 of child 0 {#text} of child 3 {DIV} of body

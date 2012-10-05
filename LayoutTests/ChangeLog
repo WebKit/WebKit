@@ -1,3 +1,29 @@
+2012-10-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        GTK+ rebaselines after r130411.
+
+        * platform/gtk/editing/deleting/delete-block-merge-contents-018-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-019-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-020-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-021-expected.txt:
+        * platform/gtk/editing/deleting/delete-block-merge-contents-022-expected.txt:
+        * platform/gtk/editing/deleting/merge-no-br-expected.txt:
+        * platform/gtk/editing/execCommand/find-after-replace-expected.txt:
+        * platform/gtk/editing/execCommand/paste-2-expected.txt:
+        * platform/gtk/editing/pasteboard/4944770-2-expected.txt:
+        * platform/gtk/editing/pasteboard/5006779-expected.txt:
+        * platform/gtk/editing/pasteboard/5028447-expected.txt:
+        * platform/gtk/editing/pasteboard/drag-drop-modifies-page-expected.txt:
+        * platform/gtk/editing/pasteboard/merge-end-borders-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-line-endings-008-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-line-endings-009-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-line-endings-010-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-text-008-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-xml-expected.txt:
+        * platform/gtk/editing/pasteboard/smart-drag-drop-expected.txt:
+        * platform/gtk/editing/pasteboard/subframe-dragndrop-1-expected.txt:
+        * platform/gtk/fast/lists/drag-into-marker-expected.txt:
+
 2012-10-04  Tab Atkins  <tabatkins@google.com>
 
         1ex should equal .5em when the font has no x-height metric

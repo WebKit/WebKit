@@ -14,10 +14,8 @@ layer at (0,0) size 800x600
             RenderText at (4,4) size 9x19
               text run at (4,4) width 9: "1"
       RenderBlock {DIV} at (0,84) size 784x32
-        RenderText {#text} at (0,7) size 8x19
-          text run at (0,7) width 8: "x"
-        RenderText {#text} at (8,7) size 4x19
-          text run at (8,7) width 4: " "
+        RenderText {#text} at (0,7) size 12x19
+          text run at (0,7) width 12: "x "
         RenderMenuList {SELECT} at (14,2) size 36x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 34x26
             RenderText at (4,4) size 9x19
@@ -26,4 +24,4 @@ layer at (0,0) size 800x600
           text run at (52,7) width 4: " "
         RenderText {#text} at (56,7) size 8x19
           text run at (56,7) width 8: "x"
-caret: position 1 of child 3 {#text} of child 4 {DIV} of body
+caret: position 1 of child 2 {#text} of child 4 {DIV} of body
