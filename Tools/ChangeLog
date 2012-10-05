@@ -1,3 +1,14 @@
+2012-10-04  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Add APIs to get/set the frame flattening.
+        https://bugs.webkit.org/show_bug.cgi?id=95982
+
+        Reviewed by Gyuyoung Kim.
+
+        * MiniBrowser/efl/main.c: Added frame flattening option to test.
+        (browserCreate):
+        (main):
+
 2012-10-04  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Add libxml 2.8.0 to jhbuild

@@ -157,6 +157,32 @@ EAPI Eina_Bool ewk_settings_file_access_from_file_urls_allowed_set(Ewk_Settings 
  */
 EAPI Eina_Bool ewk_settings_file_access_from_file_urls_allowed_get(const Ewk_Settings *settings);
 
+/**
+ * Enables/disables frame flattening.
+ *
+ * By default, the frame flattening is disabled.
+ *
+ * @param settings settings object to set the frame flattening
+ * @param enable @c EINA_TRUE to enable the frame flattening @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ *
+ * @see ewk_settings_enable_frame_flattening_get()
+ */
+EAPI Eina_Bool ewk_settings_enable_frame_flattening_set(Ewk_Settings *settings, Eina_Bool enable);
+
+/**
+ * Returns the frame flattening.
+ *
+ * The frame flattening is a feature which expands sub frames until all the frames become
+ * one scrollable page.
+ *
+ * @param settings settings object to get the frame flattening.
+ *
+ * @return @c EINA_TRUE if the frame flattening is enabled or @c EINA_FALSE otherwise
+ */
+EAPI Eina_Bool ewk_settings_enable_frame_flattening_get(const Ewk_Settings *settings);
+
 #ifdef __cplusplus
 }
 #endif

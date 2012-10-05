@@ -1,3 +1,21 @@
+2012-10-04  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Add APIs to get/set the frame flattening.
+        https://bugs.webkit.org/show_bug.cgi?id=95982
+
+        Reviewed by Gyuyoung Kim.
+
+        Added new APIs and test case to support frame flattening.
+
+        * UIProcess/API/efl/ewk_settings.cpp:
+        (ewk_settings_enable_frame_flattening_set):
+        (ewk_settings_enable_frame_flattening_get):
+        * UIProcess/API/efl/ewk_settings.h:
+        * UIProcess/API/efl/tests/resources/frame_flattening_test.html: Added.
+        * UIProcess/API/efl/tests/resources/frame_flattening_test_subframe.html: Added.
+        * UIProcess/API/efl/tests/test_ewk2_settings.cpp:
+        (TEST_F):
+
 2012-10-04  Simon Fraser  <simon.fraser@apple.com>
 
         TiledCoreAnimationDrawingArea.mm should not include RenderLayerCompositor.h

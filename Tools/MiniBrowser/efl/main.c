@@ -60,6 +60,8 @@ static const Ecore_Getopt options = {
         ECORE_GETOPT_CALLBACK_NOARGS
             ('E', "list-engines", "list ecore-evas engines.",
              ecore_getopt_callback_ecore_evas_list_engines, NULL),
+        ECORE_GETOPT_STORE_DEF_BOOL
+            ('f', "flattening", "frame flattening.", EINA_FALSE),
         ECORE_GETOPT_VERSION
             ('V', "version"),
         ECORE_GETOPT_COPYRIGHT
@@ -211,7 +213,7 @@ quit(Eina_Bool success, const char *msg)
     return EXIT_SUCCESS;
 }
 
-static MiniBrowser *browserCreate(const char *url, const char *engine)
+static MiniBrowser *browserCreate(const char *url, const char *engine, Eina_Bool frame_flattening)
 {
     MiniBrowser *app = malloc(sizeof(MiniBrowser));
 
@@ -230,6 +232,7 @@ static MiniBrowser *browserCreate(const char *url, const char *engine)
     /* Create webview */
     app->browser = ewk_view_add(app->evas);
     ewk_view_theme_set(app->browser, THEME_DIR"/default.edj");
+    ewk_settings_enable_frame_flattening_set(ewk_view_settings_get(app->browser), frame_flattening);
     evas_object_name_set(app->browser, "browser");
 
     Ewk_Settings *settings = ewk_view_settings_get(app->browser);
@@ -262,9 +265,12 @@ int main(int argc, char *argv[])
     char *engine = NULL;
     unsigned char quitOption = 0;
 
+    Eina_Bool frame_flattening = EINA_FALSE;
+
     Ecore_Getopt_Value values[] = {
         ECORE_GETOPT_VALUE_STR(engine),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
+        ECORE_GETOPT_VALUE_BOOL(frame_flattening),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
@@ -285,10 +291,10 @@ int main(int argc, char *argv[])
 
     if (args < argc) {
         char *url = url_from_user_input(argv[args]);
-        browser = browserCreate(url, engine);
+        browser = browserCreate(url, engine, frame_flattening);
         free(url);
     } else
-        browser = browserCreate(DEFAULT_URL, engine);
+        browser = browserCreate(DEFAULT_URL, engine, frame_flattening);
 
     if (!browser)
         return quit(EINA_FALSE, "ERROR: could not create browser.\n");
