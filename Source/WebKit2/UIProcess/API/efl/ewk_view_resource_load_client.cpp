@@ -38,7 +38,6 @@
 #include "ewk_url_response_private.h"
 #include "ewk_view_private.h"
 #include "ewk_view_resource_load_client_private.h"
-#include "ewk_web_error.h"
 #include "ewk_web_error_private.h"
 #include "ewk_web_resource.h"
 #include "ewk_web_resource_private.h"

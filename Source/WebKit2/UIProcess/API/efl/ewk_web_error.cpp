@@ -67,6 +67,10 @@ struct _Ewk_Web_Error {
     }                                                          \
     WKErrorRef wkError_ = (error)->wkError.get()
 
+/**
+ * @internal
+ * Frees the given object.
+ */
 void ewk_web_error_free(Ewk_Web_Error* error)
 {
     EINA_SAFETY_ON_NULL_RETURN(error);

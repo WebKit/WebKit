@@ -36,7 +36,6 @@
 #include "ewk_url_response.h"
 #include "ewk_url_response_private.h"
 #include "ewk_view_private.h"
-#include "ewk_web_error.h"
 #include "ewk_web_error_private.h"
 #include <string.h>
 #include <wtf/text/CString.h>

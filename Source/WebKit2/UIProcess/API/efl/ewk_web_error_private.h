@@ -31,5 +31,6 @@
 typedef struct _Ewk_Web_Error Ewk_Web_Error;
 
 Ewk_Web_Error* ewk_web_error_new(WKErrorRef error);
+void ewk_web_error_free(Ewk_Web_Error* error);
 
 #endif // ewk_web_error_private_h

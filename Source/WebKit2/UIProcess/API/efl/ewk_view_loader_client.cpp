@@ -34,7 +34,6 @@
 #include "ewk_intent_service_private.h"
 #include "ewk_view_loader_client_private.h"
 #include "ewk_view_private.h"
-#include "ewk_web_error.h"
 #include "ewk_web_error_private.h"
 #include <wtf/text/CString.h>
 

@@ -52,13 +52,6 @@ typedef enum {
 } Ewk_Web_Error_Type;
 
 /**
- * Frees the given object.
- *
- * @param error the error object to free
- */
-EAPI void ewk_web_error_free(Ewk_Web_Error *error);
-
-/**
  * Query type for this error.
  *
  * @param error error object to query.
