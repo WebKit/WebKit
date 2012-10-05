@@ -163,6 +163,7 @@ static void closeOtherPage(WKPageRef page, const void* clientInfo)
 static void focus(WKPageRef page, const void* clientInfo)
 {
     PlatformWebView* view = static_cast<PlatformWebView*>(const_cast<void*>(clientInfo));
+    view->focus();
     view->setWindowIsKey(true);
 }
 
@@ -362,8 +363,8 @@ void TestController::initialize(int argc, const char* argv[])
         0, // showPage
         0, // close
         0, // takeFocus
-        0, // focus
-        0, // unfocus
+        focus,
+        unfocus,
         0, // runJavaScriptAlert
         0, // runJavaScriptConfirm
         0, // runJavaScriptPrompt
