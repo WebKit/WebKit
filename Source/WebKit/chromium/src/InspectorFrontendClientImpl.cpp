@@ -39,8 +39,8 @@
 #include "V8InspectorFrontendHost.h"
 #include "WebDevToolsFrontendClient.h"
 #include "WebDevToolsFrontendImpl.h"
-#include "platform/WebFloatPoint.h"
-#include "platform/WebString.h"
+#include <public/WebFloatPoint.h>
+#include <public/WebString.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;

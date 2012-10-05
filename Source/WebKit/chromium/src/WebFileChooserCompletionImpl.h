@@ -33,7 +33,7 @@
 
 #include "FileChooser.h"
 #include "WebFileChooserCompletion.h"
-#include "platform/WebString.h"
+#include <public/WebString.h>
 #include <public/WebVector.h>
 #include <wtf/PassRefPtr.h>
 

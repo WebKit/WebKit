@@ -38,9 +38,9 @@
 #include "ScriptExecutionContext.h"
 #include "WebFileInfo.h"
 #include "WebFileSystemEntry.h"
-#include "platform/WebString.h"
 #include "WorkerAsyncFileSystemChromium.h"
 #include <public/WebFileSystem.h>
+#include <public/WebString.h>
 #include <wtf/Vector.h>
 
 using namespace WebCore;

@@ -35,12 +35,11 @@
 #include "ClipboardChromium.h"
 #include "Frame.h"
 #include "NativeImageSkia.h"
-#include "platform/WebCommon.h"
-#include "platform/WebImage.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
-
+#include <public/WebCommon.h>
 #include <public/WebDragData.h>
+#include <public/WebImage.h>
 
 using namespace WebCore;
 

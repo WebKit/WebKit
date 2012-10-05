@@ -37,12 +37,11 @@
 #include "GraphicsContext.h"
 #include "painting/GraphicsContextBuilder.h"
 #include "TextRun.h"
-#include "platform/WebFloatPoint.h"
-#include "platform/WebFloatRect.h"
 #include "WebFontDescription.h"
-#include "platform/WebRect.h"
 #include "WebTextRun.h"
-
+#include <public/WebFloatPoint.h>
+#include <public/WebFloatRect.h>
+#include <public/WebRect.h>
 #include <skia/ext/platform_canvas.h>
 
 using namespace WebCore;

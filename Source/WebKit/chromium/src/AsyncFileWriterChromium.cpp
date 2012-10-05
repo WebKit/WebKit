@@ -36,7 +36,7 @@
 #include "AsyncFileWriterClient.h"
 #include "Blob.h"
 #include "WebFileWriter.h"
-#include "platform/WebURL.h"
+#include <public/WebURL.h>
 
 namespace WebCore {
 

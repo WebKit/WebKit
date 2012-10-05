@@ -44,9 +44,9 @@
 #include "WebFrameImpl.h"
 #include "WrappedResourceRequest.h"
 #include "WrappedResourceResponse.h"
-#include "platform/WebURL.h"
-#include "platform/WebURLError.h"
-#include "platform/WebURLResponse.h"
+#include <public/WebURL.h>
+#include <public/WebURLError.h>
+#include <public/WebURLResponse.h>
 #include <public/WebVector.h>
 
 using namespace WebKit;

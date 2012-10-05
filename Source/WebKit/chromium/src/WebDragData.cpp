@@ -34,10 +34,10 @@
 #include "ClipboardMimeTypes.h"
 #include "DataTransferItem.h"
 #include "DraggedIsolatedFileSystem.h"
-#include "platform/WebData.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
+#include <public/WebData.h>
 #include <public/WebDragData.h>
+#include <public/WebString.h>
+#include <public/WebURL.h>
 #include <public/WebVector.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>

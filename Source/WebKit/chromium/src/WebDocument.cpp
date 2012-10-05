@@ -56,8 +56,7 @@
 #include "WebFrameImpl.h"
 #include "WebNodeCollection.h"
 #include "WebNodeList.h"
-#include "platform/WebURL.h"
-
+#include <public/WebURL.h>
 #include <wtf/PassRefPtr.h>
 
 using namespace WebCore;

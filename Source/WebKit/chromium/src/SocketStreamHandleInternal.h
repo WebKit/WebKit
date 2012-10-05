@@ -34,8 +34,8 @@
 #if ENABLE(WEB_SOCKETS)
 
 #include "SocketStreamHandle.h"
-#include "platform/WebSocketStreamHandleClient.h"
-#include "platform/WebURL.h"
+#include <public/WebSocketStreamHandleClient.h>
+#include <public/WebURL.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebKit {

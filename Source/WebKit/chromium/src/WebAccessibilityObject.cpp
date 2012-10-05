@@ -46,10 +46,10 @@
 #include "UserGestureIndicator.h"
 #include "WebDocument.h"
 #include "WebNode.h"
-#include "platform/WebPoint.h"
-#include "platform/WebRect.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
+#include <public/WebPoint.h>
+#include <public/WebRect.h>
+#include <public/WebString.h>
+#include <public/WebURL.h>
 #include <wtf/text/StringBuilder.h>
 
 using namespace WebCore;

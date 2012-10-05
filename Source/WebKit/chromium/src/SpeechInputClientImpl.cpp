@@ -35,8 +35,8 @@
 #include "SpeechInputListener.h"
 #include "WebSecurityOrigin.h"
 #include "WebSpeechInputController.h"
-#include "platform/WebString.h"
 #include "WebViewClient.h"
+#include <public/WebString.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 

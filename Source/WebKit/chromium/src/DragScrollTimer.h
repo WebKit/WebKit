@@ -33,7 +33,7 @@
 
 #include "IntSize.h"
 #include "Timer.h"
-#include "platform/WebPoint.h"
+#include <public/WebPoint.h>
 
 namespace WebCore { class FrameView; }
 
