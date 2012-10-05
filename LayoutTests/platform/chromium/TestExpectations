@@ -975,6 +975,9 @@ webkit.org/b/83260 fast/text/international/embed-bidi-style-in-isolate-crash.htm
 # Marking as expected failing until the test can be updated and all platforms rebaselined.
 webkit.org/b/96319 fast/block/float/overhanging-tall-block.html [ Failure ]
 
+# New test added that needs platform specific results
+webkit.org/b/98452 fast/text/vertical-rl-rtl-linebreak.html [ Failure ]
+
 # -----------------------------------------------------------------
 # Inspector tests
 # -----------------------------------------------------------------

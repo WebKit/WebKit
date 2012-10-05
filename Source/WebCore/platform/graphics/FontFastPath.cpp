@@ -47,6 +47,40 @@ GlyphData Font::glyphDataForCharacter(UChar32 c, bool mirror, FontDataVariant va
     return glyphDataAndPageForCharacter(c, mirror, variant).first;
 }
 
+static inline std::pair<GlyphData, GlyphPage*> glyphDataAndPageForCharacterWithTextOrientation(UChar32 character, TextOrientation orientation, GlyphData& data, GlyphPage* page, unsigned pageNumber)
+{
+    if (orientation == TextOrientationVerticalRight) {
+        RefPtr<SimpleFontData> verticalRightFontData = data.fontData->verticalRightOrientationFontData();
+        GlyphPageTreeNode* verticalRightNode = GlyphPageTreeNode::getRootChild(verticalRightFontData.get(), pageNumber);
+        GlyphPage* verticalRightPage = verticalRightNode->page();
+        if (verticalRightPage) {
+            GlyphData verticalRightData = verticalRightPage->glyphDataForCharacter(character);
+            // If the glyphs are distinct, we will make the assumption that the font has a vertical-right glyph baked
+            // into it.
+            if (data.glyph != verticalRightData.glyph)
+                return make_pair(data, page);
+            // The glyphs are identical, meaning that we should just use the horizontal glyph.
+            if (verticalRightData.fontData)
+                return make_pair(verticalRightData, verticalRightPage);
+        }
+    } else if (orientation == TextOrientationUpright) {
+        RefPtr<SimpleFontData> uprightFontData = data.fontData->uprightOrientationFontData();
+        GlyphPageTreeNode* uprightNode = GlyphPageTreeNode::getRootChild(uprightFontData.get(), pageNumber);
+        GlyphPage* uprightPage = uprightNode->page();
+        if (uprightPage) {
+            GlyphData uprightData = uprightPage->glyphDataForCharacter(character);
+            // If the glyphs are the same, then we know we can just use the horizontal glyph rotated vertically to be upright.
+            if (data.glyph == uprightData.glyph)
+                return make_pair(data, page);
+            // The glyphs are distinct, meaning that the font has a vertical-right glyph baked into it. We can't use that
+            // glyph, so we fall back to the upright data and use the horizontal glyph.
+            if (uprightData.fontData)
+                return make_pair(uprightData, uprightPage);
+        }
+    }
+    return make_pair(data, page);
+}
+
 std::pair<GlyphData, GlyphPage*> Font::glyphDataAndPageForCharacter(UChar32 c, bool mirror, FontDataVariant variant) const
 {
     ASSERT(isMainThread());
@@ -95,40 +129,9 @@ std::pair<GlyphData, GlyphPage*> Font::glyphDataAndPageForCharacter(UChar32 c, b
                             variant = BrokenIdeographVariant;
                             break;
                         }
-                    } else {
-                        if (m_fontDescription.textOrientation() == TextOrientationVerticalRight) {
-                            RefPtr<SimpleFontData> verticalRightFontData = data.fontData->verticalRightOrientationFontData();
-                            GlyphPageTreeNode* verticalRightNode = GlyphPageTreeNode::getRootChild(verticalRightFontData.get(), pageNumber);
-                            GlyphPage* verticalRightPage = verticalRightNode->page();
-                            if (verticalRightPage) {
-                                GlyphData verticalRightData = verticalRightPage->glyphDataForCharacter(c);
-                                // If the glyphs are distinct, we will make the assumption that the font has a vertical-right glyph baked
-                                // into it.
-                                if (data.glyph != verticalRightData.glyph)
-                                    return make_pair(data, page);
-                                // The glyphs are identical, meaning that we should just use the horizontal glyph.
-                                if (verticalRightData.fontData)
-                                    return make_pair(verticalRightData, verticalRightPage);
-                            }
-                        } else if (m_fontDescription.textOrientation() == TextOrientationUpright) {
-                            RefPtr<SimpleFontData> uprightFontData = data.fontData->uprightOrientationFontData();
-                            GlyphPageTreeNode* uprightNode = GlyphPageTreeNode::getRootChild(uprightFontData.get(), pageNumber);
-                            GlyphPage* uprightPage = uprightNode->page();
-                            if (uprightPage) {
-                                GlyphData uprightData = uprightPage->glyphDataForCharacter(c);
-                                // If the glyphs are the same, then we know we can just use the horizontal glyph rotated vertically to be upright.
-                                if (data.glyph == uprightData.glyph)
-                                    return make_pair(data, page);
-                                // The glyphs are distinct, meaning that the font has a vertical-right glyph baked into it. We can't use that
-                                // glyph, so we fall back to the upright data and use the horizontal glyph.
-                                if (uprightData.fontData)
-                                    return make_pair(uprightData, uprightPage);
-                            }
-                        }
+                    } else
+                        return glyphDataAndPageForCharacterWithTextOrientation(c, m_fontDescription.textOrientation(), data, page, pageNumber);
 
-                        // Shouldn't be possible to even reach this point.
-                        ASSERT_NOT_REACHED();
-                    }
                     return make_pair(data, page);
                 }
 
@@ -222,6 +225,8 @@ std::pair<GlyphData, GlyphPage*> Font::glyphDataAndPageForCharacter(UChar32 c, b
 #else
             page->setGlyphDataForCharacter(c, data.glyph, data.fontData);
             data.fontData->setMaxGlyphPageTreeLevel(max(data.fontData->maxGlyphPageTreeLevel(), node->level()));
+            if (data.fontData->platformData().orientation() != Horizontal && !data.fontData->isTextOrientationFallback())
+                return glyphDataAndPageForCharacterWithTextOrientation(c, m_fontDescription.textOrientation(), data, fallbackPage, pageNumber);
 #endif
         }
         return make_pair(data, page);
