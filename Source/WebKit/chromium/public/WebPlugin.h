@@ -31,6 +31,8 @@
 #ifndef WebPlugin_h
 #define WebPlugin_h
 
+#include "WebDragOperation.h"
+#include "WebDragStatus.h"
 #include "platform/WebCanvas.h"
 #include "platform/WebString.h"
 #include "platform/WebURL.h"
@@ -40,6 +42,7 @@ struct NPObject;
 namespace WebKit {
 
 class WebDataSource;
+class WebDragData;
 class WebFrame;
 class WebInputEvent;
 class WebPluginContainer;
@@ -79,6 +82,8 @@ public:
 
     virtual bool acceptsInputEvents() = 0;
     virtual bool handleInputEvent(const WebInputEvent&, WebCursorInfo&) = 0;
+
+    virtual bool handleDragStatusUpdate(WebDragStatus, const WebDragData&, WebDragOperationsMask, const WebPoint& position, const WebPoint& screenPosition) { return false; }
 
     virtual void didReceiveResponse(const WebURLResponse&) = 0;
     virtual void didReceiveData(const char* data, int dataLength) = 0;

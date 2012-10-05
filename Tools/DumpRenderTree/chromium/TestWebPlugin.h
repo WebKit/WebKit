@@ -65,6 +65,7 @@ public:
     virtual void updateVisibility(bool) { }
     virtual bool acceptsInputEvents() { return true; }
     virtual bool handleInputEvent(const WebKit::WebInputEvent&, WebKit::WebCursorInfo&);
+    virtual bool handleDragStatusUpdate(WebKit::WebDragStatus, const WebKit::WebDragData&, WebKit::WebDragOperationsMask, const WebKit::WebPoint& position, const WebKit::WebPoint& screenPosition);
     virtual void didReceiveResponse(const WebKit::WebURLResponse&) { }
     virtual void didReceiveData(const char* data, int dataLength) { }
     virtual void didFinishLoading() { }

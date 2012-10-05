@@ -165,6 +165,7 @@ private:
     ~WebPluginContainerImpl();
 
     void handleMouseEvent(WebCore::MouseEvent*);
+    void handleDragEvent(WebCore::MouseEvent*);
     void handleWheelEvent(WebCore::WheelEvent*);
     void handleKeyboardEvent(WebCore::KeyboardEvent*);
     void handleTouchEvent(WebCore::TouchEvent*);

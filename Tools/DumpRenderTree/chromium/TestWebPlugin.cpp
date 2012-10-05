@@ -463,3 +463,23 @@ bool TestWebPlugin::handleInputEvent(const WebKit::WebInputEvent& event, WebKit:
     return false;
 }
 
+bool TestWebPlugin::handleDragStatusUpdate(WebKit::WebDragStatus dragStatus, const WebKit::WebDragData&, WebKit::WebDragOperationsMask, const WebKit::WebPoint& position, const WebKit::WebPoint& screenPosition)
+{
+    const char* dragStatusName = 0;
+    switch (dragStatus) {
+    case WebKit::WebDragStatusEnter:
+        dragStatusName = "DragEnter";
+        break;
+    case WebKit::WebDragStatusOver:
+        dragStatusName = "DragOver";
+        break;
+    case WebKit::WebDragStatusLeave:
+        dragStatusName = "DragLeave";
+        break;
+    case WebKit::WebDragStatusUnknown:
+        ASSERT_NOT_REACHED();
+    }
+    printf("Plugin received event: %s\n", dragStatusName);
+    return false;
+}
+
