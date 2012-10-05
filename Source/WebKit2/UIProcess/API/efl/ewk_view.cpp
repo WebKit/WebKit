@@ -44,6 +44,7 @@
 #include "ewk_popup_menu_item.h"
 #include "ewk_popup_menu_item_private.h"
 #include "ewk_private.h"
+#include "ewk_resource.h"
 #include "ewk_settings_private.h"
 #include "ewk_view_find_client_private.h"
 #include "ewk_view_form_client_private.h"
@@ -52,7 +53,6 @@
 #include "ewk_view_private.h"
 #include "ewk_view_resource_load_client_private.h"
 #include "ewk_view_ui_client_private.h"
-#include "ewk_web_resource.h"
 #include <Ecore_Evas.h>
 #include <Edje.h>
 #include <WebCore/Cursor.h>
@@ -79,7 +79,7 @@ static const char EWK_VIEW_TYPE_STR[] = "EWK2_View";
 
 static const int defaultCursorSize = 16;
 
-typedef HashMap<uint64_t, Ewk_Web_Resource*> LoadingResourcesMap;
+typedef HashMap<uint64_t, Ewk_Resource*> LoadingResourcesMap;
 static void _ewk_view_priv_loading_resources_clear(LoadingResourcesMap& loadingResourcesMap);
 
 struct _Ewk_View_Private_Data {
@@ -426,7 +426,7 @@ static void _ewk_view_priv_loading_resources_clear(LoadingResourcesMap& loadingR
     LoadingResourcesMap::iterator it = loadingResourcesMap.begin();
     LoadingResourcesMap::iterator end = loadingResourcesMap.end();
     for ( ; it != end; ++it)
-        ewk_web_resource_unref(it->second);
+        ewk_resource_unref(it->second);
 
     loadingResourcesMap.clear();
 }
@@ -946,15 +946,15 @@ Ewk_Settings* ewk_view_settings_get(const Evas_Object* ewkView)
  *
  * Emits signal: "resource,request,new" with pointer to resource request.
  */
-void ewk_view_resource_load_initiated(Evas_Object* ewkView, uint64_t resourceIdentifier, Ewk_Web_Resource* resource, Ewk_Url_Request* request)
+void ewk_view_resource_load_initiated(Evas_Object* ewkView, uint64_t resourceIdentifier, Ewk_Resource* resource, Ewk_Url_Request* request)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
 
-    Ewk_Web_Resource_Request resourceRequest = {resource, request, 0};
+    Ewk_Resource_Request resourceRequest = {resource, request, 0};
 
     // Keep the resource internally to reuse it later.
-    priv->loadingResourcesMap.add(resourceIdentifier, ewk_web_resource_ref(resource));
+    priv->loadingResourcesMap.add(resourceIdentifier, ewk_resource_ref(resource));
 
     evas_object_smart_callback_call(ewkView, "resource,request,new", &resourceRequest);
 }
@@ -973,8 +973,8 @@ void ewk_view_resource_load_response(Evas_Object* ewkView, uint64_t resourceIden
     if (!priv->loadingResourcesMap.contains(resourceIdentifier))
         return;
 
-    Ewk_Web_Resource* resource = priv->loadingResourcesMap.get(resourceIdentifier);
-    Ewk_Web_Resource_Load_Response resourceLoadResponse = {resource, response};
+    Ewk_Resource* resource = priv->loadingResourcesMap.get(resourceIdentifier);
+    Ewk_Resource_Load_Response resourceLoadResponse = {resource, response};
     evas_object_smart_callback_call(ewkView, "resource,request,response", &resourceLoadResponse);
 }
 
@@ -992,8 +992,8 @@ void ewk_view_resource_load_failed(Evas_Object* ewkView, uint64_t resourceIdenti
     if (!priv->loadingResourcesMap.contains(resourceIdentifier))
         return;
 
-    Ewk_Web_Resource* resource = priv->loadingResourcesMap.get(resourceIdentifier);
-    Ewk_Web_Resource_Load_Error resourceLoadError = {resource, error};
+    Ewk_Resource* resource = priv->loadingResourcesMap.get(resourceIdentifier);
+    Ewk_Resource_Load_Error resourceLoadError = {resource, error};
     evas_object_smart_callback_call(ewkView, "resource,request,failed", &resourceLoadError);
 }
 
@@ -1011,10 +1011,10 @@ void ewk_view_resource_load_finished(Evas_Object* ewkView, uint64_t resourceIden
     if (!priv->loadingResourcesMap.contains(resourceIdentifier))
         return;
 
-    Ewk_Web_Resource* resource = priv->loadingResourcesMap.take(resourceIdentifier);
+    Ewk_Resource* resource = priv->loadingResourcesMap.take(resourceIdentifier);
     evas_object_smart_callback_call(ewkView, "resource,request,finished", resource);
 
-    ewk_web_resource_unref(resource);
+    ewk_resource_unref(resource);
 }
 
 /**
@@ -1031,8 +1031,8 @@ void ewk_view_resource_request_sent(Evas_Object* ewkView, uint64_t resourceIdent
     if (!priv->loadingResourcesMap.contains(resourceIdentifier))
         return;
 
-    Ewk_Web_Resource* resource = priv->loadingResourcesMap.get(resourceIdentifier);
-    Ewk_Web_Resource_Request resourceRequest = {resource, request, redirectResponse};
+    Ewk_Resource* resource = priv->loadingResourcesMap.get(resourceIdentifier);
+    Ewk_Resource_Request resourceRequest = {resource, request, redirectResponse};
 
     evas_object_smart_callback_call(ewkView, "resource,request,sent", &resourceRequest);
 }

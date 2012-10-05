@@ -32,6 +32,8 @@
 #include "WKURL.h"
 #include "WKURLRequest.h"
 #include "WKURLResponse.h"
+#include "ewk_resource.h"
+#include "ewk_resource_private.h"
 #include "ewk_url_request.h"
 #include "ewk_url_request_private.h"
 #include "ewk_url_response.h"
@@ -39,8 +41,6 @@
 #include "ewk_view_private.h"
 #include "ewk_view_resource_load_client_private.h"
 #include "ewk_web_error_private.h"
-#include "ewk_web_resource.h"
-#include "ewk_web_resource_private.h"
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
@@ -56,10 +56,10 @@ static void didInitiateLoadForResource(WKPageRef, WKFrameRef wkFrame, uint64_t r
     bool isMainResource = (WKFrameIsMainFrame(wkFrame) && pageIsProvisionallyLoading);
     WKRetainPtr<WKURLRef> wkUrl(AdoptWK, WKURLRequestCopyURL(wkRequest));
 
-    Ewk_Web_Resource* resource = ewk_web_resource_new(toImpl(wkUrl.get())->string().utf8().data(), isMainResource);
+    Ewk_Resource* resource = ewk_resource_new(toImpl(wkUrl.get())->string().utf8().data(), isMainResource);
     Ewk_Url_Request* request = ewk_url_request_new(wkRequest);
     ewk_view_resource_load_initiated(toEwkView(clientInfo), resourceIdentifier, resource, request);
-    ewk_web_resource_unref(resource);
+    ewk_resource_unref(resource);
     ewk_url_request_unref(request);
 }
 

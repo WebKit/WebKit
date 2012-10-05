@@ -1,3 +1,38 @@
+2012-10-05  Jongseok Yang  <js45.yang@samsung.com>
+
+        [EFL][WK2] Remove "web" word from ewk_resource APIs
+        https://bugs.webkit.org/show_bug.cgi?id=97887
+
+        Reviewed by Gyuyoung Kim.
+
+        Remove "web" word from ewk_web_resource APIs.
+        "web" word was redundant because "ewk" means "EFL WebKit" and enough to understand the meaning with ewk_resource_XXX.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/ewk_resource.cpp: Renamed from Source/WebKit2/UIProcess/API/efl/ewk_web_resource.cpp.
+        (_Ewk_Resource):
+        (_Ewk_Resource::_Ewk_Resource):
+        (_Ewk_Resource::~_Ewk_Resource):
+        (ewk_resource_ref):
+        (ewk_resource_unref):
+        (ewk_resource_url_get):
+        (ewk_resource_new):
+        (ewk_resource_main_resource_get):
+        * UIProcess/API/efl/ewk_resource.h: Renamed from Source/WebKit2/UIProcess/API/efl/ewk_web_resource.h.
+        * UIProcess/API/efl/ewk_resource_private.h: Renamed from Source/WebKit2/UIProcess/API/efl/ewk_web_resource_private.h.
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_priv_loading_resources_clear):
+        (ewk_view_resource_load_initiated):
+        (ewk_view_resource_load_response):
+        (ewk_view_resource_load_failed):
+        (ewk_view_resource_load_finished):
+        (ewk_view_resource_request_sent):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_private.h:
+        * UIProcess/API/efl/ewk_view_resource_load_client.cpp:
+        (didInitiateLoadForResource):
+
 2012-10-04  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] ewk_web_error_free is not a public API

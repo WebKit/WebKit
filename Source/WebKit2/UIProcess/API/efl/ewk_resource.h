@@ -24,12 +24,12 @@
  */
 
 /**
- * @file    ewk_web_resource.h
+ * @file    ewk_resource.h
  * @brief   Describes the Web Resource API.
  */
 
-#ifndef ewk_web_resource_h
-#define ewk_web_resource_h
+#ifndef ewk_resource_h
+#define ewk_resource_h
 
 #include <Eina.h>
 
@@ -37,8 +37,8 @@
 extern "C" {
 #endif
 
-/** Creates a type name for @a Ewk_Web_Resource. */
-typedef struct _Ewk_Web_Resource Ewk_Web_Resource;
+/** Creates a type name for @a Ewk_Resource. */
+typedef struct _Ewk_Resource Ewk_Resource;
 
 /**
  * Increases the reference count of the given object.
@@ -47,7 +47,7 @@ typedef struct _Ewk_Web_Resource Ewk_Web_Resource;
  *
  * @return a pointer to the object on success, @c NULL otherwise.
  */
-EAPI Ewk_Web_Resource *ewk_web_resource_ref(Ewk_Web_Resource *resource);
+EAPI Ewk_Resource *ewk_resource_ref(Ewk_Resource *resource);
 
 /**
  * Decreases the reference count of the given object, possibly freeing it.
@@ -56,7 +56,7 @@ EAPI Ewk_Web_Resource *ewk_web_resource_ref(Ewk_Web_Resource *resource);
  *
  * @param resource the resource object to decrease the reference count
  */
-EAPI void ewk_web_resource_unref(Ewk_Web_Resource *resource);
+EAPI void ewk_resource_unref(Ewk_Resource *resource);
 
 /**
  * Query URL for this resource.
@@ -69,7 +69,7 @@ EAPI void ewk_web_resource_unref(Ewk_Web_Resource *resource);
  *         eina_stringshare_ref() instead of eina_stringshare_add() or
  *         strdup().
  */
-EAPI const char *ewk_web_resource_url_get(const Ewk_Web_Resource *resource);
+EAPI const char *ewk_resource_url_get(const Ewk_Resource *resource);
 
 /**
  * Query if this is the main resource.
@@ -78,10 +78,10 @@ EAPI const char *ewk_web_resource_url_get(const Ewk_Web_Resource *resource);
  *
  * @return @c EINA_TRUE if this is the main resource, @c EINA_FALSE otherwise
  */
-EAPI Eina_Bool ewk_web_resource_main_resource_get(const Ewk_Web_Resource *resource);
+EAPI Eina_Bool ewk_resource_main_resource_get(const Ewk_Resource *resource);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // ewk_web_resource_h
+#endif // ewk_resource_h

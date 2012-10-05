@@ -56,11 +56,11 @@
  * - "policy,decision,new,window", Ewk_Navigation_Policy_Decision*: a new window policy decision should be taken.
  *   To make a policy decision asynchronously, simply increment the reference count of the
  *   #Ewk_Navigation_Policy_Decision object using ewk_navigation_policy_decision_ref().
- * - "resource,request,failed", const Ewk_Web_Resource_Load_Error*: a resource failed loading.
- * - "resource,request,finished", const Ewk_Web_Resource*: a resource finished loading.
- * - "resource,request,new", const Ewk_Web_Resource_Request*: a resource request was initiated.
- * - "resource,request,response", Ewk_Web_Resource_Load_Response*: a response to a resource request was received.
- * - "resource,request,sent", const Ewk_Web_Resource_Request*: a resource request was sent.
+ * - "resource,request,failed", const Ewk_Resource_Load_Error*: a resource failed loading.
+ * - "resource,request,finished", const Ewk_Resource*: a resource finished loading.
+ * - "resource,request,new", const Ewk_Resource_Request*: a resource request was initiated.
+ * - "resource,request,response", Ewk_Resource_Load_Response*: a response to a resource request was received.
+ * - "resource,request,sent", const Ewk_Resource_Request*: a resource request was sent.
  * - "text,found", unsigned int*: the requested text was found and it gives the number of matches.
  * - "title,changed", const char*: title of the main frame was changed.
  * - "uri,changed", const char*: uri of the main frame was changed.
@@ -74,12 +74,12 @@
 #include "ewk_context.h"
 #include "ewk_download_job.h"
 #include "ewk_intent.h"
+#include "ewk_resource.h"
 #include "ewk_settings.h"
 #include "ewk_touch.h"
 #include "ewk_url_request.h"
 #include "ewk_url_response.h"
 #include "ewk_web_error.h"
-#include "ewk_web_resource.h"
 #include <Evas.h>
 
 #ifdef __cplusplus
@@ -201,39 +201,39 @@ struct _Ewk_View_Smart_Data {
     } changed;
 };
 
-/// Creates a type name for _Ewk_Web_Resource_Request.
-typedef struct _Ewk_Web_Resource_Request Ewk_Web_Resource_Request;
+/// Creates a type name for _Ewk_Resource_Request.
+typedef struct _Ewk_Resource_Request Ewk_Resource_Request;
 
 /**
  * @brief Structure containing details about a resource request.
  */
-struct _Ewk_Web_Resource_Request {
-    Ewk_Web_Resource *resource; /**< resource being requested */
+struct _Ewk_Resource_Request {
+    Ewk_Resource *resource; /**< resource being requested */
     Ewk_Url_Request *request; /**< URL request for the resource */
     Ewk_Url_Response *redirect_response; /**< Possible redirect response for the resource or @c NULL */
 };
 
-/// Creates a type name for _Ewk_Web_Resource_Load_Response.
-typedef struct _Ewk_Web_Resource_Load_Response Ewk_Web_Resource_Load_Response;
+/// Creates a type name for _Ewk_Resource_Load_Response.
+typedef struct _Ewk_Resource_Load_Response Ewk_Resource_Load_Response;
 
 /**
  * @brief Structure containing details about a response to a resource request.
  */
-struct _Ewk_Web_Resource_Load_Response {
-     Ewk_Web_Resource *resource; /**< resource requested */
-     Ewk_Url_Response *response; /**< resource load response */
+struct _Ewk_Resource_Load_Response {
+    Ewk_Resource *resource; /**< resource requested */
+    Ewk_Url_Response *response; /**< resource load response */
 };
 
-/// Creates a type name for _Ewk_Web_Resource_Load_Error.
-typedef struct _Ewk_Web_Resource_Load_Error Ewk_Web_Resource_Load_Error;
+/// Creates a type name for _Ewk_Resource_Load_Error.
+typedef struct _Ewk_Resource_Load_Error Ewk_Resource_Load_Error;
 
 /**
  * @brief Structure containing details about a resource load error.
  *
  * Details given about a resource load failure.
  */
-struct _Ewk_Web_Resource_Load_Error {
-    Ewk_Web_Resource *resource; /**< resource that failed loading */
+struct _Ewk_Resource_Load_Error {
+    Ewk_Resource *resource; /**< resource that failed loading */
     Ewk_Web_Error *error; /**< load error */
 };
 

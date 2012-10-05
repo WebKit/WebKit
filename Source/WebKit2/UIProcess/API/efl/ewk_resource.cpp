@@ -23,11 +23,70 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ewk_web_resource_private_h
-#define ewk_web_resource_private_h
+#include "config.h"
+#include "ewk_resource.h"
 
-typedef struct _Ewk_Web_Resource Ewk_Web_Resource;
+#include "WKEinaSharedString.h"
+#include "ewk_resource_private.h"
+#include <wtf/text/CString.h>
 
-Ewk_Web_Resource* ewk_web_resource_new(const char* uri, bool isMainResource);
+struct _Ewk_Resource {
+    unsigned __ref; /**< the reference count of the object */
+    WKEinaSharedString url;
+    bool isMainResource;
 
-#endif // ewk_web_resource_private_h
+    _Ewk_Resource(const char* url, bool isMainResource)
+        : __ref(1)
+        , url(url)
+        , isMainResource(isMainResource)
+    { }
+
+    ~_Ewk_Resource()
+    {
+        ASSERT(!__ref);
+    }
+};
+
+Ewk_Resource* ewk_resource_ref(Ewk_Resource* resource)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(resource, 0);
+
+    ++resource->__ref;
+
+    return resource;
+}
+
+void ewk_resource_unref(Ewk_Resource* resource)
+{
+    EINA_SAFETY_ON_NULL_RETURN(resource);
+
+    if (--resource->__ref)
+        return;
+
+    delete resource;
+}
+
+const char* ewk_resource_url_get(const Ewk_Resource* resource)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(resource, 0);
+
+    return resource->url;
+}
+
+/**
+ * @internal
+ * Constructs a Ewk_Resource.
+ */
+Ewk_Resource* ewk_resource_new(const char* url, bool isMainResource)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(url, 0);
+
+    return new Ewk_Resource(url, isMainResource);
+}
+
+Eina_Bool ewk_resource_main_resource_get(const Ewk_Resource* resource)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(resource, false);
+
+    return resource->isMainResource;
+}

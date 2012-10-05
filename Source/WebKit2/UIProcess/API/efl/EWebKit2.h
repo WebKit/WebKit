@@ -39,6 +39,7 @@
 #include "ewk_main.h"
 #include "ewk_navigation_policy_decision.h"
 #include "ewk_popup_menu_item.h"
+#include "ewk_resource.h"
 #include "ewk_settings.h"
 #include "ewk_touch.h"
 #include "ewk_url_request.h"
@@ -46,6 +47,5 @@
 #include "ewk_url_scheme_request.h"
 #include "ewk_view.h"
 #include "ewk_web_error.h"
-#include "ewk_web_resource.h"
 
 #endif // EWebKit2_h
