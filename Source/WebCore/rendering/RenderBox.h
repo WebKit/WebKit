@@ -289,6 +289,10 @@ public:
     virtual LayoutUnit minPreferredLogicalWidth() const;
     virtual LayoutUnit maxPreferredLogicalWidth() const;
 
+    // FIXME: We should rename these back to overrideLogicalHeight/Width and have them store
+    // the border-box height/width like the regular height/width accessors on RenderBox.
+    // Right now, these are different than contentHeight/contentWidth because they still
+    // include the scrollbar height/width.
     LayoutUnit overrideLogicalContentWidth() const;
     LayoutUnit overrideLogicalContentHeight() const;
     bool hasOverrideHeight() const;

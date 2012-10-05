@@ -708,14 +708,14 @@ void RenderBox::clearOverrideSize()
 
 LayoutUnit RenderBox::overrideLogicalContentWidth() const
 {
-    // FIXME: This should probably be returning contentLogicalWidth instead of contentWidth.
-    return hasOverrideWidth() ? gOverrideWidthMap->get(this) : contentWidth();
+    ASSERT(hasOverrideWidth());
+    return gOverrideWidthMap->get(this);
 }
 
 LayoutUnit RenderBox::overrideLogicalContentHeight() const
 {
-    // FIXME: This should probably be returning contentLogicalHeight instead of contentHeight.
-    return hasOverrideHeight() ? gOverrideHeightMap->get(this) : contentHeight();
+    ASSERT(hasOverrideHeight());
+    return gOverrideHeightMap->get(this);
 }
 
 LayoutUnit RenderBox::adjustBorderBoxLogicalWidthForBoxSizing(LayoutUnit width) const
@@ -2341,8 +2341,11 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h) const
     // We need to stop here, since we don't want to increase the height of the table
     // artificially.  We're going to rely on this cell getting expanded to some new
     // height, and then when we lay out again we'll use the calculation below.
-    if (isTableCell() && (h.isAuto() || h.isPercent()))
-        return overrideLogicalContentHeight();
+    if (isTableCell() && (h.isAuto() || h.isPercent())) {
+        if (hasOverrideHeight())
+            return overrideLogicalContentHeight();
+        return logicalHeight() - borderAndPaddingLogicalHeight();
+    }
 
     if (h.isPercent() && isOutOfFlowPositioned()) {
         // FIXME: This is wrong if the containingBlock has a perpendicular writing mode.

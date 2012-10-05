@@ -1,3 +1,37 @@
+2012-10-05  Ojan Vafai  <ojan@chromium.org>
+
+        Deprecated flexboxes subtract scrollbar width/height twice
+        https://bugs.webkit.org/show_bug.cgi?id=98552
+
+        Reviewed by Tony Chang.
+
+        This is a regression from http://trac.webkit.org/changeset/119507.
+        The problem is that contentHeight subtracts the scrollbar and
+        RenderDeprecatedFlexbox subtracts the scrollbar.
+
+        -Make it so that we only access override sizes if one has been set.
+        I think this makes the calling code more clear.
+        -If we don't have one set, grab the height/width - borderAndPadding.
+        -Add a FIXME to change this all back to being borderbox sizes.
+        There's something trick with making table padding/border work right for that
+        though (noted in the original patch).
+
+        Test: fast/flexbox/flexing-overflow-scroll-item.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::overrideLogicalContentWidth):
+        (WebCore::RenderBox::overrideLogicalContentHeight):
+        (WebCore::RenderBox::availableLogicalHeightUsing):
+        * rendering/RenderBox.h:
+        (RenderBox):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::contentWidthForChild):
+        (WebCore):
+        (WebCore::contentHeightForChild):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::allowedChildFlex):
+
 2012-10-05  Eric Seidel  <eric@webkit.org>
 
         Make tables which don't use col/row span much faster to layout
