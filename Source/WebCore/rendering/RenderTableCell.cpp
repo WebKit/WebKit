@@ -198,6 +198,47 @@ void RenderTableCell::computePreferredLogicalWidths()
     }
 }
 
+void RenderTableCell::computeIntrinsicPadding(int rowHeight)
+{
+    int oldIntrinsicPaddingBefore = intrinsicPaddingBefore();
+    int oldIntrinsicPaddingAfter = intrinsicPaddingAfter();
+    int logicalHeightWithoutIntrinsicPadding = pixelSnappedLogicalHeight() - oldIntrinsicPaddingBefore - oldIntrinsicPaddingAfter;
+
+    int intrinsicPaddingBefore = 0;
+    switch (style()->verticalAlign()) {
+    case SUB:
+    case SUPER:
+    case TEXT_TOP:
+    case TEXT_BOTTOM:
+    case LENGTH:
+    case BASELINE: {
+        LayoutUnit baseline = cellBaselinePosition();
+        if (baseline > borderBefore() + paddingBefore())
+            intrinsicPaddingBefore = section()->rowBaseline(rowIndex()) - (baseline - oldIntrinsicPaddingBefore);
+        break;
+    }
+    case TOP:
+        break;
+    case MIDDLE:
+        intrinsicPaddingBefore = (rowHeight - logicalHeightWithoutIntrinsicPadding) / 2;
+        break;
+    case BOTTOM:
+        intrinsicPaddingBefore = rowHeight - logicalHeightWithoutIntrinsicPadding;
+        break;
+    case BASELINE_MIDDLE:
+        break;
+    }
+
+    int intrinsicPaddingAfter = rowHeight - logicalHeightWithoutIntrinsicPadding - intrinsicPaddingBefore;
+    setIntrinsicPaddingBefore(intrinsicPaddingBefore);
+    setIntrinsicPaddingAfter(intrinsicPaddingAfter);
+
+    // FIXME: Changing an intrinsic padding shouldn't trigger a relayout as it only shifts the cell inside the row but
+    // doesn't change the logical height.
+    if (intrinsicPaddingBefore != oldIntrinsicPaddingBefore || intrinsicPaddingAfter != oldIntrinsicPaddingAfter)
+        setNeedsLayout(true, MarkOnlyThis);
+}
+
 void RenderTableCell::updateLogicalWidth()
 {
 }

@@ -99,9 +99,7 @@ public:
 
     LayoutUnit cellBaselinePosition() const;
 
-    void setIntrinsicPaddingBefore(int p) { m_intrinsicPaddingBefore = p; }
-    void setIntrinsicPaddingAfter(int p) { m_intrinsicPaddingAfter = p; }
-    void setIntrinsicPadding(int before, int after) { setIntrinsicPaddingBefore(before); setIntrinsicPaddingAfter(after); }
+    void computeIntrinsicPadding(int rowHeight);
     void clearIntrinsicPadding() { setIntrinsicPadding(0, 0); }
 
     int intrinsicPaddingBefore() const { return m_intrinsicPaddingBefore; }
@@ -209,6 +207,10 @@ private:
     int borderHalfEnd(bool outer) const;
     int borderHalfBefore(bool outer) const;
     int borderHalfAfter(bool outer) const;
+
+    void setIntrinsicPaddingBefore(int p) { m_intrinsicPaddingBefore = p; }
+    void setIntrinsicPaddingAfter(int p) { m_intrinsicPaddingAfter = p; }
+    void setIntrinsicPadding(int before, int after) { setIntrinsicPaddingBefore(before); setIntrinsicPaddingAfter(after); }
 
     CollapsedBorderValue collapsedStartBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
     CollapsedBorderValue collapsedEndBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;

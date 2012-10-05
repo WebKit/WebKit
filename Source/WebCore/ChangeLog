@@ -1,3 +1,37 @@
+2012-10-04  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Split the intrinsic padding update code out of RenderTableSection::layoutRows
+        https://bugs.webkit.org/show_bug.cgi?id=98454
+
+        Reviewed by Eric Seidel.
+
+        RenderTableSection::layoutRows is very long and it's difficult to see what's
+        going on. This change moves the intrinsic padding update code into RenderTableCell
+        for clarity. While at it, cleaned up a bit the code (renaming variables, functions).
+
+        Change covered by existing table tests.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::computeIntrinsicPadding):
+        Added this new function that does the update. Removed the 'default' case, replaced by
+        the explicit label BASELINE_MIDDLE.
+
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::setIntrinsicPaddingBefore):
+        (WebCore::RenderTableCell::setIntrinsicPaddingAfter):
+        (WebCore::RenderTableCell::setIntrinsicPadding):
+        Moved those setters to the private section as we want other classes
+        to use computeIntrinsicPadding.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows):
+        Replaced the code with a call to RenderTableCell::computeIntrinsicPadding.
+        Also moved 2 variables in the loop per our coding style.
+
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::rowBaseline):
+        Renamed to match our coding style.
+
 2012-10-04  Nate Chapin  <japhet@chromium.org>
 
         Crash in EventHandler::mouseMoved().
