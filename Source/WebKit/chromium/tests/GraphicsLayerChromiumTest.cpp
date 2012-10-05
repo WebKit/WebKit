@@ -50,7 +50,7 @@ namespace {
 class MockGraphicsLayerClient : public GraphicsLayerClient {
   public:
     virtual void notifyAnimationStarted(const GraphicsLayer*, double time) OVERRIDE { }
-    virtual void notifySyncRequired(const GraphicsLayer*) OVERRIDE { }
+    virtual void notifyFlushRequired(const GraphicsLayer*) OVERRIDE { }
     virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& inClip) OVERRIDE { }
     virtual bool showDebugBorders(const GraphicsLayer*) const OVERRIDE { return false; }
     virtual bool showRepaintCounter(const GraphicsLayer*) const OVERRIDE { return false; }

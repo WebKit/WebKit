@@ -42,9 +42,9 @@ InspectorOverlay::InspectorOverlay(WebPagePrivate* page, InspectorOverlayClient*
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void InspectorOverlay::notifySyncRequired(const WebCore::GraphicsLayer* layer)
+void InspectorOverlay::notifyFlushRequired(const WebCore::GraphicsLayer* layer)
 {
-    m_webPage->notifySyncRequired(layer);
+    m_webPage->notifyFlushRequired(layer);
 }
 
 void InspectorOverlay::paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext& context, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& inClip)

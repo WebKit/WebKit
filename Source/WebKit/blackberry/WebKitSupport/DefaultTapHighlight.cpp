@@ -110,9 +110,9 @@ void DefaultTapHighlight::hide()
         m_overlay->override()->addAnimation(fadeAnimation);
 }
 
-void DefaultTapHighlight::notifySyncRequired(const GraphicsLayer* layer)
+void DefaultTapHighlight::notifyFlushRequired(const GraphicsLayer* layer)
 {
-    m_page->notifySyncRequired(layer);
+    m_page->notifyFlushRequired(layer);
 }
 
 void DefaultTapHighlight::paintContents(const GraphicsLayer*, GraphicsContext& c, GraphicsLayerPaintingPhase, const IntRect& /*inClip*/)

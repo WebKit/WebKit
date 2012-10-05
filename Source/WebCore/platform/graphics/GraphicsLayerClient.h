@@ -63,9 +63,9 @@ public:
     // Callback for when hardware-accelerated animation started.
     virtual void notifyAnimationStarted(const GraphicsLayer*, double time) = 0;
 
-    // Notification that a layer property changed that requires a subsequent call to syncCompositingState()
+    // Notification that a layer property changed that requires a subsequent call to flushCompositingState()
     // to appear on the screen.
-    virtual void notifySyncRequired(const GraphicsLayer*) = 0;
+    virtual void notifyFlushRequired(const GraphicsLayer*) = 0;
     
     virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& inClip) = 0;
     virtual void didCommitChangesForLayer(const GraphicsLayer*) const { }

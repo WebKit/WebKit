@@ -5883,7 +5883,7 @@ void WebPagePrivate::setNeedsOneShotDrawingSynchronization()
     m_needsOneShotDrawingSynchronization = true;
 }
 
-void WebPagePrivate::notifySyncRequired(const GraphicsLayer*)
+void WebPagePrivate::notifyFlushRequired(const GraphicsLayer*)
 {
     scheduleRootLayerCommit();
 }

@@ -259,11 +259,11 @@ bool LayerTreeCoordinator::flushPendingLayerChanges()
     m_detachedLayers.clear();
 
     bool didSync = m_webPage->corePage()->mainFrame()->view()->flushCompositingStateIncludingSubframes();
-    m_nonCompositedContentLayer->syncCompositingStateForThisLayerOnly();
+    m_nonCompositedContentLayer->flushCompositingStateForThisLayerOnly();
     if (m_pageOverlayLayer)
-        m_pageOverlayLayer->syncCompositingStateForThisLayerOnly();
+        m_pageOverlayLayer->flushCompositingStateForThisLayerOnly();
 
-    m_rootLayer->syncCompositingStateForThisLayerOnly();
+    m_rootLayer->flushCompositingStateForThisLayerOnly();
 
     if (m_shouldSyncRootLayer) {
         m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetRootCompositingLayer(toCoordinatedGraphicsLayer(m_rootLayer.get())->id()));
@@ -514,7 +514,7 @@ void LayerTreeCoordinator::notifyAnimationStarted(const WebCore::GraphicsLayer*,
 {
 }
 
-void LayerTreeCoordinator::notifySyncRequired(const WebCore::GraphicsLayer*)
+void LayerTreeCoordinator::notifyFlushRequired(const WebCore::GraphicsLayer*)
 {
 }
 

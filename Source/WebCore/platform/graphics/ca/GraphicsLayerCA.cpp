@@ -893,13 +893,13 @@ FloatPoint GraphicsLayerCA::computePositionRelativeToBase(float& pageScale) cons
     return FloatPoint();
 }
 
-void GraphicsLayerCA::syncCompositingState(const FloatRect& clipRect)
+void GraphicsLayerCA::flushCompositingState(const FloatRect& clipRect)
 {
     TransformState state(TransformState::UnapplyInverseTransformDirection, FloatQuad(clipRect));
     recursiveCommitChanges(state);
 }
 
-void GraphicsLayerCA::syncCompositingStateForThisLayerOnly()
+void GraphicsLayerCA::flushCompositingStateForThisLayerOnly()
 {
     float pageScaleFactor;
     FloatPoint offset = computePositionRelativeToBase(pageScaleFactor);
@@ -1005,8 +1005,8 @@ void GraphicsLayerCA::platformCALayerDidCreateTiles(const Vector<FloatRect>& dir
         setNeedsDisplayInRect(dirtyRects[i]);
 
     // Ensure that the layout is up to date before any individual tiles are painted by telling the client
-    // that it needs to sync its layer state, which will end up scheduling the layer flusher.
-    client()->notifySyncRequired(this);
+    // that it needs to flush its layer state, which will end up scheduling the layer flusher.
+    client()->notifyFlushRequired(this);
 }
 
 float GraphicsLayerCA::platformCALayerDeviceScaleFactor()
@@ -2586,7 +2586,7 @@ void GraphicsLayerCA::removeCloneLayers()
 
 FloatPoint GraphicsLayerCA::positionForCloneRootLayer() const
 {
-    // This can get called during a sync when we've just removed the m_replicaLayer.
+    // This can get called during a flush when we've just removed the m_replicaLayer.
     if (!m_replicaLayer)
         return FloatPoint();
 
@@ -2843,7 +2843,7 @@ void GraphicsLayerCA::noteSublayersChanged()
 void GraphicsLayerCA::noteLayerPropertyChanged(LayerChangeFlags flags)
 {
     if (!m_uncommittedChanges && m_client)
-        m_client->notifySyncRequired(this);
+        m_client->notifyFlushRequired(this);
 
     m_uncommittedChanges |= flags;
 }

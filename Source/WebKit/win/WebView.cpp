@@ -6631,7 +6631,7 @@ void WebView::notifyAnimationStarted(const GraphicsLayer*, double)
     ASSERT_NOT_REACHED();
 }
 
-void WebView::notifySyncRequired(const GraphicsLayer*)
+void WebView::notifyFlushRequired(const GraphicsLayer*)
 {
     flushPendingGraphicsLayerChangesSoon();
 }
@@ -6673,7 +6673,7 @@ void WebView::flushPendingGraphicsLayerChanges()
 
     // Updating layout might have taken us out of compositing mode.
     if (m_backingLayer)
-        m_backingLayer->syncCompositingStateForThisLayerOnly();
+        m_backingLayer->flushCompositingStateForThisLayerOnly();
 
     view->flushCompositingStateIncludingSubframes();
 }

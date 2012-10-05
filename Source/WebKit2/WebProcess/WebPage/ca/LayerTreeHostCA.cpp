@@ -186,7 +186,7 @@ void LayerTreeHostCA::notifyAnimationStarted(const WebCore::GraphicsLayer*, doub
 {
 }
 
-void LayerTreeHostCA::notifySyncRequired(const WebCore::GraphicsLayer*)
+void LayerTreeHostCA::notifyFlushRequired(const WebCore::GraphicsLayer*)
 {
 }
 
@@ -245,10 +245,10 @@ void LayerTreeHostCA::didPerformScheduledLayerFlush()
 
 bool LayerTreeHostCA::flushPendingLayerChanges()
 {
-    m_rootLayer->syncCompositingStateForThisLayerOnly();
-    m_nonCompositedContentLayer->syncCompositingStateForThisLayerOnly();
+    m_rootLayer->flushCompositingStateForThisLayerOnly();
+    m_nonCompositedContentLayer->flushCompositingStateForThisLayerOnly();
     if (m_pageOverlayLayer)
-        m_pageOverlayLayer->syncCompositingStateForThisLayerOnly();
+        m_pageOverlayLayer->flushCompositingStateForThisLayerOnly();
 
     return m_webPage->corePage()->mainFrame()->view()->flushCompositingStateIncludingSubframes();
 }

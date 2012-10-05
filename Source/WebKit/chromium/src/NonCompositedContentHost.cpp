@@ -166,7 +166,7 @@ void NonCompositedContentHost::notifyAnimationStarted(const WebCore::GraphicsLay
     // Intentionally left empty since we don't support animations on the non-composited content.
 }
 
-void NonCompositedContentHost::notifySyncRequired(const WebCore::GraphicsLayer*)
+void NonCompositedContentHost::notifyFlushRequired(const WebCore::GraphicsLayer*)
 {
     m_webView->scheduleCompositingLayerSync();
 }

@@ -364,7 +364,7 @@ void WebOverlayPrivateWebKitThread::resetOverrides()
     }
 }
 
-void WebOverlayPrivateWebKitThread::notifySyncRequired(const WebCore::GraphicsLayer*)
+void WebOverlayPrivateWebKitThread::notifyFlushRequired(const WebCore::GraphicsLayer*)
 {
     if (WebPagePrivate* page = this->page())
         page->scheduleRootLayerCommit();

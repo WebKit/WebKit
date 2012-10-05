@@ -225,7 +225,7 @@ private:
 
     // GraphicsLayerClient Implementation
     virtual void notifyAnimationStarted(const GraphicsLayer*, double) { }
-    virtual void notifySyncRequired(const GraphicsLayer*) { scheduleLayerFlush(); }
+    virtual void notifyFlushRequired(const GraphicsLayer*) { scheduleLayerFlush(); }
     virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect&);
 
     virtual bool showDebugBorders(const GraphicsLayer*) const;

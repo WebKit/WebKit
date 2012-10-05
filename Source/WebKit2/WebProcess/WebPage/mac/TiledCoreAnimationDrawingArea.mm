@@ -263,7 +263,7 @@ void TiledCoreAnimationDrawingArea::notifyAnimationStarted(const GraphicsLayer*,
 {
 }
 
-void TiledCoreAnimationDrawingArea::notifySyncRequired(const GraphicsLayer*)
+void TiledCoreAnimationDrawingArea::notifyFlushRequired(const GraphicsLayer*)
 {
 }
 
@@ -305,7 +305,7 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
 
     if (m_pageOverlayLayer) {
         m_pageOverlayLayer->setNeedsDisplay();
-        m_pageOverlayLayer->syncCompositingStateForThisLayerOnly();
+        m_pageOverlayLayer->flushCompositingStateForThisLayerOnly();
     }
 
     bool returnValue = m_webPage->corePage()->mainFrame()->view()->flushCompositingStateIncludingSubframes();

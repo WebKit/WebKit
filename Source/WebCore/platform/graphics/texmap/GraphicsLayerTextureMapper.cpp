@@ -56,7 +56,7 @@ void GraphicsLayerTextureMapper::notifyChange(TextureMapperLayer::ChangeMask cha
     m_changeMask |= changeMask;
     if (!client())
         return;
-    client()->notifySyncRequired(this);
+    client()->notifyFlushRequired(this);
 }
 
 void GraphicsLayerTextureMapper::didSynchronize()
@@ -367,16 +367,16 @@ void GraphicsLayerTextureMapper::setContentsToMedia(TextureMapperPlatformLayer* 
 
 /* \reimp (GraphicsLayer.h)
 */
-void GraphicsLayerTextureMapper::syncCompositingStateForThisLayerOnly()
+void GraphicsLayerTextureMapper::flushCompositingStateForThisLayerOnly()
 {
-    m_layer->syncCompositingState(this);
+    m_layer->flushCompositingState(this);
 }
 
 /* \reimp (GraphicsLayer.h)
 */
-void GraphicsLayerTextureMapper::syncCompositingState(const FloatRect&)
+void GraphicsLayerTextureMapper::flushCompositingState(const FloatRect&)
 {
-    m_layer->syncCompositingState(this, TextureMapperLayer::TraverseDescendants);
+    m_layer->flushCompositingState(this, TextureMapperLayer::TraverseDescendants);
 }
 
 bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList& valueList, const IntSize& boxSize, const Animation* anim, const String& keyframesName, double timeOffset)

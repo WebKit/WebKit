@@ -283,7 +283,7 @@ void RenderLayerCompositor::scheduleLayerFlush()
 void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
 {
     // FrameView::flushCompositingStateIncludingSubframes() flushes each subframe,
-    // but GraphicsLayer::syncCompositingState() will cross frame boundaries
+    // but GraphicsLayer::flushCompositingState() will cross frame boundaries
     // if the GraphicsLayers are connected (the RootLayerAttachedViaEnclosingFrame case).
     // As long as we're not the root of the flush, we can bail.
     if (!isFlushRoot && rootLayerAttachment() == RootLayerAttachedViaEnclosingFrame)
@@ -297,7 +297,7 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
         if (frameView) {
             // FIXME: Passing frameRect() is correct only when RenderLayerCompositor uses a ScrollLayer (as in WebKit2)
             // otherwise, the passed clip rect needs to take scrolling into account
-            rootLayer->syncCompositingState(frameView->frameRect());
+            rootLayer->flushCompositingState(frameView->frameRect());
         }
     }
     

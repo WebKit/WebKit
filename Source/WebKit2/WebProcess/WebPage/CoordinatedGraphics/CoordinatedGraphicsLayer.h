@@ -1,4 +1,4 @@
-    /*
+flushCompositingState    /*
  Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
 
  This library is free software; you can redistribute it and/or
@@ -115,8 +115,8 @@ public:
     void setContentsNeedsDisplay();
     void setContentsScale(float);
     void setVisibleContentRectTrajectoryVector(const FloatPoint&);
-    virtual void syncCompositingState(const FloatRect&);
-    virtual void syncCompositingStateForThisLayerOnly();
+    virtual void flushCompositingState(const FloatRect&);
+    virtual void flushCompositingStateForThisLayerOnly();
 #if ENABLE(CSS_FILTERS)
     bool setFilters(const FilterOperations&);
 #endif

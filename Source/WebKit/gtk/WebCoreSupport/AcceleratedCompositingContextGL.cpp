@@ -322,8 +322,8 @@ void AcceleratedCompositingContext::scheduleLayerFlush()
 
 bool AcceleratedCompositingContext::flushPendingLayerChanges()
 {
-    m_rootLayer->syncCompositingStateForThisLayerOnly();
-    m_nonCompositedContentLayer->syncCompositingStateForThisLayerOnly();
+    m_rootLayer->flushCompositingStateForThisLayerOnly();
+    m_nonCompositedContentLayer->flushCompositingStateForThisLayerOnly();
     return core(m_webView)->mainFrame()->view()->flushCompositingStateIncludingSubframes();
 }
 
@@ -370,7 +370,7 @@ void AcceleratedCompositingContext::notifyAnimationStarted(const GraphicsLayer*,
 {
 
 }
-void AcceleratedCompositingContext::notifySyncRequired(const GraphicsLayer*)
+void AcceleratedCompositingContext::notifyFlushRequired(const GraphicsLayer*)
 {
 
 }

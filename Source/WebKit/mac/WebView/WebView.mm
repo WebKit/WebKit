@@ -6329,14 +6329,14 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
     
     To fix this, the GraphicsLayerCA code in WebCore does not change the CA
     layer tree during style changes and layout; it stores up all changes and
-    commits them via syncCompositingState(). There are then two situations in
-    which we can call syncCompositingState():
+    commits them via flushCompositingState(). There are then two situations in
+    which we can call flushCompositingState():
     
-    1. When painting. FrameView::paintContents() makes a call to syncCompositingState().
+    1. When painting. FrameView::paintContents() makes a call to flushCompositingState().
     
     2. When style changes/layout have made changes to the layer tree which do not
        result in painting. In this case we need a run loop observer to do a
-       syncCompositingState() at an appropriate time. The observer will keep firing
+       flushCompositingState() at an appropriate time. The observer will keep firing
        until the time is right (essentially when there are no more pending layouts).
     
 */

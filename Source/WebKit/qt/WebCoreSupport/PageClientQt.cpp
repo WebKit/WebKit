@@ -110,7 +110,7 @@ TextureMapperLayerClientQt::~TextureMapperLayerClientQt()
 
 void TextureMapperLayerClientQt::syncRootLayer()
 {
-    m_rootGraphicsLayer->syncCompositingStateForThisLayerOnly();
+    m_rootGraphicsLayer->flushCompositingStateForThisLayerOnly();
 }
 
 TextureMapperLayer* TextureMapperLayerClientQt::rootLayer()

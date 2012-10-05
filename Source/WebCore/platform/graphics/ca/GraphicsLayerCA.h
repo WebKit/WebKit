@@ -38,7 +38,7 @@
 #include <wtf/text/StringHash.h>
 
 // Enable this to add a light red wash over the visible portion of Tiled Layers, as computed
-// by syncCompositingState().
+// by flushCompositingState().
 // #define VISIBLE_TILE_WASH
 
 namespace WebCore {
@@ -131,8 +131,8 @@ public:
 
     void recursiveCommitChanges(const TransformState&, float pageScaleFactor = 1, const FloatPoint& positionRelativeToBase = FloatPoint(), bool affectedByPageScale = false);
 
-    virtual void syncCompositingState(const FloatRect&);
-    virtual void syncCompositingStateForThisLayerOnly();
+    virtual void flushCompositingState(const FloatRect&);
+    virtual void flushCompositingStateForThisLayerOnly();
 
     virtual TiledBacking* tiledBacking() OVERRIDE;
 

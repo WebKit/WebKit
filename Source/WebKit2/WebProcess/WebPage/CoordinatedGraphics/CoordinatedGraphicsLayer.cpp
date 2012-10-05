@@ -65,21 +65,21 @@ void CoordinatedGraphicsLayer::didChangeLayerState()
 {
     m_shouldSyncLayerState = true;
     if (client())
-        client()->notifySyncRequired(this);
+        client()->notifyFlushRequired(this);
 }
 
 void CoordinatedGraphicsLayer::didChangeAnimatedProperties()
 {
     m_shouldSyncAnimatedProperties = true;
     if (client())
-        client()->notifySyncRequired(this);
+        client()->notifyFlushRequired(this);
 }
 
 void CoordinatedGraphicsLayer::didChangeChildren()
 {
     m_shouldSyncChildren = true;
     if (client())
-        client()->notifySyncRequired(this);
+        client()->notifyFlushRequired(this);
 }
 
 #if ENABLE(CSS_FILTERS)
@@ -87,7 +87,7 @@ void CoordinatedGraphicsLayer::didChangeFilters()
 {
     m_shouldSyncFilters = true;
     if (client())
-        client()->notifySyncRequired(this);
+        client()->notifyFlushRequired(this);
 }
 #endif
 
@@ -340,7 +340,7 @@ void CoordinatedGraphicsLayer::setContentsNeedsDisplay()
     setContentsToImage(image.get());
     m_canvasNeedsDisplay = true;
     if (client())
-        client()->notifySyncRequired(this);
+        client()->notifyFlushRequired(this);
 }
 
 void CoordinatedGraphicsLayer::setContentsToCanvas(PlatformLayer* platformLayer)
@@ -348,7 +348,7 @@ void CoordinatedGraphicsLayer::setContentsToCanvas(PlatformLayer* platformLayer)
     m_canvasPlatformLayer = platformLayer;
     m_canvasNeedsDisplay = true;
     if (client())
-        client()->notifySyncRequired(this);
+        client()->notifyFlushRequired(this);
 }
 
 #if ENABLE(CSS_FILTERS)
@@ -433,20 +433,20 @@ WebLayerID CoordinatedGraphicsLayer::id() const
     return m_id;
 }
 
-void CoordinatedGraphicsLayer::syncCompositingState(const FloatRect& rect)
+void CoordinatedGraphicsLayer::flushCompositingState(const FloatRect& rect)
 {
     if (CoordinatedGraphicsLayer* mask = toCoordinatedGraphicsLayer(maskLayer()))
-        mask->syncCompositingStateForThisLayerOnly();
+        mask->flushCompositingStateForThisLayerOnly();
 
     if (CoordinatedGraphicsLayer* replica = toCoordinatedGraphicsLayer(replicaLayer()))
-        replica->syncCompositingStateForThisLayerOnly();
+        replica->flushCompositingStateForThisLayerOnly();
 
     m_CoordinatedGraphicsLayerClient->syncFixedLayers();
 
-    syncCompositingStateForThisLayerOnly();
+    flushCompositingStateForThisLayerOnly();
 
     for (size_t i = 0; i < children().size(); ++i)
-        children()[i]->syncCompositingState(rect);
+        children()[i]->flushCompositingState(rect);
 }
 
 CoordinatedGraphicsLayer* toCoordinatedGraphicsLayer(GraphicsLayer* layer)
@@ -545,7 +545,7 @@ void CoordinatedGraphicsLayer::ensureImageBackingStore()
         m_layerInfo.imageBackingStoreID = m_CoordinatedGraphicsLayerClient->adoptImageBackingStore(m_image.get());
 }
 
-void CoordinatedGraphicsLayer::syncCompositingStateForThisLayerOnly()
+void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
 {
     // The remote image might have been released by purgeBackingStores.
     ensureImageBackingStore();

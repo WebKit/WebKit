@@ -70,7 +70,7 @@ private:
 
     // WebCore::GraphicsLayerClient
     virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) OVERRIDE;
-    virtual void notifySyncRequired(const WebCore::GraphicsLayer*) OVERRIDE;
+    virtual void notifyFlushRequired(const WebCore::GraphicsLayer*) OVERRIDE;
     virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& clipRect) OVERRIDE;
     virtual bool showDebugBorders(const WebCore::GraphicsLayer*) const OVERRIDE;
     virtual bool showRepaintCounter(const WebCore::GraphicsLayer*) const OVERRIDE;

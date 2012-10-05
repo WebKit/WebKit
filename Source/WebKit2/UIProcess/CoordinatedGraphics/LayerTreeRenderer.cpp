@@ -126,7 +126,7 @@ void LayerTreeRenderer::paintToCurrentGLContext(const TransformationMatrix& matr
     if (currentRootLayer->opacity() != opacity || currentRootLayer->transform() != matrix) {
         currentRootLayer->setOpacity(opacity);
         currentRootLayer->setTransform(matrix);
-        currentRootLayer->syncCompositingStateForThisLayerOnly();
+        currentRootLayer->flushCompositingStateForThisLayerOnly();
     }
 
     layer->paint();
@@ -393,7 +393,7 @@ void LayerTreeRenderer::flushLayerChanges()
 {
     m_renderedContentsScrollPosition = m_pendingRenderedContentsScrollPosition;
 
-    m_rootLayer->syncCompositingState(FloatRect());
+    m_rootLayer->flushCompositingState(FloatRect());
     commitTileOperations();
 
     // The pending tiles state is on its way for the screen, tell the web process to render the next one.

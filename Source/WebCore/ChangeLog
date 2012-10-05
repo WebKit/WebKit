@@ -1,3 +1,51 @@
+2012-10-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Final part of "sync" to "flush" renaming
+        https://bugs.webkit.org/show_bug.cgi?id=98430
+
+        Reviewed by Tim Horton.
+
+        Change method names on GraphicsLayer and GraphicsLayerClient that
+        refer to "sync" to use the term "flush" instead, to be consistent
+        with the rest of the code.
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::flushCompositingState):
+        (WebCore::GraphicsLayer::flushCompositingStateForThisLayerOnly):
+        * platform/graphics/GraphicsLayerClient.h:
+        (GraphicsLayerClient):
+        * platform/graphics/blackberry/GraphicsLayerBlackBerry.h:
+        (WebCore::GraphicsLayerBlackBerry::notifyFlushRequired):
+        * platform/graphics/blackberry/LayerWebKitThread.cpp:
+        (WebCore::LayerWebKitThread::setNeedsCommit):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::flushCompositingState):
+        (WebCore::GraphicsLayerCA::flushCompositingStateForThisLayerOnly):
+        (WebCore::GraphicsLayerCA::platformCALayerDidCreateTiles):
+        (WebCore::GraphicsLayerCA::positionForCloneRootLayer):
+        (WebCore::GraphicsLayerCA::noteLayerPropertyChanged):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (GraphicsLayerCA):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::notifyChange):
+        (WebCore::GraphicsLayerTextureMapper::flushCompositingStateForThisLayerOnly):
+        (WebCore::GraphicsLayerTextureMapper::flushCompositingState):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        (GraphicsLayerTextureMapper):
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::flushCompositingState):
+        (WebCore::TextureMapperLayer::flushCompositingStateSelf):
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        (TextureMapperLayer):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::notifyFlushRequired):
+        * rendering/RenderLayerBacking.h:
+        (RenderLayerBacking):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+        * rendering/RenderLayerCompositor.h:
+        (WebCore::RenderLayerCompositor::notifyFlushRequired):
+
 2012-10-04  Tab Atkins  <tabatkins@google.com>
 
         1ex should equal .5em when the font has no x-height metric
