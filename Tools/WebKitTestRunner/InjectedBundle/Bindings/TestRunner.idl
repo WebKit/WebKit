@@ -72,6 +72,7 @@ module WTR {
         void setMinimumTimerInterval(in double interval); // Interval specified in seconds.
         void setSpatialNavigationEnabled(in boolean value);
         void setTabKeyCyclesThroughElements(in boolean enabled);
+        void setSerializeHTTPLoads();
 
         // Special DOM functions.
         void clearBackForwardList();

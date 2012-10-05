@@ -246,6 +246,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
     WKBundleSetPluginsEnabled(m_bundle, m_pageGroup, true);
     WKBundleSetPopupBlockingEnabled(m_bundle, m_pageGroup, false);
     WKBundleSetAlwaysAcceptCookies(m_bundle, false);
+    WKBundleSetSerialLoadingEnabled(m_bundle, false);
 
     WKBundleRemoveAllUserContent(m_bundle, m_pageGroup);
 

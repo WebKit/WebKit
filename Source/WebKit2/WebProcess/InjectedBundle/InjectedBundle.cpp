@@ -61,6 +61,7 @@
 #include <WebCore/PageVisibilityState.h>
 #include <WebCore/PrintContext.h>
 #include <WebCore/ResourceHandle.h>
+#include <WebCore/ResourceLoadScheduler.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityPolicy.h>
@@ -644,6 +645,11 @@ uint64_t InjectedBundle::webNotificationID(JSContextRef jsContext, JSValueRef js
 void InjectedBundle::setTabKeyCyclesThroughElements(WebPage* page, bool enabled)
 {
     page->corePage()->setTabKeyCyclesThroughElements(enabled);
+}
+
+void InjectedBundle::setSerialLoadingEnabled(bool enabled)
+{
+    resourceLoadScheduler()->setSerialLoadingEnabled(enabled);
 }
 
 } // namespace WebKit

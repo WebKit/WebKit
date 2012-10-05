@@ -323,3 +323,8 @@ void WKBundleSetTabKeyCyclesThroughElements(WKBundleRef bundleRef, WKBundlePageR
 {
     toImpl(bundleRef)->setTabKeyCyclesThroughElements(toImpl(pageRef), enabled);
 }
+
+void WKBundleSetSerialLoadingEnabled(WKBundleRef bundleRef, bool enabled)
+{
+    toImpl(bundleRef)->setSerialLoadingEnabled(enabled);
+}

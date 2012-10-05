@@ -749,6 +749,11 @@ void TestRunner::setTabKeyCyclesThroughElements(bool enabled)
     WKBundleSetTabKeyCyclesThroughElements(InjectedBundle::shared().bundle(), InjectedBundle::shared().page()->page(), enabled);
 }
 
+void TestRunner::setSerializeHTTPLoads()
+{
+    WKBundleSetSerialLoadingEnabled(InjectedBundle::shared().bundle(), true);
+}
+
 void TestRunner::grantWebNotificationPermission(JSStringRef origin)
 {
     WKRetainPtr<WKStringRef> originWK = toWK(origin);

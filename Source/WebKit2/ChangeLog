@@ -1,3 +1,22 @@
+2012-10-05  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [WK2][WTR] WebKitTestRunner needs testRunner.setSerializeHTTPLoads
+        https://bugs.webkit.org/show_bug.cgi?id=98524
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add implementation for testRunner.setSerializeHTTPLoads in
+        WebKitTestRunner.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetSerialLoadingEnabled):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setSerialLoadingEnabled):
+        (WebKit):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        (InjectedBundle):
+
 2012-10-05  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r130556 and r130564.
