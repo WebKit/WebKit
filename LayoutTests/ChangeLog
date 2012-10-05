@@ -1,3 +1,17 @@
+2012-10-04  Tab Atkins  <tabatkins@google.com>
+
+        1ex should equal .5em when the font has no x-height metric
+        https://bugs.webkit.org/show_bug.cgi?id=80360
+
+        Reviewed by Eric Seidel.
+
+        If a font has no x-height metric, 1ex should equal .5em.
+
+        Test layout tweaked by David Barr <davidbarr@chromium.org>.
+
+        * fast/css/ex-unit-with-no-x-height-expected.txt: Added.
+        * fast/css/ex-unit-with-no-x-height.html: Added.
+
 2012-10-04  Tullio Lucena  <tullio.lucena@openbossa.org>
 
         [Qt] New test introduced in r129346 inspector-protocol/css-getSupportedCSSProperties.html fails

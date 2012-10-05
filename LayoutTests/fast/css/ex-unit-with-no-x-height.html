@@ -1,0 +1,38 @@
+<!doctype html>
+<svg xmlns = 'http://www.w3.org/2000/svg' style='display:none'>
+  <defs>
+    <font id="Font1">
+      <font-face font-family="block" />
+    </font>
+  </defs>
+</svg>
+
+<style>
+.em { height: .5em; width: .5em; }
+.ex { height: 1ex; width: 1ex; }
+.cover { background: green; }
+.back { background: red; }
+.one { left: 10px; }
+.two { left: 70px; }
+#test > div { font-family: block; font-size: 100px; position: absolute; top: 10px; }
+#description { margin-top: 70px; }
+</style>
+
+<div id='test'>
+  <div class='back em one'></div>
+  <div class='cover ex one' id='ex'></div>
+
+  <div class='back ex two'></div>
+  <div class='cover em two'></div>
+</div>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+description("This test ensures that the CSS 'ex' unit is treated as half the size of the CSS 'em' unit when a font has no x-height information.")
+
+function measureExBox() {
+  return getComputedStyle(document.getElementById('ex')).width;
+}
+
+shouldBe("measureExBox();", "'50px'")
+</script>
+<script src="../js/resources/js-test-post.js"></script>

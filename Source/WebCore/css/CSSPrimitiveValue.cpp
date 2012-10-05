@@ -522,7 +522,10 @@ double CSSPrimitiveValue::computeLengthDouble(RenderStyle* style, RenderStyle* r
             // FIXME: We have a bug right now where the zoom will be applied twice to EX units.
             // We really need to compute EX using fontMetrics for the original specifiedSize and not use
             // our actual constructed rendering font.
-            factor = style->fontMetrics().xHeight();
+            if (style->fontMetrics().hasXHeight())
+                factor = style->fontMetrics().xHeight();
+            else
+                factor = (computingFontSize ? style->fontDescription().specifiedSize() : style->fontDescription().computedSize()) / 2.0;
             break;
         case CSS_REMS:
             if (rootStyle)

@@ -112,16 +112,18 @@ void SimpleFontData::platformInit()
     m_fontMetrics.setDescent(descent);
 
     float xHeight;
-    if (metrics.fXHeight)
+    if (metrics.fXHeight) {
         xHeight = metrics.fXHeight;
-    else {
-        // hack taken from the Windows port
-        xHeight = ascent * 0.56f;
+        m_fontMetrics.setXHeight(xHeight);
+    } else {
+        xHeight = ascent * 0.56; // Best guess from Windows font metrics.
+        m_fontMetrics.setXHeight(xHeight);
+        m_fontMetrics.setHasXHeight(false);
     }
+
 
     float lineGap = SkScalarToFloat(metrics.fLeading);
     m_fontMetrics.setLineGap(lineGap);
-    m_fontMetrics.setXHeight(xHeight);
     m_fontMetrics.setLineSpacing(lroundf(ascent) + lroundf(descent) + lroundf(lineGap));
 
     if (platformData().orientation() == Vertical && !isTextOrientationFallback()) {

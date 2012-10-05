@@ -1,3 +1,30 @@
+2012-10-04  Tab Atkins  <tabatkins@google.com>
+
+        1ex should equal .5em when the font has no x-height metric
+        https://bugs.webkit.org/show_bug.cgi?id=80360
+
+        Reviewed by Eric Seidel.
+
+        Updated FontMetrics and CSSPrimitiveValue to have/use an explicit "hasXHeight" flag to determine how to size an 'ex' unit.
+
+        Updated a few of the platform font files to set the flag properly.
+
+        Patch cleanup by David Barr <davidbarr@chromium.org>.
+
+        Test: fast/css/ex-unit-with-no-x-height.html
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeLengthDouble):
+        * platform/graphics/FontMetrics.h:
+        (WebCore::FontMetrics::FontMetrics):
+        (WebCore::FontMetrics::setXHeight):
+        (FontMetrics):
+        (WebCore::FontMetrics::hasXHeight):
+        (WebCore::FontMetrics::setHasXHeight):
+        (WebCore::FontMetrics::reset):
+        * platform/graphics/skia/SimpleFontDataSkia.cpp:
+        (WebCore::SimpleFontData::platformInit):
+
 2012-10-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r130411. Add the right offset.
