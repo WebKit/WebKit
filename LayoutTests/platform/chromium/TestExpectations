@@ -3586,11 +3586,6 @@ webkit.org/b/98087 [ Linux ] fast/css/lang-mapped-to-webkit-locale-dynamic.xhtml
 webkit.org/b/96833 svg/carto.net/selectionlist.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/96833 svg/carto.net/combobox.svg [ ImageOnlyFailure Pass ]
 
-webkit.org/b/97877 [ Mac Win ] fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic.html [ ImageOnlyFailure Pass ] 
-webkit.org/b/97877 [ Mac Win ] fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes.html [ ImageOnlyFailure Pass ] 
-webkit.org/b/97877 [ Mac Win ] fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements.html [ ImageOnlyFailure Pass ] 
-webkit.org/b/97877 [ Mac Win ] fast/forms/week-multiple-fields/week-multiple-fields-appearance-style.html [ ImageOnlyFailure Pass ] 
-
 webkit.org/b/96720 [ Mac Win ] fast/forms/time-multiple-fields/time-multiple-fields-preserve-value-after-history-back.html [ Pass Timeout ]
 webkit.org/b/96549 [ Mac ] platform/chromium/virtual/gpu/fast/hidpi/focus-rings.html [ ImageOnlyFailure ]
 webkit.org/b/96549 [ Mac ] platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi.html [ ImageOnlyFailure ]
@@ -3660,6 +3655,10 @@ webkit.org/b/98481 fast/forms/week-multiple-fields/week-multiple-fields-appearan
 webkit.org/b/98481 fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes.html [ ImageOnlyFailure Pass ]
 webkit.org/b/98481 fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements.html [ ImageOnlyFailure Pass ]
 webkit.org/b/98481 fast/forms/week-multiple-fields/week-multiple-fields-appearance-style.html [ ImageOnlyFailure Pass ]
+webkit.org/b/98481 fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic.html [ ImageOnlyFailure Pass ]
+webkit.org/b/98481 fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes.html [ ImageOnlyFailure Pass ]
+webkit.org/b/98481 fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements.html [ ImageOnlyFailure Pass ]
+webkit.org/b/98481 fast/forms/month-multiple-fields/month-multiple-fields-appearance-style.html [ ImageOnlyFailure Pass ]
 
 
 # Numerous failures in software compositing.
