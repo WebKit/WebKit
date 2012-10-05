@@ -82,8 +82,13 @@ void ShareableBitmap::paint(GraphicsContext& context, float scaleFactor, const I
         return;
     }
 
-    // See <https://bugs.webkit.org/show_bug.cgi?id=64663>.
-    notImplemented();
+    QImage image = createQImage();
+    QPainter* painter = context.platformContext();
+
+    painter->save();
+    painter->scale(scaleFactor, scaleFactor);
+    painter->drawImage(dstPoint, image, QRect(srcRect));
+    painter->restore();
 }
 
 }
