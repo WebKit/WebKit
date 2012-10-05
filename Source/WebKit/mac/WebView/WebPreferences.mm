@@ -406,6 +406,7 @@ public:
 #endif
                                         WebKitScreenFontSubstitutionEnabledKey,
         [NSNumber numberWithInt:WebAllowAllStorage], WebKitStorageBlockingPolicyKey,
+        [NSNumber numberWithBool:NO],   WebKitPlugInSnapshottingEnabledPreferenceKey,
 
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
@@ -1764,6 +1765,16 @@ static NSString *classIBCreatorID = nil;
 - (WebStorageBlockingPolicy)storageBlockingPolicy
 {
     return static_cast<WebStorageBlockingPolicy>([self _integerValueForKey:WebKitStorageBlockingPolicyKey]);
+}
+
+- (BOOL)plugInSnapshottingEnabled
+{
+    return [self _boolValueForKey:WebKitPlugInSnapshottingEnabledPreferenceKey];
+}
+
+- (void)setPlugInSnapshottingEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitPlugInSnapshottingEnabledPreferenceKey];
 }
 
 @end

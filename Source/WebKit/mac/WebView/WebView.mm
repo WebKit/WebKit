@@ -1580,6 +1580,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
         break;
     }
 
+    settings->setPlugInSnapshottingEnabled([preferences plugInSnapshottingEnabled]);
+
     // We have enabled this setting in WebKit2 for the sake of some ScrollingCoordinator work.
     // To avoid possible rendering differences, we should enable it for WebKit1 too.
     settings->setFixedPositionCreatesStackingContext(true);

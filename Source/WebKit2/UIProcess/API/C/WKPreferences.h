@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -215,6 +215,10 @@ WK_EXPORT bool WKPreferencesGetShouldRespectImageOrientation(WKPreferencesRef pr
 // Defaults to false
 WK_EXPORT void WKPreferencesSetStorageBlockingPolicy(WKPreferencesRef preferencesRef, WKStorageBlockingPolicy policy);
 WK_EXPORT WKStorageBlockingPolicy WKPreferencesGetStorageBlockingPolicy(WKPreferencesRef preferencesRef);
+
+// Defaults to false
+WK_EXPORT void WKPreferencesSetPlugInSnapshottingEnabled(WKPreferencesRef preferencesRef, bool enabled);
+WK_EXPORT bool WKPreferencesGetPlugInSnapshottingEnabled(WKPreferencesRef preferencesRef);
 
 #ifdef __cplusplus
 }

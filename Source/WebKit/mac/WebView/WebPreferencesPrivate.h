@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2007, 2011 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2007, 2011, 2012 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -316,5 +316,8 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 
 - (void)setStorageBlockingPolicy:(WebStorageBlockingPolicy)storageBlockingPolicy;
 - (WebStorageBlockingPolicy)storageBlockingPolicy;
+
+- (BOOL)plugInSnapshottingEnabled;
+- (void)setPlugInSnapshottingEnabled:(BOOL)enabled;
 
 @end
