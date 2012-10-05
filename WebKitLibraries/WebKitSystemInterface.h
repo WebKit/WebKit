@@ -169,6 +169,10 @@ typedef enum {
 CGPatternRef WKCGPatternCreateWithImageAndTransform(CGImageRef image, CGAffineTransform transform, int tiling);
 void WKCGContextResetClip(CGContextRef);
 
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+bool WKCGContextDrawsWithCorrectShadowOffsets(CGContextRef);
+#endif
+
 #ifndef __LP64__
 NSEvent *WKCreateNSEventWithCarbonEvent(EventRef eventRef);
 NSEvent *WKCreateNSEventWithCarbonMouseMoveEvent(EventRef inEvent, NSWindow *window);
