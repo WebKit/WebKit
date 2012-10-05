@@ -43,7 +43,6 @@
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/GraphicsLayerCA.h>
 #import <WebCore/Page.h>
-#import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/ScrollingCoordinator.h>
 #import <WebCore/ScrollingThread.h>
