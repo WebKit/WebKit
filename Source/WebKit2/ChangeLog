@@ -1,5 +1,19 @@
 2012-10-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Test /webkit2/WebKitPrintOperation/print-errors gives runtime critical warnings
+        https://bugs.webkit.org/show_bug.cgi?id=98497
+
+        Reviewed by Martin Robinson.
+
+        The problem is that GTK+ tries to write in the IO channel that has
+        already been closed.
+
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        (WebKit::WebPrintOperationGtk::print): Finish the surface when
+        printing fails because printing data is invalid.
+
+2012-10-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Test /webkit2/WebKitWebResource/response fails
         https://bugs.webkit.org/show_bug.cgi?id=98511
 
