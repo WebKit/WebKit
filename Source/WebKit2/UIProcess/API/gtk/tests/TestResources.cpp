@@ -80,6 +80,11 @@ public:
     {
         test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(resource));
         test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(request));
+
+        // Ignore favicons.
+        if (g_str_has_suffix(webkit_uri_request_get_uri(request), "favicon.ico"))
+            return;
+
         test->resourceLoadStarted(resource, request);
         g_signal_connect(resource, "sent-request", G_CALLBACK(resourceSentRequestCallback), test);
         g_signal_connect(resource, "notify::response", G_CALLBACK(resourceReceivedResponseCallback), test);
