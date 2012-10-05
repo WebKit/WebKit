@@ -54,6 +54,7 @@ WebSettingsImpl::WebSettingsImpl(Settings* settings)
     , m_viewportEnabled(false)
     , m_applyDefaultDeviceScaleFactorInCompositor(false)
     , m_gestureTapHighlightEnabled(true)
+    , m_autoZoomFocusedNodeToLegibleScale(false)
     , m_defaultTileSize(WebSize(256, 256))
     , m_maxUntiledLayerSize(WebSize(512, 512))
 {
@@ -143,6 +144,11 @@ void WebSettingsImpl::setApplyDefaultDeviceScaleFactorInCompositor(bool applyDef
 void WebSettingsImpl::setApplyPageScaleFactorInCompositor(bool applyPageScaleFactorInCompositor)
 {
     m_settings->setApplyPageScaleFactorInCompositor(applyPageScaleFactorInCompositor);
+}
+
+void WebSettingsImpl::setAutoZoomFocusedNodeToLegibleScale(bool autoZoomFocusedNodeToLegibleScale)
+{
+    m_autoZoomFocusedNodeToLegibleScale = autoZoomFocusedNodeToLegibleScale;
 }
 
 void WebSettingsImpl::setTextAutosizingEnabled(bool enabled)

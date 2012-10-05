@@ -74,6 +74,7 @@ public:
     virtual void setApplyDefaultDeviceScaleFactorInCompositor(bool) = 0;
     virtual void setApplyPageScaleFactorInCompositor(bool) = 0;
     virtual void setAsynchronousSpellCheckingEnabled(bool) = 0;
+    virtual void setAutoZoomFocusedNodeToLegibleScale(bool) = 0;
     virtual void setAuthorAndUserStylesEnabled(bool) = 0;
     virtual void setCaretBrowsingEnabled(bool) = 0;
     virtual void setCookieEnabled(bool) = 0;

@@ -1,0 +1,16 @@
+<html>
+<head>
+<script>
+function getfocus()
+{
+var textfield = document.getElementById('EditBoxWithText');
+textfield.focus();
+textfield.setSelectionRange(textfield.value.length,textfield.value.length);
+}
+</script>
+</head>
+  <body onload="getfocus()">
+      <input id="EditBoxWithText" style=" position: absolute; left: 200px; top: 200px; width: 250; height:20" value = "Long text to fill the edit box" type="text">
+      <input id="EditBoxWithNoText" style=" position: absolute; left: 200px; top: 250px; width: 250; height:20" type="text">
+  </body>
+</html>

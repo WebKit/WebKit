@@ -1,3 +1,29 @@
+2012-10-05  Yusuf Ozuysal  <yusufo@google.com>
+
+        [chromium] Support zooming focused node for mobile devices
+        https://bugs.webkit.org/show_bug.cgi?id=97958
+
+        Reviewed by Adam Barth.
+
+        This unforks the Android version of scrollFocusedNodeIntoRect().A new setting
+        autoZoomFocusedNodeToLegibleScale was added to turn it on, since not all
+        platforms with ENABLE(GESTURE_EVENTS) want this.
+
+        Test: WebFrameTest.DivScrollIntoEditableTest
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::WebSettingsImpl):
+        (WebKit::WebSettingsImpl::setAutoZoomFocusedNodeToLegibleScale):
+        (WebKit):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+        (WebKit::WebSettingsImpl::autoZoomFocusedNodeToLegibleScale):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::scrollFocusedNodeIntoRect):
+        * tests/WebFrameTest.cpp:
+        * tests/data/get_scale_for_zoom_into_editable_test.html: Added.
+
 2012-10-05  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Modify gesture highlight behaviour. Cancel on GestureLongPress and animate on GestureTapCancel.

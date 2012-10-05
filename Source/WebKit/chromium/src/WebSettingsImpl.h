@@ -67,6 +67,7 @@ public:
     virtual void setApplyPageScaleFactorInCompositor(bool);
     virtual void setAsynchronousSpellCheckingEnabled(bool);
     virtual void setAuthorAndUserStylesEnabled(bool);
+    virtual void setAutoZoomFocusedNodeToLegibleScale(bool);
     virtual void setCaretBrowsingEnabled(bool);
     virtual void setCookieEnabled(bool);
     virtual void setCursiveFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON);
@@ -162,6 +163,7 @@ public:
     bool renderVSyncEnabled() const { return m_renderVSyncEnabled; }
     bool applyDefaultDeviceScaleFactorInCompositor() const { return m_applyDefaultDeviceScaleFactorInCompositor; }
     bool applyPageScaleFactorInCompositor() const;
+    bool autoZoomFocusedNodeToLegibleScale() const { return m_autoZoomFocusedNodeToLegibleScale; }
     bool gestureTapHighlightEnabled() { return m_gestureTapHighlightEnabled; }
     WebSize defaultTileSize() const { return m_defaultTileSize; }
     WebSize maxUntiledLayerSize() const { return m_maxUntiledLayerSize; }
@@ -175,6 +177,7 @@ private:
     bool m_viewportEnabled;
     bool m_applyDefaultDeviceScaleFactorInCompositor;
     bool m_gestureTapHighlightEnabled;
+    bool m_autoZoomFocusedNodeToLegibleScale;
     WebSize m_defaultTileSize;
     WebSize m_maxUntiledLayerSize;
 };

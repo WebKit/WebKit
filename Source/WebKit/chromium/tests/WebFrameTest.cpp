@@ -496,6 +496,74 @@ TEST_F(WebFrameTest, DivAutoZoomScaleBoundsTest)
     simulateDoubleTap(webViewImpl, doubleTapPoint, scale);
     EXPECT_FLOAT_EQ(webViewImpl->minimumPageScaleFactor(), scale);
 }
+
+TEST_F(WebFrameTest, DivScrollIntoEditableTest)
+{
+    registerMockedHttpURLLoad("get_scale_for_zoom_into_editable_test.html");
+
+    DivAutoZoomTestWebViewClient client;
+    int viewportWidth = 640;
+    int viewportHeight = 480;
+    float LeftBoxRatio = 0.3;
+    int caretPadding = 10;
+    int minReadableCaretHeight = 18;
+    client.m_windowRect = WebRect(0, 0, viewportWidth, viewportHeight);
+    WebKit::WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "get_scale_for_zoom_into_editable_test.html", true, 0, &client);
+    webView->enableFixedLayoutMode(true);
+    webView->resize(WebSize(viewportWidth, viewportHeight));
+    webView->setPageScaleFactorLimits(1, 10);
+    webView->layout();
+    webView->setDeviceScaleFactor(1.5f);
+    webView->settings()->setAutoZoomFocusedNodeToLegibleScale(true);
+
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(webView);
+    webViewImpl->shouldUseAnimateDoubleTapTimeZeroForTesting(true);
+
+    WebRect editBoxWithText(200, 200, 250, 20);
+    WebRect editBoxWithNoText(200, 250, 250, 20);
+
+    // Test scrolling the focused node
+    // The edit box is shorter and narrower than the viewport when legible.
+    setScaleAndScrollAndLayout(webView, WebPoint(0, 0), 1);
+    WebRect rect, caret;
+    webViewImpl->selectionBounds(caret, rect);
+    webView->scrollFocusedNodeIntoRect(rect);
+    // The edit box should be left aligned with a margin for possible label.
+    int hScroll = editBoxWithText.x * webView->pageScaleFactor() - LeftBoxRatio * viewportWidth;
+    EXPECT_EQ(hScroll, webView->mainFrame()->scrollOffset().width);
+    int vScroll = editBoxWithText.y * webView->pageScaleFactor() - (viewportHeight - editBoxWithText.height * webView->pageScaleFactor()) / 2;
+    EXPECT_EQ(vScroll, webView->mainFrame()->scrollOffset().height);
+    EXPECT_FLOAT_EQ(webView->deviceScaleFactor() * minReadableCaretHeight / caret.height, webView->pageScaleFactor());
+
+    // The edit box is wider than the viewport when legible.
+    webView->setDeviceScaleFactor(4);
+    setScaleAndScrollAndLayout(webView, WebPoint(0, 0), 1);
+    webViewImpl->selectionBounds(caret, rect);
+    webView->scrollFocusedNodeIntoRect(rect);
+    // The caret should be right aligned since the caret would be offscreen when the edit box is left aligned.
+    hScroll = (caret.x + caret.width) * webView->pageScaleFactor() + caretPadding - viewportWidth;
+    EXPECT_EQ(hScroll, webView->mainFrame()->scrollOffset().width);
+    EXPECT_FLOAT_EQ(webView->deviceScaleFactor() * minReadableCaretHeight / caret.height, webView->pageScaleFactor());
+
+    setScaleAndScrollAndLayout(webView, WebPoint(0, 0), 1);
+    // Move focus to edit box with text.
+    webView->advanceFocus(false);
+    webViewImpl->selectionBounds(caret, rect);
+    webView->scrollFocusedNodeIntoRect(rect);
+    // The edit box should be left aligned.
+    hScroll = editBoxWithNoText.x * webView->pageScaleFactor();
+    EXPECT_EQ(hScroll, webView->mainFrame()->scrollOffset().width);
+    vScroll = editBoxWithNoText.y * webView->pageScaleFactor() - (viewportHeight - editBoxWithNoText.height * webView->pageScaleFactor()) / 2;
+    EXPECT_EQ(vScroll, webView->mainFrame()->scrollOffset().height);
+    EXPECT_FLOAT_EQ(webView->deviceScaleFactor() * minReadableCaretHeight / caret.height, webView->pageScaleFactor());
+
+    // Move focus back to the first edit box.
+    webView->advanceFocus(true);
+    webViewImpl->selectionBounds(caret, rect);
+    // The position should have stayed the same since this box was already on screen with the right scale.
+    EXPECT_EQ(vScroll, webView->mainFrame()->scrollOffset().height);
+    EXPECT_EQ(hScroll, webView->mainFrame()->scrollOffset().width);
+}
 #endif
 
 class TestReloadDoesntRedirectWebFrameClient : public WebFrameClient {
