@@ -3860,6 +3860,10 @@
 		A78FE13C12366B1000ACE8D0 /* SpellChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = A78FE13A12366B1000ACE8D0 /* SpellChecker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A795463E0B5C4C80007B438F /* DragDataMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A795463D0B5C4C80007B438F /* DragDataMac.mm */; };
 		A79546430B5C4CB4007B438F /* DragData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A79546420B5C4CB4007B438F /* DragData.cpp */; };
+		A79BADA1161E7F3F00C2E652 /* RuleFeature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A79BAD9D161E7F3F00C2E652 /* RuleFeature.cpp */; };
+		A79BADA2161E7F3F00C2E652 /* RuleFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = A79BAD9E161E7F3F00C2E652 /* RuleFeature.h */; };
+		A79BADA3161E7F3F00C2E652 /* RuleSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A79BAD9F161E7F3F00C2E652 /* RuleSet.cpp */; };
+		A79BADA4161E7F3F00C2E652 /* RuleSet.h in Headers */ = {isa = PBXBuildFile; fileRef = A79BADA0161E7F3F00C2E652 /* RuleSet.h */; };
 		A7A78CD51532BA62006C21E4 /* ContainerNodeAlgorithms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7A78CD41532BA62006C21E4 /* ContainerNodeAlgorithms.cpp */; };
 		A7AD2F870EC89D07008AB002 /* LinkHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7AD2F850EC89D07008AB002 /* LinkHash.cpp */; };
 		A7AD2F880EC89D07008AB002 /* LinkHash.h in Headers */ = {isa = PBXBuildFile; fileRef = A7AD2F860EC89D07008AB002 /* LinkHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11088,6 +11092,10 @@
 		A78FE13A12366B1000ACE8D0 /* SpellChecker.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = SpellChecker.h; sourceTree = "<group>"; };
 		A795463D0B5C4C80007B438F /* DragDataMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DragDataMac.mm; sourceTree = "<group>"; };
 		A79546420B5C4CB4007B438F /* DragData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DragData.cpp; sourceTree = "<group>"; };
+		A79BAD9D161E7F3F00C2E652 /* RuleFeature.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RuleFeature.cpp; sourceTree = "<group>"; };
+		A79BAD9E161E7F3F00C2E652 /* RuleFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RuleFeature.h; sourceTree = "<group>"; };
+		A79BAD9F161E7F3F00C2E652 /* RuleSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RuleSet.cpp; sourceTree = "<group>"; };
+		A79BADA0161E7F3F00C2E652 /* RuleSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RuleSet.h; sourceTree = "<group>"; };
 		A7A78CD41532BA62006C21E4 /* ContainerNodeAlgorithms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContainerNodeAlgorithms.cpp; sourceTree = "<group>"; };
 		A7AD2F850EC89D07008AB002 /* LinkHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinkHash.cpp; sourceTree = "<group>"; };
 		A7AD2F860EC89D07008AB002 /* LinkHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkHash.h; sourceTree = "<group>"; };
@@ -21209,6 +21217,10 @@
 				BC74DA361013F3F7007987AD /* RGBColor.cpp */,
 				BC74DA351013F3F7007987AD /* RGBColor.h */,
 				858C38EF0AA8FDD100B187A4 /* RGBColor.idl */,
+				A79BAD9D161E7F3F00C2E652 /* RuleFeature.cpp */,
+				A79BAD9E161E7F3F00C2E652 /* RuleFeature.h */,
+				A79BAD9F161E7F3F00C2E652 /* RuleSet.cpp */,
+				A79BADA0161E7F3F00C2E652 /* RuleSet.h */,
 				E44B4BB1141650D7002B1D8B /* SelectorChecker.cpp */,
 				E44B4BB2141650D7002B1D8B /* SelectorChecker.h */,
 				A80E6CCA0A1989CA007FB8C5 /* ShadowValue.cpp */,
@@ -24781,6 +24793,8 @@
 				FD3160A912B026F700C1A359 /* ReverbConvolver.h in Headers */,
 				FD3160AB12B026F700C1A359 /* ReverbConvolverStage.h in Headers */,
 				FD3160AD12B026F700C1A359 /* ReverbInputBuffer.h in Headers */,
+				A79BADA2161E7F3F00C2E652 /* RuleFeature.h in Headers */,
+				A79BADA4161E7F3F00C2E652 /* RuleSet.h in Headers */,
 				BC74DA371013F3F7007987AD /* RGBColor.h in Headers */,
 				A8CFF5E10A155A05000A4234 /* RootInlineBox.h in Headers */,
 				49E911C90EF86D47009D0CAF /* RotateTransformOperation.h in Headers */,
@@ -28002,6 +28016,8 @@
 				A8CFF5E70A155A05000A4234 /* RootInlineBox.cpp in Sources */,
 				49E911C80EF86D47009D0CAF /* RotateTransformOperation.cpp in Sources */,
 				A73F95FE12C97BFE0031AAF9 /* RoundedRect.cpp in Sources */,
+				A79BADA1161E7F3F00C2E652 /* RuleFeature.cpp in Sources */,
+				A79BADA3161E7F3F00C2E652 /* RuleSet.cpp in Sources */,
 				BC0B358714C4F9830055E22A /* RunLoop.cpp in Sources */,
 				29A309AC1561C99B00BBD8E5 /* RunLoopCF.cpp in Sources */,
 				BC0B358314C4F9540055E22A /* RunLoopMac.mm in Sources */,

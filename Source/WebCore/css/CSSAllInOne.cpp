@@ -66,6 +66,8 @@
 #include "CSSValue.cpp"
 #include "CSSValueList.cpp"
 #include "CSSValuePool.cpp"
+#include "RuleFeature.cpp"
+#include "RuleSet.cpp"
 #include "StyleBuilder.cpp"
 #include "StylePropertySet.cpp"
 #include "StylePropertyShorthand.cpp"

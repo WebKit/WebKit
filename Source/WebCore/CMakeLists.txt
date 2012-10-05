@@ -1067,6 +1067,10 @@ SET(WebCore_SOURCES
     css/MediaQueryMatcher.cpp
     css/PropertySetCSSStyleDeclaration.cpp
     css/RGBColor.cpp
+    css/RuleFeature.h
+    css/RuleFeature.cpp
+    css/RuleSet.h
+    css/RuleSet.cpp
     css/SelectorChecker.cpp
     css/ShadowValue.cpp
     css/StyleBuilder.cpp

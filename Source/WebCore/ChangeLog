@@ -1,3 +1,95 @@
+2012-10-04  Hajime Morrita  <morrita@google.com>
+
+        [Refactoring] Some classes in StyleResolver.cpp/h could have its own file.
+        https://bugs.webkit.org/show_bug.cgi?id=98469
+
+        Reviewed by Dimitri Glazkov.
+
+        This change extracts RuleData, RuleSet, RuleFeature and Featurs class
+        to its own file: RuleSet.h/cpp and RuleFeature.h/cpp
+
+        RuleFeature class is moved fro StyleResolver inner class to plain WebCore class.
+        Feaures class is renamed to RuleFeatureSet to avoid possible name conflict.
+
+        No new tests. Just splitting file and doing simple rename.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSAllInOne.cpp:
+        * css/RuleFeature.cpp: Added.
+        (WebCore):
+        (WebCore::RuleFeatureSet::add):
+        (WebCore::RuleFeatureSet::clear):
+        (WebCore::RuleFeatureSet::reportMemoryUsage):
+        * css/RuleFeature.h: Added.
+        (WebCore):
+        (RuleFeature):
+        (WebCore::RuleFeature::RuleFeature):
+        (RuleFeatureSet):
+        (WebCore::RuleFeatureSet::RuleFeatureSet):
+        * css/RuleSet.cpp: Added.
+        (WebCore):
+        (WebCore::isSelectorMatchingHTMLBasedOnRuleHash):
+        (WebCore::selectorListContainsUncommonAttributeSelector):
+        (WebCore::isCommonAttributeSelectorAttribute):
+        (WebCore::containsUncommonAttributeSelector):
+        (WebCore::RuleData::RuleData):
+        (WebCore::RuleData::reportMemoryUsage):
+        (WebCore::reportAtomRuleMap):
+        (WebCore::RuleSet::reportMemoryUsage):
+        (WebCore::RuleSet::RuleSetSelectorPair::reportMemoryUsage):
+        (WebCore::collectFeaturesFromSelector):
+        (WebCore::collectFeaturesFromRuleData):
+        (WebCore::RuleSet::addToRuleSet):
+        (WebCore::RuleSet::addRule):
+        (WebCore::RuleSet::addPageRule):
+        (WebCore::RuleSet::addRegionRule):
+        (WebCore::RuleSet::addRulesFromSheet):
+        (WebCore::RuleSet::addStyleRule):
+        (WebCore::shrinkMapVectorsToFit):
+        (WebCore::RuleSet::shrinkToFit):
+        * css/RuleSet.h: Added.
+        (WebCore):
+        (RuleData):
+        (WebCore::RuleData::position):
+        (WebCore::RuleData::rule):
+        (WebCore::RuleData::selector):
+        (WebCore::RuleData::selectorIndex):
+        (WebCore::RuleData::hasFastCheckableSelector):
+        (WebCore::RuleData::hasMultipartSelector):
+        (WebCore::RuleData::hasRightmostSelectorMatchingHTMLBasedOnRuleHash):
+        (WebCore::RuleData::containsUncommonAttributeSelector):
+        (WebCore::RuleData::specificity):
+        (WebCore::RuleData::linkMatchType):
+        (WebCore::RuleData::hasDocumentSecurityOrigin):
+        (WebCore::RuleData::isInRegionRule):
+        (WebCore::RuleData::descendantSelectorIdentifierHashes):
+        (SameSizeAsRuleData):
+        (RuleSet):
+        (WebCore::RuleSet::create):
+        (WebCore::RuleSet::disableAutoShrinkToFit):
+        (WebCore::RuleSet::features):
+        (WebCore::RuleSet::idRules):
+        (WebCore::RuleSet::classRules):
+        (WebCore::RuleSet::tagRules):
+        (WebCore::RuleSet::shadowPseudoElementRules):
+        (WebCore::RuleSet::linkPseudoClassRules):
+        (WebCore::RuleSet::focusPseudoClassRules):
+        (WebCore::RuleSet::universalRules):
+        (WebCore::RuleSet::pageRules):
+        (WebCore::RuleSet::RuleSetSelectorPair::RuleSetSelectorPair):
+        (RuleSetSelectorPair):
+        (WebCore::RuleSet::RuleSet):
+        * css/StyleResolver.cpp:
+        (WebCore):
+        (WebCore::makeRuleSet):
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        * css/StyleResolver.h:
+        (StyleResolver):
+
 2012-10-04  Adam Barth  <abarth@webkit.org>
 
         FeatureObserver should distinguish between legacy HTML and text notifications

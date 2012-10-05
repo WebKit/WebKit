@@ -2610,6 +2610,10 @@ webcore_sources += \
 	Source/WebCore/css/Rect.h \
 	Source/WebCore/css/RGBColor.cpp \
 	Source/WebCore/css/RGBColor.h \
+	Source/WebCore/css/RuleFeature.cpp \
+	Source/WebCore/css/RuleFeature.h \
+	Source/WebCore/css/RuleSet.cpp \
+	Source/WebCore/css/RuleSet.h \
 	Source/WebCore/css/SelectorChecker.cpp \
 	Source/WebCore/css/SelectorChecker.h \
 	Source/WebCore/css/ShadowValue.cpp \

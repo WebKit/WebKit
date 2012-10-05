@@ -28,6 +28,7 @@
 #include "LinkHash.h"
 #include "MediaQueryExp.h"
 #include "RenderStyle.h"
+#include "RuleFeature.h"
 #include "SelectorChecker.h"
 #include "StyleInheritedData.h"
 #include <wtf/HashMap.h>
@@ -274,31 +275,6 @@ public:
 
     void loadPendingResources();
 
-    struct RuleFeature {
-        RuleFeature(StyleRule* rule, unsigned selectorIndex, bool hasDocumentSecurityOrigin)
-            : rule(rule)
-            , selectorIndex(selectorIndex)
-            , hasDocumentSecurityOrigin(hasDocumentSecurityOrigin) 
-        { 
-        }
-        StyleRule* rule;
-        unsigned selectorIndex;
-        bool hasDocumentSecurityOrigin;
-    };
-    struct Features {
-        Features();
-        ~Features();
-        void add(const StyleResolver::Features&);
-        void clear();
-        void reportMemoryUsage(MemoryObjectInfo*) const;
-        HashSet<AtomicStringImpl*> idsInRules;
-        HashSet<AtomicStringImpl*> attrsInRules;
-        Vector<RuleFeature> siblingRules;
-        Vector<RuleFeature> uncommonAttributeRules;
-        bool usesFirstLineRules;
-        bool usesBeforeAfterRules;
-    };
-
 private:
     // This function fixes up the default font size if it detects that the current generic font family has changed. -dwh
     void checkForGenericFamilyChange(RenderStyle*, RenderStyle* parentStyle);
@@ -395,7 +371,7 @@ private:
     OwnPtr<RuleSet> m_authorStyle;
     OwnPtr<RuleSet> m_userStyle;
 
-    Features m_features;
+    RuleFeatureSet m_features;
     OwnPtr<RuleSet> m_siblingRuleSet;
     OwnPtr<RuleSet> m_uncommonAttributeRuleSet;
 
