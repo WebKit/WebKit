@@ -1,3 +1,17 @@
+2012-10-04  Dirk Pranke  <dpranke@chromium.org>
+
+        Update chromium baselines for 5006779.html and paint-subrect-grid.html.
+
+        Unreviewed, rebaselining.
+
+        Updates after r130425 and r130411.
+
+        * platform/chromium-linux/fast/images/paint-subrect-grid-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/images/paint-subrect-grid-expected.png.
+        * platform/chromium-win-xp/editing/pasteboard/5006779-expected.png: Added.
+        * platform/chromium-win-xp/editing/pasteboard/5006779-expected.txt: Copied from LayoutTests/platform/chromium-win/editing/pasteboard/5006779-expected.txt.
+        * platform/chromium-win/editing/pasteboard/5006779-expected.txt:
+        * platform/chromium/fast/images/paint-subrect-grid-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/images/paint-subrect-grid-expected.png.
+
 2012-10-04  Douglas Stockwell  <dstockwell@chromium.org>
 
         [chromium] Unreviewed. Rebaseline mac/win results after r130355
