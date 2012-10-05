@@ -72,7 +72,13 @@ void SocketStreamHandleInternal::connect(const KURL& url)
 int SocketStreamHandleInternal::send(const char* data, int len)
 {
     LOG(Network, "send len=%d", len);
-    ASSERT(m_socket);
+    // FIXME: |m_socket| should not be null here, but it seems that there is the
+    // case. We should figure out such a path and fix it rather than checking
+    // null here.
+    if (!m_socket) {
+        LOG(Network, "m_socket is null when sending. It should not be.");
+        return 0;
+    }
     if (m_pendingAmountSent + len >= m_maxPendingSendAllowed)
         len = m_maxPendingSendAllowed - m_pendingAmountSent - 1;
 
