@@ -64,8 +64,10 @@ bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData&
     if (!g_spawn_sync(0, argv, 0, G_SPAWN_STDERR_TO_DEV_NULL, 0, 0, &stdOut, 0, &status, 0))
         return false;
 
-    if (!WIFEXITED(status) || WEXITSTATUS(status) != EXIT_SUCCESS)
+    if (!WIFEXITED(status) || WEXITSTATUS(status) != EXIT_SUCCESS) {
+        free(stdOut);
         return false;
+    }
 
     const unsigned kNumLinesExpected = 3;
     String lines[kNumLinesExpected];
