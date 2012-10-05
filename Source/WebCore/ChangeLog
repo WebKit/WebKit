@@ -1,3 +1,32 @@
+2012-10-05  Kent Tamura  <tkent@chromium.org>
+
+        Improve spelling and performance of Localizer.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=98485
+
+        Reviewed by Kentaro Hara.
+
+        Some improvements pointed in webkit.org/b/98229#c5.
+
+        No new tests because of no behavior change.
+
+        * platform/text/Localizer.h:
+        (Localizer):
+         - Rename dateTimeFormatWithSecond to dateTimeFormatWithSeconds
+         - Rename dateTimeFormatWithoutSecond to dateTimeFormatWithoutSeconds
+         - Add data members: m_dateTimeFormatWithSeconds and m_dateTimeFormatWithoutSeconds.
+        * platform/text/Localizer.cpp:
+        (WebCore::Localizer::timeFormat): Check isNull instead of isEmpty
+        (WebCore::Localizer::shortTimeFormat): Ditto.
+        (WebCore::Localizer::dateTimeFormatWithSeconds):
+        - Renamed.
+        - Cache the concatenation result to a data member.
+        (WebCore::Localizer::dateTimeFormatWithoutSeconds): Ditto.
+
+        * html/DateTimeInputType.cpp:
+        (WebCore::DateTimeInputType::setupLayoutParameters): Follow the renaming.
+        * html/DateTimeLocalInputType.cpp:
+        (WebCore::DateTimeLocalInputType::setupLayoutParameters): Ditto.
+
 2012-10-04  Kenichi Ishibashi  <bashi@chromium.org>
 
         [WebSocket] ExtensionParser should have its own file

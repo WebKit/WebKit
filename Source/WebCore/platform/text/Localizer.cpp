@@ -305,7 +305,7 @@ String Localizer::localizedDecimalSeparator()
 
 String Localizer::timeFormat()
 {
-    if (!m_localizedTimeFormatText.isEmpty())
+    if (!m_localizedTimeFormatText.isNull())
         return m_localizedTimeFormatText;
     m_localizedTimeFormatText = "hh:mm:ss";
     return m_localizedTimeFormatText;
@@ -313,30 +313,36 @@ String Localizer::timeFormat()
 
 String Localizer::shortTimeFormat()
 {
-    if (!m_localizedShortTimeFormatText.isEmpty())
+    if (!m_localizedShortTimeFormatText.isNull())
         return m_localizedShortTimeFormatText;
     m_localizedTimeFormatText = "hh:mm";
     return m_localizedShortTimeFormatText;
 }
 
-String Localizer::dateTimeFormatWithSecond()
+String Localizer::dateTimeFormatWithSeconds()
 {
-    // FIXME: We should retreive the separator and the order from the system.
+    if (!m_dateTimeFormatWithSeconds.isNull())
+        return m_dateTimeFormatWithSeconds;
+    // FIXME: We should retrieve the separator and the order from the system.
     StringBuilder builder;
     builder.append(dateFormat());
     builder.append(' ');
     builder.append(timeFormat());
-    return builder.toString();
+    m_dateTimeFormatWithSeconds = builder.toString();
+    return m_dateTimeFormatWithSeconds;
 }
 
-String Localizer::dateTimeFormatWithoutSecond()
+String Localizer::dateTimeFormatWithoutSeconds()
 {
-    // FIXME: We should retreive the separator and the order from the system.
+    if (!m_dateTimeFormatWithoutSeconds.isNull())
+        return m_dateTimeFormatWithoutSeconds;
+    // FIXME: We should retrieve the separator and the order from the system.
     StringBuilder builder;
     builder.append(dateFormat());
     builder.append(' ');
     builder.append(shortTimeFormat());
-    return builder.toString();
+    m_dateTimeFormatWithoutSeconds = builder.toString();
+    return m_dateTimeFormatWithoutSeconds;
 }
 
 const Vector<String>& Localizer::timeAMPMLabels()
