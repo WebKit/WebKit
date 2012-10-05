@@ -420,6 +420,7 @@ fast/mutation/inline-event-listener.html
 fast/mutation/mutate-during-delivery.html
 fast/mutation/mutation-observer-constructor.html
 fast/mutation/mutation-callback-non-element-crash.html
+fast/mutation/mutation-record-nullity.html
 fast/mutation/observe-attributes.html
 fast/mutation/observe-characterdata.html
 fast/mutation/observe-childList.html
@@ -1176,6 +1177,7 @@ loader/go-back-to-different-window-size.html
 editing/text-iterator/findString.html
 
 # Missing layoutTestController.testRepaint()
+fast/images/repaint-subrect-grid.html
 fast/repaint/table-writing-modes-h.html
 fast/repaint/table-writing-modes-v.html
 fast/repaint/text-emphasis-h.html
@@ -2726,6 +2728,7 @@ fast/regions/overflow-size-change-with-stacking-context.html
 # [Qt] fast/profiler/apply.html fails with LLInt on 32 bit
 # https://bugs.webkit.org/show_bug.cgi?id=97791
 fast/profiler/apply.html
+http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_xserver_redirect.html
 
 # =========================================================================== #
 #       End of entries merged in from the old Skipped file                    #

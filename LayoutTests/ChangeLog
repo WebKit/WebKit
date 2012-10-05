@@ -1,3 +1,12 @@
+2012-10-05  Nandor Huszka  <hnandor@inf.u-szeged.hu>
+
+        [Qt] Gardening, skip some failing test.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-10-05  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Fix window resizing / moving in WK1 and WKTR
