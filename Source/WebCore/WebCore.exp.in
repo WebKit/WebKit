@@ -1422,6 +1422,9 @@ _stringIsCaseInsensitiveEqualToString
 _suggestedFilenameWithMIMEType
 _wkCGContextGetShouldSmoothFonts
 _wkCGContextResetClip
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+_wkCGContextDrawsWithCorrectShadowOffsets
+#endif
 _wkCGPatternCreateWithImageAndTransform
 _wkCopyCFLocalizationPreferredName
 _wkCopyCFURLResponseSuggestedFilename

@@ -1,3 +1,23 @@
+2012-10-05  Tim Horton  <timothy_horton@apple.com>
+
+        [cg] GraphicsContextCG should ask CG whether the shadow offset workaround is required
+        https://bugs.webkit.org/show_bug.cgi?id=98565
+        <rdar://problem/12436468>
+
+        Reviewed by Simon Fraser.
+
+        On Mountain Lion and above, CG can tell us whether we need to work around incorrect
+        shadow offsets. Prior to Mountain Lion, we should assume we need to apply the workaround.
+
+        No new tests, as this requires an obscure configuration to test.
+
+        * WebCore.exp.in:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::applyShadowOffsetWorkaroundIfNeeded):
+        (WebCore::GraphicsContext::setPlatformShadow):
+        * platform/mac/WebCoreSystemInterface.h: Add wkCGContextDrawsWithCorrectShadowOffsets.
+        * platform/mac/WebCoreSystemInterface.mm: Add wkCGContextDrawsWithCorrectShadowOffsets.
+
 2012-10-05  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the build.

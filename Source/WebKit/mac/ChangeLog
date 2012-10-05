@@ -1,3 +1,16 @@
+2012-10-05  Tim Horton  <timothy_horton@apple.com>
+
+        [cg] GraphicsContextCG should ask CG whether the shadow offset workaround is required
+        https://bugs.webkit.org/show_bug.cgi?id=98565
+        <rdar://problem/12436468>
+
+        Reviewed by Simon Fraser.
+
+        Add wkCGContextDrawsWithCorrectShadowOffsets.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2012-10-04  Eric Carlson  <eric.carlson@apple.com>
 
         Allow ports to override text track rendering style
