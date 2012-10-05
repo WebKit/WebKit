@@ -1,3 +1,13 @@
+2012-10-05  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Removing failure expectation for fast/text/vertical-rl-rtl-linebreak.html
+        since the test only needed platform-specific baselines (which were added
+        in r130524).
+
+        * platform/gtk/TestExpectations:
+
 2012-10-05  Ojan Vafai  <ojan@chromium.org>
 
         Have perf test assert worst order of magnitude
