@@ -1,3 +1,22 @@
+2012-10-05  Dirk Pranke  <dpranke@chromium.org>
+
+        [chromium] tests failing after r130443.
+        https://bugs.webkit.org/show_bug.cgi?id=98545
+
+        Unreviewed, expectations change.
+
+         [chromium] fast/text/international/text-spliced-font.html and
+         fast/writing-mode/Kusa-Makura-background-canvas.html are failing on
+         the Mac after r130443 and we're not quite sure why ...
+
+        * platform/chromium-linux/fast/text/vertical-rl-rtl-linebreak-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/text/vertical-rl-rtl-linebreak-expected.png: Added.
+        * platform/chromium-mac/fast/text/vertical-rl-rtl-linebreak-expected.png: Added.
+        * platform/chromium-mac/fast/text/vertical-rl-rtl-linebreak-expected.txt: Added.
+        * platform/chromium-win/fast/text/vertical-rl-rtl-linebreak-expected.png: Added.
+        * platform/chromium-win/fast/text/vertical-rl-rtl-linebreak-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+
 2012-10-05  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Modify gesture highlight behaviour. Cancel on GestureLongPress and animate on GestureTapCancel.
