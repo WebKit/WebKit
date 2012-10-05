@@ -2035,9 +2035,6 @@ tables/mozilla_expected_failures/bugs/bug2479-5.html
 tables/mozilla/bugs/bug12384.html
 tables/mozilla/bugs/bug99948.html
 
-# The inner <input> should now grow to take the full cell's height.
-fast/table/colspanMinWidth-vertical.html
-
 # ============================================================================= #
 # Failed canvas tests from http://philip.html5.org/tests/canvas/suite/tests/
 # ============================================================================= #
@@ -2834,6 +2831,8 @@ webkit.org/b/90951 fast/text/shaping
 
 # Missing test infrastructure, no gamepads available.
 webkit.org/b/92873 gamepad/gamepad-polling-access.html [ Skip ]
+
+webkit.org/b/98564 fast/table/colspanMinWidth-vertical.html [ Missing Failure ]
 
 # Flaky tests
 webkit.org/b/91376 http/tests/security/sandboxed-iframe-modify-self.html [ Failure Pass ]

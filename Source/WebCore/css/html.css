@@ -396,7 +396,7 @@ button {
 
 /* Form controls don't go vertical. */
 input, textarea, keygen, select, button, isindex, meter, progress {
-    -webkit-block-flow: tb !important;
+    -webkit-writing-mode: horizontal-tb !important;
 }
 
 input, textarea, keygen, select, button, isindex {

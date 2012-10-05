@@ -1481,6 +1481,8 @@ webkit.org/b/88238 editing/pasteboard/paste-global-selection.html [ Skip ]
 # Gradient instead of solid color in the rectangle
 webkit.org/b/54251 fast/canvas/DrawImageSinglePixelStretch.html [ Failure ]
 
+webkit.org/b/98564 fast/table/colspanMinWidth-vertical.html [ Missing Failure ]
+
 # Fails after r129175.
 webkit.org/b/97296 fast/text/international/hebrew-selection.html [ ImageOnlyFailure ]
 

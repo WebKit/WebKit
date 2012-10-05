@@ -1,3 +1,19 @@
+2012-10-05  Tony Chang  <tony@chromium.org>
+
+        Form controls should always be horizontal
+        https://bugs.webkit.org/show_bug.cgi?id=98563
+
+        Reviewed by Ojan Vafai.
+
+        Fix a regression where we didn't force form controls to be horizontal.
+
+        Tests: fast/dom/HTMLMeterElement/meter-writing-mode.html
+               fast/dom/HTMLProgressElement/progress-writing-mode.html
+               fast/table/colspanMinWidth-vertical.html
+
+        * css/html.css:
+        (input, textarea, keygen, select, button, isindex, meter, progress):
+
 2012-10-05  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r130556 and r130564.

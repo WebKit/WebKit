@@ -3736,6 +3736,8 @@ webkit.org/b/98192 [ Win Debug ] fast/js/post-message-numeric-property.html [ Fa
 
 webkit.org/b/98275 media/event-queue-crash.html [ Skip ]
 
+webkit.org/b/98564 [ Win Mac ] fast/table/colspanMinWidth-vertical.html [ Missing Failure ]
+
 # They are failing because of webkit.org/b/95121 and need rebaseline.
 webkit.org/b/95121 fast/backgrounds/repeat/mask-negative-offset-repeat.html [ ImageOnlyFailure ] 
 webkit.org/b/95121 fast/backgrounds/size/backgroundSize15.html [ ImageOnlyFailure ] 

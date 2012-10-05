@@ -1,3 +1,48 @@
+2012-10-05  Tony Chang  <tony@chromium.org>
+
+        Form controls should always be horizontal
+        https://bugs.webkit.org/show_bug.cgi?id=98563
+
+        Reviewed by Ojan Vafai.
+
+        Convert fast/dom/HTMLMeterElement/meter-writing-mode.html and
+        fast/dom/HTMLProgressElement/progress-writing-mode.html to be ref tests.
+        Also rebaseline fast/table/colspanMinWidth-vertical.html and mark the
+        test as needing a rebaseline on platforms other than Chromium Linux.
+
+        * fast/dom/HTMLMeterElement/meter-writing-mode-expected.html: Added.
+        * fast/dom/HTMLMeterElement/meter-writing-mode-expected.txt: Removed.
+        * fast/dom/HTMLProgressElement/progress-writing-mode-expected.html: Added.
+        * fast/dom/HTMLProgressElement/progress-writing-mode-expected.png: Removed.
+        * fast/dom/HTMLProgressElement/progress-writing-mode-expected.txt: Removed.
+        * platform/chromium-linux/fast/table/colspanMinWidth-vertical-expected.png:
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-writing-mode-expected.png: Removed.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-writing-mode-expected.txt: Removed.
+        * platform/chromium-mac/fast/dom/HTMLProgressElement/progress-writing-mode-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-writing-mode-expected.png: Removed.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-writing-mode-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/HTMLProgressElement/progress-writing-mode-expected.txt: Removed.
+        * platform/chromium-win/fast/table/colspanMinWidth-vertical-expected.txt:
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/dom/HTMLProgressElement/progress-writing-mode-expected.png: Removed.
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/dom/HTMLMeterElement/meter-writing-mode-expected.png: Removed.
+        * platform/efl/fast/dom/HTMLMeterElement/meter-writing-mode-expected.txt: Removed.
+        * platform/efl/fast/dom/HTMLProgressElement/progress-writing-mode-expected.txt: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-writing-mode-expected.png: Removed.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-writing-mode-expected.txt: Removed.
+        * platform/gtk/fast/dom/HTMLProgressElement/progress-writing-mode-expected.txt: Removed.
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-writing-mode-expected.png: Removed.
+        * platform/mac/fast/dom/HTMLMeterElement/meter-writing-mode-expected.txt: Removed.
+        * platform/mac/fast/dom/HTMLProgressElement/progress-writing-mode-expected.png: Removed.
+        * platform/mac/fast/dom/HTMLProgressElement/progress-writing-mode-expected.txt: Removed.
+        * platform/qt-5.0/fast/dom/HTMLProgressElement/progress-writing-mode-expected.txt: Removed.
+        * platform/qt/TestExpectations:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-writing-mode-expected.png: Removed.
+        * platform/qt/fast/dom/HTMLMeterElement/meter-writing-mode-expected.txt: Removed.
+
 2012-10-05  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [WK2][WTR] WebKitTestRunner needs testRunner.setSerializeHTTPLoads

@@ -1184,9 +1184,6 @@ webkit.org/b/81320 editing/pasteboard/copy-two-pasteboard-types-both-work.html [
 
 webkit.org/b/82020 plugins/netscape-dom-access-and-reload.html [ Failure ]
 
-# The inner <input> should now grow to take the full cell's height.
-Bug(GTK) fast/table/colspanMinWidth-vertical.html [ Failure ]
-
 # EditorClient::checkTextOfParagraph() is not implemented.
 Bug(GTK) editing/spelling/spelling-marker-description.html [ Failure ]
 
@@ -1347,6 +1344,8 @@ webkit.org/b/95429 svg/custom/clamped-masking-clipping.svg [ ImageOnlyFailure ]
 webkit.org/b/73003 [ Debug ] editing/spelling/spellcheck-async.html [ Failure ]
 webkit.org/b/73003 [ Debug ] editing/spelling/spellcheck-paste.html [ Pass ]
 webkit.org/b/50740 [ Debug ] editing/spelling/spellcheck-queue.html [ Failure ]
+
+webkit.org/b/98564 fast/table/colspanMinWidth-vertical.html [ Missing Failure ]
 
 webkit.org/b/96900 fast/text/stale-TextLayout-from-first-line.html [ ImageOnlyFailure ]
 
