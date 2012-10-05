@@ -1,3 +1,22 @@
+2012-10-05  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Implement TestRunner.setMockDeviceOrientation
+        https://bugs.webkit.org/show_bug.cgi?id=98542
+
+        Reviewed by Antonio Gomes.
+
+        PR 120681
+
+        Provide framework for mock device motion.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        * WebKitSupport/DumpRenderTreeSupport.cpp:
+        (toDeviceOrientationClientMock):
+        (DumpRenderTreeSupport::setMockDeviceOrientation):
+        * WebKitSupport/DumpRenderTreeSupport.h:
+        (DumpRenderTreeSupport):
+
 2012-10-05  Konrad Piascik  <kpiascik@rim.com>
 
         [BlackBerry] Remove unnecessary html file.

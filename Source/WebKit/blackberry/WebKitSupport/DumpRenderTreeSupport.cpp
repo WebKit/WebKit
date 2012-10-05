@@ -21,6 +21,9 @@
 #include "DumpRenderTreeSupport.h"
 
 #include "CSSComputedStyleDeclaration.h"
+#include "DeviceOrientationClientMock.h"
+#include "DeviceOrientationController.h"
+#include "DeviceOrientationData.h"
 #include "Frame.h"
 #include "GeolocationClientMock.h"
 #include "GeolocationController.h"
@@ -134,3 +137,18 @@ JSValueRef DumpRenderTreeSupport::computedStyleIncludingVisitedInfo(JSContextRef
     return toRef(exec, toJS(exec, jsElement->globalObject(), style.get()));
 }
 
+#if ENABLE(DEVICE_ORIENTATION)
+DeviceOrientationClientMock* toDeviceOrientationClientMock(DeviceOrientationClient* client)
+{
+    return static_cast<DeviceOrientationClientMock*>(client);
+}
+#endif
+
+void DumpRenderTreeSupport::setMockDeviceOrientation(BlackBerry::WebKit::WebPage* webPage, bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
+{
+#if ENABLE(DEVICE_ORIENTATION)
+    Page* page = corePage(webPage);
+    DeviceOrientationClientMock* mockClient = toDeviceOrientationClientMock(DeviceOrientationController::from(page)->client());
+    mockClient->setOrientation(DeviceOrientationData::create(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma));
+#endif
+}

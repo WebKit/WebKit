@@ -44,6 +44,9 @@
 #include "DefaultTapHighlight.h"
 #include "DeviceMotionClientBlackBerry.h"
 #include "DeviceOrientationClientBlackBerry.h"
+#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
+#include "DeviceOrientationClientMock.h"
+#endif
 #include "DragClientBlackBerry.h"
 // FIXME: We should be using DumpRenderTreeClient, but I'm not sure where we should
 // create the DRT_BB object. See PR #120355.
@@ -533,7 +536,13 @@ void WebPagePrivate::init(const WebString& pageGroupName)
 #else
         WebCore::provideGeolocationTo(m_page, new GeolocationControllerClientBlackBerry(this));
 #endif
-    WebCore::provideDeviceOrientationTo(m_page, new DeviceOrientationClientBlackBerry(this));
+#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
+    if (getenv("drtRun"))
+        WebCore::provideDeviceOrientationTo(m_page, new DeviceOrientationClientMock);
+    else
+#endif
+        WebCore::provideDeviceOrientationTo(m_page, new DeviceOrientationClientBlackBerry(this));
+
     WebCore::provideDeviceMotionTo(m_page, new DeviceMotionClientBlackBerry(this));
 #if ENABLE(VIBRATION)
     WebCore::provideVibrationTo(m_page, new VibrationClientBlackBerry());
