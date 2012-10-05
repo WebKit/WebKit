@@ -720,7 +720,11 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
     String host;
     int port;
     if (type == ProtectionSpaceProxyHTTP) {
-        String proxyAddress = String(BlackBerry::Platform::Settings::instance()->proxyAddress(newURL.string().ascii().data()).c_str());
+        // proxyAddress returns host:port, without a protocol. KURL can't parse this, so stick http
+        // on the front.
+        // (We could split into host and port by hand, but that gets hard to parse with IPv6 urls,
+        // so better to reuse KURL's parsing.)
+        String proxyAddress = String("http://") + BlackBerry::Platform::Settings::instance()->proxyAddress(newURL.string().ascii().data()).c_str();
         KURL proxyURL(KURL(), proxyAddress);
         host = proxyURL.host();
         port = proxyURL.port();
