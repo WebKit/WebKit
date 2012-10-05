@@ -504,7 +504,7 @@ TEST_F(WebFrameTest, DivScrollIntoEditableTest)
     DivAutoZoomTestWebViewClient client;
     int viewportWidth = 640;
     int viewportHeight = 480;
-    float LeftBoxRatio = 0.3;
+    float leftBoxRatio = 0.3f;
     int caretPadding = 10;
     int minReadableCaretHeight = 18;
     client.m_windowRect = WebRect(0, 0, viewportWidth, viewportHeight);
@@ -529,7 +529,7 @@ TEST_F(WebFrameTest, DivScrollIntoEditableTest)
     webViewImpl->selectionBounds(caret, rect);
     webView->scrollFocusedNodeIntoRect(rect);
     // The edit box should be left aligned with a margin for possible label.
-    int hScroll = editBoxWithText.x * webView->pageScaleFactor() - LeftBoxRatio * viewportWidth;
+    int hScroll = editBoxWithText.x * webView->pageScaleFactor() - leftBoxRatio * viewportWidth;
     EXPECT_EQ(hScroll, webView->mainFrame()->scrollOffset().width);
     int vScroll = editBoxWithText.y * webView->pageScaleFactor() - (viewportHeight - editBoxWithText.height * webView->pageScaleFactor()) / 2;
     EXPECT_EQ(vScroll, webView->mainFrame()->scrollOffset().height);
