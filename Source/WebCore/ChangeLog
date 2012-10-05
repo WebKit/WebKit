@@ -1,3 +1,19 @@
+2012-10-05  Tab Atkins  <jackalmage@gmail.com>
+
+        <marquee> element forces itself to be at least 1em high, regardless of 'height' declaration
+        https://bugs.webkit.org/show_bug.cgi?id=18098
+
+        Reviewed by Eric Seidel.
+
+        This restriction originally existed to match IE, but IE changed some time ago to be normal instead.
+        We're the last browser, afaict, to still enforce this de-facto restriction.
+        This patch makes <marquee> instead act like a normal element.
+
+        Tests: fast/css/MarqueeLayoutTest.html (rewritten from the older, bad version)
+
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::updateMarqueeStyle):
+
 2012-10-05  Joe Mason  <jmason@rim.com>
 
         [BlackBerry] Fix regression in proxy auth
