@@ -22,6 +22,9 @@ shouldBe("input.setAttribute('size', 'a'); input.size", "20");
 shouldBe("input.removeAttribute('size'); input.size", "20");
 shouldBe("input.setAttribute('size', '0'); input.size", "20");
 shouldBe("input.setAttribute('size', '10'); input.size", "10");
+
+shouldThrow("input.size = 0", "'Error: INDEX_SIZE_ERR: DOM Exception 1'");
+
 </script>
 </body>
 

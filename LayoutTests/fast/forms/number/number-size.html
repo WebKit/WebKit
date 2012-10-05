@@ -63,7 +63,7 @@ shouldBe('number.size = 10; number.offsetWidth', 'text.offsetWidth');
 shouldBe('number.size', '10');
 shouldBe('number.size = 100; number.offsetWidth', 'text.offsetWidth');
 shouldBe('number.size', '100');
-number.size = null;
+shouldThrow('number.size = null', '"Error: INDEX_SIZE_ERR: DOM Exception 1"');
 debug('');
 
 function numberWidth(min, max, step, className) {

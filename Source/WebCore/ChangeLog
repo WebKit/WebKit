@@ -1,3 +1,23 @@
+2012-10-04  Kunihiko Sakamoto  <ksakamoto@chromium.org>
+
+        <input> size attribute should throw INDEX_SIZE_ERR when set to 0
+        https://bugs.webkit.org/show_bug.cgi?id=61675
+
+        Reviewed by Kent Tamura.
+
+        According to the spec, the size IDL attribute of input elements is limited
+        to only non-negative numbers greater than zero. It should throw INDEX_SIZE_ERR
+        exception when set to 0. New behavior matches both Firefox and IE.
+        Spec: http://www.w3.org/TR/html5/common-input-element-attributes.html#the-size-attribute
+
+        Test: fast/dom/HTMLInputElement/input-size-attribute.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setSize):
+        * html/HTMLInputElement.h:
+        (HTMLInputElement):
+        * html/HTMLInputElement.idl:
+
 2012-10-04  Kent Tamura  <tkent@chromium.org>
 
         Fix font for date/time input types.

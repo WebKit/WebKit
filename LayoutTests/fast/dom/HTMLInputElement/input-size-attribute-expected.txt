@@ -13,6 +13,7 @@ PASS input.setAttribute('size', 'a'); input.size is 20
 PASS input.removeAttribute('size'); input.size is 20
 PASS input.setAttribute('size', '0'); input.size is 20
 PASS input.setAttribute('size', '10'); input.size is 10
+PASS input.size = 0 threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
 PASS successfullyParsed is true
 
 TEST COMPLETE

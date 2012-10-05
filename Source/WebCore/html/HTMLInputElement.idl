@@ -52,7 +52,7 @@ module html {
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         attribute [ObjCImplementedAsUnsignedLong] DOMString size; // DOM level 2 changed this to a long, but ObjC API is a string
 #else
-        attribute unsigned long size; // Changed string -> long -> unsigned long
+        attribute unsigned long size setter raises(DOMException); // Changed string -> long -> unsigned long
 #endif
         attribute [Reflect, URL] DOMString src;
         attribute [Reflect] DOMString step;

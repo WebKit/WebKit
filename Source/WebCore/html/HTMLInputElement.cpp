@@ -1318,6 +1318,14 @@ void HTMLInputElement::setSize(unsigned size)
     setAttribute(sizeAttr, String::number(size));
 }
 
+void HTMLInputElement::setSize(unsigned size, ExceptionCode& ec)
+{
+    if (!size)
+        ec = INDEX_SIZE_ERR;
+    else
+        setSize(size);
+}
+
 KURL HTMLInputElement::src() const
 {
     return document()->completeURL(fastGetAttribute(srcAttr));
