@@ -39,7 +39,6 @@
 #include "LayerWebKitThread.h"
 #endif
 #include "NotImplemented.h"
-#include "OpenGLESShims.h"
 
 namespace WebCore {
 
@@ -66,14 +65,14 @@ void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsi
 #else
     if (m_attrs.antialias && m_boundFBO == m_multisampleFBO) {
          resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+        ::glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
         ::glFlush();
     }
 
     ::glReadPixels(x, y, width, height, format, type, data);
 
     if (m_attrs.antialias && m_boundFBO == m_multisampleFBO)
-        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
+        ::glBindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
 #endif
 }
 
@@ -122,12 +121,12 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
     bool mustRestoreFBO = false;
     if (m_boundFBO != m_fbo) {
         mustRestoreFBO = true;
-        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
+        ::glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     }
 
     ::glBindTexture(GL_TEXTURE_2D, m_texture);
     ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, pixelDataType, 0);
-    ::glFramebufferTexture2DEXT(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
+    ::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
 
     ::glBindTexture(GL_TEXTURE_2D, m_compositorTexture);
     ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
@@ -139,28 +138,28 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
     if (m_attrs.stencil || m_attrs.depth) {
         // Use a 24 bit depth buffer where we know we have it.
         if (supportPackedDepthStencilBuffer) {
-            ::glBindTexture(GL_TEXTURE_2D, m_depthStencilBuffer);
-            ::glTexImage2D(GL_TEXTURE_2D, 0, GraphicsContext3D::DEPTH_STENCIL, width, height, 0, GraphicsContext3D::DEPTH_STENCIL, GraphicsContext3D::UNSIGNED_INT_24_8, 0);
+            ::glBindRenderbuffer(GL_RENDERBUFFER, m_depthStencilBuffer);
+            ::glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, width, height);
             if (m_attrs.stencil)
-                ::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_depthStencilBuffer, 0);
+                ::glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
             if (m_attrs.depth)
-                ::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthStencilBuffer, 0);
-            ::glBindTexture(GL_TEXTURE_2D, 0);
+                ::glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
+            ::glBindRenderbuffer(GL_RENDERBUFFER, 0);
         } else {
             if (m_attrs.stencil) {
-                ::glBindRenderbufferEXT(GraphicsContext3D::RENDERBUFFER, m_stencilBuffer);
-                ::glRenderbufferStorageEXT(GraphicsContext3D::RENDERBUFFER, GL_STENCIL_INDEX8, width, height);
-                ::glFramebufferRenderbufferEXT(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_stencilBuffer);
+                ::glBindRenderbuffer(GL_RENDERBUFFER, m_stencilBuffer);
+                ::glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, width, height);
+                ::glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_stencilBuffer);
             }
             if (m_attrs.depth) {
-                ::glBindRenderbufferEXT(GraphicsContext3D::RENDERBUFFER, m_depthBuffer);
-                ::glRenderbufferStorageEXT(GraphicsContext3D::RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
-                ::glFramebufferRenderbufferEXT(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthBuffer);
+                ::glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer);
+                ::glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
+                ::glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBuffer);
             }
-            ::glBindRenderbufferEXT(GraphicsContext3D::RENDERBUFFER, 0);
+            ::glBindRenderbuffer(GL_RENDERBUFFER, 0);
         }
     }
-    if (glCheckFramebufferStatusEXT(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         // FIXME: cleanup
         notImplemented();
     }
@@ -178,7 +177,7 @@ void GraphicsContext3D::resolveMultisamplingIfNecessary(const IntRect& rect)
 void GraphicsContext3D::renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height)
 {
     makeContextCurrent();
-    ::glRenderbufferStorageEXT(target, internalformat, width, height);
+    ::glRenderbufferStorage(target, internalformat, width, height);
 }
 
 void GraphicsContext3D::getIntegerv(GC3Denum pname, GC3Dint* value)

@@ -28,6 +28,9 @@
     #define TEXMAP_OPENGL_ES_2
 #endif
 #endif
+#if PLATFORM(GTK) && USE(OPENGL_ES_2)
+#define TEXMAP_OPENGL_ES_2
+#endif
 
 #include "FilterOperations.h"
 #include "GraphicsContext.h"

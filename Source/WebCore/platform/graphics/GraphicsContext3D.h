@@ -395,6 +395,7 @@ public:
         STENCIL_INDEX8 = 0x8D48,
         DEPTH_STENCIL = 0x84F9,
         UNSIGNED_INT_24_8 = 0x84FA,
+        DEPTH24_STENCIL8 = 0x88F0,
         RENDERBUFFER_WIDTH = 0x8D42,
         RENDERBUFFER_HEIGHT = 0x8D43,
         RENDERBUFFER_INTERNAL_FORMAT = 0x8D44,
@@ -1021,7 +1022,7 @@ public:
     ANGLEWebKitBridge m_compiler;
 #endif
 
-#if PLATFORM(BLACKBERRY) || (PLATFORM(QT) && defined(QT_OPENGL_ES_2))
+#if PLATFORM(BLACKBERRY) || (PLATFORM(QT) && defined(QT_OPENGL_ES_2)) || (PLATFORM(GTK) && USE(OPENGL_ES_2))
     friend class Extensions3DOpenGLES;
     OwnPtr<Extensions3DOpenGLES> m_extensions;
 #elif !PLATFORM(CHROMIUM)

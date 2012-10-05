@@ -36,7 +36,7 @@
 #include <GL/gl.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
-#include <WebCore/GLContextGLX.h>
+#include <WebCore/GLContext.h>
 #include <WebCore/Page.h>
 #include <WebCore/Settings.h>
 

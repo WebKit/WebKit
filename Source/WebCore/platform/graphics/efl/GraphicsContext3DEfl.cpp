@@ -474,11 +474,6 @@ void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsi
     m_private->readPixels(x, y, width, height, format, type, data);
 }
 
-void GraphicsContext3D::releaseShaderCompiler()
-{
-    notImplemented();
-}
-
 void GraphicsContext3D::renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height)
 {
     m_private->renderbufferStorage(target, internalformat, width, height);

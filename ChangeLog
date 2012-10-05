@@ -1,3 +1,21 @@
+2012-10-05  José Dapena Paz  <jdapena@igalia.com>
+
+        [GTK] Add support for creating EGL contexts
+        https://bugs.webkit.org/show_bug.cgi?id=77921
+
+        Reviewed by Martin Robinson.
+
+        This patch adds support for EGL, using OpenGL and OpenGL ES 2. Both
+        options are set up on compile time, with the configure options
+        --enable-egl and --enable-gles2.
+
+        The implementation only adds support for EGL on top of X11, to
+        isolate the changes to the minimum. More changes should come
+        later to enable EGL for other targets (as Wayland).
+
+        * GNUmakefile.am:
+        * configure.ac: new configure options --enable-egl and --enable-gles2.
+
 2012-10-04  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Sync up CMake files

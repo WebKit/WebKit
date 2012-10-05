@@ -56,11 +56,6 @@ GraphicsContext3D::~GraphicsContext3D()
     notImplemented();
 }
 
-void GraphicsContext3D::releaseShaderCompiler()
-{
-    notImplemented();
-}
-
 bool GraphicsContext3D::getImageData(Image* image, unsigned int format, unsigned int type, bool premultiplyAlpha, bool ignoreGammaAndColorProfile, Vector<uint8_t>& outputVector)
 {
     notImplemented();

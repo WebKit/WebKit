@@ -17,57 +17,52 @@
  *  Boston, MA 02110-1301 USA
  */
 
-#ifndef GLContextGLX_h
-#define GLContextGLX_h
+#ifndef GLContextEGL_h
+#define GLContextEGL_h
 
-#if USE(GLX)
+#if USE(EGL)
 
 #include "GLContext.h"
 
-typedef struct __GLXcontextRec* GLXContext;
-typedef struct __GLXcontextRec *GLXContext;
-typedef unsigned long GLXPbuffer;
-typedef unsigned long GLXPixmap;
-typedef unsigned char GLubyte;
-typedef unsigned long Pixmap;
-typedef unsigned long XID;
-typedef void* ContextKeyType;
+#include <EGL/egl.h>
 
 namespace WebCore {
 
-class GLContextGLX : public GLContext {
-    WTF_MAKE_NONCOPYABLE(GLContextGLX);
+class GLContextEGL : public GLContext {
+    WTF_MAKE_NONCOPYABLE(GLContextEGL);
 public:
-    static PassOwnPtr<GLContextGLX> createContext(XID window, GLContext* sharingContext);
-    static PassOwnPtr<GLContextGLX> createWindowContext(XID window, GLContext* sharingContext);
+    enum EGLSurfaceType { PbufferSurface, WindowSurface, PixmapSurface };
+    static PassOwnPtr<GLContextEGL> createContext(EGLNativeWindowType, GLContext* sharingContext = 0);
+    static PassOwnPtr<GLContextEGL> createWindowContext(EGLNativeWindowType, GLContext* sharingContext);
 
-    virtual ~GLContextGLX();
+    virtual ~GLContextEGL();
     virtual bool makeContextCurrent();
     virtual void swapBuffers();
     virtual void waitNative();
     virtual bool canRenderToDefaultFramebuffer();
     virtual IntSize defaultFrameBufferSize();
 
-#if USE(3D_GRAPHICS)
+
+#if ENABLE(WEBGL)
     virtual PlatformGraphicsContext3D platformContext();
 #endif
 
 private:
-    static PassOwnPtr<GLContextGLX> createPbufferContext(GLXContext sharingContext);
-    static PassOwnPtr<GLContextGLX> createPixmapContext(GLXContext sharingContext);
+    static PassOwnPtr<GLContextEGL> createPbufferContext(EGLContext sharingContext);
+    static PassOwnPtr<GLContextEGL> createPixmapContext(EGLContext sharingContext);
 
-    GLContextGLX(GLXContext);
-    GLContextGLX(GLXContext, Pixmap, GLXPixmap);
+    static void addActiveContext(GLContextEGL*);
+    static void cleanupSharedEGLDisplay(void);
 
-    GLXContext m_context;
-    XID m_window;
-    GLXPbuffer m_pbuffer;
-    Pixmap m_pixmap;
-    GLXPixmap m_glxPixmap;
+    GLContextEGL(EGLContext, EGLSurface, EGLSurfaceType);
+
+    EGLContext m_context;
+    EGLSurface m_surface;
+    EGLSurfaceType m_type;
 };
 
 } // namespace WebCore
 
-#endif // USE(GLX)
+#endif // USE(EGL)
 
-#endif // GLContextGLX_h
+#endif // GLContextEGL_h

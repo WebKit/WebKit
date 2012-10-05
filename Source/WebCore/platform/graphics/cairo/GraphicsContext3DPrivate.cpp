@@ -24,9 +24,15 @@
 
 #include "HostWindow.h"
 #include "NotImplemented.h"
-#include "OpenGLShims.h"
 #include "PlatformContextCairo.h"
 #include <wtf/OwnArrayPtr.h>
+
+#if USE(OPENGL_ES_2)
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#else
+#include "OpenGLShims.h"
+#endif
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER) && USE(TEXTURE_MAPPER_GL)
 #include <texmap/TextureMapperGL.h>
@@ -125,7 +131,7 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper
             m_context->makeContextCurrent();
 
         m_context->resolveMultisamplingIfNecessary();
-        glBindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_context->m_boundFBO);
+        ::glBindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_context->m_boundFBO);
 
         if (previousActiveContext && previousActiveContext != m_glContext)
             previousActiveContext->makeContextCurrent();

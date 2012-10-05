@@ -4457,14 +4457,9 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/MediaPlayer.cpp \
 	Source/WebCore/platform/graphics/MediaPlayer.h \
 	Source/WebCore/platform/graphics/MediaPlayerPrivate.h \
-	Source/WebCore/platform/graphics/opengl/Extensions3DOpenGL.cpp \
-	Source/WebCore/platform/graphics/opengl/Extensions3DOpenGL.h \
 	Source/WebCore/platform/graphics/opengl/Extensions3DOpenGLCommon.cpp \
 	Source/WebCore/platform/graphics/opengl/Extensions3DOpenGLCommon.h \
-	Source/WebCore/platform/graphics/opengl/GraphicsContext3DOpenGL.cpp \
 	Source/WebCore/platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp \
-	Source/WebCore/platform/graphics/OpenGLShims.cpp \
-	Source/WebCore/platform/graphics/OpenGLShims.h \
 	Source/WebCore/platform/graphics/opentype/OpenTypeVerticalData.h \
 	Source/WebCore/platform/graphics/Path.cpp \
 	Source/WebCore/platform/graphics/Path.h \
@@ -5996,8 +5991,6 @@ webcoregtk_sources += \
 
 if TARGET_X11
 webcoregtk_sources += \
-	Source/WebCore/platform/graphics/glx/GLContextGLX.cpp \
-	Source/WebCore/platform/graphics/glx/GLContextGLX.h \
 	Source/WebCore/platform/graphics/cairo/GLContext.cpp \
 	Source/WebCore/platform/graphics/cairo/GLContext.h \
 	Source/WebCore/platform/gtk/GtkWidgetBackingStoreX11.cpp \
@@ -6008,6 +6001,16 @@ webcoregtk_sources += \
 	Source/WebCore/plugins/gtk/PluginPackageGtk.cpp \
 	Source/WebCore/plugins/gtk/PluginViewGtk.cpp \
 	Source/WebCore/plugins/gtk/xembed.h
+if USE_EGL
+webcoregtk_sources += \
+	Source/WebCore/platform/graphics/egl/GLContextEGL.cpp \
+	Source/WebCore/platform/graphics/egl/GLContextEGL.h
+endif # END USE_EGL
+if USE_GLX
+webcoregtk_sources += \
+	Source/WebCore/platform/graphics/glx/GLContextGLX.cpp \
+	Source/WebCore/platform/graphics/glx/GLContextGLX.h
+endif # END USE_GLX
 else
 if TARGET_WIN32
 webcore_sources += \
@@ -6037,6 +6040,21 @@ webcore_sources += \
 	Source/WebCore/plugins/PluginViewNone.cpp
 endif # END TARGET_WIN32
 endif # END TARGET_X11
+
+if USE_GLES2
+webcore_sources += \
+	Source/WebCore/platform/graphics/opengl/Extensions3DOpenGLES.cpp \
+	Source/WebCore/platform/graphics/opengl/Extensions3DOpenGLES.h \
+	Source/WebCore/platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp \
+	Source/WebCore/platform/graphics/OpenGLESShims.h
+else
+webcore_sources += \
+	Source/WebCore/platform/graphics/opengl/Extensions3DOpenGL.cpp \
+	Source/WebCore/platform/graphics/opengl/Extensions3DOpenGL.h \
+	Source/WebCore/platform/graphics/opengl/GraphicsContext3DOpenGL.cpp \
+	Source/WebCore/platform/graphics/OpenGLShims.cpp \
+	Source/WebCore/platform/graphics/OpenGLShims.h
+endif # END USE_GLES2
 
 # ----
 # icu unicode backend

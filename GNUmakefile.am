@@ -237,6 +237,16 @@ global_cppflags += \
 	-DWTF_USE_GLX=1
 endif
 
+if USE_EGL
+global_cppflags += \
+	-DWTF_USE_EGL=1
+endif
+
+if USE_GLES2
+global_cppflags += \
+	-DWTF_USE_OPENGL_ES_2=1
+endif
+
 if USE_OPENGL
 global_cppflags += \
 	-DWTF_USE_OPENGL=1

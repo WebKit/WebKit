@@ -1,3 +1,95 @@
+2012-10-05  José Dapena Paz  <jdapena@igalia.com>
+
+        [GTK] Add support for creating EGL contexts
+        https://bugs.webkit.org/show_bug.cgi?id=77921
+
+        Reviewed by Martin Robinson.
+
+        This patch adds support for EGL, using OpenGL and OpenGL ES 2. Both
+        options are set up on compile time, with the configure options
+        --enable-egl and --enable-gles2.
+
+        The implementation only adds support for EGL on top of X11, to
+        isolate the changes to the minimum. More changes should come
+        later to enable EGL for other targets (as Wayland).
+
+        No new tests required, as existing WebGL and AC tests should cover
+        the cases.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * platform/graphics/GraphicsContext3D.h:
+        (GraphicsContext3D):
+        * platform/graphics/OpenGLESShims.h:
+        * platform/graphics/cairo/GLContext.cpp:
+        (WebCore):
+        (WebCore::GLContext::sharedX11Display):
+        (WebCore::GLContext::cleanupSharedX11Display):
+        (WebCore::activeContextList):
+        (WebCore::GLContext::addActiveContext):
+        (WebCore::GLContext::removeActiveContext):
+        (WebCore::GLContext::cleanupActiveContextsAtExit):
+        (WebCore::GLContext::createContextForWindow):
+        (WebCore::GLContext::createOffscreenContext):
+        * platform/graphics/cairo/GLContext.h:
+        (GLContext):
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::create):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        (WebCore::GraphicsContext3D::isGLES2Compliant):
+        * platform/graphics/cairo/GraphicsContext3DPrivate.cpp:
+        (WebCore::GraphicsContext3DPrivate::paintToTextureMapper):
+        * platform/graphics/clutter/GraphicsContext3DClutter.cpp:
+        * platform/graphics/efl/GraphicsContext3DEfl.cpp:
+        * platform/graphics/egl/GLContextEGL.cpp: Added.
+        (WebCore):
+        (WebCore::sharedEGLDisplay):
+        (WebCore::getEGLConfig):
+        (WebCore::GLContextEGL::createWindowContext):
+        (WebCore::GLContextEGL::createPbufferContext):
+        (WebCore::GLContextEGL::createPixmapContext):
+        (WebCore::GLContextEGL::createContext):
+        (WebCore::GLContextEGL::GLContextEGL):
+        (WebCore::GLContextEGL::~GLContextEGL):
+        (WebCore::GLContextEGL::canRenderToDefaultFramebuffer):
+        (WebCore::GLContextEGL::defaultFrameBufferSize):
+        (WebCore::GLContextEGL::makeContextCurrent):
+        (WebCore::GLContextEGL::swapBuffers):
+        (WebCore::GLContextEGL::waitNative):
+        (WebCore::GLContextEGL::platformContext):
+        * platform/graphics/egl/GLContextEGL.h: Added.
+        (WebCore):
+        (GLContextEGL):
+        * platform/graphics/glx/GLContextGLX.cpp:
+        (WebCore::GLContextGLX::createWindowContext):
+        (WebCore::GLContextGLX::createPbufferContext):
+        (WebCore::GLContextGLX::createPixmapContext):
+        (WebCore::GLContextGLX::createContext):
+        (WebCore::GLContextGLX::~GLContextGLX):
+        (WebCore::GLContextGLX::defaultFrameBufferSize):
+        (WebCore::GLContextGLX::makeContextCurrent):
+        (WebCore::GLContextGLX::swapBuffers):
+        (WebCore):
+        (WebCore::GLContextGLX::waitNative):
+        * platform/graphics/glx/GLContextGLX.h:
+        (GLContextGLX):
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::releaseShaderCompiler):
+        (WebCore):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        (WebCore::GraphicsContext3D::readPixels):
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+        (WebCore::GraphicsContext3D::renderbufferStorage):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        * platform/graphics/texmap/TextureMapper.h:
+        * platform/gtk/RedirectedXCompositeWindow.cpp:
+        (WebCore::RedirectedXCompositeWindow::RedirectedXCompositeWindow):
+        (WebCore::RedirectedXCompositeWindow::~RedirectedXCompositeWindow):
+        (WebCore::RedirectedXCompositeWindow::resize):
+        * platform/gtk/RedirectedXCompositeWindow.h:
+
 2012-10-04  Jon Lee  <jonlee@apple.com>
 
         Add a setting to enable plugin snapshotting

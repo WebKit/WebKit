@@ -25,6 +25,10 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 
+#if PLATFORM(X11)
+typedef struct _XDisplay Display;
+#endif
+
 namespace WebCore {
 
 class GLContext {
@@ -39,8 +43,18 @@ public:
     virtual ~GLContext();
     virtual bool makeContextCurrent();
     virtual void swapBuffers() = 0;
+    virtual void waitNative() = 0;
     virtual bool canRenderToDefaultFramebuffer() = 0;
     virtual IntSize defaultFrameBufferSize() = 0;
+
+#if PLATFORM(X11)
+    static Display* sharedX11Display();
+    static void cleanupSharedX11Display();
+#endif
+
+    static void addActiveContext(GLContext*);
+    static void removeActiveContext(GLContext*);
+    static void cleanupActiveContextsAtExit();
 
 #if USE(3D_GRAPHICS)
     virtual PlatformGraphicsContext3D platformContext() = 0;

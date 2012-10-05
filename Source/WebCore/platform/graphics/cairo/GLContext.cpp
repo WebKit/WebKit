@@ -21,10 +21,12 @@
 
 #if USE(OPENGL)
 
+#include "GLContextEGL.h"
+#include "GLContextGLX.h"
 #include <wtf/MainThread.h>
 
-#if USE(GLX)
-#include "GLContextGLX.h"
+#if PLATFORM(X11)
+#include <X11/Xlib.h>
 #endif
 
 namespace WebCore {
@@ -36,22 +38,106 @@ GLContext* GLContext::sharingContext()
     return sharing.get();
 }
 
+#if PLATFORM(X11)
+// We do not want to call glXMakeContextCurrent using different Display pointers,
+// because it might lead to crashes in some drivers (fglrx). We use a shared display
+// pointer here.
+static Display* gSharedX11Display = 0;
+Display* GLContext::sharedX11Display()
+{
+    if (!gSharedX11Display)
+        gSharedX11Display = XOpenDisplay(0);
+    return gSharedX11Display;
+}
+
+void GLContext::cleanupSharedX11Display()
+{
+    if (!gSharedX11Display)
+        return;
+    XCloseDisplay(gSharedX11Display);
+    gSharedX11Display = 0;
+}
+#endif // PLATFORM(X11)
+
+// Because of driver bugs, exiting the program when there are active pbuffers
+// can crash the X server (this has been observed with the official Nvidia drivers).
+// We need to ensure that we clean everything up on exit. There are several reasons
+// that GraphicsContext3Ds will still be alive at exit, including user error (memory
+// leaks) and the page cache. In any case, we don't want the X server to crash.
+typedef Vector<GLContext*> ActiveContextList;
+static ActiveContextList& activeContextList()
+{
+    DEFINE_STATIC_LOCAL(ActiveContextList, activeContexts, ());
+    return activeContexts;
+}
+
+void GLContext::addActiveContext(GLContext* context)
+{
+    static bool addedAtExitHandler = false;
+    if (!addedAtExitHandler) {
+        atexit(&GLContext::cleanupActiveContextsAtExit);
+        addedAtExitHandler = true;
+    }
+    activeContextList().append(context);
+}
+
+static bool gCleaningUpAtExit = false;
+
+void GLContext::removeActiveContext(GLContext* context)
+{
+    // If we are cleaning up the context list at exit, don't bother removing the context
+    // from the list, since we don't want to modify the list while it's being iterated.
+    if (gCleaningUpAtExit)
+        return;
+
+    ActiveContextList& contextList = activeContextList();
+    size_t i = contextList.find(context);
+    if (i != notFound)
+        contextList.remove(i);
+}
+
+void GLContext::cleanupActiveContextsAtExit()
+{
+    gCleaningUpAtExit = true;
+
+    ActiveContextList& contextList = activeContextList();
+    for (size_t i = 0; i < contextList.size(); ++i)
+        delete contextList[i];
+
+#if PLATFORM(X11)
+    cleanupSharedX11Display();
+#endif
+}
+
+
+
 PassOwnPtr<GLContext> GLContext::createContextForWindow(uint64_t windowHandle, GLContext* sharingContext)
 {
 #if USE(GLX)
-    return GLContextGLX::createContext(windowHandle, sharingContext);
+    if (OwnPtr<GLContext> glxContext = GLContextGLX::createContext(windowHandle, sharingContext))
+        return glxContext.release();
+#endif
+#if USE(EGL)
+    if (OwnPtr<GLContext> eglContext = GLContextEGL::createContext(windowHandle, sharingContext))
+        return eglContext.release();
 #endif
     return nullptr;
 }
 
 GLContext::GLContext()
 {
+    addActiveContext(this);
 }
 
-PassOwnPtr<GLContext> GLContext::createOffscreenContext(GLContext* sharing)
+PassOwnPtr<GLContext> GLContext::createOffscreenContext(GLContext* sharingContext)
 {
 #if USE(GLX)
-    return GLContextGLX::createContext(0, sharing);
+    if (OwnPtr<GLContext> glxContext = GLContextGLX::createContext(0, sharingContext))
+        return glxContext.release();
+#endif
+#if USE(EGL)
+    if (OwnPtr<GLContext> eglContext = GLContextEGL::createContext(0, sharingContext))
+        return eglContext.release();
 #endif
     return nullptr;
 }
@@ -64,6 +150,7 @@ GLContext::~GLContext()
 {
     if (this == gCurrentContext)
         gCurrentContext = 0;
+    removeActiveContext(this);
 }
 
 bool GLContext::makeContextCurrent()
