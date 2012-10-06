@@ -64,6 +64,8 @@ const uint8_t Font::s_roundingHackCharacterTable[256] = {
 
 Font::CodePath Font::s_codePath = Auto;
 
+TypesettingFeatures Font::s_defaultTypesettingFeatures = 0;
+
 // ============================================================================================
 // Font Implementation (Cross-Platform Portion)
 // ============================================================================================
@@ -287,6 +289,16 @@ void Font::setCodePath(CodePath p)
 Font::CodePath Font::codePath()
 {
     return s_codePath;
+}
+
+void Font::setDefaultTypesettingFeatures(TypesettingFeatures typesettingFeatures)
+{
+    s_defaultTypesettingFeatures = typesettingFeatures;
+}
+
+TypesettingFeatures Font::defaultTypesettingFeatures()
+{
+    return s_defaultTypesettingFeatures;
 }
 
 Font::CodePath Font::codePath(const TextRun& run) const

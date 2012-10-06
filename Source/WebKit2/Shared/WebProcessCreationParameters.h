@@ -112,6 +112,7 @@ struct WebProcessCreationParameters {
     SandboxExtension::Handle uiProcessBundleResourcePathExtensionHandle;
 
     bool shouldForceScreenFontSubstitution;
+    bool shouldEnableKerningAndLigaturesByDefault;
 #elif PLATFORM(WIN)
     String cfURLCachePath;
     uint64_t cfURLCacheDiskCapacity;

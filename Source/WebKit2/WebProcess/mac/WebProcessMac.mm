@@ -33,6 +33,7 @@
 #import "WebProcessCreationParameters.h"
 #import "WebProcessProxyMessages.h"
 #import <WebCore/FileSystem.h>
+#import <WebCore/Font.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MemoryCache.h>
 #import <WebCore/PageCache.h>
@@ -272,6 +273,7 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     }
 
     m_shouldForceScreenFontSubstitution = parameters.shouldForceScreenFontSubstitution;
+    Font::setDefaultTypesettingFeatures(parameters.shouldEnableKerningAndLigaturesByDefault ? Kerning | Ligatures : 0);
 
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
 

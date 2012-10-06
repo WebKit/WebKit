@@ -3116,6 +3116,8 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     continuousSpellCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebContinuousSpellCheckingEnabled];
     grammarCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebGrammarCheckingEnabled];
 
+    Font::setDefaultTypesettingFeatures([[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitKerningAndLigaturesEnabledByDefault"] ? Kerning | Ligatures : 0);
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     automaticQuoteSubstitutionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticQuoteSubstitutionEnabled];
     automaticLinkDetectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticLinkDetectionEnabled];

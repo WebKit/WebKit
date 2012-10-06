@@ -42,6 +42,7 @@ WebProcessCreationParameters::WebProcessCreationParameters()
     , nsURLCacheMemoryCapacity(0)
     , nsURLCacheDiskCapacity(0)
     , shouldForceScreenFontSubstitution(false)
+    , shouldEnableKerningAndLigaturesByDefault(false)
 #elif PLATFORM(WIN)
     , shouldPaintNativeControls(false)
 #endif
@@ -90,6 +91,7 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(uiProcessBundleResourcePath);
     encoder->encode(uiProcessBundleResourcePathExtensionHandle);
     encoder->encode(shouldForceScreenFontSubstitution);
+    encoder->encode(shouldEnableKerningAndLigaturesByDefault);
 #elif PLATFORM(WIN)
     encoder->encode(shouldPaintNativeControls);
     encoder->encode(cfURLCachePath);
@@ -192,6 +194,8 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
     if (!decoder->decode(parameters.uiProcessBundleResourcePathExtensionHandle))
         return false;
     if (!decoder->decode(parameters.shouldForceScreenFontSubstitution))
+        return false;
+    if (!decoder->decode(parameters.shouldEnableKerningAndLigaturesByDefault))
         return false;
 #elif PLATFORM(WIN)
     if (!decoder->decode(parameters.shouldPaintNativeControls))
