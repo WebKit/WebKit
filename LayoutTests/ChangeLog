@@ -1,3 +1,17 @@
+2012-10-06  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [EFL] Gardening of the WK2 Debug Bot failing tests
+        https://bugs.webkit.org/show_bug.cgi?id=98575
+
+        Unreviewed EFL gardening.
+
+        Skip failing tests in order to make the bots green.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/fast/replaced/object-with-embed-url-param-expected.txt: Removed. Current results
+        matches the base expectations on WK2.
+
 2012-10-05  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

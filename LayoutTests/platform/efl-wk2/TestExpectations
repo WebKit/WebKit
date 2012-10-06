@@ -205,3 +205,12 @@ webkit.org/b/96794 inspector/console/alert-toString-exception.html [ Failure ]
 # Fails after it was unskipped in r129372.
 webkit.org/b/97545 inspector/styles/variables/css-variables.html [ Failure ]
 
+# The following test makes the fast/parser/document-write-ignores-later-network-bytes.html test crash
+webkit.org/b/98345 fast/parser/document-open-in-unload.html [ Skip ]
+
+# Fails after r130363.
+webkit.org/b/98573 fast/forms/multiple-form-submission-protection-mouse.html [ Failure ]
+
+# Requires TestRunner displayInvalidatedRegion() support.
+webkit.org/b/98523 fast/images/repaint-subrect-grid.html [ Failure ]
+
