@@ -25,13 +25,19 @@
 
 #import "AppDelegate.h"
 
-#import "BrowserWindowController.h"
+#import "WK1BrowserWindowController.h"
+#import "WK2BrowserWindowController.h"
 
 #import <WebKit2/WKContextPrivate.h>
 #import <WebKit2/WKStringCF.h>
 #import <WebKit2/WKURLCF.h>
 
 static NSString *defaultURL = @"http://www.webkit.org/";
+
+enum {
+    WebKit1NewWindowTag = 1,
+    WebKit2NewWindowTag = 2
+};
 
 @implementation BrowserAppDelegate
 
@@ -152,7 +158,16 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
 
 - (IBAction)newWindow:(id)sender
 {
-    BrowserWindowController *controller = [[BrowserWindowController alloc] initWithContext:_processContext pageGroup:_pageGroup];
+    BrowserWindowController *controller = nil;
+    
+    if (![sender respondsToSelector:@selector(tag)] || [sender tag] == WebKit1NewWindowTag)
+        controller = [[WK1BrowserWindowController alloc] initWithWindowNibName:@"BrowserWindow"];
+    else if ([sender tag] == WebKit2NewWindowTag)
+        controller = [[WK2BrowserWindowController alloc] initWithContext:_processContext pageGroup:_pageGroup];
+
+    if (!controller)
+        return;
+
     [[controller window] makeKeyAndOrderFront:sender];
     [_browserWindows addObject:[controller window]];
     
@@ -217,7 +232,7 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
 
     BrowserWindowController *controller = [self frontmostBrowserWindowController];
     if (!controller) {
-        controller = [[BrowserWindowController alloc] initWithContext:_processContext pageGroup:_pageGroup];
+        controller = [[WK2BrowserWindowController alloc] initWithContext:_processContext pageGroup:_pageGroup]; // FIXME: add a way to open in WK1 also.
         [[controller window] makeKeyAndOrderFront:self];
     }
     

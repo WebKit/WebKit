@@ -9,12 +9,14 @@
 /* Begin PBXBuildFile section */
 		0F7EB6E3134113C300F4D865 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F7EB6E2134113C300F4D865 /* WebKit.framework */; };
 		0F7EB879134113F200F4D865 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F7EB6E2134113C300F4D865 /* WebKit.framework */; };
+		0FE643A1161FA8940059E3FF /* BrowserWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FE643A0161FA8940059E3FF /* BrowserWindowController.m */; };
+		0FE643A4161FAC660059E3FF /* WK1BrowserWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FE643A3161FAC660059E3FF /* WK1BrowserWindowController.m */; };
 		256AC3DA0F4B6AC300CF3369 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 256AC3D90F4B6AC300CF3369 /* AppDelegate.m */; };
 		51E244FA11EFCE07008228D1 /* MBToolbarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 51E244F911EFCE07008228D1 /* MBToolbarItem.m */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		BC20545E11C96C92008F3375 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		BC329487116A92E2008635D0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BC329486116A92E2008635D0 /* main.m */; };
-		BC329498116A941B008635D0 /* BrowserWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC329497116A941B008635D0 /* BrowserWindowController.m */; };
+		BC329498116A941B008635D0 /* WK2BrowserWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC329497116A941B008635D0 /* WK2BrowserWindowController.m */; };
 		BC72B89511E57E07001EB4EA /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58150DA1D0A300B32029 /* MainMenu.xib */; };
 		BC72B89611E57E0F001EB4EA /* BrowserWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC3294A2116A9852008635D0 /* BrowserWindow.xib */; };
 		BC8FB5A8116AA1FE0080D413 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC8FB5A7116AA1FE0080D413 /* WebKit2.framework */; };
@@ -49,6 +51,10 @@
 
 /* Begin PBXFileReference section */
 		0F7EB6E2134113C300F4D865 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0FE6439F161FA8940059E3FF /* BrowserWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrowserWindowController.h; path = mac/BrowserWindowController.h; sourceTree = "<group>"; };
+		0FE643A0161FA8940059E3FF /* BrowserWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BrowserWindowController.m; path = mac/BrowserWindowController.m; sourceTree = "<group>"; };
+		0FE643A2161FAC660059E3FF /* WK1BrowserWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WK1BrowserWindowController.h; path = mac/WK1BrowserWindowController.h; sourceTree = "<group>"; };
+		0FE643A3161FAC660059E3FF /* WK1BrowserWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WK1BrowserWindowController.m; path = mac/WK1BrowserWindowController.m; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		1DDD58150DA1D0A300B32029 /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = mac/MainMenu.xib; sourceTree = "<group>"; };
 		256AC3D80F4B6AC300CF3369 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = mac/AppDelegate.h; sourceTree = "<group>"; };
@@ -60,8 +66,8 @@
 		51E244F911EFCE07008228D1 /* MBToolbarItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBToolbarItem.m; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* MiniBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MiniBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC329486116A92E2008635D0 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = mac/main.m; sourceTree = "<group>"; };
-		BC329496116A941B008635D0 /* BrowserWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrowserWindowController.h; path = mac/BrowserWindowController.h; sourceTree = "<group>"; };
-		BC329497116A941B008635D0 /* BrowserWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BrowserWindowController.m; path = mac/BrowserWindowController.m; sourceTree = "<group>"; };
+		BC329496116A941B008635D0 /* WK2BrowserWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WK2BrowserWindowController.h; path = mac/WK2BrowserWindowController.h; sourceTree = "<group>"; };
+		BC329497116A941B008635D0 /* WK2BrowserWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WK2BrowserWindowController.m; path = mac/WK2BrowserWindowController.m; sourceTree = "<group>"; };
 		BC3294A2116A9852008635D0 /* BrowserWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = BrowserWindow.xib; path = mac/BrowserWindow.xib; sourceTree = "<group>"; };
 		BC72B89711E57E6E001EB4EA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BC72B89A11E57E8A001EB4EA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = mac/Info.plist; sourceTree = "<group>"; };
@@ -105,8 +111,12 @@
 				BC329486116A92E2008635D0 /* main.m */,
 				256AC3D80F4B6AC300CF3369 /* AppDelegate.h */,
 				256AC3D90F4B6AC300CF3369 /* AppDelegate.m */,
-				BC329496116A941B008635D0 /* BrowserWindowController.h */,
-				BC329497116A941B008635D0 /* BrowserWindowController.m */,
+				0FE6439F161FA8940059E3FF /* BrowserWindowController.h */,
+				0FE643A0161FA8940059E3FF /* BrowserWindowController.m */,
+				0FE643A2161FAC660059E3FF /* WK1BrowserWindowController.h */,
+				0FE643A3161FAC660059E3FF /* WK1BrowserWindowController.m */,
+				BC329496116A941B008635D0 /* WK2BrowserWindowController.h */,
+				BC329497116A941B008635D0 /* WK2BrowserWindowController.m */,
 				51E244F811EFCE07008228D1 /* MBToolbarItem.h */,
 				51E244F911EFCE07008228D1 /* MBToolbarItem.m */,
 			);
@@ -285,8 +295,10 @@
 			files = (
 				256AC3DA0F4B6AC300CF3369 /* AppDelegate.m in Sources */,
 				BC329487116A92E2008635D0 /* main.m in Sources */,
-				BC329498116A941B008635D0 /* BrowserWindowController.m in Sources */,
+				BC329498116A941B008635D0 /* WK2BrowserWindowController.m in Sources */,
 				51E244FA11EFCE07008228D1 /* MBToolbarItem.m in Sources */,
+				0FE643A1161FA8940059E3FF /* BrowserWindowController.m in Sources */,
+				0FE643A4161FAC660059E3FF /* WK1BrowserWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

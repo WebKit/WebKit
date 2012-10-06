@@ -1,3 +1,150 @@
+2012-10-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Provide a way to run WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=98568
+
+        Reviewed by Tim Horton.
+
+        Make it possible to create both WebKit1 and WebKit2 windows in MiniBrowser.
+        
+        Turn BrowserWindowController into a base class; subclassed by
+        WK1BrowserWindowController and WK2BrowserWindowController, each of
+        which implement the BrowserController protocol.
+        
+        Use Command-N to get a WebKit1 window, and Command-Option-N to
+        get a WK2 window. Also add "Open Location" to focus the URL bar,
+        and code to add an http:// if missing.
+        
+        Hook up window title callbacks; append " [WK1/2]" to window title
+        as appropriate.
+
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj:
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate newWindow:]):
+        (-[BrowserAppDelegate openPanelDidEnd:returnCode:contextInfo:]):
+        * MiniBrowser/mac/BrowserWindowController.h:
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController initWithWindow:]):
+        (-[BrowserWindowController windowDidLoad]):
+        (-[BrowserWindowController openLocation:]):
+        (-[BrowserWindowController loadURLString:]):
+        (-[BrowserWindowController applicationTerminating]):
+        (-[BrowserWindowController addProtocolIfNecessary:]):
+        * MiniBrowser/mac/MainMenu.xib:
+        * MiniBrowser/mac/WK1BrowserWindowController.h: Copied from Tools/MiniBrowser/mac/BrowserWindowController.h.
+        (WebView):
+        * MiniBrowser/mac/WK1BrowserWindowController.m: Added.
+        (-[WK1BrowserWindowController awakeFromNib]):
+        (-[WK1BrowserWindowController dealloc]):
+        (-[WK1BrowserWindowController loadURLString:]):
+        (-[WK1BrowserWindowController fetch:]):
+        (-[WK1BrowserWindowController showHideWebView:]):
+        (-[WK1BrowserWindowController removeReinsertWebView:]):
+        (-[WK1BrowserWindowController validateMenuItem:]):
+        (-[WK1BrowserWindowController reload:]):
+        (-[WK1BrowserWindowController forceRepaint:]):
+        (-[WK1BrowserWindowController goBack:]):
+        (-[WK1BrowserWindowController goForward:]):
+        (-[WK1BrowserWindowController validateUserInterfaceItem:]):
+        (-[WK1BrowserWindowController validateToolbar]):
+        (-[WK1BrowserWindowController windowShouldClose:]):
+        (-[WK1BrowserWindowController windowWillClose:]):
+        (-[WK1BrowserWindowController applicationTerminating]):
+        (-[WK1BrowserWindowController currentZoomFactor]):
+        (-[WK1BrowserWindowController canZoomIn]):
+        (-[WK1BrowserWindowController zoomIn:]):
+        (-[WK1BrowserWindowController canZoomOut]):
+        (-[WK1BrowserWindowController zoomOut:]):
+        (-[WK1BrowserWindowController canResetZoom]):
+        (-[WK1BrowserWindowController resetZoom:]):
+        (-[WK1BrowserWindowController toggleZoomMode:]):
+        (-[WK1BrowserWindowController isPaginated]):
+        (-[WK1BrowserWindowController togglePaginationMode:]):
+        (-[WK1BrowserWindowController find:]):
+        (-[WK1BrowserWindowController dumpSourceToConsole:]):
+        (-[WK1BrowserWindowController webView:didStartProvisionalLoadForFrame:]):
+        (-[WK1BrowserWindowController webView:didReceiveTitle:forFrame:]):
+        * MiniBrowser/mac/WK2BrowserWindowController.h: Copied from Tools/MiniBrowser/mac/BrowserWindowController.h.
+        * MiniBrowser/mac/WK2BrowserWindowController.m: Copied from Tools/MiniBrowser/mac/BrowserWindowController.m.
+        (-[WK2BrowserWindowController initWithContext:pageGroup:]):
+        (-[WK2BrowserWindowController dealloc]):
+        (-[WK2BrowserWindowController fetch:]):
+        (-[WK2BrowserWindowController showHideWebView:]):
+        (-[WK2BrowserWindowController removeReinsertWebView:]):
+        (-[WK2BrowserWindowController validateMenuItem:]):
+        (-[WK2BrowserWindowController reload:]):
+        (-[WK2BrowserWindowController forceRepaint:]):
+        (-[WK2BrowserWindowController goBack:]):
+        (-[WK2BrowserWindowController goForward:]):
+        (-[WK2BrowserWindowController validateUserInterfaceItem:]):
+        (-[WK2BrowserWindowController validateToolbar]):
+        (-[WK2BrowserWindowController windowShouldClose:]):
+        (-[WK2BrowserWindowController windowWillClose:]):
+        (-[WK2BrowserWindowController applicationTerminating]):
+        (-[WK2BrowserWindowController currentZoomFactor]):
+        (-[WK2BrowserWindowController setCurrentZoomFactor:]):
+        (-[WK2BrowserWindowController canZoomIn]):
+        (-[WK2BrowserWindowController zoomIn:]):
+        (-[WK2BrowserWindowController canZoomOut]):
+        (-[WK2BrowserWindowController zoomOut:]):
+        (-[WK2BrowserWindowController canResetZoom]):
+        (-[WK2BrowserWindowController resetZoom:]):
+        (-[WK2BrowserWindowController toggleZoomMode:]):
+        (-[WK2BrowserWindowController isPaginated]):
+        (-[WK2BrowserWindowController togglePaginationMode:]):
+        (-[WK2BrowserWindowController dumpSourceToConsole:]):
+        (didStartProvisionalLoadForFrame):
+        (didReceiveServerRedirectForProvisionalLoadForFrame):
+        (didFailProvisionalLoadWithErrorForFrame):
+        (didCommitLoadForFrame):
+        (didFinishDocumentLoadForFrame):
+        (didFinishLoadForFrame):
+        (didFailLoadWithErrorForFrame):
+        (didSameDocumentNavigationForFrame):
+        (didReceiveTitleForFrame):
+        (didFirstLayoutForFrame):
+        (didFirstVisuallyNonEmptyLayoutForFrame):
+        (didRemoveFrameFromHierarchy):
+        (didDisplayInsecureContentForFrame):
+        (didRunInsecureContentForFrame):
+        (didDetectXSSForFrame):
+        (didStartProgress):
+        (didChangeProgress):
+        (didFinishProgress):
+        (didBecomeUnresponsive):
+        (didBecomeResponsive):
+        (processDidExit):
+        (didChangeBackForwardList):
+        (decidePolicyForNavigationAction):
+        (decidePolicyForNewWindowAction):
+        (decidePolicyForResponse):
+        (createNewPage):
+        (showPage):
+        (closePage):
+        (runJavaScriptAlert):
+        (runJavaScriptConfirm):
+        (runJavaScriptPrompt):
+        (setStatusText):
+        (mouseDidMoveOverElement):
+        (getWindowFrame):
+        (setWindowFrame):
+        (runBeforeUnloadConfirmPanel):
+        (runOpenPanel):
+        (-[WK2BrowserWindowController awakeFromNib]):
+        (-[WK2BrowserWindowController didStartProgress]):
+        (-[WK2BrowserWindowController didChangeProgress:]):
+        (-[WK2BrowserWindowController didFinishProgress]):
+        (-[WK2BrowserWindowController updateProvisionalURLForFrame:]):
+        (-[WK2BrowserWindowController didStartProvisionalLoadForFrame:]):
+        (-[WK2BrowserWindowController didReceiveServerRedirectForProvisionalLoadForFrame:]):
+        (-[WK2BrowserWindowController didFailProvisionalLoadWithErrorForFrame:]):
+        (-[WK2BrowserWindowController didFailLoadWithErrorForFrame:]):
+        (-[WK2BrowserWindowController didSameDocumentNavigationForFrame:]):
+        (-[WK2BrowserWindowController didCommitLoadForFrame:]):
+        (-[WK2BrowserWindowController loadURLString:]):
+        (-[WK2BrowserWindowController performFindPanelAction:]):
+        (-[WK2BrowserWindowController find:]):
+
 2012-10-05  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [WK2][WTR] WebKitTestRunner needs testRunner.setSerializeHTTPLoads
