@@ -485,7 +485,7 @@ void PluginView::performRequest(PluginRequest* request)
 
 void PluginView::requestTimerFired(Timer<PluginView>* timer)
 {
-    ASSERT(timer == &m_requestTimer);
+    ASSERT_UNUSED(timer, timer == &m_requestTimer);
     ASSERT(m_requests.size() > 0);
     ASSERT(!m_isJavaScriptPaused);
 
@@ -681,7 +681,7 @@ NPError PluginView::setValue(NPPVariable variable, void* value)
 
 void PluginView::invalidateTimerFired(Timer<PluginView>* timer)
 {
-    ASSERT(timer == &m_invalidateTimer);
+    ASSERT_UNUSED(timer, timer == &m_invalidateTimer);
 
     for (unsigned i = 0; i < m_invalidRects.size(); i++)
         invalidateRect(m_invalidRects[i]);

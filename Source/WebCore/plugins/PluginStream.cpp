@@ -312,7 +312,7 @@ void PluginStream::destroyStream()
 
 void PluginStream::delayDeliveryTimerFired(Timer<PluginStream>* timer)
 {
-    ASSERT(timer == &m_delayDeliveryTimer);
+    ASSERT_UNUSED(timer, timer == &m_delayDeliveryTimer);
 
     deliverData();
 }
@@ -396,7 +396,7 @@ void PluginStream::sendJavaScriptStream(const KURL& requestURL, const CString& r
 
 void PluginStream::didReceiveResponse(NetscapePlugInStreamLoader* loader, const ResourceResponse& response)
 {
-    ASSERT(loader == m_loader);
+    ASSERT_UNUSED(loader, loader == m_loader);
     ASSERT(m_streamState == StreamBeforeStarted);
 
     m_resourceResponse = response;
@@ -406,7 +406,7 @@ void PluginStream::didReceiveResponse(NetscapePlugInStreamLoader* loader, const 
 
 void PluginStream::didReceiveData(NetscapePlugInStreamLoader* loader, const char* data, int length)
 {
-    ASSERT(loader == m_loader);
+    ASSERT_UNUSED(loader, loader == m_loader);
     ASSERT(m_streamState == StreamStarted);
 
     // If the plug-in cancels the stream in deliverData it could be deleted, 
@@ -433,7 +433,7 @@ void PluginStream::didReceiveData(NetscapePlugInStreamLoader* loader, const char
 
 void PluginStream::didFail(NetscapePlugInStreamLoader* loader, const ResourceError&)
 {
-    ASSERT(loader == m_loader);
+    ASSERT_UNUSED(loader, loader == m_loader);
 
     LOG_PLUGIN_NET_ERROR();
 
@@ -447,7 +447,7 @@ void PluginStream::didFail(NetscapePlugInStreamLoader* loader, const ResourceErr
 
 void PluginStream::didFinishLoading(NetscapePlugInStreamLoader* loader)
 {
-    ASSERT(loader == m_loader);
+    ASSERT_UNUSED(loader, loader == m_loader);
     ASSERT(m_streamState == StreamStarted);
 
     // destroyStream can result in our being deleted
