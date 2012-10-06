@@ -1,3 +1,32 @@
+2012-10-05  Adam Barth  <abarth@webkit.org>
+
+        [V8] toV8(Node*, ...) does more work than needed (6% faster on dom-traverse)
+        https://bugs.webkit.org/show_bug.cgi?id=98567
+
+        Reviewed by Kentaro Hara.
+
+        This patch introduces toV8Fast for Node*. This function works a
+        differently from the existing toV8 function in two ways:
+
+        1) It uses the inline wrapper cache in Node to determine if we're
+           executing in the main world. This is faster both in the case when
+           isolated worlds exist because we don't need to retrieve any state
+           for the current context.
+
+        2) It doesn't attempt to inline the hash table lookup used to find the
+           wrapper in the isolated world. There isn't a big need to inline this
+           code since performance in the isolated world case is dominated by
+           the hash table lookup.
+
+        Because of these two changes, toV8Fast is small enough to inline into
+        each attribute getter profitably. Over time, I would like to convert
+        all the performance critical uses of toV8(Node*) to toV8Fast. At that
+        point, we can delete toV8 and rename toV8Slow to toV8.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader):
+        (GenerateNormalAttrGetter):
+
 2012-10-05  Huang Dongsung  <luxtella@company100.net>
 
         [mac] REGRESSION (r122215): Animated GIF outside the viewport doesn't play when scrolled into view.

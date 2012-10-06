@@ -525,6 +525,20 @@ inline v8::Handle<v8::Value> toV8(Node* impl, v8::Handle<v8::Object> creationCon
         return wrapper;
     return toV8Slow(impl, creationContext, isolate);
 }
+
+inline v8::Handle<v8::Value> toV8Fast(Node* node, const v8::AccessorInfo& info, Node* holder)
+{
+    if (UNLIKELY(!node))
+        return v8::Null(info.GetIsolate());
+    // What we'd really like to check here is whether we're in the main world or
+    // in an isolated world. The fastest way we know how to do that is to check
+    // whether the holder's inline wrapper is the same wrapper we see in the
+    // v8::AccessorInfo.
+    v8::Handle<v8::Object> holderWrapper = info.Holder();
+    if (holder->wrapper() && *holder->wrapper() == holderWrapper && node->wrapper())
+        return *node->wrapper();
+    return toV8Slow(node, holderWrapper, info.GetIsolate());
+}
 END
     }
 
@@ -1062,18 +1076,19 @@ END
         portArray->Set(v8Integer(i, info.GetIsolate()), toV8(portsCopy[i].get(), info.Holder(), info.GetIsolate()));
     return portArray;
 END
-    } else {
-        if ($attribute->signature->type eq "SerializedScriptValue" && $attrExt->{"CachedAttribute"}) {
-            my $getterFunc = $codeGenerator->WK_lcfirst($attribute->signature->name);
-            push(@implContentDecls, <<END);
+    } elsif ($attribute->signature->type eq "SerializedScriptValue" && $attrExt->{"CachedAttribute"}) {
+        my $getterFunc = $codeGenerator->WK_lcfirst($attribute->signature->name);
+        push(@implContentDecls, <<END);
     SerializedScriptValue* serialized = imp->${getterFunc}();
     value = serialized ? serialized->deserialize() : v8::Handle<v8::Value>(v8::Null(info.GetIsolate()));
     info.Holder()->SetHiddenValue(propertyName, value);
     return value;
 END
-        } else {
-            push(@implContentDecls, "    " . ReturnNativeToJSValue($attribute->signature, $result, "info.Holder()", "info.GetIsolate()").";\n");
-        }
+    } elsif (IsDOMNodeType(GetTypeFromSignature($attribute->signature)) && $implClassName eq "Node") {
+        # FIXME: We would like to use toV8Fast in more situations.
+        push(@implContentDecls, "    return toV8Fast($result, info, imp);\n");
+    } else {
+        push(@implContentDecls, "    " . ReturnNativeToJSValue($attribute->signature, $result, "info.Holder()", "info.GetIsolate()").";\n");
     }
 
     push(@implContentDecls, "}\n\n");  # end of getter
