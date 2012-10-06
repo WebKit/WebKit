@@ -2175,7 +2175,6 @@ NSSliderCell* RenderThemeMac::sliderThumbHorizontal() const
 {
     if (!m_sliderThumbHorizontal) {
         m_sliderThumbHorizontal.adoptNS([[NSSliderCell alloc] init]);
-        [m_sliderThumbHorizontal.get() setTitle:nil];
         [m_sliderThumbHorizontal.get() setSliderType:NSLinearSlider];
         [m_sliderThumbHorizontal.get() setControlSize:NSSmallControlSize];
         [m_sliderThumbHorizontal.get() setFocusRingType:NSFocusRingTypeExterior];
@@ -2188,7 +2187,6 @@ NSSliderCell* RenderThemeMac::sliderThumbVertical() const
 {
     if (!m_sliderThumbVertical) {
         m_sliderThumbVertical.adoptNS([[NSSliderCell alloc] init]);
-        [m_sliderThumbVertical.get() setTitle:nil];
         [m_sliderThumbVertical.get() setSliderType:NSLinearSlider];
         [m_sliderThumbVertical.get() setControlSize:NSSmallControlSize];
         [m_sliderThumbVertical.get() setFocusRingType:NSFocusRingTypeExterior];
