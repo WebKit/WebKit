@@ -649,9 +649,6 @@ webkit.org/b/90928 fast/dom/Orientation [ Skip ]
 # EFL port does not implement DeviceMotion
 webkit.org/b/95300 fast/dom/DeviceMotion [ Skip ]
 
-# New test added for https://bugs.webkit.org/show_bug.cgi?id=98452 needs platform specific results
-fast/text/vertical-rl-rtl-linebreak.html [ Failure ]
-
 # The EFL port has no support for accessibility features
 Bug(EFL) accessibility [ Skip ]
 
