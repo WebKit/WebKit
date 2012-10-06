@@ -1311,3 +1311,6 @@ webkit.org/b/95707 http/tests/images/png-partial-load-no-alpha.html [ ImageOnlyF
 
 # Requires TestRunner displayInvalidatedRegion() support.
 webkit.org/b/98523 fast/images/repaint-subrect-grid.html [ Failure ]
+
+# Rendering/Layout issue of CJK vertical text with some font.
+webkit.org/b/98560 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ ImageOnlyFailure ]

@@ -1,3 +1,17 @@
+2012-10-05  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        OpenTypeVerticalData issue with DroidSansFallback.ttf on chromium-android and chromium-linux
+        https://bugs.webkit.org/show_bug.cgi?id=97824
+
+        Reviewed by Tony Chang.
+
+        Ref test for the change. The punctuations in the vertical text are expected to
+        be substituted with the corresponding vertical forms.
+
+        * fast/writing-mode/vertical-subst-font-vert-no-dflt-expected.html: Added.
+        * fast/writing-mode/vertical-subst-font-vert-no-dflt.html: Added.
+        * platform/mac/TestExpectations: Added the new test as it fails on Mac because of https://bugs.webkit.org/show_bug.cgi?id=98560. 
+
 2012-10-05  Tony Chang  <tony@chromium.org>
 
         Form controls should always be horizontal
