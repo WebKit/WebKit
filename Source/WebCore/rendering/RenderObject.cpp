@@ -2806,16 +2806,7 @@ bool RenderObject::willRenderImage(CachedImage*)
 
     // If we're not in a window (i.e., we're dormant from being put in the b/f cache or in a background tab)
     // then we don't want to render either.
-    if (document()->inPageCache() || document()->view()->isOffscreen())
-        return false;
-
-    // If the document is being destroyed or has not been attached, then this
-    // RenderObject will not be rendered.
-    if (!view())
-        return false;
-
-    // If a renderer is outside the viewport, we won't render.
-    return viewRect().intersects(absoluteClippedOverflowRect());
+    return !document()->inPageCache() && !document()->view()->isOffscreen();
 }
 
 int RenderObject::maximalOutlineSize(PaintPhase p) const

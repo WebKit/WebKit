@@ -238,12 +238,6 @@ void MemoryCache::pruneLiveResourcesToSize(unsigned targetSize)
             if (elapsedTime < cMinDelayBeforeLiveDecodedPrune)
                 return;
 
-            // Check to see if the current resource are likely to be used again soon.
-            if (current->likelyToBeUsedSoon()) {
-                current = prev;
-                continue;
-            }
-
             // Destroy our decoded data. This will remove us from 
             // m_liveDecodedResources, and possibly move us to a different LRU 
             // list in m_allResources.

@@ -1,3 +1,24 @@
+2012-10-05  Huang Dongsung  <luxtella@company100.net>
+
+        [mac] REGRESSION (r122215): Animated GIF outside the viewport doesn't play when scrolled into view.
+        https://bugs.webkit.org/show_bug.cgi?id=94874
+
+        Reviewed by Simon Fraser.
+
+        Rollback previous patch because this patch caused two problems.
+        1. GIF animation is occasionally paused when tiled scrolling is enabled.
+        2. This change regressed Apple's Membuster benchmark by ~20% (80MB.)
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::shouldPauseAnimation):
+        * loader/cache/CachedImage.h:
+        (CachedImage):
+        * loader/cache/CachedResource.h:
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::pruneLiveResourcesToSize):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::willRenderImage):
+
 2012-10-05  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         OpenTypeVerticalData issue with DroidSansFallback.ttf on chromium-android and chromium-linux

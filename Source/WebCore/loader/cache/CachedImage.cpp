@@ -422,17 +422,6 @@ void CachedImage::decodedSizeChanged(const Image* image, int delta)
     setDecodedSize(decodedSize() + delta);
 }
 
-bool CachedImage::likelyToBeUsedSoon()
-{
-    CachedResourceClientWalker<CachedImageClient> walker(m_clients);
-    while (CachedImageClient* client = walker.next()) {
-        if (client->willRenderImage(this))
-            return true;
-    }
-
-    return false;
-}
-
 void CachedImage::didDraw(const Image* image)
 {
     if (!image || image != m_image)
@@ -450,7 +439,13 @@ bool CachedImage::shouldPauseAnimation(const Image* image)
     if (!image || image != m_image)
         return false;
     
-    return !likelyToBeUsedSoon();
+    CachedResourceClientWalker<CachedImageClient> w(m_clients);
+    while (CachedImageClient* c = w.next()) {
+        if (c->willRenderImage(this))
+            return false;
+    }
+
+    return true;
 }
 
 void CachedImage::animationAdvanced(const Image* image)

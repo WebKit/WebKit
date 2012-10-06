@@ -215,9 +215,6 @@ public:
 
     void setOwningCachedResourceLoader(CachedResourceLoader* cachedResourceLoader) { m_owningCachedResourceLoader = cachedResourceLoader; }
     
-    // MemoryCache does not destroy the decoded data of a CachedResource if the decoded data will be likely used.
-    virtual bool likelyToBeUsedSoon() { return false; }
-
     bool isPreloaded() const { return m_preloadCount; }
     void increasePreloadCount() { ++m_preloadCount; }
     void decreasePreloadCount() { ASSERT(m_preloadCount); --m_preloadCount; }
