@@ -1,3 +1,16 @@
+2012-10-06  Geoffrey Garen  <ggaren@apple.com>
+
+        If Node X is reachable from JavaScript, all Nodes in the same tree should be kept alive
+        https://bugs.webkit.org/show_bug.cgi?id=88834
+
+        Reviewed by Gavin Barraclough.
+
+        Follow-up patch to address some comments by Darin Adler.
+
+        * bindings/js/JSNodeCustom.h:
+        (WebCore::willCreatePossiblyOrphanedTreeByRemoval): Save some space by
+        collapsing comment lines. Use Node::hasChildNodes() for brevity.
+
 2012-10-06  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix weird use of KURL's protocolIs
