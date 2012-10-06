@@ -1,3 +1,28 @@
+2012-10-04  Geoffrey Garen  <ggaren@apple.com>
+
+        If Node X is reachable from JavaScript, all Nodes in the same tree should be kept alive
+        https://bugs.webkit.org/show_bug.cgi?id=88834
+
+        Reviewed by Gavin Barraclough.
+
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::isObservable): Clarified this comment, since it seems to have
+        misled some folks. 
+
+        * bindings/js/JSNodeCustom.h:
+        (WebCore::willCreatePossiblyOrphanedTreeByRemoval): New helper function
+        to ensure that a disconnected tree is visible to JavaScript.
+
+        * bindings/js/ScriptState.cpp:
+        (WebCore::mainWorldScriptState): Need to check for null because a document's
+        frame can be null.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::dispatchChildRemovalEvents): When we remove a subtree from the
+        document, we sever the reference that JavaScript previously held by
+        referencing its root. So, we give JavaScript an opportunity to establish
+        a reference to the new root.
+
 2012-10-06  Byungwoo Lee  <bw80.lee@samsung.com>
 
         Fix build warning : -Wunused-parameter.

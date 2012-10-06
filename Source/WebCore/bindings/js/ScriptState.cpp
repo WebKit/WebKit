@@ -93,6 +93,8 @@ void setEvalEnabled(ScriptState* scriptState, bool enabled)
 
 ScriptState* mainWorldScriptState(Frame* frame)
 {
+    if (!frame)
+        return 0;
     JSDOMWindowShell* shell = frame->script()->windowShell(mainThreadNormalWorld());
     return shell->window()->globalExec();
 }

@@ -85,10 +85,7 @@ using namespace HTMLNames;
 
 static inline bool isObservable(JSNode* jsNode, Node* node)
 {
-    // The DOM doesn't know how to keep a tree of nodes alive without the root
-    // being explicitly referenced. So, we artificially treat the root of
-    // every tree as observable.
-    // FIXME: Resolve this lifetime issue in the DOM, and remove this.
+    // The root node keeps the tree intact.
     if (!node->parentNode())
         return true;
 

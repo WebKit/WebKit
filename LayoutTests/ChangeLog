@@ -1,3 +1,26 @@
+2012-10-04  Geoffrey Garen  <ggaren@apple.com>
+
+        If Node X is reachable from JavaScript, all Nodes in the same tree should be kept alive
+        https://bugs.webkit.org/show_bug.cgi?id=88834
+
+        Reviewed by Gavin Barraclough.
+
+        * fast/dom/gc-12-expected.txt: Added.
+        * fast/dom/gc-12.html: Added. Test case matches an example cited by
+        Kentaro Hara <haraken@chromium.org> in bugzilla.
+
+        * fast/dom/gc-3-expected.txt:
+        * fast/dom/gc-3.html:
+        * fast/dom/gc-5-expected.txt:
+        * fast/dom/gc-5.html: Updated these tests to reflect new expected behavior.
+        We've decided that disconnected trees should persist in memory. This risks
+        a programmer accidentally retaining more memory than expected, but it
+        also makes the API more obvious.
+
+        * fast/dom/gc-dom-tree-lifetime-expected.txt: Added.
+        * fast/dom/gc-dom-tree-lifetime.html: Added. Test case written by
+        Kentaro Hara <haraken@chromium.org>.
+
 2012-10-06  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Gardening.
