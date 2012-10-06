@@ -448,7 +448,7 @@ void CachedResource::removeClient(CachedResourceClient* client)
             // "no-store: ... MUST make a best-effort attempt to remove the information from volatile storage as promptly as possible"
             // "... History buffers MAY store such responses as part of their normal operation."
             // We allow non-secure content to be reused in history, but we do not allow secure content to be reused.
-            if (protocolIs(url(), "https"))
+            if (url().protocolIs("https"))
                 memoryCache()->remove(this);
         } else
             memoryCache()->prune();
