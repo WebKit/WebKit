@@ -67,7 +67,7 @@ public:
 
     WTF_EXPORT_PRIVATE String baseAsString() const;
 
-    const URLString& spec() { return m_spec; }
+    const URLString& spec() const { return m_spec; }
 
 #ifndef NDEBUG
     WTF_EXPORT_PRIVATE void print() const;

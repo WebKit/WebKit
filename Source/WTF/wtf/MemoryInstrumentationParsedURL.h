@@ -46,7 +46,7 @@ inline void reportMemoryUsage(const URLString* const& urlString, MemoryObjectInf
 inline void reportMemoryUsage(const ParsedURL* const& parsedURL, MemoryObjectInfo* memoryObjectInfo)
 {
     MemoryClassInfo info(memoryObjectInfo, parsedURL);
-    info.addMember(arrayBuffer->spec());
+    info.addMember(parsedURL->spec());
 }
 
 }

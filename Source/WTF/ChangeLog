@@ -1,3 +1,15 @@
+2012-10-06  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix build of WTFURL after r130187
+        https://bugs.webkit.org/show_bug.cgi?id=98588
+
+        Reviewed by Kentaro Hara.
+
+        * wtf/MemoryInstrumentationParsedURL.h:
+        (WTF::reportMemoryUsage):
+        * wtf/url/api/ParsedURL.h:
+        (WTF::ParsedURL::spec):
+
 2012-10-05  Simon Pena  <spena@igalia.com>
 
         [GTK] Add support for GBytes in GRefPtr
