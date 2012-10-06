@@ -1506,3 +1506,7 @@ webkit.org/b/97990 mathml/presentation/subsup.xhtml [ Failure ]
 webkit.org/b/98247 fast/text/atsui-multiple-renderers.html [ Failure ]
 webkit.org/b/98247 fast/text/atsui-spacing-features.html [ Failure ]
 webkit.org/b/98247 fast/text/wide-zero-width-space.html [ Failure ]
+
+# Occasionally fails if run after right after
+# fast/selectors/unqualified-hover-quirks.html or itself.
+webkit.org/b/10890 fast/selectors/unqualified-hover-strict.html [ Failure Pass ]
