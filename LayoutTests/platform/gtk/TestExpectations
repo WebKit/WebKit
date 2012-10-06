@@ -1370,6 +1370,10 @@ webkit.org/b/49142 fast/regions/style-scoped-in-flow-override-region-styling-mul
 # Missing support in DRT for Geolocation's Coordinate attributes.
 fast/dom/Geolocation/coordinates-interface-attributes.html [ Failure ]
 
+webkit.org/b/98585 fast/exclusions/shape-inside/shape-inside-rounded-rectangle-003.html [ ImageOnlyFailure ]
+
+webkit.org/b/98587 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,12 @@
+2012-10-05  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding reftest failure expectations for a couple of tests that
+        were introduced in r130557 and r130570.
+
+        * platform/gtk/TestExpectations:
+
 2012-10-05  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Rebaseline for recent INPUT_MULTIPLE_FIELDS_UI changes
