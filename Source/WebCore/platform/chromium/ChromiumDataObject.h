@@ -33,7 +33,7 @@
 
 #include "ChromiumDataObjectItem.h"
 #include "Supplementable.h"
-#include <wtf/HashSet.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
@@ -69,7 +69,7 @@ public:
     void clearData(const String& type);
     void clearAllExceptFiles();
 
-    HashSet<String> types() const;
+    ListHashSet<String> types() const;
     String getData(const String& type) const;
     bool setData(const String& type, const String& data);
 

@@ -126,9 +126,9 @@ void ChromiumDataObject::clearAllExceptFiles()
     }
 }
 
-HashSet<String> ChromiumDataObject::types() const
+ListHashSet<String> ChromiumDataObject::types() const
 {
-    HashSet<String> results;
+    ListHashSet<String> results;
     bool containsFiles = false;
     for (size_t i = 0; i < m_itemList.size(); ++i) {
         if (m_itemList[i]->kind() == DataTransferItem::kindString)

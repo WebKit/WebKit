@@ -275,10 +275,10 @@ bool ClipboardChromium::setData(const String& type, const String& data)
 }
 
 // extensions beyond IE's API
-HashSet<String> ClipboardChromium::types() const
+ListHashSet<String> ClipboardChromium::types() const
 {
     if (policy() != ClipboardReadable && policy() != ClipboardTypesReadable)
-        return HashSet<String>();
+        return ListHashSet<String>();
 
     return m_dataObject->types();
 }

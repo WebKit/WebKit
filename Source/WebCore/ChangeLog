@@ -1,3 +1,61 @@
+2012-10-06  Andreas Kling  <kling@webkit.org>
+
+        Clipboard::types() should return an ordered collection.
+        <http://webkit.org/b/98547>
+
+        Reviewed by Darin Adler.
+
+        Let Clipboard::types() return a ListHashSet<String> instead of a HashSet<String> to make sure
+        it retains the order in which type strings are added.
+
+        No test, this fixes an issue that was uncovered when lowering the default table size of WTF
+        hash tables, causing the HashSet<String> to rehash and reorder itself.
+
+        * bindings/js/JSClipboardCustom.cpp:
+        (WebCore::JSClipboard::types):
+        * bindings/v8/custom/V8ClipboardCustom.cpp:
+        (WebCore::V8Clipboard::typesAccessorGetter):
+        * dom/Clipboard.h:
+        (Clipboard):
+        * platform/blackberry/ClipboardBlackBerry.cpp:
+        (WebCore::ClipboardBlackBerry::types):
+        * platform/blackberry/ClipboardBlackBerry.h:
+        (ClipboardBlackBerry):
+        * platform/chromium/ChromiumDataObject.cpp:
+        (WebCore::ChromiumDataObject::types):
+        * platform/chromium/ChromiumDataObject.h:
+        (ChromiumDataObject):
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::types):
+        * platform/chromium/ClipboardChromium.h:
+        (ClipboardChromium):
+        * platform/efl/ClipboardEfl.cpp:
+        (WebCore::ClipboardEfl::types):
+        * platform/efl/ClipboardEfl.h:
+        (ClipboardEfl):
+        * platform/gtk/ClipboardGtk.cpp:
+        (WebCore::ClipboardGtk::types):
+        * platform/gtk/ClipboardGtk.h:
+        (ClipboardGtk):
+        * platform/mac/ClipboardMac.h:
+        (ClipboardMac):
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::addHTMLClipboardTypesForCocoaType):
+        (WebCore::ClipboardMac::types):
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::types):
+        * platform/qt/ClipboardQt.h:
+        (ClipboardQt):
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::addMimeTypesForFormat):
+        (WebCore::ClipboardWin::types):
+        * platform/win/ClipboardWin.h:
+        (ClipboardWin):
+        * platform/wx/ClipboardWx.cpp:
+        (WebCore::ClipboardWx::types):
+        * platform/wx/ClipboardWx.h:
+        (ClipboardWx):
+
 2012-10-06  Geoffrey Garen  <ggaren@apple.com>
 
         If Node X is reachable from JavaScript, all Nodes in the same tree should be kept alive
