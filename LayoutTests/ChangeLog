@@ -1,3 +1,9 @@
+2012-10-06  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Mark media/audio-garbage-collect.html as flaky on WK2.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-10-04  Geoffrey Garen  <ggaren@apple.com>
 
         If Node X is reachable from JavaScript, all Nodes in the same tree should be kept alive
