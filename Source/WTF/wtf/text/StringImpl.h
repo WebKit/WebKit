@@ -453,7 +453,7 @@ public:
 
     unsigned length() const { return m_length; }
     bool is8Bit() const { return m_hashAndFlags & s_hashFlag8BitBuffer; }
-    bool hasInternalBuffer() const { return bufferOwnership() == BufferInternal && !hasTerminatingNullCharacter(); }
+    bool hasInternalBuffer() const { return bufferOwnership() == BufferInternal; }
     bool hasOwnedBuffer() const { return bufferOwnership() == BufferOwned; }
     StringImpl* baseString() const { return bufferOwnership() == BufferSubstring ? m_substringBuffer : 0; }
 

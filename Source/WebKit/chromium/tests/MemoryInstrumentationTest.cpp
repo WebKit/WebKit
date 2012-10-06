@@ -295,7 +295,7 @@ TEST(MemoryInstrumentationTest, visitStrings)
         InstrumentedOwner<String> stringInstrumentedOwner("String");
         stringInstrumentedOwner.m_value.characters();
         helper.addRootObject(stringInstrumentedOwner);
-        EXPECT_EQ(sizeof(StringImpl) + stringInstrumentedOwner.m_value.length() * 3, helper.reportedSizeForAllTypes());
+        EXPECT_EQ(sizeof(StringImpl) + stringInstrumentedOwner.m_value.length() * (sizeof(LChar) + sizeof(UChar)), helper.reportedSizeForAllTypes());
         EXPECT_EQ(2, helper.visitedObjects());
     }
 
@@ -304,7 +304,7 @@ TEST(MemoryInstrumentationTest, visitStrings)
         String string("String");
         InstrumentedOwner<String> stringInstrumentedOwner(String(string.characters(), string.length()));
         helper.addRootObject(stringInstrumentedOwner);
-        EXPECT_EQ(sizeof(StringImpl) + stringInstrumentedOwner.m_value.length() * 2, helper.reportedSizeForAllTypes());
+        EXPECT_EQ(sizeof(StringImpl) + stringInstrumentedOwner.m_value.length() * sizeof(UChar), helper.reportedSizeForAllTypes());
         EXPECT_EQ(1, helper.visitedObjects());
     }
 
@@ -317,13 +317,22 @@ TEST(MemoryInstrumentationTest, visitStrings)
         EXPECT_EQ(1, helper.visitedObjects());
     }
 
+    { // Zero terminated internal buffer.
+        InstrumentationTestHelper helper;
+        InstrumentedOwner<String> stringInstrumentedOwner("string");
+        stringInstrumentedOwner.m_value.charactersWithNullTermination();
+        helper.addRootObject(stringInstrumentedOwner);
+        EXPECT_EQ(sizeof(StringImpl) + (stringInstrumentedOwner.m_value.length() + 1) * (sizeof(LChar) + sizeof(UChar)), helper.reportedSizeForAllTypes());
+        EXPECT_EQ(2, helper.visitedObjects());
+    }
+
     { // Substring
         InstrumentationTestHelper helper;
         String baseString("String");
         baseString.characters(); // Force 16 shadow creation.
         InstrumentedOwner<String> stringInstrumentedOwner(baseString.substringSharingImpl(1, 4));
         helper.addRootObject(stringInstrumentedOwner);
-        EXPECT_EQ(sizeof(StringImpl) * 2 + baseString.length() * 3, helper.reportedSizeForAllTypes());
+        EXPECT_EQ(sizeof(StringImpl) * 2 + baseString.length() * (sizeof(LChar) + sizeof(UChar)), helper.reportedSizeForAllTypes());
         EXPECT_EQ(3, helper.visitedObjects());
     }
 
@@ -341,7 +350,7 @@ TEST(MemoryInstrumentationTest, visitStrings)
         InstrumentedOwner<AtomicString> atomicStringInstrumentedOwner("AtomicString");
         atomicStringInstrumentedOwner.m_value.string().characters(); // Force 16bit shadow creation.
         helper.addRootObject(atomicStringInstrumentedOwner);
-        EXPECT_EQ(sizeof(StringImpl) + atomicStringInstrumentedOwner.m_value.length() * 3, helper.reportedSizeForAllTypes());
+        EXPECT_EQ(sizeof(StringImpl) + atomicStringInstrumentedOwner.m_value.length() * (sizeof(LChar) + sizeof(UChar)), helper.reportedSizeForAllTypes());
         EXPECT_EQ(2, helper.visitedObjects());
     }
 

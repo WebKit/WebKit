@@ -43,24 +43,24 @@ inline void reportMemoryUsage(const StringImpl* const& stringImpl, MemoryObjectI
 {
     size_t selfSize = sizeof(StringImpl);
 
+    size_t length = stringImpl->length() + (stringImpl->hasTerminatingNullCharacter() ? 1 : 0);
+    size_t bufferSize = length * (stringImpl->is8Bit() ? sizeof(LChar) : sizeof(UChar));
+    const void* buffer = stringImpl->is8Bit() ? static_cast<const void*>(stringImpl->characters8()) : static_cast<const void*>(stringImpl->characters16());
+
     // Count size used by internal buffer but skip strings that were constructed from literals.
-    if (stringImpl->hasInternalBuffer())
-        selfSize += stringImpl->length() * (stringImpl->is8Bit() ? sizeof(LChar) : sizeof(UChar));
+    if (stringImpl->hasInternalBuffer() && buffer == stringImpl + 1)
+        selfSize += bufferSize;
 
     MemoryClassInfo info(memoryObjectInfo, stringImpl, 0, selfSize);
 
     if (StringImpl* baseString = stringImpl->baseString())
         info.addMember(baseString);
     else {
-        if (stringImpl->hasOwnedBuffer()) {
-            if (stringImpl->is8Bit())
-                info.addRawBuffer(stringImpl->characters8(), stringImpl->length());
-            else
-                info.addRawBuffer(stringImpl->characters16(), stringImpl->length() * 2);
-        }
+        if (stringImpl->hasOwnedBuffer())
+            info.addRawBuffer(buffer, bufferSize);
 
         if (stringImpl->has16BitShadow())
-            info.addRawBuffer(stringImpl->characters(), (stringImpl->length() + (stringImpl->hasTerminatingNullCharacter() ? 1 : 0)) * sizeof(UChar));
+            info.addRawBuffer(stringImpl->characters(), length * sizeof(UChar));
     }
 }
 

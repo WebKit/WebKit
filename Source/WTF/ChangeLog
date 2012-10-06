@@ -1,3 +1,18 @@
+2012-10-06  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI fix String instrumentation the way it was discussed in WK97964
+        https://bugs.webkit.org/show_bug.cgi?id=98500
+
+        Reviewed by Benjamin Poulain.
+
+        Current instrumentation incorrectly covers the case when StringImpl object has been created via StringImpl::createWithTerminatingNullCharacter().
+        Looks like the only way to detect the strings that has been created from literals is to compare the addresses of buffer and stringImpl + 1.
+
+        * wtf/MemoryInstrumentationString.h:
+        (WTF::reportMemoryUsage):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::hasInternalBuffer):
+
 2012-10-06  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix build of WTFURL after r130187
