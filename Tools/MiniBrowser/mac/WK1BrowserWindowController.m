@@ -85,6 +85,31 @@
     }
 }
 
+- (IBAction)reload:(id)sender
+{
+    [_webView reload:sender];
+}
+
+- (IBAction)forceRepaint:(id)sender
+{
+    [_webView setNeedsDisplay:YES];
+}
+
+- (IBAction)goBack:(id)sender
+{
+    [_webView goBack:sender];
+}
+
+- (IBAction)goForward:(id)sender
+{
+    [_webView goForward:sender];
+}
+
+- (BOOL)isPaginated
+{
+    return NO;
+}
+
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
     SEL action = [menuItem action];
@@ -106,26 +131,6 @@
         [menuItem setState:[self isPaginated] ? NSOnState : NSOffState];
 
     return YES;
-}
-
-- (IBAction)reload:(id)sender
-{
-    [_webView reload:sender];
-}
-
-- (IBAction)forceRepaint:(id)sender
-{
-    [_webView setNeedsDisplay:YES];
-}
-
-- (IBAction)goBack:(id)sender
-{
-    [_webView goBack:sender];
-}
-
-- (IBAction)goForward:(id)sender
-{
-    [_webView goForward:sender];
 }
 
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
@@ -209,11 +214,6 @@
 {
     // FIXME: non-text zoom not implemented.
     _zoomTextOnly = !_zoomTextOnly;
-}
-
-- (BOOL)isPaginated
-{
-    return NO;
 }
 
 - (IBAction)togglePaginationMode:(id)sender

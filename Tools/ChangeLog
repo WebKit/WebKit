@@ -1,5 +1,17 @@
 2012-10-05  Simon Fraser  <simon.fraser@apple.com>
 
+        Attempt to fix the SnowLeopard build to making the implementation of
+        -isPaginated come before its use.
+
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController reload:]):
+        (-[WK1BrowserWindowController forceRepaint:]):
+        (-[WK1BrowserWindowController goBack:]):
+        (-[WK1BrowserWindowController goForward:]):
+        (-[WK1BrowserWindowController isPaginated]):
+
+2012-10-05  Simon Fraser  <simon.fraser@apple.com>
+
         Provide a way to run WebKit1
         https://bugs.webkit.org/show_bug.cgi?id=98568
 
