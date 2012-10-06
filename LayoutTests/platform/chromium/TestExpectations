@@ -3625,38 +3625,12 @@ webkit.org/b/97672 fast/js/string-localeCompare.html [ Failure ]
 webkit.org/b/97672 fast/js/dfg-array-push-bad-time.html [ Failure ]
 webkit.org/b/97672 fast/js/dfg-array-push-slow-put.html [ Failure ]
 
-# Need rebaseline
-webkit.org/b/98479 fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic.html [ ImageOnlyFailure Missing Pass ]
-webkit.org/b/98479 fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes.html [ ImageOnlyFailure Missing Pass ]
-webkit.org/b/98479 fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements.html [ ImageOnlyFailure Missing Pass ]
-webkit.org/b/98479 fast/forms/date-multiple-fields/date-multiple-fields-appearance-style.html [ ImageOnlyFailure Missing Pass ]
-
 # Failing, again, after r129712
 webkit.org/b/97672 http/tests/security/xss-eval.html [ Failure ]
 
 # Expected to fail until WebGL extension implementation lands
 webkit.org/b/96961 fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
 webkit.org/b/96961 platform/chromium/virtual/gpu/fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
-
-webkit.org/b/98094 platform/chromium/fast/forms/time/time-suggestion-picker-appearance.html [ ImageOnlyFailure Pass ]
-webkit.org/b/98094 platform/chromium/fast/forms/time/time-suggestion-picker-appearance-with-scroll-bar.html [ ImageOnlyFailure Pass ]
-webkit.org/b/98094 platform/chromium/fast/forms/time/time-suggestion-picker-appearance-rtl.html [ ImageOnlyFailure Pass ]
-
-# Need rebaseline
-webkit.org/b/98390 platform/chromium/fast/forms/date/date-suggestion-picker-appearance-rtl.html [ ImageOnlyFailure Pass ]
-webkit.org/b/98390 platform/chromium/fast/forms/date/date-suggestion-picker-appearance-with-scroll-bar.html [ ImageOnlyFailure Pass ]
-webkit.org/b/98390 platform/chromium/fast/forms/date/date-suggestion-picker-appearance.html [ ImageOnlyFailure Pass ]
-
-# Need rebaseline
-webkit.org/b/98481 fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic.html [ ImageOnlyFailure Pass ]
-webkit.org/b/98481 fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes.html [ ImageOnlyFailure Pass ]
-webkit.org/b/98481 fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements.html [ ImageOnlyFailure Pass ]
-webkit.org/b/98481 fast/forms/week-multiple-fields/week-multiple-fields-appearance-style.html [ ImageOnlyFailure Pass ]
-webkit.org/b/98481 fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic.html [ ImageOnlyFailure Pass ]
-webkit.org/b/98481 fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes.html [ ImageOnlyFailure Pass ]
-webkit.org/b/98481 fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements.html [ ImageOnlyFailure Pass ]
-webkit.org/b/98481 fast/forms/month-multiple-fields/month-multiple-fields-appearance-style.html [ ImageOnlyFailure Pass ]
-
 
 webkit.org/b/59863 fast/repaint/box-shadow-inset-repaint.html [ ImageOnlyFailure Pass ]
 

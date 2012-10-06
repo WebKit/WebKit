@@ -1,3 +1,87 @@
+2012-10-05  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Rebaseline for recent INPUT_MULTIPLE_FIELDS_UI changes
+
+        * platform/chromium-linux-x86/fast/forms/date/calendar-picker-appearance-expected.png:
+        * platform/chromium-linux/fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.png: Added.
+        * platform/chromium-linux/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.png: Added.
+        * platform/chromium-linux/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+        * platform/chromium-linux/fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.png: Added.
+        * platform/chromium-linux/fast/forms/date/calendar-picker-appearance-expected.png:
+        * platform/chromium-linux/fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-linux/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-linux/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-linux/fast/forms/month-multiple-fields/month-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-linux/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-linux/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-linux/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-linux/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-rtl-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-rtl-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/date/calendar-picker-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-rtl-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-rtl-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-with-scroll-bar-expected.png: Added.
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-mac/fast/forms/date/calendar-picker-appearance-expected.png:
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-mac/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-rtl-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-rtl-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium-win-xp/fast/forms/date/calendar-picker-appearance-expected.png:
+        * platform/chromium-win/fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.png: Added.
+        * platform/chromium-win/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.png: Added.
+        * platform/chromium-win/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+        * platform/chromium-win/fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.png: Added.
+        * platform/chromium-win/fast/forms/date/calendar-picker-appearance-expected.png:
+        * platform/chromium-win/fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-win/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-win/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-win/fast/forms/month-multiple-fields/month-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-win/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-win/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-win/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-win/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-rtl-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-rtl-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-10-05  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         OpenTypeVerticalData issue with DroidSansFallback.ttf on chromium-android and chromium-linux
