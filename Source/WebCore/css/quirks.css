@@ -39,7 +39,7 @@ table {
     font-variant: normal;
     font-style: normal;
     color: -webkit-text;
-    text-align: -webkit-auto
+    text-align: start;
 }
 
 /* This will apply only to text fields, since all other inputs already use border box sizing */
