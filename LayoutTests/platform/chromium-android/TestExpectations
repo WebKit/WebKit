@@ -47,9 +47,6 @@ crbug.com/145338 platform/chromium/inspector
 crbug.com/145338 accessibility
 crbug.com/145338 platform/chromium/accessibility
 
-crbug.com/145338 fast/forms/month-multiple-fields
-crbug.com/145338 fast/forms/time-multiple-fields
-crbug.com/145338 fast/forms/week-multiple-fields
 crbug.com/145338 fast/forms/color
 crbug.com/145338 fast/forms/datalist
 crbug.com/145338 fast/forms/date
@@ -80,3 +77,8 @@ webkit.org/b/95378 http/tests/local/fileapi/send-sliced-dragged-file.html [ Wont
 # The test depends on the same modified time returned from local file api and PHP. This is unfeasible.
 webkit.org/b/95378 http/tests/local/fileapi/file-last-modified.html [ WontFix ]
 
+# *-multiplefields UI is for desktop platforms
+fast/forms/date-multiple-fields [ WontFix ]
+fast/forms/month-multiple-fields [ WontFix ]
+fast/forms/time-multiple-fields [ WontFix ]
+fast/forms/week-multiple-fields [ WontFix ]

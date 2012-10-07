@@ -1988,6 +1988,7 @@ plugins/nested-plugin-objects.html
 fast/css/word-space-extra.html
 
 # ENABLE(INPUT_MULTIPLE_FIELDS_UI) is disabled
+fast/forms/date-multiple-fields
 fast/forms/month-multiple-fields
 fast/forms/time-multiple-fields
 fast/forms/week-multiple-fields
