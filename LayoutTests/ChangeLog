@@ -1,3 +1,59 @@
+2012-10-07  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Finish rebaselining the SVG tests after r130599.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/svg/W3C-SVG-1.1: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/styling-pres-02-f-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/styling-pres-02-f-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1/coords-units-01-b-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1/coords-units-01-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1/pservers-grad-02-b-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1/pservers-grad-02-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1/pservers-grad-04-b-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1/pservers-grad-04-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1/pservers-grad-05-b-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1/pservers-grad-05-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1/pservers-grad-11-b-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1/pservers-grad-11-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1/pservers-grad-12-b-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1/pservers-grad-12-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1/pservers-grad-14-b-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1/pservers-grad-14-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1/pservers-grad-15-b-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1/pservers-grad-15-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1/struct-use-05-b-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1/struct-use-05-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1/styling-inherit-01-b-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1/styling-inherit-01-b-expected.txt: Added.
+        * platform/efl/svg/batik/paints/patternRegions-expected.txt:
+        * platform/efl/svg/batik/paints/patternRegions-positioned-objects-expected.txt:
+        * platform/efl/svg/batik/text/textEffect-expected.txt: Added.
+        * platform/efl/svg/batik/text/textEffect3-expected.txt: Added.
+        * platform/efl/svg/custom: Added.
+        * platform/efl/svg/custom/clip-mask-negative-scale-expected.png: Added.
+        * platform/efl/svg/custom/clip-mask-negative-scale-expected.txt: Added.
+        * platform/efl/svg/custom/gradient-deep-referencing-expected.png: Added.
+        * platform/efl/svg/custom/gradient-deep-referencing-expected.txt: Added.
+        * platform/efl/svg/custom/gradient-with-1d-boundingbox-expected.png: Added.
+        * platform/efl/svg/custom/gradient-with-1d-boundingbox-expected.txt: Added.
+        * platform/efl/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.png: Added.
+        * platform/efl/svg/custom/radialGradient-focal-radius-expected.png: Added.
+        * platform/efl/svg/custom/radialGradient-focal-radius-expected.txt: Added.
+        * platform/efl/svg/custom/recursive-gradient-expected.png: Added.
+        * platform/efl/svg/custom/recursive-gradient-expected.txt: Added.
+        * platform/efl/svg/custom/relative-sized-content-with-resources-expected.png: Added.
+        * platform/efl/svg/custom/relative-sized-content-with-resources-expected.txt: Added.
+        * platform/efl/svg/custom/stroked-pattern-expected.png: Added.
+        * platform/efl/svg/custom/stroked-pattern-expected.txt: Added.
+        * platform/efl/svg/hixie/perf/006-expected.txt:
+
 2012-10-07  Daniel Bates  <dbates@webkit.org>
 
         Update expected results for SVG tests on EFL, GTK, and Qt after <http://trac.webkit.org/changeset/130599>
