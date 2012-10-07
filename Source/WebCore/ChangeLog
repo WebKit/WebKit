@@ -1,3 +1,21 @@
+2012-10-07  Geoffrey Garen  <ggaren@apple.com>
+
+        REGRESSION (r130584): Crashes in JSC::MarkedAllocator::allocateSlowCase, failing fast/dom/gc-dom-tree-lifetime.html
+        https://bugs.webkit.org/show_bug.cgi?id=98612
+
+        Reviewed by Darin Adler.
+
+        Since DOM modification can happen outside of JS, calls into JS due to
+        DOM modification need to take the JS lock.
+
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::willCreatePossiblyOrphanedTreeByRemovalSlowCase): Take the JS
+        lock before doing a JS allocation, since this may be a JS entrypoint.
+
+        * bindings/js/JSNodeCustom.h:
+        (WebCore::willCreatePossiblyOrphanedTreeByRemoval): Split out a slow case
+        to help the inliner.
+
 2012-10-07  Nick Carter  <nick@chromium.org>
 
         [chromium] Crash in WebCore::GraphicsLayerChromium::setContentsToImage

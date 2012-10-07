@@ -73,6 +73,7 @@ inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, 
 // root. In the JavaScript DOM, a node tree survives as long as there is a
 // reference to any node in the tree. To model the JavaScript DOM on top of
 // the C++ DOM, we ensure that the root of every tree has a JavaScript wrapper.
+void willCreatePossiblyOrphanedTreeByRemovalSlowCase(Node* root);
 inline void willCreatePossiblyOrphanedTreeByRemoval(Node* root)
 {
     if (root->wrapper())
@@ -81,11 +82,7 @@ inline void willCreatePossiblyOrphanedTreeByRemoval(Node* root)
     if (!root->hasChildNodes())
         return;
 
-    ScriptState* scriptState = mainWorldScriptState(root->document()->frame());
-    if (!scriptState)
-        return;
-
-    toJS(scriptState, static_cast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject()), root);
+    willCreatePossiblyOrphanedTreeByRemovalSlowCase(root);
 }
 
 } // namespace WebCore

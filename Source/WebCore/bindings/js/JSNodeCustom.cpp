@@ -276,4 +276,14 @@ JSValue toJSNewlyCreated(ExecState* exec, JSDOMGlobalObject* globalObject, Node*
     return createWrapperInline(exec, globalObject, node);
 }
 
+void willCreatePossiblyOrphanedTreeByRemovalSlowCase(Node* root)
+{
+    ScriptState* scriptState = mainWorldScriptState(root->document()->frame());
+    if (!scriptState)
+        return;
+
+    JSLockHolder lock(scriptState);
+    toJS(scriptState, static_cast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject()), root);
+}
+
 } // namespace WebCore
