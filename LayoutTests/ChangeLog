@@ -1,5 +1,11 @@
 2012-10-07  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        [EFL] Unskip passing test.
+
+        * platform/efl/TestExpectations:
+
+2012-10-07  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         [EFL] Finish rebaselining the SVG tests after r130599.
 
         * platform/efl/TestExpectations:
