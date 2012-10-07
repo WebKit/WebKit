@@ -9,7 +9,7 @@ layer at (0,0) size 200x500
       RenderSVGResourceLinearGradient {linearGradient} [id="red-grad"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#D7433C]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#BD1F1845]
-      RenderSVGResourceRadialGradient {radialGradient} [id="red-radial-grad"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50]
+      RenderSVGResourceRadialGradient {radialGradient} [id="red-radial-grad"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50] [focalRadius=0.00]
       RenderSVGResourceLinearGradient {linearGradient} [id="border-grad"] [gradientUnits=objectBoundingBox] [start=(0.05,0.95)] [end=(0.95,0.05)]
     RenderSVGEllipse {circle} at (45,45) size 110x110 [stroke={[type=LINEAR-GRADIENT] [id="border-grad"] [stroke width=10.00]}] [fill={[type=RADIAL-GRADIENT] [id="red-radial-grad"]}] [cx=100.00] [cy=100.00] [r=50.00]
     RenderSVGEllipse {circle} at (32,32) size 30x30 [stroke={[type=LINEAR-GRADIENT] [id="border-grad"] [stroke width=10.00]}] [fill={[type=RADIAL-GRADIENT] [id="red-radial-grad"]}] [cx=47.00] [cy=47.00] [r=10.00]

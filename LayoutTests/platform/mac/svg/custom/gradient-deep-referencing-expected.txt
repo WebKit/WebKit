@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderSVGResourceLinearGradient {linearGradient} [id="gradient1f"] [gradientUnits=userSpaceOnUse] [start=(0,100)] [end=(100,100)]
       RenderSVGResourceLinearGradient {linearGradient} [id="gradient1e"] [gradientUnits=userSpaceOnUse] [start=(0,100)] [end=(100,0)]
       RenderSVGResourceLinearGradient {linearGradient} [id="gradient1d"] [gradientUnits=userSpaceOnUse] [start=(0,100)] [end=(100,0)]
-      RenderSVGResourceRadialGradient {radialGradient} [id="gradient1c"] [gradientUnits=userSpaceOnUse] [center=(400,400)] [focal=(400,400)] [radius=400.00]
+      RenderSVGResourceRadialGradient {radialGradient} [id="gradient1c"] [gradientUnits=userSpaceOnUse] [center=(400,400)] [focal=(400,400)] [radius=400.00] [focalRadius=0.00]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
       RenderSVGResourceLinearGradient {linearGradient} [id="gradient1b"] [gradientUnits=userSpaceOnUse] [start=(0,0)] [end=(100,0)]

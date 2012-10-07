@@ -33,6 +33,7 @@ module svg {
         readonly attribute SVGAnimatedLength r;
         readonly attribute SVGAnimatedLength fx;
         readonly attribute SVGAnimatedLength fy;
+        readonly attribute SVGAnimatedLength fr;
     };
 
 }

@@ -10,7 +10,7 @@ layer at (0,0) size 800x478
       RenderBlock {div} at (0,52) size 402x402 [border: (1px solid #FF0000)]
         RenderSVGRoot {svg} at (48,108) size 322x322
           RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-            RenderSVGResourceRadialGradient {radialGradient} [id="grad"] [gradientUnits=userSpaceOnUse] [center=(200,200)] [focal=(200,200)] [radius=160.00]
+            RenderSVGResourceRadialGradient {radialGradient} [id="grad"] [gradientUnits=userSpaceOnUse] [center=(200,200)] [focal=(200,200)] [radius=160.00] [focalRadius=0.00]
               RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
               RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFFFF]
           RenderSVGEllipse {circle} at (48,108) size 322x322 [stroke={[type=SOLID] [color=#808080]}] [fill={[type=RADIAL-GRADIENT] [id="grad"]}] [cx=200.00] [cy=200.00] [r=160.00]

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2012 Adobe Systems Incorporated. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -60,37 +61,17 @@ float RenderSVGResourceRadialGradient::radius(const RadialGradientAttributes& at
     return SVGLengthContext::resolveLength(static_cast<const SVGElement*>(node()), attributes.gradientUnits(), attributes.r());
 }
 
-void RenderSVGResourceRadialGradient::adjustFocalPointIfNeeded(float radius, const FloatPoint& centerPoint, FloatPoint& focalPoint) const
+float RenderSVGResourceRadialGradient::focalRadius(const RadialGradientAttributes& attributes) const
 {
-    // Eventually adjust focal points, as described below.
-    float deltaX = focalPoint.x() - centerPoint.x();
-    float deltaY = focalPoint.y() - centerPoint.y();
-    float radiusMax = 0.99f * radius;
-
-    // Spec: If (fx, fy) lies outside the circle defined by (cx, cy) and r, set
-    // (fx, fy) to the point of intersection of the line through (fx, fy) and the circle.
-    // We scale the radius by 0.99 to match the behavior of FireFox.
-    if (sqrt(deltaX * deltaX + deltaY * deltaY) <= radiusMax)
-        return;
-
-    float angle = atan2f(deltaY, deltaX);
-    deltaX = cosf(angle) * radiusMax;
-    deltaY = sinf(angle) * radiusMax;
-    focalPoint = FloatPoint(deltaX + centerPoint.x(), deltaY + centerPoint.y());
+    return SVGLengthContext::resolveLength(static_cast<const SVGElement*>(node()), attributes.gradientUnits(), attributes.fr());
 }
 
 void RenderSVGResourceRadialGradient::buildGradient(GradientData* gradientData) const
 {
-    // Determine gradient focal/center points and radius
-    float radius = this->radius(m_attributes);
-    FloatPoint centerPoint = this->centerPoint(m_attributes);
-    FloatPoint focalPoint = this->focalPoint(m_attributes);
-    adjustFocalPointIfNeeded(radius, centerPoint, focalPoint);
-
-    gradientData->gradient = Gradient::create(focalPoint,
-                                              0, // SVG does not support a "focus radius"
-                                              centerPoint,
-                                              radius);
+    gradientData->gradient = Gradient::create(this->focalPoint(m_attributes),
+        this->focalRadius(m_attributes),
+        this->centerPoint(m_attributes),
+        this->radius(m_attributes));
 
     gradientData->gradient->setSpreadMethod(platformSpreadMethodFromSVGType(m_attributes.spreadMethod()));
 

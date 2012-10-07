@@ -9,7 +9,7 @@ layer at (0,0) size 480x360
         RenderSVGRect {rect} at (0,0) size 1x1 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=1.00] [height=1.00]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
         RenderSVGImage {image} at (0,0) size 1x1
-        RenderSVGResourceRadialGradient {radialGradient} [id="g"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50]
+        RenderSVGResourceRadialGradient {radialGradient} [id="g"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50] [focalRadius=0.00]
         RenderSVGText {text}
         RenderSVGText {text} at (0,-15) size 73x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 73x18

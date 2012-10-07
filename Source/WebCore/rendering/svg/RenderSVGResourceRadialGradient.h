@@ -47,7 +47,7 @@ public:
     FloatPoint centerPoint(const RadialGradientAttributes&) const;
     FloatPoint focalPoint(const RadialGradientAttributes&) const;
     float radius(const RadialGradientAttributes&) const;
-    void adjustFocalPointIfNeeded(float radius, const FloatPoint& centerPoint, FloatPoint& focalPoint) const;
+    float focalRadius(const RadialGradientAttributes&) const;
 
 private:
     RadialGradientAttributes m_attributes;

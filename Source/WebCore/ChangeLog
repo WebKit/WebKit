@@ -1,3 +1,50 @@
+2012-10-05  Dirk Schulze  <krit@webkit.org>
+
+        SVG radialGradient should support 'fr' for focal radius (just like Canvas)
+        https://bugs.webkit.org/show_bug.cgi?id=97986
+
+        Reviewed by Daniel Bates.
+
+        Update SVGRadialGradient to the changed behavior in SVG2: http://www.w3.org/TR/SVG2/pservers.html#RadialGradients
+        SVG2 adds the focal radius for radial gradients. Color stops will start from the edge of
+        the focal radius.
+        The new specification does not limit the focal point to be inside the radial gradients radius.
+        This makes SVGRadialGradient consistent with the radial gradient on Canvas.
+
+        Test: svg/custom/radialGradient-focal-radius.svg
+
+        * rendering/svg/RenderSVGResourceRadialGradient.cpp:
+            Remove checks for position of focal point. The focal point
+            can be placed every where outside the radius of the gradient now.
+        (WebCore::RenderSVGResourceRadialGradient::focalRadius):
+            Add new method to get the focal radius from SVGRadialGradientElement.
+        (WebCore::RenderSVGResourceRadialGradient::buildGradient):
+        * rendering/svg/RenderSVGResourceRadialGradient.h:
+        (RenderSVGResourceRadialGradient):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGResourceContainer):
+            Modify DRT output to include the focal radius.
+        * svg/RadialGradientAttributes.h:
+        (WebCore::RadialGradientAttributes::RadialGradientAttributes):
+        (WebCore::RadialGradientAttributes::fr):
+        (WebCore::RadialGradientAttributes::setFr):
+        (WebCore::RadialGradientAttributes::hasFr):
+        (RadialGradientAttributes):
+            New setters and getters for focal radius.
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore):
+        (WebCore::SVGRadialGradientElement::SVGRadialGradientElement):
+        (WebCore::SVGRadialGradientElement::isSupportedAttribute):
+        (WebCore::SVGRadialGradientElement::parseAttribute):
+        (WebCore::SVGRadialGradientElement::collectGradientAttributes):
+        (WebCore::SVGRadialGradientElement::selfHasRelativeLengths):
+            Ditto.
+        * svg/SVGRadialGradientElement.h:
+        (SVGRadialGradientElement):
+        * svg/SVGRadialGradientElement.idl:
+        * svg/svgattrs.in:
+            Add 'fr' as new attribute to the SVG attribute list.
+
 2012-10-07  Glenn Adams  <glenn@skynav.com>
 
         Use start instead of -webkit-auto in default and quirks mode stylesheets.

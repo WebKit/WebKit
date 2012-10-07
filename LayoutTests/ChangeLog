@@ -1,3 +1,55 @@
+2012-10-05  Dirk Schulze  <krit@webkit.org>
+
+        SVG radialGradient should support 'fr' for focal radius (just like Canvas)
+        https://bugs.webkit.org/show_bug.cgi?id=97986
+
+        Reviewed by Daniel Bates.
+
+        DRT changed the output to reflect the new added focal radius. A bunch of tests need
+        a rebaseline on DRT.
+        Added a new test for focal radius and changed behavior of focal point.
+
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/mac/svg/W3C-SVG-1.1-SE/styling-pres-02-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/coords-units-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-04-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-05-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-11-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-12-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-14-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-15-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-use-05-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/styling-inherit-01-b-expected.txt:
+        * platform/mac/svg/batik/paints/gradientLimit-expected.txt:
+        * platform/mac/svg/batik/paints/patternRegions-expected.txt:
+        * platform/mac/svg/batik/paints/patternRegions-positioned-objects-expected.txt:
+        * platform/mac/svg/batik/text/textEffect-expected.txt:
+        * platform/mac/svg/batik/text/textEffect3-expected.txt:
+        * platform/mac/svg/custom/gradient-attr-update-expected.txt:
+        * platform/mac/svg/custom/gradient-deep-referencing-expected.txt:
+        * platform/mac/svg/custom/gradient-rotated-bbox-expected.txt:
+        * platform/mac/svg/custom/gradient-userSpaceOnUse-with-percentage-expected.txt:
+        * platform/mac/svg/custom/gradient-with-1d-boundingbox-expected.txt:
+        * platform/mac/svg/custom/large-bounding-box-percents-expected.txt:
+        * platform/mac/svg/custom/radialGradient-focal-radius-expected.png: Added.
+        * platform/mac/svg/custom/radialGradient-focal-radius-expected.txt: Added.
+        * platform/mac/svg/custom/recursive-gradient-expected.txt:
+        * platform/mac/svg/custom/relative-sized-content-with-resources-expected.txt:
+        * platform/mac/svg/custom/stroked-pattern-expected.txt:
+        * platform/mac/svg/filters/feDisplacementMap-expected.txt:
+        * platform/mac/svg/filters/filterRes-expected.txt:
+        * platform/mac/svg/hixie/perf/006-expected.txt:
+        * svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.txt:
+        * svg/custom/gradient-stroke-width-expected.txt:
+        * svg/custom/radial-gradient-with-outstanding-focalPoint-expected.txt:
+        * svg/custom/radialGradient-focal-radius.svg: Added.
+
 2012-10-07  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         Unreviewed, rolling out r130596.

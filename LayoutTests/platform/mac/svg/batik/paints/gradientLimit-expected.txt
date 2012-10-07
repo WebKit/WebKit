@@ -31,7 +31,7 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (0,0) size 119x18
             chunk 1 (middle anchor) text run 1 at (15.50,150.00) startOffset 0 endOffset 16 width 119.00: "<linearGradient>"
       RenderSVGContainer {g} at (13,180) size 124x74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,100.00)}]
-        RenderSVGResourceRadialGradient {radialGradient} [id="closeOffsetsRadialGradient"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.10]
+        RenderSVGResourceRadialGradient {radialGradient} [id="closeOffsetsRadialGradient"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.10] [focalRadius=0.00]
           RenderSVGGradientStop {stop} [offset=0.00] [color=#DC143C]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#FFD700]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#DC143C]
@@ -43,7 +43,7 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (0,0) size 119x18
             chunk 1 (middle anchor) text run 1 at (15.50,150.00) startOffset 0 endOffset 16 width 119.00: "<radialGradient>"
       RenderSVGContainer {g} at (146,180) size 158x74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,100.00)}]
-        RenderSVGResourceRadialGradient {radialGradient} [id="closeOffsetsRadialGradient2"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.10]
+        RenderSVGResourceRadialGradient {radialGradient} [id="closeOffsetsRadialGradient2"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.10] [focalRadius=0.00]
           RenderSVGGradientStop {stop} [offset=0.00] [color=#DC143C]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#FFD700]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#DC143C]
@@ -66,7 +66,7 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (0,0) size 119x18
             chunk 1 (middle anchor) text run 1 at (15.50,150.00) startOffset 0 endOffset 16 width 119.00: "<linearGradient>"
       RenderSVGContainer {g} at (315,180) size 120x74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,100.00)}]
-        RenderSVGResourceRadialGradient {radialGradient} [id="smallRadiusRadialGradient"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.00]
+        RenderSVGResourceRadialGradient {radialGradient} [id="smallRadiusRadialGradient"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.00] [focalRadius=0.00]
           RenderSVGGradientStop {stop} [offset=0.00] [color=#FFD700]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#DC143C]
         RenderSVGRect {rect} at (335,180) size 80x40 [transform={m=((100.00,0.00)(0.00,100.00)) t=(0.00,0.00)}] [fill={[type=RADIAL-GRADIENT] [id="smallRadiusRadialGradient"]}] [x=0.35] [y=0.80] [width=0.80] [height=0.40]
