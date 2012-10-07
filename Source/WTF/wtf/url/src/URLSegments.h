@@ -121,6 +121,9 @@ public:
     //
     int charactersBefore(ComponentType, DelimiterInclusion) const;
 
+    // Shift all the components after ComponentType by 'offset'.
+    void moveComponentsAfter(ComponentType, int offset);
+
     // Each component excludes the related delimiters and has a length of -1
     // if that component is absent but 0 if the component exists but is empty.
     URLComponent scheme;

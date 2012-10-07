@@ -110,6 +110,29 @@ int URLSegments::charactersBefore(ComponentType type, DelimiterInclusion include
     return current;
 }
 
+void URLSegments::moveComponentsAfter(ComponentType type, int offset)
+{
+    switch (type) {
+    // Fall through.
+    case Scheme:
+        username.move(offset);
+    case Username:
+        password.move(offset);
+    case Password:
+        host.move(offset);
+    case Host:
+        port.move(offset);
+    case Port:
+        path.move(offset);
+    case Path:
+        query.move(offset);
+    case Query:
+        fragment.move(offset);
+    case Fragment:
+        break;
+    }
+}
+
 } // namespace WTF
 
 #endif // USE(WTFURL)

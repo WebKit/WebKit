@@ -56,8 +56,9 @@ bool FindAndCompareScheme(const UChar* str, int strLength, const char* compare, 
 
 // Returns true if the given string represents a standard URL. This means that
 // either the scheme is in the list of known standard schemes.
-bool isStandard(const char* spec, const URLComponent& scheme);
+bool isStandard(const LChar* spec, const URLComponent& scheme);
 bool isStandard(const UChar* spec, const URLComponent& scheme);
+inline bool isStandard(const char* spec, const URLComponent& scheme) { return isStandard(reinterpret_cast<const LChar*>(spec), scheme); }
 
 // URL library wrappers -------------------------------------------------------
 
@@ -107,18 +108,6 @@ bool ReplaceComponents(const char* spec, int specLength, const URLSegments& pars
                        const URLCanonicalizer::Replacements<UChar>&,
                        URLQueryCharsetConverter*,
                        URLBuffer<char>&, URLSegments* outputParsed);
-
-// String helper functions ----------------------------------------------------
-
-// Compare the lower-case form of the given string against the given ASCII
-// string. This is useful for doing checking if an input string matches some
-// token, and it is optimized to avoid intermediate string copies.
-//
-// The versions of this function that don't take a bEnd assume that the b
-// string is zero terminated.
-bool LowerCaseEqualsASCII(const char* aBegin, const char* aEnd, const char* b);
-bool LowerCaseEqualsASCII(const char* aBegin, const char* aEnd, const char* bBegin, const char* bEnd);
-bool LowerCaseEqualsASCII(const UChar* aBegin, const UChar* aEnd, const char* b);
 
 // Unescapes the given string using URL escaping rules.
 void DecodeURLEscapeSequences(const char* input, int length, URLBuffer<UChar>&);
