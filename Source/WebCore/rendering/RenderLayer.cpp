@@ -80,6 +80,7 @@
 #include "RenderInline.h"
 #include "RenderMarquee.h"
 #include "RenderReplica.h"
+#include "RenderSVGResourceClipper.h"
 #include "RenderScrollbar.h"
 #include "RenderScrollbarPart.h"
 #include "RenderTheme.h"
@@ -3139,6 +3140,16 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
             ShapeClipPathOperation* clipPath = static_cast<ShapeClipPathOperation*>(style->clipPath());
             context->clipPath(clipPath->path(calculateLayerBounds(this, rootLayer, 0)), clipPath->windRule());
         }
+#if ENABLE(SVG)
+        else if (style->clipPath()->getOperationType() == ClipPathOperation::REFERENCE) {
+            ReferenceClipPathOperation* referenceClipPathOperation = static_cast<ReferenceClipPathOperation*>(style->clipPath());
+            Document* document = renderer()->document();
+            // FIXME: It doesn't work with forward or external SVG references (https://bugs.webkit.org/show_bug.cgi?id=90405)
+            Element* clipPath = document ? document->getElementById(referenceClipPathOperation->fragment()) : 0;
+            if (clipPath && clipPath->renderer() && clipPath->renderer()->isSVGResourceContainer())
+                static_cast<RenderSVGResourceClipper*>(clipPath->renderer())->applyClippingToContext(renderer(), calculateLayerBounds(this, rootLayer, 0), paintDirtyRect, context);
+        }
+#endif
     }
 
 #if ENABLE(CSS_FILTERS)

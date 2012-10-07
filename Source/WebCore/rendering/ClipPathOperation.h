@@ -42,7 +42,7 @@ namespace WebCore {
 class ClipPathOperation : public RefCounted<ClipPathOperation> {
 public:
     enum OperationType {
-        // FIXME: Add referencing for IRI https://bugs.webkit.org/show_bug.cgi?id=96381
+        REFERENCE,
         SHAPE
     };
 
@@ -61,6 +61,36 @@ protected:
     }
 
     OperationType m_type;
+};
+
+class ReferenceClipPathOperation : public ClipPathOperation {
+public:
+    static PassRefPtr<ReferenceClipPathOperation> create(const String& url, const String& fragment)
+    {
+        return adoptRef(new ReferenceClipPathOperation(url, fragment));
+    }
+
+    const String& url() const { return m_url; }
+    const String& fragment() const { return m_fragment; }
+
+private:
+    virtual bool operator==(const ClipPathOperation& o) const
+    {
+        if (!isSameType(o))
+            return false;
+        const ReferenceClipPathOperation* other = static_cast<const ReferenceClipPathOperation*>(&o);
+        return m_url == other->m_url;
+    }
+
+    ReferenceClipPathOperation(const String& url, const String& fragment)
+        : ClipPathOperation(REFERENCE)
+        , m_url(url)
+        , m_fragment(fragment)
+    {
+    }
+
+    String m_url;
+    String m_fragment;
 };
 
 class ShapeClipPathOperation : public ClipPathOperation {

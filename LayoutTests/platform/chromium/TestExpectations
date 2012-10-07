@@ -1444,6 +1444,8 @@ crbug.com/10323 [ Win ] http/tests/xmlhttprequest/xmlhttprequest-no-content-leng
 # Windows?
 crbug.com/10342 [ Android Linux Mac ] fast/loader/file-URL-with-port-number.html [ WontFix ]
 
+# Clipping differences between Chromium platforms. Needs investigation.
+webkit.org/b/98599 css3/masking/clip-path-reference-userSpaceOnUse.html [ ImageOnlyFailure ] 
 
 # Started timing out with agl's complex text change.  Page is verrry slow.
 crbug.com/10343 [ Android Linux ] fast/text/large-text-composed-char.html

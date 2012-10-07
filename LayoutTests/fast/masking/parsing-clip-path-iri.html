@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<style>
+* { font-size: 16px; }
+div { font-size: 8px; }
+</style>
+<body>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+description('Test clip-path IRIs');
+
+function computedStyle(property, value) {
+    var div = document.createElement("div");
+    document.body.appendChild(div);
+    div.style.setProperty(property, value);
+    var computedValue = getComputedStyle(div).getPropertyValue(property);
+    document.body.removeChild(div);
+    return computedValue;
+}
+
+function innerStyle(property, value) {
+    var div = document.createElement("div");
+    div.style.setProperty(property, value);
+    return div.style.getPropertyValue(property);
+}
+
+function testComputed(property, value, expected) {
+    shouldBeEqualToString('computedStyle("' + property + '", "' + value + '")', expected);
+}
+
+function testInner(property, value, expected) {
+    if (expected === null)
+        shouldBeNull('innerStyle("' + property + '", "' + value + '")');
+    else
+        shouldBeEqualToString('innerStyle("' + property + '", "' + value + '")', expected);
+}
+
+testInner("-webkit-clip-path", "url(#clip1)", "url(#clip1)");
+testInner("-webkit-clip-path", "url(clip.svg#clip1)", "url(clip.svg#clip1)");
+
+testComputed("-webkit-clip-path", "url(#clip1)", "url(#clip1)");
+testComputed("-webkit-clip-path", "url(clip.svg#clip1)", "url(clip.svg#clip1)");
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

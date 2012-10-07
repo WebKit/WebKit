@@ -2765,6 +2765,13 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             validPrimitive = true;
         else if (value->unit == CSSParserValue::Function)
             return parseBasicShape(propId, important);
+#if ENABLE(SVG)
+        else if (value->unit == CSSPrimitiveValue::CSS_URI) {
+            parsedValue = CSSPrimitiveValue::create(value->string, CSSPrimitiveValue::CSS_URI);
+            addProperty(propId, parsedValue.release(), important);
+            return true;
+        }
+#endif
         break;
 #if ENABLE(CSS_EXCLUSIONS)
     case CSSPropertyWebkitShapeInside:

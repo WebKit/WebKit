@@ -1,3 +1,20 @@
+2012-10-06  Raul Hudea  <rhudea@adobe.com>
+
+        -webkit-clip-path should parse IRIs
+        https://bugs.webkit.org/show_bug.cgi?id=96381
+
+        Reviewed by Andreas Kling.
+
+        Tests for SVG referenced clipPath with both types of clipPathUnits: "userSpaceOnUse" and "objectBoundingBox".
+
+        * css3/masking/clip-path-reference-expected.html: Added.
+        * css3/masking/clip-path-reference-userSpaceOnUse-expected.html: Added.
+        * css3/masking/clip-path-reference-userSpaceOnUse.html: Added.
+        * css3/masking/clip-path-reference.html: Added.
+        * fast/masking/parsing-clip-path-iri-expected.txt: Added.
+        * fast/masking/parsing-clip-path-iri.html: Added.
+        * platform/chromium/TestExpectations:
+
 2012-10-06  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Mark media/audio-garbage-collect.html as flaky on WK2.

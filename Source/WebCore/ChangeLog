@@ -1,3 +1,36 @@
+2012-10-06  Raul Hudea  <rhudea@adobe.com>
+
+        -webkit-clip-path should parse IRIs
+        https://bugs.webkit.org/show_bug.cgi?id=96381
+
+        Reviewed by Andreas Kling.
+
+        Implemented the clipping via referencing a SVG clipPath. Currently it works only if the clipPath is defined
+        before using it on an HTML element. The forward reference issue is tracked via https://bugs.webkit.org/show_bug.cgi?id=90405.
+
+        Tests: css3/masking/clip-path-reference-userSpaceOnUse.html
+               css3/masking/clip-path-reference.html
+               fast/masking/parsing-clip-path-iri.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Add handling for SVG clipPath references.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Add handling for SVG clipPath references.
+        * css/StyleBuilder.cpp:
+        (WebCore::ApplyPropertyClipPath::applyValue): Add handling for SVG references.
+        * rendering/ClipPathOperation.h:
+        (ReferenceClipPathOperation): Added a new class corresponding to SVG referenced clipPath.
+        (WebCore::ReferenceClipPathOperation::create):
+        (WebCore::ReferenceClipPathOperation::url):
+        (WebCore::ReferenceClipPathOperation::fragment):
+        (WebCore::ReferenceClipPathOperation::operator==):
+        (WebCore::ReferenceClipPathOperation::ReferenceClipPathOperation):
+        (WebCore):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents): Add handling for ReferenceClipPathOperation.
+        * rendering/svg/RenderSVGResourceClipper.h:
+        (RenderSVGResourceClipper): Made applyClippingToContext public as it needs to be called directly for HTML elements.
+
 2012-10-06  Pratik Solanki  <psolanki@apple.com>
 
         Reduce calls to CGImageSourceCopyPropertiesAtIndex from frameSizeAtIndex
