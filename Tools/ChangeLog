@@ -1,3 +1,37 @@
+2012-10-07  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        webkitpy: Pass the `Listen' Apache directive from Apache, not the httpd.conf files.
+        https://bugs.webkit.org/show_bug.cgi?id=98602
+
+        Reviewed by Eric Seidel.
+
+        Unify all the different `Listen' directives present in the several
+        httpd.conf files we have in LayoutTests/http/conf. For one, we
+        were already passing `Listen 127.0.0.1:8000' via webkitpy before,
+        and opening the other ports from the conf files.
+
+        The configuration files differed mostly in the way they handled
+        IPV6 ports. Some of them did not listen to IPV6 ports because the
+        systems which used them sometimes did not have IPV6 support. The
+        `http_server_supports_ipv6' method has been added to Port to
+        address that. cygwin, on its turn, still seems to use Apache 1.3,
+        which does not support IPV6 at all; the newly-added method has a
+        special case for that.
+
+        * Scripts/webkitpy/common/system/platforminfo_mock.py:
+        (MockPlatformInfo.is_cygwin):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.baseline_version_dir):
+        (Port.to.start_websocket_server):
+        (Port.to):
+        (Port.to.http_server_supports_ipv6):
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_http_server_supports_ipv6):
+        (PortTest.test_build_path):
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server.py:
+        (LayoutTestApacheHttpd):
+        (LayoutTestApacheHttpd.__init__):
+
 2012-10-05  Simon Fraser  <simon.fraser@apple.com>
 
         Attempt to fix the SnowLeopard build to making the implementation of

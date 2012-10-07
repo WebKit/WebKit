@@ -42,7 +42,7 @@ class MockPlatformInfo(object):
         return self.os_name == 'win'
 
     def is_cygwin(self):
-        return False
+        return self.os_name == 'cygwin'
 
     def is_freebsd(self):
         return self.os_name == 'freebsd'

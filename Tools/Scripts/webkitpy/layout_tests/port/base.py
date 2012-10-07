@@ -39,6 +39,7 @@ import os
 import operator
 import optparse
 import re
+import socket
 import sys
 
 try:
@@ -202,7 +203,6 @@ class Port(object):
         """Return the absolute path to the platform-and-version-specific results."""
         baseline_search_paths = self.baseline_search_path()
         return baseline_search_paths[0]
-
 
     def baseline_search_path(self):
         return self.get_option('additional_platform_directory', []) + self._compare_baseline() + self.default_baseline_search_path()
@@ -922,6 +922,12 @@ class Port(object):
         server = websocket_server.PyWebSocket(self, self.results_directory())
         server.start()
         self._websocket_server = server
+
+    def http_server_supports_ipv6(self):
+        # Cygwin is the only platform to still use Apache 1.3, which only supports IPV4.
+        if self.host.platform.is_cygwin():
+            return False
+        return socket.has_ipv6
 
     def acquire_http_lock(self):
         self._http_lock = http_lock.HttpLock(None, filesystem=self._filesystem, executive=self._executive)
