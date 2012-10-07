@@ -1,3 +1,21 @@
+2012-10-07  Daniel Bates  <dbates@webkit.org>
+
+        Update expected results for SVG tests on EFL, GTK, and Qt after <http://trac.webkit.org/changeset/130599>
+        https://bugs.webkit.org/show_bug.cgi?id=97986
+
+        * platform/efl/svg/filters/feDisplacementMap-expected.txt:
+        * platform/efl/svg/filters/filterRes-expected.txt:
+        * platform/gtk/svg/custom/gradient-attr-update-expected.txt:
+        * platform/gtk/svg/custom/gradient-rotated-bbox-expected.txt:
+        * platform/gtk/svg/custom/gradient-userSpaceOnUse-with-percentage-expected.txt:
+        * platform/gtk/svg/custom/large-bounding-box-percents-expected.txt:
+        * platform/gtk/svg/filters/feDisplacementMap-expected.txt:
+        * platform/gtk/svg/filters/filterRes-expected.txt:
+        * platform/qt/svg/custom/gradient-attr-update-expected.txt:
+        * platform/qt/svg/custom/gradient-rotated-bbox-expected.txt:
+        * platform/qt/svg/custom/gradient-userSpaceOnUse-with-percentage-expected.txt:
+        * platform/qt/svg/custom/large-bounding-box-percents-expected.txt:
+
 2012-10-05  Dirk Schulze  <krit@webkit.org>
 
         SVG radialGradient should support 'fr' for focal radius (just like Canvas)
