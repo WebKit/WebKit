@@ -1,5 +1,76 @@
 2012-10-07  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        [EFL] Unskip svg/W3C-SVG-1.1-SE and add expectations for it.
+
+        All pixel tests look OK (compared to the ones in mac/), and all
+        tests seem to pass.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/svg/W3C-SVG-1.1-SE/color-prop-05-t-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/filters-image-05-f-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/filters-image-05-f-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/interact-pointer-03-t-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/interact-pointer-03-t-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/linking-uri-01-b-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/linking-uri-01-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/painting-control-04-f-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/struct-dom-11-f-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/struct-dom-11-f-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/struct-use-11-f-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/struct-use-11-f-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.txt: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.png: Added.
+        * platform/efl/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.txt: Added.
+
+2012-10-07  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         [EFL] Unskip passing test.
 
         * platform/efl/TestExpectations:

@@ -884,7 +884,6 @@ Bug(EFL) svg/custom
 Bug(EFL) svg/dom/altGlyph-dom.xhtml
 Bug(EFL) svg/text
 Bug(EFL) svg/W3C-SVG-1.1
-Bug(EFL) svg/W3C-SVG-1.1-SE
 Bug(EFL) svg/zoom/page/zoom-zoom-coords.xhtml
 
 # EFL's TestRunner does not implement setMediaType
