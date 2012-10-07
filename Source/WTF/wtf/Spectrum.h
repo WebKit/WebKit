@@ -44,7 +44,7 @@ public:
     {
         typename HashMap<T, unsigned long>::AddResult result = m_map.add(key, count);
         if (!result.isNewEntry)
-            result.iterator->second += count;
+            result.iterator->value += count;
     }
     
     unsigned long get(const T& key) const
@@ -52,7 +52,7 @@ public:
         const_iterator iter = m_map.find(key);
         if (iter == m_map.end())
             return 0;
-        return iter->second;
+        return iter->value;
     }
     
     iterator begin() { return m_map.begin(); }
@@ -88,7 +88,7 @@ public:
     {
         Vector<KeyAndCount> list;
         for (const_iterator iter = begin(); iter != end(); ++iter)
-            list.append(KeyAndCount(iter->first, iter->second));
+            list.append(KeyAndCount(iter->key, iter->value));
         
         std::sort(list.begin(), list.end());
         return list;

@@ -234,8 +234,8 @@ public:
     {
         RefPtr<TypeBuilder::Array<TypeBuilder::Memory::NodeCount> > childrenStats = TypeBuilder::Array<TypeBuilder::Memory::NodeCount>::create();
         for (HashMap<String, int>::iterator it = m_nodeNameToCount.begin(); it != m_nodeNameToCount.end(); ++it) {
-            RefPtr<NodeCount> nodeCount = NodeCount::create().setNodeName(it->first)
-                                                             .setCount(it->second);
+            RefPtr<NodeCount> nodeCount = NodeCount::create().setNodeName(it->key)
+                                                             .setCount(it->value);
             childrenStats->addItem(nodeCount);
         }
         return childrenStats.release();
@@ -245,8 +245,8 @@ public:
     {
         RefPtr<TypeBuilder::Array<TypeBuilder::Memory::ListenerCount> > listenerStats = TypeBuilder::Array<TypeBuilder::Memory::ListenerCount>::create();
         for (HashMap<AtomicString, int>::iterator it = m_eventTypeToCount.begin(); it != m_eventTypeToCount.end(); ++it) {
-            RefPtr<ListenerCount> listenerCount = ListenerCount::create().setType(it->first)
-                                                                         .setCount(it->second);
+            RefPtr<ListenerCount> listenerCount = ListenerCount::create().setType(it->key)
+                                                                         .setCount(it->value);
             listenerStats->addItem(listenerCount);
         }
         return listenerStats.release();

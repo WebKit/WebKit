@@ -72,10 +72,10 @@ PassRefPtr<ChildListMutationAccumulator> ChildListMutationAccumulator::getOrCrea
     AccumulatorMap::AddResult result = accumulatorMap().add(target, 0);
     RefPtr<ChildListMutationAccumulator> accumulator;
     if (!result.isNewEntry)
-        accumulator = result.iterator->second;
+        accumulator = result.iterator->value;
     else {
         accumulator = adoptRef(new ChildListMutationAccumulator(target, MutationObserverInterestGroup::createForChildListMutation(target)));
-        result.iterator->second = accumulator.get();
+        result.iterator->value = accumulator.get();
     }
     return accumulator.release();
 }

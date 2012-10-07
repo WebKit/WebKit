@@ -170,9 +170,9 @@ static String buildHTTPHeaders(const ResourceResponse& response, long long& expe
     
     HTTPHeaderMap::const_iterator end = response.httpHeaderFields().end();
     for (HTTPHeaderMap::const_iterator it = response.httpHeaderFields().begin(); it != end; ++it) {
-        stringBuilder.append(it->first.characters(), it->first.length());
+        stringBuilder.append(it->key.characters(), it->key.length());
         stringBuilder.append(separator.characters(), separator.length());
-        stringBuilder.append(it->second.characters(), it->second.length());
+        stringBuilder.append(it->value.characters(), it->value.length());
         stringBuilder.append('\n');
     }
     
@@ -284,7 +284,7 @@ PluginView::~PluginView()
 
     // Cancel all pending frame loads.
     for (FrameLoadMap::iterator it = m_pendingFrameLoads.begin(), end = m_pendingFrameLoads.end(); it != end; ++it)
-        it->first->setLoadListener(0);
+        it->key->setLoadListener(0);
 
     if (m_plugin) {
         m_isBeingDestroyed = true;

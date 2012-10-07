@@ -142,7 +142,7 @@ bool RenderNamedFlowThread::dependsOn(RenderNamedFlowThread* otherRenderFlowThre
     RenderNamedFlowThreadCountedSet::const_iterator iterator = m_layoutBeforeThreadsSet.begin();
     RenderNamedFlowThreadCountedSet::const_iterator end = m_layoutBeforeThreadsSet.end();
     for (; iterator != end; ++iterator) {
-        const RenderNamedFlowThread* beforeFlowThread = (*iterator).first;
+        const RenderNamedFlowThread* beforeFlowThread = (*iterator).key;
         if (beforeFlowThread->dependsOn(otherRenderFlowThread))
             return true;
     }
@@ -309,7 +309,7 @@ void RenderNamedFlowThread::removeDependencyOnFlowThread(RenderNamedFlowThread* 
 void RenderNamedFlowThread::pushDependencies(RenderNamedFlowThreadList& list)
 {
     for (RenderNamedFlowThreadCountedSet::iterator iter = m_layoutBeforeThreadsSet.begin(); iter != m_layoutBeforeThreadsSet.end(); ++iter) {
-        RenderNamedFlowThread* flowThread = (*iter).first;
+        RenderNamedFlowThread* flowThread = (*iter).key;
         if (list.contains(flowThread))
             continue;
         flowThread->pushDependencies(list);

@@ -355,8 +355,8 @@ Method* ProxyInstance::methodNamed(PropertyName propertyName)
     // If we already have an entry in the map, use it.
     MethodMap::iterator existingMapEntry = m_methods.find(name.impl());
     if (existingMapEntry != m_methods.end()) {
-        if (existingMapEntry->second)
-            return existingMapEntry->second;
+        if (existingMapEntry->value)
+            return existingMapEntry->value;
     }
     
     uint64_t methodName = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(name.ascii().data()));
@@ -377,9 +377,9 @@ Method* ProxyInstance::methodNamed(PropertyName propertyName)
     // Add a new entry to the map unless an entry was added while we were in waitForReply.
     MethodMap::AddResult mapAddResult = m_methods.add(name.impl(), 0);
     if (mapAddResult.isNewEntry && reply->m_result)
-        mapAddResult.iterator->second = new ProxyMethod(methodName);
+        mapAddResult.iterator->value = new ProxyMethod(methodName);
 
-    return mapAddResult.iterator->second;
+    return mapAddResult.iterator->value;
 }
 
 Field* ProxyInstance::fieldNamed(PropertyName propertyName)
@@ -394,7 +394,7 @@ Field* ProxyInstance::fieldNamed(PropertyName propertyName)
     // If we already have an entry in the map, use it.
     FieldMap::iterator existingMapEntry = m_fields.find(name.impl());
     if (existingMapEntry != m_fields.end())
-        return existingMapEntry->second;
+        return existingMapEntry->value;
     
     uint64_t identifier = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(name.ascii().data()));
     uint32_t requestID = m_instanceProxy->nextRequestID();
@@ -414,8 +414,8 @@ Field* ProxyInstance::fieldNamed(PropertyName propertyName)
     // Add a new entry to the map unless an entry was added while we were in waitForReply.
     FieldMap::AddResult mapAddResult = m_fields.add(name.impl(), 0);
     if (mapAddResult.isNewEntry && reply->m_result)
-        mapAddResult.iterator->second = new ProxyField(identifier);
-    return mapAddResult.iterator->second;
+        mapAddResult.iterator->value = new ProxyField(identifier);
+    return mapAddResult.iterator->value;
 }
 
 JSC::JSValue ProxyInstance::fieldValue(ExecState* exec, const Field* field) const

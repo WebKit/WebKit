@@ -238,7 +238,7 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
         return NO;
 
     DateToEntriesMap::iterator it = _entriesByDate->find(dateKey);
-    NSMutableArray *entriesForDate = it->second.get();
+    NSMutableArray *entriesForDate = it->value.get();
     [entriesForDate removeObjectIdenticalTo:entry];
     
     // remove this date entirely if there are no other entries on it
@@ -440,7 +440,7 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
         daysAsTimeIntervals.reserveCapacity(_entriesByDate->size());
         DateToEntriesMap::const_iterator end = _entriesByDate->end();
         for (DateToEntriesMap::const_iterator it = _entriesByDate->begin(); it != end; ++it)
-            daysAsTimeIntervals.append(it->first);
+            daysAsTimeIntervals.append(it->key);
 
         sort(daysAsTimeIntervals.begin(), daysAsTimeIntervals.end());
         size_t count = daysAsTimeIntervals.size();
@@ -897,7 +897,7 @@ WebHistoryWriter::WebHistoryWriter(DateToEntriesMap* entriesByDate)
     m_dateKeys.reserveCapacity(m_entriesByDate->size());
     DateToEntriesMap::const_iterator end = m_entriesByDate->end();
     for (DateToEntriesMap::const_iterator it = m_entriesByDate->begin(); it != end; ++it)
-        m_dateKeys.append(it->first);
+        m_dateKeys.append(it->key);
     sort(m_dateKeys.begin(), m_dateKeys.end());
 }
 

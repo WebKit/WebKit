@@ -195,7 +195,7 @@ void InspectorConsoleAgent::stopTiming(const String& title, PassRefPtr<ScriptCal
     if (it == m_times.end())
         return;
 
-    double startTime = it->second;
+    double startTime = it->value;
     m_times.remove(it);
 
     double elapsed = monotonicallyIncreasingTime() - startTime;
@@ -218,7 +218,7 @@ void InspectorConsoleAgent::count(PassRefPtr<ScriptArguments> arguments, PassRef
     if (it == m_counts.end())
         count = 1;
     else {
-        count = it->second + 1;
+        count = it->value + 1;
         m_counts.remove(it);
     }
 

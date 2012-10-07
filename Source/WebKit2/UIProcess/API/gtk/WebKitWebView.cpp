@@ -2463,7 +2463,7 @@ GList* webkit_web_view_get_subresources(WebKitWebView* webView)
     WebKitWebViewPrivate* priv = webView->priv;
     ResourcesMap::const_iterator end = priv->subresourcesMap.end();
     for (ResourcesMap::const_iterator it = priv->subresourcesMap.begin(); it != end; ++it)
-        subresources = g_list_prepend(subresources, it->second.get());
+        subresources = g_list_prepend(subresources, it->value.get());
 
     return g_list_reverse(subresources);
 }

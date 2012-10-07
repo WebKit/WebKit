@@ -134,7 +134,7 @@ static void reportAtomRuleMap(MemoryClassInfo* info, const RuleSet::AtomRuleMap&
 {
     info->addMember(atomicRuleMap);
     for (RuleSet::AtomRuleMap::const_iterator it = atomicRuleMap.begin(); it != atomicRuleMap.end(); ++it)
-        info->addMember(*it->second);
+        info->addMember(*it->value);
 }
 
 void RuleSet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
@@ -201,7 +201,7 @@ void RuleSet::addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map, const RuleDa
 {
     if (!key)
         return;
-    OwnPtr<Vector<RuleData> >& rules = map.add(key, nullptr).iterator->second;
+    OwnPtr<Vector<RuleData> >& rules = map.add(key, nullptr).iterator->value;
     if (!rules)
         rules = adoptPtr(new Vector<RuleData>);
     rules->append(ruleData);
@@ -362,7 +362,7 @@ static inline void shrinkMapVectorsToFit(RuleSet::AtomRuleMap& map)
 {
     RuleSet::AtomRuleMap::iterator end = map.end();
     for (RuleSet::AtomRuleMap::iterator it = map.begin(); it != end; ++it)
-        it->second->shrinkToFit();
+        it->value->shrinkToFit();
 }
 
 void RuleSet::shrinkToFit()

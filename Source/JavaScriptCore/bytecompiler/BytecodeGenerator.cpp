@@ -230,7 +230,7 @@ bool BytecodeGenerator::addVar(const Identifier& ident, bool isConstant, Registe
     SymbolTable::AddResult result = symbolTable().add(ident.impl(), newEntry);
 
     if (!result.isNewEntry) {
-        r0 = &registerFor(result.iterator->second.getIndex());
+        r0 = &registerFor(result.iterator->value.getIndex());
         return false;
     }
 
@@ -248,8 +248,8 @@ int BytecodeGenerator::addGlobalVar(
         newEntry.attemptToWatch();
     SymbolTable::AddResult result = symbolTable().add(ident.impl(), newEntry);
     if (!result.isNewEntry) {
-        result.iterator->second.notifyWrite();
-        index = result.iterator->second.getIndex();
+        result.iterator->value.notifyWrite();
+        index = result.iterator->value.getIndex();
     }
     return index;
 }
@@ -1152,7 +1152,7 @@ unsigned BytecodeGenerator::addConstant(const Identifier& ident)
     if (result.isNewEntry)
         m_codeBlock->addIdentifier(Identifier(m_globalData, rep));
 
-    return result.iterator->second;
+    return result.iterator->value;
 }
 
 // We can't hash JSValue(), so we use a dedicated data member to cache it.
@@ -1181,7 +1181,7 @@ RegisterID* BytecodeGenerator::addConstantValue(JSValue v)
         ++m_nextConstantOffset;
         m_codeBlock->addConstant(v);
     } else
-        index = result.iterator->second;
+        index = result.iterator->value;
     return &m_constantPoolRegisters[index];
 }
 
@@ -1327,7 +1327,7 @@ RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, double number)
     // work correctly with NaN as a key.
     if (isnan(number) || number == HashTraits<double>::emptyValue() || HashTraits<double>::isDeletedValue(number))
         return emitLoad(dst, jsNumber(number));
-    JSValue& valueInMap = m_numberMap.add(number, JSValue()).iterator->second;
+    JSValue& valueInMap = m_numberMap.add(number, JSValue()).iterator->value;
     if (!valueInMap)
         valueInMap = jsNumber(number);
     return emitLoad(dst, valueInMap);
@@ -1335,7 +1335,7 @@ RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, double number)
 
 RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, const Identifier& identifier)
 {
-    JSString*& stringInMap = m_stringMap.add(identifier.impl(), 0).iterator->second;
+    JSString*& stringInMap = m_stringMap.add(identifier.impl(), 0).iterator->value;
     if (!stringInMap)
         stringInMap = jsOwnedString(globalData(), identifier.string());
     return emitLoad(dst, JSValue(stringInMap));
@@ -1907,7 +1907,7 @@ unsigned BytecodeGenerator::addConstantBuffer(unsigned length)
 
 JSString* BytecodeGenerator::addStringConstant(const Identifier& identifier)
 {
-    JSString*& stringInMap = m_stringMap.add(identifier.impl(), 0).iterator->second;
+    JSString*& stringInMap = m_stringMap.add(identifier.impl(), 0).iterator->value;
     if (!stringInMap) {
         stringInMap = jsString(globalData(), identifier.string());
         addConstantValue(stringInMap);
@@ -1979,8 +1979,8 @@ RegisterID* BytecodeGenerator::emitLazyNewFunction(RegisterID* dst, FunctionBody
 {
     FunctionOffsetMap::AddResult ptr = m_functionOffsets.add(function, 0);
     if (ptr.isNewEntry)
-        ptr.iterator->second = m_codeBlock->addFunctionDecl(FunctionExecutable::create(*m_globalData, function));
-    return emitNewFunctionInternal(dst, ptr.iterator->second, true);
+        ptr.iterator->value = m_codeBlock->addFunctionDecl(FunctionExecutable::create(*m_globalData, function));
+    return emitNewFunctionInternal(dst, ptr.iterator->value, true);
 }
 
 RegisterID* BytecodeGenerator::emitNewFunctionInternal(RegisterID* dst, unsigned index, bool doNullCheck)

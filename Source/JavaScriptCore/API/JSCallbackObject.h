@@ -83,13 +83,13 @@ struct JSCallbackObjectData : WeakHandleOwner {
             PrivatePropertyMap::const_iterator location = m_propertyMap.find(propertyName.impl());
             if (location == m_propertyMap.end())
                 return JSValue();
-            return location->second.get();
+            return location->value.get();
         }
         
         void setPrivateProperty(JSGlobalData& globalData, JSCell* owner, const Identifier& propertyName, JSValue value)
         {
             WriteBarrier<Unknown> empty;
-            m_propertyMap.add(propertyName.impl(), empty).iterator->second.set(globalData, owner, value);
+            m_propertyMap.add(propertyName.impl(), empty).iterator->value.set(globalData, owner, value);
         }
         
         void deletePrivateProperty(const Identifier& propertyName)
@@ -100,8 +100,8 @@ struct JSCallbackObjectData : WeakHandleOwner {
         void visitChildren(SlotVisitor& visitor)
         {
             for (PrivatePropertyMap::iterator ptr = m_propertyMap.begin(); ptr != m_propertyMap.end(); ++ptr) {
-                if (ptr->second)
-                    visitor.append(&ptr->second);
+                if (ptr->value)
+                    visitor.append(&ptr->value);
             }
         }
 

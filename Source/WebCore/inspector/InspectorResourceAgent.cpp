@@ -105,7 +105,7 @@ static PassRefPtr<InspectorObject> buildObjectForHeaders(const HTTPHeaderMap& he
     RefPtr<InspectorObject> headersObject = InspectorObject::create();
     HTTPHeaderMap::const_iterator end = headers.end();
     for (HTTPHeaderMap::const_iterator it = headers.begin(); it != end; ++it)
-        headersObject->setString(it->first.string(), it->second);
+        headersObject->setString(it->key.string(), it->value);
     return headersObject;
 }
 
@@ -216,8 +216,8 @@ void InspectorResourceAgent::willSendRequest(unsigned long identifier, DocumentL
         InspectorObject::const_iterator end = headers->end();
         for (InspectorObject::const_iterator it = headers->begin(); it != end; ++it) {
             String value;
-            if (it->second->asString(&value))
-                request.setHTTPHeaderField(it->first, value);
+            if (it->value->asString(&value))
+                request.setHTTPHeaderField(it->key, value);
         }
     }
 
@@ -365,7 +365,7 @@ void InspectorResourceAgent::documentThreadableLoaderStartedLoadingForClient(uns
     if (it == m_pendingXHRReplayData.end())
         return;
 
-    XHRReplayData* xhrReplayData = it->second.get();
+    XHRReplayData* xhrReplayData = it->value.get();
     String requestId = IdentifiersFactory::requestId(identifier);
     m_resourcesData->setXHRReplayData(requestId, xhrReplayData);
 }
@@ -375,7 +375,7 @@ void InspectorResourceAgent::willLoadXHR(ThreadableLoaderClient* client, const S
     RefPtr<XHRReplayData> xhrReplayData = XHRReplayData::create(method, url, async, formData, includeCredentials);
     HTTPHeaderMap::const_iterator end = headers.end();
     for (HTTPHeaderMap::const_iterator it = headers.begin(); it!= end; ++it)
-        xhrReplayData->addHeader(it->first, it->second);
+        xhrReplayData->addHeader(it->key, it->value);
     m_pendingXHRReplayData.set(client, xhrReplayData);
 }
 
@@ -624,7 +624,7 @@ void InspectorResourceAgent::replayXHR(ErrorString*, const String& requestId)
     xhr->open(xhrReplayData->method(), xhrReplayData->url(), xhrReplayData->async(), code);
     HTTPHeaderMap::const_iterator end = xhrReplayData->headers().end();
     for (HTTPHeaderMap::const_iterator it = xhrReplayData->headers().begin(); it!= end; ++it)
-        xhr->setRequestHeader(it->first, it->second, code);
+        xhr->setRequestHeader(it->key, it->value, code);
     xhr->sendFromInspector(xhrReplayData->formData(), code);
 }
 

@@ -79,19 +79,19 @@ HarfBuzzNGFace::HarfBuzzNGFace(FontPlatformData* platformData, uint64_t uniqueID
 {
     HarfBuzzNGFaceCache::AddResult result = harfbuzzFaceCache()->add(m_uniqueID, 0);
     if (result.isNewEntry)
-        result.iterator->second = FaceCacheEntry::create(createFace());
-    result.iterator->second->ref();
-    m_face = result.iterator->second->face();
-    m_glyphCacheForFaceCacheEntry = result.iterator->second->glyphCache();
+        result.iterator->value = FaceCacheEntry::create(createFace());
+    result.iterator->value->ref();
+    m_face = result.iterator->value->face();
+    m_glyphCacheForFaceCacheEntry = result.iterator->value->glyphCache();
 }
 
 HarfBuzzNGFace::~HarfBuzzNGFace()
 {
     HarfBuzzNGFaceCache::iterator result = harfbuzzFaceCache()->find(m_uniqueID);
     ASSERT(result != harfbuzzFaceCache()->end());
-    ASSERT(result.get()->second->refCount() > 1);
-    result.get()->second->deref();
-    if (result.get()->second->refCount() == 1)
+    ASSERT(result.get()->value->refCount() > 1);
+    result.get()->value->deref();
+    if (result.get()->value->refCount() == 1)
         harfbuzzFaceCache()->remove(m_uniqueID);
 }
 

@@ -620,7 +620,7 @@ void DocumentLoader::getSubresources(Vector<PassRefPtr<ArchiveResource> >& subre
     const CachedResourceLoader::DocumentResourceMap& allResources = document->cachedResourceLoader()->allCachedResources();
     CachedResourceLoader::DocumentResourceMap::const_iterator end = allResources.end();
     for (CachedResourceLoader::DocumentResourceMap::const_iterator it = allResources.begin(); it != end; ++it) {
-        RefPtr<ArchiveResource> subresource = this->subresource(KURL(ParsedURLString, it->second->url()));
+        RefPtr<ArchiveResource> subresource = this->subresource(KURL(ParsedURLString, it->value->url()));
         if (subresource)
             subresources.append(subresource.release());
     }
@@ -652,8 +652,8 @@ void DocumentLoader::substituteResourceDeliveryTimerFired(Timer<DocumentLoader>*
 
     SubstituteResourceMap::const_iterator end = copy.end();
     for (SubstituteResourceMap::const_iterator it = copy.begin(); it != end; ++it) {
-        RefPtr<ResourceLoader> loader = it->first;
-        SubstituteResource* resource = it->second.get();
+        RefPtr<ResourceLoader> loader = it->key;
+        SubstituteResource* resource = it->value.get();
         
         if (resource) {
             SharedBuffer* data = resource->data();

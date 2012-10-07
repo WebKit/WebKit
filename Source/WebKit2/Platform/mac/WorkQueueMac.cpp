@@ -164,7 +164,7 @@ void WorkQueue::unregisterMachPortEventHandler(mach_port_t machPort)
     
     ASSERT(m_eventSources.contains(machPort));
 
-    EventSource* eventSource = it->second;
+    EventSource* eventSource = it->value;
     // Cancel and release the source. It will be deleted in its finalize handler.
     dispatch_source_cancel(eventSource->dispatchSource());
     dispatch_release(eventSource->dispatchSource());

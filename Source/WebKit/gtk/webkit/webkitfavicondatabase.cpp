@@ -613,18 +613,18 @@ static void webkitFaviconDatabaseImportFinished(WebKitFaviconDatabase* database)
     Vector<String> toDeleteURLs;
     PendingIconRequestMap::const_iterator end = database->priv->pendingIconRequests.end();
     for (PendingIconRequestMap::const_iterator iter = database->priv->pendingIconRequests.begin(); iter != end; ++iter) {
-        String iconURL = iconDatabase().synchronousIconURLForPageURL(iter->first);
+        String iconURL = iconDatabase().synchronousIconURLForPageURL(iter->key);
         if (!iconURL.isEmpty())
             continue;
 
-        PendingIconRequestVector* icons = iter->second;
+        PendingIconRequestVector* icons = iter->value;
         for (size_t i = 0; i < icons->size(); ++i) {
             PendingIconRequest* request = icons->at(i).get();
             if (request->asyncResult())
                 request->asyncResultComplete(0);
         }
 
-        toDeleteURLs.append(iter->first);
+        toDeleteURLs.append(iter->key);
     }
 
     for (size_t i = 0; i < toDeleteURLs.size(); ++i)

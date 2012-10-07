@@ -336,7 +336,7 @@ RenderBoxRegionInfo* RenderRegion::setRenderBoxRegionInfo(const RenderBox* box, 
     if (!m_isValid || !m_flowThread)
         return 0;
 
-    OwnPtr<RenderBoxRegionInfo>& boxInfo = m_renderBoxRegionInfo.add(box, nullptr).iterator->second;
+    OwnPtr<RenderBoxRegionInfo>& boxInfo = m_renderBoxRegionInfo.add(box, nullptr).iterator->value;
     if (boxInfo)
         *boxInfo = RenderBoxRegionInfo(logicalLeftInset, logicalRightInset, containingBlockChainIsInset);
     else
@@ -401,8 +401,8 @@ void RenderRegion::setRegionObjectsRegionStyle()
         RefPtr<RenderStyle> objectStyleInRegion;
         bool objectRegionStyleCached = false;
         if (it != m_renderObjectRegionStyle.end()) {
-            objectStyleInRegion = it->second.style;
-            ASSERT(it->second.cached);
+            objectStyleInRegion = it->value.style;
+            ASSERT(it->value.cached);
             objectRegionStyleCached = true;
         } else
             objectStyleInRegion = computeStyleInRegion(object);
@@ -420,12 +420,12 @@ void RenderRegion::restoreRegionObjectsOriginalStyle()
 
     RenderObjectRegionStyleMap temp;
     for (RenderObjectRegionStyleMap::iterator iter = m_renderObjectRegionStyle.begin(), end = m_renderObjectRegionStyle.end(); iter != end; ++iter) {
-        RenderObject* object = const_cast<RenderObject*>(iter->first);
+        RenderObject* object = const_cast<RenderObject*>(iter->key);
         RefPtr<RenderStyle> objectRegionStyle = object->style();
-        RefPtr<RenderStyle> objectOriginalStyle = iter->second.style;
+        RefPtr<RenderStyle> objectOriginalStyle = iter->value.style;
         object->setStyleInternal(objectOriginalStyle);
 
-        bool shouldCacheRegionStyle = iter->second.cached;
+        bool shouldCacheRegionStyle = iter->value.cached;
         if (!shouldCacheRegionStyle) {
             // Check whether we should cache the computed style in region.
             unsigned changedContextSensitiveProperties = ContextSensitivePropertyNone;
@@ -482,7 +482,7 @@ void RenderRegion::computeChildrenStyleInRegion(const RenderObject* object)
         RefPtr<RenderStyle> childStyleInRegion;
         bool objectRegionStyleCached = false;
         if (it != m_renderObjectRegionStyle.end()) {
-            childStyleInRegion = it->second.style;
+            childStyleInRegion = it->value.style;
             objectRegionStyleCached = true;
         } else {
             if (child->isAnonymous())

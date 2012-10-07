@@ -190,7 +190,7 @@ void SMILTimeContainer::setElapsed(SMILTime time)
 #endif
     GroupedAnimationsMap::iterator end = m_scheduledAnimations.end();
     for (GroupedAnimationsMap::iterator it = m_scheduledAnimations.begin(); it != end; ++it) {
-        AnimationsVector* scheduled = it->second;
+        AnimationsVector* scheduled = it->value;
         unsigned size = scheduled->size();
         for (unsigned n = 0; n < size; n++)
             scheduled->at(n)->reset();
@@ -268,7 +268,7 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
     AnimationsVector animationsToApply;
     GroupedAnimationsMap::iterator end = m_scheduledAnimations.end();
     for (GroupedAnimationsMap::iterator it = m_scheduledAnimations.begin(); it != end; ++it) {
-        AnimationsVector* scheduled = it->second;
+        AnimationsVector* scheduled = it->value;
 
         // Sort according to priority. Elements with later begin time have higher priority.
         // In case of a tie, document order decides. 

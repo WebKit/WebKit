@@ -103,7 +103,7 @@ static bool isAxisName(const String& name, Step::Axis& type)
     AxisNamesMap::iterator it = axisNames.find(name);
     if (it == axisNames.end())
         return false;
-    type = it->second;
+    type = it->value;
     return true;
 }
 

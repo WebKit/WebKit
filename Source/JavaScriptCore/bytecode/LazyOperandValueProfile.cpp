@@ -81,7 +81,7 @@ LazyOperandValueProfile* LazyOperandValueProfileParser::getIfPresent(
     if (iter == m_map.end())
         return 0;
     
-    return iter->second;
+    return iter->value;
 }
 
 SpeculatedType LazyOperandValueProfileParser::prediction(

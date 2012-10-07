@@ -833,7 +833,7 @@ HRESULT WebHistory::removeItemFromDateCaches(IWebHistoryItem* entry)
 
     DateToEntriesMap::iterator found = m_entriesByDate.find(dateKey);
     ASSERT(found != m_entriesByDate.end());
-    CFMutableArrayRef entriesForDate = found->second.get();
+    CFMutableArrayRef entriesForDate = found->value.get();
 
     CFIndex count = CFArrayGetCount(entriesForDate);
     for (int i = count - 1; i >= 0; --i) {

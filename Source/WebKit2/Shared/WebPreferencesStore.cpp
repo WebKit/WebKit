@@ -151,7 +151,7 @@ static typename MapType::MappedType valueForKey(const MapType& map, const typena
 {
     typename MapType::const_iterator it = map.find(key);
     if (it != map.end())
-        return it->second;
+        return it->value;
 
     return defaultValueForKey<typename MapType::MappedType>(key);
 }
@@ -187,7 +187,7 @@ bool WebPreferencesStore::getBoolValueForKey(const String& key) const
     // FIXME: Extend overriding to other key types used from TestRunner.
     BoolOverridesMap::const_iterator it = boolTestRunnerOverridesMap().find(key);
     if (it != boolTestRunnerOverridesMap().end())
-        return it->second;
+        return it->value;
     return valueForKey(m_boolValues, key);
 }
 

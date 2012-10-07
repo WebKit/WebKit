@@ -79,7 +79,7 @@ static bool getDataMapItem(const DragDataMap* dataObject, FORMATETC* format, Str
     DragDataMap::const_iterator found = dataObject->find(format->cfFormat);
     if (found == dataObject->end())
         return false;
-    item = found->second[0];
+    item = found->value[0];
     return true;
 }
 
@@ -829,7 +829,7 @@ void getClipboardData(IDataObject* dataObject, FORMATETC* format, Vector<String>
     ClipboardFormatMap::const_iterator found = formatMap.find(format->cfFormat);
     if (found == formatMap.end())
         return;
-    found->second->getString(dataObject, found->second->format, dataStrings);
+    found->value->getString(dataObject, found->value->format, dataStrings);
 }
 
 void setClipboardData(IDataObject* dataObject, UINT format, const Vector<String>& dataStrings)
@@ -838,7 +838,7 @@ void setClipboardData(IDataObject* dataObject, UINT format, const Vector<String>
     ClipboardFormatMap::const_iterator found = formatMap.find(format);
     if (found == formatMap.end())
         return;
-    found->second->setString(dataObject, found->second->format, dataStrings);
+    found->value->setString(dataObject, found->value->format, dataStrings);
 }
 
 } // namespace WebCore

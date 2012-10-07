@@ -62,7 +62,7 @@ int SpeechInput::registerListener(SpeechInputListener* listener)
 #if defined(DEBUG)
     // Check if already present.
     for (HashMap<int, SpeechInputListener*>::iterator it = m_listeners.begin(); it != m_listeners.end(); ++it)
-      ASSERT(it->second != listener);
+      ASSERT(it->value != listener);
 #endif
 
     m_listeners.add(m_nextListenerId, listener);

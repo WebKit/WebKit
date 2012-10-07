@@ -253,7 +253,7 @@ void StyleSheetContents::parserAddNamespace(const AtomicString& prefix, const At
     PrefixNamespaceURIMap::AddResult result = m_namespaces.add(prefix, uri);
     if (result.isNewEntry)
         return;
-    result.iterator->second = uri;
+    result.iterator->value = uri;
 }
 
 const AtomicString& StyleSheetContents::determineNamespace(const AtomicString& prefix)
@@ -265,7 +265,7 @@ const AtomicString& StyleSheetContents::determineNamespace(const AtomicString& p
     PrefixNamespaceURIMap::const_iterator it = m_namespaces.find(prefix);
     if (it == m_namespaces.end())
         return nullAtom;
-    return it->second;
+    return it->value;
 }
 
 void StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet* cachedStyleSheet, const SecurityOrigin* securityOrigin)

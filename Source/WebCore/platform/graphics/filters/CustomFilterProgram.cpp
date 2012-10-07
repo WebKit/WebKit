@@ -75,7 +75,7 @@ void CustomFilterProgram::removeClient(CustomFilterProgramClient* client)
 void CustomFilterProgram::notifyClients()
 {
     for (CustomFilterProgramClientList::iterator iter = m_clients.begin(), end = m_clients.end(); iter != end; ++iter)
-        iter->first->notifyCustomFilterProgramLoaded(this);
+        iter->key->notifyCustomFilterProgramLoaded(this);
 }
 
 CustomFilterProgramInfo CustomFilterProgram::programInfo() const

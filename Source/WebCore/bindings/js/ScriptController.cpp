@@ -89,7 +89,7 @@ ScriptController::~ScriptController()
     // It's likely that destroying m_windowShells will create a lot of garbage.
     if (!m_windowShells.isEmpty()) {
         while (!m_windowShells.isEmpty())
-            destroyWindowShell(m_windowShells.begin()->first.get());
+            destroyWindowShell(m_windowShells.begin()->key.get());
         gcController().garbageCollectSoon();
     }
 }
@@ -176,7 +176,7 @@ void ScriptController::clearWindowShell(DOMWindow* newDOMWindow, bool goingIntoP
     JSLockHolder lock(JSDOMWindowBase::commonJSGlobalData());
 
     for (ShellMap::iterator iter = m_windowShells.begin(); iter != m_windowShells.end(); ++iter) {
-        JSDOMWindowShell* windowShell = iter->second.get();
+        JSDOMWindowShell* windowShell = iter->value.get();
 
         if (windowShell->window()->impl() == newDOMWindow)
             continue;
@@ -269,7 +269,7 @@ bool ScriptController::canAccessFromCurrentOrigin(Frame *frame)
 void ScriptController::attachDebugger(JSC::Debugger* debugger)
 {
     for (ShellMap::iterator iter = m_windowShells.begin(); iter != m_windowShells.end(); ++iter)
-        attachDebugger(iter->second.get(), debugger);
+        attachDebugger(iter->value.get(), debugger);
 }
 
 void ScriptController::attachDebugger(JSDOMWindowShell* shell, JSC::Debugger* debugger)
@@ -287,8 +287,8 @@ void ScriptController::attachDebugger(JSDOMWindowShell* shell, JSC::Debugger* de
 void ScriptController::updateDocument()
 {
     for (ShellMap::iterator iter = m_windowShells.begin(); iter != m_windowShells.end(); ++iter) {
-        JSLockHolder lock(iter->first->globalData());
-        iter->second->window()->updateDocument();
+        JSLockHolder lock(iter->key->globalData());
+        iter->value->window()->updateDocument();
     }
 }
 
@@ -325,7 +325,7 @@ PassRefPtr<Bindings::RootObject> ScriptController::createRootObject(void* native
 {
     RootObjectMap::iterator it = m_rootObjects.find(nativeHandle);
     if (it != m_rootObjects.end())
-        return it->second;
+        return it->value;
 
     RefPtr<Bindings::RootObject> rootObject = Bindings::RootObject::create(nativeHandle, globalObject(pluginWorld()));
 
@@ -341,8 +341,8 @@ void ScriptController::setCaptureCallStackForUncaughtExceptions(bool)
 void ScriptController::collectIsolatedContexts(Vector<std::pair<JSC::ExecState*, SecurityOrigin*> >& result)
 {
     for (ShellMap::iterator iter = m_windowShells.begin(); iter != m_windowShells.end(); ++iter) {
-        JSC::ExecState* exec = iter->second->window()->globalExec();
-        SecurityOrigin* origin = iter->second->window()->impl()->document()->securityOrigin();
+        JSC::ExecState* exec = iter->value->window()->globalExec();
+        SecurityOrigin* origin = iter->value->window()->impl()->document()->securityOrigin();
         result.append(std::pair<ScriptState*, SecurityOrigin*>(exec, origin));
     }
 }
@@ -430,7 +430,7 @@ void ScriptController::cleanupScriptObjectsForPlugin(void* nativeHandle)
     if (it == m_rootObjects.end())
         return;
 
-    it->second->invalidate();
+    it->value->invalidate();
     m_rootObjects.remove(it);
 }
 
@@ -440,7 +440,7 @@ void ScriptController::clearScriptObjects()
 
     RootObjectMap::const_iterator end = m_rootObjects.end();
     for (RootObjectMap::const_iterator it = m_rootObjects.begin(); it != end; ++it)
-        it->second->invalidate();
+        it->value->invalidate();
 
     m_rootObjects.clear();
 

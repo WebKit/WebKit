@@ -69,10 +69,10 @@ PassRefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::getOrCreate(Node*
 
     DOMHandleCache::AddResult result = domHandleCache().add(node, 0);
     if (!result.isNewEntry)
-        return PassRefPtr<InjectedBundleNodeHandle>(result.iterator->second);
+        return PassRefPtr<InjectedBundleNodeHandle>(result.iterator->value);
 
     RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::create(node);
-    result.iterator->second = nodeHandle.get();
+    result.iterator->value = nodeHandle.get();
     return nodeHandle.release();
 }
 

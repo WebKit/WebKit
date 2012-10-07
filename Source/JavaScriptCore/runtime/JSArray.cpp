@@ -356,7 +356,7 @@ bool JSArray::setLength(ExecState* exec, unsigned newLength, bool throwException
             keys.reserveCapacity(min(map->size(), static_cast<size_t>(length - newLength)));
             SparseArrayValueMap::const_iterator end = map->end();
             for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it) {
-                unsigned index = static_cast<unsigned>(it->first);
+                unsigned index = static_cast<unsigned>(it->key);
                 if (index < length && index >= newLength)
                     keys.append(index);
             }
@@ -371,7 +371,7 @@ bool JSArray::setLength(ExecState* exec, unsigned newLength, bool throwException
                     unsigned index = keys[--i];
                     SparseArrayValueMap::iterator it = map->find(index);
                     ASSERT(it != map->notFound());
-                    if (it->second.attributes & DontDelete) {
+                    if (it->value.attributes & DontDelete) {
                         storage->setLength(index + 1);
                         return reject(exec, throwException, "Unable to delete property.");
                     }

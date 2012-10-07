@@ -470,7 +470,7 @@ int64_t LayerTreeCoordinator::adoptImageBackingStore(Image* image)
     HashMap<int64_t, int>::iterator it = m_directlyCompositedImageRefCounts.find(key);
 
     if (it != m_directlyCompositedImageRefCounts.end()) {
-        ++(it->second);
+        ++(it->value);
         return key;
     }
 
@@ -495,9 +495,9 @@ void LayerTreeCoordinator::releaseImageBackingStore(int64_t key)
     if (it == m_directlyCompositedImageRefCounts.end())
         return;
 
-    it->second--;
+    it->value--;
 
-    if (it->second)
+    if (it->value)
         return;
 
     m_directlyCompositedImageRefCounts.remove(it);

@@ -55,14 +55,14 @@ public:
     size_t totalSize(MemoryObjectType objectType) const
     {
         TypeToSizeMap::const_iterator i = m_totalSizes.find(objectType);
-        return i == m_totalSizes.end() ? 0 : i->second;
+        return i == m_totalSizes.end() ? 0 : i->value;
     }
 
     size_t reportedSizeForAllTypes() const
     {
         size_t size = 0;
         for (TypeToSizeMap::const_iterator i = m_totalSizes.begin(); i != m_totalSizes.end(); ++i)
-            size += i->second;
+            size += i->value;
         return size;
     }
 

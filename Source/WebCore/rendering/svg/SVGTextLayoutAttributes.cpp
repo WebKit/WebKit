@@ -62,8 +62,8 @@ void SVGTextLayoutAttributes::dump() const
     fprintf(stderr, "context: %p\n", m_context);
     const SVGCharacterDataMap::const_iterator end = m_characterDataMap.end();
     for (SVGCharacterDataMap::const_iterator it = m_characterDataMap.begin(); it != end; ++it) {
-        const SVGCharacterData& data = it->second;
-        fprintf(stderr, " ---> pos=%i, data={", it->first);
+        const SVGCharacterData& data = it->value;
+        fprintf(stderr, " ---> pos=%i, data={", it->key);
         dumpSVGCharacterDataMapValue("x", data.x);
         dumpSVGCharacterDataMapValue("y", data.y);
         dumpSVGCharacterDataMapValue("dx", data.dx);

@@ -1,3 +1,13 @@
+2012-10-07  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Rename first/second to key/value in HashMap iterators
+        https://bugs.webkit.org/show_bug.cgi?id=82784
+
+        Reviewed by Eric Seidel.
+
+        * WebCoreSupport/PlatformStrategiesWinCE.cpp:
+        (PlatformStrategiesWinCE::getPluginInfo):
+
 2012-10-04  Simon Fraser  <simon.fraser@apple.com>
 
         Standardize on "flush" terminology for compositing layer flushing/syncing

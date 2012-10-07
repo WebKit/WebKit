@@ -107,7 +107,7 @@
         uint64_t id = [notificationID unsignedLongLongValue];
         NotificationIDMap::iterator it = _notifications.find(id);
         ASSERT(it != _notifications.end());
-        [it->second.get() dispatchCloseEvent];
+        [it->value.get() dispatchCloseEvent];
         _notifications.remove(it);
         _notificationViewMap.remove(id);
     }

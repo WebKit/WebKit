@@ -145,7 +145,7 @@ uint32_t NetscapePluginInstanceProxy::LocalObjectMap::idForObject(JSGlobalData& 
     
     HashMap<JSC::JSObject*, pair<uint32_t, uint32_t> >::iterator iter = m_jsObjectToIDMap.find(object);
     if (iter != m_jsObjectToIDMap.end())
-        return iter->second.first;
+        return iter->value.first;
     
     do {
         objectID = ++m_objectIDCounter;
@@ -162,7 +162,7 @@ void NetscapePluginInstanceProxy::LocalObjectMap::retain(JSC::JSObject* object)
     HashMap<JSC::JSObject*, pair<uint32_t, uint32_t> >::iterator iter = m_jsObjectToIDMap.find(object);
     ASSERT(iter != m_jsObjectToIDMap.end());
 
-    iter->second.second = iter->second.second + 1;
+    iter->value.second = iter->value.second + 1;
 }
 
 void NetscapePluginInstanceProxy::LocalObjectMap::release(JSC::JSObject* object)
@@ -170,10 +170,10 @@ void NetscapePluginInstanceProxy::LocalObjectMap::release(JSC::JSObject* object)
     HashMap<JSC::JSObject*, pair<uint32_t, uint32_t> >::iterator iter = m_jsObjectToIDMap.find(object);
     ASSERT(iter != m_jsObjectToIDMap.end());
 
-    ASSERT(iter->second.second > 0);
-    iter->second.second = iter->second.second - 1;
-    if (!iter->second.second) {
-        m_idToJSObjectMap.remove(iter->second.first);
+    ASSERT(iter->value.second > 0);
+    iter->value.second = iter->value.second - 1;
+    if (!iter->value.second) {
+        m_idToJSObjectMap.remove(iter->value.first);
         m_jsObjectToIDMap.remove(iter);
     }
 }
@@ -197,10 +197,10 @@ bool NetscapePluginInstanceProxy::LocalObjectMap::forget(uint32_t objectID)
         return true;
     }
 
-    HashMap<JSC::JSObject*, pair<uint32_t, uint32_t> >::iterator rIter = m_jsObjectToIDMap.find(iter->second.get());
+    HashMap<JSC::JSObject*, pair<uint32_t, uint32_t> >::iterator rIter = m_jsObjectToIDMap.find(iter->value.get());
 
     // If the object is being sent to plug-in right now, then it's not the time to forget.
-    if (rIter->second.second != 1)
+    if (rIter->value.second != 1)
         return false;
 
     m_jsObjectToIDMap.remove(rIter);
@@ -330,7 +330,7 @@ void NetscapePluginInstanceProxy::destroy()
     
     FrameLoadMap::iterator end = m_pendingFrameLoads.end();
     for (FrameLoadMap::iterator it = m_pendingFrameLoads.begin(); it != end; ++it)
-        [(it->first) _setInternalLoadDelegate:nil];
+        [(it->key) _setInternalLoadDelegate:nil];
 
     _WKPHDestroyPluginInstance(m_pluginHostProxy->port(), m_pluginID, requestID);
  
@@ -678,7 +678,7 @@ void NetscapePluginInstanceProxy::webFrameDidFinishLoadWithReason(WebFrame* webF
     FrameLoadMap::iterator it = m_pendingFrameLoads.find(webFrame);
     ASSERT(it != m_pendingFrameLoads.end());
         
-    PluginRequest* pluginRequest = it->second.get();
+    PluginRequest* pluginRequest = it->value.get();
     _WKPHLoadURLNotify(m_pluginHostProxy->port(), m_pluginID, pluginRequest->requestID(), reason);
  
     m_pendingFrameLoads.remove(it);
@@ -1628,7 +1628,7 @@ void NetscapePluginInstanceProxy::cancelCheckIfAllowedToLoadURL(uint32_t checkID
     if (it == m_urlChecks.end())
         return;
     
-    WebPluginContainerCheck *check = it->second.get();
+    WebPluginContainerCheck *check = it->value.get();
     [check cancel];
     m_urlChecks.remove(it);
 }

@@ -118,7 +118,7 @@ void ProcessingInstruction::checkStyleSheet()
         HashMap<String, String>::const_iterator i = attrs.find("type");
         String type;
         if (i != attrs.end())
-            type = i->second;
+            type = i->value;
 
         m_isCSS = type.isEmpty() || type == "text/css";
 #if ENABLE(XSLT)

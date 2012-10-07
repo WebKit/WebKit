@@ -121,7 +121,7 @@ void WebNotificationCenter::postNotificationInternal(IWebNotification* notificat
 
     // Intentionally make a copy of the list to avoid the possibility of errors
     // from a mutation of the list in the onNotify callback.
-    ObjectObserverList list = it->second;
+    ObjectObserverList list = it->value;
 
     ObserverListIterator end = list.end();
     for (ObserverListIterator it2 = list.begin(); it2 != end; ++it2) {
@@ -150,7 +150,7 @@ HRESULT STDMETHODCALLTYPE WebNotificationCenter::addObserver(
     String name(notificationName, SysStringLen(notificationName));
     MappedObservers::iterator it = d->m_mappedObservers.find(name);
     if (it != d->m_mappedObservers.end())
-        it->second.append(ObjectObserverPair(anObject, observer));
+        it->value.append(ObjectObserverPair(anObject, observer));
     else {
         ObjectObserverList list;
         list.append(ObjectObserverPair(anObject, observer));
@@ -198,7 +198,7 @@ HRESULT STDMETHODCALLTYPE WebNotificationCenter::removeObserver(
     if (it == d->m_mappedObservers.end())
         return E_FAIL;
 
-    ObjectObserverList& observerList = it->second;
+    ObjectObserverList& observerList = it->value;
     ObserverListIterator end = observerList.end();
 
     int i = 0;

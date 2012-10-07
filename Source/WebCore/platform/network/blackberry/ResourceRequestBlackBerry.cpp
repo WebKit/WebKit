@@ -139,7 +139,7 @@ ResourceRequest::TargetType ResourceRequest::targetTypeFromMimeType(const String
     if (iter == map.end())
         return ResourceRequest::TargetIsUnspecified;
 
-    return iter->second;
+    return iter->value;
 }
 
 void ResourceRequest::initializePlatformRequest(NetworkRequest& platformRequest, bool cookiesEnabled, bool isInitial, bool isRedirect) const
@@ -197,8 +197,8 @@ void ResourceRequest::initializePlatformRequest(NetworkRequest& platformRequest,
         bool cookieHeaderMayBeDirty = isRedirect || cachePolicy() == WebCore::ReloadIgnoringCacheData || cachePolicy() == WebCore::ReturnCacheDataElseLoad;
 
         for (HTTPHeaderMap::const_iterator it = httpHeaderFields().begin(); it != httpHeaderFields().end(); ++it) {
-            String key = it->first;
-            String value = it->second;
+            String key = it->key;
+            String value = it->value;
             if (!key.isEmpty()) {
                 if (equalIgnoringCase(key, "Cookie")) {
                     // We won't use the old cookies of resourceRequest for new location because these cookies may be changed by redirection.

@@ -1319,7 +1319,7 @@ class TypeBindings:
                                         validator_writer.newline("        InspectorObject::iterator %s;\n" % it_name)
                                         validator_writer.newline("        %s = object->find(\"%s\");\n" % (it_name, prop_data.p["name"]))
                                         validator_writer.newline("        ASSERT(%s != object->end());\n" % it_name)
-                                        validator_writer.newline("        %s(%s->second.get());\n" % (prop_data.param_type_binding.get_validator_call_text(), it_name))
+                                        validator_writer.newline("        %s(%s->value.get());\n" % (prop_data.param_type_binding.get_validator_call_text(), it_name))
                                         validator_writer.newline("    }\n")
 
                                     if closed_field_set:
@@ -1331,7 +1331,7 @@ class TypeBindings:
                                         validator_writer.newline("        InspectorObject::iterator %s;\n" % it_name)
                                         validator_writer.newline("        %s = object->find(\"%s\");\n" % (it_name, prop_data.p["name"]))
                                         validator_writer.newline("        if (%s != object->end()) {\n" % it_name)
-                                        validator_writer.newline("            %s(%s->second.get());\n" % (prop_data.param_type_binding.get_validator_call_text(), it_name))
+                                        validator_writer.newline("            %s(%s->value.get());\n" % (prop_data.param_type_binding.get_validator_call_text(), it_name))
                                         if closed_field_set:
                                             validator_writer.newline("            ++foundPropertiesCount;\n")
                                         validator_writer.newline("        }\n")
@@ -2044,7 +2044,7 @@ $messageHandlers
         return;
     }
 
-    ((*this).*it->second)(callId, messageObject.get());
+    ((*this).*it->value)(callId, messageObject.get());
 }
 
 void InspectorBackendDispatcherImpl::sendResponse(long callId, PassRefPtr<InspectorObject> result, const char* commandName, PassRefPtr<InspectorArray> protocolErrors, ErrorString invocationError)
@@ -2133,7 +2133,7 @@ R InspectorBackendDispatcherImpl::getPropertyValueImpl(InspectorObject* object, 
         return value;
     }
 
-    if (!as_method(valueIterator->second.get(), &value))
+    if (!as_method(valueIterator->value.get(), &value))
         protocolErrors->pushString(String::format("Parameter '%s' has wrong type. It must be '%s'.", name.utf8().data(), type_name));
     else
         if (valueFound)

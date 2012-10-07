@@ -118,7 +118,7 @@ void MediaConstraintsImpl::getMandatoryConstraints(Vector<MediaConstraint>& cons
     constraints.clear();
     HashMap<String, String>::const_iterator i = m_mandatoryConstraints.begin();
     for (; i != m_mandatoryConstraints.end(); ++i)
-        constraints.append(MediaConstraint(i->first, i->second));
+        constraints.append(MediaConstraint(i->key, i->value));
 }
 
 void MediaConstraintsImpl::getOptionalConstraints(Vector<MediaConstraint>& constraints) const
@@ -133,7 +133,7 @@ bool MediaConstraintsImpl::getMandatoryConstraintValue(const String& name, Strin
     if (i == m_mandatoryConstraints.end())
         return false;
 
-    value = i->second;
+    value = i->value;
     return true;
 }
 

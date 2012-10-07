@@ -51,7 +51,7 @@ public:
     
         ProfileTreeNode newEntry;
         Map::AddResult result = m_children->add(String(name), newEntry);
-        ProfileTreeNode* childInMap = &result.iterator->second;
+        ProfileTreeNode* childInMap = &result.iterator->value;
         ++childInMap->m_count;
         return childInMap;
     }
@@ -72,7 +72,7 @@ public:
             return 0;
         uint64_t childCount = 0;
         for (Map::iterator it = m_children->begin(); it != m_children->end(); ++it)
-            childCount += it->second.count();
+            childCount += it->value.count();
         return childCount;
     }
     
@@ -97,19 +97,19 @@ private:
             for (unsigned i = 0; i < indent; ++i)
                 dataLog("    ");
             dataLog("% 8lld: %s (%lld stack top)\n",
-                static_cast<long long>(entry->second.count()),
-                entry->first.utf8().data(),
-                static_cast<long long>(entry->second.count() - entry->second.childCount()));
+                static_cast<long long>(entry->value.count()),
+                entry->key.utf8().data(),
+                static_cast<long long>(entry->value.count() - entry->value.childCount()));
 
             // Recursively dump the child nodes.
-            entry->second.dumpInternal(indent + 1);
+            entry->value.dumpInternal(indent + 1);
         }
     }
 
     static int compareEntries(const void* a, const void* b)
     {
-        uint64_t da = (*static_cast<MapEntry* const *>(a))->second.count();
-        uint64_t db = (*static_cast<MapEntry* const *>(b))->second.count();
+        uint64_t da = (*static_cast<MapEntry* const *>(a))->value.count();
+        uint64_t db = (*static_cast<MapEntry* const *>(b))->value.count();
         return (da < db) - (da > db);
     }
 

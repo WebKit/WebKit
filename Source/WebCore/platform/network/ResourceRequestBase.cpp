@@ -377,7 +377,7 @@ void ResourceRequestBase::addHTTPHeaderField(const AtomicString& name, const Str
     updateResourceRequest();
     HTTPHeaderMap::AddResult result = m_httpHeaderFields.add(name, value);
     if (!result.isNewEntry)
-        result.iterator->second = result.iterator->second + ',' + value;
+        result.iterator->value = result.iterator->value + ',' + value;
 
     if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
@@ -387,7 +387,7 @@ void ResourceRequestBase::addHTTPHeaderFields(const HTTPHeaderMap& headerFields)
 {
     HTTPHeaderMap::const_iterator end = headerFields.end();
     for (HTTPHeaderMap::const_iterator it = headerFields.begin(); it != end; ++it)
-        addHTTPHeaderField(it->first, it->second);
+        addHTTPHeaderField(it->key, it->value);
 }
 
 bool equalIgnoringHeaderFields(const ResourceRequestBase& a, const ResourceRequestBase& b)

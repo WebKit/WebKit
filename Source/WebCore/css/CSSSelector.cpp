@@ -387,7 +387,7 @@ CSSSelector::PseudoType CSSSelector::parsePseudoType(const AtomicString& name)
         return PseudoUnknown;
     HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoType = nameToPseudoTypeMap();
     HashMap<AtomicStringImpl*, CSSSelector::PseudoType>::iterator slot = nameToPseudoType->find(name.impl());
-    return slot == nameToPseudoType->end() ? PseudoUnknown : slot->second;
+    return slot == nameToPseudoType->end() ? PseudoUnknown : slot->value;
 }
 
 bool CSSSelector::isUnknownPseudoType(const AtomicString& name)

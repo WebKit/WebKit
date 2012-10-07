@@ -152,7 +152,7 @@ const Vector<RefPtr<CSSStyleSheet> >* DocumentStyleSheetCollection::pageGroupUse
 
     UserStyleSheetMap::const_iterator end = sheetsMap->end();
     for (UserStyleSheetMap::const_iterator it = sheetsMap->begin(); it != end; ++it) {
-        const UserStyleSheetVector* sheets = it->second.get();
+        const UserStyleSheetVector* sheets = it->value.get();
         for (unsigned i = 0; i < sheets->size(); ++i) {
             const UserStyleSheet* sheet = sheets->at(i).get();
             if (sheet->injectedFrames() == InjectInTopFrameOnly && m_document->ownerElement())

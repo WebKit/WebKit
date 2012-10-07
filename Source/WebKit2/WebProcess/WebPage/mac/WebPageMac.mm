@@ -121,7 +121,7 @@ static String commandNameForSelectorName(const String& selectorName)
     static const SelectorNameMap* exceptionMap = createSelectorExceptionMap();
     SelectorNameMap::const_iterator it = exceptionMap->find(selectorName);
     if (it != exceptionMap->end())
-        return it->second;
+        return it->value;
 
     // Remove the trailing colon.
     // No need to capitalize the command name since Editor command names are not case sensitive.

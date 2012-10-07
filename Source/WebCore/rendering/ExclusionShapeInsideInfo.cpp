@@ -60,7 +60,7 @@ ExclusionShapeInsideInfo::~ExclusionShapeInsideInfo()
 ExclusionShapeInsideInfo* ExclusionShapeInsideInfo::ensureExclusionShapeInsideInfoForRenderBlock(RenderBlock* block)
 {
     ExclusionShapeInsideInfoMap::AddResult result = exclusionShapeInsideInfoMap().add(block, create(block));
-    return result.iterator->second.get();
+    return result.iterator->value.get();
 }
 
 ExclusionShapeInsideInfo* ExclusionShapeInsideInfo::exclusionShapeInsideInfoForRenderBlock(const RenderBlock* block)

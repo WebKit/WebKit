@@ -1,3 +1,20 @@
+2012-10-07  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Rename first/second to key/value in HashMap iterators
+        https://bugs.webkit.org/show_bug.cgi?id=82784
+
+        Reviewed by Eric Seidel.
+
+        * src/WebGeolocationPermissionRequestManager.cpp:
+        (WebGeolocationPermissionRequestManager::remove):
+        * src/WebIDBMetadata.cpp:
+        (WebKit::WebIDBMetadata::WebIDBMetadata):
+        * src/WebIntent.cpp:
+        (WebKit::WebIntent::extrasValue):
+        * tests/MemoryInstrumentationTest.cpp:
+        * tests/WebSocketExtensionDispatcherTest.cpp:
+        (WebCore::TEST_F):
+
 2012-10-06  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: NMI fix String instrumentation the way it was discussed in WK97964

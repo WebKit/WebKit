@@ -525,7 +525,7 @@ ListHashSet<String> ClipboardWin::types() const
     } else {
         for (DragDataMap::const_iterator it = m_dragDataMap.begin(); it != m_dragDataMap.end(); ++it) {
             FORMATETC data;
-            data.cfFormat = (*it).first;
+            data.cfFormat = (*it).key;
             addMimeTypesForFormat(results, data);
         }
     }

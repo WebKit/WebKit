@@ -42,7 +42,7 @@ void MemoryInstrumentationClientImpl::countObjectSize(MemoryObjectType objectTyp
     ASSERT(objectType);
     TypeToSizeMap::AddResult result = m_totalSizes.add(objectType, size);
     if (!result.isNewEntry)
-        result.iterator->second += size;
+        result.iterator->value += size;
     ++m_totalCountedObjects;
 }
 

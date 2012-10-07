@@ -260,9 +260,9 @@ bool WebProcessProxy::checkURLReceivedFromWebProcess(const KURL& url)
     // Items in back/forward list have been already checked.
     // One case where we don't have sandbox extensions for file URLs in b/f list is if the list has been reinstated after a crash or a browser restart.
     for (WebBackForwardListItemMap::iterator iter = m_backForwardListItemMap.begin(), end = m_backForwardListItemMap.end(); iter != end; ++iter) {
-        if (KURL(KURL(), iter->second->url()).fileSystemPath() == path)
+        if (KURL(KURL(), iter->value->url()).fileSystemPath() == path)
             return true;
-        if (KURL(KURL(), iter->second->originalURL()).fileSystemPath() == path)
+        if (KURL(KURL(), iter->value->originalURL()).fileSystemPath() == path)
             return true;
     }
 
@@ -285,15 +285,15 @@ void WebProcessProxy::addBackForwardItem(uint64_t itemID, const String& original
 
     WebBackForwardListItemMap::AddResult result = m_backForwardListItemMap.add(itemID, 0);
     if (result.isNewEntry) {
-        result.iterator->second = WebBackForwardListItem::create(originalURL, url, title, backForwardData.data(), backForwardData.size(), itemID);
+        result.iterator->value = WebBackForwardListItem::create(originalURL, url, title, backForwardData.data(), backForwardData.size(), itemID);
         return;
     }
 
     // Update existing item.
-    result.iterator->second->setOriginalURL(originalURL);
-    result.iterator->second->setURL(url);
-    result.iterator->second->setTitle(title);
-    result.iterator->second->setBackForwardData(backForwardData.data(), backForwardData.size());
+    result.iterator->value->setOriginalURL(originalURL);
+    result.iterator->value->setURL(url);
+    result.iterator->value->setTitle(title);
+    result.iterator->value->setBackForwardData(backForwardData.data(), backForwardData.size());
 }
 
 void WebProcessProxy::sendDidGetPlugins(uint64_t requestID, PassOwnPtr<Vector<PluginInfo> > pluginInfos)
@@ -563,7 +563,7 @@ size_t WebProcessProxy::frameCountInPage(WebPageProxy* page) const
 {
     size_t result = 0;
     for (HashMap<uint64_t, RefPtr<WebFrameProxy> >::const_iterator iter = m_frameMap.begin(); iter != m_frameMap.end(); ++iter) {
-        if (iter->second->page() == page)
+        if (iter->value->page() == page)
             ++result;
     }
     return result;

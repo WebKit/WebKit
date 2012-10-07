@@ -929,7 +929,7 @@ void XMLHttpRequest::setRequestHeaderInternal(const AtomicString& name, const St
 {
     HTTPHeaderMap::AddResult result = m_requestHeaders.add(name, value);
     if (!result.isNewEntry)
-        result.iterator->second.append(", " + value);
+        result.iterator->value.append(", " + value);
 }
 
 String XMLHttpRequest::getRequestHeader(const AtomicString& name) const
@@ -956,16 +956,16 @@ String XMLHttpRequest::getAllResponseHeaders(ExceptionCode& ec) const
         //     2) There's no known harm in hiding Set-Cookie header fields entirely; we don't
         //        know any widely used technique that requires access to them.
         //     3) Firefox has implemented this policy.
-        if (isSetCookieHeader(it->first) && !securityOrigin()->canLoadLocalResources())
+        if (isSetCookieHeader(it->key) && !securityOrigin()->canLoadLocalResources())
             continue;
 
-        if (!m_sameOriginRequest && !isOnAccessControlResponseHeaderWhitelist(it->first) && !accessControlExposeHeaderSet.contains(it->first))
+        if (!m_sameOriginRequest && !isOnAccessControlResponseHeaderWhitelist(it->key) && !accessControlExposeHeaderSet.contains(it->key))
             continue;
 
-        stringBuilder.append(it->first);
+        stringBuilder.append(it->key);
         stringBuilder.append(':');
         stringBuilder.append(' ');
-        stringBuilder.append(it->second);
+        stringBuilder.append(it->value);
         stringBuilder.append('\r');
         stringBuilder.append('\n');
     }

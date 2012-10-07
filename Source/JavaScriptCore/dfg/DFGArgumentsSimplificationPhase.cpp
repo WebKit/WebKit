@@ -210,7 +210,7 @@ public:
                         // Make sure that if it's a variable that we think is aliased to
                         // the arguments, that we know that it might actually not be.
                         ArgumentsAliasingData& data =
-                            m_argumentsAliasing.find(variableAccessData)->second;
+                            m_argumentsAliasing.find(variableAccessData)->value;
                         data.mergeNonArgumentsAssignment();
                         data.mergeCallContext(node.codeOrigin.inlineCallFrame);
                         break;
@@ -228,7 +228,7 @@ public:
                         break;
                     }
                     ArgumentsAliasingData& data =
-                        m_argumentsAliasing.find(variableAccessData)->second;
+                        m_argumentsAliasing.find(variableAccessData)->value;
                     data.mergeArgumentsAssignment();
                     // This ensures that the variable's uses are in the same context as
                     // the arguments it is aliasing.
@@ -243,7 +243,7 @@ public:
                     if (variableAccessData->isCaptured())
                         break;
                     ArgumentsAliasingData& data =
-                        m_argumentsAliasing.find(variableAccessData)->second;
+                        m_argumentsAliasing.find(variableAccessData)->value;
                     data.mergeCallContext(node.codeOrigin.inlineCallFrame);
                     break;
                 }
@@ -253,7 +253,7 @@ public:
                     if (variableAccessData->isCaptured())
                         break;
                     ArgumentsAliasingData& data =
-                        m_argumentsAliasing.find(variableAccessData)->second;
+                        m_argumentsAliasing.find(variableAccessData)->value;
                     data.mergeCallContext(node.codeOrigin.inlineCallFrame);
                     
                     // If a variable is used in a flush then by definition it escapes.
@@ -266,7 +266,7 @@ public:
                     if (variableAccessData->isCaptured())
                         break;
                     ArgumentsAliasingData& data =
-                        m_argumentsAliasing.find(variableAccessData)->second;
+                        m_argumentsAliasing.find(variableAccessData)->value;
                     data.mergeNonArgumentsAssignment();
                     data.mergeCallContext(node.codeOrigin.inlineCallFrame);
                     break;
@@ -350,7 +350,7 @@ public:
                 }
                 
                 ArgumentsAliasingData& data =
-                    m_argumentsAliasing.find(variableAccessData)->second;
+                    m_argumentsAliasing.find(variableAccessData)->value;
                 if (data.isValid())
                     continue;
                 
@@ -369,7 +369,7 @@ public:
                 dataLog("Captured");
             else {
                 ArgumentsAliasingData& data =
-                    m_argumentsAliasing.find(variableAccessData)->second;
+                    m_argumentsAliasing.find(variableAccessData)->value;
                 bool first = true;
                 if (data.callContextIsValid()) {
                     if (!first)
@@ -441,7 +441,7 @@ public:
                     // things. Note also that the SetLocal should become dead as soon as
                     // we replace all uses of this variable with GetMyArgumentsLength and
                     // GetMyArgumentByVal.
-                    ASSERT(m_argumentsAliasing.find(variableAccessData)->second.isValid());
+                    ASSERT(m_argumentsAliasing.find(variableAccessData)->value.isValid());
                     changed |= variableAccessData->mergeIsArgumentsAlias(true);
                     break;
                 }
@@ -685,7 +685,7 @@ private:
             if (variableAccessData->isCaptured())
                 break;
             
-            ArgumentsAliasingData& data = m_argumentsAliasing.find(variableAccessData)->second;
+            ArgumentsAliasingData& data = m_argumentsAliasing.find(variableAccessData)->value;
             data.escapes = true;
             break;
         }
@@ -734,7 +734,7 @@ private:
         if (variableAccessData->isCaptured())
             return;
         
-        ArgumentsAliasingData& data = m_argumentsAliasing.find(variableAccessData)->second;
+        ArgumentsAliasingData& data = m_argumentsAliasing.find(variableAccessData)->value;
         data.mergeCallContext(node.codeOrigin.inlineCallFrame);
     }
     
@@ -756,7 +756,7 @@ private:
             if (variableAccessData->isCaptured())
                 break;
             ArgumentsAliasingData& data =
-                m_argumentsAliasing.find(variableAccessData)->second;
+                m_argumentsAliasing.find(variableAccessData)->value;
             if (!data.isValid())
                 break;
                             
@@ -792,7 +792,7 @@ private:
                 && !m_createsArguments.contains(child.codeOrigin.inlineCallFrame);
             bool isAliasedArgumentsRegister =
                 !variableAccessData->isCaptured()
-                && m_argumentsAliasing.find(variableAccessData)->second.isValid()
+                && m_argumentsAliasing.find(variableAccessData)->value.isValid()
                 && !m_createsArguments.contains(child.codeOrigin.inlineCallFrame);
             if (!isDeadArgumentsRegister && !isAliasedArgumentsRegister)
                 break;

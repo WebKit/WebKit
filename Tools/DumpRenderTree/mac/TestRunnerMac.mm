@@ -904,8 +904,8 @@ unsigned worldIDForWorld(WebScriptWorld *world)
 {
     WorldMap::const_iterator end = worldMap().end();
     for (WorldMap::const_iterator it = worldMap().begin(); it != end; ++it) {
-        if (it->second == world)
-            return it->first;
+        if (it->value == world)
+            return it->key;
     }
 
     return 0;
@@ -927,7 +927,7 @@ void TestRunner::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef glo
     if (!worldID)
         world = [WebScriptWorld world];
     else {
-        RetainPtr<WebScriptWorld>& worldSlot = worldMap().add(worldID, 0).iterator->second;
+        RetainPtr<WebScriptWorld>& worldSlot = worldMap().add(worldID, 0).iterator->value;
         if (!worldSlot)
             worldSlot.adoptNS([[WebScriptWorld alloc] init]);
         world = worldSlot.get();

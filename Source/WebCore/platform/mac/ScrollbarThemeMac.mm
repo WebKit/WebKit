@@ -86,8 +86,8 @@ static ScrollbarPainterMap* scrollbarMap()
         return;
     ScrollbarPainterMap::iterator end = scrollbarMap()->end();
     for (ScrollbarPainterMap::iterator it = scrollbarMap()->begin(); it != end; ++it) {
-        it->first->styleChanged();
-        it->first->invalidate();
+        it->key->styleChanged();
+        it->key->invalidate();
     }
 }
 

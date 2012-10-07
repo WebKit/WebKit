@@ -136,8 +136,8 @@ DisplayRefreshMonitor* DisplayRefreshMonitorManager::ensureMonitorForClient(Disp
         m_monitors.add(client->m_displayID, monitor.release());
         return result;
     }
-    it->second->addClient(client);
-    return it->second.get();
+    it->value->addClient(client);
+    return it->value.get();
 }
 
 void DisplayRefreshMonitorManager::registerClient(DisplayRefreshMonitorClient* client)
@@ -157,7 +157,7 @@ void DisplayRefreshMonitorManager::unregisterClient(DisplayRefreshMonitorClient*
     if (it == m_monitors.end())
         return;
     
-    DisplayRefreshMonitor* monitor = it->second.get();
+    DisplayRefreshMonitor* monitor = it->value.get();
     if (monitor->removeClient(client)) {
         if (!monitor->hasClients())
             m_monitors.remove(it);

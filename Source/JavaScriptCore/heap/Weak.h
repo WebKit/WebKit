@@ -164,8 +164,8 @@ template<typename Map, typename Key, typename Value> inline void weakRemove(Map&
     typename Map::iterator it = map.find(key);
     ASSERT_UNUSED(value, value);
     ASSERT(it != map.end());
-    ASSERT(it->second.was(value));
-    ASSERT(!it->second);
+    ASSERT(it->value.was(value));
+    ASSERT(!it->value);
     map.remove(it);
 }
 

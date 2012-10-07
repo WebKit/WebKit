@@ -280,14 +280,14 @@ void StyledElement::updateAttributeStyle()
     PresentationAttributeCache::iterator cacheIterator;
     if (cacheHash) {
         cacheIterator = presentationAttributeCache().add(cacheHash, nullptr).iterator;
-        if (cacheIterator->second && cacheIterator->second->key != cacheKey)
+        if (cacheIterator->value && cacheIterator->value->key != cacheKey)
             cacheHash = 0;
     } else
         cacheIterator = presentationAttributeCache().end();
 
     RefPtr<StylePropertySet> style;
-    if (cacheHash && cacheIterator->second) {
-        style = cacheIterator->second->value;
+    if (cacheHash && cacheIterator->value) {
+        style = cacheIterator->value->value;
         presentationAttributeCacheCleaner().didHitPresentationAttributeCache();
     } else {
         style = StylePropertySet::create(isSVGElement() ? SVGAttributeMode : CSSQuirksMode);
@@ -301,7 +301,7 @@ void StyledElement::updateAttributeStyle()
 
     attributeData()->setAttributeStyle(style->isEmpty() ? 0 : style);
 
-    if (!cacheHash || cacheIterator->second)
+    if (!cacheHash || cacheIterator->value)
         return;
 
     OwnPtr<PresentationAttributeCacheEntry> newEntry = adoptPtr(new PresentationAttributeCacheEntry);
@@ -314,7 +314,7 @@ void StyledElement::updateAttributeStyle()
         presentationAttributeCache().clear();
         presentationAttributeCache().set(cacheHash, newEntry.release());
     } else
-        cacheIterator->second = newEntry.release();
+        cacheIterator->value = newEntry.release();
 }
 
 void StyledElement::addPropertyToAttributeStyle(StylePropertySet* style, CSSPropertyID propertyID, int identifier)

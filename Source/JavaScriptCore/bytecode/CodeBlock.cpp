@@ -641,7 +641,7 @@ void CodeBlock::dump(ExecState* exec)
             dataLog("  %1d = {\n", i);
             StringJumpTable::StringOffsetTable::const_iterator end = m_rareData->m_stringSwitchJumpTables[i].offsetTable.end();
             for (StringJumpTable::StringOffsetTable::const_iterator iter = m_rareData->m_stringSwitchJumpTables[i].offsetTable.begin(); iter != end; ++iter)
-                dataLog("\t\t\"%s\" => %04d\n", String(iter->first).utf8().data(), iter->second.branchOffset);
+                dataLog("\t\t\"%s\" => %04d\n", String(iter->key).utf8().data(), iter->value.branchOffset);
             dataLog("      }\n");
             ++i;
         } while (i < m_rareData->m_stringSwitchJumpTables.size());
@@ -1899,7 +1899,7 @@ void EvalCodeCache::visitAggregate(SlotVisitor& visitor)
 {
     EvalCacheMap::iterator end = m_cacheMap.end();
     for (EvalCacheMap::iterator ptr = m_cacheMap.begin(); ptr != end; ++ptr)
-        visitor.append(&ptr->second);
+        visitor.append(&ptr->value);
 }
 
 void CodeBlock::visitAggregate(SlotVisitor& visitor)
@@ -3002,8 +3002,8 @@ String CodeBlock::nameForRegister(int registerNumber)
 {
     SymbolTable::iterator end = m_symbolTable->end();
     for (SymbolTable::iterator ptr = m_symbolTable->begin(); ptr != end; ++ptr) {
-        if (ptr->second.getIndex() == registerNumber)
-            return String(ptr->first);
+        if (ptr->value.getIndex() == registerNumber)
+            return String(ptr->key);
     }
     if (needsActivation() && registerNumber == activationRegister())
         return ASCIILiteral("activation");

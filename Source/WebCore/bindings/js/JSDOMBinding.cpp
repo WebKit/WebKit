@@ -259,7 +259,7 @@ Structure* cacheDOMStructure(JSDOMGlobalObject* globalObject, Structure* structu
 {
     JSDOMStructureMap& structures = globalObject->structures();
     ASSERT(!structures.contains(classInfo));
-    return structures.set(classInfo, WriteBarrier<Structure>(globalObject->globalData(), globalObject, structure)).iterator->second.get();
+    return structures.set(classInfo, WriteBarrier<Structure>(globalObject->globalData(), globalObject, structure)).iterator->value.get();
 }
 
 } // namespace WebCore

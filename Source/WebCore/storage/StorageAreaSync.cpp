@@ -188,7 +188,7 @@ void StorageAreaSync::syncTimerFired(Timer<StorageAreaSync>*)
                 partialSync = true;
                 break;
             }
-            m_itemsPendingSync.set(changed_it->first.isolatedCopy(), changed_it->second.isolatedCopy());
+            m_itemsPendingSync.set(changed_it->key.isolatedCopy(), changed_it->value.isolatedCopy());
         }
 
         if (partialSync) {
@@ -198,7 +198,7 @@ void StorageAreaSync::syncTimerFired(Timer<StorageAreaSync>*)
             HashMap<String, String>::iterator pending_it = m_itemsPendingSync.begin();
             HashMap<String, String>::iterator pending_end = m_itemsPendingSync.end();
             for (; pending_it != pending_end; ++pending_it)
-                m_changedItems.remove(pending_it->first);
+                m_changedItems.remove(pending_it->key);
         }
 
         if (!m_syncScheduled) {
@@ -345,7 +345,7 @@ void StorageAreaSync::performImport()
     HashMap<String, String>::iterator end = itemMap.end();
 
     for (; it != end; ++it)
-        m_storageArea->importItem(it->first, it->second);
+        m_storageArea->importItem(it->key, it->value);
 
     markImported();
 }
@@ -439,13 +439,13 @@ void StorageAreaSync::sync(bool clearItems, const HashMap<String, String>& items
     transaction.begin();
     for (HashMap<String, String>::const_iterator it = items.begin(); it != end; ++it) {
         // Based on the null-ness of the second argument, decide whether this is an insert or a delete.
-        SQLiteStatement& query = it->second.isNull() ? remove : insert;
+        SQLiteStatement& query = it->value.isNull() ? remove : insert;
 
-        query.bindText(1, it->first);
+        query.bindText(1, it->key);
 
         // If the second argument is non-null, we're doing an insert, so bind it as the value.
-        if (!it->second.isNull())
-            query.bindBlob(2, it->second);
+        if (!it->value.isNull())
+            query.bindBlob(2, it->value);
 
         int result = query.step();
         if (result != SQLResultDone) {

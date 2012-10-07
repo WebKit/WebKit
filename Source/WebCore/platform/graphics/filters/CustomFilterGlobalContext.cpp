@@ -44,7 +44,7 @@ CustomFilterGlobalContext::CustomFilterGlobalContext()
 CustomFilterGlobalContext::~CustomFilterGlobalContext()
 {
     for (CustomFilterValidatedProgramsMap::iterator iter = m_programs.begin(); iter != m_programs.end(); ++iter)
-        iter->second->detachFromGlobalContext();
+        iter->value->detachFromGlobalContext();
 }
 
 ANGLEWebKitBridge* CustomFilterGlobalContext::webglShaderValidator()
@@ -91,7 +91,7 @@ PassRefPtr<CustomFilterValidatedProgram> CustomFilterGlobalContext::getValidated
 {
     CustomFilterValidatedProgramsMap::iterator iter = m_programs.find(programInfo);
     if (iter != m_programs.end())
-        return iter->second;
+        return iter->value;
 
     RefPtr<CustomFilterValidatedProgram> validatedProgram = CustomFilterValidatedProgram::create(this, programInfo);
     m_programs.set(programInfo, validatedProgram.get());
@@ -107,7 +107,7 @@ void CustomFilterGlobalContext::removeValidatedProgram(const CustomFilterValidat
 #ifndef NDEBUG
     // Check that there's no way we could have the same program under a different key.
     for (iter = m_programs.begin(); iter != m_programs.end(); ++iter)
-        ASSERT(iter->second != program);
+        ASSERT(iter->value != program);
 #endif
 }
 

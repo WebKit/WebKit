@@ -640,7 +640,7 @@ TEST(MemoryInstrumentationTest, hashMapWithValuesConvertibleToInt)
     for (int i = 0; i < count; ++i) {
         keysVector.append(adoptPtr(new InstrumentedConvertibleToInt()));
         valuesVector.append(adoptPtr(new NotInstrumented()));
-        value->set(keysVector[i].get(), InstrumentedConvertibleToInt()).iterator->second.m_notInstrumented = valuesVector[i].get();
+        value->set(keysVector[i].get(), InstrumentedConvertibleToInt()).iterator->value.m_notInstrumented = valuesVector[i].get();
     }
     InstrumentedOwner<TestMap* > root(value.get());
     helper.addRootObject(root);

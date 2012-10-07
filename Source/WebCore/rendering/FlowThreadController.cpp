@@ -153,9 +153,9 @@ void FlowThreadController::unregisterNamedFlowContentNode(Node* contentNode)
     ASSERT(contentNode && contentNode->isElementNode());
     HashMap<Node*, RenderNamedFlowThread*>::iterator it = m_mapNamedFlowContentNodes.find(contentNode);
     ASSERT(it != m_mapNamedFlowContentNodes.end());
-    ASSERT(it->second);
-    ASSERT(it->second->hasContentNode(contentNode));
-    it->second->unregisterNamedFlowContentNode(contentNode);
+    ASSERT(it->value);
+    ASSERT(it->value->hasContentNode(contentNode));
+    it->value->unregisterNamedFlowContentNode(contentNode);
     m_mapNamedFlowContentNodes.remove(contentNode);
 }
 

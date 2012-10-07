@@ -58,7 +58,7 @@ static GdkFilterReturn filterXDamageEvent(GdkXEvent* gdkXEvent, GdkEvent* event,
     if (i == windowHashMap.end())
         return GDK_FILTER_CONTINUE;
 
-    i->second->callDamageNotifyCallback();
+    i->value->callDamageNotifyCallback();
     XDamageSubtract(GDK_DISPLAY_XDISPLAY(gdk_display_get_default()), damageEvent->damage, None, None);
     return GDK_FILTER_REMOVE;
 }

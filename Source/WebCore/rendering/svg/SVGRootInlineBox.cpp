@@ -226,17 +226,17 @@ static inline void swapItemsInLayoutAttributes(SVGTextLayoutAttributes* firstAtt
         return;
 
     if (firstPresent && lastPresent) {
-        std::swap(itFirst->second, itLast->second);
+        std::swap(itFirst->value, itLast->value);
         return;
     }
 
     if (firstPresent && !lastPresent) {
-        lastAttributes->characterDataMap().set(lastPosition + 1, itFirst->second);
+        lastAttributes->characterDataMap().set(lastPosition + 1, itFirst->value);
         return;
     }
 
     // !firstPresent && lastPresent
-    firstAttributes->characterDataMap().set(firstPosition + 1, itLast->second);
+    firstAttributes->characterDataMap().set(firstPosition + 1, itLast->value);
 }
 
 static inline void findFirstAndLastAttributesInVector(Vector<SVGTextLayoutAttributes*>& attributes, RenderSVGInlineText* firstContext, RenderSVGInlineText* lastContext,

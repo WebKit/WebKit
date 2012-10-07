@@ -410,7 +410,7 @@ void SamplingTool::dump(ExecState* exec)
     Vector<ScriptSampleRecord*> codeBlockSamples(scopeCount);
     ScriptSampleRecordMap::iterator iter = m_scopeSampleMap->begin();
     for (int i = 0; i < scopeCount; ++i, ++iter)
-        codeBlockSamples[i] = iter->second.get();
+        codeBlockSamples[i] = iter->value.get();
 
     qsort(codeBlockSamples.begin(), scopeCount, sizeof(ScriptSampleRecord*), compareScriptSampleRecords);
 
@@ -446,8 +446,8 @@ void SamplingTool::dump(ExecState* exec)
                 Vector<LineCountInfo> lineCountInfo(linesCount);
                 int lineno = 0;
                 for (HashMap<unsigned,unsigned>::iterator iter = lineCounts.begin(); iter != lineCounts.end(); ++iter, ++lineno) {
-                    lineCountInfo[lineno].line = iter->first;
-                    lineCountInfo[lineno].count = iter->second;
+                    lineCountInfo[lineno].line = iter->key;
+                    lineCountInfo[lineno].count = iter->value;
                 }
 
                 qsort(lineCountInfo.begin(), linesCount, sizeof(LineCountInfo), compareLineCountInfoSampling);

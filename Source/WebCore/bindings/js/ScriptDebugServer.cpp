@@ -75,11 +75,11 @@ String ScriptDebugServer::setBreakpoint(const String& sourceID, const ScriptBrea
     SourceIdToBreakpointsMap::iterator it = m_sourceIdToBreakpoints.find(sourceIDValue);
     if (it == m_sourceIdToBreakpoints.end())
         it = m_sourceIdToBreakpoints.set(sourceIDValue, LineToBreakpointMap()).iterator;
-    LineToBreakpointMap::iterator breaksIt = it->second.find(scriptBreakpoint.lineNumber + 1);
-    if (breaksIt == it->second.end())
-        breaksIt = it->second.set(scriptBreakpoint.lineNumber + 1, BreakpointsInLine()).iterator;
+    LineToBreakpointMap::iterator breaksIt = it->value.find(scriptBreakpoint.lineNumber + 1);
+    if (breaksIt == it->value.end())
+        breaksIt = it->value.set(scriptBreakpoint.lineNumber + 1, BreakpointsInLine()).iterator;
 
-    BreakpointsInLine& breaksVector = breaksIt->second;
+    BreakpointsInLine& breaksVector = breaksIt->value;
     unsigned breaksCount = breaksVector.size();
     for (unsigned i = 0; i < breaksCount; i++) {
         if (breaksVector.at(i).columnNumber == scriptBreakpoint.columnNumber)
@@ -112,11 +112,11 @@ void ScriptDebugServer::removeBreakpoint(const String& breakpointId)
     SourceIdToBreakpointsMap::iterator it = m_sourceIdToBreakpoints.find(sourceIDValue);
     if (it == m_sourceIdToBreakpoints.end())
         return;
-    LineToBreakpointMap::iterator breaksIt = it->second.find(lineNumber + 1);
-    if (breaksIt == it->second.end())
+    LineToBreakpointMap::iterator breaksIt = it->value.find(lineNumber + 1);
+    if (breaksIt == it->value.end())
         return;
 
-    BreakpointsInLine& breaksVector = breaksIt->second;
+    BreakpointsInLine& breaksVector = breaksIt->value;
     unsigned breaksCount = breaksVector.size();
     for (unsigned i = 0; i < breaksCount; i++) {
         if (breaksVector.at(i).columnNumber == static_cast<int>(columnNumber)) {
@@ -178,12 +178,12 @@ bool ScriptDebugServer::hasBreakpoint(intptr_t sourceID, const TextPosition& pos
     if (lineNumber < 0 || columnNumber < 0)
         return false;
 
-    LineToBreakpointMap::const_iterator breaksIt = it->second.find(lineNumber + 1);
-    if (breaksIt == it->second.end())
+    LineToBreakpointMap::const_iterator breaksIt = it->value.find(lineNumber + 1);
+    if (breaksIt == it->value.end())
         return false;
 
     bool hit = false;
-    const BreakpointsInLine& breaksVector = breaksIt->second;
+    const BreakpointsInLine& breaksVector = breaksIt->value;
     unsigned breaksCount = breaksVector.size();
     unsigned i;
     for (i = 0; i < breaksCount; i++) {

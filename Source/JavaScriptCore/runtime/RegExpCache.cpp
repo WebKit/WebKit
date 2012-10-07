@@ -80,7 +80,7 @@ void RegExpCache::invalidateCode()
 
     RegExpCacheMap::iterator end = m_weakCache.end();
     for (RegExpCacheMap::iterator it = m_weakCache.begin(); it != end; ++it) {
-        RegExp* regExp = it->second.get();
+        RegExp* regExp = it->value.get();
         if (!regExp) // Skip zombies.
             continue;
         regExp->invalidateCode();

@@ -88,7 +88,7 @@ SparseArrayValueMap::AddResult SparseArrayValueMap::add(JSObject* array, unsigne
 void SparseArrayValueMap::putEntry(ExecState* exec, JSObject* array, unsigned i, JSValue value, bool shouldThrow)
 {
     AddResult result = add(array, i);
-    SparseArrayEntry& entry = result.iterator->second;
+    SparseArrayEntry& entry = result.iterator->value;
 
     // To save a separate find & add, we first always add to the sparse map.
     // In the uncommon case that this is a new property, and the array is not
@@ -106,7 +106,7 @@ void SparseArrayValueMap::putEntry(ExecState* exec, JSObject* array, unsigned i,
 bool SparseArrayValueMap::putDirect(ExecState* exec, JSObject* array, unsigned i, JSValue value, unsigned attributes, PutDirectIndexMode mode)
 {
     AddResult result = add(array, i);
-    SparseArrayEntry& entry = result.iterator->second;
+    SparseArrayEntry& entry = result.iterator->value;
 
     // To save a separate find & add, we first always add to the sparse map.
     // In the uncommon case that this is a new property, and the array is not
@@ -207,7 +207,7 @@ void SparseArrayValueMap::visitChildren(JSCell* thisObject, SlotVisitor& visitor
     SparseArrayValueMap* thisMap = jsCast<SparseArrayValueMap*>(thisObject);
     iterator end = thisMap->m_map.end();
     for (iterator it = thisMap->m_map.begin(); it != end; ++it)
-        visitor.append(&it->second);
+        visitor.append(&it->value);
 }
 
 } // namespace JSC

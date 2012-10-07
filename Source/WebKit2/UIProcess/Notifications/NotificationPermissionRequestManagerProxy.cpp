@@ -43,7 +43,7 @@ void NotificationPermissionRequestManagerProxy::invalidateRequests()
     PendingRequestMap::const_iterator it = m_pendingRequests.begin();
     PendingRequestMap::const_iterator end = m_pendingRequests.end();
     for (; it != end; ++it)
-        it->second->invalidate();
+        it->value->invalidate();
     
     m_pendingRequests.clear();
 }

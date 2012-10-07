@@ -191,7 +191,7 @@ void Node::dumpStatistics()
                 Element* element = static_cast<Element*>(node);
                 HashMap<String, size_t>::AddResult result = perTagCount.add(element->tagName(), 1);
                 if (!result.isNewEntry)
-                    result.iterator->second++;
+                    result.iterator->value++;
 
                 if (ElementAttributeData* attributeData = element->attributeData()) {
                     attributes += attributeData->length();
@@ -279,7 +279,7 @@ void Node::dumpStatistics()
 
     printf("Element tag name distibution:\n");
     for (HashMap<String, size_t>::iterator it = perTagCount.begin(); it != perTagCount.end(); ++it)
-        printf("  Number of <%s> tags: %zu\n", it->first.utf8().data(), it->second);
+        printf("  Number of <%s> tags: %zu\n", it->key.utf8().data(), it->value);
 
     printf("Attributes:\n");
     printf("  Number of Attributes (non-Node and Node): %zu [%zu]\n", attributes, sizeof(Attribute));
@@ -515,7 +515,7 @@ void Node::clearRareData()
         NodeRareData::NodeRareDataMap& dataMap = NodeRareData::rareDataMap();
         NodeRareData::NodeRareDataMap::iterator it = dataMap.find(this);
         ASSERT(it != dataMap.end());
-        delete it->second;
+        delete it->value;
         dataMap.remove(it);
     }
     clearFlag(HasRareDataFlag);
@@ -2276,18 +2276,18 @@ void NodeListsNodeData::invalidateCaches(const QualifiedName* attrName)
 {
     NodeListAtomicNameCacheMap::const_iterator atomicNameCacheEnd = m_atomicNameCaches.end();
     for (NodeListAtomicNameCacheMap::const_iterator it = m_atomicNameCaches.begin(); it != atomicNameCacheEnd; ++it)
-        it->second->invalidateCache(attrName);
+        it->value->invalidateCache(attrName);
 
     NodeListNameCacheMap::const_iterator nameCacheEnd = m_nameCaches.end();
     for (NodeListNameCacheMap::const_iterator it = m_nameCaches.begin(); it != nameCacheEnd; ++it)
-        it->second->invalidateCache(attrName);
+        it->value->invalidateCache(attrName);
 
     if (attrName)
         return;
 
     TagNodeListCacheNS::iterator tagCacheEnd = m_tagNodeListCacheNS.end();
     for (TagNodeListCacheNS::iterator it = m_tagNodeListCacheNS.begin(); it != tagCacheEnd; ++it)
-        it->second->invalidateCache();
+        it->value->invalidateCache();
 }
 
 void Node::getSubresourceURLs(ListHashSet<KURL>& urls) const
@@ -2462,7 +2462,7 @@ static inline void collectMatchingObserversForMutation(HashMap<MutationObserver*
             MutationRecordDeliveryOptions deliveryOptions = registration.deliveryOptions();
             HashMap<MutationObserver*, MutationRecordDeliveryOptions>::AddResult result = observers.add(registration.observer(), deliveryOptions);
             if (!result.isNewEntry)
-                result.iterator->second |= deliveryOptions;
+                result.iterator->value |= deliveryOptions;
         }
     }
 }

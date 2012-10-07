@@ -1,3 +1,69 @@
+2012-10-07  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Rename first/second to key/value in HashMap iterators
+        https://bugs.webkit.org/show_bug.cgi?id=82784
+
+        Reviewed by Eric Seidel.
+
+        Currently HashMap iterators follow the same interface in std::map: given an
+        iterator it, we use it->first to access the key and it->second to access the
+        value. This patch changes these accesses to it->key and it->value, improving the
+        readability at call sites.
+
+        One potential downside of this change would be the confusion between std::map and
+        HashMap interfaces. However, they are already different in other aspects and the
+        usage of std::map is more an exception than a rule in WebKit code, so we consider
+        the confusion will be less likely to happen.
+
+        * wtf/HashCountedSet.h:
+        (WTF::::add):
+        (WTF::::remove):
+        (WTF::copyToVector):
+        * wtf/HashIterators.h:
+        (WTF::HashTableConstKeysIterator::get):
+        (WTF::HashTableConstValuesIterator::get):
+        (WTF::HashTableKeysIterator::get):
+        (WTF::HashTableValuesIterator::get):
+        * wtf/HashMap.h:
+        (WTF::KeyValuePairKeyExtractor::extract):
+        (WTF::HashMapValueTraits::isEmptyValue):
+        (WTF::HashMapTranslator::translate):
+        (WTF::HashMapTranslatorAdapter::translate):
+        (WTF::::set):
+        (WTF::::get):
+        (WTF::::take):
+        (WTF::operator==):
+        (WTF::deleteAllValues):
+        (WTF::deleteAllKeys):
+        Removed deleteAllPairFirsts() and deleteAllPairSeconds() since they are now unused.
+
+        * wtf/HashTable.h:
+        (WTF::hashTableSwap):
+        (WTF::::checkTableConsistencyExceptSize):
+        * wtf/HashTraits.h:
+        (WTF):
+        (WTF::KeyValuePair::KeyValuePair):
+        (KeyValuePair):
+        (WTF::KeyValuePairHashTraits::constructDeletedValue):
+        (WTF::KeyValuePairHashTraits::isDeletedValue):
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::addFreeSpace):
+        (WTF::MetaAllocator::incrementPageOccupancy):
+        (WTF::MetaAllocator::decrementPageOccupancy):
+        * wtf/RefCountedLeakCounter.cpp:
+        (WTF::RefCountedLeakCounter::~RefCountedLeakCounter):
+        * wtf/RefPtrHashMap.h:
+        (WTF::::set):
+        (WTF::::get):
+        (WTF::::inlineGet):
+        (WTF::::take):
+        * wtf/Spectrum.h:
+        (WTF::Spectrum::add):
+        (WTF::Spectrum::get):
+        (WTF::Spectrum::buildList):
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::identifierByPthreadHandle):
+
 2012-10-07  Benjamin Poulain  <benjamin@webkit.org>
 
         WTFURL: implement URL port removal for HTMLAnchorElement

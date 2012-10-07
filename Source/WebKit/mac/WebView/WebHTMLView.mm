@@ -2378,7 +2378,7 @@ static String commandNameForSelector(SEL selector)
     static const SelectorNameMap* exceptionMap = createSelectorExceptionMap();
     SelectorNameMap::const_iterator it = exceptionMap->find(selector);
     if (it != exceptionMap->end())
-        return it->second;
+        return it->value;
 
     // Remove the trailing colon.
     // No need to capitalize the command name since Editor command names are

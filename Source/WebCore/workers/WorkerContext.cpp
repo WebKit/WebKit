@@ -184,7 +184,7 @@ bool WorkerContext::hasPendingActivity() const
     ActiveDOMObjectsMap& activeObjects = activeDOMObjects();
     ActiveDOMObjectsMap::const_iterator activeObjectsEnd = activeObjects.end();
     for (ActiveDOMObjectsMap::const_iterator iter = activeObjects.begin(); iter != activeObjectsEnd; ++iter) {
-        if (iter->first->hasPendingActivity())
+        if (iter->key->hasPendingActivity())
             return true;
     }
 

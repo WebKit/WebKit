@@ -720,7 +720,7 @@ Function* createFunction(const String& name, const Vector<Expression*>& args)
     HashMap<String, FunctionRec>::iterator functionMapIter = functionMap->find(name);
     FunctionRec* functionRec = 0;
 
-    if (functionMapIter == functionMap->end() || !(functionRec = &functionMapIter->second)->args.contains(args.size()))
+    if (functionMapIter == functionMap->end() || !(functionRec = &functionMapIter->value)->args.contains(args.size()))
         return 0;
 
     Function* function = functionRec->factoryFn();

@@ -460,7 +460,7 @@ bool InlineFlowBox::requiresIdeographicBaseline(const GlyphOverflowAndFallbackFo
             const Vector<const SimpleFontData*>* usedFonts = 0;
             if (curr->isInlineTextBox()) {
                 GlyphOverflowAndFallbackFontsMap::const_iterator it = textBoxDataMap.find(toInlineTextBox(curr));
-                usedFonts = it == textBoxDataMap.end() ? 0 : &it->second.first;
+                usedFonts = it == textBoxDataMap.end() ? 0 : &it->value.first;
             }
 
             if (usedFonts) {
@@ -824,7 +824,7 @@ inline void InlineFlowBox::addTextBoxVisualOverflow(InlineTextBox* textBox, Glyp
     RenderStyle* style = textBox->renderer()->style(isFirstLineStyle());
     
     GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.find(textBox);
-    GlyphOverflow* glyphOverflow = it == textBoxDataMap.end() ? 0 : &it->second.second;
+    GlyphOverflow* glyphOverflow = it == textBoxDataMap.end() ? 0 : &it->value.second;
     bool isFlippedLine = style->isFlippedLinesWritingMode();
 
     int topGlyphEdge = glyphOverflow ? (isFlippedLine ? glyphOverflow->bottom : glyphOverflow->top) : 0;

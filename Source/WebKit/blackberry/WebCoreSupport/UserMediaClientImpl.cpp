@@ -129,7 +129,7 @@ void UserMediaClientImpl::cancelUserMediaRequest(UserMediaRequest* request)
         return;
 
     SecurityOrigin* origin = request->scriptExecutionContext()->securityOrigin();
-    m_page->client()->cancelUserMediaRequest(WebUserMediaRequest(request->audio(), request->video(), origin->toString().utf8().data(), it->second.get()));
+    m_page->client()->cancelUserMediaRequest(WebUserMediaRequest(request->audio(), request->video(), origin->toString().utf8().data(), it->value.get()));
     userMediaRequestsMap().remove(it);
 }
 

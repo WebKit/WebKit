@@ -308,9 +308,9 @@ void MetaAllocator::addFreeSpace(void* start, size_t sizeInBytes)
         // We have something we can coalesce with on the left. Remove it from the tree, and
         // remove its end from the end address map.
         
-        ASSERT(reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(leftNeighbor->second->m_start) + leftNeighbor->second->m_sizeInBytes) == leftNeighbor->first);
+        ASSERT(reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(leftNeighbor->value->m_start) + leftNeighbor->value->m_sizeInBytes) == leftNeighbor->key);
         
-        FreeSpaceNode* leftNode = leftNeighbor->second;
+        FreeSpaceNode* leftNode = leftNeighbor->value;
         
         void* leftStart = leftNode->m_start;
         size_t leftSize = leftNode->m_sizeInBytes;
@@ -326,10 +326,10 @@ void MetaAllocator::addFreeSpace(void* start, size_t sizeInBytes)
             // Freeing something in the middle of free blocks. Coalesce both left and
             // right, whilst removing the right neighbor from the maps.
             
-            ASSERT(rightNeighbor->second->m_start == rightNeighbor->first);
+            ASSERT(rightNeighbor->value->m_start == rightNeighbor->key);
             
-            FreeSpaceNode* rightNode = rightNeighbor->second;
-            void* rightStart = rightNeighbor->first;
+            FreeSpaceNode* rightNode = rightNeighbor->value;
+            void* rightStart = rightNeighbor->key;
             size_t rightSize = rightNode->m_sizeInBytes;
             void* rightEnd = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(rightStart) + rightSize);
             
@@ -356,8 +356,8 @@ void MetaAllocator::addFreeSpace(void* start, size_t sizeInBytes)
         // Cannot coalesce with left; try to see if we can coalesce with right.
         
         if (rightNeighbor != m_freeSpaceStartAddressMap.end()) {
-            FreeSpaceNode* rightNode = rightNeighbor->second;
-            void* rightStart = rightNeighbor->first;
+            FreeSpaceNode* rightNode = rightNeighbor->value;
+            void* rightStart = rightNeighbor->key;
             size_t rightSize = rightNode->m_sizeInBytes;
             void* rightEnd = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(rightStart) + rightSize);
             
@@ -403,7 +403,7 @@ void MetaAllocator::incrementPageOccupancy(void* address, size_t sizeInBytes)
             m_bytesCommitted += m_pageSize;
             notifyNeedPage(reinterpret_cast<void*>(page << m_logPageSize));
         } else
-            iter->second++;
+            iter->value++;
     }
 }
 
@@ -415,7 +415,7 @@ void MetaAllocator::decrementPageOccupancy(void* address, size_t sizeInBytes)
     for (uintptr_t page = firstPage; page <= lastPage; ++page) {
         HashMap<uintptr_t, size_t>::iterator iter = m_pageOccupancyMap.find(page);
         ASSERT(iter != m_pageOccupancyMap.end());
-        if (!--(iter->second)) {
+        if (!--(iter->value)) {
             m_pageOccupancyMap.remove(iter);
             m_bytesCommitted -= m_pageSize;
             notifyPageIsFree(reinterpret_cast<void*>(page << m_logPageSize));

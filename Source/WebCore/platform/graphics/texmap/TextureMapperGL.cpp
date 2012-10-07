@@ -72,7 +72,7 @@ public:
         {
             GLContextDataMap::iterator it = glContextDataMap().find(context->platformGraphicsContext3D());
             if (it != glContextDataMap().end())
-                return it->second;
+                return it->value;
 
             return adoptRef(new SharedGLData(context));
         }
@@ -92,7 +92,7 @@ public:
             GLContextDataMap::const_iterator end = glContextDataMap().end();
             GLContextDataMap::iterator it;
             for (it = glContextDataMap().begin(); it != end; ++it) {
-                if (it->second == this)
+                if (it->value == this)
                     break;
             }
 

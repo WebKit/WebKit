@@ -75,7 +75,7 @@ bool NotificationPresenter::simulateClick(const WebString& title)
     if (m_activeNotifications.find(id) == m_activeNotifications.end())
         return false;
     
-    const WebNotification& notification = m_activeNotifications.find(id)->second;
+    const WebNotification& notification = m_activeNotifications.find(id)->value;
     WebNotification eventTarget(notification);
     eventTarget.dispatchClickEvent();
     return true;
@@ -89,7 +89,7 @@ bool NotificationPresenter::show(const WebNotification& notification)
         WTF::String replaceId(notification.replaceId().data(), notification.replaceId().length());
         if (m_replacements.find(replaceId) != m_replacements.end())
             printf("REPLACING NOTIFICATION %s\n",
-                   m_replacements.find(replaceId)->second.utf8().data());
+                   m_replacements.find(replaceId)->value.utf8().data());
 
         m_replacements.set(replaceId, WTF::String(identifier.data(), identifier.length()));
     }

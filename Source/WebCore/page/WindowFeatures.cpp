@@ -211,7 +211,7 @@ bool WindowFeatures::boolFeature(const DialogFeaturesMap& features, const char* 
     DialogFeaturesMap::const_iterator it = features.find(key);
     if (it == features.end())
         return defaultValue;
-    const String& value = it->second;
+    const String& value = it->value;
     return value.isNull() || value == "1" || value == "yes" || value == "on";
 }
 
@@ -223,7 +223,7 @@ float WindowFeatures::floatFeature(const DialogFeaturesMap& features, const char
     // FIXME: The toDouble function does not offer a way to tell "0q" from string with no digits in it: Both
     // return the number 0 and false for ok. But "0q" should yield the minimum rather than the default.
     bool ok;
-    double parsedNumber = it->second.toDouble(&ok);
+    double parsedNumber = it->value.toDouble(&ok);
     if ((parsedNumber == 0 && !ok) || isnan(parsedNumber))
         return defaultValue;
     if (parsedNumber < min || max <= min)

@@ -67,7 +67,7 @@ IDBObjectStoreMetadata IDBObjectStoreBackendImpl::metadata() const
 {
     IDBObjectStoreMetadata metadata(m_name, m_id, m_keyPath, m_autoIncrement, m_maxIndexId);
     for (IndexMap::const_iterator it = m_indexes.begin(); it != m_indexes.end(); ++it)
-        metadata.indexes.set(it->first, it->second->metadata());
+        metadata.indexes.set(it->key, it->value->metadata());
     return metadata;
 }
 
@@ -209,11 +209,11 @@ static bool makeIndexWriters(PassRefPtr<IDBTransactionBackendImpl> transaction, 
 
     for (IDBObjectStoreBackendImpl::IndexMap::iterator it = objectStore->iterIndexesBegin(); it != objectStore->iterIndexesEnd(); ++it) {
 
-        const RefPtr<IDBIndexBackendImpl>& index = it->second;
+        const RefPtr<IDBIndexBackendImpl>& index = it->value;
         if (!index->hasValidId())
             continue; // The index object has been created, but does not exist in the database yet.
 
-        IDBObjectStoreBackendInterface::IndexKeys keys = indexKeyMap.get(it->first);
+        IDBObjectStoreBackendInterface::IndexKeys keys = indexKeyMap.get(it->key);
         // If the objectStore is using autoIncrement, then any indexes with an identical keyPath need to also use the primary (generated) key as a key.
         if (keyWasGenerated) {
             const IDBKeyPath& indexKeyPath = index->keyPath();
@@ -389,10 +389,10 @@ void IDBObjectStoreBackendImpl::deleteInternal(ScriptExecutionContext*, PassRefP
             recordIdentifier = backingStoreCursor->objectStoreRecordIdentifier();
 
             for (IDBObjectStoreBackendImpl::IndexMap::iterator it = objectStore->m_indexes.begin(); it != objectStore->m_indexes.end(); ++it) {
-                if (!it->second->hasValidId())
+                if (!it->value->hasValidId())
                     continue; // The index object has been created, but does not exist in the database yet.
 
-                bool success = objectStore->backingStore()->deleteIndexDataForRecord(transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->id(), it->second->id(), recordIdentifier.get());
+                bool success = objectStore->backingStore()->deleteIndexDataForRecord(transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->id(), it->value->id(), recordIdentifier.get());
                 ASSERT_UNUSED(success, success);
             }
 

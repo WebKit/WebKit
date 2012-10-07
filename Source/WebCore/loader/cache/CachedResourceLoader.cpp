@@ -129,7 +129,7 @@ CachedResourceLoader::~CachedResourceLoader()
     clearPreloads();
     DocumentResourceMap::iterator end = m_documentResources.end();
     for (DocumentResourceMap::iterator it = m_documentResources.begin(); it != end; ++it)
-        it->second->setOwningCachedResourceLoader(0);
+        it->value->setOwningCachedResourceLoader(0);
 
     // Make sure no requests still point to this CachedResourceLoader
     ASSERT(m_requestCount == 0);
@@ -413,7 +413,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
     if (memoryCache()->disabled()) {
         DocumentResourceMap::iterator it = m_documentResources.find(url.string());
         if (it != m_documentResources.end()) {
-            it->second->setOwningCachedResourceLoader(0);
+            it->value->setOwningCachedResourceLoader(0);
             m_documentResources.remove(it);
         }
     }
@@ -651,7 +651,7 @@ void CachedResourceLoader::reloadImagesIfNotDeferred()
 {
     DocumentResourceMap::iterator end = m_documentResources.end();
     for (DocumentResourceMap::iterator it = m_documentResources.begin(); it != end; ++it) {
-        CachedResource* resource = it->second.get();
+        CachedResource* resource = it->value.get();
         if (resource->type() == CachedResource::ImageResource && resource->stillNeedsLoad() && !clientDefersImage(resource->url()))
             const_cast<CachedResource*>(resource)->load(this, defaultCachedResourceOptions());
     }
@@ -667,7 +667,7 @@ void CachedResourceLoader::removeCachedResource(CachedResource* resource) const
 #ifndef NDEBUG
     DocumentResourceMap::iterator it = m_documentResources.find(resource->url());
     if (it != m_documentResources.end())
-        ASSERT(it->second.get() == resource);
+        ASSERT(it->value.get() == resource);
 #endif
     m_documentResources.remove(resource->url());
 }
@@ -701,9 +701,9 @@ void CachedResourceLoader::garbageCollectDocumentResources()
     StringVector resourcesToDelete;
 
     for (DocumentResourceMap::iterator it = m_documentResources.begin(); it != m_documentResources.end(); ++it) {
-        if (it->second->hasOneHandle()) {
-            resourcesToDelete.append(it->first);
-            it->second->setOwningCachedResourceLoader(0);
+        if (it->value->hasOneHandle()) {
+            resourcesToDelete.append(it->key);
+            it->value->setOwningCachedResourceLoader(0);
         }
     }
 

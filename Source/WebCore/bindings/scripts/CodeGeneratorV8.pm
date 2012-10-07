@@ -3000,7 +3000,7 @@ v8::Persistent<v8::FunctionTemplate> ${className}::GetRawTemplate()
     V8PerIsolateData* data = V8PerIsolateData::current();
     V8PerIsolateData::TemplateMap::iterator result = data->rawTemplateMap().find(&info);
     if (result != data->rawTemplateMap().end())
-        return result->second;
+        return result->value;
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ = createRawTemplate();
@@ -3013,7 +3013,7 @@ v8::Persistent<v8::FunctionTemplate> ${className}::GetTemplate()
     V8PerIsolateData* data = V8PerIsolateData::current();
     V8PerIsolateData::TemplateMap::iterator result = data->templateMap().find(&info);
     if (result != data->templateMap().end())
-        return result->second;
+        return result->value;
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ =

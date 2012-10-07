@@ -466,7 +466,7 @@ void GraphicsContext3D::compileShader(Platform3DObject shader)
 
     if (length) {
         ShaderSourceMap::iterator result = m_shaderSourceMap.find(shader);
-        GraphicsContext3D::ShaderSourceEntry& entry = result->second;
+        GraphicsContext3D::ShaderSourceEntry& entry = result->value;
 
         GLsizei size = 0;
         OwnArrayPtr<GLchar> info = adoptArrayPtr(new GLchar[length]);
@@ -682,10 +682,10 @@ String GraphicsContext3D::mappedSymbolName(Platform3DObject program, ANGLEShader
         if (result == m_shaderSourceMap.end())
             continue;
 
-        const ShaderSymbolMap& symbolMap = result->second.symbolMap(symbolType);
+        const ShaderSymbolMap& symbolMap = result->value.symbolMap(symbolType);
         ShaderSymbolMap::const_iterator symbolEntry = symbolMap.find(name);
         if (symbolEntry != symbolMap.end())
-            return symbolEntry->second.mappedName;
+            return symbolEntry->value.mappedName;
     }
     return name;
 }
@@ -1163,7 +1163,7 @@ void GraphicsContext3D::getShaderiv(Platform3DObject shader, GC3Denum pname, GC3
             *value = static_cast<int>(false);
             return;
         }
-        *value = static_cast<int>(result->second.isValid);
+        *value = static_cast<int>(result->value.isValid);
         break;
     case INFO_LOG_LENGTH:
         if (result == m_shaderSourceMap.end()) {
@@ -1190,7 +1190,7 @@ String GraphicsContext3D::getShaderInfoLog(Platform3DObject shader)
     if (result == m_shaderSourceMap.end())
         return String(); 
 
-    ShaderSourceEntry entry = result->second;
+    ShaderSourceEntry entry = result->value;
     if (!entry.isValid)
         return entry.log;
 
@@ -1216,7 +1216,7 @@ String GraphicsContext3D::getShaderSource(Platform3DObject shader)
     if (result == m_shaderSourceMap.end())
         return String(); 
 
-    return result->second.source;
+    return result->value.source;
 }
 
 

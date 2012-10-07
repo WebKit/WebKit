@@ -120,7 +120,7 @@ const char* ewk_intent_extra_get(const Ewk_Intent* intent, const char* key)
     WTF::HashMap<String, String>::const_iterator val = core->extras().find(String::fromUTF8(key));
     if (val == core->extras().end())
         return 0;
-    return eina_stringshare_add(val->second.utf8().data());
+    return eina_stringshare_add(val->value.utf8().data());
 #else
     return 0;
 #endif

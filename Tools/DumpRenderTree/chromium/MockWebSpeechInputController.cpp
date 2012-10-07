@@ -52,7 +52,7 @@ void MockWebSpeechInputController::addMockRecognitionResult(const WebString& res
         String langString = String::fromUTF8(language.utf8().data());
         if (!m_recognitionResults.contains(langString))
             m_recognitionResults.set(langString, Vector<WebSpeechInputResult>());
-        m_recognitionResults.find(langString)->second.append(res);
+        m_recognitionResults.find(langString)->value.append(res);
     }
 }
 

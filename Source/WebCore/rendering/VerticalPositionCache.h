@@ -48,7 +48,7 @@ public:
         const HashMap<RenderObject*, int>::const_iterator it = mapToCheck.find(renderer);
         if (it == mapToCheck.end())
             return PositionUndefined;
-        return it->second;
+        return it->value;
     }
     
     void set(RenderObject* renderer, FontBaseline baselineType, int position)

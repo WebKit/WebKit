@@ -1,3 +1,118 @@
+2012-10-07  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Rename first/second to key/value in HashMap iterators
+        https://bugs.webkit.org/show_bug.cgi?id=82784
+
+        Reviewed by Eric Seidel.
+
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::getPrivateProperty):
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::setPrivateProperty):
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::visitChildren):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::getOwnNonIndexPropertyNames):
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::~OpaqueJSClass):
+        (OpaqueJSClassContextData::OpaqueJSClassContextData):
+        (OpaqueJSClass::contextData):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::EvalCodeCache::visitAggregate):
+        (JSC::CodeBlock::nameForRegister):
+        * bytecode/JumpTable.h:
+        (JSC::StringJumpTable::offsetForValue):
+        (JSC::StringJumpTable::ctiForValue):
+        * bytecode/LazyOperandValueProfile.cpp:
+        (JSC::LazyOperandValueProfileParser::getIfPresent):
+        * bytecode/SamplingTool.cpp:
+        (JSC::SamplingTool::dump):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addVar):
+        (JSC::BytecodeGenerator::addGlobalVar):
+        (JSC::BytecodeGenerator::addConstant):
+        (JSC::BytecodeGenerator::addConstantValue):
+        (JSC::BytecodeGenerator::emitLoad):
+        (JSC::BytecodeGenerator::addStringConstant):
+        (JSC::BytecodeGenerator::emitLazyNewFunction):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitBytecode):
+        * debugger/Debugger.cpp:
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        (JSC::DFG::ArgumentsSimplificationPhase::observeBadArgumentsUse):
+        (JSC::DFG::ArgumentsSimplificationPhase::observeProperArgumentsUse):
+        (JSC::DFG::ArgumentsSimplificationPhase::isOKToOptimize):
+        (JSC::DFG::ArgumentsSimplificationPhase::removeArgumentsReferencingPhantomChild):
+        * dfg/DFGAssemblyHelpers.cpp:
+        (JSC::DFG::AssemblyHelpers::decodedCodeMapFor):
+        * dfg/DFGByteCodeCache.h:
+        (JSC::DFG::ByteCodeCache::~ByteCodeCache):
+        (JSC::DFG::ByteCodeCache::get):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::cellConstant):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGStructureCheckHoistingPhase.cpp:
+        (JSC::DFG::StructureCheckHoistingPhase::run):
+        (JSC::DFG::StructureCheckHoistingPhase::noticeStructureCheck):
+        (JSC::DFG::StructureCheckHoistingPhase::noticeClobber):
+        * heap/Heap.cpp:
+        (JSC::Heap::markProtectedObjects):
+        * heap/Heap.h:
+        (JSC::Heap::forEachProtectedCell):
+        * heap/JITStubRoutineSet.cpp:
+        (JSC::JITStubRoutineSet::markSlow):
+        (JSC::JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::internalAppend):
+        * heap/Weak.h:
+        (JSC::weakRemove):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::ctiStub):
+        * parser/Parser.cpp:
+        (JSC::::parseStrictObjectLiteral):
+        * profiler/Profile.cpp:
+        (JSC::functionNameCountPairComparator):
+        (JSC::Profile::debugPrintDataSampleStyle):
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::add):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::getOwnNonIndexPropertyNames):
+        (JSC::JSActivation::symbolTablePutWithAttributes):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::setLength):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertySlotByIndex):
+        (JSC::JSObject::enterDictionaryIndexingModeWhenArrayStorageAlreadyExists):
+        (JSC::JSObject::deletePropertyByIndex):
+        (JSC::JSObject::getOwnPropertyNames):
+        (JSC::JSObject::defineOwnIndexedProperty):
+        (JSC::JSObject::attemptToInterceptPutByIndexOnHoleForPrototype):
+        (JSC::JSObject::putByIndexBeyondVectorLengthWithArrayStorage):
+        (JSC::JSObject::putDirectIndexBeyondVectorLengthWithArrayStorage):
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        * runtime/JSSymbolTableObject.cpp:
+        (JSC::JSSymbolTableObject::getOwnNonIndexPropertyNames):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::symbolTableGet):
+        (JSC::symbolTablePut):
+        (JSC::symbolTablePutWithAttributes):
+        * runtime/RegExpCache.cpp:
+        (JSC::RegExpCache::invalidateCode):
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayValueMap::putEntry):
+        (JSC::SparseArrayValueMap::putDirect):
+        (JSC::SparseArrayValueMap::visitChildren):
+        * runtime/WeakGCMap.h:
+        (JSC::WeakGCMap::clear):
+        (JSC::WeakGCMap::set):
+        * tools/ProfileTreeNode.h:
+        (JSC::ProfileTreeNode::sampleChild):
+        (JSC::ProfileTreeNode::childCount):
+        (JSC::ProfileTreeNode::dumpInternal):
+        (JSC::ProfileTreeNode::compareEntries):
+
 2012-10-05  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSC should have a way to gather and log Heap memory use and pause times

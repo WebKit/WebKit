@@ -61,9 +61,9 @@ void WidgetHierarchyUpdatesSuspensionScope::moveWidgets()
     widgetNewParentMap().clear();
     WidgetToParentMap::iterator end = map.end();
     for (WidgetToParentMap::iterator it = map.begin(); it != end; ++it) {
-        Widget* child = it->first.get();
+        Widget* child = it->key.get();
         ScrollView* currentParent = child->parent();
-        FrameView* newParent = it->second;
+        FrameView* newParent = it->value;
         if (newParent != currentParent) {
             if (currentParent)
                 currentParent->removeChild(child);

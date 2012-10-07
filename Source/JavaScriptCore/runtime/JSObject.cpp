@@ -248,7 +248,7 @@ bool JSObject::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned
         } else if (SparseArrayValueMap* map = storage->m_sparseMap.get()) {
             SparseArrayValueMap::iterator it = map->find(i);
             if (it != map->notFound()) {
-                it->second.get(slot);
+                it->value.get(slot);
                 return true;
             }
         }
@@ -425,7 +425,7 @@ ArrayStorage* JSObject::enterDictionaryIndexingModeWhenArrayStorageAlreadyExists
         // This will always be a new entry in the map, so no need to check we can write,
         // and attributes are default so no need to set them.
         if (value)
-            map->add(this, i).iterator->second.set(globalData, this, value);
+            map->add(this, i).iterator->value.set(globalData, this, value);
     }
 
     Butterfly* newButterfly = storage->butterfly()->resizeArray(globalData, structure(), 0, ArrayStorage::sizeFor(0));
@@ -716,7 +716,7 @@ bool JSObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
         } else if (SparseArrayValueMap* map = storage->m_sparseMap.get()) {
             SparseArrayValueMap::iterator it = map->find(i);
             if (it != map->notFound()) {
-                if (it->second.attributes & DontDelete)
+                if (it->value.attributes & DontDelete)
                     return false;
                 map->remove(it);
             }
@@ -892,8 +892,8 @@ void JSObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNa
             
             SparseArrayValueMap::const_iterator end = map->end();
             for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it) {
-                if (mode == IncludeDontEnumProperties || !(it->second.attributes & DontEnum))
-                    keys.append(static_cast<unsigned>(it->first));
+                if (mode == IncludeDontEnumProperties || !(it->value.attributes & DontEnum))
+                    keys.append(static_cast<unsigned>(it->key));
             }
             
             std::sort(keys.begin(), keys.end());
@@ -1123,7 +1123,7 @@ bool JSObject::defineOwnIndexedProperty(ExecState* exec, unsigned index, Propert
 
     // 1. Let current be the result of calling the [[GetOwnProperty]] internal method of O with property name P.
     SparseArrayValueMap::AddResult result = map->add(this, index);
-    SparseArrayEntry* entryInMap = &result.iterator->second;
+    SparseArrayEntry* entryInMap = &result.iterator->value;
 
     // 2. Let extensible be the value of the [[Extensible]] internal property of O.
     // 3. If current is undefined and extensible is false, then Reject.
@@ -1243,8 +1243,8 @@ bool JSObject::attemptToInterceptPutByIndexOnHoleForPrototype(ExecState* exec, J
         ArrayStorage* storage = current->arrayStorageOrNull();
         if (storage && storage->m_sparseMap) {
             SparseArrayValueMap::iterator iter = storage->m_sparseMap->find(i);
-            if (iter != storage->m_sparseMap->notFound() && (iter->second.attributes & (Accessor | ReadOnly))) {
-                iter->second.put(exec, thisValue, storage->m_sparseMap.get(), value, shouldThrow);
+            if (iter != storage->m_sparseMap->notFound() && (iter->value.attributes & (Accessor | ReadOnly))) {
+                iter->value.put(exec, thisValue, storage->m_sparseMap.get(), value, shouldThrow);
                 return true;
             }
         }
@@ -1328,7 +1328,7 @@ void JSObject::putByIndexBeyondVectorLengthWithArrayStorage(ExecState* exec, uns
     WriteBarrier<Unknown>* vector = storage->m_vector;
     SparseArrayValueMap::const_iterator end = map->end();
     for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it)
-        vector[it->first].set(globalData, this, it->second.getNonSparseMode());
+        vector[it->key].set(globalData, this, it->value.getNonSparseMode());
     deallocateSparseIndexMap();
 
     // Store the new property into the vector.
@@ -1444,7 +1444,7 @@ bool JSObject::putDirectIndexBeyondVectorLengthWithArrayStorage(ExecState* exec,
     WriteBarrier<Unknown>* vector = storage->m_vector;
     SparseArrayValueMap::const_iterator end = map->end();
     for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it)
-        vector[it->first].set(globalData, this, it->second.getNonSparseMode());
+        vector[it->key].set(globalData, this, it->value.getNonSparseMode());
     deallocateSparseIndexMap();
 
     // Store the new property into the vector.
@@ -1617,7 +1617,7 @@ bool JSObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Prope
             SparseArrayValueMap::iterator it = map->find(i);
             if (it == map->notFound())
                 return false;
-            it->second.get(descriptor);
+            it->value.get(descriptor);
             return true;
         }
         return false;

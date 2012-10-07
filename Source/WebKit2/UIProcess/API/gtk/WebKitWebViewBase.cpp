@@ -303,7 +303,7 @@ static void webkitWebViewBaseContainerForall(GtkContainer* container, gboolean i
     WebKitWebViewChildrenMap children = priv->children;
     WebKitWebViewChildrenMap::const_iterator end = children.end();
     for (WebKitWebViewChildrenMap::const_iterator current = children.begin(); current != end; ++current)
-        (*callback)(current->first, callbackData);
+        (*callback)(current->key, callbackData);
 
     if (includeInternals && priv->inspectorView)
         (*callback)(priv->inspectorView, callbackData);

@@ -425,8 +425,8 @@ private:
         // Handle duplicate references
         if (found != m_objectPool.end()) {
             write(ObjectReferenceTag);
-            ASSERT(static_cast<int32_t>(found->second) < m_objectPool.size());
-            writeObjectIndex(found->second);
+            ASSERT(static_cast<int32_t>(found->value) < m_objectPool.size());
+            writeObjectIndex(found->value);
             return true;
         }
 
@@ -667,7 +667,7 @@ private:
                 ObjectPool::iterator index = m_transferredMessagePorts.find(obj);
                 if (index != m_transferredMessagePorts.end()) {
                     write(MessagePortReferenceTag);
-                    write(index->second);
+                    write(index->value);
                     return true;
                 }
                 // MessagePort object could not be found in transferred message ports
@@ -683,7 +683,7 @@ private:
                 ObjectPool::iterator index = m_transferredArrayBuffers.find(obj);
                 if (index != m_transferredArrayBuffers.end()) {
                     write(ArrayBufferTransferTag);
-                    write(index->second);
+                    write(index->value);
                     return true;
                 }
                 if (!startObjectInternal(obj)) // handle duplicates
@@ -780,7 +780,7 @@ private:
         StringConstantPool::AddResult addResult = m_constantPool.add(str.impl(), m_constantPool.size());
         if (!addResult.isNewEntry) {
             write(StringPoolTag);
-            writeStringIndex(addResult.iterator->second);
+            writeStringIndex(addResult.iterator->value);
             return;
         }
 
