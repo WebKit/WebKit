@@ -1473,6 +1473,10 @@ webkit.org/b/96881 java [ Skip ]
 webkit.org/b/96881 plugins [ Skip ]
 webkit.org/b/96881 userscripts/user-script-plugin-document.html [ Failure ]
 
+# Ref tests added in r130592 that are failing on both EFL and GTK ports
+webkit.org/b/98613 css3/masking/clip-path-reference-userSpaceOnUse.html [ ImageOnlyFailure ] 
+webkit.org/b/98613 css3/masking/clip-path-reference.html [ ImageOnlyFailure ]
+
 # EFL does not yet support global selection
 webkit.org/b/88238 editing/pasteboard/paste-global-selection.html [ Skip ]
 
