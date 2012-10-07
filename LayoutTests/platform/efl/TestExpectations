@@ -723,6 +723,7 @@ webkit.org/b/93213 fast/text/international/text-spliced-font.html [ Failure Pass
 webkit.org/b/93214 http/tests/loading/307-after-303-after-post.html [ Failure Pass Timeout ]
 webkit.org/b/93212 http/tests/incremental/slow-utf8-text.pl [ Pass Timeout ]
 webkit.org/b/68878 media/video-playing-and-pause.html [ Failure Pass ]
+webkit.org/b/98621 media/video-controls-rendering.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS

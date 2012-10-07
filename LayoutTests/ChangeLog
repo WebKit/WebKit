@@ -1,5 +1,11 @@
 2012-10-07  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        [EFL] Mark media/video-controls-rendering.html as flaky.
+
+        * platform/efl/TestExpectations:
+
+2012-10-07  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         [EFL] Unskip svg/W3C-SVG-1.1-SE and add expectations for it.
 
         All pixel tests look OK (compared to the ones in mac/), and all
