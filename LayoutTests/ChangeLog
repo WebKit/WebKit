@@ -1,3 +1,15 @@
+2012-10-07  Nick Carter  <nick@chromium.org>
+
+        [chromium] Crash in WebCore::GraphicsLayerChromium::setContentsToImage
+        https://bugs.webkit.org/show_bug.cgi?id=98456
+
+        Reviewed by James Robinson.
+
+        New tests exercising a broken image on its own layer.
+
+        * compositing/images/truncated-direct-png-image-expected.html: Added.
+        * compositing/images/truncated-direct-png-image.html: Added.
+
 2012-10-07  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Mark media/video-controls-rendering.html as flaky.

@@ -1,3 +1,17 @@
+2012-10-07  Nick Carter  <nick@chromium.org>
+
+        [chromium] Crash in WebCore::GraphicsLayerChromium::setContentsToImage
+        https://bugs.webkit.org/show_bug.cgi?id=98456
+
+        Reviewed by James Robinson.
+
+        Handle null return of nativeImageForCurrentFrame.
+
+        Test: compositing/images/truncated-direct-png-image.html
+
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setContentsToImage):
+
 2012-10-07  Benjamin Poulain  <benjamin@webkit.org>
 
         WTFURL: implement URL port removal for HTMLAnchorElement

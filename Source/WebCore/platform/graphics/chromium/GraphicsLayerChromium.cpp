@@ -468,7 +468,8 @@ void GraphicsLayerChromium::setContentsRect(const IntRect& rect)
 void GraphicsLayerChromium::setContentsToImage(Image* image)
 {
     bool childrenChanged = false;
-    if (image) {
+    NativeImageSkia* nativeImage = image ? image->nativeImageForCurrentFrame() : 0;
+    if (nativeImage) {
         if (m_contentsLayerPurpose != ContentsLayerForImage) {
             m_imageLayer = adoptPtr(Platform::current()->compositorSupport()->createImageLayer());
             registerContentsLayer(m_imageLayer->layer());
@@ -477,7 +478,6 @@ void GraphicsLayerChromium::setContentsToImage(Image* image)
             m_contentsLayerPurpose = ContentsLayerForImage;
             childrenChanged = true;
         }
-        NativeImageSkia* nativeImage = image->nativeImageForCurrentFrame();
         m_imageLayer->setBitmap(nativeImage->bitmap());
         m_imageLayer->layer()->setOpaque(image->isBitmapImage() && !image->currentFrameHasAlpha());
         updateContentsRect();
