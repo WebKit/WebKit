@@ -1,5 +1,25 @@
 2012-10-07  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        Unreviewed, rolling out r130596.
+        http://trac.webkit.org/changeset/130596
+        https://bugs.webkit.org/show_bug.cgi?id=98616
+
+        Broke build bots without IPV6 support
+
+        * Scripts/webkitpy/common/system/platforminfo_mock.py:
+        (MockPlatformInfo.is_cygwin):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.baseline_version_dir):
+        (Port.to.start_websocket_server):
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_operating_system):
+        (PortTest.test_build_path):
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server.py:
+        (LayoutTestApacheHttpd):
+        (LayoutTestApacheHttpd.__init__):
+
+2012-10-07  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         webkitpy: Pass the `Listen' Apache directive from Apache, not the httpd.conf files.
         https://bugs.webkit.org/show_bug.cgi?id=98602
 
