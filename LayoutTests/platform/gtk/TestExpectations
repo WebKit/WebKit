@@ -282,7 +282,7 @@ Bug(GTK) fast/events/page-visibility-iframe-propagation-test.html [ Skip ]
 Bug(GTK) fast/events/page-visibility-transition-test.html [ Skip ]
 
 # GTK doesn't support smart replace.
-webkit.org/b/61661 editing/pasteboard/drag-drop-list.html [ Failure ]
+webkit.org/b/61661 [ Release ] editing/pasteboard/drag-drop-list.html [ Failure ]
 
 # Tests for MediaSource API. Feature is not yet functional.
 webkit.org/b/64731 http/tests/media/media-source [ Skip ]
@@ -465,6 +465,19 @@ webkit.org/b/90957 [ Release ] fast/js/random-array-gc-stress.html [ Crash Pass 
 
 webkit.org/b/94458 [ Debug ] http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html [ Crash Failure ]
 webkit.org/b/94458 [ Debug ] fast/events/message-port-context-destroyed.html [ Crash Pass ]
+
+webkit.org/b/98612 [ Debug ] fast/events/drag-link.html [ Crash ]
+webkit.org/b/98612 [ Debug ] fast/events/crash-on-mutate-during-drop.html [ Crash ]
+webkit.org/b/98612 [ Debug ] fast/lists/drag-into-marker.html [ Crash ]
+webkit.org/b/98612 [ Debug ] editing/pasteboard/drag-drop-list.html [ Crash Failure ]
+webkit.org/b/98612 [ Debug ] editing/pasteboard/drop-link.html [ Crash ]
+webkit.org/b/98612 [ Debug ] editing/pasteboard/smart-drag-drop.html [ Crash Pass ]
+webkit.org/b/98612 [ Debug ] editing/pasteboard/subframe-dragndrop-1.html [ Crash ]
+webkit.org/b/98612 [ Debug ] editing/selection/4895428-1.html [ Crash Pass ]
+webkit.org/b/98612 [ Debug ] editing/selection/4895428-4.html [ Crash Pass ]
+webkit.org/b/98612 [ Debug ] editing/selection/contains-boundaries.html [ Crash ]
+webkit.org/b/98612 [ Debug ] svg/custom/use-animation-in-fill.html [ Crash Pass ]
+webkit.org/b/98612 [ Debug ] svg/custom/use-multiple-on-nested-disallowed-font.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -1374,6 +1387,11 @@ fast/dom/Geolocation/coordinates-interface-attributes.html [ Failure ]
 webkit.org/b/98585 fast/exclusions/shape-inside/shape-inside-rounded-rectangle-003.html [ ImageOnlyFailure ]
 
 webkit.org/b/98587 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ ImageOnlyFailure ]
+
+webkit.org/b/98612 [ Release ] fast/dom/gc-dom-tree-lifetime.html [ Failure ]
+
+webkit.org/b/98613 css3/masking/clip-path-reference-userSpaceOnUse.html [ ImageOnlyFailure ]
+webkit.org/b/98613 css3/masking/clip-path-reference.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

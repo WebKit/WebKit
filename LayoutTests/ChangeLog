@@ -1,3 +1,12 @@
+2012-10-07  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding crash and failure expectations for regressions introduced through r130584.
+        Adding image mismatch expectations for two new tests introduced in r130592.
+
+        * platform/gtk/TestExpectations:
+
 2012-10-06  Kent Tamura  <tkent@chromium.org>
 
         Update test expectation
