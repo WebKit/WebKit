@@ -1,3 +1,49 @@
+2012-10-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Don't use the C API internally in WebKitWebContext
+        https://bugs.webkit.org/show_bug.cgi?id=96768
+
+        Reviewed by Martin Robinson.
+
+        Using the C++ classes directly instead of the C API wrappers we
+        avoid a lot of toImpl/toAPI casts, string conversions and
+        allocations. The code is also a lot simpler and easier to read.
+
+        * UIProcess/API/gtk/WebKitDownloadClient.cpp:
+        (didStart):
+        (didReceiveResponse):
+        (didReceiveData):
+        (decideDestinationWithSuggestedFilename):
+        (didCreateDestination):
+        (didFail):
+        (didCancel):
+        (didFinish):
+        (attachDownloadClientToContext):
+        * UIProcess/API/gtk/WebKitRequestManagerClient.cpp:
+        (attachRequestManagerClientToContext):
+        * UIProcess/API/gtk/WebKitSecurityManager.cpp:
+        (registerSecurityPolicyForURIScheme):
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (_WebKitWebContextPrivate):
+        (createDefaultWebContext):
+        (webkit_web_context_set_cache_model):
+        (webkit_web_context_get_cache_model):
+        (webkit_web_context_clear_cache):
+        (webkit_web_context_download_uri):
+        (webkit_web_context_get_cookie_manager):
+        (webkit_web_context_get_favicon_database_directory):
+        (webkit_web_context_get_favicon_database):
+        (webkit_web_context_set_additional_plugins_directory):
+        (webkitWebContextGetPluginThread):
+        (webkit_web_context_register_uri_scheme):
+        (webkitWebContextGetOrCreateDownload):
+        (webkitWebContextRemoveDownload):
+        (webkitWebContextGetContext):
+        (webkitWebContextGetRequestManager):
+        * UIProcess/API/gtk/WebKitWebContextPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewConstructed):
+
 2012-10-07  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][WK2] Fix unused parameter compile warning.

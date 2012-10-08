@@ -398,7 +398,7 @@ static void webkitWebViewConstructed(GObject* object)
     WebKitWebViewPrivate* priv = webView->priv;
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(webView);
 
-    webkitWebViewBaseCreateWebPage(webViewBase, toImpl(webkitWebContextGetWKContext(priv->context)), 0);
+    webkitWebViewBaseCreateWebPage(webViewBase, webkitWebContextGetContext(priv->context), 0);
 
     attachLoaderClientToView(webView);
     attachUIClientToView(webView);

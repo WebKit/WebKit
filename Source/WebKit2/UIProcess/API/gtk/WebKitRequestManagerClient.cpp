@@ -46,6 +46,6 @@ void attachRequestManagerClientToContext(WebKitWebContext* webContext)
         didReceiveURIRequest,
         didFailToLoadURIRequest
     };
-    WKSoupRequestManagerSetClient(webkitWebContextGetRequestManager(webContext), &wkRequestManagerClient);
+    WKSoupRequestManagerSetClient(toAPI(webkitWebContextGetRequestManager(webContext)), &wkRequestManagerClient);
 }
 

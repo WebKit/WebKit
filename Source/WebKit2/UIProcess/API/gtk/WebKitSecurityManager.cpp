@@ -74,7 +74,7 @@ WebKitSecurityManager* webkitSecurityManagerCreate(WebKitWebContext* webContext)
 static void registerSecurityPolicyForURIScheme(WebKitSecurityManager* manager, const char* scheme, SecurityPolicy policy)
 {
     String urlScheme = String::fromUTF8(scheme);
-    WebContext* webContext = toImpl(webkitWebContextGetWKContext(manager->priv->webContext));
+    WebContext* webContext = webkitWebContextGetContext(manager->priv->webContext);
 
     // We keep the WebCore::SchemeRegistry of the UI process in sync with the
     // web process one, so that we can return the SecurityPolicy for
