@@ -1,3 +1,34 @@
+2012-10-07  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        :first-line pseudo selector ignoring words created from :before
+        https://bugs.webkit.org/show_bug.cgi?id=80794
+
+        Reviewed by Daniel Bates.
+
+        The :first-line pseudo-element style is not applied for content
+        which is generated from the :before/:after pseudo-elements.
+
+        Test: fast/css/first-line-style-for-before-after-content.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::firstLineStyleForCachedUncachedType):
+        Added a new static helper function incorporating the common
+        functionality of both uncachedFirstLineStyle() and firstLineStyleSlowCase()
+        functions. It also modifies the functionality to handle the
+        scenario when :first-line style needs to be applied on content
+        generated from :before/:after.
+
+        While getting the :first-line style we should also consider the case
+        when the content is generated from a :before/:after pseudo-element in
+        which case the RenderInline's parent should be considered for
+        obtaining the first-line style.
+
+        (WebCore):
+        (WebCore::RenderObject::uncachedFirstLineStyle):
+        (WebCore::RenderObject::firstLineStyleSlowCase):
+        Moved the duplicate code between the two functions to the common
+        helper function firstLineStyleForCachedUncachedType().
+
 2012-10-07  Peter Wang  <peter.wang@torchmobile.com.cn>
 
         Web Inspector: The front-end should provide the position in original source file when set a breakpoint

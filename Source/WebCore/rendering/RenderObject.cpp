@@ -2602,6 +2602,37 @@ void RenderObject::layout()
     setNeedsLayout(false);
 }
 
+enum StyleCacheState {
+    Cached,
+    Uncached
+};
+
+static PassRefPtr<RenderStyle> firstLineStyleForCachedUncachedType(StyleCacheState type, const RenderObject* renderer, RenderStyle* style)
+{
+    const RenderObject* rendererForFirstLineStyle = renderer;
+    if (renderer->isBeforeOrAfterContent())
+        rendererForFirstLineStyle = renderer->parent();
+
+    if (rendererForFirstLineStyle->isBlockFlow()) {
+        if (RenderBlock* firstLineBlock = rendererForFirstLineStyle->firstLineBlock()) {
+            if (type == Cached)
+                return firstLineBlock->getCachedPseudoStyle(FIRST_LINE, style);
+            return firstLineBlock->getUncachedPseudoStyle(FIRST_LINE, style, firstLineBlock == renderer ? style : 0);
+        }
+    } else if (!rendererForFirstLineStyle->isAnonymous() && rendererForFirstLineStyle->isRenderInline()) {
+        RenderStyle* parentStyle = rendererForFirstLineStyle->parent()->firstLineStyle();
+        if (parentStyle != rendererForFirstLineStyle->parent()->style()) {
+            if (type == Cached) {
+                // A first-line style is in effect. Cache a first-line style for ourselves.
+                rendererForFirstLineStyle->style()->setHasPseudoStyle(FIRST_LINE_INHERITED);
+                return rendererForFirstLineStyle->getCachedPseudoStyle(FIRST_LINE_INHERITED, parentStyle);
+            }
+            return rendererForFirstLineStyle->getUncachedPseudoStyle(FIRST_LINE_INHERITED, parentStyle, style);
+        }
+    }
+    return 0;
+}
+
 PassRefPtr<RenderStyle> RenderObject::uncachedFirstLineStyle(RenderStyle* style) const
 {
     if (!document()->styleSheetCollection()->usesFirstLineRules())
@@ -2609,39 +2640,17 @@ PassRefPtr<RenderStyle> RenderObject::uncachedFirstLineStyle(RenderStyle* style)
 
     ASSERT(!isText());
 
-    RefPtr<RenderStyle> result;
-
-    if (isBlockFlow()) {
-        if (RenderBlock* firstLineBlock = this->firstLineBlock())
-            result = firstLineBlock->getUncachedPseudoStyle(FIRST_LINE, style, firstLineBlock == this ? style : 0);
-    } else if (!isAnonymous() && isRenderInline()) {
-        RenderStyle* parentStyle = parent()->firstLineStyle();
-        if (parentStyle != parent()->style())
-            result = getUncachedPseudoStyle(FIRST_LINE_INHERITED, parentStyle, style);
-    }
-
-    return result.release();
+    return firstLineStyleForCachedUncachedType(Uncached, this, style);
 }
 
 RenderStyle* RenderObject::firstLineStyleSlowCase() const
 {
     ASSERT(document()->styleSheetCollection()->usesFirstLineRules());
 
-    RenderStyle* style = m_style.get();
-    const RenderObject* renderer = isText() ? parent() : this;
-    if (renderer->isBlockFlow()) {
-        if (RenderBlock* firstLineBlock = renderer->firstLineBlock())
-            style = firstLineBlock->getCachedPseudoStyle(FIRST_LINE, style);
-    } else if (!renderer->isAnonymous() && renderer->isRenderInline()) {
-        RenderStyle* parentStyle = renderer->parent()->firstLineStyle();
-        if (parentStyle != renderer->parent()->style()) {
-            // A first-line style is in effect. Cache a first-line style for ourselves.
-            renderer->style()->setHasPseudoStyle(FIRST_LINE_INHERITED);
-            style = renderer->getCachedPseudoStyle(FIRST_LINE_INHERITED, parentStyle);
-        }
-    }
+    if (RefPtr<RenderStyle> style = firstLineStyleForCachedUncachedType(Cached, isText() ? parent() : this, m_style.get()))
+        return style.get();
 
-    return style;
+    return m_style.get();
 }
 
 RenderStyle* RenderObject::getCachedPseudoStyle(PseudoId pseudo, RenderStyle* parentStyle) const

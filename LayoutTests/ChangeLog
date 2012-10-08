@@ -1,3 +1,15 @@
+2012-10-07  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        :first-line pseudo selector ignoring words created from :before
+        https://bugs.webkit.org/show_bug.cgi?id=80794
+
+        Reviewed by Daniel Bates.
+
+        * fast/css/first-line-style-for-before-after-content-expected.html: Added.
+        * fast/css/first-line-style-for-before-after-content.html: Added.
+        Added ref test for verification of the scenario when :first-line style
+        is applied to content generated from :before/:after pseudo-elements.
+
 2012-10-07  Nick Carter  <nick@chromium.org>
 
         [chromium] Crash in WebCore::GraphicsLayerChromium::setContentsToImage
