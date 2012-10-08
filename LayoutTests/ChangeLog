@@ -1,3 +1,13 @@
+2012-10-08  Robert Hogan  <robert@webkit.org>
+
+        Border, margin and padding of an inline's inline ancestors counted twice
+        https://bugs.webkit.org/show_bug.cgi?id=63074
+
+        Reviewed by David Hyatt.
+
+        * fast/inline/bpm-inline-ancestors-expected.html: Added.
+        * fast/inline/bpm-inline-ancestors.html: Added.
+
 2012-10-08  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [WK2][WTR] WebKitTestRunner needs testRunner.dispatchPendingLoadRequests

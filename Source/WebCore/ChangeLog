@@ -1,3 +1,31 @@
+2012-10-08  Robert Hogan  <robert@webkit.org>
+
+        Border, margin and padding of an inline's inline ancestors counted twice
+        https://bugs.webkit.org/show_bug.cgi?id=63074
+
+        Reviewed by David Hyatt.
+
+        In a line such as '<span><span><img>Text' the border, padding and margin belonging
+        to the two spans was counted twice by RenderBlockLineLayout::nextLineBreak(): once
+        when adding the width of the <img> object to the line, and a second time when adding
+        the 'Text'. The result was that nextLineBreak() now had a length for the line that 
+        exceeded the line's maximum length and inserted a bogus line break.
+
+        This all happened because the helper function that is used to add in the border etc.
+        from inline ancestors was crawling up the tree each time. It doesn't need to do that, it
+        should stop crawling up the tree when the current object is not the first or last sibling below a parent.
+
+        Test: fast/inline/bpm-inline-ancestors.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::shouldAddBorderPaddingMargin): Broke this check out into a helper function so that it 
+        can help inlineLogicalWidth() return early and also treat empty RenderTexts the same as no previous/next
+        sibling on the line. This ensures that collapsed leading space does not interfere with the decision to
+        crawl up the ancestors accumulating border, padding, and margin.
+        (WebCore):
+        (WebCore::inlineLogicalWidth): Return early once the current child is no longer on the edge of its line - 
+        this ensures the border, padding and margin of ancestors is not counted twice. 
+
 2012-10-08  Mike West  <mkwst@chromium.org>
 
         Null-check for DOMWindow before feeding it to FeatureObserver.
