@@ -98,6 +98,15 @@ static void window_free(Browser_Window *window)
     free(window);
 }
 
+static void window_close(Browser_Window *window)
+{
+    windows = eina_list_remove(windows, window);
+    window_free(window);
+
+    if (!windows)
+        ecore_main_loop_quit();
+}
+
 static Eina_Bool main_signal_exit(void *data, int ev_type, void *ev)
 {
     Browser_Window *window;
@@ -110,13 +119,7 @@ static Eina_Bool main_signal_exit(void *data, int ev_type, void *ev)
 
 static void on_ecore_evas_delete(Ecore_Evas *ee)
 {
-    Browser_Window *window = browser_window_find(ee);
-
-    window_free(window);
-    windows = eina_list_remove(windows, window);
-
-    if (!windows)
-        ecore_main_loop_quit();
+    window_close(browser_window_find(ee));
 }
 
 static void on_ecore_evas_resize(Ecore_Evas *ee)
@@ -232,6 +235,12 @@ on_new_window(void *user_data, Evas_Object *webview, void *event_info)
 }
 
 static void
+on_close_window(void *user_data, void *event_info)
+{
+    window_close((Browser_Window *)user_data);
+}
+
+static void
 on_progress(void *user_data, Evas_Object *webview, void *event_info)
 {
     Browser_Window *window = (Browser_Window *)user_data;
@@ -340,6 +349,7 @@ static Browser_Window *window_create(const char *url)
     Ewk_Settings *settings = ewk_view_settings_get(window->webview);
     ewk_settings_file_access_from_file_urls_allowed_set(settings, EINA_TRUE);
 
+    evas_object_smart_callback_add(window->webview, "close,window", on_close_window, window);
     evas_object_smart_callback_add(window->webview, "create,window", on_new_window, window);
     evas_object_smart_callback_add(window->webview, "download,failed", on_download_failed, window);
     evas_object_smart_callback_add(window->webview, "download,finished", on_download_finished, window);

@@ -1,3 +1,19 @@
+2012-10-08  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Add support for window.close in Minibrowser
+        https://bugs.webkit.org/show_bug.cgi?id=98667
+
+        Reviewed by Laszlo Gombos.
+
+        When calling window.close() from JavaScript, MiniBrowser
+        now closes the given window.
+
+        * MiniBrowser/efl/main.c:
+        (window_close):
+        (on_ecore_evas_delete):
+        (on_close_window):
+        (window_create):
+
 2012-10-08  Ojan Vafai  <ojan@chromium.org>
 
         Properly strip new tests from the test results json if they are pass/nodata/skip.
