@@ -1,5 +1,11 @@
 2012-10-08  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        [EFL] Mark fast/dynamic/window-scrollbars-test.html as flaky.
+
+        * platform/efl/TestExpectations:
+
+2012-10-08  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         [EFL] Unskip svg/text.
 
         Most of the text cases are passing, the ones which don't have been
