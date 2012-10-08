@@ -1,3 +1,22 @@
+2012-10-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add a setting to enable/disable smooth scrolling to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=98646
+
+        Reviewed by Xan Lopez.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webKitSettingsSetProperty): Implement setter for new property.
+        (webKitSettingsGetProperty): Implement getter for new property.
+        (webkit_settings_class_init): Add new property
+        enable-smooth-scrolling.
+        (webkit_settings_get_enable_smooth_scrolling):
+        (webkit_settings_set_enable_smooth_scrolling):
+        * UIProcess/API/gtk/WebKitSettings.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp:
+        (testWebKitSettings): Test smooth scrolling setting API.
+
 2012-10-08  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Use URL instead of URI in the API

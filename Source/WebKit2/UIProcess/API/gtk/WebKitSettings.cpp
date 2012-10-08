@@ -34,6 +34,7 @@
 #include "WebKitPrivate.h"
 #include "WebKitSettingsPrivate.h"
 #include "WebPageProxy.h"
+#include "WebPreferences.h"
 #include <WebCore/UserAgentGtk.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/text/CString.h>
@@ -117,7 +118,8 @@ enum {
     PROP_DRAW_COMPOSITING_INDICATORS,
     PROP_ENABLE_SITE_SPECIFIC_QUIRKS,
     PROP_ENABLE_PAGE_CACHE,
-    PROP_USER_AGENT
+    PROP_USER_AGENT,
+    PROP_ENABLE_SMOOTH_SCROLLING
 };
 
 static void webKitSettingsSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
@@ -250,6 +252,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
         break;
     case PROP_USER_AGENT:
         webkit_settings_set_user_agent(settings, g_value_get_string(value));
+        break;
+    case PROP_ENABLE_SMOOTH_SCROLLING:
+        webkit_settings_set_enable_smooth_scrolling(settings, g_value_get_boolean(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -387,6 +392,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         break;
     case PROP_USER_AGENT:
         g_value_set_string(value, webkit_settings_get_user_agent(settings));
+        break;
+    case PROP_ENABLE_SMOOTH_SCROLLING:
+        g_value_set_boolean(value, webkit_settings_get_enable_smooth_scrolling(settings));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -1038,6 +1046,19 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                         _("The user agent string"),
                                                         0, // A null string forces the standard user agent.
                                                         readWriteConstructParamFlags));
+
+    /**
+     * WebKitSettings:enable-smooth-scrolling:
+     *
+     * Enable or disable smooth scrolling.
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_ENABLE_SMOOTH_SCROLLING,
+                                    g_param_spec_boolean("enable-smooth-scrolling",
+                                                         _("Enable smooth scrolling"),
+                                                         _("Whether to enable smooth scrolling"),
+                                                         FALSE,
+                                                         readWriteConstructParamFlags));
 
     g_type_class_add_private(klass, sizeof(WebKitSettingsPrivate));
 }
@@ -2643,4 +2664,39 @@ void webkit_settings_set_user_agent_with_application_details(WebKitSettings* set
 
     CString newUserAgent = WebCore::standardUserAgent(String::fromUTF8(applicationName), String::fromUTF8(applicationVersion)).utf8();
     webkit_settings_set_user_agent(settings, newUserAgent.data());
+}
+
+/**
+ * webkit_settings_get_enable_smooth_scrolling:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:enable-smooth-scrolling property.
+ *
+ * Returns: %TRUE if smooth scrolling is enabled or %FALSE otherwise.
+ */
+gboolean webkit_settings_get_enable_smooth_scrolling(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return WebKit::toImpl(settings->priv->preferences.get())->scrollAnimatorEnabled();
+}
+
+/**
+ * webkit_settings_set_enable_smooth_scrolling:
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the #WebKitSettings:enable-smooth-scrolling property.
+ */
+void webkit_settings_set_enable_smooth_scrolling(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = WebKit::toImpl(priv->preferences.get())->scrollAnimatorEnabled();
+    if (currentValue == enabled)
+        return;
+
+    WebKit::toImpl(priv->preferences.get())->setScrollAnimatorEnabled(enabled);
+    g_object_notify(G_OBJECT(settings), "enable-smooth-scrolling");
 }

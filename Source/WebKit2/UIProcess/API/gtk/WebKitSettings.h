@@ -373,6 +373,13 @@ webkit_settings_set_user_agent_with_application_details        (WebKitSettings *
                                                                 const gchar    *application_name,
                                                                 const gchar    *application_version);
 
+WEBKIT_API gboolean
+webkit_settings_get_enable_smooth_scrolling                    (WebKitSettings *settings);
+
+WEBKIT_API void
+webkit_settings_set_enable_smooth_scrolling                    (WebKitSettings *settings,
+                                                                gboolean        enabled);
+
 G_END_DECLS
 
 #endif /* WebKitSettings_h */
