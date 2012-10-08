@@ -90,7 +90,7 @@ QSocketNotifier* WorkQueue::registerSocketEventHandler(int socketDescriptor, QSo
     notifier->moveToThread(m_workThread);
     WorkQueue::WorkItemQt* itemQt = new WorkQueue::WorkItemQt(this, notifier, SIGNAL(activated(int)), function);
     itemQt->moveToThread(m_workThread);
-    notifier->setEnabled(true);
+    QMetaObject::invokeMethod(notifier, "setEnabled", Q_ARG(bool, true));
     return notifier;
 }
 

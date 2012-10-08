@@ -1,3 +1,23 @@
+2012-10-04  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Fix a QSocketNotifier warning at startup
+        https://bugs.webkit.org/show_bug.cgi?id=98411
+
+        Reviewed by Simon Hausmann.
+
+        The actual warning:
+        QSocketNotifier: socket notifiers cannot be enabled from another thread
+
+        The problem was that QSocketNotifier::setEnabled was called on the main thread
+        after moveToThread was called. This hasn't had any effect since Connection
+        would dispatch a readyReadHandler call right after which would then call
+        setEnabled again from the correct thread from ~SocketNotifierResourceGuard.
+
+        Replace the call with a queued invoke to shut the warning.
+
+        * Platform/qt/WorkQueueQt.cpp:
+        (WorkQueue::registerSocketEventHandler):
+
 2012-10-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Test /webkit2/WebKitWebView/populate-menu asserts in debug bots
