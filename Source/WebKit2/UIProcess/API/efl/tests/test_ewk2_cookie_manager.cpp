@@ -116,6 +116,11 @@ static int countHostnamesWithCookies(Ewk_Cookie_Manager* manager)
     return count;
 }
 
+static int compareHostNames(const void* hostName1, const void* hostName2)
+{
+    return strcmp(static_cast<const char*>(hostName1), static_cast<const char*>(hostName2));
+}
+
 TEST_F(EWK2UnitTestBase, ewk_cookie_manager_accept_policy)
 {
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
@@ -141,6 +146,7 @@ TEST_F(EWK2UnitTestBase, ewk_cookie_manager_accept_policy)
 
     hostnames = getHostnamesWithCookies(cookieManager);
     ASSERT_EQ(2, eina_list_count(hostnames));
+    hostnames = eina_list_sort(hostnames, eina_list_count(hostnames), compareHostNames);
     ASSERT_STREQ(FIRST_PARTY_DOMAIN, static_cast<char*>(eina_list_nth(hostnames, 0)));
     ASSERT_STREQ(THIRD_PARTY_DOMAIN, static_cast<char*>(eina_list_nth(hostnames, 1)));
     freeHostNames(hostnames);
