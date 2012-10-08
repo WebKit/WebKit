@@ -1,3 +1,22 @@
+2012-10-08  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed Chromium gardening.
+
+        Rebaselined those 2 tables/ tests that were forgotten in the rebaselining after r103875.
+        https://bugs.webkit.org/show_bug.cgi?id=74888 was opened to track those rebaselining but
+        it looks like some platform fell through the cracks.
+
+        * platform/chromium/TestExpectations:
+        Removed the 2 entries.
+
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/core/captions1-expected.png: Added.
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/core/captions2-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla_expected_failures/core/captions1-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla_expected_failures/core/captions1-expected.txt: Added.
+        * platform/chromium-mac/tables/mozilla_expected_failures/core/captions2-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla_expected_failures/core/captions2-expected.txt: Added.
+        Progression: the table captions are larger, which matches other browsers and other platforms' baselines.
+
 2012-10-08  Zan Dobersek  <zandobersek@gmail.com>
 
         GTK port should warn if bug modifier is missing in TestExpectations
