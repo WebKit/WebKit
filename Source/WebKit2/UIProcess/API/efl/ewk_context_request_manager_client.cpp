@@ -37,7 +37,7 @@ static inline Ewk_Context* toEwkContext(const void* clientInfo)
     return static_cast<Ewk_Context*>(const_cast<void*>(clientInfo));
 }
 
-static void didReceiveURIRequest(WKSoupRequestManagerRef soupRequestManagerRef, WKURLRef urlRef, WKPageRef initiatingPageRef, uint64_t requestID, const void* clientInfo)
+static void didReceiveURIRequest(WKSoupRequestManagerRef soupRequestManagerRef, WKURLRef urlRef, WKPageRef, uint64_t requestID, const void* clientInfo)
 {
     Ewk_Url_Scheme_Request* schemeRequest = ewk_url_scheme_request_new(soupRequestManagerRef, urlRef, requestID);
     ewk_context_url_scheme_request_received(toEwkContext(clientInfo), schemeRequest);

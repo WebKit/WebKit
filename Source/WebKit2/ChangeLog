@@ -1,3 +1,15 @@
+2012-10-07  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL][WK2] Fix unused parameter compile warning.
+        https://bugs.webkit.org/show_bug.cgi?id=98610
+
+        Reviewed by Laszlo Gombos.
+
+        Fixed unused parameter compile warning by removing initiatingPageRef parameter name.
+
+        * UIProcess/API/efl/ewk_context_request_manager_client.cpp:
+        (didReceiveURIRequest):
+
 2012-10-07  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Rename first/second to key/value in HashMap iterators
