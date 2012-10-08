@@ -1,3 +1,15 @@
+2012-10-08  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Removing crash expectations for tests that were fixed in r130611.
+
+        Removing failure expectations for fast/xsl/xslt-missing-namespace-in-xslt.xml,
+        the test is working fine after r130543.
+
+        * platform/gtk-wk2/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2012-10-08  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Unreviewed Qt gardening.

@@ -466,19 +466,6 @@ webkit.org/b/90957 [ Release ] fast/js/random-array-gc-stress.html [ Crash Pass 
 webkit.org/b/94458 [ Debug ] http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html [ Crash Failure ]
 webkit.org/b/94458 [ Debug ] fast/events/message-port-context-destroyed.html [ Crash Pass ]
 
-webkit.org/b/98612 [ Debug ] fast/events/drag-link.html [ Crash ]
-webkit.org/b/98612 [ Debug ] fast/events/crash-on-mutate-during-drop.html [ Crash ]
-webkit.org/b/98612 [ Debug ] fast/lists/drag-into-marker.html [ Crash ]
-webkit.org/b/98612 [ Debug ] editing/pasteboard/drag-drop-list.html [ Crash Failure ]
-webkit.org/b/98612 [ Debug ] editing/pasteboard/drop-link.html [ Crash ]
-webkit.org/b/98612 [ Debug ] editing/pasteboard/smart-drag-drop.html [ Crash Pass ]
-webkit.org/b/98612 [ Debug ] editing/pasteboard/subframe-dragndrop-1.html [ Crash ]
-webkit.org/b/98612 [ Debug ] editing/selection/4895428-1.html [ Crash Pass ]
-webkit.org/b/98612 [ Debug ] editing/selection/4895428-4.html [ Crash Pass ]
-webkit.org/b/98612 [ Debug ] editing/selection/contains-boundaries.html [ Crash ]
-webkit.org/b/98612 [ Debug ] svg/custom/use-animation-in-fill.html [ Crash Pass ]
-webkit.org/b/98612 [ Debug ] svg/custom/use-multiple-on-nested-disallowed-font.html [ Crash Pass ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1305,8 +1292,6 @@ webkit.org/b/90007 http/tests/security/mixedContent/insecure-audio-video-in-main
 webkit.org/b/74219 fast/regions/positioned-objects-block-static-spanning-regions-rtl.html [ ImageOnlyFailure ]
 
 webkit.org/b/89231 fast/js/global-constructors.html [ Failure ]
-
-webkit.org/b/91009 [ Debug ] fast/xsl/xslt-missing-namespace-in-xslt.xml [ Failure ]
 
 # Skip tests in fast/text/shaping
 webkit.org/b/90951 fast/text/shaping
