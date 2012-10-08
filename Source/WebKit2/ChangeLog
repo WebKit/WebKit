@@ -1,3 +1,9 @@
+2012-10-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Try to fix Windows build by exporting Frame::layerTreeAsText().
+
+        * win/WebKit2.def:
+
 2012-10-08  Rik Cabanier  <cabanier@adobe.com>
 
         Add missing compile flag for compositing
