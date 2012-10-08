@@ -1,3 +1,15 @@
+2012-10-08  Laszlo Gombos  <l.gombos@samsung.com>
+
+        [EFL] Add minimum version information for tool dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=97592
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Capture the minimum version information for the tools that are required
+        to build the EFL port (or more generally WebKit).
+
+        * CMakeLists.txt:
+
 2012-10-08  Dongwoo Joshua Im  <dw.im@samsung.com>
 
         [EFL] Fix build break when WEB_AUDIO is enabled.
