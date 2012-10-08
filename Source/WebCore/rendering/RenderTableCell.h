@@ -80,7 +80,15 @@ public:
         return row()->rowIndex();
     }
 
-    Length styleOrColLogicalWidth() const;
+    Length styleOrColLogicalWidth() const
+    {
+        Length styleWidth = style()->logicalWidth();
+        if (!styleWidth.isAuto())
+            return styleWidth;
+        if (RenderTableCol* firstColumn = table()->colElement(col()))
+            return logicalWidthFromColumns(firstColumn, styleWidth);
+        return styleWidth;
+    }
 
     LayoutUnit logicalHeightForRowSizing() const;
 
@@ -236,6 +244,8 @@ private:
     CollapsedBorderValue computeCollapsedEndBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
     CollapsedBorderValue computeCollapsedBeforeBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
     CollapsedBorderValue computeCollapsedAfterBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
+
+    Length logicalWidthFromColumns(RenderTableCol* firstColForThisCell, Length widthFromStyle) const;
 
     void updateColAndRowSpanFlags();
 

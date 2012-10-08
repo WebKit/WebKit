@@ -198,7 +198,13 @@ public:
     // Return the first column or column-group.
     RenderTableCol* firstColumn() const;
 
-    RenderTableCol* colElement(unsigned col, bool* startEdge = 0, bool* endEdge = 0) const;
+    RenderTableCol* colElement(unsigned col, bool* startEdge = 0, bool* endEdge = 0) const
+    {
+        // The common case is to not have columns, make that case fast.
+        if (!m_hasColElements)
+            return 0;
+        return slowColElement(col, startEdge, endEdge);
+    }
 
     bool needsSectionRecalc() const { return m_needsSectionRecalc; }
     void setNeedsSectionRecalc()
@@ -266,6 +272,8 @@ private:
     virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const OVERRIDE;
     virtual LayoutUnit firstLineBoxBaseline() const OVERRIDE;
     virtual LayoutUnit lastLineBoxBaseline() const OVERRIDE;
+
+    RenderTableCol* slowColElement(unsigned col, bool* startEdge, bool* endEdge) const;
 
     virtual RenderBlock* firstLineBlock() const;
     virtual void updateFirstLetter();

@@ -144,44 +144,36 @@ LayoutUnit RenderTableCell::logicalHeightForRowSizing() const
     return max(styleLogicalHeight, adjustedLogicalHeight);
 }
 
-Length RenderTableCell::styleOrColLogicalWidth() const
+Length RenderTableCell::logicalWidthFromColumns(RenderTableCol* firstColForThisCell, Length widthFromStyle) const
 {
-    Length w = style()->logicalWidth();
-    if (!w.isAuto())
-        return w;
+    ASSERT(firstColForThisCell && firstColForThisCell == table()->colElement(col()));
+    RenderTableCol* tableCol = firstColForThisCell;
 
-    if (RenderTableCol* tableCol = table()->colElement(col())) {
-        unsigned colSpanCount = colSpan();
+    unsigned colSpanCount = colSpan();
+    int colWidthSum = 0;
+    for (unsigned i = 1; i <= colSpanCount; i++) {
+        Length colWidth = tableCol->style()->logicalWidth();
 
-        Length colWidthSum = Length(0, Fixed);
-        for (unsigned i = 1; i <= colSpanCount; i++) {
-            Length colWidth = tableCol->style()->logicalWidth();
-
-            // Percentage value should be returned only for colSpan == 1.
-            // Otherwise we return original width for the cell.
-            if (!colWidth.isFixed()) {
-                if (colSpanCount > 1)
-                    return w;
-                return colWidth;
-            }
-
-            colWidthSum = Length(colWidthSum.value() + colWidth.value(), Fixed);
-
-            tableCol = tableCol->nextColumn();
-            // If no next <col> tag found for the span we just return what we have for now.
-            if (!tableCol)
-                break;
+        // Percentage value should be returned only for colSpan == 1.
+        // Otherwise we return original width for the cell.
+        if (!colWidth.isFixed()) {
+            if (colSpanCount > 1)
+                return widthFromStyle;
+            return colWidth;
         }
 
-        // Column widths specified on <col> apply to the border box of the cell.
-        // Percentages don't need to be handled since they're always treated this way (even when specified on the cells).
-        // See Bugzilla bug 8126 for details.
-        if (colWidthSum.isFixed() && colWidthSum.value() > 0)
-            colWidthSum = Length(max(0.0f, colWidthSum.value() - borderAndPaddingLogicalWidth()), Fixed);
-        return colWidthSum;
+        colWidthSum += colWidth.value();
+        tableCol = tableCol->nextColumn();
+        // If no next <col> tag found for the span we just return what we have for now.
+        if (!tableCol)
+            break;
     }
 
-    return w;
+    // Column widths specified on <col> apply to the border box of the cell, see bug 8126.
+    // FIXME: Why is border/padding ignored in the negative width case?
+    if (colWidthSum > 0)
+        return Length(max(0, colWidthSum - borderAndPaddingLogicalWidth().ceil()), Fixed);
+    return Length(colWidthSum, Fixed);
 }
 
 void RenderTableCell::computePreferredLogicalWidths()

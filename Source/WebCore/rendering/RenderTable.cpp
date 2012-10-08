@@ -754,10 +754,9 @@ RenderTableCol* RenderTable::firstColumn() const
     return 0;
 }
 
-RenderTableCol* RenderTable::colElement(unsigned col, bool* startEdge, bool* endEdge) const
+RenderTableCol* RenderTable::slowColElement(unsigned col, bool* startEdge, bool* endEdge) const
 {
-    if (!m_hasColElements)
-        return 0;
+    ASSERT(m_hasColElements);
 
     unsigned columnCount = 0;
     for (RenderTableCol* columnRenderer = firstColumn(); columnRenderer; columnRenderer = columnRenderer->nextColumn()) {
