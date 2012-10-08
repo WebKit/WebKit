@@ -453,6 +453,9 @@ fast/canvas/webgl/oes-vertex-array-object.html
 # TESTS EXPECTED TO FAIL
 #////////////////////////////////////////////////////////////////////////////////////////
 
+# Missing support for multipart/x-mixed-replace in libsoup.
+webkit.org/b/94515 http/tests/multipart/multipart-html.php [ Failure ]
+
 # These tests require DASHBOARD_SUPPORT but this feature is specific to Mac port.
 Bug(EFL) fast/canvas/canvas-gradient-addStop-error.html
 Bug(EFL) fast/canvas/fill-stroke-clip-reset-path.html
