@@ -135,9 +135,6 @@ static bool isKeypadEvent(NSEvent* event)
         return false;
     }
 
-    if ([event modifierFlags] & NSNumericPadKeyMask)
-        return true;
-
     switch ([event keyCode]) {
     case 71: // Clear
     case 81: // =

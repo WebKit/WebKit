@@ -121,6 +121,11 @@
                         '<(chromium_src_dir)/testing/android/native_test.gyp:native_test_native_code',
                     ],
                 }],
+                ['OS=="mac"', {
+                    'include_dirs': [
+                        'public/mac',
+                    ],
+                }],
             ],
         }                
     ], # targets

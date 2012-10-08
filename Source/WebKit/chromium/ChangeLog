@@ -1,3 +1,23 @@
+2012-10-08  Sailesh Agrawal  <sail@chromium.org>
+
+        Mac Chromium: Ignore system numpad modifier
+        https://bugs.webkit.org/show_bug.cgi?id=97161
+
+        Reviewed by Tony Chang.
+
+        On Mac, arrow key events have numpad modifier set. This is inconsistent with other platforms.
+
+        My fix is to only rely on keycode to decide when to set the numpad modifier.
+
+        This code is not exersided by layout tests so I added a new unit test for this.
+
+        * WebKit.gypi:
+        * WebKitUnitTests.gyp:
+        * src/mac/WebInputEventFactory.mm:
+        (WebKit::isKeypadEvent): Removed check for numpad modifier.
+        * tests/WebInputEventFactoryTestMac.mm: Added.
+        (TEST): Added new test for WebInputEventFactory::keyboardEvent().
+
 2012-10-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.
