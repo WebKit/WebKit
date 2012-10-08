@@ -37,15 +37,15 @@ static const char APP_NAME[] = "EFL MiniBrowser";
     } while (0)
 
 static int verbose = 1;
+static Eina_List *windows = NULL;
+static char *evas_engine_name = NULL;
 
-typedef struct _MiniBrowser {
+typedef struct _Browser_Window {
     Ecore_Evas *ee;
     Evas *evas;
-    Evas_Object *browser;
+    Evas_Object *webview;
     Url_Bar *url_bar;
-} MiniBrowser;
-
-MiniBrowser *browser;
+} Browser_Window;
 
 static const Ecore_Getopt options = {
     "MiniBrowser",
@@ -72,30 +72,69 @@ static const Ecore_Getopt options = {
     }
 };
 
+static Browser_Window *window_create(const char *url, Eina_Bool frame_flattening);
+
+static Browser_Window *browser_window_find(Ecore_Evas *ee)
+{
+    Eina_List *l;
+    void *data;
+
+    if (!ee)
+        return NULL;
+
+    EINA_LIST_FOREACH(windows, l, data) {
+        Browser_Window *window = (Browser_Window *)data;
+        if (window->ee == ee)
+            return window;
+    }
+    return NULL;
+}
+
+static void window_free(Browser_Window *window)
+{
+    url_bar_del(window->url_bar);
+    ecore_evas_free(window->ee);
+    free(window);
+}
+
 static Eina_Bool main_signal_exit(void *data, int ev_type, void *ev)
 {
+    Browser_Window *window;
+    EINA_LIST_FREE(windows, window)
+        window_free(window);
+
     ecore_main_loop_quit();
     return EINA_TRUE;
 }
 
-static void closeWindow(Ecore_Evas *ee)
+static void on_ecore_evas_delete(Ecore_Evas *ee)
 {
-    ecore_main_loop_quit();
+    Browser_Window *window = browser_window_find(ee);
+
+    window_free(window);
+    windows = eina_list_remove(windows, window);
+
+    if (!windows)
+        ecore_main_loop_quit();
 }
 
 static void on_ecore_evas_resize(Ecore_Evas *ee)
 {
+    Browser_Window *window;
     Evas_Object *webview;
     int w, h;
+
+    window = browser_window_find(ee);
+    if (!window)
+        return;
 
     ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
 
     /* Resize URL bar */
-    url_bar_width_set(browser->url_bar, w);
+    url_bar_width_set(window->url_bar, w);
 
-    webview = evas_object_name_find(ecore_evas_get(ee), "browser");
-    evas_object_move(webview, 0, URL_BAR_HEIGHT);
-    evas_object_resize(webview, w, h - URL_BAR_HEIGHT);
+    evas_object_move(window->webview, 0, URL_BAR_HEIGHT);
+    evas_object_resize(window->webview, w, h - URL_BAR_HEIGHT);
 }
 
 static void
@@ -121,11 +160,15 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
         info("Set encoding (F3) pressed. New encoding to %s", encodings[currentEncoding]);
         ewk_view_setting_encoding_custom_set(obj, encodings[currentEncoding]);
     } else if (!strcmp(ev->key, "F5")) {
-            info("Reload (F5) was pressed, reloading.\n");
-            ewk_view_reload(obj);
+        info("Reload (F5) was pressed, reloading.\n");
+        ewk_view_reload(obj);
     } else if (!strcmp(ev->key, "F6")) {
-            info("Stop (F6) was pressed, stop loading.\n");
-            ewk_view_stop(obj);
+        info("Stop (F6) was pressed, stop loading.\n");
+        ewk_view_stop(obj);
+    } else if (!strcmp(ev->key, "F9")) {
+        info("Create new window (F9) was pressed.\n");
+        Browser_Window *window = window_create(DEFAULT_URL, EINA_FALSE);
+        windows = eina_list_append(windows, window);
     }
 }
 
@@ -163,26 +206,26 @@ title_set(Ecore_Evas *ee, const char *title, int progress)
 static void
 on_title_changed(void *user_data, Evas_Object *webview, void *event_info)
 {
-    MiniBrowser *app = (MiniBrowser *)user_data;
+    Browser_Window *window = (Browser_Window *)user_data;
     const char *title = (const char *)event_info;
 
-    title_set(app->ee, title, 100);
+    title_set(window->ee, title, 100);
 }
 
 static void
 on_url_changed(void *user_data, Evas_Object *webview, void *event_info)
 {
-    MiniBrowser *app = (MiniBrowser *)user_data;
-    url_bar_url_set(app->url_bar, ewk_view_uri_get(app->browser));
+    Browser_Window *window = (Browser_Window *)user_data;
+    url_bar_url_set(window->url_bar, ewk_view_uri_get(window->webview));
 }
 
 static void
 on_progress(void *user_data, Evas_Object *webview, void *event_info)
 {
-    MiniBrowser *app = (MiniBrowser *)user_data;
+    Browser_Window *window = (Browser_Window *)user_data;
     double progress = *(double *)event_info;
 
-    title_set(app->ee, ewk_view_title_get(app->browser), progress * 100);
+    title_set(window->ee, ewk_view_title_get(window->webview), progress * 100);
 }
 
 static void
@@ -249,65 +292,76 @@ quit(Eina_Bool success, const char *msg)
     return EXIT_SUCCESS;
 }
 
-static MiniBrowser *browserCreate(const char *url, const char *engine, Eina_Bool frame_flattening)
+static Browser_Window *window_create(const char *url, Eina_Bool frame_flattening)
 {
-    MiniBrowser *app = malloc(sizeof(MiniBrowser));
+    Browser_Window *window = malloc(sizeof(Browser_Window));
+    if (!window) {
+        info("ERROR: could not create browser window.\n");
+        return NULL;
+    }
 
-    app->ee = ecore_evas_new(engine, 0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT, 0);
-    if (!app->ee)
-        return 0;
+    window->ee = ecore_evas_new(evas_engine_name, 0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT, 0);
+    if (!window->ee) {
+        info("ERROR: could not construct ecore-evas.\n");
+        free(window);
+        return NULL;
+    }
 
-    ecore_evas_title_set(app->ee, APP_NAME);
-    ecore_evas_callback_resize_set(app->ee, on_ecore_evas_resize);
-    ecore_evas_borderless_set(app->ee, 0);
-    ecore_evas_show(app->ee);
-    ecore_evas_callback_delete_request_set(app->ee, closeWindow);
+    ecore_evas_title_set(window->ee, APP_NAME);
+    ecore_evas_callback_resize_set(window->ee, on_ecore_evas_resize);
+    ecore_evas_borderless_set(window->ee, 0);
+    ecore_evas_show(window->ee);
+    ecore_evas_callback_delete_request_set(window->ee, on_ecore_evas_delete);
 
-    app->evas = ecore_evas_get(app->ee);
+    window->evas = ecore_evas_get(window->ee);
+    if (!window->evas) {
+        info("ERROR: could not get evas from evas-ecore.\n");
+        free(window);
+        return NULL;
+    }
 
     /* Create webview */
-    app->browser = ewk_view_add(app->evas);
-    ewk_view_theme_set(app->browser, THEME_DIR"/default.edj");
-    ewk_settings_enable_frame_flattening_set(ewk_view_settings_get(app->browser), frame_flattening);
-    evas_object_name_set(app->browser, "browser");
+    window->webview = ewk_view_add(window->evas);
+    ewk_view_theme_set(window->webview, THEME_DIR"/default.edj");
+    ewk_settings_enable_frame_flattening_set(ewk_view_settings_get(window->webview), frame_flattening);
 
-    Ewk_Settings *settings = ewk_view_settings_get(app->browser);
+    Ewk_Settings *settings = ewk_view_settings_get(window->webview);
     ewk_settings_file_access_from_file_urls_allowed_set(settings, EINA_TRUE);
 
-    evas_object_smart_callback_add(app->browser, "download,failed", on_download_failed, app);
-    evas_object_smart_callback_add(app->browser, "download,finished", on_download_finished, app);
-    evas_object_smart_callback_add(app->browser, "download,request", on_download_request, app);
-    evas_object_smart_callback_add(app->browser, "load,error", on_error, app);
-    evas_object_smart_callback_add(app->browser, "load,progress", on_progress, app);
-    evas_object_smart_callback_add(app->browser, "title,changed", on_title_changed, app);
-    evas_object_smart_callback_add(app->browser, "uri,changed", on_url_changed, app);
+    evas_object_smart_callback_add(window->webview, "download,failed", on_download_failed, window);
+    evas_object_smart_callback_add(window->webview, "download,finished", on_download_finished, window);
+    evas_object_smart_callback_add(window->webview, "download,request", on_download_request, window);
+    evas_object_smart_callback_add(window->webview, "load,error", on_error, window);
+    evas_object_smart_callback_add(window->webview, "load,progress", on_progress, window);
+    evas_object_smart_callback_add(window->webview, "title,changed", on_title_changed, window);
+    evas_object_smart_callback_add(window->webview, "uri,changed", on_url_changed, window);
 
-    evas_object_event_callback_add(app->browser, EVAS_CALLBACK_KEY_DOWN, on_key_down, app);
-    evas_object_event_callback_add(app->browser, EVAS_CALLBACK_MOUSE_DOWN, on_mouse_down, app);
+    evas_object_event_callback_add(window->webview, EVAS_CALLBACK_KEY_DOWN, on_key_down, window);
+    evas_object_event_callback_add(window->webview, EVAS_CALLBACK_MOUSE_DOWN, on_mouse_down, window);
 
-    evas_object_size_hint_weight_set(app->browser, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_move(app->browser, 0, URL_BAR_HEIGHT);
-    evas_object_resize(app->browser, DEFAULT_WIDTH, DEFAULT_HEIGHT - URL_BAR_HEIGHT);
-    evas_object_show(app->browser);
-    evas_object_focus_set(app->browser, EINA_TRUE);
+    evas_object_size_hint_weight_set(window->webview, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_move(window->webview, 0, URL_BAR_HEIGHT);
+    evas_object_resize(window->webview, DEFAULT_WIDTH, DEFAULT_HEIGHT - URL_BAR_HEIGHT);
+    evas_object_show(window->webview);
+    evas_object_focus_set(window->webview, EINA_TRUE);
 
-    app->url_bar = url_bar_add(app->browser, DEFAULT_WIDTH);
+    window->url_bar = url_bar_add(window->webview, DEFAULT_WIDTH);
 
-    ewk_view_uri_set(app->browser, url);
+    ewk_view_uri_set(window->webview, url);
 
-    return app;
+    return window;
 }
 
 int main(int argc, char *argv[])
 {
     int args = 1;
-    char *engine = NULL;
     unsigned char quitOption = 0;
+    Browser_Window *window;
 
     Eina_Bool frame_flattening = EINA_FALSE;
 
     Ecore_Getopt_Value values[] = {
-        ECORE_GETOPT_VALUE_STR(engine),
+        ECORE_GETOPT_VALUE_STR(evas_engine_name),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
         ECORE_GETOPT_VALUE_BOOL(frame_flattening),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
@@ -330,22 +384,21 @@ int main(int argc, char *argv[])
 
     if (args < argc) {
         char *url = url_from_user_input(argv[args]);
-        browser = browserCreate(url, engine, frame_flattening);
+        window = window_create(url, frame_flattening);
         free(url);
     } else
-        browser = browserCreate(DEFAULT_URL, engine, frame_flattening);
+        window = window_create(DEFAULT_URL, frame_flattening);
 
-    if (!browser)
-        return quit(EINA_FALSE, "ERROR: could not create browser.\n");
+    if (!window)
+        return quit(EINA_FALSE, "ERROR: could not create browser window.\n");
+
+    windows = eina_list_append(windows, window);
 
     Ecore_Event_Handler *handle = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, main_signal_exit, 0);
 
     ecore_main_loop_begin();
 
-    url_bar_del(browser->url_bar);
     ecore_event_handler_del(handle);
-    ecore_evas_free(browser->ee);
-    free(browser);
 
     return quit(EINA_TRUE, NULL);
 }

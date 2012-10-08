@@ -1,3 +1,26 @@
+2012-10-08  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Support multiple window creation for MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=97884
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implement the multiple window creation for MiniBrowser and bind the 'F9' key for opening a new window.
+        Also, refactored MiniBrowser codes according to EFL coding style.
+
+        * MiniBrowser/efl/main.c:
+        (_Browser_Window):
+        (window_free):
+        (main_signal_exit):
+        (on_ecore_evas_delete):
+        (on_ecore_evas_resize):
+        (on_key_down):
+        (on_title_changed):
+        (on_url_changed):
+        (on_progress):
+        (window_create):
+        (main):
+
 2012-10-07  Seokju Kwon  <seokju.kwon@samsung.com>
 
         [EFL] Add Web Inspector to EWebLauncher
