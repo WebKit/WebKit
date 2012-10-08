@@ -870,8 +870,9 @@ webkit.org/b/47744 mathml/presentation/over.xhtml
 Bug(EFL) svg/custom
 Bug(EFL) svg/dom/altGlyph-dom.xhtml
 Bug(EFL) svg/text
-Bug(EFL) svg/W3C-SVG-1.1
 Bug(EFL) svg/zoom/page/zoom-zoom-coords.xhtml
+
+webkit.org/b/98644 svg/W3C-SVG-1.1/pservers-grad-13-b.svg [ Skip ]
 
 # EFL's TestRunner does not implement setMediaType
 Bug(EFL) fast/media/print-restores-previous-mediatype.html [ Failure ]
