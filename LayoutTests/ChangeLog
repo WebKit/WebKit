@@ -1,3 +1,239 @@
+2012-10-08  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Rebaselines for Chromium.
+
+        Rebaseline after r130412 which affected image scaling pixel tests.
+
+        * platform/chromium-linux-x86/fast/backgrounds/repeat/mask-negative-offset-repeat-expected.png: Added.
+        * platform/chromium-linux-x86/fast/backgrounds/size/backgroundSize15-expected.png: Added.
+        * platform/chromium-linux-x86/fast/backgrounds/size/contain-and-cover-expected.png: Added.
+        * platform/chromium-linux-x86/fast/backgrounds/size/contain-and-cover-zoomed-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/border-image-scale-transform-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/border-image-scaled-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/border-image-slice-constrained-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/inline-mask-overlay-image-outset-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/inline-mask-overlay-image-outset-vertical-rl-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/scaled-border-image-expected.png: Added.
+        * platform/chromium-linux-x86/fast/repaint/background-misaligned-expected.png:
+        * platform/chromium-linux-x86/scrollbars/overflow-scrollbar-combinations-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-no-markup-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1-SE/filters-image-05-f-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.png: Added.
+        * platform/chromium-linux-x86/svg/as-border-image/svg-as-border-image-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/clip-mask-negative-scale-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/image-small-width-height-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/pointer-events-image-css-transform-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/pointer-events-image-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png: Added.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-background-images-expected.png: Added.
+        * platform/chromium-linux/fast/backgrounds/repeat/mask-negative-offset-repeat-expected.png:
+        * platform/chromium-linux/fast/backgrounds/size/backgroundSize15-expected.png:
+        * platform/chromium-linux/fast/backgrounds/size/contain-and-cover-expected.png:
+        * platform/chromium-linux/fast/backgrounds/size/contain-and-cover-zoomed-expected.png:
+        * platform/chromium-linux/fast/borders/border-image-scale-transform-expected.png:
+        * platform/chromium-linux/fast/borders/border-image-scaled-expected.png:
+        * platform/chromium-linux/fast/borders/border-image-slice-constrained-expected.png: Added.
+        * platform/chromium-linux/fast/borders/inline-mask-overlay-image-outset-expected.png:
+        * platform/chromium-linux/fast/borders/inline-mask-overlay-image-outset-vertical-rl-expected.png:
+        * platform/chromium-linux/fast/borders/scaled-border-image-expected.png:
+        * platform/chromium-linux/fast/repaint/background-misaligned-expected.png:
+        * platform/chromium-linux/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-no-markup-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/filters-image-05-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.png:
+        * platform/chromium-linux/svg/as-border-image/svg-as-border-image-expected.png:
+        * platform/chromium-linux/svg/custom/clip-mask-negative-scale-expected.png:
+        * platform/chromium-linux/svg/custom/image-small-width-height-expected.png:
+        * platform/chromium-linux/svg/custom/pointer-events-image-css-transform-expected.png:
+        * platform/chromium-linux/svg/custom/pointer-events-image-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-background-images-expected.png:
+        * platform/chromium-mac-snowleopard/fast/backgrounds/repeat/mask-negative-offset-repeat-expected.png:
+        * platform/chromium-mac-snowleopard/fast/backgrounds/size/backgroundSize15-expected.png:
+        * platform/chromium-mac-snowleopard/fast/backgrounds/size/contain-and-cover-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/backgrounds/size/contain-and-cover-zoomed-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/borders/border-image-scale-transform-expected.png:
+        * platform/chromium-mac-snowleopard/fast/borders/border-image-scaled-expected.png:
+        * platform/chromium-mac-snowleopard/fast/borders/border-image-slice-constrained-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/borders/inline-mask-overlay-image-outset-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/borders/inline-mask-overlay-image-outset-vertical-rl-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/borders/scaled-border-image-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/background-misaligned-expected.png:
+        * platform/chromium-mac-snowleopard/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-no-markup-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-SVG-1.1-SE/filters-image-05-f-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.png:
+        * platform/chromium-mac-snowleopard/svg/as-border-image/svg-as-border-image-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/custom/clip-mask-negative-scale-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/image-small-width-height-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/pointer-events-image-css-transform-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/pointer-events-image-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-background-images-expected.png: Added.
+        * platform/chromium-mac/fast/backgrounds/repeat/mask-negative-offset-repeat-expected.png:
+        * platform/chromium-mac/fast/backgrounds/size/backgroundSize15-expected.png:
+        * platform/chromium-mac/fast/backgrounds/size/contain-and-cover-expected.png:
+        * platform/chromium-mac/fast/backgrounds/size/contain-and-cover-zoomed-expected.png:
+        * platform/chromium-mac/fast/borders/border-image-scale-transform-expected.png:
+        * platform/chromium-mac/fast/borders/border-image-scaled-expected.png:
+        * platform/chromium-mac/fast/borders/border-image-slice-constrained-expected.png:
+        * platform/chromium-mac/fast/borders/inline-mask-overlay-image-outset-expected.png:
+        * platform/chromium-mac/fast/borders/inline-mask-overlay-image-outset-vertical-rl-expected.png:
+        * platform/chromium-mac/fast/borders/scaled-border-image-expected.png:
+        * platform/chromium-mac/fast/repaint/background-misaligned-expected.png:
+        * platform/chromium-mac/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-no-markup-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/filters-image-05-f-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.png:
+        * platform/chromium-mac/svg/as-border-image/svg-as-border-image-expected.png:
+        * platform/chromium-mac/svg/custom/clip-mask-negative-scale-expected.png:
+        * platform/chromium-mac/svg/custom/image-small-width-height-expected.png:
+        * platform/chromium-mac/svg/custom/pointer-events-image-css-transform-expected.png:
+        * platform/chromium-mac/svg/custom/pointer-events-image-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-background-images-expected.png:
+        * platform/chromium-win-xp/fast/backgrounds/repeat/mask-negative-offset-repeat-expected.png: Added.
+        * platform/chromium-win-xp/fast/backgrounds/size/backgroundSize15-expected.png: Added.
+        * platform/chromium-win-xp/fast/backgrounds/size/contain-and-cover-expected.png: Added.
+        * platform/chromium-win-xp/fast/backgrounds/size/contain-and-cover-zoomed-expected.png: Added.
+        * platform/chromium-win-xp/fast/borders/border-image-scale-transform-expected.png: Added.
+        * platform/chromium-win-xp/fast/borders/border-image-scaled-expected.png: Added.
+        * platform/chromium-win-xp/fast/borders/border-image-slice-constrained-expected.png: Added.
+        * platform/chromium-win-xp/fast/borders/inline-mask-overlay-image-outset-expected.png: Added.
+        * platform/chromium-win-xp/fast/borders/inline-mask-overlay-image-outset-vertical-rl-expected.png: Added.
+        * platform/chromium-win-xp/fast/borders/scaled-border-image-expected.png: Added.
+        * platform/chromium-win-xp/fast/repaint/background-misaligned-expected.png:
+        * platform/chromium-win-xp/scrollbars/overflow-scrollbar-combinations-expected.png: Added.
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-no-markup-expected.png:
+        * platform/chromium-win-xp/svg/W3C-SVG-1.1-SE/filters-image-05-f-expected.png: Added.
+        * platform/chromium-win-xp/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.png: Added.
+        * platform/chromium-win-xp/svg/as-border-image/svg-as-border-image-expected.png: Added.
+        * platform/chromium-win-xp/svg/custom/clip-mask-negative-scale-expected.png: Added.
+        * platform/chromium-win-xp/svg/custom/image-small-width-height-expected.png: Added.
+        * platform/chromium-win-xp/svg/custom/pointer-events-image-css-transform-expected.png: Added.
+        * platform/chromium-win-xp/svg/custom/pointer-events-image-expected.png: Added.
+        * platform/chromium-win-xp/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png: Added.
+        * platform/chromium-win-xp/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png: Added.
+        * platform/chromium-win-xp/svg/zoom/page/zoom-background-images-expected.png: Added.
+        * platform/chromium-win/fast/backgrounds/repeat/mask-negative-offset-repeat-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize15-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/contain-and-cover-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/contain-and-cover-zoomed-expected.png:
+        * platform/chromium-win/fast/borders/border-image-scale-transform-expected.png:
+        * platform/chromium-win/fast/borders/border-image-scaled-expected.png:
+        * platform/chromium-win/fast/borders/border-image-slice-constrained-expected.png:
+        * platform/chromium-win/fast/borders/inline-mask-overlay-image-outset-expected.png:
+        * platform/chromium-win/fast/borders/inline-mask-overlay-image-outset-vertical-rl-expected.png:
+        * platform/chromium-win/fast/borders/scaled-border-image-expected.png:
+        * platform/chromium-win/fast/repaint/background-misaligned-expected.png:
+        * platform/chromium-win/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-no-markup-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/filters-image-05-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.png:
+        * platform/chromium-win/svg/as-border-image/svg-as-border-image-expected.png:
+        * platform/chromium-win/svg/custom/clip-mask-negative-scale-expected.png:
+        * platform/chromium-win/svg/custom/image-small-width-height-expected.png:
+        * platform/chromium-win/svg/custom/pointer-events-image-css-transform-expected.png:
+        * platform/chromium-win/svg/custom/pointer-events-image-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-background-images-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-10-08  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed Chromium gardening.
