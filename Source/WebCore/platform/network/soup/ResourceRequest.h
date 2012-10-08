@@ -74,6 +74,8 @@ namespace WebCore {
         SoupMessageFlags soupMessageFlags() const { return m_soupFlags; }
         void setSoupMessageFlags(SoupMessageFlags soupFlags) { m_soupFlags = soupFlags; }
 
+        String urlStringForSoup() const;
+
     private:
         friend class ResourceRequestBase;
 

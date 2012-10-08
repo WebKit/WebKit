@@ -124,4 +124,11 @@ unsigned initializeMaximumHTTPConnectionCountPerHost()
     return 10000;
 }
 
+String ResourceRequest::urlStringForSoup() const
+{
+    KURL url = m_url;
+    url.removeFragmentIdentifier();
+    return url.string();
+}
+
 }

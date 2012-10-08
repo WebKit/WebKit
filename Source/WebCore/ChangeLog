@@ -1,3 +1,37 @@
+2012-10-06  Martin Robinson  <mrobinson@igalia.com>
+
+        [Soup] Simplify the way that requests are started
+        https://bugs.webkit.org/show_bug.cgi?id=98532
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Simplify the creation of the libsoup request and message when kicking off
+        requests, by elminating a bit of duplicate code.
+
+        No new tests. This should not change any behavior.
+
+        * platform/network/ResourceHandle.h:
+        (ResourceHandle):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore):
+        (WebCore::ResourceHandleInternal::soupSession): Ensure the session
+        is initialized when passing it to the caller.
+        (WebCore::createSoupMessageForHandleAndRequest): Added this helper which
+        takes care of creating the SoupMessage for HTTP/HTTPS requests.
+        (WebCore::createSoupRequestAndMessageForHandle): Collapsed the HTTP and
+        non-HTTP request creation into this helper.
+        (WebCore::ResourceHandle::start): Call the new helper now and then sendPendingRequest.
+        (WebCore::ResourceHandle::sendPendingRequest): Instead of having special
+        helpers to create and send the request, duplicating the logic for sending it
+        across the file, add this method which can be used in both cases.
+        (WebCore::waitingToSendRequest): Reworked the hasBeenSent method to answer
+        the question of whether or not the request is ready to be sent, but is unsent.
+        (WebCore::ResourceHandle::platformSetDefersLoading): Use the new helper.
+        * platform/network/soup/ResourceRequest.h:
+        (ResourceRequest): Added a new method for getting the URL string for soup.
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::urlStringForSoup): Added.
+
 2012-10-08  Eric Seidel  <eric@webkit.org>
 
         Make no-column table-layout cases a little faster with inlining

@@ -168,6 +168,7 @@ public:
 #endif
 
 #if USE(SOUP)
+    void sendPendingRequest();
     static SoupSession* defaultSession();
     static uint64_t getSoupRequestInitiaingPageID(SoupRequest*);
     static void setHostAllowsAnyHTTPSCertificate(const String&);
