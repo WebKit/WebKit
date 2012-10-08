@@ -1534,32 +1534,32 @@ webkit.org/b/98569 svg/custom/recursive-gradient.svg [ Failure Pass ]
 # ============================================================================= #
 # Failing CSS Tests
 # ============================================================================= #
-css2.1/t051201-c23-first-line-00-b.html
-css2.1/t1004-c43-rpl-ibx-00-d-ag.html
-css2.1/t100801-c544-valgn-01-d-ag.html
-css2.1/t100801-c548-ln-ht-02-b-ag.html
-css2.1/t1008-c44-ln-box-02-d-ag.html
-css2.1/t1202-counters-04-b.html
-css2.1/t1601-c547-indent-00-b-a.html
-css2.1/t1602-c43-center-00-d-ag.html
-css2.1/t1604-c542-letter-sp-00-b-a.html
-css2.1/t1604-c542-letter-sp-01-b-a.html
-css2.1/t1605-c545-txttrans-00-b-ag.html
-css2.1/t140201-c534-bgreps-00-c-ag.html
-css2.1/t140201-c534-bgreps-01-c-ag.html
-css2.1/t140201-c534-bgreps-02-c-ag.html
-css2.1/t140201-c534-bgreps-03-c-ag.html
-css2.1/t140201-c534-bgreps-04-c-ag.html
-css2.1/t140201-c534-bgreps-05-c-ag.html
+css2.1/t051201-c23-first-line-00-b.html [ Failure ]
+css2.1/t1004-c43-rpl-ibx-00-d-ag.html [ Failure ]
+css2.1/t100801-c544-valgn-01-d-ag.html [ Failure ]
+css2.1/t100801-c548-ln-ht-02-b-ag.html [ Failure ]
+css2.1/t1008-c44-ln-box-02-d-ag.html [ Failure ]
+css2.1/t1202-counters-04-b.html [ Failure ]
+css2.1/t1601-c547-indent-00-b-a.html [ Failure ]
+css2.1/t1602-c43-center-00-d-ag.html [ Failure ]
+css2.1/t1604-c542-letter-sp-00-b-a.html [ Failure ]
+css2.1/t1604-c542-letter-sp-01-b-a.html [ Failure ]
+css2.1/t1605-c545-txttrans-00-b-ag.html [ Failure ]
+css2.1/t140201-c534-bgreps-00-c-ag.html [ Failure ]
+css2.1/t140201-c534-bgreps-01-c-ag.html [ Failure ]
+css2.1/t140201-c534-bgreps-02-c-ag.html [ Failure ]
+css2.1/t140201-c534-bgreps-03-c-ag.html [ Failure ]
+css2.1/t140201-c534-bgreps-04-c-ag.html [ Failure ]
+css2.1/t140201-c534-bgreps-05-c-ag.html [ Failure ]
 
-# [Qt] css2.1/20110323/inline-non-replaced-height-* tests fail
+# [Qt] css2.1/20110323/inline-non-replaced-height-* tests are missing baselines
 # https://bugs.webkit.org/show_bug.cgi?id=62710
-css2.1/20110323/inline-non-replaced-height-002.htm
-css2.1/20110323/inline-non-replaced-height-003.htm
+css2.1/20110323/inline-non-replaced-height-002.htm [ Missing ]
+css2.1/20110323/inline-non-replaced-height-003.htm [ Missing ]
 
 # [Qt] css2.1/t090204-display-change-01-b-ao.html fails after r94084
 # https://bugs.webkit.org/show_bug.cgi?id=67286
-css2.1/t090204-display-change-01-b-ao.html
+css2.1/t090204-display-change-01-b-ao.html [ Failure ]
 
 # new tests introduced in r94775, but fails on Qt because of missing test font
 css3/unicode-bidi-isolate-aharon.html
@@ -1594,9 +1594,9 @@ fast/css/square-button-appearance.html
 fast/css/absolute-inline-alignment.html
 fast/css/absolute-inline-alignment-2.html
 
-# [Qt] css2.1/t100801-c548-ln-ht-01-b-ag.html fails
+# [Qt] css2.1/t100801-c548-ln-ht-01-b-ag.html is missing baseline
 # https://bugs.webkit.org/show_bug.cgi?id=92731
-css2.1/t100801-c548-ln-ht-01-b-ag.html
+css2.1/t100801-c548-ln-ht-01-b-ag.html [ Missing ]
 
 # ============================================================================= #
 # failing fast tests
@@ -2305,11 +2305,11 @@ fast/css/text-overflow-ellipsis-text-align-center.html
 fast/css/vertical-text-overflow-ellipsis-text-align-justify.html
 fast/css/text-overflow-ellipsis-text-align-justify.html
 fast/css/vertical-text-overflow-ellipsis-text-align-left.html
-css2.1/20110323/table-height-algorithm-024.htm
-css2.1/20110323/table-height-algorithm-023.htm
-css2.1/20110323/inline-table-002a.htm
-css2.1/20110323/inline-table-001.htm
-css2.1/20110323/inline-table-003.htm
+css2.1/20110323/table-height-algorithm-024.htm [ Missing ]
+css2.1/20110323/table-height-algorithm-023.htm [ Missing ]
+css2.1/20110323/inline-table-002a.htm [ Missing ]
+css2.1/20110323/inline-table-001.htm [ Missing ]
+css2.1/20110323/inline-table-003.htm [ Missing ]
 editing/inserting/multiple-lines-selected.html
 
 fast/table/table-row-outline-paint.html
@@ -2325,10 +2325,10 @@ fast/forms/textarea-appearance-wrap.html
 
 # [Qt] 4 css2.1/t1202-counter tests fail with Qt >= 4.7.1
 # https://bugs.webkit.org/show_bug.cgi?id=50146
-css2.1/t1202-counter-09-b.html
-css2.1/t1202-counter-15-b.html
-css2.1/t1202-counters-09-b.html
-css2.1/t1202-counters-15-b.html
+css2.1/t1202-counter-09-b.html [ Failure ]
+css2.1/t1202-counter-15-b.html [ Failure ]
+css2.1/t1202-counters-09-b.html [ Failure ]
+css2.1/t1202-counters-15-b.html [ Failure ]
 
 # [Qt] 4 fast/text tests fail with Qt >= 4.7.1 (fail with Qt 5 too)
 # https://bugs.webkit.org/show_bug.cgi?id=50147
@@ -2670,10 +2670,10 @@ fast/block/float/floats-wrap-inside-inline-001.htm
 fast/block/float/floats-wrap-inside-inline-002.htm
 fast/block/float/floats-wrap-inside-inline-003.htm
 fast/multicol/table-row-height-increase.html
-css2.1/20110323/vertical-align-boxes-001.htm
+css2.1/20110323/vertical-align-boxes-001.htm [ Failure Pass ]
 svg/as-image/svg-intrinsic-size-rectangular-vertical.html
 fast/css/word-spacing-characters.html
-css2.1/20110323/c541-word-sp-001.htm
+css2.1/20110323/c541-word-sp-001.htm [ Failure Pass ]
 
 
 # [Qt] css3/filters/huge-region-composited.html makes css3/filters/huge-region.html crash
