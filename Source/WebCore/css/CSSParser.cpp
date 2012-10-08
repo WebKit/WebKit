@@ -1600,63 +1600,6 @@ inline PassRefPtr<CSSPrimitiveValue> CSSParser::createPrimitiveStringValue(CSSPa
     return cssValuePool().createValue(value->string, CSSPrimitiveValue::CSS_STRING);
 }
 
-static int unitFromString(CSSParserValue* value)
-{
-    if (value->unit != CSSPrimitiveValue::CSS_IDENT || value->id)
-        return 0;
-
-    if (equal(value->string, "em"))
-        return CSSPrimitiveValue::CSS_EMS;
-    if (equal(value->string, "rem"))
-        return CSSPrimitiveValue::CSS_REMS;
-    if (equal(value->string, "ex"))
-        return CSSPrimitiveValue::CSS_EXS;
-    if (equal(value->string, "px"))
-        return CSSPrimitiveValue::CSS_PX;
-    if (equal(value->string, "cm"))
-        return CSSPrimitiveValue::CSS_CM;
-    if (equal(value->string, "mm"))
-        return CSSPrimitiveValue::CSS_MM;
-    if (equal(value->string, "in"))
-        return CSSPrimitiveValue::CSS_IN;
-    if (equal(value->string, "pt"))
-        return CSSPrimitiveValue::CSS_PT;
-    if (equal(value->string, "pc"))
-        return CSSPrimitiveValue::CSS_PC;
-    if (equal(value->string, "deg"))
-        return CSSPrimitiveValue::CSS_DEG;
-    if (equal(value->string, "rad"))
-        return CSSPrimitiveValue::CSS_RAD;
-    if (equal(value->string, "grad"))
-        return CSSPrimitiveValue::CSS_GRAD;
-    if (equal(value->string, "turn"))
-        return CSSPrimitiveValue::CSS_TURN;
-    if (equal(value->string, "ms"))
-        return CSSPrimitiveValue::CSS_MS;
-    if (equal(value->string, "s"))
-        return CSSPrimitiveValue::CSS_S;
-    if (equal(value->string, "Hz"))
-        return CSSPrimitiveValue::CSS_HZ;
-    if (equal(value->string, "kHz"))
-        return CSSPrimitiveValue::CSS_KHZ;
-    if (equal(value->string, "vw"))
-        return CSSPrimitiveValue::CSS_VW;
-    if (equal(value->string, "vh"))
-        return CSSPrimitiveValue::CSS_VH;
-    if (equal(value->string, "vmin"))
-        return CSSPrimitiveValue::CSS_VMIN;
-#if ENABLE(CSS_IMAGE_RESOLUTION)
-    if (equal(value->string, "dppx"))
-        return CSSPrimitiveValue::CSS_DPPX;
-    if (equal(value->string, "dpi"))
-        return CSSPrimitiveValue::CSS_DPI;
-    if (equal(value->string, "dpcm"))
-        return CSSPrimitiveValue::CSS_DPCM;
-#endif
-
-    return 0;
-}
-
 static inline bool isComma(CSSParserValue* value)
 { 
     return value && value->unit == CSSParserValue::Operator && value->iValue == ','; 
@@ -1677,37 +1620,6 @@ bool CSSParser::validHeight(CSSParserValue* value)
     if (id == CSSValueIntrinsic || id == CSSValueMinIntrinsic)
         return true;
     return !id && validUnit(value, FLength | FPercent | FNonNeg);
-}
-
-void CSSParser::checkForOrphanedUnits()
-{
-    if (inStrictMode() || inShorthand())
-        return;
-
-    // The purpose of this code is to implement the WinIE quirk that allows unit types to be separated from their numeric values
-    // by whitespace, so e.g., width: 20 px instead of width:20px.  This is invalid CSS, so we don't do this in strict mode.
-    CSSParserValue* numericVal = 0;
-    unsigned size = m_valueList->size();
-    for (unsigned i = 0; i < size; i++) {
-        CSSParserValue* value = m_valueList->valueAt(i);
-
-        if (numericVal) {
-            // Change the unit type of the numeric val to match.
-            int unit = unitFromString(value);
-            if (unit) {
-                numericVal->unit = unit;
-                numericVal = 0;
-
-                // Now delete the bogus unit value.
-                m_valueList->deleteValueAt(i);
-                i--; // We're safe even though |i| is unsigned, since we only hit this code if we had a previous numeric value (so |i| is always > 0 here).
-                size--;
-                continue;
-            }
-        }
-
-        numericVal = (value->unit == CSSPrimitiveValue::CSS_NUMBER) ? value : 0;
-    }
 }
 
 inline PassRefPtr<CSSPrimitiveValue> CSSParser::parseValidPrimitive(int identifier, CSSParserValue* value)
@@ -1753,10 +1665,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     ASSERT(!m_parsedCalculation);
     
     int id = value->id;
-
-    // In quirks mode, we will look for units that have been incorrectly separated from the number they belong to
-    // by a space.  We go ahead and associate the unit with the number even though it is invalid CSS.
-    checkForOrphanedUnits();
 
     int num = inShorthand() ? 1 : m_valueList->size();
 

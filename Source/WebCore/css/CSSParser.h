@@ -452,8 +452,6 @@ private:
     bool validWidth(CSSParserValue*);
     bool validHeight(CSSParserValue*);
 
-    void checkForOrphanedUnits();
-
     void deleteFontFaceOnlyValues();
 
     bool isGeneratedImageValue(CSSParserValue*) const;
