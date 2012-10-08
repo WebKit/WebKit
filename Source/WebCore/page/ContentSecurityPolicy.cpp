@@ -1306,7 +1306,8 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header, HeaderType ty
 {
     if (m_scriptExecutionContext->isDocument()) {
         Document* document = static_cast<Document*>(m_scriptExecutionContext);
-        FeatureObserver::observe(document->domWindow(), FeatureObserver::PrefixedContentSecurityPolicy);
+        if (document->domWindow())
+            FeatureObserver::observe(document->domWindow(), FeatureObserver::PrefixedContentSecurityPolicy);
     }
 
     // RFC2616, section 4.2 specifies that headers appearing multiple times can
