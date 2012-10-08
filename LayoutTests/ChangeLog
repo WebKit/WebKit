@@ -1,3 +1,62 @@
+2012-10-08  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed fast/repaint Chromium rebaselining.
+
+        Rebaselined those tests on Chromium Mac. The differences fall in 3 buckets:
+        - the background has an alpha off-by-one (crbug.com/23473)
+        - the repaint rectangles are united (the Mac baselines don't do the union).
+        - On Lion, the font used is different.
+
+        * platform/chromium/TestExpectations:
+        Removed the rebaselined tests' entries.
+
+        * platform/chromium-mac-snowleopard/fast/repaint/bugzilla-5699-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/control-clip-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/create-layer-repaint-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/layout-state-only-positioned-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/line-in-scrolled-clipped-block-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/line-overflow-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/list-marker-2-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/make-children-non-inline-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/outline-child-repaint-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/outline-repaint-glitch-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/overflow-scroll-delete-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/reflection-redraw-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/rel-positioned-inline-with-overflow-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/selection-after-delete-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/selection-gap-overflow-scroll-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/stacked-diacritics-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/static-to-positioned-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/table-cell-move-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/background-generated-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/bugzilla-5699-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/content-into-overflow-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/control-clip-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/control-clip-expected.txt:
+        * platform/chromium-mac/fast/repaint/create-layer-repaint-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/intermediate-layout-position-clip-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/intermediate-layout-position-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/layout-state-only-positioned-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/line-in-scrolled-clipped-block-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/line-overflow-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/list-marker-2-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/make-children-non-inline-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/outline-child-repaint-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/outline-inset-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/outline-repaint-glitch-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/overflow-into-content-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/overflow-scroll-delete-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/reflection-redraw-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/rel-positioned-inline-with-overflow-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/selection-after-delete-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/selection-gap-overflow-scroll-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/stacked-diacritics-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/static-to-positioned-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/table-cell-move-expected.png: Added.
+        * platform/chromium-win/fast/repaint/box-shadow-inset-repaint-expected.png: Added.
+        * platform/mac-lion/fast/repaint: Removed.
+        * platform/mac-lion/fast/repaint/control-clip-expected.txt: Removed.
+
 2012-10-08  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Add baselines to passing ruby DOM tests.

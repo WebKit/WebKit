@@ -22,7 +22,7 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (1,8) size 198x14
           RenderText at (0,0) size 47x13
             text run at (0,0) width 47: "SUCCESS"
-      RenderButton {BUTTON} at (0,98) size 200x30 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+      RenderButton {BUTTON} at (0,98) size 200x30 [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
         RenderBlock (anonymous) at (8,8) size 184x13
           RenderText {#text} at (68,0) size 48x13
             text run at (68,0) width 48: "SUCCESS"
