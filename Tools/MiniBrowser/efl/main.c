@@ -220,6 +220,15 @@ on_url_changed(void *user_data, Evas_Object *webview, void *event_info)
 }
 
 static void
+on_new_window(void *user_data, Evas_Object *webview, void *event_info)
+{
+    Evas_Object **new_view = (Evas_Object **)event_info;
+    Browser_Window *window = window_create(NULL, EINA_FALSE);
+    *new_view = window->webview;
+    windows = eina_list_append(windows, window);
+}
+
+static void
 on_progress(void *user_data, Evas_Object *webview, void *event_info)
 {
     Browser_Window *window = (Browser_Window *)user_data;
@@ -328,6 +337,7 @@ static Browser_Window *window_create(const char *url, Eina_Bool frame_flattening
     Ewk_Settings *settings = ewk_view_settings_get(window->webview);
     ewk_settings_file_access_from_file_urls_allowed_set(settings, EINA_TRUE);
 
+    evas_object_smart_callback_add(window->webview, "create,window", on_new_window, window);
     evas_object_smart_callback_add(window->webview, "download,failed", on_download_failed, window);
     evas_object_smart_callback_add(window->webview, "download,finished", on_download_finished, window);
     evas_object_smart_callback_add(window->webview, "download,request", on_download_request, window);
@@ -347,7 +357,8 @@ static Browser_Window *window_create(const char *url, Eina_Bool frame_flattening
 
     window->url_bar = url_bar_add(window->webview, DEFAULT_WIDTH);
 
-    ewk_view_url_set(window->webview, url);
+    if (url)
+        ewk_view_url_set(window->webview, url);
 
     return window;
 }
