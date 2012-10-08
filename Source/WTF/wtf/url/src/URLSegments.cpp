@@ -110,26 +110,26 @@ int URLSegments::charactersBefore(ComponentType type, DelimiterInclusion include
     return current;
 }
 
-void URLSegments::moveComponentsAfter(ComponentType type, int offset)
+void URLSegments::moveFromComponentBy(ComponentType type, int offset)
 {
     switch (type) {
     // Fall through.
     case Scheme:
-        username.move(offset);
+        scheme.moveBy(offset);
     case Username:
-        password.move(offset);
+        username.moveBy(offset);
     case Password:
-        host.move(offset);
+        password.moveBy(offset);
     case Host:
-        port.move(offset);
+        host.moveBy(offset);
     case Port:
-        path.move(offset);
+        port.moveBy(offset);
     case Path:
-        query.move(offset);
+        path.moveBy(offset);
     case Query:
-        fragment.move(offset);
+        query.moveBy(offset);
     case Fragment:
-        break;
+        fragment.moveBy(offset);
     }
 }
 

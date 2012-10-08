@@ -124,7 +124,7 @@ bool doScheme(const CharacterType* spec, const URLComponent& scheme, URLBuffer<c
     }
 
     // The output scheme starts from the current position.
-    outputScheme.setBegin(outputScheme.begin() + output.length());
+    outputScheme.moveBy(output.length());
 
     // Danger: it's important that this code does not strip any characters: it
     // only emits the canonical version (be it valid or escaped) of each of

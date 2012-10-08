@@ -65,7 +65,7 @@ public:
 
     int begin() const { return m_begin; }
     void setBegin(int begin) { m_begin = begin; }
-    void move(int offset) { m_begin += offset; }
+    void moveBy(int offset) { m_begin += offset; }
 
     int length() const { return m_length; }
     void setLength(int length) { m_length = length; }

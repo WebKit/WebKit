@@ -350,7 +350,7 @@ void doParseFileSystemURL(const CharacterType* spec, int specLength, URLSegments
     // Extract the scheme. We also handle the case where there is no scheme.
     if (doExtractScheme(&spec[begin], specLength - begin, parsed.scheme)) {
         // Offset the results since we gave ExtractScheme a substring.
-        parsed.scheme.setBegin(parsed.scheme.begin() + begin);
+        parsed.scheme.moveBy(begin);
 
         if (parsed.scheme.end() == specLength - 1)
             return;
@@ -368,7 +368,7 @@ void doParseFileSystemURL(const CharacterType* spec, int specLength, URLSegments
 
     if (doExtractScheme(innerSpec, innerSpecLength, innerScheme)) {
         // Offset the results since we gave ExtractScheme a substring.
-        innerScheme.setBegin(innerScheme.begin() + innerStart);
+        innerScheme.moveBy(innerStart);
 
         if (innerScheme.end() == specLength - 1)
             return;
@@ -395,14 +395,7 @@ void doParseFileSystemURL(const CharacterType* spec, int specLength, URLSegments
     // If we had any scheme that supported nesting more than one level deep,
     // we'd have to recurse into the innerParsed's innerParsed when
     // adjusting by innerStart.
-    innerParsed.scheme.setBegin(innerParsed.scheme.begin() + innerStart);
-    innerParsed.username.setBegin(innerParsed.username.begin() + innerStart);
-    innerParsed.password.setBegin(innerParsed.password.begin() + innerStart);
-    innerParsed.host.setBegin(innerParsed.host.begin() + innerStart);
-    innerParsed.port.setBegin(innerParsed.port.begin() + innerStart);
-    innerParsed.query.setBegin(innerParsed.query.begin() + innerStart);
-    innerParsed.fragment.setBegin(innerParsed.fragment.begin() + innerStart);
-    innerParsed.path.setBegin(innerParsed.path.begin() + innerStart);
+    innerParsed.moveFromComponentBy(URLSegments::Scheme, innerStart);
 
     // Query and ref move from innerParsed to parsed.
     parsed.query = innerParsed.query;
@@ -461,7 +454,7 @@ void doParsePathURL(const CharacterType* spec, int specLength, URLSegments& pars
     // handle the case where there is no scheme.
     if (ExtractScheme(&spec[begin], specLength - begin, &parsed.scheme)) {
         // Offset the results since we gave ExtractScheme a substring.
-        parsed.scheme.setBegin(parsed.scheme.begin() + begin);
+        parsed.scheme.moveBy(begin);
 
         // For compatability with the standard URL parser, we treat no path as
         // -1, rather than having a length of 0 (we normally wouldn't care so
@@ -509,7 +502,7 @@ void doParseMailtoURL(const CharacterType* spec, int specLength, URLSegments& pa
     // handle the case where there is no scheme.
     if (ExtractScheme(&spec[begin], specLength - begin, &parsed.scheme)) {
         // Offset the results since we gave ExtractScheme a substring.
-        parsed.scheme.setBegin(parsed.scheme.begin() + begin);
+        parsed.scheme.moveBy(begin);
 
         if (parsed.scheme.end() != specLength - 1) {
             pathBegin = parsed.scheme.end() + 1;

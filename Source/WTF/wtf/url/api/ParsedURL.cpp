@@ -187,7 +187,7 @@ void ParsedURL::removePort()
 
     // 2) Update the components positions.
     m_segments.port.reset();
-    m_segments.moveComponentsAfter(URLSegments::Port, -length);
+    m_segments.moveFromComponentBy(URLSegments::Path, -length);
 }
 
 String ParsedURL::path() const

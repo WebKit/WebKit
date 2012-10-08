@@ -183,7 +183,7 @@ void doParseFileURL(const CharacterType* spec, int specLength, URLSegments& pars
     {
         if (ExtractScheme(&spec[begin], specLength - begin, &parsed.scheme)) {
             // Offset the results since we gave ExtractScheme a substring.
-            parsed.scheme.setBegin(parsed.scheme.begin() + begin);
+            parsed.scheme.moveBy(begin);
             afterScheme = parsed.scheme.end() + 1;
         } else {
             // No scheme found, remember that.
