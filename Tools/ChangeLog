@@ -1,3 +1,10 @@
+2012-10-08  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Unreviewed. Moving myself from Committer to Reviewer list.
+        http://lists.webkit.org/pipermail/webkit-dev/2012-October/022460.html
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-10-08  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: [chromium] run http tests in parallel on bigger machines
