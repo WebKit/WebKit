@@ -1,3 +1,15 @@
+2012-10-08  Joone Hur  <joone.hur@intel.com>
+
+        [EFL] Add support for -webkit-sticky
+        https://bugs.webkit.org/show_bug.cgi?id=95182
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Turn on CSS sticky position by default for WebKitEfl,
+        but most of the CSS sticky position test cases still do not pass on WK1.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2012-10-05  José Dapena Paz  <jdapena@igalia.com>
 
         [GTK] Add support for creating EGL contexts

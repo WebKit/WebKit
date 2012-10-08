@@ -26,9 +26,21 @@
 # TESTS EXPECTED TO FAIL
 #////////////////////////////////////////////////////////////////////////////////////////
 
-# CSS Sticky (-webkit-sticky) not supported by EFL.
-# This test passes on WK2, though.
+# CSS Sticky (-webkit-sticky) supported by EFL, these tests fail on WK1.
 webkit.org/b/95182 fast/css/sticky/sticky-overflowing.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/inflow-sticky.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/replaced-sticky.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/sticky-as-positioning-container.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/sticky-both-sides.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/sticky-left-percentage.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/sticky-left.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/sticky-margins.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/sticky-side-margins.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/sticky-top-margins.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/sticky-top.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/sticky-writing-mode-horizontal-bt.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/sticky-writing-mode-vertical-lr.html [ ImageOnlyFailure ]
+webkit.org/b/95182 fast/css/sticky/sticky-writing-mode-vertical-rl.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # CRASHES
