@@ -1780,7 +1780,6 @@ fast/repaint/shadow-multiple-strict-vertical.html
 fast/repaint/shadow-multiple-vertical.html
 fast/text/atsui-spacing-features.html
 fast/text/atsui-negative-spacing-features.html
-fast/text/basic/015.html
 fast/text/capitalize-boundaries.html
 fast/text/international/003.html
 fast/text/international/bidi-AN-after-empty-run.html
@@ -1859,7 +1858,6 @@ fast/replaced/pdf-as-image.html
 fast/replaced/width100percent-menulist.html
 fast/text/atsui-multiple-renderers.html
 fast/text/atsui-partial-selection.html
-fast/text/basic/013.html
 fast/text/bidi-embedding-pop-and-push-same.html
 fast/text/cg-fallback-bolding.html
 fast/text/drawBidiText.html
@@ -1884,7 +1882,6 @@ fast/text/international/danda-space.html
 fast/text/international/hindi-spacing.html
 fast/text/international/rtl-caret.html
 fast/text/international/thai-baht-space.html
-fast/text/line-breaks.html
 fast/text/selection-painted-separately.html
 fast/text/soft-hyphen-2.html
 fast/text/whitespace/001.html
