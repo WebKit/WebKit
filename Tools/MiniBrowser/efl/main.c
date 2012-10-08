@@ -39,6 +39,7 @@ static const char APP_NAME[] = "EFL MiniBrowser";
 static int verbose = 1;
 static Eina_List *windows = NULL;
 static char *evas_engine_name = NULL;
+static Eina_Bool frame_flattening_enabled = EINA_FALSE;
 
 typedef struct _Browser_Window {
     Ecore_Evas *ee;
@@ -72,7 +73,7 @@ static const Ecore_Getopt options = {
     }
 };
 
-static Browser_Window *window_create(const char *url, Eina_Bool frame_flattening);
+static Browser_Window *window_create(const char *url);
 
 static Browser_Window *browser_window_find(Ecore_Evas *ee)
 {
@@ -169,7 +170,7 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
         ewk_view_stop(obj);
     } else if (!strcmp(ev->key, "n") && ctrlPressed) {
         info("Create new window (Ctrl+n) was pressed.\n");
-        Browser_Window *window = window_create(DEFAULT_URL, EINA_FALSE);
+        Browser_Window *window = window_create(DEFAULT_URL);
         windows = eina_list_append(windows, window);
     }
 }
@@ -225,7 +226,7 @@ static void
 on_new_window(void *user_data, Evas_Object *webview, void *event_info)
 {
     Evas_Object **new_view = (Evas_Object **)event_info;
-    Browser_Window *window = window_create(NULL, EINA_FALSE);
+    Browser_Window *window = window_create(NULL);
     *new_view = window->webview;
     windows = eina_list_append(windows, window);
 }
@@ -303,7 +304,7 @@ quit(Eina_Bool success, const char *msg)
     return EXIT_SUCCESS;
 }
 
-static Browser_Window *window_create(const char *url, Eina_Bool frame_flattening)
+static Browser_Window *window_create(const char *url)
 {
     Browser_Window *window = malloc(sizeof(Browser_Window));
     if (!window) {
@@ -334,7 +335,7 @@ static Browser_Window *window_create(const char *url, Eina_Bool frame_flattening
     /* Create webview */
     window->webview = ewk_view_add(window->evas);
     ewk_view_theme_set(window->webview, THEME_DIR"/default.edj");
-    ewk_settings_enable_frame_flattening_set(ewk_view_settings_get(window->webview), frame_flattening);
+    ewk_settings_enable_frame_flattening_set(ewk_view_settings_get(window->webview), frame_flattening_enabled);
 
     Ewk_Settings *settings = ewk_view_settings_get(window->webview);
     ewk_settings_file_access_from_file_urls_allowed_set(settings, EINA_TRUE);
@@ -371,12 +372,10 @@ int main(int argc, char *argv[])
     unsigned char quitOption = 0;
     Browser_Window *window;
 
-    Eina_Bool frame_flattening = EINA_FALSE;
-
     Ecore_Getopt_Value values[] = {
         ECORE_GETOPT_VALUE_STR(evas_engine_name),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
-        ECORE_GETOPT_VALUE_BOOL(frame_flattening),
+        ECORE_GETOPT_VALUE_BOOL(frame_flattening_enabled),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
@@ -397,10 +396,10 @@ int main(int argc, char *argv[])
 
     if (args < argc) {
         char *url = url_from_user_input(argv[args]);
-        window = window_create(url, frame_flattening);
+        window = window_create(url);
         free(url);
     } else
-        window = window_create(DEFAULT_URL, frame_flattening);
+        window = window_create(DEFAULT_URL);
 
     if (!window)
         return quit(EINA_FALSE, "ERROR: could not create browser window.\n");
