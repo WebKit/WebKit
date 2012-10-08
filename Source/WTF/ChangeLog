@@ -1,3 +1,19 @@
+2012-10-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r130619.
+        http://trac.webkit.org/changeset/130619
+        https://bugs.webkit.org/show_bug.cgi?id=98634
+
+        Causes many crashes on the EFL bots. (Requested by rakuco on
+        #webkit).
+
+        * wtf/efl/MainThreadEfl.cpp:
+        (WTF::pipeObject):
+        (WTF):
+        (WTF::monitorDispatchFunctions):
+        (WTF::initializeMainThreadPlatform):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+
 2012-10-08  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [EFL] Use ecore_main_loop_thread_safe_call_async() to wakeup main loop.

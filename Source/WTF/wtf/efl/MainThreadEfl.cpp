@@ -41,18 +41,25 @@
 
 namespace WTF {
 
-static void monitorDispatchFunctions(void*)
+static OwnPtr<Ecore_Pipe>& pipeObject()
+{
+    DEFINE_STATIC_LOCAL(OwnPtr<Ecore_Pipe>, pipeObject, ());
+    return pipeObject;
+}
+
+static void monitorDispatchFunctions(void*, void*, unsigned int)
 {
     dispatchFunctionsFromMainThread();
 }
 
 void initializeMainThreadPlatform()
 {
+    pipeObject() = adoptPtr(ecore_pipe_add(monitorDispatchFunctions, 0));
 }
 
 void scheduleDispatchFunctionsOnMainThread()
 {
-    ecore_main_loop_thread_safe_call_async(monitorDispatchFunctions, 0);
+    ecore_pipe_write(pipeObject().get(), "", 0);
 }
 
 }

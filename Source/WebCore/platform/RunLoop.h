@@ -167,7 +167,8 @@ private:
     Vector<GRefPtr<GMainLoop> > m_runLoopMainLoops;
 #elif PLATFORM(EFL)
     bool m_initEfl;
-    static void wakeUpEvent(void* data);
+    OwnPtr<Ecore_Pipe> m_pipe;
+    static void wakeUpEvent(void* data, void*, unsigned int);
 #endif
 };
 
