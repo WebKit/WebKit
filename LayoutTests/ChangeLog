@@ -1,3 +1,10 @@
+2012-10-08  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed rebaselining after r130598 and r130600.
+
+        * platform/chromium-linux-x86/svg/filters/filterRes-expected.txt:
+        This baseline was forgotten.
+
 2012-10-08  Tullio Lucena  <tullio.lucena@openbossa.org>
 
         [Qt] new test introduced in r120354 fails on Qt
