@@ -576,8 +576,8 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
         info("Zoom in (F8) was pressed.\n");
         if (currentZoomLevel < MAX_ZOOM_LEVEL && zoom_level_set(obj, currentZoomLevel + 1))
             currentZoomLevel++;
-    } else if (!strcmp(ev->key, "F9")) {
-        info("Create new window (F9) was pressed.\n");
+    } else if (!strcmp(ev->key, "n") && ctrlPressed) {
+        info("Create new window (Ctrl+n) was pressed.\n");
         browserCreate("http://www.google.com", app->userArgs);
     } else if (!strcmp(ev->key, "g") && ctrlPressed ) {
         Evas_Coord x, y, w, h;

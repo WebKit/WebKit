@@ -147,6 +147,8 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
         NULL
     };
     static int currentEncoding = -1;
+    Eina_Bool ctrlPressed = evas_key_modifier_is_set(evas_key_modifier_get(e), "Control");
+
     if (!strcmp(ev->key, "F1")) {
         info("Back (F1) was pressed\n");
         if (!ewk_view_back(obj))
@@ -165,8 +167,8 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
     } else if (!strcmp(ev->key, "F6")) {
         info("Stop (F6) was pressed, stop loading.\n");
         ewk_view_stop(obj);
-    } else if (!strcmp(ev->key, "F9")) {
-        info("Create new window (F9) was pressed.\n");
+    } else if (!strcmp(ev->key, "n") && ctrlPressed) {
+        info("Create new window (Ctrl+n) was pressed.\n");
         Browser_Window *window = window_create(DEFAULT_URL, EINA_FALSE);
         windows = eina_list_append(windows, window);
     }
