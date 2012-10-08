@@ -1,3 +1,27 @@
+2012-10-07  Seokju Kwon  <seokju.kwon@samsung.com>
+
+        [EFL] Add Web Inspector to EWebLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=91718
+
+        Reviewed by Gyuyoung Kim.
+
+        Implementation of Web Inspector in EWebLauncher.
+        The Web Inspector can be opened or closed by pressing ctrl+i on web page.
+
+        * EWebLauncher/main.c:
+        (on_browser_ecore_evas_resize):
+        (on_web_inspector_ecore_evas_resize):
+        (on_key_down):
+        (on_web_inspector_view_create):
+        (on_web_inspector_view_close):
+        (on_web_inspector_view_destroyed):
+        (browserCreate):
+        (webInspectorCreate):
+        (windowCreate):
+        (closeWindow):
+        (main_signal_exit):
+        (parseUserArguments):
+
 2012-10-07  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Rename first/second to key/value in HashMap iterators
