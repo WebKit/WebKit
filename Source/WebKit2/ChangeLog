@@ -1,5 +1,24 @@
 2012-10-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Test /webkit2/WebKitWebView/populate-menu asserts in debug bots
+        https://bugs.webkit.org/show_bug.cgi?id=98507
+
+        Reviewed by Martin Robinson.
+
+        Make sure we retain the page URL before asking for the icon.
+
+        * UIProcess/API/gtk/WebKitFaviconDatabase.cpp:
+        (getIconSurfaceSynchronously): Retain the page URL before asking
+        for the icon, and release it if we fail to get an icon.
+        (processPendingIconsForPageURL): Renamed to make it clear it
+        receives a Sring and not a char* and moved
+        getIconSurfaceSynchronously() call out of the loop to call it only
+        once even if there are multiple requests pending.
+        (iconDataReadyForPageURLCallback): Do not retain the page URL
+        here.
+
+2012-10-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Don't use the C API internally in WebKitWebContext
         https://bugs.webkit.org/show_bug.cgi?id=96768
 

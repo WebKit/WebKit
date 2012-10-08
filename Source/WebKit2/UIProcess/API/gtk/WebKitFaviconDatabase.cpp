@@ -119,17 +119,21 @@ static cairo_surface_t* getIconSurfaceSynchronously(WebKitFaviconDatabase* datab
 {
     ASSERT(isMainThread());
 
+    database->priv->iconDatabase->retainIconForPageURL(pageURL);
+
     // The exact size we pass is irrelevant to the iconDatabase code.
     // We must pass something greater than 0x0 to get an icon.
     WebCore::Image* iconImage = database->priv->iconDatabase->imageForPageURL(pageURL, WebCore::IntSize(1, 1));
     if (!iconImage) {
         g_set_error(error, WEBKIT_FAVICON_DATABASE_ERROR, WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_UNKNOWN, _("Unknown favicon for page %s"), pageURL.utf8().data());
+        database->priv->iconDatabase->releaseIconForPageURL(pageURL);
         return 0;
     }
 
     WebCore::NativeImagePtr icon = iconImage->nativeImageForCurrentFrame();
     if (!icon) {
         g_set_error(error, WEBKIT_FAVICON_DATABASE_ERROR, WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_NOT_FOUND, _("Page %s does not have a favicon"), pageURL.utf8().data());
+        database->priv->iconDatabase->releaseIconForPageURL(pageURL);
         return 0;
     }
 
@@ -142,21 +146,28 @@ static void deletePendingIconRequests(WebKitFaviconDatabase* database, PendingIc
     delete requests;
 }
 
-static void processPendingIconsForURI(WebKitFaviconDatabase* database, const String& pageURL)
+static void processPendingIconsForPageURL(WebKitFaviconDatabase* database, const String& pageURL)
 {
-    PendingIconRequestVector* icons = database->priv->pendingIconRequests.get(pageURL);
-    if (!icons)
+    PendingIconRequestVector* pendingIconRequests = database->priv->pendingIconRequests.get(pageURL);
+    if (!pendingIconRequests)
         return;
 
-    for (size_t i = 0; i < icons->size(); ++i) {
-        GSimpleAsyncResult* result = icons->at(i).get();
+    GOwnPtr<GError> error;
+    RefPtr<cairo_surface_t> icon = getIconSurfaceSynchronously(database, pageURL, &error.outPtr());
+
+    for (size_t i = 0; i < pendingIconRequests->size(); ++i) {
+        GSimpleAsyncResult* result = pendingIconRequests->at(i).get();
         GetFaviconSurfaceAsyncData* data = static_cast<GetFaviconSurfaceAsyncData*>(g_simple_async_result_get_op_res_gpointer(result));
-        if (!g_cancellable_is_cancelled(data->cancellable.get()))
-            data->icon = getIconSurfaceSynchronously(database, pageURL, &data->error.outPtr());
+        if (!g_cancellable_is_cancelled(data->cancellable.get())) {
+            if (error)
+                g_propagate_error(&data->error.outPtr(), error.release());
+            else
+                data->icon = icon;
+        }
 
         g_simple_async_result_complete(result);
     }
-    deletePendingIconRequests(database, icons, pageURL);
+    deletePendingIconRequests(database, pendingIconRequests, pageURL);
 }
 
 static void iconDataReadyForPageURLCallback(WKIconDatabaseRef wkIconDatabase, WKURLRef wkPageURL, const void* clientInfo)
@@ -164,11 +175,10 @@ static void iconDataReadyForPageURLCallback(WKIconDatabaseRef wkIconDatabase, WK
     ASSERT(isMainThread());
 
     WebKitFaviconDatabase* database = WEBKIT_FAVICON_DATABASE(clientInfo);
-    String pageURLString = toImpl(wkPageURL)->string();
+    String pageURL = toImpl(wkPageURL)->string();
 
-    database->priv->iconDatabase->retainIconForPageURL(pageURLString);
-    processPendingIconsForURI(database, pageURLString);
-    g_signal_emit(database, signals[ICON_READY], 0, pageURLString.utf8().data());
+    processPendingIconsForPageURL(database, pageURL);
+    g_signal_emit(database, signals[ICON_READY], 0, pageURL.utf8().data());
 }
 
 WebKitFaviconDatabase* webkitFaviconDatabaseCreate(WebIconDatabase* iconDatabase)
