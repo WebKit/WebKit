@@ -754,6 +754,11 @@ void TestRunner::setSerializeHTTPLoads()
     WKBundleSetSerialLoadingEnabled(InjectedBundle::shared().bundle(), true);
 }
 
+void TestRunner::dispatchPendingLoadRequests()
+{
+    WKBundleDispatchPendingLoadRequests(InjectedBundle::shared().bundle());
+}
+
 void TestRunner::grantWebNotificationPermission(JSStringRef origin)
 {
     WKRetainPtr<WKStringRef> originWK = toWK(origin);

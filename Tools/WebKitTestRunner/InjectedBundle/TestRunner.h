@@ -111,6 +111,7 @@ public:
     void setSpatialNavigationEnabled(bool);
     void setTabKeyCyclesThroughElements(bool);
     void setSerializeHTTPLoads();
+    void dispatchPendingLoadRequests();
 
     // Special DOM functions.
     JSValueRef computedStyleIncludingVisitedInfo(JSValueRef element);

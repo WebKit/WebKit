@@ -809,9 +809,6 @@ http/tests/download/inherited-encoding.html
 # WebFrameLoaderClient::canHandleRequest() has to be implemented.
 http/tests/misc/redirect-to-external-url.html
 
-# WebKitTestRunner needs testRunner.dispatchPendingLoadRequests
-http/tests/loading/deleted-host-in-resource-load-delegate-callback.html
-
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
 

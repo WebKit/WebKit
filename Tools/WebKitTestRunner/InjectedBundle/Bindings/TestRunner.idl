@@ -73,6 +73,7 @@ module WTR {
         void setSpatialNavigationEnabled(in boolean value);
         void setTabKeyCyclesThroughElements(in boolean enabled);
         void setSerializeHTTPLoads();
+        void dispatchPendingLoadRequests();
 
         // Special DOM functions.
         void clearBackForwardList();

@@ -652,4 +652,9 @@ void InjectedBundle::setSerialLoadingEnabled(bool enabled)
     resourceLoadScheduler()->setSerialLoadingEnabled(enabled);
 }
 
+void InjectedBundle::dispatchPendingLoadRequests()
+{
+    resourceLoadScheduler()->servePendingRequests();
+}
+
 } // namespace WebKit
