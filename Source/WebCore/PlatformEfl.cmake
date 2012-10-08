@@ -75,6 +75,7 @@ LIST(APPEND WebCore_SOURCES
   platform/network/soup/GOwnPtrSoup.cpp
   platform/network/soup/ProxyResolverSoup.cpp
   platform/network/soup/ProxyServerSoup.cpp
+  platform/network/soup/ResourceErrorSoup.cpp
   platform/network/soup/ResourceHandleSoup.cpp
   platform/network/soup/ResourceRequestSoup.cpp
   platform/network/soup/ResourceResponseSoup.cpp

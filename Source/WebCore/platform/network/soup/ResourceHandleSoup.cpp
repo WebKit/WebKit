@@ -72,9 +72,6 @@ namespace WebCore {
 
 #define READ_BUFFER_SIZE 8192
 
-// Use the same value as in NSURLError.h
-static const int gTimeoutError = -1001;
-
 static bool loadingSynchronousRequest = false;
 
 class WebCoreSynchronousLoader : public ResourceHandleClient {
@@ -399,31 +396,25 @@ static void cleanupSoupRequestOperation(ResourceHandle* handle, bool isDestroyin
         handle->deref();
 }
 
-static ResourceError convertSoupErrorToResourceError(GError* error, SoupRequest* request, SoupMessage* message = 0)
+static bool handleUnignoredTLSErrors(ResourceHandle* handle)
 {
-    ASSERT(error);
-    ASSERT(request);
+    ResourceHandleInternal* d = handle->getInternal();
+    const ResourceResponse& response = d->m_response;
 
-    GOwnPtr<char> uri(soup_uri_to_string(soup_request_get_uri(request), FALSE));
-    if (message && SOUP_STATUS_IS_TRANSPORT_ERROR(message->status_code)) {
-        return ResourceError(g_quark_to_string(SOUP_HTTP_ERROR),
-                             static_cast<gint>(message->status_code),
-                             uri.get(),
-                             String::fromUTF8(message->reason_phrase));
-    }
+    if (!response.soupMessageTLSErrors() || gIgnoreSSLErrors)
+        return false;
 
-    // Non-transport errors are handled differently.
-    return ResourceError(g_quark_to_string(G_IO_ERROR),
-                         error->code,
-                         uri.get(),
-                         String::fromUTF8(error->message));
-}
+    String lowercaseHostURL = handle->firstRequest().url().host().lower();
+    if (allowsAnyHTTPSCertificateHosts().contains(lowercaseHostURL))
+        return false;
 
-static inline bool hasUnignoredTLSErrors(ResourceHandle* handle)
-{
-    return handle->getInternal()->m_response.soupMessageTLSErrors()
-        && !gIgnoreSSLErrors
-        && !allowsAnyHTTPSCertificateHosts().contains(handle->firstRequest().url().host().lower());
+    // We aren't ignoring errors globally, but the user may have already decided to accept this certificate.
+    CertificatesMap::iterator i = clientCertificates().find(lowercaseHostURL);
+    if (i != clientCertificates().end() && i->value.contains(response.soupMessageCertificate()))
+        return false;
+
+    handle->client()->didFail(handle, ResourceError::tlsError(d->m_soupRequest.get(), response.soupMessageTLSErrors(), response.soupMessageCertificate()));
+    return true;
 }
 
 static void sendRequestCallback(GObject*, GAsyncResult* res, gpointer data)
@@ -447,7 +438,7 @@ static void sendRequestCallback(GObject*, GAsyncResult* res, gpointer data)
     GOwnPtr<GError> error;
     GInputStream* in = soup_request_send_finish(d->m_soupRequest.get(), res, &error.outPtr());
     if (error) {
-        client->didFail(handle.get(), convertSoupErrorToResourceError(error.get(), d->m_soupRequest.get(), soupMessage));
+        client->didFail(handle.get(), ResourceError::httpError(soupMessage, error.get(), d->m_soupRequest.get()));
         cleanupSoupRequestOperation(handle.get());
         return;
     }
@@ -462,17 +453,11 @@ static void sendRequestCallback(GObject*, GAsyncResult* res, gpointer data)
         }
         d->m_response.updateFromSoupMessage(soupMessage);
 
-        if (hasUnignoredTLSErrors(handle.get())) {
-            CertificatesMap::iterator iter = clientCertificates().find(handle->firstRequest().url().host().lower());
-            if (iter == clientCertificates().end() || !iter->value.contains(d->m_response.soupMessageCertificate())) {
-                GOwnPtr<char> uri(soup_uri_to_string(soup_request_get_uri(d->m_soupRequest.get()), FALSE));
-                client->didFail(handle.get(), ResourceError(g_quark_to_string(SOUP_HTTP_ERROR), SOUP_STATUS_SSL_FAILED,
-                                                            uri.get(), unacceptableTLSCertificate(),
-                                                            d->m_response.soupMessageTLSErrors(), d->m_response.soupMessageCertificate()));
-                cleanupSoupRequestOperation(handle.get());
-                return;
-            }
+        if (handleUnignoredTLSErrors(handle.get())) {
+            cleanupSoupRequestOperation(handle.get());
+            return;
         }
+
     } else {
         d->m_response.setURL(handle->firstRequest().url());
         const gchar* contentType = soup_request_get_content_type(d->m_soupRequest.get());
@@ -982,7 +967,7 @@ static void readCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
     GOwnPtr<GError> error;
     gssize bytesRead = g_input_stream_read_finish(d->m_inputStream.get(), asyncResult, &error.outPtr());
     if (error) {
-        client->didFail(handle.get(), convertSoupErrorToResourceError(error.get(), d->m_soupRequest.get()));
+        client->didFail(handle.get(), ResourceError::genericIOError(error.get(), d->m_soupRequest.get()));
         cleanupSoupRequestOperation(handle.get());
         return;
     }
@@ -1019,12 +1004,8 @@ static void readCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
 static gboolean requestTimeoutCallback(gpointer data)
 {
     RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
-    ResourceHandleInternal* d = handle->getInternal();
-    ResourceHandleClient* client = handle->client();
-
-    ResourceError timeoutError("WebKitNetworkError", gTimeoutError, d->m_firstRequest.url().string(), "Request timed out");
-    timeoutError.setIsTimeout(true);
-    client->didFail(handle.get(), timeoutError);
+    handle->client()->didFail(handle.get(), ResourceError::timeoutError(handle->getInternal()->m_firstRequest.url().string()));
+    cleanupSoupRequestOperation(handle.get());
     handle->cancel();
 
     return FALSE;
