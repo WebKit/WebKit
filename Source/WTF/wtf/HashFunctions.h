@@ -105,16 +105,15 @@ namespace WTF {
     };
 
     template<typename T> struct FloatHash {
+        typedef typename IntTypes<sizeof(T)>::UnsignedType Bits;
         static unsigned hash(T key)
         {
-            union {
-                T key;
-                typename IntTypes<sizeof(T)>::UnsignedType bits;
-            } u;
-            u.key = key;
-            return intHash(u.bits);
+            return intHash(bitwise_cast<Bits>(key));
         }
-        static bool equal(T a, T b) { return a == b; }
+        static bool equal(T a, T b)
+        {
+            return bitwise_cast<Bits>(a) == bitwise_cast<Bits>(b);
+        }
         static const bool safeToCompareToEmptyOrDeleted = true;
     };
 

@@ -1,3 +1,17 @@
+2012-10-08  Andreas Kling  <kling@webkit.org>
+
+        Using float/double as WTF hash table key is unreliable.
+        <http://webkit.org/b/98627>
+
+        Reviewed by Geoffrey Garen.
+
+        Add a test case checking that using double as the hash table key type won't
+        have problems distinguishing between keys that are considered equal by operator==
+        but have different binary representations.
+
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        (TestDoubleHashTraits):
+
 2012-10-08  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Use URL instead of URI in the API

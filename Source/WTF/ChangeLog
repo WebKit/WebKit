@@ -1,3 +1,20 @@
+2012-10-08  Andreas Kling  <kling@webkit.org>
+
+        Using float/double as WTF hash table key is unreliable.
+        <http://webkit.org/b/98627>
+
+        Reviewed by Geoffrey Garen.
+
+        Change FloatHash::equal() to do a bitwise compare instead of a logical compare.
+        This fixes a problem where the keys with different binary representation but the
+        same logical value (e.g 0 and -0) could block each other from being found if they
+        ended up in the same hash bucket.
+
+        * wtf/HashFunctions.h:
+        (FloatHash):
+        (WTF::FloatHash::hash):
+        (WTF::FloatHash::equal):
+
 2012-10-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r130619.

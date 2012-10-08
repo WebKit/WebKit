@@ -49,4 +49,30 @@ TEST(WTF, HashTableIteratorComparison)
     ASSERT_FALSE(map.end() == begin);
 }
 
+struct TestDoubleHashTraits : HashTraits<double> {
+    static const int minimumTableSize = 8;
+};
+
+typedef HashMap<double, int64_t, DefaultHash<double>::Hash, TestDoubleHashTraits> DoubleHashMap;
+
+TEST(WTF, DoubleHashCollisions)
+{
+    // The "clobber" key here is one that ends up stealing the bucket that the -0 key
+    // originally wants to be in. This makes the 0 and -0 keys collide and the test then
+    // fails unless the FloatHash::equals() implementation can distinguish them.
+    const double clobberKey = 6;
+    const double zeroKey = 0;
+    const double negativeZeroKey = -zeroKey;
+
+    DoubleHashMap map;
+
+    map.add(clobberKey, 1);
+    map.add(zeroKey, 2);
+    map.add(negativeZeroKey, 3);
+
+    ASSERT_EQ(map.get(clobberKey), 1);
+    ASSERT_EQ(map.get(zeroKey), 2);
+    ASSERT_EQ(map.get(negativeZeroKey), 3);
+}
+
 } // namespace TestWebKitAPI
