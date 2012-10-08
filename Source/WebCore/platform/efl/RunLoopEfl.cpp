@@ -34,9 +34,6 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
-static const int ecorePipeMessageSize = 1;
-static const char wakupEcorePipeMessage[] = "W";
-
 namespace WebCore {
 
 RunLoop::RunLoop()
@@ -62,7 +59,6 @@ RunLoop::RunLoop()
         goto errorEdje;
     }
 
-    m_pipe = adoptPtr(ecore_pipe_add(wakeUpEvent, this));
     m_initEfl = true;
 
     return;
@@ -95,14 +91,14 @@ void RunLoop::stop()
     ecore_main_loop_quit();
 }
 
-void RunLoop::wakeUpEvent(void* data, void*, unsigned int)
+void RunLoop::wakeUpEvent(void* data)
 {
     static_cast<RunLoop*>(data)->performWork();
 }
 
 void RunLoop::wakeUp()
 {
-    ecore_pipe_write(m_pipe.get(), wakupEcorePipeMessage, ecorePipeMessageSize);
+    ecore_main_loop_thread_safe_call_async(wakeUpEvent, this);
 }
 
 RunLoop::TimerBase::TimerBase(RunLoop*)

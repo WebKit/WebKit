@@ -1,3 +1,26 @@
+2012-10-08  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [EFL] Use ecore_main_loop_thread_safe_call_async() to wakeup main loop.
+        https://bugs.webkit.org/show_bug.cgi?id=98505
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Instead of ecore_pipe_write(),
+        use ecore_main_loop_thread_safe_call_async() to wakeup ecore main loop.
+
+        According to the EFL API document, this function is designed to dispatch
+        a function on ecore main loop by avoiding dead lock or race condition. 
+        With this function, webkit doesn't need to maintain ecore pipe also.
+
+        No new tests. The function to wakeup main loop is changed.
+
+        * platform/RunLoop.h:
+        (RunLoop):
+        * platform/efl/RunLoopEfl.cpp:
+        (WebCore::RunLoop::RunLoop):
+        (WebCore::RunLoop::wakeUpEvent):
+        (WebCore::RunLoop::wakeUp):
+
 2012-10-07  Arpita Bahuguna  <arpitabahuguna@gmail.com>
 
         :first-line pseudo selector ignoring words created from :before
