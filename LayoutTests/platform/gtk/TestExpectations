@@ -1344,8 +1344,6 @@ webkit.org/b/73003 [ Debug ] editing/spelling/spellcheck-async.html [ Failure ]
 webkit.org/b/73003 [ Debug ] editing/spelling/spellcheck-paste.html [ Pass ]
 webkit.org/b/50740 [ Debug ] editing/spelling/spellcheck-queue.html [ Failure ]
 
-webkit.org/b/98564 fast/table/colspanMinWidth-vertical.html [ Missing Failure ]
-
 webkit.org/b/96900 fast/text/stale-TextLayout-from-first-line.html [ ImageOnlyFailure ]
 
 webkit.org/b/97188 fast/text/word-space-with-kerning.html [ ImageOnlyFailure ]

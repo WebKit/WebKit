@@ -2889,8 +2889,6 @@ webkit.org/b/90951 fast/text/shaping
 # Missing test infrastructure, no gamepads available.
 webkit.org/b/92873 gamepad/gamepad-polling-access.html [ Skip ]
 
-webkit.org/b/98564 fast/table/colspanMinWidth-vertical.html [ Missing Failure ]
-
 # Flaky tests
 webkit.org/b/91376 http/tests/security/sandboxed-iframe-modify-self.html [ Failure Pass ]
 webkit.org/b/91379 http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html [ Failure Pass ]

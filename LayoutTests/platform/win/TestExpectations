@@ -1724,7 +1724,7 @@ fast/repaint/scroll-inside-table-cell.html
 fast/repaint/scroll-relative-table-inside-table-cell.html
 fast/table/cell-pref-width-invalidation.html
 
-# The inner <input> should now grow to take the full cell's height.
+# <input> should be horizontal.
 fast/table/colspanMinWidth-vertical.html
 
 # Requires ENABLE(MEDIA_CAPTURE)

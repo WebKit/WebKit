@@ -1,3 +1,28 @@
+2012-10-08  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, new baseline for fast/table/colspanMinWidth-vertical.html.
+
+        The baseline changed in http://trac.webkit.org/changeset/130569 because
+        controls should all be horizontal.
+
+        * platform/chromium-mac-snowleopard/fast/table/colspanMinWidth-vertical-expected.png:
+        * platform/chromium-mac/fast/table/colspanMinWidth-vertical-expected.png:
+        * platform/chromium-mac/fast/table/colspanMinWidth-vertical-expected.txt: Removed.
+        * platform/chromium-win/fast/table/colspanMinWidth-vertical-expected.png:
+        * platform/chromium/TestExpectations:
+        * platform/efl/fast/table/colspanMinWidth-vertical-expected.png: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/table/colspanMinWidth-vertical-expected.png: Removed.
+        * platform/gtk/fast/table/colspanMinWidth-vertical-expected.txt:
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/table/colspanMinWidth-vertical-expected.png: Removed.
+        * platform/mac/fast/table/colspanMinWidth-vertical-expected.txt:
+        * platform/qt/TestExpectations:
+        * platform/qt/fast/table/colspanMinWidth-vertical-expected.png: Removed.
+        * platform/qt/fast/table/colspanMinWidth-vertical-expected.txt:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2012-10-08  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed fast/repaint Chromium rebaselining.
