@@ -386,7 +386,7 @@ void MainResourceLoader::didReceiveResponse(const ResourceResponse& r)
 #endif
 
     if (m_loadingMultipartContent) {
-        frameLoader()->activeDocumentLoader()->setupForReplaceByMIMEType(r.mimeType());
+        m_documentLoader->setupForReplace();
         clearResourceData();
     }
     

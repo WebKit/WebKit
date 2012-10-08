@@ -1,3 +1,33 @@
+2012-10-08  Nate Chapin  <japhet@chromium.org>
+
+        Loader cleanup : Simplify FrameLoader/DocumentLoader setupForReplace()
+        https://bugs.webkit.org/show_bug.cgi?id=49072
+
+        Reviewed by Eric Seidel.
+
+        This patch contains one small known behavior change: multipart/x-mixed-replace main resources with text/html parts
+        will no longer load the text/html progressively. In practice, loading the html progressively causes the document
+        to get cleared as soon as the next part's data starts arriving, which leads to a blank page most of the time. This case
+        seems to be pathological, as IE, FF, Opera and WebKit all do something different currently. This patch will cause
+        us to behave like Firefox, which is the most sane of the current behaviors.
+
+        Test: http/tests/multipart/multipart-html.php
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::commitData): Use isMultipartReplacingLoad() helper.
+        (WebCore::DocumentLoader::receivedData):
+        (WebCore::DocumentLoader::setupForReplace): Renamed from setupForReplaceByMIMEType(). Call maybeFinishLoadingMultipartContent()
+            instead of doing identical work inline. After we call frameLoader()->setReplacing(), we will never load progressively, so remove
+            the if (doesProgressiveLoad(newMIMEType)) {} block.
+        (WebCore::DocumentLoader::isMultipartReplacingLoad):
+        (WebCore::DocumentLoader::maybeFinishLoadingMultipartContent): Inline the old DocumentLoader::setupForeReplace(), check
+            frameLoader()->isReplacing() instead of the delete doesProgressiveLoad().
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::setupForReplace): Move all calls to revertToProvisionalState here.
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::didReceiveResponse): Call setupForReplace(), renamed from setupForReplaceByMIMEType().
+
 2012-10-08  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] r122720 causes performance regression with DirectFB on ARMv7

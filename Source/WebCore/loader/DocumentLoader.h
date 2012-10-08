@@ -112,7 +112,7 @@ namespace WebCore {
         bool isCommitted() const { return m_committed; }
         bool isLoading() const { return isLoadingMainResource() || !m_subresourceLoaders.isEmpty() || !m_plugInStreamLoaders.isEmpty(); }
         void receivedData(const char*, int);
-        void setupForReplaceByMIMEType(const String& newMIMEType);
+        void setupForReplace();
         void finishedLoading();
         const ResourceResponse& response() const { return m_response; }
         const ResourceError& mainDocumentError() const { return m_mainDocumentError; }
@@ -250,11 +250,9 @@ namespace WebCore {
         bool m_deferMainResourceDataLoad;
 
     private:
-        void setupForReplace();
         void commitIfReady();
         void setMainDocumentError(const ResourceError&);
         void commitLoad(const char*, int);
-        bool doesProgressiveLoad(const String& MIMEType) const;
         void checkLoadComplete();
         void clearMainResourceLoader();
         
@@ -262,6 +260,8 @@ namespace WebCore {
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
         void clearArchiveResources();
 #endif
+
+        bool isMultipartReplacingLoad() const;
 
         void deliverSubstituteResourcesAfterDelay();
         void substituteResourceDeliveryTimerFired(Timer<DocumentLoader>*);

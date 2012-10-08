@@ -272,12 +272,6 @@ void DocumentLoader::stopLoading()
     m_isStopping = false;
 }
 
-void DocumentLoader::setupForReplace()
-{
-    frameLoader()->setupForReplace();
-    m_committed = false;
-}
-
 void DocumentLoader::commitIfReady()
 {
     if (!m_committed) {
@@ -340,8 +334,8 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
 #endif
 
         // Call receivedFirstData() exactly once per load. We should only reach this point multiple times
-        // for multipart loads, and isReplacing() will be true after the first time.
-        if (!m_mainResourceLoader || !m_mainResourceLoader->isLoadingMultipartContent() || !frameLoader()->isReplacing())
+        // for multipart loads, and FrameLoader::isReplacing() will be true after the first time.
+        if (!isMultipartReplacingLoad())
             frameLoader()->receivedFirstData();
 
         bool userChosen = true;
@@ -385,41 +379,22 @@ void DocumentLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_mainResourceData);
 }
 
-bool DocumentLoader::doesProgressiveLoad(const String& MIMEType) const
-{
-    return !frameLoader()->isReplacing() || MIMEType == "text/html";
-}
-
 void DocumentLoader::receivedData(const char* data, int length)
 {
-    if (doesProgressiveLoad(m_response.mimeType()))
+    if (!isMultipartReplacingLoad())
         commitLoad(data, length);
 }
 
-void DocumentLoader::setupForReplaceByMIMEType(const String& newMIMEType)
+void DocumentLoader::setupForReplace()
 {
     if (!mainResourceData())
         return;
     
-    String oldMIMEType = m_response.mimeType();
-    
-    if (!doesProgressiveLoad(oldMIMEType)) {
-        frameLoader()->client()->revertToProvisionalState(this);
-        setupForReplace();
-        RefPtr<SharedBuffer> resourceData = mainResourceData();
-        commitLoad(resourceData->data(), resourceData->size());
-    }
-    
+    maybeFinishLoadingMultipartContent();
     maybeCreateArchive();
     m_writer.end();
-    
     frameLoader()->setReplacing();
     m_gotFirstByte = false;
-    
-    if (doesProgressiveLoad(newMIMEType)) {
-        frameLoader()->client()->revertToProvisionalState(this);
-        setupForReplace();
-    }
     
     stopLoadingSubresources();
     stopLoadingPlugIns();
@@ -859,6 +834,11 @@ bool DocumentLoader::isLoadingMultipartContent() const
     return m_mainResourceLoader && m_mainResourceLoader->isLoadingMultipartContent();
 }
 
+bool DocumentLoader::isMultipartReplacingLoad() const
+{
+    return isLoadingMultipartContent() && frameLoader()->isReplacing();
+}
+
 void DocumentLoader::startLoadingMainResource()
 {
     m_mainDocumentError = ResourceError();
@@ -888,12 +868,13 @@ void DocumentLoader::subresourceLoaderFinishedLoadingOnePart(ResourceLoader* loa
 
 void DocumentLoader::maybeFinishLoadingMultipartContent()
 {
-    if (!doesProgressiveLoad(m_response.mimeType())) {
-        frameLoader()->client()->revertToProvisionalState(this);
-        setupForReplace();
-        RefPtr<SharedBuffer> resourceData = mainResourceData();
-        commitLoad(resourceData->data(), resourceData->size());
-    }
+    if (!frameLoader()->isReplacing())
+        return;
+
+    frameLoader()->setupForReplace();
+    m_committed = false;
+    RefPtr<SharedBuffer> resourceData = mainResourceData();
+    commitLoad(resourceData->data(), resourceData->size());
 }
 
 void DocumentLoader::iconLoadDecisionAvailable()

@@ -1145,6 +1145,7 @@ void FrameLoader::prepareForLoadStart()
 
 void FrameLoader::setupForReplace()
 {
+    m_client->revertToProvisionalState(m_documentLoader.get());
     setState(FrameStateProvisional);
     m_provisionalDocumentLoader = m_documentLoader;
     m_documentLoader = 0;
