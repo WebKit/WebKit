@@ -153,15 +153,15 @@ static int64_t onExceededApplicationCacheQuota(Ewk_View_Smart_Data*, Ewk_Securit
     return defaultOriginQuota;
 }
 
-static bool shouldUseSingleBackingStore()
+static bool shouldUseTiledBackingStore()
 {
-    const char* useSingleBackingStore = getenv("DRT_USE_SINGLE_BACKING_STORE");
-    return useSingleBackingStore && *useSingleBackingStore == '1';
+    const char* useTiledBackingStore = getenv("DRT_USE_TILED_BACKING_STORE");
+    return useTiledBackingStore && *useTiledBackingStore == '1';
 }
 
 static bool chooseAndInitializeAppropriateSmartClass(Ewk_View_Smart_Class* api)
 {
-    return shouldUseSingleBackingStore() ? ewk_view_single_smart_set(api) : ewk_view_tiled_smart_set(api);
+    return !shouldUseTiledBackingStore() ? ewk_view_single_smart_set(api) : ewk_view_tiled_smart_set(api);
 }
 
 // Taken from the file "WebKit/Tools/DumpRenderTree/chromium/WebViewHost.cpp".
