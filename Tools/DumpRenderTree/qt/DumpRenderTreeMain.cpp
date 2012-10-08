@@ -59,7 +59,7 @@
 
 void messageHandler(QtMsgType type, const QMessageLogContext&, const QString &message)
 {
-    if (type == QtCriticalMsg) {
+    if (type == QtCriticalMsg || type == QtFatalMsg) {
         fprintf(stderr, "%s\n", qPrintable(message));
         return;
     }
