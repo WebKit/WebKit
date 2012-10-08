@@ -2,13 +2,6 @@
 <html>
 <head>
 <title>WebKit Performance Test Results</title>
-<script src="%AbsolutePathToWebKitTrunk%/PerformanceTests/Dromaeo/resources/dromaeo/web/lib/jquery-1.6.4.js"></script>
-<script src="https://trac.webkit.org/browser/trunk/PerformanceTests/Dromaeo/resources/dromaeo/web/lib/jquery-1.6.4.js?format=txt"></script>
-<script src="%AbsolutePathToWebKitTrunk%/PerformanceTests/resources/jquery.flot.min.js"></script>
-<script src="https://trac.webkit.org/browser/trunk/PerformanceTests/resources/jquery.flot.min.js?format=txt"></script>
-<script src="%AbsolutePathToWebKitTrunk%/PerformanceTests/resources/jquery.tablesorter.min.js"></script>
-<script src="https://trac.webkit.org/browser/trunk/PerformanceTests/resources/jquery.tablesorter.min.js?format=txt"></script>
-<script id="json" type="application/json">%PeformanceTestsResultsJSON%</script>
 <style type="text/css">
 
 section {
@@ -136,23 +129,55 @@ td.worse {
 Result <span id="time-memory" class="checkbox"><span class="checked">Time</span><span>Memory</span></span>
 Reference <span id="reference" class="checkbox"></span>
 </div>
-<script>
-
-$(document).ready(function () {
-    $('.checkbox').each(function (index, checkbox) {
-        $(checkbox).children('span').click(function (event) {
-            if ($(this).hasClass('checked'))
-                return;
-            $(checkbox).children('span').removeClass('checked');
-            $(this).addClass('checked');
-            $(checkbox).trigger('change', $(this));
-        });
-    });
-})
-
-</script>
 <table id="container"></table>
 <script>
+
+(function () {
+    var jQuery = ['PerformanceTests/Dromaeo/resources/dromaeo/web/lib/jquery-1.6.4.js'];
+    var plugins = ['PerformanceTests/resources/jquery.flot.min.js', 'PerformanceTests/resources/jquery.tablesorter.min.js'];
+    var localPath = '%AbsolutePathToWebKitTrunk%';
+    var remotePath = 'https://svn.webkit.org/repository/webkit/trunk';
+    var numberOfFailures = 0;
+    var startedLoadingPlugins = false;
+    var numberOfLoadedPlugins = 0;
+
+    function loadScript(src, loaded, failed) {
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = src;
+        script.onload = loaded;
+        if (failed)
+            script.onerror = failed;
+        document.body.appendChild(script);
+    }
+
+    function loadPlugins(trunkPath) {
+        for (var i = 0; i < plugins.length; i++)
+            loadScript(trunkPath + '/' + plugins[i], loadedPlugin, createFailedToLoadPlugin(plugins[i]));
+    }
+
+    function loadedPlugin() {
+        numberOfLoadedPlugins++;
+        if (numberOfLoadedPlugins == plugins.length)
+            setTimeout(init, 0);            
+    }
+
+    function createFailedToLoadPlugin(plugin) {
+        return function () { alert("Failed to load " + plugin); }
+    }
+
+    function createLoadedJQuery(trunkPath) {
+        return function () { loadPlugins(trunkPath); }
+    }
+
+    loadScript(localPath + '/' + jQuery,
+        createLoadedJQuery(localPath),
+        function () {
+            loadScript(remotePath + '/' + jQuery,
+                createLoadedJQuery(localPath),
+                function () { alert("Failed to load jQuery."); });
+        });
+})();
 
 function TestResult(associatedTest, result, associatedRun) {
     this.unit = function () { return result.unit; }
@@ -480,6 +505,16 @@ function createTableRow(test, referenceResult) {
 }
 
 function init() {
+    $('.checkbox').each(function (index, checkbox) {
+        $(checkbox).children('span').click(function (event) {
+            if ($(this).hasClass('checked'))
+                return;
+            $(checkbox).children('span').removeClass('checked');
+            $(this).addClass('checked');
+            $(checkbox).trigger('change', $(this));
+        });
+    });
+
     $.tablesorter.addParser({
         id: 'comparison',
         is: function(s) {
@@ -523,8 +558,7 @@ function init() {
     });
 }
 
-init();
-
 </script>
+<script id="json" type="application/json">%PeformanceTestsResultsJSON%</script>
 </body>
 </html>

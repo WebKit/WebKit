@@ -1,3 +1,15 @@
+2012-10-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf test pesults page takes forever to load on a machine with a slow Internet connection
+        https://bugs.webkit.org/show_bug.cgi?id=98561
+
+        Reviewed by Ojan Vafai.
+
+        Try loading jquery both locally and remotely, and use the same method to load the remaining
+        jquery plugins when either one succeeds.
+
+        * resources/results-template.html:
+
 2012-10-04  Hayato Ito  <hayato@chromium.org>
 
         [Refactoring] Introduce a traversal strategy in SelectorChecker
