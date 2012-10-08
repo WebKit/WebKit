@@ -167,18 +167,18 @@ void QtWebPageEventHandler::handleHoverLeaveEvent(QHoverEvent* ev)
 {
     // To get the correct behavior of mouseout, we need to turn the Leave event of our webview into a mouse move
     // to a very far region.
-    QTransform fromItemTransform = m_webPage->transformFromItem();
-    QHoverEvent fakeEvent(QEvent::HoverMove, QPoint(INT_MIN, INT_MIN), fromItemTransform.map(ev->oldPosF()));
+    QHoverEvent fakeEvent(QEvent::HoverMove, QPoint(INT_MIN, INT_MIN), ev->oldPosF());
     fakeEvent.setTimestamp(ev->timestamp());
+    // This will apply the transform on the event.
     handleHoverMoveEvent(&fakeEvent);
 }
 
 void QtWebPageEventHandler::handleHoverMoveEvent(QHoverEvent* ev)
 {
-    QTransform fromItemTransform = m_webPage->transformFromItem();
-    QMouseEvent me(QEvent::MouseMove, fromItemTransform.map(ev->posF()), Qt::NoButton, Qt::NoButton, Qt::NoModifier);
+    QMouseEvent me(QEvent::MouseMove, ev->posF(), Qt::NoButton, Qt::NoButton, Qt::NoModifier);
     me.setAccepted(ev->isAccepted());
     me.setTimestamp(ev->timestamp());
+    // This will apply the transform on the event.
     handleMouseMoveEvent(&me);
 }
 
