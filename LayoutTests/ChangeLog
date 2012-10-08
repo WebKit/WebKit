@@ -1,3 +1,11 @@
+2012-10-08  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Unskip svg/dom/altGlyph-dom.xhtml
+
+        Seems to be passing these days.
+
+        * platform/efl/TestExpectations:
+
 2012-10-08  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

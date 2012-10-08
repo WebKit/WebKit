@@ -868,7 +868,6 @@ webkit.org/b/47744 mathml/presentation/over.xhtml
 
 # EFL has not fully implemented about some SVG attributes
 Bug(EFL) svg/custom
-Bug(EFL) svg/dom/altGlyph-dom.xhtml
 Bug(EFL) svg/text
 Bug(EFL) svg/zoom/page/zoom-zoom-coords.xhtml
 
