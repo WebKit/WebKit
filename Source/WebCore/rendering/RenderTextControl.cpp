@@ -144,20 +144,20 @@ int RenderTextControl::scrollbarThickness() const
     return ScrollbarTheme::theme()->scrollbarThickness();
 }
 
-void RenderTextControl::updateLogicalHeight()
+void RenderTextControl::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
 {
     HTMLElement* innerText = innerTextElement();
     ASSERT(innerText);
     if (RenderBox* innerTextBox = innerText->renderBox()) {
         LayoutUnit nonContentHeight = innerTextBox->borderAndPaddingHeight() + innerTextBox->marginHeight();
-        setHeight(computeControlHeight(innerTextBox->lineHeight(true, HorizontalLine, PositionOfInteriorLineBoxes), nonContentHeight) + borderAndPaddingHeight());
+        logicalHeight = computeControlHeight(innerTextBox->lineHeight(true, HorizontalLine, PositionOfInteriorLineBoxes), nonContentHeight) + borderAndPaddingHeight();
 
         // We are able to have a horizontal scrollbar if the overflow style is scroll, or if its auto and there's no word wrap.
         if (style()->overflowX() == OSCROLL ||  (style()->overflowX() == OAUTO && innerText->renderer()->style()->overflowWrap() == NormalOverflowWrap))
-            setHeight(height() + scrollbarThickness());
+            logicalHeight += scrollbarThickness();
     }
 
-    RenderBlock::updateLogicalHeight();
+    RenderBox::computeLogicalHeight(logicalHeight, logicalTop, computedValues);
 }
 
 void RenderTextControl::hitInnerTextElement(HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset)

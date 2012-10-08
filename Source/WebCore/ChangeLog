@@ -1,3 +1,26 @@
+2012-10-08  Tony Chang  <tony@chromium.org>
+
+        Replace 2 uses of updateLogicalHeight with computeLogicalHeight
+        https://bugs.webkit.org/show_bug.cgi?id=98677
+
+        Reviewed by Ojan Vafai.
+
+        This is part of bug 96804.  Convert RenderTextControl and RenderSVGForeignObject to
+        override the const computeLogicalHeight method rather than the updateLogicalHeight
+        setter method.
+
+        No new tests, there should be no behavior change as this is just a refactor.
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::computeLogicalHeight): Pass logicalHeight through rather than setting height.
+        This is a slight correctness fix, although we don't support vertical inputs yet.
+        * rendering/RenderTextControl.h:
+        (RenderTextControl):
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::computeLogicalHeight):
+        * rendering/svg/RenderSVGForeignObject.h:
+        (RenderSVGForeignObject):
+
 2012-10-08  Min Qin  <qinmin@chromium.org>
 
         Upstream some tweaks for overlay play button on Android

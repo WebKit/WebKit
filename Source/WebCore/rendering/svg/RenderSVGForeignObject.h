@@ -60,7 +60,7 @@ public:
 
 private:
     virtual void updateLogicalWidth() OVERRIDE;
-    virtual void updateLogicalHeight() OVERRIDE;
+    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
 
     virtual const AffineTransform& localToParentTransform() const;
     virtual AffineTransform localTransform() const { return m_localTransform; }
