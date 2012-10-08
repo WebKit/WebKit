@@ -1,11 +1,6 @@
 # Tests failing on WK1 only (working on WK2)
 compositing
 
-# [Qt] X11 plugins need to be reworked for Qt5+WK1
-# https://bugs.webkit.org/show_bug.cgi?id=80691
-plugins
-http/tests/plugins
-
 # Fullscreen API is not supported on WK1
 fullscreen
 plugins/fullscreen-plugins-dont-reload.html
@@ -76,3 +71,17 @@ http/tests/misc/iframe-invalid-source-crash.html
 
 # [Qt][WK1] ERROR: TestRunner::overridePreference() does not support the 'WebKitStorageBlockingPolicy' preference
 http/tests/security/cross-origin-local-storage-wk1.html
+
+# [Qt] Unidentified plugin failures
+webkit.org/b/98525 platform/qt/plugins/application-plugin-plugins-disabled.html
+webkit.org/b/98525 plugins/frameset-with-plugin-frame.html
+webkit.org/b/98525 plugins/iframe-plugin-bgcolor.html
+webkit.org/b/98525 plugins/netscape-plugin-setwindow-size-2.html
+webkit.org/b/98525 plugins/netscape-plugin-setwindow-size.html
+webkit.org/b/98525 plugins/no-mime-with-valid-extension.html
+webkit.org/b/98525 plugins/npp-set-window-called-during-destruction.html
+webkit.org/b/98525 plugins/pass-different-npp-struct.html
+webkit.org/b/98525 plugins/plugin-document-back-forward.html
+webkit.org/b/98525 plugins/reentrant-update-widget-positions.html
+webkit.org/b/98525 plugins/update-widgets-crash.html
+webkit.org/b/98525 plugins/window-open.html

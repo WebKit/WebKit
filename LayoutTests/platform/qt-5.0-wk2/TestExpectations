@@ -351,10 +351,6 @@ http/tests/plugins/npapi-response-headers.html
 http/tests/plugins/post-url-file.html
 http/tests/plugins/third-party-cookie-accept-policy.html
 
-# [Qt][WK2] All plugin tests fail on buildbot
-# https://bugs.webkit.org/show_bug.cgi?id=83024
-plugins
-
 # [Qt][WK2] fast/frames/iframe-window-focus.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=83575
 fast/frames/iframe-window-focus.html
@@ -548,3 +544,17 @@ webkit.org/b/98343 fast/dom/Geolocation/window-close-crash.html
 
 # [Qt][WK2] fast/parser/document-open-in-unload.html makes the following test crash
 webkit.org/b/98345 fast/parser/document-open-in-unload.html
+
+# [Qt] Unidentified plugin failures
+webkit.org/b/98525 http/tests/inspector/network/network-content-replacement-embed.html
+webkit.org/b/98525 http/tests/inspector/network/network-embed.html
+webkit.org/b/98525 http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
+webkit.org/b/98525 plugins/document-open.html
+webkit.org/b/98525 plugins/embed-inside-object.html
+webkit.org/b/98525 plugins/evaluate-js-after-removing-plugin-element.html
+webkit.org/b/98525 plugins/keyboard-events.html
+webkit.org/b/98525 plugins/mouse-events-fixedpos.html
+webkit.org/b/98525 plugins/mouse-events.html
+webkit.org/b/98525 plugins/npruntime/browser-object-identity.html
+webkit.org/b/98525 plugins/npruntime/embed-property-equality.html
+webkit.org/b/98525 plugins/refcount-leaks.html

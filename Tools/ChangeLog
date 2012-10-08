@@ -1,3 +1,17 @@
+2012-10-08  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Reenable plugin tests
+        https://bugs.webkit.org/show_bug.cgi?id=98528
+
+        Reviewed by Csaba Osztrogonác.
+
+        Uncomment this function so we can pick up the test plugin.
+        It was commented out because of https://bugs.webkit.org/show_bug.cgi?id=86620
+        and that bug seems to be fixed now.
+
+        * WebKitTestRunner/qt/TestControllerQt.cpp:
+        (WTR::TestController::initializeTestPluginDirectory):
+
 2012-10-08  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Support multiple window creation for MiniBrowser

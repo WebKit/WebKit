@@ -2915,3 +2915,7 @@ webkit.org/b/94005 css2.1/20110323/word-spacing-remove-space-003.htm [ ImageOnly
 webkit.org/b/94005 css2.1/20110323/word-spacing-remove-space-006.htm [ ImageOnlyFailure ]
 webkit.org/b/94006 fast/css/word-spacing-characters-complex-text.html [ ImageOnlyFailure ]
 
+# [Qt] Unidentified plugin failures
+webkit.org/b/98525 plugins/mouse-click-plugin-clears-selection.html
+webkit.org/b/98525 plugins/netscape-dom-access.html
+webkit.org/b/98525 plugins/resize-from-plugin.html

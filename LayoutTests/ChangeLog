@@ -1,3 +1,17 @@
+2012-10-08  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Reenable plugin tests
+        https://bugs.webkit.org/show_bug.cgi?id=98528
+
+        Reviewed by Csaba Osztrogonác.
+
+        Reenable plugin tests. Skip new failures.
+
+        * platform/qt-5.0-wk1/TestExpectations:
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt-5.0/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-10-07  Noel Gordon  <noel.gordon@gmail.com>
 
         Add partial load test for JPEG image

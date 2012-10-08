@@ -104,10 +104,7 @@ void TestController::initializeInjectedBundlePath()
 
 void TestController::initializeTestPluginDirectory()
 {
-    // FIXME: the test plugin cause some trouble for us, so we don't load it for the time being.
-    // See: https://bugs.webkit.org/show_bug.cgi?id=86620
-
-    // m_testPluginDirectory.adopt(WKStringCreateWithUTF8CString(qgetenv("QTWEBKIT_PLUGIN_PATH").constData()));
+    m_testPluginDirectory.adopt(WKStringCreateWithUTF8CString(qgetenv("QTWEBKIT_PLUGIN_PATH").constData()));
 }
 
 void TestController::platformInitializeContext()
