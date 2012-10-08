@@ -1,3 +1,12 @@
+2012-10-08  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        Unreviewed build fix after r130630
+
+        Explicit convertion is required from QSizeF to FloatSize.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewLegacyPrivate::updateViewportSize):
+
 2012-10-04  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Fix the mouse hover events transformation when devicePixelRatio != 1

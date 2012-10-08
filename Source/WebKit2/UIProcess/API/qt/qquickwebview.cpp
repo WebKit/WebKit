@@ -830,7 +830,7 @@ void QQuickWebViewLegacyPrivate::updateViewportSize()
     // whether its fixed or not. We still need to tell the drawing area which part of it
     // has to be rendered on tiles, and in desktop mode it's all of it.
     webPageProxy->drawingArea()->setSize((viewportSize / devicePixelRatio).toSize(), IntSize());
-    webPageProxy->drawingArea()->setVisibleContentsRect(FloatRect(FloatPoint(), viewportSize / devicePixelRatio), devicePixelRatio, FloatPoint());
+    webPageProxy->drawingArea()->setVisibleContentsRect(FloatRect(FloatPoint(), FloatSize(viewportSize / devicePixelRatio)), devicePixelRatio, FloatPoint());
 }
 
 qreal QQuickWebViewLegacyPrivate::zoomFactor() const
