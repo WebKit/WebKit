@@ -1837,6 +1837,8 @@
 		6E8798BD15F81E4A00BFE4AA /* ExclusionRectangle.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E8798B715F81E4A00BFE4AA /* ExclusionRectangle.h */; };
 		6E8798BE15F81E4A00BFE4AA /* ExclusionShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E8798B815F81E4A00BFE4AA /* ExclusionShape.cpp */; };
 		6E8798BF15F81E4A00BFE4AA /* ExclusionShape.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E8798B915F81E4A00BFE4AA /* ExclusionShape.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6EAF340F1613869A00859625 /* ExclusionPolygon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EAF340D1613869A00859625 /* ExclusionPolygon.cpp */; };
+		6EAF34101613869A00859625 /* ExclusionPolygon.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EAF340E1613869A00859625 /* ExclusionPolygon.h */; };
 		6EBC5EAF138B50F200A0CF8A /* JSFloat64Array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EBC5EAD138B50F200A0CF8A /* JSFloat64Array.cpp */; };
 		6EBC5EB0138B50F200A0CF8A /* JSFloat64Array.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBC5EAE138B50F200A0CF8A /* JSFloat64Array.h */; };
 		6EBF0E4812A8926100DB1709 /* OESTextureFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EBF0E4512A8926100DB1709 /* OESTextureFloat.cpp */; };
@@ -9032,6 +9034,8 @@
 		6E8798B715F81E4A00BFE4AA /* ExclusionRectangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExclusionRectangle.h; sourceTree = "<group>"; };
 		6E8798B815F81E4A00BFE4AA /* ExclusionShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExclusionShape.cpp; sourceTree = "<group>"; };
 		6E8798B915F81E4A00BFE4AA /* ExclusionShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExclusionShape.h; sourceTree = "<group>"; };
+		6EAF340D1613869A00859625 /* ExclusionPolygon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExclusionPolygon.cpp; sourceTree = "<group>"; };
+		6EAF340E1613869A00859625 /* ExclusionPolygon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExclusionPolygon.h; sourceTree = "<group>"; };
 		6EBC5D80138B4C4E00A0CF8A /* Float64Array.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Float64Array.idl; path = canvas/Float64Array.idl; sourceTree = "<group>"; };
 		6EBC5EAD138B50F200A0CF8A /* JSFloat64Array.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFloat64Array.cpp; sourceTree = "<group>"; };
 		6EBC5EAE138B50F200A0CF8A /* JSFloat64Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFloat64Array.h; sourceTree = "<group>"; };
@@ -21312,6 +21316,8 @@
 				A8CFF6BD0A156118000A4234 /* EllipsisBox.h */,
 				6E8798B415F81E4A00BFE4AA /* ExclusionInterval.cpp */,
 				6E8798B515F81E4A00BFE4AA /* ExclusionInterval.h */,
+				6EAF340D1613869A00859625 /* ExclusionPolygon.cpp */,
+				6EAF340E1613869A00859625 /* ExclusionPolygon.h */,
 				6E8798B615F81E4A00BFE4AA /* ExclusionRectangle.cpp */,
 				6E8798B715F81E4A00BFE4AA /* ExclusionRectangle.h */,
 				6E8798B815F81E4A00BFE4AA /* ExclusionShape.cpp */,
@@ -25537,6 +25543,7 @@
 				931CBD0D161A44E900E4C874 /* ScrollingStateNode.h in Headers */,
 				931CBD0F161A44E900E4C874 /* ScrollingStateScrollingNode.h in Headers */,
 				931CBD11161A44E900E4C874 /* ScrollingStateTree.h in Headers */,
+				6EAF34101613869A00859625 /* ExclusionPolygon.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -28634,6 +28641,7 @@
 				931CBD0E161A44E900E4C874 /* ScrollingStateScrollingNode.cpp in Sources */,
 				931CBD10161A44E900E4C874 /* ScrollingStateTree.cpp in Sources */,
 				931CBD13161A44F800E4C874 /* ScrollingStateNodeMac.mm in Sources */,
+				6EAF340F1613869A00859625 /* ExclusionPolygon.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

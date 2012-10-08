@@ -3287,6 +3287,8 @@
             'rendering/EllipsisBox.h',
             'rendering/ExclusionInterval.cpp',
             'rendering/ExclusionInterval.h',
+            'rendering/ExclusionPolygon.cpp',
+            'rendering/ExclusionPolygon.h',
             'rendering/ExclusionRectangle.cpp',
             'rendering/ExclusionRectangle.h',
             'rendering/ExclusionShape.cpp',

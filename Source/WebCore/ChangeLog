@@ -1,3 +1,74 @@
+2012-10-08  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] Add support for polygonal shapes
+        https://bugs.webkit.org/show_bug.cgi?id=96811
+
+        Reviewed by Dirk Schulze.
+
+        Initial version of the layout support for polygonal exclusion shapes: the ExclusionPolygon class.
+        Supports the public ExclusionShape operations using the algorithm described here:
+        http://hansmuller-webkit.blogspot.com/2012/06/horizontal-box-polygon-intersection-for.html.
+        Although both the "included" and "excluded" operations are supported, only the former is
+        used, since only shape-inside is supported at the moment.
+
+        The ExclusionPolygon class stores the polygon's edges in an interval tree.
+
+        Polygon edges are represented by the ExclusionPolygonEdge struct, which records the indices of
+        the pair of vertices joined by the edge.  Edge vertex index1 is usually less than index2, except
+        the last edge where index2 is 0.  We plan to improve the algorithm that creates the edges
+        by spanning vertices contained in sequences of more than two colinear vertices. For example,
+        a triangular polygon might be specified with 5 vertices like this: 3,0 5,0, 5,5, 4,4 2,2, 0,0.
+        By spanning the extra colinear points: 0,0 5,0, 5,5, which implies index1-index2 edges: 5-1 1-2 2-5.
+
+        Although the implementation supports complex polygons, the layout code is limited to
+        essentially rectangular shapes until a patch for https://bugs.webkit.org/show_bug.cgi?id=96813
+        lands.
+
+        Tests: fast/exclusions/shape-inside/shape-inside-polygon-rectangle.html
+               fast/exclusions/shape-inside/shape-inside-simple-polygon-001.html
+               fast/exclusions/shape-inside/shape-inside-simple-polygon-002.html
+               fast/exclusions/shape-inside/shape-inside-simple-polygon-003.html
+               fast/exclusions/shape-inside/shape-inside-simple-polygon-004.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/ExclusionPolygon.cpp: Added.
+        (WebCore):
+        (EdgeIntersection): Internal description of the intersection of a polygon edge and a horizontal line.
+        (WebCore::ExclusionPolygon::ExclusionPolygon): See the introductory text above for a description of this type.
+        (WebCore::computeXIntersection): Find and classify the X intercept of a polygon edge with horizontal line, if any.
+        (WebCore::ExclusionPolygon::rightVertexY): This method is used to decide if a horizontal line "crosses" a vertex.
+        (WebCore::appendIntervalX): Append an x coordinate to a vector of ExclusionIntervals.
+        (WebCore::ExclusionPolygon::computeXIntersections): Return a vector of the intersections of a horizontal line with the polygon's edges.
+        (WebCore::ExclusionPolygon::computeEdgeIntersections): Return a vector of the X projections of the edges that overlap a horizonal rectangle.
+        (WebCore::ExclusionPolygon::getExcludedIntervals): Return a SegmentList of the X intervals within a horizontal rectangle that overlap the polygon.
+        (WebCore::ExclusionPolygon::getIncludedIntervals): Return the X intervals within a horizontal rectangle that fit inside the polygon.
+        * rendering/ExclusionPolygon.h: Added.
+        (WebCore):
+        (ExclusionPolygon):
+        (WebCore::ExclusionPolygon::getXAt): X coordinate of a polygon vertex
+        (WebCore::ExclusionPolygon::getYAt): Y coordinate of a polygon vertex
+        (WebCore::ExclusionPolygon::numberOfVertices):
+        (WebCore::ExclusionPolygon::fillRule): A WindRule value that defines "inside" for self-intersecting polygons.
+        (ExclusionPolygonEdge):
+        (WebCore::ExclusionPolygonEdge::ExclusionPolygonEdge):
+        (WebCore::ExclusionPolygonEdge::vertex1):
+        (WebCore::ExclusionPolygonEdge::vertex2):
+        (WebCore::ExclusionPolygonEdge::minX):
+        (WebCore::ExclusionPolygonEdge::minY):
+        (WebCore::ExclusionPolygonEdge::maxX):
+        (WebCore::ExclusionPolygonEdge::maxY):
+        * rendering/ExclusionShape.cpp:
+        (WebCore::createExclusionPolygon): Return a new ExclusionPolygon.
+        (WebCore):
+        (WebCore::ExclusionShape::createExclusionShape): Added support for BasicShape::BASIC_SHAPE_POLYGON.
+        * rendering/ExclusionShapeInsideInfo.cpp:
+        (WebCore::ExclusionShapeInsideInfo::isExclusionShapeInsideInfoEnabledForRenderBlock): Enable BASIC_SHAPE_POLYGON shapes for RenderBlocks.
+
 2012-10-08  Tony Chang  <tony@chromium.org>
 
         Replace 2 uses of updateLogicalHeight with computeLogicalHeight

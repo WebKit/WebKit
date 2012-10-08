@@ -2037,6 +2037,7 @@ SET(WebCore_SOURCES
     rendering/CounterNode.cpp
     rendering/EllipsisBox.cpp
     rendering/ExclusionInterval.cpp
+    rendering/ExclusionPolygon.cpp
     rendering/ExclusionRectangle.cpp
     rendering/ExclusionShape.cpp
     rendering/ExclusionShapeInsideInfo.cpp

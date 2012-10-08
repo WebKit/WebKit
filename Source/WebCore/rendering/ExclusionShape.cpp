@@ -31,10 +31,10 @@
 #include "ExclusionShape.h"
 
 #include "BasicShapeFunctions.h"
+#include "ExclusionPolygon.h"
 #include "ExclusionRectangle.h"
 #include "FloatSize.h"
 #include "LengthFunctions.h"
-#include "NotImplemented.h"
 #include "WindRule.h"
 #include <wtf/MathExtras.h>
 #include <wtf/OwnPtr.h>
@@ -58,6 +58,11 @@ static PassOwnPtr<ExclusionShape> createExclusionEllipse(const FloatPoint& cente
 {
     ASSERT(radii.width() >= 0 && radii.height() >= 0);
     return adoptPtr(new ExclusionRectangle(FloatRect(center.x() - radii.width(), center.y() - radii.height(), radii.width()*2, radii.height()*2), radii));
+}
+
+static PassOwnPtr<ExclusionShape> createExclusionPolygon(PassOwnPtr<Vector<FloatPoint> > vertices, WindRule fillRule)
+{
+    return adoptPtr(new ExclusionPolygon(vertices, fillRule));
 }
 
 // If the writingMode is vertical, then the BasicShape's (physical) x and y coordinates are swapped, so that
@@ -87,8 +92,8 @@ PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape
         float radiusY = radiusYLength.isUndefined() ? 0 : floatValueForLength(radiusYLength, boxHeight);
 
         exclusionShape = horizontalWritingMode
-          ? createExclusionRectangle(FloatRect(x, y, width, height), FloatSize(radiusX, radiusY))
-          : createExclusionRectangle(FloatRect(y, x, height, width), FloatSize(radiusY, radiusX));
+            ? createExclusionRectangle(FloatRect(x, y, width, height), FloatSize(radiusX, radiusY))
+            : createExclusionRectangle(FloatRect(y, x, height, width), FloatSize(radiusY, radiusX));
         break;
     }
 
@@ -99,8 +104,8 @@ PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape
         float radius =  floatValueForLength(circle->radius(), std::max(boxHeight, boxWidth));
 
         exclusionShape = horizontalWritingMode
-          ? createExclusionCircle(FloatPoint(centerX, centerY), radius)
-          : createExclusionCircle(FloatPoint(centerY, centerX), radius);
+            ? createExclusionCircle(FloatPoint(centerX, centerY), radius)
+            : createExclusionCircle(FloatPoint(centerY, centerX), radius);
         break;
     }
 
@@ -112,13 +117,26 @@ PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape
         float radiusY = floatValueForLength(ellipse->radiusY(), boxHeight);
 
         exclusionShape = horizontalWritingMode
-          ? createExclusionEllipse(FloatPoint(centerX, centerY), FloatSize(radiusX, radiusY))
-          : createExclusionEllipse(FloatPoint(centerY, centerX), FloatSize(radiusY, radiusX));
+            ? createExclusionEllipse(FloatPoint(centerX, centerY), FloatSize(radiusX, radiusY))
+            : createExclusionEllipse(FloatPoint(centerY, centerX), FloatSize(radiusY, radiusX));
         break;
     }
 
-    case BasicShape::BASIC_SHAPE_POLYGON:
-        notImplemented();
+    case BasicShape::BASIC_SHAPE_POLYGON: {
+        const BasicShapePolygon* polygon = static_cast<const BasicShapePolygon*>(basicShape);
+        const Vector<Length>& values = polygon->values();
+        size_t valuesSize = values.size();
+        ASSERT(!(valuesSize % 2));
+        Vector<FloatPoint>* vertices = new Vector<FloatPoint>(valuesSize / 2);
+        for (unsigned i = 0; i < valuesSize; i += 2) {
+            FloatPoint vertex(
+                floatValueForLength(values.at(i), boxWidth),
+                floatValueForLength(values.at(i + 1), boxHeight));
+            (*vertices)[i / 2] = horizontalWritingMode ? vertex : vertex.transposedPoint();
+        }
+        exclusionShape = createExclusionPolygon(adoptPtr(vertices), polygon->windRule());
+        break;
+    }
 
     default:
         ASSERT_NOT_REACHED();

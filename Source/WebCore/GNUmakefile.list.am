@@ -4914,6 +4914,8 @@ webcore_sources += \
 	Source/WebCore/rendering/EllipsisBox.h \
 	Source/WebCore/rendering/ExclusionInterval.cpp \
 	Source/WebCore/rendering/ExclusionInterval.h \
+	Source/WebCore/rendering/ExclusionPolygon.cpp \
+	Source/WebCore/rendering/ExclusionPolygon.h \
 	Source/WebCore/rendering/ExclusionRectangle.cpp \
 	Source/WebCore/rendering/ExclusionRectangle.h \
 	Source/WebCore/rendering/ExclusionShape.cpp \

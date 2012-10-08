@@ -1,3 +1,41 @@
+2012-10-08  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] Add support for polygonal shapes
+        https://bugs.webkit.org/show_bug.cgi?id=96811
+
+        Reviewed by Dirk Schulze.
+
+        Verify that a rectangular shape-inside specified as a polygon works as expected for all
+        writing-modes.
+
+        Added exclusions tests for non-complex concave shape-inside polygons as well.
+        The shapes in this set of tests are "rectangular" in the sense that
+        horizontal lines that overlap the polygon only cross the polygon twice.
+        The expected part of each test uses float "sandbags" to simulate the
+        shape-inside area in the test expectations. The  tests use SVG to
+        display the polygon itself, to simplify visual inspection.
+        (See http://www.alistapart.com/articles/sandbags/).
+
+        * fast/exclusions/shape-inside/shape-inside-polygon-rectangle-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-polygon-rectangle.html: Added.
+        * fast/exclusions/resources/simple-polygon.js: Added.
+        (createPolygon):
+        (polygonXIntercepts):
+        (generatePolygonContentString):
+        (simulatePolygonShape):
+        (generateSimulatedPolygonShapeInsideElement):
+        (positionInformativeText):
+        (createPolygonShapeInsideTestCase):
+        (createPolygonShapeInsideTestCaseExpected):
+        * fast/exclusions/shape-inside/shape-inside-simple-polygon-001-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-simple-polygon-001.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-simple-polygon-002-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-simple-polygon-002.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-simple-polygon-003-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-simple-polygon-003.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-simple-polygon-004-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-simple-polygon-004.html: Added.
+
 2012-10-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening. Add PNGs after r130653,

@@ -38363,6 +38363,14 @@
                                 >
                         </File>
                         <File
+                                RelativePath="..\rendering\ExclusionPolygon.cpp"
+                                >
+                        </File>
+                        <File
+                                RelativePath="..\rendering\ExclusionPolygon.h"
+                                >
+                        </File>
+                        <File
                                 RelativePath="..\rendering\ExclusionRectangle.cpp"
                                 >
                         </File>

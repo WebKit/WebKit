@@ -1107,6 +1107,7 @@ SOURCES += \
     rendering/CounterNode.cpp \
     rendering/EllipsisBox.cpp \
     rendering/ExclusionInterval.cpp \
+    rendering/ExclusionPolygon.cpp \
     rendering/ExclusionRectangle.cpp \
     rendering/ExclusionShape.cpp \
     rendering/ExclusionShapeInsideInfo.cpp \
@@ -2298,6 +2299,7 @@ HEADERS += \
     rendering/CounterNode.h \
     rendering/EllipsisBox.h \
     rendering/ExclusionInterval.h \
+    rendering/ExclusionPolygon.h \
     rendering/ExclusionRectangle.h \
     rendering/ExclusionShape.h \
     rendering/ExclusionShapeInsideInfo.h \
