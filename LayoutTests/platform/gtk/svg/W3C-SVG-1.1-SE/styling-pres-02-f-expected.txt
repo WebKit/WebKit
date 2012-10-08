@@ -35,7 +35,7 @@ layer at (0,0) size 480x360
               chunk 1 text run 1 at (30.02,0.00) startOffset 0 endOffset 1 width 9.00: "c"
         RenderSVGResourceLinearGradient {linearGradient} [id="linearGradient"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
           RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
-        RenderSVGResourceRadialGradient {radialGradient} [id="radialGradient"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50]
+        RenderSVGResourceRadialGradient {radialGradient} [id="radialGradient"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50] [focalRadius=0.00]
           RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
         RenderSVGResourceClipper {clipPath} [id="clipPath"] [clipPathUnits=userSpaceOnUse]
       RenderSVGContainer {g} at (10,25) size 430x200

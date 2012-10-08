@@ -6,7 +6,7 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (10,11) size 194x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 194x18
           chunk 1 text run 1 at (10.00,25.00) startOffset 0 endOffset 31 width 194.00: "Testing gradientUnits attribute"
-      RenderSVGResourceRadialGradient {radialGradient} [id="Grad1"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50]
+      RenderSVGResourceRadialGradient {radialGradient} [id="Grad1"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50] [focalRadius=0.00]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
       RenderSVGRect {rect} at (10,35) size 460x50 [fill={[type=RADIAL-GRADIENT] [id="Grad1"]}] [x=10.00] [y=35.00] [width=460.00] [height=50.00]
@@ -16,7 +16,7 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (10,104) size 343x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 343x14
           chunk 1 text run 1 at (10.00,115.00) startOffset 0 endOffset 65 width 343.00: "Gradient is blue at the object center and red at the object edges"
-      RenderSVGResourceRadialGradient {radialGradient} [id="Grad2"] [gradientUnits=objectBoundingBox] [center=(0.20,0.20)] [focal=(0.20,0.20)] [radius=0.50]
+      RenderSVGResourceRadialGradient {radialGradient} [id="Grad2"] [gradientUnits=objectBoundingBox] [center=(0.20,0.20)] [focal=(0.20,0.20)] [radius=0.50] [focalRadius=0.00]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
       RenderSVGRect {rect} at (10,125) size 460x50 [fill={[type=RADIAL-GRADIENT] [id="Grad2"]}] [x=10.00] [y=125.00] [width=460.00] [height=50.00]
@@ -26,7 +26,7 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (10,194) size 152x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 152x14
           chunk 1 text run 1 at (10.00,205.00) startOffset 0 endOffset 31 width 152.00: "cx=.2, cy=.2, r=.5, fx=.2 fy=.2"
-      RenderSVGResourceRadialGradient {radialGradient} [id="Grad3"] [gradientUnits=userSpaceOnUse] [center=(25,215)] [focal=(25,215)] [radius=25.00]
+      RenderSVGResourceRadialGradient {radialGradient} [id="Grad3"] [gradientUnits=userSpaceOnUse] [center=(25,215)] [focal=(25,215)] [radius=25.00] [focalRadius=0.00]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
       RenderSVGRect {rect} at (10,210) size 460x50 [transform={m=((0.00,-1.00)(1.00,0.00)) t=(10.00,260.00)}] [fill={[type=RADIAL-GRADIENT] [id="Grad3"]}] [x=0.00] [y=0.00] [width=50.00] [height=460.00]

@@ -10,7 +10,7 @@ layer at (0,0) size 480x360
           RenderSVGGradientStop {stop} [offset=0.50] [color=#00008B]
           RenderSVGGradientStop {stop} [offset=0.66] [color=#FFFFFF]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#4169E1]
-        RenderSVGResourceRadialGradient {radialGradient} [id="radialGrad1"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.15,0.15)] [radius=0.50]
+        RenderSVGResourceRadialGradient {radialGradient} [id="radialGrad1"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.15,0.15)] [radius=0.50] [focalRadius=0.00]
           RenderSVGGradientStop {stop} [offset=0.00] [color=#4169E1]
           RenderSVGGradientStop {stop} [offset=0.33] [color=#FFFFFF]
           RenderSVGGradientStop {stop} [offset=0.50] [color=#00008B]

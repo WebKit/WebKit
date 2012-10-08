@@ -1,3 +1,61 @@
+2012-10-08  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Rebaselining SVG tests after changes in r130599.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/styling-pres-02-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/coords-units-01-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/coords-units-01-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-grad-02-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-grad-02-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-grad-04-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-grad-04-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-grad-05-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-grad-05-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-grad-11-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-grad-11-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-grad-12-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-grad-12-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-grad-14-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-grad-14-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-grad-15-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-grad-15-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/struct-use-05-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/styling-inherit-01-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/styling-inherit-01-b-expected.txt:
+        * platform/gtk/svg/batik/paints/gradientLimit-expected.png:
+        * platform/gtk/svg/batik/paints/gradientLimit-expected.txt:
+        * platform/gtk/svg/batik/paints/patternRegions-expected.png:
+        * platform/gtk/svg/batik/paints/patternRegions-expected.txt:
+        * platform/gtk/svg/batik/paints/patternRegions-positioned-objects-expected.png:
+        * platform/gtk/svg/batik/paints/patternRegions-positioned-objects-expected.txt:
+        * platform/gtk/svg/batik/text/textEffect-expected.png:
+        * platform/gtk/svg/batik/text/textEffect-expected.txt: Added.
+        * platform/gtk/svg/batik/text/textEffect3-expected.png:
+        * platform/gtk/svg/batik/text/textEffect3-expected.txt: Added.
+        * platform/gtk/svg/custom/gradient-deep-referencing-expected.png:
+        * platform/gtk/svg/custom/gradient-deep-referencing-expected.txt:
+        * platform/gtk/svg/custom/gradient-with-1d-boundingbox-expected.png: Added.
+        * platform/gtk/svg/custom/gradient-with-1d-boundingbox-expected.txt:
+        * platform/gtk/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.png:
+        * platform/gtk/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.txt: Added.
+        * platform/gtk/svg/custom/radialGradient-focal-radius-expected.png: Added.
+        * platform/gtk/svg/custom/radialGradient-focal-radius-expected.txt: Added.
+        * platform/gtk/svg/custom/recursive-gradient-expected.png:
+        * platform/gtk/svg/custom/recursive-gradient-expected.txt:
+        * platform/gtk/svg/custom/relative-sized-content-with-resources-expected.png:
+        * platform/gtk/svg/custom/relative-sized-content-with-resources-expected.txt:
+        * platform/gtk/svg/custom/stroked-pattern-expected.png:
+        * platform/gtk/svg/custom/stroked-pattern-expected.txt:
+        * platform/gtk/svg/hixie/perf/006-expected.png:
+        * platform/gtk/svg/hixie/perf/006-expected.txt:
+
 2012-10-08  Dongwoo Joshua Im  <dw.im@samsung.com>
 
         audiobuffer.html need to include audio-testing.js file.
