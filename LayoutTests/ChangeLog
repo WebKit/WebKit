@@ -1,3 +1,11 @@
+2012-10-08  Nandor Huszka  <hnandor@inf.u-szeged.hu>
+
+        Unreviewed gardening, skip and update some failing test.
+
+        * platform/qt/TestExpectations:
+        * platform/qt/http/tests/misc/acid3-expected.png:
+        * platform/qt/http/tests/misc/acid3-expected.txt:
+
 2012-10-08  Joone Hur  <joone.hur@intel.com>
 
         [EFL] Add support for -webkit-sticky

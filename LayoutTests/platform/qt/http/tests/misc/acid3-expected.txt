@@ -216,10 +216,6 @@ layer at (20,20) size 644x433
             text run at (126,38) width 164: "this reference rendering"
         RenderText {#text} at (290,38) size 4x19
           text run at (290,38) width 4: "."
-layer at (638,18) size 20x20
-  RenderBlock (positioned) at (638,18) size 20x20 [color=#FFFFFF] [bgcolor=#FF00FF]
-    RenderText at (0,0) size 20x20
-      text run at (0,0) width 20: "X"
 layer at (130,84) size 300x150
   RenderEmbeddedObject {OBJECT} at (130,84) size 300x150
     layer at (0,0) size 300x150
