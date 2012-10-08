@@ -451,7 +451,7 @@ int64_t LayerTreeCoordinator::adoptImageBackingStore(Image* image)
     int64_t key = 0;
 
 #if PLATFORM(QT)
-    QImage* nativeImage = image->nativeImageForCurrentFrame();
+    QPixmap* nativeImage = image->nativeImageForCurrentFrame();
 
     if (!nativeImage)
         return InvalidWebLayerID;

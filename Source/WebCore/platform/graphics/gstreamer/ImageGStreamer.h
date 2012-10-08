@@ -29,10 +29,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
-#if PLATFORM(QT)
-#include <QImage>
-#endif
-
 namespace WebCore {
 class IntSize;
 

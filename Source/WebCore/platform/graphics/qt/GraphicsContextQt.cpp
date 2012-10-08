@@ -1066,7 +1066,7 @@ void GraphicsContext::clearPlatformShadow()
     m_data->shadow->clear();
 }
 
-void GraphicsContext::pushTransparencyLayerInternal(const QRect &rect, qreal opacity, QImage& alphaMask)
+void GraphicsContext::pushTransparencyLayerInternal(const QRect &rect, qreal opacity, QPixmap& alphaMask)
 {
     QPainter* p = m_data->p();
 
@@ -1101,7 +1101,7 @@ void GraphicsContext::beginPlatformTransparencyLayer(float opacity)
         h = int(qBound(qreal(0), deviceClip.height(), (qreal)h) + 2);
     }
 
-    QImage emptyAlphaMask;
+    QPixmap emptyAlphaMask;
     m_data->layers.push(new TransparencyLayer(p, QRect(x, y, w, h), opacity, emptyAlphaMask));
     ++m_data->layerCount;
 }
@@ -1115,7 +1115,7 @@ void GraphicsContext::endPlatformTransparencyLayer()
     if (!layer->alphaMask.isNull()) {
         layer->painter.resetTransform();
         layer->painter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-        layer->painter.drawImage(QPoint(), layer->alphaMask);
+        layer->painter.drawPixmap(QPoint(), layer->alphaMask);
     } else
         --m_data->layerCount; // see the comment for layerCount
     layer->painter.end();
@@ -1124,7 +1124,7 @@ void GraphicsContext::endPlatformTransparencyLayer()
     p->save();
     p->resetTransform();
     p->setOpacity(layer->opacity);
-    p->drawImage(layer->offset, layer->image);
+    p->drawPixmap(layer->offset, layer->pixmap);
     p->restore();
 
     delete layer;

@@ -36,41 +36,41 @@
 
 namespace WebCore {
 
-StillImage::StillImage(const QImage& image)
-    : m_image(new QImage(image))
-    , m_ownsImage(true)
+StillImage::StillImage(const QPixmap& pixmap)
+    : m_pixmap(new QPixmap(pixmap))
+    , m_ownsPixmap(true)
 {}
 
-StillImage::StillImage(const QImage* image)
-    : m_image(image)
-    , m_ownsImage(false)
+StillImage::StillImage(const QPixmap* pixmap)
+    : m_pixmap(pixmap)
+    , m_ownsPixmap(false)
 {}
 
 StillImage::~StillImage()
 {
-    if (m_ownsImage)
-        delete m_image;
+    if (m_ownsPixmap)
+        delete m_pixmap;
 }
 
 bool StillImage::currentFrameHasAlpha()
 {
-    return m_image->hasAlphaChannel();
+    return m_pixmap->hasAlpha();
 }
 
 IntSize StillImage::size() const
 {
-    return IntSize(m_image->width(), m_image->height());
+    return IntSize(m_pixmap->width(), m_pixmap->height());
 }
 
 NativeImagePtr StillImage::nativeImageForCurrentFrame()
 {
-    return const_cast<NativeImagePtr>(m_image);
+    return const_cast<NativeImagePtr>(m_pixmap);
 }
 
 void StillImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
                       const FloatRect& src, ColorSpace, CompositeOperator op)
 {
-    if (m_image->isNull())
+    if (m_pixmap->isNull())
         return;
 
     FloatRect normalizedSrc = src.normalized();
@@ -84,12 +84,12 @@ void StillImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
         GraphicsContext* shadowContext = shadow->beginShadowLayer(ctxt, normalizedDst);
         if (shadowContext) {
             QPainter* shadowPainter = shadowContext->platformContext();
-            shadowPainter->drawImage(normalizedDst, *m_image, normalizedSrc);
+            shadowPainter->drawPixmap(normalizedDst, *m_pixmap, normalizedSrc);
             shadow->endShadowLayer(ctxt);
         }
     }
 
-    ctxt->platformContext()->drawImage(normalizedDst, *m_image, normalizedSrc);
+    ctxt->platformContext()->drawPixmap(normalizedDst, *m_pixmap, normalizedSrc);
     ctxt->setCompositeOperation(previousOperator);
 }
 

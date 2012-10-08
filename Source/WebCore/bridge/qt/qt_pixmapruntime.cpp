@@ -135,8 +135,8 @@ static JSValueRef assignToHTMLImageElement(JSContextRef context, JSObjectRef fun
 
     QVariant& data = *static_cast<QVariant*>(JSObjectGetPrivate(object));
 
-    // We now know that we have a valid <img> element as the argument, we can attach the image to it.
-    RefPtr<StillImage> stillImage = WebCore::StillImage::create(toImage(data));
+    // We now know that we have a valid <img> element as the argument, we can attach the pixmap to it.
+    RefPtr<StillImage> stillImage = WebCore::StillImage::create(toPixmap(data));
     HTMLImageElement* imageElement = static_cast<HTMLImageElement*>(static_cast<JSHTMLImageElement*>(jsObject)->impl());
     imageElement->setCachedImage(new CachedImage(stillImage.get()));
     return JSValueMakeUndefined(context);
@@ -231,13 +231,13 @@ QVariant QtPixmapRuntime::toQt(JSContextRef context, JSObjectRef obj, QMetaType:
     if (!image)
         return emptyVariantForHint(hint);
 
-    QImage* nativeImage = image->nativeImageForCurrentFrame();
-    if (!nativeImage)
+    QPixmap* pixmap = image->nativeImageForCurrentFrame();
+    if (!pixmap)
         return emptyVariantForHint(hint);
 
     return (hint == static_cast<QMetaType::Type>(qMetaTypeId<QPixmap>()))
-              ? QVariant::fromValue<QPixmap>(QPixmap::fromImage(*nativeImage))
-              : QVariant::fromValue<QImage>(*nativeImage);
+        ? QVariant::fromValue<QPixmap>(*pixmap)
+        : QVariant::fromValue<QImage>(pixmap->toImage());
 }
 
 bool QtPixmapRuntime::canHandle(QMetaType::Type hint)

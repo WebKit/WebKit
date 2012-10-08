@@ -53,6 +53,10 @@ typedef SIZE* LPSIZE;
 typedef struct HBITMAP__ *HBITMAP;
 #endif
 
+#if PLATFORM(QT)
+#include <QPixmap>
+#endif
+
 #if PLATFORM(GTK)
 typedef struct _GdkPixbuf GdkPixbuf;
 #endif
@@ -154,7 +158,7 @@ public:
 #endif
 
 #if PLATFORM(QT)
-    static void setPlatformResource(const char* name, const QImage&);
+    static void setPlatformResource(const char* name, const QPixmap&);
 #endif
 
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,

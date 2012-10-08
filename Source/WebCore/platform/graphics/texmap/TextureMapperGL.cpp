@@ -697,8 +697,9 @@ void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, co
     const char* imageData;
 
 #if PLATFORM(QT)
-    imageData = reinterpret_cast<const char*>(frameImage->constBits());
-    bytesPerLine = frameImage->bytesPerLine();
+    QImage qImage = frameImage->toImage();
+    imageData = reinterpret_cast<const char*>(qImage.constBits());
+    bytesPerLine = qImage.bytesPerLine();
 #elif USE(CAIRO)
     cairo_surface_t* surface = frameImage->surface();
     imageData = reinterpret_cast<const char*>(cairo_image_surface_get_data(surface));

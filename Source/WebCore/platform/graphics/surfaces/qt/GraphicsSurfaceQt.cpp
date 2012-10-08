@@ -52,7 +52,8 @@ PassRefPtr<Image> GraphicsSurface::createReadOnlyImage(const IntRect& rect)
     int stride;
     QImage::Format format = (flags() & SupportsAlpha) ? QImage::Format_ARGB32_Premultiplied : QImage::Format_RGB32;
     char* data = platformLock(rect, &stride, RetainPixels | ReadOnly);
-    return BitmapImage::create(new QImage(reinterpret_cast<uchar*>(data), rect.width(), rect.height(), stride, format, didReleaseImage, this));
+    QImage image(reinterpret_cast<uchar*>(data), rect.width(), rect.height(), stride, format, didReleaseImage, this);
+    return BitmapImage::create(new QPixmap(QPixmap::fromImage(image)));
 }
 
 }

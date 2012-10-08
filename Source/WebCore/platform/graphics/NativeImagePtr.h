@@ -36,7 +36,7 @@ typedef struct CGImage* CGImageRef;
 #elif PLATFORM(QT)
 #include <qglobal.h>
 QT_BEGIN_NAMESPACE
-class QImage;
+class QPixmap;
 QT_END_NAMESPACE
 #elif USE(CAIRO)
 #include "NativeImageCairo.h"
@@ -57,7 +57,7 @@ namespace WebCore {
 #if USE(CG)
 typedef CGImageRef NativeImagePtr;
 #elif PLATFORM(QT)
-typedef QImage* NativeImagePtr;
+typedef QPixmap* NativeImagePtr;
 #elif PLATFORM(OPENVG)
 class TiledImageOpenVG;
 typedef TiledImageOpenVG* NativeImagePtr;

@@ -158,7 +158,7 @@ QDateTime QWebHistoryItem::lastVisited() const
 QIcon QWebHistoryItem::icon() const
 {
     if (d->item)
-        return QPixmap::fromImage(*WebCore::iconDatabase().synchronousNativeIconForPageURL(d->item->url(), WebCore::IntSize(16, 16)));
+        return *WebCore::iconDatabase().synchronousNativeIconForPageURL(d->item->url(), WebCore::IntSize(16, 16));
 
     return QIcon();
 }

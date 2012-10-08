@@ -36,24 +36,24 @@
 #ifndef TransparencyLayer_h
 #define TransparencyLayer_h
 
-#include <NativeImageQt.h>
 #include <QPaintEngine>
 #include <QPainter>
+#include <QPixmap>
 
 namespace WebCore {
 
 struct TransparencyLayer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    TransparencyLayer(const QPainter* p, const QRect &rect, qreal opacity, QImage& alphaMask)
-        : image(rect.width(), rect.height(), NativeImageQt::defaultFormatForAlphaEnabledImages())
+    TransparencyLayer(const QPainter* p, const QRect &rect, qreal opacity, QPixmap& alphaMask)
+        : pixmap(rect.width(), rect.height())
         , opacity(opacity)
         , alphaMask(alphaMask)
         , saveCounter(1) // see the comment for saveCounter
     {
         offset = rect.topLeft();
-        image.fill(Qt::transparent);
-        painter.begin(&image);
+        pixmap.fill(Qt::transparent);
+        painter.begin(&pixmap);
         painter.setRenderHints(p->renderHints());
         painter.translate(-offset);
         painter.setPen(p->pen());
@@ -67,12 +67,12 @@ public:
     {
     }
 
-    QImage image;
+    QPixmap pixmap;
     QPoint offset;
     QPainter painter;
     qreal opacity;
     // for clipToImageBuffer
-    QImage alphaMask;
+    QPixmap alphaMask;
     // saveCounter is only used in combination with alphaMask
     // otherwise, its value is unspecified
     int saveCounter;

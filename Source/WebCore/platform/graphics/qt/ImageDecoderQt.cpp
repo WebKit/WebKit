@@ -272,7 +272,9 @@ NativeImagePtr ImageFrame::asNewNativeImage() const
     else
         format = QImage::Format_RGB32;
 
-    return new QImage(reinterpret_cast<uchar*>(m_bytes), m_size.width(), m_size.height(), sizeof(PixelData) * m_size.width(), format);
+    QImage img(reinterpret_cast<uchar*>(m_bytes), m_size.width(), m_size.height(), sizeof(PixelData) * m_size.width(), format);
+
+    return new QPixmap(QPixmap::fromImage(img));
 }
 
 }

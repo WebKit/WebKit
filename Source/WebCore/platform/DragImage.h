@@ -36,7 +36,7 @@
 OBJC_CLASS NSImage;
 #elif PLATFORM(QT)
 QT_BEGIN_NAMESPACE
-class QImage;
+class QPixmap;
 QT_END_NAMESPACE
 #elif PLATFORM(WIN)
 typedef struct HBITMAP__* HBITMAP;
@@ -62,7 +62,7 @@ namespace WebCore {
 #if PLATFORM(MAC)
     typedef RetainPtr<NSImage> DragImageRef;
 #elif PLATFORM(QT)
-    typedef QImage* DragImageRef;
+    typedef QPixmap* DragImageRef;
 #elif PLATFORM(WIN)
     typedef HBITMAP DragImageRef;
 #elif PLATFORM(WX)

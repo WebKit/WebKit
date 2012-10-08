@@ -53,8 +53,8 @@ void ShareableBitmap::releaseSharedMemoryData(void* typelessBitmap)
 
 PassRefPtr<Image> ShareableBitmap::createImage()
 {
-    QImage* image = new QImage(createQImage());
-    return BitmapImage::create(image);
+    QPixmap* pixmap = new QPixmap(QPixmap::fromImage(createQImage()));
+    return BitmapImage::create(pixmap);
 }
 
 PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()

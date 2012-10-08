@@ -723,12 +723,12 @@ void QWebSettings::clearIconDatabase()
 QIcon QWebSettings::iconForUrl(const QUrl& url)
 {
     WebCore::initializeWebCoreQt();
-    QImage* icon = WebCore::iconDatabase().synchronousNativeIconForPageURL(WebCore::KURL(url).string(),
+    QPixmap* icon = WebCore::iconDatabase().synchronousNativeIconForPageURL(WebCore::KURL(url).string(),
                                 WebCore::IntSize(16, 16));
     if (!icon)
         return QIcon();
 
-    return QPixmap::fromImage(*icon);
+    return* icon;
 }
 
 /*
@@ -771,7 +771,7 @@ static const char* resourceNameForWebGraphic(QWebSettings::WebGraphic type)
 void QWebSettings::setWebGraphic(WebGraphic type, const QPixmap& graphic)
 {
     WebCore::initializeWebCoreQt();
-    WebCore::Image::setPlatformResource(resourceNameForWebGraphic(type), graphic.toImage());
+    WebCore::Image::setPlatformResource(resourceNameForWebGraphic(type), graphic);
 }
 
 /*!
@@ -786,10 +786,10 @@ QPixmap QWebSettings::webGraphic(WebGraphic type)
     RefPtr<WebCore::Image> img = WebCore::Image::loadPlatformResource(resourceNameForWebGraphic(type));
     if (!img)
         return QPixmap();
-    QImage* image = img->nativeImageForCurrentFrame();
-    if (!image)
+    QPixmap* pixmap = img->nativeImageForCurrentFrame();
+    if (!pixmap)
         return QPixmap();
-    return QPixmap::fromImage(*image);
+    return *pixmap;
 }
 
 /*!

@@ -37,8 +37,6 @@
 
 #include "NotImplemented.h"
 
-#include <QImage>
-#include <QPixmap>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -77,11 +75,10 @@ Cursor& Cursor::operator=(const Cursor& other)
 #ifndef QT_NO_CURSOR
 static QCursor* createCustomCursor(Image* image, const IntPoint& hotSpot)
 {
-    QImage* nativeImage = image->nativeImageForCurrentFrame();
-    if (!nativeImage)
+    if (!image->nativeImageForCurrentFrame())
         return 0;
     IntPoint effectiveHotSpot = determineHotSpot(image, hotSpot);
-    return new QCursor(QPixmap::fromImage(*nativeImage), effectiveHotSpot.x(), effectiveHotSpot.y());
+    return new QCursor(*(image->nativeImageForCurrentFrame()), effectiveHotSpot.x(), effectiveHotSpot.y());
 }
 #endif
 

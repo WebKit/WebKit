@@ -1,3 +1,24 @@
+2012-10-08  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] r122720 causes performance regression with DirectFB on ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=97548
+
+        Reviewed by Jocelyn Turcotte.
+
+        Revert the rest of r122720. This change modifies the NativeImagePtr from QImage* to QPixmap*.
+
+        Covered by existing tests.
+
+        * Shared/qt/ShareableBitmapQt.cpp:
+        (WebKit::ShareableBitmap::createImage):
+        * UIProcess/qt/QtWebIconDatabaseClient.cpp:
+        (WebKit::QtWebIconDatabaseClient::iconImageForPageURL):
+        * WebProcess/WebCoreSupport/qt/WebDragClientQt.cpp:
+        (WebKit::convertQPixmapToShareableBitmap):
+        (WebKit::WebDragClient::startDrag):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::adoptImageBackingStore):
+
 2012-10-08  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         Unreviewed build fix after r130630

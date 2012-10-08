@@ -83,9 +83,9 @@ void initializeWebCoreQt()
 #endif
 
     // QWebSettings::SearchCancelButtonGraphic
-    Image::setPlatformResource("searchCancelButton", QApplication::style()->standardPixmap(QStyle::SP_DialogCloseButton).toImage());
+    Image::setPlatformResource("searchCancelButton", QApplication::style()->standardPixmap(QStyle::SP_DialogCloseButton));
     // QWebSettings::SearchCancelButtonPressedGraphic
-    Image::setPlatformResource("searchCancelButtonPressed", QApplication::style()->standardPixmap(QStyle::SP_DialogCloseButton).toImage());
+    Image::setPlatformResource("searchCancelButtonPressed", QApplication::style()->standardPixmap(QStyle::SP_DialogCloseButton));
 
     initialized = true;
 }
