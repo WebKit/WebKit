@@ -1,3 +1,42 @@
+2012-10-08  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Additional fast/repaint Chromium rebaseline.
+
+        Rebaselined more tests on Chromium Mac. Same as r130654 but there
+        is some anti-aliasing differences on transformed lines.
+
+        * platform/chromium/TestExpectations:
+        Removed the rebaselined tests.
+
+        * fast/repaint/table-section-repaint-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/overflow-outline-repaint-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/table-collapsed-border-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/text-append-dirty-lines-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/text-selection-rect-in-overflow-2-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/text-selection-rect-in-overflow-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/transform-relative-position-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/transform-repaint-descendants-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/overflow-outline-repaint-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/table-col-background-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/table-collapsed-border-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/table-outer-border-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/table-row-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/table-section-overflow-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/table-section-repaint-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/table-two-pass-layout-overpaint-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/text-append-dirty-lines-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/text-selection-rect-in-overflow-2-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/text-selection-rect-in-overflow-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/transform-absolute-child-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/transform-disable-layoutstate-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/transform-relative-position-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/transform-repaint-descendants-expected.png: Added.
+        * platform/chromium-win/fast/repaint/table-section-repaint-expected.txt: Removed.
+        * platform/chromium/fast/repaint/table-section-repaint-expected.txt: Added.
+        * platform/efl/fast/repaint/table-section-repaint-expected.txt: Removed.
+        * platform/gtk/fast/repaint/table-section-repaint-expected.txt: Removed.
+        * platform/qt/fast/repaint/table-section-repaint-expected.txt: Removed.
+
 2012-10-08  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
