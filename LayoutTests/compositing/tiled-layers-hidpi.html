@@ -18,7 +18,7 @@
         
         function finishTest() {
             setTimeout(function() {
-				document.getElementById('layer-tree').innerText = window.testRunner.layerTreeAsText();
+				document.getElementById('layer-tree').innerText = window.internals.layerTreeAsText(document);
 				testRunner.notifyDone();
 			}, 0);
         }

@@ -55,7 +55,7 @@
             document.body.offsetLeft;
             testRunner.display();
 
-            return messagePrefix + testRunner.layerTreeAsText();
+            return messagePrefix + window.internals.layerTreeAsText(document);
         }
       
         window.addEventListener('load', testOnLoad, false);

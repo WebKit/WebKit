@@ -28,14 +28,14 @@
       // If the fixed position element doesn't have its own stacking context then
       // it cannot get a composited layer.
       if (window.testRunner)
-        layerTreeOutput += 'Before (should be empty): \n' + testRunner.layerTreeAsText() + '\n';
+        layerTreeOutput += 'Before (should be empty): \n' + window.internals.layerTreeAsText(document) + '\n';
 
       // Adding a z-index to the fixed position element will give it a stacking context
       // and allow it to be composited.
       document.getElementById('fixed').style.zIndex = '1';
 
       if (window.testRunner) {
-        layerTreeOutput += 'After (should not be empty): \n' + testRunner.layerTreeAsText();
+        layerTreeOutput += 'After (should not be empty): \n' + window.internals.layerTreeAsText(document);
         document.getElementById('layertree').innerText = layerTreeOutput;
         testRunner.dumpAsText();
       }
@@ -43,7 +43,7 @@
       // Adding a transform to the container will turn off compositing.
       document.getElementById('container').style.webkitTransform = 'translateX(0)';
       if (window.testRunner) {
-        layerTreeOutput += 'After (should be empty): \n' + testRunner.layerTreeAsText();
+        layerTreeOutput += 'After (should be empty): \n' + window.internals.layerTreeAsText(document);
         document.getElementById('layertree').innerText = layerTreeOutput;
         testRunner.dumpAsText();
       }

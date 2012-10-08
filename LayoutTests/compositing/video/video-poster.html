@@ -13,7 +13,7 @@
             function hasLayers()
             {
                 if (window.testRunner)
-                    return testRunner.layerTreeAsText() != "";
+                    return window.internals.layerTreeAsText(document) != "";
                 return false;
             }
 

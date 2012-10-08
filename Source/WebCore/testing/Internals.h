@@ -187,6 +187,8 @@ public:
     void suspendAnimations(Document*, ExceptionCode&) const;
     void resumeAnimations(Document*, ExceptionCode&) const;
 
+    String layerTreeAsText(Document*, ExceptionCode&) const;
+
     void garbageCollectDocumentResources(Document*, ExceptionCode&) const;
 
     void allowRoundingHacks() const;

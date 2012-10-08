@@ -57,7 +57,7 @@
       if (window.testRunner) {
         // We need to call display() here to sync the compositor state and avoid a race condition.
         testRunner.display();
-        document.getElementById('layers').innerText = testRunner.layerTreeAsText();
+        document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
         testRunner.notifyDone();
       }
     }

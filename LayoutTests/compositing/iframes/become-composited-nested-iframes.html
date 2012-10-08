@@ -38,7 +38,7 @@
           document.getElementById('box').className = 'composited';
           if (window.testRunner) {
               testRunner.display();
-              document.getElementById('layers').innerHTML = testRunner.layerTreeAsText();
+              document.getElementById('layers').innerHTML = window.internals.layerTreeAsText(document);
               testRunner.notifyDone();
           }
         }, 20);

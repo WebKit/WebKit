@@ -49,7 +49,7 @@
 
         
         if (window.testRunner) {
-          document.getElementById('results').innerText = window.testRunner.layerTreeAsText();
+          document.getElementById('results').innerText = window.internals.layerTreeAsText(document);
           testRunner.notifyDone();
         }
       }, 150);

@@ -32,7 +32,7 @@
         testScrollability(divs[i]);
 
       if (window.testRunner)
-        document.getElementById('results').innerText = testRunner.layerTreeAsText();
+        document.getElementById('results').innerText = window.internals.layerTreeAsText(document);
     }
     window.addEventListener('load', doTest, false);
   </script>

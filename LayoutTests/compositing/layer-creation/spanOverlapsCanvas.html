@@ -14,7 +14,7 @@
             if (window.testRunner) {
                 window.testRunner.dumpAsText(true);
                 var console = document.getElementById("layeroutput");
-                console.innerHTML = window.testRunner.layerTreeAsText();
+                console.innerHTML = window.internals.layerTreeAsText(document);
             }
 	    }
 	</script>

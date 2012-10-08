@@ -30,7 +30,7 @@
   {
     var layersResult = document.getElementById('layers');
     if (window.testRunner)
-      layersResult.innerText = testRunner.layerTreeAsText();
+      layersResult.innerText = window.internals.layerTreeAsText(document);
     
   }
   window.addEventListener('load', dumpLayers, false)

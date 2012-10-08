@@ -9,7 +9,7 @@
 function test() {
     if (window.testRunner) {
         testRunner.dumpAsText();
-        document.getElementById('layers').innerHTML = testRunner.layerTreeAsText();
+        document.getElementById('layers').innerHTML = window.internals.layerTreeAsText(document);
     }
 }
 </script>

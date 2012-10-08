@@ -39,7 +39,7 @@
             // First with no kids
             window.setTimeout(function() {
                 if (window.testRunner)
-                    result = "First (no children):<br>" + testRunner.layerTreeAsText();
+                    result = "First (no children):<br>" + window.internals.layerTreeAsText(document);
             }, 0);
             
             // Second add kid
@@ -51,7 +51,7 @@
                 // Let it render
                 window.setTimeout(function() {
                     if (window.testRunner)
-                        result += "<br><br>Second (child added):<br>" + testRunner.layerTreeAsText();
+                        result += "<br><br>Second (child added):<br>" + window.internals.layerTreeAsText(document);
                 }, 0);
             }, 100);
             
@@ -63,7 +63,7 @@
                 // Let it render
                 window.setTimeout(function() {
                     if (window.testRunner) {
-                        result += "<br><br>Third (child removed):<br>" + testRunner.layerTreeAsText();
+                        result += "<br><br>Third (child removed):<br>" + window.internals.layerTreeAsText(document);
                         document.getElementById('layers').innerHTML = result;
                         testRunner.notifyDone();
                     }

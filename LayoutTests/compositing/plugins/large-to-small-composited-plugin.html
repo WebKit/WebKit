@@ -32,7 +32,7 @@
           // Need to wait for compositing layers to be updated.
           window.setTimeout(function() {
               if (window.testRunner) {
-                  var layers = testRunner.layerTreeAsText();
+                  var layers = window.internals.layerTreeAsText(document);
                   var result;
                   if (layers == "")
                     result = "PASS: no layers found";

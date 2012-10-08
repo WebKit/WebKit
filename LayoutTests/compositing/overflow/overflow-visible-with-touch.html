@@ -21,7 +21,7 @@
 
     window.addEventListener('load', function() {
       if (window.testRunner)
-        document.getElementById('layers').innerHTML = testRunner.layerTreeAsText();
+        document.getElementById('layers').innerHTML = window.internals.layerTreeAsText(document);
     }, true);
   </script>
 </head>

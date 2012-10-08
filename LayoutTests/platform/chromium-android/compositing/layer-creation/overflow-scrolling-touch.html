@@ -39,7 +39,7 @@
     function doTest()
     {
       if (window.layoutTestController) {
-        document.getElementById('layers').innerText = layoutTestController.layerTreeAsText();
+        document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
         layoutTestController.notifyDone();
       }
     }

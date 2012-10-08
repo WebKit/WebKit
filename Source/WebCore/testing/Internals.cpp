@@ -1222,6 +1222,16 @@ void Internals::resumeAnimations(Document* document, ExceptionCode& ec) const
     controller->resumeAnimations();
 }
 
+String Internals::layerTreeAsText(Document* document, ExceptionCode& ec) const
+{
+    if (!document || !document->frame()) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+    
+    return document->frame()->layerTreeAsText();
+}
+
 void Internals::garbageCollectDocumentResources(Document* document, ExceptionCode& ec) const
 {
     if (!document) {

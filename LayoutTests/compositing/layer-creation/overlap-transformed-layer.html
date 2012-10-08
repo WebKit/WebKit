@@ -45,7 +45,7 @@
     if (window.testRunner) {
         testRunner.dumpAsText(true);
         window.addEventListener('load', function() {
-            document.getElementById("layertree").innerText = testRunner.layerTreeAsText();
+            document.getElementById("layertree").innerText = window.internals.layerTreeAsText(document);
         }, false);
     }
 </script>

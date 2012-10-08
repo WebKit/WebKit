@@ -54,7 +54,7 @@
 
     function finishTest() {
         var output = document.getElementById("output");
-        output.innerText = testRunner.layerTreeAsText();
+        output.innerText = window.internals.layerTreeAsText(document);
 
         if (window.testRunner)
             window.testRunner.notifyDone();        

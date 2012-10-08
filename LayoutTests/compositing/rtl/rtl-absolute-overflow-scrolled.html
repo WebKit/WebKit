@@ -52,7 +52,7 @@
             window.scrollTo(offset, 0);
             if (window.testRunner) {
                 if (top == self)
-                    document.getElementById('layertree').innerText = testRunner.layerTreeAsText();
+                    document.getElementById('layertree').innerText = window.internals.layerTreeAsText(document);
                 testRunner.notifyDone();
             }
         }, 0);

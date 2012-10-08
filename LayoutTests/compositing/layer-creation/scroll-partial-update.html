@@ -46,7 +46,7 @@
         window.setTimeout(function() {
           document.getElementById('scroller').scrollTop = 50;
           if (window.testRunner) {
-            document.getElementById('results').innerText = testRunner.layerTreeAsText();
+            document.getElementById('results').innerText = window.internals.layerTreeAsText(document);
             testRunner.notifyDone();
           }
         }, 20);

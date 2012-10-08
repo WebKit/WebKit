@@ -7,7 +7,7 @@
     <script>
         if (window.testRunner) {
             testRunner.dumpAsText();
-            document.getElementById("console").appendChild(document.createTextNode(testRunner.layerTreeAsText()));
+            document.getElementById("console").appendChild(document.createTextNode(window.internals.layerTreeAsText(document)));
         }
     </script>
 </body>

@@ -13,7 +13,7 @@
     {
         description("Test to make sure a blend mode creates a compositing layer. Test is successful of render tree shows compositing");
         if (window.testRunner) {
-            var layers = testRunner.layerTreeAsText();
+            var layers = window.internals.layerTreeAsText(document);
             if (layers == "")
                 testFailed("no compositing layers");
             else

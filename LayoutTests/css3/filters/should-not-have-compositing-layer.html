@@ -13,7 +13,7 @@
     {
         description("Test to make sure a simple CSS filter does not create a compositing layer. Test is successful of render tree does not show any compositing");
         if (window.testRunner) {
-            var layers = testRunner.layerTreeAsText();
+            var layers = window.internals.layerTreeAsText(document);
             if (layers == "")
                 testPassed("no compositing layers");
             else

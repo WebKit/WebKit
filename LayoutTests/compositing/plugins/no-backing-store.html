@@ -17,7 +17,7 @@
         // Need to wait for compositing layers to be updated. FIXME remove.
         window.setTimeout(function() {
             if (window.testRunner) {
-                document.getElementById('layers').innerHTML = testRunner.layerTreeAsText();
+                document.getElementById('layers').innerHTML = window.internals.layerTreeAsText(document);
                 testRunner.notifyDone();
             }
         }, 0)

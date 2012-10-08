@@ -34,7 +34,7 @@
       document.getElementById('parent-iframe').contentDocument.body.offsetWidth; // work around bug 41999.
       if (window.testRunner) {
         testRunner.display();
-        document.getElementById('layers').innerText = testRunner.layerTreeAsText();
+        document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
         testRunner.notifyDone();
       }
     }

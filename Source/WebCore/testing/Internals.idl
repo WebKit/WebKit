@@ -157,6 +157,8 @@ module window {
         void suspendAnimations(in Document document) raises (DOMException);
         void resumeAnimations(in Document document) raises (DOMException);
 
+        DOMString layerTreeAsText(in Document document) raises (DOMException);
+
         void garbageCollectDocumentResources(in Document document) raises (DOMException);
 
         void allowRoundingHacks();

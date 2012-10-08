@@ -62,7 +62,7 @@
     function dumpLayerTree()
     {
       if (window.testRunner)
-        document.getElementById('layer-tree').innerText = testRunner.layerTreeAsText();
+        document.getElementById('layer-tree').innerText = window.internals.layerTreeAsText(document);
     }
     
     window.addEventListener('load', dumpLayerTree, false);

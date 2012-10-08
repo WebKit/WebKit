@@ -54,7 +54,7 @@
     function doTest()
     {
       if (window.testRunner)
-        document.getElementById('layers1').innerText = testRunner.layerTreeAsText();
+        document.getElementById('layers1').innerText = window.internals.layerTreeAsText(document);
 
       window.setTimeout(function() {
         var firstImage = document.querySelectorAll('img')[0];

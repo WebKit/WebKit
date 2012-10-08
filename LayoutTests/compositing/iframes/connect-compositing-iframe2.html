@@ -37,7 +37,7 @@
       document.getElementById('iframe').className = 'composited';
 
       if (window.testRunner) {
-        document.getElementById('layers').innerText = testRunner.layerTreeAsText();
+        document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
         testRunner.notifyDone();
       }
     }

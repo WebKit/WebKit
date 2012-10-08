@@ -36,14 +36,14 @@
             var hadLayersAfter = false;
             if (window.testRunner) {
                 testRunner.display(); // Need to paint for overlap testing.
-                hadLayersBefore = testRunner.layerTreeAsText() != "";
+                hadLayersBefore = window.internals.layerTreeAsText(document) != "";
             }
 
             document.getElementById('parent-iframe').src = "about:blank";
             
             window.setTimeout(function() {
                 if (window.testRunner) {
-                    hadLayersAfter = testRunner.layerTreeAsText() != "";
+                    hadLayersAfter = window.internals.layerTreeAsText(document) != "";
 
                     var results = document.getElementById('results');
                     if (hadLayersBefore && !hadLayersAfter)

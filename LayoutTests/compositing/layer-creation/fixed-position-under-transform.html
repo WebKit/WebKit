@@ -35,7 +35,7 @@
     function doTest() {
         window.scrollTo(0, 1000);
         if (window.testRunner) {
-            document.getElementById('layertree').innerText = testRunner.layerTreeAsText();
+            document.getElementById('layertree').innerText = window.internals.layerTreeAsText(document);
             testRunner.dumpAsText(true);
         }
     }

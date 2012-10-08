@@ -13,7 +13,7 @@
         ctx.fillRect(0,0,c.width, c.height);
 
         if (window.testRunner) {
-            document.getElementById('layers').innerText = testRunner.layerTreeAsText();
+            document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
             testRunner.notifyDone();
         }
     }

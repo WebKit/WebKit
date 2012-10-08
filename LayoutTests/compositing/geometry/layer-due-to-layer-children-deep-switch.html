@@ -55,7 +55,7 @@
         setTimeout(function() {
             if (window.testRunner) {
                 text += "\n" + which + " dump layer tree:\n";
-                text += testRunner.layerTreeAsText();
+                text += window.internals.layerTreeAsText(document);
                 document.getElementById('layers').innerText = text;
             }
         }, 0);

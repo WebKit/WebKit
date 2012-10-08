@@ -45,7 +45,7 @@
             // Small layer first
             window.setTimeout(function() {
                 if (window.testRunner)
-                    result = "First (small layer):<br>" + testRunner.layerTreeAsText();
+                    result = "First (small layer):<br>" + window.internals.layerTreeAsText(document);
             }, 0);
             
             // Huge layer second

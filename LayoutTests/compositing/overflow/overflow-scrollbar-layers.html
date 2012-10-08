@@ -45,6 +45,6 @@ resize: both;
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.display(); // Ensure compositor tree is up to date.
-    document.getElementById("layerTree").innerText = testRunner.layerTreeAsText();
+    document.getElementById("layerTree").innerText = window.internals.layerTreeAsText(document);
 }
 </script>

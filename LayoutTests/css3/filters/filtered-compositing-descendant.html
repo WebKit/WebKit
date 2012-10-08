@@ -30,7 +30,7 @@
 
     window.addEventListener('load', function () {
       if (window.testRunner)
-        document.getElementById('layer-tree').innerText = testRunner.layerTreeAsText();
+        document.getElementById('layer-tree').innerText = window.internals.layerTreeAsText(document);
     }, false);
   </script>
 </head>

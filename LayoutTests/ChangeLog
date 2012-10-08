@@ -1,3 +1,141 @@
+2012-10-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Move layerTreeAsText to window.internals
+        https://bugs.webkit.org/show_bug.cgi?id=98690
+
+        Reviewed by James Robinson.
+
+        Add window.internals.layerTreeAsText(document), and change the tests to use it.
+        I'll remove testRunner.layerTreeAsText() in a later patch.
+
+        * compositing/animation/animation-compositing.html:
+        * compositing/backing/no-backing-for-clip-overlap.html:
+        * compositing/backing/no-backing-for-clip.html:
+        * compositing/backing/no-backing-for-perspective.html:
+        * compositing/bounds-in-flipped-writing-mode.html:
+        * compositing/clip-child-by-non-stacking-ancestor.html:
+        * compositing/columns/composited-in-paginated.html:
+        * compositing/geometry/ancestor-overflow-change.html:
+        * compositing/geometry/bounds-clipped-composited-child.html:
+        * compositing/geometry/bounds-ignores-hidden-composited-descendant.html:
+        * compositing/geometry/bounds-ignores-hidden-dynamic-negzindex.html:
+        * compositing/geometry/bounds-ignores-hidden-dynamic.html:
+        * compositing/geometry/bounds-ignores-hidden.html:
+        * compositing/geometry/clip.html:
+        * compositing/geometry/composited-in-columns.html:
+        * compositing/geometry/fixed-position-composited-switch.html:
+        * compositing/geometry/flipped-writing-mode.html:
+        * compositing/geometry/foreground-layer.html:
+        * compositing/geometry/layer-due-to-layer-children-deep-switch.html:
+        * compositing/geometry/layer-due-to-layer-children-switch.html:
+        * compositing/geometry/limit-layer-bounds-clipping-ancestor.html:
+        * compositing/geometry/limit-layer-bounds-fixed-positioned.html:
+        * compositing/geometry/limit-layer-bounds-opacity-transition.html:
+        * compositing/geometry/limit-layer-bounds-overflow-root.html:
+        * compositing/geometry/limit-layer-bounds-positioned-transition.html:
+        * compositing/geometry/limit-layer-bounds-positioned.html:
+        * compositing/geometry/limit-layer-bounds-transformed-overflow.html:
+        * compositing/geometry/limit-layer-bounds-transformed.html:
+        * compositing/geometry/preserve-3d-switching.html:
+        * compositing/iframes/become-composited-nested-iframes.html:
+        * compositing/iframes/become-overlapped-iframe.html:
+        * compositing/iframes/composited-parent-iframe.html:
+        * compositing/iframes/connect-compositing-iframe-delayed.html:
+        * compositing/iframes/connect-compositing-iframe.html:
+        * compositing/iframes/connect-compositing-iframe2.html:
+        * compositing/iframes/connect-compositing-iframe3.html:
+        * compositing/iframes/enter-compositing-iframe.html:
+        * compositing/iframes/iframe-resize.html:
+        * compositing/iframes/iframe-size-from-zero.html:
+        * compositing/iframes/iframe-size-to-zero.html:
+        * compositing/iframes/iframe-src-change.html:
+        * compositing/iframes/invisible-nested-iframe-hide.html:
+        * compositing/iframes/invisible-nested-iframe-show.html:
+        * compositing/iframes/leave-compositing-iframe.html:
+        * compositing/iframes/overlapped-iframe-iframe.html:
+        * compositing/iframes/overlapped-iframe.html:
+        * compositing/iframes/overlapped-nested-iframes.html:
+        * compositing/iframes/page-cache-layer-tree.html:
+        * compositing/iframes/resizer.html:
+        * compositing/iframes/scrolling-iframe.html:
+        * compositing/images/clip-on-directly-composited-image.html:
+        * compositing/layer-creation/animation-overlap-with-children.html:
+        * compositing/layer-creation/fixed-position-and-transform.html:
+        * compositing/layer-creation/fixed-position-out-of-view.html:
+        * compositing/layer-creation/fixed-position-under-transform.html:
+        * compositing/layer-creation/no-compositing-for-preserve-3d.html:
+        * compositing/layer-creation/overflow-scroll-overlap.html:
+        * compositing/layer-creation/overlap-animation.html:
+        * compositing/layer-creation/overlap-child-layer.html:
+        * compositing/layer-creation/overlap-clipping.html:
+        * compositing/layer-creation/overlap-transformed-and-clipped.html:
+        * compositing/layer-creation/overlap-transformed-layer.html:
+        * compositing/layer-creation/overlap-transforms.html:
+        * compositing/layer-creation/rotate3d-overlap.html:
+        * compositing/layer-creation/scroll-partial-update.html:
+        * compositing/layer-creation/spanOverlapsCanvas.html:
+        * compositing/layer-creation/stacking-context-overlap-nested.html:
+        * compositing/layer-creation/stacking-context-overlap.html:
+        * compositing/layer-creation/translatez-overlap.html:
+        * compositing/overflow-trumps-transform-style.html:
+        * compositing/overflow/clip-descendents.html:
+        * compositing/overflow/content-gains-scrollbars.html:
+        * compositing/overflow/content-loses-scrollbars.html:
+        * compositing/overflow/overflow-auto-with-touch-no-overflow.html:
+        * compositing/overflow/overflow-auto-with-touch-toggle.html:
+        * compositing/overflow/overflow-auto-with-touch.html:
+        * compositing/overflow/overflow-hidden-with-touch.html:
+        * compositing/overflow/overflow-overlay-with-touch-no-overflow.html:
+        * compositing/overflow/overflow-overlay-with-touch.html:
+        * compositing/overflow/overflow-scroll-with-touch-no-overflow.html:
+        * compositing/overflow/overflow-scrollbar-layers.html:
+        * compositing/overflow/overflow-visible-with-touch.html:
+        * compositing/overflow/resize-painting.html:
+        * compositing/overflow/scrolling-content-clip-to-viewport.html:
+        * compositing/overflow/textarea-scroll-touch.html:
+        * compositing/plugins/1x1-composited-plugin.html:
+        * compositing/plugins/large-to-small-composited-plugin.html:
+        * compositing/plugins/no-backing-store.html:
+        * compositing/plugins/small-to-large-composited-plugin.html:
+        * compositing/rtl/rtl-absolute-overflow-scrolled.html:
+        * compositing/rtl/rtl-absolute-overflow.html:
+        * compositing/rtl/rtl-absolute.html:
+        * compositing/rtl/rtl-fixed-overflow-scrolled.html:
+        * compositing/rtl/rtl-fixed-overflow.html:
+        * compositing/rtl/rtl-fixed.html:
+        * compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html:
+        * compositing/rtl/rtl-iframe-absolute-overflow.html:
+        * compositing/rtl/rtl-iframe-absolute.html:
+        * compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html:
+        * compositing/rtl/rtl-iframe-fixed-overflow.html:
+        * compositing/rtl/rtl-iframe-fixed.html:
+        * compositing/rtl/rtl-iframe-relative.html:
+        * compositing/rtl/rtl-relative.html:
+        * compositing/tiled-layers-hidpi.html:
+        * compositing/tiling/crash-reparent-tiled-layer.html:
+        * compositing/tiling/huge-layer-add-remove-child.html-disabled:
+        * compositing/tiling/huge-layer-img.html-disabled:
+        * compositing/tiling/huge-layer-resize.html-disabled:
+        * compositing/tiling/huge-layer-with-layer-children-resize.html-disabled:
+        * compositing/tiling/huge-layer-with-layer-children.html-disabled:
+        * compositing/tiling/huge-layer.html-disabled:
+        * compositing/video/video-poster.html:
+        * compositing/visibility/layer-visible-content.html:
+        * compositing/visibility/visibility-image-layers-dynamic.html:
+        * css3/compositing/should-have-compositing-layer.html:
+        * css3/filters/composited-during-animation-layertree.html:
+        * css3/filters/composited-during-transition-layertree.html:
+        * css3/filters/filtered-compositing-descendant.html:
+        * css3/filters/should-not-have-compositing-layer.html:
+        * platform/chromium-android/compositing/layer-creation/overflow-scrolling-touch.html:
+        * platform/chromium/compositing/force-compositing-mode/force-composite-empty.html:
+        * platform/chromium/compositing/force-compositing-mode/no-overflow-iframe-layer.html:
+        * platform/chromium/compositing/force-compositing-mode/overflow-hidden-iframe-layer.html:
+        * platform/chromium/compositing/force-compositing-mode/overflow-iframe-enter-compositing.html:
+        * platform/chromium/compositing/force-compositing-mode/overflow-iframe-layer.html:
+        * platform/chromium/compositing/force-compositing-mode/overflow-iframe-leave-compositing.html:
+        * platform/mac/compositing/canvas/accelerated-canvas-compositing.html:
+
 2012-10-08  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] Add support for polygonal shapes

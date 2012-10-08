@@ -23,7 +23,7 @@
       results.innerText += window.getComputedStyle(document.getElementById('box2')).webkitTransformStyle + '\n';
       
       if (window.testRunner)
-        results.innerText += testRunner.layerTreeAsText();
+        results.innerText += window.internals.layerTreeAsText(document);
     }
     window.addEventListener('load', dumpResults, false);
   </script>
