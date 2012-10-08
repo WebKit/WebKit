@@ -140,3 +140,7 @@ webkit.org/b/96620 http/tests/loading/text-content-type-with-binary-extension.ht
 webkit.org/b/87974 http/tests/download [ Failure ]
 
 webkit.org/b/98570 fast/replaced/object-with-embed-url-param.html [ Failure ]
+
+# Probably the same as webkit.org/b/53986, but I need to build the GTK+
+# port to confirm
+webkit.org/b/53986 svg/text/caret-in-svg-text.xhtml [ Failure ]
