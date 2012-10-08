@@ -2927,3 +2927,4 @@ webkit.org/b/94006 fast/css/word-spacing-characters-complex-text.html [ ImageOnl
 webkit.org/b/98525 plugins/mouse-click-plugin-clears-selection.html
 webkit.org/b/98525 plugins/netscape-dom-access.html
 webkit.org/b/98525 plugins/resize-from-plugin.html
+webkit.org/b/98640 plugins/refcount-leaks.html
