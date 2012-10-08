@@ -2643,7 +2643,7 @@ PassRefPtr<RenderStyle> RenderObject::uncachedFirstLineStyle(RenderStyle* style)
     return firstLineStyleForCachedUncachedType(Uncached, this, style);
 }
 
-RenderStyle* RenderObject::firstLineStyleSlowCase() const
+RenderStyle* RenderObject::cachedFirstLineStyle() const
 {
     ASSERT(document()->styleSheetCollection()->usesFirstLineRules());
 
