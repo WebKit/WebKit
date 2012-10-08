@@ -274,12 +274,13 @@ GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
     , m_contentsLayerPurpose(NoContentsLayer)
     , m_contentsLayerHasBackgroundColor(false)
     , m_allowTiledLayer(true)
+    , m_isPageTileCacheLayer(false)
     , m_uncommittedChanges(0)
 {
     PlatformCALayer::LayerType layerType = PlatformCALayer::LayerTypeWebLayer;
     if (client && client->shouldUseTileCache(this)) {
         layerType = PlatformCALayer::LayerTypeTileCacheLayer;
-        m_usingTileCache = true;
+        m_isPageTileCacheLayer = true;
     }
 
     m_layer = PlatformCALayer::create(layerType, this);
@@ -992,6 +993,16 @@ void GraphicsLayerCA::recursiveCommitChanges(const TransformState& state, float 
         client()->didCommitChangesForLayer(this);
 }
 
+bool GraphicsLayerCA::platformCALayerShowRepaintCounter(PlatformCALayer* platformLayer) const
+{
+    // The repaint counters are painted into the TileCache tiles (which have no corresponding platform layer),
+    // so we don't want to overpaint the repaint counter when called with the TileCache's own layer.
+    if (m_isPageTileCacheLayer && platformLayer)
+        return false;
+    
+    return showRepaintCounter();
+}
+
 void GraphicsLayerCA::platformCALayerPaintContents(GraphicsContext& context, const IntRect& clip)
 {
     paintGraphicsLayerContents(context, clip);
@@ -1497,7 +1508,7 @@ void GraphicsLayerCA::updateAcceleratesDrawing()
     
 void GraphicsLayerCA::updateLayerBackgroundColor()
 {
-    if (m_layer->layerType() == PlatformCALayer::LayerTypeTileCacheLayer) {
+    if (m_isPageTileCacheLayer) {
         m_layer->setBackgroundColor(m_backgroundColor);
         return;
     }
@@ -2391,6 +2402,17 @@ void GraphicsLayerCA::setDebugBackgroundColor(const Color& color)
         m_layer->setBackgroundColor(Color::transparent);
 }
 
+void GraphicsLayerCA::getDebugBorderInfo(Color& color, float& width) const
+{
+    if (m_isPageTileCacheLayer) {
+        color = Color(0, 0, 128, 128); // tile cache layer: dark blue
+        width = 0.5;
+        return;
+    }
+
+    GraphicsLayer::getDebugBorderInfo(color, width);
+}
+
 void GraphicsLayerCA::setDebugBorder(const Color& color, float borderWidth)
 {    
     if (color.isValid()) {
@@ -2428,7 +2450,7 @@ FloatSize GraphicsLayerCA::constrainedSize() const
 
 bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor) const
 {
-    if (!m_drawsContent || !m_allowTiledLayer || m_layer->layerType() == PlatformCALayer::LayerTypeTileCacheLayer)
+    if (!m_drawsContent || !m_allowTiledLayer || m_isPageTileCacheLayer)
         return false;
 
     // FIXME: catch zero-size height or width here (or earlier)?

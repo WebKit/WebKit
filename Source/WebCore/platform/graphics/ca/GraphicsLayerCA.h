@@ -153,7 +153,7 @@ private:
     virtual CompositingCoordinatesOrientation platformCALayerContentsOrientation() const { return contentsOrientation(); }
     virtual void platformCALayerPaintContents(GraphicsContext&, const IntRect& clip);
     virtual bool platformCALayerShowDebugBorders() const { return showDebugBorders(); }
-    virtual bool platformCALayerShowRepaintCounter() const { return showRepaintCounter(); }
+    virtual bool platformCALayerShowRepaintCounter(PlatformCALayer*) const;
     virtual int platformCALayerIncrementRepaintCount() { return incrementRepaintCount(); }
 
     virtual bool platformCALayerContentsOpaque() const { return contentsOpaque(); }
@@ -227,6 +227,8 @@ private:
     PlatformCALayer* contentsLayer() const { return m_contentsLayer.get(); }
 
     virtual void setReplicatedByLayer(GraphicsLayer*);
+
+    virtual void getDebugBorderInfo(Color&, float& width) const;
 
     void computePixelAlignment(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase,
         FloatPoint& position, FloatSize&, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset) const;
@@ -403,6 +405,7 @@ private:
     ContentsLayerPurpose m_contentsLayerPurpose;
     bool m_contentsLayerHasBackgroundColor : 1;
     bool m_allowTiledLayer : 1;
+    bool m_isPageTileCacheLayer : 1;
 
     RetainPtr<CGImageRef> m_uncorrectedContentsImage;
     RetainPtr<CGImageRef> m_pendingContentsImage;

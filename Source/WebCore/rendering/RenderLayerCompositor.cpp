@@ -1935,13 +1935,10 @@ void RenderLayerCompositor::paintContents(const GraphicsLayer* graphicsLayer, Gr
 void RenderLayerCompositor::documentBackgroundColorDidChange()
 {
     RenderLayerBacking* backing = rootRenderLayer()->backing();
-    if (!backing)
+    if (!backing || !backing->usingTileCache())
         return;
 
     GraphicsLayer* graphicsLayer = backing->graphicsLayer();
-    if (!graphicsLayer->client()->usingTileCache(graphicsLayer))
-        return;
-
     Color backgroundColor = m_renderView->frameView()->documentBackgroundColor();
     if (!backgroundColor.isValid() || backgroundColor.hasAlpha())
         backgroundColor = Color::white;

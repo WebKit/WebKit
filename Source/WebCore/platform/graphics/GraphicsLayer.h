@@ -436,6 +436,7 @@ protected:
     GraphicsLayer(GraphicsLayerClient*);
 
     void dumpProperties(TextStream&, int indent, LayerTreeAsTextBehavior) const;
+    virtual void getDebugBorderInfo(Color&, float& width) const;
 
     GraphicsLayerClient* m_client;
     String m_name;
@@ -471,7 +472,6 @@ protected:
     bool m_acceleratesDrawing : 1;
     bool m_maintainsPixelAlignment : 1;
     bool m_appliesPageScale : 1; // Set for the layer which has the page scale applied to it.
-    bool m_usingTileCache : 1;
 
     GraphicsLayerPaintingPhase m_paintingPhase;
     CompositingCoordinatesOrientation m_contentsOrientation; // affects orientation of layer contents

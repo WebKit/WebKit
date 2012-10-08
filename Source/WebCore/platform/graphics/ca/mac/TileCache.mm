@@ -480,7 +480,7 @@ bool TileCache::shouldShowRepaintCounters() const
     if (!layerContents)
         return false;
 
-    return layerContents->platformCALayerShowRepaintCounter();
+    return layerContents->platformCALayerShowRepaintCounter(0);
 }
 
 void TileCache::drawRepaintCounter(WebTileLayer *layer, CGContextRef context)

@@ -1,3 +1,56 @@
+2012-10-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Some GraphicsLayer cleanup to separate the concepts of using a tile cache, and being the main tile cache layer
+        https://bugs.webkit.org/show_bug.cgi?id=98574
+
+        Reviewed by Dean Jackson.
+
+        GraphicsLayerCA assumed that using a TileCache equated to being the main page tile
+        cache layer, which has some special considerations. Make these two concepts separate
+        to get closer to being able to use TileCaches in place of CATiledLayer.
+
+        * platform/graphics/GraphicsLayer.h:
+        (GraphicsLayer): Remove m_usingTileCache member, which was not appropriate
+        for this class to have.
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer): Remove init of m_usingTileCache.
+        (WebCore::GraphicsLayer::debugBorderInfo): Can no longer use m_usingTileCache to
+        get the blue color, so moved code into a virtual debugBorderInfo() method.
+        (WebCore::GraphicsLayer::updateDebugIndicators): Call the virtual debugBorderInfo().
+        * platform/graphics/GraphicsLayerClient.h: Remove the usingTileCache() callback;
+        we now just cache this information in the GraphicsLayerCA on creation.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA): Init m_isPageTileCacheLayer to false,
+        then set to m_isPageTileCacheLayer if the client says we should create a tile cache.
+        (WebCore::GraphicsLayerCA::platformCALayerShowRepaintCounter): Overidden to avoid duplicate repaint
+        counters in the top-left tile.
+        (WebCore::GraphicsLayerCA::updateLayerBackgroundColor): If this layer is the page tile cache layer,
+        we allow setting of its background color.
+        (WebCore::GraphicsLayerCA::debugBorderInfo): Overidden to use a blue color for tiles.
+        (WebCore::GraphicsLayerCA::requiresTiledLayer): Don't make CATiledLayers for the page tile cache.
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (GraphicsLayerCA):
+        * platform/graphics/ca/PlatformCALayerClient.h:
+        (PlatformCALayerClient): Need to pass the platform layer into platformCALayerShowRepaintCounter()
+        so we can distinguish between calls for tiles, and calls for the tile cache layer itself.
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::shouldShowRepaintCounters): Pass 0 to platformCALayerShowRepaintCounter() to
+        indicate that we're asking about a tile.
+        * platform/graphics/mac/WebLayer.mm:
+        (drawLayerContents): Now we can just rely on platformCALayerShowRepaintCounter() to tell us whether
+        to draw the repaint counter.
+        (-[WebLayer setNeedsDisplayInRect:]):
+        * platform/graphics/mac/WebTiledLayer.mm:
+        (-[WebTiledLayer setNeedsDisplayInRect:]):
+        * rendering/RenderLayerBacking.h:
+        (WebCore::RenderLayerBacking::usingTileCache):
+        (RenderLayerBacking):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::documentBackgroundColorDidChange): We can ask the RenderLayerBacking
+        whether it's for the tile cache, rather than going to the GraphicsLayer.
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::LayerClient::platformCALayerShowRepaintCounter):
+
 2012-10-08  Huang Dongsung  <luxtella@company100.net>
 
         [Qt] Make ImageBufferQt use premultiplied converting functions in Color.h instead of its own mechanism.

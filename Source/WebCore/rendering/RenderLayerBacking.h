@@ -133,9 +133,10 @@ public:
     void updateAfterWidgetResize();
     void positionOverflowControlsLayers(const IntSize& offsetFromRoot);
 
+    bool usingTileCache() const { return m_usingTiledCacheLayer; }
+
     // GraphicsLayerClient interface
     virtual bool shouldUseTileCache(const GraphicsLayer*) const;
-    virtual bool usingTileCache(const GraphicsLayer*) const { return m_usingTiledCacheLayer; }
     virtual void notifyAnimationStarted(const GraphicsLayer*, double startTime);
     virtual void notifyFlushRequired(const GraphicsLayer*);
 

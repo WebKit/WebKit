@@ -1,3 +1,17 @@
+2012-10-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Some GraphicsLayer cleanup to separate the concepts of using a tile cache, and being the main tile cache layer
+        https://bugs.webkit.org/show_bug.cgi?id=98574
+
+        Reviewed by Dean Jackson.
+
+        GraphicsLayerCA assumed that using a TileCache equated to being the main page tile
+        cache layer, which has some special considerations. Make these two concepts separate
+        to get closer to being able to use TileCaches in place of CATiledLayer.
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::LayerClient::platformCALayerShowRepaintCounter):
+
 2012-10-07  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Rename first/second to key/value in HashMap iterators

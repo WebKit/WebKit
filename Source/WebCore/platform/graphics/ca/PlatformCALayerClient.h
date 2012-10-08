@@ -52,7 +52,7 @@ public:
     virtual GraphicsLayer::CompositingCoordinatesOrientation platformCALayerContentsOrientation() const = 0;
     virtual void platformCALayerPaintContents(GraphicsContext&, const IntRect& inClip) = 0;
     virtual bool platformCALayerShowDebugBorders() const = 0;
-    virtual bool platformCALayerShowRepaintCounter() const = 0;
+    virtual bool platformCALayerShowRepaintCounter(PlatformCALayer*) const = 0;
     virtual int platformCALayerIncrementRepaintCount() = 0;
     
     virtual bool platformCALayerContentsOpaque() const = 0;

@@ -84,7 +84,7 @@ using namespace WebCore;
 
             [super setNeedsDisplayInRect:dirtyRect];
 
-            if (layerOwner->platformCALayerShowRepaintCounter()) {
+            if (layerOwner->platformCALayerShowRepaintCounter(platformLayer)) {
                 CGRect bounds = [self bounds];
                 CGRect indicatorRect = CGRectMake(bounds.origin.x, bounds.origin.y, 52, 27);
                 if (layerOwner->platformCALayerContentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesBottomUp)
