@@ -1,3 +1,16 @@
+2012-10-08  Nate Chapin  <japhet@chromium.org>
+
+        Post-r130226 Cleanup: Comment a complicated if statement and make it a helper.
+        https://bugs.webkit.org/show_bug.cgi?id=98463
+
+        Reviewed by Eric Seidel.
+
+        No new tests, refactor only.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::frameElementAndViewPermitScroll):
+        (WebCore::RenderLayer::scrollRectToVisible):
+
 2012-10-06  Martin Robinson  <mrobinson@igalia.com>
 
         [Soup] Simplify the way that requests are started

@@ -1755,6 +1755,21 @@ void RenderLayer::scrollTo(int x, int y)
         renderer()->node()->document()->eventQueue()->enqueueOrDispatchScrollEvent(renderer()->node(), DocumentEventQueue::ScrollEventElementTarget);
 }
 
+static inline bool frameElementAndViewPermitScroll(HTMLFrameElement* frameElement, FrameView* frameView) 
+{
+    // If scrollbars aren't explicitly forbidden, permit scrolling.
+    if (frameElement && frameElement->scrollingMode() != ScrollbarAlwaysOff)
+        return true;
+
+    // If scrollbars are forbidden, user initiated scrolls should obviously be ignored.
+    if (frameView->wasScrolledByUser())
+        return false;
+
+    // Forbid autoscrolls when scrollbars are off, but permits other programmatic scrolls,
+    // like navigation to an anchor.
+    return !frameView->frame()->eventHandler()->autoscrollInProgress();
+}
+
 void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
 {
     RenderLayer* parentLayer = 0;
@@ -1805,8 +1820,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
                 if (ownerElement->hasTagName(frameTag) || ownerElement->hasTagName(iframeTag))
                     frameElement = static_cast<HTMLFrameElement*>(ownerElement);
 
-                if ((frameElement && frameElement->scrollingMode() != ScrollbarAlwaysOff)
-                    || (!frameView->frame()->eventHandler()->autoscrollInProgress() && !frameView->wasScrolledByUser())) {
+                if (frameElementAndViewPermitScroll(frameElement, frameView)) {
                     LayoutRect viewRect = frameView->visibleContentRect();
                     LayoutRect exposeRect = getRectToExpose(viewRect, rect, alignX, alignY);
 
