@@ -137,9 +137,6 @@ protected:
     virtual void didExecuteProgram(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno, int columnNumber);
     virtual void didReachBreakpoint(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno, int columnNumber);
 
-
-    void updateCurrentStatementPosition(intptr_t, int);
-
     typedef Vector<ScriptBreakpoint> BreakpointsInLine;
     typedef HashMap<long, BreakpointsInLine> LineToBreakpointMap;
     typedef HashMap<intptr_t, LineToBreakpointMap> SourceIdToBreakpointsMap;
@@ -155,9 +152,8 @@ protected:
     SourceIdToBreakpointsMap m_sourceIdToBreakpoints;
     Timer<ScriptDebugServer> m_recompileTimer;
 
-    Vector<String> m_currentSourceCode;
-    intptr_t m_currentSourceID;
-    ScriptBreakpoint m_currentStatementPosition;
+    int m_lastExecutedLine;
+    intptr_t m_lastExecutedSourceId;
 };
 
 } // namespace WebCore

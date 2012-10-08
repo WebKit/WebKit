@@ -1,3 +1,23 @@
+2012-10-07  Peter Wang  <peter.wang@torchmobile.com.cn>
+
+        Web Inspector: The front-end should provide the position in original source file when set a breakpoint
+        https://bugs.webkit.org/show_bug.cgi?id=93473
+
+        Reviewed by Yury Semikhatsky.
+
+        Since frontend truncates the indent, the first statement in a line must match the breakpoint (line, 0).
+        With this patch JSC debugger can support both normal and "Pretty Print" mode.
+
+        No new test case. This patch can be verified with cases in "LayoutTests/inspector/debugger/".
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::ScriptDebugServer):
+        (WebCore::ScriptDebugServer::hasBreakpoint):
+        (WebCore::ScriptDebugServer::createCallFrameAndPauseIfNeeded):
+        (WebCore::ScriptDebugServer::pauseIfNeeded):
+        * bindings/js/ScriptDebugServer.h:
+        (ScriptDebugServer):
+
 2012-10-07  Martin Robinson  <mrobinson@igalia.com>
 
         [Soup] Clean up ResourceError creation
