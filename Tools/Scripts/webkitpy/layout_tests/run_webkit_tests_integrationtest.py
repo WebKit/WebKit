@@ -301,6 +301,12 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         for batch in batch_tests_run:
             self.assertTrue(len(batch) <= 2, '%s had too many tests' % ', '.join(batch))
 
+    def test_max_locked_shards(self):
+        if not self.should_test_processes:
+            return
+        _, _, regular_output, _ = logging_run(['--debug-rwt-logging', '--child-processes', '2'], shared_port=False)
+        self.assertTrue(any(['(1 locked)' in line for line in regular_output.buflist]))
+
     def test_child_processes_2(self):
         if self.should_test_processes:
             _, _, regular_output, _ = logging_run(

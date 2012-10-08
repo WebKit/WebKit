@@ -1,3 +1,35 @@
+2012-10-08  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: [chromium] run http tests in parallel on bigger machines
+        https://bugs.webkit.org/show_bug.cgi?id=98562
+
+        Reviewed by Eric Seidel.
+
+        The "locked tests" shard (which includes the http tests and the
+        perf tests) is the long pole on machines where we have 4 or more
+        workers, so we should start making sure that
+        we can run http tests in parallel, following the normal sharding
+        rules (all tests in the same directory are in the same shard by
+        default). We should still probably limit the number of workers
+        hitting the web server in parallel where we can; a heuristic of
+        no more than 25% of them seems okay for a start. This will
+        likely only affect developer workstations and a couple of bots
+        at first, so should be low risk and a good reward.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.default_max_locked_shards):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort.default_max_locked_shards):
+        * Scripts/webkitpy/layout_tests/port/chromium_port_testcase.py:
+        (ChromiumPortTestCase.test_default_max_locked_shards):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (PortTestCase.test_default_max_locked_shards):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (_set_up_derived_options):
+        (parse_args):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_max_locked_shards):
+
 2012-10-08  Zan Dobersek  <zandobersek@gmail.com>
 
         GTK port should warn if bug modifier is missing in TestExpectations

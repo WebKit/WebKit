@@ -48,6 +48,13 @@ class ChromiumPortTestCase(port_testcase.PortTestCase):
         port = self.make_port()
         port.check_build(needs_http=True)
 
+    def test_default_max_locked_shards(self):
+        port = self.make_port()
+        port.default_child_processes = lambda: 16
+        self.assertEquals(port.default_max_locked_shards(), 4)
+        port.default_child_processes = lambda: 2
+        self.assertEquals(port.default_max_locked_shards(), 1)
+
     def test_default_timeout_ms(self):
         self.assertEquals(self.make_port(options=MockOptions(configuration='Release')).default_timeout_ms(), 6000)
         self.assertEquals(self.make_port(options=MockOptions(configuration='Debug')).default_timeout_ms(), 12000)

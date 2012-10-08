@@ -129,6 +129,9 @@ def _set_up_derived_options(port, options):
     if not options.child_processes:
         options.child_processes = os.environ.get("WEBKIT_TEST_CHILD_PROCESSES",
                                                  str(port.default_child_processes()))
+    if not options.max_locked_shards:
+        options.max_locked_shards = int(os.environ.get("WEBKIT_TEST_MAX_LOCKED_SHARDS",
+                                                       str(port.default_max_locked_shards())))
 
     if not options.configuration:
         options.configuration = port.default_configuration()
@@ -416,7 +419,7 @@ def parse_args(args=None):
         optparse.make_option("--no-retry-failures", action="store_false",
             dest="retry_failures",
             help="Don't re-try any tests that produce unexpected results."),
-        optparse.make_option("--max-locked-shards", type="int", default=1,
+        optparse.make_option("--max-locked-shards", type="int", default=0,
             help="Set the maximum number of locked shards"),
         optparse.make_option("--additional-env-var", type="string", action="append", default=[],
             help="Passes that environment variable to the tests (--additional-env-var=NAME=VALUE)"),

@@ -90,6 +90,13 @@ class PortTestCase(unittest.TestCase):
         port_name = self.port_maker.determine_full_port_name(host, options, port_name)
         return self.port_maker(host, port_name, options=options, config=config, **kwargs)
 
+    def test_default_max_locked_shards(self):
+        port = self.make_port()
+        port.default_child_processes = lambda: 16
+        self.assertEquals(port.default_max_locked_shards(), 1)
+        port.default_child_processes = lambda: 2
+        self.assertEquals(port.default_max_locked_shards(), 1)
+
     def test_default_timeout_ms(self):
         self.assertEquals(self.make_port(options=MockOptions(configuration='Release')).default_timeout_ms(), 35000)
         self.assertEquals(self.make_port(options=MockOptions(configuration='Debug')).default_timeout_ms(), 35000)

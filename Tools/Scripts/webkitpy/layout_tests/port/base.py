@@ -182,6 +182,10 @@ class Port(object):
         """Return the number of DumpRenderTree instances to use for this port."""
         return self._executive.cpu_count()
 
+    def default_max_locked_shards(self):
+        """Return the number of "locked" shards to run in parallel (like the http tests)."""
+        return 1
+
     def worker_startup_delay_secs(self):
         # FIXME: If we start workers up too quickly, DumpRenderTree appears
         # to thrash on something and time out its first few tests. Until

@@ -112,6 +112,13 @@ class ChromiumPort(Port):
     def is_chromium(self):
         return True
 
+    def default_max_locked_shards(self):
+        """Return the number of "locked" shards to run in parallel (like the http tests)."""
+        max_locked_shards = int(self.default_child_processes()) / 4
+        if not max_locked_shards:
+            return 1
+        return max_locked_shards
+
     def default_pixel_tests(self):
         return True
 
