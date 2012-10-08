@@ -384,6 +384,38 @@ class JsonResultsTest(unittest.TestCase):
                            "results": [[7,"F"]],
                            "times": [[7,0]]}}})
 
+    def test_merge_remove_new_test(self):
+        self._test_merge(
+            # Aggregated results
+            {"builds": ["2", "1"],
+             "tests": {"001.html": {
+                           "results": [[199, "F"]],
+                           "times": [[199, 0]]},
+                       }},
+            # Incremental results
+            {"builds": ["3"],
+             "tests": {"001.html": {
+                           "results": [[1, "F"]],
+                           "times": [[1, 0]]},
+                       "002.html": {
+                           "results": [[1, "P"]],
+                           "times": [[1, 0]]},
+                       "003.html": {
+                           "results": [[1, "N"]],
+                           "times": [[1, 0]]},
+                       "004.html": {
+                           "results": [[1, "X"]],
+                           "times": [[1, 0]]},
+                       }},
+            # Expected results
+            {"builds": ["3", "2", "1"],
+             "tests": {"001.html": {
+                           "results": [[200, "F"]],
+                           "times": [[200, 0]]},
+                       }},
+            max_builds=200)
+
+
     def test_merge_remove_test(self):
         self._test_merge(
             # Aggregated results
@@ -509,53 +541,6 @@ class JsonResultsTest(unittest.TestCase):
                            "results": [[max_builds,"F"]],
                            "times": [[max_builds,0]]}}},
             int(max_builds))
-
-    def test_merge_build_directory_hierarchy_old_version(self):
-        self._test_merge(
-            # Aggregated results
-            {"builds": ["2", "1"],
-             "tests": {"bar/003.html": {
-                           "results": [[25,"F"]],
-                           "times": [[25,0]]},
-                       "foo/001.html": {
-                           "results": [[50,"F"]],
-                           "times": [[50,0]]},
-                       "foo/002.html": {
-                           "results": [[100,"I"]],
-                           "times": [[100,0]]}},
-             "version": 3},
-            # Incremental results
-            {"builds": ["3"],
-             "tests": {"baz": {
-                           "004.html": {
-                               "results": [[1,"I"]],
-                               "times": [[1,0]]}},
-                       "foo": {
-                           "001.html": {
-                               "results": [[1,"F"]],
-                               "times": [[1,0]]},
-                           "002.html": {
-                               "results": [[1,"I"]],
-                               "times": [[1,0]]}}},
-             "version": 4},
-            # Expected results
-            {"builds": ["3", "2", "1"],
-             "tests": {"bar": {
-                           "003.html": {
-                               "results": [[1,"N"],[25,"F"]],
-                               "times": [[26,0]]}},
-                       "baz": {
-                           "004.html": {
-                               "results": [[1,"I"]],
-                               "times": [[1,0]]}},
-                       "foo": {
-                           "001.html": {
-                               "results": [[51,"F"]],
-                               "times": [[51,0]]},
-                           "002.html": {
-                               "results": [[101,"I"]],
-                               "times": [[101,0]]}}},
-             "version": 4})
 
     # FIXME: Some data got corrupted and has results and times at the directory level.
     # Once we've purged this from all the data, we should throw an error on this case.

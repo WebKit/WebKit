@@ -1,3 +1,26 @@
+2012-10-08  Ojan Vafai  <ojan@chromium.org>
+
+        Properly strip new tests from the test results json if they are pass/nodata/skip.
+        https://bugs.webkit.org/show_bug.cgi?id=98669
+
+        Reviewed by Eric Seidel.
+
+        In _merge_json, we had a codepath that didn't call _normalize_results_json
+        for tests that aren't already in the aggregated results.
+        Instead, now do all the merging first and then normalize the aggregated results.
+
+        * TestResultServer/model/jsonresults.py:
+        (JsonResults._merge_json):
+        (JsonResults._merge_tests):
+        (JsonResults._normalize_results):
+        (JsonResults):
+        (JsonResults._should_delete_leaf):
+        * TestResultServer/model/jsonresults_unittest.py:
+        Removed test_merge_build_directory_hierarchy_old_version since there is
+        no longer any version 3 json to support.
+        (JsonResultsTest.test_merge_remove_new_test):
+        (JsonResultsTest.test_merge_prune_extra_results_with_new_result_of_same_type):
+
 2012-10-08  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Simplify frame flattening support in MiniBrowser

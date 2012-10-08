@@ -131,6 +131,7 @@ class JsonResults(object):
         if incremental_tests:
             aggregated_tests = aggregated_json[JSON_RESULTS_TESTS]
             cls._merge_tests(aggregated_tests, incremental_tests, num_runs)
+            cls._normalize_results(aggregated_tests, num_runs)
 
     @classmethod
     def _merge_non_test_data(cls, aggregated_json, incremental_json, num_runs):
@@ -193,7 +194,6 @@ class JsonResults(object):
             aggregated_test = aggregated_json[test_name]
             cls._insert_item_run_length_encoded(results, aggregated_test[JSON_RESULTS_RESULTS], num_runs)
             cls._insert_item_run_length_encoded(times, aggregated_test[JSON_RESULTS_TIMES], num_runs)
-            cls._normalize_results_json(test_name, aggregated_json, num_runs)
 
     @classmethod
     def _insert_item_run_length_encoded(cls, incremental_item, aggregated_item, num_runs):
@@ -204,21 +204,33 @@ class JsonResults(object):
                 aggregated_item.insert(0, item)
 
     @classmethod
-    def _normalize_results_json(cls, test_name, aggregated_json, num_runs):
-        aggregated_test = aggregated_json[test_name]
-        aggregated_test[JSON_RESULTS_RESULTS] = cls._remove_items_over_max_number_of_builds(aggregated_test[JSON_RESULTS_RESULTS], num_runs)
-        aggregated_test[JSON_RESULTS_TIMES] = cls._remove_items_over_max_number_of_builds(aggregated_test[JSON_RESULTS_TIMES], num_runs)
+    def _normalize_results(cls, aggregated_json, num_runs):
+        names_to_delete = []
+        for test_name in aggregated_json:
+            if _is_directory(aggregated_json[test_name]):
+                cls._normalize_results(aggregated_json[test_name], num_runs)
+            else:
+                leaf = aggregated_json[test_name]
+                leaf[JSON_RESULTS_RESULTS] = cls._remove_items_over_max_number_of_builds(leaf[JSON_RESULTS_RESULTS], num_runs)
+                leaf[JSON_RESULTS_TIMES] = cls._remove_items_over_max_number_of_builds(leaf[JSON_RESULTS_TIMES], num_runs)
+                if cls._should_delete_leaf(leaf):
+                    names_to_delete.append(test_name)
 
+        for test_name in names_to_delete:
+            del aggregated_json[test_name]
+
+    @classmethod
+    def _should_delete_leaf(cls, leaf):
         deletable_types = set((JSON_RESULTS_PASS, JSON_RESULTS_NO_DATA, JSON_RESULTS_SKIP))
-        for result in aggregated_test[JSON_RESULTS_RESULTS]:
+        for result in leaf[JSON_RESULTS_RESULTS]:
             if result[1] not in deletable_types:
-                return
+                return False
 
-        for time in aggregated_test[JSON_RESULTS_TIMES]:
+        for time in leaf[JSON_RESULTS_TIMES]:
             if time[1] >= JSON_RESULTS_MIN_TIME:
-                return
+                return False
 
-        del aggregated_json[test_name]
+        return True
 
     @classmethod
     def _remove_items_over_max_number_of_builds(cls, encoded_list, num_runs):
