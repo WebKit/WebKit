@@ -1315,7 +1315,7 @@ webkit.org/b/94009 css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]
 
 webkit.org/b/94083 media/video-controls-fullscreen-volume.html [ Skip ]
 
-fast/forms/date-multiple-fields
+Bug(GTK) fast/forms/date-multiple-fields [ Skip ]
 webkit.org/b/97299 fast/forms/month-multiple-fields
 webkit.org/b/94186 fast/forms/time-multiple-fields
 webkit.org/b/97877 fast/forms/week-multiple-fields
@@ -1365,7 +1365,7 @@ webkit.org/b/91489 fast/dom/shadow/shadowdom-for-fieldset-only-shadow.html [ Ima
 webkit.org/b/49142 fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html [ ImageOnlyFailure ]
 
 # Missing support in DRT for Geolocation's Coordinate attributes.
-fast/dom/Geolocation/coordinates-interface-attributes.html [ Failure ]
+Bug(GTK) fast/dom/Geolocation/coordinates-interface-attributes.html [ Failure ]
 
 webkit.org/b/98585 fast/exclusions/shape-inside/shape-inside-rounded-rectangle-003.html [ ImageOnlyFailure ]
 
