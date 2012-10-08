@@ -1,3 +1,15 @@
+2012-10-08  Michael Saboff  <msaboff@apple.com>
+
+        After r130344, OpaqueJSString() creates an empty string which should be a null string
+        https://bugs.webkit.org/show_bug.cgi?id=98417
+
+        Reviewed by Sam Weinig.
+
+        Changed create() of a null string to return 0. This is the same behavior as before r130344.
+
+        * API/OpaqueJSString.cpp:
+        (OpaqueJSString::create):
+
 2012-10-07  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Rename first/second to key/value in HashMap iterators
