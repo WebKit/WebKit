@@ -1,3 +1,18 @@
+2012-10-08  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed Chromium gardening.
+
+        * platform/chromium/TestExpectations:
+        Marked a test as crashing on Lion.
+
+        * platform/chromium-linux/transforms/3d/point-mapping/3d-point-mapping-expected.png:
+        * platform/chromium-mac-snowleopard/transforms/3d/point-mapping/3d-point-mapping-expected.png:
+        * platform/chromium-mac-snowleopard/transforms/3d/point-mapping/3d-point-mapping-origins-expected.png:
+        * platform/chromium-mac/transforms/3d/point-mapping/3d-point-mapping-expected.png:
+        * platform/chromium-mac/transforms/3d/point-mapping/3d-point-mapping-origins-expected.png:
+        * platform/chromium-win/transforms/3d/point-mapping/3d-point-mapping-origins-expected.png:
+        Rebaselined these tests after a change in Chromium compositor (Chromium r160671).
+
 2012-10-08  Simon Fraser  <simon.fraser@apple.com>
 
         Move layerTreeAsText to window.internals

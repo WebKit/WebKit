@@ -3754,3 +3754,5 @@ webkit.org/b/98545 [ Mac ] fast/text/international/text-spliced-font.html [ Fail
 webkit.org/b/98545 [ Mac ] fast/writing-mode/Kusa-Makura-background-canvas.html [ Failure ]
 
 webkit.org/b/98686 editing/pasteboard/data-transfer-items.html [ Failure ]
+
+webkit.org/b/98699 [ Lion ] fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ Crash ]
