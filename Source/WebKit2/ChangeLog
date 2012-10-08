@@ -1,3 +1,69 @@
+2012-10-08  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Use URL instead of URI in the API
+        https://bugs.webkit.org/show_bug.cgi?id=98643
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Use URL instead of URI in WebKit2 EFL API. This change
+        was discussed on the mailing list and aims at making
+        the API more consistent.
+
+        * UIProcess/API/efl/ewk_back_forward_list_item.cpp:
+        (_Ewk_Back_Forward_List_Item):
+        (ewk_back_forward_list_item_url_get):
+        (ewk_back_forward_list_item_original_url_get):
+        * UIProcess/API/efl/ewk_back_forward_list_item.h:
+        * UIProcess/API/efl/ewk_context.cpp:
+        (ewk_context_url_scheme_register):
+        * UIProcess/API/efl/ewk_context.h:
+        * UIProcess/API/efl/ewk_context_download_client.cpp:
+        (decideDestinationWithSuggestedFilename):
+        * UIProcess/API/efl/ewk_download_job.h:
+        * UIProcess/API/efl/ewk_resource_private.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (ewk_view_url_update):
+        (ewk_view_url_set):
+        (ewk_view_url_get):
+        (ewk_view_reload):
+        (ewk_view_reload_bypass_cache):
+        (ewk_view_load_finished):
+        (ewk_view_load_provisional_redirect):
+        (ewk_view_load_provisional_started):
+        (ewk_view_html_string_load):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_loader_client.cpp:
+        (didSameDocumentNavigationForFrame):
+        * UIProcess/API/efl/ewk_view_private.h:
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::EWK2UnitTestBase::loadUrlSync):
+        (EWK2UnitTest::onURLChanged):
+        (EWK2UnitTest::timeOutWhileWaitingUntilURLChangedTo):
+        (EWK2UnitTest::EWK2UnitTestBase::waitUntilURLChangedTo):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.h:
+        (EWK2UnitTestBase):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestServer.cpp:
+        (EWK2UnitTestServer::EWK2UnitTestServer):
+        (EWK2UnitTestServer::~EWK2UnitTestServer):
+        (EWK2UnitTestServer::getURLForPath):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestServer.h:
+        (EWK2UnitTestServer):
+        * UIProcess/API/efl/tests/resources/redirect_url_to_default.html: Renamed from Source/WebKit2/UIProcess/API/efl/tests/resources/redirect_uri_to_default.html.
+        * UIProcess/API/efl/tests/test_ewk2_back_forward_list.cpp:
+        (checkItem):
+        (urlFromTitle):
+        * UIProcess/API/efl/tests/test_ewk2_context.cpp:
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_cookie_manager.cpp:
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_download_job.cpp:
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_settings.cpp:
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+
 2012-10-08  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] r122720 causes performance regression with DirectFB on ARMv7

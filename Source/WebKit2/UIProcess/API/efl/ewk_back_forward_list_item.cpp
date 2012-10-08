@@ -39,9 +39,9 @@ using namespace WebKit;
 struct _Ewk_Back_Forward_List_Item {
     unsigned int __ref; /**< the reference count of the object */
     WKRetainPtr<WKBackForwardListItemRef> wkItem;
-    mutable WKEinaSharedString uri;
+    mutable WKEinaSharedString url;
     mutable WKEinaSharedString title;
-    mutable WKEinaSharedString originalUri;
+    mutable WKEinaSharedString originalURL;
 
     _Ewk_Back_Forward_List_Item(WKBackForwardListItemRef itemRef)
         : __ref(1)
@@ -83,13 +83,13 @@ void ewk_back_forward_list_item_unref(Ewk_Back_Forward_List_Item* item)
     delete item;
 }
 
-const char* ewk_back_forward_list_item_uri_get(const Ewk_Back_Forward_List_Item* item)
+const char* ewk_back_forward_list_item_url_get(const Ewk_Back_Forward_List_Item* item)
 {
     EWK_BACK_FORWARD_LIST_ITEM_WK_GET_OR_RETURN(item, wkItem, 0);
 
-    item->uri = WKEinaSharedString(AdoptWK, WKBackForwardListItemCopyURL(wkItem));
+    item->url = WKEinaSharedString(AdoptWK, WKBackForwardListItemCopyURL(wkItem));
 
-    return item->uri;
+    return item->url;
 }
 
 const char* ewk_back_forward_list_item_title_get(const Ewk_Back_Forward_List_Item* item)
@@ -101,13 +101,13 @@ const char* ewk_back_forward_list_item_title_get(const Ewk_Back_Forward_List_Ite
     return item->title;
 }
 
-const char* ewk_back_forward_list_item_original_uri_get(const Ewk_Back_Forward_List_Item* item)
+const char* ewk_back_forward_list_item_original_url_get(const Ewk_Back_Forward_List_Item* item)
 {
     EWK_BACK_FORWARD_LIST_ITEM_WK_GET_OR_RETURN(item, wkItem, 0);
 
-    item->originalUri = WKEinaSharedString(AdoptWK, WKBackForwardListItemCopyOriginalURL(wkItem));
+    item->originalURL = WKEinaSharedString(AdoptWK, WKBackForwardListItemCopyOriginalURL(wkItem));
 
-    return item->originalUri;
+    return item->originalURL;
 }
 
 Ewk_Back_Forward_List_Item* ewk_back_forward_list_item_new(WKBackForwardListItemRef backForwardListItemData)

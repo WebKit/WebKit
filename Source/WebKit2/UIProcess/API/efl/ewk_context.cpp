@@ -261,7 +261,7 @@ Ewk_Context* ewk_context_new_with_injected_bundle_path(const char* path)
     return new Ewk_Context(adoptWK(WKContextCreateWithInjectedBundlePath(pathRef.get())));
 }
 
-Eina_Bool ewk_context_uri_scheme_register(Ewk_Context* ewkContext, const char* scheme, Ewk_Url_Scheme_Request_Cb callback, void* userData)
+Eina_Bool ewk_context_url_scheme_register(Ewk_Context* ewkContext, const char* scheme, Ewk_Url_Scheme_Request_Cb callback, void* userData)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(ewkContext, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(scheme, false);

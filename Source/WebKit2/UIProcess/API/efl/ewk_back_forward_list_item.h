@@ -59,21 +59,21 @@ EAPI Ewk_Back_Forward_List_Item *ewk_back_forward_list_item_ref(Ewk_Back_Forward
 EAPI void ewk_back_forward_list_item_unref(Ewk_Back_Forward_List_Item *item);
 
 /**
- * Returns URI of the item.
+ * Returns URL of the item.
  *
- * The returned URI may differ from the original URI (For example if the page was redirected).
+ * The returned URL may differ from the original URL (For example if the page was redirected).
  *
- * @see ewk_back_forward_list_item_original_uri_get()
+ * @see ewk_back_forward_list_item_original_url_get()
  *
  * @param item the back-forward list item instance
  *
- * @return the URI of the @a item or @c NULL in case of error. This pointer is
+ * @return the URL of the @a item or @c NULL in case of error. This pointer is
  *         guaranteed to be eina_stringshare, so whenever possible
  *         save yourself some cpu cycles and use
  *         eina_stringshare_ref() instead of eina_stringshare_add() or
  *         strdup()
  */
-EAPI const char *ewk_back_forward_list_item_uri_get(const Ewk_Back_Forward_List_Item *item);
+EAPI const char *ewk_back_forward_list_item_url_get(const Ewk_Back_Forward_List_Item *item);
 
 /**
  * Returns title of the item.
@@ -89,19 +89,19 @@ EAPI const char *ewk_back_forward_list_item_uri_get(const Ewk_Back_Forward_List_
 EAPI const char *ewk_back_forward_list_item_title_get(const Ewk_Back_Forward_List_Item *item);
 
 /**
- * Returns original URI of the item.
+ * Returns original URL of the item.
  *
- * @see ewk_back_forward_list_item_uri_get()
+ * @see ewk_back_forward_list_item_url_get()
  *
  * @param item the back-forward list item instance
  *
- * @return the original URI of the @a item or @c NULL in case of error. This pointer is
+ * @return the original URL of the @a item or @c NULL in case of error. This pointer is
  *         guaranteed to be eina_stringshare, so whenever possible
  *         save yourself some cpu cycles and use
  *         eina_stringshare_ref() instead of eina_stringshare_add() or
  *         strdup()
  */
-EAPI const char *ewk_back_forward_list_item_original_uri_get(const Ewk_Back_Forward_List_Item *item);
+EAPI const char *ewk_back_forward_list_item_original_url_get(const Ewk_Back_Forward_List_Item *item);
 
 #ifdef __cplusplus
 }

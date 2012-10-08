@@ -63,7 +63,7 @@
  * - "resource,request,sent", const Ewk_Resource_Request*: a resource request was sent.
  * - "text,found", unsigned int*: the requested text was found and it gives the number of matches.
  * - "title,changed", const char*: title of the main frame was changed.
- * - "uri,changed", const char*: uri of the main frame was changed.
+ * - "url,changed", const char*: url of the main frame was changed.
  * - "webprocess,crashed", Eina_Bool*: expects a @c EINA_TRUE if web process crash is handled; @c EINA_FALSE, otherwise.
  */
 
@@ -333,27 +333,27 @@ EAPI Evas_Object *ewk_view_add_with_context(Evas *e, Ewk_Context *context);
 EAPI Ewk_Context *ewk_view_context_get(const Evas_Object *o);
 
 /**
- * Asks the object to load the given URI.
+ * Asks the object to load the given URL.
  *
- * @param o view object to load @a URI
- * @param uri uniform resource identifier to load
+ * @param o view object to load @a URL
+ * @param url uniform resource identifier to load
  *
  * @return @c EINA_TRUE is returned if @a o is valid, irrespective of load,
  *         or @c EINA_FALSE on failure
  */
-EAPI Eina_Bool ewk_view_uri_set(Evas_Object *o, const char *uri);
+EAPI Eina_Bool ewk_view_url_set(Evas_Object *o, const char *url);
 
 /**
- * Returns the current URI string of view object.
+ * Returns the current URL string of view object.
  *
  * It returns an internal string and should not
  * be modified. The string is guaranteed to be stringshared.
  *
- * @param o view object to get current URI
+ * @param o view object to get current URL
  *
- * @return current URI on success or @c NULL on failure
+ * @return current URL on success or @c NULL on failure
  */
-EAPI const char *ewk_view_uri_get(const Evas_Object *o);
+EAPI const char *ewk_view_url_get(const Evas_Object *o);
 
 /**
  * Asks the main frame to reload the current document.

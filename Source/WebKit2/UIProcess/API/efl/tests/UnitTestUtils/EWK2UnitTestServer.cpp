@@ -27,14 +27,14 @@ EWK2UnitTestServer::EWK2UnitTestServer()
     soup_address_resolve_sync(address, 0);
 
     m_soupServer = soup_server_new(SOUP_SERVER_INTERFACE, address, static_cast<char*>(0));
-    m_baseURI = soup_uri_new("http://127.0.0.1/");
-    soup_uri_set_port(m_baseURI, soup_server_get_port(m_soupServer));
+    m_baseURL = soup_uri_new("http://127.0.0.1/");
+    soup_uri_set_port(m_baseURL, soup_server_get_port(m_soupServer));
     g_object_unref(address);
 }
 
 EWK2UnitTestServer::~EWK2UnitTestServer()
 {
-    soup_uri_free(m_baseURI);
+    soup_uri_free(m_baseURL);
     g_object_unref(m_soupServer);
 }
 
@@ -44,13 +44,13 @@ void EWK2UnitTestServer::run(SoupServerCallback serverCallback)
     soup_server_add_handler(m_soupServer, 0, serverCallback, 0, 0);
 }
 
-CString EWK2UnitTestServer::getURIForPath(const char* path) const
+CString EWK2UnitTestServer::getURLForPath(const char* path) const
 {
-    SoupURI* soupURI = soup_uri_new_with_base(m_baseURI, path);
-    char* uri = soup_uri_to_string(soupURI, false);
-    CString uriString = uri;
-    free(uri);
-    soup_uri_free(soupURI);
+    SoupURI* soupURL = soup_uri_new_with_base(m_baseURL, path);
+    char* url = soup_uri_to_string(soupURL, false);
+    CString urlString = url;
+    free(url);
+    soup_uri_free(soupURL);
 
-    return uriString;
+    return urlString;
 }

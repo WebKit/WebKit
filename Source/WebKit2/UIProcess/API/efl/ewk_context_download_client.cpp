@@ -58,7 +58,7 @@ static WKStringRef decideDestinationWithSuggestedFilename(WKContextRef, WKDownlo
     // and the suggested file name.
     ewk_view_download_job_requested(ewk_download_job_view_get(download), download);
 
-    // DownloadSoup expects the destination to be a URI.
+    // DownloadSoup expects the destination to be a URL.
     String destination = String("file://") + String::fromUTF8(ewk_download_job_destination_get(download));
 
     return WKStringCreateWithUTF8CString(destination.utf8().data());

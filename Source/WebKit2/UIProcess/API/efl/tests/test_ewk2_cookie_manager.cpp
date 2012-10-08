@@ -126,7 +126,7 @@ TEST_F(EWK2UnitTestBase, ewk_cookie_manager_accept_policy)
 
     // Default policy is EWK_COOKIE_ACCEPT_POLICY_NO_THIRD_PARTY.
     ASSERT_EQ(EWK_COOKIE_ACCEPT_POLICY_NO_THIRD_PARTY, getAcceptPolicy(cookieManager));
-    loadUrlSync(httpServer->getURIForPath("/index.html").data());
+    loadUrlSync(httpServer->getURLForPath("/index.html").data());
 
     Eina_List* hostnames = getHostnamesWithCookies(cookieManager);
     ASSERT_EQ(1, eina_list_count(hostnames));
@@ -137,7 +137,7 @@ TEST_F(EWK2UnitTestBase, ewk_cookie_manager_accept_policy)
     // Change policy to EWK_COOKIE_ACCEPT_POLICY_ALWAYS
     ewk_cookie_manager_accept_policy_set(cookieManager, EWK_COOKIE_ACCEPT_POLICY_ALWAYS);
     ASSERT_EQ(EWK_COOKIE_ACCEPT_POLICY_ALWAYS, getAcceptPolicy(cookieManager));
-    loadUrlSync(httpServer->getURIForPath("/index.html").data());
+    loadUrlSync(httpServer->getURLForPath("/index.html").data());
 
     hostnames = getHostnamesWithCookies(cookieManager);
     ASSERT_EQ(2, eina_list_count(hostnames));
@@ -149,7 +149,7 @@ TEST_F(EWK2UnitTestBase, ewk_cookie_manager_accept_policy)
     // Change policy to EWK_COOKIE_ACCEPT_POLICY_NEVER
     ewk_cookie_manager_accept_policy_set(cookieManager, EWK_COOKIE_ACCEPT_POLICY_NEVER);
     ASSERT_EQ(EWK_COOKIE_ACCEPT_POLICY_NEVER, getAcceptPolicy(cookieManager));
-    loadUrlSync(httpServer->getURIForPath("/index.html").data());
+    loadUrlSync(httpServer->getURLForPath("/index.html").data());
     ASSERT_EQ(0, countHostnamesWithCookies(cookieManager));
 }
 
@@ -175,7 +175,7 @@ TEST_F(EWK2UnitTestBase, ewk_cookie_manager_changes_watch)
     ewk_cookie_manager_changes_watch(cookieManager, onCookiesChanged, &cookiesChanged);
 
     // Check for cookie changes notifications
-    loadUrlSync(httpServer->getURIForPath("/index.html").data());
+    loadUrlSync(httpServer->getURLForPath("/index.html").data());
 
     while (!cookiesChanged)
         ecore_main_loop_iterate();
@@ -190,7 +190,7 @@ TEST_F(EWK2UnitTestBase, ewk_cookie_manager_changes_watch)
     // Stop watching for notifications
     ewk_cookie_manager_changes_watch(cookieManager, 0, 0);
     cookiesChanged = false;
-    loadUrlSync(httpServer->getURIForPath("/index.html").data());
+    loadUrlSync(httpServer->getURLForPath("/index.html").data());
     ASSERT_EQ(2, countHostnamesWithCookies(cookieManager));
     ASSERT_FALSE(cookiesChanged);
 
@@ -204,7 +204,7 @@ TEST_F(EWK2UnitTestBase, ewk_cookie_manager_changes_watch)
     ASSERT_TRUE(mktemp(textStorage2));
 
     ewk_cookie_manager_persistent_storage_set(cookieManager, textStorage1, EWK_COOKIE_PERSISTENT_STORAGE_TEXT);
-    loadUrlSync(httpServer->getURIForPath("/index.html").data());
+    loadUrlSync(httpServer->getURLForPath("/index.html").data());
     ASSERT_EQ(2, countHostnamesWithCookies(cookieManager));
 
     cookiesChanged = false;
@@ -233,7 +233,7 @@ TEST_F(EWK2UnitTestBase, ewk_cookie_manager_cookies_delete)
     ewk_cookie_manager_accept_policy_set(cookieManager, EWK_COOKIE_ACCEPT_POLICY_ALWAYS);
     ASSERT_EQ(EWK_COOKIE_ACCEPT_POLICY_ALWAYS, getAcceptPolicy(cookieManager));
 
-    loadUrlSync(httpServer->getURIForPath("/index.html").data());
+    loadUrlSync(httpServer->getURLForPath("/index.html").data());
     Eina_List* hostnames = getHostnamesWithCookies(cookieManager);
     ASSERT_EQ(2, eina_list_count(hostnames));
     freeHostNames(hostnames);
@@ -250,7 +250,7 @@ TEST_F(EWK2UnitTestBase, ewk_cookie_manager_cookies_delete)
     ASSERT_EQ(0, countHostnamesWithCookies(cookieManager));
 
     // Get all cookies again
-    loadUrlSync(httpServer->getURIForPath("/index.html").data());
+    loadUrlSync(httpServer->getURLForPath("/index.html").data());
     ASSERT_EQ(2, countHostnamesWithCookies(cookieManager));
 
     // Clear all cookies
@@ -279,14 +279,14 @@ TEST_F(EWK2UnitTestBase, DISABLED_ewk_cookie_manager_permanent_storage)
     ewk_cookie_manager_persistent_storage_set(cookieManager, textStorage, EWK_COOKIE_PERSISTENT_STORAGE_TEXT);
     ASSERT_EQ(0, countHostnamesWithCookies(cookieManager));
 
-    loadUrlSync(httpServer->getURIForPath("/index.html").data());
+    loadUrlSync(httpServer->getURLForPath("/index.html").data());
     ASSERT_EQ(2, countHostnamesWithCookies(cookieManager));
 
     // SQLite storage using a new file.
     ewk_cookie_manager_persistent_storage_set(cookieManager, sqliteStorage, EWK_COOKIE_PERSISTENT_STORAGE_SQLITE);
     ASSERT_EQ(0, countHostnamesWithCookies(cookieManager));
 
-    loadUrlSync(httpServer->getURIForPath("/index.html").data());
+    loadUrlSync(httpServer->getURLForPath("/index.html").data());
     ASSERT_EQ(2, countHostnamesWithCookies(cookieManager));
 
     // Text storage using an existing file.

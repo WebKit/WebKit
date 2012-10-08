@@ -61,19 +61,19 @@ static void serverCallbackNavigation(SoupServer* server, SoupMessage* message, c
     soup_message_body_complete(message->response_body);
 }
 
-static inline void checkItem(Ewk_Back_Forward_List_Item* item, const char* title, const char* uri, const char* originalURI)
+static inline void checkItem(Ewk_Back_Forward_List_Item* item, const char* title, const char* url, const char* originalURL)
 {
     ASSERT_TRUE(item);
-    EXPECT_STREQ(uri, ewk_back_forward_list_item_uri_get(item));
+    EXPECT_STREQ(url, ewk_back_forward_list_item_url_get(item));
     EXPECT_STREQ(title, ewk_back_forward_list_item_title_get(item));
-    EXPECT_STREQ(originalURI, ewk_back_forward_list_item_original_uri_get(item));
+    EXPECT_STREQ(originalURL, ewk_back_forward_list_item_original_url_get(item));
 }
 
 static inline WKEinaSharedString urlFromTitle(EWK2UnitTestServer* httpServer, const char* title)
 {
     Eina_Strbuf* path = eina_strbuf_new();
     eina_strbuf_append_printf(path, "/%s", title);
-    WKEinaSharedString res = httpServer->getURIForPath(eina_strbuf_string_get(path)).data();
+    WKEinaSharedString res = httpServer->getURLForPath(eina_strbuf_string_get(path)).data();
     eina_strbuf_free(path);
 
     return res;

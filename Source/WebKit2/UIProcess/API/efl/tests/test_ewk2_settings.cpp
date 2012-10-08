@@ -110,14 +110,14 @@ TEST_F(EWK2UnitTestBase, ewk_settings_file_access_from_file_urls_allowed)
     ASSERT_TRUE(ewk_settings_file_access_from_file_urls_allowed_get(settings));
 
     // Check that file access from file:// URLs is allowed.
-    ewk_view_uri_set(webView(), testURL.data());
+    ewk_view_url_set(webView(), testURL.data());
     ASSERT_TRUE(waitUntilTitleChangedTo("Frame loaded"));
 
     ASSERT_TRUE(ewk_settings_file_access_from_file_urls_allowed_set(settings, false));
     ASSERT_FALSE(ewk_settings_file_access_from_file_urls_allowed_get(settings));
 
     // Check that file access from file:// URLs is NOT allowed.
-    ewk_view_uri_set(webView(), testURL.data());
+    ewk_view_url_set(webView(), testURL.data());
     ASSERT_TRUE(waitUntilTitleChangedTo("Frame NOT loaded"));
 }
 
@@ -128,19 +128,19 @@ TEST_F(EWK2UnitTestBase, ewk_settings_enable_frame_flattening_set)
 
     // The frame flattening is disabled by default.
     ASSERT_FALSE(ewk_settings_enable_frame_flattening_get(settings));
-    ewk_view_uri_set(webView(), environment->urlForResource("frame_flattening_test.html").data());
+    ewk_view_url_set(webView(), environment->urlForResource("frame_flattening_test.html").data());
     waitUntilTitleChangedTo("200"); // width of iframe tag.
     ASSERT_STREQ("200", ewk_view_title_get(webView()));
 
     ASSERT_TRUE(ewk_settings_enable_frame_flattening_set(settings, true));
     ASSERT_TRUE(ewk_settings_enable_frame_flattening_get(settings));
-    ewk_view_uri_set(webView(), environment->urlForResource("frame_flattening_test.html").data());
+    ewk_view_url_set(webView(), environment->urlForResource("frame_flattening_test.html").data());
     waitUntilTitleChangedTo("600"); // width of frame_flattening_test_subframe.html
     ASSERT_STREQ("600", ewk_view_title_get(webView()));
 
     ASSERT_TRUE(ewk_settings_enable_frame_flattening_set(settings, false));
     ASSERT_FALSE(ewk_settings_enable_frame_flattening_get(settings));
-    ewk_view_uri_set(webView(), environment->urlForResource("frame_flattening_test.html").data());
+    ewk_view_url_set(webView(), environment->urlForResource("frame_flattening_test.html").data());
     waitUntilTitleChangedTo("200"); // width of iframe tag.
     ASSERT_STREQ("200", ewk_view_title_get(webView()));
 }

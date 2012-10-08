@@ -73,7 +73,7 @@ void EWK2UnitTestBase::TearDown()
 
 void EWK2UnitTestBase::loadUrlSync(const char* url)
 {
-    ewk_view_uri_set(m_webView, url);
+    ewk_view_url_set(m_webView, url);
     waitUntilLoadFinished();
 }
 
@@ -196,17 +196,17 @@ bool EWK2UnitTestBase::waitUntilTitleChangedTo(const char* expectedTitle, double
     return !data.didTimeOut();
 }
 
-static void onURIChanged(void* userData, Evas_Object* webView, void*)
+static void onURLChanged(void* userData, Evas_Object* webView, void*)
 {
     CallbackDataExpectedValue<CString>* data = static_cast<CallbackDataExpectedValue<CString>*>(userData);
 
-    if (strcmp(ewk_view_uri_get(webView), data->expectedValue().data()))
+    if (strcmp(ewk_view_url_get(webView), data->expectedValue().data()))
         return;
 
     data->setDone();
 }
 
-static bool timeOutWhileWaitingUntilURIChangedTo(void* userData)
+static bool timeOutWhileWaitingUntilURLChangedTo(void* userData)
 {
     CallbackDataExpectedValue<CString>* data = static_cast<CallbackDataExpectedValue<CString>*>(userData);
     data->setTimedOut();
@@ -214,16 +214,16 @@ static bool timeOutWhileWaitingUntilURIChangedTo(void* userData)
     return ECORE_CALLBACK_CANCEL;
 }
 
-bool EWK2UnitTestBase::waitUntilURIChangedTo(const char* expectedURI, double timeoutSeconds)
+bool EWK2UnitTestBase::waitUntilURLChangedTo(const char* expectedURL, double timeoutSeconds)
 {
-    CallbackDataExpectedValue<CString> data(expectedURI, timeoutSeconds, reinterpret_cast<Ecore_Task_Cb>(timeOutWhileWaitingUntilURIChangedTo));
+    CallbackDataExpectedValue<CString> data(expectedURL, timeoutSeconds, reinterpret_cast<Ecore_Task_Cb>(timeOutWhileWaitingUntilURLChangedTo));
 
-    evas_object_smart_callback_add(m_webView, "uri,changed", onURIChanged, &data);
+    evas_object_smart_callback_add(m_webView, "url,changed", onURLChanged, &data);
 
     while (!data.isDone())
         ecore_main_loop_iterate();
 
-    evas_object_smart_callback_del(m_webView, "uri,changed", onURIChanged);
+    evas_object_smart_callback_del(m_webView, "url,changed", onURLChanged);
 
     return !data.didTimeOut();
 }

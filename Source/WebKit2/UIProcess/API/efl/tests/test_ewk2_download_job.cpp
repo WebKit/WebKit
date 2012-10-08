@@ -159,7 +159,7 @@ TEST_F(EWK2UnitTestBase, ewk_download)
     char destinationPath[] = "/tmp/pdf-file.XXXXXX";
     ASSERT_TRUE(mktemp(destinationPath));
 
-    CString fileUrl = httpServer->getURIForPath(testFilePath);
+    CString fileUrl = httpServer->getURLForPath(testFilePath);
 
     DownloadTestData userData = { fileUrl.data(), destinationPath };
     ASSERT_FALSE(fileExists(destinationPath));
@@ -170,7 +170,7 @@ TEST_F(EWK2UnitTestBase, ewk_download)
     evas_object_smart_callback_add(webView(), "download,finished", on_download_finished, &userData);
 
     // Download test pdf
-    ewk_view_uri_set(webView(), fileUrl.data());
+    ewk_view_url_set(webView(), fileUrl.data());
     ecore_main_loop_begin();
 
     // Clean up

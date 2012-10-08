@@ -112,7 +112,7 @@ EAPI Ewk_Url_Request *ewk_download_job_request_get(const Ewk_Download_Job *downl
 EAPI Ewk_Url_Response *ewk_download_job_response_get(const Ewk_Download_Job *download);
 
 /**
- * Query the URI to which the downloaded file will be written.
+ * Query the URL to which the downloaded file will be written.
  *
  * @param download a #Ewk_Download_Job to query.
  *

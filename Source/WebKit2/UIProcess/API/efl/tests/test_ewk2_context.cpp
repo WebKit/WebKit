@@ -64,9 +64,9 @@ static void schemeRequestCallback(Ewk_Url_Scheme_Request* request, void* userDat
     ASSERT_TRUE(ewk_url_scheme_request_finish(request, htmlReply, strlen(htmlReply), "text/html"));
 }
 
-TEST_F(EWK2UnitTestBase, ewk_context_uri_scheme_register)
+TEST_F(EWK2UnitTestBase, ewk_context_url_scheme_register)
 {
-    ewk_context_uri_scheme_register(ewk_view_context_get(webView()), "fooscheme", schemeRequestCallback, 0);
+    ewk_context_url_scheme_register(ewk_view_context_get(webView()), "fooscheme", schemeRequestCallback, 0);
     loadUrlSync("fooscheme:MyPath");
     ASSERT_STREQ("Foo", ewk_view_title_get(webView()));
 }

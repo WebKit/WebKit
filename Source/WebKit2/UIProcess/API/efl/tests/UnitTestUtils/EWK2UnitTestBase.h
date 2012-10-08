@@ -45,7 +45,7 @@ protected:
     static const double defaultTimeoutSeconds = 10.0;
     bool waitUntilLoadFinished(double timeoutSeconds = defaultTimeoutSeconds);
     bool waitUntilTitleChangedTo(const char* expectedTitle, double timeoutSeconds = defaultTimeoutSeconds);
-    bool waitUntilURIChangedTo(const char* expectedURI, double timeoutSeconds = defaultTimeoutSeconds);
+    bool waitUntilURLChangedTo(const char* expectedURL, double timeoutSeconds = defaultTimeoutSeconds);
 
     void mouseClick(int x, int y);
     void mouseDown(int x, int y);

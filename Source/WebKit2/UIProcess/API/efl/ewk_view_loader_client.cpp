@@ -138,7 +138,7 @@ static void didSameDocumentNavigationForFrame(WKPageRef, WKFrameRef frame, WKSam
         return;
 
     Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
-    ewk_view_uri_update(ewkView);
+    ewk_view_url_update(ewkView);
 }
 
 void ewk_view_loader_client_attach(WKPageRef pageRef, Evas_Object* ewkView)

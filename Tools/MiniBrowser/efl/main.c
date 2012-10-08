@@ -216,7 +216,7 @@ static void
 on_url_changed(void *user_data, Evas_Object *webview, void *event_info)
 {
     Browser_Window *window = (Browser_Window *)user_data;
-    url_bar_url_set(window->url_bar, ewk_view_uri_get(window->webview));
+    url_bar_url_set(window->url_bar, ewk_view_url_get(window->webview));
 }
 
 static void
@@ -334,7 +334,7 @@ static Browser_Window *window_create(const char *url, Eina_Bool frame_flattening
     evas_object_smart_callback_add(window->webview, "load,error", on_error, window);
     evas_object_smart_callback_add(window->webview, "load,progress", on_progress, window);
     evas_object_smart_callback_add(window->webview, "title,changed", on_title_changed, window);
-    evas_object_smart_callback_add(window->webview, "uri,changed", on_url_changed, window);
+    evas_object_smart_callback_add(window->webview, "url,changed", on_url_changed, window);
 
     evas_object_event_callback_add(window->webview, EVAS_CALLBACK_KEY_DOWN, on_key_down, window);
     evas_object_event_callback_add(window->webview, EVAS_CALLBACK_MOUSE_DOWN, on_mouse_down, window);
@@ -347,7 +347,7 @@ static Browser_Window *window_create(const char *url, Eina_Bool frame_flattening
 
     window->url_bar = url_bar_add(window->webview, DEFAULT_WIDTH);
 
-    ewk_view_uri_set(window->webview, url);
+    ewk_view_url_set(window->webview, url);
 
     return window;
 }

@@ -89,7 +89,7 @@ struct _Ewk_View_Private_Data {
 #endif
     RefPtr<WebPageProxy> pageProxy;
 
-    WKEinaSharedString uri;
+    WKEinaSharedString url;
     WKEinaSharedString title;
     WKEinaSharedString theme;
     WKEinaSharedString customEncoding;
@@ -859,11 +859,11 @@ Ewk_Context* ewk_view_context_get(const Evas_Object* ewkView)
 
 /**
  * @internal
- * The uri of view was changed by the frame loader.
+ * The url of view was changed by the frame loader.
  *
- * Emits signal: "uri,changed" with pointer to new uri string.
+ * Emits signal: "url,changed" with pointer to new url string.
  */
-void ewk_view_uri_update(Evas_Object* ewkView)
+void ewk_view_url_update(Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
@@ -872,32 +872,32 @@ void ewk_view_uri_update(Evas_Object* ewkView)
     if (activeURL.isEmpty())
         return;
 
-    if (priv->uri == activeURL.utf8().data())
+    if (priv->url == activeURL.utf8().data())
         return;
 
-    priv->uri = activeURL.utf8().data();
-    const char* callbackArgument = static_cast<const char*>(priv->uri);
-    evas_object_smart_callback_call(ewkView, "uri,changed", const_cast<char*>(callbackArgument));
+    priv->url = activeURL.utf8().data();
+    const char* callbackArgument = static_cast<const char*>(priv->url);
+    evas_object_smart_callback_call(ewkView, "url,changed", const_cast<char*>(callbackArgument));
 }
 
-Eina_Bool ewk_view_uri_set(Evas_Object* ewkView, const char* uri)
+Eina_Bool ewk_view_url_set(Evas_Object* ewkView, const char* url)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(uri, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(url, false);
 
-    priv->pageProxy->loadURL(uri);
-    ewk_view_uri_update(ewkView);
+    priv->pageProxy->loadURL(url);
+    ewk_view_url_update(ewkView);
 
     return true;
 }
 
-const char* ewk_view_uri_get(const Evas_Object* ewkView)
+const char* ewk_view_url_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
 
-    return priv->uri;
+    return priv->url;
 }
 
 Eina_Bool ewk_view_reload(Evas_Object* ewkView)
@@ -906,7 +906,7 @@ Eina_Bool ewk_view_reload(Evas_Object* ewkView)
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
 
     priv->pageProxy->reload(/*reloadFromOrigin*/ false);
-    ewk_view_uri_update(ewkView);
+    ewk_view_url_update(ewkView);
 
     return true;
 }
@@ -917,7 +917,7 @@ Eina_Bool ewk_view_reload_bypass_cache(Evas_Object* ewkView)
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
 
     priv->pageProxy->reload(/*reloadFromOrigin*/ true);
-    ewk_view_uri_update(ewkView);
+    ewk_view_url_update(ewkView);
 
     return true;
 }
@@ -1425,7 +1425,7 @@ void ewk_view_load_error(Evas_Object* ewkView, const Ewk_Error* error)
  */
 void ewk_view_load_finished(Evas_Object* ewkView)
 {
-    ewk_view_uri_update(ewkView);
+    ewk_view_url_update(ewkView);
     evas_object_smart_callback_call(ewkView, "load,finished", 0);
 }
 
@@ -1448,7 +1448,7 @@ void ewk_view_load_provisional_failed(Evas_Object* ewkView, const Ewk_Error* err
  */
 void ewk_view_load_provisional_redirect(Evas_Object* ewkView)
 {
-    ewk_view_uri_update(ewkView);
+    ewk_view_url_update(ewkView);
     evas_object_smart_callback_call(ewkView, "load,provisional,redirect", 0);
 }
 
@@ -1467,7 +1467,7 @@ void ewk_view_load_provisional_started(Evas_Object* ewkView)
     // the loadingResources HashMap to start clean.
     _ewk_view_priv_loading_resources_clear(priv->loadingResourcesMap);
 
-    ewk_view_uri_update(ewkView);
+    ewk_view_url_update(ewkView);
     evas_object_smart_callback_call(ewkView, "load,provisional,started", 0);
 }
 
@@ -1503,7 +1503,7 @@ Eina_Bool ewk_view_html_string_load(Evas_Object* ewkView, const char* html, cons
         priv->pageProxy->loadAlternateHTMLString(String::fromUTF8(html), baseUrl ? String::fromUTF8(baseUrl) : "", String::fromUTF8(unreachableUrl));
     else
         priv->pageProxy->loadHTMLString(String::fromUTF8(html), baseUrl ? String::fromUTF8(baseUrl) : "");
-    ewk_view_uri_update(ewkView);
+    ewk_view_url_update(ewkView);
 
     return true;
 }

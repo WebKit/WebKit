@@ -50,7 +50,7 @@ typedef struct _Ewk_Context Ewk_Context;
 
 /**
  * @typedef Ewk_Url_Scheme_Request_Cb Ewk_Url_Scheme_Request_Cb
- * @brief Callback type for use with ewk_context_uri_scheme_register().
+ * @brief Callback type for use with ewk_context_url_scheme_register().
  */
 typedef void (*Ewk_Url_Scheme_Request_Cb) (Ewk_Url_Scheme_Request *request, void *user_data);
 
@@ -147,7 +147,7 @@ EAPI Ewk_Cookie_Manager *ewk_context_cookie_manager_get(const Ewk_Context *conte
  * @param user_data data to pass to callback function
  *
  * @code
- * static void about_uri_scheme_request_cb(Ewk_Url_Scheme_Request *request, void *user_data)
+ * static void about_url_scheme_request_cb(Ewk_Url_Scheme_Request *request, void *user_data)
  * {
  *     const char *path;
  *     char *contents_data = NULL;
@@ -172,7 +172,7 @@ EAPI Ewk_Cookie_Manager *ewk_context_cookie_manager_get(const Ewk_Context *conte
  * }
  * @endcode
  */
-EAPI Eina_Bool ewk_context_uri_scheme_register(Ewk_Context *context, const char *scheme, Ewk_Url_Scheme_Request_Cb callback, void *user_data);
+EAPI Eina_Bool ewk_context_url_scheme_register(Ewk_Context *context, const char *scheme, Ewk_Url_Scheme_Request_Cb callback, void *user_data);
 
 /**
  * Sets vibration client callbacks to handle the tactile feedback in the form of

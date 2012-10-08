@@ -44,18 +44,18 @@ static void onLoadFinishedForRedirection(void* userData, Evas_Object*, void*)
     (*countLoadFinished)--;
 }
 
-TEST_F(EWK2UnitTestBase, ewk_view_uri_get)
+TEST_F(EWK2UnitTestBase, ewk_view_url_get)
 {
     loadUrlSync(environment->defaultTestPageUrl());
-    EXPECT_STREQ(environment->defaultTestPageUrl(), ewk_view_uri_get(webView()));
+    EXPECT_STREQ(environment->defaultTestPageUrl(), ewk_view_url_get(webView()));
 
     int countLoadFinished = 2;
     evas_object_smart_callback_add(webView(), "load,finished", onLoadFinishedForRedirection, &countLoadFinished);
-    ewk_view_uri_set(webView(), environment->urlForResource("redirect_uri_to_default.html").data());
+    ewk_view_url_set(webView(), environment->urlForResource("redirect_url_to_default.html").data());
     while (countLoadFinished)
         ecore_main_loop_iterate();
     evas_object_smart_callback_del(webView(), "load,finished", onLoadFinishedForRedirection);
-    EXPECT_STREQ(environment->defaultTestPageUrl(), ewk_view_uri_get(webView()));
+    EXPECT_STREQ(environment->defaultTestPageUrl(), ewk_view_url_get(webView()));
 }
 
 TEST_F(EWK2UnitTestBase, ewk_view_device_pixel_ratio)
@@ -106,13 +106,13 @@ TEST_F(EWK2UnitTestBase, ewk_view_navigation)
     httpServer->run(serverCallbackNavigation);
 
     // Visit Page1
-    loadUrlSync(httpServer->getURIForPath("/Page1").data());
+    loadUrlSync(httpServer->getURLForPath("/Page1").data());
     ASSERT_STREQ("Page1", ewk_view_title_get(webView()));
     ASSERT_FALSE(ewk_view_back_possible(webView()));
     ASSERT_FALSE(ewk_view_forward_possible(webView()));
 
     // Visit Page2
-    loadUrlSync(httpServer->getURIForPath("/Page2").data());
+    loadUrlSync(httpServer->getURLForPath("/Page2").data());
     ASSERT_STREQ("Page2", ewk_view_title_get(webView()));
     ASSERT_TRUE(ewk_view_back_possible(webView()));
     ASSERT_FALSE(ewk_view_forward_possible(webView()));
@@ -351,13 +351,13 @@ TEST_F(EWK2UnitTestBase, ewk_view_full_screen_exit)
 
 TEST_F(EWK2UnitTestBase, ewk_view_same_page_navigation)
 {
-    // Tests that same page navigation updates the page URI.
+    // Tests that same page navigation updates the page URL.
     String testUrl = environment->urlForResource("same_page_navigation.html").data();
     loadUrlSync(testUrl.utf8().data());
-    ASSERT_STREQ(testUrl.utf8().data(), ewk_view_uri_get(webView()));
+    ASSERT_STREQ(testUrl.utf8().data(), ewk_view_url_get(webView()));
     mouseClick(50, 50);
     testUrl = testUrl + '#';
-    ASSERT_TRUE(waitUntilURIChangedTo(testUrl.utf8().data()));
+    ASSERT_TRUE(waitUntilURLChangedTo(testUrl.utf8().data()));
 }
 
 TEST_F(EWK2UnitTestBase, ewk_view_title_changed)
@@ -730,7 +730,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_color_picker_color_set)
     while (!handled)
         ecore_main_loop_iterate();
 
-    // 8. Click button to remove input element during color picker is shown.
+    // 8. Click button to remove input element durlng color picker is shown.
     api->input_picker_color_dismiss = hideColorPickerByRemovingElement;
     mouseClick(80, 20);
 
@@ -917,7 +917,7 @@ TEST_F(EWK2UnitTestBase, window_move_resize)
     EXPECT_EQ(800, width);
     EXPECT_EQ(600, height);
 
-    ewk_view_uri_set(webView(), environment->urlForResource("window_move_resize.html").data());
+    ewk_view_url_set(webView(), environment->urlForResource("window_move_resize.html").data());
     ASSERT_TRUE(waitUntilTitleChangedTo("Moved and resized"));
 
     // Check that the window has been moved and resized.

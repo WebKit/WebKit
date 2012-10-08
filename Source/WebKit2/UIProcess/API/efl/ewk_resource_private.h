@@ -28,6 +28,6 @@
 
 typedef struct _Ewk_Resource Ewk_Resource;
 
-Ewk_Resource* ewk_resource_new(const char* uri, bool isMainResource);
+Ewk_Resource* ewk_resource_new(const char* url, bool isMainResource);
 
 #endif // ewk_resource_private_h
