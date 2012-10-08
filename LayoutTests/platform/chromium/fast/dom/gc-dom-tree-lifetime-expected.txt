@@ -1,0 +1,202 @@
+=== Initial state ===
+PASS globalDiv.id is "div0"
+PASS globalDiv.parentNode.id is "div0-parent"
+PASS globalDiv.firstChild.id is "div0-child"
+PASS globalDiv.id is "div1"
+PASS globalDiv.parentNode.id is "div1-parent"
+PASS globalDiv.firstChild.id is "div1-child"
+PASS globalDiv.id is "div2"
+PASS globalDiv.parentNode.id is "div2-parent"
+PASS globalDiv.firstChild.id is "div2-child"
+=== After clearing innerHTML ===
+PASS globalDiv.id is "div0"
+FAIL globalDiv.parentNode.id should be div0-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div0-child"
+PASS globalDiv.id is "div1"
+FAIL globalDiv.parentNode.id should be div1-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div1-child"
+PASS globalDiv.id is "div2"
+FAIL globalDiv.parentNode.id should be div2-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div2-child"
+=== After clearing innerHTML and divX ===
+PASS globalDiv.id is "div1"
+FAIL globalDiv.parentNode.id should be div1-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div1-child"
+PASS globalDiv.id is "div2"
+FAIL globalDiv.parentNode.id should be div2-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div2-child"
+=== After clearing innerHTML, divX and divY ===
+PASS globalDiv.id is "div2"
+FAIL globalDiv.parentNode.id should be div2-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div2-child"
+=== After clearing innerHTML, divX, divY and divZ ===
+PASS All <div> objects in a DOM tree are successfully destructed.
+=== Initial state ===
+PASS globalDiv.id is "div0"
+PASS globalDiv.parentNode.id is "div0-parent"
+PASS globalDiv.firstChild.id is "div0-child"
+PASS globalDiv.id is "div2"
+PASS globalDiv.parentNode.id is "div2-parent"
+PASS globalDiv.firstChild.id is "div2-child"
+PASS globalDiv.id is "div1"
+PASS globalDiv.parentNode.id is "div1-parent"
+PASS globalDiv.firstChild.id is "div1-child"
+=== After clearing innerHTML ===
+PASS globalDiv.id is "div0"
+FAIL globalDiv.parentNode.id should be div0-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div0-child"
+PASS globalDiv.id is "div2"
+FAIL globalDiv.parentNode.id should be div2-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div2-child"
+PASS globalDiv.id is "div1"
+FAIL globalDiv.parentNode.id should be div1-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div1-child"
+=== After clearing innerHTML and divX ===
+PASS globalDiv.id is "div2"
+FAIL globalDiv.parentNode.id should be div2-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div2-child"
+PASS globalDiv.id is "div1"
+FAIL globalDiv.parentNode.id should be div1-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div1-child"
+=== After clearing innerHTML, divX and divY ===
+PASS globalDiv.id is "div1"
+FAIL globalDiv.parentNode.id should be div1-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div1-child"
+=== After clearing innerHTML, divX, divY and divZ ===
+PASS All <div> objects in a DOM tree are successfully destructed.
+=== Initial state ===
+PASS globalDiv.id is "div1"
+PASS globalDiv.parentNode.id is "div1-parent"
+PASS globalDiv.firstChild.id is "div1-child"
+PASS globalDiv.id is "div0"
+PASS globalDiv.parentNode.id is "div0-parent"
+PASS globalDiv.firstChild.id is "div0-child"
+PASS globalDiv.id is "div2"
+PASS globalDiv.parentNode.id is "div2-parent"
+PASS globalDiv.firstChild.id is "div2-child"
+=== After clearing innerHTML ===
+PASS globalDiv.id is "div1"
+FAIL globalDiv.parentNode.id should be div1-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div1-child"
+PASS globalDiv.id is "div0"
+FAIL globalDiv.parentNode.id should be div0-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div0-child"
+PASS globalDiv.id is "div2"
+FAIL globalDiv.parentNode.id should be div2-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div2-child"
+=== After clearing innerHTML and divX ===
+PASS globalDiv.id is "div0"
+FAIL globalDiv.parentNode.id should be div0-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div0-child"
+PASS globalDiv.id is "div2"
+FAIL globalDiv.parentNode.id should be div2-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div2-child"
+=== After clearing innerHTML, divX and divY ===
+PASS globalDiv.id is "div2"
+FAIL globalDiv.parentNode.id should be div2-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div2-child"
+=== After clearing innerHTML, divX, divY and divZ ===
+PASS All <div> objects in a DOM tree are successfully destructed.
+=== Initial state ===
+PASS globalDiv.id is "div1"
+PASS globalDiv.parentNode.id is "div1-parent"
+PASS globalDiv.firstChild.id is "div1-child"
+PASS globalDiv.id is "div2"
+PASS globalDiv.parentNode.id is "div2-parent"
+PASS globalDiv.firstChild.id is "div2-child"
+PASS globalDiv.id is "div0"
+PASS globalDiv.parentNode.id is "div0-parent"
+PASS globalDiv.firstChild.id is "div0-child"
+=== After clearing innerHTML ===
+PASS globalDiv.id is "div1"
+FAIL globalDiv.parentNode.id should be div1-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div1-child"
+PASS globalDiv.id is "div2"
+FAIL globalDiv.parentNode.id should be div2-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div2-child"
+PASS globalDiv.id is "div0"
+FAIL globalDiv.parentNode.id should be div0-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div0-child"
+=== After clearing innerHTML and divX ===
+PASS globalDiv.id is "div2"
+FAIL globalDiv.parentNode.id should be div2-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div2-child"
+PASS globalDiv.id is "div0"
+FAIL globalDiv.parentNode.id should be div0-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div0-child"
+=== After clearing innerHTML, divX and divY ===
+PASS globalDiv.id is "div0"
+FAIL globalDiv.parentNode.id should be div0-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div0-child"
+=== After clearing innerHTML, divX, divY and divZ ===
+PASS All <div> objects in a DOM tree are successfully destructed.
+=== Initial state ===
+PASS globalDiv.id is "div2"
+PASS globalDiv.parentNode.id is "div2-parent"
+PASS globalDiv.firstChild.id is "div2-child"
+PASS globalDiv.id is "div0"
+PASS globalDiv.parentNode.id is "div0-parent"
+PASS globalDiv.firstChild.id is "div0-child"
+PASS globalDiv.id is "div1"
+PASS globalDiv.parentNode.id is "div1-parent"
+PASS globalDiv.firstChild.id is "div1-child"
+=== After clearing innerHTML ===
+PASS globalDiv.id is "div2"
+FAIL globalDiv.parentNode.id should be div2-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div2-child"
+PASS globalDiv.id is "div0"
+FAIL globalDiv.parentNode.id should be div0-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div0-child"
+PASS globalDiv.id is "div1"
+FAIL globalDiv.parentNode.id should be div1-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div1-child"
+=== After clearing innerHTML and divX ===
+PASS globalDiv.id is "div0"
+FAIL globalDiv.parentNode.id should be div0-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div0-child"
+PASS globalDiv.id is "div1"
+FAIL globalDiv.parentNode.id should be div1-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div1-child"
+=== After clearing innerHTML, divX and divY ===
+PASS globalDiv.id is "div1"
+FAIL globalDiv.parentNode.id should be div1-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div1-child"
+=== After clearing innerHTML, divX, divY and divZ ===
+PASS All <div> objects in a DOM tree are successfully destructed.
+=== Initial state ===
+PASS globalDiv.id is "div2"
+PASS globalDiv.parentNode.id is "div2-parent"
+PASS globalDiv.firstChild.id is "div2-child"
+PASS globalDiv.id is "div1"
+PASS globalDiv.parentNode.id is "div1-parent"
+PASS globalDiv.firstChild.id is "div1-child"
+PASS globalDiv.id is "div0"
+PASS globalDiv.parentNode.id is "div0-parent"
+PASS globalDiv.firstChild.id is "div0-child"
+=== After clearing innerHTML ===
+PASS globalDiv.id is "div2"
+FAIL globalDiv.parentNode.id should be div2-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div2-child"
+PASS globalDiv.id is "div1"
+FAIL globalDiv.parentNode.id should be div1-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div1-child"
+PASS globalDiv.id is "div0"
+FAIL globalDiv.parentNode.id should be div0-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div0-child"
+=== After clearing innerHTML and divX ===
+PASS globalDiv.id is "div1"
+FAIL globalDiv.parentNode.id should be div1-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div1-child"
+PASS globalDiv.id is "div0"
+FAIL globalDiv.parentNode.id should be div0-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div0-child"
+=== After clearing innerHTML, divX and divY ===
+PASS globalDiv.id is "div0"
+FAIL globalDiv.parentNode.id should be div0-parent. Threw exception TypeError: Cannot read property 'id' of null
+PASS globalDiv.firstChild.id is "div0-child"
+=== After clearing innerHTML, divX, divY and divZ ===
+PASS All <div> objects in a DOM tree are successfully destructed.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

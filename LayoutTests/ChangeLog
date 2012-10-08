@@ -1,3 +1,19 @@
+2012-10-08  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed gardening after r130587.
+
+        Per discussion with Adam, this change lands the failing baselines to
+        get some coverage until V8 matches JSC. Fixing the baselines is
+        covered by https://bugs.webkit.org/show_bug.cgi?id=98658
+
+        * platform/chromium/TestExpectations:
+        Marked one of test as SLOW as it is timing out in Debug.
+
+        * platform/chromium/fast/dom/gc-12-expected.txt: Added.
+        * platform/chromium/fast/dom/gc-3-expected.txt: Added.
+        * platform/chromium/fast/dom/gc-5-expected.txt: Added.
+        * platform/chromium/fast/dom/gc-dom-tree-lifetime-expected.txt: Added.
+
 2012-10-08  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Unreviewed Qt gardening.
