@@ -1,3 +1,30 @@
+2012-10-08  Sami Kyostila  <skyostil@chromium.org>
+
+        Some non-scrollable elements are added to non-fast-scrollable region
+        https://bugs.webkit.org/show_bug.cgi?id=97927
+
+        Reviewed by James Robinson.
+
+        Test that a non-scrollable RenderLayer isn't added to the non-fast scrollable
+        region.
+
+        The test in this patch consists of a web page where both the html and
+        body elements clip horizontal overflow. This results in a hierarchy
+        where the body element gets a scrollable RenderLayer. However, that
+        layer isn't (interactively) scrollable because while the scroll geometry
+        is calculated based on the amount of overflow, the scroll bars are
+        hidden because of the "overflow-x: hidden" style.
+
+        Previously this layer would have made the entire page part of the
+        non-fast scrollable region. With this patch,
+        RenderLayer::allowScrolling() is used as a pre-requisite for expanding
+        the region, thus avoiding the problem.
+
+        * tests/ScrollingCoordinatorChromiumTest.cpp:
+        (WebKit::TEST_F):
+        (WebKit):
+        * tests/data/clipped-body.html: Added.
+
 2012-10-08  Sailesh Agrawal  <sail@chromium.org>
 
         Mac Chromium: Ignore system numpad modifier

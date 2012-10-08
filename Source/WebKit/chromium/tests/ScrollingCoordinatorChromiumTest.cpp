@@ -183,6 +183,15 @@ TEST_F(ScrollingCoordinatorChromiumTest, wheelEventHandler)
     ASSERT_TRUE(rootScrollLayer->haveWheelEventHandlers());
 }
 
+TEST_F(ScrollingCoordinatorChromiumTest, clippedBodyTest)
+{
+    registerMockedHttpURLLoad("clipped-body.html");
+    navigateTo(m_baseURL + "clipped-body.html");
+
+    WebLayer* rootScrollLayer = getRootScrollLayer();
+    ASSERT_EQ(0u, rootScrollLayer->nonFastScrollableRegion().size());
+}
+
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
 TEST_F(ScrollingCoordinatorChromiumTest, touchOverflowScrolling)
 {
