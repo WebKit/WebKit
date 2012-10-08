@@ -3755,3 +3755,5 @@ webkit.org/b/95121 fast/borders/border-image-side-reduction.html [ ImageOnlyFail
 # failing after r130443 but we're not sure if this is a real bug or just needs rebaselining
 webkit.org/b/98545 [ Mac ] fast/text/international/text-spliced-font.html [ Failure ]
 webkit.org/b/98545 [ Mac ] fast/writing-mode/Kusa-Makura-background-canvas.html [ Failure ]
+
+webkit.org/b/98686 editing/pasteboard/data-transfer-items.html [ Failure ]

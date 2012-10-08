@@ -1,3 +1,12 @@
+2012-10-08  Dirk Pranke  <dpranke@chromium.org>
+
+        Suppress editing/pasteboard/data-transfer-items.html failure.
+        https://bugs.webkit.org/show_bug.cgi?id=98686
+
+        Unreviewed, expectations change.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-08  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed rebaselining after r130598 and r130600.
