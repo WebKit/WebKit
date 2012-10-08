@@ -1,3 +1,18 @@
+2012-10-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening. Add PNGs after r130653,
+        and skip tests on Qt-WK2, because they fail on it.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt/fast/ruby/rubyDOM-insert-rt-expected.png: Added.
+        * platform/qt/fast/ruby/rubyDOM-insert-text1-expected.png: Added.
+        * platform/qt/fast/ruby/rubyDOM-insert-text2-expected.png: Added.
+        * platform/qt/fast/ruby/rubyDOM-insert-text3-expected.png: Added.
+        * platform/qt/fast/ruby/rubyDOM-remove-rt1-expected.png: Added.
+        * platform/qt/fast/ruby/rubyDOM-remove-rt2-expected.png: Added.
+        * platform/qt/fast/ruby/rubyDOM-remove-text1-expected.png: Added.
+        * platform/qt/fast/ruby/rubyDOM-remove-text2-expected.png: Added.
+
 2012-10-08  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed Chromium gardening.

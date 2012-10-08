@@ -561,3 +561,13 @@ webkit.org/b/98525 plugins/refcount-leaks.html
 
 # [Qt][WK2] REGRESSION(r130629): It made touchadjustment/focusout-on-touch.html fail
 webkit.org/b/98642 touchadjustment/focusout-on-touch.html
+
+# [Qt][WK2] Ruby DOM tests differ on WK1 and WK2
+webkit.org/b/98688 fast/ruby/rubyDOM-insert-rt.html
+webkit.org/b/98688 fast/ruby/rubyDOM-insert-text1.html
+webkit.org/b/98688 fast/ruby/rubyDOM-insert-text2.html
+webkit.org/b/98688 fast/ruby/rubyDOM-insert-text3.html
+webkit.org/b/98688 fast/ruby/rubyDOM-remove-rt1.html
+webkit.org/b/98688 fast/ruby/rubyDOM-remove-rt2.html
+webkit.org/b/98688 fast/ruby/rubyDOM-remove-text1.html
+webkit.org/b/98688 fast/ruby/rubyDOM-remove-text2.html
