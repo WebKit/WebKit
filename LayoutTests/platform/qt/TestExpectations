@@ -2686,10 +2686,6 @@ jquery/data.html
 # https://bugs.webkit.org/show_bug.cgi?id=91967
 inspector/styles/protocol-css-regions-commands.html
 
-# [Qt] new test introduced in r123281 fails on Qt
-# https://bugs.webkit.org/show_bug.cgi?id=91968
-fast/sub-pixel/table-rows-have-stable-height.html
-
 # [Qt] svg/zoom/{page,text}/zoom-hixie-mixed-009.xml fails
 # https://bugs.webkit.org/show_bug.cgi?id=92018
 svg/zoom/text/zoom-hixie-mixed-009.xml
