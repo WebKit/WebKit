@@ -188,6 +188,16 @@ void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
         m_data.m_painter->begin(&m_data.m_pixmap);
 }
 
+static inline quint32 convertABGRToARGB(quint32 pixel)
+{
+    return ((pixel << 16) & 0xff0000) | ((pixel >> 16) & 0xff) | (pixel & 0xff00ff00);
+}
+
+static inline quint32 convertARGBToABGR(quint32 pixel)
+{
+    return convertABGRToARGB(pixel);
+}
+
 template <Multiply multiplied>
 PassRefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const ImageBufferData& imageData, const IntSize& size)
 {
@@ -232,40 +242,18 @@ PassRefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const ImageBuffe
     const uchar* bits = image.constBits();
 
     quint32* destRows = reinterpret_cast_ptr<quint32*>(&data[desty * rect.width() * 4 + destx * 4]);
-
-    if (multiplied == Unmultiplied) {
-        for (int y = 0; y < numRows; ++y) {
-            const quint32* scanLine = reinterpret_cast_ptr<const quint32*>(bits + (y + originy) * bytesPerLine);
-            for (int x = 0; x < numColumns; x++) {
-                QRgb pixel = scanLine[x + originx];
-                int alpha = qAlpha(pixel);
-                // Un-premultiply and convert RGB to BGR.
-                if (alpha == 255)
-                    destRows[x] = (0xFF000000
-                                | (qBlue(pixel) << 16)
-                                | (qGreen(pixel) << 8)
-                                | (qRed(pixel)));
-                else if (alpha > 0)
-                    destRows[x] = ((alpha << 24)
-                                | (((255 * qBlue(pixel)) / alpha)) << 16)
-                                | (((255 * qGreen(pixel)) / alpha) << 8)
-                                | ((255 * qRed(pixel)) / alpha);
-                else
-                    destRows[x] = 0;
-            }
-            destRows += rect.width();
+    for (int y = 0; y < numRows; ++y) {
+        const quint32* scanLine = reinterpret_cast_ptr<const quint32*>(bits + (y + originy) * bytesPerLine);
+        for (int x = 0; x < numColumns; x++) {
+            QRgb pixel = scanLine[x + originx];
+            Color pixelColor;
+            if (multiplied == Unmultiplied)
+                pixelColor = colorFromPremultipliedARGB(Color(qRed(pixel), qGreen(pixel), qBlue(pixel), qAlpha(pixel)).rgb());
+            else
+                pixelColor = Color(qRed(pixel), qGreen(pixel), qBlue(pixel), qAlpha(pixel));
+            destRows[x] = convertARGBToABGR(pixelColor.rgb());
         }
-    } else {
-        for (int y = 0; y < numRows; ++y) {
-            const quint32* scanLine = reinterpret_cast_ptr<const quint32*>(bits + (y + originy) * bytesPerLine);
-            for (int x = 0; x < numColumns; x++) {
-                QRgb pixel = scanLine[x + originx];
-                // Convert RGB to BGR.
-                destRows[x] = ((pixel << 16) & 0xff0000) | ((pixel >> 16) & 0xff) | (pixel & 0xff00ff00);
-
-            }
-            destRows += rect.width();
-        }
+        destRows += rect.width();
     }
 
     return result.release();
@@ -279,22 +267,6 @@ PassRefPtr<Uint8ClampedArray> ImageBuffer::getUnmultipliedImageData(const IntRec
 PassRefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, CoordinateSystem) const
 {
     return getImageData<Premultiplied>(rect, m_data, m_size);
-}
-
-static inline unsigned int premultiplyABGRtoARGB(unsigned int x)
-{
-    unsigned int a = x >> 24;
-    if (a == 255)
-        return (x << 16) | ((x >> 16) & 0xff) | (x & 0xff00ff00);
-    unsigned int t = (x & 0xff00ff) * a;
-    t = (t + ((t >> 8) & 0xff00ff) + 0x800080) >> 8;
-    t = ((t << 16) | (t >> 16)) & 0xff00ff;
-
-    x = ((x >> 8) & 0xff) * a;
-    x = (x + ((x >> 8) & 0xff) + 0x80);
-    x &= 0xff00;
-    x |= t | (a << 24);
-    return x;
 }
 
 void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem)
@@ -334,26 +306,16 @@ void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, c
 
     const quint32* srcScanLine = reinterpret_cast_ptr<const quint32*>(source->data() + originy * srcBytesPerRow + originx * 4);
 
-    if (multiplied == Unmultiplied) {
-        for (int y = 0; y < numRows; ++y) {
-            quint32* destScanLine = reinterpret_cast_ptr<quint32*>(bits + y * bytesPerLine);
-            for (int x = 0; x < numColumns; x++) {
-                // Premultiply and convert BGR to RGB.
-                quint32 pixel = srcScanLine[x];
-                destScanLine[x] = premultiplyABGRtoARGB(pixel);
-            }
-            srcScanLine += sourceSize.width();
+    for (int y = 0; y < numRows; ++y) {
+        quint32* destScanLine = reinterpret_cast_ptr<quint32*>(bits + y * bytesPerLine);
+        for (int x = 0; x < numColumns; x++) {
+            quint32 pixel = convertABGRToARGB(srcScanLine[x]);
+            if (multiplied == Unmultiplied)
+                destScanLine[x] = premultipliedARGBFromColor(Color(pixel));
+            else
+                destScanLine[x] = pixel;
         }
-    } else {
-        for (int y = 0; y < numRows; ++y) {
-            quint32* destScanLine = reinterpret_cast_ptr<quint32*>(bits + y * bytesPerLine);
-            for (int x = 0; x < numColumns; x++) {
-                // Convert BGR to RGB.
-                quint32 pixel = srcScanLine[x];
-                destScanLine[x] = ((pixel << 16) & 0xff0000) | ((pixel >> 16) & 0xff) | (pixel & 0xff00ff00);
-            }
-            srcScanLine += sourceSize.width();
-        }
+        srcScanLine += sourceSize.width();
     }
 
     bool isPainting = m_data.m_painter->isActive();

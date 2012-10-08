@@ -1,3 +1,26 @@
+2012-10-08  Huang Dongsung  <luxtella@company100.net>
+
+        [Qt] Make ImageBufferQt use premultiplied converting functions in Color.h instead of its own mechanism.
+        https://bugs.webkit.org/show_bug.cgi?id=98582
+
+        Reviewed by Eric Seidel.
+
+        Only Qt port failed canvas/philip/tests/2d.imageData.put.unchanged.html because
+        ImageBufferQt converts from or to a premultiplied color using its own code. When
+        we convert twice from an unmultiplied color to a premultiplied color and then to
+        an unmultiplied color using this code, the calculated result are pretty
+        different against the input color. It is why Gtk passes this test although Qt
+        fails. Gtk port uses them in Color.h.
+
+        In addition, Qt should use the functions in Color.h to reduce duplicated codes.
+
+        Tests: canvas/philip/tests/2d.imageData.put.unchanged.html: Fixed a test case
+
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::getImageData):
+        (WebCore::convertBGRAToRGBA):
+        (WebCore::ImageBuffer::putByteArray):
+
 2012-10-08  Tab Atkins  <jackalmage@gmail.com>
 
         Remove "orphaned units" quirk
