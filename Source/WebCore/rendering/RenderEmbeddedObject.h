@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2004, 2005, 2006, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008, 2009, 2010, 2012 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -56,13 +56,15 @@ public:
     virtual bool allowsAcceleratedCompositing() const;
 #endif
 
+protected:
+    virtual void paintReplaced(PaintInfo&, const LayoutPoint&);
+    virtual void paint(PaintInfo&, const LayoutPoint&);
+
+    virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const;
+
 private:
     virtual const char* renderName() const { return "RenderEmbeddedObject"; }
     virtual bool isEmbeddedObject() const { return true; }
-
-    virtual void paintReplaced(PaintInfo&, const LayoutPoint&);
-    virtual void paint(PaintInfo&, const LayoutPoint&);
-    virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const;
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual bool requiresLayer() const;

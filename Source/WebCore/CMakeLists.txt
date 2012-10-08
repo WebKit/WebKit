@@ -2117,6 +2117,7 @@ SET(WebCore_SOURCES
     rendering/RenderScrollbarTheme.cpp
     rendering/RenderSearchField.cpp
     rendering/RenderSlider.cpp
+    rendering/RenderSnapshottedPlugIn.cpp
     rendering/RenderTable.cpp
     rendering/RenderTableCaption.cpp
     rendering/RenderTableCell.cpp

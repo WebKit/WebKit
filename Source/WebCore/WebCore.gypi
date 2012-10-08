@@ -3432,6 +3432,8 @@
             'rendering/RenderSelectionInfo.h',
             'rendering/RenderSlider.cpp',
             'rendering/RenderSlider.h',
+            'rendering/RenderSnapshottedPlugIn.cpp',
+            'rendering/RenderSnapshottedPlugIn.h',
             'rendering/RenderTable.cpp',
             'rendering/RenderTable.h',
             'rendering/RenderTableCaption.cpp',

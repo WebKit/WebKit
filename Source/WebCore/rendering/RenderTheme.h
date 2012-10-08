@@ -35,6 +35,7 @@
 
 namespace WebCore {
 
+class CSSStyleSheet;
 class Element;
 class FileList;
 class HTMLInputElement;
@@ -46,7 +47,7 @@ class RenderMeter;
 #if ENABLE(PROGRESS_ELEMENT)
 class RenderProgress;
 #endif
-class CSSStyleSheet;
+class RenderSnapshottedPlugIn;
 
 class RenderTheme : public RefCounted<RenderTheme> {
 protected:
@@ -240,6 +241,8 @@ public:
 
     virtual String fileListDefaultLabel(bool multipleFilesAllowed) const;
     virtual String fileListNameForWidth(const FileList*, const Font&, int width, bool multipleFilesAllowed) const;
+
+    virtual void paintPlugInSnapshotOverlay(RenderSnapshottedPlugIn*, const PaintInfo&, const LayoutPoint&) const { }
 
 protected:
     // The platform selection color.

@@ -1184,6 +1184,7 @@ SOURCES += \
     rendering/RenderScrollbarTheme.cpp \
     rendering/RenderSearchField.cpp \
     rendering/RenderSlider.cpp \
+    rendering/RenderSnapshottedPlugIn.cpp \
     rendering/RenderTable.cpp \
     rendering/RenderTableCaption.cpp \
     rendering/RenderTableCell.cpp \
@@ -2383,6 +2384,7 @@ HEADERS += \
     rendering/RenderScrollbarTheme.h \
     rendering/RenderSearchField.h \
     rendering/RenderSlider.h \
+    rendering/RenderSnapshottedPlugIn.h \
     rendering/RenderTableCaption.h \
     rendering/RenderTableCell.h \
     rendering/RenderTableCol.h \

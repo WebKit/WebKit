@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008, 2009, 2012 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,11 +33,12 @@ struct NPObject;
 
 namespace WebCore {
 
+class Image;
 class RenderEmbeddedObject;
 class RenderWidget;
 class Widget;
 
-class HTMLPlugInElement : public HTMLFrameOwnerElement, public ImageLoaderClientBase<HTMLPlugInElement> {
+class HTMLPlugInElement : public HTMLFrameOwnerElement {
 public:
     virtual ~HTMLPlugInElement();
 
@@ -46,6 +47,15 @@ public:
     PassScriptInstance getInstance();
 
     Widget* pluginWidget() const;
+
+    enum DisplayState {
+        WaitingForSnapshot,
+        DisplayingSnapshot,
+        Playing
+    };
+    DisplayState displayState() const { return m_displayState; }
+    void setDisplayState(DisplayState state) { m_displayState = state; }
+    virtual void updateSnapshot(Image*) { }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* getNPObject();
@@ -84,6 +94,8 @@ private:
     NPObject* m_NPObject;
 #endif
     bool m_isCapturingMouseEvents;
+
+    DisplayState m_displayState;
 };
 
 } // namespace WebCore

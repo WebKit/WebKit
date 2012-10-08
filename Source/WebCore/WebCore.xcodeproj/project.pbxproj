@@ -909,6 +909,8 @@
 		3194620413022BF1004BB3F8 /* DOMWebKitAnimationList.h in Headers */ = {isa = PBXBuildFile; fileRef = 3194620213022BF1004BB3F8 /* DOMWebKitAnimationList.h */; };
 		3194620513022BF1004BB3F8 /* DOMWebKitAnimationList.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3194620313022BF1004BB3F8 /* DOMWebKitAnimationList.mm */; };
 		3194623213022F65004BB3F8 /* JSWebKitAnimationListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3194623113022F65004BB3F8 /* JSWebKitAnimationListCustom.cpp */; };
+		31955A86160D199000858025 /* RenderSnapshottedPlugIn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31E8D8BA160BC94B004CE8F5 /* RenderSnapshottedPlugIn.cpp */; };
+		31955A88160D199200858025 /* RenderSnapshottedPlugIn.h in Headers */ = {isa = PBXBuildFile; fileRef = 31E8D8BB160BC94C004CE8F5 /* RenderSnapshottedPlugIn.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		319AE063142D6B24006563A1 /* StyleFilterData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 319AE061142D6B24006563A1 /* StyleFilterData.cpp */; };
 		319AE064142D6B24006563A1 /* StyleFilterData.h in Headers */ = {isa = PBXBuildFile; fileRef = 319AE062142D6B24006563A1 /* StyleFilterData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		319E68871327C911004AC91A /* JSWebKitAnimationCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 319E68861327C911004AC91A /* JSWebKitAnimationCustom.cpp */; };
@@ -8040,6 +8042,8 @@
 		31C0FF460E4CEFDD007D6FE5 /* DOMWebKitTransitionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitTransitionEvent.h; sourceTree = "<group>"; };
 		31C0FF470E4CEFDD007D6FE5 /* DOMWebKitTransitionEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMWebKitTransitionEvent.mm; sourceTree = "<group>"; };
 		31C0FF480E4CEFDD007D6FE5 /* DOMWebKitTransitionEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitTransitionEventInternal.h; sourceTree = "<group>"; };
+		31E8D8BA160BC94B004CE8F5 /* RenderSnapshottedPlugIn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSnapshottedPlugIn.cpp; sourceTree = "<group>"; };
+		31E8D8BB160BC94C004CE8F5 /* RenderSnapshottedPlugIn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSnapshottedPlugIn.h; sourceTree = "<group>"; };
 		31EC1D5014FEFD0800C94662 /* NotificationPermissionCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = NotificationPermissionCallback.idl; path = Modules/notifications/NotificationPermissionCallback.idl; sourceTree = "<group>"; };
 		31EC1DAC14FF26EA00C94662 /* NotificationPermissionCallback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NotificationPermissionCallback.h; path = Modules/notifications/NotificationPermissionCallback.h; sourceTree = "<group>"; };
 		31EC1E2614FF60EE00C94662 /* JSNotificationPermissionCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotificationPermissionCallback.cpp; sourceTree = "<group>"; };
@@ -21489,6 +21493,8 @@
 				0F11A54E0F39233100C37884 /* RenderSelectionInfo.h */,
 				AB247A6A0AFD6383003FA5FD /* RenderSlider.cpp */,
 				AB247A6B0AFD6383003FA5FD /* RenderSlider.h */,
+				31E8D8BA160BC94B004CE8F5 /* RenderSnapshottedPlugIn.cpp */,
+				31E8D8BB160BC94C004CE8F5 /* RenderSnapshottedPlugIn.h */,
 				A8DF4AE20980C42C0052981B /* RenderTable.cpp */,
 				A8DF4AE10980C42C0052981B /* RenderTable.h */,
 				6ED878C2147493F4004C3597 /* RenderTableCaption.cpp */,
@@ -25544,6 +25550,7 @@
 				931CBD0F161A44E900E4C874 /* ScrollingStateScrollingNode.h in Headers */,
 				931CBD11161A44E900E4C874 /* ScrollingStateTree.h in Headers */,
 				6EAF34101613869A00859625 /* ExclusionPolygon.h in Headers */,
+				31955A88160D199200858025 /* RenderSnapshottedPlugIn.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -28642,6 +28649,7 @@
 				931CBD10161A44E900E4C874 /* ScrollingStateTree.cpp in Sources */,
 				931CBD13161A44F800E4C874 /* ScrollingStateNodeMac.mm in Sources */,
 				6EAF340F1613869A00859625 /* ExclusionPolygon.cpp in Sources */,
+				31955A86160D199000858025 /* RenderSnapshottedPlugIn.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

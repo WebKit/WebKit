@@ -1,3 +1,73 @@
+2012-10-08  Jon Lee  <jonlee@apple.com>
+
+        Add render object that paints plugin snapshots
+        https://bugs.webkit.org/show_bug.cgi?id=98322
+        <rdar://problem/12426546>
+
+        Reviewed by Simon Fraser.
+
+        First, teach plugins to maintain a set of states when plugin snapshotting is enabled.
+
+        Second, a new RenderSnapshottedPlugIn class is a RenderEmbeddedObject that knows how to paint
+        snapshots when the plugin is not visibly playing. It maintains a RenderImageResource to
+        the generated poster image.
+
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::HTMLPlugInElement): By default all plugins play on load.
+        * html/HTMLPlugInElement.h: Move the inheritance of ImageLoaderClientBase down to
+        HTMLPlugInImageElement, since that is the class that actually deals with image-based plugins.
+        (WebCore::HTMLPlugInElement::displayState): Add bit for display state.
+        (WebCore::HTMLPlugInElement::setDisplayState):
+        (WebCore::HTMLPlugInElement::updateSnapshot):
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::HTMLPlugInImageElement): If plugin snapshotting is
+        enabled, plugin state is set to wait for a poster image.
+        (WebCore::HTMLPlugInImageElement::createRenderer): Create RenderSnapshottedPlugIn if
+        plugin snapshotting is enabled.
+        (WebCore::HTMLPlugInImageElement::updateSnapshot): Once a snapshot is available, update the
+        renderer and set its state to wait for user input to start the plugin.
+        * html/HTMLPlugInImageElement.h:
+        (HTMLPlugInImageElement):
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isSnapshottedPlugIn): Add new function to identify
+        RenderSnapshottedPlugIn instances. Since RenderSnapshottedPlugIn inherits from
+        RenderEmbeddedObject, isEmbeddedObject() still returns true.
+        * rendering/RenderEmbeddedObject.h:
+        (RenderEmbeddedObject): Elevate a few virtual methods to protected for
+        RenderSnapshottedPlugIn to override.
+
+        * rendering/RenderSnapshottedPlugIn.cpp: Added.
+        (WebCore::RenderSnapshottedPlugIn::RenderSnapshottedPlugIn): Initialize snapshot
+        resource.
+        (WebCore::RenderSnapshottedPlugIn::~RenderSnapshottedPlugIn): Shut down snapshot
+        image resource to remove the renderer as a client, and remove image from memory cache.
+        (WebCore::RenderSnapshottedPlugIn::plugInImageElement): Convenience function to get the
+        HTML element.
+        (WebCore::RenderSnapshottedPlugIn::updateSnapshot): Cache the snapshot, and repaint.
+        (WebCore::RenderSnapshottedPlugIn::paint): If the plugin is not playing, paint like a
+        RenderImage does.
+        (WebCore::RenderSnapshottedPlugIn::paintReplaced): Paint the snapshot and overlay if the
+        plugin is not playing.
+        (WebCore::RenderSnapshottedPlugIn::paintReplacedSnapshot): Inspired by
+        RenderImage::paintReplaced() and RenderImage::paintIntoRect().
+        * rendering/RenderSnapshottedPlugIn.h: Added.
+        (WebCore::RenderSnapshottedPlugIn::isSnapshottedPlugin): Returns true.
+
+        * rendering/RenderTheme.h: Add a function that paints the overlay on top of the snapshot.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintPlugInSnapshotOverlay):
+
+        * WebCore.xcodeproj/project.pbxproj: Add new RenderSnapshottedPlugIn class.
+        * CMakeLists.txt: Ditto.
+        * GNUmakefile.list.am: Ditto.
+        * Target.pri: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * rendering/RenderingAllInOne.cpp: Ditto.
+
 2012-10-08  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] Add support for polygonal shapes

@@ -55,6 +55,7 @@ HTMLPlugInElement::HTMLPlugInElement(const QualifiedName& tagName, Document* doc
     , m_NPObject(0)
 #endif
     , m_isCapturingMouseEvents(false)
+    , m_displayState(Playing)
 {
 }
 

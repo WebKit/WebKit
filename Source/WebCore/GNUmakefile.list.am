@@ -5085,6 +5085,8 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderSelectionInfo.h \
 	Source/WebCore/rendering/RenderSlider.cpp \
 	Source/WebCore/rendering/RenderSlider.h \
+	Source/WebCore/rendering/RenderSnapshottedPlugIn.cpp \
+	Source/WebCore/rendering/RenderSnapshottedPlugIn.h \
 	Source/WebCore/rendering/RenderTableCaption.cpp \
 	Source/WebCore/rendering/RenderTableCaption.h \
 	Source/WebCore/rendering/RenderTableCell.cpp \

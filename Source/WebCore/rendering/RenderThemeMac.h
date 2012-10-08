@@ -101,6 +101,9 @@ public:
     virtual bool usesTestModeFocusRingColor() const;
     // A view associated to the contained document. Subclasses may not have such a view and return a fake.
     virtual NSView* documentViewFor(RenderObject*) const;
+
+    virtual void paintPlugInSnapshotOverlay(RenderSnapshottedPlugIn*, const PaintInfo&, const LayoutPoint&) const OVERRIDE;
+
 protected:
     RenderThemeMac();
     virtual ~RenderThemeMac();
