@@ -1,5 +1,30 @@
 2012-10-04  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
+        [Qt] Prevent the PageViewportController from affecting the viewport in desktop mode
+        https://bugs.webkit.org/show_bug.cgi?id=98427
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        QQuickFlickable isn't tightly bound to it anymore, we can avoid creating it
+        completely in this case.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewFlickablePrivate::onComponentComplete):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate::onComponentComplete):
+        (QQuickWebViewPrivate::viewportController):
+        (QQuickWebViewPrivate):
+        (QQuickWebViewFlickablePrivate::viewportController):
+        (QQuickWebViewFlickablePrivate):
+        * UIProcess/qt/QtPageClient.cpp:
+        (WebKit::QtPageClient::didRenderFrame):
+        (WebKit::QtPageClient::didChangeContentsSize):
+        (WebKit::QtPageClient::pageTransitionViewportReady):
+        * UIProcess/qt/QtWebPageLoadClient.cpp:
+        (WebKit::QtWebPageLoadClient::didCommitLoad):
+
+2012-10-04  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
         [Qt] Fix a QSocketNotifier warning at startup
         https://bugs.webkit.org/show_bug.cgi?id=98411
 

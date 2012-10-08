@@ -77,7 +77,9 @@ void QtPageClient::didRenderFrame(const WebCore::IntSize& contentsSize, const We
 {
     // The viewport has to be notified first so that the viewport position
     // is adjusted before the loadVisuallyCommitted() signal.
-    QQuickWebViewPrivate::get(m_webView)->viewportController()->didRenderFrame(contentsSize, coveredRect);
+    PageViewportController* pvc = QQuickWebViewPrivate::get(m_webView)->viewportController();
+    if (pvc)
+        pvc->didRenderFrame(contentsSize, coveredRect);
     QQuickWebViewPrivate::get(m_webView)->didRenderFrame();
 }
 
@@ -98,7 +100,9 @@ void QtPageClient::didRelaunchProcess()
 
 void QtPageClient::didChangeContentsSize(const IntSize& newSize)
 {
-    QQuickWebViewPrivate::get(m_webView)->viewportController()->didChangeContentsSize(newSize);
+    PageViewportController* pvc = QQuickWebViewPrivate::get(m_webView)->viewportController();
+    if (pvc)
+        pvc->didChangeContentsSize(newSize);
 }
 
 void QtPageClient::didChangeViewportProperties(const WebCore::ViewportAttributes& attr)
@@ -230,7 +234,9 @@ void QtPageClient::flashBackingStoreUpdates(const Vector<IntRect>&)
 
 void QtPageClient::pageTransitionViewportReady()
 {
-    QQuickWebViewPrivate::get(m_webView)->viewportController()->pageTransitionViewportReady();
+    PageViewportController* pvc = QQuickWebViewPrivate::get(m_webView)->viewportController();
+    if (pvc)
+        pvc->pageTransitionViewportReady();
 }
 
 void QtPageClient::didFindZoomableArea(const IntPoint& target, const IntRect& area)

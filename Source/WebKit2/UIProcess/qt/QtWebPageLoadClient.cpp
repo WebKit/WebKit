@@ -62,7 +62,9 @@ void QtWebPageLoadClient::didReceiveServerRedirectForProvisionalLoad(const WTF::
 
 void QtWebPageLoadClient::didCommitLoad()
 {
-    m_webView->d_func()->viewportController()->didCommitLoad();
+    PageViewportController* pvc = m_webView->d_func()->viewportController();
+    if (pvc)
+        pvc->didCommitLoad();
     m_webView->d_func()->loadDidCommit();
 }
 
