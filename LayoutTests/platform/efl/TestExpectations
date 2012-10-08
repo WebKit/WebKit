@@ -868,10 +868,13 @@ webkit.org/b/47744 mathml/presentation/over.xhtml
 
 # EFL has not fully implemented about some SVG attributes
 Bug(EFL) svg/custom
-Bug(EFL) svg/text
+# Bug(EFL) svg/text
 Bug(EFL) svg/zoom/page/zoom-zoom-coords.xhtml
 
 webkit.org/b/98644 svg/W3C-SVG-1.1/pservers-grad-13-b.svg [ Skip ]
+webkit.org/b/98651 svg/text/non-bmp-positioning-lists.svg [ Skip ]
+webkit.org/b/98652 svg/text/selection-tripleclick.svg [ Skip ]
+webkit.org/b/98653 svg/text/lengthAdjust-text-metrics.html [ Failure ]
 
 # EFL's TestRunner does not implement setMediaType
 Bug(EFL) fast/media/print-restores-previous-mediatype.html [ Failure ]
