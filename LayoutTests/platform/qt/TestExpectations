@@ -1208,14 +1208,6 @@ fast/ruby/ruby-runs.html
 fast/ruby/ruby-simple-rp.html
 fast/ruby/ruby-simple.html
 fast/ruby/ruby-trailing.html
-fast/ruby/rubyDOM-insert-rt.html
-fast/ruby/rubyDOM-insert-text1.html
-fast/ruby/rubyDOM-insert-text2.html
-fast/ruby/rubyDOM-insert-text3.html
-fast/ruby/rubyDOM-remove-rt1.html
-fast/ruby/rubyDOM-remove-rt2.html
-fast/ruby/rubyDOM-remove-text1.html
-fast/ruby/rubyDOM-remove-text2.html
 
 # [Qt] http/tests/misc/favicon-loads-with-icon-loading-override.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=58396

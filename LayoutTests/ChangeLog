@@ -1,3 +1,19 @@
+2012-10-08  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Add baselines to passing ruby DOM tests.
+
+        Unreviewed gardening.
+
+        * platform/qt/TestExpectations:
+        * platform/qt/fast/ruby/rubyDOM-insert-rt-expected.txt: Added.
+        * platform/qt/fast/ruby/rubyDOM-insert-text1-expected.txt: Added.
+        * platform/qt/fast/ruby/rubyDOM-insert-text2-expected.txt: Added.
+        * platform/qt/fast/ruby/rubyDOM-insert-text3-expected.txt: Added.
+        * platform/qt/fast/ruby/rubyDOM-remove-rt1-expected.txt: Added.
+        * platform/qt/fast/ruby/rubyDOM-remove-rt2-expected.txt: Added.
+        * platform/qt/fast/ruby/rubyDOM-remove-text1-expected.txt: Added.
+        * platform/qt/fast/ruby/rubyDOM-remove-text2-expected.txt: Added.
+
 2012-10-08  Nate Chapin  <japhet@chromium.org>
 
         Add a test for multipart/x-mixed-replace documents with text/html
