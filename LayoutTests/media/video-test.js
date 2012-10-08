@@ -97,7 +97,7 @@ function testArraysEqual(testFuncString, expected)
         consoleWrite(ex);
         return;
     }
-  
+
     testExpected(testFuncString + ".length", expected.length);
 
     for (var i = 0; i < observed.length; i++) {
@@ -258,7 +258,7 @@ function consoleWrite(text)
 
 function relativeURL(url)
 {
-    return url.substr(url.indexOf('/media/')+7);
+    return url.substr(url.lastIndexOf('/media/')+7);
 }
 
 
