@@ -282,7 +282,7 @@ Bug(GTK) fast/events/page-visibility-iframe-propagation-test.html [ Skip ]
 Bug(GTK) fast/events/page-visibility-transition-test.html [ Skip ]
 
 # GTK doesn't support smart replace.
-webkit.org/b/61661 [ Release ] editing/pasteboard/drag-drop-list.html [ Failure ]
+webkit.org/b/61661 editing/pasteboard/drag-drop-list.html [ Failure ]
 
 # Tests for MediaSource API. Feature is not yet functional.
 webkit.org/b/64731 http/tests/media/media-source [ Skip ]

@@ -1,3 +1,12 @@
+2012-10-09  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Expanding failure expectation for editing/pasteboard/drag-drop-list.html to
+        again include debug configurations as well.
+
+        * platform/gtk/TestExpectations:
+
 2012-10-09  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Test expectation updates for Android
