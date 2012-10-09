@@ -58,6 +58,8 @@ public:
         RequestedScrollPosition = 1 << 12,
     };
 
+    virtual bool isScrollingStateScrollingNode() OVERRIDE { return true; }
+
     virtual PassOwnPtr<ScrollingStateNode> cloneAndResetNode() OVERRIDE;
 
     virtual bool hasChangedProperties() const OVERRIDE { return m_changedProperties; }
@@ -133,6 +135,15 @@ private:
     IntPoint m_requestedScrollPosition;
     IntPoint m_scrollOrigin;
 };
+
+inline ScrollingStateScrollingNode* toScrollingStateScrollingNode(ScrollingStateNode* node)
+{
+    ASSERT(!node || node->isScrollingStateScrollingNode());
+    return static_cast<ScrollingStateScrollingNode*>(node);
+}
+    
+// This will catch anyone doing an unnecessary cast.
+void toScrollingStateScrollingNode(const ScrollingStateScrollingNode*);
 
 } // namespace WebCore
 

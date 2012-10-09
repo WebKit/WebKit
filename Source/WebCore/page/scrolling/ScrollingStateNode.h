@@ -48,6 +48,8 @@ public:
     ScrollingStateNode(ScrollingStateTree*);
     virtual ~ScrollingStateNode();
 
+    virtual bool isScrollingStateScrollingNode() { return false; }
+
     virtual PassOwnPtr<ScrollingStateNode> cloneAndResetNode() = 0;
     void cloneAndResetChildNodes(ScrollingStateNode*);
 
@@ -66,9 +68,11 @@ public:
     void setScrollingStateTree(ScrollingStateTree* tree) { m_scrollingStateTree = tree; }
 
     ScrollingStateNode* parent() const { return m_parent; }
-
     void setParent(ScrollingStateNode* parent) { m_parent = parent; }
+
     void appendChild(PassOwnPtr<ScrollingStateNode>);
+
+    void removeChild(ScrollingStateNode*);
 
 protected:
     ScrollingStateNode(ScrollingStateNode*);

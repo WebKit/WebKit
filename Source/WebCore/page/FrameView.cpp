@@ -782,6 +782,19 @@ TiledBacking* FrameView::tiledBacking()
     return backing->graphicsLayer()->tiledBacking();
 }
 
+uint64_t FrameView::scrollLayerID() const
+{
+    RenderView* root = rootRenderer(this);
+    if (!root)
+        return 0;
+
+    RenderLayerBacking* backing = root->layer()->backing();
+    if (!backing)
+        return 0;
+
+    return backing->scrollLayerID();
+}
+
 #if ENABLE(RUBBER_BANDING)
 GraphicsLayer* FrameView::layerForOverhangAreas() const
 {

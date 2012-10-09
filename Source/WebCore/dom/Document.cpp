@@ -4058,14 +4058,25 @@ void Document::setInPageCache(bool flag)
     m_inPageCache = flag;
 
     FrameView* v = view();
+    Page* page = this->page();
+
     if (flag) {
         ASSERT(!m_savedRenderer);
         m_savedRenderer = renderer();
         if (v) {
+            // FIXME: There is some scrolling related work that needs to happen whenever a page goes into the
+            // page cache and similar work that needs to occur when it comes out. This is where we do the work
+            // that needs to happen when we enter, and the work that needs to happen when we exit is in
+            // HistoryController::restoreScrollPositionAndViewState(). It can't be here because this function is
+            // called too early on in the process of a page exiting the cache for that work to be possible in this
+            // function. It would be nice if there was more symmetry here.
+            // https://bugs.webkit.org/show_bug.cgi?id=98698
             v->cacheCurrentScrollPosition();
-            if (page() && page()->mainFrame() == m_frame)
+            if (page && page->mainFrame() == m_frame) {
                 v->resetScrollbarsAndClearContentsSize();
-            else
+                if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
+                    scrollingCoordinator->clearStateTree();
+            } else
                 v->resetScrollbars();
         }
         m_styleRecalcTimer.stop();

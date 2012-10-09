@@ -34,6 +34,7 @@
 #include <wtf/Forward.h>
 
 #if ENABLE(THREADED_SCROLLING)
+#include <wtf/HashMap.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
 #endif
@@ -45,6 +46,7 @@
 namespace WebCore {
 
 typedef unsigned MainThreadScrollingReasons;
+typedef uint64_t ScrollingNodeID;
 
 class FrameView;
 class GraphicsLayer;
@@ -52,6 +54,8 @@ class Page;
 class Region;
 class ScrollableArea;
 class ScrollingCoordinatorPrivate;
+class ScrollingStateNode;
+class ScrollingStateScrollingNode;
 class ScrollingStateTree;
 
 #if ENABLE(THREADED_SCROLLING)
@@ -137,15 +141,26 @@ public:
         IsImageDocument = 1 << 4
     };
 
+    // Generates a unique id to associate with a layer that will be represented by a node in the scrolling tree.
+    ScrollingNodeID uniqueScrollLayerID();
+
+    // These functions are used to indictae that a layer should be (or should not longer be) represented by a node
+    // in the scrolling tree.
+    ScrollingNodeID attachToStateTree(ScrollingNodeID);
+    void detachFromStateTree(ScrollingNodeID);
+
+    // This function wipes out the current tree.
+    void clearStateTree();
+
 private:
     explicit ScrollingCoordinator(Page*);
 
-    void recomputeWheelEventHandlerCount();
+    void ensureRootStateNodeForFrameView(FrameView*);
+    ScrollingStateScrollingNode* stateNodeForID(ScrollingNodeID);
+
+    void recomputeWheelEventHandlerCountForFrameView(FrameView*);
     bool hasNonLayerFixedObjects(FrameView*);
     void updateShouldUpdateScrollLayerPositionOnMainThread();
-
-    void setScrollLayer(GraphicsLayer*);
-    void setNonFastScrollableRegion(const Region&);
 
     struct ScrollParameters {
         ScrollElasticity horizontalScrollElasticity;
@@ -163,8 +178,25 @@ private:
         IntSize contentsSize;
     };
 
+    // FIXME: These functions are used only by ScrollingCoordinatorChromium. ScrollingCoordinator
+    // now uses new versions: setScrollParametersForNode(), setWheelEventHandlerCountForNode(), etc.
+    // To resolve this and all of the if-defs in this class, we should make ScrollingCoordinator
+    // just be a typedef that defines ScrollingCoordinatorMac to be ScrollingCoordinator, and same
+    // for Chromium and other platforms. Any shared functionality can be in something called 
+    // ScrollingCoordinatorBase which all of the platform implementations will inherit from.
+    // https://bugs.webkit.org/show_bug.cgi?id=98700
     void setScrollParameters(const ScrollParameters&);
     void setWheelEventHandlerCount(unsigned);
+    void setNonFastScrollableRegion(const Region&);
+    void setScrollLayer(GraphicsLayer*);
+
+#if ENABLE(THREADED_SCROLLING)
+    void setScrollLayerForNode(GraphicsLayer*, ScrollingStateNode*);
+    void setNonFastScrollableRegionForNode(const Region&, ScrollingStateScrollingNode*);
+    void setScrollParametersForNode(const ScrollParameters&, ScrollingStateScrollingNode*);
+    void setWheelEventHandlerCountForNode(unsigned, ScrollingStateScrollingNode*);
+#endif
+
     void setShouldUpdateScrollLayerPositionOnMainThread(MainThreadScrollingReasons);
 
     void updateMainFrameScrollLayerPosition();
@@ -182,6 +214,8 @@ private:
     OwnPtr<ScrollingStateTree> m_scrollingStateTree;
     RefPtr<ScrollingTree> m_scrollingTree;
     Timer<ScrollingCoordinator> m_scrollingStateTreeCommitterTimer;
+
+    HashMap<ScrollingNodeID, ScrollingStateNode*> m_stateNodeMap;
 #endif
 
     ScrollingCoordinatorPrivate* m_private;

@@ -1,3 +1,138 @@
+2012-10-09  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=98457
+        ScrollingStateNodes should be referenced via IDs on 
+        RenderLayerBacking
+
+        Reviewed by Simon Fraser.
+
+        This patch associates all ScrollingStateNodes with a 
+        RenderLayerBacking via a HashMap from RenderLayerBackings to 
+        ScrollingStateNodes on ScrollingCoordinator. Prior to this patch, the 
+        root ScrollingStateNode was created immediately upon creation of the 
+        ScrollingCoordinator, and it was constantly re-used for every main 
+        FrameView. This doesn't work in the new model since that doesn't 
+        allow that ScrollingStateNode to have a definite association with a 
+        RenderLayerBacking. So this patch does also introduce some lifetime 
+        differences with the ScrollingStateNodes.
+
+        If a page is going into the page cache, we should clear the state 
+        tree. When the page is in the cache, we won't have access to the 
+        RenderLayerBacking, and we don't want to be doing anything with the 
+        ScrollingStateNodes anyway.
+        * dom/Document.cpp:
+        (WebCore::Document::setInPageCache):
+
+        When a page is restored from the page cache, call 
+        frameViewRootLayerDidChange() to re-create the state tree.
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::restoreScrollPositionAndViewState):
+
+        This new FrameView function will return the scrollLayerID for a given FrameView.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollLayerID):
+        (WebCore):
+        * page/FrameView.h:
+        (FrameView):
+
+        There is a lot of unfortunate fiddling with the terrible 
+        if-defs in ScrollingCoordinator. I added a FIXME to the header
+        noting how we can avoid this in the future.
+        * page/scrolling/ScrollingCoordinator.cpp:
+
+        All of this code used to refer to the rootStateNode directly. 
+        Instead, now it looks up the proper ScrollingStateNode for the given 
+        FrameView in the HashMap.
+        (WebCore::ScrollingCoordinator::frameViewLayoutUpdated):
+        (WebCore::ScrollingCoordinator::frameViewWheelEventHandlerCountChanged):
+        (WebCore::ScrollingCoordinator::frameViewRootLayerDidChange):
+        (WebCore::ScrollingCoordinator::requestScrollPositionUpdate):
+        (WebCore::ScrollingCoordinator::updateMainFrameScrollLayerPosition):
+        (WebCore::ScrollingCoordinator::recomputeWheelEventHandlerCountForFrameView):
+        (WebCore::ScrollingCoordinator::setScrollLayerForNode):
+        (WebCore::ScrollingCoordinator::setNonFastScrollableRegionForNode):
+        (WebCore::ScrollingCoordinator::setScrollParametersForNode):
+        (WebCore::ScrollingCoordinator::setWheelEventHandlerCountForNode):
+
+        Returns the existing ScrollingStateNode for a given FrameView by 
+        looking it up in the HashMap.
+        (WebCore::ScrollingCoordinator::stateNodeForFrameView):
+
+        This is called when a RenderLayerBacking is destroyed. At that time, 
+        its associated ScrollingStateNode is destroyed.
+        (WebCore::ScrollingCoordinator::detachFromStateTree):
+
+        clearStateTree() clears the HashMap and destroys all of the nodes in 
+        the current state tree.
+        (WebCore::ScrollingCoordinator::clearStateTree):
+
+        Creates a new root state node for the given FrameView.
+        (WebCore::ScrollingCoordinator::ensureRootStateNodeForFrameView):
+
+        Some new functions for the new node stuff.
+        * page/scrolling/ScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinatorNone.cpp:
+        (WebCore::ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread):
+        (WebCore::ScrollingCoordinator::supportsFixedPositionLayers):
+        (WebCore::ScrollingCoordinator::setLayerIsContainerForFixedPositionLayers):
+        (WebCore::ScrollingCoordinator::setLayerIsFixedToContainerLayer):
+        (WebCore::ScrollingCoordinator::scrollableAreaScrollLayerDidChange):
+        (WebCore::ScrollingCoordinator::detachFromStateTree):
+        (WebCore::ScrollingCoordinator::clearStateTree):
+        (WebCore::ScrollingCoordinator::ensureRootStateNodeForFrameView):
+        (WebCore::setScrollParameters):
+        (WebCore::setWheelEventHandlerCount):
+
+        New remove functions are used when the sate tree is cleared and when 
+        a RenderLayerBacking is destroyed.
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::removeChild):
+        (WebCore):
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore::ScrollingStateNode::isScrollingStateScrollingNode):
+        (ScrollingStateNode):
+        (WebCore::ScrollingStateNode::parent):
+
+        New convenience function for casting to ScrollingStateScrollingNodes.
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        (WebCore::toScrollingStateScrollingNode):
+        (WebCore):
+
+        No longer automatically create a root node upon creation of the 
+        ScrollingStateTree. We now want to wait to create the root node until 
+        we have a RenderLayerBacking to associate it with.
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::ScrollingStateTree):
+        (WebCore::ScrollingStateTree::removeNode):
+        (WebCore):
+        * page/scrolling/ScrollingStateTree.h:
+        (WebCore::ScrollingStateTree::setRootStateNode):
+        (ScrollingStateTree):
+
+        RenderLayerBacking has a new data member called m_scrollLayerID. If 
+        this RenderLayerBacking is represented in the scrolling tree, then 
+        the ID with be unique and non-zero. 
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+        (WebCore::RenderLayerBacking::~RenderLayerBacking):
+        (WebCore::generateScrollLayerID):
+        (WebCore):
+        (WebCore::RenderLayerBacking::attachToScrollingCoordinator):
+        (WebCore::RenderLayerBacking::detachFromScrollingCoordinator):
+        * rendering/RenderLayerBacking.h:
+        (RenderLayerBacking):
+        (WebCore::RenderLayerBacking::scrollLayerID):
+
+        Move the call to ScrollingCooridinator::frameViewRootLayerDidChange() 
+        from RenderLayerCompositor::attachRootLayer() to 
+        RenderLayerCompositor:: updateBacking(). The problem with the old call 
+        site is that there is no backing at that time, so we are trying to set 
+        state on the root scrolling state node before we have enough 
+        information to create that node and add it to the HashMap.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking):
+        (WebCore::RenderLayerCompositor::attachRootLayer):
+
 2012-10-09  Florin Malita  <fmalita@chromium.org>
 
         SVGResources should use HashSet<AtomicString> instead of HashSet<AtomicStringImpl*>

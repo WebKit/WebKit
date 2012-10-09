@@ -262,4 +262,19 @@ void ScrollingCoordinator::scrollableAreaScrollLayerDidChange(ScrollableArea* sc
     }
 }
 
+// FIXME: We should consider removing these stubs when we resolve the if-def soup in ScrollingCoordinator.
+// https://bugs.webkit.org/show_bug.cgi?id=98700
+ScrollingNodeID ScrollingCoordinator::attachToStateTree(ScrollingNodeID id)
+{
+    return id;
+}
+
+void ScrollingCoordinator::detachFromStateTree(ScrollingNodeID)
+{
+}
+
+void ScrollingCoordinator::clearStateTree()
+{
+}
+
 }

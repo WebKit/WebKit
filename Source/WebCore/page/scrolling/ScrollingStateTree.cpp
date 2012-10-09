@@ -36,8 +36,7 @@ PassOwnPtr<ScrollingStateTree> ScrollingStateTree::create()
 }
 
 ScrollingStateTree::ScrollingStateTree()
-    : m_rootStateNode(ScrollingStateScrollingNode::create(this))
-    , m_hasChangedProperties(false)
+    : m_hasChangedProperties(false)
 {
 }
 
@@ -55,6 +54,18 @@ PassOwnPtr<ScrollingStateTree> ScrollingStateTree::commit()
     m_hasChangedProperties = false;
 
     return treeState.release();
+}
+
+void ScrollingStateTree::removeNode(ScrollingStateNode* node)
+{
+    ASSERT(m_rootStateNode);
+
+    if (node == m_rootStateNode) {
+        m_rootStateNode = 0;
+        return;
+    }
+
+    m_rootStateNode->removeChild(node);
 }
 
 } // namespace WebCore

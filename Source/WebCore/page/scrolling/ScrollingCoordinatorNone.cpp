@@ -59,14 +59,6 @@ void ScrollingCoordinator::setNonFastScrollableRegion(const Region&)
 {
 }
 
-void ScrollingCoordinator::setScrollParameters(const ScrollParameters&)
-{
-}
-
-void ScrollingCoordinator::setWheelEventHandlerCount(unsigned)
-{
-}
-
 void ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread(MainThreadScrollingReasons)
 {
 }
@@ -87,6 +79,32 @@ void ScrollingCoordinator::setLayerIsFixedToContainerLayer(GraphicsLayer*, bool)
 void ScrollingCoordinator::scrollableAreaScrollLayerDidChange(ScrollableArea*, GraphicsLayer*)
 {
 }
+
+ScrollingNodeID ScrollingCoordinator::attachToStateTree(ScrollingNodeID id)
+{
+    return id;
+}
+
+void ScrollingCoordinator::detachFromStateTree(ScrollingNodeID)
+{
+}
+
+void ScrollingCoordinator::clearStateTree()
+{
+}
+
+void ScrollingCoordinator::ensureRootStateNodeForFrameView(FrameView*)
+{
+}
+
+void ScrollingCoordinator::setScrollParameters(const ScrollParameters&)
+{
+}
+
+void ScrollingCoordinator::setWheelEventHandlerCount(unsigned)
+{
+}
+
 #endif // !ENABLE(THREADED_SCROLLING)
 
 }

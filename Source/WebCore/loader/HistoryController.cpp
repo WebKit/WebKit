@@ -46,6 +46,7 @@
 #include "Page.h"
 #include "PageCache.h"
 #include "PageGroup.h"
+#include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include <wtf/text/CString.h>
 
@@ -121,10 +122,20 @@ void HistoryController::restoreScrollPositionAndViewState()
     // FIXME: It would be great to work out a way to put this code in WebCore instead of calling
     // through to the client. It's currently used only for the PDF view on Mac.
     m_frame->loader()->client()->restoreViewState();
-    
+
+    // FIXME: There is some scrolling related work that needs to happen whenever a page goes into the
+    // page cache and similar work that needs to occur when it comes out. This is where we do the work
+    // that needs to happen when we exit, and the work that needs to happen when we enter is in
+    // Document::setIsInPageCache(bool). It would be nice if there was more symmetry in these spots.
+    // https://bugs.webkit.org/show_bug.cgi?id=98698
     if (FrameView* view = m_frame->view()) {
+        Page* page = m_frame->page();
+        if (page && page->mainFrame() == m_frame) {
+            if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
+                scrollingCoordinator->frameViewRootLayerDidChange(view);
+        }
+
         if (!view->wasScrolledByUser()) {
-            Page* page = m_frame->page();
             if (page && page->mainFrame() == m_frame && m_currentItem->pageScaleFactor())
                 page->setPageScaleFactor(m_currentItem->pageScaleFactor(), m_currentItem->scrollPoint());
             else

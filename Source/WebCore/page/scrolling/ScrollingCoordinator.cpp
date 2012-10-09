@@ -157,7 +157,14 @@ void ScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
     // all scrollable areas, such as subframes, overflow divs and list boxes. We need to do this even if the
     // frame view whose layout was updated is not the main frame.
     Region nonFastScrollableRegion = computeNonFastScrollableRegion(m_page->mainFrame(), IntPoint());
+
+#if ENABLE(THREADED_SCROLLING)
+    // In the future, we may want to have the ability to set non-fast scrolling regions for more than
+    // just the root node. But right now, this concept only applies to the root.
+    setNonFastScrollableRegionForNode(nonFastScrollableRegion, m_scrollingStateTree->rootStateNode());
+#else
     setNonFastScrollableRegion(nonFastScrollableRegion);
+#endif
 
     if (!coordinatesScrollingForFrameView(frameView))
         return;
@@ -174,15 +181,23 @@ void ScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
     scrollParameters.viewportRect = IntRect(IntPoint(), frameView->visibleContentRect().size());
     scrollParameters.contentsSize = frameView->contentsSize();
 
+#if ENABLE(THREADED_SCROLLING)
+    ScrollingStateScrollingNode* node = stateNodeForID(frameView->scrollLayerID());
+    if (!node)
+        return;
+
+    setScrollParametersForNode(scrollParameters, node);
+#else
     setScrollParameters(scrollParameters);
+#endif
 }
 
-void ScrollingCoordinator::frameViewWheelEventHandlerCountChanged(FrameView*)
+void ScrollingCoordinator::frameViewWheelEventHandlerCountChanged(FrameView* frameView)
 {
     ASSERT(isMainThread());
     ASSERT(m_page);
 
-    recomputeWheelEventHandlerCount();
+    recomputeWheelEventHandlerCountForFrameView(frameView);
 }
 
 void ScrollingCoordinator::frameViewHasSlowRepaintObjectsDidChange(FrameView* frameView)
@@ -232,10 +247,21 @@ void ScrollingCoordinator::frameViewRootLayerDidChange(FrameView* frameView)
     if (!coordinatesScrollingForFrameView(frameView))
         return;
 
+#if ENABLE(THREADED_SCROLLING)
+    // If the root layer does not have a ScrollingStateNode, then we should create one.
+    ensureRootStateNodeForFrameView(frameView);
+    ASSERT(m_scrollingStateTree->rootStateNode());
+#endif
+
     frameViewLayoutUpdated(frameView);
-    recomputeWheelEventHandlerCount();
+    recomputeWheelEventHandlerCountForFrameView(frameView);
     updateShouldUpdateScrollLayerPositionOnMainThread();
+    
+#if ENABLE(THREADED_SCROLLING)
+    setScrollLayerForNode(scrollLayerForFrameView(frameView), stateNodeForID(frameView->scrollLayerID()));
+#else
     setScrollLayer(scrollLayerForFrameView(frameView));
+#endif
 }
 
 bool ScrollingCoordinator::requestScrollPositionUpdate(FrameView* frameView, const IntPoint& scrollPosition)
@@ -254,7 +280,11 @@ bool ScrollingCoordinator::requestScrollPositionUpdate(FrameView* frameView, con
         return true;
     }
 
-    m_scrollingStateTree->rootStateNode()->setRequestedScrollPosition(scrollPosition, frameView->inProgrammaticScroll());
+    ScrollingStateScrollingNode* stateNode = stateNodeForID(frameView->scrollLayerID());
+    if (!stateNode)
+        return false;
+
+    stateNode->setRequestedScrollPosition(scrollPosition, frameView->inProgrammaticScroll());
     scheduleTreeStateCommit();
     return true;
 #else
@@ -300,9 +330,10 @@ void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollP
     frameView->setInProgrammaticScroll(oldProgrammaticScroll);
 }
 
+#if ENABLE(THREADED_SCROLLING)
 void ScrollingCoordinator::updateMainFrameScrollLayerPosition()
 {
-#if USE(ACCELERATED_COMPOSITING) && ENABLE(THREADED_SCROLLING)
+#if USE(ACCELERATED_COMPOSITING)
     ASSERT(isMainThread());
 
     if (!m_page)
@@ -316,6 +347,7 @@ void ScrollingCoordinator::updateMainFrameScrollLayerPosition()
         scrollLayer->setPosition(-frameView->scrollPosition());
 #endif
 }
+#endif
 
 void ScrollingCoordinator::updateMainFrameScrollPositionAndScrollLayerPosition()
 {
@@ -356,14 +388,23 @@ void ScrollingCoordinator::handleWheelEventPhase(PlatformWheelEventPhase phase)
 }
 #endif
 
-void ScrollingCoordinator::recomputeWheelEventHandlerCount()
+void ScrollingCoordinator::recomputeWheelEventHandlerCountForFrameView(FrameView* frameView)
 {
     unsigned wheelEventHandlerCount = 0;
     for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
         if (frame->document())
             wheelEventHandlerCount += frame->document()->wheelEventHandlerCount();
     }
+
+#if ENABLE(THREADED_SCROLLING)
+    ScrollingStateScrollingNode* node = stateNodeForID(frameView->scrollLayerID());
+    if (!node)
+        return;
+    setWheelEventHandlerCountForNode(wheelEventHandlerCount, node);
+#else
     setWheelEventHandlerCount(wheelEventHandlerCount);
+    UNUSED_PARAM(frameView);
+#endif
 }
 
 bool ScrollingCoordinator::hasNonLayerFixedObjects(FrameView* frameView)
@@ -416,40 +457,99 @@ void ScrollingCoordinator::setForceMainThreadScrollLayerPositionUpdates(bool for
     updateShouldUpdateScrollLayerPositionOnMainThread();
 }
 
+ScrollingNodeID ScrollingCoordinator::uniqueScrollLayerID()
+{
+    static ScrollingNodeID uniqueScrollLayerID = 1;
+    return uniqueScrollLayerID++;
+}
+
 #if ENABLE(THREADED_SCROLLING)
-void ScrollingCoordinator::setScrollLayer(GraphicsLayer* scrollLayer)
+ScrollingStateScrollingNode* ScrollingCoordinator::stateNodeForID(ScrollingNodeID scrollLayerID)
 {
-    m_scrollingStateTree->rootStateNode()->setScrollLayer(scrollLayer);
+    if (!scrollLayerID)
+        return 0;
+
+    HashMap<ScrollingNodeID, ScrollingStateNode*>::const_iterator it = m_stateNodeMap.find(scrollLayerID);
+    if (it == m_stateNodeMap.end())
+        return 0;
+
+    ScrollingStateNode* node = it->value;
+    return toScrollingStateScrollingNode(node);
+}
+
+ScrollingNodeID ScrollingCoordinator::attachToStateTree(ScrollingNodeID scrollLayerID)
+{
+    ASSERT(scrollLayerID);
+
+    ScrollingStateScrollingNode* existingNode = stateNodeForID(scrollLayerID);
+    if (existingNode && existingNode == m_scrollingStateTree->rootStateNode())
+        return scrollLayerID;
+
+    clearStateTree();
+
+    // FIXME: In the future, this function will have to take a parent ID so that it can
+    // append the node in the appropriate spot in the state tree. For now we always assume
+    // this is the root node.
+    m_scrollingStateTree->setRootStateNode(ScrollingStateScrollingNode::create(m_scrollingStateTree.get()));
+    m_stateNodeMap.set(scrollLayerID, m_scrollingStateTree->rootStateNode());
+    return scrollLayerID;
+}
+
+void ScrollingCoordinator::detachFromStateTree(ScrollingNodeID scrollLayerID)
+{
+    if (!scrollLayerID)
+        return;
+
+    ScrollingStateNode* node = m_stateNodeMap.take(scrollLayerID);
+
+    // FIXME: removeNode() will destroy children, and those children might still be in the HashMap.
+    // This will be a big problem once there are actually children in the tree.
+    m_scrollingStateTree->removeNode(node);
+}
+
+void ScrollingCoordinator::clearStateTree()
+{
+    m_stateNodeMap.clear();
+    if (ScrollingStateScrollingNode* node = m_scrollingStateTree->rootStateNode())
+        m_scrollingStateTree->removeNode(node);
+}
+
+void ScrollingCoordinator::ensureRootStateNodeForFrameView(FrameView* frameView)
+{
+    attachToStateTree(frameView->scrollLayerID());
+}
+
+void ScrollingCoordinator::setScrollLayerForNode(GraphicsLayer* scrollLayer, ScrollingStateNode* node)
+{
+    node->setScrollLayer(scrollLayer);
     scheduleTreeStateCommit();
 }
 
-void ScrollingCoordinator::setNonFastScrollableRegion(const Region& region)
+void ScrollingCoordinator::setNonFastScrollableRegionForNode(const Region& region, ScrollingStateScrollingNode* node)
 {
-    m_scrollingStateTree->rootStateNode()->setNonFastScrollableRegion(region);
+    node->setNonFastScrollableRegion(region);
     scheduleTreeStateCommit();
 }
 
-void ScrollingCoordinator::setScrollParameters(const ScrollParameters& scrollParameters)
+void ScrollingCoordinator::setScrollParametersForNode(const ScrollParameters& scrollParameters, ScrollingStateScrollingNode* node)
 {
-    // FIXME: In the future, this function and all of the other functions in this class need to
-    // handle more than just the root node. 
-    m_scrollingStateTree->rootStateNode()->setHorizontalScrollElasticity(scrollParameters.horizontalScrollElasticity);
-    m_scrollingStateTree->rootStateNode()->setVerticalScrollElasticity(scrollParameters.verticalScrollElasticity);
-    m_scrollingStateTree->rootStateNode()->setHasEnabledHorizontalScrollbar(scrollParameters.hasEnabledHorizontalScrollbar);
-    m_scrollingStateTree->rootStateNode()->setHasEnabledVerticalScrollbar(scrollParameters.hasEnabledVerticalScrollbar);
-    m_scrollingStateTree->rootStateNode()->setHorizontalScrollbarMode(scrollParameters.horizontalScrollbarMode);
-    m_scrollingStateTree->rootStateNode()->setVerticalScrollbarMode(scrollParameters.verticalScrollbarMode);
+    node->setHorizontalScrollElasticity(scrollParameters.horizontalScrollElasticity);
+    node->setVerticalScrollElasticity(scrollParameters.verticalScrollElasticity);
+    node->setHasEnabledHorizontalScrollbar(scrollParameters.hasEnabledHorizontalScrollbar);
+    node->setHasEnabledVerticalScrollbar(scrollParameters.hasEnabledVerticalScrollbar);
+    node->setHorizontalScrollbarMode(scrollParameters.horizontalScrollbarMode);
+    node->setVerticalScrollbarMode(scrollParameters.verticalScrollbarMode);
 
-    m_scrollingStateTree->rootStateNode()->setScrollOrigin(scrollParameters.scrollOrigin);
-    m_scrollingStateTree->rootStateNode()->setViewportRect(scrollParameters.viewportRect);
-    m_scrollingStateTree->rootStateNode()->setContentsSize(scrollParameters.contentsSize);
+    node->setScrollOrigin(scrollParameters.scrollOrigin);
+    node->setViewportRect(scrollParameters.viewportRect);
+    node->setContentsSize(scrollParameters.contentsSize);
     scheduleTreeStateCommit();
 }
 
 
-void ScrollingCoordinator::setWheelEventHandlerCount(unsigned wheelEventHandlerCount)
+void ScrollingCoordinator::setWheelEventHandlerCountForNode(unsigned wheelEventHandlerCount, ScrollingStateScrollingNode* node)
 {
-    m_scrollingStateTree->rootStateNode()->setWheelEventHandlerCount(wheelEventHandlerCount);
+    node->setWheelEventHandlerCount(wheelEventHandlerCount);
     scheduleTreeStateCommit();
 }
 

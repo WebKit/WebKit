@@ -55,17 +55,18 @@ public:
     ~ScrollingStateTree();
 
     ScrollingStateScrollingNode* rootStateNode() const { return m_rootStateNode.get(); }
+    void setRootStateNode(PassOwnPtr<ScrollingStateScrollingNode> rootStateNode) { m_rootStateNode = rootStateNode; }
 
     // Copies the current tree state and clears the changed properties mask in the original.
     PassOwnPtr<ScrollingStateTree> commit();
+
+    void removeNode(ScrollingStateNode*);
 
     void setHasChangedProperties(bool changedProperties) { m_hasChangedProperties = changedProperties; }
     bool hasChangedProperties() const { return m_hasChangedProperties; }
 
 private:
     ScrollingStateTree();
-
-    void setRootStateNode(PassOwnPtr<ScrollingStateScrollingNode> rootStateNode) { m_rootStateNode = rootStateNode; }
 
     OwnPtr<ScrollingStateScrollingNode> m_rootStateNode;
     bool m_hasChangedProperties;

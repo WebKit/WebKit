@@ -131,6 +131,10 @@ public:
     void setNeedsOneShotDrawingSynchronization();
 
     virtual TiledBacking* tiledBacking() OVERRIDE;
+
+    // In the future when any ScrollableArea can have a node in th ScrollingTree, this should
+    // become a virtual function on ScrollableArea.
+    uint64_t scrollLayerID() const;
 #endif
 
     bool hasCompositedContent() const;

@@ -494,6 +494,12 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
 
             layer->ensureBacking();
 
+            if (layer->isRootLayer()) {
+                layer->backing()->attachToScrollingCoordinator();
+                if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
+                    scrollingCoordinator->frameViewRootLayerDidChange(m_renderView->frameView());
+            }
+
             // This layer and all of its descendants have cached repaints rects that are relative to
             // the repaint container, so change when compositing changes; we need to update them here.
             if (layer->parent())
@@ -2304,9 +2310,6 @@ void RenderLayerCompositor::attachRootLayer(RootLayerAttachment attachment)
             break;
         }
     }
-
-    if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
-        scrollingCoordinator->frameViewRootLayerDidChange(m_renderView->frameView());
 
     m_rootLayerAttachment = attachment;
     rootLayerAttachmentChanged();

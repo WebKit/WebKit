@@ -77,6 +77,21 @@ void ScrollingStateNode::appendChild(PassOwnPtr<ScrollingStateNode> childNode)
     m_children->append(childNode);
 }
 
+void ScrollingStateNode::removeChild(ScrollingStateNode* node)
+{
+    if (!m_children)
+        return;
+
+    if (size_t index = m_children->find(node)) {
+        m_children->remove(index);
+        return;
+    }
+
+    size_t size = m_children->size();
+    for (size_t i = 0; i < size; ++i)
+        m_children->at(i)->removeChild(node);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(THREADED_SCROLLING)

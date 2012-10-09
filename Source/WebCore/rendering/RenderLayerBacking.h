@@ -87,6 +87,9 @@ public:
     bool hasScrollingLayer() const { return m_scrollingLayer; }
     GraphicsLayer* scrollingLayer() const { return m_scrollingLayer.get(); }
     GraphicsLayer* scrollingContentsLayer() const { return m_scrollingContentsLayer.get(); }
+
+    void attachToScrollingCoordinator();
+    uint64_t scrollLayerID() const { return m_scrollLayerID; }
     
     bool hasMaskLayer() const { return m_maskLayer != 0; }
 
@@ -194,6 +197,8 @@ private:
     bool requiresScrollCornerLayer() const;
     bool updateScrollingLayers(bool scrollingLayers);
 
+    void detachFromScrollingCoordinator();
+
     GraphicsLayerPaintingPhase paintingPhaseForPrimaryLayer() const;
     
     IntSize contentOffsetInCompostingLayer() const;
@@ -256,6 +261,8 @@ private:
 
     OwnPtr<GraphicsLayer> m_scrollingLayer; // only used if the layer is using composited scrolling.
     OwnPtr<GraphicsLayer> m_scrollingContentsLayer; // only used if the layer is using composited scrolling.
+
+    uint64_t m_scrollLayerID;
 
     IntRect m_compositedBounds;
 
