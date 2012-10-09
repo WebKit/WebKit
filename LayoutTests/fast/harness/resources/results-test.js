@@ -264,6 +264,12 @@ function runTests()
     runDefaultSingleRowTest('bar-image.html', 'TEXT', 'IMAGE', 1, false, '', 'images diff (1%) ');
     runDefaultSingleRowTest('bar-image-plus-text.html', 'TEXT', 'IMAGE+TEXT', 1, false, 'expected actual diff ', 'images diff (1%) ');
 
+    // test the mapping for FAIL onto only ['TEXT', 'IMAGE+TEXT', 'AUDIO']
+    runDefaultSingleRowTest('bar-image.html', 'FAIL', 'IMAGE+TEXT', 1, true, 'expected actual diff ', 'images diff (1%) ');
+    runDefaultSingleRowTest('bar-image.html', 'FAIL', 'AUDIO', 1, true, 'expected audio actual audio ', '');
+    runDefaultSingleRowTest('bar-image.html', 'FAIL', 'TEXT', 0, true, 'expected actual diff ', '');
+    runDefaultSingleRowTest('bar-image.html', 'FAIL', 'IMAGE', 1, false, '', 'images diff (1%) ');
+
     results = mockResults();
     results.tests['bar-reftest.html'] = mockExpectation('PASS', 'IMAGE', 1);
     results.tests['bar-reftest.html'].reftest_type = ['=='];

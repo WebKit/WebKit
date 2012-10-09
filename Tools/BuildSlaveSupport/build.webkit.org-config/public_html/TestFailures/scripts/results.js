@@ -42,7 +42,7 @@ var IMAGE_TEXT = 'IMAGE+TEXT';
 var AUDIO = 'AUDIO';
 var MISSING = 'MISSING';
 
-var kFailingResults = [TIMEOUT, TEXT, CRASH, IMAGE, IMAGE_TEXT, AUDIO];
+var kFailingResults = [TEXT, IMAGE_TEXT, AUDIO];
 
 var kExpectedImageSuffix = '-expected.png';
 var kActualImageSuffix = '-actual.png';

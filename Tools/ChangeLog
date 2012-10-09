@@ -1,3 +1,18 @@
+2012-10-08  Dirk Pranke  <dpranke@chromium.org>
+
+        results.html and garden-o-matic are ignoring IMAGE failures when expected to FAIL
+        https://bugs.webkit.org/show_bug.cgi?id=98706
+
+        Reviewed by Ojan Vafai.
+
+        FAIL is supposed to map onto Failure which is supposed to map
+        onto the old [ TEXT, IMAGE_PLUS_TEXT, AUDIO ] mapping.
+        results.html was including IMAGE in this and garden-o-matic was
+        including CRASH and TIMEOUT as well :(.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/results.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/results_unittests.js:
+
 2012-10-08  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Build ControlTheme only when necessary

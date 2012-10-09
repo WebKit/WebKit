@@ -84,7 +84,7 @@ unittest.kExampleResultsJSON = {
     "revision": "90430"
 };
 
-test("ResultAnalyzer", 35, function() {
+test("ResultAnalyzer", 55, function() {
     var analyzer;
 
     analyzer = new results.ResultAnalyzer({expected: 'PASS', actual: 'TEXT'});
@@ -130,6 +130,34 @@ test("ResultAnalyzer", 35, function() {
     ok(analyzer.flaky());
 
     analyzer = new results.ResultAnalyzer({expected: 'FAIL', actual: 'TIMEOUT'});
+    ok(!analyzer.expectedToSucceed());
+    ok(analyzer.hasUnexpectedFailures());
+    deepEqual(analyzer.unexpectedResults(), ['TIMEOUT']);
+    ok(!analyzer.succeeded());
+    ok(!analyzer.flaky());
+
+    analyzer = new results.ResultAnalyzer({expected: 'FAIL', actual: 'IMAGE'});
+    ok(!analyzer.expectedToSucceed());
+    ok(analyzer.hasUnexpectedFailures());
+    deepEqual(analyzer.unexpectedResults(), ['IMAGE']);
+    ok(!analyzer.succeeded());
+    ok(!analyzer.flaky());
+
+    analyzer = new results.ResultAnalyzer({expected: 'FAIL', actual: 'AUDIO'});
+    ok(!analyzer.expectedToSucceed());
+    ok(!analyzer.hasUnexpectedFailures());
+    deepEqual(analyzer.unexpectedResults(), []);
+    ok(!analyzer.succeeded());
+    ok(!analyzer.flaky());
+
+    analyzer = new results.ResultAnalyzer({expected: 'FAIL', actual: 'TEXT'});
+    ok(!analyzer.expectedToSucceed());
+    ok(!analyzer.hasUnexpectedFailures());
+    deepEqual(analyzer.unexpectedResults(), []);
+    ok(!analyzer.succeeded());
+    ok(!analyzer.flaky());
+
+    analyzer = new results.ResultAnalyzer({expected: 'FAIL', actual: 'IMAGE+TEXT'});
     ok(!analyzer.expectedToSucceed());
     ok(!analyzer.hasUnexpectedFailures());
     deepEqual(analyzer.unexpectedResults(), []);

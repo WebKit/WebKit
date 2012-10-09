@@ -479,7 +479,7 @@ function isFailureExpected(expected, actual)
             var actualValue = actualArray[i];
             if (expectedArray.indexOf(actualValue) == -1 &&
                 (expectedArray.indexOf('FAIL') == -1 ||
-                 (actualValue != 'IMAGE' && actualValue != 'TEXT' && actualValue != 'IMAGE+TEXT')))
+                 (actualValue != 'TEXT' && actualValue != 'IMAGE+TEXT' && actualValue != 'AUDIO')))
                 isExpected = false;
         }
     }
