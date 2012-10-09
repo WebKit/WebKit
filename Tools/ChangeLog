@@ -1,5 +1,11 @@
 2012-10-09  Simon Hausmann  <simon.hausmann@digia.com>
 
+        Unreviewed trivial Qt build fix: Remove stray closing braces from r130758.
+
+        * qmake/mkspecs/features/features.prf:
+
+2012-10-09  Simon Hausmann  <simon.hausmann@digia.com>
+
         [Qt] Clean up Qt module detection
 
         Reviewed by Tor Arne Vestbø.

@@ -97,7 +97,6 @@ defineTest(detectFeatures) {
 
     # Geolocation support if QtMobility exists
     haveQtModule(location): WEBKIT_CONFIG += geolocation
-    }
 
     # Orientation support
     haveQtModule(sensors): WEBKIT_CONFIG += orientation_events device_orientation
