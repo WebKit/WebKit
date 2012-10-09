@@ -1,3 +1,21 @@
+2012-10-09  Ojan Vafai  <ojan@chromium.org>
+
+        Don't duplicated build numbers when merging flakiness dashboard JSON
+        https://bugs.webkit.org/show_bug.cgi?id=98812
+
+        Reviewed by Dirk Pranke.
+
+        In general, build numbers are not unique, but we should basically never
+        get the same build number uploaded twice in a row. This is a workaround
+        for https://bugs.webkit.org/show_bug.cgi?id=97643, which frequently hits this
+        because we update results_small.json and timeout updating results.json and then
+        we retry the whole request.
+
+        * TestResultServer/model/jsonresults.py:
+        (JsonResults.merge):
+        * TestResultServer/model/jsonresults_unittest.py:
+        (JsonResultsTest.test_merge_duplicate_build_number):
+
 2012-10-09  Alexis Menard  <alexis@webkit.org>
 
         [GTK] Shadow builds are not working anymore.

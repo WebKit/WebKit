@@ -184,6 +184,24 @@ class JsonResultsTest(unittest.TestCase):
                            "results": [[200,"F"]],
                            "times": [[200,0]]}}})
 
+    def test_merge_duplicate_build_number(self):
+        self._test_merge(
+            # Aggregated results
+            {"builds": ["2", "1"],
+             "tests": {"001.html": {
+                           "results": [[100, "F"]],
+                           "times": [[100, 0]]}}},
+            # Incremental results
+            {"builds": ["2"],
+             "tests": {"001.html": {
+                           "results": [[1, "F"]],
+                           "times": [[1, 0]]}}},
+            # Expected results
+            {"builds": ["2", "1"],
+             "tests": {"001.html": {
+                           "results": [[100, "F"]],
+                           "times": [[100, 0]]}}})
+
     def test_merge_incremental_single_test_single_run_same_result(self):
         # Incremental results has the latest build and same test results for
         # that run.

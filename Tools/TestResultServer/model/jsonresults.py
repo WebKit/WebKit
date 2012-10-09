@@ -292,6 +292,10 @@ class JsonResults(object):
         if not cls._check_json(builder, aggregated_json):
             return incremental
 
+        if aggregated_json[builder][JSON_RESULTS_BUILD_NUMBERS][0] == incremental_json[builder][JSON_RESULTS_BUILD_NUMBERS][0]:
+            logging.error("Incremental JSON's build number is the latest build number in the aggregated JSON: %d." % aggregated_json[builder][JSON_RESULTS_BUILD_NUMBERS][0])
+            return aggregated
+
         logging.info("Merging json results...")
         try:
             cls._merge_json(aggregated_json[builder], incremental_json[builder], num_runs)
