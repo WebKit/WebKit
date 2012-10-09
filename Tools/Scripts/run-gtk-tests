@@ -68,6 +68,7 @@ class TestRunner:
         SkippedTest("WebKit2APITests/TestWebKitWebView", "/webkit2/WebKitWebView/mouse-target", "Test is flaky in GTK Linux 32-bit Release bot", 82866),
         SkippedTest("WebKit2APITests/TestResources", "/webkit2/WebKitWebView/resources", "Test is flaky in GTK Linux 32-bit Release bot", 82868),
         SkippedTest("WebKit2APITests/TestWebKitFindController", "/webkit2/WebKitFindController/hide", "Test  always fails in Xvfb", 89810),
+        SkippedTest("WebKit2APITests/TestCookieManager", "/webkit2/WebKitCookieManager/accept-policy", "Test fails", 98738),
         SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.WKConnection", "Tests fail and time out out", 84959),
         SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.RestoreSessionStateContainingFormData", "Session State is not implemented in GTK+ port", 84960),
         SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.SpacebarScrolling", "Test fails", 84961),

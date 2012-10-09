@@ -1,3 +1,14 @@
+2012-10-09  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Skipping the accept-policy test in TestCookieManager API test that's
+        currently failing. The test failure is covered by
+        https://bugs.webkit.org/show_bug.cgi?id=98738.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+
 2012-10-09  Laszlo Gombos  <l.gombos@samsung.com>
 
         [Qt] Remove redundant JAVASCRIPTCORE_JIT variable
