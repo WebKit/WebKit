@@ -913,10 +913,6 @@ editing/selection/select-bidi-run.html
 # https://bugs.webkit.org/show_bug.cgi?id=49127
 editing/selection/after-line-break.html
 
-# REGRESSION(r72861): editing/selection/click-left-of-rtl-wrapping-text.html and modify-up-on-rtl-wrapping-text.html fail on all but Mac platform
-# https://bugs.webkit.org/show_bug.cgi?id=50204
-editing/selection/modify-up-on-rtl-wrapping-text.html
-
 # [Qt]REGRESSION(r78846): editing/selection/mixed-editability-10.html
 # https://bugs.webkit.org/show_bug.cgi?id=54725
 editing/selection/mixed-editability-10.html

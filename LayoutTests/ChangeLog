@@ -1,3 +1,14 @@
+2012-10-09  Tullio Lucena  <tullio.lucena@openbossa.org>
+
+        [Qt] modify-up-on-rtl-wrapping-text.html fails on DRT
+        https://bugs.webkit.org/show_bug.cgi?id=50291
+
+        Reviewed by Csaba Osztrogonác.
+
+        Unskipping editing/selection/modify-up-on-rtl-wrapping-text.html
+
+        * platform/qt/TestExpectations:
+
 2012-10-09  Enrica Casucci  <enrica@apple.com>
 
         [chromium] fast/text/international/text-spliced-font.html and fast/writing-mode/Kusa-Makura-background-canvas.html
