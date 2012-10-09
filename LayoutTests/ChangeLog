@@ -1,3 +1,19 @@
+2012-10-09  Jussi Kukkonen  <jussi.kukkonen@intel.com>
+
+        [EFL] remove duplicate failure expectations
+        https://bugs.webkit.org/show_bug.cgi?id=98736
+
+        Unreviewed gardening.
+
+        Many tests are listed in both efl and wk2 expectations. Remove the efl expectations
+        in cases where the bug seems to be a wk2 issue.
+
+        Most expectations are also added into the efl-wk1 expectations (which is where
+        they should have been all along).
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2012-10-09  Arpita Bahuguna  <arpitabahuguna@gmail.com>
 
         Text decorations specified on the containing block are not properly applied when ::first-line is present.

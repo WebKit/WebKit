@@ -42,6 +42,35 @@ webkit.org/b/95182 fast/css/sticky/sticky-writing-mode-horizontal-bt.html [ Imag
 webkit.org/b/95182 fast/css/sticky/sticky-writing-mode-vertical-lr.html [ ImageOnlyFailure ]
 webkit.org/b/95182 fast/css/sticky/sticky-writing-mode-vertical-rl.html [ ImageOnlyFailure ]
 
+# EFL's LayoutTestController does not implement setWindowIsKey
+fast/dom/Window/window-onFocus.html
+fast/events/blur-focus-window-should-blur-focus-element.html
+
+# EFL's LayoutTestController does not implement authenticateSession
+http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
+
+# EFL DRT doesn't fully support http tests yet. These tests make timeout error.
+http/tests/cache/history-only-cached-subresource-loads-max-age-https.html
+http/tests/cache/subresource-failover-to-network.html
+http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html
+http/tests/misc/401-alternative-content.php
+http/tests/navigation/forward-and-cancel.html
+http/tests/navigation/post-goback-same-url.html
+http/tests/navigation/post-goback2.html
+http/tests/navigation/postredirect-frames.html
+http/tests/navigation/postredirect-goback2.html
+http/tests/navigation/postredirect-reload.html
+http/tests/security/401-logout/401-logout.php
+http/tests/security/cookies/first-party-cookie-allow-xslt.xml
+http/tests/security/cookies/third-party-cookie-blocking-main-frame.html
+http/tests/security/no-referrer.html
+http/tests/security/referrer-policy-redirect-link.html
+http/tests/xmlhttprequest/basic-auth-nopassword.html
+http/tests/xmlhttprequest/basic-auth-nouser.html
+http/tests/xmlhttprequest/cross-origin-cookie-storage.html
+http/tests/xmlhttprequest/failed-auth.html
+http/tests/xmlhttprequest/remember-bad-password.html
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # CRASHES
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -142,3 +171,51 @@ webkit.org/b/87974 http/tests/download [ Failure ]
 webkit.org/b/98570 fast/replaced/object-with-embed-url-param.html [ Failure ]
 
 webkit.org/b/53986 svg/text/caret-in-svg-text.xhtml [ Failure ]
+
+# Relies on WebKit API [WebView _loadBackForwardListFromOtherView:]
+fast/loader/crash-copying-backforwardlist.html
+
+# BUG: No authentication challenge handling
+http/tests/loading/basic-credentials-sent-automatically.html
+http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html
+http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html
+http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html
+
+# The EFL port has no support for user gesture (dumpUserGestureInFrameLoadCallbacks in DRT and in the port itself as well)
+fast/frames/location-redirect-user-gesture.html
+fast/frames/meta-refresh-user-gesture.html
+
+# Incomplete policy delegate dumping
+http/tests/misc/redirect-to-external-url.html
+
+# Probably related to https://bugs.webkit.org/show_bug.cgi?id=27637
+http/tests/loading/basic-auth-resend-wrong-credentials.html
+
+# BUG: wrong test results that need investigation
+http/tests/navigation/go-back-to-error-page.html
+
+# Probably related to https://bugs.webkit.org/show_bug.cgi?id=27637
+http/tests/loading/basic-auth-resend-wrong-credentials.html
+
+# Content Security Policy 1.1 (ENABLE_CSP_NEXT) is not enabled
+# https://bugs.webkit.org/show_bug.cgi?id=85558
+http/tests/security/contentSecurityPolicy/1.1
+
+# Fails, seems like a rounding problem
+svg/animations/animate-text-nested-transforms.html
+
+# This should only be a layer change
+# http://webkit.org/b/82129
+fast/box-shadow/shadow-buffer-partial.html
+fast/block/lineboxcontain/block-font.html
+fast/block/lineboxcontain/block-glyphs.html
+fast/block/lineboxcontain/font.html
+
+# following tests started failing on EFL after r122952.
+inspector/styles/override-screen-size.html
+inspector/console/console-long-eval-crash.html
+inspector/timeline/timeline-paint.html
+
+# Incorrect rendering results after r115846
+webkit.org/b/85599 http/tests/navigation/postredirect-basic.html [ Failure ]
+webkit.org/b/85599 http/tests/navigation/postredirect-goback1.html [ Failure ]

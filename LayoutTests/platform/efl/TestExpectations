@@ -41,10 +41,6 @@
 # EFL's LayoutTestController does not implement keepWebHistory
 fast/history/window-open.html
 
-# EFL's LayoutTestController does not implement setWindowIsKey
-fast/dom/Window/window-onFocus.html
-fast/events/blur-focus-window-should-blur-focus-element.html
-
 # BUG84835: Tests failing because of missing editing delegate callbacks.
 editing/deleting
 editing/inserting
@@ -56,28 +52,14 @@ editing/style
 # EFL's LayoutTestController does not implement shadowPseudoId
 media/video-volume-slider.html
 
-# EFL's LayoutTestController does not implement authenticateSession
-http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
-
 # Need to add functionality to DumpRenderTree to handle error pages
 fast/history/back-forward-reset-after-error-handling.html
-
-# Relies on WebKit API [WebView _loadBackForwardListFromOtherView:]
-fast/loader/crash-copying-backforwardlist.html
 
 # BUG: Captions support needed in the media engine (via GTK+)
 media/media-captions.html
 
 # BUG: No authentication challenge handling
-http/tests/loading/basic-credentials-sent-automatically.html
 http/tests/cache/subresource-fragment-identifier.html
-http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html
-http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html
-http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html
-
-# The EFL port has no support for user gesture (dumpUserGestureInFrameLoadCallbacks in DRT and in the port itself as well)
-fast/frames/location-redirect-user-gesture.html
-fast/frames/meta-refresh-user-gesture.html
 
 # The EFL port has no support for detecting slow unload handlers
 fast/dom/Window/slow-unload-handler.html
@@ -140,9 +122,6 @@ http/tests/multipart/policy-ignore-crash.php
 # https://bugs.webkit.org/show_bug.cgi?id=68278
 http/tests/history/back-with-fragment-change.php
 
-# Incomplete policy delegate dumping
-http/tests/misc/redirect-to-external-url.html
-
 # Failing http tests (via GTK+)
 http/tests/loading/bad-scheme-subframe.html
 http/tests/media/video-play-stall-seek.html
@@ -152,9 +131,6 @@ http/tests/security/feed-urls-from-remote.html
 # Test times out (via GTK+)
 # https://bugs.webkit.org/show_bug.cgi?id=61122
 http/tests/navigation/post-307-response.html
-
-# Probably related to https://bugs.webkit.org/show_bug.cgi?id=27637
-http/tests/loading/basic-auth-resend-wrong-credentials.html
 
 # ------------------------------
 # Tests which need investigation
@@ -197,7 +173,6 @@ fast/repaint/selection-clear.html
 fast/repaint/table-cell-overflow.html
 fast/repaint/text-emphasis-h.html
 fast/text/midword-break-after-breakable-char.html
-http/tests/navigation/go-back-to-error-page.html
 
 # BUG: Needs a grayish canvas background. See DumpRenderTree/chromium/WebViewHost::displayRepaintMask().
 fast/repaint/absolute-position-change-containing-block.html
@@ -286,10 +261,6 @@ http/tests/navigation/document-location-mouseover.html
 # Tests for features under development
 # ------------------------------------
 
-# Content Security Policy 1.1 (ENABLE_CSP_NEXT) is not enabled
-# https://bugs.webkit.org/show_bug.cgi?id=85558
-http/tests/security/contentSecurityPolicy/1.1
-
 # HiDPI tests require test infrastructure enhancements
 fast/hidpi
 svg/as-image/image-respects-deviceScaleFactor.html
@@ -328,9 +299,6 @@ fast/workers/shared-worker-load-error.html
 # Fails, the div does not scroll
 scrollbars/scroll-rtl-or-bt-layer.html
 
-# Fails, seems like a rounding problem
-svg/animations/animate-text-nested-transforms.html
-
 # Failing, the 2 bars are not identical
 svg/hixie/data-types/002.xhtml
 
@@ -342,48 +310,28 @@ svg/batik/paints/gradientLimit.svg
 
 # EFL DRT doesn't fully support http tests yet. These tests make timeout error.
 fast/overflow/overflow-height-float-not-removed-crash3.html
-http/tests/cache/history-only-cached-subresource-loads-max-age-https.html
-http/tests/cache/subresource-failover-to-network.html
-http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html
-http/tests/misc/401-alternative-content.php
 http/tests/misc/copy-resolves-urls.html
 http/tests/misc/iframe-invalid-source-crash.html
 http/tests/misc/submit-post-keygen.html
-http/tests/navigation/forward-and-cancel.html
 http/tests/navigation/no-referrer-reset.html
 http/tests/navigation/no-referrer-target-blank.html
-http/tests/navigation/post-goback-same-url.html
-http/tests/navigation/post-goback2.html
-http/tests/navigation/postredirect-frames.html
-http/tests/navigation/postredirect-goback2.html
-http/tests/navigation/postredirect-reload.html
 http/tests/navigation/target-frame-from-window.html
-http/tests/security/401-logout/401-logout.php
 http/tests/security/contentSecurityPolicy/media-src-allowed.html
 http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html
 http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html
 http/tests/security/aboutBlank/xss-DENIED-set-opener.html
-http/tests/security/cookies/first-party-cookie-allow-xslt.xml
-http/tests/security/cookies/third-party-cookie-blocking-main-frame.html
 http/tests/security/cross-origin-xsl-BLOCKED.html
 http/tests/security/cross-origin-xsl-redirect-BLOCKED.html
 http/tests/security/drag-drop-same-unique-origin.html
 http/tests/security/frameNavigation/not-opener.html
-http/tests/security/no-referrer.html
 http/tests/security/originHeader/origin-header-for-empty.html
 http/tests/security/redirect-BLOCKED-to-localURL.html
-http/tests/security/referrer-policy-redirect-link.html
 http/tests/security/xss-DENIED-xsl-document-redirect.xml
 http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml
 http/tests/workers/terminate-during-sync-operation.html
 http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html
-http/tests/xmlhttprequest/basic-auth-nopassword.html
-http/tests/xmlhttprequest/basic-auth-nouser.html
-http/tests/xmlhttprequest/cross-origin-cookie-storage.html
 http/tests/xmlhttprequest/cross-origin-no-authorization.html
-http/tests/xmlhttprequest/failed-auth.html
 http/tests/xmlhttprequest/logout.html
-http/tests/xmlhttprequest/remember-bad-password.html
 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
 xmlviewer/extensions-api.html
 
@@ -399,7 +347,6 @@ editing/unsupported-content/table-delete-002.html
 editing/unsupported-content/table-delete-003.html
 fast/dom/rtl-scroll-to-leftmost-and-resize.html
 fast/text/unicode-variation-selector.html
-http/tests/cache/history-only-cached-subresource-loads.html
 
 # Requires ENABLE(FILE_SYSTEM)
 fast/forms/file/input-file-entries.html
@@ -407,13 +354,6 @@ http/tests/security/contentSecurityPolicy/filesystem-urls-match-self.html
 
 # Transparent image being produced
 fast/frames/transparent-scrollbar.html
-
-# This should only be a layer change
-# http://webkit.org/b/82129
-fast/box-shadow/shadow-buffer-partial.html
-fast/block/lineboxcontain/block-font.html
-fast/block/lineboxcontain/block-glyphs.html
-fast/block/lineboxcontain/font.html
 
 # Fail until ENABLE_DATA_TRANSFER_ITEMS is enabled
 # (Other tests might also depend on it)
@@ -432,15 +372,12 @@ http/tests/inspector/resource-parameters.html
 http/tests/inspector/compiler-source-mapping-debug.html
 http/tests/inspector/console-websocket-error.html
 inspector/styles/svg-style.xhtml
-inspector/styles/override-screen-size.html
-inspector/console/console-long-eval-crash.html
 inspector/debugger/event-listener-breakpoints.html
 inspector/debugger/live-edit.html
 inspector/debugger/step-through-event-listeners.html
 inspector/debugger/xhr-breakpoints.html
 inspector/debugger/debugger-compile-and-run.html
 inspector/debugger/dom-breakpoints.html
-inspector/timeline/timeline-paint.html
 inspector/timeline/timeline-receive-response-event.html
 
 # ENABLE(WIDGET_REGION) is disabled
@@ -1162,10 +1099,6 @@ webkit.org/b/86971 svg/hittest/svg-shapes-non-scale-stroke.html [ Failure ]
 
 # Issue related to battery status and vibration API
 webkit.org/b/85594 fast/dom/navigator-detached-no-crash.html [ Failure ]
-
-# Incorrect rendering results after r115846
-webkit.org/b/85599 http/tests/navigation/postredirect-basic.html [ Failure ]
-webkit.org/b/85599 http/tests/navigation/postredirect-goback1.html [ Failure ]
 
 # Interferes with the rAF tests that are enabled
 webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Skip ]
