@@ -1,3 +1,14 @@
+2012-10-09  Laszlo Gombos  <l.gombos@samsung.com>
+
+        [Qt] Remove redundant JAVASCRIPTCORE_JIT variable
+        https://bugs.webkit.org/show_bug.cgi?id=50000
+
+        Reviewed by Simon Hausmann.
+
+        Use ENABLE_JIT instead.
+
+        * qmake/mkspecs/features/valgrind.prf:
+
 2012-10-08  Kiran Muppala  <cmuppala@apple.com>
 
         Throttle DOM timers on hidden pages.
