@@ -137,6 +137,8 @@ Bug(EFL) svg/dom/viewspec-parser-4.html [ Failure Pass ]
 Bug(EFL) svg/dom/viewspec-parser-2.html [ Failure Pass ]
 Bug(EFL) svg/dom/viewspec-parser-5.html [ Failure Pass ]
 
+webkit.org/b/98761 svg/text/selection-tripleclick.svg [ Failure Pass ]
+
 # ASSERTION FAILED: m_suspended in WebCore::SuspendableTimer::resume()
 webkit.org/b/35220 inspector/debugger/debugger-no-nested-pause.html [ Crash Failure Pass ]
 webkit.org/b/35220 inspector/debugger/debugger-pause-in-internal.html [ Crash Failure Pass ]

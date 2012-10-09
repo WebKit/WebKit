@@ -1,3 +1,9 @@
+2012-10-09  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Mark svg/text/selection-tripleclick.svg as flaky on WK2.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-10-09  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         [chromium] Make sure events are transformed correctly for plugins.
