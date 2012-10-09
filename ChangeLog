@@ -1,3 +1,16 @@
+2012-10-09  Simon Pena  <spena@igalia.com>
+
+        [GTK] Add support for running JavaScript from GResources
+        https://bugs.webkit.org/show_bug.cgi?id=98488
+
+        Reviewed by Carlos Garcia Campos.
+
+        GResources allow embedding certain resources, frequently used, in a "bundle"
+        which can be kept separated or stored in the binary. This patch adds
+        support for running JavaScript from GResources.
+
+        * configure.ac: Add support for compiling GResources
+
 2012-10-09  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK build fix after r130689.

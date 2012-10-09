@@ -1,3 +1,45 @@
+2012-10-09  Simon Pena  <spena@igalia.com>
+
+        [GTK] Add support for running JavaScript from GResources
+        https://bugs.webkit.org/show_bug.cgi?id=98488
+
+        Reviewed by Carlos Garcia Campos.
+
+        GResources allow embedding certain resources, frequently used, in a "bundle"
+        which can be kept separated or stored in the binary. This patch adds
+        support for running JavaScript from GResources.
+
+        For this, methods run_javascript_from_gresource and
+        run_javascript_from_gresource_finish are added, which load the resource
+        asynchronously and, when it is ready, run the JavaScript.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp: Include the new methods.
+        (resourcesStreamReadCallback):
+        (webkit_web_view_run_javascript_from_gresource):
+        (webkit_web_view_run_javascript_from_gresource_finish):
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Include the new
+        methods in the documentation.
+        * UIProcess/API/gtk/tests/GNUmakefile.am: Add the test resources to the
+        build infrastructure.
+        * UIProcess/API/gtk/tests/TestMain.cpp: Register the resources in the tests,
+        so that they can be accessed in all of them.
+        (register_gresource):
+        (main):
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp: Test the
+        run_javascript_from_gresource method.
+        (testWebViewRunJavaScript):
+        * UIProcess/API/gtk/tests/WebViewTest.cpp: Add a method for testing the
+        new run_javascript_from_gresource method.
+        (runJavaScriptFromGResourceReadyCallback):
+        (WebViewTest::runJavaScriptFromGResourceAndWaitUntilFinished):
+        * UIProcess/API/gtk/tests/WebViewTest.h:
+        * UIProcess/API/gtk/tests/resources/webkit2gtk-tests.gresource.xml: Added.
+        Resource bundle containing the resources.
+        * UIProcess/API/gtk/tests/resources/webkit2gtk-tests.test.js: Added.
+        Example JavaScript file to test the GResources support.
+
+
 2012-10-08  Kiran Muppala  <cmuppala@apple.com>
 
         Throttle DOM timers on hidden pages.

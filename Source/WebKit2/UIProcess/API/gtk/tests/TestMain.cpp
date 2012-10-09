@@ -25,11 +25,23 @@
 void beforeAll();
 void afterAll();
 
+static void registerGResource(void)
+{
+    GOwnPtr<char> resourcesPath(g_build_filename(WEBKIT_DERIVED_SRC_DIR, "WebKit2", "webkit2gtk-tests-resources.gresource", NULL));
+    GResource* resource = g_resource_load(resourcesPath.get(), 0);
+    g_assert(resource);
+
+    g_resources_register(resource);
+    g_resource_unref(resource);
+}
+
 int main(int argc, char** argv)
 {
     gtk_test_init(&argc, &argv, 0);
     g_setenv("WEBKIT_EXEC_PATH", WEBKIT_EXEC_PATH, FALSE);
     g_test_bug_base("https://bugs.webkit.org/");
+
+    registerGResource();
 
     beforeAll();
     int returnValue = g_test_run();

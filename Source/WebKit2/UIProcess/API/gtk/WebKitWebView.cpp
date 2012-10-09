@@ -2429,6 +2429,94 @@ WebKitJavascriptResult* webkit_web_view_run_javascript_finish(WebKitWebView* web
     return data->scriptResult ? webkit_javascript_result_ref(data->scriptResult) : 0;
 }
 
+static void resourcesStreamReadCallback(GObject* object, GAsyncResult* result, gpointer userData)
+{
+    GOutputStream* outputStream = G_OUTPUT_STREAM(object);
+    GRefPtr<GSimpleAsyncResult> runJavascriptResult = adoptGRef(G_SIMPLE_ASYNC_RESULT(userData));
+
+    GError* error = 0;
+    g_output_stream_splice_finish(outputStream, result, &error);
+    if (error) {
+        g_simple_async_result_take_error(runJavascriptResult.get(), error);
+        g_simple_async_result_complete(runJavascriptResult.get());
+        return;
+    }
+
+    GRefPtr<WebKitWebView> webView = adoptGRef(WEBKIT_WEB_VIEW(g_async_result_get_source_object(G_ASYNC_RESULT(runJavascriptResult.get()))));
+    gpointer outputStreamData = g_memory_output_stream_get_data(G_MEMORY_OUTPUT_STREAM(outputStream));
+    getPage(webView.get())->runJavaScriptInMainFrame(String::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)),
+                                                     ScriptValueCallback::create(runJavascriptResult.leakRef(), webkitWebViewRunJavaScriptCallback));
+}
+
+/**
+ * webkit_web_view_run_javascript_from_gresource:
+ * @web_view: a #WebKitWebView
+ * @resource: the location of the resource to load
+ * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
+ * @callback: (scope async): a #GAsyncReadyCallback to call when the script finished
+ * @user_data: (closure): the data to pass to callback function
+ *
+ * Asynchronously run the script from @resource in the context of the
+ * current page in @web_view.
+ *
+ * When the operation is finished, @callback will be called. You can
+ * then call webkit_web_view_run_javascript_from_gresource_finish() to get the result
+ * of the operation.
+ */
+void webkit_web_view_run_javascript_from_gresource(WebKitWebView* webView, const gchar* resource, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(resource);
+
+    GRefPtr<GSimpleAsyncResult> result = adoptGRef(g_simple_async_result_new(G_OBJECT(webView), callback, userData,
+                                                                             reinterpret_cast<gpointer>(webkit_web_view_run_javascript_from_gresource)));
+    RunJavaScriptAsyncData* data = createRunJavaScriptAsyncData();
+    data->cancellable = cancellable;
+    g_simple_async_result_set_op_res_gpointer(result.get(), data, reinterpret_cast<GDestroyNotify>(destroyRunJavaScriptAsyncData));
+
+    GError* error = 0;
+    GRefPtr<GInputStream> inputStream = adoptGRef(g_resources_open_stream(resource, G_RESOURCE_LOOKUP_FLAGS_NONE, &error));
+    if (error) {
+        g_simple_async_result_take_error(result.get(), error);
+        g_simple_async_result_complete_in_idle(result.get());
+        return;
+    }
+
+    GRefPtr<GOutputStream> outputStream = adoptGRef(g_memory_output_stream_new(0, 0, fastRealloc, fastFree));
+    g_output_stream_splice_async(outputStream.get(), inputStream.get(),
+                                 static_cast<GOutputStreamSpliceFlags>(G_OUTPUT_STREAM_SPLICE_CLOSE_SOURCE | G_OUTPUT_STREAM_SPLICE_CLOSE_TARGET),
+                                 G_PRIORITY_DEFAULT,
+                                 cancellable, resourcesStreamReadCallback, result.leakRef());
+}
+
+/**
+ * webkit_web_view_run_javascript_from_gresource_finish:
+ * @web_view: a #WebKitWebView
+ * @result: a #GAsyncResult
+ * @error: return location for error or %NULL to ignore
+ *
+ * Finish an asynchronous operation started with webkit_web_view_run_javascript_from_gresource().
+ *
+ * Check webkit_web_view_run_javascript_finish() for a usage example.
+ *
+ * Returns: (transfer full): a #WebKitJavascriptResult with the result of the last executed statement in @script
+ *    or %NULL in case of error
+ */
+WebKitJavascriptResult* webkit_web_view_run_javascript_from_gresource_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+    g_return_val_if_fail(G_IS_ASYNC_RESULT(result), 0);
+
+    GSimpleAsyncResult* simpleResult = G_SIMPLE_ASYNC_RESULT(result);
+    g_warn_if_fail(g_simple_async_result_get_source_tag(simpleResult) == webkit_web_view_run_javascript_from_gresource);
+
+    if (g_simple_async_result_propagate_error(simpleResult, error))
+        return 0;
+
+    RunJavaScriptAsyncData* data = static_cast<RunJavaScriptAsyncData*>(g_simple_async_result_get_op_res_gpointer(simpleResult));
+    return data->scriptResult ? webkit_javascript_result_ref(data->scriptResult) : 0;
+}
+
 /**
  * webkit_web_view_get_main_resource:
  * @web_view: a #WebKitWebView

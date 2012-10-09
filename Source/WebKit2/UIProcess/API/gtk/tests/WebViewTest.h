@@ -55,6 +55,7 @@ public:
     void keyStroke(unsigned int keyVal, unsigned int keyModifiers = 0);
 
     WebKitJavascriptResult* runJavaScriptAndWaitUntilFinished(const char* javascript, GError**);
+    WebKitJavascriptResult* runJavaScriptFromGResourceAndWaitUntilFinished(const char* resource, GError**);
 
     // Javascript result helpers.
     static char* javascriptResultToCString(WebKitJavascriptResult*);

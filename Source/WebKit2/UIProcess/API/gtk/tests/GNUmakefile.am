@@ -30,6 +30,7 @@ endif
 webkit2_tests_cppflags = \
 	-DWEBKIT_EXEC_PATH=\"${shell pwd}/$(top_builddir)/Programs\" \
 	-DWEBKIT_SRC_DIR=\"${shell pwd}/${srcdir}\" \
+	-DWEBKIT_DERIVED_SRC_DIR=\"${shell pwd}/${top_builddir}/DerivedSources\" \
 	$(javascriptcore_cppflags) \
 	-I$(srcdir)/Source/JavaScriptCore \
 	-I$(srcdir)/Source \
@@ -56,6 +57,12 @@ webkit2_tests_ldflags = \
 	-no-install \
 	-no-fast-install
 
+DerivedSources/WebKit2/webkit2gtk-tests-resources.gresource: Source/WebKit2/UIProcess/API/gtk/tests/resources/webkit2gtk-tests.gresource.xml $(shell $(GLIB_COMPILE_RESOURCES) --generate-dependencies $(srcdir)/Source/WebKit2/UIProcess/API/gtk/tests/resources/webkit2gtk-tests.gresource.xml)
+	$(AM_V_GEN) $(GLIB_COMPILE_RESOURCES) --target=$@ --sourcedir=$(srcdir) $<
+
+DISTCLEANFILES += DerivedSources/WebKit2/webkit2gtk-tests-resources.gresource
+noinst_DATA += DerivedSources/WebKit2/webkit2gtk-tests-resources.gresource
+
 noinst_LTLIBRARIES += Libraries/libWebKit2APITestCore.la
 Libraries_libWebKit2APITestCore_la_SOURCES = \
 	Source/WebKit2/UIProcess/API/gtk/tests/LoadTrackingTest.cpp \
@@ -70,7 +77,9 @@ Libraries_libWebKit2APITestCore_la_CPPFLAGS = $(webkit2_tests_cppflags)
 
 EXTRA_DIST += \
 	Source/WebKit2/UIProcess/API/gtk/tests/resources/test-cert.pem \
-	Source/WebKit2/UIProcess/API/gtk/tests/resources/test-key.pem
+	Source/WebKit2/UIProcess/API/gtk/tests/resources/test-key.pem \
+	Source/WebKit2/UIProcess/API/gtk/tests/resources/webkit2gtk-tests.gresource.xml \
+	Source/WebKit2/UIProcess/API/gtk/tests/resources/link-title.js
 
 Programs_WebKit2APITests_TestWebKitWebContext_SOURCES = \
 	Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitWebContext.cpp
