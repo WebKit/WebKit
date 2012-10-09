@@ -53,7 +53,7 @@ struct SameSizeAsRenderTableCell : public RenderBlock {
 };
 
 COMPILE_ASSERT(sizeof(RenderTableCell) == sizeof(SameSizeAsRenderTableCell), RenderTableCell_should_stay_small);
-
+COMPILE_ASSERT(sizeof(CollapsedBorderValue) == 8, CollapsedBorderValue_should_stay_small);
 
 RenderTableCell::RenderTableCell(Node* node)
     : RenderBlock(node)

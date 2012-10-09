@@ -32,42 +32,44 @@ namespace WebCore {
 class CollapsedBorderValue {
 public:
     CollapsedBorderValue()
-        : m_precedence(BOFF)
+        : m_color(0)
+        , m_colorIsValid(false)
+        , m_width(0)
+        , m_style(BNONE)
+        , m_precedence(BOFF)
+        , m_transparent(false)
     {
     }
 
-    // This copy constructor is for preventing GCC (x86) from creating an
-    // unexpected one as written in <http://webkit.org/b/81502>.
-    CollapsedBorderValue(const CollapsedBorderValue& other)
-        : m_border(other.m_border)
-        , m_borderColor(other.m_borderColor)
-        , m_precedence(other.m_precedence)
+    CollapsedBorderValue(const BorderValue& border, const Color& color, EBorderPrecedence precedence)
+        : m_color(color.rgb())
+        , m_colorIsValid(color.isValid())
+        , m_width(border.nonZero() ? border.width() : 0)
+        , m_style(border.style())
+        , m_precedence(precedence)
+        , m_transparent(border.isTransparent())
     {
     }
 
-    CollapsedBorderValue(const BorderValue& b, Color c, EBorderPrecedence p)
-        : m_border(b)
-        , m_borderColor(c)
-        , m_precedence(p)
-    {
-    }
-
-    int width() const { return m_border.nonZero() ? m_border.width() : 0; }
-    EBorderStyle style() const { return m_border.style(); }
+    unsigned width() const { return m_width; }
+    EBorderStyle style() const { return static_cast<EBorderStyle>(m_style); }
     bool exists() const { return m_precedence != BOFF; }
-    const Color& color() const { return m_borderColor; }
-    bool isTransparent() const { return m_border.isTransparent(); }
-    EBorderPrecedence precedence() const { return m_precedence; }
+    Color color() const { return Color(m_color, m_colorIsValid); }
+    bool isTransparent() const { return m_transparent; }
+    EBorderPrecedence precedence() const { return static_cast<EBorderPrecedence>(m_precedence); }
 
     bool isSameIgnoringColor(const CollapsedBorderValue& o) const
     {
-        return m_border.width() == o.m_border.width() && m_border.style() == o.m_border.style() && m_precedence == o.m_precedence;
+        return width() == o.width() && style() == o.style() && precedence() == o.precedence();
     }
 
 private:
-    BorderValue m_border;
-    Color m_borderColor;
-    EBorderPrecedence m_precedence;
+    RGBA32 m_color;
+    unsigned m_colorIsValid : 1;
+    unsigned m_width : 23;
+    unsigned m_style : 4; // EBorderStyle
+    unsigned m_precedence : 3; // EBorderPrecedence
+    unsigned m_transparent : 1;
 };
 
 } // namespace WebCore

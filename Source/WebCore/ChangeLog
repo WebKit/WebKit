@@ -1,3 +1,33 @@
+2012-10-08  Andreas Kling  <kling@webkit.org>
+
+        1.18MB below RenderTableSection::setCachedCollapsedBorderValue() on Membuster3.
+        <http://webkit.org/b/98670>
+        <rdar://problem/12454276>
+
+        Reviewed by Anders Carlsson.
+
+        Refactor CollapsedBorderValue to only store the bits and pieces from the BorderValue
+        that it actually needs. Packed the whole thing into 64 bits.
+
+        Reduces memory consumption by 547kB on Membuster3.
+
+        * rendering/RenderTableCell.cpp:
+
+            Add compile-time size assertion for CollapsedBorderValue.
+
+        * rendering/style/CollapsedBorderValue.h:
+        (WebCore::CollapsedBorderValue::CollapsedBorderValue):
+        (WebCore::CollapsedBorderValue::width):
+        (WebCore::CollapsedBorderValue::style):
+        (WebCore::CollapsedBorderValue::color):
+        (WebCore::CollapsedBorderValue::isTransparent):
+        (WebCore::CollapsedBorderValue::precedence):
+        (WebCore::CollapsedBorderValue::isSameIgnoringColor):
+        (CollapsedBorderValue):
+
+            Apply shrinkwrap to CollapsedBorderValue. Removed specialized copy constructor since
+            the class only has primitive members now.
+
 2012-10-08  Yoshifumi Inoue  <yosin@chromium.org>
 
         HTMLSelectElement::typeAheadFind depends on implementation dependent behavior
