@@ -3389,7 +3389,7 @@ webkit.org/b/87772 [ Debug ] svg/dom/viewspec-parser-5.html [ Timeout ]
 
 webkit.org/b/87880 [ Release ] fast/layers/scroll-with-transform-composited-layer.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/87886 [ Linux ] perf/mouse-event.html [ Failure Pass ]
+webkit.org/b/87886 [ Linux Release ] perf/mouse-event.html [ Failure Pass ]
 
 webkit.org/b/88124 [ Debug ] fast/css/absolute-child-with-percent-height-inside-relative-parent.html [ Failure Pass ]
 

@@ -1,3 +1,15 @@
+2012-10-09  Dirk Pranke  <dpranke@chromium.org>
+
+        [chromium] Don't run perf/mouse-event on debug builds
+
+        Unreviewed, expectations change.
+
+        We don't normally run any perf tests on a debug build, but this
+        one was getting run due to an improperly scoped expectation
+        overriding the wontfix rule.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-09  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: open-in-upgradeneeded layout test
