@@ -403,7 +403,7 @@ void RenderBox::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumul
 
 void RenderBox::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
-    quads.append(localToAbsoluteQuad(FloatRect(0, 0, width(), height()), 0 /* mode */, wasFixed));
+    quads.append(localToAbsoluteQuad(FloatRect(0, 0, width(), height()), false, wasFixed));
 }
 
 void RenderBox::updateLayerTransform()
@@ -436,7 +436,7 @@ IntRect RenderBox::absoluteContentBox() const
 {
     // This is wrong with transforms and flipped writing modes.
     IntRect rect = pixelSnappedIntRect(contentBoxRect());
-    FloatPoint absPos = localToAbsolute();
+    FloatPoint absPos = localToAbsolute(FloatPoint());
     rect.move(absPos.x(), absPos.y());
     return rect;
 }
@@ -1258,7 +1258,7 @@ LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
     return cb->adjustContentBoxLogicalHeightForBoxSizing(logicalHeightLength.value());
 }
 
-void RenderBox::mapLocalToContainer(RenderLayerModelObject* repaintContainer, TransformState& transformState, MapCoordinatesFlags mode, bool* wasFixed) const
+void RenderBox::mapLocalToContainer(RenderLayerModelObject* repaintContainer, TransformState& transformState, MapLocalToContainerFlags mode, bool* wasFixed) const
 {
     if (repaintContainer == this)
         return;
@@ -1363,18 +1363,18 @@ const RenderObject* RenderBox::pushMappingToContainer(const RenderLayerModelObje
     return ancestorSkipped ? ancestorToStopAt : container;
 }
 
-void RenderBox::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, TransformState& transformState) const
+void RenderBox::mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState& transformState) const
 {
     bool isFixedPos = style()->position() == FixedPosition;
     bool hasTransform = hasLayer() && layer()->transform();
-    if (hasTransform && !isFixedPos) {
+    if (hasTransform) {
         // If this box has a transform, it acts as a fixed position container for fixed descendants,
         // and may itself also be fixed position. So propagate 'fixed' up only if this box is fixed position.
-        mode &= ~IsFixed;
-    } else if (isFixedPos)
-        mode |= IsFixed;
+        fixed &= isFixedPos;
+    } else
+        fixed |= isFixedPos;
 
-    RenderBoxModelObject::mapAbsoluteToLocalPoint(mode, transformState);
+    RenderBoxModelObject::mapAbsoluteToLocalPoint(fixed, useTransforms, transformState);
 }
 
 LayoutSize RenderBox::offsetFromContainer(RenderObject* o, const LayoutPoint& point, bool* offsetDependsOnPoint) const

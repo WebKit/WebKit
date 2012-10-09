@@ -1,3 +1,20 @@
+2012-10-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r130811 and r130821.
+        http://trac.webkit.org/changeset/130811
+        http://trac.webkit.org/changeset/130821
+        https://bugs.webkit.org/show_bug.cgi?id=98831
+
+        Broke date-suggestion-picker-appearance-with-scroll-bar.html
+        (Requested by abarth|gardening on #webkit).
+
+        * src/FindInPageCoordinates.cpp:
+        (WebKit::toNormalizedRect):
+        * src/LinkHighlight.cpp:
+        (WebKit::convertTargetSpaceQuadToCompositedLayer):
+        * src/WebInputEventConversion.cpp:
+        (WebKit::convertLocationForRenderObject):
+
 2012-10-09  Ben Murdoch  <benm@google.com>
 
         [chromium][Android] Add WebSecurityOrigin::grantLoadLocalResources()

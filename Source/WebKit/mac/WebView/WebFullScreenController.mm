@@ -56,7 +56,7 @@ static IntRect screenRectOfContents(Element* element)
     ASSERT(element);
     if (element->renderer() && element->renderer()->hasLayer() && element->renderer()->enclosingLayer()->isComposited()) {
         FloatQuad contentsBox = static_cast<FloatRect>(element->renderer()->enclosingLayer()->backing()->contentsBox());
-        contentsBox = element->renderer()->localToAbsoluteQuad(contentsBox, SnapOffsetForTransforms);
+        contentsBox = element->renderer()->localToAbsoluteQuad(contentsBox);
         return element->renderer()->view()->frameView()->contentsToScreen(contentsBox.enclosingBoundingBox());
     }
     return element->screenRect();

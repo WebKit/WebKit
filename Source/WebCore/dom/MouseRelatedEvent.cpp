@@ -166,7 +166,7 @@ void MouseRelatedEvent::computeRelativePosition()
     // Adjust offsetLocation to be relative to the target's position.
     if (!isSimulated()) {
         if (RenderObject* r = targetNode->renderer()) {
-            FloatPoint localPos = r->absoluteToLocal(absoluteLocation(), UseTransforms | SnapOffsetForTransforms);
+            FloatPoint localPos = r->absoluteToLocal(absoluteLocation(), false, true);
             m_offsetLocation = roundedLayoutPoint(localPos);
             float scaleFactor = 1 / (pageZoomFactor(this) * frameScaleFactor(this));
             if (scaleFactor != 1.0f)

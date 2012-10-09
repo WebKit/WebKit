@@ -746,7 +746,7 @@ bool ContainerNode::getUpperLeftCorner(FloatPoint& point) const
     RenderObject* p = o;
 
     if (!o->isInline() || o->isReplaced()) {
-        point = o->localToAbsolute(FloatPoint(), UseTransforms | SnapOffsetForTransforms);
+        point = o->localToAbsolute(FloatPoint(), false, true);
         return true;
     }
 
@@ -771,7 +771,7 @@ bool ContainerNode::getUpperLeftCorner(FloatPoint& point) const
         ASSERT(o);
 
         if (!o->isInline() || o->isReplaced()) {
-            point = o->localToAbsolute(FloatPoint(), UseTransforms | SnapOffsetForTransforms);
+            point = o->localToAbsolute(FloatPoint(), false, true);
             return true;
         }
 
@@ -785,7 +785,7 @@ bool ContainerNode::getUpperLeftCorner(FloatPoint& point) const
                 RenderBox* box = toRenderBox(o);
                 point.moveBy(box->location());
             }
-            point = o->container()->localToAbsolute(point, UseTransforms | SnapOffsetForTransforms);
+            point = o->container()->localToAbsolute(point, false, true);
             return true;
         }
     }
@@ -807,7 +807,7 @@ bool ContainerNode::getLowerRightCorner(FloatPoint& point) const
     RenderObject* o = renderer();
     if (!o->isInline() || o->isReplaced()) {
         RenderBox* box = toRenderBox(o);
-        point = o->localToAbsolute(LayoutPoint(box->size()), UseTransforms | SnapOffsetForTransforms);
+        point = o->localToAbsolute(LayoutPoint(box->size()), false, true);
         return true;
     }
 
@@ -840,7 +840,7 @@ bool ContainerNode::getLowerRightCorner(FloatPoint& point) const
                 RenderBox* box = toRenderBox(o);
                 point.moveBy(box->frameRect().maxXMaxYCorner());
             }
-            point = o->container()->localToAbsolute(point, UseTransforms | SnapOffsetForTransforms);
+            point = o->container()->localToAbsolute(point, false, true);
             return true;
         }
     }

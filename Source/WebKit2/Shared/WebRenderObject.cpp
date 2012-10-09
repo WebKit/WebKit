@@ -75,7 +75,7 @@ WebRenderObject::WebRenderObject(RenderObject* renderer, bool shouldIncludeDesce
     }
 
     // FIXME: broken with transforms
-    m_absolutePosition = flooredIntPoint(renderer->localToAbsolute());
+    m_absolutePosition = flooredIntPoint(renderer->localToAbsolute(FloatPoint()));
 
     if (renderer->isBox())
         m_frameRect = toRenderBox(renderer)->pixelSnappedFrameRect();

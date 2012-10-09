@@ -399,7 +399,7 @@ static int getWebInputModifiers(const UIEventWithKeyState& event)
 
 static IntPoint convertLocationForRenderObject(const LayoutPoint& location, const WebCore::RenderObject& renderObject)
 {
-    return roundedIntPoint(renderObject.absoluteToLocal(location, UseTransforms | SnapOffsetForTransforms));
+    return roundedIntPoint(renderObject.absoluteToLocal(location, false, true));
 }
 
 static void updateWebMouseEventFromWebCoreMouseEvent(const MouseEvent& event, const Widget& widget, const WebCore::RenderObject& renderObject, WebMouseEvent& webEvent)

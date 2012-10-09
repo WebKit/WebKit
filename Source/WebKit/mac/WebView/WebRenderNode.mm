@@ -99,7 +99,7 @@ static WebRenderNode *copyRenderNode(RenderObject* node)
     Frame* frame = frameView ? frameView->frame() : 0;
 
     // FIXME: broken with transforms
-    FloatPoint absPos = node->localToAbsolute();
+    FloatPoint absPos = node->localToAbsolute(FloatPoint());
     int x = 0;
     int y = 0;
     int width = 0;

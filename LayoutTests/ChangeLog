@@ -1,3 +1,33 @@
+2012-10-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r130811 and r130821.
+        http://trac.webkit.org/changeset/130811
+        http://trac.webkit.org/changeset/130821
+        https://bugs.webkit.org/show_bug.cgi?id=98831
+
+        Broke date-suggestion-picker-appearance-with-scroll-bar.html
+        (Requested by abarth|gardening on #webkit).
+
+        * fast/sub-pixel/sub-pixel-iframe-copy-on-scroll.html: Removed.
+        * platform/chromium-linux/fast/repaint/repaint-across-writing-mode-boundary-expected.png:
+        * platform/chromium-linux/fast/sub-pixel/sub-pixel-iframe-copy-on-scroll-expected.png: Removed.
+        * platform/chromium-linux/fast/sub-pixel/sub-pixel-iframe-copy-on-scroll-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/sub-pixel/sub-pixel-iframe-copy-on-scroll-expected.png: Removed.
+        * platform/chromium-mac/fast/repaint/repaint-across-writing-mode-boundary-expected.png:
+        * platform/chromium-mac/fast/sub-pixel/sub-pixel-iframe-copy-on-scroll-expected.png: Removed.
+        * platform/chromium-mac/fast/sub-pixel/sub-pixel-iframe-copy-on-scroll-expected.txt: Removed.
+        * platform/mac-lion/TestExpectations:
+        * platform/mac-snowleopard/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt-4.8/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win-wk2/TestExpectations:
+        * platform/win-xp/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2012-10-09  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: 5 accessibility tests just need minor tweaks to pass on chromium

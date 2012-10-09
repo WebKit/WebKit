@@ -51,7 +51,7 @@ LayoutState::LayoutState(LayoutState* prev, RenderBox* renderer, const LayoutSiz
     bool fixed = renderer->isOutOfFlowPositioned() && renderer->style()->position() == FixedPosition;
     if (fixed) {
         // FIXME: This doesn't work correctly with transforms.
-        FloatPoint fixedOffset = renderer->view()->localToAbsolute(FloatPoint(), IsFixed);
+        FloatPoint fixedOffset = renderer->view()->localToAbsolute(FloatPoint(), true);
         m_paintOffset = LayoutSize(fixedOffset.x(), fixedOffset.y()) + offset;
     } else
         m_paintOffset = prev->m_paintOffset + offset;
@@ -148,7 +148,7 @@ LayoutState::LayoutState(RenderObject* root)
 #endif
 {
     RenderObject* container = root->container();
-    FloatPoint absContentPoint = container->localToAbsolute(FloatPoint(), UseTransforms | SnapOffsetForTransforms);
+    FloatPoint absContentPoint = container->localToAbsolute(FloatPoint(), false, true);
     m_paintOffset = LayoutSize(absContentPoint.x(), absContentPoint.y());
 
     if (container->hasOverflowClip()) {

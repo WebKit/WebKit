@@ -451,7 +451,7 @@ AffineTransform SVGSVGElement::localCoordinateSpaceTransform(SVGLocatable::CTMSc
 
             // Translate in our CSS parent coordinate space
             // FIXME: This doesn't work correctly with CSS transforms.
-            location = renderer->localToAbsolute(location, UseTransforms);
+            location = renderer->localToAbsolute(location, false, true);
             location.scale(zoomFactor, zoomFactor);
 
             // Be careful here! localToBorderBoxTransform() included the x/y offset coming from the viewBoxToViewTransform(),

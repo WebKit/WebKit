@@ -1,5 +1,134 @@
 2012-10-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r130811 and r130821.
+        http://trac.webkit.org/changeset/130811
+        http://trac.webkit.org/changeset/130821
+        https://bugs.webkit.org/show_bug.cgi?id=98831
+
+        Broke date-suggestion-picker-appearance-with-scroll-bar.html
+        (Requested by abarth|gardening on #webkit).
+
+        * WebCore.exp.in:
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getUpperLeftCorner):
+        (WebCore::ContainerNode::getLowerRightCorner):
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::computeRelativePosition):
+        * dom/Node.cpp:
+        (WebCore::Node::convertToPage):
+        (WebCore::Node::convertFromPage):
+        * editing/FrameSelection.cpp:
+        (WebCore::CaretBase::absoluteBoundsForLocalRect):
+        * editing/RenderedPosition.cpp:
+        (WebCore::RenderedPosition::absoluteRect):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::absoluteCaretBounds):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::setPositionFromPoint):
+        * html/shadow/SpinButtonElement.cpp:
+        (WebCore::SpinButtonElement::defaultEventHandler):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::convertFromRenderer):
+        (WebCore::FrameView::convertToRenderer):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintDocumentMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::computeRectForReplacementMarker):
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::absoluteQuads):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::absoluteQuads):
+        (WebCore::RenderBox::absoluteContentBox):
+        (WebCore::RenderBox::mapLocalToContainer):
+        (WebCore::RenderBox::mapAbsoluteToLocalPoint):
+        * rendering/RenderBox.h:
+        (RenderBox):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::computeStickyPositionConstraints):
+        (WebCore::RenderBoxModelObject::mapAbsoluteToLocalPoint):
+        * rendering/RenderBoxModelObject.h:
+        (RenderBoxModelObject):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::isInUnavailablePluginIndicator):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::userResize):
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::RenderGeometryMap::absolutePoint):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::mapLocalToContainer):
+        * rendering/RenderInline.h:
+        (RenderInline):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::absoluteToContents):
+        (WebCore::RenderLayer::convertToLayerCoords):
+        (WebCore::RenderLayer::scrollTo):
+        (WebCore::RenderLayer::calculateClipRects):
+        (WebCore::RenderLayer::childrenClipRect):
+        (WebCore::RenderLayer::selfClipRect):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::contentsVisible):
+        * rendering/RenderMediaControls.cpp:
+        (WebCore::RenderMediaControls::volumeSliderOffsetFromMuteButton):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::showPopup):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::absoluteFocusRingQuads):
+        (WebCore::RenderObject::localToAbsolute):
+        (WebCore::RenderObject::absoluteToLocal):
+        (WebCore::RenderObject::mapLocalToContainer):
+        (WebCore::RenderObject::mapAbsoluteToLocalPoint):
+        (WebCore::RenderObject::localToContainerQuad):
+        (WebCore::RenderObject::localToContainerPoint):
+        * rendering/RenderObject.h:
+        (RenderObject):
+        (WebCore::RenderObject::localToAbsoluteQuad):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteRectsForRange):
+        (WebCore::RenderText::absoluteQuads):
+        (WebCore::RenderText::absoluteQuadsForRange):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::volumeSliderOffsetFromMuteButton):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::mapLocalToContainer):
+        (WebCore::RenderView::mapAbsoluteToLocalPoint):
+        (WebCore::RenderView::selectionBounds):
+        * rendering/RenderView.h:
+        (RenderView):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::updateWidgetGeometry):
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::mapLocalToContainer):
+        * rendering/svg/RenderSVGForeignObject.h:
+        (RenderSVGForeignObject):
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::mapLocalToContainer):
+        * rendering/svg/RenderSVGInline.h:
+        (RenderSVGInline):
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::mapLocalToContainer):
+        (WebCore::RenderSVGModelObject::absoluteQuads):
+        * rendering/svg/RenderSVGModelObject.h:
+        (RenderSVGModelObject):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::mapLocalToContainer):
+        * rendering/svg/RenderSVGRoot.h:
+        (RenderSVGRoot):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::mapLocalToContainer):
+        (WebCore::RenderSVGText::absoluteQuads):
+        * rendering/svg/RenderSVGText.h:
+        (RenderSVGText):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::mapLocalToContainer):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::localCoordinateSpaceTransform):
+
+2012-10-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r130812.
         http://trac.webkit.org/changeset/130812
         https://bugs.webkit.org/show_bug.cgi?id=98826
