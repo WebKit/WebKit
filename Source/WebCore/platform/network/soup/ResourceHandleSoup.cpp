@@ -686,10 +686,10 @@ static void setSoupRequestInitiaingPageID(SoupRequest* request, uint64_t initiat
 
 static bool createSoupMessageForHandleAndRequest(ResourceHandle* handle, const ResourceRequest& request)
 {
+    ResourceHandleInternal* d = handle->getInternal();
     ASSERT(handle);
     ASSERT(d->m_soupRequest);
 
-    ResourceHandleInternal* d = handle->getInternal();
     d->m_soupMessage = adoptGRef(soup_request_http_get_message(SOUP_REQUEST_HTTP(d->m_soupRequest.get())));
     if (!d->m_soupMessage)
         return false;

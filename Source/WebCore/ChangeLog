@@ -1,3 +1,13 @@
+2012-10-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Try to fix the debug build after r130699
+
+        Move the assignment of the ResourceHandleInternal local to before
+        the include statement where it is used.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::createSoupMessageForHandleAndRequest):
+
 2012-10-08  Nate Chapin  <japhet@chromium.org>
 
         Post-r130226 Cleanup: Comment a complicated if statement and make it a helper.
