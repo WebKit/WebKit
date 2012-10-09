@@ -1,3 +1,23 @@
+2012-10-09  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: open-in-upgradeneeded layout test
+        https://bugs.webkit.org/show_bug.cgi?id=95912
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/intversion-open-in-upgradeneeded-expected.txt: Added.
+        * storage/indexeddb/intversion-open-in-upgradeneeded.html: Added.
+        * storage/indexeddb/resources/intversion-open-in-upgradeneeded.js: Added.
+        (test):
+        (deleteSuccess):
+        (upgradeNeeded1.transaction.oncomplete):
+        (upgradeNeeded1):
+        (openSuccess1):
+        (onVersionChange):
+        (onBlocked):
+        (upgradeNeeded2):
+        (openSuccess2):
+
 2012-10-09  Tullio Lucena  <tullio.lucena@openbossa.org>
 
         Need implement isWordTextBreak for QT, and WinCE for visual word movement functionality
