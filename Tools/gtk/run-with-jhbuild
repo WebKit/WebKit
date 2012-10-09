@@ -22,7 +22,9 @@ import os
 import subprocess
 import sys
 
-if not os.path.exists(common.top_level_path('WebKitBuild', 'Dependencies')):
+base_build_dir = os.getenv('WEBKITOUTPUTDIR', common.top_level_path('WebKitBuild'))
+
+if not os.path.exists(os.path.join(base_build_dir, 'Dependencies')):
     os.execve(sys.argv[1], sys.argv[1])
 else:
     wrapper = common.top_level_path('Tools', 'jhbuild', 'jhbuild-wrapper')
