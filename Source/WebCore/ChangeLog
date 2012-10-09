@@ -1,3 +1,20 @@
+2012-10-09  Ben Wagner  <bungeman@chromium.org>
+
+        Disable hinting when webkit-font-smoothing:antialiased is used on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=98061
+
+        Reviewed by Stephen White.
+
+        Normal anti-aliased text matches subpixel anti-aliased text.
+        However, text marked with webkit-font-smoothing:antialiased should be drawn without hinting to match Safari.
+        See crbug.com/152304 . 
+
+        Test is fast/css/font-smoothing.html, but DRT runs with font smoothing disabled, so no change visible. 
+
+        * platform/graphics/skia/FontSkia.cpp:
+        (WebCore::setupPaint):
+        Set kNo_Hinting when webkit-font-smoothing is antialiased.
+
 2012-10-09  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Shaders] Create constants for vertex attribute sizes and offsets
