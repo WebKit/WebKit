@@ -310,7 +310,7 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
         RefPtr<IDBKey> autoIncKey = objectStore->generateKey(transaction);
         keyWasGenerated = true;
         if (!autoIncKey->isValid()) {
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "Maximum key generator value reached."));
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, "Maximum key generator value reached."));
             return;
         }
         key = autoIncKey;

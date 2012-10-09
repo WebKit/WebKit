@@ -169,8 +169,8 @@ request = store.get(2)
 PASS Got "a" for key: 1
 PASS Got "b" for key: 9007199254740992
 Error event fired auto-incrementing past 2^53 (as expected)
-PASS event.target.errorCode is IDBDatabaseException.DATA_ERR
-PASS event.target.error.name is 'DataError'
+PASS event.target.errorCode is IDBDatabaseException.CONSTRAINT_ERR
+PASS event.target.error.name is 'ConstraintError'
 event.preventDefault()
 PASS Got "d" for key: 2
 db.close()
