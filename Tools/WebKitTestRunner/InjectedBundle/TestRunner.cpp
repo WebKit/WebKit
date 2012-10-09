@@ -193,13 +193,6 @@ void TestRunner::suspendAnimations()
     WKBundleFrameSuspendAnimations(mainFrame);
 }
 
-JSRetainPtr<JSStringRef> TestRunner::layerTreeAsText() const
-{
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
-    WKRetainPtr<WKStringRef> text(AdoptWK, WKBundleFrameCopyLayerTreeAsText(mainFrame));
-    return toJS(text);
-}
-
 void TestRunner::addUserScript(JSStringRef source, bool runAtStart, bool allFrames)
 {
     WKRetainPtr<WKStringRef> sourceWK = toWK(source);

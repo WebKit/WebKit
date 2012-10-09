@@ -112,13 +112,6 @@ JSValueRef TestRunner::computedStyleIncludingVisitedInfo(JSContextRef context, J
     return DumpRenderTreeSupportGtk::computedStyleIncludingVisitedInfo(context, value);
 }
 
-JSRetainPtr<JSStringRef> TestRunner::layerTreeAsText() const
-{
-    // FIXME: implement
-    JSRetainPtr<JSStringRef> string(Adopt, JSStringCreateWithUTF8CString(""));
-    return string;
-}
-
 size_t TestRunner::webHistoryItemCount()
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);

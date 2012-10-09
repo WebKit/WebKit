@@ -270,7 +270,6 @@ public Q_SLOTS:
     long long localStorageDiskUsageForOrigin(const QString& originIdentifier);
     void observeStorageTrackerNotifications(unsigned number);
     void syncLocalStorage();
-    QString layerTreeAsText();
     void setTextDirection(const QString& directionName);
     void goBack();
     void setDefersLoading(bool);

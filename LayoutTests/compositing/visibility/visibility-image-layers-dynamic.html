@@ -61,14 +61,14 @@
         firstImage.style.visibility = 'visible';
 
         if (window.testRunner)
-          document.getElementById('layers2').innerText = testRunner.layerTreeAsText();
+          document.getElementById('layers2').innerText = window.internals.layerTreeAsText(document);
 
           window.setTimeout(function() {
             var secondContainer = document.querySelectorAll('.container')[1];
             secondContainer.style.visibility = 'visible';
 
             if (window.testRunner) {
-              document.getElementById('layers3').innerText = testRunner.layerTreeAsText();
+              document.getElementById('layers3').innerText = window.internals.layerTreeAsText(document);
               testRunner.notifyDone();
             }
           }, 0);

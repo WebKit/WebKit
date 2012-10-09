@@ -336,8 +336,6 @@ public:
     // Simulate a request an embedding application could make, populating per-session credential storage.
     void authenticateSession(JSStringRef url, JSStringRef username, JSStringRef password);
 
-    JSRetainPtr<JSStringRef> layerTreeAsText() const;
-
     JSRetainPtr<JSStringRef> markerTextForListItem(JSContextRef, JSValueRef nodeObject) const;
 
     JSValueRef originsWithLocalStorage(JSContextRef);

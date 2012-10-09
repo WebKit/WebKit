@@ -355,8 +355,6 @@ public:
 #endif
     void startSpeechInput(const CppArgumentList&, CppVariant*);
 
-    void layerTreeAsText(const CppArgumentList& args, CppVariant* result);
-
     void loseCompositorContext(const CppArgumentList& args, CppVariant* result);
 
     void markerTextForListItem(const CppArgumentList&, CppVariant*);

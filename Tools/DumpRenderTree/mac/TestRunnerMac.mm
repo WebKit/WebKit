@@ -275,12 +275,6 @@ JSValueRef TestRunner::computedStyleIncludingVisitedInfo(JSContextRef context, J
     return [[mainFrame webView] _computedStyleIncludingVisitedInfo:context forElement:value];
 }
 
-JSRetainPtr<JSStringRef> TestRunner::layerTreeAsText() const
-{
-    JSRetainPtr<JSStringRef> string(Adopt, JSStringCreateWithCFString((CFStringRef)[mainFrame _layerTreeAsText]));
-    return string;
-}
-
 JSRetainPtr<JSStringRef> TestRunner::markerTextForListItem(JSContextRef context, JSValueRef nodeObject) const
 {
     DOMElement *element = [DOMElement _DOMElementFromJSContext:context value:nodeObject];

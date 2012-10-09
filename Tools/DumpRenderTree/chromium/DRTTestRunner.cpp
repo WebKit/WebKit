@@ -166,7 +166,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("findString", &DRTTestRunner::findString);
     bindMethod("isCommandEnabled", &DRTTestRunner::isCommandEnabled);
     bindMethod("hasCustomPageSizeStyle", &DRTTestRunner::hasCustomPageSizeStyle);
-    bindMethod("layerTreeAsText", &DRTTestRunner::layerTreeAsText);
     bindMethod("loseCompositorContext", &DRTTestRunner::loseCompositorContext);
     bindMethod("markerTextForListItem", &DRTTestRunner::markerTextForListItem);
     bindMethod("notifyDone", &DRTTestRunner::notifyDone);
@@ -1902,11 +1901,6 @@ void DRTTestRunner::startSpeechInput(const CppArgumentList& arguments, CppVarian
         return;
 
     input->startSpeechInput();
-}
-
-void DRTTestRunner::layerTreeAsText(const CppArgumentList& args, CppVariant* result)
-{
-    result->set(m_shell->webView()->mainFrame()->layerTreeAsText(m_showDebugLayerTree).utf8());
 }
 
 void DRTTestRunner::loseCompositorContext(const CppArgumentList& args, CppVariant*)

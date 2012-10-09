@@ -940,11 +940,6 @@ void TestRunner::setAutomaticLinkDetectionEnabled(bool)
     // FIXME: Implement this.
 }
 
-QString TestRunner::layerTreeAsText()
-{
-    return DumpRenderTreeSupportQt::layerTreeAsText(m_drt->webPage()->mainFrame());
-}
-
 void TestRunner::setTextDirection(const QString& directionName)
 {
     if (directionName == "auto")

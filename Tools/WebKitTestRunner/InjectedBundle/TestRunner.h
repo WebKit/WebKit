@@ -132,9 +132,6 @@ public:
     bool pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, double time, JSStringRef elementId);
     void suspendAnimations();
     
-    // Compositing testing.
-    JSRetainPtr<JSStringRef> layerTreeAsText() const;
-    
     // UserContent testing.
     void addUserScript(JSStringRef source, bool runAtStart, bool allFrames);
     void addUserStyleSheet(JSStringRef source, bool allFrames);

@@ -117,13 +117,6 @@ JSValueRef TestRunner::computedStyleIncludingVisitedInfo(JSContextRef context, J
     return DumpRenderTreeSupportEfl::computedStyleIncludingVisitedInfo(context, value);
 }
 
-JSRetainPtr<JSStringRef> TestRunner::layerTreeAsText() const
-{
-    String result = DumpRenderTreeSupportEfl::layerTreeAsText(browser->mainFrame());
-
-    return JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithUTF8CString(result.utf8().data()));
-}
-
 size_t TestRunner::webHistoryItemCount()
 {
     const Ewk_History* history = ewk_view_history_get(browser->mainView());

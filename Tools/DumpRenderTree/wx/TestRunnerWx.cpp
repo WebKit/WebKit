@@ -497,11 +497,6 @@ bool TestRunner::callShouldCloseOnWebView()
     return false;
 }
 
-JSRetainPtr<JSStringRef> TestRunner::layerTreeAsText() const
-{
-    return 0;
-}
-
 JSRetainPtr<JSStringRef> TestRunner::markerTextForListItem(JSContextRef context, JSValueRef nodeObject) const
 {
     return 0;

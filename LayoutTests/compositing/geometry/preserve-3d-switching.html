@@ -60,10 +60,8 @@
             setTimeout(function() {
                 document.getElementById("parent").style.webkitTransformStyle = "preserve-3d";
                 if (window.testRunner) {
-                    if (testRunner.layerTreeAsText) {
-                        var layerTree = window.internals.layerTreeAsText(document);
-                        document.getElementById("layerTree").innerHTML = "<pre>" + layerTree + "</pre>";
-                    }
+                    var layerTree = window.internals.layerTreeAsText(document);
+                    document.getElementById("layerTree").innerHTML = "<pre>" + layerTree + "</pre>";
                     testRunner.notifyDone();
                 }
             }, timeout);
