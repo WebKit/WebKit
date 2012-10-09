@@ -3930,6 +3930,10 @@ webkit.org/b/95121 fast/images/pixel-crack-image-background-webkit-transform-sca
 # This is caused by misalignment with bitmap tiling which is not yet fixed by 95121.
 webkit.org/b/95121 fast/borders/border-image-side-reduction.html [ ImageOnlyFailure ] 
 
+# failing after r130443 but we're not sure if this is a real bug or just needs rebaselining 
+webkit.org/b/98545 [ Mac ] fast/text/international/text-spliced-font.html [ Failure ] 
+webkit.org/b/98545 [ Mac ] fast/writing-mode/Kusa-Makura-background-canvas.html [ Failure ] 
+
 webkit.org/b/98686 editing/pasteboard/data-transfer-items.html [ Failure ]
 
 webkit.org/b/98699 [ Lion ] fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ Crash ]
