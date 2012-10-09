@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,11 +30,13 @@
 #include "Plugin.h"
 #include "PluginController.h"
 #include "WebFrame.h"
+#include <WebCore/Image.h>
 #include <WebCore/MediaCanStartListener.h>
 #include <WebCore/PluginViewBase.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/RunLoop.h>
+#include <WebCore/Timer.h>
 #include <wtf/Deque.h>
 
 // FIXME: Eventually this should move to WebCore.
@@ -103,6 +105,8 @@ private:
     void cancelAllStreams();
 
     void redeliverManualStream();
+
+    void pluginSnapshotTimerFired(WebCore::DeferrableOneShotTimer<PluginView>*);
 
     // WebCore::PluginViewBase
 #if PLATFORM(MAC)
@@ -177,6 +181,7 @@ private:
 
     virtual void didInitializePlugin();
     virtual void didFailToInitializePlugin();
+    void destroyPluginAndReset();
 
     // WebFrame::LoadListener
     virtual void didFinishLoad(WebFrame*);
@@ -222,7 +227,10 @@ private:
     WebCore::ResourceError m_manualStreamError;
     RefPtr<WebCore::SharedBuffer> m_manualStreamData;
     
-    RefPtr<ShareableBitmap> m_snapshot;
+    // This snapshot is used to avoid side effects should the plugin run JS during painting.
+    RefPtr<ShareableBitmap> m_transientPaintingSnapshot;
+    // This timer is used when plugin snapshotting is enabled, to capture a plugin placeholder.
+    WebCore::DeferrableOneShotTimer<PluginView> m_pluginSnapshotTimer;
 };
 
 } // namespace WebKit

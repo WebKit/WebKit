@@ -90,7 +90,7 @@ private:
     void updateWidgetIfNecessary();
     virtual bool useFallbackContent() const { return false; }
     
-    virtual void updateSnapshot(Image*) OVERRIDE;
+    virtual void updateSnapshot(PassRefPtr<Image>) OVERRIDE;
 
     bool m_needsWidgetUpdate;
     bool m_shouldPreferPlugInsForImages;

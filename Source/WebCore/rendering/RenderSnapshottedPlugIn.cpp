@@ -53,13 +53,13 @@ HTMLPlugInImageElement* RenderSnapshottedPlugIn::plugInImageElement() const
     return static_cast<HTMLPlugInImageElement*>(node());
 }
 
-void RenderSnapshottedPlugIn::updateSnapshot(Image* image)
+void RenderSnapshottedPlugIn::updateSnapshot(PassRefPtr<Image> image)
 {
     // Zero-size plugins will have no image.
     if (!image)
         return;
 
-    m_snapshotResource->setCachedImage(new CachedImage(image));
+    m_snapshotResource->setCachedImage(new CachedImage(image.get()));
     repaint();
 }
 

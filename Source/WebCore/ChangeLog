@@ -1,3 +1,27 @@
+2012-10-09  Jon Lee  <jonlee@apple.com>
+
+        [WK2] Have plugins render offscreen to capture snapshot
+        https://bugs.webkit.org/show_bug.cgi?id=98326
+        <rdar://problem/12426658>
+
+        Reviewed by Simon Fraser.
+
+        Change updateSnapshot() to use a PassRefPtr<Image> instead of Image*. WebKit2 ultimately
+        hands the image off to RenderSnapshottedPlugin. A CachedImage instance then manages the
+        lifetime of the Image.
+
+        * html/HTMLPlugInElement.h:
+        (WebCore::HTMLPlugInElement::updateSnapshot):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::updateSnapshot):
+        * html/HTMLPlugInImageElement.h:
+        (HTMLPlugInImageElement):
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::updateSnapshot): Updated to use the PassRefPtr<Image>
+        pointer.
+        * rendering/RenderSnapshottedPlugIn.h:
+        (RenderSnapshottedPlugIn):
+
 2012-10-09  Adam Barth  <abarth@webkit.org>
 
         Unreviewed. Move this file to where the build systems think it should

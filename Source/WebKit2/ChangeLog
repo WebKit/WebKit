@@ -1,3 +1,41 @@
+2012-10-09  Jon Lee  <jonlee@apple.com>
+
+        [WK2] Have plugins render offscreen to capture snapshot
+        https://bugs.webkit.org/show_bug.cgi?id=98326
+        <rdar://problem/12426658>
+
+        Reviewed by Simon Fraser.
+
+        Keep the plugin rendering without compositing to easily grab the snapshot.
+
+        PluginView now has two variables referring to snapshots, but are unrelated. The timer
+        is used to capture a snapshot that acts as a poster for a plugin. The ShareableBitmap
+        variable m_snapshot is used whenever the plugin paints in software, to avoid side effects
+        should the plugin run JS during painting.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit): Add a named constant for the time delay before a snapshot is taken.
+        (WebKit::PluginView::PluginView): Initialize a 3-second timer to get the snapshot.
+        (WebKit::PluginView::~PluginView): Refactor part of the destructor code out into
+        destroyPluginAndReset() for reuse.
+        (WebKit::PluginView::destroyPluginAndReset): Contains part of the destructor code.
+        In addition to destroying the plugin, the destructor cancels pending loads and streams.
+        (WebKit::PluginView::didInitializePlugin): If the plugin is in a state where it needs
+        to generate or display a poster, don't setup the compositing layer and start the timer.
+        (WebKit::PluginView::paint): Avoid painting if the plugin is not running.
+        (WebKit::PluginView::invalidateRect): Avoid painting if the plugin is not running.
+        (WebKit::PluginView::isAcceleratedCompositingEnabled): Don't enable accelerated compositing
+        until the plugin is running.
+        (WebKit::PluginView::pluginSnapshotTimerFired): When the timer fires, get a snapshot, generate
+        an Image that WebCore can render, and destroy the plugin.
+
+        Rename m_snapshot to m_transientPaintingSnapshot.
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::paint):
+        (WebKit::PluginView::notifyWidget):
+        (WebKit::PluginView::pluginSnapshotTimerFired):
+
 2012-10-09  Rik Cabanier  <cabanier@adobe.com>
 
         Add missing compile flag for compositing

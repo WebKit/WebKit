@@ -40,7 +40,7 @@ public:
     RenderSnapshottedPlugIn(HTMLPlugInImageElement*);
     virtual ~RenderSnapshottedPlugIn();
 
-    void updateSnapshot(Image*);
+    void updateSnapshot(PassRefPtr<Image>);
 
 private:
     HTMLPlugInImageElement* plugInImageElement() const;

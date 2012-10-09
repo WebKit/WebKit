@@ -55,7 +55,7 @@ public:
     };
     DisplayState displayState() const { return m_displayState; }
     void setDisplayState(DisplayState state) { m_displayState = state; }
-    virtual void updateSnapshot(Image*) { }
+    virtual void updateSnapshot(PassRefPtr<Image>) { }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* getNPObject();
