@@ -2,6 +2,7 @@
 #
 # Copyright (C) Research in Motion Limited 2010. All Rights Reserved.
 # Copyright (C) 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
+# Copyright (C) 2012 Daniel Bates (dbates@intudata.com)
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -173,6 +174,67 @@ END
 },
 undef],
     expectedNextLine => undef,
+},
+####
+# Using SVN 1.7 syntax
+##
+{
+    # New test
+    diffName => "simple: add svn:executable using SVN 1.7 syntax",
+    inputText => <<'END',
+Added: svn:executable
+## -0,0 +1 ##
++*
+\ No newline at end of property
+END
+    expectedReturn => [
+{
+    name => "svn:executable",
+    propertyChangeDelta => 1,
+    value => "*",
+},
+undef],
+    expectedNextLine => undef,
+},
+{
+    # New test
+    diffName => "simple: delete svn:executable using SVN 1.7 syntax",
+    inputText => <<'END',
+Deleted: svn:executable
+## -1 +0,0 ##
+-*
+\ No newline at end of property
+END
+    expectedReturn => [
+{
+    name => "svn:executable",
+    propertyChangeDelta => -1,
+    value => "*",
+},
+undef],
+    expectedNextLine => undef,
+},
+{
+    # New test
+    diffName => "add svn:mime-type and add svn:executable using SVN 1.7 syntax",
+    inputText => <<'END',
+Added: svn:mime-type
+## -0,0 +1 ##
++image/png
+\ No newline at end of property
+Added: svn:executable
+## -0,0 +1 ##
++*
+\ No newline at end of property
+END
+    expectedReturn => [
+{
+    name => "svn:mime-type",
+    propertyChangeDelta => 1,
+    value => "image/png",
+},
+"Added: svn:executable\n"],
+    expectedNextLine => "## -0,0 +1 ##\n",
 },
 ####
 # Property value followed by empty line and start of next diff

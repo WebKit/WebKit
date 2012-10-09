@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 #
 # Copyright (C) 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
+# Copyright (C) 2012 Daniel Bates (dbates@intudata.com)
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -216,12 +217,54 @@ END
 Index: test_file.swf
 ===================================================================
 Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+
 END
     indexPath => "test_file.swf",
     isBinary => 1,
 },
-"svn:mime-type = application/octet-stream\n"],
-    expectedNextLine => "\n",
+"Property changes on: test_file.swf\n"],
+    expectedNextLine => "___________________________________________________________________\n",
+},
+{
+    # New test
+    diffName => "binary file using SVN 1.7 syntax",
+    inputText => <<'END',
+Index: test_file.swf
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: test_file.swf
+===================================================================
+--- test_file.swf
++++ test_file.swf
+
+Property changes on: test_file.swf
+___________________________________________________________________
+Added: svn:mime-type
+## -0,0 +1 ##
++application/octet-stream
+\ No newline at end of property
+
+Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
+END
+    expectedReturn => [
+{
+    svnConvertedText => <<'END',
+Index: test_file.swf
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: test_file.swf
+===================================================================
+--- test_file.swf
++++ test_file.swf
+END
+    indexPath => "test_file.swf",
+    isBinary => 1,
+},
+"\n"],
+    expectedNextLine => "Property changes on: test_file.swf\n",
 },
 );
 

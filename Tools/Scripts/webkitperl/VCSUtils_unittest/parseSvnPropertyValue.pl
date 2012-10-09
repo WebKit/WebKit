@@ -2,6 +2,7 @@
 #
 # Copyright (C) Research in Motion Limited 2010. All Rights Reserved.
 # Copyright (C) 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
+# Copyright (C) 2012 Daniel Bates (dbates@intudata.com)
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -210,6 +211,29 @@ END
 END
     expectedReturn => ["/trunk/Makefile:r33020", "   Reverse-merged /trunk/Makefile.shared:r58350\n"],
     expectedNextLine => "   Merged /trunk/ChangeLog:r64190\n",
+},
+##
+# Using SVN 1.7 syntax
+##
+{
+    # New test
+    diffName => "singe-line '+' change using SVN 1.7 syntax",
+    inputText => <<'END',
++*
+\ No newline at end of property
+END
+    expectedReturn => ["*", "\\ No newline at end of property\n"],
+    expectedNextLine => undef,
+},
+{
+    # New test
+    diffName => "single-line '-' change using SVN 1.7 syntax",
+    inputText => <<'END',
+-*
+\ No newline at end of property
+END
+    expectedReturn => ["*", "\\ No newline at end of property\n"],
+    expectedNextLine => undef,
 },
 );
 

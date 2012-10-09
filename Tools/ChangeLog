@@ -1,3 +1,54 @@
+2012-10-09  Daniel Bates  <dbates@webkit.org>
+
+        VCSUtils.pm doesn't support SVN 1.7 diff files
+        <https://bugs.webkit.org/show_bug.cgi?id=80762>
+
+        Reviewed by Eric Seidel.
+
+        Implement support for the SVN 1.7 diff format.
+
+        * Scripts/VCSUtils.pm:
+        (parseChunkRange): Modified to support parsing an SVN 1.7 chunk range
+        that begins and ends with "##" (e.g. ## -0,0 +1,7 ##). For comparison,
+        earlier versions of SVN parsed chunk ranges of the form "@@ -0,0 +1,7 @@".
+
+        (parseSvnDiffHeader): Modified to parse an SVN 1.7 binary diff; SVN 1.7
+        has an unusual display format for a binary diff. It repeats the first
+        two lines of the diff header.
+
+        (parseSvnProperty): Modified to ignore both an SVN 1.7 chunk range and
+        lines of the form "\ No newline at end of property". SVN 1.7 emits the latter
+        message after a property value that doesn't end in a newline.
+
+        (parseSvnPropertyValue): Stop parsing an SVN property value when we encounter
+        a line of the form "\ No newline at end of property" (emitted by svn diff as of
+        SVN 1.7).
+
+        * Scripts/webkitperl/VCSUtils_unittest/parseChunkRange.pl:
+          - Added the following unit tests:
+          "Line count is 0"
+          "New line count is 1"
+
+        * Scripts/webkitperl/VCSUtils_unittest/parseSvnDiffFooter.pl:
+          - Added the following unit tests:
+          "svn:executable followed by custom property using SVN 1.7 syntax"
+          "svn:executable followed by custom property without newline using SVN 1.7 syntax"
+
+        * Scripts/webkitperl/VCSUtils_unittest/parseSvnDiffHeader.pl:
+          - Updated test results for test "binary file".
+          - Added unit test "binary file using SVN 1.7 syntax".
+
+        * Scripts/webkitperl/VCSUtils_unittest/parseSvnProperty.pl:
+          - Added the following unit tests:
+          "simple: add svn:executable using SVN 1.7 syntax"
+          "simple: delete svn:executable using SVN 1.7 syntax"
+          "add svn:mime-type and add svn:executable using SVN 1.7 syntax"
+
+        * Scripts/webkitperl/VCSUtils_unittest/parseSvnPropertyValue.pl:
+          - Added the following unit tests:
+          "singe-line '+' change using SVN 1.7 syntax"
+          "single-line '-' change using SVN 1.7 syntax"
+
 2012-10-09  James Robinson  <jamesr@chromium.org>
 
         Unreviewed, rolling out r128488.

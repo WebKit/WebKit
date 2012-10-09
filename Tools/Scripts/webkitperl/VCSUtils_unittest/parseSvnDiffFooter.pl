@@ -2,6 +2,7 @@
 #
 # Copyright (C) Research in Motion Limited 2010. All Rights Reserved.
 # Copyright (C) 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
+# Copyright (C) 2012 Daniel Bates (dbates@intudata.com)
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -238,6 +239,51 @@ Added: svn:executable
    + *
 Added: documentation
    + This is an example sentence.
+END
+    expectedReturn => [
+{
+    propertyPath => "FileA",
+    executableBitDelta => 1,
+},
+undef],
+    expectedNextLine => undef,
+},
+{
+    # New test
+    diffName => "svn:executable followed by custom property using SVN 1.7 syntax",
+    inputText => <<'END',
+Property changes on: FileA
+___________________________________________________________________
+Added: svn:executable
+## -0,0 +1 ##
++*
+\ No newline at end of property
+Added: documentation
+## -0,0 +1 ##
++This is an example sentence.
+END
+    expectedReturn => [
+{
+    propertyPath => "FileA",
+    executableBitDelta => 1,
+},
+undef],
+    expectedNextLine => undef,
+},
+{
+    # New test
+    diffName => "svn:executable followed by custom property without newline using SVN 1.7 syntax",
+    inputText => <<'END',
+Property changes on: FileA
+___________________________________________________________________
+Added: svn:executable
+## -0,0 +1 ##
++*
+\ No newline at end of property
+Added: documentation
+## -0,0 +1 ##
++This is an example sentence.
+\ No newline at end of property
 END
     expectedReturn => [
 {

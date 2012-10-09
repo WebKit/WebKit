@@ -1,6 +1,7 @@
 # Copyright (C) 2007, 2008, 2009 Apple Inc.  All rights reserved.
 # Copyright (C) 2009, 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
 # Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
+# Copyright (C) 2012 Daniel Bates (dbates@intudata.com)
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -108,7 +109,8 @@ my $gitDiffStartRegEx = qr#^diff --git (\w/)?(.+) (\w/)?([^\r\n]+)#;
 my $svnDiffStartRegEx = qr#^Index: ([^\r\n]+)#;
 my $svnPropertiesStartRegEx = qr#^Property changes on: ([^\r\n]+)#; # $1 is normally the same as the index path.
 my $svnPropertyStartRegEx = qr#^(Modified|Name|Added|Deleted): ([^\r\n]+)#; # $2 is the name of the property.
-my $svnPropertyValueStartRegEx = qr#^   (\+|-|Merged|Reverse-merged) ([^\r\n]+)#; # $2 is the start of the property's value (which may span multiple lines).
+my $svnPropertyValueStartRegEx = qr#^\s*(\+|-|Merged|Reverse-merged)\s*([^\r\n]+)#; # $2 is the start of the property's value (which may span multiple lines).
+my $svnPropertyValueNoNewlineRegEx = qr#\ No newline at end of property#;
 
 # This method is for portability. Return the system-appropriate exit
 # status of a child process.
@@ -539,6 +541,7 @@ sub firstEOLInFile($)
 #
 # Args:
 #   $line: the line to parse.
+#   $chunkSentinel: the sentinel that surrounds the chunk range information (defaults to "@@").
 #
 # Returns $chunkRangeHashRef
 #   $chunkRangeHashRef: a hash reference representing the parts of a chunk range, as follows--
@@ -546,10 +549,11 @@ sub firstEOLInFile($)
 #     lineCount: the line count in the original file.
 #     newStartingLine: the new starting line in the new file.
 #     newLineCount: the new line count in the new file.
-sub parseChunkRange($)
+sub parseChunkRange($;$)
 {
-    my ($line) = @_;
-    my $chunkRangeRegEx = qr#^\@\@ -(\d+)(,(\d+))? \+(\d+)(,(\d+))? \@\@#;
+    my ($line, $chunkSentinel) = @_;
+    $chunkSentinel = "@@" if !$chunkSentinel;
+    my $chunkRangeRegEx = qr#^\Q$chunkSentinel\E -(\d+)(,(\d+))? \+(\d+)(,(\d+))? \Q$chunkSentinel\E#;
     if ($line !~ /$chunkRangeRegEx/) {
         return;
     }
@@ -801,18 +805,33 @@ sub parseSvnDiffHeader($$)
                         "source revision number \"$sourceRevision\".") if ($2 != $sourceRevision);
                 }
             }
-        } elsif (s/^\+\+\+ [^\t\n\r]+/+++ $indexPath/) {
+        } elsif (s/^\+\+\+ [^\t\n\r]+/+++ $indexPath/ || $isBinary && /^$/) {
             $foundHeaderEnding = 1;
         } elsif (/^Cannot display: file marked as a binary type.$/) {
             $isBinary = 1;
-            $foundHeaderEnding = 1;
+            # SVN 1.7 has an unusual display format for a binary diff. It repeats the first
+            # two lines of the diff header. For example:
+            #     Index: test_file.swf
+            #     ===================================================================
+            #     Cannot display: file marked as a binary type.
+            #     svn:mime-type = application/octet-stream
+            #     Index: test_file.swf
+            #     ===================================================================
+            #     --- test_file.swf
+            #     +++ test_file.swf
+            #
+            #     ...
+            #     Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
+            # Therefore, we continue reading the diff header until we either encounter a line
+            # that begins with "+++" (SVN 1.7 or greater) or an empty line (SVN version less
+            # than 1.7).
         }
 
         $svnConvertedText .= "$_$eol"; # Also restore end-of-line characters.
 
         $_ = <$fileHandle>; # Not defined if end-of-file reached.
 
-        last if (!defined($_) || /$svnDiffStartRegEx/ || $foundHeaderEnding);
+        last if (!defined($_) || !$isBinary && /$svnDiffStartRegEx/ || $foundHeaderEnding);
     }
 
     if (!$foundHeaderEnding) {
@@ -1189,8 +1208,17 @@ sub parseSvnProperty($$)
 
     $_ = <$fileHandle>; # Not defined if end-of-file reached.
 
+    if (defined($_) && defined(parseChunkRange($_, "##"))) {
+        # FIXME: We should validate the chunk range line that is part of an SVN 1.7
+        #        property diff. For now, we ignore this line.
+        $_ = <$fileHandle>;
+    }
+
     # The "svn diff" command neither inserts newline characters between property values
     # nor between successive properties.
+    #
+    # As of SVN 1.7, "svn diff" may insert "\ No newline at end of property" after a
+    # property value that doesn't end in a newline.
     #
     # FIXME: We do not support property values that contain tailing newline characters
     #        as it is difficult to disambiguate these trailing newlines from the empty
@@ -1207,6 +1235,7 @@ sub parseSvnProperty($$)
         #        add error checking to prevent '+', '+', ..., '+' and other invalid combinations.
         $propertyValueType = $1;
         ($propertyValue, $_) = parseSvnPropertyValue($fileHandle, $_);
+        $_ = <$fileHandle> if defined($_) && /$svnPropertyValueNoNewlineRegEx/;
     }
 
     if (!$propertyValue) {
@@ -1274,7 +1303,7 @@ sub parseSvnPropertyValue($$)
     }
 
     while (<$fileHandle>) {
-        if (/^[\r\n]+$/ || /$svnPropertyValueStartRegEx/ || /$svnPropertyStartRegEx/) {
+        if (/^[\r\n]+$/ || /$svnPropertyValueStartRegEx/ || /$svnPropertyStartRegEx/ || /$svnPropertyValueNoNewlineRegEx/) {
             # Note, we may encounter an empty line before the contents of a binary patch.
             # Also, we check for $svnPropertyValueStartRegEx because a '-' property may be
             # followed by a '+' property in the case of a "Modified" or "Name" property.

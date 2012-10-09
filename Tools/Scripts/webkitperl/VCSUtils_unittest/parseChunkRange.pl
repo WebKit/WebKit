@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2011 Research In Motion Limited. All rights reserved.
 # Copyright (C) 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
+# Copyright (C) 2012 Daniel Bates (dbates@intudata.com)
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -148,6 +149,35 @@ my @testCaseHashRefs = (
 ]
 },
 ###
+#  Simple SVN 1.7 property diff chunk range tests
+##
+{   # New test
+    testName => "Line count is 0",
+    inputText => "## -0,0 +1,4 ##",
+    chunkSentinel => "##",
+    expectedReturn => [
+{
+    startingLine => 0,
+    lineCount => 0,
+    newStartingLine => 1,
+    newLineCount => 4,
+}
+]
+},
+{   # New test
+    testName => "New line count is 1",
+    inputText => "## -0,0 +1 ##",
+    chunkSentinel => "##",
+    expectedReturn => [
+{
+    startingLine => 0,
+    lineCount => 0,
+    newStartingLine => 1,
+    newLineCount => 1,
+}
+]
+},
+###
 #  Chunk range followed by ending junk
 ##
 {   # New test
@@ -230,7 +260,7 @@ plan(tests => $testCasesCount);
 foreach my $testCase (@testCaseHashRefs) {
     my $testNameStart = "parseChunkRange(): $testCase->{testName}: comparing";
 
-    my @got = VCSUtils::parseChunkRange($testCase->{inputText});
+    my @got = VCSUtils::parseChunkRange($testCase->{inputText}, $testCase->{chunkSentinel});
     my $expectedReturn = $testCase->{expectedReturn};
 
     is_deeply(\@got, $expectedReturn, "$testNameStart return value.");
