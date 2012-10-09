@@ -14,11 +14,6 @@ fast/events/clear-edit-drag-state.html
 # fast/events/remove-target-with-shadow-in-drag.html made fast/events/resize-subframe.html timeout
 fast/events/remove-target-with-shadow-in-drag.html
 
-# [Qt] REGRESSION: Two editing test started to fail with newer Qt5
-# https://bugs.webkit.org/show_bug.cgi?id=79634
-editing/selection/vertical-rl-rtl-extend-line-forward-br.html
-editing/selection/vertical-rl-rtl-extend-line-forward-p.html
-
 # [Qt] tests to be rebaselined after r113968 seem suspicious
 # https://bugs.webkit.org/show_bug.cgi?id=83785
 fast/dom/52776.html

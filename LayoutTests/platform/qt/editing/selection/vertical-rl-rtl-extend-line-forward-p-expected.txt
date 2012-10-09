@@ -8,11 +8,11 @@ layer at (0,0) size 800x222
           text run at (0,0) width 365: "This tests horizontal caret movement in vertical writing mode."
       RenderBlock {DIV} at (0,35) size 106x158
         RenderBlock {P} at (20,0) size 23x158
-          RenderText {#text} at (0,134) size 23x24
-            text run at (0,134) width 24 RTL: "\x{5D0}\x{5E0}\x{5D9} \x{5D7}\x{5EA}\x{5D5}\x{5DC}."
+          RenderText {#text} at (0,65) size 23x93
+            text run at (0,65) width 93 RTL: "\x{5D0}\x{5E0}\x{5D9} \x{5D7}\x{5EA}\x{5D5}\x{5DC}."
         RenderBlock {P} at (63,0) size 23x158
-          RenderText {#text} at (0,122) size 23x36
-            text run at (0,122) width 36 RTL: "\x{5D0}\x{5D9}\x{5DF} \x{5DC}\x{5D9} \x{5E9}\x{5DD}."
+          RenderText {#text} at (0,54) size 23x104
+            text run at (0,54) width 104 RTL: "\x{5D0}\x{5D9}\x{5DF} \x{5DC}\x{5D9} \x{5E9}\x{5DD}."
       RenderBlock {PRE} at (0,206) size 784x0
 selection start: position 5 of child 0 {#text} of child 1 {P} of child 3 {DIV} of body
-selection end:   position 4 of child 0 {#text} of child 2 {P} of child 3 {DIV} of body
+selection end:   position 6 of child 0 {#text} of child 2 {P} of child 3 {DIV} of body
