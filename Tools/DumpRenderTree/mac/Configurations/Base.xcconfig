@@ -24,7 +24,7 @@
 #include "CompilerVersion.xcconfig"
 
 CLANG_WARN_CXX0X_EXTENSIONS = NO;
-HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include ForwardingHeaders mac/InternalHeaders $(NEXT_ROOT)/usr/local/include/WebCoreTestSupport;
+HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include ForwardingHeaders mac/InternalHeaders $(NEXT_ROOT)/usr/local/include/WebCoreTestSupport ${SRCROOT}/../../Source/JavaScriptCore/icu;
 FRAMEWORK_SEARCH_PATHS = $(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks;
 GCC_PREPROCESSOR_DEFINITIONS = ENABLE_DASHBOARD_SUPPORT WEBKIT_VERSION_MIN_REQUIRED=WEBKIT_VERSION_LATEST;
 DEBUG_INFORMATION_FORMAT = dwarf-with-dsym;

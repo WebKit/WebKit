@@ -571,7 +571,7 @@ public:
 
     bool willGoToBackForwardItemCallbackEnabled() const { return m_willGoToBackForwardItemCallbackEnabled; }
 
-#if ENABLE(PAGE_VISIBILITY_API)
+#if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
     void setVisibilityState(int visibilityState, bool isInitialState);
 #endif
 

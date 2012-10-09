@@ -2665,6 +2665,14 @@ double Document::minimumTimerInterval() const
     return p->settings()->minDOMTimerInterval();
 }
 
+double Document::timerAlignmentInterval() const
+{
+    Page* p = page();
+    if (!p)
+        return ScriptExecutionContext::timerAlignmentInterval();
+    return p->settings()->domTimerAlignmentInterval();
+}
+
 EventTarget* Document::errorEventTarget()
 {
     return domWindow();

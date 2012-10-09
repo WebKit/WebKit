@@ -1,0 +1,77 @@
+<html>
+<head>
+    <script src="../js/resources/js-test-pre.js"></script>
+    <script>
+        description('<a href="https://bugs.webkit.org/show_bug.cgi?id=98474">Bug 98474</a>: Throttle DOM timers on hidden pages.');
+
+        var jsTestIsAsync = true;
+	var previousT = new Date().getTime();
+        var timerCount = 0;
+        var firstTimerWhileHidden = true;
+        var isPageVisible = true;
+        var timeoutInterval = 100;
+        var tolerance = 20;
+        var timerAlignmentInterval = 1000;
+
+	function testTimer() {
+	    var d = new Date();
+	    var t = d.getTime();
+            if (!isPageVisible) {
+                if (firstTimerWhileHidden) {
+      	            firstTimerIntervalWhilePageHidden = t - previousT;
+                    var minValue = timeoutInterval - tolerance;
+	            shouldBeGreaterThanOrEqual("firstTimerIntervalWhilePageHidden", minValue.toString());
+	            var maxValue = timeoutInterval + timerAlignmentInterval + tolerance;
+                    shouldBeTrue("firstTimerIntervalWhilePageHidden <= " + maxValue);
+                    firstTimerWhileHidden = false;
+                } else {
+      	            timerIntervalWhilePageHidden = t - previousT;
+                    shouldBeCloseTo("timerIntervalWhilePageHidden", timerAlignmentInterval, tolerance);
+                }
+            }
+            else {
+                timerIntervalWhilePageVisible = t - previousT;
+                shouldBeCloseTo("timerIntervalWhilePageVisible", timeoutInterval, tolerance);
+            }
+
+            timerCount++;
+	    previousT = t;
+
+            if (timerCount == 1) {
+                testRunner.setPageVisibility("hidden");
+	        isPageVisible = false;
+	    } else if (timerCount == 3) {
+                testRunner.resetPageVisibility();
+                isPageVisible = true;
+            } else if (timerCount >= 4){
+                finishJSTest();
+	        return;
+            }
+            setTimeout(testTimer, timeoutInterval);
+	}
+
+        function runTest() {
+	    if (!window.testRunner) {
+	        debug('This test requires testRunner');
+	        return;
+            }
+	    var timeoutIntervalSpans = document.getElementsByClassName('timeoutInterval');
+            for (var i = 0; i < timeoutIntervalSpans.length; i++) {
+	        timeoutIntervalSpans[i].innerText = timeoutInterval;
+	    }
+
+	    document.getElementById('alignmentInterval').innerText = timerAlignmentInterval / 1000;
+
+            testRunner.dumpAsText();
+            setTimeout(testTimer, timeoutInterval);
+        }
+
+    </script>
+</head>
+<body onload="runTest()">
+    <p>
+    This test measures the time taken to fire a <span class="timeoutInterval"></span>ms DOM Timer when the page visibility is set to "visible", "hidden" and then back to "visible".  Due to hidden page timer throttling, the timer should fire close to <span id="alignmentInterval"></span>s when page is hidden.  And it should fire close to <span class="timeoutInterval"></span>ms, when the page is visible.
+    </p>
+    <script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

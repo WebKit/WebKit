@@ -3055,6 +3055,15 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     ResourceRequest::setHTTPPipeliningEnabled(enabled);
 }
 
+- (void)_setVisibilityState:(int)visibilityState isInitialState:(BOOL)isInitialState
+{
+#if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
+    if (_private->page) {
+        _private->page->setVisibilityState(static_cast<PageVisibilityState>(visibilityState), isInitialState);
+    }
+#endif
+}
+
 @end
 
 @implementation _WebSafeForwarder

@@ -661,6 +661,9 @@ webkit.org/b/82340 fast/regions/style-scoped-in-flow-override-region-styling-mul
 webkit.org/b/82340 fast/regions/style-scoped-in-flow-override-region-styling.html [ ImageOnlyFailure ]
 webkit.org/b/82340 fast/regions/style-scoped-in-flow.html [ ImageOnlyFailure ]
 
+# This port does not enable HIDDEN_PAGE_DOM_TIMER_THROTTLING
+fast/dom/timer-throttling-hidden-page.html [ WontFix ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # CRASHES
 #////////////////////////////////////////////////////////////////////////////////////////

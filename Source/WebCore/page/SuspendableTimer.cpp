@@ -64,7 +64,7 @@ void SuspendableTimer::suspend(ReasonForSuspension)
 #endif
     m_active = isActive();
     if (m_active) {
-        m_nextFireInterval = nextFireInterval();
+        m_nextFireInterval = nextUnalignedFireInterval();
         m_repeatInterval = repeatInterval();
         TimerBase::stop();
     }

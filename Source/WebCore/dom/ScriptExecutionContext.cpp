@@ -396,6 +396,19 @@ double ScriptExecutionContext::minimumTimerInterval() const
     return Settings::defaultMinDOMTimerInterval();
 }
 
+void ScriptExecutionContext::didChangeTimerAlignmentInterval()
+{
+    for (TimeoutMap::iterator iter = m_timeouts.begin(); iter != m_timeouts.end(); ++iter) {
+        DOMTimer* timer = iter->value;
+        timer->didChangeAlignmentInterval();
+    }
+}
+
+double ScriptExecutionContext::timerAlignmentInterval() const
+{
+    return Settings::defaultDOMTimerAlignmentInterval();
+}
+
 ScriptExecutionContext::Task::~Task()
 {
 }

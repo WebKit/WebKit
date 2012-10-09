@@ -66,12 +66,22 @@ namespace WebCore {
         static double defaultMinTimerInterval() { return s_minDefaultTimerInterval; }
         static void setDefaultMinTimerInterval(double value) { s_minDefaultTimerInterval = value; }
 
+        // Retuns timer fire time rounded to the next multiple of timer alignment interval.
+        virtual double alignedFireTime(double) const;
+
+        // The default timer alignment interval (in seconds). If non zero, timer fire times
+        // will be rounded to a multiple of the alignment interval.
+        // These are only modified via static methods in Settings.
+        static double defaultTimerAlignmentInterval() { return s_defaultTimerAlignmentInterval; }
+        static void setDefaultTimerAlignmentInterval(double value) { s_defaultTimerAlignmentInterval = value; }
+
         int m_timeoutId;
         int m_nestingLevel;
         OwnPtr<ScheduledAction> m_action;
         int m_originalInterval;
         RefPtr<UserGestureIndicator::Token> m_userGestureToken;
         static double s_minDefaultTimerInterval;
+        static double s_defaultTimerAlignmentInterval;
     };
 
 } // namespace WebCore

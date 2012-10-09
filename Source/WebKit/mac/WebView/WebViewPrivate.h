@@ -642,6 +642,9 @@ Could be worth adding to the API.
  */
 + (void)_setHTTPPipeliningEnabled:(BOOL)enabled;
 
+// SPI for DumpRenderTree
+- (void)_setVisibilityState:(int)visibilityState isInitialState:(BOOL)isInitialState;
+
 @end
 
 @interface WebView (WebViewPrintingPrivate)

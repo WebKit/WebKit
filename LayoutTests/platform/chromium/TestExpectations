@@ -910,6 +910,9 @@ platform/gtk/plugins/invalidate-rect-with-null-npp-argument.html [ WontFix ]
 
 webkit.org/b/96109 [ Linux ] editing/pasteboard/paste-global-selection.html [ Skip ]
 
+# Chromium does not enable HIDDEN_PAGE_DOM_TIMER_THROTTLING
+fast/dom/timer-throttling-hidden-page.html [ WontFix ]
+
 # Skipping rules for ANDROID are in platform/chromium-android/TestExpectations.
 
 # -----------------------------------------------------------------

@@ -1197,6 +1197,8 @@ private:
 
     virtual double minimumTimerInterval() const;
 
+    virtual double timerAlignmentInterval() const;
+
     void updateTitle(const StringWithDirection&);
     void updateFocusAppearanceTimerFired(Timer<Document>*);
     void updateBaseURL();

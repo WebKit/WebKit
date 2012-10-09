@@ -254,6 +254,12 @@ namespace WebCore {
         void setMinDOMTimerInterval(double); // Per-page; initialized to default value.
         double minDOMTimerInterval();
 
+        static void setDefaultDOMTimerAlignmentInterval(double);
+        static double defaultDOMTimerAlignmentInterval();
+
+        void setDOMTimerAlignmentInterval(double);
+        double domTimerAlignmentInterval() const;
+
         void setUsesPageCache(bool);
         bool usesPageCache() const { return m_usesPageCache; }
         

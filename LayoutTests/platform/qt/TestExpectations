@@ -439,6 +439,9 @@ fast/js/names.html
 touchadjustment/touch-links-longpress.html
 touchadjustment/touch-links-active.html
 
+# ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING) is disabled
+fast/dom/timer-throttling-hidden-page.html
+
 # =========================================================================== #
 #       Feature not yet supported.                                            #
 # =========================================================================== #

@@ -233,6 +233,10 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_visibilityState(PageVisibilityStateVisible)
 #endif
 {
+#if ENABLE(PAGE_VISIBILITY_API)
+    if (!m_isVisible)
+        m_visibilityState = PageVisibilityStateHidden;
+#endif
 #ifndef NDEBUG
     webPageProxyCounter.increment();
 #endif
@@ -410,6 +414,8 @@ void WebPageProxy::initializeWebPage()
 
 #if ENABLE(PAGE_VISIBILITY_API)
     m_process->send(Messages::WebPage::SetVisibilityState(m_visibilityState, /* isInitialState */ true), m_pageID);
+#elif ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
+    m_process->send(Messages::WebPage::SetVisibilityState(m_isVisible ? PageVisibilityStateVisible : PageVisibilityStateHidden, /* isInitialState */ true), m_pageID);
 #endif
 }
 
@@ -852,6 +858,11 @@ void WebPageProxy::viewStateDidChange(ViewStateFlags flags)
                 // stop the unresponsiveness timer here.
                 m_process->responsivenessTimer()->stop();
             }
+
+#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING) && !ENABLE(PAGE_VISIBILITY_API)
+            PageVisibilityState visibilityState = m_isVisible ? PageVisibilityStateVisible : PageVisibilityStateHidden;
+            m_process->send(Messages::WebPage::SetVisibilityState(visibilityState, false), m_pageID);
+#endif
         }
     }
 
@@ -874,7 +885,7 @@ void WebPageProxy::viewStateDidChange(ViewStateFlags flags)
 #if ENABLE(PAGE_VISIBILITY_API)
     PageVisibilityState visibilityState = PageVisibilityStateHidden;
 
-    if (m_pageClient->isViewVisible())
+    if (m_isVisible)
         visibilityState = PageVisibilityStateVisible;
 
     if (visibilityState != m_visibilityState) {

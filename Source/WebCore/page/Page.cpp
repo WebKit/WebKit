@@ -82,6 +82,7 @@
 namespace WebCore {
 
 static HashSet<Page*>* allPages;
+static const double hiddenPageTimerAlignmentInterval = 1.0; // once a second
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, pageCounter, ("Page"));
 
@@ -156,6 +157,7 @@ Page::Page(PageClients& pageClients)
     , m_canStartMedia(true)
     , m_viewMode(ViewModeWindowed)
     , m_minimumTimerInterval(Settings::defaultMinDOMTimerInterval())
+    , m_timerAlignmentInterval(Settings::defaultDOMTimerAlignmentInterval())
     , m_isEditable(false)
     , m_isOnscreen(true)
 #if ENABLE(PAGE_VISIBILITY_API)
@@ -1025,6 +1027,23 @@ double Page::minimumTimerInterval() const
     return m_minimumTimerInterval;
 }
 
+void Page::setTimerAlignmentInterval(double interval)
+{
+    if (interval == m_timerAlignmentInterval)
+        return;
+
+    m_timerAlignmentInterval = interval;
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNextWithWrap(false)) {
+        if (frame->document())
+            frame->document()->didChangeTimerAlignmentInterval();
+    }
+}
+
+double Page::timerAlignmentInterval() const
+{
+    return m_timerAlignmentInterval;
+}
+
 void Page::dnsPrefetchingStateChanged()
 {
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
@@ -1093,9 +1112,10 @@ void Page::checkSubframeCountConsistency() const
 }
 #endif
 
-#if ENABLE(PAGE_VISIBILITY_API)
+#if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
 void Page::setVisibilityState(PageVisibilityState visibilityState, bool isInitialState)
 {
+#if ENABLE(PAGE_VISIBILITY_API)
     if (m_visibilityState == visibilityState)
         return;
     m_visibilityState = visibilityState;
@@ -1108,8 +1128,21 @@ void Page::setVisibilityState(PageVisibilityState visibilityState, bool isInitia
         }
         m_mainFrame->dispatchVisibilityStateChangeEvent();
     }
-}
+#endif
 
+#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
+    if (visibilityState == WebCore::PageVisibilityStateHidden)
+        setTimerAlignmentInterval(hiddenPageTimerAlignmentInterval);
+    else
+        setTimerAlignmentInterval(Settings::defaultDOMTimerAlignmentInterval());
+#if !ENABLE(PAGE_VISIBILITY_API)
+    UNUSED_PARAM(isInitialState);
+#endif
+#endif
+}
+#endif // ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
+
+#if ENABLE(PAGE_VISIBILITY_API)
 PageVisibilityState Page::visibilityState() const
 {
     return m_visibilityState;

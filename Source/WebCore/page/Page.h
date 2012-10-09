@@ -322,6 +322,8 @@ namespace WebCore {
 
 #if ENABLE(PAGE_VISIBILITY_API)
         PageVisibilityState visibilityState() const;
+#endif
+#if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
         void setVisibilityState(PageVisibilityState, bool);
 #endif
 
@@ -363,6 +365,9 @@ namespace WebCore {
 
         void setMinimumTimerInterval(double);
         double minimumTimerInterval() const;
+
+        void setTimerAlignmentInterval(double);
+        double timerAlignmentInterval() const;
 
         void collectPluginViews(Vector<RefPtr<PluginViewBase>, 32>& pluginViewBases);
 
@@ -441,6 +446,8 @@ namespace WebCore {
         ViewMode m_viewMode;
 
         double m_minimumTimerInterval;
+
+        double m_timerAlignmentInterval;
 
         bool m_isEditable;
         bool m_isOnscreen;

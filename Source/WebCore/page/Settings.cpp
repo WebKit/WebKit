@@ -683,6 +683,26 @@ double Settings::minDOMTimerInterval()
     return m_page->minimumTimerInterval();
 }
 
+void Settings::setDefaultDOMTimerAlignmentInterval(double interval)
+{
+    DOMTimer::setDefaultTimerAlignmentInterval(interval);
+}
+
+double Settings::defaultDOMTimerAlignmentInterval()
+{
+    return DOMTimer::defaultTimerAlignmentInterval();
+}
+
+void Settings::setDOMTimerAlignmentInterval(double interval)
+{
+    m_page->setTimerAlignmentInterval(interval);
+}
+
+double Settings::domTimerAlignmentInterval() const
+{
+    return m_page->timerAlignmentInterval();
+}
+
 void Settings::setUsesPageCache(bool usesPageCache)
 {
     if (m_usesPageCache == usesPageCache)

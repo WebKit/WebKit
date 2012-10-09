@@ -3323,7 +3323,7 @@ FrameView* WebPage::mainFrameView() const
     return 0;
 }
 
-#if ENABLE(PAGE_VISIBILITY_API)
+#if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
 void WebPage::setVisibilityState(int visibilityState, bool isInitialState)
 {
     if (!m_page)
@@ -3331,6 +3331,7 @@ void WebPage::setVisibilityState(int visibilityState, bool isInitialState)
 
     WebCore::PageVisibilityState state = static_cast<WebCore::PageVisibilityState>(visibilityState);
 
+#if ENABLE(PAGE_VISIBILITY_API)
     if (m_visibilityState == state)
         return;
 
@@ -3350,6 +3351,11 @@ void WebPage::setVisibilityState(int visibilityState, bool isInitialState)
         if (view)
             view->hide();
     }
+#endif
+
+#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING) && !ENABLE(PAGE_VISIBILITY_API)
+    m_page->setVisibilityState(state, isInitialState);
+#endif
 }
 #endif
 

@@ -43,6 +43,7 @@
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <WebCore/GeolocationPosition.h>
+#import <WebCore/PageVisibilityState.h>
 #import <WebKit/DOMDocument.h>
 #import <WebKit/DOMElement.h>
 #import <WebKit/WebApplicationCache.h>
@@ -1160,12 +1161,26 @@ void TestRunner::setBackingScaleFactor(double backingScaleFactor)
 
 void TestRunner::resetPageVisibility()
 {
-    // FIXME: Implement.
+    WebView *webView = [mainFrame webView];
+    if ([webView respondsToSelector:@selector(_setVisibilityState:isInitialState:)]) {
+        [webView _setVisibilityState:WebCore::PageVisibilityStateVisible isInitialState:NO];
+    }
 }
 
-void TestRunner::setPageVisibility(const char*)
+void TestRunner::setPageVisibility(const char* newVisibility)
 {
-    // FIXME: Implement.
+    if (!newVisibility)
+        return;
+
+    WebView *webView = [mainFrame webView];
+    if (!strcmp(newVisibility, "visible"))
+        [webView _setVisibilityState:WebCore::PageVisibilityStateVisible isInitialState:NO];
+    else if (!strcmp(newVisibility, "hidden"))
+        [webView _setVisibilityState:WebCore::PageVisibilityStateHidden isInitialState:NO];
+    else if (!strcmp(newVisibility, "prerender"))
+        [webView _setVisibilityState:WebCore::PageVisibilityStatePrerender isInitialState:NO];
+    else if (!strcmp(newVisibility, "preview"))
+        [webView _setVisibilityState:WebCore::PageVisibilityStatePreview isInitialState:NO];
 }
 
 void TestRunner::sendWebIntentResponse(JSStringRef)

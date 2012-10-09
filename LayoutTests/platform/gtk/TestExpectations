@@ -435,6 +435,9 @@ webkit.org/b/92942 fast/events/constructors/device-proximity-event-constructor.h
 # CSS compositing is not yet enabled.
 Bug(GTK) css3/compositing [ Skip ]
 
+# HIDDEN_PAGE_DOM_TIMER_THROTTLING is not enabled
+fast/dom/timer-throttling-hidden-page.html [ WontFix ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
