@@ -324,6 +324,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     layoutPositionedObjects(relayoutChildren || isRoot());
 
     computeRegionRangeForBlock();
+    clearChildOverrideSizes();
 
     // FIXME: css3/flexbox/repaint-rtl-column.html seems to repaint more overflow than it needs to.
     computeOverflow(oldClientAfterEdge);
@@ -371,6 +372,12 @@ void RenderFlexibleBox::repositionLogicalHeightDependentFlexItems(OrderIterator&
 
     // direction:rtl + flex-direction:column means the cross-axis direction is flipped.
     flipForRightToLeftColumn(iterator);
+}
+
+void RenderFlexibleBox::clearChildOverrideSizes()
+{
+    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox())
+        child->clearOverrideSize();
 }
 
 bool RenderFlexibleBox::hasOrthogonalFlow(RenderBox* child) const
@@ -806,7 +813,6 @@ void RenderFlexibleBox::computeMainAxisPreferredSizes(bool relayoutChildren, Ord
         if (child->isOutOfFlowPositioned())
             continue;
 
-        child->clearOverrideSize();
         // Only need to layout here if we will need to get the logicalHeight of the child in computeNextFlexLine.
         Length childMainAxisMin = isHorizontalFlow() ? child->style()->minWidth() : child->style()->minHeight();
         if (hasOrthogonalFlow(child) && (flexBasisForChild(child).isAuto() || childMainAxisMin.isAuto())) {

@@ -1,3 +1,26 @@
+2012-10-08  Tony Chang  <tony@chromium.org>
+
+        image not displayed in flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=98611
+
+        Reviewed by Ojan Vafai.
+
+        Flexbox will override the width of a child and when stretching, will override the height of the child.
+        When this happens, when an image loads, it checks to see if it's width/height has
+        changed, and if so, does a relayout.  The overridden width/height was preventing this
+        relayout from happening.
+
+        To fix, we clear all the override sizes when we're done laying out the flex children.
+
+        Test: css3/flexbox/relayout-image-load.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock): Clear child override sizes.
+        (WebCore::RenderFlexibleBox::clearChildOverrideSizes):
+        (WebCore::RenderFlexibleBox::computeMainAxisPreferredSizes): No longer need to clear the override size
+        here since it should have already been cleared.
+        * rendering/RenderFlexibleBox.h:
+
 2012-10-08  Andreas Kling  <kling@webkit.org>
 
         REGRESSION(r130643): editing/pasteboard/data-transfer-item is failing on chromium.
