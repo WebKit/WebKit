@@ -38,6 +38,7 @@
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
@@ -112,8 +113,9 @@ static const ResourceLoaderOptions& defaultCachedResourceOptions()
     return options;
 }
 
-CachedResourceLoader::CachedResourceLoader(Document* document)
-    : m_document(document)
+CachedResourceLoader::CachedResourceLoader(DocumentLoader* documentLoader)
+    : m_document(0)
+    , m_documentLoader(documentLoader)
     , m_requestCount(0)
     , m_garbageCollectDocumentResourcesTimer(this, &CachedResourceLoader::garbageCollectDocumentResourcesTimerFired)
     , m_autoLoadImages(true)
@@ -124,6 +126,7 @@ CachedResourceLoader::CachedResourceLoader(Document* document)
 
 CachedResourceLoader::~CachedResourceLoader()
 {
+    m_documentLoader = 0;
     m_document = 0;
 
     clearPreloads();
@@ -149,7 +152,7 @@ CachedResource* CachedResourceLoader::cachedResource(const KURL& resourceURL) co
 
 Frame* CachedResourceLoader::frame() const
 {
-    return m_document ? m_document->frame() : 0;
+    return m_documentLoader ? m_documentLoader->frame() : 0;
 }
 
 CachedResourceHandle<CachedImage> CachedResourceLoader::requestImage(ResourceRequest& request)
@@ -290,6 +293,10 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
 
 bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url, bool forPreload)
 {
+    // FIXME: When we can load main resources through CachedResourceLoader, we'll need to allow for null document() here.
+    if (!document())
+        return false;
+
     if (!document()->securityOrigin()->canDisplay(url)) {
         if (!forPreload)
             FrameLoader::reportLocalLoadFailed(document()->frame(), url.string());
@@ -556,7 +563,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     }
 
     // During the initial load, avoid loading the same resource multiple times for a single document, even if the cache policies would tell us to.
-    if (!document()->loadEventFinished() && m_validatedURLs.contains(existingResource->url()))
+    if (document() && !document()->loadEventFinished() && m_validatedURLs.contains(existingResource->url()))
         return Use;
 
     // CachePolicyReload always reloads
@@ -602,7 +609,7 @@ void CachedResourceLoader::printAccessDeniedMessage(const KURL& url) const
         return;
 
     String message;
-    if (m_document->url().isNull())
+    if (!m_document || m_document->url().isNull())
         message = "Unsafe attempt to load URL " + url.string() + '.';
     else
         message = "Unsafe attempt to load URL " + url.string() + " from frame with URL " + m_document->url().string() + ". Domains, protocols and ports must match.\n";
@@ -674,7 +681,8 @@ void CachedResourceLoader::removeCachedResource(CachedResource* resource) const
 
 void CachedResourceLoader::loadDone()
 {
-    RefPtr<Document> protect(m_document);
+    RefPtr<DocumentLoader> protectDocumentLoader(m_documentLoader);
+    RefPtr<Document> protectDocument(m_document);
     if (frame())
         frame()->loader()->loadDone();
     performPostLoadActions();

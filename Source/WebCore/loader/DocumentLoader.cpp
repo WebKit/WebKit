@@ -87,6 +87,7 @@ static void setAllDefersLoading(const ResourceLoaderSet& loaders, bool defers)
 DocumentLoader::DocumentLoader(const ResourceRequest& req, const SubstituteData& substituteData)
     : m_deferMainResourceDataLoad(true)
     , m_frame(0)
+    , m_cachedResourceLoader(CachedResourceLoader::create(this))
     , m_writer(m_frame)
     , m_originalRequest(req)
     , m_substituteData(substituteData)
@@ -118,6 +119,7 @@ DocumentLoader::~DocumentLoader()
         m_iconLoadDecisionCallback->invalidate();
     if (m_iconDataCallback)
         m_iconDataCallback->invalidate();
+    m_cachedResourceLoader->clearDocumentLoader();
 }
 
 PassRefPtr<SharedBuffer> DocumentLoader::mainResourceData() const
@@ -463,7 +465,7 @@ bool DocumentLoader::isLoadingInAPISense() const
         Document* doc = m_frame->document();
         if ((m_mainResourceLoader || !m_frame->document()->loadEventFinished()) && isLoading())
             return true;
-        if (doc->cachedResourceLoader()->requestCount())
+        if (m_cachedResourceLoader->requestCount())
             return true;
         if (DocumentParser* parser = doc->parser())
             if (parser->processingData())
@@ -569,7 +571,7 @@ PassRefPtr<ArchiveResource> DocumentLoader::subresource(const KURL& url) const
     if (!isCommitted())
         return 0;
     
-    CachedResource* resource = m_frame->document()->cachedResourceLoader()->cachedResource(url);
+    CachedResource* resource = m_cachedResourceLoader->cachedResource(url);
     if (!resource || !resource->isLoaded())
         return archiveResourceForURL(url);
 
@@ -590,9 +592,7 @@ void DocumentLoader::getSubresources(Vector<PassRefPtr<ArchiveResource> >& subre
     if (!isCommitted())
         return;
 
-    Document* document = m_frame->document();
-
-    const CachedResourceLoader::DocumentResourceMap& allResources = document->cachedResourceLoader()->allCachedResources();
+    const CachedResourceLoader::DocumentResourceMap& allResources = m_cachedResourceLoader->allCachedResources();
     CachedResourceLoader::DocumentResourceMap::const_iterator end = allResources.end();
     for (CachedResourceLoader::DocumentResourceMap::const_iterator it = allResources.begin(); it != end; ++it) {
         RefPtr<ArchiveResource> subresource = this->subresource(KURL(ParsedURLString, it->value->url()));

@@ -95,7 +95,6 @@ private:
     };
 
     CachedResource* m_resource;
-    RefPtr<Document> m_document;
     bool m_loadingMultipartContent;
     SubresourceLoaderState m_state;
     OwnPtr<RequestCountTracker> m_requestCountTracker;

@@ -529,7 +529,12 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
 
     m_markers = adoptPtr(new DocumentMarkerController);
 
-    m_cachedResourceLoader = adoptPtr(new CachedResourceLoader(this));
+    if (m_frame)
+        m_cachedResourceLoader = m_frame->loader()->activeDocumentLoader()->cachedResourceLoader();
+    if (!m_cachedResourceLoader)
+        m_cachedResourceLoader = CachedResourceLoader::create(0);
+    m_cachedResourceLoader->setDocument(this);
+
 #if ENABLE(LINK_PRERENDER)
     m_prerenderer = Prerenderer::create(this);
 #endif
@@ -651,6 +656,11 @@ Document::~Document()
         m_mediaQueryMatcher->documentDestroyed();
 
     clearStyleResolver(); // We need to destory CSSFontSelector before destroying m_cachedResourceLoader.
+
+    // It's possible for multiple Documents to end up referencing the same CachedResourceLoader (e.g., SVGImages
+    // load the initial empty document and the SVGDocument with the same DocumentLoader).
+    if (m_cachedResourceLoader->document() == this)
+        m_cachedResourceLoader->setDocument(0);
     m_cachedResourceLoader.clear();
 
     // We must call clearRareData() here since a Document class inherits TreeScope

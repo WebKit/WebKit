@@ -52,6 +52,7 @@ namespace WebCore {
 #endif
     class ArchiveResource;
     class ArchiveResourceCollection;
+    class CachedResourceLoader;
     class Frame;
     class FrameLoader;
     class MainResourceLoader;
@@ -90,6 +91,8 @@ namespace WebCore {
         const ResourceRequest& request() const;
         ResourceRequest& request();
         void setRequest(const ResourceRequest&);
+
+        CachedResourceLoader* cachedResourceLoader() const { return m_cachedResourceLoader.get(); }
 
         const SubstituteData& substituteData() const { return m_substituteData; }
 
@@ -267,6 +270,7 @@ namespace WebCore {
         void substituteResourceDeliveryTimerFired(Timer<DocumentLoader>*);
                 
         Frame* m_frame;
+        RefPtr<CachedResourceLoader> m_cachedResourceLoader;
 
         RefPtr<MainResourceLoader> m_mainResourceLoader;
         ResourceLoaderSet m_subresourceLoaders;

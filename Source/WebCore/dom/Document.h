@@ -1256,7 +1256,7 @@ private:
     Frame* m_frame;
     RefPtr<DOMWindow> m_domWindow;
 
-    OwnPtr<CachedResourceLoader> m_cachedResourceLoader;
+    RefPtr<CachedResourceLoader> m_cachedResourceLoader;
     RefPtr<DocumentParser> m_parser;
     RefPtr<ContextFeatures> m_contextFeatures;
 

@@ -1,3 +1,58 @@
+2012-10-09  Nate Chapin  <japhet@chromium.org>
+
+        Make CachedResourceLoader RefCounted and have both Document
+        and DocumentLoader hold RefPtrs. This is in preparation for
+        caching main resources.
+        https://bugs.webkit.org/show_bug.cgi?id=86787
+
+        Reviewed by Adam Barth.
+
+        No new tests, no functionality changes at this time.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Only create our own CachedResourceLoader
+            if we were given a null frame.
+        (WebCore::Document::~Document):
+        (WebCore::Document::cachedResourceLoader):
+        (WebCore):
+        * dom/Document.h:
+        (Document):
+        * loader/DocumentLoader.cpp: Throughout, use our m_cachedResourceLoader instead
+            of the Document's pointer.
+        (WebCore::DocumentLoader::DocumentLoader): Create a CachedResourceLoader.
+        (WebCore::DocumentLoader::~DocumentLoader):
+        (WebCore::DocumentLoader::isLoadingInAPISense):
+        (WebCore::DocumentLoader::subresource):
+        (WebCore::DocumentLoader::getSubresources):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::cachedResourceLoader):
+        (DocumentLoader):
+        * loader/SubresourceLoader.cpp: Remove m_document, since it only existed to keep alive and access the CachedResourceLoader.
+            It can now be accessed from m_documentLoader.
+        (WebCore::SubresourceLoader::SubresourceLoader):
+        (WebCore::SubresourceLoader::~SubresourceLoader):
+        (WebCore::SubresourceLoader::willSendRequest):
+        (WebCore::SubresourceLoader::releaseResources):
+        * loader/SubresourceLoader.h:
+        (SubresourceLoader):
+        * loader/cache/CachedResourceLoader.cpp: Handle the possibility of a null Document in several places.
+        (WebCore::CachedResourceLoader::CachedResourceLoader):
+        (WebCore::CachedResourceLoader::~CachedResourceLoader):
+        (WebCore::CachedResourceLoader::frame):
+        (WebCore::CachedResourceLoader::canRequest):
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy):
+        (WebCore::CachedResourceLoader::printAccessDeniedMessage):
+        (WebCore::CachedResourceLoader::loadDone):
+        * loader/cache/CachedResourceLoader.h:
+        (WebCore):
+        (WebCore::CachedResourceLoader::create): Add create(), make constructor private.
+        (CachedResourceLoader):
+        (WebCore::CachedResourceLoader::document):
+        (WebCore::CachedResourceLoader::setDocument):
+        (WebCore::CachedResourceLoader::clearDocumentLoader):
+
 2012-10-09  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         CSS Style is not recalculated when media attribute of style element is changed
