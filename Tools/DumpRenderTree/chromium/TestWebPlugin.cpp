@@ -482,6 +482,9 @@ bool TestWebPlugin::handleDragStatusUpdate(WebKit::WebDragStatus dragStatus, con
     case WebKit::WebDragStatusLeave:
         dragStatusName = "DragLeave";
         break;
+    case WebKit::WebDragStatusDrop:
+        dragStatusName = "DragDrop";
+        break;
     case WebKit::WebDragStatusUnknown:
         ASSERT_NOT_REACHED();
     }

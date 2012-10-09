@@ -37,7 +37,8 @@ enum WebDragStatus {
     WebDragStatusUnknown = 0,
     WebDragStatusEnter,
     WebDragStatusOver,
-    WebDragStatusLeave
+    WebDragStatusLeave,
+    WebDragStatusDrop
 };
 
 } // namespace WebKit

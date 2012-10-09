@@ -3,5 +3,8 @@ Plugin received event: MouseMove
 Plugin received event: DragEnter
 Plugin received event: DragOver
 Plugin received event: DragLeave
+Plugin received event: DragEnter
+Plugin received event: DragOver
+Plugin received event: DragDrop
 
 Some text to drag

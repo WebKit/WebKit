@@ -1,3 +1,15 @@
+2012-10-09  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        [chromium] Add drop event for plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=98827
+
+        Reviewed by Adam Barth.
+
+        Update the test plugin to receive drop events.
+
+        * DumpRenderTree/chromium/TestWebPlugin.cpp:
+        (TestWebPlugin::handleDragStatusUpdate):
+
 2012-10-09  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: 5 accessibility tests just need minor tweaks to pass on chromium

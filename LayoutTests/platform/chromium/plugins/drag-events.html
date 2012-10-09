@@ -9,8 +9,8 @@
 </head>
 
 <body onload="test();">
-<embed id="plugin" type="application/x-webkit-test-webplugin"></embed>
-<div contenteditable id='text'><span>Some text to drag</span></div>
+<embed id="plugin" type="application/x-webkit-test-webplugin" contentEditable></embed>
+<div id='text'><span>Some text to drag</span></div>
 <script>
 
 function test() {
@@ -30,6 +30,7 @@ function test() {
         var startX = div.offsetLeft + div.firstChild.offsetWidth / 5;
         var startY = div.offsetTop + div.offsetHeight / 2;;
 
+        // Drag into the plugin and drag out before dropping.
         eventSender.dragMode = true;
         eventSender.mouseMoveTo(startX, startY);
         eventSender.mouseDown();
@@ -37,6 +38,7 @@ function test() {
         eventSender.mouseMoveTo(positionX, positionY);
         eventSender.mouseMoveTo(positionX + 2, positionY);
         eventSender.mouseMoveTo(startX, startY);
+        eventSender.mouseMoveTo(positionX, positionY);
         eventSender.mouseUp();
     }
 }

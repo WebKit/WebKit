@@ -719,6 +719,8 @@ void WebPluginContainerImpl::handleDragEvent(MouseEvent* event)
         dragStatus = WebDragStatusLeave;
     else if (event->type() == eventNames().dragoverEvent)
         dragStatus = WebDragStatusOver;
+    else if (event->type() == eventNames().dropEvent)
+        dragStatus = WebDragStatusDrop;
 
     if (dragStatus == WebDragStatusUnknown)
         return;

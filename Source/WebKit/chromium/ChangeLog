@@ -1,3 +1,16 @@
+2012-10-09  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        [chromium] Add drop event for plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=98827
+
+        Reviewed by Adam Barth.
+
+        Add conversion for drop events.
+
+        * public/WebDragStatus.h:
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::handleDragEvent):
+
 2012-10-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r130811 and r130821.
