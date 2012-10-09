@@ -46,12 +46,12 @@ namespace JSC {
     class FunctionPrototype;
     class GetterSetter;
     class GlobalCodeBlock;
+    class JSStack;
     class LLIntOffsetsExtractor;
     class NativeErrorConstructor;
     class ProgramCodeBlock;
     class RegExpConstructor;
     class RegExpPrototype;
-    class RegisterFile;
 
     struct ActivationStackNode;
     struct HashTable;
@@ -91,7 +91,7 @@ namespace JSC {
 
     protected:
 
-        Register m_globalCallFrame[RegisterFile::CallFrameHeaderSize];
+        Register m_globalCallFrame[JSStack::CallFrameHeaderSize];
 
         WriteBarrier<JSObject> m_globalThis;
         WriteBarrier<JSObject> m_methodCallDummy;

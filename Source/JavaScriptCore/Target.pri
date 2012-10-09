@@ -138,7 +138,7 @@ SOURCES += \
     interpreter/AbstractPC.cpp \
     interpreter/CallFrame.cpp \
     interpreter/Interpreter.cpp \
-    interpreter/RegisterFile.cpp \
+    interpreter/JSStack.cpp \
     jit/ExecutableAllocatorFixedVMPool.cpp \
     jit/ExecutableAllocator.cpp \
     jit/HostCallReturnValue.cpp \

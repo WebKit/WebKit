@@ -55,11 +55,11 @@ namespace JSC {
     class JITStubRoutine;
     class JSCell;
     class JSGlobalData;
+    class JSStack;
     class JSValue;
     class LiveObjectIterator;
     class LLIntOffsetsExtractor;
     class MarkedArgumentBuffer;
-    class RegisterFile;
     class WeakGCHandlePool;
     class SlotVisitor;
 
@@ -210,7 +210,7 @@ namespace JSC {
         void zombifyDeadObjects();
         void markDeadObjects();
 
-        RegisterFile& registerFile();
+        JSStack& stack();
         BlockAllocator& blockAllocator();
 
         const HeapType m_heapType;

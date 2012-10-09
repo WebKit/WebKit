@@ -93,7 +93,7 @@ void VariableEventStream::reconstruct(
     if (!index) {
         valueRecoveries = Operands<ValueRecovery>(codeBlock->numParameters(), numVariables);
         for (size_t i = 0; i < valueRecoveries.size(); ++i)
-            valueRecoveries[i] = ValueRecovery::alreadyInRegisterFile();
+            valueRecoveries[i] = ValueRecovery::alreadyInJSStack();
         return;
     }
     
@@ -280,7 +280,7 @@ void VariableEventStream::reconstruct(
         }
         
         valueRecoveries[i] =
-            ValueRecovery::displacedInRegisterFile(static_cast<VirtualRegister>(info->u.virtualReg), info->format);
+            ValueRecovery::displacedInJSStack(static_cast<VirtualRegister>(info->u.virtualReg), info->format);
     }
 }
 

@@ -201,7 +201,7 @@ public:
 
     // Get the format of the value in machine registers (or 'none').
     DataFormat registerFormat() { return m_registerFormat; }
-    // Get the format of the value as it is spilled in the RegisterFile (or 'none').
+    // Get the format of the value as it is spilled in the JSStack (or 'none').
     DataFormat spillFormat() { return m_spillFormat; }
     
     bool isJSFormat(DataFormat expectedFormat)
@@ -255,11 +255,11 @@ public:
         // This should only be called on values that are currently in a register.
         ASSERT(m_registerFormat != DataFormatNone);
         // Constants do not need spilling, nor do values that have already been
-        // spilled to the RegisterFile.
+        // spilled to the JSStack.
         return !m_canFill;
     }
 
-    // Called when a VirtualRegister is being spilled to the RegisterFile for the first time.
+    // Called when a VirtualRegister is being spilled to the JSStack for the first time.
     void spill(VariableEventStream& stream, VirtualRegister virtualRegister, DataFormat spillFormat)
     {
         // We shouldn't be spill values that don't need spilling.

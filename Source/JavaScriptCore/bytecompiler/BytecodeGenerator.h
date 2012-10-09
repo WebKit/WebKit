@@ -629,11 +629,11 @@ namespace JSC {
             if (index >= 0)
                 return m_calleeRegisters[index];
 
-            if (index == RegisterFile::Callee)
+            if (index == JSStack::Callee)
                 return m_calleeRegister;
 
             ASSERT(m_parameters.size());
-            return m_parameters[index + m_parameters.size() + RegisterFile::CallFrameHeaderSize];
+            return m_parameters[index + m_parameters.size() + JSStack::CallFrameHeaderSize];
         }
 
         unsigned addConstant(const Identifier&);

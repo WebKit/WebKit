@@ -43,9 +43,9 @@ void CallFrame::dumpCaller()
     dataLog("Callpoint => %s:%d\n", urlString.utf8().data(), signedLineNumber);
 }
 
-RegisterFile* CallFrame::registerFile()
+JSStack* CallFrame::stack()
 {
-    return &interpreter()->registerFile();
+    return &interpreter()->stack();
 }
 
 #endif

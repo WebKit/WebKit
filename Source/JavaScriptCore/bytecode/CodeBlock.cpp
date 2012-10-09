@@ -3017,7 +3017,7 @@ String CodeBlock::nameForRegister(int registerNumber)
     }
     if (registerNumber < 0) {
         int argumentPosition = -registerNumber;
-        argumentPosition -= RegisterFile::CallFrameHeaderSize + 1;
+        argumentPosition -= JSStack::CallFrameHeaderSize + 1;
         return String::format("arguments[%3d]", argumentPosition - 1).impl();
     }
     return "";

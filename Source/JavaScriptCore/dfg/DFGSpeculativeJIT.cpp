@@ -1367,7 +1367,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
 
     ASSERT(m_arguments.size() == block.variablesAtHead.numberOfArguments());
     for (size_t i = 0; i < m_arguments.size(); ++i) {
-        ValueSource valueSource = ValueSource(ValueInRegisterFile);
+        ValueSource valueSource = ValueSource(ValueInJSStack);
         m_arguments[i] = valueSource;
         m_stream->appendAndLog(VariableEvent::setLocal(argumentToOperand(i), valueSource.dataFormat()));
     }
@@ -1384,11 +1384,11 @@ void SpeculativeJIT::compile(BasicBlock& block)
         else if (at(nodeIndex).variableAccessData()->isArgumentsAlias())
             valueSource = ValueSource(ArgumentsSource);
         else if (at(nodeIndex).variableAccessData()->isCaptured())
-            valueSource = ValueSource(ValueInRegisterFile);
+            valueSource = ValueSource(ValueInJSStack);
         else if (!at(nodeIndex).refCount())
             valueSource = ValueSource(SourceIsDead);
         else if (at(nodeIndex).variableAccessData()->shouldUseDoubleFormat())
-            valueSource = ValueSource(DoubleInRegisterFile);
+            valueSource = ValueSource(DoubleInJSStack);
         else
             valueSource = ValueSource::forSpeculation(at(nodeIndex).variableAccessData()->argumentAwarePrediction());
         m_variables[i] = valueSource;
@@ -1440,25 +1440,25 @@ void SpeculativeJIT::compile(BasicBlock& block)
                 for (int i = 0; i < argumentCountIncludingThis; ++i) {
                     ValueRecovery recovery;
                     if (codeBlock->isCaptured(argumentToOperand(i)))
-                        recovery = ValueRecovery::alreadyInRegisterFile();
+                        recovery = ValueRecovery::alreadyInJSStack();
                     else {
                         ArgumentPosition& argumentPosition =
                             m_jit.graph().m_argumentPositions[argumentPositionStart + i];
                         ValueSource valueSource;
                         if (argumentPosition.shouldUseDoubleFormat())
-                            valueSource = ValueSource(DoubleInRegisterFile);
+                            valueSource = ValueSource(DoubleInJSStack);
                         else if (isInt32Speculation(argumentPosition.prediction()))
-                            valueSource = ValueSource(Int32InRegisterFile);
+                            valueSource = ValueSource(Int32InJSStack);
                         else if (isCellSpeculation(argumentPosition.prediction()))
-                            valueSource = ValueSource(CellInRegisterFile);
+                            valueSource = ValueSource(CellInJSStack);
                         else if (isBooleanSpeculation(argumentPosition.prediction()))
-                            valueSource = ValueSource(BooleanInRegisterFile);
+                            valueSource = ValueSource(BooleanInJSStack);
                         else
-                            valueSource = ValueSource(ValueInRegisterFile);
+                            valueSource = ValueSource(ValueInJSStack);
                         recovery = computeValueRecoveryFor(valueSource);
                     }
                     // The recovery should refer either to something that has already been
-                    // stored into the register file at the right place, or to a constant,
+                    // stored into the stack at the right place, or to a constant,
                     // since the Arguments code isn't smart enough to handle anything else.
                     // The exception is the this argument, which we don't really need to be
                     // able to recover.
@@ -1550,9 +1550,9 @@ void SpeculativeJIT::checkArgumentTypes()
     m_codeOriginForOSR = CodeOrigin(0);
 
     for (size_t i = 0; i < m_arguments.size(); ++i)
-        m_arguments[i] = ValueSource(ValueInRegisterFile);
+        m_arguments[i] = ValueSource(ValueInJSStack);
     for (size_t i = 0; i < m_variables.size(); ++i)
-        m_variables[i] = ValueSource(ValueInRegisterFile);
+        m_variables[i] = ValueSource(ValueInJSStack);
     
     for (int i = 0; i < m_jit.codeBlock()->numParameters(); ++i) {
         NodeIndex nodeIndex = m_jit.graph().m_arguments[i];
@@ -1649,7 +1649,7 @@ void SpeculativeJIT::linkOSREntries(LinkBuffer& linkBuffer)
 
 ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSource)
 {
-    if (valueSource.isInRegisterFile())
+    if (valueSource.isInJSStack())
         return valueSource.valueRecovery();
         
     ASSERT(valueSource.kind() == HaveNode);

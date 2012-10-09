@@ -43,7 +43,7 @@ namespace JSC {
 
 namespace CommonSlowPaths {
 
-ALWAYS_INLINE ExecState* arityCheckFor(ExecState* exec, RegisterFile* registerFile, CodeSpecializationKind kind)
+ALWAYS_INLINE ExecState* arityCheckFor(ExecState* exec, JSStack* stack, CodeSpecializationKind kind)
 {
     JSFunction* callee = jsCast<JSFunction*>(exec->callee());
     ASSERT(!callee->isHostFunction());
@@ -51,7 +51,7 @@ ALWAYS_INLINE ExecState* arityCheckFor(ExecState* exec, RegisterFile* registerFi
     int argumentCountIncludingThis = exec->argumentCountIncludingThis();
 
     // This ensures enough space for the worst case scenario of zero arguments passed by the caller.
-    if (!registerFile->grow(exec->registers() + newCodeBlock->numParameters() + newCodeBlock->m_numCalleeRegisters))
+    if (!stack->grow(exec->registers() + newCodeBlock->numParameters() + newCodeBlock->m_numCalleeRegisters))
         return 0;
 
     ASSERT(argumentCountIncludingThis < newCodeBlock->numParameters());
@@ -71,7 +71,7 @@ ALWAYS_INLINE ExecState* arityCheckFor(ExecState* exec, RegisterFile* registerFi
         dst[i] = jsUndefined();
 
     ExecState* newExec = ExecState::create(dst);
-    ASSERT((void*)newExec <= registerFile->end());
+    ASSERT((void*)newExec <= stack->end());
     return newExec;
 }
 

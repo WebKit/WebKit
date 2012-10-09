@@ -35,9 +35,9 @@
 #include "JSFunction.h"
 #include "JSValue.h"
 #include "JSObject.h"
+#include "JSStack.h"
 #include "LLIntData.h"
 #include "Opcode.h"
-#include "RegisterFile.h"
 
 #include <wtf/HashMap.h>
 #include <wtf/text/StringBuilder.h>
@@ -189,7 +189,7 @@ namespace JSC {
         
         void initialize(bool canUseJIT);
 
-        RegisterFile& registerFile() { return m_registerFile; }
+        JSStack& stack() { return m_stack; }
         
         Opcode getOpcode(OpcodeID id)
         {
@@ -249,13 +249,9 @@ namespace JSC {
 
         NEVER_INLINE bool unwindCallFrame(CallFrame*&, JSValue, unsigned& bytecodeOffset, CodeBlock*&);
 
-        static ALWAYS_INLINE CallFrame* slideRegisterWindowForCall(CodeBlock*, RegisterFile*, CallFrame*, size_t registerOffset, int argc);
+        static ALWAYS_INLINE CallFrame* slideRegisterWindowForCall(CodeBlock*, JSStack*, CallFrame*, size_t registerOffset, int argc);
 
         static CallFrame* findFunctionCallFrameFromVMCode(CallFrame*, JSFunction*);
-
-#if !ENABLE(LLINT_C_LOOP)
-        JSValue privateExecute(ExecutionFlag, RegisterFile*, CallFrame*);
-#endif
 
         void dumpRegisters(CallFrame*);
         
@@ -267,7 +263,7 @@ namespace JSC {
 
         int m_reentryDepth;
 
-        RegisterFile m_registerFile;
+        JSStack m_stack;
         
 #if ENABLE(COMPUTED_GOTO_OPCODES) && ENABLE(LLINT)
         Opcode* m_opcodeTable; // Maps OpcodeID => Opcode for compiling
@@ -287,11 +283,11 @@ namespace JSC {
 
     inline JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue thisValue, JSScope* scope)
     {
-        return execute(eval, callFrame, thisValue, scope, m_registerFile.size() + 1 + RegisterFile::CallFrameHeaderSize);
+        return execute(eval, callFrame, thisValue, scope, m_stack.size() + 1 + JSStack::CallFrameHeaderSize);
     }
 
     JSValue eval(CallFrame*);
-    CallFrame* loadVarargs(CallFrame*, RegisterFile*, JSValue thisValue, JSValue arguments, int firstFreeRegister);
+    CallFrame* loadVarargs(CallFrame*, JSStack*, JSValue thisValue, JSValue arguments, int firstFreeRegister);
 
 } // namespace JSC
 

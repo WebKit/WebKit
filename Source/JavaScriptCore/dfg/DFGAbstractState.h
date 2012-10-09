@@ -185,7 +185,7 @@ public:
     void reset();
     
     // Abstractly executes the given node. The new abstract state is stored into an
-    // abstract register file stored in *this. Loads of local variables (that span
+    // abstract stack stored in *this. Loads of local variables (that span
     // basic blocks) interrogate the basic block's notion of the state at the head.
     // Stores to local variables are handled in endBasicBlock(). This returns true
     // if execution should continue past this node. Notably, it will return true

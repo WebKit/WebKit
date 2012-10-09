@@ -69,25 +69,19 @@ void VMInspector::dumpFrame(CallFrame* frame, const char* prefix,
         printf("%s ", prefix);
 
     printf("frame [%d] %p { cb %p:%s, retPC %p:%s, scope %p:%s, callee %p:%s, callerFrame %p:%s, argc %d, vPC %p }",
-           frameCount, frame,
-
-           CAST<void*>(frame[RegisterFile::CodeBlock].payload()),
-           getTypeName(frame[RegisterFile::CodeBlock].jsValue()),
-
-           CAST<void*>(frame[RegisterFile::ReturnPC].payload()),
-           getTypeName(frame[RegisterFile::ReturnPC].jsValue()),
-
-           CAST<void*>(frame[RegisterFile::ScopeChain].payload()),
-           getTypeName(frame[RegisterFile::ScopeChain].jsValue()),
-
-           CAST<void*>(frame[RegisterFile::Callee].payload()),
-           getTypeName(frame[RegisterFile::Callee].jsValue()),
-
-           CAST<void*>(frame[RegisterFile::CallerFrame].payload()),
-           getTypeName(frame[RegisterFile::CallerFrame].jsValue()),
-
-           frame[RegisterFile::ArgumentCount].payload(),
-           vPC);
+        frameCount, frame,
+        CAST<void*>(frame[JSStack::CodeBlock].payload()),
+        getTypeName(frame[JSStack::CodeBlock].jsValue()),
+        CAST<void*>(frame[JSStack::ReturnPC].payload()),
+        getTypeName(frame[JSStack::ReturnPC].jsValue()),
+        CAST<void*>(frame[JSStack::ScopeChain].payload()),
+        getTypeName(frame[JSStack::ScopeChain].jsValue()),
+        CAST<void*>(frame[JSStack::Callee].payload()),
+        getTypeName(frame[JSStack::Callee].jsValue()),
+        CAST<void*>(frame[JSStack::CallerFrame].callFrame()),
+        getTypeName(frame[JSStack::CallerFrame].jsValue()),
+        frame[JSStack::ArgumentCount].payload(),
+        vPC);
 
     if (funcName || file || (line >= 0)) {
         printf(" @");

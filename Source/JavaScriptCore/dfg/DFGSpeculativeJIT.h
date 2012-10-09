@@ -325,7 +325,7 @@ public:
     // These methods are used when generating 'unexpected'
     // calls out from JIT code to C++ helper routines -
     // they spill all live values to the appropriate
-    // slots in the RegisterFile without changing any state
+    // slots in the JSStack without changing any state
     // in the GenerationInfo.
     SilentRegisterSavePlan silentSavePlanForGPR(VirtualRegister spillMe, GPRReg source)
     {
@@ -704,7 +704,7 @@ public:
     }
 #endif
 
-    // Spill a VirtualRegister to the RegisterFile.
+    // Spill a VirtualRegister to the JSStack.
     void spill(VirtualRegister spillMe)
     {
         GenerationInfo& info = m_generationInfo[spillMe];
@@ -714,7 +714,7 @@ public:
             return;
 #endif
         // Check the GenerationInfo to see if this value need writing
-        // to the RegisterFile - if not, mark it as spilled & return.
+        // to the JSStack - if not, mark it as spilled & return.
         if (!info.needsSpill()) {
             info.setSpilled(*m_stream, spillMe);
             return;
@@ -829,7 +829,7 @@ public:
         return &m_jit.codeBlock()->identifier(index);
     }
 
-    // Spill all VirtualRegisters back to the RegisterFile.
+    // Spill all VirtualRegisters back to the JSStack.
     void flushRegisters()
     {
         for (gpr_iterator iter = m_gprs.begin(); iter != m_gprs.end(); ++iter) {

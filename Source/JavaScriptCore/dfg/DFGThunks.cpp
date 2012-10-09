@@ -113,7 +113,7 @@ MacroAssemblerCodeRef throwExceptionFromCallSlowPathGenerator(JSGlobalData* glob
     jit.loadPtr(
         CCallHelpers::Address(
             GPRInfo::callFrameRegister,
-            static_cast<ptrdiff_t>(sizeof(Register)) * RegisterFile::CallerFrame),
+            static_cast<ptrdiff_t>(sizeof(Register)) * JSStack::CallerFrame),
         GPRInfo::callFrameRegister);
     jit.peek(GPRInfo::nonPreservedNonReturnGPR, JITSTACKFRAME_ARGS_INDEX);
     jit.setupArgumentsWithExecState(GPRInfo::nonPreservedNonReturnGPR);
@@ -136,7 +136,7 @@ static void slowPathFor(
         GPRInfo::nonArgGPR2,
         CCallHelpers::Address(
             GPRInfo::callFrameRegister,
-            static_cast<ptrdiff_t>(sizeof(Register)) * RegisterFile::ReturnPC));
+            static_cast<ptrdiff_t>(sizeof(Register)) * JSStack::ReturnPC));
     jit.storePtr(GPRInfo::callFrameRegister, &globalData->topCallFrame);
     jit.poke(GPRInfo::nonPreservedNonReturnGPR, JITSTACKFRAME_ARGS_INDEX);
     jit.setupArgumentsExecState();
@@ -151,13 +151,13 @@ static void slowPathFor(
     jit.loadPtr(
         CCallHelpers::Address(
             GPRInfo::callFrameRegister,
-            static_cast<ptrdiff_t>(sizeof(Register)) * RegisterFile::ReturnPC),
+            static_cast<ptrdiff_t>(sizeof(Register)) * JSStack::ReturnPC),
         GPRInfo::nonPreservedNonReturnGPR);
     jit.storePtr(
         CCallHelpers::TrustedImmPtr(0),
         CCallHelpers::Address(
             GPRInfo::callFrameRegister,
-            static_cast<ptrdiff_t>(sizeof(Register)) * RegisterFile::ReturnPC));
+            static_cast<ptrdiff_t>(sizeof(Register)) * JSStack::ReturnPC));
     emitPointerValidation(jit, GPRInfo::nonPreservedNonReturnGPR);
     jit.restoreReturnAddressBeforeReturn(GPRInfo::nonPreservedNonReturnGPR);
     emitPointerValidation(jit, GPRInfo::returnValueGPR);
@@ -249,19 +249,19 @@ static MacroAssemblerCodeRef virtualForThunkGenerator(
         GPRInfo::nonArgGPR1,
         CCallHelpers::Address(
             GPRInfo::callFrameRegister,
-            static_cast<ptrdiff_t>(sizeof(Register)) * RegisterFile::ScopeChain));
+            static_cast<ptrdiff_t>(sizeof(Register)) * JSStack::ScopeChain));
 #else
     jit.storePtr(
         GPRInfo::nonArgGPR1,
         CCallHelpers::Address(
             GPRInfo::callFrameRegister,
-            static_cast<ptrdiff_t>(sizeof(Register)) * RegisterFile::ScopeChain +
+            static_cast<ptrdiff_t>(sizeof(Register)) * JSStack::ScopeChain +
             OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
     jit.store32(
         CCallHelpers::TrustedImm32(JSValue::CellTag),
         CCallHelpers::Address(
             GPRInfo::callFrameRegister,
-            static_cast<ptrdiff_t>(sizeof(Register)) * RegisterFile::ScopeChain +
+            static_cast<ptrdiff_t>(sizeof(Register)) * JSStack::ScopeChain +
             OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
 #endif
     

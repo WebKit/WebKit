@@ -40,7 +40,7 @@ namespace JSC {
         SpecializedThunkJIT(int expectedArgCount)
         {
             // Check that we have the expected number of arguments
-            m_failures.append(branch32(NotEqual, payloadFor(RegisterFile::ArgumentCount), TrustedImm32(expectedArgCount + 1)));
+            m_failures.append(branch32(NotEqual, payloadFor(JSStack::ArgumentCount), TrustedImm32(expectedArgCount + 1)));
         }
         
         void loadDoubleArgument(int argument, FPRegisterID dst, RegisterID scratch)
@@ -83,7 +83,7 @@ namespace JSC {
         {
             if (src != regT0)
                 move(src, regT0);
-            loadPtr(payloadFor(RegisterFile::CallerFrame, callFrameRegister), callFrameRegister);
+            loadPtr(payloadFor(JSStack::CallerFrame, callFrameRegister), callFrameRegister);
             ret();
         }
         
@@ -108,7 +108,7 @@ namespace JSC {
             lowNonZero.link(this);
             highNonZero.link(this);
 #endif
-            loadPtr(payloadFor(RegisterFile::CallerFrame, callFrameRegister), callFrameRegister);
+            loadPtr(payloadFor(JSStack::CallerFrame, callFrameRegister), callFrameRegister);
             ret();
         }
 
@@ -117,7 +117,7 @@ namespace JSC {
             if (src != regT0)
                 move(src, regT0);
             tagReturnAsInt32();
-            loadPtr(payloadFor(RegisterFile::CallerFrame, callFrameRegister), callFrameRegister);
+            loadPtr(payloadFor(JSStack::CallerFrame, callFrameRegister), callFrameRegister);
             ret();
         }
 
@@ -126,7 +126,7 @@ namespace JSC {
             if (src != regT0)
                 move(src, regT0);
             tagReturnAsJSCell();
-            loadPtr(payloadFor(RegisterFile::CallerFrame, callFrameRegister), callFrameRegister);
+            loadPtr(payloadFor(JSStack::CallerFrame, callFrameRegister), callFrameRegister);
             ret();
         }
         

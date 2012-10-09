@@ -25,8 +25,8 @@
 
 #include "AbstractPC.h"
 #include "JSGlobalData.h"
+#include "JSStack.h"
 #include "MacroAssemblerCodeRef.h"
-#include "RegisterFile.h"
 
 namespace JSC  {
 
@@ -39,13 +39,13 @@ namespace JSC  {
     // Passed as the first argument to most functions.
     class ExecState : private Register {
     public:
-        JSValue calleeAsValue() const { return this[RegisterFile::Callee].jsValue(); }
-        JSObject* callee() const { return this[RegisterFile::Callee].function(); }
-        CodeBlock* codeBlock() const { return this[RegisterFile::CodeBlock].Register::codeBlock(); }
+        JSValue calleeAsValue() const { return this[JSStack::Callee].jsValue(); }
+        JSObject* callee() const { return this[JSStack::Callee].function(); }
+        CodeBlock* codeBlock() const { return this[JSStack::CodeBlock].Register::codeBlock(); }
         JSScope* scope() const
         {
-            ASSERT(this[RegisterFile::ScopeChain].Register::scope());
-            return this[RegisterFile::ScopeChain].Register::scope();
+            ASSERT(this[JSStack::ScopeChain].Register::scope());
+            return this[JSStack::ScopeChain].Register::scope();
         }
 
         // Global object in which execution began.
@@ -102,11 +102,11 @@ namespace JSC  {
 
         CallFrame& operator=(const Register& r) { *static_cast<Register*>(this) = r; return *this; }
 
-        CallFrame* callerFrame() const { return this[RegisterFile::CallerFrame].callFrame(); }
+        CallFrame* callerFrame() const { return this[JSStack::CallerFrame].callFrame(); }
 #if ENABLE(JIT) || ENABLE(LLINT)
-        ReturnAddressPtr returnPC() const { return ReturnAddressPtr(this[RegisterFile::ReturnPC].vPC()); }
-        bool hasReturnPC() const { return !!this[RegisterFile::ReturnPC].vPC(); }
-        void clearReturnPC() { registers()[RegisterFile::ReturnPC] = static_cast<Instruction*>(0); }
+        ReturnAddressPtr returnPC() const { return ReturnAddressPtr(this[JSStack::ReturnPC].vPC()); }
+        bool hasReturnPC() const { return !!this[JSStack::ReturnPC].vPC(); }
+        void clearReturnPC() { registers()[JSStack::ReturnPC] = static_cast<Instruction*>(0); }
 #endif
         AbstractPC abstractReturnPC(JSGlobalData& globalData) { return AbstractPC(globalData, this); }
 #if USE(JSVALUE32_64)
@@ -116,13 +116,13 @@ namespace JSC  {
         unsigned bytecodeOffsetForNonDFGCode() const
         {
             ASSERT(codeBlock());
-            return this[RegisterFile::ArgumentCount].tag();
+            return this[JSStack::ArgumentCount].tag();
         }
         
         void setBytecodeOffsetForNonDFGCode(unsigned offset)
         {
             ASSERT(codeBlock());
-            this[RegisterFile::ArgumentCount].tag() = static_cast<int32_t>(offset);
+            this[JSStack::ArgumentCount].tag() = static_cast<int32_t>(offset);
         }
 #endif
 
@@ -136,8 +136,8 @@ namespace JSC  {
         Register* frameExtentInternal();
     
 #if ENABLE(DFG_JIT)
-        InlineCallFrame* inlineCallFrame() const { return this[RegisterFile::ReturnPC].asInlineCallFrame(); }
-        unsigned codeOriginIndexForDFG() const { return this[RegisterFile::ArgumentCount].tag(); }
+        InlineCallFrame* inlineCallFrame() const { return this[JSStack::ReturnPC].asInlineCallFrame(); }
+        unsigned codeOriginIndexForDFG() const { return this[JSStack::ArgumentCount].tag(); }
 #else
         // This will never be called if !ENABLE(DFG_JIT) since all calls should be guarded by
         // isInlineCallFrame(). But to make it easier to write code without having a bunch of
@@ -151,25 +151,25 @@ namespace JSC  {
 #if USE(JSVALUE32_64)
         Instruction* currentVPC() const
         {
-            return bitwise_cast<Instruction*>(this[RegisterFile::ArgumentCount].tag());
+            return bitwise_cast<Instruction*>(this[JSStack::ArgumentCount].tag());
         }
         void setCurrentVPC(Instruction* vpc)
         {
-            this[RegisterFile::ArgumentCount].tag() = bitwise_cast<int32_t>(vpc);
+            this[JSStack::ArgumentCount].tag() = bitwise_cast<int32_t>(vpc);
         }
 #else
         Instruction* currentVPC() const;
         void setCurrentVPC(Instruction* vpc);
 #endif
 
-        void setCallerFrame(CallFrame* callerFrame) { static_cast<Register*>(this)[RegisterFile::CallerFrame] = callerFrame; }
-        void setScope(JSScope* scope) { static_cast<Register*>(this)[RegisterFile::ScopeChain] = scope; }
+        void setCallerFrame(CallFrame* callerFrame) { static_cast<Register*>(this)[JSStack::CallerFrame] = callerFrame; }
+        void setScope(JSScope* scope) { static_cast<Register*>(this)[JSStack::ScopeChain] = scope; }
 
         ALWAYS_INLINE void init(CodeBlock* codeBlock, Instruction* vPC, JSScope* scope,
             CallFrame* callerFrame, int argc, JSObject* callee)
         {
             ASSERT(callerFrame); // Use noCaller() rather than 0 for the outer host call frame caller.
-            ASSERT(callerFrame == noCaller() || callerFrame->removeHostCallFrameFlag()->registerFile()->end() >= this);
+            ASSERT(callerFrame == noCaller() || callerFrame->removeHostCallFrameFlag()->stack()->end() >= this);
 
             setCodeBlock(codeBlock);
             setScope(scope);
@@ -186,7 +186,7 @@ namespace JSC  {
 
         // Access to arguments as passed. (After capture, arguments may move to a different location.)
         size_t argumentCount() const { return argumentCountIncludingThis() - 1; }
-        size_t argumentCountIncludingThis() const { return this[RegisterFile::ArgumentCount].payload(); }
+        size_t argumentCountIncludingThis() const { return this[JSStack::ArgumentCount].payload(); }
         static int argumentOffset(int argument) { return s_firstArgumentOffset - argument; }
         static int argumentOffsetIncludingThis(int argument) { return s_thisArgumentOffset - argument; }
 
@@ -216,7 +216,7 @@ namespace JSC  {
 
         JSValue argumentAfterCapture(size_t argument);
 
-        static int offsetFor(size_t argumentCountIncludingThis) { return argumentCountIncludingThis + RegisterFile::CallFrameHeaderSize; }
+        static int offsetFor(size_t argumentCountIncludingThis) { return argumentCountIncludingThis + JSStack::CallFrameHeaderSize; }
 
         // FIXME: Remove these.
         int hostThisRegister() { return thisArgumentOffset(); }
@@ -228,15 +228,15 @@ namespace JSC  {
         CallFrame* addHostCallFrameFlag() const { return reinterpret_cast<CallFrame*>(reinterpret_cast<intptr_t>(this) | HostCallFrameFlag); }
         CallFrame* removeHostCallFrameFlag() { return reinterpret_cast<CallFrame*>(reinterpret_cast<intptr_t>(this) & ~HostCallFrameFlag); }
 
-        void setArgumentCountIncludingThis(int count) { static_cast<Register*>(this)[RegisterFile::ArgumentCount].payload() = count; }
-        void setCallee(JSObject* callee) { static_cast<Register*>(this)[RegisterFile::Callee] = Register::withCallee(callee); }
-        void setCodeBlock(CodeBlock* codeBlock) { static_cast<Register*>(this)[RegisterFile::CodeBlock] = codeBlock; }
-        void setReturnPC(void* value) { static_cast<Register*>(this)[RegisterFile::ReturnPC] = (Instruction*)value; }
+        void setArgumentCountIncludingThis(int count) { static_cast<Register*>(this)[JSStack::ArgumentCount].payload() = count; }
+        void setCallee(JSObject* callee) { static_cast<Register*>(this)[JSStack::Callee] = Register::withCallee(callee); }
+        void setCodeBlock(CodeBlock* codeBlock) { static_cast<Register*>(this)[JSStack::CodeBlock] = codeBlock; }
+        void setReturnPC(void* value) { static_cast<Register*>(this)[JSStack::ReturnPC] = (Instruction*)value; }
         
 #if ENABLE(DFG_JIT)
         bool isInlineCallFrame();
         
-        void setInlineCallFrame(InlineCallFrame* inlineCallFrame) { static_cast<Register*>(this)[RegisterFile::ReturnPC] = inlineCallFrame; }
+        void setInlineCallFrame(InlineCallFrame* inlineCallFrame) { static_cast<Register*>(this)[JSStack::ReturnPC] = inlineCallFrame; }
         
         // Call this to get the semantically correct JS CallFrame* for the
         // currently executing function.
@@ -269,11 +269,11 @@ namespace JSC  {
 
     private:
         static const intptr_t HostCallFrameFlag = 1;
-        static const int s_thisArgumentOffset = -1 - RegisterFile::CallFrameHeaderSize;
+        static const int s_thisArgumentOffset = -1 - JSStack::CallFrameHeaderSize;
         static const int s_firstArgumentOffset = s_thisArgumentOffset - 1;
 
 #ifndef NDEBUG
-        RegisterFile* registerFile();
+        JSStack* stack();
 #endif
 #if ENABLE(DFG_JIT)
         bool isInlineCallFrameSlow();

@@ -512,7 +512,7 @@ JSObject* JSGlobalObject::toThisObject(JSCell* cell, ExecState*)
 
 ExecState* JSGlobalObject::globalExec()
 {
-    return CallFrame::create(m_globalCallFrame + RegisterFile::CallFrameHeaderSize);
+    return CallFrame::create(m_globalCallFrame + JSStack::CallFrameHeaderSize);
 }
 
 void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)

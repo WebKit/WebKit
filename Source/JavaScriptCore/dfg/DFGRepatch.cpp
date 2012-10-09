@@ -448,7 +448,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
             // right now!
             stubJit.store32(
                 MacroAssembler::TrustedImm32(exec->codeOriginIndexForDFG()),
-                CCallHelpers::tagFor(static_cast<VirtualRegister>(RegisterFile::ArgumentCount)));
+                CCallHelpers::tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
             
             operationCall = stubJit.call();
 #if USE(JSVALUE64)

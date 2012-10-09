@@ -70,11 +70,11 @@ PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGl
 
     // Finish canonical initialization before JS function call.
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scope)), regT1);
-    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+    emitPutCellToCallFrameHeader(regT1, JSStack::ScopeChain);
 
     // Also initialize ReturnPC for use by lazy linking and exceptions.
     preserveReturnAddressAfterCall(regT3);
-    emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
+    emitPutToCallFrameHeader(regT3, JSStack::ReturnPC);
     
     storePtr(callFrameRegister, &m_globalData->topCallFrame);
     restoreArgumentReference();
@@ -90,11 +90,11 @@ PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGl
 
     // Finish canonical initialization before JS function call.
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scope)), regT1);
-    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+    emitPutCellToCallFrameHeader(regT1, JSStack::ScopeChain);
 
     // Also initialize ReturnPC for use by lazy linking and exeptions.
     preserveReturnAddressAfterCall(regT3);
-    emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
+    emitPutToCallFrameHeader(regT3, JSStack::ReturnPC);
     
     storePtr(callFrameRegister, &m_globalData->topCallFrame);
     restoreArgumentReference();
@@ -110,7 +110,7 @@ PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGl
 
     // Finish canonical initialization before JS function call.
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scope)), regT1);
-    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+    emitPutCellToCallFrameHeader(regT1, JSStack::ScopeChain);
 
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
     Jump hasCodeBlock1 = branch32(GreaterThanOrEqual, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForCall)), TrustedImm32(0));
@@ -134,7 +134,7 @@ PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGl
 
     // Finish canonical initialization before JS function call.
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scope)), regT1);
-    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+    emitPutCellToCallFrameHeader(regT1, JSStack::ScopeChain);
 
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
     Jump hasCodeBlock2 = branch32(GreaterThanOrEqual, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForConstruct)), TrustedImm32(0));
@@ -152,37 +152,37 @@ PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGl
 
     callSlowCase.link(this);
     // Finish canonical initialization before JS function call.
-    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT2);
-    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT2, regT2);
-    emitPutCellToCallFrameHeader(regT2, RegisterFile::ScopeChain);
+    emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, regT2);
+    emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT2, regT2);
+    emitPutCellToCallFrameHeader(regT2, JSStack::ScopeChain);
 
     // Also initialize ReturnPC and CodeBlock, like a JS function would.
     preserveReturnAddressAfterCall(regT3);
-    emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
-    emitPutImmediateToCallFrameHeader(0, RegisterFile::CodeBlock);
+    emitPutToCallFrameHeader(regT3, JSStack::ReturnPC);
+    emitPutImmediateToCallFrameHeader(0, JSStack::CodeBlock);
 
     storePtr(callFrameRegister, &m_globalData->topCallFrame);
     restoreArgumentReference();
     Call callCallNotJSFunction = call();
-    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, callFrameRegister);
+    emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, callFrameRegister);
     restoreReturnAddressBeforeReturn(regT3);
     ret();
 
     constructSlowCase.link(this);
     // Finish canonical initialization before JS function call.
-    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT2);
-    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT2, regT2);
-    emitPutCellToCallFrameHeader(regT2, RegisterFile::ScopeChain);
+    emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, regT2);
+    emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT2, regT2);
+    emitPutCellToCallFrameHeader(regT2, JSStack::ScopeChain);
 
     // Also initialize ReturnPC and CodeBlock, like a JS function would.
     preserveReturnAddressAfterCall(regT3);
-    emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
-    emitPutImmediateToCallFrameHeader(0, RegisterFile::CodeBlock);
+    emitPutToCallFrameHeader(regT3, JSStack::ReturnPC);
+    emitPutImmediateToCallFrameHeader(0, JSStack::CodeBlock);
 
     storePtr(callFrameRegister, &m_globalData->topCallFrame);
     restoreArgumentReference();
     Call callConstructNotJSFunction = call();
-    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, callFrameRegister);
+    emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, callFrameRegister);
     restoreReturnAddressBeforeReturn(regT3);
     ret();
 
@@ -227,18 +227,18 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
 
     Label nativeCallThunk = align();
 
-    emitPutImmediateToCallFrameHeader(0, RegisterFile::CodeBlock);
+    emitPutImmediateToCallFrameHeader(0, JSStack::CodeBlock);
     storePtr(callFrameRegister, &m_globalData->topCallFrame);
 
 #if CPU(X86)
     // Load caller frame's scope chain into this callframe so that whatever we call can
     // get to its global data.
-    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT0);
-    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT0);
-    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+    emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, regT0);
+    emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT1, regT0);
+    emitPutCellToCallFrameHeader(regT1, JSStack::ScopeChain);
 
     peek(regT1);
-    emitPutToCallFrameHeader(regT1, RegisterFile::ReturnPC);
+    emitPutToCallFrameHeader(regT1, JSStack::ReturnPC);
 
     // Calling convention:      f(ecx, edx, ...);
     // Host function signature: f(ExecState*);
@@ -247,7 +247,7 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
     subPtr(TrustedImm32(16 - sizeof(void*)), stackPointerRegister); // Align stack after call.
 
     // call the function
-    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, regT1);
+    emitGetFromCallFrameHeaderPtr(JSStack::Callee, regT1);
     loadPtr(Address(regT1, OBJECT_OFFSETOF(JSFunction, m_executable)), regT1);
     move(regT0, callFrameRegister); // Eagerly restore caller frame register to avoid loading from stack.
     call(Address(regT1, executableOffsetToFunction));
@@ -257,19 +257,19 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
 #elif CPU(ARM)
     // Load caller frame's scope chain into this callframe so that whatever we call can
     // get to its global data.
-    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT2);
-    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT2);
-    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+    emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, regT2);
+    emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT1, regT2);
+    emitPutCellToCallFrameHeader(regT1, JSStack::ScopeChain);
 
     preserveReturnAddressAfterCall(regT3); // Callee preserved
-    emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
+    emitPutToCallFrameHeader(regT3, JSStack::ReturnPC);
 
     // Calling convention:      f(r0 == regT0, r1 == regT1, ...);
     // Host function signature: f(ExecState*);
     move(callFrameRegister, ARMRegisters::r0);
 
     // call the function
-    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, ARMRegisters::r1);
+    emitGetFromCallFrameHeaderPtr(JSStack::Callee, ARMRegisters::r1);
     move(regT2, callFrameRegister); // Eagerly restore caller frame register to avoid loading from stack.
     loadPtr(Address(ARMRegisters::r1, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
     call(Address(regT2, executableOffsetToFunction));
@@ -278,18 +278,18 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
 #elif CPU(SH4)
     // Load caller frame's scope chain into this callframe so that whatever we call can
     // get to its global data.
-    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT2);
-    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT2);
-    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+    emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, regT2);
+    emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT1, regT2);
+    emitPutCellToCallFrameHeader(regT1, JSStack::ScopeChain);
 
     preserveReturnAddressAfterCall(regT3); // Callee preserved
-    emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
+    emitPutToCallFrameHeader(regT3, JSStack::ReturnPC);
 
     // Calling convention: f(r0 == regT4, r1 == regT5, ...);
     // Host function signature: f(ExecState*);
     move(callFrameRegister, regT4);
 
-    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, regT5);
+    emitGetFromCallFrameHeaderPtr(JSStack::Callee, regT5);
     move(regT2, callFrameRegister); // Eagerly restore caller frame register to avoid loading from stack.
     loadPtr(Address(regT5, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
 
@@ -298,12 +298,12 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
 #elif CPU(MIPS)
     // Load caller frame's scope chain into this callframe so that whatever we call can
     // get to its global data.
-    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT0);
-    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT0);
-    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+    emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, regT0);
+    emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT1, regT0);
+    emitPutCellToCallFrameHeader(regT1, JSStack::ScopeChain);
 
     preserveReturnAddressAfterCall(regT3); // Callee preserved
-    emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
+    emitPutToCallFrameHeader(regT3, JSStack::ReturnPC);
 
     // Calling convention:      f(a0, a1, a2, a3);
     // Host function signature: f(ExecState*);
@@ -316,7 +316,7 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
     move(callFrameRegister, MIPSRegisters::a0);
 
     // Call
-    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, MIPSRegisters::a2);
+    emitGetFromCallFrameHeaderPtr(JSStack::Callee, MIPSRegisters::a2);
     loadPtr(Address(MIPSRegisters::a2, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
     move(regT0, callFrameRegister); // Eagerly restore caller frame register to avoid loading from stack.
     call(Address(regT2, executableOffsetToFunction));
@@ -362,18 +362,18 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(JSGlobalData* globalData, NativeFu
 {
     Call nativeCall;
 
-    emitPutImmediateToCallFrameHeader(0, RegisterFile::CodeBlock);
+    emitPutImmediateToCallFrameHeader(0, JSStack::CodeBlock);
     storePtr(callFrameRegister, &m_globalData->topCallFrame);
 
 #if CPU(X86)
     // Load caller frame's scope chain into this callframe so that whatever we call can
     // get to its global data.
-    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT0);
-    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT0);
-    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+    emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, regT0);
+    emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT1, regT0);
+    emitPutCellToCallFrameHeader(regT1, JSStack::ScopeChain);
 
     peek(regT1);
-    emitPutToCallFrameHeader(regT1, RegisterFile::ReturnPC);
+    emitPutToCallFrameHeader(regT1, JSStack::ReturnPC);
 
     // Calling convention:      f(ecx, edx, ...);
     // Host function signature: f(ExecState*);
@@ -391,18 +391,18 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(JSGlobalData* globalData, NativeFu
 #elif CPU(ARM)
     // Load caller frame's scope chain into this callframe so that whatever we call can
     // get to its global data.
-    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT2);
-    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT2);
-    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+    emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, regT2);
+    emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT1, regT2);
+    emitPutCellToCallFrameHeader(regT1, JSStack::ScopeChain);
 
     preserveReturnAddressAfterCall(regT3); // Callee preserved
-    emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
+    emitPutToCallFrameHeader(regT3, JSStack::ReturnPC);
 
     // Calling convention:      f(r0 == regT0, r1 == regT1, ...);
     // Host function signature: f(ExecState*);
     move(callFrameRegister, ARMRegisters::r0);
 
-    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, ARMRegisters::r1);
+    emitGetFromCallFrameHeaderPtr(JSStack::Callee, ARMRegisters::r1);
     move(regT2, callFrameRegister); // Eagerly restore caller frame register to avoid loading from stack.
     loadPtr(Address(ARMRegisters::r1, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
 
@@ -414,12 +414,12 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(JSGlobalData* globalData, NativeFu
 #elif CPU(MIPS)
     // Load caller frame's scope chain into this callframe so that whatever we call can
     // get to its global data.
-    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT0);
-    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT0);
-    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+    emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, regT0);
+    emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT1, regT0);
+    emitPutCellToCallFrameHeader(regT1, JSStack::ScopeChain);
 
     preserveReturnAddressAfterCall(regT3); // Callee preserved
-    emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
+    emitPutToCallFrameHeader(regT3, JSStack::ReturnPC);
 
     // Calling convention:      f(a0, a1, a2, a3);
     // Host function signature: f(ExecState*);
@@ -432,7 +432,7 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(JSGlobalData* globalData, NativeFu
     move(callFrameRegister, MIPSRegisters::a0);
 
     // Call
-    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, MIPSRegisters::a2);
+    emitGetFromCallFrameHeaderPtr(JSStack::Callee, MIPSRegisters::a2);
     loadPtr(Address(MIPSRegisters::a2, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
     move(regT0, callFrameRegister); // Eagerly restore caller frame register to avoid loading from stack.
     
@@ -446,18 +446,18 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(JSGlobalData* globalData, NativeFu
 #elif CPU(SH4)
     // Load caller frame's scope chain into this callframe so that whatever we call can
     // get to its global data.
-    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT2);
-    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT2);
-    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+    emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, regT2);
+    emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT1, regT2);
+    emitPutCellToCallFrameHeader(regT1, JSStack::ScopeChain);
 
     preserveReturnAddressAfterCall(regT3); // Callee preserved
-    emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
+    emitPutToCallFrameHeader(regT3, JSStack::ReturnPC);
 
     // Calling convention: f(r0 == regT4, r1 == regT5, ...);
     // Host function signature: f(ExecState*);
     move(callFrameRegister, regT4);
 
-    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, regT5);
+    emitGetFromCallFrameHeaderPtr(JSStack::Callee, regT5);
     move(regT2, callFrameRegister); // Eagerly restore caller frame register to avoid loading from stack.
     loadPtr(Address(regT5, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
 
@@ -518,7 +518,7 @@ void JIT::emit_op_end(Instruction* currentInstruction)
 {
     ASSERT(returnValueRegister != callFrameRegister);
     emitLoad(currentInstruction[1].u.operand, regT1, regT0);
-    restoreReturnAddressBeforeReturn(Address(callFrameRegister, RegisterFile::ReturnPC * static_cast<int>(sizeof(Register))));
+    restoreReturnAddressBeforeReturn(Address(callFrameRegister, JSStack::ReturnPC * static_cast<int>(sizeof(Register))));
     ret();
 }
 
@@ -1544,7 +1544,7 @@ void JIT::emit_op_init_lazy_reg(Instruction* currentInstruction)
 
 void JIT::emit_op_create_this(Instruction* currentInstruction)
 {
-    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, regT0);
+    emitGetFromCallFrameHeaderPtr(JSStack::Callee, regT0);
     loadPtr(Address(regT0, JSFunction::offsetOfCachedInheritorID()), regT2);
     addSlowCase(branchTestPtr(Zero, regT2));
     
@@ -1626,7 +1626,7 @@ void JIT::emit_op_get_arguments_length(Instruction* currentInstruction)
     int dst = currentInstruction[1].u.operand;
     int argumentsRegister = currentInstruction[2].u.operand;
     addSlowCase(branch32(NotEqual, tagFor(argumentsRegister), TrustedImm32(JSValue::EmptyValueTag)));
-    load32(payloadFor(RegisterFile::ArgumentCount), regT0);
+    load32(payloadFor(JSStack::ArgumentCount), regT0);
     sub32(TrustedImm32(1), regT0);
     emitStoreInt32(dst, regT0);
 }
@@ -1654,7 +1654,7 @@ void JIT::emit_op_get_argument_by_val(Instruction* currentInstruction)
     addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
     add32(TrustedImm32(1), regT2);
     // regT2 now contains the integer index of the argument we want, including this
-    load32(payloadFor(RegisterFile::ArgumentCount), regT3);
+    load32(payloadFor(JSStack::ArgumentCount), regT3);
     addSlowCase(branch32(AboveOrEqual, regT2, regT3));
     
     neg32(regT2);

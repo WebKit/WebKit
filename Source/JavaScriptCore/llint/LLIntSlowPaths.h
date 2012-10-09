@@ -112,7 +112,7 @@ LLINT_SLOW_PATH_HIDDEN_DECL(entry_osr_function_for_call_arityCheck);
 LLINT_SLOW_PATH_HIDDEN_DECL(entry_osr_function_for_construct_arityCheck);
 LLINT_SLOW_PATH_HIDDEN_DECL(loop_osr);
 LLINT_SLOW_PATH_HIDDEN_DECL(replace);
-LLINT_SLOW_PATH_HIDDEN_DECL(register_file_check);
+LLINT_SLOW_PATH_HIDDEN_DECL(stack_check);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_call_arityCheck);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_construct_arityCheck);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_create_activation);

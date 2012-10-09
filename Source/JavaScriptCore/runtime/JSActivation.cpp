@@ -49,7 +49,7 @@ void JSActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);
 
-    // No need to mark our registers if they're still in the RegisterFile.
+    // No need to mark our registers if they're still in the JSStack.
     if (!thisObject->isTornOff())
         return;
 

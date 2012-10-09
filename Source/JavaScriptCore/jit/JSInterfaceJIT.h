@@ -29,10 +29,10 @@
 #include "BytecodeConventions.h"
 #include "JITCode.h"
 #include "JITStubs.h"
+#include "JSStack.h"
 #include "JSString.h"
 #include "JSValue.h"
 #include "MacroAssembler.h"
-#include "RegisterFile.h"
 #include <wtf/AlwaysInline.h>
 #include <wtf/Vector.h>
 

@@ -65,7 +65,7 @@ static void initializeThreadingOnce()
 #if ENABLE(ASSEMBLER)
     ExecutableAllocator::initializeAllocator();
 #endif
-    RegisterFile::initializeThreading();
+    JSStack::initializeThreading();
 #if ENABLE(LLINT)
     LLInt::initialize();
 #endif

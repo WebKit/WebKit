@@ -1063,7 +1063,7 @@ void JIT::emit_op_get_scoped_var(Instruction* currentInstruction)
 {
     int skip = currentInstruction[3].u.operand;
 
-    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT0);
+    emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT0);
     bool checkTopLevel = m_codeBlock->codeType() == FunctionCode && m_codeBlock->needsFullScopeChain();
     ASSERT(skip || !checkTopLevel);
     if (checkTopLevel && skip--) {
@@ -1088,7 +1088,7 @@ void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
 
     emitGetVirtualRegister(currentInstruction[3].u.operand, regT0);
 
-    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1);
+    emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT1);
     bool checkTopLevel = m_codeBlock->codeType() == FunctionCode && m_codeBlock->needsFullScopeChain();
     ASSERT(skip || !checkTopLevel);
     if (checkTopLevel && skip--) {

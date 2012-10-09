@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RegisterFile_h
-#define RegisterFile_h
+#ifndef JSStack_h
+#define JSStack_h
 
 #include "ExecutableAllocator.h"
 #include "Register.h"
@@ -42,8 +42,8 @@ namespace JSC {
     class JITStubRoutineSet;
     class LLIntOffsetsExtractor;
 
-    class RegisterFile {
-        WTF_MAKE_NONCOPYABLE(RegisterFile);
+    class JSStack {
+        WTF_MAKE_NONCOPYABLE(JSStack);
     public:
         enum CallFrameHeaderEntry {
             CallFrameHeaderSize = 6,
@@ -58,11 +58,11 @@ namespace JSC {
 
         static const size_t defaultCapacity = 512 * 1024;
         static const size_t commitSize = 16 * 1024;
-        // Allow 8k of excess registers before we start trying to reap the registerfile
+        // Allow 8k of excess registers before we start trying to reap the stack
         static const ptrdiff_t maxExcessCapacity = 8 * 1024;
 
-        RegisterFile(size_t capacity = defaultCapacity);
-        ~RegisterFile();
+        JSStack(size_t capacity = defaultCapacity);
+        ~JSStack();
         
         void gatherConservativeRoots(ConservativeRoots&);
         void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, DFGCodeBlocks&);
@@ -84,7 +84,7 @@ namespace JSC {
 
     private:
         friend class LLIntOffsetsExtractor;
-        
+
         bool growSlowCase(Register*);
         void releaseExcessCapacity();
         void addToCommittedByteCount(long);
@@ -93,7 +93,7 @@ namespace JSC {
         PageReservation m_reservation;
     };
 
-    inline RegisterFile::RegisterFile(size_t capacity)
+    inline JSStack::JSStack(size_t capacity)
         : m_end(0)
     {
         ASSERT(capacity && isPageAligned(capacity));
@@ -103,7 +103,7 @@ namespace JSC {
         m_commitEnd = static_cast<Register*>(m_reservation.base());
     }
 
-    inline void RegisterFile::shrink(Register* newEnd)
+    inline void JSStack::shrink(Register* newEnd)
     {
         if (newEnd >= m_end)
             return;
@@ -112,7 +112,7 @@ namespace JSC {
             releaseExcessCapacity();
     }
 
-    inline bool RegisterFile::grow(Register* newEnd)
+    inline bool JSStack::grow(Register* newEnd)
     {
         if (newEnd <= m_end)
             return true;
@@ -121,4 +121,4 @@ namespace JSC {
 
 } // namespace JSC
 
-#endif // RegisterFile_h
+#endif // JSStack_h

@@ -136,7 +136,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     //    it seems silly: you'd be diverting the program to error handling when it
     //    would have otherwise just kept running albeit less quickly.
     
-    if (!globalData->interpreter->registerFile().grow(&exec->registers()[codeBlock->m_numCalleeRegisters])) {
+    if (!globalData->interpreter->stack().grow(&exec->registers()[codeBlock->m_numCalleeRegisters])) {
 #if ENABLE(JIT_VERBOSE_OSR)
         dataLog("    OSR failed because stack growth failed.\n");
 #endif

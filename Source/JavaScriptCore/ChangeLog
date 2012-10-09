@@ -1,3 +1,264 @@
+2012-10-08  Mark Lam  <mark.lam@apple.com>
+
+        Renamed RegisterFile to JSStack, and removed prototype of the
+        previously deleted Interpreter::privateExecute().
+        https://bugs.webkit.org/show_bug.cgi?id=98717.
+
+        Reviewed by Filip Pizlo.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.order:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/BytecodeConventions.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::nameForRegister):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        * bytecode/ValueRecovery.h:
+        (JSC::ValueRecovery::alreadyInJSStack):
+        (JSC::ValueRecovery::alreadyInJSStackAsUnboxedInt32):
+        (JSC::ValueRecovery::alreadyInJSStackAsUnboxedCell):
+        (JSC::ValueRecovery::alreadyInJSStackAsUnboxedBoolean):
+        (JSC::ValueRecovery::alreadyInJSStackAsUnboxedDouble):
+        (JSC::ValueRecovery::displacedInJSStack):
+        (JSC::ValueRecovery::isAlreadyInJSStack):
+        (JSC::ValueRecovery::virtualRegister):
+        (JSC::ValueRecovery::dump):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::resolveCallee):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitConstruct):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::registerFor):
+        * dfg/DFGAbstractState.h:
+        (AbstractState):
+        * dfg/DFGAssemblyHelpers.h:
+        (JSC::DFG::AssemblyHelpers::emitGetFromCallFrameHeaderPtr):
+        (JSC::DFG::AssemblyHelpers::emitPutToCallFrameHeader):
+        (JSC::DFG::AssemblyHelpers::emitPutImmediateToCallFrameHeader):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getDirect):
+        (JSC::DFG::ByteCodeParser::findArgumentPositionForLocal):
+        (JSC::DFG::ByteCodeParser::addCall):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::remapOperand):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGGenerationInfo.h:
+        (GenerationInfo):
+        (JSC::DFG::GenerationInfo::needsSpill):
+        * dfg/DFGGraph.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileEntry):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::beginCall):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryBuildGetByIDList):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::spill):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillInteger):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::throwExceptionFromCallSlowPathGenerator):
+        (JSC::DFG::slowPathFor):
+        (JSC::DFG::virtualForThunkGenerator):
+        * dfg/DFGValueSource.cpp:
+        (JSC::DFG::ValueSource::dump):
+        * dfg/DFGValueSource.h:
+        (JSC::DFG::dataFormatToValueSourceKind):
+        (JSC::DFG::valueSourceKindToDataFormat):
+        (JSC::DFG::isInJSStack):
+        (JSC::DFG::ValueSource::forSpeculation):
+        (JSC::DFG::ValueSource::isInJSStack):
+        (JSC::DFG::ValueSource::valueRecovery):
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStream::reconstruct):
+        * heap/Heap.cpp:
+        (JSC::Heap::stack):
+        (JSC::Heap::getConservativeRegisterRoots):
+        (JSC::Heap::markRoots):
+        * heap/Heap.h:
+        (JSC):
+        (Heap):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::stack):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::calleeAsValue):
+        (JSC::ExecState::callee):
+        (JSC::ExecState::codeBlock):
+        (JSC::ExecState::scope):
+        (JSC::ExecState::callerFrame):
+        (JSC::ExecState::returnPC):
+        (JSC::ExecState::hasReturnPC):
+        (JSC::ExecState::clearReturnPC):
+        (JSC::ExecState::bytecodeOffsetForNonDFGCode):
+        (JSC::ExecState::setBytecodeOffsetForNonDFGCode):
+        (JSC::ExecState::inlineCallFrame):
+        (JSC::ExecState::codeOriginIndexForDFG):
+        (JSC::ExecState::currentVPC):
+        (JSC::ExecState::setCurrentVPC):
+        (JSC::ExecState::setCallerFrame):
+        (JSC::ExecState::setScope):
+        (JSC::ExecState::init):
+        (JSC::ExecState::argumentCountIncludingThis):
+        (JSC::ExecState::offsetFor):
+        (JSC::ExecState::setArgumentCountIncludingThis):
+        (JSC::ExecState::setCallee):
+        (JSC::ExecState::setCodeBlock):
+        (JSC::ExecState::setReturnPC):
+        (JSC::ExecState::setInlineCallFrame):
+        (ExecState):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::slideRegisterWindowForCall):
+        (JSC::eval):
+        (JSC::loadVarargs):
+        (JSC::Interpreter::dumpRegisters):
+        (JSC::Interpreter::throwException):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        (JSC::Interpreter::endRepeatCall):
+        * interpreter/Interpreter.h:
+        (JSC::Interpreter::stack):
+        (Interpreter):
+        (JSC::Interpreter::execute):
+        (JSC):
+        * interpreter/JSStack.cpp: Copied from Source/JavaScriptCore/interpreter/RegisterFile.cpp.
+        (JSC::stackStatisticsMutex):
+        (JSC::JSStack::~JSStack):
+        (JSC::JSStack::growSlowCase):
+        (JSC::JSStack::gatherConservativeRoots):
+        (JSC::JSStack::releaseExcessCapacity):
+        (JSC::JSStack::initializeThreading):
+        (JSC::JSStack::committedByteCount):
+        (JSC::JSStack::addToCommittedByteCount):
+        * interpreter/JSStack.h: Copied from Source/JavaScriptCore/interpreter/RegisterFile.h.
+        (JSStack):
+        (JSC::JSStack::JSStack):
+        (JSC::JSStack::shrink):
+        (JSC::JSStack::grow):
+        * interpreter/RegisterFile.cpp: Removed.
+        * interpreter/RegisterFile.h: Removed.
+        * interpreter/VMInspector.cpp:
+        (JSC::VMInspector::dumpFrame):
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC):
+        (JIT):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileLoadVarargs):
+        (JSC::JIT::compileCallEval):
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::emit_op_ret):
+        (JSC::JIT::emit_op_ret_object_or_this):
+        (JSC::JIT::compileLoadVarargs):
+        (JSC::JIT::compileCallEval):
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCall):
+        * jit/JITCode.h:
+        (JSC):
+        (JSC::JITCode::execute):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitPutToCallFrameHeader):
+        (JSC::JIT::emitPutCellToCallFrameHeader):
+        (JSC::JIT::emitPutIntToCallFrameHeader):
+        (JSC::JIT::emitPutImmediateToCallFrameHeader):
+        (JSC::JIT::emitGetFromCallFrameHeaderPtr):
+        (JSC::JIT::emitGetFromCallFrameHeader32):
+        (JSC::JIT::updateTopCallFrame):
+        (JSC::JIT::unmap):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::privateCompileCTINativeCall):
+        (JSC::JIT::emit_op_end):
+        (JSC::JIT::emit_op_ret):
+        (JSC::JIT::emit_op_ret_object_or_this):
+        (JSC::JIT::emit_op_create_this):
+        (JSC::JIT::emit_op_get_arguments_length):
+        (JSC::JIT::emit_op_get_argument_by_val):
+        (JSC::JIT::emit_op_resolve_global_dynamic):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::privateCompileCTINativeCall):
+        (JSC::JIT::emit_op_end):
+        (JSC::JIT::emit_op_create_this):
+        (JSC::JIT::emit_op_get_arguments_length):
+        (JSC::JIT::emit_op_get_argument_by_val):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_scoped_var):
+        (JSC::JIT::emit_op_put_scoped_var):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_scoped_var):
+        (JSC::JIT::emit_op_put_scoped_var):
+        * jit/JITStubs.cpp:
+        (JSC::ctiTrampoline):
+        (JSC::JITThunks::JITThunks):
+        (JSC):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        (JSC):
+        (JITStackFrame):
+        * jit/JSInterfaceJIT.h:
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::SpecializedThunkJIT):
+        (JSC::SpecializedThunkJIT::returnJSValue):
+        (JSC::SpecializedThunkJIT::returnDouble):
+        (JSC::SpecializedThunkJIT::returnInt32):
+        (JSC::SpecializedThunkJIT::returnJSCell):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::genericCall):
+        * llint/LLIntSlowPaths.h:
+        (LLInt):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::tearOffForInlineCallFrame):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::arityCheckFor):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::visitChildren):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::globalExec):
+        * runtime/JSGlobalObject.h:
+        (JSC):
+        (JSGlobalObject):
+        * runtime/JSLock.cpp:
+        (JSC):
+        * runtime/JSVariableObject.h:
+        (JSVariableObject):
+        * runtime/MemoryStatistics.cpp:
+        (JSC::globalMemoryStatistics):
+
 2012-10-08  Kiran Muppala  <cmuppala@apple.com>
 
         Throttle DOM timers on hidden pages.

@@ -395,19 +395,19 @@ void Heap::finalizeUnconditionalFinalizers()
     m_slotVisitor.finalizeUnconditionalFinalizers();
 }
 
-inline RegisterFile& Heap::registerFile()
+inline JSStack& Heap::stack()
 {
-    return m_globalData->interpreter->registerFile();
+    return m_globalData->interpreter->stack();
 }
 
 void Heap::getConservativeRegisterRoots(HashSet<JSCell*>& roots)
 {
     ASSERT(isValidThreadState(m_globalData));
-    ConservativeRoots registerFileRoots(&m_objectSpace.blocks(), &m_storageSpace);
-    registerFile().gatherConservativeRoots(registerFileRoots);
-    size_t registerFileRootCount = registerFileRoots.size();
-    JSCell** registerRoots = registerFileRoots.roots();
-    for (size_t i = 0; i < registerFileRootCount; i++) {
+    ConservativeRoots stackRoots(&m_objectSpace.blocks(), &m_storageSpace);
+    stack().gatherConservativeRoots(stackRoots);
+    size_t stackRootCount = stackRoots.size();
+    JSCell** registerRoots = stackRoots.roots();
+    for (size_t i = 0; i < stackRootCount; i++) {
         setMarked(registerRoots[i]);
         roots.add(registerRoots[i]);
     }
@@ -436,12 +436,12 @@ void Heap::markRoots(bool fullGC)
         m_machineThreads.gatherConservativeRoots(machineThreadRoots, &dummy);
     }
 
-    ConservativeRoots registerFileRoots(&m_objectSpace.blocks(), &m_storageSpace);
+    ConservativeRoots stackRoots(&m_objectSpace.blocks(), &m_storageSpace);
     m_dfgCodeBlocks.clearMarks();
     {
-        GCPHASE(GatherRegisterFileRoots);
-        registerFile().gatherConservativeRoots(
-            registerFileRoots, m_jitStubRoutines, m_dfgCodeBlocks);
+        GCPHASE(GatherStackRoots);
+        stack().gatherConservativeRoots(
+            stackRoots, m_jitStubRoutines, m_dfgCodeBlocks);
     }
 
 #if ENABLE(DFG_JIT)
@@ -496,9 +496,9 @@ void Heap::markRoots(bool fullGC)
             visitor.donateAndDrain();
         }
         {
-            GCPHASE(VisitRegisterFileRoots);
-            MARK_LOG_ROOT(visitor, "Register File");
-            visitor.append(registerFileRoots);
+            GCPHASE(VisitStackRoots);
+            MARK_LOG_ROOT(visitor, "Stack");
+            visitor.append(stackRoots);
             visitor.donateAndDrain();
         }
 #if ENABLE(DFG_JIT)

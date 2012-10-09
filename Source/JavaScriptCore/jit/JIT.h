@@ -58,9 +58,9 @@ namespace JSC {
     class JIT;
     class JSPropertyNameIterator;
     class Interpreter;
-    class Register;
-    class RegisterFile;
     class JSScope;
+    class JSStack;
+    class Register;
     class StructureChain;
 
     struct CallLinkInfo;
@@ -778,12 +778,12 @@ namespace JSC {
 
         void emitInitRegister(unsigned dst);
 
-        void emitPutToCallFrameHeader(RegisterID from, RegisterFile::CallFrameHeaderEntry entry);
-        void emitPutCellToCallFrameHeader(RegisterID from, RegisterFile::CallFrameHeaderEntry);
-        void emitPutIntToCallFrameHeader(RegisterID from, RegisterFile::CallFrameHeaderEntry);
-        void emitPutImmediateToCallFrameHeader(void* value, RegisterFile::CallFrameHeaderEntry entry);
-        void emitGetFromCallFrameHeaderPtr(RegisterFile::CallFrameHeaderEntry entry, RegisterID to, RegisterID from = callFrameRegister);
-        void emitGetFromCallFrameHeader32(RegisterFile::CallFrameHeaderEntry entry, RegisterID to, RegisterID from = callFrameRegister);
+        void emitPutToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry);
+        void emitPutCellToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry);
+        void emitPutIntToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry);
+        void emitPutImmediateToCallFrameHeader(void* value, JSStack::CallFrameHeaderEntry);
+        void emitGetFromCallFrameHeaderPtr(JSStack::CallFrameHeaderEntry, RegisterID to, RegisterID from = callFrameRegister);
+        void emitGetFromCallFrameHeader32(JSStack::CallFrameHeaderEntry, RegisterID to, RegisterID from = callFrameRegister);
 
         JSValue getConstantOperand(unsigned src);
         bool isOperandConstantImmediateInt(unsigned src);

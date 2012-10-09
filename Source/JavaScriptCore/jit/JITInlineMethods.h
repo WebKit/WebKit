@@ -50,12 +50,12 @@ ALWAYS_INLINE JSValue JIT::getConstantOperand(unsigned src)
     return m_codeBlock->getConstant(src);
 }
 
-ALWAYS_INLINE void JIT::emitPutToCallFrameHeader(RegisterID from, RegisterFile::CallFrameHeaderEntry entry)
+ALWAYS_INLINE void JIT::emitPutToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry entry)
 {
     storePtr(from, payloadFor(entry, callFrameRegister));
 }
 
-ALWAYS_INLINE void JIT::emitPutCellToCallFrameHeader(RegisterID from, RegisterFile::CallFrameHeaderEntry entry)
+ALWAYS_INLINE void JIT::emitPutCellToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry entry)
 {
 #if USE(JSVALUE32_64)
     store32(TrustedImm32(JSValue::CellTag), tagFor(entry, callFrameRegister));
@@ -63,18 +63,18 @@ ALWAYS_INLINE void JIT::emitPutCellToCallFrameHeader(RegisterID from, RegisterFi
     storePtr(from, payloadFor(entry, callFrameRegister));
 }
 
-ALWAYS_INLINE void JIT::emitPutIntToCallFrameHeader(RegisterID from, RegisterFile::CallFrameHeaderEntry entry)
+ALWAYS_INLINE void JIT::emitPutIntToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry entry)
 {
     store32(TrustedImm32(Int32Tag), intTagFor(entry, callFrameRegister));
     store32(from, intPayloadFor(entry, callFrameRegister));
 }
 
-ALWAYS_INLINE void JIT::emitPutImmediateToCallFrameHeader(void* value, RegisterFile::CallFrameHeaderEntry entry)
+ALWAYS_INLINE void JIT::emitPutImmediateToCallFrameHeader(void* value, JSStack::CallFrameHeaderEntry entry)
 {
     storePtr(TrustedImmPtr(value), Address(callFrameRegister, entry * sizeof(Register)));
 }
 
-ALWAYS_INLINE void JIT::emitGetFromCallFrameHeaderPtr(RegisterFile::CallFrameHeaderEntry entry, RegisterID to, RegisterID from)
+ALWAYS_INLINE void JIT::emitGetFromCallFrameHeaderPtr(JSStack::CallFrameHeaderEntry entry, RegisterID to, RegisterID from)
 {
     loadPtr(Address(from, entry * sizeof(Register)), to);
 #if USE(JSVALUE64)
@@ -101,7 +101,7 @@ ALWAYS_INLINE void JIT::emitLoadCharacterString(RegisterID src, RegisterID dst, 
     cont8Bit.link(this);
 }
 
-ALWAYS_INLINE void JIT::emitGetFromCallFrameHeader32(RegisterFile::CallFrameHeaderEntry entry, RegisterID to, RegisterID from)
+ALWAYS_INLINE void JIT::emitGetFromCallFrameHeader32(JSStack::CallFrameHeaderEntry entry, RegisterID to, RegisterID from)
 {
     load32(Address(from, entry * sizeof(Register)), to);
 #if USE(JSVALUE64)
@@ -265,9 +265,9 @@ ALWAYS_INLINE void JIT::updateTopCallFrame()
     ASSERT(static_cast<int>(m_bytecodeOffset) >= 0);
     if (m_bytecodeOffset) {
 #if USE(JSVALUE32_64)
-        storePtr(TrustedImmPtr(m_codeBlock->instructions().begin() + m_bytecodeOffset + 1), intTagFor(RegisterFile::ArgumentCount));
+        storePtr(TrustedImmPtr(m_codeBlock->instructions().begin() + m_bytecodeOffset + 1), intTagFor(JSStack::ArgumentCount));
 #else
-        store32(TrustedImm32(m_bytecodeOffset + 1), intTagFor(RegisterFile::ArgumentCount));
+        store32(TrustedImm32(m_bytecodeOffset + 1), intTagFor(JSStack::ArgumentCount));
 #endif
     }
     storePtr(callFrameRegister, &m_globalData->topCallFrame);
@@ -757,7 +757,7 @@ inline void JIT::unmap(RegisterID registerID)
 inline void JIT::unmap()
 {
     m_mappedBytecodeOffset = (unsigned)-1;
-    m_mappedVirtualRegisterIndex = RegisterFile::ReturnPC;
+    m_mappedVirtualRegisterIndex = JSStack::ReturnPC;
     m_mappedTag = (RegisterID)-1;
     m_mappedPayload = (RegisterID)-1;
 }

@@ -38,13 +38,13 @@ namespace JSC {
 // Describes how to recover a given bytecode virtual register at a given
 // code point.
 enum ValueRecoveryTechnique {
-    // It's already in the register file at the right location.
-    AlreadyInRegisterFile,
-    // It's already in the register file but unboxed.
-    AlreadyInRegisterFileAsUnboxedInt32,
-    AlreadyInRegisterFileAsUnboxedCell,
-    AlreadyInRegisterFileAsUnboxedBoolean,
-    AlreadyInRegisterFileAsUnboxedDouble,
+    // It's already in the stack at the right location.
+    AlreadyInJSStack,
+    // It's already in the stack but unboxed.
+    AlreadyInJSStackAsUnboxedInt32,
+    AlreadyInJSStackAsUnboxedCell,
+    AlreadyInJSStackAsUnboxedBoolean,
+    AlreadyInJSStackAsUnboxedDouble,
     // It's in a register.
     InGPR,
     UnboxedInt32InGPR,
@@ -54,13 +54,13 @@ enum ValueRecoveryTechnique {
 #endif
     InFPR,
     UInt32InGPR,
-    // It's in the register file, but at a different location.
-    DisplacedInRegisterFile,
-    // It's in the register file, at a different location, and it's unboxed.
-    Int32DisplacedInRegisterFile,
-    DoubleDisplacedInRegisterFile,
-    CellDisplacedInRegisterFile,
-    BooleanDisplacedInRegisterFile,
+    // It's in the stack, but at a different location.
+    DisplacedInJSStack,
+    // It's in the stack, at a different location, and it's unboxed.
+    Int32DisplacedInJSStack,
+    DoubleDisplacedInJSStack,
+    CellDisplacedInJSStack,
+    BooleanDisplacedInJSStack,
     // It's an Arguments object.
     ArgumentsThatWereNotCreated,
     // It's a constant.
@@ -79,38 +79,38 @@ public:
     bool isSet() const { return m_technique != DontKnow; }
     bool operator!() const { return !isSet(); }
     
-    static ValueRecovery alreadyInRegisterFile()
+    static ValueRecovery alreadyInJSStack()
     {
         ValueRecovery result;
-        result.m_technique = AlreadyInRegisterFile;
+        result.m_technique = AlreadyInJSStack;
         return result;
     }
     
-    static ValueRecovery alreadyInRegisterFileAsUnboxedInt32()
+    static ValueRecovery alreadyInJSStackAsUnboxedInt32()
     {
         ValueRecovery result;
-        result.m_technique = AlreadyInRegisterFileAsUnboxedInt32;
+        result.m_technique = AlreadyInJSStackAsUnboxedInt32;
         return result;
     }
     
-    static ValueRecovery alreadyInRegisterFileAsUnboxedCell()
+    static ValueRecovery alreadyInJSStackAsUnboxedCell()
     {
         ValueRecovery result;
-        result.m_technique = AlreadyInRegisterFileAsUnboxedCell;
+        result.m_technique = AlreadyInJSStackAsUnboxedCell;
         return result;
     }
     
-    static ValueRecovery alreadyInRegisterFileAsUnboxedBoolean()
+    static ValueRecovery alreadyInJSStackAsUnboxedBoolean()
     {
         ValueRecovery result;
-        result.m_technique = AlreadyInRegisterFileAsUnboxedBoolean;
+        result.m_technique = AlreadyInJSStackAsUnboxedBoolean;
         return result;
     }
     
-    static ValueRecovery alreadyInRegisterFileAsUnboxedDouble()
+    static ValueRecovery alreadyInJSStackAsUnboxedDouble()
     {
         ValueRecovery result;
-        result.m_technique = AlreadyInRegisterFileAsUnboxedDouble;
+        result.m_technique = AlreadyInJSStackAsUnboxedDouble;
         return result;
     }
     
@@ -158,29 +158,29 @@ public:
         return result;
     }
     
-    static ValueRecovery displacedInRegisterFile(VirtualRegister virtualReg, DataFormat dataFormat)
+    static ValueRecovery displacedInJSStack(VirtualRegister virtualReg, DataFormat dataFormat)
     {
         ValueRecovery result;
         switch (dataFormat) {
         case DataFormatInteger:
-            result.m_technique = Int32DisplacedInRegisterFile;
+            result.m_technique = Int32DisplacedInJSStack;
             break;
             
         case DataFormatDouble:
-            result.m_technique = DoubleDisplacedInRegisterFile;
+            result.m_technique = DoubleDisplacedInJSStack;
             break;
 
         case DataFormatCell:
-            result.m_technique = CellDisplacedInRegisterFile;
+            result.m_technique = CellDisplacedInJSStack;
             break;
             
         case DataFormatBoolean:
-            result.m_technique = BooleanDisplacedInRegisterFile;
+            result.m_technique = BooleanDisplacedInJSStack;
             break;
             
         default:
             ASSERT(dataFormat != DataFormatNone && dataFormat != DataFormatStorage);
-            result.m_technique = DisplacedInRegisterFile;
+            result.m_technique = DisplacedInJSStack;
             break;
         }
         result.m_source.virtualReg = virtualReg;
@@ -222,14 +222,14 @@ public:
         }
     }
     
-    bool isAlreadyInRegisterFile() const
+    bool isAlreadyInJSStack() const
     {
         switch (technique()) {
-        case AlreadyInRegisterFile:
-        case AlreadyInRegisterFileAsUnboxedInt32:
-        case AlreadyInRegisterFileAsUnboxedCell:
-        case AlreadyInRegisterFileAsUnboxedBoolean:
-        case AlreadyInRegisterFileAsUnboxedDouble:
+        case AlreadyInJSStack:
+        case AlreadyInJSStackAsUnboxedInt32:
+        case AlreadyInJSStackAsUnboxedCell:
+        case AlreadyInJSStackAsUnboxedBoolean:
+        case AlreadyInJSStackAsUnboxedDouble:
             return true;
         default:
             return false;
@@ -264,7 +264,7 @@ public:
     
     VirtualRegister virtualRegister() const
     {
-        ASSERT(m_technique == DisplacedInRegisterFile || m_technique == Int32DisplacedInRegisterFile || m_technique == DoubleDisplacedInRegisterFile || m_technique == CellDisplacedInRegisterFile || m_technique == BooleanDisplacedInRegisterFile);
+        ASSERT(m_technique == DisplacedInJSStack || m_technique == Int32DisplacedInJSStack || m_technique == DoubleDisplacedInJSStack || m_technique == CellDisplacedInJSStack || m_technique == BooleanDisplacedInJSStack);
         return m_source.virtualReg;
     }
     
@@ -277,19 +277,19 @@ public:
     void dump(FILE* out) const
     {
         switch (technique()) {
-        case AlreadyInRegisterFile:
+        case AlreadyInJSStack:
             fprintf(out, "-");
             break;
-        case AlreadyInRegisterFileAsUnboxedInt32:
+        case AlreadyInJSStackAsUnboxedInt32:
             fprintf(out, "(int32)");
             break;
-        case AlreadyInRegisterFileAsUnboxedCell:
+        case AlreadyInJSStackAsUnboxedCell:
             fprintf(out, "(cell)");
             break;
-        case AlreadyInRegisterFileAsUnboxedBoolean:
+        case AlreadyInJSStackAsUnboxedBoolean:
             fprintf(out, "(bool)");
             break;
-        case AlreadyInRegisterFileAsUnboxedDouble:
+        case AlreadyInJSStackAsUnboxedDouble:
             fprintf(out, "(double)");
             break;
         case InGPR:
@@ -312,19 +312,19 @@ public:
             fprintf(out, "pair(%%r%d, %%r%d)", tagGPR(), payloadGPR());
             break;
 #endif
-        case DisplacedInRegisterFile:
+        case DisplacedInJSStack:
             fprintf(out, "*%d", virtualRegister());
             break;
-        case Int32DisplacedInRegisterFile:
+        case Int32DisplacedInJSStack:
             fprintf(out, "*int32(%d)", virtualRegister());
             break;
-        case DoubleDisplacedInRegisterFile:
+        case DoubleDisplacedInJSStack:
             fprintf(out, "*double(%d)", virtualRegister());
             break;
-        case CellDisplacedInRegisterFile:
+        case CellDisplacedInJSStack:
             fprintf(out, "*cell(%d)", virtualRegister());
             break;
-        case BooleanDisplacedInRegisterFile:
+        case BooleanDisplacedInJSStack:
             fprintf(out, "*bool(%d)", virtualRegister());
             break;
         case ArgumentsThatWereNotCreated:

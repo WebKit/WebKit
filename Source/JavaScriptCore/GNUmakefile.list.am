@@ -367,8 +367,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/interpreter/CallFrame.h \
 	Source/JavaScriptCore/interpreter/Interpreter.cpp \
 	Source/JavaScriptCore/interpreter/Interpreter.h \
-	Source/JavaScriptCore/interpreter/RegisterFile.cpp \
-	Source/JavaScriptCore/interpreter/RegisterFile.h \
+	Source/JavaScriptCore/interpreter/JSStack.cpp \
+	Source/JavaScriptCore/interpreter/JSStack.h \
 	Source/JavaScriptCore/interpreter/Register.h \
 	Source/JavaScriptCore/interpreter/VMInspector.cpp \
 	Source/JavaScriptCore/interpreter/VMInspector.h \

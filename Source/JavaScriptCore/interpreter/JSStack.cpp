@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "RegisterFile.h"
+#include "JSStack.h"
 
 #include "ConservativeRoots.h"
 #include "Interpreter.h"
@@ -36,13 +36,13 @@ namespace JSC {
 
 static size_t committedBytesCount = 0;
 
-static Mutex& registerFileStatisticsMutex()
+static Mutex& stackStatisticsMutex()
 {
     DEFINE_STATIC_LOCAL(Mutex, staticMutex, ());
     return staticMutex;
 }    
     
-RegisterFile::~RegisterFile()
+JSStack::~JSStack()
 {
     void* base = m_reservation.base();
     m_reservation.decommit(base, reinterpret_cast<intptr_t>(m_commitEnd) - reinterpret_cast<intptr_t>(base));
@@ -50,7 +50,7 @@ RegisterFile::~RegisterFile()
     m_reservation.deallocate();
 }
 
-bool RegisterFile::growSlowCase(Register* newEnd)
+bool JSStack::growSlowCase(Register* newEnd)
 {
     if (newEnd <= m_commitEnd) {
         m_end = newEnd;
@@ -68,17 +68,17 @@ bool RegisterFile::growSlowCase(Register* newEnd)
     return true;
 }
 
-void RegisterFile::gatherConservativeRoots(ConservativeRoots& conservativeRoots)
+void JSStack::gatherConservativeRoots(ConservativeRoots& conservativeRoots)
 {
     conservativeRoots.add(begin(), end());
 }
 
-void RegisterFile::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, DFGCodeBlocks& dfgCodeBlocks)
+void JSStack::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, DFGCodeBlocks& dfgCodeBlocks)
 {
     conservativeRoots.add(begin(), end(), jitStubRoutines, dfgCodeBlocks);
 }
 
-void RegisterFile::releaseExcessCapacity()
+void JSStack::releaseExcessCapacity()
 {
     ptrdiff_t delta = reinterpret_cast<uintptr_t>(m_commitEnd) - reinterpret_cast<uintptr_t>(m_reservation.base());
     m_reservation.decommit(m_reservation.base(), delta);
@@ -86,20 +86,20 @@ void RegisterFile::releaseExcessCapacity()
     m_commitEnd = static_cast<Register*>(m_reservation.base());
 }
 
-void RegisterFile::initializeThreading()
+void JSStack::initializeThreading()
 {
-    registerFileStatisticsMutex();
+    stackStatisticsMutex();
 }
 
-size_t RegisterFile::committedByteCount()
+size_t JSStack::committedByteCount()
 {
-    MutexLocker locker(registerFileStatisticsMutex());
+    MutexLocker locker(stackStatisticsMutex());
     return committedBytesCount;
 }
 
-void RegisterFile::addToCommittedByteCount(long byteCount)
+void JSStack::addToCommittedByteCount(long byteCount)
 {
-    MutexLocker locker(registerFileStatisticsMutex());
+    MutexLocker locker(stackStatisticsMutex());
     ASSERT(static_cast<long>(committedBytesCount) + byteCount > -1);
     committedBytesCount += byteCount;
 }

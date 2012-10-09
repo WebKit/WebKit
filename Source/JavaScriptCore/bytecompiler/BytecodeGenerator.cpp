@@ -629,7 +629,7 @@ RegisterID* BytecodeGenerator::resolveCallee(FunctionBodyNode* functionBodyNode)
     if (functionBodyNode->ident().isNull() || !functionBodyNode->functionNameIsInScope())
         return 0;
 
-    m_calleeRegister.setIndex(RegisterFile::Callee);
+    m_calleeRegister.setIndex(JSStack::Callee);
 
     // If non-strict eval is in play, we use a separate object in the scope chain for the callee's name.
     if ((m_codeBlock->usesEval() && !m_codeBlock->isStrictMode()) || m_shouldEmitDebugHooks) {
@@ -2065,8 +2065,8 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
         emitNode(callArguments.argumentRegister(argument++), n);
 
     // Reserve space for call frame.
-    Vector<RefPtr<RegisterID>, RegisterFile::CallFrameHeaderSize> callFrame;
-    for (int i = 0; i < RegisterFile::CallFrameHeaderSize; ++i)
+    Vector<RefPtr<RegisterID>, JSStack::CallFrameHeaderSize> callFrame;
+    for (int i = 0; i < JSStack::CallFrameHeaderSize; ++i)
         callFrame.append(newTemporary());
 
     if (m_shouldEmitProfileHooks) {
@@ -2182,8 +2182,8 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
     }
 
     // Reserve space for call frame.
-    Vector<RefPtr<RegisterID>, RegisterFile::CallFrameHeaderSize> callFrame;
-    for (int i = 0; i < RegisterFile::CallFrameHeaderSize; ++i)
+    Vector<RefPtr<RegisterID>, JSStack::CallFrameHeaderSize> callFrame;
+    for (int i = 0; i < JSStack::CallFrameHeaderSize; ++i)
         callFrame.append(newTemporary());
 
     emitExpressionInfo(divot, startOffset, endOffset);

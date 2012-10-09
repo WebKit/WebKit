@@ -224,7 +224,7 @@ COMPILE_ASSERT(offsetof(struct JITStackFrame, code) == 0x50, JITStackFrame_code_
 
 extern "C" {
 
-    __declspec(naked) EncodedJSValue ctiTrampoline(void* code, RegisterFile*, CallFrame*, void* /*unused1*/, void* /*unused2*/, JSGlobalData*)
+    __declspec(naked) EncodedJSValue ctiTrampoline(void* code, JSStack*, CallFrame*, void* /*unused1*/, void* /*unused2*/, JSGlobalData*)
     {
         __asm {
             push ebp;
@@ -285,7 +285,7 @@ extern "C" {
 #define STACK_LENGTH               104
 #elif CPU(SH4)
 #define SYMBOL_STRING(name) #name
-/* code (r4), RegisterFile* (r5), CallFrame* (r6), void* unused1 (r7), void* unused2(sp), JSGlobalData (sp)*/
+/* code (r4), JSStack* (r5), CallFrame* (r6), void* unused1 (r7), void* unused2(sp), JSGlobalData (sp)*/
 
 asm volatile (
 ".text\n"
@@ -458,7 +458,7 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "move  $16,$6       # set callFrameRegister" "\n"
     "li    $17,512      # set timeoutCheckRegister" "\n"
     "move  $25,$4       # move executableAddress to t9" "\n"
-    "sw    $5," STRINGIZE_VALUE_OF(REGISTER_FILE_OFFSET) "($29) # store registerFile to current stack" "\n"
+    "sw    $5," STRINGIZE_VALUE_OF(REGISTER_FILE_OFFSET) "($29) # store JSStack to current stack" "\n"
     "lw    $9," STRINGIZE_VALUE_OF(STACK_LENGTH + 20) "($29)    # load globalData from previous stack" "\n"
     "jalr  $25" "\n"
     "sw    $9," STRINGIZE_VALUE_OF(GLOBAL_DATA_OFFSET) "($29)   # store globalData to current stack" "\n"
@@ -659,7 +659,7 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 
 #elif COMPILER(RVCT) && CPU(ARM_THUMB2)
 
-__asm EncodedJSValue ctiTrampoline(void*, RegisterFile*, CallFrame*, void* /*unused1*/, void* /*unused2*/, JSGlobalData*)
+__asm EncodedJSValue ctiTrampoline(void*, JSStack*, CallFrame*, void* /*unused1*/, void* /*unused2*/, JSGlobalData*)
 {
     PRESERVE8
     sub sp, sp, # FIRST_STACK_ARGUMENT
@@ -727,7 +727,7 @@ __asm void ctiOpThrowNotCaught()
 
 #elif COMPILER(RVCT) && CPU(ARM_TRADITIONAL)
 
-__asm EncodedJSValue ctiTrampoline(void*, RegisterFile*, CallFrame*, void* /*unused1*/, void* /*unused2*/, JSGlobalData*)
+__asm EncodedJSValue ctiTrampoline(void*, JSStack*, CallFrame*, void* /*unused1*/, void* /*unused2*/, JSGlobalData*)
 {
     ARM
     stmdb sp!, {r1-r3}
@@ -796,7 +796,7 @@ JITThunks::JITThunks(JSGlobalData* globalData)
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedR10) == PRESERVED_R10_OFFSET);
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedR11) == PRESERVED_R11_OFFSET);
 
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, registerFile) == REGISTER_FILE_OFFSET);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, JSStack) == REGISTER_FILE_OFFSET);
     // The fifth argument is the first item already on the stack.
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, unused1) == FIRST_STACK_ARGUMENT);
 
@@ -815,7 +815,7 @@ JITThunks::JITThunks(JSGlobalData* globalData)
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedS2) == PRESERVED_S2_OFFSET);
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedReturnAddress) == PRESERVED_RETURN_ADDRESS_OFFSET);
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, thunkReturnAddress) == THUNK_RETURN_ADDRESS_OFFSET);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, registerFile) == REGISTER_FILE_OFFSET);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, JSStack) == REGISTER_FILE_OFFSET);
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, globalData) == GLOBAL_DATA_OFFSET);
 
 #endif
@@ -1049,7 +1049,7 @@ static NEVER_INLINE void returnToThrowTrampoline(JSGlobalData* globalData, Retur
     } while (0)
 
 // Helper function for JIT stubs that may throw an exception in the middle of
-// processing a function call. This function rolls back the register file to
+// processing a function call. This function rolls back the stack to
 // our caller, so exception processing can proceed from a valid state.
 template<typename T> static T throwExceptionFromOpCall(JITStackFrame& jitStackFrame, CallFrame* newCallFrame, ReturnAddressPtr& returnAddressSlot)
 {
@@ -1359,12 +1359,12 @@ DEFINE_STUB_FUNCTION(int, timeout_check)
     return timeoutChecker.ticksUntilNextCheck();
 }
 
-DEFINE_STUB_FUNCTION(void*, register_file_check)
+DEFINE_STUB_FUNCTION(void*, stack_check)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
     CallFrame* callFrame = stackFrame.callFrame;
 
-    if (UNLIKELY(!stackFrame.registerFile->grow(&callFrame->registers()[callFrame->codeBlock()->m_numCalleeRegisters])))
+    if (UNLIKELY(!stackFrame.stack->grow(&callFrame->registers()[callFrame->codeBlock()->m_numCalleeRegisters])))
         return throwExceptionFromOpCall<void*>(stackFrame, callFrame, STUB_RETURN_ADDRESS, createStackOverflowError(callFrame->callerFrame()));
 
     return callFrame;
@@ -2191,7 +2191,7 @@ DEFINE_STUB_FUNCTION(void*, op_call_arityCheck)
 
     CallFrame* callFrame = stackFrame.callFrame;
 
-    CallFrame* newCallFrame = CommonSlowPaths::arityCheckFor(callFrame, stackFrame.registerFile, CodeForCall);
+    CallFrame* newCallFrame = CommonSlowPaths::arityCheckFor(callFrame, stackFrame.stack, CodeForCall);
     if (!newCallFrame)
         return throwExceptionFromOpCall<void*>(stackFrame, callFrame, STUB_RETURN_ADDRESS, createStackOverflowError(callFrame->callerFrame()));
 
@@ -2204,7 +2204,7 @@ DEFINE_STUB_FUNCTION(void*, op_construct_arityCheck)
 
     CallFrame* callFrame = stackFrame.callFrame;
 
-    CallFrame* newCallFrame = CommonSlowPaths::arityCheckFor(callFrame, stackFrame.registerFile, CodeForConstruct);
+    CallFrame* newCallFrame = CommonSlowPaths::arityCheckFor(callFrame, stackFrame.stack, CodeForConstruct);
     if (!newCallFrame)
         return throwExceptionFromOpCall<void*>(stackFrame, callFrame, STUB_RETURN_ADDRESS, createStackOverflowError(callFrame->callerFrame()));
 
@@ -2582,12 +2582,12 @@ DEFINE_STUB_FUNCTION(void*, op_load_varargs)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     CallFrame* callFrame = stackFrame.callFrame;
-    RegisterFile* registerFile = stackFrame.registerFile;
+    JSStack* stack = stackFrame.stack;
     JSValue thisValue = stackFrame.args[0].jsValue();
     JSValue arguments = stackFrame.args[1].jsValue();
     int firstFreeRegister = stackFrame.args[2].int32();
 
-    CallFrame* newCallFrame = loadVarargs(callFrame, registerFile, thisValue, arguments, firstFreeRegister);
+    CallFrame* newCallFrame = loadVarargs(callFrame, stack, thisValue, arguments, firstFreeRegister);
     if (!newCallFrame)
         VM_THROW_EXCEPTION();
     return newCallFrame;

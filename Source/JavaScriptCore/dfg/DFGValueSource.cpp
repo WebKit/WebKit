@@ -39,19 +39,19 @@ void ValueSource::dump(FILE* out) const
     case SourceIsDead:
         fprintf(out, "IsDead");
         break;
-    case ValueInRegisterFile:
-        fprintf(out, "InRegFile");
+    case ValueInJSStack:
+        fprintf(out, "InStack");
         break;
-    case Int32InRegisterFile:
+    case Int32InJSStack:
         fprintf(out, "Int32");
         break;
-    case CellInRegisterFile:
+    case CellInJSStack:
         fprintf(out, "Cell");
         break;
-    case BooleanInRegisterFile:
+    case BooleanInJSStack:
         fprintf(out, "Bool");
         break;
-    case DoubleInRegisterFile:
+    case DoubleInJSStack:
         fprintf(out, "Double");
         break;
     case ArgumentsSource:

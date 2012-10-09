@@ -38,7 +38,7 @@ namespace JSC {
 
 #if ENABLE(JIT)
     class JSGlobalData;
-    class RegisterFile;
+    class JSStack;
 #endif
     
     class JITCode {
@@ -129,9 +129,9 @@ namespace JSC {
 
 #if ENABLE(JIT)
         // Execute the code!
-        inline JSValue execute(RegisterFile* registerFile, CallFrame* callFrame, JSGlobalData* globalData)
+        inline JSValue execute(JSStack* stack, CallFrame* callFrame, JSGlobalData* globalData)
         {
-            JSValue result = JSValue::decode(ctiTrampoline(m_ref.code().executableAddress(), registerFile, callFrame, 0, 0, globalData));
+            JSValue result = JSValue::decode(ctiTrampoline(m_ref.code().executableAddress(), stack, callFrame, 0, 0, globalData));
             return globalData->exception ? jsNull() : result;
         }
 #endif

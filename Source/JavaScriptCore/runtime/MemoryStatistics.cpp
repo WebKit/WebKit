@@ -28,7 +28,7 @@
 
 #include "ExecutableAllocator.h"
 #include "JSGlobalData.h"
-#include "RegisterFile.h"
+#include "JSStack.h"
 
 namespace JSC {
 
@@ -36,7 +36,7 @@ GlobalMemoryStatistics globalMemoryStatistics()
 {
     GlobalMemoryStatistics stats;
 
-    stats.stackBytes = RegisterFile::committedByteCount();
+    stats.stackBytes = JSStack::committedByteCount();
 #if ENABLE(EXECUTABLE_ALLOCATOR_FIXED) || ((PLATFORM(BLACKBERRY) || PLATFORM(EFL)) && ENABLE(JIT))
     stats.JITBytes = ExecutableAllocator::committedByteCount();
 #else

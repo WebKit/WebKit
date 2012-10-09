@@ -142,7 +142,7 @@ private:
             return getJSConstant(constant);
         }
 
-        if (operand == RegisterFile::Callee)
+        if (operand == JSStack::Callee)
             return getCallee();
 
         // Is this an argument?
@@ -369,11 +369,11 @@ private:
             InlineCallFrame* inlineCallFrame = stack->m_inlineCallFrame;
             if (!inlineCallFrame)
                 break;
-            if (operand >= static_cast<int>(inlineCallFrame->stackOffset - RegisterFile::CallFrameHeaderSize))
+            if (operand >= static_cast<int>(inlineCallFrame->stackOffset - JSStack::CallFrameHeaderSize))
                 continue;
             if (operand == inlineCallFrame->stackOffset + CallFrame::thisArgumentOffset())
                 continue;
-            if (operand < static_cast<int>(inlineCallFrame->stackOffset - RegisterFile::CallFrameHeaderSize - inlineCallFrame->arguments.size()))
+            if (operand < static_cast<int>(inlineCallFrame->stackOffset - JSStack::CallFrameHeaderSize - inlineCallFrame->arguments.size()))
                 continue;
             int argument = operandToArgument(operand - inlineCallFrame->stackOffset);
             return stack->m_argumentPositions[argument];
@@ -761,8 +761,8 @@ private:
         
         addVarArgChild(get(currentInstruction[1].u.operand));
         int argCount = currentInstruction[2].u.operand;
-        if (RegisterFile::CallFrameHeaderSize + (unsigned)argCount > m_parameterSlots)
-            m_parameterSlots = RegisterFile::CallFrameHeaderSize + argCount;
+        if (JSStack::CallFrameHeaderSize + (unsigned)argCount > m_parameterSlots)
+            m_parameterSlots = JSStack::CallFrameHeaderSize + argCount;
 
         int registerOffset = currentInstruction[3].u.operand;
         int dummyThisArgument = op == Call ? 0 : 1;
@@ -1142,7 +1142,7 @@ private:
                 return result;
             }
 
-            if (operand == RegisterFile::Callee)
+            if (operand == JSStack::Callee)
                 return m_calleeVR;
 
             return operand + m_inlineCallFrame->stackOffset;
@@ -1364,14 +1364,14 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     
     // FIXME: Don't flush constants!
     
-    int inlineCallFrameStart = m_inlineStackTop->remapOperand(registerOffset) - RegisterFile::CallFrameHeaderSize;
+    int inlineCallFrameStart = m_inlineStackTop->remapOperand(registerOffset) - JSStack::CallFrameHeaderSize;
     
     // Make sure that the area used by the call frame is reserved.
-    for (int arg = inlineCallFrameStart + RegisterFile::CallFrameHeaderSize + codeBlock->m_numVars; arg-- > inlineCallFrameStart;)
+    for (int arg = inlineCallFrameStart + JSStack::CallFrameHeaderSize + codeBlock->m_numVars; arg-- > inlineCallFrameStart;)
         m_preservedVars.set(arg);
     
     // Make sure that we have enough locals.
-    unsigned newNumLocals = inlineCallFrameStart + RegisterFile::CallFrameHeaderSize + codeBlock->m_numCalleeRegisters;
+    unsigned newNumLocals = inlineCallFrameStart + JSStack::CallFrameHeaderSize + codeBlock->m_numCalleeRegisters;
     if (newNumLocals > m_numLocals) {
         m_numLocals = newNumLocals;
         for (size_t i = 0; i < m_graph.m_blocks.size(); ++i)
@@ -1871,7 +1871,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_create_this: {
-            set(currentInstruction[1].u.operand, addToGraph(CreateThis, get(RegisterFile::Callee)));
+            set(currentInstruction[1].u.operand, addToGraph(CreateThis, get(JSStack::Callee)));
             NEXT_OPCODE(op_create_this);
         }
             
@@ -2756,8 +2756,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             addToGraph(CheckArgumentsNotCreated);
             
             unsigned argCount = m_inlineStackTop->m_inlineCallFrame->arguments.size();
-            if (RegisterFile::CallFrameHeaderSize + argCount > m_parameterSlots)
-                m_parameterSlots = RegisterFile::CallFrameHeaderSize + argCount;
+            if (JSStack::CallFrameHeaderSize + argCount > m_parameterSlots)
+                m_parameterSlots = JSStack::CallFrameHeaderSize + argCount;
             
             addVarArgChild(get(currentInstruction[1].u.operand)); // callee
             addVarArgChild(get(currentInstruction[2].u.operand)); // this
@@ -3210,7 +3210,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         
         InlineCallFrame inlineCallFrame;
         inlineCallFrame.executable.set(*byteCodeParser->m_globalData, byteCodeParser->m_codeBlock->ownerExecutable(), codeBlock->ownerExecutable());
-        inlineCallFrame.stackOffset = inlineCallFrameStart + RegisterFile::CallFrameHeaderSize;
+        inlineCallFrame.stackOffset = inlineCallFrameStart + JSStack::CallFrameHeaderSize;
         inlineCallFrame.callee.set(*byteCodeParser->m_globalData, byteCodeParser->m_codeBlock->ownerExecutable(), callee);
         inlineCallFrame.caller = byteCodeParser->currentCodeOrigin();
         inlineCallFrame.arguments.resize(argumentCountIncludingThis); // Set the number of arguments including this, but don't configure the value recoveries, yet.

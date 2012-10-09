@@ -140,13 +140,13 @@ bool JSLock::currentThreadIsHoldingLock()
 // context if the thread leaves JSC by making a call out to an external
 // function through a callback.
 //
-// All threads using the context share the same JS stack (the RegisterFile).
-// Whenever a thread calls into JSC it starts using the RegisterFile from the
+// All threads using the context share the same JS stack (the JSStack).
+// Whenever a thread calls into JSC it starts using the JSStack from the
 // previous 'high water mark' - the maximum point the stack has ever grown to
-// (returned by RegisterFile::end()).  So if a first thread calls out to a
+// (returned by JSStack::end()).  So if a first thread calls out to a
 // callback, and a second thread enters JSC, then also exits by calling out
 // to a callback, we can be left with stackframes from both threads in the
-// RegisterFile.  As such, a problem may occur should the first thread's
+// JSStack.  As such, a problem may occur should the first thread's
 // callback complete first, and attempt to return to JSC.  Were we to allow
 // this to happen, and were its stack to grow further, then it may potentially
 // write over the second thread's call frames.

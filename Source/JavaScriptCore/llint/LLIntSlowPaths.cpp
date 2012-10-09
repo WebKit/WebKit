@@ -396,7 +396,7 @@ LLINT_SLOW_PATH_DECL(replace)
 }
 #endif // ENABLE(JIT)
 
-LLINT_SLOW_PATH_DECL(register_file_check)
+LLINT_SLOW_PATH_DECL(stack_check)
 {
     LLINT_BEGIN();
 #if LLINT_SLOW_PATH_TRACING
@@ -404,10 +404,10 @@ LLINT_SLOW_PATH_DECL(register_file_check)
     dataLog("CodeBlock = %p.\n", exec->codeBlock());
     dataLog("Num callee registers = %u.\n", exec->codeBlock()->m_numCalleeRegisters);
     dataLog("Num vars = %u.\n", exec->codeBlock()->m_numVars);
-    dataLog("Current end is at %p.\n", exec->globalData().interpreter->registerFile().end());
+    dataLog("Current end is at %p.\n", exec->globalData().interpreter->stack().end());
 #endif
-    ASSERT(&exec->registers()[exec->codeBlock()->m_numCalleeRegisters] > exec->globalData().interpreter->registerFile().end());
-    if (UNLIKELY(!globalData.interpreter->registerFile().grow(&exec->registers()[exec->codeBlock()->m_numCalleeRegisters]))) {
+    ASSERT(&exec->registers()[exec->codeBlock()->m_numCalleeRegisters] > exec->globalData().interpreter->stack().end());
+    if (UNLIKELY(!globalData.interpreter->stack().grow(&exec->registers()[exec->codeBlock()->m_numCalleeRegisters]))) {
         ReturnAddressPtr returnPC = exec->returnPC();
         exec = exec->callerFrame();
         globalData.exception = createStackOverflowError(exec);
@@ -420,7 +420,7 @@ LLINT_SLOW_PATH_DECL(register_file_check)
 LLINT_SLOW_PATH_DECL(slow_path_call_arityCheck)
 {
     LLINT_BEGIN();
-    ExecState* newExec = CommonSlowPaths::arityCheckFor(exec, &globalData.interpreter->registerFile(), CodeForCall);
+    ExecState* newExec = CommonSlowPaths::arityCheckFor(exec, &globalData.interpreter->stack(), CodeForCall);
     if (!newExec) {
         ReturnAddressPtr returnPC = exec->returnPC();
         exec = exec->callerFrame();
@@ -434,7 +434,7 @@ LLINT_SLOW_PATH_DECL(slow_path_call_arityCheck)
 LLINT_SLOW_PATH_DECL(slow_path_construct_arityCheck)
 {
     LLINT_BEGIN();
-    ExecState* newExec = CommonSlowPaths::arityCheckFor(exec, &globalData.interpreter->registerFile(), CodeForConstruct);
+    ExecState* newExec = CommonSlowPaths::arityCheckFor(exec, &globalData.interpreter->stack(), CodeForConstruct);
     if (!newExec) {
         ReturnAddressPtr returnPC = exec->returnPC();
         exec = exec->callerFrame();
@@ -1408,7 +1408,7 @@ inline SlowPathReturnType genericCall(ExecState* exec, Instruction* pc, CodeSpec
     ExecState* execCallee = exec + pc[3].u.operand;
     
     execCallee->setArgumentCountIncludingThis(pc[2].u.operand);
-    execCallee->uncheckedR(RegisterFile::Callee) = calleeAsValue;
+    execCallee->uncheckedR(JSStack::Callee) = calleeAsValue;
     execCallee->setCallerFrame(exec);
     
     ASSERT(pc[4].u.callLinkInfo);
@@ -1438,11 +1438,11 @@ LLINT_SLOW_PATH_DECL(slow_path_call_varargs)
     JSValue calleeAsValue = LLINT_OP_C(1).jsValue();
     
     ExecState* execCallee = loadVarargs(
-        exec, &globalData.interpreter->registerFile(),
+        exec, &globalData.interpreter->stack(),
         LLINT_OP_C(2).jsValue(), LLINT_OP_C(3).jsValue(), pc[4].u.operand);
     LLINT_CALL_CHECK_EXCEPTION(exec, pc);
     
-    execCallee->uncheckedR(RegisterFile::Callee) = calleeAsValue;
+    execCallee->uncheckedR(JSStack::Callee) = calleeAsValue;
     execCallee->setCallerFrame(exec);
     exec->setCurrentVPC(pc + OPCODE_LENGTH(op_call_varargs));
     
@@ -1458,7 +1458,7 @@ LLINT_SLOW_PATH_DECL(slow_path_call_eval)
     
     execCallee->setArgumentCountIncludingThis(pc[2].u.operand);
     execCallee->setCallerFrame(exec);
-    execCallee->uncheckedR(RegisterFile::Callee) = calleeAsValue;
+    execCallee->uncheckedR(JSStack::Callee) = calleeAsValue;
     execCallee->setScope(exec->scope());
     execCallee->setReturnPC(LLInt::getCodePtr(llint_generic_return_point));
     execCallee->setCodeBlock(0);

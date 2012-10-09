@@ -297,7 +297,7 @@ public:
     void beginCall(CodeOrigin codeOrigin, CallBeginToken& token)
     {
         unsigned index = m_exceptionChecks.size();
-        store32(TrustedImm32(index), tagFor(static_cast<VirtualRegister>(RegisterFile::ArgumentCount)));
+        store32(TrustedImm32(index), tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
         token.set(codeOrigin, index);
     }
 

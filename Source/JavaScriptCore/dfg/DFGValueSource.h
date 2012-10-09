@@ -39,11 +39,11 @@ namespace JSC { namespace DFG {
 
 enum ValueSourceKind {
     SourceNotSet,
-    ValueInRegisterFile,
-    Int32InRegisterFile,
-    CellInRegisterFile,
-    BooleanInRegisterFile,
-    DoubleInRegisterFile,
+    ValueInJSStack,
+    Int32InJSStack,
+    CellInJSStack,
+    BooleanInJSStack,
+    DoubleInJSStack,
     ArgumentsSource,
     SourceIsDead,
     HaveNode
@@ -53,35 +53,35 @@ static inline ValueSourceKind dataFormatToValueSourceKind(DataFormat dataFormat)
 {
     switch (dataFormat) {
     case DataFormatInteger:
-        return Int32InRegisterFile;
+        return Int32InJSStack;
     case DataFormatDouble:
-        return DoubleInRegisterFile;
+        return DoubleInJSStack;
     case DataFormatBoolean:
-        return BooleanInRegisterFile;
+        return BooleanInJSStack;
     case DataFormatCell:
-        return CellInRegisterFile;
+        return CellInJSStack;
     case DataFormatDead:
         return SourceIsDead;
     case DataFormatArguments:
         return ArgumentsSource;
     default:
         ASSERT(dataFormat & DataFormatJS);
-        return ValueInRegisterFile;
+        return ValueInJSStack;
     }
 }
 
 static inline DataFormat valueSourceKindToDataFormat(ValueSourceKind kind)
 {
     switch (kind) {
-    case ValueInRegisterFile:
+    case ValueInJSStack:
         return DataFormatJS;
-    case Int32InRegisterFile:
+    case Int32InJSStack:
         return DataFormatInteger;
-    case CellInRegisterFile:
+    case CellInJSStack:
         return DataFormatCell;
-    case BooleanInRegisterFile:
+    case BooleanInJSStack:
         return DataFormatBoolean;
-    case DoubleInRegisterFile:
+    case DoubleInJSStack:
         return DataFormatDouble;
     case ArgumentsSource:
         return DataFormatArguments;
@@ -92,7 +92,7 @@ static inline DataFormat valueSourceKindToDataFormat(ValueSourceKind kind)
     }
 }
 
-static inline bool isInRegisterFile(ValueSourceKind kind)
+static inline bool isInJSStack(ValueSourceKind kind)
 {
     DataFormat format = valueSourceKindToDataFormat(kind);
     return format != DataFormatNone && format < DataFormatOSRMarker;
@@ -129,12 +129,12 @@ public:
     static ValueSource forSpeculation(SpeculatedType prediction)
     {
         if (isInt32Speculation(prediction))
-            return ValueSource(Int32InRegisterFile);
+            return ValueSource(Int32InJSStack);
         if (isArraySpeculation(prediction) || isCellSpeculation(prediction))
-            return ValueSource(CellInRegisterFile);
+            return ValueSource(CellInJSStack);
         if (isBooleanSpeculation(prediction))
-            return ValueSource(BooleanInRegisterFile);
-        return ValueSource(ValueInRegisterFile);
+            return ValueSource(BooleanInJSStack);
+        return ValueSource(ValueInJSStack);
     }
     
     static ValueSource forDataFormat(DataFormat dataFormat)
@@ -152,7 +152,7 @@ public:
         return kindFromNodeIndex(m_nodeIndex);
     }
     
-    bool isInRegisterFile() const { return JSC::DFG::isInRegisterFile(kind()); }
+    bool isInJSStack() const { return JSC::DFG::isInJSStack(kind()); }
     bool isTriviallyRecoverable() const { return JSC::DFG::isTriviallyRecoverable(kind()); }
     
     DataFormat dataFormat() const
@@ -164,20 +164,20 @@ public:
     {
         ASSERT(isTriviallyRecoverable());
         switch (kind()) {
-        case ValueInRegisterFile:
-            return ValueRecovery::alreadyInRegisterFile();
+        case ValueInJSStack:
+            return ValueRecovery::alreadyInJSStack();
             
-        case Int32InRegisterFile:
-            return ValueRecovery::alreadyInRegisterFileAsUnboxedInt32();
+        case Int32InJSStack:
+            return ValueRecovery::alreadyInJSStackAsUnboxedInt32();
             
-        case CellInRegisterFile:
-            return ValueRecovery::alreadyInRegisterFileAsUnboxedCell();
+        case CellInJSStack:
+            return ValueRecovery::alreadyInJSStackAsUnboxedCell();
             
-        case BooleanInRegisterFile:
-            return ValueRecovery::alreadyInRegisterFileAsUnboxedBoolean();
+        case BooleanInJSStack:
+            return ValueRecovery::alreadyInJSStackAsUnboxedBoolean();
             
-        case DoubleInRegisterFile:
-            return ValueRecovery::alreadyInRegisterFileAsUnboxedDouble();
+        case DoubleInJSStack:
+            return ValueRecovery::alreadyInJSStackAsUnboxedDouble();
             
         case SourceIsDead:
             return ValueRecovery::constant(jsUndefined());

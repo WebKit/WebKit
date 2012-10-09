@@ -24,7 +24,7 @@
 # First come the common protocols that both interpreters use. Note that each
 # of these must have an ASSERT() in LLIntData.cpp
 
-# These declarations must match interpreter/RegisterFile.h.
+# These declarations must match interpreter/JSStack.h.
 const CallFrameHeaderSize = 48
 const ArgumentCount = -48
 const CallerFrame = -40
@@ -38,7 +38,7 @@ const ThisArgumentOffset = -CallFrameHeaderSize - 8
 # Some register conventions.
 if JSVALUE64
     # - Use a pair of registers to represent the PC: one register for the
-    #   base of the register file, and one register for the index.
+    #   base of the stack, and one register for the index.
     # - The PC base (or PB for short) should be stored in the csr. It will
     #   get clobbered on calls to other JS code, but will get saved on calls
     #   to C functions.
@@ -315,13 +315,13 @@ macro functionInitialization(profileArgSkip)
     # Check stack height.
     loadi CodeBlock::m_numCalleeRegisters[t1], t0
     loadp CodeBlock::m_globalData[t1], t2
-    loadp JSGlobalData::interpreter[t2], t2   # FIXME: Can get to the RegisterFile from the JITStackFrame
+    loadp JSGlobalData::interpreter[t2], t2   # FIXME: Can get to the JSStack from the JITStackFrame
     lshifti 3, t0
     addp t0, cfr, t0
-    bpaeq Interpreter::m_registerFile + RegisterFile::m_end[t2], t0, .stackHeightOK
+    bpaeq Interpreter::m_stack + JSStack::m_end[t2], t0, .stackHeightOK
 
     # Stack height check failed - need to call a slow_path.
-    callSlowPath(_llint_register_file_check)
+    callSlowPath(_llint_stack_check)
 .stackHeightOK:
 end
 

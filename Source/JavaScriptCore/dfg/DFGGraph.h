@@ -36,8 +36,8 @@
 #include "DFGBasicBlock.h"
 #include "DFGDominators.h"
 #include "DFGNode.h"
+#include "JSStack.h"
 #include "MethodOfGettingAValueProfile.h"
-#include "RegisterFile.h"
 #include <wtf/BitVector.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>

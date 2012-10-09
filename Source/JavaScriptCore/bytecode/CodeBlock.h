@@ -159,7 +159,7 @@ namespace JSC {
             return result;
         }
 #endif
-        
+
         void visitAggregate(SlotVisitor&);
 
         static void dumpStatistics();

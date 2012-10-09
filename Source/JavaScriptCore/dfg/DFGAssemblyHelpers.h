@@ -93,16 +93,16 @@ public:
     }
 #endif
 
-    void emitGetFromCallFrameHeaderPtr(RegisterFile::CallFrameHeaderEntry entry, GPRReg to)
+    void emitGetFromCallFrameHeaderPtr(JSStack::CallFrameHeaderEntry entry, GPRReg to)
     {
         loadPtr(Address(GPRInfo::callFrameRegister, entry * sizeof(Register)), to);
     }
-    void emitPutToCallFrameHeader(GPRReg from, RegisterFile::CallFrameHeaderEntry entry)
+    void emitPutToCallFrameHeader(GPRReg from, JSStack::CallFrameHeaderEntry entry)
     {
         storePtr(from, Address(GPRInfo::callFrameRegister, entry * sizeof(Register)));
     }
 
-    void emitPutImmediateToCallFrameHeader(void* value, RegisterFile::CallFrameHeaderEntry entry)
+    void emitPutImmediateToCallFrameHeader(void* value, JSStack::CallFrameHeaderEntry entry)
     {
         storePtr(TrustedImmPtr(value), Address(GPRInfo::callFrameRegister, entry * sizeof(Register)));
     }
