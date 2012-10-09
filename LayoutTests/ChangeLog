@@ -1,3 +1,12 @@
+2012-10-09  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding failure expectations for regressions after r130699 and
+        a failing multipart test introduced in r130651.
+
+        * platform/gtk/TestExpectations:
+
 2012-10-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unskip and rebasing now passing tests.

@@ -1125,11 +1125,12 @@ webkit.org/b/68855 editing/selection/select-bidi-run.html [ Failure ]
 webkit.org/b/65709 canvas/philip/tests/2d.drawImage.outsidesource.html [ Failure ]
 
 # missing multipart/x-mixed-replace support in libsoup
-webkit.org/b/68979 http/tests/multipart/invalid-image-data.html
-webkit.org/b/68979 http/tests/multipart/load-last-non-html-frame.php [ Failure ]
-webkit.org/b/68979 http/tests/multipart/multipart-replace-non-html-content.php [ Failure ]
-webkit.org/b/68979 http/tests/multipart/policy-ignore-crash.php [ Failure ]
-webkit.org/b/68979 http/tests/multipart/stop-crash.html [ Skip ]
+webkit.org/b/94515 http/tests/multipart/invalid-image-data.html
+webkit.org/b/94515 http/tests/multipart/load-last-non-html-frame.php [ Failure ]
+webkit.org/b/94515 http/tests/multipart/multipart-replace-non-html-content.php [ Failure ]
+webkit.org/b/94515 http/tests/multipart/policy-ignore-crash.php [ Failure ]
+webkit.org/b/94515 http/tests/multipart/stop-crash.html [ Skip ]
+webkit.org/b/94515 http/tests/multipart/multipart-html.php [ Failure ]
 
 # Fails because it does not throw a couple of expected exceptions
 Bug(GTK) http/tests/local/fileapi/send-sliced-dragged-file.html [ Failure ]
@@ -1378,6 +1379,12 @@ webkit.org/b/98612 [ Release ] fast/dom/gc-dom-tree-lifetime.html [ Failure ]
 
 webkit.org/b/98613 css3/masking/clip-path-reference-userSpaceOnUse.html [ ImageOnlyFailure ]
 webkit.org/b/98613 css3/masking/clip-path-reference.html [ ImageOnlyFailure ]
+
+webkit.org/b/98729 fast/css/import-style-update.html [ Failure ]
+webkit.org/b/98729 fast/html/link-rel-stylesheet.html [ Failure ]
+webkit.org/b/98729 fast/loader/data-url-encoding-html.html [ Failure ]
+webkit.org/b/98729 fast/loader/data-url-encoding-svg.html [ Failure ]
+webkit.org/b/98729 fast/spatial-navigation/snav-iframe-nested.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
