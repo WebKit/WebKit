@@ -97,7 +97,16 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const Flo
         context->setCompositeOperation(CompositeCopy);
     else
         context->setCompositeOperation(op);
-    context->platformContext()->drawSurfaceToContext(nativeImage->surface(), dstRect, srcRect, context);
+
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
+    cairo_surface_t* surface = nativeImage->surface();
+    IntSize scaledSize(cairo_image_surface_get_width(surface), cairo_image_surface_get_height(surface));
+    FloatRect adjustedSrcRect = adjustSourceRectForDownSampling(srcRect, scaledSize);
+#else
+    FloatRect adjustedSrcRect(srcRect);
+#endif
+
+    context->platformContext()->drawSurfaceToContext(nativeImage->surface(), dstRect, adjustedSrcRect, context);
 
     context->restore();
 
