@@ -1,3 +1,10 @@
+2012-10-09  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed Chromium gardening.
+
+        * platform/chromium/TestExpectations:
+        Removed this entry: there was no need for new baselines.
+
 2012-10-09  Adam Barth  <abarth@webkit.org>
 
         dfg-cross-global tests are flaky because they misuse js-test-pre.js
