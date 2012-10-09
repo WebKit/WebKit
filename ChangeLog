@@ -1,3 +1,11 @@
+2012-10-09  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK build fix after r130689.
+
+        Adding a required symbol to symbols.filter.
+
+        * Source/autotools/symbols.filter:
+
 2012-10-08  Laszlo Gombos  <l.gombos@samsung.com>
 
         [EFL] Add minimum version information for tool dependencies
