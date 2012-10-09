@@ -1,3 +1,22 @@
+2012-10-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        DOM/textarea-edit.html spends 35% of time in numGraphemeClusters
+        https://bugs.webkit.org/show_bug.cgi?id=98711
+
+        Reviewed by Kent Tamura.
+
+        Since the number of characters is always greater than the number of grapheme clusters,
+        we can avoid calling computeLengthForSubmission when the number of characters is less
+        than maxlength. We still have to count the number of LFs since they all need to be
+        converted into CRLFs. This improves WebKit's score on DOM/textarea-edit.html by 45%.
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::computeLengthForSubmission):
+        (WebCore::numberOfLineBreaks):
+        (WebCore::upperBoundForLengthForSubmission): Added.
+        (WebCore::HTMLTextAreaElement::handleBeforeTextInsertedEvent):
+        (WebCore::HTMLTextAreaElement::tooLong):
+
 2012-10-09  Nate Chapin  <japhet@chromium.org>
 
         Make CachedResourceLoader RefCounted and have both Document
