@@ -25,15 +25,6 @@ http/tests/incremental/slow-utf8-text.pl
 # https://bugs.webkit.org/show_bug.cgi?id=77380
 fast/url/path.html
 
-# [Qt] REGRESSION: 360 tests started to fail with newer Qt5-WK1
-# https://bugs.webkit.org/show_bug.cgi?id=85631
-fast/css/word-space-extra.html
-fast/history/history-back-initial-vs-final-url.html
-fast/repaint/renderer-destruction-by-invalidateSelection-crash.html
-fast/transforms/transformed-focused-text-input.html
-http/tests/navigation/postredirect-frames.html
-http/tests/navigation/postredirect-goback2.html
-
 # [Qt] Tests still fail after the update to new fonts
 # https://bugs.webkit.org/show_bug.cgi?id=91610
 css3/calc/table-calcs.html

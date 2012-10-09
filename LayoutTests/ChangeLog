@@ -1,3 +1,18 @@
+2012-10-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unskip and rebasing now passing tests.
+
+        * platform/qt-5.0-wk1/TestExpectations:
+        * platform/qt/fast/css/word-space-extra-expected.png:
+        * platform/qt/fast/css/word-space-extra-expected.txt:
+        * platform/qt/fast/history/history-back-initial-vs-final-url-expected.txt: Added.
+        * platform/qt/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.png:
+        * platform/qt/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.txt:
+        * platform/qt/fast/transforms/transformed-focused-text-input-expected.png:
+        * platform/qt/fast/transforms/transformed-focused-text-input-expected.txt:
+        * platform/qt/http/tests/navigation/postredirect-frames-expected.txt:
+        * platform/qt/http/tests/navigation/postredirect-goback2-expected.txt:
+
 2012-10-09  Keishi Hattori  <keishi@webkit.org>
 
         Page popup should be smarter about its layout
