@@ -1,3 +1,19 @@
+2012-10-09  Dirk Pranke  <dpranke@chromium.org>
+
+        webkit-patch rebaseline-expectations doesn't work w/o failures specified
+        https://bugs.webkit.org/show_bug.cgi?id=98810
+
+        Reviewed by Ojan Vafai.
+
+        If you try to mark a test as foo.html [ Rebaseline ] it wasn't
+        getting picked up for rebaselining; we needed to think the test
+        was failing.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations.get_rebaselining_failures):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (RebaseliningTest.test_get_rebaselining_failures):
+
 2012-10-09  Daniel Bates  <dbates@webkit.org>
 
         VCSUtils.pm doesn't support SVN 1.7 diff files

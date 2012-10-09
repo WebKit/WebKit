@@ -869,7 +869,7 @@ class TestExpectations(object):
         return self._model
 
     def get_rebaselining_failures(self):
-        return self._model.get_test_set(REBASELINE, IMAGE) | self._model.get_test_set(REBASELINE, FAIL)
+        return self._model.get_test_set(REBASELINE)
 
     # FIXME: Change the callsites to use TestExpectationsModel and remove.
     def get_expectations(self, test):

@@ -524,9 +524,11 @@ class RebaseliningTest(Base):
                           'Bug(z) failures/expected/crash.html\n',
                           '')
 
+    def test_get_rebaselining_failures(self):
+        # Make sure we find a test as needing a rebaseline even if it is not marked as a failure.
+        self.parse_exp('Bug(x) failures/expected/text.html [ Rebaseline ]\n')
+        self.assertEqual(len(self._exp.get_rebaselining_failures()), 1)
 
-
-    def test_no_get_rebaselining_failures(self):
         self.parse_exp(self.get_basic_expectations())
         self.assertEqual(len(self._exp.get_rebaselining_failures()), 0)
 
