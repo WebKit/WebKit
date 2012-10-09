@@ -53,6 +53,7 @@ struct PaintInfo;
 class LineInfo;
 class RenderRubyRun;
 class TextLayout;
+class WordMeasurement;
 
 template <class Iterator, class Run> class BidiResolver;
 template <class Run> class BidiRunList;
@@ -62,6 +63,7 @@ typedef MidpointState<InlineIterator> LineMidpointState;
 typedef WTF::ListHashSet<RenderBox*, 16> TrackedRendererListHashSet;
 typedef WTF::HashMap<const RenderBlock*, TrackedRendererListHashSet*> TrackedDescendantsMap;
 typedef WTF::HashMap<const RenderBox*, HashSet<RenderBlock*>*> TrackedContainerMap;
+typedef Vector<WordMeasurement, 64> WordMeasurements;
 
 enum CaretType { CursorCaret, DragCaret };
 
@@ -729,7 +731,7 @@ private:
             reset();
         }
 
-        InlineIterator nextLineBreak(InlineBidiResolver&, LineInfo&, RenderTextInfo&, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines);
+        InlineIterator nextLineBreak(InlineBidiResolver&, LineInfo&, RenderTextInfo&, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines, WordMeasurements&);
 
         bool lineWasHyphenated() { return m_hyphenated; }
         const Vector<RenderBox*>& positionedObjects() { return m_positionedObjects; }
@@ -757,7 +759,7 @@ private:
 
     void setMarginsForRubyRun(BidiRun*, RenderRubyRun*, RenderObject*, const LineInfo&);
 
-    void computeInlineDirectionPositionsForLine(RootInlineBox*, const LineInfo&, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&);
+    void computeInlineDirectionPositionsForLine(RootInlineBox*, const LineInfo&, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&, WordMeasurements&);
     void computeBlockDirectionPositionsForLine(RootInlineBox*, BidiRun*, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&);
     void deleteEllipsisLineBoxes();
     void checkLinesForTextOverflow();
@@ -963,7 +965,7 @@ private:
     // End helper functions and structs used by layoutBlockChildren.
 
     // Helper function for layoutInlineChildren()
-    RootInlineBox* createLineBoxesFromBidiRuns(BidiRunList<BidiRun>&, const InlineIterator& end, LineInfo&, VerticalPositionCache&, BidiRun* trailingSpaceRun);
+    RootInlineBox* createLineBoxesFromBidiRuns(BidiRunList<BidiRun>&, const InlineIterator& end, LineInfo&, VerticalPositionCache&, BidiRun* trailingSpaceRun, WordMeasurements&);
     void layoutRunsAndFloats(LineLayoutState&, bool hasInlineChild);
     void layoutRunsAndFloatsInRange(LineLayoutState&, InlineBidiResolver&, const InlineIterator& cleanLineStart, const BidiStatus& cleanLineBidiStatus, unsigned consecutiveHyphenatedLines);
     void linkToEndLineIfNeeded(LineLayoutState&);

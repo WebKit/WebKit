@@ -54,13 +54,13 @@ public:
     {
     }
 
-    float width(unsigned from, unsigned len)
+    float width(unsigned from, unsigned len, HashSet<const SimpleFontData*>* fallbackFonts)
     {
-        m_controller->advance(from, 0, ByWholeGlyphs);
+        m_controller->advance(from, 0, ByWholeGlyphs, fallbackFonts);
         float beforeWidth = m_controller->runWidthSoFar();
         if (m_font.wordSpacing() && from && Font::treatAsSpace(m_run[from]))
             beforeWidth += m_font.wordSpacing();
-        m_controller->advance(from + len, 0, ByWholeGlyphs);
+        m_controller->advance(from + len, 0, ByWholeGlyphs, fallbackFonts);
         float afterWidth = m_controller->runWidthSoFar();
         return afterWidth - beforeWidth;
     }
@@ -94,9 +94,9 @@ void Font::deleteLayout(TextLayout* layout)
     delete layout;
 }
 
-float Font::width(TextLayout& layout, unsigned from, unsigned len)
+float Font::width(TextLayout& layout, unsigned from, unsigned len, HashSet<const SimpleFontData*>* fallbackFonts)
 {
-    return layout.width(from, len);
+    return layout.width(from, len, fallbackFonts);
 }
 
 static inline CGFloat roundCGFloat(CGFloat f)
@@ -460,7 +460,7 @@ unsigned ComplexTextController::incrementCurrentRun(unsigned& leftmostGlyph)
     return indexOfCurrentRun(leftmostGlyph);
 }
 
-void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer, GlyphIterationStyle iterationStyle)
+void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer, GlyphIterationStyle iterationStyle, HashSet<const SimpleFontData*>* fallbackFonts)
 {
     if (static_cast<int>(offset) > m_end)
         offset = m_end;
@@ -485,6 +485,8 @@ void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer, G
         size_t glyphCount = complexTextRun.glyphCount();
         unsigned g = ltr ? m_glyphInCurrentRun : glyphCount - 1 - m_glyphInCurrentRun;
         unsigned k = leftmostGlyph + g;
+        if (fallbackFonts && complexTextRun.fontData() != m_font.primaryFont())
+            fallbackFonts->add(complexTextRun.fontData());
 
         while (m_glyphInCurrentRun < glyphCount) {
             unsigned glyphStartOffset = complexTextRun.indexAt(g);

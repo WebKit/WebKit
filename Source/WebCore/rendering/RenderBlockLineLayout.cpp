@@ -692,22 +692,40 @@ static inline float measureHyphenWidth(RenderText* renderer, const Font& font)
     return font.width(RenderBlock::constructTextRun(renderer, font, style->hyphenString().string(), style));
 }
 
+class WordMeasurement {
+public:
+    WordMeasurement()
+        : renderer(0)
+        , width(0)
+        , startOffset(0)
+        , endOffset(0)
+    {
+    }
+    
+    RenderText* renderer;
+    float width;
+    int startOffset;
+    int endOffset;
+    HashSet<const SimpleFontData*> fallbackFonts;
+};
+
 static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* run, RenderText* renderer, float xPos, const LineInfo& lineInfo,
-                                   GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache)
+                                             GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache, WordMeasurements& wordMeasurements)
 {
     HashSet<const SimpleFontData*> fallbackFonts;
     GlyphOverflow glyphOverflow;
     
+    const Font& font = renderer->style(lineInfo.isFirstLine())->font();
     // Always compute glyph overflow if the block's line-box-contain value is "glyphs".
     if (lineBox->fitsToGlyphs()) {
         // If we don't stick out of the root line's font box, then don't bother computing our glyph overflow. This optimization
         // will keep us from computing glyph bounds in nearly all cases.
         bool includeRootLine = lineBox->includesRootLineBoxFontOrLeading();
         int baselineShift = lineBox->verticalPositionForBox(run->m_box, verticalPositionCache);
-        int rootDescent = includeRootLine ? lineBox->renderer()->style(lineInfo.isFirstLine())->font().fontMetrics().descent() : 0;
-        int rootAscent = includeRootLine ? lineBox->renderer()->style(lineInfo.isFirstLine())->font().fontMetrics().ascent() : 0;
-        int boxAscent = renderer->style(lineInfo.isFirstLine())->font().fontMetrics().ascent() - baselineShift;
-        int boxDescent = renderer->style(lineInfo.isFirstLine())->font().fontMetrics().descent() + baselineShift;
+        int rootDescent = includeRootLine ? font.fontMetrics().descent() : 0;
+        int rootAscent = includeRootLine ? font.fontMetrics().ascent() : 0;
+        int boxAscent = font.fontMetrics().ascent() - baselineShift;
+        int boxDescent = font.fontMetrics().descent() + baselineShift;
         if (boxAscent > rootDescent ||  boxDescent > rootAscent)
             glyphOverflow.computeBounds = true; 
     }
@@ -717,7 +735,45 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
         const Font& font = renderer->style(lineInfo.isFirstLine())->font();
         hyphenWidth = measureHyphenWidth(renderer, font);
     }
-    run->m_box->setLogicalWidth(renderer->width(run->m_start, run->m_stop - run->m_start, xPos, lineInfo.isFirstLine(), &fallbackFonts, &glyphOverflow) + hyphenWidth);
+    float measuredWidth = 0;
+    bool kerningIsEnabled = font.typesettingFeatures() & Kerning;
+    
+    // Since we don't cache glyph overflows, we need to re-measure the run if
+    // the style is linebox-contain: glyph.
+    
+    if (!lineBox->fitsToGlyphs() && renderer->canUseSimpleFontCodePath()) {
+        int lastEndOffset = run->m_start;
+        for (size_t i = 0, size = wordMeasurements.size(); i < size && lastEndOffset < run->m_stop; ++i) {
+            const WordMeasurement& wordMeasurement = wordMeasurements[i];
+            if (wordMeasurement.width <=0 || wordMeasurement.startOffset == wordMeasurement.endOffset)
+                continue;
+            if (wordMeasurement.renderer != renderer || wordMeasurement.startOffset != lastEndOffset || wordMeasurement.endOffset > run->m_stop)
+                continue;
+
+            lastEndOffset = wordMeasurement.endOffset;
+            if (kerningIsEnabled && lastEndOffset == run->m_stop) {
+                measuredWidth += renderer->width(wordMeasurement.startOffset, lastEndOffset - wordMeasurement.startOffset, xPos, lineInfo.isFirstLine());
+                if (i > 0)
+                    measuredWidth += renderer->style()->wordSpacing();
+            } else
+                measuredWidth += wordMeasurement.width;
+            if (!wordMeasurement.fallbackFonts.isEmpty()) {
+                HashSet<const SimpleFontData*>::const_iterator end = wordMeasurement.fallbackFonts.end();
+                for (HashSet<const SimpleFontData*>::const_iterator it = wordMeasurement.fallbackFonts.begin(); it != end; ++it)
+                    fallbackFonts.add(*it);
+            }
+        }
+        if (measuredWidth && lastEndOffset != run->m_stop) {
+            // If we don't have enough cached data, we'll measure the run again.
+            measuredWidth = 0;
+            fallbackFonts.clear();
+        }
+    }
+
+    if (!measuredWidth)
+        measuredWidth = renderer->width(run->m_start, run->m_stop - run->m_start, xPos, lineInfo.isFirstLine(), &fallbackFonts, &glyphOverflow);
+
+    run->m_box->setLogicalWidth(measuredWidth + hyphenWidth);
     if (!fallbackFonts.isEmpty()) {
         ASSERT(run->m_box->isText());
         GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(toInlineTextBox(run->m_box), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).iterator;
@@ -807,7 +863,7 @@ void RenderBlock::updateLogicalWidthForAlignment(const ETextAlign& textAlign, Bi
 }
 
 void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox, const LineInfo& lineInfo, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd,
-                                                         GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache)
+                                                         GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache, WordMeasurements& wordMeasurements)
 {
     ETextAlign textAlign = textAlignmentForLine(!reachedEnd && !lineBox->endsWithBreak());
     
@@ -854,7 +910,7 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
                 needsWordSpacing = !isSpaceOrNewline(rt->characters()[r->m_stop - 1]) && r->m_stop == length;
             }
 
-            setLogicalWidthForTextRun(lineBox, r, rt, totalLogicalWidth, lineInfo, textBoxDataMap, verticalPositionCache);
+            setLogicalWidthForTextRun(lineBox, r, rt, totalLogicalWidth, lineInfo, textBoxDataMap, verticalPositionCache, wordMeasurements);
         } else {
             isAfterExpansion = false;
             if (!r->m_object->isRenderInline()) {
@@ -1081,7 +1137,7 @@ static inline void constructBidiRuns(InlineBidiResolver& topResolver, BidiRunLis
 }
 
 // This function constructs line boxes for all of the text runs in the resolver and computes their position.
-RootInlineBox* RenderBlock::createLineBoxesFromBidiRuns(BidiRunList<BidiRun>& bidiRuns, const InlineIterator& end, LineInfo& lineInfo, VerticalPositionCache& verticalPositionCache, BidiRun* trailingSpaceRun)
+RootInlineBox* RenderBlock::createLineBoxesFromBidiRuns(BidiRunList<BidiRun>& bidiRuns, const InlineIterator& end, LineInfo& lineInfo, VerticalPositionCache& verticalPositionCache, BidiRun* trailingSpaceRun, WordMeasurements& wordMeasurements)
 {
     if (!bidiRuns.runCount())
         return 0;
@@ -1105,7 +1161,7 @@ RootInlineBox* RenderBlock::createLineBoxesFromBidiRuns(BidiRunList<BidiRun>& bi
     
     // Now we position all of our text runs horizontally.
     if (!isSVGRootInlineBox)
-        computeInlineDirectionPositionsForLine(lineBox, lineInfo, bidiRuns.firstRun(), trailingSpaceRun, end.atEnd(), textBoxDataMap, verticalPositionCache);
+        computeInlineDirectionPositionsForLine(lineBox, lineInfo, bidiRuns.firstRun(), trailingSpaceRun, end.atEnd(), textBoxDataMap, verticalPositionCache, wordMeasurements);
     
     // Now position our text runs vertically.
     computeBlockDirectionPositionsForLine(lineBox, bidiRuns.firstRun(), textBoxDataMap, verticalPositionCache);
@@ -1351,7 +1407,8 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
             exclusionShapeInsideInfo->computeSegmentsForLine(lineTop, lineBottom);
         }
 #endif
-        end = lineBreaker.nextLineBreak(resolver, layoutState.lineInfo(), renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines);
+        WordMeasurements wordMeasurements;
+        end = lineBreaker.nextLineBreak(resolver, layoutState.lineInfo(), renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
         if (resolver.position().atEnd()) {
             // FIXME: We shouldn't be creating any runs in nextLineBreak to begin with!
             // Once BidiRunList is separated from BidiResolver this will not be needed.
@@ -1393,7 +1450,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
             // inline flow boxes.
 
             LayoutUnit oldLogicalHeight = logicalHeight();
-            RootInlineBox* lineBox = createLineBoxesFromBidiRuns(bidiRuns, end, layoutState.lineInfo(), verticalPositionCache, trailingSpaceRun);
+            RootInlineBox* lineBox = createLineBoxesFromBidiRuns(bidiRuns, end, layoutState.lineInfo(), verticalPositionCache, trailingSpaceRun, wordMeasurements);
 
             bidiRuns.deleteRuns();
             resolver.markCurrentRunEmpty(); // FIXME: This can probably be replaced by an ASSERT (or just removed).
@@ -2051,13 +2108,14 @@ static bool shouldSkipWhitespaceAfterStartObject(RenderBlock* block, RenderObjec
     return false;
 }
 
-static inline float textWidth(RenderText* text, unsigned from, unsigned len, const Font& font, float xPos, bool isFixedPitch, bool collapseWhiteSpace, TextLayout* layout = 0)
+static ALWAYS_INLINE float textWidth(RenderText* text, unsigned from, unsigned len, const Font& font, float xPos, bool isFixedPitch, bool collapseWhiteSpace, HashSet<const SimpleFontData*>* fallbackFonts = 0, TextLayout* layout = 0)
 {
+    GlyphOverflow glyphOverflow;
     if (isFixedPitch || (!from && len == text->textLength()) || text->style()->hasTextCombine())
-        return text->width(from, len, font, xPos);
+        return text->width(from, len, font, xPos, fallbackFonts, &glyphOverflow);
 
     if (layout)
-        return Font::width(*layout, from, len);
+        return Font::width(*layout, from, len, fallbackFonts);
 
     TextRun run = RenderBlock::constructTextRun(text, font, text->characters() + from, len, text->style());
     run.setCharactersLength(text->textLength() - from);
@@ -2066,7 +2124,7 @@ static inline float textWidth(RenderText* text, unsigned from, unsigned len, con
     run.setCharacterScanForCodePath(!text->canUseSimpleFontCodePath());
     run.setTabSize(!collapseWhiteSpace, text->style()->tabSize());
     run.setXPos(xPos);
-    return font.width(run);
+    return font.width(run, fallbackFonts, &glyphOverflow);
 }
 
 static void tryHyphenating(RenderText* text, const Font& font, const AtomicString& localeIdentifier, unsigned consecutiveHyphenatedLines, int consecutiveHyphenatedLinesLimit, int minimumPrefixLength, int minimumSuffixLength, int lastSpace, int pos, float xPos, int availableWidth, bool isFixedPitch, bool collapseWhiteSpace, int lastSpaceWordSpacing, InlineIterator& lineBreak, int nextBreakable, bool& hyphenated)
@@ -2220,7 +2278,7 @@ void RenderBlock::LineBreaker::reset()
     m_clear = CNONE;
 }
 
-InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resolver, LineInfo& lineInfo, RenderTextInfo& renderTextInfo, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines)
+InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resolver, LineInfo& lineInfo, RenderTextInfo& renderTextInfo, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines, WordMeasurements& wordMeasurements)
 {
     reset();
 
@@ -2438,6 +2496,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
             int lastSpace = current.m_pos;
             float wordSpacing = currentStyle->wordSpacing();
             float lastSpaceWordSpacing = 0;
+            float wordSpacingForWordMeasurement = 0;
 
             float wrapW = width.uncommittedWidth() + inlineLogicalWidth(current.m_obj, !appliedStartWidth, true);
             float charWidth = 0;
@@ -2493,7 +2552,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
                 if ((breakAll || breakWords) && !midWordBreak) {
                     wrapW += charWidth;
                     bool midWordBreakIsBeforeSurrogatePair = U16_IS_LEAD(c) && current.m_pos + 1 < t->textLength() && U16_IS_TRAIL(t->characters()[current.m_pos + 1]);
-                    charWidth = textWidth(t, current.m_pos, midWordBreakIsBeforeSurrogatePair ? 2 : 1, f, width.committedWidth() + wrapW, isFixedPitch, collapseWhiteSpace, textLayout);
+                    charWidth = textWidth(t, current.m_pos, midWordBreakIsBeforeSurrogatePair ? 2 : 1, f, width.committedWidth() + wrapW, isFixedPitch, collapseWhiteSpace, 0, textLayout);
                     midWordBreak = width.committedWidth() + wrapW + charWidth > width.availableWidth();
                 }
 
@@ -2508,6 +2567,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
                             // new point.
                             ignoringSpaces = false;
                             lastSpaceWordSpacing = 0;
+                            wordSpacingForWordMeasurement = 0;
                             lastSpace = current.m_pos; // e.g., "Foo    goo", don't add in any of the ignored spaces.
                             addMidpoint(lineMidpointState, InlineIterator(0, current.m_obj, current.m_pos));
                             stoppedIgnoringSpaces = true;
@@ -2517,18 +2577,28 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
                         }
                     }
 
+                    wordMeasurements.grow(wordMeasurements.size() + 1);
+                    WordMeasurement& wordMeasurement = wordMeasurements.last();
+                    
+                    wordMeasurement.renderer = t;
+                    wordMeasurement.endOffset = current.m_pos;
+                    wordMeasurement.startOffset = lastSpace;
+                    
                     float additionalTmpW;
                     if (wordTrailingSpaceWidth && currentCharacterIsSpace)
-                        additionalTmpW = textWidth(t, lastSpace, current.m_pos + 1 - lastSpace, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace, textLayout) - wordTrailingSpaceWidth + lastSpaceWordSpacing;
+                        additionalTmpW = textWidth(t, lastSpace, current.m_pos + 1 - lastSpace, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace, &wordMeasurement.fallbackFonts, textLayout) - wordTrailingSpaceWidth;
                     else
-                        additionalTmpW = textWidth(t, lastSpace, current.m_pos - lastSpace, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace, textLayout) + lastSpaceWordSpacing;
+                        additionalTmpW = textWidth(t, lastSpace, current.m_pos - lastSpace, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace, &wordMeasurement.fallbackFonts, textLayout);
+
+                    wordMeasurement.width = additionalTmpW + wordSpacingForWordMeasurement;
+                    additionalTmpW += lastSpaceWordSpacing;
                     width.addUncommittedWidth(additionalTmpW);
                     if (!appliedStartWidth) {
                         width.addUncommittedWidth(inlineLogicalWidth(current.m_obj, true, false));
                         appliedStartWidth = true;
                     }
 
-                    applyWordSpacing =  wordSpacing && currentCharacterIsSpace;
+                    applyWordSpacing = wordSpacing && currentCharacterIsSpace;
 
                     if (!width.committedWidth() && autoWrap && !width.fitsOnLine())
                         width.fitBelowFloats();
@@ -2538,7 +2608,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
                         // as candidate width for this line.
                         bool lineWasTooWide = false;
                         if (width.fitsOnLine() && currentCharacterIsWS && currentStyle->breakOnlyAfterWhiteSpace() && !midWordBreak) {
-                            float charWidth = textWidth(t, current.m_pos, 1, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace, textLayout) + (applyWordSpacing ? wordSpacing : 0);
+                            float charWidth = textWidth(t, current.m_pos, 1, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace, &wordMeasurement.fallbackFonts, textLayout) + (applyWordSpacing ? wordSpacing : 0);
                             // Check if line is too big even without the extra space
                             // at the end of the line. If it is not, do nothing.
                             // If the line needs the extra whitespace to be too long,
@@ -2564,9 +2634,16 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
                                 }
                                 lBreak.increment();
                                 lineInfo.setPreviousLineBrokeCleanly(true);
+                                wordMeasurement.endOffset = lBreak.m_pos;
                             }
                             if (lBreak.m_obj && lBreak.m_pos && lBreak.m_obj->isText() && toRenderText(lBreak.m_obj)->textLength() && toRenderText(lBreak.m_obj)->characters()[lBreak.m_pos - 1] == softHyphen && style->hyphens() != HyphensNone)
                                 m_hyphenated = true;
+                            if (lBreak.m_pos && lBreak.m_pos != (unsigned)wordMeasurement.endOffset && !wordMeasurement.width) {
+                                if (charWidth) {
+                                    wordMeasurement.endOffset = lBreak.m_pos;
+                                    wordMeasurement.width = charWidth;
+                                }
+                            }
                             goto end; // Didn't fit. Jump to the end.
                         } else {
                             if (!betweenWords || (midWordBreak && !autoWrap))
@@ -2609,6 +2686,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
 
                     if (betweenWords) {
                         lastSpaceWordSpacing = applyWordSpacing ? wordSpacing : 0;
+                        wordSpacingForWordMeasurement = (applyWordSpacing && wordMeasurement.width) ? wordSpacing : 0;
                         lastSpace = current.m_pos;
                     }
 
@@ -2631,6 +2709,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
                     // new point.
                     ignoringSpaces = false;
                     lastSpaceWordSpacing = applyWordSpacing ? wordSpacing : 0;
+                    wordSpacingForWordMeasurement = (applyWordSpacing && wordMeasurements.last().width) ? wordSpacing : 0;
                     lastSpace = current.m_pos; // e.g., "Foo    goo", don't add in any of the ignored spaces.
                     addMidpoint(lineMidpointState, InlineIterator(0, current.m_obj, current.m_pos));
                 }
@@ -2663,8 +2742,16 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
                 atStart = false;
             }
 
+            wordMeasurements.grow(wordMeasurements.size() + 1);
+            WordMeasurement& wordMeasurement = wordMeasurements.last();
+            wordMeasurement.renderer = t;
+
             // IMPORTANT: current.m_pos is > length here!
-            float additionalTmpW = ignoringSpaces ? 0 : textWidth(t, lastSpace, current.m_pos - lastSpace, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace, textLayout) + lastSpaceWordSpacing;
+            float additionalTmpW = ignoringSpaces ? 0 : textWidth(t, lastSpace, current.m_pos - lastSpace, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace, &wordMeasurement.fallbackFonts, textLayout);
+            wordMeasurement.startOffset = lastSpace;
+            wordMeasurement.endOffset = current.m_pos;
+            wordMeasurement.width = ignoringSpaces ? 0 : additionalTmpW + wordSpacingForWordMeasurement;
+            additionalTmpW += lastSpaceWordSpacing;
             width.addUncommittedWidth(additionalTmpW + inlineLogicalWidth(current.m_obj, !appliedStartWidth, includeEndWidth));
             includeEndWidth = false;
 

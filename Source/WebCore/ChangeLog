@@ -1,3 +1,47 @@
+2012-10-09  Enrica Casucci  <enrica@apple.com>
+
+        Only measure text once instead of twice when performing line layout.
+        https://bugs.webkit.org/show_bug.cgi?id=98317
+        <rdar://problem/12080821>
+
+        Reviewed by Dan Bernstein.
+
+        Since we are measuring each word to find out where the line break should occur,
+        we should cache that information to avoid measuring the run again when
+        creating the line box. The bulk of the change is in nextLineBreak, where
+        the measurements are collected and placed in a vector so that they can
+        be consumed in setLogicalWidthForTextRun where we used to measure the
+        text one more time.
+        Each entry in the vector is a WordMeasurement object that contains information
+        about the start and end offset in the run, the renderer, the measured width
+        and, possibly, a list of fallback fonts.
+        When we need to compute the width of the run to create the line box, we add
+        all the measurements for the given renderer in the run to get the total width.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::width): Added fallback fonts parameter.
+        * platform/graphics/Font.h:
+        (Font): Added fallback fonts parameter to the width static member function.
+        This method is called when we compute the width using TextLayout.
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::TextLayout::width): Added fallback fonts parameter.
+        (WebCore::Font::width):
+        (WebCore::ComplexTextController::advance):
+        * platform/graphics/mac/ComplexTextController.h:
+        (ComplexTextController): Added fallback fonts parameter to advance method.
+        * rendering/RenderBlock.h: Added WordMeasures parameter to few methods.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WordMeasurement): Added new class to hold measurement information.
+        (WebCore::setLogicalWidthForTextRun): This is where we compute the run width using the
+        cached information.
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine): Added wordMeasures parameter.
+        (WebCore::RenderBlock::createLineBoxesFromBidiRuns): Added wordMeasures parameter.
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange): Added declaration of the WordMeasures
+        vector and its use.
+        (WebCore::textWidth): Added fallbackFonts parameter, since now we only measure once.
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak): This method has been modified to collect
+        the measurements of the individual words and add them to the vector.
+
 2012-10-09  Levi Weintraub  <leviw@chromium.org>
 
         [Sub pixel layout] Fast-path iframe scrolling can picks up an extra pixel
