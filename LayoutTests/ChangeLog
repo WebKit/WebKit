@@ -1,3 +1,44 @@
+2012-10-09  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Rebaseline some svg/text tests.
+
+        Some pixel tests now have the red rectangle drawn around some
+        areas like other ports.
+
+        While here, also add an expectation for selection-tripleclick.svg,
+        which seems to be passing now.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/svg/text/foreignObject-text-clipping-bug-expected.png:
+        * platform/efl/svg/text/selection-tripleclick-expected.png: Added.
+        * platform/efl/svg/text/selection-tripleclick-expected.txt: Added.
+        * platform/efl/svg/text/text-align-01-b-expected.png:
+        * platform/efl/svg/text/text-align-02-b-expected.png:
+        * platform/efl/svg/text/text-align-03-b-expected.png:
+        * platform/efl/svg/text/text-align-04-b-expected.png:
+        * platform/efl/svg/text/text-align-05-b-expected.png:
+        * platform/efl/svg/text/text-align-06-b-expected.png:
+        * platform/efl/svg/text/text-altglyph-01-b-expected.png:
+        * platform/efl/svg/text/text-deco-01-b-expected.png:
+        * platform/efl/svg/text/text-fonts-01-t-expected.png:
+        * platform/efl/svg/text/text-fonts-02-t-expected.png:
+        * platform/efl/svg/text/text-intro-05-t-expected.png:
+        * platform/efl/svg/text/text-path-01-b-expected.png:
+        * platform/efl/svg/text/text-spacing-01-b-expected.png:
+        * platform/efl/svg/text/text-text-01-b-expected.png:
+        * platform/efl/svg/text/text-text-03-b-expected.png:
+        * platform/efl/svg/text/text-text-04-t-expected.png:
+        * platform/efl/svg/text/text-text-05-t-expected.png:
+        * platform/efl/svg/text/text-text-06-t-expected.png:
+        * platform/efl/svg/text/text-text-07-t-expected.png:
+        * platform/efl/svg/text/text-text-08-b-expected.png:
+        * platform/efl/svg/text/text-tref-01-b-expected.png:
+        * platform/efl/svg/text/text-tselect-01-b-expected.png:
+        * platform/efl/svg/text/text-tselect-02-f-expected.png:
+        * platform/efl/svg/text/text-tspan-01-b-expected.png:
+        * platform/efl/svg/text/text-ws-01-t-expected.png:
+        * platform/efl/svg/text/text-ws-02-t-expected.png:
+
 2012-10-09  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Uploading images to Google+ using QtWebKit does not work.
