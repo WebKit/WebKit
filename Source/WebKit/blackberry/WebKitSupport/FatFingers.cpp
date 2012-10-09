@@ -50,7 +50,6 @@
 using BlackBerry::Platform::LogLevelInfo;
 using BlackBerry::Platform::log;
 using BlackBerry::Platform::IntRectRegion;
-using WTF::RefPtr;
 
 using namespace WebCore;
 
@@ -137,7 +136,7 @@ static inline int distanceBetweenPoints(const IntPoint& p1, const IntPoint& p2)
     return sqrt((double)((dx * dx) + (dy * dy)));
 }
 
-static bool compareDistanceBetweenPoints(const Platform::IntPoint& p, const Platform::IntRectRegion& r1, const Platform::IntRectRegion& r2)
+static bool compareDistanceBetweenPoints(const Platform::IntPoint& p, const IntRectRegion& r1, const IntRectRegion& r2)
 {
     return distanceBetweenPoints(p, r1.extents().center()) > distanceBetweenPoints(p, r2.extents().center());
 }
@@ -208,12 +207,12 @@ const FatFingersResult FatFingers::findBestPoint()
 #endif
 
     Vector<IntersectingRegion> intersectingRegions;
-    Platform::IntRectRegion remainingFingerRegion = Platform::IntRectRegion(fingerRectForPoint(m_contentPos));
+    IntRectRegion remainingFingerRegion = IntRectRegion(fingerRectForPoint(m_contentPos));
 
     bool foundOne = findIntersectingRegions(m_webPage->m_mainFrame->document(), intersectingRegions, remainingFingerRegion);
     if (!foundOne) {
         m_matchingApproach = MadeClickableByTheWebpage;
-        remainingFingerRegion = Platform::IntRectRegion(fingerRectForPoint(m_contentPos));
+        remainingFingerRegion = IntRectRegion(fingerRectForPoint(m_contentPos));
         foundOne = findIntersectingRegions(m_webPage->m_mainFrame->document(), intersectingRegions, remainingFingerRegion);
     }
 
@@ -224,14 +223,13 @@ const FatFingersResult FatFingers::findBestPoint()
         return result;
 
     Node* bestNode = 0;
-    Platform::IntRectRegion largestIntersectionRegion;
-    IntPoint bestPoint;
+    IntRectRegion largestIntersectionRegion;
     int largestIntersectionRegionArea = 0;
 
     Vector<IntersectingRegion>::const_iterator endIt = intersectingRegions.end();
     for (Vector<IntersectingRegion>::const_iterator it = intersectingRegions.begin(); it != endIt; ++it) {
         Node* currentNode = it->first;
-        Platform::IntRectRegion currentIntersectionRegion = it->second;
+        IntRectRegion currentIntersectionRegion = it->second;
 
         int currentIntersectionRegionArea = currentIntersectionRegion.area();
         if (currentIntersectionRegionArea > largestIntersectionRegionArea
@@ -259,17 +257,16 @@ const FatFingersResult FatFingers::findBestPoint()
 // 'remainingFingerRegion' and 'intersectingRegions' will always be in main frame contents
 // coordinates.
 // Thus, before comparing, we need to map the former to main frame contents coordinates.
-bool FatFingers::checkFingerIntersection(const Platform::IntRectRegion& region,
-                                         const Platform::IntRectRegion& remainingFingerRegion,
+bool FatFingers::checkFingerIntersection(const IntRectRegion& region, const IntRectRegion& remainingFingerRegion,
                                          Node* node, Vector<IntersectingRegion>& intersectingRegions)
 {
     ASSERT(node);
 
-    Platform::IntRectRegion regionCopy(region);
+    IntRectRegion regionCopy(region);
     WebCore::IntPoint framePos(m_webPage->frameOffset(node->document()->frame()));
     regionCopy.move(framePos.x(), framePos.y());
 
-    Platform::IntRectRegion intersection = intersectRegions(regionCopy, remainingFingerRegion);
+    IntRectRegion intersection = intersectRegions(regionCopy, remainingFingerRegion);
     if (intersection.isEmpty())
         return false;
 
@@ -292,8 +289,7 @@ bool FatFingers::checkFingerIntersection(const Platform::IntRectRegion& region,
 
 // intersectingRegions and remainingFingerRegion are all in main frame contents coordinates,
 // even on recursive calls of ::findIntersectingRegions.
-bool FatFingers::findIntersectingRegions(Document* document,
-                                         Vector<IntersectingRegion>& intersectingRegions, Platform::IntRectRegion& remainingFingerRegion)
+bool FatFingers::findIntersectingRegions(Document* document, Vector<IntersectingRegion>& intersectingRegions, IntRectRegion& remainingFingerRegion)
 {
     if (!document || !document->frame()->view())
         return false;
@@ -355,18 +351,18 @@ bool FatFingers::findIntersectingRegions(Document* document,
 
 bool FatFingers::checkForClickableElement(Element* curElement,
                                           Vector<IntersectingRegion>& intersectingRegions,
-                                          Platform::IntRectRegion& remainingFingerRegion,
+                                          IntRectRegion& remainingFingerRegion,
                                           RenderLayer*& lowestPositionedEnclosingLayerSoFar)
 {
     ASSERT(curElement);
 
     bool intersects = false;
-    Platform::IntRectRegion elementRegion;
+    IntRectRegion elementRegion;
 
     bool isClickableElement = isElementClickable(curElement);
     if (isClickableElement) {
         if (curElement->isLink()) {
-            // Links can wrap lines, and in such cases Node::getRect() can give us
+            // Links can wrap lines, and in such cases Node::boundingBox() can give us
             // not accurate rects, since it unites all InlineBox's rects. In these
             // cases, we can process each line of the link separately with our
             // intersection rect, getting a more accurate clicking.
@@ -379,10 +375,10 @@ bool FatFingers::checkForClickableElement(Element* curElement,
             for (size_t i = 0; i < n; ++i)
                 elementRegion = unionRegions(elementRegion, Platform::IntRect(quads[i].enclosingBoundingBox()));
         } else
-            elementRegion = Platform::IntRectRegion(curElement->renderer()->absoluteBoundingBoxRect(true /*use transforms*/));
+            elementRegion = IntRectRegion(curElement->renderer()->absoluteBoundingBoxRect(true /*use transforms*/));
 
     } else
-        elementRegion = Platform::IntRectRegion(curElement->renderer()->absoluteBoundingBoxRect(true /*use transforms*/));
+        elementRegion = IntRectRegion(curElement->renderer()->absoluteBoundingBoxRect(true /*use transforms*/));
 
     if (lowestPositionedEnclosingLayerSoFar) {
         RenderLayer* curElementRenderLayer = m_webPage->enclosingPositionedAncestorOrSelfIfPositioned(curElement->renderer()->enclosingLayer());
@@ -391,7 +387,7 @@ bool FatFingers::checkForClickableElement(Element* curElement,
             // elementRegion will always be in contents coordinates of its container frame. It needs to be
             // mapped to main frame contents coordinates in order to subtract the fingerRegion, then.
             WebCore::IntPoint framePos(m_webPage->frameOffset(curElement->document()->frame()));
-            Platform::IntRectRegion layerRegion(Platform::IntRect(lowestPositionedEnclosingLayerSoFar->renderer()->absoluteBoundingBoxRect(true/*use transforms*/)));
+            IntRectRegion layerRegion(Platform::IntRect(lowestPositionedEnclosingLayerSoFar->renderer()->absoluteBoundingBoxRect(true/*use transforms*/)));
             layerRegion.move(framePos.x(), framePos.y());
 
             remainingFingerRegion = subtractRegions(remainingFingerRegion, layerRegion);
@@ -407,14 +403,14 @@ bool FatFingers::checkForClickableElement(Element* curElement,
     return intersects;
 }
 
-bool FatFingers::checkForText(Node* curNode, Vector<IntersectingRegion>& intersectingRegions, Platform::IntRectRegion& fingerRegion)
+bool FatFingers::checkForText(Node* curNode, Vector<IntersectingRegion>& intersectingRegions, IntRectRegion& fingerRegion)
 {
     ASSERT(curNode);
     if (isFieldWithText(curNode)) {
         // FIXME: Find all text in the field and find the best word.
         // For now, we will just select the whole field.
         IntRect boundingRect = curNode->renderer()->absoluteBoundingBoxRect(true /*use transforms*/);
-        Platform::IntRectRegion nodeRegion(boundingRect);
+        IntRectRegion nodeRegion(boundingRect);
         return checkFingerIntersection(nodeRegion, fingerRegion, curNode, intersectingRegions);
     }
 
@@ -439,7 +435,7 @@ bool FatFingers::checkForText(Node* curNode, Vector<IntersectingRegion>& interse
 #if DEBUG_FAT_FINGERS
                 log(LogLevelInfo, "Checking word '%s'", range->text().latin1().data());
 #endif
-                Platform::IntRectRegion rangeRegion(DOMSupport::transformedBoundingBoxForRange(*range));
+                IntRectRegion rangeRegion(DOMSupport::transformedBoundingBoxForRange(*range));
                 foundOne |= checkFingerIntersection(rangeRegion, fingerRegion, curNode, intersectingRegions);
             }
             lastOffset = offset;
@@ -477,7 +473,7 @@ FatFingers::CachedResultsStrategy FatFingers::cachingStrategy() const
     }
 }
 
-void FatFingers::getNodesFromRect(Document* document, const IntPoint& contentPos, ListHashSet<RefPtr<WebCore::Node> >& intersectedNodes)
+void FatFingers::getNodesFromRect(Document* document, const IntPoint& contentPos, ListHashSet<RefPtr<Node> >& intersectedNodes)
 {
     FatFingers::CachedResultsStrategy cacheResolvingStrategy = cachingStrategy();
 
@@ -492,13 +488,14 @@ void FatFingers::getNodesFromRect(Document* document, const IntPoint& contentPos
     unsigned topPadding, rightPadding, bottomPadding, leftPadding;
     getPaddings(topPadding, rightPadding, bottomPadding, leftPadding);
 
-    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::IgnoreClipping);
     // The user functions checkForText() and findIntersectingRegions() uses the Node.wholeText() to checkFingerIntersection()
     // not the text in its shadow tree.
-    ShadowContentFilterPolicy allowShadow = m_targetType == Text ? DoNotAllowShadowContent : AllowShadowContent;
-    HitTestResult result(contentPos, topPadding, rightPadding, bottomPadding, leftPadding, allowShadow);
+    HitTestRequest::HitTestRequestType requestType = HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::IgnoreClipping;
+    if (m_targetType != Text)
+        requestType |= HitTestRequest::AllowShadowContent;
+    HitTestResult result(contentPos, topPadding, rightPadding, bottomPadding, leftPadding);
 
-    document->renderView()->layer()->hitTest(request, result);
+    document->renderView()->layer()->hitTest(requestType, result);
     intersectedNodes = result.rectBasedTestResult();
     m_cachedRectHitTestResults.add(document, intersectedNodes);
 }
@@ -511,7 +508,7 @@ void FatFingers::getRelevantInfoFromPoint(Document* document, const IntPoint& co
     if (!document || !document->renderer() || !document->frame())
         return;
 
-    HitTestResult result  = document->frame()->eventHandler()->hitTestResultAtPoint(contentPos, true /*allowShadowContent*/);
+    HitTestResult result  = document->frame()->eventHandler()->hitTestResultAtPoint(contentPos, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowShadowContent);
     Node* node = result.innerNode();
     while (node && !node->isElementNode())
         node = node->parentNode();
