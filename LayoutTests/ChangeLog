@@ -1,3 +1,15 @@
+2012-10-09  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        CSS Style is not recalculated when media attribute of style element is changed
+        https://bugs.webkit.org/show_bug.cgi?id=96752
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added test to verify that when "media" attribute for style element is updated,
+        style is recalculated.
+
+        * fast/media/mq-js-update-media.html: Added.
+
 2012-10-09  Levi Weintraub  <leviw@chromium.org>
 
         [Sub pixel layout] Fast-path iframe scrolling can picks up an extra pixel

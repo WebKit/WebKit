@@ -30,6 +30,7 @@
 #include "Event.h"
 #include "EventSender.h"
 #include "HTMLNames.h"
+#include "MediaList.h"
 #include "ScriptEventListener.h"
 #include "ScriptableDocumentParser.h"
 #include "ShadowRoot.h"
@@ -83,7 +84,10 @@ void HTMLStyleElement::parseAttribute(const Attribute& attribute)
     else if (attribute.name() == scopedAttr)
         scopedAttributeChanged(!attribute.isNull());
 #endif
-    else
+    else if (attribute.name() == mediaAttr && inDocument() && document()->renderer() && m_sheet) {
+        m_sheet->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(attribute.value()));
+        document()->styleResolverChanged(RecalcStyleImmediately);
+    } else
         HTMLElement::parseAttribute(attribute);
 }
 

@@ -1,3 +1,23 @@
+2012-10-09  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        CSS Style is not recalculated when media attribute of style element is changed
+        https://bugs.webkit.org/show_bug.cgi?id=96752
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        When "media" attribute of style element is changed, style should be recalculated.
+        This patch modifies HTMLStyleElement::parseAttribute, so that when the media attribute
+        is updated, new MediaQuerySet is created and applied to the style element then, document
+        style is recalculated. Since media query set is updated for CSSStyleSheet, CSSOM wrapper
+        for media query should be updated as well in order to sync with new media query set value.
+
+        Test: fast/media/mq-js-update-media.html
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::setMediaQueries):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::parseAttribute):
+
 2012-10-09  Ben Murdoch  <benm@google.com>
 
         [chromium][Android] Add WebSecurityOrigin::grantLoadLocalResources()
