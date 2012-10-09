@@ -1505,3 +1505,14 @@ webkit.org/b/98247 fast/text/wide-zero-width-space.html [ Failure ]
 # Occasionally fails if run after right after
 # fast/selectors/unqualified-hover-quirks.html or itself.
 webkit.org/b/10890 fast/selectors/unqualified-hover-strict.html [ Failure Pass ]
+
+# Regressions after r130699
+webkit.org/b/98729 fast/css/import-style-update.html [ Failure ]
+webkit.org/b/98729 fast/events/attribute-listener-cloned-from-frameless-doc-context-2.html [ Timeout ]
+webkit.org/b/98729 fast/events/attribute-listener-cloned-from-frameless-doc-context.html [ Timeout ]
+webkit.org/b/98729 fast/events/attribute-listener-extracted-from-frameless-doc-context-2.html [ Timeout ]
+webkit.org/b/98729 fast/events/attribute-listener-extracted-from-frameless-doc-context.html [ Timeout ]
+webkit.org/b/98729 fast/html/link-rel-stylesheet.html [ Failure ]
+webkit.org/b/98729 fast/loader/data-url-encoding-html.html [ Failure ]
+webkit.org/b/98729 fast/loader/data-url-encoding-svg.html [ Failure ]
+webkit.org/b/98729 fast/spatial-navigation/snav-iframe-nested.html [ Failure ]
