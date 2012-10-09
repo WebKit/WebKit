@@ -27,6 +27,7 @@
 
 #include "FormData.h"
 #include "QtMIMETypeSniffer.h"
+#include <wtf/PassRefPtr.h>
 
 QT_BEGIN_NAMESPACE
 class QFile;
@@ -146,6 +147,7 @@ private:
     bool wasAborted() const { return !m_resourceHandle; }
     QNetworkReply* sendNetworkRequest(QNetworkAccessManager*, const ResourceRequest&);
     FormDataIODevice* getIODevice(const ResourceRequest&);
+    PassRefPtr<FormData> handleBlobDataIfAny(FormData*);
     void clearContentHeaders();
 
     OwnPtr<QNetworkReplyWrapper> m_replyWrapper;
@@ -182,6 +184,7 @@ private:
     void moveToNextElement();
     qint64 computeSize();
     void openFileForCurrentElement();
+    void prepareCurrentElement();
 
 private:
     Vector<FormDataElement> m_formElements;

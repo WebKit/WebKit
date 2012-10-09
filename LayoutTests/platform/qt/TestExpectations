@@ -588,7 +588,6 @@ fast/forms/file/input-file-re-render.html
 fast/forms/file/input-file-write-files.html
 fast/forms/file/selected-files-from-history-state.html
 http/tests/local/blob/send-hybrid-blob.html
-http/tests/local/blob/send-sliced-data-blob.html
 http/tests/local/formdata
 http/tests/security/clipboard/clipboard-file-access.html
 
@@ -721,9 +720,6 @@ http/tests/navigation/timerredirect-goback.html
 # Advanced credential handling
 http/tests/security/401-logout/401-logout.php
 http/tests/xmlhttprequest/remember-bad-password.html
-
-# BlodBuilder is not enabled
-http/tests/local/blob/send-data-blob.html
 
 # new test introduced in r94828, but fails on Qt.
 # https://bugs.webkit.org/show_bug.cgi?id=66588

@@ -1,3 +1,26 @@
+2012-10-09  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Uploading images to Google+ using QtWebKit does not work.
+        https://bugs.webkit.org/show_bug.cgi?id=72329
+
+        Reviewed by Jocelyn Turcotte.
+
+        Implement handling of Blob FormData, including its extensions to the File FormData.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::FormDataIODevice::FormDataIODevice):
+        (WebCore::FormDataIODevice::computeSize):
+        (WebCore::FormDataIODevice::moveToNextElement):
+        (WebCore::FormDataIODevice::prepareCurrentElement):
+        (WebCore::FormDataIODevice::openFileForCurrentElement):
+        (WebCore::FormDataIODevice::readData):
+        (WebCore::QNetworkReplyHandler::getIODevice):
+        (WebCore::QNetworkReplyHandler::handleBlobDataIfAny):
+        (WebCore::QNetworkReplyHandler::sendNetworkRequest):
+        * platform/network/qt/QNetworkReplyHandler.h:
+        (QNetworkReplyHandler):
+        (FormDataIODevice):
+
 2012-10-09  Keishi Hattori  <keishi@webkit.org>
 
         Page popup should be smarter about its layout
