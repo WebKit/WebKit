@@ -58,9 +58,13 @@ public:
     // empty string, imageNameForNormalState() is used even for the disabled
     // state.
     virtual WebCString imageNameForDisabledState() = 0;
-    // Image resource name for the disabled state. If this function returns an
+    // Image resource name for the read only state. If this function returns an
     // empty string, the image same as imageNameForDisabledState() is used.
     virtual WebCString imageNameForReadOnlyState() = 0;
+    // Image resource name for when the imaged is being hovered over. If this
+    // function returns an empty string, imageNameForNormalState() is used
+    // instead.
+    virtual WebCString imageNameForHoverState() {return WebCString();}
 
     // This is called when the decoration icon is clicked.
     virtual void handleClick(WebInputElement&) = 0;

@@ -1,3 +1,20 @@
+2012-10-09  Garrett Casto  <gcasto@chromium.org>
+
+        Allow users to specify a different hover image for TextFieldDecorationElement
+        https://bugs.webkit.org/show_bug.cgi?id=93662
+
+        Reviewed by Kent Tamura.
+
+        * html/shadow/TextFieldDecorationElement.cpp:
+        (WebCore::TextFieldDecorationElement::TextFieldDecorationElement):
+        (WebCore::TextFieldDecorationElement::updateImage):
+        (WebCore::TextFieldDecorationElement::defaultEventHandler): Handles mouseover and mouseout events.
+        (WebCore::TextFieldDecorationElement::willRespondToMouseMoveEvents): Now returns true if the element is not disabled.
+        (WebCore):
+        * html/shadow/TextFieldDecorationElement.h:
+        (TextFieldDecorator):
+        (TextFieldDecorationElement):
+
 2012-10-09  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Uploading images to Google+ using QtWebKit does not work.

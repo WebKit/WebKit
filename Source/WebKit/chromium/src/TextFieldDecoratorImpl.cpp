@@ -103,13 +103,27 @@ CachedImage* TextFieldDecoratorImpl::imageForReadonlyState()
     if (!m_cachedImageForReadonlyState) {
         WebCString imageName = m_client->imageNameForReadOnlyState();
         if (imageName.isEmpty())
-            m_cachedImageForDisabledState = imageForDisabledState();
+            m_cachedImageForReadonlyState = imageForDisabledState();
         else {
             RefPtr<Image> image = Image::loadPlatformResource(imageName.data());
             m_cachedImageForReadonlyState = new CachedImage(image.get());
         }
     }
     return m_cachedImageForReadonlyState.get();
+}
+
+CachedImage* TextFieldDecoratorImpl::imageForHoverState()
+{
+    if (!m_cachedImageForHoverState) {
+        WebCString imageName = m_client->imageNameForHoverState();
+        if (imageName.isEmpty())
+            m_cachedImageForHoverState = imageForNormalState();
+        else {
+            RefPtr<Image> image = Image::loadPlatformResource(imageName.data());
+            m_cachedImageForHoverState = new CachedImage(image.get());
+        }
+    }
+    return m_cachedImageForHoverState.get();
 }
 
 void TextFieldDecoratorImpl::handleClick(HTMLInputElement* input)

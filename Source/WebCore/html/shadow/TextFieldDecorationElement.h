@@ -52,6 +52,7 @@ public:
     virtual CachedImage* imageForNormalState() = 0;
     virtual CachedImage* imageForDisabledState() = 0;
     virtual CachedImage* imageForReadonlyState() = 0;
+    virtual CachedImage* imageForHoverState() = 0;
 
     virtual void handleClick(HTMLInputElement*) = 0;
     // This function is called just before detaching the decoration. It must not
@@ -71,6 +72,7 @@ public:
     TextFieldDecorator* textFieldDecorator() { return m_textFieldDecorator; }
     void decorate(HTMLInputElement*, bool visible);
 
+    virtual bool willRespondToMouseMoveEvents() OVERRIDE;
     virtual bool willRespondToMouseClickEvents() OVERRIDE;
 
 private:
@@ -87,6 +89,7 @@ private:
     void updateImage();
 
     TextFieldDecorator* m_textFieldDecorator;
+    bool m_isInHoverState;
 };
 
 inline TextFieldDecorationElement* toTextFieldDecorationElement(Node* node)

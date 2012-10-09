@@ -51,6 +51,7 @@ private:
     virtual WebCore::CachedImage* imageForNormalState() OVERRIDE;
     virtual WebCore::CachedImage* imageForDisabledState() OVERRIDE;
     virtual WebCore::CachedImage* imageForReadonlyState() OVERRIDE;
+    virtual WebCore::CachedImage* imageForHoverState() OVERRIDE;
     virtual void handleClick(WebCore::HTMLInputElement*) OVERRIDE;
     virtual void willDetach(WebCore::HTMLInputElement*) OVERRIDE;
 
@@ -60,6 +61,7 @@ private:
     WebCore::CachedResourceHandle<WebCore::CachedImage> m_cachedImageForNormalState;
     WebCore::CachedResourceHandle<WebCore::CachedImage> m_cachedImageForDisabledState;
     WebCore::CachedResourceHandle<WebCore::CachedImage> m_cachedImageForReadonlyState;
+    WebCore::CachedResourceHandle<WebCore::CachedImage> m_cachedImageForHoverState;
 };
 
 }

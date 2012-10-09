@@ -1,3 +1,20 @@
+2012-10-09  Garrett Casto  <gcasto@chromium.org>
+
+        Allow users to specify a different hover image for TextFieldDecorationElement
+        https://bugs.webkit.org/show_bug.cgi?id=93662
+
+        Reviewed by Kent Tamura.
+
+        * public/WebTextFieldDecoratorClient.h:
+        (WebTextFieldDecoratorClient):
+        (WebKit::WebTextFieldDecoratorClient::imageNameForHoverState): Allow users to specify the name of the image for mouseover.
+        * src/TextFieldDecoratorImpl.cpp:
+        (WebKit::TextFieldDecoratorImpl::imageForReadonlyState):
+        (WebKit::TextFieldDecoratorImpl::imageForHoverState):
+        (WebKit):
+        * src/TextFieldDecoratorImpl.h:
+        (TextFieldDecoratorImpl):
+
 2012-10-09  Keishi Hattori  <keishi@webkit.org>
 
         Page popup should be smarter about its layout
