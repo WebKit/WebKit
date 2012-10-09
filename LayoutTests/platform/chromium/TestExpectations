@@ -3580,10 +3580,6 @@ webkit.org/b/90207 [ Linux Debug ] fast/forms/select/select-state-restore.html [
 webkit.org/b/90207 [ Android ] fast/forms/select/select-state-restore.html [ Failure Pass Timeout ]
 webkit.org/b/90207 [ Win Release ] fast/forms/select/select-state-restore.html [ Pass Timeout ]
 
-# Need rebaseline after bots cycle.
-webkit.org/b/98571 [ Win Mac ] fast/sub-pixel/sub-pixel-iframe-copy-on-scroll.html [ Failure Pass ]
-webkit.org/b/98571 [ Win Mac ] fast/repaint/repaint-across-writing-mode-boundary.html [ ImageOnlyFailure Pass ]
-
 # Flaky
 webkit.org/b/90430 inspector/timeline/timeline-receive-response-event.html [ Failure Pass Timeout ]
 

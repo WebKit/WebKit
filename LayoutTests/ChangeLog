@@ -1,3 +1,14 @@
+2012-10-09  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed gardening. Updating test expectations after r130811.
+
+        * compositing/iframes/iframe-copy-on-scroll.html:
+        * platform/chromium-mac-snowleopard/fast/sub-pixel/sub-pixel-iframe-copy-on-scroll-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/repaint-across-writing-mode-boundary-expected.png:
+        * platform/chromium-mac/fast/sub-pixel/sub-pixel-iframe-copy-on-scroll-expected.png: Added.
+        * platform/chromium-mac/fast/sub-pixel/sub-pixel-iframe-copy-on-scroll-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+
 2012-10-09  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         CSS Style is not recalculated when media attribute of style element is changed
