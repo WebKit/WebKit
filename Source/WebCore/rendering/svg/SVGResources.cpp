@@ -44,46 +44,46 @@ SVGResources::SVGResources()
 {
 }
 
-static HashSet<AtomicStringImpl*>& clipperFilterMaskerTags()
+static HashSet<AtomicString>& clipperFilterMaskerTags()
 {
-    DEFINE_STATIC_LOCAL(HashSet<AtomicStringImpl*>, s_tagList, ());
+    DEFINE_STATIC_LOCAL(HashSet<AtomicString>, s_tagList, ());
     if (s_tagList.isEmpty()) {
         // "container elements": http://www.w3.org/TR/SVG11/intro.html#TermContainerElement
         // "graphics elements" : http://www.w3.org/TR/SVG11/intro.html#TermGraphicsElement
-        s_tagList.add(SVGNames::aTag.localName().impl());
-        s_tagList.add(SVGNames::circleTag.localName().impl());
-        s_tagList.add(SVGNames::ellipseTag.localName().impl());
-        s_tagList.add(SVGNames::glyphTag.localName().impl());
-        s_tagList.add(SVGNames::gTag.localName().impl());
-        s_tagList.add(SVGNames::imageTag.localName().impl());
-        s_tagList.add(SVGNames::lineTag.localName().impl());
-        s_tagList.add(SVGNames::markerTag.localName().impl());
-        s_tagList.add(SVGNames::maskTag.localName().impl());
-        s_tagList.add(SVGNames::missing_glyphTag.localName().impl());
-        s_tagList.add(SVGNames::pathTag.localName().impl());
-        s_tagList.add(SVGNames::polygonTag.localName().impl());
-        s_tagList.add(SVGNames::polylineTag.localName().impl());
-        s_tagList.add(SVGNames::rectTag.localName().impl());
-        s_tagList.add(SVGNames::svgTag.localName().impl());
-        s_tagList.add(SVGNames::textTag.localName().impl());
-        s_tagList.add(SVGNames::useTag.localName().impl());
+        s_tagList.add(SVGNames::aTag.localName());
+        s_tagList.add(SVGNames::circleTag.localName());
+        s_tagList.add(SVGNames::ellipseTag.localName());
+        s_tagList.add(SVGNames::glyphTag.localName());
+        s_tagList.add(SVGNames::gTag.localName());
+        s_tagList.add(SVGNames::imageTag.localName());
+        s_tagList.add(SVGNames::lineTag.localName());
+        s_tagList.add(SVGNames::markerTag.localName());
+        s_tagList.add(SVGNames::maskTag.localName());
+        s_tagList.add(SVGNames::missing_glyphTag.localName());
+        s_tagList.add(SVGNames::pathTag.localName());
+        s_tagList.add(SVGNames::polygonTag.localName());
+        s_tagList.add(SVGNames::polylineTag.localName());
+        s_tagList.add(SVGNames::rectTag.localName());
+        s_tagList.add(SVGNames::svgTag.localName());
+        s_tagList.add(SVGNames::textTag.localName());
+        s_tagList.add(SVGNames::useTag.localName());
 
         // Not listed in the definitions is the clipPath element, the SVG spec says though:
         // The "clipPath" element or any of its children can specify property "clip-path".
         // So we have to add clipPathTag here, otherwhise clip-path on clipPath will fail.
         // (Already mailed SVG WG, waiting for a solution)
-        s_tagList.add(SVGNames::clipPathTag.localName().impl());
+        s_tagList.add(SVGNames::clipPathTag.localName());
 
         // Not listed in the definitions are the text content elements, though filter/clipper/masker on tspan/text/.. is allowed.
         // (Already mailed SVG WG, waiting for a solution)
-        s_tagList.add(SVGNames::altGlyphTag.localName().impl());
-        s_tagList.add(SVGNames::textPathTag.localName().impl());
-        s_tagList.add(SVGNames::trefTag.localName().impl());
-        s_tagList.add(SVGNames::tspanTag.localName().impl());
+        s_tagList.add(SVGNames::altGlyphTag.localName());
+        s_tagList.add(SVGNames::textPathTag.localName());
+        s_tagList.add(SVGNames::trefTag.localName());
+        s_tagList.add(SVGNames::tspanTag.localName());
 
         // Not listed in the definitions is the foreignObject element, but clip-path
         // is a supported attribute.
-        s_tagList.add(SVGNames::foreignObjectTag.localName().impl());
+        s_tagList.add(SVGNames::foreignObjectTag.localName());
 
         // Elements that we ignore, as it doesn't make any sense.
         // defs, pattern, switch (FIXME: Mail SVG WG about these)
@@ -93,48 +93,48 @@ static HashSet<AtomicStringImpl*>& clipperFilterMaskerTags()
     return s_tagList;
 }
 
-static HashSet<AtomicStringImpl*>& markerTags()
+static HashSet<AtomicString>& markerTags()
 {
-    DEFINE_STATIC_LOCAL(HashSet<AtomicStringImpl*>, s_tagList, ());
+    DEFINE_STATIC_LOCAL(HashSet<AtomicString>, s_tagList, ());
     if (s_tagList.isEmpty()) {
-        s_tagList.add(SVGNames::lineTag.localName().impl());
-        s_tagList.add(SVGNames::pathTag.localName().impl());
-        s_tagList.add(SVGNames::polygonTag.localName().impl());
-        s_tagList.add(SVGNames::polylineTag.localName().impl());
+        s_tagList.add(SVGNames::lineTag.localName());
+        s_tagList.add(SVGNames::pathTag.localName());
+        s_tagList.add(SVGNames::polygonTag.localName());
+        s_tagList.add(SVGNames::polylineTag.localName());
     }
 
     return s_tagList;
 }
 
-static HashSet<AtomicStringImpl*>& fillAndStrokeTags()
+static HashSet<AtomicString>& fillAndStrokeTags()
 {
-    DEFINE_STATIC_LOCAL(HashSet<AtomicStringImpl*>, s_tagList, ());
+    DEFINE_STATIC_LOCAL(HashSet<AtomicString>, s_tagList, ());
     if (s_tagList.isEmpty()) {
-        s_tagList.add(SVGNames::altGlyphTag.localName().impl());
-        s_tagList.add(SVGNames::circleTag.localName().impl());
-        s_tagList.add(SVGNames::ellipseTag.localName().impl());
-        s_tagList.add(SVGNames::lineTag.localName().impl());
-        s_tagList.add(SVGNames::pathTag.localName().impl());
-        s_tagList.add(SVGNames::polygonTag.localName().impl());
-        s_tagList.add(SVGNames::polylineTag.localName().impl());
-        s_tagList.add(SVGNames::rectTag.localName().impl());
-        s_tagList.add(SVGNames::textTag.localName().impl());
-        s_tagList.add(SVGNames::textPathTag.localName().impl());
-        s_tagList.add(SVGNames::trefTag.localName().impl());
-        s_tagList.add(SVGNames::tspanTag.localName().impl());
+        s_tagList.add(SVGNames::altGlyphTag.localName());
+        s_tagList.add(SVGNames::circleTag.localName());
+        s_tagList.add(SVGNames::ellipseTag.localName());
+        s_tagList.add(SVGNames::lineTag.localName());
+        s_tagList.add(SVGNames::pathTag.localName());
+        s_tagList.add(SVGNames::polygonTag.localName());
+        s_tagList.add(SVGNames::polylineTag.localName());
+        s_tagList.add(SVGNames::rectTag.localName());
+        s_tagList.add(SVGNames::textTag.localName());
+        s_tagList.add(SVGNames::textPathTag.localName());
+        s_tagList.add(SVGNames::trefTag.localName());
+        s_tagList.add(SVGNames::tspanTag.localName());
     }
 
     return s_tagList;
 }
 
-static HashSet<AtomicStringImpl*>& chainableResourceTags()
+static HashSet<AtomicString>& chainableResourceTags()
 {
-    DEFINE_STATIC_LOCAL(HashSet<AtomicStringImpl*>, s_tagList, ());
+    DEFINE_STATIC_LOCAL(HashSet<AtomicString>, s_tagList, ());
     if (s_tagList.isEmpty()) {
-        s_tagList.add(SVGNames::linearGradientTag.localName().impl());
-        s_tagList.add(SVGNames::filterTag.localName().impl());
-        s_tagList.add(SVGNames::patternTag.localName().impl());
-        s_tagList.add(SVGNames::radialGradientTag.localName().impl());
+        s_tagList.add(SVGNames::linearGradientTag.localName());
+        s_tagList.add(SVGNames::filterTag.localName());
+        s_tagList.add(SVGNames::patternTag.localName());
+        s_tagList.add(SVGNames::radialGradientTag.localName());
     }
 
     return s_tagList;
@@ -202,12 +202,12 @@ bool SVGResources::buildCachedResources(const RenderObject* object, const SVGRen
     SVGDocumentExtensions* extensions = document->accessSVGExtensions();
     ASSERT(extensions);
 
-    AtomicStringImpl* tagNameImpl = element->tagQName().localName().impl();
-    if (!tagNameImpl)
+    const AtomicString& tagName = element->localName();
+    if (tagName.isNull())
         return false;
 
     bool foundResources = false;
-    if (clipperFilterMaskerTags().contains(tagNameImpl)) {
+    if (clipperFilterMaskerTags().contains(tagName)) {
         if (style->hasClipper()) {
             AtomicString id(style->clipperResource());
             if (setClipper(getRenderSVGResourceById<RenderSVGResourceClipper>(document, id)))
@@ -235,7 +235,7 @@ bool SVGResources::buildCachedResources(const RenderObject* object, const SVGRen
         }
     }
 
-    if (markerTags().contains(tagNameImpl) && style->hasMarkers()) {
+    if (markerTags().contains(tagName) && style->hasMarkers()) {
         AtomicString markerStartId(style->markerStartResource());
         if (setMarkerStart(getRenderSVGResourceById<RenderSVGResourceMarker>(document, markerStartId)))
             foundResources = true;
@@ -255,7 +255,7 @@ bool SVGResources::buildCachedResources(const RenderObject* object, const SVGRen
             registerPendingResource(extensions, markerEndId, element);
     }
 
-    if (fillAndStrokeTags().contains(tagNameImpl)) {
+    if (fillAndStrokeTags().contains(tagName)) {
         if (style->hasFill()) {
             bool hasPendingResource = false;
             AtomicString id;
@@ -275,7 +275,7 @@ bool SVGResources::buildCachedResources(const RenderObject* object, const SVGRen
         }
     }
 
-    if (chainableResourceTags().contains(tagNameImpl)) {
+    if (chainableResourceTags().contains(tagName)) {
         AtomicString id(targetReferenceFromResource(element));
         if (setLinkedResource(getRenderSVGResourceContainerById(document, id)))
             foundResources = true;
