@@ -171,11 +171,6 @@
 #include "StyleCachedImageSet.h"
 #endif
 
-#if PLATFORM(BLACKBERRY)
-#define FIXED_POSITION_CREATES_STACKING_CONTEXT 1
-#endif
-
-
 using namespace std;
 
 namespace WebCore {
@@ -1943,11 +1938,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
         || style->hasFilter()
         || style->hasBlendMode()
         || style->position() == StickyPosition
-#ifdef FIXED_POSITION_CREATES_STACKING_CONTEXT
-        || style->position() == FixedPosition
-#else
         || (style->position() == FixedPosition && e && e->document()->page() && e->document()->page()->settings()->fixedPositionCreatesStackingContext())
-#endif
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
         // Touch overflow scrolling creates a stacking context.
         || ((style->overflowX() != OHIDDEN || style->overflowY() != OHIDDEN) && style->useTouchOverflowScrolling())

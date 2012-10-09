@@ -1,3 +1,15 @@
+2012-10-09  Antonio Gomes  <agomes@rim.com>
+
+        Get rid of FIXED_POSITION_CREATES_STACKING_CONTEXT in favor of Settings::fixedPositionCreatesStackingContext()
+        https://bugs.webkit.org/show_bug.cgi?id=98756
+
+        Reviewed by Rob Buis.
+
+        No behavior change so no new tests.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+
 2012-10-09  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Fix build with QtMultimedia

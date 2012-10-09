@@ -606,6 +606,7 @@ void WebPagePrivate::init(const WebString& pageGroupName)
     m_page->settings()->setInteractiveFormValidationEnabled(true);
     m_page->settings()->setAllowUniversalAccessFromFileURLs(false);
     m_page->settings()->setAllowFileAccessFromFileURLs(false);
+    m_page->settings()->setFixedPositionCreatesStackingContext(true);
 
     m_backingStoreClient = BackingStoreClient::create(m_mainFrame, /* parent frame */ 0, m_webPage);
     // The direct access to BackingStore is left here for convenience since it
