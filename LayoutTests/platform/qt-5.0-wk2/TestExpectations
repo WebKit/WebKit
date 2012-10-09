@@ -219,7 +219,6 @@ svg/custom/getscreenctm-in-scrollable-svg-area.xhtml
 svg/custom/getscreenctm-in-scrollable-div-area.xhtml
 
 # Failing tests on qt-wk2 after unskipping qt-5.0/Skipped tests, need more investigation
-editing/selection/click-in-margins-inside-editable-div.html
 fast/block/basic/020.html
 fast/history/visited-link-background-color.html
 fast/layers/layer-visibility-sublayer.html

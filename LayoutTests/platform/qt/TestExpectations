@@ -1603,9 +1603,6 @@ fast/loader/recursive-before-unload-crash.html
 # https://bugs.webkit.org/show_bug.cgi?id=83057
 fast/dom/inline-event-attributes-release.html
 
-# REGRESSION (r53450) - skipped until fix
-# https://bugs.webkit.org/show_bug.cgi?id=33834
-fast/forms/textarea-scrollbar-height.html
 # Final four tests before Qt buildbot is green
 # https://bugs.webkit.org/show_bug.cgi?id=27914
 # This port doesn't support detecting slow unload handlers.
