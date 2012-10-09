@@ -1,3 +1,36 @@
+2012-10-09  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Fix build with QtMultimedia
+
+        Reviewed by Tor Arne Vestbø.
+
+        This is an initial rudimentary port to of the QtMultimedia back-end,
+        adapted to slight API changes and (more importantly) to the
+        implementation of QAbstractVideoSurface instead of using
+        QGraphicsVideoItem (which is in QtMultimediaWidgets).
+
+        * WebCore.pri:
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivateQt::supportsType):
+        (WebCore::MediaPlayerPrivateQt::MediaPlayerPrivateQt):
+        (WebCore::MediaPlayerPrivateQt::~MediaPlayerPrivateQt):
+        (WebCore::MediaPlayerPrivateQt::didLoadingProgress):
+        (WebCore::MediaPlayerPrivateQt::totalBytes):
+        (WebCore::MediaPlayerPrivateQt::setVisible):
+        (WebCore::MediaPlayerPrivateQt::surfaceFormatChanged):
+        (WebCore::MediaPlayerPrivateQt::setSize):
+        (WebCore::MediaPlayerPrivateQt::removeVideoItem):
+        (WebCore::MediaPlayerPrivateQt::restoreVideoItem):
+        (WebCore):
+        (WebCore::MediaPlayerPrivateQt::start):
+        (WebCore::MediaPlayerPrivateQt::supportedPixelFormats):
+        (WebCore::MediaPlayerPrivateQt::present):
+        (WebCore::MediaPlayerPrivateQt::paint):
+        (WebCore::MediaPlayerPrivateQt::paintCurrentFrameInContext):
+        (WebCore::MediaPlayerPrivateQt::paintToTextureMapper):
+        * platform/graphics/qt/MediaPlayerPrivateQt.h:
+        (MediaPlayerPrivateQt):
+
 2012-10-09  Garrett Casto  <gcasto@chromium.org>
 
         Allow users to specify a different hover image for TextFieldDecorationElement

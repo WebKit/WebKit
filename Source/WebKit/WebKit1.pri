@@ -18,6 +18,8 @@ enable?(DEVICE_ORIENTATION)|enable?(ORIENTATION_EVENTS) {
 
 enable?(GEOLOCATION): QT += location
 
+use?(QT_MULTIMEDIA): QT *= multimediawidgets
+
 contains(CONFIG, texmap): DEFINES += WTF_USE_TEXTURE_MAPPER=1
 
 use?(PLUGIN_BACKEND_XLIB): PKGCONFIG += x11

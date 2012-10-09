@@ -22,8 +22,10 @@
 
 #include "MediaPlayerPrivate.h"
 
+#include <QAbstractVideoSurface>
 #include <QMediaPlayer>
 #include <QObject>
+#include <QVideoSurfaceFormat>
 
 QT_BEGIN_NAMESPACE
 class QMediaPlayerControl;
@@ -37,9 +39,9 @@ QT_END_NAMESPACE
 
 namespace WebCore {
 
-class MediaPlayerPrivateQt : public QObject, public MediaPlayerPrivateInterface
+class MediaPlayerPrivateQt : public QAbstractVideoSurface, public MediaPlayerPrivateInterface
 #if USE(ACCELERATED_COMPOSITING)
-        , public TextureMapperPlatformLayer
+                           , public TextureMapperPlatformLayer
 #endif
 {
 
@@ -107,7 +109,7 @@ public:
     virtual void acceleratedRenderingStateChanged() { }
     // Const-casting here is safe, since all of TextureMapperPlatformLayer's functions are const.g
     virtual PlatformLayer* platformLayer() const { return 0; }
-    virtual void paintToTextureMapper(TextureMapper*, const FloatRect& targetRect, const TransformationMatrix&, float opacity, BitmapTexture* mask) const;
+    virtual void paintToTextureMapper(TextureMapper*, const FloatRect& targetRect, const TransformationMatrix&, float opacity, BitmapTexture* mask);
 #endif
 
     virtual PlatformMedia platformMedia() const;
@@ -116,17 +118,21 @@ public:
     void removeVideoItem();
     void restoreVideoItem();
 
+    // QAbstractVideoSurface methods
+    virtual bool start(const QVideoSurfaceFormat& format);
+    virtual QList<QVideoFrame::PixelFormat> supportedPixelFormats(QAbstractVideoBuffer::HandleType handleType = QAbstractVideoBuffer::NoHandle) const;
+    virtual bool present(const QVideoFrame& frame);
+
 private Q_SLOTS:
     void mediaStatusChanged(QMediaPlayer::MediaStatus);
     void handleError(QMediaPlayer::Error);
     void stateChanged(QMediaPlayer::State);
-    void nativeSizeChanged(const QSizeF&);
+    void surfaceFormatChanged(const QVideoSurfaceFormat&);
     void positionChanged(qint64);
     void durationChanged(qint64);
     void bufferStatusChanged(int);
     void volumeChanged(int);
     void mutedChanged(bool);
-    void repaint();
 
 private:
     void updateStates();
@@ -139,15 +145,14 @@ private:
     MediaPlayer* m_webCorePlayer;
     QMediaPlayer* m_mediaPlayer;
     QMediaPlayerControl* m_mediaPlayerControl;
-    QGraphicsVideoItem* m_videoItem;
-    QGraphicsScene* m_videoScene;
+    QVideoSurfaceFormat m_frameFormat;
+    QVideoFrame m_currentVideoFrame;
 
     mutable MediaPlayer::NetworkState m_networkState;
     mutable MediaPlayer::ReadyState m_readyState;
 
     IntSize m_currentSize;
     IntSize m_naturalSize;
-    IntSize m_oldNaturalSize;
     bool m_isVisible;
     bool m_isSeeking;
     bool m_composited;

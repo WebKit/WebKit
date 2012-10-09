@@ -31,20 +31,16 @@
 #include "RenderVideo.h"
 #include "TimeRanges.h"
 #include "Widget.h"
-#include "qwebframe.h"
-#include "qwebpage.h"
 
-#include <QGraphicsScene>
-#include <QGraphicsVideoItem>
 #include <QMediaPlayerControl>
 #include <QMediaService>
 #include <QNetworkAccessManager>
+#include <QNetworkCookie>
 #include <QNetworkCookieJar>
 #include <QNetworkRequest>
 #include <QPainter>
 #include <QPoint>
 #include <QRect>
-#include <QStyleOptionGraphicsItem>
 #include <QTime>
 #include <QTimer>
 #include <QUrl>
@@ -96,7 +92,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateQt::supportsType(const String& mime,
             codecListTrimmed.append(codecStrTrimmed);
     }
 
-    if (QMediaPlayer::hasSupport(mime, codecListTrimmed) >= QtMultimediaKit::ProbablySupported)
+    if (QMediaPlayer::hasSupport(mime, codecListTrimmed) >= QtMultimedia::ProbablySupported)
         return MediaPlayer::IsSupported;
 
     return MediaPlayer::MayBeSupported;
@@ -106,21 +102,17 @@ MediaPlayerPrivateQt::MediaPlayerPrivateQt(MediaPlayer* player)
     : m_webCorePlayer(player)
     , m_mediaPlayer(new QMediaPlayer)
     , m_mediaPlayerControl(0)
-    , m_videoItem(new QGraphicsVideoItem)
-    , m_videoScene(new QGraphicsScene)
     , m_networkState(MediaPlayer::Empty)
     , m_readyState(MediaPlayer::HaveNothing)
     , m_currentSize(0, 0)
     , m_naturalSize(RenderVideo::defaultSize())
-    , m_isVisible(false)
     , m_isSeeking(false)
     , m_composited(false)
     , m_preload(MediaPlayer::Auto)
     , m_bytesLoadedAtLastDidLoadingProgress(0)
     , m_suppressNextPlaybackChanged(false)
 {
-    m_mediaPlayer->setVideoOutput(m_videoItem);
-    m_videoScene->addItem(m_videoItem);
+    m_mediaPlayer->setVideoOutput(this);
 
     // Signal Handlers
     connect(m_mediaPlayer, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
@@ -139,10 +131,8 @@ MediaPlayerPrivateQt::MediaPlayerPrivateQt(MediaPlayer* player)
             this, SLOT(volumeChanged(int)));
     connect(m_mediaPlayer, SIGNAL(mutedChanged(bool)),
             this, SLOT(mutedChanged(bool)));
-    connect(m_videoScene, SIGNAL(changed(QList<QRectF>)),
-            this, SLOT(repaint()));
-    connect(m_videoItem, SIGNAL(nativeSizeChanged(QSizeF)),
-           this, SLOT(nativeSizeChanged(QSizeF)));
+    connect(this, SIGNAL(surfaceFormatChanged(const QVideoSurfaceFormat&)),
+            this, SLOT(surfaceFormatChanged(const QVideoSurfaceFormat&)));
 
     // Grab the player control
     if (QMediaService* service = m_mediaPlayer->service()) {
@@ -158,7 +148,6 @@ MediaPlayerPrivateQt::~MediaPlayerPrivateQt()
     m_mediaPlayer->setMedia(QMediaContent());
 
     delete m_mediaPlayer;
-    delete m_videoScene;
 }
 
 bool MediaPlayerPrivateQt::hasVideo() const
@@ -366,8 +355,8 @@ bool MediaPlayerPrivateQt::didLoadingProgress() const
 {
     unsigned bytesLoaded = 0;
     QLatin1String bytesLoadedKey("bytes-loaded");
-    if (m_mediaPlayer->availableExtendedMetaData().contains(bytesLoadedKey))
-        bytesLoaded = m_mediaPlayer->extendedMetaData(bytesLoadedKey).toInt();
+    if (m_mediaPlayer->availableMetaData().contains(bytesLoadedKey))
+        bytesLoaded = m_mediaPlayer->metaData(bytesLoadedKey).toInt();
     else
         bytesLoaded = m_mediaPlayer->bufferStatus();
     bool didLoadingProgress = bytesLoaded != m_bytesLoadedAtLastDidLoadingProgress;
@@ -377,8 +366,8 @@ bool MediaPlayerPrivateQt::didLoadingProgress() const
 
 unsigned MediaPlayerPrivateQt::totalBytes() const
 {
-    if (m_mediaPlayer->availableMetaData().contains(QtMultimediaKit::Size))
-        return m_mediaPlayer->metaData(QtMultimediaKit::Size).toInt();
+    if (m_mediaPlayer->availableMetaData().contains(QtMultimedia::MetaData::Size))
+        return m_mediaPlayer->metaData(QtMultimedia::MetaData::Size).toInt();
 
     return 100;
 }
@@ -420,9 +409,8 @@ MediaPlayer::ReadyState MediaPlayerPrivateQt::readyState() const
     return m_readyState;
 }
 
-void MediaPlayerPrivateQt::setVisible(bool visible)
+void MediaPlayerPrivateQt::setVisible(bool)
 {
-    m_isVisible = visible;
 }
 
 void MediaPlayerPrivateQt::mediaStatusChanged(QMediaPlayer::MediaStatus)
@@ -443,15 +431,20 @@ void MediaPlayerPrivateQt::stateChanged(QMediaPlayer::State)
         m_suppressNextPlaybackChanged = false;
 }
 
-void MediaPlayerPrivateQt::nativeSizeChanged(const QSizeF& size)
+void MediaPlayerPrivateQt::surfaceFormatChanged(const QVideoSurfaceFormat& format)
 {
+    QSize size = format.sizeHint();
     LOG(Media, "MediaPlayerPrivateQt::naturalSizeChanged(%dx%d)",
-            size.toSize().width(), size.toSize().height());
+            size.width(), size.height());
 
     if (!size.isValid())
         return;
 
-    m_naturalSize = size.toSize();
+    IntSize webCoreSize = size;
+    if (webCoreSize == m_naturalSize)
+        return;
+
+    m_naturalSize = webCoreSize;
     m_webCorePlayer->sizeChanged();
 }
 
@@ -544,7 +537,6 @@ void MediaPlayerPrivateQt::setSize(const IntSize& size)
         return;
 
     m_currentSize = size;
-    m_videoItem->setSize(QSizeF(QSize(size)));
 }
 
 IntSize MediaPlayerPrivateQt::naturalSize() const
@@ -562,19 +554,50 @@ IntSize MediaPlayerPrivateQt::naturalSize() const
 
 void MediaPlayerPrivateQt::removeVideoItem()
 {
-    m_oldNaturalSize = m_naturalSize;
-    m_mediaPlayer->setVideoOutput(static_cast<QGraphicsVideoItem*>(0));
-    m_videoScene->removeItem(m_videoItem);
+    m_mediaPlayer->setVideoOutput(static_cast<QAbstractVideoSurface*>(0));
 }
 
 void MediaPlayerPrivateQt::restoreVideoItem()
 {
-    m_mediaPlayer->setVideoOutput(m_videoItem);
-    m_videoScene->addItem(m_videoItem);
-    // FIXME: a qtmobility bug, need to reset the size when restore the videoitem, otherwise the size is 0
-    // http://bugreports.qt.nokia.com/browse/QTMOBILITY-971
-    nativeSizeChanged(QSize(m_oldNaturalSize));
+    m_mediaPlayer->setVideoOutput(this);
 }
+
+// Begin QAbstractVideoSurface implementation.
+
+bool MediaPlayerPrivateQt::start(const QVideoSurfaceFormat& format)
+{
+    m_currentVideoFrame = QVideoFrame();
+    m_frameFormat = format;
+
+    // If the pixel format is not supported by QImage, then we return false here and the QtMultimedia back-end
+    // will re-negotiate and call us again with a better format.
+    if (QVideoFrame::imageFormatFromPixelFormat(m_frameFormat.pixelFormat()) == QImage::Format_Invalid)
+        return false;
+
+    return QAbstractVideoSurface::start(format);
+}
+
+QList<QVideoFrame::PixelFormat> MediaPlayerPrivateQt::supportedPixelFormats(QAbstractVideoBuffer::HandleType handleType) const
+{
+    QList<QVideoFrame::PixelFormat> formats;
+    switch (handleType) {
+    case QAbstractVideoBuffer::QPixmapHandle:
+    case QAbstractVideoBuffer::NoHandle:
+        formats << QVideoFrame::Format_RGB32 << QVideoFrame::Format_ARGB32 << QVideoFrame::Format_RGB565;
+        break;
+    default: break;
+    }
+    return formats;
+}
+
+bool MediaPlayerPrivateQt::present(const QVideoFrame& frame)
+{
+    m_currentVideoFrame = frame;
+    m_webCorePlayer->repaint();
+    return true;
+}
+
+// End QAbstractVideoSurface implementation.
 
 void MediaPlayerPrivateQt::paint(GraphicsContext* context, const IntRect& rect)
 {
@@ -582,14 +605,7 @@ void MediaPlayerPrivateQt::paint(GraphicsContext* context, const IntRect& rect)
     if (m_composited)
         return;
 #endif
-    if (context->paintingDisabled())
-        return;
-
-    if (!m_isVisible)
-        return;
-
-    QPainter* painter = context->platformContext();
-    m_videoScene->render(painter, QRectF(QRect(rect)), m_videoItem->sceneBoundingRect());
+    paintCurrentFrameInContext(context, rect);
 }
 
 void MediaPlayerPrivateQt::paintCurrentFrameInContext(GraphicsContext* context, const IntRect& rect)
@@ -597,32 +613,38 @@ void MediaPlayerPrivateQt::paintCurrentFrameInContext(GraphicsContext* context, 
     if (context->paintingDisabled())
         return;
 
-    if (!m_isVisible)
+    if (!m_currentVideoFrame.isValid())
         return;
 
-    // Grab the painter and widget
     QPainter* painter = context->platformContext();
 
-    // Render the video, using the item as it might not be in the scene
-    m_videoItem->paint(painter, 0, 0);
-}
+    if (m_currentVideoFrame.handleType() == QAbstractVideoBuffer::QPixmapHandle) {
+        painter->drawPixmap(rect, m_currentVideoFrame.handle().value<QPixmap>());
+    } else if (m_currentVideoFrame.map(QAbstractVideoBuffer::ReadOnly)) {
+        QImage image(m_currentVideoFrame.bits(),
+                     m_frameFormat.frameSize().width(),
+                     m_frameFormat.frameSize().height(),
+                     m_currentVideoFrame.bytesPerLine(),
+                     QVideoFrame::imageFormatFromPixelFormat(m_frameFormat.pixelFormat()));
+        const QRect target = rect;
 
-void MediaPlayerPrivateQt::repaint()
-{
-    m_webCorePlayer->repaint();
+        if (m_frameFormat.scanLineDirection() == QVideoSurfaceFormat::BottomToTop) {
+            const QTransform oldTransform = painter->transform();
+            painter->scale(1, -1);
+            painter->translate(0, -target.bottom());
+            painter->drawImage(QRect(target.x(), 0, target.width(), target.height()), image);
+            painter->setTransform(oldTransform);
+        } else {
+            painter->drawImage(target, image);
+        }
 
+        m_currentVideoFrame.unmap();
+    }
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void MediaPlayerPrivateQt::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity, BitmapTexture*) const
+void MediaPlayerPrivateQt::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity, BitmapTexture*)
 {
-        GraphicsContext* context = textureMapper->graphicsContext();
-        QPainter* painter = context->platformContext();
-        painter->save();
-        painter->setTransform(matrix);
-        painter->setOpacity(opacity);
-        m_videoScene->render(painter, QRectF(targetRect), m_videoItem->sceneBoundingRect());
-        painter->restore();
 }
 #endif
 

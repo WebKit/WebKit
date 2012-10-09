@@ -194,8 +194,7 @@ enable?(VIDEO) {
     } else:use?(GSTREAMER) {
         INCLUDEPATH += $$SOURCE_DIR/platform/graphics/gstreamer
     } else:use?(QT_MULTIMEDIA) {
-        CONFIG   *= mobility
-        MOBILITY *= multimedia
+        QT *= multimedia
     }
 }
 

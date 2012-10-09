@@ -1,3 +1,11 @@
+2012-10-09  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Fix build with QtMultimedia
+
+        Reviewed by Tor Arne Vestbø.
+
+        * WebKit1.pri: WK1 needs QtMultimediaWidgets for QVideoWidget and friends.
+
 2012-10-08  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Make RenderThemeQStyle/ScrollbarThemeQStyle compile without QStyle/QtWidgets
