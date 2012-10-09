@@ -1,3 +1,9 @@
+2012-10-09  Zoltan Horvath  <zoltan@webkit.org>
+
+        Unreviewed. Remove myself from QtWebKit2 subscriptions.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-10-09  Harald Alvestrand  <hta@google.com>
 
         Change PeerConnection getStats function to single value local / remote
