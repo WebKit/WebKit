@@ -31841,6 +31841,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\filters\CustomFilterConstants.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\filters\CustomFilterGlobalContext.cpp"
 						>
 					</File>

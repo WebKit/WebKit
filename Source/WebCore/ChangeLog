@@ -1,3 +1,35 @@
+2012-10-09  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] Create constants for vertex attribute sizes and offsets
+        https://bugs.webkit.org/show_bug.cgi?id=94755
+
+        Reviewed by Dean Jackson.
+
+        Factor out the vertex attribute size and offset constants into a new file,
+        CustomFilterConstants.h. Replace literals in CustomFilterMeshGenerator with the constants.
+
+        I could have added the constants to CustomFilterMeshGenerator.h, but this would make
+        FECustomFilter depend on CustomFilterMeshGenerator.
+
+        I also could have added the constants to CustomFilterMesh.h, but this would make
+        CustomFilterMeshGenerator depend on CustomFilterMesh.
+
+        No new tests. No change in behavior.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/CustomFilterConstants.h: Added.
+        (WebCore):
+        * platform/graphics/filters/CustomFilterMeshGenerator.h:
+        (WebCore::CustomFilterMeshGenerator::floatsPerVertex):
+            Use the new constants instead of literal values.
+        * platform/graphics/filters/FECustomFilter.cpp:
+        (WebCore::FECustomFilter::bindProgramAndBuffers):
+            Pull the constant definitions out of here.
+
 2012-10-09  Michael Saboff  <msaboff@apple.com>
 
         MarkupAccumulator should optimally handle 8 bit Strings

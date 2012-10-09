@@ -4930,6 +4930,7 @@
             'platform/graphics/efl/IntPointEfl.cpp',
             'platform/graphics/efl/IntRectEfl.cpp',
             'platform/graphics/filters/CustomFilterArrayParameter.h',
+            'platform/graphics/filters/CustomFilterConstants.h',
             'platform/graphics/filters/CustomFilterGlobalContext.cpp',
             'platform/graphics/filters/CustomFilterGlobalContext.h',
             'platform/graphics/filters/CustomFilterMesh.h',

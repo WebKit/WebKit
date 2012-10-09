@@ -3781,6 +3781,7 @@
 		A1E1154413015C3D0054AC8C /* DistantLightSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1E1154313015C3D0054AC8C /* DistantLightSource.cpp */; };
 		A1E1154613015C4E0054AC8C /* PointLightSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1E1154513015C4E0054AC8C /* PointLightSource.cpp */; };
 		A1E1154813015C5D0054AC8C /* SpotLightSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1E1154713015C5D0054AC8C /* SpotLightSource.cpp */; };
+		A24A3A9D162499FF00522745 /* CustomFilterConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = A24A3A9C162499FF00522745 /* CustomFilterConstants.h */; };
 		A24BF77B15CC3BAF003191F2 /* WebKitCSSMixFunctionValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A24BF77915CC3BAF003191F2 /* WebKitCSSMixFunctionValue.h */; };
 		A24BF77C15CC3BAF003191F2 /* WebKitCSSMixFunctionValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A24BF77A15CC3BAF003191F2 /* WebKitCSSMixFunctionValue.cpp */; };
 		A29532CF15DD5E1700469EBC /* CustomFilterValidatedProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A29532CD15DD5E1700469EBC /* CustomFilterValidatedProgram.cpp */; };
@@ -11022,6 +11023,7 @@
 		A1E1154313015C3D0054AC8C /* DistantLightSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DistantLightSource.cpp; path = filters/DistantLightSource.cpp; sourceTree = "<group>"; };
 		A1E1154513015C4E0054AC8C /* PointLightSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PointLightSource.cpp; path = filters/PointLightSource.cpp; sourceTree = "<group>"; };
 		A1E1154713015C5D0054AC8C /* SpotLightSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpotLightSource.cpp; path = filters/SpotLightSource.cpp; sourceTree = "<group>"; };
+		A24A3A9C162499FF00522745 /* CustomFilterConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomFilterConstants.h; sourceTree = "<group>"; };
 		A24BF77915CC3BAF003191F2 /* WebKitCSSMixFunctionValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSMixFunctionValue.h; sourceTree = "<group>"; };
 		A24BF77A15CC3BAF003191F2 /* WebKitCSSMixFunctionValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSMixFunctionValue.cpp; sourceTree = "<group>"; };
 		A29532CD15DD5E1700469EBC /* CustomFilterValidatedProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CustomFilterValidatedProgram.cpp; path = filters/CustomFilterValidatedProgram.cpp; sourceTree = "<group>"; };
@@ -18171,6 +18173,7 @@
 				15B3FC1715FB217800A81BCB /* CustomFilterArrayParameter.h */,
 				50D4060F147D49DE00D30BB5 /* CustomFilterCompiledProgram.cpp */,
 				50D40610147D49DE00D30BB5 /* CustomFilterCompiledProgram.h */,
+				A24A3A9C162499FF00522745 /* CustomFilterConstants.h */,
 				50987C24157D676D00BDA835 /* CustomFilterGlobalContext.cpp */,
 				50987C25157D676D00BDA835 /* CustomFilterGlobalContext.h */,
 				50D405F7147D31F300D30BB5 /* CustomFilterMesh.cpp */,
@@ -22591,6 +22594,7 @@
 				62CD325A1157E57C0063B0A7 /* CustomEvent.h in Headers */,
 				15B3FC1915FB217800A81BCB /* CustomFilterArrayParameter.h in Headers */,
 				50D40612147D49DE00D30BB5 /* CustomFilterCompiledProgram.h in Headers */,
+				A24A3A9D162499FF00522745 /* CustomFilterConstants.h in Headers */,
 				50987C27157D676D00BDA835 /* CustomFilterGlobalContext.h in Headers */,
 				50D405FA147D31F300D30BB5 /* CustomFilterMesh.h in Headers */,
 				7E12E90F15FA5D3A005E4126 /* CustomFilterMeshGenerator.h in Headers */,

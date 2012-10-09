@@ -32,6 +32,7 @@
 
 #if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 
+#include "CustomFilterConstants.h"
 #include "CustomFilterOperation.h"
 #include "FloatRect.h"
 
@@ -63,13 +64,8 @@ public:
 
     unsigned floatsPerVertex() const
     {
-        static const unsigned AttachedMeshVertexSize = 4 + // vec4 a_position
-                                                       2 + // vec2 a_texCoord
-                                                       2; // vec2 a_meshCoord
-
-        static const unsigned DetachedMeshVertexSize = AttachedMeshVertexSize +
-                                                       3; // vec3 a_triangleCoord
-
+        static const unsigned AttachedMeshVertexSize = PositionAttribSize + TexAttribSize + MeshAttribSize;
+        static const unsigned DetachedMeshVertexSize = AttachedMeshVertexSize + TriangleAttribSize;
         return m_meshType == CustomFilterOperation::ATTACHED ? AttachedMeshVertexSize : DetachedMeshVertexSize;
     }
 
