@@ -1,5 +1,20 @@
 2012-10-08  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Perf. test results page is broken when runs have different sets of tests
+        https://bugs.webkit.org/show_bug.cgi?id=98691
+
+        Reviewed by Daniel Bates.
+
+        Add "missing" columns for tests that are missing some runs.
+
+        Also fix regressions from the previous patch:
+        - Make reference run switch work again
+        - Load jquery plugins from the remote server when the jquery is loaded from the remote server.
+
+        * resources/results-template.html:
+
+2012-10-08  Ryosuke Niwa  <rniwa@webkit.org>
+
         Perf test pesults page takes forever to load on a machine with a slow Internet connection
         https://bugs.webkit.org/show_bug.cgi?id=98561
 
