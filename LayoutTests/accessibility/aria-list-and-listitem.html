@@ -23,9 +23,9 @@
           document.getElementById("body").focus();
           var obj = accessibilityController.focusedElement;
 
-          shouldBe("obj.childAtIndex(0).role", "'AXRole: AXList'");
-          shouldBe("obj.childAtIndex(0).childAtIndex(0).role", "'AXRole: AXGroup'");
-          shouldBe("obj.childAtIndex(0).childAtIndex(1).role", "'AXRole: AXGroup'");
+          debug("obj.childAtIndex(0).role = " + obj.childAtIndex(0).role);
+          debug("obj.childAtIndex(0).childAtIndex(0).role = " + obj.childAtIndex(0).childAtIndex(0).role);
+          debug("obj.childAtIndex(0).childAtIndex(1).role = " + obj.childAtIndex(0).childAtIndex(1).role);
     }
 
 </script>

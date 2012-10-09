@@ -1,3 +1,16 @@
+2012-10-09  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: 5 accessibility tests just need minor tweaks to pass on chromium
+        https://bugs.webkit.org/show_bug.cgi?id=98311
+
+        Reviewed by Chris Fleizach.
+
+        Update roleToString on Chromium to include all missing roles,
+        which enables some layout tests to pass.
+
+        * DumpRenderTree/chromium/TestRunner/AccessibilityUIElementChromium.cpp:
+        (roleToString):
+
 2012-10-09  Dirk Pranke  <dpranke@chromium.org>
 
         webkit-patch rebaseline-expectations doesn't work w/o failures specified

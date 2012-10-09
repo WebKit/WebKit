@@ -221,8 +221,47 @@ static string roleToString(WebAccessibilityRole role)
         return result.append("HorizontalRule");
     case WebAccessibilityRoleLegend:
         return result.append("Legend");
-    default:
-        // Also matches WebAccessibilityRoleUnknown.
+    case WebAccessibilityRoleApplicationAlert:
+        return result.append("Alert");
+    case WebAccessibilityRoleApplicationAlertDialog:
+        return result.append("AlertDialog");
+    case WebAccessibilityRoleApplicationDialog:
+        return result.append("ApplicationDialog");
+    case WebAccessibilityRoleDirectory:
+        return result.append("Directory");
+    case WebAccessibilityRoleDocumentMath:
+        return result.append("Math");
+    case WebAccessibilityRoleEditableText:
+        return result.append("EditableText");
+    case WebAccessibilityRoleFooter:
+        return result.append("Footer");
+    case WebAccessibilityRoleIgnored:
+        return result.append("Ignored");
+    case WebAccessibilityRoleListItem:
+        return result.append("ListItem");
+    case WebAccessibilityRoleMenuListPopup:
+        return result.append("MenuListPopup");
+    case WebAccessibilityRoleMenuListOption:
+        return result.append("MenuListOption");
+    case WebAccessibilityRolePresentational:
+        return result.append("Presentational");
+    case WebAccessibilityRoleSpinButton:
+        return result.append("SpinButton");
+    case WebAccessibilityRoleSpinButtonPart:
+        return result.append("SpinButtonPart");
+    case WebAccessibilityRoleTabList:
+        return result.append("TabList");
+    case WebAccessibilityRoleTabPanel:
+        return result.append("TabPanel");
+    case WebAccessibilityRoleTab:
+        return result.append("Tab");
+    case WebAccessibilityRoleTreeRole:
+        return result.append("Tree");
+    case WebAccessibilityRoleTreeGrid:
+        return result.append("TreeGrid");
+    case WebAccessibilityRoleTreeItemRole:
+        return result.append("TreeItem");
+    case WebAccessibilityRoleUnknown:
         return result.append("Unknown");
     }
 }

@@ -7,14 +7,14 @@ This tests that the aria roles for tab, tabpanel and tablist work as expected co
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-tabList.role = AXRole: AXTabGroup
-tab1.role = AXRole: AXRadioButton
+tabList.role = AXRole: AXTabList
+tab1.role = AXRole: AXTab
 PASS tab1.title is 'AXTitle: Crust'
 PASS tab1.childrenCount is 0
-tab2.role = AXRole: AXRadioButton
+tab2.role = AXRole: AXTab
 PASS tab2.title is 'AXTitle: Veges'
-tabPanel.role = AXRole: AXGroup
-tabPanel.subrole = AXSubrole: AXTabPanel
+tabPanel.role = AXRole: AXTabPanel
+tabPanel.subrole = undefined
 PASS successfullyParsed is true
 
 TEST COMPLETE

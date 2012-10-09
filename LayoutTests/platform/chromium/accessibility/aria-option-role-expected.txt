@@ -5,9 +5,9 @@ This tests that the aria 'option' role works as expected. That is, it becomes a 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-firstChild.role is AXRole: list item
+firstChild.role is AXRole: AXListBoxOption
 PASS firstChild.title is 'AXTitle: option 1'
-secondChild.role is AXRole: list item
+secondChild.role is AXRole: AXListBoxOption
 PASS secondChild.description is 'AXDescription: label 2'
 PASS firstChild.childrenCount is 0
 PASS secondChild.childrenCount is 0

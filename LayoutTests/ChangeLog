@@ -1,3 +1,31 @@
+2012-10-09  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: 5 accessibility tests just need minor tweaks to pass on chromium
+        https://bugs.webkit.org/show_bug.cgi?id=98311
+
+        Reviewed by Chris Fleizach.
+
+        Modifies tests so that they log data that tends to vary between
+        platforms using debug(), rather than asserting a platform-specific
+        value. Gets rid of "forks" of tests in the gtk directory. Adds
+        expectations and unskips 5 tests on Chromium.
+
+        * accessibility/aria-list-and-listitem.html:
+        * accessibility/aria-option-role.html:
+        * accessibility/aria-tab-roles.html:
+        * platform/chromium/TestExpectations:
+        * platform/chromium/accessibility/aria-fallback-roles-expected.txt: Renamed from LayoutTests/platform/chromium-win/accessibility/aria-fallback-roles-expected.txt.
+        * platform/chromium/accessibility/aria-list-and-listitem-expected.txt: Copied from LayoutTests/platform/mac/accessibility/aria-list-and-listitem-expected.txt.
+        * platform/chromium/accessibility/aria-option-role-expected.txt: Copied from LayoutTests/platform/mac/accessibility/aria-option-role-expected.txt.
+        * platform/chromium/accessibility/aria-tab-roles-expected.txt: Copied from LayoutTests/platform/mac/accessibility/aria-tab-roles-expected.txt.
+        * platform/gtk/accessibility/aria-list-and-listitem-expected.txt:
+        * platform/gtk/accessibility/aria-list-and-listitem.html: Removed.
+        * platform/gtk/accessibility/aria-option-role-expected.txt:
+        * platform/gtk/accessibility/aria-option-role.html: Removed.
+        * platform/mac/accessibility/aria-list-and-listitem-expected.txt:
+        * platform/mac/accessibility/aria-option-role-expected.txt:
+        * platform/mac/accessibility/aria-tab-roles-expected.txt:
+
 2012-10-09  Levi Weintraub  <leviw@chromium.org>
 
         Rolling back unintended change to iframe-copy-on-scroll.html from previous commit.

@@ -32,14 +32,14 @@
           var tab2 = tabList.childAtIndex(1);
           var tabPanel = accessibilityController.focusedElement.childAtIndex(1);
 
-          shouldBe("tabList.role", "'AXRole: AXTabGroup'");
-          shouldBe("tab1.role", "'AXRole: AXRadioButton'");
+          debug("tabList.role = " + tabList.role);
+          debug("tab1.role = " + tab1.role);
           shouldBe("tab1.title", "'AXTitle: Crust'");
           shouldBe("tab1.childrenCount", "0");
-          shouldBe("tab2.role", "'AXRole: AXRadioButton'");
+          debug("tab2.role = " + tab2.role);
           shouldBe("tab2.title", "'AXTitle: Veges'");
-          shouldBe("tabPanel.role", "'AXRole: AXGroup'");
-          shouldBe("tabPanel.subrole", "'AXSubrole: AXTabPanel'");
+          debug("tabPanel.role = " + tabPanel.role);
+          debug("tabPanel.subrole = " + tabPanel.subrole);
     }
 
 </script>
