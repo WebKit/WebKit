@@ -370,18 +370,6 @@ fast/table/table-style-not-updated.html
 # https://bugs.webkit.org/show_bug.cgi?id=87395
 fast/forms/ValidityState-valueMissing-002.html
 
-# [Qt][WK2] REGRESSION(r118761): It made 2 tests crash
-# https://bugs.webkit.org/show_bug.cgi?id=87750
-fast/backgrounds/multiple-backgrounds-computed-style.html
-fast/css/getComputedStyle/computed-style-cross-fade.html
-
-# [Qt][WK2] REGRESSION(r119127): It made 2 fast/multicol tests crash
-# https://bugs.webkit.org/show_bug.cgi?id=88064
-fast/multicol/pagination-v-horizontal-bt.html
-fast/multicol/pagination-h-vertical-lr.html
-fast/multicol/pagination-h-vertical-rl.html
-fast/multicol/pagination-v-horizontal-tb.html
-
 # REGRESSION(r118618): fast/dom/beforeload/image-object-before-load* fail
 # https://bugs.webkit.org/show_bug.cgi?id=87631
 fast/dom/beforeload/image-object-before-load-innerHTML.html

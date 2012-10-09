@@ -1,3 +1,9 @@
+2012-10-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unskip now passing tests.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+
 2012-10-08  Tullio Lucena  <tullio.lucena@openbossa.org>
 
         [Qt]REGRESSION(r128699): It made 2 fast/js/dfg tests assert
