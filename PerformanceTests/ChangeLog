@@ -1,5 +1,12 @@
 2012-10-08  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Skip Layout/subtree-detaching.html temporarily as it's very noisy and
+        takes 112s to run on Chromium Mac. This is tracked by the bug 98708.
+
+        * Skipped:
+
+2012-10-08  Ryosuke Niwa  <rniwa@webkit.org>
+
         Perf. test results page is broken when runs have different sets of tests
         https://bugs.webkit.org/show_bug.cgi?id=98691
 
