@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2008, 2012 Digia Plc. and/or its subsidiary(-ies)
     Copyright (C) 2007 Staikos Computing Services Inc.  <info@staikos.net>
     Copyright (C) 2008 Holger Hans Peter Freyther
 
@@ -21,6 +21,7 @@
 #include "config.h"
 #include "QNetworkReplyHandler.h"
 
+#include "BlobRegistryImpl.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
 #include "ResourceHandle.h"
@@ -37,28 +38,21 @@
 #include <wtf/text/CString.h>
 
 #include <QCoreApplication>
-#include <QDebug>
-
-// In Qt 4.8, the attribute for sending a request synchronously will be made public,
-// for now, use this hackish solution for setting the internal attribute.
-const QNetworkRequest::Attribute gSynchronousNetworkRequestAttribute = static_cast<QNetworkRequest::Attribute>(QNetworkRequest::HttpPipeliningWasUsedAttribute + 7);
 
 static const int gMaxRedirections = 10;
 
 namespace WebCore {
 
-// Take a deep copy of the FormDataElement
 FormDataIODevice::FormDataIODevice(FormData* data)
-    : m_formElements(data ? data->elements() : Vector<FormDataElement>())
-    , m_currentFile(0)
+    : m_currentFile(0)
     , m_currentDelta(0)
     , m_fileSize(0)
     , m_dataSize(0)
 {
     setOpenMode(FormDataIODevice::ReadOnly);
 
-    if (!m_formElements.isEmpty() && m_formElements[0].m_type == FormDataElement::encodedFile)
-        openFileForCurrentElement();
+    prepareFormElements(data);
+    prepareCurrentElement();
     computeSize();
 }
 
@@ -66,6 +60,71 @@ FormDataIODevice::~FormDataIODevice()
 {
     delete m_currentFile;
 }
+
+#if ENABLE(BLOB)
+static void appendBlobResolved(FormData* formData, const KURL& url)
+{
+    RefPtr<BlobStorageData> blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(KURL(ParsedURLString, url));
+    if (blobData) {
+        BlobDataItemList::const_iterator it = blobData->items().begin();
+        const BlobDataItemList::const_iterator itend = blobData->items().end();
+        for (; it != itend; ++it) {
+            const BlobDataItem& blobItem = *it;
+            if (blobItem.type == BlobDataItem::Data)
+                formData->appendData(blobItem.data->data() + static_cast<int>(blobItem.offset), static_cast<int>(blobItem.length));
+            else if (blobItem.type == BlobDataItem::File)
+                formData->appendFileRange(blobItem.path, blobItem.offset, blobItem.length, blobItem.expectedModificationTime);
+            else if (blobItem.type == BlobDataItem::Blob)
+                appendBlobResolved(formData, blobItem.url);
+            else
+                ASSERT_NOT_REACHED();
+        }
+    }
+}
+#endif
+
+void FormDataIODevice::prepareFormElements(FormData* formData)
+{
+    if (!formData)
+        return;
+
+#if ENABLE(BLOB)
+    bool hasBlob = false;
+    Vector<FormDataElement>::const_iterator it = formData->elements().begin();
+    const Vector<FormDataElement>::const_iterator itend = formData->elements().end();
+    for (; it != itend; ++it) {
+        if (it->m_type == FormDataElement::encodedBlob) {
+            hasBlob = true;
+            break;
+        }
+    }
+
+    // Resolve all blobs so we only have file and data.
+    if (hasBlob) {
+        RefPtr<FormData> newFormData = FormData::create();
+        newFormData->setAlwaysStream(formData->alwaysStream());
+        newFormData->setIdentifier(formData->identifier());
+        it = formData->elements().begin();
+        for (; it != itend; ++it) {
+            const FormDataElement& element = *it;
+            if (element.m_type == FormDataElement::data)
+                newFormData->appendData(element.m_data.data(), element.m_data.size());
+            else if (element.m_type == FormDataElement::encodedFile)
+                newFormData->appendFileRange(element.m_filename, element.m_fileStart, element.m_fileLength, element.m_expectedFileModificationTime, element.m_shouldGenerateFile);
+            else if (element.m_type == FormDataElement::encodedBlob)
+                appendBlobResolved(newFormData.get(), element.m_url);
+            else
+                ASSERT_NOT_REACHED();
+        }
+        m_formElements = newFormData->elements();
+        return;
+    }
+#endif
+
+    // Take a deep copy of the FormDataElements
+    m_formElements = formData->elements();
+}
+
 
 qint64 FormDataIODevice::computeSize() 
 {
@@ -75,7 +134,14 @@ qint64 FormDataIODevice::computeSize()
             m_dataSize += element.m_data.size();
         else {
             QFileInfo fi(element.m_filename);
+#if ENABLE(BLOB)
+            qint64 fileEnd = fi.size();
+            if (element.m_fileLength != BlobDataItem::toEndOfFile)
+                fileEnd = qMin<qint64>(fi.size(), element.m_fileStart + element.m_fileLength);
+            m_fileSize += qMax<qint64>(0, fileEnd - element.m_fileStart);
+#else
             m_fileSize += fi.size();
+#endif
         }
     }
     return m_dataSize + m_fileSize;
@@ -89,10 +155,24 @@ void FormDataIODevice::moveToNextElement()
 
     m_formElements.remove(0);
 
-    if (m_formElements.isEmpty() || m_formElements[0].m_type == FormDataElement::data)
+    prepareCurrentElement();
+}
+
+void FormDataIODevice::prepareCurrentElement()
+{
+    if (m_formElements.isEmpty())
         return;
 
-    openFileForCurrentElement();
+    switch (m_formElements[0].m_type) {
+    case FormDataElement::data:
+        return;
+    case FormDataElement::encodedFile:
+        openFileForCurrentElement();
+        break;
+    default:
+        // At this point encodedBlob should already have been handled.
+        ASSERT_NOT_REACHED();
+    }
 }
 
 void FormDataIODevice::openFileForCurrentElement()
@@ -102,6 +182,17 @@ void FormDataIODevice::openFileForCurrentElement()
 
     m_currentFile->setFileName(m_formElements[0].m_filename);
     m_currentFile->open(QFile::ReadOnly);
+#if ENABLE(BLOB)
+    if (isValidFileTime(m_formElements[0].m_expectedFileModificationTime)) {
+        QFileInfo info(*m_currentFile);
+        if (!info.exists() || static_cast<time_t>(m_formElements[0].m_expectedFileModificationTime) < info.lastModified().toTime_t()) {
+            moveToNextElement();
+            return;
+        }
+    }
+    if (m_formElements[0].m_fileStart)
+        m_currentFile->seek(m_formElements[0].m_fileStart);
+#endif
 }
 
 // m_formElements[0] is the current item. If the destination buffer is
@@ -124,13 +215,23 @@ qint64 FormDataIODevice::readData(char* destination, qint64 size)
 
             if (m_currentDelta == element.m_data.size())
                 moveToNextElement();
-        } else {
-            const QByteArray data = m_currentFile->read(available);
+        } else if (element.m_type == FormDataElement::encodedFile) {
+            quint64 toCopy = available;
+#if ENABLE(BLOB)
+            if (element.m_fileLength != BlobDataItem::toEndOfFile)
+                toCopy = qMin<qint64>(toCopy, element.m_fileLength - m_currentDelta);
+#endif
+            const QByteArray data = m_currentFile->read(toCopy);
             memcpy(destination+copied, data.constData(), data.size());
+            m_currentDelta += data.size();
             copied += data.size();
 
             if (m_currentFile->atEnd() || !m_currentFile->isOpen())
                 moveToNextElement();
+#if ENABLE(BLOB)
+            else if (element.m_fileLength != BlobDataItem::toEndOfFile && m_currentDelta == element.m_fileLength)
+                moveToNextElement();
+#endif
         }
     }
 
@@ -612,7 +713,7 @@ FormDataIODevice* QNetworkReplyHandler::getIODevice(const ResourceRequest& reque
 QNetworkReply* QNetworkReplyHandler::sendNetworkRequest(QNetworkAccessManager* manager, const ResourceRequest& request)
 {
     if (m_loadType == SynchronousLoad)
-        m_request.setAttribute(gSynchronousNetworkRequestAttribute, true);
+        m_request.setAttribute(QNetworkRequest::SynchronousRequestAttribute, true);
 
     if (!manager)
         return 0;

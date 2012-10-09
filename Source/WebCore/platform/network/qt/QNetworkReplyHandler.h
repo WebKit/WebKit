@@ -179,9 +179,11 @@ protected:
     qint64 writeData(const char*, qint64);
 
 private:
+    void prepareFormElements(FormData*);
     void moveToNextElement();
     qint64 computeSize();
     void openFileForCurrentElement();
+    void prepareCurrentElement();
 
 private:
     Vector<FormDataElement> m_formElements;
