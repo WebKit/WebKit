@@ -79,7 +79,7 @@ class XvfbDriverTest(unittest.TestCase):
         self.assertDriverStartSuccessful(driver, expected_stderr=expected_stderr, expected_display=":0", pixel_tests=True)
         self.cleanup_driver(driver)
 
-    def test_next_free_display(self):
+    def disabled_test_next_free_display(self):
         output = "Xorg            /usr/bin/X :0 -auth /var/run/lightdm/root/:0 -nolisten tcp vt7 -novtswitch -background none\nXvfb            Xvfb :1 -screen 0 800x600x24 -nolisten tcp"
         executive = MockExecutive2(output)
         driver = self.make_driver(executive=executive)

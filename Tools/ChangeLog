@@ -1,3 +1,17 @@
+2012-10-09  Zan Dobersek  <zandobersek@gmail.com>
+
+        XvfbDriver unit test is flaky on Linux builders
+        https://bugs.webkit.org/show_bug.cgi?id=98346
+
+        Reviewed by Adam Barth.
+
+        Temporarily skip the XvfbDriver test case that tests
+        the display number of the next free display. The test
+        is flaky on Linux builders.
+
+        * Scripts/webkitpy/layout_tests/port/xvfbdriver_unittest.py:
+        (XvfbDriverTest.disabled_test_next_free_display):
+
 2012-10-09  Ojan Vafai  <ojan@chromium.org>
 
         Don't duplicated build numbers when merging flakiness dashboard JSON
