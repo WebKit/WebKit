@@ -96,6 +96,9 @@ public:
     // passwords stored in password manager.
     WEBKIT_EXPORT bool canAccessPasswordManager() const;
 
+    // Allows this WebSecurityOrigin access to local resources.
+    WEBKIT_EXPORT void grantLoadLocalResources() const;
+
 #if WEBKIT_IMPLEMENTATION
     WebSecurityOrigin(const WTF::PassRefPtr<WebCore::SecurityOrigin>&);
     WebSecurityOrigin& operator=(const WTF::PassRefPtr<WebCore::SecurityOrigin>&);

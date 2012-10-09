@@ -427,11 +427,6 @@ void SecurityOrigin::grantLoadLocalResources()
     // is a security hazard because the documents without the privilege can
     // obtain the privilege by injecting script into the documents that have
     // been granted the privilege.
-    //
-    // To be backwards compatible with older versions of WebKit, we also use
-    // this function to grant the ability to load local resources to documents
-    // loaded with SubstituteData.
-    ASSERT(isUnique() || SecurityPolicy::allowSubstituteDataAccessToLocal());
     m_canLoadLocalResources = true;
 }
 

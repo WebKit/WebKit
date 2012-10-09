@@ -156,4 +156,9 @@ void WebSecurityOrigin::assign(WebSecurityOriginPrivate* p)
     m_private = p;
 }
 
+void WebSecurityOrigin::grantLoadLocalResources() const
+{
+    get()->grantLoadLocalResources();
+}
+
 } // namespace WebKit

@@ -1,3 +1,18 @@
+2012-10-09  Ben Murdoch  <benm@google.com>
+
+        [chromium][Android] Add WebSecurityOrigin::grantLoadLocalResources()
+        https://bugs.webkit.org/show_bug.cgi?id=97689
+
+        Reviewed by Adam Barth.
+
+        In addition to the WebKit/chromium side of the change, remove the
+        ASSERT in SecurityOrigin::grantLoadLocalResources(). Android WebView
+        is a legitimate user of this API in cases where neither of the
+        ASSERT'd conditions hold.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::grantLoadLocalResources): Remove ASSERT.
+
 2012-10-09  Jon Lee  <jonlee@apple.com>
 
         Build fix for Qt Windows.
