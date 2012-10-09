@@ -1,3 +1,21 @@
+2012-10-09  Alexis Menard  <alexis@webkit.org>
+
+        [GTK] Shadow builds are not working anymore.
+        https://bugs.webkit.org/show_bug.cgi?id=98785
+
+        Reviewed by Martin Robinson.
+
+        When setting WEBKITOUTPUTDIR the build was failing with a python
+        error : the os.execve expect three arguments. Also the condition
+        to check whether we build the GTK port with jhbuild or not was buggy
+        as it was always assuming an in source build. We can use now jhbuildutils
+        which has a convenient function to locate the directory where 
+        the dependencies built with jhbuild are and take into account WEBKITOUTPUTDIR.
+        If the Dependencies path does not exist then the build was not done using
+        jhbuild so we can fallback to a regular build against system libraries.
+
+        * gtk/run-with-jhbuild:
+
 2012-10-08  Simon Fraser  <simon.fraser@apple.com>
 
         Remove DRT/WTR implementations of layerTreeAsText
