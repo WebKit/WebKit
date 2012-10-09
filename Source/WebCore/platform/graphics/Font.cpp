@@ -220,7 +220,7 @@ void Font::deleteLayout(TextLayout*)
 {
 }
 
-float Font::width(TextLayout&, unsigned, unsigned, HashSet<const SimpleFontData*>*)
+float Font::width(TextLayout&, unsigned, unsigned)
 {
     ASSERT_NOT_REACHED();
     return 0;
