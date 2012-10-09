@@ -1,5 +1,12 @@
 2012-10-09  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unskip fast/transforms/scrollIntoView-transformed.html.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt/TestExpectations:
+
+2012-10-09  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unskip and rebase now passing tests.
 
         * platform/qt-5.0/TestExpectations:

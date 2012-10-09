@@ -1982,10 +1982,6 @@ fast/writing-mode/border-styles-vertical-rl.html
 # https://bugs.webkit.org/show_bug.cgi?id=82308
 fast/dom/shadow/drag-to-meter-in-shadow-crash.html
 
-# [Qt] REGRESSION(r113520): fast/transforms/scrollIntoView-transformed.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=83419
-fast/transforms/scrollIntoView-transformed.html
-
 # [Qt] REGRESSION(r114059): It made these tests fail
 # https://bugs.webkit.org/show_bug.cgi?id=83432
 fast/dom/dom-parse-serialize-display.html
