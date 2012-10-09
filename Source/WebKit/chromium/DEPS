@@ -161,8 +161,6 @@ deps_os = {
       From('chromium_deps', 'src/third_party/nss'),
     'third_party/perl':
       From('chromium_deps', 'src/third_party/perl'),
-    'tools/isolate':
-      Var('chromium_svn')+'/tools/isolate@'+Var('chromium_rev'),
     # Dependencies used by libjpeg-turbo
     'third_party/yasm/binaries':
       From('chromium_deps', 'src/third_party/yasm/binaries'),
