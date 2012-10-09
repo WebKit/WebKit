@@ -125,25 +125,6 @@ void RenderTableCell::colSpanOrRowSpanChanged()
         section()->setNeedsCellRecalc();
 }
 
-LayoutUnit RenderTableCell::logicalHeightForRowSizing() const
-{
-    LayoutUnit adjustedLogicalHeight = logicalHeight() - (intrinsicPaddingBefore() + intrinsicPaddingAfter());
-
-    LayoutUnit styleLogicalHeight = valueForLength(style()->logicalHeight(), 0, view());
-    if (document()->inQuirksMode() || style()->boxSizing() == BORDER_BOX) {
-        // Explicit heights use the border box in quirks mode.
-        // Don't adjust height.
-    } else {
-        // In strict mode, box-sizing: content-box do the right
-        // thing and actually add in the border and padding.
-        LayoutUnit adjustedPaddingBefore = paddingBefore() - intrinsicPaddingBefore();
-        LayoutUnit adjustedPaddingAfter = paddingAfter() - intrinsicPaddingAfter();
-        styleLogicalHeight += adjustedPaddingBefore + adjustedPaddingAfter + borderBefore() + borderAfter();
-    }
-
-    return max(styleLogicalHeight, adjustedLogicalHeight);
-}
-
 Length RenderTableCell::logicalWidthFromColumns(RenderTableCol* firstColForThisCell, Length widthFromStyle) const
 {
     ASSERT(firstColForThisCell && firstColForThisCell == table()->colElement(col()));

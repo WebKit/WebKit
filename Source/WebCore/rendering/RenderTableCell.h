@@ -90,7 +90,17 @@ public:
         return styleWidth;
     }
 
-    LayoutUnit logicalHeightForRowSizing() const;
+    LayoutUnit logicalHeightForRowSizing() const
+    {
+        // FIXME: This function does too much work, and is very hot during table layout!
+        LayoutUnit adjustedLogicalHeight = logicalHeight() - (intrinsicPaddingBefore() + intrinsicPaddingAfter());
+        LayoutUnit styleLogicalHeight = valueForLength(style()->logicalHeight(), 0, view());
+        // In strict mode, box-sizing: content-box do the right thing and actually add in the border and padding.
+        // Call computedCSSPadding* directly to avoid including implicitPadding.
+        if (!document()->inQuirksMode() && style()->boxSizing() != BORDER_BOX)
+            styleLogicalHeight += computedCSSPaddingBefore() + computedCSSPaddingAfter() + borderBefore() + borderAfter();
+        return max(styleLogicalHeight, adjustedLogicalHeight);
+    }
 
     virtual void computePreferredLogicalWidths();
 
