@@ -30,14 +30,13 @@
 
 #include <QtCore/qglobal.h>
 
-QT_BEGIN_NAMESPACE
-class QStyle;
-QT_END_NAMESPACE
-
 namespace WebCore {
+
+class QStyleFacade;
 
 class ScrollbarThemeQStyle : public ScrollbarTheme {
 public:
+    ScrollbarThemeQStyle();
     virtual ~ScrollbarThemeQStyle();
 
     virtual bool paint(ScrollbarThemeClient*, GraphicsContext*, const IntRect& dirtyRect);
@@ -56,7 +55,10 @@ public:
 
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
 
-    QStyle* style() const;
+    QStyleFacade* qStyle() { return m_qStyle.get(); }
+
+private:
+    OwnPtr<QStyleFacade> m_qStyle;
 };
 
 }

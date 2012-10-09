@@ -1,3 +1,124 @@
+2012-10-08  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Make RenderThemeQStyle/ScrollbarThemeQStyle compile without QStyle/QtWidgets
+        https://bugs.webkit.org/show_bug.cgi?id=98268
+
+        Reviewed by Tor Arne Vestbø.
+
+        Extracted QStyle/QWidget related code into a QWebStyle class that implements the QStyleFacade interface.
+
+        QStyleFacade is a pure interface that lives in WebCore/platform/qt
+        (next to RenderThemeQStyle and ScrollbarThemeQStyle) and provides a
+        minimal interface of what we need to draw with QStyle as well as basic
+        hit testing and metric retrieval. It also provides a
+        QStyleFacadeOption class that aggregates common meta-data for
+        rendering primitives, such as direction, rectangle, state (sunken,
+        enabled, etc.) or palette. It also provides some more slider/scrollbar
+        specific fields in a slider sub-structure.
+
+        RenderThemeQStyle/ScrollbarThemeQStyle used to instantiate specific QStyleOption sub-classes and populate
+        them with state information from render objects, before calling straight to QStyle. Most of the common code
+        was encapsulated in StylePainterQStyle.
+
+        The new RenderThemeQStyle/ScrolllbarThemeQStyle uses common code in
+        StylePainterQStyle to populate state into QStyleFacadeOption before
+        calling into QStyleFacade.
+
+        The style facade is then implemented by QStyleFacadeImp, which extracts
+        meta-data from QStyleFacadeOption arguments, populates style
+        primitive specific QStyleOption objects and then calls on QStyle.
+
+        RenderThemeQStyle/ScrollbarThemeQStyle can only use interface methods
+        from QStyleFacade. QStyleFacadeImp on the other hand will live in the
+        separate QtWebKitWidgets library in the future and therefore cannot use
+        any WebCore types.
+
+        * Target.pri:
+        * platform/qt/QStyleFacade.cpp: Added.
+        (WebCore):
+        (WebCore::QStyleFacade::styleForPage):
+        * platform/qt/QStyleFacade.h: Added.
+        (WebCore):
+        (QStyleFacade):
+        (WebCore::QStyleFacade::~QStyleFacade):
+        (WebCore::QStyleFacadeOption::QStyleFacadeOption):
+        (QStyleFacadeOption):
+        * platform/qt/RenderThemeQStyle.cpp: Renamed from Source/WebKit/qt/WebCoreSupport/RenderThemeQStyle.cpp.
+        (WebCore):
+        (WebCore::RenderThemeQStyle::getStylePainter):
+        (WebCore::StylePainterQStyle::StylePainterQStyle):
+        (WebCore::StylePainterQStyle::init):
+        (WebCore::RenderThemeQStyle::create):
+        (WebCore::RenderThemeQStyle::setStyleFactoryFunction):
+        (WebCore::RenderThemeQStyle::styleFactory):
+        (WebCore::RenderThemeQStyle::RenderThemeQStyle):
+        (WebCore::RenderThemeQStyle::~RenderThemeQStyle):
+        (WebCore::RenderThemeQStyle::setPaletteFromPageClientIfExists):
+        (WebCore::RenderThemeQStyle::inflateButtonRect):
+        (WebCore::RenderThemeQStyle::computeSizeBasedOnStyle):
+        (WebCore::RenderThemeQStyle::adjustButtonStyle):
+        (WebCore::RenderThemeQStyle::setButtonPadding):
+        (WebCore::RenderThemeQStyle::paintButton):
+        (WebCore::RenderThemeQStyle::paintTextField):
+        (WebCore::RenderThemeQStyle::adjustTextAreaStyle):
+        (WebCore::RenderThemeQStyle::paintTextArea):
+        (WebCore::RenderThemeQStyle::setPopupPadding):
+        (WebCore::RenderThemeQStyle::colorPalette):
+        (WebCore::RenderThemeQStyle::paintMenuList):
+        (WebCore::RenderThemeQStyle::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeQStyle::paintMenuListButton):
+        (WebCore::RenderThemeQStyle::animationDurationForProgressBar):
+        (WebCore::RenderThemeQStyle::paintProgressBar):
+        (WebCore::RenderThemeQStyle::paintSliderTrack):
+        (WebCore::RenderThemeQStyle::adjustSliderTrackStyle):
+        (WebCore::RenderThemeQStyle::paintSliderThumb):
+        (WebCore::RenderThemeQStyle::adjustSliderThumbStyle):
+        (WebCore::RenderThemeQStyle::paintSearchField):
+        (WebCore::RenderThemeQStyle::adjustSearchFieldDecorationStyle):
+        (WebCore::RenderThemeQStyle::paintSearchFieldDecoration):
+        (WebCore::RenderThemeQStyle::adjustSearchFieldResultsDecorationStyle):
+        (WebCore::RenderThemeQStyle::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeQStyle::paintInnerSpinButton):
+        (WebCore::RenderThemeQStyle::initializeCommonQStyleOptions):
+        (WebCore::RenderThemeQStyle::adjustSliderThumbSize):
+        * platform/qt/RenderThemeQStyle.h: Renamed from Source/WebKit/qt/WebCoreSupport/RenderThemeQStyle.h.
+        (WebCore):
+        (RenderThemeQStyle):
+        (WebCore::RenderThemeQStyle::qStyle):
+        (StylePainterQStyle):
+        (WebCore::StylePainterQStyle::isValid):
+        (WebCore::StylePainterQStyle::paintButton):
+        (WebCore::StylePainterQStyle::paintTextField):
+        (WebCore::StylePainterQStyle::paintComboBox):
+        (WebCore::StylePainterQStyle::paintComboBoxArrow):
+        (WebCore::StylePainterQStyle::paintSliderTrack):
+        (WebCore::StylePainterQStyle::paintSliderThumb):
+        (WebCore::StylePainterQStyle::paintInnerSpinButton):
+        (WebCore::StylePainterQStyle::paintProgressBar):
+        (WebCore::StylePainterQStyle::paintScrollCorner):
+        (WebCore::StylePainterQStyle::paintScrollBar):
+        * platform/qt/ScrollbarThemeQStyle.cpp: Renamed from Source/WebKit/qt/WebCoreSupport/ScrollbarThemeQStyle.cpp.
+        (WebCore):
+        (WebCore::ScrollbarThemeQStyle::ScrollbarThemeQStyle):
+        (WebCore::ScrollbarThemeQStyle::~ScrollbarThemeQStyle):
+        (WebCore::scPart):
+        (WebCore::scrollbarPart):
+        (WebCore::initSliderStyleOption):
+        (WebCore::ScrollbarThemeQStyle::paint):
+        (WebCore::ScrollbarThemeQStyle::hitTest):
+        (WebCore::ScrollbarThemeQStyle::shouldCenterOnThumb):
+        (WebCore::ScrollbarThemeQStyle::invalidatePart):
+        (WebCore::ScrollbarThemeQStyle::scrollbarThickness):
+        (WebCore::ScrollbarThemeQStyle::thumbPosition):
+        (WebCore::ScrollbarThemeQStyle::thumbLength):
+        (WebCore::ScrollbarThemeQStyle::trackPosition):
+        (WebCore::ScrollbarThemeQStyle::trackLength):
+        (WebCore::ScrollbarThemeQStyle::paintScrollCorner):
+        * platform/qt/ScrollbarThemeQStyle.h: Renamed from Source/WebKit/qt/WebCoreSupport/ScrollbarThemeQStyle.h.
+        (WebCore):
+        (ScrollbarThemeQStyle):
+        (WebCore::ScrollbarThemeQStyle::qStyle):
+
 2012-10-08  Kiran Muppala  <cmuppala@apple.com>
 
         Throttle DOM timers on hidden pages.
