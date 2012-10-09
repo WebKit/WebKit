@@ -1,3 +1,16 @@
+2012-10-09  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Test expectation updates for Android
+        https://bugs.webkit.org/show_bug.cgi?id=98786
+
+        Unreviewed test expectation update.
+
+        Update the test expectations for Android. Nineteen bugs were filed,
+        which are all blocking bug 96398.
+
+        * platform/chromium-android/TestExpectations:
+        * platform/chromium/TestExpectations:
+
 2012-10-09  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Unreviewed gardening.

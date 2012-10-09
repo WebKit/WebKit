@@ -1568,6 +1568,192 @@ webkit.org/b/93439 [ Mac ] fast/forms/file/file-appearance-transform-no-effects.
 # END MAC PORT TESTS
 # -----------------------------------------------------------------
 
+# -----------------------------------------------------------------
+# ANDROID PORT TESTS
+#
+# These tests look like actual failures and need to be triaged. The master bug
+# for this is https://bugs.webkit.org/show_bug.cgi?id=96398
+# -----------------------------------------------------------------
+
+# Composited/HW content have the red and blue channels inverted in DRT on Chromium Android
+webkit.org/b/98647 [ Android ] animations/additive-transform-animations.html [ Failure ]
+webkit.org/b/98647 [ Android ] platform/chromium/compositing/render-surface-alpha-blending.html [ Failure ]
+webkit.org/b/98647 [ Android ] platform/chromium/compositing/huge-layer-rotated.html [ Failure ]
+webkit.org/b/98647 [ Android ] platform/chromium/compositing/child-layer-3d-sorting.html [ Failure ]
+webkit.org/b/98647 [ Android ] platform/chromium/compositing/3d-corners.html [ Failure ]
+webkit.org/b/98647 [ Android ] fast/repaint/block-selection-gap-in-composited-layer.html [ Failure ]
+webkit.org/b/98647 [ Android ] fast/css/transform-default-parameter.html [ Failure ]
+webkit.org/b/98647 [ Android ] fast/canvas/canvas-toDataURL-webp.html [ Failure ]
+
+# [Chromium-Android] Some compositor tests have half a pixel offset
+webkit.org/b/98762 [ Android ] platform/chromium/compositing/lost-compositor-context.html [ Failure ]
+webkit.org/b/98762 [ Android ] platform/chromium/compositing/lost-compositor-context-twice.html [ Failure ]
+webkit.org/b/98762 [ Android ] platform/chromium/compositing/lost-compositor-context-permanently.html [ Failure ]
+webkit.org/b/98762 [ Android ] fast/layers/no-clipping-overflow-hidden-added-after-transition.html [ Failure ]
+
+# [Chromium-Android] Two tests don't display a scrollbar, while they probably should
+webkit.org/b/98763 [ Android ] platform/chromium/compositing/layout-width-change.html [ Failure ]
+webkit.org/b/98763 [ Android ] platform/chromium/compositing/img-layer-grow.html [ Failure ]
+
+# [Chromium-Android] Video does not yet work on Android
+webkit.org/b/98765 [ Android ] media/video-zoom.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/video-zoom-controls.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/video-transformed.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/video-timeupdate-during-playback.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/video-playing-and-pause.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/video-no-audio.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/video-layer-crash.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/video-frame-accurate-seek.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/video-empty-source.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/video-display-toggle.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/video-controls-rendering.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/video-colorspace-yuv422.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/video-colorspace-yuv420.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/video-canvas-alpha.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/video-aspect-ratio.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/media-load-event.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/media-fragments/ [ Failure ]
+webkit.org/b/98765 [ Android ] media/media-document-audio-repaint.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/media-controls-clone.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/event-attributes.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/controls-without-preload.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/controls-styling.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/controls-styling-strict.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/controls-strict.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/controls-layout-direction.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/controls-after-reload.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/audio-controls-rendering.html [ Failure ]
+webkit.org/b/98765 [ Android ] media/sources-fallback-codecs.html [ Failure ]
+webkit.org/b/98765 [ Android ] fast/layers/video-layer.html [ Failure ]
+webkit.org/b/98765 [ Android ] fast/hidpi/video-controls-in-hidpi.html [ Failure ]
+
+# [Chromium-Android] Subtitles (and video) do not work on Android
+webkit.org/b/98766 [ Android ] media/track/track-cue-rendering-vertical.html [ Failure ]
+webkit.org/b/98766 [ Android ] media/track/track-cue-rendering-horizontal.html [ Failure ]
+
+# [Chromium-Android] Fullscreen mode is not working correctly
+webkit.org/b/98767 [ Android ] fullscreen/full-screen-iframe-legacy.html [ Failure ]
+
+# [Chromium-Android] Vertical text with punctuation should be rotated
+webkit.org/b/98768 [ Android ] fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ Failure ]
+webkit.org/b/98768 [ Android ] fast/dynamic/text-combine.html [ Failure ]
+
+# [Chromium-Android] CJK characters are not being anti-aliased
+webkit.org/b/98769 [ Android ] fast/writing-mode/vertical-font-fallback.html [ Failure ]
+webkit.org/b/98769 [ Android ] fast/text/international/001.html [ Failure ]
+webkit.org/b/98769 [ Android ] fast/text/backslash-to-yen-sign.html [ Failure ]
+webkit.org/b/98769 [ Android ] fast/ruby/nested-ruby.html [ Failure ]
+
+# [Chromium-Android] Vertical CJK text has different dimensions
+webkit.org/b/98770 [ Android ] fast/writing-mode/japanese-rl-text.html [ Failure ]
+webkit.org/b/98770 [ Android ] fast/writing-mode/japanese-rl-selection.html [ Failure ]
+webkit.org/b/98770 [ Android ] fast/writing-mode/japanese-lr-text.html [ Failure ]
+webkit.org/b/98770 [ Android ] fast/repaint/japanese-rl-selection-repaint.html [ Failure ]
+
+# [Chromium-Android] Select boxes render different on Android
+webkit.org/b/98771 [ Android ] fast/text/updateNewFont.html [ Failure ]
+webkit.org/b/98771 [ Android ] fast/text/international/bidi-listbox.html [ Failure ]
+webkit.org/b/98771 [ Android ] fast/text/international/bidi-listbox-atsui.html [ Failure ]
+webkit.org/b/98771 [ Android ] fast/text/drawBidiText.html [ Failure ]
+webkit.org/b/98771 [ Android ] fast/replaced/replaced-breaking.html [ Failure ]
+webkit.org/b/98771 [ Android ] fast/css/text-transform-select.html [ Failure ]
+webkit.org/b/98771 [ Android ] fast/forms/select-size.html [ Failure ]
+webkit.org/b/98771 [ Android ] fast/forms/select-overflow-scroll.html [ Failure ]
+webkit.org/b/98771 [ Android ] fast/forms/select-overflow-scroll-inherited.html [ Failure ]
+webkit.org/b/98771 [ Android ] fast/forms/select-list-box-with-height.html [ Failure ]
+webkit.org/b/98771 [ Android ] fast/forms/select-initial-position.html [ Failure ]
+webkit.org/b/98771 [ Android ] fast/forms/select-change-popup-to-listbox.html [ Failure ]
+webkit.org/b/98771 [ Android ] fast/forms/select-change-listbox-to-popup.html [ Failure ]
+webkit.org/b/98771 [ Android ] fast/forms/select-change-listbox-size.html [ Failure ]
+webkit.org/b/98771 [ Android ] fast/forms/select-block-background.html [ Failure ]
+webkit.org/b/98771 [ Android ] fast/forms/placeholder-position.html [ Failure ]
+webkit.org/b/98771 [ Android ] fast/forms/option-strip-whitespace.html [ Failure ]
+webkit.org/b/98771 [ Android ] fast/forms/menulist-option-wrap.html [ Failure ]
+webkit.org/b/98771 [ Android ] fast/forms/listbox-width-change.html [ Failure ]
+webkit.org/b/98771 [ Android ] fast/forms/listbox-scrollbar-incremental-load.html [ Failure ]
+webkit.org/b/98771 [ Android ] fast/forms/listbox-bidi-align.html [ Failure ]
+webkit.org/b/98771 [ Android ] fast/forms/form-element-geometry.html [ Failure ]
+webkit.org/b/98771 [ Android ] fast/forms/disabled-select-change-index.html [ Failure ]
+webkit.org/b/98771 [ Android ] fast/forms/basic-selects.html [ Failure ]
+webkit.org/b/98771 [ Android ] fast/forms/HTMLOptionElement_label05.html [ Failure ]
+
+# [Chromium-Android] Textareas are two pixels shorter than on other platforms
+webkit.org/b/98772 [ Android ] fast/text/international/unicode-bidi-plaintext-in-textarea.html [ Failure ]
+webkit.org/b/98772 [ Android ] fast/replaced/width100percent-textarea.html [ Failure ]
+webkit.org/b/98772 [ Android ] fast/parser/open-comment-in-textarea.html [ Failure ]
+webkit.org/b/98772 [ Android ] fast/parser/entity-comment-in-textarea.html [ Failure ]
+webkit.org/b/98772 [ Android ] fast/overflow/overflow-x-y.html [ Failure ]
+webkit.org/b/98772 [ Android ] fast/dynamic/008.html [ Failure ]
+webkit.org/b/98772 [ Android ] fast/dom/vertical-scrollbar-in-rtl.html [ Failure ]
+webkit.org/b/98772 [ Android ] fast/dom/shadow/shadowdom-for-textarea-complex-shadow.html [ Failure ]
+webkit.org/b/98772 [ Android ] fast/dom/HTMLTextAreaElement/reset-textarea.html [ Failure ]
+webkit.org/b/98772 [ Android ] fast/css/resize-corner-tracking.html [ Failure ]
+webkit.org/b/98772 [ Android ] fast/forms/textarea-width.html [ Failure ]
+webkit.org/b/98772 [ Android ] fast/forms/textarea-setinnerhtml.html [ Failure ]
+webkit.org/b/98772 [ Android ] fast/forms/textarea-scrolled-type.html [ Failure ]
+webkit.org/b/98772 [ Android ] fast/forms/textarea-scrollbar.html [ Failure ]
+webkit.org/b/98772 [ Android ] fast/forms/textarea-placeholder-visibility-2.html [ Failure ]
+webkit.org/b/98772 [ Android ] fast/forms/textarea-placeholder-visibility-1.html [ Failure ]
+webkit.org/b/98772 [ Android ] fast/forms/textarea-placeholder-pseudo-style.html [ Failure ]
+webkit.org/b/98772 [ Android ] fast/forms/textarea-align.html [ Failure ]
+webkit.org/b/98772 [ Android ] fast/forms/text-control-intrinsic-widths.html [ Failure ]
+webkit.org/b/98772 [ Android ] fast/forms/basic-textareas-quirks.html [ Failure ]
+
+# [Chromium-Android] Wrong character is being selected in Hebrew text
+webkit.org/b/98793 [ Android ] fast/text/international/hebrew-selection.html [ Failure ]
+
+# [Chromium-Android] Android does not support scrollbar tickmarks
+webkit.org/b/98794 [ Android ] fast/scrolling/scrollbar-tickmarks-styled.html [ Failure ]
+
+# [Chromium-Android] Overflow is broken in some cases on Android
+webkit.org/b/98795 [ Android ] fast/overflow/overflow-stacking.html [ Failure ]
+webkit.org/b/98795 [ Android ] fast/overflow/overflow-float-stacking.html [ Failure ]
+
+# [Chromium-Android] A lot of off-by-one errors in multiple column layout tests on Android
+webkit.org/b/98796 [ Android ] fast/multicol/span/span-margin-collapsing.html [ Failure ]
+webkit.org/b/98796 [ Android ] fast/multicol/span/span-as-nested-columns-child.html [ Failure ]
+webkit.org/b/98796 [ Android ] fast/multicol/span/span-as-nested-columns-child-dynamic.html [ Failure ]
+webkit.org/b/98796 [ Android ] fast/multicol/span/span-as-immediate-columns-child.html [ Failure ]
+webkit.org/b/98796 [ Android ] fast/multicol/span/span-as-immediate-columns-child-dynamic.html [ Failure ]
+webkit.org/b/98796 [ Android ] fast/multicol/span/span-as-immediate-child-generated-content.html [ Failure ]
+webkit.org/b/98796 [ Android ] fast/multicol/span/span-as-immediate-child-complex-splitting.html [ Failure ]
+
+# [Chromium-Android] Color profiles are not supported on Android
+webkit.org/b/98778 [ Android ] fast/images/png-with-color-profile.html [ Failure ]
+webkit.org/b/98778 [ Android ] fast/images/jpeg-with-color-profile.html [ Failure ]
+
+# [Chromium-Android] Touch events fail on Android
+webkit.org/b/98779 [ Android ] fast/events/touch/ [ Failure ]
+
+# [Chromium-Android] Viewport sizes may be off for Android
+webkit.org/b/98780 [ Android ] fast/dom/elementFromPoint-relative-to-viewport.html [ Failure ]
+webkit.org/b/98780 [ Android ] fast/dom/client-width-height.html [ Failure ]
+webkit.org/b/98780 [ Android ] fast/dom/client-width-height-quirks.html [ Failure ]
+
+# [Chromium-Android] Certain ways of floating elements (sticky, left/right) are off-by-one on Android
+webkit.org/b/98781 [ Android ] fast/css/sticky/sticky-writing-mode-vertical-rl.html [ Failure ]
+webkit.org/b/98781 [ Android ] fast/box-sizing/box-sizing.html [ Failure ]
+webkit.org/b/98781 [ Android ] fast/block/float/shrink-to-avoid-float-complexity.html [ Failure ]
+
+# [Chromium-Android] getComputedStyle for scrolling returns "visible" instead of "scroll" in some cases
+webkit.org/b/98782 [ Android ] fast/css/getComputedStyle/computed-style-select-overflow.html [ Failure ]
+
+# [Chromium-Android] Date and time input fields don't have equal functionaliy on Android
+webkit.org/b/98783 [ Android ] fast/forms/week/week-stepup-stepdown-from-renderer.html [ Failure ]
+webkit.org/b/98783 [ Android ] fast/forms/week/week-input-visible-string.html [ Failure ]
+webkit.org/b/98783 [ Android ] fast/forms/time/time-input-visible-string.html [ Failure ]
+webkit.org/b/98783 [ Android ] fast/forms/month/month-stepup-stepdown-from-renderer.html [ Failure ]
+webkit.org/b/98783 [ Android ] fast/forms/month/month-input-visible-string.html [ Failure ]
+webkit.org/b/98783 [ Android ] fast/forms/datetimelocal/datetimelocal-stepup-stepdown-from-renderer.html [ Failure ]
+webkit.org/b/98783 [ Android ] fast/forms/datetimelocal/datetimelocal-input-visible-string.html [ Failure ]
+webkit.org/b/98783 [ Android ] fast/forms/datetime/datetime-stepup-stepdown-from-renderer.html [ Failure ]
+webkit.org/b/98783 [ Android ] fast/forms/datetime/datetime-input-visible-string.html [ Failure ]
+
+# -----------------------------------------------------------------
+# END ANDROID PORT TESTS
+# -----------------------------------------------------------------
+
+
 # We could fix this test for us and upstream it if the test shell user agent
 # would let us differentiate test_shell and WebKit DumpTreeNode.
 crbug.com/7482 [ Mac ] http/tests/misc/timer-vs-loading.html [ Failure Pass Timeout ]
@@ -2039,7 +2225,6 @@ crbug.com/65877 fast/writing-mode/japanese-ruby-vertical-lr.html [ Failure Pass 
 crbug.com/65877 fast/writing-mode/japanese-ruby-vertical-rl.html [ Failure Pass ]
 crbug.com/65877 [ Android Linux Win ] fast/writing-mode/japanese-ruby-horizontal-bt.html [ Failure Pass ]
 crbug.com/65877 [ Linux ] fast/writing-mode/broken-ideographic-font.html [ Failure ]
-crbug.com/65877 [ Android ] fast/writing-mode/vertical-font-fallback.html [ Failure ]
 #BUGCR65877 LINUX ANDROID WIN : fast/writing-mode/broken-ideograph-small-caps.html = IMAGE
 crbug.com/65877 [ Android ] fast/writing-mode/Kusa-Makura-background-canvas.html [ Failure ]
 crbug.com/65877 [ Win ] fast/text/international/text-combine-image-test.html [ Failure ]
@@ -2785,7 +2970,7 @@ webkit.org/b/81145 [ Lion ] platform/chromium/virtual/softwarecompositing/iframe
 webkit.org/b/81145 [ Lion ] fast/frames/invalid.html [ Failure ImageOnlyFailure Pass Slow ]
 webkit.org/b/81145 [ Lion ] fast/repaint/background-scaling.html [ ImageOnlyFailure ]
 webkit.org/b/81145 [ Lion ] fast/repaint/scale-page-shrink.html [ ImageOnlyFailure ]
-webkit.org/b/81145 [ Debug ] platform/chromium/compositing/tiny-layer-rotated.html [ ImageOnlyFailure Pass ]
+webkit.org/b/81145 [ Android Debug ] platform/chromium/compositing/tiny-layer-rotated.html [ ImageOnlyFailure Pass Failure ]
 webkit.org/b/81145 [ Lion ] editing/inserting/insert-3907422-fix.html [ Failure ]
 webkit.org/b/81145 [ Lion ] editing/pasteboard/paste-text-002.html [ Failure ]
 webkit.org/b/81145 [ Lion ] editing/pasteboard/paste-text-003.html [ Failure ]
@@ -3216,8 +3401,6 @@ webkit.org/b/89813 [ Android Linux Debug ] fast/js/large-expressions.html [ Pass
 
 webkit.org/b/89820 fast/text/hyphen-min-preferred-width.html [ ImageOnlyFailure ]
 
-webkit.org/b/91433 [ Android ] fast/forms/placeholder-position.html [ ImageOnlyFailure Pass ]
-
 # Kerning seems disabled for some reason.
 webkit.org/b/89936 [ XP ] fast/text/atsui-kerning-and-ligatures.html [ ImageOnlyFailure ]
 webkit.org/b/89936 [ XP ] fast/css/text-rendering.html [ Failure ]
@@ -3507,7 +3690,6 @@ crbug.com/145590 [ Android ] media/encrypted-media/encrypted-media-events.html [
 crbug.com/145590 [ Android ] media/encrypted-media/encrypted-media-not-loaded.html [ Failure ]
 crbug.com/145590 [ Android ] media/encrypted-media/encrypted-media-syntax.html [ Failure ]
 crbug.com/145590 [ Android ] media/track/track-default-attribute.html [ Pass Timeout ]
-crbug.com/145590 [ Android ] media/video-aspect-ratio.html [ Failure ] # 8 videos
 crbug.com/145590 [ Android ] media/video-buffered.html [ Failure ]
 crbug.com/145590 [ Android ] media/video-canvas-source.html [ Failure ]
 crbug.com/145590 [ Android ] media/video-error-does-not-exist.html [ Failure ]

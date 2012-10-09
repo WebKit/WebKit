@@ -85,3 +85,18 @@ fast/forms/week-multiple-fields [ WontFix ]
 
 # Page popup UI is for desktop platforms
 platform/chromium/fast/forms/page-popup [ WontFix ]
+
+# A Linux-specific test about the selection color
+platform/chromium-linux/editing/selection/linux_selection_color.html [ WontFix ]
+
+# Scrollbars do not take space on Android.
+fast/overflow/scrollbar-restored.html [ WontFix ]
+fast/overflow/replaced-child-100percent-height-inside-fixed-container-with-overflow-auto.html [ WontFix ]
+fast/overflow/overflow-y-scroll.html [ WontFix ]
+fast/overflow/hidden-scrollbar-resize.html [ WontFix ]
+fast/overflow/child-100percent-height-inside-fixed-container-with-overflow-auto.html [ WontFix ]
+
+# Accessing local resources in the traditional way does not work on Android.
+fast/loader/local-image-from-local.html [ WontFix ]
+fast/loader/local-JavaScript-from-local.html [ WontFix ]
+fast/loader/local-CSS-from-local.html [ WontFix ]
