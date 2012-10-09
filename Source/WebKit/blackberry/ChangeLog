@@ -1,3 +1,18 @@
+2012-10-09  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] Need API to control the DNS Prefetching
+        https://bugs.webkit.org/show_bug.cgi?id=98713
+
+        Reviewed by George Staikos.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        (BlackBerry::WebKit::WebPage::enableDNSPrefetch):
+        (WebKit):
+        (BlackBerry::WebKit::WebPage::disableDNSPrefetch):
+        (BlackBerry::WebKit::WebPage::isDNSPrefetchEnabled):
+        * Api/WebPage.h:
+
 2012-10-07  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Rename first/second to key/value in HashMap iterators

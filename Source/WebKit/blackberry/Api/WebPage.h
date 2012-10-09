@@ -329,6 +329,9 @@ public:
     bool isEnableLocalAccessToAllCookies() const;
     void setEnableLocalAccessToAllCookies(bool);
 
+    void enableDNSPrefetch();
+    void disableDNSPrefetch();
+    bool isDNSPrefetchEnabled() const;
     void enableWebInspector();
     void disableWebInspector();
     bool isWebInspectorEnabled();

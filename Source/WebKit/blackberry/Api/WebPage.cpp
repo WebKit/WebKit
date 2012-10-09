@@ -631,7 +631,6 @@ void WebPagePrivate::init(const WebString& pageGroupName)
     Platform::userInterfaceThreadMessageClient()->dispatchSyncMessage(
             createMethodCallMessage(&WebPagePrivate::createCompositor, this));
 #endif
-    m_page->settings()->setDNSPrefetchingEnabled(true);
 }
 
 class DeferredTaskLoadManualScript: public DeferredTask<&WebPagePrivate::m_wouldLoadManualScript> {
@@ -5377,6 +5376,21 @@ void WebPage::onCertificateStoreLocationSet(const WebString& caPath)
 #if ENABLE(VIDEO)
     MediaPlayerPrivate::setCertificatePath(caPath);
 #endif
+}
+
+void WebPage::enableDNSPrefetch()
+{
+    d->m_page->settings()->setDNSPrefetchingEnabled(true);
+}
+
+void WebPage::disableDNSPrefetch()
+{
+    d->m_page->settings()->setDNSPrefetchingEnabled(false);
+}
+
+bool WebPage::isDNSPrefetchEnabled() const
+{
+    return d->m_page->settings()->dnsPrefetchingEnabled();
 }
 
 void WebPage::enableWebInspector()
