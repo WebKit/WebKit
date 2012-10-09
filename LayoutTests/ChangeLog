@@ -1,3 +1,14 @@
+2012-10-09  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed. Add chromium-mac specific results for these tests. They
+        differ from the expected results only in text rendering.
+
+        * platform/chromium-mac-snowleopard/fast/text/hyphenate-character-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/hyphens-expected.png:
+        * platform/chromium-mac/fast/text/hyphenate-character-expected.png: Added.
+        * platform/chromium-mac/fast/text/hyphenate-limit-before-after-expected.png: Added.
+        * platform/chromium-mac/fast/text/hyphens-expected.png: Added.
+
 2012-10-09  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Mark svg/text/selection-tripleclick.svg as flaky on WK2.
