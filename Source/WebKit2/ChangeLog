@@ -1,3 +1,32 @@
+2012-10-09  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL][WK2] Inform the PageProxy about visibility changes when the view is shown/hidden.
+        https://bugs.webkit.org/show_bug.cgi?id=98757
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        SVN r130720 exposed a bug in our code: the PageProxy is not
+        notified when one calls evas_object_show() or evas_object_hide()
+        on the view, so the visibility it has when the WebPageProxy is
+        constructed remained set forever.
+
+        This made the ewk_context_vibration_client_callbacks_set unit test
+        start running forever, because WebPageProxy's constructor now sets
+        the page's visibility to hidden by the default for us, since it is
+        called from within ewk_view_smart_add() and before
+        evas_object_show().
+
+        We now listen to the EVAS_CALLBACK_SHOW and EVAS_CALLBACK_HIDE
+        callbacks and update the WebPageProxy accordingly. Note that we
+        could not do this from the smart_show and smart_hide functions we
+        already had, since they are called before the object's actual
+        visibility is updated.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_on_show):
+        (_ewk_view_on_hide):
+        (_ewk_view_smart_add):
+
 2012-10-09  Simon Pena  <spena@igalia.com>
 
         [GTK] Add support for running JavaScript from GResources

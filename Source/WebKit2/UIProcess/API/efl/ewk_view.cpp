@@ -362,6 +362,24 @@ static void _ewk_view_on_key_up(void* data, Evas*, Evas_Object*, void* eventInfo
     smartData->api->key_up(smartData, upEvent);
 }
 
+static void _ewk_view_on_show(void* data, Evas*, Evas_Object*, void* /*eventInfo*/)
+{
+    Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+    priv->pageProxy->viewStateDidChange(WebPageProxy::ViewIsVisible);
+}
+
+static void _ewk_view_on_hide(void* data, Evas*, Evas_Object*, void* /*eventInfo*/)
+{
+    Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    // This call may look wrong, but we really need to pass ViewIsVisible here.
+    // viewStateDidChange() itself is responsible for actually setting the visibility to Visible or Hidden
+    // depending on what WebPageProxy::isViewVisible() returns, this simply triggers the process.
+    priv->pageProxy->viewStateDidChange(WebPageProxy::ViewIsVisible);
+}
+
 #if ENABLE(TOUCH_EVENTS)
 static inline void _ewk_view_feed_touch_event_using_touch_point_list_of_evas(Evas_Object* ewkView, Ewk_Touch_Event_Type type)
 {
@@ -481,6 +499,8 @@ static void _ewk_view_smart_add(Evas_Object* ewkView)
     CONNECT(EVAS_CALLBACK_MOUSE_WHEEL, _ewk_view_on_mouse_wheel);
     CONNECT(EVAS_CALLBACK_KEY_DOWN, _ewk_view_on_key_down);
     CONNECT(EVAS_CALLBACK_KEY_UP, _ewk_view_on_key_up);
+    CONNECT(EVAS_CALLBACK_SHOW, _ewk_view_on_show);
+    CONNECT(EVAS_CALLBACK_HIDE, _ewk_view_on_hide);
 #undef CONNECT
 }
 
