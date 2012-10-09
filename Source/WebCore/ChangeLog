@@ -1,3 +1,19 @@
+2012-10-09  Tony Chang  <tony@chromium.org>
+
+        Use computeLogical* methods instead of updateLogical* methods in RenderImage
+        https://bugs.webkit.org/show_bug.cgi?id=98802
+
+        Reviewed by Eric Seidel.
+
+        We were storing the old values of width/height, calling updateLogical{Width,Height}, then restoring
+        the old values.  Instead, use the computeLogical{Width,Height} methods so we don't have to overwrite
+        the current values.
+
+        No new tests, this is just a refactoring.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageDimensionsChanged):
+
 2012-10-09  Enrica Casucci  <enrica@apple.com>
 
         [chromium] fast/text/international/text-spliced-font.html and fast/writing-mode/Kusa-Makura-
