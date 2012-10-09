@@ -267,7 +267,8 @@ CalendarPicker.validateConfig = function(config) {
 /**
  * @param {!Object} args
  */
-function initialize(args) {
+function initialize(args) { 
+    global.params = args;
     var errorString = CalendarPicker.validateConfig(args);
     if (args.suggestionValues)
         errorString = errorString || SuggestionPicker.validateConfig(args)
@@ -276,7 +277,6 @@ function initialize(args) {
         main.textContent = "Internal error: " + errorString;
         resizeWindow(main.offsetWidth, main.offsetHeight);
     } else {
-        global.params = args;
         if (global.params.suggestionValues && global.params.suggestionValues.length)
             openSuggestionPicker();
         else

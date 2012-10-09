@@ -45,16 +45,121 @@ function createElement(tagName, opt_class, opt_text) {
     return element;
 }
 
+function Rect(xOrRect, y, width, height) {
+    if (typeof xOrRect === "object") {
+        y = xOrRect.y;
+        width = xOrRect.width;
+        height = xOrRect.height;
+        xOrRect = xOrRect.x;
+    }
+    this.x = xOrRect;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+}
+
+Rect.prototype = {
+    get maxX() { return this.x + this.width; },
+    get maxY() { return this.y + this.height; },
+    toString: function() { return "Rect(" + this.x + "," + this.y + "," + this.width + "," + this.height + ")"; }
+};
+
+/**
+ * @param {!number} Rect
+ * @param {!number} Rect
+ * @return {?Rect}
+ */
+Rect.intersection = function(rect1, rect2) {
+    var x = Math.max(rect1.x, rect2.x);
+    var maxX = Math.min(rect1.maxX, rect2.maxX);
+    var y = Math.max(rect1.y, rect2.y);
+    var maxY = Math.min(rect1.maxY, rect2.maxY);
+    var width = maxX - x;
+    var height = maxY - y;
+    if (width < 0 || height < 0)
+        return null;
+    return new Rect(x, y, width, height);
+};
+
 /**
  * @param {!number} width
  * @param {!number} height
  */
 function resizeWindow(width, height) {
-    if (window.frameElement) {
-        window.frameElement.style.width = width + "px";
-        window.frameElement.style.height = height + "px";
+    setWindowRect(adjustWindowRect(width, height, width, height));
+}
+
+/**
+ * @param {!number} width
+ * @param {!number} height
+ * @param {?number} minWidth
+ * @param {?number} minHeight
+ * @return {!Rect}
+ */
+function adjustWindowRect(width, height, minWidth, minHeight) {
+    if (typeof minWidth !== "number")
+        minWidth = 0;
+    if (typeof minHeight !== "number")
+        minHeight = 0;
+
+    var windowRect = new Rect(0, 0, width, height);
+
+    if (!global.params.anchorRectInScreen)
+        return windowRect;
+
+    var anchorRect = new Rect(global.params.anchorRectInScreen);
+    var rootViewRect = new Rect(global.params.rootViewRectInScreen);
+    var availRect = new Rect(window.screen.availLeft, window.screen.availTop, window.screen.availWidth, window.screen.availHeight);
+    if (global.params.confineToRootView)
+        availRect = Rect.intersection(availRect, rootViewRect) || new Rect(0, 0, 0, 0);
+
+    _adjustWindowRectVertically(windowRect, availRect, anchorRect, minHeight);
+    _adjustWindowRectHorizontally(windowRect, availRect, anchorRect, minWidth);
+
+    return windowRect;
+}
+
+function _adjustWindowRectVertically(windowRect, availRect, anchorRect, minHeight) {
+    var availableSpaceAbove = anchorRect.y - availRect.y;
+    availableSpaceAbove = Math.max(0, Math.min(availRect.height, availableSpaceAbove));
+
+    var availableSpaceBelow = availRect.maxY - anchorRect.maxY;
+    availableSpaceBelow = Math.max(0, Math.min(availRect.height, availableSpaceBelow));
+
+    if (windowRect.height > availableSpaceBelow && availableSpaceBelow < availableSpaceAbove) {
+        windowRect.height = Math.min(windowRect.height, availableSpaceAbove);
+        windowRect.height = Math.max(windowRect.height, minHeight);
+        windowRect.y = anchorRect.y - windowRect.height;
     } else {
-        window.resizeTo(width, height);
+        windowRect.height = Math.min(windowRect.height, availableSpaceBelow);
+        windowRect.height = Math.max(windowRect.height, minHeight);
+        windowRect.y = anchorRect.maxY;
+    }
+    windowRect.y = Math.min(windowRect.y, availRect.maxY - windowRect.height);
+    windowRect.y = Math.max(windowRect.y, availRect.y);
+}
+
+function _adjustWindowRectHorizontally(windowRect, availRect, anchorRect, minWidth) {
+    windowRect.width = Math.min(windowRect.width, availRect.width);
+    windowRect.width = Math.max(windowRect.width, minWidth);
+    windowRect.x = anchorRect.x;
+    var availableSpaceToRight = availRect.maxX - anchorRect.x;
+    if (windowRect.width > availableSpaceToRight)
+        windowRect.x -= (windowRect.width - availableSpaceToRight);
+    windowRect.x = Math.min(windowRect.x, availRect.maxX - windowRect.width);
+    windowRect.x = Math.max(windowRect.x, availRect.x);
+}
+
+/**
+ * @param {!Rect} rect
+ */
+function setWindowRect(rect) {
+    if (window.frameElement) {
+        window.frameElement.style.width = rect.width + "px";
+        window.frameElement.style.height = rect.height + "px";
+    } else {
+        window.moveTo(rect.x - window.screen.availLeft, rect.y - window.screen.availTop);
+        window.resizeTo(rect.width, rect.height);
     }
 }
 

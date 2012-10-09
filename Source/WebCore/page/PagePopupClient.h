@@ -34,7 +34,7 @@
 #if ENABLE(PAGE_POPUP)
 
 #include "DocumentWriter.h"
-#include "IntSize.h"
+#include "IntRect.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -69,9 +69,11 @@ public:
     static void addString(const String&, DocumentWriter&);
     static void addJavaScriptString(const String&, DocumentWriter&);
     static void addProperty(const char* name, const String& value, DocumentWriter&);
+    static void addProperty(const char* name, int value, DocumentWriter&);
     static void addProperty(const char* name, unsigned value, DocumentWriter&);
     static void addProperty(const char* name, bool value, DocumentWriter&);
     static void addProperty(const char* name, const Vector<String>& values, DocumentWriter&);
+    static void addProperty(const char* name, const IntRect&, DocumentWriter&);
 };
 
 inline void PagePopupClient::addString(const String& str, DocumentWriter& writer)

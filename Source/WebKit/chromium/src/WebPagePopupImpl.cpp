@@ -151,15 +151,14 @@ WebPagePopupImpl::~WebPagePopupImpl()
     ASSERT(!m_page);
 }
 
-bool WebPagePopupImpl::init(WebViewImpl* webView, PagePopupClient* popupClient, const IntRect& originBoundsInRootView)
+bool WebPagePopupImpl::init(WebViewImpl* webView, PagePopupClient* popupClient, const IntRect&)
 {
     ASSERT(webView);
     ASSERT(popupClient);
     m_webView = webView;
     m_popupClient = popupClient;
-    m_originBoundsInRootView = originBoundsInRootView;
 
-    reposition(m_popupClient->contentSize());
+    resize(m_popupClient->contentSize());
 
     if (!initPage())
         return false;
@@ -233,22 +232,10 @@ void WebPagePopupImpl::paint(WebCanvas* canvas, const WebRect& rect, PaintOption
     PageWidgetDelegate::paint(m_page.get(), 0, canvas, rect, PageWidgetDelegate::Opaque);
 }
 
-void WebPagePopupImpl::reposition(const WebSize& popupSize)
-{
-    WebSize rootViewSize = m_webView->size();
-    IntRect popupBoundsInRootView(IntPoint(max(0, m_originBoundsInRootView.x()), max(0, m_originBoundsInRootView.maxY())), popupSize);
-    if (popupBoundsInRootView.maxY() > rootViewSize.height)
-        popupBoundsInRootView.setY(max(0, m_originBoundsInRootView.y() - popupSize.height));
-    if (popupBoundsInRootView.maxX() > rootViewSize.width)
-        popupBoundsInRootView.setX(max(0, rootViewSize.width - popupSize.width));
-    IntRect boundsInScreen = m_webView->page()->chrome()->rootViewToScreen(popupBoundsInRootView);
-    m_widgetClient->setWindowRect(boundsInScreen);
-    m_windowRectInScreen = boundsInScreen;
-}
-
 void WebPagePopupImpl::resize(const WebSize& newSize)
 {
-    reposition(newSize);
+    m_windowRectInScreen = WebRect(m_windowRectInScreen.x, m_windowRectInScreen.y, newSize.width, newSize.height);
+    m_widgetClient->setWindowRect(m_windowRectInScreen);
 
     if (m_page)
         m_page->mainFrame()->view()->resize(newSize);

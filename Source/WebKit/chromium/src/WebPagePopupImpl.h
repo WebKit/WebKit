@@ -87,11 +87,9 @@ private:
 
     explicit WebPagePopupImpl(WebWidgetClient*);
     bool initPage();
-    void reposition(const WebSize&);
 
     WebWidgetClient* m_widgetClient;
     WebRect m_windowRectInScreen;
-    WebCore::IntRect m_originBoundsInRootView;
     WebViewImpl* m_webView;
     OwnPtr<WebCore::Page> m_page;
     OwnPtr<PagePopupChromeClient> m_chromeClient;

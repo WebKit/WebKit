@@ -61,6 +61,14 @@ void PagePopupClient::addProperty(const char* name, const String& value, Documen
     addLiteral(",\n", writer);
 }
 
+void PagePopupClient::addProperty(const char* name, int value, DocumentWriter& writer)
+{
+    writer.addData(name, strlen(name));
+    addLiteral(": ", writer);
+    addString(String::number(value), writer);
+    addLiteral(",\n", writer);
+}
+
 void PagePopupClient::addProperty(const char* name, unsigned value, DocumentWriter& writer)
 {
     writer.addData(name, strlen(name));
@@ -90,6 +98,17 @@ void PagePopupClient::addProperty(const char* name, const Vector<String>& values
         addJavaScriptString(values[i], writer);
     }
     addLiteral("],\n", writer);
+}
+
+void PagePopupClient::addProperty(const char* name, const IntRect& rect, DocumentWriter& writer)
+{
+    writer.addData(name, strlen(name));
+    addLiteral(": {", writer);
+    addProperty("x", rect.x(), writer);
+    addProperty("y", rect.y(), writer);
+    addProperty("width", rect.width(), writer);
+    addProperty("height", rect.height(), writer);
+    addLiteral("},\n", writer);
 }
 
 } // namespace WebCore

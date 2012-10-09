@@ -157,7 +157,9 @@ SuggestionPicker.prototype._fixWindowSize = function() {
         desiredWindowHeight = maxHeight;
     }
 
-    resizeWindow(desiredWindowWidth, desiredWindowHeight);
+    var windowRect = adjustWindowRect(desiredWindowWidth, desiredWindowHeight, desiredWindowWidth, 0);
+    this._containerElement.style.height = (windowRect.height - ListBorder) + "px";
+    setWindowRect(windowRect);
 };
 
 SuggestionPicker.prototype._layout = function() {

@@ -1,3 +1,44 @@
+2012-10-09  Keishi Hattori  <keishi@webkit.org>
+
+        Page popup should be smarter about its layout
+        https://bugs.webkit.org/show_bug.cgi?id=98499
+
+        Reviewed by Kent Tamura.
+
+        This change fixes these two issues:
+        1. Page popup should reposition itself so it won't get clipped by screen(Win/Linux) or rootview(Mac) bounds.
+        2. Page popup should resize itself when it doesn't fit.
+
+        Test: platform/chromium/fast/forms/page-popup/page-popup-adjust-rect.html
+
+        * Resources/pagepopups/calendarPicker.js:
+        (initialize): We need to set global.params at the beginning because we need it for resizeWindow().
+        * Resources/pagepopups/colorSuggestionPicker.js: Added global.params.
+        (handleMessage):
+        (initialize):
+        (handleArgumentsTimeout):
+        * Resources/pagepopups/pickerCommon.js:
+        (Rect): Represents an axis aligned rectangle.
+        (Rect.prototype.get maxX): Gets position of right edge.
+        (Rect.prototype.get maxY): Gets position of bottom edge.
+        (Rect.prototype.toString):
+        (Rect.intersection): Returns the intersection of two rectangles.
+        (resizeWindow): Resize window to a certain size. Don't allow shrinking.
+        (adjustWindowRect): Calculates the best position and size for the popup.
+        (_adjustWindowRectVertically):
+        (_adjustWindowRectHorizontally):
+        (setWindowRect): Sets the position and size of the popup to the given rect.
+        * Resources/pagepopups/suggestionPicker.css:
+        (.suggestion-list): Don't show horizontal scroll bar.
+        * Resources/pagepopups/suggestionPicker.js:
+        (SuggestionPicker.prototype._fixWindowSize): 
+        * page/PagePopupClient.cpp:
+        (WebCore::PagePopupClient::addProperty): For adding an int to JSON.
+        (WebCore::PagePopupClient::addProperty): For adding an IntRect to JSON.
+        (WebCore):
+        * page/PagePopupClient.h:
+        (PagePopupClient):
+
 2012-10-09  Hajime Morrita  <morrita@google.com>
 
         [Refactoring] Scoped Style related code should have its own class.

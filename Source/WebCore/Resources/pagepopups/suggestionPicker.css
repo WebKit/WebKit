@@ -5,6 +5,7 @@
     font: -webkit-small-control;
     border: 1px solid #7f9db9;
     background-color: white;
+    overflow-x: hidden;
     overflow-y: auto;
 }
 

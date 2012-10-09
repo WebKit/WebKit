@@ -1,3 +1,14 @@
+2012-10-09  Keishi Hattori  <keishi@webkit.org>
+
+        Page popup should be smarter about its layout
+        https://bugs.webkit.org/show_bug.cgi?id=98499
+
+        Reviewed by Kent Tamura.
+
+        * platform/chromium/fast/forms/page-popup/page-popup-adjust-rect-expected.txt: Added.
+        * platform/chromium/fast/forms/page-popup/page-popup-adjust-rect.html: Added.
+        * platform/chromium-android/TestExpectations: Added platform/chromium/fast/forms/page-popup.
+
 2012-10-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unskip now passing tests.
