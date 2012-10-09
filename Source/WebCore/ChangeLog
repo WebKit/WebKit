@@ -1,3 +1,16 @@
+2012-10-08  Andreas Kling  <kling@webkit.org>
+
+        REGRESSION(r130643): editing/pasteboard/data-transfer-item is failing on chromium.
+        <http://webkit.org/b/98686>
+
+        Reviewed by Tony Chang.
+
+        Change ChromiumDataObject::createFromPasteboard() to use a ListHashSet instead of a HashSet so that
+        item order is preserved.
+
+        * platform/chromium/ChromiumDataObject.cpp:
+        (WebCore::ChromiumDataObject::createFromPasteboard):
+
 2012-10-08  Eric Seidel  <eric@webkit.org>
 
         Inline logicalHeightForRowSizing to shave another 2-3% off robohornet's resizecol.html
