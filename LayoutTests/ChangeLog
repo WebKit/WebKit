@@ -1,3 +1,10 @@
+2012-10-09  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed Chromium gardening.
+
+        * platform/chromium/TestExpectations:
+        Fix new-run-webkit-tests --lint-test-files after r130778.
+
 2012-10-09  Tullio Lucena  <tullio.lucena@openbossa.org>
 
         [Qt] modify-up-on-rtl-wrapping-text.html fails on DRT
