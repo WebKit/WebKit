@@ -1223,6 +1223,8 @@ crbug.com/18116 svg/custom/global-constructors.html [ Failure ]
 # reasonable.
 crbug.com/19897 [ Android Linux Win ] svg/custom/getscreenctm-in-mixed-content2.xhtml [ Failure ]
 
+webkit.org/b/98718 svg/animations/animate-css-xml-attributeType.html [ Failure Pass ]
+
 # Failing since creation in http://trac.webkit.org/changeset/75308
 # Failing worse maybe since https://bugs.webkit.org/show_bug.cgi?id=53471
 crbug.com/122193 svg/text/caret-in-svg-text.xhtml [ Failure ]

@@ -58,7 +58,7 @@ public:
 
     SMILTimeContainer* timeContainer() const { return m_timeContainer.get(); }
 
-    SVGElement* targetElement();
+    SVGElement* targetElement(ResolveTarget = ResolveNewTarget);
     void resetTargetElement(ResolveTarget = ResolveNewTarget);
     const QualifiedName& attributeName() const { return m_attributeName; }
 
@@ -121,6 +121,7 @@ protected:
 
     // Sub-classes may need to take action when the target is changed.
     virtual void targetElementWillChange(SVGElement* currentTarget, SVGElement* newTarget);
+    virtual void setAttributeName(const QualifiedName&);
 
 private:
     virtual void startedActiveInterval() = 0;
@@ -141,8 +142,6 @@ private:
     void checkRestart(SMILTime elapsed);
     void beginListChanged(SMILTime eventTime);
     void endListChanged(SMILTime eventTime);
-
-    void setAttributeName(const QualifiedName&);
 
     // This represents conditions on elements begin or end list that need to be resolved on runtime
     // for example <animate begin="otherElement.begin + 8s; button.click" ... />

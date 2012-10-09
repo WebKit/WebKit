@@ -1185,6 +1185,8 @@ webkit.org/b/89116 svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specu
 webkit.org/b/89116 svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop.html [ ImageOnlyFailure Pass ]
 webkit.org/b/89116 svg/filters/feLighting-crash.svg [ ImageOnlyFailure Pass ]
 
+webkit.org/b/98718 svg/animations/animate-css-xml-attributeType.html [ Failure Pass ]
+
 # Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=79682
 webkit.org/b/79682 svg/repaint/text-mask-update.svg [ Failure ImageOnlyFailure Missing Pass ]
 

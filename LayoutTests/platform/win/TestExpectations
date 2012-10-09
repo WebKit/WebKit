@@ -142,6 +142,8 @@ fast/text/atsui-pointtooffset-calls-cg.html
 fast/text/cg-vs-atsui.html
 fast/text/atsui-spacing-features.html
 
+webkit.org/b/98718 svg/animations/animate-css-xml-attributeType.html [ Failure Pass ]
+
 # <rdar://problem/5718773> Support a minimum antialiased font size
 svg/hixie/text/003.html
 svg/hixie/text/003a.xml

@@ -1,3 +1,52 @@
+2012-10-09  Philip Rogers  <pdr@google.com>
+
+        Prevent animation when CSS attributeType is invalid.
+        https://bugs.webkit.org/show_bug.cgi?id=94569
+
+        Reviewed by Dirk Schulze.
+
+        This patch changes hasValidAttributeType() to return false when
+        we have attributeType=CSS with a non-CSS attribute name.
+
+        Previously we would animate non-CSS attributes when attributeType was
+        CSS which resulted in crashes. To track this case, this patch catches
+        changes to targetElement, attributeName, and attributeType and checks
+        if an invalid combination is present. If invalid, hasInvalidCSSAttributeType()
+        will return true causing hasValidAttributeType() to return false and prevent
+        the animation from running.
+
+        Tests: svg/animations/animate-css-xml-attributeType.html
+               svg/animations/invalid-css-attribute-crash-expected.svg
+               svg/animations/invalid-css-attribute-crash.svg
+
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::hasValidAttributeType):
+        (WebCore::SVGAnimateElement::targetElementWillChange):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::SVGAnimationElement):
+        (WebCore::SVGAnimationElement::isSupportedAttribute):
+
+            This now supports the attributeType attribute which is stored in m_attributeType.
+
+        (WebCore::SVGAnimationElement::parseAttribute):
+        (WebCore::SVGAnimationElement::setAttributeType):
+
+            Changes to attributeType, attributeName, and targetElement need to be tracked
+            to determine when an invalid combination happens.
+
+        (WebCore::SVGAnimationElement::targetElementWillChange):
+        (WebCore):
+        (WebCore::SVGAnimationElement::setAttributeName):
+        (WebCore::SVGAnimationElement::checkInvalidCSSAttributeType):
+        * svg/SVGAnimationElement.h:
+        (WebCore::SVGAnimationElement::attributeType):
+        (SVGAnimationElement):
+        (WebCore::SVGAnimationElement::hasInvalidCSSAttributeType):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::targetElement):
+        * svg/animation/SVGSMILElement.h:
+        (SVGSMILElement):
+
 2012-10-09  Pravin D  <pravind.2k4@gmail.com>
 
         max-width property is does not overriding the width properties for css tables(display:table)

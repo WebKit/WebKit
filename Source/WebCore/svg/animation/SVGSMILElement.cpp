@@ -567,12 +567,12 @@ void SVGSMILElement::setAttributeName(const QualifiedName& attributeName)
         m_attributeName = attributeName;
 }
 
-SVGElement* SVGSMILElement::targetElement()
+SVGElement* SVGSMILElement::targetElement(ResolveTarget resolveTarget)
 {
     if (m_targetElement)
         return m_targetElement;
 
-    if (!inDocument())
+    if (!inDocument() || resolveTarget == DoNotResolveNewTarget)
         return 0;
 
     String href = getAttribute(XLinkNames::hrefAttr);

@@ -820,6 +820,8 @@ webkit.org/b/98644 svg/W3C-SVG-1.1/pservers-grad-13-b.svg [ Skip ]
 webkit.org/b/98651 svg/text/non-bmp-positioning-lists.svg [ Skip ]
 webkit.org/b/98653 svg/text/lengthAdjust-text-metrics.html [ Failure ]
 
+webkit.org/b/98718 svg/animations/animate-css-xml-attributeType.html [ Failure Pass ]
+
 # EFL's TestRunner does not implement setMediaType
 Bug(EFL) fast/media/print-restores-previous-mediatype.html [ Failure ]
 

@@ -535,6 +535,8 @@ webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-82-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-85-t.svg [ Failure Pass ]
 webkit.org/b/89650 svg/W3C-SVG-1.1/struct-dom-06-b.svg [ Failure Pass ]
 
+webkit.org/b/98718 svg/animations/animate-css-xml-attributeType.html [ Failure Pass ]
+
 webkit.org/b/80158 plugins/netscape-plugin-page-cache-works.html [ Failure Pass ]
 
 webkit.org/b/83704 media/event-attributes.html [ Failure Pass ]
