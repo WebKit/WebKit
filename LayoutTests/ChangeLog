@@ -1,3 +1,15 @@
+2012-10-09  Kiran Muppala  <cmuppala@apple.com>
+
+        Fix coding style of layout test fast/dom/timer-throttling-hidden-page.html
+        https://bugs.webkit.org/show_bug.cgi?id=98828
+
+        Reviewed by Ojan Vafai.
+
+        Replaced tab characters with spaces, fixed position of braces and renamed
+        variables to be more explanatory.
+
+        * fast/dom/timer-throttling-hidden-page.html:
+
 2012-10-09  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         [chromium] Add drop event for plugins.
