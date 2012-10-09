@@ -111,8 +111,7 @@ EncodedJSValue JSC_HOST_CALL JSBlobConstructor::constructJSBlob(ExecState* exec)
 
     ASSERT(endings == "transparent" || endings == "native");
 
-    // FIXME: this would be better if the WebKitBlobBuilder were a stack object to avoid the allocation.
-    RefPtr<WebKitBlobBuilder> blobBuilder = WebKitBlobBuilder::create();
+    BlobBuilder blobBuilder;
 
     JSArray* array = asArray(firstArg);
     unsigned length = array->length();
@@ -121,22 +120,22 @@ EncodedJSValue JSC_HOST_CALL JSBlobConstructor::constructJSBlob(ExecState* exec)
         JSValue item = array->getIndex(exec, i);
 #if ENABLE(BLOB)
         if (item.inherits(&JSArrayBuffer::s_info))
-            blobBuilder->append(context, toArrayBuffer(item));
+            blobBuilder.append(context, toArrayBuffer(item));
         else if (item.inherits(&JSArrayBufferView::s_info))
-            blobBuilder->append(toArrayBufferView(item));
+            blobBuilder.append(toArrayBufferView(item));
         else
 #endif
         if (item.inherits(&JSBlob::s_info))
-            blobBuilder->append(toBlob(item));
+            blobBuilder.append(toBlob(item));
         else {
             String string = item.toString(exec)->value(exec);
             if (exec->hadException())
                 return JSValue::encode(jsUndefined());
-            blobBuilder->append(string, endings, ASSERT_NO_EXCEPTION);
+            blobBuilder.append(string, endings);
         }
     }
 
-    RefPtr<Blob> blob = blobBuilder->getBlob(type, BlobConstructedByConstructor);
+    RefPtr<Blob> blob = blobBuilder.getBlob(type);
     return JSValue::encode(CREATE_DOM_WRAPPER(exec, jsConstructor->globalObject(), Blob, blob.get()));
 }
 

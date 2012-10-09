@@ -105,7 +105,7 @@ v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)
 
     ASSERT(endings == "transparent" || endings == "native");
 
-    RefPtr<WebKitBlobBuilder> blobBuilder = WebKitBlobBuilder::create();
+    BlobBuilder blobBuilder;
 
     EXCEPTION_BLOCK(v8::Local<v8::Array>, blobParts, v8::Local<v8::Array>::Cast(firstArg));
     uint32_t length = blobParts->Length();
@@ -117,24 +117,24 @@ v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)
         if (V8ArrayBuffer::HasInstance(item)) {
             ArrayBuffer* arrayBuffer = V8ArrayBuffer::toNative(v8::Handle<v8::Object>::Cast(item));
             ASSERT(arrayBuffer);
-            blobBuilder->append(context, arrayBuffer);
+            blobBuilder.append(context, arrayBuffer);
         } else if (V8ArrayBufferView::HasInstance(item)) {
             ArrayBufferView* arrayBufferView = V8ArrayBufferView::toNative(v8::Handle<v8::Object>::Cast(item));
             ASSERT(arrayBufferView);
-            blobBuilder->append(arrayBufferView);
+            blobBuilder.append(arrayBufferView);
         } else
 #endif
         if (V8Blob::HasInstance(item)) {
             Blob* blob = V8Blob::toNative(v8::Handle<v8::Object>::Cast(item));
             ASSERT(blob);
-            blobBuilder->append(blob);
+            blobBuilder.append(blob);
         } else {
             EXCEPTION_BLOCK(String, stringValue, toWebCoreString(item));
-            blobBuilder->append(stringValue, endings, ASSERT_NO_EXCEPTION);
+            blobBuilder.append(stringValue, endings);
         }
     }
 
-    RefPtr<Blob> blob = blobBuilder->getBlob(type, BlobConstructedByConstructor);
+    RefPtr<Blob> blob = blobBuilder.getBlob(type);
     return toV8(blob.get(), args.Holder(), args.GetIsolate());
 }
 

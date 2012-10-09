@@ -1,3 +1,35 @@
+2012-10-08  Adam Barth  <abarth@webkit.org>
+
+        Remove unused features of BlobBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=98331
+
+        Reviewed by Eric Seidel.
+
+        Now that we don't expose BlobBuilder as a web platform API, we can
+        strip down the class to handle only those cases that are needed by the
+        Blob constructor.
+
+        I've also renamed the class from WebKitBlobBuilder to BlobBuilder and
+        made it stack allocated rather than RefCounted. A future patch will
+        actually move the files around. (I didn't want to mix moving code
+        around with modifying the code.)
+
+        * bindings/js/JSBlobCustom.cpp:
+        (WebCore::JSBlobConstructor::constructJSBlob):
+        * bindings/v8/custom/V8BlobCustom.cpp:
+        (WebCore::V8Blob::constructorCallback):
+        * fileapi/WebKitBlobBuilder.cpp:
+        (WebCore):
+        (WebCore::BlobBuilder::BlobBuilder):
+        (WebCore::BlobBuilder::getBuffer):
+        (WebCore::BlobBuilder::append):
+        (WebCore::BlobBuilder::appendBytesData):
+        (WebCore::BlobBuilder::getBlob):
+        * fileapi/WebKitBlobBuilder.h:
+        (WebCore):
+        (BlobBuilder):
+        * page/FeatureObserver.h:
+
 2012-10-08  Martin Robinson  <mrobinson@igalia.com>
 
         Try to fix the debug build after r130699
