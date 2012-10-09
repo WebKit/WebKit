@@ -86,9 +86,7 @@ config.kPlatforms = {
             // FIXME: Should garden-o-matic show these? I can imagine showing the deps bots being useful at least so
             // that the gardener only need to look at garden-o-matic and never at the waterfall. Not really sure who
             // watches the GPU bots.
-            return builderName.indexOf('GPU') == -1 && builderName.indexOf('deps') == -1 &&
-                   builderName.indexOf('ASAN') == -1 && builderName.indexOf('Content Shell') == -1 &&
-                   builderName.indexOf('Android Builder (dbg)') == -1; // This bot is sick right now - http://crbug.com/149014
+            return builderName.indexOf('GPU') == -1 && builderName.indexOf('deps') == -1 && builderName.indexOf('ASAN') == -1 && builderName.indexOf('Content Shell') == -1;
         },
     },
     'gtk' : {
