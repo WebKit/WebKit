@@ -39,24 +39,24 @@ RTCStatsReport::RTCStatsReport()
 {
 }
 
-size_t RTCStatsReport::addElement(bool isLocal, double timestamp)
+void RTCStatsReport::addElement(bool isLocal, double timestamp)
 {
     if (isLocal) {
-        m_local.append(RTCStatsElement::create(timestamp));
-        return m_local.size() - 1;
+        ASSERT(!m_local);
+        m_local = RTCStatsElement::create(timestamp);
     }
-    m_remote.append(RTCStatsElement::create(timestamp));
-    return m_remote.size() - 1;
+    ASSERT(!m_remote);
+    m_remote = RTCStatsElement::create(timestamp);
 }
 
-void RTCStatsReport::addStatistic(bool isLocal, size_t element, String name, String value)
+void RTCStatsReport::addStatistic(bool isLocal, String name, String value)
 {
     if (isLocal) {
-        ASSERT(element >= 0 && element < m_local.size());
-        m_local[element]->addStatistic(name, value);
+        ASSERT(m_local);
+        m_local->addStatistic(name, value);
     } else {
-        ASSERT(element >= 0 && element < m_remote.size());
-        m_remote[element]->addStatistic(name, value);
+        ASSERT(m_remote);
+        m_remote->addStatistic(name, value);
     }
 }
 

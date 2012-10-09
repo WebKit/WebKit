@@ -219,11 +219,11 @@ void MockWebRTCPeerConnectionHandler::getStats(const WebRTCStatsRequest& request
     double currentDate = WTF::jsCurrentTime();
     for (int i = 0; i < m_streamCount; ++i) {
         size_t reportIndex = response.addReport();
-        size_t elementIndex = response.addElement(reportIndex, true, currentDate);
-        response.addStatistic(reportIndex, true, elementIndex, "type", "audio");
+        response.addElement(reportIndex, true, currentDate);
+        response.addStatistic(reportIndex, true, "type", "audio");
         reportIndex = response.addReport();
-        elementIndex = response.addElement(reportIndex, true, currentDate);
-        response.addStatistic(reportIndex, true, elementIndex, "type", "video");
+        response.addElement(reportIndex, true, currentDate);
+        response.addStatistic(reportIndex, true, "type", "video");
     }
     postTask(new RTCStatsRequestSucceededTask(this, request, response));
 }

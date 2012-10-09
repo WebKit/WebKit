@@ -37,17 +37,17 @@ class RTCStatsReport : public RefCounted<RTCStatsReport> {
 public:
     static PassRefPtr<RTCStatsReport> create();
 
-    const Vector<RefPtr<RTCStatsElement> >& local() const { return m_local; }
-    const Vector<RefPtr<RTCStatsElement> >& remote() const { return m_remote; }
+    const PassRefPtr<RTCStatsElement> local() const { return m_local.get(); }
+    const PassRefPtr<RTCStatsElement> remote() const { return m_remote.get(); }
 
-    size_t addElement(bool isLocal, double timestamp);
-    void addStatistic(bool isLocal, size_t element, String name, String value);
+    void addElement(bool isLocal, double timestamp);
+    void addStatistic(bool isLocal, String name, String value);
 
 private:
     RTCStatsReport();
 
-    Vector<RefPtr<RTCStatsElement> > m_local;
-    Vector<RefPtr<RTCStatsElement> > m_remote;
+    RefPtr<RTCStatsElement> m_local;
+    RefPtr<RTCStatsElement> m_remote;
 };
 
 } // namespace WebCore

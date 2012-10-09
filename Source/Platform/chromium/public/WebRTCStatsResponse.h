@@ -52,8 +52,8 @@ public:
     WEBKIT_EXPORT void reset();
 
     WEBKIT_EXPORT size_t addReport();
-    WEBKIT_EXPORT size_t addElement(size_t report, bool isLocal, double timestamp);
-    WEBKIT_EXPORT void addStatistic(size_t report, bool isLocal, size_t element, WebString name, WebString value);
+    WEBKIT_EXPORT void addElement(size_t report, bool isLocal, double timestamp);
+    WEBKIT_EXPORT void addStatistic(size_t report, bool isLocal, WebString name, WebString value);
 
 #if WEBKIT_IMPLEMENTATION
     WebRTCStatsResponse(const WTF::PassRefPtr<WebCore::RTCStatsResponseBase>&);

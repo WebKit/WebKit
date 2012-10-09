@@ -45,16 +45,16 @@ size_t RTCStatsResponse::addReport()
     return m_result.size() - 1;
 }
 
-size_t RTCStatsResponse::addElement(size_t report, bool isLocal, double timestamp)
+void RTCStatsResponse::addElement(size_t report, bool isLocal, double timestamp)
 {
     ASSERT(report >= 0 && report < m_result.size());
-    return m_result[report]->addElement(isLocal, timestamp);
+    m_result[report]->addElement(isLocal, timestamp);
 }
 
-void RTCStatsResponse::addStatistic(size_t report, bool isLocal, size_t element, String name, String value)
+void RTCStatsResponse::addStatistic(size_t report, bool isLocal, String name, String value)
 {
     ASSERT(report >= 0 && report < m_result.size());
-    return m_result[report]->addStatistic(isLocal, element, name, value);
+    m_result[report]->addStatistic(isLocal, name, value);
 }
 
 } // namespace WebCore

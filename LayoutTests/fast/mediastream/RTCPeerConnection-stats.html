@@ -48,11 +48,10 @@ function statsHandler2(status)
     testPassed("statsHandler2 was called");
     result = status.result();
     shouldBeGreaterThanOrEqual('result.length', '2');
-    local = result[0].local();
-    shouldBe('local.length', '1');
-    timestamp = local[0].timestamp;
+    local = result[0].local;
+    timestamp = local.timestamp;
     shouldBeGreaterThanOrEqual('timestamp', 'startTime');
-    shouldBe('local[0].stat("type")', '"audio"');
+    shouldBe('local.stat("type")', '"audio"');
     finishJSTest();
 }
 

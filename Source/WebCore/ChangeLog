@@ -1,3 +1,38 @@
+2012-10-09  Harald Alvestrand  <hta@google.com>
+
+        Change PeerConnection getStats function to single value local / remote
+        elements in RTCStatsReport.
+
+        https://bugs.webkit.org/show_bug.cgi?id=98753
+
+        Reviewed by Adam Barth.
+
+        IDL of RTCStatsReport has been changed to make local/remote
+        single valued RTCStatsElement attributes.
+        The RTCStatsReport argument to index the list of RTCStatsElement
+        in the local and remote functions has been removed.
+
+        Tested by modifications to RTCPeerConnection-stats.html
+
+        * Modules/mediastream/RTCStatsReport.cpp:
+        (WebCore::RTCStatsReport::addElement):
+        (WebCore::RTCStatsReport::addStatistic):
+        * Modules/mediastream/RTCStatsReport.h:
+        (WebCore::RTCStatsReport::local):
+        (WebCore::RTCStatsReport::remote):
+        (RTCStatsReport):
+        * Modules/mediastream/RTCStatsReport.idl:
+        * Modules/mediastream/RTCStatsResponse.cpp:
+        (WebCore::RTCStatsResponse::addElement):
+        (WebCore::RTCStatsResponse::addStatistic):
+        * Modules/mediastream/RTCStatsResponse.h:
+        (RTCStatsResponse):
+        * platform/chromium/support/WebRTCStatsResponse.cpp:
+        (WebKit::WebRTCStatsResponse::addElement):
+        (WebKit::WebRTCStatsResponse::addStatistic):
+        * platform/mediastream/RTCStatsResponseBase.h:
+        (RTCStatsResponseBase):
+
 2012-10-09  Antonio Gomes  <agomes@rim.com>
 
         Get rid of FIXED_POSITION_CREATES_STACKING_CONTEXT in favor of Settings::fixedPositionCreatesStackingContext()

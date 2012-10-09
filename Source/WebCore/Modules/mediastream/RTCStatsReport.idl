@@ -27,7 +27,7 @@ module mediastream {
     interface [
         Conditional=MEDIA_STREAM
     ] RTCStatsReport {
-        sequence<RTCStatsElement> local();
-        sequence<RTCStatsElement> remote();
+        readonly attribute RTCStatsElement local;
+        readonly attribute RTCStatsElement remote;
     };
 }

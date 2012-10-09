@@ -60,14 +60,14 @@ size_t WebRTCStatsResponse::addReport()
     return m_private->addReport();
 }
 
-size_t WebRTCStatsResponse::addElement(size_t report, bool isLocal, double timestamp)
+void WebRTCStatsResponse::addElement(size_t report, bool isLocal, double timestamp)
 {
-    return m_private->addElement(report, isLocal, timestamp);
+    m_private->addElement(report, isLocal, timestamp);
 }
 
-void WebRTCStatsResponse::addStatistic(size_t report, bool isLocal, size_t element, WebString name, WebString value)
+void WebRTCStatsResponse::addStatistic(size_t report, bool isLocal, WebString name, WebString value)
 {
-    m_private->addStatistic(report, isLocal, element, name, value);
+    m_private->addStatistic(report, isLocal, name, value);
 }
 
 } // namespace WebKit
