@@ -2430,10 +2430,6 @@ fast/workers/worker-crash-with-invalid-location.html
 # https://bugs.webkit.org/show_bug.cgi?id=71266
 fast/ruby/text-decoration-in-descendants-ruby.html
 
-# Failing since isWordTextBreak is not implemented. https://bugs.webkit.org/show_bug.cgi?id=81136
-editing/selection/move-by-word-visually-multi-line.html
-editing/selection/move-by-word-visually-mac.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=82628
 svg/hittest/svg-ellipse-non-scale-stroke.xhtml
 

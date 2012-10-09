@@ -1,5 +1,16 @@
 2012-10-09  Tullio Lucena  <tullio.lucena@openbossa.org>
 
+        Need implement isWordTextBreak for QT, and WinCE for visual word movement functionality
+        https://bugs.webkit.org/show_bug.cgi?id=81136
+
+        Reviewed by Caio Marcelo de Oliveira Filho.
+
+        Uskipping tests that are passing after the merge https://gitorious.org/qtwebkit/testfonts/merge_requests/1
+
+        * platform/qt/TestExpectations:
+
+2012-10-09  Tullio Lucena  <tullio.lucena@openbossa.org>
+
         RTL: selection.modify("move", "forward", "line") when cursor is at start of a line does not move down a line
         https://bugs.webkit.org/show_bug.cgi?id=51517
 
