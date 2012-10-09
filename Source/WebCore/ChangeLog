@@ -1,3 +1,11 @@
+2012-10-09  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed. Move this file to where the build systems think it should
+        be. See https://bugs.webkit.org/show_bug.cgi?id=94755
+
+        * platform/graphics/CustomFilterConstants.h: Removed.
+        * platform/graphics/filters/CustomFilterConstants.h: Copied from Source/WebCore/platform/graphics/CustomFilterConstants.h.
+
 2012-10-09  Tony Chang  <tony@chromium.org>
 
         Use computeLogical* methods instead of updateLogical* methods in RenderImage
