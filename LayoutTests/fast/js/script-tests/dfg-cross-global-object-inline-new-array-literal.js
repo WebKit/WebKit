@@ -2,8 +2,7 @@ description(
 "This tests that function inlining in the DFG JIT doesn't get confused about the global object to use for array allocation."
 );
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
+window.jsTestIsAsync = true;
 
 function foo() {
     return [1, 2, 3];
@@ -17,7 +16,7 @@ function done(value) {
         testPassed("done() called with " + expected);
     else
         testFailed("done() called with " + value + ", but expected " + expected);
-    testRunner.notifyDone();
+    finishJSTest();
 }
 
 function doit() {
