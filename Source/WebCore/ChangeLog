@@ -1,3 +1,22 @@
+2012-10-09  Pravin D  <pravind.2k4@gmail.com>
+
+        max-width property is does not overriding the width properties for css tables(display:table)
+        https://bugs.webkit.org/show_bug.cgi?id=98455
+
+        Reviewed by Tony Chang.
+
+        The max-width property determines the maximum computed width an element can have. In case of css tables(display:table),
+        the computed was not being limited by the max-width property. The current patch fixes this issue.
+
+        Test: fast/table/css-table-max-width.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::updateLogicalWidth):
+         Logic to compute the logical width of an element such that it does not exceed the max-width value.
+         Also when both min-width and max-width are present, the following contraint is used to compute the logical width:
+           1) min-width < Computed LogicalWidth < max-width, when min-width < max-width.
+           2) Computed LogicalWidth = min-width, when min-width > max-width.
+
 2012-10-09  Harald Alvestrand  <hta@google.com>
 
         Change PeerConnection getStats function to single value local / remote
