@@ -1,5 +1,11 @@
 2012-10-09  Levi Weintraub  <leviw@chromium.org>
 
+        Rolling back unintended change to iframe-copy-on-scroll.html from previous commit.
+
+        * compositing/iframes/iframe-copy-on-scroll.html:
+
+2012-10-09  Levi Weintraub  <leviw@chromium.org>
+
         Unreviewed gardening. Updating test expectations after r130811.
 
         * compositing/iframes/iframe-copy-on-scroll.html:
