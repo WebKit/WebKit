@@ -1,3 +1,9 @@
+2012-10-09  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Mark a few tests skipped in r130745 as failures instead of timeouts.
+
+        * platform/efl/TestExpectations:
+
 2012-10-09  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Uploading images to Google+ using QtWebKit does not work.
