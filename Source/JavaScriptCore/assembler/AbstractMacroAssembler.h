@@ -564,7 +564,7 @@ public:
             m_jumps.append(jump);
         }
         
-        void append(JumpList& other)
+        void append(const JumpList& other)
         {
             m_jumps.append(other.m_jumps.begin(), other.m_jumps.size());
         }

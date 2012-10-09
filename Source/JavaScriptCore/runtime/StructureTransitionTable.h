@@ -43,6 +43,7 @@ static const unsigned FirstInternalAttribute = 1 << 6; // Use for transitions th
 // Support for attributes used to indicate transitions not related to properties.
 // If any of these are used, the string portion of the key should be 0.
 enum NonPropertyTransition {
+    AllocateContiguous,
     AllocateArrayStorage,
     AllocateSlowPutArrayStorage,
     SwitchToSlowPutArrayStorage,
@@ -57,12 +58,16 @@ inline unsigned toAttributes(NonPropertyTransition transition)
 inline IndexingType newIndexingType(IndexingType oldType, NonPropertyTransition transition)
 {
     switch (transition) {
+    case AllocateContiguous:
+        ASSERT(!(oldType & (HasArrayStorage | HasSlowPutArrayStorage)));
+        return oldType | HasContiguous;
     case AllocateArrayStorage:
-        return oldType | HasArrayStorage;
+        return (oldType & ~HasContiguous) | HasArrayStorage;
     case AllocateSlowPutArrayStorage:
-        return oldType | HasSlowPutArrayStorage;
+        return (oldType & ~HasContiguous) | HasSlowPutArrayStorage;
     case SwitchToSlowPutArrayStorage:
         ASSERT(oldType & HasArrayStorage);
+        ASSERT(!(oldType & HasContiguous));
         return (oldType & ~HasArrayStorage) | HasSlowPutArrayStorage;
     case AddIndexedAccessors:
         return oldType | MayHaveIndexedAccessors;

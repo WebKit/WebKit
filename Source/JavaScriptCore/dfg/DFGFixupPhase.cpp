@@ -116,7 +116,7 @@ private:
             m_graph.deref(m_compileIndex);
             nodePtr->setArrayMode(arrayMode);
             
-            NodeIndex storage = checkArray(arrayMode, nodePtr->codeOrigin, nodePtr->child1().index(), lengthNeedsStorage, nodePtr->shouldGenerate());
+            NodeIndex storage = checkArray(arrayMode, nodePtr->codeOrigin, nodePtr->child1().index(), NoNode, lengthNeedsStorage, nodePtr->shouldGenerate());
             if (storage == NoNode)
                 break;
             
@@ -137,17 +137,17 @@ private:
                     m_graph[node.child1()].prediction(),
                     m_graph[node.child2()].prediction()));
             
-            blessArrayOperation(node.child1(), 2);
+            blessArrayOperation(node.child1(), node.child2(), 2);
             break;
         }
             
         case ArrayPush: {
-            blessArrayOperation(node.child1(), 2);
+            blessArrayOperation(node.child1(), node.child2(), 2);
             break;
         }
             
         case ArrayPop: {
-            blessArrayOperation(node.child1(), 1);
+            blessArrayOperation(node.child1(), node.child2(), 1);
         }
             
         case ValueToInt32: {
@@ -327,7 +327,7 @@ private:
                     m_graph[child1].prediction(),
                     m_graph[child2].prediction()));
             
-            blessArrayOperation(child1, 3);
+            blessArrayOperation(child1, child2, 3);
             
             Node* nodePtr = &m_graph[m_compileIndex];
             
@@ -375,14 +375,16 @@ private:
         return nodeIndex;
     }
     
-    NodeIndex checkArray(Array::Mode arrayMode, CodeOrigin codeOrigin, NodeIndex array, bool (*storageCheck)(Array::Mode) = canCSEStorage, bool shouldGenerate = true)
+    NodeIndex checkArray(Array::Mode arrayMode, CodeOrigin codeOrigin, NodeIndex array, NodeIndex index, bool (*storageCheck)(Array::Mode) = canCSEStorage, bool shouldGenerate = true)
     {
         ASSERT(modeIsSpecific(arrayMode));
         
         m_graph.ref(array);
 
         if (isEffectful(arrayMode)) {
-            Node arrayify(Arrayify, codeOrigin, OpInfo(arrayMode), array);
+            ASSERT(index != NoNode);
+            m_graph.ref(index);
+            Node arrayify(Arrayify, codeOrigin, OpInfo(arrayMode), array, index);
             arrayify.ref(); // Once because it's used as a butterfly.
             arrayify.ref(); // And twice because it's must-generate.
             NodeIndex arrayifyIndex = m_graph.size();
@@ -415,14 +417,15 @@ private:
         return addNode(Node(GetIndexedPropertyStorage, codeOrigin, OpInfo(arrayMode), array), shouldGenerate);
     }
     
-    void blessArrayOperation(Edge base, unsigned storageChildIdx)
+    void blessArrayOperation(Edge base, Edge index, unsigned storageChildIdx)
     {
         if (m_graph.m_fixpointState > BeforeFixpoint)
             return;
             
         Node* nodePtr = &m_graph[m_compileIndex];
         
-        if (nodePtr->arrayMode() == Array::ForceExit) {
+        switch (nodePtr->arrayMode()) {
+        case Array::ForceExit: {
             Node forceExit(ForceOSRExit, nodePtr->codeOrigin);
             forceExit.ref();
             NodeIndex forceExitIndex = m_graph.size();
@@ -430,15 +433,24 @@ private:
             m_insertionSet.append(m_indexInBlock, forceExitIndex);
             return;
         }
-        
-        if (!modeIsSpecific(nodePtr->arrayMode()))
+            
+        case Array::Undecided:
+        case Array::Unprofiled:
+            ASSERT_NOT_REACHED();
             return;
             
-        NodeIndex storage = checkArray(nodePtr->arrayMode(), nodePtr->codeOrigin, base.index());
-        if (storage == NoNode)
+        case Array::Generic:
+        case ALL_POLYMORPHIC_MODES:
             return;
             
-        m_graph.child(m_graph[m_compileIndex], storageChildIdx) = Edge(storage);
+        default: {
+            NodeIndex storage = checkArray(nodePtr->arrayMode(), nodePtr->codeOrigin, base.index(), index.indexUnchecked());
+            if (storage == NoNode)
+                return;
+            
+            m_graph.child(m_graph[m_compileIndex], storageChildIdx) = Edge(storage);
+            return;
+        } }
     }
     
     void fixIntEdge(Edge& edge)

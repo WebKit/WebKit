@@ -264,6 +264,25 @@ namespace JSC {
         void copyToStubInfo(StructureStubInfo& info, LinkBuffer &patchBuffer);
     };
 
+    struct ByValCompilationInfo {
+        ByValCompilationInfo() { }
+        
+        ByValCompilationInfo(unsigned bytecodeIndex, MacroAssembler::PatchableJump badTypeJump, JITArrayMode arrayMode, MacroAssembler::Label doneTarget)
+            : bytecodeIndex(bytecodeIndex)
+            , badTypeJump(badTypeJump)
+            , arrayMode(arrayMode)
+            , doneTarget(doneTarget)
+        {
+        }
+        
+        unsigned bytecodeIndex;
+        MacroAssembler::PatchableJump badTypeJump;
+        JITArrayMode arrayMode;
+        MacroAssembler::Label doneTarget;
+        MacroAssembler::Label slowPathTarget;
+        MacroAssembler::Call returnAddress;
+    };
+
     struct StructureStubCompilationInfo {
         MacroAssembler::DataLabelPtr hotPathBegin;
         MacroAssembler::Call hotPathOther;
@@ -348,6 +367,20 @@ namespace JSC {
             jit.m_bytecodeOffset = stubInfo->bytecodeIndex;
             jit.privateCompilePutByIdTransition(stubInfo, oldStructure, newStructure, cachedOffset, chain, returnAddress, direct);
         }
+        
+        static void compileGetByVal(JSGlobalData* globalData, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
+        {
+            JIT jit(globalData, codeBlock);
+            jit.m_bytecodeOffset = byValInfo->bytecodeIndex;
+            jit.privateCompileGetByVal(byValInfo, returnAddress, arrayMode);
+        }
+
+        static void compilePutByVal(JSGlobalData* globalData, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
+        {
+            JIT jit(globalData, codeBlock);
+            jit.m_bytecodeOffset = byValInfo->bytecodeIndex;
+            jit.privateCompilePutByVal(byValInfo, returnAddress, arrayMode);
+        }
 
         static PassRefPtr<ExecutableMemoryHandle> compileCTIMachineTrampolines(JSGlobalData* globalData, TrampolineStructure *trampolines)
         {
@@ -397,6 +430,9 @@ namespace JSC {
         void privateCompileGetByIdChainList(StructureStubInfo*, PolymorphicAccessStructureList*, int, Structure*, StructureChain*, size_t count, const Identifier&, const PropertySlot&, PropertyOffset cachedOffset, CallFrame*);
         void privateCompileGetByIdChain(StructureStubInfo*, Structure*, StructureChain*, size_t count, const Identifier&, const PropertySlot&, PropertyOffset cachedOffset, ReturnAddressPtr, CallFrame*);
         void privateCompilePutByIdTransition(StructureStubInfo*, Structure*, Structure*, PropertyOffset cachedOffset, StructureChain*, ReturnAddressPtr, bool direct);
+        
+        void privateCompileGetByVal(ByValInfo*, ReturnAddressPtr, JITArrayMode);
+        void privateCompilePutByVal(ByValInfo*, ReturnAddressPtr, JITArrayMode);
 
         PassRefPtr<ExecutableMemoryHandle> privateCompileCTIMachineTrampolines(JSGlobalData*, TrampolineStructure*);
         Label privateCompileCTINativeCall(JSGlobalData*, bool isConstruct = false);
@@ -452,6 +488,22 @@ namespace JSC {
         void emitArrayProfilingSite(RegisterID structureAndIndexingType, RegisterID scratch, ArrayProfile*);
         void emitArrayProfilingSiteForBytecodeIndex(RegisterID structureAndIndexingType, RegisterID scratch, unsigned bytecodeIndex);
         void emitArrayProfileStoreToHoleSpecialCase(ArrayProfile*);
+        
+        JITArrayMode chooseArrayMode(ArrayProfile*);
+        
+        // Property is in regT1, base is in regT0. regT2 contains indexing type.
+        // Property is int-checked and zero extended. Base is cell checked.
+        // Structure is already profiled. Returns the slow cases. Fall-through
+        // case contains result in regT0, and it is not yet profiled.
+        JumpList emitContiguousGetByVal(Instruction*, PatchableJump& badType);
+        JumpList emitArrayStorageGetByVal(Instruction*, PatchableJump& badType);
+        
+        // Property is in regT0, base is in regT0. regT2 contains indecing type.
+        // The value to store is not yet loaded. Property is int-checked and
+        // zero-extended. Base is cell checked. Structure is already profiled.
+        // returns the slow cases.
+        JumpList emitContiguousPutByVal(Instruction*, PatchableJump& badType);
+        JumpList emitArrayStoragePutByVal(Instruction*, PatchableJump& badType);
 
         enum FinalObjectMode { MayBeFinal, KnownNotFinal };
 
@@ -870,6 +922,7 @@ namespace JSC {
         Vector<CallRecord> m_calls;
         Vector<Label> m_labels;
         Vector<PropertyStubCompilationInfo> m_propertyAccessCompilationInfo;
+        Vector<ByValCompilationInfo> m_byValCompilationInfo;
         Vector<StructureStubCompilationInfo> m_callStructureStubCompilationInfo;
         Vector<MethodCallCompilationInfo> m_methodCallCompilationInfo;
         Vector<JumpTable> m_jmpTable;
@@ -879,6 +932,7 @@ namespace JSC {
         Vector<SwitchRecord> m_switches;
 
         unsigned m_propertyAccessInstructionIndex;
+        unsigned m_byValInstructionIndex;
         unsigned m_globalResolveInfoIndex;
         unsigned m_callLinkInfoIndex;
 

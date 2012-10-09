@@ -63,8 +63,9 @@ end
 
 # Constant for reasoning about butterflies.
 const IsArray = 1
+const HasContiguous = 2
 const HasArrayStorage = 8
-const AllArrayTypes = 15
+const HasSlowPutArrayStorage = 16
 
 # Type constants.
 const StringType = 5

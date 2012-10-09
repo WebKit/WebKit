@@ -1171,7 +1171,7 @@ _llint_op_get_array_length:
     loadp JSCell::m_structure[t3], t2
     arrayProfile(t2, t1, t0)
     btiz t2, IsArray, .opGetArrayLengthSlow
-    btiz t2, HasArrayStorage, .opGetArrayLengthSlow
+    btiz t2, (HasContiguous | HasArrayStorage | HasSlowPutArrayStorage), .opGetArrayLengthSlow
     loadi 4[PC], t1
     loadp 32[PC], t2
     loadp JSObject::m_butterfly[t3], t0
@@ -1306,10 +1306,21 @@ _llint_op_get_by_val:
     loadi 12[PC], t3
     loadConstantOrVariablePayload(t3, Int32Tag, t1, .opGetByValSlow)
     loadp JSObject::m_butterfly[t0], t3
+    btiz t2, HasContiguous, .opGetByValNotContiguous
+    
+    biaeq t1, -sizeof IndexingHeader + IndexingHeader::m_publicLength[t3], .opGetByValSlow
+    loadi TagOffset[t3, t1, 8], t2
+    loadi PayloadOffset[t3, t1, 8], t1
+    jmp .opGetByValDone
+
+.opGetByValNotContiguous:
+    btiz t2, HasArrayStorage | HasSlowPutArrayStorage, .opGetByValSlow
     biaeq t1, -sizeof IndexingHeader + IndexingHeader::m_vectorLength[t3], .opGetByValSlow
-    loadi 4[PC], t0
     loadi ArrayStorage::m_vector + TagOffset[t3, t1, 8], t2
     loadi ArrayStorage::m_vector + PayloadOffset[t3, t1, 8], t1
+
+.opGetByValDone:
+    loadi 4[PC], t0
     bieq t2, EmptyValueTag, .opGetByValSlow
     storei t2, TagOffset[cfr, t0, 8]
     storei t1, PayloadOffset[cfr, t0, 8]
@@ -1386,29 +1397,52 @@ _llint_op_put_by_val:
     loadp JSCell::m_structure[t1], t2
     loadp 16[PC], t3
     arrayProfile(t2, t3, t0)
-    btiz t2, HasArrayStorage, .opPutByValSlow
     loadi 8[PC], t0
-    loadConstantOrVariablePayload(t0, Int32Tag, t2, .opPutByValSlow)
+    loadConstantOrVariablePayload(t0, Int32Tag, t3, .opPutByValSlow)
     loadp JSObject::m_butterfly[t1], t0
-    biaeq t2, -sizeof IndexingHeader + IndexingHeader::m_vectorLength[t0], .opPutByValSlow
-    bieq ArrayStorage::m_vector + TagOffset[t0, t2, 8], EmptyValueTag, .opPutByValEmpty
-.opPutByValStoreResult:
-    loadi 12[PC], t3
-    loadConstantOrVariable2Reg(t3, t1, t3)
-    writeBarrier(t1, t3)
-    storei t1, ArrayStorage::m_vector + TagOffset[t0, t2, 8]
-    storei t3, ArrayStorage::m_vector + PayloadOffset[t0, t2, 8]
+    btiz t2, HasContiguous, .opPutByValNotContiguous
+
+    biaeq t3, -sizeof IndexingHeader + IndexingHeader::m_publicLength[t0], .opPutByValContiguousOutOfBounds
+.opPutByValContiguousStoreResult:
+    loadi 12[PC], t2
+    loadConstantOrVariable2Reg(t2, t1, t2)
+    writeBarrier(t1, t2)
+    storei t1, TagOffset[t0, t3, 8]
+    storei t2, PayloadOffset[t0, t3, 8]
     dispatch(5)
 
-.opPutByValEmpty:
+.opPutByValContiguousOutOfBounds:
+    biaeq t3, -sizeof IndexingHeader + IndexingHeader::m_vectorLength[t0], .opPutByValSlow
     if VALUE_PROFILER
-        storeb 1, ArrayProfile::m_mayStoreToHole[t3]
+        loadp 16[PC], t1
+        storeb 1, ArrayProfile::m_mayStoreToHole[t1]
+    end
+    addi 1, t3, t2
+    storei t2, -sizeof IndexingHeader + IndexingHeader::m_publicLength[t0]
+    jmp .opPutByValContiguousStoreResult
+
+.opPutByValNotContiguous:
+    btiz t2, HasArrayStorage, .opPutByValSlow
+    biaeq t3, -sizeof IndexingHeader + IndexingHeader::m_vectorLength[t0], .opPutByValSlow
+    bieq ArrayStorage::m_vector + TagOffset[t0, t3, 8], EmptyValueTag, .opPutByValArrayStorageEmpty
+.opPutByValArrayStorageStoreResult:
+    loadi 12[PC], t2
+    loadConstantOrVariable2Reg(t2, t1, t2)
+    writeBarrier(t1, t2)
+    storei t1, ArrayStorage::m_vector + TagOffset[t0, t3, 8]
+    storei t2, ArrayStorage::m_vector + PayloadOffset[t0, t3, 8]
+    dispatch(5)
+
+.opPutByValArrayStorageEmpty:
+    if VALUE_PROFILER
+        loadp 16[PC], t1
+        storeb 1, ArrayProfile::m_mayStoreToHole[t1]
     end
     addi 1, ArrayStorage::m_numValuesInVector[t0]
-    bib t2, -sizeof IndexingHeader + IndexingHeader::m_publicLength[t0], .opPutByValStoreResult
+    bib t2, -sizeof IndexingHeader + IndexingHeader::m_publicLength[t0], .opPutByValArrayStorageStoreResult
     addi 1, t2, t1
     storei t1, -sizeof IndexingHeader + IndexingHeader::m_publicLength[t0]
-    jmp .opPutByValStoreResult
+    jmp .opPutByValArrayStorageStoreResult
 
 .opPutByValSlow:
     callSlowPath(_llint_slow_path_put_by_val)

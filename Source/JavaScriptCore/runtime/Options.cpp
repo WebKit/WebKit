@@ -158,7 +158,7 @@ void Options::initialize()
 #if !ENABLE(YARR_JIT)
     useRegExpJIT() = false;
 #endif
-
+    
     // Do range checks where needed and make corrections to the options:
     ASSERT(thresholdForOptimizeAfterLongWarmUp() >= thresholdForOptimizeAfterWarmUp());
     ASSERT(thresholdForOptimizeAfterWarmUp() >= thresholdForOptimizeSoon());

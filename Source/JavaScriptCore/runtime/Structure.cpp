@@ -326,11 +326,15 @@ bool Structure::anyObjectInChainMayInterceptIndexedAccesses() const
     }
 }
 
-NonPropertyTransition Structure::suggestedIndexingTransition() const
+bool Structure::needsSlowPutIndexing() const
 {
-    ASSERT(!hasIndexedProperties(indexingType()));
-    
-    if (anyObjectInChainMayInterceptIndexedAccesses() || globalObject()->isHavingABadTime())
+    return anyObjectInChainMayInterceptIndexedAccesses()
+        || globalObject()->isHavingABadTime();
+}
+
+NonPropertyTransition Structure::suggestedArrayStorageTransition() const
+{
+    if (needsSlowPutIndexing())
         return AllocateSlowPutArrayStorage;
     
     return AllocateArrayStorage;

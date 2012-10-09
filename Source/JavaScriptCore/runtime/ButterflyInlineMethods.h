@@ -144,7 +144,7 @@ inline Butterfly* Butterfly::resizeArray(JSGlobalData& globalData, Structure* st
 
 inline Butterfly* Butterfly::unshift(Structure* structure, size_t numberOfSlots)
 {
-    ASSERT(hasIndexingHeader(structure->indexingType()));
+    ASSERT(hasArrayStorage(structure->indexingType()));
     ASSERT(numberOfSlots <= indexingHeader()->preCapacity(structure));
     unsigned propertyCapacity = structure->outOfLineCapacity();
     // FIXME: It would probably be wise to rewrite this as a loop since (1) we know in which
@@ -163,7 +163,7 @@ inline Butterfly* Butterfly::unshift(Structure* structure, size_t numberOfSlots)
 
 inline Butterfly* Butterfly::shift(Structure* structure, size_t numberOfSlots)
 {
-    ASSERT(hasIndexingHeader(structure->indexingType()));
+    ASSERT(hasArrayStorage(structure->indexingType()));
     unsigned propertyCapacity = structure->outOfLineCapacity();
     // FIXME: See comment in unshift(), above.
     memmove(

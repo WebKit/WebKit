@@ -52,7 +52,7 @@ def armV7MoveImmediate(value, register)
     else
         $asm.puts "movw #{register.armV7Operand}, \##{value & 0xffff}"
         if (value & 0xffff0000) != 0
-            $asm.puts "movt #{register.armV7Operand}, \##{value >> 16}"
+            $asm.puts "movt #{register.armV7Operand}, \##{(value >> 16) & 0xffff}"
         end
     end
 end

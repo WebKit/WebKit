@@ -200,6 +200,7 @@ SOURCES += \
     runtime/GetterSetter.cpp \
     runtime/Options.cpp \
     runtime/Identifier.cpp \
+    runtime/IndexingType.cpp \
     runtime/InitializeThreading.cpp \
     runtime/InternalFunction.cpp \
     runtime/JSActivation.cpp \

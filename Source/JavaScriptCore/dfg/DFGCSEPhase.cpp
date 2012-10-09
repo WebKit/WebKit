@@ -177,6 +177,7 @@ private:
                 if (!m_graph.byValIsPure(node))
                     return NoNode;
                 switch (node.arrayMode()) {
+                case CONTIGUOUS_TO_TAIL_MODES:
                 case ARRAY_STORAGE_TO_HOLE_MODES:
                     return NoNode;
                 default:
@@ -358,9 +359,6 @@ private:
                 // array with an integer index, which means that it's impossible
                 // for a structure change or a put to property storage to affect
                 // the GetByVal.
-                break;
-            case ArrayPush:
-                // A push cannot affect previously existing elements in the array.
                 break;
             default:
                 if (m_graph.clobbersWorld(index))
@@ -1222,9 +1220,7 @@ private:
         case PutByVal: {
             Edge child1 = m_graph.varArgChild(node, 0);
             Edge child2 = m_graph.varArgChild(node, 1);
-            if (isActionableMutableArraySpeculation(m_graph[child1].prediction())
-                && m_graph[child2].shouldSpeculateInteger()
-                && !m_graph[child1].shouldSpeculateArguments()) {
+            if (canCSEStorage(node.arrayMode())) {
                 NodeIndex nodeIndex = getByValLoadElimination(child1.index(), child2.index());
                 if (nodeIndex == NoNode)
                     break;

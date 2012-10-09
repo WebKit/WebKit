@@ -479,8 +479,12 @@ public:
     {
         switch (node.arrayMode()) {
         case Array::Generic:
+        case OUT_OF_BOUNDS_CONTIGUOUS_MODES:
+        case ARRAY_STORAGE_TO_HOLE_MODES:
         case OUT_OF_BOUNDS_ARRAY_STORAGE_MODES:
-        case ALL_EFFECTFUL_ARRAY_STORAGE_MODES:
+        case SLOW_PUT_ARRAY_STORAGE_MODES:
+        case ALL_EFFECTFUL_MODES:
+        case POLYMORPHIC_MODES:
             return false;
         case Array::String:
             return node.op() == GetByVal;

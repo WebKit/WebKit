@@ -31,6 +31,7 @@
 #define CodeBlock_h
 
 #include "ArrayProfile.h"
+#include "ByValInfo.h"
 #include "BytecodeConventions.h"
 #include "CallLinkInfo.h"
 #include "CallReturnOffsetToBytecodeOffset.h"
@@ -209,6 +210,11 @@ namespace JSC {
         }
         
         void resetStub(StructureStubInfo&);
+        
+        ByValInfo& getByValInfo(unsigned bytecodeIndex)
+        {
+            return *(binarySearch<ByValInfo, unsigned, getByValInfoBytecodeIndex>(m_byValInfos.begin(), m_byValInfos.size(), bytecodeIndex));
+        }
 
         CallLinkInfo& getCallLinkInfo(ReturnAddressPtr returnAddress)
         {
@@ -610,6 +616,10 @@ namespace JSC {
         void setNumberOfStructureStubInfos(size_t size) { m_structureStubInfos.grow(size); }
         size_t numberOfStructureStubInfos() const { return m_structureStubInfos.size(); }
         StructureStubInfo& structureStubInfo(int index) { return m_structureStubInfos[index]; }
+        
+        void setNumberOfByValInfos(size_t size) { m_byValInfos.grow(size); }
+        size_t numberOfByValInfos() const { return m_byValInfos.size(); }
+        ByValInfo& byValInfo(size_t index) { return m_byValInfos[index]; }
 
         void addGlobalResolveInfo(unsigned globalResolveInstruction)
         {
@@ -1289,6 +1299,7 @@ namespace JSC {
 #endif
 #if ENABLE(JIT)
         Vector<StructureStubInfo> m_structureStubInfos;
+        Vector<ByValInfo> m_byValInfos;
         Vector<GlobalResolveInfo> m_globalResolveInfos;
         Vector<CallLinkInfo> m_callLinkInfos;
         Vector<MethodCallLinkInfo> m_methodCallLinkInfos;

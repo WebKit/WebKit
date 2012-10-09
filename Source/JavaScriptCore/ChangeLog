@@ -1,3 +1,308 @@
+2012-10-08  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should infer when indexed storage is contiguous, and optimize for it
+        https://bugs.webkit.org/show_bug.cgi?id=97288
+
+        Reviewed by Mark Hahnenberg.
+
+        This introduces a new kind of indexed property storage called Contiguous,
+        which has the following properties:
+        
+        - No header bits beyond IndexedHeader. This results in a 16 byte reduction
+          in memory usage per array versus an ArrayStorage array. It also means
+          that the total memory usage for an empty array is now just 3 * 8 on both
+          32-bit and 64-bit. Of that, only 8 bytes are array-specific; the rest is
+          our standard object header overhead.
+        
+        - No need for hole checks on store. This results in a ~4% speed-up on
+          Kraken and a ~1% speed-up on V8v7.
+        
+        - publicLength <= vectorLength. This means that doing new Array(blah)
+          immediately allocates room for blah elements.
+        
+        - No sparse map or index bias.
+        
+        If you ever do things to an array that would require publicLength >
+        vectorLength, a sparse map, or index bias, then we switch to ArrayStorage
+        mode. This seems to never happen in any benchmark we track, and is unlikely
+        to happen very frequently on any website.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::JumpList::append):
+        * assembler/MacroAssembler.h:
+        (MacroAssembler):
+        (JSC::MacroAssembler::patchableBranchTest32):
+        * bytecode/ByValInfo.h: Added.
+        (JSC):
+        (JSC::isOptimizableIndexingType):
+        (JSC::jitArrayModeForIndexingType):
+        (JSC::ByValInfo::ByValInfo):
+        (ByValInfo):
+        (JSC::getByValInfoBytecodeIndex):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        (JSC::CodeBlock::getByValInfo):
+        (JSC::CodeBlock::setNumberOfByValInfos):
+        (JSC::CodeBlock::numberOfByValInfos):
+        (JSC::CodeBlock::byValInfo):
+        * bytecode/SamplingTool.h:
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::fromObserved):
+        (JSC::DFG::modeAlreadyChecked):
+        (JSC::DFG::modeToString):
+        * dfg/DFGArrayMode.h:
+        (DFG):
+        (JSC::DFG::modeUsesButterfly):
+        (JSC::DFG::modeIsJSArray):
+        (JSC::DFG::isInBoundsAccess):
+        (JSC::DFG::mayStoreToTail):
+        (JSC::DFG::mayStoreToHole):
+        (JSC::DFG::modeIsPolymorphic):
+        (JSC::DFG::polymorphicIncludesContiguous):
+        (JSC::DFG::polymorphicIncludesArrayStorage):
+        (JSC::DFG::canCSEStorage):
+        (JSC::DFG::modeSupportsLength):
+        (JSC::DFG::benefitsFromStructureCheck):
+        (JSC::DFG::isEffectful):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::getArrayLengthElimination):
+        (JSC::DFG::CSEPhase::getByValLoadElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::checkArray):
+        (JSC::DFG::FixupPhase::blessArrayOperation):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::byValIsPure):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryCacheGetByID):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArray):
+        (JSC::DFG::SpeculativeJIT::arrayify):
+        (JSC::DFG::SpeculativeJIT::compileGetArrayLength):
+        (JSC::DFG::SpeculativeJIT::temporaryRegisterForPutByVal):
+        (DFG):
+        * dfg/DFGSpeculativeJIT.h:
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::putByValWillNeedExtraRegister):
+        (JSC::DFG::SpeculativeJIT::temporaryRegisterForPutByVal):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileContiguousGetByVal):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::compileArrayStorageGetByVal):
+        (JSC::DFG::SpeculativeJIT::compileContiguousPutByVal):
+        (JSC::DFG::SpeculativeJIT::compileArrayStoragePutByVal):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileContiguousGetByVal):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::compileArrayStorageGetByVal):
+        (JSC::DFG::SpeculativeJIT::compileContiguousPutByVal):
+        (JSC::DFG::SpeculativeJIT::compileArrayStoragePutByVal):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * interpreter/Interpreter.cpp:
+        (SamplingScope):
+        (JSC::SamplingScope::SamplingScope):
+        (JSC::SamplingScope::~SamplingScope):
+        (JSC):
+        (JSC::Interpreter::execute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC::ByValCompilationInfo::ByValCompilationInfo):
+        (ByValCompilationInfo):
+        (JSC):
+        (JIT):
+        (JSC::JIT::compileGetByVal):
+        (JSC::JIT::compilePutByVal):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitAllocateJSArray):
+        (JSC::JIT::emitArrayProfileStoreToHoleSpecialCase):
+        (JSC):
+        (JSC::arrayProfileSaw):
+        (JSC::JIT::chooseArrayMode):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitSlow_op_get_argument_by_val):
+        (JSC::JIT::emit_op_new_array):
+        (JSC::JIT::emitSlow_op_new_array):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emitSlow_op_get_argument_by_val):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC):
+        (JSC::JIT::emitContiguousGetByVal):
+        (JSC::JIT::emitArrayStorageGetByVal):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitContiguousPutByVal):
+        (JSC::JIT::emitArrayStoragePutByVal):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByVal):
+        (JSC::JIT::privateCompilePutByVal):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC):
+        (JSC::JIT::emitContiguousGetByVal):
+        (JSC::JIT::emitArrayStorageGetByVal):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitContiguousPutByVal):
+        (JSC::JIT::emitArrayStoragePutByVal):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        * jit/JITStubs.cpp:
+        (JSC::getByVal):
+        (JSC):
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC::putByVal):
+        * jit/JITStubs.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/ArrayConventions.h:
+        (JSC::isDenseEnoughForVector):
+        * runtime/ArrayPrototype.cpp:
+        (JSC):
+        (JSC::shift):
+        (JSC::unshift):
+        (JSC::arrayProtoFuncPush):
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        * runtime/Butterfly.h:
+        (Butterfly):
+        (JSC::Butterfly::fromPointer):
+        (JSC::Butterfly::pointer):
+        (JSC::Butterfly::publicLength):
+        (JSC::Butterfly::vectorLength):
+        (JSC::Butterfly::setPublicLength):
+        (JSC::Butterfly::setVectorLength):
+        (JSC::Butterfly::contiguous):
+        (JSC::Butterfly::fromContiguous):
+        * runtime/ButterflyInlineMethods.h:
+        (JSC::Butterfly::unshift):
+        (JSC::Butterfly::shift):
+        * runtime/IndexingHeaderInlineMethods.h:
+        (JSC::IndexingHeader::indexingPayloadSizeInBytes):
+        * runtime/IndexingType.cpp: Added.
+        (JSC):
+        (JSC::indexingTypeToString):
+        * runtime/IndexingType.h:
+        (JSC):
+        (JSC::hasContiguous):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::setLengthWithArrayStorage):
+        (JSC::JSArray::setLength):
+        (JSC):
+        (JSC::JSArray::pop):
+        (JSC::JSArray::push):
+        (JSC::JSArray::shiftCountWithArrayStorage):
+        (JSC::JSArray::shiftCountWithAnyIndexingType):
+        (JSC::JSArray::unshiftCountWithArrayStorage):
+        (JSC::JSArray::unshiftCountWithAnyIndexingType):
+        (JSC::JSArray::sortNumericVector):
+        (JSC::JSArray::sortNumeric):
+        (JSC::JSArray::sortCompactedVector):
+        (JSC::JSArray::sort):
+        (JSC::JSArray::sortVector):
+        (JSC::JSArray::fillArgList):
+        (JSC::JSArray::copyToArguments):
+        (JSC::JSArray::compactForSorting):
+        * runtime/JSArray.h:
+        (JSC::JSArray::shiftCountForShift):
+        (JSC::JSArray::shiftCountForSplice):
+        (JSArray):
+        (JSC::JSArray::shiftCount):
+        (JSC::JSArray::unshiftCountForShift):
+        (JSC::JSArray::unshiftCountForSplice):
+        (JSC::JSArray::unshiftCount):
+        (JSC::JSArray::isLengthWritable):
+        (JSC::createContiguousArrayButterfly):
+        (JSC):
+        (JSC::JSArray::create):
+        (JSC::JSArray::tryCreateUninitialized):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC):
+        (JSC::JSGlobalObject::haveABadTime):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+        (JSC::JSGlobalObject::arrayStructureWithArrayStorage):
+        (JSC::JSGlobalObject::addressOfArrayStructureWithArrayStorage):
+        (JSC::constructEmptyArray):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitButterfly):
+        (JSC::JSObject::getOwnPropertySlotByIndex):
+        (JSC::JSObject::putByIndex):
+        (JSC::JSObject::enterDictionaryIndexingMode):
+        (JSC::JSObject::createInitialContiguous):
+        (JSC):
+        (JSC::JSObject::createArrayStorage):
+        (JSC::JSObject::convertContiguousToArrayStorage):
+        (JSC::JSObject::ensureContiguousSlow):
+        (JSC::JSObject::ensureArrayStorageSlow):
+        (JSC::JSObject::ensureIndexedStorageSlow):
+        (JSC::JSObject::ensureArrayStorageExistsAndEnterDictionaryIndexingMode):
+        (JSC::JSObject::switchToSlowPutArrayStorage):
+        (JSC::JSObject::setPrototype):
+        (JSC::JSObject::deletePropertyByIndex):
+        (JSC::JSObject::getOwnPropertyNames):
+        (JSC::JSObject::defineOwnIndexedProperty):
+        (JSC::JSObject::putByIndexBeyondVectorLengthContiguousWithoutAttributes):
+        (JSC::JSObject::putByIndexBeyondVectorLength):
+        (JSC::JSObject::putDirectIndexBeyondVectorLengthWithArrayStorage):
+        (JSC::JSObject::putDirectIndexBeyondVectorLength):
+        (JSC::JSObject::getNewVectorLength):
+        (JSC::JSObject::countElementsInContiguous):
+        (JSC::JSObject::increaseVectorLength):
+        (JSC::JSObject::ensureContiguousLengthSlow):
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getArrayLength):
+        (JSC::JSObject::getVectorLength):
+        (JSC::JSObject::canGetIndexQuickly):
+        (JSC::JSObject::getIndexQuickly):
+        (JSC::JSObject::tryGetIndexQuickly):
+        (JSC::JSObject::canSetIndexQuickly):
+        (JSC::JSObject::canSetIndexQuicklyForPutDirect):
+        (JSC::JSObject::setIndexQuickly):
+        (JSC::JSObject::initializeIndex):
+        (JSC::JSObject::hasSparseMap):
+        (JSC::JSObject::inSparseIndexingMode):
+        (JSObject):
+        (JSC::JSObject::ensureContiguous):
+        (JSC::JSObject::ensureIndexedStorage):
+        (JSC::JSObject::ensureContiguousLength):
+        (JSC::JSObject::indexingData):
+        (JSC::JSObject::relevantLength):
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::description):
+        * runtime/Options.cpp:
+        (JSC::Options::initialize):
+        * runtime/Structure.cpp:
+        (JSC::Structure::needsSlowPutIndexing):
+        (JSC):
+        (JSC::Structure::suggestedArrayStorageTransition):
+        * runtime/Structure.h:
+        (Structure):
+        * runtime/StructureTransitionTable.h:
+        (JSC::newIndexingType):
+
 2012-10-09  Michael Saboff  <msaboff@apple.com>
 
         After r130344, OpaqueJSString::identifier() adds wrapped String to identifier table

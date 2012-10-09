@@ -1680,7 +1680,7 @@ void JIT::emitSlow_op_get_argument_by_val(Instruction* currentInstruction, Vecto
     emitStore(unmodifiedArgumentsRegister(arguments), regT1, regT0);
     
     skipArgumentsCreation.link(this);
-    JITStubCall stubCall(this, cti_op_get_by_val);
+    JITStubCall stubCall(this, cti_op_get_by_val_generic);
     stubCall.addArgument(arguments);
     stubCall.addArgument(property);
     stubCall.callWithValueProfiling(dst);

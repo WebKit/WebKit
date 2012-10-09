@@ -400,6 +400,7 @@ void JIT::privateCompileSlowCases()
     Instruction* instructionsBegin = m_codeBlock->instructions().begin();
 
     m_propertyAccessInstructionIndex = 0;
+    m_byValInstructionIndex = 0;
     m_globalResolveInfoIndex = 0;
     m_callLinkInfoIndex = 0;
     
@@ -738,6 +739,20 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffo
     m_codeBlock->setNumberOfStructureStubInfos(m_propertyAccessCompilationInfo.size());
     for (unsigned i = 0; i < m_propertyAccessCompilationInfo.size(); ++i)
         m_propertyAccessCompilationInfo[i].copyToStubInfo(m_codeBlock->structureStubInfo(i), patchBuffer);
+    m_codeBlock->setNumberOfByValInfos(m_byValCompilationInfo.size());
+    for (unsigned i = 0; i < m_byValCompilationInfo.size(); ++i) {
+        CodeLocationJump badTypeJump = CodeLocationJump(patchBuffer.locationOf(m_byValCompilationInfo[i].badTypeJump));
+        CodeLocationLabel doneTarget = patchBuffer.locationOf(m_byValCompilationInfo[i].doneTarget);
+        CodeLocationLabel slowPathTarget = patchBuffer.locationOf(m_byValCompilationInfo[i].slowPathTarget);
+        CodeLocationCall returnAddress = patchBuffer.locationOf(m_byValCompilationInfo[i].returnAddress);
+        
+        m_codeBlock->byValInfo(i) = ByValInfo(
+            m_byValCompilationInfo[i].bytecodeIndex,
+            badTypeJump,
+            m_byValCompilationInfo[i].arrayMode,
+            differenceBetweenCodePtr(badTypeJump, doneTarget),
+            differenceBetweenCodePtr(returnAddress, slowPathTarget));
+    }
     m_codeBlock->setNumberOfCallLinkInfos(m_callStructureStubCompilationInfo.size());
     for (unsigned i = 0; i < m_codeBlock->numberOfCallLinkInfos(); ++i) {
         CallLinkInfo& info = m_codeBlock->callLinkInfo(i);

@@ -239,6 +239,11 @@ public:
     {
         return PatchableJump(jump());
     }
+
+    PatchableJump patchableBranchTest32(ResultCondition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        return PatchableJump(branchTest32(cond, reg, mask));
+    }
 #endif
 
     void jump(Label target)

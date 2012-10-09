@@ -71,8 +71,60 @@ namespace JSC {
         void push(ExecState*, JSValue);
         JSValue pop(ExecState*);
 
-        bool shiftCount(ExecState*, unsigned startIndex, unsigned count);
-        bool unshiftCount(ExecState*, unsigned startIndex, unsigned count);
+        enum ShiftCountMode {
+            // This form of shift hints that we're doing queueing. With this assumption in hand,
+            // we convert to ArrayStorage, which has queue optimizations.
+            ShiftCountForShift,
+            
+            // This form of shift hints that we're just doing care and feeding on an array that
+            // is probably typically used for ordinary accesses. With this assumption in hand,
+            // we try to preserve whatever indexing type it has already.
+            ShiftCountForSplice
+        };
+
+        bool shiftCountForShift(ExecState* exec, unsigned startIndex, unsigned count)
+        {
+            return shiftCountWithArrayStorage(startIndex, count, ensureArrayStorage(exec->globalData()));
+        }
+        bool shiftCountForSplice(ExecState* exec, unsigned startIndex, unsigned count)
+        {
+            return shiftCountWithAnyIndexingType(exec, startIndex, count);
+        }
+        template<ShiftCountMode shiftCountMode>
+        bool shiftCount(ExecState* exec, unsigned startIndex, unsigned count)
+        {
+            switch (shiftCountMode) {
+            case ShiftCountForShift:
+                return shiftCountForShift(exec, startIndex, count);
+            case ShiftCountForSplice:
+                return shiftCountForSplice(exec, startIndex, count);
+            default:
+                CRASH();
+                return false;
+            }
+        }
+        
+        bool unshiftCountForShift(ExecState* exec, unsigned startIndex, unsigned count)
+        {
+            return unshiftCountWithArrayStorage(exec, startIndex, count, ensureArrayStorage(exec->globalData()));
+        }
+        bool unshiftCountForSplice(ExecState* exec, unsigned startIndex, unsigned count)
+        {
+            return unshiftCountWithAnyIndexingType(exec, startIndex, count);
+        }
+        template<ShiftCountMode shiftCountMode>
+        bool unshiftCount(ExecState* exec, unsigned startIndex, unsigned count)
+        {
+            switch (shiftCountMode) {
+            case ShiftCountForShift:
+                return unshiftCountForShift(exec, startIndex, count);
+            case ShiftCountForSplice:
+                return unshiftCountForSplice(exec, startIndex, count);
+            default:
+                CRASH();
+                return false;
+            }
+        }
 
         void fillArgList(ExecState*, MarkedArgumentBuffer&);
         void copyToArguments(ExecState*, CallFrame*, uint32_t length);
@@ -94,17 +146,43 @@ namespace JSC {
         {
             ArrayStorage* storage = arrayStorageOrNull();
             if (!storage)
-                return false;
+                return true;
             SparseArrayValueMap* map = storage->m_sparseMap.get();
             return !map || !map->lengthIsReadOnly();
         }
-
-        void setLengthWritable(ExecState*, bool writable);
-
-        bool unshiftCountSlowCase(JSGlobalData&, bool, unsigned);
         
-        unsigned compactForSorting();
+        bool shiftCountWithAnyIndexingType(ExecState*, unsigned startIndex, unsigned count);
+        bool shiftCountWithArrayStorage(unsigned startIndex, unsigned count, ArrayStorage*);
+
+        bool unshiftCountWithAnyIndexingType(ExecState*, unsigned startIndex, unsigned count);
+        bool unshiftCountWithArrayStorage(ExecState*, unsigned startIndex, unsigned count, ArrayStorage*);
+        bool unshiftCountSlowCase(JSGlobalData&, bool, unsigned);
+
+        template<IndexingType indexingType>
+        void sortNumericVector(ExecState*, JSValue compareFunction, CallType, const CallData&);
+        
+        template<IndexingType indexingType>
+        void sortCompactedVector(ExecState*, WriteBarrier<Unknown>* begin, unsigned relevantLength);
+        
+        template<IndexingType indexingType>
+        void sortVector(ExecState*, JSValue compareFunction, CallType, const CallData&);
+
+        bool setLengthWithArrayStorage(ExecState*, unsigned newLength, bool throwException, ArrayStorage*);
+        void setLengthWritable(ExecState*, bool writable);
+        
+        template<IndexingType indexingType>
+        void compactForSorting(unsigned& numDefined, unsigned& newRelevantLength);
     };
+
+    inline Butterfly* createContiguousArrayButterfly(JSGlobalData& globalData, unsigned length)
+    {
+        IndexingHeader header;
+        header.setVectorLength(std::max(length, BASE_VECTOR_LEN));
+        header.setPublicLength(length);
+        Butterfly* result = Butterfly::create(
+            globalData, 0, 0, true, header, header.vectorLength() * sizeof(EncodedJSValue));
+        return result;
+    }
 
     inline Butterfly* createArrayButterfly(JSGlobalData& globalData, unsigned initialLength)
     {
@@ -121,7 +199,16 @@ namespace JSC {
 
     inline JSArray* JSArray::create(JSGlobalData& globalData, Structure* structure, unsigned initialLength)
     {
-        Butterfly* butterfly = createArrayButterfly(globalData, initialLength);
+        Butterfly* butterfly;
+        if (LIKELY(structure->indexingType() == ArrayWithContiguous)) {
+            butterfly = createContiguousArrayButterfly(globalData, initialLength);
+            ASSERT(initialLength < MIN_SPARSE_ARRAY_INDEX);
+        } else {
+            ASSERT(
+                structure->indexingType() == ArrayWithSlowPutArrayStorage
+                || (initialLength && structure->indexingType() == ArrayWithArrayStorage));
+            butterfly = createArrayButterfly(globalData, initialLength);
+        }
         JSArray* array = new (NotNull, allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure, butterfly);
         array->finishCreation(globalData);
         return array;
@@ -133,15 +220,26 @@ namespace JSC {
         if (vectorLength > MAX_STORAGE_VECTOR_LENGTH)
             return 0;
         
-        void* temp;
-        if (!globalData.heap.tryAllocateStorage(Butterfly::totalSize(0, 0, true, ArrayStorage::sizeFor(vectorLength)), &temp))
-            return 0;
-        Butterfly* butterfly = Butterfly::fromBase(temp, 0, 0);
-        *butterfly->indexingHeader() = indexingHeaderForArray(initialLength, vectorLength);
-        ArrayStorage* storage = butterfly->arrayStorage();
-        storage->m_indexBias = 0;
-        storage->m_sparseMap.clear();
-        storage->m_numValuesInVector = initialLength;
+        Butterfly* butterfly;
+        if (LIKELY(structure->indexingType() == ArrayWithContiguous)) {
+            
+            void* temp;
+            if (!globalData.heap.tryAllocateStorage(Butterfly::totalSize(0, 0, true, vectorLength * sizeof(EncodedJSValue)), &temp))
+                return 0;
+            butterfly = Butterfly::fromBase(temp, 0, 0);
+            butterfly->setVectorLength(vectorLength);
+            butterfly->setPublicLength(initialLength);
+        } else {
+            void* temp;
+            if (!globalData.heap.tryAllocateStorage(Butterfly::totalSize(0, 0, true, ArrayStorage::sizeFor(vectorLength)), &temp))
+                return 0;
+            butterfly = Butterfly::fromBase(temp, 0, 0);
+            *butterfly->indexingHeader() = indexingHeaderForArray(initialLength, vectorLength);
+            ArrayStorage* storage = butterfly->arrayStorage();
+            storage->m_indexBias = 0;
+            storage->m_sparseMap.clear();
+            storage->m_numValuesInVector = initialLength;
+        }
         
         JSArray* array = new (NotNull, allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure, butterfly);
         array->finishCreation(globalData);

@@ -39,8 +39,14 @@ Array::Mode fromObserved(ArrayProfile* profile, Array::Action action, bool makeS
         return Array::Unprofiled;
     case asArrayModes(NonArray):
         if (action == Array::Write && !profile->mayInterceptIndexedAccesses())
-            return Array::BlankToArrayStorage; // FIXME: we don't know whether to go to slow put mode, or not. This is a decent guess.
+            return Array::BlankToContiguousOrArrayStorage; // FIXME: we don't know whether to go to slow put mode or not. We're guessing that we don't need slow put.
         return Array::Undecided;
+    case asArrayModes(NonArrayWithContiguous):
+        return makeSafe ? Array::ContiguousOutOfBounds : (profile->mayStoreToHole() ? Array::ContiguousToTail : Array::Contiguous);
+    case asArrayModes(ArrayWithContiguous):
+        return makeSafe ? Array::ArrayWithContiguousOutOfBounds : (profile->mayStoreToHole() ? Array::ArrayWithContiguousToTail : Array::ArrayWithContiguous);
+    case asArrayModes(NonArrayWithContiguous) | asArrayModes(ArrayWithContiguous):
+        return makeSafe ? Array::PossiblyArrayWithContiguousOutOfBounds : (profile->mayStoreToHole() ? Array::PossiblyArrayWithContiguousToTail : Array::PossiblyArrayWithContiguous);
     case asArrayModes(NonArrayWithArrayStorage):
         return makeSafe ? Array::ArrayStorageOutOfBounds : (profile->mayStoreToHole() ? Array::ArrayStorageToHole : Array::ArrayStorage);
     case asArrayModes(NonArrayWithSlowPutArrayStorage):
@@ -56,6 +62,20 @@ Array::Mode fromObserved(ArrayProfile* profile, Array::Action action, bool makeS
     case asArrayModes(NonArrayWithSlowPutArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage):
     case asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage):
         return Array::PossiblyArrayWithSlowPutArrayStorage;
+    case asArrayModes(NonArrayWithContiguous) | asArrayModes(NonArrayWithArrayStorage):
+        return Array::ContiguousOrArrayStorage;
+    case asArrayModes(ArrayWithContiguous) | asArrayModes(ArrayWithArrayStorage):
+        return Array::ArrayWithContiguousOrArrayStorage;
+    case asArrayModes(NonArrayWithContiguous) | asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithContiguous) | asArrayModes(ArrayWithArrayStorage):
+        return Array::PossiblyArrayWithContiguousOrArrayStorage;
+    case asArrayModes(NonArray) | asArrayModes(NonArrayWithContiguous):
+        if (action == Array::Write && !profile->mayInterceptIndexedAccesses())
+            return Array::BlankToContiguous;
+        return Array::Undecided;
+    case asArrayModes(NonArray) | asArrayModes(NonArrayWithContiguous) | asArrayModes(NonArrayWithArrayStorage):
+        if (action == Array::Write && !profile->mayInterceptIndexedAccesses())
+            return Array::BlankToContiguousOrArrayStorage;
+        return Array::Undecided;
     case asArrayModes(NonArray) | asArrayModes(NonArrayWithArrayStorage):
         if (action == Array::Write && !profile->mayInterceptIndexedAccesses())
             return Array::BlankToArrayStorage;
@@ -144,6 +164,22 @@ bool modeAlreadyChecked(AbstractValue& value, Array::Mode arrayMode)
     case Array::String:
         return isStringSpeculation(value.m_type);
         
+    case Array::Contiguous:
+    case Array::ContiguousToTail:
+    case Array::ContiguousOutOfBounds:
+    case Array::PossiblyArrayWithContiguous:
+    case Array::PossiblyArrayWithContiguousToTail:
+    case Array::PossiblyArrayWithContiguousOutOfBounds:
+        return value.m_currentKnownStructure.hasSingleton()
+            && (value.m_currentKnownStructure.singleton()->indexingType() & HasContiguous);
+        
+    case Array::ArrayWithContiguous:
+    case Array::ArrayWithContiguousToTail:
+    case Array::ArrayWithContiguousOutOfBounds:
+        return value.m_currentKnownStructure.hasSingleton()
+            && (value.m_currentKnownStructure.singleton()->indexingType() & HasContiguous)
+            && (value.m_currentKnownStructure.singleton()->indexingType() & IsArray);
+
     case Array::ArrayStorage:
     case Array::ArrayStorageToHole:
     case Array::ArrayStorageOutOfBounds:
@@ -170,7 +206,8 @@ bool modeAlreadyChecked(AbstractValue& value, Array::Mode arrayMode)
             && (value.m_currentKnownStructure.singleton()->indexingType() & (HasArrayStorage | HasSlowPutArrayStorage))
             && (value.m_currentKnownStructure.singleton()->indexingType() & IsArray);
         
-    case ALL_EFFECTFUL_ARRAY_STORAGE_MODES:
+    case ALL_EFFECTFUL_MODES:
+    case POLYMORPHIC_MODES:
         return false;
         
     case Array::Arguments:
@@ -225,6 +262,24 @@ const char* modeToString(Array::Mode mode)
         return "ForceExit";
     case Array::String:
         return "String";
+    case Array::Contiguous:
+        return "Contiguous";
+    case Array::ContiguousToTail:
+        return "ContiguousToTail";
+    case Array::ContiguousOutOfBounds:
+        return "ContiguousOutOfBounds";
+    case Array::ArrayWithContiguous:
+        return "ArrayWithContiguous";
+    case Array::ArrayWithContiguousToTail:
+        return "ArrayWithContiguousToTail";
+    case Array::ArrayWithContiguousOutOfBounds:
+        return "ArrayWithContiguousOutOfBounds";
+    case Array::PossiblyArrayWithContiguous:
+        return "PossiblyArrayWithContiguous";
+    case Array::PossiblyArrayWithContiguousToTail:
+        return "PossiblyArrayWithContiguousToTail";
+    case Array::PossiblyArrayWithContiguousOutOfBounds:
+        return "PossiblyArrayWithContiguousOutOfBounds";
     case Array::ArrayStorage:
         return "ArrayStorage";
     case Array::ArrayStorageToHole:
@@ -249,10 +304,20 @@ const char* modeToString(Array::Mode mode)
         return "PossiblyArrayWithSlowPutArrayStorage";
     case Array::PossiblyArrayWithArrayStorageOutOfBounds:
         return "PossiblyArrayWithArrayStorageOutOfBounds";
+    case Array::BlankToContiguous:
+        return "BlankToContiguous";
     case Array::BlankToArrayStorage:
         return "BlankToArrayStorage";
     case Array::BlankToSlowPutArrayStorage:
         return "BlankToSlowPutArrayStorage";
+    case Array::BlankToContiguousOrArrayStorage:
+        return "BlankToContiguousOrArrayStorage";
+    case Array::ContiguousOrArrayStorage:
+        return "ContiguousOrArrayStorage";
+    case Array::ArrayWithContiguousOrArrayStorage:
+        return "ArrayWithContiguousOrArrayStorage";
+    case Array::PossiblyArrayWithContiguousOrArrayStorage:
+        return "PossiblyArrayWithContiguousOrArrayStorage";
     case Array::Arguments:
         return "Arguments";
     case Array::Int8Array:

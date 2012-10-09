@@ -859,12 +859,17 @@ bool AbstractState::execute(unsigned indexInBlock)
             forNode(node.child2()).filter(SpecInt32);
             forNode(nodeIndex).makeTop();
             break;
+        case IN_BOUNDS_CONTIGUOUS_MODES:
         case IN_BOUNDS_ARRAY_STORAGE_MODES:
             forNode(node.child2()).filter(SpecInt32);
             forNode(nodeIndex).makeTop();
             break;
+        case OUT_OF_BOUNDS_CONTIGUOUS_MODES:
         case OUT_OF_BOUNDS_ARRAY_STORAGE_MODES:
-        case ALL_EFFECTFUL_ARRAY_STORAGE_MODES:
+        case SLOW_PUT_ARRAY_STORAGE_MODES:
+        case ALL_EFFECTFUL_MODES:
+        case POLYMORPHIC_MODES:
+            forNode(node.child1()).filter(SpecCell);
             forNode(node.child2()).filter(SpecInt32);
             clobberWorld(node.codeOrigin, indexInBlock);
             forNode(nodeIndex).makeTop();
@@ -908,6 +913,9 @@ bool AbstractState::execute(unsigned indexInBlock)
             forNode(node.child2()).filter(SpecInt32);
             forNode(nodeIndex).set(SpecDouble);
             break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
         }
         break;
     }
@@ -915,6 +923,7 @@ bool AbstractState::execute(unsigned indexInBlock)
     case PutByVal:
     case PutByValAlias: {
         node.setCanExit(true);
+        Edge child1 = m_graph.varArgChild(node, 0);
         Edge child2 = m_graph.varArgChild(node, 1);
         Edge child3 = m_graph.varArgChild(node, 2);
         switch (modeForPut(node.arrayMode())) {
@@ -924,11 +933,18 @@ bool AbstractState::execute(unsigned indexInBlock)
         case Array::Generic:
             clobberWorld(node.codeOrigin, indexInBlock);
             break;
+        case IN_BOUNDS_CONTIGUOUS_MODES:
+        case CONTIGUOUS_TO_TAIL_MODES:
         case IN_BOUNDS_ARRAY_STORAGE_MODES:
             forNode(child2).filter(SpecInt32);
             break;
+        case OUT_OF_BOUNDS_CONTIGUOUS_MODES:
+        case ARRAY_STORAGE_TO_HOLE_MODES:
         case OUT_OF_BOUNDS_ARRAY_STORAGE_MODES:
-        case ALL_EFFECTFUL_ARRAY_STORAGE_MODES:
+        case SLOW_PUT_ARRAY_STORAGE_MODES:
+        case ALL_EFFECTFUL_MODES:
+        case POLYMORPHIC_MODES:
+            forNode(child1).filter(SpecCell);
             forNode(child2).filter(SpecInt32);
             clobberWorld(node.codeOrigin, indexInBlock);
             break;
@@ -1367,7 +1383,9 @@ bool AbstractState::execute(unsigned indexInBlock)
         case Array::String:
             forNode(node.child1()).filter(SpecString);
             break;
+        case ALL_CONTIGUOUS_MODES:
         case ALL_ARRAY_STORAGE_MODES:
+        case POLYMORPHIC_MODES: // These only get a CheckArray for GetArrayLength
             // This doesn't filter anything meaningful right now. We may want to add
             // CFA tracking of array mode speculations, but we don't have that, yet.
             forNode(node.child1()).filter(SpecCell);
@@ -1410,9 +1428,10 @@ bool AbstractState::execute(unsigned indexInBlock)
     }
     case Arrayify: {
         switch (node.arrayMode()) {
-        case EFFECTFUL_NON_ARRAY_ARRAY_STORAGE_MODES:
+        case ALL_EFFECTFUL_MODES:
             node.setCanExit(true);
             forNode(node.child1()).filter(SpecCell);
+            forNode(node.child2()).filter(SpecInt32);
             forNode(nodeIndex).clear();
             clobberStructures(indexInBlock);
             break;

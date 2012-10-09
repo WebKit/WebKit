@@ -1574,6 +1574,8 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         case Array::ArrayWithArrayStorageToHole:
             ASSERT_NOT_REACHED();
             
+        case Array::ArrayWithContiguous:
+        case Array::ArrayWithContiguousOutOfBounds:
         case Array::ArrayWithArrayStorage:
         case Array::ArrayWithArrayStorageOutOfBounds: {
             NodeIndex arrayPush = addToGraph(ArrayPush, OpInfo(arrayMode), OpInfo(prediction), get(registerOffset + argumentToOperand(0)), get(registerOffset + argumentToOperand(1)));
@@ -1597,6 +1599,8 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         case Array::ArrayWithArrayStorageToHole:
             ASSERT_NOT_REACHED();
             
+        case Array::ArrayWithContiguous:
+        case Array::ArrayWithContiguousOutOfBounds:
         case Array::ArrayWithArrayStorage:
         case Array::ArrayWithArrayStorageOutOfBounds: {
             NodeIndex arrayPop = addToGraph(ArrayPop, OpInfo(arrayMode), OpInfo(prediction), get(registerOffset + argumentToOperand(0)));

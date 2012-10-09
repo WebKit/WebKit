@@ -1,3 +1,16 @@
+2012-10-09  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should infer when indexed storage is contiguous, and optimize for it
+        https://bugs.webkit.org/show_bug.cgi?id=97288
+
+        Reviewed by Mark Hahnenberg.
+
+        Moved out this helpful math utility to MathExtras, since we now use it in
+        multiple places.
+
+        * wtf/MathExtras.h:
+        (timesThreePlusOneDividedByTwo):
+
 2012-10-08  Benjamin Poulain  <benjamin@webkit.org>
 
         Generalize moving URLComponent's begin position

@@ -738,8 +738,25 @@ static inline JSObject* checkedReturn(JSObject* returnValue)
     return returnValue;
 }
 
+class SamplingScope {
+public:
+    SamplingScope(Interpreter* interpreter)
+        : m_interpreter(interpreter)
+    {
+        interpreter->startSampling();
+    }
+    ~SamplingScope()
+    {
+        m_interpreter->stopSampling();
+    }
+private:
+    Interpreter* m_interpreter;
+};
+
 JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, JSObject* thisObj)
 {
+    SamplingScope samplingScope(this);
+    
     JSScope* scope = callFrame->scope();
     ASSERT(isValidThisObject(thisObj, callFrame));
     ASSERT(!scope->globalData()->exception);
@@ -1137,6 +1154,8 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionE
 
 JSValue Interpreter::execute(CallFrameClosure& closure) 
 {
+    SamplingScope samplingScope(this);
+    
     ASSERT(!closure.oldCallFrame->globalData().isCollectorBusy());
     if (closure.oldCallFrame->globalData().isCollectorBusy())
         return jsNull();
@@ -1172,6 +1191,8 @@ void Interpreter::endRepeatCall(CallFrameClosure& closure)
 
 JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue thisValue, JSScope* scope, int globalRegisterOffset)
 {
+    SamplingScope samplingScope(this);
+    
     ASSERT(isValidThisObject(thisValue, callFrame));
     ASSERT(!scope->globalData()->exception);
     ASSERT(!callFrame->globalData().isCollectorBusy());

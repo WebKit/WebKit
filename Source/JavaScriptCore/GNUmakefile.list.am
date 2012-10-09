@@ -84,6 +84,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/assembler/X86Assembler.h \
 	Source/JavaScriptCore/bytecode/ArrayProfile.cpp \
 	Source/JavaScriptCore/bytecode/ArrayProfile.h \
+	Source/JavaScriptCore/bytecode/ByValInfo.h \
 	Source/JavaScriptCore/bytecode/BytecodeConventions.h \
 	Source/JavaScriptCore/bytecode/CallLinkInfo.cpp \
 	Source/JavaScriptCore/bytecode/CallLinkInfo.h \
@@ -521,6 +522,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/Identifier.h \
 	Source/JavaScriptCore/runtime/IndexingHeaderInlineMethods.h \
 	Source/JavaScriptCore/runtime/IndexingHeader.h \
+	Source/JavaScriptCore/runtime/IndexingType.cpp \
 	Source/JavaScriptCore/runtime/IndexingType.h \
 	Source/JavaScriptCore/runtime/InitializeThreading.cpp \
 	Source/JavaScriptCore/runtime/InitializeThreading.h \

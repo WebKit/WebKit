@@ -522,6 +522,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\IndexingType.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\IndexingType.h"
 				>
 			</File>
@@ -1571,6 +1575,10 @@
 			</File>
 			<File
 				RelativePath="..\..\bytecode\ArrayProfile.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\ByValInfo.h"
 				>
 			</File>
 			<File

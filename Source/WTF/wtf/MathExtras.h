@@ -304,6 +304,16 @@ template<typename T> inline bool hasTwoOrMoreBitsSet(T value)
     return !hasZeroOrOneBitsSet(value);
 }
 
+template<typename T> inline T timesThreePlusOneDividedByTwo(T value)
+{
+    // Mathematically equivalent to:
+    //   (value * 3 + 1) / 2;
+    // or:
+    //   (unsigned)ceil(value * 1.5));
+    // This form is not prone to internal overflow.
+    return value + (value >> 1) + (value & 1);
+}
+
 #if !COMPILER(MSVC) && !COMPILER(RVCT) && !OS(SOLARIS)
 using std::isfinite;
 #if !COMPILER_QUIRK(GCC11_GLOBAL_ISINF_ISNAN)

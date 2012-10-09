@@ -63,6 +63,7 @@
 #include "RegExpObject.h"
 #include "RegExpPrototype.h"
 #include "Register.h"
+#include "RepatchBuffer.h"
 #include "SamplingTool.h"
 #include "Strong.h"
 #include <wtf/StdLibExtras.h>
@@ -796,7 +797,7 @@ JITThunks::JITThunks(JSGlobalData* globalData)
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedR10) == PRESERVED_R10_OFFSET);
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedR11) == PRESERVED_R11_OFFSET);
 
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, JSStack) == REGISTER_FILE_OFFSET);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, stack) == REGISTER_FILE_OFFSET);
     // The fifth argument is the first item already on the stack.
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, unused1) == FIRST_STACK_ARGUMENT);
 
@@ -2414,6 +2415,30 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_construct_NotJSConstruct)
     return returnValue;
 }
 
+static JSValue getByVal(
+    CallFrame* callFrame, JSValue baseValue, JSValue subscript, ReturnAddressPtr returnAddress)
+{
+    if (LIKELY(baseValue.isCell() && subscript.isString())) {
+        if (JSValue result = baseValue.asCell()->fastGetOwnProperty(callFrame, asString(subscript)->value(callFrame)))
+            return result;
+    }
+
+    if (subscript.isUInt32()) {
+        uint32_t i = subscript.asUInt32();
+        if (isJSString(baseValue) && asString(baseValue)->canGetIndex(i)) {
+            ctiPatchCallByReturnAddress(callFrame->codeBlock(), returnAddress, FunctionPtr(cti_op_get_by_val_string));
+            return asString(baseValue)->getIndex(callFrame, i);
+        }
+        return baseValue.get(callFrame, i);
+    }
+
+    if (isName(subscript))
+        return baseValue.get(callFrame, jsCast<NameInstance*>(subscript.asCell())->privateName());
+
+    Identifier property(callFrame, subscript.toString(callFrame)->value(callFrame));
+    return baseValue.get(callFrame, property);
+}
+
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_val)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
@@ -2423,35 +2448,44 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_val)
     JSValue baseValue = stackFrame.args[0].jsValue();
     JSValue subscript = stackFrame.args[1].jsValue();
     
-    if (LIKELY(baseValue.isCell() && subscript.isString())) {
-        if (JSValue result = baseValue.asCell()->fastGetOwnProperty(callFrame, asString(subscript)->value(callFrame))) {
-            CHECK_FOR_EXCEPTION();
-            return JSValue::encode(result);
+    if (baseValue.isObject() && subscript.isInt32()) {
+        // See if it's worth optimizing this at all.
+        JSObject* object = asObject(baseValue);
+        IndexingType indexingType = object->structure()->indexingType();
+        if (object->structure()->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero()) {
+            // Don't ever try to optimize.
+            RepatchBuffer repatchBuffer(callFrame->codeBlock());
+            repatchBuffer.relinkCallerToFunction(STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_val_generic));
+        } else {
+            // Attempt to optimize.
+            unsigned bytecodeOffset = callFrame->bytecodeOffsetForNonDFGCode();
+            ASSERT(bytecodeOffset);
+            ByValInfo& byValInfo = callFrame->codeBlock()->getByValInfo(bytecodeOffset - 1);
+            ASSERT(!byValInfo.stubRoutine);
+            if (isOptimizableIndexingType(indexingType)) {
+                JITArrayMode arrayMode = jitArrayModeForIndexingType(indexingType);
+                if (arrayMode != byValInfo.arrayMode)
+                    JIT::compileGetByVal(&callFrame->globalData(), callFrame->codeBlock(), &byValInfo, STUB_RETURN_ADDRESS, arrayMode);
+            }
         }
     }
+    
+    JSValue result = getByVal(callFrame, baseValue, subscript, STUB_RETURN_ADDRESS);
+    CHECK_FOR_EXCEPTION();
+    return JSValue::encode(result);
+}
+    
+DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_val_generic)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
 
-    if (subscript.isUInt32()) {
-        uint32_t i = subscript.asUInt32();
-        if (isJSString(baseValue) && asString(baseValue)->canGetIndex(i)) {
-            ctiPatchCallByReturnAddress(callFrame->codeBlock(), STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_val_string));
-            JSValue result = asString(baseValue)->getIndex(callFrame, i);
-            CHECK_FOR_EXCEPTION();
-            return JSValue::encode(result);
-        }
-        JSValue result = baseValue.get(callFrame, i);
-        CHECK_FOR_EXCEPTION();
-        return JSValue::encode(result);
-    }
+    CallFrame* callFrame = stackFrame.callFrame;
 
-    if (isName(subscript)) {
-        JSValue result = baseValue.get(callFrame, jsCast<NameInstance*>(subscript.asCell())->privateName());
-        CHECK_FOR_EXCEPTION();
-        return JSValue::encode(result);
-    }
-
-    Identifier property(callFrame, subscript.toString(callFrame)->value(callFrame));
-    JSValue result = baseValue.get(callFrame, property);
-    CHECK_FOR_EXCEPTION_AT_END();
+    JSValue baseValue = stackFrame.args[0].jsValue();
+    JSValue subscript = stackFrame.args[1].jsValue();
+    
+    JSValue result = getByVal(callFrame, baseValue, subscript, STUB_RETURN_ADDRESS);
+    CHECK_FOR_EXCEPTION();
     return JSValue::encode(result);
 }
     
@@ -2502,23 +2536,14 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_sub)
     return JSValue::encode(result);
 }
 
-DEFINE_STUB_FUNCTION(void, op_put_by_val)
+static void putByVal(CallFrame* callFrame, JSValue baseValue, JSValue subscript, JSValue value)
 {
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    CallFrame* callFrame = stackFrame.callFrame;
-    JSGlobalData* globalData = stackFrame.globalData;
-
-    JSValue baseValue = stackFrame.args[0].jsValue();
-    JSValue subscript = stackFrame.args[1].jsValue();
-    JSValue value = stackFrame.args[2].jsValue();
-
     if (LIKELY(subscript.isUInt32())) {
         uint32_t i = subscript.asUInt32();
         if (baseValue.isObject()) {
             JSObject* object = asObject(baseValue);
             if (object->canSetIndexQuickly(i))
-                object->setIndexQuickly(*globalData, i, value);
+                object->setIndexQuickly(callFrame->globalData(), i, value);
             else
                 object->methodTable()->putByIndex(object, callFrame, i, value, callFrame->codeBlock()->isStrictMode());
         } else
@@ -2528,11 +2553,61 @@ DEFINE_STUB_FUNCTION(void, op_put_by_val)
         baseValue.put(callFrame, jsCast<NameInstance*>(subscript.asCell())->privateName(), value, slot);
     } else {
         Identifier property(callFrame, subscript.toString(callFrame)->value(callFrame));
-        if (!stackFrame.globalData->exception) { // Don't put to an object if toString threw an exception.
+        if (!callFrame->globalData().exception) { // Don't put to an object if toString threw an exception.
             PutPropertySlot slot(callFrame->codeBlock()->isStrictMode());
             baseValue.put(callFrame, property, value, slot);
         }
     }
+}
+
+DEFINE_STUB_FUNCTION(void, op_put_by_val)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+
+    CallFrame* callFrame = stackFrame.callFrame;
+
+    JSValue baseValue = stackFrame.args[0].jsValue();
+    JSValue subscript = stackFrame.args[1].jsValue();
+    JSValue value = stackFrame.args[2].jsValue();
+
+    if (baseValue.isObject() && subscript.isInt32()) {
+        // See if it's worth optimizing at all.
+        JSObject* object = asObject(baseValue);
+        IndexingType indexingType = object->structure()->indexingType();
+        if (object->structure()->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero()) {
+            // Dont ever try to optimize.
+            RepatchBuffer repatchBuffer(callFrame->codeBlock());
+            repatchBuffer.relinkCallerToFunction(STUB_RETURN_ADDRESS, FunctionPtr(cti_op_put_by_val_generic));
+        } else {
+            // Attempt to optimize.
+            unsigned bytecodeOffset = callFrame->bytecodeOffsetForNonDFGCode();
+            ASSERT(bytecodeOffset);
+            ByValInfo& byValInfo = callFrame->codeBlock()->getByValInfo(bytecodeOffset - 1);
+            ASSERT(!byValInfo.stubRoutine);
+            if (isOptimizableIndexingType(indexingType)) {
+                JITArrayMode arrayMode = jitArrayModeForIndexingType(indexingType);
+                if (arrayMode != byValInfo.arrayMode)
+                    JIT::compilePutByVal(&callFrame->globalData(), callFrame->codeBlock(), &byValInfo, STUB_RETURN_ADDRESS, arrayMode);
+            }
+        }
+    }
+    
+    putByVal(callFrame, baseValue, subscript, value);
+
+    CHECK_FOR_EXCEPTION_AT_END();
+}
+
+DEFINE_STUB_FUNCTION(void, op_put_by_val_generic)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+
+    CallFrame* callFrame = stackFrame.callFrame;
+
+    JSValue baseValue = stackFrame.args[0].jsValue();
+    JSValue subscript = stackFrame.args[1].jsValue();
+    JSValue value = stackFrame.args[2].jsValue();
+    
+    putByVal(callFrame, baseValue, subscript, value);
 
     CHECK_FOR_EXCEPTION_AT_END();
 }

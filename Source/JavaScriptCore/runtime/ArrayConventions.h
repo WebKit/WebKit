@@ -79,7 +79,7 @@ static const unsigned minDensityMultiplier = 8;
 
 inline bool isDenseEnoughForVector(unsigned length, unsigned numValues)
 {
-    return length <= MIN_SPARSE_ARRAY_INDEX || length / minDensityMultiplier <= numValues;
+    return length / minDensityMultiplier <= numValues;
 }
 
 inline IndexingHeader indexingHeaderForArray(unsigned length, unsigned vectorLength)

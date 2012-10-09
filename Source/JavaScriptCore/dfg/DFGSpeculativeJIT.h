@@ -42,6 +42,7 @@
 
 namespace JSC { namespace DFG {
 
+class GPRTemporary;
 class JSValueOperand;
 class SlowPathGenerator;
 class SpeculativeJIT;
@@ -1166,6 +1167,11 @@ public:
         m_jit.setupArgumentsWithExecState(object, TrustedImmPtr(size));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(P_DFGOperation_EOZ operation, GPRReg result, GPRReg object, int32_t size)
+    {
+        m_jit.setupArgumentsWithExecState(object, TrustedImmPtr(size));
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(P_DFGOperation_EPS operation, GPRReg result, GPRReg old, size_t size)
     {
         m_jit.setupArgumentsWithExecState(old, TrustedImmPtr(size));
@@ -1218,9 +1224,14 @@ public:
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(J_DFGOperation_EStI operation, GPRReg result, Structure* structure, GPRReg arg2)
+    JITCompiler::Call callOperation(J_DFGOperation_EStZ operation, GPRReg result, Structure* structure, GPRReg arg2)
     {
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure), arg2);
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
+    JITCompiler::Call callOperation(J_DFGOperation_EStZ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EStPS operation, GPRReg result, Structure* structure, void* pointer, size_t size)
@@ -1468,6 +1479,11 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(arg2));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(P_DFGOperation_EOZ operation, GPRReg result, GPRReg arg1, int32_t arg2)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(arg2));
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(P_DFGOperation_EPS operation, GPRReg result, GPRReg old, size_t size)
     {
         m_jit.setupArgumentsWithExecState(old, TrustedImmPtr(size));
@@ -1531,9 +1547,14 @@ public:
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure));
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
-    JITCompiler::Call callOperation(J_DFGOperation_EStI operation, GPRReg resultTag, GPRReg resultPayload, Structure* structure, GPRReg arg2)
+    JITCompiler::Call callOperation(J_DFGOperation_EStZ operation, GPRReg resultTag, GPRReg resultPayload, Structure* structure, GPRReg arg2)
     {
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure), arg2);
+        return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
+    }
+    JITCompiler::Call callOperation(J_DFGOperation_EStZ operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1, GPRReg arg2)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EStPS operation, GPRReg resultTag, GPRReg resultPayload, Structure* structure, void* pointer, size_t size)
@@ -2148,6 +2169,52 @@ public:
     
     void compileAllocatePropertyStorage(Node&);
     void compileReallocatePropertyStorage(Node&);
+    
+#if USE(JSVALUE64)
+    MacroAssembler::JumpList compileContiguousGetByVal(Node&, GPRReg baseReg, GPRReg propertyReg, GPRReg storageReg, GPRReg resultReg);
+    MacroAssembler::JumpList compileArrayStorageGetByVal(Node&, GPRReg baseReg, GPRReg propertyReg, GPRReg storageReg, GPRReg resultReg);
+#else
+    MacroAssembler::JumpList compileContiguousGetByVal(Node&, GPRReg baseReg, GPRReg propertyReg, GPRReg storageReg, GPRReg resultTagReg, GPRReg resultPayloadReg);
+    MacroAssembler::JumpList compileArrayStorageGetByVal(Node&, GPRReg baseReg, GPRReg propertyReg, GPRReg storageReg, GPRReg resultTagReg, GPRReg resultPayloadReg);
+#endif
+    
+    bool putByValWillNeedExtraRegister(Array::Mode arrayMode)
+    {
+        switch (arrayMode) {
+        // For ArrayStorage, we need an extra reg for stores to holes except if
+        // we're in SlowPut mode.
+        case ARRAY_STORAGE_TO_HOLE_MODES:
+        case OUT_OF_BOUNDS_ARRAY_STORAGE_MODES:
+        case ALL_EFFECTFUL_ARRAY_STORAGE_MODES:
+            return true;
+            
+        // For Contiguous, we need an extra reg for any access that may store
+        // to the tail.
+        case CONTIGUOUS_TO_TAIL_MODES:
+        case OUT_OF_BOUNDS_CONTIGUOUS_MODES:
+        case ALL_EFFECTFUL_CONTIGUOUS_MODES:
+            return true;
+            
+        // All polymorphic modes need an extra reg.
+        case ALL_POLYMORPHIC_MODES:
+            return true;
+            
+        default:
+            return false;
+        }
+    }
+    GPRReg temporaryRegisterForPutByVal(GPRTemporary&, Array::Mode);
+    GPRReg temporaryRegisterForPutByVal(GPRTemporary& temporary, Node& node)
+    {
+        return temporaryRegisterForPutByVal(temporary, node.arrayMode());
+    }
+#if USE(JSVALUE64)
+    MacroAssembler::JumpList compileContiguousPutByVal(Node&, GPRReg baseReg, GPRReg propertyReg, GPRReg storageReg, GPRReg valueReg, GPRReg tempReg);
+    MacroAssembler::JumpList compileArrayStoragePutByVal(Node&, GPRReg baseReg, GPRReg propertyReg, GPRReg storageReg, GPRReg valueReg, GPRReg tempReg);
+#else
+    MacroAssembler::JumpList compileContiguousPutByVal(Node&, GPRReg baseReg, GPRReg propertyReg, GPRReg storageReg, GPRReg valueTagReg, GPRReg valuePayloadReg);
+    MacroAssembler::JumpList compileArrayStoragePutByVal(Node&, GPRReg baseReg, GPRReg propertyReg, GPRReg storageReg, GPRReg valueTagReg, GPRReg valuePayloadReg);
+#endif
     
     void compileGetCharCodeAt(Node&);
     void compileGetByValOnString(Node&);

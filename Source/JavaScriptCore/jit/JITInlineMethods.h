@@ -447,23 +447,22 @@ inline void JIT::emitAllocateBasicStorage(size_t size, ptrdiff_t offsetFromBase,
 
 inline void JIT::emitAllocateJSArray(unsigned valuesRegister, unsigned length, RegisterID cellResult, RegisterID storageResult, RegisterID storagePtr, RegisterID scratch)
 {
-    unsigned initialLength = std::max(length, 4U);
-    size_t initialStorage = Butterfly::totalSize(0, 0, true, ArrayStorage::sizeFor(initialLength));
+    unsigned initialLength = std::max(length, BASE_VECTOR_LEN);
+    size_t initialStorage = Butterfly::totalSize(0, 0, true, initialLength * sizeof(EncodedJSValue));
+
+    loadPtr(m_codeBlock->globalObject()->addressOfArrayStructure(), scratch);
+    addSlowCase(branchTest8(Zero, Address(scratch, Structure::indexingTypeOffset()), TrustedImm32(HasContiguous)));
 
     // We allocate the backing store first to ensure that garbage collection 
     // doesn't happen during JSArray initialization.
     emitAllocateBasicStorage(initialStorage, sizeof(IndexingHeader), storageResult);
 
     // Allocate the cell for the array.
-    loadPtr(m_codeBlock->globalObject()->addressOfArrayStructure(), scratch);
     emitAllocateBasicJSObject<JSArray, MarkedBlock::None>(scratch, cellResult, storagePtr);
 
-    // Store all the necessary info in the ArrayStorage.
-    store32(Imm32(length), Address(storageResult, ArrayStorage::lengthOffset()));
-    store32(Imm32(length), Address(storageResult, ArrayStorage::numValuesInVectorOffset()));
-    store32(Imm32(initialLength), Address(storageResult, ArrayStorage::vectorLengthOffset()));
-    store32(TrustedImm32(0), Address(storageResult, ArrayStorage::indexBiasOffset()));
-    storePtr(TrustedImmPtr(0), Address(storageResult, ArrayStorage::sparseMapOffset()));
+    // Store all the necessary info in the indexing header.
+    store32(Imm32(length), Address(storageResult, Butterfly::offsetOfPublicLength()));
+    store32(Imm32(initialLength), Address(storageResult, Butterfly::offsetOfVectorLength()));
 
     // Store the newly allocated ArrayStorage.
     storePtr(storageResult, Address(cellResult, JSObject::butterflyOffset()));
@@ -472,12 +471,12 @@ inline void JIT::emitAllocateJSArray(unsigned valuesRegister, unsigned length, R
     for (unsigned i = 0; i < length; i++) {
 #if USE(JSVALUE64)
         loadPtr(Address(callFrameRegister, (valuesRegister + i) * sizeof(Register)), storagePtr);
-        storePtr(storagePtr, Address(storageResult, ArrayStorage::vectorOffset() + sizeof(WriteBarrier<Unknown>) * i));
+        storePtr(storagePtr, Address(storageResult, sizeof(WriteBarrier<Unknown>) * i));
 #else
         load32(Address(callFrameRegister, (valuesRegister + i) * sizeof(Register)), storagePtr);
-        store32(storagePtr, Address(storageResult, ArrayStorage::vectorOffset() + sizeof(WriteBarrier<Unknown>) * i));
+        store32(storagePtr, Address(storageResult, sizeof(WriteBarrier<Unknown>) * i));
         load32(Address(callFrameRegister, (valuesRegister + i) * sizeof(Register) + sizeof(uint32_t)), storagePtr);
-        store32(storagePtr, Address(storageResult, ArrayStorage::vectorOffset() + sizeof(WriteBarrier<Unknown>) * i + sizeof(uint32_t)));
+        store32(storagePtr, Address(storageResult, sizeof(WriteBarrier<Unknown>) * i + sizeof(uint32_t)));
 #endif
     }
 }
@@ -561,10 +560,25 @@ inline void JIT::emitArrayProfilingSiteForBytecodeIndex(RegisterID structureAndI
 
 inline void JIT::emitArrayProfileStoreToHoleSpecialCase(ArrayProfile* arrayProfile)
 {
-    if (!canBeOptimized())
-        return;
-    
+#if ENABLE(VALUE_PROFILER)    
     store8(TrustedImm32(1), arrayProfile->addressOfMayStoreToHole());
+#endif
+}
+
+static inline bool arrayProfileSaw(ArrayProfile* profile, IndexingType capability)
+{
+#if ENABLE(VALUE_PROFILER)
+    return !!(profile->observedArrayModes() & (asArrayModes(NonArray | capability) | asArrayModes(ArrayClass | capability)));
+#else
+    return false;
+#endif
+}
+
+inline JITArrayMode JIT::chooseArrayMode(ArrayProfile* profile)
+{
+    if (arrayProfileSaw(profile, HasArrayStorage))
+        return JITArrayStorage;
+    return JITContiguous;
 }
 
 #if USE(JSVALUE32_64)

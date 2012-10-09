@@ -154,7 +154,8 @@ namespace JSC {
         
         bool anyObjectInChainMayInterceptIndexedAccesses() const;
         
-        NonPropertyTransition suggestedIndexingTransition() const;
+        bool needsSlowPutIndexing() const;
+        NonPropertyTransition suggestedArrayStorageTransition() const;
         
         JSGlobalObject* globalObject() const { return m_globalObject.get(); }
         void setGlobalObject(JSGlobalData& globalData, JSGlobalObject* globalObject) { m_globalObject.set(globalData, this, globalObject); }
