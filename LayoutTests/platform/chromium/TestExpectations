@@ -1967,6 +1967,44 @@ crbug.com/40680 fast/media/media-query-list-05.html
 crbug.com/40680 fast/media/media-query-list-06.html
 crbug.com/40680 fast/media/media-query-list-07.html
 
+# These render slightly differently if the dst-rect lands exactly on 1/2 pixel
+# boundary, due to a different sequence of float math. Best would be to change
+# these tests to not land there. For now we will just mark these for rebaselining
+crbug.com/117597 fast/backgrounds/mask-box-image.html [ ImageOnlyFailure ] 
+crbug.com/117597 fast/borders/border-image-outset-in-shorthand.html [ ImageOnlyFailure ] 
+crbug.com/117597 fast/borders/border-image-outset.html [ ImageOnlyFailure ] 
+crbug.com/117597 http/tests/misc/slow-loading-image-in-pattern.html [ ImageOnlyFailure ] 
+crbug.com/117597 scrollbars/listbox-scrollbar-combinations.html [ ImageOnlyFailure ] 
+crbug.com/117597 scrollbars/overflow-scrollbar-combinations.html [ ImageOnlyFailure ] 
+crbug.com/117597 svg/W3C-SVG-1.1/animate-elem-36-t.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/W3C-SVG-1.1/filters-light-01-f.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/custom/anchor-on-use.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/filters/filterRes2.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/filters/filteredImage.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/W3C-I18N/text-anchor-dirLTR-anchorEnd.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/W3C-I18N/text-anchor-dirLTR-anchorStart.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/W3C-I18N/text-anchor-dirNone-anchorEnd.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/W3C-I18N/text-anchor-dirNone-anchorMiddle.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/W3C-I18N/text-anchor-dirNone-anchorStart.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/W3C-I18N/text-anchor-dirRTL-anchorEnd.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/W3C-I18N/text-anchor-dirRTL-anchorStart.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/W3C-I18N/text-anchor-no-markup.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/W3C-SVG-1.1/pservers-grad-13-b.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/batik/filters/feTile.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/custom/image-small-width-height.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/custom/pointer-events-image-css-transform.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/custom/pointer-events-image.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/custom/radial-gradient-with-outstanding-focalPoint.svg [ ImageOnlyFailure ] 
+crbug.com/117597 svg/custom/radialGradient-focal-radius.svg [ ImageOnlyFailure ]
+
 # Caused by http://trac.webkit.org/changeset/56394.
 crbug.com/143475 [ Win ] http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html [ Failure Pass Timeout ]
 
