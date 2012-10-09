@@ -1,17 +1,18 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x151
-  RenderBlock {HTML} at (0,0) size 800x151
-    RenderBody {BODY} at (8,16) size 784x127
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 777x42
-          text run at (0,0) width 777: "This tests that clicking in a contenteditable div will set the caret in the right position for LTR text in a LTR block."
-          text run at (0,21) width 546: "To test manually, click the left of the text. The caret should be on the left edge."
-      RenderBlock {DIV} at (0,58) size 222x48 [border: (1px solid #000000)]
-        RenderText {#text} at (11,11) size 75x26
-          text run at (11,11) width 75: "WebKit2"
-      RenderBlock (anonymous) at (0,106) size 784x21
-        RenderText {#text} at (0,0) size 44x21
-          text run at (0,0) width 44: "PASS"
-        RenderBR {BR} at (44,0) size 0x21
+layer at (0,0) size 800x142
+  RenderBlock {HTML} at (0,0) size 800x142
+    RenderBody {BODY} at (8,16) size 784x118
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 775x38
+          text run at (0,0) width 775: "This tests that clicking in a contenteditable div will set the caret in the right position for LTR text in a LTR block. To test manually,"
+          text run at (0,19) width 363: "click the left of the text. The caret should be on the left edge."
+      RenderBlock {DIV} at (0,54) size 205x45 [border: (1px solid #000000)]
+        RenderText {#text} at (11,11) size 72x23
+          text run at (11,11) width 72: "WebKit2"
+      RenderBlock (anonymous) at (0,99) size 784x19
+        RenderText {#text} at (0,0) size 38x19
+          text run at (0,0) width 38: "PASS"
+        RenderBR {BR} at (38,0) size 0x19
+        RenderText {#text} at (0,0) size 0x0
 caret: position 0 of child 0 {#text} of child 3 {DIV} of body

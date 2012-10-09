@@ -52,10 +52,10 @@ PASS getWidth('object-100') is '300px'
 PASS getHeight('object-100') is '150px'
 PASS getWidth('button-75') is getWidth('button-100')
 PASS getHeight('button-75') != '0px' is true
-FAIL getHeight('button-75') should be 21px. Was 12px.
+FAIL getHeight('button-75') should be 19px. Was 12px.
 PASS getWidth('input-button-75') is getWidth('input-button-100')
 PASS getHeight('input-button-75') != '0px' is true
-FAIL getHeight('input-button-75') should be 21px. Was 12px.
+FAIL getHeight('input-button-75') should be 19px. Was 12px.
 PASS getWidth('input-checkbox-75') is getWidth('input-checkbox-100')
 PASS getHeight('input-checkbox-75') != '0px' is true
 PASS getHeight('input-checkbox-75') is 75% of getHeight('input-checkbox-100').
@@ -71,10 +71,10 @@ PASS getHeight('input-radio-75') != '0px' is true
 PASS getHeight('input-radio-75') is 75% of getHeight('input-radio-100').
 PASS getWidth('input-reset-75') is getWidth('input-reset-100')
 PASS getHeight('input-reset-75') != '0px' is true
-FAIL getHeight('input-reset-75') should be 21px. Was 12px.
+FAIL getHeight('input-reset-75') should be 19px. Was 12px.
 PASS getWidth('input-submit-75') is getWidth('input-submit-100')
 PASS getHeight('input-submit-75') != '0px' is true
-FAIL getHeight('input-submit-75') should be 21px. Was 12px.
+FAIL getHeight('input-submit-75') should be 19px. Was 12px.
 PASS getWidth('select-75') is getWidth('select-100')
 PASS getHeight('select-75') != '0px' is true
 PASS getHeight('select-75') is getHeight('select-100')

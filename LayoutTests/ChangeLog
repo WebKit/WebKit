@@ -1,3 +1,93 @@
+2012-10-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unskip and rebase now passing tests.
+
+        * platform/qt/TestExpectations:
+        * platform/qt/compositing/overflow/clip-descendents-expected.txt: Added.
+        * platform/qt/css1/formatting_model/floating_elements-expected.png:
+        * platform/qt/css1/formatting_model/floating_elements-expected.txt:
+        * platform/qt/editing/selection/caret-ltr-2-expected.png:
+        * platform/qt/editing/selection/caret-ltr-2-expected.txt:
+        * platform/qt/editing/selection/caret-ltr-2-left-expected.png:
+        * platform/qt/editing/selection/caret-ltr-2-left-expected.txt:
+        * platform/qt/editing/selection/caret-ltr-expected.png:
+        * platform/qt/editing/selection/caret-ltr-expected.txt:
+        * platform/qt/editing/selection/caret-ltr-right-expected.png:
+        * platform/qt/editing/selection/caret-ltr-right-expected.txt:
+        * platform/qt/editing/selection/caret-rtl-2-left-expected.png:
+        * platform/qt/editing/selection/caret-rtl-2-left-expected.txt:
+        * platform/qt/editing/selection/caret-rtl-right-expected.png:
+        * platform/qt/editing/selection/caret-rtl-right-expected.txt:
+        * platform/qt/fast/backgrounds/size/zero-expected.png: Added.
+        * platform/qt/fast/backgrounds/size/zero-expected.txt:
+        * platform/qt/fast/block/basic/fieldset-stretch-to-legend-expected.png:
+        * platform/qt/fast/block/basic/fieldset-stretch-to-legend-expected.txt:
+        * platform/qt/fast/forms/basic-buttons-expected.png:
+        * platform/qt/fast/forms/basic-buttons-expected.txt:
+        * platform/qt/fast/multicol/overflow-across-columns-expected.png: Added.
+        * platform/qt/fast/multicol/overflow-across-columns-expected.txt: Added.
+        * platform/qt/fast/multicol/overflow-unsplittable-expected.png: Added.
+        * platform/qt/fast/multicol/overflow-unsplittable-expected.txt: Added.
+        * platform/qt/fast/multicol/positive-leading-expected.png: Added.
+        * platform/qt/fast/multicol/positive-leading-expected.txt: Added.
+        * platform/qt/fast/multicol/shadow-breaking-expected.png:
+        * platform/qt/fast/multicol/span/span-as-immediate-child-property-removal-expected.png:
+        * platform/qt/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt:
+        * platform/qt/fast/multicol/span/span-as-immediate-columns-child-removal-expected.png:
+        * platform/qt/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt:
+        * platform/qt/fast/overflow/003-expected.png:
+        * platform/qt/fast/overflow/003-expected.txt:
+        * platform/qt/fast/regions/overflow-size-change-with-stacking-context-expected.txt: Added.
+        * platform/qt/fast/replaced/table-percent-height-expected.txt:
+        * platform/qt/fast/text/line-initial-and-final-swashes-expected.txt: Added.
+        * platform/qt/fonts/cursive-expected.png: Added.
+        * platform/qt/fonts/cursive-expected.txt: Added.
+        * platform/qt/fonts/default-expected.png: Added.
+        * platform/qt/fonts/default-expected.txt: Added.
+        * platform/qt/fonts/fantasy-expected.png: Added.
+        * platform/qt/fonts/fantasy-expected.txt: Added.
+        * platform/qt/fonts/monospace-expected.png: Added.
+        * platform/qt/fonts/monospace-expected.txt: Added.
+        * platform/qt/fonts/sans-serif-expected.png: Added.
+        * platform/qt/fonts/sans-serif-expected.txt: Added.
+        * platform/qt/fonts/serif-expected.png: Added.
+        * platform/qt/fonts/serif-expected.txt: Added.
+        * platform/qt/printing/page-count-relayout-shrink-expected.txt: Added.
+        * platform/qt/printing/return-from-printing-mode-expected.png: Added.
+        * platform/qt/printing/return-from-printing-mode-expected.txt: Added.
+        * platform/qt/printing/setPrinting-expected.png: Added.
+        * platform/qt/printing/setPrinting-expected.txt: Added.
+        * platform/qt/printing/single-line-must-not-be-split-into-two-pages-expected.txt: Added.
+        * platform/qt/svg/custom/clip-mask-negative-scale-expected.png: Added.
+        * platform/qt/tables/mozilla/bugs/bug10296-1-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug10296-1-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug12384-expected.png: Added.
+        * platform/qt/tables/mozilla/bugs/bug12384-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug99948-expected.png: Added.
+        * platform/qt/tables/mozilla/bugs/bug99948-expected.txt:
+        * platform/qt/tables/mozilla/marvin/colgroup_width_pct-expected.png: Added.
+        * platform/qt/tables/mozilla/marvin/colgroup_width_pct-expected.txt:
+        * platform/qt/tables/mozilla/marvin/table_overflow_hidden_td-expected.png: Added.
+        * platform/qt/tables/mozilla/marvin/table_overflow_hidden_td-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug2479-5-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/marvin/table_overflow_caption-expected.png: Added.
+        * platform/qt/tables/mozilla_expected_failures/marvin/table_overflow_caption-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/marvin/table_overflow_caption_bottom-expected.png: Added.
+        * platform/qt/tables/mozilla_expected_failures/marvin/table_overflow_caption_bottom-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden-expected.png: Added.
+        * platform/qt/tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden_table-expected.png: Added.
+        * platform/qt/tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden_table-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/marvin/table_overflow_caption_left-expected.png: Added.
+        * platform/qt/tables/mozilla_expected_failures/marvin/table_overflow_caption_left-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/marvin/table_overflow_caption_right-expected.png: Added.
+        * platform/qt/tables/mozilla_expected_failures/marvin/table_overflow_caption_right-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/marvin/table_overflow_caption_top-expected.png: Added.
+        * platform/qt/tables/mozilla_expected_failures/marvin/table_overflow_caption_top-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/marvin/table_overflow_hidden_table-expected.png: Added.
+        * platform/qt/tables/mozilla_expected_failures/marvin/table_overflow_hidden_table-expected.txt:
+
 2012-10-09  Jussi Kukkonen  <jussi.kukkonen@intel.com>
 
         [EFL] remove duplicate failure expectations
