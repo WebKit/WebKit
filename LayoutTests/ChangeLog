@@ -1,3 +1,11 @@
+2012-10-09  Adam Barth  <abarth@webkit.org>
+
+        This test now appears to fail on the bots because
+        http://trac.webkit.org/changeset/130799 removed the ImageOnlyFailure
+        attribute.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-09  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] More TestExpectation updates for Android

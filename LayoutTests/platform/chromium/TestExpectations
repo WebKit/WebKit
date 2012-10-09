@@ -3557,7 +3557,7 @@ webkit.org/b/89794 [ Mac ] fast/regions/get-regions-by-content2.html [ Crash Pas
 
 # Results are not useful and a bit indeterminate -- test needs help.
 # The test sometimes crashes on Android, part of webkit.org/b/98765.
-webkit.org/b/92811 compositing/video-page-visibility.html [ Crash Failure ]
+webkit.org/b/92811 compositing/video-page-visibility.html [ Crash Failure ImageOnlyFailure ]
 
 # Flaky
 webkit.org/b/89812 [ Debug ] fast/parser/parser-yield-timing.html [ Failure Pass ]
