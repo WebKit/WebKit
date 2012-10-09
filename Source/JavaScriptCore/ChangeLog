@@ -5,7 +5,7 @@
         REGRESSION (r130344): Install failed in Install Environment
         <rdar://problem/12450118>
 
-        Reviewed by Filip Pizlo.
+        Reviewed by Mark Rowe.
 
         Use Identifier(LChar*, length) or Identifier(UChar*, length) constructors so that we don't
         add the String instance in the OpaqueJSString to any identifier tables.
