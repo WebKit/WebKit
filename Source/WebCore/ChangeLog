@@ -1,3 +1,25 @@
+2012-10-09  Michael Saboff  <msaboff@apple.com>
+
+        MarkupAccumulator should optimally handle 8 bit Strings
+        https://bugs.webkit.org/show_bug.cgi?id=98224
+
+        Reviewed by Ryosuke Niwa.
+
+        Updated appendCharactersReplacingEntities to take a string, offset and length and process 8 or 16 bit
+        data as appropriate.  Also made it a member function of MarkupAccumulator.
+
+        No new tests, behavior covered by existing tests.
+
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::appendCharactersReplacingEntities):
+        (WebCore::MarkupAccumulator::appendAttributeValue):
+        (WebCore::MarkupAccumulator::appendNodeValue):
+        * editing/MarkupAccumulator.h:
+        (MarkupAccumulator):
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::appendText):
+        (WebCore::urlToMarkup):
+
 2012-10-09  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Overflowing key generator should throw ConstraintError

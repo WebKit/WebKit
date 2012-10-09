@@ -74,6 +74,8 @@ public:
 
     static void appendComment(StringBuilder&, const String&);
 
+    static void appendCharactersReplacingEntities(StringBuilder&, const String&, unsigned, unsigned, EntityMask);
+
 protected:
     virtual void appendString(const String&);
     void appendStartTag(Node*, Namespaces* = 0);
@@ -113,9 +115,6 @@ private:
     StringBuilder m_markup;
     const EAbsoluteURLs m_resolveURLsMethod;
 };
-
-// FIXME: This method should be integrated with MarkupAccumulator.
-void appendCharactersReplacingEntities(StringBuilder&, const UChar*, size_t, EntityMask);
 
 }
 

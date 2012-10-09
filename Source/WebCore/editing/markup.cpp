@@ -244,7 +244,7 @@ void StyledMarkupAccumulator::appendText(StringBuilder& out, Text* text)
         const bool useRenderedText = !enclosingNodeWithTag(firstPositionInNode(text), selectTag);
         String content = useRenderedText ? renderedText(text, m_range) : stringValueForRange(text, m_range);
         StringBuilder buffer;
-        appendCharactersReplacingEntities(buffer, content.characters(), content.length(), EntityMaskInPCDATA);
+        appendCharactersReplacingEntities(buffer, content, 0, content.length(), EntityMaskInPCDATA);
         out.append(convertHTMLTextToInterchangeFormat(buffer.toString(), text));
     }
 
@@ -991,7 +991,7 @@ String urlToMarkup(const KURL& url, const String& title)
     markup.append("<a href=\"");
     markup.append(url.string());
     markup.append("\">");
-    appendCharactersReplacingEntities(markup, title.characters(), title.length(), EntityMaskInPCDATA);
+    MarkupAccumulator::appendCharactersReplacingEntities(markup, title, 0, title.length(), EntityMaskInPCDATA);
     markup.append("</a>");
     return markup.toString();
 }
