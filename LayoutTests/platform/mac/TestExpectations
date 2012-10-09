@@ -821,7 +821,6 @@ fast/repaint/repaint-across-writing-mode-boundary.html
 fast/ruby/base-shorter-than-text.html
 fast/text/emphasis-vertical.html
 fast/text/international/text-spliced-font.html
-fast/writing-mode/Kusa-Makura-background-canvas.html
 fast/writing-mode/border-vertical-lr.html
 fast/writing-mode/fallback-orientation.html
 fast/writing-mode/japanese-lr-selection.html

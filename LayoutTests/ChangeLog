@@ -1,3 +1,19 @@
+2012-10-09  Enrica Casucci  <enrica@apple.com>
+
+        [chromium] fast/text/international/text-spliced-font.html and fast/writing-mode/Kusa-Makura-background-canvas.html
+        failing on the Mac after r130443
+        https://bugs.webkit.org/show_bug.cgi?id=98545
+
+        Reviewed by Tony Chang.
+
+        Updated TextExpectations for Chromium and Mac.
+        Moved existing expected results from mac to mac-lion and added new results for Mountain Lion.
+
+        * platform/chromium/TestExpectations:
+        * platform/mac-lion/fast/writing-mode/Kusa-Makura-background-canvas-expected.txt: Added.
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/writing-mode/Kusa-Makura-background-canvas-expected.txt:
+
 2012-10-09  Mike Reed  <reed@google.com>
 
         Update expectations in preparation for enabling float-src-rect behavior in SkCanvas::drawBitmapRect

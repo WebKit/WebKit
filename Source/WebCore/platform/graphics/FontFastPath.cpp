@@ -225,7 +225,7 @@ std::pair<GlyphData, GlyphPage*> Font::glyphDataAndPageForCharacter(UChar32 c, b
 #else
             page->setGlyphDataForCharacter(c, data.glyph, data.fontData);
             data.fontData->setMaxGlyphPageTreeLevel(max(data.fontData->maxGlyphPageTreeLevel(), node->level()));
-            if (data.fontData->platformData().orientation() != Horizontal && !data.fontData->isTextOrientationFallback())
+            if (isCJKIdeographOrSymbol(c) && data.fontData->platformData().orientation() != Horizontal && !data.fontData->isTextOrientationFallback())
                 return glyphDataAndPageForCharacterWithTextOrientation(c, m_fontDescription.textOrientation(), data, fallbackPage, pageNumber);
 #endif
         }
