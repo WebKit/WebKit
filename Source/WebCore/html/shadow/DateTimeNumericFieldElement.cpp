@@ -81,6 +81,7 @@ PassRefPtr<RenderStyle> DateTimeNumericFieldElement::customStyleForRenderer()
     RefPtr<RenderStyle> style = RenderStyle::clone(originalStyle.get());
     float maxiumWidth = style->font().width(m_placeholder);
     maxiumWidth = std::max(maxiumWidth, style->font().width(formatValue(maximum())));
+    maxiumWidth = std::max(maxiumWidth, style->font().width(value()));
     style->setWidth(Length(maxiumWidth, Fixed));
     return style.release();
 }
