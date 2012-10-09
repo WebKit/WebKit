@@ -857,9 +857,6 @@ editing/selection/caret-rtl.html
 # https://bugs.webkit.org/show_bug.cgi?id=41918
 editing/selection/5195166-1.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=66514
-editing/selection/caret-at-bidi-boundary.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=66431
 editing/selection/collapse-selection-in-bidi.html
 

@@ -1,3 +1,14 @@
+2012-10-09  Tullio Lucena  <tullio.lucena@openbossa.org>
+
+        [Qt] editing/selection/caret-at-bidi-boundary.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=66514
+
+        Reviewed by Yuta Kitamura.
+
+        Unskipping test. The update in testfonts solved this bug.
+
+        * platform/qt/TestExpectations:
+
 2012-10-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unskip and rebase a now passing test.
