@@ -1,3 +1,9 @@
+2012-10-09  Jon Lee  <jonlee@apple.com>
+
+        Build fix for Qt Windows.
+
+        * html/HTMLPlugInElement.h: Include Image.h.
+
 2012-10-09  Enrica Casucci  <enrica@apple.com>
 
         Only measure text once instead of twice when performing line layout.

@@ -24,6 +24,7 @@
 #define HTMLPlugInElement_h
 
 #include "HTMLFrameOwnerElement.h"
+#include "Image.h"
 #include "ImageLoaderClient.h"
 #include "ScriptInstance.h"
 
@@ -33,7 +34,6 @@ struct NPObject;
 
 namespace WebCore {
 
-class Image;
 class RenderEmbeddedObject;
 class RenderWidget;
 class Widget;
