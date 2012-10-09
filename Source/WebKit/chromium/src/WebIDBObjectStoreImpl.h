@@ -52,7 +52,6 @@ public:
     void deleteFunction(const WebIDBKeyRange&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
     void clear(WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
 
-    WebIDBIndex* createIndex(const WebString& name, const WebIDBKeyPath&, bool unique, bool multiEntry, const WebIDBTransaction&, WebExceptionCode&);
     WebIDBIndex* createIndex(long long, const WebString& name, const WebIDBKeyPath&, bool unique, bool multiEntry, const WebIDBTransaction&, WebExceptionCode&);
     WebIDBIndex* index(const WebString& name, WebExceptionCode&);
     void deleteIndex(const WebString& name, const WebIDBTransaction&, WebExceptionCode&);

@@ -50,11 +50,6 @@ public:
         WEBKIT_ASSERT_NOT_REACHED();
         return WebIDBMetadata();
     }
-    virtual WebIDBObjectStore* createObjectStore(const WebString&, const WebIDBKeyPath&, bool, const WebIDBTransaction&, WebExceptionCode&)
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-        return 0;
-    }
     virtual WebIDBObjectStore* createObjectStore(long long, const WebString&, const WebIDBKeyPath&, bool, const WebIDBTransaction&, WebExceptionCode&)
     {
         WEBKIT_ASSERT_NOT_REACHED();

@@ -537,14 +537,10 @@ static bool setMaxObjectStoreId(LevelDBTransaction* transaction, int64_t databas
     return putInt(transaction, maxObjectStoreIdKey, objectStoreId);
 }
 
-bool IDBLevelDBBackingStore::createObjectStore(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const String& name, const IDBKeyPath& keyPath, bool autoIncrement, int64_t& assignedObjectStoreId)
+bool IDBLevelDBBackingStore::createObjectStore(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const String& name, const IDBKeyPath& keyPath, bool autoIncrement)
 {
     IDB_TRACE("IDBLevelDBBackingStore::createObjectStore");
     LevelDBTransaction* levelDBTransaction = Transaction::levelDBTransactionFrom(transaction);
-    // FIXME: Remove this when switch to front-end ID management is complete: https://bugs.webkit.org/show_bug.cgi?id=98085
-    if (objectStoreId == AutogenerateObjectStoreId)
-        objectStoreId = getMaxObjectStoreId(levelDBTransaction, databaseId) + 1;
-
     if (!setMaxObjectStoreId(levelDBTransaction, databaseId, objectStoreId))
         return false;
 
@@ -611,9 +607,6 @@ bool IDBLevelDBBackingStore::createObjectStore(IDBBackingStore::Transaction* tra
         LOG_ERROR("Internal Indexed DB error.");
         return false;
     }
-
-    // FIXME: Remove this when switch to front-end ID management is complete: https://bugs.webkit.org/show_bug.cgi?id=98085
-    assignedObjectStoreId = objectStoreId;
 
     return true;
 }
@@ -942,27 +935,12 @@ void IDBLevelDBBackingStore::getIndexes(int64_t databaseId, int64_t objectStoreI
     }
 }
 
-static int64_t getMaxIndexId(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId)
-{
-    int64_t maxIndexId = -1;
-    const Vector<char> maxIndexIdKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::MaxIndexId);
-    if (!getInt(transaction, maxIndexIdKey, maxIndexId))
-        maxIndexId = MinimumIndexId;
-
-    ASSERT(maxIndexId >= 0);
-    return maxIndexId;
-}
-
 static bool setMaxIndexId(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId)
 {
     int64_t maxIndexId = -1;
     const Vector<char> maxIndexIdKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::MaxIndexId);
     if (!getInt(transaction, maxIndexIdKey, maxIndexId))
         maxIndexId = MinimumIndexId;
-
-    // FIXME: Remove this when switch to front-end ID management is complete: https://bugs.webkit.org/show_bug.cgi?id=98085
-    if (indexId == IDBBackingStore::AutogenerateIndexId)
-        indexId = maxIndexId + 1;
 
     if (indexId <= maxIndexId) {
         LOG_ERROR("Possible corruption: new index id is too small.");
@@ -972,14 +950,10 @@ static bool setMaxIndexId(LevelDBTransaction* transaction, int64_t databaseId, i
     return putInt(transaction, maxIndexIdKey, indexId);
 }
 
-bool IDBLevelDBBackingStore::createIndex(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const String& name, const IDBKeyPath& keyPath, bool isUnique, bool isMultiEntry, int64_t& assignedIndexId)
+bool IDBLevelDBBackingStore::createIndex(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const String& name, const IDBKeyPath& keyPath, bool isUnique, bool isMultiEntry)
 {
     IDB_TRACE("IDBLevelDBBackingStore::createIndex");
     LevelDBTransaction* levelDBTransaction = Transaction::levelDBTransactionFrom(transaction);
-    // FIXME: Remove this when switch to front-end ID management is complete: https://bugs.webkit.org/show_bug.cgi?id=98085
-    if (indexId == AutogenerateIndexId)
-        indexId = getMaxIndexId(levelDBTransaction, databaseId, objectStoreId) + 1;
-
     if (!setMaxIndexId(levelDBTransaction, databaseId, objectStoreId, indexId))
         return false;
 
@@ -1011,9 +985,6 @@ bool IDBLevelDBBackingStore::createIndex(IDBBackingStore::Transaction* transacti
         LOG_ERROR("Internal Indexed DB error.");
         return false;
     }
-
-    // FIXME: Remove this when switch to front-end ID management is complete: https://bugs.webkit.org/show_bug.cgi?id=98085
-    assignedIndexId = indexId;
 
     return true;
 }

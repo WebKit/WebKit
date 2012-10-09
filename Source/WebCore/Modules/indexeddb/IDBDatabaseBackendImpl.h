@@ -61,7 +61,6 @@ public:
 
     // IDBDatabaseBackendInterface
     virtual IDBDatabaseMetadata metadata() const;
-    virtual PassRefPtr<IDBObjectStoreBackendInterface> createObjectStore(const String& name, const IDBKeyPath&, bool autoIncrement, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual PassRefPtr<IDBObjectStoreBackendInterface> createObjectStore(int64_t id, const String& name, const IDBKeyPath&, bool autoIncrement, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void deleteObjectStore(const String& name, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void setVersion(const String& version, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, ExceptionCode&);

@@ -54,12 +54,7 @@ public:
 
     virtual IDBDatabaseMetadata metadata() const = 0;
 
-    // FIXME: Remove this when switch to front-end ID management is complete: https://bugs.webkit.org/show_bug.cgi?id=98085
-    static const int64_t AutogenerateObjectStoreId = -1;
-
     virtual PassRefPtr<IDBObjectStoreBackendInterface> createObjectStore(int64_t, const String& name, const IDBKeyPath&, bool autoIncrement, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
-    // FIXME: Remove this when switch to front-end ID management is complete: https://bugs.webkit.org/show_bug.cgi?id=98085
-    virtual PassRefPtr<IDBObjectStoreBackendInterface> createObjectStore(const String& name, const IDBKeyPath&, bool autoIncrement, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
     virtual void deleteObjectStore(const String& name, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
     virtual void setVersion(const String& version, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, ExceptionCode&) = 0;
     virtual PassRefPtr<IDBTransactionBackendInterface> transaction(DOMStringList* storeNames, unsigned short mode, ExceptionCode&) = 0;

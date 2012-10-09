@@ -70,16 +70,6 @@ WebIDBObjectStore* WebIDBDatabaseImpl::createObjectStore(long long id, const Web
     return new WebIDBObjectStoreImpl(objectStore);
 }
 
-WebIDBObjectStore* WebIDBDatabaseImpl::createObjectStore(const WebString& name, const WebIDBKeyPath& keyPath, bool autoIncrement, const WebIDBTransaction& transaction, WebExceptionCode& ec)
-{
-    RefPtr<IDBObjectStoreBackendInterface> objectStore = m_databaseBackend->createObjectStore(name, keyPath, autoIncrement, transaction.getIDBTransactionBackendInterface(), ec);
-    if (!objectStore) {
-        ASSERT(ec);
-        return 0;
-    }
-    return new WebIDBObjectStoreImpl(objectStore);
-}
-
 void WebIDBDatabaseImpl::deleteObjectStore(const WebString& name, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
     m_databaseBackend->deleteObjectStore(name, transaction.getIDBTransactionBackendInterface(), ec);

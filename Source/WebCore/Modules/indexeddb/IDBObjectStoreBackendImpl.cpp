@@ -59,8 +59,7 @@ IDBObjectStoreBackendImpl::IDBObjectStoreBackendImpl(const IDBDatabaseBackendImp
     , m_autoIncrement(autoIncrement)
     , m_maxIndexId(maxIndexId)
 {
-    if (m_id != AutogenerateIndexId)
-        loadIndexes();
+    loadIndexes();
 }
 
 IDBObjectStoreMetadata IDBObjectStoreBackendImpl::metadata() const
@@ -427,22 +426,16 @@ void IDBObjectStoreBackendImpl::clearInternal(ScriptExecutionContext*, PassRefPt
     callbacks->onSuccess(SerializedScriptValue::undefinedValue());
 }
 
-PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::createIndex(const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
-{
-    return createIndex(AutogenerateIndexId, name, keyPath, unique, multiEntry, transactionPtr, ec);
-}
-
 PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::createIndex(int64_t id, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
     ASSERT_WITH_MESSAGE(!m_indexes.contains(name), "Indexes already contain %s", name.utf8().data());
 
-    COMPILE_ASSERT(AutogenerateIndexId == IDBBackingStore::AutogenerateIndexId, AutogenerateIndexIdMatches);
     RefPtr<IDBIndexBackendImpl> index = IDBIndexBackendImpl::create(m_database, this, id, name, keyPath, unique, multiEntry);
     ASSERT(index->name() == name);
 
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
     ASSERT(transaction->mode() == IDBTransaction::VERSION_CHANGE);
-    ASSERT(id == AutogenerateIndexId || id > m_maxIndexId);
+    ASSERT(id > m_maxIndexId);
     m_maxIndexId = id;
 
     RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
@@ -459,15 +452,10 @@ PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::createIndex(int6
 
 void IDBObjectStoreBackendImpl::createIndexInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBTransactionBackendImpl> transaction)
 {
-    int64_t id;
-    if (!objectStore->backingStore()->createIndex(transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->id(), index->id(), index->name(), index->keyPath(), index->unique(), index->multiEntry(), id)) {
+    if (!objectStore->backingStore()->createIndex(transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->id(), index->id(), index->name(), index->keyPath(), index->unique(), index->multiEntry())) {
         transaction->abort();
         return;
     }
-
-    // FIXME: Remove this when switch to front-end ID management is complete: https://bugs.webkit.org/show_bug.cgi?id=98085
-    ASSERT(index->id() == AutogenerateIndexId || index->id() == id);
-    index->setId(id);
 
     transaction->didCompleteTaskEvents();
 }

@@ -57,7 +57,7 @@ TEST(IDBDatabaseBackendTest, BackingStoreRetention)
     EXPECT_GT(backingStore->refCount(), 1);
 
     const bool autoIncrement = false;
-    RefPtr<IDBObjectStoreBackendImpl> store = IDBObjectStoreBackendImpl::create(db.get(), IDBDatabaseBackendInterface::AutogenerateObjectStoreId, "store", IDBKeyPath("keyPath"), autoIncrement, 0);
+    RefPtr<IDBObjectStoreBackendImpl> store = IDBObjectStoreBackendImpl::create(db.get(), 1, "store", IDBKeyPath("keyPath"), autoIncrement, 0);
     EXPECT_GT(backingStore->refCount(), 1);
 
     const bool unique = false;
@@ -148,7 +148,6 @@ public:
     }
 
     virtual IDBDatabaseMetadata metadata() const { return IDBDatabaseMetadata(); }
-    virtual PassRefPtr<IDBObjectStoreBackendInterface> createObjectStore(const String& name, const IDBKeyPath&, bool autoIncrement, IDBTransactionBackendInterface*, ExceptionCode&) { return 0; }
     virtual PassRefPtr<IDBObjectStoreBackendInterface> createObjectStore(int64_t, const String& name, const IDBKeyPath&, bool autoIncrement, IDBTransactionBackendInterface*, ExceptionCode&) { return 0; }
     virtual void deleteObjectStore(const String& name, IDBTransactionBackendInterface*, ExceptionCode&) { }
     virtual void setVersion(const String& version, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, ExceptionCode&) { }

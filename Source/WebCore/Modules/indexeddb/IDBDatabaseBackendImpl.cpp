@@ -174,16 +174,10 @@ IDBDatabaseMetadata IDBDatabaseBackendImpl::metadata() const
     return metadata;
 }
 
-PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::createObjectStore(const String& name, const IDBKeyPath& keyPath, bool autoIncrement, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
-{
-    return createObjectStore(AutogenerateObjectStoreId, name, keyPath, autoIncrement, transactionPtr, ec);
-}
-
 PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::createObjectStore(int64_t id, const String& name, const IDBKeyPath& keyPath, bool autoIncrement, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
     ASSERT(!m_objectStores.contains(name));
 
-    COMPILE_ASSERT(AutogenerateObjectStoreId == IDBBackingStore::AutogenerateObjectStoreId, AutogenerateObjectStoreIdMatches);
     RefPtr<IDBObjectStoreBackendImpl> objectStore = IDBObjectStoreBackendImpl::create(this, id, name, keyPath, autoIncrement, IDBObjectStoreBackendInterface::MinimumIndexId);
     ASSERT(objectStore->name() == name);
 
@@ -191,7 +185,7 @@ PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::createObjectS
     ASSERT(transaction->mode() == IDBTransaction::VERSION_CHANGE);
 
     // FIXME: Fix edge cases around transaction aborts that prevent this from just being ASSERT(id == m_maxObjectStoreId + 1)
-    ASSERT(id == AutogenerateObjectStoreId || id > m_maxObjectStoreId);
+    ASSERT(id > m_maxObjectStoreId);
     m_maxObjectStoreId = id;
 
     RefPtr<IDBDatabaseBackendImpl> database = this;
@@ -208,16 +202,11 @@ PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::createObjectS
 
 void IDBDatabaseBackendImpl::createObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBTransactionBackendImpl> transaction)
 {
-    int64_t objectStoreId;
-
-    if (!database->m_backingStore->createObjectStore(transaction->backingStoreTransaction(), database->id(), objectStore->id(), objectStore->name(), objectStore->keyPath(), objectStore->autoIncrement(), objectStoreId)) {
+    if (!database->m_backingStore->createObjectStore(transaction->backingStoreTransaction(), database->id(), objectStore->id(), objectStore->name(), objectStore->keyPath(), objectStore->autoIncrement())) {
         transaction->abort();
         return;
     }
 
-    // FIXME: Remove this when switch to front-end ID management is complete: https://bugs.webkit.org/show_bug.cgi?id=98085
-    ASSERT(objectStore->id() == AutogenerateObjectStoreId || objectStore->id() == objectStoreId);
-    objectStore->setId(objectStoreId);
     transaction->didCompleteTaskEvents();
 }
 
