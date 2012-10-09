@@ -1,5 +1,11 @@
 2012-10-09  Adam Barth  <abarth@webkit.org>
 
+        Note that this test is flaky.
+
+        * platform/chromium/TestExpectations:
+
+2012-10-09  Adam Barth  <abarth@webkit.org>
+
         Revert change to TestExpectations in http://trac.webkit.org/changeset/130779.
         These tests still give the wrong results.
 
