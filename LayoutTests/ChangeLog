@@ -8,6 +8,12 @@
 
         [Qt] Unskip now passing tests.
 
+        * platform/qt/TestExpectations:
+
+2012-10-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unskip now passing tests.
+
         * platform/qt-5.0-wk1/TestExpectations:
         * platform/qt-5.0-wk2/TestExpectations:
         * platform/qt-5.0/TestExpectations:
