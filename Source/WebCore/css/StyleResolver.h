@@ -74,6 +74,7 @@ class RuleSet;
 class Settings;
 class StaticCSSRuleList;
 class StyleBuilder;
+class StyleScopeResolver;
 class StyleImage;
 class StyleKeyframe;
 class StylePendingImage;
@@ -178,14 +179,6 @@ private:
     bool canShareStyleWithElement(StyledElement*) const;
 
     PassRefPtr<RenderStyle> styleForKeyframe(const RenderStyle*, const StyleKeyframe*, KeyframeValue&);
-
-#if ENABLE(STYLE_SCOPED)
-    void pushScope(const ContainerNode* scope, const ContainerNode* scopeParent);
-    void popScope(const ContainerNode* scope);
-#else
-    void pushScope(const ContainerNode*, const ContainerNode*) { }
-    void popScope(const ContainerNode*) { }
-#endif
 
 public:
     // These methods will give back the set of rules that matched for a given element (or a pseudo-element).
@@ -493,34 +486,7 @@ private:
     HashMap<FilterOperation*, RefPtr<WebKitCSSSVGDocumentValue> > m_pendingSVGDocuments;
 #endif
 
-#if ENABLE(STYLE_SCOPED)
-    const ContainerNode* determineScope(const CSSStyleSheet*);
-
-    typedef HashMap<const ContainerNode*, OwnPtr<RuleSet> > ScopedRuleSetMap;
-
-    RuleSet* ruleSetForScope(const ContainerNode*) const;
-
-    void setupScopeStack(const ContainerNode*);
-    bool scopeStackIsConsistent(const ContainerNode* parent) const { return parent && parent == m_scopeStackParent; }
-
-    ScopedRuleSetMap m_scopedAuthorStyles;
-    
-    struct ScopeStackFrame {
-        ScopeStackFrame() : m_scope(0), m_authorStyleBoundsIndex(0), m_ruleSet(0) { }
-        ScopeStackFrame(const ContainerNode* scope, int authorStyleBoundsIndex, RuleSet* ruleSet) : m_scope(scope), m_authorStyleBoundsIndex(authorStyleBoundsIndex), m_ruleSet(ruleSet) { }
-        const ContainerNode* m_scope;
-        int m_authorStyleBoundsIndex;
-        RuleSet* m_ruleSet;
-    };
-    // Vector (used as stack) that keeps track of scoping elements (i.e., elements with a <style scoped> child)
-    // encountered during tree iteration for style resolution.
-    Vector<ScopeStackFrame> m_scopeStack;
-    // Element last seen as parent element when updating m_scopingElementStack.
-    // This is used to decide whether m_scopingElementStack is consistent, separately from SelectorChecker::m_parentStack.
-    const ContainerNode* m_scopeStackParent;
-    int m_scopeStackParentBoundsIndex;
-#endif
-
+    OwnPtr<StyleScopeResolver> m_scopeResolver;
     CSSToStyleMap m_styleMap;
 
     friend class StyleBuilder;

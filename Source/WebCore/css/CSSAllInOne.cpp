@@ -72,3 +72,4 @@
 #include "StylePropertySet.cpp"
 #include "StylePropertyShorthand.cpp"
 #include "StyleResolver.cpp"
+#include "StyleScopeResolver.cpp"

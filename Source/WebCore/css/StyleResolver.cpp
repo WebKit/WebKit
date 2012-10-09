@@ -114,6 +114,7 @@
 #include "StylePendingImage.h"
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
+#include "StyleScopeResolver.h"
 #include "StyleSheetContents.h"
 #include "StyleSheetList.h"
 #include "Text.h"
@@ -287,10 +288,6 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
 #if ENABLE(CSS_SHADERS)
     , m_hasPendingShaders(false)
 #endif
-#if ENABLE(STYLE_SCOPED)
-    , m_scopeStackParent(0)
-    , m_scopeStackParentBoundsIndex(0)
-#endif
     , m_styleMap(this)
 {
     Element* root = document->documentElement();
@@ -395,48 +392,14 @@ void StyleResolver::collectFeatures()
     // sharing candidates.
     m_features.add(defaultStyle->features());
     m_features.add(m_authorStyle->features());
-#if ENABLE(STYLE_SCOPED)
-    for (ScopedRuleSetMap::iterator it = m_scopedAuthorStyles.begin(); it != m_scopedAuthorStyles.end(); ++it)
-        m_features.add(it->value->features());
-#endif
+    if (m_scopeResolver)
+        m_scopeResolver->collectFeaturesTo(m_features);
     if (m_userStyle)
         m_features.add(m_userStyle->features());
 
     m_siblingRuleSet = makeRuleSet(m_features.siblingRules);
     m_uncommonAttributeRuleSet = makeRuleSet(m_features.uncommonAttributeRules);
 }
-
-#if ENABLE(STYLE_SCOPED)
-const ContainerNode* StyleResolver::determineScope(const CSSStyleSheet* sheet)
-{
-    ASSERT(sheet);
-
-    if (!ContextFeatures::styleScopedEnabled(document()))
-        return 0;
-
-    Node* ownerNode = sheet->ownerNode();
-    if (!ownerNode || !ownerNode->isHTMLElement() || !ownerNode->hasTagName(HTMLNames::styleTag))
-        return 0;
-
-    HTMLStyleElement* styleElement = static_cast<HTMLStyleElement*>(ownerNode);
-    if (!styleElement->scoped())
-        return styleElement->isInShadowTree()? styleElement->shadowRoot() : 0;
-
-    ContainerNode* parent = styleElement->parentNode();
-    if (!parent)
-        return 0;
-
-    return (parent->isElementNode() || parent->isShadowRoot()) ? parent : 0;
-}
-
-inline RuleSet* StyleResolver::ruleSetForScope(const ContainerNode* scope) const
-{
-    if (!scope->hasScopedHTMLStyleChild())
-        return 0;
-    ScopedRuleSetMap::const_iterator it = m_scopedAuthorStyles.find(scope);
-    return it != m_scopedAuthorStyles.end() ? it->value.get() : 0; 
-}
-#endif
 
 void StyleResolver::resetAuthorStyle()
 {
@@ -458,16 +421,13 @@ void StyleResolver::appendAuthorStylesheets(unsigned firstNew, const Vector<RefP
         if (cssSheet->mediaQueries() && !m_medium->eval(cssSheet->mediaQueries(), this))
             continue;
         StyleSheetContents* sheet = cssSheet->contents();
-#if ENABLE(STYLE_SCOPED)
-        const ContainerNode* scope = determineScope(cssSheet);
-        if (scope) {
-            ScopedRuleSetMap::AddResult addResult = m_scopedAuthorStyles.add(scope, nullptr);
-            if (addResult.isNewEntry)
-                addResult.iterator->value = RuleSet::create();
-            addResult.iterator->value->addRulesFromSheet(sheet, *m_medium, this, scope);
+        if (const ContainerNode* scope = StyleScopeResolver::scopeFor(cssSheet)) {
+            if (!m_scopeResolver)
+                m_scopeResolver = adoptPtr(new StyleScopeResolver());
+            m_scopeResolver->ensureRuleSetFor(scope)->addRulesFromSheet(sheet, *m_medium, this, scope);
             continue;
         }
-#endif
+
         m_authorStyle->addRulesFromSheet(sheet, *m_medium, this);
         if (!m_styleRuleToCSSOMWrapperMap.isEmpty())
             collectCSSOMWrappers(m_styleRuleToCSSOMWrapperMap, cssSheet);
@@ -478,62 +438,6 @@ void StyleResolver::appendAuthorStylesheets(unsigned firstNew, const Vector<RefP
     if (document()->renderer() && document()->renderer()->style())
         document()->renderer()->style()->font().update(fontSelector());
 }
-
-#if ENABLE(STYLE_SCOPED)
-void StyleResolver::setupScopeStack(const ContainerNode* parent)
-{
-    // The scoping element stack shouldn't be used if <style scoped> isn't used anywhere.
-    ASSERT(!m_scopedAuthorStyles.isEmpty());
-
-    m_scopeStack.shrink(0);
-    int authorStyleBoundsIndex = 0;
-    for (const ContainerNode* scope = parent; scope; scope = scope->parentOrHostNode()) {
-        RuleSet* ruleSet = ruleSetForScope(scope);
-        if (ruleSet)
-            m_scopeStack.append(ScopeStackFrame(scope, authorStyleBoundsIndex, ruleSet));
-        if (scope->isShadowRoot() && !toShadowRoot(scope)->applyAuthorStyles())
-            --authorStyleBoundsIndex;
-    }
-    m_scopeStack.reverse();
-    m_scopeStackParent = parent;
-    m_scopeStackParentBoundsIndex = 0;
-}
-
-void StyleResolver::pushScope(const ContainerNode* scope, const ContainerNode* scopeParent)
-{
-    // Shortcut: Don't bother with the scoping element stack if <style scoped> isn't used anywhere.
-    if (m_scopedAuthorStyles.isEmpty()) {
-        ASSERT(!m_scopeStackParent);
-        ASSERT(m_scopeStack.isEmpty());
-        return;
-    }
-    // In some wacky cases during style resolve we may get invoked for random elements.
-    // Recreate the whole scoping element stack in such cases.
-    if (!scopeStackIsConsistent(scopeParent)) {
-        setupScopeStack(scope);
-        return;
-    }
-    if (scope->isShadowRoot() && !toShadowRoot(scope)->applyAuthorStyles())
-        ++m_scopeStackParentBoundsIndex;
-    // Otherwise just push the parent onto the stack.
-    RuleSet* ruleSet = ruleSetForScope(scope);
-    if (ruleSet)
-        m_scopeStack.append(ScopeStackFrame(scope, m_scopeStackParentBoundsIndex, ruleSet));
-    m_scopeStackParent = scope;
-}
-
-void StyleResolver::popScope(const ContainerNode* scope)
-{
-    // Only bother to update the scoping element stack if it is consistent.
-    if (scopeStackIsConsistent(scope)) {
-        if (!m_scopeStack.isEmpty() && m_scopeStack.last().m_scope == scope)
-            m_scopeStack.removeLast();
-        if (scope->isShadowRoot() && !toShadowRoot(scope)->applyAuthorStyles())
-            --m_scopeStackParentBoundsIndex;
-        m_scopeStackParent = scope->parentOrHostNode();
-    }
-}
-#endif
 
 void StyleResolver::pushParentElement(Element* parent)
 {
@@ -549,7 +453,8 @@ void StyleResolver::pushParentElement(Element* parent)
         m_checker.pushParent(parent);
 
     // Note: We mustn't skip ShadowRoot nodes for the scope stack.
-    pushScope(parent, parent->parentOrHostNode());
+    if (m_scopeResolver)
+        m_scopeResolver->push(parent, parent->parentOrHostNode());
 }
 
 void StyleResolver::popParentElement(Element* parent)
@@ -558,19 +463,22 @@ void StyleResolver::popParentElement(Element* parent)
     // Pause maintaining the stack in this case.
     if (m_checker.parentStackIsConsistent(parent))
         m_checker.popParent();
-    popScope(parent);
+    if (m_scopeResolver)
+        m_scopeResolver->pop(parent);
 }
 
 void StyleResolver::pushParentShadowRoot(const ShadowRoot* shadowRoot)
 {
     ASSERT(shadowRoot->host());
-    pushScope(shadowRoot, shadowRoot->host());
+    if (m_scopeResolver)
+        m_scopeResolver->push(shadowRoot, shadowRoot->host());
 }
 
 void StyleResolver::popParentShadowRoot(const ShadowRoot* shadowRoot)
 {
     ASSERT(shadowRoot->host());
-    popScope(shadowRoot);
+    if (m_scopeResolver)
+        m_scopeResolver->pop(shadowRoot);
 }
 
 // This is a simplified style setting function for keyframe styles
@@ -810,26 +718,24 @@ void StyleResolver::sortAndTransferMatchedRules(MatchResult& result)
 void StyleResolver::matchScopedAuthorRules(MatchResult& result, bool includeEmptyRules)
 {
 #if ENABLE(STYLE_SCOPED)
-    if (m_scopedAuthorStyles.isEmpty())
+    if (!m_scopeResolver || !m_scopeResolver->hasScopedStyles())
         return;
 
     // Match scoped author rules by traversing the scoped element stack (rebuild it if it got inconsistent).
-    if (!scopeStackIsConsistent(m_element))
-        setupScopeStack(m_element);
-    if (m_scopeStack.isEmpty())
+    if (!m_scopeResolver->ensureStackConsistency(m_element))
         return;
 
     bool applyAuthorStyles = m_element->treeScope()->applyAuthorStyles();
     bool documentScope = true;
-    unsigned scopeSize = m_scopeStack.size();
+    unsigned scopeSize = m_scopeResolver->stackSize();
     for (unsigned i = 0; i < scopeSize; ++i) {
-        const ScopeStackFrame& frame = m_scopeStack[i];
+        const StyleScopeResolver::StackFrame& frame = m_scopeResolver->stackFrameAt(i);
         documentScope = documentScope && !frame.m_scope->isInShadowTree();
         if (documentScope) {
             if (!applyAuthorStyles)
                 continue;
         } else {
-            if (frame.m_authorStyleBoundsIndex != m_scopeStackParentBoundsIndex)
+            if (!m_scopeResolver->matchesStyleBounds(frame))
                 continue;
         }
            
@@ -934,11 +840,7 @@ void StyleResolver::collectMatchingRulesForList(const Vector<RuleData>* rules, i
 
         StyleRule* rule = ruleData.rule();
         InspectorInstrumentationCookie cookie = InspectorInstrumentation::willMatchRule(document(), rule);
-#if ENABLE(STYLE_SCOPED)
         if (checkSelector(ruleData, options.scope)) {
-#else
-        if (checkSelector(ruleData)) {
-#endif
             // Check whether the rule is applicable in the current tree scope. Criteria for this:
             // a) it's a UA rule
             // b) the tree scope allows author rules
@@ -946,9 +848,7 @@ void StyleResolver::collectMatchingRulesForList(const Vector<RuleData>* rules, i
             // d) the rule contains shadow-ID pseudo elements
             if (!MatchingUARulesScope::isMatchingUARules()
                 && !treeScope->applyAuthorStyles()
-#if ENABLE(STYLE_SCOPED)
                 && (!options.scope || options.scope->treeScope() != treeScope)
-#endif
                 && !m_hasUnknownPseudoElements) {
 
                 InspectorInstrumentation::didMatchRule(cookie, false);
@@ -5303,10 +5203,7 @@ void StyleResolver::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 #if ENABLE(CSS_FILTERS) && ENABLE(SVG)
     info.addMember(m_pendingSVGDocuments);
 #endif
-#if ENABLE(STYLE_SCOPED)
-    info.addMember(m_scopedAuthorStyles);
-    info.addMember(m_scopeStack);
-#endif
+    info.addMember(m_scopeResolver);
 
     // FIXME: move this to a place where it would be called only once?
     info.addMember(defaultStyle);

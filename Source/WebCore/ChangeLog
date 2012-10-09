@@ -1,3 +1,63 @@
+2012-10-09  Hajime Morrita  <morrita@google.com>
+
+        [Refactoring] Scoped Style related code should have its own class.
+        https://bugs.webkit.org/show_bug.cgi?id=98244
+
+        Reviewed by Dimitri Glazkov.
+
+        This change extracts StyleScopeResolver from StyleResolver to clarify
+        the responsibility of the style scope handling. Now we can easily see
+        where the style scoping needs to be involed.
+
+        Coming Shadow DOM related change like @host rules will fit within this class.
+
+        No new tests, refactoring.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSAllInOne.cpp:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::StyleResolver):
+        (WebCore::StyleResolver::collectFeatures):
+        (WebCore::StyleResolver::appendAuthorStylesheets):
+        (WebCore::StyleResolver::pushParentElement):
+        (WebCore::StyleResolver::popParentElement):
+        (WebCore::StyleResolver::pushParentShadowRoot):
+        (WebCore::StyleResolver::popParentShadowRoot):
+        (WebCore::StyleResolver::matchScopedAuthorRules):
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        (WebCore::StyleResolver::reportMemoryUsage):
+        * css/StyleResolver.h:
+        (StyleResolver):
+        * css/StyleScopeResolver.cpp: Added.
+        (WebCore):
+        (WebCore::StyleScopeResolver::StyleScopeResolver):
+        (WebCore::StyleScopeResolver::~StyleScopeResolver):
+        (WebCore::StyleScopeResolver::scopeFor):
+        (WebCore::StyleScopeResolver::ruleSetFor):
+        (WebCore::StyleScopeResolver::ensureRuleSetFor):
+        (WebCore::StyleScopeResolver::setupStack):
+        (WebCore::StyleScopeResolver::push):
+        (WebCore::StyleScopeResolver::pop):
+        (WebCore::StyleScopeResolver::collectFeaturesTo):
+        (WebCore::StyleScopeResolver::reportMemoryUsage):
+        * css/StyleScopeResolver.h: Added.
+        (WebCore):
+        (StyleScopeResolver):
+        (WebCore::StyleScopeResolver::StackFrame::StackFrame):
+        (StackFrame):
+        (WebCore::StyleScopeResolver::hasScopedStyles):
+        (WebCore::StyleScopeResolver::stackSize):
+        (WebCore::StyleScopeResolver::stackFrameAt):
+        (WebCore::StyleScopeResolver::matchesStyleBounds):
+        (WebCore::StyleScopeResolver::stackIsConsistent):
+        (WebCore::StyleScopeResolver::ensureStackConsistency):
+        (WebCore::StyleScopeResolver::scopeFor):
+        (WebCore::StyleScopeResolver::ensureRuleSetFor):
+
 2012-10-08  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Make RenderThemeQStyle/ScrollbarThemeQStyle compile without QStyle/QtWidgets
