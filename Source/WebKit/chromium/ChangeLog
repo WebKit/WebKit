@@ -1,3 +1,35 @@
+2012-10-09  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        [chromium] Make sure events are transformed correctly for plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=89250
+
+        Reviewed by Tony Chang.
+
+        The events arriving in WebPluginContainerImpl are in the coordinate
+        space of the page containing the plugin. Before the events are
+        dispatched to the plugin, it is necessary to convert them into the
+        plugin's own coordinate system.
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit::convertLocationForRenderObject): Transforms an event location for the specified RenderObject.
+        (WebKit):
+        (WebKit::updateWebMouseEventFromWebCoreMouseEvent): Refactored code to reduce code-duplication for mouse and wheel events.
+        (WebKit::WebMouseEventBuilder::WebMouseEventBuilder):
+        (WebKit::WebMouseWheelEventBuilder::WebMouseWheelEventBuilder):
+        (WebKit::addTouchPoints):
+        (WebKit::WebTouchEventBuilder::WebTouchEventBuilder):
+        (WebKit::WebGestureEventBuilder::WebGestureEventBuilder):
+        * src/WebInputEventConversion.h:
+        (WebCore):
+        (WebKit):
+        (WebMouseEventBuilder):
+        (WebMouseWheelEventBuilder):
+        (WebTouchEventBuilder):
+        (WebGestureEventBuilder):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::handleMouseEvent):
+        (WebKit::WebPluginContainerImpl::handleWheelEvent):
+
 2012-10-09  Garrett Casto  <gcasto@chromium.org>
 
         Allow users to specify a different hover image for TextFieldDecorationElement

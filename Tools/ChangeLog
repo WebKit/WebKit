@@ -1,3 +1,15 @@
+2012-10-09  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        [chromium] Make sure events are transformed correctly for plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=89250
+
+        Reviewed by Tony Chang.
+
+        Update the test plugin to print event details for mouse and gesture events.
+
+        * DumpRenderTree/chromium/TestWebPlugin.cpp:
+        (printEventDetails):
+
 2012-10-09  Simon Hausmann  <simon.hausmann@digia.com>
 
         Unreviewed trivial Qt build fix: Remove stray closing braces from r130758.

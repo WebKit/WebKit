@@ -1,0 +1,35 @@
+Plugin received event: TouchStart
+* 10, 10: Pressed
+* 10, 10: Pressed
+* 10, 10: Pressed
+Plugin received event: TouchMove
+* 20, 15: Moved
+* 20, 15: Moved
+* 20, 15: Moved
+Plugin received event: TouchEnd
+* 20, 15: Released
+Plugin received event: MouseEnter
+* 10, 10
+Plugin received event: MouseMove
+* 10, 10
+Plugin received event: MouseDown
+* 10, 10
+Plugin received event: MouseMove
+* 20, 15
+Plugin received event: MouseUp
+* 20, 15
+Plugin received event: MouseMove
+* 10, 10
+Plugin received event: MouseWheel
+* 10, 10
+Plugin received event: GestureTapDown
+* 10, 10
+Plugin received event: GestureTap
+* 10, 10
+Plugin received event: MouseMove
+* 10, 10
+Plugin received event: MouseDown
+* 10, 10
+Plugin received event: MouseUp
+* 10, 10
+

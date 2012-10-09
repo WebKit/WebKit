@@ -669,7 +669,7 @@ void WebPluginContainerImpl::handleMouseEvent(MouseEvent* event)
     // in the call to HandleEvent. See http://b/issue?id=1362948
     FrameView* parentView = static_cast<FrameView*>(parent());
 
-    WebMouseEventBuilder webEvent(this, *event);
+    WebMouseEventBuilder webEvent(this, m_element->renderer(), *event);
     if (webEvent.type == WebInputEvent::Undefined)
         return;
 
@@ -734,7 +734,7 @@ void WebPluginContainerImpl::handleDragEvent(MouseEvent* event)
 
 void WebPluginContainerImpl::handleWheelEvent(WheelEvent* event)
 {
-    WebMouseWheelEventBuilder webEvent(this, *event);
+    WebMouseWheelEventBuilder webEvent(this, m_element->renderer(), *event);
     if (webEvent.type == WebInputEvent::Undefined)
         return;
 
@@ -785,7 +785,7 @@ void WebPluginContainerImpl::handleTouchEvent(TouchEvent* event)
 {
     if (!m_isAcceptingTouchEvents)
         return;
-    WebTouchEventBuilder webEvent(this, *event);
+    WebTouchEventBuilder webEvent(this, m_element->renderer(), *event);
     if (webEvent.type == WebInputEvent::Undefined)
         return;
     WebCursorInfo cursorInfo;
@@ -796,7 +796,7 @@ void WebPluginContainerImpl::handleTouchEvent(TouchEvent* event)
 
 void WebPluginContainerImpl::handleGestureEvent(GestureEvent* event)
 {
-    WebGestureEventBuilder webEvent(this, *event);
+    WebGestureEventBuilder webEvent(this, m_element->renderer(), *event);
     if (webEvent.type == WebInputEvent::Undefined)
         return;
     WebCursorInfo cursorInfo;

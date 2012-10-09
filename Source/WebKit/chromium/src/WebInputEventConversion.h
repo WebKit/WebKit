@@ -42,9 +42,10 @@ namespace WebCore {
 class GestureEvent;
 class KeyboardEvent;
 class MouseEvent;
+class RenderObject;
 class ScrollView;
-class WheelEvent;
 class TouchEvent;
+class WheelEvent;
 class Widget;
 }
 
@@ -97,21 +98,20 @@ public:
 };
 #endif
 
-// Converts a WebCore::MouseEvent to a corresponding WebMouseEvent. view is
-// the ScrollView corresponding to the event.
+// Converts a WebCore::MouseEvent to a corresponding WebMouseEvent.
 // NOTE: This is only implemented for mousemove, mouseover, mouseout,
 // mousedown and mouseup.  If the event mapping fails, the event type will
 // be set to Undefined.
 class WebMouseEventBuilder : public WebMouseEvent {
 public:
-    WebMouseEventBuilder(const WebCore::Widget*, const WebCore::MouseEvent&);
+    WebMouseEventBuilder(const WebCore::Widget*, const WebCore::RenderObject*, const WebCore::MouseEvent&);
 };
 
 // Converts a WebCore::WheelEvent to a corresponding WebMouseWheelEvent.
 // If the event mapping fails, the event type will be set to Undefined.
 class WebMouseWheelEventBuilder : public WebMouseWheelEvent {
 public:
-    WebMouseWheelEventBuilder(const WebCore::Widget*, const WebCore::WheelEvent&);
+    WebMouseWheelEventBuilder(const WebCore::Widget*, const WebCore::RenderObject*, const WebCore::WheelEvent&);
 };
 
 // Converts a WebCore::KeyboardEvent to a corresponding WebKeyboardEvent.
@@ -128,7 +128,7 @@ public:
 // exceeding that cap will be dropped.
 class WebTouchEventBuilder : public WebTouchEvent {
 public:
-    WebTouchEventBuilder(const WebCore::Widget*, const WebCore::TouchEvent&);
+    WebTouchEventBuilder(const WebCore::Widget*, const WebCore::RenderObject*, const WebCore::TouchEvent&);
 };
 #endif // ENABLE(TOUCH_EVENTS)
 
@@ -137,7 +137,7 @@ public:
 // NOTE: If event mapping fails, the type will be set to Undefined.
 class WebGestureEventBuilder : public WebGestureEvent {
 public:
-    WebGestureEventBuilder(const WebCore::Widget*, const WebCore::GestureEvent&);
+    WebGestureEventBuilder(const WebCore::Widget*, const WebCore::RenderObject*, const WebCore::GestureEvent&);
 };
 #endif // ENABLE(GESTURE_EVENTS)
 
