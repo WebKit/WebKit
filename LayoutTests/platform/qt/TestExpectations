@@ -2497,10 +2497,6 @@ http/tests/inspector/network/network-initiator.html
 # Requires ENABLE(MEDIA_CAPTURE)
 fast/forms/file/file-input-capture.html
 
-# [Qt] new test http/tests/cookies/single-quoted-value.html is failing
-# https://bugs.webkit.org/show_bug.cgi?id=86066
-http/tests/cookies/single-quoted-value.html
-
 # [Qt] fast/frames/seamless/seamless-inherited-document-style.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=86182
 fast/frames/seamless/seamless-inherited-document-style.html

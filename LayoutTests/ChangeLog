@@ -1,3 +1,14 @@
+2012-10-09  Tullio Lucena  <tullio.lucena@openbossa.org>
+
+        [Qt] new test http/tests/cookies/single-quoted-value.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=86066
+
+        Reviewed by Csaba Osztrogonác.
+
+        Unskipping test.
+
+        * platform/qt/TestExpectations:
+
 2012-10-09  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [Cairo] Bump Cairo to fix more canvas/philip tests
