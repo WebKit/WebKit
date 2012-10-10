@@ -3453,15 +3453,6 @@ webkit.org/b/86592 [ Android Linux ] fast/loader/link-no-URL.html [ Failure Pass
 webkit.org/b/86592 [ Android Linux ] http/tests/security/sandboxed-iframe-origin-remove.html [ Failure Pass ]
 
 webkit.org/b/86592 [ Android Linux ] svg/custom/js-late-pattern-creation.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/86592 [ Android Linux ] fast/repaint/fixed-scale.html [ ImageOnlyFailure Pass ]
-webkit.org/b/86592 [ Android Linux ] fast/repaint/fixed-table-overflow-zindex.html [ ImageOnlyFailure Pass ]
-webkit.org/b/86592 [ Android Linux ] fast/repaint/fixed-tranformed.html [ ImageOnlyFailure Pass ]
-webkit.org/b/86592 [ Android Linux ] fast/repaint/scroll-fixed-reflected-layer.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/86592 [ Android Linux ] fast/loader/text-document-wrapping.html [ Pass Timeout ]
-webkit.org/b/86592 [ Android Linux ] http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect.html [ Pass Timeout ]
-webkit.org/b/86592 [ Android Linux ] fast/loader/unload-form-about-blank.html [ Pass Timeout ]
-webkit.org/b/86592 [ Android Linux ] http/tests/xmlhttprequest/zero-length-response-sync.html [ Pass Timeout ]
 
 webkit.org/b/88964 [ Mac ] http/tests/misc/embedCrasher.html [ Missing Pass ]
 
@@ -3484,10 +3475,6 @@ webkit.org/b/86909 [ Win ] platform/chromium/virtual/gpu/fast/canvas/webgl/webgl
 webkit.org/b/87175 fast/regions/floats-basic-in-variable-width-regions.html
 webkit.org/b/87175 fast/regions/overflow-in-uniform-regions.html
 webkit.org/b/87175 fast/regions/render-region-renderer.html
-
-# Failing since sub-pixel was turned on, eae and leviw working on it.
-webkit.org/b/89238 fast/repaint/reflection-repaint-test.html
-webkit.org/b/89238 fast/repaint/transform-layout-repaint.html
 
 webkit.org/b/87273 [ Release ] webaudio/audioparam-connect-audioratesignal.html [ Pass Timeout ]
 
