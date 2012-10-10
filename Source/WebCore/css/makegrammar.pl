@@ -25,6 +25,7 @@ use Config;
 use File::Basename;
 use File::Spec;
 use Getopt::Long;
+use IO::File;
 
 require Config;
 
@@ -58,21 +59,20 @@ if ($suffix eq ".y.in") {
     my $grammarFileOutPath = File::Spec->join($outputDir, "$filename.y");
     my $featureFlags = "-D " . join(" -D ", split(" ", $extraDefines));
 
-    system($gcc . " -E -P -x c $grammarFilePath $featureFlags > $grammarFileOutPath.processed" );
+    my $processed = new IO::File;
+    open $processed, "$gcc -E -P -x c $grammarFilePath $featureFlags|";
 
     open GRAMMAR, ">$grammarFileOutPath" or die;
     open INCLUDES, "<$grammarFileIncludesPath" or die;
-    open PROCESSED, "<$grammarFileOutPath.processed" or die;
 
     while (<INCLUDES>) {
         print GRAMMAR;
     }
-    while (<PROCESSED>) {
+    while (<$processed>) {
         print GRAMMAR;
     }
 
     close GRAMMAR;
-    unlink("$grammarFileOutPath.processed");
     $grammarFilePath = $grammarFileOutPath;
 }
 
