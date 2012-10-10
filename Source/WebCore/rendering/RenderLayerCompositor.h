@@ -27,6 +27,7 @@
 #define RenderLayerCompositor_h
 
 #include "ChromeClient.h"
+#include "Frame.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 
@@ -195,7 +196,7 @@ public:
 
     void scrollingLayerDidChange(RenderLayer*);
 
-    String layerTreeAsText(bool showDebugInfo = false);
+    String layerTreeAsText(LayerTreeFlags);
 
     // These are named to avoid conflicts with the functions in GraphicsLayerClient
     // These return the actual internal variables.

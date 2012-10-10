@@ -1,3 +1,45 @@
+2012-10-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Store a visible rect in GraphicsLayers, and optionally dump it in layerTreeAsText
+        https://bugs.webkit.org/show_bug.cgi?id=98839
+
+        Reviewed by Sam Weinig.
+
+        To replace CATiledLayer with TileCaches, we need to be able to compute the visible part of a GraphicsLayer,
+        in order to limit the extent of TileCache tiles. Reuse the existing code in GraphicsLayerCA for this,
+        but store the computed rect in m_visibleRect.
+        
+        Add a flag to layerTreeAsText() so that tests can optionally include this visible rect in
+        layer tree dumps. This output will be platform-specific, so we don't want to do it unconditionally.
+
+        * WebCore.exp.in: Signature of Frame::layerTreeAsText() changed.
+        * page/Frame.cpp:
+        (WebCore::Frame::layerTreeAsText): Change to take some enum flags rather than just a bool.
+        * page/Frame.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::writeIndent): Make into a static class method so subclasses can use it.
+        (WebCore::GraphicsLayer::dumpProperties): Call a virtual dumpAdditionalProperties() for subclasses.
+        (showGraphicsLayerTree):
+        * platform/graphics/GraphicsLayer.h:
+        (GraphicsLayer): New LayerTreeAsTextIncludeVisibleRects flag.
+        (WebCore::GraphicsLayer::dumpAdditionalProperties): New virtual method.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges): clipRectForChildren and clipRectForSelf
+        were previously unused and buggy. Fix to correctly compute clipRectForSelf, to assign
+        to m_visibleRect.
+        (WebCore::GraphicsLayerCA::dumpAdditionalProperties): Dump m_visibleRect.
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (GraphicsLayerCA):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerTreeAsText): Convert the flags from Frame flags
+        to GraphicsLayerFlags and pass them along.
+        * rendering/RenderLayerCompositor.h:
+        (RenderLayerCompositor):
+        * testing/Internals.cpp:
+        (WebCore::Internals::layerTreeAsText): Overloaded method to handle the optional IDL arguments.
+        * testing/Internals.h: Add enum.
+        * testing/Internals.idl: Add optional flags, and a const short to describe the flags.
+
 2012-10-10  Shinya Kawanaka  <shinyak@chromium.org>
 
         Needs internal API to return distributed nodes for InsertionPoint

@@ -37,6 +37,7 @@
 #include "RotateTransformOperation.h"
 #include "ScaleTransformOperation.h"
 #include "SystemTime.h"
+#include "TextStream.h"
 #include "TransformState.h"
 #include "TranslateTransformOperation.h"
 #include <QuartzCore/CATransform3D.h>
@@ -932,25 +933,20 @@ void GraphicsLayerCA::recursiveCommitChanges(const TransformState& state, float 
     }
     
     FloatRect clipRectForChildren = localState.lastPlanarQuad().boundingBox();
-    FloatRect clipRectForSelf;
+    FloatRect clipRectForSelf(0, 0, m_size.width(), m_size.height());
+    clipRectForSelf.intersect(clipRectForChildren);
     
     if (masksToBounds()) {
         ASSERT(accumulation == TransformState::FlattenTransform);
-        
         // Replace the quad in the TransformState with one that is clipped to this layer's bounds
-        clipRectForSelf = FloatRect(0, 0, m_size.width(), m_size.height());
-        clipRectForSelf.intersect(clipRectForChildren);
         localState.setQuad(clipRectForSelf);
     }
 
+    m_visibleRect = clipRectForSelf;
+    
 #ifdef VISIBLE_TILE_WASH
-    if (m_visibleTileWashLayer) {
-        if (clipRectForSelf.isEmpty()) {
-            clipRectForSelf = FloatRect(0, 0, m_size.width(), m_size.height());
-            clipRectForSelf.intersect(clipRectForChildren);
-        }
+    if (m_visibleTileWashLayer)
         m_visibleTileWashLayer->setFrame(clipRectForSelf);
-    }
 #endif
 
     bool hadChanges = m_uncommittedChanges;
@@ -2411,6 +2407,14 @@ void GraphicsLayerCA::getDebugBorderInfo(Color& color, float& width) const
     }
 
     GraphicsLayer::getDebugBorderInfo(color, width);
+}
+
+void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, int indent, LayerTreeAsTextBehavior behavior) const
+{
+    if (behavior & LayerTreeAsTextIncludeVisibleRects) {
+        writeIndent(textStream, indent + 1);
+        textStream << "(visible rect " << m_visibleRect.x() << ", " << m_visibleRect.y() << " " << m_visibleRect.width() << " x " << m_visibleRect.height() << ")\n";
+    }
 }
 
 void GraphicsLayerCA::setDebugBorder(const Color& color, float borderWidth)

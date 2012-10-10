@@ -188,6 +188,10 @@ public:
     void suspendAnimations(Document*, ExceptionCode&) const;
     void resumeAnimations(Document*, ExceptionCode&) const;
 
+    enum {
+        LAYER_TREE_INCLUDES_VISIBLE_RECTS = 1 // Values need to kept in sync with Internals.idl.
+    };
+    String layerTreeAsText(Document*, unsigned flags, ExceptionCode&) const;
     String layerTreeAsText(Document*, ExceptionCode&) const;
 
     void garbageCollectDocumentResources(Document*, ExceptionCode&) const;

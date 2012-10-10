@@ -876,7 +876,7 @@ Color Frame::tiledBackingStoreBackgroundColor() const
 }
 #endif
 
-String Frame::layerTreeAsText(bool showDebugInfo) const
+String Frame::layerTreeAsText(LayerTreeFlags flags) const
 {
 #if USE(ACCELERATED_COMPOSITING)
     document()->updateLayout();
@@ -884,9 +884,9 @@ String Frame::layerTreeAsText(bool showDebugInfo) const
     if (!contentRenderer())
         return String();
 
-    return contentRenderer()->compositor()->layerTreeAsText(showDebugInfo);
+    return contentRenderer()->compositor()->layerTreeAsText(flags);
 #else
-    UNUSED_PARAM(showDebugInfo);
+    UNUSED_PARAM(flags);
     return String();
 #endif
 }

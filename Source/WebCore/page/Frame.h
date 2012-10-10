@@ -76,6 +76,12 @@ namespace WebCore {
 
     class TreeScope;
 
+    enum {
+        LayerTreeFlagsIncludeDebugInfo = 1 << 0,
+        LayerTreeFlagsIncludeVisibleRects = 1 << 2
+    };
+    typedef unsigned LayerTreeFlags;
+
     class Frame : public RefCounted<Frame>, public TiledBackingStoreClient {
     public:
         static PassRefPtr<Frame> create(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
@@ -125,7 +131,7 @@ namespace WebCore {
 
         void injectUserScripts(UserScriptInjectionTime);
         
-        String layerTreeAsText(bool showDebugInfo = false) const;
+        String layerTreeAsText(LayerTreeFlags = 0) const;
 
         static Frame* frameForWidget(const Widget*);
 

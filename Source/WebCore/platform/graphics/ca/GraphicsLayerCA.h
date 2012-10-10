@@ -229,6 +229,7 @@ private:
     virtual void setReplicatedByLayer(GraphicsLayer*);
 
     virtual void getDebugBorderInfo(Color&, float& width) const;
+    virtual void dumpAdditionalProperties(TextStream&, int indent, LayerTreeAsTextBehavior) const;
 
     void computePixelAlignment(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase,
         FloatPoint& position, FloatSize&, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset) const;
@@ -393,6 +394,7 @@ private:
 #ifdef VISIBLE_TILE_WASH
     RefPtr<PlatformCALayer> m_visibleTileWashLayer;
 #endif
+    FloatRect m_visibleRect;
     
     enum ContentsLayerPurpose {
         NoContentsLayer = 0,

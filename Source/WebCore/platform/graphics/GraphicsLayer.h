@@ -47,6 +47,7 @@
 enum LayerTreeAsTextBehaviorFlags {
     LayerTreeAsTextBehaviorNormal = 0,
     LayerTreeAsTextDebug = 1 << 0, // Dump extra debugging info like layer addresses.
+    LayerTreeAsTextIncludeVisibleRects = 1 << 1,
 };
 typedef unsigned LayerTreeAsTextBehavior;
 
@@ -435,7 +436,11 @@ protected:
 
     GraphicsLayer(GraphicsLayerClient*);
 
+    static void writeIndent(TextStream&, int indent);
+
     void dumpProperties(TextStream&, int indent, LayerTreeAsTextBehavior) const;
+    virtual void dumpAdditionalProperties(TextStream&, int /*indent*/, LayerTreeAsTextBehavior) const { }
+
     virtual void getDebugBorderInfo(Color&, float& width) const;
 
     GraphicsLayerClient* m_client;

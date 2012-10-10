@@ -536,7 +536,7 @@ double GraphicsLayer::backingStoreMemoryEstimate() const
     return static_cast<double>(4 * size().width()) * size().height();
 }
 
-static void writeIndent(TextStream& ts, int indent)
+void GraphicsLayer::writeIndent(TextStream& ts, int indent)
 {
     for (int i = 0; i != indent; ++i)
         ts << "  ";
@@ -662,6 +662,8 @@ void GraphicsLayer::dumpProperties(TextStream& ts, int indent, LayerTreeAsTextBe
         ts << ")\n";
     }
     
+    dumpAdditionalProperties(ts, indent, behavior);
+    
     if (m_children.size()) {
         writeIndent(ts, indent + 1);
         ts << "(children " << m_children.size() << "\n";
@@ -690,7 +692,7 @@ void showGraphicsLayerTree(const WebCore::GraphicsLayer* layer)
     if (!layer)
         return;
 
-    WTF::String output = layer->layerTreeAsText(LayerTreeAsTextDebug);
+    String output = layer->layerTreeAsText(LayerTreeAsTextDebug | LayerTreeAsTextIncludeVisibleRects);
     fprintf(stderr, "%s\n", output.utf8().data());
 }
 #endif

@@ -1105,16 +1105,22 @@ void RenderLayerCompositor::scrollingLayerDidChange(RenderLayer* layer)
         scrollingCoordinator->scrollableAreaScrollLayerDidChange(layer, backing ? backing->scrollingContentsLayer() : 0);
 }
 
-String RenderLayerCompositor::layerTreeAsText(bool showDebugInfo)
+String RenderLayerCompositor::layerTreeAsText(LayerTreeFlags flags)
 {
     updateCompositingLayers(CompositingUpdateAfterLayout);
 
     if (!m_rootContentLayer)
         return String();
 
+    LayerTreeAsTextBehavior layerTreeBehavior = LayerTreeAsTextBehaviorNormal;
+    if (flags & LayerTreeFlagsIncludeDebugInfo)
+        layerTreeBehavior |= LayerTreeAsTextDebug;
+    if (flags & LayerTreeFlagsIncludeVisibleRects)
+        layerTreeBehavior |= LayerTreeAsTextIncludeVisibleRects;
+    
     // We skip dumping the scroll and clip layers to keep layerTreeAsText output
     // similar between platforms.
-    return m_rootContentLayer->layerTreeAsText(showDebugInfo ? LayerTreeAsTextDebug : LayerTreeAsTextBehaviorNormal);
+    return m_rootContentLayer->layerTreeAsText(layerTreeBehavior);
 }
 
 RenderLayerCompositor* RenderLayerCompositor::frameContentsCompositor(RenderPart* renderer)

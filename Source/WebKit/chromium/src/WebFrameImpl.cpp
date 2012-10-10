@@ -2156,7 +2156,9 @@ WebString WebFrameImpl::layerTreeAsText(bool showDebugInfo) const
 {
     if (!frame())
         return WebString();
-    return WebString(frame()->layerTreeAsText(showDebugInfo));
+    
+    LayerTreeFlags flags = showDebugInfo ? LayerTreeFlagsIncludeDebugInfo : 0;
+    return WebString(frame()->layerTreeAsText(flags));
 }
 
 // WebFrameImpl public ---------------------------------------------------------
