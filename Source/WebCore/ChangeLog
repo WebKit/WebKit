@@ -1,3 +1,23 @@
+2012-10-10  Alexandre Elias  <aelias@chromium.org>
+
+        Text Autosizing: Counteract funky window sizing on Android.
+        https://bugs.webkit.org/show_bug.cgi?id=98809
+
+        Reviewed by Adam Barth.
+
+        In Chrome for Android, the window sizes provided to WebCore are
+        currently in physical screen pixels instead of
+        device-scale-adjusted units. For example window width on a
+        Galaxy Nexus is 720 instead of 360.  Text autosizing expects
+        device-independent pixels.  When Chrome for Android cuts over to
+        the new coordinate space, it will be tied to the setting
+        applyPageScaleFactorInCompositor.
+
+        No new tests.
+
+        * rendering/TextAutosizer.cpp:
+        (WebCore::TextAutosizer::processSubtree):
+
 2012-10-09  Philip Rogers  <pdr@google.com>
 
         Recursively detach SVGElementInstances
