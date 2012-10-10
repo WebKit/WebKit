@@ -262,6 +262,7 @@ static string roleToString(WebAccessibilityRole role)
     case WebAccessibilityRoleTreeItemRole:
         return result.append("TreeItem");
     case WebAccessibilityRoleUnknown:
+    default:
         return result.append("Unknown");
     }
 }

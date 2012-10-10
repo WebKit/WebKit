@@ -1,3 +1,10 @@
+2012-10-09  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed Chromium Windows build fix after r130823.
+
+        * DumpRenderTree/chromium/TestRunner/AccessibilityUIElementChromium.cpp:
+        (roleToString): Re-added the 'default' label as some cases are not handled.
+
 2012-10-09  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         [chromium] Add drop event for plugins.
