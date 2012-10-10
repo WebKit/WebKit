@@ -1,3 +1,42 @@
+2012-10-10  Regina Chung  <heejin.r.chung@samsung.com>
+
+        [EFL] Use the shareable GraphicsContext3DOpenGL* implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=96627
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Changed EFL implementation of GraphicsContext3D(GC3D) to use GraphicsContext3DOpenGL*.
+        It was initially implemented in a different way, due to characteristics of Evas,
+        but it would be better to use the common implementation and find another way
+        to deal with Evas, especially because all the duplicated code.
+
+        No new tests. No functional changes.
+
+        * PlatformEfl.cmake: Removed cairo implementation of GC3D and added efl files to WebCore_SOURCES.
+        * platform/graphics/efl/GraphicsContext3DEfl.cpp: Modified code so GC3DOpenGL* can be used.
+        (WebCore::GraphicsContext3D::create):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::platformLayer):
+        (WebCore::GraphicsContext3D::makeContextCurrent):
+        (WebCore::GraphicsContext3D::setContextLostCallback):
+        (WebCore::GraphicsContext3D::setErrorMessageCallback):
+        (WebCore::GraphicsContext3D::paintToCanvas):
+        (WebCore):
+        (WebCore::GraphicsContext3D::createGraphicsSurfaces):
+        (WebCore::GraphicsContext3D::releaseShaderCompiler):
+        (WebCore::GraphicsContext3D::getImageData):
+        * platform/graphics/efl/GraphicsContext3DPrivate.cpp: Removed functions implemented in GC3DOpenGL*
+        (WebCore::GraphicsContext3DPrivate::GraphicsContext3DPrivate):
+        (WebCore):
+        (WebCore::GraphicsContext3DPrivate::~GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::createSurface):
+        (WebCore::GraphicsContext3DPrivate::platformGraphicsContext3D):
+        (WebCore::GraphicsContext3DPrivate::makeContextCurrent):
+        (WebCore::GraphicsContext3DPrivate::isGLES2Compliant):
+        (WebCore::GraphicsContext3DPrivate::paintToTextureMapper):
+        * platform/graphics/efl/GraphicsContext3DPrivate.h: Removed functions implemented in GC3DOpenGL*
+        (GraphicsContext3DPrivate):
+
 2012-10-10  Tony Chang  <tony@chromium.org>
 
         Unreviewed, rolling out r130937, r130949, r130955, and
