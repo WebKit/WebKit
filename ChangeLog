@@ -1,3 +1,10 @@
+2012-10-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Attempt to fix gtk build which controls exports via this mysteriously-named
+        file.
+        
+        * Source/autotools/symbols.filter:
+
 2012-10-10  Shinya Kawanaka  <shinyak@chromium.org>
 
         Needs internal API to return distributed nodes for InsertionPoint
