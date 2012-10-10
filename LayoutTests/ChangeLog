@@ -1,3 +1,9 @@
+2012-10-10  Adam Barth  <abarth@webkit.org>
+
+        Add a note that this test is flaky and can trigger an ASSERT.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-10  David Barton  <dbarton@mathscribe.com>
 
         Turn on ENABLE_MATHML for Chromium
