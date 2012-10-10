@@ -849,16 +849,20 @@ static void updateChildAllocationFromPendingAllocation(GtkWidget* child, void*)
     *allocation = IntRect();
 }
 
-static void resizeWebViewFromAllocation(WebKitWebView* webView, GtkAllocation* allocation)
+static void resizeWebViewFromAllocation(WebKitWebView* webView, GtkAllocation* allocation, bool sizeChanged)
 {
     Page* page = core(webView);
     IntSize oldSize;
-    if (FrameView* frameView = page->mainFrame()->view()) {
+    FrameView* frameView = page->mainFrame()->view();
+    if (sizeChanged && frameView) {
         oldSize = frameView->size();
         frameView->resize(allocation->width, allocation->height);
     }
 
     gtk_container_forall(GTK_CONTAINER(webView), updateChildAllocationFromPendingAllocation, 0);
+
+    if (!sizeChanged)
+        return;
 
     WebKit::ChromeClient* chromeClient = static_cast<WebKit::ChromeClient*>(page->chrome()->client());
     chromeClient->widgetSizeChanged(oldSize, IntSize(allocation->width, allocation->height));
@@ -869,17 +873,16 @@ static void webkit_web_view_size_allocate(GtkWidget* widget, GtkAllocation* allo
 {
     GtkAllocation oldAllocation;
     gtk_widget_get_allocation(widget, &oldAllocation);
+    bool sizeChanged = allocation->width != oldAllocation.width || allocation->height != oldAllocation.height;
 
     GTK_WIDGET_CLASS(webkit_web_view_parent_class)->size_allocate(widget, allocation);
-    if (allocation->width == oldAllocation.width && allocation->height == oldAllocation.height)
-        return;
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
-    if (!gtk_widget_get_mapped(widget)) {
+    if (sizeChanged && !gtk_widget_get_mapped(widget)) {
         webView->priv->needsResizeOnMap = true;
         return;
     }
-    resizeWebViewFromAllocation(webView, allocation);
+    resizeWebViewFromAllocation(webView, allocation, sizeChanged);
 }
 
 static void webkitWebViewMap(GtkWidget* widget)
@@ -892,7 +895,7 @@ static void webkitWebViewMap(GtkWidget* widget)
 
     GtkAllocation allocation;
     gtk_widget_get_allocation(widget, &allocation);
-    resizeWebViewFromAllocation(webView, &allocation);
+    resizeWebViewFromAllocation(webView, &allocation, true);
     webView->priv->needsResizeOnMap = false;
 }
 
