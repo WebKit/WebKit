@@ -46,6 +46,7 @@ typedef void (^OnLoadBlock)(WKBrowsingContextController *);
 
 @interface UserContentTestLoadDelegate : NSObject <WKBrowsingContextLoadDelegate>
 {
+    OnLoadBlock _onLoadBlock;
 }
 
 @property (nonatomic, copy) OnLoadBlock onLoadBlock;

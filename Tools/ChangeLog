@@ -1,5 +1,11 @@
 2012-10-10  Andy Estes  <aestes@apple.com>
 
+        Fix the Lion build after r130948.
+
+        * TestWebKitAPI/Tests/WebKit2ObjC/UserContentTest.mm:
+
+2012-10-10  Andy Estes  <aestes@apple.com>
+
         Speculative build fix for Snow Leopard after r130948.
 
         * TestWebKitAPI/Tests/WebKit2ObjC/UserContentTest.mm: Pull the
