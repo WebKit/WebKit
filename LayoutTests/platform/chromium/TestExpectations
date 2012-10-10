@@ -2325,16 +2325,12 @@ crbug.com/52017 [ Android Linux ] http/tests/misc/isindex-with-no-form.html [ Pa
 
 crbug.com/52572 [ Android Linux Win Debug ] http/tests/misc/image-blocked-src-change.html [ Failure Pass ]
 
-webkit.org/b/44199 [ Release ] perf/array-nested-loop.html [ Failure Pass Slow ]
 webkit.org/b/44199 [ Release ] perf/class-list-remove.html [ Failure Pass Slow ]
-webkit.org/b/71652 [ Android Linux Mac Release ] perf/document-contains.html [ Pass Slow ]
-webkit.org/b/72372 [ Win Release ] perf/document-contains.html [ Pass Slow ]
 webkit.org/b/67921 [ Android Release ] perf/show-hide-table-rows.html [ Timeout ]
 webkit.org/b/67921 [ Linux Mac Win Release ] perf/show-hide-table-rows.html [ Failure Pass Slow ]
 webkit.org/b/44199 [ Release ] perf/clone-with-focus.html [ Failure Pass ]
 webkit.org/b/44199 [ Release ] perf/typing-at-end-of-line.html [ Failure Pass ]
 webkit.org/b/44199 webkit.org/b/63057 [ Release ] perf/array-binary-search.html [ Failure Pass Slow ]
-webkit.org/b/72901 [ Release ] perf/array-push-pop.html [ Pass Slow ]
 webkit.org/b/44199 [ Release ] perf/array-reverse.html [ Pass Timeout ]
 webkit.org/b/63057 [ Release ] perf/adding-radio-buttons.html [ Failure Pass ]
 webkit.org/b/96977 [ Mac Release ] perf/nested-combined-selectors.html [ Failure Pass ]
