@@ -1,3 +1,29 @@
+2012-10-09  Kent Tamura  <tkent@chromium.org>
+
+        Should reject invalid dates constructed with multiple fields UI
+        https://bugs.webkit.org/show_bug.cgi?id=98727
+
+        Reviewed by Hajime Morita.
+
+        In input[type=date] with multiple fields UI, we allow users to set
+        day-of-month value to 1-31 regardless of the month value. So users can
+        construct an invalid date such as "2012-02-31". We should sanitize such
+        values.
+
+        This change affects platforms with ENABLE_INPUT_TYPE_DATE &&
+        ENABLE_INPUT_MULTIPLE_FIELDS_UI.
+
+        Test: fast/forms/date-multiple-fields/date-multiple-fields-keyboard-events.html
+
+        * html/BaseDateAndTimeInputType.h:
+        (BaseDateAndTimeInputType): Make sanitizeValue protected to be called from
+        BaseMultipleFieldsDateAndTimeInputType.
+        * html/BaseMultipleFieldsDateAndTimeInputType.cpp:
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::editControlValueChanged):
+        Apply sanitizeValue to a value constructed in UI.
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::restoreFormControlState):
+        Ditto.
+
 2012-10-09  Joe Mason  <jmason@rim.com>
 
         Check for null m_frame in NetworkJob

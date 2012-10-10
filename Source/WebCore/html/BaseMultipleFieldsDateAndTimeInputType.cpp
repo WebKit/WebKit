@@ -71,7 +71,7 @@ void BaseMultipleFieldsDateAndTimeInputType::didFocusOnControl()
 void BaseMultipleFieldsDateAndTimeInputType::editControlValueChanged()
 {
     RefPtr<HTMLInputElement> input(element());
-    input->setValueInternal(m_dateTimeEditElement->value(), DispatchNoEvent);
+    input->setValueInternal(sanitizeValue(m_dateTimeEditElement->value()), DispatchNoEvent);
     input->setNeedsStyleRecalc();
     input->dispatchFormControlInputEvent();
     input->dispatchFormControlChangeEvent();
@@ -233,7 +233,7 @@ void BaseMultipleFieldsDateAndTimeInputType::restoreFormControlState(const FormC
     setMillisecondToDateComponents(createStepRange(AnyIsDefaultStep).minimum().toDouble(), &date);
     DateTimeFieldsState dateTimeFieldsState = DateTimeFieldsState::restoreFormControlState(state);
     m_dateTimeEditElement->setValueAsDateTimeFieldsState(dateTimeFieldsState, date);
-    element()->setValueInternal(m_dateTimeEditElement->value(), DispatchNoEvent);
+    element()->setValueInternal(sanitizeValue(m_dateTimeEditElement->value()), DispatchNoEvent);
 }
 
 FormControlState BaseMultipleFieldsDateAndTimeInputType::saveFormControlState() const

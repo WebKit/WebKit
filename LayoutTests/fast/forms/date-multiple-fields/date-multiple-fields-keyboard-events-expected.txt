@@ -13,46 +13,48 @@ Tab - Move focus field
 Backspace - Make value empty
   
 == Digit keys ==
-PASS input.value is "2012-09"
+PASS input.value is "0012-09-20"
 == Left/Right keys ==
-PASS input.value is "0005-06"
+PASS input.value is "2012-09-06"
 PASS document.activeElement.id is "input"
 == Up/Down keys ==
-PASS input.value is "2012-10"
-PASS input.value is "2012-08"
+PASS input.value is "2012-10-29"
+PASS input.value is "2012-08-29"
 == Up/Down keys on empty value ==
-PASS input.value is "2012-11"
+PASS input.value is "2012-11-01"
 == Up/Down keys on empty value 2 ==
-PASS input.value is "2012-02"
+PASS input.value is "2012-02-28"
 == Tab key ==
-PASS input.value is "0005-09"
-PASS input.value is "0005-07"
-PASS document.activeElement.id is "another"
+PASS input.value is "2012-09-05"
+PASS input.value is "2012-09-07"
+PASS document.activeElement.id is "after"
 == Shfit+Tab key ==
-PASS input.value is "0003-09"
+PASS input.value is "0003-09-30"
 PASS document.activeElement.id is "before"
 == Up key on maximum value ==
-PASS input.value is "0001-10"
+PASS input.value is "0001-10-14"
 == Up key with a maximum attribute ==
-PASS input.value is "0001-01"
+PASS input.value is "1000-01-01"
 == Down key on minimum value ==
 PASS input.value is ""
 == Down key with a minimum attribute ==
 PASS input.value is ""
 == Inconsistent min-max attributes ==
-PASS input.value is "1000-12"
-PASS input.value is "1999-12"
+PASS input.value is "1000-12-31"
+PASS input.value is "1999-12-31"
+== Make an invalid date ==
+PASS input.value is ""
 == Backspace key ==
 PASS input.value is ""
 == Delete key ==
 PASS input.value is ""
 == Typeahead ==
-PASS input.value is "0001-12"
-PASS input.value is "0002-12"
+PASS input.value is "2012-12-01"
+PASS input.value is "2012-12-02"
 == RTL Left/Right keys ==
-PASS input.value is "2012-01"
-PASS input.value is "0002-01"
-PASS input.value is "0002-03"
+PASS input.value is "2012-01-28"
+PASS input.value is "2012-01-02"
+PASS input.value is "2012-03-02"
 PASS successfullyParsed is true
 
 TEST COMPLETE

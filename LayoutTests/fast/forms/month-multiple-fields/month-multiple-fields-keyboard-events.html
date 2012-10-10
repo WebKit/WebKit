@@ -134,15 +134,15 @@ keyDown('upArrow');
 shouldBeEqualToString('input.value', '0001-01');
 
 beginTest('Down key on minimum value', '0001-01', 'bad min', 'wrong max');
-keyDown('downArrow');
+keyDown('downArrow'); // -> 0001-12
 keyDown('\t');
-keyDown('downArrow');
-shouldBeEqualToString('input.value', '275760-12');
+keyDown('downArrow'); // -> 275760-12, which is greater than the hard limit.
+shouldBeEqualToString('input.value', '');
 beginTest('Down key with a minimum attribute', '0001-01', '0001-01');
-keyDown('downArrow');
+keyDown('downArrow'); // -> 0001-12
 keyDown('\t');
-keyDown('downArrow');
-shouldBeEqualToString('input.value', '275760-12');
+keyDown('downArrow'); // -> 275760-12, which is greater than the hard limit.
+shouldBeEqualToString('input.value', '');
 
 beginTest('Inconsistent min-max attributes', '1999-12', '1999-12', '1000-01');
 keyDown('\t');
