@@ -89,7 +89,7 @@ static inline void freeEinaList(Eina_List* list)
 TEST_F(EWK2UnitTestBase, ewk_back_forward_list_current_item_get)
 {
     const char* url = environment->defaultTestPageUrl();
-    loadUrlSync(url);
+    ASSERT_TRUE(loadUrlSync(url));
     Ewk_Back_Forward_List* backForwardList = ewk_view_back_forward_list_get(webView());
     ASSERT_TRUE(backForwardList);
 
@@ -106,10 +106,10 @@ TEST_F(EWK2UnitTestBase, ewk_back_forward_list_previous_item_get)
     httpServer->run(serverCallbackNavigation);
 
     WKEinaSharedString url1 = urlFromTitle(httpServer.get(), title1);
-    loadUrlSync(url1);
+    ASSERT_TRUE(loadUrlSync(url1));
     ASSERT_STREQ(title1, ewk_view_title_get(webView()));
 
-    loadUrlSync(urlFromTitle(httpServer.get(), title2));
+    ASSERT_TRUE(loadUrlSync(urlFromTitle(httpServer.get(), title2)));
     ASSERT_STREQ(title2, ewk_view_title_get(webView()));
 
     Ewk_Back_Forward_List* backForwardList = ewk_view_back_forward_list_get(webView());
@@ -127,11 +127,11 @@ TEST_F(EWK2UnitTestBase, ewk_back_forward_list_next_item_get)
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
     httpServer->run(serverCallbackNavigation);
 
-    loadUrlSync(urlFromTitle(httpServer.get(), title1));
+    ASSERT_TRUE(loadUrlSync(urlFromTitle(httpServer.get(), title1)));
     ASSERT_STREQ(title1, ewk_view_title_get(webView()));
 
     WKEinaSharedString url2 = urlFromTitle(httpServer.get(), title2);
-    loadUrlSync(url2);
+    ASSERT_TRUE(loadUrlSync(url2));
     ASSERT_STREQ(title2, ewk_view_title_get(webView()));
 
     // Go back to Page1.
@@ -154,10 +154,10 @@ TEST_F(EWK2UnitTestBase, ewk_back_forward_list_item_at_index_get)
     httpServer->run(serverCallbackNavigation);
 
     WKEinaSharedString url1 = urlFromTitle(httpServer.get(), title1);
-    loadUrlSync(url1);
+    ASSERT_TRUE(loadUrlSync(url1));
     ASSERT_STREQ(title1, ewk_view_title_get(webView()));
 
-    loadUrlSync(urlFromTitle(httpServer.get(), title2));
+    ASSERT_TRUE(loadUrlSync(urlFromTitle(httpServer.get(), title2)));
     ASSERT_STREQ(title2, ewk_view_title_get(webView()));
 
     Ewk_Back_Forward_List* backForwardList = ewk_view_back_forward_list_get(webView());
@@ -178,10 +178,10 @@ TEST_F(EWK2UnitTestBase, ewk_back_forward_list_count)
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
     httpServer->run(serverCallbackNavigation);
 
-    loadUrlSync(urlFromTitle(httpServer.get(), title1));
+    ASSERT_TRUE(loadUrlSync(urlFromTitle(httpServer.get(), title1)));
     ASSERT_STREQ(title1, ewk_view_title_get(webView()));
 
-    loadUrlSync(urlFromTitle(httpServer.get(), title2));
+    ASSERT_TRUE(loadUrlSync(urlFromTitle(httpServer.get(), title2)));
     ASSERT_STREQ(title2, ewk_view_title_get(webView()));
 
     Ewk_Back_Forward_List* backForwardList = ewk_view_back_forward_list_get(webView());
@@ -196,14 +196,14 @@ TEST_F(EWK2UnitTestBase, ewk_back_forward_list_n_back_items_copy)
     httpServer->run(serverCallbackNavigation);
 
     WKEinaSharedString url1 = urlFromTitle(httpServer.get(), title1);
-    loadUrlSync(url1);
+    ASSERT_TRUE(loadUrlSync(url1));
     ASSERT_STREQ(title1, ewk_view_title_get(webView()));
 
     WKEinaSharedString url2 = urlFromTitle(httpServer.get(), title2);
-    loadUrlSync(url2);
+    ASSERT_TRUE(loadUrlSync(url2));
     ASSERT_STREQ(title2, ewk_view_title_get(webView()));
 
-    loadUrlSync(urlFromTitle(httpServer.get(), title3));
+    ASSERT_TRUE(loadUrlSync(urlFromTitle(httpServer.get(), title3)));
     ASSERT_STREQ(title3, ewk_view_title_get(webView()));
 
     Ewk_Back_Forward_List* backForwardList = ewk_view_back_forward_list_get(webView());
@@ -232,15 +232,15 @@ TEST_F(EWK2UnitTestBase, ewk_back_forward_list_n_forward_items_copy)
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
     httpServer->run(serverCallbackNavigation);
 
-    loadUrlSync(urlFromTitle(httpServer.get(), title1));
+    ASSERT_TRUE(loadUrlSync(urlFromTitle(httpServer.get(), title1)));
     ASSERT_STREQ(title1, ewk_view_title_get(webView()));
 
     WKEinaSharedString url2 = urlFromTitle(httpServer.get(), title2);
-    loadUrlSync(url2);
+    ASSERT_TRUE(loadUrlSync(url2));
     ASSERT_STREQ(title2, ewk_view_title_get(webView()));
 
     WKEinaSharedString url3 = urlFromTitle(httpServer.get(), title3);
-    loadUrlSync(url3);
+    ASSERT_TRUE(loadUrlSync(url3));
     ASSERT_STREQ(title3, ewk_view_title_get(webView()));
 
     // Go back to Page1.

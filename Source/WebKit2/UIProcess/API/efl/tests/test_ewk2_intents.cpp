@@ -54,7 +54,7 @@ TEST_F(EWK2UnitTestBase, ewk_intent_service_registration)
 {
     bool intentRegistered = false;
     evas_object_smart_callback_add(webView(), "intent,service,register", onIntentServiceRegistration, &intentRegistered);
-    loadUrlSync(environment->urlForResource("intent-service.html").data());
+    ASSERT_TRUE(loadUrlSync(environment->urlForResource("intent-service.html").data()));
     evas_object_smart_callback_del(webView(), "intent,service,register", onIntentServiceRegistration);
     ASSERT_TRUE(intentRegistered);
 }
@@ -103,7 +103,7 @@ TEST_F(EWK2UnitTestBase, ewk_intent_request)
 {
     unsigned intentReceivedCount = 0;
     evas_object_smart_callback_add(webView(), "intent,request,new", onIntentReceived, &intentReceivedCount);
-    loadUrlSync(environment->urlForResource("intent-request.html").data());
+    ASSERT_TRUE(loadUrlSync(environment->urlForResource("intent-request.html").data()));
 
     // A user gesture is required for the intent to start.
     mouseClick(5, 5);

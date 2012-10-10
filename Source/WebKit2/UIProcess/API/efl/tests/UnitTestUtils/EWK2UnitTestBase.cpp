@@ -71,10 +71,10 @@ void EWK2UnitTestBase::TearDown()
     ewk_shutdown();
 }
 
-void EWK2UnitTestBase::loadUrlSync(const char* url)
+bool EWK2UnitTestBase::loadUrlSync(const char* url, double timeoutSeconds)
 {
     ewk_view_url_set(m_webView, url);
-    waitUntilLoadFinished();
+    return waitUntilLoadFinished(timeoutSeconds);
 }
 
 class CallbackDataTimer {

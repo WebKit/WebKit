@@ -1,5 +1,37 @@
 2012-10-09  Byungwoo Lee  <bw80.lee@samsung.com>
 
+        [EFL][WK2] Change parameter and return type of loadUrlSync().
+        https://bugs.webkit.org/show_bug.cgi?id=97920
+
+        Reviewed by Gyuyoung Kim.
+
+        loadUrlSync() uses waitUntilLoadFinished() internally, and it has
+        a parameter and return value for timeout.
+        To set and check timeout, loadUrlSync() should have those.
+
+        A parameter for timeout interval is added to loadUrlSync() and it
+        returns the result of waitUntilLoadFinished() for checking timeout.
+
+        And I added codes to check the result of all the LoadUrlSync()
+        function calls with ASSERT_TRUE() macro.
+
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::EWK2UnitTestBase::loadUrlSync):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.h:
+        (EWK2UnitTestBase):
+        * UIProcess/API/efl/tests/test_ewk2_back_forward_list.cpp:
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_context.cpp:
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_cookie_manager.cpp:
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_intents.cpp:
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+
+2012-10-09  Byungwoo Lee  <bw80.lee@samsung.com>
+
         [EFL][WK2] Move timeout callback to the CallbackDataTimer class.
         https://bugs.webkit.org/show_bug.cgi?id=97861
 

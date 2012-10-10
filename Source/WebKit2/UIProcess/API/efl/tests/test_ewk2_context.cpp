@@ -67,7 +67,7 @@ static void schemeRequestCallback(Ewk_Url_Scheme_Request* request, void* userDat
 TEST_F(EWK2UnitTestBase, ewk_context_url_scheme_register)
 {
     ewk_context_url_scheme_register(ewk_view_context_get(webView()), "fooscheme", schemeRequestCallback, 0);
-    loadUrlSync("fooscheme:MyPath");
+    ASSERT_TRUE(loadUrlSync("fooscheme:MyPath"));
     ASSERT_STREQ("Foo", ewk_view_title_get(webView()));
 }
 

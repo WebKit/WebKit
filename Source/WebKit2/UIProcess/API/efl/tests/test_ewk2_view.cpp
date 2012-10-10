@@ -46,7 +46,7 @@ static void onLoadFinishedForRedirection(void* userData, Evas_Object*, void*)
 
 TEST_F(EWK2UnitTestBase, ewk_view_url_get)
 {
-    loadUrlSync(environment->defaultTestPageUrl());
+    ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
     EXPECT_STREQ(environment->defaultTestPageUrl(), ewk_view_url_get(webView()));
 
     int countLoadFinished = 2;
@@ -60,7 +60,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_url_get)
 
 TEST_F(EWK2UnitTestBase, ewk_view_device_pixel_ratio)
 {
-    loadUrlSync(environment->defaultTestPageUrl());
+    ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
 
     // Default pixel ratio is 1.0
     ASSERT_FLOAT_EQ(1, ewk_view_device_pixel_ratio_get(webView()));
@@ -106,13 +106,13 @@ TEST_F(EWK2UnitTestBase, ewk_view_navigation)
     httpServer->run(serverCallbackNavigation);
 
     // Visit Page1
-    loadUrlSync(httpServer->getURLForPath("/Page1").data());
+    ASSERT_TRUE(loadUrlSync(httpServer->getURLForPath("/Page1").data()));
     ASSERT_STREQ("Page1", ewk_view_title_get(webView()));
     ASSERT_FALSE(ewk_view_back_possible(webView()));
     ASSERT_FALSE(ewk_view_forward_possible(webView()));
 
     // Visit Page2
-    loadUrlSync(httpServer->getURLForPath("/Page2").data());
+    ASSERT_TRUE(loadUrlSync(httpServer->getURLForPath("/Page2").data()));
     ASSERT_STREQ("Page2", ewk_view_title_get(webView()));
     ASSERT_TRUE(ewk_view_back_possible(webView()));
     ASSERT_FALSE(ewk_view_forward_possible(webView()));
@@ -353,7 +353,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_same_page_navigation)
 {
     // Tests that same page navigation updates the page URL.
     String testUrl = environment->urlForResource("same_page_navigation.html").data();
-    loadUrlSync(testUrl.utf8().data());
+    ASSERT_TRUE(loadUrlSync(testUrl.utf8().data()));
     ASSERT_STREQ(testUrl.utf8().data(), ewk_view_url_get(webView()));
     mouseClick(50, 50);
     testUrl = testUrl + '#';

@@ -40,9 +40,9 @@ protected:
     virtual void SetUp();
     virtual void TearDown();
 
-    void loadUrlSync(const char* url);
-
     static const double defaultTimeoutSeconds = 10.0;
+
+    bool loadUrlSync(const char* url, double timeoutSeconds = defaultTimeoutSeconds);
     bool waitUntilLoadFinished(double timeoutSeconds = defaultTimeoutSeconds);
     bool waitUntilTitleChangedTo(const char* expectedTitle, double timeoutSeconds = defaultTimeoutSeconds);
     bool waitUntilURLChangedTo(const char* expectedURL, double timeoutSeconds = defaultTimeoutSeconds);
