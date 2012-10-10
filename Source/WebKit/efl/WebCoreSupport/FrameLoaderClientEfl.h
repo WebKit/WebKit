@@ -132,6 +132,7 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
                                const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight);
 
     virtual PassRefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement*, const KURL&, const WTF::Vector<String>&, const WTF::Vector<String>&, const String&, bool);
+    virtual void recreatePlugin(Widget*) { }
     virtual void redirectDataToPlugin(Widget* pluginWidget);
     virtual PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL& baseURL, const WTF::Vector<String>& paramNames, const WTF::Vector<String>& paramValues);
     virtual String overrideMediaType() const;

@@ -27,9 +27,11 @@
 #include "RenderSnapshottedPlugIn.h"
 
 #include "Cursor.h"
+#include "FrameLoaderClient.h"
 #include "FrameView.h"
 #include "Gradient.h"
 #include "HTMLPlugInImageElement.h"
+#include "MouseEvent.h"
 #include "PaintInfo.h"
 #include "Path.h"
 
@@ -113,6 +115,32 @@ void RenderSnapshottedPlugIn::paintReplacedSnapshot(PaintInfo& paintInfo, const 
 
     bool useLowQualityScaling = shouldPaintAtLowQuality(context, image.get(), image.get(), alignedRect.size());
     context->drawImage(image.get(), style()->colorSpace(), alignedRect, CompositeSourceOver, shouldRespectImageOrientation(), useLowQualityScaling);
+}
+
+CursorDirective RenderSnapshottedPlugIn::getCursor(const LayoutPoint& point, Cursor& overrideCursor) const
+{
+    if (plugInImageElement()->displayState() < HTMLPlugInElement::Playing) {
+        overrideCursor = handCursor();
+        return SetCursor;
+    }
+    return RenderEmbeddedObject::getCursor(point, overrideCursor);
+}
+
+void RenderSnapshottedPlugIn::handleEvent(Event* event)
+{
+    if (!event->isMouseEvent())
+        return;
+
+    MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
+    if (event->type() == eventNames().clickEvent && mouseEvent->button() == LeftButton) {
+        plugInImageElement()->setDisplayState(HTMLPlugInElement::Playing);
+        if (widget()) {
+            if (Frame* frame = document()->frame())
+                frame->loader()->client()->recreatePlugin(widget());
+            repaint();
+        }
+        event->setDefaultHandled();
+    }
 }
 
 } // namespace WebCore

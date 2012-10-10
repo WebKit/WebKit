@@ -316,6 +316,26 @@ void PluginView::destroyPluginAndReset()
     cancelAllStreams();
 }
 
+void PluginView::recreateAndInitialize(PassRefPtr<Plugin> plugin)
+{
+    if (m_plugin) {
+        if (m_pluginSnapshotTimer.isActive())
+            m_pluginSnapshotTimer.stop();
+        destroyPluginAndReset();
+    }
+
+    // Reset member variables to initial values.
+    m_plugin = plugin;
+    m_isInitialized = false;
+    m_isWaitingForSynchronousInitialization = false;
+    m_isWaitingUntilMediaCanStart = false;
+    m_isBeingDestroyed = false;
+    m_manualStreamState = StreamStateInitial;
+    m_transientPaintingSnapshot = nullptr;
+
+    initializePlugin();
+}
+
 Frame* PluginView::frame() const
 {
     return m_pluginElement->document()->frame();

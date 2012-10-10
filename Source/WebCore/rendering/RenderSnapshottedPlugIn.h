@@ -42,10 +42,13 @@ public:
 
     void updateSnapshot(PassRefPtr<Image>);
 
+    void handleEvent(Event*);
+
 private:
     HTMLPlugInImageElement* plugInImageElement() const;
     virtual const char* renderName() const { return "RenderSnapshottedPlugIn"; }
 
+    virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const OVERRIDE;
     virtual bool isSnapshottedPlugIn() const OVERRIDE { return true; }
     virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&) OVERRIDE;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1351,6 +1351,16 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugIn
         return 0;
     
     return PluginView::create(pluginElement, plugin.release(), parameters);
+}
+
+void WebFrameLoaderClient::recreatePlugin(Widget* widget)
+{
+    ASSERT(widget && widget->isPluginViewBase());
+    ASSERT(m_frame->page());
+
+    PluginView* pluginView = static_cast<PluginView*>(widget);
+    RefPtr<Plugin> plugin = m_frame->page()->createPlugin(m_frame, pluginView->pluginElement(), pluginView->initialParameters());
+    pluginView->recreateAndInitialize(plugin.release());
 }
 
 void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)

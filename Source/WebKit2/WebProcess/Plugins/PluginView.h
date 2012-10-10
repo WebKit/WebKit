@@ -53,6 +53,8 @@ class PluginView : public WebCore::PluginViewBase, public PluginController, priv
 public:
     static PassRefPtr<PluginView> create(PassRefPtr<WebCore::HTMLPlugInElement>, PassRefPtr<Plugin>, const Plugin::Parameters&);
 
+    void recreateAndInitialize(PassRefPtr<Plugin>);
+
     WebCore::Frame* frame() const;
 
     bool isBeingDestroyed() const { return m_isBeingDestroyed; }
@@ -71,6 +73,9 @@ public:
     void setLayerHostingMode(LayerHostingMode);
     RetainPtr<PDFDocument> pdfDocumentForPrinting() const { return m_plugin->pdfDocumentForPrinting(); }
 #endif
+
+    WebCore::HTMLPlugInElement* pluginElement() const { return m_pluginElement.get(); }
+    const Plugin::Parameters& initialParameters() const { return m_parameters; }
 
     // FIXME: Remove this; nobody should have to know about the plug-in view's renderer except the plug-in view itself.
     WebCore::RenderBoxModelObject* renderer() const;

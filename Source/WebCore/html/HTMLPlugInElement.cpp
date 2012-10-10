@@ -35,6 +35,7 @@
 #include "Page.h"
 #include "PluginViewBase.h"
 #include "RenderEmbeddedObject.h"
+#include "RenderSnapshottedPlugIn.h"
 #include "RenderWidget.h"
 #include "Settings.h"
 #include "Widget.h"
@@ -177,9 +178,15 @@ void HTMLPlugInElement::defaultEventHandler(Event* event)
     // FIXME: Mouse down and scroll events are passed down to plug-in via custom code in EventHandler; these code paths should be united.
 
     RenderObject* r = renderer();
-    if (r && r->isEmbeddedObject() && toRenderEmbeddedObject(r)->showsUnavailablePluginIndicator()) {
-        toRenderEmbeddedObject(r)->handleUnavailablePluginIndicatorEvent(event);
-        return;
+    if (r && r->isEmbeddedObject()) {
+        if (toRenderEmbeddedObject(r)->showsUnavailablePluginIndicator()) {
+            toRenderEmbeddedObject(r)->handleUnavailablePluginIndicatorEvent(event);
+            return;
+        }
+        if (r->isSnapshottedPlugIn() && displayState() < Playing) {
+            toRenderSnapshottedPlugIn(r)->handleEvent(event);
+            return;
+        }
     }
 
     if (!r || !r->isWidget())

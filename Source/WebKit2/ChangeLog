@@ -1,3 +1,34 @@
+2012-10-10  Jon Lee  <jonlee@apple.com>
+
+        [WK2] Activate plugins when user clicks on snapshot
+        https://bugs.webkit.org/show_bug.cgi?id=98328
+        <rdar://problem/12426681>
+
+        Reviewed by Brady Eidson.
+
+        Implement the recreation of the plugin.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::recreateAndInitialize): We can run into a situation where the user
+        decided to run the plugin before the snapshot was ready to be taken. In this case, the
+        plugin member variable is non-null, and the timer is still active. Turn off the timer, and
+        destroy that instance of the plugin. We set the plugin to the instance provided in the
+        first parameter to this function, and reset the member variables so that the PluginView is
+        in a state similar to when it was first created. We also immediately initialize the plugin,
+        which may happen synchronously or asynchronously.
+
+        * WebProcess/Plugins/PluginView.h:
+        (WebKit::PluginView::initialParameters): Expose the initial parameters. Used to recreate
+        the plugin.
+        (WebKit::PluginView::pluginElement): Expose the element associated with the widget. Used to
+        recreate the plugin.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::recreatePlugin): Create a new Plugin instance using the same
+        parameters used to create the plugin for snapshotting. Forward that instance to the widget.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        (WebFrameLoaderClient): Implement recreatePlugin().
+
 2012-10-10  Sam Weinig  <sam@webkit.org>
 
         Fix 32-bit build.
