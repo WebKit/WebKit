@@ -38,6 +38,7 @@
 #define ewk_context_h
 
 #include "ewk_cookie_manager.h"
+#include "ewk_navigation_data.h"
 #include "ewk_url_scheme_request.h"
 #include <Evas.h>
 
@@ -67,6 +68,38 @@ typedef void (*Ewk_Vibration_Client_Vibrate_Cb)(uint64_t vibration_time, void *u
  * vibration request receiveed from the vibration controller.
  */
 typedef void (*Ewk_Vibration_Client_Vibration_Cancel_Cb)(void *user_data);
+
+/**
+ * @typedef Ewk_History_Navigation_Cb Ewk_History_Navigation_Cb
+ * @brief Type definition for a function that will be called back when @a view did navigation (loaded new URL).
+ */
+typedef void (*Ewk_History_Navigation_Cb)(const Evas_Object *view, Ewk_Navigation_Data *navigation_data, void *user_data);
+
+/**
+ * @typedef Ewk_History_Client_Redirection_Cb Ewk_History_Client_Redirection_Cb
+ * @brief Type definition for a function that will be called back when @a view performed a client redirect.
+ */
+typedef void (*Ewk_History_Client_Redirection_Cb)(const Evas_Object *view, const char *source_url, const char *destination_url, void *user_data);
+
+/**
+ * @typedef Ewk_History_Server_Redirection_Cb Ewk_History_Server_Redirection_Cb
+ * @brief Type definition for a function that will be called back when @a view performed a server redirect.
+ */
+typedef void (*Ewk_History_Server_Redirection_Cb)(const Evas_Object *view, const char *source_url, const char *destination_url, void *user_data);
+
+/**
+ * @typedef Ewk_History_Title_Update_Cb Ewk_History_Title_Update_Cb
+ * @brief Type definition for a function that will be called back when history title is updated.
+ */
+typedef void (*Ewk_History_Title_Update_Cb)(const Evas_Object *view, const char *title, const char *url, void *user_data);
+
+/**
+ * @typedef Ewk_Context_History_Client_Visited_Links_Populate_Cb Ewk_Context_History_Client_Visited_Links_Populate_Cb
+ * @brief Type definition for a function that will be called back when client is asked to provide visited links from a client-managed storage.
+ *
+ * @see ewk_context_visited_link_add
+ */
+typedef void (*Ewk_History_Populate_Visited_Links_Cb)(void *user_data);
 
 /**
  * Increases the reference count of the given object.
@@ -189,6 +222,41 @@ EAPI Eina_Bool ewk_context_url_scheme_register(Ewk_Context *context, const char 
  * @param data User data (may be @c NULL).
  */
 EAPI void ewk_context_vibration_client_callbacks_set(Ewk_Context *context, Ewk_Vibration_Client_Vibrate_Cb vibrate, Ewk_Vibration_Client_Vibration_Cancel_Cb cancel, void *data);
+
+/**
+ * Sets history callbacks for the given @a context.
+ *
+ * To stop listening for history events, you may call this function with @c
+ * NULL for the callbacks.
+ *
+ * @param context context object to set history callbacks
+ * @param navigate_func The function to call when @c ewk_view did navigation (may be @c NULL).
+ * @param client_redirect_func The function to call when @c ewk_view performed a client redirect (may be @c NULL).
+ * @param server_redirect_func The function to call when @c ewk_view performed a server redirect (may be @c NULL).
+ * @param title_update_func The function to call when history title is updated (may be @c NULL).
+ * @param populate_visited_links_func The function is called when client is asked to provide visited links from a
+ *        client-managed storage (may be @c NULL).
+ * @param data User data (may be @c NULL).
+ */
+EAPI void ewk_context_history_callbacks_set(Ewk_Context *context,
+                                            Ewk_History_Navigation_Cb navigate_func,
+                                            Ewk_History_Client_Redirection_Cb client_redirect_func,
+                                            Ewk_History_Server_Redirection_Cb server_redirect_func,
+                                            Ewk_History_Title_Update_Cb title_update_func,
+                                            Ewk_History_Populate_Visited_Links_Cb populate_visited_links_func,
+                                            void *data);
+
+/**
+ * Registers the given @a visited_url as visited link in @a context visited link cache.
+ *
+ * This function shall be invoked as a response to @c populateVisitedLinks callback of the history cient.
+ *
+ * @param context context object to add visited link data
+ * @param visited_url visited url
+ *
+ * @see Ewk_Context_History_Client
+ */
+EAPI void ewk_context_visited_link_add(Ewk_Context *context, const char *visited_url);
 
 #ifdef __cplusplus
 }

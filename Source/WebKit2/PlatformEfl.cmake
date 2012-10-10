@@ -50,6 +50,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/API/efl/ewk_back_forward_list_item.cpp
     UIProcess/API/efl/ewk_context.cpp
     UIProcess/API/efl/ewk_context_download_client.cpp
+    UIProcess/API/efl/ewk_context_history_client.cpp
     UIProcess/API/efl/ewk_context_request_manager_client.cpp
     UIProcess/API/efl/ewk_cookie_manager.cpp
     UIProcess/API/efl/ewk_download_job.cpp
@@ -58,6 +59,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/API/efl/ewk_intent.cpp
     UIProcess/API/efl/ewk_intent_service.cpp
     UIProcess/API/efl/ewk_main.cpp
+    UIProcess/API/efl/ewk_navigation_data.cpp
     UIProcess/API/efl/ewk_navigation_policy_decision.cpp
     UIProcess/API/efl/ewk_popup_menu_item.cpp
     UIProcess/API/efl/ewk_resource.cpp
@@ -233,6 +235,7 @@ SET (EWebKit2_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_intent.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_intent_service.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_main.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_navigation_data.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_navigation_policy_decision.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_popup_menu_item.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_resource.h"
@@ -322,6 +325,7 @@ TARGET_LINK_LIBRARIES(ewk2UnitTestUtils ${EWK2UnitTests_LIBRARIES})
 SET(EWK2UnitTests_BINARIES
     test_ewk2_back_forward_list
     test_ewk2_context
+    test_ewk2_context_history_callbacks
     test_ewk2_cookie_manager
     test_ewk2_download_job
     test_ewk2_eina_shared_string

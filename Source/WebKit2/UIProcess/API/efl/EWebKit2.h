@@ -38,6 +38,7 @@
 #include "ewk_intent.h"
 #include "ewk_intent_service.h"
 #include "ewk_main.h"
+#include "ewk_navigation_data.h"
 #include "ewk_navigation_policy_decision.h"
 #include "ewk_popup_menu_item.h"
 #include "ewk_resource.h"

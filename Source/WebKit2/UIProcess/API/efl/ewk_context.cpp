@@ -31,6 +31,7 @@
 #include "WKString.h"
 #include "WebContext.h"
 #include "ewk_context_download_client_private.h"
+#include "ewk_context_history_client_private.h"
 #include "ewk_context_private.h"
 #include "ewk_context_request_manager_client_private.h"
 #include "ewk_cookie_manager_private.h"
@@ -79,11 +80,14 @@ struct _Ewk_Context {
     WKRetainPtr<WKSoupRequestManagerRef> requestManager;
     URLSchemeHandlerMap urlSchemeHandlers;
 
+    Ewk_Context_History_Client historyClient;
+
     _Ewk_Context(WKRetainPtr<WKContextRef> contextRef)
         : __ref(1)
         , context(contextRef)
         , cookieManager(0)
         , requestManager(WKContextGetSoupRequestManager(contextRef.get()))
+        , historyClient()
     {
 #if ENABLE(BATTERY_STATUS)
         batteryProvider = BatteryProvider::create(context.get());
@@ -109,6 +113,7 @@ struct _Ewk_Context {
 #endif
         ewk_context_request_manager_client_attach(this);
         ewk_context_download_client_attach(this);
+        ewk_context_history_client_attach(this);
     }
 
     ~_Ewk_Context()
@@ -281,4 +286,32 @@ void ewk_context_vibration_client_callbacks_set(Ewk_Context* ewkContext, Ewk_Vib
 #if ENABLE(VIBRATION)
     ewkContext->vibrationProvider->setVibrationClientCallbacks(vibrate, cancel, data);
 #endif
+}
+
+void ewk_context_history_callbacks_set(Ewk_Context* ewkContext, Ewk_History_Navigation_Cb navigate, Ewk_History_Client_Redirection_Cb clientRedirect, Ewk_History_Server_Redirection_Cb serverRedirect, Ewk_History_Title_Update_Cb titleUpdate, Ewk_History_Populate_Visited_Links_Cb populateVisitedLinks, void* data)
+{
+    EINA_SAFETY_ON_NULL_RETURN(ewkContext);
+
+    ewkContext->historyClient.navigate_func = navigate;
+    ewkContext->historyClient.client_redirect_func = clientRedirect;
+    ewkContext->historyClient.server_redirect_func = serverRedirect;
+    ewkContext->historyClient.title_update_func = titleUpdate;
+    ewkContext->historyClient.populate_visited_links_func = populateVisitedLinks;
+    ewkContext->historyClient.user_data = data;
+}
+
+const Ewk_Context_History_Client* ewk_context_history_client_get(const Ewk_Context* ewkContext)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ewkContext, 0);
+
+    return &ewkContext->historyClient;
+}
+
+void ewk_context_visited_link_add(Ewk_Context* ewkContext, const char* visitedURL)
+{
+    EINA_SAFETY_ON_NULL_RETURN(ewkContext);
+    EINA_SAFETY_ON_NULL_RETURN(visitedURL);
+
+    WKRetainPtr<WKStringRef> wkVisitedURL(AdoptWK, WKStringCreateWithUTF8CString(visitedURL));
+    WKContextAddVisitedLink(ewkContext->context.get(), wkVisitedURL.get());
 }
