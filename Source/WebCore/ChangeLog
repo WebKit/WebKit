@@ -1,3 +1,31 @@
+2012-10-10  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Needs internal API to return distributed nodes for InsertionPoint
+        https://bugs.webkit.org/show_bug.cgi?id=98868
+
+        Reviewed by Hajime Morita.
+
+        When testing insertion points, we would like to have an internal API which returns a node list
+        distributed to an insertion point.
+
+        We've added the API in Internals.
+
+        Test: fast/dom/shadow/distributed-nodes.html
+
+        * WebCore.exp.in:
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::distributedNodes): Returns the distributed nodes. When InsertionPoint is not
+        attached, the result will be null, since the distribution is not calculated correctly.
+        (WebCore):
+        * html/shadow/InsertionPoint.h:
+        (InsertionPoint):
+        * testing/Internals.cpp:
+        (WebCore::Internals::distributedNodes):
+        (WebCore):
+        * testing/Internals.h:
+        (Internals):
+        * testing/Internals.idl:
+
 2012-10-10  Wei James  <james.wei@intel.com>
 
         [Chromium]Android x86 content shell debug build warning for uninitialized value used as error with gcc 4.6

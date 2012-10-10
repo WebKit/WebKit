@@ -33,6 +33,7 @@
 
 #include "ElementShadow.h"
 #include "ShadowRoot.h"
+#include "StaticNodeList.h"
 
 namespace WebCore {
 
@@ -84,6 +85,19 @@ bool InsertionPoint::isActive() const
         node = node->parentNode();
     }
     return true;
+}
+
+PassRefPtr<NodeList> InsertionPoint::distributedNodes() const
+{
+    if (!attached())
+        return 0;
+
+    Vector<RefPtr<Node> > nodes;
+
+    for (size_t i = 0; i < m_distribution.size(); ++i)
+        nodes.append(m_distribution.at(i));
+
+    return StaticNodeList::adopt(nodes);
 }
 
 bool InsertionPoint::rendererIsNeeded(const NodeRenderingContext& context)

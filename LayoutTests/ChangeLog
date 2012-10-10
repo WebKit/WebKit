@@ -1,3 +1,13 @@
+2012-10-10  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Needs internal API to return distributed nodes for InsertionPoint
+        https://bugs.webkit.org/show_bug.cgi?id=98868
+
+        Reviewed by Hajime Morita.
+
+        * fast/dom/shadow/distributed-nodes-expected.txt: Added.
+        * fast/dom/shadow/distributed-nodes.html: Added.
+
 2012-10-10  Peter Beverloo  <peter@chromium.org>
 
         Update more baselines and some entries in TestExpectations for Android.

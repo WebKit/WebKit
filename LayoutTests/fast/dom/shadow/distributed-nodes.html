@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="resources/polyfill.js"></script>
+<script src="../../js/resources/js-test-pre.js"></script>
+
+<p>This test checks internals.distributedNodes(insertionPoint) returns the node distributed to the insertion point.</p>
+
+<div id="host">
+    <div id="a">A</div>
+    <div id="b">B</div>
+    <div id="c">C</div>
+</div>
+
+<script>
+jsTestIsAsync = true;
+
+var shadowRoot = new WebKitShadowRoot(host);
+var shadow = document.createElement('content');
+shadow.setAttribute('select', 'div');
+shadowRoot.appendChild(shadow);
+
+var nodeList;
+setTimeout(function() {
+    nodeList = internals.distributedNodes(shadow);
+
+    shouldBe('nodeList.length', "3");
+    shouldBe('nodeList.item(0)', 'a');
+    shouldBe('nodeList.item(1)', 'b');
+    shouldBe('nodeList.item(2)', 'c');
+
+    finishJSTest();
+}, 0);
+
+</script>
+
+<script src="../../js/resources/js-test-post.js"></script>
+
+</body>
+</html>

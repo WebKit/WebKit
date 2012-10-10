@@ -1,0 +1,12 @@
+PASS nodeList.length is 3
+PASS nodeList.item(0) is a
+PASS nodeList.item(1) is b
+PASS nodeList.item(2) is c
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This test checks internals.distributedNodes(insertionPoint) returns the node distributed to the insertion point.
+
+A
+B
+C

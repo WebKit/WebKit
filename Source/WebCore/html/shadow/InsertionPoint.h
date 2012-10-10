@@ -49,6 +49,8 @@ public:
     bool isShadowBoundary() const;
     bool isActive() const;
 
+    PassRefPtr<NodeList> distributedNodes() const;
+
     virtual const AtomicString& select() const = 0;
     virtual bool isSelectValid() const = 0;
     virtual bool doesSelectFromHostChildren() const = 0;

@@ -118,6 +118,7 @@ EXPORTS
         ?detachThread@WTF@@YAXI@Z
         ?didBeginFrameImpl@InspectorInstrumentation@WebCore@@CAXPAVInstrumentingAgents@2@@Z
         ?didCancelFrameImpl@InspectorInstrumentation@WebCore@@CAXPAVInstrumentingAgents@2@@Z
+        ?distributedNodes@InsertionPoint@WebCore@@QBE?AV?$PassRefPtr@VNodeList@WebCore@@@WTF@@XZ
         ?initializeMainThread@WTF@@YAXXZ
         ?initializeThreading@WTF@@YAXXZ
         ?instrumentationForPage@WebCore@@YAPAVInstrumentingAgents@1@PAVPage@1@@Z
