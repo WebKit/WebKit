@@ -1,3 +1,16 @@
+2012-10-10  Sam Weinig  <sam@webkit.org>
+
+        Fix 32-bit build.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMDocument.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMDocument.mm:
+        * WebProcess/InjectedBundle/API/mac/WKDOMElement.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMElement.mm:
+        * WebProcess/InjectedBundle/API/mac/WKDOMInternals.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMInternals.mm:
+        * WebProcess/InjectedBundle/API/mac/WKDOMNode.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMNode.mm:
+
 2012-10-10  Anders Carlsson  <andersca@apple.com>
 
         WebContext should be a MessageReceiver

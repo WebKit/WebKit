@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if __LP64__
+#ifdef __LP64__
 
 #import "WKDOMNode.h"
 

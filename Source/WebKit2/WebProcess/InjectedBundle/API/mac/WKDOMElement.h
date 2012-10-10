@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if __LP64__
+#ifdef __LP64__
 
 #import <WebKit2/WKDOMNode.h>
 
