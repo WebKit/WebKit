@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef __LP64__
+#if defined(__LP64__) && defined(__CLANG__)
 
 #import "WKDOMNode.h"
 #import <WebCore/Node.h>
@@ -61,4 +61,4 @@ void WKDOMNodeCacheRemove(WebCore::Node*);
 
 } // namespace WebKit
 
-#endif // __LP64__
+#endif // defined(__LP64__) && defined(__CLANG__)

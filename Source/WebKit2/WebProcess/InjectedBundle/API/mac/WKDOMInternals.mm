@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#ifdef __LP64__
+#if defined(__LP64__) && defined(__CLANG__)
 
 #import "WKDOMInternals.h"
 
@@ -125,4 +125,4 @@ WKDOMDocument *toWKDOMDocument(WebCore::Document* impl)
 
 } // namespace WebKit
 
-#endif // __LP64__
+#endif // defined(__LP64__) && defined(__CLANG__)

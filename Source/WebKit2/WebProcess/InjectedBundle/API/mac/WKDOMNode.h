@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef __LP64__
+#if defined(__LP64__) && defined(__CLANG__)
 
 #import <Foundation/Foundation.h>
 #import <WebKit2/WKBase.h>
@@ -37,4 +37,4 @@ WK_EXPORT
 
 @end
 
-#endif // __LP64__
+#endif // defined(__LP64__) && defined(__CLANG__)

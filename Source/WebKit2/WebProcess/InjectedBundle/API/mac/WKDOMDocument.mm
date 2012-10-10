@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#ifdef __LP64__
+#if defined(__LP64__) && defined(__CLANG__)
 
 #import "WKDOMDocument.h"
 
@@ -35,4 +35,4 @@
 @implementation WKDOMDocument
 @end
 
-#endif // __LP64__
+#endif // defined(__LP64__) && defined(__CLANG__)
