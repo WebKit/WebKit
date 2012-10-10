@@ -1,3 +1,80 @@
+2012-10-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Typed arrays should not be 20x slower in the baseline JIT than in the DFG JIT
+        https://bugs.webkit.org/show_bug.cgi?id=98605
+
+        Reviewed by Oliver Hunt and Gavin Barraclough.
+
+        This adds typed array get_by_val/put_by_val patching to the baseline JIT. It's
+        a big (~40%) win on benchmarks that have trouble staying in the DFG JIT. Even
+        if we fix those benchmarks, this functionality gives us the insurance that we
+        typically desire with all speculative optimizations: even if we bail to
+        baseline, we're still reasonably performant.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * assembler/MacroAssembler.cpp: Added.
+        (JSC):
+        * assembler/MacroAssembler.h:
+        (MacroAssembler):
+        (JSC::MacroAssembler::patchableBranchPtr):
+        * assembler/MacroAssemblerARMv7.h:
+        (MacroAssemblerARMv7):
+        (JSC::MacroAssemblerARMv7::moveDoubleToInts):
+        (JSC::MacroAssemblerARMv7::moveIntsToDouble):
+        (JSC::MacroAssemblerARMv7::patchableBranchPtr):
+        * assembler/MacroAssemblerX86.h:
+        (MacroAssemblerX86):
+        (JSC::MacroAssemblerX86::moveDoubleToInts):
+        (JSC::MacroAssemblerX86::moveIntsToDouble):
+        * bytecode/ByValInfo.h:
+        (JSC::hasOptimizableIndexingForClassInfo):
+        (JSC):
+        (JSC::hasOptimizableIndexing):
+        (JSC::jitArrayModeForClassInfo):
+        (JSC::jitArrayModeForStructure):
+        (JSC::ByValInfo::ByValInfo):
+        (ByValInfo):
+        * dfg/DFGAssemblyHelpers.cpp:
+        (DFG):
+        * dfg/DFGAssemblyHelpers.h:
+        (AssemblyHelpers):
+        (JSC::DFG::AssemblyHelpers::boxDouble):
+        (JSC::DFG::AssemblyHelpers::unboxDouble):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        * jit/JIT.h:
+        (JIT):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::privateCompileGetByVal):
+        (JSC::JIT::privateCompilePutByVal):
+        (JSC::JIT::emitIntTypedArrayGetByVal):
+        (JSC):
+        (JSC::JIT::emitFloatTypedArrayGetByVal):
+        (JSC::JIT::emitIntTypedArrayPutByVal):
+        (JSC::JIT::emitFloatTypedArrayPutByVal):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/JSCell.h:
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+        (JSC::JSGlobalData::typedArrayDescriptor):
+        * runtime/TypedArrayDescriptor.h: Added.
+        (JSC):
+        (JSC::TypedArrayDescriptor::TypedArrayDescriptor):
+        (TypedArrayDescriptor):
+
 2012-10-09  Michael Saboff  <msaboff@apple.com>
 
         Add tests to testapi for null OpaqueJSStrings

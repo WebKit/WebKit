@@ -37,6 +37,7 @@ SET(JavaScriptCore_SOURCES
     API/JSWeakObjectMapRefPrivate.cpp
     API/OpaqueJSString.cpp
     
+    assembler/MacroAssembler.cpp
     assembler/LinkBuffer.cpp
 
     bytecode/ArrayProfile.cpp

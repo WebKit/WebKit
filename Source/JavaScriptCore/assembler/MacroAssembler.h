@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,8 @@
 
 #ifndef MacroAssembler_h
 #define MacroAssembler_h
+
+#include <wtf/Platform.h>
 
 #if ENABLE(ASSEMBLER)
 
@@ -88,6 +90,8 @@ public:
     using MacroAssemblerBase::urshift32;
     using MacroAssemblerBase::xor32;
 #endif
+
+    static const double twoToThe32; // This is super useful for some double code.
 
     // Utilities used by the DFG JIT.
 #if ENABLE(DFG_JIT)
@@ -230,6 +234,11 @@ public:
     }
 
 #if !CPU(ARM_THUMB2)
+    PatchableJump patchableBranchPtr(RelationalCondition cond, Address left, TrustedImmPtr right = TrustedImmPtr(0))
+    {
+        return PatchableJump(branchPtr(cond, left, right));
+    }
+    
     PatchableJump patchableBranchPtrWithPatch(RelationalCondition cond, Address left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
     {
         return PatchableJump(branchPtrWithPatch(cond, left, dataLabel, initialRightValue));

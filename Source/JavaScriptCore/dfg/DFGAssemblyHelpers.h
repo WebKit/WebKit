@@ -243,33 +243,14 @@ public:
     }
 #endif
 
-#if USE(JSVALUE32_64) && CPU(X86)
+#if USE(JSVALUE32_64)
     void boxDouble(FPRReg fpr, GPRReg tagGPR, GPRReg payloadGPR)
     {
-        movePackedToInt32(fpr, payloadGPR);
-        rshiftPacked(TrustedImm32(32), fpr);
-        movePackedToInt32(fpr, tagGPR);
+        moveDoubleToInts(fpr, payloadGPR, tagGPR);
     }
     void unboxDouble(GPRReg tagGPR, GPRReg payloadGPR, FPRReg fpr, FPRReg scratchFPR)
     {
-        jitAssertIsJSDouble(tagGPR);
-        moveInt32ToPacked(payloadGPR, fpr);
-        moveInt32ToPacked(tagGPR, scratchFPR);
-        lshiftPacked(TrustedImm32(32), scratchFPR);
-        orPacked(scratchFPR, fpr);
-    }
-#endif
-
-#if USE(JSVALUE32_64) && CPU(ARM)
-    void boxDouble(FPRReg fpr, GPRReg tagGPR, GPRReg payloadGPR)
-    {
-        m_assembler.vmov(payloadGPR, tagGPR, fpr);
-    }
-    void unboxDouble(GPRReg tagGPR, GPRReg payloadGPR, FPRReg fpr, FPRReg scratchFPR)
-    {
-        jitAssertIsJSDouble(tagGPR);
-        UNUSED_PARAM(scratchFPR);
-        m_assembler.vmov(fpr, payloadGPR, tagGPR);
+        moveIntsToDouble(payloadGPR, tagGPR, fpr, scratchFPR);
     }
 #endif
     
@@ -364,8 +345,6 @@ public:
 
     Vector<BytecodeAndMachineOffset>& decodedCodeMapFor(CodeBlock*);
     
-    static const double twoToThe32;
-
 protected:
     JSGlobalData* m_globalData;
     CodeBlock* m_codeBlock;

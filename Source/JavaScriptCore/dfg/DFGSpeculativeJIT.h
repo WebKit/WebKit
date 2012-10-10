@@ -2237,14 +2237,6 @@ public:
 #endif
     void compileArithMod(Node&);
     void compileSoftModulo(Node&);
-    enum TypedArraySignedness {
-        SignedTypedArray,
-        UnsignedTypedArray
-    };
-    enum TypedArrayRounding {
-        TruncateRounding,
-        ClampRounding
-    };
     void compileGetIndexedPropertyStorage(Node&);
     void compileGetByValOnIntTypedArray(const TypedArrayDescriptor&, Node&, size_t elementSize, TypedArraySignedness);
     void compilePutByValForIntTypedArray(const TypedArrayDescriptor&, GPRReg base, GPRReg property, Node&, size_t elementSize, TypedArraySignedness, TypedArrayRounding = TruncateRounding);

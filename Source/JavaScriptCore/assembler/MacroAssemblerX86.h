@@ -138,6 +138,22 @@ public:
         ASSERT(-128 <= imm.m_value && imm.m_value < 128);
         m_assembler.movb_i8m(imm.m_value, address);
     }
+    
+    // Possibly clobbers src.
+    void moveDoubleToInts(FPRegisterID src, RegisterID dest1, RegisterID dest2)
+    {
+        movePackedToInt32(src, dest1);
+        rshiftPacked(TrustedImm32(32), src);
+        movePackedToInt32(src, dest2);
+    }
+
+    void moveIntsToDouble(RegisterID src1, RegisterID src2, FPRegisterID dest, FPRegisterID scratch)
+    {
+        moveInt32ToPacked(src1, dest);
+        moveInt32ToPacked(src2, scratch);
+        lshiftPacked(TrustedImm32(32), scratch);
+        orPacked(scratch, dest);
+    }
 
     Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, AbsoluteAddress dest)
     {

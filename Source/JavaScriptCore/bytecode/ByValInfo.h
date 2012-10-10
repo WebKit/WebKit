@@ -30,13 +30,27 @@
 
 #if ENABLE(JIT)
 
+#include "ClassInfo.h"
 #include "CodeLocation.h"
 #include "IndexingType.h"
 #include "JITStubRoutine.h"
+#include "Structure.h"
 
 namespace JSC {
 
-enum JITArrayMode { JITContiguous, JITArrayStorage };
+enum JITArrayMode {
+    JITContiguous,
+    JITArrayStorage,
+    JITInt8Array,
+    JITInt16Array,
+    JITInt32Array,
+    JITUint8Array,
+    JITUint8ClampedArray,
+    JITUint16Array,
+    JITUint32Array,
+    JITFloat32Array,
+    JITFloat64Array
+};
 
 inline bool isOptimizableIndexingType(IndexingType indexingType)
 {
@@ -47,6 +61,17 @@ inline bool isOptimizableIndexingType(IndexingType indexingType)
     default:
         return false;
     }
+}
+
+inline bool hasOptimizableIndexingForClassInfo(const ClassInfo* classInfo)
+{
+    return classInfo->typedArrayStorageType != TypedArrayNone;
+}
+
+inline bool hasOptimizableIndexing(Structure* structure)
+{
+    return isOptimizableIndexingType(structure->indexingType())
+        || hasOptimizableIndexingForClassInfo(structure->classInfo());
 }
 
 inline JITArrayMode jitArrayModeForIndexingType(IndexingType indexingType)
@@ -62,6 +87,42 @@ inline JITArrayMode jitArrayModeForIndexingType(IndexingType indexingType)
     }
 }
 
+inline JITArrayMode jitArrayModeForClassInfo(const ClassInfo* classInfo)
+{
+    switch (classInfo->typedArrayStorageType) {
+    case TypedArrayInt8:
+        return JITInt8Array;
+    case TypedArrayInt16:
+        return JITInt16Array;
+    case TypedArrayInt32:
+        return JITInt32Array;
+    case TypedArrayUint8:
+        return JITUint8Array;
+    case TypedArrayUint8Clamped:
+        return JITUint8ClampedArray;
+    case TypedArrayUint16:
+        return JITUint16Array;
+    case TypedArrayUint32:
+        return JITUint32Array;
+    case TypedArrayFloat32:
+        return JITFloat32Array;
+    case TypedArrayFloat64:
+        return JITFloat64Array;
+    default:
+        CRASH();
+        return JITContiguous;
+    }
+}
+
+inline JITArrayMode jitArrayModeForStructure(Structure* structure)
+{
+    if (isOptimizableIndexingType(structure->indexingType()))
+        return jitArrayModeForIndexingType(structure->indexingType());
+    
+    ASSERT(hasOptimizableIndexingForClassInfo(structure->classInfo()));
+    return jitArrayModeForClassInfo(structure->classInfo());
+}
+
 struct ByValInfo {
     ByValInfo() { }
     
@@ -71,6 +132,7 @@ struct ByValInfo {
         , arrayMode(arrayMode)
         , badTypeJumpToDone(badTypeJumpToDone)
         , returnAddressToSlowPath(returnAddressToSlowPath)
+        , slowPathCount(0)
     {
     }
     
@@ -79,6 +141,7 @@ struct ByValInfo {
     JITArrayMode arrayMode; // The array mode that was baked into the inline JIT code.
     int16_t badTypeJumpToDone;
     int16_t returnAddressToSlowPath;
+    unsigned slowPathCount;
     RefPtr<JITStubRoutine> stubRoutine;
 };
 

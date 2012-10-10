@@ -125,6 +125,9 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     case JITArrayStorage:
         slowCases = emitArrayStorageGetByVal(currentInstruction, badType);
         break;
+    default:
+        CRASH();
+        break;
     }
     
     addSlowCase(badType);
@@ -303,6 +306,9 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
         break;
     case JITArrayStorage:
         slowCases = emitArrayStoragePutByVal(currentInstruction, badType);
+        break;
+    default:
+        CRASH();
         break;
     }
     
@@ -1413,6 +1419,33 @@ void JIT::privateCompileGetByVal(ByValInfo* byValInfo, ReturnAddressPtr returnAd
     case JITArrayStorage:
         slowCases = emitArrayStorageGetByVal(currentInstruction, badType);
         break;
+    case JITInt8Array:
+        slowCases = emitIntTypedArrayGetByVal(currentInstruction, badType, m_globalData->int8ArrayDescriptor(), 1, SignedTypedArray);
+        break;
+    case JITInt16Array:
+        slowCases = emitIntTypedArrayGetByVal(currentInstruction, badType, m_globalData->int16ArrayDescriptor(), 2, SignedTypedArray);
+        break;
+    case JITInt32Array:
+        slowCases = emitIntTypedArrayGetByVal(currentInstruction, badType, m_globalData->int32ArrayDescriptor(), 4, SignedTypedArray);
+        break;
+    case JITUint8Array:
+    case JITUint8ClampedArray:
+        slowCases = emitIntTypedArrayGetByVal(currentInstruction, badType, m_globalData->uint8ArrayDescriptor(), 1, UnsignedTypedArray);
+        break;
+    case JITUint16Array:
+        slowCases = emitIntTypedArrayGetByVal(currentInstruction, badType, m_globalData->uint16ArrayDescriptor(), 2, UnsignedTypedArray);
+        break;
+    case JITUint32Array:
+        slowCases = emitIntTypedArrayGetByVal(currentInstruction, badType, m_globalData->uint32ArrayDescriptor(), 4, UnsignedTypedArray);
+        break;
+    case JITFloat32Array:
+        slowCases = emitFloatTypedArrayGetByVal(currentInstruction, badType, m_globalData->float32ArrayDescriptor(), 4);
+        break;
+    case JITFloat64Array:
+        slowCases = emitFloatTypedArrayGetByVal(currentInstruction, badType, m_globalData->float64ArrayDescriptor(), 8);
+        break;
+    default:
+        CRASH();
     }
     
     Jump done = jump();
@@ -1447,6 +1480,36 @@ void JIT::privateCompilePutByVal(ByValInfo* byValInfo, ReturnAddressPtr returnAd
     case JITArrayStorage:
         slowCases = emitArrayStoragePutByVal(currentInstruction, badType);
         break;
+    case JITInt8Array:
+        slowCases = emitIntTypedArrayPutByVal(currentInstruction, badType, m_globalData->int8ArrayDescriptor(), 1, SignedTypedArray, TruncateRounding);
+        break;
+    case JITInt16Array:
+        slowCases = emitIntTypedArrayPutByVal(currentInstruction, badType, m_globalData->int16ArrayDescriptor(), 2, SignedTypedArray, TruncateRounding);
+        break;
+    case JITInt32Array:
+        slowCases = emitIntTypedArrayPutByVal(currentInstruction, badType, m_globalData->int32ArrayDescriptor(), 4, SignedTypedArray, TruncateRounding);
+        break;
+    case JITUint8Array:
+        slowCases = emitIntTypedArrayPutByVal(currentInstruction, badType, m_globalData->uint8ArrayDescriptor(), 1, UnsignedTypedArray, TruncateRounding);
+        break;
+    case JITUint8ClampedArray:
+        slowCases = emitIntTypedArrayPutByVal(currentInstruction, badType, m_globalData->uint8ClampedArrayDescriptor(), 1, UnsignedTypedArray, ClampRounding);
+        break;
+    case JITUint16Array:
+        slowCases = emitIntTypedArrayPutByVal(currentInstruction, badType, m_globalData->uint16ArrayDescriptor(), 2, UnsignedTypedArray, TruncateRounding);
+        break;
+    case JITUint32Array:
+        slowCases = emitIntTypedArrayPutByVal(currentInstruction, badType, m_globalData->uint32ArrayDescriptor(), 4, UnsignedTypedArray, TruncateRounding);
+        break;
+    case JITFloat32Array:
+        slowCases = emitFloatTypedArrayPutByVal(currentInstruction, badType, m_globalData->float32ArrayDescriptor(), 4);
+        break;
+    case JITFloat64Array:
+        slowCases = emitFloatTypedArrayPutByVal(currentInstruction, badType, m_globalData->float64ArrayDescriptor(), 8);
+        break;
+    default:
+        CRASH();
+        break;
     }
     
     Jump done = jump();
@@ -1465,6 +1528,252 @@ void JIT::privateCompilePutByVal(ByValInfo* byValInfo, ReturnAddressPtr returnAd
     RepatchBuffer repatchBuffer(m_codeBlock);
     repatchBuffer.relink(byValInfo->badTypeJump, CodeLocationLabel(byValInfo->stubRoutine->code().code()));
     repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(cti_op_put_by_val_generic));
+}
+
+JIT::JumpList JIT::emitIntTypedArrayGetByVal(Instruction*, PatchableJump& badType, const TypedArrayDescriptor& descriptor, size_t elementSize, TypedArraySignedness signedness)
+{
+    // The best way to test the array type is to use the classInfo. We need to do so without
+    // clobbering the register that holds the indexing type, base, and property.
+
+#if USE(JSVALUE64)
+    RegisterID base = regT0;
+    RegisterID property = regT1;
+    RegisterID resultPayload = regT0;
+    RegisterID scratch = regT3;
+#else
+    RegisterID base = regT0;
+    RegisterID property = regT2;
+    RegisterID resultPayload = regT0;
+    RegisterID resultTag = regT1;
+    RegisterID scratch = regT3;
+#endif
+    
+    JumpList slowCases;
+    
+    loadPtr(Address(base, JSCell::structureOffset()), scratch);
+    badType = patchableBranchPtr(NotEqual, Address(scratch, Structure::classInfoOffset()), TrustedImmPtr(descriptor.m_classInfo));
+    slowCases.append(branch32(AboveOrEqual, property, Address(base, descriptor.m_lengthOffset)));
+    loadPtr(Address(base, descriptor.m_storageOffset), base);
+    
+    switch (elementSize) {
+    case 1:
+        if (signedness == SignedTypedArray)
+            load8Signed(BaseIndex(base, property, TimesOne), resultPayload);
+        else
+            load8(BaseIndex(base, property, TimesOne), resultPayload);
+        break;
+    case 2:
+        if (signedness == SignedTypedArray)
+            load16Signed(BaseIndex(base, property, TimesTwo), resultPayload);
+        else
+            load16(BaseIndex(base, property, TimesTwo), resultPayload);
+        break;
+    case 4:
+        load32(BaseIndex(base, property, TimesFour), resultPayload);
+        break;
+    default:
+        CRASH();
+    }
+    
+    Jump done;
+    if (elementSize == 4 && signedness == UnsignedTypedArray) {
+        Jump canBeInt = branch32(GreaterThanOrEqual, resultPayload, TrustedImm32(0));
+        
+        convertInt32ToDouble(resultPayload, fpRegT0);
+        addDouble(AbsoluteAddress(&twoToThe32), fpRegT0);
+#if USE(JSVALUE64)
+        moveDoubleToPtr(fpRegT0, resultPayload);
+        subPtr(tagTypeNumberRegister, resultPayload);
+#else
+        moveDoubleToInts(fpRegT0, resultPayload, resultTag);
+#endif
+        
+        done = jump();
+        canBeInt.link(this);
+    }
+
+#if USE(JSVALUE64)
+    orPtr(tagTypeNumberRegister, resultPayload);
+#else
+    move(TrustedImm32(JSValue::Int32Tag), resultTag);
+#endif
+    if (done.isSet())
+        done.link(this);
+    return slowCases;
+}
+
+JIT::JumpList JIT::emitFloatTypedArrayGetByVal(Instruction*, PatchableJump& badType, const TypedArrayDescriptor& descriptor, size_t elementSize)
+{
+#if USE(JSVALUE64)
+    RegisterID base = regT0;
+    RegisterID property = regT1;
+    RegisterID resultPayload = regT0;
+    RegisterID scratch = regT3;
+#else
+    RegisterID base = regT0;
+    RegisterID property = regT2;
+    RegisterID resultPayload = regT0;
+    RegisterID resultTag = regT1;
+    RegisterID scratch = regT3;
+#endif
+    
+    JumpList slowCases;
+    
+    loadPtr(Address(base, JSCell::structureOffset()), scratch);
+    badType = patchableBranchPtr(NotEqual, Address(scratch, Structure::classInfoOffset()), TrustedImmPtr(descriptor.m_classInfo));
+    slowCases.append(branch32(AboveOrEqual, property, Address(base, descriptor.m_lengthOffset)));
+    loadPtr(Address(base, descriptor.m_storageOffset), base);
+    
+    switch (elementSize) {
+    case 4:
+        loadFloat(BaseIndex(base, property, TimesFour), fpRegT0);
+        convertFloatToDouble(fpRegT0, fpRegT0);
+        break;
+    case 8: {
+        loadDouble(BaseIndex(base, property, TimesEight), fpRegT0);
+        Jump notNaN = branchDouble(DoubleEqual, fpRegT0, fpRegT0);
+        static const double NaN = std::numeric_limits<double>::quiet_NaN();
+        loadDouble(&NaN, fpRegT0);
+        notNaN.link(this);
+        break;
+    }
+    default:
+        CRASH();
+    }
+    
+#if USE(JSVALUE64)
+    moveDoubleToPtr(fpRegT0, resultPayload);
+    subPtr(tagTypeNumberRegister, resultPayload);
+#else
+    moveDoubleToInts(fpRegT0, resultPayload, resultTag);
+#endif
+    return slowCases;    
+}
+
+JIT::JumpList JIT::emitIntTypedArrayPutByVal(Instruction* currentInstruction, PatchableJump& badType, const TypedArrayDescriptor& descriptor, size_t elementSize, TypedArraySignedness signedness, TypedArrayRounding rounding)
+{
+    unsigned value = currentInstruction[3].u.operand;
+
+#if USE(JSVALUE64)
+    RegisterID base = regT0;
+    RegisterID property = regT1;
+    RegisterID earlyScratch = regT3;
+    RegisterID lateScratch = regT2;
+#else
+    RegisterID base = regT0;
+    RegisterID property = regT2;
+    RegisterID earlyScratch = regT3;
+    RegisterID lateScratch = regT1;
+#endif
+    
+    JumpList slowCases;
+    
+    loadPtr(Address(base, JSCell::structureOffset()), earlyScratch);
+    badType = patchableBranchPtr(NotEqual, Address(earlyScratch, Structure::classInfoOffset()), TrustedImmPtr(descriptor.m_classInfo));
+    slowCases.append(branch32(AboveOrEqual, property, Address(base, descriptor.m_lengthOffset)));
+    
+#if USE(JSVALUE64)
+    emitGetVirtualRegister(value, earlyScratch);
+    slowCases.append(emitJumpIfNotImmediateInteger(earlyScratch));
+#else
+    emitLoad(value, lateScratch, earlyScratch);
+    slowCases.append(branch32(NotEqual, lateScratch, TrustedImm32(JSValue::Int32Tag)));
+#endif
+    
+    // We would be loading this into base as in get_by_val, except that the slow
+    // path expects the base to be unclobbered.
+    loadPtr(Address(base, descriptor.m_storageOffset), lateScratch);
+    
+    if (rounding == ClampRounding) {
+        ASSERT(elementSize == 1);
+        ASSERT_UNUSED(signedness, signedness = UnsignedTypedArray);
+        Jump inBounds = branch32(BelowOrEqual, earlyScratch, TrustedImm32(0xff));
+        Jump tooBig = branch32(GreaterThan, earlyScratch, TrustedImm32(0xff));
+        xor32(earlyScratch, earlyScratch);
+        Jump clamped = jump();
+        tooBig.link(this);
+        move(TrustedImm32(0xff), earlyScratch);
+        clamped.link(this);
+        inBounds.link(this);
+    }
+    
+    switch (elementSize) {
+    case 1:
+        store8(earlyScratch, BaseIndex(lateScratch, property, TimesOne));
+        break;
+    case 2:
+        store16(earlyScratch, BaseIndex(lateScratch, property, TimesTwo));
+        break;
+    case 4:
+        store32(earlyScratch, BaseIndex(lateScratch, property, TimesFour));
+        break;
+    default:
+        CRASH();
+    }
+    
+    return slowCases;
+}
+
+JIT::JumpList JIT::emitFloatTypedArrayPutByVal(Instruction* currentInstruction, PatchableJump& badType, const TypedArrayDescriptor& descriptor, size_t elementSize)
+{
+    unsigned value = currentInstruction[3].u.operand;
+
+#if USE(JSVALUE64)
+    RegisterID base = regT0;
+    RegisterID property = regT1;
+    RegisterID earlyScratch = regT3;
+    RegisterID lateScratch = regT2;
+#else
+    RegisterID base = regT0;
+    RegisterID property = regT2;
+    RegisterID earlyScratch = regT3;
+    RegisterID lateScratch = regT1;
+#endif
+    
+    JumpList slowCases;
+    
+    loadPtr(Address(base, JSCell::structureOffset()), earlyScratch);
+    badType = patchableBranchPtr(NotEqual, Address(earlyScratch, Structure::classInfoOffset()), TrustedImmPtr(descriptor.m_classInfo));
+    slowCases.append(branch32(AboveOrEqual, property, Address(base, descriptor.m_lengthOffset)));
+    
+#if USE(JSVALUE64)
+    emitGetVirtualRegister(value, earlyScratch);
+    Jump doubleCase = emitJumpIfNotImmediateInteger(earlyScratch);
+    convertInt32ToDouble(earlyScratch, fpRegT0);
+    Jump ready = jump();
+    doubleCase.link(this);
+    slowCases.append(emitJumpIfNotImmediateNumber(earlyScratch));
+    addPtr(tagTypeNumberRegister, earlyScratch);
+    movePtrToDouble(earlyScratch, fpRegT0);
+    ready.link(this);
+#else
+    emitLoad(value, lateScratch, earlyScratch);
+    Jump doubleCase = branch32(NotEqual, lateScratch, TrustedImm32(JSValue::Int32Tag));
+    convertInt32ToDouble(earlyScratch, fpRegT0);
+    Jump ready = jump();
+    doubleCase.link(this);
+    slowCases.append(branch32(Above, lateScratch, TrustedImm32(JSValue::LowestTag)));
+    moveIntsToDouble(earlyScratch, lateScratch, fpRegT0, fpRegT1);
+    ready.link(this);
+#endif
+    
+    // We would be loading this into base as in get_by_val, except that the slow
+    // path expects the base to be unclobbered.
+    loadPtr(Address(base, descriptor.m_storageOffset), lateScratch);
+    
+    switch (elementSize) {
+    case 4:
+        convertDoubleToFloat(fpRegT0, fpRegT0);
+        storeFloat(fpRegT0, BaseIndex(lateScratch, property, TimesFour));
+        break;
+    case 8:
+        storeDouble(fpRegT0, BaseIndex(lateScratch, property, TimesEight));
+        break;
+    default:
+        CRASH();
+    }
+    
+    return slowCases;
 }
 
 } // namespace JSC

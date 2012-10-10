@@ -31,6 +31,7 @@
 #include "JSValueInlineMethods.h"
 #include "SlotVisitor.h"
 #include "SlotVisitorInlineMethods.h"
+#include "TypedArrayDescriptor.h"
 #include "WriteBarrier.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/TypeTraits.h>
@@ -47,19 +48,6 @@ namespace JSC {
     enum EnumerationMode {
         ExcludeDontEnumProperties,
         IncludeDontEnumProperties
-    };
-
-    enum TypedArrayType {
-        TypedArrayNone,
-        TypedArrayInt8,
-        TypedArrayInt16,
-        TypedArrayInt32,
-        TypedArrayUint8,
-        TypedArrayUint8Clamped,
-        TypedArrayUint16,
-        TypedArrayUint32,
-        TypedArrayFloat32,
-        TypedArrayFloat64
     };
 
     class JSCell {

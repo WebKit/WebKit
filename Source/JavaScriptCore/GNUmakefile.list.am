@@ -67,6 +67,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/assembler/CodeLocation.h \
 	Source/JavaScriptCore/assembler/LinkBuffer.cpp \
 	Source/JavaScriptCore/assembler/LinkBuffer.h \
+	Source/JavaScriptCore/assembler/MacroAssembler.cpp \
 	Source/JavaScriptCore/assembler/MacroAssembler.h \
 	Source/JavaScriptCore/assembler/MacroAssemblerARM.cpp \
 	Source/JavaScriptCore/assembler/MacroAssemblerARM.h \
@@ -677,6 +678,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/TimeoutChecker.cpp \
 	Source/JavaScriptCore/runtime/TimeoutChecker.h \
 	Source/JavaScriptCore/runtime/Tracing.h \
+	Source/JavaScriptCore/runtime/TypedArrayDescriptor.h \
 	Source/JavaScriptCore/runtime/Uint16WithFraction.h \
 	Source/JavaScriptCore/runtime/WeakGCMap.h \
 	Source/JavaScriptCore/runtime/WeakRandom.h \

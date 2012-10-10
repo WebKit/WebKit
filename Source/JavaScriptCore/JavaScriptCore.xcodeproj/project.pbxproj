@@ -235,6 +235,8 @@
 		0FD82E86141F3FF100179C94 /* SpeculatedType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD82E84141F3FDA00179C94 /* SpeculatedType.cpp */; };
 		0FE228ED1436AB2700196C48 /* Options.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE228EB1436AB2300196C48 /* Options.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FE228EE1436AB2C00196C48 /* Options.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE228EA1436AB2300196C48 /* Options.cpp */; };
+		0FEB3ECD16237F4D00AB67AD /* TypedArrayDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEB3ECB16237F4700AB67AD /* TypedArrayDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FEB3ECF16237F6C00AB67AD /* MacroAssembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEB3ECE16237F6700AB67AD /* MacroAssembler.cpp */; };
 		0FF42731158EBD54004CB9FF /* Disassembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF4272F158EBD44004CB9FF /* Disassembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FF42732158EBD58004CB9FF /* UDis86Disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF42730158EBD44004CB9FF /* UDis86Disassembler.cpp */; };
 		0FF42740158EBE8B004CB9FF /* udis86_decode.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FF42734158EBD94004CB9FF /* udis86_decode.c */; };
@@ -1015,6 +1017,8 @@
 		0FD82E84141F3FDA00179C94 /* SpeculatedType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpeculatedType.cpp; sourceTree = "<group>"; };
 		0FE228EA1436AB2300196C48 /* Options.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Options.cpp; sourceTree = "<group>"; };
 		0FE228EB1436AB2300196C48 /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Options.h; sourceTree = "<group>"; };
+		0FEB3ECB16237F4700AB67AD /* TypedArrayDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypedArrayDescriptor.h; sourceTree = "<group>"; };
+		0FEB3ECE16237F6700AB67AD /* MacroAssembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacroAssembler.cpp; sourceTree = "<group>"; };
 		0FF4272F158EBD44004CB9FF /* Disassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Disassembler.h; path = disassembler/Disassembler.h; sourceTree = "<group>"; };
 		0FF42730158EBD44004CB9FF /* UDis86Disassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UDis86Disassembler.cpp; path = disassembler/UDis86Disassembler.cpp; sourceTree = "<group>"; };
 		0FF42734158EBD94004CB9FF /* udis86_decode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = udis86_decode.c; path = disassembler/udis86/udis86_decode.c; sourceTree = "<group>"; };
@@ -2280,6 +2284,7 @@
 				14A42E3E0F4F60EE00599099 /* TimeoutChecker.h */,
 				5D53726D0E1C546B0021E549 /* Tracing.d */,
 				5D53726E0E1C54880021E549 /* Tracing.h */,
+				0FEB3ECB16237F4700AB67AD /* TypedArrayDescriptor.h */,
 				866739D113BFDE710023D87C /* Uint16WithFraction.h */,
 				14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */,
 				1420BE7A10AA6DDB00F455D2 /* WeakRandom.h */,
@@ -2466,6 +2471,7 @@
 				86E116B00FE75AC800B512BC /* CodeLocation.h */,
 				0FF4275615914A20004CB9FF /* LinkBuffer.cpp */,
 				86D3B3C110159D7F002865E7 /* LinkBuffer.h */,
+				0FEB3ECE16237F6700AB67AD /* MacroAssembler.cpp */,
 				86C36EE90EE1289D00B3DF59 /* MacroAssembler.h */,
 				86C568DD11A213EE0007F7F0 /* MacroAssemblerARM.cpp */,
 				86D3B2C210156BDE002865E7 /* MacroAssemblerARM.h */,
@@ -2975,6 +2981,7 @@
 				0F8023EA1613832B00A0BA45 /* ByValInfo.h in Headers */,
 				862553D216136E1A009F17D0 /* JSProxy.h in Headers */,
 				0F5541B21613C1FB00CE3E25 /* SpecialPointer.h in Headers */,
+				0FEB3ECD16237F4D00AB67AD /* TypedArrayDescriptor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3581,6 +3588,7 @@
 				862553D116136DA9009F17D0 /* JSProxy.cpp in Sources */,
 				0F13E04E16164A1F00DC8DE7 /* IndexingType.cpp in Sources */,
 				0F5541B11613C1FB00CE3E25 /* SpecialPointer.cpp in Sources */,
+				0FEB3ECF16237F6C00AB67AD /* MacroAssembler.cpp in Sources */,
 				C24D31E2161CD695002AA4DB /* HeapStatistics.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

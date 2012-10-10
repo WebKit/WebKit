@@ -562,6 +562,8 @@ inline void JIT::emitArrayProfileStoreToHoleSpecialCase(ArrayProfile* arrayProfi
 {
 #if ENABLE(VALUE_PROFILER)    
     store8(TrustedImm32(1), arrayProfile->addressOfMayStoreToHole());
+#else
+    UNUSED_PARAM(arrayProfile);
 #endif
 }
 
@@ -570,6 +572,8 @@ static inline bool arrayProfileSaw(ArrayProfile* profile, IndexingType capabilit
 #if ENABLE(VALUE_PROFILER)
     return !!(profile->observedArrayModes() & (asArrayModes(NonArray | capability) | asArrayModes(ArrayClass | capability)));
 #else
+    UNUSED_PARAM(profile);
+    UNUSED_PARAM(capability);
     return false;
 #endif
 }

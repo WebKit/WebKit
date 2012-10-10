@@ -2234,7 +2234,7 @@ void SpeculativeJIT::compileGetByValOnIntTypedArray(const TypedArrayDescriptor& 
         m_jit.load32(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesFour), resultReg);
         break;
     default:
-        ASSERT_NOT_REACHED();
+        CRASH();
     }
     if (elementSize < 4 || signedness == SignedTypedArray) {
         integerResult(resultReg, m_compileIndex);
@@ -2344,7 +2344,7 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(const TypedArrayDescriptor&
         m_jit.store32(value.gpr(), MacroAssembler::BaseIndex(storageReg, property, MacroAssembler::TimesFour));
         break;
     default:
-        ASSERT_NOT_REACHED();
+        CRASH();
     }
     if (node.op() == PutByVal)
         outOfBounds.link(&m_jit);

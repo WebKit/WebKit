@@ -497,6 +497,8 @@ namespace JSC {
         // case contains result in regT0, and it is not yet profiled.
         JumpList emitContiguousGetByVal(Instruction*, PatchableJump& badType);
         JumpList emitArrayStorageGetByVal(Instruction*, PatchableJump& badType);
+        JumpList emitIntTypedArrayGetByVal(Instruction*, PatchableJump& badType, const TypedArrayDescriptor&, size_t elementSize, TypedArraySignedness);
+        JumpList emitFloatTypedArrayGetByVal(Instruction*, PatchableJump& badType, const TypedArrayDescriptor&, size_t elementSize);
         
         // Property is in regT0, base is in regT0. regT2 contains indecing type.
         // The value to store is not yet loaded. Property is int-checked and
@@ -504,7 +506,9 @@ namespace JSC {
         // returns the slow cases.
         JumpList emitContiguousPutByVal(Instruction*, PatchableJump& badType);
         JumpList emitArrayStoragePutByVal(Instruction*, PatchableJump& badType);
-
+        JumpList emitIntTypedArrayPutByVal(Instruction*, PatchableJump& badType, const TypedArrayDescriptor&, size_t elementSize, TypedArraySignedness, TypedArrayRounding);
+        JumpList emitFloatTypedArrayPutByVal(Instruction*, PatchableJump& badType, const TypedArrayDescriptor&, size_t elementSize);
+        
         enum FinalObjectMode { MayBeFinal, KnownNotFinal };
 
 #if USE(JSVALUE32_64)

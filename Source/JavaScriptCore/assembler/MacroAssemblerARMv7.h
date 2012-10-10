@@ -754,6 +754,18 @@ public:
         store16(src, setupArmAddress(address));
     }
 
+    // Possibly clobbers src, but not on this architecture.
+    void moveDoubleToInts(FPRegisterID src, RegisterID dest1, RegisterID dest2)
+    {
+        m_assembler.vmov(dest1, dest2, src);
+    }
+    
+    void moveIntsToDouble(RegisterID src1, RegisterID src2, FPRegisterID dest, FPRegisterID scratch)
+    {
+        UNUSED_PARAM(scratch);
+        m_assembler.vmov(dest, src1, src2);
+    }
+
 #if ENABLE(JIT_CONSTANT_BLINDING)
     static bool shouldBlindForSpecificArch(uint32_t value)
     {
@@ -1671,6 +1683,14 @@ public:
         load32(left, addressTempRegister);
         dataLabel = moveWithPatch(initialRightValue, dataTempRegister);
         return branch32(cond, addressTempRegister, dataTempRegister);
+    }
+    
+    PatchableJump patchableBranchPtr(RelationalCondition cond, Address left, TrustedImmPtr right = TrustedImmPtr(0))
+    {
+        m_makeJumpPatchable = true;
+        Jump result = branchPtr(cond, left, right);
+        m_makeJumpPatchable = false;
+        return PatchableJump(result);
     }
     
     PatchableJump patchableBranchTest32(ResultCondition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))

@@ -44,6 +44,7 @@
 #include "Strong.h"
 #include "Terminator.h"
 #include "TimeoutChecker.h"
+#include "TypedArrayDescriptor.h"
 #include "WeakRandom.h"
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/Forward.h>
@@ -106,24 +107,6 @@ namespace JSC {
     enum ThreadStackType {
         ThreadStackTypeLarge,
         ThreadStackTypeSmall
-    };
-
-    struct TypedArrayDescriptor {
-        TypedArrayDescriptor()
-            : m_classInfo(0)
-            , m_storageOffset(0)
-            , m_lengthOffset(0)
-        {
-        }
-        TypedArrayDescriptor(const ClassInfo* classInfo, size_t storageOffset, size_t lengthOffset)
-            : m_classInfo(classInfo)
-            , m_storageOffset(storageOffset)
-            , m_lengthOffset(lengthOffset)
-        {
-        }
-        const ClassInfo* m_classInfo;
-        size_t m_storageOffset;
-        size_t m_lengthOffset;
     };
 
 #if ENABLE(DFG_JIT)
@@ -429,6 +412,35 @@ namespace JSC {
         registerTypedArrayFunction(float32, Float32);
         registerTypedArrayFunction(float64, Float64);
 #undef registerTypedArrayFunction
+        
+        const TypedArrayDescriptor* typedArrayDescriptor(TypedArrayType type) const
+        {
+            switch (type) {
+            case TypedArrayNone:
+                return 0;
+            case TypedArrayInt8:
+                return &int8ArrayDescriptor();
+            case TypedArrayInt16:
+                return &int16ArrayDescriptor();
+            case TypedArrayInt32:
+                return &int32ArrayDescriptor();
+            case TypedArrayUint8:
+                return &uint8ArrayDescriptor();
+            case TypedArrayUint8Clamped:
+                return &uint8ClampedArrayDescriptor();
+            case TypedArrayUint16:
+                return &uint16ArrayDescriptor();
+            case TypedArrayUint32:
+                return &uint32ArrayDescriptor();
+            case TypedArrayFloat32:
+                return &float32ArrayDescriptor();
+            case TypedArrayFloat64:
+                return &float64ArrayDescriptor();
+            default:
+                CRASH();
+                return 0;
+            }
+        }
 
         JSLock& apiLock() { return m_apiLock; }
 

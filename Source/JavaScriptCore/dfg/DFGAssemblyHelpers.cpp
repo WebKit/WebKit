@@ -30,8 +30,6 @@
 
 namespace JSC { namespace DFG {
 
-const double AssemblyHelpers::twoToThe32 = (double)0x100000000ull;
-
 ExecutableBase* AssemblyHelpers::executableFor(const CodeOrigin& codeOrigin)
 {
     if (!codeOrigin.inlineCallFrame)

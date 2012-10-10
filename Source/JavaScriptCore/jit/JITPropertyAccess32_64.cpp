@@ -224,6 +224,8 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     case JITArrayStorage:
         slowCases = emitArrayStorageGetByVal(currentInstruction, badType);
         break;
+    default:
+        CRASH();
     }
     
     addSlowCase(badType);
@@ -336,6 +338,9 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
         break;
     case JITArrayStorage:
         slowCases = emitArrayStoragePutByVal(currentInstruction, badType);
+        break;
+    default:
+        CRASH();
         break;
     }
     

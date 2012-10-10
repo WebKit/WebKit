@@ -1338,6 +1338,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\TypedArrayDescriptor.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\WeakGCMap.h"
 				>
 			</File>
@@ -1819,6 +1823,10 @@
 			</File>
 			<File
 				RelativePath="..\..\assembler\LinkBuffer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\assembler\MacroAssembler.cpp"
 				>
 			</File>
 			<File
