@@ -1,3 +1,9 @@
+2012-10-09  Jeffrey Pfau  <jpfau@apple.com>
+
+        [Mac] Unreviewed, skipping http/tests/security/svg-image-leak.html
+
+        * platform/mac/TestExpectations:
+
 2012-10-09  Adam Barth  <abarth@webkit.org>
 
         filesystem-url-in-iframe test is flaky

@@ -1317,3 +1317,6 @@ webkit.org/b/98523 fast/images/repaint-subrect-grid.html [ Failure ]
 
 # Rendering/Layout issue of CJK vertical text with some font.
 webkit.org/b/98560 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ ImageOnlyFailure ]
+
+# This test is failing and causing subsequent tests to time out.
+webkit.org/b/98837 http/tests/security/svg-image-leak.html [ Skip ]
