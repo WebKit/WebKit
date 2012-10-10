@@ -1131,6 +1131,22 @@ int main(int argc, char* argv[])
     ASSERT(JSValueGetType(context, jsCFEmptyString) == kJSTypeString);
     ASSERT(JSValueGetType(context, jsCFEmptyStringWithCharacters) == kJSTypeString);
 
+    JSStringRef nullString = JSStringCreateWithUTF8CString(0);
+    const JSChar* characters = JSStringGetCharactersPtr(nullString);
+    if (characters) {
+        printf("FAIL: Didn't return null when accessing character pointer of a null String.\n");
+        failed = 1;
+    } else
+        printf("PASS: returned null when accessing character pointer of a null String.\n");
+
+    size_t length = JSStringGetLength(nullString);
+    if (length) {
+        printf("FAIL: Didn't return 0 length for null String.\n");
+        failed = 1;
+    } else
+        printf("PASS: returned 0 length for null String.\n");
+    JSStringRelease(nullString);
+
     JSObjectRef propertyCatchalls = JSObjectMake(context, PropertyCatchalls_class(context), NULL);
     JSStringRef propertyCatchallsString = JSStringCreateWithUTF8CString("PropertyCatchalls");
     JSObjectSetProperty(context, globalObject, propertyCatchallsString, propertyCatchalls, kJSPropertyAttributeNone, NULL);
@@ -1207,6 +1223,15 @@ int main(int argc, char* argv[])
         failed = 1;
     } else
         printf("PASS: Retrieved private property.\n");
+
+    JSStringRef nullJSON = JSStringCreateWithUTF8CString(0);
+    JSValueRef nullJSONObject = JSValueMakeFromJSONString(context, nullJSON);
+    if (nullJSONObject) {
+        printf("FAIL: Did not parse null String as JSON correctly\n");
+        failed = 1;
+    } else
+        printf("PASS: Parsed null String as JSON correctly.\n");
+    JSStringRelease(nullJSON);
 
     JSStringRef validJSON = JSStringCreateWithUTF8CString("{\"aProperty\":true}");
     JSValueRef jsonObject = JSValueMakeFromJSONString(context, validJSON);
