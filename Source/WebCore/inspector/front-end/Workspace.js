@@ -35,6 +35,7 @@ WebInspector.WorkspaceController = function(workspace)
 {
     this._workspace = workspace;
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, this._mainFrameNavigated, this);
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameAdded, this._frameAdded, this);
 }
 
 WebInspector.WorkspaceController.prototype = {
@@ -44,6 +45,13 @@ WebInspector.WorkspaceController.prototype = {
         this._workspace.dispatchEventToListeners(WebInspector.Workspace.Events.ProjectWillReset, this._workspace.project());
         this._workspace.project().reset();
         this._workspace.dispatchEventToListeners(WebInspector.Workspace.Events.ProjectDidReset, this._workspace.project());
+    },
+
+    _frameAdded: function(event)
+    {
+        var frame = /** @type {WebInspector.ResourceTreeFrame} */ event.data;
+        if (frame.isMainFrame())
+            WebInspector.Revision.filterOutStaleRevisions();
     }
 }
 
