@@ -646,7 +646,6 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& pt, float widt
         *misspellBitmap[index], SkShader::kRepeat_TileMode,
         SkShader::kRepeat_TileMode);
     SkMatrix matrix;
-    SkMatrix matrix;
     matrix.setTranslate(originX, originY);
     shader->setLocalMatrix(matrix);
 
