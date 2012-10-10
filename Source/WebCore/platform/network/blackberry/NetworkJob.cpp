@@ -780,6 +780,9 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
             if (m_handle->firstRequest().targetType() != ResourceRequest::TargetIsMainFrame && BlackBerry::Platform::Settings::instance()->isChromeProcess())
                 return false;
 
+            if (!m_frame || !m_frame->page())
+                return false;
+
             m_handle->getInternal()->m_currentWebChallenge = AuthenticationChallenge();
             m_frame->page()->chrome()->client()->platformPageClient()->authenticationChallenge(newURL, protectionSpace, Credential(), this);
             return true;
@@ -812,7 +815,8 @@ void NetworkJob::storeCredentials()
     if (challenge.protectionSpace().serverType() == ProtectionSpaceProxyHTTP) {
         BlackBerry::Platform::Settings::instance()->setProxyCredential(challenge.proposedCredential().user().utf8().data(),
                                                                 challenge.proposedCredential().password().utf8().data());
-        m_frame->page()->chrome()->client()->platformPageClient()->syncProxyCredential(challenge.proposedCredential());
+        if (m_frame && m_frame->page())
+            m_frame->page()->chrome()->client()->platformPageClient()->syncProxyCredential(challenge.proposedCredential());
     }
 }
 
