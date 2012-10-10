@@ -1,3 +1,12 @@
+2012-10-10  Adam Barth  <abarth@webkit.org>
+
+        When we check in image baselines, we use the -expected.png suffix
+        rather than the -actual.png suffix. (This is likely a typo in
+        http://trac.webkit.org/changeset/130940.)
+
+        * platform/chromium-win/editing/spelling/inline-spelling-markers-hidpi-actual.png: Removed.
+        * platform/chromium-win/editing/spelling/inline-spelling-markers-hidpi-expected.png: Copied from LayoutTests/platform/chromium-win/editing/spelling/inline-spelling-markers-hidpi-actual.png.
+
 2012-10-10  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Skip the color-correction tests.
