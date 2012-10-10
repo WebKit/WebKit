@@ -1,3 +1,22 @@
+2012-10-10  Kenichi Ishibashi  <bashi@chromium.org>
+
+        FontVerticalDataCache should allow zero as a key value
+        https://bugs.webkit.org/show_bug.cgi?id=98877
+
+        Reviewed by Tony Chang.
+
+        Use WTF::UnsignedWithZeroKeyHashTraits for type definition of
+        FontVerticalDataCache.
+
+        No new tests because there is no certain way to make
+        FontPlatformDataHarfBuzz::uniqueID() be zero.
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore):
+        * platform/graphics/harfbuzz/FontPlatformDataHarfBuzz.cpp:
+        (WebCore::FontPlatformData::verticalData): Removed zero check of uniqueID().
+        (WebCore::FontPlatformData::openTypeTable): Ditto.
+
 2012-10-10  Regina Chung  <heejin.r.chung@samsung.com>
 
         [EFL] Use the shareable GraphicsContext3DOpenGL* implementation.
