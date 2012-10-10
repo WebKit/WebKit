@@ -1,3 +1,10 @@
+2012-10-10  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Layout Test platform/chromium/fast/forms/*/*-suggestion-picker-*-operations.html are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=98906
+
+        * platform/chromium/TestExpectations:
+
 2012-10-10  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Add some css3 expectations, rebaseline a css2.1 PNG.

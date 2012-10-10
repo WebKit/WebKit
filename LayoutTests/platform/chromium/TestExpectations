@@ -2786,6 +2786,10 @@ webkit.org/b/61169 [ Android Linux Win ] css3/images/optimize-contrast-image.htm
 
 webkit.org/b/92710 fast/forms/date/calendar-picker-appearance.html [ ImageOnlyFailure Pass ]
 
+webkit.org/b/98906 platform/chromium/fast/forms/date/date-suggestion-picker-mouse-operations.html [ Pass Text ]
+webkit.org/b/98906 platform/chromium/fast/forms/time/time-suggestion-picker-mouse-operations.html [ Pass Text ]
+webkit.org/b/98906 platform/chromium/fast/forms/time/time-suggestion-picker-key-operations.html [ Pass Text ]
+
 # New test added in r87324
 crbug.com/83994 [ Win ] platform/win/plugins/call-javascript-that-destroys-plugin.html [ Failure ]
 
