@@ -134,7 +134,6 @@ static bool executeApplyStyle(Frame* frame, EditorCommandSource source, EditActi
 //        until https://bugs.webkit.org/show_bug.cgi?id=27818 is resolved.
 static bool executeToggleStyleInList(Frame* frame, EditorCommandSource source, EditAction action, CSSPropertyID propertyID, CSSValue* value)
 {
-    ExceptionCode ec = 0;
     RefPtr<EditingStyle> selectionStyle = EditingStyle::styleAtSelectionStart(frame->selection()->selection());
     if (!selectionStyle || !selectionStyle->style())
         return false;
@@ -153,7 +152,7 @@ static bool executeToggleStyleInList(Frame* frame, EditorCommandSource source, E
 
     // FIXME: We shouldn't be having to convert new style into text.  We should have setPropertyCSSValue.
     RefPtr<StylePropertySet> newMutableStyle = StylePropertySet::create();
-    newMutableStyle->setProperty(propertyID, newStyle, ec);
+    newMutableStyle->setProperty(propertyID, newStyle);
     return applyCommandToFrame(frame, source, action, newMutableStyle.get());
 }
 
