@@ -1,3 +1,16 @@
+2012-10-10  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Rebaselining tests after r130851.
+
+        * platform/gtk/fast/text/justify-ideograph-complex-expected.txt:
+        * platform/gtk/platform: Added.
+        * platform/gtk/platform/gtk: Added.
+        * platform/gtk/platform/gtk/fonts: Added.
+        * platform/gtk/platform/gtk/fonts/complex-text-shadows-expected.txt: Added.
+        * platform/gtk/platform/gtk/fonts/font-face-with-complex-text-expected.txt: Added.
+
 2012-10-10  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Add more missing pixel expectations to lots of different directories.
