@@ -919,11 +919,6 @@ fast/dom/timer-throttling-hidden-page.html [ WontFix ]
 # TESTS TO FIX
 # -----------------------------------------------------------------
 
-# Tests to investigate after r130851
-[ Mac ]fast/lists/003-vertical.html [Failure]
-[ Mac ]fast/text/international/vertical-text-glyph-test.html [Failure]
-[ Mac ]fast/text/shaping/shaping-selection-rect.html [Failure]
-
 # LightTPD doesn't accept unknown HTTP methods
 crbug.com/30536 [ Win ] http/tests/xmlhttprequest/methods-lower-case.html
 crbug.com/30536 [ Win ] http/tests/xmlhttprequest/methods-async.html [ Timeout ]
@@ -4028,3 +4023,7 @@ webkit.org/b/98686 editing/pasteboard/data-transfer-items.html [ Failure ]
 
 webkit.org/b/98699 [ Lion ] fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ Crash ]
 webkit.org/b/98811 [ Mac ] fast/transforms/transformed-focused-text-input.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/98867 [ Mac ] fast/lists/003-vertical.html [ ImageOnlyFailure ]
+webkit.org/b/98867 [ Mac ] fast/text/international/vertical-text-glyph-test.html [ ImageOnlyFailure ]
+webkit.org/b/98867 [ Mac ] fast/text/shaping/shaping-selection-rect.html [ ImageOnlyFailure ]
