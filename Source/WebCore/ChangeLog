@@ -1,3 +1,19 @@
+2012-10-09  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [Chromium] Fix harfbuzz-ng related code after r130231
+        https://bugs.webkit.org/show_bug.cgi?id=98858
+
+        Reviewed by Kent Tamura.
+
+        Replace first/second with key/value.
+
+        No new tests. No changes in behavior.
+
+        * platform/graphics/harfbuzz/ng/HarfBuzzNGFaceSkia.cpp:
+        (WebCore::harfbuzzGetGlyph):
+        * platform/graphics/skia/SimpleFontDataSkia.cpp:
+        (WebCore::SimpleFontData::canRenderCombiningCharacterSequence):
+
 2012-10-09  Enrica Casucci  <enrica@apple.com>
 
         Only measure text once instead of twice when performing line layout.
