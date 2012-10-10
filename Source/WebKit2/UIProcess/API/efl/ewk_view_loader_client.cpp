@@ -130,6 +130,7 @@ static void didChangeBackForwardList(WKPageRef, WKBackForwardListItemRef addedIt
     ASSERT(ewkView);
 
     ewk_back_forward_list_changed(ewk_view_back_forward_list_get(ewkView), addedItem, removedItems);
+    ewk_view_back_forward_list_changed(ewkView);
 }
 
 static void didSameDocumentNavigationForFrame(WKPageRef, WKFrameRef frame, WKSameDocumentNavigationType, WKTypeRef, const void* clientInfo)

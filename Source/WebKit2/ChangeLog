@@ -1,3 +1,22 @@
+2012-10-10  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Add toolbar buttons to MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=98883
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add "back,forward,list,changed" signal on the Ewk_View
+        to notify the client when the view's back / forward
+        list has changed. This is useful for the UI to update
+        its back / forward buttons disabled state.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_back_forward_list_changed):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_loader_client.cpp:
+        (didChangeBackForwardList):
+        * UIProcess/API/efl/ewk_view_private.h:
+
 2012-10-10  Jon Lee  <jonlee@apple.com>
 
         [WK2] Activate plugins when user clicks on snapshot

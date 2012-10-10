@@ -1521,6 +1521,17 @@ void ewk_view_load_provisional_started(Evas_Object* ewkView)
 
 /**
  * @internal
+ * Reports that the view's back / forward list has changed.
+ *
+ * Emits signal: "back,forward,list,changed".
+ */
+void ewk_view_back_forward_list_changed(Evas_Object* ewkView)
+{
+    evas_object_smart_callback_call(ewkView, "back,forward,list,changed", 0);
+}
+
+/**
+ * @internal
  * Reports that a navigation policy decision should be taken.
  *
  * Emits signal: "policy,decision,navigation".

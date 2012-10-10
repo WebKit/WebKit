@@ -29,6 +29,8 @@ static const int DEFAULT_WIDTH = 800;
 static const int DEFAULT_HEIGHT = 600;
 static const char DEFAULT_URL[] = "http://www.google.com/";
 static const char APP_NAME[] = "EFL MiniBrowser";
+static const int TOOL_BAR_ICON_SIZE = 24;
+static const int TOOL_BAR_BUTTON_SIZE = 32;
 
 #define info(format, args...)       \
     do {                            \
@@ -45,6 +47,8 @@ typedef struct _Browser_Window {
     Evas_Object *window;
     Evas_Object *webview;
     Evas_Object *url_bar;
+    Evas_Object *back_button;
+    Evas_Object *forward_button;
 } Browser_Window;
 
 static const Ecore_Getopt options = {
@@ -206,6 +210,16 @@ on_url_changed(void *user_data, Evas_Object *webview, void *event_info)
 }
 
 static void
+on_back_forward_list_changed(void *user_data, Evas_Object *webview, void *event_info)
+{
+    Browser_Window *window = (Browser_Window *)user_data;
+
+    /* Update navigation buttons state */
+    elm_object_disabled_set(window->back_button, !ewk_view_back_possible(webview));
+    elm_object_disabled_set(window->forward_button, !ewk_view_forward_possible(webview));
+}
+
+static void
 on_new_window(void *user_data, Evas_Object *webview, void *event_info)
 {
     Evas_Object **new_view = (Evas_Object **)event_info;
@@ -323,9 +337,69 @@ on_url_bar_clicked(void *user_data, Evas_Object *url_bar, void *event_info)
 }
 
 static void
+on_back_button_clicked(void *user_data, Evas_Object *back_button, void *event_info)
+{
+    Browser_Window *app_data = (Browser_Window *)user_data;
+
+    ewk_view_back(app_data->webview);
+    /* Update back button state */
+    elm_object_disabled_set(back_button, !ewk_view_back_possible(app_data->webview));
+}
+
+static void
+on_forward_button_clicked(void *user_data, Evas_Object *forward_button, void *event_info)
+{
+    Browser_Window *app_data = (Browser_Window *)user_data;
+
+    ewk_view_forward(app_data->webview);
+    /* Update forward button state */
+    elm_object_disabled_set(forward_button, !ewk_view_forward_possible(app_data->webview));
+}
+
+static void
+on_refresh_button_clicked(void *user_data, Evas_Object *refresh_button, void *event_info)
+{
+    Browser_Window *app_data = (Browser_Window *)user_data;
+
+    Evas *evas = evas_object_evas_get(refresh_button);
+    Eina_Bool ctrlPressed = evas_key_modifier_is_set(evas_key_modifier_get(evas), "Control");
+    if (ctrlPressed) {
+        info("Reloading and bypassing cache...\n");
+        ewk_view_reload_bypass_cache(app_data->webview);
+    } else {
+        info("Reloading...\n");
+        ewk_view_reload(app_data->webview);
+    }
+}
+
+static void
+on_home_button_clicked(void *user_data, Evas_Object *home_button, void *event_info)
+{
+    Browser_Window *app_data = (Browser_Window *)user_data;
+
+    ewk_view_url_set(app_data->webview, DEFAULT_URL);
+}
+
+static void
 on_window_deletion(void *user_data, Evas_Object *window, void *event_info)
 {
     window_close(browser_window_find(window));
+}
+
+static Evas_Object *
+create_toolbar_button(Evas_Object *window, const char *icon_name)
+{
+    Evas_Object *button = elm_button_add(window);
+
+    Evas_Object *icon = elm_icon_add(window);
+    elm_icon_standard_set(icon, icon_name);
+    evas_object_size_hint_max_set(icon, TOOL_BAR_ICON_SIZE, TOOL_BAR_ICON_SIZE);
+    evas_object_color_set(icon, 44, 44, 102, 128);
+    evas_object_show(icon);
+    elm_object_part_content_set(button, "icon", icon);
+    evas_object_size_hint_min_set(button, TOOL_BAR_BUTTON_SIZE, TOOL_BAR_BUTTON_SIZE);
+
+    return button;
 }
 
 static Browser_Window *window_create(const char *url)
@@ -337,8 +411,16 @@ static Browser_Window *window_create(const char *url)
     }
 
     /* Create window */
-    app_data->window = elm_win_util_standard_add("minibrowser-window", APP_NAME);
+    app_data->window = elm_win_add(NULL, "minibrowser-window", ELM_WIN_BASIC);
+    elm_win_title_set(app_data->window, APP_NAME);
     evas_object_smart_callback_add(app_data->window, "delete,request", on_window_deletion, &app_data);
+
+    /* Create window background */
+    Evas_Object *bg = elm_bg_add(app_data->window);
+    elm_bg_color_set(bg, 193, 192, 191);
+    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    elm_win_resize_object_add(app_data->window, bg);
+    evas_object_show(bg);
 
     /* Create vertical layout */
     Evas_Object *vertical_layout = elm_box_add(app_data->window);
@@ -347,17 +429,60 @@ static Browser_Window *window_create(const char *url)
     elm_win_resize_object_add(app_data->window, vertical_layout);
     evas_object_show(vertical_layout);
 
+    /* Create horizontal layout for top bar */
+    Evas_Object *horizontal_layout = elm_box_add(app_data->window);
+    elm_box_horizontal_set(horizontal_layout, EINA_TRUE);
+    evas_object_size_hint_weight_set(horizontal_layout, EVAS_HINT_EXPAND, 0.0);
+    evas_object_size_hint_align_set(horizontal_layout, EVAS_HINT_FILL, 0.0);
+    elm_box_pack_end(vertical_layout, horizontal_layout);
+    evas_object_show(horizontal_layout);
+
+    /* Create Back button */
+    app_data->back_button = create_toolbar_button(app_data->window, "arrow_left");
+    evas_object_smart_callback_add(app_data->back_button, "clicked", on_back_button_clicked, app_data);
+    elm_object_disabled_set(app_data->back_button, EINA_TRUE);
+    evas_object_size_hint_weight_set(app_data->back_button, 0.0, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(app_data->back_button, 0.0, 0.5);
+    elm_box_pack_end(horizontal_layout, app_data->back_button);
+    evas_object_show(app_data->back_button);
+
+    /* Create Forward button */
+    app_data->forward_button = create_toolbar_button(app_data->window, "arrow_right");
+    evas_object_smart_callback_add(app_data->forward_button, "clicked", on_forward_button_clicked, app_data);
+    elm_object_disabled_set(app_data->forward_button, EINA_TRUE);
+    evas_object_size_hint_weight_set(app_data->forward_button, 0.0, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(app_data->forward_button, 0.0, 0.5);
+    elm_box_pack_end(horizontal_layout, app_data->forward_button);
+    evas_object_show(app_data->forward_button);
+
     /* Create URL bar */
     app_data->url_bar = elm_entry_add(app_data->window);
+    elm_entry_scrollable_set(app_data->url_bar, EINA_TRUE);
     elm_entry_single_line_set(app_data->url_bar, EINA_TRUE);
     elm_entry_cnp_mode_set(app_data->url_bar, ELM_CNP_MODE_PLAINTEXT);
-    elm_entry_text_style_user_push(app_data->url_bar, "DEFAULT='font_size=16'");
+    elm_entry_text_style_user_push(app_data->url_bar, "DEFAULT='font_size=18'");
     evas_object_smart_callback_add(app_data->url_bar, "activated", on_url_bar_activated, app_data);
     evas_object_smart_callback_add(app_data->url_bar, "clicked", on_url_bar_clicked, app_data);
-    evas_object_size_hint_weight_set(app_data->url_bar, EVAS_HINT_EXPAND, 0.0);
-    evas_object_size_hint_align_set(app_data->url_bar, EVAS_HINT_FILL, 0.0);
-    elm_box_pack_end(vertical_layout, app_data->url_bar);
+    evas_object_size_hint_weight_set(app_data->url_bar, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(app_data->url_bar, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    elm_box_pack_end(horizontal_layout, app_data->url_bar);
     evas_object_show(app_data->url_bar);
+
+    /* Create Refresh button */
+    Evas_Object *refresh_button = create_toolbar_button(app_data->window, "refresh");
+    evas_object_smart_callback_add(refresh_button, "clicked", on_refresh_button_clicked, app_data);
+    evas_object_size_hint_weight_set(refresh_button, 0.0, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(refresh_button, 1.0, 0.5);
+    elm_box_pack_end(horizontal_layout, refresh_button);
+    evas_object_show(refresh_button);
+
+    /* Create Home button */
+    Evas_Object *home_button = create_toolbar_button(app_data->window, "home");
+    evas_object_smart_callback_add(home_button, "clicked", on_home_button_clicked, app_data);
+    evas_object_size_hint_weight_set(home_button, 0.0, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(home_button, 1.0, 0.5);
+    elm_box_pack_end(horizontal_layout, home_button);
+    evas_object_show(home_button);
 
     /* Create webview */
     Evas *evas = evas_object_evas_get(app_data->window);
@@ -377,6 +502,7 @@ static Browser_Window *window_create(const char *url)
     evas_object_smart_callback_add(app_data->webview, "load,progress", on_progress, app_data);
     evas_object_smart_callback_add(app_data->webview, "title,changed", on_title_changed, app_data);
     evas_object_smart_callback_add(app_data->webview, "url,changed", on_url_changed, app_data);
+    evas_object_smart_callback_add(app_data->webview, "back,forward,list,changed", on_back_forward_list_changed, app_data);
 
     evas_object_event_callback_add(app_data->webview, EVAS_CALLBACK_KEY_DOWN, on_key_down, app_data);
     evas_object_event_callback_add(app_data->webview, EVAS_CALLBACK_MOUSE_DOWN, on_mouse_down, app_data);
