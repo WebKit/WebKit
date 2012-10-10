@@ -1,6 +1,6 @@
 <?php
 
-$origin = isset($_GET['origin']) ? $_GET['origin'] : $_SERVER['HTTP_ORIGIN'];
+$origin = $_GET['origin'];
 
 if ($origin != 'none')
     header("Access-Control-Allow-Origin: $origin");

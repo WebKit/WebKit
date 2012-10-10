@@ -1,3 +1,15 @@
+2012-10-09  Pablo Flouret  <pablof@motorola.com>
+
+        [Qt]REGRESSION(r120107): It made http/tests/xmlhttprequest/origin-exact-matching.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=88913
+
+        Reviewed by Csaba Osztrogonác.
+
+        Blind fix to try to fix the test.
+
+        * http/tests/xmlhttprequest/access-control-allow-lists-starting-with-comma.html:
+        * http/tests/xmlhttprequest/resources/access-control-allow-lists.php:
+
 2012-10-09  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [EFL] Update EFL baselines after r130840

@@ -1492,7 +1492,6 @@ svg/carto.net/tabgroup.svg
 # https://bugs.webkit.org/show_bug.cgi?id=92734
 svg/css/text-gradient-shadow.svg
 
-
 # These files need new expectations after changing the behavrior from radiaGradients to SVG2
 webkit.org/b/98569 svg/W3C-SVG-1.1-SE/styling-pres-02-f.svg [ Failure Pass ] 
 webkit.org/b/98569 svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg [ Failure Pass ] 
@@ -2518,10 +2517,6 @@ inspector/styles/region-style-crash.html
 fast/profiler/stop-profiling-after-setTimeout.html
 fast/profiler/dead-time.html
 
-# [Qt]REGRESSION(r120107): It made http/tests/xmlhttprequest/origin-exact-matching.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=88913
-http/tests/xmlhttprequest/origin-exact-matching.html
-
 # [Qt]Web Inspector: inspector/extensions/extensions-network.html makes inspector/extensions/extensions-reload.html timeout
 # https://bugs.webkit.org/show_bug.cgi?id=89349
 inspector/extensions/extensions-reload.html
@@ -2627,7 +2622,6 @@ Bug(_qt_slow) [ Debug ] fast/js/dfg-poison-fuzz.html [ Pass Slow ]
 webkit.org/b/62662 [ Debug ] inspector/cookie-parser.html [ Crash Pass ]
 
 webkit.org/b/73766 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
-
 
 webkit.org/b/83906 ietestcenter/css3/grid/grid-column-001.htm [ ImageOnlyFailure ]
 webkit.org/b/83907 ietestcenter/css3/grid/grid-column-002.htm [ ImageOnlyFailure ]

@@ -7,7 +7,7 @@
 <script type="text/javascript">
 description("Allow lists starting with a comma should be parsed correctly.");
 var xhr = new XMLHttpRequest();
-var url = "http://localhost:8000/xmlhttprequest/resources/access-control-allow-lists.php?headers=,y-lol,x-print,%20,,,y-print";
+var url = "http://localhost:8000/xmlhttprequest/resources/access-control-allow-lists.php?headers=,y-lol,x-print,%20,,,y-print&origin=http://127.0.0.1:8000";
 xhr.open("GET", url, false);
 xhr.setRequestHeader('x-print', 'unicorn')
 xhr.setRequestHeader('y-print', 'narwhal')
@@ -17,7 +17,7 @@ var response = JSON.parse(xhr.response)
 shouldBeEqualToString("response['x-print']", "unicorn");
 shouldBeEqualToString("response['y-print']", "narwhal");
 
-url = "http://localhost:8000/xmlhttprequest/resources/access-control-allow-lists.php?methods=,,PUT,GET";
+url = "http://localhost:8000/xmlhttprequest/resources/access-control-allow-lists.php?methods=,,PUT,GET&origin=http://127.0.0.1:8000";
 xhr.open("PUT", url, false);
 debug("Sending PUT request.");
 shouldBeUndefined("xhr.send(null)");
