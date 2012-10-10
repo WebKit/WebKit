@@ -1,3 +1,17 @@
+2012-10-10  John Bauman  <jbauman@chromium.org>
+
+        [chromium] Add attribute for disabling automatic flushes
+        https://bugs.webkit.org/show_bug.cgi?id=98834
+
+        Reviewed by Kenneth Russell.
+
+        This attribute allows the compositor context to specify that it wants
+        to handle flushing itself.
+
+        * chromium/public/WebGraphicsContext3D.h:
+        (WebKit::WebGraphicsContext3D::Attributes::Attributes):
+        (Attributes):
+
 2012-10-09  Harald Alvestrand  <hta@google.com>
 
         Change PeerConnection getStats function to single value local / remote
