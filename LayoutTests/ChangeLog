@@ -1,3 +1,9 @@
+2012-10-10  Adam Barth  <abarth@webkit.org>
+
+        Record that these tests have additional failure modes.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-10  Peter Beverloo  <peter@chromium.org>
 
         [Chromium-Android] Another batch of TestExpectation updates for Android
