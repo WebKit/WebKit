@@ -39,6 +39,15 @@ PassRefPtr<OpaqueJSString> OpaqueJSString::create(const String& string)
     return 0;
 }
 
+String OpaqueJSString::string() const
+{
+    if (!this)
+        return String();
+
+    // Return a copy of the wrapped string, because the caller may make it an Identifier.
+    return m_string.isolatedCopy();
+}
+
 Identifier OpaqueJSString::identifier(JSGlobalData* globalData) const
 {
     if (!this || !m_string.length())
