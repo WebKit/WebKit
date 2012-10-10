@@ -1,3 +1,13 @@
+2012-10-10  David Grogan  <dgrogan@chromium.org>
+
+        Inspector: display IndexedDB integer versions
+        https://bugs.webkit.org/show_bug.cgi?id=95816
+
+        Reviewed by Vsevolod Vlasov.
+
+        * http/tests/inspector/indexeddb/database-structure-expected.txt:
+        * http/tests/inspector/indexeddb/database-structure.html:
+
 2012-10-10  Shinya Kawanaka  <shinyak@chromium.org>
 
         Needs internal API to return distributed nodes for InsertionPoint

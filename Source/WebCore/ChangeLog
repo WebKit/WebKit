@@ -1,3 +1,23 @@
+2012-10-10  David Grogan  <dgrogan@chromium.org>
+
+        Inspector: display IndexedDB integer versions
+        https://bugs.webkit.org/show_bug.cgi?id=95816
+
+        Reviewed by Vsevolod Vlasov.
+
+        Added basic test to database-structure.html
+
+        * inspector/Inspector.json:
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore):
+        * inspector/front-end/IndexedDBModel.js:
+        (WebInspector.IndexedDBModel.prototype._loadDatabase.callback):
+        (WebInspector.IndexedDBModel.prototype._loadDatabase):
+        (WebInspector.IndexedDBModel.Database):
+        * inspector/front-end/IndexedDBViews.js:
+        (WebInspector.IDBDatabaseView):
+        (WebInspector.IDBDatabaseView.prototype._refreshDatabase):
+
 2012-10-10  Simon Fraser  <simon.fraser@apple.com>
 
         Store a visible rect in GraphicsLayers, and optionally dump it in layerTreeAsText

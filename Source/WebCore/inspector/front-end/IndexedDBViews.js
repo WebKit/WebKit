@@ -53,9 +53,13 @@ WebInspector.IDBDatabaseView = function(database)
     this._nameTreeElement.selectable = false;
     this._headersTreeOutline.appendChild(this._nameTreeElement);
 
-    this._versionTreeElement = new TreeElement("", null, false);
-    this._versionTreeElement.selectable = false;
-    this._headersTreeOutline.appendChild(this._versionTreeElement);
+    this._intVersionTreeElement = new TreeElement("", null, false);
+    this._intVersionTreeElement.selectable = false;
+    this._headersTreeOutline.appendChild(this._intVersionTreeElement);
+
+    this._stringVersionTreeElement = new TreeElement("", null, false);
+    this._stringVersionTreeElement.selectable = false;
+    this._headersTreeOutline.appendChild(this._stringVersionTreeElement);
 
     this.update(database);
 }
@@ -78,7 +82,8 @@ WebInspector.IDBDatabaseView.prototype = {
     {
         this._securityOriginTreeElement.title = this._formatHeader(WebInspector.UIString("Security origin"), this._database.databaseId.securityOrigin);
         this._nameTreeElement.title = this._formatHeader(WebInspector.UIString("Name"), this._database.databaseId.name);
-        this._versionTreeElement.title = this._formatHeader(WebInspector.UIString("Version"), this._database.version);
+        this._stringVersionTreeElement.title = this._formatHeader(WebInspector.UIString("String Version"), this._database.version);
+        this._intVersionTreeElement.title = this._formatHeader(WebInspector.UIString("Integer Version"), this._database.intVersion);
     },
 
     /**

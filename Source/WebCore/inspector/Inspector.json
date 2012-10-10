@@ -1160,7 +1160,8 @@
                 "description": "Database with an array of object stores.",
                 "properties": [
                     { "name": "name", "type": "string", "description": "Database name." },
-                    { "name": "version", "type": "string", "description": "Database version." },
+                    { "name": "version", "type": "string", "description": "Deprecated string database version." },
+                    { "name": "intVersion", "type": "integer", "description": "Integer database version." },
                     { "name": "objectStores", "type": "array", "items": { "$ref": "ObjectStore" }, "description": "Object stores in this database." }
                 ]
             },

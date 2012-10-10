@@ -21,11 +21,13 @@ Tests that database names are correctly loaded and saved in IndexedDBModel.
 Dumping database:
 Dumping database:
 testDatabase1
+    intVersion: 1
     version: 
     objectStores:
 
 Dumping database:
 testDatabase1
+    intVersion: -1
     version: 2
     objectStores:
     testObjectStore1
@@ -35,6 +37,7 @@ testDatabase1
 
 Dumping database:
 testDatabase1
+    intVersion: -1
     version: 3
     objectStores:
     testObjectStore1
@@ -48,6 +51,7 @@ testDatabase1
 
 Dumping database:
 testDatabase1
+    intVersion: -1
     version: 4
     objectStores:
     testObjectStore1
@@ -65,6 +69,7 @@ testDatabase1
 
 Dumping database:
 testDatabase1
+    intVersion: -1
     version: 5
     objectStores:
     testObjectStore1
@@ -86,6 +91,7 @@ testDatabase1
 
 Dumping database:
 testDatabase1
+    intVersion: -1
     version: 6
     objectStores:
     testObjectStore1
@@ -103,6 +109,7 @@ testDatabase1
 
 Dumping database:
 testDatabase1
+    intVersion: -1
     version: 7
     objectStores:
     testObjectStore1
@@ -116,6 +123,7 @@ testDatabase1
 
 Dumping database:
 testDatabase1
+    intVersion: -1
     version: 8
     objectStores:
     testObjectStore1
@@ -125,6 +133,7 @@ testDatabase1
 
 Dumping database:
 testDatabase1
+    intVersion: -1
     version: 9
     objectStores:
 
