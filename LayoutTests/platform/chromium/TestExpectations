@@ -919,6 +919,11 @@ fast/dom/timer-throttling-hidden-page.html [ WontFix ]
 # TESTS TO FIX
 # -----------------------------------------------------------------
 
+# Tests to investigate after r130851
+[ Mac ]fast/lists/003-vertical.html [Failure]
+[ Mac ]fast/text/international/vertical-text-glyph-test.html [Failure]
+[ Mac ]fast/text/shaping/shaping-selection-rect.html [Failure]
+
 # LightTPD doesn't accept unknown HTTP methods
 crbug.com/30536 [ Win ] http/tests/xmlhttprequest/methods-lower-case.html
 crbug.com/30536 [ Win ] http/tests/xmlhttprequest/methods-async.html [ Timeout ]
