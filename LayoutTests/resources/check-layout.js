@@ -1,3 +1,6 @@
+if (window.testRunner)
+    testRunner.dumpAsText();
+
 (function() {
 
 function insertAfter(nodeToAdd, referenceNode)

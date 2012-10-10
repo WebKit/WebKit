@@ -1,3 +1,84 @@
+2012-10-10  Ojan Vafai  <ojan@chromium.org>
+
+        check-layout.js should always dumpAsText
+        https://bugs.webkit.org/show_bug.cgi?id=98959
+
+        Reviewed by Tony Chang.
+
+        Every checkLayout test was already dumpAsText except for 
+        css3/flexbox/flex-item-child-overflow.html, which is a reftest
+        and really doesn't need to be a checkLayout test.
+
+        * css3/flexbox/auto-height-dynamic.html:
+        * css3/flexbox/box-sizing-min-max-sizes.html:
+        * css3/flexbox/box-sizing.html:
+        * css3/flexbox/columns-auto-size.html:
+        * css3/flexbox/columns-height-set-via-top-bottom.html:
+        * css3/flexbox/flex-algorithm-min-max.html:
+        * css3/flexbox/flex-algorithm-with-margins.html:
+        * css3/flexbox/flex-algorithm.html:
+        * css3/flexbox/flex-align-column.html:
+        * css3/flexbox/flex-align-end.html:
+        * css3/flexbox/flex-align-max.html:
+        * css3/flexbox/flex-align-percent-height.html:
+        * css3/flexbox/flex-align-stretch.html:
+        * css3/flexbox/flex-align-vertical-writing-mode.html:
+        * css3/flexbox/flex-align.html:
+        * css3/flexbox/flex-flow-auto-margins.html:
+        * css3/flexbox/flex-flow-border.html:
+        * css3/flexbox/flex-flow-margins-auto-size.html:
+        * css3/flexbox/flex-flow-margins.html:
+        * css3/flexbox/flex-flow-orientations.html:
+        * css3/flexbox/flex-flow-overflow.html:
+        * css3/flexbox/flex-flow-padding.html:
+        * css3/flexbox/flex-flow.html:
+        * css3/flexbox/flex-item-child-overflow-expected.html:
+        * css3/flexbox/flex-item-child-overflow.html:
+        * css3/flexbox/flex-item-min-size.html:
+        * css3/flexbox/flex-justify-content.html:
+        * css3/flexbox/flex-no-flex.html:
+        * css3/flexbox/flex-rounding.html:
+        * css3/flexbox/flexitem-stretch-image.html:
+        * css3/flexbox/flexitem.html:
+        * css3/flexbox/floated-flexbox.html:
+        * css3/flexbox/inline-flex.html:
+        * css3/flexbox/line-wrapping.html:
+        * css3/flexbox/multiline-align-content-horizontal-column.html:
+        * css3/flexbox/multiline-align-content.html:
+        * css3/flexbox/multiline-align-self.html:
+        * css3/flexbox/multiline-column-auto.html:
+        * css3/flexbox/multiline-justify-content.html:
+        * css3/flexbox/multiline-reverse-wrap-overflow.html:
+        * css3/flexbox/multiline.html:
+        * css3/flexbox/nested-stretch.html:
+        * css3/flexbox/orthogonal-flex-directions.html:
+        * css3/flexbox/percent-margins.html:
+        * css3/flexbox/percentage-heights.html:
+        * css3/flexbox/percentage-sizes-quirks.html:
+        * css3/flexbox/percentage-sizes.html:
+        * css3/flexbox/perpendicular-writing-modes-inside-flex-item.html:
+        * css3/flexbox/position-absolute-child.html:
+        * css3/flexbox/position-absolute-children.html:
+        * css3/flexbox/preferred-widths-orthogonal.html:
+        * css3/flexbox/preferred-widths.html:
+        * css3/flexbox/relayout-image-load.html:
+        * css3/flexbox/style-change.html:
+        * css3/flexbox/true-centering.html:
+        * css3/flexbox/writing-modes.html:
+        * fast/block/margins-perpendicular-containing-block.html:
+        * fast/css-grid-layout/place-cell-by-index.html:
+        * fast/css/deprecated-flexbox-auto-min-size.html:
+        * fast/css/nested-percent-height-on-replaced.html:
+        * fast/css/percentage-height-auto-sized-body-quirks.html:
+        * fast/flexbox/flexing-overflow-scroll-item.html:
+        * fast/replaced/vertical-writing-mode-max-logical-width-replaced.html:
+        * fast/table/bad-replaced-sizing-preferred-logical-widths.html:
+        * fast/table/margins-flipped-text-direction.html:
+        * fast/table/margins-perpendicular-containing-block.html:
+        * fast/writing-mode/percentage-height-orthogonal-writing-modes-quirks.html:
+        * fast/writing-mode/percentage-height-orthogonal-writing-modes.html:
+        * resources/check-layout.js:
+
 2012-10-10  Jeffrey Pfau  <jpfau@apple.com>
 
         [Mac][WK2] Unreviewed, skipping fast/parser/document-open-in-unload.html
