@@ -1,3 +1,17 @@
+2012-10-10  Dirk Pranke  <dpranke@chromium.org>
+
+        NRWT crashes on too many timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=97047
+
+        Reviewed by Tony Chang.
+
+        Apparently if you kill a subprocess directly python doesn't
+        auto-close the file descriptors.
+
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        (ServerProcess._reset):
+        * Scripts/webkitpy/layout_tests/port/server_process_unittest.py:
+
 2012-10-10  Zan Dobersek  <zandobersek@gmail.com>
 
         [TestResultServer] Enable CORS for test files

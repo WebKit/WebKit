@@ -84,6 +84,17 @@ class ServerProcess(object):
         return self._pid
 
     def _reset(self):
+        if getattr(self, '_proc', None):
+            if self._proc.stdin:
+                self._proc.stdin.close()
+                self._proc.stdin = None
+            if self._proc.stdout:
+                self._proc.stdout.close()
+                self._proc.stdout = None
+            if self._proc.stderr:
+                self._proc.stderr.close()
+                self._proc.stderr = None
+
         self._proc = None
         self._output = str()  # bytesarray() once we require Python 2.6
         self._error = str()  # bytesarray() once we require Python 2.6

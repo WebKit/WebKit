@@ -57,6 +57,7 @@ class TrivialMockPort(object):
 class MockFile(object):
     def __init__(self, server_process):
         self._server_process = server_process
+        self.closed = False
 
     def fileno(self):
         return 1
@@ -66,7 +67,7 @@ class MockFile(object):
         raise IOError
 
     def close(self):
-        pass
+        self.closed = True
 
 
 class MockProc(object):
@@ -87,6 +88,8 @@ class FakeServerProcess(server_process.ServerProcess):
     def _start(self):
         self._proc = MockProc(self)
         self.stdin = self._proc.stdin
+        self.stdout = self._proc.stdout
+        self.stderr = self._proc.stderr
         self._pid = self._proc.pid
         self.broken_pipes = []
 
@@ -120,6 +123,15 @@ class TestServerProcess(unittest.TestCase):
             self.assertEquals(line.strip(), "stderr")
 
         proc.stop(0)
+
+    def test_cleanup(self):
+        port_obj = TrivialMockPort()
+        server_process = FakeServerProcess(port_obj=port_obj, name="test", cmd=["test"])
+        server_process._start()
+        server_process.stop()
+        self.assertTrue(server_process.stdin.closed)
+        self.assertTrue(server_process.stdout.closed)
+        self.assertTrue(server_process.stderr.closed)
 
     def test_broken_pipe(self):
         port_obj = TrivialMockPort()
