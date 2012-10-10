@@ -1,3 +1,18 @@
+2012-10-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, adding forgotten files.
+
+        * bytecode/ByValInfo.h: Added.
+        (JSC):
+        (JSC::isOptimizableIndexingType):
+        (JSC::jitArrayModeForIndexingType):
+        (JSC::ByValInfo::ByValInfo):
+        (ByValInfo):
+        (JSC::getByValInfoBytecodeIndex):
+        * runtime/IndexingType.cpp: Added.
+        (JSC):
+        (JSC::indexingTypeToString):
+
 2012-10-08  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should infer when indexed storage is contiguous, and optimize for it
