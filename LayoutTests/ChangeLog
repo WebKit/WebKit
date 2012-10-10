@@ -1,3 +1,9 @@
+2012-10-10  Jeffrey Pfau  <jpfau@apple.com>
+
+        [Mac][WK2] Unreviewed, skipping fast/parser/document-open-in-unload.html
+
+        * platform/mac-wk2/TestExpectations:
+
 2012-10-10  Ojan Vafai  <ojan@chromium.org>
 
         Remove perf tests that haven't failed in the past 500 runs.
