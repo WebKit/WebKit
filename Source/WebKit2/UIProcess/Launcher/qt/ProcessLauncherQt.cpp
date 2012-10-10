@@ -128,7 +128,7 @@ void ProcessLauncher::launchProcess()
     mach_port_insert_right(mach_task_self(), connector, connector, MACH_MSG_TYPE_MAKE_SEND);
 
     // Register port with a service name to the system.
-    QString serviceName = QString("com.nokia.Qt.WebKit.QtWebProcess-%1-%2");
+    QString serviceName = QStringLiteral("com.nokia.Qt.WebKit.QtWebProcess-%1-%2");
     serviceName = serviceName.arg(QString().setNum(getpid()), QString().setNum((size_t)this));
     kern_return_t kr = bootstrap_register2(bootstrap_port, const_cast<char*>(serviceName.toUtf8().data()), connector, 0);
     ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
