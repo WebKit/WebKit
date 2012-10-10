@@ -314,14 +314,13 @@ void RenderThemeBlackBerry::adjustSearchFieldStyle(StyleResolver*, RenderStyle* 
 
 void RenderThemeBlackBerry::adjustSearchFieldCancelButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
-    static const float defaultControlFontPixelSize = 13;
-    static const float defaultCancelButtonSize = 9;
+    static const float defaultControlFontPixelSize = 10;
+    static const float defaultCancelButtonSize = 13;
     static const float minCancelButtonSize = 5;
-    static const float maxCancelButtonSize = 21;
 
     // Scale the button size based on the font size
     float fontScale = style->fontSize() / defaultControlFontPixelSize;
-    int cancelButtonSize = lroundf(std::min(std::max(minCancelButtonSize, defaultCancelButtonSize * fontScale), maxCancelButtonSize));
+    int cancelButtonSize = lroundf(std::max(minCancelButtonSize, defaultCancelButtonSize * fontScale));
     Length length(cancelButtonSize, Fixed);
     style->setWidth(length);
     style->setHeight(length);
