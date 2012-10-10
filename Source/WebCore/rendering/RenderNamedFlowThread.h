@@ -50,6 +50,8 @@ public:
 
     const AtomicString& flowThreadName() const;
 
+    const RenderRegionList& invalidRenderRegionList() const { return m_invalidRegionList; }
+
     RenderObject* nextRendererForNode(Node*) const;
     RenderObject* previousRendererForNode(Node*) const;
 
@@ -86,7 +88,7 @@ private:
     void addDependencyOnFlowThread(RenderNamedFlowThread*);
     void removeDependencyOnFlowThread(RenderNamedFlowThread*);
     void checkInvalidRegions();
-    bool canBeDestroyed() const { return m_regionList.isEmpty() && m_contentNodes.isEmpty(); }
+    bool canBeDestroyed() const { return m_invalidRegionList.isEmpty() && m_regionList.isEmpty() && m_contentNodes.isEmpty(); }
     void regionLayoutUpdateEventTimerFired(Timer<RenderNamedFlowThread>*);
     void clearContentNodes();
 
@@ -106,6 +108,8 @@ private:
     FlowThreadChildList m_flowThreadChildList;
 
     NamedFlowContentNodes m_contentNodes;
+
+    RenderRegionList m_invalidRegionList;
 
     // The DOM Object that represents a named flow.
     RefPtr<WebKitNamedFlow> m_namedFlow;

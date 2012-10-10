@@ -118,7 +118,7 @@ PassRefPtr<NodeList> WebKitNamedFlow::getRegionsByContent(Node* contentNode)
         for (RenderRegionList::const_iterator iter = regionList.begin(); iter != regionList.end(); ++iter) {
             const RenderRegion* renderRegion = *iter;
             // FIXME: Pseudo-elements are not included in the list.
-            if (!renderRegion->isValid() || !renderRegion->node())
+            if (!renderRegion->node())
                 continue;
             if (m_parentFlowThread->objectInFlowRegion(contentNode->renderer(), renderRegion))
                 regionNodes.append(renderRegion->node());
@@ -144,7 +144,7 @@ PassRefPtr<NodeList> WebKitNamedFlow::getRegions()
     for (RenderRegionList::const_iterator iter = regionList.begin(); iter != regionList.end(); ++iter) {
         const RenderRegion* renderRegion = *iter;
         // FIXME: Pseudo-elements are not included in the list.
-        if (!renderRegion->isValid() || !renderRegion->node())
+        if (!renderRegion->node())
             continue;
         regionNodes.append(renderRegion->node());
     }

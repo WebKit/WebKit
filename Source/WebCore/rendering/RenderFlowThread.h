@@ -80,13 +80,12 @@ public:
     bool hitTestFlowThreadPortionInRegion(RenderRegion*, LayoutRect flowThreadPortionRect, LayoutRect flowThreadPortionOverflowRect, const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset) const;
 
     bool hasRegions() const { return m_regionList.size(); }
-    bool hasValidRegions() const { ASSERT(!m_regionsInvalidated); return m_hasValidRegions; }
     // Check if the content is flown into at least a region with region styling rules.
     bool hasRegionsWithStyling() const { return m_hasRegionsWithStyling; }
     void checkRegionsWithStyling();
 
     void invalidateRegions() { m_regionsInvalidated = true; setNeedsLayout(true); }
-    bool hasValidRegionInfo() const { return !m_regionsInvalidated && hasValidRegions(); }
+    bool hasValidRegionInfo() const { return !m_regionsInvalidated && !m_regionList.isEmpty(); }
 
     static PassRefPtr<RenderStyle> createFlowThreadStyle(RenderStyle* parentStyle);
 
@@ -179,7 +178,6 @@ protected:
     typedef HashMap<const RenderBox*, RenderRegionRange> RenderRegionRangeMap;
     RenderRegionRangeMap m_regionRangeMap;
 
-    bool m_hasValidRegions : 1;
     bool m_regionsInvalidated : 1;
     bool m_regionsHaveUniformLogicalWidth : 1;
     bool m_regionsHaveUniformLogicalHeight : 1;

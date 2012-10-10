@@ -9,8 +9,8 @@ layer at (0,0) size 800x16
 Flow Threads
   Thread with flow-name 'flowB'
   Regions for flow 'flowB'
-    RenderRegion {DIV} invalid
     RenderRegion {DIV}
+    RenderRegion {DIV} invalid
   Thread with flow-name 'flowC'
   Regions for flow 'flowC'
     RenderRegion {DIV}

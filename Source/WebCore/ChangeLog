@@ -1,3 +1,52 @@
+2012-10-10  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Create a separate list for the invalid regions
+        https://bugs.webkit.org/show_bug.cgi?id=98752
+
+        Reviewed by Andreas Kling.
+
+        This patch moves the invalid regions in a low traffic data structure, outside the main region list. This should add a small performance boost (there's no test for it) and simplifies the code in the following ways:
+        - iterations through the region list don't need to worry about invalid regions
+        - accessing the first/last region is straightforward
+        - list manipulations are easier to implement (e.g. binary search for a region)
+
+        Tests: Adapted fast/regions/flows-dependency-same-flow.html to use the new dump format for the region chain.
+
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::getRegionsByContent): Now returns only the valid regions.
+        (WebCore::WebKitNamedFlow::getRegions): Now returns only the valid regions.
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::RenderFlowThread):
+        (WebCore::RenderFlowThread::layout):
+        (WebCore::RenderFlowThread::updateLogicalWidth):
+        (WebCore::RenderFlowThread::computeLogicalHeight):
+        (WebCore::RenderFlowThread::repaintRectangleInRegions):
+        (WebCore::RenderFlowThread::regionAtBlockOffset):
+        (WebCore::RenderFlowThread::removeRenderBoxRegionInfo):
+        (WebCore::RenderFlowThread::logicalWidthChangedInRegions):
+        (WebCore::RenderFlowThread::firstRegion):
+        (WebCore::RenderFlowThread::lastRegion):
+        (WebCore::RenderFlowThread::computeOverflowStateForRegions):
+        (WebCore::RenderFlowThread::regionInRange):
+        (WebCore::RenderFlowThread::checkRegionsWithStyling):
+        (WebCore::RenderFlowThread::objectInFlowRegion):
+        (WebCore::RenderFlowThread::autoLogicalHeightRegionsCount):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore):
+        (WebCore::addRegionToList):
+        (WebCore::RenderNamedFlowThread::addRegionToThread):
+        (WebCore::RenderNamedFlowThread::removeRegionFromThread):
+        (WebCore::RenderNamedFlowThread::checkInvalidRegions):
+        * rendering/RenderNamedFlowThread.h:
+        (WebCore::RenderNamedFlowThread::invalidRenderRegionList):
+        (RenderNamedFlowThread):
+        (WebCore::RenderNamedFlowThread::canBeDestroyed):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeRenderRegionList):
+        (WebCore):
+        (WebCore::writeRenderNamedFlowThreads): The valid regions are listed first followed by the invalid regions.
+
 2012-10-10  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [Regression] Stale revisions are not cleared when inspector is opened for the already loaded page.

@@ -201,24 +201,31 @@ static bool compareRenderRegions(const RenderRegion* firstRegion, const RenderRe
     return true;
 }
 
+// This helper function adds a region to a list preserving the order property of the list.
+static void addRegionToList(RenderRegionList& regionList, RenderRegion* renderRegion)
+{
+    if (regionList.isEmpty())
+        regionList.add(renderRegion);
+    else {
+        // Find the first region "greater" than renderRegion.
+        RenderRegionList::iterator it = regionList.begin();
+        while (it != regionList.end() && !compareRenderRegions(renderRegion, *it))
+            ++it;
+        regionList.insertBefore(it, renderRegion);
+    }
+}
+
 void RenderNamedFlowThread::addRegionToThread(RenderRegion* renderRegion)
 {
     ASSERT(renderRegion);
-    if (m_regionList.isEmpty())
-        m_regionList.add(renderRegion);
-    else {
-        // Find the first region "greater" than renderRegion.
-        RenderRegionList::iterator it = m_regionList.begin();
-        while (it != m_regionList.end() && !compareRenderRegions(renderRegion, *it))
-            ++it;
-        m_regionList.insertBefore(it, renderRegion);
-    }
 
     resetMarkForDestruction();
 
     ASSERT(!renderRegion->isValid());
     if (renderRegion->parentNamedFlowThread()) {
         if (renderRegion->parentNamedFlowThread()->dependsOn(this)) {
+            // The order of invalid regions is irrelevant.
+            m_invalidRegionList.add(renderRegion);
             // Register ourself to get a notification when the state changes.
             renderRegion->parentNamedFlowThread()->m_observerThreadsSet.add(this);
             return;
@@ -228,6 +235,7 @@ void RenderNamedFlowThread::addRegionToThread(RenderRegion* renderRegion)
     }
 
     renderRegion->setIsValid(true);
+    addRegionToList(m_regionList, renderRegion);
 
     invalidateRegions();
 }
@@ -236,10 +244,11 @@ void RenderNamedFlowThread::removeRegionFromThread(RenderRegion* renderRegion)
 {
     ASSERT(renderRegion);
     m_regionRangeMap.clear();
-    m_regionList.remove(renderRegion);
 
     if (renderRegion->parentNamedFlowThread()) {
         if (!renderRegion->isValid()) {
+            ASSERT(m_invalidRegionList.contains(renderRegion));
+            m_invalidRegionList.remove(renderRegion);
             renderRegion->parentNamedFlowThread()->m_observerThreadsSet.remove(this);
             // No need to invalidate the regions rectangles. The removed region
             // was not taken into account. Just return here.
@@ -247,6 +256,9 @@ void RenderNamedFlowThread::removeRegionFromThread(RenderRegion* renderRegion)
         }
         removeDependencyOnFlowThread(renderRegion->parentNamedFlowThread());
     }
+
+    ASSERT(m_regionList.contains(renderRegion));
+    m_regionList.remove(renderRegion);
 
     if (canBeDestroyed())
         setMarkForDestruction();
@@ -260,18 +272,28 @@ void RenderNamedFlowThread::removeRegionFromThread(RenderRegion* renderRegion)
 
 void RenderNamedFlowThread::checkInvalidRegions()
 {
-    for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+    Vector<RenderRegion*> newValidRegions;
+    for (RenderRegionList::iterator iter = m_invalidRegionList.begin(); iter != m_invalidRegionList.end(); ++iter) {
         RenderRegion* region = *iter;
         // The only reason a region would be invalid is because it has a parent flow thread.
-        ASSERT(region->isValid() || region->parentNamedFlowThread());
-        if (region->isValid() || region->parentNamedFlowThread()->dependsOn(this))
+        ASSERT(!region->isValid() && region->parentNamedFlowThread());
+        if (region->parentNamedFlowThread()->dependsOn(this))
             continue;
 
-        region->parentNamedFlowThread()->m_observerThreadsSet.remove(this);
-        addDependencyOnFlowThread(region->parentNamedFlowThread());
-        region->setIsValid(true);
-        invalidateRegions();
+        newValidRegions.append(region);
     }
+
+    for (Vector<RenderRegion*>::iterator iter = newValidRegions.begin(); iter != newValidRegions.end(); ++iter) {
+        RenderRegion* region = *iter;
+        m_invalidRegionList.remove(region);
+        region->parentNamedFlowThread()->m_observerThreadsSet.remove(this);
+        region->setIsValid(true);
+        addDependencyOnFlowThread(region->parentNamedFlowThread());
+        addRegionToList(m_regionList, region);
+    }
+
+    if (!newValidRegions.isEmpty())
+        invalidateRegions();
 
     if (m_observerThreadsSet.isEmpty())
         return;

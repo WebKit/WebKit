@@ -655,6 +655,31 @@ static void write(TextStream& ts, RenderLayer& l,
         write(ts, *l.renderer(), indent + 1, behavior);
 }
 
+static void writeRenderRegionList(const RenderRegionList& flowThreadRegionList, TextStream& ts, int indent)
+{
+    for (RenderRegionList::const_iterator itRR = flowThreadRegionList.begin(); itRR != flowThreadRegionList.end(); ++itRR) {
+        RenderRegion* renderRegion = *itRR;
+        writeIndent(ts, indent + 2);
+        ts << "RenderRegion";
+        if (renderRegion->generatingNode()) {
+            String tagName = getTagName(renderRegion->generatingNode());
+            if (!tagName.isEmpty())
+                ts << " {" << tagName << "}";
+            if (renderRegion->generatingNode()->isElementNode() && renderRegion->generatingNode()->hasID()) {
+                Element* element = static_cast<Element*>(renderRegion->generatingNode());
+                ts << " #" << element->idForStyleResolution();
+            }
+            if (renderRegion->hasCustomRegionStyle())
+                ts << " region style: 1";
+            if (renderRegion->hasAutoLogicalHeight())
+                ts << " hasAutoLogicalHeight";
+        }
+        if (!renderRegion->isValid())
+            ts << " invalid";
+        ts << "\n";
+    }
+}
+
 static void writeRenderNamedFlowThreads(TextStream& ts, RenderView* renderView, const RenderLayer* rootLayer,
                         const LayoutRect& paintRect, int indent, RenderAsTextBehavior behavior)
 {
@@ -675,32 +700,14 @@ static void writeRenderNamedFlowThreads(TextStream& ts, RenderView* renderView, 
         RenderLayer* layer = renderFlowThread->layer();
         writeLayers(ts, rootLayer, layer, paintRect, indent + 2, behavior);
 
-        // Display the render regions attached to this flow thread
-        const RenderRegionList& flowThreadRegionList = renderFlowThread->renderRegionList();
-        if (!flowThreadRegionList.isEmpty()) {
+        // Display the valid and invalid render regions attached to this flow thread.
+        const RenderRegionList& validRegionsList = renderFlowThread->renderRegionList();
+        const RenderRegionList& invalidRegionsList = renderFlowThread->invalidRenderRegionList();
+        if (!validRegionsList.isEmpty() || !invalidRegionsList.isEmpty()) {
             writeIndent(ts, indent + 1);
             ts << "Regions for flow '"<< renderFlowThread->flowThreadName() << "'\n";
-            for (RenderRegionList::const_iterator itRR = flowThreadRegionList.begin(); itRR != flowThreadRegionList.end(); ++itRR) {
-                RenderRegion* renderRegion = *itRR;
-                writeIndent(ts, indent + 2);
-                ts << "RenderRegion";
-                if (renderRegion->generatingNode()) {
-                    String tagName = getTagName(renderRegion->generatingNode());
-                    if (!tagName.isEmpty())
-                        ts << " {" << tagName << "}";
-                    if (renderRegion->generatingNode()->isElementNode() && renderRegion->generatingNode()->hasID()) {
-                        Element* element = static_cast<Element*>(renderRegion->generatingNode());
-                        ts << " #" << element->idForStyleResolution();
-                    }
-                    if (renderRegion->hasCustomRegionStyle())
-                        ts << " region style: 1";
-                    if (renderRegion->hasAutoLogicalHeight())
-                        ts << " hasAutoLogicalHeight";
-                }
-                if (!renderRegion->isValid())
-                    ts << " invalid";
-                ts << "\n";
-            }
+            writeRenderRegionList(validRegionsList, ts, indent);
+            writeRenderRegionList(invalidRegionsList, ts, indent);
         }
     }
 }
