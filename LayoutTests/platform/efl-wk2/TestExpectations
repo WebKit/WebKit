@@ -40,6 +40,9 @@
 webkit.org/b/92726 fast/dom/register-protocol-handler.html [ Crash ]
 webkit.org/b/92726 fast/dom/unregister-protocol-handler.html [ Crash ]
 
+# Crashes on plugin test.
+webkit.org/b/98747 plugins/document-open.html [ Crash ]
+
 # WebKitTestRunner needs an implementation for download attribute feature
 # The implementation for DumpRenderTree is on https://bugs.webkit.org/show_bug.cgi?id=96462
 # anchor-download-unset.html and anchor-nodownload.html are currently passed, but need to be checked along with below test cases
@@ -218,3 +221,38 @@ webkit.org/b/98573 fast/forms/multiple-form-submission-protection-mouse.html [ F
 # Requires TestRunner displayInvalidatedRegion() support.
 webkit.org/b/98523 fast/images/repaint-subrect-grid.html [ Failure ]
 
+# NPP_SetWindow is not called with proper size for the first time.
+webkit.org/b/98746 plugins/netscape-plugin-setwindow-size-2.html [ Failure ]
+
+# Mouse event problem with plugin test.
+webkit.org/b/98745 plugins/clicking-missing-plugin-fires-delegate.html [ Failure ]
+webkit.org/b/98745 plugins/keyboard-events.html [ Failure ]
+webkit.org/b/98745 plugins/mouse-events-fixedpos.html [ Failure ]
+webkit.org/b/98745 plugins/mouse-events.html [ Failure ]
+
+# NPN_ReloadPlugins is not implemented.
+webkit.org/b/98744 plugins/reloadplugins-and-pages.html [ Failure ]
+
+# Plugin test timeout.
+webkit.org/b/98743 plugins/evaluate-js-after-removing-plugin-element.html [ Failure ]
+
+# Plugin failure related to NPP_URLNotify.
+webkit.org/b/98742 plugins/get-targeted-javascript-url.html [ Failure ]
+
+# Reloading a Netscape plugin that accesses its own DOM element is failing.
+webkit.org/b/82020 plugins/netscape-dom-access-and-reload.html [ Failure ]
+
+# Plugin test failures having wrong object reference count problem.
+webkit.org/b/98741 plugins/npruntime/browser-object-identity.html [ Failure ]
+webkit.org/b/98741 plugins/refcount-leaks.html [ Failure ]
+
+# NPP_SetWindow is not called during plugin destruction on X11.
+webkit.org/b/63261 plugins/npp-set-window-called-during-destruction.html [ Failure ]
+
+# Delete plugin failures.
+webkit.org/b/98740 plugins/npruntime/delete-plugin-within-hasProperty-return-false.html [ Failure ]
+webkit.org/b/98740 plugins/npruntime/delete-plugin-within-hasProperty-return-true.html [ Failure ]
+webkit.org/b/98740 plugins/npruntime/delete-plugin-within-setProperty.html [ Failure ]
+
+# Comparison of two javascript objects in C++ is failing.
+webkit.org/b/98739 plugins/npruntime/embed-property-equality.html [ Failure ]

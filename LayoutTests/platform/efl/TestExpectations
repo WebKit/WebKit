@@ -1380,7 +1380,6 @@ webkit.org/b/96881 http/tests/security/frameNavigation/xss-DENIED-plugin-navigat
 webkit.org/b/96881 http/tests/security/storage-blocking-strengthened-plugin.html [ Failure ]
 webkit.org/b/96881 http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Failure ]
 webkit.org/b/96881 java [ Skip ]
-webkit.org/b/96881 plugins [ Skip ]
 webkit.org/b/96881 userscripts/user-script-plugin-document.html [ Failure ]
 
 # Ref tests added in r130592 that are failing on both EFL and GTK ports

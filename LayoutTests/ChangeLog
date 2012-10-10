@@ -1,3 +1,19 @@
+2012-10-10  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [EFL] Rebaseline after r129972 which enabled plugin feature
+        https://bugs.webkit.org/show_bug.cgi?id=98750
+
+        Unreviewed. Plugin feature is enabled on EFL port after r129972.
+
+        * platform/efl-wk1/TestExpectations: EFL WK1 does not support plugins yet.
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/efl/plugins/iframe-plugin-bgcolor-expected.txt: Added.
+        * platform/efl/plugins/mouse-click-plugin-clears-selection-expected.txt: Added.
+        * platform/efl/plugins/netscape-dom-access-expected.txt: Added.
+        * platform/efl/plugins/plugin-javascript-access-expected.txt: Added.
+        * platform/efl/plugins/resize-from-plugin-expected.txt: Added.
+
 2012-10-09  Kent Tamura  <tkent@chromium.org>
 
         Add behavior tests for input[type=date] with multiple fields
