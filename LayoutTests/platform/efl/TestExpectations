@@ -93,21 +93,6 @@ sputnik/Unicode/Unicode_510/S7.6_A3.2.html
 sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html
 sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html
 
-# A testcase for this failure is already in cairo tree, but has not yet been fixed.
-# Cairo commit http://cgit.freedesktop.org/cairo/commit/?id=4d4056872db94573183473610ad1d81d5439fdc6
-# https://bugs.webkit.org/show_bug.cgi?id=54471
-canvas/philip/tests/2d.path.arc.selfintersect.1.html
-canvas/philip/tests/2d.path.arc.shape.3.html
-
-# A testcase for this failure is already in cairo tree, but has not yet been fixed.
-# Cairo commit http://cgit.freedesktop.org/cairo/commit/?id=303f56a2d34a23d933a02fa625873211fb51eb3b
-canvas/philip/tests/2d.path.rect.selfintersect.html
-
-# Strangely set miter limit - calculations suggest it should be 1.414 (and the test passes
-# with miter limit set to that) but perhaps there are special steps to be taken because the
-# rectangle has zero height.
-canvas/philip/tests/2d.path.rect.zero.6.html
-
 # Rendering of multipart images is broken: this test times out
 # https://bugs.webkit.org/show_bug.cgi?id=54251
 http/tests/multipart/invalid-image-data-standalone.html

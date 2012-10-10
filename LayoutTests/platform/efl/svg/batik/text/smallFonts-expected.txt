@@ -6,7 +6,7 @@ layer at (0,0) size 450x500
       RenderSVGResourceFilter {filter} [id="blur"] [filterUnits=userSpaceOnUse] [primitiveUnits=userSpaceOnUse]
         [feGaussianBlur stdDeviation="0.04, 0.04"]
           [SourceGraphic]
-      RenderSVGPath {path} at (14,8) size 122x29 [transform={m=((0.00,0.00)(0.00,0.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#008000] [stroke width=5.00]}] [data="M 100 200 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100"]
+      RenderSVGPath {path} at (14,8) size 121x29 [transform={m=((0.00,0.00)(0.00,0.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#008000] [stroke width=5.00]}] [data="M 100 200 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100"]
     RenderSVGContainer {g} at (0,0) size 400x500
       RenderSVGText {text} at (1,0) size 6x1 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 6x1
@@ -139,8 +139,8 @@ layer at (0,0) size 450x500
             RenderSVGInlineText {#text} at (0,0) size 3x1
               chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 6 width 2.58: "Shadow"
         RenderSVGContainer {g} at (250,350) size 150x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(5.00,8.00)}]
-          RenderSVGContainer {use} at (264,408) size 122x29
-            RenderSVGPath {path} at (264,408) size 122x29 [transform={m=((0.00,0.00)(0.00,0.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#008000] [stroke width=5.00]}] [data="M 100 200 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100"]
+          RenderSVGContainer {use} at (264,408) size 121x29
+            RenderSVGPath {path} at (264,408) size 121x29 [transform={m=((0.00,0.00)(0.00,0.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#008000] [stroke width=5.00]}] [data="M 100 200 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100"]
           RenderSVGText {text} at (0,-1) size 3x1 contains 1 chunk(s)
             RenderSVGTextPath {textPath} at (0,0) size 3x1
               RenderSVGInlineText {#text} at (0,0) size 2x1

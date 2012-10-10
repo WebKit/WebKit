@@ -1,5 +1,67 @@
 2012-10-09  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
+        [Cairo] Bump Cairo to fix more canvas/philip tests
+        https://bugs.webkit.org/show_bug.cgi?id=97658
+
+        Reviewed by Martin Robinson.
+
+        Update platform-specific baselines after the cairo update. Also,
+        unksip canvas/philip tests which are passing now.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/box-shadow/box-shadow-clipped-slices-expected.png:
+        * platform/efl/fast/canvas/canvas-incremental-repaint-expected.png:
+        * platform/efl/fast/dynamic/window-scrollbars-test-expected.png:
+        * platform/efl/fast/images/pixel-crack-image-background-webkit-transform-scale-expected.png:
+        * platform/efl/svg/as-image/img-preserveAspectRatio-support-1-expected.png:
+        * platform/efl/svg/batik/text/smallFonts-expected.png:
+        * platform/efl/svg/batik/text/smallFonts-expected.txt:
+        * platform/efl/svg/batik/text/textGlyphOrientationHorizontal-expected.png:
+        * platform/efl/svg/batik/text/textGlyphOrientationHorizontal-expected.txt:
+        * platform/efl/svg/batik/text/textOnPath-expected.png:
+        * platform/efl/svg/batik/text/textOnPath-expected.txt:
+        * platform/efl/svg/batik/text/textOnPath2-expected.png:
+        * platform/efl/svg/batik/text/textOnPath2-expected.txt:
+        * platform/efl/svg/batik/text/textOnPath3-expected.png:
+        * platform/efl/svg/batik/text/textOnPath3-expected.txt:
+        * platform/efl/svg/batik/text/textOnPathSpaces-expected.png:
+        * platform/efl/svg/batik/text/textOnPathSpaces-expected.txt:
+        * platform/efl/svg/batik/text/verticalTextOnPath-expected.png:
+        * platform/efl/svg/batik/text/verticalTextOnPath-expected.txt:
+        * platform/efl/svg/zoom/page/zoom-coords-viewattr-01-b-expected.png:
+        * platform/efl/svg/zoom/text/zoom-coords-viewattr-01-b-expected.png:
+        * platform/efl/transforms/2d/transform-fixed-container-expected.png:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/canvas/canvas-incremental-repaint-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-83-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-83-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/paths-data-01-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/paths-data-01-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/paths-data-02-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/paths-data-02-t-expected.txt:
+        * platform/gtk/svg/batik/text/smallFonts-expected.png:
+        * platform/gtk/svg/batik/text/smallFonts-expected.txt:
+        * platform/gtk/svg/batik/text/textGlyphOrientationHorizontal-expected.png:
+        * platform/gtk/svg/batik/text/textGlyphOrientationHorizontal-expected.txt:
+        * platform/gtk/svg/batik/text/textOnPath-expected.png:
+        * platform/gtk/svg/batik/text/textOnPath-expected.txt:
+        * platform/gtk/svg/batik/text/textOnPath2-expected.png:
+        * platform/gtk/svg/batik/text/textOnPath2-expected.txt:
+        * platform/gtk/svg/batik/text/textOnPath3-expected.png:
+        * platform/gtk/svg/batik/text/textOnPath3-expected.txt:
+        * platform/gtk/svg/batik/text/textOnPathSpaces-expected.png:
+        * platform/gtk/svg/batik/text/textOnPathSpaces-expected.txt:
+        * platform/gtk/svg/batik/text/verticalTextOnPath-expected.png:
+        * platform/gtk/svg/batik/text/verticalTextOnPath-expected.txt:
+        * platform/gtk/svg/custom/js-update-path-changes-expected.png:
+        * platform/gtk/svg/custom/js-update-path-changes-expected.txt:
+        * platform/gtk/svg/custom/js-update-path-removal-expected.png:
+        * platform/gtk/svg/custom/js-update-path-removal-expected.txt:
+        * platform/gtk/svg/custom/path-textPath-simulation-expected.png:
+        * platform/gtk/svg/custom/path-textPath-simulation-expected.txt:
+
+2012-10-09  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
         fast/canvas/canvas-fillRect-gradient-shadow.html failing
         https://bugs.webkit.org/show_bug.cgi?id=98760
 
