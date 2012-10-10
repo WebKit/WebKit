@@ -33,7 +33,7 @@ crbug.com/24182 [ Debug ] fast/js/toString-and-valueOf-override.html [ Pass Slow
 crbug.com/24182 [ SnowLeopard Debug ] fast/loader/javascript-url-iframe-crash.html [ Pass Slow ]
 crbug.com/24182 [ Android ] fast/parser/nested-fragment-parser-crash.html [ Pass Slow ]
 crbug.com/24182 [ Debug ] html5lib/webkit-resumer.html [ Pass Slow ]
-crbug.com/24182 [ Win Debug ] http/tests/cache/stopped-revalidation.html [ Pass Slow ]
+crbug.com/24182 [ Win Debug ] http/tests/cache/stopped-revalidation.html [ Pass Slow Failure ]
 crbug.com/24182 [ Win Release ] http/tests/loading/onload-vs-immediate-refresh.pl [ Pass Slow ]
 crbug.com/24182 [ Win Debug ] http/tests/loading/redirect-methods.html [ Pass Slow ]
 crbug.com/24182 [ Win ] http/tests/local/file-url-sent-as-referer.html [ Pass Slow ]

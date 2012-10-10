@@ -1,3 +1,9 @@
+2012-10-10  Adam Barth  <abarth@webkit.org>
+
+        This test can also fail with TEXT.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-10  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed Chromium gardening.
