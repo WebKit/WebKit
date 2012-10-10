@@ -1,3 +1,19 @@
+2012-10-10  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Semantically incorrect CSS rules result in broken source code data
+        https://bugs.webkit.org/show_bug.cgi?id=98520
+
+        Reviewed by Vsevolod Vlasov.
+
+        Pop and throw away rule data from the stack when data have been collected for a semantically invalid CSS rule
+        (which is not going to be created).
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createImportRule):
+        (WebCore::CSSParser::createFontFaceRule):
+        (WebCore::CSSParser::createPageRule):
+        (WebCore::CSSParser::createRegionRule):
+
 2012-10-10  Zeno Albisser  <zeno@webkit.org>
 
         [Qt][Mac] GL_ARB_texture_rectangle must be activated when using ANGLE.

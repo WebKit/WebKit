@@ -85,6 +85,30 @@ body {
     color: page-block;
 }
 </style>
+<style>
+body {
+    color: before-import;
+}
+@import "foo";
+body {
+    color: after-import;
+}
+</style>
+<style>
+@font-face {
+    font-family: initial;
+}
+body {
+    color: after-invalid-font-face;
+}
+</style>
+<style>
+@-webkit-region %^% {
+}
+body {
+    color: after-invalid-region;
+}
+</style>
 </head>
 
 <body onload="runTest()">

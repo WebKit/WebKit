@@ -1,3 +1,13 @@
+2012-10-10  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Semantically incorrect CSS rules result in broken source code data
+        https://bugs.webkit.org/show_bug.cgi?id=98520
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/styles/parse-stylesheet-errors-expected.txt:
+        * inspector/styles/parse-stylesheet-errors.html:
+
 2012-10-09  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt][WK2] REGRESSION(r130629): It made touchadjustment/focusout-on-touch.html fai1
