@@ -298,6 +298,7 @@ committers_unable_to_review = [
     Committer("Joshua Bell", ["jsbell@chromium.org", "jsbell@google.com"], "jsbell"),
     Committer("Julie Parent", ["jparent@google.com", "jparent@chromium.org"], "jparent"),
     Committer("Jungshik Shin", "jshin@chromium.org"),
+    Committer("Justin Novosad", ["junov@google.com", "junov@chromium.org"], "junov"),
     Committer("Justin Schuh", "jschuh@chromium.org", "jschuh"),
     Committer("Kaustubh Atrawalkar", ["kaustubh@motorola.com"], "silverroots"),
     Committer("Keishi Hattori", "keishi@webkit.org", "keishi"),
