@@ -64,6 +64,12 @@ bool WebElement::hasTagName(const WebString& tagName) const
                              tagName.operator String());
 }
 
+bool WebElement::hasHTMLTagName(const WebString& tagName) const
+{
+    const Element* element = constUnwrap<Element>();
+    return HTMLNames::xhtmlNamespaceURI == element->namespaceURI() && equalIgnoringCase(element->tagName(), String(tagName));
+}
+
 bool WebElement::hasAttribute(const WebString& attrName) const
 {
     return constUnwrap<Element>()->hasAttribute(attrName);
