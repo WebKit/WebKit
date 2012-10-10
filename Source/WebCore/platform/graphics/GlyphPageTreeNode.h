@@ -32,6 +32,7 @@
 #include "GlyphPage.h"
 #include <string.h>
 #include <wtf/HashMap.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/unicode/Unicode.h>
@@ -69,23 +70,6 @@ class SimpleFontData;
 class GlyphPageTreeNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    GlyphPageTreeNode()
-        : m_parent(0)
-        , m_level(0)
-        , m_isSystemFallback(false)
-        , m_customFontCount(0)
-        , m_systemFallbackChild(0)
-#ifndef NDEBUG
-        , m_pageNumber(0)
-#endif
-    {
-    }
-
-    ~GlyphPageTreeNode();
-
-    static HashMap<int, GlyphPageTreeNode*>* roots;
-    static GlyphPageTreeNode* pageZeroRoot;
-
     static GlyphPageTreeNode* getRootChild(const FontData* fontData, unsigned pageNumber)
     {
         return getRoot(pageNumber)->getChild(fontData, pageNumber);
@@ -113,6 +97,17 @@ public:
     size_t pageCount() const;
 
 private:
+    GlyphPageTreeNode()
+        : m_parent(0)
+        , m_level(0)
+        , m_isSystemFallback(false)
+        , m_customFontCount(0)
+#ifndef NDEBUG
+        , m_pageNumber(0)
+#endif
+    {
+    }
+
     static GlyphPageTreeNode* getRoot(unsigned pageNumber);
     void initializePage(const FontData*, unsigned pageNumber);
 
@@ -120,17 +115,23 @@ private:
     void showSubtree();
 #endif
 
+    static HashMap<int, GlyphPageTreeNode*>* roots;
+    static GlyphPageTreeNode* pageZeroRoot;
+
+    typedef HashMap<const FontData*, OwnPtr<GlyphPageTreeNode> > GlyphPageTreeNodeMap;
+
+    GlyphPageTreeNodeMap m_children;
     GlyphPageTreeNode* m_parent;
     RefPtr<GlyphPage> m_page;
     unsigned m_level : 31;
     bool m_isSystemFallback : 1;
     unsigned m_customFontCount;
-    HashMap<const FontData*, GlyphPageTreeNode*> m_children;
-    GlyphPageTreeNode* m_systemFallbackChild;
+    OwnPtr<GlyphPageTreeNode> m_systemFallbackChild;
 
 #ifndef NDEBUG
     unsigned m_pageNumber;
 
+    friend void ::showGlyphPageTrees();
     friend void ::showGlyphPageTree(unsigned pageNumber);
 #endif
 };

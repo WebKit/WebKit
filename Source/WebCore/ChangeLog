@@ -1,3 +1,26 @@
+2012-10-09  Andreas Kling  <kling@webkit.org>
+
+        GlyphPageTreeNode should use HashMap<OwnPtr>.
+        <http://webkit.org/b/98845>
+
+        Reviewed by Dan Bernstein.
+
+        - Replace manual memory management by OwnPtrs.
+        - Added a GlyphPageTreeNodeMap typedef to make call sites look a bit nicer.
+        = Changed some hashmap get()/remove() pairs to use the more efficient take() instead.
+        - Made the constructor private, it has no external clients.
+
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        (WebCore::GlyphPageTreeNode::getRoot):
+        (WebCore::GlyphPageTreeNode::pageCount):
+        (WebCore::GlyphPageTreeNode::getChild):
+        (WebCore::GlyphPageTreeNode::pruneCustomFontData):
+        (WebCore::GlyphPageTreeNode::pruneFontData):
+        (WebCore::GlyphPageTreeNode::showSubtree):
+        * platform/graphics/GlyphPageTreeNode.h:
+        (GlyphPageTreeNode):
+        (WebCore::GlyphPageTreeNode::GlyphPageTreeNode):
+
 2012-10-09  Kent Tamura  <tkent@chromium.org>
 
         Sub-fields in input[type=time] should not be focusable if the input is disabled or read-only
