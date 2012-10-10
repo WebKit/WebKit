@@ -190,7 +190,7 @@ shouldBe('d[1]', '0');
 shouldBe('d[2]', '0');
 shouldBeSmaller('d[3]', '15');
 
-d = ctx.getImageData(351, 751, 1, 1).data;
+d = ctx.getImageData(350, 750, 1, 1).data;
 shouldBe('d[0]', '255');
 shouldBe('d[1]', '0');
 shouldBe('d[2]', '0');

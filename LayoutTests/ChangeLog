@@ -1,3 +1,16 @@
+2012-10-09  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        fast/canvas/canvas-fillRect-gradient-shadow.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=98760
+
+        Reviewed by Martin Robinson.
+
+        Adjust the test case to verify the pixel in the middle of the shadow,
+        instead of the outer edge, to make sure that the test will not fail
+        in case if there is any effect around the borders.
+
+        * fast/canvas/script-tests/canvas-fillRect-gradient-shadow.js:
+
 2012-10-09  Kent Tamura  <tkent@chromium.org>
 
         Should reject invalid dates constructed with multiple fields UI
