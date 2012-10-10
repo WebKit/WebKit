@@ -1,3 +1,9 @@
+2012-10-10  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, another speculative fix for Qt Win.
+
+        * DerivedSources.pri: Make the path slash marks be forward slashes to the .in file.
+
 2012-10-10  David Barton  <dbarton@mathscribe.com>
 
         Turn on ENABLE_MATHML for Chromium
