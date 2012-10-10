@@ -1,3 +1,112 @@
+2012-10-04  Andy Estes  <aestes@apple.com>
+
+        [WebKit2] Create an API for adding and removing user stylesheets from a page group
+        https://bugs.webkit.org/show_bug.cgi?id=98432
+
+        Reviewed by Sam Weinig.
+
+        This patch adds the following API to WKBrowsingContextGroup:
+
+        - (void)addUserStyleSheet:(NSString *)source baseURL:(NSURL *)baseURL whitelist:(NSArray *)whitelist blacklist:(NSArray *)blacklist mainFrameOnly:(BOOL)mainFrameOnly;
+        - (void)removeAllUserStyleSheets;
+
+        Sheets added via this API are sent to all processes that contain a page
+        in the given page group. Sheets are also cached in the UI process in a
+        new object called UserContentContainer, which is a property of each
+        group's WebPageGroupData and is sent to new web processes during page
+        initialization.
+
+        This is less than ideal, since new pages added to a pre-existing
+        process / page group combination will send redundant user stylesheet
+        strings over the wire. To avoid this we'd have to keep track track of
+        the groups that currently exist in each process and only send user
+        content during page creation if it is the first time a process has seen
+        the page's group. I decided to not add this complexity for the time
+        being, but we might need to consider it if we find that the current
+        approach impacts performance for clients that heavily utilize user
+        content.
+
+        * Shared/API/c/WKArray.cpp:
+        (WKArrayCreateAdoptingValues): Add a WKArray creation function that
+        adopts the incoming WKTypeRefs rather than refing them.
+        * Shared/API/c/WKArray.h:
+        * Shared/API/c/WKBase.h: Move WKUserContentInjectedFrames out of
+        WKBundlePrivate.h so it can be used in WKPageGroup, too.
+        * Shared/API/c/cf/WKURLCF.cpp:
+        (WKURLCreateWithCFURL): Return 0 for null CFURLRefs instead of crashing
+        inside CFURLGetString().
+        * Shared/ImmutableArray.cpp:
+        (WebKit::ImmutableArray::ImmutableArray): Add a tag to differentiate
+        between the adopting and refing ctors.
+        * Shared/ImmutableArray.h:
+        (WebKit::ImmutableArray::create): Call the refing ctor.
+        (WebKit::ImmutableArray::adopt): Call the adopting ctor.
+        * Shared/UserContentContainer.cpp: Added.
+        (UserContentItemMessageEncoder): Create a UserMessageEncoder for
+        serializing UserContentContainer::Item's APIObjects.
+        (WebKit::UserContentItemMessageEncoder::UserContentItemMessageEncoder):
+        (WebKit::UserContentItemMessageEncoder::encode):
+        (UserContentItemMessageDecoder): Create a UserMessageEncoder for
+        deserializing UserContentContainer::Item's APIObjects.
+        (WebKit::UserContentItemMessageDecoder::UserContentItemMessageDecoder):
+        (WebKit::UserContentItemMessageDecoder::decode):
+        (WebKit::UserContentContainer::Item::Item):
+        (WebKit::encodeStringArray): Add a helper function for encoding
+        ImmutableArrays of WebStrings.
+        (WebKit::UserContentContainer::Item::encode): Encode the item's
+        properties using UserContentItemMessageEncoder.
+        (WebKit::decodeStringArray): Add a helper function for decoding
+        ImmutableArrays of WebStrings.
+        (WebKit::UserContentContainer::Item::decode): Decode the item's
+        properties using UserContentItemMessageDecoder.
+        (WebKit::toStringVector): Add a helper function for converting an
+        ImmutableArray of WebStrings to a Vector of Strings.
+        (WebKit::UserContentContainer::Item::whitelist): Use toStringVector().
+        (WebKit::UserContentContainer::Item::blacklist): Ditto.
+        (WebKit::UserContentContainer::encode): Encode the Vector of UserContentContainer::Items.
+        (WebKit::UserContentContainer::decode): Decode the Vector of UserContentContainer::Items.
+        * Shared/UserContentContainer.h: Added.
+        * Shared/WebPageGroupData.cpp:
+        (WebKit::WebPageGroupData::encode): Include userStyleSheets when encoding.
+        (WebKit::WebPageGroupData::decode): Include userStyleSheets when decoding.
+        * Shared/WebPageGroupData.h:
+        (WebPageGroupData): Add a UserContentContainer called userStyleSheets
+        to WebPageGroupData.
+        * UIProcess/API/C/WKPageGroup.cpp: Add the C SPI version of the Objective-C API.
+        (WKPageGroupAddUserStyleSheet):
+        (WKPageGroupRemoveAllUserStyleSheets):
+        * UIProcess/API/C/WKPageGroup.h:
+        * UIProcess/API/mac/WKBrowsingContextGroup.h: Add the Objective-C API.
+        * UIProcess/API/mac/WKBrowsingContextGroup.mm:
+        (createWKArray): Add a helper function that converts an NSArray of NSStrings to a WKArray of WKStrings.
+        (-[WKBrowsingContextGroup addUserStyleSheet:baseURL:whitelist:blacklist:mainFrameOnly:]):
+        Implement the Objective-C API in terms of the C SPI.
+        (-[WKBrowsingContextGroup removeAllUserStyleSheets]): Ditto.
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::addUserStyleSheet): Add the new sheet to the
+        group's WebPageGroupData, which ensures that the group's sheets are
+        sent to new web processes.
+        (WebKit::WebPageGroup::removeAllUserStyleSheets): Ditto for removal.
+        * UIProcess/WebPageGroup.h:
+        (WebKit::WebPageGroup::sendToAllProcessesInGroup): Add a helper message
+        that sends a message to all processes that have a page in the current
+        group. This is used to add new user sheets to already-initialized page
+        groups in the UI processes.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h: Moved
+        WKUserContentInjectedFrames from here to WKBase.h.
+        * WebProcess/WebPage/WebPageGroupProxy.cpp:
+        (WebKit::WebPageGroupProxy::WebPageGroupProxy): Add each sheet in the
+        WebPageGroupData to WebCore's page group.
+        (WebKit::WebPageGroupProxy::addUserStyleSheet): Add the sheet received
+        from the UI process to WebCore's page group.
+        (WebKit::WebPageGroupProxy::removeAllUserStyleSheets): Remove all
+        sheets from WebCore's page group.
+        * WebProcess/WebPage/WebPageGroupProxy.h:
+        * WebProcess/WebPage/WebPageGroupProxy.messages.in: Define
+        AddUserStyleSheet and RemoveAllUserStyleSheets, two messages sent from
+        the UI process to a web process's WebPageGroupProxy.
+
 2012-10-10  Sam Weinig  <sam@webkit.org>
 
         Make all of the WebContext sub objects MessageReceivers

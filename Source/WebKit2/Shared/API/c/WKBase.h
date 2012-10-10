@@ -79,6 +79,12 @@ typedef const struct OpaqueWKURLRequest* WKURLRequestRef;
 typedef const struct OpaqueWKURLResponse* WKURLResponseRef;
 typedef const struct OpaqueWKUserContentURLPattern* WKUserContentURLPatternRef;
 
+enum WKUserContentInjectedFrames {
+    kWKInjectInAllFrames,
+    kWKInjectInTopFrameOnly
+};
+typedef enum WKUserContentInjectedFrames WKUserContentInjectedFrames;
+
 /* WebKit2 main API types */
 
 typedef const struct OpaqueWKApplicationCacheManager* WKApplicationCacheManagerRef;

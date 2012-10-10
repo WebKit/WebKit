@@ -28,6 +28,8 @@
 
 #include "WebProcess.h"
 #include "InjectedBundle.h"
+#include <WebCore/DOMWrapperWorld.h>
+#include <WebCore/PageGroup.h>
 
 namespace WebKit {
 
@@ -49,11 +51,23 @@ void WebPageGroupProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreI
 {
     didReceiveWebPageGroupProxyMessage(connection, messageID, arguments);
 }
-
-void WebPageGroupProxy::didReceiveWebPageGroupProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*)
+    
+WebPageGroupProxy::WebPageGroupProxy(const WebPageGroupData& data)
+    : m_data(data)
+    , m_pageGroup(WebCore::PageGroup::pageGroup(m_data.identifer))
 {
-    // FIXME: Remove this once WebPageGroupProxy.messages.in contains messages,
-    // in which case this method will be auto-generated.
+    for (size_t i = 0; i < data.userStyleSheets.size(); ++i)
+        addUserStyleSheet(data.userStyleSheets.at(i));
+}
+
+void WebPageGroupProxy::addUserStyleSheet(const UserContentContainer::Item& styleSheet)
+{
+    m_pageGroup->addUserStyleSheetToWorld(WebCore::mainThreadNormalWorld(), styleSheet.source(), styleSheet.url(), styleSheet.whitelist(), styleSheet.blacklist(), static_cast<WebCore::UserContentInjectedFrames>(styleSheet.injectedFrames()));
+}
+
+void WebPageGroupProxy::removeAllUserStyleSheets()
+{
+    m_pageGroup->removeUserStyleSheetsFromWorld(WebCore::mainThreadNormalWorld());
 }
 
 } // namespace WebKit

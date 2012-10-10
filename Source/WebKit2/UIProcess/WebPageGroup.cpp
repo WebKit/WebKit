@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebPageGroup.h"
 
+#include "WebPageGroupProxyMessages.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include <wtf/HashMap.h>
@@ -126,6 +127,18 @@ void WebPageGroup::preferencesDidChange()
         WebPageProxy* page = *it;
         page->preferencesDidChange();
     }
+}
+    
+void WebPageGroup::addUserStyleSheet(const UserContentContainer::Item& styleSheet)
+{
+    m_data.userStyleSheets.addItem(styleSheet);
+    sendToAllProcessesInGroup(Messages::WebPageGroupProxy::AddUserStyleSheet(styleSheet), m_data.pageGroupID);
+}
+
+void WebPageGroup::removeAllUserStyleSheets()
+{
+    m_data.userStyleSheets.removeAllItems();
+    sendToAllProcessesInGroup(Messages::WebPageGroupProxy::RemoveAllUserStyleSheets(), m_data.pageGroupID);
 }
 
 } // namespace WebKit

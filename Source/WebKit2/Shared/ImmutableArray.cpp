@@ -32,6 +32,13 @@ ImmutableArray::ImmutableArray()
 {
 }
 
+ImmutableArray::ImmutableArray(AdoptTag, APIObject** entries, size_t size)
+    : m_entries(size)
+{
+    for (size_t i = 0; i < size; ++i)
+        m_entries[i] = adoptRef(entries[i]);
+}
+
 ImmutableArray::ImmutableArray(APIObject** entries, size_t size)
     : m_entries(size)
 {

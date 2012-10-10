@@ -152,6 +152,7 @@ SET(WebKit2_SOURCES
     Shared/StatisticsData.cpp
     Shared/SurfaceUpdateInfo.cpp
     Shared/UpdateInfo.cpp
+    Shared/UserContentContainer.cpp
     Shared/VisitedLinkTable.cpp
     Shared/WebBackForwardListItem.cpp
     Shared/WebBatteryStatus.cpp

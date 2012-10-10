@@ -26,6 +26,8 @@
 #ifndef WebPageGroupData_h
 #define WebPageGroupData_h
 
+#include "UserContentContainer.h"
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace CoreIPC {
@@ -43,6 +45,7 @@ struct WebPageGroupData {
     uint64_t pageGroupID;
     bool visibleToInjectedBundle;
     bool visibleToHistoryClient;
+    UserContentContainer userStyleSheets;
 };
 
 } // namespace WebKit

@@ -36,6 +36,10 @@ class Connection;
 class MessageID;
 }
 
+namespace WebCore {
+class PageGroup;
+}
+
 namespace WebKit {
 
 class WebPageGroupProxy : public APIObject {
@@ -53,16 +57,17 @@ public:
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
 private:
-    WebPageGroupProxy(const WebPageGroupData& data)
-        : m_data(data)
-    {
-    }
+    WebPageGroupProxy(const WebPageGroupData&);
 
     virtual Type type() const { return APIType; }
     
     void didReceiveWebPageGroupProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    
+    void addUserStyleSheet(const UserContentContainer::Item& styleSheet);
+    void removeAllUserStyleSheets();
 
     WebPageGroupData m_data;
+    WebCore::PageGroup* m_pageGroup;
 };
 
 } // namespace WebKit

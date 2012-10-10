@@ -441,6 +441,8 @@ webkit2_sources += \
 	Source/WebKit2/Shared/UserMessageCoders.h \
 	Source/WebKit2/Shared/UpdateInfo.cpp \
 	Source/WebKit2/Shared/UpdateInfo.h \
+	Source/WebKit2/Shared/UserContentContainer.cpp \
+	Source/WebKit2/Shared/UserContentContainer.h \
 	Source/WebKit2/Shared/VisitedLinkTable.cpp \
 	Source/WebKit2/Shared/VisitedLinkTable.h \
 	Source/WebKit2/Shared/WebBackForwardListItem.cpp \

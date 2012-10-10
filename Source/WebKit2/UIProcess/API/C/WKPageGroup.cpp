@@ -57,3 +57,16 @@ WKPreferencesRef WKPageGroupGetPreferences(WKPageGroupRef pageGroupRef)
 {
     return toAPI(toImpl(pageGroupRef)->preferences());
 }
+
+void WKPageGroupAddUserStyleSheet(WKPageGroupRef pageGroupRef, WKStringRef sourceRef, WKURLRef baseURL, WKArrayRef whitelist, WKArrayRef blacklist, WKUserContentInjectedFrames injectedFrames)
+{
+    if (!sourceRef)
+        return;
+
+    toImpl(pageGroupRef)->addUserStyleSheet(UserContentContainer::Item(toImpl(sourceRef), toImpl(baseURL), toImpl(whitelist), toImpl(blacklist), static_cast<UserContentContainer::Item::InjectedFrames>(injectedFrames), UserContentContainer::Item::TypeStylesheet));
+}
+
+void WKPageGroupRemoveAllUserStyleSheets(WKPageGroupRef pageGroupRef)
+{
+    toImpl(pageGroupRef)->removeAllUserStyleSheets();
+}

@@ -42,12 +42,6 @@ enum WKUserScriptInjectionTime {
 };
 typedef enum WKUserScriptInjectionTime WKUserScriptInjectionTime;
 
-enum WKUserContentInjectedFrames {
-    kWKInjectInAllFrames,
-    kWKInjectInTopFrameOnly
-};
-typedef enum WKUserContentInjectedFrames WKUserContentInjectedFrames;
-
 // TestRunner only SPI
 WK_EXPORT void WKBundleSetShouldTrackVisitedLinks(WKBundleRef bundle, bool shouldTrackVisitedLinks);
 WK_EXPORT void WKBundleSetAlwaysAcceptCookies(WKBundleRef bundle, bool);

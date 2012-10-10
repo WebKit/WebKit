@@ -31,6 +31,7 @@
 		26DF5A6315A2A27E003689C2 /* CancelLoadFromResourceLoadDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26DF5A6115A2A22B003689C2 /* CancelLoadFromResourceLoadDelegate.html */; };
 		26F1B44415CA434F00D1E4BF /* AtomicString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F1B44215CA434F00D1E4BF /* AtomicString.cpp */; };
 		26F1B44515CA434F00D1E4BF /* StringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F1B44315CA434F00D1E4BF /* StringImpl.cpp */; };
+		2943BE86161DFEB800999E3D /* UserContentTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2943BE84161DFEB800999E3D /* UserContentTest.mm */; };
 		333B9CE21277F23100FEFCE3 /* PreventEmptyUserAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 333B9CE11277F23100FEFCE3 /* PreventEmptyUserAgent.cpp */; };
 		33BE5AF5137B5A6C00705813 /* MouseMoveAfterCrash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33BE5AF4137B5A6C00705813 /* MouseMoveAfterCrash.cpp */; };
 		33BE5AF9137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33BE5AF8137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp */; };
@@ -266,6 +267,7 @@
 		26DF5A6115A2A22B003689C2 /* CancelLoadFromResourceLoadDelegate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CancelLoadFromResourceLoadDelegate.html; sourceTree = "<group>"; };
 		26F1B44215CA434F00D1E4BF /* AtomicString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AtomicString.cpp; path = WTF/AtomicString.cpp; sourceTree = "<group>"; };
 		26F1B44315CA434F00D1E4BF /* StringImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StringImpl.cpp; path = WTF/StringImpl.cpp; sourceTree = "<group>"; };
+		2943BE84161DFEB800999E3D /* UserContentTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = UserContentTest.mm; path = WebKit2ObjC/UserContentTest.mm; sourceTree = "<group>"; };
 		333B9CE11277F23100FEFCE3 /* PreventEmptyUserAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PreventEmptyUserAgent.cpp; sourceTree = "<group>"; };
 		33BE5AF4137B5A6C00705813 /* MouseMoveAfterCrash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseMoveAfterCrash.cpp; sourceTree = "<group>"; };
 		33BE5AF8137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseMoveAfterCrash_Bundle.cpp; sourceTree = "<group>"; };
@@ -529,6 +531,7 @@
 		BC3C4C6F14575B1D0025FB62 /* WebKit2 Objective-C */ = {
 			isa = PBXGroup;
 			children = (
+				2943BE84161DFEB800999E3D /* UserContentTest.mm */,
 				BC3C4C7D14587AA60025FB62 /* WKBrowsingContextGroupTest.mm */,
 				BC3C4C7014575B6A0025FB62 /* WKBrowsingContextLoadDelegateTest.mm */,
 			);
@@ -987,6 +990,7 @@
 				BC9099941256ACF100083756 /* WKStringJSString.cpp in Sources */,
 				265AF55015D1E48A00B0CB4A /* WTFString.cpp in Sources */,
 				9318778915EEC57700A9CCE3 /* NewFirstVisuallyNonEmptyLayoutForImages.cpp in Sources */,
+				2943BE86161DFEB800999E3D /* UserContentTest.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
