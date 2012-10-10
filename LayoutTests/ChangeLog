@@ -1,3 +1,62 @@
+2012-10-10  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Update some pixel expectations for the new Cairo, and add more baselines for other tests.
+
+        * platform/efl/fast/block/positioning/vertical-rl/fixed-positioning-expected.png:
+        * platform/efl/fast/borders/border-radius-valid-border-clipping-expected.png: Added.
+        * platform/efl/fast/borders/border-shadow-large-radius-expected.png: Added.
+        * platform/efl/fast/borders/fieldsetBorderRadius-expected.png:
+        * platform/efl/fast/canvas/canvas-composite-fill-repaint-expected.png: Added.
+        * platform/efl/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.png: Added.
+        * platform/efl/fast/canvas/canvas-resize-after-paint-without-layout-expected.png: Added.
+        * platform/efl/fast/css/color-correction-on-text-expected.png: Removed.
+        * platform/efl/fast/css/color-correction-on-text-expected.txt: Removed.
+        * platform/efl/fast/css/square-button-appearance-expected.png: Added.
+        * platform/efl/fast/css/text-overflow-ellipsis-text-align-center-expected.png: Added.
+        * platform/efl/fast/css/text-overflow-ellipsis-text-align-justify-expected.png: Added.
+        * platform/efl/fast/css/text-overflow-ellipsis-text-align-left-expected.png: Added.
+        * platform/efl/fast/css/text-overflow-ellipsis-text-align-right-expected.png: Added.
+        * platform/efl/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.png: Added.
+        * platform/efl/fast/css/vertical-text-overflow-ellipsis-text-align-justify-expected.png: Added.
+        * platform/efl/fast/css/vertical-text-overflow-ellipsis-text-align-left-expected.png: Added.
+        * platform/efl/fast/css/vertical-text-overflow-ellipsis-text-align-right-expected.png: Added.
+        * platform/efl/fast/events/context-no-deselect-expected.png: Added.
+        * platform/efl/fast/forms/datalist/input-appearance-range-with-padding-with-datalist-expected.png: Added.
+        * platform/efl/fast/forms/datalist/input-appearance-range-with-transform-expected.png: Added.
+        * platform/efl/fast/forms/input-placeholder-paint-order-expected.png: Added.
+        * platform/efl/fast/forms/textarea: Added.
+        * platform/efl/fast/forms/textarea/textarea-placeholder-paint-order-expected.png: Added.
+        * platform/efl/fast/gradients/border-image-gradient-sides-and-corners-expected.png: Added.
+        * platform/efl/fast/html/details-marker-style-expected.png: Added.
+        * platform/efl/fast/images/image-css3-content-data-expected.png: Added.
+        * platform/efl/fast/images/imagemap-focus-ring-zoom-expected.png: Added.
+        * platform/efl/fast/images/paint-subrect-expected.png: Added.
+        * platform/efl/fast/images/paint-subrect-grid-expected.png: Added.
+        * platform/efl/fast/images/repaint-subrect-grid-expected.png: Added.
+        * platform/efl/fast/images/rgb-jpeg-with-adobe-marker-only-expected.png: Added.
+        * platform/efl/fast/images/rgb-png-with-cmyk-color-profile-expected.png: Added.
+        * platform/efl/fast/images/ycbcr-with-cmyk-color-profile-expected.png: Added.
+        * platform/efl/fast/js: Added.
+        * platform/efl/fast/js/exception-linenums-in-html-3-expected.png: Added.
+        * platform/efl/fast/js/missing-style-end-tag-js-expected.png: Added.
+        * platform/efl/fast/js/missing-title-end-tag-js-expected.png: Added.
+        * platform/efl/fast/layers/scroll-with-transform-composited-layer-expected.png: Added.
+        * platform/efl/fast/layers/scroll-with-transform-layer-expected.png: Added.
+        * platform/efl/fast/multicol/shrink-to-column-height-for-pagination-expected.png: Added.
+        * platform/efl/fast/multicol/shrink-to-column-height-for-pagination-expected.txt: Added.
+        * platform/efl/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.png: Added.
+        * platform/efl/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.txt: Added.
+        * platform/efl/fast/repaint/overflow-auto-in-overflow-auto-scrolled-expected.png: Added.
+        * platform/efl/fast/repaint/overflow-scroll-in-overflow-scroll-scrolled-expected.png: Added.
+        * platform/efl/fast/repaint/table-overflow-auto-in-overflow-auto-scrolled-expected.png: Added.
+        * platform/efl/fast/repaint/table-overflow-hidden-in-overflow-hidden-scrolled-expected.png: Added.
+        * platform/efl/fast/repaint/table-overflow-scroll-in-overflow-scroll-scrolled-expected.png: Added.
+        * platform/efl/fast/scrolling: Added.
+        * platform/efl/fast/scrolling/scrollbar-tickmarks-styled-expected.png: Added.
+        * platform/efl/fast/table/colspanMinWidth-vertical-expected.png: Added.
+        * platform/efl/fast/table/table-row-focus-ring-paint-expected.png: Added.
+        * platform/efl/fast/text/text-shadow-no-default-color-expected.png: Added.
+
 2012-10-10  Christophe Dumez  <christophe.dumez@intel.com>
 
         SQLResultSet.rowsAffected not cleared
