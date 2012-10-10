@@ -32,27 +32,44 @@
 
 """Standalone WebSocket server.
 
+Use this file to launch pywebsocket without Apache HTTP Server.
+
+
 BASIC USAGE
 
-Use this server to run mod_pywebsocket without Apache HTTP Server.
+Go to the src directory and run
 
-Usage:
-    python standalone.py [-p <ws_port>] [-w <websock_handlers>]
-                         [-s <scan_dir>]
-                         [-d <document_root>]
-                         [-m <websock_handlers_map_file>]
-                         ... for other options, see _main below ...
+  $ python mod_pywebsocket/standalone.py [-p <ws_port>]
+                                         [-w <websock_handlers>]
+                                         [-d <document_root>]
 
 <ws_port> is the port number to use for ws:// connection.
 
 <document_root> is the path to the root directory of HTML files.
 
 <websock_handlers> is the path to the root directory of WebSocket handlers.
-See __init__.py for details of <websock_handlers> and how to write WebSocket
-handlers. If this path is relative, <document_root> is used as the base.
+If not specified, <document_root> will be used. See __init__.py (or
+run $ pydoc mod_pywebsocket) for how to write WebSocket handlers.
 
-<scan_dir> is a path under the root directory. If specified, only the
-handlers under scan_dir are scanned. This is useful in saving scan time.
+For more detail and other options, run
+
+  $ python mod_pywebsocket/standalone.py --help
+
+or see _build_option_parser method below.
+
+For trouble shooting, adding "--log_level debug" might help you.
+
+
+TRY DEMO
+
+Go to the src directory and run
+
+  $ python standalone.py -d example
+
+to launch pywebsocket with the sample handler and html on port 80. Open
+http://localhost/console.html, click the connect button, type something into
+the text box next to the send button and click the send button. If everything
+is working, you'll see the message you typed echoed by the server.
 
 
 SUPPORTING TLS
@@ -63,10 +80,10 @@ To support TLS, run standalone.py with -t, -k, and -c options.
 SUPPORTING CLIENT AUTHENTICATION
 
 To support client authentication with TLS, run standalone.py with -t, -k, -c,
-and --ca-certificate options.
+and --tls-client-auth, and --tls-client-ca options.
 
 E.g., $./standalone.py -d ../example -p 10443 -t -c ../test/cert/cert.pem -k
-../test/cert/key.pem --ca-certificate=../test/cert/cacert.pem
+../test/cert/key.pem --tls-client-auth --tls-client-ca=../test/cert/cacert.pem
 
 
 CONFIGURATION FILE
@@ -110,6 +127,7 @@ import CGIHTTPServer
 import SimpleHTTPServer
 import SocketServer
 import ConfigParser
+import base64
 import httplib
 import logging
 import logging.handlers
@@ -224,6 +242,12 @@ class _StandaloneRequest(object):
         return self._request_handler.command
     method = property(get_method)
 
+    def get_protocol(self):
+        """Getter to mimic request.protocol."""
+
+        return self._request_handler.request_version
+    protocol = property(get_protocol)
+
     def is_https(self):
         """Mimic request.is_https()."""
 
@@ -264,6 +288,32 @@ class _StandaloneSSLConnection(object):
         return socket._fileobject(self._connection, mode, bufsize)
 
 
+def _alias_handlers(dispatcher, websock_handlers_map_file):
+    """Set aliases specified in websock_handler_map_file in dispatcher.
+
+    Args:
+        dispatcher: dispatch.Dispatcher instance
+        websock_handler_map_file: alias map file
+    """
+
+    fp = open(websock_handlers_map_file)
+    try:
+        for line in fp:
+            if line[0] == '#' or line.isspace():
+                continue
+            m = re.match('(\S+)\s+(\S+)', line)
+            if not m:
+                logging.warning('Wrong format in map file:' + line)
+                continue
+            try:
+                dispatcher.add_resource_path_alias(
+                    m.group(1), m.group(2))
+            except dispatch.DispatchException, e:
+                logging.error(str(e))
+    finally:
+        fp.close()
+
+
 class WebSocketServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
     """HTTPServer specialized for WebSocket."""
 
@@ -277,6 +327,20 @@ class WebSocketServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
         socket object to self.socket before server_bind and server_activate,
         if necessary.
         """
+
+        # Share a Dispatcher among request handlers to save time for
+        # instantiation.  Dispatcher can be shared because it is thread-safe.
+        options.dispatcher = dispatch.Dispatcher(
+            options.websock_handlers,
+            options.scan_dir,
+            options.allow_handlers_outside_root_dir)
+        if options.websock_handlers_map_file:
+            _alias_handlers(options.dispatcher,
+                            options.websock_handlers_map_file)
+        warnings = options.dispatcher.source_warnings()
+        if warnings:
+            for warning in warnings:
+                logging.warning('mod_pywebsocket: %s' % warning)
 
         self._logger = util.get_class_logger(self)
 
@@ -325,7 +389,7 @@ class WebSocketServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
                 continue
             if self.websocket_server_options.use_tls:
                 if _HAS_SSL:
-                    if self.websocket_server_options.ca_certificate:
+                    if self.websocket_server_options.tls_client_auth:
                         client_cert_ = ssl.CERT_REQUIRED
                     else:
                         client_cert_ = ssl.CERT_NONE
@@ -333,7 +397,7 @@ class WebSocketServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
                         keyfile=self.websocket_server_options.private_key,
                         certfile=self.websocket_server_options.certificate,
                         ssl_version=ssl.PROTOCOL_SSLv23,
-                        ca_certs=self.websocket_server_options.ca_certificate,
+                        ca_certs=self.websocket_server_options.tls_client_ca,
                         cert_reqs=client_cert_)
                 if _HAS_OPEN_SSL:
                     ctx = OpenSSL.SSL.Context(OpenSSL.SSL.SSLv23_METHOD)
@@ -362,6 +426,15 @@ class WebSocketServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
                 self._logger.info('Skip by failure: %r', e)
                 socket_.close()
                 failed_sockets.append(socketinfo)
+            if self.server_address[1] == 0:
+                # The operating system assigns the actual port number for port
+                # number 0. This case, the second and later sockets should use
+                # the same port number. Also self.server_port is rewritten
+                # because it is exported, and will be used by external code.
+                self.server_address = (
+                    self.server_name, socket_.getsockname()[1])
+                self.server_port = self.server_address[1]
+                self._logger.info('Port %r is assigned', self.server_port)
 
         for socketinfo in failed_sockets:
             self._sockets.remove(socketinfo)
@@ -385,6 +458,10 @@ class WebSocketServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
 
         for socketinfo in failed_sockets:
             self._sockets.remove(socketinfo)
+
+        if len(self._sockets) == 0:
+            self._logger.critical(
+                'No sockets activated. Use info log level to see the reason.')
 
     def server_close(self):
         """Override SocketServer.TCPServer.server_close to enable multiple
@@ -513,6 +590,17 @@ class WebSocketRequestHandler(CGIHTTPServer.CGIHTTPRequestHandler):
         # attributes).
         if not CGIHTTPServer.CGIHTTPRequestHandler.parse_request(self):
             return False
+
+        if self._options.use_basic_auth:
+            auth = self.headers.getheader('Authorization')
+            if auth != self._options.basic_auth_credential:
+                self.send_response(401)
+                self.send_header('WWW-Authenticate',
+                                 'Basic realm="Pywebsocket"')
+                self.end_headers()
+                self._logger.info('Request basic authentication')
+                return True
+
         host, port, resource = http_header_util.parse_uri(self.path)
         if resource is None:
             self._logger.info('Invalid URI: %r', self.path)
@@ -648,32 +736,6 @@ def _configure_logging(options):
         deflate_log_level_name)
 
 
-def _alias_handlers(dispatcher, websock_handlers_map_file):
-    """Set aliases specified in websock_handler_map_file in dispatcher.
-
-    Args:
-        dispatcher: dispatch.Dispatcher instance
-        websock_handler_map_file: alias map file
-    """
-
-    fp = open(websock_handlers_map_file)
-    try:
-        for line in fp:
-            if line[0] == '#' or line.isspace():
-                continue
-            m = re.match('(\S+)\s+(\S+)', line)
-            if not m:
-                logging.warning('Wrong format in map file:' + line)
-                continue
-            try:
-                dispatcher.add_resource_path_alias(
-                    m.group(1), m.group(2))
-            except dispatch.DispatchException, e:
-                logging.error(str(e))
-    finally:
-        fp.close()
-
-
 def _build_option_parser():
     parser = optparse.OptionParser()
 
@@ -700,7 +762,9 @@ def _build_option_parser():
     parser.add_option('-w', '--websock-handlers', '--websock_handlers',
                       dest='websock_handlers',
                       default='.',
-                      help='WebSocket handlers root directory.')
+                      help=('The root directory of WebSocket handler files. '
+                            'If the path is relative, --document-root is used '
+                            'as the base.'))
     parser.add_option('-m', '--websock-handlers-map-file',
                       '--websock_handlers_map_file',
                       dest='websock_handlers_map_file',
@@ -710,15 +774,20 @@ def _build_option_parser():
                             'existing_resource_path, separated by spaces.'))
     parser.add_option('-s', '--scan-dir', '--scan_dir', dest='scan_dir',
                       default=None,
-                      help=('WebSocket handlers scan directory. '
-                            'Must be a directory under websock_handlers.'))
+                      help=('Must be a directory under --websock-handlers. '
+                            'Only handlers under this directory are scanned '
+                            'and registered to the server. '
+                            'Useful for saving scan time when the handler '
+                            'root directory contains lots of files that are '
+                            'not handler file or are handler files but you '
+                            'don\'t want them to be registered. '))
     parser.add_option('--allow-handlers-outside-root-dir',
                       '--allow_handlers_outside_root_dir',
                       dest='allow_handlers_outside_root_dir',
                       action='store_true',
                       default=False,
                       help=('Scans WebSocket handlers even if their canonical '
-                            'path is not under websock_handlers.'))
+                            'path is not under --websock-handlers.'))
     parser.add_option('-d', '--document-root', '--document_root',
                       dest='document_root', default='.',
                       help='Document root directory.')
@@ -735,9 +804,20 @@ def _build_option_parser():
                       default='', help='TLS private key file.')
     parser.add_option('-c', '--certificate', dest='certificate',
                       default='', help='TLS certificate file.')
-    parser.add_option('--ca-certificate', dest='ca_certificate', default='',
-                      help=('TLS CA certificate file for client '
-                            'authentication.'))
+    parser.add_option('--tls-client-auth', dest='tls_client_auth',
+                      action='store_true', default=False,
+                      help='Requires TLS client auth on every connection.')
+    parser.add_option('--tls-client-ca', dest='tls_client_ca', default='',
+                      help=('Specifies a pem file which contains a set of '
+                            'concatenated CA certificates which are used to '
+                            'validate certificates passed from clients'))
+    parser.add_option('--basic-auth', dest='use_basic_auth',
+                      action='store_true', default=False,
+                      help='Requires Basic authentication.')
+    parser.add_option('--basic-auth-credential',
+                      dest='basic_auth_credential', default='test:test',
+                      help='Specifies the credential of basic authentication '
+                      'by username:password pair (e.g. test:test).')
     parser.add_option('-l', '--log-file', '--log_file', dest='log_file',
                       default='', help='Log file.')
     # Custom log level:
@@ -771,9 +851,9 @@ def _build_option_parser():
                       help='Log backup count')
     parser.add_option('--allow-draft75', dest='allow_draft75',
                       action='store_true', default=False,
-                      help='Allow draft 75 handshake')
+                      help='Obsolete option. Ignored.')
     parser.add_option('--strict', dest='strict', action='store_true',
-                      default=False, help='Strictly check handshake request')
+                      default=False, help='Obsolete option. Ignored.')
     parser.add_option('-q', '--queue', dest='request_queue_size', type='int',
                       default=_DEFAULT_REQUEST_QUEUE_SIZE,
                       help='request queue size')
@@ -841,6 +921,12 @@ def _parse_args_and_config(args):
 
 
 def _main(args=None):
+    """You can call this function from your own program, but please note that
+    this function has some side-effects that might affect your program. For
+    example, util.wrap_popen3_for_win use in this method replaces implementation
+    of os.popen3.
+    """
+
     options, args = _parse_args_and_config(args=args)
 
     os.chdir(options.document_root)
@@ -877,7 +963,7 @@ def _main(args=None):
                     'To use TLS, specify private_key and certificate.')
             sys.exit(1)
 
-    if options.ca_certificate:
+    if options.tls_client_auth:
         if not options.use_tls:
             logging.critical('TLS must be enabled for client authentication.')
             sys.exit(1)
@@ -887,25 +973,15 @@ def _main(args=None):
     if not options.scan_dir:
         options.scan_dir = options.websock_handlers
 
+    if options.use_basic_auth:
+        options.basic_auth_credential = 'Basic ' + base64.b64encode(
+            options.basic_auth_credential)
+
     try:
         if options.thread_monitor_interval_in_sec > 0:
             # Run a thread monitor to show the status of server threads for
             # debugging.
             ThreadMonitor(options.thread_monitor_interval_in_sec).start()
-
-        # Share a Dispatcher among request handlers to save time for
-        # instantiation.  Dispatcher can be shared because it is thread-safe.
-        options.dispatcher = dispatch.Dispatcher(
-            options.websock_handlers,
-            options.scan_dir,
-            options.allow_handlers_outside_root_dir)
-        if options.websock_handlers_map_file:
-            _alias_handlers(options.dispatcher,
-                            options.websock_handlers_map_file)
-        warnings = options.dispatcher.source_warnings()
-        if warnings:
-            for warning in warnings:
-                logging.warning('mod_pywebsocket: %s' % warning)
 
         server = WebSocketServer(options)
         server.serve_forever()

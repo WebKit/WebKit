@@ -37,7 +37,6 @@ successfully established.
 import logging
 
 from mod_pywebsocket import common
-from mod_pywebsocket.handshake import draft75
 from mod_pywebsocket.handshake import hybi00
 from mod_pywebsocket.handshake import hybi
 # Export AbortedByUserException, HandshakeException, and VersionException
@@ -56,10 +55,8 @@ def do_handshake(request, dispatcher, allowDraft75=False, strict=False):
     Args:
         request: mod_python request.
         dispatcher: Dispatcher (dispatch.Dispatcher).
-        allowDraft75: allow draft 75 handshake protocol.
-        strict: Strictly check handshake request in draft 75.
-            Default: False. If True, request.connection must provide
-            get_memorized_lines method.
+        allowDraft75: obsolete argument. ignored.
+        strict: obsolete argument. ignored.
 
     Handshaker will add attributes such as ws_resource in performing
     handshake.
@@ -86,9 +83,6 @@ def do_handshake(request, dispatcher, allowDraft75=False, strict=False):
         ('RFC 6455', hybi.Handshaker(request, dispatcher)))
     handshakers.append(
         ('HyBi 00', hybi00.Handshaker(request, dispatcher)))
-    if allowDraft75:
-        handshakers.append(
-            ('Hixie 75', draft75.Handshaker(request, dispatcher, strict)))
 
     for name, handshaker in handshakers:
         _LOGGER.debug('Trying protocol version %s', name)

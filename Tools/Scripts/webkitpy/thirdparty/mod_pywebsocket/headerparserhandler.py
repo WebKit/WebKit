@@ -63,8 +63,9 @@ _PYOPT_ALLOW_HANDLERS_OUTSIDE_ROOT = (
 _PYOPT_ALLOW_HANDLERS_OUTSIDE_ROOT_DEFINITION = {
     'off': False, 'no': False, 'on': True, 'yes': True}
 
-# PythonOption to specify to allow draft75 handshake.
-# The default is None (Off)
+# (Obsolete option. Ignored.)
+# PythonOption to specify to allow handshake defined in Hixie 75 version
+# protocol. The default is None (Off)
 _PYOPT_ALLOW_DRAFT75 = 'mod_pywebsocket.allow_draft75'
 # Map from values to their meanings.
 _PYOPT_ALLOW_DRAFT75_DEFINITION = {'off': False, 'on': True}

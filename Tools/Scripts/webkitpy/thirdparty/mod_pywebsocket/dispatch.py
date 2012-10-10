@@ -39,6 +39,7 @@ import re
 from mod_pywebsocket import common
 from mod_pywebsocket import handshake
 from mod_pywebsocket import msgutil
+from mod_pywebsocket import mux
 from mod_pywebsocket import stream
 from mod_pywebsocket import util
 
@@ -277,13 +278,18 @@ class Dispatcher(object):
             AbortedByUserException: when user handler abort connection
         """
 
-        handler_suite = self.get_handler_suite(request.ws_resource)
-        if handler_suite is None:
-            raise DispatchException('No handler for: %r' % request.ws_resource)
-        transfer_data_ = handler_suite.transfer_data
         # TODO(tyoshino): Terminate underlying TCP connection if possible.
         try:
-            transfer_data_(request)
+            if mux.use_mux(request):
+                mux.start(request, self)
+            else:
+                handler_suite = self.get_handler_suite(request.ws_resource)
+                if handler_suite is None:
+                    raise DispatchException('No handler for: %r' %
+                                            request.ws_resource)
+                transfer_data_ = handler_suite.transfer_data
+                transfer_data_(request)
+
             if not request.server_terminated:
                 request.ws_stream.close_connection()
         # Catch non-critical exceptions the handler didn't handle.

@@ -85,13 +85,16 @@ def get_default_port(is_secure):
 
 
 def validate_subprotocol(subprotocol, hixie):
-    """Validate a value in subprotocol fields such as WebSocket-Protocol,
-    Sec-WebSocket-Protocol.
+    """Validate a value in the Sec-WebSocket-Protocol field.
 
     See
     - RFC 6455: Section 4.1., 4.2.2., and 4.3.
     - HyBi 00: Section 4.1. Opening handshake
-    - Hixie 75: Section 4.1. Handshake
+
+    Args:
+         hixie: if True, checks if characters in subprotocol are in range
+                between U+0020 and U+007E. It's required by HyBi 00 but not by
+                RFC 6455.
     """
 
     if not subprotocol:
@@ -170,7 +173,11 @@ def check_request_line(request):
     # 5.1 1. The three character UTF-8 string "GET".
     # 5.1 2. A UTF-8-encoded U+0020 SPACE character (0x20 byte).
     if request.method != 'GET':
-        raise HandshakeException('Method is not GET')
+        raise HandshakeException('Method is not GET: %r' % request.method)
+
+    if request.protocol != 'HTTP/1.1':
+        raise HandshakeException('Version is not HTTP/1.1: %r' %
+                                 request.protocol)
 
 
 def check_header_lines(request, mandatory_headers):

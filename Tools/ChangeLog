@@ -1,3 +1,241 @@
+2012-10-10  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Update pywebsocket to 0.7.7
+        https://bugs.webkit.org/show_bug.cgi?id=98872
+
+        Reviewed by Yuta Kitamura.
+
+        This version contains server-side permessage-compress extension support.
+        We need this version to add tests for permessage-compress extension.
+
+        I confirmed all tests under http/tests/websocket passed.
+
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/__init__.py:
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/_stream_hixie75.py:
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/_stream_hybi.py:
+        (parse_frame):
+        (FragmentedFrameBuilder.__init__):
+        (FragmentedFrameBuilder.build):
+        (create_closing_handshake_body):
+        (StreamOptions.__init__):
+        (Stream.__init__):
+        (Stream._receive_frame._receive_bytes):
+        (Stream._receive_frame):
+        (Stream.receive_filtered_frame):
+        (Stream.send_message):
+        (Stream._get_message_from_frame):
+        (Stream):
+        (Stream._process_close_message):
+        (Stream._process_ping_message):
+        (Stream._process_pong_message):
+        (Stream.receive_message):
+        (Stream._send_closing_handshake):
+        (Stream.get_last_received_opcode):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/common.py:
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/dispatch.py:
+        (Dispatcher.transfer_data):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/extensions.py:
+        (ExtensionProcessorInterface.name):
+        (DeflateStreamExtensionProcessor):
+        (DeflateStreamExtensionProcessor.name):
+        (_log_compression_ratio):
+        (_log_decompression_ratio):
+        (DeflateFrameExtensionProcessor):
+        (DeflateFrameExtensionProcessor.name):
+        (DeflateFrameExtensionProcessor._outgoing_filter):
+        (DeflateFrameExtensionProcessor._incoming_filter):
+        (CompressionExtensionProcessorBase):
+        (CompressionExtensionProcessorBase.for):
+        (CompressionExtensionProcessorBase.__init__):
+        (CompressionExtensionProcessorBase.name):
+        (CompressionExtensionProcessorBase._get_compression_processor_response):
+        (CompressionExtensionProcessorBase.set_compression_processor_hook):
+        (PerFrameCompressionExtensionProcessor):
+        (PerFrameCompressionExtensionProcessor.__init__):
+        (PerFrameCompressionExtensionProcessor.name):
+        (PerFrameCompressionExtensionProcessor._lookup_compression_processor):
+        (DeflateMessageProcessor):
+        (DeflateMessageProcessor.__init__):
+        (DeflateMessageProcessor.name):
+        (DeflateMessageProcessor.get_extension_response):
+        (DeflateMessageProcessor.setup_stream_options):
+        (DeflateMessageProcessor.setup_stream_options._OutgoingMessageFilter):
+        (DeflateMessageProcessor.setup_stream_options._OutgoingMessageFilter.__init__):
+        (DeflateMessageProcessor.setup_stream_options._OutgoingMessageFilter.filter):
+        (DeflateMessageProcessor.setup_stream_options._IncomingMessageFilter):
+        (DeflateMessageProcessor.setup_stream_options._IncomingMessageFilter.__init__):
+        (DeflateMessageProcessor.setup_stream_options._IncomingMessageFilter.decompress_next_message):
+        (DeflateMessageProcessor.setup_stream_options._IncomingMessageFilter.filter):
+        (DeflateMessageProcessor.setup_stream_options._OutgoingFrameFilter):
+        (DeflateMessageProcessor.setup_stream_options._OutgoingFrameFilter.__init__):
+        (DeflateMessageProcessor.setup_stream_options._OutgoingFrameFilter.set_compression_bit):
+        (DeflateMessageProcessor.setup_stream_options._OutgoingFrameFilter.filter):
+        (DeflateMessageProcessor.setup_stream_options._IncomingFrameFilter):
+        (DeflateMessageProcessor.setup_stream_options._IncomingFrameFilter.__init__):
+        (DeflateMessageProcessor.setup_stream_options._IncomingFrameFilter.filter):
+        (DeflateMessageProcessor.set_c2s_max_window_bits):
+        (DeflateMessageProcessor.set_c2s_no_context_takeover):
+        (DeflateMessageProcessor.enable_outgoing_compression):
+        (DeflateMessageProcessor.disable_outgoing_compression):
+        (DeflateMessageProcessor._process_incoming_message):
+        (DeflateMessageProcessor._process_outgoing_message):
+        (DeflateMessageProcessor._process_incoming_frame):
+        (DeflateMessageProcessor._process_outgoing_frame):
+        (PerMessageCompressionExtensionProcessor):
+        (PerMessageCompressionExtensionProcessor.__init__):
+        (PerMessageCompressionExtensionProcessor.name):
+        (PerMessageCompressionExtensionProcessor._lookup_compression_processor):
+        (MuxExtensionProcessor):
+        (MuxExtensionProcessor.__init__):
+        (MuxExtensionProcessor.name):
+        (MuxExtensionProcessor.get_extension_response):
+        (MuxExtensionProcessor.setup_stream_options):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/handshake/__init__.py:
+        (do_handshake):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/handshake/_base.py:
+        (validate_subprotocol):
+        (check_request_line):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/handshake/draft75.py: Removed.
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/handshake/hybi.py:
+        (Handshaker.do_handshake):
+        (Handshaker._set_protocol):
+        (Handshaker._create_stream):
+        (Handshaker):
+        (Handshaker._create_handshake_response):
+        (Handshaker._send_handshake):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/headerparserhandler.py:
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/msgutil.py:
+        (send_message):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/mux.py: Added.
+        (MuxUnexpectedException):
+        (MuxNotImplementedException):
+        (LogicalConnectionClosedException):
+        (PhysicalConnectionError):
+        (PhysicalConnectionError.__init__):
+        (LogicalChannelError):
+        (LogicalChannelError.__init__):
+        (_encode_channel_id):
+        (_encode_number):
+        (_create_add_channel_response):
+        (_create_drop_channel):
+        (_create_flow_control):
+        (_create_new_channel_slot):
+        (_create_fallback_new_channel_slot):
+        (_parse_request_text):
+        (_ControlBlock):
+        (_ControlBlock.__init__):
+        (_MuxFramePayloadParser):
+        (_MuxFramePayloadParser.that):
+        (_MuxFramePayloadParser.__init__):
+        (_MuxFramePayloadParser.read_channel_id):
+        (_MuxFramePayloadParser.read_inner_frame):
+        (_MuxFramePayloadParser._read_number):
+        (_MuxFramePayloadParser._read_size_and_contents):
+        (_MuxFramePayloadParser._read_add_channel_request):
+        (_MuxFramePayloadParser._read_add_channel_response):
+        (_MuxFramePayloadParser._read_flow_control):
+        (_MuxFramePayloadParser._read_drop_channel):
+        (_MuxFramePayloadParser._read_new_channel_slot):
+        (_MuxFramePayloadParser.read_control_blocks):
+        (_MuxFramePayloadParser.remaining_data):
+        (_LogicalRequest):
+        (_LogicalRequest.__init__):
+        (_LogicalRequest.is_https):
+        (_LogicalConnection):
+        (_LogicalConnection.__init__):
+        (_LogicalConnection.get_local_addr):
+        (_LogicalConnection.get_remote_addr):
+        (_LogicalConnection.get_memorized_lines):
+        (_LogicalConnection.write):
+        (_LogicalConnection.write_control_data):
+        (_LogicalConnection.notify_write_done):
+        (_LogicalConnection.append_frame_data):
+        (_LogicalConnection.read):
+        (_LogicalConnection.set_read_state):
+        (_LogicalStream):
+        (_LogicalStream.interprets):
+        (_LogicalStream.__init__):
+        (_LogicalStream._create_inner_frame):
+        (_LogicalStream._write_inner_frame):
+        (_LogicalStream.replenish_send_quota):
+        (_LogicalStream.consume_receive_quota):
+        (_LogicalStream.send_message):
+        (_LogicalStream._receive_frame):
+        (_LogicalStream.receive_message):
+        (_LogicalStream._send_closing_handshake):
+        (_LogicalStream.send_ping):
+        (_LogicalStream._send_pong):
+        (_LogicalStream.close_connection):
+        (_LogicalStream._drain_received_data):
+        (_OutgoingData):
+        (_OutgoingData.__init__):
+        (_PhysicalConnectionWriter):
+        (_PhysicalConnectionWriter.__init__):
+        (_PhysicalConnectionWriter.put_outgoing_data):
+        (_PhysicalConnectionWriter._write_data):
+        (_PhysicalConnectionWriter.run):
+        (_PhysicalConnectionWriter.stop):
+        (_PhysicalConnectionReader):
+        (_PhysicalConnectionReader.__init__):
+        (_PhysicalConnectionReader.run):
+        (_Worker):
+        (_Worker.__init__):
+        (_Worker.run):
+        (_MuxHandshaker):
+        (_MuxHandshaker.__init__):
+        (_MuxHandshaker._create_stream):
+        (_MuxHandshaker._create_handshake_response):
+        (_MuxHandshaker._send_handshake):
+        (_LogicalChannelData):
+        (_LogicalChannelData.__init__):
+        (_HandshakeDeltaBase):
+        (_HandshakeDeltaBase.that):
+        (_HandshakeDeltaBase.__init__):
+        (_HandshakeDeltaBase.create_headers):
+        (_MuxHandler):
+        (_MuxHandler.are):
+        (_MuxHandler.__init__):
+        (_MuxHandler.start):
+        (_MuxHandler.add_channel_slots):
+        (_MuxHandler.wait_until_done):
+        (_MuxHandler.notify_write_done):
+        (_MuxHandler.send_control_data):
+        (_MuxHandler.send_data):
+        (_MuxHandler._send_drop_channel):
+        (_MuxHandler._send_error_add_channel_response):
+        (_MuxHandler._create_logical_request):
+        (_MuxHandler._do_handshake_for_logical_request):
+        (_MuxHandler._add_logical_channel):
+        (_MuxHandler._process_add_channel_request):
+        (_MuxHandler._process_flow_control):
+        (_MuxHandler._process_drop_channel):
+        (_MuxHandler._process_control_blocks):
+        (_MuxHandler._process_logical_frame):
+        (_MuxHandler.dispatch_message):
+        (_MuxHandler.notify_worker_done):
+        (_MuxHandler.notify_reader_done):
+        (_MuxHandler.fail_physical_connection):
+        (_MuxHandler.fail_logical_channel):
+        (use_mux):
+        (start):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/standalone.py:
+        (_StandaloneRequest.get_protocol):
+        (_StandaloneRequest):
+        (_alias_handlers):
+        (WebSocketServer.__init__):
+        (WebSocketServer._create_sockets):
+        (WebSocketServer.server_bind):
+        (WebSocketServer.server_activate):
+        (WebSocketRequestHandler.parse_request):
+        (_configure_logging):
+        (_build_option_parser):
+        (_main):
+        (_main.if):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/stream.py:
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/util.py:
+        (_Deflater.compress):
+        (_RFC1979Deflater.filter):
+
 2012-10-09  Damian Kaleta  <dkaleta@apple.com>
 
         extract-localizable-strings script should be able to handle paths to files containing whitespaces.
