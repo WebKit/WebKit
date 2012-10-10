@@ -1,3 +1,12 @@
+2012-10-10  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Skip the color-correction tests.
+
+        Just specifying `Missing' makes the build bots sometimes report
+        these tests as failing.
+
+        * platform/efl/TestExpectations:
+
 2012-10-10  Adam Barth  <abarth@webkit.org>
 
         Add a note that this test is flaky and can trigger an ASSERT.
