@@ -197,6 +197,23 @@ shouldBeEqualToString('input.value', '2012-01-02');
 keyDown('rightArrow'); // -> 2012/02/[01]
 keyDown('3'); //          -> 2012/02/[03]
 shouldBeEqualToString('input.value', '2012-03-02');
+
+beginTest('Disabled/readonly', '2012-10-08');
+input.disabled = true;
+keyDown('upArrow'); // 10/08/2012
+shouldBeEqualToString('input.value', '2012-10-08');
+input.disabled = false;
+input.focus();
+keyDown('upArrow'); // [11]/08/2012
+shouldBeEqualToString('input.value', '2012-11-08');
+input.readOnly = true;
+keyDown('upArrow'); // 11/08/2012
+shouldBeEqualToString('input.value', '2012-11-08');
+input.readOnly = false;
+input.focus();
+keyDown('upArrow'); // [12]/08/2012
+shouldBeEqualToString('input.value', '2012-12-08');
+
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

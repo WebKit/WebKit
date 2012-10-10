@@ -30,7 +30,8 @@ function testSpinButtonChangeAndInputEvents(inputType, initialValue, expectedVal
 
     debug('Click the upper button');
     // Move the cursor on the upper button.
-    eventSender.mouseMoveTo(testInput.offsetLeft + testInput.offsetWidth - 10, testInput.offsetTop + testInput.offsetHeight / 4);
+    var spinButton = getElementByPseudoId(internals.oldestShadowRoot(testInput), "-webkit-inner-spin-button");
+    eventSender.mouseMoveTo(testInput.offsetLeft + spinButton.offsetLeft, testInput.offsetTop + testInput.offsetHeight / 4);
     eventSender.mouseDown();
     eventSender.mouseUp();
     shouldBeEqualToString('testInput.value', expectedValue);

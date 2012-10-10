@@ -1,0 +1,15 @@
+This test checks value changed accessibility notifications.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FocusedUIElementChanged AXHelp: Month=AXValueDescription: 10
+FocusedUIElementChanged AXHelp: Day=AXValueDescription: 09
+FocusedUIElementChanged AXHelp: Year=AXValueDescription: 2012
+ValueChanged AXHelp: Day=AXValueDescription: 04
+ValueChanged AXHelp: Year=AXValueDescription: 2013
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

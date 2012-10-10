@@ -2,12 +2,15 @@
 <html>
 <head>
 <script src="../../../fast/js/resources/js-test-pre.js"></script>
-<script src="../resources/common.js"></script>
-<script src="../resources/common-spinbutton-change-and-input-events.js"></script>
+<script src="../resources/common-wheel-event.js"></script>
 </head>
 <body>
 <script>
-testSpinButtonChangeAndInputEvents('number', '0', '1', '1');
+testWheelEvent({
+    'inputType' : 'date',
+    'initialValue' : '1999-01-13',
+    'stepUpValue1' : '1999-02-13',
+    'stepUpValue2' : '1999-03-13' });
 </script>
 <script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>

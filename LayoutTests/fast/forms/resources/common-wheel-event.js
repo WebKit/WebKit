@@ -20,7 +20,7 @@ function testWheelEvent(parameters)
     input = document.getElementById('test');
     input.focus();
 
-    debug('Initial value is ' + initialValue + '. We\'ll wheel up by ' + stepUpValue1 + ':');
+    debug('Initial value is ' + initialValue + '. We\'ll wheel up by 1:');
     dispatchWheelEvent(input, 0, 1);
     shouldBeEqualToString('input.value', stepUpValue1);
 
