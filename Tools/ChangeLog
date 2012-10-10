@@ -1,3 +1,12 @@
+2012-10-09  Damian Kaleta  <dkaleta@apple.com>
+
+        extract-localizable-strings script should be able to handle paths to files containing whitespaces.
+        https://bugs.webkit.org/show_bug.cgi?id=98844
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/extract-localizable-strings: Added ability to handle whitespace.
+
 2012-10-09  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [Cairo] Bump Cairo to fix more canvas/philip tests

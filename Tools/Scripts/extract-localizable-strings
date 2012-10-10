@@ -85,7 +85,7 @@ my %usedException;
 if ($exceptionsFile ne "-" && open EXCEPTIONS, $exceptionsFile) {
     while (<EXCEPTIONS>) {
         chomp;
-        if (/^"([^\\"]|\\.)*"$/ or /^[-_\/\w.]+.(h|m|mm|c|cpp)$/ or /^[-_\/\w.]+.(h|m|mm|c|cpp):"([^\\"]|\\.)*"$/) {
+        if (/^"([^\\"]|\\.)*"$/ or /^[-_\/\w\s.]+.(h|m|mm|c|cpp)$/ or /^[-_\/\w\s.]+.(h|m|mm|c|cpp):"([^\\"]|\\.)*"$/) {
             if ($exception{$_}) {
                 print "$exceptionsFile:$.:exception for $_ appears twice\n";
                 print "$exceptionsFile:$exception{$_}:first appearance\n";
