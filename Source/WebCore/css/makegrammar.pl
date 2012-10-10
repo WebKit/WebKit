@@ -21,35 +21,79 @@
 use strict;
 use warnings;
 
-my $grammar = $ARGV[0];
-my $fileBase = $ARGV[1];
+use Config;
+use File::Basename;
+use File::Spec;
+use Getopt::Long;
 
-system("bison -d -p cssyy " . $grammar . " -o " . $fileBase . ".tab.c");
+require Config;
 
-open HEADER, ">" . $fileBase . ".h" or die;
+my $gcc = "";
+if ($ENV{CC}) {
+    $gcc = $ENV{CC};
+} elsif (($Config::Config{'osname'}) =~ /solaris/i) {
+    $gcc = "/usr/sfw/bin/gcc";
+} else {
+    $gcc = "/usr/bin/gcc";
+}
+
+my $grammarFilePath = "";
+my $outputDir = ".";
+my $extraDefines = "";
+my $symbolsPrefix = "";
+
+GetOptions(
+    'grammar=s' => \$grammarFilePath,
+    'outputDir=s' => \$outputDir,
+    'extraDefines=s' => \$extraDefines,
+    'symbolsPrefix=s' => \$symbolsPrefix
+);
+
+die "Need a symbols prefix to give to bison (e.g. cssyy, xpathyy)" unless length($symbolsPrefix);
+
+my ($filename, $basePath, $suffix) = fileparse($grammarFilePath, (".y", ".y.in"));
+
+if ($suffix eq ".y.in") {
+    my $grammarFileIncludesPath = "${basePath}${filename}.y.includes";
+    my $grammarFileOutPath = File::Spec->join($outputDir, "$filename.y");
+    my $featureFlags = "-D " . join(" -D ", split(" ", $extraDefines));
+
+    system($gcc . " -E -P -x c $grammarFilePath $featureFlags > $grammarFileOutPath.processed" );
+
+    open GRAMMAR, ">$grammarFileOutPath" or die;
+    open INCLUDES, "<$grammarFileIncludesPath" or die;
+    open PROCESSED, "<$grammarFileOutPath.processed" or die;
+
+    while (<INCLUDES>) {
+        print GRAMMAR;
+    }
+    while (<PROCESSED>) {
+        print GRAMMAR;
+    }
+
+    close GRAMMAR;
+    unlink("$grammarFileOutPath.processed");
+    $grammarFilePath = $grammarFileOutPath;
+}
+
+my $fileBase = File::Spec->join($outputDir, $filename);
+system("bison -d -p $symbolsPrefix $grammarFilePath -o $fileBase.cpp");
+
+open HEADER, ">$fileBase.h" or die;
 print HEADER << "EOF";
 #ifndef CSSGRAMMAR_H
 #define CSSGRAMMAR_H
 EOF
 
-open HPP, "<" . $fileBase . ".tab.h" or die;
+open HPP, "<$fileBase.cpp.h" or open HPP, "<$fileBase.hpp" or die;
 while (<HPP>) {
     print HEADER;
 }
 close HPP;
 
 print HEADER "#endif\n";
-
 close HEADER;
 
-unlink($fileBase . ".tab.h");
+unlink("$fileBase.cpp.h");
+unlink("$fileBase.hpp");
 
-open CPP, ">" . $fileBase . ".cpp" or die;
-open GENSRC, "<" . $fileBase . ".tab.c" or die;
-while (<GENSRC>) {
-    print CPP;
-}
-close GENSRC;
-close CPP;
-
-unlink($fileBase . ".tab.c");

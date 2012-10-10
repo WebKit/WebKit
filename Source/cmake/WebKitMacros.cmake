@@ -148,11 +148,12 @@ MACRO (GENERATE_HASH_LUT _input _output)
 ENDMACRO ()
 
 
-MACRO (GENERATE_GRAMMAR _prefix _input _output_header _output_source)
+MACRO (GENERATE_GRAMMAR _prefix _input _output_header _output_source _other_dependencies _features)
     ADD_CUSTOM_COMMAND(
         OUTPUT ${_output_header} ${_output_source}
         MAIN_DEPENDENCY ${_input}
-        COMMAND ${BISON_EXECUTABLE} -p ${_prefix} ${_input} -o ${_output_source} --defines=${_output_header}
+        DEPENDS ${_input} ${_other_dependencies}
+        COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/css/makegrammar.pl --grammar ${_input} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR} --extraDefines "${_features}" --symbolsPrefix ${_prefix}
         VERBATIM)
 ENDMACRO ()
 

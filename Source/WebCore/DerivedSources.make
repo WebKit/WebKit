@@ -779,32 +779,14 @@ endif
 # --------
 
 # CSS grammar
-# NOTE: Older versions of bison do not inject an inclusion guard, so we add one.
-
-CSSGrammar.cpp : css/CSSGrammar.y
-	$(BISON) -d -p cssyy $< -o $@
-	touch CSSGrammar.cpp.h
-	touch CSSGrammar.hpp
-	echo '#ifndef CSSGrammar_h' > CSSGrammar.h
-	echo '#define CSSGrammar_h' >> CSSGrammar.h
-	cat CSSGrammar.cpp.h CSSGrammar.hpp >> CSSGrammar.h
-	echo '#endif' >> CSSGrammar.h
-	rm -f CSSGrammar.cpp.h CSSGrammar.hpp
+CSSGrammar.cpp : css/CSSGrammar.y.in
+	perl $(WebCore)/css/makegrammar.pl --grammar $< --extraDefines "$(FEATURE_DEFINES)" --outputDir . --symbolsPrefix cssyy
 
 # --------
 
 # XPath grammar
-# NOTE: Older versions of bison do not inject an inclusion guard, so we add one.
-
 XPathGrammar.cpp : xml/XPathGrammar.y $(PROJECT_FILE)
-	$(BISON) -d -p xpathyy $< -o $@
-	touch XPathGrammar.cpp.h
-	touch XPathGrammar.hpp
-	echo '#ifndef XPathGrammar_h' > XPathGrammar.h
-	echo '#define XPathGrammar_h' >> XPathGrammar.h
-	cat XPathGrammar.cpp.h XPathGrammar.hpp >> XPathGrammar.h
-	echo '#endif' >> XPathGrammar.h
-	rm -f XPathGrammar.cpp.h XPathGrammar.hpp
+	perl $(WebCore)/css/makegrammar.pl --grammar $< --outputDir . --symbolsPrefix xpathyy
 
 # --------
 

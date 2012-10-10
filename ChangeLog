@@ -1,3 +1,13 @@
+2012-10-10  Pablo Flouret  <pablof@motorola.com>
+
+        Pre-process CSSGrammar.y before running through bison.
+        https://bugs.webkit.org/show_bug.cgi?id=94290
+
+        Reviewed by Tony Chang.
+
+        * Source/cmake/WebKitMacros.cmake:
+            Use WebCore/css/makegrammar.pl to generate bison grammar files.
+
 2012-10-10  Simon Fraser  <simon.fraser@apple.com>
 
         Attempt to fix gtk build which controls exports via this mysteriously-named

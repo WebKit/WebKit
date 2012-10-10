@@ -1,3 +1,48 @@
+2012-10-10  Pablo Flouret  <pablof@motorola.com>
+
+        Pre-process CSSGrammar.y before running through bison.
+        https://bugs.webkit.org/show_bug.cgi?id=94290
+
+        Reviewed by Tony Chang.
+
+        Running CSSGrammar.y through a preprocessor allows the use of feature
+        defines in all places of the yacc file (i.e. not just in C blocks).
+        Mostly useful to be able to keep every part of a feature under feature
+        flags for self-documenting purposes.
+
+        No new tests, CSSGrammar.y should be generated correctly and everything
+        should keep working as before.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+            Modify build systems to use makegrammar.pl to generate the .y files
+            and run those through bison.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gyp/scripts/action_preprocessgrammar.py: Added.
+            Add a new action to preprocess the CSSGrammar.y.in file before the
+            bison rule is run.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+            Add the new .y.in / .y.includes files.
+
+        * css/CSSGrammar.y.in: Renamed from Source/WebCore/css/CSSGrammar.y.
+            Also moved the top declarations section that has includes, defines,
+            etc. to its own file. These shouldn't be touched by the first
+            pass of the preprocessor. And changed the existing ENABLE(FEATURE)
+            ifdefs to ENABLE_FEATURE since the ENABLE() macro is not available
+            yet.
+        * css/CSSGrammar.y.includes: Added.
+            The aforementioned declarations header section. After the .y.in file
+            is processed it will be concatenated with this one to make the
+            CSSGrammar.y file.
+
+        * css/makegrammar.pl:
+            Modify the script to handle .y.in files.
+
 2012-10-10  Luciano Wolf  <luciano.wolf@openbossa.org>
 
         EventHandler::handleGestureLongPress breaks compilation if CONTEXT_MENUS isn't set
