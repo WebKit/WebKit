@@ -1,3 +1,18 @@
+2012-10-10  Balazs Kilvady  <kilvadyb@homejinni.com>
+
+        RegisterFile to JSStack rename fix for a struct member.
+
+        Compilation problem in debug build on MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=98808
+
+        Reviewed by Alexey Proskuryakov.
+
+        In ASSERT conditions structure field name "registerFile" was replaced
+        with type name "JSStack" and it should be "stack".
+
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::JITThunks): structure member name fix.
+
 2012-10-10  Michael Saboff  <msaboff@apple.com>
 
         After r130344, OpaqueJSString::string() shouldn't directly return the wrapped String
