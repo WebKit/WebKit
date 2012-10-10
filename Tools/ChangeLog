@@ -1,3 +1,18 @@
+2012-10-10  Andreas Kling  <kling@webkit.org>
+
+        Future-proof the WTF.DoubleHashCollisions test.
+        <http://webkit.org/b/98853>
+
+        Reviewed by Anders Carlsson.
+
+        Add a check that the two keys that are supposed to clobber each other actually end up
+        in the same bucket with the DefaultHash<double> hash function.
+
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        (TestWebKitAPI::bucketForKey):
+        (TestWebKitAPI):
+        (TestWebKitAPI::TEST):
+
 2012-10-10  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Test drivers should handle repaint rects

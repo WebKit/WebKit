@@ -55,6 +55,11 @@ struct TestDoubleHashTraits : HashTraits<double> {
 
 typedef HashMap<double, int64_t, DefaultHash<double>::Hash, TestDoubleHashTraits> DoubleHashMap;
 
+static int bucketForKey(double key)
+{
+    return DefaultHash<double>::Hash::hash(key) & (TestDoubleHashTraits::minimumTableSize - 1);
+}
+
 TEST(WTF, DoubleHashCollisions)
 {
     // The "clobber" key here is one that ends up stealing the bucket that the -0 key
@@ -70,6 +75,7 @@ TEST(WTF, DoubleHashCollisions)
     map.add(zeroKey, 2);
     map.add(negativeZeroKey, 3);
 
+    ASSERT_EQ(bucketForKey(clobberKey), bucketForKey(negativeZeroKey));
     ASSERT_EQ(map.get(clobberKey), 1);
     ASSERT_EQ(map.get(zeroKey), 2);
     ASSERT_EQ(map.get(negativeZeroKey), 3);
