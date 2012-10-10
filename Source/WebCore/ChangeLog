@@ -1,3 +1,16 @@
+2012-10-10  Andreas Kling  <kling@webkit.org>
+
+        ElementAttributeData: tighten member packing on 64-bit.
+        <http://webkit.org/b/98861>
+
+        Reviewed by Anders Carlsson.
+
+        Pack m_isMutable and m_arraySize into the slack from the RefCounted base on 64-bit.
+        218kB progression on Membuster3.
+
+        * dom/ElementAttributeData.h:
+        (ElementAttributeData):
+
 2012-10-10  Alexandre Elias  <aelias@chromium.org>
 
         Text Autosizing: Counteract funky window sizing on Android.

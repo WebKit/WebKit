@@ -114,13 +114,13 @@ protected:
         , m_arraySize(arraySize)
     { }
 
+    unsigned m_isMutable : 1;
+    unsigned m_arraySize : 31;
+
     mutable RefPtr<StylePropertySet> m_inlineStyleDecl;
     mutable RefPtr<StylePropertySet> m_attributeStyle;
     mutable SpaceSplitString m_classNames;
     mutable AtomicString m_idForStyleResolution;
-
-    unsigned m_isMutable : 1;
-    unsigned m_arraySize : 31;
 
 private:
     friend class Element;
