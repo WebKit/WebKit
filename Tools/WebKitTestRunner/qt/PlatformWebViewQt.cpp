@@ -34,6 +34,7 @@
 #include <QEventLoop>
 #include <QQmlProperty>
 #include <QtQuick/QQuickView>
+#include <WebKit2/WKImageQt.h>
 #include <qpa/qwindowsysteminterface.h>
 
 namespace WTR {

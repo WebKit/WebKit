@@ -565,3 +565,22 @@ webkit.org/b/98688 fast/ruby/rubyDOM-remove-text2.html
 # [Qt][WK2]REGRESSION(r130826): It made fast/js/sparse-array.html crash on 64 bit
 webkit.org/b/98859 fast/js/sort-stability.html
 webkit.org/b/98859 fast/js/sort-with-side-effecting-comparisons.html
+
+# [Qt][WK2] Tests producing bad repaint rects in pixel results
+webkit.org/b/98897 compositing/clip-change.html [ ImageOnlyFailure ]
+webkit.org/b/98897 compositing/geometry/foreground-offset-change.html [ ImageOnlyFailure ]
+webkit.org/b/98897 compositing/iframes/iframe-content-flipping.html [ ImageOnlyFailure ]
+webkit.org/b/98897 compositing/iframes/repaint-after-losing-scrollbars.html [ ImageOnlyFailure ]
+webkit.org/b/98897 compositing/iframes/scroll-grandchild-iframe.html [ ImageOnlyFailure ]
+webkit.org/b/98897 compositing/iframes/scroll-grandchild-iframe.html [ ImageOnlyFailure ]
+webkit.org/b/98897 compositing/overflow/repaint-after-losing-scrollbars.html [ ImageOnlyFailure ]
+webkit.org/b/98897 compositing/repaint/transform-style-change.html [ ImageOnlyFailure ]
+webkit.org/b/98897 compositing/video-page-visibility.html [ ImageOnlyFailure ]
+webkit.org/b/98897 css3/filters/filter-change-repaint-composited.html [ ImageOnlyFailure ]
+webkit.org/b/98897 css3/filters/filter-repaint-composited-fallback-crash.html [ ImageOnlyFailure ]
+webkit.org/b/98897 css3/filters/filter-repaint-composited-fallback.html [ ImageOnlyFailure ]
+webkit.org/b/98897 fast/canvas/canvas-as-image-incremental-repaint.html [ ImageOnlyFailure ]
+webkit.org/b/98897 fast/dynamic/containing-block-change.html [ ImageOnlyFailure ]
+webkit.org/b/98897 fast/frames/inline-object-inside-frameset.html [ ImageOnlyFailure ]
+webkit.org/b/98897 fast/repaint/overflow-flipped-writing-mode-block-in-regions.html [ ImageOnlyFailure ]
+webkit.org/b/98897 fast/repaint/textarea-set-disabled.html [ ImageOnlyFailure ]

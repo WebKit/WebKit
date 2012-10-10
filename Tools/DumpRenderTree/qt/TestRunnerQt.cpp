@@ -236,6 +236,7 @@ void TestRunner::simulateLegacyWebNotificationClick(const QString& title)
 
 void TestRunner::display()
 {
+    DumpRenderTreeSupportQt::setTrackRepaintRects(m_topLoadingFrame, true);
     emit showPage();
 }
 

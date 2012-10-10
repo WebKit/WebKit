@@ -1092,6 +1092,25 @@ QImage DumpRenderTreeSupportQt::paintPagesWithBoundaries(QWebFrame* qframe)
     return image;
 }
 
+void DumpRenderTreeSupportQt::setTrackRepaintRects(QWebFrame* frame, bool enable)
+{
+    QWebFramePrivate::core(frame)->view()->setTracksRepaints(enable);
+}
+
+bool DumpRenderTreeSupportQt::trackRepaintRects(QWebFrame* frame)
+{
+    return QWebFramePrivate::core(frame)->view()->isTrackingRepaints();
+}
+
+void DumpRenderTreeSupportQt::getTrackedRepaintRects(QWebFrame* frame, QVector<QRect>& result)
+{
+    Frame* coreFrame = QWebFramePrivate::core(frame);
+    const Vector<IntRect>& rects = coreFrame->view()->trackedRepaintRects();
+    result.resize(rects.size());
+    for (size_t i = 0; i < rects.size(); ++i)
+        result.append(rects[i]);
+}
+
 // Provide a backward compatibility with previously exported private symbols as of QtWebKit 4.6 release
 
 void QWEBKIT_EXPORT qt_resumeActiveDOMObjects(QWebFrame* frame)

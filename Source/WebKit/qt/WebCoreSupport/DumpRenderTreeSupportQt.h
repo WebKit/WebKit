@@ -26,6 +26,7 @@
 #include "qwebkitglobal.h"
 #include <QNetworkCookieJar>
 #include <QVariant>
+#include <QVector>
 
 typedef const struct OpaqueJSContext* JSContextRef;
 
@@ -212,6 +213,10 @@ public:
     static void enableMockScrollbars();
 
     static QImage paintPagesWithBoundaries(QWebFrame*);
+
+    static void setTrackRepaintRects(QWebFrame*, bool enable);
+    static bool trackRepaintRects(QWebFrame*);
+    static void getTrackedRepaintRects(QWebFrame*, QVector<QRect>& result);
 };
 
 #endif

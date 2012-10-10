@@ -29,6 +29,7 @@
 
 #include <QBuffer>
 #include <QCryptographicHash>
+#include <QtGui/QPainter>
 #include <WebKit2/WKImageQt.h>
 #include <stdio.h>
 #include <wtf/Assertions.h>
@@ -64,10 +65,25 @@ static void dumpImage(const QImage& image)
 
 void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef imageRef, WKArrayRef repaintRects)
 {
-    //FIXME: https://bugs.webkit.org/show_bug.cgi?id=68870
-    UNUSED_PARAM(repaintRects);
-
     QImage image = WKImageCreateQImage(imageRef);
+
+    if (repaintRects) {
+        QImage mask(image.size(), image.format());
+        mask.fill(QColor(0, 0, 0, 0.66 * 255));
+
+        QPainter maskPainter(&mask);
+        maskPainter.setCompositionMode(QPainter::CompositionMode_Source);
+        size_t count = WKArrayGetSize(repaintRects);
+        for (size_t i = 0; i < count; ++i) {
+            WKRect wkRect = WKRectGetValue(static_cast<WKRectRef>(WKArrayGetItemAtIndex(repaintRects, i)));
+            QRectF rect(wkRect.origin.x, wkRect.origin.y, wkRect.size.width, wkRect.size.height);
+            maskPainter.fillRect(rect, Qt::transparent);
+        }
+
+        QPainter painter(&image);
+        painter.drawImage(image.rect(), mask);
+    }
+
     QCryptographicHash hash(QCryptographicHash::Md5);
     for (unsigned row = 0; row < image.height(); ++row)
         hash.addData(reinterpret_cast<const char*>(image.constScanLine(row)), image.bytesPerLine());

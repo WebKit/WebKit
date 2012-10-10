@@ -1,3 +1,312 @@
+2012-10-10  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Test drivers should handle repaint rects
+        https://bugs.webkit.org/show_bug.cgi?id=68870
+
+        Reviewed by Zoltan Herczeg.
+
+        Rebasline results. Added new expectations where the results were good.
+        I evaulated the results based on the mac and chromium-mac ports. In some
+        cases I accepted our diverging result if it seemed to be ok by looking
+        into the test. Marked bad results as image failure.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt-5.0-wk2/compositing/iframes/fixed-position-iframe-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/iframes/scroll-fixed-transformed-element-expected.png: Copied from LayoutTests/platform/qt/fast/layers/add-layer-with-nested-stacking-expected.png.
+        * platform/qt-5.0-wk2/compositing/layer-creation/fixed-position-scroll-expected.png:
+        * platform/qt-5.0-wk2/compositing/repaint/newly-composited-on-scroll-expected.png:
+        * platform/qt-5.0-wk2/compositing/repaint/shrink-layer-expected.png: Copied from LayoutTests/platform/qt/svg/custom/clip-path-href-changes-expected.png.
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-overflow-invalidation-expected.png: Copied from LayoutTests/platform/qt/fast/repaint/clip-with-layout-delta-expected.png.
+        * platform/qt-5.0-wk2/compositing/scaling/tiled-layer-recursion-expected.png:
+        * platform/qt-5.0-wk2/compositing/transitions/singular-scale-transition-expected.png: Added.
+        * platform/qt-5.0-wk2/css3/filters/filter-change-repaint-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/backgrounds/solid-color-context-restore-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/canvas/canvas-incremental-repaint-2-expected.png: Copied from LayoutTests/platform/qt/fast/repaint/subtree-root-clip-3-expected.png.
+        * platform/qt-5.0-wk2/fast/canvas/setWidthResetAfterForcedRender-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/listbox-clip-expected.png: Copied from LayoutTests/platform/qt/svg/repaint/repainting-after-animation-element-removal-expected.png.
+        * platform/qt-5.0-wk2/fast/reflections/inline-crash-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/repaint/body-background-image-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/repaint/delete-into-nested-block-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/repaint/fixed-after-scroll-expected.png: Copied from LayoutTests/platform/qt/svg/custom/use-disappears-after-style-update-expected.png.
+        * platform/qt-5.0-wk2/fast/repaint/fixed-scale-expected.png: Copied from LayoutTests/platform/qt/fast/repaint/iframe-scroll-repaint-expected.png.
+        * platform/qt-5.0-wk2/fast/repaint/fixed-scroll-simple-expected.png: Copied from LayoutTests/platform/qt/fast/repaint/overflow-clip-subtree-layout-expected.png.
+        * platform/qt-5.0-wk2/fast/repaint/fixed-table-cell-expected.png: Copied from LayoutTests/platform/qt/fast/repaint/button-spurious-layout-hint-expected.png.
+        * platform/qt-5.0-wk2/fast/repaint/fixed-table-overflow-expected.png: Copied from LayoutTests/platform/qt/fast/repaint/subtree-root-clip-2-expected.png.
+        * platform/qt-5.0-wk2/fast/repaint/fixed-table-overflow-zindex-expected.png: Copied from LayoutTests/platform/qt/fast/repaint/subtree-root-clip-2-expected.png.
+        * platform/qt-5.0-wk2/fast/repaint/iframe-scroll-repaint-expected.png: Copied from LayoutTests/platform/qt/fast/repaint/clip-with-layout-delta-expected.png.
+        * platform/qt-5.0-wk2/fast/repaint/reflection-repaint-test-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/repaint/region-painting-invalidation-expected.png: Copied from LayoutTests/platform/qt/fast/layers/add-layer-with-nested-stacking-expected.png.
+        * platform/qt-5.0-wk2/fast/repaint/region-painting-via-layout-expected.png: Copied from LayoutTests/platform/qt/svg/as-object/embedded-svg-size-changes-no-layout-triggers-expected.png.
+        * platform/qt-5.0-wk2/fast/repaint/scale-page-shrink-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/repaint/selection-after-delete-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/repaint/selection-after-remove-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/repaint/selection-clear-expected.png: Copied from LayoutTests/platform/qt/fast/repaint/table-hover-on-link-expected.png.
+        * platform/qt-5.0-wk2/fast/repaint/selection-gap-overflow-scroll-2-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/table/border-collapsing/cached-69296-expected.png: Copied from LayoutTests/platform/qt/fast/repaint/table-two-pass-layout-overpaint-expected.png.
+        * platform/qt-5.0-wk2/fast/text/font-initial-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/remove-text-node-from-tspan-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/text/remove-tspan-from-text-expected.png: Added.
+        * platform/qt/fast/canvas/canvas-as-image-incremental-repaint-expected.png:
+        * platform/qt/fast/canvas/canvas-incremental-repaint-expected.png: Added.
+        * platform/qt/fast/dynamic/containing-block-change-expected.png:
+        * platform/qt/fast/frames/transparent-scrollbar-expected.png: Copied from LayoutTests/platform/qt/svg/custom/repaint-on-constant-size-change-expected.png.
+        * platform/qt/fast/layers/add-layer-with-nested-stacking-expected.png:
+        * platform/qt/fast/layers/inline-dirty-z-order-lists-expected.png:
+        * platform/qt/fast/layers/layer-content-visibility-change-expected.png: Copied from LayoutTests/platform/qt/fast/repaint/layout-state-only-positioned-expected.png.
+        * platform/qt/fast/layers/remove-layer-with-nested-stacking-expected.png:
+        * platform/qt/fast/repaint/4774354-expected.png:
+        * platform/qt/fast/repaint/4776765-expected.png:
+        * platform/qt/fast/repaint/backgroundSizeRepaint-expected.png:
+        * platform/qt/fast/repaint/block-layout-inline-children-float-positioned-expected.png:
+        * platform/qt/fast/repaint/block-layout-inline-children-replaced-expected.png:
+        * platform/qt/fast/repaint/block-no-inflow-children-expected.png:
+        * platform/qt/fast/repaint/border-fit-lines-expected.png:
+        * platform/qt/fast/repaint/border-radius-repaint-expected.png:
+        * platform/qt/fast/repaint/border-repaint-glitch-expected.png:
+        * platform/qt/fast/repaint/box-shadow-dynamic-expected.png:
+        * platform/qt/fast/repaint/bugzilla-3509-expected.png:
+        * platform/qt/fast/repaint/bugzilla-5699-expected.png:
+        * platform/qt/fast/repaint/bugzilla-6278-expected.png:
+        * platform/qt/fast/repaint/bugzilla-6388-expected.png:
+        * platform/qt/fast/repaint/bugzilla-6473-expected.png:
+        * platform/qt/fast/repaint/bugzilla-7235-expected.png:
+        * platform/qt/fast/repaint/button-spurious-layout-hint-expected.png:
+        * platform/qt/fast/repaint/caret-outside-block-expected.png:
+        * platform/qt/fast/repaint/change-transform-expected.png:
+        * platform/qt/fast/repaint/clip-with-layout-delta-expected.png:
+        * platform/qt/fast/repaint/clipped-relative-expected.png:
+        * platform/qt/fast/repaint/containing-block-position-change-expected.png:
+        * platform/qt/fast/repaint/content-into-overflow-expected.png:
+        * platform/qt/fast/repaint/continuation-after-outline-expected.png:
+        * platform/qt/fast/repaint/control-clip-expected.png:
+        * platform/qt/fast/repaint/create-layer-repaint-expected.png:
+        * platform/qt/fast/repaint/delete-into-nested-block-expected.png:
+        * platform/qt/fast/repaint/dynamic-table-vertical-alignment-change-expected.png:
+        * platform/qt/fast/repaint/fixed-child-move-after-scroll-expected.png:
+        * platform/qt/fast/repaint/fixed-child-of-fixed-move-after-scroll-expected.png:
+        * platform/qt/fast/repaint/fixed-child-of-transformed-move-after-scroll-expected.png:
+        * platform/qt/fast/repaint/fixed-move-after-keyboard-scroll-expected.png:
+        * platform/qt/fast/repaint/fixed-move-after-scroll-expected.png:
+        * platform/qt/fast/repaint/fixed-tranformed-expected.png:
+        * platform/qt/fast/repaint/float-move-during-layout-expected.png:
+        * platform/qt/fast/repaint/float-overflow-expected.png:
+        * platform/qt/fast/repaint/float-overflow-right-expected.png:
+        * platform/qt/fast/repaint/gradients-em-stops-repaint-expected.png:
+        * platform/qt/fast/repaint/iframe-scroll-repaint-expected.png:
+        * platform/qt/fast/repaint/inline-color-change-expected.png:
+        * platform/qt/fast/repaint/inline-outline-repaint-expected.png:
+        * platform/qt/fast/repaint/invisible-objects-expected.png:
+        * platform/qt/fast/repaint/layer-visibility-expected.png: Copied from LayoutTests/platform/qt/fast/layers/add-layer-with-nested-stacking-expected.png.
+        * platform/qt/fast/repaint/layout-state-only-positioned-expected.png:
+        * platform/qt/fast/repaint/layout-state-relative-expected.png:
+        * platform/qt/fast/repaint/layout-state-scrolloffset-expected.png:
+        * platform/qt/fast/repaint/layout-state-scrolloffset2-expected.png:
+        * platform/qt/fast/repaint/layout-state-scrolloffset3-expected.png:
+        * platform/qt/fast/repaint/line-flow-with-floats-1-expected.png:
+        * platform/qt/fast/repaint/line-flow-with-floats-10-expected.png:
+        * platform/qt/fast/repaint/line-flow-with-floats-2-expected.png:
+        * platform/qt/fast/repaint/line-flow-with-floats-3-expected.png:
+        * platform/qt/fast/repaint/line-flow-with-floats-4-expected.png:
+        * platform/qt/fast/repaint/line-flow-with-floats-5-expected.png:
+        * platform/qt/fast/repaint/line-flow-with-floats-6-expected.png:
+        * platform/qt/fast/repaint/line-flow-with-floats-7-expected.png:
+        * platform/qt/fast/repaint/line-flow-with-floats-8-expected.png:
+        * platform/qt/fast/repaint/line-flow-with-floats-9-expected.png:
+        * platform/qt/fast/repaint/line-in-scrolled-clipped-block-expected.png:
+        * platform/qt/fast/repaint/line-overflow-expected.png:
+        * platform/qt/fast/repaint/lines-with-layout-delta-expected.png:
+        * platform/qt/fast/repaint/list-marker-2-expected.png:
+        * platform/qt/fast/repaint/make-children-non-inline-expected.png:
+        * platform/qt/fast/repaint/multicol-repaint-expected.png:
+        * platform/qt/fast/repaint/no-caret-repaint-in-non-content-editable-element-expected.png:
+        * platform/qt/fast/repaint/opacity-change-on-overflow-float-expected.png:
+        * platform/qt/fast/repaint/outline-child-repaint-expected.png:
+        * platform/qt/fast/repaint/outline-inset-expected.png:
+        * platform/qt/fast/repaint/outline-repaint-glitch-expected.png:
+        * platform/qt/fast/repaint/outline-shrinking-expected.png:
+        * platform/qt/fast/repaint/overflow-clip-subtree-layout-expected.png:
+        * platform/qt/fast/repaint/overflow-delete-line-expected.png:
+        * platform/qt/fast/repaint/overflow-flipped-writing-mode-block-in-regions-expected.png:
+        * platform/qt/fast/repaint/overflow-into-content-expected.png:
+        * platform/qt/fast/repaint/overflow-scroll-delete-expected.png:
+        * platform/qt/fast/repaint/reflection-redraw-expected.png:
+        * platform/qt/fast/repaint/reflection-repaint-test-expected.png:
+        * platform/qt/fast/repaint/region-painting-invalidation-expected.png:
+        * platform/qt/fast/repaint/region-painting-via-layout-expected.png:
+        * platform/qt/fast/repaint/rel-positioned-inline-with-overflow-expected.png:
+        * platform/qt/fast/repaint/repaint-during-scroll-expected.png:
+        * platform/qt/fast/repaint/repaint-resized-overflow-expected.png:
+        * platform/qt/fast/repaint/search-field-cancel-expected.png:
+        * platform/qt/fast/repaint/select-option-background-color-expected.png:
+        * platform/qt/fast/repaint/selected-replaced-expected.png:
+        * platform/qt/fast/repaint/selection-after-delete-expected.png:
+        * platform/qt/fast/repaint/selection-after-remove-expected.png:
+        * platform/qt/fast/repaint/selection-clear-expected.png:
+        * platform/qt/fast/repaint/selection-gap-overflow-scroll-2-expected.png:
+        * platform/qt/fast/repaint/selection-rl-expected.png:
+        * platform/qt/fast/repaint/stacked-diacritics-expected.png:
+        * platform/qt/fast/repaint/subtree-layoutstate-transform-expected.png:
+        * platform/qt/fast/repaint/subtree-root-clip-2-expected.png:
+        * platform/qt/fast/repaint/subtree-root-clip-3-expected.png:
+        * platform/qt/fast/repaint/subtree-root-clip-expected.png:
+        * platform/qt/fast/repaint/subtree-root-skipped-expected.png:
+        * platform/qt/fast/repaint/table-cell-collapsed-border-expected.png:
+        * platform/qt/fast/repaint/table-cell-move-expected.png:
+        * platform/qt/fast/repaint/table-collapsed-border-expected.png:
+        * platform/qt/fast/repaint/table-extra-bottom-grow-expected.png:
+        * platform/qt/fast/repaint/table-hover-on-link-expected.png:
+        * platform/qt/fast/repaint/table-section-repaint-expected.png:
+        * platform/qt/fast/repaint/table-two-pass-layout-overpaint-expected.png:
+        * platform/qt/fast/repaint/text-append-dirty-lines-expected.png:
+        * platform/qt/fast/repaint/transform-absolute-child-expected.png:
+        * platform/qt/fast/repaint/transform-absolute-in-positioned-container-expected.png:
+        * platform/qt/fast/repaint/transform-disable-layoutstate-expected.png:
+        * platform/qt/fast/repaint/transform-layout-repaint-expected.png:
+        * platform/qt/fast/repaint/transform-relative-position-expected.png:
+        * platform/qt/fast/repaint/transform-repaint-descendants-expected.png:
+        * platform/qt/fast/repaint/transform-replaced-shadows-expected.png:
+        * platform/qt/fast/repaint/transform-rotate-and-remove-expected.png:
+        * platform/qt/fast/repaint/transform-translate-expected.png:
+        * platform/qt/fast/table/border-collapsing/cached-69296-expected.png: Copied from LayoutTests/platform/qt/fast/repaint/layout-state-only-positioned-expected.png.
+        * platform/qt/fast/table/border-collapsing/cached-change-cell-sl-border-color-expected.png: Copied from LayoutTests/platform/qt/svg/zoom/page/relative-sized-document-scrollbars-expected.png.
+        * platform/qt/fast/table/border-collapsing/cached-change-row-border-width-expected.png: Copied from LayoutTests/platform/qt/svg/repaint/repainting-after-animation-element-removal-expected.png.
+        * platform/qt/fast/table/border-collapsing/cached-change-tbody-border-width-expected.png: Copied from LayoutTests/platform/qt/fast/repaint/table-two-pass-layout-overpaint-expected.png.
+        * platform/qt/http/tests/misc/slow-loading-image-in-pattern-expected.png:
+        * platform/qt/svg/as-background-image/svg-background-partial-redraw-expected.png:
+        * platform/qt/svg/as-image/animated-svg-as-image-expected.png:
+        * platform/qt/svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size-expected.png:
+        * platform/qt/svg/as-image/animated-svg-as-image-same-image-expected.png:
+        * platform/qt/svg/as-image/svg-image-change-content-size-expected.png:
+        * platform/qt/svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-1-expected.png:
+        * platform/qt/svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-2-expected.png:
+        * platform/qt/svg/as-object/embedded-svg-size-changes-no-layout-triggers-expected.png:
+        * platform/qt/svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-1-expected.png:
+        * platform/qt/svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-2-expected.png:
+        * platform/qt/svg/carto.net/window-expected.png:
+        * platform/qt/svg/custom/absolute-sized-content-with-resources-expected.png:
+        * platform/qt/svg/custom/animate-path-discrete-expected.png:
+        * platform/qt/svg/custom/animate-path-morphing-expected.png:
+        * platform/qt/svg/custom/animate-target-id-changed-expected.png:
+        * platform/qt/svg/custom/animate-target-removed-from-document-expected.png:
+        * platform/qt/svg/custom/circle-move-invalidation-expected.png:
+        * platform/qt/svg/custom/clip-path-child-changes-expected.png:
+        * platform/qt/svg/custom/clip-path-href-changes-expected.png:
+        * platform/qt/svg/custom/clip-path-units-changes-expected.png:
+        * platform/qt/svg/custom/deep-dynamic-updates-expected.png:
+        * platform/qt/svg/custom/fill-opacity-update-expected.png:
+        * platform/qt/svg/custom/foreignObject-crash-on-hover-expected.png:
+        * platform/qt/svg/custom/gradient-add-stops-expected.png:
+        * platform/qt/svg/custom/gradient-stop-style-change-expected.png:
+        * platform/qt/svg/custom/hit-test-unclosed-subpaths-expected.png:
+        * platform/qt/svg/custom/js-late-clipPath-and-object-creation-expected.png:
+        * platform/qt/svg/custom/js-late-clipPath-creation-expected.png:
+        * platform/qt/svg/custom/js-late-gradient-and-object-creation-expected.png:
+        * platform/qt/svg/custom/js-late-gradient-creation-expected.png:
+        * platform/qt/svg/custom/js-late-marker-and-object-creation-expected.png:
+        * platform/qt/svg/custom/js-late-marker-creation-expected.png:
+        * platform/qt/svg/custom/js-late-mask-and-object-creation-expected.png:
+        * platform/qt/svg/custom/js-late-mask-creation-expected.png:
+        * platform/qt/svg/custom/js-update-bounce-expected.png:
+        * platform/qt/svg/custom/js-update-container-expected.png:
+        * platform/qt/svg/custom/js-update-container2-expected.png:
+        * platform/qt/svg/custom/js-update-gradient-expected.png:
+        * platform/qt/svg/custom/js-update-image-expected.png:
+        * platform/qt/svg/custom/js-update-path-changes-expected.png:
+        * platform/qt/svg/custom/js-update-path-removal-expected.png:
+        * platform/qt/svg/custom/js-update-pattern-child-expected.png:
+        * platform/qt/svg/custom/js-update-pattern-expected.png:
+        * platform/qt/svg/custom/js-update-polygon-changes-expected.png:
+        * platform/qt/svg/custom/js-update-polygon-removal-expected.png:
+        * platform/qt/svg/custom/js-update-stop-expected.png:
+        * platform/qt/svg/custom/js-update-stop-linked-gradient-expected.png:
+        * platform/qt/svg/custom/js-update-style-expected.png:
+        * platform/qt/svg/custom/js-update-transform-addition-expected.png:
+        * platform/qt/svg/custom/js-update-transform-changes-expected.png:
+        * platform/qt/svg/custom/marker-child-changes-css-expected.png:
+        * platform/qt/svg/custom/marker-child-changes-expected.png:
+        * platform/qt/svg/custom/marker-viewBox-changes-expected.png:
+        * platform/qt/svg/custom/mask-child-changes-expected.png:
+        * platform/qt/svg/custom/mask-invalidation-expected.png:
+        * platform/qt/svg/custom/object-sizing-no-width-height-change-content-box-size-expected.png:
+        * platform/qt/svg/custom/prevent-default-expected.png:
+        * platform/qt/svg/custom/relative-sized-content-expected.png:
+        * platform/qt/svg/custom/relative-sized-deep-shadow-tree-content-expected.png:
+        * platform/qt/svg/custom/relative-sized-image-expected.png:
+        * platform/qt/svg/custom/relative-sized-inner-svg-expected.png:
+        * platform/qt/svg/custom/relative-sized-shadow-tree-content-expected.png:
+        * platform/qt/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.png:
+        * platform/qt/svg/custom/relative-sized-use-on-symbol-expected.png:
+        * platform/qt/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.png:
+        * platform/qt/svg/custom/repaint-moving-svg-and-div-expected.png:
+        * platform/qt/svg/custom/repaint-on-constant-size-change-expected.png:
+        * platform/qt/svg/custom/repaint-on-image-bounds-change-expected.png:
+        * platform/qt/svg/custom/repaint-stroke-width-changes-expected.png:
+        * platform/qt/svg/custom/resource-client-removal-expected.png:
+        * platform/qt/svg/custom/resource-invalidate-on-target-update-expected.png:
+        * platform/qt/svg/custom/scroll-hit-test-expected.png:
+        * platform/qt/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png:
+        * platform/qt/svg/custom/stroke-opacity-update-expected.png:
+        * platform/qt/svg/custom/svg-absolute-children-expected.png:
+        * platform/qt/svg/custom/text-dom-removal-expected.png:
+        * platform/qt/svg/custom/text-repaint-including-stroke-expected.png:
+        * platform/qt/svg/custom/text-xy-updates-SVGList-expected.png:
+        * platform/qt/svg/custom/use-clipped-hit-expected.png:
+        * platform/qt/svg/custom/use-detach-expected.png:
+        * platform/qt/svg/custom/use-disappears-after-style-update-expected.png:
+        * platform/qt/svg/custom/use-elementInstance-event-target-expected.png:
+        * platform/qt/svg/custom/use-elementInstance-methods-expected.png:
+        * platform/qt/svg/custom/use-event-handler-on-referenced-element-expected.png:
+        * platform/qt/svg/custom/use-event-handler-on-use-element-expected.png:
+        * platform/qt/svg/custom/use-setAttribute-crash-expected.png:
+        * platform/qt/svg/dom/SVGPathSegList-segment-modification-expected.png:
+        * platform/qt/svg/dom/SVGPathSegList-xml-dom-synchronization2-expected.png:
+        * platform/qt/svg/dom/SVGRectElement/rect-modify-rx-expected.png:
+        * platform/qt/svg/filters/feImage-change-target-id-expected.png:
+        * platform/qt/svg/filters/feImage-multiple-targets-id-change-expected.png:
+        * platform/qt/svg/filters/feImage-reference-invalidation-expected.png: Copied from LayoutTests/platform/qt/svg/custom/animate-target-removed-from-document-expected.png.
+        * platform/qt/svg/filters/feImage-remove-target-expected.png:
+        * platform/qt/svg/filters/feImage-target-add-to-document-expected.png:
+        * platform/qt/svg/filters/feImage-target-attribute-change-expected.png:
+        * platform/qt/svg/filters/feImage-target-attribute-change-with-use-indirection-2-expected.png:
+        * platform/qt/svg/filters/feImage-target-attribute-change-with-use-indirection-expected.png:
+        * platform/qt/svg/filters/feImage-target-changes-id-expected.png:
+        * platform/qt/svg/filters/feImage-target-id-change-expected.png:
+        * platform/qt/svg/filters/feImage-target-inline-style-change-expected.png:
+        * platform/qt/svg/filters/feImage-target-property-change-expected.png:
+        * platform/qt/svg/filters/feImage-target-reappend-to-document-expected.png:
+        * platform/qt/svg/filters/feImage-target-remove-from-document-expected.png:
+        * platform/qt/svg/filters/feImage-target-style-change-expected.png:
+        * platform/qt/svg/filters/filter-refresh-expected.png:
+        * platform/qt/svg/filters/filter-width-update-expected.png:
+        * platform/qt/svg/filters/invalidate-on-child-layout-expected.png:
+        * platform/qt/svg/hixie/perf/001-expected.png:
+        * platform/qt/svg/hixie/perf/002-expected.png:
+        * platform/qt/svg/hixie/perf/003-expected.png:
+        * platform/qt/svg/hixie/perf/004-expected.png:
+        * platform/qt/svg/hixie/perf/005-expected.png:
+        * platform/qt/svg/hixie/perf/007-expected.png:
+        * platform/qt/svg/repaint/filter-child-repaint-expected.png:
+        * platform/qt/svg/repaint/inner-svg-change-viewBox-contract-expected.png:
+        * platform/qt/svg/repaint/inner-svg-change-viewBox-expected.png:
+        * platform/qt/svg/repaint/inner-svg-change-viewPort-relative-expected.png:
+        * platform/qt/svg/repaint/mask-clip-target-transform-expected.png:
+        * platform/qt/svg/repaint/repainting-after-animation-element-removal-expected.png:
+        * platform/qt/svg/repaint/text-mask-update-expected.png:
+        * platform/qt/svg/text/append-text-node-to-tspan-expected.png:
+        * platform/qt/svg/text/ems-display-none-expected.png:
+        * platform/qt/svg/text/exs-display-none-expected.png:
+        * platform/qt/svg/text/modify-text-node-in-tspan-expected.png:
+        * platform/qt/svg/text/text-text-05-t-expected.png:
+        * platform/qt/svg/text/text-viewbox-rescale-expected.png:
+        * platform/qt/svg/text/tspan-dynamic-positioning-expected.png:
+        * platform/qt/svg/transforms/animated-path-inside-transformed-html-expected.png:
+        * platform/qt/svg/zoom/page/absolute-sized-document-no-scrollbars-expected.png:
+        * platform/qt/svg/zoom/page/relative-sized-document-scrollbars-expected.png:
+        * platform/qt/svg/zoom/text/absolute-sized-document-no-scrollbars-expected.png:
+        * platform/qt/svg/zoom/text/absolute-sized-document-scrollbars-expected.png:
+        * platform/qt/svg/zoom/text/relative-sized-document-scrollbars-expected.png:
+        * platform/qt/svg/zoom/text/zoom-foreignObject-expected.png:
+
 2012-10-10  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Skip fast/css/color-correction-on-text.html.
