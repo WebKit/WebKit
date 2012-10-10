@@ -1,3 +1,17 @@
+2012-10-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r130838.
+        http://trac.webkit.org/changeset/130838
+        https://bugs.webkit.org/show_bug.cgi?id=98860
+
+        The patch is causing X errors (=> crashes) on GTK 64-bit
+        Release builder (Requested by zdobersek on #webkit).
+
+        * webkit/webkitwebview.cpp:
+        (resizeWebViewFromAllocation):
+        (webkit_web_view_size_allocate):
+        (webkitWebViewMap):
+
 2012-10-09  Daniel Drake  <dsd@laptop.org>
 
         [GTK] Plugins don't display
