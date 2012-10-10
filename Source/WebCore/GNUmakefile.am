@@ -200,10 +200,18 @@ feature_defines_overrides += ENABLE_MEDIA_STREAM=0
 endif # END ENABLE_MEDIA_STREAM
 
 # XPath grammar
+# NOTE: older versions of bison do not inject an inclusion guard, so we do it
 $(GENSOURCES_WEBCORE)/XPathGrammar.h: $(GENSOURCES_WEBCORE)/XPathGrammar.cpp
 $(GENSOURCES_WEBCORE)/XPathGrammar.cpp: $(WebCore)/xml/XPathGrammar.y
 	$(AM_V_GEN)
-	$(AM_V_at)perl $(WebCore)/css/makegrammar.pl --grammar $< --outputDir $(GENSOURCES_WEBCORE) --symbolsPrefix xpathyy
+	$(AM_V_at)rm -f $(GENSOURCES_WEBCORE)/XPathGrammar.cpp.h $(GENSOURCES_WEBCORE)/XPathGrammar.hpp
+	$(AM_V_at)$(BISON) -d -p xpathyy $< -o $(GENSOURCES_WEBCORE)/XPathGrammar.cpp
+	$(AM_V_at)touch $(GENSOURCES_WEBCORE)/XPathGrammar.cpp.h $(GENSOURCES_WEBCORE)/XPathGrammar.hpp
+	$(AM_V_at)echo '#ifndef XPathGrammar_h' > $(GENSOURCES_WEBCORE)/XPathGrammar.h
+	$(AM_V_at)echo '#define XPathGrammar_h' >> $(GENSOURCES_WEBCORE)/XPathGrammar.h
+	$(AM_V_at)cat $(GENSOURCES_WEBCORE)/XPathGrammar.cpp.h $(GENSOURCES_WEBCORE)/XPathGrammar.hpp >> $(GENSOURCES_WEBCORE)/XPathGrammar.h
+	$(AM_V_at)echo '#endif' >> $(GENSOURCES_WEBCORE)/XPathGrammar.h
+	$(AM_V_at)rm -f $(GENSOURCES_WEBCORE)/XPathGrammar.cpp.h $(GENSOURCES_WEBCORE)/XPathGrammar.hpp
 
 # ----
 # XSLT Support
@@ -410,10 +418,18 @@ DerivedSources/WebCore/ColorData.cpp: $(WebCore)/platform/ColorData.gperf $(WebC
 
 # CSS grammar
 
+# NOTE: older versions of bison do not inject an inclusion guard, so we do it
 DerivedSources/WebCore/CSSGrammar.h: $(GENSOURCES_WEBCORE)/CSSGrammar.cpp
-DerivedSources/WebCore/CSSGrammar.cpp: $(WebCore)/css/CSSGrammar.y.in
+DerivedSources/WebCore/CSSGrammar.cpp: $(WebCore)/css/CSSGrammar.y
 	$(AM_V_GEN)
-	$(AM_V_at)perl $(WebCore)/css/makegrammar.pl --grammar $< --extraDefines "$(feature_defines)" --outputDir $(GENSOURCES_WEBCORE) --symbolsPrefix cssyy
+	$(AM_V_at)rm -f $(GENSOURCES_WEBCORE)/CSSGrammar.cpp.h $(GENSOURCES_WEBCORE)/CSSGrammar.hpp
+	$(AM_V_at)$(BISON) -d -p cssyy $< -o $(GENSOURCES_WEBCORE)/CSSGrammar.cpp
+	$(AM_V_at)touch $(GENSOURCES_WEBCORE)/CSSGrammar.cpp.h $(GENSOURCES_WEBCORE)/CSSGrammar.hpp
+	$(AM_V_at)echo '#ifndef CSSGrammar_h' > $(GENSOURCES_WEBCORE)/CSSGrammar.h
+	$(AM_V_at)echo '#define CSSGrammar_h' >> $(GENSOURCES_WEBCORE)/CSSGrammar.h
+	$(AM_V_at)cat $(GENSOURCES_WEBCORE)/CSSGrammar.cpp.h $(GENSOURCES_WEBCORE)/CSSGrammar.hpp >> $(GENSOURCES_WEBCORE)/CSSGrammar.h
+	$(AM_V_at)echo '#endif' >> $(GENSOURCES_WEBCORE)/CSSGrammar.h
+	$(AM_V_at)rm -f $(GENSOURCES_WEBCORE)/CSSGrammar.cpp.h $(GENSOURCES_WEBCORE)/CSSGrammar.hpp
 
 # user agent style sheets
 USER_AGENT_STYLE_SHEETS = \

@@ -1,3 +1,27 @@
+2012-10-10  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, rolling out r130937, r130949, r130955, and
+        r130957.
+        http://trac.webkit.org/changeset/130937
+        http://trac.webkit.org/changeset/130949
+        http://trac.webkit.org/changeset/130955
+        http://trac.webkit.org/changeset/130957
+        https://bugs.webkit.org/show_bug.cgi?id=94290
+
+        Breaks Qt build
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gyp/scripts/action_preprocessgrammar.py: Removed.
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSGrammar.y: Renamed from Source/WebCore/css/CSSGrammar.y.in.
+        * css/CSSGrammar.y.includes: Removed.
+        * css/makegrammar.pl:
+
 2012-10-10  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Adapt to new image for search-cancel

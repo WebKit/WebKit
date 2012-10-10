@@ -35879,11 +35879,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\CSSGrammar.y.in"
-				>
-			</File>
-			<File
-				RelativePath="..\css\CSSGrammar.y.includes"
+				RelativePath="..\css\CSSGrammar.y"
 				>
 			</File>
 			<File

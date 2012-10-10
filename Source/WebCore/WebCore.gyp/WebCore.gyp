@@ -586,7 +586,7 @@
       },
       'sources': [
         # bison rule
-        '<(SHARED_INTERMEDIATE_DIR)/webkit/CSSGrammar.y',
+        '../css/CSSGrammar.y',
         '../xml/XPathGrammar.y',
 
         # gperf rule
@@ -1075,25 +1075,6 @@
             '<(SHARED_INTERMEDIATE_DIR)/supplemental_dependency.tmp',
             '--',
             '<@(derived_sources_aggregate_files)',
-          ],
-        },
-        {
-          'action_name': 'preprocess_grammar',
-          'inputs': [
-            '../css/CSSGrammar.y.in',
-            '../css/CSSGrammar.y.includes',
-          ],
-          'outputs': [
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/CSSGrammar.y',
-          ],
-          'action': [
-            'python',
-            'scripts/action_preprocessgrammar.py',
-            '--output-dir',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/',
-            '--defines',
-            '<(feature_defines)',
-            '<@(_inputs)',
           ],
         },
       ],
