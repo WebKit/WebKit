@@ -1980,6 +1980,10 @@
           # warnings about uninitialized this.
           'cflags': ['-Wno-uninitialized'],
         }],
+        ['OS == "android" and target_arch == "ia32" and gcc_version == 46', {
+          # Due to a bug in gcc 4.6 in android NDK, we get warnings about uninitialized variable.
+          'cflags': ['-Wno-uninitialized'],
+        }],
         ['use_x11 == 0', {
           'sources/': [
             ['exclude', 'Linux\\.cpp$'],
