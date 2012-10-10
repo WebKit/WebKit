@@ -32,6 +32,7 @@ if (isset($stallAt) && isset($stallFor)) {
 } else {
     echo(fread($file, filesize($name)));
 }
-
+flush();
+ob_flush();
 fclose($file);
 ?>
