@@ -139,6 +139,7 @@
       '../plugins',
       '../plugins/chromium',
       '../rendering',
+      '../rendering/mathml',
       '../rendering/style',
       '../rendering/svg',
       '../storage',

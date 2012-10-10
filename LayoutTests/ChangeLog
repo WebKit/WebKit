@@ -1,3 +1,15 @@
+2012-10-10  David Barton  <dbarton@mathscribe.com>
+
+        Turn on ENABLE_MATHML for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=96960
+
+        Reviewed by Adam Barth.
+
+        We're enabling MathML now partly to let the automated fuzzers go to work. Some layout tuning will also be done in the
+        next few days, so we expect MathML pixel tests to be changing during that time.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-10  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed Chromium gardening.

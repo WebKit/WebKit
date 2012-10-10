@@ -1,3 +1,12 @@
+2012-10-10  David Barton  <dbarton@mathscribe.com>
+
+        Turn on ENABLE_MATHML for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=96960
+
+        Reviewed by Adam Barth.
+
+        * features.gypi:
+
 2012-10-10  Varun Jain  <varunjain@chromium.org>
 
         [chromium] Spelling and grammar markers are pixelated in hidpi.
