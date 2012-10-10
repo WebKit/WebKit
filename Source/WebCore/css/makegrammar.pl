@@ -38,6 +38,8 @@ if ($ENV{CC}) {
     $gcc = "/usr/bin/gcc";
 }
 
+$gcc .= " -E -P -x c";
+
 my $grammarFilePath = "";
 my $outputDir = ".";
 my $extraDefines = "";
@@ -46,6 +48,7 @@ my $symbolsPrefix = "";
 GetOptions(
     'grammar=s' => \$grammarFilePath,
     'outputDir=s' => \$outputDir,
+    'preprocessor=s' => \$gcc,
     'extraDefines=s' => \$extraDefines,
     'symbolsPrefix=s' => \$symbolsPrefix
 );
@@ -60,7 +63,7 @@ if ($suffix eq ".y.in") {
     my $featureFlags = "-D " . join(" -D ", split(" ", $extraDefines));
 
     my $processed = new IO::File;
-    open $processed, "$gcc -E -P -x c $grammarFilePath $featureFlags|";
+    open $processed, "$gcc $grammarFilePath $featureFlags|";
 
     open GRAMMAR, ">$grammarFileOutPath" or die;
     open INCLUDES, "<$grammarFileIncludesPath" or die;
