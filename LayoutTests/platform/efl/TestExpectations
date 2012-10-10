@@ -1045,12 +1045,12 @@ webkit.org/b/61932 [ Debug ] jquery/manipulation.html [ Failure Pass Timeout ]
 # These test -apple- prefixed CSS properties, which we don't support.
 fast/css/apple-prefix.html [ WontFix ]
 
-webkit.org/b/75747 fast/css/color-correction-on-background-image.html [ Failure ]
-webkit.org/b/75747 fast/css/color-correction-on-backgrounds.html [ Failure ]
-webkit.org/b/75747 fast/css/color-correction-on-box-shadow.html [ Failure ]
-webkit.org/b/75747 fast/css/color-correction-on-text.html [ Failure ]
-webkit.org/b/75747 fast/css/color-correction-on-text-shadow.html [ Failure ]
-webkit.org/b/75747 fast/css/color-correction-untagged-images.html [ Failure ]
+webkit.org/b/75747 fast/css/color-correction-on-background-image.html [ Missing Failure ]
+webkit.org/b/75747 fast/css/color-correction-on-backgrounds.html [ Missing Failure ]
+webkit.org/b/75747 fast/css/color-correction-on-box-shadow.html [ Missing Failure ]
+webkit.org/b/75747 fast/css/color-correction-on-text.html [ Missing Failure ]
+webkit.org/b/75747 fast/css/color-correction-on-text-shadow.html [ Missing Failure ]
+webkit.org/b/75747 fast/css/color-correction-untagged-images.html [ Missing Failure ]
 
 webkit.org/b/65536 fast/css/text-rendering.html [ Failure ]
 

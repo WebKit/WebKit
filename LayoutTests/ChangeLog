@@ -1,5 +1,20 @@
 2012-10-10  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        [EFL] Remove a few wrong expectations from the tree and properly skip the tests.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/css/color-correction-backgrounds-and-text-expected.png: Removed.
+        * platform/efl/fast/css/color-correction-backgrounds-and-text-expected.txt: Removed.
+        * platform/efl/fast/css/color-correction-expected.png: Removed.
+        * platform/efl/fast/css/color-correction-expected.txt: Removed.
+        * platform/efl/fast/css/color-correction-on-background-image-expected.txt: Removed.
+        * platform/efl/fast/css/color-correction-on-backgrounds-expected.txt: Removed.
+        * platform/efl/fast/css/color-correction-on-box-shadow-expected.txt: Removed.
+        * platform/efl/fast/css/color-correction-on-text-shadow-expected.txt: Removed.
+        * platform/efl/fast/css/color-correction-untagged-images-expected.txt: Removed.
+
+2012-10-10  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         [EFL] More gardening.
 
         * platform/efl/TestExpectations: Unskip a few tests which have had
