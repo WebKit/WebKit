@@ -1,3 +1,9 @@
+2012-10-10  Antonio Gomes  <agomes@rim.com>
+
+        Unreviewed watch list addition.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-10-10  Dirk Pranke  <dpranke@chromium.org>
 
         NRWT crashes on too many timeouts
