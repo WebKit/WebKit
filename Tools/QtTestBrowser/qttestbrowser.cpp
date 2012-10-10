@@ -300,7 +300,7 @@ int main(int argc, char **argv)
         if (QFile(defaultIndexFile).exists())
             urls.append(QString("file://") + defaultIndexFile);
         else
-            urls.append("");
+            urls.append("http://www.google.com/");
     }
 
     LauncherWindow* window = 0;
