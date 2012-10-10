@@ -33,59 +33,51 @@
  */
 Evas_Object* ewk_util_image_from_cairo_surface_add(Evas* canvas, cairo_surface_t* surface)
 {
-    cairo_status_t status;
-    cairo_surface_type_t type;
-    cairo_format_t format;
-    int w, h, stride;
-    Evas_Object* image;
-    const void* src;
-    void* dst;
-
     EINA_SAFETY_ON_NULL_RETURN_VAL(canvas, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(surface, 0);
 
-    status = cairo_surface_status(surface);
+    cairo_status_t status = cairo_surface_status(surface);
     if (status != CAIRO_STATUS_SUCCESS) {
         ERR("cairo surface is invalid: %s", cairo_status_to_string(status));
         return 0;
     }
 
-    type = cairo_surface_get_type(surface);
+    cairo_surface_type_t type = cairo_surface_get_type(surface);
     if (type != CAIRO_SURFACE_TYPE_IMAGE) {
         ERR("unknown surface type %d, required %d (CAIRO_SURFACE_TYPE_IMAGE).",
             type, CAIRO_SURFACE_TYPE_IMAGE);
         return 0;
     }
 
-    format = cairo_image_surface_get_format(surface);
+    cairo_format_t format = cairo_image_surface_get_format(surface);
     if (format != CAIRO_FORMAT_ARGB32 && format != CAIRO_FORMAT_RGB24) {
         ERR("unknown surface format %d, expected %d or %d.",
             format, CAIRO_FORMAT_ARGB32, CAIRO_FORMAT_RGB24);
         return 0;
     }
 
-    w = cairo_image_surface_get_width(surface);
-    h = cairo_image_surface_get_height(surface);
-    stride = cairo_image_surface_get_stride(surface);
-    if (w <= 0 || h <= 0 || stride <= 0) {
-        ERR("invalid image size %dx%d, stride=%d", w, h, stride);
+    int width = cairo_image_surface_get_width(surface);
+    int height = cairo_image_surface_get_height(surface);
+    int stride = cairo_image_surface_get_stride(surface);
+    if (width <= 0 || height <= 0 || stride <= 0) {
+        ERR("invalid image size %dx%d, stride=%d", width, height, stride);
         return 0;
     }
 
-    src = cairo_image_surface_get_data(surface);
-    if (!src) {
+    void* data = cairo_image_surface_get_data(surface);
+    if (!data) {
         ERR("could not get source data.");
         return 0;
     }
 
-    image = evas_object_image_filled_add(canvas);
+    Evas_Object* image = evas_object_image_filled_add(canvas);
     if (!image) {
         ERR("could not add image to canvas.");
         return 0;
     }
 
     evas_object_image_colorspace_set(image, EVAS_COLORSPACE_ARGB8888);
-    evas_object_image_size_set(image, w, h);
+    evas_object_image_size_set(image, width, height);
     evas_object_image_alpha_set(image, format == CAIRO_FORMAT_ARGB32);
 
     if (evas_object_image_stride_get(image) != stride) {
@@ -95,11 +87,7 @@ Evas_Object* ewk_util_image_from_cairo_surface_add(Evas* canvas, cairo_surface_t
         return 0;
     }
 
-    dst = evas_object_image_data_get(image, true);
-    memcpy(dst, src, h * stride);
-    evas_object_image_data_set(image, dst);
-
-    evas_object_resize(image, w, h); // helpful but not really required
+    evas_object_image_data_copy_set(image, data);
 
     return image;
 }

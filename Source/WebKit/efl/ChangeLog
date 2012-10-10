@@ -1,3 +1,20 @@
+2012-10-10  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        [EFL] Use Evas function instead of memcpy
+        https://bugs.webkit.org/show_bug.cgi?id=98483
+
+        Reviewed by Gyuyoung Kim.
+
+        Evas supports evas_object_image_data_copy_set() to copy raw image data.
+        Change memcpy() with evas_object_image_data_copy_set().
+
+        Spell out variable names and refactor variable declaration statements.
+
+        No new tests, no functionality was changed.
+
+        * ewk/ewk_util.cpp:
+        (ewk_util_image_from_cairo_surface_add):
+
 2012-10-07  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Rename first/second to key/value in HashMap iterators
