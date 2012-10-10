@@ -1,3 +1,18 @@
+2012-10-10  Dan Bernstein  <mitz@apple.com>
+
+        Changed debug-safari, debug-minibrowser and debug-test-runner to use LLDB by default when
+        using Xcode 4.5 or later.
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkitdirs.pm:
+        (determineDebugger): Changed the default debugger from GDB to LLDB when the Xcode version
+        is 4.5 or later. Added a --use-gdb switch for overriding this.
+        (printHelpAndExitForRunAndDebugWebKitAppIfNeeded): Updated to mention --use-gdb and the
+        how the default debugger choice depends on the Xcode version. Also changed the description
+        of --no-saved-state to use the same terminology Xcode’s scheme editor uses to describe this
+        option, and clarified to which OS X versions it applies.
+
 2012-10-10  Antonio Gomes  <agomes@rim.com>
 
         Unreviewed watch list addition.
