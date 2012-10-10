@@ -1,0 +1,11 @@
+This tests the correct placement of inline spelling and grammar markers in text.
+Spelling markers should line up exactly under misspelled words in all cases.
+
+LTR
+the the adlj adaasj sdklj. there there
+RTL
+the the adlj adaasj sdklj. there there
+LTR (text-overflow:ellipses):
+the the adlj adaasj sdklj. there there
+RTL (text-overflow:ellipses):
+the the adlj adaasj sdklj. there there

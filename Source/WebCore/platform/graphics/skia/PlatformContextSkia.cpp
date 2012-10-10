@@ -188,6 +188,7 @@ PlatformContextSkia::PlatformContextSkia(SkCanvas* canvas)
     , m_accelerated(false)
     , m_deferred(false)
     , m_drawingToImageBuffer(false)
+    , m_deviceScaleFactor(1)
 #if defined(SK_SUPPORT_HINTING_SCALE_FACTOR)
     , m_hintingScaleFactor(SK_Scalar1)
 #endif

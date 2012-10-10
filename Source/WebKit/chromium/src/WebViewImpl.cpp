@@ -3868,6 +3868,8 @@ void WebViewImpl::paintRootLayer(GraphicsContext& context, const IntRect& conten
     if (!page())
         return;
     FrameView* view = page()->mainFrame()->view();
+    if (context.platformContext())
+        context.platformContext()->setDeviceScaleFactor(page()->deviceScaleFactor());
     view->paintContents(&context, contentRect);
     double paintEnd = currentTime();
     double pixelsPerSec = (contentRect.width() * contentRect.height()) / (paintEnd - paintStart);

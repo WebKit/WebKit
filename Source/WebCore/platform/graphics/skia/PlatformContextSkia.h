@@ -187,6 +187,9 @@ public:
     bool isDeferred() const { return m_deferred; }
     void setDeferred(bool deferred) { m_deferred = deferred; }
 
+    float deviceScaleFactor() const { return m_deviceScaleFactor; }
+    void setDeviceScaleFactor(float scale) { m_deviceScaleFactor = scale; }
+
     void setTrackOpaqueRegion(bool track) { m_trackOpaqueRegion = track; }
 
     // This will be an empty region unless tracking is enabled.
@@ -239,6 +242,7 @@ private:
     bool m_accelerated;
     bool m_deferred;
     bool m_drawingToImageBuffer;
+    float m_deviceScaleFactor;
 #if defined(SK_SUPPORT_HINTING_SCALE_FACTOR)
     SkScalar m_hintingScaleFactor;
 #endif

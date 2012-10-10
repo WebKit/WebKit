@@ -1,3 +1,19 @@
+2012-10-10  Varun Jain  <varunjain@chromium.org>
+
+        [chromium] Spelling and grammar markers are pixelated in hidpi.
+        https://bugs.webkit.org/show_bug.cgi?id=98339
+
+        Reviewed by Stephen White.
+
+        We create separate bitmaps for markers in normal and hidpi mode as per
+        specification from UX and choose the right bitmap based on the current
+        device scale factor.
+
+        * src/PageWidgetDelegate.cpp:
+        (WebKit::PageWidgetDelegate::paint):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::paintRootLayer):
+
 2012-10-10  Simon Fraser  <simon.fraser@apple.com>
 
         Store a visible rect in GraphicsLayers, and optionally dump it in layerTreeAsText
