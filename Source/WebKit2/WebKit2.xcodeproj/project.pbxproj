@@ -487,6 +487,14 @@
 		B878B615133428DC006888E9 /* CorrectionPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = B878B613133428DC006888E9 /* CorrectionPanel.h */; };
 		B878B616133428DC006888E9 /* CorrectionPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = B878B614133428DC006888E9 /* CorrectionPanel.mm */; };
 		BC0092F8115837A300E0AE2A /* WorkQueueMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0092F6115837A300E0AE2A /* WorkQueueMac.cpp */; };
+		BC017D0716260FF4007054F5 /* WKDOMDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = BC017CFF16260FF4007054F5 /* WKDOMDocument.h */; };
+		BC017D0816260FF4007054F5 /* WKDOMDocument.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC017D0016260FF4007054F5 /* WKDOMDocument.mm */; };
+		BC017D0916260FF4007054F5 /* WKDOMElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC017D0116260FF4007054F5 /* WKDOMElement.h */; };
+		BC017D0A16260FF4007054F5 /* WKDOMElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC017D0216260FF4007054F5 /* WKDOMElement.mm */; };
+		BC017D0B16260FF4007054F5 /* WKDOMInternals.h in Headers */ = {isa = PBXBuildFile; fileRef = BC017D0316260FF4007054F5 /* WKDOMInternals.h */; };
+		BC017D0C16260FF4007054F5 /* WKDOMInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC017D0416260FF4007054F5 /* WKDOMInternals.mm */; };
+		BC017D0D16260FF4007054F5 /* WKDOMNode.h in Headers */ = {isa = PBXBuildFile; fileRef = BC017D0516260FF4007054F5 /* WKDOMNode.h */; };
+		BC017D0E16260FF4007054F5 /* WKDOMNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC017D0616260FF4007054F5 /* WKDOMNode.mm */; };
 		BC032D7510F4378D0058C15A /* WebChromeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032D6010F4378D0058C15A /* WebChromeClient.h */; };
 		BC032D7710F4378D0058C15A /* WebContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032D6210F4378D0058C15A /* WebContextMenuClient.h */; };
 		BC032D7B10F4378D0058C15A /* WebDragClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032D6610F4378D0058C15A /* WebDragClient.h */; };
@@ -1575,6 +1583,14 @@
 		B878B613133428DC006888E9 /* CorrectionPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorrectionPanel.h; sourceTree = "<group>"; };
 		B878B614133428DC006888E9 /* CorrectionPanel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CorrectionPanel.mm; sourceTree = "<group>"; };
 		BC0092F6115837A300E0AE2A /* WorkQueueMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueueMac.cpp; sourceTree = "<group>"; };
+		BC017CFF16260FF4007054F5 /* WKDOMDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDOMDocument.h; sourceTree = "<group>"; };
+		BC017D0016260FF4007054F5 /* WKDOMDocument.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKDOMDocument.mm; sourceTree = "<group>"; };
+		BC017D0116260FF4007054F5 /* WKDOMElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDOMElement.h; sourceTree = "<group>"; };
+		BC017D0216260FF4007054F5 /* WKDOMElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKDOMElement.mm; sourceTree = "<group>"; };
+		BC017D0316260FF4007054F5 /* WKDOMInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDOMInternals.h; sourceTree = "<group>"; };
+		BC017D0416260FF4007054F5 /* WKDOMInternals.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKDOMInternals.mm; sourceTree = "<group>"; };
+		BC017D0516260FF4007054F5 /* WKDOMNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDOMNode.h; sourceTree = "<group>"; };
+		BC017D0616260FF4007054F5 /* WKDOMNode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKDOMNode.mm; sourceTree = "<group>"; };
 		BC032D6010F4378D0058C15A /* WebChromeClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebChromeClient.h; sourceTree = "<group>"; };
 		BC032D6210F4378D0058C15A /* WebContextMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextMenuClient.h; sourceTree = "<group>"; };
 		BC032D6610F4378D0058C15A /* WebDragClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDragClient.h; sourceTree = "<group>"; };
@@ -2850,6 +2866,21 @@
 			name = mac;
 			sourceTree = "<group>";
 		};
+		BC017D1016260FFD007054F5 /* DOM */ = {
+			isa = PBXGroup;
+			children = (
+				BC017CFF16260FF4007054F5 /* WKDOMDocument.h */,
+				BC017D0016260FF4007054F5 /* WKDOMDocument.mm */,
+				BC017D0116260FF4007054F5 /* WKDOMElement.h */,
+				BC017D0216260FF4007054F5 /* WKDOMElement.mm */,
+				BC017D0316260FF4007054F5 /* WKDOMInternals.h */,
+				BC017D0416260FF4007054F5 /* WKDOMInternals.mm */,
+				BC017D0516260FF4007054F5 /* WKDOMNode.h */,
+				BC017D0616260FF4007054F5 /* WKDOMNode.mm */,
+			);
+			name = DOM;
+			sourceTree = "<group>";
+		};
 		BC032D5C10F436D50058C15A /* WebProcess */ = {
 			isa = PBXGroup;
 			children = (
@@ -3549,8 +3580,9 @@
 		BC989D4516181691000D46D3 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				BC989D7F161A7E5B000D46D3 /* WKWebProcessPlugIn.mm */,
+				BC017D1016260FFD007054F5 /* DOM */,
 				BC989D80161A7E5C000D46D3 /* WKWebProcessPlugIn.h */,
+				BC989D7F161A7E5B000D46D3 /* WKWebProcessPlugIn.mm */,
 				BC989D84161A988F000D46D3 /* WKWebProcessPlugInInternal.h */,
 			);
 			path = mac;
@@ -4344,6 +4376,10 @@
 				1A3EED0F161A535400AEB4F5 /* MessageReceiverMap.h in Headers */,
 				1A3EED12161A53D600AEB4F5 /* MessageReceiver.h in Headers */,
 				29D55DF2161BF9F10031A2E3 /* WebPageGroupProxyMessages.h in Headers */,
+				BC017D0716260FF4007054F5 /* WKDOMDocument.h in Headers */,
+				BC017D0916260FF4007054F5 /* WKDOMElement.h in Headers */,
+				BC017D0B16260FF4007054F5 /* WKDOMInternals.h in Headers */,
+				BC017D0D16260FF4007054F5 /* WKDOMNode.h in Headers */,
 				29121708161CE7360057D451 /* UserContentContainer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5204,6 +5240,10 @@
 				BC989D81161A7E5D000D46D3 /* WKWebProcessPlugIn.mm in Sources */,
 				1A3EED0E161A535400AEB4F5 /* MessageReceiverMap.cpp in Sources */,
 				29D55DF1161BF9F10031A2E3 /* WebPageGroupProxyMessageReceiver.cpp in Sources */,
+				BC017D0816260FF4007054F5 /* WKDOMDocument.mm in Sources */,
+				BC017D0A16260FF4007054F5 /* WKDOMElement.mm in Sources */,
+				BC017D0C16260FF4007054F5 /* WKDOMInternals.mm in Sources */,
+				BC017D0E16260FF4007054F5 /* WKDOMNode.mm in Sources */,
 				29121707161CE7360057D451 /* UserContentContainer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

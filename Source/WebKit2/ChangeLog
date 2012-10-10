@@ -1,3 +1,24 @@
+2012-10-10  Sam Weinig  <sam@webkit.org>
+
+        Add skeleton of a WebKit2 ObjC DOM SPI (not intended to be the full DOM)
+        https://bugs.webkit.org/show_bug.cgi?id=98955
+
+        Reviewed by Anders Carlsson.
+
+        Add a skeleton DOM implementation only exposing Node, Element and Document
+        for now. It is currently only available in 64-bit as it relies on the non-fragile
+        ABI for now.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/mac/WKDOMDocument.h: Added.
+        * WebProcess/InjectedBundle/API/mac/WKDOMDocument.mm: Added.
+        * WebProcess/InjectedBundle/API/mac/WKDOMElement.h: Added.
+        * WebProcess/InjectedBundle/API/mac/WKDOMElement.mm: Added.
+        * WebProcess/InjectedBundle/API/mac/WKDOMInternals.h: Added.
+        * WebProcess/InjectedBundle/API/mac/WKDOMInternals.mm: Added.
+        * WebProcess/InjectedBundle/API/mac/WKDOMNode.h: Added.
+        * WebProcess/InjectedBundle/API/mac/WKDOMNode.mm: Added.
+
 2012-10-04  Andy Estes  <aestes@apple.com>
 
         [WebKit2] Create an API for adding and removing user stylesheets from a page group
