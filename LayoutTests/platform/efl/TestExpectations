@@ -649,7 +649,6 @@ webkit.org/b/98621 media/video-controls-rendering.html [ Failure Pass ]
 webkit.org/b/74219 fast/regions/positioned-objects-block-static-spanning-regions-rtl.html [ ImageOnlyFailure ]
 
 # CSS Regions issues.
-webkit.org/b/97208 fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl.html [ Missing ]
 webkit.org/b/97209 fast/regions/webkit-flow-floats-inside-regions-bounds.html [ Missing ]
 
 # Needs inner spin button to respect -webkit-inner-spin-button style
@@ -1283,9 +1282,6 @@ webkit.org/b/90007 http/tests/security/mixedContent/insecure-audio-video-in-main
 # Looks like missing multipart/x-mixed-replace support in libsoup. Failing on both GTK and EFL.
 webkit.org/b/68979 http/tests/multipart/multipart-replace-non-html-content.php [ Failure ]
 
-# Test added by Mac port, rendering results totally different on EFL.
-webkit.org/b/91477 fast/multicol/shrink-to-column-height-for-pagination.html [ Missing ]
-
 # These tests are failing after r122528.
 webkit.org/b/91210 http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html [ Failure ]
 webkit.org/b/91210 http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_xserver_redirect.html [ Failure ]
@@ -1403,8 +1399,6 @@ webkit.org/b/97077 inspector/extensions/extensions-panel.html [ Failure ]
 
 # Fails on the bots.
 webkit.org/b/97968 media/unsupported-rtsp.html [ Failure ]
-
-webkit.org/b/98306 css3/flexbox/flexbox-baseline.html [ Failure Missing ]
 
 webkit.org/b/98587 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ ImageOnlyFailure ]
 

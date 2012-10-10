@@ -1,3 +1,11 @@
+2012-10-10  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] More gardening.
+
+        * platform/efl/TestExpectations: Unskip a few tests which have had
+        their pixel expectations committed.
+        * platform/efl/svg/css/text-gradient-shadow-expected.png: Added.
+
 2012-10-10  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
