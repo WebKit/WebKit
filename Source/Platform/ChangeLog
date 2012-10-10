@@ -1,3 +1,17 @@
+2012-10-10  Antoine Labour  <piman@chromium.org>
+
+        [chromium] Add empty WebCompositorFrame/WebCompositorFrameAck
+        https://bugs.webkit.org/show_bug.cgi?id=98841
+
+        Reviewed by James Robinson.
+
+        These were used in the WebKit API but never defined.
+
+        * chromium/public/WebCompositorFrame.h: Added.
+        (WebKit):
+        * chromium/public/WebCompositorFrameAck.h: Added.
+        (WebKit):
+
 2012-10-10  John Bauman  <jbauman@chromium.org>
 
         [chromium] Add attribute for disabling automatic flushes
