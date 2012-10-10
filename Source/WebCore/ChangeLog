@@ -1,3 +1,18 @@
+2012-10-10  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt][Mac] GL_ARB_texture_rectangle must be activated when using ANGLE.
+        https://bugs.webkit.org/show_bug.cgi?id=98387
+
+        Check for the availability of GL_ARB_texture_rectangle extension.
+        In case it is available, we activate the extension for ANGLE.
+        This is necessary for WebGL on mac, because the GraphicsSurface
+        on this platform is based on an IOSurface, which requires this extension.
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DPrivate::initializeANGLE):
+
 2012-10-10  Andreas Kling  <kling@webkit.org>
 
         ElementAttributeData: tighten member packing on 64-bit.

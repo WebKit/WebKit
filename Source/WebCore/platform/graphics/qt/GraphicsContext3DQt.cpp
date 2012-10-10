@@ -199,6 +199,11 @@ void GraphicsContext3DPrivate::initializeANGLE()
 
     // Always set to 1 for OpenGL ES.
     ANGLEResources.MaxDrawBuffers = 1;
+
+    Extensions3D* extensions = m_context->getExtensions();
+    if (extensions->supports("GL_ARB_texture_rectangle"))
+        ANGLEResources.ARB_texture_rectangle = 1;
+
     m_context->m_compiler.setResources(ANGLEResources);
 }
 
