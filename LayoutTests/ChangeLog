@@ -1,5 +1,11 @@
 2012-10-10  Adam Barth  <abarth@webkit.org>
 
+        These tests appear to pass now.
+
+        * platform/chromium/TestExpectations:
+
+2012-10-10  Adam Barth  <abarth@webkit.org>
+
         These tests appear to pass.
 
         * platform/chromium/TestExpectations:
