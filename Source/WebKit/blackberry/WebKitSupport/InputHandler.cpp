@@ -745,7 +745,7 @@ void InputHandler::setElementUnfocused(bool refocusOccuring)
 
         // Only hide the keyboard if we aren't refocusing on a new input field.
         if (!refocusOccuring)
-            notifyClientOfKeyboardVisibilityChange(false);
+            notifyClientOfKeyboardVisibilityChange(false, true /* triggeredByFocusChange */);
 
         m_webPage->m_client->inputFocusLost();
 
@@ -826,7 +826,7 @@ void InputHandler::setElementFocused(Element* element)
     handleInputLocaleChanged(m_webPage->m_webSettings->isWritingDirectionRTL());
 
     if (!m_delayKeyboardVisibilityChange)
-        notifyClientOfKeyboardVisibilityChange(true);
+        notifyClientOfKeyboardVisibilityChange(true, true /* triggeredByFocusChange */);
 
 #ifdef ENABLE_SPELLING_LOG
     SpellingLog(LogLevelInfo, "InputHandler::setElementFocused Focusing the field took %f seconds.", timer.elapsed());
@@ -1259,10 +1259,15 @@ void InputHandler::processPendingKeyboardVisibilityChange()
     m_pendingKeyboardVisibilityChange = NoChange;
 }
 
-void InputHandler::notifyClientOfKeyboardVisibilityChange(bool visible)
+void InputHandler::notifyClientOfKeyboardVisibilityChange(bool visible, bool triggeredByFocusChange)
 {
     // If we aren't ready for input, keyboard changes should be ignored.
     if (!isInputModeEnabled() && visible)
+        return;
+
+    // If we are processing a change assume the keyboard is visbile to avoid
+    // flooding the VKB with show requests.
+    if (!triggeredByFocusChange && processingChange() && visible)
         return;
 
     if (!m_delayKeyboardVisibilityChange) {

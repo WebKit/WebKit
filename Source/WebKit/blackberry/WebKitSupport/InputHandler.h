@@ -97,7 +97,7 @@ public:
     void setDelayKeyboardVisibilityChange(bool value);
     void processPendingKeyboardVisibilityChange();
 
-    void notifyClientOfKeyboardVisibilityChange(bool visible);
+    void notifyClientOfKeyboardVisibilityChange(bool visible, bool triggeredByFocusChange = false);
 
     bool isInputMode() const { return isActiveTextEdit(); }
     bool isMultilineInputMode() const { return isActiveTextEdit() && elementType(m_currentFocusElement.get()) == BlackBerry::Platform::InputTypeTextArea; }
