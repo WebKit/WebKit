@@ -102,6 +102,15 @@ WebProcessProxy::~WebProcessProxy()
     }
 }
 
+WebProcessProxy* WebProcessProxy::fromConnection(CoreIPC::Connection* connection)
+{
+    ASSERT(connection);
+    WebProcessProxy* webProcessProxy = static_cast<WebProcessProxy*>(connection->client());
+
+    ASSERT(webProcessProxy->connection() == connection);
+    return webProcessProxy;
+}
+
 void WebProcessProxy::connect()
 {
     ASSERT(!m_processLauncher);
@@ -375,11 +384,8 @@ void WebProcessProxy::didClearPluginSiteData(uint64_t callbackID)
 
 void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
-    // FIXME: Come up with a better way to chain to the WebContext.
-    if (m_context->knowsHowToHandleMessage(messageID)) {
-        m_context->didReceiveMessage(this, messageID, arguments);
+    if (m_context->dispatchMessage(connection, messageID, arguments))
         return;
-    }
 
     if (messageID.is<CoreIPC::MessageClassWebProcessProxy>()) {
         didReceiveWebProcessProxyMessage(connection, messageID, arguments);
@@ -399,11 +405,8 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
 
 void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
 {
-    // FIXME: Come up with a better way to chain to the WebContext.
-    if (m_context->knowsHowToHandleMessage(messageID)) {
-        m_context->didReceiveSyncMessage(this, messageID, arguments, reply);
+    if (m_context->dispatchSyncMessage(connection, messageID, arguments, reply))
         return;
-    }
 
     if (messageID.is<CoreIPC::MessageClassWebProcessProxy>()) {
         didReceiveSyncWebProcessProxyMessage(connection, messageID, arguments, reply);

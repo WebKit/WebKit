@@ -151,6 +151,8 @@ public:
     static PassRefPtr<Connection> createClientConnection(Identifier, Client*, WebCore::RunLoop* clientRunLoop);
     ~Connection();
 
+    Client* client() const { return m_client; }
+
 #if OS(DARWIN)
     void setShouldCloseConnectionOnMachExceptions();
 #elif PLATFORM(QT)
