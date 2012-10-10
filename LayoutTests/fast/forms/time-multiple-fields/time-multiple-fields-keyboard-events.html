@@ -98,6 +98,19 @@ keyDown('\t');
 keyDown('\t');
 shouldBeEqualToString('document.activeElement.id', 'another');
 
+beginTest('Tab navigation should skip disabled/readonly inputs', '');
+before.focus();
+input.disabled = true;
+keyDown('\t');
+shouldBeEqualToString('document.activeElement.id', 'another');
+input.disabled = false;
+
+before.focus();
+input.readOnly = true;
+keyDown('\t');
+shouldBeEqualToString('document.activeElement.id', 'another');
+input.readOnly = false;
+
 beginTest('Shfit+Tab key', '03:00');
 another.focus();
 keyDown('\t', ['shiftKey']);

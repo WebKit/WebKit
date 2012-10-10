@@ -131,6 +131,7 @@ private:
     virtual void fieldValueChanged() OVERRIDE FINAL;
     virtual bool focusOnNextField(const DateTimeFieldElement&) OVERRIDE FINAL;
     virtual bool focusOnPreviousField(const DateTimeFieldElement&) OVERRIDE FINAL;
+    virtual bool isFieldOwnerDisabledOrReadOnly() const OVERRIDE FINAL;
     virtual AtomicString localeIdentifier() const OVERRIDE FINAL;
 
     // SpinButtonElement::SpinButtonOwner functions.

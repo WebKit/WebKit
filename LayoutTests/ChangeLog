@@ -1,3 +1,15 @@
+2012-10-09  Kent Tamura  <tkent@chromium.org>
+
+        Sub-fields in input[type=time] should not be focusable if the input is disabled or read-only
+        https://bugs.webkit.org/show_bug.cgi?id=98850
+
+        Reviewed by Kentaro Hara.
+
+        * fast/forms/time-multiple-fields/time-multiple-fields-keyboard-events-expected.txt:
+        * fast/forms/time-multiple-fields/time-multiple-fields-keyboard-events.html:
+        * fast/forms/time-multiple-fields/time-multiple-fields-mouse-events-expected.txt:
+        * fast/forms/time-multiple-fields/time-multiple-fields-mouse-events.html:
+
 2012-10-09  Pablo Flouret  <pablof@motorola.com>
 
         [Qt]REGRESSION(r120107): It made http/tests/xmlhttprequest/origin-exact-matching.html fails

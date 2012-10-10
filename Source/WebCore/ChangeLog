@@ -1,3 +1,25 @@
+2012-10-09  Kent Tamura  <tkent@chromium.org>
+
+        Sub-fields in input[type=time] should not be focusable if the input is disabled or read-only
+        https://bugs.webkit.org/show_bug.cgi?id=98850
+
+        Reviewed by Kentaro Hara.
+
+        Covered by additional test cases of
+        time-multiple-fields/time-multiple-fields-keyboard-events.html and
+        time-multiple-fields/time-multiple-fields-mouse-events.html.
+
+        * html/shadow/DateTimeFieldElement.h:
+        (FieldOwner): Add isFieldOwnerDisabledOrReadOnly.
+        * html/shadow/DateTimeFieldElement.cpp:
+        (WebCore::DateTimeFieldElement::isFocusable):
+        Check isFieldOwnerDisabledOrReadOnly, and calls HTMLElement::isFocusable()
+        just in case.
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore::DateTimeEditElement::isFieldOwnerDisabledOrReadOnly): Added.
+        * html/shadow/DateTimeEditElement.h:
+        (DateTimeEditElement): Declare isFieldOwnerDisabledOrReadOnly.
+
 2012-10-09  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] revert fling deacceleration parameter change

@@ -146,7 +146,11 @@ void DateTimeFieldElement::initialize(const AtomicString& shadowPseudoId, const 
 
 bool DateTimeFieldElement::isFocusable() const
 {
-    return !isReadOnly();
+    if (isReadOnly())
+        return false;
+    if (m_fieldOwner && m_fieldOwner->isFieldOwnerDisabledOrReadOnly())
+        return false;
+    return HTMLElement::isFocusable();
 }
 
 bool DateTimeFieldElement::isReadOnly() const

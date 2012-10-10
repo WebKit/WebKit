@@ -66,6 +66,20 @@ mouseMoveTo(input.offsetWidth - 10, input.offsetHeight - 8);
 mouseClick();
 shouldBeEqualToString('input.value', '02:24');
 
+debug('= Click on a disabled/readonly field =');
+input.disabled = true;
+mouseMoveTo(12, 14);
+mouseClick();
+keyDown('upArrow');
+shouldBeEqualToString('input.value', '02:24'); // Not changed.
+input.disabled = false;
+input.readOnly = true;
+mouseMoveTo(12, 14);
+mouseClick();
+keyDown('upArrow');
+shouldBeEqualToString('input.value', '02:24'); // Not changed.
+input.readOnly = false;
+
 debug('');
 </script>
 <script src="../../js/resources/js-test-post.js"></script>

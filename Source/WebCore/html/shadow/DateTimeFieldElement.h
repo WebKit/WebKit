@@ -55,6 +55,7 @@ public:
         virtual void fieldValueChanged() = 0;
         virtual bool focusOnNextField(const DateTimeFieldElement&) = 0;
         virtual bool focusOnPreviousField(const DateTimeFieldElement&) = 0;
+        virtual bool isFieldOwnerDisabledOrReadOnly() const = 0;
         virtual AtomicString localeIdentifier() const = 0;
     };
 

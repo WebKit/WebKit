@@ -354,6 +354,11 @@ bool DateTimeEditElement::isDisabled() const
     return m_editControlOwner && m_editControlOwner->isEditControlOwnerDisabled();
 }
 
+bool DateTimeEditElement::isFieldOwnerDisabledOrReadOnly() const
+{
+    return isDisabled() || isReadOnly();
+}
+
 bool DateTimeEditElement::isReadOnly() const
 {
     return m_editControlOwner && m_editControlOwner->isEditControlOwnerReadOnly();

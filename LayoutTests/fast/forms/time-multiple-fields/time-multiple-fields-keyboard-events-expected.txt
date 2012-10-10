@@ -26,6 +26,9 @@ PASS input.value is "14:58"
 PASS input.value is "03:05"
 PASS input.value is "07:05"
 PASS document.activeElement.id is "another"
+== Tab navigation should skip disabled/readonly inputs ==
+PASS document.activeElement.id is "another"
+PASS document.activeElement.id is "another"
 == Shfit+Tab key ==
 PASS input.value is "15:00"
 PASS input.value is "15:03"
