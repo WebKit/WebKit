@@ -1,3 +1,13 @@
+2012-10-10  Luciano Wolf  <luciano.wolf@openbossa.org>
+
+        EventHandler::handleGestureLongPress breaks compilation if CONTEXT_MENUS isn't set
+        https://bugs.webkit.org/show_bug.cgi?id=98890
+
+        Reviewed by Caio Marcelo de Oliveira Filho.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleGestureLongPress):
+
 2012-10-10  David Grogan  <dgrogan@chromium.org>
 
         Inspector: display IndexedDB integer versions

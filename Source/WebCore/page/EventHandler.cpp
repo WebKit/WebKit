@@ -2582,7 +2582,11 @@ bool EventHandler::handleGestureLongPress(const PlatformGestureEvent& gestureEve
             return true;
     }
 #endif
+#if ENABLE(CONTEXT_MENUS)
     return sendContextMenuEventForGesture(gestureEvent);
+#else
+    return false;
+#endif
 }
 
 bool EventHandler::handleGestureScrollUpdate(const PlatformGestureEvent& gestureEvent)
