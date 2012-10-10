@@ -1,3 +1,22 @@
+2012-10-10  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] DumpRenderTree needs a beginDragWithFiles implementation
+        https://bugs.webkit.org/show_bug.cgi?id=50902
+
+        Reviewed by Simon Hausmann.
+
+        Implement support for beginDragWithFiles. This function similates dragging without going
+        though regular event handling. Which allows us to test effects of dropping files on
+        different elements.
+
+        * DumpRenderTree/qt/EventSenderQt.cpp:
+        (EventSender::EventSender):
+        (EventSender::mouseUp):
+        (EventSender::mouseMoveTo):
+        (EventSender::beginDragWithFiles):
+        * DumpRenderTree/qt/EventSenderQt.h:
+        (EventSender):
+
 2012-10-10  KwangYong Choi  <ky0.choi@samsung.com>
 
         [EFL][WTR][CMake] Add a missing TestNetscapePlugin file

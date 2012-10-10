@@ -606,30 +606,12 @@ http/tests/local/drag-over-remote-content.html
 http/tests/local/fileapi
 http/tests/security/drag-drop-same-unique-origin.html
 
-# [Qt] DumpRenderTree needs eventSender.beginDragWithFiles() implementation
-# https://bugs.webkit.org/show_bug.cgi?id=50902
 editing/pasteboard/dataTransfer-setData-getData.html
 editing/pasteboard/drag-drop-url-with-style.html
 editing/pasteboard/file-drag-to-editable.html
 editing/pasteboard/file-input-files-access.html
-fast/dom/Window/window-postmessage-clone-frames.html
-fast/dom/Window/window-postmessage-clone.html
-fast/events/drag-file-crash.html
-fast/events/drag-to-navigate.html
-fast/events/file-input-hidden-in-ondrop.html
-fast/events/input-element-display-none-in-dragleave-crash.html
-fast/events/prevent-drag-to-navigate.html
-fast/files/file-list-test.html
-fast/files/file-reader-directory-crash.html
-fast/forms/file/file-input-change-event.html
-fast/forms/file/file-input-reset.html
-fast/forms/file/recover-file-input-in-unposted-form.html
-fast/forms/file/get-file-upload.html
+fast/events/prevent-drag-to-navigate.html [ Failure ]
 fast/forms/file/input-file-re-render.html
-fast/forms/file/input-file-write-files.html
-fast/forms/file/selected-files-from-history-state.html
-http/tests/local/blob/send-hybrid-blob.html
-http/tests/local/formdata
 http/tests/security/clipboard/clipboard-file-access.html
 
 fast/files/apply-blob-url-to-img.html
@@ -637,8 +619,6 @@ fast/files/apply-blob-url-to-xhr.html
 fast/files/file-reader-abort.html
 fast/files/file-reader-event-listener.html
 fast/files/null-origin-string.html
-fast/files/read-blob-async.html
-fast/files/read-file-async.html
 fast/files/workers/worker-apply-blob-url-to-xhr.html
 fast/files/workers/worker-read-blob-async.html
 fast/files/workers/worker-read-blob-sync.html

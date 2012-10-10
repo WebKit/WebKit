@@ -1,3 +1,15 @@
+2012-10-10  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] DumpRenderTree needs a beginDragWithFiles implementation
+        https://bugs.webkit.org/show_bug.cgi?id=50902
+
+        Reviewed by Simon Hausmann.
+
+        Move some skipped tests that now passing in DRT to only being skipped in WTR.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-10-10  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip failing test.

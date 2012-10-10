@@ -64,6 +64,24 @@ fast/forms/legend-access-key.html
 fast/loader/policy-delegate-action-hit-test-zoomed.html
 # eventSender.gestureTap
 fast/events/touch/gesture/gesture-click.html
+# eventSender.beginDragWithFiles
+fast/dom/Window/window-postmessage-clone-frames.html
+fast/dom/Window/window-postmessage-clone.html
+fast/events/drag-file-crash.html
+fast/events/drag-to-navigate.html
+fast/events/file-input-hidden-in-ondrop.html
+fast/events/input-element-display-none-in-dragleave-crash.html
+fast/files/file-list-test.html
+fast/files/file-reader-directory-crash.html
+fast/files/read-blob-async.html
+fast/files/read-file-async.html
+fast/forms/file/get-file-upload.html
+fast/forms/file/input-file-write-files.html
+fast/forms/file/file-input-change-event.html
+fast/forms/file/recover-file-input-in-unposted-form.html
+fast/forms/file/selected-files-from-history-state.html
+http/tests/local/blob/send-hybrid-blob.html
+http/tests/local/formdata
 
 svg/custom/use-events-crash.svg
 
