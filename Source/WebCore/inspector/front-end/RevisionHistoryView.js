@@ -166,6 +166,8 @@ WebInspector.RevisionHistoryView.prototype = {
     _removeUISourceCode: function(uiSourceCode)
     {
         var uiSourceCodeItem = this._uiSourceCodeItems.get(uiSourceCode);
+        if (!uiSourceCodeItem)
+            return;
         this._treeOutline.removeChild(uiSourceCodeItem);
         this._uiSourceCodeItems.remove(uiSourceCode);
     },
