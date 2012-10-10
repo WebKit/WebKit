@@ -1,3 +1,19 @@
+2012-10-09  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] WTR: Fix an assert triggered by EventSenderProxy::touchEnd
+        https://bugs.webkit.org/show_bug.cgi?id=98735
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        ASSERT: "itemForTouchPointId.isEmpty()" in file qt5/qtdeclarative/src/quick/items/qquickwindow.cpp, line 1563
+        This assert is caused by QQuickWindow not registering our TouchPointReleased
+        since it expects QTouchEvent::touchPointStates() to be filled by the event's sender.
+
+        This patch calculates the touchPointStates like QQuickWindowPrivate::touchEventWithPoints does.
+
+        * WebKitTestRunner/qt/EventSenderProxyQt.cpp:
+        (WTR::EventSenderProxy::sendTouchEvent):
+
 2012-10-10  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] DumpRenderTree needs a beginDragWithFiles implementation
