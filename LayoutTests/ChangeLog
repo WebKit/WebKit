@@ -1,5 +1,11 @@
 2012-10-10  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        [EFL] Skip fast/css/color-correction-on-text.html.
+
+        * platform/efl/TestExpectations:
+
+2012-10-10  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         [EFL] Gardening for the some SVG pixel expectations.
 
         * platform/efl/svg/W3C-SVG-1.1/painting-marker-03-f-expected.png:

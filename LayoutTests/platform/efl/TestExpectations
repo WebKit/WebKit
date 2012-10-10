@@ -1049,6 +1049,7 @@ fast/css/apple-prefix.html [ WontFix ]
 webkit.org/b/75747 fast/css/color-correction-on-background-image.html [ Failure ]
 webkit.org/b/75747 fast/css/color-correction-on-backgrounds.html [ Failure ]
 webkit.org/b/75747 fast/css/color-correction-on-box-shadow.html [ Failure ]
+webkit.org/b/75747 fast/css/color-correction-on-text.html [ Failure ]
 webkit.org/b/75747 fast/css/color-correction-on-text-shadow.html [ Failure ]
 webkit.org/b/75747 fast/css/color-correction-untagged-images.html [ Failure ]
 
