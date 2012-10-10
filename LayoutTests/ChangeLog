@@ -1,3 +1,76 @@
+2012-10-10  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Gardening for the some SVG pixel expectations.
+
+        * platform/efl/svg/W3C-SVG-1.1/painting-marker-03-f-expected.png:
+        * platform/efl/svg/W3C-SVG-1.1/pservers-grad-10-b-expected.png:
+        * platform/efl/svg/W3C-SVG-1.1/render-groups-03-t-expected.png:
+        * platform/efl/svg/W3C-SVG-1.1/text-text-01-b-expected.png:
+        * platform/efl/svg/filters/animate-fill-expected.png: Added.
+        * platform/efl/svg/filters/feImage-reference-invalidation-expected.png: Added.
+        * platform/efl/svg/hixie/data-types/001-expected.png: Added.
+        * platform/efl/svg/hixie/dynamic/002-expected.png: Added.
+        * platform/efl/svg/hixie/dynamic/003-expected.png: Added.
+        * platform/efl/svg/hixie/dynamic/004-expected.png: Added.
+        * platform/efl/svg/hixie/dynamic/005-expected.png: Added.
+        * platform/efl/svg/hixie/dynamic/006-expected.png: Added.
+        * platform/efl/svg/hixie/error/002-expected.png: Added.
+        * platform/efl/svg/hixie/error/006-expected.png: Added.
+        * platform/efl/svg/hixie/error/007-expected.png: Added.
+        * platform/efl/svg/hixie/error/008-expected.png: Added.
+        * platform/efl/svg/hixie/error/009-expected.png: Added.
+        * platform/efl/svg/hixie/error/010-expected.png: Added.
+        * platform/efl/svg/hixie/error/011-expected.png: Added.
+        * platform/efl/svg/hixie/error/014-test-expected.png: Added.
+        * platform/efl/svg/hixie/error/015-expected.png: Added.
+        * platform/efl/svg/hixie/error/016-expected.png: Added.
+        * platform/efl/svg/hixie/intrinsic/001-expected.png: Added.
+        * platform/efl/svg/hixie/intrinsic/002-expected.png: Added.
+        * platform/efl/svg/hixie/intrinsic/003-expected.png: Added.
+        * platform/efl/svg/hixie/links/001-expected.png: Added.
+        * platform/efl/svg/hixie/links/002-expected.png: Added.
+        * platform/efl/svg/hixie/painting/001-expected.png: Added.
+        * platform/efl/svg/hixie/processing-model/005-expected.png: Added.
+        * platform/efl/svg/hixie/rendering-model/003a-expected.png: Added.
+        * platform/efl/svg/hixie/text/001-expected.png: Added.
+        * platform/efl/svg/hixie/text/002-expected.png: Added.
+        * platform/efl/svg/hixie/text/003a-expected.png: Added.
+        * platform/efl/svg/hixie/text/003b-expected.png: Added.
+        * platform/efl/svg/hixie/use/002-test-expected.png: Added.
+        * platform/efl/svg/hixie/viewbox/001-expected.png: Added.
+        * platform/efl/svg/hixie/viewbox/002-expected.png: Added.
+        * platform/efl/svg/hixie/viewbox/003-expected.png: Added.
+        * platform/efl/svg/hixie/viewbox/004-expected.png: Added.
+        * platform/efl/svg/hixie/viewbox/preserveAspectRatio/001-expected.png: Added.
+        * platform/efl/svg/hixie/viewbox/preserveAspectRatio/002-expected.png: Added.
+        * platform/efl/svg/overflow/overflow-on-foreignObject-expected.png: Added.
+        * platform/efl/svg/overflow/overflow-on-inner-svg-element-defaults-expected.png: Added.
+        * platform/efl/svg/repaint/image-href-change-expected.png: Added.
+        * platform/efl/svg/repaint/image-with-clip-path-expected.png: Added.
+        * platform/efl/svg/repaint/inner-svg-change-viewBox-expected.png: Added.
+        * platform/efl/svg/repaint/mask-clip-target-transform-expected.png: Added.
+        * platform/efl/svg/repaint/repainting-after-animation-element-removal-expected.png: Added.
+        * platform/efl/svg/stroke/zero-length-arc-linecaps-rendering-expected.png: Added.
+        * platform/efl/svg/wicd/sizing-flakiness-expected.png: Added.
+        * platform/efl/svg/zoom/page/absolute-sized-document-no-scrollbars-expected.png: Added.
+        * platform/efl/svg/zoom/page/absolute-sized-document-scrollbars-expected.png: Added.
+        * platform/efl/svg/zoom/page/relative-sized-document-scrollbars-expected.png: Added.
+        * platform/efl/svg/zoom/page/zoom-background-images-expected.png: Added.
+        * platform/efl/svg/zoom/page/zoom-hixie-mixed-009-expected.png: Added.
+        * platform/efl/svg/zoom/page/zoom-svg-as-background-with-relative-size-expected.png: Added.
+        * platform/efl/svg/zoom/page/zoom-svg-as-image-expected.png: Added.
+        * platform/efl/svg/zoom/page/zoom-svg-as-object-expected.png: Added.
+        * platform/efl/svg/zoom/page/zoom-svg-as-relative-image-expected.png: Added.
+        * platform/efl/svg/zoom/page/zoom-svg-float-border-padding-expected.png: Added.
+        * platform/efl/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png: Added.
+        * platform/efl/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png: Added.
+        * platform/efl/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.png: Added.
+        * platform/efl/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.png: Added.
+        * platform/efl/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png: Added.
+        * platform/efl/svg/zoom/text/absolute-sized-document-no-scrollbars-expected.png: Added.
+        * platform/efl/svg/zoom/text/absolute-sized-document-scrollbars-expected.png: Added.
+        * platform/efl/svg/zoom/text/relative-sized-document-scrollbars-expected.png: Added.
+
 2012-10-10  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed inspector test fix.
