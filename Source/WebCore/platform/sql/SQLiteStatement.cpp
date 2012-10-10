@@ -101,6 +101,11 @@ int SQLiteStatement::step()
 
     if (!m_statement)
         return SQLITE_OK;
+
+    // The database needs to update its last changes count before each statement
+    // in order to compute properly the lastChanges() return value.
+    m_database.updateLastChangesCount();
+
     LOG(SQLDatabase, "SQL - step - %s", m_query.ascii().data());
     int error = sqlite3_step(m_statement);
     if (error != SQLITE_DONE && error != SQLITE_ROW) {

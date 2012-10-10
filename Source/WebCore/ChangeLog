@@ -1,3 +1,43 @@
+2012-10-10  Christophe Dumez  <christophe.dumez@intel.com>
+
+        SQLResultSet.rowsAffected not cleared
+        https://bugs.webkit.org/show_bug.cgi?id=46070
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        SQLResultSet.rowsAffected is supposed to return the number
+        of rows that were changed by the statement. For "SELECT"
+        statements, it should return 0.
+
+        However, our implementation currently relies on sqlite3_changes()
+        to compute this value. sqlite3_changes() returns the number of
+        direct row changes in the most recent INSERT, UPDATE, or DELETE
+        statement within the same trigger context. Unfortunately, the
+        most recent INSERT, UPDATE, or DELETE statement may not be the
+        last statement. As a consequence, if you INSERT 1 row, then
+        do a SELECT, SQLResultSet.rowsAffected will be 1 for both the
+        INSERT and the SELECT statements.
+
+        The proposed solution is to use sqlite3_total_changes() instead
+        of sqlite3_changes(). sqlite3_total_changes() returns the number
+        of row changes caused by INSERT, UPDATE or DELETE statements since
+        the database connection was opened. We now store the value
+        returned by sqlite3_total_changes() before each statement in
+        order to return the count difference in
+        SQLiteDatabase::lastChanges().
+
+        Test: storage/websql/execute-sql-rowsAffected.html
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::SQLiteDatabase):
+        (WebCore::SQLiteDatabase::updateLastChangesCount):
+        (WebCore):
+        (WebCore::SQLiteDatabase::lastChanges):
+        * platform/sql/SQLiteDatabase.h:
+        (SQLiteDatabase):
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::step):
+
 2012-10-10  Keishi Hattori  <keishi@webkit.org>
 
         REGRESSION (r129738): Calendar picker is too wide when the input is rtl

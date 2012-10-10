@@ -65,6 +65,8 @@ public:
     void interrupt();
     bool isInterrupted();
 
+    void updateLastChangesCount();
+
     bool executeCommand(const String&);
     bool returnsAtLeastOneResult(const String&);
     
@@ -158,6 +160,8 @@ private:
 
     int m_openError;
     CString m_openErrorMessage;
+
+    int m_lastChangesCount;
 };
 
 } // namespace WebCore

@@ -1,3 +1,16 @@
+2012-10-10  Christophe Dumez  <christophe.dumez@intel.com>
+
+        SQLResultSet.rowsAffected not cleared
+        https://bugs.webkit.org/show_bug.cgi?id=46070
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add layout test to check that SQLResultSet.rowsAffected is
+        correct in executeSql() success callback.
+
+        * storage/websql/execute-sql-rowsAffected-expected.txt: Added.
+        * storage/websql/execute-sql-rowsAffected.html: Added.
+
 2012-10-10  KwangYong Choi  <ky0.choi@samsung.com>
 
         [EFL] Rebaseline after r129972 which enabled plugin feature

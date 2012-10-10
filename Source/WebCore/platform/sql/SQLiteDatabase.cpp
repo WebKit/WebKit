@@ -58,6 +58,7 @@ SQLiteDatabase::SQLiteDatabase()
     , m_interrupted(false)
     , m_openError(SQLITE_ERROR)
     , m_openErrorMessage()
+    , m_lastChangesCount(0)
 {
 }
 
@@ -321,11 +322,20 @@ int64_t SQLiteDatabase::lastInsertRowID()
     return sqlite3_last_insert_rowid(m_db);
 }
 
+void SQLiteDatabase::updateLastChangesCount()
+{
+    if (!m_db)
+        return;
+
+    m_lastChangesCount = sqlite3_total_changes(m_db);
+}
+
 int SQLiteDatabase::lastChanges()
 {
     if (!m_db)
         return 0;
-    return sqlite3_changes(m_db);
+
+    return sqlite3_total_changes(m_db) - m_lastChangesCount;
 }
 
 int SQLiteDatabase::lastError()
