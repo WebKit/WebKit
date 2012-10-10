@@ -93,6 +93,8 @@ TestController::TestController(int argc, const char* argv[])
     , m_beforeUnloadReturnValue(true)
     , m_isGeolocationPermissionSet(false)
     , m_isGeolocationPermissionAllowed(false)
+    , m_policyDelegateEnabled(false)
+    , m_policyDelegatePermissive(false)
 #if PLATFORM(MAC) || PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
     , m_eventSenderProxy(new EventSenderProxy(this))
 #endif
@@ -432,6 +434,16 @@ void TestController::initialize(int argc, const char* argv[])
         0, // didLayout
     };
     WKPageSetPageLoaderClient(m_mainWebView->page(), &pageLoaderClient);
+
+    WKPagePolicyClient pagePolicyClient = {
+        kWKPagePolicyClientCurrentVersion,
+        this,
+        decidePolicyForNavigationAction,
+        0, // decidePolicyForNewWindowAction
+        0, // decidePolicyForResponse
+        0, // unableToImplementPolicy
+    };
+    WKPageSetPagePolicyClient(m_mainWebView->page(), &pagePolicyClient);
 }
 
 bool TestController::resetStateToConsistentValues()
@@ -514,6 +526,9 @@ bool TestController::resetStateToConsistentValues()
     m_geolocationPermissionRequests.clear();
     m_isGeolocationPermissionSet = false;
     m_isGeolocationPermissionAllowed = false;
+
+    // Reset Custom Policy Delegate.
+    setCustomPolicyDelegate(false, false);
 
     // Reset main page back to about:blank
     m_doneResetting = false;
@@ -1009,6 +1024,12 @@ void TestController::handleGeolocationPermissionRequest(WKGeolocationPermissionR
     decidePolicyForGeolocationPermissionRequestIfPossible();
 }
 
+void TestController::setCustomPolicyDelegate(bool enabled, bool permissive)
+{
+    m_policyDelegateEnabled = enabled;
+    m_policyDelegatePermissive = permissive;
+}
+
 void TestController::decidePolicyForGeolocationPermissionRequestIfPossible()
 {
     if (!m_isGeolocationPermissionSet)
@@ -1032,6 +1053,21 @@ void TestController::decidePolicyForNotificationPermissionRequest(WKPageRef page
 void TestController::decidePolicyForNotificationPermissionRequest(WKPageRef, WKSecurityOriginRef, WKNotificationPermissionRequestRef request)
 {
     WKNotificationPermissionRequestAllow(request);
+}
+
+void TestController::decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKURLRequestRef, WKFramePolicyListenerRef listener, WKTypeRef, const void* clientInfo)
+{
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->decidePolicyForNavigationAction(listener);
+}
+
+void TestController::decidePolicyForNavigationAction(WKFramePolicyListenerRef listener)
+{
+    if (m_policyDelegateEnabled && !m_policyDelegatePermissive) {
+        WKFramePolicyListenerIgnore(listener);
+        return;
+    }
+
+    WKFramePolicyListenerUse(listener);
 }
 
 } // namespace WTR

@@ -73,6 +73,9 @@ public:
     void setMockGeolocationPositionUnavailableError(WKStringRef errorMessage);
     void handleGeolocationPermissionRequest(WKGeolocationPermissionRequestRef);
 
+    // Policy delegate.
+    void setCustomPolicyDelegate(bool enabled, bool permissive);
+
     bool resetStateToConsistentValues();
 
 private:
@@ -109,6 +112,10 @@ private:
 
     static void decidePolicyForNotificationPermissionRequest(WKPageRef, WKSecurityOriginRef, WKNotificationPermissionRequestRef, const void*);
     void decidePolicyForNotificationPermissionRequest(WKPageRef, WKSecurityOriginRef, WKNotificationPermissionRequestRef);
+
+    // WKPagePolicyClient
+    static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKURLRequestRef, WKFramePolicyListenerRef, WKTypeRef, const void*);
+    void decidePolicyForNavigationAction(WKFramePolicyListenerRef);
 
     static WKPageRef createOtherPage(WKPageRef oldPage, WKURLRequestRef, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void*);
 
@@ -157,6 +164,9 @@ private:
     Vector<WKRetainPtr<WKGeolocationPermissionRequestRef> > m_geolocationPermissionRequests;
     bool m_isGeolocationPermissionSet;
     bool m_isGeolocationPermissionAllowed;
+
+    bool m_policyDelegateEnabled;
+    bool m_policyDelegatePermissive;
 
     EventSenderProxy* m_eventSenderProxy;
 };

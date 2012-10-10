@@ -552,11 +552,6 @@ fast/text-autosizing
 inspector/geolocation-error.html
 inspector/geolocation-success.html
 
-# WebFrameLoaderClient::dispatchDecidePolicy methods should consider 
-# 'WKBundlePagePolicyActionPassThrough' policy action 
-# https://bugs.webkit.org/show_bug.cgi?id=95974
-fast/loader/onload-policy-ignore-for-frame.html
-
 ### END OF (1) Classified failures with bug reports
 ########################################
 

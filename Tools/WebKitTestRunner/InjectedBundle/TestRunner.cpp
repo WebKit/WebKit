@@ -123,11 +123,12 @@ void TestRunner::dumpAsText(bool dumpPixels)
     m_dumpPixels = dumpPixels;
 }
 
-// FIXME: Needs a full implementation see https://bugs.webkit.org/show_bug.cgi?id=42546
 void TestRunner::setCustomPolicyDelegate(bool enabled, bool permissive)
 {
     m_policyDelegateEnabled = enabled;
     m_policyDelegatePermissive = permissive;
+
+    InjectedBundle::shared().setCustomPolicyDelegate(enabled, permissive);
 }
 
 void TestRunner::waitForPolicyDelegate()

@@ -95,6 +95,9 @@ public:
     void setMockGeolocationPosition(double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed);
     void setMockGeolocationPositionUnavailableError(WKStringRef errorMessage);
 
+    // Policy delegate.
+    void setCustomPolicyDelegate(bool enabled, bool permissive);
+
 private:
     InjectedBundle();
     ~InjectedBundle();

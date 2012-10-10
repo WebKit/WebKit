@@ -429,4 +429,21 @@ void InjectedBundle::setMockGeolocationPositionUnavailableError(WKStringRef erro
     WKBundlePostMessage(m_bundle, messageName.get(), errorMessage);
 }
 
+void InjectedBundle::setCustomPolicyDelegate(bool enabled, bool permissive)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetCustomPolicyDelegate"));
+
+    WKRetainPtr<WKMutableDictionaryRef> messageBody(AdoptWK, WKMutableDictionaryCreate());
+
+    WKRetainPtr<WKStringRef> enabledKeyWK(AdoptWK, WKStringCreateWithUTF8CString("enabled"));
+    WKRetainPtr<WKBooleanRef> enabledWK(AdoptWK, WKBooleanCreate(enabled));
+    WKDictionaryAddItem(messageBody.get(), enabledKeyWK.get(), enabledWK.get());
+
+    WKRetainPtr<WKStringRef> permissiveKeyWK(AdoptWK, WKStringCreateWithUTF8CString("permissive"));
+    WKRetainPtr<WKBooleanRef> permissiveWK(AdoptWK, WKBooleanCreate(permissive));
+    WKDictionaryAddItem(messageBody.get(), permissiveKeyWK.get(), permissiveWK.get());
+
+    WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
+}
+
 } // namespace WTR
