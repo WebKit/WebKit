@@ -1,3 +1,19 @@
+2012-10-10  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed Chromium gardening.
+
+        * platform/chromium-linux/fast/repaint/reflection-repaint-test-expected.png:
+        * platform/chromium-linux/fast/repaint/transform-layout-repaint-expected.png:
+        * platform/chromium-mac/fast/repaint/reflection-repaint-test-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/transform-layout-repaint-expected.png: Added.
+        * platform/chromium-win/fast/repaint/reflection-repaint-test-expected.png:
+        * platform/chromium-win/fast/repaint/transform-layout-repaint-expected.png:
+        The flakiness dashboard was lying on this entry. After talking with Emil, the baselines are correct so
+        rebaselined these tests.
+
+        * platform/chromium/TestExpectations:
+        Marked fast/dom/gc-dom-tree-lifetime.html as timeout as marking it slow didn't remove the flakiness.
+
 2012-10-10  Adam Barth  <abarth@webkit.org>
 
         When we check in image baselines, we use the -expected.png suffix

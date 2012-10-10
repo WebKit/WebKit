@@ -91,7 +91,7 @@ webkit.org/b/90488 [ Linux Win Debug ] http/tests/inspector [ Pass Slow ]
 webkit.org/b/90488 [ Linux Win Debug ] http/tests/inspector-enabled [ Pass Slow ]
 
 # The test has been timing out since landed in r130587.
-webkit.org/b/98659 [ Debug ] fast/dom/gc-dom-tree-lifetime.html [ Pass Slow ]
+webkit.org/b/98659 [ Debug ] fast/dom/gc-dom-tree-lifetime.html [ Pass Timeout ]
 
 # -----------------------------------------------------------------
 # TEMPORARILY SKIPPED TESTS
