@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # Copyright (C) 2012 Google Inc. All rights reserved.
+# Copyright (C) 2012 Zoltan Horvath, Adobe Systems Incorporated. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -213,8 +214,29 @@ class PageLoadingPerfTest(PerfTest):
         super(PageLoadingPerfTest, self).run_single(driver, self.force_gc_test, time_out_ms, False)
         return super(PageLoadingPerfTest, self).run_single(driver, path_or_url, time_out_ms, should_run_pixel_test)
 
+    def calculate_statistics(self, values):
+        sorted_values = sorted(values)
+
+        # Compute the mean and variance using Knuth's online algorithm (has good numerical stability).
+        squareSum = 0
+        mean = 0
+        for i, time in enumerate(sorted_values):
+            delta = time - mean
+            sweep = i + 1.0
+            mean += delta / sweep
+            squareSum += delta * (time - mean)
+
+        middle = int(len(sorted_values) / 2)
+        result = {'avg': mean,
+            'min': sorted_values[0],
+            'max': sorted_values[-1],
+            'median': sorted_values[middle] if len(sorted_values) % 2 else (sorted_values[middle - 1] + sorted_values[middle]) / 2,
+            'stdev': math.sqrt(squareSum / (len(sorted_values) - 1))}
+        return result
+
     def run(self, driver, time_out_ms):
-        test_times = []
+        results = {}
+        results.setdefault(self.test_name(), {'unit': 'ms', 'values': []})
 
         for i in range(0, 20):
             output = self.run_single(driver, self.path_or_url(), time_out_ms)
@@ -222,29 +244,25 @@ class PageLoadingPerfTest(PerfTest):
                 return None
             if i == 0:
                 continue
-            test_times.append(output.test_time * 1000)
 
-        sorted_test_times = sorted(test_times)
+            results[self.test_name()]['values'].append(output.test_time * 1000)
 
-        # Compute the mean and variance using Knuth's online algorithm (has good numerical stability).
-        squareSum = 0
-        mean = 0
-        for i, time in enumerate(sorted_test_times):
-            delta = time - mean
-            sweep = i + 1.0
-            mean += delta / sweep
-            squareSum += delta * (time - mean)
+            if not output.measurements:
+                continue
 
-        middle = int(len(test_times) / 2)
-        results = {'values': test_times,
-            'avg': mean,
-            'min': sorted_test_times[0],
-            'max': sorted_test_times[-1],
-            'median': sorted_test_times[middle] if len(sorted_test_times) % 2 else (sorted_test_times[middle - 1] + sorted_test_times[middle]) / 2,
-            'stdev': math.sqrt(squareSum / (len(sorted_test_times) - 1)),
-            'unit': 'ms'}
-        self.output_statistics(self.test_name(), results, '')
-        return {self.test_name(): results}
+            for result_class, result in output.measurements.items():
+                name = self.test_name() + ':' + result_class
+                if not name in results:
+                    results.setdefault(name, {'values': []})
+                results[name]['values'].append(result)
+                if result_class == 'Malloc' or result_class == 'JSHeap':
+                    results[name]['unit'] = 'bytes'
+
+        for result_class in results.keys():
+            results[result_class].update(self.calculate_statistics(results[result_class]['values']))
+            self.output_statistics(result_class, results[result_class], '')
+
+        return results
 
 
 class ReplayServer(object):

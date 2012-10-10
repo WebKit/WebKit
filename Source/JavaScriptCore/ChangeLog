@@ -1,3 +1,18 @@
+2012-10-10  Zoltan Horvath  <zoltan@webkit.org>
+
+        Pageload tests should measure memory usage
+        https://bugs.webkit.org/show_bug.cgi?id=93958
+
+        Reviewed by Ryosuke Niwa.
+
+        Add JS Heap and Heap memory measurement to PageLoad tests.
+
+        * heap/HeapStatistics.cpp:
+        (JSC::HeapStatistics::usedJSHeap): Add new private function to expose the used JS Heap size.
+        (JSC):
+        * heap/HeapStatistics.h:
+        (HeapStatistics): Add new private function to expose the used JS Heap size.
+
 2012-10-10  Balazs Kilvady  <kilvadyb@homejinni.com>
 
         RegisterFile to JSStack rename fix for a struct member.

@@ -36,6 +36,7 @@ class HeapStatistics {
 public:
     NO_RETURN static void exitWithFailure();
     JS_EXPORT_PRIVATE static void reportSuccess();
+    JS_EXPORT_PRIVATE static size_t usedJSHeap();
 
     static void initialize();
     static void recordGCPauseTime(double start, double end);

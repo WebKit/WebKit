@@ -102,10 +102,11 @@ class MainTest(unittest.TestCase):
 
 class TestPageLoadingPerfTest(unittest.TestCase):
     class MockDriver(object):
-        def __init__(self, values, test):
+        def __init__(self, values, test, measurements=None):
             self._values = values
             self._index = 0
             self._test = test
+            self._measurements = measurements
 
         def run_test(self, input, stop_when_done):
             if input.test_name == self._test.force_gc_test:
@@ -115,7 +116,7 @@ class TestPageLoadingPerfTest(unittest.TestCase):
             if isinstance(value, str):
                 return DriverOutput('some output', image=None, image_hash=None, audio=None, error=value)
             else:
-                return DriverOutput('some output', image=None, image_hash=None, audio=None, test_time=self._values[self._index - 1])
+                return DriverOutput('some output', image=None, image_hash=None, audio=None, test_time=self._values[self._index - 1], measurements=self._measurements)
 
     def test_run(self):
         port = MockPort()
@@ -132,6 +133,30 @@ class TestPageLoadingPerfTest(unittest.TestCase):
         self.assertEqual(actual_stdout, '')
         self.assertEqual(actual_stderr, '')
         self.assertEqual(actual_logs, 'RESULT some-test= 11000.0 ms\nmedian= 11000 ms, stdev= 5627.31433871 ms, min= 2000 ms, max= 20000 ms\n')
+
+    def test_run_with_memory_output(self):
+        port = MockPort()
+        test = PageLoadingPerfTest(port, 'some-test', '/path/some-dir/some-test')
+        memory_results = {'Malloc': 10, 'JSHeap': 5}
+        self.maxDiff = None
+        driver = TestPageLoadingPerfTest.MockDriver(range(1, 21), test, memory_results)
+        output_capture = OutputCapture()
+        output_capture.capture_output()
+        try:
+            self.assertEqual(test.run(driver, None),
+                {'some-test': {'max': 20000, 'avg': 11000.0, 'median': 11000, 'stdev': 5627.314338711378, 'min': 2000, 'unit': 'ms',
+                    'values': [i * 1000 for i in range(2, 21)]},
+                 'some-test:Malloc': {'max': 10, 'avg': 10.0, 'median': 10, 'min': 10, 'stdev': 0.0, 'unit': 'bytes',
+                    'values': [10] * 19},
+                 'some-test:JSHeap': {'max': 5, 'avg': 5.0, 'median': 5, 'min': 5, 'stdev': 0.0, 'unit': 'bytes',
+                    'values': [5] * 19}})
+        finally:
+            actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
+        self.assertEqual(actual_stdout, '')
+        self.assertEqual(actual_stderr, '')
+        self.assertEqual(actual_logs, 'RESULT some-test= 11000.0 ms\nmedian= 11000 ms, stdev= 5627.31433871 ms, min= 2000 ms, max= 20000 ms\n'
+            + 'RESULT some-test: Malloc= 10.0 bytes\nmedian= 10 bytes, stdev= 0.0 bytes, min= 10 bytes, max= 10 bytes\n'
+            + 'RESULT some-test: JSHeap= 5.0 bytes\nmedian= 5 bytes, stdev= 0.0 bytes, min= 5 bytes, max= 5 bytes\n')
 
     def test_run_with_bad_output(self):
         output_capture = OutputCapture()

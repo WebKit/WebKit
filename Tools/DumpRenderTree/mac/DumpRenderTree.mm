@@ -89,6 +89,7 @@
 #import <getopt.h>
 #import <objc/objc-runtime.h>
 #import <wtf/Assertions.h>
+#import <wtf/FastMalloc.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Threading.h>
 #import <wtf/ObjcRuntimeExtras.h>
@@ -1182,6 +1183,10 @@ void dump()
 
         if (gTestRunner->dumpAsAudio())
             printf("Content-Transfer-Encoding: base64\n");
+
+        WTF::FastMallocStatistics mallocStats = WTF::fastMallocStatistics();
+        printf("DumpMalloc: %li\n", mallocStats.committedVMBytes);
+        printf("DumpJSHeap: %li\n", JSC::HeapStatistics::usedJSHeap());
 
         if (resultData) {
             fwrite([resultData bytes], 1, [resultData length], stdout);

@@ -2378,6 +2378,8 @@ sub readFromDumpToolWithTimer(**)
             } elsif (!$haveSeenContentTransferEncoding && $lineIn =~ /^Content-Transfer-Encoding: (\S+)$/) {
                 $encoding = $1;
                 $haveSeenContentTransferEncoding = 1;
+            } elsif ($lineIn =~ /^DumpMalloc|^DumpJSHeap: (\S+)$/) {
+                    # Ignored. Only used in performance tests.
             } elsif ($lineIn =~ /(.*)#EOF$/) {
                 if ($1 ne "") {
                     push @output, $1;

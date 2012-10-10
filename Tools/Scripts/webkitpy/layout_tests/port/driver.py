@@ -76,7 +76,7 @@ class DriverOutput(object):
     strip_patterns.append((re.compile('scrolled to [0-9]+,[0-9]+'), 'scrolled'))
 
     def __init__(self, text, image, image_hash, audio, crash=False,
-            test_time=0, timeout=False, error='', crashed_process_name='??',
+            test_time=0, measurements=None, timeout=False, error='', crashed_process_name='??',
             crashed_pid=None, crash_log=None):
         # FIXME: Args could be renamed to better clarify what they do.
         self.text = text
@@ -89,6 +89,7 @@ class DriverOutput(object):
         self.crashed_pid = crashed_pid
         self.crash_log = crash_log
         self.test_time = test_time
+        self.measurements = measurements
         self.timeout = timeout
         self.error = error  # stderr output
 
@@ -137,6 +138,8 @@ class Driver(object):
         self.error_from_test = str()
         self.err_seen_eof = False
         self._server_process = None
+
+        self._measurements = {}
 
     def __del__(self):
         self.stop()
@@ -193,7 +196,7 @@ class Driver(object):
                     crash_log += '\nstdout:\n%s\nstderr:\n%s\n' % (text, self.error_from_test)
 
         return DriverOutput(text, image, actual_image_hash, audio,
-            crash=crashed, test_time=time.time() - test_begin_time,
+            crash=crashed, test_time=time.time() - test_begin_time, measurements=self._measurements,
             timeout=timed_out, error=self.error_from_test,
             crashed_process_name=self._crashed_process_name,
             crashed_pid=self._crashed_pid, crash_log=crash_log)
@@ -360,6 +363,10 @@ class Driver(object):
     def _read_first_block(self, deadline):
         # returns (text_content, audio_content)
         block = self._read_block(deadline)
+        if block.malloc:
+            self._measurements['Malloc'] = float(block.malloc)
+        if block.js_heap:
+            self._measurements['JSHeap'] = float(block.js_heap)
         if block.content_type == 'audio/wav':
             return (None, block.decoded_content)
         return (block.decoded_content, None)
@@ -384,7 +391,9 @@ class Driver(object):
         if (self._read_header(block, line, 'Content-Type: ', 'content_type')
             or self._read_header(block, line, 'Content-Transfer-Encoding: ', 'encoding')
             or self._read_header(block, line, 'Content-Length: ', '_content_length', int)
-            or self._read_header(block, line, 'ActualHash: ', 'content_hash')):
+            or self._read_header(block, line, 'ActualHash: ', 'content_hash')
+            or self._read_header(block, line, 'DumpMalloc: ', 'malloc')
+            or self._read_header(block, line, 'DumpJSHeap: ', 'js_heap')):
             return
         # Note, we're not reading ExpectedHash: here, but we could.
         # If the line wasn't a header, we just append it to the content.
@@ -450,6 +459,8 @@ class ContentBlock(object):
         # Content is treated as binary data even though the text output is usually UTF-8.
         self.content = str()  # FIXME: Should be bytearray() once we require Python 2.6.
         self.decoded_content = None
+        self.malloc = None
+        self.js_heap = None
 
     def decode_content(self):
         if self.encoding == 'base64' and self.content is not None:
