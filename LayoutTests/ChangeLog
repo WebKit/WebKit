@@ -1,3 +1,12 @@
+2012-10-09  Noel Gordon  <noel.gordon@gmail.com>
+
+        Initialize $written variable in load-and-stall.php script
+        https://bugs.webkit.org/show_bug.cgi?id=98854
+
+        Reviewed by Kent Tamura.
+
+        * http/tests/resources/load-and-stall.php:
+
 2012-10-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening.
