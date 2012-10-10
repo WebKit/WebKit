@@ -672,6 +672,17 @@ public:
         load32(Address(ARMRegisters::S0, 0), ARMRegisters::pc);
     }
 
+    void moveDoubleToInts(FPRegisterID src, RegisterID dest1, RegisterID dest2)
+    {
+        m_assembler.vmov(dest1, dest2, src);
+    }
+
+    void moveIntsToDouble(RegisterID src1, RegisterID src2, FPRegisterID dest, FPRegisterID scratch)
+    {
+        UNUSED_PARAM(scratch);
+        m_assembler.vmov(dest, src1, src2);
+    }
+
     Jump branchAdd32(ResultCondition cond, RegisterID src, RegisterID dest)
     {
         ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
