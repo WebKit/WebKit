@@ -1,3 +1,18 @@
+2012-10-10  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Port MiniBrowser to Elementary
+        https://bugs.webkit.org/show_bug.cgi?id=98748
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Bump EFL librairies dependencies to v1.7
+        and add Elementary as optional dependency now
+        that it is needed to build MiniBrowser.
+
+        * Source/cmake/FindEet.cmake: Added.
+        * Source/cmake/FindElementary.cmake: Added.
+        * Source/cmake/OptionsEfl.cmake:
+
 2012-10-09  Simon Pena  <spena@igalia.com>
 
         [GTK] Add support for running JavaScript from GResources

@@ -1,5 +1,43 @@
 2012-10-10  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL][WK2] Port MiniBrowser to Elementary
+        https://bugs.webkit.org/show_bug.cgi?id=98748
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Port MiniBrowser to Elementary to simplify the
+        code and make future improvements easier. The
+        URL bar is now an Elementary Entry widget and
+        supports additional functionality like copy /
+        paste.
+
+        * CMakeLists.txt:
+        * EWebLauncher/url_bar.c:
+        (on_urlbar_key_down): Remove WK2-specific code
+        now that this file is no longer used by MiniBrowser.
+        * MiniBrowser/efl/CMakeLists.txt:
+        * MiniBrowser/efl/main.c:
+        (_Browser_Window):
+        (window_free):
+        (window_close):
+        (view_focus_set):
+        (on_mouse_down):
+        (title_set):
+        (on_title_changed):
+        (on_url_changed):
+        (on_close_window):
+        (on_progress):
+        (quit):
+        (on_url_bar_activated):
+        (on_url_bar_clicked):
+        (on_window_deletion):
+        (window_create):
+        (elm_main):
+        * efl/jhbuild.modules: Add Elementary to jhbuild and bump
+        EFL dependencies to 1.7.
+
+2012-10-10  Christophe Dumez  <christophe.dumez@intel.com>
+
         [WK2][SOUP] ResourceError.isCancellation() is not carried over IPC
         https://bugs.webkit.org/show_bug.cgi?id=98882
 

@@ -50,11 +50,7 @@ on_urlbar_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 
     char *url = _url_bar_url_get_with_protocol(urlBar);
     if (url) {
-#ifdef EFL_WK2
-        ewk_view_url_set(urlBar->webView, url);
-#else
         ewk_view_uri_set(urlBar->webView, url);
-#endif
         free(url);
     }
     evas_object_focus_set(urlBar->webView, EINA_TRUE);

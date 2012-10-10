@@ -10,7 +10,7 @@ IF ("${PORT}" STREQUAL "Efl")
         ADD_SUBDIRECTORY(EWebLauncher)
     ENDIF ()
 
-    IF (ENABLE_WEBKIT2)
+    IF (ENABLE_WEBKIT2 AND ELEMENTARY_FOUND)
         ADD_SUBDIRECTORY(MiniBrowser/efl)
     ENDIF ()
     ADD_SUBDIRECTORY(DumpRenderTree/TestNetscapePlugIn)

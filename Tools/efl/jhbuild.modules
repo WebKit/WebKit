@@ -17,6 +17,7 @@
       <dep package="e_dbus"/>
       <dep package="eeze"/>
       <dep package="efreet"/>
+      <dep package="elementary"/>
       <dep package="libxml2"/>
     </dependencies>
   </metamodule>
@@ -41,6 +42,8 @@
       href="http://git.enlightenment.fr/cgit.cgi/svn/"/>
   <repository type="tarball" name="xmlsoft.org"
       href="ftp://xmlsoft.org"/> 
+  <repository type="tarball" name="download.enlightenment.org"
+      href="http://download.enlightenment.org"/>
 
   <autotools id="cairo" autogen-sh="configure">
     <dependencies>
@@ -159,20 +162,20 @@
  </autotools>
 
   <autotools id="eina">
-    <branch module="eina.git/snapshot/eina-f90926dd9bf19ea946d7572b36335cc0c5cd3ab5.tar.bz2" version="73027"
-            checkoutdir="eina-f90926dd9bf19ea946d7572b36335cc0c5cd3ab5"
-            repo="enlightenment.fr"
-            hash="sha256:388214434dbe3726aa3894e6f9838adfc43d8bd63bb9597f86a4efbc48b42cad"
-            md5sum="db756dbda2b8b77e5f807c3ecccd34e4">
+    <branch module="releases/eina-1.7.0.tar.gz" version="1.7.0"
+            checkoutdir="eina-1.7.0"
+            repo="download.enlightenment.org"
+            hash="sha256:6aacededb08aa1090a1beecbf62acf3e2ce0676ac87d21c787c07983f801166f"
+            md5sum="303b81bbfff684eef0e5be70ba977012">
     </branch>
   </autotools>
 
   <autotools id="embryo">
-    <branch module="embryo.git/snapshot/embryo-191e1b5f022f769d62abec6112f51e5fbecd6db9.tar.bz2" version="73027"
-            checkoutdir="embryo-191e1b5f022f769d62abec6112f51e5fbecd6db9"
-            repo="enlightenment.fr"
-            hash="sha256:d8a57f51985ee16ee6a7fde2d3b931e83da5d26a1a62efc012d64e6d5fe3748b"
-            md5sum="adebeb8c704e70912a920e8ef4ec43cd">
+    <branch module="releases/embryo-1.7.0.tar.gz" version="1.7.0"
+            checkoutdir="embryo-1.7.0"
+            repo="download.enlightenment.org"
+            hash="sha256:290b452e6cb87f64b11b529c7f67c40192f87a73cc4c5be93a95f17b76f65063"
+            md5sum="f46bb8ab1699cd7acb8463e50a3ffb4b">
     </branch>
     <dependencies>
       <dep package="eina"/>
@@ -180,20 +183,20 @@
   </autotools>
 
   <autotools id="evas">
-    <branch module="evas.git/snapshot/evas-169cf1bb962001f1cf3e59eb950380a9dc1fced3.tar.bz2" version="73027"
-            checkoutdir="evas-169cf1bb962001f1cf3e59eb950380a9dc1fced3"
-            repo="enlightenment.fr"
-            hash="sha256:2b59350e0fe33a8fe49fcbe04192d05ab37345684c4eb9b10fb0e0a35545e7da"
-            md5sum="bfb5442e50551c64c709481a9a35b4a2">
+    <branch module="releases/evas-1.7.0.tar.gz" version="1.7.0"
+            checkoutdir="evas-1.7.0"
+            repo="download.enlightenment.org"
+            hash="sha256:2d7a33d02d2da37647e4c0127fedebe00eeea14560d6c1b6ca9b0cccdae0de84"
+            md5sum="3359918f8e60c778b861cf1cde02d3a9">
     </branch>
   </autotools>
 
   <autotools id="ecore">
-    <branch module="ecore.git/snapshot/ecore-9c96f9c140320e52030d1a206d8d330aa46abc44.tar.bz2" version="73027"
-            checkoutdir="ecore-9c96f9c140320e52030d1a206d8d330aa46abc44"
-            repo="enlightenment.fr"
-            hash="sha256:546b9c389556074ad4982a0e389ccb0e55ced59ce725ea2b5c065c4d60310068"
-            md5sum="b15571f271a9960b562f98cb09268408">
+    <branch module="releases/ecore-1.7.0.tar.gz" version="1.7.0"
+            checkoutdir="ecore-1.7.0"
+            repo="download.enlightenment.org"
+            hash="sha256:f009e17376b7f3fb6ce6b45648d2a0131a152943b502fa34cc4bd018f67da8bb"
+            md5sum="cf0b5e980a77dc0d1bdedf2bcc60e862">
     </branch>
     <dependencies>
       <dep package="eina"/>
@@ -202,11 +205,11 @@
   </autotools>
 
   <autotools id="eet">
-    <branch module="eet.git/snapshot/eet-15fd52e4831b946308a80df9a25357dc18c97ca2.tar.bz2" version="73027"
-            checkoutdir="eet-15fd52e4831b946308a80df9a25357dc18c97ca2"
-            repo="enlightenment.fr"
-            hash="sha256:62eff1248923be7918beff46e8598ff2b139b0224f0a1b845142cf1b078422e6"
-            md5sum="be08634c70712bb44a5534ef5b2a7af3">
+    <branch module="releases/eet-1.7.0.tar.gz" version="1.7.0"
+            checkoutdir="eet-1.7.0"
+            repo="download.enlightenment.org"
+            hash="sha256:9bca5becaaa5abf4b7ac0f80de68d3b9a8f1abce7eca4175e1ad82953783d209"
+            md5sum="46e989eb4dddd942b4564299e19d9f64">
     </branch>
     <dependencies>
       <dep package="libgcrypt"/>
@@ -215,11 +218,11 @@
   </autotools>
 
   <autotools id="edje">
-    <branch module="edje.git/snapshot/edje-14738eefac54d1a8cfead2b5aed3b7f05c5b4bd8.tar.bz2" version="73027"
-            checkoutdir="edje-14738eefac54d1a8cfead2b5aed3b7f05c5b4bd8"
-            repo="enlightenment.fr"
-            hash="sha256:9e102f0b47e9cdfa737b5f81b11d352ae01206209729e5815c28d826186b247e"
-            md5sum="5f1995901c848bdaec56ff1f913ef02f">
+    <branch module="releases/edje-1.7.0.tar.gz" version="1.7.0"
+            checkoutdir="edje-1.7.0"
+            repo="download.enlightenment.org"
+            hash="sha256:d6df9a7bf11c4605f55a2e7c209210044f8dc4f3332135f6256676d2f937621b"
+            md5sum="37e15c5d6e7c2676728bda75109b2218">
     </branch>
     <dependencies>
       <dep package="eet"/>
@@ -230,11 +233,11 @@
   </autotools>
 
   <autotools id="e_dbus">
-    <branch module="e_dbus.git/snapshot/e_dbus-9de0a3e0c959cdbaba022eb888b9670bd766d38f.tar.bz2" version="73027"
-            checkoutdir="e_dbus-9de0a3e0c959cdbaba022eb888b9670bd766d38f"
-            repo="enlightenment.fr"
-            hash="sha256:f9655c3ba69174dbd65b5220a492b970aa9264ff3283cbd960a89b69e53591b6"
-            md5sum="4cca1f994e17823ca9be1985f5c4ad09">
+    <branch module="releases/e_dbus-1.7.0.tar.gz" version="1.7.0"
+            checkoutdir="e_dbus-1.7.0"
+            repo="download.enlightenment.org"
+            hash="sha256:6ee303bd0e2f91a6be08433df474377494ba6815441e5e6b79a5d284ead2a768"
+            md5sum="3d59bfb00763a61976a976be925e1cbf">
     </branch>
     <dependencies>
       <dep package="ecore"/>
@@ -243,11 +246,11 @@
   </autotools>
 
   <autotools id="eeze">
-    <branch module="eeze.git/snapshot/eeze-09a379bc2cc6c1c7aab0478991a104b0c6af1844.tar.bz2" version="73027"
-            checkoutdir="eeze-09a379bc2cc6c1c7aab0478991a104b0c6af1844"
-            repo="enlightenment.fr"
-            hash="sha256:312d61429af845a6333c0c968ec7b0902982082f171453ee14343a8efe773cfc"
-            md5sum="c163caedcbab532b4dc16014b14bb9bc">
+    <branch module="releases/eeze-1.7.0.tar.gz" version="1.7.0"
+            checkoutdir="eeze-1.7.0"
+            repo="download.enlightenment.org"
+            hash="sha256:7db8709445114d1fe1c3609cf79a06e13a3d584a5a3dfd557642ddc65ac3a202"
+            md5sum="60a8bb62e3d2cc7dfac14f1cd62343e2">
     </branch>
     <dependencies>
       <dep package="ecore"/>
@@ -256,16 +259,31 @@
   </autotools>
 
   <autotools id="efreet">
-    <branch module="efreet.git/snapshot/efreet-e7712c830f3a3cb4c197695de4c981387be8f214.tar.bz2" version="73027"
-            checkoutdir="efreet-e7712c830f3a3cb4c197695de4c981387be8f214"
-            repo="enlightenment.fr"
-            hash="sha256:4839187c3cc099eb6b6986c6924f4e4f6dffd22eccbc3f1bddd1a6312bc8c84c"
-            md5sum="bf28ee9d7b5211d72c27412a7f1cdb80">
+    <branch module="releases/efreet-1.7.0.tar.gz" version="1.7.0"
+            checkoutdir="efreet-1.7.0"
+            repo="download.enlightenment.org"
+            hash="sha256:16a41a03d55febf30f2dd786b51be3e370fc563f3335dd26832e0eaa88516c79"
+            md5sum="f039197e14288ecef94eeab040cbbdb4">
     </branch>
     <dependencies>
         <deb package="ecore"/>
         <deb package="eina"/>
         <deb package="eet"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="elementary">
+    <branch module="releases/elementary-1.7.0.tar.gz" version="1.7.0"
+            checkoutdir="elementary-1.7.0"
+            repo="download.enlightenment.org"
+            hash="sha256:7e7deeb4e3a9bbb9c7b7a89c2efbe269a1a6a44ef380bf91c1066d128163e2d3"
+            md5sum="45263c5d107981a44d28734c82e9fae1">
+    </branch>
+    <dependencies>
+        <deb package="edje"/>
+        <deb package="eina"/>
+        <deb package="eet"/>
+        <deb package="ecore"/>
     </dependencies>
   </autotools>
 

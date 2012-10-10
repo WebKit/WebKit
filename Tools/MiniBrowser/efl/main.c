@@ -18,11 +18,11 @@
  */
 
 #include "EWebKit2.h"
-#include "url_bar.h"
 #include "url_utils.h"
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Eina.h>
+#include <Elementary.h>
 #include <Evas.h>
 
 static const int DEFAULT_WIDTH = 800;
@@ -42,10 +42,9 @@ static char *evas_engine_name = NULL;
 static Eina_Bool frame_flattening_enabled = EINA_FALSE;
 
 typedef struct _Browser_Window {
-    Ecore_Evas *ee;
-    Evas *evas;
+    Evas_Object *window;
     Evas_Object *webview;
-    Url_Bar *url_bar;
+    Evas_Object *url_bar;
 } Browser_Window;
 
 static const Ecore_Getopt options = {
@@ -75,26 +74,27 @@ static const Ecore_Getopt options = {
 
 static Browser_Window *window_create(const char *url);
 
-static Browser_Window *browser_window_find(Ecore_Evas *ee)
+static Browser_Window *browser_window_find(Evas_Object *window)
 {
     Eina_List *l;
     void *data;
 
-    if (!ee)
+    if (!window)
         return NULL;
 
     EINA_LIST_FOREACH(windows, l, data) {
-        Browser_Window *window = (Browser_Window *)data;
-        if (window->ee == ee)
-            return window;
+        Browser_Window *browser_window = (Browser_Window *)data;
+        if (browser_window->window == window)
+            return browser_window;
     }
     return NULL;
 }
 
 static void window_free(Browser_Window *window)
 {
-    url_bar_del(window->url_bar);
-    ecore_evas_free(window->ee);
+    evas_object_del(window->webview);
+    /* The elm_win will take care of freeing its children */
+    evas_object_del(window->window);
     free(window);
 }
 
@@ -104,41 +104,7 @@ static void window_close(Browser_Window *window)
     window_free(window);
 
     if (!windows)
-        ecore_main_loop_quit();
-}
-
-static Eina_Bool main_signal_exit(void *data, int ev_type, void *ev)
-{
-    Browser_Window *window;
-    EINA_LIST_FREE(windows, window)
-        window_free(window);
-
-    ecore_main_loop_quit();
-    return EINA_TRUE;
-}
-
-static void on_ecore_evas_delete(Ecore_Evas *ee)
-{
-    window_close(browser_window_find(ee));
-}
-
-static void on_ecore_evas_resize(Ecore_Evas *ee)
-{
-    Browser_Window *window;
-    Evas_Object *webview;
-    int w, h;
-
-    window = browser_window_find(ee);
-    if (!window)
-        return;
-
-    ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
-
-    /* Resize URL bar */
-    url_bar_width_set(window->url_bar, w);
-
-    evas_object_move(window->webview, 0, URL_BAR_HEIGHT);
-    evas_object_resize(window->webview, w, h - URL_BAR_HEIGHT);
+        elm_exit();
 }
 
 static void
@@ -179,23 +145,37 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-on_mouse_down(void *data, Evas *e, Evas_Object *webview, void *event_info)
+view_focus_set(Browser_Window *window, Eina_Bool focus)
 {
-    Evas_Event_Mouse_Down *ev = (Evas_Event_Mouse_Down *)event_info;
-
-    if (ev->button == 1)
-        evas_object_focus_set(webview, EINA_TRUE);
-    else if (ev->button == 2)
-        evas_object_focus_set(webview, !evas_object_focus_get(webview));
+    /* We steal focus away from elm's focus model and start to do things
+     * manually here, so elm now has no clue what's up. Tell elm that its
+     * toplevel widget is to be unfocused so elm gives up the focus */
+    elm_object_focus_set(elm_object_top_widget_get(window->window), EINA_FALSE);
+    evas_object_focus_set(window->webview, focus);
 }
 
 static void
-title_set(Ecore_Evas *ee, const char *title, int progress)
+on_mouse_down(void *user_data, Evas *e, Evas_Object *webview, void *event_info)
 {
-    Eina_Strbuf* buffer;
+    Browser_Window *window = (Browser_Window *)user_data;
+    Evas_Event_Mouse_Down *ev = (Evas_Event_Mouse_Down *)event_info;
+
+    /* Clear selection from the URL bar */
+    elm_entry_select_none(window->url_bar);
+
+    if (ev->button == 1)
+        view_focus_set(window, EINA_TRUE);
+    else if (ev->button == 2)
+        view_focus_set(window, !evas_object_focus_get(webview));
+}
+
+static void
+title_set(Evas_Object *window, const char *title, int progress)
+{
+    Eina_Strbuf *buffer;
 
     if (!title || !*title) {
-        ecore_evas_title_set(ee, APP_NAME);
+        elm_win_title_set(window, APP_NAME);
         return;
     }
 
@@ -205,7 +185,7 @@ title_set(Ecore_Evas *ee, const char *title, int progress)
     else
         eina_strbuf_append_printf(buffer, "%s - %s", title, APP_NAME);
 
-    ecore_evas_title_set(ee, eina_strbuf_string_get(buffer));
+    elm_win_title_set(window, eina_strbuf_string_get(buffer));
     eina_strbuf_free(buffer);
 }
 
@@ -215,14 +195,14 @@ on_title_changed(void *user_data, Evas_Object *webview, void *event_info)
     Browser_Window *window = (Browser_Window *)user_data;
     const char *title = (const char *)event_info;
 
-    title_set(window->ee, title, 100);
+    title_set(window->window, title, 100);
 }
 
 static void
 on_url_changed(void *user_data, Evas_Object *webview, void *event_info)
 {
     Browser_Window *window = (Browser_Window *)user_data;
-    url_bar_url_set(window->url_bar, ewk_view_url_get(window->webview));
+    elm_entry_entry_set(window->url_bar, ewk_view_url_get(window->webview));
 }
 
 static void
@@ -235,7 +215,7 @@ on_new_window(void *user_data, Evas_Object *webview, void *event_info)
 }
 
 static void
-on_close_window(void *user_data, void *event_info)
+on_close_window(void *user_data, Evas_Object *webview, void *event_info)
 {
     window_close((Browser_Window *)user_data);
 }
@@ -246,7 +226,7 @@ on_progress(void *user_data, Evas_Object *webview, void *event_info)
     Browser_Window *window = (Browser_Window *)user_data;
     double progress = *(double *)event_info;
 
-    title_set(window->ee, ewk_view_title_get(window->webview), progress * 100);
+    title_set(window->window, ewk_view_title_get(window->webview), progress * 100);
 }
 
 static void
@@ -307,6 +287,7 @@ static int
 quit(Eina_Bool success, const char *msg)
 {
     ewk_shutdown();
+    elm_shutdown();
 
     if (msg)
         fputs(msg, (success) ? stdout : stderr);
@@ -317,70 +298,108 @@ quit(Eina_Bool success, const char *msg)
     return EXIT_SUCCESS;
 }
 
+static void
+on_url_bar_activated(void *user_data, Evas_Object *url_bar, void *event_info)
+{
+    Browser_Window *app_data = (Browser_Window *)user_data;
+
+    const char *user_url = elm_entry_entry_get(url_bar);
+    char *url = url_from_user_input(user_url);
+    ewk_view_url_set(app_data->webview, url);
+    free(url);
+
+    /* Give focus back to the view */
+    view_focus_set(app_data, EINA_TRUE);
+}
+
+static void
+on_url_bar_clicked(void *user_data, Evas_Object *url_bar, void *event_info)
+{
+    Browser_Window *app_data = (Browser_Window *)user_data;
+
+    /* Grab focus from the view */
+    evas_object_focus_set(app_data->webview, EINA_FALSE);
+    elm_object_focus_set(url_bar, EINA_TRUE);
+}
+
+static void
+on_window_deletion(void *user_data, Evas_Object *window, void *event_info)
+{
+    window_close(browser_window_find(window));
+}
+
 static Browser_Window *window_create(const char *url)
 {
-    Browser_Window *window = malloc(sizeof(Browser_Window));
-    if (!window) {
+    Browser_Window *app_data = malloc(sizeof(Browser_Window));
+    if (!app_data) {
         info("ERROR: could not create browser window.\n");
         return NULL;
     }
 
-    window->ee = ecore_evas_new(evas_engine_name, 0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT, 0);
-    if (!window->ee) {
-        info("ERROR: could not construct ecore-evas.\n");
-        free(window);
-        return NULL;
-    }
+    /* Create window */
+    app_data->window = elm_win_util_standard_add("minibrowser-window", APP_NAME);
+    evas_object_smart_callback_add(app_data->window, "delete,request", on_window_deletion, &app_data);
 
-    ecore_evas_title_set(window->ee, APP_NAME);
-    ecore_evas_callback_resize_set(window->ee, on_ecore_evas_resize);
-    ecore_evas_borderless_set(window->ee, 0);
-    ecore_evas_show(window->ee);
-    ecore_evas_callback_delete_request_set(window->ee, on_ecore_evas_delete);
+    /* Create vertical layout */
+    Evas_Object *vertical_layout = elm_box_add(app_data->window);
+    elm_box_padding_set(vertical_layout, 0, 2);
+    evas_object_size_hint_weight_set(vertical_layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    elm_win_resize_object_add(app_data->window, vertical_layout);
+    evas_object_show(vertical_layout);
 
-    window->evas = ecore_evas_get(window->ee);
-    if (!window->evas) {
-        info("ERROR: could not get evas from evas-ecore.\n");
-        free(window);
-        return NULL;
-    }
+    /* Create URL bar */
+    app_data->url_bar = elm_entry_add(app_data->window);
+    elm_entry_single_line_set(app_data->url_bar, EINA_TRUE);
+    elm_entry_cnp_mode_set(app_data->url_bar, ELM_CNP_MODE_PLAINTEXT);
+    elm_entry_text_style_user_push(app_data->url_bar, "DEFAULT='font_size=16'");
+    evas_object_smart_callback_add(app_data->url_bar, "activated", on_url_bar_activated, app_data);
+    evas_object_smart_callback_add(app_data->url_bar, "clicked", on_url_bar_clicked, app_data);
+    evas_object_size_hint_weight_set(app_data->url_bar, EVAS_HINT_EXPAND, 0.0);
+    evas_object_size_hint_align_set(app_data->url_bar, EVAS_HINT_FILL, 0.0);
+    elm_box_pack_end(vertical_layout, app_data->url_bar);
+    evas_object_show(app_data->url_bar);
 
     /* Create webview */
-    window->webview = ewk_view_add(window->evas);
-    ewk_view_theme_set(window->webview, THEME_DIR"/default.edj");
-    ewk_settings_enable_frame_flattening_set(ewk_view_settings_get(window->webview), frame_flattening_enabled);
+    Evas *evas = evas_object_evas_get(app_data->window);
+    app_data->webview = ewk_view_add(evas);
+    ewk_view_theme_set(app_data->webview, THEME_DIR "/default.edj");
 
-    Ewk_Settings *settings = ewk_view_settings_get(window->webview);
+    Ewk_Settings *settings = ewk_view_settings_get(app_data->webview);
     ewk_settings_file_access_from_file_urls_allowed_set(settings, EINA_TRUE);
+    ewk_settings_enable_frame_flattening_set(settings, frame_flattening_enabled);
 
-    evas_object_smart_callback_add(window->webview, "close,window", on_close_window, window);
-    evas_object_smart_callback_add(window->webview, "create,window", on_new_window, window);
-    evas_object_smart_callback_add(window->webview, "download,failed", on_download_failed, window);
-    evas_object_smart_callback_add(window->webview, "download,finished", on_download_finished, window);
-    evas_object_smart_callback_add(window->webview, "download,request", on_download_request, window);
-    evas_object_smart_callback_add(window->webview, "load,error", on_error, window);
-    evas_object_smart_callback_add(window->webview, "load,progress", on_progress, window);
-    evas_object_smart_callback_add(window->webview, "title,changed", on_title_changed, window);
-    evas_object_smart_callback_add(window->webview, "url,changed", on_url_changed, window);
+    evas_object_smart_callback_add(app_data->webview, "close,window", on_close_window, app_data);
+    evas_object_smart_callback_add(app_data->webview, "create,window", on_new_window, app_data);
+    evas_object_smart_callback_add(app_data->webview, "download,failed", on_download_failed, app_data);
+    evas_object_smart_callback_add(app_data->webview, "download,finished", on_download_finished, app_data);
+    evas_object_smart_callback_add(app_data->webview, "download,request", on_download_request, app_data);
+    evas_object_smart_callback_add(app_data->webview, "load,error", on_error, app_data);
+    evas_object_smart_callback_add(app_data->webview, "load,progress", on_progress, app_data);
+    evas_object_smart_callback_add(app_data->webview, "title,changed", on_title_changed, app_data);
+    evas_object_smart_callback_add(app_data->webview, "url,changed", on_url_changed, app_data);
 
-    evas_object_event_callback_add(window->webview, EVAS_CALLBACK_KEY_DOWN, on_key_down, window);
-    evas_object_event_callback_add(window->webview, EVAS_CALLBACK_MOUSE_DOWN, on_mouse_down, window);
+    evas_object_event_callback_add(app_data->webview, EVAS_CALLBACK_KEY_DOWN, on_key_down, app_data);
+    evas_object_event_callback_add(app_data->webview, EVAS_CALLBACK_MOUSE_DOWN, on_mouse_down, app_data);
 
-    evas_object_size_hint_weight_set(window->webview, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_move(window->webview, 0, URL_BAR_HEIGHT);
-    evas_object_resize(window->webview, DEFAULT_WIDTH, DEFAULT_HEIGHT - URL_BAR_HEIGHT);
-    evas_object_show(window->webview);
-    evas_object_focus_set(window->webview, EINA_TRUE);
-
-    window->url_bar = url_bar_add(window->webview, DEFAULT_WIDTH);
+    evas_object_size_hint_weight_set(app_data->webview, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(app_data->webview, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    elm_box_pack_end(vertical_layout, app_data->webview);
+    evas_object_show(app_data->webview);
 
     if (url)
-        ewk_view_url_set(window->webview, url);
+        ewk_view_url_set(app_data->webview, url);
 
-    return window;
+    evas_object_resize(app_data->window, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    elm_win_center(app_data->window, EINA_TRUE, EINA_TRUE);
+    evas_object_show(app_data->window);
+
+    view_focus_set(app_data, EINA_TRUE);
+
+    return app_data;
 }
 
-int main(int argc, char *argv[])
+EAPI_MAIN int
+elm_main(int argc, char *argv[])
 {
     int args = 1;
     unsigned char quitOption = 0;
@@ -420,11 +439,8 @@ int main(int argc, char *argv[])
 
     windows = eina_list_append(windows, window);
 
-    Ecore_Event_Handler *handle = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, main_signal_exit, 0);
-
-    ecore_main_loop_begin();
-
-    ecore_event_handler_del(handle);
+    elm_run();
 
     return quit(EINA_TRUE, NULL);
 }
+ELM_MAIN()
