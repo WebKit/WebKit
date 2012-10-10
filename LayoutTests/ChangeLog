@@ -1,3 +1,9 @@
+2012-10-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-5.0-wk1/fast/history/history-back-initial-vs-final-url-expected.txt: Renamed from LayoutTests/platform/qt/fast/history/history-back-initial-vs-final-url-expected.txt.
+
 2012-10-09  Kent Tamura  <tkent@chromium.org>
 
         Sub-fields in input[type=time] should not be focusable if the input is disabled or read-only
