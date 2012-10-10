@@ -2142,7 +2142,7 @@ __ZNK7WebCore15ContextMenuItem7enabledEv
 #endif // ENABLE(CONTEXT_MENUS)
 
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
-__ZNK7WebCore8Document16dashboardRegionsEv
+__ZNK7WebCore8Document16annotatedRegionsEv
 #endif
 #if ENABLE(DASHBOARD_SUPPORT)
 __ZN7WebCore8Settings41setUsesDashboardBackwardCompatibilityModeEb

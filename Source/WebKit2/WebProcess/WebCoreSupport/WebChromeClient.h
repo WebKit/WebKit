@@ -139,7 +139,7 @@ private:
     virtual void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin*, int64_t spaceNeeded) OVERRIDE;
 
 #if ENABLE(DASHBOARD_SUPPORT)
-    virtual void dashboardRegionsChanged() OVERRIDE;
+    virtual void annotatedRegionsChanged() OVERRIDE;
 #endif
 
     virtual void populateVisitedLinks() OVERRIDE;

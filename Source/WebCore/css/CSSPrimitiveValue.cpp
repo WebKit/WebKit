@@ -45,7 +45,7 @@
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringBuilder.h>
 
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
 #include "DashboardRegion.h"
 #endif
 
@@ -91,7 +91,7 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSPrimitiveValue::Unit
     case CSSPrimitiveValue::CSS_ATTR:
     case CSSPrimitiveValue::CSS_COUNTER:
     case CSSPrimitiveValue::CSS_COUNTER_NAME:
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
     case CSSPrimitiveValue::CSS_DASHBOARD_REGION:
 #endif
 #if !ENABLE(CSS_IMAGE_RESOLUTION)
@@ -330,7 +330,7 @@ void CSSPrimitiveValue::init(PassRefPtr<Quad> quad)
     m_value.quad = quad.leakRef();
 }
 
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
 void CSSPrimitiveValue::init(PassRefPtr<DashboardRegion> r)
 {
     m_primitiveUnitType = CSS_DASHBOARD_REGION;
@@ -391,7 +391,7 @@ void CSSPrimitiveValue::cleanup()
     case CSS_PAIR:
         m_value.pair->deref();
         break;
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
     case CSS_DASHBOARD_REGION:
         if (m_value.region)
             m_value.region->deref();
@@ -1034,19 +1034,13 @@ String CSSPrimitiveValue::customCssText() const
         case CSS_PAIR:
             text = getPairValue()->cssText();
             break;
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
         case CSS_DASHBOARD_REGION: {
             StringBuilder result;
             for (DashboardRegion* region = getDashboardRegionValue(); region; region = region->m_next.get()) {
                 if (!result.isEmpty())
                     result.append(' ');
-#if ENABLE(DASHBOARD_SUPPORT) && ENABLE(WIDGET_REGION)
-                result.append(region->m_cssFunctionName);
-#elif ENABLE(DASHBOARD_SUPPORT)
                 result.appendLiteral("dashboard-region(");
-#else
-                result.appendLiteral("region(");
-#endif
                 result.append(region->m_label);
                 if (region->m_isCircle)
                     result.appendLiteral(" circle");
@@ -1197,7 +1191,7 @@ PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValue::cloneForCSSOM() const
         // Pair is not exposed to the CSSOM, no need for a deep clone.
         result = CSSPrimitiveValue::create(m_value.pair);
         break;
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
     case CSS_DASHBOARD_REGION:
         // DashboardRegion is not exposed to the CSSOM, no need for a deep clone.
         result = CSSPrimitiveValue::create(m_value.region);
@@ -1289,7 +1283,7 @@ void CSSPrimitiveValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObje
     case CSS_PAIR:
         info.addMember(m_value.pair);
         break;
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
     case CSS_DASHBOARD_REGION:
         info.addMember(m_value.region);
         break;

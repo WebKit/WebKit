@@ -2122,12 +2122,12 @@ static inline IMP getMethod(id o, SEL s)
     if (!mainFrame)
         return nil;
 
-    const Vector<DashboardRegionValue>& regions = mainFrame->document()->dashboardRegions();
+    const Vector<AnnotatedRegionValue>& regions = mainFrame->document()->annotatedRegions();
     size_t size = regions.size();
 
     NSMutableDictionary *webRegions = [NSMutableDictionary dictionaryWithCapacity:size];
     for (size_t i = 0; i < size; i++) {
-        const DashboardRegionValue& region = regions[i];
+        const AnnotatedRegionValue& region = regions[i];
 
         if (region.type == StyleDashboardRegion::None)
             continue;

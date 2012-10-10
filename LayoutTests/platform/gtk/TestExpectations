@@ -75,7 +75,7 @@ fast/canvas/canvas-gradient-addStop-error.html [ WontFix ]
 http/tests/xmlhttprequest/default-content-type-dashboard.html [ WontFix ]
 
 # ENABLE(WIDGET_REGION) is disabled
-fast/css/widget-region-parser.html [ WontFix ]
+fast/css/draggable-region-parser.html [ WontFix ]
 
 # These test -apple- and -khtml- prefixed CSS properties, which we don't support.
 inspector/styles/vendor-prefixes.html [ WontFix ]

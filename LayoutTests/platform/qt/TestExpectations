@@ -449,7 +449,7 @@ fast/forms/time-multiple-fields
 fast/forms/week-multiple-fields
 
 # ENABLE(WIDGET_REGION) is disabled
-fast/css/widget-region-parser.html
+fast/css/draggable-region-parser.html
 
 # Text Autosizing is not enabled.
 webkit.org/b/84186 fast/text-autosizing

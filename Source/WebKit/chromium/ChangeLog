@@ -1,3 +1,22 @@
+2012-10-09  Jian Li  <jianli@chromium.org>
+
+        Update the CSS property used to support draggable regions.
+        https://bugs.webkit.org/show_bug.cgi?id=97156
+
+        Reviewed by Adam Barth.
+
+        Update the code to use the new name annotatedRegions to work for
+        both features.
+
+        * public/WebDraggableRegion.h: Rename dashboardRegions to annotatedRegions.
+        (WebDraggableRegion):
+        * src/ChromeClientImpl.cpp: Rename dashboardRegions to annotatedRegions.
+        (WebKit::ChromeClientImpl::annotatedRegionsChanged):
+        * src/ChromeClientImpl.h: Rename dashboardRegions to annotatedRegions.
+        (ChromeClientImpl):
+        * src/WebDocument.cpp: Rename dashboardRegions to annotatedRegions.
+        (WebKit::WebDocument::draggableRegions):
+
 2012-10-09  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         [chromium] Add drop event for plugins.

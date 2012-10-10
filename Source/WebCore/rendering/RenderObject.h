@@ -121,20 +121,28 @@ typedef unsigned MapLocalToContainerFlags;
 const int caretWidth = 1;
 
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
-struct DashboardRegionValue {
-    bool operator==(const DashboardRegionValue& o) const
+struct AnnotatedRegionValue {
+    bool operator==(const AnnotatedRegionValue& o) const
     {
+#if ENABLE(DASHBOARD_SUPPORT)
         return type == o.type && bounds == o.bounds && clip == o.clip && label == o.label;
+#else // ENABLE(WIDGET_REGION)
+        return draggable == o.draggable && bounds == o.bounds;
+#endif
     }
-    bool operator!=(const DashboardRegionValue& o) const
+    bool operator!=(const AnnotatedRegionValue& o) const
     {
         return !(*this == o);
     }
 
-    String label;
     LayoutRect bounds;
+#if ENABLE(DASHBOARD_SUPPORT)
+    String label;
     LayoutRect clip;
     int type;
+#else // ENABLE(WIDGET_REGION)
+    bool draggable;
+#endif
 };
 #endif
 
@@ -667,8 +675,8 @@ public:
     virtual void updateFromElement() { }
 
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
-    virtual void addDashboardRegions(Vector<DashboardRegionValue>&);
-    void collectDashboardRegions(Vector<DashboardRegionValue>&);
+    virtual void addAnnotatedRegions(Vector<AnnotatedRegionValue>&);
+    void collectAnnotatedRegions(Vector<AnnotatedRegionValue>&);
 #endif
 
     bool isComposited() const;

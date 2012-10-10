@@ -24,7 +24,7 @@
 
 #ifndef StyleDashboardRegion_h
 #define StyleDashboardRegion_h
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
 
 #include "LengthBox.h"
 #include <wtf/text/WTFString.h>
@@ -57,5 +57,5 @@ struct StyleDashboardRegion {
 
 } // namespace WebCore
 
-#endif // ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
+#endif // ENABLE(DASHBOARD_SUPPORT)
 #endif // StyleDashboardRegion_h

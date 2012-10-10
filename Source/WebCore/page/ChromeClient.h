@@ -208,7 +208,7 @@ namespace WebCore {
         virtual void reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t totalSpaceNeeded) = 0;
 
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
-        virtual void dashboardRegionsChanged();
+        virtual void annotatedRegionsChanged();
 #endif
 
         virtual void populateVisitedLinks();

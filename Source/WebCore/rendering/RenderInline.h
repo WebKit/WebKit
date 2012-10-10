@@ -162,7 +162,7 @@ private:
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
-    virtual void addDashboardRegions(Vector<DashboardRegionValue>&);
+    virtual void addAnnotatedRegions(Vector<AnnotatedRegionValue>&);
 #endif
     
     virtual void updateFromStyle() OVERRIDE;

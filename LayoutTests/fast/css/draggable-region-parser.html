@@ -1,0 +1,68 @@
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("This tests the parser and serializer for draggable region values.");
+
+var style = document.getElementById('description').style;
+
+function parseDraggableRegion(string)
+{
+    try {
+        style.removeProperty("-webkit-app-region");
+        style.setProperty("-webkit-app-region", string, "");
+        var result = style.getPropertyValue("-webkit-app-region");
+        style.removeProperty("-webkit-app-region");
+        return result;
+    } catch (e) {
+        return "" + e;
+    }
+}
+
+debug('');
+
+shouldBe("parseDraggableRegion('drag')", "'drag'");
+shouldBe("parseDraggableRegion('no-drag')", "'no-drag'");
+
+debug('');
+debug('Tests for variations in whitespace that are allowed.');
+debug('');
+
+shouldBe("parseDraggableRegion('  drag  ')", "'drag'");
+shouldBe("parseDraggableRegion('  no-drag    ')", "'no-drag'");
+
+debug('');
+debug('Tests for case insensitivity.');
+debug('');
+
+shouldBe("parseDraggableRegion('Drag')", "'drag'");
+shouldBe("parseDraggableRegion('DrAG')", "'drag'");
+shouldBe("parseDraggableRegion('NO-DrAG')", "'no-drag'");
+shouldBe("parseDraggableRegion('NO-DRAG')", "'no-drag'");
+
+debug('');
+debug('Some expected failures.');
+debug('');
+
+shouldBe("parseDraggableRegion('')", "null");
+shouldBe("parseDraggableRegion(' ')", "null");
+shouldBe("parseDraggableRegion('x')", "null");
+shouldBe("parseDraggableRegion('x-')", "null");
+shouldBe("parseDraggableRegion('x()')", "null");
+shouldBe("parseDraggableRegion('x(a)')", "null");
+shouldBe("parseDraggableRegion('none x')", "null");
+shouldBe("parseDraggableRegion('none x()')", "null");
+shouldBe("parseDraggableRegion('none x(a)')", "null");
+
+debug('');
+
+
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

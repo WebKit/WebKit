@@ -381,7 +381,7 @@ inspector/debugger/dom-breakpoints.html
 inspector/timeline/timeline-receive-response-event.html
 
 # ENABLE(WIDGET_REGION) is disabled
-fast/css/widget-region-parser.html
+fast/css/draggable-region-parser.html
 
 # http://webkit.org/b/96828
 fast/canvas/webgl/oes-vertex-array-object.html

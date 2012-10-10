@@ -110,7 +110,7 @@
 #include "WebKitCSSShaderValue.h"
 #endif
 
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
 #include "DashboardRegion.h"
 #endif
 
@@ -2515,18 +2515,20 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             validPrimitive = true;
         break;
 
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
 #if ENABLE(DASHBOARD_SUPPORT)
     case CSSPropertyWebkitDashboardRegion: // <dashboard-region> | <dashboard-region>
-#endif
-#if ENABLE(WIDGET_REGION)
-    case CSSPropertyWebkitWidgetRegion:
-#endif
         if (value->unit == CSSParserValue::Function || id == CSSValueNone)
             return parseDashboardRegions(propId, important);
         break;
 #endif
     // End Apple-specific properties
+
+#if ENABLE(WIDGET_REGION)
+    case CSSPropertyWebkitAppRegion:
+        if (id >= CSSValueDrag && id <= CSSValueNoDrag)
+            validPrimitive = true;
+        break;
+#endif
 
 #if ENABLE(TOUCH_EVENTS)
     case CSSPropertyWebkitTapHighlightColor:
@@ -4208,7 +4210,7 @@ bool CSSParser::parseGridTrackList(CSSPropertyID propId, bool important)
 }
 
 
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
 
 #define DASHBOARD_REGION_NUM_PARAMETERS  6
 #define DASHBOARD_REGION_SHORT_NUM_PARAMETERS  2
@@ -4261,32 +4263,7 @@ bool CSSParser::parseDashboardRegions(CSSPropertyID propId, bool important)
         // dashboard-region(label, type) or dashboard-region(label type)
         // dashboard-region(label, type) or dashboard-region(label type)
         CSSParserValueList* args = value->function->args.get();
-        if (!args) {
-            valid = false;
-            break;
-        }
-        bool validFunctionName = false;
-#if ENABLE(DASHBOARD_SUPPORT)
-        static const char dashboardRegionFunctionName[] = "dashboard-region(";
-        if (equalIgnoringCase(value->function->name, dashboardRegionFunctionName)) {
-            validFunctionName = true;
-#if ENABLE(DASHBOARD_SUPPORT) && ENABLE(WIDGET_REGION)
-            // Keep track of function name when both features are enabled. 
-            region->m_cssFunctionName = dashboardRegionFunctionName;
-#endif
-        }
-#endif
-#if ENABLE(WIDGET_REGION)
-        static const char widgetRegionFunctionName[] = "region(";
-        if (equalIgnoringCase(value->function->name, widgetRegionFunctionName)) {
-            validFunctionName = true;
-#if ENABLE(DASHBOARD_SUPPORT) && ENABLE(WIDGET_REGION)
-            // Keep track of function name when both features are enabled. 
-            region->m_cssFunctionName = widgetRegionFunctionName;
-#endif
-        }
-#endif
-        if (!validFunctionName) {
+        if (!equalIgnoringCase(value->function->name, "dashboard-region(") || !args) {
             valid = false;
             break;
         }
@@ -4372,7 +4349,7 @@ bool CSSParser::parseDashboardRegions(CSSPropertyID propId, bool important)
     return valid;
 }
 
-#endif /* ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION) */
+#endif /* ENABLE(DASHBOARD_SUPPORT) */
 
 PassRefPtr<CSSValue> CSSParser::parseCounterContent(CSSParserValueList* args, bool counters)
 {

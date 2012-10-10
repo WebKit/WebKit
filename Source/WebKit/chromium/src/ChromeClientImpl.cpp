@@ -1120,7 +1120,7 @@ bool ChromeClientImpl::isPointerLocked()
 #endif
 
 #if ENABLE(WIDGET_REGION)
-void ChromeClientImpl::dashboardRegionsChanged()
+void ChromeClientImpl::annotatedRegionsChanged()
 {
     WebViewClient* client = m_webView->client();
     if (client)

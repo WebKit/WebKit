@@ -562,7 +562,7 @@ void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin* origin,
 }
 
 #if ENABLE(DASHBOARD_SUPPORT)
-void WebChromeClient::dashboardRegionsChanged()
+void WebChromeClient::annotatedRegionsChanged()
 {
     notImplemented();
 }

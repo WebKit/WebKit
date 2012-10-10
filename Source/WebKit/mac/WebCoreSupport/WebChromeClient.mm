@@ -681,7 +681,7 @@ void WebChromeClient::populateVisitedLinks()
 
 #if ENABLE(DASHBOARD_SUPPORT)
 
-void WebChromeClient::dashboardRegionsChanged()
+void WebChromeClient::annotatedRegionsChanged()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     CallUIDelegate(m_webView, @selector(webView:dashboardRegionsChanged:), [m_webView _dashboardRegions]);

@@ -441,6 +441,9 @@ webaudio/
 # Microdata DOM API is not yet enabled.
 fast/dom/MicroData
 
+# ENABLE(WIDGET_REGION) is disabled
+fast/css/draggable-region-parser.html
+
 # https://bugs.webkit.org/show_bug.cgi?id=97132
 media/track/track-cue-rendering-horizontal.html
 media/track/track-cue-rendering-snap-to-lines-not-set.html

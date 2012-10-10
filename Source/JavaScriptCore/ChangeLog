@@ -1,3 +1,16 @@
+2012-10-09  Jian Li  <jianli@chromium.org>
+
+        Update the CSS property used to support draggable regions.
+        https://bugs.webkit.org/show_bug.cgi?id=97156
+
+        Reviewed by Adam Barth.
+
+        The CSS property to support draggable regions, guarded under
+        WIDGET_REGION is now disabled from Mac WebKit, in order not to cause
+        confusion with DASHBOARD_SUPPORT feature.
+
+        * Configurations/FeatureDefines.xcconfig: Disable WIDGET_REGION feature.
+
 2012-10-09  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, adding forgotten files.

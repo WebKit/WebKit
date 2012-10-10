@@ -462,8 +462,8 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_savedRenderer(0)
     , m_designMode(inherit)
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
-    , m_hasDashboardRegions(false)
-    , m_dashboardRegionsDirty(false)
+    , m_hasAnnotatedRegions(false)
+    , m_annotatedRegionsDirty(false)
 #endif
     , m_createRenderers(true)
     , m_inPageCache(false)
@@ -3354,15 +3354,15 @@ void Document::activeChainNodeDetached(Node* node)
 }
 
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
-const Vector<DashboardRegionValue>& Document::dashboardRegions() const
+const Vector<AnnotatedRegionValue>& Document::annotatedRegions() const
 {
-    return m_dashboardRegions;
+    return m_annotatedRegions;
 }
 
-void Document::setDashboardRegions(const Vector<DashboardRegionValue>& regions)
+void Document::setAnnotatedRegions(const Vector<AnnotatedRegionValue>& regions)
 {
-    m_dashboardRegions = regions;
-    setDashboardRegionsDirty(false);
+    m_annotatedRegions = regions;
+    setAnnotatedRegionsDirty(false);
 }
 #endif
 
@@ -5902,8 +5902,8 @@ void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_contentLanguage);
     info.addMember(m_documentNamedItemCollections);
     info.addMember(m_windowNamedItemCollections);
-#if ENABLE(DASHBOARD_SUPPORT)
-    info.addMember(m_dashboardRegions);
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
+    info.addMember(m_annotatedRegions);
 #endif
     info.addMember(m_cssCanvasElements);
     info.addMember(m_iconURLs);

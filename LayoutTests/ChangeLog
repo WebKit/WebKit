@@ -1,3 +1,24 @@
+2012-10-09  Jian Li  <jianli@chromium.org>
+
+        Update the CSS property used to support draggable regions.
+        https://bugs.webkit.org/show_bug.cgi?id=97156
+
+        Reviewed by Adam Barth.
+
+        Update the test and rename the files due to CSS property name and
+        syntax changes.
+
+        * fast/css/draggable-region-parser-expected.txt: Added.
+        * fast/css/draggable-region-parser.html: Added.
+        * fast/css/widget-region-parser-expected.txt: Removed.
+        * fast/css/widget-region-parser.html: Removed.
+        * platform/efl/TestExpectations: Rename the skipped test.
+        * platform/gtk/TestExpectations: Rename the skipped test.
+        * platform/mac/TestExpectations: Skip the renamed test since WIDGET_REGION is off.
+        * platform/qt/TestExpectations: Rename the skipped test.
+        * platform/win/TestExpectations: Rename the skipped test.
+        * platform/wincairo/TestExpectations: Rename the skipped test.
+
 2012-10-09  Kiran Muppala  <cmuppala@apple.com>
 
         Fix coding style of layout test fast/dom/timer-throttling-hidden-page.html

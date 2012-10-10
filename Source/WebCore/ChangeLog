@@ -1,3 +1,113 @@
+2012-10-09  Jian Li  <jianli@chromium.org>
+
+        Update the CSS property used to support draggable regions.
+        https://bugs.webkit.org/show_bug.cgi?id=97156
+
+        Reviewed by Adam Barth.
+
+        The CSS property to support draggable regions has been changed from
+        "-webkit-widget-region" to "-webkit-app-region" in the following syntax:
+           -webkit-app-region: drag|no-drag
+
+        The CSS parsing code for draggable regions is now different from the CSS
+        parsing code for dashboard regions since we have quite different syntax.
+
+        We still try to share as much rendering update code as possible for
+        these two features. To make the shared code easier to understand for
+        both features, the name "DashboardRegions" in the shared code is changed
+        to "AnnotatedRegions" to work for both dashboard regions and draggable
+        regions.
+
+        Note that we still using WIDGET_REGION as feature name in order not to
+        add more changes to this patch. It will be renamed to a more appropriate
+        name in next patch. WIDGET_REGION is now only turned on for the chromium
+        port.
+
+        Test: fast/css/draggable-region-parser.html
+
+        * Configurations/FeatureDefines.xcconfig: Disable WIDGET_REGION feature.
+        * WebCore.exp.in: Update the exported symbol due to renaming.
+        * css/CSSComputedStyleDeclaration.cpp: Update the CSS parsing.
+        (WebCore):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp: Update the CSS parsing.
+        (WebCore::CSSParser::parseValue):
+        (WebCore):
+        (WebCore::CSSParser::parseDashboardRegions):
+        * css/CSSParserValues.cpp: Update the CSS parsing.
+        (WebCore::CSSParserValue::createCSSValue):
+        * css/CSSPrimitiveValue.cpp: Update the CSS parsing.
+        (WebCore::isValidCSSUnitTypeForDoubleConversion):
+        (WebCore):
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::customCssText):
+        (WebCore::CSSPrimitiveValue::cloneForCSSOM):
+        (WebCore::CSSPrimitiveValue::reportDescendantMemoryUsage):
+        * css/CSSPrimitiveValue.h: Update the CSS parsing.
+        (CSSPrimitiveValue):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in: Rename the CSS property for draggable region.
+        * css/CSSValueKeywords.in: Add the keywords supported for the draggable region.
+        * css/DashboardRegion.h: Remove WIDGET_REGION guard.
+        (DashboardRegion):
+        * css/StyleResolver.cpp: Update the CSS parsing.
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        * dom/Document.cpp: Rename dashboardRegions to annotatedRegions.
+        (WebCore::Document::Document):
+        (WebCore::Document::annotatedRegions):
+        (WebCore::Document::setAnnotatedRegions):
+        (WebCore::Document::reportMemoryUsage):
+        * dom/Document.h: Rename dashboardRegions to annotatedRegions.
+        (WebCore):
+        (WebCore::Document::setAnnotatedRegionsDirty):
+        (WebCore::Document::annotatedRegionsDirty):
+        (WebCore::Document::hasAnnotatedRegions):
+        (WebCore::Document::setHasAnnotatedRegions):
+        (Document):
+        * page/Chrome.cpp: Rename dashboardRegions to annotatedRegions.
+        (WebCore::ChromeClient::annotatedRegionsChanged):
+        * page/ChromeClient.h: Rename dashboardRegions to annotatedRegions.
+        (ChromeClient):
+        * page/FrameView.cpp: Rename dashboardRegions to annotatedRegions.
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::updateAnnotatedRegions):
+        (WebCore::FrameView::paintContents):
+        * page/FrameView.h: Rename dashboardRegions to annotatedRegions.
+        (FrameView):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addAnnotatedRegions):
+        * rendering/RenderInline.h: Rename dashboardRegions to annotatedRegions.
+        (RenderInline):
+        * rendering/RenderLayer.cpp: Rename dashboardRegions to annotatedRegions.
+        (WebCore::RenderLayer::scrollTo):
+        (WebCore::RenderLayer::setHasHorizontalScrollbar):
+        (WebCore::RenderLayer::setHasVerticalScrollbar):
+        (WebCore::RenderLayer::updateScrollbarsAfterLayout):
+        * rendering/RenderListBox.cpp: Rename dashboardRegions to annotatedRegions.
+        (WebCore::RenderListBox::setHasVerticalScrollbar):
+        * rendering/RenderObject.cpp: Rename dashboardRegions to annotatedRegions.
+        (WebCore::RenderObject::styleWillChange):
+        (WebCore::RenderObject::addAnnotatedRegions):
+        (WebCore::RenderObject::collectAnnotatedRegions):
+        * rendering/RenderObject.h: Rename dashboardRegions to annotatedRegions.
+        (WebCore::AnnotatedRegionValue::operator==):
+        (WebCore::AnnotatedRegionValue::operator!=):
+        (AnnotatedRegionValue):
+        (RenderObject):
+        * rendering/style/RenderStyle.cpp: Update the CSS parsing.
+        (WebCore::RenderStyle::diff):
+        (WebCore):
+        * rendering/style/RenderStyle.h: Update the CSS parsing.
+        * rendering/style/RenderStyleConstants.h: Update the CSS parsing.
+        * rendering/style/StyleDashboardRegion.h: Update the CSS parsing.
+        * rendering/style/StyleRareNonInheritedData.cpp: Update the CSS parsing.
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h: Update the CSS parsing.
+        (WebCore):
+        (StyleRareNonInheritedData):
+
 2012-10-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r130811 and r130821.

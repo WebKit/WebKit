@@ -23,7 +23,7 @@
 
 #include "Rect.h"
 
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
+#if ENABLE(DASHBOARD_SUPPORT)
 
 namespace WebCore {
 
@@ -36,11 +36,6 @@ public:
     String m_geometryType;
     bool m_isCircle : 1;
     bool m_isRectangle : 1;
-
-#if ENABLE(DASHBOARD_SUPPORT) && ENABLE(WIDGET_REGION)
-    // Used to tell different CSS function name when both features are enabled.
-    String m_cssFunctionName;
-#endif
 
 private:
     DashboardRegion() : m_isCircle(false), m_isRectangle(false) { }

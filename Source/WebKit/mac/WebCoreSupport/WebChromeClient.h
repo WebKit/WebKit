@@ -117,7 +117,7 @@ public:
     virtual void populateVisitedLinks() OVERRIDE;
 
 #if ENABLE(DASHBOARD_SUPPORT)
-    virtual void dashboardRegionsChanged() OVERRIDE;
+    virtual void annotatedRegionsChanged() OVERRIDE;
 #endif
 
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>) OVERRIDE;

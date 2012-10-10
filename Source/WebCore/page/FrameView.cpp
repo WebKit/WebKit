@@ -1228,7 +1228,7 @@ void FrameView::layout(bool allowSubtree)
         root->document()->axObjectCache()->postNotification(root, AXObjectCache::AXLayoutComplete, true);
 #endif
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
-    updateDashboardRegions();
+    updateAnnotatedRegions();
 #endif
 
     ASSERT(!root->needsLayout());
@@ -2913,20 +2913,20 @@ bool FrameView::scrollAnimatorEnabled() const
 }
 
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
-void FrameView::updateDashboardRegions()
+void FrameView::updateAnnotatedRegions()
 {
     Document* document = m_frame->document();
-    if (!document->hasDashboardRegions())
+    if (!document->hasAnnotatedRegions())
         return;
-    Vector<DashboardRegionValue> newRegions;
-    document->renderBox()->collectDashboardRegions(newRegions);
-    if (newRegions == document->dashboardRegions())
+    Vector<AnnotatedRegionValue> newRegions;
+    document->renderBox()->collectAnnotatedRegions(newRegions);
+    if (newRegions == document->annotatedRegions())
         return;
-    document->setDashboardRegions(newRegions);
+    document->setAnnotatedRegions(newRegions);
     Page* page = m_frame->page();
     if (!page)
         return;
-    page->chrome()->client()->dashboardRegionsChanged();
+    page->chrome()->client()->annotatedRegionsChanged();
 }
 #endif
 
@@ -3249,10 +3249,10 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
     m_paintBehavior = oldPaintBehavior;
     m_lastPaintTime = currentTime();
 
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
     // Regions may have changed as a result of the visibility/z-index of element changing.
-    if (document->dashboardRegionsDirty())
-        updateDashboardRegions();
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
+    if (document->annotatedRegionsDirty())
+        updateAnnotatedRegions();
 #endif
 
     if (isTopLevelPainter)

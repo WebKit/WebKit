@@ -1535,12 +1535,13 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, const L
 }
 
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
-void RenderInline::addDashboardRegions(Vector<DashboardRegionValue>& regions)
+void RenderInline::addAnnotatedRegions(Vector<AnnotatedRegionValue>& regions)
 {
     // Convert the style regions to absolute coordinates.
     if (style()->visibility() != VISIBLE)
         return;
 
+#if ENABLE(DASHBOARD_SUPPORT)
     const Vector<StyleDashboardRegion>& styleRegions = style()->dashboardRegions();
     unsigned i, count = styleRegions.size();
     for (i = 0; i < count; i++) {
@@ -1550,7 +1551,7 @@ void RenderInline::addDashboardRegions(Vector<DashboardRegionValue>& regions)
         LayoutUnit w = linesBoundingBox.width();
         LayoutUnit h = linesBoundingBox.height();
 
-        DashboardRegionValue region;
+        AnnotatedRegionValue region;
         region.label = styleRegion.label;
         region.bounds = LayoutRect(linesBoundingBox.x() + styleRegion.offset.left().value(),
                                 linesBoundingBox.y() + styleRegion.offset.top().value(),
@@ -1575,6 +1576,24 @@ void RenderInline::addDashboardRegions(Vector<DashboardRegionValue>& regions)
 
         regions.append(region);
     }
+#else // ENABLE(WIDGET_REGION)
+    if (style()->getDraggableRegionMode() == DraggableRegionNone)
+        return;
+
+    AnnotatedRegionValue region;
+    region.draggable = style()->getDraggableRegionMode() == DraggableRegionDrag;
+    region.bounds = linesBoundingBox();
+
+    RenderObject* container = containingBlock();
+    if (!container)
+        container = this;
+
+    FloatPoint absPos = container->localToAbsolute();
+    region.bounds.setX(absPos.x() + region.bounds.x());
+    region.bounds.setY(absPos.y() + region.bounds.y());
+    
+    regions.append(region);
+#endif
 }
 #endif
 

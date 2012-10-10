@@ -1819,7 +1819,7 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
                 || m_style->hasAutoZIndex() != newStyle->hasAutoZIndex();
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
             if (visibilityChanged)
-                document()->setDashboardRegionsDirty(true);
+                document()->setAnnotatedRegionsDirty(true);
 #endif
             if (visibilityChanged && AXObjectCache::accessibilityEnabled())
                 document()->axObjectCache()->childrenChanged(this);
@@ -2751,14 +2751,16 @@ void RenderObject::getTextDecorationColors(int decorations, Color& underline, Co
 }
 
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
-void RenderObject::addDashboardRegions(Vector<DashboardRegionValue>& regions)
+void RenderObject::addAnnotatedRegions(Vector<AnnotatedRegionValue>& regions)
 {
     // Convert the style regions to absolute coordinates.
     if (style()->visibility() != VISIBLE || !isBox())
         return;
     
     RenderBox* box = toRenderBox(this);
+    FloatPoint absPos = localToAbsolute();
 
+#if ENABLE(DASHBOARD_SUPPORT)
     const Vector<StyleDashboardRegion>& styleRegions = style()->dashboardRegions();
     unsigned i, count = styleRegions.size();
     for (i = 0; i < count; i++) {
@@ -2767,7 +2769,7 @@ void RenderObject::addDashboardRegions(Vector<DashboardRegionValue>& regions)
         LayoutUnit w = box->width();
         LayoutUnit h = box->height();
 
-        DashboardRegionValue region;
+        AnnotatedRegionValue region;
         region.label = styleRegion.label;
         region.bounds = LayoutRect(styleRegion.offset.left().value(),
                                    styleRegion.offset.top().value(),
@@ -2782,24 +2784,31 @@ void RenderObject::addDashboardRegions(Vector<DashboardRegionValue>& regions)
             region.clip.setWidth(0);
         }
 
-        FloatPoint absPos = localToAbsolute();
         region.bounds.setX(absPos.x() + styleRegion.offset.left().value());
         region.bounds.setY(absPos.y() + styleRegion.offset.top().value());
 
         regions.append(region);
     }
+#else // ENABLE(WIDGET_REGION)
+    if (style()->getDraggableRegionMode() == DraggableRegionNone)
+        return;
+    AnnotatedRegionValue region;
+    region.draggable = style()->getDraggableRegionMode() == DraggableRegionDrag;
+    region.bounds = LayoutRect(absPos.x(), absPos.y(), box->width(), box->height());
+    regions.append(region);
+#endif
 }
 
-void RenderObject::collectDashboardRegions(Vector<DashboardRegionValue>& regions)
+void RenderObject::collectAnnotatedRegions(Vector<AnnotatedRegionValue>& regions)
 {
     // RenderTexts don't have their own style, they just use their parent's style,
     // so we don't want to include them.
     if (isText())
         return;
 
-    addDashboardRegions(regions);
+    addAnnotatedRegions(regions);
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
-        curr->collectDashboardRegions(regions);
+        curr->collectAnnotatedRegions(regions);
 }
 #endif
 
