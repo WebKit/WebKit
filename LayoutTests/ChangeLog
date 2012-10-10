@@ -1,3 +1,9 @@
+2012-10-10  Adam Barth  <abarth@webkit.org>
+
+        These tests appear to pass.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-10  David Grogan  <dgrogan@chromium.org>
 
         Inspector: display IndexedDB integer versions
