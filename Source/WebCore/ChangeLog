@@ -1,3 +1,21 @@
+2012-10-10  Mike West  <mkwst@google.com>
+
+        HTMLTextFormControlElement calls setInlineStyleProperty with the wrong parameters.
+        https://bugs.webkit.org/show_bug.cgi?id=98892
+
+        Reviewed by Jochen Eisinger.
+
+        HTMLTextFormControlElement::updatePlaceholderVisibility calls
+        HTMLElement::setInlineStyleProperty with an ExceptionCode as the last
+        parameter. This only succeeds because it's automagically cast to a bool,
+        which is what the method actually expects.
+
+        Implicitly passing in 'false' by dropping the parameter shouldn't change
+        any functionality; so no new tests are required.
+
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::updatePlaceholderVisibility):
+
 2012-10-10  Christophe Dumez  <christophe.dumez@intel.com>
 
         SQLResultSet.rowsAffected not cleared
