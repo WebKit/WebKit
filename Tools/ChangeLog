@@ -1,3 +1,16 @@
+2012-10-10  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][SOUP] ResourceError.isCancellation() is not carried over IPC
+        https://bugs.webkit.org/show_bug.cgi?id=98882
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Do not display the error page in MiniBrowser if the loading
+        error corresponds to a cancellation.
+
+        * MiniBrowser/efl/main.c:
+        (on_error):
+
 2012-10-09  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] WTR: Fix an assert triggered by EventSenderProxy::touchEnd
