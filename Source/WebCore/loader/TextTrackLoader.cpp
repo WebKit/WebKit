@@ -34,10 +34,10 @@
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
 #include "Logging.h"
+#include "ResourceBuffer.h"
 #include "ResourceHandle.h"
 #include "ScriptCallStack.h"
 #include "SecurityOrigin.h"
-#include "SharedBuffer.h"
 #include "WebVTTParser.h"
 
 namespace WebCore {
@@ -83,10 +83,10 @@ void TextTrackLoader::processNewCueData(CachedResource* resource)
 {
     ASSERT(m_cachedCueData == resource);
     
-    if (m_state == Failed || !resource->data())
+    if (m_state == Failed || !resource->resourceBuffer())
         return;
     
-    SharedBuffer* buffer = resource->data();
+    ResourceBuffer* buffer = resource->resourceBuffer();
     if (m_parseOffset == buffer->size())
         return;
 
@@ -106,7 +106,7 @@ void TextTrackLoader::didReceiveData(CachedResource* resource)
 {
     ASSERT(m_cachedCueData == resource);
     
-    if (!resource->data())
+    if (!resource->resourceBuffer())
         return;
     
     processNewCueData(resource);

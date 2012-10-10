@@ -32,7 +32,7 @@
 #include "CachedStyleSheetClient.h"
 #include "HTTPParsers.h"
 #include "MemoryCache.h"
-#include "SharedBuffer.h"
+#include "ResourceBuffer.h"
 #include "StyleSheetContents.h"
 #include "TextResourceDecoder.h"
 #include "WebCoreMemoryInstrumentation.h"
@@ -99,7 +99,7 @@ void CachedCSSStyleSheet::data(PassRefPtr<SharedBuffer> data, bool allDataReceiv
     if (!allDataReceived)
         return;
 
-    m_data = data;
+    m_data = ResourceBuffer::adoptSharedBuffer(data);
     setEncodedSize(m_data.get() ? m_data->size() : 0);
     // Decode the data to find out the encoding and keep the sheet text around during checkNotify()
     if (m_data) {

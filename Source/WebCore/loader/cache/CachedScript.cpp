@@ -30,7 +30,7 @@
 #include "MemoryCache.h"
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
-#include "SharedBuffer.h"
+#include "ResourceBuffer.h"
 #include "TextResourceDecoder.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/Vector.h>
@@ -84,7 +84,7 @@ void CachedScript::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
     if (!allDataReceived)
         return;
 
-    m_data = data;
+    m_data = ResourceBuffer::adoptSharedBuffer(data);
     setEncodedSize(m_data.get() ? m_data->size() : 0);
     setLoading(false);
     checkNotify();

@@ -1,3 +1,110 @@
+2012-10-10  Brady Eidson  <beidson@apple.com>
+
+        Switch CachedResource over from SharedBuffer to a new ResourceBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=98541
+
+        Reviewed by Anders Carlsson.
+
+        As part of preparation for a WebKit2 NetworkProcess, we need to change the data handle shared
+        between CachedResources and ResourceLoaders to be one that can be backed by something other
+        than a SharedBuffer.
+
+        ResourceBuffer is this new object. Right now it is directly backed by a SharedBuffer and there
+        should be no change in behavior.
+
+        No new tests (No behavior change).
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCore.vcproj/WebCore.vcproj:
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+
+        Implementation of the new ResourceBuffer, backed directly by a SharedBuffer:
+        * loader/ResourceBuffer.cpp: Added.
+        (WebCore):
+        (WebCore::ResourceBuffer::ResourceBuffer):
+        (WebCore::ResourceBuffer::~ResourceBuffer):
+        (WebCore::ResourceBuffer::data):
+        (WebCore::ResourceBuffer::size):
+        (WebCore::ResourceBuffer::isEmpty):
+        (WebCore::ResourceBuffer::getSomeData):
+        (WebCore::ResourceBuffer::sharedBuffer):
+        (WebCore::ResourceBuffer::copy):
+        (WebCore::ResourceBuffer::hasPurgeableBuffer):
+        (WebCore::ResourceBuffer::releasePurgeableBuffer):
+        (WebCore::ResourceBuffer::createCFData):
+
+        * loader/ResourceBuffer.h: Added.
+        (WebCore):
+        (ResourceBuffer):
+        (WebCore::ResourceBuffer::create):
+        (WebCore::ResourceBuffer::adoptSharedBuffer):
+        * loader/mac/ResourceBuffer.mm: Added.
+
+        (WebCore):
+        (WebCore::ResourceBuffer::createNSData):
+
+        Switch CachedResource over to using it:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::makePurgeable):
+
+        * loader/cache/CachedResource.h:
+        (WebCore):
+        (WebCore::CachedResource::resourceBuffer):
+        (CachedResource):
+
+        Switch all the other CachedResource subclasses over to using it:
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::data):
+
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::data):
+        (WebCore::CachedFont::ensureCustomFontData):
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::didAddClient):
+        (WebCore::CachedImage::data):
+
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::data):
+
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::data):
+
+        * loader/cache/CachedShader.cpp:
+        (WebCore::CachedShader::data):
+
+        * loader/cache/CachedTextTrack.cpp:
+        (WebCore::CachedTextTrack::data):
+        
+        * loader/cache/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::data):
+
+        Switch other affect parties over to using it:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::decodeBuffer):
+        (WebCore::InspectorPageAgent::cachedResourceContent):
+        (WebCore::InspectorPageAgent::sharedBufferContent):
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::subresource):
+
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::processNewCueData):
+        (WebCore::TextTrackLoader::didReceiveData):
+
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::create):
+
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::notifyFinished):
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::fileWrapperForImage):
+
 2012-10-10  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed build fix after r130940.

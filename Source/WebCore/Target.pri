@@ -843,6 +843,7 @@ SOURCES += \
     loader/Prerenderer.cpp \
     loader/PrerendererClient.cpp \
     loader/NavigationScheduler.cpp \
+    loader/ResourceBuffer.cpp \
     loader/ResourceLoader.cpp \
     loader/ResourceLoadNotifier.cpp \
     loader/ResourceLoadScheduler.cpp \
@@ -1963,6 +1964,7 @@ HEADERS += \
     loader/Prerenderer.h \
     loader/PrerendererClient.h \
     loader/ProgressTracker.h \
+    loader/ResourceBuffer.h \
     loader/ResourceLoader.h \
     loader/SubresourceLoader.h \
     loader/SubstituteData.h \

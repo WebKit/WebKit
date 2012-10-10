@@ -34,8 +34,8 @@
 #include "FrameLoaderClient.h"
 #include "IconDatabase.h"
 #include "Logging.h"
+#include "ResourceBuffer.h"
 #include "ResourceRequest.h"
-#include "SharedBuffer.h"
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -87,7 +87,7 @@ void IconLoader::notifyFinished(CachedResource* resource)
 
     // If we got a status code indicating an invalid response, then lets
     // ignore the data and not try to decode the error page as an icon.
-    RefPtr<SharedBuffer> data = resource->data();
+    RefPtr<ResourceBuffer> data = resource->resourceBuffer();
     int status = resource->response().httpStatusCode();
     if (status && (status < 200 || status > 299))
         data = 0;
@@ -97,7 +97,7 @@ void IconLoader::notifyFinished(CachedResource* resource)
     // Setting the icon data only after committing to the database ensures that the data is
     // kept in memory (so it does not have to be read from the database asynchronously), since
     // there is a page URL referencing it.
-    iconDatabase().setIconDataForIconURL(data, resource->url().string());
+    iconDatabase().setIconDataForIconURL(data ? data->sharedBuffer() : 0, resource->url().string());
     m_frame->loader()->client()->dispatchDidReceiveIcon();
     stopLoading();
 }

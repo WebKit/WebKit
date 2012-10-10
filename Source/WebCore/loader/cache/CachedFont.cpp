@@ -36,7 +36,7 @@
 #include "CachedResourceLoader.h"
 #include "FontPlatformData.h"
 #include "MemoryCache.h"
-#include "SharedBuffer.h"
+#include "ResourceBuffer.h"
 #include "TextResourceDecoder.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/Vector.h>
@@ -89,7 +89,7 @@ void CachedFont::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
     if (!allDataReceived)
         return;
 
-    m_data = data;     
+    m_data = ResourceBuffer::adoptSharedBuffer(data);
     setEncodedSize(m_data.get() ? m_data->size() : 0);
     setLoading(false);
     checkNotify();
@@ -107,7 +107,7 @@ bool CachedFont::ensureCustomFontData()
 {
 #ifdef STORE_FONT_CUSTOM_PLATFORM_DATA
     if (!m_fontData && !errorOccurred() && !isLoading() && m_data) {
-        m_fontData = createFontCustomPlatformData(m_data.get());
+        m_fontData = createFontCustomPlatformData(m_data.get()->sharedBuffer());
         if (!m_fontData)
             setStatus(DecodeError);
     }

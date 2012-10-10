@@ -27699,6 +27699,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\ResourceBuffer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\ResourceBuffer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\ResourceLoader.cpp"
 				>
 			</File>

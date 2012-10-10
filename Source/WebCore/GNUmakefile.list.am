@@ -3909,6 +3909,8 @@ webcore_sources += \
 	Source/WebCore/loader/ProgressTracker.h \
 	Source/WebCore/loader/NavigationScheduler.cpp \
 	Source/WebCore/loader/NavigationScheduler.h \
+	Source/WebCore/loader/ResourceBuffer.cpp \
+	Source/WebCore/loader/ResourceBuffer.h \
 	Source/WebCore/loader/ResourceLoader.cpp \
 	Source/WebCore/loader/ResourceLoader.h \
 	Source/WebCore/loader/ResourceLoaderOptions.h \

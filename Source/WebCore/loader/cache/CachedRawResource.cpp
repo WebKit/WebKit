@@ -29,7 +29,7 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "CachedResourceLoader.h"
-#include "SharedBuffer.h"
+#include "ResourceBuffer.h"
 #include "SubresourceLoader.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/PassRefPtr.h>
@@ -64,9 +64,9 @@ void CachedRawResource::data(PassRefPtr<SharedBuffer> data, bool allDataReceived
     if (m_options.shouldBufferData == BufferData) {
         if (data)
             setEncodedSize(data->size());
-        m_data = data;
+        m_data = ResourceBuffer::adoptSharedBuffer(data);
     }
-    CachedResource::data(m_data, allDataReceived);
+    CachedResource::data(m_data ? m_data->sharedBuffer() : 0, allDataReceived);
 }
 
 void CachedRawResource::didAddClient(CachedResourceClient* c)

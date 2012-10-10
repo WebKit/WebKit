@@ -48,8 +48,8 @@
 #include "Logging.h"
 #include "MainResourceLoader.h"
 #include "Page.h"
+#include "ResourceBuffer.h"
 #include "Settings.h"
-#include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/Assertions.h>
@@ -580,11 +580,11 @@ PassRefPtr<ArchiveResource> DocumentLoader::subresource(const KURL& url) const
     if (!resource->makePurgeable(false))
         return 0;
 
-    RefPtr<SharedBuffer> data = resource->data();
+    ResourceBuffer* data = resource->resourceBuffer();
     if (!data)
         return 0;
 
-    return ArchiveResource::create(data.release(), url, resource->response());
+    return ArchiveResource::create(data->sharedBuffer(), url, resource->response());
 }
 
 void DocumentLoader::getSubresources(Vector<PassRefPtr<ArchiveResource> >& subresources) const

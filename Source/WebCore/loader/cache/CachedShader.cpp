@@ -32,7 +32,7 @@
 #if ENABLE(CSS_SHADERS)
 
 #include "CachedShader.h"
-#include "SharedBuffer.h"
+#include "ResourceBuffer.h"
 #include "TextResourceDecoder.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
@@ -64,7 +64,7 @@ const String& CachedShader::shaderString()
 void CachedShader::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 {
     if (allDataReceived)
-        m_data = data;
+        m_data = ResourceBuffer::adoptSharedBuffer(data);
     CachedResource::data(data, allDataReceived);
 }
 

@@ -67,10 +67,10 @@
 #include "MemoryCache.h"
 #include "Page.h"
 #include "RegularExpression.h"
+#include "ResourceBuffer.h"
 #include "ScriptObject.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
-#include "SharedBuffer.h"
 #include "TextEncoding.h"
 #include "TextResourceDecoder.h"
 #include "UserGestureIndicator.h"
@@ -98,13 +98,13 @@ static const char touchEventEmulationEnabled[] = "touchEventEmulationEnabled";
 #endif
 }
 
-static bool decodeSharedBuffer(PassRefPtr<SharedBuffer> buffer, const String& textEncodingName, String* result)
+static bool decodeBuffer(const char* buffer, unsigned size, const String& textEncodingName, String* result)
 {
     if (buffer) {
         TextEncoding encoding(textEncodingName);
         if (!encoding.isValid())
             encoding = WindowsLatin1Encoding();
-        *result = encoding.decode(buffer->data(), buffer->size());
+        *result = encoding.decode(buffer, size);
         return true;
     }
     return false;
@@ -166,7 +166,7 @@ bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, S
 
     *base64Encoded = !hasTextContent(cachedResource);
     if (*base64Encoded) {
-        RefPtr<SharedBuffer> buffer = hasZeroSize ? SharedBuffer::create() : cachedResource->data();
+        RefPtr<SharedBuffer> buffer = hasZeroSize ? SharedBuffer::create() : cachedResource->resourceBuffer()->sharedBuffer();
 
         if (!buffer)
             return false;
@@ -189,7 +189,7 @@ bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, S
             *result = static_cast<CachedScript*>(cachedResource)->script();
             return true;
         case CachedResource::RawResource: {
-            SharedBuffer* buffer = cachedResource->data();
+            ResourceBuffer* buffer = cachedResource->resourceBuffer();
             if (!buffer)
                 return false;
             RefPtr<TextResourceDecoder> decoder = createXHRTextDecoder(cachedResource->response().mimeType(), cachedResource->response().textEncodingName());
@@ -201,7 +201,8 @@ bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, S
             return true;
         }
         default:
-            return decodeSharedBuffer(cachedResource->data(), cachedResource->encoding(), result);
+            ResourceBuffer* buffer = cachedResource->resourceBuffer();
+            return decodeBuffer(buffer ? buffer->data() : 0, buffer ? buffer->size() : 0, cachedResource->encoding(), result);
         }
     }
     return false;
@@ -225,7 +226,7 @@ bool InspectorPageAgent::sharedBufferContent(PassRefPtr<SharedBuffer> buffer, co
         return true;
     }
 
-    return decodeSharedBuffer(buffer, textEncodingName, result);
+    return decodeBuffer(buffer ? buffer->data() : 0, buffer ? buffer->size() : 0, textEncodingName, result);
 }
 
 PassOwnPtr<InspectorPageAgent> InspectorPageAgent::create(InstrumentingAgents* instrumentingAgents, Page* page, InspectorAgent* inspectorAgent, InspectorState* state, InjectedScriptManager* injectedScriptManager, InspectorClient* client, InspectorOverlay* overlay)

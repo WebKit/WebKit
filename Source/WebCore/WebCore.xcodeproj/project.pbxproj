@@ -1539,6 +1539,9 @@
 		513F14540AB634C400094DDF /* IconLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 513F14520AB634C400094DDF /* IconLoader.h */; };
 		514B3F730C722047000530DF /* FileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 514B3F720C722047000530DF /* FileSystem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514B3F760C722055000530DF /* FileSystemMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 514B3F750C722055000530DF /* FileSystemMac.mm */; };
+		514BC83F161CF04A004D52F4 /* ResourceBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 514BC83D161CF043004D52F4 /* ResourceBuffer.mm */; };
+		514BC842161CF05C004D52F4 /* ResourceBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514BC840161CF05C004D52F4 /* ResourceBuffer.cpp */; };
+		514BC843161CF05C004D52F4 /* ResourceBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 514BC841161CF05C004D52F4 /* ResourceBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C76370CE9225E007EF3CD /* JSSQLError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C76350CE9225E007EF3CD /* JSSQLError.cpp */; };
 		514C76380CE9225E007EF3CD /* JSSQLTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C76360CE9225E007EF3CD /* JSSQLTransaction.cpp */; };
 		514C764C0CE9234E007EF3CD /* AuthenticationMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C76420CE9234E007EF3CD /* AuthenticationMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8720,6 +8723,9 @@
 		513F14520AB634C400094DDF /* IconLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IconLoader.h; sourceTree = "<group>"; };
 		514B3F720C722047000530DF /* FileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystem.h; sourceTree = "<group>"; };
 		514B3F750C722055000530DF /* FileSystemMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSystemMac.mm; sourceTree = "<group>"; };
+		514BC83D161CF043004D52F4 /* ResourceBuffer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceBuffer.mm; sourceTree = "<group>"; };
+		514BC840161CF05C004D52F4 /* ResourceBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceBuffer.cpp; sourceTree = "<group>"; };
+		514BC841161CF05C004D52F4 /* ResourceBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceBuffer.h; sourceTree = "<group>"; };
 		514C76350CE9225E007EF3CD /* JSSQLError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLError.cpp; sourceTree = "<group>"; };
 		514C76360CE9225E007EF3CD /* JSSQLTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLTransaction.cpp; sourceTree = "<group>"; };
 		514C76420CE9234E007EF3CD /* AuthenticationMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthenticationMac.h; sourceTree = "<group>"; };
@@ -17303,6 +17309,7 @@
 				1C2649790D7E248A00BD10F2 /* DocumentLoaderMac.cpp */,
 				656D371A0ADBA5DE00A4554D /* LoaderNSURLExtras.h */,
 				656D371B0ADBA5DE00A4554D /* LoaderNSURLExtras.mm */,
+				514BC83D161CF043004D52F4 /* ResourceBuffer.mm */,
 				51AA3F6E0BD5AA9E00892971 /* ResourceLoaderMac.mm */,
 			);
 			path = mac;
@@ -20653,6 +20660,8 @@
 				97059976107D975200A50A7C /* PolicyChecker.h */,
 				1A2A68210B5BEDE70002A480 /* ProgressTracker.cpp */,
 				1A2A68220B5BEDE70002A480 /* ProgressTracker.h */,
+				514BC840161CF05C004D52F4 /* ResourceBuffer.cpp */,
+				514BC841161CF05C004D52F4 /* ResourceBuffer.h */,
 				93E227DE0AF589AD00D48324 /* ResourceLoader.cpp */,
 				656D37270ADBA5DE00A4554D /* ResourceLoader.h */,
 				D0A3A7301405A39800FB8ED3 /* ResourceLoaderOptions.h */,
@@ -25564,6 +25573,7 @@
 				931CBD11161A44E900E4C874 /* ScrollingStateTree.h in Headers */,
 				6EAF34101613869A00859625 /* ExclusionPolygon.h in Headers */,
 				31955A88160D199200858025 /* RenderSnapshottedPlugIn.h in Headers */,
+				514BC843161CF05C004D52F4 /* ResourceBuffer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -28664,6 +28674,8 @@
 				931CBD13161A44F800E4C874 /* ScrollingStateNodeMac.mm in Sources */,
 				6EAF340F1613869A00859625 /* ExclusionPolygon.cpp in Sources */,
 				31955A86160D199000858025 /* RenderSnapshottedPlugIn.cpp in Sources */,
+				514BC83F161CF04A004D52F4 /* ResourceBuffer.mm in Sources */,
+				514BC842161CF05C004D52F4 /* ResourceBuffer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

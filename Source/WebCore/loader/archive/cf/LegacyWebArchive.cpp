@@ -46,8 +46,8 @@
 #include "Node.h"
 #include "Page.h"
 #include "Range.h"
+#include "ResourceBuffer.h"
 #include "Settings.h"
-#include "SharedBuffer.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/ListHashSet.h>
@@ -562,7 +562,8 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
 
                 CachedResource* cachedResource = memoryCache()->resourceForURL(subresourceURL);
                 if (cachedResource) {
-                    resource = ArchiveResource::create(cachedResource->data(), subresourceURL, cachedResource->response());
+                    ResourceBuffer* data = cachedResource->resourceBuffer();
+                    resource = ArchiveResource::create(data ? data->sharedBuffer() : 0, subresourceURL, cachedResource->response());
                     if (resource) {
                         subresources.append(resource.release());
                         continue;

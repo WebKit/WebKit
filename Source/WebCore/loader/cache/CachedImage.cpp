@@ -35,8 +35,8 @@
 #include "MemoryCache.h"
 #include "Page.h"
 #include "RenderObject.h"
+#include "ResourceBuffer.h"
 #include "Settings.h"
-#include "SharedBuffer.h"
 #include "SubresourceLoader.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/StdLibExtras.h>
@@ -88,7 +88,7 @@ void CachedImage::didAddClient(CachedResourceClient* c)
 {
     if (m_data && !m_image && !errorOccurred()) {
         createImage();
-        m_image->setData(m_data, true);
+        m_image->setData(m_data->sharedBuffer(), true);
     }
     
     ASSERT(c->resourceClientType() == CachedImageClient::expectedType());
@@ -345,7 +345,7 @@ size_t CachedImage::maximumDecodedImageSize()
 
 void CachedImage::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 {
-    m_data = data;
+    m_data = ResourceBuffer::adoptSharedBuffer(data);
 
     createImage();
 
@@ -354,7 +354,7 @@ void CachedImage::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
     // Have the image update its data from its internal buffer.
     // It will not do anything now, but will delay decoding until 
     // queried for info (like size or specific image frames).
-    sizeAvailable = m_image->setData(m_data, allDataReceived);
+    sizeAvailable = m_image->setData(m_data ? m_data->sharedBuffer() : 0, allDataReceived);
 
     // Go ahead and tell our observers to try to draw if we have either
     // received all the data or the size is known.  Each chunk from the

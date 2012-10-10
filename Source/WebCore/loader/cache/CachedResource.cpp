@@ -37,9 +37,9 @@
 #include "KURL.h"
 #include "Logging.h"
 #include "PurgeableBuffer.h"
+#include "ResourceBuffer.h"
 #include "ResourceHandle.h"
 #include "ResourceLoadScheduler.h"
-#include "SharedBuffer.h"
 #include "SubresourceLoader.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/CurrentTime.h>
@@ -755,7 +755,7 @@ bool CachedResource::makePurgeable(bool purgeable)
     if (!m_purgeableData->makePurgeable(false))
         return false; 
 
-    m_data = SharedBuffer::adoptPurgeableBuffer(m_purgeableData.release());
+    m_data = ResourceBuffer::adoptSharedBuffer(SharedBuffer::adoptPurgeableBuffer(m_purgeableData.release()));
     return true;
 }
 
