@@ -447,6 +447,11 @@ WebInspector.ConsoleMessageImpl.prototype = {
             return obj.description;
         }
 
+        function styleFormatter(obj)
+        {
+            formattedResult.setAttribute("style", obj.description);
+        }
+
         // Firebug uses %o for formatting objects.
         formatters.o = parameterFormatter.bind(this, false);
         formatters.s = valueFormatter;
@@ -455,15 +460,18 @@ WebInspector.ConsoleMessageImpl.prototype = {
         formatters.i = valueFormatter;
         formatters.d = valueFormatter;
 
+        // Firebug uses %c for styling the message.
+        formatters.c = styleFormatter;
+
         // Support %O to force object formatting, instead of the type-based %o formatting.
         formatters.O = parameterFormatter.bind(this, true);
 
         function append(a, b)
         {
-            if (!(b instanceof Node))
-                a.appendChild(WebInspector.linkifyStringAsFragment(b.toString()));
-            else
+            if (b instanceof Node)
                 a.appendChild(b);
+            else if (b)
+                a.appendChild(WebInspector.linkifyStringAsFragment(b.toString()));
             return a;
         }
 

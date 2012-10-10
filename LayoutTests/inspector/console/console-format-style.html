@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <script src="../../http/tests/inspector/inspector-test.js"></script>
+        <script src="../../http/tests/inspector/console-test.js"></script>
+        <script>
+            function onload()
+            {
+                console.log('%cBlue!.', 'color: blue;');
+                console.log('%cRed!%c.', 'color: blue;', 'color: red;');
+                runTest();
+            }
+
+            function test()
+            {
+                InspectorTest.expandConsoleMessages();
+                InspectorTest.dumpConsoleMessagesWithStyles();
+                InspectorTest.completeTest();
+            }
+        </script>
+    </head>
+
+    <body onload="onload()">
+      <p>Tests that console logging dumps properly styled messages, and that
+      the whole message gets the same style, regardless of multiple %c
+      settings.</p>
+    </body>
+</html>

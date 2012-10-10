@@ -1,3 +1,16 @@
+2012-10-10  Mike West  <mkwst@chromium.org>
+
+        Web Inspector: add support for %c (style) in console API
+        https://bugs.webkit.org/show_bug.cgi?id=69401
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/console-test.js:
+        (initialize_ConsoleTest.InspectorTest.dumpConsoleMessagesWithStyles):
+            Helper to dump the style associated with a console message.
+        * inspector/console/console-format-style-expected.txt: Added.
+        * inspector/console/console-format-style.html: Added.
+
 2012-10-10  Varun Jain  <varunjain@chromium.org>
 
         [chromium] Spelling and grammar markers are pixelated in hidpi.
