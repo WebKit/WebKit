@@ -1,3 +1,22 @@
+2012-10-10  Peter Beverloo  <peter@chromium.org>
+
+        Update more baselines and some entries in TestExpectations for Android.
+
+        Unreviewed rebaselining.
+
+        * platform/chromium-android/compositing/: 5 new baselines.
+        * platform/chromium-android/css2.1/: 5 new baselines.
+        * platform/chromium-android/css3/: 2 new baselines.
+        * platform/chromium-android/editing/: 5 new baselines.
+        * platform/chromium-android/fast/: 67 new baselines.
+        * platform/chromium-android/http/: 3 new baselines.
+        * platform/chromium-android/ietestcenter/: 4 new baselines.
+        * platform/chromium-android/platform/: 51 new baselines.
+        * platform/chromium-android/svg/: 111 new baselines.
+        * platform/chromium-android/tables/: 57 new baselines.
+        * platform/chromium-android/transitions/: 1 new baseline.
+        * platform/chromium/TestExpectations:
+
 2012-10-10  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed Chromium gardening.

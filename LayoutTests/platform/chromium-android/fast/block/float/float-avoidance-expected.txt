@@ -1,0 +1,330 @@
+layer at (0,0) size 800x2438
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x2438
+  RenderBlock {HTML} at (0,0) size 800x2438
+    RenderBody {BODY} at (8,8) size 784x2422
+      RenderBlock (anonymous) at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 754x39
+          text run at (0,0) width 517: "Test of objects that avoid floats to see what they do with percentage and auto widths. "
+          text run at (517,0) width 237: "This test is designed to illustrate that we"
+          text run at (0,20) width 402: "have removed the WinIE quirk and are behaving more like Firefox."
+      RenderBlock {HR} at (0,48) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,58) size 784x20
+        RenderText {#text} at (0,0) size 477x19
+          text run at (0,0) width 477: "The inline-level button should be below the select and fill the width of the block."
+      RenderBlock {P} at (0,94) size 220x90 [border: (10px solid #FF0000)]
+        RenderText {#text} at (10,10) size 56x19
+          text run at (10,10) width 56: "Line One"
+        RenderBR {BR} at (66,25) size 0x0
+        RenderMenuList {SELECT} at (10,32) size 100x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 98x18
+            RenderText at (4,1) size 24x16
+              text run at (4,1) width 24: "One"
+        RenderText {#text} at (0,0) size 0x0
+        RenderButton {INPUT} at (10,56) size 200x22 [bgcolor=#DDDDDD] [border: (2px outset #DDDDDD)]
+          RenderBlock (anonymous) at (8,3) size 184x16
+            RenderText at (86,0) size 12x16
+              text run at (86,0) width 12: "Hi"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,200) size 784x20
+        RenderText {#text} at (0,0) size 446x19
+          text run at (0,0) width 446: "The floating button with a percentage width should be even with the select."
+      RenderBlock {P} at (0,236) size 220x66 [border: (10px solid #FF0000)]
+        RenderText {#text} at (10,10) size 56x19
+          text run at (10,10) width 56: "Line One"
+        RenderBR {BR} at (66,25) size 0x0
+        RenderMenuList {SELECT} at (10,32) size 100x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 98x18
+            RenderText at (4,1) size 24x16
+              text run at (4,1) width 24: "One"
+        RenderText {#text} at (0,0) size 0x0
+        RenderButton {INPUT} at (110,32) size 100x22 [bgcolor=#DDDDDD] [border: (2px outset #DDDDDD)]
+          RenderBlock (anonymous) at (8,3) size 84x16
+            RenderText at (36,0) size 12x16
+              text run at (36,0) width 12: "Hi"
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (210,30) size 0x19
+      RenderBlock (anonymous) at (0,318) size 784x20
+        RenderText {#text} at (0,0) size 437x19
+          text run at (0,0) width 437: "The block-level button with an auto width should be even with the select."
+      RenderBlock {P} at (0,354) size 220x86 [border: (10px solid #FF0000)]
+        RenderBlock (anonymous) at (10,10) size 200x20
+          RenderText {#text} at (0,0) size 56x19
+            text run at (0,0) width 56: "Line One"
+          RenderBR {BR} at (56,15) size 0x0
+          RenderMenuList {SELECT} at (0,22) size 100x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+            RenderBlock (anonymous) at (1,1) size 98x18
+              RenderText at (4,1) size 24x16
+                text run at (4,1) width 24: "One"
+          RenderText {#text} at (0,0) size 0x0
+        RenderButton {INPUT} at (110,32) size 28x22 [bgcolor=#DDDDDD] [border: (2px outset #DDDDDD)]
+          RenderBlock (anonymous) at (8,3) size 12x16
+            RenderText at (0,0) size 12x16
+              text run at (0,0) width 12: "Hi"
+        RenderBlock (anonymous) at (10,56) size 200x20
+          RenderBR {BR} at (0,0) size 0x19
+      RenderBlock (anonymous) at (0,456) size 784x20
+        RenderText {#text} at (0,0) size 470x19
+          text run at (0,0) width 470: "The block-level button with a percentage width should be even with the select."
+      RenderBlock {P} at (0,492) size 220x86 [border: (10px solid #FF0000)]
+        RenderBlock (anonymous) at (10,10) size 200x20
+          RenderText {#text} at (0,0) size 56x19
+            text run at (0,0) width 56: "Line One"
+          RenderBR {BR} at (56,15) size 0x0
+          RenderMenuList {SELECT} at (0,22) size 100x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+            RenderBlock (anonymous) at (1,1) size 98x18
+              RenderText at (4,1) size 24x16
+                text run at (4,1) width 24: "One"
+          RenderText {#text} at (0,0) size 0x0
+        RenderButton {INPUT} at (110,32) size 100x22 [bgcolor=#DDDDDD] [border: (2px outset #DDDDDD)]
+          RenderBlock (anonymous) at (8,3) size 84x16
+            RenderText at (36,0) size 12x16
+              text run at (36,0) width 12: "Hi"
+        RenderBlock (anonymous) at (10,56) size 200x20
+          RenderBR {BR} at (0,0) size 0x19
+      RenderBlock (anonymous) at (0,594) size 784x20
+        RenderText {#text} at (0,0) size 437x19
+          text run at (0,0) width 437: "The floating table with a percentage width should be even with the select."
+      RenderBlock {P} at (0,630) size 220x72 [border: (10px solid #FF0000)]
+        RenderText {#text} at (10,10) size 56x19
+          text run at (10,10) width 56: "Line One"
+        RenderBR {BR} at (66,25) size 0x0
+        RenderMenuList {SELECT} at (10,32) size 100x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 98x18
+            RenderText at (4,1) size 24x16
+              text run at (4,1) width 24: "One"
+        RenderText {#text} at (0,0) size 0x0
+        RenderTable {TABLE} at (110,30) size 100x32 [border: (2px outset #808080)]
+          RenderTableSection {TBODY} at (2,2) size 96x28
+            RenderTableRow {TR} at (0,2) size 96x24
+              RenderTableCell {TD} at (2,2) size 92x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 34x19
+                  text run at (2,2) width 34: "Table"
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (210,30) size 0x19
+      RenderBlock (anonymous) at (0,718) size 784x40
+        RenderText {#text} at (0,0) size 711x39
+          text run at (0,0) width 711: "The floating table with an auto width should be even with the select and shrinks to use the available line width. THIS IS"
+          text run at (0,20) width 154: "CURRENTLY BUGGY."
+      RenderBlock {P} at (0,774) size 220x136 [border: (10px solid #FF0000)]
+        RenderText {#text} at (10,10) size 56x19
+          text run at (10,10) width 56: "Line One"
+        RenderBR {BR} at (66,25) size 0x0
+        RenderMenuList {SELECT} at (10,32) size 100x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 98x18
+            RenderText at (4,1) size 24x16
+              text run at (4,1) width 24: "One"
+        RenderText {#text} at (0,0) size 0x0
+        RenderTable {TABLE} at (10,54) size 200x72 [border: (2px outset #808080)]
+          RenderTableSection {TBODY} at (2,2) size 196x68
+            RenderTableRow {TR} at (0,2) size 196x64
+              RenderTableCell {TD} at (2,2) size 192x64 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 154x59
+                  text run at (2,2) width 150: "Floating table that should"
+                  text run at (2,22) width 154: "shrink so it can be next to"
+                  text run at (2,42) width 85: "previous float."
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (110,30) size 0x19
+      RenderBlock (anonymous) at (0,926) size 784x20
+        RenderText {#text} at (0,0) size 695x19
+          text run at (0,0) width 550: "The block-level table below has a percentage width and should still be even with the select. "
+          text run at (550,0) width 145: "It spills out of the block."
+      RenderBlock {P} at (0,962) size 220x156 [border: (10px solid #FF0000)]
+        RenderBlock (anonymous) at (10,10) size 200x20
+          RenderText {#text} at (0,0) size 56x19
+            text run at (0,0) width 56: "Line One"
+          RenderBR {BR} at (56,15) size 0x0
+          RenderMenuList {SELECT} at (0,22) size 100x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+            RenderBlock (anonymous) at (1,1) size 98x18
+              RenderText at (4,1) size 24x16
+                text run at (4,1) width 24: "One"
+          RenderText {#text} at (0,0) size 0x0
+        RenderTable {TABLE} at (10,54) size 200x72 [border: (2px outset #808080)]
+          RenderTableSection {TBODY} at (2,2) size 196x68
+            RenderTableRow {TR} at (0,2) size 196x64
+              RenderTableCell {TD} at (2,2) size 192x64 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 154x59
+                  text run at (2,2) width 150: "Floating table that should"
+                  text run at (2,22) width 154: "shrink so it can be next to"
+                  text run at (2,42) width 85: "previous float."
+        RenderBlock (anonymous) at (10,126) size 200x20
+          RenderBR {BR} at (0,0) size 0x19
+      RenderBlock (anonymous) at (0,1134) size 784x20
+        RenderText {#text} at (0,0) size 705x19
+          text run at (0,0) width 517: "The block-level table below has an auto width and should still be even with the select. "
+          text run at (517,0) width 188: "It shrinks to fit inside the block."
+      RenderBlock {P} at (0,1170) size 220x172 [border: (10px solid #FF0000)]
+        RenderBlock (anonymous) at (10,10) size 200x20
+          RenderText {#text} at (0,0) size 56x19
+            text run at (0,0) width 56: "Line One"
+          RenderBR {BR} at (56,15) size 0x0
+          RenderMenuList {SELECT} at (0,22) size 100x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+            RenderBlock (anonymous) at (1,1) size 98x18
+              RenderText at (4,1) size 24x16
+                text run at (4,1) width 24: "One"
+          RenderText {#text} at (0,0) size 0x0
+        RenderTable {TABLE} at (110,30) size 100x112 [border: (2px outset #808080)]
+          RenderTableSection {TBODY} at (2,2) size 96x108
+            RenderTableRow {TR} at (0,2) size 96x104
+              RenderTableCell {TD} at (2,2) size 92x104 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 85x99
+                  text run at (2,2) width 81: "Floating table"
+                  text run at (2,22) width 65: "that should"
+                  text run at (2,42) width 65: "shrink so it"
+                  text run at (2,62) width 85: "can be next to"
+                  text run at (2,82) width 85: "previous float."
+        RenderBlock (anonymous) at (10,142) size 200x20
+          RenderBR {BR} at (0,0) size 0x19
+      RenderBlock (anonymous) at (0,1358) size 784x20
+        RenderText {#text} at (0,0) size 507x19
+          text run at (0,0) width 507: "The floating overflow section with a percentage width should be even with the select."
+      RenderBlock {DIV} at (0,1378) size 220x140 [border: (10px solid #FF0000)]
+        RenderText {#text} at (10,10) size 56x19
+          text run at (10,10) width 56: "Line One"
+        RenderBR {BR} at (66,25) size 0x0
+        RenderMenuList {SELECT} at (10,32) size 100x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 98x18
+            RenderText at (4,1) size 24x16
+              text run at (4,1) width 24: "One"
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (210,30) size 0x19
+      RenderBlock (anonymous) at (0,1518) size 784x40
+        RenderText {#text} at (0,0) size 781x39
+          text run at (0,0) width 781: "The floating overflow section with an auto width should be even with the select and shrinks to use the available line width. THIS IS"
+          text run at (0,20) width 154: "CURRENTLY BUGGY."
+      RenderBlock {DIV} at (0,1558) size 220x124 [border: (10px solid #FF0000)]
+        RenderText {#text} at (10,10) size 56x19
+          text run at (10,10) width 56: "Line One"
+        RenderBR {BR} at (66,25) size 0x0
+        RenderMenuList {SELECT} at (10,32) size 100x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 98x18
+            RenderText at (4,1) size 24x16
+              text run at (4,1) width 24: "One"
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (110,30) size 0x19
+      RenderBlock (anonymous) at (0,1682) size 784x20
+        RenderText {#text} at (0,0) size 616x19
+          text run at (0,0) width 616: "The block-level overflow section below has a percentage width and should still be even with the select."
+      RenderBlock {DIV} at (0,1702) size 220x160 [border: (10px solid #FF0000)]
+        RenderBlock (anonymous) at (10,10) size 200x20
+          RenderText {#text} at (0,0) size 56x19
+            text run at (0,0) width 56: "Line One"
+          RenderBR {BR} at (56,15) size 0x0
+          RenderMenuList {SELECT} at (0,22) size 100x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+            RenderBlock (anonymous) at (1,1) size 98x18
+              RenderText at (4,1) size 24x16
+                text run at (4,1) width 24: "One"
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock (anonymous) at (10,130) size 200x20
+          RenderBR {BR} at (0,0) size 0x19
+      RenderBlock (anonymous) at (0,1862) size 784x20
+        RenderText {#text} at (0,0) size 775x19
+          text run at (0,0) width 587: "The block-level overflow section below has an auto width and should still be even with the select. "
+          text run at (587,0) width 188: "It shrinks to fit inside the block."
+      RenderBlock {DIV} at (0,1882) size 220x160 [border: (10px solid #FF0000)]
+        RenderBlock (anonymous) at (10,10) size 200x20
+          RenderText {#text} at (0,0) size 56x19
+            text run at (0,0) width 56: "Line One"
+          RenderBR {BR} at (56,15) size 0x0
+          RenderMenuList {SELECT} at (0,22) size 100x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+            RenderBlock (anonymous) at (1,1) size 98x18
+              RenderText at (4,1) size 24x16
+                text run at (4,1) width 24: "One"
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock (anonymous) at (10,130) size 200x20
+          RenderBR {BR} at (0,0) size 0x19
+      RenderBlock (anonymous) at (0,2042) size 784x20
+        RenderText {#text} at (0,0) size 420x19
+          text run at (0,0) width 420: "The floating hr with a percentage width should be even with the select."
+      RenderBlock {DIV} at (0,2062) size 220x64 [border: (10px solid #FF0000)]
+        RenderText {#text} at (10,10) size 56x19
+          text run at (10,10) width 56: "Line One"
+        RenderBR {BR} at (66,25) size 0x0
+        RenderMenuList {SELECT} at (10,32) size 100x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 98x18
+            RenderText at (4,1) size 24x16
+              text run at (4,1) width 24: "One"
+        RenderText {#text} at (0,0) size 0x0
+        RenderBlock (floating) {HR} at (112,32) size 82x2 [border: (1px inset #000000)]
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (196,30) size 0x19
+      RenderBlock (anonymous) at (0,2126) size 784x20
+        RenderText {#text} at (0,0) size 735x19
+          text run at (0,0) width 735: "The floating hr below should still be even with the select and shrinks to use its intrinsic width (which is basically like 1-2px)."
+      RenderBlock {DIV} at (0,2146) size 220x64 [border: (10px solid #FF0000)]
+        RenderText {#text} at (10,10) size 56x19
+          text run at (10,10) width 56: "Line One"
+        RenderBR {BR} at (66,25) size 0x0
+        RenderMenuList {SELECT} at (10,32) size 100x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 98x18
+            RenderText at (4,1) size 24x16
+              text run at (4,1) width 24: "One"
+        RenderText {#text} at (0,0) size 0x0
+        RenderBlock (floating) {HR} at (112,32) size 2x2 [border: (1px inset #000000)]
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (116,30) size 0x19
+      RenderBlock (anonymous) at (0,2210) size 784x20
+        RenderText {#text} at (0,0) size 529x19
+          text run at (0,0) width 529: "The block-level hr below has a percentage width and should still be even with the select."
+      RenderBlock {DIV} at (0,2230) size 220x94 [border: (10px solid #FF0000)]
+        RenderBlock (anonymous) at (10,10) size 200x20
+          RenderText {#text} at (0,0) size 56x19
+            text run at (0,0) width 56: "Line One"
+          RenderBR {BR} at (56,15) size 0x0
+          RenderMenuList {SELECT} at (0,22) size 100x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+            RenderBlock (anonymous) at (1,1) size 98x18
+              RenderText at (4,1) size 24x16
+                text run at (4,1) width 24: "One"
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {HR} at (10,54) size 202x2 [border: (1px inset #000000)]
+        RenderBlock (anonymous) at (10,64) size 200x20
+          RenderBR {BR} at (0,0) size 0x19
+      RenderBlock (anonymous) at (0,2324) size 784x20
+        RenderText {#text} at (0,0) size 590x19
+          text run at (0,0) width 500: "The block-level hr below has an auto width and should still be even with the select. "
+          text run at (500,0) width 90: "It shrinks to fit."
+      RenderBlock {DIV} at (0,2344) size 220x78 [border: (10px solid #FF0000)]
+        RenderBlock (anonymous) at (10,10) size 200x20
+          RenderText {#text} at (0,0) size 56x19
+            text run at (0,0) width 56: "Line One"
+          RenderBR {BR} at (56,15) size 0x0
+          RenderMenuList {SELECT} at (0,22) size 100x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+            RenderBlock (anonymous) at (1,1) size 98x18
+              RenderText at (4,1) size 24x16
+                text run at (4,1) width 24: "One"
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {HR} at (110,38) size 100x2 [border: (1px inset #000000)]
+        RenderBlock (anonymous) at (10,48) size 200x20
+          RenderBR {BR} at (100,0) size 0x19
+layer at (118,1416) size 100x100
+  RenderBlock (floating) {DIV} at (110,30) size 100x100
+    RenderText {#text} at (0,0) size 99x99
+      text run at (0,0) width 56: "This is an"
+      text run at (0,20) width 99: "overflow section"
+      text run at (0,40) width 98: "with enough text"
+      text run at (0,60) width 95: "to have to wrap"
+      text run at (0,80) width 96: "to multiple lines."
+layer at (18,1620) size 200x60
+  RenderBlock (floating) {DIV} at (10,54) size 200x60
+    RenderText {#text} at (0,0) size 188x59
+      text run at (0,0) width 188: "This is an overflow section with"
+      text run at (0,20) width 184: "enough text to have to wrap to"
+      text run at (0,40) width 80: "multiple lines."
+layer at (118,1740) size 100x100
+  RenderBlock {DIV} at (110,30) size 100x100
+    RenderText {#text} at (0,0) size 99x99
+      text run at (0,0) width 56: "This is an"
+      text run at (0,20) width 99: "overflow section"
+      text run at (0,40) width 98: "with enough text"
+      text run at (0,60) width 95: "to have to wrap"
+      text run at (0,80) width 96: "to multiple lines."
+layer at (118,1920) size 100x100
+  RenderBlock {DIV} at (110,30) size 100x100
+    RenderText {#text} at (0,0) size 99x99
+      text run at (0,0) width 56: "This is an"
+      text run at (0,20) width 99: "overflow section"
+      text run at (0,40) width 98: "with enough text"
+      text run at (0,60) width 95: "to have to wrap"
+      text run at (0,80) width 96: "to multiple lines."
