@@ -79,9 +79,9 @@ void EWK2UnitTestBase::loadUrlSync(const char* url)
 
 class CallbackDataTimer {
 public:
-    CallbackDataTimer(double timeoutSeconds, Ecore_Task_Cb callback)
+    explicit CallbackDataTimer(double timeoutSeconds)
         : m_done(false)
-        , m_timer(timeoutSeconds >= 0 ? ecore_timer_add(timeoutSeconds, callback, this) : 0)
+        , m_timer(timeoutSeconds >= 0 ? ecore_timer_add(timeoutSeconds, reinterpret_cast<Ecore_Task_Cb>(timeOutCallback), this) : 0)
         , m_didTimeOut(false)
     {
     }
@@ -105,6 +105,19 @@ public:
 
     bool didTimeOut() const { return m_didTimeOut; }
 
+protected:
+    bool m_done;
+    Ecore_Timer* m_timer;
+    bool m_didTimeOut;
+
+private:
+    static bool timeOutCallback(void* userData)
+    {
+        CallbackDataTimer* data = static_cast<CallbackDataTimer*>(userData);
+        data->setTimedOut();
+        return ECORE_CALLBACK_CANCEL;
+    }
+
     void setTimedOut()
     {
         m_done = true;
@@ -112,17 +125,13 @@ public:
         m_didTimeOut = true;
     }
 
-protected:
-    bool m_done;
-    Ecore_Timer* m_timer;
-    bool m_didTimeOut;
 };
 
 template <class T>
 class CallbackDataExpectedValue : public CallbackDataTimer {
 public:
-    CallbackDataExpectedValue(const T& expectedValue, double timeoutSeconds, Ecore_Task_Cb callback)
-        : CallbackDataTimer(timeoutSeconds, callback)
+    CallbackDataExpectedValue(const T& expectedValue, double timeoutSeconds)
+        : CallbackDataTimer(timeoutSeconds)
         , m_expectedValue(expectedValue)
     {
     }
@@ -142,17 +151,9 @@ static void onLoadFinished(void* userData, Evas_Object* webView, void* eventInfo
     data->setDone();
 }
 
-static bool timeOutWhileWaitingUntilLoadFinished(void* userData)
-{
-    CallbackDataTimer* data = static_cast<CallbackDataTimer*>(userData);
-    data->setTimedOut();
-
-    return ECORE_CALLBACK_CANCEL;
-}
-
 bool EWK2UnitTestBase::waitUntilLoadFinished(double timeoutSeconds)
 {
-    CallbackDataTimer data(timeoutSeconds, reinterpret_cast<Ecore_Task_Cb>(timeOutWhileWaitingUntilLoadFinished));
+    CallbackDataTimer data(timeoutSeconds);
 
     evas_object_smart_callback_add(m_webView, "load,finished", onLoadFinished, &data);
 
@@ -174,17 +175,9 @@ static void onTitleChanged(void* userData, Evas_Object* webView, void*)
     data->setDone();
 }
 
-static bool timeOutWhileWaitingUntilTitleChangedTo(void* userData)
-{
-    CallbackDataExpectedValue<CString>* data = static_cast<CallbackDataExpectedValue<CString>*>(userData);
-    data->setTimedOut();
-
-    return ECORE_CALLBACK_CANCEL;
-}
-
 bool EWK2UnitTestBase::waitUntilTitleChangedTo(const char* expectedTitle, double timeoutSeconds)
 {
-    CallbackDataExpectedValue<CString> data(expectedTitle, timeoutSeconds, reinterpret_cast<Ecore_Task_Cb>(timeOutWhileWaitingUntilTitleChangedTo));
+    CallbackDataExpectedValue<CString> data(expectedTitle, timeoutSeconds);
 
     evas_object_smart_callback_add(m_webView, "title,changed", onTitleChanged, &data);
 
@@ -206,17 +199,9 @@ static void onURLChanged(void* userData, Evas_Object* webView, void*)
     data->setDone();
 }
 
-static bool timeOutWhileWaitingUntilURLChangedTo(void* userData)
-{
-    CallbackDataExpectedValue<CString>* data = static_cast<CallbackDataExpectedValue<CString>*>(userData);
-    data->setTimedOut();
-
-    return ECORE_CALLBACK_CANCEL;
-}
-
 bool EWK2UnitTestBase::waitUntilURLChangedTo(const char* expectedURL, double timeoutSeconds)
 {
-    CallbackDataExpectedValue<CString> data(expectedURL, timeoutSeconds, reinterpret_cast<Ecore_Task_Cb>(timeOutWhileWaitingUntilURLChangedTo));
+    CallbackDataExpectedValue<CString> data(expectedURL, timeoutSeconds);
 
     evas_object_smart_callback_add(m_webView, "url,changed", onURLChanged, &data);
 

@@ -1,3 +1,24 @@
+2012-10-09  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [EFL][WK2] Move timeout callback to the CallbackDataTimer class.
+        https://bugs.webkit.org/show_bug.cgi?id=97861
+
+        Reviewed by Gyuyoung Kim.
+
+        Timeout callbacks for waitUntil{LoadFinished,TitleChanged,URIChanged}
+        can be moved to the CallbackDataTimer class.
+
+        Moved the callback implementation to the CallbackDataTimer class.
+
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::CallbackDataTimer::CallbackDataTimer):
+        (CallbackDataTimer):
+        (EWK2UnitTest::CallbackDataTimer::timeOutCallback):
+        (EWK2UnitTest::CallbackDataExpectedValue::CallbackDataExpectedValue):
+        (EWK2UnitTest::EWK2UnitTestBase::waitUntilLoadFinished):
+        (EWK2UnitTest::EWK2UnitTestBase::waitUntilTitleChangedTo):
+        (EWK2UnitTest::EWK2UnitTestBase::waitUntilURIChangedTo):
+
 2012-10-09  Jian Li  <jianli@chromium.org>
 
         Update the CSS property used to support draggable regions.
