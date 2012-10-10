@@ -1,3 +1,20 @@
+2012-10-09  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt][WK2] REGRESSION(r130629): It made touchadjustment/focusout-on-touch.html fai1
+        https://bugs.webkit.org/show_bug.cgi?id=98642
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        There was an early return that would prevent gesture recognition if no PageViewportController
+        has been set on QtWebPageEventHandler. The gesture recognizer are also used to send
+        GestureEvents to WebCore which this layout test is using.
+
+        Make sure that the gesture recognition is done even when no PageViewportController is present.
+
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (WebKit::QtWebPageEventHandler::handleInputEvent):
+        (WebKit::QtWebPageEventHandler::doneWithTouchEvent):
+
 2012-10-10  Zeno Albisser  <zeno@webkit.org>
 
         [Qt] ProcessLauncherQt should use QStringLiteral for serviceName.

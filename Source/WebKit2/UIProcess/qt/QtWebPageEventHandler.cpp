@@ -450,7 +450,38 @@ void QtWebPageEventHandler::doneWithGestureEvent(const WebGestureEvent& event, b
 
 void QtWebPageEventHandler::handleInputEvent(const QInputEvent* event)
 {
-    ASSERT(m_viewportController);
+    if (m_viewportController) {
+        switch (event->type()) {
+        case QEvent::MouseButtonPress:
+        case QEvent::TouchBegin:
+            ASSERT(!m_viewportController->panGestureActive());
+            ASSERT(!m_viewportController->pinchGestureActive());
+            m_viewportController->touchBegin();
+
+            // The page viewport controller might still be animating kinetic scrolling or a scale animation
+            // such as double-tap to zoom or the bounce back effect. A touch stops the kinetic scrolling
+            // where as it does not stop the scale animation.
+            // The gesture recognizer stops the kinetic scrolling animation if needed.
+            break;
+        case QEvent::MouseMove:
+        case QEvent::TouchUpdate:
+            // The scale animation can only be interrupted by a pinch gesture, which will then take over.
+            if (m_viewportController->scaleAnimationActive() && m_pinchGestureRecognizer.isRecognized())
+                m_viewportController->interruptScaleAnimation();
+            break;
+        case QEvent::MouseButtonRelease:
+        case QEvent::TouchEnd:
+            m_viewportController->touchEnd();
+            break;
+        default:
+            break;
+        }
+
+        // If the scale animation is active we don't pass the event to the recognizers. In the future
+        // we would want to queue the event here and repost then when the animation ends.
+        if (m_viewportController->scaleAnimationActive())
+            return;
+    }
 
     bool isMouseEvent = false;
 
@@ -458,44 +489,21 @@ void QtWebPageEventHandler::handleInputEvent(const QInputEvent* event)
     case QEvent::MouseButtonPress:
         isMouseEvent = true;
         m_isMouseButtonPressed = true;
-        // Fall through.
-    case QEvent::TouchBegin:
-        ASSERT(!m_viewportController->panGestureActive());
-        ASSERT(!m_viewportController->pinchGestureActive());
-        m_viewportController->touchBegin();
-
-        // The interaction engine might still be animating kinetic scrolling or a scale animation
-        // such as double-tap to zoom or the bounce back effect. A touch stops the kinetic scrolling
-        // where as it does not stop the scale animation.
-        // The gesture recognizer stops the kinetic scrolling animation if needed.
         break;
     case QEvent::MouseMove:
         if (!m_isMouseButtonPressed)
             return;
-
         isMouseEvent = true;
-        // Fall through.
-    case QEvent::TouchUpdate:
-        // The scale animation can only be interrupted by a pinch gesture, which will then take over.
-        if (m_viewportController->scaleAnimationActive() && m_pinchGestureRecognizer.isRecognized())
-            m_viewportController->interruptScaleAnimation();
         break;
     case QEvent::MouseButtonRelease:
         isMouseEvent = true;
         m_isMouseButtonPressed = false;
-        // Fall through.
-    case QEvent::TouchEnd:
-        m_viewportController->touchEnd();
         break;
+    case QEvent::MouseButtonDblClick:
+        return;
     default:
-        ASSERT(event->type() == QEvent::MouseButtonDblClick);
-        return;
+        break;
     }
-
-    // If the scale animation is active we don't pass the event to the recognizers. In the future
-    // we would want to queue the event here and repost then when the animation ends.
-    if (m_viewportController->scaleAnimationActive())
-        return;
 
     QList<QTouchEvent::TouchPoint> activeTouchPoints;
     QTouchEvent::TouchPoint currentTouchPoint;
@@ -568,9 +576,6 @@ void QtWebPageEventHandler::handleInputEvent(const QInputEvent* event)
 #if ENABLE(TOUCH_EVENTS)
 void QtWebPageEventHandler::doneWithTouchEvent(const NativeWebTouchEvent& event, bool wasEventHandled)
 {
-    if (!m_viewportController)
-        return;
-
     if (wasEventHandled || event.type() == WebEvent::TouchCancel) {
         m_panGestureRecognizer.cancel();
         m_pinchGestureRecognizer.cancel();
