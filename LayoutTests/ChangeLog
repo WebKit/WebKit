@@ -1,3 +1,23 @@
+2012-10-09  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [EFL] Update EFL baselines after r130840
+        https://bugs.webkit.org/show_bug.cgi?id=98846
+
+        Unreviewed EFL gardening.
+
+        Update baselines after the cairo update in r130840.
+
+        * platform/efl/svg/W3C-SVG-1.1/animate-elem-08-t-expected.png:
+        * platform/efl/svg/W3C-SVG-1.1/animate-elem-08-t-expected.txt:
+        * platform/efl/svg/W3C-SVG-1.1/animate-elem-30-t-expected.png:
+        * platform/efl/svg/W3C-SVG-1.1/animate-elem-30-t-expected.txt:
+        * platform/efl/svg/W3C-SVG-1.1/animate-elem-83-t-expected.png:
+        * platform/efl/svg/W3C-SVG-1.1/animate-elem-83-t-expected.txt:
+        * platform/efl/svg/W3C-SVG-1.1/paths-data-01-t-expected.png:
+        * platform/efl/svg/W3C-SVG-1.1/paths-data-01-t-expected.txt:
+        * platform/efl/svg/W3C-SVG-1.1/paths-data-02-t-expected.png:
+        * platform/efl/svg/W3C-SVG-1.1/paths-data-02-t-expected.txt:
+
 2012-10-09  Tullio Lucena  <tullio.lucena@openbossa.org>
 
         [Qt] new test http/tests/cookies/single-quoted-value.html is failing
