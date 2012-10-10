@@ -1,5 +1,14 @@
 2012-10-10  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        [EFL] Add some css3 expectations, rebaseline a css2.1 PNG.
+
+        * platform/efl/css2.1/20110323/abspos-containing-block-initial-001-expected.png:
+        * platform/efl/css3/flexbox/flexbox-baseline-expected.png: Added.
+        * platform/efl/css3/flexbox/flexbox-baseline-expected.txt: Added.
+        * platform/efl/css3/images/cross-fade-background-size-expected.png: Added.
+
+2012-10-10  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         [EFL] Hopefully finish adding SVG pixel expectations.
 
         * platform/efl/svg/W3C-I18N/g-dirLTR-ubNone-expected.png: Added.
