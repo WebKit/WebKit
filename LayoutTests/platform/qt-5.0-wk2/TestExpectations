@@ -546,3 +546,7 @@ webkit.org/b/98688 fast/ruby/rubyDOM-remove-rt1.html
 webkit.org/b/98688 fast/ruby/rubyDOM-remove-rt2.html
 webkit.org/b/98688 fast/ruby/rubyDOM-remove-text1.html
 webkit.org/b/98688 fast/ruby/rubyDOM-remove-text2.html
+
+# [Qt][WK2]REGRESSION(r130826): It made fast/js/sparse-array.html crash on 64 bit
+webkit.org/b/98859 fast/js/sort-stability.html
+webkit.org/b/98859 fast/js/sort-with-side-effecting-comparisons.html
