@@ -1,3 +1,16 @@
+2012-10-10  Max Vujovic  <mvujovic@adobe.com>
+
+        SVG root element's inspector highlight has different dimensions than the element when zooming the page
+        https://bugs.webkit.org/show_bug.cgi?id=78031
+
+        Reviewed by Pavel Feldman.
+
+        Add test that verifies the position and size of the highlight rectangles overlayed on an SVG
+        root element when the page is zoomed.
+
+        * inspector/elements/highlight-svg-root-zoomed-expected.txt: Added.
+        * inspector/elements/highlight-svg-root-zoomed.html: Added.
+
 2012-10-10  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Test drivers should handle repaint rects

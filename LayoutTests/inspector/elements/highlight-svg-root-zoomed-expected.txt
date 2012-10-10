@@ -1,0 +1,7 @@
+This test verifies the position and size of the highlight rectangles overlayed on an SVG root element when the page is zoomed.
+
+margin rect is 408 x 528 at (12, 24)
+border rect is 336 x 456 at (48, 60)
+padding rect is 240 x 360 at (96, 108)
+content rect is 120 x 240 at (156, 168)
+
