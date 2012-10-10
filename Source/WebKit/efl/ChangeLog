@@ -1,3 +1,24 @@
+2012-10-10  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Use ewk_view_paint instead of ewk_view_paint_contents in ewk_view_single.
+        https://bugs.webkit.org/show_bug.cgi?id=98716
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        ewk_view_paint is the wrapper of ScrollView::paint and
+        ewk_view_paint_contents is the wrapper of FrameView::paintContents.
+
+        Because FrameView::paintContents just draw contents,
+        ewk_view_single should use ewk_view_paint instead of ewk_view_paint_contents
+        like other ports.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_paint):
+        Moved updateLayoutAndStyleIfNeededRecursive to share ewk_view_paint.
+        * ewk/ewk_view_single.cpp:
+        (_ewk_view_single_smart_repaints_process):
+        Modified to call ewk_view_paint.
+
 2012-10-10  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         [EFL] Use Evas function instead of memcpy

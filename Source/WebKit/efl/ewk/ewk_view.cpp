@@ -2862,7 +2862,14 @@ void ewk_view_scrolls_process(Ewk_View_Smart_Data* smartData)
 
 Eina_Bool ewk_view_paint(Ewk_View_Private_Data* priv, cairo_t* cr, const Eina_Rectangle* area)
 {
+    EINA_SAFETY_ON_NULL_RETURN_VAL(priv, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(cr, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(area, false);
+
+    WebCore::FrameView* view = priv->mainFrame->view();
+    EINA_SAFETY_ON_NULL_RETURN_VAL(view, false);
+
+    view->updateLayoutAndStyleIfNeededRecursive();
 
     Ewk_Paint_Context* context = ewk_paint_context_new(cr);
     bool result = ewk_view_paint(priv, context, area);
@@ -2917,8 +2924,6 @@ Eina_Bool ewk_view_paint(Ewk_View_Private_Data* priv, Ewk_Paint_Context* context
     EINA_SAFETY_ON_NULL_RETURN_VAL(area, false);
     WebCore::FrameView* view = priv->mainFrame->view();
     EINA_SAFETY_ON_NULL_RETURN_VAL(view, false);
-
-    view->updateLayoutAndStyleIfNeededRecursive();
 
     ewk_paint_context_save(context);
     ewk_paint_context_clip(context, area);

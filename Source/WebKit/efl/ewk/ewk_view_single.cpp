@@ -260,15 +260,9 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* sm
     Ewk_Paint_Context* context = ewk_paint_context_from_image_new(smartData->backing_store);
     ewk_paint_context_save(context);
 
-    int scrollX, scrollY;
-    ewk_frame_scroll_pos_get(smartData->main_frame, &scrollX, &scrollY);
-    if (scrollX || scrollY)
-        ewk_paint_context_translate(context, -scrollX, -scrollY);
-
     Eina_Rectangle* rect;
     EINA_ITERATOR_FOREACH(iterator, rect) {
-        Eina_Rectangle scrolledRect = { rect->x + scrollX, rect->y + scrollY, rect->w, rect->h };
-        ewk_view_paint_contents(smartData->_priv, context, &scrolledRect);
+        ewk_view_paint(smartData->_priv, context, rect);
         evas_object_image_data_update_add(smartData->backing_store, rect->x, rect->y, rect->w, rect->h);
     }
 
