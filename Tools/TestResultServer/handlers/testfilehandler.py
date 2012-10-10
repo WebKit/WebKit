@@ -171,6 +171,7 @@ class GetFile(webapp.RequestHandler):
             # In practice, appengine seems to use GMT.
             self.response.headers["Last-Modified"] = modified_date.strftime('%a, %d %b %Y %H:%M:%S') + ' GMT'
             self.response.headers["Content-Type"] = "application/json"
+            self.response.headers["Access-Control-Allow-Origin"] = "*"
             self.response.out.write(json)
         else:
             self.error(404)

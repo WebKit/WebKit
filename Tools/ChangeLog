@@ -1,3 +1,17 @@
+2012-10-10  Zan Dobersek  <zandobersek@gmail.com>
+
+        [TestResultServer] Enable CORS for test files
+        https://bugs.webkit.org/show_bug.cgi?id=98918
+
+        Reviewed by Dirk Pranke.
+
+        Serve the JSON test files with the Access-Control-Allow-Origin
+        response header to enable cross-origin sharing of these files.
+        This eases up hacking on TestResultServer.
+
+        * TestResultServer/handlers/testfilehandler.py:
+        (GetFile._serve_json):
+
 2012-10-10  Andreas Kling  <kling@webkit.org>
 
         Future-proof the WTF.DoubleHashCollisions test.
