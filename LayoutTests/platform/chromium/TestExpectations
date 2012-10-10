@@ -3883,6 +3883,9 @@ webkit.org/b/98087 [ Linux ] fast/css/lang-mapped-to-webkit-locale-dynamic.xhtml
 webkit.org/b/96833 svg/carto.net/selectionlist.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/96833 svg/carto.net/combobox.svg [ ImageOnlyFailure Pass ]
 
+# Need rebaseline
+webkit.org/b/98866 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step.html [ Pass ImageOnlyFailure Missing ]
+
 webkit.org/b/96720 [ Mac Win ] fast/forms/time-multiple-fields/time-multiple-fields-preserve-value-after-history-back.html [ Pass Timeout ]
 webkit.org/b/96549 [ Mac ] platform/chromium/virtual/gpu/fast/hidpi/focus-rings.html [ ImageOnlyFailure ]
 webkit.org/b/96549 [ Mac ] platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi.html [ ImageOnlyFailure ]

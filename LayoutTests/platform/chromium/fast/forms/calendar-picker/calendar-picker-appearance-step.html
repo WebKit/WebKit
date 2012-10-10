@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<body>
+<script src="../../../../../fast/forms/date/calendar-picker-common.js"></script>
+<!-- Check if step attribute reflects the appearance of the calendar picker.  -->
+<input type="date" id="date" value="2012-12-31" step="3">
+<script>
+function finishTest() {
+    popupWindow.removeEventListener('resize', finishTest);
+    setTimeout(function() { testRunner.notifyDone(); }, 0);
+}
+
+testRunner.dumpAsText(true);
+testRunner.waitUntilDone();
+
+window.onload = function() {
+    openPicker(document.getElementById('date'));
+    popupWindow.addEventListener('resize', finishTest, false);
+};
+</script>
+</body>

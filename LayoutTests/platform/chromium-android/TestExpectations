@@ -85,6 +85,7 @@ fast/forms/week-multiple-fields [ WontFix ]
 
 # Page popup UI is for desktop platforms
 platform/chromium/fast/forms/page-popup [ WontFix ]
+platform/chromium/fast/forms/calendar-picker [ WontFix ]
 
 # A Linux-specific test about the selection color
 platform/chromium-linux/editing/selection/linux_selection_color.html [ WontFix ]
