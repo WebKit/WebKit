@@ -9,36 +9,37 @@
 </p>
 
 <script>
-if (location.protocol != 'https:')
-    location = 'https://127.0.0.1:8443/security/mixedContent/filesystem-url-in-iframe.html';
-
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.dumpChildFramesAsText();
     testRunner.waitUntilDone();
 }
 
-var iframe = document.querySelector('iframe');
-iframe.onload = function () {
-    if (window.testRunner)
-        testRunner.notifyDone();
-};
+if (location.protocol != 'https:')
+    location = 'https://127.0.0.1:8443/security/mixedContent/filesystem-url-in-iframe.html';
+else {
+    var iframe = document.querySelector('iframe');
+    iframe.onload = function () {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    };
 
-// Opening a file system with temporary storage
-window.webkitRequestFileSystem(TEMPORARY, 1024*1024 /*1MB*/, function(fs) {
-    fs.root.getFile('test.html', {create: true}, function(fileEntry) {
-        fileEntry.createWriter(function(fileWriter) {
-            fileWriter.onwriteend = function(e) {
-                alert('PASS (1/2): File written');
-                iframe.src = fileEntry.toURL('text/html');
-            };
+    // Opening a file system with temporary storage
+    window.webkitRequestFileSystem(TEMPORARY, 1024*1024 /*1MB*/, function(fs) {
+        fs.root.getFile('test.html', {create: true}, function(fileEntry) {
+            fileEntry.createWriter(function(fileWriter) {
+                fileWriter.onwriteend = function(e) {
+                    alert('PASS (1/2): File written');
+                    iframe.src = fileEntry.toURL('text/html');
+                };
 
-            // Create a new Blob and write it to log.txt.
-            var b = new Blob(['PASS (2/2): File displayed'], { type: 'text/html' });
-            fileWriter.write(b);
+                // Create a new Blob and write it to log.txt.
+                var b = new Blob(['PASS (2/2): File displayed'], { type: 'text/html' });
+                fileWriter.write(b);
+            });
         });
     });
-});
+}
 </script>
 </body>
 </html>

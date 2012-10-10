@@ -3727,9 +3727,6 @@ webkit.org/b/94492 [ Linux Win ] css3/filters/custom/filter-repaint-custom-clipp
 webkit.org/b/94492 [ Linux Win ] css3/filters/custom/filter-repaint-custom.html [ ImageOnlyFailure ]
 webkit.org/b/94492 [ Linux Win ] css3/filters/custom/filter-repaint-custom-rotated.html [ ImageOnlyFailure ]
 
-# Flaky
-webkit.org/b/95246 http/tests/security/mixedContent/filesystem-url-in-iframe.html [ Failure Pass ]
-
 webkit.org/b/95581 http/tests/xmlhttprequest/zero-length-response.html [ Pass Timeout ]
 webkit.org/b/95581 http/tests/misc/javascript-url-stop-loaders.html [ Pass Timeout ]
 

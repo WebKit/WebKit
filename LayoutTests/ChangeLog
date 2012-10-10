@@ -1,3 +1,16 @@
+2012-10-09  Adam Barth  <abarth@webkit.org>
+
+        filesystem-url-in-iframe test is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=95246
+
+        Reviewed by Eric Seidel.
+
+        This test was assuming that the navigation would complete before the
+        async JavaScript executed, which is true usually (but not always).
+
+        * http/tests/security/mixedContent/filesystem-url-in-iframe.html:
+        * platform/chromium/TestExpectations:
+
 2012-10-09  Jian Li  <jianli@chromium.org>
 
         Update the CSS property used to support draggable regions.
