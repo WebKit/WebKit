@@ -512,21 +512,31 @@ static void testWebResourceGetData(ResourcesTest* test, gconstpointer)
 
 static void testWebViewResourcesHistoryCache(SingleResourceLoadTest* test, gconstpointer)
 {
-    test->loadURI(kServer->getURIForPath("/").data());
+    CString javascriptURI = kServer->getURIForPath("/javascript.html");
+    test->loadURI(javascriptURI.data());
     test->waitUntilResourceLoadFinished();
-    g_assert(webkit_web_view_get_main_resource(test->m_webView));
+    WebKitWebResource* resource = webkit_web_view_get_main_resource(test->m_webView);
+    g_assert(resource);
+    g_assert_cmpstr(webkit_web_resource_get_uri(resource), ==, javascriptURI.data());
 
-    test->loadURI(kServer->getURIForPath("/javascript.html").data());
+    CString simpleStyleCSSURI = kServer->getURIForPath("/simple-style-css.html");
+    test->loadURI(simpleStyleCSSURI.data());
     test->waitUntilResourceLoadFinished();
-    g_assert(webkit_web_view_get_main_resource(test->m_webView));
+    resource = webkit_web_view_get_main_resource(test->m_webView);
+    g_assert(resource);
+    g_assert_cmpstr(webkit_web_resource_get_uri(resource), ==, simpleStyleCSSURI.data());
 
     test->goBack();
     test->waitUntilResourceLoadFinished();
-    g_assert(webkit_web_view_get_main_resource(test->m_webView));
+    resource = webkit_web_view_get_main_resource(test->m_webView);
+    g_assert(resource);
+    g_assert_cmpstr(webkit_web_resource_get_uri(resource), ==, javascriptURI.data());
 
     test->goForward();
     test->waitUntilResourceLoadFinished();
-    g_assert(webkit_web_view_get_main_resource(test->m_webView));
+    resource = webkit_web_view_get_main_resource(test->m_webView);
+    g_assert(resource);
+    g_assert_cmpstr(webkit_web_resource_get_uri(resource), ==, simpleStyleCSSURI.data());
 }
 
 static void addCacheHTTPHeadersToResponse(SoupMessage* message)
@@ -572,6 +582,9 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
     } else if (g_str_equal(path, "/invalid-css.html")) {
         static const char* invalidCSSHtml = "<html><head><link rel='stylesheet' href='/invalid.css' type='text/css'></head><body></html>";
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, invalidCSSHtml, strlen(invalidCSSHtml));
+    } else if (g_str_equal(path, "/simple-style-css.html")) {
+        static const char* simpleStyleCSSHtml = "<html><head><link rel='stylesheet' href='/simple-style.css' type='text/css'></head><body></html>";
+        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, simpleStyleCSSHtml, strlen(simpleStyleCSSHtml));
     } else if (g_str_equal(path, "/style.css")) {
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, kStyleCSS, strlen(kStyleCSS));
         addCacheHTTPHeadersToResponse(message);
