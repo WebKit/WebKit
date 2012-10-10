@@ -144,3 +144,16 @@ TEST_F(EWK2UnitTestBase, ewk_settings_enable_frame_flattening_set)
     waitUntilTitleChangedTo("200"); // width of iframe tag.
     ASSERT_STREQ("200", ewk_view_title_get(webView()));
 }
+
+TEST_F(EWK2UnitTestBase, ewk_settings_DNS_prefetching_enabled)
+{
+    Ewk_Settings* settings = ewk_view_settings_get(webView());
+
+    // DNS prefeching is disabled by default.
+    ASSERT_FALSE(ewk_settings_DNS_prefetching_enabled_get(settings));
+    ASSERT_TRUE(ewk_settings_DNS_prefetching_enabled_set(settings, true));
+    ASSERT_TRUE(ewk_settings_DNS_prefetching_enabled_get(settings));
+
+    ASSERT_TRUE(ewk_settings_DNS_prefetching_enabled_set(settings, false));
+    ASSERT_FALSE(ewk_settings_DNS_prefetching_enabled_get(settings));
+}

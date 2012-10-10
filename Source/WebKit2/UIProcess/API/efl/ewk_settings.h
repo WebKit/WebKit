@@ -183,6 +183,33 @@ EAPI Eina_Bool ewk_settings_enable_frame_flattening_set(Ewk_Settings *settings, 
  */
 EAPI Eina_Bool ewk_settings_enable_frame_flattening_get(const Ewk_Settings *settings);
 
+/**
+ * Enables/disables DNS prefetching.
+ *
+ * By default, DNS prefetching is disabled.
+ *
+ * @param settings settings object to set DNS prefetching
+ * @param enable @c EINA_TRUE to enable DNS prefetching or
+ *               @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ *
+ * @see ewk_settings_DNS_prefetching_enabled_get()
+ */
+EAPI Eina_Bool ewk_settings_DNS_prefetching_enabled_set(Ewk_Settings *settings, Eina_Bool enable);
+
+/**
+ * Returns whether DNS prefetching is enabled or not.
+ *
+ * DNS prefetching is an attempt to resolve domain names before a user tries to follow a link.
+ *
+ * @param settings settings object to get DNS prefetching
+ *
+ * @return @c EINA_TRUE if DNS prefetching is enabled
+ *         @c EINA_FALSE if not or on failure
+ */
+EAPI Eina_Bool ewk_settings_DNS_prefetching_enabled_get(const Ewk_Settings *settings);
+
 #ifdef __cplusplus
 }
 #endif

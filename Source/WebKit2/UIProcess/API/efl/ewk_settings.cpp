@@ -132,3 +132,19 @@ Eina_Bool ewk_settings_enable_frame_flattening_get(const Ewk_Settings* settings)
 
     return WKPreferencesGetFrameFlatteningEnabled(settings->preferences.get());
 }
+
+Eina_Bool ewk_settings_DNS_prefetching_enabled_set(Ewk_Settings* settings, Eina_Bool enable)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
+
+    WKPreferencesSetDNSPrefetchingEnabled(settings->preferences.get(), enable);
+
+    return true;
+}
+
+Eina_Bool ewk_settings_DNS_prefetching_enabled_get(const Ewk_Settings* settings)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
+
+    return WKPreferencesGetDNSPrefetchingEnabled(settings->preferences.get());
+}
