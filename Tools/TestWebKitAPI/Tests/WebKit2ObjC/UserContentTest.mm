@@ -29,7 +29,6 @@
 #import "PlatformUtilities.h"
 #import <JavaScriptCore/JSRetainPtr.h>
 #import <JavaScriptCore/JavaScriptCore.h>
-#import <WebKit2/WKRetainPtr.h>
 #import <WebKit2/WKSerializedScriptValue.h>
 #import <WebKit2/WKViewPrivate.h>
 #import <WebKit2/WebKit2.h>
@@ -121,11 +120,12 @@ TEST_F(WebKit2UserContentTest, AddUserStyleSheetBeforeCreatingView)
     [browsingContextGroup addUserStyleSheet:userStyleSheet baseURL:nil whitelist:nil blacklist:nil mainFrameOnly:YES];
     
     WKView *wkView = [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup browsingContextGroup:browsingContextGroup];
+    WKStringRef backgroundColorQuery = WKStringCreateWithUTF8CString(backgroundColorScript);
     wkView.browsingContextController.loadDelegate = [[UserContentTestLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
-        WKRetainPtr<WKStringRef> backgroundColorQuery = adoptWK(WKStringCreateWithUTF8CString(backgroundColorScript));
-        WKPageRunJavaScriptInMainFrame_b(wkView.pageRef, backgroundColorQuery.get(), ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
+        WKPageRunJavaScriptInMainFrame_b(wkView.pageRef, backgroundColorQuery, ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
             expectScriptValue(serializedScriptValue, greenInRGB);
             testFinished = true;
+            WKRelease(backgroundColorQuery);
         });
     }];
     
@@ -139,11 +139,12 @@ TEST_F(WebKit2UserContentTest, AddUserStyleSheetAfterCreatingView)
     testFinished = false;
     
     WKView *wkView = [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup browsingContextGroup:browsingContextGroup];
+    WKStringRef backgroundColorQuery = WKStringCreateWithUTF8CString(backgroundColorScript);
     wkView.browsingContextController.loadDelegate = [[UserContentTestLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
-        WKRetainPtr<WKStringRef> backgroundColorQuery = adoptWK(WKStringCreateWithUTF8CString(backgroundColorScript));
-        WKPageRunJavaScriptInMainFrame_b(wkView.pageRef, backgroundColorQuery.get(), ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
+        WKPageRunJavaScriptInMainFrame_b(wkView.pageRef, backgroundColorQuery, ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
             expectScriptValue(serializedScriptValue, greenInRGB);
             testFinished = true;
+            WKRelease(backgroundColorQuery);
         });
     }];
     
@@ -160,11 +161,12 @@ TEST_F(WebKit2UserContentTest, RemoveAllUserStyleSheets)
     [browsingContextGroup addUserStyleSheet:userStyleSheet baseURL:nil whitelist:nil blacklist:nil mainFrameOnly:YES];
     
     WKView *wkView = [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup browsingContextGroup:browsingContextGroup];
+    WKStringRef backgroundColorQuery = WKStringCreateWithUTF8CString(backgroundColorScript);
     wkView.browsingContextController.loadDelegate = [[UserContentTestLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
-        WKRetainPtr<WKStringRef> backgroundColorQuery = adoptWK(WKStringCreateWithUTF8CString(backgroundColorScript));
-        WKPageRunJavaScriptInMainFrame_b(wkView.pageRef, backgroundColorQuery.get(), ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
+        WKPageRunJavaScriptInMainFrame_b(wkView.pageRef, backgroundColorQuery, ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
             expectScriptValue(serializedScriptValue, redInRGB);
             testFinished = true;
+            WKRelease(backgroundColorQuery);
         });
     }];
     

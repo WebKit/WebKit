@@ -1,3 +1,10 @@
+2012-10-10  Andy Estes  <aestes@apple.com>
+
+        Speculative build fix for Snow Leopard after r130948.
+
+        * TestWebKitAPI/Tests/WebKit2ObjC/UserContentTest.mm: Pull the
+        declaration of backgroundColorQuery out of a block to appease GCC.
+
 2012-10-10  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][WTR] WebKitTestRunner UI process should be aware of Custom Policy Delegate
