@@ -1,3 +1,17 @@
+2012-10-10  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium-Android] Another batch of TestExpectation updates for Android
+        https://bugs.webkit.org/show_bug.cgi?id=98909
+
+        Unreviewed test expectation update.
+
+        Many of the failures were actually ImageOnlyFailure, which isn't part
+        of the Failure state. This also includes a number of new expected
+        results, mostly focusing on crashing and timing out tests.
+
+        * platform/chromium-android/TestExpectations:
+        * platform/chromium/TestExpectations:
+
 2012-10-10  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Layout Test platform/chromium/fast/forms/*/*-suggestion-picker-*-operations.html are flaky

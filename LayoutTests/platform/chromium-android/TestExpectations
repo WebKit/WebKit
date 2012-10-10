@@ -96,6 +96,7 @@ fast/overflow/replaced-child-100percent-height-inside-fixed-container-with-overf
 fast/overflow/overflow-y-scroll.html [ WontFix ]
 fast/overflow/hidden-scrollbar-resize.html [ WontFix ]
 fast/overflow/child-100percent-height-inside-fixed-container-with-overflow-auto.html [ WontFix ]
+fast/multicol/image-inside-nested-blocks-with-border.html [ WontFix ]
 
 # Accessing local resources in the traditional way does not work on Android.
 fast/loader/local-image-from-local.html [ WontFix ]
