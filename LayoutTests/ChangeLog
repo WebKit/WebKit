@@ -1,3 +1,10 @@
+2012-10-10  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        More unreviewed Chromium gardening.
+
+        * platform/chromium/TestExpectations:
+        Removed 11 more entries that have not failed in last 100 runs according to the flakiness dashboard.
+
 2012-10-10  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][WTR] WebKitTestRunner UI process should be aware of Custom Policy Delegate

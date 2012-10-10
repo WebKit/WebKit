@@ -1297,8 +1297,6 @@ webkit.org/b/81240 [ Mac ] svg/text/bidi-reorder-value-lists.svg [ Failure Pass 
 
 webkit.org/b/81243 svg/repaint/repainting-after-animation-element-removal.svg [ ImageOnlyFailure Pass ]
 
-webkit.org/b/81493 [ Android Linux ] svg/custom/js-late-gradient-creation.svg [ ImageOnlyFailure Pass ]
-
 # Flaky on Linux after http://trac.webkit.org/changeset/112022
 webkit.org/b/82217 [ Android Linux ] svg/zoom/text/zoom-foreignObject.svg [ ImageOnlyFailure Pass ]
 
@@ -1461,8 +1459,6 @@ crbug.com/10318 platform/chromium/virtual/gpu/fast/canvas/toDataURL-supportedTyp
 
 # GURL doesn't handle switching from standard URL to path URL correctly
 webkit.org/b/27914 [ Win ] fast/dom/HTMLAnchorElement/set-href-attribute-protocol.html [ Failure ]
-
-webkit.org/b/80227 editing/selection/select-line-break-with-opposite-directionality.html [ Failure Pass ]
 
 # This test isn't hanging, it just takes 12-13 seconds to run. See BUGWK87839.
 crbug.com/30536 [ Android Linux Win ] http/tests/misc/acid3.html [ Failure Slow ] # See "SVG Tests" section too
@@ -2389,10 +2385,6 @@ crbug.com/60651 platform/chromium/virtual/gpu/fast/canvas/webgl/uniform-location
 webkit.org/b/46693 [ Mac ] fast/repaint/repaint-svg-after-style-change.html [ Failure ]
 
 crbug.com/57934 [ Win Debug ] http/tests/appcache/fail-on-update-2.html [ Pass Timeout ]
-
-# Issues starting from
-# http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20%28webkit.org%29/builds/35997
-crbug.com/58333 [ Android Linux Win ] fast/css/font-face-download-error.html [ Failure Pass ]
 
 # Flakiness first seen
 # http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20%28webkit.org%29/builds/35995
@@ -3451,13 +3443,7 @@ webkit.org/b/86439 [ Linux Win Debug ] inspector/extensions/extensions-sidebar.h
 
 webkit.org/b/86114 [ Mac Debug ] animations/combo-transform-translate+scale.html [ Failure Pass ]
 
-webkit.org/b/86592 [ Android Linux ] fast/loader/javascript-url-in-object.html [ Failure Pass ]
 webkit.org/b/92279 [ Linux Win ] http/tests/inspector/resource-har-pages.html [ Failure Pass Slow ]
-webkit.org/b/86592 [ Android Linux ] http/tests/security/sandboxed-iframe-origin-add.html [ Failure Pass ]
-webkit.org/b/86592 [ Android Linux ] fast/loader/link-no-URL.html [ Failure Pass ]
-webkit.org/b/86592 [ Android Linux ] http/tests/security/sandboxed-iframe-origin-remove.html [ Failure Pass ]
-
-webkit.org/b/86592 [ Android Linux ] svg/custom/js-late-pattern-creation.svg [ ImageOnlyFailure Pass ]
 
 webkit.org/b/88964 [ Mac ] http/tests/misc/embedCrasher.html [ Missing Pass ]
 
@@ -3721,8 +3707,6 @@ webkit.org/b/94017 [ Win ] css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailu
 
 webkit.org/b/94059 [ Debug ] editing/selection/move-by-line-001.html [ Failure Pass ]
 webkit.org/b/94059 [ Lion Release ] editing/selection/move-by-line-001.html [ Failure Pass ]
-
-webkit.org/b/94060 [ Linux ] fast/dom/Window/dom-access-from-closure-window.html [ Failure Pass ]
 
 webkit.org/b/94078 [ Win Release ] http/tests/inspector/web-socket-frame-error.html [ Failure Pass ]
 
@@ -4016,10 +4000,6 @@ crbug.com/152007 platform/chromium/virtual/softwarecompositing/color-matching/im
 crbug.com/152007 platform/chromium/virtual/softwarecompositing/geometry/bounds-ignores-hidden-dynamic-negzindex.html [ ImageOnlyFailure ]
 crbug.com/152007 [ Linux Mac ] platform/chromium/virtual/softwarecompositing/geometry/clipping-foreground.html [ ImageOnlyFailure ]
 crbug.com/152007 platform/chromium/virtual/softwarecompositing/visibility/visibility-image-layers.html [ ImageOnlyFailure ]
-
-# Sometimes missing the scrollbar.
-webkit.org/b/98198 tables/mozilla/marvin/backgr_index.html [ ImageOnlyFailure Failure Pass ]
-webkit.org/b/98198 tables/mozilla_expected_failures/marvin/backgr_border-table-cell.html [ ImageOnlyFailure Failure Pass ]
 
 webkit.org/b/98192 [ Win Debug ] fast/js/dfg-cross-global-object-inline-new-array-with-elements.html [ Failure Pass ]
 webkit.org/b/98192 [ Win Debug ] fast/js/post-message-numeric-property.html [ Failure Pass ]
