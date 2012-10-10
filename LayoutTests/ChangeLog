@@ -1,3 +1,11 @@
+2012-10-10  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed Chromium gardening.
+
+        * platform/chromium/TestExpectations:
+        Amend bad change from r130904, the test *IS* timing out on all Debug platforms,
+        not just on Android Debug.
+
 2012-10-10  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Create a separate list for the invalid regions
