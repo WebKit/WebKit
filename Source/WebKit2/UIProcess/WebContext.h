@@ -28,11 +28,13 @@
 
 #include "APIObject.h"
 #include "GenericCallback.h"
+#include "MessageReceiver.h"
+#include "MessageReceiverMap.h"
 #include "PluginInfoStore.h"
 #include "ProcessModel.h"
 #include "VisitedLinkProvider.h"
-#include "WebContextInjectedBundleClient.h"
 #include "WebContextConnectionClient.h"
+#include "WebContextInjectedBundleClient.h"
 #include "WebDownloadClient.h"
 #include "WebHistoryClient.h"
 #include "WebProcessProxy.h"
@@ -83,6 +85,9 @@ public:
     virtual ~WebContext();
 
     static const Vector<WebContext*>& allContexts();
+
+    void addMessageReceiver(CoreIPC::MessageClass, CoreIPC::MessageReceiver*);
+    bool knowsHowToHandleMessage(CoreIPC::MessageID) const;
 
     void initializeInjectedBundleClient(const WKContextInjectedBundleClient*);
     void initializeConnectionClient(const WKContextConnectionClient*);
@@ -360,6 +365,8 @@ private:
     bool m_processTerminationEnabled;
     
     HashMap<uint64_t, RefPtr<DictionaryCallback> > m_dictionaryCallbacks;
+
+    CoreIPC::MessageReceiverMap m_messageReceiverMap;
 };
 
 template<typename U> inline void WebContext::sendToAllProcesses(const U& message)

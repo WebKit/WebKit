@@ -1,3 +1,100 @@
+2012-10-10  Sam Weinig  <sam@webkit.org>
+
+        Make all of the WebContext sub objects MessageReceivers
+        https://bugs.webkit.org/show_bug.cgi?id=98661
+
+        Reviewed by Anders Carlsson.
+
+        Start work towards simplified message dispatch.
+
+        * Platform/CoreIPC/MessageReceiverMap.cpp:
+        (CoreIPC::MessageReceiverMap::clearAllMessageReceivers):
+        (CoreIPC::MessageReceiverMap::knowsHowToHandleMessage):
+        (CoreIPC::MessageReceiverMap::dispatchSyncMessage):
+        * Platform/CoreIPC/MessageReceiverMap.h:
+        Add additional helper methods.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::~WebContext):
+        (WebKit::WebContext::addMessageReceiver):
+        (WebKit::WebContext::knowsHowToHandleMessage):
+        (WebKit::WebContext::didReceiveMessage):
+        (WebKit::WebContext::didReceiveSyncMessage):
+        * UIProcess/WebContext.h:
+        Add a MessageReceiverMap that chains to the main on in WebProcessProxy. Simplifies
+        didReceiveMessage and didReceiveSyncMessage.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+        Use the new WebContext methods to simplify dispatch.
+
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::WebNotificationManagerProxy):
+        * UIProcess/Notifications/WebNotificationManagerProxy.h:
+        (WebNotificationManagerProxy):
+        * UIProcess/WebApplicationCacheManagerProxy.cpp:
+        (WebKit::WebApplicationCacheManagerProxy::WebApplicationCacheManagerProxy):
+        * UIProcess/WebApplicationCacheManagerProxy.h:
+        (WebApplicationCacheManagerProxy):
+        * UIProcess/WebBatteryManagerProxy.cpp:
+        (WebKit::WebBatteryManagerProxy::WebBatteryManagerProxy):
+        * UIProcess/WebBatteryManagerProxy.h:
+        (WebBatteryManagerProxy):
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::WebCookieManagerProxy):
+        * UIProcess/WebCookieManagerProxy.h:
+        (WebCookieManagerProxy):
+        * UIProcess/WebDatabaseManagerProxy.cpp:
+        (WebKit::WebDatabaseManagerProxy::WebDatabaseManagerProxy):
+        (WebKit::WebDatabaseManagerProxy::didReceiveMessage):
+        (WebKit):
+        * UIProcess/WebDatabaseManagerProxy.h:
+        (WebDatabaseManagerProxy):
+        * UIProcess/WebGeolocationManagerProxy.cpp:
+        (WebKit::WebGeolocationManagerProxy::WebGeolocationManagerProxy):
+        * UIProcess/WebGeolocationManagerProxy.h:
+        (WebGeolocationManagerProxy):
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::WebIconDatabase):
+        * UIProcess/WebIconDatabase.h:
+        (WebIconDatabase):
+        (WebKit::WebIconDatabase::type):
+        * UIProcess/WebKeyValueStorageManagerProxy.cpp:
+        (WebKit::WebKeyValueStorageManagerProxy::WebKeyValueStorageManagerProxy):
+        * UIProcess/WebKeyValueStorageManagerProxy.h:
+        (WebKeyValueStorageManagerProxy):
+        * UIProcess/WebMediaCacheManagerProxy.cpp:
+        (WebKit::WebMediaCacheManagerProxy::WebMediaCacheManagerProxy):
+        * UIProcess/WebMediaCacheManagerProxy.h:
+        (WebMediaCacheManagerProxy):
+        * UIProcess/WebNetworkInfoManagerProxy.cpp:
+        (WebKit::WebNetworkInfoManagerProxy::WebNetworkInfoManagerProxy):
+        (WebKit::WebNetworkInfoManagerProxy::didReceiveSyncMessage):
+        * UIProcess/WebNetworkInfoManagerProxy.h:
+        (WebNetworkInfoManagerProxy):
+        * UIProcess/WebResourceCacheManagerProxy.cpp:
+        (WebKit::WebResourceCacheManagerProxy::WebResourceCacheManagerProxy):
+        (WebKit::WebResourceCacheManagerProxy::didReceiveMessage):
+        (WebKit):
+        * UIProcess/WebResourceCacheManagerProxy.h:
+        (WebResourceCacheManagerProxy):
+        * UIProcess/WebVibrationProxy.cpp:
+        (WebKit::WebVibrationProxy::WebVibrationProxy):
+        * UIProcess/WebVibrationProxy.h:
+        (WebVibrationProxy):
+        * UIProcess/soup/WebSoupRequestManagerProxy.cpp:
+        (WebKit::WebSoupRequestManagerProxy::WebSoupRequestManagerProxy):
+        (WebKit::WebSoupRequestManagerProxy::didReceiveMessage):
+        (WebKit):
+        * UIProcess/soup/WebSoupRequestManagerProxy.h:
+        (WebSoupRequestManagerProxy):
+        * WebProcess/Authentication/AuthenticationManager.h:
+        (AuthenticationManager):
+        * WebProcess/Geolocation/WebGeolocationManager.h:
+        (WebGeolocationManager):
+        Make all the WebContext sub-objects MessageReceivers to simplify dispatch.
+
 2012-10-10  Simon Fraser  <simon.fraser@apple.com>
 
         Add the mangled symbol name for Frame::layerTreeAsText() to the confusingly named

@@ -29,7 +29,7 @@
 #include "APIObject.h"
 #include "GenericCallback.h"
 #include "ImmutableArray.h"
-
+#include "MessageReceiver.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -49,7 +49,7 @@ class WebSecurityOrigin;
 
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 
-class WebApplicationCacheManagerProxy : public APIObject {
+class WebApplicationCacheManagerProxy : public APIObject, private CoreIPC::MessageReceiver {
 public:
     static const Type APIType = TypeApplicationCacheManager;
 
@@ -63,8 +63,6 @@ public:
     void deleteEntriesForOrigin(WebSecurityOrigin*);
     void deleteAllEntries();
 
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-
     bool shouldTerminate(WebProcessProxy*) const;
 
 private:
@@ -73,7 +71,9 @@ private:
     virtual Type type() const { return APIType; }
 
     void didGetApplicationCacheOrigins(const Vector<SecurityOriginData>&, uint64_t callbackID);
-    
+
+    // CoreIPC::MessageReceiver
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*) OVERRIDE;
     void didReceiveWebApplicationCacheManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
     WebContext* m_webContext;

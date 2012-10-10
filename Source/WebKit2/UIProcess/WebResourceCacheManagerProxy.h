@@ -29,15 +29,10 @@
 #include "APIObject.h"
 #include "Arguments.h"
 #include "GenericCallback.h"
+#include "MessageReceiver.h"
 #include "ResourceCachesToClear.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
-
-namespace CoreIPC {
-class ArgumentDecoder;
-class Connection;
-class MessageID;
-}
 
 namespace WebKit {
 
@@ -48,7 +43,7 @@ class WebSecurityOrigin;
 
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 
-class WebResourceCacheManagerProxy : public APIObject {
+class WebResourceCacheManagerProxy : public APIObject, private CoreIPC::MessageReceiver {
 public:
     static const Type APIType = TypeCacheManager;
 
@@ -62,14 +57,16 @@ public:
     void clearCacheForOrigin(WebSecurityOrigin*, ResourceCachesToClear);
     void clearCacheForAllOrigins(ResourceCachesToClear);
 
-    void didReceiveWebResourceCacheManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-
     bool shouldTerminate(WebProcessProxy*) const;
 
 private:
     explicit WebResourceCacheManagerProxy(WebContext*);
 
     virtual Type type() const { return APIType; }
+
+    // CoreIPC::MessageReceiver
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*) OVERRIDE;
+    void didReceiveWebResourceCacheManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
     // Message handlers.
     void didGetCacheOrigins(const Vector<SecurityOriginData>& originIdentifiers, uint64_t callbackID);

@@ -94,6 +94,7 @@ PassRefPtr<WebDatabaseManagerProxy> WebDatabaseManagerProxy::create(WebContext* 
 WebDatabaseManagerProxy::WebDatabaseManagerProxy(WebContext* webContext)
     : m_webContext(webContext)
 {
+    m_webContext->addMessageReceiver(CoreIPC::MessageClassWebDatabaseManagerProxy, this);
 }
 
 WebDatabaseManagerProxy::~WebDatabaseManagerProxy()
@@ -229,6 +230,11 @@ void WebDatabaseManagerProxy::didModifyDatabase(const String& originIdentifier, 
 {
     RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::createFromDatabaseIdentifier(originIdentifier);
     m_client.didModifyDatabase(this, origin.get(), databaseIdentifier);
+}
+
+void WebDatabaseManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+{
+    didReceiveWebDatabaseManagerProxyMessage(connection, messageID, arguments);
 }
 
 } // namespace WebKit

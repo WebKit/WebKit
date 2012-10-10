@@ -54,6 +54,7 @@ WebIconDatabase::WebIconDatabase(WebContext* context)
     , m_urlImportCompleted(false)
     , m_databaseCleanupDisabled(false)
 {
+    m_webContext->addMessageReceiver(CoreIPC::MessageClassWebIconDatabase, this);
 }
 
 void WebIconDatabase::invalidate()

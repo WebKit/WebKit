@@ -29,6 +29,7 @@
 #include "APIObject.h"
 #include "GenericCallback.h"
 #include "ImmutableArray.h"
+#include "MessageReceiver.h"
 #include "WebCookieManagerProxyClient.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -48,7 +49,7 @@ class WebProcessProxy;
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 typedef GenericCallback<WKHTTPCookieAcceptPolicy, HTTPCookieAcceptPolicy> HTTPCookieAcceptPolicyCallback;
 
-class WebCookieManagerProxy : public APIObject {
+class WebCookieManagerProxy : public APIObject, private CoreIPC::MessageReceiver {
 public:
     static const Type APIType = TypeCookieManager;
 
@@ -74,8 +75,6 @@ public:
     void setCookiePersistentStorage(const String& storagePath, uint32_t storageType);
 #endif
 
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-
     bool shouldTerminate(WebProcessProxy*) const;
 
 private:
@@ -88,6 +87,8 @@ private:
 
     void cookiesDidChange();
     
+    // CoreIPC::MessageReceiver
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*) OVERRIDE;
     void didReceiveWebCookieManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
 #if PLATFORM(MAC)

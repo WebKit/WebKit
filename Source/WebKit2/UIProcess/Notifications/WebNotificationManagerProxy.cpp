@@ -47,6 +47,7 @@ PassRefPtr<WebNotificationManagerProxy> WebNotificationManagerProxy::create(WebC
 WebNotificationManagerProxy::WebNotificationManagerProxy(WebContext* context)
     : m_context(context)
 {
+    m_context->addMessageReceiver(CoreIPC::MessageClassWebNotificationManagerProxy, this);
 }
 
 void WebNotificationManagerProxy::invalidate()

@@ -44,10 +44,30 @@ void MessageReceiverMap::addMessageReceiver(MessageClass messageClass, MessageRe
     m_globalMessageReceiverMap.set(messageClass, messageReceiver);
 }
 
+void MessageReceiverMap::clearAllMessageReceivers()
+{
+    m_globalMessageReceiverMap.clear();
+}
+
+bool MessageReceiverMap::knowsHowToHandleMessage(MessageID messageID) const
+{
+    return m_globalMessageReceiverMap.contains(messageID.messageClass());
+}
+
 bool MessageReceiverMap::dispatchMessage(Connection* connection, MessageID messageID, ArgumentDecoder* argumentDecoder)
 {
     if (MessageReceiver* messageReceiver = m_globalMessageReceiverMap.get(messageID.messageClass())) {
         messageReceiver->didReceiveMessage(connection, messageID, argumentDecoder);
+        return true;
+    }
+
+    return false;
+}
+
+bool MessageReceiverMap::dispatchSyncMessage(Connection* connection, MessageID messageID, ArgumentDecoder* argumentDecoder, OwnPtr<ArgumentEncoder>& reply)
+{
+    if (MessageReceiver* messageReceiver = m_globalMessageReceiverMap.get(messageID.messageClass())) {
+        messageReceiver->didReceiveSyncMessage(connection, messageID, argumentDecoder, reply);
         return true;
     }
 

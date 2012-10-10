@@ -375,36 +375,14 @@ void WebProcessProxy::didClearPluginSiteData(uint64_t callbackID)
 
 void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
-    if (messageID.is<CoreIPC::MessageClassWebProcessProxy>()) {
-        didReceiveWebProcessProxyMessage(connection, messageID, arguments);
+    // FIXME: Come up with a better way to chain to the WebContext.
+    if (m_context->knowsHowToHandleMessage(messageID)) {
+        m_context->didReceiveMessage(this, messageID, arguments);
         return;
     }
 
-    if (messageID.is<CoreIPC::MessageClassWebContext>()
-        || messageID.is<CoreIPC::MessageClassWebContextLegacy>()
-        || messageID.is<CoreIPC::MessageClassDownloadProxy>()
-        || messageID.is<CoreIPC::MessageClassWebApplicationCacheManagerProxy>()
-#if ENABLE(BATTERY_STATUS)
-        || messageID.is<CoreIPC::MessageClassWebBatteryManagerProxy>()
-#endif
-        || messageID.is<CoreIPC::MessageClassWebCookieManagerProxy>()
-        || messageID.is<CoreIPC::MessageClassWebDatabaseManagerProxy>()
-        || messageID.is<CoreIPC::MessageClassWebGeolocationManagerProxy>()
-        || messageID.is<CoreIPC::MessageClassWebIconDatabase>()
-        || messageID.is<CoreIPC::MessageClassWebKeyValueStorageManagerProxy>()
-        || messageID.is<CoreIPC::MessageClassWebMediaCacheManagerProxy>()
-#if ENABLE(NETWORK_INFO)
-        || messageID.is<CoreIPC::MessageClassWebNetworkInfoManagerProxy>()
-#endif
-        || messageID.is<CoreIPC::MessageClassWebNotificationManagerProxy>()
-#if USE(SOUP)
-        || messageID.is<CoreIPC::MessageClassWebSoupRequestManagerProxy>()
-#endif
-#if ENABLE(VIBRATION)
-        || messageID.is<CoreIPC::MessageClassWebVibrationProxy>()
-#endif
-        || messageID.is<CoreIPC::MessageClassWebResourceCacheManagerProxy>()) {
-        m_context->didReceiveMessage(this, messageID, arguments);
+    if (messageID.is<CoreIPC::MessageClassWebProcessProxy>()) {
+        didReceiveWebProcessProxyMessage(connection, messageID, arguments);
         return;
     }
 
@@ -421,17 +399,14 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
 
 void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
 {
-    if (messageID.is<CoreIPC::MessageClassWebProcessProxy>()) {
-        didReceiveSyncWebProcessProxyMessage(connection, messageID, arguments, reply);
+    // FIXME: Come up with a better way to chain to the WebContext.
+    if (m_context->knowsHowToHandleMessage(messageID)) {
+        m_context->didReceiveSyncMessage(this, messageID, arguments, reply);
         return;
     }
 
-    if (messageID.is<CoreIPC::MessageClassWebContext>() || messageID.is<CoreIPC::MessageClassWebContextLegacy>()
-#if ENABLE(NETWORK_INFO)
-        || messageID.is<CoreIPC::MessageClassWebNetworkInfoManagerProxy>()
-#endif
-        || messageID.is<CoreIPC::MessageClassDownloadProxy>() || messageID.is<CoreIPC::MessageClassWebIconDatabase>()) {
-        m_context->didReceiveSyncMessage(this, messageID, arguments, reply);
+    if (messageID.is<CoreIPC::MessageClassWebProcessProxy>()) {
+        didReceiveSyncWebProcessProxyMessage(connection, messageID, arguments, reply);
         return;
     }
 

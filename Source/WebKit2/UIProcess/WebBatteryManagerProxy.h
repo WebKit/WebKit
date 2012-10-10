@@ -29,21 +29,16 @@
 #if ENABLE(BATTERY_STATUS)
 
 #include "APIObject.h"
-#include "MessageID.h"
+#include "MessageReceiver.h"
 #include "WebBatteryProvider.h"
 #include <wtf/Forward.h>
-
-namespace CoreIPC {
-class ArgumentDecoder;
-class Connection;
-}
 
 namespace WebKit {
 
 class WebContext;
 class WebBatteryStatus;
+class WebBatteryManagerProxy : public APIObject, private CoreIPC::MessageReceiver {
 
-class WebBatteryManagerProxy : public APIObject {
 public:
     static const Type APIType = TypeBatteryManager;
 
@@ -58,12 +53,13 @@ public:
     void providerDidChangeBatteryStatus(const WTF::AtomicString&, WebBatteryStatus*);
     void providerUpdateBatteryStatus(WebBatteryStatus*);
 
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-
 private:
     explicit WebBatteryManagerProxy(WebContext*);
 
     virtual Type type() const { return APIType; }
+
+    // CoreIPC::MessageReceiver
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*) OVERRIDE;
 
     // Implemented in generated WebBatteryManagerProxyMessageReceiver.cpp
     void didReceiveWebBatteryManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);

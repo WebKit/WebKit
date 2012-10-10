@@ -41,6 +41,7 @@ PassRefPtr<WebCookieManagerProxy> WebCookieManagerProxy::create(WebContext* cont
 WebCookieManagerProxy::WebCookieManagerProxy(WebContext* context)
     : m_webContext(context)
 {
+    m_webContext->addMessageReceiver(CoreIPC::MessageClassWebCookieManagerProxy, this);
 }
 
 WebCookieManagerProxy::~WebCookieManagerProxy()

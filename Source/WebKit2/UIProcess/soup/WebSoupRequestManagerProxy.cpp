@@ -35,6 +35,7 @@ WebSoupRequestManagerProxy::WebSoupRequestManagerProxy(WebContext* context)
     : m_webContext(context)
     , m_loadFailed(false)
 {
+    m_webContext->addMessageReceiver(CoreIPC::MessageClassWebSoupRequestManagerProxy, this);
 }
 
 WebSoupRequestManagerProxy::~WebSoupRequestManagerProxy()

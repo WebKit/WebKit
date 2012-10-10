@@ -27,10 +27,12 @@
 #define MessageReceiverMap_h
 
 #include "MessageID.h"
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 
 namespace CoreIPC {
 
+class ArgumentEncoder;
 class ArgumentDecoder;
 class Connection;
 class MessageReceiver;
@@ -41,8 +43,11 @@ public:
     ~MessageReceiverMap();
 
     void addMessageReceiver(MessageClass, MessageReceiver*);
+    void clearAllMessageReceivers();
+    bool knowsHowToHandleMessage(MessageID) const;
 
-    bool dispatchMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    bool dispatchMessage(Connection*, MessageID, ArgumentDecoder*);
+    bool dispatchSyncMessage(Connection*, MessageID, ArgumentDecoder*, OwnPtr<ArgumentEncoder>&);
 
 private:
     // Message receivers that don't require a destination ID.
