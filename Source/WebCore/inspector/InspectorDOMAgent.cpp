@@ -957,9 +957,10 @@ bool InspectorDOMAgent::handleMousePress()
     return false;
 }
 
-void InspectorDOMAgent::inspect(Node* node)
+void InspectorDOMAgent::inspect(Node* inspectedNode)
 {
     ErrorString error;
+    RefPtr<Node> node = inspectedNode;
     setSearchingForNode(&error, false, 0);
 
     if (node->nodeType() != Node::ELEMENT_NODE && node->nodeType() != Node::DOCUMENT_NODE)
