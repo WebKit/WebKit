@@ -1,3 +1,22 @@
+2012-10-10  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] REGRESSION: 5 tests started to fail with newer Qt5
+        https://bugs.webkit.org/show_bug.cgi?id=90687
+
+        Unreviewed gardening after r129234.
+
+        Moves the Qt 5 specific results to qt-5.0 directory, while moving the old results to qt-4.8.
+
+        * platform/qt-4.8/http/tests/xmlhttprequest/methods-expected.txt: Copied from LayoutTests/platform/qt/http/tests/xmlhttprequest/methods-expected.txt.
+        * platform/qt-4.8/http/tests/xmlhttprequest/workers/methods-async-expected.txt: Copied from LayoutTests/platform/qt/http/tests/xmlhttprequest/workers/methods-async-expected.txt.
+        * platform/qt-4.8/http/tests/xmlhttprequest/workers/methods-expected.txt: Copied from LayoutTests/platform/qt/http/tests/xmlhttprequest/workers/methods-expected.txt.
+        * platform/qt-4.8/http/tests/xmlhttprequest/workers/shared-worker-methods-async-expected.txt: Copied from LayoutTests/platform/qt/http/tests/xmlhttprequest/workers/shared-worker-methods-async-expected.txt.
+        * platform/qt-5.0/http/tests/cookies/double-quoted-value-with-semi-colon-expected.txt: Renamed from LayoutTests/platform/qt/http/tests/cookies/double-quoted-value-with-semi-colon-expected.txt.
+        * platform/qt-5.0/http/tests/xmlhttprequest/methods-expected.txt: Renamed from LayoutTests/platform/qt/http/tests/xmlhttprequest/methods-expected.txt.
+        * platform/qt-5.0/http/tests/xmlhttprequest/workers/methods-async-expected.txt: Renamed from LayoutTests/platform/qt/http/tests/xmlhttprequest/workers/methods-async-expected.txt.
+        * platform/qt-5.0/http/tests/xmlhttprequest/workers/methods-expected.txt: Renamed from LayoutTests/platform/qt/http/tests/xmlhttprequest/workers/methods-expected.txt.
+        * platform/qt-5.0/http/tests/xmlhttprequest/workers/shared-worker-methods-async-expected.txt: Renamed from LayoutTests/platform/qt/http/tests/xmlhttprequest/workers/shared-worker-methods-async-expected.txt.
+
 2012-10-10  Adam Barth  <abarth@webkit.org>
 
         Record that these tests have additional failure modes.
