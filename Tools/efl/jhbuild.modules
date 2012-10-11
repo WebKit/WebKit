@@ -272,7 +272,8 @@
     </dependencies>
   </autotools>
 
-  <autotools id="elementary">
+  <autotools id="elementary"
+             autogenargs="--disable-web">
     <branch module="releases/elementary-1.7.0.tar.gz" version="1.7.0"
             checkoutdir="elementary-1.7.0"
             repo="download.enlightenment.org"
