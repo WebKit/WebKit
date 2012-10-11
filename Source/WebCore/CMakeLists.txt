@@ -2685,7 +2685,6 @@ IF (WTF_USE_3D_GRAPHICS)
 ENDIF ()
 
 SET(WebCoreTestSupport_INCLUDE_DIRECTORIES
-    "${WebCore_INCLUDE_DIRECTORIES}"
     "${WEBCORE_DIR}/testing"
 )
 
