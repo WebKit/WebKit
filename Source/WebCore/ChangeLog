@@ -1,3 +1,15 @@
+2012-10-11  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: The 'X' of the close button of Settings view is not centered
+        https://bugs.webkit.org/show_bug.cgi?id=99008
+
+        Reviewed by Alexander Pavlov.
+
+        Fixed text positioning in CSS.
+
+        * inspector/front-end/helpScreen.css:
+        (.help-close-button):
+
 2012-10-11  Kent Tamura  <tkent@chromium.org>
 
         Introduce Localizer::isRTL, and use it in DateTimeChooserImpl
