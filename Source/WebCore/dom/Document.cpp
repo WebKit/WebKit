@@ -5071,9 +5071,17 @@ void Document::requestFullScreenForElement(Element* element, unsigned short flag
         // There is a previously-established user preference, security risk, or platform limitation.
         if (!page() || !page()->settings()->fullScreenEnabled())
             break;
-        
-        if (!page()->chrome()->client()->supportsFullScreenForElement(element, flags & Element::ALLOW_KEYBOARD_INPUT))
-            break;
+
+        if (!page()->chrome()->client()->supportsFullScreenForElement(element, flags & Element::ALLOW_KEYBOARD_INPUT)) {
+            // The new full screen API does not accept a "flags" parameter, so fall back to disallowing
+            // keyboard input if the chrome client refuses to allow keyboard input.
+            if (!inLegacyMozillaMode && flags & Element::ALLOW_KEYBOARD_INPUT) {
+                flags &= ~Element::ALLOW_KEYBOARD_INPUT;
+                if (!page()->chrome()->client()->supportsFullScreenForElement(element, false))
+                    break;
+            } else
+                break;
+        }
 
         // 2. Let doc be element's node document. (i.e. "this")
         Document* currentDoc = this;
