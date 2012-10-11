@@ -83,7 +83,7 @@ protected:
 private:
     ScrollingStateNode* m_parent;
 
-    Vector<OwnPtr<ScrollingStateNode> >* m_children;
+    OwnPtr<Vector<OwnPtr<ScrollingStateNode> > > m_children;
 
     bool m_scrollLayerDidChange;
 

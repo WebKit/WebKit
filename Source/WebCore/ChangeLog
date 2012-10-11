@@ -1,3 +1,19 @@
+2012-10-11  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=99111
+        ScrollingStateNode should keep its Vector of children in an OwnPtr
+
+        Reviewed by Ada Chan.
+
+        Vector<OwnPtr<ScrollingStateNode> >* m_children; is now:
+         OwnPtr<Vector<OwnPtr<ScrollingStateNode> > > m_children;
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::ScrollingStateNode):
+        (WebCore::ScrollingStateNode::~ScrollingStateNode):
+        (WebCore::ScrollingStateNode::appendChild):
+        * page/scrolling/ScrollingStateNode.h:
+        (ScrollingStateNode):
+
 2012-10-11  Levi Weintraub  <leviw@chromium.org>
 
         [Sub pixel layout] Fast-path iframe scrolling can picks up an extra pixel
