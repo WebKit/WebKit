@@ -100,7 +100,7 @@ static inline int cssyyerror(void*, const char*)
 
 %}
 
-%expect 63
+%expect 65
 
 %nonassoc LOWEST_PREC
 
@@ -534,9 +534,15 @@ maybe_media_value:
     ;
 
 media_query_exp:
-    '(' maybe_space media_feature maybe_space maybe_media_value ')' maybe_space {
-        $3.lower();
-        $$ = parser->createFloatingMediaQueryExp($3, $5);
+    maybe_media_restrictor maybe_space '(' maybe_space media_feature maybe_space maybe_media_value ')' maybe_space {
+        // If restrictor is specified, media query expression is invalid.
+        // Create empty media query expression and continue parsing media query.
+        if ($1 != MediaQuery::None)
+            $$ = parser->createFloatingMediaQueryExp("", 0);
+        else {
+            $5.lower();
+            $$ = parser->createFloatingMediaQueryExp($5, $7);
+        }
     }
     ;
 

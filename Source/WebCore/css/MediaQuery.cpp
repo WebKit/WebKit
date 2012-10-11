@@ -41,32 +41,36 @@ namespace WebCore {
 String MediaQuery::serialize() const
 {
     StringBuilder result;
+    if (!m_ignored) {
+        switch (m_restrictor) {
+        case MediaQuery::Only:
+            result.append("only ");
+            break;
+        case MediaQuery::Not:
+            result.append("not ");
+            break;
+        case MediaQuery::None:
+            break;
+        }
 
-    switch (m_restrictor) {
-    case MediaQuery::Only:
-        result.append("only ");
-        break;
-    case MediaQuery::Not:
-        result.append("not ");
-        break;
-    case MediaQuery::None:
-        break;
-    }
+        if (m_expressions->isEmpty()) {
+            result.append(m_mediaType);
+            return result.toString();
+        }
 
-    if (m_expressions->isEmpty()) {
-        result.append(m_mediaType);
-        return result.toString();
-    }
+        if (m_mediaType != "all" || m_restrictor != None) {
+            result.append(m_mediaType);
+            result.append(" and ");
+        }
 
-    if (m_mediaType != "all" || m_restrictor != None) {
-        result.append(m_mediaType);
-        result.append(" and ");
-    }
-
-    result.append(m_expressions->at(0)->serialize());
-    for (size_t i = 1; i < m_expressions->size(); ++i) {
-        result.append(" and ");
-        result.append(m_expressions->at(i)->serialize());
+        result.append(m_expressions->at(0)->serialize());
+        for (size_t i = 1; i < m_expressions->size(); ++i) {
+            result.append(" and ");
+            result.append(m_expressions->at(i)->serialize());
+        }
+    } else {
+        // If query is invalid, serialized text should turn into "not all".
+        result.append("not all");
     }
     return result.toString();
 }

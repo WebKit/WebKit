@@ -1,3 +1,19 @@
+2012-10-10  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        Invalid values for media query features are not handled
+        https://bugs.webkit.org/show_bug.cgi?id=97006
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Imported CSS3 Media Queries test suite from http://www.w3.org/Style/CSS/Test/MediaQueries/20120229/
+
+        * fast/media/media-query-invalid-value.html: Fixed invalid media query.
+        * fast/media/media-query-serialization.html: Fixed invalid media query.
+        * fast/media/w3c/README: Added.
+        * fast/media/w3c/resources/media_queries_iframe.html: Added. (Imported from w3c test suite)
+        * fast/media/w3c/test_media_queries-expected.txt: Added.
+        * fast/media/w3c/test_media_queries.html: Added. (Imported from w3c test suite)
+
 2012-10-10  MORITA Hajime  <morrita@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=95664

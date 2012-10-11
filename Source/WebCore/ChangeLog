@@ -1,3 +1,27 @@
+2012-10-10  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        Invalid values for media query features are not handled
+        https://bugs.webkit.org/show_bug.cgi?id=97006
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This patch improves pass rate of CSS3 Media Queries test suite
+        by making media expressions compliant with W3C specification. Few
+        performance issues are fixed by removal of string comparison during
+        media expression evaluation.
+
+        Tests: fast/media/w3c/test_media_queries.html
+
+        * css/CSSGrammar.y: Handle media query expression with specified media restrictor as invalid.
+        * css/MediaQuery.cpp:
+        (WebCore::MediaQuery::serialize): Serialize invalid query according to specification.
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::orientationMediaFeatureEval): Compare CSSValueID instead of strings.
+        (WebCore::view_modeMediaFeatureEval): Compare CSSValueID instead of strings.
+        (WebCore::pointerMediaFeatureEval): Compare CSSValueID instead of strings.
+        * css/MediaQueryExp.cpp:
+        (WebCore::MediaQueryExp::MediaQueryExp): Check that media features initialized with correct values.
+
 2012-10-10  Justin Novosad  <junov@chromium.org>
 
         [Chromium] Smoother animation for non-RAF 2D canvas animations

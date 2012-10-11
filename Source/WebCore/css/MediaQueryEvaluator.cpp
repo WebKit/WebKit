@@ -31,6 +31,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -243,16 +244,18 @@ static bool monochromeMediaFeatureEval(CSSValue* value, RenderStyle* style, Fram
 
 static bool orientationMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix)
 {
-    // A missing parameter should fail
-    if (!value)
-        return false;
-
     FrameView* view = frame->view();
     int width = view->layoutWidth();
     int height = view->layoutHeight();
-    if (width > height) // Square viewport is portrait
-        return "landscape" == static_cast<CSSPrimitiveValue*>(value)->getStringValue();
-    return "portrait" == static_cast<CSSPrimitiveValue*>(value)->getStringValue();
+    if (value && value->isPrimitiveValue()) {
+        const int id = static_cast<CSSPrimitiveValue*>(value)->getIdent();
+        if (width > height) // Square viewport is portrait.
+            return CSSValueLandscape == id;
+        return CSSValuePortrait == id;
+    }
+
+    // Expression (orientation) evaluates to true if width and height >= 0.
+    return height >= 0 && width >= 0;
 }
 
 static bool aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix op)
@@ -534,7 +537,32 @@ static bool view_modeMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* fram
     UNUSED_PARAM(op);
     if (!value)
         return true;
-    return Page::stringToViewMode(static_cast<CSSPrimitiveValue*>(value)->getStringValue()) == frame->page()->viewMode();
+
+    const int viewModeCSSKeywordID = static_cast<CSSPrimitiveValue*>(value)->getIdent();
+    const Page::ViewMode viewMode = frame->page()->viewMode();
+    bool result = false;
+    switch (viewMode) {
+    case Page::ViewModeWindowed:
+        result = viewModeCSSKeywordID == CSSValueWindowed;
+        break;
+    case Page::ViewModeFloating:
+        result = viewModeCSSKeywordID == CSSValueFloating;
+        break;
+    case Page::ViewModeFullscreen:
+        result = viewModeCSSKeywordID == CSSValueFullscreen;
+        break;
+    case Page::ViewModeMaximized:
+        result = viewModeCSSKeywordID == CSSValueMaximized;
+        break;
+    case Page::ViewModeMinimized:
+        result = viewModeCSSKeywordID == CSSValueMinimized;
+        break;
+    default:
+        result = false;
+        break;
+    }
+
+    return result;
 }
 
 enum PointerDeviceType { TouchPointer, MousePointer, NoPointer, UnknownPointer };
@@ -591,10 +619,10 @@ static bool pointerMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame,
     if (!value->isPrimitiveValue())
         return false;
 
-    String str = static_cast<CSSPrimitiveValue*>(value)->getStringValue();
-    return (pointer == NoPointer && str == "none")
-        || (pointer == TouchPointer && str == "coarse")
-        || (pointer == MousePointer && str == "fine");
+    const int id = static_cast<CSSPrimitiveValue*>(value)->getIdent();
+    return (pointer == NoPointer && id == CSSValueNone)
+        || (pointer == TouchPointer && id == CSSValueCoarse)
+        || (pointer == MousePointer && id == CSSValueFine);
 }
 
 static void createFunctionMap()

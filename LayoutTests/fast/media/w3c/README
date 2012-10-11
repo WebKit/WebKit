@@ -1,0 +1,31 @@
+Imported CSS3 MediaQuery test suite from:
+http://www.w3.org/Style/CSS/Test/MediaQueries/20120229/
+
+* Media Queries Test Suite
+
+This is a Release Candidate version of the official W3C Media Queries Test Suite. It relies on support for HTML,
+ECMAScript, and the DOM.
+
+This test suite is considered to be complete with no known or suspected bugs at the time of its publication.
+If you find any errors, would like to contribute additional tests, or have other feedback, please post to the
+archived public discussion mailing list for CSS test suites, public-css-testsuite@w3.org.
+
+An implementation report is available. (If you would like to add an implementation to the report,
+please send a patch to public-css-testsuite@w3.org.)
+
+* Test Suite
+
+The test suite is a single self-contained file that thoroughly tests Media Queries via a script: Media Queries Self-Contained Test Suite.
+
+* License
+
+This test suite is licensed under both the W3C Test Suite License and the W3C 3-clause BSD License. See W3C Legal's explanation of the licenses.
+
+* Acknowledgements
+
+Many thanks to the following for their contributions:
+
+ Anne van Kesteren
+ Ian Hickson
+ L. David Baron
+ Arron Eicholz
