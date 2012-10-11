@@ -19,6 +19,7 @@
 #include "config.h"
 #include "NetworkJob.h"
 
+#include "AuthenticationChallengeManager.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "CookieManager.h"
@@ -84,7 +85,14 @@ NetworkJob::NetworkJob()
     , m_deferredData(*this)
     , m_deferLoadingCount(0)
     , m_frame(0)
+    , m_isAuthenticationChallenging(false)
 {
+}
+
+NetworkJob::~NetworkJob()
+{
+    if (m_isAuthenticationChallenging)
+        AuthenticationChallengeManager::instance()->cancelAuthenticationChallenge(this);
 }
 
 bool NetworkJob::initialize(int playerId,
@@ -197,10 +205,8 @@ void NetworkJob::handleNotifyStatusReceived(int status, const String& message)
 
     m_response.setHTTPStatusText(message);
 
-    if (isUnauthorized(m_extendedStatusCode)) {
+    if (isUnauthorized(m_extendedStatusCode))
         purgeCredentials();
-        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical, "Authentication failed, purge the stored credentials for this site.");
-    }
 }
 
 void NetworkJob::notifyHeadersReceived(BlackBerry::Platform::NetworkRequest::HeaderList& headers)
@@ -478,6 +484,7 @@ void NetworkJob::handleNotifyClose(int status)
 #ifndef NDEBUG
     m_isRunning = false;
 #endif
+
     if (!m_cancelled) {
         if (!m_statusReceived) {
             // Connection failed before sending notifyStatusReceived: use generic NetworkError.
@@ -489,6 +496,7 @@ void NetworkJob::handleNotifyClose(int status)
                 m_extendedStatusCode = BlackBerry::Platform::FilterStream::StatusTooManyRedirects;
 
             sendResponseIfNeeded();
+
             if (isClientAvailable()) {
                 if (isError(status))
                     m_extendedStatusCode = status;
@@ -514,7 +522,7 @@ void NetworkJob::handleNotifyClose(int status)
 
 bool NetworkJob::shouldReleaseClientResource()
 {
-    if ((m_needsRetryAsFTPDirectory && retryAsFTPDirectory()) || (isRedirect(m_extendedStatusCode) && handleRedirect()) || m_newJobWithCredentialsStarted)
+    if ((m_needsRetryAsFTPDirectory && retryAsFTPDirectory()) || (isRedirect(m_extendedStatusCode) && handleRedirect()) || m_newJobWithCredentialsStarted || m_isAuthenticationChallenging)
         return false;
     return true;
 }
@@ -784,8 +792,13 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
                 return false;
 
             m_handle->getInternal()->m_currentWebChallenge = AuthenticationChallenge();
-            m_frame->page()->chrome()->client()->platformPageClient()->authenticationChallenge(newURL, protectionSpace, Credential(), this);
-            return true;
+
+            m_isAuthenticationChallenging = true;
+            updateDeferLoadingCount(1);
+
+            AuthenticationChallengeManager::instance()->authenticationChallenge(newURL, protectionSpace,
+                Credential(), this, m_frame->page()->chrome()->client()->platformPageClient());
+            return false;
         }
 
         credential = Credential(username, password, CredentialPersistenceForSession);
@@ -846,16 +859,25 @@ void NetworkJob::fireDeleteJobTimer(Timer<NetworkJob>*)
 
 void NetworkJob::notifyChallengeResult(const KURL& url, const ProtectionSpace& protectionSpace, AuthenticationChallengeResult result, const Credential& credential)
 {
-    if (result != AuthenticationChallengeSuccess || protectionSpace.host().isEmpty() || !url.isValid()) {
-        m_newJobWithCredentialsStarted = false;
-        return;
+    ASSERT(url.isValid());
+    ASSERT(url == m_response.url());
+    ASSERT(!protectionSpace.host().isEmpty());
+
+    if (m_isAuthenticationChallenging) {
+        m_isAuthenticationChallenging = false;
+        if (result == AuthenticationChallengeSuccess)
+            cancelJob();
+        updateDeferLoadingCount(-1);
     }
+
+    if (result != AuthenticationChallengeSuccess)
+        return;
 
     if (m_handle->getInternal()->m_currentWebChallenge.isNull())
         m_handle->getInternal()->m_currentWebChallenge = AuthenticationChallenge(protectionSpace, credential, 0, m_response, ResourceError());
 
     ResourceRequest newRequest = m_handle->firstRequest();
-    newRequest.setURL(m_response.url());
+    newRequest.setURL(url);
     newRequest.setMustHandleInternally(true);
     m_newJobWithCredentialsStarted = startNewJobWithRequest(newRequest);
 }

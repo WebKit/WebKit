@@ -20,6 +20,7 @@
 #include "BlackBerryGlobal.h"
 
 #include "ApplicationCacheStorage.h"
+#include "AuthenticationChallengeManager.h"
 #include "CacheClientBlackBerry.h"
 #include "CookieManager.h"
 #include "CrossOriginPreflightResultCache.h"
@@ -80,6 +81,8 @@ void globalInitialize()
     BlackBerry::Platform::Settings* settings = BlackBerry::Platform::Settings::instance();
 
     ImageSource::setMaxPixelsPerDecodedImage(settings->maxPixelsPerDecodedImage());
+
+    AuthenticationChallengeManager::init();
 }
 
 void collectJavascriptGarbageNow()

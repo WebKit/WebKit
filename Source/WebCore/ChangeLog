@@ -1,3 +1,72 @@
+2012-10-10  Lianghui Chen  <liachen@rim.com>
+
+        [BlackBerry] Fix assertion in NetworkJob::notifyChallengeResult.
+        https://bugs.webkit.org/show_bug.cgi?id=97397
+        Internal PR: 186597.
+
+        Internally reviewed by Yong Li, Joe Mason.
+        Reviewed by George Staikos.
+
+        Add a singleton AuthenticationChallengeManager to manage authentication
+        challenge dialog. It does following things:
+        Record page creation/deletion, so it knows what page is present or not.
+        Record page visibility change so it knows when to display a dialog or not.
+        Accept authentication challenge, and decide whether to postpone the
+            challenge dialog based on whether there is active authentication challenge
+            dialog already and whether its page is visible or not.
+        When a challenge result comes back, notify the result to all clients
+            authenticating for the same protection space, and then start the next
+            authentication challenge from the same page, if there is one.
+        When a page becomes visible, start the first authentication challenge
+            dialog that has been blocked before.
+        When an authentication challenge is requested, the NetworkJob will be
+            deferred so its initial response will be saved while waiting for
+            user decision on the challenge.
+
+        No new tests for platform specific internal change.
+
+        * PlatformBlackBerry.cmake:
+        * platform/blackberry/AuthenticationChallengeManager.cpp: Added.
+        (WebCore):
+        (ChallengeInfo):
+        (WebCore::ChallengeInfo::ChallengeInfo):
+        (AuthenticationChallengeManagerPrivate):
+        (WebCore::AuthenticationChallengeManagerPrivate::AuthenticationChallengeManagerPrivate):
+        (WebCore::AuthenticationChallengeManagerPrivate::resumeAuthenticationChallenge):
+        (WebCore::AuthenticationChallengeManagerPrivate::startAuthenticationChallenge):
+        (WebCore::AuthenticationChallengeManagerPrivate::pageExists):
+        (WebCore::AuthenticationChallengeManager::AuthenticationChallengeManager):
+        (WebCore::AuthenticationChallengeManager::pageCreated):
+        (WebCore::AuthenticationChallengeManager::pageDeleted):
+        (WebCore::AuthenticationChallengeManager::pageVisibilityChanged):
+        (WebCore::AuthenticationChallengeManager::authenticationChallenge):
+        (WebCore::AuthenticationChallengeManager::cancelAuthenticationChallenge):
+        (WebCore::AuthenticationChallengeManager::notifyChallengeResult):
+        (WebCore::AuthenticationChallengeManager::instance):
+        (WebCore::AuthenticationChallengeManager::init):
+        * platform/blackberry/AuthenticationChallengeManager.h:
+        (WebCore):
+        (AuthenticationChallengeManager):
+        * platform/blackberry/PageClientBlackBerry.h:
+        * platform/graphics/blackberry/MediaPlayerPrivateBlackBerry.cpp:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::~MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::onAuthenticationNeeded):
+        (WebCore::MediaPlayerPrivate::notifyChallengeResult):
+        * platform/graphics/blackberry/MediaPlayerPrivateBlackBerry.h:
+        (MediaPlayerPrivate):
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::NetworkJob):
+        (WebCore::NetworkJob::~NetworkJob):
+        (WebCore):
+        (WebCore::NetworkJob::handleNotifyStatusReceived):
+        (WebCore::NetworkJob::handleNotifyClose):
+        (WebCore::NetworkJob::shouldReleaseClientResource):
+        (WebCore::NetworkJob::sendRequestWithCredentials):
+        (WebCore::NetworkJob::notifyChallengeResult):
+        * platform/network/blackberry/NetworkJob.h:
+        (NetworkJob):
+
 2012-10-10  Simon Fraser  <simon.fraser@apple.com>
 
         compositing/tiling/crash-reparent-tiled-layer.html is flakey

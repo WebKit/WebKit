@@ -21,6 +21,7 @@
 #if ENABLE(VIDEO)
 #include "MediaPlayerPrivateBlackBerry.h"
 
+#include "AuthenticationChallengeManager.h"
 #include "CookieManager.h"
 #include "Credential.h"
 #include "CredentialStorage.h"
@@ -114,6 +115,7 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_userDrivenSeekTimer(this, &MediaPlayerPrivate::userDrivenSeekTimerFired)
     , m_lastSeekTime(0)
     , m_lastSeekTimePending(false)
+    , m_isAuthenticationChallenging(false)
     , m_waitMetadataTimer(this, &MediaPlayerPrivate::waitMetadataTimerFired)
     , m_waitMetadataPopDialogCounter(0)
 {
@@ -121,6 +123,9 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
 
 MediaPlayerPrivate::~MediaPlayerPrivate()
 {
+    if (m_isAuthenticationChallenging)
+        AuthenticationChallengeManager::instance()->cancelAuthenticationChallenge(this);
+
     if (isFullscreen()) {
         m_webCorePlayer->mediaPlayerClient()->mediaPlayerExitFullscreen();
     }
@@ -713,12 +718,18 @@ void MediaPlayerPrivate::onAuthenticationNeeded(MMRAuthChallenge& authChallenge)
         return;
     }
 
-    if (frameView() && frameView()->hostWindow())
-        frameView()->hostWindow()->platformPageClient()->authenticationChallenge(url, protectionSpace, credential, this);
+    if (!frameView() || !frameView()->hostWindow())
+        return;
+
+    m_isAuthenticationChallenging = true;
+    AuthenticationChallengeManager::instance()->authenticationChallenge(url, protectionSpace, credential,
+        this, frameView()->hostWindow()->platformPageClient());
 }
 
 void MediaPlayerPrivate::notifyChallengeResult(const KURL& url, const ProtectionSpace& protectionSpace, AuthenticationChallengeResult result, const Credential& credential)
 {
+    m_isAuthenticationChallenging = false;
+
     if (result != AuthenticationChallengeSuccess || !url.isValid())
         return;
 

@@ -61,6 +61,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/cpp/WebDOMString.cpp
     bindings/cpp/WebExceptionHandler.cpp
     platform/blackberry/CookieDatabaseBackingStore/CookieDatabaseBackingStore.cpp
+    platform/blackberry/AuthenticationChallengeManager.cpp
     platform/blackberry/CookieManager.cpp
     platform/blackberry/CookieMap.cpp
     platform/blackberry/CookieParser.cpp
