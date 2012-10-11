@@ -1,3 +1,21 @@
+2012-10-11  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Some shadow roots are not showing up in Inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=88251
+
+        Reviewed by Pavel Feldman.
+
+        When an element has only text node, its shadow root is not showing up in Inspector, since
+        child text is shown in oneline. We had to prevent from inlining child text when a shadow root is
+        added.
+
+        Test: inspector/elements/shadow-root.html
+
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode):
+        (WebInspector.DOMNode.prototype.hasShadowRoots):
+        * inspector/front-end/ElementsTreeOutline.js:
+
 2012-10-11  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] More responsive scroll animations

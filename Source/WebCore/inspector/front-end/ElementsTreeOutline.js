@@ -1859,6 +1859,9 @@ WebInspector.ElementsTreeElement.prototype = {
         if (!firstChild || firstChild.nodeType() !== Node.TEXT_NODE)
             return null;
 
+        if (node.hasShadowRoots())
+            return null;
+
         var sibling = firstChild.nextSibling;
         return sibling ? null : firstChild;
     },

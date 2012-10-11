@@ -67,6 +67,14 @@ WebInspector.DOMNode = function(domAgent, doc, isInShadowTree, payload) {
     this.lastChild = null;
     this.parentNode = null;
 
+    if (payload.shadowRoots && WebInspector.settings.showShadowDOM.get()) {
+        for (var i = 0; i < payload.shadowRoots.length; ++i) {
+            var root = payload.shadowRoots[i];
+            var node = new WebInspector.DOMNode(this._domAgent, this.ownerDocument, true, root);
+            this._shadowRoots.push(node);
+        }
+    }
+
     if (payload.children)
         this._setChildrenPayload(payload.children);
 
@@ -74,14 +82,6 @@ WebInspector.DOMNode = function(domAgent, doc, isInShadowTree, payload) {
         this._contentDocument = new WebInspector.DOMDocument(domAgent, payload.contentDocument);
         this.children = [this._contentDocument];
         this._renumber();
-    }
-
-    if (payload.shadowRoots && WebInspector.settings.showShadowDOM.get()) {
-        for (var i = 0; i < payload.shadowRoots.length; ++i) {
-            var root = payload.shadowRoots[i];
-            var node = new WebInspector.DOMNode(this._domAgent, this.ownerDocument, true, root);
-            this._shadowRoots.push(node);
-        }
     }
 
     if (this._nodeType === Node.ELEMENT_NODE) {
@@ -133,6 +133,14 @@ WebInspector.DOMNode.prototype = {
     hasChildNodes: function()
     {
         return this._childNodeCount > 0 || !!this._shadowRoots.length;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    hasShadowRoots: function()
+    {
+        return !!this._shadowRoots.length;
     },
 
     /**

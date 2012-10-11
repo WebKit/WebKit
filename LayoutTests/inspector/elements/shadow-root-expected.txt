@@ -1,0 +1,17 @@
+This test verified #shadow-root is displayed when showShadowRoot is enabled.
+
+- <div id="container">
+    - <div id="test1">
+          #shadow-root
+      </div>
+    - <div id="test2">
+          #shadow-root
+          "only test"
+      </div>
+    - <div id="test3">
+          #shadow-root
+          "with "
+          <span>elements</span>
+      </div>
+  </div>
+

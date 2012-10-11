@@ -1,0 +1,41 @@
+<html>
+<head>
+<script src="../../fast/dom/shadow/resources/polyfill.js"></script>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function initialize_shadowSettings()
+{
+    WebInspector.settings.showShadowDOM.set(true);
+}
+
+function test()
+{
+    InspectorTest.expandElementsTree(function() {
+        var container = InspectorTest.expandedNodeWithId("container");
+        InspectorTest.dumpElementsTree(container);
+        InspectorTest.completeTest();
+    });
+}
+</script>
+</head>
+
+<body onload="runTest()">
+
+<p id="description">This test verified #shadow-root is displayed when showShadowRoot is enabled.</p>
+
+<div id="container">
+    <div id="test1"></div>
+    <div id="test2">only test</div>
+    <div id="test3">with <span>elements</span></div>
+</div>
+
+<script>
+new WebKitShadowRoot(test1);
+new WebKitShadowRoot(test2);
+new WebKitShadowRoot(test3);
+</script>
+
+</body>
+</html>
