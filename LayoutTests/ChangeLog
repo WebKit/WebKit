@@ -1,3 +1,18 @@
+2012-10-11  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] More unreviewed gardening.
+
+        Revert my r130959, it turns out the tests being reported as
+        failing were ones which were not listed in TestExpectations at
+        all, so no cookie for me.
+
+        Also add `Missing' as a valid expectation for
+        fast/css/text-rendering.html. While at it remove the text
+        expectations for it, since the test is failing for us anyway.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/css/text-rendering-expected.txt: Removed.
+
 2012-10-11  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Elements] Breadcrumbs are not updated upon involved elements' className changes

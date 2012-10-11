@@ -1045,14 +1045,16 @@ webkit.org/b/61932 [ Debug ] jquery/manipulation.html [ Failure Pass Timeout ]
 # These test -apple- prefixed CSS properties, which we don't support.
 fast/css/apple-prefix.html [ WontFix ]
 
-webkit.org/b/75747 fast/css/color-correction-on-background-image.html [ Skip ]
-webkit.org/b/75747 fast/css/color-correction-on-backgrounds.html [ Skip ]
-webkit.org/b/75747 fast/css/color-correction-on-box-shadow.html [ Skip ]
-webkit.org/b/75747 fast/css/color-correction-on-text.html [ Skip ]
-webkit.org/b/75747 fast/css/color-correction-on-text-shadow.html [ Skip ]
-webkit.org/b/75747 fast/css/color-correction-untagged-images.html [ Skip ]
+webkit.org/b/75747 fast/css/color-correction-backgrounds-and-text.html [ Missing Failure ]
+webkit.org/b/75747 fast/css/color-correction-on-background-image.html [ Missing Failure ]
+webkit.org/b/75747 fast/css/color-correction-on-backgrounds.html [ Missing Failure ]
+webkit.org/b/75747 fast/css/color-correction-on-box-shadow.html [ Missing Failure ]
+webkit.org/b/75747 fast/css/color-correction-on-text-shadow.html [ Missing Failure ]
+webkit.org/b/75747 fast/css/color-correction-on-text.html [ Missing Failure ]
+webkit.org/b/75747 fast/css/color-correction-untagged-images.html [ Missing Failure ]
+webkit.org/b/75747 fast/css/color-correction.html [ Missing Failure ]
 
-webkit.org/b/65536 fast/css/text-rendering.html [ Failure ]
+webkit.org/b/65536 fast/css/text-rendering.html [ Missing Failure ]
 
 webkit.org/b/49142 fast/css/style-scoped [ Failure ]
 
