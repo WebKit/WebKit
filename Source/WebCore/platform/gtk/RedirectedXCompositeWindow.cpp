@@ -109,19 +109,20 @@ RedirectedXCompositeWindow::RedirectedXCompositeWindow(const IntSize& size)
     , m_damageNotifyData(0)
 {
     Display* display = GLContext::sharedX11Display();
+    Screen* screen = DefaultScreenOfDisplay(display);
 
     // This is based on code from Chromium: src/content/common/gpu/image_transport_surface_linux.cc
     XSetWindowAttributes windowAttributes;
     windowAttributes.override_redirect = True;
     m_parentWindow = XCreateWindow(display,
-                                   RootWindow(display, DefaultScreen(display)),
-                                   -100, -100, 1, 1,
-                                   0,
-                                   CopyFromParent,
-                                   InputOutput,
-                                   CopyFromParent,
-                                   CWOverrideRedirect,
-                                   &windowAttributes);
+        RootWindowOfScreen(screen),
+        WidthOfScreen(screen) + 1, 0, 1, 1,
+        0,
+        CopyFromParent,
+        InputOutput,
+        CopyFromParent,
+        CWOverrideRedirect,
+        &windowAttributes);
     XMapWindow(display, m_parentWindow);
 
     windowAttributes.event_mask = StructureNotifyMask;

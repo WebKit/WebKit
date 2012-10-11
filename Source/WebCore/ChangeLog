@@ -1,3 +1,18 @@
+2012-10-11  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        accelerated compositing does not work with ati driver
+        https://bugs.webkit.org/show_bug.cgi?id=97472
+
+        Reviewed by Martin Robinson.
+
+        Create m_parentWindow at positive position. Otherwise, parts of it are
+        not displayed on ati drivers.
+
+        Covered by existing tests.
+
+        * platform/gtk/RedirectedXCompositeWindow.cpp:
+        (WebCore::RedirectedXCompositeWindow::RedirectedXCompositeWindow):
+
 2012-10-11  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Fix JPEG decoding faiure when IMAGE_DECODER_DOWN_SAMPLING is enabled
