@@ -117,7 +117,7 @@ Eina_Bool ewk_settings_file_access_from_file_urls_allowed_get(const Ewk_Settings
     return WKPreferencesGetFileAccessFromFileURLsAllowed(settings->preferences.get());
 }
 
-Eina_Bool ewk_settings_enable_frame_flattening_set(Ewk_Settings* settings, Eina_Bool enable)
+Eina_Bool ewk_settings_frame_flattening_enabled_set(Ewk_Settings* settings, Eina_Bool enable)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
@@ -126,14 +126,14 @@ Eina_Bool ewk_settings_enable_frame_flattening_set(Ewk_Settings* settings, Eina_
     return true;
 }
 
-Eina_Bool ewk_settings_enable_frame_flattening_get(const Ewk_Settings* settings)
+Eina_Bool ewk_settings_frame_flattening_enabled_get(const Ewk_Settings* settings)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
     return WKPreferencesGetFrameFlatteningEnabled(settings->preferences.get());
 }
 
-Eina_Bool ewk_settings_DNS_prefetching_enabled_set(Ewk_Settings* settings, Eina_Bool enable)
+Eina_Bool ewk_settings_dns_prefetching_enabled_set(Ewk_Settings* settings, Eina_Bool enable)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
@@ -142,7 +142,7 @@ Eina_Bool ewk_settings_DNS_prefetching_enabled_set(Ewk_Settings* settings, Eina_
     return true;
 }
 
-Eina_Bool ewk_settings_DNS_prefetching_enabled_get(const Ewk_Settings* settings)
+Eina_Bool ewk_settings_dns_prefetching_enabled_get(const Ewk_Settings* settings)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 

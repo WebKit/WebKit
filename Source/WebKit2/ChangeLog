@@ -1,3 +1,21 @@
+2012-10-11  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Revisit setting API names and documentation
+        https://bugs.webkit.org/show_bug.cgi?id=98793
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make setting API names to be consistent and revisit the documentation.
+
+        * UIProcess/API/efl/ewk_settings.cpp:
+        (ewk_settings_frame_flattening_enabled_set):
+        (ewk_settings_frame_flattening_enabled_get):
+        (ewk_settings_dns_prefetching_enabled_set):
+        (ewk_settings_dns_prefetching_enabled_get):
+        * UIProcess/API/efl/ewk_settings.h:
+        * UIProcess/API/efl/tests/test_ewk2_settings.cpp:
+        (TEST_F):
+
 2012-10-10  Jer Noble  <jer.noble@apple.com>
 
         Disallow full screen mode keyboard access by default.

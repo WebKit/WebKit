@@ -491,7 +491,7 @@ static Browser_Window *window_create(const char *url)
 
     Ewk_Settings *settings = ewk_view_settings_get(app_data->webview);
     ewk_settings_file_access_from_file_urls_allowed_set(settings, EINA_TRUE);
-    ewk_settings_enable_frame_flattening_set(settings, frame_flattening_enabled);
+    ewk_settings_frame_flattening_enabled_set(settings, frame_flattening_enabled);
 
     evas_object_smart_callback_add(app_data->webview, "close,window", on_close_window, app_data);
     evas_object_smart_callback_add(app_data->webview, "create,window", on_new_window, app_data);

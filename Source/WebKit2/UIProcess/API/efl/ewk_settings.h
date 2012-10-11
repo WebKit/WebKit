@@ -71,16 +71,18 @@ EAPI Eina_Bool ewk_settings_fullscreen_enabled_get(const Ewk_Settings *settings)
 /**
  * Enables/disables the javascript executing.
  *
+ * By default, JavaScript execution is enabled.
+ *
  * @param settings settings object to set javascript executing
  * @param enable @c EINA_TRUE to enable javascript executing
- *        @c EINA_FALSE to disable
+ *               @c EINA_FALSE to disable
  *
  * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
  */
 EAPI Eina_Bool ewk_settings_javascript_enabled_set(Ewk_Settings *settings, Eina_Bool enable);
 
 /**
- * Returns the javascript can be executable or not.
+ * Returns whether JavaScript execution is enabled.
  *
  * @param settings settings object to query if the javascript can be executed
  *
@@ -92,20 +94,22 @@ EAPI Eina_Bool ewk_settings_javascript_enabled_get(const Ewk_Settings *settings)
 /**
  * Enables/disables auto loading of the images.
  *
+ * By default, auto loading of the images is enabled.
+ *
  * @param settings settings object to set auto loading of the images
- * @param automatic @c EINA_TRUE to enable auto loading of the images,
- *        @c EINA_FALSE to disable
+ * @param automatic @c EINA_TRUE to enable auto loading of the images
+ *                  @c EINA_FALSE to disable
  *
  * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
  */
 EAPI Eina_Bool ewk_settings_loads_images_automatically_set(Ewk_Settings *settings, Eina_Bool automatic);
 
 /**
- * Returns the images can be loaded automatically or not.
+ * Returns whether the images can be loaded automatically or not.
  *
  * @param settings settings object to get auto loading of the images
  *
- * @return @c EINA_TRUE if the images are loaded automatically,
+ * @return @c EINA_TRUE if the images are loaded automatically
  *         @c EINA_FALSE if not or on failure
  */
 EAPI Eina_Bool ewk_settings_loads_images_automatically_get(const Ewk_Settings *settings);
@@ -116,7 +120,8 @@ EAPI Eina_Bool ewk_settings_loads_images_automatically_get(const Ewk_Settings *s
  * By default, the developer extensions are disabled.
  *
  * @param settings settings object to set developer extensions
- * @param enable @c EINA_TRUE to enable developer extensions, @c EINA_FALSE to disable
+ * @param enable @c EINA_TRUE to enable developer extensions
+ *               @c EINA_FALSE to disable
  *
  * @return @c EINA_TRUE on success or @EINA_FALSE on failure
  */
@@ -140,6 +145,8 @@ EAPI Eina_Bool ewk_settings_developer_extras_enabled_get(const Ewk_Settings *set
  * By default, file access from file:// URLs is not allowed.
  *
  * @param settings settings object to set file access permission
+ * @param enable @c EINA_TRUE to enable file access permission
+ *               @c EINA_FALSE to disable
  *
  * @return @c EINA_TRUE on success or @EINA_FALSE on failure
  */
@@ -153,7 +160,7 @@ EAPI Eina_Bool ewk_settings_file_access_from_file_urls_allowed_set(Ewk_Settings 
  * @param settings settings object to query file access permission
  *
  * @return @c EINA_TRUE if file access from file:// URLs is allowed
-           @c EINA_FALSE if not or on failure
+ *         @c EINA_FALSE if not or on failure
  */
 EAPI Eina_Bool ewk_settings_file_access_from_file_urls_allowed_get(const Ewk_Settings *settings);
 
@@ -163,25 +170,27 @@ EAPI Eina_Bool ewk_settings_file_access_from_file_urls_allowed_get(const Ewk_Set
  * By default, the frame flattening is disabled.
  *
  * @param settings settings object to set the frame flattening
- * @param enable @c EINA_TRUE to enable the frame flattening @c EINA_FALSE to disable
+ * @param enable @c EINA_TRUE to enable the frame flattening
+ *               @c EINA_FALSE to disable
  *
  * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
  *
  * @see ewk_settings_enable_frame_flattening_get()
  */
-EAPI Eina_Bool ewk_settings_enable_frame_flattening_set(Ewk_Settings *settings, Eina_Bool enable);
+EAPI Eina_Bool ewk_settings_frame_flattening_enabled_set(Ewk_Settings *settings, Eina_Bool enable);
 
 /**
- * Returns the frame flattening.
+ * Returns whether the frame flattening is enabled.
  *
  * The frame flattening is a feature which expands sub frames until all the frames become
  * one scrollable page.
  *
  * @param settings settings object to get the frame flattening.
  *
- * @return @c EINA_TRUE if the frame flattening is enabled or @c EINA_FALSE otherwise
+ * @return @c EINA_TRUE if the frame flattening is enabled
+ *         @c EINA_FALSE if not or on failure
  */
-EAPI Eina_Bool ewk_settings_enable_frame_flattening_get(const Ewk_Settings *settings);
+EAPI Eina_Bool ewk_settings_frame_flattening_enabled_get(const Ewk_Settings *settings);
 
 /**
  * Enables/disables DNS prefetching.
@@ -196,7 +205,7 @@ EAPI Eina_Bool ewk_settings_enable_frame_flattening_get(const Ewk_Settings *sett
  *
  * @see ewk_settings_DNS_prefetching_enabled_get()
  */
-EAPI Eina_Bool ewk_settings_DNS_prefetching_enabled_set(Ewk_Settings *settings, Eina_Bool enable);
+EAPI Eina_Bool ewk_settings_dns_prefetching_enabled_set(Ewk_Settings *settings, Eina_Bool enable);
 
 /**
  * Returns whether DNS prefetching is enabled or not.
@@ -208,7 +217,7 @@ EAPI Eina_Bool ewk_settings_DNS_prefetching_enabled_set(Ewk_Settings *settings, 
  * @return @c EINA_TRUE if DNS prefetching is enabled
  *         @c EINA_FALSE if not or on failure
  */
-EAPI Eina_Bool ewk_settings_DNS_prefetching_enabled_get(const Ewk_Settings *settings);
+EAPI Eina_Bool ewk_settings_dns_prefetching_enabled_get(const Ewk_Settings *settings);
 
 #ifdef __cplusplus
 }

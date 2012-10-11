@@ -121,39 +121,39 @@ TEST_F(EWK2UnitTestBase, ewk_settings_file_access_from_file_urls_allowed)
     ASSERT_TRUE(waitUntilTitleChangedTo("Frame NOT loaded"));
 }
 
-TEST_F(EWK2UnitTestBase, ewk_settings_enable_frame_flattening_set)
+TEST_F(EWK2UnitTestBase, ewk_settings_frame_flattening_enabled_set)
 {
     Ewk_Settings* settings = ewk_view_settings_get(webView());
     ASSERT_TRUE(settings);
 
     // The frame flattening is disabled by default.
-    ASSERT_FALSE(ewk_settings_enable_frame_flattening_get(settings));
+    ASSERT_FALSE(ewk_settings_frame_flattening_enabled_get(settings));
     ewk_view_url_set(webView(), environment->urlForResource("frame_flattening_test.html").data());
     waitUntilTitleChangedTo("200"); // width of iframe tag.
     ASSERT_STREQ("200", ewk_view_title_get(webView()));
 
-    ASSERT_TRUE(ewk_settings_enable_frame_flattening_set(settings, true));
-    ASSERT_TRUE(ewk_settings_enable_frame_flattening_get(settings));
+    ASSERT_TRUE(ewk_settings_frame_flattening_enabled_set(settings, true));
+    ASSERT_TRUE(ewk_settings_frame_flattening_enabled_get(settings));
     ewk_view_url_set(webView(), environment->urlForResource("frame_flattening_test.html").data());
     waitUntilTitleChangedTo("600"); // width of frame_flattening_test_subframe.html
     ASSERT_STREQ("600", ewk_view_title_get(webView()));
 
-    ASSERT_TRUE(ewk_settings_enable_frame_flattening_set(settings, false));
-    ASSERT_FALSE(ewk_settings_enable_frame_flattening_get(settings));
+    ASSERT_TRUE(ewk_settings_frame_flattening_enabled_set(settings, false));
+    ASSERT_FALSE(ewk_settings_frame_flattening_enabled_get(settings));
     ewk_view_url_set(webView(), environment->urlForResource("frame_flattening_test.html").data());
     waitUntilTitleChangedTo("200"); // width of iframe tag.
     ASSERT_STREQ("200", ewk_view_title_get(webView()));
 }
 
-TEST_F(EWK2UnitTestBase, ewk_settings_DNS_prefetching_enabled)
+TEST_F(EWK2UnitTestBase, ewk_settings_dns_prefetching_enabled)
 {
     Ewk_Settings* settings = ewk_view_settings_get(webView());
 
     // DNS prefeching is disabled by default.
-    ASSERT_FALSE(ewk_settings_DNS_prefetching_enabled_get(settings));
-    ASSERT_TRUE(ewk_settings_DNS_prefetching_enabled_set(settings, true));
-    ASSERT_TRUE(ewk_settings_DNS_prefetching_enabled_get(settings));
+    ASSERT_FALSE(ewk_settings_dns_prefetching_enabled_get(settings));
+    ASSERT_TRUE(ewk_settings_dns_prefetching_enabled_set(settings, true));
+    ASSERT_TRUE(ewk_settings_dns_prefetching_enabled_get(settings));
 
-    ASSERT_TRUE(ewk_settings_DNS_prefetching_enabled_set(settings, false));
-    ASSERT_FALSE(ewk_settings_DNS_prefetching_enabled_get(settings));
+    ASSERT_TRUE(ewk_settings_dns_prefetching_enabled_set(settings, false));
+    ASSERT_FALSE(ewk_settings_dns_prefetching_enabled_get(settings));
 }
