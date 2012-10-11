@@ -1,3 +1,23 @@
+2012-10-11  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        [CSS3 Media Queries] Aspect ratio value re-parsed when media query expression is evaluated
+        https://bugs.webkit.org/show_bug.cgi?id=99003
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Use CSSAspectRatioValue instead of CSSValueList to store aspect ratio value
+        in order to avoid re-parsing of aspect ratio data during media expression evaluation.
+
+        test: fast/media/w3c/test_media_queries.html
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::compareAspectRatioValue):
+        (WebCore):
+        (WebCore::aspect_ratioMediaFeatureEval):
+        (WebCore::device_aspect_ratioMediaFeatureEval):
+        * css/MediaQueryExp.cpp:
+        (WebCore::MediaQueryExp::MediaQueryExp):
+
 2012-10-11  Zeno Albisser  <zeno@webkit.org>
 
         [Qt] Implement GraphicsSurfaceToken to replace uint64_t as token type.

@@ -28,6 +28,7 @@
 #include "config.h"
 #include "MediaQueryEvaluator.h"
 
+#include "CSSAspectRatioValue.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "CSSPrimitiveValue.h"
@@ -172,29 +173,6 @@ bool MediaQueryEvaluator::eval(const MediaQuerySet* querySet, StyleResolver* sty
     return result;
 }
 
-static bool parseAspectRatio(CSSValue* value, int& h, int& v)
-{
-    if (value->isValueList()) {
-        CSSValueList* valueList = static_cast<CSSValueList*>(value);
-        if (valueList->length() == 3) {
-            CSSValue* i0 = valueList->itemWithoutBoundsCheck(0);
-            CSSValue* i1 = valueList->itemWithoutBoundsCheck(1);
-            CSSValue* i2 = valueList->itemWithoutBoundsCheck(2);
-            if (i0->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(i0)->isNumber()
-                && i1->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(i1)->isString()
-                && i2->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(i2)->isNumber()) {
-                String str = static_cast<CSSPrimitiveValue*>(i1)->getStringValue();
-                if (!str.isNull() && str.length() == 1 && str[0] == '/') {
-                    h = static_cast<CSSPrimitiveValue*>(i0)->getIntValue(CSSPrimitiveValue::CSS_NUMBER);
-                    v = static_cast<CSSPrimitiveValue*>(i2)->getIntValue(CSSPrimitiveValue::CSS_NUMBER);
-                    return true;
-                }
-            }
-        }
-    }
-    return false;
-}
-
 template<typename T>
 bool compareValue(T a, T b, MediaFeaturePrefix op)
 {
@@ -206,6 +184,16 @@ bool compareValue(T a, T b, MediaFeaturePrefix op)
     case NoPrefix:
         return a == b;
     }
+    return false;
+}
+
+static bool compareAspectRatioValue(CSSValue* value, int width, int height, MediaFeaturePrefix op)
+{
+    if (value->isAspectRatioValue()) {
+        CSSAspectRatioValue* aspectRatio = static_cast<CSSAspectRatioValue*>(value);
+        return compareValue(width * static_cast<int>(aspectRatio->denominatorValue()), height * static_cast<int>(aspectRatio->numeratorValue()), op);
+    }
+
     return false;
 }
 
@@ -262,13 +250,7 @@ static bool aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* f
 {
     if (value) {
         FrameView* view = frame->view();
-        int width = view->layoutWidth();
-        int height = view->layoutHeight();
-        int h = 0;
-        int v = 0;
-        if (parseAspectRatio(value, h, v))
-            return v != 0 && compareValue(width * v, height * h, op);
-        return false;
+        return compareAspectRatioValue(value, view->layoutWidth(), view->layoutHeight(), op);
     }
 
     // ({,min-,max-}aspect-ratio)
@@ -280,11 +262,7 @@ static bool device_aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle*, F
 {
     if (value) {
         FloatRect sg = screenRect(frame->page()->mainFrame()->view());
-        int h = 0;
-        int v = 0;
-        if (parseAspectRatio(value, h, v))
-            return v != 0  && compareValue(static_cast<int>(sg.width()) * v, static_cast<int>(sg.height()) * h, op);
-        return false;
+        return compareAspectRatioValue(value, static_cast<int>(sg.width()), static_cast<int>(sg.height()), op);
     }
 
     // ({,min-,max-}device-aspect-ratio)

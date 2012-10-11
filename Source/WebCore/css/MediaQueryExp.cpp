@@ -29,6 +29,7 @@
 #include "config.h"
 #include "MediaQueryExp.h"
 
+#include "CSSAspectRatioValue.h"
 #include "CSSParser.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValueList.h"
@@ -164,28 +165,32 @@ inline MediaQueryExp::MediaQueryExp(const AtomicString& mediaFeature, CSSParserV
                 m_value = CSSPrimitiveValue::create(value->fValue, CSSPrimitiveValue::CSS_NUMBER);
 
             m_isValid = m_value;
-        } else if (valueList->size() > 1 && featureWithAspectRatio(mediaFeature)) {
+        } else if (valueList->size() == 3 && featureWithAspectRatio(mediaFeature)) {
             // Create list of values.
             // Currently accepts only <integer>/<integer>.
             // Applicable to device-aspect-ratio and aspec-ratio.
-
-            RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
-            CSSParserValue* value = valueList->current();
             bool isValid = true;
+            float numeratorValue = 0;
+            float denominatorValue = 0;
 
-            while (value && isValid) {
-                if (value->unit == CSSParserValue::Operator && value->iValue == '/')
-                    list->append(CSSPrimitiveValue::create("/", CSSPrimitiveValue::CSS_STRING));
-                else if (value->unit == CSSPrimitiveValue::CSS_NUMBER && value->fValue > 0 && value->isInt)
-                    list->append(CSSPrimitiveValue::create(value->fValue, CSSPrimitiveValue::CSS_NUMBER));
-                else
+            // The aspect-ratio must be <integer> (whitespace)? / (whitespace)? <integer>.
+            for (unsigned i = 0; i < 3; ++i, valueList->next()) {
+                const CSSParserValue* value = valueList->current();
+                if (i != 1 && value->unit == CSSPrimitiveValue::CSS_NUMBER && value->fValue > 0 && value->isInt) {
+                    if (!i)
+                        numeratorValue = value->fValue;
+                    else
+                        denominatorValue = value->fValue;
+                } else if (i == 1 && value->unit == CSSParserValue::Operator && value->iValue == '/')
+                    continue;
+                else {
                     isValid = false;
-
-                value = valueList->next();
+                    break;
+                }
             }
 
             if (isValid)
-                m_value = list.release();
+                m_value = CSSAspectRatioValue::create(numeratorValue, denominatorValue);
 
             m_isValid = m_value;
         }
