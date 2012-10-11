@@ -23,10 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(__LP64__) && defined(__CLANG__)
+#if defined(__LP64__) && defined(__clang__)
 
 #import "WKDOMNode.h"
+#import "WKDOMRange.h"
 #import <WebCore/Node.h>
+#import <WebCore/Range.h>
+#import <wtf/HashMap.h>
 
 namespace WebCore {
 class Element;
@@ -38,13 +41,57 @@ class Document;
 
 @interface WKDOMNode () {
 @public
-    RefPtr<WebCore::Node> _node;
+    RefPtr<WebCore::Node> _impl;
 }
 
-- (id)_initWithNode:(WebCore::Node*)node;
+- (id)_initWithImpl:(WebCore::Node*)impl;
+@end
+
+@interface WKDOMRange () {
+@public
+    RefPtr<WebCore::Range> _impl;
+}
+
+- (id)_initWithImpl:(WebCore::Range*)impl;
 @end
 
 namespace WebKit {
+
+template<typename WebCoreType, typename WKDOMType>
+class DOMCache {
+public:
+    DOMCache()
+    {
+    }
+
+    void add(WebCoreType core, WKDOMType kit)
+    {
+        m_map.add(core, kit);
+    }
+    
+    WKDOMType get(WebCoreType core)
+    {
+        return m_map.get(core);
+    }
+
+    void remove(WebCoreType core)
+    {
+        m_map.remove(core);
+    }
+
+private:
+    // This class should only ever be used as a singleton.
+    ~DOMCache() = delete;
+
+    HashMap<WebCoreType, WKDOMType> m_map;
+};
+
+// -- Caches --
+
+DOMCache<WebCore::Node*, WKDOMNode *>& WKDOMNodeCache();
+DOMCache<WebCore::Range*, WKDOMRange *>& WKDOMRangeCache();
+
+// -- Node and classes derived from Node. --
 
 WebCore::Node* toWebCoreNode(WKDOMNode *);
 WKDOMNode *toWKDOMNode(WebCore::Node*);
@@ -55,10 +102,11 @@ WKDOMElement *toWKDOMElement(WebCore::Element*);
 WebCore::Document* toWebCoreDocument(WKDOMDocument *);
 WKDOMDocument *toWKDOMDocument(WebCore::Document*);
 
-void WKDOMNodeCacheAdd(WebCore::Node*, WKDOMNode *);
-WKDOMNode *WKDOMNodeCacheGet(WebCore::Node*);
-void WKDOMNodeCacheRemove(WebCore::Node*);
+// -- Range. --
+
+WebCore::Range* toWebCoreRange(WKDOMRange *);
+WKDOMRange *toWKDOMRange(WebCore::Range*);
 
 } // namespace WebKit
 
-#endif // defined(__LP64__) && defined(__CLANG__)
+#endif // defined(__LP64__) && defined(__clang__)

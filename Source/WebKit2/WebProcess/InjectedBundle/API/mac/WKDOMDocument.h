@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(__LP64__) && defined(__CLANG__)
+#if defined(__LP64__) && defined(__clang__)
 
 #import <WebKit2/WKDOMNode.h>
 
@@ -31,5 +31,5 @@ WK_EXPORT
 @interface WKDOMDocument : WKDOMNode
 @end
 
-#endif // defined(__LP64__) && defined(__CLANG__)
+#endif // defined(__LP64__) && defined(__clang__)
 

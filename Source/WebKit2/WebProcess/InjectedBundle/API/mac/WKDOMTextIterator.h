@@ -23,16 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-
 #if defined(__LP64__) && defined(__clang__)
 
-#import "WKDOMElement.h"
+#import <Foundation/Foundation.h>
 
-#import "WKDOMInternals.h"
-#import <WebCore/Element.h>
+@class WKDOMRange;
 
-@implementation WKDOMElement
+@interface WKDOMTextIterator : NSObject
+
+- (id)initWithRange:(WKDOMRange *)range;
+
+- (void)advance;
+
+@property (readonly) BOOL atEnd;
+@property (readonly) WKDOMRange *currentRange;
+@property (readonly) NSUInteger currentTextLength;
+@property (readonly) const unichar *currentTextPointer;
+
 @end
 
 #endif // defined(__LP64__) && defined(__clang__)

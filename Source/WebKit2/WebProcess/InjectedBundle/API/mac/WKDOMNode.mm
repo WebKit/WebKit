@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if defined(__LP64__) && defined(__CLANG__)
+#if defined(__LP64__) && defined(__clang__)
 
 #import "WKDOMNode.h"
 
@@ -33,27 +33,29 @@
 
 @implementation WKDOMNode
 
-- (id)_initWithNode:(WebCore::Node*)node
+- (id)_initWithImpl:(WebCore::Node*)impl
 {
     self = [super init];
     if (!self)
         return nil;
 
-    WebKit::WKDOMNodeCacheAdd(node, self);
+    _impl = impl;
+    WebKit::WKDOMNodeCache().add(impl, self);
+
     return self;
 }
 
 - (void)dealloc
 {
-    WebKit::WKDOMNodeCacheRemove(_node.get());
+    WebKit::WKDOMNodeCache().remove(_impl.get());
     [super dealloc];
 }
 
 - (WKDOMDocument *)document
 {
-    return WebKit::toWKDOMDocument(_node->document());
+    return WebKit::toWKDOMDocument(_impl->document());
 }
 
 @end
 
-#endif // defined(__LP64__) && defined(__CLANG__)
+#endif // defined(__LP64__) && defined(__clang__)

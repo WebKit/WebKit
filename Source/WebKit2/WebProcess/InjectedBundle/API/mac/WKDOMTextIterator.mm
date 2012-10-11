@@ -27,12 +27,57 @@
 
 #if defined(__LP64__) && defined(__clang__)
 
-#import "WKDOMElement.h"
+#import "WKDOMTextIterator.h"
 
 #import "WKDOMInternals.h"
-#import <WebCore/Element.h>
+#import "WKDOMRange.h"
+#import <WebCore/TextIterator.h>
+#import <wtf/OwnPtr.h>
 
-@implementation WKDOMElement
+@interface WKDOMTextIterator () {
+@public
+    OwnPtr<WebCore::TextIterator> _textIterator;
+}
+@end
+
+@implementation WKDOMTextIterator
+
+- (id)initWithRange:(WKDOMRange *)range
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _textIterator = adoptPtr(new WebCore::TextIterator(WebKit::toWebCoreRange(range)));
+
+    return self;
+}
+
+- (void)advance
+{
+    _textIterator->advance();
+}
+
+- (BOOL)atEnd
+{
+    return _textIterator->atEnd();
+}
+
+- (WKDOMRange *)currentRange
+{
+    return WebKit::toWKDOMRange(_textIterator->range().get());
+}
+
+- (const unichar *)currentTextPointer
+{
+    return _textIterator->characters();
+}
+
+- (NSUInteger)currentTextLength
+{
+    return _textIterator->length();
+}
+
 @end
 
 #endif // defined(__LP64__) && defined(__clang__)

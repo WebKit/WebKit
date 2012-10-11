@@ -27,12 +27,74 @@
 
 #if defined(__LP64__) && defined(__clang__)
 
-#import "WKDOMElement.h"
+#import "WKDOMRange.h"
 
 #import "WKDOMInternals.h"
-#import <WebCore/Element.h>
+#import <WebCore/Document.h>
 
-@implementation WKDOMElement
+@implementation WKDOMRange
+
+- (id)_initWithImpl:(WebCore::Range*)impl
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _impl = impl;
+    WebKit::WKDOMRangeCache().add(impl, self);
+
+    return self;
+}
+
+- (id)initWithDocument:(WKDOMDocument *)document
+{
+    RefPtr<WebCore::Range> range = WebCore::Range::create(WebKit::toWebCoreDocument(document));
+    self = [self _initWithImpl:range.get()];
+    if (!self)
+        return nil;
+
+    return self;
+}
+
+- (void)dealloc
+{
+    WebKit::WKDOMRangeCache().remove(_impl.get());
+    [super dealloc];
+}
+
+- (WKDOMNode *)startContainer
+{
+    // FIXME: Do something about the exception.
+    WebCore::ExceptionCode ec = 0;
+    return WebKit::toWKDOMNode(_impl->startContainer(ec));
+}
+
+- (NSInteger)startOffset
+{
+    // FIXME: Do something about the exception.
+    WebCore::ExceptionCode ec = 0;
+    return _impl->startOffset(ec);
+}
+
+- (WKDOMNode *)endContainer
+{
+    // FIXME: Do something about the exception.
+    WebCore::ExceptionCode ec = 0;
+    return WebKit::toWKDOMNode(_impl->endContainer(ec));
+}
+
+- (NSInteger)endOffset
+{
+    // FIXME: Do something about the exception.
+    WebCore::ExceptionCode ec = 0;
+    return _impl->endOffset(ec);
+}
+
+- (NSString *)text
+{
+    return _impl->text();
+}
+
 @end
 
 #endif // defined(__LP64__) && defined(__clang__)

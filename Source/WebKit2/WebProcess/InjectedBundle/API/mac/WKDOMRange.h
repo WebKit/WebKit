@@ -23,16 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-
 #if defined(__LP64__) && defined(__clang__)
 
-#import "WKDOMElement.h"
+#import <Foundation/Foundation.h>
+#import <WebKit2/WKBase.h>
 
-#import "WKDOMInternals.h"
-#import <WebCore/Element.h>
+@class WKDOMNode, WKDOMDocument;
 
-@implementation WKDOMElement
+WK_EXPORT
+@interface WKDOMRange : NSObject
+
+-(id)initWithDocument:(WKDOMDocument *)document;
+
+@property(readonly, retain) WKDOMNode *startContainer;
+@property(readonly) NSInteger startOffset;
+@property(readonly, retain) WKDOMNode *endContainer;
+@property(readonly) NSInteger endOffset;
+@property(readonly, copy) NSString *text;
+
 @end
 
 #endif // defined(__LP64__) && defined(__clang__)
