@@ -1,3 +1,23 @@
+2012-10-10  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Calendar picker: should use consistent Localizer object
+        https://bugs.webkit.org/show_bug.cgi?id=98983
+
+        Reviewed by Kentaro Hara.
+
+        In Source/WebKit/chromium/src/DateTimeChooserImpl.cpp, we used two
+        Localizer objects, one was m_localizer and another was 'localizer' local
+        object in writeDocument. We should use single Localizer object.
+
+        Also, Localizer::create(nullAtom) had unexpected behaviors in ICU
+        environment; e.g. Month labels in a calendar picker were numeric. This
+        patch fixes it, and this is covered by
+        fast/forms/date/calendar-picker-appearance.html.
+
+        * src/DateTimeChooserImpl.cpp:
+        (WebKit::DateTimeChooserImpl::writeDocument):
+        Use m_localizer.
+
 2012-10-10  Justin Novosad  <junov@chromium.org>
 
         [Chromium] Smoother animation for non-RAF 2D canvas animations
