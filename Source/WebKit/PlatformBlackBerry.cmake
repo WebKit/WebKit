@@ -249,6 +249,26 @@ IF (ENABLE_VIDEO_TRACK)
     )
 ENDIF ()
 
+INSTALL(DIRECTORY ${WEBCORE_DIR}/inspector/front-end/
+        DESTINATION ../../usr/share/webkit/inspector/
+        FILES_MATCHING PATTERN "*.js")
+INSTALL(DIRECTORY ${WEBCORE_DIR}/inspector/front-end/
+        DESTINATION ../../usr/share/webkit/inspector/
+        FILES_MATCHING PATTERN "*.css")
+INSTALL(DIRECTORY ${WEBCORE_DIR}/inspector/front-end/
+        DESTINATION ../../usr/share/webkit/inspector/
+        FILES_MATCHING PATTERN "*.png")
+INSTALL(DIRECTORY ${WEBCORE_DIR}/inspector/front-end/
+        DESTINATION ../../usr/share/webkit/inspector/
+        FILES_MATCHING PATTERN "*.jpg")
+INSTALL(DIRECTORY ${WEBCORE_DIR}/inspector/front-end/
+        DESTINATION ../../usr/share/webkit/inspector/
+        FILES_MATCHING PATTERN "*.gif")
+INSTALL(FILES ${DERIVED_SOURCES_WEBCORE_DIR}/inspectorBB.html
+              ${WEBKIT_DIR}/blackberry/WebCoreSupport/inspectorBB.js
+              ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorBackendCommands.js
+        DESTINATION ../../usr/share/webkit/inspector/)
+
 ADD_CUSTOM_TARGET (
     inspector ALL
     command cp ${WEBCORE_DIR}/inspector/front-end/inspector.html ${DERIVED_SOURCES_WEBCORE_DIR}/inspectorBB.html && echo '<script src="inspectorBB.js"></script>'  >> ${DERIVED_SOURCES_WEBCORE_DIR}/inspectorBB.html
