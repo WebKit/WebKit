@@ -32,7 +32,6 @@
 
 namespace JSC {
 
-ASSERT_CLASS_FITS_IN_CELL(FunctionPrototype);
 ASSERT_HAS_TRIVIAL_DESTRUCTOR(FunctionPrototype);
 
 const ClassInfo FunctionPrototype::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(FunctionPrototype) };

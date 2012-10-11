@@ -48,7 +48,6 @@ EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState* exec)
     return throwVMError(exec, createNotAConstructorError(exec, exec->callee()));
 }
 
-ASSERT_CLASS_FITS_IN_CELL(JSFunction);
 ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSFunction);
 
 const ClassInfo JSFunction::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSFunction) };

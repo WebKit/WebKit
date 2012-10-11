@@ -100,8 +100,6 @@ const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = { &all
 @end
 */
 
-ASSERT_CLASS_FITS_IN_CELL(JSGlobalObject);
-
 // Default number of ticks before a timeout check should be done.
 static const int initialTickCountThreshold = 255;
 

@@ -68,7 +68,6 @@ const ClassInfo NumberPrototype::s_info = { "Number", &NumberObject::s_info, 0, 
 @end
 */
 
-ASSERT_CLASS_FITS_IN_CELL(NumberPrototype);
 ASSERT_HAS_TRIVIAL_DESTRUCTOR(NumberPrototype);
 
 NumberPrototype::NumberPrototype(ExecState* exec, Structure* structure)

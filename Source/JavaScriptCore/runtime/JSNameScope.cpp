@@ -30,8 +30,6 @@
 
 namespace JSC {
 
-ASSERT_CLASS_FITS_IN_CELL(JSNameScope);
-
 const ClassInfo JSNameScope::s_info = { "NameScope", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSNameScope) };
 
 void JSNameScope::visitChildren(JSCell* cell, SlotVisitor& visitor)

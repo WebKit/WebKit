@@ -34,8 +34,6 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
-#define ASSERT_CLASS_FITS_IN_CELL(class) COMPILE_ASSERT(sizeof(class) <= MarkedSpace::maxCellSize, class_fits_in_cell)
-
 namespace JSC {
 
 class Heap;
@@ -68,8 +66,6 @@ struct Capacity : MarkedBlock::CountFunctor {
 class MarkedSpace {
     WTF_MAKE_NONCOPYABLE(MarkedSpace);
 public:
-    static const size_t maxCellSize = 2048;
-
     MarkedSpace(Heap*);
     ~MarkedSpace();
     void lastChanceToFinalize();

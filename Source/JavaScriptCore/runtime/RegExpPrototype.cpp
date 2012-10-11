@@ -59,8 +59,6 @@ const ClassInfo RegExpPrototype::s_info = { "RegExp", &RegExpObject::s_info, 0, 
 @end
 */
 
-ASSERT_CLASS_FITS_IN_CELL(RegExpPrototype);
-
 RegExpPrototype::RegExpPrototype(JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
     : RegExpObject(globalObject, structure, regExp)
 {

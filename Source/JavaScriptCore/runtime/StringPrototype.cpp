@@ -47,7 +47,6 @@ using namespace WTF;
 
 namespace JSC {
 
-ASSERT_CLASS_FITS_IN_CELL(StringPrototype);
 ASSERT_HAS_TRIVIAL_DESTRUCTOR(StringPrototype);
 
 static EncodedJSValue JSC_HOST_CALL stringProtoFuncToString(ExecState*);

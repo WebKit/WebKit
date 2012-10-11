@@ -1420,8 +1420,6 @@ sub GenerateImplementation
     push(@implContent, "\nusing namespace JSC;\n\n");
     push(@implContent, "namespace WebCore {\n\n");
 
-    push(@implContent, "ASSERT_CLASS_FITS_IN_CELL($className);\n");
-
     my $numAttributes = GenerateAttributesHashTable($object, $dataNode);
 
     my $numConstants = @{$dataNode->constants};

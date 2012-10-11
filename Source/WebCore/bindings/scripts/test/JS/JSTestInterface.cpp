@@ -48,7 +48,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-ASSERT_CLASS_FITS_IN_CELL(JSTestInterface);
 /* Hash table */
 
 static const HashTableValue JSTestInterfaceTableValues[] =

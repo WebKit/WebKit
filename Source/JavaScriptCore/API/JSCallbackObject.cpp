@@ -32,9 +32,6 @@
 
 namespace JSC {
 
-ASSERT_CLASS_FITS_IN_CELL(JSCallbackObject<JSDestructibleObject>);
-ASSERT_CLASS_FITS_IN_CELL(JSCallbackObject<JSGlobalObject>);
-
 // Define the two types of JSCallbackObjects we support.
 template <> const ClassInfo JSCallbackObject<JSDestructibleObject>::s_info = { "CallbackObject", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSCallbackObject) };
 template <> const ClassInfo JSCallbackObject<JSGlobalObject>::s_info = { "CallbackGlobalObject", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSCallbackObject) };

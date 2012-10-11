@@ -24,7 +24,6 @@
 
 namespace JSC {
 
-ASSERT_CLASS_FITS_IN_CELL(JSWrapperObject);
 ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSWrapperObject);
 
 void JSWrapperObject::visitChildren(JSCell* cell, SlotVisitor& visitor)

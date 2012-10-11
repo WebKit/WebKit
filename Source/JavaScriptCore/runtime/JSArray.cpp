@@ -44,8 +44,6 @@ using namespace WTF;
 
 namespace JSC {
 
-
-ASSERT_CLASS_FITS_IN_CELL(JSArray);
 ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSArray);
 
 const ClassInfo JSArray::s_info = {"Array", &JSNonFinalObject::s_info, 0, 0, CREATE_METHOD_TABLE(JSArray)};

@@ -32,7 +32,6 @@
 
 namespace JSC {
 
-ASSERT_CLASS_FITS_IN_CELL(MathObject);
 ASSERT_HAS_TRIVIAL_DESTRUCTOR(MathObject);
 
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncAbs(ExecState*);

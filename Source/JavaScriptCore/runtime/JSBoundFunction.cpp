@@ -31,7 +31,6 @@
 
 namespace JSC {
 
-ASSERT_CLASS_FITS_IN_CELL(JSBoundFunction);
 ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSBoundFunction);
 
 const ClassInfo JSBoundFunction::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSBoundFunction) };

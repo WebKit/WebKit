@@ -30,7 +30,6 @@
 
 namespace JSC {
 
-ASSERT_CLASS_FITS_IN_CELL(JSProxy);
 ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSProxy);
 
 const ClassInfo JSProxy::s_info = { "JSProxy", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSProxy) };

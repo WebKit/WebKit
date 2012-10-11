@@ -37,8 +37,6 @@ using namespace std;
 
 namespace JSC {
 
-ASSERT_CLASS_FITS_IN_CELL(JSActivation);
-
 const ClassInfo JSActivation::s_info = { "JSActivation", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSActivation) };
 
 void JSActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)

@@ -42,8 +42,6 @@
 
 namespace JSC {
 
-ASSERT_CLASS_FITS_IN_CELL(ArrayPrototype);
-
 static EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState*);
 static EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState*);
 static EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState*);

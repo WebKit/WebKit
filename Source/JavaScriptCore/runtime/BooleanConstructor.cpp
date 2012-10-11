@@ -26,7 +26,6 @@
 
 namespace JSC {
 
-ASSERT_CLASS_FITS_IN_CELL(BooleanConstructor);
 ASSERT_HAS_TRIVIAL_DESTRUCTOR(BooleanConstructor);
 
 const ClassInfo BooleanConstructor::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(BooleanConstructor) };

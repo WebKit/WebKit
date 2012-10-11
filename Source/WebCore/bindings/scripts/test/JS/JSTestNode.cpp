@@ -31,7 +31,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-ASSERT_CLASS_FITS_IN_CELL(JSTestNode);
 /* Hash table */
 
 static const HashTableValue JSTestNodeTableValues[] =

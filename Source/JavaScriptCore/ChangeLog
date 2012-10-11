@@ -1,3 +1,63 @@
+2012-10-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed ASSERT_CLASS_FITS_IN_CELL
+        https://bugs.webkit.org/show_bug.cgi?id=97634
+
+        Reviewed by Mark Hahnenberg.
+
+        Our collector now supports arbitrarily sized objects, so the ASSERT is not needed.
+
+        * API/JSCallbackFunction.cpp:
+        * API/JSCallbackObject.cpp:
+        * heap/MarkedSpace.h:
+        * jsc.cpp:
+        * runtime/Arguments.cpp:
+        * runtime/ArrayConstructor.cpp:
+        * runtime/ArrayPrototype.cpp:
+        * runtime/BooleanConstructor.cpp:
+        * runtime/BooleanObject.cpp:
+        * runtime/BooleanPrototype.cpp:
+        * runtime/DateConstructor.cpp:
+        * runtime/DatePrototype.cpp:
+        * runtime/Error.cpp:
+        * runtime/ErrorConstructor.cpp:
+        * runtime/ErrorPrototype.cpp:
+        * runtime/FunctionConstructor.cpp:
+        * runtime/FunctionPrototype.cpp:
+        * runtime/InternalFunction.cpp:
+        * runtime/JSActivation.cpp:
+        * runtime/JSArray.cpp:
+        * runtime/JSBoundFunction.cpp:
+        * runtime/JSFunction.cpp:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalThis.cpp:
+        * runtime/JSNameScope.cpp:
+        * runtime/JSNotAnObject.cpp:
+        * runtime/JSONObject.cpp:
+        * runtime/JSObject.cpp:
+        * runtime/JSPropertyNameIterator.cpp:
+        * runtime/JSScope.cpp:
+        * runtime/JSWithScope.cpp:
+        * runtime/JSWrapperObject.cpp:
+        * runtime/MathObject.cpp:
+        * runtime/NameConstructor.cpp:
+        * runtime/NamePrototype.cpp:
+        * runtime/NativeErrorConstructor.cpp:
+        * runtime/NativeErrorPrototype.cpp:
+        * runtime/NumberConstructor.cpp:
+        * runtime/NumberObject.cpp:
+        * runtime/NumberPrototype.cpp:
+        * runtime/ObjectConstructor.cpp:
+        * runtime/ObjectPrototype.cpp:
+        * runtime/RegExpConstructor.cpp:
+        * runtime/RegExpMatchesArray.cpp:
+        * runtime/RegExpObject.cpp:
+        * runtime/RegExpPrototype.cpp:
+        * runtime/StringConstructor.cpp:
+        * runtime/StringObject.cpp:
+        * runtime/StringPrototype.cpp:
+        * testRegExp.cpp: Removed the ASSERT.
+
 2012-10-11  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should inline code blocks that use new_array_buffer

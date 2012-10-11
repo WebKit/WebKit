@@ -1,3 +1,47 @@
+2012-10-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed ASSERT_CLASS_FITS_IN_CELL
+        https://bugs.webkit.org/show_bug.cgi?id=97634
+
+        Reviewed by Mark Hahnenberg.
+
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore):
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore):
+        * bindings/js/JSNodeFilterCondition.cpp:
+        (WebCore):
+        * bindings/js/JSWorkerContextBase.cpp:
+        (WebCore):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSFloat64Array.cpp:
+        (WebCore):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        (WebCore):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore):
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore):
+        * bridge/runtime_method.cpp:
+        (JSC):
+
 2012-10-10  Brady Eidson  <beidson@apple.com>
 
         Switch ResourceLoader::resourceData() from SharedBuffer to ResourceBuffer

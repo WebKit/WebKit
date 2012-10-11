@@ -53,8 +53,6 @@ static void setRegExpConstructorMultiline(ExecState*, JSObject*, JSValue);
 
 namespace JSC {
 
-ASSERT_CLASS_FITS_IN_CELL(RegExpConstructor);
-
 const ClassInfo RegExpConstructor::s_info = { "Function", &InternalFunction::s_info, 0, ExecState::regExpConstructorTable, CREATE_METHOD_TABLE(RegExpConstructor) };
 
 /* Source for RegExpConstructor.lut.h

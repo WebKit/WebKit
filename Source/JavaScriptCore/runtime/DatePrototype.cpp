@@ -70,8 +70,6 @@ using namespace WTF;
 
 namespace JSC {
 
-ASSERT_CLASS_FITS_IN_CELL(DatePrototype);
-
 static EncodedJSValue JSC_HOST_CALL dateProtoFuncGetDate(ExecState*);
 static EncodedJSValue JSC_HOST_CALL dateProtoFuncGetDay(ExecState*);
 static EncodedJSValue JSC_HOST_CALL dateProtoFuncGetFullYear(ExecState*);

@@ -28,8 +28,6 @@
 
 namespace JSC {
 
-ASSERT_CLASS_FITS_IN_CELL(NumberConstructor);
-
 static JSValue numberConstructorNaNValue(ExecState*, JSValue, PropertyName);
 static JSValue numberConstructorNegInfinity(ExecState*, JSValue, PropertyName);
 static JSValue numberConstructorPosInfinity(ExecState*, JSValue, PropertyName);

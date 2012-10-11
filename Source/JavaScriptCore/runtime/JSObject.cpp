@@ -62,10 +62,6 @@ JSCell* getCallableObjectSlow(JSCell* cell)
     return 0;
 }
 
-ASSERT_CLASS_FITS_IN_CELL(JSObject);
-ASSERT_CLASS_FITS_IN_CELL(JSNonFinalObject);
-ASSERT_CLASS_FITS_IN_CELL(JSFinalObject);
-
 ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSObject);
 ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSFinalObject);
 

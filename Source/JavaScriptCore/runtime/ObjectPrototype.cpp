@@ -63,8 +63,6 @@ const ClassInfo ObjectPrototype::s_info = { "Object", &JSNonFinalObject::s_info,
 @end
 */
 
-ASSERT_CLASS_FITS_IN_CELL(ObjectPrototype);
-
 ObjectPrototype::ObjectPrototype(ExecState* exec, Structure* stucture)
     : JSNonFinalObject(exec->globalData(), stucture)
 {

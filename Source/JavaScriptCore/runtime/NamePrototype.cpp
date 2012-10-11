@@ -30,8 +30,6 @@
 
 namespace JSC {
 
-ASSERT_CLASS_FITS_IN_CELL(NamePrototype);
-
 static EncodedJSValue JSC_HOST_CALL privateNameProtoFuncToString(ExecState*);
 
 }
@@ -47,8 +45,6 @@ const ClassInfo NamePrototype::s_info = { "Name", &Base::s_info, 0, ExecState::p
   toString          privateNameProtoFuncToString         DontEnum|Function 0
 @end
 */
-
-ASSERT_CLASS_FITS_IN_CELL(NamePrototype);
 
 NamePrototype::NamePrototype(ExecState* exec, Structure* structure)
     : Base(exec->globalData(), structure, jsEmptyString(exec))

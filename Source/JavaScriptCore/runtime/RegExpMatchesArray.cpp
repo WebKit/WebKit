@@ -30,8 +30,6 @@
 
 namespace JSC {
 
-ASSERT_CLASS_FITS_IN_CELL(RegExpMatchesArray);
-
 const ClassInfo RegExpMatchesArray::s_info = {"Array", &JSArray::s_info, 0, 0, CREATE_METHOD_TABLE(RegExpMatchesArray)};
 
 RegExpMatchesArray::RegExpMatchesArray(JSGlobalData& globalData, Butterfly* butterfly, JSGlobalObject* globalObject, JSString* input, RegExp* regExp, MatchResult result)

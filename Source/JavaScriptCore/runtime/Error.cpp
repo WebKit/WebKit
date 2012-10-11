@@ -177,8 +177,6 @@ JSObject* throwSyntaxError(ExecState* exec)
     return throwError(exec, createSyntaxError(exec, ASCIILiteral("Syntax error")));
 }
 
-ASSERT_CLASS_FITS_IN_CELL(StrictModeTypeErrorFunction);
-
 const ClassInfo StrictModeTypeErrorFunction::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(StrictModeTypeErrorFunction) };
 
 void StrictModeTypeErrorFunction::destroy(JSCell* cell)

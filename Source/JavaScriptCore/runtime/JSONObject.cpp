@@ -41,7 +41,6 @@
 
 namespace JSC {
 
-ASSERT_CLASS_FITS_IN_CELL(JSONObject);
 ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSONObject);
 
 static EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState*);

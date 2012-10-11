@@ -39,8 +39,6 @@ namespace JSC {
 
 using namespace Bindings;
 
-ASSERT_CLASS_FITS_IN_CELL(RuntimeMethod);
-
 const ClassInfo RuntimeMethod::s_info = { "RuntimeMethod", &InternalFunction::s_info, 0, 0, CREATE_METHOD_TABLE(RuntimeMethod) };
 
 RuntimeMethod::RuntimeMethod(JSGlobalObject* globalObject, Structure* structure, Method* method)

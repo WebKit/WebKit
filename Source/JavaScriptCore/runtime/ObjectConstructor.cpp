@@ -35,8 +35,6 @@
 
 namespace JSC {
 
-ASSERT_CLASS_FITS_IN_CELL(ObjectConstructor);
-
 static EncodedJSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(ExecState*);
 static EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState*);
 static EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyNames(ExecState*);
