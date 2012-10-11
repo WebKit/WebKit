@@ -1,3 +1,49 @@
+2012-10-11  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should inline code blocks that use new_array_buffer
+        https://bugs.webkit.org/show_bug.cgi?id=98996
+
+        Reviewed by Geoffrey Garen.
+
+        This adds plumbing to drop in constant buffers from the inlinees to the inliner.
+        It's smart about not duplicating buffers needlessly but doesn't try to completely
+        hash-cons them, either.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::numberOfConstantBuffers):
+        (JSC::CodeBlock::addConstantBuffer):
+        (JSC::CodeBlock::constantBufferAsVector):
+        (JSC::CodeBlock::constantBuffer):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (ConstantBufferKey):
+        (JSC::DFG::ConstantBufferKey::ConstantBufferKey):
+        (JSC::DFG::ConstantBufferKey::operator==):
+        (JSC::DFG::ConstantBufferKey::hash):
+        (JSC::DFG::ConstantBufferKey::isHashTableDeletedValue):
+        (JSC::DFG::ConstantBufferKey::codeBlock):
+        (JSC::DFG::ConstantBufferKey::index):
+        (DFG):
+        (JSC::DFG::ConstantBufferKeyHash::hash):
+        (JSC::DFG::ConstantBufferKeyHash::equal):
+        (ConstantBufferKeyHash):
+        (WTF):
+        (ByteCodeParser):
+        (InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canInlineOpcode):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-10-10  Zoltan Horvath  <zoltan@webkit.org>
 
         Pageload tests should measure memory usage

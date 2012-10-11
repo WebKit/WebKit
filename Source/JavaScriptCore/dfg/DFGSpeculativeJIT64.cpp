@@ -3591,10 +3591,14 @@ void SpeculativeJIT::compile(Node& node)
     }
         
     case NewArrayBuffer: {
+        JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node.codeOrigin);
+        if (!globalObject->isHavingABadTime())
+            globalObject->havingABadTimeWatchpoint()->add(speculationWatchpoint());
+        
         flushRegisters();
         GPRResult result(this);
         
-        callOperation(operationNewArrayBuffer, result.gpr(), node.startConstant(), node.numConstants());
+        callOperation(operationNewArrayBuffer, result.gpr(), globalObject->arrayStructure(), node.startConstant(), node.numConstants());
         
         cellResult(result.gpr(), m_compileIndex);
         break;

@@ -43,6 +43,76 @@
 
 namespace JSC { namespace DFG {
 
+class ConstantBufferKey {
+public:
+    ConstantBufferKey()
+        : m_codeBlock(0)
+        , m_index(0)
+    {
+    }
+    
+    ConstantBufferKey(WTF::HashTableDeletedValueType)
+        : m_codeBlock(0)
+        , m_index(1)
+    {
+    }
+    
+    ConstantBufferKey(CodeBlock* codeBlock, unsigned index)
+        : m_codeBlock(codeBlock)
+        , m_index(index)
+    {
+    }
+    
+    bool operator==(const ConstantBufferKey& other) const
+    {
+        return m_codeBlock == other.m_codeBlock
+            && m_index == other.m_index;
+    }
+    
+    unsigned hash() const
+    {
+        return WTF::PtrHash<CodeBlock*>::hash(m_codeBlock) ^ m_index;
+    }
+    
+    bool isHashTableDeletedValue() const
+    {
+        return !m_codeBlock && m_index;
+    }
+    
+    CodeBlock* codeBlock() const { return m_codeBlock; }
+    unsigned index() const { return m_index; }
+    
+private:
+    CodeBlock* m_codeBlock;
+    unsigned m_index;
+};
+
+struct ConstantBufferKeyHash {
+    static unsigned hash(const ConstantBufferKey& key) { return key.hash(); }
+    static bool equal(const ConstantBufferKey& a, const ConstantBufferKey& b)
+    {
+        return a == b;
+    }
+    
+    static const bool safeToCompareToEmptyOrDeleted = true;
+};
+
+} } // namespace JSC::DFG
+
+namespace WTF {
+
+template<typename T> struct DefaultHash;
+template<> struct DefaultHash<JSC::DFG::ConstantBufferKey> {
+    typedef JSC::DFG::ConstantBufferKeyHash Hash;
+};
+
+template<typename T> struct HashTraits;
+template<> struct HashTraits<JSC::DFG::ConstantBufferKey> : SimpleClassHashTraits<JSC::DFG::ConstantBufferKey> { };
+
+} // namespace WTF
+
+namespace JSC { namespace DFG {
+
 // === ByteCodeParser ===
 //
 // This class is used to compile the dataflow graph from a CodeBlock.
@@ -1052,6 +1122,8 @@ private:
     Vector<PhiStackEntry, 16> m_argumentPhiStack;
     Vector<PhiStackEntry, 16> m_localPhiStack;
     
+    HashMap<ConstantBufferKey, unsigned> m_constantBufferCache;
+    
     struct InlineStackEntry {
         ByteCodeParser* m_byteCodeParser;
         
@@ -1070,6 +1142,7 @@ private:
         // direct, caller).
         Vector<unsigned> m_identifierRemap;
         Vector<unsigned> m_constantRemap;
+        Vector<unsigned> m_constantBufferRemap;
         
         // Blocks introduced by this code block, which need successor linking.
         // May include up to one basic block that includes the continuation after
@@ -1896,7 +1969,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_new_array_buffer: {
             int startConstant = currentInstruction[2].u.operand;
             int numConstants = currentInstruction[3].u.operand;
-            set(currentInstruction[1].u.operand, addToGraph(NewArrayBuffer, OpInfo(startConstant), OpInfo(numConstants)));
+            set(currentInstruction[1].u.operand, addToGraph(NewArrayBuffer, OpInfo(m_inlineStackTop->m_constantBufferRemap[startConstant]), OpInfo(numConstants)));
             NEXT_OPCODE(op_new_array_buffer);
         }
             
@@ -3251,6 +3324,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         
         m_identifierRemap.resize(codeBlock->numberOfIdentifiers());
         m_constantRemap.resize(codeBlock->numberOfConstantRegisters());
+        m_constantBufferRemap.resize(codeBlock->numberOfConstantBuffers());
 
         for (size_t i = 0; i < codeBlock->numberOfIdentifiers(); ++i) {
             StringImpl* rep = codeBlock->identifier(i).impl();
@@ -3279,6 +3353,20 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         }
         for (unsigned i = 0; i < codeBlock->numberOfGlobalResolveInfos(); ++i)
             byteCodeParser->m_codeBlock->addGlobalResolveInfo(std::numeric_limits<unsigned>::max());
+        for (unsigned i = 0; i < codeBlock->numberOfConstantBuffers(); ++i) {
+            // If we inline the same code block multiple times, we don't want to needlessly
+            // duplicate its constant buffers.
+            HashMap<ConstantBufferKey, unsigned>::iterator iter =
+                byteCodeParser->m_constantBufferCache.find(ConstantBufferKey(codeBlock, i));
+            if (iter != byteCodeParser->m_constantBufferCache.end()) {
+                m_constantBufferRemap[i] = iter->value;
+                continue;
+            }
+            Vector<JSValue>& buffer = codeBlock->constantBufferAsVector(i);
+            unsigned newIndex = byteCodeParser->m_codeBlock->addConstantBuffer(buffer);
+            m_constantBufferRemap[i] = newIndex;
+            byteCodeParser->m_constantBufferCache.add(ConstantBufferKey(codeBlock, i), newIndex);
+        }
         
         m_callsiteBlockHeadNeedsLinking = true;
     } else {
@@ -3294,11 +3382,14 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
 
         m_identifierRemap.resize(codeBlock->numberOfIdentifiers());
         m_constantRemap.resize(codeBlock->numberOfConstantRegisters());
+        m_constantBufferRemap.resize(codeBlock->numberOfConstantBuffers());
 
         for (size_t i = 0; i < codeBlock->numberOfIdentifiers(); ++i)
             m_identifierRemap[i] = i;
         for (size_t i = 0; i < codeBlock->numberOfConstantRegisters(); ++i)
             m_constantRemap[i] = i + FirstConstantRegisterIndex;
+        for (size_t i = 0; i < codeBlock->numberOfConstantBuffers(); ++i)
+            m_constantBufferRemap[i] = i;
 
         m_callsiteBlockHeadNeedsLinking = false;
     }

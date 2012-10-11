@@ -80,6 +80,7 @@ typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_ESS)(ExecState*, size_t, s
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_ESt)(ExecState*, Structure*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EStZ)(ExecState*, Structure*, int32_t);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EStPS)(ExecState*, Structure*, void*, size_t);
+typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EStSS)(ExecState*, Structure*, size_t, size_t);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EZ)(ExecState*, int32_t);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EZIcfZ)(ExecState*, int32_t, InlineCallFrame*, int32_t);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EZZ)(ExecState*, int32_t, int32_t);
@@ -137,7 +138,7 @@ EncodedJSValue DFG_OPERATION operationResolveGlobal(ExecState*, GlobalResolveInf
 EncodedJSValue DFG_OPERATION operationToPrimitive(ExecState*, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationStrCat(ExecState*, void*, size_t) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationNewArray(ExecState*, Structure*, void*, size_t) WTF_INTERNAL;
-EncodedJSValue DFG_OPERATION operationNewArrayBuffer(ExecState*, size_t, size_t) WTF_INTERNAL;
+EncodedJSValue DFG_OPERATION operationNewArrayBuffer(ExecState*, Structure*, size_t, size_t) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationNewEmptyArray(ExecState*, Structure*) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationNewArrayWithSize(ExecState*, Structure*, int32_t) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationNewRegexp(ExecState*, void*) WTF_INTERNAL;

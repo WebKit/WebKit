@@ -925,18 +925,32 @@ namespace JSC {
         }
         RegExp* regexp(int index) const { ASSERT(m_rareData); return m_rareData->m_regexps[index].get(); }
 
-        unsigned addConstantBuffer(unsigned length)
+        unsigned numberOfConstantBuffers() const
+        {
+            if (!m_rareData)
+                return 0;
+            return m_rareData->m_constantBuffers.size();
+        }
+        unsigned addConstantBuffer(const Vector<JSValue>& buffer)
         {
             createRareDataIfNecessary();
             unsigned size = m_rareData->m_constantBuffers.size();
-            m_rareData->m_constantBuffers.append(Vector<JSValue>(length));
+            m_rareData->m_constantBuffers.append(buffer);
             return size;
         }
+        unsigned addConstantBuffer(unsigned length)
+        {
+            return addConstantBuffer(Vector<JSValue>(length));
+        }
 
-        JSValue* constantBuffer(unsigned index)
+        Vector<JSValue>& constantBufferAsVector(unsigned index)
         {
             ASSERT(m_rareData);
-            return m_rareData->m_constantBuffers[index].data();
+            return m_rareData->m_constantBuffers[index];
+        }
+        JSValue* constantBuffer(unsigned index)
+        {
+            return constantBufferAsVector(index).data();
         }
 
         JSGlobalObject* globalObject() { return m_globalObject.get(); }

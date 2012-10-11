@@ -3585,11 +3585,15 @@ void SpeculativeJIT::compile(Node& node)
     }
         
     case NewArrayBuffer: {
+        JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node.codeOrigin);
+        if (!globalObject->isHavingABadTime())
+            globalObject->havingABadTimeWatchpoint()->add(speculationWatchpoint());
+        
         flushRegisters();
         GPRResult resultPayload(this);
         GPRResult2 resultTag(this);
         
-        callOperation(operationNewArrayBuffer, resultTag.gpr(), resultPayload.gpr(), node.startConstant(), node.numConstants());
+        callOperation(operationNewArrayBuffer, resultTag.gpr(), resultPayload.gpr(), globalObject->arrayStructure(), node.startConstant(), node.numConstants());
         
         // FIXME: make the callOperation above explicitly return a cell result, or jitAssert the tag is a cell tag.
         cellResult(resultPayload.gpr(), m_compileIndex);

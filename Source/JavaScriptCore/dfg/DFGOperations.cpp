@@ -1124,11 +1124,11 @@ EncodedJSValue DFG_OPERATION operationNewArrayWithSize(ExecState* exec, Structur
     return JSValue::encode(JSArray::create(exec->globalData(), arrayStructure, size));
 }
 
-EncodedJSValue DFG_OPERATION operationNewArrayBuffer(ExecState* exec, size_t start, size_t size)
+EncodedJSValue DFG_OPERATION operationNewArrayBuffer(ExecState* exec, Structure* arrayStructure, size_t start, size_t size)
 {
     JSGlobalData& globalData = exec->globalData();
     NativeCallFrameTracer tracer(&globalData, exec);
-    return JSValue::encode(constructArray(exec, exec->codeBlock()->constantBuffer(start), size));
+    return JSValue::encode(constructArray(exec, arrayStructure, exec->codeBlock()->constantBuffer(start), size));
 }
 
 EncodedJSValue DFG_OPERATION operationNewRegexp(ExecState* exec, void* regexpPtr)
