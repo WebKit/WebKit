@@ -27,7 +27,7 @@
 #include "config.h"
 #include "StyleScopeResolver.h"
 
-#if ENABLE(STYLE_SCOPED)
+#if ENABLE(STYLE_SCOPED) || ENABLE(SHADOW_DOM)
 
 #include "CSSStyleSheet.h"
 #include "ContextFeatures.h"
@@ -60,16 +60,13 @@ const ContainerNode* StyleScopeResolver::scopeFor(const CSSStyleSheet* sheet)
     Document* document = sheet->ownerDocument();
     if (!document)
         return 0;
-    if (!ContextFeatures::styleScopedEnabled(document))
-        return 0;
-
     Node* ownerNode = sheet->ownerNode();
     if (!ownerNode || !ownerNode->isHTMLElement() || !ownerNode->hasTagName(HTMLNames::styleTag))
         return 0;
 
     HTMLStyleElement* styleElement = static_cast<HTMLStyleElement*>(ownerNode);
     if (!styleElement->scoped())
-        return styleElement->isInShadowTree()? styleElement->shadowRoot() : 0;
+        return styleElement->isInShadowTree() ? styleElement->shadowRoot() : 0;
 
     ContainerNode* parent = styleElement->parentNode();
     if (!parent)

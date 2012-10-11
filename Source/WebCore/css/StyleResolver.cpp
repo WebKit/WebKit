@@ -712,7 +712,7 @@ void StyleResolver::sortAndTransferMatchedRules(MatchResult& result)
 
 void StyleResolver::matchScopedAuthorRules(MatchResult& result, bool includeEmptyRules)
 {
-#if ENABLE(STYLE_SCOPED)
+#if ENABLE(STYLE_SCOPED) || ENABLE(SHADOW_DOM)
     if (!m_scopeResolver || !m_scopeResolver->hasScopedStyles())
         return;
 
@@ -996,10 +996,8 @@ Node* StyleResolver::locateCousinList(Element* parent, unsigned& visitedNodeCoun
         return 0;
     if (!parent || !parent->isStyledElement())
         return 0;
-#if ENABLE(STYLE_SCOPED)
     if (parent->hasScopedHTMLStyleChild())
         return 0;
-#endif
     StyledElement* p = static_cast<StyledElement*>(parent);
     if (p->inlineStyle())
         return 0;
@@ -1179,14 +1177,10 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
         return false;
     if (element->fastGetAttribute(cellpaddingAttr) != m_element->fastGetAttribute(cellpaddingAttr))
         return false;
-
     if (element->hasID() && m_features.idsInRules.contains(element->idForStyleResolution().impl()))
         return false;
-
-#if ENABLE(STYLE_SCOPED)
     if (element->hasScopedHTMLStyleChild())
         return false;
-#endif
 
 #if ENABLE(PROGRESS_ELEMENT)
     if (element->hasTagName(progressTag)) {
@@ -1293,10 +1287,8 @@ RenderStyle* StyleResolver::locateSharedStyle()
         return 0;
     if (parentStylePreventsSharing(m_parentStyle))
         return 0;
-#if ENABLE(STYLE_SCOPED)
     if (m_styledElement->hasScopedHTMLStyleChild())
         return 0;
-#endif
 
     // Check previous siblings and their cousins.
     unsigned count = 0;

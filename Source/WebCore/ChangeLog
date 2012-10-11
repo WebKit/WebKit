@@ -1,3 +1,49 @@
+2012-10-10  MORITA Hajime  <morrita@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=95664
+        [Shadow DOM] should be able to be available without <style scoped>
+
+        Reviewed by Dimitri Glazkov.
+
+        This change relaxes ENABLE(STYLE_SCOPED) compilation guard
+        and styleScopedEnabled() runtime guard. The flags now masks
+        user visible bits of the code, rather than all of it.
+        This change also eliminates some redundant guards for simplicity.
+
+        Test: fast/dom/shadow/style-scoped-not-enabled.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::matchScopedAuthorRules):
+        (WebCore::StyleResolver::locateCousinList):
+        (WebCore::StyleResolver::canShareStyleWithElement):
+        (WebCore::StyleResolver::locateSharedStyle):
+        * css/StyleScopeResolver.cpp:
+        (WebCore::StyleScopeResolver::scopeFor):
+        * css/StyleScopeResolver.h:
+        (WebCore):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::HTMLStyleElement):
+        (WebCore::HTMLStyleElement::parseAttribute):
+        (WebCore::HTMLStyleElement::scopedAttributeChanged):
+        (WebCore::HTMLStyleElement::isRegisteredAsScoped):
+        (WebCore::HTMLStyleElement::registerWithScopingNode):
+        (WebCore::HTMLStyleElement::unregisterWithScopingNode):
+        (WebCore::HTMLStyleElement::insertedInto):
+        (WebCore::HTMLStyleElement::removedFrom):
+        (WebCore::HTMLStyleElement::scoped):
+        (WebCore::HTMLStyleElement::scopingElement):
+        * html/HTMLStyleElement.h:
+        (HTMLStyleElement):
+        * testing/InternalSettings.cpp: Exporsing a flag for testing.
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setStyleScopedEnabled):
+        (WebCore):
+        * testing/InternalSettings.h: Exporsing a flag for testing.
+        (Backup):
+        (InternalSettings):
+        * testing/InternalSettings.idl: Exporsing a flag for testing.
+
 2012-10-10  Roger Fong  <roger_fong@apple.com>
 
         [WebGL] [On Mac] queried attributes and uniforms need to return the original variable name, not the mapped name.

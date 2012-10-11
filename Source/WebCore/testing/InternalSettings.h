@@ -61,6 +61,9 @@ public:
         bool m_originalShadowDOMEnabled;
         bool m_originalAuthorShadowDOMForAnyElementEnabled;
 #endif
+#if ENABLE(STYLE_SCOPED)
+        bool m_originalStyleScoped;
+#endif
         EditingBehaviorType m_originalEditingBehavior;
         bool m_originalUnifiedSpellCheckerEnabled;
         bool m_originalFixedPositionCreatesStackingContext;
@@ -113,6 +116,7 @@ public:
     void setDeviceSupportsMouse(bool enabled, ExceptionCode&);
     void setShadowDOMEnabled(bool enabled, ExceptionCode&);
     void setAuthorShadowDOMForAnyElementEnabled(bool);
+    void setStyleScopedEnabled(bool);
     void setStandardFontFamily(const String& family, const String& script, ExceptionCode&);
     void setSerifFontFamily(const String& family, const String& script, ExceptionCode&);
     void setSansSerifFontFamily(const String& family, const String& script, ExceptionCode&);

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+if (window.internals)
+    window.internals.settings.setStyleScopedEnabled(false);
+</script>
+</head>
+<body>
+<div id="host"></div>
+<span id='shouldNotBeApplied'>Should not be blue</span>
+<div>
+  <style scoped> p { color: red; } </style>
+  <p id='insideScope'>Should be red</p>
+</div>
+<p id='shouldNotBeScoped'>Should be red</p>
+<script>
+description("This test ensures content element feature can be disabled");
+var host = document.getElementById("host");
+var shadow = new WebKitShadowRoot(host);
+shadow.innerHTML = "<style> span { color: blue; } </style><span id='shouldBeApplied'>Should be blue</span>";
+var shouldBeApplied = shadow.getElementById("shouldBeApplied");
+var shouldNotBeApplied = document.getElementById("shouldNotBeApplied");
+var shouldNotBeScoped = document.getElementById("shouldNotBeScoped");
+var insideScope = document.getElementById("insideScope");
+shouldBe("window.getComputedStyle(shouldBeApplied).color", "'rgb(0, 0, 255)'");
+shouldBe("window.getComputedStyle(shouldNotBeApplied).color", "'rgb(0, 0, 0)'");
+shouldBe("window.getComputedStyle(insideScope).color", "'rgb(255, 0, 0)'");
+shouldBe("window.getComputedStyle(shouldNotBeScoped).color", "'rgb(255, 0, 0)'");
+finishJSTest();
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

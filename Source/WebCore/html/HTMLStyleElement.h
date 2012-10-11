@@ -41,12 +41,10 @@ public:
 
     void setType(const AtomicString&);
 
-#if ENABLE(STYLE_SCOPED)
     bool scoped() const;
     void setScoped(bool);
     Element* scopingElement() const;
     bool isRegisteredAsScoped() const;
-#endif
 
     using StyleElement::sheet;
 
@@ -77,23 +75,19 @@ private:
     virtual const AtomicString& media() const;
     virtual const AtomicString& type() const;
 
-#if ENABLE(STYLE_SCOPED)
     void scopedAttributeChanged(bool);
     void registerWithScopingNode(bool);
     void unregisterWithScopingNode(ContainerNode*);
-#endif
 
     bool m_firedLoad;
     bool m_loadedSheet;
 
-#if ENABLE(STYLE_SCOPED)
     enum ScopedStyleRegistrationState {
         NotRegistered,
         RegisteredAsScoped,
         RegisteredInShadowRoot
     };
     ScopedStyleRegistrationState m_scopedStyleRegistrationState;
-#endif
 };
 
 } //namespace

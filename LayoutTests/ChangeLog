@@ -1,3 +1,13 @@
+2012-10-10  MORITA Hajime  <morrita@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=95664
+        [Shadow DOM] should be able to be available without <style scoped>
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/style-scoped-not-enabled-expected.txt: Added.
+        * fast/dom/shadow/style-scoped-not-enabled.html: Added.
+
 2012-10-10  Ojan Vafai  <ojan@chromium.org>
 
         check-layout.js should always dumpAsText

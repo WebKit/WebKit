@@ -40,7 +40,7 @@ class CSSStyleSheet;
 class RuleSet;
 class RuleFeatureSet;
 
-#if ENABLE(STYLE_SCOPED)
+#if ENABLE(STYLE_SCOPED) || ENABLE(SHADOW_DOM)
 
 class StyleScopeResolver {
 public:
