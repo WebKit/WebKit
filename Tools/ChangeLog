@@ -1,3 +1,17 @@
+2012-10-11 Vivek Galatage <vivekgalatage@gmail.com>
+
+        Fix committers.py for the names of contributors to appear on webkit.org/team.html
+        https://bugs.webkit.org/show_bug.cgi?id=99004
+
+        Reviewed by Yuta Kitamura
+
+        Some of the nicknames in the committers.py file are using the single quotes (')
+        but while parsing these, JSON throws an error: Single quotes (') are not allowed in JSON
+        Hence coverting these single quotes to (") so as the contributor names appear properly
+        on http://www.webkit.org/team.html
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-10-10  Lucas Forschler  <lforschler@apple.com>
 
         Remove Apple Mac Snow Leopard bots.
