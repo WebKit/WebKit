@@ -695,6 +695,8 @@ WebInspector.ConsoleMessageImpl.prototype = {
                 return false;
             var l = this._stackTrace;
             var r = msg._stackTrace;
+            if (l.length !== r.length) 
+                return false;
             for (var i = 0; i < l.length; i++) {
                 if (l[i].url !== r[i].url ||
                     l[i].functionName !== r[i].functionName ||
