@@ -1,3 +1,18 @@
+2012-10-10  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Do not perform backing store blit for animations during one-shot drawing synchronization
+        https://bugs.webkit.org/show_bug.cgi?id=98944
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by: Arvid Nilsson.
+        Internal PR 220014
+        Prevent animations from causing a backing store blit during a
+        one-shot drawing synchronization.
+
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::animationFrameChanged):
+
 2012-10-10  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Fix crash for detached node when validating selection change.

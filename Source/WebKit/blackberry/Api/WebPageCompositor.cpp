@@ -238,7 +238,9 @@ void WebPageCompositorPrivate::animationFrameChanged()
         webKitThreadMessageClient()->dispatchMessage(createMethodCallMessage(&BackingStorePrivate::renderVisibleContents, backingStore->d));
         return;
     }
-    m_webPage->blitVisibleContents();
+
+    if (!m_webPage->needsOneShotDrawingSynchronization())
+        m_webPage->blitVisibleContents();
 }
 
 void WebPageCompositorPrivate::compositorDestroyed()
