@@ -1,3 +1,31 @@
+2012-10-11  Chris Guan  <chris.guan@torchmobile.com.cn>
+
+        [Blackberry] makes NavigatorContentUtils work
+        https://bugs.webkit.org/show_bug.cgi?id=99022
+
+        Reviewed by Rob Buis.
+
+        Because r126735 renamed RegisterProtocolHandler API to NavigatorContentUtils and 
+        r122810 added RegisterProtocolHandlerClient to the Modules/protocolhandler,
+        we need sync up code:
+        1. Add NavigatorContentUtilsClientBlackBerry class.
+        2. use new API provideNavigatorContentUtilsTo.
+
+        No new tests. Covered by existing tests.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        * WebCoreSupport/NavigatorContentUtilsClientBlackBerry.cpp: Added.
+        (WebCore):
+        (WebCore::NavigatorContentUtilsClientBlackBerry::NavigatorContentUtilsClientBlackBerry):
+        (WebCore::NavigatorContentUtilsClientBlackBerry::registerProtocolHandler):
+        (WebCore::NavigatorContentUtilsClientBlackBerry::isProtocolHandlerRegistered):
+        (WebCore::NavigatorContentUtilsClientBlackBerry::unregisterProtocolHandler):
+        * WebCoreSupport/NavigatorContentUtilsClientBlackBerry.h: Added.
+        (WebKit):
+        (NavigatorContentUtilsClientBlackBerry):
+        (WebCore::NavigatorContentUtilsClientBlackBerry::~NavigatorContentUtilsClientBlackBerry):
+
 2012-10-10  Lianghui Chen  <liachen@rim.com>
 
         [BlackBerry] Fix assertion in NetworkJob::notifyChallengeResult.

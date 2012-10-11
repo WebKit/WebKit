@@ -88,6 +88,9 @@
 #endif
 #include "NetworkManager.h"
 #include "NodeRenderStyle.h"
+#if ENABLE(NAVIGATOR_CONTENT_UTILS)
+#include "NavigatorContentUtilsClientBlackBerry.h"
+#endif
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include "NotificationPresenterImpl.h"
 #endif
@@ -561,6 +564,10 @@ void WebPagePrivate::init(const WebString& pageGroupName)
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     WebCore::provideNotification(m_page, NotificationPresenterImpl::instance());
+#endif
+
+#if ENABLE(NAVIGATOR_CONTENT_UTILS)
+    WebCore::provideNavigatorContentUtilsTo(m_page, new NavigatorContentUtilsClientBlackBerry(this));
 #endif
 
 #if ENABLE(NETWORK_INFO)
