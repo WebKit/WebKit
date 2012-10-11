@@ -1,3 +1,39 @@
+2012-10-11  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] It should be possible to disable favicons in WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=98885
+
+        Reviewed by Carlos Garcia Campos.
+
+        Make support for favicons in WebKit2GTK+ disabled by default, and
+        allow enabling it even after calling webkit_web_context_get_favicon_database(),
+        by decoupling opening the IconDatabase, which will happen when
+        setting the path for the database directory, from creating the
+        instance of WebKitFaviconDatabase from WebKitWebContext.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (_WebKitWebContextPrivate): Renamed faviconDatabasePath to
+        faviconDatabaseDirectory;
+        (ensureFaviconDatabase): Makes sure there's an instance of
+        WebKitFaviconDatabase created and associated to the context.
+        (webkit_web_context_set_favicon_database_directory): Use the
+        default path if NULL is passed, or the specified one, creating the
+        database if needed and opening it by setting it's path. If the
+        database is already open this method does nothing.
+        (webkit_web_context_get_favicon_database_directory): Return the
+        path or NULL if webkit_web_context_set_favicon_database_directory
+        has not been called yet.
+        (webkit_web_context_get_favicon_database): Return the instance of
+        WebKitFaviconDatabase, or create it if it doesn't exist yet, but
+        never set the path (would cause the icon database to be opened).
+
+        * UIProcess/API/gtk/tests/TestWebKitFaviconDatabase.cpp:
+        (testNotInitialized): New test to check that a NOT_INITIALIZED
+        error is got when using the database before setting its path.
+        (testSetDirectory): Call set_favicon_database_directory() here
+        instead of doing it in the constructor of FaviconDatabaseTest.
+        (beforeAll): Add testNotInitialized() to the test suite.
+
 2012-10-11  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Revisit setting API names and documentation
