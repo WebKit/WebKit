@@ -1,5 +1,11 @@
 2012-10-11  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed gardening, skip new failing tests.
+
+        * platform/qt/TestExpectations:
+
+2012-10-11  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed gardening, unskip and rebase now passing tests.
 
         * platform/qt/TestExpectations:

@@ -239,6 +239,8 @@ fast/dom/shadow/shadowdom-for-progress-with-style.html
 fast/dom/shadow/shadowdom-for-progress-without-appearance.html
 fast/dom/shadow/shadowdom-for-progress-without-shadow-element.html
 fast/dom/shadow/shadowdom-for-progress.html
+fast/dom/shadow/shadowdom-reprojection-1.html
+fast/dom/shadow/shadowdom-reprojection-2.html
 fast/dom/shadow/shadow-and-list-elements.html
 fast/dom/shadow/shadow-boundary-events.html
 fast/dom/shadow/shadow-content-crash.html
