@@ -407,13 +407,14 @@ ALWAYS_INLINE bool JIT::isOperandConstantImmediateChar(unsigned src)
 
 template <typename ClassType, MarkedBlock::DestructorType destructorType, typename StructureType> inline void JIT::emitAllocateBasicJSObject(StructureType structure, RegisterID result, RegisterID storagePtr)
 {
+    size_t size = ClassType::allocationSize(INLINE_STORAGE_CAPACITY);
     MarkedAllocator* allocator = 0;
     if (destructorType == MarkedBlock::Normal)
-        allocator = &m_globalData->heap.allocatorForObjectWithNormalDestructor(sizeof(ClassType));
+        allocator = &m_globalData->heap.allocatorForObjectWithNormalDestructor(size);
     else if (destructorType == MarkedBlock::ImmortalStructure)
-        allocator = &m_globalData->heap.allocatorForObjectWithImmortalStructureDestructor(sizeof(ClassType));
+        allocator = &m_globalData->heap.allocatorForObjectWithImmortalStructureDestructor(size);
     else
-        allocator = &m_globalData->heap.allocatorForObjectWithoutDestructor(sizeof(ClassType));
+        allocator = &m_globalData->heap.allocatorForObjectWithoutDestructor(size);
     loadPtr(&allocator->m_freeList.head, result);
     addSlowCase(branchTestPtr(Zero, result));
 

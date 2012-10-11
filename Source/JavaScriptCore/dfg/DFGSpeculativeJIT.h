@@ -2261,13 +2261,14 @@ public:
     template <typename ClassType, MarkedBlock::DestructorType destructorType, typename StructureType> 
     void emitAllocateBasicJSObject(StructureType structure, GPRReg resultGPR, GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
     {
+        size_t size = ClassType::allocationSize(INLINE_STORAGE_CAPACITY);
         MarkedAllocator* allocator = 0;
         if (destructorType == MarkedBlock::Normal)
-            allocator = &m_jit.globalData()->heap.allocatorForObjectWithNormalDestructor(sizeof(ClassType));
+            allocator = &m_jit.globalData()->heap.allocatorForObjectWithNormalDestructor(size);
         else if (destructorType == MarkedBlock::ImmortalStructure)
-            allocator = &m_jit.globalData()->heap.allocatorForObjectWithImmortalStructureDestructor(sizeof(ClassType));
+            allocator = &m_jit.globalData()->heap.allocatorForObjectWithImmortalStructureDestructor(size);
         else
-            allocator = &m_jit.globalData()->heap.allocatorForObjectWithoutDestructor(sizeof(ClassType));
+            allocator = &m_jit.globalData()->heap.allocatorForObjectWithoutDestructor(size);
 
         m_jit.loadPtr(&allocator->m_freeList.head, resultGPR);
         slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, resultGPR));

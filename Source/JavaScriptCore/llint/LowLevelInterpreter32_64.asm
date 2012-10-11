@@ -951,7 +951,7 @@ macro loadPropertyAtVariableOffset(propertyOffset, objectAndStorage, tag, payloa
     negi propertyOffset
     jmp .ready
 .isInline:
-    addp JSFinalObject::m_inlineStorage - (firstOutOfLineOffset - 2) * 8, objectAndStorage
+    addp sizeof JSObject - (firstOutOfLineOffset - 2) * 8, objectAndStorage
 .ready:
     loadi TagOffset + (firstOutOfLineOffset - 2) * 8[objectAndStorage, propertyOffset, 8], tag
     loadi PayloadOffset + (firstOutOfLineOffset - 2) * 8[objectAndStorage, propertyOffset, 8], payload

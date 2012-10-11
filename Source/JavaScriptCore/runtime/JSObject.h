@@ -109,6 +109,11 @@ namespace JSC {
     public:
         typedef JSCell Base;
         
+        static size_t allocationSize(size_t inlineCapacity)
+        {
+            return sizeof(JSObject) + inlineCapacity * sizeof(WriteBarrierBase<Unknown>);
+        }
+        
         JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
 
         JS_EXPORT_PRIVATE static String className(const JSObject*);
@@ -827,27 +832,30 @@ namespace JSC {
         void finishCreation(JSGlobalData& globalData)
         {
             Base::finishCreation(globalData);
-            ASSERT(!(OBJECT_OFFSETOF(JSFinalObject, m_inlineStorage) % sizeof(double)));
             ASSERT(structure()->totalStorageCapacity() == structure()->inlineCapacity());
             ASSERT(classInfo());
         }
 
     private:
         friend class LLIntOffsetsExtractor;
-        
+
         explicit JSFinalObject(JSGlobalData& globalData, Structure* structure)
             : JSObject(globalData, structure)
         {
         }
 
         static const unsigned StructureFlags = JSObject::StructureFlags;
-
-        WriteBarrierBase<Unknown> m_inlineStorage[INLINE_STORAGE_CAPACITY];
     };
 
 inline JSFinalObject* JSFinalObject::create(ExecState* exec, Structure* structure)
 {
-    JSFinalObject* finalObject = new (NotNull, allocateCell<JSFinalObject>(*exec->heap())) JSFinalObject(exec->globalData(), structure);
+    JSFinalObject* finalObject = new (
+        NotNull, 
+        allocateCell<JSFinalObject>(
+            *exec->heap(),
+            allocationSize(structure->inlineCapacity())
+        )
+    ) JSFinalObject(exec->globalData(), structure);
     finalObject->finishCreation(exec->globalData());
     return finalObject;
 }
@@ -864,7 +872,7 @@ inline bool isJSFinalObject(JSValue value)
 
 inline size_t JSObject::offsetOfInlineStorage()
 {
-    return OBJECT_OFFSETOF(JSFinalObject, m_inlineStorage);
+    return sizeof(JSObject);
 }
 
 inline bool JSObject::isGlobalObject() const
@@ -1356,6 +1364,8 @@ inline int offsetRelativeToBase(PropertyOffset offset)
         return offsetInOutOfLineStorage(offset) * sizeof(EncodedJSValue) + Butterfly::offsetOfPropertyStorage();
     return JSObject::offsetOfInlineStorage() + offsetInInlineStorage(offset) * sizeof(EncodedJSValue);
 }
+
+COMPILE_ASSERT(!(sizeof(JSObject) % sizeof(WriteBarrierBase<Unknown>)), JSObject_inline_storage_has_correct_alignment);
 
 } // namespace JSC
 

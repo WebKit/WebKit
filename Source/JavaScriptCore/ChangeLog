@@ -1,5 +1,41 @@
 2012-10-11  Geoffrey Garen  <ggaren@apple.com>
 
+        Removed some more static assumptions about inline object capacity
+        https://bugs.webkit.org/show_bug.cgi?id=98603
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateBasicJSObject): Use JSObject::allocationSize()
+        for a little more flexibility. We still pass it a constant inline capacity
+        because the JIT doesn't have a strategy for selecting a size class based
+        on non-constant capacity yet. "INLINE_STORAGE_CAPACITY" is a marker for
+        code that makes static assumptions about object size.
+
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitAllocateBasicJSObject):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm: Ditto for the rest of our many execution engines.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::allocationSize):
+        (JSC::JSFinalObject::finishCreation):
+        (JSC::JSFinalObject::create): New helper function for computing object
+        size dynamically, since we plan to have objects of different sizes.
+
+        (JSC::JSFinalObject::JSFinalObject): Note that our m_inlineStorage used
+        to auto-generate an implicit C++ constructor with default null initialization.
+        This memory is not observed in its uninitialized state, and our LLInt and
+        JIT allocators do not initialize it, so I did not add any explicit code
+        to do so, now that the implicit code is gone.
+
+        (JSC::JSObject::offsetOfInlineStorage): Changed the math here to match
+        inlineStorageUnsafe(), since we can rely on an explicit data member anymore.
+
+2012-10-11  Geoffrey Garen  <ggaren@apple.com>
+
         Enable RUNTIME_HEURISTICS all the time, for easier testing
         https://bugs.webkit.org/show_bug.cgi?id=99090
 

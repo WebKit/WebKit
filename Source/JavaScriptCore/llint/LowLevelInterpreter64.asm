@@ -810,7 +810,7 @@ macro loadPropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, value)
     sxi2p propertyOffsetAsInt, propertyOffsetAsInt
     jmp .ready
 .isInline:
-    addp JSFinalObject::m_inlineStorage - (firstOutOfLineOffset - 2) * 8, objectAndStorage
+    addp sizeof JSObject - (firstOutOfLineOffset - 2) * 8, objectAndStorage
 .ready:
     loadp (firstOutOfLineOffset - 2) * 8[objectAndStorage, propertyOffsetAsInt, 8], value
 end
