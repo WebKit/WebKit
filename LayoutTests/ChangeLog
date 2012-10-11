@@ -1,3 +1,19 @@
+2012-10-11  Keishi Hattori  <keishi@webkit.org>
+
+        F4 key should open the picker popup on Windows and Linux
+        https://bugs.webkit.org/show_bug.cgi?id=98754
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/date/calendar-picker-key-operations.html:
+        * platform/chromium-win/fast/forms/date/calendar-picker-key-operations-expected.txt: Added.
+        * platform/chromium-win/platform/chromium/fast/forms/date/date-suggestion-picker-key-operations-expected.txt:
+        * platform/chromium-win/platform/chromium/fast/forms/time/time-suggestion-picker-key-operations-expected.txt:
+        * platform/chromium/fast/forms/date/date-suggestion-picker-key-operations-expected.txt:
+        * platform/chromium/fast/forms/date/date-suggestion-picker-key-operations.html:
+        * platform/chromium/fast/forms/time/time-suggestion-picker-key-operations-expected.txt:
+        * platform/chromium/fast/forms/time/time-suggestion-picker-key-operations.html:
+
 2012-10-11  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Reviewing Qt TestExpectations. Unskip now passing tests.

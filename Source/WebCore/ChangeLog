@@ -1,3 +1,31 @@
+2012-10-11  Keishi Hattori  <keishi@webkit.org>
+
+        F4 key should open the picker popup on Windows and Linux
+        https://bugs.webkit.org/show_bug.cgi?id=98754
+
+        Reviewed by Kent Tamura.
+
+        On Windows, F4 key is used to open the combo box popup. We will introduce the same keybinding for picker popups.
+
+        Added test to calendar-picker-key-operations.html, date-suggestion-picker-key-operations.html, time-suggestion-picker-key-operations.html.
+
+        * html/BaseMultipleFieldsDateAndTimeInputType.cpp:
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::handleKeydownEvent): Open picker on F4 key if it is enabled.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::shouldOpenPickerWithF4Key): Returns true if we want to enable the F4 key binding on this platform. Return false for default.
+        (WebCore):
+        * rendering/RenderTheme.h:
+        (RenderTheme):
+        * rendering/RenderThemeChromiumLinux.cpp:
+        (WebCore::RenderThemeChromiumLinux::shouldOpenPickerWithF4Key): Returns true.
+        (WebCore):
+        * rendering/RenderThemeChromiumLinux.h:
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore):
+        (WebCore::RenderThemeChromiumWin::shouldOpenPickerWithF4Key): Returns true.
+        * rendering/RenderThemeChromiumWin.h:
+        (RenderThemeChromiumWin):
+
 2012-10-11  John J. Barton  <johnjbarton@chromium.org>
 
         Web Inspector: Zebra stripe the console

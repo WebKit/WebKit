@@ -116,6 +116,10 @@ function test2() {
     shouldBeNull('document.getElementById("mock-page-popup")');
     shouldBe('document.getElementById("date").value', '"1999-12-26"');
 
+    sendKey(document.getElementById('date'), "F4");
+    if (document.getElementById('mock-page-popup'))
+        testPassed("F4 opened picker.");
+
     finishJSTest();
 }
 

@@ -1274,4 +1274,9 @@ String RenderTheme::fileListNameForWidth(const FileList* fileList, const Font& f
     return StringTruncator::centerTruncate(string, width, font, StringTruncator::EnableRoundingHacks);
 }
 
+bool RenderTheme::shouldOpenPickerWithF4Key() const
+{
+    return false;
+}
+
 } // namespace WebCore

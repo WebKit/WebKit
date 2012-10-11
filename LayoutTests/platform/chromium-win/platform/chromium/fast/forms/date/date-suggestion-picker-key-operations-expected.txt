@@ -36,7 +36,8 @@ PASS popupWindow.document.getElementById("main").classList.contains("calendar-pi
 Check that escape key closes the popup.
 PASS document.getElementById("mock-page-popup") is null
 PASS document.getElementById("date").value is "2012-03-08"
+PASS F4 opened picker.
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
+ 

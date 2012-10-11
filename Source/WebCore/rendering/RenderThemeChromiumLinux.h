@@ -84,6 +84,8 @@ namespace WebCore {
         virtual bool paintProgressBar(RenderObject*, const PaintInfo&, const IntRect&);
 #endif
 
+        virtual bool shouldOpenPickerWithF4Key() const OVERRIDE;
+
         static void setSelectionColors(unsigned activeBackgroundColor,
                                        unsigned activeForegroundColor,
                                        unsigned inactiveBackgroundColor,

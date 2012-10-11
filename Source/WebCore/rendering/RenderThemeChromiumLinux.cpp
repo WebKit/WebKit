@@ -377,4 +377,9 @@ bool RenderThemeChromiumLinux::paintProgressBar(RenderObject* o, const PaintInfo
 
 #endif
 
+bool RenderThemeChromiumLinux::shouldOpenPickerWithF4Key() const
+{
+    return true;
+}
+
 } // namespace WebCore

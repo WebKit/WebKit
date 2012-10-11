@@ -809,4 +809,9 @@ bool RenderThemeChromiumWin::paintProgressBar(RenderObject* o, const PaintInfo& 
 
 #endif
 
+bool RenderThemeChromiumWin::shouldOpenPickerWithF4Key() const
+{
+    return true;
+}
+
 } // namespace WebCore

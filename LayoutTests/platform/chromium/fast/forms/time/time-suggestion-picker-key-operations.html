@@ -155,8 +155,9 @@ function test2() {
     shouldBeNull('document.getElementById("mock-page-popup")');
     shouldBe('document.getElementById("time").value', '"02:07"');
 
-    debug('Reopen popup.');
-    openPicker(document.getElementById('time'));
+    sendKey(document.getElementById('time'), "F4");
+    if (document.getElementById('mock-page-popup'))
+        testPassed("F4 opened picker.");
 
     clearTimeout(timeoutTimer);
     finishJSTest();

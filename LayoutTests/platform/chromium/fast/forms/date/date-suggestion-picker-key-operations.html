@@ -150,22 +150,7 @@ function test1() {
 
 function test2() {
     popupWindow.removeEventListener("resize", test2, false);
-
-    popupWindow.focus();
-
-    debug('Check that escape key closes the popup.');
-    eventSender.keyDown('\x1B');
-    shouldBeNull('document.getElementById("mock-page-popup")');
-    shouldBe('document.getElementById("date").value', '"2012-03-08"');
-
-    debug('Reopen popup.');
-    openPicker(document.getElementById('date'));
     popupWindow.addEventListener("resize", test3, false);
-}
-
-function test3() {
-    popupWindow.removeEventListener("resize", test3, false);
-    popupWindow.addEventListener("resize", test4, false);
 
     popupWindow.focus();
 
@@ -178,11 +163,20 @@ function test3() {
     eventSender.keyDown('\n');
 }
 
-function test4() {
-    popupWindow.removeEventListener("resize", test4, false);
+function test3() {
+    popupWindow.removeEventListener("resize", test3, false);
 
     debug('Confirm calendar picker did open.');
     shouldBeTrue('popupWindow.document.getElementById("main").classList.contains("calendar-picker")');
+
+    debug('Check that escape key closes the popup.');
+    eventSender.keyDown('\x1B');
+    shouldBeNull('document.getElementById("mock-page-popup")');
+    shouldBe('document.getElementById("date").value', '"2012-03-08"');
+
+    sendKey(document.getElementById('date'), "F4");
+    if (document.getElementById('mock-page-popup'))
+        testPassed("F4 opened picker.");
 
     clearTimeout(timeoutTimer);
     finishJSTest();

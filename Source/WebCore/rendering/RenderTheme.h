@@ -244,6 +244,8 @@ public:
 
     virtual void paintPlugInSnapshotOverlay(RenderSnapshottedPlugIn*, const PaintInfo&, const LayoutPoint&) const { }
 
+    virtual bool shouldOpenPickerWithF4Key() const;
+
 protected:
     // The platform selection color.
     virtual Color platformActiveSelectionBackgroundColor() const;
