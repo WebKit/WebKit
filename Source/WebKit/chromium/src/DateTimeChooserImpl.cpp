@@ -48,7 +48,6 @@
 #include <public/Platform.h>
 #include <public/WebLocalizedString.h>
 
-using namespace WTF::Unicode;
 using namespace WebCore;
 
 namespace WebKit {
@@ -123,8 +122,7 @@ void DateTimeChooserImpl::writeDocument(WebCore::DocumentWriter& writer)
     addProperty("weekStartDay", m_localizer->firstDayOfWeek(), writer);
     addProperty("monthLabels", m_localizer->monthLabels(), writer);
     addProperty("dayLabels", m_localizer->weekDayShortLabels(), writer);
-    Direction dir = direction(m_localizer->monthLabels()[0][0]);
-    addProperty("isCalendarRTL", dir == RightToLeft || dir == RightToLeftArabic, writer);
+    addProperty("isCalendarRTL", m_localizer->isRTL(), writer);
     addProperty("isRTL", m_parameters.isAnchorElementRTL, writer);
     if (m_parameters.suggestionValues.size()) {
         addProperty("inputWidth", static_cast<unsigned>(m_parameters.anchorRectInRootView.width()), writer);

@@ -239,6 +239,11 @@ unsigned LocaleMac::firstDayOfWeek()
     // weekDay, so it can be 1 through 7 and 1 is Sunday.
     return [calendar.get() firstWeekday] - 1;
 }
+
+bool LocaleMac::isRTL()
+{
+    return NSLocaleLanguageDirectionRightToLeft == [NSLocale characterDirectionForLanguage:[NSLocale canonicalLanguageIdentifierFromString:[m_locale.get() localeIdentifier]]];
+}
 #endif
 
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)

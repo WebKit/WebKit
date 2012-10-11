@@ -54,6 +54,7 @@ public:
     virtual const Vector<String>& monthLabels() OVERRIDE;
     virtual const Vector<String>& weekDayShortLabels() OVERRIDE;
     virtual unsigned firstDayOfWeek() OVERRIDE;
+    virtual bool isRTL() OVERRIDE;
 #endif
 
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)

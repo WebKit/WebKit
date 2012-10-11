@@ -99,6 +99,10 @@ public:
     virtual unsigned firstDayOfWeek() = 0;
 
     virtual String dateFormatText() = 0;
+
+    // Returns true if people use right-to-left writing in the locale for this
+    // object.
+    virtual bool isRTL() = 0;
 #endif
 
     // Parses a string representation of a date/time string localized

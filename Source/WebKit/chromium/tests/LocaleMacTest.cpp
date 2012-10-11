@@ -111,6 +111,12 @@ protected:
         OwnPtr<LocaleMac> locale = LocaleMac::create(localeString);
         return locale->weekDayShortLabels()[index];
     }
+
+    bool isRTL(const String& localeString)
+    {
+        OwnPtr<LocaleMac> locale = LocaleMac::create(localeString);
+        return locale->isRTL();
+    }
 #endif
 
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
@@ -218,6 +224,14 @@ TEST_F(LocaleMacTest, weekDayShortLabels)
     EXPECT_STREQ("\xE6\x97\xA5", weekDayShortLabel("ja_JP", Sunday).utf8().data());
     EXPECT_STREQ("\xE6\xB0\xB4", weekDayShortLabel("ja_JP", Wednesday).utf8().data());
     EXPECT_STREQ("\xE5\x9C\x9F", weekDayShortLabel("ja_JP", Saturday).utf8().data());
+}
+
+TEST_F(LocaleMacTest, isRTL)
+{
+    EXPECT_TRUE(isRTL("ar-eg"));
+    EXPECT_FALSE(isRTL("en-us"));
+    EXPECT_FALSE(isRTL("ja-jp"));
+    EXPECT_FALSE(isRTL("**invalid**"));
 }
 #endif
 

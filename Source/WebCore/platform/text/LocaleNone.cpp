@@ -39,6 +39,7 @@ private:
     virtual String formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified) OVERRIDE;
 #if ENABLE(CALENDAR_PICKER)
     virtual String dateFormatText() OVERRIDE;
+    virtual bool isRTL() OVERRIDE;
 #endif
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     virtual String dateFormat() OVERRIDE;
@@ -72,6 +73,11 @@ String LocaleNone::formatDateTime(const DateComponents&, FormatType)
 String LocaleNone::dateFormatText()
 {
     return ASCIILiteral("Year-Month-Day");
+}
+
+bool LocaleNone::isRTL()
+{
+    return false;
 }
 #endif
 

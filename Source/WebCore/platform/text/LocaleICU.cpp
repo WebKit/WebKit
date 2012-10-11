@@ -33,6 +33,7 @@
 
 #include "LocalizedStrings.h"
 #include <limits>
+#include <unicode/uloc.h>
 #include <wtf/DateMath.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringBuilder.h>
@@ -376,6 +377,12 @@ unsigned LocaleICU::firstDayOfWeek()
 {
     initializeCalendar();
     return m_firstDayOfWeek;
+}
+
+bool LocaleICU::isRTL()
+{
+    UErrorCode status;
+    return uloc_getCharacterOrientation(m_locale.data(), &status) == ULOC_LAYOUT_RTL;
 }
 #endif
 
