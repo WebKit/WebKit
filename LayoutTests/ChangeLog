@@ -1,3 +1,11 @@
+2012-10-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed morning gardening.
+
+        * platform/qt/TestExpectations: Skip new failing tests.
+        * platform/qt/fast/css-generated-content/table-row-group-to-inline-expected.png: Updated after r131004.
+        * platform/qt/fast/css-generated-content/table-row-group-to-inline-expected.txt: Updated after r131004.
+
 2012-10-10  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Chromium] Unreviewed gardening, rebaselined.
