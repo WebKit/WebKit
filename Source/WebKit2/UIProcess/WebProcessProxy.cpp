@@ -105,8 +105,9 @@ WebProcessProxy::~WebProcessProxy()
 WebProcessProxy* WebProcessProxy::fromConnection(CoreIPC::Connection* connection)
 {
     ASSERT(connection);
-    WebProcessProxy* webProcessProxy = static_cast<WebProcessProxy*>(connection->client());
+    WebConnectionToWebProcess* webConnection = static_cast<WebConnectionToWebProcess*>(connection->client());
 
+    WebProcessProxy* webProcessProxy = webConnection->webProcessProxy();
     ASSERT(webProcessProxy->connection() == connection);
     return webProcessProxy;
 }

@@ -33,10 +33,11 @@ namespace WebKit {
 
 class WebProcessProxy;
 
-class WebConnectionToWebProcess : public WebConnection, CoreIPC::Connection::Client {
+class WebConnectionToWebProcess : public WebConnection, public CoreIPC::Connection::Client {
 public:
     static PassRefPtr<WebConnectionToWebProcess> create(WebProcessProxy*, CoreIPC::Connection::Identifier, WebCore::RunLoop*);
 
+    WebProcessProxy* webProcessProxy() const { return m_process; }
     CoreIPC::Connection* connection() { return m_connection.get(); }
 
     void invalidate();

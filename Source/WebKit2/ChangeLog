@@ -1,3 +1,15 @@
+2012-10-10  Anders Carlsson  <andersca@apple.com>
+
+        Stop crashing left and right.
+
+        * UIProcess/WebConnectionToWebProcess.h:
+        (WebKit::WebConnectionToWebProcess::webProcessProxy):
+        Add a getter.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::fromConnection):
+        The WebProcessProxy is not the Connection::Client, the WebConnectionToWebProcess is.
+
 2012-10-10  Sam Weinig  <sam@webkit.org>
 
         Fix the GCC Mac build. Why are we still building with GCC again?
