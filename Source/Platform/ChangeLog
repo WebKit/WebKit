@@ -1,5 +1,19 @@
 2012-10-10  Antoine Labour  <piman@chromium.org>
 
+        [chromium] Add entrypoints to set frame contents and recycle resources in WebDelegatedRendererLayer
+        https://bugs.webkit.org/show_bug.cgi?id=98833
+
+        Reviewed by James Robinson.
+
+        This is needed for https://codereview.chromium.org/10915298
+
+        * chromium/public/WebDelegatedRendererLayer.h:
+        (cc):
+        (WebKit):
+        (WebDelegatedRendererLayer):
+
+2012-10-10  Antoine Labour  <piman@chromium.org>
+
         [chromium] Add empty WebCompositorFrame/WebCompositorFrameAck
         https://bugs.webkit.org/show_bug.cgi?id=98841
 
