@@ -119,6 +119,7 @@ public:
     virtual void setUseParentBackfaceVisibility(bool) = 0;
 
     virtual void setBackgroundColor(WebColor) = 0;
+    virtual WebColor backgroundColor() const = 0;
 
     // Clear the filters in use by passing in a newly instantiated
     // WebFilterOperations object.
