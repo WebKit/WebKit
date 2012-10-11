@@ -94,12 +94,12 @@ const String CachedCSSStyleSheet::sheetText(bool enforceMIMEType, bool* hasValid
     return sheetText;
 }
 
-void CachedCSSStyleSheet::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
+void CachedCSSStyleSheet::data(PassRefPtr<ResourceBuffer> data, bool allDataReceived)
 {
     if (!allDataReceived)
         return;
 
-    m_data = ResourceBuffer::adoptSharedBuffer(data);
+    m_data = data;
     setEncodedSize(m_data.get() ? m_data->size() : 0);
     // Decode the data to find out the encoding and keep the sheet text around during checkNotify()
     if (m_data) {

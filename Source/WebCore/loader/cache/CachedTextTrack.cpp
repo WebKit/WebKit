@@ -48,9 +48,9 @@ CachedTextTrack::~CachedTextTrack()
 {
 }
 
-void CachedTextTrack::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
+void CachedTextTrack::data(PassRefPtr<ResourceBuffer> data, bool allDataReceived)
 {
-    m_data = ResourceBuffer::adoptSharedBuffer(data);
+    m_data = data;
     setEncodedSize(m_data.get() ? m_data->size() : 0);
 
     CachedResourceClientWalker<CachedResourceClient> walker(m_clients);

@@ -42,7 +42,7 @@ CachedRawResource::CachedRawResource(ResourceRequest& resourceRequest)
 {
 }
 
-void CachedRawResource::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
+void CachedRawResource::data(PassRefPtr<ResourceBuffer> data, bool allDataReceived)
 {
     CachedResourceHandle<CachedRawResource> protect(this);
     if (data) {
@@ -64,9 +64,9 @@ void CachedRawResource::data(PassRefPtr<SharedBuffer> data, bool allDataReceived
     if (m_options.shouldBufferData == BufferData) {
         if (data)
             setEncodedSize(data->size());
-        m_data = ResourceBuffer::adoptSharedBuffer(data);
+        m_data = data;
     }
-    CachedResource::data(m_data ? m_data->sharedBuffer() : 0, allDataReceived);
+    CachedResource::data(m_data, allDataReceived);
 }
 
 void CachedRawResource::didAddClient(CachedResourceClient* c)

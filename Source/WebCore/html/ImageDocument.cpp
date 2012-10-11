@@ -40,6 +40,7 @@
 #include "NotImplemented.h"
 #include "Page.h"
 #include "RawDataDocumentParser.h"
+#include "ResourceBuffer.h"
 #include "Settings.h"
 
 using std::min;
@@ -132,7 +133,7 @@ void ImageDocumentParser::appendBytes(DocumentWriter*, const char*, size_t)
         return;
 
     CachedImage* cachedImage = document()->cachedImage();
-    cachedImage->data(frame->loader()->documentLoader()->mainResourceData(), false);
+    cachedImage->data(ResourceBuffer::adoptSharedBuffer(frame->loader()->documentLoader()->mainResourceData()), false);
 
     document()->imageUpdated();
 }
@@ -148,7 +149,7 @@ void ImageDocumentParser::finish()
         if (document()->frame()->loader()->documentLoader()->isLoadingMultipartContent())
             data = data->copy();
 
-        cachedImage->data(data.release(), true);
+        cachedImage->data(ResourceBuffer::adoptSharedBuffer(data.release()), true);
         cachedImage->finish();
 
         cachedImage->setResponse(document()->frame()->loader()->documentLoader()->response());

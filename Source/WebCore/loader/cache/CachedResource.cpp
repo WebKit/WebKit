@@ -249,7 +249,7 @@ void CachedResource::checkNotify()
         c->notifyFinished(this);
 }
 
-void CachedResource::data(PassRefPtr<SharedBuffer>, bool allDataReceived)
+void CachedResource::data(PassRefPtr<ResourceBuffer>, bool allDataReceived)
 {
     if (!allDataReceived)
         return;

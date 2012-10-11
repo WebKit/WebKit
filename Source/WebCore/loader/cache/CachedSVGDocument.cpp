@@ -27,7 +27,7 @@
 
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
-#include "SharedBuffer.h"
+#include "ResourceBuffer.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -53,7 +53,7 @@ String CachedSVGDocument::encoding() const
     return m_decoder->encoding().name();
 }
 
-void CachedSVGDocument::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
+void CachedSVGDocument::data(PassRefPtr<ResourceBuffer> data, bool allDataReceived)
 {
     if (!allDataReceived)
         return;

@@ -33,14 +33,12 @@
 
 namespace WebCore {
 
-class SharedBuffer;
-
 class CachedTextTrack : public CachedResource {
 public:
     CachedTextTrack(const ResourceRequest&);
     virtual ~CachedTextTrack();
 
-    virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived);
+    virtual void data(PassRefPtr<ResourceBuffer> data, bool allDataReceived);
 };
 
 }

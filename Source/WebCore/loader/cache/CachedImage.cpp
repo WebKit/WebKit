@@ -343,9 +343,9 @@ size_t CachedImage::maximumDecodedImageSize()
     return settings ? settings->maximumDecodedImageSize() : 0;
 }
 
-void CachedImage::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
+void CachedImage::data(PassRefPtr<ResourceBuffer> data, bool allDataReceived)
 {
-    m_data = ResourceBuffer::adoptSharedBuffer(data);
+    m_data = data;
 
     createImage();
 

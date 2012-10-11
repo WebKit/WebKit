@@ -48,7 +48,7 @@ public:
 
 private:
     virtual void didAddClient(CachedResourceClient*);
-    virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived);
+    virtual void data(PassRefPtr<ResourceBuffer> data, bool allDataReceived);
 
     virtual bool shouldIgnoreHTTPStatusCodeErrors() const { return true; }
     virtual void allClientsRemoved();

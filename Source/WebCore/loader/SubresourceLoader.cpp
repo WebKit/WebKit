@@ -36,6 +36,7 @@
 #include "FrameLoader.h"
 #include "Logging.h"
 #include "MemoryCache.h"
+#include "ResourceBuffer.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include "WebCoreMemoryInstrumentation.h"
@@ -270,9 +271,9 @@ void SubresourceLoader::sendDataToResource(const char* data, int length)
     //     that all data has been received yet. 
     if (m_loadingMultipartContent || !resourceData()) { 
         RefPtr<SharedBuffer> copiedData = SharedBuffer::create(data, length); 
-        m_resource->data(copiedData.release(), m_loadingMultipartContent); 
+        m_resource->data(ResourceBuffer::adoptSharedBuffer(copiedData.release()), m_loadingMultipartContent);
     } else 
-        m_resource->data(resourceData(), false);
+        m_resource->data(ResourceBuffer::adoptSharedBuffer(resourceData()), false);
 }
 
 void SubresourceLoader::didReceiveCachedMetadata(const char* data, int length)
@@ -295,7 +296,7 @@ void SubresourceLoader::didFinishLoading(double finishTime)
     CachedResourceHandle<CachedResource> protectResource(m_resource);
     m_state = Finishing;
     m_resource->setLoadFinishTime(finishTime);
-    m_resource->data(resourceData(), true);
+    m_resource->data(ResourceBuffer::adoptSharedBuffer(resourceData()), true);
     m_resource->finish();
     ResourceLoader::didFinishLoading(finishTime);
 }
