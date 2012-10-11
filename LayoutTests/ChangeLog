@@ -1,3 +1,11 @@
+2012-10-11  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Unskip fast/dom/shadow/shadowdom-dynamic-styling.html
+
+        Seems to be passing consistently now.
+
+        * platform/efl/TestExpectations:
+
 2012-10-11  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL] Add baselines for editing/pasteboard.

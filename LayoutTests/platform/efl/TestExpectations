@@ -1343,8 +1343,6 @@ webkit.org/b/97109 tables/mozilla/bugs/bug99948.html [ Pass ]
 # New test introduced in r125790 fails
 webkit.org/b/94341 inspector/timeline/timeline-decode-resize.html [ Failure ]
 
-webkit.org/b/94690 fast/dom/shadow/shadowdom-dynamic-styling.html [ Failure ]
-
 # Fails after r126350
 webkit.org/b/94788 media/track/track-cue-rendering-snap-to-lines-not-set.html [ Failure ]
 
