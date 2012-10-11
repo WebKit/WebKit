@@ -595,3 +595,10 @@ webkit.org/b/98897 fast/repaint/textarea-set-disabled.html [ ImageOnlyFailure ]
 
 # [Qt][WK2] REGRESSION(r130967): It made http/tests/loading/text-content-type-with-binary-extension.html fail
 webkit.org/b/98994 http/tests/loading/text-content-type-with-binary-extension.html
+
+# [Qt] some tests fail after unskipped in r131044
+# https://bugs.webkit.org/show_bug.cgi?id=99034
+http/tests/cookies/third-party-cookie-relaxing.html
+http/tests/security/cookies/third-party-cookie-blocking-user-action.html
+http/tests/security/cookies/third-party-cookie-blocking-xslt.xml
+http/tests/security/cookies/third-party-cookie-blocking.html
