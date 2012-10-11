@@ -1,3 +1,17 @@
+2012-10-11  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] REGRESSION(r131033): Favicons don't work in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=99019
+
+        Reviewed by Carlos Garcia Campos.
+
+        Enable the favicons database by specifying the default path for
+        the directory where the actual data will be stored.
+
+        * MiniBrowser/gtk/main.c:
+        (main): Set the default directory for the favicon database calling
+        webkit_web_context_set_favicon_database_directory().
+
 2012-10-11  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [EFL][WK2] NWTR should launch MiniBrowser instead of EWebLauncher after test run
