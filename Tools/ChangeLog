@@ -1,3 +1,16 @@
+2012-10-11  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android] Exception when the layout test driver is stopped
+        https://bugs.webkit.org/show_bug.cgi?id=99084
+
+        Reviewed by Dirk Pranke.
+
+        On chromium-android, the process is killed directly in ServerProcess.stop() as the pipes are closed first.
+        Should not try to read data from the pipes after the process is killed.
+
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        (ServerProcess.stop): Don't read data after the process is killed.
+
 2012-10-11  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] REGRESSION(r131033): Favicons don't work in MiniBrowser
