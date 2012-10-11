@@ -1,3 +1,15 @@
+2012-10-11  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Cleaning up the expected failures section. Any test that is marked as a WontFix
+        should now have a small comment about the reasoning for such expectation, but no
+        bug modifier. Any other expectation should now have a dedicated bug entry in the
+        bugzilla that has the Gtk and LayoutTestFailure keywords. Also removed some
+        outdated expectations or moved them into the failing tests section.
+
+        * platform/gtk/TestExpectations:
+
 2012-10-11  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening after 131050, 131051.
