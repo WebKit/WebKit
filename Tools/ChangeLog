@@ -1,3 +1,21 @@
+2012-10-11  Dirk Pranke  <dpranke@chromium.org>
+
+        test-webkitpy runs individual tests twice
+        https://bugs.webkit.org/show_bug.cgi?id=99098
+
+        Reviewed by Adam Barth.
+
+        If you were to run 'test-webkitpy webkitpy.test.main_unittests.TesterTests.test_no_tests_found',
+        it would actually run the test twice. This fixes that.
+
+        * Scripts/webkitpy/test/main.py:
+        (Tester._parse_args):
+        (Tester._test_names):
+        * Scripts/webkitpy/test/main_unittest.py:
+        (TesterTest.test_no_tests_found):
+        (TesterTest):
+        (TesterTest.test_individual_names_are_not_run_twice):
+
 2012-10-11  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Exception when the layout test driver is stopped

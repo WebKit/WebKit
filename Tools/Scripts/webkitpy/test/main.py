@@ -81,7 +81,7 @@ class Tester(object):
     def skip(self, names, reason, bugid):
         self.finder.skip(names, reason, bugid)
 
-    def _parse_args(self):
+    def _parse_args(self, argv=None):
         parser = optparse.OptionParser(usage='usage: %prog [options] [args...]')
         parser.add_option('-a', '--all', action='store_true', default=False,
                           help='run all the tests')
@@ -103,7 +103,7 @@ class Tester(object):
         parser.epilog = ('[args...] is an optional list of modules, test_classes, or individual tests. '
                          'If no args are given, all the tests will be run.')
 
-        return parser.parse_args()
+        return parser.parse_args(argv)
 
     def run(self):
         self._options, args = self._parse_args()
@@ -188,9 +188,14 @@ class Tester(object):
             loader.test_method_prefixes = []
 
         serial_tests = []
-        loader.test_method_prefixes.extend(['serial_test_', 'serial_integration_test_'])
+        loader.test_method_prefixes = ['serial_test_', 'serial_integration_test_']
         for name in names:
             serial_tests.extend(self._all_test_names(loader.loadTestsFromName(name, None)))
+
+        # loader.loadTestsFromName() will not verify that names begin with one of the test_method_prefixes
+        # if the names were explicitly provided (e.g., MainTest.test_basic), so this means that any individual
+        # tests will be included in both parallel_tests and serial_tests, and we need to de-dup them.
+        serial_tests = list(set(serial_tests).difference(set(parallel_tests)))
 
         return (parallel_tests, serial_tests)
 

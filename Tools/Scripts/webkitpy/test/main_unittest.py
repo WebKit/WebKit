@@ -25,7 +25,7 @@ import unittest
 import StringIO
 
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.test.main import Tester
+from webkitpy.test.main import Tester, _Loader
 
 
 class TesterTest(unittest.TestCase):
@@ -52,3 +52,10 @@ class TesterTest(unittest.TestCase):
 
         self.assertTrue('No tests to run' in errors.getvalue())
         self.assertTrue('No tests to run' in logs)
+
+    def test_individual_names_are_not_run_twice(self):
+        tester = Tester()
+        tester._options, args = tester._parse_args(["webkitpy.test.main_unittest.TesterTest.test_no_tests_found"])
+        parallel_tests, serial_tests = tester._test_names(_Loader(), args)
+        self.assertEquals(parallel_tests, args)
+        self.assertEquals(serial_tests, [])
