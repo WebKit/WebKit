@@ -1,3 +1,19 @@
+2012-10-10  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        [Chromium] Update selection on long press to match normal delimiters.
+        https://bugs.webkit.org/show_bug.cgi?id=98947
+
+        Reviewed by Adam Barth.
+
+        Make the long press selection behaviour consistent.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleGestureEvent):
+        (WebKit::WebViewImpl::detectContentOnTouch):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        * tests/WebViewTest.cpp:
+
 2012-10-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

@@ -585,24 +585,6 @@ TEST_F(WebViewTest, DetectContentAroundPosition)
     EXPECT_FALSE(client.contentDetectionRequested());
     client.reset();
 
-    // Content detection should still work on click, mouse and touch event listeners for long taps
-    // as long as we're not tapping on links.
-    EXPECT_TRUE(tapElementById(webView, WebInputEvent::GestureLongPress, clickListener));
-    EXPECT_TRUE(client.contentDetectionRequested());
-    client.reset();
-
-    EXPECT_TRUE(tapElementById(webView, WebInputEvent::GestureLongPress, touchstartListener));
-    EXPECT_TRUE(client.contentDetectionRequested());
-    client.reset();
-
-    EXPECT_TRUE(tapElementById(webView, WebInputEvent::GestureLongPress, mousedownListener));
-    EXPECT_TRUE(client.contentDetectionRequested());
-    client.reset();
-
-    EXPECT_TRUE(tapElementById(webView, WebInputEvent::GestureLongPress, link));
-    EXPECT_FALSE(client.contentDetectionRequested());
-    client.reset();
-
     // Content detection should work normally without these event listeners.
     // The click listener in the body should be ignored as a special case.
     EXPECT_TRUE(tapElementById(webView, WebInputEvent::GestureTap, noListener));
