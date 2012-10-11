@@ -1,3 +1,30 @@
+2012-10-10  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Minimize the recent template explosion in SelectorChecker.
+        https://bugs.webkit.org/show_bug.cgi?id=98829
+
+        Reviewed by Antti Koivisto.
+
+        We've recently added the capability to switch sibling traversal strategy to SelectorChecker, at some readability/clarity expense.
+        This patch tries to minimize the surface of this expense to SelectorChecker::checkOneSelector. 
+
+        No new tests, no change in behavior.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkSelector): Turned back into a function.
+        (WebCore::SelectorChecker::checkOneSelector): Changed to specialize on traversal strategy, rather than the context, which was less clear.
+        (WebCore::SelectorChecker::DOMTraversalStrategy::isFirstChild): Turned into a function.
+        (WebCore::SelectorChecker::DOMTraversalStrategy::isLastChild): Ditto.
+        (WebCore::SelectorChecker::DOMTraversalStrategy::isFirstOfType): Ditto.
+        (WebCore::SelectorChecker::DOMTraversalStrategy::isLastOfType): Ditto.
+        (WebCore::SelectorChecker::DOMTraversalStrategy::countElementsBefore): Ditto.
+        (WebCore::SelectorChecker::DOMTraversalStrategy::countElementsOfTypeBefore): Ditto.
+        (WebCore::SelectorChecker::DOMTraversalStrategy::countElementsAfter): Ditto.
+        (WebCore::SelectorChecker::DOMTraversalStrategy::countElementsOfTypeAfter): Ditto.
+        * css/SelectorChecker.h:
+        (DOMTraversalStrategy): Changed into a class, rather than a template.
+        (SelectorChecker): Turned back into a function.
+
 2012-10-10  James Simonsen  <simonjam@chromium.org>
 
         High res times should start at 0

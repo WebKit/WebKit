@@ -81,24 +81,23 @@ public:
         bool hasSelectionPseudo;
     };
 
-    template<typename Context>
-    struct DOMTraversalStrategy {
-        static bool isFirstChild(const Context&, Element*);
-        static bool isLastChild(const Context&, Element*);
-        static bool isFirstOfType(const Context&, Element*, const QualifiedName&);
-        static bool isLastOfType(const Context&, Element*, const QualifiedName&);
+    class DOMSiblingTraversalStrategy {
+    public:
+        bool isFirstChild(Element*) const;
+        bool isLastChild(Element*) const;
+        bool isFirstOfType(Element*, const QualifiedName&) const;
+        bool isLastOfType(Element*, const QualifiedName&) const;
 
-        static int countElementsBefore(const Context&, Element*);
-        static int countElementsAfter(const Context&, Element*);
-        static int countElementsOfTypeBefore(const Context&, Element*, const QualifiedName&);
-        static int countElementsOfTypeAfter(const Context&, Element*, const QualifiedName&);
+        int countElementsBefore(Element*) const;
+        int countElementsAfter(Element*) const;
+        int countElementsOfTypeBefore(Element*, const QualifiedName&) const;
+        int countElementsOfTypeAfter(Element*, const QualifiedName&) const;
     };
 
     bool checkSelector(CSSSelector*, Element*, bool isFastCheckableSelector = false) const;
-    template<typename CheckingContext>
-    SelectorMatch checkSelector(const CheckingContext&, PseudoId&, bool& hasUnknownPseudoElements) const;
-    template<typename CheckingContext>
-    bool checkOneSelector(const CheckingContext&) const;
+    SelectorMatch checkSelector(const SelectorCheckingContext&, PseudoId&, bool& hasUnknownPseudoElements) const;
+    template<typename SiblingTraversalStrategy>
+    bool checkOneSelector(const SelectorCheckingContext&, const SiblingTraversalStrategy&) const;
 
     static bool isFastCheckableSelector(const CSSSelector*);
     bool fastCheckSelector(const CSSSelector*, const Element*) const;
