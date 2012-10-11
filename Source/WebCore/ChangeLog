@@ -1,3 +1,39 @@
+2012-10-10  Stephen Chenney  <schenney@chromium.org>
+
+        SVGTextRunRenderingContext changes font data in the glyph page, but it shouldn't
+        https://bugs.webkit.org/show_bug.cgi?id=98755
+
+        Reviewed by Eric Seidel.
+
+        The code in SVGTextRunRenderingContext::glyphDataForCharacter, when it
+        encounters an <altglyph> tag, immediately replaces the font data for a
+        glyph with font data for the primary font, presumably to meet the SVG
+        spec requirement: "If the references to alternate glyphs do not result
+        in successful identification of alternate glyphs to use, then the
+        character(s) that are inside of the ‘altGlyph’ element are rendered as
+        if the ‘altGlyph’ element were a ‘tspan’ element instead."
+
+        If the alt glyph is not then found we are in the case from the spec
+        and indeed we should use the primary font. However, we end up replacing the GlyphPage
+        entry for the character with primary font data, which we should not do
+        because the glyph page might be used in some place that does not have
+        the alt glyph tag.
+
+        Furthermore, this causes object lifetime problems for font data, because
+        in cases where the font data that is replaced is for the system fallback
+        font the GlyphPage will live forever with no knowldege that it contains
+        font data pointers into font data other that the system fallback. The
+        replaced font data may be deleted while the pointer lives on in the
+        system fallback page.
+
+        The fix is simply not to replace the font data in the page.
+
+        Test: svg/text/alt-glpyh-on-fallback-font-crash.html
+
+        * rendering/svg/SVGTextRunRenderingContext.cpp:
+        (WebCore::SVGTextRunRenderingContext::glyphDataForCharacter): Keep track of the original font data and put it back
+        in the glyph page when the method has finished.
+
 2012-10-10  Tab Atkins  <jackalmage@gmail.com>
 
         column-count: 0 should not prevent margin-collapse through

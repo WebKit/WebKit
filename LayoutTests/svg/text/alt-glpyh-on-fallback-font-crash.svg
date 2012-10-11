@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <defs>
+      <font>
+        <font-face font-family="HappySad">
+        </font-face>
+      </font>
+    </defs>
+    <g font-family="HappySad" style="-webkit-writing-mode: vertical-rl; ">
+      <text>
+        <altGlyph>A</altGlyph>
+        A: This test passes if you see two As at the start of this message.
+      </text>
+    </g>
+  </g>
+  <script>
+    if (window.testRunner)
+      testRunner.dumpAsText();
+
+    var docElement = document.body ? document.body : document.documentElement;
+    if (docElement) docElement.offsetTop;
+  </script>
+</svg>
