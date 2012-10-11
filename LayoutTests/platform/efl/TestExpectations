@@ -1411,11 +1411,6 @@ webkit.org/b/97990 mathml/presentation/roots.xhtml [ Failure ]
 webkit.org/b/97990 mathml/presentation/row-alignment.xhtml [ Failure ]
 webkit.org/b/97990 mathml/presentation/subsup.xhtml [ Failure ]
 
-# r130231 introcudes a regression for some complex font cases:
-webkit.org/b/98247 fast/text/atsui-multiple-renderers.html [ Failure ]
-webkit.org/b/98247 fast/text/atsui-spacing-features.html [ Failure ]
-webkit.org/b/98247 fast/text/wide-zero-width-space.html [ Failure ]
-
 # Occasionally fails if run after right after
 # fast/selectors/unqualified-hover-quirks.html or itself.
 webkit.org/b/10890 fast/selectors/unqualified-hover-strict.html [ Failure Pass ]
