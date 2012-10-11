@@ -28,6 +28,7 @@
 #include "ImageBuffer.h"
 
 #include "IntRect.h"
+#include "PlatformMemoryInstrumentation.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -111,5 +112,12 @@ bool ImageBuffer::copyToPlatformTexture(GraphicsContext3D&, Platform3DObject, GC
     return false;
 }
 #endif
+
+void ImageBuffer::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
+    info.addMember(m_data);
+    info.addMember(m_context);
+}
 
 }

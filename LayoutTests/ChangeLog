@@ -1,3 +1,20 @@
+2012-10-10  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI instrument HTMLCanvas element.
+        https://bugs.webkit.org/show_bug.cgi?id=98917
+
+        Reviewed by Yury Semikhatsky.
+
+        It also includes non intrusive instrumentation for skia classes.
+
+        * inspector/profiler/memory-instrumentation-cached-images-expected.txt:
+        * inspector/profiler/memory-instrumentation-cached-images.html:
+        * inspector/profiler/memory-instrumentation-canvas.html: Added.
+        * inspector/profiler/memory-instrumentation-test.js: Added.
+        (initialize_MemoryInstrumentationTest.InspectorTest._memoryBlockSize):
+        (initialize_MemoryInstrumentationTest.InspectorTest.validateMemoryBlockSize):
+        (initialize_MemoryInstrumentationTest):
+
 2012-10-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed morning gardening.

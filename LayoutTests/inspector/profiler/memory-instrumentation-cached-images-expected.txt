@@ -1,6 +1,5 @@
 This test checks that CachedImages size reported by the memory agent includes images decoded size. Bug 93366
 
 
-didReceiveMemorySnapshot
-PASS: Page.Image size is OK.
+PASS: block size for path = [ProcessPrivateMemory, Page, Page.Image] is OK.
 

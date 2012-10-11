@@ -1,6 +1,7 @@
 <html>
 <head>
 <script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="memory-instrumentation-test.js"></script>
 <script>
 
 function displayAndRunTest()
@@ -10,54 +11,10 @@ function displayAndRunTest()
     runTest();
 }
 
-
 function test()
 {
-    function memoryBlockSize(path, root)
-    {
-        var pathPos = 0;
-        var children = [root];
-
-        while (true) {
-            var name = path[pathPos++];
-            var child = null;
-            for (var i = 0; i < children.length; i++) {
-                if (children[i].name === name) {
-                    if (pathPos === path.length)
-                        return children[i].size;
-                    else {
-                        child = children[i];
-                        break;
-                    }
-                }
-            }
-            if (child) {
-                children = child.children;
-                if (!children) {
-                    InspectorTest.addResult(name + " has no children");
-                    return -1;
-                }
-            } else {
-                InspectorTest.addResult(name + " not found");
-                return -1;
-            }
-        }
-        return -1;
-    }
-
-    function didReceiveMemorySnapshot(error, memoryBlock)
-    {
-        InspectorTest.addResult("didReceiveMemorySnapshot");
-        var imagesSize = memoryBlockSize(["ProcessPrivateMemory", "Page", "Page.Image"], memoryBlock);
-        var jpegDecodedSizeExpected = 20000000;
-        if (imagesSize > jpegDecodedSizeExpected)
-            InspectorTest.addResult("PASS: Page.Image size is OK.");
-        else
-            InspectorTest.addResult("FAIL: Page.Image size is too small.");
-        InspectorTest.completeTest();
-    }
-
-    MemoryAgent.getProcessMemoryDistribution(didReceiveMemorySnapshot.bind(this));
+    var jpegDecodedSizeExpected = 20000000;
+    InspectorTest.validateMemoryBlockSize(["ProcessPrivateMemory", "Page", "Page.Image"], jpegDecodedSizeExpected);
 }
 
 </script>

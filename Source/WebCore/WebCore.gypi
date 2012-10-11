@@ -5193,6 +5193,8 @@
             'platform/graphics/skia/ImageSkia.cpp',
             'platform/graphics/skia/IntPointSkia.cpp',
             'platform/graphics/skia/IntRectSkia.cpp',
+            'platform/graphics/skia/MemoryInstrumentationSkia.cpp',
+            'platform/graphics/skia/MemoryInstrumentationSkia.h',
             'platform/graphics/skia/NativeImageSkia.cpp',
             'platform/graphics/skia/NativeImageSkia.h',
             'platform/graphics/skia/OpaqueRegionSkia.cpp',

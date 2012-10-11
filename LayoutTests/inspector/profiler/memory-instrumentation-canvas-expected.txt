@@ -1,0 +1,4 @@
+This test checks that page's image size reported by the memory agent includes size of canvas internal image buffer.
+
+ PASS: block size for path = [ProcessPrivateMemory, Page, Page.Image] is OK.
+

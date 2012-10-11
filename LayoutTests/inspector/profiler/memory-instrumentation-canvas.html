@@ -1,0 +1,32 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="memory-instrumentation-test.js"></script>
+<script>
+
+function displayAndRunTest()
+{
+    var canvasContext = document.getElementById("canvas").getContext("2d");
+    canvasContext.fillRect(0, 0, 1024, 1024);
+
+    if (window.testRunner)
+        testRunner.display();
+    runTest();
+}
+
+function test()
+{
+    var canvasImageBufferExpected = 4000000;
+    InspectorTest.validateMemoryBlockSize(["ProcessPrivateMemory", "Page", "Page.Image"], canvasImageBufferExpected);
+}
+
+</script>
+</head>
+
+<body onload="displayAndRunTest()">
+<p>
+This test checks that page's image size reported by the memory agent includes size of canvas internal image buffer.
+</p>
+<canvas id="canvas" width="1024" height="1024"></canvas>
+</body>
+</html>

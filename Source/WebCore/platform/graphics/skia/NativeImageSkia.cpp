@@ -34,19 +34,11 @@
 
 #include "NativeImageSkia.h"
 #include "GraphicsContext3D.h"
+#include "MemoryInstrumentationSkia.h"
 #include "PlatformInstrumentation.h"
 #include "PlatformMemoryInstrumentation.h"
 #include "SkPixelRef.h"
 #include "SkiaUtils.h"
-
-void reportMemoryUsage(const SkBitmap* const& image, WTF::MemoryObjectInfo* memoryObjectInfo)
-{
-    WTF::MemoryClassInfo info(memoryObjectInfo, image);
-    SkPixelRef* pixelRef = image->pixelRef();
-    info.addMember(pixelRef);
-    if (pixelRef)
-        info.addRawBuffer(pixelRef->pixels(), image->getSize());
-}
 
 namespace WebCore {
 
