@@ -40,23 +40,23 @@ MessageReceiverMap::~MessageReceiverMap()
 
 void MessageReceiverMap::addMessageReceiver(MessageClass messageClass, MessageReceiver* messageReceiver)
 {
-    ASSERT(!m_globalMessageReceivers.contains(messageClass));
-    m_globalMessageReceivers.set(messageClass, messageReceiver);
+    ASSERT(!m_globalMessageReceiverMap.contains(messageClass));
+    m_globalMessageReceiverMap.set(messageClass, messageReceiver);
 }
 
-void MessageReceiverMap::invalidate()
+void MessageReceiverMap::clearAllMessageReceivers()
 {
-    m_globalMessageReceivers.clear();
+    m_globalMessageReceiverMap.clear();
 }
 
 bool MessageReceiverMap::knowsHowToHandleMessage(MessageID messageID) const
 {
-    return m_globalMessageReceivers.contains(messageID.messageClass());
+    return m_globalMessageReceiverMap.contains(messageID.messageClass());
 }
 
 bool MessageReceiverMap::dispatchMessage(Connection* connection, MessageID messageID, ArgumentDecoder* argumentDecoder)
 {
-    if (MessageReceiver* messageReceiver = m_globalMessageReceivers.get(messageID.messageClass())) {
+    if (MessageReceiver* messageReceiver = m_globalMessageReceiverMap.get(messageID.messageClass())) {
         messageReceiver->didReceiveMessage(connection, messageID, argumentDecoder);
         return true;
     }
@@ -66,7 +66,7 @@ bool MessageReceiverMap::dispatchMessage(Connection* connection, MessageID messa
 
 bool MessageReceiverMap::dispatchSyncMessage(Connection* connection, MessageID messageID, ArgumentDecoder* argumentDecoder, OwnPtr<ArgumentEncoder>& reply)
 {
-    if (MessageReceiver* messageReceiver = m_globalMessageReceivers.get(messageID.messageClass())) {
+    if (MessageReceiver* messageReceiver = m_globalMessageReceiverMap.get(messageID.messageClass())) {
         messageReceiver->didReceiveSyncMessage(connection, messageID, argumentDecoder, reply);
         return true;
     }
