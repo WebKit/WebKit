@@ -1,3 +1,20 @@
+2012-10-10  Tab Atkins  <jackalmage@gmail.com>
+
+        column-count: 0 should not prevent margin-collapse through
+        https://bugs.webkit.org/show_bug.cgi?id=65159
+
+        Reviewed by Tony Chang.
+
+        This patch makes "column-count:0" be properly recognized as invalid syntax,
+        as it violates the property grammar in the spec.
+
+        Tests: fast/multicol/zeroColumnCount.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::validUnit):
+        (WebCore::CSSParser::parseValue):
+        * css/CSSParser.h:
+
 2012-10-10  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2] Safari crashes on error when using CFNetwork

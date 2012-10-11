@@ -1,3 +1,16 @@
+2012-10-10  Tab Atkins  <jackalmage@gmail.com>
+
+        column-count: 0 should not prevent margin-collapse through
+        https://bugs.webkit.org/show_bug.cgi?id=65159
+
+        Reviewed by Tony Chang.
+
+        Fixed the zeroColumnCount.html test to properly test that "0" is an invalid CSS value,
+        rather than just ensuring that it doesn't crash.
+
+        * fast/multicol/zeroColumnCount-expected.txt:
+        * fast/multicol/zeroColumnCount.html:
+
 2012-10-10  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         Invalid values for media query features are not handled

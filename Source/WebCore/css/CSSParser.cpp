@@ -1522,6 +1522,8 @@ bool CSSParser::validUnit(CSSParserValue* value, Units unitflags, CSSParserMode 
         }
         if (!b && (unitflags & FInteger) && value->isInt)
             b = true;
+        if (!b && (unitflags & FPositiveInteger) && value->isInt && value->fValue > 0)
+            b = true;
         break;
     case CSSPrimitiveValue::CSS_PERCENTAGE:
         b = (unitflags & FPercent);
@@ -2436,7 +2438,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         if (id == CSSValueAuto)
             validPrimitive = true;
         else
-            validPrimitive = !id && validUnit(value, FInteger | FNonNeg, CSSQuirksMode);
+            validPrimitive = !id && validUnit(value, FPositiveInteger, CSSQuirksMode);
         break;
     case CSSPropertyWebkitColumnGap:         // normal | <length>
         if (id == CSSValueNormal)

@@ -1,8 +1,16 @@
-This test succeeds if it does not crash.
-
-<h2 style="-webkit-column-count: 0;">
-
+<!DOCTYPE html>
+<body>
+<style>
+body {
+	-webkit-column-count: 2;
+	-webkit-column-count: 0;
+}
+</style>
+<script src="../js/resources/js-test-pre.js"></script>
 <script>
+description("Test that column-count:0 is parsed as invalid syntax and thrown away.");
+shouldBe("getComputedStyle(document.body).webkitColumnCount", "'2'");
 if (window.testRunner)
     testRunner.dumpAsText();
 </script>
+<script src="../js/resources/js-test-post.js"></script>
