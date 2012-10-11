@@ -1,3 +1,9 @@
+2012-10-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-10-11  Mihai Balan  <mibalan@adobe.com>
 
         Always enable the experiments tab for WebKit nightly
