@@ -584,3 +584,6 @@ webkit.org/b/98897 fast/dynamic/containing-block-change.html [ ImageOnlyFailure 
 webkit.org/b/98897 fast/frames/inline-object-inside-frameset.html [ ImageOnlyFailure ]
 webkit.org/b/98897 fast/repaint/overflow-flipped-writing-mode-block-in-regions.html [ ImageOnlyFailure ]
 webkit.org/b/98897 fast/repaint/textarea-set-disabled.html [ ImageOnlyFailure ]
+
+# [Qt][WK2] REGRESSION(r130967): It made http/tests/loading/text-content-type-with-binary-extension.html fail
+webkit.org/b/98994 http/tests/loading/text-content-type-with-binary-extension.html
