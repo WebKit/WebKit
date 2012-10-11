@@ -37,7 +37,6 @@ function removeVendorPrefixes()
     IDBTransaction = self.IDBTransaction || self.webkitIDBTransaction;
 
     indexedDB = evalAndLog("indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;");
-    shouldBeTrueQuiet("Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction)");
     debug("");
 }
 

@@ -1,3 +1,18 @@
+2012-10-11  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: IDL types defined in spec should be visible to scripts
+        https://bugs.webkit.org/show_bug.cgi?id=99093
+
+        Reviewed by Adam Barth.
+
+        Interfaces defined in the spec WebIDL, such as IDBCursorWithValue, should be exposed
+        to scripts as properties of the global object. A few types were missing - add them.
+
+        Test: storage/indexeddb/interfaces.html
+
+        * Modules/indexeddb/DOMWindowIndexedDatabase.idl:
+        * Modules/indexeddb/WorkerContextIndexedDatabase.idl:
+
 2012-10-11  Geoffrey Garen  <ggaren@apple.com>
 
         Removed ASSERT_CLASS_FITS_IN_CELL

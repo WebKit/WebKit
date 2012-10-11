@@ -1,3 +1,19 @@
+2012-10-11  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: IDL types defined in spec should be visible to scripts
+        https://bugs.webkit.org/show_bug.cgi?id=99093
+
+        Reviewed by Adam Barth.
+
+        Verify that interfaces defined in the IDB spec's WebIDL are present on the
+        global object.
+
+        * storage/indexeddb/interfaces-expected.txt: Added.
+        * storage/indexeddb/interfaces.html: Added.
+        * storage/indexeddb/resources/interfaces.js: Added.
+        * storage/indexeddb/resources/shared.js: Remove assertion redundant with this test.
+        (test):
+
 2012-10-11  Adam Barth  <abarth@webkit.org>
 
         Rebaseline these tests after v8-i18n roll.

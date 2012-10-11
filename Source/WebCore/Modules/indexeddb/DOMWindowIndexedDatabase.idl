@@ -45,14 +45,17 @@ module window {
         readonly attribute [V8MeasureAs=UnprefixedIndexedDB] IDBFactory indexedDB;
 
         attribute IDBCursorConstructor IDBCursor;
+        attribute IDBCursorWithValueConstructor IDBCursorWithValue;
         attribute IDBDatabaseConstructor IDBDatabase;
         attribute IDBDatabaseExceptionConstructor IDBDatabaseException;
         attribute IDBFactoryConstructor IDBFactory;
         attribute IDBIndexConstructor IDBIndex;
         attribute IDBKeyRangeConstructor IDBKeyRange;
         attribute IDBObjectStoreConstructor IDBObjectStore;
+        attribute IDBOpenDBRequestConstructor IDBOpenDBRequest;
         attribute IDBRequestConstructor IDBRequest;
         attribute IDBTransactionConstructor IDBTransaction;
+        attribute IDBVersionChangeEventConstructor IDBVersionChangeEvent;
     };
 
 }
