@@ -68,6 +68,16 @@ void ScrollingStateTree::removeNode(ScrollingStateNode* node)
     m_rootStateNode->removeChild(node);
 }
 
+void ScrollingStateTree::rootLayerDidChange()
+{
+    // If the root layer has changed, then destroyed and re-created the root state node. That means that the
+    // cached properties in ScrollingStateScrollingNode are no longer reflective of the properties we have
+    // cached over in the ScrollingTree. To resolve this, we will mark all of the properties as having changed
+    // so that the ScrollingTree will be in synch with the state tree.
+    setHasChangedProperties(true);
+    rootStateNode()->setHasChangedProperties();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(THREADED_SCROLLING)

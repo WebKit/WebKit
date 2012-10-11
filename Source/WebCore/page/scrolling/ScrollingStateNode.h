@@ -56,6 +56,7 @@ public:
     virtual bool hasChangedProperties() const = 0;
     virtual unsigned changedProperties() const = 0;
     virtual void resetChangedProperties() = 0;
+    virtual void setHasChangedProperties() { setScrollLayerDidChange(true); }
 
     PlatformLayer* platformScrollLayer() const;
     void setScrollLayer(const GraphicsLayer*);

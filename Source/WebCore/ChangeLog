@@ -1,3 +1,39 @@
+2012-10-10  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=98968
+        REGRESSION: Unable to scroll with trackpad on some websites after 
+        r130783
+
+        Reviewed by Simon Fraser.
+
+        This bug seems to reproduce mostly on web pages that require login. 
+        The re-routing causes extra churn of the RenderLayerBacking, and we 
+        end up destroying and re-creating the backing and therefore the 
+        ScrollingStateNodes, and when the timing is just wrong we get into a 
+        state where the ScrollingTree has a set of incorrect information. 
+        This patch fixes the bug by making sure the ScrollingStateNodes keep 
+        the ScrollingTree in synch with their re-set data.
+
+        Tell the ScrollingStateTree that the root layer has changed.
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::frameViewRootLayerDidChange):
+
+        New virtual function will set every property as having changed.
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore::ScrollingStateNode::setHasChangedProperties):
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::setHasChangedProperties):
+        (WebCore):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+
+        When the root layer changes, make sure we update the ScrollingTree 
+        appropriately by indicating that every property could have changed.
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::rootLayerDidChange):
+        (WebCore):
+        * page/scrolling/ScrollingStateTree.h:
+        (ScrollingStateTree):
+
 2012-10-10  MORITA Hajime  <morrita@google.com>
 
         [Chromium] Crash on SpellChecker::didCheck()

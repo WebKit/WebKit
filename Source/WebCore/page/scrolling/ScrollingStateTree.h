@@ -62,6 +62,8 @@ public:
 
     void removeNode(ScrollingStateNode*);
 
+    void rootLayerDidChange();
+
     void setHasChangedProperties(bool changedProperties) { m_hasChangedProperties = changedProperties; }
     bool hasChangedProperties() const { return m_hasChangedProperties; }
 

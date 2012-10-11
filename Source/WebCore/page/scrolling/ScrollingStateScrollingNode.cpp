@@ -77,6 +77,12 @@ ScrollingStateScrollingNode::~ScrollingStateScrollingNode()
 {
 }
 
+void ScrollingStateScrollingNode::setHasChangedProperties()
+{
+    m_changedProperties = All;
+    ScrollingStateNode::setHasChangedProperties();
+}
+
 PassOwnPtr<ScrollingStateNode> ScrollingStateScrollingNode::cloneAndResetNode()
 {
     OwnPtr<ScrollingStateScrollingNode> clone = adoptPtr(new ScrollingStateScrollingNode(this));

@@ -251,6 +251,7 @@ void ScrollingCoordinator::frameViewRootLayerDidChange(FrameView* frameView)
     // If the root layer does not have a ScrollingStateNode, then we should create one.
     ensureRootStateNodeForFrameView(frameView);
     ASSERT(m_scrollingStateTree->rootStateNode());
+    m_scrollingStateTree->rootLayerDidChange();
 #endif
 
     frameViewLayoutUpdated(frameView);
