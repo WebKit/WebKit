@@ -228,6 +228,77 @@ testComposedShadowTree(
               createDOM('content', {'id': 'inactive-insertion-point', 'class': 'select-4'}),
               createDOM('div', {'id': 'should-not-be-selected'}),
               createDOM('div', {'id': 'f', 'class': 'select-4'})));
+
+debug('Test for a re-projection.');
+testComposedShadowTree(
+    createDOM('div', {'id': 'a'},
+              createShadowRoot(
+                  createDOM('div', {'id': 'b'},
+                            createShadowRoot(createDOM('content', {'select': '#c'})),
+                            createDOM('content', {'select': '#c'}))),
+              createDOM('div', {'id': 'c'})));
+
+debug('Test for a content element which is selected by another content element.');
+testComposedShadowTree(
+    createDOM('div', {'id': 'a'},
+              createShadowRoot(
+                  createDOM('div', {'id': 'b'},
+                            createShadowRoot(createDOM('content', {'select': '#content'}),
+                                             createDOM('div', {'id': 'most-inner-child'}),
+                                             createDOM('content', {'select': '#host-child'})),
+                            createDOM('content', {'id': 'content', 'select': '#host-child'},
+                                      createDOM('div', {'id': 'should-not-be-used'})),
+                            createDOM('div', {'id': 'inner-child', 'class': 'foo'}))),
+              createDOM('div', {'id': 'host-child'})));
+
+debug('Test for a reprojection. Content elements should be used in document order.');
+testComposedShadowTree(
+    createDOM('div', {'id': 'a'},
+              createShadowRoot(
+                  createDOM('content', {'select': '#host-child1'}),
+                  createDOM('div', {'id': 'b'},
+                            createShadowRoot(createDOM('content', {'select': '.child'})),
+                            createDOM('content', {'select': '.child'}))),
+              createDOM('div', {'id': 'host-child1', 'class': 'child'}),
+              createDOM('div', {'id': 'host-child2', 'class': 'child'})));
+
+debug('Test for complex re-projections.');
+testComposedShadowTree(
+    createDOM('div', {'id': 'a'},
+              createShadowRoot(
+                  createDOM('div', {'id': 'b'},
+                            createShadowRoot(createDOM('content', {'select': '.foo'}),
+                                             createDOM('div', {'id': 'c'})),
+                            // Select #child-1
+                            createDOM('content', {'select': '#child-1'},
+                                      createDOM('div', {'class': 'should-not-be-used'}),
+                                      // Should not select any nodes since it's inactive.
+                                      createDOM('content', {'class': 'should-be-inactive', 'select': '.foo'})),
+                            createDOM('div', {'id': 'd', 'class': 'foo'},
+                                      createShadowRoot(createDOM('div', {'id': 'e'}),
+                                                       // Should select #child-2 and #g.
+                                                       createDOM('content', {'select': '.foo'}),
+                                                       createDOM('div', {'id': 'f'})),
+                                      // Select #child-2
+                                      createDOM('content', {'select': '#child-2'}),
+                                      createDOM('div', {'id': 'g', 'class': 'foo'})),
+                            createDOM('div', {'class': 'should-not-be-selected'}),
+                            createDOM('div', {'id': 'h', 'class': 'foo'}))),
+              createDOM('div', {'id': 'child-1', 'class': 'foo'}),
+              createDOM('div', {'id': 'not-selected', 'class': 'foo'}),
+              createDOM('div', {'id': 'child-2', 'class': 'foo'})));
+
+/*
+debug('Test for multiple shadow roots with reprojections.');
+testComposedShadowTree(
+    createDOM('div', {'id': 'a'},
+              createShadowRoot(createDOM('content')),
+              createShadowRoot(createDOM('div', {'id': 'b'},
+                                         createShadowRoot(createDOM('content', {'select': '#child'})),
+                                         createDOM('shadow'))),
+              createDOM('div', {'id': 'child'})));
+*/
+
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

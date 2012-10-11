@@ -247,8 +247,6 @@ Test for nested insertion points. Some of them are either empty insertion points
 Composed Shadow Tree:
 DIV	 id=a
 	DIV	 id=b
-		CONTENT	 id=inactive-insertion-point class=select-4
-		DIV	 id=f class=select-4
 		DIV	 id=c
 		DIV	 id=d class=select-2
 		DIV	 id=e class=select-2
@@ -256,8 +254,6 @@ DIV	 id=a
 Traverse in forward.
 DIV	 id=a
 DIV	 id=b
-CONTENT	 id=inactive-insertion-point class=select-4
-DIV	 id=f class=select-4
 DIV	 id=c
 DIV	 id=d class=select-2
 DIV	 id=e class=select-2
@@ -265,8 +261,93 @@ Traverse in backward.
 DIV	 id=e class=select-2
 DIV	 id=d class=select-2
 DIV	 id=c
-DIV	 id=f class=select-4
-CONTENT	 id=inactive-insertion-point class=select-4
+DIV	 id=b
+DIV	 id=a
+
+Test for a re-projection.
+Composed Shadow Tree:
+DIV	 id=a
+	DIV	 id=b
+		DIV	 id=c
+
+Traverse in forward.
+DIV	 id=a
+DIV	 id=b
+DIV	 id=c
+Traverse in backward.
+DIV	 id=c
+DIV	 id=b
+DIV	 id=a
+
+Test for a content element which is selected by another content element.
+Composed Shadow Tree:
+DIV	 id=a
+	DIV	 id=b
+		DIV	 id=most-inner-child
+		DIV	 id=host-child
+
+Traverse in forward.
+DIV	 id=a
+DIV	 id=b
+DIV	 id=most-inner-child
+DIV	 id=host-child
+Traverse in backward.
+DIV	 id=host-child
+DIV	 id=most-inner-child
+DIV	 id=b
+DIV	 id=a
+
+Test for a reprojection. Content elements should be used in document order.
+Composed Shadow Tree:
+DIV	 id=a
+	DIV	 id=host-child1 class=child
+	DIV	 id=b
+		DIV	 id=host-child2 class=child
+
+Traverse in forward.
+DIV	 id=a
+DIV	 id=host-child1 class=child
+DIV	 id=b
+DIV	 id=host-child2 class=child
+Traverse in backward.
+DIV	 id=host-child2 class=child
+DIV	 id=b
+DIV	 id=host-child1 class=child
+DIV	 id=a
+
+Test for complex re-projections.
+Composed Shadow Tree:
+DIV	 id=a
+	DIV	 id=b
+		DIV	 id=child-1 class=foo
+		DIV	 id=d class=foo
+			DIV	 id=e
+			DIV	 id=child-2 class=foo
+			DIV	 id=g class=foo
+			DIV	 id=f
+		DIV	 id=h class=foo
+		DIV	 id=c
+
+Traverse in forward.
+DIV	 id=a
+DIV	 id=b
+DIV	 id=child-1 class=foo
+DIV	 id=d class=foo
+DIV	 id=e
+DIV	 id=child-2 class=foo
+DIV	 id=g class=foo
+DIV	 id=f
+DIV	 id=h class=foo
+DIV	 id=c
+Traverse in backward.
+DIV	 id=c
+DIV	 id=h class=foo
+DIV	 id=f
+DIV	 id=g class=foo
+DIV	 id=child-2 class=foo
+DIV	 id=e
+DIV	 id=d class=foo
+DIV	 id=child-1 class=foo
 DIV	 id=b
 DIV	 id=a
 

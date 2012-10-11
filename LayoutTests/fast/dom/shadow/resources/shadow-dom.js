@@ -4,6 +4,13 @@ function createShadowRoot()
             'children': Array.prototype.slice.call(arguments)};
 }
 
+function createShadowRootWithAttributes(attributes, children)
+{
+    return {'isShadowRoot': true,
+            'attributes': attributes,
+            'children': children};
+}
+
 // This function can take optional child elements, which might be a result of createShadowRoot(), as arguments[2:].
 // You must enable SHADOW_DOM flag if you use this fucntion to host multiple ShadowRoots
 // since window.internals does not have a function which can be used to host multiple shadow roots.
@@ -26,6 +33,12 @@ function createDOM(tagName, attributes)
                 shadowRoot = internals.ensureShadowRoot(element);
             else
                 throw "CreateDOM cannot be used to host multiple ShadowRoots without new WebKitShadowRoot()";
+            if (child.attributes) {
+                for (var attribute in child.attributes) {
+                    // Shadow Root does not have setAttribute.
+                    shadowRoot[attribute] = child.attributes[attribute];
+                }
+            }
             for (var j = 0; j < child.children.length; ++j)
                 shadowRoot.appendChild(child.children[j]);
         } else

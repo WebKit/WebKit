@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/shadow-dom.js"></script>
+<style>
+div {
+  margin: 10px 10px 10px 10px;
+  border: solid black;
+}
+</style>
+</head>
+<body>
+<script>
+function text(contents) {
+    return document.createTextNode(contents);
+}
+
+function shadowRoot() {
+    return createShadowRootWithAttributes({'applyAuthorStyles': true}, Array.prototype.slice.call(arguments));
+}
+
+document.body.appendChild(
+    createDOM('div', {},
+              shadowRoot(
+                  createDOM('div', {},
+                            shadowRoot(
+                                createDOM('content', {'select': '#a-1'})),
+                            createDOM('content', {'select': '#a-1'}))),
+              createDOM('div', {'id': 'a-1'}, text('a-1'))));
+</script>
+</body>
+</html>

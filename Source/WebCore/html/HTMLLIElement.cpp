@@ -96,9 +96,9 @@ void HTMLLIElement::attach()
 
         // Find the enclosing list node.
         Node* listNode = 0;
-        ComposedShadowTreeParentWalker walker(this);
+        ComposedShadowTreeWalker walker(this);
         while (!listNode) {
-            walker.parentIncludingInsertionPointAndShadowRoot();
+            walker.parent();
             if (!walker.get())
                 break;
             if (walker.get()->hasTagName(ulTag) || walker.get()->hasTagName(olTag))

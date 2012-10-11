@@ -1,3 +1,59 @@
+2012-10-11  Hayato Ito  <hayato@chromium.org>
+
+        Support re-projection for Shadow DOM.
+        https://bugs.webkit.org/show_bug.cgi?id=97151
+
+        Reviewed by Dimitri Glazkov.
+
+        Update node distribution algorithm so that nodes can be re-projected to insertion points
+        in nested shadow subtree.
+
+        See the latest Shadow DOM spec for what 're-projected' means:
+        - http://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/shadow/index.html
+        Also see the related W3C bug:
+        - http://www.w3.org/Bugs/Public/show_bug.cgi?id=18513
+
+        Since this change breaks existing behavior, we have to update several code at once, which includes:
+        - ContentDistributer: ContentDistributor now re-projects distributed nodes.
+        - ComposedShadowTreeWalker: ComposedShadowTreeWalker is now aware of re-projection. That can
+          resolve re-projection transparently.
+        - AncestorChainWalker (formerly named ComposedShadowTreeParentWallker):
+          AncestorChainWalker is now aware of re-projection. I've also added a crossingInsertionPoint()
+          member function so that clients of the walker can know whether the walker is just crossing
+          insertion points for a re-projected node.
+        - EventDispatcher: EventDispatcher now uses the updated AncestorChainWalker and its
+          crossingInsertionPoint() so that EventDispatcher can compute relative target for each ancestor correctly.
+
+        I've also updated existing layout tests and added some layout tests for re-projection.
+        Re-projection for multiple shadow root is not supported yet. I'll address that in another bug.
+
+        Tests: fast/dom/shadow/composed-shadow-tree-walker.html
+               fast/dom/shadow/shadow-dom-event-dispatching.html
+               fast/dom/shadow/shadowdom-reprojection-1.html
+               fast/dom/shadow/shadowdom-reprojection-2.html
+
+        * dom/ComposedShadowTreeWalker.cpp:
+        (WebCore::resolveReprojection):
+        (WebCore):
+        (WebCore::ComposedShadowTreeWalker::traverseSiblingOrBackToInsertionPoint):
+        (WebCore::ComposedShadowTreeWalker::traverseParent):
+        (WebCore::AncestorChainWalker::AncestorChainWalker):
+        (WebCore::AncestorChainWalker::parent):
+        * dom/ComposedShadowTreeWalker.h:
+        (AncestorChainWalker):
+        (WebCore::AncestorChainWalker::crossingInsertionPoint):
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventRelatedTargetAdjuster::adjust):
+        (WebCore::EventDispatcher::ensureEventAncestors):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::focusedNode):
+        * html/HTMLLIElement.cpp:
+        (WebCore::HTMLLIElement::attach):
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ContentDistributor::distribute):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+
 2012-10-11  Shinya Kawanaka  <shinyak@chromium.org>
 
         Make ContentSelectorQuery work when siblings are passed explicitly.

@@ -1,3 +1,21 @@
+2012-10-11  Hayato Ito  <hayato@chromium.org>
+
+        Update ComposedShadowTreeWalker for Shadow DOM re-projection.
+        https://bugs.webkit.org/show_bug.cgi?id=97151
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/composed-shadow-tree-walker-expected.txt:
+        * fast/dom/shadow/composed-shadow-tree-walker.html:
+        * fast/dom/shadow/resources/shadow-dom.js:
+        (createShadowRootWithAttributes):
+        (createDOM):
+        * fast/dom/shadow/shadow-dom-event-dispatching.html:
+        * fast/dom/shadow/shadowdom-reprojection-1-expected.html: Added.
+        * fast/dom/shadow/shadowdom-reprojection-1.html: Added.
+        * fast/dom/shadow/shadowdom-reprojection-2-expected.html: Added.
+        * fast/dom/shadow/shadowdom-reprojection-2.html: Added.
+
 2012-10-11  Joshua Bell  <jsbell@chromium.org>
 
         WebIDL: overloaded methods prevent number -> string conversion
