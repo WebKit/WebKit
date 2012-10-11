@@ -173,7 +173,7 @@ private:
     void initElement(Element*);
     void collectFeatures();
     RenderStyle* locateSharedStyle();
-    bool matchesRuleSet(RuleSet*);
+    bool styleSharingCandidateMatchesRuleSet(RuleSet*);
     Node* locateCousinList(Element* parent, unsigned& visitedNodeCount) const;
     StyledElement* findSiblingForStyleSharing(Node*, unsigned& count) const;
     bool canShareStyleWithElement(StyledElement*) const;

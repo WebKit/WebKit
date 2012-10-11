@@ -52,7 +52,7 @@ public:
 
     enum SelectorMatch { SelectorMatches, SelectorFailsLocally, SelectorFailsAllSiblings, SelectorFailsCompletely };
     enum VisitedMatchType { VisitedMatchDisabled, VisitedMatchEnabled };
-    enum Mode { ResolvingStyle = 0, CollectingRules, QueryingRules };
+    enum Mode { ResolvingStyle = 0, CollectingRules, QueryingRules, SharingRules };
 
     struct SelectorCheckingContext {
         // Initial selector constructor

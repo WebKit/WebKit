@@ -1,3 +1,15 @@
+2012-10-11  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        REGRESSION (r96393): In some cases, generated content is never shown
+        https://bugs.webkit.org/show_bug.cgi?id=88196
+
+        Reviewed by Antti Koivisto.
+
+        * fast/selectors/style-sharing-attribute-selector-with-pseudo-element-expected.html: Added.
+        * fast/selectors/style-sharing-attribute-selector-with-pseudo-element.html: Added.
+        Ref test added for verifying that the attribute selector style, when specified
+        in conjucntion with pseudo-elements, is applied to the corresponding element.
+
 2012-10-11  Shinya Kawanaka  <shinyak@chromium.org>
 
         Some shadow roots are not showing up in Inspector.

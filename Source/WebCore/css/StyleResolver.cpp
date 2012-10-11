@@ -1035,15 +1035,16 @@ Node* StyleResolver::locateCousinList(Element* parent, unsigned& visitedNodeCoun
     return 0;
 }
 
-bool StyleResolver::matchesRuleSet(RuleSet* ruleSet)
+bool StyleResolver::styleSharingCandidateMatchesRuleSet(RuleSet* ruleSet)
 {
     if (!ruleSet)
         return false;
     m_matchedRules.clear();
 
     int firstRuleIndex = -1, lastRuleIndex = -1;
+    m_checker.setMode(SelectorChecker::SharingRules);
     collectMatchingRules(ruleSet, firstRuleIndex, lastRuleIndex, false);
-
+    m_checker.setMode(SelectorChecker::ResolvingStyle);
     if (m_matchedRules.isEmpty())
         return false;
     m_matchedRules.clear();
@@ -1307,10 +1308,10 @@ RenderStyle* StyleResolver::locateSharedStyle()
         return 0;
 
     // Can't share if sibling rules apply. This is checked at the end as it should rarely fail.
-    if (matchesRuleSet(m_siblingRuleSet.get()))
+    if (styleSharingCandidateMatchesRuleSet(m_siblingRuleSet.get()))
         return 0;
     // Can't share if attribute rules apply.
-    if (matchesRuleSet(m_uncommonAttributeRuleSet.get()))
+    if (styleSharingCandidateMatchesRuleSet(m_uncommonAttributeRuleSet.get()))
         return 0;
     // Tracking child index requires unique style for each node. This may get set by the sibling rule match above.
     if (parentStylePreventsSharing(m_parentStyle))

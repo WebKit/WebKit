@@ -459,7 +459,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
                 if (Document* document = context.element->document())
                     document->styleSheetCollection()->setUsesFirstLetterRules(true);
             }
-            if (pseudoId != NOPSEUDO)
+            if (pseudoId != NOPSEUDO && m_mode != SharingRules)
                 dynamicPseudo = pseudoId;
         }
     }

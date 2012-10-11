@@ -1,3 +1,53 @@
+2012-10-11  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        REGRESSION (r96393): In some cases, generated content is never shown
+        https://bugs.webkit.org/show_bug.cgi?id=88196
+
+        Reviewed by Antti Koivisto.
+
+        Elements with style specified from an attribute selector in conjunction
+        with a pseudo-element should not take on the shared style of their
+        previous matching sibling (if any).
+
+        The problem here is that an attribute selector appended by a pseudo-element
+        does not return any matched rules for the call (matchesRuleSet(m_uncommonAttributeRuleSet.get()))
+        in StyleResolver::locateSharedStyle().
+
+        This is because of the way pseudo-elements are handled in
+        SelectorChecker::checkSelector(). For a pseudo-element selector we check
+        for the condition (!context.elementStyle && m_mode == ResolvingStyle) and
+        since for this particular flow the SelectorChecker mode is set to ResolvingStyle
+        and since the current element's style is still not available we fail this
+        initial check and return SelectorFailsLocally from checkSelector(). This is
+        incorrect behavior since the element does have an attribute selector specified
+        for it.
+
+        Have thus introduced another enum value: SharingRules for SelectorChecker's Mode.
+        SelectorChecker's mode should be set to SharingRules before making the
+        call to collectMatchingRules() and then reset (back to ResolvingStyle) thereafter.
+
+        Existing Mode value: CollectingRules although appropriate cannot be used in this
+        scenario because we also don't want to set any value to dynamicPseudo for this flow.
+
+        Test: fast/selectors/style-sharing-attribute-selector-with-pseudo-element.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkSelector):
+        Added additional check for SelectorChecker's mode: SharingRules when
+        trying to match for the pseudo-element selector.
+
+        * css/SelectorChecker.h:
+        Added SharingRules to Mode enum.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleSharingCandidateMatchesRuleSet):
+        (WebCore::StyleResolver::locateSharedStyle):
+        * css/StyleResolver.h:
+        (StyleResolver):
+        Renamed matchesRuleSet() to a more descriptive styleSharingCandidateMatchesRuleSet().
+        Also, setting the SelectorChecker's mode to SharingRules before calling
+        on collectMatchingRules() from styleSharingCandidateMatchesRuleSet().
+
 2012-10-11  Shinya Kawanaka  <shinyak@chromium.org>
 
         Some shadow roots are not showing up in Inspector.
