@@ -17,7 +17,7 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (70,155) size 319x68 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 319x68
           chunk 1 text run 1 at (70.00,210.00) startOffset 0 endOffset 10 width 319.00: "Background"
-      RenderSVGResourceRadialGradient {radialGradient} [id="Grad2"] [gradientUnits=userSpaceOnUse] [center=(240,210)] [focal=(240,210)] [radius=220.00]
+      RenderSVGResourceRadialGradient {radialGradient} [id="Grad2"] [gradientUnits=userSpaceOnUse] [center=(240,210)] [focal=(240,210)] [radius=220.00] [focalRadius=0.00]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
         RenderSVGGradientStop {stop} [offset=0.20] [color=#FFFF0000]
         RenderSVGGradientStop {stop} [offset=0.40] [color=#FF000080]

@@ -365,9 +365,11 @@ fast/loader/subframe-navigate-during-main-frame-load.html
 
 # Hyphenation is not implemented yet.
 fast/text/hyphenate-character.html
+fast/text/hyphenate-first-word.html
+fast/text/hyphenate-locale.html
 fast/text/hyphens.html
-fast/text/soft-hyphen-4.html
 fast/text/hyphen-min-preferred-width.html
+fast/text/soft-hyphen-4.html
 fast/text/soft-hyphen-min-preferred-width.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=43332
@@ -1289,55 +1291,34 @@ storage/domstorage/storage-close-database-on-idle.html
 http/tests/fullscreen/fullscreenelement-different-origin.html
 http/tests/fullscreen/fullscreenelement-same-origin.html
 
+# Missing testRunner.setShouldPaintBrokenImage() implementation
+fast/images/support-broken-image-delegate.html
+
 # ============================================================================= #
 # Failing SVG tests
 # ============================================================================= #
 
-svg/batik/filters/feTile.svg
-
-svg/dom/length-list-parser.html
-svg/css/group-with-shadow.svg
-svg/filters/big-sized-filter-2.svg
-svg/filters/big-sized-filter.svg
-svg/filters/feDisplacementMap.svg
-svg/filters/filterRes.svg
+# --- failing tests, bug report needed
+svg/batik/paints/gradientLimit.svg
 svg/css/composite-shadow-example.html
 svg/css/composite-shadow-with-opacity.html
-
-# --- to be reviewed
-svg/batik/paints/gradientLimit.svg
-svg/batik/text/textLayout.svg
-svg/batik/text/textOnPathSpaces.svg
-svg/batik/text/textStyles.svg
-svg/batik/text/verticalText.svg
-svg/batik/text/xmlSpace.svg
-svg/custom/hit-test-with-br.xhtml
-svg/custom/feComponentTransfer-Discrete.svg
-svg/custom/feComponentTransfer-Gamma.svg
-svg/custom/feComponentTransfer-Linear.svg
-svg/custom/feComponentTransfer-Table.svg
+svg/css/shadow-changes.svg
 svg/custom/feDisplacementMap-01.svg
-svg/custom/js-late-pattern-and-object-creation.svg
-svg/custom/js-late-pattern-creation.svg
-svg/custom/junk-data.svg
-svg/custom/missing-xlink.svg
-svg/custom/path-bad-data.svg
-svg/custom/visibility-override-filter.svg
-svg/custom/stroke-width-click.svg
+svg/custom/radialGradient-focal-radius.svg
+svg/custom/svg-fonts-fallback.xhtml
+svg/custom/transform-with-shadow-and-gradient.svg
+svg/filters/feDisplacementMap.svg
+svg/filters/filterRes.svg
+svg/hixie/cascade/002.xml
+svg/stroke/zero-length-path-linecap-rendering.svg
+svg/stroke/zero-length-subpaths-linecap-rendering.svg
+svg/text/non-bmp-positioning-lists.svg
 svg/W3C-SVG-1.1/animate-elem-80-t.svg
-svg/W3C-SVG-1.1/coords-viewattr-01-b.svg
-svg/W3C-SVG-1.1/coords-viewattr-02-b.svg
+svg/W3C-SVG-1.1/pservers-grad-14-b.svg
 svg/W3C-SVG-1.1/filters-image-01-b.svg
 svg/W3C-SVG-1.1/filters-offset-01-b.svg
-svg/W3C-SVG-1.1/fonts-desc-02-t.svg
-svg/W3C-SVG-1.1/fonts-glyph-04-t.svg
-svg/W3C-SVG-1.1/metadata-example-01-b.svg
 svg/W3C-SVG-1.1/paths-data-10-t.svg
-svg/W3C-SVG-1.1/shapes-polyline-01-t.svg
 svg/W3C-SVG-1.1/struct-cond-02-t.svg
-svg/hixie/cascade/002.xml
-svg/hixie/data-types/002.xhtml
-svg/hixie/error/012.xml
 
 # --- missing test fonts
 svg/W3C-I18N/g-dirLTR-ubNone.svg
@@ -1402,19 +1383,6 @@ webkit.org/b/98718 svg/animations/animate-css-xml-attributeType.html [ Failure P
 svg/animations/animate-path-nested-transforms.html
 svg/animations/animate-text-nested-transforms.html
 
-# [Qt] svg/W3C-SVG-1.1-SE/styling-pres-02-f.svg fails
-# https://bugs.webkit.org/show_bug.cgi?id=65266
-svg/W3C-SVG-1.1-SE/styling-pres-02-f.svg
-
-# [Qt]REGRESSION? (r67762): 23 layout tests fail
-# https://bugs.webkit.org/show_bug.cgi?id=46093
-svg/custom/use-font-face-crash.svg
-svg/zoom/text/zoom-coords-viewattr-01-b.svg
-
-# Issue related to hit testing
-# https://bugs.webkit.org/show_bug.cgi?id=86971
-svg/custom/non-scaling-stroke.svg
-
 # [Qt] fontCache related assertion revealed by r105143
 # https://bugs.webkit.org/show_bug.cgi?id=76534
 svg/carto.net/combobox.svg
@@ -1427,14 +1395,6 @@ svg/custom/getBBox-path.svg
 #https://bugs.webkit.org/show_bug.cgi?id=77964
 svg/hittest/zero-length-round-cap-path.xhtml
 svg/hittest/zero-length-square-cap-path.xhtml
-
-# [Qt] svg/zoom/page/zoom-coords-viewattr-01-b.svg fails
-# https://bugs.webkit.org/show_bug.cgi?id=78128
-svg/zoom/page/zoom-coords-viewattr-01-b.svg
-
-# [Qt] svg/text/text-rescale.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=79451
-svg/text/text-rescale.html
 
 # [Qt] svg/animations tests are very flaky
 # https://bugs.webkit.org/show_bug.cgi?id=80703
@@ -1454,68 +1414,9 @@ svg/carto.net/tabgroup.svg
 # https://bugs.webkit.org/show_bug.cgi?id=92734
 svg/css/text-gradient-shadow.svg
 
-# These files need new expectations after changing the behavrior from radiaGradients to SVG2
-webkit.org/b/98569 svg/W3C-SVG-1.1-SE/styling-pres-02-f.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/W3C-SVG-1.1/coords-units-01-b.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/W3C-SVG-1.1/pservers-grad-02-b.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/W3C-SVG-1.1/pservers-grad-04-b.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/W3C-SVG-1.1/pservers-grad-05-b.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/W3C-SVG-1.1/pservers-grad-06-b.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/W3C-SVG-1.1/pservers-grad-11-b.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/W3C-SVG-1.1/pservers-grad-12-b.svg [ Failure Pass ]
-webkit.org/b/98569 svg/W3C-SVG-1.1/pservers-grad-13-b.svg [ Failure Pass ]
-webkit.org/b/98569 svg/W3C-SVG-1.1/pservers-grad-14-b.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/W3C-SVG-1.1/pservers-grad-15-b.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/W3C-SVG-1.1/struct-use-05-b.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/W3C-SVG-1.1/styling-inherit-01-b.svg [ Failure Pass ]
-webkit.org/b/98569 svg/batik/paints/gradientLimit.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/batik/paints/patternRegions-positioned-objects.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/batik/paints/patternRegions.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/batik/text/textEffect.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/batik/text/textEffect3.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/hixie/perf/006.xml [ Failure Pass ]
-webkit.org/b/98569 svg/custom/relative-sized-content-with-resources.xhtml [ Failure Pass ]
-webkit.org/b/98569 svg/custom/stroked-pattern.svg [ Failure Pass ]
-webkit.org/b/98569 svg/custom/gradient-deep-referencing.svg [ Failure Pass ]
-webkit.org/b/98569 svg/custom/radial-gradient-with-outstanding-focalPoint.svg [ Failure Pass ]
-webkit.org/b/98569 svg/custom/radialGradient-focal-radius.svg [ Failure Pass ]
-webkit.org/b/98569 svg/custom/gradient-with-1d-boundingbox.svg [ Failure Pass ]
-webkit.org/b/98569 svg/custom/recursive-gradient.svg [ Failure Pass ]
-
-# These files need new expectations after changing the behavrior from radiaGradients to SVG2
-webkit.org/b/98569 svg/W3C-SVG-1.1-SE/styling-pres-02-f.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/W3C-SVG-1.1/coords-units-01-b.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/W3C-SVG-1.1/pservers-grad-02-b.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/W3C-SVG-1.1/pservers-grad-04-b.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/W3C-SVG-1.1/pservers-grad-05-b.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/W3C-SVG-1.1/pservers-grad-06-b.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/W3C-SVG-1.1/pservers-grad-11-b.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/W3C-SVG-1.1/pservers-grad-12-b.svg [ Failure Pass ]
-webkit.org/b/98569 svg/W3C-SVG-1.1/pservers-grad-13-b.svg [ Failure Pass ]
-webkit.org/b/98569 svg/W3C-SVG-1.1/pservers-grad-14-b.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/W3C-SVG-1.1/pservers-grad-15-b.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/W3C-SVG-1.1/struct-use-05-b.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/W3C-SVG-1.1/styling-inherit-01-b.svg [ Failure Pass ]
-webkit.org/b/98569 svg/batik/paints/gradientLimit.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/batik/paints/patternRegions-positioned-objects.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/batik/paints/patternRegions.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/batik/text/textEffect.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/batik/text/textEffect3.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/hixie/perf/006.xml [ Failure Pass ]
-webkit.org/b/98569 svg/custom/relative-sized-content-with-resources.xhtml [ Failure Pass ]
-webkit.org/b/98569 svg/custom/stroked-pattern.svg [ Failure Pass ]
-webkit.org/b/98569 svg/custom/gradient-deep-referencing.svg [ Failure Pass ]
-webkit.org/b/98569 svg/custom/radial-gradient-with-outstanding-focalPoint.svg [ Failure Pass ]
-webkit.org/b/98569 svg/custom/radialGradient-focal-radius.svg [ Failure Pass ]
-webkit.org/b/98569 svg/custom/gradient-with-1d-boundingbox.svg [ Failure Pass ]
-webkit.org/b/98569 svg/custom/recursive-gradient.svg [ Failure Pass ]
-
 # ============================================================================= #
 # Failing CSS Tests
 # ============================================================================= #
-css2.1/t051201-c23-first-line-00-b.html [ Failure ]
 css2.1/t1004-c43-rpl-ibx-00-d-ag.html [ Failure ]
 css2.1/t100801-c544-valgn-01-d-ag.html [ Failure ]
 css2.1/t100801-c548-ln-ht-02-b-ag.html [ Failure ]
@@ -1544,7 +1445,6 @@ css2.1/t090204-display-change-01-b-ao.html [ Failure ]
 
 # new tests introduced in r94775, but fails on Qt because of missing test font
 css3/unicode-bidi-isolate-aharon.html
-css3/unicode-bidi-isolate-basic.html
 
 # [Qt] New css3/flexbox/flexitem.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=88963
@@ -1560,6 +1460,16 @@ fast/css/line-after-floating-div.html
 # [Qt] The square-button-appearance test is wrong
 # https://bugs.webkit.org/show_bug.cgi?id=67128
 fast/css/square-button-appearance.html
+
+# --- new failing tests, bug report needed
+css3/images/cross-fade-blending.html
+css3/images/cross-fade-invalidation.html
+css3/images/cross-fade-simple.html
+css3/images/cross-fade-sizing.html
+css3/images/cross-fade-tiled.html
+
+# --- new crashing test, bug report needed
+css3/filters/effect-reference-hw.html
 
 # ============================================================================= #
 # failing fast tests
@@ -2039,10 +1949,10 @@ transforms/2d/hindi-rotated.html
 # ============================================================================= #
 # new tests without expected results
 # ============================================================================= #
-editing/selection/transformed-selection-rects.html
 
-# New tests without Qt specific expected files. Need investigation.
+# --- new but failing tests, bug reports needed
 animations/3d/matrix-transform-type-animation.html
+editing/selection/transformed-selection-rects.html
 fast/block/lineboxcontain/block-glyphs-replaced.html
 fast/block/lineboxcontain/block-replaced.html
 fast/block/lineboxcontain/block.html
@@ -2052,36 +1962,32 @@ fast/block/lineboxcontain/inline-box-replaced.html
 fast/block/lineboxcontain/inline.html
 fast/block/positioning/vertical-lr/002.html
 fast/block/positioning/vertical-rl/002.html
-fast/borders/rtl-border-04.html
-fast/borders/rtl-border-05.html
+fast/borders/scaled-border-image.html
 fast/css/line-height-determined-by-primary-font.html
-fast/dom/34176.html
 fast/dom/HTMLMeterElement/meter-appearances-capacity.html
 fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html
 fast/dynamic/text-combine.html
+fast/events/touch/gesture/context-menu-on-long-press.html
+fast/events/touch/gesture/context-menu-on-two-finger-tap.html
 fast/images/pixel-crack-image-background-webkit-transform-scale.html
-fast/images/support-broken-image-delegate.html
-fast/inline/inline-box-background-long-image.html
-fast/inline/inline-box-background-repeat-x.html
-fast/inline/inline-box-background-repeat-y.html
-fast/inline/inline-box-background.html
 fast/repaint/inline-horizontal-bt-overflow.html
 fast/repaint/inline-vertical-lr-overflow.html
 fast/repaint/inline-vertical-rl-overflow.html
 fast/repaint/repaint-across-writing-mode-boundary.html
 fast/ruby/base-shorter-than-text.html
 fast/ruby/nested-ruby.html
+fast/speech/speech-bidi-rendering.html
 fast/text/decorations-transformed.html
 fast/text/emphasis-combined-text.html
 fast/text/emphasis-vertical.html
 fast/text/emphasis.html
-fast/text/hyphenate-first-word.html
-fast/text/hyphenate-locale.html
+fast/text/international/text-combine-image-test.html
 fast/text/justify-ideograph-complex.html
 fast/text/justify-ideograph-leading-expansion.html
 fast/text/justify-ideograph-simple.html
 fast/text/justify-ideograph-vertical.html
-fast/text/international/text-combine-image-test.html
+fast/text/midword-break-before-surrogate-pair.html
+fast/text/selection-rect-rounding.html
 fast/writing-mode/Kusa-Makura-background-canvas.html
 fast/writing-mode/border-image-horizontal-bt.html
 fast/writing-mode/border-image-vertical-lr.html
@@ -2094,94 +2000,10 @@ fast/writing-mode/text-orientation-basic.html
 fast/writing-mode/vertical-align-table-baseline.html
 fast/writing-mode/vertical-baseline-alignment.html
 fast/writing-mode/vertical-font-fallback.html
-svg/css/shadow-changes.svg
-svg/custom/use-invalid-pattern.svg
-svg/text/bidi-embedded-direction.svg
-svg/text/select-textLength-spacingAndGlyphs-squeeze-1.svg
-svg/text/select-textLength-spacingAndGlyphs-squeeze-2.svg
-svg/text/select-textLength-spacingAndGlyphs-squeeze-3.svg
-svg/text/select-textLength-spacingAndGlyphs-squeeze-4.svg
-svg/text/select-textLength-spacingAndGlyphs-stretch-1.svg
-svg/text/select-textLength-spacingAndGlyphs-stretch-2.svg
-svg/text/select-textLength-spacingAndGlyphs-stretch-3.svg
-transitions/default-timing-function.html
 http/tests/inspector/console-websocket-error.html
-
-# failing new tests
-fast/box-shadow/single-pixel-shadow.html
-fast/text/selection-rect-rounding.html
-svg/custom/painting-marker-07-f-inherit.svg
-svg/custom/small-rect-scale.svg
-
-# failing new tests
-fast/text/midword-break-before-surrogate-pair.html
-svg/custom/svg-fonts-fallback.xhtml
-
-# new tests without expected files, need investigation
-css3/images/cross-fade-background-size.html
-css3/images/cross-fade-tiled.html
-css3/images/cross-fade-blending.html
-css3/images/cross-fade-invalidation.html
-css3/images/cross-fade-simple.html
-css3/images/cross-fade-sizing.html
-svg/clip-path/clip-in-clip.svg
-svg/clip-path/clipper-placement-issue.svg
-svg/text/non-bmp-positioning-lists.svg
-svg/custom/transform-with-shadow-and-gradient.svg
-svg/custom/clip-path-with-css-transform-2.svg
-svg/custom/clip-path-with-css-transform-1.svg
-svg/stroke/zero-length-path-linecap-rendering.svg
-svg/stroke/zero-length-subpaths-linecap-rendering.svg
-svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-userSpaceOnUse.svg
-http/tests/misc/willCacheResponse-delegate-callback.html
-fast/borders/scaled-border-image.html
-
-# new tests without expected files, need investigation
-css3/filters/composited-during-animation-layertree.html
-css3/filters/composited-during-transition-layertree.html
-css3/filters/composited-during-animation.html
-css3/filters/blur-filter-page-scroll.html
-css3/filters/blur-filter-page-scroll-self.html
-css3/filters/blur-filter-page-scroll-parents.html
-svg/foreignObject/fO-display-none-with-relative-pos-content.svg
-svg/foreignObject/fO-display-none.svg
-fast/speech/input-appearance-speechbutton.html
-fast/speech/input-appearance-searchandspeech.html
-fast/speech/speech-bidi-rendering.html
-fast/css/relative-positioned-block-with-inline-ancestor-and-parent-dynamic.html
-
-# new tests without expected files, need investigation
-css3/filters/effect-reference-external.html
-css3/filters/effect-reference-hw.html
-css3/filters/effect-reference.html
-css3/filters/effect-reference-ordering.html
-fast/repaint/repaint-during-scroll-with-zoom.html
-fast/multicol/shrink-to-column-height-for-pagination.html
-fast/forms/textarea/textarea-placeholder-paint-order.html
-fast/forms/select/optgroup-rendering.html
-fast/forms/input-placeholder-paint-order.html
-fast/reflections/reflection-with-zoom.html
-fast/table/mozilla-bug10296-vertical-align-2.html
-fast/table/mozilla-bug10296-vertical-align-1.html
-fast/events/touch/gesture/context-menu-on-long-press.html
-fast/events/touch/gesture/context-menu-on-two-finger-tap.html
-fast/css/text-overflow-ellipsis-text-align-right.html
-fast/css/text-overflow-ellipsis-text-align-left.html
-fast/css/vertical-text-overflow-ellipsis-text-align-center.html
-fast/css/vertical-text-overflow-ellipsis-text-align-right.html
-fast/css/text-overflow-ellipsis-text-align-center.html
-fast/css/vertical-text-overflow-ellipsis-text-align-justify.html
-fast/css/text-overflow-ellipsis-text-align-justify.html
-fast/css/vertical-text-overflow-ellipsis-text-align-left.html
-css2.1/20110323/table-height-algorithm-024.htm [ Missing ]
-css2.1/20110323/table-height-algorithm-023.htm [ Missing ]
-css2.1/20110323/inline-table-002a.htm [ Missing ]
-css2.1/20110323/inline-table-001.htm [ Missing ]
-css2.1/20110323/inline-table-003.htm [ Missing ]
-editing/inserting/multiple-lines-selected.html
-
-fast/table/table-row-outline-paint.html
 svg/as-image/animated-svg-repaints-completely-in-hidpi.html
+transitions/default-timing-function.html
+
 
 # ============================================================================= #
 # Regressions occured after Qt version update

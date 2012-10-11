@@ -1,3 +1,225 @@
+2012-10-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, unskip and rebase now passing tests.
+
+        * platform/qt/TestExpectations:
+        * platform/qt/css2.1/20110323/inline-table-001-expected.png: Added.
+        * platform/qt/css2.1/20110323/inline-table-001-expected.txt: Added.
+        * platform/qt/css2.1/20110323/inline-table-002a-expected.png: Copied from LayoutTests/platform/qt/svg/custom/visibility-override-filter-expected.png.
+        * platform/qt/css2.1/20110323/inline-table-002a-expected.txt: Added.
+        * platform/qt/css2.1/20110323/inline-table-003-expected.png: Added.
+        * platform/qt/css2.1/20110323/inline-table-003-expected.txt: Added.
+        * platform/qt/css2.1/20110323/table-height-algorithm-023-expected.png: Added.
+        * platform/qt/css2.1/20110323/table-height-algorithm-023-expected.txt: Added.
+        * platform/qt/css2.1/20110323/table-height-algorithm-024-expected.png: Added.
+        * platform/qt/css2.1/20110323/table-height-algorithm-024-expected.txt: Added.
+        * platform/qt/css2.1/t051201-c23-first-line-00-b-expected.png: Added.
+        * platform/qt/css2.1/t051201-c23-first-line-00-b-expected.txt:
+        * platform/qt/css3/filters/blur-filter-page-scroll-expected.png:
+        * platform/qt/css3/filters/blur-filter-page-scroll-parents-expected.png:
+        * platform/qt/css3/filters/blur-filter-page-scroll-self-expected.png: Copied from LayoutTests/platform/qt/css3/filters/blur-filter-page-scroll-expected.png.
+        * platform/qt/css3/filters/blur-filter-page-scroll-self-expected.txt: Added.
+        * platform/qt/css3/filters/composited-during-animation-expected.txt: Added.
+        * platform/qt/css3/filters/composited-during-animation-layertree-expected.txt: Added.
+        * platform/qt/css3/filters/composited-during-transition-layertree-expected.txt: Added.
+        * platform/qt/css3/filters/effect-reference-ordering-expected.png:
+        * platform/qt/css3/images/cross-fade-background-size-expected.png: Added.
+        * platform/qt/css3/images/cross-fade-background-size-expected.txt: Added.
+        * platform/qt/css3/unicode-bidi-isolate-basic-expected.png: Added.
+        * platform/qt/css3/unicode-bidi-isolate-basic-expected.txt: Added.
+        * platform/qt/editing/inserting/multiple-lines-selected-expected.png: Added.
+        * platform/qt/editing/inserting/multiple-lines-selected-expected.txt: Added.
+        * platform/qt/fast/borders/rtl-border-04-expected.png: Added.
+        * platform/qt/fast/borders/rtl-border-04-expected.txt: Added.
+        * platform/qt/fast/borders/rtl-border-05-expected.png: Added.
+        * platform/qt/fast/borders/rtl-border-05-expected.txt: Added.
+        * platform/qt/fast/box-shadow/single-pixel-shadow-expected.png: Added.
+        * platform/qt/fast/box-shadow/single-pixel-shadow-expected.txt: Added.
+        * platform/qt/fast/css/relative-positioned-block-with-inline-ancestor-and-parent-dynamic-expected.png: Added.
+        * platform/qt/fast/css/relative-positioned-block-with-inline-ancestor-and-parent-dynamic-expected.txt: Added.
+        * platform/qt/fast/css/text-overflow-ellipsis-text-align-center-expected.png: Added.
+        * platform/qt/fast/css/text-overflow-ellipsis-text-align-center-expected.txt: Added.
+        * platform/qt/fast/css/text-overflow-ellipsis-text-align-justify-expected.png: Added.
+        * platform/qt/fast/css/text-overflow-ellipsis-text-align-justify-expected.txt: Added.
+        * platform/qt/fast/css/text-overflow-ellipsis-text-align-left-expected.png: Added.
+        * platform/qt/fast/css/text-overflow-ellipsis-text-align-left-expected.txt: Added.
+        * platform/qt/fast/css/text-overflow-ellipsis-text-align-right-expected.png: Added.
+        * platform/qt/fast/css/text-overflow-ellipsis-text-align-right-expected.txt: Added.
+        * platform/qt/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.png: Added.
+        * platform/qt/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.txt: Added.
+        * platform/qt/fast/css/vertical-text-overflow-ellipsis-text-align-justify-expected.png: Added.
+        * platform/qt/fast/css/vertical-text-overflow-ellipsis-text-align-justify-expected.txt: Added.
+        * platform/qt/fast/css/vertical-text-overflow-ellipsis-text-align-left-expected.png: Added.
+        * platform/qt/fast/css/vertical-text-overflow-ellipsis-text-align-left-expected.txt: Added.
+        * platform/qt/fast/css/vertical-text-overflow-ellipsis-text-align-right-expected.png: Added.
+        * platform/qt/fast/css/vertical-text-overflow-ellipsis-text-align-right-expected.txt: Added.
+        * platform/qt/fast/dom/34176-expected.png: Added.
+        * platform/qt/fast/dom/34176-expected.txt: Added.
+        * platform/qt/fast/forms/input-placeholder-paint-order-expected.png: Added.
+        * platform/qt/fast/forms/input-placeholder-paint-order-expected.txt: Added.
+        * platform/qt/fast/forms/select/optgroup-rendering-expected.png: Added.
+        * platform/qt/fast/forms/select/optgroup-rendering-expected.txt: Added.
+        * platform/qt/fast/forms/textarea/textarea-placeholder-paint-order-expected.png: Added.
+        * platform/qt/fast/forms/textarea/textarea-placeholder-paint-order-expected.txt: Added.
+        * platform/qt/fast/inline/inline-box-background-expected.png: Added.
+        * platform/qt/fast/inline/inline-box-background-expected.txt: Added.
+        * platform/qt/fast/inline/inline-box-background-long-image-expected.png: Added.
+        * platform/qt/fast/inline/inline-box-background-long-image-expected.txt: Added.
+        * platform/qt/fast/inline/inline-box-background-repeat-x-expected.png: Added.
+        * platform/qt/fast/inline/inline-box-background-repeat-x-expected.txt: Added.
+        * platform/qt/fast/inline/inline-box-background-repeat-y-expected.png: Added.
+        * platform/qt/fast/inline/inline-box-background-repeat-y-expected.txt: Added.
+        * platform/qt/fast/multicol/shrink-to-column-height-for-pagination-expected.png: Copied from LayoutTests/platform/qt/svg/custom/visibility-override-filter-expected.png.
+        * platform/qt/fast/multicol/shrink-to-column-height-for-pagination-expected.txt: Added.
+        * platform/qt/fast/reflections/reflection-with-zoom-expected.png: Added.
+        * platform/qt/fast/reflections/reflection-with-zoom-expected.txt: Added.
+        * platform/qt/fast/repaint/repaint-during-scroll-with-zoom-expected.png: Copied from LayoutTests/platform/qt/css3/filters/blur-filter-page-scroll-expected.png.
+        * platform/qt/fast/repaint/repaint-during-scroll-with-zoom-expected.txt: Added.
+        * platform/qt/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/qt/fast/speech/input-appearance-searchandspeech-expected.txt:
+        * platform/qt/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/qt/fast/speech/input-appearance-speechbutton-expected.txt:
+        * platform/qt/fast/table/mozilla-bug10296-vertical-align-1-expected.png: Added.
+        * platform/qt/fast/table/mozilla-bug10296-vertical-align-1-expected.txt: Added.
+        * platform/qt/fast/table/mozilla-bug10296-vertical-align-2-expected.png: Added.
+        * platform/qt/fast/table/mozilla-bug10296-vertical-align-2-expected.txt: Added.
+        * platform/qt/fast/table/table-row-outline-paint-expected.png: Added.
+        * platform/qt/fast/table/table-row-outline-paint-expected.txt: Added.
+        * platform/qt/http/tests/misc/willCacheResponse-delegate-callback-expected.txt: Added.
+        * platform/qt/svg/W3C-SVG-1.1-SE/styling-pres-02-f-expected.png: Added.
+        * platform/qt/svg/W3C-SVG-1.1-SE/styling-pres-02-f-expected.txt: Added.
+        * platform/qt/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.txt: Added.
+        * platform/qt/svg/W3C-SVG-1.1/coords-units-01-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/coords-viewattr-01-b-expected.png: Added.
+        * platform/qt/svg/W3C-SVG-1.1/coords-viewattr-01-b-expected.txt: Added.
+        * platform/qt/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.png: Added.
+        * platform/qt/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.txt: Added.
+        * platform/qt/svg/W3C-SVG-1.1/fonts-desc-02-t-expected.png: Added.
+        * platform/qt/svg/W3C-SVG-1.1/fonts-desc-02-t-expected.txt: Added.
+        * platform/qt/svg/W3C-SVG-1.1/fonts-glyph-04-t-expected.png: Added.
+        * platform/qt/svg/W3C-SVG-1.1/fonts-glyph-04-t-expected.txt: Added.
+        * platform/qt/svg/W3C-SVG-1.1/metadata-example-01-b-expected.png: Added.
+        * platform/qt/svg/W3C-SVG-1.1/metadata-example-01-b-expected.txt: Added.
+        * platform/qt/svg/W3C-SVG-1.1/pservers-grad-02-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/pservers-grad-04-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/pservers-grad-05-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/pservers-grad-11-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/pservers-grad-12-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/pservers-grad-15-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/shapes-polyline-01-t-expected.png: Added.
+        * platform/qt/svg/W3C-SVG-1.1/shapes-polyline-01-t-expected.txt: Added.
+        * platform/qt/svg/W3C-SVG-1.1/struct-use-05-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/styling-inherit-01-b-expected.txt:
+        * platform/qt/svg/batik/filters/feTile-expected.png: Added.
+        * platform/qt/svg/batik/filters/feTile-expected.txt:
+        * platform/qt/svg/batik/paints/patternRegions-expected.png:
+        * platform/qt/svg/batik/paints/patternRegions-expected.txt:
+        * platform/qt/svg/batik/paints/patternRegions-positioned-objects-expected.png:
+        * platform/qt/svg/batik/paints/patternRegions-positioned-objects-expected.txt:
+        * platform/qt/svg/batik/text/textEffect-expected.png:
+        * platform/qt/svg/batik/text/textEffect-expected.txt:
+        * platform/qt/svg/batik/text/textEffect3-expected.png:
+        * platform/qt/svg/batik/text/textEffect3-expected.txt:
+        * platform/qt/svg/batik/text/textLayout-expected.png: Added.
+        * platform/qt/svg/batik/text/textLayout-expected.txt: Added.
+        * platform/qt/svg/batik/text/textOnPathSpaces-expected.png: Added.
+        * platform/qt/svg/batik/text/textOnPathSpaces-expected.txt: Added.
+        * platform/qt/svg/batik/text/textStyles-expected.png: Added.
+        * platform/qt/svg/batik/text/textStyles-expected.txt: Added.
+        * platform/qt/svg/batik/text/verticalText-expected.png: Added.
+        * platform/qt/svg/batik/text/verticalText-expected.txt: Added.
+        * platform/qt/svg/batik/text/xmlSpace-expected.png: Added.
+        * platform/qt/svg/batik/text/xmlSpace-expected.txt: Added.
+        * platform/qt/svg/clip-path/clip-in-clip-expected.png: Copied from LayoutTests/platform/qt/svg/custom/visibility-override-filter-expected.png.
+        * platform/qt/svg/clip-path/clip-in-clip-expected.txt: Added.
+        * platform/qt/svg/clip-path/clipper-placement-issue-expected.png: Copied from LayoutTests/platform/qt/svg/custom/visibility-override-filter-expected.png.
+        * platform/qt/svg/clip-path/clipper-placement-issue-expected.txt: Added.
+        * platform/qt/svg/css/group-with-shadow-expected.png: Added.
+        * platform/qt/svg/css/group-with-shadow-expected.txt: Added.
+        * platform/qt/svg/custom/clip-path-with-css-transform-1-expected.png: Copied from LayoutTests/platform/qt/css3/filters/blur-filter-page-scroll-expected.png.
+        * platform/qt/svg/custom/clip-path-with-css-transform-1-expected.txt: Added.
+        * platform/qt/svg/custom/clip-path-with-css-transform-2-expected.png: Copied from LayoutTests/platform/qt/css3/filters/blur-filter-page-scroll-expected.png.
+        * platform/qt/svg/custom/clip-path-with-css-transform-2-expected.txt: Added.
+        * platform/qt/svg/custom/feComponentTransfer-Discrete-expected.png: Added.
+        * platform/qt/svg/custom/feComponentTransfer-Discrete-expected.txt: Added.
+        * platform/qt/svg/custom/feComponentTransfer-Gamma-expected.png: Added.
+        * platform/qt/svg/custom/feComponentTransfer-Gamma-expected.txt: Added.
+        * platform/qt/svg/custom/feComponentTransfer-Linear-expected.png: Added.
+        * platform/qt/svg/custom/feComponentTransfer-Linear-expected.txt: Added.
+        * platform/qt/svg/custom/feComponentTransfer-Table-expected.png: Added.
+        * platform/qt/svg/custom/feComponentTransfer-Table-expected.txt: Added.
+        * platform/qt/svg/custom/gradient-deep-referencing-expected.txt:
+        * platform/qt/svg/custom/gradient-with-1d-boundingbox-expected.txt:
+        * platform/qt/svg/custom/hit-test-with-br-expected.png: Added.
+        * platform/qt/svg/custom/hit-test-with-br-expected.txt: Added.
+        * platform/qt/svg/custom/js-late-pattern-and-object-creation-expected.png: Added.
+        * platform/qt/svg/custom/js-late-pattern-and-object-creation-expected.txt: Added.
+        * platform/qt/svg/custom/js-late-pattern-creation-expected.png: Added.
+        * platform/qt/svg/custom/js-late-pattern-creation-expected.txt: Added.
+        * platform/qt/svg/custom/junk-data-expected.png: Added.
+        * platform/qt/svg/custom/junk-data-expected.txt: Added.
+        * platform/qt/svg/custom/missing-xlink-expected.png:
+        * platform/qt/svg/custom/missing-xlink-expected.txt:
+        * platform/qt/svg/custom/non-scaling-stroke-expected.png:
+        * platform/qt/svg/custom/non-scaling-stroke-expected.txt:
+        * platform/qt/svg/custom/painting-marker-07-f-inherit-expected.png: Copied from LayoutTests/platform/qt/css3/filters/blur-filter-page-scroll-expected.png.
+        * platform/qt/svg/custom/painting-marker-07-f-inherit-expected.txt: Added.
+        * platform/qt/svg/custom/path-bad-data-expected.png:
+        * platform/qt/svg/custom/path-bad-data-expected.txt:
+        * platform/qt/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.png:
+        * platform/qt/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.txt: Added.
+        * platform/qt/svg/custom/recursive-gradient-expected.txt:
+        * platform/qt/svg/custom/relative-sized-content-with-resources-expected.png:
+        * platform/qt/svg/custom/relative-sized-content-with-resources-expected.txt:
+        * platform/qt/svg/custom/small-rect-scale-expected.png: Copied from LayoutTests/platform/qt/svg/custom/visibility-override-filter-expected.png.
+        * platform/qt/svg/custom/small-rect-scale-expected.txt: Added.
+        * platform/qt/svg/custom/stroked-pattern-expected.txt:
+        * platform/qt/svg/custom/use-font-face-crash-expected.png:
+        * platform/qt/svg/custom/use-font-face-crash-expected.txt:
+        * platform/qt/svg/custom/use-invalid-pattern-expected.txt: Added.
+        * platform/qt/svg/custom/visibility-override-filter-expected.png:
+        * platform/qt/svg/dom/length-list-parser-expected.txt:
+        * platform/qt/svg/filters/big-sized-filter-2-expected.png: Added.
+        * platform/qt/svg/filters/big-sized-filter-2-expected.txt: Added.
+        * platform/qt/svg/filters/big-sized-filter-expected.png: Added.
+        * platform/qt/svg/filters/big-sized-filter-expected.txt: Added.
+        * platform/qt/svg/foreignObject/fO-display-none-expected.png: Copied from LayoutTests/platform/qt/css3/filters/blur-filter-page-scroll-expected.png.
+        * platform/qt/svg/foreignObject/fO-display-none-expected.txt: Added.
+        * platform/qt/svg/foreignObject/fO-display-none-with-relative-pos-content-expected.png: Copied from LayoutTests/platform/qt/css3/filters/blur-filter-page-scroll-expected.png.
+        * platform/qt/svg/foreignObject/fO-display-none-with-relative-pos-content-expected.txt: Added.
+        * platform/qt/svg/hixie/data-types/002-expected.png: Added.
+        * platform/qt/svg/hixie/data-types/002-expected.txt: Added.
+        * platform/qt/svg/hixie/error/012-expected.png: Added.
+        * platform/qt/svg/hixie/error/012-expected.txt: Added.
+        * platform/qt/svg/hixie/perf/006-expected.png:
+        * platform/qt/svg/hixie/perf/006-expected.txt:
+        * platform/qt/svg/text/bidi-embedded-direction-expected.png: Added.
+        * platform/qt/svg/text/bidi-embedded-direction-expected.txt: Added.
+        * platform/qt/svg/text/select-textLength-spacingAndGlyphs-squeeze-1-expected.png: Added.
+        * platform/qt/svg/text/select-textLength-spacingAndGlyphs-squeeze-1-expected.txt: Added.
+        * platform/qt/svg/text/select-textLength-spacingAndGlyphs-squeeze-2-expected.png: Added.
+        * platform/qt/svg/text/select-textLength-spacingAndGlyphs-squeeze-2-expected.txt: Added.
+        * platform/qt/svg/text/select-textLength-spacingAndGlyphs-squeeze-3-expected.png: Added.
+        * platform/qt/svg/text/select-textLength-spacingAndGlyphs-squeeze-3-expected.txt: Added.
+        * platform/qt/svg/text/select-textLength-spacingAndGlyphs-squeeze-4-expected.png: Added.
+        * platform/qt/svg/text/select-textLength-spacingAndGlyphs-squeeze-4-expected.txt: Added.
+        * platform/qt/svg/text/select-textLength-spacingAndGlyphs-stretch-1-expected.png: Added.
+        * platform/qt/svg/text/select-textLength-spacingAndGlyphs-stretch-1-expected.txt: Added.
+        * platform/qt/svg/text/select-textLength-spacingAndGlyphs-stretch-2-expected.png: Added.
+        * platform/qt/svg/text/select-textLength-spacingAndGlyphs-stretch-2-expected.txt: Added.
+        * platform/qt/svg/text/select-textLength-spacingAndGlyphs-stretch-3-expected.png: Added.
+        * platform/qt/svg/text/select-textLength-spacingAndGlyphs-stretch-3-expected.txt: Added.
+        * platform/qt/svg/text/text-rescale-expected.png: Added.
+        * platform/qt/svg/text/text-rescale-expected.txt: Added.
+        * platform/qt/svg/zoom/page/zoom-coords-viewattr-01-b-expected.png:
+        * platform/qt/svg/zoom/page/zoom-coords-viewattr-01-b-expected.txt:
+        * platform/qt/svg/zoom/text/zoom-coords-viewattr-01-b-expected.png: Added.
+        * platform/qt/svg/zoom/text/zoom-coords-viewattr-01-b-expected.txt:
+
 2012-10-11  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/12477191> Combined text reverts to full-width font after a style change

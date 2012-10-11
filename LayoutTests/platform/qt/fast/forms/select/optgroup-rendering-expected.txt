@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x449
+  RenderBlock {HTML} at (0,0) size 800x449
+    RenderBody {BODY} at (8,8) size 784x433
+      RenderBlock {FORM} at (0,0) size 784x433
+        RenderListBox {SELECT} at (2,2) size 83x401 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderText {#text} at (87,383) size 4x19
+          text run at (87,383) width 4: " "
+        RenderBR {BR} at (91,383) size 0x19
+        RenderMenuList {SELECT} at (2,407) size 79x24 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (4,2) size 51x19
+            RenderText at (0,0) size 35x19
+              text run at (0,0) width 35: "Three"
+        RenderText {#text} at (0,0) size 0x0

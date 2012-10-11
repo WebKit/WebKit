@@ -30,13 +30,13 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (60,40) size 71x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 71x19
             chunk 1 text run 1 at (60.00,55.00) startOffset 0 endOffset 10 width 71.00: "User Space"
-      RenderSVGResourceRadialGradient {radialGradient} [id="radialBoundingBoxPercentage"] [gradientUnits=objectBoundingBox] [center=(0.25,0.25)] [focal=(0.25,0.25)] [radius=0.25]
+      RenderSVGResourceRadialGradient {radialGradient} [id="radialBoundingBoxPercentage"] [gradientUnits=objectBoundingBox] [center=(0.25,0.25)] [focal=(0.25,0.25)] [radius=0.25] [focalRadius=0.00]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
-      RenderSVGResourceRadialGradient {radialGradient} [id="radialBoundingBoxFraction"] [gradientUnits=objectBoundingBox] [center=(0.25,0.25)] [focal=(0.25,0.25)] [radius=0.25]
+      RenderSVGResourceRadialGradient {radialGradient} [id="radialBoundingBoxFraction"] [gradientUnits=objectBoundingBox] [center=(0.25,0.25)] [focal=(0.25,0.25)] [radius=0.25] [focalRadius=0.00]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
-      RenderSVGResourceRadialGradient {radialGradient} [id="radialUserSpace"] [gradientUnits=userSpaceOnUse] [center=(15,15)] [focal=(15,15)] [radius=15.00]
+      RenderSVGResourceRadialGradient {radialGradient} [id="radialUserSpace"] [gradientUnits=userSpaceOnUse] [center=(15,15)] [focal=(15,15)] [radius=15.00] [focalRadius=0.00]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
       RenderSVGText {text} at (30,115) size 325x19 contains 1 chunk(s)
