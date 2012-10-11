@@ -21,8 +21,7 @@
             pass.focus();
             var titleUIElement = accessibilityController.focusedElement.titleUIElement();
             var titleText = titleUIElement.childAtIndex(0);
-            var pattern = "AXValue: Password";
-            if (titleText.allAttributes().indexOf(pattern) != -1) {
+            if (titleText.stringValue == "AXValue: Password") {
                 result.innerText += "Test passed\n";
             }
             else {

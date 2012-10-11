@@ -35,6 +35,7 @@ namespace WebCore {
 class ContainerNode;
 class DOMSelection;
 class Element;
+class HTMLLabelElement;
 class HTMLMapElement;
 class IdTargetObserverRegistry;
 class Node;
@@ -61,6 +62,12 @@ public:
     void addImageMap(HTMLMapElement*);
     void removeImageMap(HTMLMapElement*);
     HTMLMapElement* getImageMap(const String& url) const;
+
+    // For accessibility.
+    bool shouldCacheLabelsByForAttribute() const { return m_shouldCacheLabelsByForAttribute; }
+    void addLabel(const AtomicString& forAttributeValue, HTMLLabelElement*);
+    void removeLabel(const AtomicString& forAttributeValue, HTMLLabelElement*);
+    HTMLLabelElement* labelElementForId(const AtomicString& forAttributeValue);
 
     DOMSelection* getSelection() const;
 
@@ -93,6 +100,9 @@ private:
 
     DocumentOrderedMap m_elementsById;
     DocumentOrderedMap m_imageMapsByName;
+
+    DocumentOrderedMap m_labelsByForAttribute;
+    bool m_shouldCacheLabelsByForAttribute;
 
     OwnPtr<IdTargetObserverRegistry> m_idTargetObserverRegistry;
 

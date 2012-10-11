@@ -1,3 +1,19 @@
+2012-10-11  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: labelForElement is slow when there are a lot of DOM elements
+        https://bugs.webkit.org/show_bug.cgi?id=97825
+
+        Reviewed by Ryosuke Niwa.
+
+        Implement titleUIElement in the chromium port of DRT, and
+        fix getAccessibleElementById so that it ensures the backing store
+        is up-to-date.
+
+        * DumpRenderTree/chromium/TestRunner/AccessibilityControllerChromium.cpp:
+        (AccessibilityController::getAccessibleElementById):
+        * DumpRenderTree/chromium/TestRunner/AccessibilityUIElementChromium.cpp:
+        (AccessibilityUIElement::titleUIElementCallback):
+
 2012-10-11  Dirk Pranke  <dpranke@chromium.org>
 
         test-webkitpy runs individual tests twice

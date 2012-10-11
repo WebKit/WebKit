@@ -117,6 +117,9 @@ AccessibilityUIElement* AccessibilityController::getAccessibleElementById(const 
     if (m_rootElement.isNull())
         m_rootElement = m_webView->accessibilityObject();
 
+    if (!m_rootElement.updateBackingStoreAndCheckValidity())
+        return 0;
+
     return findAccessibleElementByIdRecursive(m_rootElement, WebString::fromUTF8(id.c_str()));
 }
 
