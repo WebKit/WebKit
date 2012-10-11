@@ -960,9 +960,7 @@ PassRefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCo
             ec = NAMESPACE_ERR;
             return 0;
         }
-        RefPtr<Element> newElement = createElement(oldElement->tagQName(), ec);
-        if (ec)
-            return 0;
+        RefPtr<Element> newElement = createElement(oldElement->tagQName(), false);
 
         newElement->cloneDataFromElement(*oldElement);
 
