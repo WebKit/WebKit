@@ -1,3 +1,19 @@
+2012-10-11  Justin Novosad  <junov@chromium.org>
+
+        [Chromium][Mac] r130994 seems to break chromium gpu test
+        https://bugs.webkit.org/show_bug.cgi?id=98995
+
+        Reviewed by Stephen White.
+
+        Removing unnecessary assertion that was based on an invalid assumption
+        that 2d canvas draw operations were always called from within WebThread
+        tasks.
+
+        Test: Canvas2DAllowed chromium gpu_test
+
+        * platform/graphics/chromium/Canvas2DLayerManager.cpp:
+        (WebCore::Canvas2DLayerManager::willProcessTask):
+
 2012-10-11  Kenichi Ishibashi <bashi@chromium.org>
 
         REGRESSION(130231): Causes 3 complex font test failures on EFL / Harfbuzz+Freetype

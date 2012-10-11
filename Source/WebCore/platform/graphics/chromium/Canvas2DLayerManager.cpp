@@ -69,8 +69,6 @@ Canvas2DLayerManager& Canvas2DLayerManager::get()
 
 void Canvas2DLayerManager::willProcessTask()
 {
-    // Observer is registered during a task and deregistered upon task completion.
-    ASSERT_NOT_REACHED();
 }
 
 void Canvas2DLayerManager::didProcessTask()
