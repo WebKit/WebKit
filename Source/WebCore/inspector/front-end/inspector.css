@@ -1020,6 +1020,10 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     color: rgb(15%, 15%, 15%);
 }
 
+.console-message:hover { 
+    background-color: #F0F0F0;
+}
+
 .console-message-url {
     float: right;
     margin-left: 4px;
