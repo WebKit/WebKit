@@ -211,7 +211,7 @@ PassRefPtr<Attr> Element::detachAttribute(size_t index)
     else
         attr = Attr::create(document(), attribute->name(), attribute->value());
 
-    mutableAttributeData()->removeAttribute(index, this);
+    removeAttributeInternal(index, NotInSynchronizationOfLazyAttribute);
     return attr.release();
 }
 
@@ -220,14 +220,11 @@ void Element::removeAttribute(const QualifiedName& name)
     if (!attributeData())
         return;
 
-    if (RefPtr<Attr> attr = attrIfExists(name))
-        attr->detachFromElementWithValue(attr->value());
-
     size_t index = attributeData()->getAttributeItemIndex(name);
     if (index == notFound)
         return;
 
-    mutableAttributeData()->removeAttribute(index, this);
+    removeAttributeInternal(index, NotInSynchronizationOfLazyAttribute);
 }
 
 void Element::setBooleanAttribute(const QualifiedName& name, bool value)
@@ -666,32 +663,35 @@ void Element::setSynchronizedLazyAttribute(const QualifiedName& name, const Atom
     setAttributeInternal(mutableAttributeData()->getAttributeItemIndex(name), name, value, InSynchronizationOfLazyAttribute);
 }
 
-inline void Element::setAttributeInternal(size_t index, const QualifiedName& name, const AtomicString& value, SynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
+inline void Element::setAttributeInternal(size_t index, const QualifiedName& name, const AtomicString& newValue, SynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
 {
     ElementAttributeData* attributeData = mutableAttributeData();
 
-    Attribute* old = index != notFound ? attributeData->attributeItem(index) : 0;
-    if (value.isNull()) {
-        if (old)
-            attributeData->removeAttribute(index, this, inSynchronizationOfLazyAttribute);
+    Attribute* existingAttribute = index != notFound ? attributeData->attributeItem(index) : 0;
+    if (newValue.isNull()) {
+        if (existingAttribute)
+            removeAttributeInternal(index, inSynchronizationOfLazyAttribute);
         return;
     }
 
-    if (!old) {
-        attributeData->addAttribute(Attribute(name, value), this, inSynchronizationOfLazyAttribute);
+    if (!existingAttribute) {
+        addAttributeInternal(name, newValue, inSynchronizationOfLazyAttribute);
         return;
     }
 
-    if (inSynchronizationOfLazyAttribute == NotInSynchronizationOfLazyAttribute)
-        willModifyAttribute(name, old->value(), value);
+    if (!inSynchronizationOfLazyAttribute)
+        willModifyAttribute(name, existingAttribute->value(), newValue);
 
+    // If there is an Attr node hooked to this attribute, the Attr::setValue() call below
+    // will write into the ElementAttributeData.
+    // FIXME: Refactor this so it makes some sense.
     if (RefPtr<Attr> attrNode = attrIfExists(name))
-        attrNode->setValue(value);
+        attrNode->setValue(newValue);
     else
-        old->setValue(value);
+        existingAttribute->setValue(newValue);
 
-    if (inSynchronizationOfLazyAttribute == NotInSynchronizationOfLazyAttribute)
-        didModifyAttribute(Attribute(old->name(), old->value()));
+    if (!inSynchronizationOfLazyAttribute)
+        didModifyAttribute(*existingAttribute);
 }
 
 void Element::attributeChanged(const Attribute& attribute)
@@ -1527,11 +1527,40 @@ void Element::setAttributeNS(const AtomicString& namespaceURI, const AtomicStrin
     setAttribute(parsedName, value);
 }
 
-void Element::removeAttribute(size_t index)
+void Element::removeAttributeInternal(size_t index, SynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
 {
-    ASSERT(attributeData());
-    ASSERT(index <= attributeCount());
-    mutableAttributeData()->removeAttribute(index, this);
+    ASSERT(index < attributeCount());
+
+    ElementAttributeData* attributeData = mutableAttributeData();
+
+    QualifiedName name = attributeData->attributeItem(index)->name();
+    AtomicString valueBeingRemoved = attributeData->attributeItem(index)->value();
+
+    if (!inSynchronizationOfLazyAttribute) {
+        if (!valueBeingRemoved.isNull())
+            willModifyAttribute(name, valueBeingRemoved, nullAtom);
+    }
+
+    if (hasAttrList()) {
+        if (RefPtr<Attr> attr = attributeData->attrIfExists(this, name))
+            attr->detachFromElementWithValue(attributeData->attributeItem(index)->value());
+    }
+
+    attributeData->removeAttribute(index);
+
+    if (!inSynchronizationOfLazyAttribute)
+        didRemoveAttribute(name);
+}
+
+void Element::addAttributeInternal(const QualifiedName& name, const AtomicString& value, SynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
+{
+    ASSERT(m_attributeData);
+    ASSERT(m_attributeData->isMutable());
+    if (!inSynchronizationOfLazyAttribute)
+        willModifyAttribute(name, nullAtom, value);
+    m_attributeData->addAttribute(Attribute(name, value));
+    if (!inSynchronizationOfLazyAttribute)
+        didAddAttribute(Attribute(name, value));
 }
 
 void Element::removeAttribute(const AtomicString& name)
@@ -1544,7 +1573,7 @@ void Element::removeAttribute(const AtomicString& name)
     if (index == notFound)
         return;
 
-    mutableAttributeData()->removeAttribute(index, this);
+    removeAttributeInternal(index, NotInSynchronizationOfLazyAttribute);
 }
 
 void Element::removeAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName)

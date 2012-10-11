@@ -38,8 +38,6 @@ class Element;
 class ImmutableElementAttributeData;
 class MutableElementAttributeData;
 
-enum SynchronizationOfLazyAttribute { NotInSynchronizationOfLazyAttribute, InSynchronizationOfLazyAttribute };
-
 class ElementAttributeData : public RefCounted<ElementAttributeData> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -83,9 +81,8 @@ public:
     size_t getAttributeItemIndex(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
 
     // These functions do no error checking.
-    void addAttribute(const Attribute&, Element*, SynchronizationOfLazyAttribute = NotInSynchronizationOfLazyAttribute);
-    void removeAttribute(size_t index, Element*, SynchronizationOfLazyAttribute = NotInSynchronizationOfLazyAttribute);
-    PassRefPtr<Attr> takeAttribute(size_t index, Element*);
+    void addAttribute(const Attribute&);
+    void removeAttribute(size_t index);
 
     bool hasID() const { return !m_idForStyleResolution.isNull(); }
     bool hasClass() const { return !m_classNames.isNull(); }

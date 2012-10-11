@@ -118,7 +118,6 @@ public:
     void setAttribute(const QualifiedName&, const AtomicString& value);
     void setSynchronizedLazyAttribute(const QualifiedName&, const AtomicString& value);
     void removeAttribute(const QualifiedName&);
-    void removeAttribute(size_t index);
 
     // Typed getters and setters for language bindings.
     int getIntegralAttribute(const QualifiedName& attributeName) const;
@@ -317,12 +316,6 @@ public:
     void updateId(TreeScope*, const AtomicString& oldId, const AtomicString& newId);
     void updateName(const AtomicString& oldName, const AtomicString& newName);
 
-    void willModifyAttribute(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue);
-    void willRemoveAttribute(const QualifiedName&, const AtomicString& value);
-    void didAddAttribute(const Attribute&);
-    void didModifyAttribute(const Attribute&);
-    void didRemoveAttribute(const QualifiedName&);
-
     void removeCachedHTMLCollection(HTMLCollection*, CollectionType);
 
     LayoutSize minimumSizeForResizing() const;
@@ -475,6 +468,16 @@ protected:
     void classAttributeChanged(const AtomicString& newClassString);
 
 private:
+    // FIXME: Remove the need for Attr to call willModifyAttribute/didModifyAttribute.
+    friend class Attr;
+
+    enum SynchronizationOfLazyAttribute { NotInSynchronizationOfLazyAttribute = 0, InSynchronizationOfLazyAttribute };
+
+    void didAddAttribute(const Attribute&);
+    void willModifyAttribute(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue);
+    void didModifyAttribute(const Attribute&);
+    void didRemoveAttribute(const QualifiedName&);
+
     void updateInvalidAttributes() const;
 
     void scrollByUnits(int units, ScrollGranularity);
@@ -484,6 +487,8 @@ private:
     virtual bool childTypeAllowed(NodeType) const;
 
     void setAttributeInternal(size_t index, const QualifiedName&, const AtomicString& value, SynchronizationOfLazyAttribute);
+    void addAttributeInternal(const QualifiedName&, const AtomicString& value, SynchronizationOfLazyAttribute);
+    void removeAttributeInternal(size_t index, SynchronizationOfLazyAttribute);
 
 #ifndef NDEBUG
     virtual void formatForDebugger(char* buffer, unsigned length) const;
@@ -641,12 +646,6 @@ inline void Element::updateId(TreeScope* scope, const AtomicString& oldId, const
 
     if (shouldRegisterAsExtraNamedItem())
         updateExtraNamedItemRegistration(oldId, newId);
-}
-
-inline void Element::willRemoveAttribute(const QualifiedName& name, const AtomicString& value)
-{
-    if (!value.isNull())
-        willModifyAttribute(name, value, nullAtom);
 }
 
 inline bool Element::fastHasAttribute(const QualifiedName& name) const

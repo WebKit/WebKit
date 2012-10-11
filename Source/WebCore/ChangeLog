@@ -1,3 +1,32 @@
+2012-10-11  Andreas Kling  <kling@webkit.org>
+
+        ElementAttributeData shouldn't be managing Element's callbacks.
+        <http://webkit.org/b/98987>
+
+        Reviewed by Anders Carlsson.
+
+        Dispatch the following attribute-related Element callbacks from within Element
+        instead of ElementAttributeData. Also made them private.
+
+            - willModifyAttribute
+            - didModifyAttribute
+            - didAddAttribute
+            - didRemoveAttribute
+
+        No behavior change, just making ElementAttributeData a bit dumber (a good thing.)
+
+        * dom/Element.cpp:
+        (WebCore::Element::detachAttribute):
+        (WebCore::Element::removeAttribute):
+        (WebCore::Element::setAttributeInternal):
+        (WebCore::Element::removeAttributeInternal):
+        (WebCore::Element::addAttributeInternal):
+        * dom/Element.h:
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::addAttribute):
+        (WebCore::ElementAttributeData::removeAttribute):
+        * dom/ElementAttributeData.h:
+
 2012-10-11  Huang Dongsung  <luxtella@company100.net>
 
         [CSS Shaders] Make custom filters use a premultiplied buffer.

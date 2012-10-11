@@ -226,37 +226,17 @@ void ElementAttributeData::destroyInlineStyle(StyledElement* element)
     m_inlineStyleDecl = 0;
 }
 
-void ElementAttributeData::addAttribute(const Attribute& attribute, Element* element, SynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
+void ElementAttributeData::addAttribute(const Attribute& attribute)
 {
     ASSERT(isMutable());
-
-    if (element && inSynchronizationOfLazyAttribute == NotInSynchronizationOfLazyAttribute)
-        element->willModifyAttribute(attribute.name(), nullAtom, attribute.value());
-
     mutableAttributeVector().append(attribute);
-
-    if (element && inSynchronizationOfLazyAttribute == NotInSynchronizationOfLazyAttribute)
-        element->didAddAttribute(attribute);
 }
 
-void ElementAttributeData::removeAttribute(size_t index, Element* element, SynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
+void ElementAttributeData::removeAttribute(size_t index)
 {
     ASSERT(isMutable());
     ASSERT(index < length());
-
-    Attribute& attribute = mutableAttributeVector().at(index);
-    QualifiedName name = attribute.name();
-
-    if (element && inSynchronizationOfLazyAttribute == NotInSynchronizationOfLazyAttribute)
-        element->willRemoveAttribute(name, attribute.value());
-
-    if (RefPtr<Attr> attr = attrIfExists(element, name))
-        attr->detachFromElementWithValue(attribute.value());
-
     mutableAttributeVector().remove(index);
-
-    if (element && inSynchronizationOfLazyAttribute == NotInSynchronizationOfLazyAttribute)
-        element->didRemoveAttribute(name);
 }
 
 bool ElementAttributeData::isEquivalent(const ElementAttributeData* other) const
