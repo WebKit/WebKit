@@ -1,3 +1,13 @@
+2012-10-11  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/12477191> Combined text reverts to full-width font after a style change
+        https://bugs.webkit.org/show_bug.cgi?id=99009
+
+        Reviewed by John Sullivan.
+
+        * fast/text/text-combine-width-after-style-change-expected.html: Added.
+        * fast/text/text-combine-width-after-style-change.html: Added.
+
 2012-10-11  Hayato Ito  <hayato@chromium.org>
 
         Update ComposedShadowTreeWalker for Shadow DOM re-projection.
