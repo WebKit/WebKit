@@ -1,5 +1,20 @@
 2012-10-11  Geoffrey Garen  <ggaren@apple.com>
 
+        Enable RUNTIME_HEURISTICS all the time, for easier testing
+        https://bugs.webkit.org/show_bug.cgi?id=99090
+
+        Reviewed by Filip Pizlo.
+
+        I find myself using this a lot, and there doesn't seem to be an obvious
+        reason to compile it out, since it only runs once at startup.
+
+        * runtime/Options.cpp:
+        (JSC::overrideOptionWithHeuristic):
+        (JSC::Options::initialize):
+        * runtime/Options.h: Removed the #ifdef.
+
+2012-10-11  Geoffrey Garen  <ggaren@apple.com>
+
         Removed ASSERT_CLASS_FITS_IN_CELL
         https://bugs.webkit.org/show_bug.cgi?id=97634
 

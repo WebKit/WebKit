@@ -42,10 +42,6 @@
 #include <sys/sysctl.h>
 #endif
 
-// Set to 1 to control the heuristics using environment variables.
-#define ENABLE_RUN_TIME_HEURISTICS 0
-
-
 namespace JSC {
 
 static bool parse(const char* string, bool& value)
@@ -76,7 +72,6 @@ static bool parse(const char* string, double& value)
     return sscanf(string, "%lf", &value) == 1;
 }
 
-#if ENABLE(RUN_TIME_HEURISTICS)
 template<typename T>
 void overrideOptionWithHeuristic(T& variable, const char* name)
 {
@@ -89,8 +84,6 @@ void overrideOptionWithHeuristic(T& variable, const char* name)
     
     fprintf(stderr, "WARNING: failed to parse %s=%s\n", name, stringValue);
 }
-#endif
-
 
 static unsigned computeNumberOfGCMarkers(int maxNumberOfGCMarkers)
 {
@@ -140,12 +133,10 @@ void Options::initialize()
     // Allow environment vars to override options if applicable.
     // The evn var should be the name of the option prefixed with
     // "JSC_".
-#if ENABLE(RUN_TIME_HEURISTICS)
 #define FOR_EACH_OPTION(type_, name_, defaultValue_) \
     overrideOptionWithHeuristic(name_(), "JSC_" #name_);
     JSC_OPTIONS(FOR_EACH_OPTION)
 #undef FOR_EACH_OPTION
-#endif // RUN_TIME_HEURISTICS
 
 #if 0
     ; // Deconfuse editors that do auto indentation
