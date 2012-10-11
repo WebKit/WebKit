@@ -1,3 +1,9 @@
+2012-10-11  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Chromium] Unreviewed gardening, test expectation update.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed morning gardening, skip new failing tests.

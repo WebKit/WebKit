@@ -3564,11 +3564,12 @@ webkit.org/b/89936 [ XP ] fast/css/text-rendering.html [ Failure ]
 # Started timeout between r121233:r121239.
 webkit.org/b/90003 [ Win Debug ] fast/js/repeat-cached-vm-reentry.html [ Pass Timeout ]
 
-# Flaky. It also times out very frequently on Windows and Linux debug build.
+# Flaky. It also times out very frequently on Windows and Linux debug build, sometimes on Mac debug build.
 webkit.org/b/90207 [ Win Debug ] fast/forms/select/select-state-restore.html [ Failure Pass Slow ]
 webkit.org/b/90207 [ Linux Debug ] fast/forms/select/select-state-restore.html [ Failure Pass Slow ]
 webkit.org/b/90207 [ Android ] fast/forms/select/select-state-restore.html [ Failure Pass Timeout ]
 webkit.org/b/90207 [ Win Release ] fast/forms/select/select-state-restore.html [ Pass Timeout ]
+webkit.org/b/90207 [ Mac Debug ] fast/forms/select/select-state-restore.html [ Pass Timeout ]
 
 # Flaky
 webkit.org/b/90430 inspector/timeline/timeline-receive-response-event.html [ Failure Pass Timeout ]
