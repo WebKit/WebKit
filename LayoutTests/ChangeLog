@@ -1,3 +1,10 @@
+2012-10-10  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Chromium] Unreviewed gardening, rebaselined.
+
+        * platform/chromium-mac-snowleopard/fast/css-generated-content/table-row-group-to-inline-expected.png:
+        * platform/chromium-mac/fast/css-generated-content/table-row-group-to-inline-expected.png: Removed.
+
 2012-10-10  Simon Fraser  <simon.fraser@apple.com>
 
         compositing/images/truncated-direct-png-image.html has been failing on Mac since it was
