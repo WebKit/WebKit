@@ -1402,18 +1402,6 @@ svg/animations/animate-text-nested-transforms.html
 # https://bugs.webkit.org/show_bug.cgi?id=65266
 svg/W3C-SVG-1.1-SE/styling-pres-02-f.svg
 
-# REGRESSION (r91125): Google Drawings is broken
-# https://bugs.webkit.org/show_bug.cgi?id=65257
-svg/custom/zero-path-square-cap-rendering2.svg
-
-# Assumes spesific metrics
-# See http://code.google.com/p/chromium/issues/detail?id=19897
-svg/custom/getscreenctm-in-mixed-content2.xhtml
-
-# [Qt] svg/custom/svg-fonts-no-latin-glyph.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=74847
-svg/custom/svg-fonts-no-latin-glyph.html
-
 # [Qt]REGRESSION? (r67762): 23 layout tests fail
 # https://bugs.webkit.org/show_bug.cgi?id=46093
 svg/custom/use-font-face-crash.svg
@@ -1439,9 +1427,6 @@ svg/hittest/zero-length-square-cap-path.xhtml
 # [Qt] svg/zoom/page/zoom-coords-viewattr-01-b.svg fails
 # https://bugs.webkit.org/show_bug.cgi?id=78128
 svg/zoom/page/zoom-coords-viewattr-01-b.svg
-
-# Crashes due to debug assert until we fix issues with style elements in SVG
-svg/custom/use-referencing-style-crash.svg
 
 # [Qt] svg/text/text-rescale.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=79451
@@ -1544,23 +1529,9 @@ css2.1/t140201-c534-bgreps-03-c-ag.html [ Failure ]
 css2.1/t140201-c534-bgreps-04-c-ag.html [ Failure ]
 css2.1/t140201-c534-bgreps-05-c-ag.html [ Failure ]
 
-# [Qt] css2.1/20110323/inline-non-replaced-height-* tests are missing baselines
-# https://bugs.webkit.org/show_bug.cgi?id=62710
-css2.1/20110323/inline-non-replaced-height-002.htm [ Missing ]
-css2.1/20110323/inline-non-replaced-height-003.htm [ Missing ]
-
-# [Qt] css2.1/t090204-display-change-01-b-ao.html fails after r94084
-# https://bugs.webkit.org/show_bug.cgi?id=67286
-css2.1/t090204-display-change-01-b-ao.html [ Failure ]
-
 # new tests introduced in r94775, but fails on Qt because of missing test font
 css3/unicode-bidi-isolate-aharon.html
 css3/unicode-bidi-isolate-basic.html
-
-# [Qt] CSS3 hardware accelerated Brightness and contrast filters fails
-# https://bugs.webkit.org/show_bug.cgi?id=76785
-css3/filters/effect-brightness-hw.html
-css3/filters/effect-contrast-hw.html
 
 # [Qt] New css3/flexbox/flexitem.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=88963
@@ -1577,15 +1548,6 @@ fast/css/line-after-floating-div.html
 # https://bugs.webkit.org/show_bug.cgi?id=67128
 fast/css/square-button-appearance.html
 
-# [Qt] fast/css/absolute-inline-alignment.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=75400
-fast/css/absolute-inline-alignment.html
-fast/css/absolute-inline-alignment-2.html
-
-# [Qt] css2.1/t100801-c548-ln-ht-01-b-ag.html is missing baseline
-# https://bugs.webkit.org/show_bug.cgi?id=92731
-css2.1/t100801-c548-ln-ht-01-b-ag.html [ Missing ]
-
 # ============================================================================= #
 # failing fast tests
 # ============================================================================= #
@@ -1593,14 +1555,6 @@ css2.1/t100801-c548-ln-ht-01-b-ag.html [ Missing ]
 # [Qt] fast/ruby/overhang* tests fail
 # https://bugs.webkit.org/show_bug.cgi?id=57824
 fast/ruby/overhang-vertical.html
-
-# This test fails because Qt does not support conditionals in unicode special casing.
-# See also http://trolltech.com/developer/task-tracker/index_html?id=212870&method=entry
-fast/css/case-transform.html
-
-# New test hangs QT bot
-# Discussed in https://bugs.webkit.org/show_bug.cgi?id=38928
-fast/loader/recursive-before-unload-crash.html
 
 # New test flakey on Qt Linux Release introduced in r113086
 # https://bugs.webkit.org/show_bug.cgi?id=83057
@@ -1638,9 +1592,6 @@ fast/loader/crash-copying-backforwardlist.html
 fast/forms/range/slider-thumb-shared-style.html
 fast/forms/range/slider-thumb-stylability.html
 fast/forms/range/slider-zoomed.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=35973
-fast/multicol/hit-test-above-or-below.html
 
 # Not sure why this is failing on Qt.
 # https://bugs.webkit.org/show_bug.cgi?id=37697
@@ -1947,13 +1898,6 @@ fast/writing-mode/border-styles-vertical-rl.html
 # https://bugs.webkit.org/show_bug.cgi?id=82308
 fast/dom/shadow/drag-to-meter-in-shadow-crash.html
 
-# [Qt] REGRESSION(r114059): It made these tests fail
-# https://bugs.webkit.org/show_bug.cgi?id=83432
-fast/dom/dom-parse-serialize-display.html
-fast/dom/dom-parse-serialize-xmldecl.html
-fast/dom/dom-parse-serialize.html
-fast/xmlhttprequest/xmlhttprequest-get.xhtml
-
 # [Qt] fast/block/positioning/offsetLeft-offsetTop-multicolumn.html is failing
 # https://bugs.webkit.org/show_bug.cgi?id=86130
 fast/block/positioning/offsetLeft-offsetTop-multicolumn.html
@@ -1965,10 +1909,6 @@ fast/events/keydown-leftright-keys.html
 # New fast/events/domactivate-sets-underlying-click-event-as-handled.html times out on Qt, GTK
 # https://bugs.webkit.org/show_bug.cgi?id=87469
 fast/events/domactivate-sets-underlying-click-event-as-handled.html
-
-# New fast/dom/Window/mozilla-focus-blur.html introduced in r118916 fails
-# https://bugs.webkit.org/show_bug.cgi?id=87956
-fast/dom/Window/mozilla-focus-blur.html
 
 # New fast/notifications/notifications-click-event-focus.html introduced in r118916 fails
 # https://bugs.webkit.org/show_bug.cgi?id=90988

@@ -1,3 +1,11 @@
+2012-10-11  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Reviewing Qt TestExpectations. Unskip now passing tests.
+
+        * platform/qt-5.0-wk1/TestExpectations:
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-10-11  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: revert 131004, 131012, 131016, 131042, 131043 for breaking inspector console
