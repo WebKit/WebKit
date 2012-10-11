@@ -283,12 +283,13 @@ GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(QPainter* p, cons
 
 GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate()
 {
+    delete shadow;
+
     if (!platformContextIsOwned)
         return;
 
     QPaintDevice* device = painter->device();
     painter->end();
-    delete shadow;
     delete painter;
     delete device;
 }

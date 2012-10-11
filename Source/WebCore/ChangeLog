@@ -1,3 +1,19 @@
+2012-10-11  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] GraphicsContextPlatformPrivate is leaking it's ShadowBlur
+        https://bugs.webkit.org/show_bug.cgi?id=99073
+
+        Reviewed by Noam Rosenthal.
+
+        Stop leaking GraphicsContextPlatformPrivate::shadow.
+
+        No change in behavior so no new tests.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate):
+        Always destroy shadow. It is obviously owned by the context so it has
+        nothing to do with the erly return.
+
 2012-10-11  Joshua Bell  <jsbell@chromium.org>
 
         WebIDL: overloaded methods prevent number -> string conversion
