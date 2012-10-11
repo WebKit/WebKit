@@ -225,7 +225,7 @@ bool FECustomFilter::programNeedsInputTexture() const
 
 bool FECustomFilter::applyShader()
 {
-    Uint8ClampedArray* dstPixelArray = createUnmultipliedImageResult();
+    Uint8ClampedArray* dstPixelArray = m_validatedProgram->programInfo().programType() == PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE ? createPremultipliedImageResult() : createUnmultipliedImageResult();
     if (!dstPixelArray)
         return false;
 

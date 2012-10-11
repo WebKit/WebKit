@@ -1,3 +1,25 @@
+2012-10-11  Huang Dongsung  <luxtella@company100.net>
+
+        [CSS Shaders] Make custom filters use a premultiplied buffer.
+        https://bugs.webkit.org/show_bug.cgi?id=98396
+
+        Reviewed by Dean Jackson.
+
+        Currently, a GLSL css_Composite function returns a premultiplied color, so
+        FECustomFilter must make a premultiplied buffer in the case when an author is
+        using the CSS mix function.
+
+        In addition, there are two performance benefits when FECustomFilter uses a premultiplied buffer.
+        1. FilterEffect::asImageBuffer is faster.
+        2. In the future when Accelerated Compositing implementations use
+        FECustomFilter, they do not need to convert an unmultiplied buffer to a
+        premultiplied buffer.
+
+        Test: css3/filters/custom/custom-filter-composite-fractional-source-alpha.html
+
+        * platform/graphics/filters/FECustomFilter.cpp:
+        (WebCore::FECustomFilter::applyShader):
+
 2012-10-11  Rob Buis  <rbuis@rim.com>
 
         [CMAKE] Do not add include dirs twice
