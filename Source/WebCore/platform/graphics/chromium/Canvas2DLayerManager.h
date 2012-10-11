@@ -26,12 +26,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define Canvas2DLayerManager_h
 
 #include "Canvas2DLayerBridge.h"
+#include <public/WebThread.h>
 
 class Canvas2DLayerManagerTest;
 
 namespace WebCore {
 
-class Canvas2DLayerManager {
+class Canvas2DLayerManager : public WebKit::WebThread::TaskObserver {
 public:
     static Canvas2DLayerManager& get();
     void init(size_t maxBytesAllocated, size_t targetBytesAllocated);
@@ -48,10 +49,13 @@ private:
     bool isInList(Canvas2DLayerBridge*);
     void addLayerToList(Canvas2DLayerBridge*);
     void removeLayerFromList(Canvas2DLayerBridge*);
+    virtual void willProcessTask() OVERRIDE;
+    virtual void didProcessTask() OVERRIDE;
 
     size_t m_bytesAllocated;
     size_t m_maxBytesAllocated;
     size_t m_targetBytesAllocated;
+    bool m_taskObserverActive;
     DoublyLinkedList<Canvas2DLayerBridge> m_layerList;
 
     friend class ::Canvas2DLayerManagerTest; // for unit testing

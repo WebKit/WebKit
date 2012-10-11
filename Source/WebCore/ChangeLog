@@ -1,3 +1,48 @@
+2012-10-10  Justin Novosad  <junov@chromium.org>
+
+        [Chromium] Smoother animation for non-RAF 2D canvas animations
+        https://bugs.webkit.org/show_bug.cgi?id=97918
+
+        Reviewed by Stephen White.
+
+        Reduces animation jank by preventing the accumulation of multiple
+        frames of backlog in the deferred canvas rendering queue. When the
+        animation is more than one full frame ahead of the compositor, an
+        immediate flush is triggered.  This takes into account overdraw
+        elimination by the skip-on-clear optimization that is built-in to
+        SkDeferredCanvas, to allow non-RAF animations that clear the canvas at
+        each frame to run without any rate limiting. This change also
+        incidentally improves frame rate in many cases by providing more
+        granular batching of GPU API calls, resulting in better pipelining
+        through the command buffer.
+
+        Test: webkit_unit_test Canvas2DLayerManagerTest.testDeferredFrame
+
+        * platform/graphics/chromium/Canvas2DLayerBridge.cpp:
+        (WebCore::Canvas2DLayerBridge::Canvas2DLayerBridge):
+        (WebCore::Canvas2DLayerBridge::limitPendingFrames):
+        Called at the end of a task (usually a scheduled script action) that
+        invoked 2d canvas rendering context methods. The end of the task
+        marks the completion of a displayable frame. This method will trigger
+        a flush if it detects that the layer has pending draw commands that
+        are more that one frame old.
+        (WebCore):
+        (WebCore::Canvas2DLayerBridge::flushedDrawCommands):
+        (WebCore::Canvas2DLayerBridge::didFlushPendingCommands):
+        (WebCore::Canvas2DLayerBridge::skippedPendingDrawCommands):
+        (WebCore::Canvas2DLayerBridge::flush):
+        (WebCore::Canvas2DLayerBridge::contextAcquired):
+        * platform/graphics/chromium/Canvas2DLayerBridge.h:
+        (Canvas2DLayerBridge):
+        * platform/graphics/chromium/Canvas2DLayerManager.cpp:
+        (WebCore::Canvas2DLayerManager::~Canvas2DLayerManager):
+        (WebCore::Canvas2DLayerManager::willProcessTask):
+        (WebCore):
+        (WebCore::Canvas2DLayerManager::didProcessTask):
+        (WebCore::Canvas2DLayerManager::layerDidDraw):
+        * platform/graphics/chromium/Canvas2DLayerManager.h:
+        (Canvas2DLayerManager):
+
 2012-10-10  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=98968

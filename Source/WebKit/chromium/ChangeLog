@@ -1,3 +1,32 @@
+2012-10-10  Justin Novosad  <junov@chromium.org>
+
+        [Chromium] Smoother animation for non-RAF 2D canvas animations
+        https://bugs.webkit.org/show_bug.cgi?id=97918
+
+        Reviewed by Stephen White.
+
+        New unit test to verify the automatic flushing of deferred 2d canvas
+        layers when scripted animations are more than one full frame ahead 
+        of the compositor. Also verifies that automatic flushing does not
+        kick-in when the skip on clear optimization fires
+
+        * DEPS:
+        * tests/Canvas2DLayerManagerTest.cpp:
+        (FakeCanvas2DLayerBridge::fakeSkipPendingDrawCommands):
+        To fake the skip on clear optimization
+        (FakeCanvas2DLayerBridge):
+        (Canvas2DLayerManagerTest):
+        (Canvas2DLayerManagerTest::doDeferredFrameTestTask):
+        Method that simulates a javascript scheduled action that draws to
+        a 2D canvas layer
+        (DeferredFrameTestTask):
+        Task object to simulate a scheduled action. This is so the unit
+        test can cover the TaskObserver behavior of Canvas2DLayerManager.
+        (Canvas2DLayerManagerTest::DeferredFrameTestTask::DeferredFrameTestTask):
+        (Canvas2DLayerManagerTest::deferredFrameTest):
+        The unit test implementation, which uses the WebThread run loop to
+        post tasks that touch the canvas layer.
+
 2012-10-10  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         [Chromium] Update selection on long press to match normal delimiters.

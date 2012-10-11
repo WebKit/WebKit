@@ -51,6 +51,8 @@ Canvas2DLayerBridge::Canvas2DLayerBridge(PassRefPtr<GraphicsContext3D> context, 
     , m_canvas(0)
     , m_context(context)
     , m_bytesAllocated(0)
+    , m_didRecordDrawCommand(false)
+    , m_framesPending(0)
     , m_next(0)
     , m_prev(0)
 {
@@ -106,6 +108,16 @@ SkDeferredCanvas* Canvas2DLayerBridge::deferredCanvas()
     return 0;
 }
 
+void Canvas2DLayerBridge::limitPendingFrames()
+{
+    if (m_didRecordDrawCommand) {
+        m_framesPending++;
+        m_didRecordDrawCommand = false;
+        if (m_framesPending > 1)
+            flush();
+    }
+}
+
 void Canvas2DLayerBridge::prepareForDraw()
 {
     ASSERT(deferredCanvas());
@@ -122,9 +134,20 @@ void Canvas2DLayerBridge::storageAllocatedForRecordingChanged(size_t bytesAlloca
     Canvas2DLayerManager::get().layerAllocatedStorageChanged(this, delta);
 }
 
+size_t Canvas2DLayerBridge::storageAllocatedForRecording()
+{
+    return deferredCanvas()->storageAllocatedForRecording();
+}
+
 void Canvas2DLayerBridge::flushedDrawCommands()
 {
-    storageAllocatedForRecordingChanged(deferredCanvas()->storageAllocatedForRecording());
+    storageAllocatedForRecordingChanged(storageAllocatedForRecording());
+    m_framesPending = 0;
+}
+
+void Canvas2DLayerBridge::skippedPendingDrawCommands()
+{
+    flushedDrawCommands();
 }
 
 size_t Canvas2DLayerBridge::freeMemoryIfPossible(size_t bytesToFree)
@@ -140,7 +163,8 @@ size_t Canvas2DLayerBridge::freeMemoryIfPossible(size_t bytesToFree)
 void Canvas2DLayerBridge::flush()
 {
     ASSERT(deferredCanvas());
-    m_canvas->flush();
+    if (deferredCanvas()->hasPendingCommands())
+        m_canvas->flush();
 }
 
 SkCanvas* Canvas2DLayerBridge::skCanvas(SkDevice* device)
@@ -196,8 +220,10 @@ void Canvas2DLayerBridge::contextAcquired()
 {
     if (m_deferralMode == NonDeferred && !m_useDoubleBuffering)
         m_layer->willModifyTexture();
-    else if (m_deferralMode == Deferred)
+    else if (m_deferralMode == Deferred) {
         Canvas2DLayerManager::get().layerDidDraw(this);
+        m_didRecordDrawCommand = true;
+    }
 }
 
 unsigned Canvas2DLayerBridge::backBufferTexture()

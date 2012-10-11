@@ -62,11 +62,14 @@ public:
     virtual void prepareForDraw() OVERRIDE;
     virtual void storageAllocatedForRecordingChanged(size_t) OVERRIDE;
     virtual void flushedDrawCommands() OVERRIDE;
+    virtual void skippedPendingDrawCommands() OVERRIDE;
 
     // Methods used by Canvas2DLayerManager
     virtual size_t freeMemoryIfPossible(size_t); // virtual for mocking
     virtual void flush(); // virtual for mocking
+    virtual size_t storageAllocatedForRecording(); // virtual for faking
     size_t bytesAllocated() const {return m_bytesAllocated;}
+    void limitPendingFrames();
 
     SkCanvas* skCanvas(SkDevice*);
     WebKit::WebLayer* layer();
@@ -87,6 +90,8 @@ protected:
     OwnPtr<WebKit::WebExternalTextureLayer> m_layer;
     RefPtr<GraphicsContext3D> m_context;
     size_t m_bytesAllocated;
+    bool m_didRecordDrawCommand;
+    int m_framesPending;
 
     friend class WTF::DoublyLinkedListNode<Canvas2DLayerBridge>;
     Canvas2DLayerBridge* m_next;
