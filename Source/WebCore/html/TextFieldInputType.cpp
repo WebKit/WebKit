@@ -381,6 +381,10 @@ void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent* 
 
     // Truncate the inserted text to avoid violating the maxLength and other constraints.
     String eventText = event->text();
+    unsigned textLength = eventText.length();
+    while (textLength > 0 && isASCIILineBreak(eventText[textLength - 1]))
+        textLength--;
+    eventText.truncate(textLength);
     eventText.replace("\r\n", " ");
     eventText.replace('\r', ' ');
     eventText.replace('\n', ' ');
