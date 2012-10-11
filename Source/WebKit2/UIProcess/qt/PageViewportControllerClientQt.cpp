@@ -322,8 +322,6 @@ void PageViewportControllerClientQt::setContentsScale(float localScale, bool tre
         setContentRectVisiblePositionAtScale(QPointF(), localScale);
     } else
         scaleContent(localScale);
-
-    updateViewportController();
 }
 
 void PageViewportControllerClientQt::setContentsRectToNearestValidBounds()
@@ -335,6 +333,7 @@ void PageViewportControllerClientQt::setContentsRectToNearestValidBounds()
 
 void PageViewportControllerClientQt::didResumeContent()
 {
+    // Make sure that tiles all around the viewport will be requested.
     updateViewportController();
 }
 
@@ -494,18 +493,14 @@ void PageViewportControllerClientQt::didChangeVisibleContents()
 
 void PageViewportControllerClientQt::didChangeViewportAttributes()
 {
-    // Make sure we apply the new initial scale when deferring ends.
-    ViewportUpdateDeferrer guard(m_controller);
-
     emit m_viewportItem->experimental()->test()->devicePixelRatioChanged();
     emit m_viewportItem->experimental()->test()->viewportChanged();
 }
 
-void PageViewportControllerClientQt::updateViewportController(const QPointF& trajectory, qreal scale)
+void PageViewportControllerClientQt::updateViewportController(const QPointF& trajectory)
 {
     FloatPoint viewportPos = m_viewportItem->mapToWebContent(QPointF());
-    float viewportScale = (scale < 0) ? m_pageItem->contentsScale() : scale;
-    m_controller->didChangeContentsVisibility(viewportPos, viewportScale, trajectory);
+    m_controller->didChangeContentsVisibility(viewportPos, m_pageItem->contentsScale(), trajectory);
 }
 
 void PageViewportControllerClientQt::scaleContent(qreal itemScale, const QPointF& centerInCSSCoordinates)

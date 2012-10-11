@@ -54,9 +54,6 @@ ViewportUpdateDeferrer::~ViewportUpdateDeferrer()
         return;
 
     m_controller->resumeContent();
-
-    // Make sure that tiles all around the viewport will be requested.
-    m_controller->syncVisibleContents();
 }
 
 PageViewportController::PageViewportController(WebKit::WebPageProxy* proxy, PageViewportControllerClient* client)
@@ -126,8 +123,13 @@ void PageViewportController::didChangeContentsSize(const IntSize& newSize)
 
 void PageViewportController::didRenderFrame(const IntSize& contentsSize, const IntRect& coveredRect)
 {
-    // Only update the viewport's contents dimensions along with its render.
-    m_client->didChangeContentsSize(contentsSize);
+    if (m_clientContentsSize != contentsSize) {
+        m_clientContentsSize = contentsSize;
+        // Only update the viewport's contents dimensions along with its render if the
+        // size actually changed since animations on the page trigger DidRenderFrame
+        // messages without causing dimension changes.
+        m_client->didChangeContentsSize(contentsSize);
+    }
 
     m_lastFrameCoveredRect = coveredRect;
 
@@ -137,7 +139,6 @@ void PageViewportController::didRenderFrame(const IntSize& contentsSize, const I
     // All position and scale changes resulting from a web process event should
     // go through here to be applied on the viewport to avoid showing incomplete
     // tiles to the user during a few milliseconds.
-    ViewportUpdateDeferrer guard(this);
     if (m_effectiveScaleIsLocked) {
         m_client->setContentsScale(m_effectiveScale, false);
         m_effectiveScaleIsLocked = false;

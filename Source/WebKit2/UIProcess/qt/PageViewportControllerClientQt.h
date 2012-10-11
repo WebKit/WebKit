@@ -124,7 +124,7 @@ private:
     QRectF nearestValidVisibleContentsRect() const;
 
     void setContentsRectToNearestValidBounds();
-    void updateViewportController(const QPointF& trajectory = QPointF(), qreal scale = -1);
+    void updateViewportController(const QPointF& trajectory = QPointF());
     void setContentRectVisiblePositionAtScale(const QPointF& location, qreal itemScale);
     void animateContentRectVisible(const QRectF& contentRect);
     void scaleContent(qreal itemScale, const QPointF& centerInCSSCoordinates = QPointF());

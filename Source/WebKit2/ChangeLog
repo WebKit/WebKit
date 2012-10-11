@@ -1,3 +1,29 @@
+2012-10-10  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][WK2] Avoid unnecessary calls in PageViewportController
+        https://bugs.webkit.org/show_bug.cgi?id=98886
+
+        Reviewed by Jocelyn Turcotte.
+
+        Remove leftover and unneeded update guards and visibility update
+        notifications to avoid unnecessary update cycles between the
+        controller an the client.
+        Previously didRenderFrame triggered updates for no reason since
+        animations on the page cause a lot of DidRenderFrame messages
+        for which the viewport state does not change.
+
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::ViewportUpdateDeferrer::~ViewportUpdateDeferrer):
+        (WebKit::PageViewportController::didRenderFrame):
+        * UIProcess/PageViewportController.h:
+        (PageViewportController):
+        * UIProcess/qt/PageViewportControllerClientQt.cpp:
+        (WebKit::PageViewportControllerClientQt::setContentsScale):
+        (WebKit::PageViewportControllerClientQt::didChangeViewportAttributes):
+        (WebKit::PageViewportControllerClientQt::updateViewportController):
+        * UIProcess/qt/PageViewportControllerClientQt.h:
+        (PageViewportControllerClientQt):
+
 2012-10-11  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] It should be possible to disable favicons in WebKit2 GTK+ API

@@ -126,6 +126,7 @@ private:
     WebCore::FloatPoint m_viewportPos;
     WebCore::FloatSize m_viewportSize;
     WebCore::FloatSize m_contentsSize;
+    WebCore::IntSize m_clientContentsSize;
     float m_effectiveScale; // Should always be cssScale * devicePixelRatio.
 
     bool m_viewportPosIsLocked;
