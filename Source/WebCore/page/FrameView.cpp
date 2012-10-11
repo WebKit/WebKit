@@ -335,7 +335,7 @@ void FrameView::init()
     // Propagate the marginwidth/height and scrolling modes to the view.
     Element* ownerElement = m_frame ? m_frame->ownerElement() : 0;
     if (ownerElement && (ownerElement->hasTagName(frameTag) || ownerElement->hasTagName(iframeTag))) {
-        HTMLFrameElement* frameElt = static_cast<HTMLFrameElement*>(ownerElement);
+        HTMLFrameElementBase* frameElt = static_cast<HTMLFrameElementBase*>(ownerElement);
         if (frameElt->scrollingMode() == ScrollbarAlwaysOff)
             setCanHaveScrollbars(false);
         LayoutUnit marginWidth = frameElt->marginWidth();

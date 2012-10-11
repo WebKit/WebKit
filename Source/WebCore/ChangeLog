@@ -1,3 +1,15 @@
+2012-10-11  Adam Barth  <abarth@webkit.org>
+
+        Incorrect/Illegal static cast in FrameView.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=98943
+
+        Reviewed by Eric Seidel.
+
+        HTMLFrameElementBase is the common base class for <frame> and <iframe>.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::init):
+
 2012-10-11  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] Improve vertical text rendering of HarfBuzzShaper
