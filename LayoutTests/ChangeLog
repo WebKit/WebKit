@@ -1,3 +1,9 @@
+2012-10-11  Adam Barth  <abarth@webkit.org>
+
+        One more baseline tweak after v8-i18n roll.
+
+        * platform/chromium/fast/js/date-proto-generic-invocation-expected.txt: Replaced.
+
 2012-10-11  Filip Pizlo  <fpizlo@apple.com>
 
         UInt32ToNumber and OSR exit should be aware of copy propagation and correctly recover both versions of a variable that was subject to a UInt32ToNumber cast

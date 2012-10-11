@@ -8,9 +8,9 @@ FAIL o.__proto__.toDateString() should throw TypeError: Type error. Threw except
 FAIL o.__proto__.toTimeString() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
 FAIL o.__proto__.toGMTString() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
 FAIL o.__proto__.toUTCString() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
-FAIL o.__proto__.toLocaleString() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
-FAIL o.__proto__.toLocaleDateString() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
-FAIL o.__proto__.toLocaleTimeString() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.toLocaleString() should throw TypeError: Type error. Threw exception TypeError: Method invoked on an object that is not Date..
+FAIL o.__proto__.toLocaleDateString() should throw TypeError: Type error. Threw exception TypeError: Method invoked on an object that is not Date..
+FAIL o.__proto__.toLocaleTimeString() should throw TypeError: Type error. Threw exception TypeError: Method invoked on an object that is not Date..
 FAIL o.__proto__.getTime() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
 FAIL o.__proto__.getYear() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
 FAIL o.__proto__.getFullYear() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
