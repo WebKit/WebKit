@@ -1,3 +1,16 @@
+2012-10-11  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [EFL][WK2] NWTR should launch MiniBrowser instead of EWebLauncher after test run
+        https://bugs.webkit.org/show_bug.cgi?id=99075
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Pass the '-2' flag when executing run-launcher script after
+        testing with WebKitTestRunner.
+
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort.show_results_html_file):
+
 2012-10-11  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Add support for Javascript popup boxes to MiniBrowser
