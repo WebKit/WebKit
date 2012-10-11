@@ -613,6 +613,9 @@ Bug(GTK) svg/dom/viewspec-parser-3.html [ Pass ]
 Bug(GTK) svg/dom/viewspec-parser-4.html [ Pass ]
 Bug(GTK) svg/dom/viewspec-parser-5.html [ Pass ]
 
+# Will need rebaselining after bug 98527 fixed
+webkit.org/b/98527 http/tests/loading/text-content-type-with-binary-extension.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests working in WK2 and failing in WK1
 #////////////////////////////////////////////////////////////////////////////////////////

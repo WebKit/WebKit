@@ -440,7 +440,7 @@ void TestController::initialize(int argc, const char* argv[])
         this,
         decidePolicyForNavigationAction,
         0, // decidePolicyForNewWindowAction
-        0, // decidePolicyForResponse
+        decidePolicyForResponse,
         0, // unableToImplementPolicy
     };
     WKPageSetPagePolicyClient(m_mainWebView->page(), &pagePolicyClient);
@@ -1068,6 +1068,17 @@ void TestController::decidePolicyForNavigationAction(WKFramePolicyListenerRef li
     }
 
     WKFramePolicyListenerUse(listener);
+}
+
+void TestController::decidePolicyForResponse(WKPageRef, WKFrameRef, WKURLResponseRef, WKURLRequestRef, WKFramePolicyListenerRef listener, WKTypeRef, const void* clientInfo)
+{
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->decidePolicyForResponse(listener);
+}
+
+void TestController::decidePolicyForResponse(WKFramePolicyListenerRef listener)
+{
+    // Response was already checked by WKBundlePagePolicyClient, so if we are here we're supposed to ignore.
+    WKFramePolicyListenerIgnore(listener);
 }
 
 } // namespace WTR
