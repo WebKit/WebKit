@@ -2673,3 +2673,6 @@ webkit.org/b/98525 plugins/mouse-click-plugin-clears-selection.html
 webkit.org/b/98525 plugins/netscape-dom-access.html
 webkit.org/b/98525 plugins/resize-from-plugin.html
 webkit.org/b/98640 plugins/refcount-leaks.html
+
+# Skipped until the prefix is removed.
+webkit.org/b/98953 http/tests/w3c/webperf/approved/HighResolutionTime [ Skip ]

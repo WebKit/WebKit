@@ -1,3 +1,22 @@
+2012-10-10  James Simonsen  <simonjam@chromium.org>
+
+        Import W3C test suite for performance.now()
+        https://bugs.webkit.org/show_bug.cgi?id=98953
+
+        Reviewed by Tony Gentilcore.
+
+        * http/tests/w3c/webperf/approved/HighResolutionTime/basic-expected.txt: Added.
+        * http/tests/w3c/webperf/approved/HighResolutionTime/basic.html: Added.
+        * http/tests/w3c/webperf/approved/HighResolutionTime/monotonic-clock-expected.txt: Added.
+        * http/tests/w3c/webperf/approved/HighResolutionTime/monotonic-clock.html: Added.
+        * http/tests/w3c/webperf/approved/HighResolutionTime/resources/now_frame.html: Added.
+        * http/tests/w3c/webperf/approved/HighResolutionTime/test_cross_frame_start-expected.txt: Added.
+        * http/tests/w3c/webperf/approved/HighResolutionTime/test_cross_frame_start.html: Added.
+        * platform/chromium/TestExpectations: Skipped everywhere until we remove the prefix.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-10-10  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/12472460> text-combine doesn’t use third- and quarter-width variants when used with @font-face
