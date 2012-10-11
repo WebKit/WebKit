@@ -1,3 +1,9 @@
+2012-10-11  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Rebaseline fast/css-generated-content/table-row-group-to-inline.html after r131004.
+
+        * platform/efl/fast/css-generated-content/table-row-group-to-inline-expected.txt:
+
 2012-10-11  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
