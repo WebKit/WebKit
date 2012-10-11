@@ -73,11 +73,11 @@ PASS 'a'.localeCompare('aa') < 0 is true
 PASS 'a'.localeCompare('x') < 0 is true
 PASS 'x'.localeCompare('a') > 0 is true
 PASS ''.localeCompare('') is 0
-PASS ''.localeCompare() is 0
-FAIL ''.localeCompare(undefined) should be -1. Was -9.
-FAIL ''.localeCompare(null) should be -1. Was -4.
+FAIL ''.localeCompare() should be 0. Was -1.
+PASS ''.localeCompare(undefined) is -1
+PASS ''.localeCompare(null) is -1
 PASS 'a'.localeCompare('') is 1
-PASS 'a'.localeCompare() is 0
+FAIL 'a'.localeCompare() should be 0. Was -1.
 PASS 'abc'[0] is 'a'
 PASS 'abc'[-1] is undefined.
 PASS 'abc'[-4] is undefined.
