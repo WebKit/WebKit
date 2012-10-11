@@ -1,3 +1,17 @@
+2012-10-11  Filip Pizlo  <fpizlo@apple.com>
+
+        UInt32ToNumber and OSR exit should be aware of copy propagation and correctly recover both versions of a variable that was subject to a UInt32ToNumber cast
+        https://bugs.webkit.org/show_bug.cgi?id=99100
+        <rdar://problem/12480955>
+
+        Reviewed by Michael Saboff and Mark Hahnenberg.
+
+        * fast/js/dfg-uint32-to-number-in-middle-of-copy-propagation-expected.txt: Added.
+        * fast/js/dfg-uint32-to-number-in-middle-of-copy-propagation.html: Added.
+        * fast/js/jsc-test-list:
+        * fast/js/script-tests/dfg-uint32-to-number-in-middle-of-copy-propagation.js: Added.
+        (foo):
+
 2012-10-11  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: IDL types defined in spec should be visible to scripts

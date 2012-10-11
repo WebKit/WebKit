@@ -1,3 +1,18 @@
+2012-10-11  Filip Pizlo  <fpizlo@apple.com>
+
+        UInt32ToNumber and OSR exit should be aware of copy propagation and correctly recover both versions of a variable that was subject to a UInt32ToNumber cast
+        https://bugs.webkit.org/show_bug.cgi?id=99100
+        <rdar://problem/12480955>
+
+        Reviewed by Michael Saboff and Mark Hahnenberg.
+
+        Fixed by forcing UInt32ToNumber to use a different register. This "undoes" the copy propagation that we
+        would have been doing, since it has no performance effect in this case and has the benefit of making the
+        OSR exit compiler a lot simpler.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileUInt32ToNumber):
+
 2012-10-11  Geoffrey Garen  <ggaren@apple.com>
 
         Removed some more static assumptions about inline object capacity
