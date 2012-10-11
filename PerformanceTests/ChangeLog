@@ -1,3 +1,12 @@
+2012-10-11  James Simonsen  <simonjam@chromium.org>
+
+        unprefix window.performance.webkitNow()
+        https://bugs.webkit.org/show_bug.cgi?id=88278
+
+        Reviewed by Tony Gentilcore.
+
+        * resources/runner.js: Bind to proper object to avoid invalid invocation errors.
+
 2012-10-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Skip Layout/subtree-detaching.html temporarily as it's very noisy and

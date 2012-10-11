@@ -53,7 +53,7 @@ module window {
         attribute EventListener onwebkitresourcetimingbufferfull;
 #endif
         // See http://www.w3.org/TR/hr-time/ for details.
-        double webkitNow();
+        double now();
     };
 
 }

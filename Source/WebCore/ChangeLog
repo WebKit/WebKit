@@ -1,3 +1,19 @@
+2012-10-11  James Simonsen  <simonjam@chromium.org>
+
+        unprefix window.performance.webkitNow()
+        https://bugs.webkit.org/show_bug.cgi?id=88278
+
+        Reviewed by Tony Gentilcore.
+
+        Test: fast/dom/Window/window-properties-performance.html
+              fast/performance/performance-now-timestamps.html
+
+        * page/Performance.cpp:
+        (WebCore::Performance::now):
+        * page/Performance.h:
+        (Performance):
+        * page/Performance.idl:
+
 2012-10-11  Roger Fong  <roger_fong@apple.com>
 
         [WebGL] [Mac] only the mapped symbol for the first element of a uniform/attribute array is stored.

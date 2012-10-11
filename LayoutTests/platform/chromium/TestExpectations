@@ -4020,7 +4020,4 @@ webkit.org/b/98811 [ Mac ] fast/transforms/transformed-focused-text-input.html [
 
 webkit.org/b/98948 [ Linux Debug ] http/tests/media/media-source/video-media-source-play.html [ PASS CRASH ]
 
-# Skipped until the prefix is removed.
-webkit.org/b/98953 http/tests/w3c/webperf/approved/HighResolutionTime [ Skip ]
-
 webkit.org/b/99089 transforms/3d/general/perspective-units.html [ Pass ImageOnlyFailure ]

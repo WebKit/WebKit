@@ -1,11 +1,11 @@
-description("Tests the timestamps from performance.webkitNow increase and are in milliseconds");
+description("Tests the timestamps from performance.now increase and are in milliseconds");
 
 function busyWait(millis) {
     var start = Date.now();
     while (Date.now() - start < millis) {}
 }
 
-var firstTimestamp = window.performance.webkitNow();
+var firstTimestamp = window.performance.now();
 shouldBeDefined("firstTimestamp");
 shouldBeGreaterThanOrEqual("firstTimestamp", "0");
 
@@ -17,7 +17,7 @@ shouldBeTrue("firstTimestamp < 5000");
 var waitTime = 10;
 busyWait(waitTime);
 
-var secondTimestamp = window.performance.webkitNow();
+var secondTimestamp = window.performance.now();
 shouldBeDefined("secondTimestamp");
 shouldBeGreaterThanOrEqual("secondTimestamp", "firstTimestamp + (waitTime / 2)");
 

@@ -201,7 +201,7 @@ Magnitude._runIteration = function(setup, test, magnitude)
     Magnitude._debug(debugStr);
 
     var iterations = 0;
-    var nowFunction = window.performance.now || Date.now;
+    var nowFunction = window.performance.now.bind(window.performance) || Date.now;
     var start = nowFunction();
     while (nowFunction() - start < Magnitude.millisecondsPerIteration) {
         test(magnitude);

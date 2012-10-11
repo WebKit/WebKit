@@ -1,3 +1,22 @@
+2012-10-11  James Simonsen  <simonjam@chromium.org>
+
+        unprefix window.performance.webkitNow()
+        https://bugs.webkit.org/show_bug.cgi?id=88278
+
+        Reviewed by Tony Gentilcore.
+
+        * fast/dom/Window/window-properties-performance-expected.txt:
+        * fast/performance/performance-now-timestamps-expected.txt:
+        * fast/performance/script-tests/performance-now-timestamps.js:
+        * platform/chromium/TestExpectations: Remove skipped expectation.
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/dom/Window/window-properties-performance-expected.txt:
+        * platform/gtk/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/qt/fast/dom/Window/window-properties-performance-expected.txt:
+        * resources/magnitude-perf.js:
+        (Magnitude._runIteration):
+
 2012-10-11  Huang Dongsung  <luxtella@company100.net>
 
         [CSS Shaders] Make custom filters use a premultiplied buffer.

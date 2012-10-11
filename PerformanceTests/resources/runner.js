@@ -42,7 +42,7 @@ if (window.testRunner) {
         return (randomSeed & 0xfffffff) / 0x10000000;
     };
 
-    PerfTestRunner.now = window.performance && window.performance.webkitNow ? function () { return window.performance.webkitNow(); } : Date.now;
+    PerfTestRunner.now = window.performance && window.performance.now ? function () { return window.performance.now(); } : Date.now;
 
     PerfTestRunner.logInfo = function (text) {
         if (!window.testRunner)

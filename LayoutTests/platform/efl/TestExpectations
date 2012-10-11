@@ -1426,9 +1426,6 @@ webkit.org/b/98729 fast/loader/data-url-encoding-html.html [ Failure ]
 webkit.org/b/98729 fast/loader/data-url-encoding-svg.html [ Failure ]
 webkit.org/b/98729 fast/spatial-navigation/snav-iframe-nested.html [ Failure ]
 
-# Skipped until the prefix is removed.
-webkit.org/b/98953 http/tests/w3c/webperf/approved/HighResolutionTime [ Skip ]
-
 # New inspector/profiler/memory-instrumentation-canvas.html fails on JSC platforms
 webkit.org/b/99001 inspector/profiler/memory-instrumentation-canvas.html
 
