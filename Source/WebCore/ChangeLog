@@ -1,3 +1,25 @@
+2012-10-10  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/12472460> text-combine doesn’t use third- and quarter-width variants when used with @font-face
+        https://bugs.webkit.org/show_bug.cgi?id=98961
+
+        Reviewed by Tim Horton.
+
+        Test: fast/text/text-combine-with-font-face.html
+
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSSegmentedFontFace::getFontData): Added the width variant to the
+        key used for entries in the font data table, so that we can return different
+        font data for different width variants.
+        * platform/graphics/FontWidthVariant.h: Defined FontWidthVariantWidth for
+        use in the computation of the above key.
+        * rendering/RenderCombineText.cpp:
+        (WebCore::RenderCombineText::combineText): Added a local variable to store
+        the font selector before changing the font description. Previously, by the time
+        we tried to get the font selector from the font, it had already been cleared,
+        so we called Font::update() with a 0 font selector, meaning @font-face fonts
+        could not be selected.
+
 2012-10-10  Elliott Sprehn  <esprehn@chromium.org>
 
         Move :before and :after into the DOM        
