@@ -1,3 +1,50 @@
+2012-10-10  James Simonsen  <simonjam@chromium.org>
+
+        High res times should start at 0
+        https://bugs.webkit.org/show_bug.cgi?id=84912
+
+        Reviewed by Tony Gentilcore.
+
+        Test: Existing Navigation Timing tests.
+
+        * inspector/InspectorInstrumentation.cpp: Use legacy document time, pending 98223.
+        (WebCore):
+        (WebCore::InspectorInstrumentation::didFinishLoadingImpl):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::buildObjectForTiming):
+        * loader/DocumentLoadTiming.cpp:
+        (WebCore::DocumentLoadTiming::convertMonotonicTimeToLegacyDocumentTime):
+        (WebCore):
+        (WebCore::DocumentLoadTiming::convertMonotonicTimeToZeroBasedDocumentTime):
+        (WebCore::DocumentLoadTiming::markNavigationStart):
+        * loader/DocumentLoadTiming.h:
+        (DocumentLoadTiming):
+        (WebCore::DocumentLoadTiming::navigationStart): These just report raw monotonic times now.
+        (WebCore::DocumentLoadTiming::unloadEventStart):
+        (WebCore::DocumentLoadTiming::unloadEventEnd):
+        (WebCore::DocumentLoadTiming::redirectStart):
+        (WebCore::DocumentLoadTiming::redirectEnd):
+        (WebCore::DocumentLoadTiming::fetchStart):
+        (WebCore::DocumentLoadTiming::responseEnd):
+        (WebCore::DocumentLoadTiming::loadEventStart):
+        (WebCore::DocumentLoadTiming::loadEventEnd):
+        * page/PerformanceTiming.cpp:
+        (WebCore::PerformanceTiming::navigationStart): Convert these back to legacy document times.
+        (WebCore::PerformanceTiming::unloadEventStart):
+        (WebCore::PerformanceTiming::unloadEventEnd):
+        (WebCore::PerformanceTiming::redirectStart):
+        (WebCore::PerformanceTiming::redirectEnd):
+        (WebCore::PerformanceTiming::fetchStart):
+        (WebCore::PerformanceTiming::responseEnd):
+        (WebCore::PerformanceTiming::loadEventStart):
+        (WebCore::PerformanceTiming::loadEventEnd):
+        (WebCore::PerformanceTiming::resourceLoadTimeRelativeToAbsolute):
+        (WebCore::PerformanceTiming::monotonicTimeToIntegerMilliseconds):
+        * platform/network/ResourceLoadTiming.cpp:
+        (WebCore::ResourceLoadTiming::convertResourceLoadTimeToMonotonicTime):
+        * platform/network/ResourceLoadTiming.h:
+        (ResourceLoadTiming):
+
 2012-10-10  Levi Weintraub  <leviw@chromium.org>
 
         Tests failure on Chromium Mac after r130821

@@ -61,7 +61,7 @@ unsigned long long PerformanceTiming::navigationStart() const
     if (!timing)
         return 0;
 
-    return toIntegerMilliseconds(timing->navigationStart());
+    return monotonicTimeToIntegerMilliseconds(timing->navigationStart());
 }
 
 unsigned long long PerformanceTiming::unloadEventStart() const
@@ -73,7 +73,7 @@ unsigned long long PerformanceTiming::unloadEventStart() const
     if (timing->hasCrossOriginRedirect() || !timing->hasSameOriginAsPreviousDocument())
         return 0;
 
-    return toIntegerMilliseconds(timing->unloadEventStart());
+    return monotonicTimeToIntegerMilliseconds(timing->unloadEventStart());
 }
 
 unsigned long long PerformanceTiming::unloadEventEnd() const
@@ -85,7 +85,7 @@ unsigned long long PerformanceTiming::unloadEventEnd() const
     if (timing->hasCrossOriginRedirect() || !timing->hasSameOriginAsPreviousDocument())
         return 0;
 
-    return toIntegerMilliseconds(timing->unloadEventEnd());
+    return monotonicTimeToIntegerMilliseconds(timing->unloadEventEnd());
 }
 
 unsigned long long PerformanceTiming::redirectStart() const
@@ -97,7 +97,7 @@ unsigned long long PerformanceTiming::redirectStart() const
     if (timing->hasCrossOriginRedirect())
         return 0;
 
-    return toIntegerMilliseconds(timing->redirectStart());
+    return monotonicTimeToIntegerMilliseconds(timing->redirectStart());
 }
 
 unsigned long long PerformanceTiming::redirectEnd() const
@@ -109,7 +109,7 @@ unsigned long long PerformanceTiming::redirectEnd() const
     if (timing->hasCrossOriginRedirect())
         return 0;
 
-    return toIntegerMilliseconds(timing->redirectEnd());
+    return monotonicTimeToIntegerMilliseconds(timing->redirectEnd());
 }
 
 unsigned long long PerformanceTiming::fetchStart() const
@@ -118,7 +118,7 @@ unsigned long long PerformanceTiming::fetchStart() const
     if (!timing)
         return 0;
 
-    return toIntegerMilliseconds(timing->fetchStart());
+    return monotonicTimeToIntegerMilliseconds(timing->fetchStart());
 }
 
 unsigned long long PerformanceTiming::domainLookupStart() const
@@ -243,7 +243,7 @@ unsigned long long PerformanceTiming::responseEnd() const
     if (!timing)
         return 0;
 
-    return toIntegerMilliseconds(timing->responseEnd());
+    return monotonicTimeToIntegerMilliseconds(timing->responseEnd());
 }
 
 unsigned long long PerformanceTiming::domLoading() const
@@ -297,7 +297,7 @@ unsigned long long PerformanceTiming::loadEventStart() const
     if (!timing)
         return 0;
 
-    return toIntegerMilliseconds(timing->loadEventStart());
+    return monotonicTimeToIntegerMilliseconds(timing->loadEventStart());
 }
 
 unsigned long long PerformanceTiming::loadEventEnd() const
@@ -306,7 +306,7 @@ unsigned long long PerformanceTiming::loadEventEnd() const
     if (!timing)
         return 0;
 
-    return toIntegerMilliseconds(timing->loadEventEnd());
+    return monotonicTimeToIntegerMilliseconds(timing->loadEventEnd());
 }
 
 DocumentLoader* PerformanceTiming::documentLoader() const
@@ -352,7 +352,7 @@ unsigned long long PerformanceTiming::resourceLoadTimeRelativeToAbsolute(int rel
     ASSERT(relativeMilliseconds >= 0);
     ResourceLoadTiming* resourceTiming = resourceLoadTiming();
     ASSERT(resourceTiming);
-    return toIntegerMilliseconds(resourceTiming->convertResourceLoadTimeToDocumentTime(documentLoadTiming(), relativeMilliseconds));
+    return monotonicTimeToIntegerMilliseconds(resourceTiming->convertResourceLoadTimeToMonotonicTime(relativeMilliseconds));
 }
 
 unsigned long long PerformanceTiming::monotonicTimeToIntegerMilliseconds(double monotonicSeconds) const
@@ -360,7 +360,7 @@ unsigned long long PerformanceTiming::monotonicTimeToIntegerMilliseconds(double 
     ASSERT(monotonicSeconds >= 0);
     const DocumentLoadTiming* timing = documentLoadTiming();
     ASSERT(timing);
-    return toIntegerMilliseconds(timing->convertMonotonicTimeToDocumentTime(monotonicSeconds));
+    return toIntegerMilliseconds(timing->monotonicTimeToPseudoWallTime(monotonicSeconds));
 }
 
 } // namespace WebCore

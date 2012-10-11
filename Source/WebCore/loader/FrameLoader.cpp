@@ -2952,7 +2952,7 @@ void FrameLoader::loadProvisionalItemFromCachedPage()
     // Should have timing data from previous time(s) the page was shown.
     ASSERT(provisionalLoader->timing()->navigationStart());
     provisionalLoader->resetTiming();
-    provisionalLoader->timing()->markNavigationStart(frame());
+    provisionalLoader->timing()->markNavigationStart();
 
     provisionalLoader->setCommitted(true);
     commitProvisionalLoad();

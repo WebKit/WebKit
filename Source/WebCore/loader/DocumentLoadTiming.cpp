@@ -54,22 +54,26 @@ DocumentLoadTiming::DocumentLoadTiming()
 {
 }
 
-void DocumentLoadTiming::markNavigationStart(Frame* frame)
+double DocumentLoadTiming::monotonicTimeToZeroBasedDocumentTime(double monotonicTime) const
 {
-    ASSERT(frame);
+    if (!monotonicTime)
+        return 0.0;
+    return monotonicTime - m_referenceMonotonicTime;
+}
+
+double DocumentLoadTiming::monotonicTimeToPseudoWallTime(double monotonicTime) const
+{
+    if (!monotonicTime)
+        return 0.0;
+    return m_referenceWallTime + monotonicTime - m_referenceMonotonicTime;
+}
+
+void DocumentLoadTiming::markNavigationStart()
+{
     ASSERT(!m_navigationStart && !m_referenceMonotonicTime && !m_referenceWallTime);
 
-    if (frame->page()->mainFrame() == frame) {
-        m_navigationStart = m_referenceMonotonicTime = monotonicallyIncreasingTime();
-        m_referenceWallTime = currentTime();
-    } else {
-        Document* rootDocument = frame->page()->mainFrame()->document();
-        ASSERT(rootDocument);
-        DocumentLoadTiming* rootTiming = rootDocument->loader()->timing();
-        m_referenceMonotonicTime = rootTiming->m_referenceMonotonicTime;
-        m_referenceWallTime = rootTiming->m_referenceWallTime;
-        m_navigationStart = monotonicallyIncreasingTime();
-    }
+    m_navigationStart = m_referenceMonotonicTime = monotonicallyIncreasingTime();
+    m_referenceWallTime = currentTime();
 }
 
 void DocumentLoadTiming::setNavigationStart(double navigationStart)
@@ -87,20 +91,6 @@ void DocumentLoadTiming::addRedirect(const KURL& redirectingUrl, const KURL& red
     // Check if the redirected url is allowed to access the redirecting url's timing information.
     RefPtr<SecurityOrigin> redirectedSecurityOrigin = SecurityOrigin::create(redirectedUrl);
     m_hasCrossOriginRedirect = !redirectedSecurityOrigin->canRequest(redirectingUrl);
-}
-
-double DocumentLoadTiming::convertMonotonicTimeToDocumentTime(double monotonicTime) const
-{
-    if (!monotonicTime)
-        return 0.0;
-    return m_referenceWallTime + monotonicTime - m_referenceMonotonicTime;
-}
-
-double DocumentLoadTiming::convertMonotonicTimeToZeroBasedDocumentTime(double monotonicTime) const
-{
-    if (!monotonicTime)
-        return 0.0;
-    return monotonicTime - m_referenceMonotonicTime;
 }
 
 } // namespace WebCore

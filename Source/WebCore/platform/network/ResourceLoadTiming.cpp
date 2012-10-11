@@ -26,16 +26,11 @@
 #include "config.h"
 #include "ResourceLoadTiming.h"
 
-#include "DocumentLoadTiming.h"
-
 namespace WebCore {
 
-double ResourceLoadTiming::convertResourceLoadTimeToDocumentTime(const DocumentLoadTiming* documentTiming, int deltaMilliseconds) const
+double ResourceLoadTiming::convertResourceLoadTimeToMonotonicTime(int deltaMilliseconds) const
 {
-    if (!documentTiming)
-        return 0.0;
-
-    return documentTiming->convertMonotonicTimeToDocumentTime(requestTime + deltaMilliseconds / 1000.0);
+    return requestTime + deltaMilliseconds / 1000.0;
 }
 
 }

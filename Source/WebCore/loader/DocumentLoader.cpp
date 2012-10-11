@@ -842,7 +842,7 @@ bool DocumentLoader::isMultipartReplacingLoad() const
 void DocumentLoader::startLoadingMainResource()
 {
     m_mainDocumentError = ResourceError();
-    timing()->markNavigationStart(m_frame);
+    timing()->markNavigationStart();
     ASSERT(!m_mainResourceLoader);
     m_mainResourceLoader = MainResourceLoader::create(m_frame);
 

@@ -112,7 +112,7 @@ static PassRefPtr<InspectorObject> buildObjectForHeaders(const HTTPHeaderMap& he
 static PassRefPtr<TypeBuilder::Network::ResourceTiming> buildObjectForTiming(const ResourceLoadTiming& timing, DocumentLoader* loader)
 {
     return TypeBuilder::Network::ResourceTiming::create()
-        .setRequestTime(timing.convertResourceLoadTimeToDocumentTime(loader->timing(), 0))
+        .setRequestTime(loader->timing()->monotonicTimeToPseudoWallTime(timing.convertResourceLoadTimeToMonotonicTime(0)))
         .setProxyStart(timing.proxyStart)
         .setProxyEnd(timing.proxyEnd)
         .setDnsStart(timing.dnsStart)

@@ -746,7 +746,7 @@ void InspectorInstrumentation::didFinishLoadingImpl(InstrumentingAgents* instrum
     double finishTime = 0.0;
     // FIXME: Expose all of the timing details to inspector and have it calculate finishTime.
     if (monotonicFinishTime)
-        finishTime = loader->timing()->convertMonotonicTimeToDocumentTime(monotonicFinishTime);
+        finishTime = loader->timing()->monotonicTimeToPseudoWallTime(monotonicFinishTime);
 
     if (timelineAgent)
         timelineAgent->didFinishLoadingResource(identifier, false, finishTime, loader->frame());
