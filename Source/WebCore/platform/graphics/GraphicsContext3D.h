@@ -1018,6 +1018,7 @@ public:
     ShaderSourceMap m_shaderSourceMap;
 
     String mappedSymbolName(Platform3DObject program, ANGLEShaderSymbolType, const String& name);
+    String originalSymbolName(Platform3DObject program, ANGLEShaderSymbolType, const String& name);
 
     ANGLEWebKitBridge m_compiler;
 #endif

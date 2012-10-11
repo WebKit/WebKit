@@ -1,3 +1,27 @@
+2012-10-10  Roger Fong  <roger_fong@apple.com>
+
+        [WebGL] [On Mac] queried attributes and uniforms need to return the original variable name, not the mapped name.
+        https://bugs.webkit.org/show_bug.cgi?id=98470
+
+        Reviewed by Timothy Horton.
+
+        When a variable name is too long we translate to a shorter version and keep a mapping between the long and short names.
+        However, when querying for a variable client side using getActiveAttrib or getActiveUniform, we accidentally return the 
+        translated names. This fix makes these methods return the original variable names.
+
+        Tested using Khronos WebGL conformance suite:
+        conformance/glsl/misc/glsl-long-variable-names.html
+
+        * platform/graphics/GraphicsContext3D.h:
+        (GraphicsContext3D):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp: getActiveAttrib and getActiveUniform
+        now use GraphicsContext3D::originalSymbolName to find the original variable name.
+        (WebCore::GraphicsContext3D::getActiveAttrib):
+        (WebCore::GraphicsContext3D::getActiveUniform):
+        (WebCore):
+        (WebCore::GraphicsContext3D::originalSymbolName): This method returns the original variable name given 
+        the mapped name.
+
 2012-10-10 Brady Eidson  <beidson@apple.com>
 
         Switch over CachedResource::data() from taking a SharedBuffer to taking a ResourceBuffer.

@@ -629,7 +629,10 @@ bool GraphicsContext3D::getActiveAttrib(Platform3DObject program, GC3Duint index
     ::glGetActiveAttrib(program, index, maxAttributeSize, &nameLength, &size, &type, name.get());
     if (!nameLength)
         return false;
-    info.name = String(name.get(), nameLength);
+    
+    String originalName = originalSymbolName(program, SHADER_SYMBOL_TYPE_ATTRIBUTE, String(name.get(), nameLength));
+    
+    info.name = originalName;
     info.type = type;
     info.size = size;
     return true;
@@ -653,11 +656,12 @@ bool GraphicsContext3D::getActiveUniform(Platform3DObject program, GC3Duint inde
     ::glGetActiveUniform(program, index, maxUniformSize, &nameLength, &size, &type, name.get());
     if (!nameLength)
         return false;
-
-    info.name = String(name.get(), nameLength);
+    
+    String originalName = originalSymbolName(program, SHADER_SYMBOL_TYPE_UNIFORM, String(name.get(), nameLength));
+    
+    info.name = originalName;
     info.type = type;
     info.size = size;
-
     return true;
 }
     
@@ -686,6 +690,27 @@ String GraphicsContext3D::mappedSymbolName(Platform3DObject program, ANGLEShader
         ShaderSymbolMap::const_iterator symbolEntry = symbolMap.find(name);
         if (symbolEntry != symbolMap.end())
             return symbolEntry->value.mappedName;
+    }
+    return name;
+}
+    
+String GraphicsContext3D::originalSymbolName(Platform3DObject program, ANGLEShaderSymbolType symbolType, const String& name)
+{
+    GC3Dsizei count;
+    Platform3DObject shaders[2];
+    getAttachedShaders(program, 2, &count, shaders);
+    
+    for (GC3Dsizei i = 0; i < count; ++i) {
+        ShaderSourceMap::iterator result = m_shaderSourceMap.find(shaders[i]);
+        if (result == m_shaderSourceMap.end())
+            continue;
+        
+        const ShaderSymbolMap& symbolMap = result->value.symbolMap(symbolType);
+        ShaderSymbolMap::const_iterator symbolEntry;
+        for (symbolEntry = symbolMap.begin(); symbolEntry != symbolMap.end(); ++symbolEntry) {
+            if (symbolEntry->value.mappedName == name)
+                return symbolEntry->key;
+        }
     }
     return name;
 }
