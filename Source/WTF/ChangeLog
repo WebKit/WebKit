@@ -1,3 +1,20 @@
+2012-10-11  Mark Toller  <mark.toller@samsung.com>
+
+        Removed incorrect pthread_mutex_trylock code in an ASSERT in TCMalloc_PageHeap::signalScavenger. This 
+        branch is used by the Webkit GTK code.
+
+        https://bugs.webkit.org/show_bug.cgi?id=97539
+
+        Reviewed by Geoffrey Garen.
+
+        The code was never compiled in, and was functionally broken. There is no need for locking around the 
+        m_scavengeThreadActive flag, however, we should lock pageheap_lock before calling 'shouldScavenge()', as we
+        only want to scavenge when really required, so it's better to wait for any current memory operation to 
+        complete before checking. 
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::signalScavenger):
+
 2012-10-10  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Define WTF_USE_EXTRA_MACROS in cmake rather than Platform.h

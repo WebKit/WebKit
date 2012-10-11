@@ -1627,8 +1627,11 @@ void* TCMalloc_PageHeap::runScavengerThread(void* context)
 
 ALWAYS_INLINE void TCMalloc_PageHeap::signalScavenger()
 {
-    // m_scavengeMutex should be held before accessing m_scavengeThreadActive.
-    ASSERT(pthread_mutex_trylock(m_scavengeMutex));
+    // shouldScavenge() should be called only when the pageheap_lock spinlock is held, additionally, 
+    // m_scavengeThreadActive is only set to false whilst pageheap_lock is held. The caller must ensure this is
+    // taken prior to calling this method. If the scavenger thread is sleeping and shouldScavenge() indicates there
+    // is memory to free the scavenger thread is signalled to start.
+    ASSERT(pageheap_lock.IsHeld());
     if (!m_scavengeThreadActive && shouldScavenge())
         pthread_cond_signal(&m_scavengeCondition);
 }
@@ -2544,24 +2547,38 @@ ALWAYS_INLINE void TCMalloc_PageHeap::signalScavenger()
 void TCMalloc_PageHeap::scavengerThread()
 {
 #if HAVE(PTHREAD_SETNAME_NP)
-  pthread_setname_np("JavaScriptCore: FastMalloc scavenger");
+    pthread_setname_np("JavaScriptCore: FastMalloc scavenger");
 #endif
 
-  while (1) {
-      if (!shouldScavenge()) {
-          pthread_mutex_lock(&m_scavengeMutex);
-          m_scavengeThreadActive = false;
-          // Block until there are enough free committed pages to release back to the system.
-          pthread_cond_wait(&m_scavengeCondition, &m_scavengeMutex);
-          m_scavengeThreadActive = true;
-          pthread_mutex_unlock(&m_scavengeMutex);
-      }
-      sleep(kScavengeDelayInSeconds);
-      {
-          SpinLockHolder h(&pageheap_lock);
-          pageheap->scavenge();
-      }
-  }
+    while (1) {
+        pageheap_lock.Lock();
+        if (!shouldScavenge()) {
+            // Set to false so that signalScavenger() will check whether we need to be siganlled.
+            m_scavengeThreadActive = false;
+
+            // We need to unlock now, as this thread will block on the condvar until scavenging is required.
+            pageheap_lock.Unlock();
+
+            // Block until there are enough free committed pages to release back to the system.
+            pthread_mutex_lock(&m_scavengeMutex);
+            pthread_cond_wait(&m_scavengeCondition, &m_scavengeMutex);
+            // After exiting the pthread_cond_wait, we hold the lock on m_scavengeMutex. Unlock it to prevent
+            // deadlock next time round the loop.
+            pthread_mutex_unlock(&m_scavengeMutex);
+
+            // Set to true to prevent unnecessary signalling of the condvar.
+            m_scavengeThreadActive = true;
+        } else
+            pageheap_lock.Unlock();
+
+        // Wait for a while to calculate how much memory remains unused during this pause.
+        sleep(kScavengeDelayInSeconds);
+
+        {
+            SpinLockHolder h(&pageheap_lock);
+            pageheap->scavenge();
+        }
+    }
 }
 
 #endif
