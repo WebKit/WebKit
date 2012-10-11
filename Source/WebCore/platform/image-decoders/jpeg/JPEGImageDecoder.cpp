@@ -612,6 +612,12 @@ bool JPEGImageDecoder::outputScanlines()
             JSAMPLE* jsample = *samples + (m_scaled ? m_scaledColumns[x] : x) * ((info->out_color_space == JCS_RGB) ? 3 : 4);
             if (info->out_color_space == JCS_RGB)
                 buffer.setRGBA(x, destY, jsample[0], jsample[1], jsample[2], 0xFF);
+#if defined(TURBO_JPEG_RGB_SWIZZLE)
+            else if (info->out_color_space == JCS_EXT_RGBA)
+                buffer.setRGBA(x, destY, jsample[0], jsample[1], jsample[2], 0xFF);
+            else if (info->out_color_space == JCS_EXT_BGRA)
+                buffer.setRGBA(x, destY, jsample[2], jsample[1], jsample[0], 0xFF);
+#endif
             else if (info->out_color_space == JCS_CMYK) {
                 // Source is 'Inverted CMYK', output is RGB.
                 // See: http://www.easyrgb.com/math.php?MATH=M12#text12
