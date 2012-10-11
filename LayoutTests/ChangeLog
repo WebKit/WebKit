@@ -1,3 +1,13 @@
+2012-10-11  Jussi Kukkonen  <jussi.kukkonen@intel.com>
+
+        [WK2] Enable tests that use setAlwaysAcceptCookies()
+        https://bugs.webkit.org/show_bug.cgi?id=98891
+
+        Unreviewed gardening. Enable WebKit2 tests that use
+        setAlwaysAcceptCookies(): this feature was added several months ago.
+
+        * platform/wk2/TestExpectations:
+
 2012-10-11  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Rebaseline fast/css-generated-content/table-row-group-to-inline.html after r131004.

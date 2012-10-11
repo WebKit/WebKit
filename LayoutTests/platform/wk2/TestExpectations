@@ -428,19 +428,6 @@ http/tests/security/setDomainRelaxationForbiddenForURLScheme.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42777>
 fast/loader/non-deferred-substitute-load.html
 
-# WebKit2 needs layoutTestController.setAlwaysAcceptCookies
-# <https://bugs.webkit.org/show_bug.cgi?id=42778>
-http/tests/cookies/third-party-cookie-relaxing.html
-http/tests/plugins/third-party-cookie-accept-policy.html
-http/tests/security/cookies/third-party-cookie-blocking-main-frame.html
-http/tests/xmlhttprequest/cross-origin-cookie-storage.html
-http/tests/security/cookies/first-party-cookie-allow-xslt.xml
-http/tests/security/cookies/third-party-cookie-blocking-user-action.html
-http/tests/security/cookies/third-party-cookie-blocking.html
-http/tests/security/cookies/third-party-cookie-blocking-xslt.xml
-http/tests/xmlhttprequest/access-control-preflight-credential-sync.html
-http/tests/xmlhttprequest/access-control-preflight-credential-async.html
-
 # WebKitTestRunner needs to print history delegate information
 # <https://bugs.webkit.org/show_bug.cgi?id=42704>
 http/tests/globalhistory/history-delegate-basic-302-redirect.html
