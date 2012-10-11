@@ -622,6 +622,7 @@ bool ewk_view_accelerated_compositing_mode_enter(const Evas_Object* ewkView)
         return false;
     }
 
+    priv->viewportHandler->setRendererActive(true);
     return true;
 }
 

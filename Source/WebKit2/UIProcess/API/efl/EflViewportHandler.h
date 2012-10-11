@@ -48,7 +48,7 @@ public:
     void updateViewportSize(const WebCore::IntSize& viewportSize);
     void setVisibleContentsRect(const WebCore::IntPoint&, float, const WebCore::FloatPoint&);
     void didChangeContentsSize(const WebCore::IntSize& size);
-
+    void setRendererActive(bool);
 private:
     explicit EflViewportHandler(Evas_Object*);
 

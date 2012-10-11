@@ -1,3 +1,21 @@
+2012-10-11  Regina Chung  <heejin.r.chung@samsung.com>
+
+        [EFL][WK2] WebProcess keeps on waiting for UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=97646
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Set LayerTreeRenderer to active so UIProcess can send RenderNextFrame message to WebProcess
+        after accelerated compositing(AC) mode is entered, so WebProcess can start flushing changes to UIProcess.
+
+        * UIProcess/API/efl/EflViewportHandler.cpp: Added API for setting LayerTreeRenderer's active state.
+        (WebKit::EflViewportHandler::setActive):
+        (WebKit):
+        * UIProcess/API/efl/EflViewportHandler.h:
+        (EflViewportHandler):
+        * UIProcess/API/efl/ewk_view.cpp: Sets LayerTreeRenderer's active status to true after entering AC mode.
+        (ewk_view_accelerated_compositing_mode_enter):
+
 2012-10-10  Brady Eidson  <beidson@apple.com>
 
         Switch ResourceLoader::resourceData() from SharedBuffer to ResourceBuffer
