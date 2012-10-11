@@ -417,6 +417,40 @@ void ScrollAnimatorNone::fireUpAnAnimation(FloatPoint fp)
 #endif
 }
 
+ScrollAnimatorNone::Parameters ScrollAnimatorNone::parametersForScrollGranularity(ScrollGranularity granularity) const
+{
+#if !PLATFORM(QT)
+    switch (granularity) {
+    case ScrollByDocument:
+        return Parameters(true, 20 * kTickTime, 10 * kTickTime, Cubic, 10 * kTickTime, Cubic, 10 * kTickTime, Linear, 1);
+    case ScrollByLine:
+        return Parameters(true, 10 * kTickTime, 7 * kTickTime, Cubic, 3 * kTickTime, Cubic, 3 * kTickTime, Linear, 1);
+    case ScrollByPage:
+        return Parameters(true, 15 * kTickTime, 10 * kTickTime, Cubic, 5 * kTickTime, Cubic, 5 * kTickTime, Linear, 1);
+    case ScrollByPixel:
+        return Parameters(true, 11 * kTickTime, 2 * kTickTime, Cubic, 3 * kTickTime, Cubic, 3 * kTickTime, Quadratic, 1.25);
+    default:
+        ASSERT_NOT_REACHED();
+    }
+#else
+    // This is a slightly different strategy for the animation with a steep attack curve and natural release curve.
+    // The fast acceleration makes the animation look more responsive to user input.
+    switch (granularity) {
+    case ScrollByDocument:
+        return Parameters(true, 20 * kTickTime, 10 * kTickTime, Cubic, 6 * kTickTime, Quadratic, 10 * kTickTime, Quadratic, 22 * kTickTime);
+    case ScrollByLine:
+        return Parameters(true, 6 * kTickTime, 5 * kTickTime, Cubic, 1 * kTickTime, Quadratic, 4 * kTickTime, Linear, 1);
+    case ScrollByPage:
+        return Parameters(true, 12 * kTickTime, 10 * kTickTime, Cubic, 3 * kTickTime, Quadratic, 6 * kTickTime, Linear, 1);
+    case ScrollByPixel:
+        return Parameters(true, 8 * kTickTime, 3 * kTickTime, Cubic, 2 * kTickTime, Quadratic, 5 * kTickTime, Quadratic, 1.25);
+    default:
+        ASSERT_NOT_REACHED();
+    }
+#endif
+    return Parameters();
+}
+
 bool ScrollAnimatorNone::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier)
 {
     if (!m_scrollableArea->scrollAnimatorEnabled())
@@ -431,16 +465,10 @@ bool ScrollAnimatorNone::scroll(ScrollbarOrientation orientation, ScrollGranular
     Parameters parameters;
     switch (granularity) {
     case ScrollByDocument:
-        parameters = Parameters(true, 20 * kTickTime, 10 * kTickTime, Cubic, 10 * kTickTime, Cubic, 10 * kTickTime, Linear, 1);
-        break;
     case ScrollByLine:
-        parameters = Parameters(true, 10 * kTickTime, 7 * kTickTime, Cubic, 3 * kTickTime, Cubic, 3 * kTickTime, Linear, 1);
-        break;
     case ScrollByPage:
-        parameters = Parameters(true, 15 * kTickTime, 10 * kTickTime, Cubic, 5 * kTickTime, Cubic, 5 * kTickTime, Linear, 1);
-        break;
     case ScrollByPixel:
-        parameters = Parameters(true, 11 * kTickTime, 2 * kTickTime, Cubic, 3 * kTickTime, Cubic, 3 * kTickTime, Quadratic, 1.25);
+        parameters = parametersForScrollGranularity(granularity);
         break;
     case ScrollByPrecisePixel:
         return ScrollAnimator::scroll(orientation, granularity, step, multiplier);

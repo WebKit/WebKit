@@ -104,6 +104,8 @@ protected:
     virtual void animationWillStart() { }
     virtual void animationDidFinish() { }
 
+    Parameters parametersForScrollGranularity(ScrollGranularity) const;
+
     friend class ::ScrollAnimatorNoneTest;
 
     struct PerAxisData {

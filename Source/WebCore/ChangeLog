@@ -1,3 +1,18 @@
+2012-10-11  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] More responsive scroll animations
+        https://bugs.webkit.org/show_bug.cgi?id=99016
+
+        Reviewed by Jocelyn Turcotte.
+
+        Changes the scrolling animations so they accelerate faster than they deccelerate,
+        making the animation respond faster to user input.
+
+        * platform/ScrollAnimatorNone.cpp:
+        (WebCore::ScrollAnimatorNone::parametersForScrollGranularity):
+        * platform/ScrollAnimatorNone.h:
+        (ScrollAnimatorNone):
+
 2012-10-11  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         [CSS3 Media Queries] Aspect ratio value re-parsed when media query expression is evaluated
