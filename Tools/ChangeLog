@@ -1,3 +1,24 @@
+2012-10-11  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Add support for Javascript popup boxes to MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=99021
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add support for JavaScript popups (alert, confirm, prompt)
+        to MiniBrowser.
+
+        * MiniBrowser/efl/main.c:
+        (miniBrowserViewSmartClass):
+        (browser_view_find):
+        (quit_event_loop):
+        (on_ok_clicked):
+        (on_javascript_alert):
+        (on_javascript_confirm):
+        (on_javascript_prompt):
+        (window_create):
+        (elm_main):
+
 2012-10-11  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][jhbuild] Disable elm-web in elementary

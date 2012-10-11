@@ -43,6 +43,12 @@ static Eina_List *windows = NULL;
 static char *evas_engine_name = NULL;
 static Eina_Bool frame_flattening_enabled = EINA_FALSE;
 
+static Ewk_View_Smart_Class* miniBrowserViewSmartClass()
+{
+    static Ewk_View_Smart_Class ewkViewClass = EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION("MiniBrowser_View");
+    return &ewkViewClass;
+}
+
 typedef struct _Browser_Window {
     Evas_Object *window;
     Evas_Object *webview;
@@ -89,6 +95,22 @@ static Browser_Window *browser_window_find(Evas_Object *window)
     EINA_LIST_FOREACH(windows, l, data) {
         Browser_Window *browser_window = (Browser_Window *)data;
         if (browser_window->window == window)
+            return browser_window;
+    }
+    return NULL;
+}
+
+static Browser_Window *browser_view_find(Evas_Object *view)
+{
+    Eina_List *l;
+    void *data;
+
+    if (!view)
+        return NULL;
+
+    EINA_LIST_FOREACH(windows, l, data) {
+        Browser_Window *browser_window = (Browser_Window *)data;
+        if (browser_window->webview == view)
             return browser_window;
     }
     return NULL;
@@ -373,6 +395,133 @@ on_refresh_button_clicked(void *user_data, Evas_Object *refresh_button, void *ev
 }
 
 static void
+quit_event_loop(void *user_data, Evas_Object *obj, void *event_info)
+{
+    ecore_main_loop_quit();
+}
+
+static void
+on_ok_clicked(void *user_data, Evas_Object *obj, void *event_info)
+{
+    Eina_Bool *confirmed = (Eina_Bool *)user_data;
+    *confirmed = EINA_TRUE;
+
+    ecore_main_loop_quit();
+}
+
+static void
+on_javascript_alert(Ewk_View_Smart_Data *smartData, const char *message)
+{
+    Browser_Window *window = browser_view_find(smartData->self);
+
+    Evas_Object *alert_popup = elm_popup_add(window->window);
+    evas_object_size_hint_weight_set(alert_popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    elm_object_text_set(alert_popup, message);
+    elm_object_part_text_set(alert_popup, "title,text", "Alert");
+
+    /* Popup buttons */
+    Evas_Object *button = elm_button_add(alert_popup);
+    elm_object_text_set(button, "OK");
+    elm_object_part_content_set(alert_popup, "button1", button);
+    evas_object_smart_callback_add(button, "clicked", quit_event_loop, NULL);
+    evas_object_show(alert_popup);
+
+    /* Make modal */
+    ecore_main_loop_begin();
+
+    evas_object_del(alert_popup);
+}
+
+static Eina_Bool
+on_javascript_confirm(Ewk_View_Smart_Data *smartData, const char *message)
+{
+    Browser_Window *window = browser_view_find(smartData->self);
+
+    Eina_Bool ok = EINA_FALSE;
+
+    Evas_Object *confirm_popup = elm_popup_add(window->window);
+    evas_object_size_hint_weight_set(confirm_popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    elm_object_text_set(confirm_popup, message);
+    elm_object_part_text_set(confirm_popup, "title,text", "Confirmation");
+
+    /* Popup buttons */
+    Evas_Object *cancel_button = elm_button_add(confirm_popup);
+    elm_object_text_set(cancel_button, "Cancel");
+    elm_object_part_content_set(confirm_popup, "button1", cancel_button);
+    evas_object_smart_callback_add(cancel_button, "clicked", quit_event_loop, NULL);
+    Evas_Object *ok_button = elm_button_add(confirm_popup);
+    elm_object_text_set(ok_button, "OK");
+    elm_object_part_content_set(confirm_popup, "button2", ok_button);
+    evas_object_smart_callback_add(ok_button, "clicked", on_ok_clicked, &ok);
+    evas_object_show(confirm_popup);
+
+    /* Make modal */
+    ecore_main_loop_begin();
+
+    evas_object_del(confirm_popup);
+
+    return ok;
+}
+
+static const char *
+on_javascript_prompt(Ewk_View_Smart_Data *smartData, const char *message, const char *default_value)
+{
+    Browser_Window *window = browser_view_find(smartData->self);
+
+    Eina_Bool ok = EINA_FALSE;
+
+    Evas_Object *prompt_popup = elm_popup_add(window->window);
+    evas_object_size_hint_weight_set(prompt_popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    elm_object_part_text_set(prompt_popup, "title,text", "Prompt");
+
+    /* Popup Content */
+    Evas_Object *box = elm_box_add(window->window);
+    elm_box_padding_set(box, 0, 4);
+    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_show(box);
+
+    Evas_Object *prompt = elm_label_add(window->window);
+    elm_object_text_set(prompt, message);
+    evas_object_size_hint_weight_set(prompt, EVAS_HINT_EXPAND, 0.0);
+    evas_object_size_hint_align_set(prompt, EVAS_HINT_FILL, 0.5);
+    elm_box_pack_end(box, prompt);
+    evas_object_show(prompt);
+
+    Evas_Object *entry = elm_entry_add(window->window);
+    elm_entry_scrollable_set(entry, EINA_TRUE);
+    elm_entry_single_line_set(entry, EINA_TRUE);
+    elm_entry_text_style_user_push(entry, "DEFAULT='font_size=18'");
+    elm_entry_entry_set(entry, default_value ? default_value : "");
+    evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, 0.0);
+    evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, 0.5);
+    elm_box_pack_end(box, entry);
+    evas_object_show(entry);
+
+    elm_object_content_set(prompt_popup, box);
+
+    /* Popup buttons */
+    Evas_Object *cancel_button = elm_button_add(prompt_popup);
+    elm_object_text_set(cancel_button, "Cancel");
+    elm_object_part_content_set(prompt_popup, "button1", cancel_button);
+    evas_object_smart_callback_add(cancel_button, "clicked", quit_event_loop, NULL);
+    Evas_Object *ok_button = elm_button_add(prompt_popup);
+    elm_object_text_set(ok_button, "OK");
+    elm_object_part_content_set(prompt_popup, "button2", ok_button);
+    evas_object_smart_callback_add(ok_button, "clicked", on_ok_clicked, &ok);
+    evas_object_show(prompt_popup);
+
+    /* Make modal */
+    ecore_main_loop_begin();
+
+    /* The return string need to be stringshared */
+    const char *prompt_text = ok ? eina_stringshare_add(elm_entry_entry_get(entry)) : NULL;
+    evas_object_del(prompt_popup);
+
+    return prompt_text;
+}
+
+static void
 on_home_button_clicked(void *user_data, Evas_Object *home_button, void *event_info)
 {
     Browser_Window *app_data = (Browser_Window *)user_data;
@@ -485,8 +634,14 @@ static Browser_Window *window_create(const char *url)
     evas_object_show(home_button);
 
     /* Create webview */
+    Ewk_View_Smart_Class *ewkViewClass = miniBrowserViewSmartClass();
+    ewkViewClass->run_javascript_alert = on_javascript_alert;
+    ewkViewClass->run_javascript_confirm = on_javascript_confirm;
+    ewkViewClass->run_javascript_prompt = on_javascript_prompt;
+
     Evas *evas = evas_object_evas_get(app_data->window);
-    app_data->webview = ewk_view_add(evas);
+    Evas_Smart *smart = evas_smart_class_new(&ewkViewClass->sc);
+    app_data->webview = ewk_view_smart_add(evas, smart, ewk_context_default_get());
     ewk_view_theme_set(app_data->webview, THEME_DIR "/default.edj");
 
     Ewk_Settings *settings = ewk_view_settings_get(app_data->webview);
@@ -516,7 +671,6 @@ static Browser_Window *window_create(const char *url)
         ewk_view_url_set(app_data->webview, url);
 
     evas_object_resize(app_data->window, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-    elm_win_center(app_data->window, EINA_TRUE, EINA_TRUE);
     evas_object_show(app_data->window);
 
     view_focus_set(app_data, EINA_TRUE);
@@ -543,6 +697,8 @@ elm_main(int argc, char *argv[])
 
     if (!ewk_init())
         return EXIT_FAILURE;
+
+    ewk_view_smart_class_set(miniBrowserViewSmartClass());
 
     ecore_app_args_set(argc, (const char **) argv);
     args = ecore_getopt_parse(&options, values, argc, argv);
