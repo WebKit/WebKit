@@ -1,5 +1,19 @@
 2012-10-10  Mike Fenton  <mifenton@rim.com>
 
+        [BlackBerry] Fix crash for detached node when validating selection change.
+        https://bugs.webkit.org/show_bug.cgi?id=98926
+
+        Reviewed by Rob Buis.
+
+        PR 220628.
+
+        Guard against detached nodes when generating selection rect.
+
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::visibleTextQuads):
+
+2012-10-10  Mike Fenton  <mifenton@rim.com>
+
         [BlackBerry] Adjust spell checking location to update after the cursor position is set.
         https://bugs.webkit.org/show_bug.cgi?id=98904
 

@@ -54,7 +54,11 @@ void visibleTextQuads(const VisibleSelection& selection, Vector<FloatQuad>& quad
 {
     if (!selection.isRange())
         return;
-    ASSERT(selection.firstRange());
+
+    // Make sure that both start and end have valid nodes associated otherwise
+    // this can crash. See PR 220628.
+    if (!selection.start().anchorNode() || !selection.end().anchorNode())
+        return;
 
     visibleTextQuads(*(selection.firstRange()), quads, true /* useSelectionHeight */);
 }
