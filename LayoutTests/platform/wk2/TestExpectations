@@ -741,6 +741,7 @@ fast/block/lineboxcontain/font.html
 # https://bugs.webkit.org/show_bug.cgi?id=81042
 editing/spelling/grammar-markers.html
 editing/spelling/grammar-paste.html
+editing/spelling/grammar-markers-hidpi.html
 editing/spelling/spellcheck-async-mutation.html
 editing/spelling/spellcheck-async-remove-frame.html
 editing/spelling/spellcheck-async.html
