@@ -32,10 +32,12 @@
  * @constructor
  * @extends {WebInspector.RequestView}
  * @param {WebInspector.NetworkRequest} request
+ * @param {string} dataURL
  */
-WebInspector.RequestHTMLView = function(request)
+WebInspector.RequestHTMLView = function(request, dataURL)
 {
     WebInspector.RequestView.call(this, request);
+    this._dataURL = dataURL;
     this.element.addStyleClass("html");
 }
 
@@ -61,10 +63,9 @@ WebInspector.RequestHTMLView.prototype = {
         // is deleted when iframe is removed from its parent.
         this.element.removeChildren();
         var iframe = document.createElement("iframe");
-        this.element.appendChild(iframe);
         iframe.setAttribute("sandbox", ""); // Forbid to run JavaScript and set unique origin.
-
-        iframe.contentDocument.body.innerHTML = this.request.content;
+        iframe.setAttribute("src", this._dataURL);
+        this.element.appendChild(iframe);
     },
 
     __proto__: WebInspector.RequestView.prototype

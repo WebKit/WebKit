@@ -55,7 +55,6 @@ WebInspector.NetworkRequest = function(requestId, url, documentURL, frameId, loa
     this.receiveHeadersEnd = 0;
 
     this._type = WebInspector.resourceTypes.Other;
-    this._content = undefined;
     this._contentEncoded = false;
     this._pendingContentCallbacks = [];
     this._frames = [];
@@ -761,20 +760,28 @@ WebInspector.NetworkRequest.prototype = {
     populateImageSource: function(image)
     {
         /**
+         * @this {WebInspector.NetworkRequest}
          * @param {?string} content
          * @param {boolean} contentEncoded
          * @param {string} mimeType
          */
         function onResourceContent(content, contentEncoded, mimeType)
         {
-            const maxDataUrlSize = 1024 * 1024;
-            // If resource content is not available or won't fit a data URL, fall back to using original URL.
-            if (this._content == null || this._content.length > maxDataUrlSize)
-                return this.url;
-            image.src = "data:" + this.mimeType + (this._contentEncoded ? ";base64," : ",") + this._content;
+            var imageSrc = this.asDataURL();
+            if (imageSrc === null)
+                imageSrc = this.url;
+            image.src = imageSrc;
         }
 
         this.requestContent(onResourceContent.bind(this));
+    },
+
+    /**
+     * @return {?string}
+     */
+    asDataURL: function()
+    {
+        return WebInspector.contentAsDataURL(this._content, this.mimeType, this._contentEncoded);
     },
 
     _innerRequestContent: function()

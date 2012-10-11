@@ -68,8 +68,13 @@ WebInspector.RequestPreviewView.prototype = {
 
     _createPreviewView: function()
     {
-        if (this.request.hasErrorStatusCode() && this.request.content)
-            return new WebInspector.RequestHTMLView(this.request);
+        if (this.request.content) {
+            if (this.request.hasErrorStatusCode() || (this.request.type === WebInspector.resourceTypes.XHR && this.request.mimeType === "text/html")) {
+                var dataURL = this.request.asDataURL();
+                if (dataURL !== null)
+                    return new WebInspector.RequestHTMLView(this.request, dataURL);
+            }
+        }
 
         if (this.request.type === WebInspector.resourceTypes.XHR && this.request.content) {
             var parsedJSON = WebInspector.RequestJSONView.parseJSON(this.request.content);

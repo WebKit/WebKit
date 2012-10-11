@@ -1,3 +1,28 @@
+2012-10-11  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Preview HTML in ajax responses in network panel
+        https://bugs.webkit.org/show_bug.cgi?id=99066
+
+        Reviewed by Yury Semikhatsky.
+
+        HTML preview is now shown for XHR responses with text/html mime types.
+        Also RequestHTMLView is refactored to use sandbox iframe correctly.
+        Also extracted a method to generate dataURL from resource/request content.
+
+        * inspector/front-end/NetworkRequest.js:
+        (WebInspector.NetworkRequest):
+        (WebInspector.NetworkRequest.prototype.populateImageSource):
+        (WebInspector.NetworkRequest.prototype.asDataURL):
+        * inspector/front-end/RequestHTMLView.js:
+        (WebInspector.RequestHTMLView):
+        (WebInspector.RequestHTMLView.prototype._createIFrame):
+        * inspector/front-end/RequestPreviewView.js:
+        (WebInspector.RequestPreviewView.prototype._createPreviewView):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.populateImageSource):
+        * inspector/front-end/ResourceUtils.js:
+        (WebInspector.contentAsDataURL):
+
 2012-10-11  Christophe Dumez  <christophe.dumez@intel.com>
 
         Regression(r131058): Broke EFL build
