@@ -1,3 +1,12 @@
+2012-10-11  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Unreviewed Qt gardening.
+
+        Unskip more tests that now passes in DRT after the implementation of beginDragWithFiles.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-10-11  Arpita Bahuguna  <arpitabahuguna@gmail.com>
 
         REGRESSION (r96393): In some cases, generated content is never shown
