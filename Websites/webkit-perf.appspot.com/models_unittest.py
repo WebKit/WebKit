@@ -618,7 +618,7 @@ class RunsTest(DataStoreTestsBase):
         builds, results = self._create_results(some_branch, some_platform, some_builder, 'some-test', [50.0])
         runs = Runs.update_or_insert(some_branch, some_platform, some_test)
         self.assertOnlyInstance(runs)
-        self.assertTrue(runs.json_runs.startswith('[5, [4, 0, 100, null],'))
+        self.assertTrue(runs.json_runs.startswith('[5,[4,0,100,null],'))
         self.assertEqual(json.loads('{' + runs.json_averages + '}'), {"100": 50.0})
         self.assertEqual(runs.json_min, 50.0)
         self.assertEqual(runs.json_max, 50.0)

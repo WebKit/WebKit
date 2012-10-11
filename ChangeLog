@@ -1,3 +1,20 @@
+2012-10-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf-o-matic build fixes.
+
+        Get the password from the first item of the array now that each JSON contains an array as
+        the top-level structure instead of a dictionary, which is the first item in the array.
+
+        Remove spaces after comma to save space in Runs objects to work-around the AppEngine's
+        object size limit. This should buy us a couple of days. We'll implement a proper fix later.
+
+        * Websites/webkit-perf.appspot.com/models.py:
+        (Runs.update_incrementally):
+        * Websites/webkit-perf.appspot.com/models_unittest.py:
+        (RunsTest.test_update_or_insert):
+        * Websites/webkit-perf.appspot.com/report_handler.py:
+        (ReportHandler.post):
+
 2012-10-10  Tony Chang  <tony@chromium.org>
 
         Unreviewed, rolling out r130937, r130949, r130955, and

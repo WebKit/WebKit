@@ -434,9 +434,9 @@ class Runs(db.Model):
         if self.json_averages:
             self.json_averages += ','
 
-        self.json_runs += json.dumps(new_entry)
+        self.json_runs = (self.json_runs + json.dumps(new_entry)).replace(', ', ',')
         # FIXME: Calculate the average. In practice, we wouldn't have more than one value for a given revision.
-        self.json_averages += '"%d": %f' % (build.revision, result.value)
+        self.json_averages = (self.json_averages + '"%d":%f' % (build.revision, result.value)).replace(', ', ',')
         self.json_min = min(self.json_min, result.value) if self.json_min != None else result.value
         self.json_max = max(self.json_max, result.value)
 

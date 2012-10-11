@@ -53,8 +53,10 @@ class ReportHandler(webapp2.RequestHandler):
 
         try:
             parsedPayload = json.loads(self.request.body)
+            if isinstance(parsedPayload, list):
+                parsedPayload = parsedPayload[0]
             password = parsedPayload.get('password', '')
-        except ValueError:
+        except:
             return self._output('Failed to parse the payload as a json. Report key: %d' % log.key().id())
 
         builder = log.builder()
