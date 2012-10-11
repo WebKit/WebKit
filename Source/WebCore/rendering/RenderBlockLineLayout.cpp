@@ -712,7 +712,7 @@ public:
 static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* run, RenderText* renderer, float xPos, const LineInfo& lineInfo,
                                              GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache, WordMeasurements& wordMeasurements)
 {
-#if USE(HARFBUZZ_NG)
+#if !(PLATFORM(CHROMIUM) && OS(DARWIN))
     UNUSED_PARAM(wordMeasurements);
 #endif
     HashSet<const SimpleFontData*> fallbackFonts;
@@ -740,7 +740,7 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
     }
     float measuredWidth = 0;
 
-#if !USE(HARFBUZZ_NG)
+#if !(PLATFORM(CHROMIUM) && OS(DARWIN))
     bool kerningIsEnabled = font.typesettingFeatures() & Kerning;
     
     // Since we don't cache glyph overflows, we need to re-measure the run if

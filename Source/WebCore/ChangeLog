@@ -1,3 +1,17 @@
+2012-10-10  Levi Weintraub  <leviw@chromium.org>
+
+        Tests failure on Chromium Mac after r130821
+        https://bugs.webkit.org/show_bug.cgi?id=98865
+
+        Reviewed by Adam Barth.
+
+        Updating the check for USE(HARFBUZZ_NG) to check for Mac Chromium, as the HARFBUZZ_NG flag isn't
+        actually set, despite us using Harfbuzz. This unbreaks Chromium Mac as we diagnose the root
+        cause of this issue.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::setLogicalWidthForTextRun):
+
 2012-10-10  Stephen Chenney  <schenney@chromium.org>
 
         SVGTextRunRenderingContext changes font data in the glyph page, but it shouldn't

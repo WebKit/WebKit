@@ -4018,8 +4018,4 @@ webkit.org/b/98686 editing/pasteboard/data-transfer-items.html [ Failure ]
 webkit.org/b/98699 [ Lion ] fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ Crash ]
 webkit.org/b/98811 [ Mac ] fast/transforms/transformed-focused-text-input.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/98867 [ Mac ] fast/lists/003-vertical.html [ ImageOnlyFailure ]
-webkit.org/b/98867 [ Mac ] fast/text/international/vertical-text-glyph-test.html [ Failure ImageOnlyFailure ]
-webkit.org/b/98867 [ Mac ] fast/text/shaping/shaping-selection-rect.html [ Failure ImageOnlyFailure ]
-
 webkit.org/b/98948 [ Linux Debug ] http/tests/media/media-source/video-media-source-play.html [ PASS CRASH ]
