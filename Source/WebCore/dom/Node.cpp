@@ -2070,7 +2070,7 @@ FloatPoint Node::convertToPage(const FloatPoint& p) const
 {
     // If there is a renderer, just ask it to do the conversion
     if (renderer())
-        return renderer()->localToAbsolute(p, false, true);
+        return renderer()->localToAbsolute(p, UseTransforms);
     
     // Otherwise go up the tree looking for a renderer
     Element *parent = ancestorElement();
@@ -2085,7 +2085,7 @@ FloatPoint Node::convertFromPage(const FloatPoint& p) const
 {
     // If there is a renderer, just ask it to do the conversion
     if (renderer())
-        return renderer()->absoluteToLocal(p, false, true);
+        return renderer()->absoluteToLocal(p, UseTransforms);
 
     // Otherwise go up the tree looking for a renderer
     Element *parent = ancestorElement();

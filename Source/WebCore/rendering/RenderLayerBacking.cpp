@@ -1865,7 +1865,7 @@ bool RenderLayerBacking::contentsVisible(const GraphicsLayer*, const IntRect& lo
         return false;
 
     IntRect visibleContentRect(view->visibleContentRect());
-    FloatQuad absoluteContentQuad = renderer()->localToAbsoluteQuad(FloatRect(localContentRect));
+    FloatQuad absoluteContentQuad = renderer()->localToAbsoluteQuad(FloatRect(localContentRect), SnapOffsetForTransforms);
     return absoluteContentQuad.enclosingBoundingBox().intersects(visibleContentRect);
 }
 #endif

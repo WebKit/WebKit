@@ -217,6 +217,7 @@ fast/sub-pixel/table-rows-no-gaps.html
 fast/sub-pixel/sub-pixel-accumulates-to-layers.html
 fast/sub-pixel/selection/selection-rect-in-sub-pixel-table.html
 fast/sub-pixel/snap-negative-location.html
+fast/sub-pixel/sub-pixel-iframe-copy-on-scroll.html
 
 # Frame::findString does nothing on pages that prevent selection
 # https://bugs.webkit.org/show_bug.cgi?id=40361

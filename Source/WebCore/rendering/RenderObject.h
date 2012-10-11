@@ -110,13 +110,13 @@ enum PlaceGeneratedRunInFlag {
     DoNotPlaceGeneratedRunIn
 };
 
-enum MapLocalToContainerMode {
+enum MapCoordinatesMode {
     IsFixed = 1 << 0,
     UseTransforms = 1 << 1,
     ApplyContainerFlip = 1 << 2,
     SnapOffsetForTransforms = 1 << 3
 };
-typedef unsigned MapLocalToContainerFlags;
+typedef unsigned MapCoordinatesFlags;
 
 const int caretWidth = 1;
 
@@ -707,19 +707,19 @@ public:
     RenderBlock* containingBlock() const;
 
     // Convert the given local point to absolute coordinates
-    // FIXME: Temporary. If useTransforms is true, take transforms into account. Eventually localToAbsolute() will always be transform-aware.
-    FloatPoint localToAbsolute(const FloatPoint& localPoint = FloatPoint(), bool fixed = false, bool useTransforms = false) const;
-    FloatPoint absoluteToLocal(const FloatPoint&, bool fixed = false, bool useTransforms = false) const;
+    // FIXME: Temporary. If UseTransforms is true, take transforms into account. Eventually localToAbsolute() will always be transform-aware.
+    FloatPoint localToAbsolute(const FloatPoint& localPoint = FloatPoint(), MapCoordinatesFlags mode = 0) const;
+    FloatPoint absoluteToLocal(const FloatPoint&, MapCoordinatesFlags mode = 0) const;
 
     // Convert a local quad to absolute coordinates, taking transforms into account.
-    FloatQuad localToAbsoluteQuad(const FloatQuad& quad, bool fixed = false, bool* wasFixed = 0) const
+    FloatQuad localToAbsoluteQuad(const FloatQuad& quad, MapCoordinatesFlags mode = 0, bool* wasFixed = 0) const
     {
-        return localToContainerQuad(quad, 0, false, fixed, wasFixed);
+        return localToContainerQuad(quad, 0, mode, wasFixed);
     }
 
     // Convert a local quad into the coordinate system of container, taking transforms into account.
-    FloatQuad localToContainerQuad(const FloatQuad&, RenderLayerModelObject* repaintContainer, bool snapOffsetForTransforms = true, bool fixed = false, bool* wasFixed = 0) const;
-    FloatPoint localToContainerPoint(const FloatPoint&, RenderLayerModelObject* repaintContainer, bool snapOffsetForTransforms = true, bool fixed = false, bool* wasFixed = 0) const;
+    FloatQuad localToContainerQuad(const FloatQuad&, RenderLayerModelObject* repaintContainer, MapCoordinatesFlags mode = 0, bool* wasFixed = 0) const;
+    FloatPoint localToContainerPoint(const FloatPoint&, RenderLayerModelObject* repaintContainer, MapCoordinatesFlags mode = 0, bool* wasFixed = 0) const;
 
     // Return the offset from the container() renderer (excluding transforms). In multi-column layout,
     // different offsets apply at different points, so return the offset that applies to the given point.
@@ -917,8 +917,8 @@ public:
 
     // Map points and quads through elements, potentially via 3d transforms. You should never need to call these directly; use
     // localToAbsolute/absoluteToLocal methods instead.
-    virtual void mapLocalToContainer(RenderLayerModelObject* repaintContainer, TransformState&, MapLocalToContainerFlags mode = ApplyContainerFlip, bool* wasFixed = 0) const;
-    virtual void mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState&) const;
+    virtual void mapLocalToContainer(RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags mode = ApplyContainerFlip, bool* wasFixed = 0) const;
+    virtual void mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, TransformState&) const;
 
     // Pushes state onto RenderGeometryMap about how to map coordinates from this renderer to its container, or ancestorToStopAt (whichever is encountered first).
     // Returns the renderer which was mapped to (container or ancestorToStopAt).

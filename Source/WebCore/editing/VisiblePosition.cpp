@@ -624,7 +624,7 @@ IntRect VisiblePosition::absoluteCaretBounds() const
     if (localRect.isEmpty() || !renderer)
         return IntRect();
 
-    return renderer->localToAbsoluteQuad(FloatRect(localRect)).enclosingBoundingBox();
+    return renderer->localToAbsoluteQuad(FloatRect(localRect), SnapOffsetForTransforms).enclosingBoundingBox();
 }
 
 int VisiblePosition::lineDirectionPointForBlockDirectionNavigation() const

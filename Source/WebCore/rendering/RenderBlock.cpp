@@ -6770,10 +6770,10 @@ void RenderBlock::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
         // https://bugs.webkit.org/show_bug.cgi?id=46781
         FloatRect localRect(0, -collapsedMarginBefore(),
                             width(), height() + collapsedMarginBefore() + collapsedMarginAfter());
-        quads.append(localToAbsoluteQuad(localRect, false, wasFixed));
+        quads.append(localToAbsoluteQuad(localRect, 0 /* mode */, wasFixed));
         continuation()->absoluteQuads(quads, wasFixed);
     } else
-        quads.append(RenderBox::localToAbsoluteQuad(FloatRect(0, 0, width(), height()), false, wasFixed));
+        quads.append(RenderBox::localToAbsoluteQuad(FloatRect(0, 0, width(), height()), 0 /* mode */, wasFixed));
 }
 
 LayoutRect RenderBlock::rectWithOutlineForRepaint(RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const

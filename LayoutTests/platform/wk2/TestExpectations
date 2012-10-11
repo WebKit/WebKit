@@ -106,6 +106,7 @@ fast/sub-pixel/table-rows-no-gaps.html
 fast/sub-pixel/sub-pixel-accumulates-to-layers.html
 fast/sub-pixel/selection/selection-rect-in-sub-pixel-table.html
 fast/sub-pixel/snap-negative-location.html
+fast/sub-pixel/sub-pixel-iframe-copy-on-scroll.html
 fast/sub-pixel/zoomed-image-tiles.html
 
 # [WK2][WTR] svg/animations/animate-text-nested-transforms.html fails

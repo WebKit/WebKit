@@ -58,7 +58,7 @@ FloatPoint RenderGeometryMap::absolutePoint(const FloatPoint& p) const
     }
 
 #if !ASSERT_DISABLED
-    FloatPoint rendererMappedResult = m_mapping.last().m_renderer->localToAbsolute(p, false, true);
+    FloatPoint rendererMappedResult = m_mapping.last().m_renderer->localToAbsolute(p, UseTransforms | SnapOffsetForTransforms);
     ASSERT(rendererMappedResult == result);
 #endif
 

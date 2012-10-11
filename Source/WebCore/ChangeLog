@@ -1,3 +1,119 @@
+2012-10-11  Levi Weintraub  <leviw@chromium.org>
+
+        [Sub pixel layout] Fast-path iframe scrolling can picks up an extra pixel
+        https://bugs.webkit.org/show_bug.cgi?id=98571
+
+        Reviewed by Emil A Eklund.
+
+        Refactoring all coordinate-switching functionality to use a single "mode" flag
+        as opposed to having a bunch of boolean values. This enables the same set of
+        options across the board, and a consistent interface. This was previously
+        done for mapLocalToContainer.
+
+        The imptetus for this for this stems from the one logical change in this patch
+        which only effects sub-pixel layout. FrameView::convertToRenderer and
+        convertFromRenderer return IntPoint coordinates, and need to also snap transform
+        offsets to determine proper rects for scrolling.
+
+        Unlabeled functions below are simply being updated to these new interfaces.
+
+        Test: fast/sub-pixel/sub-pixel-iframe-copy-on-scroll.html
+
+        * WebCore.exp.in:
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getUpperLeftCorner):
+        (WebCore::ContainerNode::getLowerRightCorner):
+        * dom/Element.cpp:
+        (WebCore::Element::boundsInRootViewSpace):
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::computeRelativePosition):
+        * dom/Node.cpp:
+        (WebCore::Node::convertToPage):
+        (WebCore::Node::convertFromPage):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::setPositionFromPoint):
+        * html/shadow/SpinButtonElement.cpp:
+        (WebCore::SpinButtonElement::defaultEventHandler):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::convertToRenderer): Now pixel-snaps offsets before passing
+        them to TransformState, which transforms the coordinates.
+        (WebCore::FrameView::convertFromRenderer): Ditto.
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::absoluteQuads):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::absoluteQuads):
+        (WebCore::RenderBox::mapLocalToContainer):
+        (WebCore::RenderBox::mapAbsoluteToLocalPoint):
+        * rendering/RenderBox.h:
+        (RenderBox):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::mapAbsoluteToLocalPoint):
+        * rendering/RenderBoxModelObject.h:
+        (RenderBoxModelObject):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::isInUnavailablePluginIndicator):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::userResize):
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::RenderGeometryMap::absolutePoint):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::mapLocalToContainer):
+        * rendering/RenderInline.h:
+        (RenderInline):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::absoluteToContents):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderMediaControls.cpp:
+        (WebCore::RenderMediaControls::volumeSliderOffsetFromMuteButton):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::showPopup):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::localToAbsolute):
+        (WebCore::RenderObject::absoluteToLocal):
+        (WebCore::RenderObject::mapLocalToContainer):
+        (WebCore::RenderObject::mapAbsoluteToLocalPoint):
+        (WebCore::RenderObject::localToContainerQuad):
+        (WebCore::RenderObject::localToContainerPoint):
+        * rendering/RenderObject.h:
+        (RenderObject): MapLocalToContainerFlags is now MapCoordinatesFlags since it's
+        now used for other conversion methods.
+        (WebCore::RenderObject::localToAbsoluteQuad):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::volumeSliderOffsetFromMuteButton):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::mapLocalToContainer):
+        (WebCore::RenderView::mapAbsoluteToLocalPoint):
+        * rendering/RenderView.h:
+        (RenderView):
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::mapLocalToContainer):
+        * rendering/svg/RenderSVGForeignObject.h:
+        (RenderSVGForeignObject):
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::mapLocalToContainer):
+        * rendering/svg/RenderSVGInline.h:
+        (RenderSVGInline):
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::mapLocalToContainer):
+        * rendering/svg/RenderSVGModelObject.h:
+        (RenderSVGModelObject):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::mapLocalToContainer):
+        * rendering/svg/RenderSVGRoot.h:
+        (RenderSVGRoot):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::mapLocalToContainer):
+        * rendering/svg/RenderSVGText.h:
+        (RenderSVGText):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::mapLocalToContainer):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::localCoordinateSpaceTransform):
+
 2012-10-11  Adam Barth  <abarth@webkit.org>
 
         Incorrect/Illegal static cast in FrameView.cpp

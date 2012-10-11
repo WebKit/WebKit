@@ -1264,7 +1264,7 @@ IntRect CaretBase::absoluteBoundsForLocalRect(Node* node, const LayoutRect& rect
     LayoutRect localRect(rect);
     if (caretPainter->isBox())
         toRenderBox(caretPainter)->flipForWritingMode(localRect);
-    return caretPainter->localToAbsoluteQuad(FloatRect(localRect)).enclosingBoundingBox();
+    return caretPainter->localToAbsoluteQuad(FloatRect(localRect), SnapOffsetForTransforms).enclosingBoundingBox();
 }
 
 IntRect FrameSelection::absoluteCaretBounds()

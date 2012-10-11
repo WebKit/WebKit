@@ -83,7 +83,7 @@ void SVGRenderSupport::mapLocalToContainer(const RenderObject* object, RenderLay
     if (parent->isSVGRoot())
         transformState.applyTransform(toRenderSVGRoot(parent)->localToBorderBoxTransform());
 
-    MapLocalToContainerFlags mode = UseTransforms;
+    MapCoordinatesFlags mode = UseTransforms;
     if (snapOffsetForTransforms)
         mode |= SnapOffsetForTransforms;
     parent->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
