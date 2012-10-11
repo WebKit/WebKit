@@ -268,7 +268,6 @@ void RenderListItem::updateMarkerLocation()
             if (m_marker->preferredLogicalWidthsDirty())
                 m_marker->computePreferredLogicalWidths();
             // If markerPar is an anonymous block that has lost all its children, destroy it.
-            // Extraneous anonymous blocks can cause problems for RenderBlock::updateBeforeAfterContent.
             if (markerPar && markerPar->isAnonymousBlock() && !markerPar->firstChild() && !toRenderBlock(markerPar)->continuation())
                 markerPar->destroy();
         }

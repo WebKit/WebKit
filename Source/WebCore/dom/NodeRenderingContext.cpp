@@ -35,6 +35,7 @@
 #include "HTMLNames.h"
 #include "HTMLShadowElement.h"
 #include "Node.h"
+#include "PseudoElement.h"
 #include "RenderFullScreen.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderObject.h"
@@ -92,6 +93,14 @@ RenderObject* NodeRenderingContext::nextRenderer() const
     // nextRenderer() when the parent element hasn't attached yet.
     if (m_parentDetails.node() && !m_parentDetails.node()->attached())
         return 0;
+
+    // FIXME: This is wrong when the next sibling was actually moved around by shadow insertion points.
+    if (m_node->isPseudoElement()) {
+        Node* sibling = m_node->pseudoAwareNextSibling();
+        while (sibling && !sibling->renderer())
+            sibling = sibling->pseudoAwareNextSibling();
+        return sibling ? sibling->renderer() : 0;
+    }
 
     ComposedShadowTreeWalker walker(m_node);
     do {

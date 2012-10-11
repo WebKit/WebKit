@@ -3614,6 +3614,15 @@ webkit.org/b/91620 css3/filters/blur-filter-page-scroll-self.html [ ImageOnlyFai
 # Needs rebaseline after bug 97217 is fixed
 webkit.org/b/97325 css3/masking/clip-path-circle-relative-overflow.html [ ImageOnlyFailure Pass ]
 
+# Needs rebaseline after bug 95117 is fixed
+webkit.org/b/98687 fast/css-generated-content/table-row-group-to-inline.html [ Failure Pass ]
+
+# Should not be testing for generated content in inputs yet.
+webkit.org/b/98836 fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements.html [ Skip ]
+webkit.org/b/98836 fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements.html [ Skip ]
+webkit.org/b/98836 fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements.html [ Skip ]
+webkit.org/b/98836 fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements.html [ Skip ]
+
 webkit.org/b/91544 media/media-continues-playing-after-replace-source.html [ Pass Timeout ]
 
 webkit.org/b/92019 fast/text/international/inline-plaintext-relayout-with-leading-neutrals.html [ ImageOnlyFailure Pass ]

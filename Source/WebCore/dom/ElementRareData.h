@@ -29,6 +29,7 @@
 #include "HTMLCollection.h"
 #include "NamedNodeMap.h"
 #include "NodeRareData.h"
+#include "PseudoElement.h"
 #include "StyleInheritedData.h"
 #include <wtf/OwnPtr.h>
 
@@ -40,6 +41,9 @@ class ElementRareData : public NodeRareData {
 public:
     ElementRareData();
     virtual ~ElementRareData();
+
+    void setPseudoElement(PseudoId, PassRefPtr<PseudoElement>);
+    PseudoElement* pseudoElement(PseudoId) const;
 
     void resetComputedStyle();
 
@@ -119,6 +123,9 @@ public:
     OwnPtr<ElementShadow> m_shadow;
     OwnPtr<NamedNodeMap> m_attributeMap;
 
+    RefPtr<PseudoElement> m_generatedBefore;
+    RefPtr<PseudoElement> m_generatedAfter;
+
     IntSize m_savedLayerScrollOffset;
 };
 
@@ -135,6 +142,33 @@ inline ElementRareData::ElementRareData()
 inline ElementRareData::~ElementRareData()
 {
     ASSERT(!m_shadow);
+}
+
+inline void ElementRareData::setPseudoElement(PseudoId pseudoId, PassRefPtr<PseudoElement> element)
+{
+    switch (pseudoId) {
+    case BEFORE:
+        m_generatedBefore = element;
+        break;
+    case AFTER:
+        m_generatedAfter = element;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
+inline PseudoElement* ElementRareData::pseudoElement(PseudoId pseudoId) const
+{
+    switch (pseudoId) {
+    case BEFORE:
+        return m_generatedBefore.get();
+    case AFTER:
+        return m_generatedAfter.get();
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
 }
 
 inline void ElementRareData::resetComputedStyle()

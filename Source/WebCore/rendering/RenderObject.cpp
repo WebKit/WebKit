@@ -130,7 +130,7 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
     // Works only if we have exactly one piece of content and it's a URL.
     // Otherwise acts as if we didn't support this feature.
     const ContentData* contentData = style->contentData();
-    if (contentData && !contentData->next() && contentData->isImage() && doc != node) {
+    if (contentData && !contentData->next() && contentData->isImage() && doc != node && !node->isPseudoElement()) {
         RenderImage* image = new (arena) RenderImage(node);
         // RenderImageResourceStyleImage requires a style being present on the image but we don't want to
         // trigger a style change now as the node is not fully attached. Moving this code to style change

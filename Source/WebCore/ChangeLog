@@ -1,3 +1,128 @@
+2012-10-10  Elliott Sprehn  <esprehn@chromium.org>
+
+        Move :before and :after into the DOM        
+        https://bugs.webkit.org/show_bug.cgi?id=95117
+
+        Reviewed by Eric Seidel.
+
+        Reimplement generated content :before and :after as DOM Elements. Now ElementRareData has
+        two RefPtrs to PseudoElements for the generated content and Node has methods for traversing
+        the tree including generated content.
+
+        This allows the generated content to be treated as real nodes instead of anonymous and take
+        part in the usual recalcStyle and attach flow which fixes many bugs and vastly simplifies the
+        lifecycle of generated content.
+
+        No new tests needed for now.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/Element.cpp:
+        (WebCore::Element::attach): Add generated content if needed.
+        (WebCore::Element::detach): Remove all child generated content.
+        (WebCore::Element::recalcStyle): Add or remove generated content based on the new style.
+        (WebCore::Element::updatePseudoElement): Updates pseudo content based on a pseudoId.
+        (WebCore):
+        (WebCore::Element::createPseudoElementIfNeeded):
+        (WebCore::Element::beforePseudoElement):
+        (WebCore::Element::afterPseudoElement):
+        * dom/Element.h:
+        (WebCore):
+        (Element):
+        * dom/ElementRareData.h:
+        (ElementRareData):
+        (WebCore::ElementRareData::setPseudoElement):
+        (WebCore):
+        (WebCore::ElementRareData::pseudoElement):
+        * dom/Node.cpp:
+        (WebCore::Node::pseudoAwarePreviousSibling):
+        (WebCore):
+        (WebCore::Node::pseudoAwareNextSibling):
+        (WebCore::checkAcceptChild): Forbid moving PseudoElements for sanity. The code never does this.
+        * dom/Node.h:
+        (Node):
+        (WebCore::Node::isPseudoElement):
+        (WebCore::Node::pseudoId): Fast path that only calls virtualPseudoId if the node has custom callbacks so isPseudoElement is fast.
+        (WebCore::Node::virtualPseudoId):
+        (WebCore::Node::isBeforePseudoElement):
+        (WebCore::Node::isAfterPseudoElement):
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::nextRenderer): Changed to find the next sibling of pseudos for insertion.
+        * dom/PseudoElement.cpp: Added.
+        (WebCore):
+        (WebCore::pseudoElementName):
+        (WebCore::PseudoElement::PseudoElement):
+        (WebCore::PseudoElement::pseudoRendererIsNeeded):
+        (WebCore::PseudoElement::customStyleForRenderer):
+        (WebCore::PseudoElement::attach):
+        (WebCore::PseudoElement::rendererIsNeeded):
+        (WebCore::PseudoElement::updateChildStyle): Propagates the style downward into the anonymous renderers for the content.
+        (WebCore::PseudoElement::didRecalcStyle):
+        (WebCore::PseudoElement::createRendererForContent): Refactored from RenderObjectChildList.
+        * dom/PseudoElement.h: Added.
+        (WebCore):
+        (PseudoElement):
+        (WebCore::PseudoElement::create):
+        (WebCore::toPseudoElement):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::setInnerNode): Hit testing a PseudoElement should really hit the parent.
+        (WebCore::HitTestResult::setInnerNonSharedNode): Same as above.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleDidChange): Remove old generated content code, same for below.
+        (WebCore::RenderBlock::splitBlocks):
+        (WebCore::RenderBlock::addChildIgnoringAnonymousColumnBlocks):
+        (WebCore::RenderBlock::createReplacementRunIn):
+        (WebCore::RenderBlock::renderName):
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+        * rendering/RenderButton.cpp:
+        * rendering/RenderButton.h:
+        (RenderButton):
+        * rendering/RenderCounter.cpp:
+        (WebCore::RenderCounter::originalText):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::renderName):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::renderName):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::styleDidChange):
+        (WebCore::RenderInline::addChildIgnoringContinuation):
+        (WebCore::RenderInline::splitInlines):
+        (WebCore::RenderInline::renderName):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::updateMarkerLocation):
+        * rendering/RenderMultiColumnBlock.cpp:
+        (WebCore::RenderMultiColumnBlock::renderName):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isPseudoElement):
+        (RenderObject):
+        (WebCore::RenderObject::generatingNode):
+        * rendering/RenderObjectChildList.cpp:
+        * rendering/RenderObjectChildList.h:
+        (RenderObjectChildList):
+        * rendering/RenderRubyText.cpp:
+        * rendering/RenderRubyText.h:
+        (RenderRubyText):
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::renderName):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::styleDidChange):
+        * rendering/RenderTableRow.h:
+        (WebCore::RenderTableRow::renderName):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addChild):
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::renderName):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+
 2012-10-10  Sam Weinig  <sam@webkit.org>
 
         Add more Objective-C WebKit2 DOM API skeletons.

@@ -61,6 +61,7 @@
 #include "NodeRenderingContext.h"
 #include "Page.h"
 #include "PointerLockController.h"
+#include "PseudoElement.h"
 #include "RenderRegion.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
@@ -1016,7 +1017,9 @@ void Element::attach()
     } else {
         if (firstChild())
             parentPusher.push();
+        updatePseudoElement(BEFORE);
         ContainerNode::attach();
+        updatePseudoElement(AFTER);
     }
 
     if (hasRareData()) {   
@@ -1046,6 +1049,8 @@ void Element::detach()
     cancelFocusAppearanceUpdate();
     if (hasRareData()) {
         ElementRareData* data = elementRareData();
+        data->setPseudoElement(BEFORE, 0);
+        data->setPseudoElement(AFTER, 0);
         data->setIsInCanvasSubtree(false);
         data->resetComputedStyle();
     }
@@ -1197,6 +1202,8 @@ void Element::recalcStyle(StyleChange change)
         }
     }
 
+    updatePseudoElement(BEFORE, change);
+
     // FIXME: This check is good enough for :hover + foo, but it is not good enough for :hover + foo + bar.
     // For now we will just worry about the common case, since it's a lot trickier to get the second case right
     // without doing way too much re-resolution.
@@ -1220,6 +1227,8 @@ void Element::recalcStyle(StyleChange change)
         forceCheckOfNextElementSibling = childRulesChanged && hasDirectAdjacentRules;
         forceCheckOfAnyElementSibling = forceCheckOfAnyElementSibling || (childRulesChanged && hasIndirectAdjacentRules);
     }
+
+    updatePseudoElement(AFTER, change);
 
     clearNeedsStyleRecalc();
     clearChildNeedsStyleRecalc();
@@ -1801,6 +1810,47 @@ void Element::normalizeAttributes()
         if (RefPtr<Attr> attr = attrIfExists(attributeData->attributeItem(i)->name()))
             attr->normalize();
     }
+}
+
+void Element::updatePseudoElement(PseudoId pseudoId, StyleChange change)
+{
+    PseudoElement* existing = hasRareData() ? elementRareData()->pseudoElement(pseudoId) : 0;
+    if (existing) {
+        // PseudoElement styles hang off the parent element's style so we need to manually tell
+        // the pseudo element it's style has changed (or we could pass Force).
+        existing->setNeedsStyleRecalc();
+        existing->recalcStyle(change);
+        if (!existing->renderer())
+            elementRareData()->setPseudoElement(pseudoId, 0);
+    } else if (RefPtr<PseudoElement> element = createPseudoElementIfNeeded(pseudoId)) {
+        element->attach();
+        ensureElementRareData()->setPseudoElement(pseudoId, element);
+    }
+}
+
+PassRefPtr<PseudoElement> Element::createPseudoElementIfNeeded(PseudoId pseudoId)
+{
+    if (!document()->styleSheetCollection()->usesBeforeAfterRules())
+        return 0;
+
+    if (isPseudoElement() || !renderer() || !renderer()->canHaveGeneratedChildren())
+        return 0;
+
+    RenderStyle* style = renderer()->getCachedPseudoStyle(pseudoId);
+    if (!style || !PseudoElement::pseudoRendererIsNeeded(style))
+        return 0;
+
+    return PseudoElement::create(this, pseudoId);
+}
+
+PseudoElement* Element::beforePseudoElement() const
+{
+    return hasRareData() ? elementRareData()->pseudoElement(BEFORE) : 0;
+}
+
+PseudoElement* Element::afterPseudoElement() const
+{
+    return hasRareData() ? elementRareData()->pseudoElement(AFTER) : 0;
 }
 
 // ElementTraversal API

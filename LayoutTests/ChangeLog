@@ -1,3 +1,22 @@
+2012-10-10  Elliott Sprehn  <esprehn@chromium.org>
+
+        Move :before and :after into the DOM        
+        https://bugs.webkit.org/show_bug.cgi?id=95117
+
+        Reviewed by Eric Seidel.
+
+        Regenerated some baselines for tests given the new generated content architecture and disabled
+        tests that are testing generated content on inputs which were wrong.
+
+        * fast/css-generated-content/before-content-continuation-chain-expected.txt:
+        * platform/chromium-mac/fast/css-generated-content/table-row-group-to-inline-expected.png:
+        * platform/chromium/TestExpectations: Disable the tests for generated content on inputs. A follow up CL with remove these tests.
+        * platform/mac/fast/css-generated-content/table-row-group-to-inline-expected.png:
+        * platform/mac/fast/css-generated-content/table-row-group-to-inline-expected.txt:
+           This test always produced wrong output because we leave an anonymous RenderTable in the tree,
+           and now that generated content is handled like DOM nodes this test renders differently since the
+           content ends up after the left over RenderTable. Both outputs are wrong until Bug 86261 is fixed.
+
 2012-10-10  Levi Weintraub  <leviw@chromium.org>
 
         Tests failure on Chromium Mac after r130821

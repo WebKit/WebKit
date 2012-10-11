@@ -209,7 +209,7 @@ protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
 private:
-    virtual const char* renderName() const { return isAnonymous() ? "RenderTableCell (anonymous)" : "RenderTableCell"; }
+    virtual const char* renderName() const { return (isAnonymous() || isPseudoElement()) ? "RenderTableCell (anonymous)" : "RenderTableCell"; }
 
     virtual bool isTableCell() const { return true; }
 

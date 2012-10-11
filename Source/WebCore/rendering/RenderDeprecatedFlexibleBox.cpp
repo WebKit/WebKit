@@ -1085,6 +1085,10 @@ LayoutUnit RenderDeprecatedFlexibleBox::allowedChildFlex(RenderBox* child, bool 
 
 const char *RenderDeprecatedFlexibleBox::renderName() const
 {
+    // FIXME: Temporary hack while the new generated content system is being implemented.
+    if (isPseudoElement())
+        return "RenderDeprecatedFlexibleBox (generated)";
+
     if (isFloating())
         return "RenderDeprecatedFlexibleBox (floating)";
     if (isOutOfFlowPositioned())
