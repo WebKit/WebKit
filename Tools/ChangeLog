@@ -1,3 +1,9 @@
+2012-10-11  Timothy Hatcher  <timothy@apple.com>
+
+        Unreviewed watch list addition for Inspector.json.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-10-11  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: labelForElement is slow when there are a lot of DOM elements
