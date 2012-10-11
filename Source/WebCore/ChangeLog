@@ -1,3 +1,11 @@
+2012-10-11  Kent Tamura  <tkent@chromium.org>
+
+        Introduce Localizer::isRTL, and use it in DateTimeChooserImpl
+        https://bugs.webkit.org/show_bug.cgi?id=98992
+
+        * platform/text/LocaleICU.cpp:
+        (WebCore::LocaleICU::isRTL): Need to initialize 'status'.
+
 2012-10-11  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: The 'X' of the close button of Settings view is not centered

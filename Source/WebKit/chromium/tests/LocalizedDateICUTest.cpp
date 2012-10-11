@@ -118,9 +118,9 @@ std::ostream& operator<<(std::ostream& os, const LocalizedDateICUTest::Labels& l
     return os << labels.toString().utf8().data();
 }
 
-TEST_F(LocalizedDateICUTest, DISABLED_isRTL)
+TEST_F(LocalizedDateICUTest, isRTL)
 {
-    EXPECT_TRUE(isRTL("ar"));
+    EXPECT_TRUE(isRTL("ar-EG"));
     EXPECT_FALSE(isRTL("en-us"));
     EXPECT_FALSE(isRTL("ja-jp"));
     EXPECT_FALSE(isRTL("**invalid**"));
