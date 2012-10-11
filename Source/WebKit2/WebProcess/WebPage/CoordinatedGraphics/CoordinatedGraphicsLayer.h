@@ -26,6 +26,7 @@
 #include "GraphicsLayer.h"
 #include "GraphicsLayerAnimation.h"
 #include "GraphicsLayerTransform.h"
+#include "GraphicsSurface.h"
 #include "Image.h"
 #include "IntSize.h"
 #include "ShareableBitmap.h"
@@ -61,8 +62,8 @@ public:
 #if ENABLE(CSS_FILTERS)
     virtual void syncLayerFilters(WebLayerID, const WebCore::FilterOperations&) = 0;
 #endif
-#if PLATFORM(QT)
-    virtual void syncCanvas(WebLayerID, const WebCore::IntSize& canvasSize, uint64_t graphicsSurfaceToken, uint32_t frontBuffer) = 0;
+#if USE(GRAPHICS_SURFACE)
+    virtual void syncCanvas(WebLayerID, const WebCore::IntSize& canvasSize, const WebCore::GraphicsSurfaceToken&, uint32_t frontBuffer) = 0;
 #endif
 
     virtual void setLayerAnimatedOpacity(WebLayerID, float) = 0;

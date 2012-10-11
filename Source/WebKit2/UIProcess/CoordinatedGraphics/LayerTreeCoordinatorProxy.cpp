@@ -66,12 +66,12 @@ void LayerTreeCoordinatorProxy::updateTileForLayer(int layerID, int tileID, cons
 {
     RefPtr<ShareableSurface> surface;
 #if USE(GRAPHICS_SURFACE)
-    uint64_t token = updateInfo.surfaceHandle.graphicsSurfaceToken();
-    if (token) {
-        HashMap<uint64_t, RefPtr<ShareableSurface> >::iterator it = m_surfaces.find(token);
+    GraphicsSurfaceToken token = updateInfo.surfaceHandle.graphicsSurfaceToken();
+    if (token.isValid()) {
+        HashMap<GraphicsSurfaceToken::BufferHandle, RefPtr<ShareableSurface> >::iterator it = m_surfaces.find(token.frontBufferHandle);
         if (it == m_surfaces.end()) {
             surface = ShareableSurface::create(updateInfo.surfaceHandle);
-            m_surfaces.add(token, surface);
+            m_surfaces.add(token.frontBufferHandle, surface);
         } else
             surface = it->value;
     } else
@@ -180,10 +180,12 @@ void LayerTreeCoordinatorProxy::didChangeScrollPosition(const IntPoint& position
     dispatchUpdate(bind(&LayerTreeRenderer::didChangeScrollPosition, m_renderer.get(), position));
 }
 
-void LayerTreeCoordinatorProxy::syncCanvas(uint32_t id, const IntSize& canvasSize, uint64_t graphicsSurfaceToken, uint32_t frontBuffer)
+#if USE(GRAPHICS_SURFACE)
+void LayerTreeCoordinatorProxy::syncCanvas(uint32_t id, const IntSize& canvasSize, const GraphicsSurfaceToken& token, uint32_t frontBuffer)
 {
-    dispatchUpdate(bind(&LayerTreeRenderer::syncCanvas, m_renderer.get(), id, canvasSize, graphicsSurfaceToken, frontBuffer));
+    dispatchUpdate(bind(&LayerTreeRenderer::syncCanvas, m_renderer.get(), id, canvasSize, token, frontBuffer));
 }
+#endif
 
 void LayerTreeCoordinatorProxy::purgeBackingStores()
 {

@@ -20,6 +20,10 @@
 #ifndef TextureMapperPlatformLayer_h
 #define TextureMapperPlatformLayer_h
 
+#if USE(GRAPHICS_SURFACE)
+#include "GraphicsSurface.h"
+#endif
+
 #include "TransformationMatrix.h"
 
 namespace WebCore {
@@ -34,7 +38,7 @@ public:
     virtual void swapBuffers() { }
 #if USE(GRAPHICS_SURFACE)
     virtual uint32_t copyToGraphicsSurface() { return 0; }
-    virtual uint64_t graphicsSurfaceToken() const { return 0; }
+    virtual GraphicsSurfaceToken graphicsSurfaceToken() const { return GraphicsSurfaceToken(); }
 #endif
 };
 

@@ -55,6 +55,9 @@
 #if ENABLE(CSS_FILTERS)
 #include <WebCore/FilterOperations.h>
 #endif
+#if USE(GRAPHICS_SURFACE)
+#include <WebCore/GraphicsSurface.h>
+#endif
 #endif
 
 using namespace WebCore;
@@ -793,6 +796,35 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
 
     return true;
 }
+#endif
+
+#if USE(GRAPHICS_SURFACE)
+void ArgumentCoder<WebCore::GraphicsSurfaceToken>::encode(ArgumentEncoder* encoder, const WebCore::GraphicsSurfaceToken& token)
+{
+#if OS(DARWIN)
+    encoder->encodeUInt32(token.frontBufferHandle);
+    encoder->encodeUInt32(token.backBufferHandle);
+#endif
+#if OS(LINUX)
+    encoder->encodeUInt32(token.frontBufferHandle);
+#endif
+}
+
+bool ArgumentCoder<WebCore::GraphicsSurfaceToken>::decode(ArgumentDecoder* decoder, WebCore::GraphicsSurfaceToken& token)
+{
+#if OS(DARWIN)
+    if (!decoder->decodeUInt32(token.frontBufferHandle))
+        return false;
+    if (!decoder->decodeUInt32(token.backBufferHandle))
+        return false;
+#endif
+#if OS(LINUX)
+    if (!decoder->decodeUInt32(token.frontBufferHandle))
+        return false;
+#endif
+    return true;
+}
+
 #endif
 
 #endif

@@ -50,7 +50,7 @@ protected:
 class TextureMapperSurfaceBackingStore : public TextureMapperBackingStore {
 public:
     static PassRefPtr<TextureMapperSurfaceBackingStore> create() { return adoptRef(new TextureMapperSurfaceBackingStore); }
-    void setGraphicsSurface(uint64_t graphicsSurfaceToken, const IntSize& surfaceSize, uint32_t frontBuffer);
+    void setGraphicsSurface(const GraphicsSurfaceToken&, const IntSize& surfaceSize, uint32_t frontBuffer);
     PassRefPtr<WebCore::GraphicsSurface> graphicsSurface() const { return m_graphicsSurface; }
     virtual PassRefPtr<BitmapTexture> texture() const;
     virtual void paintToTextureMapper(TextureMapper*, const FloatRect&, const TransformationMatrix&, float, BitmapTexture*);
@@ -62,10 +62,9 @@ protected:
 private:
     TextureMapperSurfaceBackingStore()
         : TextureMapperBackingStore()
-        , m_graphicsSurfaceToken(0)
         { }
 
-    uint64_t m_graphicsSurfaceToken;
+    GraphicsSurfaceToken m_graphicsSurfaceToken;
     RefPtr<WebCore::GraphicsSurface> m_graphicsSurface;
     IntSize m_graphicsSurfaceSize;
 };

@@ -1,3 +1,50 @@
+2012-10-11  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt] Implement GraphicsSurfaceToken to replace uint64_t as token type.
+        https://bugs.webkit.org/show_bug.cgi?id=98501
+
+        Replace the token type for GraphicsSurface with a new class GraphicsSurfaceToken.
+        This is necessary in order to implement GraphicsSurface for Windows.
+        Depending on the platform a GraphicsSurfaceToken might contain a
+        WindowID (Linux/GLX), two IOSurfaceIDs (Mac) or in the future two HANDLEs (Windows).
+        The simple uint64_t is not sufficient anymore, since a single HANDLE in windows
+        can be 64bit already.
+
+        Reviewed by Noam Rosenthal.
+
+        * Shared/ShareableSurface.cpp:
+        (WebKit::ShareableSurface::Handle::encode):
+        (WebKit::ShareableSurface::Handle::decode):
+        (WebKit::ShareableSurface::create):
+        (WebKit::ShareableSurface::createHandle):
+        * Shared/ShareableSurface.h:
+        (WebKit::ShareableSurface::Handle::graphicsSurfaceToken):
+        (Handle):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC):
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        (WebCore):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp:
+        (WebKit::LayerTreeCoordinatorProxy::updateTileForLayer):
+        (WebKit::LayerTreeCoordinatorProxy::syncCanvas):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.h:
+        (LayerTreeCoordinatorProxy):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.messages.in:
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::syncCanvas):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h:
+        (LayerTreeRenderer):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::syncCanvas):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        (CoordinatedGraphicsLayerClient):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::syncCanvas):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h:
+        (LayerTreeCoordinator):
+
 2012-10-10  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt][WK2] Avoid unnecessary calls in PageViewportController

@@ -34,7 +34,7 @@
 namespace WebCore {
 
 #if USE(GRAPHICS_SURFACE)
-void TextureMapperSurfaceBackingStore::setGraphicsSurface(uint64_t graphicsSurfaceToken, const IntSize& surfaceSize, uint32_t frontBuffer)
+void TextureMapperSurfaceBackingStore::setGraphicsSurface(const GraphicsSurfaceToken& graphicsSurfaceToken, const IntSize& surfaceSize, uint32_t frontBuffer)
 {
     if (graphicsSurfaceToken != m_graphicsSurfaceToken) {
         GraphicsSurface::Flags surfaceFlags = GraphicsSurface::SupportsTextureTarget
@@ -68,7 +68,7 @@ void TextureMapperSurfaceBackingStore::setSurface(PassRefPtr<GraphicsSurface> su
         m_graphicsSurfaceToken = m_graphicsSurface->exportToken();
     } else {
         m_graphicsSurface = RefPtr<GraphicsSurface>();
-        m_graphicsSurfaceToken = 0;
+        m_graphicsSurfaceToken = GraphicsSurfaceToken();
     }
 }
 #endif

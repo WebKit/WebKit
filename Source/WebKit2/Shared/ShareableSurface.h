@@ -55,14 +55,14 @@ public:
         static bool decode(CoreIPC::ArgumentDecoder*, Handle&);
 
 #if USE(GRAPHICS_SURFACE)
-        uint64_t graphicsSurfaceToken() const { return m_graphicsSurfaceToken; }
+        WebCore::GraphicsSurfaceToken graphicsSurfaceToken() const { return m_graphicsSurfaceToken; }
 #endif
 
     private:
         friend class ShareableSurface;
         mutable ShareableBitmap::Handle m_bitmapHandle;
 #if USE(GRAPHICS_SURFACE)
-        uint64_t m_graphicsSurfaceToken;
+        WebCore::GraphicsSurfaceToken m_graphicsSurfaceToken;
 #endif
         WebCore::IntSize m_size;
         ShareableBitmap::Flags m_flags;

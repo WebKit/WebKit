@@ -237,9 +237,9 @@ static bool resolveGLMethods(GraphicsSurfacePrivate* p)
     return resolved;
 }
 
-uint64_t GraphicsSurface::platformExport()
+GraphicsSurfaceToken GraphicsSurface::platformExport()
 {
-    return m_platformSurface;
+    return GraphicsSurfaceToken(m_platformSurface);
 }
 
 uint32_t GraphicsSurface::platformGetTextureID()
@@ -316,7 +316,7 @@ PassRefPtr<GraphicsSurface> GraphicsSurface::platformCreate(const IntSize& size,
     return surface;
 }
 
-PassRefPtr<GraphicsSurface> GraphicsSurface::platformImport(const IntSize& size, Flags flags, uint64_t token)
+PassRefPtr<GraphicsSurface> GraphicsSurface::platformImport(const IntSize& size, Flags flags, const GraphicsSurfaceToken& token)
 {
     // X11 does not support CopyToTexture, so we do not create a GraphicsSurface if this is requested.
     // GraphicsSurfaceGLX uses an XWindow as native surface. This one always has a front and a back buffer.
@@ -330,7 +330,7 @@ PassRefPtr<GraphicsSurface> GraphicsSurface::platformImport(const IntSize& size,
     if (!resolveGLMethods(surface->m_private))
         return PassRefPtr<GraphicsSurface>();
 
-    surface->m_platformSurface = token;
+    surface->m_platformSurface = token.frontBufferHandle;
 
     surface->m_private->createPixmap(surface->m_platformSurface);
     surface->m_size = surface->m_private->size();

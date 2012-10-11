@@ -29,6 +29,7 @@
 #include "UpdateAtlas.h"
 #include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/GraphicsLayerFactory.h>
+#include <WebCore/GraphicsSurface.h>
 #include <wtf/OwnPtr.h>
 
 namespace WebKit {
@@ -88,7 +89,9 @@ public:
 #if ENABLE(CSS_FILTERS)
     virtual void syncLayerFilters(WebLayerID, const WebCore::FilterOperations&);
 #endif
-    virtual void syncCanvas(WebLayerID, const WebCore::IntSize& canvasSize, uint64_t graphicsSurfaceToken, uint32_t frontBuffer) OVERRIDE;
+#if USE(GRAPHICS_SURFACE)
+    virtual void syncCanvas(WebLayerID, const WebCore::IntSize& canvasSize, const WebCore::GraphicsSurfaceToken&, uint32_t frontBuffer) OVERRIDE;
+#endif
     virtual void attachLayer(WebCore::CoordinatedGraphicsLayer*);
     virtual void detachLayer(WebCore::CoordinatedGraphicsLayer*);
     virtual void syncFixedLayers();

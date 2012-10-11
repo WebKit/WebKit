@@ -191,12 +191,12 @@ void LayerTreeRenderer::didChangeScrollPosition(const IntPoint& position)
     m_pendingRenderedContentsScrollPosition = position;
 }
 
-void LayerTreeRenderer::syncCanvas(WebLayerID id, const WebCore::IntSize& canvasSize, uint64_t graphicsSurfaceToken, uint32_t frontBuffer)
+#if USE(GRAPHICS_SURFACE)
+void LayerTreeRenderer::syncCanvas(WebLayerID id, const WebCore::IntSize& canvasSize, const GraphicsSurfaceToken& token, uint32_t frontBuffer)
 {
     if (canvasSize.isEmpty() || !m_textureMapper)
         return;
 
-#if USE(GRAPHICS_SURFACE)
     ensureLayer(id);
     GraphicsLayer* layer = layerByID(id);
 
@@ -208,10 +208,10 @@ void LayerTreeRenderer::syncCanvas(WebLayerID id, const WebCore::IntSize& canvas
     } else
         canvasBackingStore = it->value;
 
-    canvasBackingStore->setGraphicsSurface(graphicsSurfaceToken, canvasSize, frontBuffer);
+    canvasBackingStore->setGraphicsSurface(token, canvasSize, frontBuffer);
     layer->setContentsToMedia(canvasBackingStore.get());
-#endif
 }
+#endif
 
 void LayerTreeRenderer::setLayerChildren(WebLayerID id, const Vector<WebLayerID>& childIDs)
 {

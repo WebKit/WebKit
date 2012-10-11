@@ -69,7 +69,7 @@ public:
 #endif
 #if USE(GRAPHICS_SURFACE)
     virtual uint32_t copyToGraphicsSurface();
-    virtual uint64_t graphicsSurfaceToken() const;
+    virtual GraphicsSurfaceToken graphicsSurfaceToken() const;
 #endif
 
     QRectF boundingRect() const;
@@ -289,7 +289,7 @@ uint32_t GraphicsContext3DPrivate::copyToGraphicsSurface()
     return frontBuffer;
 }
 
-uint64_t GraphicsContext3DPrivate::graphicsSurfaceToken() const
+GraphicsSurfaceToken GraphicsContext3DPrivate::graphicsSurfaceToken() const
 {
     return m_graphicsSurface->exportToken();
 }

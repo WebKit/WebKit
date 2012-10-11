@@ -72,6 +72,10 @@ namespace WebCore {
     class FloatPoint3D;
     class TransformationMatrix;
     struct Length;
+
+#if USE(GRAPHICS_SURFACE)
+    struct GraphicsSurfaceToken;
+#endif
 }
 
 #if ENABLE(CSS_FILTERS)
@@ -249,6 +253,13 @@ template<> struct ArgumentCoder<WebCore::TransformationMatrix> {
 template<> struct ArgumentCoder<WebCore::FilterOperations> {
     static void encode(ArgumentEncoder*, const WebCore::FilterOperations&);
     static bool decode(ArgumentDecoder*, WebCore::FilterOperations&);
+};
+#endif
+
+#if USE(GRAPHICS_SURFACE)
+template<> struct ArgumentCoder<WebCore::GraphicsSurfaceToken> {
+    static void encode(ArgumentEncoder*, const WebCore::GraphicsSurfaceToken&);
+    static bool decode(ArgumentDecoder*, WebCore::GraphicsSurfaceToken&);
 };
 #endif
 #endif

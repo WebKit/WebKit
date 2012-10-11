@@ -22,13 +22,13 @@
 
 #if USE(COORDINATED_GRAPHICS)
 #include "BackingStore.h"
-#include "GraphicsSurface.h"
 #include "ShareableSurface.h"
 #include "TextureMapper.h"
 #include "TextureMapperBackingStore.h"
 #include "WebLayerTreeInfo.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
+#include <WebCore/GraphicsSurface.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/RunLoop.h>
@@ -68,7 +68,9 @@ public:
     void setContentsSize(const WebCore::FloatSize&);
     void setVisibleContentsRect(const WebCore::FloatRect&);
     void didChangeScrollPosition(const WebCore::IntPoint& position);
-    void syncCanvas(uint32_t id, const WebCore::IntSize& canvasSize, uint64_t graphicsSurfaceToken, uint32_t frontBuffer);
+#if USE(GRAPHICS_SURFACE)
+    void syncCanvas(uint32_t id, const WebCore::IntSize& canvasSize, const WebCore::GraphicsSurfaceToken&, uint32_t frontBuffer);
+#endif
 
     void detach();
     void appendUpdate(const Function<void()>&);

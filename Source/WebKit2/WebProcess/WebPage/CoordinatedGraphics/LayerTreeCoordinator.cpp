@@ -305,11 +305,13 @@ void LayerTreeCoordinator::syncLayerChildren(WebLayerID id, const Vector<WebLaye
     m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetCompositingLayerChildren(id, children));
 }
 
-void LayerTreeCoordinator::syncCanvas(WebLayerID id, const IntSize& canvasSize, uint64_t graphicsSurfaceToken, uint32_t frontBuffer)
+#if USE(GRAPHICS_SURFACE)
+void LayerTreeCoordinator::syncCanvas(WebLayerID id, const IntSize& canvasSize, const GraphicsSurfaceToken& token, uint32_t frontBuffer)
 {
     m_shouldSyncFrame = true;
-    m_webPage->send(Messages::LayerTreeCoordinatorProxy::SyncCanvas(id, canvasSize, graphicsSurfaceToken, frontBuffer));
+    m_webPage->send(Messages::LayerTreeCoordinatorProxy::SyncCanvas(id, canvasSize, token, frontBuffer));
 }
+#endif
 
 #if ENABLE(CSS_FILTERS)
 void LayerTreeCoordinator::syncLayerFilters(WebLayerID id, const FilterOperations& filters)

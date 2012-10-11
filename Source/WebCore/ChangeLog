@@ -1,3 +1,50 @@
+2012-10-11  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt] Implement GraphicsSurfaceToken to replace uint64_t as token type.
+        https://bugs.webkit.org/show_bug.cgi?id=98501
+
+        Replace the token type for GraphicsSurface with a new class GraphicsSurfaceToken.
+        This is necessary in order to implement GraphicsSurface for Windows.
+        Depending on the platform a GraphicsSurfaceToken might contain a
+        WindowID (Linux/GLX), two IOSurfaceIDs (Mac) or in the future two HANDLEs (Windows).
+        The simple uint64_t is not sufficient anymore, since a single HANDLE in windows
+        can be 64bit already.
+
+        Reviewed by Noam Rosenthal.
+
+        * Target.pri:
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::graphicsSurfaceToken):
+        * platform/graphics/surfaces/GraphicsSurface.cpp:
+        (WebCore::GraphicsSurface::create):
+        (WebCore::GraphicsSurface::exportToken):
+        * platform/graphics/surfaces/GraphicsSurface.h:
+        (GraphicsSurface):
+        * platform/graphics/surfaces/GraphicsSurfaceToken.h: Added.
+        (WebCore):
+        (GraphicsSurfaceToken):
+        (WebCore::GraphicsSurfaceToken::GraphicsSurfaceToken):
+        (WebCore::GraphicsSurfaceToken::operator!=):
+        (WebCore::GraphicsSurfaceToken::isValid):
+        * platform/graphics/surfaces/mac/GraphicsSurfaceMac.cpp:
+        (WebCore::GraphicsSurfacePrivate::GraphicsSurfacePrivate):
+        (WebCore::GraphicsSurfacePrivate::token):
+        (GraphicsSurfacePrivate):
+        (WebCore::GraphicsSurface::platformExport):
+        (WebCore::GraphicsSurface::platformImport):
+        * platform/graphics/surfaces/qt/GraphicsSurfaceGLX.cpp:
+        (WebCore::GraphicsSurface::platformExport):
+        (WebCore::GraphicsSurface::platformImport):
+        * platform/graphics/texmap/TextureMapperBackingStore.cpp:
+        (WebCore::TextureMapperSurfaceBackingStore::setGraphicsSurface):
+        (WebCore::TextureMapperSurfaceBackingStore::setSurface):
+        * platform/graphics/texmap/TextureMapperBackingStore.h:
+        (TextureMapperSurfaceBackingStore):
+        (WebCore::TextureMapperSurfaceBackingStore::TextureMapperSurfaceBackingStore):
+        * platform/graphics/texmap/TextureMapperPlatformLayer.h:
+        (WebCore::TextureMapperPlatformLayer::graphicsSurfaceToken):
+
 2012-10-11  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Elements] Breadcrumbs are not updated upon involved elements' className changes

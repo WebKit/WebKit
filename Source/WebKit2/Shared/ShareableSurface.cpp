@@ -22,6 +22,7 @@
 
 #include "GraphicsContext.h"
 #include "WebCoreArgumentCoders.h"
+#include <WebCore/GraphicsSurfaceToken.h>
 
 #if USE(TEXTURE_MAPPER)
 #include "TextureMapperGL.h"
@@ -32,9 +33,6 @@ using namespace WebCore;
 namespace WebKit {
 
 ShareableSurface::Handle::Handle()
-#if USE(GRAPHICS_SURFACE)
-    : m_graphicsSurfaceToken(0)
-#endif
 {
 }
 
@@ -44,7 +42,7 @@ void ShareableSurface::Handle::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(m_flags);
 #if USE(GRAPHICS_SURFACE)
     encoder->encode(m_graphicsSurfaceToken);
-    if (m_graphicsSurfaceToken)
+    if (m_graphicsSurfaceToken.isValid())
         return;
 #endif
     encoder->encode(m_bitmapHandle);
@@ -59,7 +57,7 @@ bool ShareableSurface::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle&
 #if USE(GRAPHICS_SURFACE)
     if (!decoder->decode(handle.m_graphicsSurfaceToken))
         return false;
-    if (handle.m_graphicsSurfaceToken)
+    if (handle.m_graphicsSurfaceToken.isValid())
         return true;
 #endif
     if (!decoder->decode(handle.m_bitmapHandle))
@@ -151,7 +149,7 @@ ShareableSurface::~ShareableSurface()
 PassRefPtr<ShareableSurface> ShareableSurface::create(const Handle& handle)
 {
 #if USE(GRAPHICS_SURFACE)
-    if (handle.graphicsSurfaceToken()) {
+    if (handle.graphicsSurfaceToken().isValid()) {
         RefPtr<GraphicsSurface> surface = GraphicsSurface::create(handle.m_size, handle.m_flags, handle.m_graphicsSurfaceToken);
         if (surface)
             return adoptRef(new ShareableSurface(handle.m_size, handle.m_flags, PassRefPtr<GraphicsSurface>(surface)));
@@ -171,8 +169,8 @@ bool ShareableSurface::createHandle(Handle& handle)
     handle.m_flags = m_flags;
 
 #if USE(GRAPHICS_SURFACE)
-    handle.m_graphicsSurfaceToken = m_graphicsSurface ? m_graphicsSurface->exportToken() : 0;
-    if (handle.m_graphicsSurfaceToken)
+    handle.m_graphicsSurfaceToken = m_graphicsSurface ? m_graphicsSurface->exportToken() : GraphicsSurfaceToken();
+    if (handle.m_graphicsSurfaceToken.isValid())
         return true;
 #endif
     if (!m_bitmap->createHandle(handle.m_bitmapHandle))

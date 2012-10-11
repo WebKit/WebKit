@@ -530,7 +530,7 @@ void CoordinatedGraphicsLayer::syncCanvas()
 
 #if USE(GRAPHICS_SURFACE)
     uint32_t frontBuffer = m_canvasPlatformLayer->copyToGraphicsSurface();
-    uint64_t token = m_canvasPlatformLayer->graphicsSurfaceToken();
+    GraphicsSurfaceToken token = m_canvasPlatformLayer->graphicsSurfaceToken();
 
     m_CoordinatedGraphicsLayerClient->syncCanvas(m_id, IntSize(size().width(), size().height()), token, frontBuffer);
 #endif
