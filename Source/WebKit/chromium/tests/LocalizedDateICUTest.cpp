@@ -120,7 +120,7 @@ std::ostream& operator<<(std::ostream& os, const LocalizedDateICUTest::Labels& l
 
 TEST_F(LocalizedDateICUTest, isRTL)
 {
-    EXPECT_TRUE(isRTL("ar-eg"));
+    EXPECT_TRUE(isRTL("ar"));
     EXPECT_FALSE(isRTL("en-us"));
     EXPECT_FALSE(isRTL("ja-jp"));
     EXPECT_FALSE(isRTL("**invalid**"));
