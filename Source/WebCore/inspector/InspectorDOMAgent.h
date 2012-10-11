@@ -177,6 +177,7 @@ public:
 
     PassRefPtr<TypeBuilder::Runtime::RemoteObject> resolveNode(Node*, const String& objectGroup);
     bool handleMousePress();
+    bool handleTouchEvent(Node*);
     void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
     void inspect(Node*);
     void focusNode();

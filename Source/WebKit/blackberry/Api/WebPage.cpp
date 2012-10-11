@@ -4071,10 +4071,6 @@ bool WebPage::touchEvent(const Platform::TouchEvent& event)
     if (d->m_page->defersLoading())
         return false;
 
-    // FIXME: this checks if node search on inspector is enabled, though it might not be optimized.
-    if (InspectorInstrumentation::handleMousePress(d->m_mainFrame->page()))
-        return false;
-
     PluginView* pluginView = d->m_fullScreenPluginView.get();
     if (pluginView)
         return d->dispatchTouchEventToFullScreenPlugin(pluginView, event);

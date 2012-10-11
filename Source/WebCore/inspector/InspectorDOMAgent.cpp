@@ -957,6 +957,18 @@ bool InspectorDOMAgent::handleMousePress()
     return false;
 }
 
+bool InspectorDOMAgent::handleTouchEvent(Node* node)
+{
+    if (!m_searchingForNode)
+        return false;
+    if (node && m_inspectModeHighlightConfig) {
+        m_overlay->highlightNode(node, *m_inspectModeHighlightConfig);
+        inspect(node);
+        return true;
+    }
+    return false;
+}
+
 void InspectorDOMAgent::inspect(Node* inspectedNode)
 {
     ErrorString error;

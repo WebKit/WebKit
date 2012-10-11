@@ -262,6 +262,13 @@ void InspectorInstrumentation::didScrollImpl(InstrumentingAgents* instrumentingA
         pageAgent->didScroll();
 }
 
+bool InspectorInstrumentation::handleTouchEventImpl(InstrumentingAgents* instrumentingAgents, Node* node)
+{
+    if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())
+        return domAgent->handleTouchEvent(node);
+    return false;
+}
+
 bool InspectorInstrumentation::handleMousePressImpl(InstrumentingAgents* instrumentingAgents)
 {
     if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())

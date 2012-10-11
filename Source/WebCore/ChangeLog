@@ -1,3 +1,34 @@
+2012-10-11  Konrad Piascik  <kpiascik@rim.com>
+
+        Web Inspector: node search does not work with elements on touch start listener
+        https://bugs.webkit.org/show_bug.cgi?id=95252
+
+        Reviewed by Pavel Feldman.
+
+        Added new InspectorInstrumentation::handleTouchEvent() method which
+        will prevent a touch handler from firing and inspect and element if we
+        are already searching for a node to highlight.
+        Now when a user has chosen to inspect element (magnifying glass icon)
+        and touches on a page the event will be directed to inspector and
+        handled appropriately.
+
+        Not testable.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::handleTouchEvent):
+        (WebCore):
+        * inspector/InspectorDOMAgent.h:
+        (InspectorDOMAgent):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        (WebCore::InspectorInstrumentation::handleTouchEventImpl):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::handleTouchEvent):
+        (WebCore):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleTouchEvent):
+
 2012-10-11  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Credentials for HTTPS urls are saved in the HTTP protection space

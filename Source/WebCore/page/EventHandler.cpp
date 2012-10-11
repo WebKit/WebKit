@@ -3699,6 +3699,9 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
             if (node->isTextNode())
                 node = node->parentNode();
 
+            if (InspectorInstrumentation::handleTouchEvent(m_frame->page(), node))
+                return true;
+
             Document* doc = node->document();
             if (!doc)
                 continue;
