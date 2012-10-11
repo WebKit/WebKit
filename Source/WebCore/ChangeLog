@@ -1,3 +1,29 @@
+2012-10-11  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [Chromium] Improve vertical text rendering of HarfBuzzShaper
+        https://bugs.webkit.org/show_bug.cgi?id=98979
+
+        Reviewed by Tony Chang.
+
+        - Specify 'vert' and 'vrt2' features when we render vertical text.
+        - Set appropriate script so that harfbuzz-ng can use the features.
+
+        No new tests. fast/text/international/text-spliced-font.html should cover this change.
+        This change will affect after switching to harfbuzz-ng.
+
+        * platform/graphics/harfbuzz/ng/HarfBuzzNGFace.cpp:
+        (WebCore::HarfBuzzNGFace::HarfBuzzNGFace):
+        (WebCore::findScriptForVerticalGlyphSubstitution): Added.
+        (WebCore):
+        (WebCore::HarfBuzzNGFace::setScriptForVerticalGlyphSubstitution): Added.
+        * platform/graphics/harfbuzz/ng/HarfBuzzNGFace.h:
+        (HarfBuzzNGFace): Added m_scriptForVerticalText.
+        * platform/graphics/harfbuzz/ng/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::setFontFeatures):
+        Set 'vert' and 'vrt2' features when orientation() == Vertical.
+        (WebCore::HarfBuzzShaper::shapeHarfBuzzRuns):
+        Call setScriptForVerticalGlyphSubstitution() when orientation() == Vertical.
+
 2012-10-11  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: labelForElement is slow when there are a lot of DOM elements
