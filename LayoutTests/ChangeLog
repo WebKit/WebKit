@@ -1,3 +1,13 @@
+2012-10-11  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed. Skip inspector/profiler/memory-instrumentation-canvas.html on JSC platforms until proper fix in platform specific canvas code.
+        https://bugs.webkit.org/show_bug.cgi?id=99001
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2012-10-11  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Chromium] Unreviewed gardening, test expectation update.
