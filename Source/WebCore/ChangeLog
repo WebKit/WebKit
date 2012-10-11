@@ -1,5 +1,21 @@
 2012-10-10  MORITA Hajime  <morrita@google.com>
 
+        [Chromium] Crash on SpellChecker::didCheck()
+        https://bugs.webkit.org/show_bug.cgi?id=98476
+
+        Reviewed by Kent Tamura.
+
+        SpellChecker::didCheck() assumed m_processingRequest is non-NULL. However, SpellChecker::invokeRequest()
+        calls SpellCheckRequest::didCancel(), which results didCheck() with NULL m_processingRequest.
+        This chagne eliminates the problematic didCheck().
+
+        No new tests. The case depends on specific timing and is hard to hit by automated testing.
+
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellChecker::didCheck):
+
+2012-10-10  MORITA Hajime  <morrita@google.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=95664
         [Shadow DOM] should be able to be available without <style scoped>
 

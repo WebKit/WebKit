@@ -178,11 +178,8 @@ void SpellChecker::requestCheckingFor(PassRefPtr<SpellCheckRequest> request)
 void SpellChecker::invokeRequest(PassRefPtr<SpellCheckRequest> request)
 {
     ASSERT(!m_processingRequest);
-    if (!client()) {
-        request->didCancel();
+    if (!client())
         return;
-    }
-
     m_processingRequest = request;
     client()->requestCheckingOfString(m_processingRequest);
 }
