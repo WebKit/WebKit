@@ -1,3 +1,26 @@
+2012-10-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WK2] Safari crashes on error when using CFNetwork
+        https://bugs.webkit.org/show_bug.cgi?id=98965
+
+        Reviewed by Sam Weinig.
+
+        The code of ResourceErrorMac when using CFNetwork was assuming
+        there is always either a CFError or an NSError associated with
+        any ResourceError.
+
+        This is not true on WebKit2 where error can be generic errors
+        in the WebProcess (for example a cannotShowURLError).
+        The code was crashing when trying to invoke function on the
+        non-existing CFError.
+
+        This patch fixes the issue by handling that third case separately.
+        If the ResourceError is a generic error, a new NSError is created,
+        similarily to what is done in the non-CFNetwork case.
+
+        * platform/network/mac/ResourceErrorMac.mm:
+        (WebCore::ResourceError::nsError):
+
 2012-10-10  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         Invalid values for media query features are not handled
