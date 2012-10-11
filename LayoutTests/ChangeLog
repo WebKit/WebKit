@@ -1,5 +1,14 @@
 2012-10-11  Adam Barth  <abarth@webkit.org>
 
+        I'm not 100% sure what caused this test to change behavior, but fewer
+        unexpected exceptions seems like a good thing.
+
+        * platform/chromium/http/tests/media: Added.
+        * platform/chromium/http/tests/media/media-source: Added.
+        * platform/chromium/http/tests/media/media-source/video-media-source-add-and-remove-buffers-expected.txt: Added.
+
+2012-10-11  Adam Barth  <abarth@webkit.org>
+
         Note that this test is flaky.
 
         * platform/chromium/TestExpectations:
