@@ -203,10 +203,6 @@ LayoutPoint RenderGrid::findChildLogicalPosition(RenderBox* child, const Vector<
 
 const char* RenderGrid::renderName() const
 {
-    // FIXME: Temporary hack while the new generated content system is being implemented.
-    if (isPseudoElement())
-        return "RenderGrid (generated)";
-
     if (isFloating())
         return "RenderGrid (floating)";
     if (isOutOfFlowPositioned())

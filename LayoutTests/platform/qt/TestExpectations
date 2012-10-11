@@ -194,7 +194,6 @@ fast/dom/shadow/content-element-outside-shadow.html
 fast/dom/shadow/content-element-outside-shadow-style.html
 fast/dom/shadow/content-element-in-media-element.html
 fast/dom/shadow/content-element-in-meter-element.html
-fast/dom/shadow/distributed-nodes.html
 fast/dom/shadow/drop-event-for-input-in-shadow.html
 fast/dom/shadow/drop-event-in-shadow.html
 fast/dom/shadow/elements-in-frameless-document.html
@@ -264,7 +263,6 @@ fast/dom/shadow/shadow-root-js-api.html
 fast/dom/shadow/shadow-root-new.html
 fast/dom/shadow/shadow-root-resetStyleInheritance.html
 fast/dom/shadow/shadow-ul-li.html
-fast/dom/shadow/style-scoped-not-enabled.html
 fast/dom/shadow/tab-order-iframe-and-shadow.html
 fast/dom/shadow/transition-on-shadow-host-with-distributed-node.html
 fast/dom/shadow/user-modify-inheritance.html
@@ -1190,8 +1188,6 @@ svg/repaint/filter-repaint.svg
 fast/autoresize
 
 # Needs layoutTestController.setBackingScaleFactor()
-editing/spelling/grammar-markers-hidpi.html
-editing/spelling/inline-spelling-markers-hidpi.html
 fast/canvas/2d.backingStorePixelRatio.html
 fast/canvas/2d.imageDataHD.html
 svg/as-image/svg-as-image-canvas.html

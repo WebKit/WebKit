@@ -466,34 +466,6 @@ TreeScope* Node::treeScope() const
     return scope ? scope : m_document;
 }
 
-Node* Node::pseudoAwarePreviousSibling() const
-{
-    if (isElementNode() && !previousSibling()) {
-        Element* parent = parentOrHostElement();
-        if (!parent)
-            return 0;
-        if (isAfterPseudoElement() && parent->lastChild())
-            return parent->lastChild();
-        if (!isBeforePseudoElement())
-            return parent->beforePseudoElement();
-    }
-    return previousSibling();
-}
-
-Node* Node::pseudoAwareNextSibling() const
-{
-    if (isElementNode() && !nextSibling()) {
-        Element* parent = parentOrHostElement();
-        if (!parent)
-            return 0;
-        if (isBeforePseudoElement() && parent->firstChild())
-            return parent->firstChild();
-        if (!isAfterPseudoElement())
-            return parent->afterPseudoElement();
-    }
-    return nextSibling();
-}
-
 NodeRareData* Node::rareData() const
 {
     ASSERT(hasRareData());
@@ -1211,15 +1183,7 @@ static void checkAcceptChild(Node* newParent, Node* newChild, ExceptionCode& ec)
         ec = NOT_FOUND_ERR;
         return;
     }
-
-    // Assert because this should never happen, but also protect non-debug builds
-    // from tree corruption.
-    ASSERT(!newChild->isPseudoElement());
-    if (newChild->isPseudoElement()) {
-        ec = HIERARCHY_REQUEST_ERR;
-        return;
-    }
-
+    
     if (newParent->isReadOnlyNode()) {
         ec = NO_MODIFICATION_ALLOWED_ERR;
         return;

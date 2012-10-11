@@ -172,9 +172,6 @@ public:
     bool hasAttributes() const;
     NamedNodeMap* attributes() const;
 
-    Node* pseudoAwarePreviousSibling() const;
-    Node* pseudoAwareNextSibling() const;
-
     virtual KURL baseURI() const;
     
     void getSubresourceURLs(ListHashSet<KURL>&) const;
@@ -219,19 +216,6 @@ public:
     bool isHTMLElement() const { return getFlag(IsHTMLFlag); }
     bool isSVGElement() const { return getFlag(IsSVGFlag); }
 
-    bool isPseudoElement() const
-    {
-        return pseudoId() != NOPSEUDO;
-    }
-
-    PseudoId pseudoId() const
-    {
-        return (isElementNode() && hasCustomCallbacks()) ? virtualPseudoId() : NOPSEUDO;
-    }
-
-    virtual PseudoId virtualPseudoId() const { return NOPSEUDO; }
-    bool isBeforePseudoElement() const { return pseudoId() == BEFORE; }
-    bool isAfterPseudoElement() const { return pseudoId() == AFTER; }
     virtual bool isMediaControlElement() const { return false; }
     virtual bool isMediaControls() const { return false; }
     bool isStyledElement() const { return getFlag(IsStyledElementFlag); }

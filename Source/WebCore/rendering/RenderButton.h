@@ -50,6 +50,8 @@ public:
     void setupInnerStyle(RenderStyle*);
     virtual void updateFromElement();
 
+    virtual void updateBeforeAfterContent(PseudoId);
+
     virtual bool canHaveGeneratedChildren() const OVERRIDE;
     virtual bool hasControlClip() const { return true; }
     virtual LayoutRect controlClipRect(const LayoutPoint&) const;

@@ -1,3 +1,101 @@
+2012-10-11  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: revert 131004, 131012, 131016, 131042, 131043 for breaking inspector console
+        https://bugs.webkit.org/show_bug.cgi?id=99042
+
+        One can't type in the inspector console after 131004.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/Element.cpp:
+        (WebCore::Element::attach):
+        (WebCore::Element::detach):
+        (WebCore::Element::recalcStyle):
+        * dom/Element.h:
+        (WebCore):
+        (Element):
+        * dom/ElementRareData.h:
+        (ElementRareData):
+        * dom/Node.cpp:
+        (WebCore::checkAcceptChild):
+        * dom/Node.h:
+        (Node):
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::nextRenderer):
+        * dom/PseudoElement.cpp: Removed.
+        * dom/PseudoElement.h: Removed.
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::setInnerNode):
+        (WebCore::HitTestResult::setInnerNonSharedNode):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleDidChange):
+        (WebCore::RenderBlock::updateBeforeAfterContent):
+        (WebCore):
+        (WebCore::RenderBlock::splitBlocks):
+        (WebCore::RenderBlock::addChildIgnoringAnonymousColumnBlocks):
+        (WebCore::RenderBlock::createReplacementRunIn):
+        (WebCore::RenderBlock::renderName):
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::updateBeforeAfterContent):
+        (WebCore):
+        * rendering/RenderButton.h:
+        (RenderButton):
+        * rendering/RenderCounter.cpp:
+        (WebCore::RenderCounter::originalText):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::renderName):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::renderName):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::styleDidChange):
+        (WebCore::RenderInline::addChildIgnoringContinuation):
+        (WebCore::RenderInline::splitInlines):
+        (WebCore::RenderInline::renderName):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::updateMarkerLocation):
+        * rendering/RenderMultiColumnBlock.cpp:
+        (WebCore::RenderMultiColumnBlock::renderName):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::generatingNode):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore):
+        (WebCore::findBeforeAfterParent):
+        (WebCore::RenderObjectChildList::updateBeforeAfterStyle):
+        (WebCore::createRendererForBeforeAfterContent):
+        (WebCore::ensureBeforeAfterContainer):
+        (WebCore::RenderObjectChildList::updateBeforeAfterContent):
+        * rendering/RenderObjectChildList.h:
+        (RenderObjectChildList):
+        * rendering/RenderRubyText.cpp:
+        (WebCore::RenderRubyText::updateBeforeAfterContent):
+        (WebCore):
+        * rendering/RenderRubyText.h:
+        (RenderRubyText):
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::renderName):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::updateBeforeAndAfterContent):
+        (WebCore):
+        (WebCore::RenderTableRow::styleDidChange):
+        * rendering/RenderTableRow.h:
+        (RenderTableRow):
+        (WebCore::RenderTableRow::renderName):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addChild):
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::renderName):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+
 2012-10-11  Arpita Bahuguna  <arpitabahuguna@gmail.com>
 
         REGRESSION (r96393): In some cases, generated content is never shown

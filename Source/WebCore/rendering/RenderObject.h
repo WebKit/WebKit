@@ -317,8 +317,6 @@ private:
 public:
     RenderArena* renderArena() const { return document()->renderArena(); }
 
-    bool isPseudoElement() const { return node() && node()->isPseudoElement(); }
-
     virtual bool isBR() const { return false; }
     virtual bool isBlockFlow() const { return false; }
     virtual bool isBoxModelObject() const { return false; }
@@ -611,14 +609,7 @@ public:
     // Returns the styled node that caused the generation of this renderer.
     // This is the same as node() except for renderers of :before and :after
     // pseudo elements for which their parent node is returned.
-    Node* generatingNode() const
-    {
-        // FIXME: Fix the DOM traversals in RenderCounter and remove the use of generatingNode().
-        Node* node = m_node == document() ? 0 : m_node;
-        if (node && node->isPseudoElement())
-            return node->parentOrHostNode();
-        return node;
-    }
+    Node* generatingNode() const { return m_node == document() ? 0 : m_node; }
     void setNode(Node* node) { m_node = node; }
 
     Document* document() const { return m_node->document(); }

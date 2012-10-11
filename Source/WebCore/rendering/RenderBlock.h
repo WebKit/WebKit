@@ -542,6 +542,8 @@ private:
     static void removeFromTrackedRendererMaps(RenderBox* descendant, TrackedDescendantsMap*&, TrackedContainerMap*&);
 
     virtual void borderFitAdjust(LayoutRect&) const; // Shrink the box in which the border paints if border-fit is set.
+
+    virtual void updateBeforeAfterContent(PseudoId);
     
     virtual RootInlineBox* createRootInlineBox(); // Subclassed by SVG and Ruby.
 

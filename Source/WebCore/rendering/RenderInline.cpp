@@ -40,6 +40,8 @@
 #include "TransformState.h"
 #include "VisiblePosition.h"
 
+#include <wtf/TemporaryChange.h>
+
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
 #include "Frame.h"
 #endif
@@ -167,11 +169,18 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
     // need to pass its style on to anyone else.
     RenderStyle* newStyle = style();
     RenderInline* continuation = inlineElementContinuation();
-    for (RenderInline* currCont = continuation; currCont; currCont = currCont->inlineElementContinuation()) {
-        RenderBoxModelObject* nextCont = currCont->continuation();
-        currCont->setContinuation(0);
-        currCont->setStyle(newStyle);
-        currCont->setContinuation(nextCont);
+    {
+        TemporaryChange<bool> enableAfter(RenderObjectChildList::s_enableUpdateBeforeAfterContent, false);
+        RenderInline* nextInlineElementCont = 0;
+        for (RenderInline* currCont = continuation; currCont; currCont = nextInlineElementCont) {
+            nextInlineElementCont = currCont->inlineElementContinuation();
+            // We need to update :after content for the last continuation in the chain.
+            RenderObjectChildList::s_enableUpdateBeforeAfterContent = !nextInlineElementCont;
+            RenderBoxModelObject* nextCont = currCont->continuation();
+            currCont->setContinuation(0);
+            currCont->setStyle(newStyle);
+            currCont->setContinuation(nextCont);
+        }
     }
 
     // If an inline's in-flow positioning has changed then any descendant blocks will need to change their in-flow positioning accordingly.
@@ -191,6 +200,12 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
             setNeedsLayout(true);
         }
         m_alwaysCreateLineBoxes = alwaysCreateLineBoxes;
+    }
+
+    // Update pseudos for :before and :after now.
+    if (!isAnonymous() && document()->styleSheetCollection()->usesBeforeAfterRules()) {
+        children()->updateBeforeAfterContent(this, BEFORE);
+        children()->updateBeforeAfterContent(this, AFTER);
     }
 }
 
@@ -314,6 +329,16 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
         RenderBoxModelObject* oldContinuation = continuation();
         setContinuation(newBox);
 
+        // Someone may have put a <p> inside a <q>, causing a split.  When this happens, the :after content
+        // has to move into the inline continuation.  Call updateBeforeAfterContent to ensure that our :after
+        // content gets properly destroyed.
+        bool isLastChild = (beforeChild == lastChild());
+        if (document()->styleSheetCollection()->usesBeforeAfterRules())
+            children()->updateBeforeAfterContent(this, AFTER);
+        if (isLastChild && beforeChild != lastChild())
+            beforeChild = 0; // We destroyed the last child, so now we need to update our insertion
+                             // point to be 0.  It's just a straight append now.
+
         splitFlow(beforeChild, newBox, newChild, oldContinuation);
         return;
     }
@@ -379,6 +404,12 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
             oldCont = inlineCurr->continuation();
             inlineCurr->setContinuation(cloneInline);
             cloneInline->setContinuation(oldCont);
+
+            // Someone may have indirectly caused a <q> to split.  When this happens, the :after content
+            // has to move into the inline continuation.  Call updateBeforeAfterContent to ensure that the inline's :after
+            // content gets properly destroyed.
+            if (document()->styleSheetCollection()->usesBeforeAfterRules())
+                inlineCurr->children()->updateBeforeAfterContent(inlineCurr, AFTER);
 
             // Now we need to take all of the children starting from the first child
             // *after* currChild and append them all to the clone.
@@ -731,9 +762,6 @@ const char* RenderInline::renderName() const
     if (isStickyPositioned())
         return "RenderInline (sticky positioned)";
     if (isAnonymous())
-        return "RenderInline (generated)";
-    // FIXME: Temporary hack while the new generated content system is being implemented.
-    if (isPseudoElement())
         return "RenderInline (generated)";
     if (isRunIn())
         return "RenderInline (run-in)";

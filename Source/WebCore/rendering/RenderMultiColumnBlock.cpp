@@ -146,10 +146,6 @@ void RenderMultiColumnBlock::ensureColumnSets()
 
 const char* RenderMultiColumnBlock::renderName() const
 {    
-    // FIXME: Temporary hack while the new generated content system is being implemented.
-    if (isPseudoElement())
-        return "RenderMultiColumnBlock (generated)";
-
     if (isFloating())
         return "RenderMultiColumnBlock (floating)";
     if (isOutOfFlowPositioned())

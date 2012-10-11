@@ -1,3 +1,18 @@
+2012-10-11  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: revert 131004, 131012, 131016, 131042, 131043 for breaking inspector console
+        https://bugs.webkit.org/show_bug.cgi?id=99042
+
+        * fast/css-generated-content/before-content-continuation-chain-expected.txt:
+        * platform/chromium-mac-snowleopard/fast/css-generated-content/table-row-group-to-inline-expected.png:
+        * platform/chromium-mac/fast/css-generated-content/table-row-group-to-inline-expected.png: Added.
+        * platform/chromium/TestExpectations:
+        * platform/efl/fast/css-generated-content/table-row-group-to-inline-expected.txt:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/css-generated-content/table-row-group-to-inline-expected.txt:
+        * platform/mac/fast/css-generated-content/table-row-group-to-inline-expected.png:
+        * platform/mac/fast/css-generated-content/table-row-group-to-inline-expected.txt:
+
 2012-10-11  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening after r131044.
@@ -160,14 +175,6 @@
         (initialize_MemoryInstrumentationTest.InspectorTest._memoryBlockSize):
         (initialize_MemoryInstrumentationTest.InspectorTest.validateMemoryBlockSize):
         (initialize_MemoryInstrumentationTest):
-
-2012-10-10  Csaba Osztrogonác  <ossy@webkit.org>
-
-        [Qt] Unreviewed morning gardening.
-
-        * platform/qt/TestExpectations: Skip new failing tests.
-        * platform/qt/fast/css-generated-content/table-row-group-to-inline-expected.png: Updated after r131004.
-        * platform/qt/fast/css-generated-content/table-row-group-to-inline-expected.txt: Updated after r131004.
 
 2012-10-10  Shinya Kawanaka  <shinyak@chromium.org>
 
