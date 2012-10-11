@@ -294,8 +294,11 @@ public:
         int argc,
         v8::Handle<v8::Value> argv[]) = 0;
 
-    // Returns the V8 context for this frame, or an empty handle if there
-    // is none.
+    // Returns the V8 context for associated with the main world and this
+    // frame. There can be many V8 contexts associated with this frame, one for
+    // each isolated world and one for the main world. If you don't know what
+    // the "main world" or an "isolated world" is, then you probably shouldn't
+    // be calling this API.
     virtual v8::Local<v8::Context> mainWorldScriptContext() const = 0;
 
     // Creates an instance of file system object.

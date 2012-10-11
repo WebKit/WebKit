@@ -1,3 +1,15 @@
+2012-10-11  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Improve the comment describing mainWorldScriptContext
+        https://bugs.webkit.org/show_bug.cgi?id=99092
+
+        Reviewed by James Robinson.
+
+        * public/WebFrame.h:
+        (WebFrame):
+            - Add some more text about what this API does so that folks who
+              call it know what they need to worry about.
+
 2012-10-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.
