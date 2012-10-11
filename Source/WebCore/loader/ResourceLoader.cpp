@@ -39,6 +39,7 @@
 #include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "ProgressTracker.h"
+#include "ResourceBuffer.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"
 #include "ResourceLoadScheduler.h"
@@ -48,7 +49,7 @@
 
 namespace WebCore {
 
-PassRefPtr<SharedBuffer> ResourceLoader::resourceData()
+PassRefPtr<ResourceBuffer> ResourceLoader::resourceData()
 {
     return m_resourceData;
 }
@@ -198,12 +199,12 @@ void ResourceLoader::addData(const char* data, int length, bool allAtOnce)
         return;
 
     if (allAtOnce) {
-        m_resourceData = SharedBuffer::create(data, length);
+        m_resourceData = ResourceBuffer::create(data, length);
         return;
     }
         
     if (!m_resourceData)
-        m_resourceData = SharedBuffer::create(data, length);
+        m_resourceData = ResourceBuffer::create(data, length);
     else
         m_resourceData->append(data, length);
 }
@@ -288,7 +289,7 @@ void ResourceLoader::willStopBufferingData(const char* data, int length)
         return;
 
     ASSERT(!m_resourceData);
-    m_resourceData = SharedBuffer::create(data, length);
+    m_resourceData = ResourceBuffer::create(data, length);
 }
 
 void ResourceLoader::didFinishLoading(double finishTime)

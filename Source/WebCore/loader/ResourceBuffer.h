@@ -54,6 +54,9 @@ public:
     unsigned size() const;
     bool isEmpty() const;
 
+    void append(const char*, unsigned);
+    void clear();
+    
     unsigned getSomeData(const char*& data, unsigned position = 0) const;
     
     SharedBuffer* sharedBuffer() const;

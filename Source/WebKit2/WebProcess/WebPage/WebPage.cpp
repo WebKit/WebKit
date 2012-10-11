@@ -104,6 +104,7 @@
 #include <WebCore/RenderLayer.h>
 #include <WebCore/RenderTreeAsText.h>
 #include <WebCore/RenderView.h>
+#include <WebCore/ResourceBuffer.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RunLoop.h>
 #include <WebCore/SchemeRegistry.h>
@@ -1922,7 +1923,7 @@ void WebPage::getMainResourceDataOfFrame(uint64_t frameID, uint64_t callbackID)
 {
     CoreIPC::DataReference dataReference;
 
-    RefPtr<SharedBuffer> buffer;
+    RefPtr<ResourceBuffer> buffer;
     if (WebFrame* frame = WebProcess::shared().webFrame(frameID)) {
         if (DocumentLoader* loader = frame->coreFrame()->loader()->documentLoader()) {
             if ((buffer = loader->mainResourceData()))

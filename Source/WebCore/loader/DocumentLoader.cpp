@@ -122,7 +122,7 @@ DocumentLoader::~DocumentLoader()
     m_cachedResourceLoader->clearDocumentLoader();
 }
 
-PassRefPtr<SharedBuffer> DocumentLoader::mainResourceData() const
+PassRefPtr<ResourceBuffer> DocumentLoader::mainResourceData() const
 {
     if (m_mainResourceData)
         return m_mainResourceData;
@@ -481,7 +481,8 @@ bool DocumentLoader::maybeCreateArchive()
 #else
     
     // Give the archive machinery a crack at this document. If the MIME type is not an archive type, it will return 0.
-    m_archive = ArchiveFactory::create(m_response.url(), mainResourceData().get(), m_response.mimeType());
+    RefPtr<ResourceBuffer> mainResourceBuffer = mainResourceData();
+    m_archive = ArchiveFactory::create(m_response.url(), mainResourceBuffer ? mainResourceBuffer->sharedBuffer() : 0, m_response.mimeType());
     if (!m_archive)
         return false;
     
@@ -559,11 +560,13 @@ ArchiveResource* DocumentLoader::archiveResourceForURL(const KURL& url) const
 PassRefPtr<ArchiveResource> DocumentLoader::mainResource() const
 {
     const ResourceResponse& r = response();
-    RefPtr<SharedBuffer> mainResourceBuffer = mainResourceData();
-    if (!mainResourceBuffer)
-        mainResourceBuffer = SharedBuffer::create();
+    
+    RefPtr<ResourceBuffer> mainResourceBuffer = mainResourceData();
+    RefPtr<SharedBuffer> data = mainResourceBuffer ? mainResourceBuffer->sharedBuffer() : 0;
+    if (!data)
+        data = SharedBuffer::create();
         
-    return ArchiveResource::create(mainResourceBuffer, r.url(), r.mimeType(), r.textEncodingName(), frame()->tree()->uniqueName());
+    return ArchiveResource::create(data, r.url(), r.mimeType(), r.textEncodingName(), frame()->tree()->uniqueName());
 }
 
 PassRefPtr<ArchiveResource> DocumentLoader::subresource(const KURL& url) const
@@ -873,7 +876,7 @@ void DocumentLoader::maybeFinishLoadingMultipartContent()
 
     frameLoader()->setupForReplace();
     m_committed = false;
-    RefPtr<SharedBuffer> resourceData = mainResourceData();
+    RefPtr<ResourceBuffer> resourceData = mainResourceData();
     commitLoad(resourceData->data(), resourceData->size());
 }
 

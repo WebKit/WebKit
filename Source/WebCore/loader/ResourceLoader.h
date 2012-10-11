@@ -44,8 +44,8 @@ namespace WebCore {
     class Frame;
     class FrameLoader;
     class KURL;
+    class ResourceBuffer;
     class ResourceHandle;
-    class SharedBuffer;
     
     class ResourceLoader : public RefCounted<ResourceLoader>, protected ResourceHandleClient {
     public:
@@ -72,7 +72,7 @@ namespace WebCore {
         const ResourceResponse& response() const;
 
         virtual void addData(const char*, int, bool allAtOnce);
-        virtual PassRefPtr<SharedBuffer> resourceData();
+        virtual PassRefPtr<ResourceBuffer> resourceData();
         void clearResourceData();
         virtual bool isSubresourceLoader();
         
@@ -173,7 +173,7 @@ namespace WebCore {
 
         ResourceRequest m_request;
         ResourceRequest m_originalRequest; // Before redirects.
-        RefPtr<SharedBuffer> m_resourceData;
+        RefPtr<ResourceBuffer> m_resourceData;
         
         unsigned long m_identifier;
 

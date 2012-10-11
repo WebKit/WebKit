@@ -221,7 +221,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
         }
     }
 
-    RefPtr<SharedBuffer> buffer = resourceData();
+    RefPtr<ResourceBuffer> buffer = resourceData();
     if (m_loadingMultipartContent && buffer && buffer->size()) {
         sendDataToResource(buffer->data(), buffer->size());
         clearResourceData();
@@ -270,10 +270,10 @@ void SubresourceLoader::sendDataToResource(const char* data, int length)
     //     ResourceLoader::resourceData() will be null. However, unlike the multipart case, we don't want to tell the CachedResource 
     //     that all data has been received yet. 
     if (m_loadingMultipartContent || !resourceData()) { 
-        RefPtr<SharedBuffer> copiedData = SharedBuffer::create(data, length); 
-        m_resource->data(ResourceBuffer::adoptSharedBuffer(copiedData.release()), m_loadingMultipartContent);
+        RefPtr<ResourceBuffer> copiedData = ResourceBuffer::create(data, length); 
+        m_resource->data(copiedData.release(), m_loadingMultipartContent);
     } else 
-        m_resource->data(ResourceBuffer::adoptSharedBuffer(resourceData()), false);
+        m_resource->data(resourceData(), false);
 }
 
 void SubresourceLoader::didReceiveCachedMetadata(const char* data, int length)
@@ -296,7 +296,7 @@ void SubresourceLoader::didFinishLoading(double finishTime)
     CachedResourceHandle<CachedResource> protectResource(m_resource);
     m_state = Finishing;
     m_resource->setLoadFinishTime(finishTime);
-    m_resource->data(ResourceBuffer::adoptSharedBuffer(resourceData()), true);
+    m_resource->data(resourceData(), true);
     m_resource->finish();
     ResourceLoader::didFinishLoading(finishTime);
 }

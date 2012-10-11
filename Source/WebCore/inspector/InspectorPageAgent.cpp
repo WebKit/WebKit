@@ -208,25 +208,30 @@ bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, S
     return false;
 }
 
-static bool mainResourceContent(Frame* frame, bool withBase64Encode, String* result)
+bool InspectorPageAgent::mainResourceContent(Frame* frame, bool withBase64Encode, String* result)
 {
-    RefPtr<SharedBuffer> buffer = frame->loader()->documentLoader()->mainResourceData();
+    RefPtr<ResourceBuffer> buffer = frame->loader()->documentLoader()->mainResourceData();
     if (!buffer)
         return false;
     String textEncodingName = frame->document()->inputEncoding();
 
-    return InspectorPageAgent::sharedBufferContent(buffer, textEncodingName, withBase64Encode, result);
+    return InspectorPageAgent::dataContent(buffer->data(), buffer->size(), textEncodingName, withBase64Encode, result);
 }
 
 // static
 bool InspectorPageAgent::sharedBufferContent(PassRefPtr<SharedBuffer> buffer, const String& textEncodingName, bool withBase64Encode, String* result)
 {
+    return dataContent(buffer ? buffer->data() : 0, buffer ? buffer->size() : 0, textEncodingName, withBase64Encode, result);
+}
+
+bool InspectorPageAgent::dataContent(const char* data, unsigned size, const String& textEncodingName, bool withBase64Encode, String* result)
+{
     if (withBase64Encode) {
-        *result = base64Encode(buffer->data(), buffer->size());
+        *result = base64Encode(data, size);
         return true;
     }
 
-    return decodeBuffer(buffer ? buffer->data() : 0, buffer ? buffer->size() : 0, textEncodingName, result);
+    return decodeBuffer(data, size, textEncodingName, result);
 }
 
 PassOwnPtr<InspectorPageAgent> InspectorPageAgent::create(InstrumentingAgents* instrumentingAgents, Page* page, InspectorAgent* inspectorAgent, InspectorState* state, InjectedScriptManager* injectedScriptManager, InspectorClient* client, InspectorOverlay* overlay)

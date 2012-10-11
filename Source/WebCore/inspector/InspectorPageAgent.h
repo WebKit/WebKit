@@ -160,6 +160,9 @@ private:
     void updateTouchEventEmulationInPage(bool);
 #endif
 
+    static bool mainResourceContent(Frame*, bool withBase64Encode, String* result);
+    static bool dataContent(const char* data, unsigned size, const String& textEncodingName, bool withBase64Encode, String* result);
+
     PassRefPtr<TypeBuilder::Page::Frame> buildObjectForFrame(Frame*);
     PassRefPtr<TypeBuilder::Page::FrameResourceTree> buildObjectForFrameTree(Frame*);
     Page* m_page;

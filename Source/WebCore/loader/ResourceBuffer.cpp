@@ -65,6 +65,16 @@ bool ResourceBuffer::isEmpty() const
     return m_sharedBuffer->isEmpty();
 }
 
+void ResourceBuffer::append(const char* data, unsigned size)
+{
+    m_sharedBuffer->append(data, size);
+}
+
+void ResourceBuffer::clear()
+{
+    m_sharedBuffer->clear();
+}
+
 unsigned ResourceBuffer::getSomeData(const char*& data, unsigned position) const
 {
     return m_sharedBuffer->getSomeData(data, position);

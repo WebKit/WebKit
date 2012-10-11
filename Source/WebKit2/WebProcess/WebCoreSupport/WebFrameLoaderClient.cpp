@@ -68,6 +68,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/ProgressTracker.h>
+#include <WebCore/ResourceBuffer.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/Settings.h>
 #include <WebCore/UIEventWithKeyState.h>
@@ -898,7 +899,7 @@ void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
             if (!webPage)
                 return;
 
-            RefPtr<SharedBuffer> mainResourceData = loader->mainResourceData();
+            RefPtr<ResourceBuffer> mainResourceData = loader->mainResourceData();
             CoreIPC::DataReference dataReference(reinterpret_cast<const uint8_t*>(mainResourceData ? mainResourceData->data() : 0), mainResourceData ? mainResourceData->size() : 0);
             
             webPage->send(Messages::WebPageProxy::DidFinishLoadingDataForCustomRepresentation(loader->response().suggestedFilename(), dataReference));

@@ -57,6 +57,7 @@ namespace WebCore {
     class FrameLoader;
     class MainResourceLoader;
     class Page;
+    class ResourceBuffer;
     class ResourceLoader;
     class SchedulePair;
     class SharedBuffer;
@@ -81,7 +82,7 @@ namespace WebCore {
 
         FrameLoader* frameLoader() const;
         MainResourceLoader* mainResourceLoader() const { return m_mainResourceLoader.get(); }
-        PassRefPtr<SharedBuffer> mainResourceData() const;
+        PassRefPtr<ResourceBuffer> mainResourceData() const;
         
         DocumentWriter* writer() const { return &m_writer; }
 
@@ -277,7 +278,7 @@ namespace WebCore {
         ResourceLoaderSet m_multipartSubresourceLoaders;
         ResourceLoaderSet m_plugInStreamLoaders;
 
-        RefPtr<SharedBuffer> m_mainResourceData;
+        RefPtr<ResourceBuffer> m_mainResourceData;
         
         mutable DocumentWriter m_writer;
 
