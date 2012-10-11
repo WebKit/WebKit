@@ -94,9 +94,23 @@ static bool getSymbolInfo(ShHandle compiler, ShShaderInfo symbolType, Vector<ANG
         // nameBuffer and mappedNameBuffer. Also, the character set for symbol names
         // is a subset of Latin-1 as specified by the OpenGL ES Shading Language, Section 3.1 and
         // WebGL, Section "Characters Outside the GLSL Source Character Set".
-        symbol.name = String(nameBuffer.data());
-        symbol.mappedName = String(mappedNameBuffer.data());
-        symbols.append(symbol);
+
+        // If the variable is an array, add symbols for each array element
+        if (symbol.size > 1) {
+            for (int i = 0; i < symbol.size; i++) {
+                String name = nameBuffer.data();
+                String mappedName = mappedNameBuffer.data();
+                name.replace(name.length() - 2, 1, String::number(i));
+                mappedName.replace(mappedName.length() - 2, 1, String::number(i));
+                symbol.name = name;
+                symbol.mappedName = mappedName;
+                symbols.append(symbol);
+            }
+        } else {
+            symbol.name = String(nameBuffer.data());
+            symbol.mappedName = String(mappedNameBuffer.data());
+            symbols.append(symbol);
+        }
     }
     return true;
 }
