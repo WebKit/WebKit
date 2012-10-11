@@ -1,5 +1,12 @@
 2012-10-10  Simon Fraser  <simon.fraser@apple.com>
 
+        compositing/images/truncated-direct-png-image.html has been failing on Mac since it was
+        added. Mark it as an expected image failure.
+
+        * platform/mac/TestExpectations:
+
+2012-10-10  Simon Fraser  <simon.fraser@apple.com>
+
         compositing/tiling/crash-reparent-tiled-layer.html is flakey
         https://bugs.webkit.org/show_bug.cgi?id=82546
 
