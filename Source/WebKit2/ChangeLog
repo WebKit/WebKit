@@ -1,3 +1,11 @@
+2012-10-11  Sam Weinig  <sam@webkit.org>
+
+        Add missing WK_EXPORT for WKDOMTextIterator.
+
+        Rubber-stamped by Brady Eidson.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMTextIterator.h:
+
 2012-10-11  Zeno Albisser  <zeno@webkit.org>
 
         [Qt] Implement GraphicsSurfaceToken to replace uint64_t as token type.

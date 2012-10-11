@@ -26,9 +26,11 @@
 #if defined(__LP64__) && defined(__clang__)
 
 #import <Foundation/Foundation.h>
+#import <WebKit2/WKBase.h>
 
 @class WKDOMRange;
 
+WK_EXPORT
 @interface WKDOMTextIterator : NSObject
 
 - (id)initWithRange:(WKDOMRange *)range;
