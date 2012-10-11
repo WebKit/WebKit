@@ -12,9 +12,11 @@ linux-g++*:isEqual(QT_ARCH,i386) {
     QMAKE_CXXFLAGS += -march=pentium4 -msse2 -mfpmath=sse
 }
 
-# Treat warnings as errors on x86/Linux/GCC
-!production_build:linux-g++* {
-    isEqual(QT_ARCH,x86_64)|isEqual(QT_ARCH,i386): QMAKE_CXXFLAGS += -Werror
+linux-g++* {
+    !production_build {
+        # Treat warnings as errors on x86/Linux/GCC
+        isEqual(QT_ARCH,x86_64)|isEqual(QT_ARCH,i386): QMAKE_CXXFLAGS += -Werror
+    }
     greaterThan(QT_GCC_MAJOR_VERSION, 3):greaterThan(QT_GCC_MINOR_VERSION, 5) {
         !contains(QMAKE_CXXFLAGS, -std=(c|gnu)\\+\\+(0x|11)) {
             # We need to deactivate those warnings because some names conflicts with upcoming c++0x types (e.g.nullptr).
