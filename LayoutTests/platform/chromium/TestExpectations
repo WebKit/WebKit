@@ -1612,7 +1612,6 @@ webkit.org/b/98647 [ Android ] compositing/transitions/scale-transition-no-start
 webkit.org/b/98647 [ Android ] compositing/visibility/visibility-image-layers.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] css3/images/cross-fade-tiled.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] transforms/2d/hindi-rotated.html [ ImageOnlyFailure ]
-webkit.org/b/98647 [ Android ] transforms/3d/general/perspective-units.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] transforms/3d/point-mapping/3d-point-mapping-3.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] transforms/3d/point-mapping/3d-point-mapping-origins.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] transforms/3d/point-mapping/3d-point-mapping-overlapping.html [ ImageOnlyFailure ]
@@ -4023,3 +4022,5 @@ webkit.org/b/98948 [ Linux Debug ] http/tests/media/media-source/video-media-sou
 
 # Skipped until the prefix is removed.
 webkit.org/b/98953 http/tests/w3c/webperf/approved/HighResolutionTime [ Skip ]
+
+webkit.org/b/99089 transforms/3d/general/perspective-units.html [ Pass ImageOnlyFailure ]

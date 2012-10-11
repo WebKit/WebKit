@@ -1,3 +1,9 @@
+2012-10-11  Adam Barth  <abarth@webkit.org>
+
+        Note that this test is flaky.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip new failing tests.
