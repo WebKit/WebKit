@@ -1,3 +1,14 @@
+2012-10-11  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding platform-specific baseline for svg/custom/clip-mask-negative-scale.html
+        that's required after r130090.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/svg/custom/clip-mask-negative-scale-expected.png: Added.
+        * platform/gtk/svg/custom/clip-mask-negative-scale-expected.txt: Added.
+
 2012-10-11  Keishi Hattori  <keishi@webkit.org>
 
         F4 key should open the picker popup on Windows and Linux

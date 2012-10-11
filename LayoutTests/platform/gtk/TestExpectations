@@ -308,9 +308,6 @@ Bug(GTK) css3/filters [ Skip ]
 # Needs rebaseline after bug 97217 is fixed
 webkit.org/b/97325 css3/masking/clip-path-circle-relative-overflow.html [ ImageOnlyFailure Pass ]
 
-# Needs results
-webkit.org/b/97409 svg/custom/clip-mask-negative-scale.svg [ Missing Pass ]
-
 # CSS image-set support not yet enabled (needs ENABLE_CSS_IMAGE_SET).
 Bug(GTK) fast/css/image-set-parsing.html [ Skip ]
 Bug(GTK) fast/css/image-set-parsing-invalid.html [ Skip ]
