@@ -41,6 +41,7 @@
     Preferences.exposeDisableCache = true;
     Preferences.showDockToRight = true;
     Preferences.exposeFileSystemInspection = true;
+    Preferences.experimentsEnabled = false;
 })();}
 
 function buildPlatformExtensionAPI(extensionInfo)

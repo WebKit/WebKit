@@ -43,7 +43,8 @@ var Preferences = {
     exposeDisableCache: false,
     applicationTitle: "Web Inspector - %s",
     showDockToRight: false,
-    exposeFileSystemInspection: false
+    exposeFileSystemInspection: false,
+    experimentsEnabled: true
 }
 
 var Capabilities = {
@@ -216,7 +217,7 @@ WebInspector.ExperimentsSettings.prototype = {
      */
     get experimentsEnabled()
     {
-        return "experiments" in WebInspector.queryParamsObject;
+        return Preferences.experimentsEnabled || ("experiments" in WebInspector.queryParamsObject);
     },
     
     /**
