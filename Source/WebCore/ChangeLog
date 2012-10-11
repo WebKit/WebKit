@@ -1,3 +1,13 @@
+2012-10-11  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Filter out embedder injected content scripts
+        https://bugs.webkit.org/show_bug.cgi?id=99039
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/NetworkUISourceCodeProvider.js:
+        (WebInspector.NetworkUISourceCodeProvider.prototype._parsedScriptSource):
+
 2012-10-11  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: revert 131004, 131012, 131016, 131042, 131043 for breaking inspector console

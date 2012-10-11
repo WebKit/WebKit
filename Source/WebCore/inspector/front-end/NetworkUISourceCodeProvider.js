@@ -69,6 +69,12 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
             return;
         if (!script.sourceURL)
             return;
+        // Filter out embedder injected content scripts.
+        if (script.isContentScript && !script.hasSourceURL) {
+            var parsedURL = new WebInspector.ParsedURL(script.sourceURL);
+            if (!parsedURL.host)
+                return;
+        }
         if (this._uiSourceCodeForResource[script.sourceURL])
             return;
         var uiSourceCode = new WebInspector.JavaScriptSource(script.sourceURL, script, true);
