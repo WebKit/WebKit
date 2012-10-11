@@ -66,7 +66,7 @@ public:
     static const AtomicString& modeReadOnlyLegacy();
     static const AtomicString& modeReadWriteLegacy();
 
-    static Mode stringToMode(const String&, ExceptionCode&);
+    static Mode stringToMode(const String&, ScriptExecutionContext*, ExceptionCode&);
     static const AtomicString& modeToString(Mode, ExceptionCode&);
 
     IDBTransactionBackendInterface* backend() const;

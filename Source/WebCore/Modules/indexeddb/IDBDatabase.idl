@@ -52,14 +52,6 @@ module storage {
         [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMString storeName, in [Optional=DefaultIsNullString] DOMString mode)
             raises (IDBDatabaseException);
 
-        // FIXME: remove these when https://bugs.webkit.org/show_bug.cgi?id=85326 is fixed.
-        [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMStringList storeNames, in unsigned short mode)
-            raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMString[] storeNames, in unsigned short mode)
-            raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMString storeName, in unsigned short mode)
-            raises (IDBDatabaseException);
-
         void close();
 
         // EventTarget interface

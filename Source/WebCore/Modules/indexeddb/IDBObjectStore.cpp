@@ -41,7 +41,6 @@
 #include "IDBKeyRange.h"
 #include "IDBTracing.h"
 #include "IDBTransaction.h"
-#include "ScriptCallStack.h"
 #include "SerializedScriptValue.h"
 #include <wtf/UnusedParam.h>
 
@@ -498,7 +497,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* contex
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
         return 0;
     }
-    IDBCursor::Direction direction = IDBCursor::stringToDirection(directionString, ec);
+    IDBCursor::Direction direction = IDBCursor::stringToDirection(directionString, context, ec);
     if (ec)
         return 0;
 
@@ -509,28 +508,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* contex
     return request.release();
 }
 
-PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> range, unsigned short direction, ExceptionCode& ec)
-{
-    IDB_TRACE("IDBObjectStore::openCursor");
-    // FIXME: Is this thread-safe?
-    DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Numeric direction values are deprecated in IDBObjectStore.openCursor. Use \"next\", \"nextunique\", \"prev\", or \"prevunique\".")));
-    context->addConsoleMessage(JSMessageSource, LogMessageType, WarningMessageLevel, consoleMessage);
-    const String& directionString = IDBCursor::directionToString(direction, ec);
-    if (ec)
-        return 0;
-    return openCursor(context, range, directionString, ec);
-}
-
 PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, const String& direction, ExceptionCode& ec)
-{
-    IDB_TRACE("IDBObjectStore::openCursor");
-    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(key, ec);
-    if (ec)
-        return 0;
-    return openCursor(context, keyRange.release(), direction, ec);
-}
-
-PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, unsigned short direction, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStore::openCursor");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(key, ec);

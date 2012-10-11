@@ -1,17 +1,17 @@
 CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: Numeric transaction modes are deprecated in IDBDatabase.transaction. Use "readonly" or "readwrite".
 CONSOLE MESSAGE: Numeric transaction modes are deprecated in IDBDatabase.transaction. Use "readonly" or "readwrite".
-CONSOLE MESSAGE: Numeric direction values are deprecated in IDBObjectStore.openCursor. Use "next", "nextunique", "prev", or "prevunique".
-CONSOLE MESSAGE: Numeric direction values are deprecated in IDBObjectStore.openCursor. Use "next", "nextunique", "prev", or "prevunique".
+CONSOLE MESSAGE: Numeric direction values are deprecated in openCursor and openKeyCursor. Use "next", "nextunique", "prev", or "prevunique".
+CONSOLE MESSAGE: Numeric direction values are deprecated in openCursor and openKeyCursor. Use "next", "nextunique", "prev", or "prevunique".
 CONSOLE MESSAGE: Numeric transaction modes are deprecated in IDBDatabase.transaction. Use "readonly" or "readwrite".
-CONSOLE MESSAGE: Numeric direction values are deprecated in IDBObjectStore.openCursor. Use "next", "nextunique", "prev", or "prevunique".
-CONSOLE MESSAGE: Numeric direction values are deprecated in IDBObjectStore.openCursor. Use "next", "nextunique", "prev", or "prevunique".
+CONSOLE MESSAGE: Numeric direction values are deprecated in openCursor and openKeyCursor. Use "next", "nextunique", "prev", or "prevunique".
+CONSOLE MESSAGE: Numeric direction values are deprecated in openCursor and openKeyCursor. Use "next", "nextunique", "prev", or "prevunique".
 CONSOLE MESSAGE: Numeric transaction modes are deprecated in IDBDatabase.transaction. Use "readonly" or "readwrite".
-CONSOLE MESSAGE: Numeric direction values are deprecated in IDBObjectStore.openCursor. Use "next", "nextunique", "prev", or "prevunique".
-CONSOLE MESSAGE: Numeric direction values are deprecated in IDBObjectStore.openCursor. Use "next", "nextunique", "prev", or "prevunique".
+CONSOLE MESSAGE: Numeric direction values are deprecated in openCursor and openKeyCursor. Use "next", "nextunique", "prev", or "prevunique".
+CONSOLE MESSAGE: Numeric direction values are deprecated in openCursor and openKeyCursor. Use "next", "nextunique", "prev", or "prevunique".
 CONSOLE MESSAGE: Numeric transaction modes are deprecated in IDBDatabase.transaction. Use "readonly" or "readwrite".
-CONSOLE MESSAGE: Numeric direction values are deprecated in IDBObjectStore.openCursor. Use "next", "nextunique", "prev", or "prevunique".
-CONSOLE MESSAGE: Numeric direction values are deprecated in IDBObjectStore.openCursor. Use "next", "nextunique", "prev", or "prevunique".
+CONSOLE MESSAGE: Numeric direction values are deprecated in openCursor and openKeyCursor. Use "next", "nextunique", "prev", or "prevunique".
+CONSOLE MESSAGE: Numeric direction values are deprecated in openCursor and openKeyCursor. Use "next", "nextunique", "prev", or "prevunique".
 Test that legacy direction/mode constants work
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

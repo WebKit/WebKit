@@ -1,3 +1,15 @@
+2012-10-11  Joshua Bell  <jsbell@chromium.org>
+
+        WebIDL: overloaded methods prevent number -> string conversion
+        https://bugs.webkit.org/show_bug.cgi?id=85326
+
+        Reviewed by Kentaro Hara.
+
+        Updated expectations - new (more generic) console warnings.
+
+        * storage/indexeddb/cursor-overloads-expected.txt:
+        * storage/indexeddb/legacy-constants-expected.txt:
+
 2012-10-11  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

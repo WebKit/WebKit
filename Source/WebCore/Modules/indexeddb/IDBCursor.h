@@ -58,7 +58,7 @@ public:
     static const AtomicString& directionPrev();
     static const AtomicString& directionPrevUnique();
 
-    static IDBCursor::Direction stringToDirection(const String& modeString, ExceptionCode&);
+    static IDBCursor::Direction stringToDirection(const String& modeString, ScriptExecutionContext*, ExceptionCode&);
     static const AtomicString& directionToString(unsigned short mode, ExceptionCode&);
 
     static PassRefPtr<IDBCursor> create(PassRefPtr<IDBCursorBackendInterface>, Direction, IDBRequest*, IDBAny* source, IDBTransaction*);

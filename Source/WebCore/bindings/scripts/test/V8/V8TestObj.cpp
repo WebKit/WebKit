@@ -1619,6 +1619,17 @@ static v8::Handle<v8::Value> overloadedMethod10Callback(const v8::Arguments& arg
     return v8Undefined();
 }
 
+static v8::Handle<v8::Value> overloadedMethod11Callback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.overloadedMethod11");
+    if (args.Length() < 1)
+        return throwNotEnoughArgumentsError(args.GetIsolate());
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    imp->overloadedMethod(strArg);
+    return v8Undefined();
+}
+
 static v8::Handle<v8::Value> overloadedMethodCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.overloadedMethod");
@@ -1642,6 +1653,8 @@ static v8::Handle<v8::Value> overloadedMethodCallback(const v8::Arguments& args)
         return overloadedMethod9Callback(args);
     if ((args.Length() == 1 && (args[0]->IsArray())))
         return overloadedMethod10Callback(args);
+    if (args.Length() == 1)
+        return overloadedMethod11Callback(args);
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     return throwTypeError(0, args.GetIsolate());

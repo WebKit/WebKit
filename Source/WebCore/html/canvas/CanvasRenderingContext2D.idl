@@ -156,12 +156,12 @@ module html {
         void fillText(in DOMString text, in float x, in float y, in [Optional] float maxWidth);
         void strokeText(in DOMString text, in float x, in float y, in [Optional] float maxWidth);
 
-        void setStrokeColor(in DOMString color, in [Optional] float alpha);
+        void setStrokeColor(in [StrictTypeChecking] DOMString color, in [Optional] float alpha);
         void setStrokeColor(in float grayLevel, in [Optional] float alpha);
         void setStrokeColor(in float r, in float g, in float b, in float a);
         void setStrokeColor(in float c, in float m, in float y, in float k, in float a);
 
-        void setFillColor(in DOMString color, in [Optional] float alpha);
+        void setFillColor(in [StrictTypeChecking] DOMString color, in [Optional] float alpha);
         void setFillColor(in float grayLevel, in [Optional] float alpha);
         void setFillColor(in float r, in float g, in float b, in float a);
         void setFillColor(in float c, in float m, in float y, in float k, in float a);
@@ -198,7 +198,7 @@ module html {
                                in [Optional] float dx, in [Optional] float dy, in [Optional] float dw, in [Optional] float dh,
                                in [Optional] DOMString compositeOperation);
 
-        void setShadow(in float width, in float height, in float blur, in [Optional] DOMString color, in [Optional] float alpha);
+        void setShadow(in float width, in float height, in float blur, in [Optional, StrictTypeChecking] DOMString color, in [Optional] float alpha);
         void setShadow(in float width, in float height, in float blur, in float grayLevel, in [Optional] float alpha);
         void setShadow(in float width, in float height, in float blur, in float r, in float g, in float b, in float a);
         void setShadow(in float width, in float height, in float blur, in float c, in float m, in float y, in float k, in float a);

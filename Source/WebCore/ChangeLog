@@ -1,3 +1,58 @@
+2012-10-11  Joshua Bell  <jsbell@chromium.org>
+
+        WebIDL: overloaded methods prevent number -> string conversion
+        https://bugs.webkit.org/show_bug.cgi?id=85326
+
+        Reviewed by Kentaro Hara.
+
+        Make the default behavior for overloaded methods matching DOMString arguments match the
+        default behavior for non-overloaded methods, which more closely matches the WebIDL spec.
+        Enable legacy behavior of only matching undefined/null/string/object(and not number,
+        boolean, etc) via the StrictTypeChecking attribute.
+
+        Tests: storage/indexeddb/cursor-overloads.html
+               storage/indexeddb/legacy-constants.html
+               ... and run-bindings-tests
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::stringToDirection): Handle "0"..."4" as stringified legacy constants.
+        * Modules/indexeddb/IDBCursor.h:
+        * Modules/indexeddb/IDBDatabase.cpp: Remove redundant overloads.
+        (WebCore::IDBDatabase::transaction): Remove redundant overloads.
+        * Modules/indexeddb/IDBDatabase.h:
+        (IDBDatabase):
+        * Modules/indexeddb/IDBDatabase.idl: Remove redundant overloads.
+        * Modules/indexeddb/IDBIndex.cpp: Remove redundant overloads.
+        (WebCore::IDBIndex::openCursor):
+        (WebCore::IDBIndex::openKeyCursor):
+        * Modules/indexeddb/IDBIndex.h: Remove redundant overloads.
+        (IDBIndex):
+        * Modules/indexeddb/IDBIndex.idl: Remove redundant overloads.
+        * Modules/indexeddb/IDBObjectStore.cpp: Remove redundant overloads.
+        (WebCore::IDBObjectStore::openCursor):
+        * Modules/indexeddb/IDBObjectStore.h: Remove redundant overloads.
+        (IDBObjectStore):
+        * Modules/indexeddb/IDBObjectStore.idl: Remove redundant overloads.
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::stringToMode): Handle "0"..."4" as stringified legacy constants.
+        * Modules/indexeddb/IDBTransaction.h:
+        * bindings/scripts/CodeGeneratorJS.pm: Check for StrictTypeChecking attribute.
+        (GenerateParametersCheckExpression):
+        * bindings/scripts/CodeGeneratorV8.pm: Ditto.
+        (GenerateParametersCheckExpression):
+        * bindings/scripts/test/JS/JSTestObj.cpp: Rebaselined.
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod11):
+        (WebCore):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod):
+        * bindings/scripts/test/TestObj.idl: Added [StrictTypeChecking] to DOMString overloads,
+        plus a new DOMString overload w/o it.
+        * bindings/scripts/test/V8/V8TestObj.cpp: Rebaselined.
+        (WebCore::TestObjV8Internal::overloadedMethod11Callback):
+        (TestObjV8Internal):
+        (WebCore::TestObjV8Internal::overloadedMethodCallback):
+        * html/canvas/CanvasRenderingContext2D.idl: Tag legacy overloads with [StrictTypeChecking].
+        * xml/XMLHttpRequest.idl: Ditto.
+
 2012-10-11  Justin Novosad  <junov@chromium.org>
 
         [Chromium][Mac] r130994 seems to break chromium gpu test

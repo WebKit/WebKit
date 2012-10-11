@@ -172,9 +172,9 @@ module test {
 
 #if defined(TESTING_V8) || defined(TESTING_JS)
         // Overloads
-        void    overloadedMethod(in TestObj? objArg, in DOMString strArg);
+        void    overloadedMethod(in TestObj? objArg, in [StrictTypeChecking] DOMString strArg);
         void    overloadedMethod(in TestObj? objArg, in [Optional] long longArg);
-        void    overloadedMethod(in DOMString strArg);
+        void    overloadedMethod(in [StrictTypeChecking] DOMString strArg);
         void    overloadedMethod(in long longArg);
         void    overloadedMethod(in [Callback] TestCallback callback);
         void    overloadedMethod(in DOMStringList? listArg);
@@ -182,6 +182,7 @@ module test {
         void    overloadedMethod(in TestObj objArg);
         void    overloadedMethod(in DOMString[] arrayArg);
         void    overloadedMethod(in sequence<unsigned long> arrayArg);
+        void    overloadedMethod(in DOMString strArg);
 #endif
 
         // Class methods within JavaScript (like what's used for IDBKeyRange).
@@ -191,7 +192,7 @@ module test {
 
         // Static method with conditional on overloaded methods
         [Conditional=Condition1] static void overloadedMethod1(in long arg);
-        [Conditional=Condition1] static void overloadedMethod1(in DOMString type);
+        [Conditional=Condition1] static void overloadedMethod1(in [StrictTypeChecking] DOMString type);
 
         void classMethodWithClamp(in [Clamp] unsigned short objArgsShort, in [Clamp] unsigned long objArgsLong);
 

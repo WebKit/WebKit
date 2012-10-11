@@ -77,7 +77,7 @@ module xml {
             raises(DOMException);
         [Custom] void send(in Document data)
             raises(DOMException);
-        [Custom] void send(in DOMString data)
+        [Custom] void send(in [StrictTypeChecking] DOMString data)
             raises(DOMException);
         [Custom] void send(in DOMFormData data)
             raises(DOMException);

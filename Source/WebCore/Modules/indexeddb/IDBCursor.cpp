@@ -37,6 +37,7 @@
 #include "IDBRequest.h"
 #include "IDBTracing.h"
 #include "IDBTransaction.h"
+#include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {
@@ -288,7 +289,7 @@ PassRefPtr<IDBObjectStore> IDBCursor::effectiveObjectStore()
     return index->objectStore();
 }
 
-IDBCursor::Direction IDBCursor::stringToDirection(const String& directionString, ExceptionCode& ec)
+IDBCursor::Direction IDBCursor::stringToDirection(const String& directionString, ScriptExecutionContext* context, ExceptionCode& ec)
 {
     if (directionString == IDBCursor::directionNext())
         return IDBCursor::NEXT;
@@ -298,6 +299,14 @@ IDBCursor::Direction IDBCursor::stringToDirection(const String& directionString,
         return IDBCursor::PREV;
     if (directionString == IDBCursor::directionPrevUnique())
         return IDBCursor::PREV_NO_DUPLICATE;
+
+    // FIXME: Remove legacy constants. http://webkit.org/b/85315
+    // FIXME: This is not thread-safe.
+    DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Numeric direction values are deprecated in openCursor and openKeyCursor. Use \"next\", \"nextunique\", \"prev\", or \"prevunique\".")));
+    if (directionString == "0" || directionString == "1" || directionString == "2" || directionString == "3") {
+        context->addConsoleMessage(JSMessageSource, LogMessageType, WarningMessageLevel, consoleMessage);
+        return static_cast<IDBCursor::Direction>(IDBCursor::NEXT + (directionString[0] - '0'));
+    }
 
     ec = NATIVE_TYPE_ERR;
     return IDBCursor::NEXT;
