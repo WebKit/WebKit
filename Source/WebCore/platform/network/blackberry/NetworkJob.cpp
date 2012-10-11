@@ -252,6 +252,10 @@ void NetworkJob::notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthTy
 
     ProtectionSpaceServerType serverType = ProtectionSpaceServerHTTP;
     ProtectionSpaceAuthenticationScheme scheme = ProtectionSpaceAuthenticationSchemeDefault;
+
+    if (m_response.url().protocolIs("https"))
+        serverType = ProtectionSpaceServerHTTPS;
+
     switch (authType) {
     case NetworkRequest::AuthHTTPBasic:
         scheme = ProtectionSpaceAuthenticationSchemeHTTPBasic;
@@ -266,10 +270,16 @@ void NetworkJob::notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthTy
         scheme = ProtectionSpaceAuthenticationSchemeNTLM;
         break;
     case NetworkRequest::AuthFTP:
-        serverType = ProtectionSpaceServerFTP;
+        if (m_response.url().protocolIs("ftps"))
+            serverType = ProtectionSpaceServerFTPS;
+        else
+            serverType = ProtectionSpaceServerFTP;
         break;
     case NetworkRequest::AuthProxy:
-        serverType = ProtectionSpaceProxyHTTP;
+        if (m_response.url().protocolIs("https"))
+            serverType = ProtectionSpaceProxyHTTPS;
+        else
+            serverType = ProtectionSpaceProxyHTTP;
         break;
     case NetworkRequest::AuthNone:
     default:
@@ -698,7 +708,10 @@ bool NetworkJob::handleFTPHeader(const String& header)
         break;
     case 530:
         purgeCredentials();
-        sendRequestWithCredentials(ProtectionSpaceServerFTP, ProtectionSpaceAuthenticationSchemeDefault, "ftp");
+        if (m_response.url().protocolIs("ftps"))
+            sendRequestWithCredentials(ProtectionSpaceServerFTPS, ProtectionSpaceAuthenticationSchemeDefault, "ftp");
+        else
+            sendRequestWithCredentials(ProtectionSpaceServerFTP, ProtectionSpaceAuthenticationSchemeDefault, "ftp");
         break;
     case 230:
         storeCredentials();
@@ -727,13 +740,20 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
 
     String host;
     int port;
-    if (type == ProtectionSpaceProxyHTTP) {
+    if (type == ProtectionSpaceProxyHTTP || type == ProtectionSpaceProxyHTTPS) {
         // proxyAddress returns host:port, without a protocol. KURL can't parse this, so stick http
         // on the front.
         // (We could split into host and port by hand, but that gets hard to parse with IPv6 urls,
         // so better to reuse KURL's parsing.)
-        String proxyAddress = String("http://") + BlackBerry::Platform::Settings::instance()->proxyAddress(newURL.string().ascii().data()).c_str();
-        KURL proxyURL(KURL(), proxyAddress);
+        StringBuilder proxyAddress;
+
+        if (type == ProtectionSpaceProxyHTTP)
+            proxyAddress.append("http://");
+        else
+            proxyAddress.append("https://");
+
+        proxyAddress.append(BlackBerry::Platform::Settings::instance()->proxyAddress(newURL.string().ascii().data()).c_str());
+        KURL proxyURL(KURL(), proxyAddress.toString());
         host = proxyURL.host();
         port = proxyURL.port();
     } else {
@@ -766,7 +786,7 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
         String username;
         String password;
 
-        if (type == ProtectionSpaceProxyHTTP) {
+        if (type == ProtectionSpaceProxyHTTP || type == ProtectionSpaceProxyHTTPS) {
             username = String(BlackBerry::Platform::Settings::instance()->proxyUsername().c_str());
             password = String(BlackBerry::Platform::Settings::instance()->proxyPassword().c_str());
         } else {
@@ -778,7 +798,7 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
         if (!username.isEmpty() || !password.isEmpty()) {
             // Prevent them from been used again if they are wrong.
             // If they are correct, they will the put into CredentialStorage.
-            if (type == ProtectionSpaceProxyHTTP)
+            if (type == ProtectionSpaceProxyHTTP || type == ProtectionSpaceProxyHTTPS)
                 BlackBerry::Platform::Settings::instance()->setProxyCredential("", "");
             else {
                 m_handle->getInternal()->m_user = "";
@@ -825,7 +845,7 @@ void NetworkJob::storeCredentials()
     CredentialStorage::set(challenge.proposedCredential(), challenge.protectionSpace(), m_response.url());
     challenge.setStored(true);
 
-    if (challenge.protectionSpace().serverType() == ProtectionSpaceProxyHTTP) {
+    if (challenge.protectionSpace().serverType() == ProtectionSpaceProxyHTTP || challenge.protectionSpace().serverType() == ProtectionSpaceProxyHTTPS) {
         BlackBerry::Platform::Settings::instance()->setProxyCredential(challenge.proposedCredential().user().utf8().data(),
                                                                 challenge.proposedCredential().password().utf8().data());
         if (m_frame && m_frame->page())

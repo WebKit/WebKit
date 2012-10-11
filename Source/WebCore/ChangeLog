@@ -1,3 +1,35 @@
+2012-10-11  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Credentials for HTTPS urls are saved in the HTTP protection space
+        https://bugs.webkit.org/show_bug.cgi?id=99082
+
+        Reviewed by Rob Buis.
+
+        Adding support for secure ProtectionSpaces in Credentials
+        to prevent credentials from being overwritten/used when the user
+        accesses both versions of the same url.
+
+        PR 199457
+
+        The issue was the secure/non-secure version of the same protocol
+        were using the same ProtectionSpace enum in the network stack. When
+        the credentials are saved, it will overwrite each other since the
+        protection object is identical.
+
+        The fix is to use the WebKit provided secure enums when the protcol is secure.
+
+        To test this, access a restricted site that is running on http. Save the
+        password and access the same restricted site (same domain
+        and path) but on https. The browser should prompt for credentials.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::notifyAuthReceived):
+        (WebCore::NetworkJob::handleFTPHeader):
+        (WebCore::NetworkJob::sendRequestWithCredentials):
+        (WebCore::NetworkJob::storeCredentials):
+        * platform/network/blackberry/NetworkManager.cpp:
+        (WebCore::NetworkManager::startJob):
+
 2012-10-11  Arnaud Renevier  <a.renevier@sisa.samsung.com>
 
         [texmap] logic error in BitmapTextureGL::updateContents
