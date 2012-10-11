@@ -117,10 +117,10 @@ void ContentDistributor::distributeSelectionsTo(InsertionPoint* insertionPoint, 
         if (distributed[i])
             continue;
 
-        Node* child = pool[i].get();
-        if (!query.matches(child))
+        if (!query.matches(pool, i))
             continue;
 
+        Node* child = pool[i].get();
         distribution.append(child);
         m_nodeToInsertionPoint.add(child, insertionPoint);
         distributed[i] = true;

@@ -1486,6 +1486,7 @@ HEADERS += \
     css/RGBColor.h \
     css/SelectorChecker.h \
     css/ShadowValue.h \
+    css/SiblingTraversalStrategies.h \
     css/StyleMedia.h \
     css/StyleBuilder.h \
     css/StylePropertySet.h \

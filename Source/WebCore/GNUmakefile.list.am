@@ -2620,6 +2620,7 @@ webcore_sources += \
 	Source/WebCore/css/SelectorChecker.h \
 	Source/WebCore/css/ShadowValue.cpp \
 	Source/WebCore/css/ShadowValue.h \
+	Source/WebCore/css/SiblingTraversalStrategies.h \
 	Source/WebCore/css/StyleBuilder.cpp \
 	Source/WebCore/css/StyleBuilder.h \
 	Source/WebCore/css/StyleMedia.cpp \

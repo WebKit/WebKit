@@ -30,16 +30,45 @@
 #include "CSSParser.h"
 #include "CSSSelectorList.h"
 #include "InsertionPoint.h"
+#include "SelectorChecker.h"
 #include "ShadowRoot.h"
+#include "SiblingTraversalStrategies.h"
 
 namespace WebCore {
+
+ContentSelectorChecker::ContentSelectorChecker(Document* document, bool strictParsing)
+    : m_selectorChecker(document, strictParsing)
+{
+    m_selectorChecker.setMode(SelectorChecker::CollectingRules);
+}
+
+bool ContentSelectorChecker::checkContentSelector(CSSSelector* selector, const Vector<RefPtr<Node> >& siblings, int nth) const
+{
+    SelectorChecker::SelectorCheckingContext context(selector, toElement(siblings[nth].get()), SelectorChecker::VisitedMatchEnabled);
+    ShadowDOMSiblingTraversalStrategy strategy(siblings, nth);
+    return m_selectorChecker.checkOneSelector(context, strategy);
+}
+
+void ContentSelectorDataList::initialize(const CSSSelectorList& selectors)
+{
+    for (CSSSelector* selector = selectors.first(); selector; selector = CSSSelectorList::next(selector))
+        m_selectors.append(selector);
+}
+
+bool ContentSelectorDataList::matches(const ContentSelectorChecker& selectorChecker, const Vector<RefPtr<Node> >& siblings, int nth) const
+{
+    unsigned selectorCount = m_selectors.size();
+    for (unsigned i = 0; i < selectorCount; ++i) {
+        if (selectorChecker.checkContentSelector(m_selectors[i], siblings, nth))
+            return true;
+    }
+    return false;
+}
 
 ContentSelectorQuery::ContentSelectorQuery(const InsertionPoint* insertionPoint)
     : m_insertionPoint(insertionPoint)
     , m_selectorChecker(insertionPoint->document(), !insertionPoint->document()->inQuirksMode())
 {
-    m_selectorChecker.setMode(SelectorChecker::CollectingRules);
-
     if (insertionPoint->select().isNull() || insertionPoint->select().isEmpty()) {
         m_isValidSelector = true;
         return;
@@ -58,13 +87,10 @@ bool ContentSelectorQuery::isValidSelector() const
     return m_isValidSelector;
 }
 
-bool ContentSelectorQuery::matches(Node* node) const
+bool ContentSelectorQuery::matches(const Vector<RefPtr<Node> >& siblings, int nth) const
 {
+    Node* node = siblings[nth].get();
     ASSERT(node);
-    if (!node)
-        return false;
-
-    ASSERT(node->parentNode() == m_insertionPoint->shadowRoot()->host());
 
     if (m_insertionPoint->select().isNull() || m_insertionPoint->select().isEmpty())
         return true;
@@ -75,7 +101,7 @@ bool ContentSelectorQuery::matches(Node* node) const
     if (!node->isElementNode())
         return false;
 
-    return m_selectors.matches(m_selectorChecker, toElement(node));
+    return m_selectors.matches(m_selectorChecker, siblings, nth);
 }
 
 static bool validateSubSelector(CSSSelector* selector)

@@ -81,19 +81,6 @@ public:
         bool hasSelectionPseudo;
     };
 
-    class DOMSiblingTraversalStrategy {
-    public:
-        bool isFirstChild(Element*) const;
-        bool isLastChild(Element*) const;
-        bool isFirstOfType(Element*, const QualifiedName&) const;
-        bool isLastOfType(Element*, const QualifiedName&) const;
-
-        int countElementsBefore(Element*) const;
-        int countElementsAfter(Element*) const;
-        int countElementsOfTypeBefore(Element*, const QualifiedName&) const;
-        int countElementsOfTypeAfter(Element*, const QualifiedName&) const;
-    };
-
     bool checkSelector(CSSSelector*, Element*, bool isFastCheckableSelector = false) const;
     SelectorMatch checkSelector(const SelectorCheckingContext&, PseudoId&, bool& hasUnknownPseudoElements) const;
     template<typename SiblingTraversalStrategy>

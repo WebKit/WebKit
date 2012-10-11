@@ -1,3 +1,65 @@
+2012-10-11  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Make ContentSelectorQuery work when siblings are passed explicitly.
+        https://bugs.webkit.org/show_bug.cgi?id=96990
+
+        Reviewed by Dimitri Glazkov.
+
+        When we implement content reprojection in ShadowDOM, we have to pass a node pool to SelectorChecker.
+        We introdue ShadowDOMSiblingTraversalStrategy, which traverses a node pool instead of real node siblings.
+
+        Since ContentSelector is a very hot place, we don't want to regress performance. In the previous patch,
+        we've make ContentSelector::checkOneSelector template to take SiblingTraversalStrategy as an argument.
+
+        We also move DOMSiblingTraversalStrategy to SiblingTraversalStrategies.h.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/SelectorChecker.cpp:
+        (WebCore):
+        * css/SelectorChecker.h:
+        * css/SiblingTraversalStrategies.h: Added.
+        (WebCore):
+        (DOMSiblingTraversalStrategy): Moved from SelectorChecker.
+        (WebCore::DOMSiblingTraversalStrategy::isFirstChild):
+        (WebCore::DOMSiblingTraversalStrategy::isLastChild):
+        (WebCore::DOMSiblingTraversalStrategy::isFirstOfType):
+        (WebCore::DOMSiblingTraversalStrategy::isLastOfType):
+        (WebCore::DOMSiblingTraversalStrategy::countElementsBefore):
+        (WebCore::DOMSiblingTraversalStrategy::countElementsOfTypeBefore):
+        (WebCore::DOMSiblingTraversalStrategy::countElementsAfter):
+        (WebCore::DOMSiblingTraversalStrategy::countElementsOfTypeAfter):
+        (WebCore::ShadowDOMSiblingTraversalStrategy::ShadowDOMSiblingTraversalStrategy):
+        (ShadowDOMSiblingTraversalStrategy): SiblingTraversalStrategy which uses a node pool instead of a real element
+        siblings. This strategy takes a vector of node which we traverse.
+        (WebCore::ShadowDOMSiblingTraversalStrategy::isFirstChild):
+        (WebCore::ShadowDOMSiblingTraversalStrategy::isLastChild):
+        (WebCore::ShadowDOMSiblingTraversalStrategy::isFirstOfType):
+        (WebCore::ShadowDOMSiblingTraversalStrategy::isLastOfType):
+        (WebCore::ShadowDOMSiblingTraversalStrategy::countElementsBefore):
+        (WebCore::ShadowDOMSiblingTraversalStrategy::countElementsAfter):
+        (WebCore::ShadowDOMSiblingTraversalStrategy::countElementsOfTypeBefore):
+        (WebCore::ShadowDOMSiblingTraversalStrategy::countElementsOfTypeAfter):
+        * css/StyleResolver.cpp:
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ContentDistributor::distributeSelectionsTo):
+        * html/shadow/ContentSelectorQuery.cpp: Uses ShadowDOMSiblingTraversalStrategy instead of DOMSiblingTraversalStrategy.
+        (WebCore::ContentSelectorChecker::ContentSelectorChecker):
+        (WebCore):
+        (WebCore::ContentSelectorChecker::checkContentSelector):
+        (WebCore::ContentSelectorDataList::initialize):
+        (WebCore::ContentSelectorDataList::matches):
+        (WebCore::ContentSelectorQuery::ContentSelectorQuery):
+        (WebCore::ContentSelectorQuery::matches):
+        * html/shadow/ContentSelectorQuery.h:
+        (ContentSelectorChecker):
+        (WebCore):
+        (ContentSelectorDataList):
+        (ContentSelectorQuery):
+
 2012-10-11  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] GraphicsContextPlatformPrivate is leaking it's ShadowBlur

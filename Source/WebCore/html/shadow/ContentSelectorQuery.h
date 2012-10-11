@@ -43,25 +43,41 @@ class Document;
 class Node;
 class InsertionPoint;
 
+class ContentSelectorChecker {
+public:
+    ContentSelectorChecker(Document*, bool strictParsing);
+
+    bool checkContentSelector(CSSSelector*, const Vector<RefPtr<Node> >& siblings, int nthNode) const;
+private:
+    SelectorChecker m_selectorChecker;
+};
+
+class ContentSelectorDataList {
+public:
+    void initialize(const CSSSelectorList&);
+    bool matches(const ContentSelectorChecker&, const Vector<RefPtr<Node> >& siblings, int nthNode) const;
+
+private:
+    Vector<CSSSelector*> m_selectors;
+};
+
 class ContentSelectorQuery {
     WTF_MAKE_NONCOPYABLE(ContentSelectorQuery);
 public:
     explicit ContentSelectorQuery(const InsertionPoint*);
 
     bool isValidSelector() const;
-    bool matches(Node*) const;
+    bool matches(const Vector<RefPtr<Node> >& siblings, int nthNode) const;
 private:
     bool validateSelectorList();
 
     const InsertionPoint* m_insertionPoint;
-    SelectorDataList m_selectors;
+    ContentSelectorDataList m_selectors;
     CSSSelectorList m_selectorList;
-    SelectorChecker m_selectorChecker;
+    ContentSelectorChecker m_selectorChecker;
     bool m_isValidSelector;
 };
 
 }
-
-
 
 #endif

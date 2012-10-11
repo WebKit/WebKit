@@ -2623,6 +2623,7 @@
             'css/SelectorChecker.h',
             'css/ShadowValue.cpp',
             'css/ShadowValue.h',
+            'css/SiblingTraversalStrategies.h',
             'css/StyleBuilder.cpp',
             'css/StyleBuilder.h',
             'css/StyleMedia.cpp',

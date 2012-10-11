@@ -51,6 +51,7 @@
 #include "RenderStyle.h"
 #include "ScrollableArea.h"
 #include "ScrollbarTheme.h"
+#include "SiblingTraversalStrategies.h"
 #include "StyledElement.h"
 #include "Text.h"
 #include "XLinkNames.h"
@@ -1358,79 +1359,7 @@ bool SelectorChecker::determineSelectorScopes(const CSSSelectorList& selectorLis
     return true;
 }
 
-inline bool SelectorChecker::DOMSiblingTraversalStrategy::isFirstChild(Element* element) const
-{
-    return !element->previousElementSibling();
-}
-
-inline bool SelectorChecker::DOMSiblingTraversalStrategy::isLastChild(Element* element) const
-{
-    return !element->nextElementSibling();
-}
-
-inline bool SelectorChecker::DOMSiblingTraversalStrategy::isFirstOfType(Element* element, const QualifiedName& type) const
-{
-    for (const Element* sibling = element->previousElementSibling(); sibling; sibling = sibling->previousElementSibling()) {
-        if (sibling->hasTagName(type))
-            return false;
-    }
-    return true;
-}
-
-inline bool SelectorChecker::DOMSiblingTraversalStrategy::isLastOfType(Element* element, const QualifiedName& type) const
-{
-    for (const Element* sibling = element->nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
-        if (sibling->hasTagName(type))
-            return false;
-    }
-    return true;
-}
-
-inline int SelectorChecker::DOMSiblingTraversalStrategy::countElementsBefore(Element* element) const
-{
-    int count = 0;
-    for (const Element* sibling = element->previousElementSibling(); sibling; sibling = sibling->previousElementSibling()) {
-        RenderStyle* s = sibling->renderStyle();
-        unsigned index = s ? s->childIndex() : 0;
-        if (index) {
-            count += index;
-            break;
-        }
-        count++;
-    }
-
-    return count;
-}
-
-inline int SelectorChecker::DOMSiblingTraversalStrategy::countElementsOfTypeBefore(Element* element, const QualifiedName& type) const
-{
-    int count = 0;
-    for (const Element* sibling = element->previousElementSibling(); sibling; sibling = sibling->previousElementSibling()) {
-        if (sibling->hasTagName(type))
-            ++count;
-    }
-
-    return count;
-}
-
-inline int SelectorChecker::DOMSiblingTraversalStrategy::countElementsAfter(Element* element) const
-{
-    int count = 0;
-    for (const Element* sibling = element->nextElementSibling(); sibling; sibling = sibling->nextElementSibling())
-        ++count;
-
-    return count;
-}
-
-inline int SelectorChecker::DOMSiblingTraversalStrategy::countElementsOfTypeAfter(Element* element, const QualifiedName& type) const
-{
-    int count = 0;
-    for (const Element* sibling = element->nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
-        if (sibling->hasTagName(type))
-            ++count;
-    }
-
-    return count;
-}
+template
+bool SelectorChecker::checkOneSelector(const SelectorChecker::SelectorCheckingContext&, const ShadowDOMSiblingTraversalStrategy&) const;
 
 }

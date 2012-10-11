@@ -1642,6 +1642,7 @@
 		53C8298E13D8D92700DE2DEB /* RenderFlexibleBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C8298C13D8D92700DE2DEB /* RenderFlexibleBox.h */; };
 		550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* QualifiedName.cpp */; };
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5728BD9E1625369600C40B56 /* SiblingTraversalStrategies.h in Headers */ = {isa = PBXBuildFile; fileRef = 5728BD9D1625369600C40B56 /* SiblingTraversalStrategies.h */; };
 		573D134714CE39FF0057ABCA /* InspectorTypeBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 573D134514CE39FF0057ABCA /* InspectorTypeBuilder.cpp */; };
 		5759898715AAC0B100353C31 /* ImageInnerElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 572145CC15A51DA700AD119C /* ImageInnerElement.h */; };
 		5759898915AAC0E900353C31 /* ImageInnerElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 572145CB15A51DA700AD119C /* ImageInnerElement.cpp */; };
@@ -8838,6 +8839,7 @@
 		550A0BC8085F6039007353D6 /* QualifiedName.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedName.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		572145CB15A51DA700AD119C /* ImageInnerElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageInnerElement.cpp; sourceTree = "<group>"; };
 		572145CC15A51DA700AD119C /* ImageInnerElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageInnerElement.h; sourceTree = "<group>"; };
+		5728BD9D1625369600C40B56 /* SiblingTraversalStrategies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SiblingTraversalStrategies.h; sourceTree = "<group>"; };
 		573D134514CE39FF0057ABCA /* InspectorTypeBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorTypeBuilder.cpp; sourceTree = "<group>"; };
 		573D134614CE39FF0057ABCA /* InspectorTypeBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorTypeBuilder.h; sourceTree = "<group>"; };
 		5759898E15AEAB9400353C31 /* ImageLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageLoaderClient.h; sourceTree = "<group>"; };
@@ -21255,6 +21257,7 @@
 				E44B4BB2141650D7002B1D8B /* SelectorChecker.h */,
 				A80E6CCA0A1989CA007FB8C5 /* ShadowValue.cpp */,
 				A80E6CBE0A1989CA007FB8C5 /* ShadowValue.h */,
+				5728BD9D1625369600C40B56 /* SiblingTraversalStrategies.h */,
 				E100EE731546EAC100BA11D1 /* StyleBuilder.cpp */,
 				E100EE741546EAC100BA11D1 /* StyleBuilder.h */,
 				0FF5026E102BA9660066F39A /* StyleMedia.cpp */,
@@ -25572,6 +25575,7 @@
 				6EAF34101613869A00859625 /* ExclusionPolygon.h in Headers */,
 				31955A88160D199200858025 /* RenderSnapshottedPlugIn.h in Headers */,
 				514BC843161CF05C004D52F4 /* ResourceBuffer.h in Headers */,
+				5728BD9E1625369600C40B56 /* SiblingTraversalStrategies.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

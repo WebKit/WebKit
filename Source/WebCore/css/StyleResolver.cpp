@@ -107,6 +107,7 @@
 #include "ShadowData.h"
 #include "ShadowRoot.h"
 #include "ShadowValue.h"
+#include "SiblingTraversalStrategies.h"
 #include "SkewTransformOperation.h"
 #include "StyleBuilder.h"
 #include "StyleCachedImage.h"
