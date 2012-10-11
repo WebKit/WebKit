@@ -1113,6 +1113,8 @@ String RenderLayerCompositor::layerTreeAsText(LayerTreeFlags flags)
     if (!m_rootContentLayer)
         return String();
 
+    flushPendingLayerChanges(true);
+
     LayerTreeAsTextBehavior layerTreeBehavior = LayerTreeAsTextBehaviorNormal;
     if (flags & LayerTreeFlagsIncludeDebugInfo)
         layerTreeBehavior |= LayerTreeAsTextDebug;

@@ -1,3 +1,20 @@
+2012-10-10  Simon Fraser  <simon.fraser@apple.com>
+
+        compositing/tiling/crash-reparent-tiled-layer.html is flakey
+        https://bugs.webkit.org/show_bug.cgi?id=82546
+
+        Reviewed by Beth Dakin.
+
+        When calling layerTreeAsText() inside the document load event,
+        GraphicsLayerCA may have not flushed layers yet, so layer tree
+        properties that are affected by flushing (tiled layer, visible
+        rects) appeared flakey in tests.
+        
+        Fix by forcing a flush before dumping the layer tree.        
+        
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerTreeAsText):
+
 2012-10-10  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=98984

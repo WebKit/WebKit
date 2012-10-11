@@ -1147,9 +1147,6 @@ webkit.org/b/69210 fast/inline/continuation-outlines-with-layers-2.html [ Failur
 webkit.org/b/69210 fast/inline/continuation-outlines-with-layers.html [ Skip ]
 webkit.org/b/69210 fast/repaint/transform-absolute-in-positioned-container.html [ Failure ]
 
-# Tiled-layer compositing tests are flakey.
-webkit.org/b/82546 compositing/tiling/crash-reparent-tiled-layer.html [ Failure Pass ]
-
 # Requires rebaseline after bug 83978
 webkit.org/b/83978 tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html [ Skip ]
 

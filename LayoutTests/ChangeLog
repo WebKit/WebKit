@@ -1,3 +1,14 @@
+2012-10-10  Simon Fraser  <simon.fraser@apple.com>
+
+        compositing/tiling/crash-reparent-tiled-layer.html is flakey
+        https://bugs.webkit.org/show_bug.cgi?id=82546
+
+        Reviewed by Beth Dakin.
+
+        Unskip a previously-flakey tiled layer test that should not be flakey after this change.
+
+        * platform/mac/TestExpectations:
+
 2012-10-10  James Simonsen  <simonjam@chromium.org>
 
         Import W3C test suite for performance.now()
