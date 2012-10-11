@@ -1,3 +1,13 @@
+2012-10-11  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Rebaselining fast/css-generated-content/table-row-group-to-inline.html after r131004.
+        Adding a flaky crashing expectation for fast/css/style-scoped/style-scoped-apply-authot-styles.html.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/css-generated-content/table-row-group-to-inline-expected.txt:
+
 2012-10-11  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Unskip fast/dom/shadow/shadowdom-dynamic-styling.html
