@@ -38,6 +38,10 @@ void JSCell::destroy(JSCell* cell)
     cell->JSCell::~JSCell();
 }
 
+void JSCell::copyBackingStore(JSCell*, CopyVisitor&)
+{
+}
+
 bool JSCell::getString(ExecState* exec, String& stringValue) const
 {
     if (!isString())

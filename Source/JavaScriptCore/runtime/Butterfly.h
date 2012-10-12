@@ -35,7 +35,7 @@
 namespace JSC {
 
 class JSGlobalData;
-class SlotVisitor;
+class CopyVisitor;
 struct ArrayStorage;
 
 class Butterfly {
@@ -73,7 +73,7 @@ public:
 
     static Butterfly* create(JSGlobalData&, size_t preCapacity, size_t propertyCapacity, bool hasIndexingHeader, const IndexingHeader&, size_t indexingPayloadSizeInBytes);
     static Butterfly* create(JSGlobalData&, Structure*);
-    static Butterfly* createUninitializedDuringCollection(SlotVisitor&, size_t preCapacity, size_t propertyCapacity, bool hasIndexingHeader, size_t indexingPayloadSizeInBytes);
+    static Butterfly* createUninitializedDuringCollection(CopyVisitor&, size_t preCapacity, size_t propertyCapacity, bool hasIndexingHeader, size_t indexingPayloadSizeInBytes);
     
     IndexingHeader* indexingHeader() { return IndexingHeader::from(this); }
     const IndexingHeader* indexingHeader() const { return IndexingHeader::from(this); }

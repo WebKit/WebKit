@@ -116,6 +116,7 @@ EXPORTS
     ?convertLatin1ToUTF8@Unicode@WTF@@YA?AW4ConversionResult@12@PAPBEPBEPAPADPAD@Z
     ?convertUTF16ToUTF8@Unicode@WTF@@YA?AW4ConversionResult@12@PAPB_WPB_WPAPADPAD_N@Z
     ?convertUTF8ToUTF16@Unicode@WTF@@YA?AW4ConversionResult@12@PAPBDPBDPAPA_WPA_W_N@Z
+    ?copyBackingStore@JSObject@JSC@@SAXPAVJSCell@2@AAVCopyVisitor@2@@Z
     ?create@JSFunction@JSC@@SAPAV12@PAVExecState@2@PAVJSGlobalObject@2@HABVString@WTF@@P6I_J0@ZW4Intrinsic@2@3@Z
     ?create@JSGlobalData@JSC@@SA?AV?$PassRefPtr@VJSGlobalData@JSC@@@WTF@@W4ThreadStackType@2@W4HeapType@2@@Z
     ?create@RegExp@JSC@@SAPAV12@AAVJSGlobalData@2@ABVString@WTF@@W4RegExpFlags@2@@Z

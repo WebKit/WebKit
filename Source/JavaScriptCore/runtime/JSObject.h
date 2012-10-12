@@ -115,6 +115,7 @@ namespace JSC {
         }
         
         JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
+        JS_EXPORT_PRIVATE static void copyBackingStore(JSCell*, CopyVisitor&);
 
         JS_EXPORT_PRIVATE static String className(const JSObject*);
 
@@ -639,6 +640,7 @@ namespace JSC {
         void resetInheritorID(JSGlobalData&);
         
         void visitButterfly(SlotVisitor&, Butterfly*, size_t storageSize);
+        void copyButterfly(CopyVisitor&, Butterfly*, size_t storageSize);
 
         // Call this if you know that the object is in a mode where it has array
         // storage. This will assert otherwise.
@@ -964,14 +966,14 @@ inline JSValue JSObject::prototype() const
     return structure()->storedPrototype();
 }
 
-inline bool JSCell::inherits(const ClassInfo* info) const
-{
-    return classInfo()->isSubClassOf(info);
-}
-
 inline const MethodTable* JSCell::methodTable() const
 {
     return &classInfo()->methodTable;
+}
+
+inline bool JSCell::inherits(const ClassInfo* info) const
+{
+    return classInfo()->isSubClassOf(info);
 }
 
 // this method is here to be after the inline declaration of JSCell::inherits

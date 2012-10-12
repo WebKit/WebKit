@@ -2354,6 +2354,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\heap\CopyVisitor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\heap\CopyVisitor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\heap\CopyVisitorInlineMethods.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\heap\DFGCodeBlocks.cpp"
 				>
 			</File>
@@ -2447,6 +2459,14 @@
 			</File>
 			<File
 				RelativePath="..\..\heap\BlockAllocator.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\heap\GCThread.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\heap\GCThread.h"
 				>
 			</File>
 			<File

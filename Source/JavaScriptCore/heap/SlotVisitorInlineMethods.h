@@ -136,30 +136,6 @@ inline void SlotVisitor::mergeOpaqueRootsIfProfitable()
     mergeOpaqueRoots();
 }
     
-ALWAYS_INLINE bool SlotVisitor::checkIfShouldCopyAndPinOtherwise(void* oldPtr, size_t bytes)
-{
-    if (CopiedSpace::isOversize(bytes)) {
-        m_shared.m_copiedSpace->pin(CopiedSpace::oversizeBlockFor(oldPtr));
-        return false;
-    }
-
-    if (m_shared.m_copiedSpace->isPinned(oldPtr))
-        return false;
-    
-    return true;
-}
-
-ALWAYS_INLINE void* SlotVisitor::allocateNewSpace(size_t bytes)
-{
-    void* result = 0; // Compilers don't realize that this will be assigned.
-    if (LIKELY(m_copiedAllocator.tryAllocate(bytes, &result)))
-        return result;
-    
-    result = allocateNewSpaceSlow(bytes);
-    ASSERT(result);
-    return result;
-}       
-
 inline void SlotVisitor::donate()
 {
     ASSERT(m_isInParallelMode);
@@ -175,6 +151,23 @@ inline void SlotVisitor::donateAndDrain()
     drain();
 }
 
+inline void SlotVisitor::copyLater(void* ptr, size_t bytes)
+{
+    if (CopiedSpace::isOversize(bytes)) {
+        m_shared.m_copiedSpace->pin(CopiedSpace::oversizeBlockFor(ptr));
+        return;
+    }
+
+    CopiedBlock* block = CopiedSpace::blockFor(ptr);
+    if (block->isPinned())
+        return;
+
+    block->reportLiveBytes(bytes);
+
+    if (!block->shouldEvacuate())
+        m_shared.m_copiedSpace->pin(block);
+}
+    
 } // namespace JSC
 
 #endif // SlotVisitorInlineMethods_h

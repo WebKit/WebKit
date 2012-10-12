@@ -107,8 +107,10 @@ SET(JavaScriptCore_SOURCES
 
     heap/BlockAllocator.cpp
     heap/CopiedSpace.cpp
+    heap/CopyVisitor.cpp
     heap/ConservativeRoots.cpp
     heap/DFGCodeBlocks.cpp
+    heap/GCThread.cpp
     heap/GCThreadSharedData.cpp
     heap/HandleSet.cpp
     heap/HandleStack.cpp

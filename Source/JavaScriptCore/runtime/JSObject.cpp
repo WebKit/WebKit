@@ -26,6 +26,8 @@
 
 #include "ButterflyInlineMethods.h"
 #include "CopiedSpaceInlineMethods.h"
+#include "CopyVisitor.h"
+#include "CopyVisitorInlineMethods.h"
 #include "DatePrototype.h"
 #include "ErrorConstructor.h"
 #include "GetterSetter.h"
@@ -90,7 +92,7 @@ static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* class
     }
 }
 
-ALWAYS_INLINE void JSObject::visitButterfly(SlotVisitor& visitor, Butterfly* butterfly, size_t storageSize)
+ALWAYS_INLINE void JSObject::copyButterfly(CopyVisitor& visitor, Butterfly* butterfly, size_t storageSize)
 {
     ASSERT(butterfly);
     
@@ -107,26 +109,20 @@ ALWAYS_INLINE void JSObject::visitButterfly(SlotVisitor& visitor, Butterfly* but
         preCapacity = 0;
         indexingPayloadSizeInBytes = 0;
     }
-    size_t capacityInBytes = Butterfly::totalSize(
-        preCapacity, propertyCapacity, hasIndexingHeader, indexingPayloadSizeInBytes);
-    if (visitor.checkIfShouldCopyAndPinOtherwise(
-            butterfly->base(preCapacity, propertyCapacity), capacityInBytes)) {
+    size_t capacityInBytes = Butterfly::totalSize(preCapacity, propertyCapacity, hasIndexingHeader, indexingPayloadSizeInBytes);
+    if (visitor.checkIfShouldCopy(butterfly->base(preCapacity, propertyCapacity), capacityInBytes)) {
         Butterfly* newButterfly = Butterfly::createUninitializedDuringCollection(visitor, preCapacity, propertyCapacity, hasIndexingHeader, indexingPayloadSizeInBytes);
         
-        // Mark and copy the properties.
+        // Copy the properties.
         PropertyStorage currentTarget = newButterfly->propertyStorage();
         PropertyStorage currentSource = butterfly->propertyStorage();
-        for (size_t count = storageSize; count--;) {
-            JSValue value = (--currentSource)->get();
-            ASSERT(value);
-            visitor.appendUnbarrieredValue(&value);
-            (--currentTarget)->setWithoutWriteBarrier(value);
-        }
+        for (size_t count = storageSize; count--;)
+            (--currentTarget)->setWithoutWriteBarrier((--currentSource)->get());
         
         if (UNLIKELY(hasIndexingHeader)) {
             *newButterfly->indexingHeader() = *butterfly->indexingHeader();
             
-            // Mark and copy the array if appropriate.
+            // Copy the array if appropriate.
             
             WriteBarrier<Unknown>* currentTarget;
             WriteBarrier<Unknown>* currentSource;
@@ -146,8 +142,6 @@ ALWAYS_INLINE void JSObject::visitButterfly(SlotVisitor& visitor, Butterfly* but
                 currentTarget = newButterfly->arrayStorage()->m_vector;
                 currentSource = butterfly->arrayStorage()->m_vector;
                 count = newButterfly->arrayStorage()->vectorLength();
-                if (newButterfly->arrayStorage()->m_sparseMap)
-                    visitor.append(&newButterfly->arrayStorage()->m_sparseMap);
                 break;
             }
             default:
@@ -158,32 +152,50 @@ ALWAYS_INLINE void JSObject::visitButterfly(SlotVisitor& visitor, Butterfly* but
                 break;
             }
 
-            while (count--) {
-                JSValue value = (currentSource++)->get();
-                if (value)
-                    visitor.appendUnbarrieredValue(&value);
-                (currentTarget++)->setWithoutWriteBarrier(value);
-            }
+            while (count--)
+                (currentTarget++)->setWithoutWriteBarrier((currentSource++)->get());
         }
         
         m_butterfly = newButterfly;
+        visitor.didCopy(butterfly->base(preCapacity, propertyCapacity), capacityInBytes);
+    } 
+}
+
+ALWAYS_INLINE void JSObject::visitButterfly(SlotVisitor& visitor, Butterfly* butterfly, size_t storageSize)
+{
+    ASSERT(butterfly);
+    
+    Structure* structure = this->structure();
+    
+    size_t propertyCapacity = structure->outOfLineCapacity();
+    size_t preCapacity;
+    size_t indexingPayloadSizeInBytes;
+    bool hasIndexingHeader = JSC::hasIndexingHeader(structure->indexingType());
+    if (UNLIKELY(hasIndexingHeader)) {
+        preCapacity = butterfly->indexingHeader()->preCapacity(structure);
+        indexingPayloadSizeInBytes = butterfly->indexingHeader()->indexingPayloadSizeInBytes(structure);
     } else {
-        // Mark the properties.
-        visitor.appendValues(butterfly->propertyStorage() - storageSize, storageSize);
-        
-        // Mark the array if appropriate.
-        switch (structure->indexingType()) {
-        case ALL_CONTIGUOUS_INDEXING_TYPES:
-            visitor.appendValues(butterfly->contiguous(), butterfly->publicLength());
-            break;
-        case ALL_ARRAY_STORAGE_INDEXING_TYPES:
-            visitor.appendValues(butterfly->arrayStorage()->m_vector, butterfly->arrayStorage()->vectorLength());
-            if (butterfly->arrayStorage()->m_sparseMap)
-                visitor.append(&butterfly->arrayStorage()->m_sparseMap);
-            break;
-        default:
-            break;
-        }
+        preCapacity = 0;
+        indexingPayloadSizeInBytes = 0;
+    }
+    size_t capacityInBytes = Butterfly::totalSize(preCapacity, propertyCapacity, hasIndexingHeader, indexingPayloadSizeInBytes);
+
+    // Mark the properties.
+    visitor.appendValues(butterfly->propertyStorage() - storageSize, storageSize);
+    visitor.copyLater(butterfly->base(preCapacity, propertyCapacity), capacityInBytes);
+    
+    // Mark the array if appropriate.
+    switch (structure->indexingType()) {
+    case ALL_CONTIGUOUS_INDEXING_TYPES:
+        visitor.appendValues(butterfly->contiguous(), butterfly->publicLength());
+        break;
+    case ALL_ARRAY_STORAGE_INDEXING_TYPES:
+        visitor.appendValues(butterfly->arrayStorage()->m_vector, butterfly->arrayStorage()->vectorLength());
+        if (butterfly->arrayStorage()->m_sparseMap)
+            visitor.append(&butterfly->arrayStorage()->m_sparseMap);
+        break;
+    default:
+        break;
     }
 }
 
@@ -205,6 +217,16 @@ void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 #if !ASSERT_DISABLED
     visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
 #endif
+}
+
+void JSObject::copyBackingStore(JSCell* cell, CopyVisitor& visitor)
+{
+    JSObject* thisObject = jsCast<JSObject*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    
+    Butterfly* butterfly = thisObject->butterfly();
+    if (butterfly)
+        thisObject->copyButterfly(visitor, butterfly, thisObject->structure()->outOfLineSize());
 }
 
 void JSFinalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)

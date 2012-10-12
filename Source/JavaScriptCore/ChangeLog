@@ -1,3 +1,190 @@
+2012-10-09  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Copying collection shouldn't require O(live bytes) memory overhead
+        https://bugs.webkit.org/show_bug.cgi?id=98792
+
+        Reviewed by Filip Pizlo.
+
+        Currently our copying collection occurs simultaneously with the marking phase. We'd like 
+        to be able to reuse CopiedBlocks as soon as they become fully evacuated, but this is not 
+        currently possible because we don't know the liveness statistics of each old CopiedBlock 
+        until marking/copying has already finished. Instead, we have to allocate additional memory 
+        from the OS to use as our working set of CopiedBlocks while copying. We then return the 
+        fully evacuated old CopiedBlocks back to the block allocator, thus giving our copying phase 
+        an O(live bytes) overhead.
+
+        To fix this, we should instead split the copying phase apart from the marking phase. This 
+        way we have full liveness data for each CopiedBlock during the copying phase so that we 
+        can reuse them the instant they become fully evacuated. With the additional liveness data 
+        that each CopiedBlock accumulates, we can add some additional heuristics to the collector. 
+        For example, we can calculate our global Heap fragmentation and only choose to do a copying 
+        phase if that fragmentation exceeds some limit. As another example, we can skip copying 
+        blocks that are already above a particular fragmentation limit, which allows older objects 
+        to coalesce into blocks that are rarely copied.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/CopiedBlock.h:
+        (CopiedBlock):
+        (JSC::CopiedBlock::CopiedBlock): Added support for tracking live bytes in a CopiedBlock in a 
+        thread-safe fashion.
+        (JSC::CopiedBlock::reportLiveBytes): Adds a number of live bytes to the block in a thread-safe 
+        fashion using compare and swap.
+        (JSC):
+        (JSC::CopiedBlock::didSurviveGC): Called when a block survives a single GC without being 
+        evacuated. This could be called for a couple reasons: (a) the block was pinned or (b) we 
+        decided not to do any copying. A block can become pinned for a few reasons: (1) a pointer into 
+        the block was found during the conservative scan. (2) the block was deemed full enough to 
+        not warrant any copying. (3) The block is oversize and was found to be live. 
+        (JSC::CopiedBlock::didEvacuateBytes): Called when some number of bytes are copied from this 
+        block. If the number of live bytes ever hits zero, the block will return itself to the 
+        BlockAllocator to be recycled.
+        (JSC::CopiedBlock::canBeRecycled): Indicates that a block has no live bytes and can be 
+        immediately recycled. This is used for blocks that are found to have zero live bytes at the 
+        beginning of the copying phase.
+        (JSC::CopiedBlock::shouldEvacuate): This function returns true if the current fragmentation 
+        of the block is above our fragmentation threshold, and false otherwise.
+        (JSC::CopiedBlock::isPinned): Added an accessor for the pinned flag
+        (JSC::CopiedBlock::liveBytes): 
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::CopiedSpace):
+        (JSC::CopiedSpace::doneFillingBlock): Changed so that we can exchange our filled block for a 
+        fresh block. This avoids the situation where a thread returns its borrowed block, it's the last 
+        borrowed block, so CopiedSpace thinks that copying has completed, and it starts doing all of the 
+        copying phase cleanup. In actuality, the thread wanted another block after returning the current 
+        block. So we allow the thread to atomically exchange its block for another block.
+        (JSC::CopiedSpace::startedCopying): Added the calculation of global Heap fragmentation to 
+        determine if the copying phase should commence. We include the MarkedSpace in our fragmentation 
+        calculation by assuming that the MarkedSpace is 0% fragmented since we can reuse any currently 
+        free memory in it (i.e. we ignore any internal fragmentation in the MarkedSpace). While we're 
+        calculating the fragmentation of CopiedSpace, we also return any free blocks we find along the 
+        way (meaning liveBytes() == 0).
+        (JSC):
+        (JSC::CopiedSpace::doneCopying): We still have to iterate over all the blocks, regardless of
+        whether the copying phase took place or not so that we can reset all of the live bytes counters 
+        and un-pin any pinned blocks.
+        * heap/CopiedSpace.h:
+        (CopiedSpace):
+        (JSC::CopiedSpace::shouldDoCopyPhase):
+        * heap/CopiedSpaceInlineMethods.h:
+        (JSC::CopiedSpace::recycleEvacuatedBlock): This function is distinct from recycling a borrowed block 
+        because a borrowed block hasn't been added to the CopiedSpace yet, but an evacuated block is still
+        currently in CopiedSpace, so we have to make sure we properly remove all traces of the block from 
+        CopiedSpace before returning it to BlockAllocator.
+        (JSC::CopiedSpace::recycleBorrowedBlock): Renamed to indicate the distinction mentioned above.
+        * heap/CopyVisitor.cpp: Added.
+        (JSC):
+        (JSC::CopyVisitor::CopyVisitor):
+        (JSC::CopyVisitor::copyFromShared): Main function for any thread participating in the copying phase.
+        Grabs chunks of MarkedBlocks from the shared list and copies the backing store of anybody who needs
+        it until there are no more chunks to copy.
+        * heap/CopyVisitor.h: Added.
+        (JSC):
+        (CopyVisitor):
+        * heap/CopyVisitorInlineMethods.h: Added.
+        (JSC):
+        (GCCopyPhaseFunctor):
+        (JSC::GCCopyPhaseFunctor::GCCopyPhaseFunctor):
+        (JSC::GCCopyPhaseFunctor::operator()):
+        (JSC::CopyVisitor::checkIfShouldCopy): We don't have to check shouldEvacuate() because all of those 
+        checks are done during the marking phase.
+        (JSC::CopyVisitor::allocateNewSpace): 
+        (JSC::CopyVisitor::allocateNewSpaceSlow):
+        (JSC::CopyVisitor::startCopying): Initialization function for a thread that is about to start copying.
+        (JSC::CopyVisitor::doneCopying):
+        (JSC::CopyVisitor::didCopy): This callback is called by an object that has just successfully copied its
+        backing store. It indicates to the CopiedBlock that somebody has just finished evacuating some number of 
+        bytes from it, and, if the CopiedBlock now has no more live bytes, can be recycled immediately.
+        * heap/GCThread.cpp: Added.
+        (JSC):
+        (JSC::GCThread::GCThread): This is a new class that encapsulates a single thread responsible for participating 
+        in a specific set of GC phases. Currently, that set of phases includes Mark, Copy, and Exit. Each thread 
+        monitors a shared variable in its associated GCThreadSharedData. The main thread updates this m_currentPhase
+        variable as collection progresses through the various phases. Parallel marking still works exactly like it 
+        has. In other words, the "run loop" for each of the GC threads sits above any individual phase, thus keeping 
+        the separate phases of the collector orthogonal.
+        (JSC::GCThread::threadID):
+        (JSC::GCThread::initializeThreadID):
+        (JSC::GCThread::slotVisitor):
+        (JSC::GCThread::copyVisitor):
+        (JSC::GCThread::waitForNextPhase):
+        (JSC::GCThread::gcThreadMain):
+        (JSC::GCThread::gcThreadStartFunc):
+        * heap/GCThread.h: Added.
+        (JSC):
+        (GCThread):
+        * heap/GCThreadSharedData.cpp: The GCThreadSharedData now has a list of GCThread objects rather than raw 
+        ThreadIdentifiers.
+        (JSC::GCThreadSharedData::resetChildren):
+        (JSC::GCThreadSharedData::childVisitCount):
+        (JSC::GCThreadSharedData::GCThreadSharedData):
+        (JSC::GCThreadSharedData::~GCThreadSharedData):
+        (JSC::GCThreadSharedData::reset):
+        (JSC::GCThreadSharedData::didStartMarking): Callback to let the GCThreadSharedData know that marking has 
+        started and updates the m_currentPhase variable and notifies the GCThreads accordingly.
+        (JSC::GCThreadSharedData::didFinishMarking): Ditto for finishing marking. 
+        (JSC::GCThreadSharedData::didStartCopying): Ditto for starting the copying phase.
+        (JSC::GCThreadSharedData::didFinishCopying): Ditto for finishing copying. 
+        * heap/GCThreadSharedData.h:
+        (JSC):
+        (GCThreadSharedData):
+        (JSC::GCThreadSharedData::getNextBlocksToCopy): Atomically gets the next chunk of work for a copying thread.
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::markRoots):
+        (JSC):
+        (JSC::Heap::copyBackingStores): Responsible for setting up the copying phase, notifying the copying threads, 
+        and doing any copying work if necessary.
+        (JSC::Heap::collect):
+        * heap/Heap.h:
+        (Heap):
+        (JSC):
+        (JSC::CopyFunctor::CopyFunctor):
+        (CopyFunctor):
+        (JSC::CopyFunctor::operator()):
+        * heap/IncrementalSweeper.cpp: Changed the incremental sweeper to have a reference to the list of MarkedBlocks 
+        that need sweeping, since this now resides in the Heap so that it can be easily shared by the GCThreads.
+        (JSC::IncrementalSweeper::IncrementalSweeper):
+        (JSC::IncrementalSweeper::startSweeping):
+        * heap/IncrementalSweeper.h:
+        (JSC):
+        (IncrementalSweeper):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::setup):
+        (JSC::SlotVisitor::drainFromShared): We no longer do any copying-related work here.
+        (JSC):
+        * heap/SlotVisitor.h:
+        (SlotVisitor):
+        * heap/SlotVisitorInlineMethods.h:
+        (JSC):
+        (JSC::SlotVisitor::copyLater): Notifies the CopiedBlock that there are some live bytes that may need 
+        to be copied.
+        * runtime/Butterfly.h:
+        (JSC):
+        (Butterfly):
+        * runtime/ButterflyInlineMethods.h:
+        (JSC::Butterfly::createUninitializedDuringCollection): Uses the new CopyVisitor.
+        * runtime/ClassInfo.h:
+        (MethodTable): Added new "virtual" function copyBackingStore to method table.
+        (JSC):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::copyBackingStore): Default implementation that does nothing.
+        (JSC):
+        * runtime/JSCell.h:
+        (JSC):
+        (JSCell):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::copyButterfly): Does the actual copying of the butterfly.
+        (JSC):
+        (JSC::JSObject::visitButterfly): Calls copyLater for the butterfly.
+        (JSC::JSObject::copyBackingStore): 
+        * runtime/JSObject.h:
+        (JSObject):
+        (JSC::JSCell::methodTable):
+        (JSC::JSCell::inherits):
+        * runtime/Options.h: Added two new constants, minHeapUtilization and minCopiedBlockUtilization, 
+        to govern the amount of fragmentation we allow before doing copying.
+        (JSC):
+
 2012-10-12  Filip Pizlo  <fpizlo@apple.com>
 
         DFG array allocation calls should not return an encoded JSValue

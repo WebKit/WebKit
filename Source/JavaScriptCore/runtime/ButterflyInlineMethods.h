@@ -29,8 +29,8 @@
 #include "ArrayStorage.h"
 #include "Butterfly.h"
 #include "CopiedSpaceInlineMethods.h"
+#include "CopyVisitor.h"
 #include "JSGlobalData.h"
-#include "SlotVisitor.h"
 #include "Structure.h"
 
 namespace JSC {
@@ -59,7 +59,7 @@ inline Butterfly* Butterfly::create(JSGlobalData& globalData, Structure* structu
     return create(globalData, 0, structure->outOfLineCapacity(), hasIndexingHeader(structure->indexingType()), IndexingHeader(), 0);
 }
 
-inline Butterfly* Butterfly::createUninitializedDuringCollection(SlotVisitor& visitor, size_t preCapacity, size_t propertyCapacity, bool hasIndexingHeader, size_t indexingPayloadSizeInBytes)
+inline Butterfly* Butterfly::createUninitializedDuringCollection(CopyVisitor& visitor, size_t preCapacity, size_t propertyCapacity, bool hasIndexingHeader, size_t indexingPayloadSizeInBytes)
 {
     Butterfly* result = fromBase(
         visitor.allocateNewSpace(totalSize(preCapacity, propertyCapacity, hasIndexingHeader, indexingPayloadSizeInBytes)),

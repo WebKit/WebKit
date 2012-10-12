@@ -256,6 +256,9 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/CopiedSpace.cpp \
 	Source/JavaScriptCore/heap/CopiedSpace.h \
 	Source/JavaScriptCore/heap/CopiedSpaceInlineMethods.h \
+    Source/JavaScriptCore/heap/CopyVisitor.h \
+    Source/JavaScriptCore/heap/CopyVisitorInlineMethods.h \
+    Source/JavaScriptCore/heap/CopyVisitor.cpp \
 	Source/JavaScriptCore/heap/CardSet.h \
 	Source/JavaScriptCore/heap/ConservativeRoots.cpp \
 	Source/JavaScriptCore/heap/ConservativeRoots.h \
@@ -280,6 +283,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/BlockAllocator.h \
     Source/JavaScriptCore/heap/GCThreadSharedData.cpp \
     Source/JavaScriptCore/heap/GCThreadSharedData.h \
+    Source/JavaScriptCore/heap/GCThread.cpp \
+    Source/JavaScriptCore/heap/GCThread.h \
 	Source/JavaScriptCore/heap/Heap.cpp \
 	Source/JavaScriptCore/heap/Heap.h \
     Source/JavaScriptCore/heap/HeapStatistics.cpp \

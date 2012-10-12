@@ -115,6 +115,8 @@ namespace JSC {
     v(unsigned, gcMarkStackSegmentSize, pageSize()) \
     v(unsigned, numberOfGCMarkers, computeNumberOfGCMarkers(7)) \
     v(unsigned, opaqueRootMergeThreshold, 1000) \
+    v(double, minHeapUtilization, 0.8) \
+    v(double, minCopiedBlockUtilization, 0.9) \
     \
     v(bool, forceWeakRandomSeed, false) \
     v(unsigned, forcedWeakRandomSeed, 0) \

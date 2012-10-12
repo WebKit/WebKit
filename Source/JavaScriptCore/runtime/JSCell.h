@@ -38,6 +38,7 @@
 
 namespace JSC {
 
+    class CopyVisitor;
     class JSDestructibleObject;
     class JSGlobalObject;
     class LLIntOffsetsExtractor;
@@ -100,6 +101,7 @@ namespace JSC {
         JS_EXPORT_PRIVATE JSObject* toObject(ExecState*, JSGlobalObject*) const;
 
         static void visitChildren(JSCell*, SlotVisitor&);
+        JS_EXPORT_PRIVATE static void copyBackingStore(JSCell*, CopyVisitor&);
 
         // Object operations, with the toObject operation included.
         const ClassInfo* classInfo() const;

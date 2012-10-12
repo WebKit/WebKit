@@ -21,10 +21,11 @@
 #include "config.h"
 #include "Heap.h"
 
-#include "CopiedSpace.h"
-#include "CopiedSpaceInlineMethods.h"
 #include "CodeBlock.h"
 #include "ConservativeRoots.h"
+#include "CopiedSpace.h"
+#include "CopiedSpaceInlineMethods.h"
+#include "CopyVisitorInlineMethods.h"
 #include "GCActivityCallback.h"
 #include "HeapRootVisitor.h"
 #include "HeapStatistics.h"
@@ -252,6 +253,7 @@ Heap::Heap(JSGlobalData* globalData, HeapType heapType)
     , m_machineThreads(this)
     , m_sharedData(globalData)
     , m_slotVisitor(m_sharedData)
+    , m_copyVisitor(m_sharedData)
     , m_handleSet(globalData)
     , m_isSafeToCollect(false)
     , m_globalData(globalData)
@@ -464,7 +466,7 @@ void Heap::markRoots(bool fullGC)
         m_objectSpace.clearMarks();
     }
 
-    m_storageSpace.startedCopying();
+    m_sharedData.didStartMarking();
     SlotVisitor& visitor = m_slotVisitor;
     visitor.setup();
     HeapRootVisitor heapRootVisitor(visitor);
@@ -589,7 +591,7 @@ void Heap::markRoots(bool fullGC)
 
     GCCOUNTER(VisitedValueCount, visitor.visitCount());
 
-    visitor.doneCopying();
+    m_sharedData.didFinishMarking();
 #if ENABLE(OBJECT_MARK_LOGGING)
     size_t visitCount = visitor.visitCount();
 #if ENABLE(PARALLEL_GC)
@@ -603,6 +605,19 @@ void Heap::markRoots(bool fullGC)
     m_sharedData.resetChildren();
 #endif
     m_sharedData.reset();
+}
+
+void Heap::copyBackingStores()
+{
+    m_storageSpace.startedCopying();
+    if (m_storageSpace.shouldDoCopyPhase()) {
+        m_sharedData.didStartCopying();
+        CopyVisitor& visitor = m_copyVisitor;
+        visitor.startCopying();
+        visitor.copyFromShared();
+        visitor.doneCopying();
+        m_sharedData.didFinishCopying();
+    } 
     m_storageSpace.doneCopying();
 }
 
@@ -734,6 +749,14 @@ void Heap::collect(SweepToggle sweepToggle)
     JAVASCRIPTCORE_GC_MARKED();
 
     {
+        m_blockSnapshot.resize(m_objectSpace.blocks().set().size());
+        MarkedBlockSnapshotFunctor functor(m_blockSnapshot);
+        m_objectSpace.forEachBlock(functor);
+    }
+
+    copyBackingStores();
+
+    {
         GCPHASE(FinalizeUnconditionalFinalizers);
         finalizeUnconditionalFinalizers();
     }
@@ -755,7 +778,7 @@ void Heap::collect(SweepToggle sweepToggle)
         m_objectSpace.shrink();
     }
 
-    m_sweeper->startSweeping(m_objectSpace.blocks().set());
+    m_sweeper->startSweeping(m_blockSnapshot);
     m_bytesAbandoned = 0;
 
     {

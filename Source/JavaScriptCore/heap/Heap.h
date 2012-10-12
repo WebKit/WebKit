@@ -23,6 +23,7 @@
 #define Heap_h
 
 #include "BlockAllocator.h"
+#include "CopyVisitor.h"
 #include "DFGCodeBlocks.h"
 #include "GCThreadSharedData.h"
 #include "HandleSet.h"
@@ -182,7 +183,9 @@ namespace JSC {
         friend class MarkedAllocator;
         friend class MarkedBlock;
         friend class CopiedSpace;
+        friend class CopyVisitor;
         friend class SlotVisitor;
+        friend class IncrementalSweeper;
         friend class HeapStatistics;
         template<typename T> friend void* allocateCell(Heap&);
         template<typename T> friend void* allocateCell(Heap&, size_t);
@@ -204,6 +207,7 @@ namespace JSC {
         void markRoots(bool fullGC);
         void markProtectedObjects(HeapRootVisitor&);
         void markTempSortVectors(HeapRootVisitor&);
+        void copyBackingStores();
         void harvestWeakReferences();
         void finalizeUnconditionalFinalizers();
         void deleteUnmarkedCompiledCode();
@@ -239,6 +243,7 @@ namespace JSC {
         
         GCThreadSharedData m_sharedData;
         SlotVisitor m_slotVisitor;
+        CopyVisitor m_copyVisitor;
 
         HandleSet m_handleSet;
         HandleStack m_handleStack;
@@ -256,6 +261,20 @@ namespace JSC {
         
         GCActivityCallback* m_activityCallback;
         IncrementalSweeper* m_sweeper;
+        Vector<MarkedBlock*> m_blockSnapshot;
+    };
+
+    struct MarkedBlockSnapshotFunctor : public MarkedBlock::VoidFunctor {
+        MarkedBlockSnapshotFunctor(Vector<MarkedBlock*>& blocks) 
+            : m_index(0) 
+            , m_blocks(blocks)
+        {
+        }
+    
+        void operator()(MarkedBlock* block) { m_blocks[m_index++] = block; }
+    
+        size_t m_index;
+        Vector<MarkedBlock*>& m_blocks;
     };
 
     inline bool Heap::shouldCollect()

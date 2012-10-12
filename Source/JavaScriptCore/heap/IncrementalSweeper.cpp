@@ -48,6 +48,7 @@ static const double sweepTimeMultiplier = 1.0 / sweepTimeTotal;
 IncrementalSweeper::IncrementalSweeper(Heap* heap, CFRunLoopRef runLoop)
     : HeapTimer(heap->globalData(), runLoop)
     , m_currentBlockToSweepIndex(0)
+    , m_blocksToSweep(heap->m_blockSnapshot)
 {
 }
 
@@ -127,11 +128,9 @@ void IncrementalSweeper::sweepNextBlock()
     }
 }
 
-void IncrementalSweeper::startSweeping(const HashSet<MarkedBlock*>& blockSnapshot)
+void IncrementalSweeper::startSweeping(Vector<MarkedBlock*>& blockSnapshot)
 {
-    m_blocksToSweep.resize(blockSnapshot.size());
-    CopyFunctor functor(m_blocksToSweep);
-    m_globalData->heap.objectSpace().forEachBlock(functor);
+    m_blocksToSweep = blockSnapshot;
     m_currentBlockToSweepIndex = 0;
     scheduleTimer();
 }
@@ -160,7 +159,7 @@ IncrementalSweeper* IncrementalSweeper::create(Heap* heap)
     return new IncrementalSweeper(heap->globalData());
 }
 
-void IncrementalSweeper::startSweeping(const HashSet<MarkedBlock*>&)
+void IncrementalSweeper::startSweeping(Vector<MarkedBlock*>&)
 {
 }
 

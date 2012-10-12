@@ -93,19 +93,20 @@ inline void CopiedSpace::pinIfNecessary(void* opaquePointer)
         pin(block);
 }
 
-inline void CopiedSpace::startedCopying()
+inline void CopiedSpace::recycleEvacuatedBlock(CopiedBlock* block)
 {
-    std::swap(m_fromSpace, m_toSpace);
-
-    m_blockFilter.reset();
-    m_allocator.resetCurrentBlock();
-
-    ASSERT(!m_inCopyingPhase);
-    ASSERT(!m_numberOfLoanedBlocks);
-    m_inCopyingPhase = true;
+    ASSERT(block);
+    ASSERT(block->canBeRecycled());
+    ASSERT(!block->m_isPinned);
+    {
+        SpinLockHolder locker(&m_toSpaceLock);
+        m_blockSet.remove(block);
+        m_fromSpace->remove(block);
+    }
+    m_heap->blockAllocator().deallocate(CopiedBlock::destroy(block));
 }
 
-inline void CopiedSpace::recycleBlock(CopiedBlock* block)
+inline void CopiedSpace::recycleBorrowedBlock(CopiedBlock* block)
 {
     m_heap->blockAllocator().deallocate(CopiedBlock::destroy(block));
 

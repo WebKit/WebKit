@@ -73,6 +73,7 @@ SOURCES += \
     bytecompiler/BytecodeGenerator.cpp \
     bytecompiler/NodesCodegen.cpp \
     heap/CopiedSpace.cpp \
+    heap/CopyVisitor.cpp \
     heap/ConservativeRoots.cpp \
     heap/DFGCodeBlocks.cpp \
     heap/WeakSet.cpp \
@@ -82,6 +83,7 @@ SOURCES += \
     heap/HandleStack.cpp \
     heap/BlockAllocator.cpp \
     heap/GCThreadSharedData.cpp \
+    heap/GCThread.cpp \
     heap/Heap.cpp \
     heap/HeapStatistics.cpp \
     heap/HeapTimer.cpp \

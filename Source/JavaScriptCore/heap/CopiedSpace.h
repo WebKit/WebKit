@@ -46,6 +46,7 @@ class Heap;
 class CopiedBlock;
 
 class CopiedSpace {
+    friend class CopyVisitor;
     friend class SlotVisitor;
     friend class JIT;
 public:
@@ -74,6 +75,7 @@ public:
     size_t capacity();
 
     bool isPagedOut(double deadline);
+    bool shouldDoCopyPhase() { return m_shouldDoCopyPhase; }
 
     static CopiedBlock* blockFor(void*);
 
@@ -88,8 +90,9 @@ private:
     void allocateBlock();
     CopiedBlock* allocateBlockForCopyingPhase();
 
-    void doneFillingBlock(CopiedBlock*);
-    void recycleBlock(CopiedBlock*);
+    void doneFillingBlock(CopiedBlock*, CopiedBlock**);
+    void recycleEvacuatedBlock(CopiedBlock*);
+    void recycleBorrowedBlock(CopiedBlock*);
 
     Heap* m_heap;
 
@@ -108,6 +111,7 @@ private:
     DoublyLinkedList<CopiedBlock> m_oversizeBlocks;
    
     bool m_inCopyingPhase;
+    bool m_shouldDoCopyPhase;
 
     Mutex m_loanedBlocksLock; 
     ThreadCondition m_loanedBlocksCondition;
