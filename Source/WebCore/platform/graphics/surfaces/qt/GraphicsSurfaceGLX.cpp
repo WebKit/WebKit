@@ -107,8 +107,18 @@ struct GraphicsSurfacePrivate {
         , m_textureIsYInverted(false)
         , m_hasAlpha(false)
     {
+        QSurface* currentSurface = 0;
+        QOpenGLContext* currentContext = QOpenGLContext::currentContext();
+        if (currentContext)
+            currentSurface = currentContext->surface();
+
         m_display = XOpenDisplay(0);
         m_glContext->create();
+
+        // The GLX implementation of QOpenGLContext will reset the current context when create is being called.
+        // Therefore we have to make the previous context current again.
+        if (currentContext)
+            currentContext->makeCurrent(currentSurface);
     }
 
     ~GraphicsSurfacePrivate()

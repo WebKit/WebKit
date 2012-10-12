@@ -1,3 +1,19 @@
+2012-10-12  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt][WK2] GraphicsSurfaceGLX should keep track of previous GL context.
+        https://bugs.webkit.org/show_bug.cgi?id=99076
+
+        In GraphicsSurfaceGLX/GraphicsSurfacePrivate we create a new
+        QOpenGLContext for resolving GL methods.
+        This context is implicitly made current on creation.
+        Therefore we need to keep track of the previously bound context
+        and make that one current again after calling create.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * platform/graphics/surfaces/qt/GraphicsSurfaceGLX.cpp:
+        (WebCore::GraphicsSurfacePrivate::GraphicsSurfacePrivate):
+
 2012-10-12  Balazs Kelemen  <kbalazs@webkit.org>
 
         Unreviewed, rolling out r130389.
