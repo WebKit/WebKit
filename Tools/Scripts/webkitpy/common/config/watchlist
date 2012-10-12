@@ -255,6 +255,11 @@
             "filename": r"Source/WebCore/Modules/websockets"
                         r"|Source/WebCore/platform/network/(|.+/)SocketStream.*",
         },
+        "MediaStream": {
+            "filename": r"Source/WebCore/Modules/mediastream"
+                        r"|Source/WebCore/platform/mediastream"
+                        r"|LayoutTests/fast/mediastream",
+        },
     },
     "CC_RULES": {
         # Note: All email addresses listed must be registered with bugzilla.
@@ -280,6 +285,7 @@
         "Loader": [ "japhet@chromium.org" ],
         "MathML": [ "dbarton@mathscribe.com" ],
         "Media": [ "feature-media-reviews@chromium.org", "eric.carlson@apple.com" ],
+        "MediaStream": [ "tommyw@google.com" ],
         "NetworkInfo": [ "gyuyoung.kim@samsung.com" ],
         "OpenGL" : [ "noam.rosenthal@nokia.com", "dino@apple.com" ],
         "QtBuildSystem" : [ "vestbo@webkit.org", "abecsi@webkit.org" ],
