@@ -38,6 +38,7 @@ class ArrayValue;
 class Dictionary;
 class DOMWindow;
 class EventTarget;
+class MediaKeyError;
 class Node;
 class ScriptValue;
 class SerializedScriptValue;
@@ -110,6 +111,10 @@ private:
     static void convertValue(JSC::ExecState*, JSC::JSValue, HashSet<AtomicString>& result);
 #endif
     static void convertValue(JSC::ExecState*, JSC::JSValue, ArrayValue& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<Uint8Array>& result);
+#if ENABLE(ENCRYPTED_MEDIA)
+    static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<MediaKeyError>& result);
+#endif
 
     JSC::ExecState* m_exec;
     JSC::Strong<JSC::JSObject> m_initializerObject;

@@ -132,7 +132,11 @@ PassOwnPtr<MediaPlayerPrivateInterface> MediaPlayerPrivateAVFoundationObjC::crea
 void MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(MediaEngineRegistrar registrar)
 {
     if (isAvailable())
+#if ENABLE(ENCRYPTED_MEDIA)
+        registrar(create, getSupportedTypes, extendedSupportsType, 0, 0, 0);
+#else
         registrar(create, getSupportedTypes, supportsType, 0, 0, 0);
+#endif
 }
 
 MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlayer* player)
@@ -724,6 +728,16 @@ MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::supportsType(const
     NSString *typeString = [NSString stringWithFormat:@"%@; codecs=\"%@\"", (NSString *)type, (NSString *)codecs];
     return [AVURLAsset isPlayableExtendedMIMEType:typeString] ? MediaPlayer::IsSupported : MediaPlayer::MayBeSupported;;
 }
+
+#if ENABLE(ENCRYPTED_MEDIA)
+MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::extendedSupportsType(const String& type, const String& codecs, const String& keySystem, const KURL& url)
+{
+    // AVFoundation does not support any encrypted media, so return IsNotSupported if the keySystem is non-NULL.
+    if (!keySystem.isNull() || !keySystem.isEmpty())
+            return MediaPlayer::IsNotSupported;
+    return supportsType(type, codecs, url);
+}
+#endif
 
 bool MediaPlayerPrivateAVFoundationObjC::isAvailable()
 {

@@ -1834,8 +1834,14 @@ void HTMLMediaElement::mediaPlayerKeyMessage(MediaPlayer*, const String& keySyst
     m_asyncEventQueue->enqueueEvent(event.release());
 }
 
-void HTMLMediaElement::mediaPlayerKeyNeeded(MediaPlayer*, const String& keySystem, const String& sessionId, const unsigned char* initData, unsigned initDataLength)
+bool HTMLMediaElement::mediaPlayerKeyNeeded(MediaPlayer*, const String& keySystem, const String& sessionId, const unsigned char* initData, unsigned initDataLength)
 {
+    if (!hasEventListeners(eventNames().webkitneedkeyEvent)) {
+        m_error = MediaError::create(MediaError::MEDIA_ERR_ENCRYPTED);
+        scheduleEvent(eventNames().errorEvent);
+        return false;
+    }
+
     MediaKeyEventInit initializer;
     initializer.keySystem = keySystem;
     initializer.sessionId = sessionId;
@@ -1846,6 +1852,7 @@ void HTMLMediaElement::mediaPlayerKeyNeeded(MediaPlayer*, const String& keySyste
     RefPtr<Event> event = MediaKeyEvent::create(eventNames().webkitneedkeyEvent, initializer);
     event->setTarget(this);
     m_asyncEventQueue->enqueueEvent(event.release());
+    return true;
 }
 #endif
 

@@ -5878,6 +5878,9 @@
 		CD8203101395ACE700F956C6 /* WebWindowAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = CD82030E1395ACE700F956C6 /* WebWindowAnimation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD8203111395ACE700F956C6 /* WebWindowAnimation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD82030F1395ACE700F956C6 /* WebWindowAnimation.mm */; };
 		CDAA8D0A14D71B2E0061EA60 /* PlatformClockCM.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDAA8D0814D385600061EA60 /* PlatformClockCM.mm */; };
+		CDB859F7160D48A400E5B07F /* MediaKeyEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDB859F4160D489900E5B07F /* MediaKeyEvent.cpp */; };
+		CDB859FA160D494900E5B07F /* JSMediaKeyEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDB859F8160D493E00E5B07F /* JSMediaKeyEvent.cpp */; };
+		CDB859FB160D494F00E5B07F /* JSMediaKeyError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDB859F0160D42DD00E5B07F /* JSMediaKeyError.cpp */; };
 		CDD525D7145B6DD0008D204D /* JSHTMLMediaElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF65CCC145B6AFE00C4C7AA /* JSHTMLMediaElementCustom.cpp */; };
 		CDEA763014608A53008B31F1 /* PlatformClockCA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDEA762E146084DE008B31F1 /* PlatformClockCA.cpp */; };
 		CDEA76341460B56F008B31F1 /* ClockGeneric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDEA76321460AE29008B31F1 /* ClockGeneric.cpp */; };
@@ -13228,6 +13231,15 @@
 		CD82030F1395ACE700F956C6 /* WebWindowAnimation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebWindowAnimation.mm; sourceTree = "<group>"; };
 		CDAA8D0714D385600061EA60 /* PlatformClockCM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformClockCM.h; sourceTree = "<group>"; };
 		CDAA8D0814D385600061EA60 /* PlatformClockCM.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformClockCM.mm; sourceTree = "<group>"; };
+		CDB859F0160D42DD00E5B07F /* JSMediaKeyError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaKeyError.cpp; sourceTree = "<group>"; };
+		CDB859F1160D42DD00E5B07F /* JSMediaKeyError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaKeyError.h; sourceTree = "<group>"; };
+		CDB859F2160D489900E5B07F /* MediaKeyError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaKeyError.h; sourceTree = "<group>"; };
+		CDB859F3160D489900E5B07F /* MediaKeyError.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaKeyError.idl; sourceTree = "<group>"; };
+		CDB859F4160D489900E5B07F /* MediaKeyEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaKeyEvent.cpp; sourceTree = "<group>"; };
+		CDB859F5160D489900E5B07F /* MediaKeyEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaKeyEvent.h; sourceTree = "<group>"; };
+		CDB859F6160D489900E5B07F /* MediaKeyEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaKeyEvent.idl; sourceTree = "<group>"; };
+		CDB859F8160D493E00E5B07F /* JSMediaKeyEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaKeyEvent.cpp; sourceTree = "<group>"; };
+		CDB859F9160D493E00E5B07F /* JSMediaKeyEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaKeyEvent.h; sourceTree = "<group>"; };
 		CDBD93BA1333BD4B002570E3 /* fullscreenQuickTime.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = fullscreenQuickTime.css; sourceTree = "<group>"; };
 		CDCE5CD014633BC900D47CCA /* EventTargetFactory.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EventTargetFactory.in; sourceTree = "<group>"; };
 		CDEA762C14608224008B31F1 /* Clock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Clock.h; sourceTree = "<group>"; };
@@ -17354,6 +17366,7 @@
 				F55B3D7D1251F12D003EF269 /* CheckboxInputType.cpp */,
 				F55B3D7E1251F12D003EF269 /* CheckboxInputType.h */,
 				4ACBC0BC12713CBD0094F9B2 /* ClassList.cpp */,
+				CDB859F4160D489900E5B07F /* MediaKeyEvent.cpp */,
 				4ACBC0BD12713CBD0094F9B2 /* ClassList.h */,
 				93C441FF0F813AE100C1A634 /* CollectionType.h */,
 				F55B3D7F1251F12D003EF269 /* ColorInputType.cpp */,
@@ -17671,6 +17684,8 @@
 				07A6D1E91491137700051D0C /* MediaFragmentURIParser.cpp */,
 				07A6D1EA1491137700051D0C /* MediaFragmentURIParser.h */,
 				9B2F7CF714562120007F8B50 /* MicroDataItemValue.cpp */,
+				CDB859F2160D489900E5B07F /* MediaKeyError.h */,
+				CDB859F5160D489900E5B07F /* MediaKeyEvent.h */,
 				9B2F7CF814562120007F8B50 /* MicroDataItemValue.h */,
 				1059457115B428C3004D37FD /* MicroDataItemValue.idl */,
 				F55B3D911251F12D003EF269 /* MonthInputType.cpp */,
@@ -17722,6 +17737,8 @@
 				E44613A00CD6331000FADA75 /* VoidCallback.idl */,
 				F55B3DAB1251F12D003EF269 /* WeekInputType.cpp */,
 				F55B3DAC1251F12D003EF269 /* WeekInputType.h */,
+				CDB859F3160D489900E5B07F /* MediaKeyError.idl */,
+				CDB859F6160D489900E5B07F /* MediaKeyEvent.idl */,
 			);
 			path = html;
 			sourceTree = "<group>";
@@ -18263,6 +18280,10 @@
 		A83B79080CCAFF2B000B0825 /* HTML */ = {
 			isa = PBXGroup;
 			children = (
+				CDB859F8160D493E00E5B07F /* JSMediaKeyEvent.cpp */,
+				CDB859F9160D493E00E5B07F /* JSMediaKeyEvent.h */,
+				CDB859F0160D42DD00E5B07F /* JSMediaKeyError.cpp */,
+				CDB859F1160D42DD00E5B07F /* JSMediaKeyError.h */,
 				49EECEF2105070C400099FAB /* JSArrayBuffer.cpp */,
 				49EECEF3105070C400099FAB /* JSArrayBuffer.h */,
 				49EECF19105072F300099FAB /* JSArrayBufferView.cpp */,
@@ -27352,6 +27373,8 @@
 				CD27F6E51457685A0078207D /* JSMediaController.cpp in Sources */,
 				FD23A12513F5FA5900F67001 /* JSMediaElementAudioSourceNode.cpp in Sources */,
 				E44614180CD6826900FADA75 /* JSMediaError.cpp in Sources */,
+				CDB859FA160D494900E5B07F /* JSMediaKeyEvent.cpp in Sources */,
+				CDB859FB160D494F00E5B07F /* JSMediaKeyError.cpp in Sources */,
 				BC3C39B60C0D3D8D005F4D7A /* JSMediaList.cpp in Sources */,
 				1464E06C135EC10600FDB00A /* JSMediaListCustom.cpp in Sources */,
 				D3A94A46122DC40F00A37BBC /* JSMediaQueryList.cpp in Sources */,
@@ -27758,6 +27781,7 @@
 				FD6F252C13F5EF0E0065165F /* MediaElementAudioSourceNode.cpp in Sources */,
 				4E1959210A39DABA00220FE5 /* MediaFeatureNames.cpp in Sources */,
 				07A6D1EB1491137700051D0C /* MediaFragmentURIParser.cpp in Sources */,
+				CDB859F7160D48A400E5B07F /* MediaKeyEvent.cpp in Sources */,
 				A8EA80090A19516E00A8EF5F /* MediaList.cpp in Sources */,
 				E44613E30CD6819F00FADA75 /* MediaPlayer.cpp in Sources */,
 				072C8B11131C518600A4FCE9 /* MediaPlayerPrivateAVFoundation.cpp in Sources */,

@@ -1,0 +1,102 @@
+This tests the constructor for the MediaKeyEvent DOM class.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+*** No initializer passed ***
+PASS new MediaKeyEvent('MediaKeyEvent').bubbles is false
+PASS new MediaKeyEvent('MediaKeyEvent').cancelable is false
+PASS new MediaKeyEvent('MediaKeyEvent').keySystem is ""
+PASS new MediaKeyEvent('MediaKeyEvent').sessionId is ""
+PASS new MediaKeyEvent('MediaKeyEvent').initData is null
+PASS new MediaKeyEvent('MediaKeyEvent').message is null
+PASS new MediaKeyEvent('MediaKeyEvent').defaultURL is ""
+PASS new MediaKeyEvent('MediaKeyEvent').errorCode is null
+PASS new MediaKeyEvent('MediaKeyEvent').systemCode is 0
+
+*** Bubbles and cancelable true, other members are missing ***
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true }).bubbles is true
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true }).cancelable is true
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true }).keySystem is ""
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true }).sessionId is ""
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true }).initData is null
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true }).message is null
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true }).defaultURL is ""
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true }).errorCode is null
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true }).systemCode is 0
+
+*** Bubbles and cancelable true, invalid other members ***
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: undefined, sessionId: undefined, initData: Uint8Array, message: Uint8Array, defaultURL: undefined, errorCode: MediaKeyError, systemCode: undefined }).bubbles is true
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: undefined, sessionId: undefined, initData: Uint8Array, message: Uint8Array, defaultURL: undefined, errorCode: MediaKeyError, systemCode: undefined }).cancelable is true
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: undefined, sessionId: undefined, initData: Uint8Array, message: Uint8Array, defaultURL: undefined, errorCode: MediaKeyError, systemCode: undefined }).keySystem is "undefined"
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: undefined, sessionId: undefined, initData: Uint8Array, message: Uint8Array, defaultURL: undefined, errorCode: MediaKeyError, systemCode: undefined }).sessionId is "undefined"
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: undefined, sessionId: undefined, initData: Uint8Array, message: Uint8Array, defaultURL: undefined, errorCode: MediaKeyError, systemCode: undefined }).initData is null
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: undefined, sessionId: undefined, initData: Uint8Array, message: Uint8Array, defaultURL: undefined, errorCode: MediaKeyError, systemCode: undefined }).message is null
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: undefined, sessionId: undefined, initData: Uint8Array, message: Uint8Array, defaultURL: undefined, errorCode: MediaKeyError, systemCode: undefined }).defaultURL is "undefined"
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: undefined, sessionId: undefined, initData: Uint8Array, message: Uint8Array, defaultURL: undefined, errorCode: MediaKeyError, systemCode: undefined }).errorCode is null
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: undefined, sessionId: undefined, initData: Uint8Array, message: Uint8Array, defaultURL: undefined, errorCode: MediaKeyError, systemCode: undefined }).systemCode is 0
+
+*** Initialize 'keySystem' with a invalid values ***
+PASS new MediaKeyEvent('MediaKeyEvent', { keySystem: emptyObject }).keySystem is "[object Object]"
+PASS new MediaKeyEvent('MediaKeyEvent', { keySystem: document }).keySystem is "[object HTMLDocument]"
+
+*** Initialize 'sessionId' with a invalid values ***
+PASS new MediaKeyEvent('MediaKeyEvent', { sessionId: emptyObject }).sessionId is "[object Object]"
+PASS new MediaKeyEvent('MediaKeyEvent', { sessionId: document }).sessionId is "[object HTMLDocument]"
+
+*** Initialize 'initData' with a invalid values ***
+PASS new MediaKeyEvent('MediaKeyEvent', { initData: 10 }).initData is null
+PASS new MediaKeyEvent('MediaKeyEvent', { initData: 'string' }).initData is null
+PASS new MediaKeyEvent('MediaKeyEvent', { initData: emptyObject }).initData is null
+PASS new MediaKeyEvent('MediaKeyEvent', { initData: document }).initData is null
+
+*** Initialize 'message' with a invalid values ***
+PASS new MediaKeyEvent('MediaKeyEvent', { message: 10 }).message is null
+PASS new MediaKeyEvent('MediaKeyEvent', { message: 'string' }).message is null
+PASS new MediaKeyEvent('MediaKeyEvent', { message: emptyObject }).message is null
+PASS new MediaKeyEvent('MediaKeyEvent', { message: document }).message is null
+
+*** Initialize 'defaultURL' with a invalid values ***
+PASS new MediaKeyEvent('MediaKeyEvent', { defaultURL: emptyObject }).defaultURL is "[object Object]"
+PASS new MediaKeyEvent('MediaKeyEvent', { defaultURL: document }).defaultURL is "[object HTMLDocument]"
+
+*** Initialize 'errorCode' with a invalid values ***
+PASS new MediaKeyEvent('MediaKeyEvent', { errorCode: 10 }).errorCode is null
+PASS new MediaKeyEvent('MediaKeyEvent', { errorCode: 'string' }).errorCode is null
+PASS new MediaKeyEvent('MediaKeyEvent', { errorCode: emptyObject }).errorCode is null
+PASS new MediaKeyEvent('MediaKeyEvent', { errorCode: document }).errorCode is null
+
+*** Initialize 'systemCode' with a invalid values ***
+PASS new MediaKeyEvent('MediaKeyEvent', { systemCode: 'string' }).systemCode is 0
+PASS new MediaKeyEvent('MediaKeyEvent', { systemCode: emptyObject }).systemCode is 0
+PASS new MediaKeyEvent('MediaKeyEvent', { systemCode: document }).systemCode is 0
+
+*** Bubbles and cancelable true, valid other members ***
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).bubbles is true
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).cancelable is true
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).keySystem is "keySystem"
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).sessionId is "sessionId"
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).initData is initDataArray
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).message is messageArray
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).defaultURL is "defaultURL"
+FAIL new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).errorCode should be [object MediaKeyErrorConstructor]. Was null.
+FAIL new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).errorCode.code should be 1. Threw exception TypeError: 'null' is not an object (near '...de: 123 }).errorCode.code...')
+PASS new MediaKeyEvent('MediaKeyEvent', { bubbles: true, cancelable: true, keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).systemCode is 123
+
+*** Initialize with valid members ***
+FAIL new MediaKeyEvent('MediaKeyEvent', { keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).bubbles should be true. Was false.
+FAIL new MediaKeyEvent('MediaKeyEvent', { keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).cancelable should be true. Was false.
+PASS new MediaKeyEvent('MediaKeyEvent', { keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).keySystem is "keySystem"
+PASS new MediaKeyEvent('MediaKeyEvent', { keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).sessionId is "sessionId"
+PASS new MediaKeyEvent('MediaKeyEvent', { keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).initData is initDataArray
+PASS new MediaKeyEvent('MediaKeyEvent', { keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).message is messageArray
+PASS new MediaKeyEvent('MediaKeyEvent', { keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).defaultURL is "defaultURL"
+FAIL new MediaKeyEvent('MediaKeyEvent', { keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).errorCode should be [object MediaKeyErrorConstructor]. Was null.
+FAIL new MediaKeyEvent('MediaKeyEvent', { keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).errorCode.code should be 1. Threw exception TypeError: 'null' is not an object (near '...de: 123 }).errorCode.code...')
+PASS new MediaKeyEvent('MediaKeyEvent', { keySystem: 'keySystem', sessionId: 'sessionId', initData: initDataArray, message: messageArray, defaultURL: 'defaultURL', errorCode: errorObject, systemCode: 123 }).systemCode is 123
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

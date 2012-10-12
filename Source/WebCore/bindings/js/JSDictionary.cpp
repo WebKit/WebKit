@@ -34,11 +34,16 @@
 #include "JSNode.h"
 #include "JSStorage.h"
 #include "JSTrackCustom.h"
+#include "JSUint8Array.h"
 #include "ScriptValue.h"
 #include "SerializedScriptValue.h"
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/AtomicString.h>
+
+#if ENABLE(ENCRYPTED_MEDIA)
+#include "JSMediaKeyError.h"
+#endif
 
 using namespace JSC;
 
@@ -194,6 +199,18 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, ArrayValue& resu
 
     result = ArrayValue(exec, value);
 }
+
+void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<Uint8Array>& result)
+{
+    result = toUint8Array(value);
+}
+
+#if ENABLE(ENCRYPTED_MEDIA)
+void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<MediaKeyError>& result)
+{
+    result = toMediaKeyError(value);
+}
+#endif
 
 bool JSDictionary::getWithUndefinedOrNullCheck(const String& propertyName, String& result) const
 {

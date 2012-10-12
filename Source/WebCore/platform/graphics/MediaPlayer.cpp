@@ -1078,10 +1078,11 @@ void MediaPlayer::keyMessage(const String& keySystem, const String& sessionId, c
         m_mediaPlayerClient->mediaPlayerKeyMessage(this, keySystem, sessionId, message, messageLength);
 }
 
-void MediaPlayer::keyNeeded(const String& keySystem, const String& sessionId, const unsigned char* initData, unsigned initDataLength)
+bool MediaPlayer::keyNeeded(const String& keySystem, const String& sessionId, const unsigned char* initData, unsigned initDataLength)
 {
     if (m_mediaPlayerClient)
-        m_mediaPlayerClient->mediaPlayerKeyNeeded(this, keySystem, sessionId, initData, initDataLength);
+        return m_mediaPlayerClient->mediaPlayerKeyNeeded(this, keySystem, sessionId, initData, initDataLength);
+    return false;
 }
 #endif
 

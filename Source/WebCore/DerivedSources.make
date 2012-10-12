@@ -356,6 +356,8 @@ BINDING_IDLS = \
     $(WebCore)/html/ImageData.idl \
     $(WebCore)/html/MediaController.idl \
     $(WebCore)/html/MediaError.idl \
+	$(WebCore)/html/MediaKeyError.idl \
+	$(WebCore)/html/MediaKeyEvent.idl \
     $(WebCore)/html/MicroDataItemValue.idl \
     $(WebCore)/html/RadioNodeList.idl \
     $(WebCore)/html/TextMetrics.idl \
@@ -869,6 +871,10 @@ endif
 
 ifeq ($(findstring ENABLE_SHADOW_DOM,$(FEATURE_DEFINES)), ENABLE_SHADOW_DOM)
     HTML_FLAGS := $(HTML_FLAGS) ENABLE_SHADOW_DOM=1
+endif
+
+ifeq ($(findstring ENABLE_ENCRYPTED_MEDIA,$(FEATURE_DEFINES)), ENABLE_ENCRYPTED_MEDIA)
+    HTML_FLAGS := $(HTML_FLAGS) ENABLE_ENCRYPTED_MEDIA=1
 endif
 
 ifdef HTML_FLAGS

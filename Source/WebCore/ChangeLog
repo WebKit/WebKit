@@ -1,3 +1,46 @@
+2012-10-01  Jer Noble  <jer.noble@apple.com>
+
+        Enable ENCRYPTED_MEDIA support on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=98044
+
+        Reviewed by Anders Carlsson.
+
+        Enable the ENCRYPTED_MEDIA conditional on the Mac port.
+
+        No new tests; Existing media/encrypted-media tests require org.w3.clearkey support, which is not implemented.
+
+        * Configurations/FeatureDefines.xcconfig: Enable the ENCRYPTED_MEDIA flag.
+        * DerivedSources.make: Add the MediaKeyError and MediaKeyEvent classes.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue): Add convertValue functions for Uint8Array and MediaKeyError.
+        * bindings/js/JSDictionary.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerKeyNeeded): Throw an error if no "needkey"
+            handler is registered.
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl: Change keySystem to DefaultIsUndefined.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::keyNeeded): Return a bool indicating whether the process was aborted
+            due to a lack of "needkey" listener.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerKeyAdded): Remove unused parameter names.
+        (WebCore::MediaPlayerClient::mediaPlayerKeyError): Ditto.
+        (WebCore::MediaPlayerClient::mediaPlayerKeyMessage): Ditto.
+        (WebCore::MediaPlayerClient::mediaPlayerKeyNeeded): Ditto.
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::addKey): Ditto.
+        (WebCore::MediaPlayerPrivateInterface::generateKeyRequest): Ditto.
+        (WebCore::MediaPlayerPrivateInterface::cancelKeyRequest): Ditto.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::registerMediaEngine): Call extendedSupportsType.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::extendedSupportsType): Stub. Pass through to supportsType.
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::registerMediaEngine): Call extendedSupportsType.
+        (WebCore::MediaPlayerPrivateQTKit::extendedSupportsType): Stub. Pass through to supportsType.
+
 2012-10-12  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Check parameter's safety first
