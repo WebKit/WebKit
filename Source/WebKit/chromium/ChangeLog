@@ -1,3 +1,21 @@
+2012-10-12  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Remove used frameForEnteredContext API
+        https://bugs.webkit.org/show_bug.cgi?id=99201
+
+        Reviewed by Eric Seidel.
+
+        No one in Chromium-land understands the difference between
+        frameForEnteredContext and frameForCurrentContext. Rather than give
+        folks a confusing choice, let's just expose the one we most often want
+        to use.
+
+        I've already removed all callers of frameForEnteredContext downstream.
+
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit):
+
 2012-10-12  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] IndexedDB: WebKit API plumbing to pass abort reason code/message to script

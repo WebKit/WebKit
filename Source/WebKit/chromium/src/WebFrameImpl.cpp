@@ -555,14 +555,6 @@ int WebFrame::instanceCount()
     return frameCount;
 }
 
-WebFrame* WebFrame::frameForEnteredContext()
-{
-    v8::Handle<v8::Context> context = v8::Context::GetEntered();
-    if (context.IsEmpty())
-        return 0;
-    return frameForContext(context);
-}
-
 WebFrame* WebFrame::frameForCurrentContext()
 {
     v8::Handle<v8::Context> context = v8::Context::GetCurrent();
