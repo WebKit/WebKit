@@ -1,3 +1,18 @@
+2012-10-12  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed, rolling out r130389.
+        http://trac.webkit.org/changeset/130389
+        https://bugs.webkit.org/show_bug.cgi?id=98048
+
+        It broke chromium
+
+        * WebCore.exp.in:
+        * page/Settings.cpp:
+        (WebCore::Settings::setAcceleratedCompositingEnabled):
+        * page/Settings.h:
+        (WebCore::Settings::setForceCompositingMode):
+        (WebCore::Settings::forceCompositingMode):
+
 2012-10-12  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Show request body source in request headers view.

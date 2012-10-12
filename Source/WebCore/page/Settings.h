@@ -514,8 +514,8 @@ namespace WebCore {
         void setDeviceHeight(int height) { m_deviceHeight = height; }
         int deviceHeight() const { return m_deviceHeight; }
 
-        void setForceCompositingMode(bool flag);
-        bool forceCompositingMode() const { return m_forceCompositingMode; }
+        void setForceCompositingMode(bool flag) { m_forceCompositingMode = flag; }
+        bool forceCompositingMode() { return m_forceCompositingMode; }
 
         void setShouldInjectUserScriptsInInitialEmptyDocument(bool flag) { m_shouldInjectUserScriptsInInitialEmptyDocument = flag; }
         bool shouldInjectUserScriptsInInitialEmptyDocument() { return m_shouldInjectUserScriptsInInitialEmptyDocument; }

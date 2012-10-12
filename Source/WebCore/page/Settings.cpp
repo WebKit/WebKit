@@ -862,9 +862,6 @@ void Settings::setAcceleratedCompositingEnabled(bool enabled)
 {
     if (m_acceleratedCompositingEnabled == enabled)
         return;
-
-    if (!enabled && m_forceCompositingMode)
-        return;
         
     m_acceleratedCompositingEnabled = enabled;
     m_page->setNeedsRecalcStyleInAllFrames();
@@ -991,14 +988,6 @@ void Settings::setTiledBackingStoreEnabled(bool enabled)
     if (m_page->mainFrame())
         m_page->mainFrame()->setTiledBackingStoreEnabled(enabled);
 #endif
-}
-
-void Settings::setForceCompositingMode(bool flag)
-{
-    m_forceCompositingMode = flag;
-
-    if (flag)
-        setAcceleratedCompositingEnabled(true);
 }
 
 void Settings::setScrollingPerformanceLoggingEnabled(bool enabled)
