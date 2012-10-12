@@ -956,6 +956,15 @@ Bug(EFL) http/tests/security/isolatedWorld/didClearWindowObject.html
 
 # EFL has accelerated compositing disabled
 webkit.org/b/79766 compositing/animation/animation-compositing.html [ Failure ]
+webkit.org/b/99043 compositing/backface-visibility/backface-visibility-3d.html [ ImageOnlyFailure ]
+webkit.org/b/99044 compositing/backface-visibility/backface-visibility-hierarchical-transform.html [ ImageOnlyFailure ]
+webkit.org/b/99045 compositing/backface-visibility/backface-visibility-image.html [ ImageOnlyFailure ]
+webkit.org/b/99047 compositing/backface-visibility/backface-visibility-non3d.html [ ImageOnlyFailure ]
+webkit.org/b/99048 compositing/backface-visibility/backface-visibility-simple.html [ ImageOnlyFailure ]
+webkit.org/b/99050 compositing/culling/filter-occlusion-alpha-large.html [ ImageOnlyFailure ]
+webkit.org/b/99051 compositing/culling/filter-occlusion-alpha.html [ ImageOnlyFailure ]
+webkit.org/b/99185 compositing/culling/filter-occlusion-blur-large.html [ ImageOnlyFailure ]
+webkit.org/b/99185 compositing/culling/filter-occlusion-blur.html [ ImageOnlyFailure ]
 webkit.org/b/79766 compositing/geometry/ancestor-overflow-change.html [ Failure ]
 webkit.org/b/79766 compositing/geometry/clip.html [ Failure ]
 webkit.org/b/79766 compositing/geometry/composited-in-columns.html [ Failure ]

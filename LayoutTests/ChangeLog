@@ -1,3 +1,65 @@
+2012-10-12  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] More pixel expectations and gardening.
+
+        Skip some pixel tests which are failing in WK1 and add correct PNG
+        baselines for quite a few tests which render correctly in WK2.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/efl/compositing/fixed-position-scroll-offset-history-restore-expected.png: Added.
+        * platform/efl/compositing/geometry/fixed-in-composited-expected.png:
+        * platform/efl/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/efl/compositing/geometry/video-fixed-scrolling-expected.png:
+        * platform/efl/compositing/overflow/fixed-position-ancestor-clip-expected.png:
+        * platform/efl/compositing/repaint/newly-composited-repaint-rect-expected.png: Added.
+        * platform/efl/fast/block/positioning/rtl-fixed-positioning-expected.png:
+        * platform/efl/fast/block/positioning/vertical-rl/fixed-positioning-expected.png:
+        * platform/efl/fast/dynamic/anchor-lock-expected.png:
+        * platform/efl/fast/events/autoscroll-expected.png:
+        * platform/efl/fast/events/reveal-link-when-focused-expected.png:
+        * platform/efl/fast/layers/scroll-rect-to-visible-expected.png:
+        * platform/efl/fast/multicol/scrolling-overflow-expected.png:
+        * platform/efl/fast/multicol/shrink-to-column-height-for-pagination-expected.png:
+        * platform/efl/fast/overflow/clip-rects-fixed-ancestor-expected.png:
+        * platform/efl/fast/overflow/position-fixed-transform-clipping-expected.png:
+        * platform/efl/fast/overflow/scrollRevealButton-expected.png:
+        * platform/efl/fast/repaint/absolute-position-changed-expected.png:
+        * platform/efl/fast/repaint/fixed-after-scroll-expected.png:
+        * platform/efl/fast/repaint/fixed-and-absolute-position-scrolled-expected.png:
+        * platform/efl/fast/repaint/fixed-child-move-after-scroll-expected.png:
+        * platform/efl/fast/repaint/fixed-child-of-fixed-move-after-scroll-expected.png:
+        * platform/efl/fast/repaint/fixed-child-of-transformed-move-after-scroll-expected.png:
+        * platform/efl/fast/repaint/fixed-expected.png:
+        * platform/efl/fast/repaint/fixed-move-after-scroll-expected.png:
+        * platform/efl/fast/repaint/fixed-scale-expected.png:
+        * platform/efl/fast/repaint/fixed-scroll-simple-expected.png:
+        * platform/efl/fast/repaint/fixed-table-cell-expected.png:
+        * platform/efl/fast/repaint/fixed-table-overflow-expected.png:
+        * platform/efl/fast/repaint/fixed-table-overflow-zindex-expected.png:
+        * platform/efl/fast/repaint/fixed-tranformed-expected.png:
+        * platform/efl/fast/repaint/repaint-during-scroll-expected.png:
+        * platform/efl/fast/repaint/scroll-absolute-layer-with-reflection-expected.png:
+        * platform/efl/fast/repaint/scroll-fixed-layer-with-no-visible-content-expected.png:
+        * platform/efl/fast/repaint/scroll-fixed-layer-with-reflection-expected.png:
+        * platform/efl/fast/repaint/scroll-fixed-layer-with-transformed-parent-layer-expected.png:
+        * platform/efl/fast/repaint/scroll-fixed-reflected-layer-expected.png:
+        * platform/efl/fast/repaint/scroll-in-fixed-layer-expected.png:
+        * platform/efl/fast/repaint/scroll-relative-table-inside-table-cell-expected.png: Added.
+        * platform/efl/fast/text/atsui-negative-spacing-features-expected.png:
+        * platform/efl/fast/text/justify-ideograph-complex-expected.png:
+        * platform/efl/fast/text/large-text-composed-char-expected.png:
+        * platform/efl/http/tests/loading/simple-subframe-expected.png: Added.
+        * platform/efl/svg/as-image/img-preserveAspectRatio-support-1-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFETurbulenceElement-dom-stitchTiles-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-stitchTiles-prop-expected.png:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug1647-expected.png: Added.
+
 2012-10-12  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [EFL] Gardening of the WK2 Debug Bot failing tests
