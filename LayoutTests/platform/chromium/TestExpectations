@@ -2864,8 +2864,6 @@ webkit.org/b/62754 [ Android Linux Mac Release ] http/tests/misc/object-embeddin
 webkit.org/b/62754 [ Android Linux Mac Debug ] http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Failure Slow ]
 webkit.org/b/62754 [ Win ] http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Failure ]
 
-crbug.com/89282 [ SnowLeopard ] fast/forms/range/input-appearance-range.html [ ImageOnlyFailure Pass ]
-
 crbug.com/87732 fast/regex/toString.html [ Failure ]
 
 # Started around WebKit r90233:r90242

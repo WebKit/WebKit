@@ -1,5 +1,14 @@
 2012-10-12  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, chromium-mac-snowleopard rebaseline for a slider.
+        The thumb moved a small amount (maybe during shadow dom refactor?).
+        This matches the Apple Lion result.
+
+        * platform/chromium-mac-snowleopard/fast/forms/range/input-appearance-range-expected.png:
+        * platform/chromium/TestExpectations:
+
+2012-10-12  Tony Chang  <tony@chromium.org>
+
         Unreviewed, remove duplicate TestExpectation entries.
 
         * platform/efl-wk1/TestExpectations:
