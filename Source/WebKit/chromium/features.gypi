@@ -140,7 +140,6 @@
       'enable_touch_events%': 1,
       'enable_touch_icon_loading%' : 0,
       'enable_mutation_observers%': 1,
-      'use_harfbuzz_ng%': 0,
     },
     'use_accelerated_compositing%': '<(use_accelerated_compositing)',
     'enable_skia_text%': '<(enable_skia_text)',
@@ -223,7 +222,7 @@
           'WTF_USE_SKIA_ON_MAC_CHROMIUM=1',
         ],
       }],
-      ['use_harfbuzz_ng==1', {
+      ['use_x11==1', {
         'feature_defines': [
           'WTF_USE_HARFBUZZ_NG=1',
         ],

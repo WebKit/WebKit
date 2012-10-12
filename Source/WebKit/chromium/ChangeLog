@@ -1,3 +1,12 @@
+2012-10-11  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [Chromium] Use harfbuzz-ng by default on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=97281
+
+        Reviewed by Tony Chang.
+
+        * features.gypi: Enable WTF_USE_HARFBUZZ_NG when use_x11 == 1.
+
 2012-10-11  Nat Duca  <nduca@chromium.org>
 
         Expose high-resolution on requestAnimationFrame callback
