@@ -1,5 +1,14 @@
 2012-10-12  Emil A Eklund  <eae@chromium.org>
 
+        Unreviewed chromium windows rebaseline for vertical-rl-ltr test.
+
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.png:
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt:
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.png:
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt:
+
+2012-10-12  Emil A Eklund  <eae@chromium.org>
+
         Unreviewed chromium rebaseline for r131202.
 
         * css2.1/t0804-c5509-padn-l-03-f-g-expected.txt: Added.
