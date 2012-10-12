@@ -496,6 +496,8 @@ public:
 
     bool isPinnedToLeftSide() const { return m_mainFrameIsPinnedToLeftSide; }
     bool isPinnedToRightSide() const { return m_mainFrameIsPinnedToRightSide; }
+    bool isPinnedToTopSide() const { return m_mainFrameIsPinnedToTopSide; }
+    bool isPinnedToBottomSide() const { return m_mainFrameIsPinnedToBottomSide; }
 
     void setPaginationMode(WebCore::Pagination::Mode);
     WebCore::Pagination::Mode paginationMode() const { return m_paginationMode; }
@@ -836,7 +838,7 @@ private:
     void notifyScrollerThumbIsVisibleInRect(const WebCore::IntRect&);
     void recommendedScrollbarStyleDidChange(int32_t newStyle);
     void didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar);
-    void didChangeScrollOffsetPinningForMainFrame(bool pinnedToLeftSide, bool pinnedToRightSide);
+    void didChangeScrollOffsetPinningForMainFrame(bool pinnedToLeftSide, bool pinnedToRightSide, bool pinnedToTopSide, bool pinnedToBottomSide);
     void didChangePageCount(unsigned);
     void didFailToInitializePlugin(const String& mimeType);
     void didBlockInsecurePluginVersion(const String& mimeType, const String& urlString);
@@ -1196,6 +1198,8 @@ private:
 
     bool m_mainFrameIsPinnedToLeftSide;
     bool m_mainFrameIsPinnedToRightSide;
+    bool m_mainFrameIsPinnedToTopSide;
+    bool m_mainFrameIsPinnedToBottomSide;
 
     unsigned m_pageCount;
 

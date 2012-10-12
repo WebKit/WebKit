@@ -223,6 +223,8 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_canShortCircuitHorizontalWheelEvents(true)
     , m_mainFrameIsPinnedToLeftSide(false)
     , m_mainFrameIsPinnedToRightSide(false)
+    , m_mainFrameIsPinnedToTopSide(false)
+    , m_mainFrameIsPinnedToBottomSide(false)
     , m_pageCount(0)
     , m_renderTreeSize(0)
     , m_shouldSendEventsSynchronously(false)
@@ -475,6 +477,8 @@ void WebPageProxy::close()
 
     m_mainFrameIsPinnedToLeftSide = false;
     m_mainFrameIsPinnedToRightSide = false;
+    m_mainFrameIsPinnedToTopSide = false;
+    m_mainFrameIsPinnedToBottomSide = false;
 
     m_visibleScrollerThumbRect = IntRect();
 
@@ -2097,6 +2101,8 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, const String& mimeTyp
             // any wheel events and dispatch them to the WKView when necessary.
             m_mainFrameIsPinnedToLeftSide = true;
             m_mainFrameIsPinnedToRightSide = true;
+            m_mainFrameIsPinnedToTopSide = true;
+            m_mainFrameIsPinnedToBottomSide = true;
         }
         m_pageClient->didCommitLoadForMainFrame(frameHasCustomRepresentation);
     }
@@ -3616,6 +3622,8 @@ void WebPageProxy::processDidCrash()
 
     m_mainFrameIsPinnedToLeftSide = false;
     m_mainFrameIsPinnedToRightSide = false;
+    m_mainFrameIsPinnedToTopSide = false;
+    m_mainFrameIsPinnedToBottomSide = false;
 
     m_visibleScrollerThumbRect = IntRect();
 
@@ -3864,10 +3872,12 @@ void WebPageProxy::didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, 
     m_pageClient->didChangeScrollbarsForMainFrame();
 }
 
-void WebPageProxy::didChangeScrollOffsetPinningForMainFrame(bool pinnedToLeftSide, bool pinnedToRightSide)
+void WebPageProxy::didChangeScrollOffsetPinningForMainFrame(bool pinnedToLeftSide, bool pinnedToRightSide, bool pinnedToTopSide, bool pinnedToBottomSide)
 {
     m_mainFrameIsPinnedToLeftSide = pinnedToLeftSide;
     m_mainFrameIsPinnedToRightSide = pinnedToRightSide;
+    m_mainFrameIsPinnedToTopSide = pinnedToTopSide;
+    m_mainFrameIsPinnedToBottomSide = pinnedToBottomSide;
 }
 
 void WebPageProxy::didChangePageCount(unsigned pageCount)

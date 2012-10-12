@@ -439,6 +439,8 @@ WK_EXPORT bool WKPageAreScrollbarAnimationsSuppressed(WKPageRef page);
 
 WK_EXPORT bool WKPageIsPinnedToLeftSide(WKPageRef page);
 WK_EXPORT bool WKPageIsPinnedToRightSide(WKPageRef page);
+WK_EXPORT bool WKPageIsPinnedToTopSide(WKPageRef page);
+WK_EXPORT bool WKPageIsPinnedToBottomSide(WKPageRef page);
 
 WK_EXPORT bool WKPageCanDelete(WKPageRef page);
 WK_EXPORT bool WKPageHasSelectedRange(WKPageRef page);

@@ -902,6 +902,8 @@ private:
 
     bool m_cachedMainFrameIsPinnedToLeftSide;
     bool m_cachedMainFrameIsPinnedToRightSide;
+    bool m_cachedMainFrameIsPinnedToTopSide;
+    bool m_cachedMainFrameIsPinnedToBottomSide;
     bool m_canShortCircuitHorizontalWheelEvents;
     unsigned m_numWheelEventHandlers;
 

@@ -1,3 +1,42 @@
+2012-10-12  Ada Chan  <adachan@apple.com>
+
+        Add WKPage API to get whether the main frame is pinned to the top or bottom edge
+        https://bugs.webkit.org/show_bug.cgi?id=99110
+
+        Reviewed by Beth Dakin.
+
+        This is very similar to r79025 where we add support to do this for the left and right sides.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageIsPinnedToTopSide):
+        (WKPageIsPinnedToBottomSide):
+        * UIProcess/API/C/WKPage.h:
+        Add new API calls.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::processDidCrash):
+        (WebKit::WebPageProxy::didChangeScrollOffsetPinningForMainFrame):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isPinnedToTopSide):
+        (WebKit::WebPageProxy::isPinnedToBottomSide):
+        Declare new data members for keeping track of the pinned states for
+        top and bottom sides. Initialize, reset, and update these states
+        at appropriate times. Implement getters for these states.
+
+        * UIProcess/WebPageProxy.messages.in:
+        Change the DidChangeScrollOffsetPinningForMainFrame message to take
+        the pinned states for top and bottom sides.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::didChangeScrollOffsetForMainFrame):
+        * WebProcess/WebPage/WebPage.h:
+        Cache the pinned states for top and bottom sides. Only notify the
+        UI process if the states have changed.
+
 2012-10-12  Anders Carlsson  <andersca@apple.com>
 
         Stop using deprecatedSend inside ConnectionMac.cpp

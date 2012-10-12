@@ -365,6 +365,16 @@ bool WKPageIsPinnedToRightSide(WKPageRef pageRef)
     return toImpl(pageRef)->isPinnedToRightSide();
 }
 
+bool WKPageIsPinnedToTopSide(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->isPinnedToTopSide();
+}
+
+bool WKPageIsPinnedToBottomSide(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->isPinnedToBottomSide();
+}
+
 void WKPageSetPaginationMode(WKPageRef pageRef, WKPaginationMode paginationMode)
 {
     Pagination::Mode mode;

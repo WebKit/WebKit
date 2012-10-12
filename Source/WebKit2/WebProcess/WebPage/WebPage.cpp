@@ -247,6 +247,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_isRunningModal(false)
     , m_cachedMainFrameIsPinnedToLeftSide(false)
     , m_cachedMainFrameIsPinnedToRightSide(false)
+    , m_cachedMainFrameIsPinnedToTopSide(false)
+    , m_cachedMainFrameIsPinnedToBottomSide(false)
     , m_canShortCircuitHorizontalWheelEvents(false)
     , m_numWheelEventHandlers(0)
     , m_cachedPageCount(0)
@@ -2640,12 +2642,16 @@ void WebPage::didChangeScrollOffsetForMainFrame()
 
     bool isPinnedToLeftSide = (scrollPosition.x() <= minimumScrollPosition.x());
     bool isPinnedToRightSide = (scrollPosition.x() >= maximumScrollPosition.x());
+    bool isPinnedToTopSide = (scrollPosition.y() <= minimumScrollPosition.y());
+    bool isPinnedToBottomSide = (scrollPosition.y() >= maximumScrollPosition.y());
 
-    if (isPinnedToLeftSide != m_cachedMainFrameIsPinnedToLeftSide || isPinnedToRightSide != m_cachedMainFrameIsPinnedToRightSide) {
-        send(Messages::WebPageProxy::DidChangeScrollOffsetPinningForMainFrame(isPinnedToLeftSide, isPinnedToRightSide));
+    if (isPinnedToLeftSide != m_cachedMainFrameIsPinnedToLeftSide || isPinnedToRightSide != m_cachedMainFrameIsPinnedToRightSide || isPinnedToTopSide != m_cachedMainFrameIsPinnedToTopSide || isPinnedToBottomSide != m_cachedMainFrameIsPinnedToBottomSide) {
+        send(Messages::WebPageProxy::DidChangeScrollOffsetPinningForMainFrame(isPinnedToLeftSide, isPinnedToRightSide, isPinnedToTopSide, isPinnedToBottomSide));
         
         m_cachedMainFrameIsPinnedToLeftSide = isPinnedToLeftSide;
         m_cachedMainFrameIsPinnedToRightSide = isPinnedToRightSide;
+        m_cachedMainFrameIsPinnedToTopSide = isPinnedToTopSide;
+        m_cachedMainFrameIsPinnedToBottomSide = isPinnedToBottomSide;
     }
 }
 
