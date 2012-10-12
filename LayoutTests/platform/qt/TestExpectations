@@ -1028,6 +1028,10 @@ http/tests/websocket/tests/hybi/workers/close.html
 # New test added for https://bugs.webkit.org/show_bug.cgi?id=98452 needs platform specific results
 fast/text/vertical-rl-rtl-linebreak.html
 
+# [Qt] http/tests/misc/webtiming-origins.html is flakey
+# https://bugs.webkit.org/show_bug.cgi?id=51245
+http/tests/misc/webtiming-origins.html
+
 # =========================================================================== #
 # failing media tests
 # =========================================================================== #

@@ -1,3 +1,10 @@
+2012-10-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-5.0-wk2/css3/filters/composited-during-animation-layertree-expected.txt: Updated.
+        * platform/qt/TestExpectations: Skip a flakey test.
+
 2012-10-12  Adam Barth  <abarth@webkit.org>
 
         More baselines updates after http://trac.webkit.org/changeset/131134.
