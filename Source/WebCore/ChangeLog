@@ -1,3 +1,11 @@
+2012-10-11  Anders Carlsson  <andersca@apple.com>
+
+        Attempt to fix build broken by r131125.
+
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::addImageToResources):
+        KURL::utf8String() is apparently a USE(GOOGLEURL) feature. Call url.string().utf8() instead.
+
 2012-10-11  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] Use harfbuzz-ng by default on Linux
