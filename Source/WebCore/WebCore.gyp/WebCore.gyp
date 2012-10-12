@@ -101,6 +101,7 @@
       '../page/animation',
       '../page/chromium',
       '../page/scrolling',
+      '../page/scrolling/chromium',
       '../platform',
       '../platform/animation',
       '../platform/audio',

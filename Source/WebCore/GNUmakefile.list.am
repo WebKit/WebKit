@@ -4072,7 +4072,6 @@ webcore_sources += \
 	Source/WebCore/page/scrolling/ScrollingConstraints.h \
 	Source/WebCore/page/scrolling/ScrollingCoordinator.cpp \
 	Source/WebCore/page/scrolling/ScrollingCoordinator.h \
-	Source/WebCore/page/scrolling/ScrollingCoordinatorNone.cpp \
 	Source/WebCore/page/scrolling/ScrollingStateNode.cpp \
 	Source/WebCore/page/scrolling/ScrollingStateNode.h \
 	Source/WebCore/page/scrolling/ScrollingStateScrollingNode.cpp \

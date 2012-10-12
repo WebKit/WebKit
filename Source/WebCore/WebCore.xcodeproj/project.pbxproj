@@ -1021,7 +1021,6 @@
 		37F818FD0D657606005E1F05 /* WebCoreURLResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 37F818FB0D657606005E1F05 /* WebCoreURLResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37F818FE0D657606005E1F05 /* WebCoreURLResponse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37F818FC0D657606005E1F05 /* WebCoreURLResponse.mm */; };
 		37FD4298118368460093C029 /* TreeDepthLimit.h in Headers */ = {isa = PBXBuildFile; fileRef = 37FD4297118368460093C029 /* TreeDepthLimit.h */; };
-		3866AF3814F1C17100283D68 /* ScrollingCoordinatorNone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3866AF3714F1C17100283D68 /* ScrollingCoordinatorNone.cpp */; };
 		3AB02D2A12D4F91600FBB694 /* StorageTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AB02D2812D4F91600FBB694 /* StorageTracker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3AB02D2B12D4F91600FBB694 /* StorageTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AB02D2912D4F91600FBB694 /* StorageTracker.cpp */; };
 		3AC3680012EF7A09006A3D6F /* StorageTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC367FE12EF7A09006A3D6F /* StorageTrackerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3289,6 +3288,7 @@
 		938E65F709F0985D008A48EC /* JSHTMLElementWrapperFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 938E65F609F0985D008A48EC /* JSHTMLElementWrapperFactory.cpp */; };
 		938E666009F09B81008A48EC /* JSHTMLCanvasElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 938E665F09F09B81008A48EC /* JSHTMLCanvasElement.cpp */; };
 		938E666209F09B87008A48EC /* JSHTMLCanvasElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 938E666109F09B87008A48EC /* JSHTMLCanvasElement.h */; };
+		9391A991162746CB00297330 /* ScrollingCoordinatorMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 9391A990162746CB00297330 /* ScrollingCoordinatorMac.h */; };
 		9392262D1032107B006E7D5D /* JSHTMLCanvasElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9392262C1032107B006E7D5D /* JSHTMLCanvasElementCustom.cpp */; };
 		9392262F10321084006E7D5D /* JSCSSRuleListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9392262E10321084006E7D5D /* JSCSSRuleListCustom.cpp */; };
 		9392F1420AD185F400691BD4 /* RenderCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 9392F1410AD185F400691BD4 /* RenderCounter.h */; };
@@ -8145,7 +8145,6 @@
 		37F818FC0D657606005E1F05 /* WebCoreURLResponse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreURLResponse.mm; sourceTree = "<group>"; };
 		37FC96DA1104ED71003E1FAD /* TrailingFloatsRootInlineBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrailingFloatsRootInlineBox.h; sourceTree = "<group>"; };
 		37FD4297118368460093C029 /* TreeDepthLimit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeDepthLimit.h; sourceTree = "<group>"; };
-		3866AF3714F1C17100283D68 /* ScrollingCoordinatorNone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingCoordinatorNone.cpp; sourceTree = "<group>"; };
 		3AB02D2812D4F91600FBB694 /* StorageTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageTracker.h; sourceTree = "<group>"; };
 		3AB02D2912D4F91600FBB694 /* StorageTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageTracker.cpp; sourceTree = "<group>"; };
 		3AC367FE12EF7A09006A3D6F /* StorageTrackerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageTrackerClient.h; sourceTree = "<group>"; };
@@ -10488,6 +10487,7 @@
 		938E662509F09956008A48EC /* HTMLCanvasElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLCanvasElement.idl; sourceTree = "<group>"; };
 		938E665F09F09B81008A48EC /* JSHTMLCanvasElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLCanvasElement.cpp; sourceTree = "<group>"; };
 		938E666109F09B87008A48EC /* JSHTMLCanvasElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLCanvasElement.h; sourceTree = "<group>"; };
+		9391A990162746CB00297330 /* ScrollingCoordinatorMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingCoordinatorMac.h; sourceTree = "<group>"; };
 		9392262C1032107B006E7D5D /* JSHTMLCanvasElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLCanvasElementCustom.cpp; sourceTree = "<group>"; };
 		9392262E10321084006E7D5D /* JSCSSRuleListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSRuleListCustom.cpp; sourceTree = "<group>"; };
 		9392F1410AD185F400691BD4 /* RenderCounter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderCounter.h; sourceTree = "<group>"; };
@@ -14580,7 +14580,6 @@
 				0F605AEB15F94848004DF0C0 /* ScrollingConstraints.h */,
 				1AF62EE414DA22A70041556C /* ScrollingCoordinator.cpp */,
 				1AF62EE514DA22A70041556C /* ScrollingCoordinator.h */,
-				3866AF3714F1C17100283D68 /* ScrollingCoordinatorNone.cpp */,
 				931CBD06161A44E900E4C874 /* ScrollingStateNode.cpp */,
 				931CBD07161A44E900E4C874 /* ScrollingStateNode.h */,
 				931CBD08161A44E900E4C874 /* ScrollingStateScrollingNode.cpp */,
@@ -14600,6 +14599,7 @@
 		1AF62EE214DA22A70041556C /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				9391A990162746CB00297330 /* ScrollingCoordinatorMac.h */,
 				1AF62EE314DA22A70041556C /* ScrollingCoordinatorMac.mm */,
 				931CBD12161A44F800E4C874 /* ScrollingStateNodeMac.mm */,
 				1AF62F2314DAFE910041556C /* ScrollingThreadMac.mm */,
@@ -25576,6 +25576,7 @@
 				31955A88160D199200858025 /* RenderSnapshottedPlugIn.h in Headers */,
 				514BC843161CF05C004D52F4 /* ResourceBuffer.h in Headers */,
 				5728BD9E1625369600C40B56 /* SiblingTraversalStrategies.h in Headers */,
+				9391A991162746CB00297330 /* ScrollingCoordinatorMac.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -28116,7 +28117,6 @@
 				0F605AEC15F94848004DF0C0 /* ScrollingConstraints.cpp in Sources */,
 				1AF62EE714DA22A70041556C /* ScrollingCoordinator.cpp in Sources */,
 				1AF62EE614DA22A70041556C /* ScrollingCoordinatorMac.mm in Sources */,
-				3866AF3814F1C17100283D68 /* ScrollingCoordinatorNone.cpp in Sources */,
 				1AF62F2514DAFE9E0041556C /* ScrollingThread.cpp in Sources */,
 				1AF62F2414DAFE910041556C /* ScrollingThreadMac.mm in Sources */,
 				1AAADDA314DB409F00AF64B3 /* ScrollingTree.cpp in Sources */,

@@ -27259,10 +27259,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\page\scrolling\ScrollingCoordinatorNone.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\page\SecurityOrigin.cpp"
 				>
 			</File>

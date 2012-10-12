@@ -1,3 +1,111 @@
+2012-10-11  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=98700
+        ScrollingCoordinator is a hot mess of if-defs
+
+        Reviewed by Anders Carlsson.
+
+        This patch moves all of the threaded scrolling code in 
+        ScrollingCoordinator into a new class called ScrollingCoordinatorMac 
+        which inherits from ScrollingCoordinator. 
+
+        It also adds ScrollingCoordinatorChromium to do Chromium-specific work. 
+        ScrollingCoordinator itself does work that is cross-platform. 
+        
+        Finally, this patch also eliminates ScrollingCoordinatorNone. 
+        ScrollingCoordinator is now sufficient for platforms that relied on 
+        ScrollingCoordinatorNone to build.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::create):
+        (WebCore):
+        (WebCore::ScrollingCoordinator::ScrollingCoordinator):
+        (WebCore::ScrollingCoordinator::~ScrollingCoordinator):
+        (WebCore::ScrollingCoordinator::pageDestroyed):
+        (WebCore::ScrollingCoordinator::computeNonFastScrollableRegion):
+        (WebCore::ScrollingCoordinator::computeCurrentWheelEventHandlerCount):
+        (WebCore::ScrollingCoordinator::scrollLayerForFrameView):
+        (WebCore::ScrollingCoordinator::frameViewRootLayerDidChange):
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore):
+        (ScrollingCoordinator):
+        (WebCore::ScrollingCoordinator::scrollingTree):
+        (WebCore::ScrollingCoordinator::commitTreeStateIfNeeded):
+        (WebCore::ScrollingCoordinator::frameViewLayoutUpdated):
+        (WebCore::ScrollingCoordinator::supportsFixedPositionLayers):
+        (WebCore::ScrollingCoordinator::requestScrollPositionUpdate):
+        (WebCore::ScrollingCoordinator::handleWheelEvent):
+        (WebCore::ScrollingCoordinator::updateMainFrameScrollPositionAndScrollLayerPosition):
+        (WebCore::ScrollingCoordinator::attachToStateTree):
+        (WebCore::ScrollingCoordinator::detachFromStateTree):
+        (WebCore::ScrollingCoordinator::clearStateTree):
+        (WebCore::ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange):
+        (WebCore::ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange):
+        (WebCore::ScrollingCoordinator::scrollableAreaScrollLayerDidChange):
+        (WebCore::ScrollingCoordinator::setLayerIsContainerForFixedPositionLayers):
+        (WebCore::ScrollingCoordinator::setLayerIsFixedToContainerLayer):
+        (WebCore::ScrollingCoordinator::recomputeWheelEventHandlerCountForFrameView):
+        (WebCore::ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread):
+        * page/scrolling/ScrollingCoordinatorNone.cpp: Removed.
+        * page/scrolling/chromium/ScrollingCoordinatorChromium.cpp:
+        (WebCore::ScrollingCoordinatorChromium::ScrollingCoordinatorChromium):
+        (WebCore::ScrollingCoordinatorChromium::~ScrollingCoordinatorChromium):
+        (WebCore::ScrollingCoordinatorChromium::frameViewLayoutUpdated):
+        (WebCore):
+        (WebCore::ScrollingCoordinatorChromium::frameViewRootLayerDidChange):
+        (WebCore::ScrollingCoordinatorChromium::frameViewHorizontalScrollbarLayerDidChange):
+        (WebCore::ScrollingCoordinatorChromium::frameViewVerticalScrollbarLayerDidChange):
+        (WebCore::ScrollingCoordinatorChromium::setScrollLayer):
+        (WebCore::ScrollingCoordinatorChromium::setNonFastScrollableRegion):
+        (WebCore::ScrollingCoordinatorChromium::setWheelEventHandlerCount):
+        (WebCore::ScrollingCoordinatorChromium::setShouldUpdateScrollLayerPositionOnMainThread):
+        (WebCore::ScrollingCoordinatorChromium::setLayerIsContainerForFixedPositionLayers):
+        (WebCore::ScrollingCoordinatorChromium::setLayerIsFixedToContainerLayer):
+        (WebCore::ScrollingCoordinatorChromium::scrollableAreaScrollLayerDidChange):
+        (WebCore::ScrollingCoordinatorChromium::recomputeWheelEventHandlerCountForFrameView):
+        * page/scrolling/chromium/ScrollingCoordinatorChromium.h: Added.
+        (WebCore):
+        (ScrollingCoordinatorChromium):
+        (WebCore::ScrollingCoordinatorChromium::supportsFixedPositionLayers):
+        * page/scrolling/mac/ScrollingCoordinatorMac.h: Added.
+        (WebCore):
+        (ScrollingCoordinatorMac):
+        (ScrollParameters):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::ScrollingCoordinatorMac):
+        (WebCore::ScrollingCoordinatorMac::~ScrollingCoordinatorMac):
+        (WebCore::ScrollingCoordinatorMac::pageDestroyed):
+        (WebCore):
+        (WebCore::ScrollingCoordinatorMac::scrollingTree):
+        (WebCore::ScrollingCoordinatorMac::commitTreeStateIfNeeded):
+        (WebCore::ScrollingCoordinatorMac::frameViewLayoutUpdated):
+        (WebCore::ScrollingCoordinatorMac::recomputeWheelEventHandlerCountForFrameView):
+        (WebCore::ScrollingCoordinatorMac::frameViewRootLayerDidChange):
+        (WebCore::ScrollingCoordinatorMac::frameViewHorizontalScrollbarLayerDidChange):
+        (WebCore::ScrollingCoordinatorMac::frameViewVerticalScrollbarLayerDidChange):
+        (WebCore::ScrollingCoordinatorMac::requestScrollPositionUpdate):
+        (WebCore::ScrollingCoordinatorMac::handleWheelEvent):
+        (WebCore::ScrollingCoordinatorMac::updateMainFrameScrollPositionAndScrollLayerPosition):
+        (WebCore::ScrollingCoordinatorMac::attachToStateTree):
+        (WebCore::ScrollingCoordinatorMac::detachFromStateTree):
+        (WebCore::ScrollingCoordinatorMac::clearStateTree):
+        (WebCore::ScrollingCoordinatorMac::stateNodeForID):
+        (WebCore::ScrollingCoordinatorMac::ensureRootStateNodeForFrameView):
+        (WebCore::ScrollingCoordinatorMac::setScrollLayerForNode):
+        (WebCore::ScrollingCoordinatorMac::setNonFastScrollableRegionForNode):
+        (WebCore::ScrollingCoordinatorMac::setScrollParametersForNode):
+        (WebCore::ScrollingCoordinatorMac::setWheelEventHandlerCountForNode):
+        (WebCore::ScrollingCoordinatorMac::setShouldUpdateScrollLayerPositionOnMainThread):
+        (WebCore::ScrollingCoordinatorMac::updateMainFrameScrollLayerPosition):
+        (WebCore::ScrollingCoordinatorMac::scheduleTreeStateCommit):
+        (WebCore::ScrollingCoordinatorMac::scrollingStateTreeCommitterTimerFired):
+        (WebCore::ScrollingCoordinatorMac::commitTreeState):
+
 2012-10-11  Takashi Sakamoto  <tasak@google.com>
 
         [Shadow DOM] Insertion points need resetStyleInheritance

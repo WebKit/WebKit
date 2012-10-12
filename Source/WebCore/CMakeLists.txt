@@ -1759,7 +1759,6 @@ SET(WebCore_SOURCES
 
     page/scrolling/ScrollingConstraints.cpp
     page/scrolling/ScrollingCoordinator.cpp
-    page/scrolling/ScrollingCoordinatorNone.cpp
 
     platform/Arena.cpp
     platform/AsyncFileSystem.cpp
