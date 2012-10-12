@@ -3,6 +3,17 @@
         [WK2] Serialization of Resource[Request,Response,Error] should be shared across ports
         https://bugs.webkit.org/show_bug.cgi?id=90142
 
+        Unreviewed buildfix 2.
+
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (CoreIPC::::encodePlatformData):
+        (CoreIPC::::decodePlatformData):
+
+2012-10-12  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [WK2] Serialization of Resource[Request,Response,Error] should be shared across ports
+        https://bugs.webkit.org/show_bug.cgi?id=90142
+
         Unreviewed buildfix.
 
         * Shared/WebCoreArgumentCoders.cpp:
