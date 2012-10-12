@@ -1,3 +1,16 @@
+2012-10-12  Anders Carlsson  <andersca@apple.com>
+
+        Move macros from Parser.h to Parser.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=99217
+
+        Reviewed by Andreas Kling.
+
+        There are a bunch of macros in Parser.h that are only used in Parser.cpp. Move them to Parser.cpp
+        so they won't pollute the global namespace.
+        * parser/Parser.cpp:
+        * parser/Parser.h:
+        (JSC):
+
 2012-10-12  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Another build fix after r131213
