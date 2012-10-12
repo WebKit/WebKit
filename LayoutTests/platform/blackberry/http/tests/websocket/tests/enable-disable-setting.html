@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>RIM PR 152311</title>
+<script>
+function appendResult(text)
+{
+    document.getElementById("results").innerHTML += text;
+}
+
+function runTest()
+{
+    if (window.testRunner) {
+        window.testRunner.dumpAsText();
+        window.testRunner.overridePreference("WebSocketsEnabled", true);
+    }
+    if (window.WebSocket) {
+        appendResult("PASSED: websocket object is available when WebSocketsEnabled is true<br>");
+    } else {
+        appendResult("FAILED: websocket object is not available when WebSocketsEnabled is true<br>");
+    }
+    if (window.testRunner) {
+        window.testRunner.overridePreference("WebSocketsEnabled", false);
+    }
+    if (window.WebSocket) {
+        appendResult("FAILED: websocket object is available when WebSocketsEnabled is false<br>");
+    } else {
+        appendResult("PASSED: websocket object is not available when WebSocketsEnabled is false<br>");
+    }
+    appendResult("TEST COMPLETE");
+}
+</script>
+</head>
+<body onload="runTest()">
+<div id="results"></div>
+</body>
+</html>

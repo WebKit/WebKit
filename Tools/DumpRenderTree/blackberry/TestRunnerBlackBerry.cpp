@@ -437,6 +437,8 @@ void TestRunner::overridePreference(JSStringRef key, JSStringRef value)
         DumpRenderTreeSupport::setLinksIncludedInFocusChain(valueStr == "true" || valueStr == "1");
     else if (keyStr == "WebKitHyperlinkAuditingEnabled")
         mainFrame->page()->settings()->setHyperlinkAuditingEnabled(valueStr == "true" || valueStr == "1");
+    else if (keyStr == "WebSocketsEnabled")
+        BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->settings()->setWebSocketsEnabled(valueStr == "true" || valueStr == "1");
 }
 
 void TestRunner::setAlwaysAcceptCookies(bool alwaysAcceptCookies)

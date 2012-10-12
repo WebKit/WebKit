@@ -1,3 +1,13 @@
+2012-10-12  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Add tests of WebSocketEnabled preference
+        https://bugs.webkit.org/show_bug.cgi?id=84982
+
+        Reviewed by Yong Li.
+
+        * platform/blackberry/http/tests/websocket/tests/enable-disable-setting-expected.txt: Added.
+        * platform/blackberry/http/tests/websocket/tests/enable-disable-setting.html: Added.
+
 2012-10-11  Emil A Eklund  <eae@chromium.org>
 
         [Sub pixel layout] Change RenderBox to not round logicalTop/Left for RenderReplaced
