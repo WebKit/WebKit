@@ -1,5 +1,64 @@
 2012-10-12  Adam Barth  <abarth@webkit.org>
 
+        More baselines updates after http://trac.webkit.org/changeset/131134.
+        It seems http://trac.webkit.org/changeset/131158 wasn't quite complete.
+
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/W3C-I18N/text-anchor-no-markup-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.txt: Removed.
+        * platform/chromium-linux-x86/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.txt: Removed.
+        * platform/chromium-linux-x86/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.txt: Removed.
+        * platform/chromium-linux-x86/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.txt: Removed.
+        * platform/chromium-linux-x86/svg/text/bidi-text-query-expected.txt: Removed.
+        * platform/chromium-linux-x86/transforms/2d/hindi-rotated-expected.png: Removed.
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-no-markup-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.txt: Removed.
+        * platform/chromium-linux/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.txt: Removed.
+        * platform/chromium-linux/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.txt: Removed.
+        * platform/chromium-linux/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.txt: Removed.
+        * platform/chromium-linux/svg/text/bidi-text-query-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/svg/text/bidi-text-query-expected.txt: Removed.
+        * platform/chromium-win-xp/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.txt: Removed.
+        * platform/chromium-win-xp/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.txt: Removed.
+        * platform/chromium-win-xp/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.txt: Removed.
+        * platform/chromium-win-xp/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.txt: Removed.
+        * platform/chromium-win-xp/svg/text/bidi-text-query-expected.txt: Removed.
+
+2012-10-12  Adam Barth  <abarth@webkit.org>
+
         Note that this test is flaky.
 
         * platform/chromium/TestExpectations:
