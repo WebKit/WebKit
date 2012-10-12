@@ -81,10 +81,10 @@ layer at (103,426) size 20x20
     RenderBR {BR} at (6,24) size 0x18
     RenderBR {BR} at (6,42) size 0x18
 layer at (13,763) size 20x20
-  RenderImage {IMG} at (13,763) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+  RenderImage {IMG} at (13,763) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
 layer at (43,763) size 20x20
-  RenderImage {IMG} at (43,763) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+  RenderImage {IMG} at (43,763) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
 layer at (73,763) size 20x20
-  RenderImage {IMG} at (73,763) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+  RenderImage {IMG} at (73,763) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
 layer at (103,763) size 20x20
-  RenderImage {IMG} at (103,763) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+  RenderImage {IMG} at (103,763) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]

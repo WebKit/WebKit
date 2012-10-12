@@ -1,5 +1,28 @@
 2012-10-12  Emil A Eklund  <eae@chromium.org>
 
+        Unreviewed chromium rebaseline for r131216.
+
+        * fast/box-sizing/box-sizing-expected.txt: Replaced.
+        * fast/repaint/repaint-during-scroll-with-zoom-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/repaint-during-scroll-with-zoom-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/writing-mode/fieldsets-expected.png:
+        * platform/chromium-mac/compositing/shadows/shadow-drawing-expected.txt:
+        * platform/chromium-mac/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.png:
+        * platform/chromium-mac/fast/box-sizing/box-sizing-expected.txt:
+        * platform/chromium-mac/fast/repaint/repaint-during-scroll-with-zoom-expected.txt:
+        * platform/chromium-mac/fast/writing-mode/fieldsets-expected.png:
+        * platform/chromium-mac/fast/writing-mode/fieldsets-expected.txt:
+        * platform/chromium-mac/media/media-document-audio-repaint-expected.txt:
+        * platform/chromium-win-xp/fast/repaint/repaint-during-scroll-with-zoom-expected.txt: Removed.
+        * platform/efl/fast/box-sizing/box-sizing-expected.txt: Removed.
+        * platform/efl/fast/repaint/repaint-during-scroll-with-zoom-expected.txt: Removed.
+        * platform/gtk/fast/box-sizing/box-sizing-expected.txt: Removed.
+        * platform/gtk/fast/repaint/repaint-during-scroll-with-zoom-expected.txt: Removed.
+        * platform/win-future/fast/box-sizing: Added.
+        * platform/win-future/fast/box-sizing/box-sizing-expected.txt: Added.
+
+2012-10-12  Emil A Eklund  <eae@chromium.org>
+
         Unreviewed chromium windows rebaseline for vertical-rl-ltr test.
 
         * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.png:
