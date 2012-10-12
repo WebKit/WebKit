@@ -1,3 +1,16 @@
+2012-10-12  Roger Fong  <roger_fong@apple.com>
+
+        Update method signature for platformCALayerShowRepaintCounter in MediaPlayerPlayerPrivateAVFoundationCF's LayerClient class.
+        https://bugs.webkit.org/show_bug.cgi?id=99190
+
+        Reviewed by Simon Fraser.
+
+        LayerClient's base class (PlatformCALayerClient) method signature for abstract method platformCALayerShowRepaintCounter
+        was updated in http://trac.webkit.org/changeset/130676 so it needs to be changed in LayerClient as well.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::LayerClient::platformCALayerShowRepaintCounter):
+
 2012-10-12  Scott Graham  <scottmg@chromium.org>
 
         Local disable of stack corruption warning when compiling on VS2012
@@ -4937,6 +4950,7 @@
         * platform/graphics/skia/SimpleFontDataSkia.cpp:
         (WebCore::SimpleFontData::canRenderCombiningCharacterSequence):
 
+>>>>>>> .r131205
 2012-10-09  Enrica Casucci  <enrica@apple.com>
 
         Only measure text once instead of twice when performing line layout.
