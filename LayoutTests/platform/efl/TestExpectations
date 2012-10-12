@@ -627,6 +627,9 @@ Bug(EFL) inspector/timeline/timeline-enum-stability.html [ Failure Pass ]
 webkit.org/b/95066 inspector/styles/media-queries.html [ Failure Pass ]
 webkit.org/b/98777 inspector/styles/styles-history.html [ Failure Pass ]
 
+# Fails after r131176.
+webkit.org/b/99175 inspector/styles/region-style-crash.html [ Failure ]
+
 # Sometimes asserts in MessagePort::contextDestroyed
 webkit.org/b/94458 http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html [ Crash Failure Pass ]
 
@@ -1431,6 +1434,9 @@ webkit.org/b/94009 css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]
 
 # Requires CSS_COMPOSITING to be turned on
 webkit.org/b/94024 css3/compositing [ Skip ]
+
+# Fails because Blend Mode is not enabled yet.
+webkit.org/b/91908 transitions/blendmode-transitions.html [ Skip ]
 
 # Alt text should be displayed if src attribute is not set.
 webkit.org/b/94198 fast/dom/HTMLImageElement/image-alt-text.html [ ImageOnlyFailure ]
