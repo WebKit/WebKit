@@ -1,3 +1,21 @@
+2012-10-12  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Check parameter's safety first
+        https://bugs.webkit.org/show_bug.cgi?id=99136
+
+        Reviewed by Chris Rogers.
+
+        Pointer parameter was used before NULL checking.
+        This patch moves safety checking statements to the head of the function.
+
+        No new tests. No behavior change.
+
+        * platform/audio/AudioChannel.cpp:
+        (WebCore::AudioChannel::copyFromRange):
+        (WebCore::AudioChannel::sumFrom):
+        * platform/audio/EqualPowerPanner.cpp:
+        (WebCore::EqualPowerPanner::pan):
+
 2012-10-12  Andreas Kling  <kling@webkit.org>
 
         RenderBR should share its constant newline string between instances.

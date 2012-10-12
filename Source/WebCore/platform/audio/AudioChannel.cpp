@@ -65,13 +65,13 @@ void AudioChannel::copyFrom(const AudioChannel* sourceChannel)
 
 void AudioChannel::copyFromRange(const AudioChannel* sourceChannel, unsigned startFrame, unsigned endFrame)
 {
-    if (sourceChannel->isSilent() && isSilent())
-        return;
-
     // Check that range is safe for reading from sourceChannel.
     bool isRangeSafe = sourceChannel && startFrame < endFrame && endFrame <= sourceChannel->length();
     ASSERT(isRangeSafe);
     if (!isRangeSafe)
+        return;
+
+    if (sourceChannel->isSilent() && isSilent())
         return;
 
     // Check that this channel has enough space.
@@ -95,12 +95,12 @@ void AudioChannel::copyFromRange(const AudioChannel* sourceChannel, unsigned sta
 
 void AudioChannel::sumFrom(const AudioChannel* sourceChannel)
 {
-    if (sourceChannel->isSilent())
-        return;
-
     bool isSafe = sourceChannel && sourceChannel->length() >= length();
     ASSERT(isSafe);
     if (!isSafe)
+        return;
+
+    if (sourceChannel->isSilent())
         return;
 
     if (isSilent())
