@@ -1,3 +1,15 @@
+2012-10-11  Rik Cabanier  <cabanier@adobe.com>
+
+        Bad copy constructor in StyleRareNonInheritedData
+        https://bugs.webkit.org/show_bug.cgi?id=98950
+
+        Reviewed by Eric Seidel.
+
+        Typo in copy constructor caused blendmode to always be the default.
+
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+
 2012-10-11  Takashi Sakamoto  <tasak@google.com>
 
         [WebKit IDL] remove all module from idl files.

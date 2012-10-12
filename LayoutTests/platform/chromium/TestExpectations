@@ -107,6 +107,9 @@ webkit.org/b/94332 http/tests/security/contentSecurityPolicy/function-constructo
 # ever expect to pass this.
 crbug.com/24189 fast/dom/open-and-close-by-DOM.html [ Skip ]
 
+# Fails because Blend Mode is not enabled on Chromium yet 
+webkit.org/b/98950 transitions/blendmode-transitions.html [ Skip ]
+
 # Implement java testing harness.
 crbug.com/36681 java [ Skip ]
 

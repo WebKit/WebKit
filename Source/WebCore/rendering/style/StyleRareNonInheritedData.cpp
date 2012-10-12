@@ -165,7 +165,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
 #endif
     , m_hasAspectRatio(o.m_hasAspectRatio)
 #if ENABLE(CSS_COMPOSITING)
-    , m_effectiveBlendMode(RenderStyle::initialBlendMode())
+    , m_effectiveBlendMode(o.m_effectiveBlendMode)
 #endif
 {
 }

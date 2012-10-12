@@ -163,6 +163,7 @@ function checkExpectedValue(expected, index)
         } else if (computedStyle.cssValueType == CSSValue.CSS_PRIMITIVE_VALUE) {
             switch (computedStyle.primitiveType) {
                 case CSSPrimitiveValue.CSS_STRING:
+                case CSSPrimitiveValue.CSS_IDENT:
                     computedValue = computedStyle.getStringValue();
                     pass = computedValue == expectedValue;
                     break;
