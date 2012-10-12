@@ -167,6 +167,9 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
         info("Create new window (Ctrl+n) was pressed.\n");
         Browser_Window *window = window_create(DEFAULT_URL);
         windows = eina_list_append(windows, window);
+    } else if (!strcmp(ev->key, "i") && ctrlPressed) {
+        info("Show Inspector (Ctrl+i) was pressed.\n");
+        ewk_view_inspector_show(obj);
     }
 }
 
@@ -647,6 +650,7 @@ static Browser_Window *window_create(const char *url)
     Ewk_Settings *settings = ewk_view_settings_get(app_data->webview);
     ewk_settings_file_access_from_file_urls_allowed_set(settings, EINA_TRUE);
     ewk_settings_frame_flattening_enabled_set(settings, frame_flattening_enabled);
+    ewk_settings_developer_extras_enabled_set(settings, EINA_TRUE);
 
     evas_object_smart_callback_add(app_data->webview, "close,window", on_close_window, app_data);
     evas_object_smart_callback_add(app_data->webview, "create,window", on_new_window, app_data);

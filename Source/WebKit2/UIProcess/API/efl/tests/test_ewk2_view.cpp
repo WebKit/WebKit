@@ -927,3 +927,14 @@ TEST_F(EWK2UnitTestBase, window_move_resize)
     EXPECT_EQ(200, width);
     EXPECT_EQ(100, height);
 }
+
+TEST_F(EWK2UnitTestBase, ewk_view_inspector)
+{
+#if ENABLE(INSPECTOR)
+    ASSERT_TRUE(ewk_view_inspector_show(webView()));
+    ASSERT_TRUE(ewk_view_inspector_close(webView()));
+#else
+    ASSERT_FALSE(ewk_view_inspector_show(webView()));
+    ASSERT_FALSE(ewk_view_inspector_close(webView()));
+#endif
+}

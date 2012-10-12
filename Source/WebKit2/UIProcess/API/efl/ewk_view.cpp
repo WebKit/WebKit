@@ -64,6 +64,10 @@
 #include "WebFullScreenManagerProxy.h"
 #endif
 
+#if ENABLE(INSPECTOR)
+#include "WebInspectorProxy.h"
+#endif
+
 #if USE(ACCELERATED_COMPOSITING)
 #include <Evas_GL.h>
 #endif
@@ -1964,6 +1968,38 @@ Eina_Bool ewk_view_touch_events_enabled_get(const Evas_Object* ewkView)
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
 
     return priv->areTouchEventsEnabled;
+#else
+    return false;
+#endif
+}
+
+Eina_Bool ewk_view_inspector_show(Evas_Object* ewkView)
+{
+#if ENABLE(INSPECTOR)
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    WebInspectorProxy* inspector = priv->pageProxy->inspector();
+    if (inspector)
+        inspector->show();
+
+    return true;
+#else
+    return false;
+#endif
+}
+
+Eina_Bool ewk_view_inspector_close(Evas_Object* ewkView)
+{
+#if ENABLE(INSPECTOR)
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    WebInspectorProxy* inspector = priv->pageProxy->inspector();
+    if (inspector)
+        inspector->close();
+
+    return true;
 #else
     return false;
 #endif

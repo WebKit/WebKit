@@ -758,6 +758,26 @@ EAPI Eina_Bool ewk_view_touch_events_enabled_set(Evas_Object *o, Eina_Bool enabl
  */
 EAPI Eina_Bool ewk_view_touch_events_enabled_get(const Evas_Object *o);
 
+/**
+ * Show the inspector to debug a web page.
+ *
+ * @param o The view to show the inspector.
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ *
+ * @see ewk_settings_developer_extras_enabled_set()
+ */
+EAPI Eina_Bool ewk_view_inspector_show(Evas_Object *o);
+
+/**
+ * Close the inspector
+ *
+ * @param o The view to close the inspector.
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_view_inspector_close(Evas_Object *o);
+
 #ifdef __cplusplus
 }
 #endif

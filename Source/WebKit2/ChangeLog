@@ -1,3 +1,29 @@
+2012-10-11  Seokju Kwon  <seokju.kwon@samsung.com>
+
+        [EFL][WK2] Add support for Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=98639
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Support inspector on WebKit2/Efl and add APIs to show and close the inspector.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_inspector_show):
+        (ewk_view_inspector_close):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+        * UIProcess/WebInspectorProxy.h:
+        (WebInspectorProxy):
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::resizeInspectorWindow):
+        (WebKit):
+        (WebKit::destroyInspectorWindow):
+        (WebKit::closeInspectorWindow):
+        (WebKit::WebInspectorProxy::createInspectorWindow):
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        (WebKit::WebInspectorProxy::platformOpen):
+
 2012-10-11  Anders Carlsson  <andersca@apple.com>
 
         Stop using deprecatedSend and deprecatedSendSync for sending messages to the UI process
