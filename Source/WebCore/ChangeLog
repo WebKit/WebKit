@@ -1,3 +1,54 @@
+2012-10-10  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Refactor UISourceCode, make it possible to distinguish working copy changes/commits from formatting.
+        https://bugs.webkit.org/show_bug.cgi?id=98911
+
+        Reviewed by Pavel Feldman.
+
+        ContentChanged was dispatched both when working copy was committed and UISourceCode was formatted before.
+        WorkingCopyChanged event was dispatched when working copy was set.
+        Now there are three explicit events: WorkingCopyChanged, WorkingCopyCommitted, FormattedChanged.
+        No events are dispatched now during revisions restoring.
+        Reverting to revisions is now implemented based on the working copy editing.
+
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame):
+        (WebInspector.JavaScriptSourceFrame.prototype._onFormattedChanged):
+        (WebInspector.JavaScriptSourceFrame.prototype._onWorkingCopyChanged):
+        (WebInspector.JavaScriptSourceFrame.prototype._onWorkingCopyCommitted):
+        (WebInspector.JavaScriptSourceFrame.prototype._innerSetContent):
+        (WebInspector.JavaScriptSourceFrame.prototype.onTextChanged):
+        * inspector/front-end/NavigatorView.js:
+        (WebInspector.NavigatorView.prototype._uiSourceCodeWorkingCopyCommitted):
+        (WebInspector.NavigatorView.prototype._uiSourceCodeFormattedChanged):
+        (WebInspector.NavigatorView.prototype._addUISourceCodeListeners):
+        (WebInspector.NavigatorView.prototype._removeUISourceCodeListeners):
+        * inspector/front-end/TabbedEditorContainer.js:
+        (WebInspector.TabbedEditorContainer.prototype._addUISourceCodeListeners):
+        (WebInspector.TabbedEditorContainer.prototype._removeUISourceCodeListeners):
+        (WebInspector.TabbedEditorContainer.prototype._uiSourceCodeWorkingCopyCommitted):
+        (WebInspector.TabbedEditorContainer.prototype._uiSourceCodeFormattedChanged):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode):
+        (WebInspector.UISourceCode.prototype._commitContent):
+        (WebInspector.UISourceCode.prototype.addRevision):
+        (WebInspector.UISourceCode.prototype._restoreRevisionHistory):
+        (WebInspector.UISourceCode.prototype.revertToOriginal):
+        (WebInspector.UISourceCode.prototype.revertAndClearHistory):
+        (WebInspector.UISourceCode.prototype.setWorkingCopy):
+        (WebInspector.UISourceCode.prototype.commitWorkingCopy):
+        (WebInspector.UISourceCode.prototype.setFormatted.didGetContent.formattedChanged):
+        (WebInspector.UISourceCode.prototype.setFormatted.didGetContent):
+        (WebInspector.UISourceCode.prototype.setFormatted):
+        (WebInspector.Revision.prototype.revertToThis):
+        * inspector/front-end/UISourceCodeFrame.js:
+        (WebInspector.UISourceCodeFrame):
+        (WebInspector.UISourceCodeFrame.prototype.onTextChanged):
+        (WebInspector.UISourceCodeFrame.prototype._onFormattedChanged):
+        (WebInspector.UISourceCodeFrame.prototype._onWorkingCopyChanged):
+        (WebInspector.UISourceCodeFrame.prototype._onWorkingCopyCommitted):
+        (WebInspector.UISourceCodeFrame.prototype._innerSetContent):
+
 2012-10-12  Balazs Kelemen  <kbalazs@webkit.org>
 
         [WK2] Serialization of Resource[Request,Response,Error] should be shared across ports

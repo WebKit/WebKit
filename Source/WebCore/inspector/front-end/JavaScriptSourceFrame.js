@@ -57,7 +57,9 @@ WebInspector.JavaScriptSourceFrame = function(scriptsPanel, javaScriptSource)
     this._breakpointManager.addEventListener(WebInspector.BreakpointManager.Events.BreakpointAdded, this._breakpointAdded, this);
     this._breakpointManager.addEventListener(WebInspector.BreakpointManager.Events.BreakpointRemoved, this._breakpointRemoved, this);
 
-    this._javaScriptSource.addEventListener(WebInspector.UISourceCode.Events.ContentChanged, this._onContentChanged, this);
+    this._javaScriptSource.addEventListener(WebInspector.UISourceCode.Events.FormattedChanged, this._onFormattedChanged, this);
+    this._javaScriptSource.addEventListener(WebInspector.UISourceCode.Events.WorkingCopyChanged, this._onWorkingCopyChanged, this);
+    this._javaScriptSource.addEventListener(WebInspector.UISourceCode.Events.WorkingCopyCommitted, this._onWorkingCopyCommitted, this);
     this._javaScriptSource.addEventListener(WebInspector.UISourceCode.Events.ConsoleMessageAdded, this._consoleMessageAdded, this);
     this._javaScriptSource.addEventListener(WebInspector.UISourceCode.Events.ConsoleMessageRemoved, this._consoleMessageRemoved, this);
     this._javaScriptSource.addEventListener(WebInspector.UISourceCode.Events.ConsoleMessagesCleared, this._consoleMessagesCleared, this);
@@ -101,11 +103,32 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     /**
      * @param {WebInspector.Event} event
      */
-    _onContentChanged: function(event)
+    _onFormattedChanged: function(event)
     {
-        if (this._isCommittingEditing)
-            return;
         var content = /** @type {string} */ event.data.content;
+        this._innerSetContent(content);
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _onWorkingCopyChanged: function(event)
+    {
+        this._innerSetContent(this._javaScriptSource.workingCopy());
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _onWorkingCopyCommitted: function(event)
+    {
+        this._innerSetContent(this._javaScriptSource.workingCopy());
+    },
+
+    _innerSetContent: function(content)
+    {
+        if (this._isSettingWorkingCopy || this._isCommittingEditing)
+            return;
 
         if (this._javaScriptSource.togglingFormatter())
             this.setContent(content, false, this._javaScriptSource.mimeType());
@@ -158,7 +181,9 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         var wasDiverged = this._scriptFile && this._scriptFile.hasDivergedFromVM();
 
         this._preserveDecorations = true;
+        this._isSettingWorkingCopy = true;
         this._javaScriptSource.setWorkingCopy(this._textEditor.text());
+        delete this._isSettingWorkingCopy;
         delete this._preserveDecorations;
 
         if (this._supportsEnabledBreakpointsWhileEditing())

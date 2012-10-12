@@ -35,7 +35,9 @@ WebInspector.UISourceCodeFrame = function(uiSourceCode)
 {
     this._uiSourceCode = uiSourceCode;
     WebInspector.SourceFrame.call(this, this._uiSourceCode);
-    this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ContentChanged, this._onContentChanged, this);
+    this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.FormattedChanged, this._onFormattedChanged, this);
+    this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.WorkingCopyChanged, this._onWorkingCopyChanged, this);
+    this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.WorkingCopyCommitted, this._onWorkingCopyCommitted, this);
 }
 
 WebInspector.UISourceCodeFrame.prototype = {
@@ -62,7 +64,9 @@ WebInspector.UISourceCodeFrame.prototype = {
 
     onTextChanged: function(oldRange, newRange)
     {
+        this._isSettingWorkingCopy = true;
         this._uiSourceCode.setWorkingCopy(this._textEditor.text());
+        delete this._isSettingWorkingCopy;
     },
 
     _didEditContent: function(error)
@@ -76,10 +80,34 @@ WebInspector.UISourceCodeFrame.prototype = {
     /**
      * @param {WebInspector.Event} event
      */
-    _onContentChanged: function(event)
+    _onFormattedChanged: function(event)
     {
-        if (!this._isCommittingEditing)
-            this.setContent(this._uiSourceCode.content() || "", false, this._uiSourceCode.contentType().canonicalMimeType());
+        var content = /** @type {string} */ event.data.content;
+        this._innerSetContent(content);
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _onWorkingCopyChanged: function(event)
+    {
+        this._innerSetContent(this._uiSourceCode.workingCopy());
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _onWorkingCopyCommitted: function(event)
+    {
+        this._innerSetContent(this._uiSourceCode.workingCopy());
+    },
+
+    _innerSetContent: function(content)
+    {
+        if (this._isSettingWorkingCopy || this._isCommittingEditing)
+            return;
+
+        this.setContent(this._uiSourceCode.content() || "", false, this._uiSourceCode.contentType().canonicalMimeType());
     },
 
     populateTextAreaContextMenu: function(contextMenu, lineNumber)

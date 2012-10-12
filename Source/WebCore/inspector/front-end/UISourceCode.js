@@ -61,13 +61,15 @@ WebInspector.UISourceCode = function(url, contentProvider, isEditable)
      * @type {Array.<WebInspector.Revision>}
      */
     this.history = [];
-    this._restoreRevisionHistory();
+    if (this.isEditable())
+        this._restoreRevisionHistory();
     this._formatterMapping = new WebInspector.IdentityFormatterSourceMapping();
 }
 
 WebInspector.UISourceCode.Events = {
-    ContentChanged: "ContentChanged",
+    FormattedChanged: "FormattedChanged",
     WorkingCopyChanged: "WorkingCopyChanged",
+    WorkingCopyCommitted: "WorkingCopyCommitted",
     TitleChanged: "TitleChanged",
     ConsoleMessageAdded: "ConsoleMessageAdded",
     ConsoleMessageRemoved: "ConsoleMessageRemoved",
@@ -172,33 +174,32 @@ WebInspector.UISourceCode.prototype = {
     },
 
     /**
-     * @param {string} newContent
+     * @param {string} content
      */
-    _setContent: function(newContent)
+    _commitContent: function(content)
     {
-        this.setWorkingCopy(newContent);
-        this.commitWorkingCopy(function() {});
+        this._content = content;
+        this._contentLoaded = true;
+        
+        var lastRevision = this.history.length ? this.history[this.history.length - 1] : null;
+        if (!lastRevision || lastRevision._content !== this._content) {
+            var revision = new WebInspector.Revision(this, this._content, new Date());
+            this.history.push(revision);
+            revision._persist();
+        }
+
+        var oldWorkingCopy = this._workingCopy;
+        delete this._workingCopy;
+        this.dispatchEventToListeners(WebInspector.UISourceCode.Events.WorkingCopyCommitted, {oldWorkingCopy: oldWorkingCopy, workingCopy: this.workingCopy()});
+        WebInspector.workspace.dispatchEventToListeners(WebInspector.Workspace.Events.UISourceCodeContentCommitted, { uiSourceCode: this, content: this._content });
     },
 
     /**
      * @param {string} content
-     * @param {Date=} timestamp
-     * @param {boolean=} restoringHistory
      */
-    addRevision: function(content, timestamp, restoringHistory)
+    addRevision: function(content)
     {
-        if (this.history.length) {
-            var lastRevision = this.history[this.history.length - 1];
-            if (lastRevision._content === content)
-                return;
-        }
-        var revision = new WebInspector.Revision(this, content, timestamp || new Date());
-        this.history.push(revision);
-
-        this.contentChanged(revision.content || "", this.canonicalMimeType());
-        if (!restoringHistory)
-            revision._persist();
-        WebInspector.workspace.dispatchEventToListeners(WebInspector.Workspace.Events.UISourceCodeContentCommitted, { uiSourceCode: this, content: content });
+        this._commitContent(content);
     },
 
     _restoreRevisionHistory: function()
@@ -208,8 +209,17 @@ WebInspector.UISourceCode.prototype = {
 
         var registry = WebInspector.Revision._revisionHistoryRegistry();
         var historyItems = registry[this.url];
-        for (var i = 0; historyItems && i < historyItems.length; ++i)
-            this.addRevision(window.localStorage[historyItems[i].key], new Date(historyItems[i].timestamp), true);
+        if (!historyItems || !historyItems.length)
+            return;
+        for (var i = 0; i < historyItems.length; ++i) {
+            var content = window.localStorage[historyItems[i].key];
+            var timestamp = new Date(historyItems[i].timestamp);
+            var revision = new WebInspector.Revision(this, content, timestamp);
+            this.history.push(revision);
+        }
+        this._content = this.history[this.history.length - 1].content;
+        this._contentLoaded = true;
+        this._mimeType = this.canonicalMimeType();
     },
 
     _clearRevisionHistory: function()
@@ -238,7 +248,7 @@ WebInspector.UISourceCode.prototype = {
             if (typeof content !== "string")
                 return;
 
-            this._setContent(content);
+            this.addRevision(content);
         }
 
         this.requestOriginalContent(callback.bind(this));
@@ -260,26 +270,13 @@ WebInspector.UISourceCode.prototype = {
             if (typeof content !== "string")
                 return;
 
-            this._setContent(content);
+            this.addRevision(content);
             this._clearRevisionHistory();
             this.history = [];
             callback(this);
         }
 
         this.requestOriginalContent(revert.bind(this));
-    },
-
-    /**
-     * @param {string} newContent
-     * @param {string} mimeType
-     */
-    contentChanged: function(newContent, mimeType)
-    {
-        this._content = newContent;
-        this._mimeType = mimeType;
-        this._contentLoaded = true;
-        delete this._workingCopy;
-        this.dispatchEventToListeners(WebInspector.UISourceCode.Events.ContentChanged, {content: newContent});
     },
 
     /**
@@ -305,6 +302,7 @@ WebInspector.UISourceCode.prototype = {
      */
     setWorkingCopy: function(newWorkingCopy)
     {
+        this._mimeType = this.canonicalMimeType();
         var oldWorkingCopy = this._workingCopy;
         if (this._content === newWorkingCopy)
             delete this._workingCopy;
@@ -314,7 +312,7 @@ WebInspector.UISourceCode.prototype = {
             this.scriptFile().workingCopyChanged();
         else if (this.styleFile())
             this.styleFile().workingCopyChanged();
-        this.dispatchEventToListeners(WebInspector.UISourceCode.Events.WorkingCopyChanged, {oldWorkingCopy: oldWorkingCopy, workingCopy: newWorkingCopy});
+        this.dispatchEventToListeners(WebInspector.UISourceCode.Events.WorkingCopyChanged, {oldWorkingCopy: oldWorkingCopy, workingCopy: this.workingCopy()});
     },
 
     /**
@@ -327,12 +325,11 @@ WebInspector.UISourceCode.prototype = {
             return;
         }
 
-        var newContent = this._workingCopy;
         if (this.scriptFile())
             this.scriptFile().workingCopyCommitted(callback);
         else if (this.styleFile())
             this.styleFile().workingCopyCommitted(callback);
-        this.addRevision(newContent);
+        this._commitContent(this._workingCopy);
     },
 
     /**
@@ -563,7 +560,9 @@ WebInspector.UISourceCode.prototype = {
             function formattedChanged(content, formatterMapping)
             {
                 this._togglingFormatter = true;
-                this.contentChanged(content, mimeType);
+                this._content = content;
+                delete this._workingCopy;
+                this.dispatchEventToListeners(WebInspector.UISourceCode.Events.FormattedChanged, {content: content});
                 delete this._togglingFormatter;
                 this._formatterMapping = formatterMapping;
                 this.updateLiveLocations();
@@ -807,7 +806,7 @@ WebInspector.Revision.prototype = {
         function revert(content)
         {
             if (this._uiSourceCode._content !== content)
-                this._uiSourceCode._setContent(content);
+                this._uiSourceCode.addRevision(content);
         }
         this.requestContent(revert.bind(this));
     },
