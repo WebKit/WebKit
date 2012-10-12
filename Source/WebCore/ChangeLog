@@ -1,3 +1,23 @@
+2012-10-12  Scott Graham  <scottmg@chromium.org>
+
+        Local disable of stack corruption warning when compiling on VS2012
+        https://bugs.webkit.org/show_bug.cgi?id=99106
+
+        Reviewed by Ryosuke Niwa.
+
+        Warning is:
+
+        ...\FEConvolveMatrix.cpp(274) : warning C4789: buffer 'totals' of size 12 bytes will be overrun; 4 bytes will be written starting at offset 12.
+
+        And similar at lines 281, 355, and 365. This appears to be incorrect
+        as the writes at offset 12 occur only when preserveAlphaValues is
+        false, and when it's false, totals will be 16 bytes long.
+
+        No new tests.
+
+        * platform/graphics/filters/FEConvolveMatrix.cpp:
+        (WebCore):
+
 2012-10-11  Emil A Eklund  <eae@chromium.org>
 
         [Sub pixel layout] Change RenderBox to not round logicalTop/Left for RenderReplaced

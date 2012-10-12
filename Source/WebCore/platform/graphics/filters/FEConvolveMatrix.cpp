@@ -243,6 +243,12 @@ ALWAYS_INLINE void setDestinationPixels(Uint8ClampedArray* image, int& pixel, fl
         image->set(pixel++, maxAlpha);
 }
 
+#if defined(_MSC_VER) && (_MSC_VER >= 1700)
+// Incorrectly diagnosing overwrite of stack in |totals| due to |preserveAlphaValues|.
+#pragma warning(push)
+#pragma warning(disable: 4789)
+#endif
+
 // Only for region C
 template<bool preserveAlphaValues>
 ALWAYS_INLINE void FEConvolveMatrix::fastSetInteriorPixels(PaintingData& paintingData, int clipRight, int clipBottom, int yStart, int yEnd)
@@ -380,6 +386,10 @@ void FEConvolveMatrix::fastSetOuterPixels(PaintingData& paintingData, int x1, in
         ++startKernelPixelY;
     }
 }
+
+#if defined(_MSC_VER) && (_MSC_VER >= 1700)
+#pragma warning(pop) // Disable of 4789
+#endif
 
 ALWAYS_INLINE void FEConvolveMatrix::setInteriorPixels(PaintingData& paintingData, int clipRight, int clipBottom, int yStart, int yEnd)
 {
