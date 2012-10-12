@@ -336,7 +336,7 @@ TEST(MemoryInstrumentationTest, visitStrings)
         stringInstrumentedOwner.m_value.characters();
         helper.addRootObject(stringInstrumentedOwner);
         EXPECT_EQ(sizeof(StringImpl) + stringInstrumentedOwner.m_value.length() * (sizeof(LChar) + sizeof(UChar)), helper.reportedSizeForAllTypes());
-        EXPECT_EQ(2, helper.visitedObjects());
+        EXPECT_EQ(2u, helper.visitedObjects());
     }
 
     { // 16 bit string.
@@ -399,7 +399,7 @@ TEST(MemoryInstrumentationTest, visitStrings)
         InstrumentedOwner<CString> cStringInstrumentedOwner("CString");
         helper.addRootObject(cStringInstrumentedOwner);
         EXPECT_EQ(sizeof(WTF::CStringBuffer) + cStringInstrumentedOwner.m_value.length(), helper.reportedSizeForAllTypes());
-        EXPECT_EQ(1, helper.visitedObjects());
+        EXPECT_EQ(1u, helper.visitedObjects());
     }
 }
 
@@ -424,7 +424,7 @@ TEST(MemoryInstrumentationTest, refPtrPtr)
     TwoPointersToRefPtr root(refPtr);
     helper.addRootObject(root);
     EXPECT_EQ(sizeof(RefPtr<StringImpl>), helper.reportedSizeForAllTypes());
-    EXPECT_EQ(1, helper.visitedObjects());
+    EXPECT_EQ(1u, helper.visitedObjects());
 }
 
 class TwoPointersToOwnPtr {
@@ -496,7 +496,7 @@ TEST(MemoryInstrumentationTest, vectorZeroInlineCapacity)
     InstrumentedOwner<Vector<int> > vectorOwner(16);
     helper.addRootObject(vectorOwner);
     EXPECT_EQ(16 * sizeof(int), helper.reportedSizeForAllTypes());
-    EXPECT_EQ(1, helper.visitedObjects());
+    EXPECT_EQ(1u, helper.visitedObjects());
 }
 
 TEST(MemoryInstrumentationTest, vectorFieldWithInlineCapacity)

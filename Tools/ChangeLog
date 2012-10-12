@@ -1,3 +1,9 @@
+2012-10-12  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed compile error fix for clang builders.
+
+        * TestWebKitAPI/Tests/WTF/MemoryInstrumentationTest.cpp:
+
 2012-10-11  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: NMI move instrumentation tests from chromium test set to the cross platform test set.
