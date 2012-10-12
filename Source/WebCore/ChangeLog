@@ -1,3 +1,14 @@
+2012-10-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r131100.
+        http://trac.webkit.org/changeset/131100
+        https://bugs.webkit.org/show_bug.cgi?id=99127
+
+        Caused an ASSERT (Requested by abarth|gardening on #webkit).
+
+        * platform/graphics/filters/CustomFilterValidatedProgram.cpp:
+        (WebCore::CustomFilterValidatedProgram::compositeFunctionString):
+
 2012-10-11  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] Improve vertical text rendering of HarfBuzzShaper (Re-land)

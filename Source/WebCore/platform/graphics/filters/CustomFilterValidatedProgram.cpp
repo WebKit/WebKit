@@ -245,45 +245,15 @@ String CustomFilterValidatedProgram::compositeFunctionString(CompositeOperator c
         Fb = "1.0 - as";
         break;
     case CompositeClear:
-        Fa = "0.0";
-        Fb = "0.0";
-        break;
     case CompositeCopy:
-        Fa = "1.0";
-        Fb = "0.0";
-        break;
     case CompositeSourceOver:
-        Fa = "1.0";
-        Fb = "1.0 - as";
-        break;
     case CompositeSourceIn:
-        Fa = "ab";
-        Fb = "0.0";
-        break;
     case CompositeSourceOut:
-        Fa = "1.0 - ab";
-        Fb = "0.0";
-        break;
     case CompositeDestinationOver:
-        Fa = "1.0 - ab";
-        Fb = "1.0";
-        break;
     case CompositeDestinationIn:
-        Fa = "0.0";
-        Fb = "as";
-        break;
     case CompositeDestinationOut:
-        Fa = "0.0";
-        Fb = "1.0 - as";
-        break;
     case CompositeDestinationAtop:
-        Fa = "1.0 - ab";
-        Fb = "as";
-        break;
     case CompositeXOR:
-        Fa = "1.0 - ab";
-        Fb = "1.0 - as";
-        break;
     case CompositePlusLighter:
         notImplemented();
         return String();

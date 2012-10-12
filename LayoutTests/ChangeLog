@@ -1,3 +1,15 @@
+2012-10-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r131100.
+        http://trac.webkit.org/changeset/131100
+        https://bugs.webkit.org/show_bug.cgi?id=99127
+
+        Caused an ASSERT (Requested by abarth|gardening on #webkit).
+
+        * css3/filters/custom/custom-filter-composite-operators-expected.png: Removed.
+        * css3/filters/custom/custom-filter-composite-operators-expected.txt: Removed.
+        * css3/filters/custom/custom-filter-composite-operators.html: Removed.
+
 2012-10-11  Adam Barth  <abarth@webkit.org>
 
         Add baselines for the rest of the platforms after
