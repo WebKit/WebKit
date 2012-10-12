@@ -1,3 +1,19 @@
+2012-10-12  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Styles] !important priority not honored inside the same declaration
+        https://bugs.webkit.org/show_bug.cgi?id=99170
+
+        Reviewed by Yury Semikhatsky.
+
+        Property priorities were not considered inside the same CSS rule. !important properties should stay active
+        even if followed by non-!important properties with the same name.
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::styleWithProperties):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection.prototype.onpopulate):
+        (WebInspector.ComputedStylePropertiesSection.prototype.rebuildComputedTrace):
+
 2012-10-12  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: use hard-coded zoom factors instead of 1.2 powers.

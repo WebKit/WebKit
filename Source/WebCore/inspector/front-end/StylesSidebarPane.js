@@ -1045,7 +1045,7 @@ WebInspector.StylePropertiesSection.prototype = {
 
                 var isShorthand = !!WebInspector.CSSCompletions.cssPropertiesMetainfo.longhands(property.name);
                 var inherited = this.isPropertyInherited(property.name);
-                var overloaded = this.isPropertyOverloaded(property.name);
+                var overloaded = property.inactive || this.isPropertyOverloaded(property.name);
                 var item = new WebInspector.StylePropertyTreeElement(this, this._parentPane, this.styleRule, style, property, isShorthand, inherited, overloaded);
                 this.propertiesTreeOutline.appendChild(item);
             }
@@ -1079,7 +1079,7 @@ WebInspector.StylePropertiesSection.prototype = {
 
                 // Generate synthetic shorthand we have a value for.
                 var shorthandProperty = new WebInspector.CSSProperty(style, style.allProperties.length, shorthand, style.shorthandValue(shorthand), "", "style", true, true, undefined);
-                var overloaded = this.isPropertyOverloaded(property.name, true);
+                var overloaded = property.inactive || this.isPropertyOverloaded(property.name, true);
                 var item = new WebInspector.StylePropertyTreeElement(this, this._parentPane, this.styleRule, style, shorthandProperty,  /* isShorthand */ true, /* inherited */ false, overloaded);
                 this.propertiesTreeOutline.appendChild(item);
                 generatedShorthands[shorthand] = shorthandProperty;
@@ -1089,7 +1089,7 @@ WebInspector.StylePropertiesSection.prototype = {
                 continue;  // Shorthand for the property found.
 
             var inherited = this.isPropertyInherited(property.name);
-            var overloaded = this.isPropertyOverloaded(property.name, isShorthand);
+            var overloaded = property.inactive || this.isPropertyOverloaded(property.name, isShorthand);
             var item = new WebInspector.StylePropertyTreeElement(this, this._parentPane, this.styleRule, style, property, isShorthand, inherited, overloaded);
             this.propertiesTreeOutline.appendChild(item);
         }
@@ -1450,7 +1450,7 @@ WebInspector.ComputedStylePropertiesSection.prototype = {
                     subtitle.appendChild(section._createRuleOriginNode());
                     var childElement = new TreeElement(fragment, null, false);
                     treeElement.appendChild(childElement);
-                    if (section.isPropertyOverloaded(property.name))
+                    if (property.inactive || section.isPropertyOverloaded(property.name))
                         childElement.listItemElement.addStyleClass("overloaded");
                     if (!property.parsedOk)
                         childElement.listItemElement.addStyleClass("not-parsed-ok");

@@ -1,3 +1,14 @@
+2012-10-12  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Styles] !important priority not honored inside the same declaration
+        https://bugs.webkit.org/show_bug.cgi?id=99170
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/elements/elements-panel-styles-expected.txt:
+        * inspector/elements/resources/elements-panel-styles.css:
+        (.foo):
+
 2012-10-12  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [EFL] Gardening to make the bots green

@@ -17,6 +17,8 @@ body {
     margin: 10px 0 2px;
     border-radius: 5px;
     font-style: normal !important;
+    font-weight: normal !important;
+    font-weight: bold;
 }
 
 .foo, .foo::before {
