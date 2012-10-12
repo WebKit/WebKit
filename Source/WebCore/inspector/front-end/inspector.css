@@ -1370,7 +1370,6 @@ iframe.panel.extension {
     float: right;
     font-size: 10px;
     margin-left: 5px;
-    max-width: 55%;
     color: rgba(0, 0, 0, 0.7);
     text-overflow: ellipsis;
     overflow: hidden;

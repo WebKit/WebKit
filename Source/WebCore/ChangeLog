@@ -1,3 +1,17 @@
+2012-10-12  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: trim filename in the call stack sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=99169
+
+        Reviewed by Yury Semikhatsky.
+
+        Otherwise long file names are rendered poorly.
+
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane.Placard.prototype._update):
+        * inspector/front-end/inspector.css:
+        (.placard .subtitle):
+
 2012-10-12  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Resume button in element inspector -> scripts has tooltip 'pause script execution'
