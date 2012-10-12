@@ -1,5 +1,21 @@
 2012-10-12  Emil A Eklund  <eae@chromium.org>
 
+        Unreviewed chromium lucid rebaseline for r131202.
+
+        * platform/chromium-linux-x86/svg/as-border-image: Removed.
+        * platform/chromium-linux-x86/svg/as-border-image/svg-as-border-image-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt: Removed.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-background-images-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/as-border-image: Removed.
+        * platform/chromium-mac-snowleopard/svg/as-border-image/svg-as-border-image-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-background-images-expected.png: Removed.
+        * platform/chromium-win-xp/svg/as-border-image: Removed.
+        * platform/chromium-win-xp/svg/as-border-image/svg-as-border-image-expected.png: Removed.
+        * platform/chromium-win-xp/svg/zoom/page/zoom-background-images-expected.png: Removed.
+
+2012-10-12  Emil A Eklund  <eae@chromium.org>
+
         Unreviewed chromium mac rebaseline for r131202.
 
         * platform/chromium-linux-x86/fast/block/float: Removed.
