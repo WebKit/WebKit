@@ -1106,29 +1106,29 @@ EncodedJSValue DFG_OPERATION operationStrCat(ExecState* exec, void* buffer, size
     return JSValue::encode(jsString(exec, static_cast<Register*>(buffer), size));
 }
 
-EncodedJSValue DFG_OPERATION operationNewArray(ExecState* exec, Structure* arrayStructure, void* buffer, size_t size)
+char* DFG_OPERATION operationNewArray(ExecState* exec, Structure* arrayStructure, void* buffer, size_t size)
 {
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
 
-    return JSValue::encode(constructArray(exec, arrayStructure, static_cast<JSValue*>(buffer), size));
+    return bitwise_cast<char*>(constructArray(exec, arrayStructure, static_cast<JSValue*>(buffer), size));
 }
 
-EncodedJSValue DFG_OPERATION operationNewEmptyArray(ExecState* exec, Structure* arrayStructure)
+char* DFG_OPERATION operationNewEmptyArray(ExecState* exec, Structure* arrayStructure)
 {
-    return JSValue::encode(JSArray::create(exec->globalData(), arrayStructure));
+    return bitwise_cast<char*>(JSArray::create(exec->globalData(), arrayStructure));
 }
 
-EncodedJSValue DFG_OPERATION operationNewArrayWithSize(ExecState* exec, Structure* arrayStructure, int32_t size)
+char* DFG_OPERATION operationNewArrayWithSize(ExecState* exec, Structure* arrayStructure, int32_t size)
 {
-    return JSValue::encode(JSArray::create(exec->globalData(), arrayStructure, size));
+    return bitwise_cast<char*>(JSArray::create(exec->globalData(), arrayStructure, size));
 }
 
-EncodedJSValue DFG_OPERATION operationNewArrayBuffer(ExecState* exec, Structure* arrayStructure, size_t start, size_t size)
+char* DFG_OPERATION operationNewArrayBuffer(ExecState* exec, Structure* arrayStructure, size_t start, size_t size)
 {
     JSGlobalData& globalData = exec->globalData();
     NativeCallFrameTracer tracer(&globalData, exec);
-    return JSValue::encode(constructArray(exec, arrayStructure, exec->codeBlock()->constantBuffer(start), size));
+    return bitwise_cast<char*>(constructArray(exec, arrayStructure, exec->codeBlock()->constantBuffer(start), size));
 }
 
 EncodedJSValue DFG_OPERATION operationNewRegexp(ExecState* exec, void* regexpPtr)

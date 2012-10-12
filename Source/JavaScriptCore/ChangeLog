@@ -1,3 +1,20 @@
+2012-10-12  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG array allocation calls should not return an encoded JSValue
+        https://bugs.webkit.org/show_bug.cgi?id=99196
+
+        Reviewed by Mark Hahnenberg.
+
+        The array allocation operations now return a pointer instead. This makes it
+        easier to share code between 32-bit and 64-bit.
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-10-01  Jer Noble  <jer.noble@apple.com>
 
         Enable ENCRYPTED_MEDIA support on Mac.

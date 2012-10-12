@@ -77,10 +77,6 @@ typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EP)(ExecState*, void*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EPP)(ExecState*, void*, void*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EPS)(ExecState*, void*, size_t);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_ESS)(ExecState*, size_t, size_t);
-typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_ESt)(ExecState*, Structure*);
-typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EStZ)(ExecState*, Structure*, int32_t);
-typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EStPS)(ExecState*, Structure*, void*, size_t);
-typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EStSS)(ExecState*, Structure*, size_t, size_t);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EZ)(ExecState*, int32_t);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EZIcfZ)(ExecState*, int32_t, InlineCallFrame*, int32_t);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EZZ)(ExecState*, int32_t, int32_t);
@@ -114,6 +110,10 @@ typedef char* DFG_OPERATION (*P_DFGOperation_EOS)(ExecState*, JSObject*, size_t)
 typedef char* DFG_OPERATION (*P_DFGOperation_EOZ)(ExecState*, JSObject*, int32_t);
 typedef char* DFG_OPERATION (*P_DFGOperation_EPS)(ExecState*, void*, size_t);
 typedef char* DFG_OPERATION (*P_DFGOperation_ES)(ExecState*, size_t);
+typedef char* DFG_OPERATION (*P_DFGOperation_ESt)(ExecState*, Structure*);
+typedef char* DFG_OPERATION (*P_DFGOperation_EStPS)(ExecState*, Structure*, void*, size_t);
+typedef char* DFG_OPERATION (*P_DFGOperation_EStSS)(ExecState*, Structure*, size_t, size_t);
+typedef char* DFG_OPERATION (*P_DFGOperation_EStZ)(ExecState*, Structure*, int32_t);
 
 // These routines are provide callbacks out to C++ implementations of operations too complex to JIT.
 JSCell* DFG_OPERATION operationNewObject(ExecState*) WTF_INTERNAL;
@@ -137,10 +137,10 @@ EncodedJSValue DFG_OPERATION operationResolveBaseStrictPut(ExecState*, Identifie
 EncodedJSValue DFG_OPERATION operationResolveGlobal(ExecState*, GlobalResolveInfo*, JSGlobalObject*, Identifier*) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationToPrimitive(ExecState*, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationStrCat(ExecState*, void*, size_t) WTF_INTERNAL;
-EncodedJSValue DFG_OPERATION operationNewArray(ExecState*, Structure*, void*, size_t) WTF_INTERNAL;
-EncodedJSValue DFG_OPERATION operationNewArrayBuffer(ExecState*, Structure*, size_t, size_t) WTF_INTERNAL;
-EncodedJSValue DFG_OPERATION operationNewEmptyArray(ExecState*, Structure*) WTF_INTERNAL;
-EncodedJSValue DFG_OPERATION operationNewArrayWithSize(ExecState*, Structure*, int32_t) WTF_INTERNAL;
+char* DFG_OPERATION operationNewArray(ExecState*, Structure*, void*, size_t) WTF_INTERNAL;
+char* DFG_OPERATION operationNewArrayBuffer(ExecState*, Structure*, size_t, size_t) WTF_INTERNAL;
+char* DFG_OPERATION operationNewEmptyArray(ExecState*, Structure*) WTF_INTERNAL;
+char* DFG_OPERATION operationNewArrayWithSize(ExecState*, Structure*, int32_t) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationNewRegexp(ExecState*, void*) WTF_INTERNAL;
 void DFG_OPERATION operationPutByValStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue) WTF_INTERNAL;
 void DFG_OPERATION operationPutByValNonStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue) WTF_INTERNAL;
