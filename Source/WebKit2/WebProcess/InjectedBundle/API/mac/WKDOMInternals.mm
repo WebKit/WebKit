@@ -40,6 +40,9 @@
 
 namespace WebKit {
 
+template<typename WebCoreType, typename WKDOMType>
+static WKDOMType toWKDOMType(WebCoreType impl, DOMCache<WebCoreType, WKDOMType>& cache);
+
 // -- Caches -- 
 
 DOMCache<WebCore::Node*, WKDOMNode *>& WKDOMNodeCache()
@@ -58,7 +61,7 @@ DOMCache<WebCore::Range*, WKDOMRange *>& WKDOMRangeCache()
 
 // -- Node and classes derived from Node. --
 
-static Class WKDOMClass(WebCore::Node* impl)
+static Class WKDOMNodeClass(WebCore::Node* impl)
 {
     switch (impl->nodeType()) {
     case WebCore::Node::ELEMENT_NODE:
@@ -82,6 +85,11 @@ static Class WKDOMClass(WebCore::Node* impl)
     return nil;
 }
 
+static WKDOMNode *initWithImpl(WebCore::Node* impl)
+{
+    return [[WKDOMNodeClass(impl) alloc] _initWithImpl:impl];
+}
+
 WebCore::Node* toWebCoreNode(WKDOMNode *wrapper)
 {
     return wrapper ? wrapper->_impl.get() : 0;
@@ -89,14 +97,7 @@ WebCore::Node* toWebCoreNode(WKDOMNode *wrapper)
 
 WKDOMNode *toWKDOMNode(WebCore::Node* impl)
 {
-    if (!impl)
-        return nil;
-    if (WKDOMNode *wrapper = WKDOMNodeCache().get(impl))
-        return [[wrapper retain] autorelease];
-    WKDOMNode *wrapper = [[WKDOMClass(impl) alloc] _initWithImpl:impl];
-    if (!wrapper)
-        return nil;
-    return [wrapper autorelease];
+    return toWKDOMType<WebCore::Node*, WKDOMNode *>(impl, WKDOMNodeCache());
 }
 
 WebCore::Element* toWebCoreElement(WKDOMElement *wrapper)
@@ -121,6 +122,11 @@ WKDOMDocument *toWKDOMDocument(WebCore::Document* impl)
 
 // -- Range. --
 
+static WKDOMRange *initWithImpl(WebCore::Range* impl)
+{
+    return [[WKDOMRange alloc] _initWithImpl:impl];
+}
+
 WebCore::Range* toWebCoreRange(WKDOMRange * wrapper)
 {
     return wrapper ? wrapper->_impl.get() : 0;
@@ -129,11 +135,19 @@ WebCore::Range* toWebCoreRange(WKDOMRange * wrapper)
 
 WKDOMRange *toWKDOMRange(WebCore::Range* impl)
 {
+    return toWKDOMType<WebCore::Range*, WKDOMRange *>(impl, WKDOMRangeCache());
+}
+
+// -- Helpers --
+
+template<typename WebCoreType, typename WKDOMType>
+static WKDOMType toWKDOMType(WebCoreType impl, DOMCache<WebCoreType, WKDOMType>& cache)
+{
     if (!impl)
         return nil;
-    if (WKDOMRange *wrapper = WKDOMRangeCache().get(impl))
+    if (WKDOMType wrapper = cache.get(impl))
         return [[wrapper retain] autorelease];
-    WKDOMRange *wrapper = [[WKDOMRange alloc] _initWithImpl:impl];
+    WKDOMType wrapper = initWithImpl(impl);
     if (!wrapper)
         return nil;
     return [wrapper autorelease];

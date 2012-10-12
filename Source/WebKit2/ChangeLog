@@ -1,3 +1,18 @@
+2012-10-11  Sam Weinig  <sam@webkit.org>
+
+        Add a helper function for initializing WebKit2 DOM objects
+        https://bugs.webkit.org/show_bug.cgi?id=99128
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMInternals.mm:
+        (WebKit::WKDOMNodeClass):
+        (WebKit::initWithImpl):
+        (WebKit::toWKDOMNode):
+        (WebKit::toWKDOMRange):
+        (WebKit::toWKDOMType):
+        Add toWKDOMType which implements the core object initialization and caching.
+
 2012-10-11  Seokju Kwon  <seokju.kwon@samsung.com>
 
         [EFL][WK2] Add support for Inspector
