@@ -40,6 +40,7 @@ typedef const struct __CFString * CFStringRef;
 QT_BEGIN_NAMESPACE
 class QString;
 QT_END_NAMESPACE
+#include <QDataStream>
 #endif
 
 #if PLATFORM(WX)
@@ -463,6 +464,11 @@ private:
 
     RefPtr<StringImpl> m_impl;
 };
+
+#if PLATFORM(QT)
+QDataStream& operator<<(QDataStream& stream, const String& str);
+QDataStream& operator>>(QDataStream& stream, String& str);
+#endif
 
 inline bool operator==(const String& a, const String& b) { return equal(a.impl(), b.impl()); }
 inline bool operator==(const String& a, const LChar* b) { return equal(a.impl(), b); }

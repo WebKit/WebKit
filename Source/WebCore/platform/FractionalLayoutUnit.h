@@ -38,6 +38,10 @@
 #include <wtf/MathExtras.h>
 #include <wtf/SaturatedArithmetic.h>
 
+#if PLATFORM(QT)
+#include <QDataStream>
+#endif
+
 namespace WebCore {
 
 #ifdef NDEBUG
@@ -819,6 +823,26 @@ inline int snapSizeToPixel(FractionalLayoutUnit size, FractionalLayoutUnit locat
     FractionalLayoutUnit fraction = location.fraction();
     return (fraction + size).round() - fraction.round();
 }
+
+#if PLATFORM(QT)
+inline QDataStream& operator<<(QDataStream& stream, const FractionalLayoutUnit& value)
+{
+    if (kFixedPointDenominator == 1)
+        stream << value.rawValue();
+    else
+        stream << QString::fromLatin1("%1").arg(value.toFloat(), 0, 'f', 2);
+
+    return stream;
+}
+
+inline QDataStream& operator>>(QDataStream& stream, FractionalLayoutUnit& value)
+{
+    float v;
+    stream >> v;
+    value = v;
+    return stream;
+}
+#endif
 
 } // namespace WebCore
 
