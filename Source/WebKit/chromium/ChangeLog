@@ -1,3 +1,9 @@
+2012-10-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-10-11  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] Use harfbuzz-ng by default on Linux
