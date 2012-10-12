@@ -1,3 +1,13 @@
+2012-10-11  Takashi Sakamoto  <tasak@google.com>
+
+        [Shadow DOM] Insertion points need resetStyleInheritance
+        https://bugs.webkit.org/show_bug.cgi?id=93922
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/insertion-point-resetStyleInheritance-expected.txt: Added.
+        * fast/dom/shadow/insertion-point-resetStyleInheritance.html: Added.
+
 2012-10-11  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] Use harfbuzz-ng by default on Linux

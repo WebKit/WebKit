@@ -55,6 +55,9 @@ public:
     virtual bool isSelectValid() const = 0;
     virtual bool doesSelectFromHostChildren() const = 0;
 
+    bool resetStyleInheritance() const;
+    void setResetStyleInheritance(bool);
+
     virtual void attach();
     virtual void detach();
     virtual bool isInsertionPoint() const OVERRIDE { return true; }
@@ -77,6 +80,7 @@ protected:
 
 private:
     ContentDistribution m_distribution;
+    bool m_shouldResetStyleInheritance : 1;
 };
 
 inline bool isInsertionPoint(const Node* node)

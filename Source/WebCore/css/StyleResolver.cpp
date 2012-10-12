@@ -61,6 +61,7 @@
 #include "CounterContent.h"
 #include "CursorList.h"
 #include "DocumentStyleSheetCollection.h"
+#include "ElementShadow.h"
 #include "FontFeatureValue.h"
 #include "FontValue.h"
 #include "Frame.h"
@@ -958,6 +959,27 @@ inline void StyleResolver::initElement(Element* e)
     }
 }
 
+inline bool shouldResetStyleInheritance(NodeRenderingContext& context)
+{
+    if (context.resetStyleInheritance())
+        return true;
+
+    InsertionPoint* insertionPoint = context.insertionPoint();
+    if (!insertionPoint)
+        return false;
+    ASSERT(context.node()->parentElement());
+    ElementShadow* shadow = context.node()->parentElement()->shadow();
+    ASSERT(shadow);
+
+    for ( ; insertionPoint; ) {
+        InsertionPoint* youngerInsertionPoint = shadow->insertionPointFor(insertionPoint);
+        if (!youngerInsertionPoint)
+            break;
+        insertionPoint = youngerInsertionPoint;
+    }
+    return insertionPoint->resetStyleInheritance();
+}
+
 inline void StyleResolver::initForStyleResolve(Element* e, RenderStyle* parentStyle, PseudoId pseudoID)
 {
     m_pseudoStyle = pseudoID;
@@ -965,7 +987,7 @@ inline void StyleResolver::initForStyleResolve(Element* e, RenderStyle* parentSt
     if (e) {
         NodeRenderingContext context(e);
         m_parentNode = context.parentNodeForRenderingAndStyle();
-        m_parentStyle = context.resetStyleInheritance()? 0 :
+        m_parentStyle = shouldResetStyleInheritance(context) ? 0 :
             parentStyle ? parentStyle :
             m_parentNode ? m_parentNode->renderStyle() : 0;
         m_distributedToInsertionPoint = context.insertionPoint();

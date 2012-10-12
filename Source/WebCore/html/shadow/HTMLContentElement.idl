@@ -30,5 +30,6 @@ module html {
         V8EnabledAtRuntime=shadowDOM
     ] HTMLContentElement : HTMLElement {
         attribute [Reflect] DOMString select;
+        attribute boolean resetStyleInheritance;
     };
 }

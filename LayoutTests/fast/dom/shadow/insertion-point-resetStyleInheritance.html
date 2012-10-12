@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div.resetTest {
+  background-color: #eef;
+  color: #fee;
+}
+</style>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/polyfill.js"></script>
+<script>
+function testNoResetStyleInheritance() {
+    debug("Test case: no reset-style-inheritance. color value should be inherited from the shadow host.");
+    var div = document.getElementById('no-reset-style-inheritance');
+
+    var shadowRoot = new WebKitShadowRoot(div);
+    shadowRoot.innerHTML = '<content id="content"></content>';
+    
+    shadowRoot.getElementById('content').resetStyleInheritance = false;
+    shouldBe('window.getComputedStyle(document.getElementById("no-reset-style-inheritance").firstChild).color', '"rgb(255, 238, 238)"');
+    shouldBe('window.getComputedStyle(document.getElementById("no-reset-style-inheritance").firstChild).backgroundColor', '"rgba(0, 0, 0, 0)"');
+}
+
+function testResetStyleInheritance() {
+    debug("Test case: reset-style-inhertiace basic test. color value should be initial because insertion point's resetStyleInheritance is true.");
+    var div = document.getElementById('reset-style-inheritance');
+
+    var shadowRoot = new WebKitShadowRoot(div);
+    shadowRoot.innerHTML = '<content id="content"></content>';
+
+    shadowRoot.getElementById('content').resetStyleInheritance = true;
+    shouldBe('window.getComputedStyle(document.getElementById("reset-style-inheritance").firstChild).color', '"rgb(0, 0, 0)"');
+    shouldBe('window.getComputedStyle(document.getElementById("reset-style-inheritance").firstChild).backgroundColor', '"rgba(0, 0, 0, 0)"');
+}
+
+function testResetStyleInheritanceDynamic() {
+    debug("Test case: reset-style-inhertiace changes dynamically. Firstly color value should be inherited. Next, initial. At last, inherited.");
+    var div = document.getElementById('reset-style-inheritance-dynamic');
+
+    var shadowRoot = new WebKitShadowRoot(div);
+    shadowRoot.innerHTML = '<content id="content"></content>';
+
+    shadowRoot.getElementById('content').resetStyleInheritance = false;
+    shouldBe('window.getComputedStyle(document.getElementById("reset-style-inheritance-dynamic").firstChild).color', '"rgb(255, 238, 238)"');
+    shouldBe('window.getComputedStyle(document.getElementById("reset-style-inheritance-dynamic").firstChild).backgroundColor', '"rgba(0, 0, 0, 0)"');
+
+    shadowRoot.getElementById('content').resetStyleInheritance = true;
+    shouldBe('window.getComputedStyle(document.getElementById("reset-style-inheritance-dynamic").firstChild).color', '"rgb(0, 0, 0)"');
+    shouldBe('window.getComputedStyle(document.getElementById("reset-style-inheritance-dynamic").firstChild).backgroundColor', '"rgba(0, 0, 0, 0)"');
+
+    shadowRoot.getElementById('content').resetStyleInheritance = false;
+    shouldBe('window.getComputedStyle(document.getElementById("reset-style-inheritance-dynamic").firstChild).color', '"rgb(255, 238, 238)"');
+    shouldBe('window.getComputedStyle(document.getElementById("reset-style-inheritance-dynamic").firstChild).backgroundColor', '"rgba(0, 0, 0, 0)"');
+}
+
+function testResetStyleInheritanceWithoutCrossingUpperBoundary() {
+    debug("Test case: the parent node of the distributed node is in the same shadow dom subtree as the insertion point. color value should be initial. reset-style-inheritance doesn't depend on whether parent style node is in the same treescope or not.");
+    var div = document.getElementById('reset-but-not-cross-upper-boundary');
+    var shadowRoot = new WebKitShadowRoot(div);
+
+    shadowRoot.innerHTML = '<div style="color:blue; background-color:green;"><content id="content"></content></div>';
+
+    shadowRoot.getElementById('content').resetStyleInheritance = true;
+    shouldBe('window.getComputedStyle(document.getElementById("reset-but-not-cross-upper-boundary").firstChild).color', '"rgb(0, 0, 0)"');
+    shouldBe('window.getComputedStyle(document.getElementById("reset-but-not-cross-upper-boundary").firstChild).backgroundColor', '"rgba(0, 0, 0, 0)"');
+}
+
+function testResetStyleInheritanceWithMultipleShadowRoots() {
+    debug("Test case: reset-style-inheritance with multiple shadow roots. color value should be initial, because reset-style-inheritance of the insertion point in the youngest shadow root is true.");
+    var div = document.getElementById('multiple-shadow-roots');
+    var oldestShadowRoot = new WebKitShadowRoot(div);
+    oldestShadowRoot.innerHTML = '<content id="content"></content>';
+
+    var youngerShadowRoot = new WebKitShadowRoot(div);
+    youngerShadowRoot.innerHTML = '<shadow id="shadow"></shadow>';
+
+    var youngestShadowRoot = new WebKitShadowRoot(div);
+    youngestShadowRoot.innerHTML = '<shadow id="shadow"></shadow>';
+
+    oldestShadowRoot.getElementById('content').resetStyleInheritance = false;
+    youngerShadowRoot.getElementById('shadow').resetStyleInheritance = false;
+    youngestShadowRoot.getElementById('shadow').resetStyleInheritance = true;
+    shouldBe('window.getComputedStyle(document.getElementById("multiple-shadow-roots").firstChild).color', '"rgb(0, 0, 0)"');
+    shouldBe('window.getComputedStyle(document.getElementById("multiple-shadow-roots").firstChild).backgroundColor', '"rgba(0, 0, 0, 0)"');
+}
+
+function testResetStyleInheritanceWithMultipleInsertionPoints() {
+    debug("Test case: multiple insertion points in the same shadow dom subtree.. Each reset-style-inheritance should be checked.");
+    var div = document.getElementById('multiple-insertion-points');
+    var oldestShadowRoot = new WebKitShadowRoot(div);
+    oldestShadowRoot.innerHTML = '<content id="content"></content>';
+
+    var youngestShadowRoot = new WebKitShadowRoot(div);
+    youngestShadowRoot.innerHTML = '<content select=":first-child" id="content"></content><shadow id="shadow"></shadow>';
+
+    youngestShadowRoot.getElementById('content').resetStyleInheritance = false;
+    youngestShadowRoot.getElementById('shadow').resetStyleInheritance = true;
+
+    shouldBe('window.getComputedStyle(document.getElementById("multiple-insertion-points").firstChild).color', '"rgb(255, 238, 238)"');
+    shouldBe('window.getComputedStyle(document.getElementById("multiple-insertion-points").firstChild).backgroundColor', '"rgba(0, 0, 0, 0)"');
+    shouldBe('window.getComputedStyle(document.getElementById("multiple-insertion-points").lastChild).color', '"rgb(0, 0, 0)"');
+    shouldBe('window.getComputedStyle(document.getElementById("multiple-insertion-points").lastChild).backgroundColor', '"rgba(0, 0, 0, 0)"');
+}
+
+function runTests() {
+    testNoResetStyleInheritance();
+    testResetStyleInheritance();
+    testResetStyleInheritanceDynamic();
+    testResetStyleInheritanceWithoutCrossingUpperBoundary()
+    testResetStyleInheritanceWithMultipleShadowRoots();
+    testResetStyleInheritanceWithMultipleInsertionPoints();
+    document.getElementById('test-cases').innerHTML = 'DONE';
+}
+</script>
+</head>
+<body onload="runTests()">
+<div id="test-cases">
+  <div id="no-reset-style-inheritance" class="resetTest"><span>first-child</span></div>
+  <div id="reset-style-inheritance" class="resetTest"><span>first-child</span></div>
+  <div id="reset-style-inheritance-dynamic" class="resetTest"><span>first-child</span></div>
+  <div id="reset-but-not-cross-upper-boundary" class="resetTest"><span>first-child</span></div>
+  <div id="multiple-shadow-roots" class="resetTest"><span>first-child</span></div>
+  <div id="multiple-insertion-points" class="resetTest"><span>first-child</span><span>last-child</span></div>
+</div>
+</body>
+</html>

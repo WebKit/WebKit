@@ -1,3 +1,34 @@
+2012-10-11  Takashi Sakamoto  <tasak@google.com>
+
+        [Shadow DOM] Insertion points need resetStyleInheritance
+        https://bugs.webkit.org/show_bug.cgi?id=93922
+
+        Reviewed by Dimitri Glazkov.
+
+        Implemented resetStyleInheritance of insertion points.
+        Its spec link is http://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/shadow/index.html#api-html-content-element-reset-style-inheritance
+
+        Test: fast/dom/shadow/insertion-point-resetStyleInheritance.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::isResetStyleInheritance):
+        Added a new function to check whether there exists any insertion
+        point which has reset-style-inhertiance flag set to be true.
+        (WebCore::StyleResolver::initForStyleResolve):
+        Modified to use the above function to check reset-style-inheritance.
+        * html/shadow/HTMLContentElement.idl:
+        * html/shadow/HTMLShadowElement.idl:
+        Added a new attribute for reset-style-inheritance.
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::InsertionPoint):
+        Initialized a new member variable for reset-style-inheritance.
+        (WebCore::InsertionPoint::resetStyleInheritance):
+        (WebCore::InsertionPoint::setResetStyleInheritance):
+        Implemented setter/getter for reset-style-inheritance.
+        * html/shadow/InsertionPoint.h:
+        (InsertionPoint):
+        Added a new member variable for reset-style-inheritance.
+
 2012-10-11  Anders Carlsson  <andersca@apple.com>
 
         Attempt to fix build broken by r131125.

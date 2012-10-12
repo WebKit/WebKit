@@ -39,6 +39,7 @@ namespace WebCore {
 
 InsertionPoint::InsertionPoint(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document)
+    , m_shouldResetStyleInheritance(false)
 {
 }
 
@@ -157,6 +158,20 @@ void InsertionPoint::removedFrom(ContainerNode* insertionPoint)
     }
 
     HTMLElement::removedFrom(insertionPoint);
+}
+
+bool InsertionPoint::resetStyleInheritance() const
+{
+    return m_shouldResetStyleInheritance;
+}
+
+void InsertionPoint::setResetStyleInheritance(bool value)
+{
+    if (value != m_shouldResetStyleInheritance) {
+        m_shouldResetStyleInheritance = value;
+        if (attached() && isActive())
+            shadowRoot()->host()->setNeedsStyleRecalc();
+    }
 }
 
 } // namespace WebCore
