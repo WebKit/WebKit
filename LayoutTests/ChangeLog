@@ -1,3 +1,25 @@
+2012-10-12  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed gardening. Updating expectations for fast/repaint/repaint-across-writing-mode-boundary.html
+        and switching the TestExpectations files for ports with SUBPIXEL_LAYOUT disabled to skip the entire
+        sub-pixel test folder.
+
+        * platform/chromium-mac/fast/repaint/repaint-across-writing-mode-boundary-expected.png:
+        * platform/chromium-win-xp/fast/repaint/repaint-across-writing-mode-boundary-expected.png:
+        * platform/chromium-win/fast/repaint/repaint-across-writing-mode-boundary-expected.png:
+        * platform/chromium/TestExpectations:
+        * platform/mac-lion/TestExpectations:
+        * platform/mac-snowleopard/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt-4.8/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win-wk2/TestExpectations:
+        * platform/win-xp/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2012-10-12  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed chromium windows rebaseline for r131202.

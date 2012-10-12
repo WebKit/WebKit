@@ -3543,10 +3543,6 @@ webkit.org/b/89702 platform/chromium/virtual/softwarecompositing/scaling/tiled-l
 webkit.org/b/89789 [ Mac ] plugins/embed-attributes-style.html [ ImageOnlyFailure Pass ]
 webkit.org/b/89789 [ Mac ] userscripts/user-script-video-document.html [ Crash Pass ]
 
-# Need rebaseline after bots cycle.
-webkit.org/b/98571 [ Win Mac ] fast/sub-pixel/sub-pixel-iframe-copy-on-scroll.html [ Failure Pass ]
-webkit.org/b/98571 [ Win Mac ] fast/repaint/repaint-across-writing-mode-boundary.html [ ImageOnlyFailure Pass ]
-
 # Flaky
 webkit.org/b/89794 [ Mac ] fast/regions/get-regions-by-content2.html [ Crash Pass ]
 

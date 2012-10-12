@@ -680,27 +680,7 @@ inspector/debugger/linkifier.html
 
 # Fail until SUBPIXEL_LAYOUT is enabled
 # https://bugs.webkit.org/show_bug.cgi?id=85532
-fast/sub-pixel/block-with-margin-overflow.html
-fast/sub-pixel/client-rect-has-subpixel-precision.html
-fast/sub-pixel/client-width-height-snapping.html
-fast/sub-pixel/file-upload-control-at-fractional-offset.html
-fast/sub-pixel/float-containing-block-with-margin.html
-fast/sub-pixel/float-with-right-margin-zoom.html
-fast/sub-pixel/float-wrap-with-subpixel-top.html
-fast/sub-pixel/inline-block-should-not-wrap.html
-fast/sub-pixel/inline-block-with-margin.html
-fast/sub-pixel/inline-block-with-padding.html
-fast/sub-pixel/large-sizes.html
-fast/sub-pixel/layout-boxes-with-zoom.html
-fast/sub-pixel/position-right-aligns-with-container.html
-fast/sub-pixel/selection/selection-gaps-at-fractional-offsets.html
-fast/sub-pixel/size-of-box-with-zoom.html
-fast/sub-pixel/table-rows-no-gaps.html
-fast/sub-pixel/sub-pixel-accumulates-to-layers.html
-fast/sub-pixel/selection/selection-rect-in-sub-pixel-table.html
-fast/sub-pixel/snap-negative-location.html
-fast/sub-pixel/sub-pixel-iframe-copy-on-scroll.html
-fast/sub-pixel/zoomed-image-tiles.html
+fast/sub-pixel
 
 # No CORS support for media elements is implemented yet.
 http/tests/security/video-cross-origin-readback.html
