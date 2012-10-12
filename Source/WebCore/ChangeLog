@@ -1,3 +1,17 @@
+2012-10-12  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: use hard-coded zoom factors instead of 1.2 powers.
+        https://bugs.webkit.org/show_bug.cgi?id=99173
+
+        Reviewed by Vsevolod Vlasov.
+
+        Overwise we step too fast.
+
+        * inspector/front-end/inspector.js:
+        (WebInspector._zoomIn):
+        (WebInspector._zoomOut):
+        (WebInspector):
+
 2012-10-12  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: move delete watch expression farther from the expand triangle

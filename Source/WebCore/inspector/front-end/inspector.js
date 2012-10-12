@@ -233,13 +233,13 @@ var WebInspector = {
 
     _zoomIn: function()
     {
-        ++this._zoomLevel;
+        this._zoomLevel = Math.min(this._zoomLevel + 1, WebInspector.Zoom.Table.length - WebInspector.Zoom.DefaultOffset - 1);
         this._requestZoom();
     },
 
     _zoomOut: function()
     {
-        --this._zoomLevel;
+        this._zoomLevel = Math.max(this._zoomLevel - 1, -WebInspector.Zoom.DefaultOffset);
         this._requestZoom();
     },
 
@@ -252,7 +252,11 @@ var WebInspector = {
     _requestZoom: function()
     {
         WebInspector.settings.zoomLevel.set(this._zoomLevel);
-        InspectorFrontendHost.setZoomFactor(Math.pow(1.2, this._zoomLevel));
+        // For backwards compatibility, zoomLevel takes integers (with 0 being default zoom).
+        var index = this._zoomLevel + WebInspector.Zoom.DefaultOffset;
+        index = Math.min(WebInspector.Zoom.Table.length - 1, index);
+        index = Math.max(0, index);
+        InspectorFrontendHost.setZoomFactor(WebInspector.Zoom.Table[index]);
     },
 
     toggleSearchingForNode: function()
@@ -962,3 +966,8 @@ WebInspector.addMainEventListeners = function(doc)
 }
 
 WebInspector.ProfileURLRegExp = /webkit-profile:\/\/(.+)\/(.+)#([0-9]+)/;
+
+WebInspector.Zoom = {
+    Table: [0.25, 0.33, 0.5, 0.66, 0.75, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2, 2.5, 3, 4, 5],
+    DefaultOffset: 6
+}
