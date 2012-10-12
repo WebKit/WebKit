@@ -34,6 +34,42 @@
 (function (InjectedScriptHost, inspectedWindow, injectedScriptId) {
 
 /**
+ * @param {Arguments} array
+ * @param {number=} index
+ * @return {Array.<*>}
+ */
+function slice(array, index)
+{
+    var result = [];
+    for (var i = index || 0; i < array.length; ++i)
+        result.push(array[i]);
+    return result;
+}
+
+/**
+ * Please use this bind, not the one from Function.prototype
+ * @param {function()} func
+ * @param {Object} thisObject
+ * @param {...number} var_args
+ */
+function bind(func, thisObject, var_args)
+{
+    var args = slice(arguments, 2);
+
+    /**
+     * @param {...number} var_args
+     */
+    function bound(var_args)
+    {
+        return func.apply(thisObject, args.concat(slice(arguments)));
+    }
+    bound.toString = function() {
+        return "bound: " + func;
+    };
+    return bound;
+}
+
+/**
  * @constructor
  */
 var InjectedScript = function()
@@ -935,7 +971,7 @@ function CommandLineAPI(commandLineAPIImpl, callFrame)
         if (member in inspectedWindow || inScopeVariables(member))
             continue;
 
-        this[member] = commandLineAPIImpl[member].bind(commandLineAPIImpl);
+        this[member] = bind(commandLineAPIImpl[member], commandLineAPIImpl);
     }
 
     for (var i = 0; i < 5; ++i) {
@@ -943,7 +979,7 @@ function CommandLineAPI(commandLineAPIImpl, callFrame)
         if (member in inspectedWindow || inScopeVariables(member))
             continue;
 
-        this.__defineGetter__("$" + i, commandLineAPIImpl._inspectedObject.bind(commandLineAPIImpl, i));
+        this.__defineGetter__("$" + i, bind(commandLineAPIImpl._inspectedObject, commandLineAPIImpl, i));
     }
 
     this.$_ = injectedScript._lastResult;

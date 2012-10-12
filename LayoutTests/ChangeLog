@@ -1,3 +1,14 @@
+2012-10-12  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: relies on current Function.prototype.bind in the frame
+        https://bugs.webkit.org/show_bug.cgi?id=99164
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/console/command-line-api-expected.txt:
+        * inspector/console/console-bind-fake-expected.txt: Added.
+        * inspector/console/console-bind-fake.html: Added.
+
 2012-10-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, update expected files, skip new failing tests.
