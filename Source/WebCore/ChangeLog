@@ -1,3 +1,19 @@
+2012-10-12  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Resume button in element inspector -> scripts has tooltip 'pause script execution'
+        https://bugs.webkit.org/show_bug.cgi?id=99165
+
+        Reviewed by Pavel Feldman.
+
+        Pause/resume button title is now updated when debugger is paused/resumed.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._updateDebuggerButtons):
+        (WebInspector.ScriptsPanel.prototype._createDebugToolbar):
+        (WebInspector.ScriptsPanel.prototype._updateButtonTitle):
+        (WebInspector.ScriptsPanel.prototype._createButtonAndRegisterShortcuts):
+
 2012-10-12  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Fix run-binding-tests failures introduced in r131167.

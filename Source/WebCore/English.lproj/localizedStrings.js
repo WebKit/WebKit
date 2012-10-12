@@ -304,6 +304,7 @@ localizedStrings["Path"] = "Path";
 localizedStrings["Pause on all exceptions.\nClick to Pause on uncaught exceptions."] = "Pause on all exceptions.\nClick to Pause on uncaught exceptions.";
 localizedStrings["Pause on uncaught exceptions.\nClick to Not pause on exceptions."] = "Pause on uncaught exceptions.\nClick to Not pause on exceptions.";
 localizedStrings["Pause script execution (%s)."] = "Pause script execution (%s).";
+localizedStrings["Resume script execution (%s)."] = "Resume script execution (%s).";
 localizedStrings["Pause/Continue"] = "Pause/Continue";
 localizedStrings["Paused"] = "Paused";
 localizedStrings["Paused on exception: '%s'."] = "Paused on exception: '%s'.";
