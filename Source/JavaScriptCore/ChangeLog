@@ -1,3 +1,16 @@
+2012-10-12  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Build fix after r131213
+
+        Removed an unused variable that was making compilers unhappy.
+
+        * heap/GCThread.cpp:
+        (JSC::GCThread::GCThread):
+        * heap/GCThread.h:
+        (GCThread):
+        * heap/GCThreadSharedData.cpp:
+        (JSC::GCThreadSharedData::GCThreadSharedData):
+
 2012-10-09  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Copying collection shouldn't require O(live bytes) memory overhead

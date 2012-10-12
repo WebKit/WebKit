@@ -35,12 +35,11 @@
 
 namespace JSC {
 
-GCThread::GCThread(GCThreadSharedData& shared, SlotVisitor* slotVisitor, CopyVisitor* copyVisitor, size_t index)
+GCThread::GCThread(GCThreadSharedData& shared, SlotVisitor* slotVisitor, CopyVisitor* copyVisitor)
     : m_threadID(0)
     , m_shared(shared)
     , m_slotVisitor(WTF::adoptPtr(slotVisitor))
     , m_copyVisitor(WTF::adoptPtr(copyVisitor))
-    , m_index(index)
 {
 }
 

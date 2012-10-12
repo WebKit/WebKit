@@ -39,7 +39,7 @@ class SlotVisitor;
 
 class GCThread {
 public:
-    GCThread(GCThreadSharedData&, SlotVisitor*, CopyVisitor*, size_t);
+    GCThread(GCThreadSharedData&, SlotVisitor*, CopyVisitor*);
 
     SlotVisitor* slotVisitor();
     CopyVisitor* copyVisitor();
@@ -56,7 +56,6 @@ private:
     GCThreadSharedData& m_shared;
     OwnPtr<SlotVisitor> m_slotVisitor;
     OwnPtr<CopyVisitor> m_copyVisitor;
-    size_t m_index;
 };
 
 } // namespace JSC

@@ -70,8 +70,7 @@ GCThreadSharedData::GCThreadSharedData(JSGlobalData* globalData)
     for (unsigned i = 1; i < Options::numberOfGCMarkers(); ++i) {
         SlotVisitor* slotVisitor = new SlotVisitor(*this);
         CopyVisitor* copyVisitor = new CopyVisitor(*this);
-        size_t index = m_gcThreads.size();
-        GCThread* newThread = new GCThread(*this, slotVisitor, copyVisitor, index);
+        GCThread* newThread = new GCThread(*this, slotVisitor, copyVisitor);
         ThreadIdentifier threadID = createThread(GCThread::gcThreadStartFunc, newThread, "JavaScriptCore::Marking");
         newThread->initializeThreadID(threadID);
         m_gcThreads.append(newThread);
