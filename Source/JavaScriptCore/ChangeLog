@@ -1,5 +1,13 @@
 2012-10-12  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Another build fix after r131213
+
+        Added some symbol magic to placate the linker on some platforms.
+
+        * JavaScriptCore.order:
+
+2012-10-12  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Build fix after r131213
 
         Removed an unused variable that was making compilers unhappy.
