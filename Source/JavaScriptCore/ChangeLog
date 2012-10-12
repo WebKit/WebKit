@@ -1,3 +1,108 @@
+2012-10-11  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        BlockAllocator should use regions as its VM allocation abstraction
+        https://bugs.webkit.org/show_bug.cgi?id=99107
+
+        Reviewed by Geoffrey Garen.
+
+        Currently the BlockAllocator allocates a single block at a time directly from the OS. Our block 
+        allocations are on the large-ish side (64 KB) to amortize across many allocations the expense of 
+        mapping new virtual memory from the OS. These large blocks are then shared between the MarkedSpace 
+        and the CopiedSpace. This design makes it difficult to vary the size of the blocks in different 
+        parts of the Heap while still allowing us to amortize the VM allocation costs.
+
+        We should redesign the BlockAllocator so that it has a layer of indirection between blocks that are 
+        used by the allocator/collector and our primary unit of VM allocation from the OS. In particular, 
+        the BlockAllocator should allocate Regions of virtual memory from the OS, which are then subdivided 
+        into one or more Blocks to be used in our custom allocators. This design has the following nice properties:
+
+        1) We can remove the knowledge of PageAllocationAligned from HeapBlocks. Each HeapBlock will now 
+           only know what Region it belongs to. The Region maintains all the metadata for how to allocate 
+           and deallocate virtual memory from the OS.
+
+        2) We can easily allocate in larger chunks than we need to satisfy a particular request for a Block. 
+           We can then continue to amortize our VM allocation costs while allowing for smaller block sizes, 
+           which should increase locality in the mutator when allocating, lazy sweeping, etc.
+
+        3) By encapsulating the logic of where our memory comes from inside of the Region class, we can more 
+           easily transition over to allocating VM from a specific range of pre-reserved address space. This 
+           will be a necessary step along the way to 32-bit pointers.
+
+        This particular patch will not change the size of MarkedBlocks or CopiedBlocks, nor will it change how 
+        much VM we allocate per failed Block request. It only sets up the data structures that we need to make 
+        these changes in future patches.
+
+        Most of the changes in this patch relate to the addition of the Region class to be used by the 
+        BlockAllocator and the threading of changes made to BlockAllocator's interface through to the call sites.
+
+        * heap/BlockAllocator.cpp: The BlockAllocator now has three lists that track the three disjoint sets of
+        Regions that it cares about: empty regions, partially full regions, and completely full regions. 
+        Empty regions have no blocks currently in use and can be freed immediately if the freeing thread 
+        determines they should be. Partial regions have some blocks used, but aren't completely in use yet. 
+        These regions are preferred for recycling before empty regions to mitigate fragmentation within regions.
+        Completely full regions are no longer able to be used for allocations. Regions move between these 
+        three lists as they are created and their constituent blocks are allocated and deallocated.
+        (JSC::BlockAllocator::BlockAllocator):
+        (JSC::BlockAllocator::~BlockAllocator):
+        (JSC::BlockAllocator::releaseFreeRegions):
+        (JSC::BlockAllocator::waitForRelativeTimeWhileHoldingLock):
+        (JSC::BlockAllocator::waitForRelativeTime):
+        (JSC::BlockAllocator::blockFreeingThreadMain):
+        * heap/BlockAllocator.h:
+        (JSC):
+        (DeadBlock):
+        (JSC::DeadBlock::DeadBlock):
+        (Region):
+        (JSC::Region::blockSize):
+        (JSC::Region::isFull):
+        (JSC::Region::isEmpty):
+        (JSC::Region::create): This function is responsible for doing the actual VM allocation. This should be the 
+        only function in the entire JSC object runtime that calls out the OS for virtual memory allocation.
+        (JSC::Region::Region):
+        (JSC::Region::~Region):
+        (JSC::Region::allocate):
+        (JSC::Region::deallocate):
+        (BlockAllocator):
+        (JSC::BlockAllocator::tryAllocateFromRegion): Helper function that encapsulates checking a particular list 
+        of regions for a free block.
+        (JSC::BlockAllocator::allocate):
+        (JSC::BlockAllocator::allocateCustomSize): This function is responsible for allocating one-off custom size 
+        regions for use in oversize allocations in both the MarkedSpace and the CopiedSpace. These regions are not 
+        tracked by the BlockAllocator. The only pointer to them is in the HeapBlock that is returned. These regions 
+        contain exactly one block.
+        (JSC::BlockAllocator::deallocate):
+        (JSC::BlockAllocator::deallocateCustomSize): This function is responsible for deallocating one-off custom size
+        regions. The regions are deallocated back to the OS eagerly.
+        * heap/CopiedBlock.h: Re-worked CopiedBlocks to use Regions instead of PageAllocationAligned.
+        (CopiedBlock):
+        (JSC::CopiedBlock::createNoZeroFill):
+        (JSC::CopiedBlock::create):
+        (JSC::CopiedBlock::CopiedBlock):
+        (JSC::CopiedBlock::payloadEnd):
+        (JSC::CopiedBlock::capacity):
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::~CopiedSpace):
+        (JSC::CopiedSpace::tryAllocateOversize):
+        (JSC::CopiedSpace::tryReallocateOversize):
+        (JSC::CopiedSpace::doneCopying):
+        * heap/CopiedSpaceInlineMethods.h:
+        (JSC::CopiedSpace::allocateBlockForCopyingPhase):
+        (JSC::CopiedSpace::allocateBlock):
+        * heap/HeapBlock.h:
+        (JSC::HeapBlock::destroy):
+        (JSC::HeapBlock::HeapBlock):
+        (JSC::HeapBlock::region):
+        (HeapBlock):
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::allocateBlock):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::create):
+        (JSC::MarkedBlock::MarkedBlock):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::capacity):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::freeBlock):
+
 2012-10-11  Filip Pizlo  <fpizlo@apple.com>
 
         UInt32ToNumber and OSR exit should be aware of copy propagation and correctly recover both versions of a variable that was subject to a UInt32ToNumber cast

@@ -50,7 +50,7 @@ CopiedSpace::~CopiedSpace()
         m_heap->blockAllocator().deallocate(CopiedBlock::destroy(m_fromSpace->removeHead()));
 
     while (!m_oversizeBlocks.isEmpty())
-        CopiedBlock::destroy(m_oversizeBlocks.removeHead()).deallocate();
+        m_heap->blockAllocator().deallocateCustomSize(CopiedBlock::destroy(m_oversizeBlocks.removeHead()));
 }
 
 void CopiedSpace::init()
@@ -79,15 +79,7 @@ CheckedBoolean CopiedSpace::tryAllocateOversize(size_t bytes, void** outPtr)
 {
     ASSERT(isOversize(bytes));
     
-    size_t blockSize = WTF::roundUpToMultipleOf(WTF::pageSize(), sizeof(CopiedBlock) + bytes);
-
-    PageAllocationAligned allocation = PageAllocationAligned::allocate(blockSize, WTF::pageSize(), OSAllocator::JSGCHeapPages);
-    if (!static_cast<bool>(allocation)) {
-        *outPtr = 0;
-        return false;
-    }
-
-    CopiedBlock* block = CopiedBlock::create(allocation);
+    CopiedBlock* block = CopiedBlock::create(m_heap->blockAllocator().allocateCustomSize(sizeof(CopiedBlock) + bytes, WTF::pageSize()));
     m_oversizeBlocks.push(block);
     m_blockFilter.add(reinterpret_cast<Bits>(block));
     m_blockSet.add(block);
@@ -97,7 +89,7 @@ CheckedBoolean CopiedSpace::tryAllocateOversize(size_t bytes, void** outPtr)
     *outPtr = allocator.forceAllocate(bytes);
     allocator.resetCurrentBlock();
 
-    m_heap->didAllocate(blockSize);
+    m_heap->didAllocate(block->region()->blockSize());
 
     return true;
 }
@@ -145,7 +137,7 @@ CheckedBoolean CopiedSpace::tryReallocateOversize(void** ptr, size_t oldSize, si
         CopiedBlock* oldBlock = oversizeBlockFor(oldPtr);
         m_oversizeBlocks.remove(oldBlock);
         m_blockSet.remove(oldBlock);
-        CopiedBlock::destroy(oldBlock).deallocate();
+        m_heap->blockAllocator().deallocateCustomSize(CopiedBlock::destroy(oldBlock));
     }
     
     *ptr = newPtr;
@@ -213,7 +205,7 @@ void CopiedSpace::doneCopying()
         if (!curr->m_isPinned) {
             m_oversizeBlocks.remove(curr);
             m_blockSet.remove(curr);
-            CopiedBlock::destroy(curr).deallocate();
+            m_heap->blockAllocator().deallocateCustomSize(CopiedBlock::destroy(curr));
         } else {
             m_blockFilter.add(reinterpret_cast<Bits>(curr));
             curr->m_isPinned = false;

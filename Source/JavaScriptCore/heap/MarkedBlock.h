@@ -22,6 +22,7 @@
 #ifndef MarkedBlock_h
 #define MarkedBlock_h
 
+#include "BlockAllocator.h"
 #include "CardSet.h"
 #include "HeapBlock.h"
 
@@ -114,7 +115,7 @@ namespace JSC {
         };
 
         enum DestructorType { None, ImmortalStructure, Normal };
-        static MarkedBlock* create(const PageAllocationAligned&, MarkedAllocator*, size_t cellSize, DestructorType);
+        static MarkedBlock* create(DeadBlock*, MarkedAllocator*, size_t cellSize, DestructorType);
 
         static bool isAtomAligned(const void*);
         static MarkedBlock* blockFor(const void*);
@@ -200,7 +201,7 @@ namespace JSC {
 
         typedef char Atom[atomSize];
 
-        MarkedBlock(const PageAllocationAligned&, MarkedAllocator*, size_t cellSize, DestructorType);
+        MarkedBlock(Region*, MarkedAllocator*, size_t cellSize, DestructorType);
         Atom* atoms();
         size_t atomNumber(const void*);
         void callDestructor(JSCell*);
@@ -345,7 +346,7 @@ namespace JSC {
 
     inline size_t MarkedBlock::capacity()
     {
-        return allocation().size();
+        return region()->blockSize();
     }
 
     inline size_t MarkedBlock::atomNumber(const void* p)

@@ -26,6 +26,7 @@
 #ifndef CopiedBlock_h
 #define CopiedBlock_h
 
+#include "BlockAllocator.h"
 #include "HeapBlock.h"
 #include "JSValue.h"
 #include "JSValueInlineMethods.h"
@@ -38,8 +39,8 @@ class CopiedBlock : public HeapBlock<CopiedBlock> {
     friend class CopiedSpace;
     friend class CopiedAllocator;
 public:
-    static CopiedBlock* create(const PageAllocationAligned&);
-    static CopiedBlock* createNoZeroFill(const PageAllocationAligned&);
+    static CopiedBlock* create(DeadBlock*);
+    static CopiedBlock* createNoZeroFill(DeadBlock*);
 
     // The payload is the region of the block that is usable for allocations.
     char* payload();
@@ -60,24 +61,27 @@ public:
     size_t size();
     size_t capacity();
 
+    static const size_t blockSize = 64 * KB;
+
 private:
-    CopiedBlock(const PageAllocationAligned&);
+    CopiedBlock(Region*);
     void zeroFillWilderness(); // Can be called at any time to zero-fill to the end of the block.
 
     size_t m_remaining;
     uintptr_t m_isPinned;
 };
 
-inline CopiedBlock* CopiedBlock::createNoZeroFill(const PageAllocationAligned& allocation)
+inline CopiedBlock* CopiedBlock::createNoZeroFill(DeadBlock* block)
 {
-    return new(NotNull, allocation.base()) CopiedBlock(allocation);
+    Region* region = block->region();
+    return new(NotNull, block) CopiedBlock(region);
 }
 
-inline CopiedBlock* CopiedBlock::create(const PageAllocationAligned& allocation)
+inline CopiedBlock* CopiedBlock::create(DeadBlock* block)
 {
-    CopiedBlock* block = createNoZeroFill(allocation);
-    block->zeroFillWilderness();
-    return block;
+    CopiedBlock* newBlock = createNoZeroFill(block);
+    newBlock->zeroFillWilderness();
+    return newBlock;
 }
 
 inline void CopiedBlock::zeroFillWilderness()
@@ -92,8 +96,8 @@ inline void CopiedBlock::zeroFillWilderness()
 #endif
 }
 
-inline CopiedBlock::CopiedBlock(const PageAllocationAligned& allocation)
-    : HeapBlock<CopiedBlock>(allocation)
+inline CopiedBlock::CopiedBlock(Region* region)
+    : HeapBlock<CopiedBlock>(region)
     , m_remaining(payloadCapacity())
     , m_isPinned(false)
 {
@@ -107,7 +111,7 @@ inline char* CopiedBlock::payload()
 
 inline char* CopiedBlock::payloadEnd()
 {
-    return reinterpret_cast<char*>(this) + allocation().size();
+    return reinterpret_cast<char*>(this) + region()->blockSize();
 }
 
 inline size_t CopiedBlock::payloadCapacity()
@@ -152,7 +156,7 @@ inline size_t CopiedBlock::size()
 
 inline size_t CopiedBlock::capacity()
 {
-    return allocation().size();
+    return region()->blockSize();
 }
 
 } // namespace JSC

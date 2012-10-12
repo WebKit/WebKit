@@ -27,12 +27,13 @@
 #define HeapBlock_h
 
 #include <wtf/DoublyLinkedList.h>
-#include <wtf/PageAllocationAligned.h>
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
 
 enum AllocationEffort { AllocationCanFail, AllocationMustSucceed };
+
+class Region;
 
 #if COMPILER(GCC)
 #define CLASS_IF_GCC class
@@ -46,28 +47,25 @@ class HeapBlock : public DoublyLinkedListNode<T> {
 public:
     static const size_t s_blockSize = 64 * KB;
 
-    static PageAllocationAligned destroy(HeapBlock* block)
+    static HeapBlock* destroy(HeapBlock* block)
     {
         static_cast<T*>(block)->~T();
-
-        PageAllocationAligned allocation;
-        std::swap(allocation, block->m_allocation);
-        return allocation;
+        return block;
     }
 
-    HeapBlock(const PageAllocationAligned& allocation)
+    HeapBlock(Region* region)
         : DoublyLinkedListNode<T>()
-        , m_allocation(allocation)
+        , m_region(region)
         , m_prev(0)
         , m_next(0)
     {
-        ASSERT(m_allocation);
+        ASSERT(m_region);
     }
 
-    const PageAllocationAligned allocation() const { return m_allocation; }
+    Region* region() const { return m_region; }
 
 private:
-    PageAllocationAligned m_allocation;
+    Region* m_region;
     T* m_prev;
     T* m_next;
 };

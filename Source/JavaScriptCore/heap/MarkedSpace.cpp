@@ -200,8 +200,7 @@ void MarkedSpace::freeBlock(MarkedBlock* block)
         m_heap->blockAllocator().deallocate(MarkedBlock::destroy(block));
         return;
     }
-
-    MarkedBlock::destroy(block).deallocate();
+    m_heap->blockAllocator().deallocateCustomSize(MarkedBlock::destroy(block));
 }
 
 void MarkedSpace::freeOrShrinkBlock(MarkedBlock* block)

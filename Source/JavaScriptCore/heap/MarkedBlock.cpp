@@ -33,13 +33,14 @@
 
 namespace JSC {
 
-MarkedBlock* MarkedBlock::create(const PageAllocationAligned& allocation, MarkedAllocator* allocator, size_t cellSize, DestructorType destructorType)
+MarkedBlock* MarkedBlock::create(DeadBlock* block, MarkedAllocator* allocator, size_t cellSize, DestructorType destructorType)
 {
-    return new (NotNull, allocation.base()) MarkedBlock(allocation, allocator, cellSize, destructorType);
+    Region* region = block->region();
+    return new (NotNull, block) MarkedBlock(region, allocator, cellSize, destructorType);
 }
 
-MarkedBlock::MarkedBlock(const PageAllocationAligned& allocation, MarkedAllocator* allocator, size_t cellSize, DestructorType destructorType)
-    : HeapBlock<MarkedBlock>(allocation)
+MarkedBlock::MarkedBlock(Region* region, MarkedAllocator* allocator, size_t cellSize, DestructorType destructorType)
+    : HeapBlock<MarkedBlock>(region)
     , m_atomsPerCell((cellSize + atomSize - 1) / atomSize)
     , m_endAtom(atomsPerBlock - m_atomsPerCell + 1)
     , m_destructorType(destructorType)

@@ -111,15 +111,9 @@ MarkedBlock* MarkedAllocator::allocateBlock(size_t bytes)
 
     size_t cellSize = m_cellSize ? m_cellSize : WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(bytes);
 
-    if (blockSize == MarkedBlock::blockSize) {
-        PageAllocationAligned allocation = m_heap->blockAllocator().allocate();
-        return MarkedBlock::create(allocation, this, cellSize, m_destructorType);
-    }
-
-    PageAllocationAligned allocation = PageAllocationAligned::allocate(blockSize, MarkedBlock::blockSize, OSAllocator::JSGCHeapPages);
-    if (!static_cast<bool>(allocation))
-        CRASH();
-    return MarkedBlock::create(allocation, this, cellSize, m_destructorType);
+    if (blockSize == MarkedBlock::blockSize)
+        return MarkedBlock::create(m_heap->blockAllocator().allocate<MarkedBlock>(), this, cellSize, m_destructorType);
+    return MarkedBlock::create(m_heap->blockAllocator().allocateCustomSize(blockSize, MarkedBlock::blockSize), this, cellSize, m_destructorType);
 }
 
 void MarkedAllocator::addBlock(MarkedBlock* block)
