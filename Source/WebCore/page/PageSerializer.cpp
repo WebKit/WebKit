@@ -267,7 +267,7 @@ void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const KUR
         Document* document = styleSheet->ownerDocument();
         // Some rules have resources associated with them that we need to retrieve.
         if (rule->isImportRule()) {
-            CSSImportRule* importRule = static_cast<CSSImportRule*>(rule);            
+            CSSImportRule* importRule = static_cast<CSSImportRule*>(rule);
             KURL importURL = document->completeURL(importRule->href());
             if (m_resourceURLs.contains(importURL))
                 continue;
@@ -298,8 +298,14 @@ void PageSerializer::addImageToResources(CachedImage* image, RenderObject* image
     if (!image || image->image() == Image::nullImage())
         return;
 
+    RefPtr<SharedBuffer> data = imageRenderer ? image->imageForRenderer(imageRenderer)->data() : image->image()->data();
+    if (!data) {
+        // SVG images don't return data at this point. Bug 99102.
+        LOG_ERROR("No data for image %s", url.utf8String().data());
+        return;
+    }
     String mimeType = image->response().mimeType();
-    m_resources->append(Resource(url, mimeType, imageRenderer ? image->imageForRenderer(imageRenderer)->data() : image->image()->data()));
+    m_resources->append(Resource(url, mimeType, data));
     m_resourceURLs.add(url);
 }
 

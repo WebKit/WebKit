@@ -88,6 +88,7 @@ public:
         , m_xhtmlMimeType(WebString::fromUTF8("application/xhtml+xml"))
         , m_cssMimeType(WebString::fromUTF8("text/css"))
         , m_pngMimeType(WebString::fromUTF8("image/png"))
+        , m_svgMimeType(WebString::fromUTF8("image/svg+xml"))
     {
     }
 
@@ -148,6 +149,7 @@ protected:
     const WebString& xhtmlMimeType() const { return m_xhtmlMimeType; }
     const WebString& cssMimeType() const { return m_cssMimeType; }
     const WebString& pngMimeType() const { return m_pngMimeType; }
+    const WebString& svgMimeType() const { return m_svgMimeType; }
 
     static bool resourceVectorContains(const WebVector<WebPageSerializer::Resource>& resources, const char* url, const char* mimeType)
     {
@@ -167,6 +169,7 @@ private:
     WebString m_xhtmlMimeType;
     WebString m_cssMimeType;
     WebString m_pngMimeType;
+    WebString m_svgMimeType;
     TestWebFrameClient m_webFrameClient;
 };
 
@@ -327,6 +330,22 @@ TEST_F(WebPageNewSerializeTest, FAILS_TestMHTMLEncoding)
         }
     }
     EXPECT_EQ(12, sectionCheckedCount);
+}
+
+// Test that we don't regress https://bugs.webkit.org/show_bug.cgi?id=99105
+TEST_F(WebPageNewSerializeTest, SVGImageDontCrash)
+{
+    WebURL pageUrl = toKURL("http://www.test.com");
+    WebURL imageUrl = toKURL("http://www.test.com/green_rectangle.svg");
+
+    registerMockedURLLoad(pageUrl, WebString::fromUTF8("page_with_svg_image.html"), WebString::fromUTF8("pageserializer/"), htmlMimeType());
+    registerMockedURLLoad(imageUrl, WebString::fromUTF8("green_rectangle.svg"), WebString::fromUTF8("pageserializer/"), svgMimeType());
+
+    loadURLInTopFrame(pageUrl);
+
+    WebCString mhtml = WebPageSerializer::serializeToMHTML(m_webView);
+    // We expect some data to be generated.
+    EXPECT_GT(mhtml.length(), 50U);
 }
 
 }
