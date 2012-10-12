@@ -175,7 +175,7 @@ bool WorkerContextExecutionProxy::initializeIfNeeded()
     if (!m_workerContext->isDedicatedWorkerContext())
         contextType = &V8SharedWorkerContext::info;
 #endif
-    v8::Handle<v8::Function> workerContextConstructor = m_perContextData->constructorForType(contextType);
+    v8::Handle<v8::Function> workerContextConstructor = m_perContextData->constructorForType(contextType, m_workerContext);
     v8::Local<v8::Object> jsWorkerContext = V8ObjectConstructor::newInstance(workerContextConstructor);
     // Bail out if allocation failed.
     if (jsWorkerContext.IsEmpty()) {

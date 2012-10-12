@@ -1,3 +1,131 @@
+2012-10-12  MORITA Hajime  <morrita@google.com>
+
+        [V8] PerContextEnabled methods should be installed when the constructor is created
+        https://bugs.webkit.org/show_bug.cgi?id=99129
+
+        Reviewed by Kentaro Hara.
+
+        Before this change, generated installPerContextProperties() method
+        injected both per-context attributes and functions, and functions
+        were injected into the prototye object.  This means that the
+        functions are injected into the prototype repeatedly for each
+        intance creation.  This injection can be happened only once per
+        prototype object, which is clearer and is faster.
+
+        This change introduces installPerContextPrototypeProperties()
+        generated method, which is designed to be called for each time when the prototype
+        object is created.
+
+        To do that, WrapperTypeInfo is extended to hold an additional
+        function pointer to an installPerContextPrototypeProperties()
+        implementation so that we call it from V8PerContextData::constructorForTypeSlowCase(),
+        where the prototype instance is created.
+
+        Other changes:
+        - Added some modification to pass around the parameter to constructorForTypeSlowCase().
+        - installPerContextProperties() are now always generated for simplicity. Empty implementations are inlined thus
+          no speed penalty.
+
+        No new tests. Covered by existing tests.
+
+        * Modules/notifications/NotificationCenter.cpp:
+        (WebCore::NotificationCenter::document):
+        * Modules/notifications/NotificationCenter.h:
+        (NotificationCenter):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader):
+        (GenerateConstructorGetter):
+        (GenerateNamedConstructorCallback):
+        (GenerateImplementation): Extracted per-context function additions to new installPerContextPrototypeProperties() function.
+        (GenerateToV8Converters):
+        * bindings/scripts/test/V8/V8Float64Array.cpp:
+        (WebCore):
+        (WebCore::V8Float64Array::wrapSlow):
+        * bindings/scripts/test/V8/V8Float64Array.h:
+        (WebCore::V8Float64Array::installPerContextProperties):
+        (WebCore::V8Float64Array::installPerContextPrototypeProperties):
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.cpp:
+        (WebCore):
+        (WebCore::V8TestActiveDOMObject::wrapSlow):
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.h:
+        (WebCore::V8TestActiveDOMObject::installPerContextProperties):
+        (WebCore::V8TestActiveDOMObject::installPerContextPrototypeProperties):
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.cpp:
+        (WebCore):
+        (WebCore::V8TestCustomNamedGetter::wrapSlow):
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.h:
+        (WebCore::V8TestCustomNamedGetter::installPerContextProperties):
+        (WebCore::V8TestCustomNamedGetter::installPerContextPrototypeProperties):
+        * bindings/scripts/test/V8/V8TestEventConstructor.cpp:
+        (WebCore):
+        (WebCore::V8TestEventConstructor::wrapSlow):
+        * bindings/scripts/test/V8/V8TestEventConstructor.h:
+        (WebCore::V8TestEventConstructor::installPerContextProperties):
+        (WebCore::V8TestEventConstructor::installPerContextPrototypeProperties):
+        * bindings/scripts/test/V8/V8TestEventTarget.cpp:
+        (WebCore):
+        (WebCore::V8TestEventTarget::wrapSlow):
+        * bindings/scripts/test/V8/V8TestEventTarget.h:
+        (WebCore::V8TestEventTarget::installPerContextProperties):
+        (WebCore::V8TestEventTarget::installPerContextPrototypeProperties):
+        * bindings/scripts/test/V8/V8TestException.cpp:
+        (WebCore):
+        (WebCore::V8TestException::wrapSlow):
+        * bindings/scripts/test/V8/V8TestException.h:
+        (WebCore::V8TestException::installPerContextProperties):
+        (WebCore::V8TestException::installPerContextPrototypeProperties):
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        (WebCore):
+        (WebCore::V8TestInterface::wrapSlow):
+        * bindings/scripts/test/V8/V8TestInterface.h:
+        (WebCore::V8TestInterface::installPerContextProperties):
+        (WebCore::V8TestInterface::installPerContextPrototypeProperties):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.cpp:
+        (WebCore):
+        (WebCore::V8TestMediaQueryListListener::wrapSlow):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.h:
+        (WebCore::V8TestMediaQueryListListener::installPerContextProperties):
+        (WebCore::V8TestMediaQueryListListener::installPerContextPrototypeProperties):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.cpp:
+        (WebCore):
+        (WebCore::V8TestNamedConstructor::wrapSlow):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.h:
+        (WebCore::V8TestNamedConstructor::installPerContextProperties):
+        (WebCore::V8TestNamedConstructor::installPerContextPrototypeProperties):
+        * bindings/scripts/test/V8/V8TestNode.cpp:
+        (WebCore):
+        (WebCore::V8TestNode::wrapSlow):
+        * bindings/scripts/test/V8/V8TestNode.h:
+        (WebCore::V8TestNode::installPerContextProperties):
+        (WebCore::V8TestNode::installPerContextPrototypeProperties):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+        (WebCore):
+        (WebCore::V8TestSerializedScriptValueInterface::wrapSlow):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.h:
+        (WebCore::V8TestSerializedScriptValueInterface::installPerContextProperties):
+        (WebCore::V8TestSerializedScriptValueInterface::installPerContextPrototypeProperties):
+        * bindings/v8/NPV8Object.cpp:
+        (WebCore::npObjectTypeInfo):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::installDOMWindow):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::instantiateV8Object):
+        * bindings/v8/V8PerContextData.cpp:
+        (WebCore::V8PerContextData::createWrapperFromCacheSlowCase):
+        (WebCore::V8PerContextData::constructorForTypeSlowCase): Now invokes installPerContextPrototypeProperties()
+        * bindings/v8/V8PerContextData.h:
+        (WebCore::V8PerContextData::createWrapperFromCache):
+        (WebCore::V8PerContextData::constructorForType):
+        (V8PerContextData):
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::initializeIfNeeded):
+        * bindings/v8/WrapperTypeInfo.h:
+        (WebCore):
+        (WebCore::WrapperTypeInfo::installPerContextPrototypeProperties): Added.
+        (WrapperTypeInfo):
+        * bindings/v8/custom/V8HTMLImageElementConstructor.cpp:
+        (WebCore):
+
 2012-10-12  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: Add "goto tab 1,2,3" hotkeys

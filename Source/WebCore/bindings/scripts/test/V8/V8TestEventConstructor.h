@@ -48,6 +48,8 @@ public:
     static WrapperTypeInfo info;
     static v8::Handle<v8::Value> constructorCallback(const v8::Arguments&);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
+    static void installPerContextProperties(v8::Handle<v8::Object>, TestEventConstructor*) { }
+    static void installPerContextPrototypeProperties(v8::Handle<v8::Object>, ScriptExecutionContext*) { }
 private:
     static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestEventConstructor>, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 };

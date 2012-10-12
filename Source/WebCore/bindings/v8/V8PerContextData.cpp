@@ -100,13 +100,13 @@ bool V8PerContextData::init()
 
 #undef V8_STORE_PRIMORDIAL
 
-v8::Local<v8::Object> V8PerContextData::createWrapperFromCacheSlowCase(WrapperTypeInfo* type)
+v8::Local<v8::Object> V8PerContextData::createWrapperFromCacheSlowCase(WrapperTypeInfo* type, ScriptExecutionContext* context)
 {
     ASSERT(!m_errorPrototype.isEmpty());
     ASSERT(!m_objectPrototype.isEmpty());
 
     v8::Context::Scope scope(m_context);
-    v8::Local<v8::Function> function = constructorForType(type);
+    v8::Local<v8::Function> function = constructorForType(type, context);
     v8::Local<v8::Object> instance = V8ObjectConstructor::newInstance(function);
     if (!instance.IsEmpty()) {
         m_wrapperBoilerplates.set(type, v8::Persistent<v8::Object>::New(instance));
@@ -115,7 +115,7 @@ v8::Local<v8::Object> V8PerContextData::createWrapperFromCacheSlowCase(WrapperTy
     return v8::Local<v8::Object>();
 }
 
-v8::Local<v8::Function> V8PerContextData::constructorForTypeSlowCase(WrapperTypeInfo* type)
+v8::Local<v8::Function> V8PerContextData::constructorForTypeSlowCase(WrapperTypeInfo* type, ScriptExecutionContext* context)
 {
     ASSERT(!m_errorPrototype.isEmpty());
     ASSERT(!m_objectPrototype.isEmpty());
@@ -129,11 +129,12 @@ v8::Local<v8::Function> V8PerContextData::constructorForTypeSlowCase(WrapperType
         return v8::Local<v8::Function>();
 
     function->SetPrototype(m_objectPrototype.get());
-
-    if (type->wrapperTypePrototype == WrapperTypeErrorPrototype) {
-        v8::Local<v8::Value> prototypeValue = function->Get(v8::String::NewSymbol("prototype"));
-        if (!prototypeValue.IsEmpty() && prototypeValue->IsObject())
-            v8::Local<v8::Object>::Cast(prototypeValue)->SetPrototype(m_errorPrototype.get());
+    v8::Local<v8::Value> prototypeValue = function->Get(v8::String::NewSymbol("prototype"));
+    if (!prototypeValue.IsEmpty() && prototypeValue->IsObject()) {
+        v8::Local<v8::Object> prototypeObject = v8::Local<v8::Object>::Cast(prototypeValue);
+        type->installPerContextPrototypeProperties(prototypeObject, context);
+        if (type->wrapperTypePrototype == WrapperTypeErrorPrototype)
+            prototypeObject->SetPrototype(m_errorPrototype.get());
     }
 
     m_constructorMap.set(type, v8::Persistent<v8::Function>::New(function));

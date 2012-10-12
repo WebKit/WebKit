@@ -84,8 +84,8 @@ public:
 #if ENABLE(LEGACY_NOTIFICATIONS)
     int checkPermission();
     void requestPermission(PassRefPtr<VoidCallback>);
-    Document* document() const;
 #endif
+    Document* document() const;
 
     virtual void stop() OVERRIDE;
 

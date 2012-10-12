@@ -46,6 +46,8 @@ public:
     static void visitDOMWrapper(DOMDataStore*, void*, v8::Persistent<v8::Object>);
     static WrapperTypeInfo info;
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
+    static void installPerContextProperties(v8::Handle<v8::Object>, TestException*) { }
+    static void installPerContextPrototypeProperties(v8::Handle<v8::Object>, ScriptExecutionContext*) { }
 private:
     static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestException>, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 };

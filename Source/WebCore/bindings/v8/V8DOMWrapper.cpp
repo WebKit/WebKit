@@ -122,7 +122,7 @@ v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(Document* document, Wrap
     else
         perContextData = V8PerContextData::from(v8::Context::GetCurrent());
 
-    v8::Local<v8::Object> instance = perContextData ? perContextData->createWrapperFromCache(type) : V8ObjectConstructor::newInstance(type->getTemplate()->GetFunction());
+    v8::Local<v8::Object> instance = perContextData ? perContextData->createWrapperFromCache(type, document) : V8ObjectConstructor::newInstance(type->getTemplate()->GetFunction());
 
     // Avoid setting the DOM wrapper for failed allocations.
     if (instance.IsEmpty())
