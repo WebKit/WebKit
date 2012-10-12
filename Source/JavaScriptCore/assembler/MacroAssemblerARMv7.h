@@ -1688,7 +1688,7 @@ public:
     PatchableJump patchableBranchPtr(RelationalCondition cond, Address left, TrustedImmPtr right = TrustedImmPtr(0))
     {
         m_makeJumpPatchable = true;
-        Jump result = branchPtr(cond, left, right);
+        Jump result = branch32(cond, left, TrustedImm32(right));
         m_makeJumpPatchable = false;
         return PatchableJump(result);
     }

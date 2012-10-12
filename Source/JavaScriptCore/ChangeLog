@@ -1,3 +1,10 @@
+2012-10-12  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed. It should be possible to build JSC on ARMv7.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::patchableBranchPtr):
+
 2012-10-11  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         BlockAllocator should use regions as its VM allocation abstraction
