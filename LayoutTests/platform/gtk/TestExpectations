@@ -1365,6 +1365,8 @@ webkit.org/b/99001 inspector/profiler/memory-instrumentation-canvas.html
 
 webkit.org/b/99071 media/context-menu-actions.html [ Failure ]
 
+webkit.org/b/98950 transitions/blendmode-transitions.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

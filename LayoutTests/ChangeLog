@@ -1,3 +1,13 @@
+2012-10-12  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Rebaselining fast/dom/Window/window-properties-performance.html after r131106.
+        Adding a failure expectation for a transitions blend mode test added in r131146.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/dom/Window/window-properties-performance-expected.txt:
+
 2012-10-12  Kenichi Ishibashi  <bashi@chromium.org>
 
         [WebSocket] Add "Cache-Control: no-cache" to handshake request
