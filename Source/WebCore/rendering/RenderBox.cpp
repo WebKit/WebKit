@@ -3318,7 +3318,7 @@ void RenderBox::computePositionedLogicalWidthReplaced(LogicalExtentComputedValue
 
     LayoutUnit logicalLeftPos = logicalLeftValue + marginLogicalLeftAlias;
     computeLogicalLeftPositionedOffset(logicalLeftPos, this, computedValues.m_extent, containerBlock, containerLogicalWidth);
-    computedValues.m_position = logicalLeftPos.round();
+    computedValues.m_position = logicalLeftPos;
 }
 
 void RenderBox::computePositionedLogicalHeightReplaced(LogicalExtentComputedValues& computedValues) const
@@ -3447,7 +3447,7 @@ void RenderBox::computePositionedLogicalHeightReplaced(LogicalExtentComputedValu
     // Use computed values to calculate the vertical position.
     LayoutUnit logicalTopPos = logicalTopValue + marginBeforeAlias;
     computeLogicalTopPositionedOffset(logicalTopPos, this, computedValues.m_extent, containerBlock, containerLogicalHeight);
-    computedValues.m_position = logicalTopPos.round();
+    computedValues.m_position = logicalTopPos;
 }
 
 LayoutRect RenderBox::localCaretRect(InlineBox* box, int caretOffset, LayoutUnit* extraWidthToEndOfLine)

@@ -1,3 +1,26 @@
+2012-10-11  Emil A Eklund  <eae@chromium.org>
+
+        [Sub pixel layout] Change RenderBox to not round logicalTop/Left for RenderReplaced
+        https://bugs.webkit.org/show_bug.cgi?id=99108
+
+        Reviewed by Levi Weintraub.
+
+        Change RenderBox::computePositionedLogicalHeightReplaced and
+        computePositionedLogicalWidthReplaced to not round position.
+
+        Covered by existing tests.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        Floor baselinePosition for replaced elements to match logic in
+        RootInlineBox::ascentAndDescentForBox where the ascent is
+        computed from the floored baselinePosition.
+        
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computePositionedLogicalWidthReplaced):
+        (WebCore::RenderBox::computePositionedLogicalHeightReplaced):
+        Remove .round() call for m_position, preserving precision.
+
 2012-10-01  Jer Noble  <jer.noble@apple.com>
 
         Enable ENCRYPTED_MEDIA support on Mac.

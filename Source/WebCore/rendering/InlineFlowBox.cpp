@@ -625,6 +625,10 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
             curr->adjustBlockDirectionPosition(adjustmentForChildrenWithSameLineHeightAndBaseline);
             continue;
         }
+        
+        LayoutUnit baselinePosition = curr->baselinePosition(baselineType);
+        if (curr->renderer()->isReplaced())
+            baselinePosition = baselinePosition.floor();
 
         InlineFlowBox* inlineFlowBox = curr->isInlineFlowBox() ? toInlineFlowBox(curr) : 0;
         bool childAffectsTopBottomPos = true;
@@ -636,7 +640,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
             if (!strictMode && inlineFlowBox && !inlineFlowBox->hasTextChildren() && !curr->boxModelObject()->hasInlineDirectionBordersOrPadding()
                 && !(inlineFlowBox->descendantsHaveSameLineHeightAndBaseline() && inlineFlowBox->hasTextDescendants()))
                 childAffectsTopBottomPos = false;
-            LayoutUnit posAdjust = maxAscent - curr->baselinePosition(baselineType);
+            LayoutUnit posAdjust = maxAscent - baselinePosition;
             curr->setLogicalTop(curr->logicalTop() + top + posAdjust);
         }
         
@@ -647,7 +651,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
             
         if (curr->isText() || curr->isInlineFlowBox()) {
             const FontMetrics& fontMetrics = curr->renderer()->style(isFirstLineStyle())->fontMetrics();
-            newLogicalTop += curr->baselinePosition(baselineType) - fontMetrics.ascent(baselineType);
+            newLogicalTop += baselinePosition - fontMetrics.ascent(baselineType);
             if (curr->isInlineFlowBox()) {
                 RenderBoxModelObject* boxObject = toRenderBoxModelObject(curr->renderer());
                 newLogicalTop -= boxObject->style(isFirstLineStyle())->isHorizontalWritingMode() ? boxObject->borderTop() + boxObject->paddingTop() : 

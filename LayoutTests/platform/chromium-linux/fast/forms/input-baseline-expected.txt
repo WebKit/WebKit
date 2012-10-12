@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
         text run at (157,43) width 398: "This text should line up with the bottom of the text in the text field. "
       RenderBR {BR} at (555,58) size 0x0
       RenderBR {BR} at (0,66) size 0x19
-      RenderTextControl {INPUT} at (2,87) size 153x129 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderTextControl {INPUT} at (2,88) size 153x128 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
       RenderText {#text} at (157,173) size 394x19
         text run at (157,173) width 394: "This text should line up with the bottom of the text in the text field."
 layer at (12,53) size 149x16

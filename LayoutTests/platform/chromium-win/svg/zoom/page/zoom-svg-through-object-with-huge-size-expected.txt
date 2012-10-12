@@ -7,7 +7,7 @@ layer at (0,0) size 800x352
         RenderText {#text} at (0,0) size 92x14
           text run at (0,0) width 92: "Text above the rect"
       RenderBlock (anonymous) at (0,25) size 789x281
-        RenderEmbeddedObject {object} at (0,-1) size 278x278
+        RenderEmbeddedObject {object} at (0,0) size 278x278
           layer at (0,0) size 278x278
             RenderView at (0,0) size 278x278
           layer at (0,0) size 278x278
