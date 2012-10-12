@@ -2408,7 +2408,7 @@ __ZN7WebCore33QLPreviewGetSupportedMIMETypesSetEv
 #endif
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-__ZN7WebCore9FrameView25serviceScriptedAnimationsEy
+__ZN7WebCore9FrameView25serviceScriptedAnimationsEd
 #endif
 
 #if ENABLE(SHADOW_DOM)

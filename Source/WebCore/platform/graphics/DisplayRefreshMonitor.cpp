@@ -53,7 +53,7 @@ void DisplayRefreshMonitorClient::fireDisplayRefreshIfNeeded(double timestamp)
 }
 
 DisplayRefreshMonitor::DisplayRefreshMonitor(PlatformDisplayID displayID)
-    : m_timestamp(0)
+    : m_monotonicAnimationStartTime(0)
     , m_active(true)
     , m_scheduled(false)
     , m_previousFrameDone(true)
@@ -91,7 +91,7 @@ bool DisplayRefreshMonitor::removeClient(DisplayRefreshMonitorClient* client)
 
 void DisplayRefreshMonitor::displayDidRefresh()
 {
-    double timestamp;
+    double monotonicAnimationStartTime;
     {
         MutexLocker lock(m_mutex);
          if (!m_scheduled)
@@ -100,7 +100,7 @@ void DisplayRefreshMonitor::displayDidRefresh()
             m_unscheduledFireCount = 0;
 
         m_scheduled = false;
-        timestamp = m_timestamp;
+        monotonicAnimationStartTime = m_monotonicAnimationStartTime;
     }
 
     // The call back can cause all our clients to be unregistered, so we need to protect
@@ -110,7 +110,7 @@ void DisplayRefreshMonitor::displayDidRefresh()
     Vector<DisplayRefreshMonitorClient*> clients;
     copyToVector(m_clients, clients);
     for (size_t i = 0; i < clients.size(); ++i)
-        clients[i]->fireDisplayRefreshIfNeeded(timestamp);
+        clients[i]->fireDisplayRefreshIfNeeded(monotonicAnimationStartTime);
 
     {
         MutexLocker lock(m_mutex);

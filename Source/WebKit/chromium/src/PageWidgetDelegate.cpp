@@ -59,8 +59,7 @@ void PageWidgetDelegate::animate(Page* page, double monotonicFrameBeginTime)
     FrameView* view = mainFrameView(page);
     if (!view)
         return;
-    double timeShift = currentTime() - monotonicallyIncreasingTime();
-    view->serviceScriptedAnimations(convertSecondsToDOMTimeStamp(monotonicFrameBeginTime + timeShift));
+    view->serviceScriptedAnimations(monotonicFrameBeginTime);
 #endif
 }
 

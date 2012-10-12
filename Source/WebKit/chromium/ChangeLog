@@ -1,3 +1,19 @@
+2012-10-11  Nat Duca  <nduca@chromium.org>
+
+        Expose high-resolution on requestAnimationFrame callback
+        https://bugs.webkit.org/show_bug.cgi?id=66683
+
+        This changes requestAnimationFrame's animationStartTime argument
+        to be a high resolution DOM timestamp, per disucssion here:
+        http://lists.w3.org/Archives/Public/public-web-perf/2012Apr/0004.html
+
+        Reviewed by James Robinson.
+
+        * src/PageWidgetDelegate.cpp:
+        (WebKit::PageWidgetDelegate::animate):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::updateAnimations):
+
 2012-10-11  Jay Civelli  <jcivelli@chromium.org>
 
         Test for a fix for a crasher when generating MHTML for a page containing SVG images.

@@ -33,11 +33,13 @@ module core {
         Callback,
         Conditional=REQUEST_ANIMATION_FRAME,
     ] RequestAnimationFrameCallback{
+        // highResTime is passed as high resolution timestamp, see
+        // http://www.w3.org/TR/hr-time/ for details.
 #if defined(V8_BINDING) && V8_BINDING
-        boolean handleEvent(in DOMTimeStamp time);
+        boolean handleEvent(in double highResTime);
 #else
-        [Custom] boolean handleEvent(in DOMTimeStamp time);
+        [Custom] boolean handleEvent(in double highResTime);
 #endif
-        
+
     };
 }

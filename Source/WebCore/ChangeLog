@@ -1,3 +1,46 @@
+2012-10-11  Nat Duca  <nduca@chromium.org>
+
+        Expose high-resolution on requestAnimationFrame callback
+        https://bugs.webkit.org/show_bug.cgi?id=66683
+
+        This changes requestAnimationFrame's animationStartTime argument
+        to be a high resolution DOM timestamp, per disucssion here:
+        http://lists.w3.org/Archives/Public/public-web-perf/2012Apr/0004.html
+
+        Reviewed by James Robinson.
+
+        Covered by existing requestAnimationFrame tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::serviceScriptedAnimations):
+        * dom/Document.h:
+        (Document):
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::ScriptedAnimationController):
+        (WebCore::ScriptedAnimationController::serviceScriptedAnimations):
+        (WebCore):
+        (WebCore::ScriptedAnimationController::windowScreenDidChange):
+        (WebCore::ScriptedAnimationController::scheduleAnimation):
+        (WebCore::ScriptedAnimationController::animationTimerFired):
+        (WebCore::ScriptedAnimationController::displayRefreshFired):
+        * dom/ScriptedAnimationController.h:
+        (ScriptedAnimationController):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::serviceScriptedAnimations):
+        * page/FrameView.h:
+        (FrameView):
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        (WebCore::DisplayRefreshMonitor::DisplayRefreshMonitor):
+        (WebCore::DisplayRefreshMonitor::notifyClients):
+        * platform/graphics/DisplayRefreshMonitor.h:
+        (DisplayRefreshMonitor):
+        * platform/graphics/blackberry/DisplayRefreshMonitorBlackBerry.cpp:
+        (WebCore::DisplayRefreshMonitor::displayLinkFired):
+        * platform/graphics/mac/DisplayRefreshMonitorMac.cpp:
+        (WebCore):
+        (WebCore::DisplayRefreshMonitor::requestRefreshCallback):
+        (WebCore::DisplayRefreshMonitor::displayLinkFired):
+
 2012-10-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r131100.

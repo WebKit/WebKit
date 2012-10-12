@@ -121,7 +121,7 @@ private:
     void displayDidRefresh();
     static void handleDisplayRefreshedNotificationOnMainThread(void* data);
 
-    double m_timestamp;
+    double m_monotonicAnimationStartTime;
     bool m_active;
     bool m_scheduled;
     bool m_previousFrameDone;
