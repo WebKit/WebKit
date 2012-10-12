@@ -1,3 +1,19 @@
+2012-10-12  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Optimzie SelectorCheckingContext memory layout
+        https://bugs.webkit.org/show_bug.cgi?id=99139
+
+        Reviewed by Hajime Morita.
+
+        Since VisitedMatchType and PseudoId are both enum, we can make SelectorChecker more compact
+        if these two fields are continuously placed.
+
+        No new tests, no change in behavior.
+
+        * css/SelectorChecker.h:
+        (WebCore::SelectorChecker::SelectorCheckingContext::SelectorCheckingContext):
+        (SelectorCheckingContext):
+
 2012-10-12  Kenichi Ishibashi  <bashi@chromium.org>
 
         [WebSocket] Add "Cache-Control: no-cache" to handshake request

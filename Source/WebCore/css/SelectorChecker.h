@@ -61,10 +61,10 @@ public:
             , element(element)
             , scope(0)
             , visitedMatchType(visitedMatchType)
+            , pseudoStyle(NOPSEUDO)
             , elementStyle(0)
             , elementParentStyle(0)
             , isSubSelector(false)
-            , pseudoStyle(NOPSEUDO)
             , hasScrollbarPseudo(false)
             , hasSelectionPseudo(false)
         { }
@@ -73,10 +73,10 @@ public:
         Element* element;
         const ContainerNode* scope;
         VisitedMatchType visitedMatchType;
+        PseudoId pseudoStyle;
         RenderStyle* elementStyle;
         RenderStyle* elementParentStyle;
         bool isSubSelector;
-        PseudoId pseudoStyle;
         bool hasScrollbarPseudo;
         bool hasSelectionPseudo;
     };
