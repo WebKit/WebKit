@@ -1,3 +1,14 @@
+2012-10-12  Andreas Kling  <kling@webkit.org>
+
+        RenderBR should share its constant newline string between instances.
+        <http://webkit.org/b/99121>
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/RenderBR.cpp:
+        (WebCore::newlineString):
+        (WebCore::RenderBR::RenderBR):
+
 2012-10-12  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Styles] !important priority not honored inside the same declaration

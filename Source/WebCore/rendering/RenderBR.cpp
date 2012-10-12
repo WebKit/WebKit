@@ -28,8 +28,14 @@
 
 namespace WebCore {
 
+static PassRefPtr<StringImpl> newlineString()
+{
+    DEFINE_STATIC_LOCAL(const String, string, (ASCIILiteral("\n")));
+    return string.impl();
+}
+
 RenderBR::RenderBR(Node* node)
-    : RenderText(node, StringImpl::create("\n"))
+    : RenderText(node, newlineString())
     , m_lineHeight(-1)
 {
 }
