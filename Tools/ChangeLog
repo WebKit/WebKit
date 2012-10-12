@@ -1,3 +1,15 @@
+2012-10-12  Jochen Eisinger  <jochen@chromium.org>
+
+        Create a separate gyp target for dependencies of DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=99023
+
+        Reviewed by Tony Chang.
+
+        This allows for pulling in the fonts and helpers required to run layout
+        tests in the content_shell without depending on DumpRenderTree.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
 2012-10-12  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WTR] Do a forced repaint before generating pixel results
