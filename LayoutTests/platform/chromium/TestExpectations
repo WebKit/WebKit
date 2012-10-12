@@ -3601,6 +3601,7 @@ webkit.org/b/90980 [ Android Linux Mac Debug ] fast/forms/textarea/textarea-stat
 webkit.org/b/90980 [ Win ] fast/forms/textarea/textarea-state-restore.html [ Pass Timeout ]
 
 webkit.org/b/91183 http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html [ Failure Pass ]
+webkit.org/b/91183 http/tests/w3c/webperf/approved/HighResolutionTime/test_cross_frame_start.html [ Failure Pass ]
 
 # Fails on Mac 10.7
 webkit.org/b/91255 [ Lion ] fast/multicol/table-vertical-align.html [ Failure ]
