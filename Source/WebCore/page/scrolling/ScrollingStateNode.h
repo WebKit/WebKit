@@ -29,6 +29,7 @@
 #if ENABLE(THREADED_SCROLLING)
 
 #include "GraphicsLayer.h"
+#include "ScrollingCoordinator.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
@@ -45,7 +46,7 @@ class ScrollingStateNode {
     WTF_MAKE_NONCOPYABLE(ScrollingStateNode);
 
 public:
-    ScrollingStateNode(ScrollingStateTree*);
+    ScrollingStateNode(ScrollingStateTree*, ScrollingNodeID);
     virtual ~ScrollingStateNode();
 
     virtual bool isScrollingStateScrollingNode() { return false; }
@@ -68,6 +69,8 @@ public:
     ScrollingStateTree* scrollingStateTree() const { return m_scrollingStateTree; }
     void setScrollingStateTree(ScrollingStateTree* tree) { m_scrollingStateTree = tree; }
 
+    ScrollingNodeID scrollingNodeID() const { return m_nodeID; }
+
     ScrollingStateNode* parent() const { return m_parent; }
     void setParent(ScrollingStateNode* parent) { m_parent = parent; }
 
@@ -81,8 +84,9 @@ protected:
     ScrollingStateTree* m_scrollingStateTree;
 
 private:
-    ScrollingStateNode* m_parent;
+    ScrollingNodeID m_nodeID;
 
+    ScrollingStateNode* m_parent;
     OwnPtr<Vector<OwnPtr<ScrollingStateNode> > > m_children;
 
     bool m_scrollLayerDidChange;

@@ -39,7 +39,7 @@ namespace WebCore {
 
 class ScrollingStateScrollingNode : public ScrollingStateNode {
 public:
-    static PassOwnPtr<ScrollingStateScrollingNode> create(ScrollingStateTree*);
+    static PassOwnPtr<ScrollingStateScrollingNode> create(ScrollingStateTree*, ScrollingNodeID);
     virtual ~ScrollingStateScrollingNode();
 
     enum ChangedProperty {
@@ -110,7 +110,7 @@ public:
     bool requestedScrollPositionRepresentsProgrammaticScroll() const { return m_requestedScrollPositionRepresentsProgrammaticScroll; }
 
 private:
-    ScrollingStateScrollingNode(ScrollingStateTree*);
+    ScrollingStateScrollingNode(ScrollingStateTree*, ScrollingNodeID);
     ScrollingStateScrollingNode(ScrollingStateScrollingNode*);
 
     unsigned m_changedProperties;

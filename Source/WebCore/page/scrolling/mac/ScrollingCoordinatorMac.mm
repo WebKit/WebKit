@@ -247,7 +247,7 @@ ScrollingNodeID ScrollingCoordinatorMac::attachToStateTree(ScrollingNodeID scrol
     // FIXME: In the future, this function will have to take a parent ID so that it can
     // append the node in the appropriate spot in the state tree. For now we always assume
     // this is the root node.
-    m_scrollingStateTree->setRootStateNode(ScrollingStateScrollingNode::create(m_scrollingStateTree.get()));
+    m_scrollingStateTree->setRootStateNode(ScrollingStateScrollingNode::create(m_scrollingStateTree.get(), scrollLayerID));
     m_stateNodeMap.set(scrollLayerID, m_scrollingStateTree->rootStateNode());
     return scrollLayerID;
 }
