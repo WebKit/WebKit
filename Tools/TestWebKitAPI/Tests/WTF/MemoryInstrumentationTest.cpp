@@ -590,8 +590,8 @@ TEST(MemoryInstrumentationTest, hashMapWithInstrumentedKeys)
 
     typedef HashMap<String, int> StringToIntMap;
     OwnPtr<StringToIntMap> value = adoptPtr(new StringToIntMap());
-    int count = 10;
-    for (int i = 10; i < 10 + count; ++i)
+    size_t count = 10;
+    for (size_t i = 10; i < 10 + count; ++i)
         value->set(String::number(i), i);
     InstrumentedOwner<StringToIntMap* > root(value.get());
     helper.addRootObject(root);
@@ -605,8 +605,8 @@ TEST(MemoryInstrumentationTest, hashMapWithInstrumentedValues)
 
     typedef HashMap<int, String> IntToStringMap;
     OwnPtr<IntToStringMap> value = adoptPtr(new IntToStringMap());
-    int count = 10;
-    for (int i = 10; i < 10 + count; ++i)
+    size_t count = 10;
+    for (size_t i = 10; i < 10 + count; ++i)
         value->set(i, String::number(i));
     InstrumentedOwner<IntToStringMap* > root(value.get());
     helper.addRootObject(root);
@@ -620,8 +620,8 @@ TEST(MemoryInstrumentationTest, hashMapWithInstrumentedKeysAndValues)
 
     typedef HashMap<String, String> StringToStringMap;
     OwnPtr<StringToStringMap> value = adoptPtr(new StringToStringMap());
-    int count = 10;
-    for (int i = 10; i < 10 + count; ++i)
+    size_t count = 10;
+    for (size_t i = 10; i < 10 + count; ++i)
         value->set(String::number(count + i), String::number(i));
     InstrumentedOwner<StringToStringMap* > root(value.get());
     helper.addRootObject(root);
@@ -636,8 +636,8 @@ TEST(MemoryInstrumentationTest, hashMapWithInstrumentedPointerKeysAndPointerValu
     typedef HashMap<Instrumented*, Instrumented*> InstrumentedToInstrumentedMap;
     OwnPtr<InstrumentedToInstrumentedMap> value = adoptPtr(new InstrumentedToInstrumentedMap());
     Vector<OwnPtr<Instrumented> > valuesVector;
-    int count = 10;
-    for (int i = 0; i < count; ++i) {
+    size_t count = 10;
+    for (size_t i = 0; i < count; ++i) {
         valuesVector.append(adoptPtr(new Instrumented()));
         valuesVector.append(adoptPtr(new Instrumented()));
         value->set(valuesVector[2 * i].get(), valuesVector[2 * i + 1].get());
@@ -676,8 +676,8 @@ TEST(MemoryInstrumentationTest, hashMapWithValuesConvertibleToInt)
     OwnPtr<TestMap> value = adoptPtr(new TestMap());
     Vector<OwnPtr<InstrumentedConvertibleToInt> > keysVector;
     Vector<OwnPtr<NotInstrumented> > valuesVector;
-    int count = 10;
-    for (int i = 0; i < count; ++i) {
+    size_t count = 10;
+    for (size_t i = 0; i < count; ++i) {
         keysVector.append(adoptPtr(new InstrumentedConvertibleToInt()));
         valuesVector.append(adoptPtr(new NotInstrumented()));
         value->set(keysVector[i].get(), InstrumentedConvertibleToInt()).iterator->value.m_notInstrumented = valuesVector[i].get();
@@ -695,8 +695,8 @@ TEST(MemoryInstrumentationTest, hashMapWithEnumKeysAndInstrumentedValues)
 
     typedef HashMap<TestEnum, String> EnumToStringMap;
     OwnPtr<EnumToStringMap> value = adoptPtr(new EnumToStringMap());
-    int count = MY_ENUM_MAX;
-    for (int i = ONE; i <= count; ++i)
+    size_t count = MY_ENUM_MAX;
+    for (size_t i = ONE; i <= count; ++i)
         value->set(static_cast<TestEnum>(i), String::number(i));
     InstrumentedOwner<EnumToStringMap* > root(value.get());
     helper.addRootObject(root);
@@ -711,10 +711,10 @@ TEST(MemoryInstrumentationTest, hashCountedSetWithInstrumentedValues)
     typedef HashCountedSet<Instrumented*> TestSet;
     OwnPtr<TestSet> set = adoptPtr(new TestSet());
     Vector<OwnPtr<Instrumented> > keysVector;
-    int count = 10;
-    for (int i = 0; i < count; ++i) {
+    size_t count = 10;
+    for (size_t i = 0; i < count; ++i) {
         keysVector.append(adoptPtr(new Instrumented()));
-        for (int j = 0; j <= i; j++)
+        for (size_t j = 0; j <= i; j++)
             set->add(keysVector.last().get());
     }
     InstrumentedOwner<TestSet* > root(set.get());
