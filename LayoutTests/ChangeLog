@@ -1,3 +1,18 @@
+2012-10-12  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [WebSocket] Add "Cache-Control: no-cache" to handshake request
+        https://bugs.webkit.org/show_bug.cgi?id=98000
+
+        Reviewed by Yuta Kitamura.
+
+        Add a test for no-cache headers check.
+
+        * http/tests/websocket/tests/hybi/nocache-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/nocache-test_wsh.py: Added.
+        (web_socket_do_extra_handshake):
+        (web_socket_transfer_data):
+        * http/tests/websocket/tests/hybi/nocache.html: Added.
+
 2012-10-12  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip test using disabled SHADOW_DOM.

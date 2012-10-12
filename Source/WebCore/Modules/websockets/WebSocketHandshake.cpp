@@ -206,6 +206,13 @@ CString WebSocketHandshake::clientHandshakeMessage() const
         // Set "Cookie2: <cookie>" if cookies 2 exists for url?
     }
 
+    // Add no-cache headers to avoid compatibility issue.
+    // There are some proxies that rewrite "Connection: upgrade"
+    // to "Connection: close" in the response if a request doesn't contain
+    // these headers.
+    fields.append("Pragma: no-cache");
+    fields.append("Cache-Control: no-cache");
+
     fields.append("Sec-WebSocket-Key: " + m_secWebSocketKey);
     fields.append("Sec-WebSocket-Version: 13");
     const String extensionValue = m_extensionDispatcher.createHeaderValue();
@@ -247,6 +254,9 @@ PassRefPtr<WebSocketHandshakeRequest> WebSocketHandshake::clientHandshakeRequest
             request->addHeaderField("Cookie", cookie);
         // Set "Cookie2: <cookie>" if cookies 2 exists for url?
     }
+
+    request->addHeaderField("Pragma", "no-cache");
+    request->addHeaderField("Cache-Control", "no-cache");
 
     request->addHeaderField("Sec-WebSocket-Key", m_secWebSocketKey);
     request->addHeaderField("Sec-WebSocket-Version", "13");
