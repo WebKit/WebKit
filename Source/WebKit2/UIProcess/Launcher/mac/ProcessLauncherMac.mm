@@ -366,7 +366,22 @@ static void createProcess(const ProcessLauncher::LaunchOptions& launchOptions, b
     CString localization = String(cfLocalization.get()).utf8();
 
     NSBundle *webKit2Bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit2"];
-    NSString *processPath = [webKit2Bundle pathForAuxiliaryExecutable:(launchOptions.processType == ProcessLauncher::PluginProcess ? @"PluginProcess.app" : @"WebProcess.app")];
+
+    NSString *processPath;
+    switch(launchOptions.processType) {
+    case ProcessLauncher::WebProcess:
+        processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"WebProcess.app"];
+        break;
+    case ProcessLauncher::PluginProcess:
+        processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"PluginProcess.app"];
+        break;
+#if ENABLE(NETWORK_PROCESS)
+    case ProcessLauncher::NetworkProcess:
+        processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"NetworkProcess.app"];
+        break;
+#endif
+    }
+
     NSString *frameworkExecutablePath = [webKit2Bundle executablePath];
     NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
 

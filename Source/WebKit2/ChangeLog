@@ -1,3 +1,78 @@
+2012-10-12  Brady Eidson  <beidson@apple.com>
+
+        Add a basic NetworkProcess.app to the WebKit2 build
+        https://bugs.webkit.org/show_bug.cgi?id=98543
+
+        Reviewed by Sam Weinig.
+
+        This change sets up the Mac build to include a NetworkProcess.app.
+        It also launches this app when the first WebProcess is created.
+        It then quits this app when the UIProcess terminates.
+
+        The app, it does nothing.
+                             -McBain
+
+        Pure project file/build system stuff:
+        * Configurations/NetworkProcess.xcconfig: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebKit2Prefix.h:
+
+        Basic UIProcess side of things:
+        * UIProcess/Network/NetworkProcessProxy.cpp: Added.
+        (WebKit):
+        (WebKit::NetworkProcessProxy::create):
+        (WebKit::NetworkProcessProxy::NetworkProcessProxy):
+        (WebKit::NetworkProcessProxy::~NetworkProcessProxy):
+        (WebKit::NetworkProcessProxy::didReceiveMessage):
+        (WebKit::NetworkProcessProxy::didClose):
+        (WebKit::NetworkProcessProxy::didReceiveInvalidMessage):
+        (WebKit::NetworkProcessProxy::syncMessageSendTimedOut):
+        (WebKit::NetworkProcessProxy::didFinishLaunching):
+        * UIProcess/Network/NetworkProcessProxy.h: Added.
+        (WebKit):
+        (NetworkProcessProxy):
+
+        Basic NetworkProcess side of things:
+        * NetworkProcess/Info.plist: Added.
+        * NetworkProcess/NetworkProcess.cpp: Added.
+        (WebKit):
+        (WebKit::NetworkProcess::shared):
+        (WebKit::NetworkProcess::NetworkProcess):
+        (WebKit::NetworkProcess::~NetworkProcess):
+        (WebKit::NetworkProcess::initialize):
+        (WebKit::NetworkProcess::shouldTerminate):
+        (WebKit::NetworkProcess::didReceiveMessage):
+        (WebKit::NetworkProcess::didClose):
+        (WebKit::NetworkProcess::didReceiveInvalidMessage):
+        (WebKit::NetworkProcess::syncMessageSendTimedOut):
+        * NetworkProcess/NetworkProcess.h: Added.
+        (WebCore):
+        (WebKit):
+        (NetworkProcess):
+
+        Add the main method for the NetworkProcess itself:
+        * WebProcess/WebKitMain.cpp:
+        (WebKitMain):
+        * NetworkProcess/NetworkProcessMain.h: Added.
+        (WebKit):
+        * NetworkProcess/mac/NetworkProcessMainMac.mm: Added.
+        (WebKit):
+        (WebKit::NetworkProcessMain):
+
+        Teach ProcessLauncher about the new app type:
+        * UIProcess/Launcher/ProcessLauncher.cpp:
+        (WebKit::ProcessLauncher::processTypeAsString):
+        (WebKit::ProcessLauncher::getProcessTypeFromString):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::createProcess):
+
+        Launch the NetworkProcess when we launch the first WebProcess:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::ensureNetworkProcess):
+        * UIProcess/WebContext.h:
+        (WebContext):
+
 2012-10-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r131189.

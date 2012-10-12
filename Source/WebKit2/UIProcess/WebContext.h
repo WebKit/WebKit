@@ -46,6 +46,10 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(NETWORK_PROCESS)
+#include "NetworkProcessProxy.h"
+#endif
+
 namespace WebKit {
 
 class DownloadProxy;
@@ -371,6 +375,7 @@ private:
     bool m_processTerminationEnabled;
 
 #if ENABLE(NETWORK_PROCESS)
+    RefPtr<NetworkProcessProxy> m_networkProcess;
     bool m_usesNetworkProcess;
 #endif
     

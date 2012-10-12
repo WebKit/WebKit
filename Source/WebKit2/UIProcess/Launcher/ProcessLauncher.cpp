@@ -75,6 +75,8 @@ const char* ProcessLauncher::processTypeAsString(ProcessType processType)
         return "webprocess";
     case PluginProcess:
         return "pluginprocess";
+    case NetworkProcess:
+        return "networkprocess";
     }
 
     ASSERT_NOT_REACHED();
@@ -90,6 +92,11 @@ bool ProcessLauncher::getProcessTypeFromString(const char* string, ProcessType& 
 
     if (!strcmp(string, "pluginprocess")) {
         processType = PluginProcess;
+        return true;
+    }
+
+    if (!strcmp(string, "networkprocess")) {
+        processType = NetworkProcess;
         return true;
     }
 

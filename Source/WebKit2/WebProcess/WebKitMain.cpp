@@ -31,6 +31,10 @@
 #include "WebProcessMain.h"
 #include <wtf/text/CString.h>
 
+#if ENABLE(NETWORK_PROCESS)
+#include "NetworkProcessMain.h"
+#endif
+
 #if PLATFORM(MAC)
 #include <objc/objc-auto.h>
 #elif PLATFORM(WIN)
@@ -51,6 +55,12 @@ static int WebKitMain(const CommandLine& commandLine)
         case ProcessLauncher::PluginProcess:
 #if ENABLE(PLUGIN_PROCESS)
             return PluginProcessMain(commandLine);
+#else
+            break;
+#endif
+        case ProcessLauncher::NetworkProcess:
+#if ENABLE(NETWORK_PROCESS)
+            return NetworkProcessMain(commandLine);
 #else
             break;
 #endif

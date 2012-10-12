@@ -423,7 +423,10 @@ void WebContext::warmInitialProcess()
 #if ENABLE(NETWORK_PROCESS)
 void WebContext::ensureNetworkProcess()
 {
-    // FIXME: Implement.
+    if (m_networkProcess)
+        return;
+
+    m_networkProcess = NetworkProcessProxy::create();
 }
 #endif
 
