@@ -52,6 +52,8 @@ public:
         OpenWebDatabase,
         LegacyHTMLNotifications,
         LegacyTextNotifications,
+        UnprefixedRequestAnimationFrame,
+        PrefixedRequestAnimationFrame,
         // Add new features above this line.
         NumberOfFeatures, // This enum value must be last.
     };

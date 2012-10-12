@@ -1,7 +1,7 @@
 description("Tests that requestAnimationFrame is disabled when the setting/preference is false. Note: since the setting is true by default, this usually can't be tested directly in a browser.");
 
 var callbackInvoked = false;
-window.webkitRequestAnimationFrame(function() {
+window.requestAnimationFrame(function() {
     callbackInvoked = true;
 });
 

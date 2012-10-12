@@ -10,10 +10,10 @@ function busyWait(millis) {
 var firstTimestamp = undefined;
 var secondTimestamp = undefined;
 
-window.webkitRequestAnimationFrame(function(timestamp) {
+window.requestAnimationFrame(function(timestamp) {
     firstTimestamp = timestamp;
     shouldBeDefined("firstTimestamp");
-    window.webkitRequestAnimationFrame(function(timestamp) {
+    window.requestAnimationFrame(function(timestamp) {
         secondTimestamp = timestamp;
         shouldBeDefined("secondTimestamp");
         shouldBeTrue("secondTimestamp > firstTimestamp");

@@ -5,12 +5,12 @@ var secondCallbackId;
 var callbackFired = false;
 var cancelFired = false;
 
-window.webkitRequestAnimationFrame(function() {
+window.requestAnimationFrame(function() {
     cancelFired = true;
-    window.webkitCancelAnimationFrame(secondCallbackId);
+    window.cancelAnimationFrame(secondCallbackId);
 }, e);
 
-secondCallbackId = window.webkitRequestAnimationFrame(function() {
+secondCallbackId = window.requestAnimationFrame(function() {
     callbackFired = true;
 }, e);
 

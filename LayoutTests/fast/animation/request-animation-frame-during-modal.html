@@ -12,7 +12,7 @@ description('Tests that requestAnimationFrame callbacks are not invoked while mo
 onload = function()
 {
     debug('Setting callback');
-    window.webkitRequestAnimationFrame(function() { debug('Callback fired'); }, document.body);
+    window.requestAnimationFrame(function() { debug('Callback fired'); }, document.body);
     debug('Showing modal dialog');
     var src = 'if (window.testRunner) {' +
               '    testRunner.display();' +

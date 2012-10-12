@@ -53,7 +53,7 @@ function BrowserPaint(){
     draw();
 	if (drawIterations > 0) {
 		drawIterations = drawIterations - 1;
-		window.webkitRequestAnimationFrame(BrowserPaint);
+		window.requestAnimationFrame(BrowserPaint);
     } else {
 	    testResult();
 	}

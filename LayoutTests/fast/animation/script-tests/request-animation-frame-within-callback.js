@@ -2,15 +2,15 @@ description("Tests adding one callback within another");
 
 var e = document.getElementById("e");
 var sameFrame;
-window.webkitRequestAnimationFrame(function() {
+window.requestAnimationFrame(function() {
     sameFrame = true;
 }, e);
-window.webkitRequestAnimationFrame(function() {
-    window.webkitRequestAnimationFrame(function() {
+window.requestAnimationFrame(function() {
+    window.requestAnimationFrame(function() {
         shouldBeFalse("sameFrame");
     }, e);
 }, e);
-window.webkitRequestAnimationFrame(function() {
+window.requestAnimationFrame(function() {
     sameFrame = false;
 }, e);
 

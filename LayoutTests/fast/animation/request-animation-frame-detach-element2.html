@@ -6,7 +6,7 @@ if (window.testRunner) {
 }
 window.onload = function() {
     var el = document.getElementsByTagName("iframe")[0];
-    window.frames[0].webkitRequestAnimationFrame(function() {
+    window.frames[0].requestAnimationFrame(function() {
         el.parentNode.removeChild(el);
     });
 

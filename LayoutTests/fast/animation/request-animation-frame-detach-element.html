@@ -6,10 +6,10 @@ if (window.testRunner) {
 }
 window.onload = function() {
     var el = document.getElementsByTagName("iframe")[0];
-    window.frames[0].webkitRequestAnimationFrame(function() {
+    window.frames[0].requestAnimationFrame(function() {
         el.parentNode.removeChild(el);
     });
-    window.frames[1].webkitRequestAnimationFrame(function() {
+    window.frames[1].requestAnimationFrame(function() {
     });
 
     if (window.testRunner) {

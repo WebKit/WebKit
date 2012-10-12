@@ -1,11 +1,11 @@
-description("This tests cancelling a webkitRequestAnimationFrame callback");
+description("This tests cancelling a requestAnimationFrame callback");
 
 var callbackFired = false;
 var e = document.getElementById("e");
-var id = window.webkitRequestAnimationFrame(function() {
+var id = window.requestAnimationFrame(function() {
 }, e);
 
-window.webkitCancelAnimationFrame(id);
+window.cancelAnimationFrame(id);
 
 if (window.testRunner)
     testRunner.display();

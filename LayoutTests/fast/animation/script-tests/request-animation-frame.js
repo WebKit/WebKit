@@ -2,7 +2,7 @@ description("Tests basic use of requestAnimationFrame");
 
 var e = document.getElementById("e");
 var callbackInvoked = false;
-window.webkitRequestAnimationFrame(function() {
+window.requestAnimationFrame(function() {
     callbackInvoked = true;
 }, e);
 

@@ -40,8 +40,6 @@ window.onload = function()
   canvas = document.getElementById("webgl-canvas");
   context = create3DContext(canvas);
 
-  requestAnimationFrame = window.webkitRequestAnimationFrame
-
   var program = wtu.setupTexturedQuad(context);
   var bufferObjects = wtu.setupUnitQuad(context);
   var texture = wtu.createColoredTexture(context, 1, 1, [0, 0, 255, 255]);

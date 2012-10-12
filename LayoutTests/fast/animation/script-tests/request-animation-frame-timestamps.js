@@ -7,14 +7,14 @@ function busyWait(millis) {
 
 var firstTimestamp = undefined;
 
-window.webkitRequestAnimationFrame(function(timestamp) {
+window.requestAnimationFrame(function(timestamp) {
     firstTimestamp = timestamp;
     shouldBeDefined("firstTimestamp");
     busyWait(10);
 });
 
 var secondTimestamp = undefined;
-window.webkitRequestAnimationFrame(function(timestamp) {
+window.requestAnimationFrame(function(timestamp) {
     secondTimestamp = timestamp;
     shouldBeDefined("secondTimestamp");
     shouldBe("firstTimestamp", "secondTimestamp");

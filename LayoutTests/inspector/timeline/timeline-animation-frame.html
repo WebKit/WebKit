@@ -7,10 +7,10 @@
 function performActions()
 {
     var element = document.getElementById("animation");
-    var requestId = window.webkitRequestAnimationFrame(animationFrameCallback, element);
+    var requestId = window.requestAnimationFrame(animationFrameCallback, element);
     function animationFrameCallback()
     {
-        window.webkitCancelRequestAnimationFrame(requestId);
+        window.cancelAnimationFrame(requestId);
     }
 
     if (window.testRunner)

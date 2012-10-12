@@ -1,4 +1,4 @@
-This tests cancelling a webkitRequestAnimationFrame callback
+This tests cancelling a requestAnimationFrame callback
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

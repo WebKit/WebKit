@@ -263,9 +263,8 @@ namespace WebCore {
 
         // WebKit animation extensions
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-        int webkitRequestAnimationFrame(PassRefPtr<RequestAnimationFrameCallback>);
-        void webkitCancelAnimationFrame(int id);
-        void webkitCancelRequestAnimationFrame(int id) { webkitCancelAnimationFrame(id); }
+        int requestAnimationFrame(PassRefPtr<RequestAnimationFrameCallback>);
+        void cancelAnimationFrame(int id);
 #endif
 
         // Events

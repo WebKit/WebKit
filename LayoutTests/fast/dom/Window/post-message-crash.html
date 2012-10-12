@@ -23,7 +23,7 @@ window.onerror = function() {
     return true;
 };
 
-webkitRequestAnimationFrame(postMessage);
+requestAnimationFrame(postMessage);
 setTimeout(postMessage);
 
 if (window.testRunner)
