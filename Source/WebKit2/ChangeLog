@@ -1,5 +1,45 @@
 2012-10-11  Anders Carlsson  <andersca@apple.com>
 
+        Stop using deprecatedSend for WebContext::postMessageToInjectedBundle
+        https://bugs.webkit.org/show_bug.cgi?id=99123
+
+        Reviewed by Andreas Kling.
+
+        Instead of using deprecatedSend, just encode the data using a separate ArgumentEncoder and pass it along as a DataReference.
+
+        * Platform/CoreIPC/MessageID.h:
+        Remove MessageClassInjectedBundle.
+
+        * Shared/CoreIPCSupport/InjectedBundleMessageKinds.h: Removed.
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createNewWebProcess):
+        Stop using deprecatedSend.
+
+        (WebKit::WebContext::postMessageToInjectedBundle):
+        Stop using deprecatedSend. Remove now invalid FIXMEs.
+
+        * UIProcess/WebPageProxy.cpp:
+        Remove include.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Remove InjectedBundleMessageKinds.h.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        The injected bundle is no longer in charge of receiving IPC messages.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessage):
+        Stop passing messages to the injected bundle.
+
+        (WebKit::WebProcess::postInjectedBundleMessage):
+        Decode the message and pass it to the injected bundle.
+
+        * WebProcess/WebProcess.messages.in:
+        Add PostInjectedBundleMessage.
+
+2012-10-11  Anders Carlsson  <andersca@apple.com>
+
         Stop using deprecatedSend for WebPageProxy::postMessageToInjectedBundle
         https://bugs.webkit.org/show_bug.cgi?id=99120
 

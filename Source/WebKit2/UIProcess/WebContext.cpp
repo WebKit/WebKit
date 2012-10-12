@@ -28,7 +28,6 @@
 
 #include "DownloadProxy.h"
 #include "ImmutableArray.h"
-#include "InjectedBundleMessageKinds.h"
 #include "Logging.h"
 #include "MutableDictionary.h"
 #include "SandboxExtension.h"
@@ -378,7 +377,12 @@ PassRefPtr<WebProcessProxy> WebContext::createNewWebProcess()
     if (m_processModel == ProcessModelSharedSecondaryProcess) {
         for (size_t i = 0; i != m_messagesToInjectedBundlePostedToEmptyContext.size(); ++i) {
             pair<String, RefPtr<APIObject> >& message = m_messagesToInjectedBundlePostedToEmptyContext[i];
-            process->deprecatedSend(InjectedBundleMessage::PostMessage, 0, CoreIPC::In(message.first, WebContextUserMessageEncoder(message.second.get())));
+
+            OwnPtr<CoreIPC::ArgumentEncoder> messageData = CoreIPC::ArgumentEncoder::create(0);
+
+            messageData->encode(message.first);
+            messageData->encode(WebContextUserMessageEncoder(message.second.get()));
+            process->send(Messages::WebProcess::PostInjectedBundleMessage(CoreIPC::DataReference(messageData->buffer(), messageData->bufferSize())), 0);
         }
         m_messagesToInjectedBundlePostedToEmptyContext.clear();
     } else
@@ -588,10 +592,12 @@ void WebContext::postMessageToInjectedBundle(const String& messageName, APIObjec
 
     // FIXME: Return early if the message body contains any references to WKPageRefs/WKFrameRefs etc. since they're local to a process.
 
+    OwnPtr<CoreIPC::ArgumentEncoder> messageData = CoreIPC::ArgumentEncoder::create(0);
+    messageData->encode(messageName);
+    messageData->encode(WebContextUserMessageEncoder(messageBody));
+
     for (size_t i = 0; i < m_processes.size(); ++i) {
-        // FIXME: We should consider returning false from this function if the messageBody cannot be encoded.
-        // FIXME: Can we encode the message body outside the loop for all the processes?
-        m_processes[i]->deprecatedSend(InjectedBundleMessage::PostMessage, 0, CoreIPC::In(messageName, WebContextUserMessageEncoder(messageBody)));
+        m_processes[i]->send(Messages::WebProcess::PostInjectedBundleMessage(CoreIPC::DataReference(messageData->buffer(), messageData->bufferSize())), 0);
     }
 }
 

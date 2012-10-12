@@ -28,7 +28,6 @@
 
 #include "DownloadManager.h"
 #include "InjectedBundle.h"
-#include "InjectedBundleMessageKinds.h"
 #include "InjectedBundleUserMessageCoders.h"
 #include "SandboxExtension.h"
 #include "StatisticsData.h"
@@ -694,13 +693,6 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         return;
     }
 #endif
-
-    if (messageID.is<CoreIPC::MessageClassInjectedBundle>()) {
-        if (!m_injectedBundle)
-            return;
-        m_injectedBundle->didReceiveMessage(connection, messageID, arguments);    
-        return;
-    }
     
     if (messageID.is<CoreIPC::MessageClassWebPageGroupProxy>()) {
         uint64_t pageGroupID = arguments->destinationID();
@@ -1034,6 +1026,25 @@ void WebProcess::garbageCollectJavaScriptObjects()
 void WebProcess::setJavaScriptGarbageCollectorTimerEnabled(bool flag)
 {
     gcController().setJavaScriptGarbageCollectorTimerEnabled(flag);
+}
+
+void WebProcess::postInjectedBundleMessage(const CoreIPC::DataReference& messageData)
+{
+    InjectedBundle* injectedBundle = WebProcess::shared().injectedBundle();
+    if (!injectedBundle)
+        return;
+
+    CoreIPC::ArgumentDecoder messageDecoder(messageData.data(), messageData.size());
+
+    String messageName;
+    if (!messageDecoder.decode(messageName))
+        return;
+
+    RefPtr<APIObject> messageBody;
+    if (!messageDecoder.decode(InjectedBundleUserMessageDecoder(messageBody)))
+        return;
+
+    injectedBundle->didReceiveMessage(messageName, messageBody.get());
 }
 
 #if ENABLE(PLUGIN_PROCESS)

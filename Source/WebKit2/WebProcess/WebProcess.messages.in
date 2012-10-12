@@ -56,7 +56,6 @@ messages -> WebProcess {
 #endif
 
     # Plug-ins.
-
 #if !ENABLE(PLUGIN_PROCESS)
     GetSitesWithPluginData(Vector<WTF::String> pluginPaths, uint64_t callbackID)
     ClearPluginSiteData(Vector<WTF::String> pluginPaths, Vector<WTF::String> sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
@@ -86,6 +85,8 @@ messages -> WebProcess {
     GetWebCoreStatistics(uint64_t callbackID)
     GarbageCollectJavaScriptObjects()
     SetJavaScriptGarbageCollectorTimerEnabled(bool enable)
+
+    PostInjectedBundleMessage(CoreIPC::DataReference messageData);
 
 #if USE(SECURITY_FRAMEWORK)
     SecItemResponse(uint64_t requestID, WebKit::SecItemResponseData response) DispatchOnConnectionQueue
