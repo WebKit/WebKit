@@ -6,8 +6,8 @@ element.style  { ()
 ======== Matched CSS Rules ========
 [expanded] 
 #main  { (styles-overriden-properties.html:4)
-/-- overloaded --/ background: black;
-background: #BADA55;
+/-- overloaded --/ background: #000;
+background: #bada55;
 
 [expanded] 
 div  { (user agent stylesheet)

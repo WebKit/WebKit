@@ -1,3 +1,14 @@
+2012-10-12  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Styles] Colors should be "As authored" by default
+        https://bugs.webkit.org/show_bug.cgi?id=99017
+
+        Reviewed by Vsevolod Vlasov.
+
+        Use "original" as the default value of WebInspector.settings.colorFormat.
+
+        * inspector/front-end/Settings.js:
+
 2012-10-12  Takashi Sakamoto  <tasak@google.com>
 
         [WebKit IDL] move extended attributes to left of interface, exception...

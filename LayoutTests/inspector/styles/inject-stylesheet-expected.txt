@@ -13,7 +13,7 @@ background-attachment: scroll;
     #main - initial inject-stylesheet.html:5
 background-clip: border-box;
     #main - initial inject-stylesheet.html:5
-background-color: blue;
+background-color: rgb(0, 0, 255);
     #main - blue inject-stylesheet.html:5
 background-image: none;
     #main - initial inject-stylesheet.html:5
@@ -21,7 +21,7 @@ background-origin: padding-box;
     #main - initial inject-stylesheet.html:5
 background-size: auto;
     #main - initial inject-stylesheet.html:5
-color: red;
+color: rgb(255, 0, 0);
     #main - red user stylesheet
 display: block;
     div - block user agent stylesheet
@@ -66,7 +66,7 @@ background-attachment: scroll;
 background-clip: border-box;
     body - initial inject-stylesheet-iframe-data.html:4
     /-- overloaded --/ #iframebody - initial user stylesheet
-background-color: green;
+background-color: rgb(0, 128, 0);
     body - green inject-stylesheet-iframe-data.html:4
     /-- overloaded --/ #iframebody - red user stylesheet
 background-image: none;

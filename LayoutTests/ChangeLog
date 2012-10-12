@@ -1,3 +1,21 @@
+2012-10-12  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Styles] Colors should be "As authored" by default
+        https://bugs.webkit.org/show_bug.cgi?id=99017
+
+        Reviewed by Vsevolod Vlasov.
+
+        Test rebaselines.
+
+        * inspector/elements/elements-panel-styles-expected.txt:
+        * inspector/styles/inject-stylesheet-expected.txt:
+        * inspector/styles/lazy-computed-style-expected.txt:
+        * inspector/styles/styles-computed-trace-expected.txt:
+        * inspector/styles/styles-overriden-properties-expected.txt:
+        * inspector/styles/styles-update-from-js-expected.txt:
+        * inspector/styles/variables/css-variables-expected.txt:
+        * platform/chromium/inspector/styles/inject-stylesheet-expected.txt:
+
 2012-10-12  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Extract domain specific editing handling logic from UISourceCode descendants (step 1).

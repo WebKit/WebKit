@@ -12,7 +12,7 @@ border-top-left-radius: 5px;
     .foo - 5px elements-panel-styles.css:14
 border-top-right-radius: 5px;
     .foo - 5px elements-panel-styles.css:14
-color: blue;
+color: rgb(0, 0, 255);
     .foo, .foo::before - blue elements-panel-styles.css:22
     /-- overloaded --/ .foo - black elements-panel-styles.css:14
 display: block;

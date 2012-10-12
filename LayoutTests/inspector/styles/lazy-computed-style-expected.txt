@@ -45,7 +45,7 @@ background-attachment: scroll;
     #inspected - initial lazy-computed-style.html:15
 background-clip: border-box;
     #inspected - initial lazy-computed-style.html:15
-background-color: gray;
+background-color: rgb(128, 128, 128);
     #inspected - gray lazy-computed-style.html:15
     /-- overloaded --/ #inspected - black lazy-computed-style.html:10
     /-- overloaded --/ #inspected - green lazy-computed-style.html:5

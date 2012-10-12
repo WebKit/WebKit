@@ -7,7 +7,7 @@ Running: testSetStyleAttribute
 <div id="container" style="color: #daC0DE; border: 1px solid black;">…</div>
 [expanded] 
 element.style  { ()
-color: #DAC0DE;
+color: #daC0DE;
 border: 1px solid black;
     border-top-color: black;
     border-top-style: solid;
@@ -33,7 +33,7 @@ Running: testSetStyleCSSText
 <div id="container" style="color: rgb(192, 255, 238);">…</div>
 [expanded] 
 element.style  { ()
-color: #C0FFEE;
+color: rgb(192, 255, 238);
 
 ======== Matched CSS Rules ========
 [expanded] 
@@ -46,7 +46,7 @@ Running: testSetViaParsedAttributes
 <div id="container" style="color: rgb(192, 255, 238); border: 3px dashed green;">…</div>
 [expanded] 
 element.style  { ()
-color: #C0FFEE;
+color: rgb(192, 255, 238);
 border: 3px dashed green;
     border-top-color: green;
     border-top-style: dashed;
@@ -85,7 +85,7 @@ display: block;
 ======== Inherited from div#container.red ========
 [expanded] 
 Style Attribute  { ()
-color: #C0FFEE;
+color: rgb(192, 255, 238);
 
 
 
@@ -106,7 +106,7 @@ display: block;
 ======== Inherited from div#container.red ========
 [expanded] 
 Style Attribute  { ()
-color: #C0FFEE;
+color: rgb(192, 255, 238);
 
 
 
