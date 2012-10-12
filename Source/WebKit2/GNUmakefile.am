@@ -219,6 +219,7 @@ BUILT_SOURCES += $(GENSOURCES_WEBKIT2)/webkit2gtk/include/webkit2
 
 vpath %.messages.in = \
 	$(WebKit2)/PluginProcess \
+	$(WebKit2)/Shared \
 	$(WebKit2)/Shared/Plugins \
 	$(WebKit2)/UIProcess \
 	$(WebKit2)/UIProcess/ApplicationCache \

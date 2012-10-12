@@ -26,7 +26,18 @@
 #include "config.h"
 #include "WebConnection.h"
 
+#include "ArgumentCoders.h"
+#include "Connection.h"
+#include "DataReference.h"
+#include "WebConnectionMessages.h"
+#include <wtf/text/WTFString.h>
+
 namespace WebKit {
+
+WebConnection::WebConnection(PassRefPtr<CoreIPC::Connection> connection)
+    : m_connection(connection)
+{
+}
 
 WebConnection::~WebConnection()
 {
@@ -37,9 +48,37 @@ void WebConnection::initializeConnectionClient(const WKConnectionClient* client)
     m_client.initialize(client);
 }
 
-void WebConnection::forwardDidReceiveMessageToClient(const String& messageName, APIObject* messageBody)
+void WebConnection::postMessage(const String& messageName, APIObject* messageBody)
 {
-    m_client.didReceiveMessage(this, messageName, messageBody);
+    if (!m_connection)
+        return;
+
+    OwnPtr<CoreIPC::ArgumentEncoder> messageData = CoreIPC::ArgumentEncoder::create(0);
+    messageData->encode(messageName);
+    encodeMessageBody(messageData.get(), messageBody);
+
+    m_connection->send(Messages::WebConnection::HandleMessage(CoreIPC::DataReference(messageData->buffer(), messageData->bufferSize())), 0);
+}
+
+void WebConnection::handleMessage(const CoreIPC::DataReference& messageData)
+{
+    CoreIPC::ArgumentDecoder messageDecoder(messageData.data(), messageData.size());
+
+    String messageName;
+    if (!messageDecoder.decode(messageName))
+        return;
+
+    RefPtr<APIObject> messageBody;
+    if (!decodeMessageBody(&messageDecoder, messageBody))
+        return;
+
+    m_client.didReceiveMessage(this, messageName, messageBody.get());
+}
+
+void WebConnection::invalidate()
+{
+    m_connection->invalidate();
+    m_connection = nullptr;
 }
 
 } // namespace WebKit

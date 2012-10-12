@@ -1,3 +1,66 @@
+2012-10-11  Anders Carlsson  <andersca@apple.com>
+
+        Stop using Connection::deprecatedSend in WebConnection
+        https://bugs.webkit.org/show_bug.cgi?id=99130
+
+        Reviewed by Sam Weinig.
+
+        Instead of using deprecatedSend, just encode the data using a separate ArgumentEncoder and pass it along as a DataReference.
+
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        Add new files.
+
+        * Platform/CoreIPC/MessageID.h:
+        Add WebConnectionMessageClass.
+
+        * Shared/WebConnection.cpp:
+        (WebKit::WebConnection::WebConnection):
+        Make WebConnection hold on to the CoreIPC::Connection.
+
+        (WebKit::WebConnection::postMessage):
+        Ask the subclasses to encode the body data, then send it.
+
+        (WebKit::WebConnection::handleMessage):
+        Ask the subclasses to decode the body data, then call didReceiveClient.
+
+        (WebKit::WebConnection::invalidate):
+        Null out m_connection.
+
+        * Shared/WebConnection.h:
+        (WebKit::WebConnection::connection):
+
+        * Shared/WebConnection.messages.in: Added.
+
+        * UIProcess/WebConnectionToWebProcess.cpp:
+        (WebKit::WebConnectionToWebProcess::WebConnectionToWebProcess):
+        Pass the connection to the WebConnection initializer.
+
+        (WebKit::WebConnectionToWebProcess::encodeMessageBody):
+        (WebKit::WebConnectionToWebProcess::decodeMessageBody):
+        Encode and decode the message body.
+
+        (WebKit::WebConnectionToWebProcess::didReceiveMessage):
+        Handle WebConnection messages.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/WebConnectionToUIProcess.cpp:
+        (WebKit::WebConnectionToUIProcess::WebConnectionToUIProcess):
+        Pass the connection to the WebConnection initializer.
+
+        (WebKit::WebConnectionToUIProcess::encodeMessageBody):
+        (WebKit::WebConnectionToUIProcess::decodeMessageBody):
+        Encode and decode the message body.
+
+        (WebKit::WebConnectionToUIProcess::didReceiveMessage):
+        Handle WebConnection messages.
+
+        * win/WebKit2.vcproj:
+        Add new files.
+
 2012-10-11  Andy Estes  <aestes@apple.com>
 
         Expose the main frame's document to injected bundles via the Objective-C API

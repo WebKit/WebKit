@@ -59,6 +59,7 @@ VPATH = \
     UIProcess/Downloads \
     UIProcess/Notifications \
     UIProcess/Plugins \
+    Shared \
     Shared/Plugins
 
 MESSAGE_RECEIVERS = \
@@ -76,6 +77,7 @@ MESSAGE_RECEIVERS = \
     WebApplicationCacheManagerProxy.messages.in \
     WebBatteryManager.messages.in \
     WebBatteryManagerProxy.messages.in \
+    WebConnection.messages.in \
     WebContext.messages.in \
     WebCookieManager.messages.in \
     WebCookieManagerProxy.messages.in \

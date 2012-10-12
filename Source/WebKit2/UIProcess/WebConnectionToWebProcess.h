@@ -37,15 +37,12 @@ class WebConnectionToWebProcess : public WebConnection, CoreIPC::Connection::Cli
 public:
     static PassRefPtr<WebConnectionToWebProcess> create(WebProcessProxy*, CoreIPC::Connection::Identifier, WebCore::RunLoop*);
 
-    CoreIPC::Connection* connection() { return m_connection.get(); }
-
-    void invalidate();
-
 private:
     WebConnectionToWebProcess(WebProcessProxy*, CoreIPC::Connection::Identifier, WebCore::RunLoop*);
 
     // WebConnection
-    virtual void postMessage(const String&, APIObject*);
+    virtual void encodeMessageBody(CoreIPC::ArgumentEncoder*, APIObject*) OVERRIDE;
+    virtual bool decodeMessageBody(CoreIPC::ArgumentDecoder*, RefPtr<APIObject>&) OVERRIDE;
 
     // CoreIPC::Connection::Client
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
@@ -57,7 +54,6 @@ private:
 #endif
 
     WebProcessProxy* m_process;
-    RefPtr<CoreIPC::Connection> m_connection;
 };
 
 } // namespace WebKit

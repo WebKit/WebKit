@@ -165,6 +165,8 @@ webkit2_built_sources += \
 	DerivedSources/WebKit2/WebBatteryManagerProxyMessages.h \
 	DerivedSources/WebKit2/WebContextMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebContextMessages.h \
+	DerivedSources/WebKit2/WebConnectionMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebConnectionMessages.h \
 	DerivedSources/WebKit2/WebCookieManagerMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebCookieManagerMessages.h \
 	DerivedSources/WebKit2/WebCookieManagerProxyMessageReceiver.cpp \

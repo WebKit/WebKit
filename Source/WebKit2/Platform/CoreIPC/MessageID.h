@@ -65,6 +65,7 @@ enum MessageClass {
     MessageClassLayerTreeCoordinatorProxy,
     MessageClassWebApplicationCacheManagerProxy,
     MessageClassWebBatteryManager,
+    MessageClassWebConnection,
     MessageClassWebContext,
     MessageClassWebContextLegacy,
     MessageClassWebCookieManagerProxy,

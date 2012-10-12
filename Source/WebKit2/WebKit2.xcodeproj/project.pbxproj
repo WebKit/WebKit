@@ -73,6 +73,8 @@
 		1A186EEA12EF7618008E5F37 /* LayerTreeHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A186EE812EF7618008E5F37 /* LayerTreeHost.h */; };
 		1A186EEB12EF7618008E5F37 /* LayerTreeHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A186EE912EF7618008E5F37 /* LayerTreeHost.cpp */; };
 		1A1C649B11F4174200553C19 /* WebContextMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A1C648611F415B700553C19 /* WebContextMac.mm */; };
+		1A1FEC1C1627B45700700F6D /* WebConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1FEC1A1627B45600700F6D /* WebConnectionMessageReceiver.cpp */; };
+		1A1FEC1D1627B45700700F6D /* WebConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1FEC1B1627B45700700F6D /* WebConnectionMessages.h */; };
 		1A2161B011F37664008AD0F5 /* NPRuntimeObjectMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2161AE11F37664008AD0F5 /* NPRuntimeObjectMap.h */; };
 		1A2161B111F37664008AD0F5 /* NPRuntimeObjectMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2161AF11F37664008AD0F5 /* NPRuntimeObjectMap.cpp */; };
 		1A2162B011F38971008AD0F5 /* NPRuntimeUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2162AE11F38971008AD0F5 /* NPRuntimeUtilities.cpp */; };
@@ -1134,6 +1136,9 @@
 		1A1FA284127A13BC0050E709 /* NPObjectProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPObjectProxy.cpp; sourceTree = "<group>"; };
 		1A1FA35B127A45BF0050E709 /* NPObjectMessageReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NPObjectMessageReceiver.h; sourceTree = "<group>"; };
 		1A1FA35C127A45BF0050E709 /* NPObjectMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPObjectMessageReceiver.cpp; sourceTree = "<group>"; };
+		1A1FEC191627B3EF00700F6D /* WebConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebConnection.messages.in; sourceTree = "<group>"; };
+		1A1FEC1A1627B45600700F6D /* WebConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebConnectionMessageReceiver.cpp; path = WebConnectionMessageReceiver.cpp; sourceTree = "<group>"; };
+		1A1FEC1B1627B45700700F6D /* WebConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebConnectionMessages.h; path = WebConnectionMessages.h; sourceTree = "<group>"; };
 		1A2161AE11F37664008AD0F5 /* NPRuntimeObjectMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NPRuntimeObjectMap.h; sourceTree = "<group>"; };
 		1A2161AF11F37664008AD0F5 /* NPRuntimeObjectMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPRuntimeObjectMap.cpp; sourceTree = "<group>"; };
 		1A2162AE11F38971008AD0F5 /* NPRuntimeUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPRuntimeUtilities.cpp; sourceTree = "<group>"; };
@@ -2526,6 +2531,7 @@
 				BCF50726124329AA005955AE /* WebCertificateInfo.h */,
 				BC4A628B147312BE006C681A /* WebConnection.cpp */,
 				BC4A628C147312BE006C681A /* WebConnection.h */,
+				1A1FEC191627B3EF00700F6D /* WebConnection.messages.in */,
 				BC4A628D147312BE006C681A /* WebConnectionClient.cpp */,
 				BC4A628E147312BE006C681A /* WebConnectionClient.h */,
 				512935D51288D19400A4B695 /* WebContextMenuItem.cpp */,
@@ -3785,6 +3791,8 @@
 			children = (
 				512F58A012A883AD00629530 /* AuthenticationManagerMessageReceiver.cpp */,
 				512F58A112A883AD00629530 /* AuthenticationManagerMessages.h */,
+				E1967E35150AB5D500C73169 /* com.apple.WebKit.PluginProcess.sb */,
+				E1967E37150AB5E200C73169 /* com.apple.WebProcess.sb */,
 				1AB7D6171288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp */,
 				1AB7D6181288B9D900CFD08C /* DownloadProxyMessages.h */,
 				1A64229712DD029200CAAE2C /* DrawingAreaMessageReceiver.cpp */,
@@ -3809,6 +3817,8 @@
 				512E3569130B57F000ABD19A /* WebApplicationCacheManagerMessages.h */,
 				512E35F6130B642E00ABD19A /* WebApplicationCacheManagerProxyMessageReceiver.cpp */,
 				512E35F7130B642E00ABD19A /* WebApplicationCacheManagerProxyMessages.h */,
+				1A1FEC1A1627B45600700F6D /* WebConnectionMessageReceiver.cpp */,
+				1A1FEC1B1627B45700700F6D /* WebConnectionMessages.h */,
 				BCEE7D0B12846F69009827DA /* WebContextMessageReceiver.cpp */,
 				BCEE7D0C12846F69009827DA /* WebContextMessages.h */,
 				330934431315B9220097A7BC /* WebCookieManagerMessageReceiver.cpp */,
@@ -3863,8 +3873,6 @@
 				33367652130C9ECA006C9DE2 /* WebResourceCacheManagerMessages.h */,
 				33367653130C9ECA006C9DE2 /* WebResourceCacheManagerProxyMessageReceiver.cpp */,
 				33367654130C9ECA006C9DE2 /* WebResourceCacheManagerProxyMessages.h */,
-				E1967E35150AB5D500C73169 /* com.apple.WebKit.PluginProcess.sb */,
-				E1967E37150AB5E200C73169 /* com.apple.WebProcess.sb */,
 			);
 			name = "Derived Sources";
 			path = DerivedSources/WebKit2;
@@ -4402,6 +4410,7 @@
 				BC39C4361626366F008BC689 /* WKDOMRange.h in Headers */,
 				BC8F2F2B16273A2C005FACB5 /* WKWebProcessPlugInBrowserContextController.h in Headers */,
 				BC8F2F2E16273ACC005FACB5 /* WKWebProcessPlugInBrowserContextControllerInternal.h in Headers */,
+				1A1FEC1D1627B45700700F6D /* WebConnectionMessages.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5269,6 +5278,7 @@
 				BC017D2016263308007054F5 /* WKDOMTextIterator.mm in Sources */,
 				BC39C4351626366F008BC689 /* WKDOMRange.mm in Sources */,
 				BC8F2F2A16273A2C005FACB5 /* WKWebProcessPlugInBrowserContextController.mm in Sources */,
+				1A1FEC1C1627B45700700F6D /* WebConnectionMessageReceiver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
