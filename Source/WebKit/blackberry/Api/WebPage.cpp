@@ -3101,6 +3101,9 @@ void WebPage::destroyWebPageCompositor()
 void WebPage::destroy()
 {
     // TODO: need to verify if this call needs to be made before calling
+    // Close the Inspector to resume the JS engine if it's paused.
+    disableWebInspector();
+
     // WebPage::destroyWebPageCompositor()
     d->m_backingStore->d->suspendScreenAndBackingStoreUpdates();
 

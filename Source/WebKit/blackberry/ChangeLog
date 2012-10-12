@@ -1,3 +1,15 @@
+2012-10-11  Peter Wang  <peter.wang@torchmobile.com.cn>
+
+        [BlackBerry] Paused in Inspector, Browser doesn't exit cleanly
+        https://bugs.webkit.org/show_bug.cgi?id=97962
+
+        Reviewed by George Staikos.
+
+        Before destroying webpage, close the inspector, so if the JSC is paused it will be resumed.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::destroy):
+
 2012-10-11  Konrad Piascik  <kpiascik@rim.com>
 
         Web Inspector: node search does not work with elements on touch start listener
