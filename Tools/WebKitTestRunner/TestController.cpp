@@ -1070,14 +1070,21 @@ void TestController::decidePolicyForNavigationAction(WKFramePolicyListenerRef li
     WKFramePolicyListenerUse(listener);
 }
 
-void TestController::decidePolicyForResponse(WKPageRef, WKFrameRef, WKURLResponseRef, WKURLRequestRef, WKFramePolicyListenerRef listener, WKTypeRef, const void* clientInfo)
+void TestController::decidePolicyForResponse(WKPageRef, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef, WKFramePolicyListenerRef listener, WKTypeRef, const void* clientInfo)
 {
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->decidePolicyForResponse(listener);
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->decidePolicyForResponse(frame, response, listener);
 }
 
-void TestController::decidePolicyForResponse(WKFramePolicyListenerRef listener)
+void TestController::decidePolicyForResponse(WKFrameRef frame, WKURLResponseRef response, WKFramePolicyListenerRef listener)
 {
-    // Response was already checked by WKBundlePagePolicyClient, so if we are here we're supposed to ignore.
+    // Even though Response was already checked by WKBundlePagePolicyClient, the check did not include plugins
+    // so we have to re-check again.
+    WKRetainPtr<WKStringRef> wkMIMEType(AdoptWK, WKURLResponseCopyMIMEType(response));
+    if (WKFrameCanShowMIMEType(frame, wkMIMEType.get())) {
+        WKFramePolicyListenerUse(listener);
+        return;
+    }
+
     WKFramePolicyListenerIgnore(listener);
 }
 

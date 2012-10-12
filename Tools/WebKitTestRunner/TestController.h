@@ -118,7 +118,7 @@ private:
     void decidePolicyForNavigationAction(WKFramePolicyListenerRef);
 
     static void decidePolicyForResponse(WKPageRef, WKFrameRef, WKURLResponseRef, WKURLRequestRef, WKFramePolicyListenerRef, WKTypeRef, const void*);
-    void decidePolicyForResponse(WKFramePolicyListenerRef);
+    void decidePolicyForResponse(WKFrameRef, WKURLResponseRef, WKFramePolicyListenerRef);
 
     static WKPageRef createOtherPage(WKPageRef oldPage, WKURLRequestRef, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void*);
 

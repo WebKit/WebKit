@@ -1,3 +1,19 @@
+2012-10-12  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [Qt][WK2] REGRESSION(r131057): It made plugins/plugin-document-back-forward.html timeout
+        https://bugs.webkit.org/show_bug.cgi?id=99152
+
+        Reviewed by Simon Fraser.
+
+        Even though Response was already checked in WTR WKBundlePagePolicyClient decidePolicyForResponse callback,
+        this check did not take plugins into consideration when deciding whether we can show the given MIME type or not
+        so added another check in WTR UI process which also includes plugins.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::decidePolicyForResponse):
+        * WebKitTestRunner/TestController.h:
+        (TestController):
+
 2012-10-12  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Add tests of WebSocketEnabled preference
