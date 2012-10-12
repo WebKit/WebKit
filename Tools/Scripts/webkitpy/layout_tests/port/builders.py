@@ -37,16 +37,16 @@ from webkitpy.common.memoized import memoized
 # * specifiers -- a set of specifiers, representing configurations covered by this builder.
 _exact_matches = {
     # These builders are on build.chromium.org.
-    "Webkit Win": {"port_name": "chromium-win-xp", "specifiers": set(["xp", "release"])},
-    "Webkit Win7": {"port_name": "chromium-win-win7", "specifiers": set(["win7"])},
-    "Webkit Win (dbg)(1)": {"port_name": "chromium-win-xp", "specifiers": set(["win", "debug"])},
-    "Webkit Win (dbg)(2)": {"port_name": "chromium-win-xp", "specifiers": set(["win", "debug"])},
-    "Webkit Linux": {"port_name": "chromium-linux-x86_64", "specifiers": set(["linux", "x86_64", "release"])},
-    "Webkit Linux 32": {"port_name": "chromium-linux-x86", "specifiers": set(["linux", "x86"])},
-    "Webkit Linux (dbg)": {"port_name": "chromium-linux-x86_64", "specifiers": set(["linux", "debug"])},
-    "Webkit Mac10.6": {"port_name": "chromium-mac-snowleopard", "specifiers": set(["snowleopard"])},
-    "Webkit Mac10.6 (dbg)": {"port_name": "chromium-mac-snowleopard", "specifiers": set(["snowleopard", "debug"])},
-    "Webkit Mac10.7": {"port_name": "chromium-mac-lion", "specifiers": set(["lion"])},
+    "WebKit XP": {"port_name": "chromium-win-xp", "specifiers": set(["xp", "release"])},
+    "WebKit Win7": {"port_name": "chromium-win-win7", "specifiers": set(["win7"])},
+    "WebKit Win7 (dbg)(1)": {"port_name": "chromium-win-xp", "specifiers": set(["win", "debug"])},
+    "WebKit Win7 (dbg)(2)": {"port_name": "chromium-win-xp", "specifiers": set(["win", "debug"])},
+    "WebKit Linux": {"port_name": "chromium-linux-x86_64", "specifiers": set(["linux", "x86_64", "release"])},
+    "WebKit Linux 32": {"port_name": "chromium-linux-x86", "specifiers": set(["linux", "x86"])},
+    "WebKit Linux (dbg)": {"port_name": "chromium-linux-x86_64", "specifiers": set(["linux", "debug"])},
+    "WebKit Mac10.6": {"port_name": "chromium-mac-snowleopard", "specifiers": set(["snowleopard"])},
+    "WebKit Mac10.6 (dbg)": {"port_name": "chromium-mac-snowleopard", "specifiers": set(["snowleopard", "debug"])},
+    "WebKit Mac10.7": {"port_name": "chromium-mac-lion", "specifiers": set(["lion"])},
 
     # These builders are on build.webkit.org.
     "Apple MountainLion Release WK1 (Tests)": {"port_name": "mac-mountainlion", "specifiers": set(["mountainlion"]), "rebaseline_override_dir": "mac"},

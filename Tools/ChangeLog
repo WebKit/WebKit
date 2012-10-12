@@ -1,3 +1,39 @@
+2012-10-12  Dirk Pranke  <dpranke@chromium.org>
+
+        [chromium] add ML bot and update bot names
+        https://bugs.webkit.org/show_bug.cgi?id=99209
+
+        Reviewed by Eric Seidel.
+
+        This change adds proper baseline support for Mac10.8 (Mountain
+        Lion or ML) to chromium and updates the bot names from "Webkit" 
+        to "WebKit" and ensures that all the bots have the OS version in
+        the name on Mac and Win.
+
+        We don't yet include a ML bot in garden-o-matic since it isn't
+        green yet.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/builders_unittests.js:
+        (.):
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort):
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py:
+        (FactoryTest.test_get_from_builder_name):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaseline.test_baseline_directory):
+        (TestRebaseline.test_rebaseline_updates_expectations_file_noop):
+        (test_rebaseline_updates_expectations_file):
+        (test_rebaseline_does_not_include_overrides):
+        (test_rebaseline_test):
+        (test_rebaseline_test_and_print_scm_changes):
+        (test_rebaseline_and_copy_test):
+        (test_rebaseline_and_copy_test_with_lion_result):
+        (test_rebaseline_and_copy_no_overwrite_test):
+        (test_rebaseline_expectations):
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+        (BuildCoverageExtrapolatorTest.test_extrapolate):
+
 2012-10-12  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [Qt][WK2] REGRESSION(r131057): It made plugins/plugin-document-back-forward.html timeout

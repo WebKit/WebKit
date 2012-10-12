@@ -63,13 +63,13 @@ class ChromiumPort(Port):
         ('icecreamsandwich', 'x86'))
 
     ALL_BASELINE_VARIANTS = [
-        'chromium-mac-lion', 'chromium-mac-snowleopard', 'chromium-mac-leopard',
+        'chromium-mac-mountainlion', 'chromium-mac-lion', 'chromium-mac-snowleopard',
         'chromium-win-win7', 'chromium-win-xp',
         'chromium-linux-x86_64', 'chromium-linux-x86',
     ]
 
     CONFIGURATION_SPECIFIER_MACROS = {
-        'mac': ['snowleopard', 'lion'],
+        'mac': ['snowleopard', 'lion', 'mountainlion'],
         'win': ['xp', 'win7'],
         'linux': ['lucid'],
         'android': ['icecreamsandwich'],

@@ -28,8 +28,8 @@
 module("builders");
 
 var kExampleBuilderStatusJSON =  {
-    "Webkit Linux": {
-        "basedir": "Webkit_Linux",
+    "WebKit Linux": {
+        "basedir": "WebKit_Linux",
         "cachedBuilds": [11459, 11460, 11461, 11462],
         "category": "6webkit linux latest",
         "currentBuilds": [11462],
@@ -37,8 +37,8 @@ var kExampleBuilderStatusJSON =  {
         "slaves": ["vm124-m1"],
         "state": "building"
     },
-    "Webkit Mac10.6": {
-        "basedir": "Webkit_Linux",
+    "WebKit Mac10.6": {
+        "basedir": "WebKit_Linux",
         "cachedBuilds": [11459, 11460, 11461, 11462],
         "category": "6webkit linux latest",
         "currentBuilds": [11461, 11462],
@@ -46,8 +46,8 @@ var kExampleBuilderStatusJSON =  {
         "slaves": ["vm124-m1"],
         "state": "building"
     },
-    "Webkit ASAN": {
-        "basedir": "Webkit_Linux",
+    "WebKit ASAN": {
+        "basedir": "WebKit_Linux",
         "cachedBuilds": [11459, 11460, 11461, 11462],
         "category": "6webkit linux latest",
         "currentBuilds": [11461, 11462],
@@ -59,7 +59,7 @@ var kExampleBuilderStatusJSON =  {
 
 var kExampleWebKitDotOrgBuilderStatusJSON =  {
     "Apple Lion Release WK2 (Tests)": {
-        "basedir": "Webkit_Linux",
+        "basedir": "WebKit_Linux",
         "cachedBuilds": [11459, 11460, 11461, 11462],
         "category": "6webkit linux latest",
         "currentBuilds": [11462],
@@ -68,7 +68,7 @@ var kExampleWebKitDotOrgBuilderStatusJSON =  {
         "state": "building"
     },
     "GTK Linux 64-bit Debug": {
-        "basedir": "Webkit_Linux",
+        "basedir": "WebKit_Linux",
         "cachedBuilds": [11459, 11460, 11461, 11462],
         "category": "6webkit linux latest",
         "currentBuilds": [11461, 11462],
@@ -77,7 +77,7 @@ var kExampleWebKitDotOrgBuilderStatusJSON =  {
         "state": "building"
     },
     "Qt Linux Release": {
-        "basedir": "Webkit_Linux",
+        "basedir": "WebKit_Linux",
         "cachedBuilds": [11459, 11460, 11461, 11462],
         "category": "6webkit linux latest",
         "currentBuilds": [11461, 11462],
@@ -89,26 +89,26 @@ var kExampleWebKitDotOrgBuilderStatusJSON =  {
 
 var kExampleBuildInfoJSON = {
     "blame": ["abarth@webkit.org"],
-    "builderName": "Webkit Linux",
+    "builderName": "WebKit Linux",
     "changes": ["Files:\n Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.js\n Tools/ChangeLog\nAt: Thu 04 Aug 2011 00:50:38\nChanged By: abarth@webkit.org\nComments: Fix types.  Sadly, main.js has no test coverage.  (I need to think\nabout how to test this part of the code.)\n\n* BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.js:Properties: \n\n\n", "Files:\n LayoutTests/ChangeLog\n LayoutTests/platform/chromium-mac/fast/box-shadow/inset-box-shadows-expected.png\n LayoutTests/platform/chromium-mac/fast/repaint/shadow-multiple-horizontal-expected.png\n LayoutTests/platform/chromium-mac/fast/repaint/shadow-multiple-strict-horizontal-expected.png\n LayoutTests/platform/chromium-mac/fast/repaint/shadow-multiple-strict-vertical-expected.png\n LayoutTests/platform/chromium-mac/fast/repaint/shadow-multiple-vertical-expected.png\nAt: Thu 04 Aug 2011 00:50:38\nChanged By: abarth@webkit.org\nComments: Update baselines after <http://trac.webkit.org/changeset/92340>.\n\n* platform/chromium-mac/fast/box-shadow/inset-box-shadows-expected.png:\n* platform/chromium-mac/fast/repaint/shadow-multiple-horizontal-expected.png:\n* platform/chromium-mac/fast/repaint/shadow-multiple-strict-horizontal-expected.png:\n* platform/chromium-mac/fast/repaint/shadow-multiple-strict-vertical-expected.png:\n* platform/chromium-mac/fast/repaint/shadow-multiple-vertical-expected.png:Properties: \n\n\n"],
     "currentStep": null,
     "eta": null,
     "logs": [
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/update_scripts/logs/stdio"],
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/update/logs/stdio"],
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/compile/logs/stdio"],
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/test_shell_tests/logs/stdio"],
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/webkit_unit_tests/logs/stdio"],
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/webkit_tests/logs/stdio"],
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/archive_webkit_tests_results/logs/stdio"],
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/webkit_gpu_tests/logs/stdio"],
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/archive_webkit_tests_gpu_results/logs/stdio"]
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/update_scripts/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/update/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/compile/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/test_shell_tests/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/webkit_unit_tests/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/webkit_tests/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/archive_webkit_tests_results/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/webkit_gpu_tests/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/archive_webkit_tests_gpu_results/logs/stdio"]
     ],
     "number": 11461,
     "properties": [
         ["blamelist", ["abarth@webkit.org"], "Build"],
         ["branch", "trunk", "Build"],
-        ["buildername", "Webkit Linux", "Build"],
+        ["buildername", "WebKit Linux", "Build"],
         ["buildnumber", 11461, "Build"],
         ["got_revision", "95395", "Source"],
         ["got_webkit_revision", "92358", "Source"],
@@ -120,7 +120,7 @@ var kExampleBuildInfoJSON = {
     ],
     "reason": "",
     "requests": [{
-        "builderName": "Webkit Linux",
+        "builderName": "WebKit Linux",
         "builds": [11461],
         "source": {
             "branch": "trunk",
@@ -194,7 +194,7 @@ var kExampleBuildInfoJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/update_scripts/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/update_scripts/logs/stdio"]
         ],
         "name": "update_scripts",
         "results": [0, []],
@@ -211,8 +211,7 @@ var kExampleBuildInfoJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/update/logs/stdio"]
-        ],
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/update/logs/stdio"] ],
         "name": "update",
         "results": [0, []],
         "statistics": {},
@@ -228,7 +227,7 @@ var kExampleBuildInfoJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/compile/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/compile/logs/stdio"]
         ],
         "name": "compile",
         "results": [0, []],
@@ -245,7 +244,7 @@ var kExampleBuildInfoJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/test_shell_tests/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/test_shell_tests/logs/stdio"]
         ],
         "name": "test_shell_tests",
         "results": [0, []],
@@ -262,7 +261,7 @@ var kExampleBuildInfoJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/webkit_unit_tests/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/webkit_unit_tests/logs/stdio"]
         ],
         "name": "webkit_unit_tests",
         "results": [0, []],
@@ -279,7 +278,7 @@ var kExampleBuildInfoJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/webkit_tests/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/webkit_tests/logs/stdio"]
         ],
         "name": "webkit_tests",
         "results": [2, ["webkit_tests"]],
@@ -296,7 +295,7 @@ var kExampleBuildInfoJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/archive_webkit_tests_results/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/archive_webkit_tests_results/logs/stdio"]
         ],
         "name": "archive_webkit_tests_results",
         "results": [0, []],
@@ -305,7 +304,7 @@ var kExampleBuildInfoJSON = {
         "text": ["archived webkit_tests results"],
         "times": [1312444768.888746, 1312444781.444399],
         "urls": {
-            "layout test results": "http://build.chromium.org/buildbot/layout_test_results/Webkit_Linux\r/95395\rNone"
+            "layout test results": "http://build.chromium.org/buildbot/layout_test_results/WebKit_Linux\r/95395\rNone"
         }
     }, {
         "eta": null,
@@ -315,7 +314,7 @@ var kExampleBuildInfoJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/webkit_gpu_tests/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/webkit_gpu_tests/logs/stdio"]
         ],
         "name": "webkit_gpu_tests",
         "results": [2, ["webkit_gpu_tests"]],
@@ -332,7 +331,7 @@ var kExampleBuildInfoJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/archive_webkit_tests_gpu_results/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/archive_webkit_tests_gpu_results/logs/stdio"]
         ],
         "name": "archive_webkit_tests_gpu_results",
         "results": [0, []],
@@ -341,7 +340,7 @@ var kExampleBuildInfoJSON = {
         "text": ["archived webkit_tests gpu results"],
         "times": [1312444966.856575, 1312444970.458655],
         "urls": {
-            "layout test gpu results": "http://build.chromium.org/buildbot/layout_test_results/Webkit_Linux_-_GPU\r/95395\rNone"
+            "layout test gpu results": "http://build.chromium.org/buildbot/layout_test_results/WebKit_Linux_-_GPU\r/95395\rNone"
         }
     }],
     "text": ["failed", "webkit_tests", "webkit_gpu_tests"],
@@ -350,25 +349,25 @@ var kExampleBuildInfoJSON = {
 
 var kExampleBuildInfoWithWebKitTestCrashJSON = {
     "blame": ["asvitkine@chromium.org", "derat@chromium.org", "nirnimesh@chromium.org"],
-    "builderName": "Webkit Win (deps)(dbg)(2)",
+    "builderName": "WebKit Win (deps)(dbg)(2)",
     "currentStep": null,
     "eta": null,
     "logs": [
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/svnkill/logs/stdio"],
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/update_scripts/logs/stdio"],
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/taskkill/logs/stdio"],
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/update/logs/stdio"],
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/extract_build/logs/stdio"],
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/webkit_tests/logs/stdio"],
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/archive_webkit_tests_results/logs/stdio"],
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/webkit_gpu_tests/logs/stdio"],
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/archive_webkit_tests_gpu_results/logs/stdio"]
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/svnkill/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/update_scripts/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/taskkill/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/update/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/extract_build/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/webkit_tests/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/archive_webkit_tests_results/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/webkit_gpu_tests/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/archive_webkit_tests_gpu_results/logs/stdio"]
     ],
     "number": 7653,
     "properties": [
         ["blamelist", ["asvitkine@chromium.org", "derat@chromium.org", "nirnimesh@chromium.org"], "Build"],
         ["branch", "src", "Build"],
-        ["buildername", "Webkit Win (deps)(dbg)(2)", "Builder"],
+        ["buildername", "WebKit Win (deps)(dbg)(2)", "Builder"],
         ["buildnumber", 7653, "Build"],
         ["got_revision", "104939", "Source"],
         ["gtest_filter", null, "Factory"],
@@ -467,7 +466,7 @@ var kExampleBuildInfoWithWebKitTestCrashJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/svnkill/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/svnkill/logs/stdio"]
         ],
         "name": "svnkill",
         "results": [0, []],
@@ -484,7 +483,7 @@ var kExampleBuildInfoWithWebKitTestCrashJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/update_scripts/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/update_scripts/logs/stdio"]
         ],
         "name": "update_scripts",
         "results": [0, []],
@@ -501,7 +500,7 @@ var kExampleBuildInfoWithWebKitTestCrashJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/taskkill/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/taskkill/logs/stdio"]
         ],
         "name": "taskkill",
         "results": [0, []],
@@ -518,7 +517,7 @@ var kExampleBuildInfoWithWebKitTestCrashJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/update/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/update/logs/stdio"]
         ],
         "name": "update",
         "results": [0, []],
@@ -535,7 +534,7 @@ var kExampleBuildInfoWithWebKitTestCrashJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/extract_build/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/extract_build/logs/stdio"]
         ],
         "name": "extract_build",
         "results": [1, []],
@@ -552,7 +551,7 @@ var kExampleBuildInfoWithWebKitTestCrashJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/webkit_tests/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/webkit_tests/logs/stdio"]
         ],
         "name": "webkit_tests",
         "results": [2, ["webkit_tests"]],
@@ -569,7 +568,7 @@ var kExampleBuildInfoWithWebKitTestCrashJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/archive_webkit_tests_results/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/archive_webkit_tests_results/logs/stdio"]
         ],
         "name": "archive_webkit_tests_results",
         "results": [2, ["archive_webkit_tests_results"]],
@@ -578,7 +577,7 @@ var kExampleBuildInfoWithWebKitTestCrashJSON = {
         "text": ["archived webkit_tests results", "failed"],
         "times": [1318366405.2573731, 1318366406.505815],
         "urls": {
-            "layout test results": "http://build.chromium.org/buildbot/layout_test_results/Webkit_Win__deps__dbg__2_\r/0\rNone"
+            "layout test results": "http://build.chromium.org/buildbot/layout_test_results/WebKit_Win__deps__dbg__2_\r/0\rNone"
         }
     }, {
         "eta": null,
@@ -588,7 +587,7 @@ var kExampleBuildInfoWithWebKitTestCrashJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/webkit_gpu_tests/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/webkit_gpu_tests/logs/stdio"]
         ],
         "name": "webkit_gpu_tests",
         "results": [2, ["webkit_gpu_tests"]],
@@ -605,7 +604,7 @@ var kExampleBuildInfoWithWebKitTestCrashJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/archive_webkit_tests_gpu_results/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/archive_webkit_tests_gpu_results/logs/stdio"]
         ],
         "name": "archive_webkit_tests_gpu_results",
         "results": [2, ["archive_webkit_tests_gpu_results"]],
@@ -614,7 +613,7 @@ var kExampleBuildInfoWithWebKitTestCrashJSON = {
         "text": ["archived webkit_tests gpu results", "failed"],
         "times": [1318366407.1804891, 1318366408.071501],
         "urls": {
-            "layout test gpu results": "http://build.chromium.org/buildbot/layout_test_results/Webkit_Win__deps__dbg__2__-_GPU\r/0\rNone"
+            "layout test gpu results": "http://build.chromium.org/buildbot/layout_test_results/WebKit_Win__deps__dbg__2__-_GPU\r/0\rNone"
         }
     }],
     "text": ["failed", "webkit_tests", "archive_webkit_tests_results", "webkit_gpu_tests", "archive_webkit_tests_gpu_results"],
@@ -623,17 +622,17 @@ var kExampleBuildInfoWithWebKitTestCrashJSON = {
 
 var kExampleBuildInfoWithTaskKillWarning = {
     "blame": ["asvitkine@chromium.org", "derat@chromium.org", "nirnimesh@chromium.org"],
-    "builderName": "Webkit Win (deps)(dbg)(2)",
+    "builderName": "WebKit Win (deps)(dbg)(2)",
     "currentStep": null,
     "eta": null,
     "logs": [
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/svnkill/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Win%20%28deps%29%28dbg%29%282%29/builds/7653/steps/svnkill/logs/stdio"],
     ],
     "number": 7653,
     "properties": [
         ["blamelist", ["asvitkine@chromium.org", "derat@chromium.org", "nirnimesh@chromium.org"], "Build"],
         ["branch", "src", "Build"],
-        ["buildername", "Webkit Win (deps)(dbg)(2)", "Builder"],
+        ["buildername", "WebKit Win (deps)(dbg)(2)", "Builder"],
         ["buildnumber", 7653, "Build"],
         ["got_revision", "104939", "Source"],
         ["gtest_filter", null, "Factory"],
@@ -693,8 +692,8 @@ var kExampleBuildInfoWithTaskKillWarning = {
 
 
 var kExamplePerfBuilderStatusJSON =  {
-    "Webkit Linux": {
-        "basedir": "Webkit_Linux",
+    "WebKit Linux": {
+        "basedir": "WebKit_Linux",
         "cachedBuilds": [11459, 11460, 11461, 11462],
         "category": "6webkit linux latest",
         "currentBuilds": [11462],
@@ -720,21 +719,21 @@ var kExamplePerfBuildInfoJSON = {
     "currentStep": null,
     "eta": null,
     "logs": [
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/update_scripts/logs/stdio"],
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/update/logs/stdio"],
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/compile/logs/stdio"],
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/test_shell_tests/logs/stdio"],
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/webkit_unit_tests/logs/stdio"],
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/webkit_tests/logs/stdio"],
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/archive_webkit_tests_results/logs/stdio"],
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/webkit_gpu_tests/logs/stdio"],
-        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/archive_webkit_tests_gpu_results/logs/stdio"]
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/update_scripts/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/update/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/compile/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/test_shell_tests/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/webkit_unit_tests/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/webkit_tests/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/archive_webkit_tests_results/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/webkit_gpu_tests/logs/stdio"],
+        ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/archive_webkit_tests_gpu_results/logs/stdio"]
     ],
     "number": 11461,
     "properties": [
         ["blamelist", ["abarth@webkit.org"], "Build"],
         ["branch", "trunk", "Build"],
-        ["buildername", "Webkit Linux", "Build"],
+        ["buildername", "WebKit Linux", "Build"],
         ["buildnumber", 11461, "Build"],
         ["got_revision", "95395", "Source"],
         ["got_webkit_revision", "92358", "Source"],
@@ -746,7 +745,7 @@ var kExamplePerfBuildInfoJSON = {
     ],
     "reason": "",
     "requests": [{
-        "builderName": "Webkit Linux",
+        "builderName": "WebKit Linux",
         "builds": [11461],
         "source": {
             "branch": "trunk",
@@ -820,7 +819,7 @@ var kExamplePerfBuildInfoJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/update_scripts/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/update_scripts/logs/stdio"]
         ],
         "name": "update_scripts",
         "results": [0, []],
@@ -837,7 +836,7 @@ var kExamplePerfBuildInfoJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/update/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/update/logs/stdio"]
         ],
         "name": "update",
         "results": [0, []],
@@ -854,7 +853,7 @@ var kExamplePerfBuildInfoJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/compile/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/compile/logs/stdio"]
         ],
         "name": "compile",
         "results": [0, []],
@@ -871,7 +870,7 @@ var kExamplePerfBuildInfoJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/test_shell_tests/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/test_shell_tests/logs/stdio"]
         ],
         "name": "test_shell_tests",
         "results": [0, []],
@@ -888,7 +887,7 @@ var kExamplePerfBuildInfoJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/webkit_unit_tests/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/webkit_unit_tests/logs/stdio"]
         ],
         "name": "webkit_unit_tests",
         "results": [0, []],
@@ -905,7 +904,7 @@ var kExamplePerfBuildInfoJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/webkit_tests/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/webkit_tests/logs/stdio"]
         ],
         "name": "webkit_tests",
         "results": [2, ["webkit_tests"]],
@@ -922,7 +921,7 @@ var kExamplePerfBuildInfoJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/archive_webkit_tests_results/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/archive_webkit_tests_results/logs/stdio"]
         ],
         "name": "dummy_perf_test_1",
         "results": [0, []],
@@ -941,7 +940,7 @@ var kExamplePerfBuildInfoJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/webkit_gpu_tests/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/webkit_gpu_tests/logs/stdio"]
         ],
         "name": "webkit_gpu_tests",
         "results": [2, ["webkit_gpu_tests"]],
@@ -958,7 +957,7 @@ var kExamplePerfBuildInfoJSON = {
         "isFinished": true,
         "isStarted": true,
         "logs": [
-            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/Webkit%20Linux/builds/11461/steps/archive_webkit_tests_gpu_results/logs/stdio"]
+            ["stdio", "http://build.chromium.org/p/chromium.webkitbuilders/WebKit%20Linux/builds/11461/steps/archive_webkit_tests_gpu_results/logs/stdio"]
         ],
         "name": "dummy_perf_test_2",
         "results": [0, []],
@@ -989,11 +988,11 @@ test("buildersFailing", 3, function() {
         simulator.scheduleCallback(function() {
             if (/\/json\/builders$/.exec(url))
                 callback(kExampleBuilderStatusJSON);
-            else if (/Webkit%20Linux/.exec(url))
+            else if (/WebKit%20Linux/.exec(url))
                 callback(kExampleBuildInfoJSON);
-            else if (/Webkit%20Mac10\.6/.exec(url))
+            else if (/WebKit%20Mac10\.6/.exec(url))
                 callback(failingBuildInfoJSON);
-            else if (/Webkit%20ASAN/.exec(url))
+            else if (/WebKit%20ASAN/.exec(url))
                 callback(failingBuildInfoJSON);
             else {
                 ok(false, "Unexpected URL: " + url);
@@ -1005,10 +1004,10 @@ test("buildersFailing", 3, function() {
     simulator.runTest(function() {
         builders.buildersFailingNonLayoutTests(function(builderNameList) {
             deepEqual(builderNameList, {
-                "Webkit Linux": [
+                "WebKit Linux": [
                     "webkit_gpu_tests"
                 ],
-                "Webkit Mac10.6": [
+                "WebKit Mac10.6": [
                     "webkit_gpu_tests"
                 ]
             });
@@ -1017,8 +1016,8 @@ test("buildersFailing", 3, function() {
 
     deepEqual(requestedURLs, [
       "http://build.chromium.org/p/chromium.webkit/json/builders",
-      "http://build.chromium.org/p/chromium.webkit/json/builders/Webkit%20Linux/builds/11461",
-      "http://build.chromium.org/p/chromium.webkit/json/builders/Webkit%20Mac10.6/builds/11460",
+      "http://build.chromium.org/p/chromium.webkit/json/builders/WebKit%20Linux/builds/11461",
+      "http://build.chromium.org/p/chromium.webkit/json/builders/WebKit%20Mac10.6/builds/11460",
     ]);
 });
 
@@ -1072,9 +1071,9 @@ test("buildersFailing (run-webkit-tests crash)", 3, function() {
     builders.clearBuildInfoCache();
 
     var builderStatusJSON = JSON.parse(JSON.stringify(kExampleBuilderStatusJSON));
-    delete builderStatusJSON['Webkit Mac10.6'];
-    builderStatusJSON['Webkit Linux'].cachedBuilds = [21460];
-    builderStatusJSON['Webkit Linux'].currentBuilds = [];
+    delete builderStatusJSON['WebKit Mac10.6'];
+    builderStatusJSON['WebKit Linux'].cachedBuilds = [21460];
+    builderStatusJSON['WebKit Linux'].currentBuilds = [];
 
     var failingBuildInfoJSON = JSON.parse(JSON.stringify(kExampleBuildInfoWithWebKitTestCrashJSON));
     failingBuildInfoJSON.number = 21460;
@@ -1086,7 +1085,7 @@ test("buildersFailing (run-webkit-tests crash)", 3, function() {
         simulator.scheduleCallback(function() {
             if (/\/json\/builders$/.exec(url))
                 callback(builderStatusJSON);
-            else if (/Webkit%20Linux/.exec(url))
+            else if (/WebKit%20Linux/.exec(url))
                 callback(failingBuildInfoJSON);
             else {
                 ok(false, "Unexpected URL: " + url);
@@ -1098,7 +1097,7 @@ test("buildersFailing (run-webkit-tests crash)", 3, function() {
     simulator.runTest(function() {
         builders.buildersFailingNonLayoutTests(function(builderNameList) {
             deepEqual(builderNameList, {
-                "Webkit Linux": [
+                "WebKit Linux": [
                     "webkit_tests",
                     "archive_webkit_tests_results",
                     "webkit_gpu_tests",
@@ -1110,7 +1109,7 @@ test("buildersFailing (run-webkit-tests crash)", 3, function() {
 
     deepEqual(requestedURLs, [
       "http://build.chromium.org/p/chromium.webkit/json/builders",
-      "http://build.chromium.org/p/chromium.webkit/json/builders/Webkit%20Linux/builds/21460",
+      "http://build.chromium.org/p/chromium.webkit/json/builders/WebKit%20Linux/builds/21460",
     ]);
 });
 
@@ -1119,9 +1118,9 @@ test("buildersFailing (taskkill warning)", 3, function() {
     builders.clearBuildInfoCache();
 
     var builderStatusJSON = JSON.parse(JSON.stringify(kExampleBuilderStatusJSON));
-    delete builderStatusJSON['Webkit Mac10.6'];
-    builderStatusJSON['Webkit Linux'].cachedBuilds = [21460];
-    builderStatusJSON['Webkit Linux'].currentBuilds = [];
+    delete builderStatusJSON['WebKit Mac10.6'];
+    builderStatusJSON['WebKit Linux'].cachedBuilds = [21460];
+    builderStatusJSON['WebKit Linux'].currentBuilds = [];
 
     var failingBuildInfoJSON = JSON.parse(JSON.stringify(kExampleBuildInfoWithTaskKillWarning));
     failingBuildInfoJSON.number = 21460;
@@ -1133,7 +1132,7 @@ test("buildersFailing (taskkill warning)", 3, function() {
         simulator.scheduleCallback(function() {
             if (/\/json\/builders$/.exec(url))
                 callback(builderStatusJSON);
-            else if (/Webkit%20Linux/.exec(url))
+            else if (/WebKit%20Linux/.exec(url))
                 callback(failingBuildInfoJSON);
             else {
                 ok(false, "Unexpected URL: " + url);
@@ -1150,7 +1149,7 @@ test("buildersFailing (taskkill warning)", 3, function() {
 
     deepEqual(requestedURLs, [
       "http://build.chromium.org/p/chromium.webkit/json/builders",
-      "http://build.chromium.org/p/chromium.webkit/json/builders/Webkit%20Linux/builds/21460",
+      "http://build.chromium.org/p/chromium.webkit/json/builders/WebKit%20Linux/builds/21460",
     ]);
 });
 

@@ -105,7 +105,7 @@ class FactoryTest(unittest.TestCase):
         self.assertRaises(NotImplementedError, factory.PortFactory(MockSystemHost(os_name='vms')).get)
 
     def test_get_from_builder_name(self):
-        self.assertEquals(factory.PortFactory(MockSystemHost()).get_from_builder_name('Webkit Mac10.7').name(),
+        self.assertEquals(factory.PortFactory(MockSystemHost()).get_from_builder_name('WebKit Mac10.7').name(),
                           'chromium-mac-lion')
 
 
