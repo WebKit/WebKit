@@ -1,3 +1,20 @@
+2012-10-12  Andreas Kling  <kling@webkit.org>
+
+        REGRESSION: Rapid memory growth calling DOM APIs with large strings.
+        <http://webkit.org/b/98498>
+        <rdar://problem/12443926>
+
+        Reviewed by Geöff Gären and Änders Cärlssön.
+
+        Prevent the selector query cache from growing indefinitely by setting a relaxed limit of 256 entries.
+        If the cache fills up, remove a random entry before inserting a new one.
+
+        While this is unlikely to be a problem on real websites, we definitely shouldn't be adding boundless
+        caches to WebKit.
+
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorQueryCache::add):
+
 2012-10-12  Roger Fong  <roger_fong@apple.com>
 
         Update method signature for platformCALayerShowRepaintCounter in MediaPlayerPlayerPrivateAVFoundationCF's LayerClient class.

@@ -190,6 +190,10 @@ SelectorQuery* SelectorQueryCache::add(const AtomicString& selectors, Document* 
         ec = NAMESPACE_ERR;
         return 0;
     }
+
+    const int maximumSelectorQueryCacheSize = 256;
+    if (m_entries.size() == maximumSelectorQueryCacheSize)
+        m_entries.remove(m_entries.begin());
     
     OwnPtr<SelectorQuery> selectorQuery = adoptPtr(new SelectorQuery(selectorList));
     SelectorQuery* rawSelectorQuery = selectorQuery.get();
