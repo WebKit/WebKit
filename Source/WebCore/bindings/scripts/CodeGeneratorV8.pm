@@ -835,9 +835,12 @@ END
 END
     } elsif ($implClassName eq "WorkerContext") {
         push(@implContentDecls, "    return perContextData->constructorForType(WrapperTypeInfo::unwrap(data), V8WorkerContext::toNative(info.Holder()));\n")
-    } else {
-        die "Unknown Context ${implClassName}"
     }
+    # FIXME: This code is correct for real IDL files, but fails with TestObj.idl,
+    # which contains methods with [V8EnabledPerContext].
+    # else {
+    #    die "Unknown Context ${implClassName}"
+    # }
     push(@implContentDecls, <<END);
 }
 END

@@ -1,3 +1,18 @@
+2012-10-12  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Fix run-binding-tests failures introduced in r131167.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateConstructorGetter):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore):
+        (WebCore::TestObjV8Internal::TestObjConstructorGetter):
+        (WebCore::V8TestObj::installPerContextProperties):
+        (WebCore::V8TestObj::installPerContextPrototypeProperties):
+        (WebCore::V8TestObj::wrapSlow):
+        * bindings/scripts/test/V8/V8TestObj.h:
+        (V8TestObj):
+
 2012-10-12  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: relies on current Function.prototype.bind in the frame
