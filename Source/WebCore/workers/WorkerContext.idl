@@ -24,84 +24,81 @@
  *
  */
 
-module threads {
+interface [
+    Conditional=WORKERS,
+    JSCustomMarkFunction,
+    JSCustomGetOwnPropertySlotAndDescriptor,
+    EventTarget,
+    ExtendsDOMGlobalObject,
+    IsWorkerContext,
+    JSLegacyParent=JSWorkerContextBase,
+    JSNoStaticTables,
+    OmitConstructor,
+    V8CustomToJSObject
+] WorkerContext {
 
-    interface [
-        Conditional=WORKERS,
-        JSCustomMarkFunction,
-        JSCustomGetOwnPropertySlotAndDescriptor,
-        EventTarget,
-        ExtendsDOMGlobalObject,
-        IsWorkerContext,
-        JSLegacyParent=JSWorkerContextBase,
-        JSNoStaticTables,
-        OmitConstructor,
-        V8CustomToJSObject
-    ] WorkerContext {
-
-        // WorkerGlobalScope
+    // WorkerGlobalScope
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-                 attribute [Replaceable] WorkerContext self;
+             attribute [Replaceable] WorkerContext self;
 #endif
-                 attribute [Replaceable] WorkerLocation location;
-        void close();
-                 attribute EventListener onerror;
+             attribute [Replaceable] WorkerLocation location;
+    void close();
+             attribute EventListener onerror;
 
-        // WorkerUtils
-        [Custom] void importScripts(/*[Variadic] in DOMString urls */);
-                 attribute [Replaceable] WorkerNavigator navigator;
+    // WorkerUtils
+    [Custom] void importScripts(/*[Variadic] in DOMString urls */);
+             attribute [Replaceable] WorkerNavigator navigator;
 
-        // Timers
-        [Custom] long setTimeout(in TimeoutHandler handler, in long timeout);
-        // [Custom] long setTimeout(in DOMString code, in long timeout);
-        void clearTimeout(in [Optional=DefaultIsUndefined] long handle);
-        [Custom] long setInterval(in TimeoutHandler handler, in long timeout);
-        // [Custom] long setInterval(in DOMString code, in long timeout);
-        void clearInterval(in [Optional=DefaultIsUndefined] long handle);
+    // Timers
+    [Custom] long setTimeout(in TimeoutHandler handler, in long timeout);
+    // [Custom] long setTimeout(in DOMString code, in long timeout);
+    void clearTimeout(in [Optional=DefaultIsUndefined] long handle);
+    [Custom] long setInterval(in TimeoutHandler handler, in long timeout);
+    // [Custom] long setInterval(in DOMString code, in long timeout);
+    void clearInterval(in [Optional=DefaultIsUndefined] long handle);
 
 
-        // EventTarget interface
-        void addEventListener(in DOMString type, 
-                              in EventListener listener, 
-                              in [Optional] boolean useCapture);
-        void removeEventListener(in DOMString type, 
-                                 in EventListener listener, 
-                                 in [Optional] boolean useCapture);
-        boolean dispatchEvent(in Event evt)
-            raises(EventException);
+    // EventTarget interface
+    void addEventListener(in DOMString type, 
+                          in EventListener listener, 
+                          in [Optional] boolean useCapture);
+    void removeEventListener(in DOMString type, 
+                             in EventListener listener, 
+                             in [Optional] boolean useCapture);
+    boolean dispatchEvent(in Event evt)
+        raises(EventException);
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-        // Constructors
-        attribute MessageEventConstructor MessageEvent;
-        attribute WorkerLocationConstructor WorkerLocation;
+    // Constructors
+    attribute MessageEventConstructor MessageEvent;
+    attribute WorkerLocationConstructor WorkerLocation;
 
 #if ENABLE_CHANNEL_MESSAGING
-        attribute [JSCustomGetter] MessageChannelConstructor MessageChannel;
+    attribute [JSCustomGetter] MessageChannelConstructor MessageChannel;
 #endif
-        attribute [JSCustomGetter] EventSourceConstructor EventSource;
-        attribute [JSCustomGetter] XMLHttpRequestConstructor XMLHttpRequest;
+    attribute [JSCustomGetter] EventSourceConstructor EventSource;
+    attribute [JSCustomGetter] XMLHttpRequestConstructor XMLHttpRequest;
 #endif
 
 #if defined(ENABLE_BLOB) && ENABLE_BLOB
-        attribute BlobConstructor Blob;
-        attribute FileReaderConstructor FileReader;
-        attribute FileReaderSyncConstructor FileReaderSync;
+    attribute BlobConstructor Blob;
+    attribute FileReaderConstructor FileReader;
+    attribute FileReaderSyncConstructor FileReaderSync;
 #endif
 
-        attribute [Conditional=BLOB] DOMURLConstructor URL;
-        attribute [Conditional=BLOB] DOMURLConstructor webkitURL; // FIXME: deprecate this.
+    attribute [Conditional=BLOB] DOMURLConstructor URL;
+    attribute [Conditional=BLOB] DOMURLConstructor webkitURL; // FIXME: deprecate this.
 
-        attribute ArrayBufferConstructor ArrayBuffer; // Usable with new operator
-        attribute Int8ArrayConstructor Int8Array; // Usable with new operator
-        attribute Uint8ArrayConstructor Uint8Array; // Usable with new operator
-        attribute Uint8ArrayConstructor Uint8ClampedArray; // Usable with new operator
-        attribute Int16ArrayConstructor Int16Array; // Usable with new operator
-        attribute Uint16ArrayConstructor Uint16Array; // Usable with new operator
-        attribute Int32ArrayConstructor Int32Array; // Usable with new operator
-        attribute Uint32ArrayConstructor Uint32Array; // Usable with new operator
-        attribute Float32ArrayConstructor Float32Array; // Usable with new operator
-        attribute Float64ArrayConstructor Float64Array; // Usable with new operator
-        attribute DataViewConstructor DataView; // Usable with new operator
-    };
+    attribute ArrayBufferConstructor ArrayBuffer; // Usable with new operator
+    attribute Int8ArrayConstructor Int8Array; // Usable with new operator
+    attribute Uint8ArrayConstructor Uint8Array; // Usable with new operator
+    attribute Uint8ArrayConstructor Uint8ClampedArray; // Usable with new operator
+    attribute Int16ArrayConstructor Int16Array; // Usable with new operator
+    attribute Uint16ArrayConstructor Uint16Array; // Usable with new operator
+    attribute Int32ArrayConstructor Int32Array; // Usable with new operator
+    attribute Uint32ArrayConstructor Uint32Array; // Usable with new operator
+    attribute Float32ArrayConstructor Float32Array; // Usable with new operator
+    attribute Float64ArrayConstructor Float64Array; // Usable with new operator
+    attribute DataViewConstructor DataView; // Usable with new operator
+};
 
-}

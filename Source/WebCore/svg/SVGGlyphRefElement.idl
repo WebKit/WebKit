@@ -17,24 +17,20 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module svg {
-
-    interface [Conditional=SVG&SVG_FONTS] SVGGlyphRefElement : SVGElement,
-                                                               SVGURIReference,
-                                                               SVGStylable {
-        // FIXME: Use [Reflect] after https://bugs.webkit.org/show_bug.cgi?id=64843 is fixed.
-        attribute DOMString glyphRef
-            setter raises(DOMException);
-        attribute [Reflect] DOMString format;
-        attribute float x
-            setter raises(DOMException);
-        attribute float y
-            setter raises(DOMException);
-        attribute float dx
-            setter raises(DOMException);
-        attribute float dy
-            setter raises(DOMException);
-    };
-
-}
+interface [Conditional=SVG&SVG_FONTS] SVGGlyphRefElement : SVGElement,
+                                                           SVGURIReference,
+                                                           SVGStylable {
+    // FIXME: Use [Reflect] after https://bugs.webkit.org/show_bug.cgi?id=64843 is fixed.
+    attribute DOMString glyphRef
+        setter raises(DOMException);
+    attribute [Reflect] DOMString format;
+    attribute float x
+        setter raises(DOMException);
+    attribute float y
+        setter raises(DOMException);
+    attribute float dx
+        setter raises(DOMException);
+    attribute float dy
+        setter raises(DOMException);
+};
 

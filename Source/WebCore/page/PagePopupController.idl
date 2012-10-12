@@ -28,11 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module window {
-    interface [
-        Conditional=PAGE_POPUP
-    ] PagePopupController {
-        void setValueAndClosePopup(in long numberValue, in DOMString stringValue);
-        DOMString localizeNumberString(in DOMString numberString);
-    };
-}
+interface [
+    Conditional=PAGE_POPUP
+] PagePopupController {
+    void setValueAndClosePopup(in long numberValue, in DOMString stringValue);
+    DOMString localizeNumberString(in DOMString numberString);
+};

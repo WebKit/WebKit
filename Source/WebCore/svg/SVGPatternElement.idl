@@ -23,25 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG
+] SVGPatternElement : SVGElement,
+                                                SVGURIReference,
+                                                SVGTests,
+                                                SVGLangSpace,
+                                                SVGExternalResourcesRequired,
+                                                SVGStylable,
+                                                SVGFitToViewBox
+                                             /* SVGUnitTypes */ {
+    readonly attribute SVGAnimatedEnumeration   patternUnits;
+    readonly attribute SVGAnimatedEnumeration   patternContentUnits;
+    readonly attribute SVGAnimatedTransformList patternTransform;
+    readonly attribute SVGAnimatedLength        x;
+    readonly attribute SVGAnimatedLength        y;
+    readonly attribute SVGAnimatedLength        width;
+    readonly attribute SVGAnimatedLength        height;
+};
 
-    interface [
-        Conditional=SVG
-    ] SVGPatternElement : SVGElement,
-                                                    SVGURIReference,
-                                                    SVGTests,
-                                                    SVGLangSpace,
-                                                    SVGExternalResourcesRequired,
-                                                    SVGStylable,
-                                                    SVGFitToViewBox
-                                                 /* SVGUnitTypes */ {
-        readonly attribute SVGAnimatedEnumeration   patternUnits;
-        readonly attribute SVGAnimatedEnumeration   patternContentUnits;
-        readonly attribute SVGAnimatedTransformList patternTransform;
-        readonly attribute SVGAnimatedLength        x;
-        readonly attribute SVGAnimatedLength        y;
-        readonly attribute SVGAnimatedLength        width;
-        readonly attribute SVGAnimatedLength        height;
-    };
-
-}

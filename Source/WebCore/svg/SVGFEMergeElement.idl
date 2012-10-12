@@ -23,12 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG&FILTERS
+] SVGFEMergeElement : SVGElement,
+                                                SVGFilterPrimitiveStandardAttributes {
+};
 
-    interface [
-        Conditional=SVG&FILTERS
-    ] SVGFEMergeElement : SVGElement,
-                                                    SVGFilterPrimitiveStandardAttributes {
-    };
-
-}

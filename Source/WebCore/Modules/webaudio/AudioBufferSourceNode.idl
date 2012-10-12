@@ -22,36 +22,34 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module audio {
-    // A cached (non-streamed), memory-resident audio source
-    interface [
-        Conditional=WEB_AUDIO,
-        JSGenerateToJSObject
-    ] AudioBufferSourceNode : AudioSourceNode {
-        attribute [CustomSetter] AudioBuffer buffer
-            setter raises (DOMException);
+// A cached (non-streamed), memory-resident audio source
+interface [
+    Conditional=WEB_AUDIO,
+    JSGenerateToJSObject
+] AudioBufferSourceNode : AudioSourceNode {
+    attribute [CustomSetter] AudioBuffer buffer
+        setter raises (DOMException);
 
-        const unsigned short UNSCHEDULED_STATE = 0;
-        const unsigned short SCHEDULED_STATE = 1;
-        const unsigned short PLAYING_STATE = 2;
-        const unsigned short FINISHED_STATE = 3;
+    const unsigned short UNSCHEDULED_STATE = 0;
+    const unsigned short SCHEDULED_STATE = 1;
+    const unsigned short PLAYING_STATE = 2;
+    const unsigned short FINISHED_STATE = 3;
 
-        readonly attribute unsigned short playbackState;
+    readonly attribute unsigned short playbackState;
 
-        readonly attribute AudioGain gain;
-        readonly attribute AudioParam playbackRate;
+    readonly attribute AudioGain gain;
+    readonly attribute AudioParam playbackRate;
 
-        attribute boolean loop; // This is the proper attribute name from the specification.
-        attribute boolean looping; // This is an alias for the .loop attribute for backwards compatibility.
+    attribute boolean loop; // This is the proper attribute name from the specification.
+    attribute boolean looping; // This is an alias for the .loop attribute for backwards compatibility.
 
-        [V8MeasureAs=WebAudioStart] void start(in double when);
-        [V8MeasureAs=WebAudioStart, ImplementedAs=startGrain] void start(in double when, in double grainOffset, in double grainDuration);
-        void stop(in double when);
+    [V8MeasureAs=WebAudioStart] void start(in double when);
+    [V8MeasureAs=WebAudioStart, ImplementedAs=startGrain] void start(in double when, in double grainOffset, in double grainDuration);
+    void stop(in double when);
 
 #if defined(ENABLE_LEGACY_WEB_AUDIO) && ENABLE_LEGACY_WEB_AUDIO
-        [V8MeasureAs=LegacyWebAudioNoteOn] void noteOn(in double when);
-        [V8MeasureAs=LegacyWebAudioNoteOn] void noteGrainOn(in double when, in double grainOffset, in double grainDuration);
-        void noteOff(in double when);
+    [V8MeasureAs=LegacyWebAudioNoteOn] void noteOn(in double when);
+    [V8MeasureAs=LegacyWebAudioNoteOn] void noteGrainOn(in double when, in double grainOffset, in double grainDuration);
+    void noteOff(in double when);
 #endif
-    };
-}
+};

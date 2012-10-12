@@ -26,19 +26,17 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module audio {
-    interface [
-        Conditional=WEB_AUDIO
-    ] AudioBuffer {
-        readonly attribute long length; // in sample-frames
-        readonly attribute float duration; // in seconds
-        readonly attribute float sampleRate; // in sample-frames per second
+interface [
+    Conditional=WEB_AUDIO
+] AudioBuffer {
+    readonly attribute long length; // in sample-frames
+    readonly attribute float duration; // in seconds
+    readonly attribute float sampleRate; // in sample-frames per second
 
-        attribute float gain; // linear gain (default 1.0)
+    attribute float gain; // linear gain (default 1.0)
 
-        // Channel access
-        readonly attribute unsigned long numberOfChannels;
-        Float32Array getChannelData(in unsigned long channelIndex)
-            raises(DOMException);
-    };
-}
+    // Channel access
+    readonly attribute unsigned long numberOfChannels;
+    Float32Array getChannelData(in unsigned long channelIndex)
+        raises(DOMException);
+};

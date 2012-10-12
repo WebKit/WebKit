@@ -23,21 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG,
+    OmitConstructor
+] SVGAnimationElement : SVGElement,
+                                                  SVGTests,
+                                                  SVGExternalResourcesRequired,
+                                                  ElementTimeControl {
+    readonly attribute SVGElement targetElement;
 
-    interface [
-        Conditional=SVG,
-        OmitConstructor
-    ] SVGAnimationElement : SVGElement,
-                                                      SVGTests,
-                                                      SVGExternalResourcesRequired,
-                                                      ElementTimeControl {
-        readonly attribute SVGElement targetElement;
+    float getStartTime();
+    float getCurrentTime();
+    float getSimpleDuration()
+        raises(DOMException);
+};
 
-        float getStartTime();
-        float getCurrentTime();
-        float getSimpleDuration()
-            raises(DOMException);
-    };
-
-}

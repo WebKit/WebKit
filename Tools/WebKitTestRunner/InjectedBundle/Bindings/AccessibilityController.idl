@@ -23,22 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module WTR {
+interface AccessibilityController {
+    readonly attribute AccessibilityUIElement rootElement;
+    readonly attribute AccessibilityUIElement focusedElement;
+    AccessibilityUIElement elementAtPoint(in int x, in int y);
+    AccessibilityUIElement accessibleElementById(in DOMString id);
+    
+    boolean addNotificationListener(in object functionCallback);
+    boolean removeNotificationListener();
 
-    interface AccessibilityController {
-        readonly attribute AccessibilityUIElement rootElement;
-        readonly attribute AccessibilityUIElement focusedElement;
-        AccessibilityUIElement elementAtPoint(in int x, in int y);
-        AccessibilityUIElement accessibleElementById(in DOMString id);
-        
-        boolean addNotificationListener(in object functionCallback);
-        boolean removeNotificationListener();
+    void logFocusEvents();
+    void logValueChangeEvents();
+    void logScrollingStartEvents();
+    void logAccessibilityEvents();
+    void resetToConsistentState();
+};
 
-        void logFocusEvents();
-        void logValueChangeEvents();
-        void logScrollingStartEvents();
-        void logAccessibilityEvents();
-        void resetToConsistentState();
-    };
-
-}

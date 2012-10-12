@@ -24,19 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG
+] SVGStyleElement : SVGElement,
+                                              SVGLangSpace {
+             attribute boolean disabled;
+             attribute DOMString type
+                 setter raises(DOMException);
+             attribute DOMString media
+                 setter raises(DOMException);
+             attribute DOMString title
+                 setter raises(DOMException);
+};
 
-    interface [
-        Conditional=SVG
-    ] SVGStyleElement : SVGElement,
-                                                  SVGLangSpace {
-                 attribute boolean disabled;
-                 attribute DOMString type
-                     setter raises(DOMException);
-                 attribute DOMString media
-                     setter raises(DOMException);
-                 attribute DOMString title
-                     setter raises(DOMException);
-    };
-
-}

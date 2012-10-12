@@ -22,13 +22,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module audio {
-    // A linear convolution effect
-    interface [
-        Conditional=WEB_AUDIO,
-        JSGenerateToJSObject
-    ] ConvolverNode : AudioNode {
-        attribute AudioBuffer buffer;
-        attribute boolean normalize;
-    };
-}
+// A linear convolution effect
+interface [
+    Conditional=WEB_AUDIO,
+    JSGenerateToJSObject
+] ConvolverNode : AudioNode {
+    attribute AudioBuffer buffer;
+    attribute boolean normalize;
+};

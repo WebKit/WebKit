@@ -23,20 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module events {
-
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-    // Introduced in DOM Level 3:
-    interface [
-        ConstructorTemplate=Event
-    ] CustomEvent : Event {
-        readonly attribute [InitializedByEventConstructor] DOMObject detail;
+// Introduced in DOM Level 3:
+interface [
+    ConstructorTemplate=Event
+] CustomEvent : Event {
+    readonly attribute [InitializedByEventConstructor] DOMObject detail;
 
-        void initCustomEvent(in [Optional=DefaultIsUndefined] DOMString typeArg, 
-                             in [Optional=DefaultIsUndefined] boolean canBubbleArg, 
-                             in [Optional=DefaultIsUndefined] boolean cancelableArg, 
-                             in [Optional=DefaultIsUndefined] DOMObject detailArg);
-    };
+    void initCustomEvent(in [Optional=DefaultIsUndefined] DOMString typeArg, 
+                         in [Optional=DefaultIsUndefined] boolean canBubbleArg, 
+                         in [Optional=DefaultIsUndefined] boolean cancelableArg, 
+                         in [Optional=DefaultIsUndefined] DOMObject detailArg);
+};
 #endif
 
-}

@@ -18,38 +18,35 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module html {
-
-    interface [
-        JSGenerateToNativeObject
-    ] HTMLImageElement : HTMLElement {
-        attribute [Reflect] DOMString name;
-        attribute [Reflect] DOMString align;
-        attribute [Reflect] DOMString alt;
-        attribute [Reflect] DOMString border;
-        attribute [Reflect] DOMString crossOrigin;
-        attribute long height;
-        attribute [Reflect] long hspace;
-        attribute [Reflect] boolean isMap;
-        attribute [Reflect, URL] DOMString longDesc;
-        attribute [Reflect, URL] DOMString src;
-        attribute [Reflect] DOMString useMap;
-        attribute [Reflect] long vspace;
-        attribute long width;
-        
-        // Extensions
-        readonly attribute boolean complete;
-        attribute [Reflect,URL] DOMString lowsrc;
-        readonly attribute long naturalHeight;
-        readonly attribute long naturalWidth;
-        readonly attribute long x;
-        readonly attribute long y;
+interface [
+    JSGenerateToNativeObject
+] HTMLImageElement : HTMLElement {
+    attribute [Reflect] DOMString name;
+    attribute [Reflect] DOMString align;
+    attribute [Reflect] DOMString alt;
+    attribute [Reflect] DOMString border;
+    attribute [Reflect] DOMString crossOrigin;
+    attribute long height;
+    attribute [Reflect] long hspace;
+    attribute [Reflect] boolean isMap;
+    attribute [Reflect, URL] DOMString longDesc;
+    attribute [Reflect, URL] DOMString src;
+    attribute [Reflect] DOMString useMap;
+    attribute [Reflect] long vspace;
+    attribute long width;
+    
+    // Extensions
+    readonly attribute boolean complete;
+    attribute [Reflect,URL] DOMString lowsrc;
+    readonly attribute long naturalHeight;
+    readonly attribute long naturalWidth;
+    readonly attribute long x;
+    readonly attribute long y;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-        // Objective-C extension:
-        readonly attribute DOMString altDisplayString;
-        readonly attribute URL absoluteImageURL;
+    // Objective-C extension:
+    readonly attribute DOMString altDisplayString;
+    readonly attribute URL absoluteImageURL;
 #endif
-    };
+};
 
-}

@@ -18,56 +18,53 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module html {
-
-    interface HTMLAnchorElement : HTMLElement {
-        attribute [Reflect] DOMString charset;
-        attribute [Reflect] DOMString coords;
-        attribute [Conditional=DOWNLOAD_ATTRIBUTE, Reflect] DOMString download;
-        attribute [Reflect, URL] DOMString href;
-        attribute [Reflect] DOMString hreflang;
-        attribute [Reflect] DOMString name;
-        attribute [Reflect] DOMString ping;
-        attribute [Reflect] DOMString rel;
-        attribute [Reflect] DOMString rev;
-        attribute [Reflect] DOMString shape;
-        attribute [Reflect] DOMString target;
-        attribute [Reflect] DOMString type;
+interface HTMLAnchorElement : HTMLElement {
+    attribute [Reflect] DOMString charset;
+    attribute [Reflect] DOMString coords;
+    attribute [Conditional=DOWNLOAD_ATTRIBUTE, Reflect] DOMString download;
+    attribute [Reflect, URL] DOMString href;
+    attribute [Reflect] DOMString hreflang;
+    attribute [Reflect] DOMString name;
+    attribute [Reflect] DOMString ping;
+    attribute [Reflect] DOMString rel;
+    attribute [Reflect] DOMString rev;
+    attribute [Reflect] DOMString shape;
+    attribute [Reflect] DOMString target;
+    attribute [Reflect] DOMString type;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-        attribute [Reflect] DOMString accessKey;
+    attribute [Reflect] DOMString accessKey;
 #endif
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-        readonly attribute DOMString hash;
-        readonly attribute DOMString host;
-        readonly attribute DOMString hostname;
-        readonly attribute DOMString pathname;
-        readonly attribute DOMString port;
-        readonly attribute DOMString protocol;
-        readonly attribute DOMString search;
+    readonly attribute DOMString hash;
+    readonly attribute DOMString host;
+    readonly attribute DOMString hostname;
+    readonly attribute DOMString pathname;
+    readonly attribute DOMString port;
+    readonly attribute DOMString protocol;
+    readonly attribute DOMString search;
 #else
-        attribute [TreatNullAs=NullString] DOMString hash;
-        attribute [TreatNullAs=NullString] DOMString host;
-        attribute [TreatNullAs=NullString] DOMString hostname;
-        attribute [TreatNullAs=NullString] DOMString pathname;
-        attribute [TreatNullAs=NullString] DOMString port;
-        attribute [TreatNullAs=NullString] DOMString protocol;
-        attribute [TreatNullAs=NullString] DOMString search;
+    attribute [TreatNullAs=NullString] DOMString hash;
+    attribute [TreatNullAs=NullString] DOMString host;
+    attribute [TreatNullAs=NullString] DOMString hostname;
+    attribute [TreatNullAs=NullString] DOMString pathname;
+    attribute [TreatNullAs=NullString] DOMString port;
+    attribute [TreatNullAs=NullString] DOMString protocol;
+    attribute [TreatNullAs=NullString] DOMString search;
 
-        readonly attribute [TreatNullAs=NullString] DOMString origin;
+    readonly attribute [TreatNullAs=NullString] DOMString origin;
 #endif
 
-        readonly attribute DOMString text;
+    readonly attribute DOMString text;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        [NotEnumerable] DOMString toString();
+    [NotEnumerable] DOMString toString();
 #endif
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-        // Objective-C extension:
-        readonly attribute URL absoluteLinkURL;
+    // Objective-C extension:
+    readonly attribute URL absoluteLinkURL;
 #endif
-    };
+};
 
-}

@@ -23,15 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG
+] SVGViewElement : SVGElement,
+                                             SVGExternalResourcesRequired,
+                                             SVGFitToViewBox,
+                                             SVGZoomAndPan {
+    readonly attribute SVGStringList viewTarget;
+};
 
-    interface [
-        Conditional=SVG
-    ] SVGViewElement : SVGElement,
-                                                 SVGExternalResourcesRequired,
-                                                 SVGFitToViewBox,
-                                                 SVGZoomAndPan {
-        readonly attribute SVGStringList viewTarget;
-    };
-
-}

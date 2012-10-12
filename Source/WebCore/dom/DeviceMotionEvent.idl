@@ -23,22 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module core {
+interface [
+    Conditional=DEVICE_ORIENTATION,
+] DeviceMotionEvent : Event {
+    readonly attribute [Custom] Acceleration acceleration;
+    readonly attribute [Custom] Acceleration accelerationIncludingGravity;
+    readonly attribute [Custom] RotationRate rotationRate;
+    readonly attribute [Custom] double interval;
+    [Custom] void initDeviceMotionEvent(in [Optional=DefaultIsUndefined] DOMString type, 
+                                        in [Optional=DefaultIsUndefined] boolean bubbles, 
+                                        in [Optional=DefaultIsUndefined] boolean cancelable, 
+                                        in [Optional=DefaultIsUndefined] Acceleration acceleration, 
+                                        in [Optional=DefaultIsUndefined] Acceleration accelerationIncludingGravity, 
+                                        in [Optional=DefaultIsUndefined] RotationRate rotationRate, 
+                                        in [Optional=DefaultIsUndefined] double interval);
+};
 
-    interface [
-        Conditional=DEVICE_ORIENTATION,
-    ] DeviceMotionEvent : Event {
-        readonly attribute [Custom] Acceleration acceleration;
-        readonly attribute [Custom] Acceleration accelerationIncludingGravity;
-        readonly attribute [Custom] RotationRate rotationRate;
-        readonly attribute [Custom] double interval;
-        [Custom] void initDeviceMotionEvent(in [Optional=DefaultIsUndefined] DOMString type, 
-                                            in [Optional=DefaultIsUndefined] boolean bubbles, 
-                                            in [Optional=DefaultIsUndefined] boolean cancelable, 
-                                            in [Optional=DefaultIsUndefined] Acceleration acceleration, 
-                                            in [Optional=DefaultIsUndefined] Acceleration accelerationIncludingGravity, 
-                                            in [Optional=DefaultIsUndefined] RotationRate rotationRate, 
-                                            in [Optional=DefaultIsUndefined] double interval);
-    };
-
-}

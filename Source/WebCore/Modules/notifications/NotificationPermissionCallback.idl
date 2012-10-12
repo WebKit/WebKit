@@ -23,13 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module threads {
+interface [
+    Conditional=NOTIFICATIONS,
+    Callback
+] NotificationPermissionCallback {
+    boolean handleEvent(in DOMString permission);
+};
 
-    interface [
-        Conditional=NOTIFICATIONS,
-        Callback
-    ] NotificationPermissionCallback {
-        boolean handleEvent(in DOMString permission);
-    };
-
-}

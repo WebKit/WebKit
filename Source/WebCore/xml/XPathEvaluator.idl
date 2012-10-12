@@ -17,21 +17,19 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module xpath {
-    interface [
-        Constructor
-    ] XPathEvaluator {
-        XPathExpression createExpression(in [Optional=DefaultIsUndefined] DOMString expression,
-                                         in [Optional=DefaultIsUndefined] XPathNSResolver resolver)
-            raises(DOMException);
+interface [
+    Constructor
+] XPathEvaluator {
+    XPathExpression createExpression(in [Optional=DefaultIsUndefined] DOMString expression,
+                                     in [Optional=DefaultIsUndefined] XPathNSResolver resolver)
+        raises(DOMException);
 
-        XPathNSResolver createNSResolver(in [Optional=DefaultIsUndefined] Node nodeResolver);
+    XPathNSResolver createNSResolver(in [Optional=DefaultIsUndefined] Node nodeResolver);
 
-        XPathResult evaluate(in [Optional=DefaultIsUndefined] DOMString expression,
-                             in [Optional=DefaultIsUndefined] Node contextNode, 
-                             in [Optional=DefaultIsUndefined] XPathNSResolver resolver,
-                             in [Optional=DefaultIsUndefined] unsigned short type,
-                             in [Optional=DefaultIsUndefined] XPathResult inResult)
-            raises(DOMException);
-    };
-}
+    XPathResult evaluate(in [Optional=DefaultIsUndefined] DOMString expression,
+                         in [Optional=DefaultIsUndefined] Node contextNode, 
+                         in [Optional=DefaultIsUndefined] XPathNSResolver resolver,
+                         in [Optional=DefaultIsUndefined] unsigned short type,
+                         in [Optional=DefaultIsUndefined] XPathResult inResult)
+        raises(DOMException);
+};

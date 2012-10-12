@@ -18,30 +18,27 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module css {
+// Introduced in DOM Level 2:
+interface [
+    V8GenerateIsReachable=ImplOwnerNodeRoot
+] CSSStyleSheet : StyleSheet {
+    readonly attribute CSSRule          ownerRule;
+    readonly attribute CSSRuleList      cssRules;
 
-    // Introduced in DOM Level 2:
-    interface [
-        V8GenerateIsReachable=ImplOwnerNodeRoot
-    ] CSSStyleSheet : StyleSheet {
-        readonly attribute CSSRule          ownerRule;
-        readonly attribute CSSRuleList      cssRules;
+    [ObjCLegacyUnnamedParameters] unsigned long insertRule(in [Optional=DefaultIsUndefined] DOMString rule, 
+                                            in [Optional=DefaultIsUndefined] unsigned long index)
+        raises(DOMException);
+    void               deleteRule(in [Optional=DefaultIsUndefined] unsigned long index)
+        raises(DOMException);
 
-        [ObjCLegacyUnnamedParameters] unsigned long insertRule(in [Optional=DefaultIsUndefined] DOMString rule, 
-                                                in [Optional=DefaultIsUndefined] unsigned long index)
-            raises(DOMException);
-        void               deleteRule(in [Optional=DefaultIsUndefined] unsigned long index)
-            raises(DOMException);
+    // IE Extensions
+    readonly attribute CSSRuleList      rules;
 
-        // IE Extensions
-        readonly attribute CSSRuleList      rules;
+    long addRule(in [Optional=DefaultIsUndefined] DOMString selector,
+                 in [Optional=DefaultIsUndefined] DOMString style,
+                 in [Optional] unsigned long index)
+        raises(DOMException);
+    void removeRule(in [Optional=DefaultIsUndefined] unsigned long index)
+        raises(DOMException);
+};
 
-        long addRule(in [Optional=DefaultIsUndefined] DOMString selector,
-                     in [Optional=DefaultIsUndefined] DOMString style,
-                     in [Optional] unsigned long index)
-            raises(DOMException);
-        void removeRule(in [Optional=DefaultIsUndefined] unsigned long index)
-            raises(DOMException);
-    };
-
-}

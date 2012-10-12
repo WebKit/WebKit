@@ -24,27 +24,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG&FILTERS
+] SVGFilterElement : SVGElement,
+                                               SVGURIReference,
+                                               SVGLangSpace,
+                                               SVGExternalResourcesRequired,
+                                               SVGStylable
+                                            /* SVGUnitTypes */ {  
+    readonly attribute SVGAnimatedEnumeration filterUnits;
+    readonly attribute SVGAnimatedEnumeration primitiveUnits;
+    readonly attribute SVGAnimatedLength      x;
+    readonly attribute SVGAnimatedLength      y;
+    readonly attribute SVGAnimatedLength      width;
+    readonly attribute SVGAnimatedLength      height;
+    readonly attribute SVGAnimatedInteger     filterResX;
+    readonly attribute SVGAnimatedInteger     filterResY;
 
-    interface [
-        Conditional=SVG&FILTERS
-    ] SVGFilterElement : SVGElement,
-                                                   SVGURIReference,
-                                                   SVGLangSpace,
-                                                   SVGExternalResourcesRequired,
-                                                   SVGStylable
-                                                /* SVGUnitTypes */ {  
-        readonly attribute SVGAnimatedEnumeration filterUnits;
-        readonly attribute SVGAnimatedEnumeration primitiveUnits;
-        readonly attribute SVGAnimatedLength      x;
-        readonly attribute SVGAnimatedLength      y;
-        readonly attribute SVGAnimatedLength      width;
-        readonly attribute SVGAnimatedLength      height;
-        readonly attribute SVGAnimatedInteger     filterResX;
-        readonly attribute SVGAnimatedInteger     filterResY;
+    void setFilterRes(in [Optional=DefaultIsUndefined] unsigned long filterResX, 
+                      in [Optional=DefaultIsUndefined] unsigned long filterResY);
+};
 
-        void setFilterRes(in [Optional=DefaultIsUndefined] unsigned long filterResX, 
-                          in [Optional=DefaultIsUndefined] unsigned long filterResY);
-    };
-
-}

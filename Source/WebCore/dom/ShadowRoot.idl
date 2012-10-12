@@ -24,30 +24,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
+interface [
+    Conditional=SHADOW_DOM,
+    Constructor(in Element host),
+    ConstructorRaisesException,
+    JSGenerateToJSObject
+] ShadowRoot : DocumentFragment {
+    readonly attribute Element activeElement;
+    attribute boolean applyAuthorStyles;
+    attribute boolean resetStyleInheritance;
 
-    interface [
-        Conditional=SHADOW_DOM,
-        Constructor(in Element host),
-        ConstructorRaisesException,
-        JSGenerateToJSObject
-    ] ShadowRoot : DocumentFragment {
-        readonly attribute Element activeElement;
-        attribute boolean applyAuthorStyles;
-        attribute boolean resetStyleInheritance;
-
-        attribute [TreatNullAs=NullString] DOMString innerHTML
-            setter raises(DOMException);
+    attribute [TreatNullAs=NullString] DOMString innerHTML
+        setter raises(DOMException);
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        Node cloneNode(in [Optional=DefaultIsUndefined] boolean deep) raises(DOMException);
+    Node cloneNode(in [Optional=DefaultIsUndefined] boolean deep) raises(DOMException);
 #endif
-        DOMSelection getSelection();
-        Element getElementById(in [Optional=DefaultIsUndefined] DOMString elementId);
-        NodeList getElementsByClassName(in [Optional=DefaultIsUndefined] DOMString className);
-        NodeList getElementsByTagName(in [Optional=DefaultIsUndefined] DOMString tagName);
-        NodeList getElementsByTagNameNS(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI,
-                                        in [Optional=DefaultIsUndefined] DOMString localName);
-    };
+    DOMSelection getSelection();
+    Element getElementById(in [Optional=DefaultIsUndefined] DOMString elementId);
+    NodeList getElementsByClassName(in [Optional=DefaultIsUndefined] DOMString className);
+    NodeList getElementsByTagName(in [Optional=DefaultIsUndefined] DOMString tagName);
+    NodeList getElementsByTagNameNS(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI,
+                                    in [Optional=DefaultIsUndefined] DOMString localName);
+};
 
-}

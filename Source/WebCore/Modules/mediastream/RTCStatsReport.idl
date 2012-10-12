@@ -22,12 +22,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module mediastream {
-
-    interface [
-        Conditional=MEDIA_STREAM
-    ] RTCStatsReport {
-        readonly attribute RTCStatsElement local;
-        readonly attribute RTCStatsElement remote;
-    };
-}
+interface [
+    Conditional=MEDIA_STREAM
+] RTCStatsReport {
+    readonly attribute RTCStatsElement local;
+    readonly attribute RTCStatsElement remote;
+};

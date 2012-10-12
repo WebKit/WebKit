@@ -22,12 +22,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module audio {
-    interface [
-        Conditional=WEB_AUDIO,
-        JSGenerateToJSObject
-    ] AudioProcessingEvent : Event {
-        readonly attribute AudioBuffer inputBuffer;
-        readonly attribute AudioBuffer outputBuffer; 
-    };
-}
+interface [
+    Conditional=WEB_AUDIO,
+    JSGenerateToJSObject
+] AudioProcessingEvent : Event {
+    readonly attribute AudioBuffer inputBuffer;
+    readonly attribute AudioBuffer outputBuffer; 
+};

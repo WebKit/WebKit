@@ -29,243 +29,241 @@
 
 // This IDL file is for testing the bindings code generator and for tracking
 // changes in its ouput.
-module test {
-    interface [
-        Constructor(in [Callback] TestCallback testCallback),
-        InterfaceName=TestObject
-    ] TestObj {
-        // Attributes
-        readonly attribute long            readOnlyLongAttr;
-        readonly attribute DOMString       readOnlyStringAttr;
-        readonly attribute TestObj         readOnlyTestObjAttr;
+interface [
+    Constructor(in [Callback] TestCallback testCallback),
+    InterfaceName=TestObject
+] TestObj {
+    // Attributes
+    readonly attribute long            readOnlyLongAttr;
+    readonly attribute DOMString       readOnlyStringAttr;
+    readonly attribute TestObj         readOnlyTestObjAttr;
 #if defined(TESTING_JS) || defined(TESTING_V8)
-        static readonly attribute long     staticReadOnlyLongAttr;
-        static attribute DOMString         staticStringAttr;
-        static readonly attribute TestSubObjConstructor TestSubObj;
+    static readonly attribute long     staticReadOnlyLongAttr;
+    static attribute DOMString         staticStringAttr;
+    static readonly attribute TestSubObjConstructor TestSubObj;
 #endif
-        attribute short                    shortAttr;
-        attribute unsigned short           unsignedShortAttr;
-        attribute long                     longAttr;
-        attribute long long                longLongAttr;
-        attribute unsigned long long       unsignedLongLongAttr;
-        attribute DOMString                stringAttr;
-        attribute [V8MeasureAs=TestFeature] TestObj testObjAttr;
+    attribute short                    shortAttr;
+    attribute unsigned short           unsignedShortAttr;
+    attribute long                     longAttr;
+    attribute long long                longLongAttr;
+    attribute unsigned long long       unsignedLongLongAttr;
+    attribute DOMString                stringAttr;
+    attribute [V8MeasureAs=TestFeature] TestObj testObjAttr;
 
-        // WK_ucfirst, WK_lcfirst exceptional cases.
-        attribute TestObj                  XMLObjAttr;
-        attribute boolean                  create;
+    // WK_ucfirst, WK_lcfirst exceptional cases.
+    attribute TestObj                  XMLObjAttr;
+    attribute boolean                  create;
 
-        // Reflected DOM attributes
-        attribute [Reflect] DOMString reflectedStringAttr;
-        attribute [Reflect] long reflectedIntegralAttr;
-        attribute [Reflect] unsigned long reflectedUnsignedIntegralAttr;
-        attribute [Reflect] boolean reflectedBooleanAttr;
-        attribute [Reflect, URL] DOMString reflectedURLAttr;
-        attribute [Reflect=customContentStringAttr] DOMString reflectedStringAttr;
-        attribute [Reflect=customContentIntegralAttr] long reflectedCustomIntegralAttr;
-        attribute [Reflect=customContentBooleanAttr] boolean reflectedCustomBooleanAttr;
-        attribute [Reflect=customContentURLAttr, URL] DOMString reflectedCustomURLAttr;
+    // Reflected DOM attributes
+    attribute [Reflect] DOMString reflectedStringAttr;
+    attribute [Reflect] long reflectedIntegralAttr;
+    attribute [Reflect] unsigned long reflectedUnsignedIntegralAttr;
+    attribute [Reflect] boolean reflectedBooleanAttr;
+    attribute [Reflect, URL] DOMString reflectedURLAttr;
+    attribute [Reflect=customContentStringAttr] DOMString reflectedStringAttr;
+    attribute [Reflect=customContentIntegralAttr] long reflectedCustomIntegralAttr;
+    attribute [Reflect=customContentBooleanAttr] boolean reflectedCustomBooleanAttr;
+    attribute [Reflect=customContentURLAttr, URL] DOMString reflectedCustomURLAttr;
 
-        // TypedArray attribute
-        attribute Float32Array typedArrayAttr;
+    // TypedArray attribute
+    attribute Float32Array typedArrayAttr;
 
-        // Methods
-        void    voidMethod();
-        void    voidMethodWithArgs(in long longArg, in DOMString strArg, in TestObj objArg);
-        long    longMethod();
-        long    longMethodWithArgs(in long longArg, in DOMString strArg, in TestObj objArg);
-        [V8MeasureAs=TestFeature] TestObj objMethod();
-        TestObj objMethodWithArgs(in long longArg, in DOMString strArg, in TestObj objArg);
+    // Methods
+    void    voidMethod();
+    void    voidMethodWithArgs(in long longArg, in DOMString strArg, in TestObj objArg);
+    long    longMethod();
+    long    longMethodWithArgs(in long longArg, in DOMString strArg, in TestObj objArg);
+    [V8MeasureAs=TestFeature] TestObj objMethod();
+    TestObj objMethodWithArgs(in long longArg, in DOMString strArg, in TestObj objArg);
 
-        void methodWithSequenceArg(in sequence<ScriptProfile> sequenceArg);
-        sequence<ScriptProfile> methodReturningSequence(in long longArg);
+    void methodWithSequenceArg(in sequence<ScriptProfile> sequenceArg);
+    sequence<ScriptProfile> methodReturningSequence(in long longArg);
 
-        TestObj methodThatRequiresAllArgsAndThrows(in DOMString strArg, in TestObj objArg)
-            raises(DOMException);
+    TestObj methodThatRequiresAllArgsAndThrows(in DOMString strArg, in TestObj objArg)
+        raises(DOMException);
 
-        void serializedValue(in SerializedScriptValue serializedArg);
-        void idbKey(in IDBKey key);
-        void optionsObject(in Dictionary oo, in [Optional] Dictionary ooo);
+    void serializedValue(in SerializedScriptValue serializedArg);
+    void idbKey(in IDBKey key);
+    void optionsObject(in Dictionary oo, in [Optional] Dictionary ooo);
 
-        // Exceptions
-        void methodWithException() raises(DOMException);
-        attribute long attrWithGetterException getter raises(DOMException);
-        attribute long attrWithSetterException setter raises(DOMException);
-        attribute DOMString stringAttrWithGetterException getter raises(DOMException);
-        attribute DOMString stringAttrWithSetterException setter raises(DOMException);
+    // Exceptions
+    void methodWithException() raises(DOMException);
+    attribute long attrWithGetterException getter raises(DOMException);
+    attribute long attrWithSetterException setter raises(DOMException);
+    attribute DOMString stringAttrWithGetterException getter raises(DOMException);
+    attribute DOMString stringAttrWithSetterException setter raises(DOMException);
 
-        // 'Custom' extended attribute
-        attribute [Custom] long            customAttr;
-        [Custom, V8MeasureAs=CustomTestFeature] void customMethod();
-        [Custom] void customMethodWithArgs(in long longArg, in DOMString strArg, in TestObj objArg);
+    // 'Custom' extended attribute
+    attribute [Custom] long            customAttr;
+    [Custom, V8MeasureAs=CustomTestFeature] void customMethod();
+    [Custom] void customMethodWithArgs(in long longArg, in DOMString strArg, in TestObj objArg);
 
-        void addEventListener(in DOMString type, 
-                              in EventListener listener, 
-                              in [Optional] boolean useCapture);
-        void removeEventListener(in DOMString type, 
-                                 in EventListener listener, 
-                                 in [Optional] boolean useCapture);
+    void addEventListener(in DOMString type, 
+                          in EventListener listener, 
+                          in [Optional] boolean useCapture);
+    void removeEventListener(in DOMString type, 
+                             in EventListener listener, 
+                             in [Optional] boolean useCapture);
 
-        // 'CallWith' extended attribute
-        [CallWith=ScriptState] void withScriptStateVoid();
-        [CallWith=ScriptState] TestObj withScriptStateObj();
-        [CallWith=ScriptState] void withScriptStateVoidException()
-            raises(DOMException);
-        [CallWith=ScriptState] TestObj withScriptStateObjException()
-            raises(DOMException);
-        [CallWith=ScriptExecutionContext] void withScriptExecutionContext();
-        [CallWith=ScriptExecutionContext|ScriptState] void withScriptExecutionContextAndScriptState();
-        [CallWith=ScriptExecutionContext|ScriptState] TestObj withScriptExecutionContextAndScriptStateObjException()
-            raises(DOMException);
-        [CallWith=  ScriptExecutionContext  |  ScriptState  ] TestObj withScriptExecutionContextAndScriptStateWithSpaces();
-        [CallWith=ScriptArguments|CallStack] void withScriptArgumentsAndCallStack();
+    // 'CallWith' extended attribute
+    [CallWith=ScriptState] void withScriptStateVoid();
+    [CallWith=ScriptState] TestObj withScriptStateObj();
+    [CallWith=ScriptState] void withScriptStateVoidException()
+        raises(DOMException);
+    [CallWith=ScriptState] TestObj withScriptStateObjException()
+        raises(DOMException);
+    [CallWith=ScriptExecutionContext] void withScriptExecutionContext();
+    [CallWith=ScriptExecutionContext|ScriptState] void withScriptExecutionContextAndScriptState();
+    [CallWith=ScriptExecutionContext|ScriptState] TestObj withScriptExecutionContextAndScriptStateObjException()
+        raises(DOMException);
+    [CallWith=  ScriptExecutionContext  |  ScriptState  ] TestObj withScriptExecutionContextAndScriptStateWithSpaces();
+    [CallWith=ScriptArguments|CallStack] void withScriptArgumentsAndCallStack();
 
-        attribute [CallWith=ScriptState] long withScriptStateAttribute;
-        attribute [CallWith=ScriptExecutionContext] TestObj withScriptExecutionContextAttribute;
-        attribute [CallWith=ScriptState] TestObj withScriptStateAttributeRaises
-            getter raises(DOMException);
-        attribute [CallWith=ScriptExecutionContext] TestObj withScriptExecutionContextAttributeRaises
-            getter raises(DOMException);
-        attribute [CallWith=ScriptExecutionContext|ScriptState] TestObj withScriptExecutionContextAndScriptStateAttribute;
-        attribute [CallWith=ScriptExecutionContext|ScriptState] TestObj withScriptExecutionContextAndScriptStateAttributeRaises
-            getter raises(DOMException);
-        attribute [CallWith=  ScriptExecutionContext  |  ScriptState  ] TestObj withScriptExecutionContextAndScriptStateWithSpacesAttribute;
-        attribute [CallWith=ScriptArguments|CallStack] TestObj withScriptArgumentsAndCallStackAttribute;
+    attribute [CallWith=ScriptState] long withScriptStateAttribute;
+    attribute [CallWith=ScriptExecutionContext] TestObj withScriptExecutionContextAttribute;
+    attribute [CallWith=ScriptState] TestObj withScriptStateAttributeRaises
+        getter raises(DOMException);
+    attribute [CallWith=ScriptExecutionContext] TestObj withScriptExecutionContextAttributeRaises
+        getter raises(DOMException);
+    attribute [CallWith=ScriptExecutionContext|ScriptState] TestObj withScriptExecutionContextAndScriptStateAttribute;
+    attribute [CallWith=ScriptExecutionContext|ScriptState] TestObj withScriptExecutionContextAndScriptStateAttributeRaises
+        getter raises(DOMException);
+    attribute [CallWith=  ScriptExecutionContext  |  ScriptState  ] TestObj withScriptExecutionContextAndScriptStateWithSpacesAttribute;
+    attribute [CallWith=ScriptArguments|CallStack] TestObj withScriptArgumentsAndCallStackAttribute;
 
-        // 'Optional' extended attribute
-        void    methodWithOptionalArg(in [Optional] long opt);
-        void    methodWithNonOptionalArgAndOptionalArg(in long nonOpt, in [Optional] long opt);
-        void    methodWithNonOptionalArgAndTwoOptionalArgs(in long nonOpt, in [Optional] long opt1, in [Optional] long opt2);
-        void    methodWithOptionalString(in [Optional] DOMString str);
-        void    methodWithOptionalStringIsUndefined(in [Optional=DefaultIsUndefined] DOMString str);
-        void    methodWithOptionalStringIsNullString(in [Optional=DefaultIsNullString] DOMString str);
+    // 'Optional' extended attribute
+    void    methodWithOptionalArg(in [Optional] long opt);
+    void    methodWithNonOptionalArgAndOptionalArg(in long nonOpt, in [Optional] long opt);
+    void    methodWithNonOptionalArgAndTwoOptionalArgs(in long nonOpt, in [Optional] long opt1, in [Optional] long opt2);
+    void    methodWithOptionalString(in [Optional] DOMString str);
+    void    methodWithOptionalStringIsUndefined(in [Optional=DefaultIsUndefined] DOMString str);
+    void    methodWithOptionalStringIsNullString(in [Optional=DefaultIsNullString] DOMString str);
 
 #if defined(TESTING_V8) || defined(TESTING_JS)
-        // 'Callback' extended attribute
-        void    methodWithCallbackArg(in [Callback] TestCallback callback);
-        void    methodWithNonCallbackArgAndCallbackArg(in long nonCallback, in [Callback] TestCallback callback);
-        void    methodWithCallbackAndOptionalArg(in [Callback, Optional] TestCallback callback);
+    // 'Callback' extended attribute
+    void    methodWithCallbackArg(in [Callback] TestCallback callback);
+    void    methodWithNonCallbackArgAndCallbackArg(in long nonCallback, in [Callback] TestCallback callback);
+    void    methodWithCallbackAndOptionalArg(in [Callback, Optional] TestCallback callback);
 #endif
 
-        // 'Conditional' extended attribute
-        attribute [Conditional=Condition1] long conditionalAttr1;
-        attribute [Conditional=Condition1&Condition2] long conditionalAttr2;
-        attribute [Conditional=Condition1|Condition2] long conditionalAttr3;
+    // 'Conditional' extended attribute
+    attribute [Conditional=Condition1] long conditionalAttr1;
+    attribute [Conditional=Condition1&Condition2] long conditionalAttr2;
+    attribute [Conditional=Condition1|Condition2] long conditionalAttr3;
 
-        // 'Conditional' extended method
-        [Conditional=Condition1] DOMString conditionalMethod1();
-        [Conditional=Condition1&Condition2] void conditionalMethod2();
-        [Conditional=Condition1|Condition2] void conditionalMethod3();
+    // 'Conditional' extended method
+    [Conditional=Condition1] DOMString conditionalMethod1();
+    [Conditional=Condition1&Condition2] void conditionalMethod2();
+    [Conditional=Condition1|Condition2] void conditionalMethod3();
 
-        attribute [Conditional=Condition1] TestObjectAConstructor conditionalAttr4;
-        attribute [Conditional=Condition1&Condition2] TestObjectBConstructor conditionalAttr5;
-        attribute [Conditional=Condition1|Condition2] TestObjectCConstructor conditionalAttr6;
+    attribute [Conditional=Condition1] TestObjectAConstructor conditionalAttr4;
+    attribute [Conditional=Condition1&Condition2] TestObjectBConstructor conditionalAttr5;
+    attribute [Conditional=Condition1|Condition2] TestObjectCConstructor conditionalAttr6;
 
-        [Conditional=Condition1] const unsigned short CONDITIONAL_CONST = 0;
+    [Conditional=Condition1] const unsigned short CONDITIONAL_CONST = 0;
 
 #if defined(TESTING_V8) || defined(TESTING_JS)
-        readonly attribute [CachedAttribute] any cachedAttribute1;
-        readonly attribute [CachedAttribute] any cachedAttribute2;
+    readonly attribute [CachedAttribute] any cachedAttribute1;
+    readonly attribute [CachedAttribute] any cachedAttribute2;
 #endif
-        
-        attribute any anyAttribute;
+    
+    attribute any anyAttribute;
 
 #if defined(TESTING_V8) || defined(TESTING_JS)
-        // Overloads
-        void    overloadedMethod(in TestObj? objArg, in [StrictTypeChecking] DOMString strArg);
-        void    overloadedMethod(in TestObj? objArg, in [Optional] long longArg);
-        void    overloadedMethod(in [StrictTypeChecking] DOMString strArg);
-        void    overloadedMethod(in long longArg);
-        void    overloadedMethod(in [Callback] TestCallback callback);
-        void    overloadedMethod(in DOMStringList? listArg);
-        void    overloadedMethod(in DOMString[]? arrayArg);
-        void    overloadedMethod(in TestObj objArg);
-        void    overloadedMethod(in DOMString[] arrayArg);
-        void    overloadedMethod(in sequence<unsigned long> arrayArg);
-        void    overloadedMethod(in DOMString strArg);
+    // Overloads
+    void    overloadedMethod(in TestObj? objArg, in [StrictTypeChecking] DOMString strArg);
+    void    overloadedMethod(in TestObj? objArg, in [Optional] long longArg);
+    void    overloadedMethod(in [StrictTypeChecking] DOMString strArg);
+    void    overloadedMethod(in long longArg);
+    void    overloadedMethod(in [Callback] TestCallback callback);
+    void    overloadedMethod(in DOMStringList? listArg);
+    void    overloadedMethod(in DOMString[]? arrayArg);
+    void    overloadedMethod(in TestObj objArg);
+    void    overloadedMethod(in DOMString[] arrayArg);
+    void    overloadedMethod(in sequence<unsigned long> arrayArg);
+    void    overloadedMethod(in DOMString strArg);
 #endif
 
-        // Class methods within JavaScript (like what's used for IDBKeyRange).
-        static void classMethod();
-        static long classMethodWithOptional(in [Optional] long arg);
-        [Custom] static void classMethod2(in long arg);
+    // Class methods within JavaScript (like what's used for IDBKeyRange).
+    static void classMethod();
+    static long classMethodWithOptional(in [Optional] long arg);
+    [Custom] static void classMethod2(in long arg);
 
-        // Static method with conditional on overloaded methods
-        [Conditional=Condition1] static void overloadedMethod1(in long arg);
-        [Conditional=Condition1] static void overloadedMethod1(in [StrictTypeChecking] DOMString type);
+    // Static method with conditional on overloaded methods
+    [Conditional=Condition1] static void overloadedMethod1(in long arg);
+    [Conditional=Condition1] static void overloadedMethod1(in [StrictTypeChecking] DOMString type);
 
-        void classMethodWithClamp(in [Clamp] unsigned short objArgsShort, in [Clamp] unsigned long objArgsLong);
+    void classMethodWithClamp(in [Clamp] unsigned short objArgsShort, in [Clamp] unsigned long objArgsLong);
 
 #if defined(TESTING_V8)
-        // 'V8EnabledAtRuntime' methods and attributes.
-        [V8EnabledAtRuntime] void enabledAtRuntimeMethod1(in long longArg);
-        [V8EnabledAtRuntime=FeatureName] void enabledAtRuntimeMethod2(in long longArg);
-        attribute [V8EnabledAtRuntime] long enabledAtRuntimeAttr1;
-        attribute [V8EnabledAtRuntime=FeatureName] long enabledAtRuntimeAttr2;
-        // 'V8EnabledPerContext' methods and attributes.
-        [V8EnabledPerContext] void enabledPerContextMethod1(in long longArg);
-        [V8EnabledPerContext=FeatureName] void enabledPerContextMethod2(in long longArg);
-        attribute [V8EnabledPerContext] long enabledPerContextAttr1;
-        attribute [V8EnabledPerContext=FeatureName] long enabledPerContextAttr2;
+    // 'V8EnabledAtRuntime' methods and attributes.
+    [V8EnabledAtRuntime] void enabledAtRuntimeMethod1(in long longArg);
+    [V8EnabledAtRuntime=FeatureName] void enabledAtRuntimeMethod2(in long longArg);
+    attribute [V8EnabledAtRuntime] long enabledAtRuntimeAttr1;
+    attribute [V8EnabledAtRuntime=FeatureName] long enabledAtRuntimeAttr2;
+    // 'V8EnabledPerContext' methods and attributes.
+    [V8EnabledPerContext] void enabledPerContextMethod1(in long longArg);
+    [V8EnabledPerContext=FeatureName] void enabledPerContextMethod2(in long longArg);
+    attribute [V8EnabledPerContext] long enabledPerContextAttr1;
+    attribute [V8EnabledPerContext=FeatureName] long enabledPerContextAttr2;
 #endif
 
 
 #if defined(TESTING_V8)
-        attribute float[]                   floatArray;
-        attribute double[]                  doubleArray;
+    attribute float[]                   floatArray;
+    attribute double[]                  doubleArray;
 #endif
 
 #if defined(TESTING_JS)
-        void methodWithUnsignedLongSequence(in sequence<unsigned long> unsignedLongSequence);
+    void methodWithUnsignedLongSequence(in sequence<unsigned long> unsignedLongSequence);
 #endif
 #if defined(TESTING_V8) || defined(TESTING_JS)
-        DOMString[] stringArrayFunction(in DOMString[] values) raises(DOMException);
+    DOMString[] stringArrayFunction(in DOMString[] values) raises(DOMException);
 #endif
 
-        readonly attribute [CheckSecurityForNode] Document contentDocument;
-        [CheckSecurityForNode] SVGDocument getSVGDocument()
-            raises(DOMException);
+    readonly attribute [CheckSecurityForNode] Document contentDocument;
+    [CheckSecurityForNode] SVGDocument getSVGDocument()
+        raises(DOMException);
 
-        void convert1(in [TreatReturnedNullStringAs=Null] a value);
-        void convert2(in [TreatReturnedNullStringAs=Undefined] b value);
-        void convert4(in [TreatNullAs=NullString] d value);
-        void convert5(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] e value);
+    void convert1(in [TreatReturnedNullStringAs=Null] a value);
+    void convert2(in [TreatReturnedNullStringAs=Undefined] b value);
+    void convert4(in [TreatNullAs=NullString] d value);
+    void convert5(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] e value);
 
-        attribute SVGPoint mutablePoint;
-        attribute [Immutable] SVGPoint immutablePoint;
-        SVGPoint mutablePointFunction();
-        [Immutable] SVGPoint immutablePointFunction();
+    attribute SVGPoint mutablePoint;
+    attribute [Immutable] SVGPoint immutablePoint;
+    SVGPoint mutablePointFunction();
+    [Immutable] SVGPoint immutablePointFunction();
 
-        [ImplementedAs=banana] void orange();
-        attribute [ImplementedAs=blueberry] long strawberry;
+    [ImplementedAs=banana] void orange();
+    attribute [ImplementedAs=blueberry] long strawberry;
 
-        attribute [StrictTypeChecking] float strictFloat;
-        [StrictTypeChecking] bool strictFunction(in DOMString str, in float a, in long b)
-            raises(DOMException);
+    attribute [StrictTypeChecking] float strictFloat;
+    [StrictTypeChecking] bool strictFunction(in DOMString str, in float a, in long b)
+        raises(DOMException);
 
-        // ObjectiveC reserved words.
-        readonly attribute long      description;
-        attribute long               id;
-        readonly attribute DOMString hash;
+    // ObjectiveC reserved words.
+    readonly attribute long      description;
+    attribute long               id;
+    readonly attribute DOMString hash;
 
-        // Check constants and enums.
-        const unsigned short CONST_VALUE_0 = 0;
-        const unsigned short CONST_VALUE_1 = 1;
-        const unsigned short CONST_VALUE_2 = 2;
-        const unsigned short CONST_VALUE_4 = 4;
-        const unsigned short CONST_VALUE_8 = 8;
-        const short CONST_VALUE_9 = -1;
-        const DOMString CONST_VALUE_10 = "my constant string";
-        const unsigned short CONST_VALUE_11 = 0xffffffff;
-        const unsigned short CONST_VALUE_12 = 0x01;
-        const unsigned short CONST_VALUE_13 = 0X20;
-        const unsigned short CONST_VALUE_14 = 0x1abc;
-        [Reflect=CONST_IMPL] const unsigned short CONST_JAVASCRIPT = 15;
+    // Check constants and enums.
+    const unsigned short CONST_VALUE_0 = 0;
+    const unsigned short CONST_VALUE_1 = 1;
+    const unsigned short CONST_VALUE_2 = 2;
+    const unsigned short CONST_VALUE_4 = 4;
+    const unsigned short CONST_VALUE_8 = 8;
+    const short CONST_VALUE_9 = -1;
+    const DOMString CONST_VALUE_10 = "my constant string";
+    const unsigned short CONST_VALUE_11 = 0xffffffff;
+    const unsigned short CONST_VALUE_12 = 0x01;
+    const unsigned short CONST_VALUE_13 = 0X20;
+    const unsigned short CONST_VALUE_14 = 0x1abc;
+    [Reflect=CONST_IMPL] const unsigned short CONST_JAVASCRIPT = 15;
 
-        attribute [Replaceable] long replaceableAttribute;
+    attribute [Replaceable] long replaceableAttribute;
 
-        void variadicStringMethod(in DOMString head, in DOMString... tail);
-        void variadicDoubleMethod(in double head, in double... tail);
-        void variadicNodeMethod(in Node head, in Node... tail);
-    };
-}
+    void variadicStringMethod(in DOMString head, in DOMString... tail);
+    void variadicDoubleMethod(in double head, in double... tail);
+    void variadicNodeMethod(in Node head, in Node... tail);
+};

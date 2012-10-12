@@ -23,15 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module html {
+interface CanvasGradient {
 
-    interface CanvasGradient {
+    void addColorStop(in [Optional=DefaultIsUndefined] float offset, 
+                      in [Optional=DefaultIsUndefined] DOMString color)
+        raises (DOMException);
 
-        void addColorStop(in [Optional=DefaultIsUndefined] float offset, 
-                          in [Optional=DefaultIsUndefined] DOMString color)
-            raises (DOMException);
-
-    };
-
-}
+};
 

@@ -23,16 +23,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module html {
+interface [
+    Conditional=WEB_INTENTS_TAG
+] HTMLIntentElement : HTMLElement {
+    attribute [Reflect] DOMString action;
+    attribute [Reflect] DOMString type;
+    attribute [Reflect, URL] DOMString href;
+    attribute [Reflect] DOMString title;
+    attribute [Reflect] DOMString disposition;
+};
 
-    interface [
-        Conditional=WEB_INTENTS_TAG
-    ] HTMLIntentElement : HTMLElement {
-        attribute [Reflect] DOMString action;
-        attribute [Reflect] DOMString type;
-        attribute [Reflect, URL] DOMString href;
-        attribute [Reflect] DOMString title;
-        attribute [Reflect] DOMString disposition;
-    };
-
-}

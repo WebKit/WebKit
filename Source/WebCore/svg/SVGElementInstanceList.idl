@@ -23,12 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
-    interface [
-        Conditional=SVG
-    ] SVGElementInstanceList {
-        readonly attribute unsigned long length;
+interface [
+    Conditional=SVG
+] SVGElementInstanceList {
+    readonly attribute unsigned long length;
 
-        SVGElementInstance item(in [Optional=DefaultIsUndefined] unsigned long index);
-    };
-}
+    SVGElementInstance item(in [Optional=DefaultIsUndefined] unsigned long index);
+};

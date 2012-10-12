@@ -18,15 +18,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module html {
-
-    interface HTMLLabelElement : HTMLElement {
-        readonly attribute HTMLFormElement form;
-        attribute [Reflect=for] DOMString htmlFor;
-        readonly attribute HTMLElement control;
+interface HTMLLabelElement : HTMLElement {
+    readonly attribute HTMLFormElement form;
+    attribute [Reflect=for] DOMString htmlFor;
+    readonly attribute HTMLElement control;
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-        attribute [Reflect] DOMString accessKey;
+    attribute [Reflect] DOMString accessKey;
 #endif
-    };
+};
 
-}

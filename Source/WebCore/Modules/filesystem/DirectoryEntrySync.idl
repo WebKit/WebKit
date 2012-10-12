@@ -28,16 +28,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
-    interface [
-        Conditional=FILE_SYSTEM,
-        JSGenerateToNativeObject,
-        JSGenerateToJSObject,
-        JSNoStaticTables
-    ] DirectoryEntrySync : EntrySync {
-        DirectoryReaderSync createReader() raises (FileException);
-        FileEntrySync getFile(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString path, in Dictionary flags) raises (FileException);
-        DirectoryEntrySync getDirectory(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString path, in Dictionary flags) raises (FileException);
-        void removeRecursively() raises (FileException);
-    };
-}
+interface [
+    Conditional=FILE_SYSTEM,
+    JSGenerateToNativeObject,
+    JSGenerateToJSObject,
+    JSNoStaticTables
+] DirectoryEntrySync : EntrySync {
+    DirectoryReaderSync createReader() raises (FileException);
+    FileEntrySync getFile(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString path, in Dictionary flags) raises (FileException);
+    DirectoryEntrySync getDirectory(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString path, in Dictionary flags) raises (FileException);
+    void removeRecursively() raises (FileException);
+};

@@ -23,25 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG,
+    DoNotCheckConstants
+] SVGGradientElement : SVGElement,
+                       SVGURIReference,
+                       SVGExternalResourcesRequired,
+                       SVGStylable
+                       /* SVGUnitTypes */ {
+    // Spread Method Types
+    const unsigned short SVG_SPREADMETHOD_UNKNOWN = 0;
+    const unsigned short SVG_SPREADMETHOD_PAD     = 1;
+    const unsigned short SVG_SPREADMETHOD_REFLECT = 2;
+    const unsigned short SVG_SPREADMETHOD_REPEAT  = 3;
 
-    interface [
-        Conditional=SVG,
-        DoNotCheckConstants
-    ] SVGGradientElement : SVGElement,
-                           SVGURIReference,
-                           SVGExternalResourcesRequired,
-                           SVGStylable
-                           /* SVGUnitTypes */ {
-        // Spread Method Types
-        const unsigned short SVG_SPREADMETHOD_UNKNOWN = 0;
-        const unsigned short SVG_SPREADMETHOD_PAD     = 1;
-        const unsigned short SVG_SPREADMETHOD_REFLECT = 2;
-        const unsigned short SVG_SPREADMETHOD_REPEAT  = 3;
+    readonly attribute SVGAnimatedEnumeration   gradientUnits;
+    readonly attribute SVGAnimatedTransformList gradientTransform;
+    readonly attribute SVGAnimatedEnumeration   spreadMethod;
+};
 
-        readonly attribute SVGAnimatedEnumeration   gradientUnits;
-        readonly attribute SVGAnimatedTransformList gradientTransform;
-        readonly attribute SVGAnimatedEnumeration   spreadMethod;
-    };
-
-}

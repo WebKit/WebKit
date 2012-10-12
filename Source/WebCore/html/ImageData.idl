@@ -26,16 +26,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module html {
-
-    interface [
-        CustomToJSObject
-    ] ImageData {
-        readonly attribute long width;
-        readonly attribute long height;
+interface [
+    CustomToJSObject
+] ImageData {
+    readonly attribute long width;
+    readonly attribute long height;
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
-        readonly attribute Uint8ClampedArray data;
+    readonly attribute Uint8ClampedArray data;
 #endif
-    };
+};
 
-}

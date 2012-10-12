@@ -24,27 +24,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG
+] SVGLengthList { 
+    readonly attribute unsigned long numberOfItems;
 
-    interface [
-        Conditional=SVG
-    ] SVGLengthList { 
-        readonly attribute unsigned long numberOfItems;
+    void clear()
+        raises(DOMException);
+    [StrictTypeChecking] SVGLength initialize(in SVGLength item)
+        raises(DOMException, SVGException);
+    [StrictTypeChecking] SVGLength getItem(in unsigned long index)
+        raises(DOMException);
+    [StrictTypeChecking] SVGLength insertItemBefore(in SVGLength item, in unsigned long index)
+        raises(DOMException, SVGException);
+    [StrictTypeChecking] SVGLength replaceItem(in SVGLength item, in unsigned long index)
+        raises(DOMException, SVGException);
+    [StrictTypeChecking] SVGLength removeItem(in unsigned long index)
+        raises(DOMException);
+    [StrictTypeChecking] SVGLength appendItem(in SVGLength item)
+        raises(DOMException, SVGException);
+};
 
-        void clear()
-            raises(DOMException);
-        [StrictTypeChecking] SVGLength initialize(in SVGLength item)
-            raises(DOMException, SVGException);
-        [StrictTypeChecking] SVGLength getItem(in unsigned long index)
-            raises(DOMException);
-        [StrictTypeChecking] SVGLength insertItemBefore(in SVGLength item, in unsigned long index)
-            raises(DOMException, SVGException);
-        [StrictTypeChecking] SVGLength replaceItem(in SVGLength item, in unsigned long index)
-            raises(DOMException, SVGException);
-        [StrictTypeChecking] SVGLength removeItem(in unsigned long index)
-            raises(DOMException);
-        [StrictTypeChecking] SVGLength appendItem(in SVGLength item)
-            raises(DOMException, SVGException);
-    };
-
-}

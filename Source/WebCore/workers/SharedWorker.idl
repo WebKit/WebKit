@@ -29,20 +29,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module threads {
+interface [
+    Conditional=SHARED_WORKERS,
+    ActiveDOMObject,
+    JSCustomConstructor,
+    Constructor(in DOMString scriptURL, in [Optional=DefaultIsNullString] DOMString name),
+    CallWith=ScriptExecutionContext,
+    ConstructorRaisesException,
+    JSCustomMarkFunction,
+    JSGenerateToNativeObject,
+    JSGenerateToJSObject
+] SharedWorker : AbstractWorker {
+    readonly attribute MessagePort port;
+};
 
-    interface [
-        Conditional=SHARED_WORKERS,
-        ActiveDOMObject,
-        JSCustomConstructor,
-        Constructor(in DOMString scriptURL, in [Optional=DefaultIsNullString] DOMString name),
-        CallWith=ScriptExecutionContext,
-        ConstructorRaisesException,
-        JSCustomMarkFunction,
-        JSGenerateToNativeObject,
-        JSGenerateToJSObject
-    ] SharedWorker : AbstractWorker {
-        readonly attribute MessagePort port;
-    };
-
-}

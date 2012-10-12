@@ -23,17 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module core {
-
-    interface [
-        OmitConstructor
-    ] Coordinates {
-        readonly attribute double latitude;
-        readonly attribute double longitude;
-        readonly attribute [Custom] double altitude;
-        readonly attribute double accuracy;
-        readonly attribute [Custom] double altitudeAccuracy;
-        readonly attribute [Custom] double heading;
-        readonly attribute [Custom] double speed;
-    };
-}
+interface [
+    OmitConstructor
+] Coordinates {
+    readonly attribute double latitude;
+    readonly attribute double longitude;
+    readonly attribute [Custom] double altitude;
+    readonly attribute double accuracy;
+    readonly attribute [Custom] double altitudeAccuracy;
+    readonly attribute [Custom] double heading;
+    readonly attribute [Custom] double speed;
+};

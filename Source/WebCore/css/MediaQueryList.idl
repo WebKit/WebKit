@@ -17,11 +17,9 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-module view {
-    interface MediaQueryList {
-        readonly attribute DOMString media;
-        readonly attribute boolean matches;
-        void addListener(in [Optional=DefaultIsUndefined] MediaQueryListListener listener);
-        void removeListener(in [Optional=DefaultIsUndefined] MediaQueryListListener listener);
-    };
-}
+interface MediaQueryList {
+    readonly attribute DOMString media;
+    readonly attribute boolean matches;
+    void addListener(in [Optional=DefaultIsUndefined] MediaQueryListListener listener);
+    void removeListener(in [Optional=DefaultIsUndefined] MediaQueryListListener listener);
+};

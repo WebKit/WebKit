@@ -17,12 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module html {
+interface HTMLFontElement : HTMLElement {
+    attribute [Reflect] DOMString color;
+    attribute [Reflect] DOMString face;
+    attribute [Reflect] DOMString size;
+};
 
-    interface HTMLFontElement : HTMLElement {
-        attribute [Reflect] DOMString color;
-        attribute [Reflect] DOMString face;
-        attribute [Reflect] DOMString size;
-    };
-
-}

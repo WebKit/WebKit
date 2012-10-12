@@ -23,12 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
-    interface [
-        Conditional=SCRIPTED_SPEECH,
-        IndexedGetter
-    ] SpeechRecognitionResultList {
-        readonly attribute unsigned long length;
-        SpeechRecognitionResult item(in [IsIndex] unsigned long index);
-    };
-}
+interface [
+    Conditional=SCRIPTED_SPEECH,
+    IndexedGetter
+] SpeechRecognitionResultList {
+    readonly attribute unsigned long length;
+    SpeechRecognitionResult item(in [IsIndex] unsigned long index);
+};

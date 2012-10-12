@@ -23,28 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG
+] SVGPaint : SVGColor {
+    const unsigned short SVG_PAINTTYPE_UNKNOWN = 0;
+    const unsigned short SVG_PAINTTYPE_RGBCOLOR = 1;
+    const unsigned short SVG_PAINTTYPE_RGBCOLOR_ICCCOLOR = 2;
+    const unsigned short SVG_PAINTTYPE_NONE = 101;
+    const unsigned short SVG_PAINTTYPE_CURRENTCOLOR = 102;
+    const unsigned short SVG_PAINTTYPE_URI_NONE = 103;
+    const unsigned short SVG_PAINTTYPE_URI_CURRENTCOLOR = 104;
+    const unsigned short SVG_PAINTTYPE_URI_RGBCOLOR = 105;
+    const unsigned short SVG_PAINTTYPE_URI_RGBCOLOR_ICCCOLOR = 106;
+    const unsigned short SVG_PAINTTYPE_URI = 107;
 
-    interface [
-        Conditional=SVG
-    ] SVGPaint : SVGColor {
-        const unsigned short SVG_PAINTTYPE_UNKNOWN = 0;
-        const unsigned short SVG_PAINTTYPE_RGBCOLOR = 1;
-        const unsigned short SVG_PAINTTYPE_RGBCOLOR_ICCCOLOR = 2;
-        const unsigned short SVG_PAINTTYPE_NONE = 101;
-        const unsigned short SVG_PAINTTYPE_CURRENTCOLOR = 102;
-        const unsigned short SVG_PAINTTYPE_URI_NONE = 103;
-        const unsigned short SVG_PAINTTYPE_URI_CURRENTCOLOR = 104;
-        const unsigned short SVG_PAINTTYPE_URI_RGBCOLOR = 105;
-        const unsigned short SVG_PAINTTYPE_URI_RGBCOLOR_ICCCOLOR = 106;
-        const unsigned short SVG_PAINTTYPE_URI = 107;
+    readonly attribute unsigned short paintType;
+    readonly attribute DOMString uri;
 
-        readonly attribute unsigned short paintType;
-        readonly attribute DOMString uri;
+    [StrictTypeChecking] void setUri(in DOMString uri);
+    [StrictTypeChecking] void setPaint(in unsigned short paintType, in DOMString uri, in DOMString rgbColor, in DOMString iccColor)
+        raises(DOMException, SVGException);
+};
 
-        [StrictTypeChecking] void setUri(in DOMString uri);
-        [StrictTypeChecking] void setPaint(in unsigned short paintType, in DOMString uri, in DOMString rgbColor, in DOMString iccColor)
-            raises(DOMException, SVGException);
-    };
-
-}

@@ -22,11 +22,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module audio {
-    // WaveTable represents a periodic audio waveform given by its Fourier coefficients.
-    interface [
-        Conditional=WEB_AUDIO
-    ] WaveTable {
+// WaveTable represents a periodic audio waveform given by its Fourier coefficients.
+interface [
+    Conditional=WEB_AUDIO
+] WaveTable {
 
-    };
-}
+};

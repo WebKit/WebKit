@@ -24,33 +24,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG
+] SVGTransformList {
+    readonly attribute unsigned long numberOfItems;
 
-    interface [
-        Conditional=SVG
-    ] SVGTransformList {
-        readonly attribute unsigned long numberOfItems;
+    void clear()
+        raises(DOMException);
+    [StrictTypeChecking] SVGTransform initialize(in SVGTransform item)
+        raises(DOMException, SVGException);
+    [StrictTypeChecking] SVGTransform getItem(in unsigned long index)
+        raises(DOMException);
+    [StrictTypeChecking] SVGTransform insertItemBefore(in SVGTransform item, in unsigned long index)
+        raises(DOMException, SVGException);
+    [StrictTypeChecking] SVGTransform replaceItem(in SVGTransform item, in unsigned long index)
+        raises(DOMException, SVGException);
+    [StrictTypeChecking] SVGTransform removeItem(in unsigned long index)
+        raises(DOMException);
+    [StrictTypeChecking] SVGTransform appendItem(in SVGTransform item)
+        raises(DOMException, SVGException);
 
-        void clear()
-            raises(DOMException);
-        [StrictTypeChecking] SVGTransform initialize(in SVGTransform item)
-            raises(DOMException, SVGException);
-        [StrictTypeChecking] SVGTransform getItem(in unsigned long index)
-            raises(DOMException);
-        [StrictTypeChecking] SVGTransform insertItemBefore(in SVGTransform item, in unsigned long index)
-            raises(DOMException, SVGException);
-        [StrictTypeChecking] SVGTransform replaceItem(in SVGTransform item, in unsigned long index)
-            raises(DOMException, SVGException);
-        [StrictTypeChecking] SVGTransform removeItem(in unsigned long index)
-            raises(DOMException);
-        [StrictTypeChecking] SVGTransform appendItem(in SVGTransform item)
-            raises(DOMException, SVGException);
+    [StrictTypeChecking] SVGTransform createSVGTransformFromMatrix(in SVGMatrix matrix)
+        raises(DOMException);
 
-        [StrictTypeChecking] SVGTransform createSVGTransformFromMatrix(in SVGMatrix matrix)
-            raises(DOMException);
+    SVGTransform consolidate()
+        raises(DOMException);
+};
 
-        SVGTransform consolidate()
-            raises(DOMException);
-    };
-
-}

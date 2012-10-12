@@ -17,13 +17,11 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-module view {
-    interface [
-        JSNoStaticTables,
-        ObjCProtocol,
-        CPPPureInterface,
-        OmitConstructor
-    ] MediaQueryListListener {
-        void queryChanged(in [Optional=DefaultIsUndefined] MediaQueryList list);
-    };
-}
+interface [
+    JSNoStaticTables,
+    ObjCProtocol,
+    CPPPureInterface,
+    OmitConstructor
+] MediaQueryListListener {
+    void queryChanged(in [Optional=DefaultIsUndefined] MediaQueryList list);
+};

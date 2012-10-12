@@ -23,24 +23,21 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
+interface [
+    Conditional=INDEXED_DATABASE
+] IDBKeyRange {
+    readonly attribute IDBKey lower;
+    readonly attribute IDBKey upper;
+    readonly attribute boolean lowerOpen;
+    readonly attribute boolean upperOpen;
 
-    interface [
-        Conditional=INDEXED_DATABASE
-    ] IDBKeyRange {
-        readonly attribute IDBKey lower;
-        readonly attribute IDBKey upper;
-        readonly attribute boolean lowerOpen;
-        readonly attribute boolean upperOpen;
+    static IDBKeyRange only(in IDBKey value)
+        raises (IDBDatabaseException);
+    static IDBKeyRange lowerBound(in IDBKey bound, in [Optional] boolean open)
+        raises (IDBDatabaseException);
+    static IDBKeyRange upperBound(in IDBKey bound, in [Optional] boolean open)
+        raises (IDBDatabaseException);
+    static IDBKeyRange bound(in IDBKey lower, in IDBKey upper, in [Optional] boolean lowerOpen, in [Optional] boolean upperOpen)
+        raises (IDBDatabaseException);
+};
 
-        static IDBKeyRange only(in IDBKey value)
-            raises (IDBDatabaseException);
-        static IDBKeyRange lowerBound(in IDBKey bound, in [Optional] boolean open)
-            raises (IDBDatabaseException);
-        static IDBKeyRange upperBound(in IDBKey bound, in [Optional] boolean open)
-            raises (IDBDatabaseException);
-        static IDBKeyRange bound(in IDBKey lower, in IDBKey upper, in [Optional] boolean lowerOpen, in [Optional] boolean upperOpen)
-            raises (IDBDatabaseException);
-    };
-
-}

@@ -23,12 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module WTR {
+interface GCController {
+    void collect();
+    void collectOnAlternateThread(in boolean waitUntilDone);
+    unsigned long long getJSObjectCount();
+};
 
-    interface GCController {
-        void collect();
-        void collectOnAlternateThread(in boolean waitUntilDone);
-        unsigned long long getJSObjectCount();
-    };
-
-}

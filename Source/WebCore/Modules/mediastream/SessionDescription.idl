@@ -28,16 +28,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module p2p {
+interface [
+    Conditional=MEDIA_STREAM,
+    Constructor(in DOMString sdp)
+] SessionDescription {
+    [StrictTypeChecking] void addCandidate(in IceCandidate candidate)
+        raises(DOMException);
 
-    interface [
-        Conditional=MEDIA_STREAM,
-        Constructor(in DOMString sdp)
-    ] SessionDescription {
-        [StrictTypeChecking] void addCandidate(in IceCandidate candidate)
-            raises(DOMException);
+    DOMString toSdp();
+};
 
-        DOMString toSdp();
-    };
-
-}

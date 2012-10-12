@@ -23,48 +23,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
-module offline {
- 
-    interface [
-        EventTarget,
-        OmitConstructor,
-        DoNotCheckConstants,
-        JSGenerateIsReachable=ImplFrame
-    ] DOMApplicationCache {
-        // update status
-        const unsigned short UNCACHED = 0;
-        const unsigned short IDLE = 1;
-        const unsigned short CHECKING = 2;
-        const unsigned short DOWNLOADING = 3;
-        const unsigned short UPDATEREADY = 4;
-        const unsigned short OBSOLETE = 5;
-        readonly attribute unsigned short status;
+interface [
+    EventTarget,
+    OmitConstructor,
+    DoNotCheckConstants,
+    JSGenerateIsReachable=ImplFrame
+] DOMApplicationCache {
+    // update status
+    const unsigned short UNCACHED = 0;
+    const unsigned short IDLE = 1;
+    const unsigned short CHECKING = 2;
+    const unsigned short DOWNLOADING = 3;
+    const unsigned short UPDATEREADY = 4;
+    const unsigned short OBSOLETE = 5;
+    readonly attribute unsigned short status;
 
-        void update()
-            raises(DOMException);
-        void swapCache()
-            raises(DOMException);
-        void abort();
+    void update()
+        raises(DOMException);
+    void swapCache()
+        raises(DOMException);
+    void abort();
 
-        // events
-        attribute EventListener onchecking;
-        attribute EventListener onerror;
-        attribute EventListener onnoupdate;
-        attribute EventListener ondownloading;
-        attribute EventListener onprogress;
-        attribute EventListener onupdateready;
-        attribute EventListener oncached;
-        attribute EventListener onobsolete;
+    // events
+    attribute EventListener onchecking;
+    attribute EventListener onerror;
+    attribute EventListener onnoupdate;
+    attribute EventListener ondownloading;
+    attribute EventListener onprogress;
+    attribute EventListener onupdateready;
+    attribute EventListener oncached;
+    attribute EventListener onobsolete;
 
-        // EventTarget interface
-        void addEventListener(in DOMString type, 
-                              in EventListener listener, 
-                              in [Optional] boolean useCapture);
-        void removeEventListener(in DOMString type, 
-                                 in EventListener listener, 
-                                 in [Optional] boolean useCapture);
-        boolean dispatchEvent(in Event evt)
-            raises(EventException);
-    };
+    // EventTarget interface
+    void addEventListener(in DOMString type, 
+                          in EventListener listener, 
+                          in [Optional] boolean useCapture);
+    void removeEventListener(in DOMString type, 
+                             in EventListener listener, 
+                             in [Optional] boolean useCapture);
+    boolean dispatchEvent(in Event evt)
+        raises(EventException);
+};
 
-}

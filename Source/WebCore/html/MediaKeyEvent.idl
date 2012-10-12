@@ -23,20 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module html {
+interface [
+    Conditional=ENCRYPTED_MEDIA,
+    V8EnabledAtRuntime=encryptedMedia,
+    ConstructorTemplate=Event 
+] MediaKeyEvent : Event {
+    readonly attribute [InitializedByEventConstructor] DOMString keySystem;
+    readonly attribute [InitializedByEventConstructor] DOMString sessionId;
+    readonly attribute [InitializedByEventConstructor] Uint8Array initData;
+    readonly attribute [InitializedByEventConstructor] Uint8Array message;
+    readonly attribute [InitializedByEventConstructor] DOMString defaultURL;
+    readonly attribute [InitializedByEventConstructor] MediaKeyError errorCode;
+    readonly attribute [InitializedByEventConstructor] unsigned short systemCode;
+};
 
-    interface [
-        Conditional=ENCRYPTED_MEDIA,
-        V8EnabledAtRuntime=encryptedMedia,
-        ConstructorTemplate=Event 
-    ] MediaKeyEvent : Event {
-        readonly attribute [InitializedByEventConstructor] DOMString keySystem;
-        readonly attribute [InitializedByEventConstructor] DOMString sessionId;
-        readonly attribute [InitializedByEventConstructor] Uint8Array initData;
-        readonly attribute [InitializedByEventConstructor] Uint8Array message;
-        readonly attribute [InitializedByEventConstructor] DOMString defaultURL;
-        readonly attribute [InitializedByEventConstructor] MediaKeyError errorCode;
-        readonly attribute [InitializedByEventConstructor] unsigned short systemCode;
-    };
-
-}

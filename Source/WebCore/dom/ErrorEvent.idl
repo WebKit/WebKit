@@ -28,15 +28,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module events {
+interface [
+    JSNoStaticTables,
+    ConstructorTemplate=Event
+] ErrorEvent : Event {
+    readonly attribute [InitializedByEventConstructor] DOMString message;
+    readonly attribute [InitializedByEventConstructor] DOMString filename;
+    readonly attribute [InitializedByEventConstructor] unsigned long lineno;
+};
 
-    interface [
-        JSNoStaticTables,
-        ConstructorTemplate=Event
-    ] ErrorEvent : Event {
-        readonly attribute [InitializedByEventConstructor] DOMString message;
-        readonly attribute [InitializedByEventConstructor] DOMString filename;
-        readonly attribute [InitializedByEventConstructor] unsigned long lineno;
-    };
-
-}

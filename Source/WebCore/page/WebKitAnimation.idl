@@ -26,33 +26,30 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module html {
+interface WebKitAnimation {
 
-    interface WebKitAnimation {
+    readonly attribute DOMString name;
 
-        readonly attribute DOMString name;
+    readonly attribute double duration;
+    attribute double elapsedTime;
 
-        readonly attribute double duration;
-        attribute double elapsedTime;
+    readonly attribute double delay;
+    readonly attribute [Custom] long iterationCount;
 
-        readonly attribute double delay;
-        readonly attribute [Custom] long iterationCount;
+    readonly attribute boolean paused;
+    readonly attribute boolean ended;
 
-        readonly attribute boolean paused;
-        readonly attribute boolean ended;
+    const unsigned short DIRECTION_NORMAL = 0;
+    const unsigned short DIRECTION_ALTERNATE = 1;
+    readonly attribute unsigned short direction;
 
-        const unsigned short DIRECTION_NORMAL = 0;
-        const unsigned short DIRECTION_ALTERNATE = 1;
-        readonly attribute unsigned short direction;
+    const unsigned short FILL_NONE = 0;
+    const unsigned short FILL_BACKWARDS = 1;
+    const unsigned short FILL_FORWARDS = 2;
+    const unsigned short FILL_BOTH = 3;
+    readonly attribute unsigned short fillMode;
 
-        const unsigned short FILL_NONE = 0;
-        const unsigned short FILL_BACKWARDS = 1;
-        const unsigned short FILL_FORWARDS = 2;
-        const unsigned short FILL_BOTH = 3;
-        readonly attribute unsigned short fillMode;
+    void play();
+    void pause();
+};
 
-        void play();
-        void pause();
-    };
-
-}

@@ -18,21 +18,18 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module css {
+// Introduced in DOM Level 2:
+interface RGBColor {
+    readonly attribute CSSPrimitiveValue  red;
+    readonly attribute CSSPrimitiveValue  green;
+    readonly attribute CSSPrimitiveValue  blue;
 
-    // Introduced in DOM Level 2:
-    interface RGBColor {
-        readonly attribute CSSPrimitiveValue  red;
-        readonly attribute CSSPrimitiveValue  green;
-        readonly attribute CSSPrimitiveValue  blue;
-
-        // WebKit extensions
+    // WebKit extensions
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
-        readonly attribute CSSPrimitiveValue  alpha;
+    readonly attribute CSSPrimitiveValue  alpha;
 #endif
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-        readonly attribute Color              color;
+    readonly attribute Color              color;
 #endif
-    };
+};
 
-}

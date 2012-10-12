@@ -23,11 +23,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module html {
-    interface [
-        Conditional=WEBGL,
-        JSGenerateIsReachable=ImplContext,
-        OmitConstructor
-    ] OESTextureFloat {
-    };
-}
+interface [
+    Conditional=WEBGL,
+    JSGenerateIsReachable=ImplContext,
+    OmitConstructor
+] OESTextureFloat {
+};

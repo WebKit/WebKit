@@ -30,43 +30,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
-    interface [
-        Conditional=INSPECTOR
-    ] InspectorFrontendHost {
-        void loaded();
-        void closeWindow();
-        void bringToFront();
-        void setZoomFactor(in float zoom);
-        void inspectedURLChanged(in DOMString newURL);
+interface [
+    Conditional=INSPECTOR
+] InspectorFrontendHost {
+    void loaded();
+    void closeWindow();
+    void bringToFront();
+    void setZoomFactor(in float zoom);
+    void inspectedURLChanged(in DOMString newURL);
 
-        void requestAttachWindow();
-        void requestDetachWindow();
-        void requestSetDockSide(in DOMString side);
-        void setAttachedWindowHeight(in unsigned long height);
-        void moveWindowBy(in float x, in float y);
-        void setInjectedScriptForOrigin(in DOMString origin, in DOMString script);
+    void requestAttachWindow();
+    void requestDetachWindow();
+    void requestSetDockSide(in DOMString side);
+    void setAttachedWindowHeight(in unsigned long height);
+    void moveWindowBy(in float x, in float y);
+    void setInjectedScriptForOrigin(in DOMString origin, in DOMString script);
 
-        DOMString localizedStringsURL();
-        DOMString hiddenPanels();
+    DOMString localizedStringsURL();
+    DOMString hiddenPanels();
 
-        void copyText(in DOMString text);
-        void openInNewTab(in DOMString url);
-        boolean canSave();
-        void save(in DOMString url, in DOMString content, in boolean forceSaveAs);
-        void append(in DOMString url, in DOMString content);
+    void copyText(in DOMString text);
+    void openInNewTab(in DOMString url);
+    boolean canSave();
+    void save(in DOMString url, in DOMString content, in boolean forceSaveAs);
+    void append(in DOMString url, in DOMString content);
 
-        boolean canInspectWorkers();
+    boolean canInspectWorkers();
 
-        [Custom] DOMString platform();
-        [Custom] DOMString port();
-        [Custom] void showContextMenu(in MouseEvent event, in DOMObject items);
-        void sendMessageToBackend(in DOMString message);
+    [Custom] DOMString platform();
+    [Custom] DOMString port();
+    [Custom] void showContextMenu(in MouseEvent event, in DOMObject items);
+    void sendMessageToBackend(in DOMString message);
 
-        [Custom] void recordActionTaken(in unsigned long actionCode);
-        [Custom] void recordPanelShown(in unsigned long panelCode);
-        [Custom] void recordSettingChanged(in unsigned long settingChanged);
-        
-        DOMString loadResourceSynchronously(in DOMString url);
-    };
-}
+    [Custom] void recordActionTaken(in unsigned long actionCode);
+    [Custom] void recordPanelShown(in unsigned long panelCode);
+    [Custom] void recordSettingChanged(in unsigned long settingChanged);
+    
+    DOMString loadResourceSynchronously(in DOMString url);
+};

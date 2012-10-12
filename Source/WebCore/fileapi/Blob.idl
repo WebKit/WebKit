@@ -28,23 +28,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module html {
-
-    interface [
-        JSGenerateIsReachable=Impl,
-        CustomToJSObject,
-        JSNoStaticTables,
-        CustomConstructor,
-        ConstructorParameters=2
-    ] Blob {
-        readonly attribute unsigned long long size;
-        readonly attribute DOMString type;
+interface [
+    JSGenerateIsReachable=Impl,
+    CustomToJSObject,
+    JSNoStaticTables,
+    CustomConstructor,
+    ConstructorParameters=2
+] Blob {
+    readonly attribute unsigned long long size;
+    readonly attribute DOMString type;
 
 #if !defined(LANGUAGE_OBJECTIVE_C)
 #if defined(ENABLE_BLOB) && ENABLE_BLOB
-        Blob slice(in [Optional] long long start, in [Optional] long long end, in [Optional, TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString contentType);
+    Blob slice(in [Optional] long long start, in [Optional] long long end, in [Optional, TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString contentType);
 #endif
 #endif
-    };
+};
 
-}

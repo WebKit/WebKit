@@ -28,11 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
-    interface [
-        Conditional=FILE_SYSTEM,
-        Callback
-    ] MetadataCallback {
-        boolean handleEvent(in Metadata metadata);
-    };
-}
+interface [
+    Conditional=FILE_SYSTEM,
+    Callback
+] MetadataCallback {
+    boolean handleEvent(in Metadata metadata);
+};

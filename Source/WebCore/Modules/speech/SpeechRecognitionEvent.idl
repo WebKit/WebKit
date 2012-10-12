@@ -23,13 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module events {
-    interface [
-        Conditional=SCRIPTED_SPEECH,
-        ConstructorTemplate=Event
-    ] SpeechRecognitionEvent : Event {
-        readonly attribute [InitializedByEventConstructor] SpeechRecognitionResult result;
-        readonly attribute [InitializedByEventConstructor] short resultIndex;
-        readonly attribute [InitializedByEventConstructor] SpeechRecognitionResultList resultHistory;
-    };
-}
+interface [
+    Conditional=SCRIPTED_SPEECH,
+    ConstructorTemplate=Event
+] SpeechRecognitionEvent : Event {
+    readonly attribute [InitializedByEventConstructor] SpeechRecognitionResult result;
+    readonly attribute [InitializedByEventConstructor] short resultIndex;
+    readonly attribute [InitializedByEventConstructor] SpeechRecognitionResultList resultHistory;
+};

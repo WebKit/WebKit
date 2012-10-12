@@ -26,12 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
-    interface [
-        Conditional=SQL_DATABASE,
-        Callback
-    ] DatabaseCallback {
-        boolean handleEvent(in Database database);
-        boolean handleEvent(in DatabaseSync database);
-    };
-}
+interface [
+    Conditional=SQL_DATABASE,
+    Callback
+] DatabaseCallback {
+    boolean handleEvent(in Database database);
+    boolean handleEvent(in DatabaseSync database);
+};

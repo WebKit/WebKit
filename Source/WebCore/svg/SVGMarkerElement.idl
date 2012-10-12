@@ -23,35 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG
+] SVGMarkerElement : SVGElement,
+                                               SVGLangSpace,
+                                               SVGExternalResourcesRequired,
+                                               SVGStylable,
+                                               SVGFitToViewBox { 
+    // Marker Unit Types
+    const unsigned short SVG_MARKERUNITS_UNKNOWN        = 0;
+    const unsigned short SVG_MARKERUNITS_USERSPACEONUSE = 1;
+    const unsigned short SVG_MARKERUNITS_STROKEWIDTH    = 2;
 
-    interface [
-        Conditional=SVG
-    ] SVGMarkerElement : SVGElement,
-                                                   SVGLangSpace,
-                                                   SVGExternalResourcesRequired,
-                                                   SVGStylable,
-                                                   SVGFitToViewBox { 
-        // Marker Unit Types
-        const unsigned short SVG_MARKERUNITS_UNKNOWN        = 0;
-        const unsigned short SVG_MARKERUNITS_USERSPACEONUSE = 1;
-        const unsigned short SVG_MARKERUNITS_STROKEWIDTH    = 2;
+    // Marker Orientation Types
+    const unsigned short SVG_MARKER_ORIENT_UNKNOWN      = 0;
+    const unsigned short SVG_MARKER_ORIENT_AUTO         = 1;
+    const unsigned short SVG_MARKER_ORIENT_ANGLE        = 2;
 
-        // Marker Orientation Types
-        const unsigned short SVG_MARKER_ORIENT_UNKNOWN      = 0;
-        const unsigned short SVG_MARKER_ORIENT_AUTO         = 1;
-        const unsigned short SVG_MARKER_ORIENT_ANGLE        = 2;
+    readonly attribute SVGAnimatedLength      refX;
+    readonly attribute SVGAnimatedLength      refY;
+    readonly attribute SVGAnimatedEnumeration markerUnits;
+    readonly attribute SVGAnimatedLength      markerWidth;
+    readonly attribute SVGAnimatedLength      markerHeight;
+    readonly attribute SVGAnimatedEnumeration orientType;
+    readonly attribute SVGAnimatedAngle       orientAngle;
 
-        readonly attribute SVGAnimatedLength      refX;
-        readonly attribute SVGAnimatedLength      refY;
-        readonly attribute SVGAnimatedEnumeration markerUnits;
-        readonly attribute SVGAnimatedLength      markerWidth;
-        readonly attribute SVGAnimatedLength      markerHeight;
-        readonly attribute SVGAnimatedEnumeration orientType;
-        readonly attribute SVGAnimatedAngle       orientAngle;
+    void setOrientToAuto();
+    void setOrientToAngle(in [Optional=DefaultIsUndefined] SVGAngle angle);
+};
 
-        void setOrientToAuto();
-        void setOrientToAngle(in [Optional=DefaultIsUndefined] SVGAngle angle);
-    };
-
-}

@@ -26,15 +26,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module audio {
-    interface [
-        Conditional=WEB_AUDIO
-    ] AudioListener {
-        attribute float dopplerFactor;  // same as OpenAL (default 1.0)
-        attribute float speedOfSound;   // in meters / second (default 343.3)
+interface [
+    Conditional=WEB_AUDIO
+] AudioListener {
+    attribute float dopplerFactor;  // same as OpenAL (default 1.0)
+    attribute float speedOfSound;   // in meters / second (default 343.3)
 
-        void setPosition(in float x, in float y, in float z);
-        void setOrientation(in float x, in float y, in float z, in float xUp, in float yUp, in float zUp);
-        void setVelocity(in float x, in float y, in float z);
-    };
-}
+    void setPosition(in float x, in float y, in float z);
+    void setOrientation(in float x, in float y, in float z, in float xUp, in float yUp, in float zUp);
+    void setVelocity(in float x, in float y, in float z);
+};

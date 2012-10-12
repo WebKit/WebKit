@@ -23,39 +23,36 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
+interface [
+    Conditional=INDEXED_DATABASE
+] IDBIndex {
+    readonly attribute DOMString name;
+    readonly attribute IDBObjectStore objectStore;
+    readonly attribute [ImplementedAs=keyPathAny] IDBAny keyPath;
+    readonly attribute boolean unique;
+    readonly attribute boolean multiEntry;
 
-    interface [
-        Conditional=INDEXED_DATABASE
-    ] IDBIndex {
-        readonly attribute DOMString name;
-        readonly attribute IDBObjectStore objectStore;
-        readonly attribute [ImplementedAs=keyPathAny] IDBAny keyPath;
-        readonly attribute boolean unique;
-        readonly attribute boolean multiEntry;
+    [CallWith=ScriptExecutionContext] IDBRequest openCursor(in [Optional] IDBKeyRange? range, in [Optional] DOMString direction)
+        raises (IDBDatabaseException);
+    [CallWith=ScriptExecutionContext] IDBRequest openCursor(in IDBKey key, in [Optional] DOMString direction)
+        raises (IDBDatabaseException);
+    
+    [CallWith=ScriptExecutionContext] IDBRequest openKeyCursor(in [Optional] IDBKeyRange? range, in [Optional] DOMString  direction)
+        raises (IDBDatabaseException);
+    [CallWith=ScriptExecutionContext] IDBRequest openKeyCursor(in IDBKey key, in [Optional] DOMString direction)
+        raises (IDBDatabaseException);
 
-        [CallWith=ScriptExecutionContext] IDBRequest openCursor(in [Optional] IDBKeyRange? range, in [Optional] DOMString direction)
-            raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext] IDBRequest openCursor(in IDBKey key, in [Optional] DOMString direction)
-            raises (IDBDatabaseException);
-        
-        [CallWith=ScriptExecutionContext] IDBRequest openKeyCursor(in [Optional] IDBKeyRange? range, in [Optional] DOMString  direction)
-            raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext] IDBRequest openKeyCursor(in IDBKey key, in [Optional] DOMString direction)
-            raises (IDBDatabaseException);
+    [CallWith=ScriptExecutionContext] IDBRequest get(in IDBKeyRange? key)
+        raises (IDBDatabaseException);
+    [CallWith=ScriptExecutionContext] IDBRequest get(in IDBKey key)
+        raises (IDBDatabaseException);
+    [CallWith=ScriptExecutionContext] IDBRequest getKey(in IDBKeyRange? key)
+        raises (IDBDatabaseException);
+    [CallWith=ScriptExecutionContext] IDBRequest getKey(in IDBKey key)
+        raises (IDBDatabaseException);
+    [CallWith=ScriptExecutionContext] IDBRequest count(in [Optional] IDBKeyRange? range)
+        raises (IDBDatabaseException);
+    [CallWith=ScriptExecutionContext] IDBRequest count(in IDBKey key)
+        raises (IDBDatabaseException);
+};
 
-        [CallWith=ScriptExecutionContext] IDBRequest get(in IDBKeyRange? key)
-            raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext] IDBRequest get(in IDBKey key)
-            raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext] IDBRequest getKey(in IDBKeyRange? key)
-            raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext] IDBRequest getKey(in IDBKey key)
-            raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext] IDBRequest count(in [Optional] IDBKeyRange? range)
-            raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext] IDBRequest count(in IDBKey key)
-            raises (IDBDatabaseException);
-    };
-
-}

@@ -28,26 +28,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-module html {
+interface [
+    Conditional=MEDIA_SOURCE,
+    V8EnabledAtRuntime=mediaSource
+] SourceBuffer {
 
-    interface [
-        Conditional=MEDIA_SOURCE,
-        V8EnabledAtRuntime=mediaSource
-    ] SourceBuffer {
+    // Returns the time ranges buffered.
+    readonly attribute TimeRanges buffered
+        getter raises(DOMException);
 
-        // Returns the time ranges buffered.
-        readonly attribute TimeRanges buffered
-            getter raises(DOMException);
+    // Applies an offset to media segment timestamps.
+    attribute double timestampOffset
+        setter raises(DOMException);
 
-        // Applies an offset to media segment timestamps.
-        attribute double timestampOffset
-            setter raises(DOMException);
+    // Append segment data.
+    void append(in Uint8Array data) raises (DOMException);
 
-        // Append segment data.
-        void append(in Uint8Array data) raises (DOMException);
+    // Abort the current segment append sequence.
+    void abort() raises (DOMException);
+};
 
-        // Abort the current segment append sequence.
-        void abort() raises (DOMException);
-    };
-
-}

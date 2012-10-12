@@ -29,25 +29,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module threads {
+interface [
+    Conditional=WORKERS,
+    ActiveDOMObject,
+    JSCustomToJSObject,
+    EventTarget
+] AbstractWorker {
 
-    interface [
-        Conditional=WORKERS,
-        ActiveDOMObject,
-        JSCustomToJSObject,
-        EventTarget
-    ] AbstractWorker {
+    attribute EventListener onerror;
 
-        attribute EventListener onerror;
+    void addEventListener(in DOMString type,
+                          in EventListener listener,
+                          in [Optional] boolean useCapture);
+    void removeEventListener(in DOMString type,
+                             in EventListener listener,
+                             in [Optional] boolean useCapture);
+    boolean dispatchEvent(in Event evt)
+        raises(EventException);
+};
 
-        void addEventListener(in DOMString type,
-                              in EventListener listener,
-                              in [Optional] boolean useCapture);
-        void removeEventListener(in DOMString type,
-                                 in EventListener listener,
-                                 in [Optional] boolean useCapture);
-        boolean dispatchEvent(in Event evt)
-            raises(EventException);
-    };
-
-}

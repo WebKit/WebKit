@@ -23,18 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module html {
-    interface [
-        Conditional=WEBGL, 
-        JSGenerateIsReachable=ImplContext,
-        OmitConstructor, 
-        DoNotCheckConstants
-    ] OESVertexArrayObject {
-        const unsigned int VERTEX_ARRAY_BINDING_OES = 0x85B5;
-        
-        [StrictTypeChecking] WebGLVertexArrayObjectOES createVertexArrayOES();
-        [StrictTypeChecking] void         deleteVertexArrayOES(in [Optional=DefaultIsUndefined] WebGLVertexArrayObjectOES arrayObject);
-        [StrictTypeChecking] boolean      isVertexArrayOES(in [Optional=DefaultIsUndefined] WebGLVertexArrayObjectOES arrayObject);
-        [StrictTypeChecking] void         bindVertexArrayOES(in [Optional=DefaultIsUndefined] WebGLVertexArrayObjectOES arrayObject) raises(DOMException);
-    };
-}
+interface [
+    Conditional=WEBGL, 
+    JSGenerateIsReachable=ImplContext,
+    OmitConstructor, 
+    DoNotCheckConstants
+] OESVertexArrayObject {
+    const unsigned int VERTEX_ARRAY_BINDING_OES = 0x85B5;
+    
+    [StrictTypeChecking] WebGLVertexArrayObjectOES createVertexArrayOES();
+    [StrictTypeChecking] void         deleteVertexArrayOES(in [Optional=DefaultIsUndefined] WebGLVertexArrayObjectOES arrayObject);
+    [StrictTypeChecking] boolean      isVertexArrayOES(in [Optional=DefaultIsUndefined] WebGLVertexArrayObjectOES arrayObject);
+    [StrictTypeChecking] void         bindVertexArrayOES(in [Optional=DefaultIsUndefined] WebGLVertexArrayObjectOES arrayObject) raises(DOMException);
+};

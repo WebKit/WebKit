@@ -24,19 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module window {
+interface [
+    Conditional=FILE_SYSTEM,
+    Supplemental=DOMWindow
+] DOMWindowFileSystem {
+    const unsigned short TEMPORARY = 0;
+    const unsigned short PERSISTENT = 1;
 
-    interface [
-        Conditional=FILE_SYSTEM,
-        Supplemental=DOMWindow
-    ] DOMWindowFileSystem {
-        const unsigned short TEMPORARY = 0;
-        const unsigned short PERSISTENT = 1;
+    [V8EnabledAtRuntime=FileSystem] void webkitRequestFileSystem(in unsigned short type, in long long size,
+            in [Callback] FileSystemCallback successCallback, in [Callback, Optional] ErrorCallback errorCallback);
+    [V8EnabledAtRuntime=FileSystem] void webkitResolveLocalFileSystemURL(in DOMString url,
+            in [Callback] EntryCallback successCallback, in [Callback, Optional] ErrorCallback errorCallback);
+};
 
-        [V8EnabledAtRuntime=FileSystem] void webkitRequestFileSystem(in unsigned short type, in long long size,
-                in [Callback] FileSystemCallback successCallback, in [Callback, Optional] ErrorCallback errorCallback);
-        [V8EnabledAtRuntime=FileSystem] void webkitResolveLocalFileSystemURL(in DOMString url,
-                in [Callback] EntryCallback successCallback, in [Callback, Optional] ErrorCallback errorCallback);
-    };
-
-}

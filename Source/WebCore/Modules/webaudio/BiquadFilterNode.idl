@@ -22,30 +22,28 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module audio {
-    interface [
-        Conditional=WEB_AUDIO,
-        JSGenerateToJSObject
-    ] BiquadFilterNode : AudioNode {
-        // Filter type.
-        const unsigned short LOWPASS = 0;
-        const unsigned short HIGHPASS = 1;
-        const unsigned short BANDPASS = 2;
-        const unsigned short LOWSHELF = 3;
-        const unsigned short HIGHSHELF = 4;
-        const unsigned short PEAKING = 5;
-        const unsigned short NOTCH = 6;
-        const unsigned short ALLPASS = 7;
+interface [
+    Conditional=WEB_AUDIO,
+    JSGenerateToJSObject
+] BiquadFilterNode : AudioNode {
+    // Filter type.
+    const unsigned short LOWPASS = 0;
+    const unsigned short HIGHPASS = 1;
+    const unsigned short BANDPASS = 2;
+    const unsigned short LOWSHELF = 3;
+    const unsigned short HIGHSHELF = 4;
+    const unsigned short PEAKING = 5;
+    const unsigned short NOTCH = 6;
+    const unsigned short ALLPASS = 7;
 
-        attribute unsigned short type
-            setter raises(DOMException);
-        
-        readonly attribute AudioParam frequency; // in Hertz
-        readonly attribute AudioParam Q; // Quality factor
-        readonly attribute AudioParam gain; // in Decibels
+    attribute unsigned short type
+        setter raises(DOMException);
+    
+    readonly attribute AudioParam frequency; // in Hertz
+    readonly attribute AudioParam Q; // Quality factor
+    readonly attribute AudioParam gain; // in Decibels
 
-        void getFrequencyResponse(in Float32Array frequencyHz,
-                                  in Float32Array magResponse,
-                                  in Float32Array phaseResponse);
-    };
-}
+    void getFrequencyResponse(in Float32Array frequencyHz,
+                              in Float32Array magResponse,
+                              in Float32Array phaseResponse);
+};

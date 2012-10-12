@@ -26,23 +26,20 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module threads {
+interface [
+    Conditional=WORKERS,
+    JSGenerateIsReachable=Impl,
+    JSNoStaticTables
+] WorkerLocation {
+    readonly attribute DOMString href;
+    readonly attribute DOMString protocol;
+    readonly attribute DOMString host;
+    readonly attribute DOMString hostname;
+    readonly attribute DOMString port;
+    readonly attribute DOMString pathname;
+    readonly attribute DOMString search;
+    readonly attribute DOMString hash;
 
-    interface [
-        Conditional=WORKERS,
-        JSGenerateIsReachable=Impl,
-        JSNoStaticTables
-    ] WorkerLocation {
-        readonly attribute DOMString href;
-        readonly attribute DOMString protocol;
-        readonly attribute DOMString host;
-        readonly attribute DOMString hostname;
-        readonly attribute DOMString port;
-        readonly attribute DOMString pathname;
-        readonly attribute DOMString search;
-        readonly attribute DOMString hash;
+    [NotEnumerable] DOMString toString();
+};
 
-        [NotEnumerable] DOMString toString();
-    };
-
-}

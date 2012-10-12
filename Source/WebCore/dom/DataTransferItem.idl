@@ -28,16 +28,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
+interface [
+    Conditional=DATA_TRANSFER_ITEMS,
+] DataTransferItem {
+    readonly attribute DOMString kind;
+    readonly attribute DOMString type;
 
-    interface [
-        Conditional=DATA_TRANSFER_ITEMS,
-    ] DataTransferItem {
-        readonly attribute DOMString kind;
-        readonly attribute DOMString type;
+    void getAsString(in [Callback,Optional=DefaultIsUndefined] StringCallback callback);
+    Blob getAsFile();
+};
 
-        void getAsString(in [Callback,Optional=DefaultIsUndefined] StringCallback callback);
-        Blob getAsFile();
-    };
-
-}

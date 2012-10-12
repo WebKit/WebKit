@@ -28,13 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module mediastream {
+interface [
+    Conditional=MEDIA_STREAM,
+    Callback
+] RTCErrorCallback {
+    boolean handleEvent(in DOMString errorInformation);
+};
 
-    interface [
-        Conditional=MEDIA_STREAM,
-        Callback
-    ] RTCErrorCallback {
-        boolean handleEvent(in DOMString errorInformation);
-    };
-
-}

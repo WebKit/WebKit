@@ -26,26 +26,23 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module events {
+// Introduced in DOM Level 2:
+exception [
+    JSNoStaticTables,
+    DoNotCheckConstants
+] EventException {
 
-    // Introduced in DOM Level 2:
-    exception [
-        JSNoStaticTables,
-        DoNotCheckConstants
-    ] EventException {
-
-        readonly attribute unsigned short   code;
-        readonly attribute DOMString        name;
-        readonly attribute DOMString        message;
+    readonly attribute unsigned short   code;
+    readonly attribute DOMString        name;
+    readonly attribute DOMString        message;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        // Override in a Mozilla compatible format
-        [NotEnumerable] DOMString toString();
+    // Override in a Mozilla compatible format
+    [NotEnumerable] DOMString toString();
 #endif
 
-        // EventExceptionCode
-        const unsigned short UNSPECIFIED_EVENT_TYPE_ERR = 0;
-        const unsigned short DISPATCH_REQUEST_ERR = 1;
-    };
+    // EventExceptionCode
+    const unsigned short UNSPECIFIED_EVENT_TYPE_ERR = 0;
+    const unsigned short DISPATCH_REQUEST_ERR = 1;
+};
 
-}

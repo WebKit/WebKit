@@ -23,11 +23,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module window {
   interface [
-      Conditional=WEB_INTENTS,
-      Callback
+  Conditional=WEB_INTENTS,
+  Callback
   ] IntentResultCallback {
-      boolean handleEvent(in SerializedScriptValue result);
+  boolean handleEvent(in SerializedScriptValue result);
   };
-}

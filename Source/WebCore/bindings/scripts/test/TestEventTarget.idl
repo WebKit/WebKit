@@ -26,25 +26,22 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module events {
+interface [
+    EventTarget,
+    IndexedGetter,
+    NamedGetter,
+    MasqueradesAsUndefined
+] TestEventTarget {
 
-    interface [
-        EventTarget,
-        IndexedGetter,
-        NamedGetter,
-        MasqueradesAsUndefined
-    ] TestEventTarget {
+    Node item(in [IsIndex] unsigned long index);
 
-        Node item(in [IsIndex] unsigned long index);
+    void addEventListener(in DOMString type, 
+                          in EventListener listener, 
+                          in [Optional] boolean useCapture);
+    void removeEventListener(in DOMString type, 
+                             in EventListener listener, 
+                             in [Optional] boolean useCapture);
+    boolean dispatchEvent(in Event evt)
+        raises(EventException);
+};
 
-        void addEventListener(in DOMString type, 
-                              in EventListener listener, 
-                              in [Optional] boolean useCapture);
-        void removeEventListener(in DOMString type, 
-                                 in EventListener listener, 
-                                 in [Optional] boolean useCapture);
-        boolean dispatchEvent(in Event evt)
-            raises(EventException);
-    };
-
-}

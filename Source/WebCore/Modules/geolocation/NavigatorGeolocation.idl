@@ -17,13 +17,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module window {
+interface [
+    Conditional=GEOLOCATION,
+    Supplemental=Navigator
+] NavigatorGeolocation {
+    readonly attribute [V8EnabledAtRuntime] Geolocation geolocation;
+};
 
-    interface [
-        Conditional=GEOLOCATION,
-        Supplemental=Navigator
-    ] NavigatorGeolocation {
-        readonly attribute [V8EnabledAtRuntime] Geolocation geolocation;
-    };
-
-}

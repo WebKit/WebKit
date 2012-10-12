@@ -23,15 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG&SVG_FONTS,
+] SVGAltGlyphElement : SVGTextPositioningElement, SVGURIReference {
+    attribute DOMString glyphRef
+        setter raises(DOMException);
+    attribute DOMString format
+        setter raises(DOMException);
+};
 
-    interface [
-        Conditional=SVG&SVG_FONTS,
-    ] SVGAltGlyphElement : SVGTextPositioningElement, SVGURIReference {
-        attribute DOMString glyphRef
-            setter raises(DOMException);
-        attribute DOMString format
-            setter raises(DOMException);
-    };
-
-}

@@ -18,24 +18,21 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module events {
+// Introduced in DOM Level 2:
+interface [
+    ObjCProtocol,
+    CPPPureInterface,
+    OmitConstructor,
+    JSCustomToJSObject,
+    JSCustomToNativeObject
+] EventTarget {
+    [ObjCLegacyUnnamedParameters] void addEventListener(in DOMString type, 
+                                         in EventListener listener, 
+                                         in [Optional] boolean useCapture);
+    [ObjCLegacyUnnamedParameters] void removeEventListener(in DOMString type, 
+                                            in EventListener listener, 
+                                            in [Optional] boolean useCapture);
+    boolean dispatchEvent(in Event event)
+        raises(EventException);
+};
 
-    // Introduced in DOM Level 2:
-    interface [
-        ObjCProtocol,
-        CPPPureInterface,
-        OmitConstructor,
-        JSCustomToJSObject,
-        JSCustomToNativeObject
-    ] EventTarget {
-        [ObjCLegacyUnnamedParameters] void addEventListener(in DOMString type, 
-                                             in EventListener listener, 
-                                             in [Optional] boolean useCapture);
-        [ObjCLegacyUnnamedParameters] void removeEventListener(in DOMString type, 
-                                                in EventListener listener, 
-                                                in [Optional] boolean useCapture);
-        boolean dispatchEvent(in Event event)
-            raises(EventException);
-    };
-
-}

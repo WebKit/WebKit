@@ -26,24 +26,21 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module xpath {
+exception [
+    DoNotCheckConstants
+] XPathException {
 
-    exception [
-        DoNotCheckConstants
-    ] XPathException {
-
-        readonly attribute unsigned short   code;
-        readonly attribute DOMString        name;
-        readonly attribute DOMString        message;
+    readonly attribute unsigned short   code;
+    readonly attribute DOMString        name;
+    readonly attribute DOMString        message;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        // Override in a Mozilla compatible format
-        [NotEnumerable] DOMString toString();
+    // Override in a Mozilla compatible format
+    [NotEnumerable] DOMString toString();
 #endif
 
-        // XPathExceptionCode
-        const unsigned short INVALID_EXPRESSION_ERR = 51;
-        const unsigned short TYPE_ERR = 52;
-    };
+    // XPathExceptionCode
+    const unsigned short INVALID_EXPRESSION_ERR = 51;
+    const unsigned short TYPE_ERR = 52;
+};
 
-}

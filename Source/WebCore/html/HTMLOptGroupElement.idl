@@ -17,11 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module html {
+interface HTMLOptGroupElement : HTMLElement {
+    attribute [Reflect] boolean disabled;
+    attribute [Reflect] DOMString label;
+};
 
-    interface HTMLOptGroupElement : HTMLElement {
-        attribute [Reflect] boolean disabled;
-        attribute [Reflect] DOMString label;
-    };
-
-}

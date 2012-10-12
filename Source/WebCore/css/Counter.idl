@@ -17,13 +17,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module css {
+// Introduced in DOM Level 2:
+interface Counter {
+    readonly attribute DOMString identifier;
+    readonly attribute DOMString listStyle;
+    readonly attribute DOMString separator;
+};
 
-    // Introduced in DOM Level 2:
-    interface Counter {
-        readonly attribute DOMString identifier;
-        readonly attribute DOMString listStyle;
-        readonly attribute DOMString separator;
-    };
-
-}

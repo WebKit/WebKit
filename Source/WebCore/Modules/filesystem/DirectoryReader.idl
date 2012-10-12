@@ -28,11 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
-    interface [
-        Conditional=FILE_SYSTEM,
-        JSNoStaticTables
-    ] DirectoryReader {
-        void readEntries(in [Callback] EntriesCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
-    };
-}
+interface [
+    Conditional=FILE_SYSTEM,
+    JSNoStaticTables
+] DirectoryReader {
+    void readEntries(in [Callback] EntriesCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
+};

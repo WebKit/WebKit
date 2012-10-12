@@ -28,15 +28,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module p2p {
+interface [
+    Conditional=MEDIA_STREAM,
+    Constructor(in DOMString label, in DOMString candidateLine)
+] IceCandidate {
+    readonly attribute DOMString label;
 
-    interface [
-        Conditional=MEDIA_STREAM,
-        Constructor(in DOMString label, in DOMString candidateLine)
-    ] IceCandidate {
-        readonly attribute DOMString label;
+    DOMString toSdp();
+};
 
-        DOMString toSdp();
-    };
-
-}

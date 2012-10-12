@@ -23,27 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG
+] SVGPointList {
+    readonly attribute unsigned long numberOfItems;
 
-    interface [
-        Conditional=SVG
-    ] SVGPointList {
-        readonly attribute unsigned long numberOfItems;
+    void clear()
+        raises(DOMException);
+    [StrictTypeChecking] SVGPoint initialize(in SVGPoint item)
+        raises(DOMException, SVGException);
+    [StrictTypeChecking] SVGPoint getItem(in unsigned long index)
+        raises(DOMException);
+    [StrictTypeChecking] SVGPoint insertItemBefore(in SVGPoint item, in unsigned long index)
+        raises(DOMException, SVGException);
+    [StrictTypeChecking] SVGPoint replaceItem(in SVGPoint item, in unsigned long index)
+        raises(DOMException, SVGException);
+    [StrictTypeChecking] SVGPoint removeItem(in unsigned long index)
+        raises(DOMException);
+    [StrictTypeChecking] SVGPoint appendItem(in SVGPoint item)
+        raises(DOMException, SVGException);
+};
 
-        void clear()
-            raises(DOMException);
-        [StrictTypeChecking] SVGPoint initialize(in SVGPoint item)
-            raises(DOMException, SVGException);
-        [StrictTypeChecking] SVGPoint getItem(in unsigned long index)
-            raises(DOMException);
-        [StrictTypeChecking] SVGPoint insertItemBefore(in SVGPoint item, in unsigned long index)
-            raises(DOMException, SVGException);
-        [StrictTypeChecking] SVGPoint replaceItem(in SVGPoint item, in unsigned long index)
-            raises(DOMException, SVGException);
-        [StrictTypeChecking] SVGPoint removeItem(in unsigned long index)
-            raises(DOMException);
-        [StrictTypeChecking] SVGPoint appendItem(in SVGPoint item)
-            raises(DOMException, SVGException);
-    };
-
-}

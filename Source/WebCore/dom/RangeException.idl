@@ -17,24 +17,21 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module ranges {
+exception [
+    DoNotCheckConstants
+] RangeException {
 
-    exception [
-        DoNotCheckConstants
-    ] RangeException {
-
-        readonly attribute unsigned short   code;
-        readonly attribute DOMString        name;
-        readonly attribute DOMString        message;
+    readonly attribute unsigned short   code;
+    readonly attribute DOMString        name;
+    readonly attribute DOMString        message;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        [NotEnumerable] DOMString toString();
+    [NotEnumerable] DOMString toString();
 #endif
 
-        // DOM Level 2
+    // DOM Level 2
 
-        const unsigned short BAD_BOUNDARYPOINTS_ERR = 1;
-        const unsigned short INVALID_NODE_TYPE_ERR = 2;
-    };
+    const unsigned short BAD_BOUNDARYPOINTS_ERR = 1;
+    const unsigned short INVALID_NODE_TYPE_ERR = 2;
+};
 
-}

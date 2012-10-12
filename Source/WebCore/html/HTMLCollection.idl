@@ -18,23 +18,20 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module html {
-
-    interface [
-        IndexedGetter,
-        NamedGetter,
-        CustomToJSObject,
-        GenerateIsReachable=ImplBaseRoot,
-        V8DependentLifetime,
-        ObjCPolymorphic
-    ] HTMLCollection {
-        readonly attribute unsigned long length;
-        Node item(in [Optional=DefaultIsUndefined] unsigned long index);
-        [Custom] Node namedItem(in [Optional=DefaultIsUndefined] DOMString name);
+interface [
+    IndexedGetter,
+    NamedGetter,
+    CustomToJSObject,
+    GenerateIsReachable=ImplBaseRoot,
+    V8DependentLifetime,
+    ObjCPolymorphic
+] HTMLCollection {
+    readonly attribute unsigned long length;
+    Node item(in [Optional=DefaultIsUndefined] unsigned long index);
+    [Custom] Node namedItem(in [Optional=DefaultIsUndefined] DOMString name);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-        NodeList tags(in [Optional=DefaultIsUndefined] DOMString name);
+    NodeList tags(in [Optional=DefaultIsUndefined] DOMString name);
 #endif
-    };
+};
 
-}

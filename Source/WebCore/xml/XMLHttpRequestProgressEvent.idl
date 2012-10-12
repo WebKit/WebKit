@@ -23,14 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module events {
+interface [
+    JSNoStaticTables
+// We should also inherit from LSProgressEvent when the idl is added.
+] XMLHttpRequestProgressEvent : ProgressEvent {
+     readonly attribute unsigned long long position;
+     readonly attribute unsigned long long totalSize;
+};
 
-    interface [
-        JSNoStaticTables
-    // We should also inherit from LSProgressEvent when the idl is added.
-    ] XMLHttpRequestProgressEvent : ProgressEvent {
-         readonly attribute unsigned long long position;
-         readonly attribute unsigned long long totalSize;
-    };
-
-}

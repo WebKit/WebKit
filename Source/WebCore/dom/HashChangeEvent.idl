@@ -17,19 +17,16 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module events {
+// Introduced in http://www.whatwg.org/specs/web-apps/current-work/multipage/history.html#event-hashchange
+interface [
+    ConstructorTemplate=Event
+] HashChangeEvent : Event {
+    void initHashChangeEvent(in [Optional=DefaultIsUndefined] DOMString type, 
+                             in [Optional=DefaultIsUndefined] boolean canBubble, 
+                             in [Optional=DefaultIsUndefined] boolean cancelable, 
+                             in [Optional=DefaultIsUndefined] DOMString oldURL, 
+                             in [Optional=DefaultIsUndefined] DOMString newURL); 
+    readonly attribute [InitializedByEventConstructor] DOMString oldURL;
+    readonly attribute [InitializedByEventConstructor] DOMString newURL;
+};
 
-    // Introduced in http://www.whatwg.org/specs/web-apps/current-work/multipage/history.html#event-hashchange
-    interface [
-        ConstructorTemplate=Event
-    ] HashChangeEvent : Event {
-        void initHashChangeEvent(in [Optional=DefaultIsUndefined] DOMString type, 
-                                 in [Optional=DefaultIsUndefined] boolean canBubble, 
-                                 in [Optional=DefaultIsUndefined] boolean cancelable, 
-                                 in [Optional=DefaultIsUndefined] DOMString oldURL, 
-                                 in [Optional=DefaultIsUndefined] DOMString newURL); 
-        readonly attribute [InitializedByEventConstructor] DOMString oldURL;
-        readonly attribute [InitializedByEventConstructor] DOMString newURL;
-    };
-
-}

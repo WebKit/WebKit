@@ -23,221 +23,217 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module html {
+interface CanvasRenderingContext2D : CanvasRenderingContext {
 
-    interface CanvasRenderingContext2D : CanvasRenderingContext {
+    void save();
+    void restore();
 
-        void save();
-        void restore();
+    void scale(in [Optional=DefaultIsUndefined] float sx,
+               in [Optional=DefaultIsUndefined] float sy);
+    void rotate(in [Optional=DefaultIsUndefined] float angle);
+    void translate(in [Optional=DefaultIsUndefined] float tx,
+                   in [Optional=DefaultIsUndefined] float ty);
+    void transform(in [Optional=DefaultIsUndefined] float m11,
+                   in [Optional=DefaultIsUndefined] float m12,
+                   in [Optional=DefaultIsUndefined] float m21,
+                   in [Optional=DefaultIsUndefined] float m22,
+                   in [Optional=DefaultIsUndefined] float dx,
+                   in [Optional=DefaultIsUndefined] float dy);
+    void setTransform(in [Optional=DefaultIsUndefined] float m11,
+                      in [Optional=DefaultIsUndefined] float m12,
+                      in [Optional=DefaultIsUndefined] float m21,
+                      in [Optional=DefaultIsUndefined] float m22,
+                      in [Optional=DefaultIsUndefined] float dx,
+                      in [Optional=DefaultIsUndefined] float dy);
 
-        void scale(in [Optional=DefaultIsUndefined] float sx,
-                   in [Optional=DefaultIsUndefined] float sy);
-        void rotate(in [Optional=DefaultIsUndefined] float angle);
-        void translate(in [Optional=DefaultIsUndefined] float tx,
-                       in [Optional=DefaultIsUndefined] float ty);
-        void transform(in [Optional=DefaultIsUndefined] float m11,
-                       in [Optional=DefaultIsUndefined] float m12,
-                       in [Optional=DefaultIsUndefined] float m21,
-                       in [Optional=DefaultIsUndefined] float m22,
-                       in [Optional=DefaultIsUndefined] float dx,
-                       in [Optional=DefaultIsUndefined] float dy);
-        void setTransform(in [Optional=DefaultIsUndefined] float m11,
-                          in [Optional=DefaultIsUndefined] float m12,
-                          in [Optional=DefaultIsUndefined] float m21,
-                          in [Optional=DefaultIsUndefined] float m22,
-                          in [Optional=DefaultIsUndefined] float dx,
-                          in [Optional=DefaultIsUndefined] float dy);
+    attribute float globalAlpha;
+    attribute [TreatNullAs=NullString] DOMString globalCompositeOperation;
 
-        attribute float globalAlpha;
-        attribute [TreatNullAs=NullString] DOMString globalCompositeOperation;
+    CanvasGradient createLinearGradient(in [Optional=DefaultIsUndefined] float x0,
+                                        in [Optional=DefaultIsUndefined] float y0,
+                                        in [Optional=DefaultIsUndefined] float x1,
+                                        in [Optional=DefaultIsUndefined] float y1)
+        raises (DOMException);
+    CanvasGradient createRadialGradient(in [Optional=DefaultIsUndefined] float x0,
+                                        in [Optional=DefaultIsUndefined] float y0,
+                                        in [Optional=DefaultIsUndefined] float r0,
+                                        in [Optional=DefaultIsUndefined] float x1,
+                                        in [Optional=DefaultIsUndefined] float y1,
+                                        in [Optional=DefaultIsUndefined] float r1)
+        raises (DOMException);
 
-        CanvasGradient createLinearGradient(in [Optional=DefaultIsUndefined] float x0,
-                                            in [Optional=DefaultIsUndefined] float y0,
-                                            in [Optional=DefaultIsUndefined] float x1,
-                                            in [Optional=DefaultIsUndefined] float y1)
-            raises (DOMException);
-        CanvasGradient createRadialGradient(in [Optional=DefaultIsUndefined] float x0,
-                                            in [Optional=DefaultIsUndefined] float y0,
-                                            in [Optional=DefaultIsUndefined] float r0,
-                                            in [Optional=DefaultIsUndefined] float x1,
-                                            in [Optional=DefaultIsUndefined] float y1,
-                                            in [Optional=DefaultIsUndefined] float r1)
-            raises (DOMException);
+    attribute float lineWidth;
+    attribute [TreatNullAs=NullString] DOMString lineCap;
+    attribute [TreatNullAs=NullString] DOMString lineJoin;
+    attribute float miterLimit;
 
-        attribute float lineWidth;
-        attribute [TreatNullAs=NullString] DOMString lineCap;
-        attribute [TreatNullAs=NullString] DOMString lineJoin;
-        attribute float miterLimit;
+    attribute float shadowOffsetX;
+    attribute float shadowOffsetY;
+    attribute float shadowBlur;
+    attribute [TreatNullAs=NullString] DOMString shadowColor;
 
-        attribute float shadowOffsetX;
-        attribute float shadowOffsetY;
-        attribute float shadowBlur;
-        attribute [TreatNullAs=NullString] DOMString shadowColor;
+    void setLineDash(in sequence<float> dash);
+    sequence<float> getLineDash();
+    attribute float lineDashOffset;
 
-        void setLineDash(in sequence<float> dash);
-        sequence<float> getLineDash();
-        attribute float lineDashOffset;
-
-        // FIXME: These attributes should also be implemented for V8.
+    // FIXME: These attributes should also be implemented for V8.
 #if !(defined(V8_BINDING) && V8_BINDING)
-        attribute [Custom] Array webkitLineDash;
-        attribute float webkitLineDashOffset;
+    attribute [Custom] Array webkitLineDash;
+    attribute float webkitLineDashOffset;
 #endif
 
-        void clearRect(in [Optional=DefaultIsUndefined] float x,
-                       in [Optional=DefaultIsUndefined] float y,
-                       in [Optional=DefaultIsUndefined] float width,
-                       in [Optional=DefaultIsUndefined] float height);
-        void fillRect(in [Optional=DefaultIsUndefined] float x,
-                      in [Optional=DefaultIsUndefined] float y,
-                      in [Optional=DefaultIsUndefined] float width,
-                      in [Optional=DefaultIsUndefined] float height);
-
-        void beginPath();
-        void closePath();
-        void moveTo(in [Optional=DefaultIsUndefined] float x,
-                    in [Optional=DefaultIsUndefined] float y);
-        void lineTo(in [Optional=DefaultIsUndefined] float x,
-                    in [Optional=DefaultIsUndefined] float y);
-        void quadraticCurveTo(in [Optional=DefaultIsUndefined] float cpx,
-                              in [Optional=DefaultIsUndefined] float cpy,
-                              in [Optional=DefaultIsUndefined] float x,
-                              in [Optional=DefaultIsUndefined] float y);
-        void bezierCurveTo(in [Optional=DefaultIsUndefined] float cp1x,
-                           in [Optional=DefaultIsUndefined] float cp1y,
-                           in [Optional=DefaultIsUndefined] float cp2x,
-                           in [Optional=DefaultIsUndefined] float cp2y,
-                           in [Optional=DefaultIsUndefined] float x,
-                           in [Optional=DefaultIsUndefined] float y);
-        void arcTo(in [Optional=DefaultIsUndefined] float x1,
-                   in [Optional=DefaultIsUndefined] float y1,
-                   in [Optional=DefaultIsUndefined] float x2,
-                   in [Optional=DefaultIsUndefined] float y2,
-                   in [Optional=DefaultIsUndefined] float radius)
-            raises (DOMException);
-        void rect(in [Optional=DefaultIsUndefined] float x,
+    void clearRect(in [Optional=DefaultIsUndefined] float x,
+                   in [Optional=DefaultIsUndefined] float y,
+                   in [Optional=DefaultIsUndefined] float width,
+                   in [Optional=DefaultIsUndefined] float height);
+    void fillRect(in [Optional=DefaultIsUndefined] float x,
                   in [Optional=DefaultIsUndefined] float y,
                   in [Optional=DefaultIsUndefined] float width,
                   in [Optional=DefaultIsUndefined] float height);
-        void arc(in [Optional=DefaultIsUndefined] float x,
-                 in [Optional=DefaultIsUndefined] float y,
-                 in [Optional=DefaultIsUndefined] float radius,
-                 in [Optional=DefaultIsUndefined] float startAngle,
-                 in [Optional=DefaultIsUndefined] float endAngle,
-                 in [Optional=DefaultIsUndefined] boolean anticlockwise)
-            raises (DOMException);
-        void fill();
-        void stroke();
-        void clip();
-        boolean isPointInPath(in [Optional=DefaultIsUndefined] float x,
-                              in [Optional=DefaultIsUndefined] float y);
 
-        // text
-        attribute DOMString font;
-        attribute DOMString textAlign;
-        attribute DOMString textBaseline;
+    void beginPath();
+    void closePath();
+    void moveTo(in [Optional=DefaultIsUndefined] float x,
+                in [Optional=DefaultIsUndefined] float y);
+    void lineTo(in [Optional=DefaultIsUndefined] float x,
+                in [Optional=DefaultIsUndefined] float y);
+    void quadraticCurveTo(in [Optional=DefaultIsUndefined] float cpx,
+                          in [Optional=DefaultIsUndefined] float cpy,
+                          in [Optional=DefaultIsUndefined] float x,
+                          in [Optional=DefaultIsUndefined] float y);
+    void bezierCurveTo(in [Optional=DefaultIsUndefined] float cp1x,
+                       in [Optional=DefaultIsUndefined] float cp1y,
+                       in [Optional=DefaultIsUndefined] float cp2x,
+                       in [Optional=DefaultIsUndefined] float cp2y,
+                       in [Optional=DefaultIsUndefined] float x,
+                       in [Optional=DefaultIsUndefined] float y);
+    void arcTo(in [Optional=DefaultIsUndefined] float x1,
+               in [Optional=DefaultIsUndefined] float y1,
+               in [Optional=DefaultIsUndefined] float x2,
+               in [Optional=DefaultIsUndefined] float y2,
+               in [Optional=DefaultIsUndefined] float radius)
+        raises (DOMException);
+    void rect(in [Optional=DefaultIsUndefined] float x,
+              in [Optional=DefaultIsUndefined] float y,
+              in [Optional=DefaultIsUndefined] float width,
+              in [Optional=DefaultIsUndefined] float height);
+    void arc(in [Optional=DefaultIsUndefined] float x,
+             in [Optional=DefaultIsUndefined] float y,
+             in [Optional=DefaultIsUndefined] float radius,
+             in [Optional=DefaultIsUndefined] float startAngle,
+             in [Optional=DefaultIsUndefined] float endAngle,
+             in [Optional=DefaultIsUndefined] boolean anticlockwise)
+        raises (DOMException);
+    void fill();
+    void stroke();
+    void clip();
+    boolean isPointInPath(in [Optional=DefaultIsUndefined] float x,
+                          in [Optional=DefaultIsUndefined] float y);
 
-        TextMetrics measureText(in [Optional=DefaultIsUndefined] DOMString text);
+    // text
+    attribute DOMString font;
+    attribute DOMString textAlign;
+    attribute DOMString textBaseline;
 
-        // other
+    TextMetrics measureText(in [Optional=DefaultIsUndefined] DOMString text);
 
-        void setAlpha(in [Optional=DefaultIsUndefined] float alpha);
-        void setCompositeOperation(in [Optional=DefaultIsUndefined] DOMString compositeOperation);
+    // other
+
+    void setAlpha(in [Optional=DefaultIsUndefined] float alpha);
+    void setCompositeOperation(in [Optional=DefaultIsUndefined] DOMString compositeOperation);
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-        void setLineWidth(in [Optional=DefaultIsUndefined] float width);
-        void setLineCap(in [Optional=DefaultIsUndefined] DOMString cap);
-        void setLineJoin(in [Optional=DefaultIsUndefined] DOMString join);
-        void setMiterLimit(in [Optional=DefaultIsUndefined] float limit);
+    void setLineWidth(in [Optional=DefaultIsUndefined] float width);
+    void setLineCap(in [Optional=DefaultIsUndefined] DOMString cap);
+    void setLineJoin(in [Optional=DefaultIsUndefined] DOMString join);
+    void setMiterLimit(in [Optional=DefaultIsUndefined] float limit);
 #endif
 
-        void clearShadow();
+    void clearShadow();
 
-        void fillText(in DOMString text, in float x, in float y, in [Optional] float maxWidth);
-        void strokeText(in DOMString text, in float x, in float y, in [Optional] float maxWidth);
+    void fillText(in DOMString text, in float x, in float y, in [Optional] float maxWidth);
+    void strokeText(in DOMString text, in float x, in float y, in [Optional] float maxWidth);
 
-        void setStrokeColor(in [StrictTypeChecking] DOMString color, in [Optional] float alpha);
-        void setStrokeColor(in float grayLevel, in [Optional] float alpha);
-        void setStrokeColor(in float r, in float g, in float b, in float a);
-        void setStrokeColor(in float c, in float m, in float y, in float k, in float a);
+    void setStrokeColor(in [StrictTypeChecking] DOMString color, in [Optional] float alpha);
+    void setStrokeColor(in float grayLevel, in [Optional] float alpha);
+    void setStrokeColor(in float r, in float g, in float b, in float a);
+    void setStrokeColor(in float c, in float m, in float y, in float k, in float a);
 
-        void setFillColor(in [StrictTypeChecking] DOMString color, in [Optional] float alpha);
-        void setFillColor(in float grayLevel, in [Optional] float alpha);
-        void setFillColor(in float r, in float g, in float b, in float a);
-        void setFillColor(in float c, in float m, in float y, in float k, in float a);
+    void setFillColor(in [StrictTypeChecking] DOMString color, in [Optional] float alpha);
+    void setFillColor(in float grayLevel, in [Optional] float alpha);
+    void setFillColor(in float r, in float g, in float b, in float a);
+    void setFillColor(in float c, in float m, in float y, in float k, in float a);
 
-        void strokeRect(in [Optional=DefaultIsUndefined] float x,
-                        in [Optional=DefaultIsUndefined] float y,
-                        in [Optional=DefaultIsUndefined] float width,
-                        in [Optional=DefaultIsUndefined] float height,
-                        in [Optional] float lineWidth);
+    void strokeRect(in [Optional=DefaultIsUndefined] float x,
+                    in [Optional=DefaultIsUndefined] float y,
+                    in [Optional=DefaultIsUndefined] float width,
+                    in [Optional=DefaultIsUndefined] float height,
+                    in [Optional] float lineWidth);
 
-        void drawImage(in HTMLImageElement? image, in float x, in float y)
-            raises (DOMException);
-        void drawImage(in HTMLImageElement? image, in float x, in float y, in float width, in float height)
-            raises (DOMException);
-        void drawImage(in HTMLImageElement? image, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
-            raises (DOMException);
-        void drawImage(in HTMLCanvasElement? canvas, in float x, in float y)
-            raises (DOMException);
-        void drawImage(in HTMLCanvasElement? canvas, in float x, in float y, in float width, in float height)
-            raises (DOMException);
-        void drawImage(in HTMLCanvasElement? canvas, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
-            raises (DOMException);
+    void drawImage(in HTMLImageElement? image, in float x, in float y)
+        raises (DOMException);
+    void drawImage(in HTMLImageElement? image, in float x, in float y, in float width, in float height)
+        raises (DOMException);
+    void drawImage(in HTMLImageElement? image, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
+        raises (DOMException);
+    void drawImage(in HTMLCanvasElement? canvas, in float x, in float y)
+        raises (DOMException);
+    void drawImage(in HTMLCanvasElement? canvas, in float x, in float y, in float width, in float height)
+        raises (DOMException);
+    void drawImage(in HTMLCanvasElement? canvas, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
+        raises (DOMException);
 #if defined(ENABLE_VIDEO) && ENABLE_VIDEO
-        void drawImage(in HTMLVideoElement? video, in float x, in float y)
-            raises (DOMException);
-        void drawImage(in HTMLVideoElement? video, in float x, in float y, in float width, in float height)
-            raises (DOMException);
-        void drawImage(in HTMLVideoElement? video, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
-            raises (DOMException);
+    void drawImage(in HTMLVideoElement? video, in float x, in float y)
+        raises (DOMException);
+    void drawImage(in HTMLVideoElement? video, in float x, in float y, in float width, in float height)
+        raises (DOMException);
+    void drawImage(in HTMLVideoElement? video, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
+        raises (DOMException);
 #endif
 
-        void drawImageFromRect(in HTMLImageElement image,
-                               in [Optional] float sx, in [Optional] float sy, in [Optional] float sw, in [Optional] float sh,
-                               in [Optional] float dx, in [Optional] float dy, in [Optional] float dw, in [Optional] float dh,
-                               in [Optional] DOMString compositeOperation);
+    void drawImageFromRect(in HTMLImageElement image,
+                           in [Optional] float sx, in [Optional] float sy, in [Optional] float sw, in [Optional] float sh,
+                           in [Optional] float dx, in [Optional] float dy, in [Optional] float dw, in [Optional] float dh,
+                           in [Optional] DOMString compositeOperation);
 
-        void setShadow(in float width, in float height, in float blur, in [Optional, StrictTypeChecking] DOMString color, in [Optional] float alpha);
-        void setShadow(in float width, in float height, in float blur, in float grayLevel, in [Optional] float alpha);
-        void setShadow(in float width, in float height, in float blur, in float r, in float g, in float b, in float a);
-        void setShadow(in float width, in float height, in float blur, in float c, in float m, in float y, in float k, in float a);
+    void setShadow(in float width, in float height, in float blur, in [Optional, StrictTypeChecking] DOMString color, in [Optional] float alpha);
+    void setShadow(in float width, in float height, in float blur, in float grayLevel, in [Optional] float alpha);
+    void setShadow(in float width, in float height, in float blur, in float r, in float g, in float b, in float a);
+    void setShadow(in float width, in float height, in float blur, in float c, in float m, in float y, in float k, in float a);
 
-        void putImageData(in ImageData? imagedata, in float dx, in float dy)
-            raises(DOMException);
-        void putImageData(in ImageData? imagedata, in float dx, in float dy, in float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight)
-            raises(DOMException);
+    void putImageData(in ImageData? imagedata, in float dx, in float dy)
+        raises(DOMException);
+    void putImageData(in ImageData? imagedata, in float dx, in float dy, in float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight)
+        raises(DOMException);
 
-        void webkitPutImageDataHD(in ImageData? imagedata, in float dx, in float dy)
-            raises(DOMException);
-        void webkitPutImageDataHD(in ImageData? imagedata, in float dx, in float dy, in float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight)
-            raises(DOMException);
+    void webkitPutImageDataHD(in ImageData? imagedata, in float dx, in float dy)
+        raises(DOMException);
+    void webkitPutImageDataHD(in ImageData? imagedata, in float dx, in float dy, in float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight)
+        raises(DOMException);
 
-        CanvasPattern createPattern(in HTMLCanvasElement? canvas, in [TreatNullAs=NullString] DOMString repetitionType)
-            raises (DOMException);
-        CanvasPattern createPattern(in HTMLImageElement? image, in [TreatNullAs=NullString] DOMString repetitionType)
-            raises (DOMException);
-        ImageData createImageData(in ImageData? imagedata)
-            raises (DOMException);
-        ImageData createImageData(in float sw, in float sh)
-            raises (DOMException);
+    CanvasPattern createPattern(in HTMLCanvasElement? canvas, in [TreatNullAs=NullString] DOMString repetitionType)
+        raises (DOMException);
+    CanvasPattern createPattern(in HTMLImageElement? image, in [TreatNullAs=NullString] DOMString repetitionType)
+        raises (DOMException);
+    ImageData createImageData(in ImageData? imagedata)
+        raises (DOMException);
+    ImageData createImageData(in float sw, in float sh)
+        raises (DOMException);
 
-        attribute [Custom] custom strokeStyle;
-        attribute [Custom] custom fillStyle;
+    attribute [Custom] custom strokeStyle;
+    attribute [Custom] custom fillStyle;
 
-        // pixel manipulation
-        ImageData getImageData(in [Optional=DefaultIsUndefined] float sx, in [Optional=DefaultIsUndefined] float sy,
-                               in [Optional=DefaultIsUndefined] float sw, in [Optional=DefaultIsUndefined] float sh)
-            raises(DOMException);
+    // pixel manipulation
+    ImageData getImageData(in [Optional=DefaultIsUndefined] float sx, in [Optional=DefaultIsUndefined] float sy,
+                           in [Optional=DefaultIsUndefined] float sw, in [Optional=DefaultIsUndefined] float sh)
+        raises(DOMException);
 
-        ImageData webkitGetImageDataHD(in [Optional=DefaultIsUndefined] float sx, in [Optional=DefaultIsUndefined] float sy,
-                                       in [Optional=DefaultIsUndefined] float sw, in [Optional=DefaultIsUndefined] float sh)
-            raises(DOMException);
+    ImageData webkitGetImageDataHD(in [Optional=DefaultIsUndefined] float sx, in [Optional=DefaultIsUndefined] float sy,
+                                   in [Optional=DefaultIsUndefined] float sw, in [Optional=DefaultIsUndefined] float sh)
+        raises(DOMException);
 
-        readonly attribute float webkitBackingStorePixelRatio;
+    readonly attribute float webkitBackingStorePixelRatio;
 
-        attribute boolean webkitImageSmoothingEnabled;
-    };
-
-}
+    attribute boolean webkitImageSmoothingEnabled;
+};
 

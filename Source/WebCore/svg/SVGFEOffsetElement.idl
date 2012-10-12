@@ -23,15 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG&FILTERS
+] SVGFEOffsetElement : SVGElement,
+                                                 SVGFilterPrimitiveStandardAttributes {
+    readonly attribute SVGAnimatedString in1;
+    readonly attribute SVGAnimatedNumber dx;
+    readonly attribute SVGAnimatedNumber dy;
+};
 
-    interface [
-        Conditional=SVG&FILTERS
-    ] SVGFEOffsetElement : SVGElement,
-                                                     SVGFilterPrimitiveStandardAttributes {
-        readonly attribute SVGAnimatedString in1;
-        readonly attribute SVGAnimatedNumber dx;
-        readonly attribute SVGAnimatedNumber dy;
-    };
-
-}

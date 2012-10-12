@@ -18,75 +18,72 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module events {
+// Introduced in DOM Level 2:
+interface [
+    CustomToJSObject,
+    ConstructorTemplate=Event,
+    JSNoStaticTables,
+    ObjCPolymorphic
+] Event {
 
-    // Introduced in DOM Level 2:
-    interface [
-        CustomToJSObject,
-        ConstructorTemplate=Event,
-        JSNoStaticTables,
-        ObjCPolymorphic
-    ] Event {
-
-        // DOM PhaseType
-        const unsigned short NONE                = 0;
-        const unsigned short CAPTURING_PHASE     = 1;
-        const unsigned short AT_TARGET           = 2;
-        const unsigned short BUBBLING_PHASE      = 3;
+    // DOM PhaseType
+    const unsigned short NONE                = 0;
+    const unsigned short CAPTURING_PHASE     = 1;
+    const unsigned short AT_TARGET           = 2;
+    const unsigned short BUBBLING_PHASE      = 3;
 
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
-        // Reverse-engineered from Netscape
-        const unsigned short MOUSEDOWN           = 1;
-        const unsigned short MOUSEUP             = 2;
-        const unsigned short MOUSEOVER           = 4;
-        const unsigned short MOUSEOUT            = 8;
-        const unsigned short MOUSEMOVE           = 16;
-        const unsigned short MOUSEDRAG           = 32;
-        const unsigned short CLICK               = 64;
-        const unsigned short DBLCLICK            = 128;
-        const unsigned short KEYDOWN             = 256;
-        const unsigned short KEYUP               = 512;
-        const unsigned short KEYPRESS            = 1024;
-        const unsigned short DRAGDROP            = 2048;
-        const unsigned short FOCUS               = 4096;
-        const unsigned short BLUR                = 8192;
-        const unsigned short SELECT              = 16384;
-        const unsigned short CHANGE              = 32768;
+    // Reverse-engineered from Netscape
+    const unsigned short MOUSEDOWN           = 1;
+    const unsigned short MOUSEUP             = 2;
+    const unsigned short MOUSEOVER           = 4;
+    const unsigned short MOUSEOUT            = 8;
+    const unsigned short MOUSEMOVE           = 16;
+    const unsigned short MOUSEDRAG           = 32;
+    const unsigned short CLICK               = 64;
+    const unsigned short DBLCLICK            = 128;
+    const unsigned short KEYDOWN             = 256;
+    const unsigned short KEYUP               = 512;
+    const unsigned short KEYPRESS            = 1024;
+    const unsigned short DRAGDROP            = 2048;
+    const unsigned short FOCUS               = 4096;
+    const unsigned short BLUR                = 8192;
+    const unsigned short SELECT              = 16384;
+    const unsigned short CHANGE              = 32768;
 #endif
 
-        readonly attribute DOMString        type;
-        readonly attribute EventTarget      target;
-        readonly attribute EventTarget      currentTarget;
-        readonly attribute unsigned short   eventPhase;
-        readonly attribute [InitializedByEventConstructor] boolean bubbles;
-        readonly attribute [InitializedByEventConstructor] boolean cancelable;
-        readonly attribute DOMTimeStamp     timeStamp;
+    readonly attribute DOMString        type;
+    readonly attribute EventTarget      target;
+    readonly attribute EventTarget      currentTarget;
+    readonly attribute unsigned short   eventPhase;
+    readonly attribute [InitializedByEventConstructor] boolean bubbles;
+    readonly attribute [InitializedByEventConstructor] boolean cancelable;
+    readonly attribute DOMTimeStamp     timeStamp;
 
-        void               stopPropagation();
-        void               preventDefault();
-        [ObjCLegacyUnnamedParameters] void initEvent(in [Optional=DefaultIsUndefined] DOMString eventTypeArg, 
-                                      in [Optional=DefaultIsUndefined] boolean canBubbleArg, 
-                                      in [Optional=DefaultIsUndefined] boolean cancelableArg);
+    void               stopPropagation();
+    void               preventDefault();
+    [ObjCLegacyUnnamedParameters] void initEvent(in [Optional=DefaultIsUndefined] DOMString eventTypeArg, 
+                                  in [Optional=DefaultIsUndefined] boolean canBubbleArg, 
+                                  in [Optional=DefaultIsUndefined] boolean cancelableArg);
 
-        // DOM Level 3 Additions.
-        readonly attribute boolean defaultPrevented;
-        void stopImmediatePropagation();
+    // DOM Level 3 Additions.
+    readonly attribute boolean defaultPrevented;
+    void stopImmediatePropagation();
 
-        // IE Extensions
-        readonly attribute EventTarget      srcElement;
-                 attribute boolean          returnValue;
-                 attribute boolean          cancelBubble;
+    // IE Extensions
+    readonly attribute EventTarget      srcElement;
+             attribute boolean          returnValue;
+             attribute boolean          cancelBubble;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        readonly attribute [Custom] Clipboard        clipboardData;
+    readonly attribute [Custom] Clipboard        clipboardData;
 #endif
 
 #if defined(LANGUAGE_CPP) && LANGUAGE_CPP
-        // Extra WebCore methods exposed to allow compile-time casting in C++
-        boolean isMouseEvent();
-        boolean isUIEvent();
+    // Extra WebCore methods exposed to allow compile-time casting in C++
+    boolean isMouseEvent();
+    boolean isUIEvent();
 #endif
 
-    };
+};
 
-}

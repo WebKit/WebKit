@@ -24,18 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module window {
-
-    interface [
-        Conditional=NOTIFICATIONS|LEGACY_NOTIFICATIONS,
-        Supplemental=DOMWindow
-    ] DOMWindowNotifications {
+interface [
+    Conditional=NOTIFICATIONS|LEGACY_NOTIFICATIONS,
+    Supplemental=DOMWindow
+] DOMWindowNotifications {
 #if defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS
-        readonly attribute [V8EnabledAtRuntime, V8MeasureAs=LegacyNotifications] NotificationCenter webkitNotifications;
+    readonly attribute [V8EnabledAtRuntime, V8MeasureAs=LegacyNotifications] NotificationCenter webkitNotifications;
 #endif
 #if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
-        attribute NotificationConstructor Notification;
+    attribute NotificationConstructor Notification;
 #endif
-    };
+};
 
-}

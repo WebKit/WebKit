@@ -23,14 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module events {
+interface [
+    Conditional=TOUCH_EVENTS,
+    IndexedGetter
+] TouchList {
+    readonly attribute unsigned long length;
 
-    interface [
-        Conditional=TOUCH_EVENTS,
-        IndexedGetter
-    ] TouchList {
-        readonly attribute unsigned long length;
-
-        Touch item(in unsigned long index);
-    };
-}
+    Touch item(in unsigned long index);
+};

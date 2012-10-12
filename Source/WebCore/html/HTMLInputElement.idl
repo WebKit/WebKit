@@ -19,103 +19,100 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module html {
-
-    interface HTMLInputElement : HTMLElement {
-        attribute [Reflect] DOMString accept;
-        attribute [Reflect] DOMString alt;
-        attribute [Reflect] DOMString autocomplete;
-        attribute [Reflect] boolean autofocus;
-        attribute [Reflect=checked] boolean defaultChecked;
-        attribute boolean checked;
-        attribute [Reflect] DOMString dirName;
-        attribute [Reflect] boolean disabled;
-        readonly attribute HTMLFormElement form;
-        attribute FileList files;
-        attribute [Reflect, URL] DOMString formAction;
-        attribute [TreatNullAs=NullString] DOMString formEnctype;
-        attribute [TreatNullAs=NullString] DOMString formMethod;
-        attribute [Reflect] boolean formNoValidate;
-        attribute [Reflect] DOMString formTarget;
-        attribute unsigned long height;
-        attribute boolean indeterminate;
-        readonly attribute [Conditional=DATALIST_ELEMENT] HTMLElement list;
-        attribute [Reflect] DOMString max;
-        attribute long maxLength setter raises(DOMException);
-        attribute [Reflect] DOMString min;
-        attribute [Reflect] boolean multiple;
-        attribute [Reflect] DOMString name;
-        attribute [Reflect] DOMString pattern;
-        attribute [Reflect] DOMString placeholder;
-        attribute [Reflect] boolean readOnly;
-        attribute [Reflect] boolean required;
+interface HTMLInputElement : HTMLElement {
+    attribute [Reflect] DOMString accept;
+    attribute [Reflect] DOMString alt;
+    attribute [Reflect] DOMString autocomplete;
+    attribute [Reflect] boolean autofocus;
+    attribute [Reflect=checked] boolean defaultChecked;
+    attribute boolean checked;
+    attribute [Reflect] DOMString dirName;
+    attribute [Reflect] boolean disabled;
+    readonly attribute HTMLFormElement form;
+    attribute FileList files;
+    attribute [Reflect, URL] DOMString formAction;
+    attribute [TreatNullAs=NullString] DOMString formEnctype;
+    attribute [TreatNullAs=NullString] DOMString formMethod;
+    attribute [Reflect] boolean formNoValidate;
+    attribute [Reflect] DOMString formTarget;
+    attribute unsigned long height;
+    attribute boolean indeterminate;
+    readonly attribute [Conditional=DATALIST_ELEMENT] HTMLElement list;
+    attribute [Reflect] DOMString max;
+    attribute long maxLength setter raises(DOMException);
+    attribute [Reflect] DOMString min;
+    attribute [Reflect] boolean multiple;
+    attribute [Reflect] DOMString name;
+    attribute [Reflect] DOMString pattern;
+    attribute [Reflect] DOMString placeholder;
+    attribute [Reflect] boolean readOnly;
+    attribute [Reflect] boolean required;
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-        attribute [ObjCImplementedAsUnsignedLong] DOMString size; // DOM level 2 changed this to a long, but ObjC API is a string
+    attribute [ObjCImplementedAsUnsignedLong] DOMString size; // DOM level 2 changed this to a long, but ObjC API is a string
 #else
-        attribute unsigned long size setter raises(DOMException); // Changed string -> long -> unsigned long
+    attribute unsigned long size setter raises(DOMException); // Changed string -> long -> unsigned long
 #endif
-        attribute [Reflect, URL] DOMString src;
-        attribute [Reflect] DOMString step;
-        attribute [TreatNullAs=NullString] DOMString type; // readonly dropped as part of DOM level 2
-        attribute [TreatNullAs=NullString] DOMString defaultValue;
-        attribute [TreatNullAs=NullString] DOMString value;
+    attribute [Reflect, URL] DOMString src;
+    attribute [Reflect] DOMString step;
+    attribute [TreatNullAs=NullString] DOMString type; // readonly dropped as part of DOM level 2
+    attribute [TreatNullAs=NullString] DOMString defaultValue;
+    attribute [TreatNullAs=NullString] DOMString value;
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-        attribute Date valueAsDate setter raises(DOMException);
+    attribute Date valueAsDate setter raises(DOMException);
 #endif
-        attribute double valueAsNumber setter raises(DOMException);
+    attribute double valueAsNumber setter raises(DOMException);
 
-        void stepUp(in [Optional] long n) raises(DOMException);
-        void stepDown(in [Optional] long n) raises(DOMException);
+    void stepUp(in [Optional] long n) raises(DOMException);
+    void stepDown(in [Optional] long n) raises(DOMException);
 
-        attribute unsigned long width;
-        readonly attribute boolean willValidate;
-        readonly attribute ValidityState validity;
-        readonly attribute DOMString validationMessage;
-        boolean checkValidity();
-        void setCustomValidity(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString error);
+    attribute unsigned long width;
+    readonly attribute boolean willValidate;
+    readonly attribute ValidityState validity;
+    readonly attribute DOMString validationMessage;
+    boolean checkValidity();
+    void setCustomValidity(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString error);
 
-        readonly attribute NodeList labels;
+    readonly attribute NodeList labels;
 
-        void select();
-        attribute [Custom] long selectionStart;
-        attribute [Custom] long selectionEnd;
-        attribute [Custom] DOMString selectionDirection;
+    void select();
+    attribute [Custom] long selectionStart;
+    attribute [Custom] long selectionEnd;
+    attribute [Custom] DOMString selectionDirection;
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-        [Custom] void setSelectionRange(in long start, in long end);
+    [Custom] void setSelectionRange(in long start, in long end);
 #else
-        [Custom] void setSelectionRange(in [Optional=DefaultIsUndefined] long start, 
-                                        in [Optional=DefaultIsUndefined] long end, 
-                                        in [Optional] DOMString direction);
+    [Custom] void setSelectionRange(in [Optional=DefaultIsUndefined] long start, 
+                                    in [Optional=DefaultIsUndefined] long end, 
+                                    in [Optional] DOMString direction);
 #endif
 
-        // Non-standard attributes
-        attribute [Reflect] DOMString align;
-        attribute [Conditional=DIRECTORY_UPLOAD, Reflect] boolean webkitdirectory;
-        attribute [Reflect] DOMString useMap;
-        attribute [Reflect] boolean incremental;
-        attribute [Conditional=INPUT_SPEECH, Reflect, V8EnabledAtRuntime] boolean webkitSpeech;
-        attribute [Conditional=INPUT_SPEECH, Reflect, V8EnabledAtRuntime] boolean webkitGrammar;
-        attribute [Conditional=INPUT_SPEECH, NotEnumerable] EventListener onwebkitspeechchange;
+    // Non-standard attributes
+    attribute [Reflect] DOMString align;
+    attribute [Conditional=DIRECTORY_UPLOAD, Reflect] boolean webkitdirectory;
+    attribute [Reflect] DOMString useMap;
+    attribute [Reflect] boolean incremental;
+    attribute [Conditional=INPUT_SPEECH, Reflect, V8EnabledAtRuntime] boolean webkitSpeech;
+    attribute [Conditional=INPUT_SPEECH, Reflect, V8EnabledAtRuntime] boolean webkitGrammar;
+    attribute [Conditional=INPUT_SPEECH, NotEnumerable] EventListener onwebkitspeechchange;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-        attribute [Reflect] DOMString accessKey;
+    attribute [Reflect] DOMString accessKey;
 #endif
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-        void click();
+    void click();
 #endif
 
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
-        void setValueForUser(in [TreatNullAs=NullString] DOMString value);
+    void setValueForUser(in [TreatNullAs=NullString] DOMString value);
 #endif
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-        // Objective-C extension:
-        readonly attribute DOMString altDisplayString;
-        readonly attribute URL absoluteImageURL;
+    // Objective-C extension:
+    readonly attribute DOMString altDisplayString;
+    readonly attribute URL absoluteImageURL;
 #endif
 
-        // See http://www.w3.org/TR/html-media-capture/
-        attribute [Conditional=MEDIA_CAPTURE] DOMString capture;
-    };
-}
+    // See http://www.w3.org/TR/html-media-capture/
+    attribute [Conditional=MEDIA_CAPTURE] DOMString capture;
+};

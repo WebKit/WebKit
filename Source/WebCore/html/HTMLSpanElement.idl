@@ -23,10 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module html {
+// http://www.whatwg.org/specs/web-apps/current-work/#htmlspanelement
+interface HTMLSpanElement : HTMLElement {
+};
 
-    // http://www.whatwg.org/specs/web-apps/current-work/#htmlspanelement
-    interface HTMLSpanElement : HTMLElement {
-    };
-
-}

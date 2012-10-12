@@ -23,17 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module html {
-    interface [
-        Conditional=ENCRYPTED_MEDIA,
-        V8EnabledAtRuntime=encryptedMedia, 
-    ] MediaKeyError {
-        const unsigned short MEDIA_KEYERR_UNKNOWN = 1;
-        const unsigned short MEDIA_KEYERR_CLIENT = 2;
-        const unsigned short MEDIA_KEYERR_SERVICE = 3;
-        const unsigned short MEDIA_KEYERR_OUTPUT = 4;
-        const unsigned short MEDIA_KEYERR_HARDWARECHANGE = 5;
-        const unsigned short MEDIA_KEYERR_DOMAIN = 6;
-        readonly attribute unsigned short code;
-    };
-}
+interface [
+    Conditional=ENCRYPTED_MEDIA,
+    V8EnabledAtRuntime=encryptedMedia, 
+] MediaKeyError {
+    const unsigned short MEDIA_KEYERR_UNKNOWN = 1;
+    const unsigned short MEDIA_KEYERR_CLIENT = 2;
+    const unsigned short MEDIA_KEYERR_SERVICE = 3;
+    const unsigned short MEDIA_KEYERR_OUTPUT = 4;
+    const unsigned short MEDIA_KEYERR_HARDWARECHANGE = 5;
+    const unsigned short MEDIA_KEYERR_DOMAIN = 6;
+    readonly attribute unsigned short code;
+};

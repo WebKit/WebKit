@@ -23,15 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module window {
-    interface [
-        Conditional=SCRIPTED_SPEECH,
-        Supplemental=DOMWindow
-    ] DOMWindowSpeech {
-        attribute [V8EnabledAtRuntime] SpeechRecognitionConstructor webkitSpeechRecognition;
-        attribute [V8EnabledAtRuntime] SpeechRecognitionErrorConstructor webkitSpeechRecognitionError;
-        attribute [V8EnabledAtRuntime] SpeechRecognitionEventConstructor webkitSpeechRecognitionEvent;
-        attribute [V8EnabledAtRuntime] SpeechGrammarConstructor webkitSpeechGrammar;
-        attribute [V8EnabledAtRuntime] SpeechGrammarListConstructor webkitSpeechGrammarList;
-    };
-}
+interface [
+    Conditional=SCRIPTED_SPEECH,
+    Supplemental=DOMWindow
+] DOMWindowSpeech {
+    attribute [V8EnabledAtRuntime] SpeechRecognitionConstructor webkitSpeechRecognition;
+    attribute [V8EnabledAtRuntime] SpeechRecognitionErrorConstructor webkitSpeechRecognitionError;
+    attribute [V8EnabledAtRuntime] SpeechRecognitionEventConstructor webkitSpeechRecognitionEvent;
+    attribute [V8EnabledAtRuntime] SpeechGrammarConstructor webkitSpeechGrammar;
+    attribute [V8EnabledAtRuntime] SpeechGrammarListConstructor webkitSpeechGrammarList;
+};

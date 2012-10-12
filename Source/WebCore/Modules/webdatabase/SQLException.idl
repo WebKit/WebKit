@@ -28,24 +28,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
+exception [
+    Conditional=SQL_DATABASE,
+    JSNoStaticTables,
+    DoNotCheckConstants
+] SQLException {
+    readonly attribute unsigned long code;
+    readonly attribute DOMString message;
 
-    exception [
-        Conditional=SQL_DATABASE,
-        JSNoStaticTables,
-        DoNotCheckConstants
-    ] SQLException {
-        readonly attribute unsigned long code;
-        readonly attribute DOMString message;
-
-        // SQLExceptionCode: used only in the sync DB API
-        const unsigned short UNKNOWN_ERR = 0;
-        const unsigned short DATABASE_ERR = 1;
-        const unsigned short VERSION_ERR = 2;
-        const unsigned short TOO_LARGE_ERR = 3;
-        const unsigned short QUOTA_ERR = 4;
-        const unsigned short SYNTAX_ERR = 5;
-        const unsigned short CONSTRAINT_ERR = 6;
-        const unsigned short TIMEOUT_ERR = 7;
-    };
-}
+    // SQLExceptionCode: used only in the sync DB API
+    const unsigned short UNKNOWN_ERR = 0;
+    const unsigned short DATABASE_ERR = 1;
+    const unsigned short VERSION_ERR = 2;
+    const unsigned short TOO_LARGE_ERR = 3;
+    const unsigned short QUOTA_ERR = 4;
+    const unsigned short SYNTAX_ERR = 5;
+    const unsigned short CONSTRAINT_ERR = 6;
+    const unsigned short TIMEOUT_ERR = 7;
+};

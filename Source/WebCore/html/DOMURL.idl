@@ -24,22 +24,20 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module html {
-    interface [
-        Conditional=BLOB,
-        Constructor,
-        JSGenerateToNativeObject,
-        JSGenerateToJSObject,
-        JSNoStaticTables,
-        InterfaceName=URL
-    ] DOMURL {
+interface [
+    Conditional=BLOB,
+    Constructor,
+    JSGenerateToNativeObject,
+    JSGenerateToJSObject,
+    JSNoStaticTables,
+    InterfaceName=URL
+] DOMURL {
 #if defined(ENABLE_MEDIA_SOURCE) && ENABLE_MEDIA_SOURCE
-        [CallWith=ScriptExecutionContext,TreatReturnedNullStringAs=Null] static DOMString createObjectURL(in MediaSource? source);
+    [CallWith=ScriptExecutionContext,TreatReturnedNullStringAs=Null] static DOMString createObjectURL(in MediaSource? source);
 #endif
 #if defined(ENABLE_MEDIA_STREAM) && ENABLE_MEDIA_STREAM
-        [CallWith=ScriptExecutionContext,TreatReturnedNullStringAs=Null] static DOMString createObjectURL(in MediaStream? stream);
+    [CallWith=ScriptExecutionContext,TreatReturnedNullStringAs=Null] static DOMString createObjectURL(in MediaStream? stream);
 #endif
-        [CallWith=ScriptExecutionContext,TreatReturnedNullStringAs=Null] static DOMString createObjectURL(in Blob? blob);
-        [CallWith=ScriptExecutionContext] static void revokeObjectURL(in DOMString url);
-    };
-}
+    [CallWith=ScriptExecutionContext,TreatReturnedNullStringAs=Null] static DOMString createObjectURL(in Blob? blob);
+    [CallWith=ScriptExecutionContext] static void revokeObjectURL(in DOMString url);
+};

@@ -22,43 +22,41 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module audio {
-    // Oscillator is an audio generator of periodic waveforms.
-    interface [
-        Conditional=WEB_AUDIO,
-        JSGenerateToJSObject
-    ] Oscillator : AudioSourceNode {
+// Oscillator is an audio generator of periodic waveforms.
+interface [
+    Conditional=WEB_AUDIO,
+    JSGenerateToJSObject
+] Oscillator : AudioSourceNode {
 
-        // Type constants.
-        const unsigned short SINE = 0;
-        const unsigned short SQUARE = 1;
-        const unsigned short SAWTOOTH = 2;
-        const unsigned short TRIANGLE = 3;
-        const unsigned short CUSTOM = 4;
+    // Type constants.
+    const unsigned short SINE = 0;
+    const unsigned short SQUARE = 1;
+    const unsigned short SAWTOOTH = 2;
+    const unsigned short TRIANGLE = 3;
+    const unsigned short CUSTOM = 4;
 
-        attribute unsigned short type
-            setter raises(DOMException);        
+    attribute unsigned short type
+        setter raises(DOMException);        
 
-        // Playback state constants.
-        const unsigned short UNSCHEDULED_STATE = 0;
-        const unsigned short SCHEDULED_STATE = 1;
-        const unsigned short PLAYING_STATE = 2;
-        const unsigned short FINISHED_STATE = 3;
+    // Playback state constants.
+    const unsigned short UNSCHEDULED_STATE = 0;
+    const unsigned short SCHEDULED_STATE = 1;
+    const unsigned short PLAYING_STATE = 2;
+    const unsigned short FINISHED_STATE = 3;
 
-        readonly attribute unsigned short playbackState;
+    readonly attribute unsigned short playbackState;
 
-        readonly attribute AudioParam frequency; // in Hertz
-        readonly attribute AudioParam detune; // in Cents
+    readonly attribute AudioParam frequency; // in Hertz
+    readonly attribute AudioParam detune; // in Cents
 
-        void start(in double when);
-        void stop(in double when);
+    void start(in double when);
+    void stop(in double when);
 
 #if defined(ENABLE_LEGACY_WEB_AUDIO) && ENABLE_LEGACY_WEB_AUDIO
-        void noteOn(in double when);
-        void noteOff(in double when);
+    void noteOn(in double when);
+    void noteOff(in double when);
 #endif
 
-        void setWaveTable(in WaveTable waveTable);
+    void setWaveTable(in WaveTable waveTable);
 
-    };
-}
+};

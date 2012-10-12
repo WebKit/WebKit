@@ -23,13 +23,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module html {
-    interface [
-        Conditional=WEBGL,
-        JSGenerateIsReachable=ImplContext,
-        OmitConstructor,
-        DoNotCheckConstants
-    ] OESStandardDerivatives {
-        const unsigned int FRAGMENT_SHADER_DERIVATIVE_HINT_OES = 0x8B8B;
-    };
-}
+interface [
+    Conditional=WEBGL,
+    JSGenerateIsReachable=ImplContext,
+    OmitConstructor,
+    DoNotCheckConstants
+] OESStandardDerivatives {
+    const unsigned int FRAGMENT_SHADER_DERIVATIVE_HINT_OES = 0x8B8B;
+};

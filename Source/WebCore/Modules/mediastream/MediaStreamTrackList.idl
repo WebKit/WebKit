@@ -22,33 +22,30 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
+interface [
+    Conditional=MEDIA_STREAM,
+    IndexedGetter,
+    EventTarget
+] MediaStreamTrackList {
+    readonly attribute unsigned long length;
+    MediaStreamTrack item(in [IsIndex] unsigned long index);
 
-    interface [
-        Conditional=MEDIA_STREAM,
-        IndexedGetter,
-        EventTarget
-    ] MediaStreamTrackList {
-        readonly attribute unsigned long length;
-        MediaStreamTrack item(in [IsIndex] unsigned long index);
+    void add(in MediaStreamTrack track)
+        raises(DOMException);
+    void remove(in MediaStreamTrack track)
+        raises(DOMException);
 
-        void add(in MediaStreamTrack track)
-            raises(DOMException);
-        void remove(in MediaStreamTrack track)
-            raises(DOMException);
+    attribute EventListener onaddtrack;
+    attribute EventListener onremovetrack;
 
-        attribute EventListener onaddtrack;
-        attribute EventListener onremovetrack;
+    // EventTarget interface
+    void addEventListener(in DOMString type,
+                          in EventListener listener,
+                          in [Optional] boolean useCapture);
+    void removeEventListener(in DOMString type,
+                             in EventListener listener,
+                             in [Optional] boolean useCapture);
+    boolean dispatchEvent(in Event event)
+        raises(EventException);
+};
 
-        // EventTarget interface
-        void addEventListener(in DOMString type,
-                              in EventListener listener,
-                              in [Optional] boolean useCapture);
-        void removeEventListener(in DOMString type,
-                                 in EventListener listener,
-                                 in [Optional] boolean useCapture);
-        boolean dispatchEvent(in Event event)
-            raises(EventException);
-    };
-
-}

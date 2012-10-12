@@ -22,21 +22,19 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module audio {
-    interface [
-        Conditional=WEB_AUDIO
-    ] AudioNode {
-        readonly attribute AudioContext context;
-        readonly attribute unsigned long numberOfInputs;
-        readonly attribute unsigned long numberOfOutputs;
+interface [
+    Conditional=WEB_AUDIO
+] AudioNode {
+    readonly attribute AudioContext context;
+    readonly attribute unsigned long numberOfInputs;
+    readonly attribute unsigned long numberOfOutputs;
 
-        void connect(in AudioNode? destination, in [Optional=DefaultIsUndefined] unsigned long output, in [Optional=DefaultIsUndefined] unsigned long input)
-            raises(DOMException);
+    void connect(in AudioNode? destination, in [Optional=DefaultIsUndefined] unsigned long output, in [Optional=DefaultIsUndefined] unsigned long input)
+        raises(DOMException);
 
-        void connect(in AudioParam? destination, in [Optional=DefaultIsUndefined] unsigned long output)
-            raises(DOMException);
+    void connect(in AudioParam? destination, in [Optional=DefaultIsUndefined] unsigned long output)
+        raises(DOMException);
 
-        void disconnect(in [Optional=DefaultIsUndefined] unsigned long output)
-            raises(DOMException);
-    };
-}
+    void disconnect(in [Optional=DefaultIsUndefined] unsigned long output)
+        raises(DOMException);
+};

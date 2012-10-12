@@ -23,18 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG&FILTERS
+] SVGFEGaussianBlurElement : SVGElement,
+                                                       SVGFilterPrimitiveStandardAttributes { 
+    readonly attribute SVGAnimatedString in1;
+    readonly attribute SVGAnimatedNumber stdDeviationX;
+    readonly attribute SVGAnimatedNumber stdDeviationY;
 
-    interface [
-        Conditional=SVG&FILTERS
-    ] SVGFEGaussianBlurElement : SVGElement,
-                                                           SVGFilterPrimitiveStandardAttributes { 
-        readonly attribute SVGAnimatedString in1;
-        readonly attribute SVGAnimatedNumber stdDeviationX;
-        readonly attribute SVGAnimatedNumber stdDeviationY;
+    void setStdDeviation(in [Optional=DefaultIsUndefined] float stdDeviationX, 
+                         in [Optional=DefaultIsUndefined] float stdDeviationY);
+};
 
-        void setStdDeviation(in [Optional=DefaultIsUndefined] float stdDeviationX, 
-                             in [Optional=DefaultIsUndefined] float stdDeviationY);
-    };
-
-}

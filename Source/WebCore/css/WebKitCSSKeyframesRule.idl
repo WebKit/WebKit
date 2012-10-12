@@ -26,19 +26,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module css {
+// Introduced in DOM Level ?:
+interface [
+    IndexedGetter
+] WebKitCSSKeyframesRule : CSSRule {
 
-    // Introduced in DOM Level ?:
-    interface [
-        IndexedGetter
-    ] WebKitCSSKeyframesRule : CSSRule {
+    attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString name;
+    readonly attribute CSSRuleList cssRules;
+    
+    void insertRule(in [Optional=DefaultIsUndefined] DOMString rule);
+    void deleteRule(in [Optional=DefaultIsUndefined] DOMString key);
+    WebKitCSSKeyframeRule findRule(in [Optional=DefaultIsUndefined] DOMString key);
+};
 
-        attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString name;
-        readonly attribute CSSRuleList cssRules;
-        
-        void insertRule(in [Optional=DefaultIsUndefined] DOMString rule);
-        void deleteRule(in [Optional=DefaultIsUndefined] DOMString key);
-        WebKitCSSKeyframeRule findRule(in [Optional=DefaultIsUndefined] DOMString key);
-    };
-
-}

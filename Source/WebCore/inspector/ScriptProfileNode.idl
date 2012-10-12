@@ -24,22 +24,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
+interface [
+    Conditional=JAVASCRIPT_DEBUGGER,
+    OmitConstructor,
+    V8CustomToJSObject
+] ScriptProfileNode {
+    readonly attribute DOMString functionName;
+    readonly attribute DOMString url;
+    readonly attribute unsigned long lineNumber;
+    readonly attribute double totalTime;
+    readonly attribute double selfTime;
+    readonly attribute unsigned long numberOfCalls;
+    sequence<ScriptProfileNode> children();
+    readonly attribute boolean visible;
+    readonly attribute [CustomGetter] unsigned long callUID;
+};
 
-    interface [
-        Conditional=JAVASCRIPT_DEBUGGER,
-        OmitConstructor,
-        V8CustomToJSObject
-    ] ScriptProfileNode {
-        readonly attribute DOMString functionName;
-        readonly attribute DOMString url;
-        readonly attribute unsigned long lineNumber;
-        readonly attribute double totalTime;
-        readonly attribute double selfTime;
-        readonly attribute unsigned long numberOfCalls;
-        sequence<ScriptProfileNode> children();
-        readonly attribute boolean visible;
-        readonly attribute [CustomGetter] unsigned long callUID;
-    };
-
-}

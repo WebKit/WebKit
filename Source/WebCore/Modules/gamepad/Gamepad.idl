@@ -23,16 +23,13 @@
  * DAMAGE.
  */
 
-module dom {
+interface [
+    Conditional=GAMEPAD
+] Gamepad {
+    readonly attribute DOMString id;
+    readonly attribute unsigned long index;
+    readonly attribute unsigned long long timestamp;
+    readonly attribute float[] axes;
+    readonly attribute float[] buttons;
+};
 
-    interface [
-        Conditional=GAMEPAD
-    ] Gamepad {
-        readonly attribute DOMString id;
-        readonly attribute unsigned long index;
-        readonly attribute unsigned long long timestamp;
-        readonly attribute float[] axes;
-        readonly attribute float[] buttons;
-    };
-
-}

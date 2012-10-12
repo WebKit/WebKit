@@ -25,37 +25,34 @@
  *
  */
 
-module threads {
+interface [
+    Conditional=WORKERS,
+    ActiveDOMObject,
+    JSCustomConstructor,
+    Constructor(in DOMString scriptUrl),
+    CallWith=ScriptExecutionContext,
+    ConstructorRaisesException,
+    JSGenerateToNativeObject,
+    JSGenerateToJSObject
+] Worker : AbstractWorker {
 
-    interface [
-        Conditional=WORKERS,
-        ActiveDOMObject,
-        JSCustomConstructor,
-        Constructor(in DOMString scriptUrl),
-        CallWith=ScriptExecutionContext,
-        ConstructorRaisesException,
-        JSGenerateToNativeObject,
-        JSGenerateToJSObject
-    ] Worker : AbstractWorker {
-
-        attribute EventListener onmessage;
+    attribute EventListener onmessage;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        [Custom] void postMessage(in SerializedScriptValue message, in [Optional] Array messagePorts)
-            raises(DOMException);
+    [Custom] void postMessage(in SerializedScriptValue message, in [Optional] Array messagePorts)
+        raises(DOMException);
 
 #if defined(ENABLE_LEGACY_VENDOR_PREFIXES) && ENABLE_LEGACY_VENDOR_PREFIXES
-        [Custom] void webkitPostMessage(in SerializedScriptValue message, in [Optional] Array messagePorts)
-            raises(DOMException);
+    [Custom] void webkitPostMessage(in SerializedScriptValue message, in [Optional] Array messagePorts)
+        raises(DOMException);
 #endif // defined(ENABLE_LEGACY_VENDOR_PREFIXES) && ENABLE_LEGACY_VENDOR_PREFIXES
 
 #else
-        // There's no good way to expose an array via the ObjC bindings, so for now just allow passing in a single port.
-        void postMessage(in SerializedScriptValue message, in [Optional] MessagePort messagePort)
-            raises(DOMException);
+    // There's no good way to expose an array via the ObjC bindings, so for now just allow passing in a single port.
+    void postMessage(in SerializedScriptValue message, in [Optional] MessagePort messagePort)
+        raises(DOMException);
 #endif
 
-        void terminate();
-    };
+    void terminate();
+};
 
-}

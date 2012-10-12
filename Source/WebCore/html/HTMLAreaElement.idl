@@ -18,33 +18,30 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module html {
-
-    interface HTMLAreaElement : HTMLElement {
-        attribute [Reflect] DOMString alt;
-        attribute [Reflect] DOMString coords;
-        attribute [Reflect, URL] DOMString href;
-        attribute [Reflect] boolean noHref;
-        attribute [Reflect] DOMString ping;
-        attribute [Reflect] DOMString shape;
-        attribute [Reflect] DOMString target;
+interface HTMLAreaElement : HTMLElement {
+    attribute [Reflect] DOMString alt;
+    attribute [Reflect] DOMString coords;
+    attribute [Reflect, URL] DOMString href;
+    attribute [Reflect] boolean noHref;
+    attribute [Reflect] DOMString ping;
+    attribute [Reflect] DOMString shape;
+    attribute [Reflect] DOMString target;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-        attribute [Reflect] DOMString accessKey;
+    attribute [Reflect] DOMString accessKey;
 #endif
-        // IE Extensions
-        readonly attribute DOMString hash;
-        readonly attribute DOMString host;
-        readonly attribute DOMString hostname;
-        readonly attribute DOMString pathname;
-        readonly attribute DOMString port;
-        readonly attribute DOMString protocol;
-        readonly attribute DOMString search;
+    // IE Extensions
+    readonly attribute DOMString hash;
+    readonly attribute DOMString host;
+    readonly attribute DOMString hostname;
+    readonly attribute DOMString pathname;
+    readonly attribute DOMString port;
+    readonly attribute DOMString protocol;
+    readonly attribute DOMString search;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-        // Objective-C extension:
-        readonly attribute URL absoluteLinkURL;
+    // Objective-C extension:
+    readonly attribute URL absoluteLinkURL;
 #endif
-    };
+};
 
-}

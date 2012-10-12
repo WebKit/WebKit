@@ -24,13 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG
+] SVGPathSegLinetoRel : SVGPathSeg {
+    attribute [StrictTypeChecking] float x;
+    attribute [StrictTypeChecking] float y;
+};
 
-    interface [
-        Conditional=SVG
-    ] SVGPathSegLinetoRel : SVGPathSeg {
-        attribute [StrictTypeChecking] float x;
-        attribute [StrictTypeChecking] float y;
-    };
-
-}

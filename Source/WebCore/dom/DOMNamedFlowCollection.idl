@@ -27,17 +27,14 @@
  * SUCH DAMAGE.
  */
 
-module core {
-    interface [
-        Conditional=CSS_REGIONS,
-        InterfaceName=WebKitNamedFlowCollection,
-        JSGenerateToJSObject,
-        IndexedGetter,
-        NamedGetter
-    ] DOMNamedFlowCollection {
-        readonly attribute unsigned long length;
-        WebKitNamedFlow item(in unsigned long index);
-        WebKitNamedFlow namedItem(in DOMString name);
-    };
-}
-
+interface [
+    Conditional=CSS_REGIONS,
+    InterfaceName=WebKitNamedFlowCollection,
+    JSGenerateToJSObject,
+    IndexedGetter,
+    NamedGetter
+] DOMNamedFlowCollection {
+    readonly attribute unsigned long length;
+    WebKitNamedFlow item(in unsigned long index);
+    WebKitNamedFlow namedItem(in DOMString name);
+};

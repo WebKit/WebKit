@@ -25,18 +25,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG,
+    ObjCProtocol,
+    SuppressToJSObject,
+    OmitConstructor
+] SVGStylable {
+    readonly attribute SVGAnimatedString className;
+    readonly attribute CSSStyleDeclaration style;
 
-    interface [
-        Conditional=SVG,
-        ObjCProtocol,
-        SuppressToJSObject,
-        OmitConstructor
-    ] SVGStylable {
-        readonly attribute SVGAnimatedString className;
-        readonly attribute CSSStyleDeclaration style;
+    CSSValue getPresentationAttribute(in [Optional=DefaultIsUndefined] DOMString name);
+};
 
-        CSSValue getPresentationAttribute(in [Optional=DefaultIsUndefined] DOMString name);
-    };
-
-}

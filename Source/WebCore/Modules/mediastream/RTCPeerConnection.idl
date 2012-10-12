@@ -28,72 +28,69 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module mediastream {
+interface [
+    Conditional=MEDIA_STREAM,
+    ActiveDOMObject,
+    Constructor(in Dictionary rtcIceServers, in [Optional=DefaultIsUndefined] Dictionary mediaConstraints),
+    ConstructorRaisesException,
+    CallWith=ScriptExecutionContext,
+    EventTarget
+] RTCPeerConnection {
+    void createOffer(in [Callback] RTCSessionDescriptionCallback successCallback, in [Callback,Optional=DefaultIsUndefined] RTCErrorCallback failureCallback, in [Optional=DefaultIsUndefined] Dictionary mediaConstraints)
+        raises(DOMException);
 
-    interface [
-        Conditional=MEDIA_STREAM,
-        ActiveDOMObject,
-        Constructor(in Dictionary rtcIceServers, in [Optional=DefaultIsUndefined] Dictionary mediaConstraints),
-        ConstructorRaisesException,
-        CallWith=ScriptExecutionContext,
-        EventTarget
-    ] RTCPeerConnection {
-        void createOffer(in [Callback] RTCSessionDescriptionCallback successCallback, in [Callback,Optional=DefaultIsUndefined] RTCErrorCallback failureCallback, in [Optional=DefaultIsUndefined] Dictionary mediaConstraints)
-            raises(DOMException);
+    void createAnswer(in [Callback] RTCSessionDescriptionCallback successCallback, in [Callback, Optional=DefaultIsUndefined] RTCErrorCallback failureCallback, in [Optional=DefaultIsUndefined] Dictionary mediaConstraints)
+        raises(DOMException);
 
-        void createAnswer(in [Callback] RTCSessionDescriptionCallback successCallback, in [Callback, Optional=DefaultIsUndefined] RTCErrorCallback failureCallback, in [Optional=DefaultIsUndefined] Dictionary mediaConstraints)
-            raises(DOMException);
+    void setLocalDescription(in RTCSessionDescription description, in [Callback, Optional=DefaultIsUndefined] VoidCallback successCallback, in [Callback, Optional=DefaultIsUndefined] RTCErrorCallback failureCallback)
+        raises(DOMException);
+    readonly attribute RTCSessionDescription localDescription
+        getter raises(DOMException);
 
-        void setLocalDescription(in RTCSessionDescription description, in [Callback, Optional=DefaultIsUndefined] VoidCallback successCallback, in [Callback, Optional=DefaultIsUndefined] RTCErrorCallback failureCallback)
-            raises(DOMException);
-        readonly attribute RTCSessionDescription localDescription
-            getter raises(DOMException);
+    void setRemoteDescription(in RTCSessionDescription description, in [Callback, Optional=DefaultIsUndefined] VoidCallback successCallback, in [Callback, Optional=DefaultIsUndefined] RTCErrorCallback failureCallback)
+        raises(DOMException);
+    readonly attribute RTCSessionDescription remoteDescription
+        getter raises(DOMException);
 
-        void setRemoteDescription(in RTCSessionDescription description, in [Callback, Optional=DefaultIsUndefined] VoidCallback successCallback, in [Callback, Optional=DefaultIsUndefined] RTCErrorCallback failureCallback)
-            raises(DOMException);
-        readonly attribute RTCSessionDescription remoteDescription
-            getter raises(DOMException);
+    readonly attribute DOMString readyState;
 
-        readonly attribute DOMString readyState;
+    void updateIce(in [Optional=DefaultIsUndefined] Dictionary configuration, in [Optional=DefaultIsUndefined] Dictionary mediaConstraints)
+        raises(DOMException);
 
-        void updateIce(in [Optional=DefaultIsUndefined] Dictionary configuration, in [Optional=DefaultIsUndefined] Dictionary mediaConstraints)
-            raises(DOMException);
+    void addIceCandidate(in RTCIceCandidate candidate)
+        raises(DOMException);
 
-        void addIceCandidate(in RTCIceCandidate candidate)
-            raises(DOMException);
+    readonly attribute DOMString iceState;
 
-        readonly attribute DOMString iceState;
+    readonly attribute MediaStreamList localStreams;
+    readonly attribute MediaStreamList remoteStreams;
 
-        readonly attribute MediaStreamList localStreams;
-        readonly attribute MediaStreamList remoteStreams;
+    [StrictTypeChecking] void addStream(in MediaStream stream, in [Optional=DefaultIsUndefined] Dictionary mediaConstraints)
+        raises(DOMException);
+    [StrictTypeChecking] void removeStream(in MediaStream stream)
+        raises(DOMException);
 
-        [StrictTypeChecking] void addStream(in MediaStream stream, in [Optional=DefaultIsUndefined] Dictionary mediaConstraints)
-            raises(DOMException);
-        [StrictTypeChecking] void removeStream(in MediaStream stream)
-            raises(DOMException);
+    void getStats(in [Callback] RTCStatsCallback successCallback, in [Optional=DefaultIsUndefined] MediaStreamTrack selector);
 
-        void getStats(in [Callback] RTCStatsCallback successCallback, in [Optional=DefaultIsUndefined] MediaStreamTrack selector);
+    void close()
+        raises(DOMException);
 
-        void close()
-            raises(DOMException);
+    attribute EventListener onnegotiationneeded;
+    attribute EventListener onicecandidate;
+    attribute EventListener onopen;
+    attribute EventListener onstatechange;
+    attribute EventListener onaddstream;
+    attribute EventListener onremovestream;
+    attribute EventListener onicechange;
 
-        attribute EventListener onnegotiationneeded;
-        attribute EventListener onicecandidate;
-        attribute EventListener onopen;
-        attribute EventListener onstatechange;
-        attribute EventListener onaddstream;
-        attribute EventListener onremovestream;
-        attribute EventListener onicechange;
+    // EventTarget interface
+    void addEventListener(in DOMString type,
+                          in EventListener listener,
+                          in [Optional] boolean useCapture);
+    void removeEventListener(in DOMString type,
+                             in EventListener listener,
+                             in [Optional] boolean useCapture);
+    boolean dispatchEvent(in Event event)
+        raises(EventException);
+};
 
-        // EventTarget interface
-        void addEventListener(in DOMString type,
-                              in EventListener listener,
-                              in [Optional] boolean useCapture);
-        void removeEventListener(in DOMString type,
-                                 in EventListener listener,
-                                 in [Optional] boolean useCapture);
-        boolean dispatchEvent(in Event event)
-            raises(EventException);
-    };
-
-}

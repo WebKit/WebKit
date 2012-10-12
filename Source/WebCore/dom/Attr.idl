@@ -18,34 +18,31 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module core {
+interface [
+    JSCustomMarkFunction,
+    JSGenerateToNativeObject
+] Attr : Node {
 
-    interface [
-        JSCustomMarkFunction,
-        JSGenerateToNativeObject
-    ] Attr : Node {
+    // DOM Level 1
 
-        // DOM Level 1
+    readonly attribute [TreatReturnedNullStringAs=Null] DOMString name;
 
-        readonly attribute [TreatReturnedNullStringAs=Null] DOMString name;
+    readonly attribute boolean specified;
 
-        readonly attribute boolean specified;
+             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString value 
+                 setter raises(DOMException);
 
-                 attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString value 
-                     setter raises(DOMException);
+    // DOM Level 2
 
-        // DOM Level 2
+    readonly attribute Element ownerElement;
 
-        readonly attribute Element ownerElement;
+    // DOM Level 3
 
-        // DOM Level 3
-
-        readonly attribute boolean isId;
+    readonly attribute boolean isId;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-        // This extension is no longer needed, but it has to remain available in Objective C, as it's public API.
-        readonly attribute CSSStyleDeclaration style;
+    // This extension is no longer needed, but it has to remain available in Objective C, as it's public API.
+    readonly attribute CSSStyleDeclaration style;
 #endif
-    };
+};
 
-}

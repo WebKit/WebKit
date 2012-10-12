@@ -23,14 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module window {
+interface [
+    CustomConstructor,
+    ConstructorParameters=2
+] WebKitPoint {
+    attribute float x;
+    attribute float y;
+};
 
-    interface [
-        CustomConstructor,
-        ConstructorParameters=2
-    ] WebKitPoint {
-        attribute float x;
-        attribute float y;
-    };
-
-}

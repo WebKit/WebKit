@@ -24,25 +24,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module html {
+interface [
+    JSGenerateToNativeObject
+] HTMLCanvasElement : HTMLElement {
 
-    interface [
-        JSGenerateToNativeObject
-    ] HTMLCanvasElement : HTMLElement {
+    attribute long width;
+    attribute long height;
 
-        attribute long width;
-        attribute long height;
-
-        [Custom] DOMString toDataURL(in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=DefaultIsUndefined] DOMString type)
-            raises(DOMException);
+    [Custom] DOMString toDataURL(in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=DefaultIsUndefined] DOMString type)
+        raises(DOMException);
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
-        // The custom binding is needed to handle context creation attributes.
-        [Custom] DOMObject getContext(in [Optional=DefaultIsUndefined] DOMString contextId);
+    // The custom binding is needed to handle context creation attributes.
+    [Custom] DOMObject getContext(in [Optional=DefaultIsUndefined] DOMString contextId);
 #endif
 #endif
 
-    };
+};
 
-}

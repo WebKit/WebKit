@@ -23,14 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module html {
+interface [
+    IndexedGetter,
+    JSNoStaticTables
+] FileList {
+    readonly attribute unsigned long length;
+    File item(in unsigned long index);
+};
 
-    interface [
-        IndexedGetter,
-        JSNoStaticTables
-    ] FileList {
-        readonly attribute unsigned long length;
-        File item(in unsigned long index);
-    };
-
-}

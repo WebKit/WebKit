@@ -18,80 +18,77 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module html {
+interface [
+    JSGenerateToNativeObject,
+    JSCustomPushEventHandlerScope,
+    V8CustomToJSObject
+] HTMLElement : Element {
+             // iht.com relies on id returning the empty string when no id is present. 
+             // Other browsers do this as well. So we don't convert null to JS null.
+             attribute [Reflect] DOMString id;
+             attribute [Reflect] DOMString title;
+             attribute [Reflect] DOMString lang;
+             attribute boolean             translate;
+             attribute [Reflect] DOMString dir;
 
-    interface [
-        JSGenerateToNativeObject,
-        JSCustomPushEventHandlerScope,
-        V8CustomToJSObject
-    ] HTMLElement : Element {
-                 // iht.com relies on id returning the empty string when no id is present. 
-                 // Other browsers do this as well. So we don't convert null to JS null.
-                 attribute [Reflect] DOMString id;
-                 attribute [Reflect] DOMString title;
-                 attribute [Reflect] DOMString lang;
-                 attribute boolean             translate;
-                 attribute [Reflect] DOMString dir;
+             attribute long              tabIndex;
+             attribute boolean           draggable;
+             attribute [Reflect] DOMString webkitdropzone;
+             attribute [Reflect] boolean hidden;
+             attribute [Reflect] DOMString accessKey;
 
-                 attribute long              tabIndex;
-                 attribute boolean           draggable;
-                 attribute [Reflect] DOMString webkitdropzone;
-                 attribute [Reflect] boolean hidden;
-                 attribute [Reflect] DOMString accessKey;
+    // Extensions
+             attribute [TreatNullAs=NullString] DOMString innerHTML
+                 setter raises(DOMException);
+             attribute [TreatNullAs=NullString] DOMString innerText
+                 setter raises(DOMException);
+             attribute [TreatNullAs=NullString] DOMString outerHTML
+                 setter raises(DOMException);
+             attribute [TreatNullAs=NullString] DOMString outerText
+                 setter raises(DOMException);
 
-        // Extensions
-                 attribute [TreatNullAs=NullString] DOMString innerHTML
-                     setter raises(DOMException);
-                 attribute [TreatNullAs=NullString] DOMString innerText
-                     setter raises(DOMException);
-                 attribute [TreatNullAs=NullString] DOMString outerHTML
-                     setter raises(DOMException);
-                 attribute [TreatNullAs=NullString] DOMString outerText
-                     setter raises(DOMException);
+    Element insertAdjacentElement(in [Optional=DefaultIsUndefined] DOMString where,
+                                  in [Optional=DefaultIsUndefined] Element element)
+        raises(DOMException);
+    void insertAdjacentHTML(in [Optional=DefaultIsUndefined] DOMString where,
+                            in [Optional=DefaultIsUndefined] DOMString html)
+        raises(DOMException);
+    void insertAdjacentText(in [Optional=DefaultIsUndefined] DOMString where,
+                            in [Optional=DefaultIsUndefined] DOMString text)
+        raises(DOMException);
 
-        Element insertAdjacentElement(in [Optional=DefaultIsUndefined] DOMString where,
-                                      in [Optional=DefaultIsUndefined] Element element)
-            raises(DOMException);
-        void insertAdjacentHTML(in [Optional=DefaultIsUndefined] DOMString where,
-                                in [Optional=DefaultIsUndefined] DOMString html)
-            raises(DOMException);
-        void insertAdjacentText(in [Optional=DefaultIsUndefined] DOMString where,
-                                in [Optional=DefaultIsUndefined] DOMString text)
-            raises(DOMException);
+    readonly attribute HTMLCollection children;
 
-        readonly attribute HTMLCollection children;
+             attribute [TreatNullAs=NullString] DOMString contentEditable
+                 setter raises(DOMException);
+    readonly attribute boolean isContentEditable;
 
-                 attribute [TreatNullAs=NullString] DOMString contentEditable
-                     setter raises(DOMException);
-        readonly attribute boolean isContentEditable;
-
-                 attribute boolean spellcheck;
+             attribute boolean spellcheck;
 
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C // No Objective-C bindings yet.
-                 attribute [Conditional=MICRODATA, Reflect] boolean itemScope;
-        readonly attribute [Conditional=MICRODATA] DOMSettableTokenList itemType;
-                 attribute [Conditional=MICRODATA, Reflect, URL] DOMString itemId;
+             attribute [Conditional=MICRODATA, Reflect] boolean itemScope;
+    readonly attribute [Conditional=MICRODATA] DOMSettableTokenList itemType;
+             attribute [Conditional=MICRODATA, Reflect, URL] DOMString itemId;
 
-        readonly attribute [Conditional=MICRODATA] DOMSettableTokenList itemRef;
-        readonly attribute [Conditional=MICRODATA] DOMSettableTokenList itemProp;
+    readonly attribute [Conditional=MICRODATA] DOMSettableTokenList itemRef;
+    readonly attribute [Conditional=MICRODATA] DOMSettableTokenList itemProp;
 
 #if defined(ENABLE_MICRODATA) && ENABLE_MICRODATA
-        readonly attribute [Conditional=MICRODATA] HTMLPropertiesCollection properties;
+    readonly attribute [Conditional=MICRODATA] HTMLPropertiesCollection properties;
 #endif
 #endif
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
-                 attribute [Conditional=MICRODATA, Custom] DOMObject itemValue
-                     setter raises(DOMException);
+             attribute [Conditional=MICRODATA, Custom] DOMObject itemValue
+                 setter raises(DOMException);
 #endif
 #endif
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-        readonly attribute DOMString titleDisplayString;
+    readonly attribute DOMString titleDisplayString;
 #endif
 
-        void click();
-    };
+    void click();
+};
 
-}

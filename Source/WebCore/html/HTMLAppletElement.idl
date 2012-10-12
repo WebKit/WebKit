@@ -18,32 +18,29 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module html {
-
-    interface [
-        CustomNamedSetter,
-        JSCustomGetOwnPropertySlotAndDescriptor,
-        CustomCall
-    ] HTMLAppletElement : HTMLElement {
-        attribute [Reflect] DOMString align;
-        attribute [Reflect] DOMString alt;
-        attribute [Reflect] DOMString archive;
-        attribute [Reflect] DOMString code;
-        attribute [Reflect] DOMString codeBase;
-        attribute [Reflect] DOMString height;
+interface [
+    CustomNamedSetter,
+    JSCustomGetOwnPropertySlotAndDescriptor,
+    CustomCall
+] HTMLAppletElement : HTMLElement {
+    attribute [Reflect] DOMString align;
+    attribute [Reflect] DOMString alt;
+    attribute [Reflect] DOMString archive;
+    attribute [Reflect] DOMString code;
+    attribute [Reflect] DOMString codeBase;
+    attribute [Reflect] DOMString height;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        attribute [Reflect] DOMString hspace;
+    attribute [Reflect] DOMString hspace;
 #else
-        attribute [Reflect] long hspace;
+    attribute [Reflect] long hspace;
 #endif
-        attribute [Reflect] DOMString name;
-        attribute [Reflect] DOMString object;
+    attribute [Reflect] DOMString name;
+    attribute [Reflect] DOMString object;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        attribute [Reflect] DOMString vspace;
+    attribute [Reflect] DOMString vspace;
 #else
-        attribute [Reflect] long vspace;
+    attribute [Reflect] long vspace;
 #endif
-        attribute [Reflect] DOMString width;
-    };
+    attribute [Reflect] DOMString width;
+};
 
-}

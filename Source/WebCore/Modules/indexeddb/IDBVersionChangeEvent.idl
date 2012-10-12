@@ -23,11 +23,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
-
-    interface [
-        Conditional=INDEXED_DATABASE
-    ] IDBVersionChangeEvent : Event {
-        readonly attribute DOMString version;
-    };
-}
+interface [
+    Conditional=INDEXED_DATABASE
+] IDBVersionChangeEvent : Event {
+    readonly attribute DOMString version;
+};

@@ -17,30 +17,27 @@
     Boston, MA 02110-1301, USA.
 */
 
-module window {
+interface [
+    JSGenerateIsReachable=ImplFrame,
+    OmitConstructor
+] Navigator {
+    readonly attribute DOMString appCodeName;
+    readonly attribute DOMString appName;
+    readonly attribute DOMString appVersion;
+    readonly attribute DOMString language;
+    readonly attribute DOMString userAgent;
+    readonly attribute DOMString platform;
+    readonly attribute DOMPluginArray plugins;
+    readonly attribute DOMMimeTypeArray mimeTypes;
+    readonly attribute DOMString product;
+    readonly attribute DOMString productSub;
+    readonly attribute DOMString vendor;
+    readonly attribute DOMString vendorSub;
+    readonly attribute boolean cookieEnabled;
+    boolean javaEnabled();
 
-    interface [
-        JSGenerateIsReachable=ImplFrame,
-        OmitConstructor
-    ] Navigator {
-        readonly attribute DOMString appCodeName;
-        readonly attribute DOMString appName;
-        readonly attribute DOMString appVersion;
-        readonly attribute DOMString language;
-        readonly attribute DOMString userAgent;
-        readonly attribute DOMString platform;
-        readonly attribute DOMPluginArray plugins;
-        readonly attribute DOMMimeTypeArray mimeTypes;
-        readonly attribute DOMString product;
-        readonly attribute DOMString productSub;
-        readonly attribute DOMString vendor;
-        readonly attribute DOMString vendorSub;
-        readonly attribute boolean cookieEnabled;
-        boolean javaEnabled();
+    readonly attribute boolean onLine;
 
-        readonly attribute boolean onLine;
+    void getStorageUpdates(); // FIXME: Remove this method or rename to yieldForStorageUpdates.
+};
 
-        void getStorageUpdates(); // FIXME: Remove this method or rename to yieldForStorageUpdates.
-    };
-
-}

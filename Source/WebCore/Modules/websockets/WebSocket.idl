@@ -29,60 +29,57 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module websockets {
+interface [
+    Conditional=WEB_SOCKETS,
+    ActiveDOMObject,
+    CustomConstructor,
+    ConstructorParameters=1,
+    EventTarget,
+    JSNoStaticTables
+] WebSocket {
+    readonly attribute DOMString URL; // Lowercased .url is the one in the spec, but leaving .URL for compatibility reasons.
+    readonly attribute DOMString url;
 
-    interface [
-        Conditional=WEB_SOCKETS,
-        ActiveDOMObject,
-        CustomConstructor,
-        ConstructorParameters=1,
-        EventTarget,
-        JSNoStaticTables
-    ] WebSocket {
-        readonly attribute DOMString URL; // Lowercased .url is the one in the spec, but leaving .URL for compatibility reasons.
-        readonly attribute DOMString url;
+    // ready state
+    const unsigned short CONNECTING = 0;
+    const unsigned short OPEN = 1;
+    const unsigned short CLOSING = 2;
+    const unsigned short CLOSED = 3;
+    readonly attribute unsigned short readyState;
 
-        // ready state
-        const unsigned short CONNECTING = 0;
-        const unsigned short OPEN = 1;
-        const unsigned short CLOSING = 2;
-        const unsigned short CLOSED = 3;
-        readonly attribute unsigned short readyState;
+    readonly attribute unsigned long bufferedAmount;
 
-        readonly attribute unsigned long bufferedAmount;
+    // networking
+    attribute EventListener onopen;
+    attribute EventListener onmessage;
+    attribute EventListener onerror;
+    attribute EventListener onclose;
 
-        // networking
-        attribute EventListener onopen;
-        attribute EventListener onmessage;
-        attribute EventListener onerror;
-        attribute EventListener onclose;
+    readonly attribute [TreatReturnedNullStringAs=Undefined] DOMString protocol;
+    readonly attribute [TreatReturnedNullStringAs=Undefined] DOMString extensions;
 
-        readonly attribute [TreatReturnedNullStringAs=Undefined] DOMString protocol;
-        readonly attribute [TreatReturnedNullStringAs=Undefined] DOMString extensions;
+    attribute DOMString binaryType;
 
-        attribute DOMString binaryType;
+    // FIXME: Use overloading provided by our IDL code generator.
+    // According to Web IDL specification, overloaded function with DOMString argument
+    // should accept anything that can be converted to a string (including numbers,
+    // booleans, null, undefined and objects except ArrayBuffer and Blob). Current code
+    // generator does not handle this rule correctly.
+    // boolean send(in ArrayBuffer data) raises(DOMException);
+    // boolean send(in ArrayBufferView data) raises(DOMException);
+    // boolean send(in Blob data) raises(DOMException);
+    // boolean send(in DOMString data) raises(DOMException);
+    [Custom] boolean send(in DOMString data) raises(DOMException);
 
-        // FIXME: Use overloading provided by our IDL code generator.
-        // According to Web IDL specification, overloaded function with DOMString argument
-        // should accept anything that can be converted to a string (including numbers,
-        // booleans, null, undefined and objects except ArrayBuffer and Blob). Current code
-        // generator does not handle this rule correctly.
-        // boolean send(in ArrayBuffer data) raises(DOMException);
-        // boolean send(in ArrayBufferView data) raises(DOMException);
-        // boolean send(in Blob data) raises(DOMException);
-        // boolean send(in DOMString data) raises(DOMException);
-        [Custom] boolean send(in DOMString data) raises(DOMException);
+    void close(in [Clamp, Optional] unsigned short code, in [Optional] DOMString reason) raises(DOMException);
 
-        void close(in [Clamp, Optional] unsigned short code, in [Optional] DOMString reason) raises(DOMException);
-
-        // EventTarget interface
-        void addEventListener(in DOMString type,
-                              in EventListener listener,
-                              in [Optional] boolean useCapture);
-        void removeEventListener(in DOMString type,
-                                 in EventListener listener,
-                                 in [Optional] boolean useCapture);
-        boolean dispatchEvent(in Event evt)
-            raises(EventException);
-    };
-}
+    // EventTarget interface
+    void addEventListener(in DOMString type,
+                          in EventListener listener,
+                          in [Optional] boolean useCapture);
+    void removeEventListener(in DOMString type,
+                             in EventListener listener,
+                             in [Optional] boolean useCapture);
+    boolean dispatchEvent(in Event evt)
+        raises(EventException);
+};

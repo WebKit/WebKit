@@ -29,58 +29,55 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module threads {
-
-    interface [
-        Conditional=NOTIFICATIONS|LEGACY_NOTIFICATIONS,
-        ActiveDOMObject,
-        EventTarget,
+interface [
+    Conditional=NOTIFICATIONS|LEGACY_NOTIFICATIONS,
+    ActiveDOMObject,
+    EventTarget,
 #if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
-        Constructor(in DOMString title, in [Optional=DefaultIsUndefined] Dictionary options),
-        CallWith=ScriptExecutionContext,
+    Constructor(in DOMString title, in [Optional=DefaultIsUndefined] Dictionary options),
+    CallWith=ScriptExecutionContext,
 #else
-        OmitConstructor
+    OmitConstructor
 #endif
-    ] Notification {
-        void show();
+] Notification {
+    void show();
 #if defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS
-        void cancel();
+    void cancel();
 #endif
 #if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
-        void close();
+    void close();
 #endif
 
 
 #if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
-        static readonly attribute [CallWith=ScriptExecutionContext] DOMString permission;
-        [Custom] static void requestPermission(in NotificationPermissionCallback callback);
+    static readonly attribute [CallWith=ScriptExecutionContext] DOMString permission;
+    [Custom] static void requestPermission(in NotificationPermissionCallback callback);
 #endif
 
-        attribute EventListener onshow;
+    attribute EventListener onshow;
 #if defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS
-        attribute EventListener ondisplay;
+    attribute EventListener ondisplay;
 #endif
-        attribute EventListener onerror;
-        attribute EventListener onclose;
-        attribute EventListener onclick;
+    attribute EventListener onerror;
+    attribute EventListener onclose;
+    attribute EventListener onclick;
 
 #if defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS
-        attribute DOMString dir;
-        attribute DOMString replaceId;
+    attribute DOMString dir;
+    attribute DOMString replaceId;
 #endif
 #if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
-        attribute DOMString tag;
+    attribute DOMString tag;
 #endif
 
-        // EventTarget interface
-        void addEventListener(in DOMString type, 
-                              in EventListener listener, 
-                              in [Optional] boolean useCapture);
-        void removeEventListener(in DOMString type, 
-                                 in EventListener listener, 
-                                 in [Optional] boolean useCapture);
-        boolean dispatchEvent(in Event evt)
-            raises(EventException);
-    };
+    // EventTarget interface
+    void addEventListener(in DOMString type, 
+                          in EventListener listener, 
+                          in [Optional] boolean useCapture);
+    void removeEventListener(in DOMString type, 
+                             in EventListener listener, 
+                             in [Optional] boolean useCapture);
+    boolean dispatchEvent(in Event evt)
+        raises(EventException);
+};
 
-}

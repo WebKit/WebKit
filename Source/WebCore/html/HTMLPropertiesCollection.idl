@@ -28,18 +28,15 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module html {
+interface [
+    Conditional=MICRODATA,
+    JSGenerateToJSObject,
+    IndexedGetter,
+    NamedGetter
+] HTMLPropertiesCollection : HTMLCollection {
+    readonly attribute unsigned long length;
+    Node item(in unsigned long index);
 
-    interface [
-        Conditional=MICRODATA,
-        JSGenerateToJSObject,
-        IndexedGetter,
-        NamedGetter
-    ] HTMLPropertiesCollection : HTMLCollection {
-        readonly attribute unsigned long length;
-        Node item(in unsigned long index);
-
-        readonly attribute DOMStringList names;
-        PropertyNodeList namedItem(in DOMString name);
-    };
-}
+    readonly attribute DOMStringList names;
+    PropertyNodeList namedItem(in DOMString name);
+};

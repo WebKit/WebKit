@@ -18,33 +18,30 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module html {
-
-    interface [
-        CustomNamedSetter,
-        JSCustomGetOwnPropertySlotAndDescriptor,
-        CustomCall
-    ] HTMLEmbedElement : HTMLElement {
-    attribute [Reflect] DOMString align;
+interface [
+    CustomNamedSetter,
+    JSCustomGetOwnPropertySlotAndDescriptor,
+    CustomCall
+] HTMLEmbedElement : HTMLElement {
+attribute [Reflect] DOMString align;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    attribute [Reflect] DOMString height;
+attribute [Reflect] DOMString height;
 #else
-    attribute [Reflect] long height;
+attribute [Reflect] long height;
 #endif
-    attribute [Reflect] DOMString name;
-    attribute [Reflect, URL] DOMString src;
-    attribute [Reflect] DOMString type;
+attribute [Reflect] DOMString name;
+attribute [Reflect, URL] DOMString src;
+attribute [Reflect] DOMString type;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    attribute [Reflect] DOMString width;
+attribute [Reflect] DOMString width;
 #else
-    attribute [Reflect] long width;
+attribute [Reflect] long width;
 #endif
 
 #if defined(ENABLE_SVG) && ENABLE_SVG
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C || defined(ENABLE_SVG_DOM_OBJC_BINDINGS) && ENABLE_SVG_DOM_OBJC_BINDINGS
-    [CheckSecurityForNode] SVGDocument getSVGDocument() raises(DOMException);
+[CheckSecurityForNode] SVGDocument getSVGDocument() raises(DOMException);
 #endif
 #endif
-    };
+};
 
-}

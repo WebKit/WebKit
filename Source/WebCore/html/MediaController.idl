@@ -23,41 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module html {
-    interface [
-        Conditional=VIDEO,
-        Constructor,
-        CallWith=ScriptExecutionContext,
-        JSGenerateToJSObject,
-        EventTarget
-    ] MediaController {
-        readonly attribute TimeRanges buffered;
-        readonly attribute TimeRanges seekable;
+interface [
+    Conditional=VIDEO,
+    Constructor,
+    CallWith=ScriptExecutionContext,
+    JSGenerateToJSObject,
+    EventTarget
+] MediaController {
+    readonly attribute TimeRanges buffered;
+    readonly attribute TimeRanges seekable;
 
-        readonly attribute double duration;
-        attribute double currentTime
-            setter raises (DOMException);
+    readonly attribute double duration;
+    attribute double currentTime
+        setter raises (DOMException);
 
-        readonly attribute boolean paused;
-        readonly attribute TimeRanges played;
-        void play();
-        void pause();
+    readonly attribute boolean paused;
+    readonly attribute TimeRanges played;
+    void play();
+    void pause();
 
-        attribute double defaultPlaybackRate;
-        attribute double playbackRate;
+    attribute double defaultPlaybackRate;
+    attribute double playbackRate;
 
-        attribute double volume
-            setter raises (DOMException);
-        attribute boolean muted;
+    attribute double volume
+        setter raises (DOMException);
+    attribute boolean muted;
 
-        // EventTarget interface
-        void addEventListener(in DOMString type, 
-                              in EventListener listener, 
-                              in [Optional] boolean useCapture);
-        void removeEventListener(in DOMString type, 
-                                 in EventListener listener, 
-                                 in [Optional] boolean useCapture);
-        boolean dispatchEvent(in Event evt)
-            raises(EventException);
-    };
-}
+    // EventTarget interface
+    void addEventListener(in DOMString type, 
+                          in EventListener listener, 
+                          in [Optional] boolean useCapture);
+    void removeEventListener(in DOMString type, 
+                             in EventListener listener, 
+                             in [Optional] boolean useCapture);
+    boolean dispatchEvent(in Event evt)
+        raises(EventException);
+};

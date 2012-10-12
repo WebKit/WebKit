@@ -24,18 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module window {
-
-    interface [
-        Conditional=WEB_AUDIO,
-        Supplemental=DOMWindow
-    ] DOMWindowWebAudio {
+interface [
+    Conditional=WEB_AUDIO,
+    Supplemental=DOMWindow
+] DOMWindowWebAudio {
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-        attribute [JSCustomGetter, V8EnabledAtRuntime] AudioContextConstructor webkitAudioContext;
-        attribute AudioPannerNodeConstructor webkitAudioPannerNode;
-        attribute AudioProcessingEventConstructor AudioProcessingEvent;
-        attribute OfflineAudioCompletionEventConstructor OfflineAudioCompletionEvent;
+    attribute [JSCustomGetter, V8EnabledAtRuntime] AudioContextConstructor webkitAudioContext;
+    attribute AudioPannerNodeConstructor webkitAudioPannerNode;
+    attribute AudioProcessingEventConstructor AudioProcessingEvent;
+    attribute OfflineAudioCompletionEventConstructor OfflineAudioCompletionEvent;
 #endif
-    };
+};
 
-}

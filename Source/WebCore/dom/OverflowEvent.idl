@@ -23,24 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module events {
-
-    interface [
-        ConstructorTemplate=Event
-    ] OverflowEvent : Event {
-        const unsigned short HORIZONTAL = 0;
-        const unsigned short VERTICAL   = 1;
-        const unsigned short BOTH       = 2;
-        
-        readonly attribute [InitializedByEventConstructor] unsigned short orient;
-        readonly attribute [InitializedByEventConstructor] boolean horizontalOverflow;
-        readonly attribute [InitializedByEventConstructor] boolean verticalOverflow;
+interface [
+    ConstructorTemplate=Event
+] OverflowEvent : Event {
+    const unsigned short HORIZONTAL = 0;
+    const unsigned short VERTICAL   = 1;
+    const unsigned short BOTH       = 2;
+    
+    readonly attribute [InitializedByEventConstructor] unsigned short orient;
+    readonly attribute [InitializedByEventConstructor] boolean horizontalOverflow;
+    readonly attribute [InitializedByEventConstructor] boolean verticalOverflow;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-        void initOverflowEvent(in [Optional=DefaultIsUndefined] unsigned short orient,
-                               in [Optional=DefaultIsUndefined] boolean horizontalOverflow,
-                               in [Optional=DefaultIsUndefined] boolean verticalOverflow);
+    void initOverflowEvent(in [Optional=DefaultIsUndefined] unsigned short orient,
+                           in [Optional=DefaultIsUndefined] boolean horizontalOverflow,
+                           in [Optional=DefaultIsUndefined] boolean verticalOverflow);
 #endif
-    };
+};
 
-}

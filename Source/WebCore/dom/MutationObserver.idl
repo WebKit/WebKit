@@ -28,15 +28,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
-    interface [
-        Conditional=MUTATION_OBSERVERS,
-        CustomConstructor,
-        ConstructorParameters=1
-    ] MutationObserver {
-        void observe(in Node target, in Dictionary options)
-            raises(DOMException);
-        sequence<MutationRecord> takeRecords();
-        void disconnect();
-    };
-}
+interface [
+    Conditional=MUTATION_OBSERVERS,
+    CustomConstructor,
+    ConstructorParameters=1
+] MutationObserver {
+    void observe(in Node target, in Dictionary options)
+        raises(DOMException);
+    sequence<MutationRecord> takeRecords();
+    void disconnect();
+};

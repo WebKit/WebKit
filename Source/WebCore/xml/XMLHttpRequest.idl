@@ -26,98 +26,95 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module xml {
+interface [
+    ActiveDOMObject,
+    Constructor,
+    CallWith=ScriptExecutionContext,
+    V8CustomConstructor,
+    JSCustomMarkFunction,
+    EventTarget,
+    JSNoStaticTables
+] XMLHttpRequest {
+    // From XMLHttpRequestEventTarget
+    // event handler attributes
+    attribute EventListener onabort;
+    attribute EventListener onerror;
+    attribute EventListener onload;
+    attribute EventListener onloadend;
+    attribute EventListener onloadstart;
+    attribute EventListener onprogress;
 
-    interface [
-        ActiveDOMObject,
-        Constructor,
-        CallWith=ScriptExecutionContext,
-        V8CustomConstructor,
-        JSCustomMarkFunction,
-        EventTarget,
-        JSNoStaticTables
-    ] XMLHttpRequest {
-        // From XMLHttpRequestEventTarget
-        // event handler attributes
-        attribute EventListener onabort;
-        attribute EventListener onerror;
-        attribute EventListener onload;
-        attribute EventListener onloadend;
-        attribute EventListener onloadstart;
-        attribute EventListener onprogress;
+    // event handler attributes
+    attribute EventListener onreadystatechange;
 
-        // event handler attributes
-        attribute EventListener onreadystatechange;
+    // state
+    const unsigned short UNSENT = 0;
+    const unsigned short OPENED = 1;
+    const unsigned short HEADERS_RECEIVED = 2;
+    const unsigned short LOADING = 3;
+    const unsigned short DONE = 4;
 
-        // state
-        const unsigned short UNSENT = 0;
-        const unsigned short OPENED = 1;
-        const unsigned short HEADERS_RECEIVED = 2;
-        const unsigned short LOADING = 3;
-        const unsigned short DONE = 4;
+    readonly attribute unsigned short readyState;
 
-        readonly attribute unsigned short readyState;
+    attribute boolean withCredentials
+        setter raises(DOMException);
 
-        attribute boolean withCredentials
-            setter raises(DOMException);
+    [Custom] void open(in DOMString method, in DOMString url, in [Optional] boolean async, in [Optional] DOMString user, in [Optional] DOMString password)
+        raises(DOMException);
 
-        [Custom] void open(in DOMString method, in DOMString url, in [Optional] boolean async, in [Optional] DOMString user, in [Optional] DOMString password)
-            raises(DOMException);
+    void setRequestHeader(in DOMString header, in DOMString value)
+        raises(DOMException);
 
-        void setRequestHeader(in DOMString header, in DOMString value)
-            raises(DOMException);
+    [Custom] void send()
+        raises(DOMException);
+    [Custom] void send(in ArrayBuffer data) // FIXME: this should be eventually deprecated.
+        raises(DOMException);
+    [Custom] void send(in ArrayBufferView data)
+        raises(DOMException);
+    [Conditional=BLOB, Custom] void send(in Blob data)
+        raises(DOMException);
+    [Custom] void send(in Document data)
+        raises(DOMException);
+    [Custom] void send(in [StrictTypeChecking] DOMString data)
+        raises(DOMException);
+    [Custom] void send(in DOMFormData data)
+        raises(DOMException);
 
-        [Custom] void send()
-            raises(DOMException);
-        [Custom] void send(in ArrayBuffer data) // FIXME: this should be eventually deprecated.
-            raises(DOMException);
-        [Custom] void send(in ArrayBufferView data)
-            raises(DOMException);
-        [Conditional=BLOB, Custom] void send(in Blob data)
-            raises(DOMException);
-        [Custom] void send(in Document data)
-            raises(DOMException);
-        [Custom] void send(in [StrictTypeChecking] DOMString data)
-            raises(DOMException);
-        [Custom] void send(in DOMFormData data)
-            raises(DOMException);
+    void abort();
 
-        void abort();
+    readonly attribute XMLHttpRequestUpload upload;
 
-        readonly attribute XMLHttpRequestUpload upload;
+    // response
+    [TreatReturnedNullStringAs=Undefined] DOMString getAllResponseHeaders()
+        raises(DOMException);
+    [TreatReturnedNullStringAs=Null] DOMString getResponseHeader(in DOMString header)
+        raises(DOMException);
+    readonly attribute [CustomGetter] DOMString responseText // The custom getter implements TreatReturnedNullStringAs=Null
+        getter raises(DOMException);
+    readonly attribute Document responseXML
+        getter raises(DOMException);
 
-        // response
-        [TreatReturnedNullStringAs=Undefined] DOMString getAllResponseHeaders()
-            raises(DOMException);
-        [TreatReturnedNullStringAs=Null] DOMString getResponseHeader(in DOMString header)
-            raises(DOMException);
-        readonly attribute [CustomGetter] DOMString responseText // The custom getter implements TreatReturnedNullStringAs=Null
-            getter raises(DOMException);
-        readonly attribute Document responseXML
-            getter raises(DOMException);
+    attribute DOMString responseType
+        setter raises(DOMException);
+    readonly attribute [CustomGetter] Object response
+        getter raises(DOMException);
 
-        attribute DOMString responseType
-            setter raises(DOMException);
-        readonly attribute [CustomGetter] Object response
-            getter raises(DOMException);
+    readonly attribute unsigned short status
+        getter raises(DOMException);
+    readonly attribute DOMString statusText
+        getter raises(DOMException);
 
-        readonly attribute unsigned short status
-            getter raises(DOMException);
-        readonly attribute DOMString statusText
-            getter raises(DOMException);
+    // Extension
+    void overrideMimeType(in DOMString override);
 
-        // Extension
-        void overrideMimeType(in DOMString override);
+    // EventTarget interface
+    void addEventListener(in DOMString type, 
+                          in EventListener listener, 
+                          in [Optional] boolean useCapture);
+    void removeEventListener(in DOMString type, 
+                             in EventListener listener, 
+                             in [Optional] boolean useCapture);
+    boolean dispatchEvent(in Event evt)
+        raises(EventException);
+};
 
-        // EventTarget interface
-        void addEventListener(in DOMString type, 
-                              in EventListener listener, 
-                              in [Optional] boolean useCapture);
-        void removeEventListener(in DOMString type, 
-                                 in EventListener listener, 
-                                 in [Optional] boolean useCapture);
-        boolean dispatchEvent(in Event evt)
-            raises(EventException);
-    };
-
-}

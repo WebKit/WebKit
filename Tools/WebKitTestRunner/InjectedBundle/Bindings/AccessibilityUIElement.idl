@@ -23,151 +23,148 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module WTR {
+interface AccessibilityUIElement {
+    boolean isEqual(in AccessibilityUIElement otherElement);
 
-    interface AccessibilityUIElement {
-        boolean isEqual(in AccessibilityUIElement otherElement);
+    // Document information
+    readonly attribute DOMString documentEncoding;
+    readonly attribute DOMString documentURI;
 
-        // Document information
-        readonly attribute DOMString documentEncoding;
-        readonly attribute DOMString documentURI;
-
-        // Element access.
-        AccessibilityUIElement elementAtPoint(in int x, in int y);
-        AccessibilityUIElement childAtIndex(in unsigned long index);
-        unsigned long indexOfChild(in AccessibilityUIElement child);
-        AccessibilityUIElement linkedUIElementAtIndex(in unsigned long index);
-        AccessibilityUIElement selectedChildAtIndex(in unsigned long index);
-        void setSelectedChild(in AccessibilityUIElement element);
-        AccessibilityUIElement titleUIElement();
-        AccessibilityUIElement parentElement();
-        
-        readonly attribute DOMString role;
-        readonly attribute DOMString subrole;
-        readonly attribute DOMString roleDescription;
-        readonly attribute DOMString title;
-        readonly attribute DOMString description;
-        readonly attribute DOMString language;
-        readonly attribute DOMString helpText;
-        readonly attribute DOMString valueDescription;
-        readonly attribute DOMString url;
-        readonly attribute DOMString speak;
-        readonly attribute DOMString orientation;
-        readonly attribute int insertionPointLineNumber;
-        readonly attribute DOMString selectedTextRange;
+    // Element access.
+    AccessibilityUIElement elementAtPoint(in int x, in int y);
+    AccessibilityUIElement childAtIndex(in unsigned long index);
+    unsigned long indexOfChild(in AccessibilityUIElement child);
+    AccessibilityUIElement linkedUIElementAtIndex(in unsigned long index);
+    AccessibilityUIElement selectedChildAtIndex(in unsigned long index);
+    void setSelectedChild(in AccessibilityUIElement element);
+    AccessibilityUIElement titleUIElement();
+    AccessibilityUIElement parentElement();
     
-        DOMString stringAttributeValue(in DOMString attr);
-        double numberAttributeValue(in DOMString attr);
-        AccessibilityUIElement uiElementAttributeValue(in DOMString attr);  
-        boolean boolAttributeValue(in DOMString attr);
-        boolean isAttributeSupported(in DOMString attr);
-        boolean isAttributeSettable(in DOMString attr);
-        boolean isActionSupported(in DOMString attr);
+    readonly attribute DOMString role;
+    readonly attribute DOMString subrole;
+    readonly attribute DOMString roleDescription;
+    readonly attribute DOMString title;
+    readonly attribute DOMString description;
+    readonly attribute DOMString language;
+    readonly attribute DOMString helpText;
+    readonly attribute DOMString valueDescription;
+    readonly attribute DOMString url;
+    readonly attribute DOMString speak;
+    readonly attribute DOMString orientation;
+    readonly attribute int insertionPointLineNumber;
+    readonly attribute DOMString selectedTextRange;
 
-        readonly attribute DOMString stringValue;
-        readonly attribute int intValue;
-        readonly attribute int minValue;
-        readonly attribute int maxValue;
-        
-        readonly attribute boolean isEnabled;
-        readonly attribute boolean isRequired;
-        readonly attribute boolean isFocused;
-        readonly attribute boolean isFocusable;
-        readonly attribute boolean isSelected;
-        readonly attribute boolean isMultiSelectable;
-        readonly attribute boolean isExpanded;
-        readonly attribute boolean isChecked;
-        readonly attribute boolean isVisible;
-        readonly attribute boolean isCollapsed;
-        readonly attribute boolean hasPopup;
-        readonly attribute boolean isIgnored;
-        readonly attribute boolean isOffScreen;
-        readonly attribute boolean isValid;
-        readonly attribute int hierarchicalLevel;
-        readonly attribute boolean ariaIsGrabbed;
-        readonly attribute DOMString ariaDropEffects;
-        
-        readonly attribute int x;
-        readonly attribute int y;
-        readonly attribute int width;
-        readonly attribute int height;
-        readonly attribute int clickPointX;
-        readonly attribute int clickPointY;
+    DOMString stringAttributeValue(in DOMString attr);
+    double numberAttributeValue(in DOMString attr);
+    AccessibilityUIElement uiElementAttributeValue(in DOMString attr);  
+    boolean boolAttributeValue(in DOMString attr);
+    boolean isAttributeSupported(in DOMString attr);
+    boolean isAttributeSettable(in DOMString attr);
+    boolean isActionSupported(in DOMString attr);
 
-        readonly attribute int childrenCount;
-        readonly attribute int selectedChildrenCount;
-        readonly attribute int rowCount;
-        readonly attribute int columnCount;
-
-        // Actions.
-        void increment();
-        void decrement();
-        void press();
-        void showMenu();
-
-        // Attribute info.
-        DOMString allAttributes();
-        DOMString attributesOfChildren();
-        DOMString attributesOfLinkedUIElements();
-        DOMString attributesOfDocumentLinks();
-        
-        // Table info.
-        DOMString attributesOfColumnHeaders();
-        DOMString attributesOfRowHeaders();
-        DOMString attributesOfColumns();
-        DOMString attributesOfRows();
-        DOMString attributesOfVisibleCells();
-        DOMString attributesOfHeader();
-        AccessibilityUIElement cellForColumnAndRow(in unsigned long column, in unsigned long row);
-        AccessibilityUIElement selectedRowAtIndex(in unsigned long index);
-        AccessibilityUIElement disclosedByRow();
-        AccessibilityUIElement disclosedRowAtIndex(in unsigned long index);
-        AccessibilityUIElement rowAtIndex(in unsigned long index);
-        int indexInTable();
-        DOMString rowIndexRange();
-        DOMString columnIndexRange();
-        int rowCount();
-        int columnCount();
+    readonly attribute DOMString stringValue;
+    readonly attribute int intValue;
+    readonly attribute int minValue;
+    readonly attribute int maxValue;
     
-        AccessibilityUIElement ariaOwnsElementAtIndex(in unsigned long index);
-        AccessibilityUIElement ariaFlowToElementAtIndex(in unsigned long index);
+    readonly attribute boolean isEnabled;
+    readonly attribute boolean isRequired;
+    readonly attribute boolean isFocused;
+    readonly attribute boolean isFocusable;
+    readonly attribute boolean isSelected;
+    readonly attribute boolean isMultiSelectable;
+    readonly attribute boolean isExpanded;
+    readonly attribute boolean isChecked;
+    readonly attribute boolean isVisible;
+    readonly attribute boolean isCollapsed;
+    readonly attribute boolean hasPopup;
+    readonly attribute boolean isIgnored;
+    readonly attribute boolean isOffScreen;
+    readonly attribute boolean isValid;
+    readonly attribute int hierarchicalLevel;
+    readonly attribute boolean ariaIsGrabbed;
+    readonly attribute DOMString ariaDropEffects;
+    
+    readonly attribute int x;
+    readonly attribute int y;
+    readonly attribute int width;
+    readonly attribute int height;
+    readonly attribute int clickPointX;
+    readonly attribute int clickPointY;
 
-        // Paramaterized attributes.
-        DOMString parameterizedAttributeNames();
-        int lineForIndex(in int index);
-        DOMString rangeForLine(in int index);
-        DOMString rangeForPosition(in int x, in int y);
-        DOMString boundsForRange(in unsigned long location, in unsigned long length);
-        DOMString stringForRange(in unsigned long location, in unsigned long length);
-        DOMString attributedStringForRange(in unsigned long location, in unsigned long length);
-        boolean attributedStringRangeIsMisspelled(in unsigned long location, in unsigned long length);
-        AccessibilityUIElement uiElementForSearchPredicate(in AccessibilityUIElement startElement, in boolean isDirectionNext, in DOMString searchKey, in DOMString searchText);
-        void setSelectedTextRange(in unsigned long location, in unsigned long length);
+    readonly attribute int childrenCount;
+    readonly attribute int selectedChildrenCount;
+    readonly attribute int rowCount;
+    readonly attribute int columnCount;
 
-        // Scroll area attributes.
-        readonly attribute AccessibilityUIElement horizontalScrollbar;
-        readonly attribute AccessibilityUIElement verticalScrollbar;
+    // Actions.
+    void increment();
+    void decrement();
+    void press();
+    void showMenu();
 
-        // Text markers.
-        AccessibilityTextMarkerRange textMarkerRangeForElement(in AccessibilityUIElement element);    
-        AccessibilityTextMarkerRange textMarkerRangeForMarkers(in AccessibilityTextMarker startMarker, in AccessibilityTextMarker endMarker);
-        AccessibilityTextMarker startTextMarkerForTextMarkerRange(in AccessibilityTextMarkerRange range);
-        AccessibilityTextMarker endTextMarkerForTextMarkerRange(in AccessibilityTextMarkerRange range);
-        AccessibilityTextMarker textMarkerForPoint(in int x, in int y);
-        AccessibilityTextMarker previousTextMarker(in AccessibilityTextMarker marker);
-        AccessibilityTextMarker nextTextMarker(in AccessibilityTextMarker marker);
-        AccessibilityUIElement accessibilityElementForTextMarker(in AccessibilityTextMarker marker);
-        DOMString stringForTextMarkerRange(in AccessibilityTextMarkerRange range);
-        int textMarkerRangeLength(in AccessibilityTextMarkerRange range);
-        boolean attributedStringForTextMarkerRangeContainsAttribute(in DOMString attr, in AccessibilityTextMarkerRange range);
-        int indexForTextMarker(in AccessibilityTextMarker marker);
-        boolean isTextMarkerValid(in AccessibilityTextMarker marker);
-        AccessibilityTextMarker textMarkerForIndex(in int textIndex);
+    // Attribute info.
+    DOMString allAttributes();
+    DOMString attributesOfChildren();
+    DOMString attributesOfLinkedUIElements();
+    DOMString attributesOfDocumentLinks();
+    
+    // Table info.
+    DOMString attributesOfColumnHeaders();
+    DOMString attributesOfRowHeaders();
+    DOMString attributesOfColumns();
+    DOMString attributesOfRows();
+    DOMString attributesOfVisibleCells();
+    DOMString attributesOfHeader();
+    AccessibilityUIElement cellForColumnAndRow(in unsigned long column, in unsigned long row);
+    AccessibilityUIElement selectedRowAtIndex(in unsigned long index);
+    AccessibilityUIElement disclosedByRow();
+    AccessibilityUIElement disclosedRowAtIndex(in unsigned long index);
+    AccessibilityUIElement rowAtIndex(in unsigned long index);
+    int indexInTable();
+    DOMString rowIndexRange();
+    DOMString columnIndexRange();
+    int rowCount();
+    int columnCount();
 
-        // Notification support.
-        boolean addNotificationListener(in object callbackFunction);
-        boolean removeNotificationListener();
-        
-    };
+    AccessibilityUIElement ariaOwnsElementAtIndex(in unsigned long index);
+    AccessibilityUIElement ariaFlowToElementAtIndex(in unsigned long index);
 
-}
+    // Paramaterized attributes.
+    DOMString parameterizedAttributeNames();
+    int lineForIndex(in int index);
+    DOMString rangeForLine(in int index);
+    DOMString rangeForPosition(in int x, in int y);
+    DOMString boundsForRange(in unsigned long location, in unsigned long length);
+    DOMString stringForRange(in unsigned long location, in unsigned long length);
+    DOMString attributedStringForRange(in unsigned long location, in unsigned long length);
+    boolean attributedStringRangeIsMisspelled(in unsigned long location, in unsigned long length);
+    AccessibilityUIElement uiElementForSearchPredicate(in AccessibilityUIElement startElement, in boolean isDirectionNext, in DOMString searchKey, in DOMString searchText);
+    void setSelectedTextRange(in unsigned long location, in unsigned long length);
+
+    // Scroll area attributes.
+    readonly attribute AccessibilityUIElement horizontalScrollbar;
+    readonly attribute AccessibilityUIElement verticalScrollbar;
+
+    // Text markers.
+    AccessibilityTextMarkerRange textMarkerRangeForElement(in AccessibilityUIElement element);    
+    AccessibilityTextMarkerRange textMarkerRangeForMarkers(in AccessibilityTextMarker startMarker, in AccessibilityTextMarker endMarker);
+    AccessibilityTextMarker startTextMarkerForTextMarkerRange(in AccessibilityTextMarkerRange range);
+    AccessibilityTextMarker endTextMarkerForTextMarkerRange(in AccessibilityTextMarkerRange range);
+    AccessibilityTextMarker textMarkerForPoint(in int x, in int y);
+    AccessibilityTextMarker previousTextMarker(in AccessibilityTextMarker marker);
+    AccessibilityTextMarker nextTextMarker(in AccessibilityTextMarker marker);
+    AccessibilityUIElement accessibilityElementForTextMarker(in AccessibilityTextMarker marker);
+    DOMString stringForTextMarkerRange(in AccessibilityTextMarkerRange range);
+    int textMarkerRangeLength(in AccessibilityTextMarkerRange range);
+    boolean attributedStringForTextMarkerRangeContainsAttribute(in DOMString attr, in AccessibilityTextMarkerRange range);
+    int indexForTextMarker(in AccessibilityTextMarker marker);
+    boolean isTextMarkerValid(in AccessibilityTextMarker marker);
+    AccessibilityTextMarker textMarkerForIndex(in int textIndex);
+
+    // Notification support.
+    boolean addNotificationListener(in object callbackFunction);
+    boolean removeNotificationListener();
+    
+};
+

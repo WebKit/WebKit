@@ -17,10 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module html {
+interface HTMLTitleElement : HTMLElement {
+    attribute  [TreatNullAs=NullString] DOMString            text;
+};
 
-    interface HTMLTitleElement : HTMLElement {
-        attribute  [TreatNullAs=NullString] DOMString            text;
-    };
-
-}

@@ -17,19 +17,16 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module core {
+interface Text : CharacterData {
 
-    interface Text : CharacterData {
+    // DOM Level 1
 
-        // DOM Level 1
+    Text splitText(in [IsIndex,Optional=DefaultIsUndefined] unsigned long offset)
+        raises (DOMException);
 
-        Text splitText(in [IsIndex,Optional=DefaultIsUndefined] unsigned long offset)
-            raises (DOMException);
+    // Introduced in DOM Level 3:
+    readonly attribute DOMString       wholeText;
+    Text               replaceWholeText(in [Optional=DefaultIsUndefined] DOMString content)
+                                        raises(DOMException);
+};
 
-        // Introduced in DOM Level 3:
-        readonly attribute DOMString       wholeText;
-        Text               replaceWholeText(in [Optional=DefaultIsUndefined] DOMString content)
-                                            raises(DOMException);
-    };
-
-}

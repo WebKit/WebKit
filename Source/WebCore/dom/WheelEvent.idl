@@ -18,48 +18,45 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module events {
+// Based off http://dev.w3.org/2006/webapi/DOM-Level-3-Events/html/DOM3-Events.html#events-wheelevents
+interface WheelEvent : MouseEvent
+{
+    readonly attribute long    wheelDelta;
+    readonly attribute long    wheelDeltaX;
+    readonly attribute long    wheelDeltaY;
 
-    // Based off http://dev.w3.org/2006/webapi/DOM-Level-3-Events/html/DOM3-Events.html#events-wheelevents
-    interface WheelEvent : MouseEvent
-    {
-        readonly attribute long    wheelDelta;
-        readonly attribute long    wheelDeltaX;
-        readonly attribute long    wheelDeltaY;
-
-        // WebKit Extension
-        readonly attribute boolean webkitDirectionInvertedFromDevice;
+    // WebKit Extension
+    readonly attribute boolean webkitDirectionInvertedFromDevice;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-        readonly attribute boolean isHorizontal;
+    readonly attribute boolean isHorizontal;
 #endif /* defined(LANGUAGE_OBJECTIVE_C) */
 
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
-        void initWheelEvent(in [Optional=DefaultIsUndefined] long wheelDeltaX,
-                            in [Optional=DefaultIsUndefined] long wheelDeltaY, 
-                            in [Optional=DefaultIsUndefined] DOMWindow view, 
-                            in [Optional=DefaultIsUndefined] long screenX,
-                            in [Optional=DefaultIsUndefined] long screenY,
-                            in [Optional=DefaultIsUndefined] long clientX,
-                            in [Optional=DefaultIsUndefined] long clientY,
-                            in [Optional=DefaultIsUndefined] boolean ctrlKey,
-                            in [Optional=DefaultIsUndefined] boolean altKey,
-                            in [Optional=DefaultIsUndefined] boolean shiftKey,
-                            in [Optional=DefaultIsUndefined] boolean metaKey);
+    void initWheelEvent(in [Optional=DefaultIsUndefined] long wheelDeltaX,
+                        in [Optional=DefaultIsUndefined] long wheelDeltaY, 
+                        in [Optional=DefaultIsUndefined] DOMWindow view, 
+                        in [Optional=DefaultIsUndefined] long screenX,
+                        in [Optional=DefaultIsUndefined] long screenY,
+                        in [Optional=DefaultIsUndefined] long clientX,
+                        in [Optional=DefaultIsUndefined] long clientY,
+                        in [Optional=DefaultIsUndefined] boolean ctrlKey,
+                        in [Optional=DefaultIsUndefined] boolean altKey,
+                        in [Optional=DefaultIsUndefined] boolean shiftKey,
+                        in [Optional=DefaultIsUndefined] boolean metaKey);
 #endif /* !defined(LANGUAGE_JAVASCRIPT) */
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        void initWebKitWheelEvent(in [Optional=DefaultIsUndefined] long wheelDeltaX,
-                                  in [Optional=DefaultIsUndefined] long wheelDeltaY, 
-                                  in [Optional=DefaultIsUndefined] DOMWindow view, 
-                                  in [Optional=DefaultIsUndefined] long screenX,
-                                  in [Optional=DefaultIsUndefined] long screenY,
-                                  in [Optional=DefaultIsUndefined] long clientX,
-                                  in [Optional=DefaultIsUndefined] long clientY,
-                                  in [Optional=DefaultIsUndefined] boolean ctrlKey,
-                                  in [Optional=DefaultIsUndefined] boolean altKey,
-                                  in [Optional=DefaultIsUndefined] boolean shiftKey,
-                                  in [Optional=DefaultIsUndefined] boolean metaKey);
+    void initWebKitWheelEvent(in [Optional=DefaultIsUndefined] long wheelDeltaX,
+                              in [Optional=DefaultIsUndefined] long wheelDeltaY, 
+                              in [Optional=DefaultIsUndefined] DOMWindow view, 
+                              in [Optional=DefaultIsUndefined] long screenX,
+                              in [Optional=DefaultIsUndefined] long screenY,
+                              in [Optional=DefaultIsUndefined] long clientX,
+                              in [Optional=DefaultIsUndefined] long clientY,
+                              in [Optional=DefaultIsUndefined] boolean ctrlKey,
+                              in [Optional=DefaultIsUndefined] boolean altKey,
+                              in [Optional=DefaultIsUndefined] boolean shiftKey,
+                              in [Optional=DefaultIsUndefined] boolean metaKey);
 #endif /* defined(LANGUAGE_JAVASCRIPT) */
-    };
-}
+};

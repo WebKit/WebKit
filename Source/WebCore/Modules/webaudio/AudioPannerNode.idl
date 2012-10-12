@@ -22,45 +22,43 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module audio {
-    interface [
-        Conditional=WEB_AUDIO,
-        JSGenerateToJSObject
-    ] AudioPannerNode : AudioNode {
-        // Panning model
-        const unsigned short EQUALPOWER = 0;
-        const unsigned short HRTF = 1;
-        const unsigned short SOUNDFIELD = 2;
+interface [
+    Conditional=WEB_AUDIO,
+    JSGenerateToJSObject
+] AudioPannerNode : AudioNode {
+    // Panning model
+    const unsigned short EQUALPOWER = 0;
+    const unsigned short HRTF = 1;
+    const unsigned short SOUNDFIELD = 2;
 
-        // Distance model
-        const unsigned short LINEAR_DISTANCE = 0;
-        const unsigned short INVERSE_DISTANCE = 1;
-        const unsigned short EXPONENTIAL_DISTANCE = 2;
+    // Distance model
+    const unsigned short LINEAR_DISTANCE = 0;
+    const unsigned short INVERSE_DISTANCE = 1;
+    const unsigned short EXPONENTIAL_DISTANCE = 2;
 
-        // Default model for stereo is HRTF 
-        attribute unsigned short panningModel
-            setter raises(DOMException);
+    // Default model for stereo is HRTF 
+    attribute unsigned short panningModel
+        setter raises(DOMException);
 
-        // Uses a 3D cartesian coordinate system 
-        void setPosition(in float x, in float y, in float z);
-        void setOrientation(in float x, in float y, in float z);
-        void setVelocity(in float x, in float y, in float z);
+    // Uses a 3D cartesian coordinate system 
+    void setPosition(in float x, in float y, in float z);
+    void setOrientation(in float x, in float y, in float z);
+    void setVelocity(in float x, in float y, in float z);
 
-        // Distance model
-        attribute unsigned short distanceModel
-            setter raises(DOMException);
+    // Distance model
+    attribute unsigned short distanceModel
+        setter raises(DOMException);
 
-        attribute float refDistance;
-        attribute float maxDistance;
-        attribute float rolloffFactor;
+    attribute float refDistance;
+    attribute float maxDistance;
+    attribute float rolloffFactor;
 
-        // Directional sound cone
-        attribute float coneInnerAngle;
-        attribute float coneOuterAngle;
-        attribute float coneOuterGain;
+    // Directional sound cone
+    attribute float coneInnerAngle;
+    attribute float coneOuterAngle;
+    attribute float coneOuterGain;
 
-        // Dynamically calculated gain values          
-        readonly attribute AudioGain coneGain;
-        readonly attribute AudioGain distanceGain;
-    };
-}
+    // Dynamically calculated gain values          
+    readonly attribute AudioGain coneGain;
+    readonly attribute AudioGain distanceGain;
+};

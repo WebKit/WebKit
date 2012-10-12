@@ -18,16 +18,13 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module events {
+// Introduced in DOM Level 2:
+interface [
+    JSNoStaticTables,
+    ObjCProtocol,
+    CPPPureInterface,
+    OmitConstructor
+] EventListener {
+    void               handleEvent(in Event evt);
+};
 
-    // Introduced in DOM Level 2:
-    interface [
-        JSNoStaticTables,
-        ObjCProtocol,
-        CPPPureInterface,
-        OmitConstructor
-    ] EventListener {
-        void               handleEvent(in Event evt);
-    };
-
-}

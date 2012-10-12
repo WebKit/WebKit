@@ -24,71 +24,68 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
-
-    interface [
-        Conditional=SVG,
-        JSCustomMarkFunction,
-        JSGenerateToNativeObject,
-        JSGenerateToJSObject
-    ] SVGElementInstance
+interface [
+    Conditional=SVG,
+    JSCustomMarkFunction,
+    JSGenerateToNativeObject,
+    JSGenerateToJSObject
+] SVGElementInstance
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-        : Object, EventTarget
+    : Object, EventTarget
 #else
-        : EventTarget
+    : EventTarget
 #endif /* defined(LANGUAGE_OBJECTIVE_C) */
-    {
-        readonly attribute SVGElement correspondingElement;
-        readonly attribute SVGUseElement correspondingUseElement;
-        readonly attribute SVGElementInstance parentNode;
-        readonly attribute SVGElementInstanceList childNodes;
-        readonly attribute SVGElementInstance firstChild;
-        readonly attribute SVGElementInstance lastChild;
-        readonly attribute SVGElementInstance previousSibling;
-        readonly attribute SVGElementInstance nextSibling;
+{
+    readonly attribute SVGElement correspondingElement;
+    readonly attribute SVGUseElement correspondingUseElement;
+    readonly attribute SVGElementInstance parentNode;
+    readonly attribute SVGElementInstanceList childNodes;
+    readonly attribute SVGElementInstance firstChild;
+    readonly attribute SVGElementInstance lastChild;
+    readonly attribute SVGElementInstance previousSibling;
+    readonly attribute SVGElementInstance nextSibling;
 
-        // EventTarget
+    // EventTarget
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
-        attribute [NotEnumerable] EventListener onabort;
-        attribute [NotEnumerable] EventListener onblur;
-        attribute [NotEnumerable] EventListener onchange;
-        attribute [NotEnumerable] EventListener onclick;
-        attribute [NotEnumerable] EventListener oncontextmenu;
-        attribute [NotEnumerable] EventListener ondblclick;
-        attribute [NotEnumerable] EventListener onerror;
-        attribute [NotEnumerable] EventListener onfocus;
-        attribute [NotEnumerable] EventListener oninput;
-        attribute [NotEnumerable] EventListener onkeydown;
-        attribute [NotEnumerable] EventListener onkeypress;
-        attribute [NotEnumerable] EventListener onkeyup;
-        attribute [NotEnumerable] EventListener onload;
-        attribute [NotEnumerable] EventListener onmousedown;
-        attribute [NotEnumerable] EventListener onmousemove;
-        attribute [NotEnumerable] EventListener onmouseout;
-        attribute [NotEnumerable] EventListener onmouseover;
-        attribute [NotEnumerable] EventListener onmouseup;
-        attribute [NotEnumerable] EventListener onmousewheel;
-        attribute [NotEnumerable] EventListener onbeforecut;
-        attribute [NotEnumerable] EventListener oncut;
-        attribute [NotEnumerable] EventListener onbeforecopy;
-        attribute [NotEnumerable] EventListener oncopy;
-        attribute [NotEnumerable] EventListener onbeforepaste;
-        attribute [NotEnumerable] EventListener onpaste;
-        attribute [NotEnumerable] EventListener ondragenter;
-        attribute [NotEnumerable] EventListener ondragover;
-        attribute [NotEnumerable] EventListener ondragleave;
-        attribute [NotEnumerable] EventListener ondrop;
-        attribute [NotEnumerable] EventListener ondragstart;
-        attribute [NotEnumerable] EventListener ondrag;
-        attribute [NotEnumerable] EventListener ondragend;
-        attribute [NotEnumerable] EventListener onreset;
-        attribute [NotEnumerable] EventListener onresize;
-        attribute [NotEnumerable] EventListener onscroll;
-        attribute [NotEnumerable] EventListener onsearch;
-        attribute [NotEnumerable] EventListener onselect;
-        attribute [NotEnumerable] EventListener onselectstart;
-        attribute [NotEnumerable] EventListener onsubmit;
-        attribute [NotEnumerable] EventListener onunload;
+    attribute [NotEnumerable] EventListener onabort;
+    attribute [NotEnumerable] EventListener onblur;
+    attribute [NotEnumerable] EventListener onchange;
+    attribute [NotEnumerable] EventListener onclick;
+    attribute [NotEnumerable] EventListener oncontextmenu;
+    attribute [NotEnumerable] EventListener ondblclick;
+    attribute [NotEnumerable] EventListener onerror;
+    attribute [NotEnumerable] EventListener onfocus;
+    attribute [NotEnumerable] EventListener oninput;
+    attribute [NotEnumerable] EventListener onkeydown;
+    attribute [NotEnumerable] EventListener onkeypress;
+    attribute [NotEnumerable] EventListener onkeyup;
+    attribute [NotEnumerable] EventListener onload;
+    attribute [NotEnumerable] EventListener onmousedown;
+    attribute [NotEnumerable] EventListener onmousemove;
+    attribute [NotEnumerable] EventListener onmouseout;
+    attribute [NotEnumerable] EventListener onmouseover;
+    attribute [NotEnumerable] EventListener onmouseup;
+    attribute [NotEnumerable] EventListener onmousewheel;
+    attribute [NotEnumerable] EventListener onbeforecut;
+    attribute [NotEnumerable] EventListener oncut;
+    attribute [NotEnumerable] EventListener onbeforecopy;
+    attribute [NotEnumerable] EventListener oncopy;
+    attribute [NotEnumerable] EventListener onbeforepaste;
+    attribute [NotEnumerable] EventListener onpaste;
+    attribute [NotEnumerable] EventListener ondragenter;
+    attribute [NotEnumerable] EventListener ondragover;
+    attribute [NotEnumerable] EventListener ondragleave;
+    attribute [NotEnumerable] EventListener ondrop;
+    attribute [NotEnumerable] EventListener ondragstart;
+    attribute [NotEnumerable] EventListener ondrag;
+    attribute [NotEnumerable] EventListener ondragend;
+    attribute [NotEnumerable] EventListener onreset;
+    attribute [NotEnumerable] EventListener onresize;
+    attribute [NotEnumerable] EventListener onscroll;
+    attribute [NotEnumerable] EventListener onsearch;
+    attribute [NotEnumerable] EventListener onselect;
+    attribute [NotEnumerable] EventListener onselectstart;
+    attribute [NotEnumerable] EventListener onsubmit;
+    attribute [NotEnumerable] EventListener onunload;
 #endif /* defined(LANGUAGE_OBJECTIVE_C) */
-    };
-}
+};

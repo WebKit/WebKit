@@ -28,19 +28,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module html {
-    interface [
-        Conditional=BLOB,
-        Constructor,
-        JSNoStaticTables
-    ] FileReaderSync {
-        [CallWith=ScriptExecutionContext] ArrayBuffer readAsArrayBuffer(in Blob blob)
-            raises(FileException);
-        [CallWith=ScriptExecutionContext] DOMString readAsBinaryString(in Blob blob)
-            raises(FileException);
-        [CallWith=ScriptExecutionContext] DOMString readAsText(in Blob blob, in [Optional] DOMString encoding)
-            raises(FileException);
-        [CallWith=ScriptExecutionContext] DOMString readAsDataURL(in Blob blob)
-            raises(FileException);
-    };
-}
+interface [
+    Conditional=BLOB,
+    Constructor,
+    JSNoStaticTables
+] FileReaderSync {
+    [CallWith=ScriptExecutionContext] ArrayBuffer readAsArrayBuffer(in Blob blob)
+        raises(FileException);
+    [CallWith=ScriptExecutionContext] DOMString readAsBinaryString(in Blob blob)
+        raises(FileException);
+    [CallWith=ScriptExecutionContext] DOMString readAsText(in Blob blob, in [Optional] DOMString encoding)
+        raises(FileException);
+    [CallWith=ScriptExecutionContext] DOMString readAsDataURL(in Blob blob)
+        raises(FileException);
+};

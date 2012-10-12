@@ -26,10 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
   interface [
-    ] DOMError {
-        readonly attribute DOMString name;
+] DOMError {
+    readonly attribute DOMString name;
   };
 
-}

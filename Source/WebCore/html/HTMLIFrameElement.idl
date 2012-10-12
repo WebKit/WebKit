@@ -18,35 +18,32 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module html {
+interface HTMLIFrameElement : HTMLElement {
+    attribute [Reflect] DOMString align;
+    attribute [Reflect] DOMString frameBorder;
+    attribute [Reflect] DOMString height;
+    attribute [Reflect] DOMString longDesc;
+    attribute [Reflect] DOMString marginHeight;
+    attribute [Reflect] DOMString marginWidth;
+    attribute [Reflect] DOMString name;
+    attribute [Reflect] DOMString sandbox;
+    attribute [Reflect, Conditional=IFRAME_SEAMLESS] boolean seamless;
+    attribute [Reflect] DOMString scrolling;
+    attribute [Reflect, URL] DOMString src;
+    attribute [Reflect] DOMString srcdoc;
+    attribute [Reflect] DOMString width;
 
-    interface HTMLIFrameElement : HTMLElement {
-        attribute [Reflect] DOMString align;
-        attribute [Reflect] DOMString frameBorder;
-        attribute [Reflect] DOMString height;
-        attribute [Reflect] DOMString longDesc;
-        attribute [Reflect] DOMString marginHeight;
-        attribute [Reflect] DOMString marginWidth;
-        attribute [Reflect] DOMString name;
-        attribute [Reflect] DOMString sandbox;
-        attribute [Reflect, Conditional=IFRAME_SEAMLESS] boolean seamless;
-        attribute [Reflect] DOMString scrolling;
-        attribute [Reflect, URL] DOMString src;
-        attribute [Reflect] DOMString srcdoc;
-        attribute [Reflect] DOMString width;
+    // Introduced in DOM Level 2:
+    readonly attribute [CheckSecurityForNode] Document contentDocument;
 
-        // Introduced in DOM Level 2:
-        readonly attribute [CheckSecurityForNode] Document contentDocument;
-
-        // Extensions
-        readonly attribute DOMWindow contentWindow;
+    // Extensions
+    readonly attribute DOMWindow contentWindow;
 
 #if defined(ENABLE_SVG) && ENABLE_SVG
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C || defined(ENABLE_SVG_DOM_OBJC_BINDINGS) && ENABLE_SVG_DOM_OBJC_BINDINGS
-        [CheckSecurityForNode] SVGDocument getSVGDocument()
-            raises(DOMException);
+    [CheckSecurityForNode] SVGDocument getSVGDocument()
+        raises(DOMException);
 #endif
 #endif
-    };
+};
 
-}

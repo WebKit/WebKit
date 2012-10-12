@@ -23,17 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG
+] SVGRadialGradientElement : SVGGradientElement {
+    readonly attribute SVGAnimatedLength cx;
+    readonly attribute SVGAnimatedLength cy;
+    readonly attribute SVGAnimatedLength r;
+    readonly attribute SVGAnimatedLength fx;
+    readonly attribute SVGAnimatedLength fy;
+    readonly attribute SVGAnimatedLength fr;
+};
 
-    interface [
-        Conditional=SVG
-    ] SVGRadialGradientElement : SVGGradientElement {
-        readonly attribute SVGAnimatedLength cx;
-        readonly attribute SVGAnimatedLength cy;
-        readonly attribute SVGAnimatedLength r;
-        readonly attribute SVGAnimatedLength fx;
-        readonly attribute SVGAnimatedLength fy;
-        readonly attribute SVGAnimatedLength fr;
-    };
-
-}

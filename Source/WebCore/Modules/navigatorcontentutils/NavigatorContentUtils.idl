@@ -18,18 +18,15 @@
     Boston, MA 02110-1301, USA.
 */
 
-module window {
+// http://www.w3.org/TR/html5/system-state-and-capabilities.html#custom-handlers
+interface [
+    Supplemental=Navigator
+] NavigatorContentUtils {
+    [Conditional=NAVIGATOR_CONTENT_UTILS] void registerProtocolHandler(in DOMString scheme, in DOMString url, in DOMString title)
+        raises(DOMException);
+    [Conditional=NAVIGATOR_CONTENT_UTILS&CUSTOM_SCHEME_HANDLER] DOMString isProtocolHandlerRegistered(in DOMString scheme, in DOMString url)
+        raises(DOMException);
+    [Conditional=NAVIGATOR_CONTENT_UTILS&CUSTOM_SCHEME_HANDLER] void unregisterProtocolHandler(in DOMString scheme, in DOMString url)
+        raises(DOMException);
+};
 
-    // http://www.w3.org/TR/html5/system-state-and-capabilities.html#custom-handlers
-    interface [
-        Supplemental=Navigator
-    ] NavigatorContentUtils {
-        [Conditional=NAVIGATOR_CONTENT_UTILS] void registerProtocolHandler(in DOMString scheme, in DOMString url, in DOMString title)
-            raises(DOMException);
-        [Conditional=NAVIGATOR_CONTENT_UTILS&CUSTOM_SCHEME_HANDLER] DOMString isProtocolHandlerRegistered(in DOMString scheme, in DOMString url)
-            raises(DOMException);
-        [Conditional=NAVIGATOR_CONTENT_UTILS&CUSTOM_SCHEME_HANDLER] void unregisterProtocolHandler(in DOMString scheme, in DOMString url)
-            raises(DOMException);
-    };
-
-}

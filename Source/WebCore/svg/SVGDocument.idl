@@ -19,17 +19,14 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module svg {
+interface [
+    Conditional=SVG,
+    V8CustomToJSObject
+] SVGDocument : Document {
+    readonly attribute SVGSVGElement        rootElement;
 
-    interface [
-        Conditional=SVG,
-        V8CustomToJSObject
-    ] SVGDocument : Document {
-        readonly attribute SVGSVGElement        rootElement;
+    // Overwrite the one in events::DocumentEvent
+    Event createEvent(in [Optional=DefaultIsUndefined] DOMString eventType)
+        raises(DOMException);
+};
 
-        // Overwrite the one in events::DocumentEvent
-        Event createEvent(in [Optional=DefaultIsUndefined] DOMString eventType)
-            raises(DOMException);
-    };
-
-}

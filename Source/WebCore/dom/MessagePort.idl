@@ -25,42 +25,39 @@
  *
  */
 
-module events {
-
-    interface [
-        JSCustomMarkFunction,
-        JSGenerateIsReachable=Impl,
-        ActiveDOMObject,
-        EventTarget,
-        JSNoStaticTables
-    ] MessagePort {
+interface [
+    JSCustomMarkFunction,
+    JSGenerateIsReachable=Impl,
+    ActiveDOMObject,
+    EventTarget,
+    JSNoStaticTables
+] MessagePort {
 // We need to have something as an ObjC binding, because MessagePort is used in MessageEvent, which already has one,
 // but we don't want to actually expose the API while it is in flux.
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        [Custom] void postMessage(in any message, in [Optional] Array messagePorts)
-            raises(DOMException);
+    [Custom] void postMessage(in any message, in [Optional] Array messagePorts)
+        raises(DOMException);
 
 #if defined(ENABLE_LEGACY_VENDOR_PREFIXES) && ENABLE_LEGACY_VENDOR_PREFIXES
-        [Custom] void webkitPostMessage(in any message, in [Optional] Array transfer)
-            raises(DOMException);
+    [Custom] void webkitPostMessage(in any message, in [Optional] Array transfer)
+        raises(DOMException);
 #endif // defined(ENABLE_LEGACY_VENDOR_PREFIXES) && ENABLE_LEGACY_VENDOR_PREFIXES
 
-        void start();
-        void close();
+    void start();
+    void close();
 
-        // event handler attributes
-        attribute EventListener onmessage;
+    // event handler attributes
+    attribute EventListener onmessage;
 
-        // EventTarget interface
-        void addEventListener(in DOMString type, 
-                              in EventListener listener, 
-                              in [Optional] boolean useCapture);
-        void removeEventListener(in DOMString type, 
-                                 in EventListener listener, 
-                                 in [Optional] boolean useCapture);
-        boolean dispatchEvent(in Event evt)
-            raises(EventException);
+    // EventTarget interface
+    void addEventListener(in DOMString type, 
+                          in EventListener listener, 
+                          in [Optional] boolean useCapture);
+    void removeEventListener(in DOMString type, 
+                             in EventListener listener, 
+                             in [Optional] boolean useCapture);
+    boolean dispatchEvent(in Event evt)
+        raises(EventException);
 #endif
-    };
+};
 
-}

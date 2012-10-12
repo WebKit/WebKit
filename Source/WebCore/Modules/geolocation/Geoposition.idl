@@ -23,13 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module core {
-
-    interface [
-        Conditional=GEOLOCATION,
-        OmitConstructor
-    ] Geoposition {
-        readonly attribute Coordinates coords;
-        readonly attribute DOMTimeStamp timestamp;
-    };
-}
+interface [
+    Conditional=GEOLOCATION,
+    OmitConstructor
+] Geoposition {
+    readonly attribute Coordinates coords;
+    readonly attribute DOMTimeStamp timestamp;
+};

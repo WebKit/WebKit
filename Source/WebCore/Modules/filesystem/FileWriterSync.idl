@@ -28,17 +28,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module html {
-    interface [
-        Conditional=FILE_SYSTEM,
-        JSNoStaticTables
-    ] FileWriterSync {
-        // synchronous write/modify methods
-        void write(in Blob data) raises (FileException);
-        void seek(in long long position) raises (FileException);
-        void truncate(in long long size) raises (FileException);
+interface [
+    Conditional=FILE_SYSTEM,
+    JSNoStaticTables
+] FileWriterSync {
+    // synchronous write/modify methods
+    void write(in Blob data) raises (FileException);
+    void seek(in long long position) raises (FileException);
+    void truncate(in long long size) raises (FileException);
 
-        readonly attribute long long position;
-        readonly attribute long long length;
-    };
-}
+    readonly attribute long long position;
+    readonly attribute long long length;
+};

@@ -17,34 +17,30 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-module window {
+// http://dev.w3.org/2009/dap/system-info/battery-status.html
+interface [
+    Conditional=BATTERY_STATUS,
+    ActiveDOMObject,
+    EventTarget
+ ] BatteryManager {
+    readonly attribute boolean charging;
+    readonly attribute double chargingTime;
+    readonly attribute double dischargingTime;
+    readonly attribute double level;
 
-    // http://dev.w3.org/2009/dap/system-info/battery-status.html
-    interface [
-        Conditional=BATTERY_STATUS,
-        ActiveDOMObject,
-        EventTarget
-     ] BatteryManager {
-        readonly attribute boolean charging;
-        readonly attribute double chargingTime;
-        readonly attribute double dischargingTime;
-        readonly attribute double level;
+    attribute EventListener onchargingchange;
+    attribute EventListener onchargingtimechange;
+    attribute EventListener ondischargingtimechange;
+    attribute EventListener onlevelchange;
 
-        attribute EventListener onchargingchange;
-        attribute EventListener onchargingtimechange;
-        attribute EventListener ondischargingtimechange;
-        attribute EventListener onlevelchange;
-
-        // EventTarget interface
-        void addEventListener(in DOMString type,
-                              in EventListener listener,
-                              in [Optional] boolean useCapture);
-        void removeEventListener(in DOMString type,
-                                 in EventListener listener,
-                                 in [Optional] boolean useCapture);
-        boolean dispatchEvent(in Event event)
-            raises(EventException);
-    };
-
-}
+    // EventTarget interface
+    void addEventListener(in DOMString type,
+                          in EventListener listener,
+                          in [Optional] boolean useCapture);
+    void removeEventListener(in DOMString type,
+                             in EventListener listener,
+                             in [Optional] boolean useCapture);
+    boolean dispatchEvent(in Event event)
+        raises(EventException);
+};
 

@@ -24,41 +24,38 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
+interface [
+    Conditional=INDEXED_DATABASE,
+    ActiveDOMObject,
+    EventTarget
+] IDBTransaction {
+    // FIXME: Eventually remove legacy enum constants, see https://bugs.webkit.org/show_bug.cgi?id=85315
+    const unsigned short READ_ONLY = 0;
+    const unsigned short READ_WRITE = 1;
+    const unsigned short VERSION_CHANGE = 2;
 
-    interface [
-        Conditional=INDEXED_DATABASE,
-        ActiveDOMObject,
-        EventTarget
-    ] IDBTransaction {
-        // FIXME: Eventually remove legacy enum constants, see https://bugs.webkit.org/show_bug.cgi?id=85315
-        const unsigned short READ_ONLY = 0;
-        const unsigned short READ_WRITE = 1;
-        const unsigned short VERSION_CHANGE = 2;
+    // Properties
+    readonly attribute DOMString mode;
+    readonly attribute IDBDatabase db;
+    readonly attribute DOMError error;
 
-        // Properties
-        readonly attribute DOMString mode;
-        readonly attribute IDBDatabase db;
-        readonly attribute DOMError error;
+    // Methods
+    IDBObjectStore objectStore (in DOMString name)
+        raises (IDBDatabaseException);
+    void abort ()
+        raises (IDBDatabaseException);
 
-        // Methods
-        IDBObjectStore objectStore (in DOMString name)
-            raises (IDBDatabaseException);
-        void abort ()
-            raises (IDBDatabaseException);
-
-        // Events
-        attribute EventListener onabort;
-        attribute EventListener oncomplete;
-        attribute EventListener onerror;
-        // EventTarget interface
-        void addEventListener(in DOMString type,
-                              in EventListener listener,
-                              in [Optional] boolean useCapture);
-        void removeEventListener(in DOMString type,
-                                 in EventListener listener,
-                                 in [Optional] boolean useCapture);
-        boolean dispatchEvent(in Event evt) 
-            raises(EventException);
-    };
-}
+    // Events
+    attribute EventListener onabort;
+    attribute EventListener oncomplete;
+    attribute EventListener onerror;
+    // EventTarget interface
+    void addEventListener(in DOMString type,
+                          in EventListener listener,
+                          in [Optional] boolean useCapture);
+    void removeEventListener(in DOMString type,
+                             in EventListener listener,
+                             in [Optional] boolean useCapture);
+    boolean dispatchEvent(in Event evt) 
+        raises(EventException);
+};

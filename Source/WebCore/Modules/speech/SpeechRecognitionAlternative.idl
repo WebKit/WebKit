@@ -23,12 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
-    interface [
-        Conditional=SCRIPTED_SPEECH
-    ] SpeechRecognitionAlternative {
-        readonly attribute DOMString transcript;
-        readonly attribute float confidence;
-    };
-}
-
+interface [
+    Conditional=SCRIPTED_SPEECH
+] SpeechRecognitionAlternative {
+    readonly attribute DOMString transcript;
+    readonly attribute float confidence;
+};

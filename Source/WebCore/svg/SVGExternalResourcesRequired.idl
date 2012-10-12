@@ -24,15 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG,
+    ObjCProtocol,
+    SuppressToJSObject,
+    OmitConstructor
+] SVGExternalResourcesRequired { 
+    readonly attribute SVGAnimatedBoolean externalResourcesRequired;
+};
 
-    interface [
-        Conditional=SVG,
-        ObjCProtocol,
-        SuppressToJSObject,
-        OmitConstructor
-    ] SVGExternalResourcesRequired { 
-        readonly attribute SVGAnimatedBoolean externalResourcesRequired;
-    };
-
-}

@@ -23,17 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module html {
-    interface [
-        Conditional=VIDEO
-    ] MediaError {
-          const unsigned short MEDIA_ERR_ABORTED = 1;
-          const unsigned short MEDIA_ERR_NETWORK = 2;
-          const unsigned short MEDIA_ERR_DECODE = 3;
-          const unsigned short MEDIA_ERR_SRC_NOT_SUPPORTED = 4;
+interface [
+    Conditional=VIDEO
+] MediaError {
+      const unsigned short MEDIA_ERR_ABORTED = 1;
+      const unsigned short MEDIA_ERR_NETWORK = 2;
+      const unsigned short MEDIA_ERR_DECODE = 3;
+      const unsigned short MEDIA_ERR_SRC_NOT_SUPPORTED = 4;
 #if defined(ENABLE_ENCRYPTED_MEDIA) && ENABLE_ENCRYPTED_MEDIA
-          const unsigned short MEDIA_ERR_ENCRYPTED = 5;
+      const unsigned short MEDIA_ERR_ENCRYPTED = 5;
 #endif
-          readonly attribute unsigned short code;
-    };
-}
+      readonly attribute unsigned short code;
+};

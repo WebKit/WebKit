@@ -26,51 +26,48 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module window {
-
-    interface [
+interface [
 #if defined(V8_BINDING) && V8_BINDING
-        CheckSecurity,
+    CheckSecurity,
 #endif
-        JSCustomGetOwnPropertySlotAndDescriptor,
-        CustomNamedSetter,
-        JSGenerateIsReachable=ImplFrame,
-        CustomDeleteProperty,
-        CustomEnumerateProperty,
-        JSCustomDefineOwnProperty,
-        JSCustomNamedGetterOnPrototype,
-        JSCustomDefineOwnPropertyOnPrototype,
-        OmitConstructor
-    ] Location {
+    JSCustomGetOwnPropertySlotAndDescriptor,
+    CustomNamedSetter,
+    JSGenerateIsReachable=ImplFrame,
+    CustomDeleteProperty,
+    CustomEnumerateProperty,
+    JSCustomDefineOwnProperty,
+    JSCustomNamedGetterOnPrototype,
+    JSCustomDefineOwnPropertyOnPrototype,
+    OmitConstructor
+] Location {
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-                 attribute [DoNotCheckSecurityOnSetter, CustomSetter, V8Unforgeable] DOMString href;
+             attribute [DoNotCheckSecurityOnSetter, CustomSetter, V8Unforgeable] DOMString href;
 #endif
 
-        [Custom, V8Unforgeable] void assign(in [Optional=DefaultIsUndefined] DOMString url);
-        [Custom, V8Unforgeable] void replace(in [Optional=DefaultIsUndefined] DOMString url);
-        [Custom, V8Unforgeable] void reload();
+    [Custom, V8Unforgeable] void assign(in [Optional=DefaultIsUndefined] DOMString url);
+    [Custom, V8Unforgeable] void replace(in [Optional=DefaultIsUndefined] DOMString url);
+    [Custom, V8Unforgeable] void reload();
 
-        // URI decomposition attributes
+    // URI decomposition attributes
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-                 attribute [CustomSetter] DOMString protocol;
-                 attribute [CustomSetter] DOMString host;
-                 attribute [CustomSetter] DOMString hostname;
-                 attribute [CustomSetter] DOMString port;
-                 attribute [CustomSetter] DOMString pathname;
-                 attribute [CustomSetter] DOMString search;
-                 attribute [CustomSetter] DOMString hash;
+             attribute [CustomSetter] DOMString protocol;
+             attribute [CustomSetter] DOMString host;
+             attribute [CustomSetter] DOMString hostname;
+             attribute [CustomSetter] DOMString port;
+             attribute [CustomSetter] DOMString pathname;
+             attribute [CustomSetter] DOMString search;
+             attribute [CustomSetter] DOMString hash;
 
-                 readonly attribute DOMString origin;
+             readonly attribute DOMString origin;
 #endif
 
-        readonly attribute DOMStringList ancestorOrigins;
+    readonly attribute DOMStringList ancestorOrigins;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        [NotEnumerable, Custom, V8Unforgeable, V8ReadOnly, ImplementedAs=toStringFunction] DOMString toString();
+    [NotEnumerable, Custom, V8Unforgeable, V8ReadOnly, ImplementedAs=toStringFunction] DOMString toString();
 #endif
 #if defined(V8_BINDING) && V8_BINDING
-        [NotEnumerable, Custom, V8Unforgeable, V8ReadOnly] DOMObject valueOf();
+    [NotEnumerable, Custom, V8Unforgeable, V8ReadOnly] DOMObject valueOf();
 #endif
-    };
+};
 
-}

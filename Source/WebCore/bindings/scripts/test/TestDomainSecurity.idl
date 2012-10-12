@@ -26,12 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module test {
-    interface [
-        CheckSecurity
-    ] TestActiveDOMObject {
-        readonly attribute long excitingAttr;
-        void excitingFunction(in Node nextChild);
-        [DoNotCheckSecurity] void postMessage(in DOMString message);
-    };
-}
+interface [
+    CheckSecurity
+] TestActiveDOMObject {
+    readonly attribute long excitingAttr;
+    void excitingFunction(in Node nextChild);
+    [DoNotCheckSecurity] void postMessage(in DOMString message);
+};

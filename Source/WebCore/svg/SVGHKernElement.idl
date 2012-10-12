@@ -17,11 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module svg {
+interface [
+    Conditional=SVG&SVG_FONTS
+] SVGHKernElement : SVGElement {
+};
 
-    interface [
-        Conditional=SVG&SVG_FONTS
-    ] SVGHKernElement : SVGElement {
-    };
-
-}

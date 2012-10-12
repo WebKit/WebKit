@@ -24,18 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG
+] SVGPathSegArcRel : SVGPathSeg {
+    attribute [StrictTypeChecking] float x;
+    attribute [StrictTypeChecking] float y;
+    attribute [StrictTypeChecking] float r1;
+    attribute [StrictTypeChecking] float r2;
+    attribute [StrictTypeChecking] float angle;
+    attribute [StrictTypeChecking] boolean largeArcFlag;
+    attribute [StrictTypeChecking] boolean sweepFlag;
+};
 
-    interface [
-        Conditional=SVG
-    ] SVGPathSegArcRel : SVGPathSeg {
-        attribute [StrictTypeChecking] float x;
-        attribute [StrictTypeChecking] float y;
-        attribute [StrictTypeChecking] float r1;
-        attribute [StrictTypeChecking] float r2;
-        attribute [StrictTypeChecking] float angle;
-        attribute [StrictTypeChecking] boolean largeArcFlag;
-        attribute [StrictTypeChecking] boolean sweepFlag;
-    };
-
-}

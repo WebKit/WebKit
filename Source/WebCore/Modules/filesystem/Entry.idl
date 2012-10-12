@@ -28,23 +28,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
-    interface [
-        Conditional=FILE_SYSTEM,
-        CustomToJSObject,
-        JSNoStaticTables
-    ] Entry {
-        readonly attribute boolean isFile;
-        readonly attribute boolean isDirectory;
-        readonly attribute DOMString name;
-        readonly attribute DOMString fullPath;
-        readonly attribute DOMFileSystem filesystem;
+interface [
+    Conditional=FILE_SYSTEM,
+    CustomToJSObject,
+    JSNoStaticTables
+] Entry {
+    readonly attribute boolean isFile;
+    readonly attribute boolean isDirectory;
+    readonly attribute DOMString name;
+    readonly attribute DOMString fullPath;
+    readonly attribute DOMFileSystem filesystem;
 
-        void getMetadata(in [Callback] MetadataCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
-        void moveTo(in DirectoryEntry parent, in [Optional, TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString name, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
-        void copyTo(in DirectoryEntry parent, in [Optional, TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString name, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
-        DOMString toURL();
-        void remove(in [Callback] VoidCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
-        void getParent(in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
-    };
-}
+    void getMetadata(in [Callback] MetadataCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
+    void moveTo(in DirectoryEntry parent, in [Optional, TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString name, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
+    void copyTo(in DirectoryEntry parent, in [Optional, TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString name, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
+    DOMString toURL();
+    void remove(in [Callback] VoidCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
+    void getParent(in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
+};

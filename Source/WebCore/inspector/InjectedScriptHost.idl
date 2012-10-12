@@ -30,25 +30,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
-    interface [
-        Conditional=INSPECTOR
-    ] InjectedScriptHost {
-        void clearConsoleMessages();
+interface [
+    Conditional=INSPECTOR
+] InjectedScriptHost {
+    void clearConsoleMessages();
 
-        void copyText(in DOMString text);
-        [Custom] void inspect(in DOMObject objectId, in DOMObject hints);
-        [Custom] DOMObject inspectedObject(in int num);
-        [Custom] DOMObject internalConstructorName(in DOMObject object);
-        [Custom] boolean isHTMLAllCollection(in DOMObject object);
-        [Custom] DOMString type(in DOMObject object);
-        [Custom] DOMObject functionDetails(in DOMObject object);
-        [Custom] Array getInternalProperties(in DOMObject object);
-        [Custom] Array getEventListeners(in Node node);
+    void copyText(in DOMString text);
+    [Custom] void inspect(in DOMObject objectId, in DOMObject hints);
+    [Custom] DOMObject inspectedObject(in int num);
+    [Custom] DOMObject internalConstructorName(in DOMObject object);
+    [Custom] boolean isHTMLAllCollection(in DOMObject object);
+    [Custom] DOMString type(in DOMObject object);
+    [Custom] DOMObject functionDetails(in DOMObject object);
+    [Custom] Array getInternalProperties(in DOMObject object);
+    [Custom] Array getEventListeners(in Node node);
 
-        [Custom] DOMString databaseId(in DOMObject database);
-        [Custom] DOMString storageId(in DOMObject storage);
-        [Custom] DOMObject evaluate(in DOMString text);
-    };
-}
-
+    [Custom] DOMString databaseId(in DOMObject database);
+    [Custom] DOMString storageId(in DOMObject storage);
+    [Custom] DOMObject evaluate(in DOMString text);
+};

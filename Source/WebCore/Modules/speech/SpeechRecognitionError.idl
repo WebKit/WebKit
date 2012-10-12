@@ -23,22 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
-    interface [
-        Conditional=SCRIPTED_SPEECH,
-        ConstructorTemplate=Event
-    ] SpeechRecognitionError : Event {
-        const unsigned short OTHER = 0;
-        const unsigned short NO_SPEECH = 1;
-        const unsigned short ABORTED = 2;
-        const unsigned short AUDIO_CAPTURE = 3;
-        const unsigned short NETWORK = 4;
-        const unsigned short NOT_ALLOWED = 5;
-        const unsigned short SERVICE_NOT_ALLOWED = 6;
-        const unsigned short BAD_GRAMMAR = 7;
-        const unsigned short LANGUAGE_NOT_SUPPORTED = 8;
+interface [
+    Conditional=SCRIPTED_SPEECH,
+    ConstructorTemplate=Event
+] SpeechRecognitionError : Event {
+    const unsigned short OTHER = 0;
+    const unsigned short NO_SPEECH = 1;
+    const unsigned short ABORTED = 2;
+    const unsigned short AUDIO_CAPTURE = 3;
+    const unsigned short NETWORK = 4;
+    const unsigned short NOT_ALLOWED = 5;
+    const unsigned short SERVICE_NOT_ALLOWED = 6;
+    const unsigned short BAD_GRAMMAR = 7;
+    const unsigned short LANGUAGE_NOT_SUPPORTED = 8;
 
-        readonly attribute [InitializedByEventConstructor] unsigned short code;
-        readonly attribute [InitializedByEventConstructor] DOMString message;
-    };
-}
+    readonly attribute [InitializedByEventConstructor] unsigned short code;
+    readonly attribute [InitializedByEventConstructor] DOMString message;
+};

@@ -23,25 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG&FILTERS,
+    DoNotCheckConstants
+] SVGFEDisplacementMapElement : SVGElement,
+                                SVGFilterPrimitiveStandardAttributes {
+    // Channel Selectors
+    const unsigned short SVG_CHANNEL_UNKNOWN = 0;
+    const unsigned short SVG_CHANNEL_R       = 1;
+    const unsigned short SVG_CHANNEL_G       = 2;
+    const unsigned short SVG_CHANNEL_B       = 3;
+    const unsigned short SVG_CHANNEL_A       = 4;
 
-    interface [
-        Conditional=SVG&FILTERS,
-        DoNotCheckConstants
-    ] SVGFEDisplacementMapElement : SVGElement,
-                                    SVGFilterPrimitiveStandardAttributes {
-        // Channel Selectors
-        const unsigned short SVG_CHANNEL_UNKNOWN = 0;
-        const unsigned short SVG_CHANNEL_R       = 1;
-        const unsigned short SVG_CHANNEL_G       = 2;
-        const unsigned short SVG_CHANNEL_B       = 3;
-        const unsigned short SVG_CHANNEL_A       = 4;
+    readonly attribute SVGAnimatedString      in1;
+    readonly attribute SVGAnimatedString      in2;
+    readonly attribute SVGAnimatedNumber      scale;
+    readonly attribute SVGAnimatedEnumeration xChannelSelector;
+    readonly attribute SVGAnimatedEnumeration yChannelSelector;
+};
 
-        readonly attribute SVGAnimatedString      in1;
-        readonly attribute SVGAnimatedString      in2;
-        readonly attribute SVGAnimatedNumber      scale;
-        readonly attribute SVGAnimatedEnumeration xChannelSelector;
-        readonly attribute SVGAnimatedEnumeration yChannelSelector;
-    };
-
-}

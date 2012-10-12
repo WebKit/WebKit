@@ -28,12 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
-    interface [
-        Conditional=FILE_SYSTEM,
-        JSNoStaticTables
-    ] Metadata {
-        readonly attribute Date modificationTime;
-        readonly attribute unsigned long long size;
-    };
-}
+interface [
+    Conditional=FILE_SYSTEM,
+    JSNoStaticTables
+] Metadata {
+    readonly attribute Date modificationTime;
+    readonly attribute unsigned long long size;
+};

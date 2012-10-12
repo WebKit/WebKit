@@ -28,23 +28,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
-
-    interface [
-        Conditional=DATA_TRANSFER_ITEMS,
-        IndexedGetter,
-        JSGenerateToNativeObject,
+interface [
+    Conditional=DATA_TRANSFER_ITEMS,
+    IndexedGetter,
+    JSGenerateToNativeObject,
 #if defined(V8_BINDING) && V8_BINDING
-        CustomDeleteProperty,
+    CustomDeleteProperty,
 #endif
-    ] DataTransferItemList {
-        readonly attribute long length;
-        DataTransferItem item(in [Optional=DefaultIsUndefined] unsigned long index);
+] DataTransferItemList {
+    readonly attribute long length;
+    DataTransferItem item(in [Optional=DefaultIsUndefined] unsigned long index);
 
-        void clear();
-        void add(in File? file);
-        void add(in [Optional=DefaultIsUndefined] DOMString data, 
-                 in [Optional=DefaultIsUndefined] DOMString type) raises(DOMException);
-    };
+    void clear();
+    void add(in File? file);
+    void add(in [Optional=DefaultIsUndefined] DOMString data, 
+             in [Optional=DefaultIsUndefined] DOMString type) raises(DOMException);
+};
 
-}

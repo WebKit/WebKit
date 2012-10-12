@@ -24,12 +24,9 @@
  *
  */
 
-module events {
+interface [
+    ConstructorTemplate=Event
+] BeforeLoadEvent : Event {
+    readonly attribute [InitializedByEventConstructor] DOMString url;
+};
 
-    interface [
-        ConstructorTemplate=Event
-    ] BeforeLoadEvent : Event {
-        readonly attribute [InitializedByEventConstructor] DOMString url;
-    };
-
-}

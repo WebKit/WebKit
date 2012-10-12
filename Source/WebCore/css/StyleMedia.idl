@@ -24,11 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module view {
-    interface [
-        JSGenerateIsReachable=ImplFrame
-    ] StyleMedia {
-        readonly attribute DOMString type;
-        boolean matchMedium(in [Optional=DefaultIsUndefined] DOMString mediaquery);
-    };
-}
+interface [
+    JSGenerateIsReachable=ImplFrame
+] StyleMedia {
+    readonly attribute DOMString type;
+    boolean matchMedium(in [Optional=DefaultIsUndefined] DOMString mediaquery);
+};

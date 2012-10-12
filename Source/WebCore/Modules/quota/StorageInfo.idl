@@ -23,15 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module storage {
-    interface [
-        Conditional=QUOTA,
-        OmitConstructor
-    ] StorageInfo {
-        const unsigned short TEMPORARY = 0;
-        const unsigned short PERSISTENT = 1;
+interface [
+    Conditional=QUOTA,
+    OmitConstructor
+] StorageInfo {
+    const unsigned short TEMPORARY = 0;
+    const unsigned short PERSISTENT = 1;
 
-        [CallWith=ScriptExecutionContext] void queryUsageAndQuota(in unsigned short storageType, in [Callback, Optional] StorageInfoUsageCallback usageCallback, in [Callback, Optional] StorageInfoErrorCallback errorCallback);
-        [CallWith=ScriptExecutionContext] void requestQuota(in unsigned short storageType, in unsigned long long newQuotaInBytes, in [Callback, Optional] StorageInfoQuotaCallback quotaCallback, in [Callback, Optional] StorageInfoErrorCallback errorCallback);
-    };
-}
+    [CallWith=ScriptExecutionContext] void queryUsageAndQuota(in unsigned short storageType, in [Callback, Optional] StorageInfoUsageCallback usageCallback, in [Callback, Optional] StorageInfoErrorCallback errorCallback);
+    [CallWith=ScriptExecutionContext] void requestQuota(in unsigned short storageType, in unsigned long long newQuotaInBytes, in [Callback, Optional] StorageInfoQuotaCallback quotaCallback, in [Callback, Optional] StorageInfoErrorCallback errorCallback);
+};

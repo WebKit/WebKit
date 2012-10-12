@@ -23,20 +23,17 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
+interface [
+    Conditional=INDEXED_DATABASE
+] IDBFactory {
+    [CallWith=ScriptExecutionContext, ImplementedAs=getDatabaseNames] IDBRequest webkitGetDatabaseNames();
 
-    interface [
-        Conditional=INDEXED_DATABASE
-    ] IDBFactory {
-        [CallWith=ScriptExecutionContext, ImplementedAs=getDatabaseNames] IDBRequest webkitGetDatabaseNames();
+    [CallWith=ScriptExecutionContext] IDBOpenDBRequest open(in DOMString name, in [Optional] unsigned long long version)
+        raises (IDBDatabaseException);
+    [CallWith=ScriptExecutionContext] IDBVersionChangeRequest deleteDatabase(in DOMString name)
+        raises (IDBDatabaseException);
 
-        [CallWith=ScriptExecutionContext] IDBOpenDBRequest open(in DOMString name, in [Optional] unsigned long long version)
-            raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext] IDBVersionChangeRequest deleteDatabase(in DOMString name)
-            raises (IDBDatabaseException);
+    short cmp(in IDBKey first, in IDBKey second)
+        raises (IDBDatabaseException);
+};
 
-        short cmp(in IDBKey first, in IDBKey second)
-            raises (IDBDatabaseException);
-    };
-
-}

@@ -23,12 +23,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module window {
-    interface [
-        OmitConstructor
-    ] MallocStatistics {
-        readonly attribute unsigned long reservedVMBytes;
-        readonly attribute unsigned long committedVMBytes;
-        readonly attribute unsigned long freeListBytes;
-    };
-}
+interface [
+    OmitConstructor
+] MallocStatistics {
+    readonly attribute unsigned long reservedVMBytes;
+    readonly attribute unsigned long committedVMBytes;
+    readonly attribute unsigned long freeListBytes;
+};

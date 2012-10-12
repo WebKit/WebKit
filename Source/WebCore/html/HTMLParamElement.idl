@@ -17,13 +17,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module html {
+interface HTMLParamElement : HTMLElement {
+    attribute [Reflect] DOMString name;
+    attribute [Reflect] DOMString type;
+    attribute [Reflect] DOMString value;
+    attribute [Reflect] DOMString valueType;
+};
 
-    interface HTMLParamElement : HTMLElement {
-        attribute [Reflect] DOMString name;
-        attribute [Reflect] DOMString type;
-        attribute [Reflect] DOMString value;
-        attribute [Reflect] DOMString valueType;
-    };
-
-}

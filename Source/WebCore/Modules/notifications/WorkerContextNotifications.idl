@@ -24,15 +24,12 @@
  *
  */
 
-module threads {
-
-    interface [
-        Conditional=NOTIFICATIONS|LEGACY_NOTIFICATIONS,
-        Supplemental=WorkerContext
-    ] WorkerContextNotifications {
+interface [
+    Conditional=NOTIFICATIONS|LEGACY_NOTIFICATIONS,
+    Supplemental=WorkerContext
+] WorkerContextNotifications {
 #if defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS
-        readonly attribute [V8EnabledAtRuntime] NotificationCenter webkitNotifications;
+    readonly attribute [V8EnabledAtRuntime] NotificationCenter webkitNotifications;
 #endif
-    };
+};
 
-}

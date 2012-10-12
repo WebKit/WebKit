@@ -28,40 +28,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-module html {
+interface [
+    Conditional=MEDIA_SOURCE,
+    V8EnabledAtRuntime=mediaSource,
+    EventTarget,
+    Constructor,
+    CallWith=ScriptExecutionContext
+] MediaSource {
+    // All the source buffers created by this object.
+    readonly attribute SourceBufferList sourceBuffers;
 
-    interface [
-        Conditional=MEDIA_SOURCE,
-        V8EnabledAtRuntime=mediaSource,
-        EventTarget,
-        Constructor,
-        CallWith=ScriptExecutionContext
-    ] MediaSource {
-        // All the source buffers created by this object.
-        readonly attribute SourceBufferList sourceBuffers;
+    // Subset of sourceBuffers that provide data for the selected/enabled tracks.
+    readonly attribute SourceBufferList activeSourceBuffers;
 
-        // Subset of sourceBuffers that provide data for the selected/enabled tracks.
-        readonly attribute SourceBufferList activeSourceBuffers;
+    attribute double duration setter raises (DOMException);
 
-        attribute double duration setter raises (DOMException);
+    SourceBuffer addSourceBuffer(in DOMString type) raises (DOMException);
+    void removeSourceBuffer(in SourceBuffer buffer) raises (DOMException);
 
-        SourceBuffer addSourceBuffer(in DOMString type) raises (DOMException);
-        void removeSourceBuffer(in SourceBuffer buffer) raises (DOMException);
+    readonly attribute DOMString readyState;
+    
+    void endOfStream(in [Optional=DefaultIsNullString] DOMString error)
+        raises (DOMException);
+    
+    // EventTarget interface
+    void addEventListener(in DOMString type,
+                          in EventListener listener,
+                          in [Optional] boolean useCapture);
+    void removeEventListener(in DOMString type,
+                             in EventListener listener,
+                             in [Optional] boolean useCapture);
+    boolean dispatchEvent(in Event event)
+        raises(EventException);
+};
 
-        readonly attribute DOMString readyState;
-        
-        void endOfStream(in [Optional=DefaultIsNullString] DOMString error)
-            raises (DOMException);
-        
-        // EventTarget interface
-        void addEventListener(in DOMString type,
-                              in EventListener listener,
-                              in [Optional] boolean useCapture);
-        void removeEventListener(in DOMString type,
-                                 in EventListener listener,
-                                 in [Optional] boolean useCapture);
-        boolean dispatchEvent(in Event event)
-            raises(EventException);
-    };
-
-}

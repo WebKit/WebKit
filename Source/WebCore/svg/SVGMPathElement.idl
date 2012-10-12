@@ -23,13 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG
+] SVGMPathElement : SVGElement,
+                                                            SVGURIReference,
+                                                            SVGExternalResourcesRequired {
+};
 
-    interface [
-        Conditional=SVG
-    ] SVGMPathElement : SVGElement,
-                                                                SVGURIReference,
-                                                                SVGExternalResourcesRequired {
-    };
-
-}

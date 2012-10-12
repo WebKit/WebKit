@@ -17,15 +17,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module html {
-
-    interface HTMLBaseFontElement : HTMLElement {
-        attribute [Reflect] DOMString color;
-        attribute [Reflect] DOMString face;
+interface HTMLBaseFontElement : HTMLElement {
+    attribute [Reflect] DOMString color;
+    attribute [Reflect] DOMString face;
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-        attribute [Reflect] DOMString size; // this changed to a long, but our existing API is a string
+    attribute [Reflect] DOMString size; // this changed to a long, but our existing API is a string
 #else
-        attribute [Reflect] long size;
+    attribute [Reflect] long size;
 #endif
-    };
-}
+};

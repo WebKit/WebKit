@@ -22,11 +22,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module mediastream {
-
-    interface [
-        Conditional=MEDIA_STREAM
-    ] RTCStatsResponse {
-        sequence<RTCStatsReport> result();
-    };
-}
+interface [
+    Conditional=MEDIA_STREAM
+] RTCStatsResponse {
+    sequence<RTCStatsReport> result();
+};

@@ -23,12 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG&FILTERS
+] SVGFEMergeNodeElement : SVGElement {
+    readonly attribute SVGAnimatedString in1;
+};
 
-    interface [
-        Conditional=SVG&FILTERS
-    ] SVGFEMergeNodeElement : SVGElement {
-        readonly attribute SVGAnimatedString in1;
-    };
-
-}

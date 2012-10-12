@@ -23,13 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module events {
+interface [
+    ConstructorTemplate=Event
+] WebKitTransitionEvent : Event {
+    readonly attribute [InitializedByEventConstructor] DOMString propertyName;
+    readonly attribute [InitializedByEventConstructor] double elapsedTime;
+};
 
-    interface [
-        ConstructorTemplate=Event
-    ] WebKitTransitionEvent : Event {
-        readonly attribute [InitializedByEventConstructor] DOMString propertyName;
-        readonly attribute [InitializedByEventConstructor] double elapsedTime;
-    };
-
-}

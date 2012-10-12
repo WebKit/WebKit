@@ -23,12 +23,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module html {
-    interface [
-        Conditional=WEBGL,
-        JSGenerateIsReachable=ImplContext,
-        OmitConstructor
-    ] WebGLDebugShaders {
-        [StrictTypeChecking, TreatReturnedNullStringAs=Null] DOMString getTranslatedShaderSource(in WebGLShader shader) raises(DOMException);
-    };
-}
+interface [
+    Conditional=WEBGL,
+    JSGenerateIsReachable=ImplContext,
+    OmitConstructor
+] WebGLDebugShaders {
+    [StrictTypeChecking, TreatReturnedNullStringAs=Null] DOMString getTranslatedShaderSource(in WebGLShader shader) raises(DOMException);
+};

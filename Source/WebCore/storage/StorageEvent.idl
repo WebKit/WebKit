@@ -23,28 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module storage {
+interface [
+    ConstructorTemplate=Event
+] StorageEvent : Event {
+    readonly attribute [InitializedByEventConstructor] DOMString key;
+    readonly attribute [InitializedByEventConstructor, TreatReturnedNullStringAs=Null] DOMString oldValue;
+    readonly attribute [InitializedByEventConstructor, TreatReturnedNullStringAs=Null] DOMString newValue;
+    readonly attribute [InitializedByEventConstructor] DOMString url;
+    readonly attribute [InitializedByEventConstructor] Storage storageArea;
 
-    interface [
-        ConstructorTemplate=Event
-    ] StorageEvent : Event {
-        readonly attribute [InitializedByEventConstructor] DOMString key;
-        readonly attribute [InitializedByEventConstructor, TreatReturnedNullStringAs=Null] DOMString oldValue;
-        readonly attribute [InitializedByEventConstructor, TreatReturnedNullStringAs=Null] DOMString newValue;
-        readonly attribute [InitializedByEventConstructor] DOMString url;
-        readonly attribute [InitializedByEventConstructor] Storage storageArea;
+    void initStorageEvent(in [Optional=DefaultIsUndefined] DOMString typeArg, 
+                          in [Optional=DefaultIsUndefined] boolean canBubbleArg, 
+                          in [Optional=DefaultIsUndefined] boolean cancelableArg, 
+                          in [Optional=DefaultIsUndefined] DOMString keyArg, 
+                          in [Optional=DefaultIsUndefined,TreatNullAs=NullString] DOMString oldValueArg, 
+                          in [Optional=DefaultIsUndefined,TreatNullAs=NullString] DOMString newValueArg, 
+                          in [Optional=DefaultIsUndefined] DOMString urlArg, 
+                          in [Optional=DefaultIsUndefined] Storage storageAreaArg);
 
-        void initStorageEvent(in [Optional=DefaultIsUndefined] DOMString typeArg, 
-                              in [Optional=DefaultIsUndefined] boolean canBubbleArg, 
-                              in [Optional=DefaultIsUndefined] boolean cancelableArg, 
-                              in [Optional=DefaultIsUndefined] DOMString keyArg, 
-                              in [Optional=DefaultIsUndefined,TreatNullAs=NullString] DOMString oldValueArg, 
-                              in [Optional=DefaultIsUndefined,TreatNullAs=NullString] DOMString newValueArg, 
-                              in [Optional=DefaultIsUndefined] DOMString urlArg, 
-                              in [Optional=DefaultIsUndefined] Storage storageAreaArg);
+    // Needed once we support init<blank>EventNS
+    // void initStorageEventNS(in DOMString namespaceURI, in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in DOMString keyArg, in DOMString oldValueArg, in DOMString newValueArg, in DOMString urlArg, in Storage storageAreaArg);
+};
 
-        // Needed once we support init<blank>EventNS
-        // void initStorageEventNS(in DOMString namespaceURI, in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in DOMString keyArg, in DOMString oldValueArg, in DOMString newValueArg, in DOMString urlArg, in Storage storageAreaArg);
-    };
-
-}

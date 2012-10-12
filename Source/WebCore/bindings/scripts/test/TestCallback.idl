@@ -28,18 +28,16 @@
 
 // This IDL file is for testing the bindings code generator with an interface
 // that has the "Callback" attribute and for tracking changes in its ouput.
-module test {
-    interface [
-        Conditional=SQL_DATABASE,
-        Callback
-    ] TestCallback {
-      boolean callbackWithNoParam();
-      boolean callbackWithClass1Param(in Class1 class1Param);
-      boolean callbackWithClass2Param(in Class2 class2Param, in DOMString strArg);
-      long callbackWithNonBoolReturnType(in Class3 class3Param);
-      [Custom] long customCallback(in Class5 class5Param, in Class6 class6Param);
-      boolean callbackWithStringList(in DOMStringList listParam);
-      boolean callbackWithBoolean(in boolean boolParam);
-      [PassThisToCallback=ThisClass] boolean callbackRequiresThisToPass(in Class8 class8Param, in ThisClass thisClassParam);
-    };
-}
+interface [
+    Conditional=SQL_DATABASE,
+    Callback
+] TestCallback {
+  boolean callbackWithNoParam();
+  boolean callbackWithClass1Param(in Class1 class1Param);
+  boolean callbackWithClass2Param(in Class2 class2Param, in DOMString strArg);
+  long callbackWithNonBoolReturnType(in Class3 class3Param);
+  [Custom] long customCallback(in Class5 class5Param, in Class6 class6Param);
+  boolean callbackWithStringList(in DOMStringList listParam);
+  boolean callbackWithBoolean(in boolean boolParam);
+  [PassThisToCallback=ThisClass] boolean callbackRequiresThisToPass(in Class8 class8Param, in ThisClass thisClassParam);
+};

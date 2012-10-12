@@ -24,25 +24,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module html {
-    interface [
-        ConstructorTemplate=TypedArray,
-        ConstructorParameters=1,
-        NumericIndexedGetter,
-        CustomIndexedSetter,
-        JSGenerateToNativeObject,
-        JSNoStaticTables,
-        CustomToJSObject,
-        DoNotCheckConstants,
-        TypedArray=unsigned short
-    ] Uint16Array : ArrayBufferView {
-        const unsigned long BYTES_PER_ELEMENT = 2;
+interface [
+    ConstructorTemplate=TypedArray,
+    ConstructorParameters=1,
+    NumericIndexedGetter,
+    CustomIndexedSetter,
+    JSGenerateToNativeObject,
+    JSNoStaticTables,
+    CustomToJSObject,
+    DoNotCheckConstants,
+    TypedArray=unsigned short
+] Uint16Array : ArrayBufferView {
+    const unsigned long BYTES_PER_ELEMENT = 2;
 
-        readonly attribute unsigned long length;
-        Uint16Array subarray(in [Optional=DefaultIsUndefined] long start, in [Optional] long end);
+    readonly attribute unsigned long length;
+    Uint16Array subarray(in [Optional=DefaultIsUndefined] long start, in [Optional] long end);
 
-        // void set(in Uint16Array array, [Optional] in unsigned long offset);
-        // void set(in sequence<long> array, [Optional] in unsigned long offset);
-        void set();
-    };
-}
+    // void set(in Uint16Array array, [Optional] in unsigned long offset);
+    // void set(in sequence<long> array, [Optional] in unsigned long offset);
+    void set();
+};

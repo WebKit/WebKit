@@ -23,20 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG
+] SVGEllipseElement : SVGElement,
+                                                SVGTests,
+                                                SVGLangSpace,
+                                                SVGExternalResourcesRequired,
+                                                SVGStylable,
+                                                SVGTransformable {
+    readonly attribute SVGAnimatedLength cx;
+    readonly attribute SVGAnimatedLength cy;
+    readonly attribute SVGAnimatedLength rx;
+    readonly attribute SVGAnimatedLength ry;
+};
 
-    interface [
-        Conditional=SVG
-    ] SVGEllipseElement : SVGElement,
-                                                    SVGTests,
-                                                    SVGLangSpace,
-                                                    SVGExternalResourcesRequired,
-                                                    SVGStylable,
-                                                    SVGTransformable {
-        readonly attribute SVGAnimatedLength cx;
-        readonly attribute SVGAnimatedLength cy;
-        readonly attribute SVGAnimatedLength rx;
-        readonly attribute SVGAnimatedLength ry;
-    };
-
-}

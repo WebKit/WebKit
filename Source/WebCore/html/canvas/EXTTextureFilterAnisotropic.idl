@@ -23,14 +23,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module html {
-    interface [
-        Conditional=WEBGL,
-        JSGenerateIsReachable=ImplContext,
-        OmitConstructor,
-        DoNotCheckConstants
-    ] EXTTextureFilterAnisotropic {
-        const unsigned int TEXTURE_MAX_ANISOTROPY_EXT = 0x84FE;
-        const unsigned int MAX_TEXTURE_MAX_ANISOTROPY_EXT = 0x84FF;
-    };
-}
+interface [
+    Conditional=WEBGL,
+    JSGenerateIsReachable=ImplContext,
+    OmitConstructor,
+    DoNotCheckConstants
+] EXTTextureFilterAnisotropic {
+    const unsigned int TEXTURE_MAX_ANISOTROPY_EXT = 0x84FE;
+    const unsigned int MAX_TEXTURE_MAX_ANISOTROPY_EXT = 0x84FF;
+};

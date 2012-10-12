@@ -20,33 +20,30 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module svg {
+interface [
+    Conditional=SVG
+] SVGMatrix {
+    // FIXME: these attributes should all be floats but since we implement
+    // AffineTransform with doubles setting these as doubles makes more sense.
+    attribute [StrictTypeChecking] double a;
+    attribute [StrictTypeChecking] double b;
+    attribute [StrictTypeChecking] double c;
+    attribute [StrictTypeChecking] double d;
+    attribute [StrictTypeChecking] double e;
+    attribute [StrictTypeChecking] double f;
 
-    interface [
-        Conditional=SVG
-    ] SVGMatrix {
-        // FIXME: these attributes should all be floats but since we implement
-        // AffineTransform with doubles setting these as doubles makes more sense.
-        attribute [StrictTypeChecking] double a;
-        attribute [StrictTypeChecking] double b;
-        attribute [StrictTypeChecking] double c;
-        attribute [StrictTypeChecking] double d;
-        attribute [StrictTypeChecking] double e;
-        attribute [StrictTypeChecking] double f;
+    [StrictTypeChecking] SVGMatrix multiply(in SVGMatrix secondMatrix);
+    SVGMatrix inverse()
+        raises(SVGException);
+    [Immutable, StrictTypeChecking] SVGMatrix translate(in float x, in float y);
+    [Immutable, StrictTypeChecking] SVGMatrix scale(in float scaleFactor);
+    [Immutable, StrictTypeChecking] SVGMatrix scaleNonUniform(in float scaleFactorX, in float scaleFactorY);
+    [Immutable, StrictTypeChecking] SVGMatrix rotate(in float angle);
+    [StrictTypeChecking] SVGMatrix rotateFromVector(in float x, in float y)
+        raises(SVGException);
+    [Immutable] SVGMatrix flipX();
+    [Immutable] SVGMatrix flipY();
+    [Immutable, StrictTypeChecking] SVGMatrix skewX(in float angle);
+    [Immutable, StrictTypeChecking] SVGMatrix skewY(in float angle);
+};
 
-        [StrictTypeChecking] SVGMatrix multiply(in SVGMatrix secondMatrix);
-        SVGMatrix inverse()
-            raises(SVGException);
-        [Immutable, StrictTypeChecking] SVGMatrix translate(in float x, in float y);
-        [Immutable, StrictTypeChecking] SVGMatrix scale(in float scaleFactor);
-        [Immutable, StrictTypeChecking] SVGMatrix scaleNonUniform(in float scaleFactorX, in float scaleFactorY);
-        [Immutable, StrictTypeChecking] SVGMatrix rotate(in float angle);
-        [StrictTypeChecking] SVGMatrix rotateFromVector(in float x, in float y)
-            raises(SVGException);
-        [Immutable] SVGMatrix flipX();
-        [Immutable] SVGMatrix flipY();
-        [Immutable, StrictTypeChecking] SVGMatrix skewX(in float angle);
-        [Immutable, StrictTypeChecking] SVGMatrix skewY(in float angle);
-    };
-
-}

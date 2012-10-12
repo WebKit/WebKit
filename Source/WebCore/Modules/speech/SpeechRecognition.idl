@@ -23,44 +23,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
-    interface [
-        Conditional=SCRIPTED_SPEECH,
-        ActiveDOMObject,
-        Constructor,
-        CallWith=ScriptExecutionContext,
-        EventTarget,
-    ] SpeechRecognition {
-        attribute SpeechGrammarList grammars;
-        attribute DOMString lang;
-        attribute boolean continuous;
-        attribute boolean interimResults;
-        attribute unsigned long maxAlternatives;
+interface [
+    Conditional=SCRIPTED_SPEECH,
+    ActiveDOMObject,
+    Constructor,
+    CallWith=ScriptExecutionContext,
+    EventTarget,
+] SpeechRecognition {
+    attribute SpeechGrammarList grammars;
+    attribute DOMString lang;
+    attribute boolean continuous;
+    attribute boolean interimResults;
+    attribute unsigned long maxAlternatives;
 
-        void start() raises (DOMException);
-        [ImplementedAs=stopFunction] void stop();
-        void abort();
+    void start() raises (DOMException);
+    [ImplementedAs=stopFunction] void stop();
+    void abort();
 
-        attribute EventListener onaudiostart;
-        attribute EventListener onsoundstart;
-        attribute EventListener onspeechstart;
-        attribute EventListener onspeechend;
-        attribute EventListener onsoundend;
-        attribute EventListener onaudioend;
-        attribute EventListener onresult;
-        attribute EventListener onnomatch;
-        attribute EventListener onerror;
-        attribute EventListener onstart;
-        attribute EventListener onend;
+    attribute EventListener onaudiostart;
+    attribute EventListener onsoundstart;
+    attribute EventListener onspeechstart;
+    attribute EventListener onspeechend;
+    attribute EventListener onsoundend;
+    attribute EventListener onaudioend;
+    attribute EventListener onresult;
+    attribute EventListener onnomatch;
+    attribute EventListener onerror;
+    attribute EventListener onstart;
+    attribute EventListener onend;
 
-        // EventTarget interface
-        void addEventListener(in DOMString type,
-                              in EventListener listener,
-                              in [Optional] boolean useCapture);
-        void removeEventListener(in DOMString type,
-                                 in EventListener listener,
-                                 in [Optional] boolean useCapture);
-        boolean dispatchEvent(in Event evt)
-            raises(EventException);
-    };
-}
+    // EventTarget interface
+    void addEventListener(in DOMString type,
+                          in EventListener listener,
+                          in [Optional] boolean useCapture);
+    void removeEventListener(in DOMString type,
+                             in EventListener listener,
+                             in [Optional] boolean useCapture);
+    boolean dispatchEvent(in Event evt)
+        raises(EventException);
+};

@@ -17,10 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module html {
+interface HTMLDivElement : HTMLElement {
+    attribute [Reflect] DOMString align;
+};
 
-    interface HTMLDivElement : HTMLElement {
-        attribute [Reflect] DOMString align;
-    };
-
-}

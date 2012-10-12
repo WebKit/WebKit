@@ -23,14 +23,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module window {
-    interface [
-        Conditional=WEB_INTENTS,
-    ] DeliveredIntent : Intent {
-        readonly attribute MessagePortArray ports;
+interface [
+    Conditional=WEB_INTENTS,
+] DeliveredIntent : Intent {
+    readonly attribute MessagePortArray ports;
 
-        [TreatReturnedNullStringAs=Null] DOMString getExtra(in DOMString key);
-        void postResult(in SerializedScriptValue result);
-        void postFailure(in SerializedScriptValue result);
-    };
-}
+    [TreatReturnedNullStringAs=Null] DOMString getExtra(in DOMString key);
+    void postResult(in SerializedScriptValue result);
+    void postFailure(in SerializedScriptValue result);
+};

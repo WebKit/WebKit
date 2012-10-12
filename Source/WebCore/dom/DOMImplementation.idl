@@ -18,38 +18,35 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module core {
+interface [
+    JSGenerateIsReachable=ImplDocument,
+    V8DependentLifetime
+] DOMImplementation {
 
-    interface [
-        JSGenerateIsReachable=ImplDocument,
-        V8DependentLifetime
-    ] DOMImplementation {
+    // DOM Level 1
 
-        // DOM Level 1
+    [ObjCLegacyUnnamedParameters] boolean hasFeature(in [Optional=DefaultIsUndefined] DOMString feature, 
+                                      in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString version);
 
-        [ObjCLegacyUnnamedParameters] boolean hasFeature(in [Optional=DefaultIsUndefined] DOMString feature, 
-                                          in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString version);
+    // DOM Level 2
 
-        // DOM Level 2
+    [ObjCLegacyUnnamedParameters] DocumentType createDocumentType(in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=DefaultIsUndefined] DOMString qualifiedName,
+                                                   in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=DefaultIsUndefined] DOMString publicId,
+                                                   in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=DefaultIsUndefined] DOMString systemId)
+        raises(DOMException);
+    [ObjCLegacyUnnamedParameters] Document createDocument(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI, 
+                                           in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString qualifiedName, 
+                                           in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DocumentType doctype)
+        raises(DOMException);
 
-        [ObjCLegacyUnnamedParameters] DocumentType createDocumentType(in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=DefaultIsUndefined] DOMString qualifiedName,
-                                                       in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=DefaultIsUndefined] DOMString publicId,
-                                                       in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=DefaultIsUndefined] DOMString systemId)
-            raises(DOMException);
-        [ObjCLegacyUnnamedParameters] Document createDocument(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI, 
-                                               in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString qualifiedName, 
-                                               in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DocumentType doctype)
-            raises(DOMException);
+    // DOMImplementationCSS interface from DOM Level 2 CSS
 
-        // DOMImplementationCSS interface from DOM Level 2 CSS
+    [ObjCLegacyUnnamedParameters] CSSStyleSheet createCSSStyleSheet(in [Optional=DefaultIsUndefined] DOMString title,
+                                                     in [Optional=DefaultIsUndefined] DOMString media)
+        raises(DOMException);
 
-        [ObjCLegacyUnnamedParameters] CSSStyleSheet createCSSStyleSheet(in [Optional=DefaultIsUndefined] DOMString title,
-                                                         in [Optional=DefaultIsUndefined] DOMString media)
-            raises(DOMException);
+    // HTMLDOMImplementation interface from DOM Level 2 HTML
 
-        // HTMLDOMImplementation interface from DOM Level 2 HTML
+    HTMLDocument createHTMLDocument(in [Optional=DefaultIsNullString] DOMString title);
+};
 
-        HTMLDocument createHTMLDocument(in [Optional=DefaultIsNullString] DOMString title);
-    };
-
-}

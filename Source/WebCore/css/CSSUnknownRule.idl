@@ -18,12 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module css {
+// Introduced in DOM Level 2:
+interface [
+    OmitConstructor
+] CSSUnknownRule : CSSRule {
+};
 
-    // Introduced in DOM Level 2:
-    interface [
-        OmitConstructor
-    ] CSSUnknownRule : CSSRule {
-    };
-
-}

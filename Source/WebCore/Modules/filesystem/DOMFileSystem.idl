@@ -29,13 +29,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
-    interface [
-        Conditional=FILE_SYSTEM,
-        ActiveDOMObject,
-        JSNoStaticTables
-    ] DOMFileSystem {
-        readonly attribute DOMString name;
-        readonly attribute DirectoryEntry root;
-    };
-}
+interface [
+    Conditional=FILE_SYSTEM,
+    ActiveDOMObject,
+    JSNoStaticTables
+] DOMFileSystem {
+    readonly attribute DOMString name;
+    readonly attribute DirectoryEntry root;
+};

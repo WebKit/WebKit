@@ -26,14 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module css {
+// Introduced in DOM Level ?:
+interface WebKitCSSKeyframeRule : CSSRule {
 
-    // Introduced in DOM Level ?:
-    interface WebKitCSSKeyframeRule : CSSRule {
+    attribute DOMString keyText;
+    readonly attribute CSSStyleDeclaration style;
 
-        attribute DOMString keyText;
-        readonly attribute CSSStyleDeclaration style;
+};
 
-    };
-
-}

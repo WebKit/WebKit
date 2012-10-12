@@ -26,10 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module audio {
-    interface [
-        Conditional=WEB_AUDIO,
-        JSGenerateToJSObject
-    ] AudioGain : AudioParam {
-    };
-}
+interface [
+    Conditional=WEB_AUDIO,
+    JSGenerateToJSObject
+] AudioGain : AudioParam {
+};

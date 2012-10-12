@@ -23,13 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
+interface [
+    Conditional=INPUT_SPEECH,
+] SpeechInputResult {
+    readonly attribute DOMString utterance;
+    readonly attribute float confidence;
+};
 
-    interface [
-        Conditional=INPUT_SPEECH,
-    ] SpeechInputResult {
-        readonly attribute DOMString utterance;
-        readonly attribute float confidence;
-    };
-
-}

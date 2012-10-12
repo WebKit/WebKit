@@ -18,41 +18,38 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module css {
-
-    // Introduced in DOM Level 2:
-    interface [
-        JSCustomMarkFunction,
-        JSGenerateIsReachable,
-        JSCustomGetOwnPropertySlotAndDescriptor,
-        CustomNamedSetter,
+// Introduced in DOM Level 2:
+interface [
+    JSCustomMarkFunction,
+    JSGenerateIsReachable,
+    JSCustomGetOwnPropertySlotAndDescriptor,
+    CustomNamedSetter,
 #if defined(V8_BINDING) && V8_BINDING
-        NamedGetter,
+    NamedGetter,
 #endif
-        IndexedGetter,
-        CustomEnumerateProperty,
-        V8DependentLifetime
-    ] CSSStyleDeclaration {
-                 attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString        cssText
-                     setter raises(DOMException);
+    IndexedGetter,
+    CustomEnumerateProperty,
+    V8DependentLifetime
+] CSSStyleDeclaration {
+             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString        cssText
+                 setter raises(DOMException);
 
-        [TreatReturnedNullStringAs=Null] DOMString          getPropertyValue(in [Optional=DefaultIsUndefined] DOMString propertyName);
-        [JSCustom] CSSValue           getPropertyCSSValue(in [Optional=DefaultIsUndefined] DOMString propertyName);
-        [TreatReturnedNullStringAs=Null] DOMString          removeProperty(in [Optional=DefaultIsUndefined] DOMString propertyName)
-            raises(DOMException);
-        [TreatReturnedNullStringAs=Null] DOMString          getPropertyPriority(in [Optional=DefaultIsUndefined] DOMString propertyName);
-        [ObjCLegacyUnnamedParameters] void setProperty(in [Optional=DefaultIsUndefined] DOMString propertyName, 
-                                        in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString value, 
-                                        in [Optional=DefaultIsUndefined] DOMString priority)
-            raises(DOMException);
+    [TreatReturnedNullStringAs=Null] DOMString          getPropertyValue(in [Optional=DefaultIsUndefined] DOMString propertyName);
+    [JSCustom] CSSValue           getPropertyCSSValue(in [Optional=DefaultIsUndefined] DOMString propertyName);
+    [TreatReturnedNullStringAs=Null] DOMString          removeProperty(in [Optional=DefaultIsUndefined] DOMString propertyName)
+        raises(DOMException);
+    [TreatReturnedNullStringAs=Null] DOMString          getPropertyPriority(in [Optional=DefaultIsUndefined] DOMString propertyName);
+    [ObjCLegacyUnnamedParameters] void setProperty(in [Optional=DefaultIsUndefined] DOMString propertyName, 
+                                    in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString value, 
+                                    in [Optional=DefaultIsUndefined] DOMString priority)
+        raises(DOMException);
 
-        readonly attribute unsigned long    length;
-        DOMString          item(in [Optional=DefaultIsUndefined] unsigned long index);
-        readonly attribute CSSRule          parentRule;
+    readonly attribute unsigned long    length;
+    DOMString          item(in [Optional=DefaultIsUndefined] unsigned long index);
+    readonly attribute CSSRule          parentRule;
 
-        // Extensions
-        [TreatReturnedNullStringAs=Null] DOMString          getPropertyShorthand(in [Optional=DefaultIsUndefined] DOMString propertyName);
-        boolean            isPropertyImplicit(in [Optional=DefaultIsUndefined] DOMString propertyName);
-    };
+    // Extensions
+    [TreatReturnedNullStringAs=Null] DOMString          getPropertyShorthand(in [Optional=DefaultIsUndefined] DOMString propertyName);
+    boolean            isPropertyImplicit(in [Optional=DefaultIsUndefined] DOMString propertyName);
+};
 
-}

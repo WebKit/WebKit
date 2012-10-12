@@ -24,20 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module window {
+interface [
+    Conditional=MEDIA_STREAM,
+    Supplemental=DOMWindow
+] DOMWindowMediaStream {
+    attribute [V8EnabledAtRuntime] MediaStreamConstructor webkitMediaStream;
+    attribute [V8EnabledAtRuntime] PeerConnection00Constructor webkitPeerConnection00;
+    attribute [V8EnabledAtRuntime] RTCPeerConnectionConstructor webkitRTCPeerConnection;
+    attribute SessionDescriptionConstructor SessionDescription;
+    attribute RTCSessionDescriptionConstructor RTCSessionDescription;
+    attribute IceCandidateConstructor IceCandidate;
+    attribute RTCIceCandidateConstructor RTCIceCandidate;
+    attribute MediaStreamEventConstructor MediaStreamEvent;
+};
 
-    interface [
-        Conditional=MEDIA_STREAM,
-        Supplemental=DOMWindow
-    ] DOMWindowMediaStream {
-        attribute [V8EnabledAtRuntime] MediaStreamConstructor webkitMediaStream;
-        attribute [V8EnabledAtRuntime] PeerConnection00Constructor webkitPeerConnection00;
-        attribute [V8EnabledAtRuntime] RTCPeerConnectionConstructor webkitRTCPeerConnection;
-        attribute SessionDescriptionConstructor SessionDescription;
-        attribute RTCSessionDescriptionConstructor RTCSessionDescription;
-        attribute IceCandidateConstructor IceCandidate;
-        attribute RTCIceCandidateConstructor RTCIceCandidate;
-        attribute MediaStreamEventConstructor MediaStreamEvent;
-    };
-
-}

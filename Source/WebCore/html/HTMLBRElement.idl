@@ -17,10 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module html {
+interface HTMLBRElement : HTMLElement {
+    attribute [Reflect] DOMString clear;
+};
 
-    interface HTMLBRElement : HTMLElement {
-        attribute [Reflect] DOMString clear;
-    };
-
-}

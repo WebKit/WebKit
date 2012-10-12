@@ -23,76 +23,74 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module webaudio {
-    interface [
-        Conditional=WEB_AUDIO,
-        ActiveDOMObject,
-        CustomConstructor,
-        ConstructorParameters=0,
-        JSCustomMarkFunction,
-        EventTarget
-    ] AudioContext {
-        // All rendered audio ultimately connects to destination, which represents the audio hardware.
-        readonly attribute AudioDestinationNode destination;
+interface [
+    Conditional=WEB_AUDIO,
+    ActiveDOMObject,
+    CustomConstructor,
+    ConstructorParameters=0,
+    JSCustomMarkFunction,
+    EventTarget
+] AudioContext {
+    // All rendered audio ultimately connects to destination, which represents the audio hardware.
+    readonly attribute AudioDestinationNode destination;
 
-        // All scheduled times are relative to this time in seconds.
-        readonly attribute float currentTime;
+    // All scheduled times are relative to this time in seconds.
+    readonly attribute float currentTime;
 
-        // All AudioNodes in the context run at this sample-rate (in sample-frames per second).
-        readonly attribute float sampleRate;
+    // All AudioNodes in the context run at this sample-rate (in sample-frames per second).
+    readonly attribute float sampleRate;
 
-        // All panning is relative to this listener.
-        readonly attribute AudioListener listener;
+    // All panning is relative to this listener.
+    readonly attribute AudioListener listener;
 
-        // Number of AudioBufferSourceNodes that are currently playing.
-        readonly attribute unsigned long activeSourceCount;
-        
-        AudioBuffer createBuffer(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate)
-            raises(DOMException);
-        AudioBuffer createBuffer(in ArrayBuffer? buffer, in boolean mixToMono)
-            raises(DOMException);
+    // Number of AudioBufferSourceNodes that are currently playing.
+    readonly attribute unsigned long activeSourceCount;
+    
+    AudioBuffer createBuffer(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate)
+        raises(DOMException);
+    AudioBuffer createBuffer(in ArrayBuffer? buffer, in boolean mixToMono)
+        raises(DOMException);
 
-        // Asynchronous audio file data decoding.
-        void decodeAudioData(in ArrayBuffer audioData, in [Callback] AudioBufferCallback successCallback, in [Optional, Callback] AudioBufferCallback errorCallback)
-            raises(DOMException);
+    // Asynchronous audio file data decoding.
+    void decodeAudioData(in ArrayBuffer audioData, in [Callback] AudioBufferCallback successCallback, in [Optional, Callback] AudioBufferCallback errorCallback)
+        raises(DOMException);
 
-        // Sources
-        AudioBufferSourceNode createBufferSource();
+    // Sources
+    AudioBufferSourceNode createBufferSource();
 
 #if defined(ENABLE_VIDEO) && ENABLE_VIDEO
-        MediaElementAudioSourceNode createMediaElementSource(in HTMLMediaElement mediaElement)
-            raises(DOMException);
+    MediaElementAudioSourceNode createMediaElementSource(in HTMLMediaElement mediaElement)
+        raises(DOMException);
 #endif
 
 #if defined(ENABLE_MEDIA_STREAM) && ENABLE_MEDIA_STREAM
-        MediaStreamAudioSourceNode createMediaStreamSource(in MediaStream mediaStream)
-            raises(DOMException);
+    MediaStreamAudioSourceNode createMediaStreamSource(in MediaStream mediaStream)
+        raises(DOMException);
 #endif
 
-        // Processing nodes
-        AudioGainNode createGainNode();
-        DelayNode createDelayNode(in [Optional] double maxDelayTime);
-        BiquadFilterNode createBiquadFilter();
-        WaveShaperNode createWaveShaper();
-        AudioPannerNode createPanner();
-        ConvolverNode createConvolver();
-        DynamicsCompressorNode createDynamicsCompressor();
-        RealtimeAnalyserNode createAnalyser();
-        JavaScriptAudioNode createJavaScriptNode(in unsigned long bufferSize, in [Optional] unsigned long numberOfInputChannels, in [Optional] unsigned long numberOfOutputChannels)
-            raises(DOMException);
-        Oscillator createOscillator();
-        WaveTable createWaveTable(in Float32Array real, in Float32Array imag)
-            raises(DOMException);
+    // Processing nodes
+    AudioGainNode createGainNode();
+    DelayNode createDelayNode(in [Optional] double maxDelayTime);
+    BiquadFilterNode createBiquadFilter();
+    WaveShaperNode createWaveShaper();
+    AudioPannerNode createPanner();
+    ConvolverNode createConvolver();
+    DynamicsCompressorNode createDynamicsCompressor();
+    RealtimeAnalyserNode createAnalyser();
+    JavaScriptAudioNode createJavaScriptNode(in unsigned long bufferSize, in [Optional] unsigned long numberOfInputChannels, in [Optional] unsigned long numberOfOutputChannels)
+        raises(DOMException);
+    Oscillator createOscillator();
+    WaveTable createWaveTable(in Float32Array real, in Float32Array imag)
+        raises(DOMException);
 
-        // Channel splitting and merging
-        AudioChannelSplitter createChannelSplitter(in [Optional] unsigned long numberOfOutputs)
-            raises(DOMException);
-        AudioChannelMerger createChannelMerger(in [Optional] unsigned long numberOfInputs)
-            raises(DOMException);
+    // Channel splitting and merging
+    AudioChannelSplitter createChannelSplitter(in [Optional] unsigned long numberOfOutputs)
+        raises(DOMException);
+    AudioChannelMerger createChannelMerger(in [Optional] unsigned long numberOfInputs)
+        raises(DOMException);
 
-        // Offline rendering
-        // void prepareOfflineBufferRendering(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate);
-        attribute EventListener oncomplete;
-        void startRendering();
-    };
-}
+    // Offline rendering
+    // void prepareOfflineBufferRendering(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate);
+    attribute EventListener oncomplete;
+    void startRendering();
+};

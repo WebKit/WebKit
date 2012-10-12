@@ -23,17 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module core {
+interface [
+    Conditional=GEOLOCATION
+] PositionError {
+    readonly attribute unsigned short code;
+    readonly attribute DOMString message;
 
-    interface [
-        Conditional=GEOLOCATION
-    ] PositionError {
-        readonly attribute unsigned short code;
-        readonly attribute DOMString message;
+    const unsigned short PERMISSION_DENIED = 1;
+    const unsigned short POSITION_UNAVAILABLE = 2;
+    const unsigned short TIMEOUT = 3;
+};
 
-        const unsigned short PERMISSION_DENIED = 1;
-        const unsigned short POSITION_UNAVAILABLE = 2;
-        const unsigned short TIMEOUT = 3;
-    };
-
-}

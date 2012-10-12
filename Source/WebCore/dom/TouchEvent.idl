@@ -23,31 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module events {
+interface [
+    Conditional=TOUCH_EVENTS
+] TouchEvent : UIEvent {
+    readonly attribute TouchList touches;
+    readonly attribute TouchList targetTouches;
+    readonly attribute TouchList changedTouches;
+    readonly attribute boolean ctrlKey;
+    readonly attribute boolean shiftKey;
+    readonly attribute boolean altKey;
+    readonly attribute boolean metaKey;
 
-    interface [
-        Conditional=TOUCH_EVENTS
-    ] TouchEvent : UIEvent {
-        readonly attribute TouchList touches;
-        readonly attribute TouchList targetTouches;
-        readonly attribute TouchList changedTouches;
-        readonly attribute boolean ctrlKey;
-        readonly attribute boolean shiftKey;
-        readonly attribute boolean altKey;
-        readonly attribute boolean metaKey;
-
-        void initTouchEvent(in [Optional=DefaultIsUndefined] TouchList touches,
-                            in [Optional=DefaultIsUndefined] TouchList targetTouches,
-                            in [Optional=DefaultIsUndefined] TouchList changedTouches,
-                            in [Optional=DefaultIsUndefined] DOMString type,
-                            in [Optional=DefaultIsUndefined] DOMWindow view,
-                            in [Optional=DefaultIsUndefined] long screenX, 
-                            in [Optional=DefaultIsUndefined] long screenY, 
-                            in [Optional=DefaultIsUndefined] long clientX, 
-                            in [Optional=DefaultIsUndefined] long clientY,
-                            in [Optional=DefaultIsUndefined] boolean ctrlKey,
-                            in [Optional=DefaultIsUndefined] boolean altKey,
-                            in [Optional=DefaultIsUndefined] boolean shiftKey,
-                            in [Optional=DefaultIsUndefined] boolean metaKey);
-    };
-}
+    void initTouchEvent(in [Optional=DefaultIsUndefined] TouchList touches,
+                        in [Optional=DefaultIsUndefined] TouchList targetTouches,
+                        in [Optional=DefaultIsUndefined] TouchList changedTouches,
+                        in [Optional=DefaultIsUndefined] DOMString type,
+                        in [Optional=DefaultIsUndefined] DOMWindow view,
+                        in [Optional=DefaultIsUndefined] long screenX, 
+                        in [Optional=DefaultIsUndefined] long screenY, 
+                        in [Optional=DefaultIsUndefined] long clientX, 
+                        in [Optional=DefaultIsUndefined] long clientY,
+                        in [Optional=DefaultIsUndefined] boolean ctrlKey,
+                        in [Optional=DefaultIsUndefined] boolean altKey,
+                        in [Optional=DefaultIsUndefined] boolean shiftKey,
+                        in [Optional=DefaultIsUndefined] boolean metaKey);
+};

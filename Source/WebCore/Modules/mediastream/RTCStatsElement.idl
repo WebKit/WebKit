@@ -22,12 +22,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module mediastream {
-
-    interface [
-        Conditional=MEDIA_STREAM,
-    ] RTCStatsElement {
-        readonly attribute Date timestamp;
-        DOMString stat(in DOMString name);
-    };
-}
+interface [
+    Conditional=MEDIA_STREAM,
+] RTCStatsElement {
+    readonly attribute Date timestamp;
+    DOMString stat(in DOMString name);
+};

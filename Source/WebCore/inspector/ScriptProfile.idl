@@ -24,16 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
+interface [
+    Conditional=JAVASCRIPT_DEBUGGER,
+    OmitConstructor,
+    V8CustomToJSObject
+] ScriptProfile {
+    readonly attribute DOMString title;
+    readonly attribute unsigned long uid;
+    readonly attribute ScriptProfileNode head;
+};
 
-    interface [
-        Conditional=JAVASCRIPT_DEBUGGER,
-        OmitConstructor,
-        V8CustomToJSObject
-    ] ScriptProfile {
-        readonly attribute DOMString title;
-        readonly attribute unsigned long uid;
-        readonly attribute ScriptProfileNode head;
-    };
-
-}

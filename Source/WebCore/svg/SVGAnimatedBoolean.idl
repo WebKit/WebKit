@@ -23,14 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG
+] SVGAnimatedBoolean {
+    attribute [StrictTypeChecking] boolean baseVal
+        setter raises(DOMException);
+    readonly attribute boolean animVal;
+};
 
-    interface [
-        Conditional=SVG
-    ] SVGAnimatedBoolean {
-        attribute [StrictTypeChecking] boolean baseVal
-            setter raises(DOMException);
-        readonly attribute boolean animVal;
-    };
-
-}

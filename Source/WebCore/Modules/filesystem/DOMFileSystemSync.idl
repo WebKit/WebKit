@@ -28,12 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
-    interface [
-        Conditional=FILE_SYSTEM,
-        JSNoStaticTables
-    ] DOMFileSystemSync {
-        readonly attribute DOMString name;
-        readonly attribute DirectoryEntrySync root;
-    };
-}
+interface [
+    Conditional=FILE_SYSTEM,
+    JSNoStaticTables
+] DOMFileSystemSync {
+    readonly attribute DOMString name;
+    readonly attribute DirectoryEntrySync root;
+};

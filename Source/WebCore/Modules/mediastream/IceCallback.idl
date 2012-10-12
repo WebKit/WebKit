@@ -28,13 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module p2p {
+interface [
+    Conditional=MEDIA_STREAM,
+    Callback
+] IceCallback {
+    boolean handleEvent(in IceCandidate candidate, in boolean moreToFollow, in PeerConnection00 source);
+};
 
-    interface [
-        Conditional=MEDIA_STREAM,
-        Callback
-    ] IceCallback {
-        boolean handleEvent(in IceCandidate candidate, in boolean moreToFollow, in PeerConnection00 source);
-    };
-
-}

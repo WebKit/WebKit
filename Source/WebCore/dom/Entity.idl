@@ -17,12 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module core {
+interface Entity : Node {
+    readonly attribute [TreatReturnedNullStringAs=Null] DOMString publicId;
+    readonly attribute [TreatReturnedNullStringAs=Null] DOMString systemId;
+    readonly attribute [TreatReturnedNullStringAs=Null] DOMString notationName;
+};
 
-    interface Entity : Node {
-        readonly attribute [TreatReturnedNullStringAs=Null] DOMString publicId;
-        readonly attribute [TreatReturnedNullStringAs=Null] DOMString systemId;
-        readonly attribute [TreatReturnedNullStringAs=Null] DOMString notationName;
-    };
-
-}

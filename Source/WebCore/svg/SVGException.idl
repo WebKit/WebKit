@@ -18,25 +18,22 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module svg {
+exception [
+    Conditional=SVG,
+    DoNotCheckConstants
+] SVGException {
 
-    exception [
-        Conditional=SVG,
-        DoNotCheckConstants
-    ] SVGException {
-
-        readonly attribute unsigned short   code;
-        readonly attribute DOMString        name;
-        readonly attribute DOMString        message;
+    readonly attribute unsigned short   code;
+    readonly attribute DOMString        name;
+    readonly attribute DOMString        message;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        // Override in a Mozilla compatible format
-        [NotEnumerable] DOMString toString();
+    // Override in a Mozilla compatible format
+    [NotEnumerable] DOMString toString();
 #endif
 
-        // SVGExceptionCode
-        const unsigned short SVG_WRONG_TYPE_ERR = 0;
-        const unsigned short SVG_INVALID_VALUE_ERR = 1;
-        const unsigned short SVG_MATRIX_NOT_INVERTABLE = 2;
-    };
-}
+    // SVGExceptionCode
+    const unsigned short SVG_WRONG_TYPE_ERR = 0;
+    const unsigned short SVG_INVALID_VALUE_ERR = 1;
+    const unsigned short SVG_MATRIX_NOT_INVERTABLE = 2;
+};

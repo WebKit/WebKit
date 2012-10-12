@@ -23,15 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG
+] SVGScriptElement : SVGElement,
+                                               SVGURIReference,
+                                               SVGExternalResourcesRequired {
+             attribute [TreatNullAs=NullString] DOMString type
+                 /*setter raises(DOMException)*/;
+};
 
-    interface [
-        Conditional=SVG
-    ] SVGScriptElement : SVGElement,
-                                                   SVGURIReference,
-                                                   SVGExternalResourcesRequired {
-                 attribute [TreatNullAs=NullString] DOMString type
-                     /*setter raises(DOMException)*/;
-    };
-
-}

@@ -22,35 +22,32 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
+interface [
+    Conditional=MEDIA_STREAM,
+    EventTarget,
+    ActiveDOMObject
+] MediaStreamTrack {
+    readonly attribute DOMString kind;
+    readonly attribute DOMString label;
+             attribute boolean enabled;
 
-    interface [
-        Conditional=MEDIA_STREAM,
-        EventTarget,
-        ActiveDOMObject
-    ] MediaStreamTrack {
-        readonly attribute DOMString kind;
-        readonly attribute DOMString label;
-                 attribute boolean enabled;
+    const unsigned short LIVE = 0;
+    const unsigned short MUTED = 1;
+    const unsigned short ENDED = 2;
+    readonly attribute unsigned short readyState;
 
-        const unsigned short LIVE = 0;
-        const unsigned short MUTED = 1;
-        const unsigned short ENDED = 2;
-        readonly attribute unsigned short readyState;
+    attribute EventListener onmute;
+    attribute EventListener onunmute;
+    attribute EventListener onended;
 
-        attribute EventListener onmute;
-        attribute EventListener onunmute;
-        attribute EventListener onended;
+    // EventTarget interface
+    void addEventListener(in DOMString type,
+                          in EventListener listener,
+                          in [Optional] boolean useCapture);
+    void removeEventListener(in DOMString type,
+                             in EventListener listener,
+                             in [Optional] boolean useCapture);
+    boolean dispatchEvent(in Event event)
+        raises(EventException);
+};
 
-        // EventTarget interface
-        void addEventListener(in DOMString type,
-                              in EventListener listener,
-                              in [Optional] boolean useCapture);
-        void removeEventListener(in DOMString type,
-                                 in EventListener listener,
-                                 in [Optional] boolean useCapture);
-        boolean dispatchEvent(in Event event)
-            raises(EventException);
-    };
-
-}

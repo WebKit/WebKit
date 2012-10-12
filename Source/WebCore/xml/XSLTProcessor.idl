@@ -26,28 +26,25 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module xml {
+// Eventually we should implement XSLTException:
+// http://lxr.mozilla.org/seamonkey/source/content/xsl/public/nsIXSLTException.idl
+// http://bugs.webkit.org/show_bug.cgi?id=5446
 
-    // Eventually we should implement XSLTException:
-    // http://lxr.mozilla.org/seamonkey/source/content/xsl/public/nsIXSLTException.idl
-    // http://bugs.webkit.org/show_bug.cgi?id=5446
+interface [
+    Conditional=XSLT,
+    Constructor
+] XSLTProcessor {
+    
+    void importStylesheet(in [Optional=DefaultIsUndefined] Node stylesheet);
+    DocumentFragment transformToFragment(in [Optional=DefaultIsUndefined] Node source, in [Optional=DefaultIsUndefined] Document docVal);
+    Document transformToDocument(in [Optional=DefaultIsUndefined] Node source);
 
-    interface [
-        Conditional=XSLT,
-        Constructor
-    ] XSLTProcessor {
-        
-        void importStylesheet(in [Optional=DefaultIsUndefined] Node stylesheet);
-        DocumentFragment transformToFragment(in [Optional=DefaultIsUndefined] Node source, in [Optional=DefaultIsUndefined] Document docVal);
-        Document transformToDocument(in [Optional=DefaultIsUndefined] Node source);
+    [Custom] void setParameter(in DOMString namespaceURI, in DOMString localName, in DOMString value);
+    [Custom, TreatReturnedNullStringAs=Undefined] DOMString getParameter(in DOMString namespaceURI, in DOMString localName);
+    [Custom] void removeParameter(in DOMString namespaceURI, in DOMString localName);
+    void clearParameters();
 
-        [Custom] void setParameter(in DOMString namespaceURI, in DOMString localName, in DOMString value);
-        [Custom, TreatReturnedNullStringAs=Undefined] DOMString getParameter(in DOMString namespaceURI, in DOMString localName);
-        [Custom] void removeParameter(in DOMString namespaceURI, in DOMString localName);
-        void clearParameters();
+    void reset();
 
-        void reset();
+};
 
-    };
-
-}

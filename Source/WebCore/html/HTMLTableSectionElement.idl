@@ -18,18 +18,15 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module html {
+interface [
+    JSGenerateToNativeObject
+] HTMLTableSectionElement : HTMLElement {
+    attribute [Reflect] DOMString align;
+    attribute [Reflect=char] DOMString ch;
+    attribute [Reflect=charoff] DOMString chOff;
+    attribute [Reflect] DOMString vAlign;
+    readonly attribute HTMLCollection rows;
+    HTMLElement insertRow(in [Optional=DefaultIsUndefined] long index) raises(DOMException);
+    void deleteRow(in [Optional=DefaultIsUndefined] long index) raises(DOMException);
+};
 
-    interface [
-        JSGenerateToNativeObject
-    ] HTMLTableSectionElement : HTMLElement {
-        attribute [Reflect] DOMString align;
-        attribute [Reflect=char] DOMString ch;
-        attribute [Reflect=charoff] DOMString chOff;
-        attribute [Reflect] DOMString vAlign;
-        readonly attribute HTMLCollection rows;
-        HTMLElement insertRow(in [Optional=DefaultIsUndefined] long index) raises(DOMException);
-        void deleteRow(in [Optional=DefaultIsUndefined] long index) raises(DOMException);
-    };
-
-}

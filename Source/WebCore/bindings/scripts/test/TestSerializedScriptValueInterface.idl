@@ -25,18 +25,16 @@
 
 // This IDL file is for testing the bindings code generator and for tracking
 // changes in its ouput.
-module test {
-    interface [
-        Conditional=Condition1|Condition2,
-        Constructor(in DOMString hello, in SerializedScriptValue value),
-        Constructor(in DOMString hello, in [TransferList=transferList] SerializedScriptValue data, in [Optional=DefaultIsUndefined] Array transferList),
-    ] TestSerializedScriptValueInterface {
-        attribute SerializedScriptValue value;
-        readonly attribute SerializedScriptValue readonlyValue;
-        attribute [CachedAttribute] SerializedScriptValue cachedValue;
-        readonly attribute MessagePortArray ports;
-        readonly attribute [CachedAttribute] SerializedScriptValue cachedReadonlyValue;
-        void acceptTransferList(in [TransferList=transferList] SerializedScriptValue data, in [Optional] Array transferList);
-        void multiTransferList(in [Optional, TransferList=tx] SerializedScriptValue first, in [Optional] Array tx, in [Optional, TransferList=txx] SerializedScriptValue second, in [Optional] Array txx);
-    };
-}
+interface [
+    Conditional=Condition1|Condition2,
+    Constructor(in DOMString hello, in SerializedScriptValue value),
+    Constructor(in DOMString hello, in [TransferList=transferList] SerializedScriptValue data, in [Optional=DefaultIsUndefined] Array transferList),
+] TestSerializedScriptValueInterface {
+    attribute SerializedScriptValue value;
+    readonly attribute SerializedScriptValue readonlyValue;
+    attribute [CachedAttribute] SerializedScriptValue cachedValue;
+    readonly attribute MessagePortArray ports;
+    readonly attribute [CachedAttribute] SerializedScriptValue cachedReadonlyValue;
+    void acceptTransferList(in [TransferList=transferList] SerializedScriptValue data, in [Optional] Array transferList);
+    void multiTransferList(in [Optional, TransferList=tx] SerializedScriptValue first, in [Optional] Array tx, in [Optional, TransferList=txx] SerializedScriptValue second, in [Optional] Array txx);
+};

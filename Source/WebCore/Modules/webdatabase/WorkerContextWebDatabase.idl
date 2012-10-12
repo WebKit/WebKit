@@ -24,17 +24,14 @@
  *
  */
 
-module window {
+interface [
+    Conditional=SQL_DATABASE,
+    Supplemental=WorkerContext
+] WorkerContextWebDatabase {
+    [V8EnabledAtRuntime] Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
+        raises(DOMException);
 
-    interface [
-        Conditional=SQL_DATABASE,
-        Supplemental=WorkerContext
-    ] WorkerContextWebDatabase {
-        [V8EnabledAtRuntime] Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
-            raises(DOMException);
+    [V8EnabledAtRuntime] DatabaseSync openDatabaseSync(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
+        raises(DOMException);
+};
 
-        [V8EnabledAtRuntime] DatabaseSync openDatabaseSync(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
-            raises(DOMException);
-    };
-
-}

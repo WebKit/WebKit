@@ -26,20 +26,17 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module threads {
+interface [
+    Conditional=WORKERS,
+    JSGenerateIsReachable=Impl,
+    JSNoStaticTables,
+    OmitConstructor
+] WorkerNavigator {
+    readonly attribute DOMString appName;
+    readonly attribute DOMString appVersion;
+    readonly attribute DOMString platform;
+    readonly attribute DOMString userAgent;
 
-    interface [
-        Conditional=WORKERS,
-        JSGenerateIsReachable=Impl,
-        JSNoStaticTables,
-        OmitConstructor
-    ] WorkerNavigator {
-        readonly attribute DOMString appName;
-        readonly attribute DOMString appVersion;
-        readonly attribute DOMString platform;
-        readonly attribute DOMString userAgent;
+    readonly attribute boolean onLine;
+};
 
-        readonly attribute boolean onLine;
-    };
-
-}

@@ -24,45 +24,42 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
+interface [
+    Conditional=INDEXED_DATABASE,
+    ActiveDOMObject,
+    EventTarget
+] IDBDatabase {
+    readonly attribute DOMString name;
+    readonly attribute IDBAny version;
+    readonly attribute DOMStringList objectStoreNames;
 
-    interface [
-        Conditional=INDEXED_DATABASE,
-        ActiveDOMObject,
-        EventTarget
-    ] IDBDatabase {
-        readonly attribute DOMString name;
-        readonly attribute IDBAny version;
-        readonly attribute DOMStringList objectStoreNames;
+    attribute EventListener onabort;
+    attribute EventListener onerror;
+    attribute EventListener onversionchange;
 
-        attribute EventListener onabort;
-        attribute EventListener onerror;
-        attribute EventListener onversionchange;
+    IDBObjectStore createObjectStore(in DOMString name, in [Optional] Dictionary options)
+        raises (IDBDatabaseException);
+    void deleteObjectStore(in DOMString name)
+        raises (IDBDatabaseException);
+    [CallWith=ScriptExecutionContext] IDBVersionChangeRequest setVersion(in DOMString version)
+        raises (IDBDatabaseException);
+    [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMStringList storeNames, in [Optional=DefaultIsNullString] DOMString mode)
+        raises (IDBDatabaseException);
+    [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMString[] storeNames, in [Optional=DefaultIsNullString] DOMString mode)
+        raises (IDBDatabaseException);
+    [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMString storeName, in [Optional=DefaultIsNullString] DOMString mode)
+        raises (IDBDatabaseException);
 
-        IDBObjectStore createObjectStore(in DOMString name, in [Optional] Dictionary options)
-            raises (IDBDatabaseException);
-        void deleteObjectStore(in DOMString name)
-            raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext] IDBVersionChangeRequest setVersion(in DOMString version)
-            raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMStringList storeNames, in [Optional=DefaultIsNullString] DOMString mode)
-            raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMString[] storeNames, in [Optional=DefaultIsNullString] DOMString mode)
-            raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMString storeName, in [Optional=DefaultIsNullString] DOMString mode)
-            raises (IDBDatabaseException);
+    void close();
 
-        void close();
+    // EventTarget interface
+    void addEventListener(in DOMString type,
+                          in EventListener listener,
+                          in [Optional] boolean useCapture);
+    void removeEventListener(in DOMString type,
+                             in EventListener listener,
+                             in [Optional] boolean useCapture);
+    boolean dispatchEvent(in Event evt)
+        raises(EventException);
+};
 
-        // EventTarget interface
-        void addEventListener(in DOMString type,
-                              in EventListener listener,
-                              in [Optional] boolean useCapture);
-        void removeEventListener(in DOMString type,
-                                 in EventListener listener,
-                                 in [Optional] boolean useCapture);
-        boolean dispatchEvent(in Event evt)
-            raises(EventException);
-    };
-
-}

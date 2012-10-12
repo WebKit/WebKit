@@ -24,27 +24,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG
+] SVGPathSegList {
+    readonly attribute unsigned long numberOfItems;
 
-    interface [
-        Conditional=SVG
-    ] SVGPathSegList {
-        readonly attribute unsigned long numberOfItems;
+    void clear()
+        raises(DOMException);
+    [StrictTypeChecking] SVGPathSeg initialize(in SVGPathSeg newItem)
+        raises(DOMException, SVGException);
+    [StrictTypeChecking] SVGPathSeg getItem(in unsigned long index)
+        raises(DOMException);
+    [StrictTypeChecking] SVGPathSeg insertItemBefore(in SVGPathSeg newItem, in unsigned long index)
+        raises(DOMException, SVGException);
+    [StrictTypeChecking] SVGPathSeg replaceItem(in SVGPathSeg newItem, in unsigned long index)
+        raises(DOMException, SVGException);
+    [StrictTypeChecking] SVGPathSeg removeItem(in unsigned long index)
+        raises(DOMException);
+    [StrictTypeChecking] SVGPathSeg appendItem(in SVGPathSeg newItem)
+        raises(DOMException, SVGException);
+};
 
-        void clear()
-            raises(DOMException);
-        [StrictTypeChecking] SVGPathSeg initialize(in SVGPathSeg newItem)
-            raises(DOMException, SVGException);
-        [StrictTypeChecking] SVGPathSeg getItem(in unsigned long index)
-            raises(DOMException);
-        [StrictTypeChecking] SVGPathSeg insertItemBefore(in SVGPathSeg newItem, in unsigned long index)
-            raises(DOMException, SVGException);
-        [StrictTypeChecking] SVGPathSeg replaceItem(in SVGPathSeg newItem, in unsigned long index)
-            raises(DOMException, SVGException);
-        [StrictTypeChecking] SVGPathSeg removeItem(in unsigned long index)
-            raises(DOMException);
-        [StrictTypeChecking] SVGPathSeg appendItem(in SVGPathSeg newItem)
-            raises(DOMException, SVGException);
-    };
-
-}

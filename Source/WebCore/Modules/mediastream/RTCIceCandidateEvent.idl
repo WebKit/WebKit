@@ -22,12 +22,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module events {
+interface [
+    Conditional=MEDIA_STREAM,
+] RTCIceCandidateEvent : Event {
+    readonly attribute RTCIceCandidate candidate;
+};
 
-    interface [
-        Conditional=MEDIA_STREAM,
-    ] RTCIceCandidateEvent : Event {
-        readonly attribute RTCIceCandidate candidate;
-    };
-
-}

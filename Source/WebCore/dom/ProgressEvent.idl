@@ -23,15 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module events {
+interface [
+    ConstructorTemplate=Event,
+    JSNoStaticTables
+] ProgressEvent : Event {
+    readonly attribute [InitializedByEventConstructor] boolean lengthComputable;
+    readonly attribute [InitializedByEventConstructor] unsigned long long loaded;
+    readonly attribute [InitializedByEventConstructor] unsigned long long total;
+};
 
-    interface [
-        ConstructorTemplate=Event,
-        JSNoStaticTables
-    ] ProgressEvent : Event {
-        readonly attribute [InitializedByEventConstructor] boolean lengthComputable;
-        readonly attribute [InitializedByEventConstructor] unsigned long long loaded;
-        readonly attribute [InitializedByEventConstructor] unsigned long long total;
-    };
-
-}

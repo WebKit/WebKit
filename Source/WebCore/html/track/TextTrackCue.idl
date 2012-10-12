@@ -23,52 +23,49 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module html {
+interface [
+    Conditional=VIDEO_TRACK,
+    V8EnabledAtRuntime=webkitVideoTrack,
+    JSGenerateToNativeObject,
+    Constructor(in double startTime, in double endTime, in DOMString text),
+    CallWith=ScriptExecutionContext,
+    EventTarget,
+    JSCustomMarkFunction,
+    JSCustomIsReachable
+] TextTrackCue {
+    readonly attribute TextTrack track;
 
-    interface [
-        Conditional=VIDEO_TRACK,
-        V8EnabledAtRuntime=webkitVideoTrack,
-        JSGenerateToNativeObject,
-        Constructor(in double startTime, in double endTime, in DOMString text),
-        CallWith=ScriptExecutionContext,
-        EventTarget,
-        JSCustomMarkFunction,
-        JSCustomIsReachable
-    ] TextTrackCue {
-        readonly attribute TextTrack track;
+    attribute DOMString id;
+    attribute double startTime;
+    attribute double endTime;
+    attribute boolean pauseOnExit;
 
-        attribute DOMString id;
-        attribute double startTime;
-        attribute double endTime;
-        attribute boolean pauseOnExit;
+    attribute DOMString vertical
+        setter raises (DOMException);
+    attribute boolean snapToLines;
+    attribute long line
+        setter raises (DOMException);
+    attribute long position
+        setter raises (DOMException);
+    attribute long size
+        setter raises (DOMException);
+    attribute DOMString align
+        setter raises (DOMException);
 
-        attribute DOMString vertical
-            setter raises (DOMException);
-        attribute boolean snapToLines;
-        attribute long line
-            setter raises (DOMException);
-        attribute long position
-            setter raises (DOMException);
-        attribute long size
-            setter raises (DOMException);
-        attribute DOMString align
-            setter raises (DOMException);
+    attribute DOMString text;
+    DocumentFragment getCueAsHTML();
+    
+    attribute EventListener onenter;
+    attribute EventListener onexit;
+    
+    // EventTarget interface
+    void addEventListener(in DOMString type, 
+                          in EventListener listener, 
+                          in [Optional] boolean useCapture);
+    void removeEventListener(in DOMString type, 
+                             in EventListener listener, 
+                             in [Optional] boolean useCapture);
+    boolean dispatchEvent(in Event evt)
+        raises(EventException);
+};
 
-        attribute DOMString text;
-        DocumentFragment getCueAsHTML();
-        
-        attribute EventListener onenter;
-        attribute EventListener onexit;
-        
-        // EventTarget interface
-        void addEventListener(in DOMString type, 
-                              in EventListener listener, 
-                              in [Optional] boolean useCapture);
-        void removeEventListener(in DOMString type, 
-                                 in EventListener listener, 
-                                 in [Optional] boolean useCapture);
-        boolean dispatchEvent(in Event evt)
-            raises(EventException);
-    };
-
-}

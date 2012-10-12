@@ -24,19 +24,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG,
+    ObjCProtocol,
+    SuppressToJSObject,
+    OmitConstructor
+] SVGTests {
+    readonly attribute SVGStringList requiredFeatures;
+    readonly attribute SVGStringList requiredExtensions;
+    readonly attribute SVGStringList systemLanguage;
 
-    interface [
-        Conditional=SVG,
-        ObjCProtocol,
-        SuppressToJSObject,
-        OmitConstructor
-    ] SVGTests {
-        readonly attribute SVGStringList requiredFeatures;
-        readonly attribute SVGStringList requiredExtensions;
-        readonly attribute SVGStringList systemLanguage;
+    boolean hasExtension(in [Optional=DefaultIsUndefined] DOMString extension);
+};
 
-        boolean hasExtension(in [Optional=DefaultIsUndefined] DOMString extension);
-    };
-
-}

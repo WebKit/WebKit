@@ -26,12 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module events {
+interface [
+    CustomNamedGetter
+] TestCustomNamedGetter {
+    void anotherFunction(in DOMString str);
+};
 
-    interface [
-        CustomNamedGetter
-    ] TestCustomNamedGetter {
-        void anotherFunction(in DOMString str);
-    };
-
-}

@@ -26,25 +26,22 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module xml {
+exception [
+    JSNoStaticTables,
+    DoNotCheckConstants
+] XMLHttpRequestException {
 
-    exception [
-        JSNoStaticTables,
-        DoNotCheckConstants
-    ] XMLHttpRequestException {
-
-        readonly attribute unsigned short   code;
-        readonly attribute DOMString        name;
-        readonly attribute DOMString        message;
+    readonly attribute unsigned short   code;
+    readonly attribute DOMString        name;
+    readonly attribute DOMString        message;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        // Override in a Mozilla compatible format
-        [NotEnumerable] DOMString toString();
+    // Override in a Mozilla compatible format
+    [NotEnumerable] DOMString toString();
 #endif
 
-        // XMLHttpRequestExceptionCode
-        const unsigned short NETWORK_ERR = 101;
-        const unsigned short ABORT_ERR = 102;
-    };
+    // XMLHttpRequestExceptionCode
+    const unsigned short NETWORK_ERR = 101;
+    const unsigned short ABORT_ERR = 102;
+};
 
-}

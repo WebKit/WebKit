@@ -27,12 +27,9 @@
  * SUCH DAMAGE.
  */
 
-module css {
+interface [
+    Conditional=CSS_REGIONS,
+] WebKitCSSRegionRule : CSSRule {
+    readonly attribute CSSRuleList cssRules;
+};
 
-    interface [
-        Conditional=CSS_REGIONS,
-    ] WebKitCSSRegionRule : CSSRule {
-        readonly attribute CSSRuleList cssRules;
-    };
-
-}

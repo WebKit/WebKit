@@ -23,40 +23,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG
+] SVGTextContentElement : SVGElement,
+                                                    SVGTests,
+                                                    SVGLangSpace,
+                                                    SVGExternalResourcesRequired,
+                                                    SVGStylable {
+    // lengthAdjust Types
+    const unsigned short LENGTHADJUST_UNKNOWN          = 0;
+    const unsigned short LENGTHADJUST_SPACING          = 1;
+    const unsigned short LENGTHADJUST_SPACINGANDGLYPHS = 2;
 
-    interface [
-        Conditional=SVG
-    ] SVGTextContentElement : SVGElement,
-                                                        SVGTests,
-                                                        SVGLangSpace,
-                                                        SVGExternalResourcesRequired,
-                                                        SVGStylable {
-        // lengthAdjust Types
-        const unsigned short LENGTHADJUST_UNKNOWN          = 0;
-        const unsigned short LENGTHADJUST_SPACING          = 1;
-        const unsigned short LENGTHADJUST_SPACINGANDGLYPHS = 2;
+    readonly attribute SVGAnimatedLength      textLength;
+    readonly attribute SVGAnimatedEnumeration lengthAdjust;
 
-        readonly attribute SVGAnimatedLength      textLength;
-        readonly attribute SVGAnimatedEnumeration lengthAdjust;
-
-        long getNumberOfChars();
-        float getComputedTextLength();
-        float getSubStringLength(in [Optional=DefaultIsUndefined,IsIndex] unsigned long offset, 
-                                 in [Optional=DefaultIsUndefined,IsIndex] unsigned long length)
-            raises(DOMException);
-        SVGPoint getStartPositionOfChar(in [Optional=DefaultIsUndefined,IsIndex] unsigned long offset)
-            raises(DOMException);
-        SVGPoint getEndPositionOfChar(in [Optional=DefaultIsUndefined,IsIndex] unsigned long offset)
-            raises(DOMException);
-        SVGRect getExtentOfChar(in [Optional=DefaultIsUndefined,IsIndex] unsigned long offset)
-            raises(DOMException);
-        float getRotationOfChar(in [Optional=DefaultIsUndefined,IsIndex] unsigned long offset)
-            raises(DOMException);
-        long getCharNumAtPosition(in [Optional=DefaultIsUndefined] SVGPoint point);
-        void selectSubString(in [Optional=DefaultIsUndefined,IsIndex] unsigned long offset, 
+    long getNumberOfChars();
+    float getComputedTextLength();
+    float getSubStringLength(in [Optional=DefaultIsUndefined,IsIndex] unsigned long offset, 
                              in [Optional=DefaultIsUndefined,IsIndex] unsigned long length)
-            raises(DOMException);
-    };
+        raises(DOMException);
+    SVGPoint getStartPositionOfChar(in [Optional=DefaultIsUndefined,IsIndex] unsigned long offset)
+        raises(DOMException);
+    SVGPoint getEndPositionOfChar(in [Optional=DefaultIsUndefined,IsIndex] unsigned long offset)
+        raises(DOMException);
+    SVGRect getExtentOfChar(in [Optional=DefaultIsUndefined,IsIndex] unsigned long offset)
+        raises(DOMException);
+    float getRotationOfChar(in [Optional=DefaultIsUndefined,IsIndex] unsigned long offset)
+        raises(DOMException);
+    long getCharNumAtPosition(in [Optional=DefaultIsUndefined] SVGPoint point);
+    void selectSubString(in [Optional=DefaultIsUndefined,IsIndex] unsigned long offset, 
+                         in [Optional=DefaultIsUndefined,IsIndex] unsigned long length)
+        raises(DOMException);
+};
 
-}

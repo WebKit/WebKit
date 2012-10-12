@@ -23,13 +23,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
-
-    interface [
-        Conditional=INDEXED_DATABASE,
-        ActiveDOMObject,
-        EventTarget
-    ] IDBVersionChangeRequest : IDBRequest {
-        attribute EventListener onblocked;
-    };
-}
+interface [
+    Conditional=INDEXED_DATABASE,
+    ActiveDOMObject,
+    EventTarget
+] IDBVersionChangeRequest : IDBRequest {
+    attribute EventListener onblocked;
+};

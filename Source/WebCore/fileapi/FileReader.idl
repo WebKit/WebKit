@@ -29,53 +29,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module html {
-    interface [
-        Conditional=BLOB,
-        ActiveDOMObject,
-        Constructor,
-        CallWith=ScriptExecutionContext,
-        EventTarget,
-        JSNoStaticTables
-    ] FileReader {
-        // ready states
-        const unsigned short EMPTY = 0;
-        const unsigned short LOADING = 1;
-        const unsigned short DONE = 2;
-        readonly attribute unsigned short readyState;
+interface [
+    Conditional=BLOB,
+    ActiveDOMObject,
+    Constructor,
+    CallWith=ScriptExecutionContext,
+    EventTarget,
+    JSNoStaticTables
+] FileReader {
+    // ready states
+    const unsigned short EMPTY = 0;
+    const unsigned short LOADING = 1;
+    const unsigned short DONE = 2;
+    readonly attribute unsigned short readyState;
 
-        // async read methods
-        void readAsArrayBuffer(in Blob blob)
-            raises(DOMException);
-        void readAsBinaryString(in Blob blob)
-            raises(DOMException);
-        void readAsText(in Blob blob, in [Optional] DOMString encoding)
-            raises(DOMException);
-        void readAsDataURL(in Blob blob)
-            raises(DOMException);
+    // async read methods
+    void readAsArrayBuffer(in Blob blob)
+        raises(DOMException);
+    void readAsBinaryString(in Blob blob)
+        raises(DOMException);
+    void readAsText(in Blob blob, in [Optional] DOMString encoding)
+        raises(DOMException);
+    void readAsDataURL(in Blob blob)
+        raises(DOMException);
 
-        void abort();
+    void abort();
 
-        // file data
-        readonly attribute [Custom] DOMObject result;
+    // file data
+    readonly attribute [Custom] DOMObject result;
 
-        readonly attribute FileError error;
+    readonly attribute FileError error;
 
-        // EventTarget interface
-        void addEventListener(in DOMString type,
-                              in EventListener listener,
-                              in [Optional] boolean useCapture);
-        void removeEventListener(in DOMString type,
-                                 in EventListener listener,
-                                 in [Optional] boolean useCapture);
-        boolean dispatchEvent(in Event evt)
-            raises(EventException);
+    // EventTarget interface
+    void addEventListener(in DOMString type,
+                          in EventListener listener,
+                          in [Optional] boolean useCapture);
+    void removeEventListener(in DOMString type,
+                             in EventListener listener,
+                             in [Optional] boolean useCapture);
+    boolean dispatchEvent(in Event evt)
+        raises(EventException);
 
-        attribute EventListener onloadstart;
-        attribute EventListener onprogress;
-        attribute EventListener onload;
-        attribute EventListener onabort;
-        attribute EventListener onerror;
-        attribute EventListener onloadend;
-    };
-}
+    attribute EventListener onloadstart;
+    attribute EventListener onprogress;
+    attribute EventListener onload;
+    attribute EventListener onabort;
+    attribute EventListener onerror;
+    attribute EventListener onloadend;
+};

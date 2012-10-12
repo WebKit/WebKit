@@ -22,11 +22,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module audio {
-    interface [
-        Conditional=WEB_AUDIO,
-        JSGenerateToJSObject
-    ] DelayNode : AudioNode {
-        readonly attribute AudioParam delayTime;
-    };
-}
+interface [
+    Conditional=WEB_AUDIO,
+    JSGenerateToJSObject
+] DelayNode : AudioNode {
+    readonly attribute AudioParam delayTime;
+};

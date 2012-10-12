@@ -17,27 +17,24 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module events {
+// Introduced in DOM Level 2:
+interface UIEvent : Event {
+    readonly attribute DOMWindow            view;
+    readonly attribute long                 detail;
+    
+    [ObjCLegacyUnnamedParameters] void initUIEvent(in [Optional=DefaultIsUndefined] DOMString type, 
+                                    in [Optional=DefaultIsUndefined] boolean canBubble, 
+                                    in [Optional=DefaultIsUndefined] boolean cancelable, 
+                                    in [Optional=DefaultIsUndefined] DOMWindow view, 
+                                    in [Optional=DefaultIsUndefined] long detail);
 
-    // Introduced in DOM Level 2:
-    interface UIEvent : Event {
-        readonly attribute DOMWindow            view;
-        readonly attribute long                 detail;
-        
-        [ObjCLegacyUnnamedParameters] void initUIEvent(in [Optional=DefaultIsUndefined] DOMString type, 
-                                        in [Optional=DefaultIsUndefined] boolean canBubble, 
-                                        in [Optional=DefaultIsUndefined] boolean cancelable, 
-                                        in [Optional=DefaultIsUndefined] DOMWindow view, 
-                                        in [Optional=DefaultIsUndefined] long detail);
+    // extensions
+    readonly attribute long                 keyCode;
+    readonly attribute long                 charCode;
+    readonly attribute long                 layerX;
+    readonly attribute long                 layerY;
+    readonly attribute long                 pageX;
+    readonly attribute long                 pageY;
+    readonly attribute long                 which;
+};
 
-        // extensions
-        readonly attribute long                 keyCode;
-        readonly attribute long                 charCode;
-        readonly attribute long                 layerX;
-        readonly attribute long                 layerY;
-        readonly attribute long                 pageX;
-        readonly attribute long                 pageY;
-        readonly attribute long                 which;
-    };
-
-}

@@ -23,15 +23,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module window {
   interface [
-      Conditional=WEB_INTENTS,
-      CustomConstructor,
-      Constructor(in DOMString action, in DOMString type, in [Optional=DefaultIsNullString, TransferList=transferList] SerializedScriptValue data, in [Optional=DefaultIsUndefined] Array transferList),
-      ConstructorRaisesException
+  Conditional=WEB_INTENTS,
+  CustomConstructor,
+  Constructor(in DOMString action, in DOMString type, in [Optional=DefaultIsNullString, TransferList=transferList] SerializedScriptValue data, in [Optional=DefaultIsUndefined] Array transferList),
+  ConstructorRaisesException
   ] Intent {
-        readonly attribute DOMString action;
-        readonly attribute DOMString type;
-        readonly attribute SerializedScriptValue data;
+    readonly attribute DOMString action;
+    readonly attribute DOMString type;
+    readonly attribute SerializedScriptValue data;
   };
-}

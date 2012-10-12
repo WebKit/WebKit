@@ -28,20 +28,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module window {
+// See: http://www.w3.org/TR/navigation-timing/
+interface [
+    Conditional=WEB_TIMING,
+    OmitConstructor
+] PerformanceNavigation {
+    const unsigned short TYPE_NAVIGATE = 0;
+    const unsigned short TYPE_RELOAD = 1;
+    const unsigned short TYPE_BACK_FORWARD = 2;
+    const unsigned short TYPE_RESERVED = 255;
+    readonly attribute unsigned short type;
 
-    // See: http://www.w3.org/TR/navigation-timing/
-    interface [
-        Conditional=WEB_TIMING,
-        OmitConstructor
-    ] PerformanceNavigation {
-        const unsigned short TYPE_NAVIGATE = 0;
-        const unsigned short TYPE_RELOAD = 1;
-        const unsigned short TYPE_BACK_FORWARD = 2;
-        const unsigned short TYPE_RESERVED = 255;
-        readonly attribute unsigned short type;
+    readonly attribute unsigned short redirectCount;
+};
 
-        readonly attribute unsigned short redirectCount;
-    };
-
-}

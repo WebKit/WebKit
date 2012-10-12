@@ -18,29 +18,26 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module stylesheets {
-
-    // Introduced in DOM Level 2:
-    interface [
-        JSCustomMarkFunction,
-        JSGenerateIsReachable,
-        CustomToJSObject,
-        ObjCPolymorphic,
-        V8GenerateIsReachable=ImplOwnerNodeRoot
-    ] StyleSheet {
-        readonly attribute [TreatReturnedNullStringAs=Null] DOMString        type;
-                 attribute boolean          disabled;
-        readonly attribute Node             ownerNode;
-        readonly attribute StyleSheet       parentStyleSheet;
-        readonly attribute [TreatReturnedNullStringAs=Null] DOMString        href;
-        readonly attribute [TreatReturnedNullStringAs=Null] DOMString        title;
-        readonly attribute MediaList        media;
+// Introduced in DOM Level 2:
+interface [
+    JSCustomMarkFunction,
+    JSGenerateIsReachable,
+    CustomToJSObject,
+    ObjCPolymorphic,
+    V8GenerateIsReachable=ImplOwnerNodeRoot
+] StyleSheet {
+    readonly attribute [TreatReturnedNullStringAs=Null] DOMString        type;
+             attribute boolean          disabled;
+    readonly attribute Node             ownerNode;
+    readonly attribute StyleSheet       parentStyleSheet;
+    readonly attribute [TreatReturnedNullStringAs=Null] DOMString        href;
+    readonly attribute [TreatReturnedNullStringAs=Null] DOMString        title;
+    readonly attribute MediaList        media;
 
 #if defined(LANGUAGE_CPP) && LANGUAGE_CPP
-        // Extra WebCore methods exposed to allowe compile-time casting in C++
-        boolean isCSSStyleSheet();
+    // Extra WebCore methods exposed to allowe compile-time casting in C++
+    boolean isCSSStyleSheet();
 #endif
 
-    };
+};
 
-}

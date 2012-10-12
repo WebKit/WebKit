@@ -24,19 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module html {
-    interface [
-        ConstructorTemplate=TypedArray,
-        ConstructorParameters=123,
-        NumericIndexedGetter,
-        CustomIndexedSetter,
-        JSGenerateToNativeObject,
-        JSNoStaticTables,
-        CustomToJSObject,
-        DoNotCheckConstants,
-        TypedArray=double
-    ] Float64Array : ArrayBufferView {
-        Int32Array foo(in Float32Array array);
-        void set();
-    };
-}
+interface [
+    ConstructorTemplate=TypedArray,
+    ConstructorParameters=123,
+    NumericIndexedGetter,
+    CustomIndexedSetter,
+    JSGenerateToNativeObject,
+    JSNoStaticTables,
+    CustomToJSObject,
+    DoNotCheckConstants,
+    TypedArray=double
+] Float64Array : ArrayBufferView {
+    Int32Array foo(in Float32Array array);
+    void set();
+};

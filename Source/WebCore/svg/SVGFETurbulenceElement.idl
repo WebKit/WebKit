@@ -23,29 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG&FILTERS,
+    DoNotCheckConstants
+] SVGFETurbulenceElement : SVGElement,
+                           SVGFilterPrimitiveStandardAttributes {
+    // Turbulence Types
+    const unsigned short SVG_TURBULENCE_TYPE_UNKNOWN      = 0;
+    const unsigned short SVG_TURBULENCE_TYPE_FRACTALNOISE = 1;
+    const unsigned short SVG_TURBULENCE_TYPE_TURBULENCE   = 2;
 
-    interface [
-        Conditional=SVG&FILTERS,
-        DoNotCheckConstants
-    ] SVGFETurbulenceElement : SVGElement,
-                               SVGFilterPrimitiveStandardAttributes {
-        // Turbulence Types
-        const unsigned short SVG_TURBULENCE_TYPE_UNKNOWN      = 0;
-        const unsigned short SVG_TURBULENCE_TYPE_FRACTALNOISE = 1;
-        const unsigned short SVG_TURBULENCE_TYPE_TURBULENCE   = 2;
+    // Stitch Options
+    const unsigned short SVG_STITCHTYPE_UNKNOWN  = 0;
+    const unsigned short SVG_STITCHTYPE_STITCH   = 1;
+    const unsigned short SVG_STITCHTYPE_NOSTITCH = 2;
 
-        // Stitch Options
-        const unsigned short SVG_STITCHTYPE_UNKNOWN  = 0;
-        const unsigned short SVG_STITCHTYPE_STITCH   = 1;
-        const unsigned short SVG_STITCHTYPE_NOSTITCH = 2;
+    readonly attribute SVGAnimatedNumber      baseFrequencyX;
+    readonly attribute SVGAnimatedNumber      baseFrequencyY;
+    readonly attribute SVGAnimatedInteger     numOctaves;
+    readonly attribute SVGAnimatedNumber      seed;
+    readonly attribute SVGAnimatedEnumeration stitchTiles;
+    readonly attribute SVGAnimatedEnumeration type;
+};
 
-        readonly attribute SVGAnimatedNumber      baseFrequencyX;
-        readonly attribute SVGAnimatedNumber      baseFrequencyY;
-        readonly attribute SVGAnimatedInteger     numOctaves;
-        readonly attribute SVGAnimatedNumber      seed;
-        readonly attribute SVGAnimatedEnumeration stitchTiles;
-        readonly attribute SVGAnimatedEnumeration type;
-    };
-
-}

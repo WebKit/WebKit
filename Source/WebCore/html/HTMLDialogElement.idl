@@ -23,15 +23,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module html {
+interface [
+    Conditional=DIALOG_ELEMENT
+] HTMLDialogElement : HTMLElement {
+    attribute [Reflect] boolean open;
+    void close() raises(DOMException);
+    void show();
+    void showModal() raises(DOMException);
+};
 
-    interface [
-        Conditional=DIALOG_ELEMENT
-    ] HTMLDialogElement : HTMLElement {
-        attribute [Reflect] boolean open;
-        void close() raises(DOMException);
-        void show();
-        void showModal() raises(DOMException);
-    };
-
-}

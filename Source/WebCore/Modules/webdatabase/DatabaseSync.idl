@@ -28,18 +28,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module storage {
+interface [
+    Conditional=SQL_DATABASE,
+    OmitConstructor,
+    JSNoStaticTables
+] DatabaseSync {
+    readonly attribute DOMString version;
+    readonly attribute DOMString lastErrorMessage;
+    void changeVersion(in DOMString oldVersion, in DOMString newVersion, in [Callback, Optional] SQLTransactionSyncCallback callback) raises(DOMException);
+    void transaction(in [Callback] SQLTransactionSyncCallback callback) raises(DOMException);
+    void readTransaction(in [Callback] SQLTransactionSyncCallback callback) raises(DOMException);
+};
 
-    interface [
-        Conditional=SQL_DATABASE,
-        OmitConstructor,
-        JSNoStaticTables
-    ] DatabaseSync {
-        readonly attribute DOMString version;
-        readonly attribute DOMString lastErrorMessage;
-        void changeVersion(in DOMString oldVersion, in DOMString newVersion, in [Callback, Optional] SQLTransactionSyncCallback callback) raises(DOMException);
-        void transaction(in [Callback] SQLTransactionSyncCallback callback) raises(DOMException);
-        void readTransaction(in [Callback] SQLTransactionSyncCallback callback) raises(DOMException);
-    };
-
-}

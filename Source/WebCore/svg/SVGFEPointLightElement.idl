@@ -23,14 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module svg {
+interface [
+    Conditional=SVG&FILTERS
+] SVGFEPointLightElement : SVGElement {
+    readonly attribute SVGAnimatedNumber x;
+    readonly attribute SVGAnimatedNumber y;
+    readonly attribute SVGAnimatedNumber z;
+};
 
-    interface [
-        Conditional=SVG&FILTERS
-    ] SVGFEPointLightElement : SVGElement {
-        readonly attribute SVGAnimatedNumber x;
-        readonly attribute SVGAnimatedNumber y;
-        readonly attribute SVGAnimatedNumber z;
-    };
-
-}

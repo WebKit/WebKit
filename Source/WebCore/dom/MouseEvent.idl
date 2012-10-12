@@ -17,50 +17,47 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module events {
+// Introduced in DOM Level 2:
+interface MouseEvent : UIEvent {
+    readonly attribute long             screenX;
+    readonly attribute long             screenY;
+    readonly attribute long             clientX;
+    readonly attribute long             clientY;
+    readonly attribute [Conditional=POINTER_LOCK, V8EnabledAtRuntime=pointerLock] long webkitMovementX;
+    readonly attribute [Conditional=POINTER_LOCK, V8EnabledAtRuntime=pointerLock] long webkitMovementY;
+    readonly attribute boolean          ctrlKey;
+    readonly attribute boolean          shiftKey;
+    readonly attribute boolean          altKey;
+    readonly attribute boolean          metaKey;
+    readonly attribute unsigned short   button;
+    readonly attribute EventTarget      relatedTarget;
+    
+    [ObjCLegacyUnnamedParameters] void initMouseEvent(in [Optional=DefaultIsUndefined] DOMString type, 
+                                       in [Optional=DefaultIsUndefined] boolean canBubble, 
+                                       in [Optional=DefaultIsUndefined] boolean cancelable, 
+                                       in [Optional=DefaultIsUndefined] DOMWindow view, 
+                                       in [Optional=DefaultIsUndefined] long detail, 
+                                       in [Optional=DefaultIsUndefined] long screenX, 
+                                       in [Optional=DefaultIsUndefined] long screenY, 
+                                       in [Optional=DefaultIsUndefined] long clientX, 
+                                       in [Optional=DefaultIsUndefined] long clientY, 
+                                       in [Optional=DefaultIsUndefined] boolean ctrlKey, 
+                                       in [Optional=DefaultIsUndefined] boolean altKey, 
+                                       in [Optional=DefaultIsUndefined] boolean shiftKey, 
+                                       in [Optional=DefaultIsUndefined] boolean metaKey, 
+                                       in [Optional=DefaultIsUndefined] unsigned short button, 
+                                       in [Optional=DefaultIsUndefined] EventTarget relatedTarget);
 
-    // Introduced in DOM Level 2:
-    interface MouseEvent : UIEvent {
-        readonly attribute long             screenX;
-        readonly attribute long             screenY;
-        readonly attribute long             clientX;
-        readonly attribute long             clientY;
-        readonly attribute [Conditional=POINTER_LOCK, V8EnabledAtRuntime=pointerLock] long webkitMovementX;
-        readonly attribute [Conditional=POINTER_LOCK, V8EnabledAtRuntime=pointerLock] long webkitMovementY;
-        readonly attribute boolean          ctrlKey;
-        readonly attribute boolean          shiftKey;
-        readonly attribute boolean          altKey;
-        readonly attribute boolean          metaKey;
-        readonly attribute unsigned short   button;
-        readonly attribute EventTarget      relatedTarget;
-        
-        [ObjCLegacyUnnamedParameters] void initMouseEvent(in [Optional=DefaultIsUndefined] DOMString type, 
-                                           in [Optional=DefaultIsUndefined] boolean canBubble, 
-                                           in [Optional=DefaultIsUndefined] boolean cancelable, 
-                                           in [Optional=DefaultIsUndefined] DOMWindow view, 
-                                           in [Optional=DefaultIsUndefined] long detail, 
-                                           in [Optional=DefaultIsUndefined] long screenX, 
-                                           in [Optional=DefaultIsUndefined] long screenY, 
-                                           in [Optional=DefaultIsUndefined] long clientX, 
-                                           in [Optional=DefaultIsUndefined] long clientY, 
-                                           in [Optional=DefaultIsUndefined] boolean ctrlKey, 
-                                           in [Optional=DefaultIsUndefined] boolean altKey, 
-                                           in [Optional=DefaultIsUndefined] boolean shiftKey, 
-                                           in [Optional=DefaultIsUndefined] boolean metaKey, 
-                                           in [Optional=DefaultIsUndefined] unsigned short button, 
-                                           in [Optional=DefaultIsUndefined] EventTarget relatedTarget);
-
-        // extensions
-        readonly attribute long             offsetX;
-        readonly attribute long             offsetY;
-        readonly attribute long             x;
-        readonly attribute long             y;
-        readonly attribute Node             fromElement;
-        readonly attribute Node             toElement;
+    // extensions
+    readonly attribute long             offsetX;
+    readonly attribute long             offsetY;
+    readonly attribute long             x;
+    readonly attribute long             y;
+    readonly attribute Node             fromElement;
+    readonly attribute Node             toElement;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        readonly attribute Clipboard        dataTransfer;
+    readonly attribute Clipboard        dataTransfer;
 #endif
-    };
+};
 
-}

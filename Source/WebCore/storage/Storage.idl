@@ -23,22 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module storage {
+interface [
+    NamedGetter,
+    JSGenerateIsReachable=ImplFrame,
+    CustomDeleteProperty,
+    CustomEnumerateProperty,
+    CustomNamedSetter,
+] Storage {
+    readonly attribute [NotEnumerable] unsigned long length;
+    [NotEnumerable, TreatReturnedNullStringAs=Null] DOMString key(in unsigned long index);
+    [NotEnumerable, TreatReturnedNullStringAs=Null] DOMString getItem(in DOMString key);
+    [NotEnumerable] void setItem(in DOMString key, in DOMString data) 
+        raises(DOMException);
+    [NotEnumerable] void removeItem(in DOMString key);
+    [NotEnumerable] void clear();
+};
 
-    interface [
-        NamedGetter,
-        JSGenerateIsReachable=ImplFrame,
-        CustomDeleteProperty,
-        CustomEnumerateProperty,
-        CustomNamedSetter,
-    ] Storage {
-        readonly attribute [NotEnumerable] unsigned long length;
-        [NotEnumerable, TreatReturnedNullStringAs=Null] DOMString key(in unsigned long index);
-        [NotEnumerable, TreatReturnedNullStringAs=Null] DOMString getItem(in DOMString key);
-        [NotEnumerable] void setItem(in DOMString key, in DOMString data) 
-            raises(DOMException);
-        [NotEnumerable] void removeItem(in DOMString key);
-        [NotEnumerable] void clear();
-    };
-
-}

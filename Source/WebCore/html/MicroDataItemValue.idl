@@ -28,12 +28,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module html {
-    interface [
-        Conditional=MICRODATA,
-        CustomToJSObject,
-        OmitConstructor
-    ] MicroDataItemValue {
-    };
-}
-
+interface [
+    Conditional=MICRODATA,
+    CustomToJSObject,
+    OmitConstructor
+] MicroDataItemValue {
+};

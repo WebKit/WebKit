@@ -18,25 +18,22 @@
  * Boston, MA 02110-1301, USA.
  */
 
-module html {
-
-    interface [
-        JSGenerateToNativeObject,
-        NamedConstructor=Option(in [Optional=DefaultIsNullString] DOMString data, in [Optional=DefaultIsNullString] DOMString value, in [Optional=DefaultIsUndefined] boolean defaultSelected, in [Optional=DefaultIsUndefined] boolean selected),
-        ConstructorRaisesException
-    ] HTMLOptionElement : HTMLElement {
-        attribute [Reflect] boolean disabled;
-        readonly attribute HTMLFormElement form;
-        attribute DOMString label;
-        attribute [Reflect=selected] boolean defaultSelected;
-        attribute boolean selected;
-        attribute DOMString value;
+interface [
+    JSGenerateToNativeObject,
+    NamedConstructor=Option(in [Optional=DefaultIsNullString] DOMString data, in [Optional=DefaultIsNullString] DOMString value, in [Optional=DefaultIsUndefined] boolean defaultSelected, in [Optional=DefaultIsUndefined] boolean selected),
+    ConstructorRaisesException
+] HTMLOptionElement : HTMLElement {
+    attribute [Reflect] boolean disabled;
+    readonly attribute HTMLFormElement form;
+    attribute DOMString label;
+    attribute [Reflect=selected] boolean defaultSelected;
+    attribute boolean selected;
+    attribute DOMString value;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        attribute DOMString text setter raises(DOMException);
+    attribute DOMString text setter raises(DOMException);
 #else
-        readonly attribute DOMString text;
+    readonly attribute DOMString text;
 #endif
-        readonly attribute long index;
-    };
-}
+    readonly attribute long index;
+};

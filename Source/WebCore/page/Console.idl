@@ -26,42 +26,39 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module window {
+interface [
+    JSGenerateIsReachable=ImplFrame,
+    OmitConstructor
+] Console {
 
-    interface [
-        JSGenerateIsReachable=ImplFrame,
-        OmitConstructor
-    ] Console {
-
-        [CallWith=ScriptArguments|CallStack] void debug();
-        [CallWith=ScriptArguments|CallStack] void error();
-        [CallWith=ScriptArguments|CallStack] void info();
-        [CallWith=ScriptArguments|CallStack] void log();
-        [CallWith=ScriptArguments|CallStack] void warn();
-        [CallWith=ScriptArguments|CallStack] void dir();
-        [CallWith=ScriptArguments|CallStack] void dirxml();
-        [V8Custom, CallWith=ScriptArguments|CallStack] void trace();
-        [V8Custom, CallWith=ScriptArguments|CallStack, ImplementedAs=assertCondition] void assert(in boolean condition);
-        [CallWith=ScriptArguments|CallStack] void count();
-        [CallWith=ScriptArguments|CallStack] void markTimeline();
+    [CallWith=ScriptArguments|CallStack] void debug();
+    [CallWith=ScriptArguments|CallStack] void error();
+    [CallWith=ScriptArguments|CallStack] void info();
+    [CallWith=ScriptArguments|CallStack] void log();
+    [CallWith=ScriptArguments|CallStack] void warn();
+    [CallWith=ScriptArguments|CallStack] void dir();
+    [CallWith=ScriptArguments|CallStack] void dirxml();
+    [V8Custom, CallWith=ScriptArguments|CallStack] void trace();
+    [V8Custom, CallWith=ScriptArguments|CallStack, ImplementedAs=assertCondition] void assert(in boolean condition);
+    [CallWith=ScriptArguments|CallStack] void count();
+    [CallWith=ScriptArguments|CallStack] void markTimeline();
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
-        // As per spec: http://www.w3.org/TR/WebIDL/#idl-sequence
-        // "Sequences must not be used as the type of an attribute, constant or exception field."
-        // FIXME: this will lead to BUG console.profiles !== console.profiles as profile will always returns new array.
-        readonly attribute ScriptProfile[] profiles;
-        [Custom] void profile(in DOMString title);
-        [Custom] void profileEnd(in DOMString title);
+    // As per spec: http://www.w3.org/TR/WebIDL/#idl-sequence
+    // "Sequences must not be used as the type of an attribute, constant or exception field."
+    // FIXME: this will lead to BUG console.profiles !== console.profiles as profile will always returns new array.
+    readonly attribute ScriptProfile[] profiles;
+    [Custom] void profile(in DOMString title);
+    [Custom] void profileEnd(in DOMString title);
 #endif
 
-        void time(in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=DefaultIsUndefined] DOMString title);
-        [CallWith=ScriptArguments|CallStack] void timeEnd(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString title);
-        [CallWith=ScriptArguments|CallStack] void timeStamp();
-        [CallWith=ScriptArguments|CallStack] void group();
-        [CallWith=ScriptArguments|CallStack] void groupCollapsed();
-        void groupEnd();
+    void time(in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=DefaultIsUndefined] DOMString title);
+    [CallWith=ScriptArguments|CallStack] void timeEnd(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString title);
+    [CallWith=ScriptArguments|CallStack] void timeStamp();
+    [CallWith=ScriptArguments|CallStack] void group();
+    [CallWith=ScriptArguments|CallStack] void groupCollapsed();
+    void groupEnd();
 
-        readonly attribute [V8CustomGetter] MemoryInfo memory;
-    };
+    readonly attribute [V8CustomGetter] MemoryInfo memory;
+};
 
-}

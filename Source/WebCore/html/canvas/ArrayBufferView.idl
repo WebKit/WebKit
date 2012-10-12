@@ -23,14 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module html {
-    interface [
-        CustomToJSObject,
-        JSNoStaticTables,
-        OmitConstructor
-    ] ArrayBufferView {
-        readonly attribute ArrayBuffer buffer;
-        readonly attribute unsigned long byteOffset;
-        readonly attribute unsigned long byteLength;
-    };
-}
+interface [
+    CustomToJSObject,
+    JSNoStaticTables,
+    OmitConstructor
+] ArrayBufferView {
+    readonly attribute ArrayBuffer buffer;
+    readonly attribute unsigned long byteOffset;
+    readonly attribute unsigned long byteLength;
+};
