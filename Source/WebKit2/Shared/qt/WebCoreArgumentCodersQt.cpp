@@ -34,100 +34,32 @@ using namespace WebCore;
  
 namespace CoreIPC {
 
-void ArgumentCoder<ResourceRequest>::encode(ArgumentEncoder* encoder, const ResourceRequest& resourceRequest)
+void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder* encoder, const ResourceRequest& resourceRequest)
 {
-    encoder->encode(resourceRequest.url().string());
 }
 
-bool ArgumentCoder<ResourceRequest>::decode(ArgumentDecoder* decoder, ResourceRequest& resourceRequest)
+bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder* decoder, ResourceRequest& resourceRequest)
 {
-    // FIXME: Add *more* coding implementation when we want to implement something that
-    // depends on this like the policy client.
-
-    String url;
-    if (!decoder->decode(url))
-        return false;
-    resourceRequest.setURL(KURL(KURL(), url));
     return true;
 }
 
 
-void ArgumentCoder<ResourceResponse>::encode(ArgumentEncoder* encoder, const ResourceResponse& resourceResponse)
+void ArgumentCoder<ResourceResponse>::encodePlatformData(ArgumentEncoder* encoder, const ResourceResponse& resourceResponse)
 {
-    encoder->encode(resourceResponse.url().string());
-    encoder->encode(resourceResponse.mimeType());
-    encoder->encode(static_cast<int64_t>(resourceResponse.expectedContentLength()));
-    encoder->encode(resourceResponse.textEncodingName());
-    encoder->encode(resourceResponse.suggestedFilename());
 }
 
-bool ArgumentCoder<ResourceResponse>::decode(ArgumentDecoder* decoder, ResourceResponse& resourceResponse)
+bool ArgumentCoder<ResourceResponse>::decodePlatformData(ArgumentDecoder* decoder, ResourceResponse& resourceResponse)
 {
-    ResourceResponse response;
-
-    String url;
-    if (!decoder->decode(url))
-        return false;
-    response.setURL(KURL(WebCore::ParsedURLString, url));
-
-    String mimeType;
-    if (!decoder->decode(mimeType))
-        return false;
-    response.setMimeType(mimeType);
-
-    int64_t contentLength;
-    if (!decoder->decode(contentLength))
-        return false;
-    response.setExpectedContentLength(contentLength);
-
-    String textEncodingName;
-    if (!decoder->decode(textEncodingName))
-        return false;
-    response.setTextEncodingName(textEncodingName);
-
-    String suggestedFilename;
-    if (!decoder->decode(suggestedFilename))
-        return false;
-    response.setSuggestedFilename(suggestedFilename);
-
-    resourceResponse = response;
     return true;
 }
 
 
-void ArgumentCoder<ResourceError>::encode(ArgumentEncoder* encoder, const ResourceError& resourceError)
+void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder* encoder, const ResourceError& resourceError)
 {
-    encoder->encode(resourceError.domain());
-    encoder->encode(resourceError.errorCode());
-    encoder->encode(resourceError.failingURL());
-    encoder->encode(resourceError.localizedDescription());
-    encoder->encode(resourceError.isCancellation());
 }
 
-bool ArgumentCoder<ResourceError>::decode(ArgumentDecoder* decoder, ResourceError& resourceError)
+bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder* decoder, ResourceError& resourceError)
 {
-    String domain;
-    if (!decoder->decode(domain))
-        return false;
-
-    int errorCode;
-    if (!decoder->decode(errorCode))
-        return false;
-
-    String failingURL;
-    if (!decoder->decode(failingURL))
-        return false;
-
-    String localizedDescription;
-    if (!decoder->decode(localizedDescription))
-        return false;
-
-    bool isCancellation;
-    if (!decoder->decode(isCancellation))
-        return false;
-
-    resourceError = ResourceError(domain, errorCode, failingURL, localizedDescription);
-    resourceError.setIsCancellation(isCancellation);
     return true;
 }
 

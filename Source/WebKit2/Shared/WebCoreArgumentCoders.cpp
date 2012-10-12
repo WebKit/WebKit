@@ -41,6 +41,9 @@
 #include <WebCore/KURL.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/ProtectionSpace.h>
+#include <WebCore/ResourceError.h>
+#include <WebCore/ResourceRequest.h>
+#include <WebCore/ResourceResponse.h>
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/ViewportArguments.h>
 #include <WebCore/WindowFeatures.h>
@@ -387,6 +390,212 @@ bool ArgumentCoder<Cursor>::decode(ArgumentDecoder* decoder, Cursor& cursor)
     return true;
 }
 
+void ArgumentCoder<ResourceRequest>::encode(ArgumentEncoder* encoder, const ResourceRequest& resourceRequest)
+{
+    if (kShouldSerializeWebCoreData) {
+        encoder->encode(resourceRequest.url().string());
+        encoder->encode(resourceRequest.httpMethod());
+
+        const HTTPHeaderMap& headers = resourceRequest.httpHeaderFields();
+        encoder->encode(headers);
+
+        FormData* httpBody = resourceRequest.httpBody();
+        encoder->encode(static_cast<bool>(httpBody));
+        if (httpBody)
+            encoder->encode(httpBody->flattenToString());
+
+        encoder->encode(resourceRequest.firstPartyForCookies().string());
+    }
+
+    encodePlatformData(encoder, resourceRequest);
+}
+
+bool ArgumentCoder<ResourceRequest>::decode(ArgumentDecoder* decoder, ResourceRequest& resourceRequest)
+{
+    if (kShouldSerializeWebCoreData) {
+        ResourceRequest request;
+
+        String url;
+        if (!decoder->decode(url))
+            return false;
+        request.setURL(KURL(KURL(), url));
+
+        String httpMethod;
+        if (!decoder->decode(httpMethod))
+            return false;
+        request.setHTTPMethod(httpMethod);
+
+        HTTPHeaderMap headers;
+        if (!decoder->decode(headers))
+            return false;
+        request.addHTTPHeaderFields(headers);
+
+        bool hasHTTPBody;
+        if (!decoder->decode(hasHTTPBody))
+            return false;
+        if (hasHTTPBody) {
+            String httpBody;
+            if (!decoder->decode(httpBody))
+                return false;
+            request.setHTTPBody(FormData::create(httpBody.utf8()));
+        }
+
+        String firstPartyForCookies;
+        if (!decoder->decode(firstPartyForCookies))
+            return false;
+        request.setFirstPartyForCookies(KURL(KURL(), firstPartyForCookies));
+
+        resourceRequest = request;
+    }
+
+    return decodePlatformData(decoder, resourceRequest);
+}
+
+void ArgumentCoder<ResourceResponse>::encode(ArgumentEncoder* encoder, const ResourceResponse& resourceResponse)
+{
+    if (kShouldSerializeWebCoreData) {
+        bool responseIsNull = resourceResponse.isNull();
+        encoder->encode(responseIsNull);
+        if (responseIsNull)
+            return;
+
+        encoder->encode(resourceResponse.url().string());
+        encoder->encode(static_cast<int32_t>(resourceResponse.httpStatusCode()));
+
+        const HTTPHeaderMap& headers = resourceResponse.httpHeaderFields();
+        encoder->encode(headers);
+
+        encoder->encode(resourceResponse.mimeType());
+        encoder->encode(resourceResponse.textEncodingName());
+        encoder->encode(static_cast<int64_t>(resourceResponse.expectedContentLength()));
+        encoder->encode(resourceResponse.httpStatusText());
+        encoder->encode(resourceResponse.suggestedFilename());
+    }
+
+    encodePlatformData(encoder, resourceResponse);
+}
+
+bool ArgumentCoder<ResourceResponse>::decode(ArgumentDecoder* decoder, ResourceResponse& resourceResponse)
+{
+    if (kShouldSerializeWebCoreData) {
+        bool responseIsNull;
+        if (!decoder->decode(responseIsNull))
+            return false;
+        if (responseIsNull) {
+            resourceResponse = ResourceResponse();
+            return true;
+        }
+
+        ResourceResponse response;
+
+        String url;
+        if (!decoder->decode(url))
+            return false;
+        response.setURL(KURL(KURL(), url));
+
+        int32_t httpStatusCode;
+        if (!decoder->decode(httpStatusCode))
+            return false;
+        response.setHTTPStatusCode(httpStatusCode);
+
+        HTTPHeaderMap headers;
+        if (!decoder->decode(headers))
+            return false;
+        for (HTTPHeaderMap::const_iterator it = headers.begin(), end = headers.end(); it != end; ++it)
+            response.setHTTPHeaderField(it->first, it->second);
+
+        String mimeType;
+        if (!decoder->decode(mimeType))
+            return false;
+        response.setMimeType(mimeType);
+
+        String textEncodingName;
+        if (!decoder->decode(textEncodingName))
+            return false;
+        response.setTextEncodingName(textEncodingName);
+
+        int64_t contentLength;
+        if (!decoder->decode(contentLength))
+            return false;
+        response.setExpectedContentLength(contentLength);
+
+        String httpStatusText;
+        if (!decoder->decode(httpStatusText))
+            return false;
+        response.setHTTPStatusText(httpStatusText);
+
+        String suggestedFilename;
+        if (!decoder->decode(suggestedFilename))
+            return false;
+        response.setSuggestedFilename(suggestedFilename);
+
+        resourceResponse = response;
+    }
+
+    return decodePlatformData(decoder, resourceResponse);
+}
+
+void ArgumentCoder<ResourceError>::encode(ArgumentEncoder* encoder, const ResourceError& resourceError)
+{
+    if (kShouldSerializeWebCoreData) {
+        bool errorIsNull = resourceError.isNull();
+        encoder->encode(errorIsNull);
+        if (errorIsNull)
+            return;
+
+        encoder->encode(resourceError.domain());
+        encoder->encode(resourceError.errorCode());
+        encoder->encode(resourceError.failingURL());
+        encoder->encode(resourceError.localizedDescription());
+        encoder->encode(resourceError.isCancellation());
+        encoder->encode(resourceError.isTimeout());
+    }
+
+    encodePlatformData(encoder, resourceError);
+}
+
+bool ArgumentCoder<ResourceError>::decode(ArgumentDecoder* decoder, ResourceError& resourceError)
+{
+    if (kShouldSerializeWebCoreData) {
+        bool errorIsNull;
+        if (!decoder->decode(errorIsNull))
+            return false;
+        if (errorIsNull) {
+            resourceError = ResourceError();
+            return true;
+        }
+
+        String domain;
+        if (!decoder->decode(domain))
+            return false;
+
+        int errorCode;
+        if (!decoder->decode(errorCode))
+            return false;
+
+        String failingURL;
+        if (!decoder->decode(failingURL))
+            return false;
+
+        String localizedDescription;
+        if (!decoder->decode(localizedDescription))
+            return false;
+
+        bool isCancellation;
+        if (!decoder->decode(isCancellation))
+            return false;
+
+        bool isTimeout;
+        if (!decoder->decode(isTimeout))
+            return false;
+
+        resourceError = ResourceError(domain, errorCode, failingURL, localizedDescription);
+        resourceError.setIsCancellation(isCancellation);
+        resourceError.setIsTimeout(isTimeout);
+    }
+
+    return decodePlatformData(decoder, resourceError);
+}
 
 void ArgumentCoder<WindowFeatures>::encode(ArgumentEncoder* encoder, const WindowFeatures& windowFeatures)
 {

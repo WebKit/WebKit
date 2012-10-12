@@ -1,3 +1,20 @@
+2012-10-12  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [WK2] Serialization of Resource[Request,Response,Error] should be shared across ports
+        https://bugs.webkit.org/show_bug.cgi?id=90142
+
+        Reviewed by Simon Hausmann.
+
+        Added a setter for the certificate of ResourceError.
+
+        No change in behavior so no new tests.
+
+        * platform/network/cf/ResourceError.h:
+        (ResourceError):
+        * platform/network/cf/ResourceErrorCF.cpp:
+        (WebCore):
+        (WebCore::ResourceError::setCertificate):
+
 2012-10-12  MORITA Hajime  <morrita@google.com>
 
         [V8] PerContextEnabled methods should be installed when the constructor is created

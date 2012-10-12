@@ -1,5 +1,34 @@
 2012-10-12  Balazs Kelemen  <kbalazs@webkit.org>
 
+        [WK2] Serialization of Resource[Request,Response,Error] should be shared across ports
+        https://bugs.webkit.org/show_bug.cgi?id=90142
+
+        Reviewed by Simon Hausmann.
+
+        Share common serialization code across Qt and soup ports.
+        All of these ports serialize the WebCore representation
+        of these types.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC):
+        (CoreIPC::::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (CoreIPC::::encodePlatformData):
+        (CoreIPC::::decodePlatformData):
+        * Shared/qt/WebCoreArgumentCodersQt.cpp:
+        (CoreIPC::::encodePlatformData):
+        (CoreIPC::::decodePlatformData):
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (CoreIPC::::encodePlatformData):
+        (CoreIPC::::decodePlatformData):
+        * Shared/win/WebCoreArgumentCodersWin.cpp:
+        (CoreIPC::::encodePlatformData):
+        (CoreIPC::::decodePlatformData):
+
+2012-10-12  Balazs Kelemen  <kbalazs@webkit.org>
+
         Unreviewed, rolling out r130389.
         http://trac.webkit.org/changeset/130389
         https://bugs.webkit.org/show_bug.cgi?id=98048
