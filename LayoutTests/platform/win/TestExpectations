@@ -2322,3 +2322,7 @@ fast/text/international/float-as-only-child-of-isolate-crash.html
 
 # HIDDEN_PAGE_DOM_TIMER_THROTTLING is disabled
 fast/dom/timer-throttling-hidden-page.html
+
+# CSS_COMPOSITING is disabled (CIFilters don't work on Windows)
+css3/compositing/
+transitions/blendmode-transitions.html

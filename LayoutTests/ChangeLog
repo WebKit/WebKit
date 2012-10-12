@@ -1,3 +1,9 @@
+2012-10-12  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Skipping tests involving CSS_COMPOSITING on Windows. Feature isn't and should not be enabled.
+
+        * platform/win/TestExpectations:
+
 2012-10-12  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed cleanup, remove unneeded XP specific rebaselines for chromium.
