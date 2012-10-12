@@ -1,3 +1,9 @@
+2012-10-12  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skip test using disabled SHADOW_DOM.
+
+        * platform/qt/TestExpectations: Skip fast/dom/shadow/insertion-point-resetStyleInheritance.html.
+
 2012-10-11  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Chromium] Unreviewed gardening, TestExpectation updated.

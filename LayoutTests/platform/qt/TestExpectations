@@ -208,6 +208,7 @@ fast/dom/shadow/has-shadow-insertion-point.html
 fast/dom/shadow/iframe-shadow.html
 fast/dom/shadow/invalidate-distribution.html
 fast/dom/shadow/insertion-point-list-menu-crash.html
+fast/dom/shadow/insertion-point-resetStyleInheritance.html
 fast/dom/shadow/insertion-point-shadow-crash.html
 fast/dom/shadow/insertion-point-video-crash.html
 fast/dom/shadow/link-in-shadow-tree.html
