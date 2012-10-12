@@ -9,8 +9,8 @@ layer at (0,0) size 800x600
           text run at (235,0) width 548: "The first word of the following three words should be displayed like \"WebKit\", while others"
           text run at (0,20) width 217: "should be displayed as black boxes."
       RenderBlock {DIV} at (0,56) size 784x18
-        RenderText {#text} at (0,0) size 96x17
-          text run at (0,0) width 96: "WebKit"
+        RenderText {#text} at (0,0) size 30x17
+          text run at (0,0) width 30: "WebKit"
       RenderBlock {DIV} at (0,74) size 784x18
         RenderText {#text} at (0,0) size 96x17
           text run at (0,0) width 96: "WebKit"

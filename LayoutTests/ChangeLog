@@ -1,3 +1,68 @@
+2012-10-12  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Unreviewed test expectations update after r131134
+
+        * platform/chromium-linux/css3/font-feature-settings-rendering-expected.txt:
+        * platform/chromium-linux/fast/text/atsui-negative-spacing-features-expected.png:
+        * platform/chromium-linux/fast/text/atsui-spacing-features-expected.png:
+        * platform/chromium-linux/fast/text/cg-vs-atsui-expected.png:
+        * platform/chromium-linux/fast/text/complex-text-opacity-expected.png:
+        * platform/chromium-linux/fast/text/drawBidiText-expected.png:
+        * platform/chromium-linux/fast/text/international/arabic-justify-expected.png:
+        * platform/chromium-linux/fast/text/international/arabic-vertical-offset-expected.png:
+        * platform/chromium-linux/fast/text/international/complex-joining-using-gpos-expected.png:
+        * platform/chromium-linux/fast/text/international/hebrew-vowels-expected.png:
+        * platform/chromium-linux/fast/text/international/hindi-spacing-expected.png:
+        * platform/chromium-linux/fast/text/international/khmer-selection-expected.png:
+        * platform/chromium-linux/fast/text/international/khmer-selection-expected.txt:
+        * platform/chromium-linux/fast/text/international/text-spliced-font-expected.png:
+        * platform/chromium-linux/fast/text/international/thai-line-breaks-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/g-dirLTR-ubOverride-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/g-dirRTL-ubOverride-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-no-markup-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-dirLTR-ubOverride-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-dirLTR-ubOverride-expected.txt:
+        * platform/chromium-linux/svg/W3C-I18N/text-dirRTL-ubOverride-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.txt:
+        * platform/chromium-linux/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.txt:
+        * platform/chromium-linux/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.txt:
+        * platform/chromium-linux/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.txt:
+        * platform/chromium-linux/svg/W3C-I18N/tspan-dirNone-ubOverride-in-rtl-context-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-default-context-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-ltr-context-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/tspan-direction-rtl-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-intro-05-t-expected.png:
+        * platform/chromium-linux/svg/text/bidi-text-query-expected.png:
+        * platform/chromium-linux/svg/text/bidi-text-query-expected.txt:
+        * platform/chromium-linux/svg/text/bidi-tspans-expected.png:
+        * platform/chromium-linux/svg/text/text-intro-05-t-expected.png:
+        * platform/chromium-linux/svg/text/text-with-geometric-precision-expected.png:
+        * platform/chromium-linux/transforms/2d/hindi-rotated-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-10-12  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
