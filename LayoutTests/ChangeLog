@@ -1,3 +1,11 @@
+2012-10-11  Shinya Kawanaka  <shinyak@chromium.org> 
+
+        [Chromium] Unreviewed gardening, rebaselined.
+
+        * platform/chromium-linux/platform/chromium/compositing/tiny-layer-rotated-expected.png:
+        * platform/chromium-mac/platform/chromium/compositing/tiny-layer-rotated-expected.png:
+        * platform/chromium-win/platform/chromium/compositing/tiny-layer-rotated-expected.png:
+
 2012-10-11  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Chromium] Unreviewed gardening, rebaselined.
