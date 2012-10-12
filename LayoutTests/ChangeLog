@@ -1,5 +1,20 @@
 2012-10-12  Emil A Eklund  <eae@chromium.org>
 
+        Unreviewed chromium windows rebaseline for r131202.
+
+        * platform/chromium-linux/fast/repaint/repaint-during-scroll-with-zoom-expected.txt: Removed.
+        * platform/chromium-linux/transforms/3d/point-mapping/3d-point-mapping-3-expected.png:
+        * platform/chromium-linux/transforms/3d/point-mapping/3d-point-mapping-expected.png:
+        * platform/chromium-linux/transforms/3d/point-mapping/3d-point-mapping-origins-expected.png:
+        * platform/chromium-linux/transforms/3d/point-mapping/3d-point-mapping-overlapping-expected.png:
+        * platform/chromium-linux/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.png:
+        * platform/chromium-win/fast/repaint/repaint-during-scroll-with-zoom-expected.txt:
+        * platform/chromium-win/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-win/fast/speech/input-appearance-searchandspeech-expected.txt:
+        * platform/chromium-win/fast/writing-mode/fieldsets-expected.png:
+
+2012-10-12  Emil A Eklund  <eae@chromium.org>
+
         Unreviewed chromium rebaseline for r131216.
 
         * fast/box-sizing/box-sizing-expected.txt: Replaced.

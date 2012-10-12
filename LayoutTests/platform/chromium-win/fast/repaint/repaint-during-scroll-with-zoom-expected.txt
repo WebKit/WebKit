@@ -4,7 +4,7 @@ layer at (0,0) size 800x0
   RenderBlock {HTML} at (0,0) size 800x0
     RenderBody {BODY} at (0,0) size 800x0 [bgcolor=#C0C0C0]
 layer at (0,63) size 254x254
-  RenderPartObject {IFRAME} at (0,63) size 254x254 [border: (2px inset #000000)]
+  RenderPartObject {IFRAME} at (0,62) size 254x255 [border: (2px inset #000000)]
     layer at (0,0) size 2008x2016
       RenderView at (0,0) size 235x235
     layer at (0,0) size 235x2016
