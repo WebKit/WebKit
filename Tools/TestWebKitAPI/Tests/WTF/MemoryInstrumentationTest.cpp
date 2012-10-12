@@ -30,16 +30,13 @@
 
 #include "config.h"
 
-#include "DataRef.h"
-#include "MemoryInstrumentationImpl.h"
-#include "WebCoreMemoryInstrumentation.h"
-
 #include <gtest/gtest.h>
 
 #include <wtf/ArrayBuffer.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/MemoryInstrumentation.h>
 #include <wtf/MemoryInstrumentationArrayBufferView.h>
 #include <wtf/MemoryInstrumentationHashCountedSet.h>
 #include <wtf/MemoryInstrumentationHashMap.h>
@@ -54,8 +51,6 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/StringImpl.h>
 #include <wtf/text/WTFString.h>
-
-using namespace WebCore;
 
 namespace {
 enum TestEnum { ONE = 1, TWO, THREE, MY_ENUM_MAX };
@@ -78,20 +73,75 @@ template<> struct HashTraits<TestEnum> : GenericHashTraits<TestEnum> {
 
 namespace {
 
-class InstrumentationTestHelper {
-public:
-    InstrumentationTestHelper() : m_client(0), m_instrumentation(&m_client) { }
+using WTF::MemoryObjectInfo;
+using WTF::MemoryClassInfo;
+using WTF::MemoryObjectType;
 
-    template<typename T>
-    void addRootObject(const T& t) { m_instrumentation.addRootObject(t); }
+MemoryObjectType TestType = "TestType";
+
+class InstrumentationTestHelper : public WTF::MemoryInstrumentation {
+public:
+    InstrumentationTestHelper()
+        : MemoryInstrumentation(&m_client)
+    { }
+
+    virtual void processDeferredInstrumentedPointers();
+    virtual void deferInstrumentedPointer(PassOwnPtr<InstrumentedPointerBase>);
+
+    size_t visitedObjects() const { return m_client.visitedObjects(); }
     size_t reportedSizeForAllTypes() const { return m_client.reportedSizeForAllTypes(); }
-    int visitedObjects() const { return m_client.visitedObjects(); }
-    size_t totalSize(MemoryObjectType objectType) const { return m_client.totalSize(objectType); }
+    size_t totalSize(const MemoryObjectType objectType) const { return m_client.totalSize(objectType); }
 
 private:
-    MemoryInstrumentationClientImpl m_client;
-    MemoryInstrumentationImpl m_instrumentation;
+    class Client : public WTF::MemoryInstrumentationClient {
+    public:
+        virtual void countObjectSize(const MemoryObjectType objectType, size_t size)
+        {
+            TypeToSizeMap::AddResult result = m_totalSizes.add(objectType, size);
+            if (!result.isNewEntry)
+                result.iterator->value += size;
+        }
+        virtual bool visited(const void* object) { return !m_visitedObjects.add(object).isNewEntry; }
+        virtual void checkCountedObject(const void*) { }
+
+        size_t visitedObjects() const { return m_visitedObjects.size(); }
+        size_t totalSize(const MemoryObjectType objectType) const
+        {
+            TypeToSizeMap::const_iterator i = m_totalSizes.find(objectType);
+            return i == m_totalSizes.end() ? 0 : i->value;
+        }
+
+        size_t reportedSizeForAllTypes() const
+        {
+            size_t size = 0;
+            for (TypeToSizeMap::const_iterator i = m_totalSizes.begin(); i != m_totalSizes.end(); ++i)
+                size += i->value;
+            return size;
+        }
+
+    private:
+        typedef HashMap<MemoryObjectType, size_t> TypeToSizeMap;
+        TypeToSizeMap m_totalSizes;
+        WTF::HashSet<const void*> m_visitedObjects;
+    };
+
+    Client m_client;
+    Vector<OwnPtr<InstrumentedPointerBase> > m_deferredInstrumentedPointers;
 };
+
+void InstrumentationTestHelper::processDeferredInstrumentedPointers()
+{
+    while (!m_deferredInstrumentedPointers.isEmpty()) {
+        OwnPtr<InstrumentedPointerBase> pointer = m_deferredInstrumentedPointers.last().release();
+        m_deferredInstrumentedPointers.removeLast();
+        pointer->process(this);
+    }
+}
+
+void InstrumentationTestHelper::deferInstrumentedPointer(PassOwnPtr<InstrumentedPointerBase> pointer)
+{
+    m_deferredInstrumentedPointers.append(pointer);
+}
 
 class NotInstrumented {
 public:
@@ -106,7 +156,7 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+        MemoryClassInfo info(memoryObjectInfo, this, TestType);
         info.addMember(m_notInstrumented);
     }
     NotInstrumented* m_notInstrumented;
@@ -118,7 +168,7 @@ TEST(MemoryInstrumentationTest, sizeOf)
     Instrumented instrumented;
     helper.addRootObject(instrumented);
     EXPECT_EQ(sizeof(NotInstrumented), helper.reportedSizeForAllTypes());
-    EXPECT_EQ(1, helper.visitedObjects());
+    EXPECT_EQ(1u, helper.visitedObjects());
 }
 
 TEST(MemoryInstrumentationTest, nullCheck)
@@ -127,7 +177,7 @@ TEST(MemoryInstrumentationTest, nullCheck)
     Instrumented* instrumented = 0;
     helper.addRootObject(instrumented);
     EXPECT_EQ(0u, helper.reportedSizeForAllTypes());
-    EXPECT_EQ(0, helper.visitedObjects());
+    EXPECT_EQ(0u, helper.visitedObjects());
 }
 
 TEST(MemoryInstrumentationTest, ptrVsRef)
@@ -137,14 +187,14 @@ TEST(MemoryInstrumentationTest, ptrVsRef)
         Instrumented instrumented;
         helper.addRootObject(&instrumented);
         EXPECT_EQ(sizeof(Instrumented) + sizeof(NotInstrumented), helper.reportedSizeForAllTypes());
-        EXPECT_EQ(2, helper.visitedObjects());
+        EXPECT_EQ(2u, helper.visitedObjects());
     }
     {
         InstrumentationTestHelper helper;
         Instrumented instrumented;
         helper.addRootObject(instrumented);
         EXPECT_EQ(sizeof(NotInstrumented), helper.reportedSizeForAllTypes());
-        EXPECT_EQ(1, helper.visitedObjects());
+        EXPECT_EQ(1u, helper.visitedObjects());
     }
 }
 
@@ -154,7 +204,7 @@ TEST(MemoryInstrumentationTest, ownPtr)
     OwnPtr<Instrumented> instrumented(adoptPtr(new Instrumented));
     helper.addRootObject(instrumented);
     EXPECT_EQ(sizeof(Instrumented) + sizeof(NotInstrumented), helper.reportedSizeForAllTypes());
-    EXPECT_EQ(2, helper.visitedObjects());
+    EXPECT_EQ(2u, helper.visitedObjects());
 }
 
 class InstrumentedRefPtr : public RefCounted<InstrumentedRefPtr> {
@@ -165,21 +215,11 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+        MemoryClassInfo info(memoryObjectInfo, this, TestType);
         info.addMember(m_notInstrumented);
     }
     NotInstrumented* m_notInstrumented;
 };
-
-TEST(MemoryInstrumentationTest, dataRef)
-{
-    InstrumentationTestHelper helper;
-    DataRef<InstrumentedRefPtr> instrumentedRefPtr;
-    instrumentedRefPtr.init();
-    helper.addRootObject(instrumentedRefPtr);
-    EXPECT_EQ(sizeof(InstrumentedRefPtr) + sizeof(NotInstrumented), helper.reportedSizeForAllTypes());
-    EXPECT_EQ(2, helper.visitedObjects());
-}
 
 TEST(MemoryInstrumentationTest, refPtr)
 {
@@ -187,7 +227,7 @@ TEST(MemoryInstrumentationTest, refPtr)
     RefPtr<InstrumentedRefPtr> instrumentedRefPtr(adoptRef(new InstrumentedRefPtr));
     helper.addRootObject(instrumentedRefPtr);
     EXPECT_EQ(sizeof(InstrumentedRefPtr) + sizeof(NotInstrumented), helper.reportedSizeForAllTypes());
-    EXPECT_EQ(2, helper.visitedObjects());
+    EXPECT_EQ(2u, helper.visitedObjects());
 }
 
 class InstrumentedWithOwnPtr : public Instrumented {
@@ -196,7 +236,7 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
+        MemoryClassInfo info(memoryObjectInfo, this, TestType);
         Instrumented::reportMemoryUsage(memoryObjectInfo);
         info.addMember(m_notInstrumentedOwnPtr);
     }
@@ -208,8 +248,8 @@ TEST(MemoryInstrumentationTest, ownPtrNotInstrumented)
     InstrumentationTestHelper helper;
     InstrumentedWithOwnPtr instrumentedWithOwnPtr;
     helper.addRootObject(instrumentedWithOwnPtr);
-    EXPECT_EQ(2 * sizeof(NotInstrumented), helper.reportedSizeForAllTypes());
-    EXPECT_EQ(2, helper.visitedObjects());
+    EXPECT_EQ(2u * sizeof(NotInstrumented), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(2u, helper.visitedObjects());
 }
 
 class InstrumentedUndefined {
@@ -229,7 +269,7 @@ public:
 
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+        MemoryClassInfo info(memoryObjectInfo, this, TestType);
         info.addMember(m_instrumentedUndefined);
     }
     OwnPtr<InstrumentedUndefined> m_instrumentedUndefined;
@@ -241,15 +281,15 @@ TEST(MemoryInstrumentationTest, ownerTypePropagation)
     OwnPtr<InstrumentedDOM> instrumentedDOM(adoptPtr(new InstrumentedDOM));
     helper.addRootObject(instrumentedDOM);
     EXPECT_EQ(sizeof(InstrumentedDOM) + sizeof(InstrumentedUndefined), helper.reportedSizeForAllTypes());
-    EXPECT_EQ(sizeof(InstrumentedDOM) + sizeof(InstrumentedUndefined), helper.totalSize(WebCoreMemoryTypes::DOM));
-    EXPECT_EQ(2, helper.visitedObjects());
+    EXPECT_EQ(sizeof(InstrumentedDOM) + sizeof(InstrumentedUndefined), helper.totalSize(TestType));
+    EXPECT_EQ(2u, helper.visitedObjects());
 }
 
 class NonVirtualInstrumented {
 public:
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+        MemoryClassInfo info(memoryObjectInfo, this, TestType);
         info.addMember(m_instrumented);
     }
 
@@ -262,7 +302,7 @@ TEST(MemoryInstrumentationTest, visitFirstMemberInNonVirtualClass)
     NonVirtualInstrumented nonVirtualInstrumented;
     helper.addRootObject(&nonVirtualInstrumented);
     EXPECT_EQ(sizeof(NonVirtualInstrumented) + sizeof(NotInstrumented), helper.reportedSizeForAllTypes());
-    EXPECT_EQ(2, helper.visitedObjects());
+    EXPECT_EQ(2u, helper.visitedObjects());
 }
 
 template<typename T>
@@ -273,7 +313,7 @@ public:
     InstrumentedOwner() { }
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+        MemoryClassInfo info(memoryObjectInfo, this, TestType);
         info.addMember(m_value);
     }
 
@@ -287,7 +327,7 @@ TEST(MemoryInstrumentationTest, visitStrings)
         InstrumentedOwner<String> stringInstrumentedOwner("String");
         helper.addRootObject(stringInstrumentedOwner);
         EXPECT_EQ(sizeof(StringImpl) + stringInstrumentedOwner.m_value.length(), helper.reportedSizeForAllTypes());
-        EXPECT_EQ(1, helper.visitedObjects());
+        EXPECT_EQ(1u, helper.visitedObjects());
     }
 
     { // 8-bit string with 16bit shadow.
@@ -305,7 +345,7 @@ TEST(MemoryInstrumentationTest, visitStrings)
         InstrumentedOwner<String> stringInstrumentedOwner(String(string.characters(), string.length()));
         helper.addRootObject(stringInstrumentedOwner);
         EXPECT_EQ(sizeof(StringImpl) + stringInstrumentedOwner.m_value.length() * sizeof(UChar), helper.reportedSizeForAllTypes());
-        EXPECT_EQ(1, helper.visitedObjects());
+        EXPECT_EQ(1u, helper.visitedObjects());
     }
 
     { // ASCIILiteral
@@ -314,7 +354,7 @@ TEST(MemoryInstrumentationTest, visitStrings)
         InstrumentedOwner<String> stringInstrumentedOwner(literal);
         helper.addRootObject(stringInstrumentedOwner);
         EXPECT_EQ(sizeof(StringImpl), helper.reportedSizeForAllTypes());
-        EXPECT_EQ(1, helper.visitedObjects());
+        EXPECT_EQ(1u, helper.visitedObjects());
     }
 
     { // Zero terminated internal buffer.
@@ -323,7 +363,7 @@ TEST(MemoryInstrumentationTest, visitStrings)
         stringInstrumentedOwner.m_value.charactersWithNullTermination();
         helper.addRootObject(stringInstrumentedOwner);
         EXPECT_EQ(sizeof(StringImpl) + (stringInstrumentedOwner.m_value.length() + 1) * (sizeof(LChar) + sizeof(UChar)), helper.reportedSizeForAllTypes());
-        EXPECT_EQ(2, helper.visitedObjects());
+        EXPECT_EQ(2u, helper.visitedObjects());
     }
 
     { // Substring
@@ -333,7 +373,7 @@ TEST(MemoryInstrumentationTest, visitStrings)
         InstrumentedOwner<String> stringInstrumentedOwner(baseString.substringSharingImpl(1, 4));
         helper.addRootObject(stringInstrumentedOwner);
         EXPECT_EQ(sizeof(StringImpl) * 2 + baseString.length() * (sizeof(LChar) + sizeof(UChar)), helper.reportedSizeForAllTypes());
-        EXPECT_EQ(3, helper.visitedObjects());
+        EXPECT_EQ(3u, helper.visitedObjects());
     }
 
     { // Owned buffer.
@@ -342,7 +382,7 @@ TEST(MemoryInstrumentationTest, visitStrings)
         InstrumentedOwner<String> stringInstrumentedOwner(String::adopt(buffer));
         helper.addRootObject(stringInstrumentedOwner);
         EXPECT_EQ(sizeof(StringImpl) + stringInstrumentedOwner.m_value.length(), helper.reportedSizeForAllTypes());
-        EXPECT_EQ(2, helper.visitedObjects());
+        EXPECT_EQ(2u, helper.visitedObjects());
     }
 
     {
@@ -351,7 +391,7 @@ TEST(MemoryInstrumentationTest, visitStrings)
         atomicStringInstrumentedOwner.m_value.string().characters(); // Force 16bit shadow creation.
         helper.addRootObject(atomicStringInstrumentedOwner);
         EXPECT_EQ(sizeof(StringImpl) + atomicStringInstrumentedOwner.m_value.length() * (sizeof(LChar) + sizeof(UChar)), helper.reportedSizeForAllTypes());
-        EXPECT_EQ(2, helper.visitedObjects());
+        EXPECT_EQ(2u, helper.visitedObjects());
     }
 
     {
@@ -368,7 +408,7 @@ public:
     TwoPointersToRefPtr(const RefPtr<StringImpl>& value) : m_ptr1(&value), m_ptr2(&value)  { }
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+        MemoryClassInfo info(memoryObjectInfo, this, TestType);
         info.addMember(m_ptr1);
         info.addMember(m_ptr2);
     }
@@ -392,7 +432,7 @@ public:
     TwoPointersToOwnPtr(const OwnPtr<NotInstrumented>& value) : m_ptr1(&value), m_ptr2(&value)  { }
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+        MemoryClassInfo info(memoryObjectInfo, this, TestType);
         info.addMember(m_ptr1);
         info.addMember(m_ptr2);
     }
@@ -408,7 +448,7 @@ TEST(MemoryInstrumentationTest, ownPtrPtr)
     TwoPointersToOwnPtr root(ownPtr);
     helper.addRootObject(root);
     EXPECT_EQ(sizeof(OwnPtr<NotInstrumented>), helper.reportedSizeForAllTypes());
-    EXPECT_EQ(1, helper.visitedObjects());
+    EXPECT_EQ(1u, helper.visitedObjects());
 }
 
 template<typename T>
@@ -420,7 +460,7 @@ public:
     template<typename MemoryObjectInfo>
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        typename MemoryObjectInfo::ClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+        typename MemoryObjectInfo::ClassInfo info(memoryObjectInfo, this, TestType);
         info.addMember(m_value);
     }
 
@@ -446,7 +486,7 @@ TEST(MemoryInstrumentationTest, detectReportMemoryUsageMethod)
         InstrumentedOwner<InstrumentedTemplate<NotInstrumented>* > root(value.get());
         helper.addRootObject(root);
         EXPECT_EQ(sizeof(InstrumentedTemplate<NotInstrumented>), helper.reportedSizeForAllTypes());
-        EXPECT_EQ(1, helper.visitedObjects());
+        EXPECT_EQ(1u, helper.visitedObjects());
     }
 }
 
@@ -465,7 +505,7 @@ TEST(MemoryInstrumentationTest, vectorFieldWithInlineCapacity)
     InstrumentedOwner<Vector<int, 4> > vectorOwner;
     helper.addRootObject(vectorOwner);
     EXPECT_EQ(static_cast<size_t>(0), helper.reportedSizeForAllTypes());
-    EXPECT_EQ(0, helper.visitedObjects());
+    EXPECT_EQ(0u, helper.visitedObjects());
 }
 
 TEST(MemoryInstrumentationTest, vectorFieldWithInlineCapacityResized)
@@ -474,8 +514,8 @@ TEST(MemoryInstrumentationTest, vectorFieldWithInlineCapacityResized)
     InstrumentedOwner<Vector<int, 4> > vectorOwner;
     vectorOwner.m_value.reserveCapacity(8);
     helper.addRootObject(vectorOwner);
-    EXPECT_EQ(8 * sizeof(int), helper.reportedSizeForAllTypes());
-    EXPECT_EQ(1, helper.visitedObjects());
+    EXPECT_EQ(8u * sizeof(int), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(1u, helper.visitedObjects());
 }
 
 TEST(MemoryInstrumentationTest, heapAllocatedVectorWithInlineCapacity)
@@ -485,7 +525,7 @@ TEST(MemoryInstrumentationTest, heapAllocatedVectorWithInlineCapacity)
     vectorOwner.m_value = adoptPtr(new Vector<int, 4>());
     helper.addRootObject(vectorOwner);
     EXPECT_EQ(sizeof(Vector<int, 4>), helper.reportedSizeForAllTypes());
-    EXPECT_EQ(1, helper.visitedObjects());
+    EXPECT_EQ(1u, helper.visitedObjects());
 }
 
 TEST(MemoryInstrumentationTest, heapAllocatedVectorWithInlineCapacityResized)
@@ -495,8 +535,8 @@ TEST(MemoryInstrumentationTest, heapAllocatedVectorWithInlineCapacityResized)
     vectorOwner.m_value = adoptPtr(new Vector<int, 4>());
     vectorOwner.m_value->reserveCapacity(8);
     helper.addRootObject(vectorOwner);
-    EXPECT_EQ(8 * sizeof(int) + sizeof(Vector<int, 4>), helper.reportedSizeForAllTypes());
-    EXPECT_EQ(2, helper.visitedObjects());
+    EXPECT_EQ(8u * sizeof(int) + sizeof(Vector<int, 4>), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(2u, helper.visitedObjects());
 }
 
 TEST(MemoryInstrumentationTest, vectorWithInstrumentedType)
@@ -541,7 +581,7 @@ TEST(MemoryInstrumentationTest, hashMapWithNotInstrumentedKeysAndValues)
     InstrumentedOwner<IntToIntMap* > root(value.get());
     helper.addRootObject(root);
     EXPECT_EQ(sizeof(IntToIntMap) + sizeof(IntToIntMap::ValueType) * value->capacity(), helper.reportedSizeForAllTypes());
-    EXPECT_EQ(1, helper.visitedObjects());
+    EXPECT_EQ(1u, helper.visitedObjects());
 }
 
 TEST(MemoryInstrumentationTest, hashMapWithInstrumentedKeys)
@@ -586,7 +626,7 @@ TEST(MemoryInstrumentationTest, hashMapWithInstrumentedKeysAndValues)
     InstrumentedOwner<StringToStringMap* > root(value.get());
     helper.addRootObject(root);
     EXPECT_EQ(sizeof(StringToStringMap) + sizeof(StringToStringMap::ValueType) * value->capacity() + 2 * (sizeof(StringImpl) + 2) * value->size(), helper.reportedSizeForAllTypes());
-    EXPECT_EQ(2 * count + 1, helper.visitedObjects());
+    EXPECT_EQ(2u * count + 1, helper.visitedObjects());
 }
 
 TEST(MemoryInstrumentationTest, hashMapWithInstrumentedPointerKeysAndPointerValues)
@@ -605,7 +645,7 @@ TEST(MemoryInstrumentationTest, hashMapWithInstrumentedPointerKeysAndPointerValu
     InstrumentedOwner<InstrumentedToInstrumentedMap* > root(value.get());
     helper.addRootObject(root);
     EXPECT_EQ(sizeof(InstrumentedToInstrumentedMap) + sizeof(InstrumentedToInstrumentedMap::ValueType) * value->capacity() + 2 * (sizeof(Instrumented) + sizeof(NotInstrumented)) * value->size(), helper.reportedSizeForAllTypes());
-    EXPECT_EQ(2 * 2 * count + 1, helper.visitedObjects());
+    EXPECT_EQ(2u * 2u * count + 1, helper.visitedObjects());
 }
 
 class InstrumentedConvertibleToInt {
@@ -615,7 +655,7 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+        MemoryClassInfo info(memoryObjectInfo, this, TestType);
         info.addMember(m_notInstrumented);
     }
 
@@ -680,7 +720,7 @@ TEST(MemoryInstrumentationTest, hashCountedSetWithInstrumentedValues)
     InstrumentedOwner<TestSet* > root(set.get());
     helper.addRootObject(root);
     EXPECT_EQ(sizeof(TestSet) + sizeof(HashMap<Instrumented*, unsigned>::ValueType) * set->capacity() + (sizeof(Instrumented) + sizeof(NotInstrumented))  * set->size(), helper.reportedSizeForAllTypes());
-    EXPECT_EQ(2 * count + 1, helper.visitedObjects());
+    EXPECT_EQ(2u * count + 1, helper.visitedObjects());
 }
 
 TEST(MemoryInstrumentationTest, arrayBuffer)
@@ -691,7 +731,7 @@ TEST(MemoryInstrumentationTest, arrayBuffer)
     ValueType value(ArrayBuffer::create(1000, sizeof(int)));
     helper.addRootObject(value);
     EXPECT_EQ(sizeof(int) * 1000 + sizeof(ArrayBuffer), helper.reportedSizeForAllTypes());
-    EXPECT_EQ(2, helper.visitedObjects());
+    EXPECT_EQ(2u, helper.visitedObjects());
 }
 
 } // namespace
