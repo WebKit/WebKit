@@ -1,3 +1,51 @@
+2012-10-11  Andy Estes  <aestes@apple.com>
+
+        Add some basic methods and properties to the injected bundle Objective-C DOM API
+        https://bugs.webkit.org/show_bug.cgi?id=99137
+
+        Reviewed by Sam Weinig.
+
+        Add methods and properties that allow for tree traversal, node creation/insertion,
+        attribute modification, text node retrieval, and range creation.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/mac/WKDOMDocument.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMDocument.mm:
+        (toDocument):
+        (-[WKDOMDocument createElement:]):
+        (-[WKDOMDocument createTextNode:]):
+        (-[WKDOMDocument body]):
+        * WebProcess/InjectedBundle/API/mac/WKDOMElement.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMElement.mm:
+        (-[WKDOMElement hasAttribute:]):
+        (-[WKDOMElement getAttribute:]):
+        (-[WKDOMElement setAttribute:value:]):
+        (-[WKDOMElement tagName]):
+        * WebProcess/InjectedBundle/API/mac/WKDOMInternals.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMInternals.mm:
+        (WebKit::WKDOMNodeClass):
+        (WebKit::toWebCoreText):
+        (WebKit::toWKDOMText):
+        (WebKit::toWebCoreRange):
+        * WebProcess/InjectedBundle/API/mac/WKDOMNode.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMNode.mm:
+        (-[WKDOMNode insertNode:before:]):
+        (-[WKDOMNode appendChild:]):
+        (-[WKDOMNode parentNode]):
+        (-[WKDOMNode firstChild]):
+        (-[WKDOMNode nextSibling]):
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.mm:
+        (-[WKDOMRange setStart:offset:]):
+        (-[WKDOMRange setEnd:offset:]):
+        (-[WKDOMRange collapse:]):
+        (-[WKDOMRange selectNode:]):
+        (-[WKDOMRange selectNodeContents:]):
+        (-[WKDOMRange isCollapsed]):
+        * WebProcess/InjectedBundle/API/mac/WKDOMText.h: Added.
+        * WebProcess/InjectedBundle/API/mac/WKDOMText.mm: Added.
+        (-[WKDOMText data]):
+
 2012-10-11  Brady Eidson  <beidson@apple.com>
 
         Add a WKContext call to enable the NetworkProcess.

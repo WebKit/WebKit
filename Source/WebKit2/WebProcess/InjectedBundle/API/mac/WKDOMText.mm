@@ -24,75 +24,18 @@
  */
 
 #import "config.h"
+#import "WKDOMText.h"
 
 #if defined(__LP64__) && defined(__clang__)
 
-#import "WKDOMNode.h"
-
 #import "WKDOMInternals.h"
+#import <WebCore/Text.h>
 
-@implementation WKDOMNode
+@implementation WKDOMText
 
-- (id)_initWithImpl:(WebCore::Node*)impl
+- (NSString *)data
 {
-    self = [super init];
-    if (!self)
-        return nil;
-
-    _impl = impl;
-    WebKit::WKDOMNodeCache().add(impl, self);
-
-    return self;
-}
-
-- (void)dealloc
-{
-    WebKit::WKDOMNodeCache().remove(_impl.get());
-    [super dealloc];
-}
-
-- (void)insertNode:(WKDOMNode *)node before:(WKDOMNode *)refNode
-{
-    // FIXME: Do something about the exception.
-    WebCore::ExceptionCode ec;
-    _impl->insertBefore(WebKit::toWebCoreNode(node), WebKit::toWebCoreNode(refNode), ec);
-}
-
-- (void)appendChild:(WKDOMNode *)node
-{
-    // FIXME: Do something about the exception.
-    WebCore::ExceptionCode ec;
-    _impl->appendChild(WebKit::toWebCoreNode(node), ec);
-}
-
-- (WKDOMDocument *)document
-{
-    return WebKit::toWKDOMDocument(_impl->document());
-}
-
-- (WKDOMNode *)parentNode
-{
-    return WebKit::toWKDOMNode(_impl->parentNode());
-}
-
-- (WKDOMNode *)firstChild
-{
-    return WebKit::toWKDOMNode(_impl->firstChild());
-}
-
-- (WKDOMNode *)lastChild
-{
-    return WebKit::toWKDOMNode(_impl->lastChild());
-}
-
-- (WKDOMNode *)previousSibling
-{
-    return WebKit::toWKDOMNode(_impl->previousSibling());
-}
-
-- (WKDOMNode *)nextSibling
-{
-    return WebKit::toWKDOMNode(_impl->nextSibling());
+    return WebCore::toText(_impl.get())->data();
 }
 
 @end

@@ -33,13 +33,20 @@
 WK_EXPORT
 @interface WKDOMRange : NSObject
 
--(id)initWithDocument:(WKDOMDocument *)document;
+- (id)initWithDocument:(WKDOMDocument *)document;
+
+- (void)setStart:(WKDOMNode *)node offset:(int)offset;
+- (void)setEnd:(WKDOMNode *)node offset:(int)offset;
+- (void)collapse:(BOOL)toStart;
+- (void)selectNode:(WKDOMNode *)node;
+- (void)selectNodeContents:(WKDOMNode *)node;
 
 @property(readonly, retain) WKDOMNode *startContainer;
 @property(readonly) NSInteger startOffset;
 @property(readonly, retain) WKDOMNode *endContainer;
 @property(readonly) NSInteger endOffset;
 @property(readonly, copy) NSString *text;
+@property(readonly) BOOL isCollapsed;
 
 @end
 

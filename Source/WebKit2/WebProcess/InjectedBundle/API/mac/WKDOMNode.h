@@ -33,7 +33,15 @@
 WK_EXPORT
 @interface WKDOMNode : NSObject
 
+- (void)insertNode:(WKDOMNode *)node before:(WKDOMNode *)refNode;
+- (void)appendChild:(WKDOMNode *)node;
+
 @property(readonly) WKDOMDocument *document;
+@property(readonly) WKDOMNode *parentNode;
+@property(readonly) WKDOMNode *firstChild;
+@property(readonly) WKDOMNode *lastChild;
+@property(readonly) WKDOMNode *previousSibling;
+@property(readonly) WKDOMNode *nextSibling;
 
 @end
 

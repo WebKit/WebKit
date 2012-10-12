@@ -62,6 +62,41 @@
     [super dealloc];
 }
 
+- (void)setStart:(WKDOMNode *)node offset:(int)offset
+{
+    // FIXME: Do something about the exception.
+    WebCore::ExceptionCode ec = 0;
+    _impl->setStart(WebKit::toWebCoreNode(node), offset, ec);
+}
+
+- (void)setEnd:(WKDOMNode *)node offset:(int)offset
+{
+    // FIXME: Do something about the exception.
+    WebCore::ExceptionCode ec = 0;
+    _impl->setEnd(WebKit::toWebCoreNode(node), offset, ec);
+}
+
+- (void)collapse:(BOOL)toStart
+{
+    // FIXME: Do something about the exception.
+    WebCore::ExceptionCode ec = 0;
+    _impl->collapse(toStart, ec);
+}
+
+- (void)selectNode:(WKDOMNode *)node
+{
+    // FIXME: Do something about the exception.
+    WebCore::ExceptionCode ec = 0;
+    _impl->selectNode(WebKit::toWebCoreNode(node), ec);
+}
+
+- (void)selectNodeContents:(WKDOMNode *)node
+{
+    // FIXME: Do something about the exception.
+    WebCore::ExceptionCode ec = 0;
+    _impl->selectNodeContents(WebKit::toWebCoreNode(node), ec);
+}
+
 - (WKDOMNode *)startContainer
 {
     // FIXME: Do something about the exception.
@@ -93,6 +128,13 @@
 - (NSString *)text
 {
     return _impl->text();
+}
+
+- (BOOL)isCollapsed
+{
+    // FIXME: Do something about the exception.
+    WebCore::ExceptionCode ec = 0;
+    return _impl->collapsed(ec);
 }
 
 @end

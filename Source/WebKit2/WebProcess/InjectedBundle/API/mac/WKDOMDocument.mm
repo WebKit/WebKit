@@ -31,8 +31,34 @@
 
 #import "WKDOMInternals.h"
 #import <WebCore/Document.h>
+#import <WebCore/HTMLElement.h>
+#import <WebCore/Text.h>
+
+static inline WebCore::Document* toDocument(WebCore::Node* node)
+{
+    ASSERT(!node || node->isDocumentNode());
+    return static_cast<WebCore::Document*>(node);
+}
 
 @implementation WKDOMDocument
+
+- (WKDOMElement *)createElement:(NSString *)tagName
+{
+    // FIXME: Do something about the exception.
+    WebCore::ExceptionCode ec = 0;
+    return WebKit::toWKDOMElement(toDocument(_impl.get())->createElement(tagName, ec).get());
+}
+
+- (WKDOMText *)createTextNode:(NSString *)data
+{
+    return WebKit::toWKDOMText(toDocument(_impl.get())->createTextNode(data).get());
+}
+
+- (WKDOMElement *)body
+{
+    return WebKit::toWKDOMElement(toDocument(_impl.get())->body());
+}
+
 @end
 
 #endif // defined(__LP64__) && defined(__clang__)

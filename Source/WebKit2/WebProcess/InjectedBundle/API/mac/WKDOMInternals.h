@@ -38,6 +38,7 @@ class Document;
 
 @class WKDOMElement;
 @class WKDOMDocument;
+@class WKDOMText;
 
 @interface WKDOMNode () {
 @public
@@ -101,6 +102,9 @@ WKDOMElement *toWKDOMElement(WebCore::Element*);
 
 WebCore::Document* toWebCoreDocument(WKDOMDocument *);
 WKDOMDocument *toWKDOMDocument(WebCore::Document*);
+
+WebCore::Text* toWebCoreText(WKDOMText *);
+WKDOMText *toWKDOMText(WebCore::Text*);
 
 // -- Range. --
 

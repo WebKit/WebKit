@@ -27,8 +27,17 @@
 
 #import <WebKit2/WKDOMNode.h>
 
+@class WKDOMElement;
+@class WKDOMText;
+
 WK_EXPORT
 @interface WKDOMDocument : WKDOMNode
+
+- (WKDOMElement *)createElement:(NSString *)tagName;
+- (WKDOMText *)createTextNode:(NSString *)data;
+
+@property(readonly) WKDOMElement *body;
+
 @end
 
 #endif // defined(__LP64__) && defined(__clang__)

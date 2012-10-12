@@ -29,6 +29,13 @@
 
 WK_EXPORT
 @interface WKDOMElement : WKDOMNode
+
+- (BOOL)hasAttribute:(NSString *)attribute;
+- (NSString *)getAttribute:(NSString *)attribute;
+- (void)setAttribute:(NSString *)name value:(NSString *)value;
+
+@property(readonly) NSString *tagName;
+
 @end
 
 #endif // defined(__LP64__) && defined(__clang__)
