@@ -1020,6 +1020,7 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     color: rgb(15%, 15%, 15%);
 }
 
+ol.watch-expressions > li.hovered,
 .console-message:hover { 
     background-color: #F0F0F0;
 }
@@ -1577,10 +1578,17 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
 
 .properties-tree.watch-expressions {
     padding-bottom: 8px;
+    padding-left: 4px !important;
 }
 
-.properties-tree.watch-expressions li {
+.properties-tree.watch-expressions > li {
     padding-top: 2px;
+    padding-left: 4px;
+}
+
+.properties-tree.watch-expressions > li:not(.parent) {
+    margin-left: 1px;
+    padding-left: 15px;
 }
 
 .watch-expressions > li.editing-sub-part .text-prompt {
@@ -1611,8 +1619,7 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     background-repeat: no-repeat;
     border: 0 none transparent;
     position: absolute;
-    margin-left: -25px;
-    margin-top: 2px;
+    right: 8px;
     display: none;
 }
 

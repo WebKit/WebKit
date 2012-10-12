@@ -1,3 +1,17 @@
+2012-10-12  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: move delete watch expression farther from the expand triangle
+        https://bugs.webkit.org/show_bug.cgi?id=99166
+
+        Reviewed by Pavel Feldman.
+
+        Aligned 'delete watch expression' button on the right side (was on the left) so
+        that it is hard to click it when expanding watched value.
+
+        * inspector/front-end/inspector.css:
+        (.properties-tree.watch-expressions):
+        (.section .properties .delete-button):
+
 2012-10-12  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: trim filename in the call stack sidebar
