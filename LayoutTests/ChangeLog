@@ -1,5 +1,11 @@
 2012-10-12  Alexander Pavlov  <apavlov@chromium.org>
 
+        Unreviewed, rebaseline inspector/styles/region-style-crash.html after r131176.
+
+        * inspector/styles/region-style-crash-expected.txt:
+
+2012-10-12  Alexander Pavlov  <apavlov@chromium.org>
+
         Web Inspector: [Styles] !important priority not honored inside the same declaration
         https://bugs.webkit.org/show_bug.cgi?id=99170
 
