@@ -606,3 +606,12 @@ http/tests/cookies/third-party-cookie-relaxing.html
 http/tests/security/cookies/third-party-cookie-blocking-user-action.html
 http/tests/security/cookies/third-party-cookie-blocking-xslt.xml
 http/tests/security/cookies/third-party-cookie-blocking.html
+
+[Qt][WK2] http/tests/misc/willCacheResponse-delegate-callback.html fails
+webkit.org/b/99148 http/tests/misc/willCacheResponse-delegate-callback.html
+
+[Qt][WK2] REGRESSION(r131057): It made plugins/plugin-document-back-forward.html timeout
+webkit.org/b/99152 plugins/plugin-document-back-forward.html
+
+[Qt][WK2] http/tests/navigation/ping-cross-origin-from-https.html fails
+webkit.org/b/99155 http/tests/navigation/ping-cross-origin-from-https.html

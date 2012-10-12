@@ -1,3 +1,12 @@
+2012-10-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, update expected files, skip new failing tests.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt-5.0-wk2/css3/filters/composited-during-animation-layertree-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/multicol/shrink-to-column-height-for-pagination-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/multicol/shrink-to-column-height-for-pagination-expected.txt: Added.
+
 2012-10-12  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Styles] Colors should be "As authored" by default
