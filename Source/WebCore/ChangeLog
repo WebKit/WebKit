@@ -1,3 +1,30 @@
+2012-10-01  Jer Noble  <jer.noble@apple.com>
+
+        Add LSKD support to MediaPlayerPrivateAVFoundation.
+        https://bugs.webkit.org/show_bug.cgi?id=98090
+
+        Reviewed by Anders Carlsson.
+
+        Add support for LSKD key system to MediaPlayerPrivateAVFoundation.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        (MediaPlayerPrivateAVFoundationObjC): Add m_loaderDelegate, m_keyURIToRequestMap, and m_sessionToRequestMap.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (globalLoaderDelegateQueue): Static accessor for the dispatch queue to use for the loader delegate.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL): Add the loader delegate to the AVURLAsset.
+        (WebCore::keySystemIsSupported): Convenience function; checks that the key system matches "com.apple.lskd"
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::extendedSupportsType): Check the key system matches.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource): Fire a needkey event with an initData containing
+            the key URI.
+        (WebCore::extractKeyURIKeyIdAndCertificateFromInitData): Extract the keyURI, keyID, and the app certificate from the initData.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::generateKeyRequest): Generate a streaming key request from AVFoundation and 
+            fire a keymessage event.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::addKey): Pass to AVFoundation through the AVAssetResourceLoader.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::cancelKeyRequest): Release the loader delegate.
+        (-[WebCoreAVFLoaderDelegate initWithCallback:]): Simple constructor.
+        (-[WebCoreAVFLoaderDelegate resourceLoader:shouldWaitForLoadingOfRequestedResource:]): Pass to the MediaPlayerPrivateAVFoundationObjC.
+
 2012-10-12  James Simonsen  <simonjam@chromium.org>
 
         [RequestAnimationFrame] Remove vendor prefix

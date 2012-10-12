@@ -29,14 +29,20 @@
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
 #include "MediaPlayerPrivateAVFoundation.h"
+#include <wtf/HashMap.h>
 
-OBJC_CLASS AVAsset;
+OBJC_CLASS AVURLAsset;
 OBJC_CLASS AVPlayer;
 OBJC_CLASS AVPlayerItem;
 OBJC_CLASS AVPlayerItemVideoOutput;
 OBJC_CLASS AVPlayerLayer;
 OBJC_CLASS AVAssetImageGenerator;
 OBJC_CLASS WebCoreAVFMovieObserver;
+
+#if ENABLE(ENCRYPTED_MEDIA) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+OBJC_CLASS WebCoreAVFLoaderDelegate;
+OBJC_CLASS AVAssetResourceLoadingRequest;
+#endif
 
 #ifndef __OBJC__
 typedef struct objc_object *id;
@@ -55,6 +61,10 @@ public:
 
     void setAsset(id);
     virtual void tracksChanged();
+
+#if ENABLE(ENCRYPTED_MEDIA) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    bool shouldWaitForLoadingOfResource(AVAssetResourceLoadingRequest*);
+#endif
 
 private:
     MediaPlayerPrivateAVFoundationObjC(MediaPlayer*);
@@ -128,7 +138,13 @@ private:
     void paintWithVideoOutput(GraphicsContext*, const IntRect&);
 #endif
 
-    RetainPtr<AVAsset> m_avAsset;
+#if ENABLE(ENCRYPTED_MEDIA)
+    virtual MediaPlayer::MediaKeyException addKey(const String&, const unsigned char*, unsigned, const unsigned char*, unsigned, const String&);
+    virtual MediaPlayer::MediaKeyException generateKeyRequest(const String&, const unsigned char*, unsigned);
+    virtual MediaPlayer::MediaKeyException cancelKeyRequest(const String&, const String&);
+#endif
+
+    RetainPtr<AVURLAsset> m_avAsset;
     RetainPtr<AVPlayer> m_avPlayer;
     RetainPtr<AVPlayerItem> m_avPlayerItem;
     RetainPtr<AVPlayerLayer> m_videoLayer;
@@ -142,6 +158,12 @@ private:
 #else
     RetainPtr<AVPlayerItemVideoOutput> m_videoOutput;
     RetainPtr<CVPixelBufferRef> m_lastImage;
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    RetainPtr<WebCoreAVFLoaderDelegate> m_loaderDelegate;
+    HashMap<String, RetainPtr<AVAssetResourceLoadingRequest> > m_keyURIToRequestMap;
+    HashMap<String, RetainPtr<AVAssetResourceLoadingRequest> > m_sessionIDToRequestMap;
 #endif
 };
 

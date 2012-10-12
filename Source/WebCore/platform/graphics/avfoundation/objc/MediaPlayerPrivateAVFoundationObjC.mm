@@ -30,6 +30,7 @@
 #import "MediaPlayerPrivateAVFoundationObjC.h"
 
 #import "BlockExceptions.h"
+#import "DataView.h"
 #import "FloatConversion.h"
 #import "FrameView.h"
 #import "FloatConversion.h"
@@ -39,9 +40,13 @@
 #import "SecurityOrigin.h"
 #import "SoftLinking.h"
 #import "TimeRanges.h"
+#import "UUID.h"
 #import "WebCoreSystemInterface.h"
 #import <objc/objc-runtime.h>
 #import <wtf/UnusedParam.h>
+#import <wtf/Uint8Array.h>
+#import <wtf/Uint16Array.h>
+#import <wtf/Uint32Array.h>
 
 #import <CoreMedia/CoreMedia.h>
 #import <AVFoundation/AVFoundation.h>
@@ -112,6 +117,25 @@ enum MediaPlayerAVFoundationObservationContext {
 -(void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary *)change context:(MediaPlayerAVFoundationObservationContext)context;
 @end
 
+#if ENABLE(ENCRYPTED_MEDIA)
+@interface WebCoreAVFLoaderDelegate : NSObject<AVAssetResourceLoaderDelegate> {
+    MediaPlayerPrivateAVFoundationObjC* m_callback;
+}
+- (id)initWithCallback:(MediaPlayerPrivateAVFoundationObjC*)callback;
+- (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest;
+@end
+
+static dispatch_queue_t globalLoaderDelegateQueue()
+{
+    static dispatch_queue_t globalQueue;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        globalQueue = dispatch_queue_create("WebCoreAVFLoaderDelegate queue", DISPATCH_QUEUE_SERIAL);
+    });
+    return globalQueue;
+}
+#endif
+
 namespace WebCore {
 
 static NSArray *assetMetadataKeyNames();
@@ -144,6 +168,9 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
     , m_objcObserver(AdoptNS, [[WebCoreAVFMovieObserver alloc] initWithCallback:this])
     , m_videoFrameHasDrawn(false)
     , m_haveCheckedPlayability(false)
+#if ENABLE(ENCRYPTED_MEDIA)
+    , m_loaderDelegate(AdoptNS, [[WebCoreAVFLoaderDelegate alloc] initWithCallback:this])
+#endif
 {
 }
 
@@ -307,6 +334,10 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
 
     NSURL *cocoaURL = KURL(ParsedURLString, url);
     m_avAsset.adoptNS([[AVURLAsset alloc] initWithURL:cocoaURL options:options.get()]);
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    [[m_avAsset.get() resourceLoader] setDelegate:m_loaderDelegate.get() queue:globalLoaderDelegateQueue()];
+#endif
 
     m_haveCheckedPlayability = false;
 
@@ -730,12 +761,55 @@ MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::supportsType(const
 }
 
 #if ENABLE(ENCRYPTED_MEDIA)
+static bool keySystemIsSupported(const String& keySystem)
+{
+    if (equalIgnoringCase(keySystem, "com.apple.lskd") || equalIgnoringCase(keySystem, "com.apple.lskd.1_0"))
+        return true;
+
+    return false;
+}
+
 MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::extendedSupportsType(const String& type, const String& codecs, const String& keySystem, const KURL& url)
 {
-    // AVFoundation does not support any encrypted media, so return IsNotSupported if the keySystem is non-NULL.
-    if (!keySystem.isNull() || !keySystem.isEmpty())
-            return MediaPlayer::IsNotSupported;
+    // From: <http://dvcs.w3.org/hg/html-media/raw-file/eme-v0.1b/encrypted-media/encrypted-media.html#dom-canplaytype>
+    // In addition to the steps in the current specification, this method must run the following steps:
+
+    // 1. Check whether the Key System is supported with the specified container and codec type(s) by following the steps for the first matching condition from the following list:
+    //    If keySystem is null, continue to the next step.
+    if (keySystem.isNull() || keySystem.isEmpty())
+        return supportsType(type, codecs, url);
+
+    // If keySystem contains an unrecognized or unsupported Key System, return the empty string
+    if (!keySystemIsSupported(keySystem))
+        return MediaPlayer::IsNotSupported;
+
+    // If the Key System specified by keySystem does not support decrypting the container and/or codec specified in the rest of the type string.
+    // (AVFoundation does not provide an API which would allow us to determine this, so this is a no-op)
+
+    // 2. Return "maybe" or "probably" as appropriate per the existing specification of canPlayType().
     return supportsType(type, codecs, url);
+}
+
+bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetResourceLoadingRequest* avRequest)
+{
+    String keyURI = [[[avRequest request] URL] absoluteString];
+
+    // Create an initData with the following layout:
+    // [4 bytes: keyURI size], [keyURI size bytes: keyURI]
+    unsigned keyURISize = keyURI.length() * sizeof(UChar);
+    RefPtr<ArrayBuffer> initDataBuffer = ArrayBuffer::create(4 + keyURISize, 1);
+    RefPtr<DataView> initDataView = DataView::create(initDataBuffer, 0, initDataBuffer->byteLength());
+    ExceptionCode ec = 0;
+    initDataView->setUint32(0, keyURISize, true, ec);
+
+    RefPtr<Uint16Array> keyURIArray = Uint16Array::create(initDataBuffer, 4, keyURI.length());
+    keyURIArray->setRange(keyURI.characters(), keyURI.length() / sizeof(unsigned char), 0);
+
+    if (!player()->keyNeeded("com.apple.lskd", emptyString(), static_cast<const unsigned char*>(initDataBuffer->data()), initDataBuffer->byteLength()))
+        return false;
+
+    m_keyURIToRequestMap.set(keyURI, avRequest);
+    return true;
 }
 #endif
 
@@ -911,6 +985,133 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext* c
 
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+
+static bool extractKeyURIKeyIDAndCertificateFromInitData(Uint8Array* initData, String& keyURI, String& keyID, RefPtr<Uint8Array>& certificate)
+{
+    // initData should have the following layout:
+    // [4 bytes: keyURI length][N bytes: keyURI][4 bytes: contentID length], [N bytes: contentID], [4 bytes: certificate length][N bytes: certificate]
+    if (initData->byteLength() < 4)
+        return false;
+
+    RefPtr<ArrayBuffer> initDataBuffer = initData->buffer();
+
+    // Use a DataView to read uint32 values from the buffer, as Uint32Array requires the reads be aligned on 4-byte boundaries. 
+    RefPtr<DataView> initDataView = DataView::create(initDataBuffer, 0, initDataBuffer->byteLength());
+    uint32_t offset = 0;
+    ExceptionCode ec = 0;
+
+    uint32_t keyURILength = initDataView->getUint32(offset, true, ec);
+    offset += 4;
+    if (ec || offset + keyURILength > initData->length())
+        return false;
+
+    RefPtr<Uint16Array> keyURIArray = Uint16Array::create(initDataBuffer, offset, keyURILength);
+    if (!keyURIArray)
+        return false;
+
+    keyURI = String(keyURIArray->data(), keyURILength / sizeof(unsigned short));
+    offset += keyURILength;
+
+    uint32_t keyIDLength = initDataView->getUint32(offset, true, ec);
+    offset += 4;
+    if (ec || offset + keyIDLength > initData->length())
+        return false;
+
+    RefPtr<Uint16Array> keyIDArray = Uint16Array::create(initDataBuffer, offset, keyIDLength);
+    if (!keyIDArray)
+        return false;
+
+    keyID = String(keyIDArray->data(), keyIDLength / sizeof(unsigned short));
+    offset += keyIDLength;
+
+    uint32_t certificateLength = initDataView->getUint32(offset, true, ec);
+    offset += 4;
+    if (ec || offset + certificateLength > initData->length())
+        return false;
+
+    certificate = Uint8Array::create(initDataBuffer, offset, certificateLength);
+    if (!certificate)
+        return false;
+
+    return true;
+}
+
+MediaPlayer::MediaKeyException MediaPlayerPrivateAVFoundationObjC::generateKeyRequest(const String& keySystem, const unsigned char* initDataPtr, unsigned initDataLength)
+{
+    if (!keySystemIsSupported(keySystem))
+        return MediaPlayer::KeySystemNotSupported;
+
+    RefPtr<Uint8Array> initData = Uint8Array::create(initDataPtr, initDataLength);
+    String keyURI;
+    String keyID;
+    RefPtr<Uint8Array> certificate;
+    if (!extractKeyURIKeyIDAndCertificateFromInitData(initData.get(), keyURI, keyID, certificate))
+        return MediaPlayer::InvalidPlayerState;
+
+    if (!m_keyURIToRequestMap.contains(keyURI))
+        return MediaPlayer::InvalidPlayerState;
+
+    String sessionID = createCanonicalUUIDString();
+
+    RetainPtr<AVAssetResourceLoadingRequest> avRequest = m_keyURIToRequestMap.get(keyURI);
+
+    RetainPtr<NSData> certificateData = adoptNS([[NSData alloc] initWithBytes:certificate->baseAddress() length:certificate->byteLength()]);
+    NSString* assetStr = keyID;
+    RetainPtr<NSData> assetID = [NSData dataWithBytes: [assetStr cStringUsingEncoding:NSUTF8StringEncoding] length:[assetStr lengthOfBytesUsingEncoding:NSUTF8StringEncoding]];
+    NSError* error = 0;
+    RetainPtr<NSData> keyRequest = [avRequest.get() streamingContentKeyRequestDataForApp:certificateData.get() contentIdentifier:assetID.get() options:nil error:&error];
+
+    if (!keyRequest) {
+        NSError* underlyingError = [[error userInfo] objectForKey:NSUnderlyingErrorKey];
+        player()->keyError(keySystem, sessionID, MediaPlayerClient::DomainError, [underlyingError code]);
+        return MediaPlayer::NoError;
+    }
+
+    RefPtr<ArrayBuffer> keyRequestBuffer = ArrayBuffer::create([keyRequest.get() bytes], [keyRequest.get() length]);
+    RefPtr<Uint8Array> keyRequestArray = Uint8Array::create(keyRequestBuffer, 0, keyRequestBuffer->byteLength());
+    player()->keyMessage(keySystem, sessionID, keyRequestArray->data(), keyRequestArray->byteLength());
+
+    // Move ownership of the AVAssetResourceLoadingRequestfrom the keyIDToRequestMap to the sessionIDToRequestMap:
+    m_sessionIDToRequestMap.set(sessionID, avRequest);
+    m_keyURIToRequestMap.remove(keyURI);
+
+    return MediaPlayer::NoError;
+}
+
+MediaPlayer::MediaKeyException MediaPlayerPrivateAVFoundationObjC::addKey(const String& keySystem, const unsigned char* keyPtr, unsigned keyLength, const unsigned char* initDataPtr, unsigned initDataLength, const String& sessionID)
+{
+    if (!keySystemIsSupported(keySystem))
+        return MediaPlayer::KeySystemNotSupported;
+
+    if (!m_sessionIDToRequestMap.contains(sessionID))
+        return MediaPlayer::InvalidPlayerState;
+
+    RetainPtr<AVAssetResourceLoadingRequest> avRequest = m_sessionIDToRequestMap.get(sessionID);
+    RetainPtr<NSData> keyData = adoptNS([[NSData alloc] initWithBytes:keyPtr length:keyLength]);
+    [avRequest.get() finishLoadingWithResponse:nil data:keyData.get() redirect:nil];
+    m_sessionIDToRequestMap.remove(sessionID);
+
+    player()->keyAdded(keySystem, sessionID);
+
+    UNUSED_PARAM(initDataPtr);
+    UNUSED_PARAM(initDataLength);
+    return MediaPlayer::NoError;
+}
+
+MediaPlayer::MediaKeyException MediaPlayerPrivateAVFoundationObjC::cancelKeyRequest(const String& keySystem, const String& sessionID)
+{
+    if (!keySystemIsSupported(keySystem))
+        return MediaPlayer::KeySystemNotSupported;
+
+    if (!m_sessionIDToRequestMap.contains(sessionID))
+        return MediaPlayer::InvalidPlayerState;
+
+    m_sessionIDToRequestMap.remove(sessionID);
+    return MediaPlayer::NoError;
+}
+#endif
+
 NSArray* assetMetadataKeyNames()
 {
     static NSArray* keys;
@@ -1037,5 +1238,27 @@ NSArray* itemKVOProperties()
 }
 
 @end
+
+#if ENABLE(ENCRYPTED_MEDIA)
+@implementation WebCoreAVFLoaderDelegate
+
+- (id)initWithCallback:(MediaPlayerPrivateAVFoundationObjC*)callback
+{
+    m_callback = callback;
+    return [super init];
+}
+
+- (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest
+{
+    UNUSED_PARAM(resourceLoader);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (!m_callback->shouldWaitForLoadingOfResource(loadingRequest))
+            [loadingRequest finishLoadingWithError:nil];
+    });
+    return TRUE;
+}
+
+@end
+#endif
 
 #endif
