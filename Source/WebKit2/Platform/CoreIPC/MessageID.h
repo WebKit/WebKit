@@ -105,6 +105,9 @@ enum MessageClass {
 
     // NPObject messages sent by both the plug-in process and the web process.
     MessageClassNPObjectMessageReceiver,
+    
+    // Messages sent by the UI process to the network process.
+    MessageClassNetworkProcess,
 };
 
 template<typename> struct MessageKindTraits { };

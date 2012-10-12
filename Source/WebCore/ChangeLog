@@ -1,3 +1,12 @@
+2012-10-12  Brady Eidson  <beidson@apple.com>
+
+        Setup basic NetworkProcess messaging and initialization.
+        https://bugs.webkit.org/show_bug.cgi?id=99198
+
+        Reviewed by Sam Weinig.
+
+        * English.lproj/Localizable.strings: Update for the Network Process UI name.
+
 2012-10-12  Levi Weintraub  <leviw@chromium.org>
 
         Remove unnecessary mode identifiers added in r131111

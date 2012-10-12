@@ -1,3 +1,54 @@
+2012-10-12  Brady Eidson  <beidson@apple.com>
+
+        Setup basic NetworkProcess messaging and initialization.
+        https://bugs.webkit.org/show_bug.cgi?id=99198
+
+        Reviewed by Sam Weinig.
+
+        Project file/build system stuff:
+        * DerivedSources.make:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * Scripts/webkit2/messages.py:
+        (struct_or_class):
+
+        Add basic initialization parameters for the NetworkProcess:
+        * Shared/Network/NetworkProcessCreationParameters.cpp: 
+        (WebKit):
+        (WebKit::NetworkProcessCreationParameters::NetworkProcessCreationParameters):
+        (WebKit::NetworkProcessCreationParameters::encode):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * Shared/Network/NetworkProcessCreationParameters.h:
+        (CoreIPC):
+        (WebKit):
+        (NetworkProcessCreationParameters):
+
+        Use them to message the NetworkProcess what it's application name should be:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didFinishLaunching):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        (WebKit):
+        (NetworkProcessProxy):
+        * UIProcess/Network/mac/NetworkProcessProxyMac.mm:
+        (WebKit):
+        (WebKit::NetworkProcessProxy::platformInitializeNetworkProcess):        
+
+        Add basic message handling and initialization to the NetworkProcess itself:
+        * NetworkProcess/NetworkProcess.messages.in: Added.
+        * Platform/CoreIPC/MessageID.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didReceiveMessage):
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit):
+        (NetworkProcess):
+
+        Set a reasonable application name to be revealed in UI:
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit):
+        (WebKit::NetworkProcess::platformInitialize):
+
+
 2012-10-12  Ada Chan  <adachan@apple.com>
 
         Add WKPage API to get whether the main frame is pinned to the top or bottom edge

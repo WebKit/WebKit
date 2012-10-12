@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NetworkProcessProxy.h"
 
+#include "NetworkProcessCreationParameters.h"
+#include "NetworkProcessMessages.h"
 #include <WebCore/RunLoop.h>
 
 #if ENABLE(NETWORK_PROCESS)
@@ -95,6 +97,12 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher*, CoreIPC::Connecti
 #endif
 
     m_connection->open();
+
+    NetworkProcessCreationParameters parameters;
+    platformInitializeNetworkProcess(parameters);
+
+    // Initialize the network host process.
+    m_connection->send(Messages::NetworkProcess::InitializeNetworkProcess(parameters), 0);
 }
 
 } // namespace WebKit

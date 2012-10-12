@@ -22,6 +22,7 @@
 
 VPATH = \
     $(WebKit2) \
+    $(WebKit2)/NetworkProcess \
     $(WebKit2)/PluginProcess \
     $(WebKit2)/PluginProcess/mac \
     $(WebKit2)/Shared/Plugins \
@@ -52,6 +53,7 @@ MESSAGE_RECEIVERS = \
     DrawingAreaProxy \
     DownloadProxy \
     EventDispatcher \
+    NetworkProcess \
     NPObjectMessageReceiver \
     PluginControllerProxy \
     PluginProcess \

@@ -66,6 +66,7 @@ bool NetworkProcess::shouldTerminate()
 
 void NetworkProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
+    didReceiveNetworkProcessMessage(connection, messageID, arguments);
 }
 
 void NetworkProcess::didClose(CoreIPC::Connection*)
@@ -84,6 +85,11 @@ void NetworkProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::Mes
 
 void NetworkProcess::syncMessageSendTimedOut(CoreIPC::Connection*)
 {
+}
+
+void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
+{
+    platformInitialize(parameters);
 }
 
 } // namespace WebKit

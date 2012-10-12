@@ -36,6 +36,8 @@ namespace WebCore {
 }
 
 namespace WebKit {
+    
+struct NetworkProcessCreationParameters;
 
 class NetworkProcess : ChildProcess {
     WTF_MAKE_NONCOPYABLE(NetworkProcess);
@@ -48,6 +50,8 @@ private:
     NetworkProcess();
     ~NetworkProcess();
 
+    void platformInitialize(const NetworkProcessCreationParameters&);
+
     // ChildProcess
     virtual bool shouldTerminate();
 
@@ -56,6 +60,10 @@ private:
     virtual void didClose(CoreIPC::Connection*);
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID);
     virtual void syncMessageSendTimedOut(CoreIPC::Connection*);
+
+    // Message Handlers
+    void didReceiveNetworkProcessMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void initializeNetworkProcess(const NetworkProcessCreationParameters&);
 
     // The connection to the UI process.
     RefPtr<CoreIPC::Connection> m_uiConnection;

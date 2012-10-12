@@ -23,49 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetworkProcessProxy_h
-#define NetworkProcessProxy_h
+#ifndef NetworkProcessCreationParameters_h
+#define NetworkProcessCreationParameters_h
 
 #if ENABLE(NETWORK_PROCESS)
 
-#include "Connection.h"
-#include "ProcessLauncher.h"
-#include "WebProcessProxyMessages.h"
-#include <wtf/Deque.h>
+#include <wtf/text/WTFString.h>
+
+namespace CoreIPC {
+    class ArgumentDecoder;
+    class ArgumentEncoder;
+}
 
 namespace WebKit {
 
-struct NetworkProcessCreationParameters;
+struct NetworkProcessCreationParameters {
+    NetworkProcessCreationParameters();
 
-class NetworkProcessProxy : public RefCounted<NetworkProcessProxy>, CoreIPC::Connection::Client, ProcessLauncher::Client {
-public:
-    static PassRefPtr<NetworkProcessProxy> create();
-    ~NetworkProcessProxy();
+    void encode(CoreIPC::ArgumentEncoder*) const;
+    static bool decode(CoreIPC::ArgumentDecoder*, NetworkProcessCreationParameters&);
 
-private:
-    NetworkProcessProxy();
-
-    void platformInitializeNetworkProcess(NetworkProcessCreationParameters&);
-
-    // CoreIPC::Connection::Client
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-    virtual void didClose(CoreIPC::Connection*);
-    virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID);
-    virtual void syncMessageSendTimedOut(CoreIPC::Connection*);
-
-    // ProcessLauncher::Client
-    virtual void didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier);
-
-    // The connection to the network process.
-    RefPtr<CoreIPC::Connection> m_connection;
-
-    // The process launcher for the network process.
-    RefPtr<ProcessLauncher> m_processLauncher;
-
+#if PLATFORM(MAC)
+    String parentProcessName;
+#endif
 };
 
 } // namespace WebKit
 
 #endif // ENABLE(NETWORK_PROCESS)
 
-#endif // NetworkProcessProxy_h
+#endif // NetworkProcessCreationParameters_h
