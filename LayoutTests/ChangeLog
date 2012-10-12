@@ -1,3 +1,9 @@
+2012-10-11  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Chromium] Unreviewed gardening, rebaselined.
+
+        * platform/chromium-mac-snowleopard/svg/custom/foreign-object-skew-expected.png:
+
 2012-10-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r131100.
