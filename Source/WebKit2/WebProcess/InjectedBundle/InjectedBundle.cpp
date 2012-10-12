@@ -555,24 +555,6 @@ void InjectedBundle::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID 
             return;
         }
 
-        case InjectedBundleMessage::PostMessageToPage: {
-            uint64_t pageID = arguments->destinationID();
-            if (!pageID)
-                return;
-            
-            WebPage* page = WebProcess::shared().webPage(pageID);
-            if (!page)
-                return;
-
-            String messageName;
-            RefPtr<APIObject> messageBody;
-            InjectedBundleUserMessageDecoder messageDecoder(messageBody);
-            if (!arguments->decode(CoreIPC::Out(messageName, messageDecoder)))
-                return;
-
-            didReceiveMessageToPage(page, messageName, messageBody.get());
-            return;
-        }
     }
 
     ASSERT_NOT_REACHED();

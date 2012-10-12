@@ -33,6 +33,7 @@
 #include "DrawingArea.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleBackForwardList.h"
+#include "InjectedBundleUserMessageCoders.h"
 #include "LayerTreeHost.h"
 #include "MessageID.h"
 #include "NetscapePlugin.h"
@@ -1171,6 +1172,25 @@ void WebPage::setGapBetweenPages(double gap)
     Pagination pagination = m_page->pagination();
     pagination.gap = gap;
     m_page->setPagination(pagination);
+}
+
+void WebPage::postInjectedBundleMessage(const CoreIPC::DataReference& messageData)
+{
+    InjectedBundle* injectedBundle = WebProcess::shared().injectedBundle();
+    if (!injectedBundle)
+        return;
+
+    CoreIPC::ArgumentDecoder messageDecoder(messageData.data(), messageData.size());
+
+    String messageName;
+    if (!messageDecoder.decode(messageName))
+        return;
+
+    RefPtr<APIObject> messageBody;
+    if (!messageDecoder.decode(InjectedBundleUserMessageDecoder(messageBody)))
+        return;
+
+    injectedBundle->didReceiveMessageToPage(this, messageName, messageBody.get());
 }
 
 void WebPage::installPageOverlay(PassRefPtr<PageOverlay> pageOverlay)

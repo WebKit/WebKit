@@ -34,7 +34,6 @@ namespace InjectedBundleMessage {
 
 enum Kind {
     PostMessage,
-    PostMessageToPage
 };
 
 }

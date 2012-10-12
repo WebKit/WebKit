@@ -319,6 +319,8 @@ public:
     void setPageLength(double);
     void setGapBetweenPages(double);
 
+    void postInjectedBundleMessage(const CoreIPC::DataReference& message);
+
     bool drawsBackground() const { return m_drawsBackground; }
     bool drawsTransparentBackground() const { return m_drawsTransparentBackground; }
 

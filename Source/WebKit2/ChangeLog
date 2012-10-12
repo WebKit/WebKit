@@ -1,3 +1,30 @@
+2012-10-11  Anders Carlsson  <andersca@apple.com>
+
+        Stop using deprecatedSend for WebPageProxy::postMessageToInjectedBundle
+        https://bugs.webkit.org/show_bug.cgi?id=99120
+
+        Reviewed by Andreas Kling.
+
+        Instead of using deprecatedSend, just encode the data using a separate ArgumentEncoder and pass it along as a DataReference.
+
+        * Shared/CoreIPCSupport/InjectedBundleMessageKinds.h:
+        Remove PostMessageToPage.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::postMessageToInjectedBundle):
+        Stop using deprecatedSend.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::didReceiveMessage):
+        Remove code to handle PostMessageToPage.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::postInjectedBundleMessage):
+        Decode the APIObject and send it along to the injected bundle.
+
+        * WebProcess/WebPage/WebPage.messages.in:
+        Add PostInjectedBundleMessage message.
+
 2012-10-11  Regina Chung  <heejin.r.chung@samsung.com>
 
         [EFL][WK2] WebProcess keeps on waiting for UIProcess
