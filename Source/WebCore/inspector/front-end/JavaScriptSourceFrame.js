@@ -39,6 +39,7 @@ WebInspector.JavaScriptSourceFrame = function(scriptsPanel, javaScriptSource)
     this._scriptsPanel = scriptsPanel;
     this._breakpointManager = WebInspector.breakpointManager;
     this._javaScriptSource = javaScriptSource;
+    this._scriptFile = this._javaScriptSource.scriptFile();
 
     var locations = this._breakpointManager.breakpointLocationsForUISourceCode(this._javaScriptSource);
     for (var i = 0; i < locations.length; ++i)
@@ -150,16 +151,11 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         contextMenu.appendApplicableItems(this._javaScriptSource);
     },
 
-    _hasDivergedFromVM: function()
-    {
-        return this._javaScriptSource.isDirty() || this._javaScriptSource.hasDivergedFromVM;
-    },
-
     onTextChanged: function(oldRange, newRange)
     {
         WebInspector.SourceFrame.prototype.onTextChanged.call(this, oldRange, newRange);
 
-        var wasDiverged = this._hasDivergedFromVM();
+        var wasDiverged = this._scriptFile && this._scriptFile.hasDivergedFromVM();
 
         this._preserveDecorations = true;
         this._javaScriptSource.setWorkingCopy(this._textEditor.text());
@@ -168,7 +164,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         if (this._supportsEnabledBreakpointsWhileEditing())
             return;
 
-        var isDiverged = this._hasDivergedFromVM();
+        var isDiverged = this._scriptFile && this._scriptFile.hasDivergedFromVM();
         if (!wasDiverged && isDiverged)
             this._muteBreakpointsWhileEditing();
         else if (wasDiverged && !isDiverged) {

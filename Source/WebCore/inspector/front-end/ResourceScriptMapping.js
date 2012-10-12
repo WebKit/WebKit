@@ -56,7 +56,7 @@ WebInspector.ResourceScriptMapping.prototype = {
         var uiSourceCode = this._workspaceUISourceCodeForScript(script);
         if (!uiSourceCode)
             uiSourceCode = this._getOrCreateTemporaryUISourceCode(script);
-        else if (uiSourceCode.isDirty() || uiSourceCode.hasDivergedFromVM) {
+        else if (uiSourceCode.scriptFile() && uiSourceCode.scriptFile().hasDivergedFromVM()) {
             var temporaryUISourceCode = this._getOrCreateTemporaryUISourceCode(script);
             temporaryUISourceCode.divergedVersion = uiSourceCode;
             uiSourceCode = temporaryUISourceCode;
@@ -73,7 +73,7 @@ WebInspector.ResourceScriptMapping.prototype = {
             return;
         for (var i = 0; i < scripts.length; ++i)
             scripts[i].setSourceMapping(this);
-        if (!uiSourceCode.isDirty() && !uiSourceCode.hasDivergedFromVM)
+        if (uiSourceCode.scriptFile() && !uiSourceCode.scriptFile().hasDivergedFromVM())
             this._deleteTemporaryUISourceCodeForScripts(scripts);
     },
 
@@ -148,9 +148,11 @@ WebInspector.ResourceScriptMapping.prototype = {
             scripts[i].setSourceMapping(this);
         uiSourceCode.isContentScript = scripts[0].isContentScript;
         uiSourceCode.setSourceMapping(this);
-        if (!uiSourceCode.isTemporary)
-            uiSourceCode.addEventListener(WebInspector.JavaScriptSource.Events.HasDivergedFromVMChanged, this._hasDivergedFromVMChanged, this);
-
+        if (!uiSourceCode.isTemporary) {
+            var scriptFile = new WebInspector.ResourceScriptFile(uiSourceCode);
+            uiSourceCode.setScriptFile(scriptFile);
+            scriptFile.addEventListener(WebInspector.ScriptFile.Events.HasDivergedFromVMChanged, this._hasDivergedFromVMChanged, this);
+        }
     },
 
     /**
@@ -242,4 +244,112 @@ WebInspector.ResourceScriptMapping.prototype = {
         this._temporaryUISourceCodeForScriptId = {};
         this._scripts = [];
     },
+}
+
+/**
+ * @interface
+ */
+WebInspector.ScriptFile = function()
+{
+}
+
+WebInspector.ScriptFile.Events = {
+    HasDivergedFromVMChanged: "HasDivergedFromVMChanged",
+}
+
+WebInspector.ScriptFile.prototype = {
+    /**
+     * @return {boolean}
+     */
+    hasDivergedFromVM: function() { return false; },
+
+    /**
+     * @return {boolean}
+     */
+    isDivergingFromVM: function() { return false; },
+
+    /**
+     * @param {string} eventType
+     * @param {function(WebInspector.Event)} listener
+     * @param {Object=} thisObject
+     */
+    addEventListener: function(eventType, listener, thisObject) { },
+
+    /**
+     * @param {string} eventType
+     * @param {function(WebInspector.Event)} listener
+     * @param {Object=} thisObject
+     */
+    removeEventListener: function(eventType, listener, thisObject) { }
+}
+
+/**
+ * @constructor
+ * @implements {WebInspector.ScriptFile}
+ * @extends {WebInspector.Object}
+ * @param {WebInspector.UISourceCode} uiSourceCode
+ */
+WebInspector.ResourceScriptFile = function(uiSourceCode)
+{
+    WebInspector.ScriptFile.call(this);
+    this._uiSourceCode = uiSourceCode;
+}
+
+WebInspector.ResourceScriptFile.prototype = {
+    /**
+     * @param {function(?string)} callback
+     */
+    workingCopyCommitted: function(callback)
+    {
+        /**
+        * @param {?string} error
+         */
+        function innerCallback(error)
+        {
+            if (error)
+                this._hasDivergedFromVM = true;
+            else
+                delete this._hasDivergedFromVM;
+            this.fireHasDivergedFromVMChanged();
+
+            callback(error);
+        }
+        var rawLocation = /** @type {WebInspector.DebuggerModel.Location} */ this._uiSourceCode.uiLocationToRawLocation(0, 0);
+        if (!rawLocation) {
+            callback(null);
+            return;
+        }
+        var script = WebInspector.debuggerModel.scriptForId(rawLocation.scriptId);
+        WebInspector.debuggerModel.setScriptSource(script.scriptId, this._uiSourceCode.workingCopy(), innerCallback.bind(this));
+    },
+
+    workingCopyChanged: function()
+    {
+        this.fireHasDivergedFromVMChanged();
+    },
+
+    fireHasDivergedFromVMChanged: function()
+    {
+        this._isDivergingFromVM = true;
+        this.dispatchEventToListeners(WebInspector.ScriptFile.Events.HasDivergedFromVMChanged, this._uiSourceCode);
+        delete this._isDivergingFromVM;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    hasDivergedFromVM: function()
+    {
+        return this._uiSourceCode.isDirty() || this._hasDivergedFromVM;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isDivergingFromVM: function()
+    {
+        return this._isDivergingFromVM;
+    },
+
+    __proto__: WebInspector.Object.prototype
 }

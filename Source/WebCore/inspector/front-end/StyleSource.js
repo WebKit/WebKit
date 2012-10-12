@@ -36,50 +36,6 @@ WebInspector.StyleSource = function(contentProvider)
     WebInspector.UISourceCode.call(this, contentProvider.contentURL(), contentProvider, true);
 }
 
-WebInspector.StyleSource.updateTimeout = 200;
-
 WebInspector.StyleSource.prototype = {
-    /**
-     * @param {function(?string)} callback
-     */
-    workingCopyCommitted: function(callback)
-    {  
-        this._commitIncrementalEdit(true, callback);
-    },
-
-    workingCopyChanged: function()
-    {
-        this._callOrSetTimeout(this._commitIncrementalEdit.bind(this, false, function() {}));
-    },
-
-    /**
-     * @param {function(?string)} callback
-     */
-    _callOrSetTimeout: function(callback)
-    {
-        // FIXME: Extensions tests override updateTimeout because extensions don't have any control over applying changes to domain specific bindings.   
-        if (WebInspector.StyleSource.updateTimeout >= 0)
-            this._incrementalUpdateTimer = setTimeout(callback, WebInspector.StyleSource.updateTimeout);
-        else
-            callback(null);
-    },
-
-    /**
-     * @param {boolean} majorChange
-     * @param {function(?string)} callback
-     */
-    _commitIncrementalEdit: function(majorChange, callback)
-    {
-        this._clearIncrementalUpdateTimer();
-        WebInspector.styleContentBinding.setStyleContent(this, this.workingCopy(), majorChange, callback);
-    },
-
-    _clearIncrementalUpdateTimer: function()
-    {
-        if (this._incrementalUpdateTimer)
-            clearTimeout(this._incrementalUpdateTimer);
-        delete this._incrementalUpdateTimer;
-    },
-
     __proto__: WebInspector.UISourceCode.prototype
 }

@@ -63,11 +63,6 @@ WebInspector.BreakpointManager.breakpointStorageId = function(uiSourceCode)
     return uiSourceCode.formatted() ? "deobfuscated:" + uiSourceCode.url : uiSourceCode.url;
 }
 
-WebInspector.BreakpointManager.hasDivergedFromVM = function(uiSourceCode)
-{
-    return uiSourceCode.isDirty() || uiSourceCode.hasDivergedFromVM;
-}
-
 WebInspector.BreakpointManager.prototype = {
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
@@ -438,7 +433,8 @@ WebInspector.BreakpointManager.Breakpoint.prototype = {
         this._condition = condition;
         this._breakpointManager._storage._updateBreakpoint(this);
 
-        if (this._enabled && !WebInspector.BreakpointManager.hasDivergedFromVM(this._primaryUILocation.uiSourceCode)) {
+        var scriptFile = this._primaryUILocation.uiSourceCode.scriptFile();
+        if (this._enabled && !(scriptFile && scriptFile.hasDivergedFromVM())) {
             this._setInDebugger();
             return;
         }

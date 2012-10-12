@@ -118,6 +118,38 @@ WebInspector.UISourceCode.prototype = {
     },
 
     /**
+     * @return {WebInspector.ScriptFile}
+     */
+    scriptFile: function()
+    {
+        return this._scriptFile;
+    },
+
+    /**
+     * @param {WebInspector.ScriptFile} scriptFile
+     */
+    setScriptFile: function(scriptFile)
+    {
+        this._scriptFile = scriptFile;
+    },
+
+    /**
+     * @return {WebInspector.StyleFile}
+     */
+    styleFile: function()
+    {
+        return this._styleFile;
+    },
+
+    /**
+     * @param {WebInspector.StyleFile} styleFile
+     */
+    setStyleFile: function(styleFile)
+    {
+        this._styleFile = styleFile;
+    },
+
+    /**
      * @param {function(?string,boolean,string)} callback
      */
     requestContent: function(callback)
@@ -278,13 +310,11 @@ WebInspector.UISourceCode.prototype = {
             delete this._workingCopy;
         else
             this._workingCopy = newWorkingCopy;
-        this.workingCopyChanged();
+        if (this.scriptFile())
+            this.scriptFile().workingCopyChanged();
+        else if (this.styleFile())
+            this.styleFile().workingCopyChanged();
         this.dispatchEventToListeners(WebInspector.UISourceCode.Events.WorkingCopyChanged, {oldWorkingCopy: oldWorkingCopy, workingCopy: newWorkingCopy});
-    },
-
-    workingCopyChanged: function()
-    {  
-        // Overridden.
     },
 
     /**
@@ -298,16 +328,11 @@ WebInspector.UISourceCode.prototype = {
         }
 
         var newContent = this._workingCopy;
-        this.workingCopyCommitted(callback);
+        if (this.scriptFile())
+            this.scriptFile().workingCopyCommitted(callback);
+        else if (this.styleFile())
+            this.styleFile().workingCopyCommitted(callback);
         this.addRevision(newContent);
-    },
-
-    /**
-     * @param {function(?string)} callback
-     */
-    workingCopyCommitted: function(callback)
-    {  
-        // Overridden.
     },
 
     /**

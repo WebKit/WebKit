@@ -70,7 +70,7 @@ WebInspector.StylesSourceMapping.prototype = {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
         if (!uiSourceCode.url || this._uiSourceCodeForURL[uiSourceCode.url])
             return;
-        if (uiSourceCode.contentType() !== WebInspector.resourceTypes.StyleSheet)
+        if (uiSourceCode.contentType() !== WebInspector.resourceTypes.Stylesheet)
             return;
             
         this._addUISourceCode(uiSourceCode);
@@ -83,6 +83,8 @@ WebInspector.StylesSourceMapping.prototype = {
     {
         this._uiSourceCodeForURL[uiSourceCode.url] = uiSourceCode;
         uiSourceCode.setSourceMapping(this);
+        var styleFile = new WebInspector.StyleFile(uiSourceCode);
+        uiSourceCode.setStyleFile(styleFile);
         WebInspector.cssModel.setSourceMapping(uiSourceCode.url, this);
     },
 
@@ -92,6 +94,62 @@ WebInspector.StylesSourceMapping.prototype = {
         WebInspector.cssModel.resetSourceMappings();
     }
 }
+
+/**
+ * @constructor
+ * @param {WebInspector.UISourceCode} uiSourceCode
+ */
+WebInspector.StyleFile = function(uiSourceCode)
+{
+    this._uiSourceCode = uiSourceCode;
+}
+
+WebInspector.StyleFile.updateTimeout = 200;
+
+WebInspector.StyleFile.prototype = {
+    /**
+     * @param {function(?string)} callback
+     */
+    workingCopyCommitted: function(callback)
+    {
+        this._commitIncrementalEdit(true, callback);
+    },
+
+    workingCopyChanged: function()
+    {
+        this._callOrSetTimeout(this._commitIncrementalEdit.bind(this, false, function() {}));
+    },
+
+    /**
+     * @param {function(?string)} callback
+     */
+    _callOrSetTimeout: function(callback)
+    {
+        // FIXME: Extensions tests override updateTimeout because extensions don't have any control over applying changes to domain specific bindings.
+        if (WebInspector.StyleFile.updateTimeout >= 0)
+            this._incrementalUpdateTimer = setTimeout(callback, WebInspector.StyleFile.updateTimeout);
+        else
+            callback(null);
+    },
+
+    /**
+     * @param {boolean} majorChange
+     * @param {function(?string)} callback
+     */
+    _commitIncrementalEdit: function(majorChange, callback)
+    {
+        this._clearIncrementalUpdateTimer();
+        WebInspector.styleContentBinding.setStyleContent(this._uiSourceCode, this._uiSourceCode.workingCopy(), majorChange, callback);
+    },
+
+    _clearIncrementalUpdateTimer: function()
+    {
+        if (this._incrementalUpdateTimer)
+            clearTimeout(this._incrementalUpdateTimer);
+        delete this._incrementalUpdateTimer;
+    },
+}
+
 
 /**
  * @constructor
@@ -105,14 +163,14 @@ WebInspector.StyleContentBinding = function(cssModel)
 
 WebInspector.StyleContentBinding.prototype = {
     /**
-     * @param {WebInspector.StyleSource} styleSource
+     * @param {WebInspector.UISourceCode} uiSourceCode
      * @param {string} content
      * @param {boolean} majorChange
      * @param {function(?string)} userCallback
      */
-    setStyleContent: function(styleSource, content, majorChange, userCallback)
+    setStyleContent: function(uiSourceCode, content, majorChange, userCallback)
     {
-        var resource = WebInspector.resourceForURL(styleSource.url);
+        var resource = WebInspector.resourceForURL(uiSourceCode.url);
         this._cssModel.resourceBinding().requestStyleSheetIdForResource(resource, callback.bind(this));
 
         /**

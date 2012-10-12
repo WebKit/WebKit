@@ -80,15 +80,15 @@ function extension_testGetResourceContent(nextTest)
     });
 }
 
-// Extensions tests override WebInspector.StyleSource.updateTimeout because otherwise extensions don't have any control over applying changes to domain specific bindings.
+// Extensions tests override WebInspector.StyleFile.updateTimeout because otherwise extensions don't have any control over applying changes to domain specific bindings.
 function extension_setFakeStyleSheetUpdateTimeout(callback)
 {
-    evaluateOnFrontend("WebInspector.oldStyleSheetUpdateTimeout = WebInspector.StyleSource.updateTimeout; WebInspector.StyleSource.updateTimeout = -1; reply();", callback);
+    evaluateOnFrontend("WebInspector.oldStyleSheetUpdateTimeout = WebInspector.StyleFile.updateTimeout; WebInspector.StyleFile.updateTimeout = -1; reply();", callback);
 }
 
 function extension_resetStyleSheetUpdateTimeout(callback)
 {
-    evaluateOnFrontend("WebInspector.StyleSource.updateTimeout = WebInspector.oldStyleSheetUpdateTimeout; delete WebInspector.oldStyleSheetUpdateTimeout; reply();", callback);
+    evaluateOnFrontend("WebInspector.StyleFile.updateTimeout = WebInspector.oldStyleSheetUpdateTimeout; delete WebInspector.oldStyleSheetUpdateTimeout; reply();", callback);
 }
 
 function extension_testSetResourceContent(nextTest)

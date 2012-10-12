@@ -1,3 +1,63 @@
+2012-10-12  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Extract domain specific editing handling logic from UISourceCode descendants (step 1).
+        https://bugs.webkit.org/show_bug.cgi?id=98912
+
+        Reviewed by Pavel Feldman.
+
+        This is the first step that introduces StyleFile and ScriptFile and extracts domain specific editing handling logic.
+        StyleFile and ScriptFile should listen for the UISourceCode events and process them, this will be done in the next patch.
+
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.Breakpoint.prototype._updateBreakpoint):
+        * inspector/front-end/JavaScriptSource.js:
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame):
+        (WebInspector.JavaScriptSourceFrame.prototype.onTextChanged):
+        * inspector/front-end/ResourceScriptMapping.js:
+        (WebInspector.ResourceScriptMapping.prototype.rawLocationToUILocation):
+        (WebInspector.ResourceScriptMapping.prototype._hasDivergedFromVMChanged):
+        (WebInspector.ResourceScriptMapping.prototype._bindUISourceCodeToScripts):
+        (WebInspector.ScriptFile):
+        (WebInspector.ScriptFile.prototype.hasDivergedFromVM):
+        (WebInspector.ScriptFile.prototype.isDivergingFromVM):
+        (WebInspector.ScriptFile.prototype.addEventListener):
+        (WebInspector.ScriptFile.prototype.removeEventListener):
+        (WebInspector.ResourceScriptFile):
+        (WebInspector.ResourceScriptFile.prototype.workingCopyCommitted):
+        (WebInspector.ResourceScriptFile.prototype.workingCopyChanged):
+        (WebInspector.ResourceScriptFile.prototype.fireHasDivergedFromVMChanged):
+        (WebInspector.ResourceScriptFile.prototype.hasDivergedFromVM):
+        (WebInspector.ResourceScriptFile.prototype.isDivergingFromVM):
+        * inspector/front-end/ScriptSnippetModel.js:
+        (WebInspector.ScriptSnippetModel.prototype._addScriptSnippet):
+        (WebInspector.SnippetScriptFile):
+        (WebInspector.SnippetScriptFile.prototype.hasDivergedFromVM):
+        (WebInspector.SnippetScriptFile.prototype.setHasDivergedFromVM):
+        (WebInspector.SnippetScriptFile.prototype.isDivergingFromVM):
+        (WebInspector.SnippetScriptFile.prototype.setIsDivergingFromVM):
+        (WebInspector.SnippetScriptFile.prototype.workingCopyCommitted):
+        (WebInspector.SnippetScriptFile.prototype.workingCopyChanged):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._revealExecutionLine):
+        * inspector/front-end/StyleSource.js:
+        * inspector/front-end/StylesSourceMapping.js:
+        (WebInspector.StylesSourceMapping.prototype._uiSourceCodeAddedToWorkspace):
+        (WebInspector.StylesSourceMapping.prototype._addUISourceCode):
+        (WebInspector.StyleFile):
+        (WebInspector.StyleFile.prototype.workingCopyCommitted):
+        (WebInspector.StyleFile.prototype.workingCopyChanged):
+        (WebInspector.StyleFile.prototype._callOrSetTimeout):
+        (WebInspector.StyleFile.prototype._commitIncrementalEdit):
+        (WebInspector.StyleFile.prototype._clearIncrementalUpdateTimer):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode.prototype.scriptFile):
+        (WebInspector.UISourceCode.prototype.setScriptFile):
+        (WebInspector.UISourceCode.prototype.styleFile):
+        (WebInspector.UISourceCode.prototype.setStyleFile):
+        (WebInspector.UISourceCode.prototype.setWorkingCopy):
+        (WebInspector.UISourceCode.prototype.commitWorkingCopy):
+
 2012-10-12  Zeno Albisser  <zeno@webkit.org>
 
         [Qt][WK2] GraphicsSurfaceGLX should keep track of previous GL context.

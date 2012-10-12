@@ -42,12 +42,7 @@ function test()
 
             function didShowScriptSource(sourceFrame)
             {
-                InspectorTest.addSniffer(WebInspector.JavaScriptSourceFrame.prototype, "_didEditContent", didEditScriptSource);
                 InspectorTest.replaceInSource(sourceFrame, ",\"I'm good\"", "\"I'm good\"");
-            }
-
-            function didEditScriptSource()
-            {
                 InspectorTest.dumpSourceFrameContents(panel.visibleView);
                 next();
             }

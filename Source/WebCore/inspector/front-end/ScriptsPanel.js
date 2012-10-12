@@ -506,7 +506,7 @@ WebInspector.ScriptsPanel.prototype = {
         var uiSourceCode = uiLocation.uiSourceCode;
         // Some scripts (anonymous and snippets evaluations) are not added to files select by default.
         if (uiSourceCode.isTemporary) {
-            if (this._currentUISourceCode && this._currentUISourceCode.isDivergingFromVM)
+            if (this._currentUISourceCode && this._currentUISourceCode.scriptFile() && this._currentUISourceCode.scriptFile().isDivergingFromVM())
                 return;
             this._editorContainer.addUISourceCode(uiSourceCode);
             if (uiSourceCode.formatted() !== this._toggleFormatSourceButton.toggled)
