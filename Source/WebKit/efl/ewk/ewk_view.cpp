@@ -4450,7 +4450,7 @@ void ewk_view_setting_should_display_text_descriptions_set(Evas_Object *ewkView,
 #endif
 }
 
-void ewk_view_web_inspector_show(const Evas_Object* ewkView)
+void ewk_view_inspector_show(const Evas_Object* ewkView)
 {
 #if ENABLE(INSPECTOR)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
@@ -4460,7 +4460,7 @@ void ewk_view_web_inspector_show(const Evas_Object* ewkView)
 #endif
 }
 
-void ewk_view_web_inspector_close(const Evas_Object* ewkView)
+void ewk_view_inspector_close(const Evas_Object* ewkView)
 {
 #if ENABLE(INSPECTOR)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
@@ -4470,7 +4470,7 @@ void ewk_view_web_inspector_close(const Evas_Object* ewkView)
 #endif
 }
 
-Evas_Object* ewk_view_web_inspector_view_get(const Evas_Object* ewkView)
+Evas_Object* ewk_view_inspector_view_get(const Evas_Object* ewkView)
 {
 #if ENABLE(INSPECTOR)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
@@ -4482,7 +4482,7 @@ Evas_Object* ewk_view_web_inspector_view_get(const Evas_Object* ewkView)
 #endif
 }
 
-void ewk_view_web_inspector_view_set(Evas_Object* ewkView, Evas_Object* inspectorView)
+void ewk_view_inspector_view_set(Evas_Object* ewkView, Evas_Object* inspectorView)
 {
 #if ENABLE(INSPECTOR)
     EWK_VIEW_SD_GET(ewkView, smartData);

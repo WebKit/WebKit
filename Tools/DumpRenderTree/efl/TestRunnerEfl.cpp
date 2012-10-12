@@ -732,13 +732,13 @@ void TestRunner::setAsynchronousSpellCheckingEnabled(bool)
 
 void TestRunner::showWebInspector()
 {
-    ewk_view_web_inspector_show(browser->mainView());
+    ewk_view_inspector_show(browser->mainView());
     browser->waitInspectorLoadFinished();
 }
 
 void TestRunner::closeWebInspector()
 {
-    ewk_view_web_inspector_close(browser->mainView());
+    ewk_view_inspector_close(browser->mainView());
 }
 
 void TestRunner::evaluateInWebInspector(long callId, JSStringRef script)

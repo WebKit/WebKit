@@ -1,3 +1,35 @@
+2012-10-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Remove "web" word in web inspector
+        https://bugs.webkit.org/show_bug.cgi?id=98724
+
+        Reviewed by Laszlo Gombos.
+
+        *web* word is redundant in web inspector. Beside r130494 and r130479 removed *web* from EFL WK2.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::createInspectorView):
+        (DumpRenderTreeChrome::removeInspectorView):
+        (DumpRenderTreeChrome::waitInspectorLoadFinished):
+        (DumpRenderTreeChrome::onInspectorViewCreate):
+        (DumpRenderTreeChrome::onInspectorViewClose):
+        (DumpRenderTreeChrome::onInspectorFrameLoadFinished):
+        * DumpRenderTree/efl/DumpRenderTreeChrome.h:
+        (DumpRenderTreeChrome):
+        * DumpRenderTree/efl/TestRunnerEfl.cpp:
+        (TestRunner::showWebInspector):
+        (TestRunner::closeWebInspector):
+        * EWebLauncher/main.c:
+        (on_inspector_ecore_evas_resize):
+        (on_key_down):
+        (on_inspector_view_create):
+        (on_inspector_view_close):
+        (on_inspector_view_destroyed):
+        (browserCreate):
+        (webInspectorCreate):
+        (closeWindow):
+        (main_signal_exit):
+
 2012-10-11  Timothy Hatcher  <timothy@apple.com>
 
         Unreviewed watch list addition for Inspector.json.

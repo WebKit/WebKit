@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-static void notifyWebInspectorDestroy(void* userData, Evas_Object* /*webview*/, void* /*eventInfo*/)
+static void notifyInspectorDestroy(void* userData, Evas_Object* /*webview*/, void* /*eventInfo*/)
 {
     InspectorFrontendClientEfl* inspectorFrontendClient = static_cast<InspectorFrontendClientEfl*>(userData);
     if (inspectorFrontendClient)
@@ -87,7 +87,7 @@ InspectorFrontendChannel* InspectorClientEfl::openInspectorFrontend(InspectorCon
 {
     evas_object_smart_callback_call(m_inspectedView, "inspector,view,create", 0);
 
-    Evas_Object* inspectorView = ewk_view_web_inspector_view_get(m_inspectedView);
+    Evas_Object* inspectorView = ewk_view_inspector_view_get(m_inspectedView);
     if (!inspectorView)
         return 0;
 
@@ -153,12 +153,12 @@ InspectorFrontendClientEfl::InspectorFrontendClientEfl(Evas_Object* inspectedVie
     , m_inspectorView(inspectorView)
     , m_inspectorClient(inspectorClient)
 {
-    evas_object_smart_callback_add(m_inspectorView, "inspector,view,destroy", notifyWebInspectorDestroy, this);
+    evas_object_smart_callback_add(m_inspectorView, "inspector,view,destroy", notifyInspectorDestroy, this);
 }
 
 InspectorFrontendClientEfl::~InspectorFrontendClientEfl()
 {
-    evas_object_smart_callback_del(m_inspectorView, "inspector,view,destroy", notifyWebInspectorDestroy);
+    evas_object_smart_callback_del(m_inspectorView, "inspector,view,destroy", notifyInspectorDestroy);
 
     if (m_inspectorClient) {
         m_inspectorClient->releaseFrontendPage();

@@ -257,7 +257,7 @@ on_browser_ecore_evas_resize(Ecore_Evas *ee)
 }
 
 static void
-on_web_inspector_ecore_evas_resize(Ecore_Evas *ee)
+on_inspector_ecore_evas_resize(Ecore_Evas *ee)
 {
     Evas_Object *webview;
     int w, h;
@@ -635,13 +635,13 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
         ewk_security_origin_free(origin);
         ewk_web_database_list_free(databaseList);
     } else if (!strcmp(ev->key, "i") && ctrlPressed) {
-        Evas_Object *inspector_view = ewk_view_web_inspector_view_get(obj);
+        Evas_Object *inspector_view = ewk_view_inspector_view_get(obj);
         if (inspector_view) {
             info("Web Inspector close\n");
-            ewk_view_web_inspector_close(obj);
+            ewk_view_inspector_close(obj);
         } else {
             info("Web Inspector show\n");
-            ewk_view_web_inspector_show(obj);
+            ewk_view_inspector_show(obj);
         }
     }
 }
@@ -659,7 +659,7 @@ on_browser_del(void *data, Evas *evas, Evas_Object *browser, void *event)
 }
 
 static void
-on_web_inspector_view_create(void *user_data, Evas_Object *webview, void *event_info)
+on_inspector_view_create(void *user_data, Evas_Object *webview, void *event_info)
 {
     ELauncher *app_browser = (ELauncher *)user_data;
 
@@ -667,14 +667,14 @@ on_web_inspector_view_create(void *user_data, Evas_Object *webview, void *event_
 }
 
 static void
-on_web_inspector_view_close(void *user_data, Evas_Object *webview, void *event_info)
+on_inspector_view_close(void *user_data, Evas_Object *webview, void *event_info)
 {
     Eina_List *l;
     void *app;
     ELauncher *app_browser = (ELauncher *)user_data;
     Evas_Object *inspector_view = (Evas_Object *)event_info;
 
-    ewk_view_web_inspector_view_set(app_browser->browser, NULL);
+    ewk_view_inspector_view_set(app_browser->browser, NULL);
 
     EINA_LIST_FOREACH(windows, l, app)
         if (((ELauncher *)app)->browser == inspector_view)
@@ -686,7 +686,7 @@ on_web_inspector_view_close(void *user_data, Evas_Object *webview, void *event_i
 }
 
 static void
-on_web_inspector_view_destroyed(Ecore_Evas *ee)
+on_inspector_view_destroyed(Ecore_Evas *ee)
 {
     ELauncher *app;
 
@@ -729,8 +729,8 @@ browserCreate(const char *url, User_Arguments *userArgs)
     evas_object_name_set(appBrowser->browser, "browser");
 
     evas_object_smart_callback_add(appBrowser->browser, "inputmethod,changed", on_inputmethod_changed, appBrowser);
-    evas_object_smart_callback_add(appBrowser->browser, "inspector,view,close", on_web_inspector_view_close, appBrowser);
-    evas_object_smart_callback_add(appBrowser->browser, "inspector,view,create", on_web_inspector_view_create, appBrowser);
+    evas_object_smart_callback_add(appBrowser->browser, "inspector,view,close", on_inspector_view_close, appBrowser);
+    evas_object_smart_callback_add(appBrowser->browser, "inspector,view,create", on_inspector_view_create, appBrowser);
     evas_object_smart_callback_add(appBrowser->browser, "load,error", on_load_error, appBrowser);
     evas_object_smart_callback_add(appBrowser->browser, "load,finished", on_load_finished, appBrowser);
     evas_object_smart_callback_add(appBrowser->browser, "load,progress", on_progress, appBrowser);
@@ -777,8 +777,8 @@ webInspectorCreate(ELauncher *appBrowser)
         return quit(EINA_FALSE, "ERROR: could not create an inspector window\n");
 
     ecore_evas_title_set(appInspector->ee, "Web Inspector");
-    ecore_evas_callback_resize_set(appInspector->ee, on_web_inspector_ecore_evas_resize);
-    ecore_evas_callback_delete_request_set(appInspector->ee, on_web_inspector_view_destroyed);
+    ecore_evas_callback_resize_set(appInspector->ee, on_inspector_ecore_evas_resize);
+    ecore_evas_callback_delete_request_set(appInspector->ee, on_inspector_view_destroyed);
 
     evas_object_name_set(appInspector->browser, "inspector");
 
@@ -790,7 +790,7 @@ webInspectorCreate(ELauncher *appBrowser)
 
     evas_object_focus_set(appInspector->browser, EINA_TRUE);
 
-    ewk_view_web_inspector_view_set(appBrowser->browser, appInspector->browser);
+    ewk_view_inspector_view_set(appBrowser->browser, appInspector->browser);
 
     return 1;
 }
@@ -856,7 +856,7 @@ closeWindow(Ecore_Evas *ee)
     ELauncher *app;
 
     app = find_app_from_ee(ee);
-    ewk_view_web_inspector_close(app->browser);
+    ewk_view_inspector_close(app->browser);
 
     windows = eina_list_remove(windows, app);
     url_bar_del(app->url_bar);
@@ -870,7 +870,7 @@ main_signal_exit(void *data, int ev_type, void *ev)
     ELauncher *app;
     while (windows) {
         app = (ELauncher*) eina_list_data_get(windows);
-        ewk_view_web_inspector_close(app->browser);
+        ewk_view_inspector_close(app->browser);
 
         ecore_evas_free(app->ee);
         windows = eina_list_remove(windows, app);

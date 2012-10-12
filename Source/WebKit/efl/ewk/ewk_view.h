@@ -46,8 +46,8 @@
  *  - "icon,received", void: main frame received an icon.
  *  - "inputmethod,changed", Eina_Bool: reports that input method was changed and
  *    it gives a boolean value whether it's enabled or not as an argument.
- *  - "inspector,view,close", Evas_Object*: request to close the view for web inspector.
- *  - "inspector,view,create", void: request to create the new view for web inspector.
+ *  - "inspector,view,close", Evas_Object*: request to close the view for inspector.
+ *  - "inspector,view,create", void: request to create the new view for inspector.
  *  - "js,windowobject,clear", void: Report that the JS window object has been cleared.
  *  - "link,hover,in", const char *link[2]: reports mouse is over a link.
  *    It gives the url in link[0] and link's title in link[1] as an argument.
@@ -2703,51 +2703,51 @@ EAPI Eina_Bool    ewk_view_setting_web_audio_get(const Evas_Object *o);
 EAPI Eina_Bool    ewk_view_setting_web_audio_set(Evas_Object *o, Eina_Bool enable);
 
 /**
- * Show the web inspector to debug a web page.
+ * Show the inspector to debug a web page.
  *
  * The following signals are emiited.
  * "inspector,view,create" and "inspector,view,close"
- * The first one will be called to request the view for web inspector on view that will be inspected.
- * This callback should create the view for web inspector and set the view with ewk_view_web_inspector_view_set().
- * The second one will be called to close the view for web inspector on view having the web inspector after disconnecting frontend
- * This callback should remove the view for web inspector.
+ * The first one will be called to request the view for inspector on view that will be inspected.
+ * This callback should create the view for inspector and set the view with ewk_view_inspector_view_set().
+ * The second one will be called to close the view for inspector on view having the inspector after disconnecting frontend
+ * This callback should remove the view for inspector.
  *
- * When the view having the web inspector is removed,
- * please emit the "inspector,view,destroy" signal on view for web inspector.
+ * When the view having the inspector is removed,
+ * please emit the "inspector,view,destroy" signal on view for inspector.
  *
- * @param o The view to show the web inspector.
+ * @param o The view to show the inspector.
  *
- * @see ewk_view_web_inspector_close()
- * @see ewk_view_web_inspector_view_set()
+ * @see ewk_view_inspector_close()
+ * @see ewk_view_inspector_view_set()
  */
-EAPI void ewk_view_web_inspector_show(const Evas_Object *o);
+EAPI void ewk_view_inspector_show(const Evas_Object *o);
 
 /**
- * Close the web inspector view
+ * Close the inspector view
  *
- * @param o The view to close the web inspector.
+ * @param o The view to close the inspector.
  *
- * @see ewk_view_web_inspector_show()
- * @see ewk_view_web_inspector_view_get()
+ * @see ewk_view_inspector_show()
+ * @see ewk_view_inspector_view_get()
  */
-EAPI void ewk_view_web_inspector_close(const Evas_Object *o);
+EAPI void ewk_view_inspector_close(const Evas_Object *o);
 
 /**
- * Get the view of web inspector.
+ * Get the view of inspector.
  *
  * @param o The view that is inspected.
  *
  * @return view object on success or @c NULL on failure
  */
-EAPI Evas_Object* ewk_view_web_inspector_view_get(const Evas_Object *o);
+EAPI Evas_Object* ewk_view_inspector_view_get(const Evas_Object *o);
 
 /**
- * Set the view of web inspector.
+ * Set the view of inspector.
  *
  * @param o The view that is inspected.
- * @param inspector_view The view of web inspector.
+ * @param inspector_view The view of inspector.
  */
-EAPI void ewk_view_web_inspector_view_set(Evas_Object *o, Evas_Object *inspector_view);
+EAPI void ewk_view_inspector_view_set(Evas_Object *o, Evas_Object *inspector_view);
 
 /**
  * Enables/disables the fullscreen mode by javascript fullscreen API.
