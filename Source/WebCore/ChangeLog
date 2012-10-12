@@ -1,3 +1,15 @@
+2012-10-12  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: never expand global scope automatically
+        https://bugs.webkit.org/show_bug.cgi?id=99159
+
+        Reviewed by Vsevolod Vlasov.
+
+        Otherwise, stepping is slow.
+
+        * inspector/front-end/ScopeChainSidebarPane.js:
+        (WebInspector.ScopeChainSidebarPane.prototype.update):
+
 2012-10-10  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Refactor UISourceCode, make it possible to distinguish working copy changes/commits from formatting.
