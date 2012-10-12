@@ -1,3 +1,20 @@
+2012-10-12  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] IndexedDB: WebKit API plumbing to pass abort reason code/message to script
+        https://bugs.webkit.org/show_bug.cgi?id=99193
+
+        Reviewed by Adam Barth.
+
+        Add database error (code, message) to payload for back-end to front-end abort call,
+        so that scripts can determine why the abort occurred - e.g. ConstraintError during
+        indexing. This API change allows the Chromium plumbing to land; the real implementation
+        is in http://webkit.org/b/99097 and will land later.
+
+        * public/WebIDBTransactionCallbacks.h:
+        (WebKit):
+        (WebIDBTransactionCallbacks):
+        (WebKit::WebIDBTransactionCallbacks::onAbort):
+
 2012-10-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.
