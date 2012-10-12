@@ -1,3 +1,20 @@
+2012-10-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r131121.
+        http://trac.webkit.org/changeset/131121
+        https://bugs.webkit.org/show_bug.cgi?id=99144
+
+        It made all tests timeout on all WK2 platform (Requested by
+        ossy on #webkit).
+
+        * UIProcess/WebProcessProxy.cpp:
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::postMessage):
+        (WebKit::InjectedBundle::postSynchronousMessage):
+
 2012-10-11  Andy Estes  <aestes@apple.com>
 
         Add some basic methods and properties to the injected bundle Objective-C DOM API

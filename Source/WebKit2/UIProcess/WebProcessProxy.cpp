@@ -33,7 +33,6 @@
 #include "TextCheckerState.h"
 #include "WebBackForwardListItem.h"
 #include "WebContext.h"
-#include "WebContextUserMessageCoders.h"
 #include "WebNavigationDataStore.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebPageProxy.h"
@@ -627,41 +626,6 @@ void WebProcessProxy::didUpdateHistoryTitle(uint64_t pageID, const String& title
     MESSAGE_CHECK_URL(url);
 
     m_context->historyClient().didUpdateHistoryTitle(m_context.get(), page, title, url, frame);
-}
-
-void WebProcessProxy::postMessage(const CoreIPC::DataReference& messageData)
-{
-    CoreIPC::ArgumentDecoder messageDecoder(messageData.data(), messageData.size());
-
-    String messageName;
-    if (!messageDecoder.decode(messageName))
-        return;
-
-    RefPtr<APIObject> messageBody;
-    if (!messageDecoder.decode(WebContextUserMessageDecoder(messageBody, this)))
-        return;
-
-    m_context->didReceiveMessageFromInjectedBundle(messageName, messageBody.get());
-}
-
-void WebProcessProxy::postSynchronousMessage(const CoreIPC::DataReference& messageData, Vector<uint8_t>& replyMessageData)
-{
-    CoreIPC::ArgumentDecoder messageDecoder(messageData.data(), messageData.size());
-
-    String messageName;
-    if (!messageDecoder.decode(messageName))
-        return;
-
-    RefPtr<APIObject> messageBody;
-    if (!messageDecoder.decode(WebContextUserMessageDecoder(messageBody, this)))
-        return;
-
-    RefPtr<APIObject> replyMessageBody;
-    m_context->didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody.get(), replyMessageBody);
-
-    OwnPtr<CoreIPC::ArgumentEncoder> replyEncoder = CoreIPC::ArgumentEncoder::create(0);
-    replyEncoder->encode(WebContextUserMessageEncoder(replyMessageBody.get()));
-    replyMessageData.append(replyEncoder->buffer(), replyEncoder->bufferSize());
 }
 
 } // namespace WebKit

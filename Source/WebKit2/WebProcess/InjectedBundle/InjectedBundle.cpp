@@ -43,7 +43,6 @@
 #include "WebPage.h"
 #include "WebPreferencesStore.h"
 #include "WebProcess.h"
-#include "WebProcessProxyMessages.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSLock.h>
 #include <WebCore/ApplicationCache.h>
@@ -94,28 +93,20 @@ void InjectedBundle::initializeClient(WKBundleClient* client)
 
 void InjectedBundle::postMessage(const String& messageName, APIObject* messageBody)
 {
-    OwnPtr<CoreIPC::ArgumentEncoder> messageData = CoreIPC::ArgumentEncoder::create(0);
-    messageData->encode(messageName);
-    messageData->encode(InjectedBundleUserMessageEncoder(messageBody));
-
-    WebProcess::shared().connection()->send(Messages::WebProcessProxy::PostMessage(CoreIPC::DataReference(messageData->buffer(), messageData->bufferSize())), 0);
+    WebProcess::shared().connection()->deprecatedSend(WebContextLegacyMessage::PostMessage, 0, CoreIPC::In(messageName, InjectedBundleUserMessageEncoder(messageBody)));
 }
 
 void InjectedBundle::postSynchronousMessage(const String& messageName, APIObject* messageBody, RefPtr<APIObject>& returnData)
 {
-    OwnPtr<CoreIPC::ArgumentEncoder> messageData = CoreIPC::ArgumentEncoder::create(0);
-    messageData->encode(messageName);
-    messageData->encode(InjectedBundleUserMessageEncoder(messageBody));
+    RefPtr<APIObject> returnDataTmp;
+    InjectedBundleUserMessageDecoder messageDecoder(returnDataTmp);
+    
+    bool succeeded = WebProcess::shared().connection()->deprecatedSendSync(WebContextLegacyMessage::PostSynchronousMessage, 0, CoreIPC::In(messageName, InjectedBundleUserMessageEncoder(messageBody)), CoreIPC::Out(messageDecoder));
 
-    Vector<uint8_t> replyMessageData;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebProcessProxy::PostSynchronousMessage(CoreIPC::DataReference(messageData->buffer(), messageData->bufferSize())), Messages::WebProcessProxy::PostSynchronousMessage::Reply(replyMessageData), 0))
+    if (!succeeded)
         return;
 
-    CoreIPC::ArgumentDecoder replyDecoder(replyMessageData.data(), replyMessageData.size());
-    if (!replyDecoder.decode(InjectedBundleUserMessageDecoder(returnData))) {
-        returnData = nullptr;
-        return;
-    }
+    returnData = returnDataTmp;
 }
 
 WebConnection* InjectedBundle::webConnectionToUIProcess() const

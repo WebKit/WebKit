@@ -190,9 +190,6 @@ private:
     void didReceiveSyncWebProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply);
     void didReceiveWebProcessProxyMessageOnConnectionWorkQueue(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder* arguments, bool& didHandleMessage);
 
-    void postMessage(const CoreIPC::DataReference& messageData);
-    void postSynchronousMessage(const CoreIPC::DataReference& messageData, Vector<uint8_t>& replyMessageData);
-
     ResponsivenessTimer m_responsivenessTimer;
     
     // This is not a CoreIPC::Connection so that we can wrap the CoreIPC::Connection in
