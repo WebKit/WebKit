@@ -1,3 +1,18 @@
+2012-10-12  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [EFL] Gardening of the WK2 Debug Bot failing tests
+        https://bugs.webkit.org/show_bug.cgi?id=99184
+
+        Unreviewed EFL gardening.
+
+        Skip failing tests on WK2 debug bot. Also, unskip tests that are
+        consistently passing.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl-wk2/http/tests/loading/text-content-type-with-binary-extension-expected.txt:
+        * platform/efl/TestExpectations:
+
 2012-10-12  Alexander Pavlov  <apavlov@chromium.org>
 
         Unreviewed, rebaseline inspector/styles/region-style-crash.html after r131176.

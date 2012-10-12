@@ -203,15 +203,6 @@ webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.htm
 # WebKitTestRunner needs an implementation for testRunner.setStorageDatabaseIdleInterval
 webkit.org/b/93982 storage/domstorage/storage-close-database-on-idle.html [ Failure ]
 
-# Unclassified failures
-Bug(EFL) http/tests/inspector/network/network-sidebar-width.html [ Failure ]
-
-# Fails after r128056.
-webkit.org/b/96794 inspector/console/alert-toString-exception.html [ Failure ]
-
-# Fails after it was unskipped in r129372.
-webkit.org/b/97545 inspector/styles/variables/css-variables.html [ Failure ]
-
 # The following test makes the fast/parser/document-write-ignores-later-network-bytes.html test crash
 webkit.org/b/98345 fast/parser/document-open-in-unload.html [ Skip ]
 
@@ -256,3 +247,12 @@ webkit.org/b/98740 plugins/npruntime/delete-plugin-within-setProperty.html [ Fai
 
 # Comparison of two javascript objects in C++ is failing.
 webkit.org/b/98739 plugins/npruntime/embed-property-equality.html [ Failure ]
+
+# Fails after r131057.
+webkit.org/b/99152 plugins/plugin-document-back-forward.html [ Failure ]
+webkit.org/b/99152 http/tests/security/contentSecurityPolicy/object-src-url-allowed.html [ Failure ]
+webkit.org/b/99152 http/tests/security/contentSecurityPolicy/object-src-url-blocked.html [ Failure ]
+webkit.org/b/99152 plugins/iframe-plugin-bgcolor.html [ Failure ]
+
+# Flaky on EFL port.
+webkit.org/b/96641 media/video-seek-past-end-playing.html [ Failure ]

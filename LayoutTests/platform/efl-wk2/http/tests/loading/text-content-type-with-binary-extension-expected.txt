@@ -1,9 +1,9 @@
 main frame - didStartProvisionalLoadForFrame
 main frame - didCommitLoadForFrame
 frame "iframe" - didStartProvisionalLoadForFrame
-frame "iframe" - didFailProvisionalLoadWithError
 main frame - didFinishDocumentLoadForFrame
 main frame - didHandleOnloadEventsForFrame
+frame "iframe" - didFailProvisionalLoadWithError
 main frame - didFinishLoadForFrame
 Test for https://bugs.webkit.org/show_bug.cgi?id=17360 REGRESSION: mp4 file downloaded from server is downloaded as html.
 

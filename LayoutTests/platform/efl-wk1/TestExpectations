@@ -67,7 +67,6 @@ http/tests/security/no-referrer.html
 http/tests/security/referrer-policy-redirect-link.html
 http/tests/xmlhttprequest/basic-auth-nopassword.html
 http/tests/xmlhttprequest/basic-auth-nouser.html
-http/tests/xmlhttprequest/cross-origin-cookie-storage.html
 http/tests/xmlhttprequest/failed-auth.html
 http/tests/xmlhttprequest/remember-bad-password.html
 
@@ -225,3 +224,10 @@ webkit.org/b/56567 http/tests/cache/history-only-cached-subresource-loads.html [
 
 # EFL WK1 does not support plugins yet.
 webkit.org/b/96881 plugins [ Skip ]
+
+# Needs custom policy delegate enhancement to log DOM node info - EFL port is missing DOM node abstraction
+webkit.org/b/87972 fast/loader/policy-delegate-action-hit-test-zoomed.html [ Failure ]
+webkit.org/b/87972 fast/encoding/mailto-always-utf-8.html [ Failure ]
+
+# Frame does not get focus as expected
+webkit.org/b/97077 inspector/extensions/extensions-panel.html [ Failure ]
