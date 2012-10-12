@@ -4078,3 +4078,5 @@ webkit.org/b/98811 [ Mac ] fast/transforms/transformed-focused-text-input.html [
 webkit.org/b/98948 [ Linux Debug ] http/tests/media/media-source/video-media-source-play.html [ PASS CRASH ]
 
 webkit.org/b/99089 transforms/3d/general/perspective-units.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/99134 platform/chromium/compositing/tiny-layer-rotated.html [ Pass ImageOnlyFailure ]

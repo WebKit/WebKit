@@ -1,3 +1,9 @@
+2012-10-11  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Chromium] Unreviewed gardening, TestExpectations updated.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-11  Takashi Sakamoto  <tasak@google.com>
 
         [Shadow DOM] Insertion points need resetStyleInheritance
