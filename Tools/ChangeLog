@@ -1,5 +1,11 @@
 2012-10-12  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        Unreviewed compile error fix for chromium windows bot.
+
+        * TestWebKitAPI/Tests/WTF/MemoryInstrumentationTest.cpp:
+
+2012-10-12  Ilya Tikhonovsky  <loislo@chromium.org>
+
         Another unreviewed fix for clang builders.
 
         * TestWebKitAPI/Tests/WTF/MemoryInstrumentationTest.cpp:
