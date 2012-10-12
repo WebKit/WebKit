@@ -85,6 +85,7 @@ bool InjectedBundle::load(APIObject* initializationUserData)
         return true;
     }
     
+#if defined(__LP64__) && defined(__clang__)
     // Otherwise, look to see if the bundle has a principal class
     Class principalClass = [m_platformBundle principalClass];
     if (!principalClass) {
@@ -110,6 +111,9 @@ bool InjectedBundle::load(APIObject* initializationUserData)
         [instance webProcessPlugInInitialize:[WKWebProcessPlugInController _shared]];
 
     return true;
+#else
+    return false;
+#endif
 }
 
 void InjectedBundle::activateMacFontAscentHack()

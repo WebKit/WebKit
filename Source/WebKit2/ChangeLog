@@ -1,3 +1,10 @@
+2012-10-11  Andy Estes  <aestes@apple.com>
+
+        Fix the 32-bit Mac build after r131138.
+
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WebKit::InjectedBundle::load):
+
 2012-10-11  Anders Carlsson  <andersca@apple.com>
 
         Stop using Connection::deprecatedSend in WebConnection
