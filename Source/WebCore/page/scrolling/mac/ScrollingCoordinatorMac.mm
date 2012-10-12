@@ -258,10 +258,14 @@ void ScrollingCoordinatorMac::detachFromStateTree(ScrollingNodeID scrollLayerID)
         return;
 
     ScrollingStateNode* node = m_stateNodeMap.take(scrollLayerID);
-
-    // FIXME: removeNode() will destroy children, and those children might still be in the HashMap.
-    // This will be a big problem once there are actually children in the tree.
     m_scrollingStateTree->removeNode(node);
+
+    // ScrollingStateTree::removeNode() will destroy children, so we have to make sure we remove those children
+    // from the HashMap.
+   const Vector<ScrollingNodeID>& removedNodes = m_scrollingStateTree->removedNodes();
+    size_t size = removedNodes.size();
+    for (size_t i = 0; i < size; ++i)
+        m_stateNodeMap.remove(removedNodes[i]);
 }
 
 void ScrollingCoordinatorMac::clearStateTree()

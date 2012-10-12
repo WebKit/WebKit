@@ -1,3 +1,39 @@
+2012-10-12  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=99211
+        When ScrollingStateNodes are destroyed, they should be removed 
+        ScrollingCoordinator's HashMap
+
+        Reviewed by Sam Weinig.
+
+        This patch adds a new member variable to ScrollingStateTree. It's a 
+        Vector of ScrollingNodeIDs. It will contain the IDs of nodes that 
+        have been removed from the tree since the last time the tree was 
+        committed.
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::ScrollingStateTree):
+
+        When we do commit, copy the Vector over into the cloned tree, and 
+        then clear our own Vector.
+        (WebCore::ScrollingStateTree::commit):
+
+        Call didRemoveNode().
+        (WebCore::ScrollingStateTree::removeNode):
+
+        Append the removed node's id to the vector.
+        (WebCore::ScrollingStateTree::didRemoveNode):
+        (WebCore):
+        * page/scrolling/ScrollingStateTree.h:
+        (ScrollingStateTree):
+
+        Call didRemoveNode().
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::removeChild):
+
+        Fix the FIXME!
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::detachFromStateTree):
+
 2012-10-12  Brady Eidson  <beidson@apple.com>
 
         Setup basic NetworkProcess messaging and initialization.

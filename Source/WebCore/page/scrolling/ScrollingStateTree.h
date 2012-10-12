@@ -61,6 +61,8 @@ public:
     PassOwnPtr<ScrollingStateTree> commit();
 
     void removeNode(ScrollingStateNode*);
+    void didRemoveNode(ScrollingNodeID);
+    const Vector<ScrollingNodeID>& removedNodes() const { return m_nodesRemovedSinceLastCommit; }
 
     void rootLayerDidChange();
 
@@ -70,7 +72,10 @@ public:
 private:
     ScrollingStateTree();
 
+    PassOwnPtr<ScrollingStateTree> clone();
+
     OwnPtr<ScrollingStateScrollingNode> m_rootStateNode;
+    Vector<ScrollingNodeID> m_nodesRemovedSinceLastCommit;
     bool m_hasChangedProperties;
 };
 

@@ -82,6 +82,7 @@ void ScrollingStateNode::removeChild(ScrollingStateNode* node)
         return;
 
     if (size_t index = m_children->find(node)) {
+        m_scrollingStateTree->didRemoveNode(node->scrollingNodeID());
         m_children->remove(index);
         return;
     }
