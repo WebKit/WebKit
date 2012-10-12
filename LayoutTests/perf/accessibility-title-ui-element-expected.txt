@@ -1,3 +1,0 @@
-Tests that titleUIElement on an accessibility element runs in amortized constant time.
-PASS
-

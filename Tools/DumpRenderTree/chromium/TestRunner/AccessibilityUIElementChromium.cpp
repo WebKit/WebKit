@@ -774,13 +774,7 @@ void AccessibilityUIElement::cellForColumnAndRowCallback(const CppArgumentList&,
 
 void AccessibilityUIElement::titleUIElementCallback(const CppArgumentList&, CppVariant* result)
 {
-    WebAccessibilityObject obj = accessibilityObject().titleUIElement();
-    if (obj.isNull()) {
-        result->setNull();
-        return;
-    }
-
-    result->set(*(m_factory->getOrCreate(obj)->getAsCppVariant()));
+    result->setNull();
 }
 
 void AccessibilityUIElement::setSelectedTextRangeCallback(const CppArgumentList&arguments, CppVariant* result)

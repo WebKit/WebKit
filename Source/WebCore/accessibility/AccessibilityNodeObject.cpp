@@ -59,7 +59,6 @@
 #include "HTMLTextFormControlElement.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
-#include "LabelableElement.h"
 #include "LocalizedStrings.h"
 #include "MathMLNames.h"
 #include "NodeList.h"
@@ -1002,18 +1001,14 @@ bool AccessibilityNodeObject::isGenericFocusableElement() const
 
 HTMLLabelElement* AccessibilityNodeObject::labelForElement(Element* element) const
 {
-    if (!element->isHTMLElement() || !toHTMLElement(element)->isLabelable())
-        return 0;
-
-    const AtomicString& id = element->getIdAttribute();
-    if (!id.isEmpty()) {
-        if (HTMLLabelElement* label = element->treeScope()->labelElementForId(id))
-            return label;
-    }
-
-    for (Element* parent = element->parentElement(); parent; parent = parent->parentElement()) {
-        if (parent->hasTagName(labelTag))
-            return static_cast<HTMLLabelElement*>(parent);
+    RefPtr<NodeList> list = element->document()->getElementsByTagName("label");
+    unsigned len = list->length();
+    for (unsigned i = 0; i < len; i++) {
+        if (list->item(i)->hasTagName(labelTag)) {
+            HTMLLabelElement* label = static_cast<HTMLLabelElement*>(list->item(i));
+            if (label->control() == element)
+                return label;
+        }
     }
 
     return 0;

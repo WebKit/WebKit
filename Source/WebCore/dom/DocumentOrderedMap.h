@@ -52,7 +52,6 @@ public:
     Element* getElementById(AtomicStringImpl*, const TreeScope*) const;
     Element* getElementByMapName(AtomicStringImpl*, const TreeScope*) const;
     Element* getElementByLowercasedMapName(AtomicStringImpl*, const TreeScope*) const;
-    Element* getElementByLabelForAttribute(AtomicStringImpl*, const TreeScope*) const;
 
     void checkConsistency() const;
 
@@ -81,3 +80,4 @@ inline bool DocumentOrderedMap::containsMultiple(AtomicStringImpl* id) const
 } // namespace WebCore
 
 #endif // DocumentOrderedMap_h
+
