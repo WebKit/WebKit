@@ -1,3 +1,11 @@
+2012-10-12  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed cleanup, remove unneeded XP specific rebaselines for chromium.
+
+        * platform/chromium-win-xp/fast/speech: Removed.
+        * platform/chromium-win-xp/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt: Removed.
+        * platform/chromium-win-xp/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png: Removed.
+
 2012-10-12  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed gardening. Updating expectations for fast/repaint/repaint-across-writing-mode-boundary.html
