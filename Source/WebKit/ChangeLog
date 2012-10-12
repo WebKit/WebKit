@@ -1,3 +1,14 @@
+2012-10-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r131189.
+        http://trac.webkit.org/changeset/131189
+        https://bugs.webkit.org/show_bug.cgi?id=99187
+
+        Made inspector http tests crash on WK2. (Requested by rakuco
+        on #webkit).
+
+        * PlatformEfl.cmake:
+
 2012-10-12  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Share resources installed for inspector
