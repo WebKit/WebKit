@@ -1,3 +1,36 @@
+2012-10-12  Levi Weintraub  <leviw@chromium.org>
+
+        Remove unnecessary mode identifiers added in r131111
+        https://bugs.webkit.org/show_bug.cgi?id=99208
+
+        Reviewed by Emil A Eklund.
+
+        Removing unnecessary mode identifiers from coordinate conversion methods. These
+        were added in http://trac.webkit.org/changeset/131111
+
+        No new tests. No change in behavior.
+
+        * rendering/RenderBox.h:
+        (RenderBox):
+        * rendering/RenderBoxModelObject.h:
+        (RenderBoxModelObject):
+        * rendering/RenderInline.h:
+        (RenderInline):
+        * rendering/RenderObject.h:
+        (RenderObject):
+        * rendering/RenderView.h:
+        (RenderView):
+        * rendering/svg/RenderSVGForeignObject.h:
+        (RenderSVGForeignObject):
+        * rendering/svg/RenderSVGInline.h:
+        (RenderSVGInline):
+        * rendering/svg/RenderSVGModelObject.h:
+        (RenderSVGModelObject):
+        * rendering/svg/RenderSVGRoot.h:
+        (RenderSVGRoot):
+        * rendering/svg/RenderSVGText.h:
+        (RenderSVGText):
+
 2012-10-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r131224.
