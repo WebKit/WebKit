@@ -1,3 +1,18 @@
+2012-10-12  Anders Carlsson  <andersca@apple.com>
+
+        Move QDataStream functions into HistoryItemQt.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=99203
+
+        Reviewed by Andreas Kling.
+
+        It seems like the QDataStream stream operators are only used from HistoryItemQt.cpp
+        inside WebCore, so move them there. If in the future they are required elsewhere, they should
+        be moved into a separate header instead of polluting headers unnecessarily.
+
+        * wtf/Vector.h:
+        * wtf/qt/StringQt.cpp:
+        * wtf/text/WTFString.h:
+
 2012-10-11  Mark Toller  <mark.toller@samsung.com>
 
         Removed incorrect pthread_mutex_trylock code in an ASSERT in TCMalloc_PageHeap::signalScavenger. This 
