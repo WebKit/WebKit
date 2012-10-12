@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 163x19
+          text run at (0,0) width 163: "This page is a test case for "
+        RenderInline {A} at (0,0) size 68x19 [color=#0000EE]
+          RenderText {#text} at (163,0) size 68x19
+            text run at (163,0) width 68: "Bug 51905"
+        RenderText {#text} at (231,0) size 314x19
+          text run at (231,0) width 314: ". WebKit should not crash when this page is loaded."
+      RenderBlock (anonymous) at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 38x19
+          text run at (0,0) width 38: "PASS"
+      RenderBlock {FORM} at (0,56) size 784x0
