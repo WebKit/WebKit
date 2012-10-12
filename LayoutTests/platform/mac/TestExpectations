@@ -1324,3 +1324,5 @@ webkit.org/b/98837 http/tests/security/svg-image-leak.html [ Skip ]
 
 # Should never have been a ref test.
 webkit.org/b/98456 compositing/images/truncated-direct-png-image.html [ ImageOnlyFailure ]
+
+webkit.org/b/99096 fast/canvas/webgl/arraybuffer-transfer-of-control.html [ Failure ]
