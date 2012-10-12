@@ -111,7 +111,10 @@ bool Connection::open()
         m_isConnected = true;
         
         // Send the initialize message, which contains a send right for the server to use.
-        deprecatedSend(CoreIPCMessage::InitializeConnection, 0, MachPort(m_receivePort, MACH_MSG_TYPE_MAKE_SEND));
+        OwnPtr<ArgumentEncoder> argumentEncoder = ArgumentEncoder::create(0);
+        argumentEncoder->encode(MachPort(m_receivePort, MACH_MSG_TYPE_MAKE_SEND));
+
+        sendMessage(MessageID(CoreIPCMessage::InitializeConnection), argumentEncoder.release());
 
         // Set the dead name handler for our send port.
         initializeDeadNameSource();
@@ -127,7 +130,10 @@ bool Connection::open()
     if (m_exceptionPort) {
         m_connectionQueue.registerMachPortEventHandler(m_exceptionPort, WorkQueue::MachPortDataAvailable, bind(&Connection::exceptionSourceEventHandler, this));
 
-        deprecatedSend(CoreIPCMessage::SetExceptionPort, 0, MachPort(m_exceptionPort, MACH_MSG_TYPE_MAKE_SEND));
+        OwnPtr<ArgumentEncoder> argumentEncoder = ArgumentEncoder::create(0);
+        argumentEncoder->encode(MachPort(m_exceptionPort, MACH_MSG_TYPE_MAKE_SEND));
+
+        sendMessage(MessageID(CoreIPCMessage::SetExceptionPort), argumentEncoder.release());
     }
 
     return true;

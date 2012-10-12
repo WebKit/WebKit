@@ -1,3 +1,15 @@
+2012-10-12  Anders Carlsson  <andersca@apple.com>
+
+        Stop using deprecatedSend inside ConnectionMac.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=99192
+
+        Reviewed by Andreas Kling.
+
+        The messages that we send are so simple that we can just use sendMessage.
+
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::Connection::open):
+
 2012-10-12  Brady Eidson  <beidson@apple.com>
 
         Add a basic NetworkProcess.app to the WebKit2 build
