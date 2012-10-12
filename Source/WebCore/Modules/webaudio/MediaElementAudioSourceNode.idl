@@ -22,9 +22,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=WEB_AUDIO&VIDEO,
     JSGenerateToJSObject
-] MediaElementAudioSourceNode : AudioSourceNode {
+] interface MediaElementAudioSourceNode : AudioSourceNode {
     readonly attribute HTMLMediaElement mediaElement;
 };

@@ -28,11 +28,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=FILE_SYSTEM,
     CustomToJSObject,
     JSNoStaticTables
-] EntrySync {
+] interface EntrySync {
     readonly attribute boolean isFile;
     readonly attribute boolean isDirectory;
     readonly attribute DOMString name;

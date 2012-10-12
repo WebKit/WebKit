@@ -23,8 +23,8 @@ interface MouseEvent : UIEvent {
     readonly attribute long             screenY;
     readonly attribute long             clientX;
     readonly attribute long             clientY;
-    readonly attribute [Conditional=POINTER_LOCK, V8EnabledAtRuntime=pointerLock] long webkitMovementX;
-    readonly attribute [Conditional=POINTER_LOCK, V8EnabledAtRuntime=pointerLock] long webkitMovementY;
+    [Conditional=POINTER_LOCK, V8EnabledAtRuntime=pointerLock] readonly attribute long webkitMovementX;
+    [Conditional=POINTER_LOCK, V8EnabledAtRuntime=pointerLock] readonly attribute long webkitMovementY;
     readonly attribute boolean          ctrlKey;
     readonly attribute boolean          shiftKey;
     readonly attribute boolean          altKey;

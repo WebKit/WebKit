@@ -23,12 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     Conditional=WEBGL, 
     JSGenerateIsReachable=ImplContext,
     OmitConstructor, 
     DoNotCheckConstants
-] OESVertexArrayObject {
+] interface OESVertexArrayObject {
     const unsigned int VERTEX_ARRAY_BINDING_OES = 0x85B5;
     
     [StrictTypeChecking] WebGLVertexArrayObjectOES createVertexArrayOES();

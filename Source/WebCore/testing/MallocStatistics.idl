@@ -23,9 +23,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     OmitConstructor
-] MallocStatistics {
+] interface MallocStatistics {
     readonly attribute unsigned long reservedVMBytes;
     readonly attribute unsigned long committedVMBytes;
     readonly attribute unsigned long freeListBytes;

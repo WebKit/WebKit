@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     ConstructorTemplate=TypedArray,
     ConstructorParameters=123,
     NumericIndexedGetter,
@@ -34,7 +34,7 @@ interface [
     CustomToJSObject,
     DoNotCheckConstants,
     TypedArray=double
-] Float64Array : ArrayBufferView {
+] interface Float64Array : ArrayBufferView {
     Int32Array foo(in Float32Array array);
     void set();
 };

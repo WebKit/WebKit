@@ -18,9 +18,9 @@
  */
 
 interface HTMLParamElement : HTMLElement {
-    attribute [Reflect] DOMString name;
-    attribute [Reflect] DOMString type;
-    attribute [Reflect] DOMString value;
-    attribute [Reflect] DOMString valueType;
+    [Reflect] attribute DOMString name;
+    [Reflect] attribute DOMString type;
+    [Reflect] attribute DOMString value;
+    [Reflect] attribute DOMString valueType;
 };
 

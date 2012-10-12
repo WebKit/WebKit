@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     Conditional=VIDEO_TRACK,
     V8EnabledAtRuntime=webkitVideoTrack,
     JSGenerateToNativeObject,
@@ -32,7 +32,7 @@ interface [
     EventTarget,
     JSCustomMarkFunction,
     JSCustomIsReachable
-] TextTrackCue {
+] interface TextTrackCue {
     readonly attribute TextTrack track;
 
     attribute DOMString id;

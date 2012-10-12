@@ -19,12 +19,12 @@
  */
 
 // Introduced in DOM Level 2:
-interface [
+[
     JSCustomMarkFunction,
     JSCustomToNativeObject,
     ObjCProtocol,
     CPPPureInterface
-] NodeFilter {
+] interface NodeFilter {
     // Constants returned by acceptNode
     const short               FILTER_ACCEPT                  = 1;
     const short               FILTER_REJECT                  = 2;

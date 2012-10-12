@@ -18,12 +18,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface [
+[
     JSGenerateToNativeObject,
     CustomIndexedSetter
-] HTMLOptionsCollection : HTMLCollection {
+] interface HTMLOptionsCollection : HTMLCollection {
              attribute long selectedIndex;
-             attribute [Custom] unsigned long length
+             [Custom] attribute unsigned long length
                     setter raises (DOMException);
 
     [Custom] void add(in [Optional=DefaultIsUndefined] HTMLOptionElement option, 

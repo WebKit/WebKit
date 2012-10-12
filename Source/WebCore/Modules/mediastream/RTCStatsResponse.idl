@@ -22,8 +22,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=MEDIA_STREAM
-] RTCStatsResponse {
+] interface RTCStatsResponse {
     sequence<RTCStatsReport> result();
 };

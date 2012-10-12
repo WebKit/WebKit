@@ -27,10 +27,10 @@
  */
 
 
-interface [
+[
     JSGenerateIsReachable=ImplFrame,
     OmitConstructor
-] Screen {
+] interface Screen {
     readonly attribute unsigned long height;
     readonly attribute unsigned long width;
     readonly attribute unsigned long colorDepth;

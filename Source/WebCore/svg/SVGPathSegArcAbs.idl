@@ -24,15 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     Conditional=SVG
-] SVGPathSegArcAbs : SVGPathSeg {
-    attribute [StrictTypeChecking] float x;
-    attribute [StrictTypeChecking] float y;
-    attribute [StrictTypeChecking] float r1;
-    attribute [StrictTypeChecking] float r2;
-    attribute [StrictTypeChecking] float angle;
-    attribute [StrictTypeChecking] boolean largeArcFlag;
-    attribute [StrictTypeChecking] boolean sweepFlag;
+] interface SVGPathSegArcAbs : SVGPathSeg {
+    [StrictTypeChecking] attribute float x;
+    [StrictTypeChecking] attribute float y;
+    [StrictTypeChecking] attribute float r1;
+    [StrictTypeChecking] attribute float r2;
+    [StrictTypeChecking] attribute float angle;
+    [StrictTypeChecking] attribute boolean largeArcFlag;
+    [StrictTypeChecking] attribute boolean sweepFlag;
 };
 

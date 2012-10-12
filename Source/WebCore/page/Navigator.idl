@@ -17,10 +17,10 @@
     Boston, MA 02110-1301, USA.
 */
 
-interface [
+[
     JSGenerateIsReachable=ImplFrame,
     OmitConstructor
-] Navigator {
+] interface Navigator {
     readonly attribute DOMString appCodeName;
     readonly attribute DOMString appName;
     readonly attribute DOMString appVersion;

@@ -22,11 +22,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=MEDIA_STREAM,
     IndexedGetter,
     EventTarget
-] MediaStreamTrackList {
+] interface MediaStreamTrackList {
     readonly attribute unsigned long length;
     MediaStreamTrack item(in [IsIndex] unsigned long index);
 

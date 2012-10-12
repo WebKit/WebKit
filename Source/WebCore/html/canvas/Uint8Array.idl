@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     ConstructorTemplate=TypedArray,
     ConstructorParameters=1,
     NumericIndexedGetter,
@@ -34,7 +34,7 @@ interface [
     CustomToJSObject,
     DoNotCheckConstants,
     TypedArray=unsigned char
-] Uint8Array : ArrayBufferView {
+] interface Uint8Array : ArrayBufferView {
     const unsigned long BYTES_PER_ELEMENT = 1;
 
     readonly attribute unsigned long length;

@@ -18,5 +18,5 @@
  */
 
 interface HTMLQuoteElement : HTMLElement {
-    attribute [Reflect, URL] DOMString cite;
+    [Reflect, URL] attribute DOMString cite;
 };

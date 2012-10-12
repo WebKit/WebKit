@@ -27,13 +27,13 @@
  * SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=CSS_REGIONS,
     InterfaceName=WebKitNamedFlowCollection,
     JSGenerateToJSObject,
     IndexedGetter,
     NamedGetter
-] DOMNamedFlowCollection {
+] interface DOMNamedFlowCollection {
     readonly attribute unsigned long length;
     WebKitNamedFlow item(in unsigned long index);
     WebKitNamedFlow namedItem(in DOMString name);

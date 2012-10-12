@@ -23,13 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=DEVICE_ORIENTATION,
-] DeviceOrientationEvent : Event {
-    readonly attribute [Custom] double alpha;
-    readonly attribute [Custom] double beta;
-    readonly attribute [Custom] double gamma;
-    readonly attribute [Custom] boolean absolute;
+] interface DeviceOrientationEvent : Event {
+    [Custom] readonly attribute double alpha;
+    [Custom] readonly attribute double beta;
+    [Custom] readonly attribute double gamma;
+    [Custom] readonly attribute boolean absolute;
     [Custom] void initDeviceOrientationEvent(in [Optional=DefaultIsUndefined] DOMString type, 
                                              in [Optional=DefaultIsUndefined] boolean bubbles, 
                                              in [Optional=DefaultIsUndefined] boolean cancelable, 

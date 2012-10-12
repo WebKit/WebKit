@@ -18,9 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface [
+[
     Constructor
-] XMLSerializer {
+] interface XMLSerializer {
     DOMString serializeToString(in [Optional=DefaultIsUndefined] Node node)
         raises(DOMException);
 };

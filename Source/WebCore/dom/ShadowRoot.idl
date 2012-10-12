@@ -24,17 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=SHADOW_DOM,
     Constructor(in Element host),
     ConstructorRaisesException,
     JSGenerateToJSObject
-] ShadowRoot : DocumentFragment {
+] interface ShadowRoot : DocumentFragment {
     readonly attribute Element activeElement;
     attribute boolean applyAuthorStyles;
     attribute boolean resetStyleInheritance;
 
-    attribute [TreatNullAs=NullString] DOMString innerHTML
+    [TreatNullAs=NullString] attribute DOMString innerHTML
         setter raises(DOMException);
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT

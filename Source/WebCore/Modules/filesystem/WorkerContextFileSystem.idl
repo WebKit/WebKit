@@ -24,10 +24,10 @@
  *
  */
 
-interface [
+[
     Conditional=FILE_SYSTEM,
     Supplemental=WorkerContext
-] WorkerContextFileSystem {
+] interface WorkerContextFileSystem {
     const unsigned short TEMPORARY = 0;
     const unsigned short PERSISTENT = 1;
 
@@ -36,7 +36,7 @@ interface [
     [V8EnabledAtRuntime=FileSystem] void webkitResolveLocalFileSystemURL(in DOMString url, in [Callback] EntryCallback successCallback, in [Callback, Optional] ErrorCallback errorCallback);
     [V8EnabledAtRuntime=FileSystem] EntrySync webkitResolveLocalFileSystemSyncURL(in DOMString url) raises (FileException);
 
-    attribute [V8EnabledAtRuntime=FileSystem] FileErrorConstructor FileError;
-    attribute [V8EnabledAtRuntime=FileSystem] FileExceptionConstructor FileException;
+    [V8EnabledAtRuntime=FileSystem] attribute FileErrorConstructor FileError;
+    [V8EnabledAtRuntime=FileSystem] attribute FileExceptionConstructor FileException;
 };
 

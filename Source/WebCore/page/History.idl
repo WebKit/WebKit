@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
 #if defined(V8_BINDING) && V8_BINDING
     CheckSecurity,
 #endif
@@ -33,9 +33,9 @@ interface [
     CustomDeleteProperty,
     CustomEnumerateProperty,
     OmitConstructor
-] History {
+] interface History {
     readonly attribute unsigned long length;
-    readonly attribute [CachedAttribute, Custom] SerializedScriptValue state;
+    [CachedAttribute, Custom] readonly attribute SerializedScriptValue state;
 
     [DoNotCheckSecurity, CallWith=ScriptExecutionContext] void back();
     [DoNotCheckSecurity, CallWith=ScriptExecutionContext] void forward();

@@ -19,13 +19,13 @@
  */
 
 // Introduced in DOM Level 2:
-interface [
+[
     ObjCProtocol,
     CPPPureInterface,
     OmitConstructor,
     JSCustomToJSObject,
     JSCustomToNativeObject
-] EventTarget {
+] interface EventTarget {
     [ObjCLegacyUnnamedParameters] void addEventListener(in DOMString type, 
                                          in EventListener listener, 
                                          in [Optional] boolean useCapture);

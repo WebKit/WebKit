@@ -17,9 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface [
+[
     Constructor
-] DOMParser {
+] interface DOMParser {
     Document parseFromString(in [Optional=DefaultIsUndefined] DOMString str, 
                              in [Optional=DefaultIsUndefined] DOMString contentType);
 };

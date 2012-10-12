@@ -47,7 +47,7 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
                       in [Optional=DefaultIsUndefined] float dy);
 
     attribute float globalAlpha;
-    attribute [TreatNullAs=NullString] DOMString globalCompositeOperation;
+    [TreatNullAs=NullString] attribute DOMString globalCompositeOperation;
 
     CanvasGradient createLinearGradient(in [Optional=DefaultIsUndefined] float x0,
                                         in [Optional=DefaultIsUndefined] float y0,
@@ -63,14 +63,14 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
         raises (DOMException);
 
     attribute float lineWidth;
-    attribute [TreatNullAs=NullString] DOMString lineCap;
-    attribute [TreatNullAs=NullString] DOMString lineJoin;
+    [TreatNullAs=NullString] attribute DOMString lineCap;
+    [TreatNullAs=NullString] attribute DOMString lineJoin;
     attribute float miterLimit;
 
     attribute float shadowOffsetX;
     attribute float shadowOffsetY;
     attribute float shadowBlur;
-    attribute [TreatNullAs=NullString] DOMString shadowColor;
+    [TreatNullAs=NullString] attribute DOMString shadowColor;
 
     void setLineDash(in sequence<float> dash);
     sequence<float> getLineDash();
@@ -78,7 +78,7 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
 
     // FIXME: These attributes should also be implemented for V8.
 #if !(defined(V8_BINDING) && V8_BINDING)
-    attribute [Custom] Array webkitLineDash;
+    [Custom] attribute Array webkitLineDash;
     attribute float webkitLineDashOffset;
 #endif
 
@@ -220,8 +220,8 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
     ImageData createImageData(in float sw, in float sh)
         raises (DOMException);
 
-    attribute [Custom] custom strokeStyle;
-    attribute [Custom] custom fillStyle;
+    [Custom] attribute custom strokeStyle;
+    [Custom] attribute custom fillStyle;
 
     // pixel manipulation
     ImageData getImageData(in [Optional=DefaultIsUndefined] float sx, in [Optional=DefaultIsUndefined] float sy,

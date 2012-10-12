@@ -30,10 +30,10 @@
 // http://lxr.mozilla.org/seamonkey/source/content/xsl/public/nsIXSLTException.idl
 // http://bugs.webkit.org/show_bug.cgi?id=5446
 
-interface [
+[
     Conditional=XSLT,
     Constructor
-] XSLTProcessor {
+] interface XSLTProcessor {
     
     void importStylesheet(in [Optional=DefaultIsUndefined] Node stylesheet);
     DocumentFragment transformToFragment(in [Optional=DefaultIsUndefined] Node source, in [Optional=DefaultIsUndefined] Document docVal);

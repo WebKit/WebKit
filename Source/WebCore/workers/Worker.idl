@@ -25,7 +25,7 @@
  *
  */
 
-interface [
+[
     Conditional=WORKERS,
     ActiveDOMObject,
     JSCustomConstructor,
@@ -34,7 +34,7 @@ interface [
     ConstructorRaisesException,
     JSGenerateToNativeObject,
     JSGenerateToJSObject
-] Worker : AbstractWorker {
+] interface Worker : AbstractWorker {
 
     attribute EventListener onmessage;
 

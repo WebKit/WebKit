@@ -28,14 +28,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=WORKERS,
     ExtendsDOMGlobalObject,
     IsWorkerContext,
     JSGenerateToNativeObject,
     JSNoStaticTables,
     OmitConstructor
-] DedicatedWorkerContext : WorkerContext {
+] interface DedicatedWorkerContext : WorkerContext {
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT

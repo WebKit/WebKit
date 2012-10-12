@@ -23,9 +23,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=INDEXED_DATABASE
-] IDBKeyRange {
+] interface IDBKeyRange {
     readonly attribute IDBKey lower;
     readonly attribute IDBKey upper;
     readonly attribute boolean lowerOpen;

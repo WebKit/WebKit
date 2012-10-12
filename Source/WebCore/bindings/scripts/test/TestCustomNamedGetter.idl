@@ -26,9 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     CustomNamedGetter
-] TestCustomNamedGetter {
+] interface TestCustomNamedGetter {
     void anotherFunction(in DOMString str);
 };
 

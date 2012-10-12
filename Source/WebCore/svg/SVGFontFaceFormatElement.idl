@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     Conditional=SVG&SVG_FONTS
-] SVGFontFaceFormatElement : SVGElement {
+] interface SVGFontFaceFormatElement : SVGElement {
 };
 

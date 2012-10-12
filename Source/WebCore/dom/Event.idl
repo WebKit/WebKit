@@ -19,12 +19,12 @@
  */
 
 // Introduced in DOM Level 2:
-interface [
+[
     CustomToJSObject,
     ConstructorTemplate=Event,
     JSNoStaticTables,
     ObjCPolymorphic
-] Event {
+] interface Event {
 
     // DOM PhaseType
     const unsigned short NONE                = 0;
@@ -56,8 +56,8 @@ interface [
     readonly attribute EventTarget      target;
     readonly attribute EventTarget      currentTarget;
     readonly attribute unsigned short   eventPhase;
-    readonly attribute [InitializedByEventConstructor] boolean bubbles;
-    readonly attribute [InitializedByEventConstructor] boolean cancelable;
+    [InitializedByEventConstructor] readonly attribute boolean bubbles;
+    [InitializedByEventConstructor] readonly attribute boolean cancelable;
     readonly attribute DOMTimeStamp     timeStamp;
 
     void               stopPropagation();
@@ -76,7 +76,7 @@ interface [
              attribute boolean          cancelBubble;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    readonly attribute [Custom] Clipboard        clipboardData;
+    [Custom] readonly attribute Clipboard        clipboardData;
 #endif
 
 #if defined(LANGUAGE_CPP) && LANGUAGE_CPP

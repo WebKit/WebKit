@@ -24,11 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=JAVASCRIPT_DEBUGGER,
     OmitConstructor,
     V8CustomToJSObject
-] ScriptProfileNode {
+] interface ScriptProfileNode {
     readonly attribute DOMString functionName;
     readonly attribute DOMString url;
     readonly attribute unsigned long lineNumber;
@@ -37,6 +37,6 @@ interface [
     readonly attribute unsigned long numberOfCalls;
     sequence<ScriptProfileNode> children();
     readonly attribute boolean visible;
-    readonly attribute [CustomGetter] unsigned long callUID;
+    [CustomGetter] readonly attribute unsigned long callUID;
 };
 

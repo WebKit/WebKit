@@ -26,10 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-exception [
+[
     JSNoStaticTables,
     DoNotCheckConstants
-] XMLHttpRequestException {
+] exception XMLHttpRequestException {
 
     readonly attribute unsigned short   code;
     readonly attribute DOMString        name;

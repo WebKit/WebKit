@@ -26,11 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=SQL_DATABASE,
     OmitConstructor,
     JSNoStaticTables
-] SQLError {
+] interface SQLError {
     readonly attribute unsigned long code;
     readonly attribute DOMString message;
 

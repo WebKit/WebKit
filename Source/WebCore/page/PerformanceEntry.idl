@@ -29,12 +29,12 @@
  */
 
 // See: https://dvcs.w3.org/hg/webperf/raw-file/tip/specs/PerformanceTimeline/Overview.html
-interface [
+[
     Conditional=WEB_TIMING,
     Conditional=PERFORMANCE_TIMELINE,
     CustomToJSObject,
     OmitConstructor
-] PerformanceEntry {
+] interface PerformanceEntry {
     readonly attribute DOMString name;
     readonly attribute DOMString entryType;
     readonly attribute double startTime;

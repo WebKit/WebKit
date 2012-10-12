@@ -18,12 +18,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface [
+[
     CustomIsReachable,
     IndexedGetter,
     NamedGetter,
     V8DependentLifetime
-] NodeList {
+] interface NodeList {
 
     Node item(in [IsIndex,Optional=DefaultIsUndefined] unsigned long index);
 

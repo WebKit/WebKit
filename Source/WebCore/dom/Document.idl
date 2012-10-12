@@ -18,11 +18,11 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface [
+[
     CustomToJSObject,
     JSGenerateToNativeObject,
     JSInlineGetOwnPropertySlot
-] Document : Node {
+] interface Document : Node {
 
     // DOM Level 1 Core
     readonly attribute DocumentType doctype;
@@ -62,10 +62,10 @@ interface [
 
     // DOM Level 3 Core
 
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString inputEncoding;
+    [TreatReturnedNullStringAs=Null] readonly attribute DOMString inputEncoding;
 
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString xmlEncoding;
-             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString xmlVersion
+    [TreatReturnedNullStringAs=Null] readonly attribute DOMString xmlEncoding;
+             [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] attribute DOMString xmlVersion
                 setter raises (DOMException);
              attribute boolean xmlStandalone
                 setter raises (DOMException);
@@ -78,9 +78,9 @@ interface [
     // (see http://www.w3.org/TR/2011/WD-dom-20110915/#document). We need to keep
     // the writable version around for Objective C clients, but are moving to
     // read-only for other clients.
-             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString documentURI;
+             [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] attribute DOMString documentURI;
 #else
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString documentURI;
+    [TreatReturnedNullStringAs=Null] readonly attribute DOMString documentURI;
 #endif
 
     // DOM Level 2 Events (DocumentEvents interface)
@@ -151,17 +151,17 @@ interface [
 
     // Moved down from HTMLDocument
 
-             attribute [TreatNullAs=NullString] DOMString title;
+             [TreatNullAs=NullString] attribute DOMString title;
     readonly attribute DOMString referrer;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-             attribute [TreatNullAs=NullString] DOMString domain
+             [TreatNullAs=NullString] attribute DOMString domain
                  setter raises (DOMException);
 #else
     readonly attribute DOMString domain;
 #endif
     readonly attribute DOMString URL;
 
-             attribute [TreatNullAs=NullString] DOMString cookie
+             [TreatNullAs=NullString] attribute DOMString cookie
                  setter raises (DOMException),
                  getter raises (DOMException);
 
@@ -183,14 +183,14 @@ interface [
 #endif
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-             attribute [Custom] Location location;
+             [Custom] attribute Location location;
 #endif
 
     // IE extensions
 
-             attribute [TreatReturnedNullStringAs=Undefined, TreatNullAs=NullString] DOMString charset;
-    readonly attribute [TreatReturnedNullStringAs=Undefined] DOMString defaultCharset;
-    readonly attribute [TreatReturnedNullStringAs=Undefined] DOMString readyState;
+             [TreatReturnedNullStringAs=Undefined, TreatNullAs=NullString] attribute DOMString charset;
+    [TreatReturnedNullStringAs=Undefined] readonly attribute DOMString defaultCharset;
+    [TreatReturnedNullStringAs=Undefined] readonly attribute DOMString readyState;
 
     Element            elementFromPoint(in [Optional=DefaultIsUndefined] long x, 
                                         in [Optional=DefaultIsUndefined] long y);
@@ -201,19 +201,19 @@ interface [
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     DOMSelection       getSelection();
 #endif
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString characterSet;
+    [TreatReturnedNullStringAs=Null] readonly attribute DOMString characterSet;
 
     // WebKit extensions
 
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString preferredStylesheetSet;
-             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString selectedStylesheetSet;
+    [TreatReturnedNullStringAs=Null] readonly attribute DOMString preferredStylesheetSet;
+             [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] attribute DOMString selectedStylesheetSet;
 
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
     CSSStyleDeclaration createCSSStyleDeclaration();
 #endif
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    readonly attribute [Conditional=UNDO_MANAGER] UndoManager undoManager;
+    [Conditional=UNDO_MANAGER] readonly attribute UndoManager undoManager;
 #endif
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
@@ -250,55 +250,55 @@ interface [
 
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
     // Mozilla version
-    readonly attribute [V8EnabledAtRuntime] boolean webkitIsFullScreen;
-    readonly attribute [V8EnabledAtRuntime] boolean webkitFullScreenKeyboardInputAllowed;
-    readonly attribute [V8EnabledAtRuntime] Element webkitCurrentFullScreenElement;
+    [V8EnabledAtRuntime] readonly attribute boolean webkitIsFullScreen;
+    [V8EnabledAtRuntime] readonly attribute boolean webkitFullScreenKeyboardInputAllowed;
+    [V8EnabledAtRuntime] readonly attribute Element webkitCurrentFullScreenElement;
     [V8EnabledAtRuntime] void webkitCancelFullScreen();
 
     // W3C version
-    readonly attribute [V8EnabledAtRuntime] boolean webkitFullscreenEnabled;
-    readonly attribute [V8EnabledAtRuntime] Element webkitFullscreenElement;
+    [V8EnabledAtRuntime] readonly attribute boolean webkitFullscreenEnabled;
+    [V8EnabledAtRuntime] readonly attribute Element webkitFullscreenElement;
     [V8EnabledAtRuntime] void webkitExitFullscreen();
 #endif
 
     [Conditional=POINTER_LOCK, V8EnabledAtRuntime=pointerLock] void webkitExitPointerLock();
-    readonly attribute [Conditional=POINTER_LOCK, V8EnabledAtRuntime=pointerLock] Element webkitPointerLockElement;
+    [Conditional=POINTER_LOCK, V8EnabledAtRuntime=pointerLock] readonly attribute Element webkitPointerLockElement;
 
     [Conditional=CSS_REGIONS] DOMNamedFlowCollection webkitGetNamedFlows();
 
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
     // Event handler DOM attributes
-    attribute [NotEnumerable] EventListener onabort;
-    attribute [NotEnumerable] EventListener onblur;
-    attribute [NotEnumerable] EventListener onchange;
-    attribute [NotEnumerable] EventListener onclick;
-    attribute [NotEnumerable] EventListener oncontextmenu;
-    attribute [NotEnumerable] EventListener ondblclick;
-    attribute [NotEnumerable] EventListener ondrag;
-    attribute [NotEnumerable] EventListener ondragend;
-    attribute [NotEnumerable] EventListener ondragenter;
-    attribute [NotEnumerable] EventListener ondragleave;
-    attribute [NotEnumerable] EventListener ondragover;
-    attribute [NotEnumerable] EventListener ondragstart;
-    attribute [NotEnumerable] EventListener ondrop;
-    attribute [NotEnumerable] EventListener onerror;
-    attribute [NotEnumerable] EventListener onfocus;
-    attribute [NotEnumerable] EventListener oninput;
-    attribute [NotEnumerable] EventListener oninvalid;
-    attribute [NotEnumerable] EventListener onkeydown;
-    attribute [NotEnumerable] EventListener onkeypress;
-    attribute [NotEnumerable] EventListener onkeyup;
-    attribute [NotEnumerable] EventListener onload;
-    attribute [NotEnumerable] EventListener onmousedown;
-    attribute [NotEnumerable] EventListener onmousemove;
-    attribute [NotEnumerable] EventListener onmouseout;
-    attribute [NotEnumerable] EventListener onmouseover;
-    attribute [NotEnumerable] EventListener onmouseup;
-    attribute [NotEnumerable] EventListener onmousewheel;
-    attribute [NotEnumerable] EventListener onreadystatechange;
-    attribute [NotEnumerable] EventListener onscroll;
-    attribute [NotEnumerable] EventListener onselect;
-    attribute [NotEnumerable] EventListener onsubmit;
+    [NotEnumerable] attribute EventListener onabort;
+    [NotEnumerable] attribute EventListener onblur;
+    [NotEnumerable] attribute EventListener onchange;
+    [NotEnumerable] attribute EventListener onclick;
+    [NotEnumerable] attribute EventListener oncontextmenu;
+    [NotEnumerable] attribute EventListener ondblclick;
+    [NotEnumerable] attribute EventListener ondrag;
+    [NotEnumerable] attribute EventListener ondragend;
+    [NotEnumerable] attribute EventListener ondragenter;
+    [NotEnumerable] attribute EventListener ondragleave;
+    [NotEnumerable] attribute EventListener ondragover;
+    [NotEnumerable] attribute EventListener ondragstart;
+    [NotEnumerable] attribute EventListener ondrop;
+    [NotEnumerable] attribute EventListener onerror;
+    [NotEnumerable] attribute EventListener onfocus;
+    [NotEnumerable] attribute EventListener oninput;
+    [NotEnumerable] attribute EventListener oninvalid;
+    [NotEnumerable] attribute EventListener onkeydown;
+    [NotEnumerable] attribute EventListener onkeypress;
+    [NotEnumerable] attribute EventListener onkeyup;
+    [NotEnumerable] attribute EventListener onload;
+    [NotEnumerable] attribute EventListener onmousedown;
+    [NotEnumerable] attribute EventListener onmousemove;
+    [NotEnumerable] attribute EventListener onmouseout;
+    [NotEnumerable] attribute EventListener onmouseover;
+    [NotEnumerable] attribute EventListener onmouseup;
+    [NotEnumerable] attribute EventListener onmousewheel;
+    [NotEnumerable] attribute EventListener onreadystatechange;
+    [NotEnumerable] attribute EventListener onscroll;
+    [NotEnumerable] attribute EventListener onselect;
+    [NotEnumerable] attribute EventListener onsubmit;
 
     // attribute [NotEnumerable] EventListener oncanplay;
     // attribute [NotEnumerable] EventListener oncanplaythrough;
@@ -323,24 +323,24 @@ interface [
     // attribute [NotEnumerable] EventListener onwaiting;
 
     // WebKit extensions
-    attribute [NotEnumerable] EventListener onbeforecut;
-    attribute [NotEnumerable] EventListener oncut;
-    attribute [NotEnumerable] EventListener onbeforecopy;
-    attribute [NotEnumerable] EventListener oncopy;
-    attribute [NotEnumerable] EventListener onbeforepaste;
-    attribute [NotEnumerable] EventListener onpaste;
-    attribute [NotEnumerable] EventListener onreset;
-    attribute [NotEnumerable] EventListener onsearch;
-    attribute [NotEnumerable] EventListener onselectstart;
-    attribute [NotEnumerable] EventListener onselectionchange;
-    attribute [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] EventListener ontouchstart;
-    attribute [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] EventListener ontouchmove;
-    attribute [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] EventListener ontouchend;
-    attribute [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] EventListener ontouchcancel;
-    attribute [NotEnumerable, Conditional=FULLSCREEN_API] EventListener onwebkitfullscreenchange;
-    attribute [NotEnumerable, Conditional=FULLSCREEN_API] EventListener onwebkitfullscreenerror;
-    attribute [NotEnumerable, Conditional=POINTER_LOCK, V8EnabledAtRuntime=pointerLock] EventListener onwebkitpointerlockchange;
-    attribute [NotEnumerable, Conditional=POINTER_LOCK, V8EnabledAtRuntime=pointerLock] EventListener onwebkitpointerlockerror;
+    [NotEnumerable] attribute EventListener onbeforecut;
+    [NotEnumerable] attribute EventListener oncut;
+    [NotEnumerable] attribute EventListener onbeforecopy;
+    [NotEnumerable] attribute EventListener oncopy;
+    [NotEnumerable] attribute EventListener onbeforepaste;
+    [NotEnumerable] attribute EventListener onpaste;
+    [NotEnumerable] attribute EventListener onreset;
+    [NotEnumerable] attribute EventListener onsearch;
+    [NotEnumerable] attribute EventListener onselectstart;
+    [NotEnumerable] attribute EventListener onselectionchange;
+    [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] attribute EventListener ontouchstart;
+    [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] attribute EventListener ontouchmove;
+    [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] attribute EventListener ontouchend;
+    [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] attribute EventListener ontouchcancel;
+    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventListener onwebkitfullscreenchange;
+    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventListener onwebkitfullscreenerror;
+    [NotEnumerable, Conditional=POINTER_LOCK, V8EnabledAtRuntime=pointerLock] attribute EventListener onwebkitpointerlockchange;
+    [NotEnumerable, Conditional=POINTER_LOCK, V8EnabledAtRuntime=pointerLock] attribute EventListener onwebkitpointerlockerror;
 #endif
 
 #if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
@@ -366,11 +366,11 @@ interface [
 #endif
 
     // Page visibility API.
-    readonly attribute [Conditional=PAGE_VISIBILITY_API] DOMString webkitVisibilityState;
-    readonly attribute [Conditional=PAGE_VISIBILITY_API] boolean webkitHidden;
+    [Conditional=PAGE_VISIBILITY_API] readonly attribute DOMString webkitVisibilityState;
+    [Conditional=PAGE_VISIBILITY_API] readonly attribute boolean webkitHidden;
 
     // Security Policy API: http://dvcs.w3.org/hg/content-security-policy/raw-file/tip/csp-specification.dev.html#script-interfaces
-    readonly attribute [Conditional=CSP_NEXT] DOMSecurityPolicy SecurityPolicy;
+    [Conditional=CSP_NEXT] readonly attribute DOMSecurityPolicy SecurityPolicy;
 
 };
 

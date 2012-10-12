@@ -24,10 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=SQL_DATABASE,
     Supplemental=DOMWindow
-] DOMWindowWebDatabase {
+] interface DOMWindowWebDatabase {
     [V8EnabledAtRuntime, V8MeasureAs=OpenWebDatabase] Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
         raises(DOMException);
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP

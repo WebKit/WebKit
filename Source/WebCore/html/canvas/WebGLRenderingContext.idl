@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     Conditional=WEBGL,
     JSCustomMarkFunction,
     DoNotCheckConstants
-] WebGLRenderingContext : CanvasRenderingContext {
+] interface WebGLRenderingContext : CanvasRenderingContext {
 
     /* ClearBufferMask */
     const unsigned int DEPTH_BUFFER_BIT               = 0x00000100;

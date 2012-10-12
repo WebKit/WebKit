@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     ActiveDOMObject,
     Constructor,
     CallWith=ScriptExecutionContext,
@@ -34,7 +34,7 @@ interface [
     JSCustomMarkFunction,
     EventTarget,
     JSNoStaticTables
-] XMLHttpRequest {
+] interface XMLHttpRequest {
     // From XMLHttpRequestEventTarget
     // event handler attributes
     attribute EventListener onabort;
@@ -89,14 +89,14 @@ interface [
         raises(DOMException);
     [TreatReturnedNullStringAs=Null] DOMString getResponseHeader(in DOMString header)
         raises(DOMException);
-    readonly attribute [CustomGetter] DOMString responseText // The custom getter implements TreatReturnedNullStringAs=Null
+    [CustomGetter] readonly attribute DOMString responseText // The custom getter implements TreatReturnedNullStringAs=Null
         getter raises(DOMException);
     readonly attribute Document responseXML
         getter raises(DOMException);
 
     attribute DOMString responseType
         setter raises(DOMException);
-    readonly attribute [CustomGetter] Object response
+    [CustomGetter] readonly attribute Object response
         getter raises(DOMException);
 
     readonly attribute unsigned short status

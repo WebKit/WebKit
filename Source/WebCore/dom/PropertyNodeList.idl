@@ -28,11 +28,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=MICRODATA,
     IndexedGetter,
     JSGenerateToJSObject
-] PropertyNodeList : NodeList {
+] interface PropertyNodeList : NodeList {
 
     sequence<MicroDataItemValue> getValues();
     Node item(in unsigned long index);

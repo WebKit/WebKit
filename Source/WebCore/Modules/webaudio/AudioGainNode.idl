@@ -22,10 +22,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject
-] AudioGainNode : AudioNode {
+] interface AudioGainNode : AudioNode {
     // FIXME: eventually it will be interesting to remove the readonly restriction, but need to properly deal with thread safety here.
     readonly attribute AudioGain gain;
 };

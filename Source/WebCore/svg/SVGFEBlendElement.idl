@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     Conditional=SVG&FILTERS,
     DoNotCheckConstants
-] SVGFEBlendElement : SVGElement,
+] interface SVGFEBlendElement : SVGElement,
                       SVGFilterPrimitiveStandardAttributes {
     // Blend Mode Types
     const unsigned short SVG_FEBLEND_MODE_UNKNOWN  = 0;

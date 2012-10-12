@@ -18,12 +18,12 @@
     Boston, MA 02110-1301, USA.
 */
 
-interface [
+[
     JSGenerateIsReachable=ImplFrame,
     NamedGetter,
     IndexedGetter,
     InterfaceName=MimeTypeArray
-] DOMMimeTypeArray {
+] interface DOMMimeTypeArray {
     readonly attribute unsigned long length;
     DOMMimeType item(in [Optional=DefaultIsUndefined] unsigned long index);
     DOMMimeType namedItem(in [Optional=DefaultIsUndefined] DOMString name);

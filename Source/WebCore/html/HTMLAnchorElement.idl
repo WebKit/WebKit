@@ -19,21 +19,21 @@
  */
 
 interface HTMLAnchorElement : HTMLElement {
-    attribute [Reflect] DOMString charset;
-    attribute [Reflect] DOMString coords;
-    attribute [Conditional=DOWNLOAD_ATTRIBUTE, Reflect] DOMString download;
-    attribute [Reflect, URL] DOMString href;
-    attribute [Reflect] DOMString hreflang;
-    attribute [Reflect] DOMString name;
-    attribute [Reflect] DOMString ping;
-    attribute [Reflect] DOMString rel;
-    attribute [Reflect] DOMString rev;
-    attribute [Reflect] DOMString shape;
-    attribute [Reflect] DOMString target;
-    attribute [Reflect] DOMString type;
+    [Reflect] attribute DOMString charset;
+    [Reflect] attribute DOMString coords;
+    [Conditional=DOWNLOAD_ATTRIBUTE, Reflect] attribute DOMString download;
+    [Reflect, URL] attribute DOMString href;
+    [Reflect] attribute DOMString hreflang;
+    [Reflect] attribute DOMString name;
+    [Reflect] attribute DOMString ping;
+    [Reflect] attribute DOMString rel;
+    [Reflect] attribute DOMString rev;
+    [Reflect] attribute DOMString shape;
+    [Reflect] attribute DOMString target;
+    [Reflect] attribute DOMString type;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    attribute [Reflect] DOMString accessKey;
+    [Reflect] attribute DOMString accessKey;
 #endif
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
@@ -45,15 +45,15 @@ interface HTMLAnchorElement : HTMLElement {
     readonly attribute DOMString protocol;
     readonly attribute DOMString search;
 #else
-    attribute [TreatNullAs=NullString] DOMString hash;
-    attribute [TreatNullAs=NullString] DOMString host;
-    attribute [TreatNullAs=NullString] DOMString hostname;
-    attribute [TreatNullAs=NullString] DOMString pathname;
-    attribute [TreatNullAs=NullString] DOMString port;
-    attribute [TreatNullAs=NullString] DOMString protocol;
-    attribute [TreatNullAs=NullString] DOMString search;
+    [TreatNullAs=NullString] attribute DOMString hash;
+    [TreatNullAs=NullString] attribute DOMString host;
+    [TreatNullAs=NullString] attribute DOMString hostname;
+    [TreatNullAs=NullString] attribute DOMString pathname;
+    [TreatNullAs=NullString] attribute DOMString port;
+    [TreatNullAs=NullString] attribute DOMString protocol;
+    [TreatNullAs=NullString] attribute DOMString search;
 
-    readonly attribute [TreatNullAs=NullString] DOMString origin;
+    [TreatNullAs=NullString] readonly attribute DOMString origin;
 #endif
 
     readonly attribute DOMString text;

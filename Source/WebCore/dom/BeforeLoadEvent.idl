@@ -24,9 +24,9 @@
  *
  */
 
-interface [
+[
     ConstructorTemplate=Event
-] BeforeLoadEvent : Event {
-    readonly attribute [InitializedByEventConstructor] DOMString url;
+] interface BeforeLoadEvent : Event {
+    [InitializedByEventConstructor] readonly attribute DOMString url;
 };
 

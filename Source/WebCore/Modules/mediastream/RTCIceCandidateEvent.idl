@@ -22,9 +22,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=MEDIA_STREAM,
-] RTCIceCandidateEvent : Event {
+] interface RTCIceCandidateEvent : Event {
     readonly attribute RTCIceCandidate candidate;
 };
 

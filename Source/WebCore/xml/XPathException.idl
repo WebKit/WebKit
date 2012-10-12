@@ -26,9 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-exception [
+[
     DoNotCheckConstants
-] XPathException {
+] exception XPathException {
 
     readonly attribute unsigned short   code;
     readonly attribute DOMString        name;

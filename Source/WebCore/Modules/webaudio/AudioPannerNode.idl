@@ -22,10 +22,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject
-] AudioPannerNode : AudioNode {
+] interface AudioPannerNode : AudioNode {
     // Panning model
     const unsigned short EQUALPOWER = 0;
     const unsigned short HRTF = 1;

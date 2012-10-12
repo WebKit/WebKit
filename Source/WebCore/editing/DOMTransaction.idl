@@ -22,9 +22,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=UNDO_MANAGER,
     V8CustomIsReachable
-] DOMTransaction {
+] interface DOMTransaction {
 };
 

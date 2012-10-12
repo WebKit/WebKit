@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     Conditional=SVG&FILTERS,
     DoNotCheckConstants
-] SVGFEDisplacementMapElement : SVGElement,
+] interface SVGFEDisplacementMapElement : SVGElement,
                                 SVGFilterPrimitiveStandardAttributes {
     // Channel Selectors
     const unsigned short SVG_CHANNEL_UNKNOWN = 0;

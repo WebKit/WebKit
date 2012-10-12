@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     Conditional=VIDEO
-] TimeRanges {
+] interface TimeRanges {
     readonly attribute unsigned long length;
     float start(in unsigned long index)
         raises (DOMException);

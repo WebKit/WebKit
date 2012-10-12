@@ -20,9 +20,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface [
+[
     Conditional=SVG
-] SVGLength { 
+] interface SVGLength { 
     // Length Unit Types
     const unsigned short SVG_LENGTHTYPE_UNKNOWN    = 0;
     const unsigned short SVG_LENGTHTYPE_NUMBER     = 1;
@@ -37,12 +37,12 @@ interface [
     const unsigned short SVG_LENGTHTYPE_PC         = 10;
 
     readonly attribute unsigned short unitType;
-    attribute [Custom, StrictTypeChecking] float value
+    [Custom, StrictTypeChecking] attribute float value
         setter raises(DOMException),
         getter raises(DOMException);
 
-    attribute [StrictTypeChecking] float valueInSpecifiedUnits;
-    attribute [TreatNullAs=NullString, StrictTypeChecking] DOMString valueAsString
+    [StrictTypeChecking] attribute float valueInSpecifiedUnits;
+    [TreatNullAs=NullString, StrictTypeChecking] attribute DOMString valueAsString
         setter raises(DOMException);
 
     [StrictTypeChecking] void newValueSpecifiedUnits(in unsigned short unitType, 

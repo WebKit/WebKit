@@ -21,7 +21,7 @@
 // Introduced in DOM Level 2:
 interface CSSPageRule : CSSRule {
 
-             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString selectorText;
+             [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] attribute DOMString selectorText;
 
     readonly attribute CSSStyleDeclaration style;
 

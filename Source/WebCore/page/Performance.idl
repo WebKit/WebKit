@@ -29,14 +29,14 @@
  */
 
 // See: http://dev.w3.org/2006/webapi/WebTiming/
-interface [
+[
     Conditional=WEB_TIMING,
     EventTarget,
     OmitConstructor
-] Performance {
+] interface Performance {
     readonly attribute PerformanceNavigation navigation;
     readonly attribute PerformanceTiming timing;
-    readonly attribute [V8CustomGetter] MemoryInfo memory;
+    [V8CustomGetter] readonly attribute MemoryInfo memory;
 
 #if defined(ENABLE_PERFORMANCE_TIMELINE) && ENABLE_PERFORMANCE_TIMELINE
     PerformanceEntryList webkitGetEntries();

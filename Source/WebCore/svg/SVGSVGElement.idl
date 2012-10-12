@@ -23,9 +23,9 @@
 // TODO: no css::ViewCSS available!
 // TODO: Fix SVGSVGElement inheritance (css::DocumentCSS)! 
 // TODO: no events::DocumentEvent available!
-interface [
+[
     Conditional=SVG
-] SVGSVGElement : SVGElement,
+] interface SVGSVGElement : SVGElement,
                                             SVGTests,
                                             SVGLangSpace,
                                             SVGExternalResourcesRequired,

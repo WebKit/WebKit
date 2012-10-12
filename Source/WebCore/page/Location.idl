@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
 #if defined(V8_BINDING) && V8_BINDING
     CheckSecurity,
 #endif
@@ -39,9 +39,9 @@ interface [
     JSCustomNamedGetterOnPrototype,
     JSCustomDefineOwnPropertyOnPrototype,
     OmitConstructor
-] Location {
+] interface Location {
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-             attribute [DoNotCheckSecurityOnSetter, CustomSetter, V8Unforgeable] DOMString href;
+             [DoNotCheckSecurityOnSetter, CustomSetter, V8Unforgeable] attribute DOMString href;
 #endif
 
     [Custom, V8Unforgeable] void assign(in [Optional=DefaultIsUndefined] DOMString url);
@@ -50,13 +50,13 @@ interface [
 
     // URI decomposition attributes
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-             attribute [CustomSetter] DOMString protocol;
-             attribute [CustomSetter] DOMString host;
-             attribute [CustomSetter] DOMString hostname;
-             attribute [CustomSetter] DOMString port;
-             attribute [CustomSetter] DOMString pathname;
-             attribute [CustomSetter] DOMString search;
-             attribute [CustomSetter] DOMString hash;
+             [CustomSetter] attribute DOMString protocol;
+             [CustomSetter] attribute DOMString host;
+             [CustomSetter] attribute DOMString hostname;
+             [CustomSetter] attribute DOMString port;
+             [CustomSetter] attribute DOMString pathname;
+             [CustomSetter] attribute DOMString search;
+             [CustomSetter] attribute DOMString hash;
 
              readonly attribute DOMString origin;
 #endif

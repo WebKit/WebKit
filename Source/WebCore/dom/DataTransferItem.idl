@@ -28,9 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=DATA_TRANSFER_ITEMS,
-] DataTransferItem {
+] interface DataTransferItem {
     readonly attribute DOMString kind;
     readonly attribute DOMString type;
 

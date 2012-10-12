@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     Conditional=VIDEO_TRACK,
     V8EnabledAtRuntime=webkitVideoTrack,
     IndexedGetter
-] TextTrackCueList {
+] interface TextTrackCueList {
     readonly attribute unsigned long length;
     TextTrackCue item(in unsigned long index);
     TextTrackCue getCueById(in DOMString id);

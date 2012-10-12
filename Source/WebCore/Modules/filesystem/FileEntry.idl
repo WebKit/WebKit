@@ -28,12 +28,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=FILE_SYSTEM,
     JSGenerateToNativeObject,
     JSGenerateToJSObject,
     JSNoStaticTables
-] FileEntry : Entry {
+] interface FileEntry : Entry {
     void createWriter(in [Callback] FileWriterCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
     void file(in [Callback] FileCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
 };

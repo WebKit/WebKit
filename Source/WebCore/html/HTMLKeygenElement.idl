@@ -29,12 +29,12 @@
  */
 
 interface HTMLKeygenElement : HTMLElement {
-    attribute [Reflect] boolean autofocus;
-    attribute [Reflect] DOMString challenge;
-    attribute [Reflect] boolean disabled;
+    [Reflect] attribute boolean autofocus;
+    [Reflect] attribute DOMString challenge;
+    [Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;
-    attribute [Reflect] DOMString keytype;
-    attribute [Reflect] DOMString name;
+    [Reflect] attribute DOMString keytype;
+    [Reflect] attribute DOMString name;
 
     readonly attribute DOMString type;
 

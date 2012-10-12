@@ -24,11 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=JAVASCRIPT_DEBUGGER,
     OmitConstructor,
     V8CustomToJSObject
-] ScriptProfile {
+] interface ScriptProfile {
     readonly attribute DOMString title;
     readonly attribute unsigned long uid;
     readonly attribute ScriptProfileNode head;

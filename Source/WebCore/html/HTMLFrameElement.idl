@@ -20,17 +20,17 @@
 
 interface HTMLFrameElement : HTMLElement {
 
-    attribute [Reflect] DOMString frameBorder;
-    attribute [Reflect] DOMString longDesc;
-    attribute [Reflect] DOMString marginHeight;
-    attribute [Reflect] DOMString marginWidth;
-    attribute [Reflect] DOMString name;
-    attribute [Reflect] boolean noResize;
-    attribute [Reflect] DOMString scrolling;
-    attribute [Reflect, URL] DOMString src;
+    [Reflect] attribute DOMString frameBorder;
+    [Reflect] attribute DOMString longDesc;
+    [Reflect] attribute DOMString marginHeight;
+    [Reflect] attribute DOMString marginWidth;
+    [Reflect] attribute DOMString name;
+    [Reflect] attribute boolean noResize;
+    [Reflect] attribute DOMString scrolling;
+    [Reflect, URL] attribute DOMString src;
 
     // Introduced in DOM Level 2:
-    readonly attribute [CheckSecurityForNode] Document contentDocument;
+    [CheckSecurityForNode] readonly attribute Document contentDocument;
 
     // Extensions
     readonly attribute DOMWindow contentWindow;
@@ -42,7 +42,7 @@ interface HTMLFrameElement : HTMLElement {
 #endif
 #endif
 
-    attribute [TreatNullAs=NullString, CustomSetter] DOMString location;
+    [TreatNullAs=NullString, CustomSetter] attribute DOMString location;
 
     readonly attribute long width;
     readonly attribute long height;

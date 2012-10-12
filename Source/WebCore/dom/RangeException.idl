@@ -17,9 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-exception [
+[
     DoNotCheckConstants
-] RangeException {
+] exception RangeException {
 
     readonly attribute unsigned short   code;
     readonly attribute DOMString        name;

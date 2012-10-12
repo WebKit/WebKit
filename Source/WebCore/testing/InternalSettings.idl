@@ -23,9 +23,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     OmitConstructor
-] InternalSettings {
+] interface InternalSettings {
     void setInspectorResourcesDataSizeLimits(in long maximumResourcesContentSize, in long maximumSingleResourceContentSize) raises(DOMException);
     void setForceCompositingMode(in boolean enabled) raises(DOMException);
     void setEnableCompositingForFixedPosition(in boolean enabled) raises(DOMException);

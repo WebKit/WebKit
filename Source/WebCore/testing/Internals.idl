@@ -23,9 +23,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     OmitConstructor
-] Internals {
+] interface Internals {
     DOMString address(in Node node);
 
     DOMString elementRenderTreeAsText(in Element element) raises(DOMException);

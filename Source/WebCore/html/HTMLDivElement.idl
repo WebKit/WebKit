@@ -18,6 +18,6 @@
  */
 
 interface HTMLDivElement : HTMLElement {
-    attribute [Reflect] DOMString align;
+    [Reflect] attribute DOMString align;
 };
 

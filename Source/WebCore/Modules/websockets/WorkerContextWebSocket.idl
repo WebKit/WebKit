@@ -24,10 +24,10 @@
  *
  */
 
-interface [
+[
     Conditional=WEB_SOCKETS,
     Supplemental=WorkerContext
-] WorkerContextWebSocket {
-    attribute [JSCustomGetter,V8EnabledAtRuntime] WebSocketConstructor WebSocket; // Usable with the new operator
+] interface WorkerContextWebSocket {
+    [JSCustomGetter,V8EnabledAtRuntime] attribute WebSocketConstructor WebSocket; // Usable with the new operator
 };
 

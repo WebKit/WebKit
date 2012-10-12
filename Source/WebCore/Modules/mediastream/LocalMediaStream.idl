@@ -22,12 +22,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=MEDIA_STREAM,
     EventTarget,
     JSGenerateToNativeObject,
     JSGenerateToJSObject
-] LocalMediaStream : MediaStream {
+] interface LocalMediaStream : MediaStream {
     void stop();
 };
 

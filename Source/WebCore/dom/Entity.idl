@@ -18,8 +18,8 @@
  */
 
 interface Entity : Node {
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString publicId;
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString systemId;
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString notationName;
+    [TreatReturnedNullStringAs=Null] readonly attribute DOMString publicId;
+    [TreatReturnedNullStringAs=Null] readonly attribute DOMString systemId;
+    [TreatReturnedNullStringAs=Null] readonly attribute DOMString notationName;
 };
 

@@ -18,28 +18,28 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface [
+[
     CustomNamedSetter,
     JSCustomGetOwnPropertySlotAndDescriptor,
     CustomCall
-] HTMLObjectElement : HTMLElement {
+] interface HTMLObjectElement : HTMLElement {
     readonly attribute HTMLFormElement form;
-    attribute [Reflect] DOMString code;
-    attribute [Reflect] DOMString align;
-    attribute [Reflect] DOMString archive;
-    attribute [Reflect] DOMString border;
-    attribute [Reflect] DOMString codeBase;
-    attribute [Reflect] DOMString codeType;
-    attribute [Reflect, URL] DOMString data;
-    attribute [Reflect] boolean declare;
-    attribute [Reflect] DOMString height;
-    attribute [Reflect] long hspace;
-    attribute [Reflect] DOMString name;
-    attribute [Reflect] DOMString standby;
-    attribute [Reflect] DOMString type;
-    attribute [Reflect] DOMString useMap;
-    attribute [Reflect] long vspace;
-    attribute [Reflect] DOMString width;
+    [Reflect] attribute DOMString code;
+    [Reflect] attribute DOMString align;
+    [Reflect] attribute DOMString archive;
+    [Reflect] attribute DOMString border;
+    [Reflect] attribute DOMString codeBase;
+    [Reflect] attribute DOMString codeType;
+    [Reflect, URL] attribute DOMString data;
+    [Reflect] attribute boolean declare;
+    [Reflect] attribute DOMString height;
+    [Reflect] attribute long hspace;
+    [Reflect] attribute DOMString name;
+    [Reflect] attribute DOMString standby;
+    [Reflect] attribute DOMString type;
+    [Reflect] attribute DOMString useMap;
+    [Reflect] attribute long vspace;
+    [Reflect] attribute DOMString width;
     readonly attribute boolean willValidate;
     readonly attribute ValidityState validity;
     readonly attribute DOMString validationMessage;
@@ -47,7 +47,7 @@ interface [
     void setCustomValidity(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString error);
 
     // Introduced in DOM Level 2:
-    readonly attribute [CheckSecurityForNode] Document contentDocument;
+    [CheckSecurityForNode] readonly attribute Document contentDocument;
 
 #if defined(ENABLE_SVG) && ENABLE_SVG
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C || defined(ENABLE_SVG_DOM_OBJC_BINDINGS) && ENABLE_SVG_DOM_OBJC_BINDINGS

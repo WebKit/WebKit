@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=SCRIPTED_SPEECH,
     IndexedGetter
-] SpeechRecognitionResultList {
+] interface SpeechRecognitionResultList {
     readonly attribute unsigned long length;
     SpeechRecognitionResult item(in [IsIndex] unsigned long index);
 };

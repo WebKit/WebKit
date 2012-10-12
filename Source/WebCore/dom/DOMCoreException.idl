@@ -26,11 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-exception [
+[
     JSNoStaticTables,
     DoNotCheckConstants,
     InterfaceName=DOMException
-] DOMCoreException {
+] exception DOMCoreException {
 
     readonly attribute unsigned short   code;
     readonly attribute DOMString        name;

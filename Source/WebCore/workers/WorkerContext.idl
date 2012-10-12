@@ -24,7 +24,7 @@
  *
  */
 
-interface [
+[
     Conditional=WORKERS,
     JSCustomMarkFunction,
     JSCustomGetOwnPropertySlotAndDescriptor,
@@ -35,7 +35,7 @@ interface [
     JSNoStaticTables,
     OmitConstructor,
     V8CustomToJSObject
-] WorkerContext {
+] interface WorkerContext {
 
     // WorkerGlobalScope
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
@@ -47,7 +47,7 @@ interface [
 
     // WorkerUtils
     [Custom] void importScripts(/*[Variadic] in DOMString urls */);
-             attribute [Replaceable] WorkerNavigator navigator;
+             [Replaceable] attribute WorkerNavigator navigator;
 
     // Timers
     [Custom] long setTimeout(in TimeoutHandler handler, in long timeout);
@@ -74,10 +74,10 @@ interface [
     attribute WorkerLocationConstructor WorkerLocation;
 
 #if ENABLE_CHANNEL_MESSAGING
-    attribute [JSCustomGetter] MessageChannelConstructor MessageChannel;
+    [JSCustomGetter] attribute MessageChannelConstructor MessageChannel;
 #endif
-    attribute [JSCustomGetter] EventSourceConstructor EventSource;
-    attribute [JSCustomGetter] XMLHttpRequestConstructor XMLHttpRequest;
+    [JSCustomGetter] attribute EventSourceConstructor EventSource;
+    [JSCustomGetter] attribute XMLHttpRequestConstructor XMLHttpRequest;
 #endif
 
 #if defined(ENABLE_BLOB) && ENABLE_BLOB
@@ -86,8 +86,8 @@ interface [
     attribute FileReaderSyncConstructor FileReaderSync;
 #endif
 
-    attribute [Conditional=BLOB] DOMURLConstructor URL;
-    attribute [Conditional=BLOB] DOMURLConstructor webkitURL; // FIXME: deprecate this.
+    [Conditional=BLOB] attribute DOMURLConstructor URL;
+    [Conditional=BLOB] attribute DOMURLConstructor webkitURL; // FIXME: deprecate this.
 
     attribute ArrayBufferConstructor ArrayBuffer; // Usable with new operator
     attribute Int8ArrayConstructor Int8Array; // Usable with new operator

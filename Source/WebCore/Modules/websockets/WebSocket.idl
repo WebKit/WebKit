@@ -29,14 +29,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=WEB_SOCKETS,
     ActiveDOMObject,
     CustomConstructor,
     ConstructorParameters=1,
     EventTarget,
     JSNoStaticTables
-] WebSocket {
+] interface WebSocket {
     readonly attribute DOMString URL; // Lowercased .url is the one in the spec, but leaving .URL for compatibility reasons.
     readonly attribute DOMString url;
 
@@ -55,8 +55,8 @@ interface [
     attribute EventListener onerror;
     attribute EventListener onclose;
 
-    readonly attribute [TreatReturnedNullStringAs=Undefined] DOMString protocol;
-    readonly attribute [TreatReturnedNullStringAs=Undefined] DOMString extensions;
+    [TreatReturnedNullStringAs=Undefined] readonly attribute DOMString protocol;
+    [TreatReturnedNullStringAs=Undefined] readonly attribute DOMString extensions;
 
     attribute DOMString binaryType;
 

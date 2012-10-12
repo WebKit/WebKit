@@ -22,13 +22,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=MEDIA_STREAM,
     EventTarget,
     Constructor(in MediaStreamTrackList audioTracks, in MediaStreamTrackList videoTracks),
     CallWith=ScriptExecutionContext,
     ConstructorRaisesException
-   ] MediaStream {
+   ] interface MediaStream {
     readonly attribute DOMString label;
     readonly attribute MediaStreamTrackList audioTracks;
     readonly attribute MediaStreamTrackList videoTracks;

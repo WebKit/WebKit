@@ -27,9 +27,9 @@
  */
 
 interface Clipboard {
-             attribute [TreatReturnedNullStringAs=Undefined] DOMString dropEffect;
-             attribute [TreatReturnedNullStringAs=Undefined] DOMString effectAllowed;
-    readonly attribute [CustomGetter] Array types;
+             [TreatReturnedNullStringAs=Undefined] attribute DOMString dropEffect;
+             [TreatReturnedNullStringAs=Undefined] attribute DOMString effectAllowed;
+    [CustomGetter] readonly attribute Array types;
     readonly attribute FileList files;
 
     [Custom] void clearData(in [Optional] DOMString type)
@@ -39,6 +39,6 @@ interface Clipboard {
     [Custom] void setDragImage(in HTMLImageElement image, in long x, in long y)
         raises(DOMException);
 
-    readonly attribute [Conditional=DATA_TRANSFER_ITEMS, V8EnabledAtRuntime=DataTransferItems] DataTransferItemList items;
+    [Conditional=DATA_TRANSFER_ITEMS, V8EnabledAtRuntime=DataTransferItems] readonly attribute DataTransferItemList items;
 };
 

@@ -24,14 +24,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=BLOB,
     Constructor,
     JSGenerateToNativeObject,
     JSGenerateToJSObject,
     JSNoStaticTables,
     InterfaceName=URL
-] DOMURL {
+] interface DOMURL {
 #if defined(ENABLE_MEDIA_SOURCE) && ENABLE_MEDIA_SOURCE
     [CallWith=ScriptExecutionContext,TreatReturnedNullStringAs=Null] static DOMString createObjectURL(in MediaSource? source);
 #endif

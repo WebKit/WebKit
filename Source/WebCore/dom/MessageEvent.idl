@@ -25,16 +25,16 @@
  *
  */
 
-interface [
+[
     JSNoStaticTables,
     ConstructorTemplate=Event
-] MessageEvent : Event {
-    readonly attribute [InitializedByEventConstructor] DOMString origin;
-    readonly attribute [InitializedByEventConstructor] DOMString lastEventId;
-    readonly attribute [InitializedByEventConstructor] DOMWindow source;
+] interface MessageEvent : Event {
+    [InitializedByEventConstructor] readonly attribute DOMString origin;
+    [InitializedByEventConstructor] readonly attribute DOMString lastEventId;
+    [InitializedByEventConstructor] readonly attribute DOMWindow source;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    readonly attribute [InitializedByEventConstructor, CachedAttribute, CustomGetter] DOMObject data;
-    readonly attribute [InitializedByEventConstructor, CustomGetter] Array ports;
+    [InitializedByEventConstructor, CachedAttribute, CustomGetter] readonly attribute DOMObject data;
+    [InitializedByEventConstructor, CustomGetter] readonly attribute Array ports;
 
     [Custom] void initMessageEvent(in [Optional=DefaultIsUndefined] DOMString typeArg, 
                                    in [Optional=DefaultIsUndefined] boolean canBubbleArg, 

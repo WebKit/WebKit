@@ -23,13 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=SCRIPTED_SPEECH,
     ActiveDOMObject,
     Constructor,
     CallWith=ScriptExecutionContext,
     EventTarget,
-] SpeechRecognition {
+] interface SpeechRecognition {
     attribute SpeechGrammarList grammars;
     attribute DOMString lang;
     attribute boolean continuous;

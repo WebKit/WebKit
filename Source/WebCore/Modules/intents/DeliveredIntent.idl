@@ -23,9 +23,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=WEB_INTENTS,
-] DeliveredIntent : Intent {
+] interface DeliveredIntent : Intent {
     readonly attribute MessagePortArray ports;
 
     [TreatReturnedNullStringAs=Null] DOMString getExtra(in DOMString key);

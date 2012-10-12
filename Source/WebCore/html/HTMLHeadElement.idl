@@ -18,6 +18,6 @@
  */
 
 interface HTMLHeadElement : HTMLElement {
-    attribute [Reflect] DOMString profile;
+    [Reflect] attribute DOMString profile;
 };
 

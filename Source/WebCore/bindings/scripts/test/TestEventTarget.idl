@@ -26,12 +26,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     EventTarget,
     IndexedGetter,
     NamedGetter,
     MasqueradesAsUndefined
-] TestEventTarget {
+] interface TestEventTarget {
 
     Node item(in [IsIndex] unsigned long index);
 

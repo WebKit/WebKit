@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=SCRIPTED_SPEECH,
     ConstructorTemplate=Event
-] SpeechRecognitionError : Event {
+] interface SpeechRecognitionError : Event {
     const unsigned short OTHER = 0;
     const unsigned short NO_SPEECH = 1;
     const unsigned short ABORTED = 2;
@@ -37,6 +37,6 @@ interface [
     const unsigned short BAD_GRAMMAR = 7;
     const unsigned short LANGUAGE_NOT_SUPPORTED = 8;
 
-    readonly attribute [InitializedByEventConstructor] unsigned short code;
-    readonly attribute [InitializedByEventConstructor] DOMString message;
+    [InitializedByEventConstructor] readonly attribute unsigned short code;
+    [InitializedByEventConstructor] readonly attribute DOMString message;
 };

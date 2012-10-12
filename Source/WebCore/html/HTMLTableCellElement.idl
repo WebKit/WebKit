@@ -20,19 +20,19 @@
 
 interface HTMLTableCellElement : HTMLElement {
     readonly attribute long cellIndex;
-    attribute [Reflect] DOMString abbr;
-    attribute [Reflect] DOMString align;
-    attribute [Reflect] DOMString axis;
-    attribute [Reflect] DOMString bgColor;
-    attribute [Reflect=char] DOMString ch;
-    attribute [Reflect=charoff] DOMString chOff;
+    [Reflect] attribute DOMString abbr;
+    [Reflect] attribute DOMString align;
+    [Reflect] attribute DOMString axis;
+    [Reflect] attribute DOMString bgColor;
+    [Reflect=char] attribute DOMString ch;
+    [Reflect=charoff] attribute DOMString chOff;
     attribute long colSpan;
-    attribute [Reflect] DOMString headers;
-    attribute [Reflect] DOMString height;
-    attribute [Reflect] boolean noWrap;
+    [Reflect] attribute DOMString headers;
+    [Reflect] attribute DOMString height;
+    [Reflect] attribute boolean noWrap;
     attribute long rowSpan;
-    attribute [Reflect] DOMString scope;
-    attribute [Reflect] DOMString vAlign;
-    attribute [Reflect] DOMString width;
+    [Reflect] attribute DOMString scope;
+    [Reflect] attribute DOMString vAlign;
+    [Reflect] attribute DOMString width;
 };
 

@@ -26,10 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     JSGenerateIsReachable=ImplFrame,
     OmitConstructor
-] BarInfo {
+] interface BarInfo {
     readonly attribute boolean visible;
 };
 

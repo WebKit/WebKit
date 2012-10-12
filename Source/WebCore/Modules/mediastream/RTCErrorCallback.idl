@@ -28,10 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=MEDIA_STREAM,
     Callback
-] RTCErrorCallback {
+] interface RTCErrorCallback {
     boolean handleEvent(in DOMString errorInformation);
 };
 

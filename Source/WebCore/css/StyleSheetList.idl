@@ -19,12 +19,12 @@
  */
 
 // Introduced in DOM Level 2:
-interface [
+[
     JSGenerateIsReachable=ImplDocument,
     IndexedGetter,
     NamedGetter,
     V8DependentLifetime
-] StyleSheetList {
+] interface StyleSheetList {
     readonly attribute unsigned long    length;
     StyleSheet         item(in [Optional=DefaultIsUndefined] unsigned long index);
 };

@@ -18,14 +18,14 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface [
+[
     JSGenerateToNativeObject,
     JSInlineGetOwnPropertySlot
-] Element : Node {
+] interface Element : Node {
 
     // DOM Level 1 Core
 
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString tagName;
+    [TreatReturnedNullStringAs=Null] readonly attribute DOMString tagName;
 
     [TreatReturnedNullStringAs=Null] DOMString getAttribute(in [Optional=DefaultIsUndefined] DOMString name);
     [ObjCLegacyUnnamedParameters] void setAttribute(in [Optional=DefaultIsUndefined] DOMString name,
@@ -94,7 +94,7 @@ interface [
     // HTML 5
     NodeList getElementsByClassName(in [Optional=DefaultIsUndefined] DOMString name);
 
-    attribute [Reflect=class] DOMString className;
+    [Reflect=class] attribute DOMString className;
     readonly attribute DOMTokenList classList;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
@@ -145,41 +145,41 @@ interface [
     [Conditional=POINTER_LOCK, V8EnabledAtRuntime=pointerLock] void webkitRequestPointerLock();
 
     // CSS Regions API
-    readonly attribute [Conditional=CSS_REGIONS] DOMString webkitRegionOverset;
+    [Conditional=CSS_REGIONS] readonly attribute DOMString webkitRegionOverset;
     [Conditional=CSS_REGIONS] sequence<Range> webkitGetRegionFlowRanges();
 
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
     // Event handler DOM attributes
-    attribute [NotEnumerable] EventListener onabort;
-    attribute [NotEnumerable] EventListener onblur;
-    attribute [NotEnumerable] EventListener onchange;
-    attribute [NotEnumerable] EventListener onclick;
-    attribute [NotEnumerable] EventListener oncontextmenu;
-    attribute [NotEnumerable] EventListener ondblclick;
-    attribute [NotEnumerable] EventListener ondrag;
-    attribute [NotEnumerable] EventListener ondragend;
-    attribute [NotEnumerable] EventListener ondragenter;
-    attribute [NotEnumerable] EventListener ondragleave;
-    attribute [NotEnumerable] EventListener ondragover;
-    attribute [NotEnumerable] EventListener ondragstart;
-    attribute [NotEnumerable] EventListener ondrop;
-    attribute [NotEnumerable] EventListener onerror;
-    attribute [NotEnumerable] EventListener onfocus;
-    attribute [NotEnumerable] EventListener oninput;
-    attribute [NotEnumerable] EventListener oninvalid;
-    attribute [NotEnumerable] EventListener onkeydown;
-    attribute [NotEnumerable] EventListener onkeypress;
-    attribute [NotEnumerable] EventListener onkeyup;
-    attribute [NotEnumerable] EventListener onload;
-    attribute [NotEnumerable] EventListener onmousedown;
-    attribute [NotEnumerable] EventListener onmousemove;
-    attribute [NotEnumerable] EventListener onmouseout;
-    attribute [NotEnumerable] EventListener onmouseover;
-    attribute [NotEnumerable] EventListener onmouseup;
-    attribute [NotEnumerable] EventListener onmousewheel;
-    attribute [NotEnumerable] EventListener onscroll;
-    attribute [NotEnumerable] EventListener onselect;
-    attribute [NotEnumerable] EventListener onsubmit;
+    [NotEnumerable] attribute EventListener onabort;
+    [NotEnumerable] attribute EventListener onblur;
+    [NotEnumerable] attribute EventListener onchange;
+    [NotEnumerable] attribute EventListener onclick;
+    [NotEnumerable] attribute EventListener oncontextmenu;
+    [NotEnumerable] attribute EventListener ondblclick;
+    [NotEnumerable] attribute EventListener ondrag;
+    [NotEnumerable] attribute EventListener ondragend;
+    [NotEnumerable] attribute EventListener ondragenter;
+    [NotEnumerable] attribute EventListener ondragleave;
+    [NotEnumerable] attribute EventListener ondragover;
+    [NotEnumerable] attribute EventListener ondragstart;
+    [NotEnumerable] attribute EventListener ondrop;
+    [NotEnumerable] attribute EventListener onerror;
+    [NotEnumerable] attribute EventListener onfocus;
+    [NotEnumerable] attribute EventListener oninput;
+    [NotEnumerable] attribute EventListener oninvalid;
+    [NotEnumerable] attribute EventListener onkeydown;
+    [NotEnumerable] attribute EventListener onkeypress;
+    [NotEnumerable] attribute EventListener onkeyup;
+    [NotEnumerable] attribute EventListener onload;
+    [NotEnumerable] attribute EventListener onmousedown;
+    [NotEnumerable] attribute EventListener onmousemove;
+    [NotEnumerable] attribute EventListener onmouseout;
+    [NotEnumerable] attribute EventListener onmouseover;
+    [NotEnumerable] attribute EventListener onmouseup;
+    [NotEnumerable] attribute EventListener onmousewheel;
+    [NotEnumerable] attribute EventListener onscroll;
+    [NotEnumerable] attribute EventListener onselect;
+    [NotEnumerable] attribute EventListener onsubmit;
 
     // attribute [NotEnumerable] EventListener oncanplay;
     // attribute [NotEnumerable] EventListener oncanplaythrough;
@@ -205,21 +205,21 @@ interface [
     // attribute [NotEnumerable] EventListener onwaiting;
 
     // WebKit extensions
-    attribute [NotEnumerable] EventListener onbeforecut;
-    attribute [NotEnumerable] EventListener oncut;
-    attribute [NotEnumerable] EventListener onbeforecopy;
-    attribute [NotEnumerable] EventListener oncopy;
-    attribute [NotEnumerable] EventListener onbeforepaste;
-    attribute [NotEnumerable] EventListener onpaste;
-    attribute [NotEnumerable] EventListener onreset;
-    attribute [NotEnumerable] EventListener onsearch;
-    attribute [NotEnumerable] EventListener onselectstart;
-    attribute [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] EventListener ontouchstart;
-    attribute [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] EventListener ontouchmove;
-    attribute [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] EventListener ontouchend;
-    attribute [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] EventListener ontouchcancel;
-    attribute [NotEnumerable, Conditional=FULLSCREEN_API] EventListener onwebkitfullscreenchange;
-    attribute [NotEnumerable, Conditional=FULLSCREEN_API] EventListener onwebkitfullscreenerror;
+    [NotEnumerable] attribute EventListener onbeforecut;
+    [NotEnumerable] attribute EventListener oncut;
+    [NotEnumerable] attribute EventListener onbeforecopy;
+    [NotEnumerable] attribute EventListener oncopy;
+    [NotEnumerable] attribute EventListener onbeforepaste;
+    [NotEnumerable] attribute EventListener onpaste;
+    [NotEnumerable] attribute EventListener onreset;
+    [NotEnumerable] attribute EventListener onsearch;
+    [NotEnumerable] attribute EventListener onselectstart;
+    [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] attribute EventListener ontouchstart;
+    [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] attribute EventListener ontouchmove;
+    [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] attribute EventListener ontouchend;
+    [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] attribute EventListener ontouchcancel;
+    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventListener onwebkitfullscreenchange;
+    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventListener onwebkitfullscreenerror;
 #endif
 };
 

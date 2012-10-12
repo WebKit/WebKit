@@ -29,14 +29,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     ActiveDOMObject,
     Constructor(in DOMString scriptUrl),
     CallWith=ScriptExecutionContext,
     ConstructorRaisesException,
     EventTarget,
     JSNoStaticTables
-] EventSource {
+] interface EventSource {
 
     readonly attribute DOMString URL; // Lowercased .url is the one in the spec, but leaving .URL for compatibility reasons.
     readonly attribute DOMString url;

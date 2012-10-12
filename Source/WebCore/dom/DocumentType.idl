@@ -17,9 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface [
+[
     JSGenerateToNativeObject
-] DocumentType : Node {
+] interface DocumentType : Node {
 
     // DOM Level 1
 
@@ -29,9 +29,9 @@ interface [
 
     // DOM Level 2
 
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString publicId;
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString systemId;
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString internalSubset;        
+    [TreatReturnedNullStringAs=Null] readonly attribute DOMString publicId;
+    [TreatReturnedNullStringAs=Null] readonly attribute DOMString systemId;
+    [TreatReturnedNullStringAs=Null] readonly attribute DOMString internalSubset;        
 
     // DOM 4
     void remove()

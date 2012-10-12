@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     IndexedGetter,
     JSCustomToNativeObject
-] DOMStringList {
+] interface DOMStringList {
     readonly attribute unsigned long length;
     [TreatReturnedNullStringAs=Null] DOMString item(in [Optional=DefaultIsUndefined] unsigned long index);
     boolean contains(in [Optional=DefaultIsUndefined] DOMString string);

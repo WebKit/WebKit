@@ -18,6 +18,6 @@
  */
 
 interface HTMLBRElement : HTMLElement {
-    attribute [Reflect] DOMString clear;
+    [Reflect] attribute DOMString clear;
 };
 

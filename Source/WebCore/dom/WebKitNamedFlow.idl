@@ -27,11 +27,11 @@
  * SUCH DAMAGE.
  */
 
-interface [
+[
     EventTarget,
     JSGenerateToJSObject,
     GenerateIsReachable=ImplBaseRoot
-] WebKitNamedFlow {
+] interface WebKitNamedFlow {
     readonly attribute DOMString name;
     readonly attribute boolean overset;
     readonly attribute long firstEmptyRegionIndex;

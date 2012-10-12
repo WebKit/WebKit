@@ -19,7 +19,7 @@
  */
 
 // Introduced in DOM Level 2:
-interface [
+[
     JSCustomMarkFunction,
     JSGenerateIsReachable,
     JSCustomGetOwnPropertySlotAndDescriptor,
@@ -30,8 +30,8 @@ interface [
     IndexedGetter,
     CustomEnumerateProperty,
     V8DependentLifetime
-] CSSStyleDeclaration {
-             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString        cssText
+] interface CSSStyleDeclaration {
+             [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] attribute DOMString        cssText
                  setter raises(DOMException);
 
     [TreatReturnedNullStringAs=Null] DOMString          getPropertyValue(in [Optional=DefaultIsUndefined] DOMString propertyName);

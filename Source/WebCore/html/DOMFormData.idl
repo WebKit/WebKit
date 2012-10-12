@@ -28,13 +28,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     CustomConstructor,
     ConstructorParameters=1,
     JSGenerateToNativeObject,
     JSGenerateToJSObject,
     InterfaceName=FormData
-] DOMFormData {
+] interface DOMFormData {
     // void append(DOMString name, DOMString value);
     // void append(DOMString name, Blob value, optional DOMString filename);
     [Custom] void append(in [Optional=DefaultIsUndefined] DOMString name, 

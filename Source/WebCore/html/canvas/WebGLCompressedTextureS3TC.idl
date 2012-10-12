@@ -23,12 +23,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=WEBGL,
     JSGenerateIsReachable=ImplContext,
     OmitConstructor,
     DoNotCheckConstants
-] WebGLCompressedTextureS3TC {
+] interface WebGLCompressedTextureS3TC {
     /* Compressed Texture Formats */
     const unsigned int COMPRESSED_RGB_S3TC_DXT1_EXT        = 0x83F0;
     const unsigned int COMPRESSED_RGBA_S3TC_DXT1_EXT       = 0x83F1;

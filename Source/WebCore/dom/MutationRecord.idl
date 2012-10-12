@@ -28,9 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=MUTATION_OBSERVERS
-] MutationRecord {
+] interface MutationRecord {
     readonly attribute DOMString type;
     readonly attribute Node target;
 
@@ -39,8 +39,8 @@ interface [
     readonly attribute Node previousSibling;
     readonly attribute Node nextSibling;
 
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString attributeName;
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString attributeNamespace;
+    [TreatReturnedNullStringAs=Null] readonly attribute DOMString attributeName;
+    [TreatReturnedNullStringAs=Null] readonly attribute DOMString attributeNamespace;
 
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString oldValue;
+    [TreatReturnedNullStringAs=Null] readonly attribute DOMString oldValue;
 };

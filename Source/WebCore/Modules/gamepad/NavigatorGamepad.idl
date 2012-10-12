@@ -17,10 +17,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface [
+[
     Conditional=GAMEPAD,
     Supplemental=Navigator
-] NavigatorGamepad {
+] interface NavigatorGamepad {
     [V8EnabledAtRuntime] GamepadList webkitGetGamepads();
 };
 

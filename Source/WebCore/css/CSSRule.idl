@@ -19,13 +19,13 @@
  */
 
 // Introduced in DOM Level 2:
-interface [
+[
     JSCustomMarkFunction,
     JSGenerateIsReachable,
     CustomToJSObject,
     ObjCPolymorphic,
     V8DependentLifetime
-] CSSRule {
+] interface CSSRule {
 
     // RuleType
     const unsigned short UNKNOWN_RULE = 0;
@@ -43,7 +43,7 @@ interface [
 
     readonly attribute unsigned short   type;
 
-             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString        cssText
+             [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] attribute DOMString        cssText
                  setter raises (DOMException);
 
     readonly attribute CSSStyleSheet    parentStyleSheet;

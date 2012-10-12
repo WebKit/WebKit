@@ -19,9 +19,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface [
+[
     Conditional=SVG
-] SVGColor : CSSValue {
+] interface SVGColor : CSSValue {
     const unsigned short SVG_COLORTYPE_UNKNOWN = 0;
     const unsigned short SVG_COLORTYPE_RGBCOLOR = 1;
     const unsigned short SVG_COLORTYPE_RGBCOLOR_ICCCOLOR = 2;

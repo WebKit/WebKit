@@ -29,11 +29,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=LEGACY_NOTIFICATIONS,
     ActiveDOMObject,
     OmitConstructor
-] NotificationCenter {
+] interface NotificationCenter {
 #if !defined(ENABLE_TEXT_NOTIFICATIONS_ONLY) || !ENABLE_TEXT_NOTIFICATIONS_ONLY
    [V8EnabledPerContext=htmlNotifications, V8MeasureAs=LegacyHTMLNotifications] Notification createHTMLNotification(in DOMString url) raises(DOMException);
 #endif

@@ -18,9 +18,9 @@
     Boston, MA 02110-1301, USA.
 */
 
-interface [
+[
     InterfaceName=MimeType
-] DOMMimeType {
+] interface DOMMimeType {
     readonly attribute DOMString type;
     readonly attribute DOMString suffixes;
     readonly attribute DOMString description;

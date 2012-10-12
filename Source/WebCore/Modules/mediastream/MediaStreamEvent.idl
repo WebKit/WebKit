@@ -24,9 +24,9 @@
 
 // According to the WHATWG specification:
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/video-conferencing-and-peer-to-peer-communication.html#mediastreamevent
-interface [
+[
     Conditional=MEDIA_STREAM,
-] MediaStreamEvent : Event {
+] interface MediaStreamEvent : Event {
    readonly attribute MediaStream stream;
 };
 

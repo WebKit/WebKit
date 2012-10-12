@@ -29,10 +29,10 @@
 
 // This is based off of Mozilla's Selection interface
 // https://developer.mozilla.org/En/DOM/Selection
-interface [
+[
     JSGenerateIsReachable=ImplFrame,
     InterfaceName=Selection
-] DOMSelection {
+] interface DOMSelection {
     readonly attribute Node anchorNode;
     readonly attribute long anchorOffset;
     readonly attribute Node focusNode;

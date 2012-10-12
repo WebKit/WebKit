@@ -24,11 +24,11 @@
  */
 
 // Introduced in DOM Level 2:
-interface [
+[
     JSCustomIsReachable,
     IndexedGetter,
     V8DependentLifetime
-] CSSRuleList {
+] interface CSSRuleList {
     readonly attribute unsigned long    length;
     CSSRule           item(in [Optional=DefaultIsUndefined] unsigned long index);
 };

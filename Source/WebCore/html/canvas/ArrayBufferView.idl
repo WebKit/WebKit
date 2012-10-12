@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     CustomToJSObject,
     JSNoStaticTables,
     OmitConstructor
-] ArrayBufferView {
+] interface ArrayBufferView {
     readonly attribute ArrayBuffer buffer;
     readonly attribute unsigned long byteOffset;
     readonly attribute unsigned long byteLength;

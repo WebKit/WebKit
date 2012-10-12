@@ -28,9 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=FILE_SYSTEM,
     JSNoStaticTables
-] DirectoryReader {
+] interface DirectoryReader {
     void readEntries(in [Callback] EntriesCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
 };

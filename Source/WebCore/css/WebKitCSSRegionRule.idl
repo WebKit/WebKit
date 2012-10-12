@@ -27,9 +27,9 @@
  * SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=CSS_REGIONS,
-] WebKitCSSRegionRule : CSSRule {
+] interface WebKitCSSRegionRule : CSSRule {
     readonly attribute CSSRuleList cssRules;
 };
 

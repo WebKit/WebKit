@@ -18,14 +18,14 @@
  */
 
 interface HTMLScriptElement : HTMLElement {
-    attribute [TreatNullAs=NullString] DOMString text;
-    attribute [Reflect=for] DOMString htmlFor;
-    attribute [Reflect] DOMString event;
-    attribute [Reflect] DOMString charset;
+    [TreatNullAs=NullString] attribute DOMString text;
+    [Reflect=for] attribute DOMString htmlFor;
+    [Reflect] attribute DOMString event;
+    [Reflect] attribute DOMString charset;
     attribute boolean async;
-    attribute [Reflect] boolean defer;
-    attribute [Reflect, URL] DOMString src;
-    attribute [Reflect] DOMString type;
-    attribute [Reflect] DOMString crossOrigin;
-    attribute [Reflect, Conditional=CSP_NEXT] DOMString nonce;
+    [Reflect] attribute boolean defer;
+    [Reflect, URL] attribute DOMString src;
+    [Reflect] attribute DOMString type;
+    [Reflect] attribute DOMString crossOrigin;
+    [Reflect, Conditional=CSP_NEXT] attribute DOMString nonce;
 };

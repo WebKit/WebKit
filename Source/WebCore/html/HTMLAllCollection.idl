@@ -23,14 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     IndexedGetter,
     NamedGetter,
     CustomCall,
     MasqueradesAsUndefined,
     GenerateIsReachable=ImplBaseRoot,
     V8DependentLifetime
-] HTMLAllCollection {
+] interface HTMLAllCollection {
     readonly attribute unsigned long length;
     [Custom] Node item(in [Optional=DefaultIsUndefined] unsigned long index);
     [Custom] Node namedItem(in DOMString name);

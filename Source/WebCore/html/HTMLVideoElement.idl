@@ -23,15 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     Conditional=VIDEO,
     JSGenerateToNativeObject
-] HTMLVideoElement : HTMLMediaElement {
-    attribute [Reflect] unsigned long width;
-    attribute [Reflect] unsigned long height;
+] interface HTMLVideoElement : HTMLMediaElement {
+    [Reflect] attribute unsigned long width;
+    [Reflect] attribute unsigned long height;
     readonly attribute unsigned long videoWidth;
     readonly attribute unsigned long videoHeight;
-    attribute [Reflect, URL] DOMString poster;
+    [Reflect, URL] attribute DOMString poster;
 
     readonly attribute boolean webkitSupportsFullscreen;
     readonly attribute boolean webkitDisplayingFullscreen;
@@ -45,9 +45,9 @@ interface [
 
     // The number of frames that have been decoded and made available for
     // playback.
-    readonly attribute [Conditional=MEDIA_STATISTICS] unsigned long webkitDecodedFrameCount;
+    [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitDecodedFrameCount;
 
     // The number of decoded frames that have been dropped by the player
     // for performance reasons during playback.
-    readonly attribute [Conditional=MEDIA_STATISTICS] unsigned long webkitDroppedFrameCount;
+    [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitDroppedFrameCount;
 };

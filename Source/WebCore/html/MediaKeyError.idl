@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     Conditional=ENCRYPTED_MEDIA,
     V8EnabledAtRuntime=encryptedMedia, 
-] MediaKeyError {
+] interface MediaKeyError {
     const unsigned short MEDIA_KEYERR_UNKNOWN = 1;
     const unsigned short MEDIA_KEYERR_CLIENT = 2;
     const unsigned short MEDIA_KEYERR_SERVICE = 3;

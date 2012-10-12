@@ -17,13 +17,13 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface [Conditional=SVG&SVG_FONTS] SVGGlyphRefElement : SVGElement,
+[Conditional=SVG&SVG_FONTS] interface SVGGlyphRefElement : SVGElement,
                                                            SVGURIReference,
                                                            SVGStylable {
     // FIXME: Use [Reflect] after https://bugs.webkit.org/show_bug.cgi?id=64843 is fixed.
     attribute DOMString glyphRef
         setter raises(DOMException);
-    attribute [Reflect] DOMString format;
+    [Reflect] attribute DOMString format;
     attribute float x
         setter raises(DOMException);
     attribute float y

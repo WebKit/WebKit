@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
         Conditional=CSS_FILTERS,
         IndexedGetter,
         DoNotCheckConstants
-] WebKitCSSFilterValue : CSSValueList {
+] interface WebKitCSSFilterValue : CSSValueList {
 
     // OperationTypes
 

@@ -22,9 +22,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject
-] AudioDestinationNode : AudioNode {
+] interface AudioDestinationNode : AudioNode {
     readonly attribute long numberOfChannels;
 };

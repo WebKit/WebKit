@@ -19,11 +19,11 @@
  */
 
 interface HTMLTableColElement : HTMLElement {
-    attribute [Reflect] DOMString align;
-    attribute [Reflect=char] DOMString ch;
-    attribute [Reflect=charoff] DOMString chOff;
+    [Reflect] attribute DOMString align;
+    [Reflect=char] attribute DOMString ch;
+    [Reflect=charoff] attribute DOMString chOff;
     attribute long span;
-    attribute [Reflect] DOMString vAlign;
-    attribute [Reflect] DOMString width;
+    [Reflect] attribute DOMString vAlign;
+    [Reflect] attribute DOMString width;
 };
 

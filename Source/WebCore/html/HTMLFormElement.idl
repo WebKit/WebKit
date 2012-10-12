@@ -18,19 +18,19 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface [
+[
     IndexedGetter,
     CustomNamedGetter
-] HTMLFormElement : HTMLElement {
-    attribute [Reflect=accept_charset] DOMString acceptCharset;
-    attribute [Reflect, URL] DOMString action;
-    attribute [Reflect] DOMString autocomplete;
-    attribute [TreatNullAs=NullString] DOMString enctype;
-    attribute [TreatNullAs=NullString] DOMString encoding;
-    attribute [TreatNullAs=NullString] DOMString method;
-    attribute [Reflect] DOMString name;
-    attribute [Reflect] boolean noValidate;
-    attribute [Reflect] DOMString target;
+] interface HTMLFormElement : HTMLElement {
+    [Reflect=accept_charset] attribute DOMString acceptCharset;
+    [Reflect, URL] attribute DOMString action;
+    [Reflect] attribute DOMString autocomplete;
+    [TreatNullAs=NullString] attribute DOMString enctype;
+    [TreatNullAs=NullString] attribute DOMString encoding;
+    [TreatNullAs=NullString] attribute DOMString method;
+    [Reflect] attribute DOMString name;
+    [Reflect] attribute boolean noValidate;
+    [Reflect] attribute DOMString target;
 
     readonly attribute HTMLCollection elements;
     readonly attribute long length;

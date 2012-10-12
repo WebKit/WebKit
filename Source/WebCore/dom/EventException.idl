@@ -27,10 +27,10 @@
  */
 
 // Introduced in DOM Level 2:
-exception [
+[
     JSNoStaticTables,
     DoNotCheckConstants
-] EventException {
+] exception EventException {
 
     readonly attribute unsigned short   code;
     readonly attribute DOMString        name;

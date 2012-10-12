@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=TOUCH_EVENTS,
     IndexedGetter
-] TouchList {
+] interface TouchList {
     readonly attribute unsigned long length;
 
     Touch item(in unsigned long index);

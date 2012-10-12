@@ -29,14 +29,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=BLOB,
     ActiveDOMObject,
     Constructor,
     CallWith=ScriptExecutionContext,
     EventTarget,
     JSNoStaticTables
-] FileReader {
+] interface FileReader {
     // ready states
     const unsigned short EMPTY = 0;
     const unsigned short LOADING = 1;
@@ -56,7 +56,7 @@ interface [
     void abort();
 
     // file data
-    readonly attribute [Custom] DOMObject result;
+    [Custom] readonly attribute DOMObject result;
 
     readonly attribute FileError error;
 

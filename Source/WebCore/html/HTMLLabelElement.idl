@@ -20,10 +20,10 @@
 
 interface HTMLLabelElement : HTMLElement {
     readonly attribute HTMLFormElement form;
-    attribute [Reflect=for] DOMString htmlFor;
+    [Reflect=for] attribute DOMString htmlFor;
     readonly attribute HTMLElement control;
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    attribute [Reflect] DOMString accessKey;
+    [Reflect] attribute DOMString accessKey;
 #endif
 };
 

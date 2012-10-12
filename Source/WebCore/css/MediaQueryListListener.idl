@@ -17,11 +17,11 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-interface [
+[
     JSNoStaticTables,
     ObjCProtocol,
     CPPPureInterface,
     OmitConstructor
-] MediaQueryListListener {
+] interface MediaQueryListListener {
     void queryChanged(in [Optional=DefaultIsUndefined] MediaQueryList list);
 };

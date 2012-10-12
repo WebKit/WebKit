@@ -28,11 +28,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=BLOB,
     Constructor,
     JSNoStaticTables
-] FileReaderSync {
+] interface FileReaderSync {
     [CallWith=ScriptExecutionContext] ArrayBuffer readAsArrayBuffer(in Blob blob)
         raises(FileException);
     [CallWith=ScriptExecutionContext] DOMString readAsBinaryString(in Blob blob)

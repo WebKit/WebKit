@@ -18,13 +18,13 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface [
+[
     CustomToJSObject,
     JSCustomIsReachable,
     JSCustomFinalize,
     ObjCPolymorphic,
     V8DependentLifetime
-] CSSValue {
+] interface CSSValue {
 
     // UnitTypes
     const unsigned short CSS_INHERIT         = 0;
@@ -32,7 +32,7 @@ interface [
     const unsigned short CSS_VALUE_LIST      = 2;
     const unsigned short CSS_CUSTOM          = 3;
 
-             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString cssText
+             [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] attribute DOMString cssText
                  setter raises(DOMException);
 
     readonly attribute unsigned short cssValueType;

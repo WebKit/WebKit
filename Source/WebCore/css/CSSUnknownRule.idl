@@ -19,8 +19,8 @@
  */
 
 // Introduced in DOM Level 2:
-interface [
+[
     OmitConstructor
-] CSSUnknownRule : CSSRule {
+] interface CSSUnknownRule : CSSRule {
 };
 

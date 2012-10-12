@@ -20,13 +20,13 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface [
+[
     JSGenerateToNativeObject,
     Conditional=SVG,
     V8CustomToJSObject
-] SVGElement : Element {
-    attribute [Reflect] DOMString id;
-    attribute [TreatNullAs=NullString] DOMString xmlbase setter raises(DOMException);
+] interface SVGElement : Element {
+    [Reflect] attribute DOMString id;
+    [TreatNullAs=NullString] attribute DOMString xmlbase setter raises(DOMException);
     readonly attribute SVGSVGElement ownerSVGElement;
     readonly attribute SVGElement viewportElement;
 };

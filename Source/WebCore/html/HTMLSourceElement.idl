@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     Conditional=VIDEO,
-] HTMLSourceElement : HTMLElement {
+] interface HTMLSourceElement : HTMLElement {
 attribute [Reflect, URL] DOMString src;
 attribute DOMString type;
 attribute DOMString media;

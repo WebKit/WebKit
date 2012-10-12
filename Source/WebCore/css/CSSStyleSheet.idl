@@ -19,9 +19,9 @@
  */
 
 // Introduced in DOM Level 2:
-interface [
+[
     V8GenerateIsReachable=ImplOwnerNodeRoot
-] CSSStyleSheet : StyleSheet {
+] interface CSSStyleSheet : StyleSheet {
     readonly attribute CSSRule          ownerRule;
     readonly attribute CSSRuleList      cssRules;
 

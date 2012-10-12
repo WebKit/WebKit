@@ -27,18 +27,18 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=INDEXED_DATABASE,
     ActiveDOMObject,
     EventTarget
-] IDBRequest {
+] interface IDBRequest {
     readonly attribute IDBAny result
         getter raises (IDBDatabaseException);
     readonly attribute unsigned short errorCode
         getter raises (IDBDatabaseException);
     readonly attribute DOMError error
         getter raises (IDBDatabaseException);
-    readonly attribute [TreatReturnedNullStringAs=Undefined] DOMString webkitErrorMessage
+    [TreatReturnedNullStringAs=Undefined] readonly attribute DOMString webkitErrorMessage
         getter raises (IDBDatabaseException);
 
     readonly attribute IDBAny source;

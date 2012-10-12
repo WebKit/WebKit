@@ -17,10 +17,10 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-interface [
+[
     Conditional=VIBRATION,
     Supplemental=Navigator
-] NavigatorVibration {
+] interface NavigatorVibration {
     void vibrate(in sequence<unsigned long> pattern) raises(DOMException);
     void vibrate(in unsigned long time) raises(DOMException);
 };

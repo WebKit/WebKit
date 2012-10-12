@@ -19,9 +19,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface [
+[
     Conditional=SVG
-] SVGTransform { 
+] interface SVGTransform { 
     // Transform Types
     const unsigned short SVG_TRANSFORM_UNKNOWN = 0;
     const unsigned short SVG_TRANSFORM_MATRIX = 1;

@@ -28,13 +28,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     JSGenerateIsReachable=Impl,
     CustomToJSObject,
     JSNoStaticTables,
     CustomConstructor,
     ConstructorParameters=2
-] Blob {
+] interface Blob {
     readonly attribute unsigned long long size;
     readonly attribute DOMString type;
 

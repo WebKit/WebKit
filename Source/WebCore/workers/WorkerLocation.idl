@@ -26,11 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=WORKERS,
     JSGenerateIsReachable=Impl,
     JSNoStaticTables
-] WorkerLocation {
+] interface WorkerLocation {
     readonly attribute DOMString href;
     readonly attribute DOMString protocol;
     readonly attribute DOMString host;

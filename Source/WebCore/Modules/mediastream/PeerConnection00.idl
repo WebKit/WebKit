@@ -28,14 +28,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=MEDIA_STREAM,
     ActiveDOMObject,
     Constructor(in DOMString serverConfiguration, in [Callback] IceCallback iceCallback),
     CallWith=ScriptExecutionContext,
     ConstructorRaisesException,
     EventTarget
-] PeerConnection00 {
+] interface PeerConnection00 {
     SessionDescription createOffer(in [Optional] Dictionary mediaHints)
         raises(DOMException);
     SessionDescription createAnswer(in DOMString offer, in [Optional] Dictionary mediaHints)

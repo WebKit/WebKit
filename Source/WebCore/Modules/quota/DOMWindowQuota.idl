@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=QUOTA,
     Supplemental=DOMWindow
-] DOMWindowQuota {
+] interface DOMWindowQuota {
     readonly attribute StorageInfo webkitStorageInfo;
 };
 

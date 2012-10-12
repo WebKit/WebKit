@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=SCRIPTED_SPEECH,
     IndexedGetter,
     Constructor,
-] SpeechGrammarList {
+] interface SpeechGrammarList {
     readonly attribute unsigned long length;
     SpeechGrammar item(in [IsIndex] unsigned long index);
     [CallWith=ScriptExecutionContext] void addFromUri(in DOMString src, in [Optional] float weight);

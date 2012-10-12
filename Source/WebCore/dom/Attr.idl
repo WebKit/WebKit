@@ -18,18 +18,18 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface [
+[
     JSCustomMarkFunction,
     JSGenerateToNativeObject
-] Attr : Node {
+] interface Attr : Node {
 
     // DOM Level 1
 
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString name;
+    [TreatReturnedNullStringAs=Null] readonly attribute DOMString name;
 
     readonly attribute boolean specified;
 
-             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString value 
+             [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] attribute DOMString value 
                  setter raises(DOMException);
 
     // DOM Level 2

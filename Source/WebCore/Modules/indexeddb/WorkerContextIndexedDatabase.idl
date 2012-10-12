@@ -24,11 +24,11 @@
  *
  */
 
-interface [
+[
     Conditional=INDEXED_DATABASE,
     Supplemental=WorkerContext
-] WorkerContextIndexedDatabase {
-    readonly attribute [ImplementedAs=indexedDB,V8EnabledAtRuntime] IDBFactory webkitIndexedDB;
+] interface WorkerContextIndexedDatabase {
+    [ImplementedAs=indexedDB,V8EnabledAtRuntime] readonly attribute IDBFactory webkitIndexedDB;
 
     attribute IDBCursorConstructor webkitIDBCursor;
     attribute IDBDatabaseConstructor webkitIDBDatabase;
@@ -40,7 +40,7 @@ interface [
     attribute IDBRequestConstructor webkitIDBRequest;
     attribute IDBTransactionConstructor webkitIDBTransaction;
 
-    readonly attribute [V8EnabledAtRuntime] IDBFactory indexedDB;
+    [V8EnabledAtRuntime] readonly attribute IDBFactory indexedDB;
 
     attribute IDBCursorConstructor IDBCursor;
     attribute IDBCursorWithValueConstructor IDBCursorWithValue;

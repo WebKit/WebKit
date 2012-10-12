@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     Conditional=SVG&FILTERS,
     DoNotCheckConstants
-] SVGFEMorphologyElement : SVGElement,
+] interface SVGFEMorphologyElement : SVGElement,
                            SVGFilterPrimitiveStandardAttributes {
     // Morphology Operators
     const unsigned short SVG_MORPHOLOGY_OPERATOR_UNKNOWN  = 0;

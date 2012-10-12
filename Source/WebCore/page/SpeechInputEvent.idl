@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=INPUT_SPEECH,
-] SpeechInputEvent : Event {
+] interface SpeechInputEvent : Event {
     readonly attribute SpeechInputResultList results;
 };
 

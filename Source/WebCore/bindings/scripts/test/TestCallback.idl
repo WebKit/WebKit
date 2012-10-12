@@ -28,10 +28,10 @@
 
 // This IDL file is for testing the bindings code generator with an interface
 // that has the "Callback" attribute and for tracking changes in its ouput.
-interface [
+[
     Conditional=SQL_DATABASE,
     Callback
-] TestCallback {
+] interface TestCallback {
   boolean callbackWithNoParam();
   boolean callbackWithClass1Param(in Class1 class1Param);
   boolean callbackWithClass2Param(in Class2 class2Param, in DOMString strArg);

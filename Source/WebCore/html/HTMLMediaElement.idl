@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     Conditional=VIDEO,
     JSGenerateToNativeObject
-] HTMLMediaElement : HTMLElement {
+] interface HTMLMediaElement : HTMLElement {
 
 // error state
 readonly attribute MediaError error;
@@ -102,7 +102,7 @@ readonly attribute [Conditional=MEDIA_STATISTICS] unsigned long webkitVideoDecod
 [V8EnabledAtRuntime=encryptedMedia] void webkitCancelKeyRequest(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, in [Optional=DefaultIsNullString] DOMString sessionId)
     raises (DOMException);
 
-attribute [V8EnabledAtRuntime=encryptedMedia] EventListener onwebkitkeyadded;
+[V8EnabledAtRuntime=encryptedMedia] attribute EventListener onwebkitkeyadded;
 attribute [V8EnabledAtRuntime=encryptedMedia] EventListener onwebkitkeyerror;
 attribute [V8EnabledAtRuntime=encryptedMedia] EventListener onwebkitkeymessage;
 attribute [V8EnabledAtRuntime=encryptedMedia] EventListener onwebkitneedkey;
@@ -114,6 +114,6 @@ attribute [V8EnabledAtRuntime=encryptedMedia] EventListener onwebkitneedkey;
 readonly attribute [V8EnabledAtRuntime=webkitVideoTrack] TextTrackList textTracks;
 #endif
 
-attribute [Reflect, TreatNullAs=NullString] DOMString mediaGroup;
+[Reflect, TreatNullAs=NullString] attribute DOMString mediaGroup;
 attribute [CustomSetter] MediaController controller;
 };

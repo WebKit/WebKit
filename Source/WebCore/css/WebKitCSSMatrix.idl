@@ -24,10 +24,10 @@
  */
 
 // Introduced in DOM Level ?:
-interface [
+[
     Constructor(in [Optional=DefaultIsNullString] DOMString cssValue),
     ConstructorRaisesException,
-] WebKitCSSMatrix {
+] interface WebKitCSSMatrix {
 
     // These attributes are simple aliases for certain elements of the 4x4 matrix
     attribute double a; // alias for m11

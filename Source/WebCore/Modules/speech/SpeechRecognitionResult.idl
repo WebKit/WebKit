@@ -23,12 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=SCRIPTED_SPEECH,
     CustomIsReachable,
     IndexedGetter,
     V8DependentLifetime
-] SpeechRecognitionResult {
+] interface SpeechRecognitionResult {
     readonly attribute unsigned long length;
     SpeechRecognitionAlternative item(in [IsIndex] unsigned long index);
     readonly attribute boolean final;

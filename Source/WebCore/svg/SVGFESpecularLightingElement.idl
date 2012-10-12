@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     Conditional=SVG&FILTERS
-] SVGFESpecularLightingElement : SVGElement,
+] interface SVGFESpecularLightingElement : SVGElement,
                                                            SVGFilterPrimitiveStandardAttributes {
     readonly attribute SVGAnimatedString in1;
     readonly attribute SVGAnimatedNumber surfaceScale;

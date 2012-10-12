@@ -19,19 +19,19 @@
  */
 
 // Introduced in DOM Level 2:
-interface [
+[
     JSCustomMarkFunction,
     JSGenerateIsReachable,
     CustomToJSObject,
     ObjCPolymorphic,
     V8GenerateIsReachable=ImplOwnerNodeRoot
-] StyleSheet {
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString        type;
+] interface StyleSheet {
+    [TreatReturnedNullStringAs=Null] readonly attribute DOMString        type;
              attribute boolean          disabled;
     readonly attribute Node             ownerNode;
     readonly attribute StyleSheet       parentStyleSheet;
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString        href;
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString        title;
+    [TreatReturnedNullStringAs=Null] readonly attribute DOMString        href;
+    [TreatReturnedNullStringAs=Null] readonly attribute DOMString        title;
     readonly attribute MediaList        media;
 
 #if defined(LANGUAGE_CPP) && LANGUAGE_CPP

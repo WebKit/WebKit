@@ -28,14 +28,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=SHARED_WORKERS,
     ExtendsDOMGlobalObject,
     IsWorkerContext,
     JSGenerateToNativeObject,
     JSNoStaticTables,
     OmitConstructor
-] SharedWorkerContext : WorkerContext {
+] interface SharedWorkerContext : WorkerContext {
 
     readonly attribute DOMString name;
              attribute EventListener onconnect;

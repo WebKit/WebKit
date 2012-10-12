@@ -18,8 +18,8 @@
  */
 
 interface HTMLFontElement : HTMLElement {
-    attribute [Reflect] DOMString color;
-    attribute [Reflect] DOMString face;
-    attribute [Reflect] DOMString size;
+    [Reflect] attribute DOMString color;
+    [Reflect] attribute DOMString face;
+    [Reflect] attribute DOMString size;
 };
 

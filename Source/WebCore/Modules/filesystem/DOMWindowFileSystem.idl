@@ -24,10 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=FILE_SYSTEM,
     Supplemental=DOMWindow
-] DOMWindowFileSystem {
+] interface DOMWindowFileSystem {
     const unsigned short TEMPORARY = 0;
     const unsigned short PERSISTENT = 1;
 

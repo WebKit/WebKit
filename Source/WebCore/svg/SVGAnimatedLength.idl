@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     Conditional=SVG
-] SVGAnimatedLength {
+] interface SVGAnimatedLength {
     readonly attribute SVGLength baseVal;
     readonly attribute SVGLength animVal;
 };

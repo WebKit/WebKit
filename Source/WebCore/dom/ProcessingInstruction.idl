@@ -22,8 +22,8 @@ interface ProcessingInstruction : Node {
 
     // DOM Level 1
 
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString target;
-             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString data
+    [TreatReturnedNullStringAs=Null] readonly attribute DOMString target;
+             [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] attribute DOMString data
                  setter raises(DOMException);
 
     // interface LinkStyle from DOM Level 2 Style Sheets

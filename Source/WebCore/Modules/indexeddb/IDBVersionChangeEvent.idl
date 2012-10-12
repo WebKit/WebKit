@@ -23,8 +23,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=INDEXED_DATABASE
-] IDBVersionChangeEvent : Event {
+] interface IDBVersionChangeEvent : Event {
     readonly attribute DOMString version;
 };

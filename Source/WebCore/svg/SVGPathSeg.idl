@@ -24,11 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     Conditional=SVG,
     CustomToJSObject,
     ObjCPolymorphic
-] SVGPathSeg {
+] interface SVGPathSeg {
     // Path Segment Types
     const unsigned short PATHSEG_UNKNOWN = 0;
     const unsigned short PATHSEG_CLOSEPATH = 1;

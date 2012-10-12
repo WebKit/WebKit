@@ -24,12 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=WEB_INTENTS,
     Supplemental=DOMWindow
-] DOMWindowIntents {
+] interface DOMWindowIntents {
     attribute IntentConstructor WebKitIntent;
 
-    attribute [Replaceable] DeliveredIntent webkitIntent;
+    [Replaceable] attribute DeliveredIntent webkitIntent;
 };
 

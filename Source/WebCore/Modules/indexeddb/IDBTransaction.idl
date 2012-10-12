@@ -24,11 +24,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=INDEXED_DATABASE,
     ActiveDOMObject,
     EventTarget
-] IDBTransaction {
+] interface IDBTransaction {
     // FIXME: Eventually remove legacy enum constants, see https://bugs.webkit.org/show_bug.cgi?id=85315
     const unsigned short READ_ONLY = 0;
     const unsigned short READ_WRITE = 1;

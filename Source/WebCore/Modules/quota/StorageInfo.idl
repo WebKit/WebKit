@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     Conditional=QUOTA,
     OmitConstructor
-] StorageInfo {
+] interface StorageInfo {
     const unsigned short TEMPORARY = 0;
     const unsigned short PERSISTENT = 1;
 

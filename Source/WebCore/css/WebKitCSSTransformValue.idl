@@ -26,10 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
         IndexedGetter,
         DoNotCheckConstants
-] WebKitCSSTransformValue : CSSValueList {
+] interface WebKitCSSTransformValue : CSSValueList {
 
     // OperationTypes
 

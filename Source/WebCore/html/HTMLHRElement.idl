@@ -18,9 +18,9 @@
  */
 
 interface HTMLHRElement : HTMLElement {
-    attribute [Reflect] DOMString align;
-    attribute [Reflect] boolean noShade;
-    attribute [Reflect] DOMString size;
-    attribute [Reflect] DOMString width;
+    [Reflect] attribute DOMString align;
+    [Reflect] attribute boolean noShade;
+    [Reflect] attribute DOMString size;
+    [Reflect] attribute DOMString width;
 };
 

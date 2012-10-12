@@ -23,13 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     Conditional=DEVICE_ORIENTATION,
-] DeviceMotionEvent : Event {
-    readonly attribute [Custom] Acceleration acceleration;
-    readonly attribute [Custom] Acceleration accelerationIncludingGravity;
-    readonly attribute [Custom] RotationRate rotationRate;
-    readonly attribute [Custom] double interval;
+] interface DeviceMotionEvent : Event {
+    [Custom] readonly attribute Acceleration acceleration;
+    [Custom] readonly attribute Acceleration accelerationIncludingGravity;
+    [Custom] readonly attribute RotationRate rotationRate;
+    [Custom] readonly attribute double interval;
     [Custom] void initDeviceMotionEvent(in [Optional=DefaultIsUndefined] DOMString type, 
                                         in [Optional=DefaultIsUndefined] boolean bubbles, 
                                         in [Optional=DefaultIsUndefined] boolean cancelable, 

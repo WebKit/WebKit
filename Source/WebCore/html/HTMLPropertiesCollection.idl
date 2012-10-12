@@ -28,12 +28,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=MICRODATA,
     JSGenerateToJSObject,
     IndexedGetter,
     NamedGetter
-] HTMLPropertiesCollection : HTMLCollection {
+] interface HTMLPropertiesCollection : HTMLCollection {
     readonly attribute unsigned long length;
     Node item(in unsigned long index);
 

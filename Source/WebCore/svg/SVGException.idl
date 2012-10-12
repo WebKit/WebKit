@@ -18,10 +18,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-exception [
+[
     Conditional=SVG,
     DoNotCheckConstants
-] SVGException {
+] exception SVGException {
 
     readonly attribute unsigned short   code;
     readonly attribute DOMString        name;

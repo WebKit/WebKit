@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     IndexedGetter
-] WebKitAnimationList {
+] interface WebKitAnimationList {
     readonly attribute unsigned long length;
     WebKitAnimation item(in unsigned long index);
 };

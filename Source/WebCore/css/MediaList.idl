@@ -24,12 +24,12 @@
  */
 
 // Introduced in DOM Level 2:
-interface [
+[
     JSGenerateIsReachable,
     IndexedGetter
-] MediaList {
+] interface MediaList {
 
-             attribute [TreatNullAs=NullString, TreatReturnedNullStringAs=Null] DOMString mediaText
+             [TreatNullAs=NullString, TreatReturnedNullStringAs=Null] attribute DOMString mediaText
                  setter raises(DOMException);
     readonly attribute unsigned long length;
 

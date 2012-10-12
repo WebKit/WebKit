@@ -23,11 +23,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=WEBGL,
     JSGenerateIsReachable=ImplContext,
     OmitConstructor,
     DoNotCheckConstants
-] OESStandardDerivatives {
+] interface OESStandardDerivatives {
     const unsigned int FRAGMENT_SHADER_DERIVATIVE_HINT_OES = 0x8B8B;
 };

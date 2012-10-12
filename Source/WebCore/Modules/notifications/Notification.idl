@@ -29,7 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=NOTIFICATIONS|LEGACY_NOTIFICATIONS,
     ActiveDOMObject,
     EventTarget,
@@ -39,7 +39,7 @@ interface [
 #else
     OmitConstructor
 #endif
-] Notification {
+] interface Notification {
     void show();
 #if defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS
     void cancel();

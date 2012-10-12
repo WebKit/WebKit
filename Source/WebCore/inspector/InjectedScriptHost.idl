@@ -30,9 +30,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=INSPECTOR
-] InjectedScriptHost {
+] interface InjectedScriptHost {
     void clearConsoleMessages();
 
     void copyText(in DOMString text);

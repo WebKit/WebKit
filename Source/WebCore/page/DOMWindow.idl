@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     CheckSecurity,
     JSCustomDefineOwnProperty,
     CustomDeleteProperty,
@@ -40,7 +40,7 @@ interface [
     JSLegacyParent=JSDOMWindowBase,
     V8CustomToJSObject,
     InterfaceName=Window
-] DOMWindow {
+] interface DOMWindow {
     // DOM Level 0
     attribute [Replaceable] Screen screen;
     attribute [Replaceable, DoNotCheckSecurityOnGetter] History history;
@@ -372,7 +372,7 @@ interface [
     attribute DocumentConstructor Document;
     attribute NodeConstructor Node;
     attribute NodeListConstructor NodeList;
-    attribute [Conditional=MICRODATA] PropertyNodeListConstructor PropertyNodeList;
+    [Conditional=MICRODATA] attribute PropertyNodeListConstructor PropertyNodeList;
     attribute NamedNodeMapConstructor NamedNodeMap;
     attribute CharacterDataConstructor CharacterData;
     attribute AttrConstructor Attr;
@@ -391,9 +391,9 @@ interface [
     attribute EntityConstructor Entity;
     attribute EntityReferenceConstructor EntityReference;
     attribute ProcessingInstructionConstructor ProcessingInstruction;
-    attribute [Conditional=SHADOW_DOM, V8EnabledPerContext=shadowDOM] ShadowRootConstructor WebKitShadowRoot;
-    attribute [Conditional=SHADOW_DOM, V8EnabledPerContext=shadowDOM] HTMLContentElementConstructor HTMLContentElement;
-    attribute [Conditional=SHADOW_DOM, V8EnabledPerContext=shadowDOM] HTMLShadowElementConstructor HTMLShadowElement;
+    [Conditional=SHADOW_DOM, V8EnabledPerContext=shadowDOM] attribute ShadowRootConstructor WebKitShadowRoot;
+    [Conditional=SHADOW_DOM, V8EnabledPerContext=shadowDOM] attribute HTMLContentElementConstructor HTMLContentElement;
+    [Conditional=SHADOW_DOM, V8EnabledPerContext=shadowDOM] attribute HTMLShadowElementConstructor HTMLShadowElement;
 
     attribute DOMSelectionConstructor Selection;
     attribute DOMWindowConstructor Window;
@@ -410,8 +410,8 @@ interface [
     attribute HTMLButtonElementConstructor HTMLButtonElement;
     attribute HTMLCanvasElementConstructor HTMLCanvasElement;
     attribute HTMLDListElementConstructor HTMLDListElement;
-    attribute [Conditional=DATALIST_ELEMENT] HTMLDataListElementConstructor HTMLDataListElement;
-    attribute [Conditional=DIALOG_ELEMENT, V8EnabledPerContext=dialogElement] HTMLDialogElementConstructor HTMLDialogElement;
+    [Conditional=DATALIST_ELEMENT] attribute HTMLDataListElementConstructor HTMLDataListElement;
+    [Conditional=DIALOG_ELEMENT, V8EnabledPerContext=dialogElement] attribute HTMLDialogElementConstructor HTMLDialogElement;
     attribute HTMLDirectoryElementConstructor HTMLDirectoryElement;
     attribute HTMLDivElementConstructor HTMLDivElement;
     attribute HTMLEmbedElementConstructor HTMLEmbedElement;
@@ -468,32 +468,32 @@ interface [
 
     attribute HTMLCollectionConstructor HTMLCollection;
     attribute HTMLAllCollectionConstructor HTMLAllCollection;
-    attribute [Conditional=MICRODATA] HTMLPropertiesCollectionConstructor HTMLPropertiesCollection;
+    [Conditional=MICRODATA] attribute HTMLPropertiesCollectionConstructor HTMLPropertiesCollection;
     attribute HTMLUnknownElementConstructor HTMLUnknownElement;
 
-    attribute [JSCustomGetter, CustomConstructor] HTMLImageElementConstructorConstructor Image; // Usable with new operator
-    attribute [JSCustomGetter] HTMLOptionElementConstructorConstructor Option; // Usable with new operator
+    [JSCustomGetter, CustomConstructor] attribute HTMLImageElementConstructorConstructor Image; // Usable with new operator
+    [JSCustomGetter] attribute HTMLOptionElementConstructorConstructor Option; // Usable with new operator
 
-    attribute [Conditional=ENCRYPTED_MEDIA, V8EnabledAtRuntime=encryptedMedia] MediaKeyErrorConstructor MediaKeyError;
-    attribute [Conditional=ENCRYPTED_MEDIA, V8EnabledAtRuntime=encryptedMedia] MediaKeyEventConstructor MediaKeyEvent;
+    [Conditional=ENCRYPTED_MEDIA, V8EnabledAtRuntime=encryptedMedia] attribute MediaKeyErrorConstructor MediaKeyError;
+    [Conditional=ENCRYPTED_MEDIA, V8EnabledAtRuntime=encryptedMedia] attribute MediaKeyEventConstructor MediaKeyEvent;
 
-    attribute [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] HTMLTrackElementConstructor HTMLTrackElement;
-    attribute [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] TextTrackConstructor TextTrack;
-    attribute [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] TextTrackCueConstructor TextTrackCue; // Usable with the new operator
-    attribute [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] TextTrackCueListConstructor TextTrackCueList;
-    attribute [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] TextTrackListConstructor TextTrackList;
-    attribute [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] TrackEventConstructor TrackEvent;
+    [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] attribute HTMLTrackElementConstructor HTMLTrackElement;
+    [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] attribute TextTrackConstructor TextTrack;
+    [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] attribute TextTrackCueConstructor TextTrackCue; // Usable with the new operator
+    [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] attribute TextTrackCueListConstructor TextTrackCueList;
+    [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] attribute TextTrackListConstructor TextTrackList;
+    [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] attribute TrackEventConstructor TrackEvent;
 
-    attribute [JSCustomGetter, Conditional=VIDEO, V8EnabledAtRuntime] HTMLAudioElementConstructorConstructor Audio; // Usable with the new operator
-    attribute [Conditional=VIDEO, V8EnabledAtRuntime] HTMLAudioElementConstructor HTMLAudioElement;
-    attribute [Conditional=VIDEO, V8EnabledAtRuntime] HTMLMediaElementConstructor HTMLMediaElement;
-    attribute [Conditional=VIDEO, V8EnabledAtRuntime] HTMLVideoElementConstructor HTMLVideoElement;
-    attribute [Conditional=VIDEO, V8EnabledAtRuntime] MediaErrorConstructor MediaError;
-    attribute [Conditional=VIDEO, V8EnabledAtRuntime] TimeRangesConstructor TimeRanges;
-    attribute [Conditional=VIDEO, V8EnabledAtRuntime] HTMLSourceElementConstructor HTMLSourceElement;
-    attribute [Conditional=VIDEO, V8EnabledAtRuntime] MediaControllerConstructor MediaController;
+    [JSCustomGetter, Conditional=VIDEO, V8EnabledAtRuntime] attribute HTMLAudioElementConstructorConstructor Audio; // Usable with the new operator
+    [Conditional=VIDEO, V8EnabledAtRuntime] attribute HTMLAudioElementConstructor HTMLAudioElement;
+    [Conditional=VIDEO, V8EnabledAtRuntime] attribute HTMLMediaElementConstructor HTMLMediaElement;
+    [Conditional=VIDEO, V8EnabledAtRuntime] attribute HTMLVideoElementConstructor HTMLVideoElement;
+    [Conditional=VIDEO, V8EnabledAtRuntime] attribute MediaErrorConstructor MediaError;
+    [Conditional=VIDEO, V8EnabledAtRuntime] attribute TimeRangesConstructor TimeRanges;
+    [Conditional=VIDEO, V8EnabledAtRuntime] attribute HTMLSourceElementConstructor HTMLSourceElement;
+    [Conditional=VIDEO, V8EnabledAtRuntime] attribute MediaControllerConstructor MediaController;
 
-    attribute [Conditional=WEB_INTENTS_TAG] HTMLIntentElementConstructor HTMLIntentElement;
+    [Conditional=WEB_INTENTS_TAG] attribute HTMLIntentElementConstructor HTMLIntentElement;
 
     attribute CanvasPatternConstructor CanvasPattern;
     attribute CanvasGradientConstructor CanvasGradient;
@@ -502,16 +502,16 @@ interface [
     attribute ImageDataConstructor ImageData;
     attribute TextMetricsConstructor TextMetrics;
 
-    attribute [Conditional=WEBGL] WebGLActiveInfoConstructor WebGLActiveInfo;
-    attribute [Conditional=WEBGL] WebGLBufferConstructor WebGLBuffer;
-    attribute [Conditional=WEBGL] WebGLFramebufferConstructor WebGLFramebuffer;
-    attribute [Conditional=WEBGL] WebGLProgramConstructor WebGLProgram;
-    attribute [Conditional=WEBGL] WebGLRenderbufferConstructor WebGLRenderbuffer;
-    attribute [Conditional=WEBGL] WebGLRenderingContextConstructor WebGLRenderingContext;
-    attribute [Conditional=WEBGL] WebGLShaderConstructor WebGLShader;
-    attribute [Conditional=WEBGL] WebGLShaderPrecisionFormatConstructor WebGLShaderPrecisionFormat;
-    attribute [Conditional=WEBGL] WebGLTextureConstructor WebGLTexture;
-    attribute [Conditional=WEBGL] WebGLUniformLocationConstructor WebGLUniformLocation;
+    [Conditional=WEBGL] attribute WebGLActiveInfoConstructor WebGLActiveInfo;
+    [Conditional=WEBGL] attribute WebGLBufferConstructor WebGLBuffer;
+    [Conditional=WEBGL] attribute WebGLFramebufferConstructor WebGLFramebuffer;
+    [Conditional=WEBGL] attribute WebGLProgramConstructor WebGLProgram;
+    [Conditional=WEBGL] attribute WebGLRenderbufferConstructor WebGLRenderbuffer;
+    [Conditional=WEBGL] attribute WebGLRenderingContextConstructor WebGLRenderingContext;
+    [Conditional=WEBGL] attribute WebGLShaderConstructor WebGLShader;
+    [Conditional=WEBGL] attribute WebGLShaderPrecisionFormatConstructor WebGLShaderPrecisionFormat;
+    [Conditional=WEBGL] attribute WebGLTextureConstructor WebGLTexture;
+    [Conditional=WEBGL] attribute WebGLUniformLocationConstructor WebGLUniformLocation;
 
     attribute DOMStringMapConstructor DOMStringMap;
 
@@ -548,19 +548,19 @@ interface [
     attribute WebKitTransitionEventConstructor WebKitTransitionEvent;
     attribute WheelEventConstructor WheelEvent;
     attribute XMLHttpRequestProgressEventConstructor XMLHttpRequestProgressEvent;
-    attribute [Conditional=DEVICE_ORIENTATION, V8EnabledAtRuntime] DeviceMotionEventConstructor DeviceMotionEvent;
-    attribute [Conditional=DEVICE_ORIENTATION, V8EnabledAtRuntime] DeviceOrientationEventConstructor DeviceOrientationEvent;
-    attribute [Conditional=TOUCH_EVENTS] TouchEventConstructor TouchEvent;
+    [Conditional=DEVICE_ORIENTATION, V8EnabledAtRuntime] attribute DeviceMotionEventConstructor DeviceMotionEvent;
+    [Conditional=DEVICE_ORIENTATION, V8EnabledAtRuntime] attribute DeviceOrientationEventConstructor DeviceOrientationEvent;
+    [Conditional=TOUCH_EVENTS] attribute TouchEventConstructor TouchEvent;
     attribute StorageEventConstructor StorageEvent;
-    attribute [Conditional=INPUT_SPEECH] SpeechInputEventConstructor SpeechInputEvent;
-    attribute [Conditional=WEBGL] WebGLContextEventConstructor WebGLContextEvent;
-    attribute [Conditional=PROXIMITY_EVENTS] DeviceProximityEventConstructor DeviceProximityEvent;
+    [Conditional=INPUT_SPEECH] attribute SpeechInputEventConstructor SpeechInputEvent;
+    [Conditional=WEBGL] attribute WebGLContextEventConstructor WebGLContextEvent;
+    [Conditional=PROXIMITY_EVENTS] attribute DeviceProximityEventConstructor DeviceProximityEvent;
 
     attribute EventExceptionConstructor EventException;
 
     attribute WebKitCSSKeyframeRuleConstructor WebKitCSSKeyframeRule;
     attribute WebKitCSSKeyframesRuleConstructor WebKitCSSKeyframesRule;
-    attribute [Conditional=CSS_REGIONS] WebKitCSSRegionRuleConstructor WebKitCSSRegionRule;
+    [Conditional=CSS_REGIONS] attribute WebKitCSSRegionRuleConstructor WebKitCSSRegionRule;
 
     attribute WebKitCSSMatrixConstructor WebKitCSSMatrix; // Usable with the new operator
 
@@ -568,8 +568,8 @@ interface [
 
     attribute ClipboardConstructor Clipboard;
 
-    attribute [Conditional=WORKERS] WorkerConstructor Worker; // Usable with the new operator
-    attribute [Conditional=SHARED_WORKERS, JSCustomGetter, V8EnabledAtRuntime] SharedWorkerConstructor SharedWorker; // Usable with the new operator
+    [Conditional=WORKERS] attribute WorkerConstructor Worker; // Usable with the new operator
+    [Conditional=SHARED_WORKERS, JSCustomGetter, V8EnabledAtRuntime] attribute SharedWorkerConstructor SharedWorker; // Usable with the new operator
 
     attribute FileConstructor File;
     attribute FileListConstructor FileList;
@@ -589,7 +589,7 @@ interface [
     attribute XMLHttpRequestConstructor XMLHttpRequest; // Usable with the new operator
     attribute XMLHttpRequestUploadConstructor XMLHttpRequestUpload;
     attribute XMLHttpRequestExceptionConstructor XMLHttpRequestException;
-    attribute [Conditional=XSLT] XSLTProcessorConstructor XSLTProcessor; // Usable with the new operator
+    [Conditional=XSLT] attribute XSLTProcessorConstructor XSLTProcessor; // Usable with the new operator
 
 #if defined(ENABLE_CHANNEL_MESSAGING) && ENABLE_CHANNEL_MESSAGING
     attribute MessagePortConstructor MessagePort;
@@ -616,7 +616,7 @@ interface [
     attribute XPathResultConstructor XPathResult;
     attribute XPathExceptionConstructor XPathException;
 
-    attribute [Conditional=SVG] SVGZoomEventConstructor SVGZoomEvent;
+    [Conditional=SVG] attribute SVGZoomEventConstructor SVGZoomEvent;
 
 #if defined(ENABLE_SVG) && ENABLE_SVG
     // Expose all implemented SVG 1.1 interfaces, excluding the SVG MI interfaces:
@@ -777,17 +777,17 @@ interface [
 
     attribute DOMFormDataConstructor FormData;
 
-    attribute [Conditional=BLOB|FILE_SYSTEM] FileErrorConstructor FileError;
-    attribute [Conditional=BLOB] FileReaderConstructor FileReader;
+    [Conditional=BLOB|FILE_SYSTEM] attribute FileErrorConstructor FileError;
+    [Conditional=BLOB] attribute FileReaderConstructor FileReader;
 
-    attribute [Conditional=BLOB] DOMURLConstructor URL;
-    attribute [Conditional=BLOB] DOMURLConstructor webkitURL; // FIXME: deprecate this.
+    [Conditional=BLOB] attribute DOMURLConstructor URL;
+    [Conditional=BLOB] attribute DOMURLConstructor webkitURL; // FIXME: deprecate this.
 
-    attribute [Conditional=MUTATION_OBSERVERS] MutationObserverConstructor WebKitMutationObserver;
+    [Conditional=MUTATION_OBSERVERS] attribute MutationObserverConstructor WebKitMutationObserver;
 
-    attribute [Conditional=MEDIA_SOURCE, V8EnabledAtRuntime=mediaSource] MediaSourceConstructor WebKitMediaSource;
-    attribute [Conditional=MEDIA_SOURCE, V8EnabledAtRuntime=mediaSource] SourceBufferConstructor WebKitSourceBuffer;
-    attribute [Conditional=MEDIA_SOURCE, V8EnabledAtRuntime=mediaSource] SourceBufferListConstructor WebKitSourceBufferList;
+    [Conditional=MEDIA_SOURCE, V8EnabledAtRuntime=mediaSource] attribute MediaSourceConstructor WebKitMediaSource;
+    [Conditional=MEDIA_SOURCE, V8EnabledAtRuntime=mediaSource] attribute SourceBufferConstructor WebKitSourceBuffer;
+    [Conditional=MEDIA_SOURCE, V8EnabledAtRuntime=mediaSource] attribute SourceBufferListConstructor WebKitSourceBufferList;
 
 #endif // defined(LANGUAGE_JAVASCRIPT)
 

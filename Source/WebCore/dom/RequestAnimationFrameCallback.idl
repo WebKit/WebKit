@@ -28,10 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Callback,
     Conditional=REQUEST_ANIMATION_FRAME,
-] RequestAnimationFrameCallback{
+] interface RequestAnimationFrameCallback{
     // highResTime is passed as high resolution timestamp, see
     // http://www.w3.org/TR/hr-time/ for details.
 #if defined(V8_BINDING) && V8_BINDING

@@ -23,9 +23,9 @@
  * DAMAGE.
  */
 
-interface [
+[
     Conditional=GAMEPAD
-] Gamepad {
+] interface Gamepad {
     readonly attribute DOMString id;
     readonly attribute unsigned long index;
     readonly attribute unsigned long long timestamp;

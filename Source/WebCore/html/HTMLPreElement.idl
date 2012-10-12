@@ -21,9 +21,9 @@
 interface HTMLPreElement : HTMLElement {
     // FIXME: DOM spec says that width should be of type DOMString
     // see http://bugs.webkit.org/show_bug.cgi?id=8992
-    attribute [Reflect] long width;
+    [Reflect] attribute long width;
     
     // Extensions
-    attribute [Reflect] boolean wrap;
+    [Reflect] attribute boolean wrap;
 };
 

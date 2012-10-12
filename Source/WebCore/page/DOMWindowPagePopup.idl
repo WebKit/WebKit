@@ -28,9 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=PAGE_POPUP,
     Supplemental=DOMWindow
-] DOMWindowPagePopup {
-    readonly attribute [V8EnabledPerContext=pagePopup] PagePopupController pagePopupController;
+] interface DOMWindowPagePopup {
+    [V8EnabledPerContext=pagePopup] readonly attribute PagePopupController pagePopupController;
 };

@@ -19,22 +19,22 @@
  */
 
 interface HTMLIFrameElement : HTMLElement {
-    attribute [Reflect] DOMString align;
-    attribute [Reflect] DOMString frameBorder;
-    attribute [Reflect] DOMString height;
-    attribute [Reflect] DOMString longDesc;
-    attribute [Reflect] DOMString marginHeight;
-    attribute [Reflect] DOMString marginWidth;
-    attribute [Reflect] DOMString name;
-    attribute [Reflect] DOMString sandbox;
-    attribute [Reflect, Conditional=IFRAME_SEAMLESS] boolean seamless;
-    attribute [Reflect] DOMString scrolling;
-    attribute [Reflect, URL] DOMString src;
-    attribute [Reflect] DOMString srcdoc;
-    attribute [Reflect] DOMString width;
+    [Reflect] attribute DOMString align;
+    [Reflect] attribute DOMString frameBorder;
+    [Reflect] attribute DOMString height;
+    [Reflect] attribute DOMString longDesc;
+    [Reflect] attribute DOMString marginHeight;
+    [Reflect] attribute DOMString marginWidth;
+    [Reflect] attribute DOMString name;
+    [Reflect] attribute DOMString sandbox;
+    [Reflect, Conditional=IFRAME_SEAMLESS] attribute boolean seamless;
+    [Reflect] attribute DOMString scrolling;
+    [Reflect, URL] attribute DOMString src;
+    [Reflect] attribute DOMString srcdoc;
+    [Reflect] attribute DOMString width;
 
     // Introduced in DOM Level 2:
-    readonly attribute [CheckSecurityForNode] Document contentDocument;
+    [CheckSecurityForNode] readonly attribute Document contentDocument;
 
     // Extensions
     readonly attribute DOMWindow contentWindow;

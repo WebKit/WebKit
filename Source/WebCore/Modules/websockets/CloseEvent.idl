@@ -28,12 +28,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     JSNoStaticTables,
     ConstructorTemplate=Event
-] CloseEvent : Event {
-    readonly attribute [InitializedByEventConstructor] boolean wasClean;
-    readonly attribute [InitializedByEventConstructor] unsigned short code;
-    readonly attribute [InitializedByEventConstructor] DOMString reason;
+] interface CloseEvent : Event {
+    [InitializedByEventConstructor] readonly attribute boolean wasClean;
+    [InitializedByEventConstructor] readonly attribute unsigned short code;
+    [InitializedByEventConstructor] readonly attribute DOMString reason;
 };
 

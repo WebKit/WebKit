@@ -28,11 +28,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=MEDIA_STREAM,
     Constructor(in Dictionary dictionary),
     ConstructorRaisesException
-] RTCSessionDescription {
+] interface RTCSessionDescription {
     attribute DOMString type
         setter raises(DOMException);
     attribute DOMString sdp

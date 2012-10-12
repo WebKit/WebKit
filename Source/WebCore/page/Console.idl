@@ -26,10 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     JSGenerateIsReachable=ImplFrame,
     OmitConstructor
-] Console {
+] interface Console {
 
     [CallWith=ScriptArguments|CallStack] void debug();
     [CallWith=ScriptArguments|CallStack] void error();
@@ -59,6 +59,6 @@ interface [
     [CallWith=ScriptArguments|CallStack] void groupCollapsed();
     void groupEnd();
 
-    readonly attribute [V8CustomGetter] MemoryInfo memory;
+    [V8CustomGetter] readonly attribute MemoryInfo memory;
 };
 

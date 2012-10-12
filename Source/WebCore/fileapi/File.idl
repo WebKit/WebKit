@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     JSGenerateToNativeObject,
     JSGenerateToJSObject,
     JSNoStaticTables
-] File : Blob {
+] interface File : Blob {
     readonly attribute DOMString name;
 #if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT
     readonly attribute Date lastModifiedDate;

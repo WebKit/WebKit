@@ -29,13 +29,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=FILE_SYSTEM,
     ActiveDOMObject,
     CallWith=ScriptExecutionContext,
     EventTarget,
     JSNoStaticTables
-] FileWriter {
+] interface FileWriter {
     // ready states
     const unsigned short INIT = 0;
     const unsigned short WRITING = 1;

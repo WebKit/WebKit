@@ -28,11 +28,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=FILE_SYSTEM,
     IndexedGetter,
     JSNoStaticTables
-] EntryArray {
+] interface EntryArray {
     readonly attribute unsigned long length;
     Entry item(in [IsIndex] unsigned long index);
 };

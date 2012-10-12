@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     CustomConstructor,
     ConstructorParameters=2
-] WebKitPoint {
+] interface WebKitPoint {
     attribute float x;
     attribute float y;
 };

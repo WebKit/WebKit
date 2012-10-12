@@ -19,17 +19,17 @@
  */
 
 interface HTMLButtonElement : HTMLElement {
-    attribute [Reflect] boolean autofocus;
-    attribute [Reflect] boolean disabled;
+    [Reflect] attribute boolean autofocus;
+    [Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;
-    attribute [Reflect, URL] DOMString formAction;
-    attribute [TreatNullAs=NullString] DOMString formEnctype;
-    attribute [TreatNullAs=NullString] DOMString formMethod;
-    attribute [Reflect] boolean formNoValidate;
-    attribute [Reflect] DOMString formTarget;
-    attribute [Reflect] DOMString name;
-    attribute [TreatNullAs=NullString] DOMString type;
-    attribute [Reflect] DOMString value;
+    [Reflect, URL] attribute DOMString formAction;
+    [TreatNullAs=NullString] attribute DOMString formEnctype;
+    [TreatNullAs=NullString] attribute DOMString formMethod;
+    [Reflect] attribute boolean formNoValidate;
+    [Reflect] attribute DOMString formTarget;
+    [Reflect] attribute DOMString name;
+    [TreatNullAs=NullString] attribute DOMString type;
+    [Reflect] attribute DOMString value;
 
     readonly attribute boolean willValidate;
     readonly attribute ValidityState validity;
@@ -40,7 +40,7 @@ interface HTMLButtonElement : HTMLElement {
     readonly attribute NodeList labels;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    attribute [Reflect] DOMString accessKey;
+    [Reflect] attribute DOMString accessKey;
 #endif
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C

@@ -28,13 +28,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-interface [
+[
     Conditional=MEDIA_SOURCE,
     V8EnabledAtRuntime=mediaSource,
     EventTarget,
     Constructor,
     CallWith=ScriptExecutionContext
-] MediaSource {
+] interface MediaSource {
     // All the source buffers created by this object.
     readonly attribute SourceBufferList sourceBuffers;
 

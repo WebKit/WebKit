@@ -22,10 +22,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     GenerateIsReachable=ImplElementRoot,
     IndexedGetter
-] DOMTokenList {
+] interface DOMTokenList {
     readonly attribute unsigned long length;
     [TreatReturnedNullStringAs=Null] DOMString item(in unsigned long index);
     boolean contains(in DOMString token) raises(DOMException);

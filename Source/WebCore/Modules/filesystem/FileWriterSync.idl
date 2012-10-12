@@ -28,10 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=FILE_SYSTEM,
     JSNoStaticTables
-] FileWriterSync {
+] interface FileWriterSync {
     // synchronous write/modify methods
     void write(in Blob data) raises (FileException);
     void seek(in long long position) raises (FileException);

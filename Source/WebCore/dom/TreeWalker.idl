@@ -19,9 +19,9 @@
  */
 
 // Introduced in DOM Level 2:
-interface [
+[
     JSCustomMarkFunction
-] TreeWalker {
+] interface TreeWalker {
     readonly attribute Node root;
     readonly attribute unsigned long whatToShow;
     readonly attribute NodeFilter filter;

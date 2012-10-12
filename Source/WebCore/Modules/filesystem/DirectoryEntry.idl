@@ -28,12 +28,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=FILE_SYSTEM,
     JSGenerateToNativeObject,
     JSGenerateToJSObject,
     JSNoStaticTables
-] DirectoryEntry : Entry {
+] interface DirectoryEntry : Entry {
     DirectoryReader createReader();
     void getFile(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString path, in [Optional] Dictionary options, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
     void getDirectory(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString path, in [Optional] Dictionary options, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);

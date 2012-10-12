@@ -23,14 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     ConstructorTemplate=Event
-] StorageEvent : Event {
-    readonly attribute [InitializedByEventConstructor] DOMString key;
-    readonly attribute [InitializedByEventConstructor, TreatReturnedNullStringAs=Null] DOMString oldValue;
-    readonly attribute [InitializedByEventConstructor, TreatReturnedNullStringAs=Null] DOMString newValue;
-    readonly attribute [InitializedByEventConstructor] DOMString url;
-    readonly attribute [InitializedByEventConstructor] Storage storageArea;
+] interface StorageEvent : Event {
+    [InitializedByEventConstructor] readonly attribute DOMString key;
+    [InitializedByEventConstructor, TreatReturnedNullStringAs=Null] readonly attribute DOMString oldValue;
+    [InitializedByEventConstructor, TreatReturnedNullStringAs=Null] readonly attribute DOMString newValue;
+    [InitializedByEventConstructor] readonly attribute DOMString url;
+    [InitializedByEventConstructor] readonly attribute Storage storageArea;
 
     void initStorageEvent(in [Optional=DefaultIsUndefined] DOMString typeArg, 
                           in [Optional=DefaultIsUndefined] boolean canBubbleArg, 

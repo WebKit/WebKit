@@ -18,12 +18,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface [
+[
     GenerateIsReachable=ImplElementRoot,
     IndexedGetter,
     JSCustomMarkFunction,
     NamedGetter
-] NamedNodeMap {
+] interface NamedNodeMap {
 
     Node getNamedItem(in [Optional=DefaultIsUndefined] DOMString name);
 

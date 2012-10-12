@@ -26,11 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     JSGenerateIsReachable=Impl,
     EventTarget,
     JSNoStaticTables
-] XMLHttpRequestUpload {
+] interface XMLHttpRequestUpload {
     // From XMLHttpRequestEventTarget
     // event handler attributes
     attribute EventListener onabort;

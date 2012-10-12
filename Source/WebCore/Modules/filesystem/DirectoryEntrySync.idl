@@ -28,12 +28,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=FILE_SYSTEM,
     JSGenerateToNativeObject,
     JSGenerateToJSObject,
     JSNoStaticTables
-] DirectoryEntrySync : EntrySync {
+] interface DirectoryEntrySync : EntrySync {
     DirectoryReaderSync createReader() raises (FileException);
     FileEntrySync getFile(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString path, in Dictionary flags) raises (FileException);
     DirectoryEntrySync getDirectory(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString path, in Dictionary flags) raises (FileException);

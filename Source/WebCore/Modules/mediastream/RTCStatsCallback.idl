@@ -22,10 +22,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=MEDIA_STREAM,
     Callback
-] RTCStatsCallback {
+] interface RTCStatsCallback {
     boolean handleEvent(in RTCStatsResponse response);
 };
 

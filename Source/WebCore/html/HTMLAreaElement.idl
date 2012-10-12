@@ -19,16 +19,16 @@
  */
 
 interface HTMLAreaElement : HTMLElement {
-    attribute [Reflect] DOMString alt;
-    attribute [Reflect] DOMString coords;
-    attribute [Reflect, URL] DOMString href;
-    attribute [Reflect] boolean noHref;
-    attribute [Reflect] DOMString ping;
-    attribute [Reflect] DOMString shape;
-    attribute [Reflect] DOMString target;
+    [Reflect] attribute DOMString alt;
+    [Reflect] attribute DOMString coords;
+    [Reflect, URL] attribute DOMString href;
+    [Reflect] attribute boolean noHref;
+    [Reflect] attribute DOMString ping;
+    [Reflect] attribute DOMString shape;
+    [Reflect] attribute DOMString target;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    attribute [Reflect] DOMString accessKey;
+    [Reflect] attribute DOMString accessKey;
 #endif
     // IE Extensions
     readonly attribute DOMString hash;

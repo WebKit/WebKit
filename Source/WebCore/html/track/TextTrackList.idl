@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     Conditional=VIDEO_TRACK,
     V8EnabledAtRuntime=webkitVideoTrack,
     IndexedGetter,
@@ -31,7 +31,7 @@ interface [
     JSCustomMarkFunction,
     JSCustomIsReachable,
     V8GenerateIsReachable=ImplOwnerRoot
-] TextTrackList {
+] interface TextTrackList {
     readonly attribute unsigned long length;
     TextTrack item(in unsigned long index);
 

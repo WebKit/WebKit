@@ -22,9 +22,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=MEDIA_STREAM
-] RTCStatsReport {
+] interface RTCStatsReport {
     readonly attribute RTCStatsElement local;
     readonly attribute RTCStatsElement remote;
 };

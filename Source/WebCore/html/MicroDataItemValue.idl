@@ -28,9 +28,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=MICRODATA,
     CustomToJSObject,
     OmitConstructor
-] MicroDataItemValue {
+] interface MicroDataItemValue {
 };

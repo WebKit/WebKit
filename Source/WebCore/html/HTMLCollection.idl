@@ -18,14 +18,14 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface [
+[
     IndexedGetter,
     NamedGetter,
     CustomToJSObject,
     GenerateIsReachable=ImplBaseRoot,
     V8DependentLifetime,
     ObjCPolymorphic
-] HTMLCollection {
+] interface HTMLCollection {
     readonly attribute unsigned long length;
     Node item(in [Optional=DefaultIsUndefined] unsigned long index);
     [Custom] Node namedItem(in [Optional=DefaultIsUndefined] DOMString name);

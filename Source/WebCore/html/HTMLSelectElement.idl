@@ -18,10 +18,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface [
+[
     IndexedGetter,
     CustomIndexedSetter
-] HTMLSelectElement : HTMLElement {
+] interface HTMLSelectElement : HTMLElement {
     attribute [Reflect] boolean autofocus;
     attribute [Reflect] boolean disabled;
     readonly attribute HTMLFormElement form;
@@ -53,7 +53,7 @@ interface [
 #endif
     readonly attribute HTMLCollection selectedOptions;
     attribute long selectedIndex;
-    attribute [TreatNullAs=NullString] DOMString value;
+    [TreatNullAs=NullString] attribute DOMString value;
 
     readonly attribute boolean willValidate;
     readonly attribute ValidityState validity;

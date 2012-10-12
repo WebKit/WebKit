@@ -23,8 +23,8 @@
  */
 
 // WaveTable represents a periodic audio waveform given by its Fourier coefficients.
-interface [
+[
     Conditional=WEB_AUDIO
-] WaveTable {
+] interface WaveTable {
 
 };

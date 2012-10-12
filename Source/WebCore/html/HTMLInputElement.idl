@@ -20,43 +20,43 @@
  */
 
 interface HTMLInputElement : HTMLElement {
-    attribute [Reflect] DOMString accept;
-    attribute [Reflect] DOMString alt;
-    attribute [Reflect] DOMString autocomplete;
-    attribute [Reflect] boolean autofocus;
-    attribute [Reflect=checked] boolean defaultChecked;
+    [Reflect] attribute DOMString accept;
+    [Reflect] attribute DOMString alt;
+    [Reflect] attribute DOMString autocomplete;
+    [Reflect] attribute boolean autofocus;
+    [Reflect=checked] attribute boolean defaultChecked;
     attribute boolean checked;
-    attribute [Reflect] DOMString dirName;
-    attribute [Reflect] boolean disabled;
+    [Reflect] attribute DOMString dirName;
+    [Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;
     attribute FileList files;
-    attribute [Reflect, URL] DOMString formAction;
-    attribute [TreatNullAs=NullString] DOMString formEnctype;
-    attribute [TreatNullAs=NullString] DOMString formMethod;
-    attribute [Reflect] boolean formNoValidate;
-    attribute [Reflect] DOMString formTarget;
+    [Reflect, URL] attribute DOMString formAction;
+    [TreatNullAs=NullString] attribute DOMString formEnctype;
+    [TreatNullAs=NullString] attribute DOMString formMethod;
+    [Reflect] attribute boolean formNoValidate;
+    [Reflect] attribute DOMString formTarget;
     attribute unsigned long height;
     attribute boolean indeterminate;
-    readonly attribute [Conditional=DATALIST_ELEMENT] HTMLElement list;
-    attribute [Reflect] DOMString max;
+    [Conditional=DATALIST_ELEMENT] readonly attribute HTMLElement list;
+    [Reflect] attribute DOMString max;
     attribute long maxLength setter raises(DOMException);
-    attribute [Reflect] DOMString min;
-    attribute [Reflect] boolean multiple;
-    attribute [Reflect] DOMString name;
-    attribute [Reflect] DOMString pattern;
-    attribute [Reflect] DOMString placeholder;
-    attribute [Reflect] boolean readOnly;
-    attribute [Reflect] boolean required;
+    [Reflect] attribute DOMString min;
+    [Reflect] attribute boolean multiple;
+    [Reflect] attribute DOMString name;
+    [Reflect] attribute DOMString pattern;
+    [Reflect] attribute DOMString placeholder;
+    [Reflect] attribute boolean readOnly;
+    [Reflect] attribute boolean required;
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    attribute [ObjCImplementedAsUnsignedLong] DOMString size; // DOM level 2 changed this to a long, but ObjC API is a string
+    [ObjCImplementedAsUnsignedLong] attribute DOMString size; // DOM level 2 changed this to a long, but ObjC API is a string
 #else
     attribute unsigned long size setter raises(DOMException); // Changed string -> long -> unsigned long
 #endif
-    attribute [Reflect, URL] DOMString src;
-    attribute [Reflect] DOMString step;
-    attribute [TreatNullAs=NullString] DOMString type; // readonly dropped as part of DOM level 2
-    attribute [TreatNullAs=NullString] DOMString defaultValue;
-    attribute [TreatNullAs=NullString] DOMString value;
+    [Reflect, URL] attribute DOMString src;
+    [Reflect] attribute DOMString step;
+    [TreatNullAs=NullString] attribute DOMString type; // readonly dropped as part of DOM level 2
+    [TreatNullAs=NullString] attribute DOMString defaultValue;
+    [TreatNullAs=NullString] attribute DOMString value;
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
     attribute Date valueAsDate setter raises(DOMException);
 #endif
@@ -75,9 +75,9 @@ interface HTMLInputElement : HTMLElement {
     readonly attribute NodeList labels;
 
     void select();
-    attribute [Custom] long selectionStart;
-    attribute [Custom] long selectionEnd;
-    attribute [Custom] DOMString selectionDirection;
+    [Custom] attribute long selectionStart;
+    [Custom] attribute long selectionEnd;
+    [Custom] attribute DOMString selectionDirection;
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     [Custom] void setSelectionRange(in long start, in long end);
 #else
@@ -87,16 +87,16 @@ interface HTMLInputElement : HTMLElement {
 #endif
 
     // Non-standard attributes
-    attribute [Reflect] DOMString align;
-    attribute [Conditional=DIRECTORY_UPLOAD, Reflect] boolean webkitdirectory;
-    attribute [Reflect] DOMString useMap;
-    attribute [Reflect] boolean incremental;
-    attribute [Conditional=INPUT_SPEECH, Reflect, V8EnabledAtRuntime] boolean webkitSpeech;
-    attribute [Conditional=INPUT_SPEECH, Reflect, V8EnabledAtRuntime] boolean webkitGrammar;
-    attribute [Conditional=INPUT_SPEECH, NotEnumerable] EventListener onwebkitspeechchange;
+    [Reflect] attribute DOMString align;
+    [Conditional=DIRECTORY_UPLOAD, Reflect] attribute boolean webkitdirectory;
+    [Reflect] attribute DOMString useMap;
+    [Reflect] attribute boolean incremental;
+    [Conditional=INPUT_SPEECH, Reflect, V8EnabledAtRuntime] attribute boolean webkitSpeech;
+    [Conditional=INPUT_SPEECH, Reflect, V8EnabledAtRuntime] attribute boolean webkitGrammar;
+    [Conditional=INPUT_SPEECH, NotEnumerable] attribute EventListener onwebkitspeechchange;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    attribute [Reflect] DOMString accessKey;
+    [Reflect] attribute DOMString accessKey;
 #endif
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
@@ -114,5 +114,5 @@ interface HTMLInputElement : HTMLElement {
 #endif
 
     // See http://www.w3.org/TR/html-media-capture/
-    attribute [Conditional=MEDIA_CAPTURE] DOMString capture;
+    [Conditional=MEDIA_CAPTURE] attribute DOMString capture;
 };

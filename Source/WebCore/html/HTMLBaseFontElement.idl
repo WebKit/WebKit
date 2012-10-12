@@ -18,11 +18,11 @@
  */
 
 interface HTMLBaseFontElement : HTMLElement {
-    attribute [Reflect] DOMString color;
-    attribute [Reflect] DOMString face;
+    [Reflect] attribute DOMString color;
+    [Reflect] attribute DOMString face;
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    attribute [Reflect] DOMString size; // this changed to a long, but our existing API is a string
+    [Reflect] attribute DOMString size; // this changed to a long, but our existing API is a string
 #else
-    attribute [Reflect] long size;
+    [Reflect] attribute long size;
 #endif
 };

@@ -24,11 +24,11 @@
  */
 
 // http://www.w3.org/TR/geolocation-API/#geolocation_interface
-interface [
+[
     Conditional=GEOLOCATION, 
     JSGenerateIsReachable=ImplFrame,
     OmitConstructor
-] Geolocation {
+] interface Geolocation {
     [Custom] void getCurrentPosition(in PositionCallback successCallback,
                                      in [Optional] PositionErrorCallback errorCallback,
                                      in [Optional] PositionOptions options);

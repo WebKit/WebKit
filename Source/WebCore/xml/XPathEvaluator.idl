@@ -17,9 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface [
+[
     Constructor
-] XPathEvaluator {
+] interface XPathEvaluator {
     XPathExpression createExpression(in [Optional=DefaultIsUndefined] DOMString expression,
                                      in [Optional=DefaultIsUndefined] XPathNSResolver resolver)
         raises(DOMException);

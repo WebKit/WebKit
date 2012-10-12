@@ -23,11 +23,11 @@
  */
 
 // A cached (non-streamed), memory-resident audio source
-interface [
+[
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject
-] AudioBufferSourceNode : AudioSourceNode {
-    attribute [CustomSetter] AudioBuffer buffer
+] interface AudioBufferSourceNode : AudioSourceNode {
+    [CustomSetter] attribute AudioBuffer buffer
         setter raises (DOMException);
 
     const unsigned short UNSCHEDULED_STATE = 0;

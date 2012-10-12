@@ -24,9 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     JSGenerateToNativeObject
-] HTMLCanvasElement : HTMLElement {
+] interface HTMLCanvasElement : HTMLElement {
 
     attribute long width;
     attribute long height;

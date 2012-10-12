@@ -23,10 +23,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=INDEXED_DATABASE,
     InterfaceName=IDBVersionChangeEvent
-] IDBUpgradeNeededEvent : Event {
+] interface IDBUpgradeNeededEvent : Event {
     readonly attribute unsigned long long oldVersion;
     readonly attribute unsigned long long newVersion;
 };

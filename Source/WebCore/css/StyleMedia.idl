@@ -24,9 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     JSGenerateIsReachable=ImplFrame
-] StyleMedia {
+] interface StyleMedia {
     readonly attribute DOMString type;
     boolean matchMedium(in [Optional=DefaultIsUndefined] DOMString mediaquery);
 };

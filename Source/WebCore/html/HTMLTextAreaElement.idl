@@ -20,22 +20,22 @@
  */
 
 interface HTMLTextAreaElement : HTMLElement {
-    attribute [Reflect] boolean autofocus;
+    [Reflect] attribute boolean autofocus;
     attribute long cols;
-    attribute [Reflect] DOMString dirName;
-    attribute [Reflect] boolean disabled;
+    [Reflect] attribute DOMString dirName;
+    [Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;
     attribute long maxLength setter raises(DOMException);
-    attribute [Reflect] DOMString name;
-    attribute [Reflect] DOMString placeholder;
-    attribute [Reflect] boolean readOnly;
-    attribute [Reflect] boolean required;
+    [Reflect] attribute DOMString name;
+    [Reflect] attribute DOMString placeholder;
+    [Reflect] attribute boolean readOnly;
+    [Reflect] attribute boolean required;
     attribute long rows;
-    attribute [Reflect] DOMString wrap;
+    [Reflect] attribute DOMString wrap;
 
     readonly attribute DOMString type;
-    attribute [TreatNullAs=NullString] DOMString defaultValue;
-    attribute [TreatNullAs=NullString] DOMString value;
+    [TreatNullAs=NullString] attribute DOMString defaultValue;
+    [TreatNullAs=NullString] attribute DOMString value;
     readonly attribute unsigned long textLength;
 
     readonly attribute boolean willValidate;
@@ -59,6 +59,6 @@ interface HTMLTextAreaElement : HTMLElement {
 #endif
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    attribute [Reflect] DOMString accessKey;
+    [Reflect] attribute DOMString accessKey;
 #endif
 };

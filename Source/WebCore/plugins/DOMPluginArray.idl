@@ -18,12 +18,12 @@
     Boston, MA 02110-1301, USA.
 */
 
-interface [
+[
     JSGenerateIsReachable=ImplFrame,
     NamedGetter,
     IndexedGetter,
     InterfaceName=PluginArray
-] DOMPluginArray {
+] interface DOMPluginArray {
     readonly attribute unsigned long length;
     DOMPlugin item(in [Optional=DefaultIsUndefined] unsigned long index);
     DOMPlugin namedItem(in [Optional=DefaultIsUndefined] DOMString name);

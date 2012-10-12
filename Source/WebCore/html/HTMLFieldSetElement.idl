@@ -18,9 +18,9 @@
  */
 
 interface HTMLFieldSetElement : HTMLElement {
-    attribute [Reflect] boolean disabled;
+    [Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;
-    attribute [Reflect] DOMString name;
+    [Reflect] attribute DOMString name;
 
     readonly attribute DOMString type;
 

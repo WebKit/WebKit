@@ -28,9 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=MUTATION_OBSERVERS,
     Callback
-] MutationCallback {
+] interface MutationCallback {
     [Custom] boolean handleEvent(in MutationRecordArray mutations, in MutationObserver observer);
 };

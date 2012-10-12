@@ -28,11 +28,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=MEDIA_STREAM,
     Constructor(in Dictionary dictionary),
     ConstructorRaisesException
-] RTCIceCandidate {
+] interface RTCIceCandidate {
     readonly attribute DOMString candidate;
     readonly attribute DOMString sdpMid;
     readonly attribute unsigned short sdpMLineIndex;

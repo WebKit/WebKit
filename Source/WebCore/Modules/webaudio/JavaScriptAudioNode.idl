@@ -23,12 +23,12 @@
  */
 
 // For real-time audio stream synthesis/processing in JavaScript 
-interface [
+[
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject,
     JSCustomMarkFunction,
     EventTarget
-] JavaScriptAudioNode : AudioNode {
+] interface JavaScriptAudioNode : AudioNode {
     // Rendering callback
     attribute EventListener onaudioprocess;
     

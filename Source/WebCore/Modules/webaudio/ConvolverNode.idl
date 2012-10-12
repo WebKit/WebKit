@@ -23,10 +23,10 @@
  */
 
 // A linear convolution effect
-interface [
+[
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject
-] ConvolverNode : AudioNode {
+] interface ConvolverNode : AudioNode {
     attribute AudioBuffer buffer;
     attribute boolean normalize;
 };

@@ -20,9 +20,9 @@
 
 interface HTMLStyleElement : HTMLElement {
     attribute boolean disabled;
-    attribute [Conditional=STYLE_SCOPED, V8EnabledAtRuntime=styleScoped] boolean scoped;
-    attribute [Reflect] DOMString media;
-    attribute [Reflect] DOMString type;
+    [Conditional=STYLE_SCOPED, V8EnabledAtRuntime=styleScoped] attribute boolean scoped;
+    [Reflect] attribute DOMString media;
+    [Reflect] attribute DOMString type;
 
     // DOM Level 2 Style
     readonly attribute StyleSheet sheet;

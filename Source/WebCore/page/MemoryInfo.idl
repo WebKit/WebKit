@@ -28,13 +28,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     OmitConstructor
-] MemoryInfo {
+] interface MemoryInfo {
 
     readonly attribute unsigned long totalJSHeapSize;
     readonly attribute unsigned long usedJSHeapSize;
-    readonly attribute [JSCustomGetter] unsigned long jsHeapSizeLimit;
+    [JSCustomGetter] readonly attribute unsigned long jsHeapSizeLimit;
 
 };
 

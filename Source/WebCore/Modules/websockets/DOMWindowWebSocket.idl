@@ -24,13 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=WEB_SOCKETS,
     Supplemental=DOMWindow
-] DOMWindowWebSocket {
+] interface DOMWindowWebSocket {
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
     attribute CloseEventConstructor CloseEvent;
-    attribute [JSCustomGetter, V8EnabledAtRuntime] WebSocketConstructor WebSocket; // Usable with the new operator
+    [JSCustomGetter, V8EnabledAtRuntime] attribute WebSocketConstructor WebSocket; // Usable with the new operator
 #endif
 };
 

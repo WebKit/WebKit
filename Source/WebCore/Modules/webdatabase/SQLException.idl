@@ -28,11 +28,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-exception [
+[
     Conditional=SQL_DATABASE,
     JSNoStaticTables,
     DoNotCheckConstants
-] SQLException {
+] exception SQLException {
     readonly attribute unsigned long code;
     readonly attribute DOMString message;
 

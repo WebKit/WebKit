@@ -29,10 +29,10 @@
 
 // This IDL file is for testing the bindings code generator and for tracking
 // changes in its ouput.
-interface [
+[
     Constructor(in [Callback] TestCallback testCallback),
     InterfaceName=TestObject
-] TestObj {
+] interface TestObj {
     // Attributes
     readonly attribute long            readOnlyLongAttr;
     readonly attribute DOMString       readOnlyStringAttr;
@@ -48,22 +48,22 @@ interface [
     attribute long long                longLongAttr;
     attribute unsigned long long       unsignedLongLongAttr;
     attribute DOMString                stringAttr;
-    attribute [V8MeasureAs=TestFeature] TestObj testObjAttr;
+    [V8MeasureAs=TestFeature] attribute TestObj testObjAttr;
 
     // WK_ucfirst, WK_lcfirst exceptional cases.
     attribute TestObj                  XMLObjAttr;
     attribute boolean                  create;
 
     // Reflected DOM attributes
-    attribute [Reflect] DOMString reflectedStringAttr;
-    attribute [Reflect] long reflectedIntegralAttr;
-    attribute [Reflect] unsigned long reflectedUnsignedIntegralAttr;
-    attribute [Reflect] boolean reflectedBooleanAttr;
-    attribute [Reflect, URL] DOMString reflectedURLAttr;
-    attribute [Reflect=customContentStringAttr] DOMString reflectedStringAttr;
-    attribute [Reflect=customContentIntegralAttr] long reflectedCustomIntegralAttr;
-    attribute [Reflect=customContentBooleanAttr] boolean reflectedCustomBooleanAttr;
-    attribute [Reflect=customContentURLAttr, URL] DOMString reflectedCustomURLAttr;
+    [Reflect] attribute DOMString reflectedStringAttr;
+    [Reflect] attribute long reflectedIntegralAttr;
+    [Reflect] attribute unsigned long reflectedUnsignedIntegralAttr;
+    [Reflect] attribute boolean reflectedBooleanAttr;
+    [Reflect, URL] attribute DOMString reflectedURLAttr;
+    [Reflect=customContentStringAttr] attribute DOMString reflectedStringAttr;
+    [Reflect=customContentIntegralAttr] attribute long reflectedCustomIntegralAttr;
+    [Reflect=customContentBooleanAttr] attribute boolean reflectedCustomBooleanAttr;
+    [Reflect=customContentURLAttr, URL] attribute DOMString reflectedCustomURLAttr;
 
     // TypedArray attribute
     attribute Float32Array typedArrayAttr;
@@ -94,7 +94,7 @@ interface [
     attribute DOMString stringAttrWithSetterException setter raises(DOMException);
 
     // 'Custom' extended attribute
-    attribute [Custom] long            customAttr;
+    [Custom] attribute long            customAttr;
     [Custom, V8MeasureAs=CustomTestFeature] void customMethod();
     [Custom] void customMethodWithArgs(in long longArg, in DOMString strArg, in TestObj objArg);
 
@@ -119,17 +119,17 @@ interface [
     [CallWith=  ScriptExecutionContext  |  ScriptState  ] TestObj withScriptExecutionContextAndScriptStateWithSpaces();
     [CallWith=ScriptArguments|CallStack] void withScriptArgumentsAndCallStack();
 
-    attribute [CallWith=ScriptState] long withScriptStateAttribute;
-    attribute [CallWith=ScriptExecutionContext] TestObj withScriptExecutionContextAttribute;
-    attribute [CallWith=ScriptState] TestObj withScriptStateAttributeRaises
+    [CallWith=ScriptState] attribute long withScriptStateAttribute;
+    [CallWith=ScriptExecutionContext] attribute TestObj withScriptExecutionContextAttribute;
+    [CallWith=ScriptState] attribute TestObj withScriptStateAttributeRaises
         getter raises(DOMException);
-    attribute [CallWith=ScriptExecutionContext] TestObj withScriptExecutionContextAttributeRaises
+    [CallWith=ScriptExecutionContext] attribute TestObj withScriptExecutionContextAttributeRaises
         getter raises(DOMException);
-    attribute [CallWith=ScriptExecutionContext|ScriptState] TestObj withScriptExecutionContextAndScriptStateAttribute;
-    attribute [CallWith=ScriptExecutionContext|ScriptState] TestObj withScriptExecutionContextAndScriptStateAttributeRaises
+    [CallWith=ScriptExecutionContext|ScriptState] attribute TestObj withScriptExecutionContextAndScriptStateAttribute;
+    [CallWith=ScriptExecutionContext|ScriptState] attribute TestObj withScriptExecutionContextAndScriptStateAttributeRaises
         getter raises(DOMException);
-    attribute [CallWith=  ScriptExecutionContext  |  ScriptState  ] TestObj withScriptExecutionContextAndScriptStateWithSpacesAttribute;
-    attribute [CallWith=ScriptArguments|CallStack] TestObj withScriptArgumentsAndCallStackAttribute;
+    [CallWith=  ScriptExecutionContext  |  ScriptState  ] attribute TestObj withScriptExecutionContextAndScriptStateWithSpacesAttribute;
+    [CallWith=ScriptArguments|CallStack] attribute TestObj withScriptArgumentsAndCallStackAttribute;
 
     // 'Optional' extended attribute
     void    methodWithOptionalArg(in [Optional] long opt);
@@ -147,24 +147,24 @@ interface [
 #endif
 
     // 'Conditional' extended attribute
-    attribute [Conditional=Condition1] long conditionalAttr1;
-    attribute [Conditional=Condition1&Condition2] long conditionalAttr2;
-    attribute [Conditional=Condition1|Condition2] long conditionalAttr3;
+    [Conditional=Condition1] attribute long conditionalAttr1;
+    [Conditional=Condition1&Condition2] attribute long conditionalAttr2;
+    [Conditional=Condition1|Condition2] attribute long conditionalAttr3;
 
     // 'Conditional' extended method
     [Conditional=Condition1] DOMString conditionalMethod1();
     [Conditional=Condition1&Condition2] void conditionalMethod2();
     [Conditional=Condition1|Condition2] void conditionalMethod3();
 
-    attribute [Conditional=Condition1] TestObjectAConstructor conditionalAttr4;
-    attribute [Conditional=Condition1&Condition2] TestObjectBConstructor conditionalAttr5;
-    attribute [Conditional=Condition1|Condition2] TestObjectCConstructor conditionalAttr6;
+    [Conditional=Condition1] attribute TestObjectAConstructor conditionalAttr4;
+    [Conditional=Condition1&Condition2] attribute TestObjectBConstructor conditionalAttr5;
+    [Conditional=Condition1|Condition2] attribute TestObjectCConstructor conditionalAttr6;
 
     [Conditional=Condition1] const unsigned short CONDITIONAL_CONST = 0;
 
 #if defined(TESTING_V8) || defined(TESTING_JS)
-    readonly attribute [CachedAttribute] any cachedAttribute1;
-    readonly attribute [CachedAttribute] any cachedAttribute2;
+    [CachedAttribute] readonly attribute any cachedAttribute1;
+    [CachedAttribute] readonly attribute any cachedAttribute2;
 #endif
     
     attribute any anyAttribute;
@@ -199,13 +199,13 @@ interface [
     // 'V8EnabledAtRuntime' methods and attributes.
     [V8EnabledAtRuntime] void enabledAtRuntimeMethod1(in long longArg);
     [V8EnabledAtRuntime=FeatureName] void enabledAtRuntimeMethod2(in long longArg);
-    attribute [V8EnabledAtRuntime] long enabledAtRuntimeAttr1;
-    attribute [V8EnabledAtRuntime=FeatureName] long enabledAtRuntimeAttr2;
+    [V8EnabledAtRuntime] attribute long enabledAtRuntimeAttr1;
+    [V8EnabledAtRuntime=FeatureName] attribute long enabledAtRuntimeAttr2;
     // 'V8EnabledPerContext' methods and attributes.
     [V8EnabledPerContext] void enabledPerContextMethod1(in long longArg);
     [V8EnabledPerContext=FeatureName] void enabledPerContextMethod2(in long longArg);
-    attribute [V8EnabledPerContext] long enabledPerContextAttr1;
-    attribute [V8EnabledPerContext=FeatureName] long enabledPerContextAttr2;
+    [V8EnabledPerContext] attribute long enabledPerContextAttr1;
+    [V8EnabledPerContext=FeatureName] attribute long enabledPerContextAttr2;
 #endif
 
 
@@ -221,7 +221,7 @@ interface [
     DOMString[] stringArrayFunction(in DOMString[] values) raises(DOMException);
 #endif
 
-    readonly attribute [CheckSecurityForNode] Document contentDocument;
+    [CheckSecurityForNode] readonly attribute Document contentDocument;
     [CheckSecurityForNode] SVGDocument getSVGDocument()
         raises(DOMException);
 
@@ -231,14 +231,14 @@ interface [
     void convert5(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] e value);
 
     attribute SVGPoint mutablePoint;
-    attribute [Immutable] SVGPoint immutablePoint;
+    [Immutable] attribute SVGPoint immutablePoint;
     SVGPoint mutablePointFunction();
     [Immutable] SVGPoint immutablePointFunction();
 
     [ImplementedAs=banana] void orange();
-    attribute [ImplementedAs=blueberry] long strawberry;
+    [ImplementedAs=blueberry] attribute long strawberry;
 
-    attribute [StrictTypeChecking] float strictFloat;
+    [StrictTypeChecking] attribute float strictFloat;
     [StrictTypeChecking] bool strictFunction(in DOMString str, in float a, in long b)
         raises(DOMException);
 
@@ -261,7 +261,7 @@ interface [
     const unsigned short CONST_VALUE_14 = 0x1abc;
     [Reflect=CONST_IMPL] const unsigned short CONST_JAVASCRIPT = 15;
 
-    attribute [Replaceable] long replaceableAttribute;
+    [Replaceable] attribute long replaceableAttribute;
 
     void variadicStringMethod(in DOMString head, in DOMString... tail);
     void variadicDoubleMethod(in double head, in double... tail);

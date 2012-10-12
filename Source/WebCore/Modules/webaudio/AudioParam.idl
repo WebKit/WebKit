@@ -26,9 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=WEB_AUDIO
-] AudioParam {
+] interface AudioParam {
     attribute float value;
     readonly attribute float minValue;
     readonly attribute float maxValue;

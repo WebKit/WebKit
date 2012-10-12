@@ -24,11 +24,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=INDEXED_DATABASE,
     ActiveDOMObject,
     EventTarget
-] IDBDatabase {
+] interface IDBDatabase {
     readonly attribute DOMString name;
     readonly attribute IDBAny version;
     readonly attribute DOMStringList objectStoreNames;

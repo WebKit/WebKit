@@ -22,11 +22,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=CSP_NEXT,
     OmitConstructor,
     InterfaceName=SecurityPolicy
-] DOMSecurityPolicy {
+] interface DOMSecurityPolicy {
     readonly attribute DOMStringList reportURIs;
 
     boolean isActive();

@@ -23,14 +23,14 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=WEB_AUDIO,
     ActiveDOMObject,
     CustomConstructor,
     ConstructorParameters=0,
     JSCustomMarkFunction,
     EventTarget
-] AudioContext {
+] interface AudioContext {
     // All rendered audio ultimately connects to destination, which represents the audio hardware.
     readonly attribute AudioDestinationNode destination;
 

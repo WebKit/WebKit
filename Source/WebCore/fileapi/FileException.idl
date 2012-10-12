@@ -28,11 +28,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-exception [
+[
     Conditional=BLOB|FILE_SYSTEM,
     DoNotCheckConstants,
     JSNoStaticTables
-] FileException {
+] exception FileException {
 
     readonly attribute unsigned short   code;
     readonly attribute DOMString        name;

@@ -19,7 +19,7 @@
 
 interface CharacterData : Node {
 
-    attribute [TreatNullAs=NullString] DOMString data
+    [TreatNullAs=NullString] attribute DOMString data
         setter raises(DOMException);
 
     readonly attribute unsigned long length;

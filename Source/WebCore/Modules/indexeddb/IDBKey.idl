@@ -23,9 +23,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=INDEXED_DATABASE,
     CustomToJSObject
-] IDBKey {
+] interface IDBKey {
     // This space is intentionally left blank.
 };

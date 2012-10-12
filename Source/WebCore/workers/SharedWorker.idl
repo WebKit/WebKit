@@ -29,7 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=SHARED_WORKERS,
     ActiveDOMObject,
     JSCustomConstructor,
@@ -39,7 +39,7 @@ interface [
     JSCustomMarkFunction,
     JSGenerateToNativeObject,
     JSGenerateToJSObject
-] SharedWorker : AbstractWorker {
+] interface SharedWorker : AbstractWorker {
     readonly attribute MessagePort port;
 };
 

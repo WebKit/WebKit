@@ -26,9 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=WEB_AUDIO
-] AudioBuffer {
+] interface AudioBuffer {
     readonly attribute long length; // in sample-frames
     readonly attribute float duration; // in seconds
     readonly attribute float sampleRate; // in sample-frames per second

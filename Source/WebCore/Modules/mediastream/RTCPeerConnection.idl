@@ -28,14 +28,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=MEDIA_STREAM,
     ActiveDOMObject,
     Constructor(in Dictionary rtcIceServers, in [Optional=DefaultIsUndefined] Dictionary mediaConstraints),
     ConstructorRaisesException,
     CallWith=ScriptExecutionContext,
     EventTarget
-] RTCPeerConnection {
+] interface RTCPeerConnection {
     void createOffer(in [Callback] RTCSessionDescriptionCallback successCallback, in [Callback,Optional=DefaultIsUndefined] RTCErrorCallback failureCallback, in [Optional=DefaultIsUndefined] Dictionary mediaConstraints)
         raises(DOMException);
 

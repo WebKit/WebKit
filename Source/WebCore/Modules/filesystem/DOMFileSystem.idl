@@ -29,11 +29,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=FILE_SYSTEM,
     ActiveDOMObject,
     JSNoStaticTables
-] DOMFileSystem {
+] interface DOMFileSystem {
     readonly attribute DOMString name;
     readonly attribute DirectoryEntry root;
 };

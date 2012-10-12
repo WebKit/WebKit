@@ -18,7 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface [
+[
     JSCustomHeader,
     JSCustomMarkFunction,
     JSCustomPushEventHandlerScope,
@@ -30,7 +30,7 @@ interface [
     JSInlineGetOwnPropertySlot,
     ObjCPolymorphic,
     V8DependentLifetime
-] Node
+] interface Node
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     : Object, EventTarget
 #endif /* defined(LANGUAGE_OBJECTIVE_C) */

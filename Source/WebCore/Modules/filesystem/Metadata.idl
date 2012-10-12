@@ -28,10 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=FILE_SYSTEM,
     JSNoStaticTables
-] Metadata {
+] interface Metadata {
     readonly attribute Date modificationTime;
     readonly attribute unsigned long long size;
 };

@@ -26,10 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=SQL_DATABASE,
     Callback
-] DatabaseCallback {
+] interface DatabaseCallback {
     boolean handleEvent(in Database database);
     boolean handleEvent(in DatabaseSync database);
 };

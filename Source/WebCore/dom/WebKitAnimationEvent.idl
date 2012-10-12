@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-interface [
+[
     ConstructorTemplate=Event
-] WebKitAnimationEvent : Event {
-    readonly attribute [InitializedByEventConstructor] DOMString animationName;
-    readonly attribute [InitializedByEventConstructor] double elapsedTime;
+] interface WebKitAnimationEvent : Event {
+    [InitializedByEventConstructor] readonly attribute DOMString animationName;
+    [InitializedByEventConstructor] readonly attribute double elapsedTime;
 };
 

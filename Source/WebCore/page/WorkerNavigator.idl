@@ -26,12 +26,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=WORKERS,
     JSGenerateIsReachable=Impl,
     JSNoStaticTables,
     OmitConstructor
-] WorkerNavigator {
+] interface WorkerNavigator {
     readonly attribute DOMString appName;
     readonly attribute DOMString appVersion;
     readonly attribute DOMString platform;

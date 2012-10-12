@@ -18,11 +18,11 @@
     Boston, MA 02110-1301, USA.
 */
 
-interface [
+[
     NamedGetter,
     IndexedGetter,
     InterfaceName=Plugin
-] DOMPlugin {
+] interface DOMPlugin {
     readonly attribute DOMString name;
     readonly attribute DOMString filename;
     readonly attribute DOMString description;

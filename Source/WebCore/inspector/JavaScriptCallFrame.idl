@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=JAVASCRIPT_DEBUGGER,
     OmitConstructor,
     DoNotCheckConstants
-] JavaScriptCallFrame {
+] interface JavaScriptCallFrame {
 
     // Scope type
     const unsigned short GLOBAL_SCOPE = 0;
@@ -43,10 +43,10 @@ interface [
     readonly attribute long sourceID;
     readonly attribute long line;
     readonly attribute long column;
-    readonly attribute [CustomGetter] Array scopeChain;
+    [CustomGetter] readonly attribute Array scopeChain;
     [Custom] unsigned short scopeType(in int scopeIndex);
-    readonly attribute [CustomGetter] Object thisObject;
+    [CustomGetter] readonly attribute Object thisObject;
     readonly attribute DOMString functionName;
-    readonly attribute [CustomGetter] DOMString type;
+    [CustomGetter] readonly attribute DOMString type;
 };
 

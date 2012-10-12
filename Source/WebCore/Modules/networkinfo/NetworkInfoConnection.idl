@@ -20,11 +20,11 @@
  */
 
 // http://dvcs.w3.org/hg/dap/raw-file/tip/network-api/index.html
-interface [
+[
     Conditional=NETWORK_INFO,
     ActiveDOMObject,
     EventTarget
-] NetworkInfoConnection {
+] interface NetworkInfoConnection {
     readonly attribute double bandwidth;
     readonly attribute boolean metered;
 

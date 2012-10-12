@@ -22,9 +22,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=GEOLOCATION,
     Callback
-] PositionErrorCallback {
+] interface PositionErrorCallback {
     boolean handleEvent(in PositionError error);
 };

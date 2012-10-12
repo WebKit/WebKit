@@ -24,10 +24,10 @@
  *
  */
 
-interface [
+[
     Conditional=SQL_DATABASE,
     Supplemental=WorkerContext
-] WorkerContextWebDatabase {
+] interface WorkerContextWebDatabase {
     [V8EnabledAtRuntime] Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
         raises(DOMException);
 

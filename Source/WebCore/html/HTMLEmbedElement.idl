@@ -18,11 +18,11 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface [
+[
     CustomNamedSetter,
     JSCustomGetOwnPropertySlotAndDescriptor,
     CustomCall
-] HTMLEmbedElement : HTMLElement {
+] interface HTMLEmbedElement : HTMLElement {
 attribute [Reflect] DOMString align;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
 attribute [Reflect] DOMString height;

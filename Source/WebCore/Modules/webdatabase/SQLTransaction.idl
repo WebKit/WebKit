@@ -26,11 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=SQL_DATABASE,
     OmitConstructor,
     JSNoStaticTables
-] SQLTransaction {
+] interface SQLTransaction {
     [Custom] void executeSql(in DOMString sqlStatement,
                              in ObjectArray arguments,
                              in [Optional, Callback] SQLStatementCallback callback,

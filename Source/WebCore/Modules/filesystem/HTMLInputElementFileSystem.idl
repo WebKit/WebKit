@@ -28,10 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=FILE_SYSTEM,
     Supplemental=HTMLInputElement
-] HTMLInputElementFileSystem {
-    readonly attribute [V8EnabledAtRuntime=FileSystem,CallWith=ScriptExecutionContext] EntryArray webkitEntries;
+] interface HTMLInputElementFileSystem {
+    [V8EnabledAtRuntime=FileSystem,CallWith=ScriptExecutionContext] readonly attribute EntryArray webkitEntries;
 };
 

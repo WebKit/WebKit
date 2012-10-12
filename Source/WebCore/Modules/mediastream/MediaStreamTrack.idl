@@ -22,11 +22,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=MEDIA_STREAM,
     EventTarget,
     ActiveDOMObject
-] MediaStreamTrack {
+] interface MediaStreamTrack {
     readonly attribute DOMString kind;
     readonly attribute DOMString label;
              attribute boolean enabled;

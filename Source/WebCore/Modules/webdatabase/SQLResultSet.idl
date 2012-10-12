@@ -26,11 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-interface [
+[
     Conditional=SQL_DATABASE,
     OmitConstructor,
     JSNoStaticTables
-] SQLResultSet {
+] interface SQLResultSet {
     readonly attribute SQLResultSetRowList rows;
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP

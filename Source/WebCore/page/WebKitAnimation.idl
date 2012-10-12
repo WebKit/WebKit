@@ -34,7 +34,7 @@ interface WebKitAnimation {
     attribute double elapsedTime;
 
     readonly attribute double delay;
-    readonly attribute [Custom] long iterationCount;
+    [Custom] readonly attribute long iterationCount;
 
     readonly attribute boolean paused;
     readonly attribute boolean ended;

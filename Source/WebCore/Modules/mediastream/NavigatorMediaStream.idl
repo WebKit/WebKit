@@ -17,10 +17,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface [
+[
     Conditional=MEDIA_STREAM,
     Supplemental=Navigator
-] NavigatorMediaStream {
+] interface NavigatorMediaStream {
     [V8EnabledAtRuntime] void webkitGetUserMedia(in Dictionary options,
                                                  in [Callback] NavigatorUserMediaSuccessCallback successCallback,
                                                  in [Callback, Optional] NavigatorUserMediaErrorCallback errorCallback)
