@@ -1943,8 +1943,8 @@ WebInspector.NetworkDataGridNode.prototype = {
     _fileName: function()
     {
         var fileName = this._request.displayName;
-        if (this._request.queryString)
-            fileName += "?" + this._request.queryString;
+        if (this._request.queryString())
+            fileName += "?" + this._request.queryString();
         return fileName;
     },
 
@@ -2173,8 +2173,8 @@ WebInspector.NetworkDataGridNode.prototype = {
 
 WebInspector.NetworkDataGridNode.NameComparator = function(a, b)
 {
-    var aFileName = a._request.displayName + (a._request.queryString ? a._request.queryString : "");
-    var bFileName = b._request.displayName + (b._request.queryString ? b._request.queryString : "");
+    var aFileName = a._request.displayName + (a._request.queryString() ? a._request.queryString() : "");
+    var bFileName = b._request.displayName + (b._request.queryString() ? b._request.queryString() : "");
     if (aFileName > bFileName)
         return 1;
     if (bFileName > aFileName)

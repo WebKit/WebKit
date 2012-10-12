@@ -1,3 +1,29 @@
+2012-10-12  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Show request body source in request headers view.
+        https://bugs.webkit.org/show_bug.cgi?id=99145
+
+        Reviewed by Pavel Feldman.
+
+        Added view source toggle to query parameters and form data elements.
+
+        * inspector/front-end/NetworkPanel.js: fixed queryString getter usage.
+        (WebInspector.NetworkDataGridNode.prototype._fileName):
+        (WebInspector.NetworkDataGridNode.NameComparator):
+        * inspector/front-end/NetworkRequest.js: Extracted queryString getter.
+        (WebInspector.NetworkRequest.prototype.queryString):
+        (WebInspector.NetworkRequest.prototype.get queryParameters):
+        * inspector/front-end/RequestHeadersView.js:
+        (WebInspector.RequestHeadersView.prototype._refreshQueryString):
+        (WebInspector.RequestHeadersView.prototype._refreshFormData):
+        (WebInspector.RequestHeadersView.prototype._populateTreeElementWithSourceText):
+        extracted common method to populate elememnt with raw source text.
+        (WebInspector.RequestHeadersView.prototype._refreshParams.toggleViewSource):
+        (WebInspector.RequestHeadersView.prototype._refreshParams):
+        (WebInspector.RequestHeadersView.prototype._toggleURLDecoding):
+        (WebInspector.RequestHeadersView.prototype._refreshHeadersText):
+        * inspector/front-end/networkPanel.css:A removed redundant raw-form-data style rule.
+
 2012-10-12  Shinya Kawanaka  <shinyak@chromium.org>
 
         Optimzie SelectorCheckingContext memory layout

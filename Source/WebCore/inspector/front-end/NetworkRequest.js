@@ -578,16 +578,29 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
+     * @return {?string}
+     */
+    queryString: function()
+    {
+        if (this._queryString)
+            return this._queryString;
+        var queryString = this.url.split("?", 2)[1];
+        if (!queryString)
+            return null;
+        this._queryString = queryString.split("#", 2)[0];
+        return this._queryString;
+    },
+
+    /**
      * @return {?Array.<Object>}
      */
     get queryParameters()
     {
         if (this._parsedQueryParameters)
             return this._parsedQueryParameters;
-        var queryString = this.url.split("?", 2)[1];
+        var queryString = this.queryString();
         if (!queryString)
             return null;
-        queryString = queryString.split("#", 2)[0];
         this._parsedQueryParameters = this._parseParameters(queryString);
         return this._parsedQueryParameters;
     },

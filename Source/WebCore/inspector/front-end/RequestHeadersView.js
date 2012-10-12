@@ -160,10 +160,11 @@ WebInspector.RequestHeadersView.prototype = {
 
     _refreshQueryString: function()
     {
+        var queryString = this._request.queryString();
         var queryParameters = this._request.queryParameters;
         this._queryStringTreeElement.hidden = !queryParameters;
         if (queryParameters)
-            this._refreshParms(WebInspector.UIString("Query String Parameters"), queryParameters, this._queryStringTreeElement);
+            this._refreshParams(WebInspector.UIString("Query String Parameters"), queryParameters, queryString, this._queryStringTreeElement);
     },
 
     _refreshUrlFragment: function()
@@ -198,58 +199,75 @@ WebInspector.RequestHeadersView.prototype = {
         var formParameters = this._request.formParameters;
         if (formParameters) {
             this._formDataTreeElement.hidden = false;
-            this._refreshParms(WebInspector.UIString("Form Data"), formParameters, this._formDataTreeElement);
+            this._refreshParams(WebInspector.UIString("Form Data"), formParameters, formData, this._formDataTreeElement);
         } else {
             this._requestPayloadTreeElement.hidden = false;
-            this._refreshRequestPayload(formData);
+            this._populateTreeElementWithSourceText(this._requestPayloadTreeElement, formData)
         }
     },
 
-    _refreshRequestPayload: function(formData)
+    _populateTreeElementWithSourceText: function(treeElement, sourceText)
     {
-        this._requestPayloadTreeElement.removeChildren();
+        treeElement.removeChildren();
 
-        var title = document.createElement("div");
-        title.className = "raw-form-data header-value source-code";
-        title.textContent = formData;
+        var sourceTreeElement = new TreeElement(null, null, false);
+        sourceTreeElement.selectable = false;
+        treeElement.appendChild(sourceTreeElement);
 
-        var parmTreeElement = new TreeElement(title, null, false);
-        parmTreeElement.selectable = false;
-        this._requestPayloadTreeElement.appendChild(parmTreeElement);
+        var sourceTextElement = document.createElement("span");
+        sourceTextElement.addStyleClass("header-value");
+        sourceTextElement.addStyleClass("source-code");
+        sourceTextElement.textContent = String(sourceText).trim();
+        sourceTreeElement.listItemElement.appendChild(sourceTextElement);
     },
 
-    _refreshParms: function(title, parms, parmsTreeElement)
+    _refreshParams: function(title, params, sourceText, paramsTreeElement)
     {
-        parmsTreeElement.removeChildren();
+        paramsTreeElement.removeChildren();
 
-        parmsTreeElement.listItemElement.removeChildren();
-        parmsTreeElement.listItemElement.appendChild(document.createTextNode(title));
+        paramsTreeElement.listItemElement.removeChildren();
+        paramsTreeElement.listItemElement.appendChild(document.createTextNode(title));
 
         var headerCount = document.createElement("span");
         headerCount.addStyleClass("header-count");
-        headerCount.textContent = WebInspector.UIString(" (%d)", parms.length);
-        parmsTreeElement.listItemElement.appendChild(headerCount);
+        headerCount.textContent = WebInspector.UIString(" (%d)", params.length);
+        paramsTreeElement.listItemElement.appendChild(headerCount);
+
+        function toggleViewSource()
+        {
+            paramsTreeElement._viewSource = !paramsTreeElement._viewSource;
+            this._refreshParams(title, params, sourceText, paramsTreeElement);
+        }
+
+        var viewSourceToggleTitle = paramsTreeElement._viewSource ? WebInspector.UIString("view parsed") : WebInspector.UIString("view source");
+        var viewSourceToggleButton = this._createToggleButton(viewSourceToggleTitle);
+        viewSourceToggleButton.addEventListener("click", toggleViewSource.bind(this));
+        paramsTreeElement.listItemElement.appendChild(viewSourceToggleButton);
+        
+        if (paramsTreeElement._viewSource) {
+            this._populateTreeElementWithSourceText(paramsTreeElement, sourceText);
+            return;
+        }
 
         var toggleTitle = this._decodeRequestParameters ? WebInspector.UIString("view URL encoded") : WebInspector.UIString("view decoded");
         var toggleButton = this._createToggleButton(toggleTitle);
-        toggleButton.addEventListener("click", this._toggleURLdecoding.bind(this));
-        parmsTreeElement.listItemElement.appendChild(toggleButton);
+        toggleButton.addEventListener("click", this._toggleURLDecoding.bind(this));
+        paramsTreeElement.listItemElement.appendChild(toggleButton);
 
-
-        for (var i = 0; i < parms.length; ++i) {
+        for (var i = 0; i < params.length; ++i) {
             var paramNameValue = document.createDocumentFragment();
-            var name = this._formatParameter(parms[i].name + ":", "header-name", this._decodeRequestParameters);
-            var value = this._formatParameter(parms[i].value, "header-value source-code", this._decodeRequestParameters);
+            var name = this._formatParameter(params[i].name + ":", "header-name", this._decodeRequestParameters);
+            var value = this._formatParameter(params[i].value, "header-value source-code", this._decodeRequestParameters);
             paramNameValue.appendChild(name);
             paramNameValue.appendChild(value);
 
             var parmTreeElement = new TreeElement(paramNameValue, null, false);
             parmTreeElement.selectable = false;
-            parmsTreeElement.appendChild(parmTreeElement);
+            paramsTreeElement.appendChild(parmTreeElement);
         }
     },
 
-    _toggleURLdecoding: function(event)
+    _toggleURLDecoding: function(event)
     {
         this._decodeRequestParameters = !this._decodeRequestParameters;
         this._refreshQueryString();
@@ -369,18 +387,8 @@ WebInspector.RequestHeadersView.prototype = {
 
     _refreshHeadersText: function(title, headers, headersText, headersTreeElement)
     {
-        headersTreeElement.removeChildren();
-
+        this._populateTreeElementWithSourceText(headersTreeElement, headersText);
         this._refreshHeadersTitle(title, headersTreeElement, headers.length);
-        var headerTreeElement = new TreeElement(null, null, false);
-        headerTreeElement.selectable = false;
-        headersTreeElement.appendChild(headerTreeElement);
-
-        var headersTextElement = document.createElement("span");
-        headersTextElement.addStyleClass("header-value");
-        headersTextElement.addStyleClass("source-code");
-        headersTextElement.textContent = String(headersText).trim();
-        headerTreeElement.listItemElement.appendChild(headersTextElement);
     },
 
     _toggleRequestHeadersText: function(event)
