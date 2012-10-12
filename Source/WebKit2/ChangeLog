@@ -1,5 +1,26 @@
 2012-10-11  Anders Carlsson  <andersca@apple.com>
 
+        Stop using deprecatedSend and deprecatedSendSync for sending messages to the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=99125
+
+        Reviewed by Andreas Kling.
+
+        Instead of using deprecatedSend, just encode the data using a separate ArgumentEncoder and pass it along as a DataReference.
+
+        * UIProcess/WebContext.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::postMessage):
+        (WebKit):
+        (WebKit::WebProcessProxy::postSynchronousMessage):
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::postMessage):
+        (WebKit::InjectedBundle::postSynchronousMessage):
+
+2012-10-11  Anders Carlsson  <andersca@apple.com>
+
         Stop using deprecatedSend for WebContext::postMessageToInjectedBundle
         https://bugs.webkit.org/show_bug.cgi?id=99123
 
