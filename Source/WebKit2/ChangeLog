@@ -1,3 +1,25 @@
+2012-10-11  Brady Eidson  <beidson@apple.com>
+
+        Add a WKContext call to enable the NetworkProcess.
+        https://bugs.webkit.org/show_bug.cgi?id=99140
+
+        Reviewed by Sam Weinig.
+
+        Add the SPI:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetUsesNetworkProcess):
+        * UIProcess/API/C/WKContextPrivate.h:
+
+        Add a member for the flag and the first call site that will be interested in the flag's value:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::setUsesNetworkProcess):
+        (WebKit):
+        (WebKit::WebContext::createNewWebProcess):
+        (WebKit::WebContext::ensureNetworkProcess):
+        * UIProcess/WebContext.h:
+        (WebContext):
+
 2012-10-11  Andy Estes  <aestes@apple.com>
 
         Fix the 32-bit Mac build after r131138.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -235,6 +235,8 @@ public:
 
     void textCheckerStateChanged();
 
+    void setUsesNetworkProcess(bool);
+
 private:
     WebContext(ProcessModel, const String& injectedBundlePath);
 
@@ -242,7 +244,11 @@ private:
 
     void platformInitializeWebProcess(WebProcessCreationParameters&);
     void platformInvalidateContext();
-    
+
+#if ENABLE(NETWORK_PROCESS)
+    void ensureNetworkProcess();
+#endif
+
 #if PLATFORM(MAC)
     void getPasteboardTypes(const String& pasteboardName, Vector<String>& pasteboardTypes);
     void getPasteboardPathnamesForType(const String& pasteboardName, const String& pasteboardType, Vector<String>& pathnames);
@@ -363,6 +369,10 @@ private:
     String m_overrideLocalStorageDirectory;
 
     bool m_processTerminationEnabled;
+
+#if ENABLE(NETWORK_PROCESS)
+    bool m_usesNetworkProcess;
+#endif
     
     HashMap<uint64_t, RefPtr<DictionaryCallback> > m_dictionaryCallbacks;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -125,6 +125,9 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_initialHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyAlways)
 #endif
     , m_processTerminationEnabled(true)
+#if ENABLE(NETWORK_PROCESS)
+    , m_usesNetworkProcess(false)
+#endif
 {
     
     // NOTE: These sub-objects must be initialized after m_messageReceiverMap..
@@ -307,6 +310,15 @@ void WebContext::textCheckerStateChanged()
     sendToAllProcesses(Messages::WebProcess::SetTextCheckerState(TextChecker::state()));
 }
 
+void WebContext::setUsesNetworkProcess(bool usesNetworkProcess)
+{
+#if ENABLE(NETWORK_PROCESS)
+    m_usesNetworkProcess = usesNetworkProcess;
+#else
+    UNUSED_PARAM(usesNetworkProcess);
+#endif
+}
+
 void WebContext::ensureSharedWebProcess()
 {
     if (m_processes.isEmpty())
@@ -315,6 +327,11 @@ void WebContext::ensureSharedWebProcess()
 
 PassRefPtr<WebProcessProxy> WebContext::createNewWebProcess()
 {
+#if ENABLE(NETWORK_PROCESS)
+    if (m_usesNetworkProcess)
+        ensureNetworkProcess();
+#endif
+
     RefPtr<WebProcessProxy> process = WebProcessProxy::create(this);
 
     WebProcessCreationParameters parameters;
@@ -402,6 +419,13 @@ void WebContext::warmInitialProcess()
     createNewWebProcess();
     m_haveInitialEmptyProcess = true;
 }
+
+#if ENABLE(NETWORK_PROCESS)
+void WebContext::ensureNetworkProcess()
+{
+    // FIXME: Implement.
+}
+#endif
 
 void WebContext::enableProcessTermination()
 {
