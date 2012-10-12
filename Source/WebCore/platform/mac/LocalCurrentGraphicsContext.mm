@@ -30,8 +30,9 @@
 namespace WebCore {
 
 LocalCurrentGraphicsContext::LocalCurrentGraphicsContext(GraphicsContext* graphicsContext)
+    : m_didSetGraphicsContext(false)
 #if USE(SKIA)
-    : m_skiaBitLocker(graphicsContext->platformContext()->canvas())
+    , m_skiaBitLocker(graphicsContext->platformContext()->canvas())
 #endif
 {
     m_savedGraphicsContext = graphicsContext;
@@ -42,20 +43,21 @@ LocalCurrentGraphicsContext::LocalCurrentGraphicsContext(GraphicsContext* graphi
         m_savedNSGraphicsContext = 0;
         return;
     }
-    
+
     m_savedNSGraphicsContext = [[NSGraphicsContext currentContext] retain];
     NSGraphicsContext* newContext = [NSGraphicsContext graphicsContextWithGraphicsPort:cgContext flipped:YES];
     [NSGraphicsContext setCurrentContext:newContext];
+    m_didSetGraphicsContext = true;
 }
 
 LocalCurrentGraphicsContext::~LocalCurrentGraphicsContext()
 {
-    m_savedGraphicsContext->restore();
-
-    if (m_savedNSGraphicsContext) {
+    if (m_didSetGraphicsContext) {
         [NSGraphicsContext setCurrentContext:m_savedNSGraphicsContext];
         [m_savedNSGraphicsContext release];
     }
+
+    m_savedGraphicsContext->restore();
 }
 
 CGContextRef LocalCurrentGraphicsContext::cgContext()

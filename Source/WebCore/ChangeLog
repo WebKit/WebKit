@@ -1,3 +1,28 @@
+2012-10-11  Tim Horton  <timothy_horton@apple.com>
+
+        LocalCurrentGraphicsContext will never restore the current context to null
+        https://bugs.webkit.org/show_bug.cgi?id=99122
+
+        Reviewed by Simon Fraser.
+
+        LocalCurrentGraphicsContext is meant to cause temporary changes to
+        NSGraphicsContext's currentContext. However, if it is entered when
+        currentContext is null, it will not restore to null, as a null
+        m_savedNSGraphicsContext was being used to indicate that the current and
+        passed-in graphics contexts were equal (and thus no save/restore was required).
+
+        Add a separate flag for whether or not we need to restore the context.
+
+        Also flip the order of calls to restore graphics context state so that
+        exiting LocalCurrentGraphicsContext does things in exactly the opposite
+        of entry.
+
+        * platform/mac/LocalCurrentGraphicsContext.h:
+        (LocalCurrentGraphicsContext):
+        * platform/mac/LocalCurrentGraphicsContext.mm:
+        (WebCore::LocalCurrentGraphicsContext::LocalCurrentGraphicsContext):
+        (WebCore::LocalCurrentGraphicsContext::~LocalCurrentGraphicsContext):
+
 2012-10-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r131109.
