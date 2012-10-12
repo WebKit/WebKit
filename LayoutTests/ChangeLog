@@ -1,3 +1,10 @@
+2012-10-12  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, remove duplicate TestExpectation entries.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2012-10-12  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Skipping tests involving CSS_COMPOSITING on Windows. Feature isn't and should not be enabled.
