@@ -24,18 +24,84 @@
  */
 
 #import "config.h"
+
+#if defined(__LP64__) && defined(__clang__)
+
 #import "WKWebProcessPlugIn.h"
+#import "WKWebProcessPlugInInternal.h"
 
 #import "InjectedBundle.h"
-#import "WKWebProcessPlugInInternal.h"
+#import "WKBundle.h"
+#import "WKBundleAPICast.h"
+#import "WKRetainPtr.h"
+#import "WKWebProcessPlugInBrowserContextControllerInternal.h"
 #import <wtf/RetainPtr.h>
+
+typedef HashMap<WKBundlePageRef, RetainPtr<WKWebProcessPlugInBrowserContextController *> > BundlePageWrapperCache;
 
 struct WKWebProcessPlugInControllerData {
     RetainPtr<id<WKWebProcessPlugIn> > _principalClassInstance;
-    RefPtr<WebKit::InjectedBundle> _injectedBundle;
+    WKRetainPtr<WKBundleRef> _bundleRef;
+    BundlePageWrapperCache _bundlePageWrapperCache;
 };
 
+@interface WKWebProcessPlugInController ()
+
+@property(readonly) id<WKWebProcessPlugIn> _principalClassInstance;
+@property(readonly) WKBundleRef _bundleRef;
+@property(readonly) BundlePageWrapperCache& _bundlePageWrapperCache;
+
+@end
+
+
 @implementation WKWebProcessPlugInController (Internal)
+
+static void didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo)
+{
+    WKWebProcessPlugInController *plugInController = (WKWebProcessPlugInController *)clientInfo;
+    id<WKWebProcessPlugIn> principalClassInstance = plugInController._principalClassInstance;
+
+    if ([principalClassInstance respondsToSelector:@selector(webProcessPlugIn:didCreateBrowserContextController:)]) {
+        ASSERT(!plugInController._bundlePageWrapperCache.contains(page));
+
+        WKWebProcessPlugInBrowserContextController* browserContextController = [[WKWebProcessPlugInBrowserContextController alloc] _initWithBundlePageRef:page];
+        plugInController._bundlePageWrapperCache.set(page, browserContextController);
+
+        [principalClassInstance webProcessPlugIn:plugInController didCreateBrowserContextController:browserContextController];
+    }
+}
+
+static void willDestroyPage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo)
+{
+    WKWebProcessPlugInController *plugInController = (WKWebProcessPlugInController *)clientInfo;
+    id<WKWebProcessPlugIn> principalClassInstance = plugInController._principalClassInstance;
+
+    // If we never added the bundle page to the cache, which can happen if webProcessPlugIn:didCreateBrowserContextController: is not implemented,
+    // there is no reason to call webProcessPlugIn:willDestroyBrowserContextController:, so don't.
+    BundlePageWrapperCache::iterator it = plugInController._bundlePageWrapperCache.find(page);
+    if (it == plugInController._bundlePageWrapperCache.end()) {
+        ASSERT(![principalClassInstance respondsToSelector:@selector(webProcessPlugIn:didCreateBrowserContextController:)]);
+        return;
+    }
+
+    if ([principalClassInstance respondsToSelector:@selector(webProcessPlugIn:willDestroyBrowserContextController:)])
+        [principalClassInstance webProcessPlugIn:plugInController willDestroyBrowserContextController:it->value.get()];
+
+    plugInController._bundlePageWrapperCache.remove(it);
+}
+
+static void setUpBundleClient(WKWebProcessPlugInController *plugInController, WKBundleRef bundleRef)
+{
+    WKBundleClient bundleClient;
+    memset(&bundleClient, 0, sizeof(bundleClient));
+
+    bundleClient.version = kWKBundleClientCurrentVersion;
+    bundleClient.clientInfo = plugInController;
+    bundleClient.didCreatePage = didCreatePage;
+    bundleClient.willDestroyPage = willDestroyPage;
+
+    WKBundleSetClient(bundleRef, &bundleClient);
+}
 
 static WKWebProcessPlugInController *sharedInstance;
 
@@ -45,7 +111,7 @@ static WKWebProcessPlugInController *sharedInstance;
     return sharedInstance;
 }
 
-- (id)_initWithPrincipalClassInstance:(id<WKWebProcessPlugIn>)principalClassInstance injectedBundle:(WebKit::InjectedBundle*)injectedBundle
+- (id)_initWithPrincipalClassInstance:(id<WKWebProcessPlugIn>)principalClassInstance bundleRef:(WKBundleRef)bundleRef
 {
     self = [super init];
     if (!self)
@@ -53,10 +119,12 @@ static WKWebProcessPlugInController *sharedInstance;
 
     _private = new WKWebProcessPlugInControllerData;
     static_cast<WKWebProcessPlugInControllerData*>(_private)->_principalClassInstance = principalClassInstance;
-    static_cast<WKWebProcessPlugInControllerData*>(_private)->_injectedBundle = injectedBundle;
+    static_cast<WKWebProcessPlugInControllerData*>(_private)->_bundleRef = bundleRef;
 
     ASSERT_WITH_MESSAGE(!sharedInstance, "WKWebProcessPlugInController initialized multiple times.");
     sharedInstance = self;
+
+    setUpBundleClient(self, bundleRef);
 
     return self;
 }
@@ -71,4 +139,21 @@ static WKWebProcessPlugInController *sharedInstance;
 
 @implementation WKWebProcessPlugInController
 
+- (id<WKWebProcessPlugIn>)_principalClassInstance
+{
+    return static_cast<WKWebProcessPlugInControllerData*>(_private)->_principalClassInstance.get();
+}
+
+- (WKBundleRef)_bundleRef
+{
+    return static_cast<WKWebProcessPlugInControllerData*>(_private)->_bundleRef.get();
+}
+
+- (BundlePageWrapperCache&)_bundlePageWrapperCache
+{
+    return static_cast<WKWebProcessPlugInControllerData*>(_private)->_bundlePageWrapperCache;
+}
+
 @end
+
+#endif // defined(__LP64__) && defined(__clang__)

@@ -28,21 +28,15 @@
 #import <Foundation/Foundation.h>
 #import <WebKit2/WKBase.h>
 
-@class WKWebProcessPlugInController;
-@class WKWebProcessPlugInBrowserContextController;
-
-@protocol WKWebProcessPlugIn <NSObject>
-@optional
-- (void)webProcessPlugInInitialize:(WKWebProcessPlugInController *)plugInController;
-- (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController didCreateBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController;
-- (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController willDestroyBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController;
-@end
+@class WKDOMDocument;
 
 WK_EXPORT
-@interface WKWebProcessPlugInController : NSObject {
+@interface WKWebProcessPlugInBrowserContextController : NSObject {
 @private
-    void *_private;
+    void *_data;
 }
+
+@property(readonly) WKDOMDocument *mainFrameDocument;
 
 @end
 

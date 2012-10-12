@@ -25,24 +25,11 @@
 
 #if defined(__LP64__) && defined(__clang__)
 
-#import <Foundation/Foundation.h>
-#import <WebKit2/WKBase.h>
+#import "WKWebProcessPlugInBrowserContextController.h"
 
-@class WKWebProcessPlugInController;
-@class WKWebProcessPlugInBrowserContextController;
+@interface WKWebProcessPlugInBrowserContextController(Internal)
 
-@protocol WKWebProcessPlugIn <NSObject>
-@optional
-- (void)webProcessPlugInInitialize:(WKWebProcessPlugInController *)plugInController;
-- (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController didCreateBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController;
-- (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController willDestroyBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController;
-@end
-
-WK_EXPORT
-@interface WKWebProcessPlugInController : NSObject {
-@private
-    void *_private;
-}
+- (id)_initWithBundlePageRef:(WKBundlePageRef)bundlePageRef;
 
 @end
 
