@@ -1435,7 +1435,7 @@ webkit_dom_test_obj_orange(WebKitDOMTestObj* self)
     g_return_if_fail(self);
     WebCore::JSMainThreadNullState state;
     WebCore::TestObj* item = WebKit::core(self);
-    item->orange();
+    item->banana();
 }
 
 WebKitDOMbool*

@@ -804,9 +804,8 @@ sub GenerateFunction {
 
     return if ($function->signature->name eq "set" and $parentNode->extendedAttributes->{"TypedArray"});
 
-    my $functionSigName = $function->signature->name;
     my $functionSigType = $prefix eq "set_" ? "void" : $function->signature->type;
-    my $functionName = "webkit_dom_" . $decamelize . "_" . $prefix . decamelize($functionSigName);
+    my $functionName = "webkit_dom_" . $decamelize . "_" . $prefix . decamelize($function->signature->name);
     my $returnType = GetGlibTypeName($functionSigType);
     my $returnValueIsGDOMType = IsGDOMClassType($functionSigType);
 
@@ -976,8 +975,10 @@ sub GenerateFunction {
         push(@callImplParams, "ec");
     }
 
+    my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementedAs"} || $function->signature->name;
+
     if ($functionHasCustomReturn) {
-        push(@cBody, "    bool ok = item->${functionSigName}(" . join(", ", @callImplParams) . ");\n");
+        push(@cBody, "    bool ok = item->${functionImplementationName}(" . join(", ", @callImplParams) . ");\n");
         my $customNodeAppendChild = << "EOF";
     if (ok)
     {
@@ -1018,9 +1019,9 @@ EOF
                 my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
                 $implIncludes{"${implementedBy}.h"} = 1;
                 unshift(@arguments, "item");
-                $getterContentHead = "${assign}convertToUTF8String(WebCore::${implementedBy}::${functionSigName}(" . join(", ", @arguments) . "));\n";
+                $getterContentHead = "${assign}convertToUTF8String(WebCore::${implementedBy}::${functionImplementationName}(" . join(", ", @arguments) . "));\n";
             } else {
-                $getterContentHead = "${assign}convertToUTF8String(item->${functionSigName}(" . join(", ", @arguments) . "));\n";
+                $getterContentHead = "${assign}convertToUTF8String(item->${functionImplementationName}(" . join(", ", @arguments) . "));\n";
             }
         }
         push(@cBody, "    ${getterContentHead}");
@@ -1057,9 +1058,9 @@ EOF
                 my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
                 $implIncludes{"${implementedBy}.h"} = 1;
                 unshift(@arguments, "item");
-                $contentHead = "${assign}${assignPre}WebCore::${implementedBy}::${functionSigName}(" . join(", ", @arguments) . "${assignPost});\n";
+                $contentHead = "${assign}${assignPre}WebCore::${implementedBy}::${functionImplementationName}(" . join(", ", @arguments) . "${assignPost});\n";
             } else {
-                $contentHead = "${assign}${assignPre}item->${functionSigName}(" . join(", ", @arguments) . "${assignPost});\n";
+                $contentHead = "${assign}${assignPre}item->${functionImplementationName}(" . join(", ", @arguments) . "${assignPost});\n";
             }
         }
         push(@cBody, "    ${contentHead}");

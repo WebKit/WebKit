@@ -1,3 +1,17 @@
+2012-10-12  Pablo Flouret  <pablof@motorola.com>
+
+        Teach GeneratorGObject about [ImplementedAs] extended attribute in functions
+        https://bugs.webkit.org/show_bug.cgi?id=99214
+
+        Reviewed by Kentaro Hara.
+
+        No new tests, updated the binding tests results.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateFunction):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_orange):
+
 2012-10-12  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=99211
