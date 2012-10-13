@@ -616,9 +616,12 @@ void Heap::copyBackingStores()
         visitor.startCopying();
         visitor.copyFromShared();
         visitor.doneCopying();
+        // We need to wait for everybody to finish and return their CopiedBlocks 
+        // before signaling that the phase is complete.
+        m_storageSpace.doneCopying();
         m_sharedData.didFinishCopying();
-    } 
-    m_storageSpace.doneCopying();
+    } else 
+        m_storageSpace.doneCopying();
 }
 
 size_t Heap::objectCount()

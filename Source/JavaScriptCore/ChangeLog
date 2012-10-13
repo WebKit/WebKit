@@ -1,3 +1,25 @@
+2012-10-12  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Race condition during CopyingPhase can lead to deadlock
+        https://bugs.webkit.org/show_bug.cgi?id=99226
+
+        Reviewed by Filip Pizlo.
+
+        The main thread calls startCopying() for each of the GCThreads at the beginning of the copy phase. 
+        It then proceeds to start copying. If copying completes before one of the GCThreads wakes up, the 
+        main thread will set m_currentPhase back to NoPhase, the GCThread will wake up, see that there's 
+        nothing to do, and then it will go back to sleep without ever calling CopyVisitor::doneCopying() 
+        to return its borrowed block to the CopiedSpace. CopiedSpace::doneCopying() will then sleep forever 
+        waiting on the block.
+
+        The fix for this is to make sure we call CopiedSpace::doneCopying() on the main thread before we 
+        call GCThreadSharedData::didFinishCopying(), which sets the m_currentPhase flag to NoPhase. This 
+        way we will wait until all threads have woken up and given back their borrowed blocks before 
+        clearing the flag.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::copyBackingStores):
+
 2012-10-12  Anders Carlsson  <andersca@apple.com>
 
         Move macros from Parser.h to Parser.cpp
