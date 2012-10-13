@@ -916,20 +916,34 @@ TiledBacking* GraphicsLayerCA::tiledBacking()
 
 void GraphicsLayerCA::computeVisibleRect(TransformState& state)
 {
-    TransformState::TransformAccumulation accumulation = preserves3D() ? TransformState::AccumulateTransform : TransformState::FlattenTransform;
-    state.move(m_position.x(), m_position.y(), accumulation);
+    bool preserve3D = preserves3D() || (parent() ? parent()->preserves3D() : false);
+    TransformState::TransformAccumulation accumulation = preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform;
+
+    TransformationMatrix layerTransform;
+    layerTransform.translate(m_position.x(), m_position.y());
     
     if (!transform().isIdentity()) {
-        TransformationMatrix transformWithAnchorPoint;
         FloatPoint3D absoluteAnchorPoint(anchorPoint());
         absoluteAnchorPoint.scale(size().width(), size().height(), 1);
-        transformWithAnchorPoint.translate3d(absoluteAnchorPoint.x(), absoluteAnchorPoint.y(), absoluteAnchorPoint.z());
-        transformWithAnchorPoint.multiply(transform());
-        transformWithAnchorPoint.translate3d(-absoluteAnchorPoint.x(), -absoluteAnchorPoint.y(), -absoluteAnchorPoint.z());
-        state.applyTransform(transformWithAnchorPoint, accumulation);
+        layerTransform.translate3d(absoluteAnchorPoint.x(), absoluteAnchorPoint.y(), absoluteAnchorPoint.z());
+        layerTransform.multiply(transform());
+        layerTransform.translate3d(-absoluteAnchorPoint.x(), -absoluteAnchorPoint.y(), -absoluteAnchorPoint.z());
     }
+
+    if (GraphicsLayer* parentLayer = parent()) {
+        if (!parentLayer->childrenTransform().isIdentity()) {
+            FloatPoint3D parentAnchorPoint(parentLayer->anchorPoint());
+            parentAnchorPoint.scale(parentLayer->size().width(), parentLayer->size().height(), 1);
+
+            layerTransform.translateRight3d(-parentAnchorPoint.x(), -parentAnchorPoint.y(), -parentAnchorPoint.z());
+            layerTransform = parentLayer->childrenTransform() * layerTransform;
+            layerTransform.translateRight3d(parentAnchorPoint.x(), parentAnchorPoint.y(), parentAnchorPoint.z());
+        }
+    }
+
+    state.applyTransform(layerTransform, accumulation);
     
-    FloatRect clipRectForChildren = state.lastPlanarQuad().boundingBox();
+    FloatRect clipRectForChildren = state.mappedQuad().boundingBox();
     FloatRect clipRectForSelf(0, 0, m_size.width(), m_size.height());
     clipRectForSelf.intersect(clipRectForChildren);
     
@@ -940,9 +954,6 @@ void GraphicsLayerCA::computeVisibleRect(TransformState& state)
     }
 
     m_visibleRect = clipRectForSelf;
-
-    if (!childrenTransform().isIdentity())    
-        state.applyTransform(childrenTransform(), accumulation);
 }
 
 void GraphicsLayerCA::recursiveCommitChanges(const TransformState& state, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool affectedByPageScale)

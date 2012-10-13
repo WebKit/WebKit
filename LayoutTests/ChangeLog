@@ -1,5 +1,22 @@
 2012-10-12  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix GraphicsLayerCA visible rect computation in the face of perspective and preserve-3d
+        https://bugs.webkit.org/show_bug.cgi?id=99212
+
+        Reviewed by Tim Horton.
+
+        Layer tree tests that include visible rect information, to test visible rect
+        computation for more complex layer trees.
+
+        * compositing/visible-rect/3d-transform-style-expected.txt: Added.
+        * compositing/visible-rect/3d-transform-style.html: Added.
+        * compositing/visible-rect/3d-transformed-expected.txt: Added.
+        * compositing/visible-rect/3d-transformed.html: Added.
+        * compositing/visible-rect/nested-transform-expected.txt: Added.
+        * compositing/visible-rect/nested-transform.html: Added.
+
+2012-10-12  Simon Fraser  <simon.fraser@apple.com>
+
         Add some initial visible rect tests and tweak the visible wash layer
         https://bugs.webkit.org/show_bug.cgi?id=99095
 

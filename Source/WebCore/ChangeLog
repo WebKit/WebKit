@@ -1,3 +1,30 @@
+2012-10-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix GraphicsLayerCA visible rect computation in the face of perspective and preserve-3d
+        https://bugs.webkit.org/show_bug.cgi?id=99212
+
+        Reviewed by Tim Horton.
+
+        GraphicsLayerCA::computeVisibleRect() was incorrect for layer trees with perspective
+        and preserve-3d, so fix that, and add some tests.
+        
+        Perspective is implemented via childrenTransform(); if our parent has one,
+        we have to left-multiply this into the transformation matrix.
+        
+        We have to test both this layer and its parent when deciding whether to accumulate
+        or flatten.
+        
+        Use state.mappedQuad() rather than state.lastPlanarQuad(), because the last planar
+        quad might be for some distant ancestor, and there may be intermediate preserve-3d
+        layers.
+
+        Tests: compositing/visible-rect/3d-transform-style.html
+               compositing/visible-rect/3d-transformed.html
+               compositing/visible-rect/nested-transform.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::computeVisibleRect):
+
 2012-10-11  Simon Fraser  <simon.fraser@apple.com>
 
         Move TransformState code into its own member function, and remove a test that was prematurely added
