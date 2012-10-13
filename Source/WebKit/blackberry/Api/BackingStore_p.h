@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2011 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2009, 2010, 2011, 2012 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -38,6 +38,11 @@ class TransformationMatrix;
 }
 
 namespace BlackBerry {
+
+namespace Platform {
+class ViewportAccessor;
+}
+
 namespace WebKit {
 
 class BackingStoreTile;
@@ -51,6 +56,7 @@ public:
     BackingStoreGeometry()
         : m_numberOfTilesWide(0)
         , m_numberOfTilesHigh(0)
+        , m_scale(0.0)
     {
     }
 
@@ -67,9 +73,13 @@ public:
     const TileMap& tileMap() const { return m_tileMap; }
     void setTileMap(const TileMap& tileMap) { m_tileMap = tileMap; }
 
+    double scale() const { return m_scale; }
+    void setScale(double scale) { m_scale = scale; }
+
   private:
     int m_numberOfTilesWide;
     int m_numberOfTilesHigh;
+    double m_scale;
     Platform::IntPoint m_backingStoreOffset;
     TileMap m_tileMap;
 };
@@ -154,7 +164,7 @@ public:
     bool canMoveDown(const Platform::IntRect&) const;
 
     Platform::IntRect backingStoreRectForScroll(int deltaX, int deltaY, const Platform::IntRect&) const;
-    void setBackingStoreRect(const Platform::IntRect&);
+    void setBackingStoreRect(const Platform::IntRect&, double scale);
 
     typedef WTF::Vector<TileIndex> TileIndexList;
     TileIndexList indexesForBackingStoreRect(const Platform::IntRect&) const;
@@ -193,7 +203,7 @@ public:
     // Assumes the rect to be in window/viewport coordinates.
     void copyPreviousContentsToBackSurfaceOfWindow();
     void copyPreviousContentsToBackSurfaceOfTile(const Platform::IntRect&, BackingStoreTile*);
-    void paintDefaultBackground(const Platform::IntRect& contents, const WebCore::TransformationMatrix&, bool flush);
+    void paintDefaultBackground(const Platform::IntRect& dstRect, BlackBerry::Platform::ViewportAccessor*, bool flush);
     void blitOnIdle();
 
     typedef std::pair<TileIndex, Platform::IntRect> TileRect;
@@ -216,8 +226,8 @@ public:
     void setDirectRenderingAnimationMessageScheduled() { m_isDirectRenderingAnimationMessageScheduled = true; }
 #endif
 
-    void blitHorizontalScrollbar(const Platform::IntPoint&);
-    void blitVerticalScrollbar(const Platform::IntPoint&);
+    void blitHorizontalScrollbar();
+    void blitVerticalScrollbar();
 
     // Returns whether the tile index is currently visible or not.
     bool isTileVisible(const TileIndex&) const;

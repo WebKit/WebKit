@@ -79,6 +79,7 @@ class SelectionHandler;
 class TouchEventHandler;
 class WebCookieJar;
 class WebPageClient;
+class WebKitThreadViewportAccessor;
 
 #if USE(ACCELERATED_COMPOSITING)
 class FrameLayers;
@@ -509,6 +510,7 @@ public:
     WebCore::TransformationMatrix* m_transformationMatrix;
     BackingStore* m_backingStore;
     BackingStoreClient* m_backingStoreClient;
+    WebKitThreadViewportAccessor* m_webkitThreadViewportAccessor;
     InPageSearchManager* m_inPageSearchManager;
     InputHandler* m_inputHandler;
     SelectionHandler* m_selectionHandler;

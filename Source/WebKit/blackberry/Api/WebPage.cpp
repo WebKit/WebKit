@@ -137,6 +137,7 @@
 #if ENABLE(WEBDOM)
 #include "WebDOMDocument.h"
 #endif
+#include "WebKitThreadViewportAccessor.h"
 #include "WebKitVersion.h"
 #include "WebOverlay.h"
 #include "WebOverlay_p.h"
@@ -388,6 +389,7 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_transformationMatrix(new TransformationMatrix())
     , m_backingStore(0) // Initialized by init.
     , m_backingStoreClient(0) // Initialized by init.
+    , m_webkitThreadViewportAccessor(0) // Initialized by init.
     , m_inPageSearchManager(new InPageSearchManager(this))
     , m_inputHandler(new InputHandler(this))
     , m_selectionHandler(new SelectionHandler(this))
@@ -461,6 +463,9 @@ WebPagePrivate::~WebPagePrivate()
 
     delete m_cookieJar;
     m_cookieJar = 0;
+
+    delete m_webkitThreadViewportAccessor;
+    m_webkitThreadViewportAccessor = 0;
 
     delete m_backingStoreClient;
     m_backingStoreClient = 0;
@@ -622,6 +627,8 @@ void WebPagePrivate::init(const WebString& pageGroupName)
     // The direct access to BackingStore is left here for convenience since it
     // is owned by BackingStoreClient and then deleted by its destructor.
     m_backingStore = m_backingStoreClient->backingStore();
+
+    m_webkitThreadViewportAccessor = new WebKitThreadViewportAccessor(this);
 
     blockClickRadius = int(roundf(0.35 * Platform::Graphics::Screen::primaryScreen()->pixelsPerInch(0).width())); // The clicked rectangle area should be a fixed unit of measurement.
 
@@ -1813,6 +1820,11 @@ IntPoint WebPagePrivate::transformedMaximumScrollPosition() const
 IntSize WebPagePrivate::transformedActualVisibleSize() const
 {
     return IntSize(m_actualVisibleWidth, m_actualVisibleHeight);
+}
+
+Platform::ViewportAccessor* WebPage::webkitThreadViewportAccessor() const
+{
+    return d->m_webkitThreadViewportAccessor;
 }
 
 Platform::IntSize WebPage::viewportSize() const

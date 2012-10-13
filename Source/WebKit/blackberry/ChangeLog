@@ -1,3 +1,146 @@
+2012-10-13  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Fetch blit rects from a viewport accessor
+        https://bugs.webkit.org/show_bug.cgi?id=98581
+        RIM PR 173292
+
+        Reviewed by George Staikos.
+        Internally reviewed by Arvid Nilsson.
+
+        The long-standing userInterfaceBlittedVisibleContentsRect()
+        method in WebPageClient has long been a major annoyance,
+        as it returns the source rect for WebKit contents but in
+        backingstore pixel coordinates. This makes it not only
+        unwieldy but also terribly fragile, especially when
+        both pinch zoom and a backingstore re-render both deal
+        with the same rectangle. On different threads, even.
+
+        BlackBerry::Platform now exposes a ViewportAccessor
+        interface, which can be used to get the various rects
+        in document coordinates or target pixel coordinates,
+        both being a better choice than the ones dependent
+        on an implentation detail.
+
+        This commit makes use of this new functionality.
+        Instead of relying on the passed rectangle to contain
+        implicit information about the scale factor, we now
+        track the scale of each backingstore geometry by making
+        a snapshot of the current WebKit-thread scale when the
+        geometry is generated. Once the geometry is swapped to
+        the front, we can then calculate the remaining
+        backingstore-to-viewport transformation in a threadsafe
+        way. We now only calculate this if we actually blit from
+        backingstore tiles and don't go through a configuration
+        of pure accelerated compositing.
+
+        As a result, we are now a lot more robust against
+        synchonization issues related to backingstore
+        geometry changes. As an additional gimmick, the scale
+        is also stored with each tile buffer to doubly secure
+        that a tile rendered in one scale is not transferred
+        to a different geometry and then rendered there without
+        being rerendered at the new scale, even if the rendered
+        pixel coordinates are still the same.
+
+        Having per-geometry scale information also opens up
+        opportunities to further improve backingstore rendering
+        later. For instance, we could pre-render a low-res
+        version of the page onto one buffer and combine that one
+        with a higher-res array of tiles covering a smaller area.
+        Or we could steal some tiles from the front geometry to
+        render them at a new scale while a pinch-zoom operation
+        is in progress.
+
+        No such thing is implemented in this patch though.
+
+        In adapting/fixing the backingstore visualization
+        debug mode and the default background painting in
+        renderDirectToWindow(), we also introduce new
+        ViewportAccessor subclasses that can subsequently
+        be used to replace methods from WebPage and elsewhere.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::slowScroll):
+        (BlackBerry::WebKit::BackingStorePrivate::scroll):
+        (BlackBerry::WebKit::BackingStorePrivate::setBackingStoreRect):
+        (BlackBerry::WebKit::BackingStorePrivate::scrollBackingStore):
+        (BlackBerry::WebKit::BackingStorePrivate::renderDirectToWindow):
+        (BlackBerry::WebKit::BackingStorePrivate::render):
+        (BlackBerry::WebKit::BackingStorePrivate::paintDefaultBackground):
+        (BlackBerry::WebKit::BackingStorePrivate::blitVisibleContents):
+        (BlackBerry::WebKit::BackingStorePrivate::blitHorizontalScrollbar):
+        (BlackBerry::WebKit::BackingStorePrivate::blitVerticalScrollbar):
+        (BlackBerry::WebKit::BackingStorePrivate::updateTilesForScrollOrNotRenderedRegion):
+        (BlackBerry::WebKit::BackingStorePrivate::updateTileMatrixIfNeeded):
+        (BlackBerry::WebKit::BackingStorePrivate::orientationChanged):
+        (BlackBerry::WebKit::BackingStorePrivate::createSurfaces):
+        (BlackBerry::WebKit::BackingStorePrivate::invalidateWindow):
+        * Api/BackingStore_p.h:
+        (BlackBerry):
+        (Platform):
+        (BlackBerry::WebKit::BackingStoreGeometry::BackingStoreGeometry):
+        (BlackBerry::WebKit::BackingStoreGeometry::scale):
+        (BlackBerry::WebKit::BackingStoreGeometry::setScale):
+        (BackingStoreGeometry):
+        (BackingStorePrivate):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::~WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        (BlackBerry::WebKit::WebPage::webkitThreadViewportAccessor):
+        (WebKit):
+        * Api/WebPage.h:
+        (Platform):
+        * Api/WebPageClient.h:
+        (Platform):
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::animationFrameChanged):
+        * Api/WebPage_p.h:
+        (WebKit):
+        (WebPagePrivate):
+        * WebKitSupport/BackingStoreTile.cpp:
+        (BlackBerry::WebKit::TileBuffer::TileBuffer):
+        (BlackBerry::WebKit::TileBuffer::isRendered):
+        * WebKitSupport/BackingStoreTile.h:
+        (TileBuffer):
+        (BlackBerry::WebKit::TileBuffer::scale):
+        (BlackBerry::WebKit::TileBuffer::setScale):
+        * WebKitSupport/BackingStoreVisualizationViewportAccessor.cpp: Added.
+        (WebKit):
+        (BlackBerry::WebKit::BackingStoreVisualizationViewportAccessor::BackingStoreVisualizationViewportAccessor):
+        (BlackBerry::WebKit::BackingStoreVisualizationViewportAccessor::pixelContentsSize):
+        (BlackBerry::WebKit::BackingStoreVisualizationViewportAccessor::documentContentsSize):
+        (BlackBerry::WebKit::BackingStoreVisualizationViewportAccessor::pixelScrollPosition):
+        (BlackBerry::WebKit::BackingStoreVisualizationViewportAccessor::documentScrollPosition):
+        (BlackBerry::WebKit::BackingStoreVisualizationViewportAccessor::pixelViewportSize):
+        (BlackBerry::WebKit::BackingStoreVisualizationViewportAccessor::documentViewportSize):
+        (BlackBerry::WebKit::BackingStoreVisualizationViewportAccessor::destinationSurfaceOffset):
+        (BlackBerry::WebKit::BackingStoreVisualizationViewportAccessor::scale):
+        (BlackBerry::WebKit::BackingStoreVisualizationViewportAccessor::state):
+        * WebKitSupport/BackingStoreVisualizationViewportAccessor.h: Added.
+        (BlackBerry):
+        (Platform):
+        (WebKit):
+        (BackingStoreVisualizationViewportAccessor):
+        (BlackBerry::WebKit::BackingStoreVisualizationViewportAccessor::~BackingStoreVisualizationViewportAccessor):
+        * WebKitSupport/WebKitThreadViewportAccessor.cpp: Added.
+        (WebKit):
+        (BlackBerry::WebKit::WebKitThreadViewportAccessor::WebKitThreadViewportAccessor):
+        (BlackBerry::WebKit::WebKitThreadViewportAccessor::pixelContentsSize):
+        (BlackBerry::WebKit::WebKitThreadViewportAccessor::documentContentsSize):
+        (BlackBerry::WebKit::WebKitThreadViewportAccessor::pixelScrollPosition):
+        (BlackBerry::WebKit::WebKitThreadViewportAccessor::documentScrollPosition):
+        (BlackBerry::WebKit::WebKitThreadViewportAccessor::pixelViewportSize):
+        (BlackBerry::WebKit::WebKitThreadViewportAccessor::documentViewportSize):
+        (BlackBerry::WebKit::WebKitThreadViewportAccessor::destinationSurfaceOffset):
+        (BlackBerry::WebKit::WebKitThreadViewportAccessor::scale):
+        * WebKitSupport/WebKitThreadViewportAccessor.h: Added.
+        (BlackBerry):
+        (Platform):
+        (WebKit):
+        (WebKitThreadViewportAccessor):
+        (BlackBerry::WebKit::WebKitThreadViewportAccessor::~WebKitThreadViewportAccessor):
+
 2012-10-11  Peter Wang  <peter.wang@torchmobile.com.cn>
 
         [BlackBerry] Paused in Inspector, Browser doesn't exit cleanly

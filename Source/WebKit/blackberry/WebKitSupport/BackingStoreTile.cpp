@@ -37,6 +37,7 @@ TileBuffer::TileBuffer(const Platform::IntSize& size)
     : m_size(size)
     , m_fence(Fence::create())
     , m_buffer(0)
+    , m_scale(1.0)
 {
 }
 
@@ -55,14 +56,14 @@ Platform::IntRect TileBuffer::rect() const
     return Platform::IntRect(Platform::IntPoint::zero(), m_size);
 }
 
-bool TileBuffer::isRendered() const
+bool TileBuffer::isRendered(double scale) const
 {
-    return isRendered(rect());
+    return isRendered(rect(), scale);
 }
 
-bool TileBuffer::isRendered(const Platform::IntRectRegion& contents) const
+bool TileBuffer::isRendered(const Platform::IntRectRegion& contents, double scale) const
 {
-    return Platform::IntRectRegion::subtractRegions(contents, m_renderedRegion).isEmpty();
+    return m_scale == scale && Platform::IntRectRegion::subtractRegions(contents, m_renderedRegion).isEmpty();
 }
 
 void TileBuffer::clearRenderedRegion(const Platform::IntRectRegion& region)

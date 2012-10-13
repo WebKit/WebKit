@@ -74,13 +74,16 @@ class TileBuffer {
         Platform::IntSize size() const;
         Platform::IntRect rect() const;
 
-        bool isRendered() const;
-        bool isRendered(const Platform::IntRectRegion& contents) const;
+        bool isRendered(double scale) const;
+        bool isRendered(const Platform::IntRectRegion& contents, double scale) const;
         void clearRenderedRegion();
         void clearRenderedRegion(const Platform::IntRectRegion&);
         void addRenderedRegion(const Platform::IntRectRegion&);
         Platform::IntRectRegion renderedRegion() const;
         Platform::IntRectRegion notRenderedRegion() const;
+
+        double scale() { return m_scale; }
+        void setScale(double scale) { m_scale = scale; };
 
         Platform::Graphics::Buffer* nativeBuffer() const;
 
@@ -92,6 +95,7 @@ class TileBuffer {
         Platform::IntRectRegion m_renderedRegion;
         RefPtr<Fence> m_fence;
         mutable Platform::Graphics::Buffer* m_buffer;
+        double m_scale;
 };
 
 

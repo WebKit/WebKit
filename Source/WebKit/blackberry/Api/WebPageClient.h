@@ -43,6 +43,7 @@ class GeoTrackerListener;
 class IntRectRegion;
 class NetworkRequest;
 class NetworkStreamFactory;
+class ViewportAccessor;
 class WebUserMediaRequest;
 
 namespace Graphics {
@@ -203,8 +204,7 @@ public:
     virtual void needMoreData() = 0;
     virtual void handleWebInspectorMessageToFrontend(int id, const char* message, int length) = 0;
 
-    virtual Platform::IntRect userInterfaceBlittedDestinationRect() const = 0;
-    virtual Platform::IntRect userInterfaceBlittedVisibleContentsRect() const = 0;
+    virtual BlackBerry::Platform::ViewportAccessor* userInterfaceViewportAccessor() const = 0;
 
     virtual void resetBitmapZoomScale(double scale) = 0;
     virtual void animateBlockZoom(const Platform::FloatPoint& finalPoint, double finalScale) = 0;
