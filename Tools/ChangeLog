@@ -1,3 +1,11 @@
+2012-10-12  Dirk Pranke  <dpranke@chromium.org>
+
+        Update chromium bot names in garden-o-matic.
+
+        Unreviewed, build fix.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/config.js:
+
 2012-10-12  Ojan Vafai  <ojan@chromium.org>
 
         Fix bot name filters now that the Chromium bots have been renamed.
