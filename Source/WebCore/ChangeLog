@@ -1,3 +1,19 @@
+2012-10-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Move TransformState code into its own member function, and remove a test that was prematurely added
+        https://bugs.webkit.org/show_bug.cgi?id=99117
+
+        Reviewed by Tim Horton.
+
+        The code that manipulates the TransformState and computes the visible rect is going to get
+        more complex, so move it into a new member function.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::computeVisibleRect):
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (GraphicsLayerCA):
+
 2012-10-12  Simon Fraser  <simon.fraser@apple.com>
 
         Add some initial visible rect tests and tweak the visible wash layer

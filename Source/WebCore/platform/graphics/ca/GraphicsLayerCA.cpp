@@ -914,13 +914,10 @@ TiledBacking* GraphicsLayerCA::tiledBacking()
     return m_layer->tiledBacking();
 }
 
-void GraphicsLayerCA::recursiveCommitChanges(const TransformState& state, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool affectedByPageScale)
+void GraphicsLayerCA::computeVisibleRect(TransformState& state)
 {
-    // Save the state before sending down to kids and restore it after
-    TransformState localState = state;
-    
     TransformState::TransformAccumulation accumulation = preserves3D() ? TransformState::AccumulateTransform : TransformState::FlattenTransform;
-    localState.move(m_position.x(), m_position.y(), accumulation);
+    state.move(m_position.x(), m_position.y(), accumulation);
     
     if (!transform().isIdentity()) {
         TransformationMatrix transformWithAnchorPoint;
@@ -929,21 +926,30 @@ void GraphicsLayerCA::recursiveCommitChanges(const TransformState& state, float 
         transformWithAnchorPoint.translate3d(absoluteAnchorPoint.x(), absoluteAnchorPoint.y(), absoluteAnchorPoint.z());
         transformWithAnchorPoint.multiply(transform());
         transformWithAnchorPoint.translate3d(-absoluteAnchorPoint.x(), -absoluteAnchorPoint.y(), -absoluteAnchorPoint.z());
-        localState.applyTransform(transformWithAnchorPoint, accumulation);
+        state.applyTransform(transformWithAnchorPoint, accumulation);
     }
     
-    FloatRect clipRectForChildren = localState.lastPlanarQuad().boundingBox();
+    FloatRect clipRectForChildren = state.lastPlanarQuad().boundingBox();
     FloatRect clipRectForSelf(0, 0, m_size.width(), m_size.height());
     clipRectForSelf.intersect(clipRectForChildren);
     
     if (masksToBounds()) {
         ASSERT(accumulation == TransformState::FlattenTransform);
         // Replace the quad in the TransformState with one that is clipped to this layer's bounds
-        localState.setQuad(clipRectForSelf);
+        state.setQuad(clipRectForSelf);
     }
 
     m_visibleRect = clipRectForSelf;
-    
+
+    if (!childrenTransform().isIdentity())    
+        state.applyTransform(childrenTransform(), accumulation);
+}
+
+void GraphicsLayerCA::recursiveCommitChanges(const TransformState& state, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool affectedByPageScale)
+{
+    TransformState localState = state;
+    computeVisibleRect(localState);
+
 #ifdef VISIBLE_TILE_WASH
     // Use having a transform as a key to making the tile wash layer. If every layer gets a wash,
     // they start to obscure useful information.
@@ -962,7 +968,7 @@ void GraphicsLayerCA::recursiveCommitChanges(const TransformState& state, float 
     }
 
     if (m_visibleTileWashLayer)
-        m_visibleTileWashLayer->setFrame(clipRectForSelf);
+        m_visibleTileWashLayer->setFrame(m_visibleRect);
 #endif
 
     bool hadChanges = m_uncommittedChanges;
@@ -984,9 +990,6 @@ void GraphicsLayerCA::recursiveCommitChanges(const TransformState& state, float 
 
     const Vector<GraphicsLayer*>& childLayers = children();
     size_t numChildren = childLayers.size();
-    
-    if (!childrenTransform().isIdentity())    
-        localState.applyTransform(childrenTransform(), accumulation);
     
     for (size_t i = 0; i < numChildren; ++i) {
         GraphicsLayerCA* curChild = static_cast<GraphicsLayerCA*>(childLayers[i]);

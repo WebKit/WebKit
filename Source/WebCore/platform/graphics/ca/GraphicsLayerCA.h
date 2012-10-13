@@ -233,6 +233,7 @@ private:
 
     void computePixelAlignment(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase,
         FloatPoint& position, FloatSize&, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset) const;
+    void computeVisibleRect(TransformState&);
 
     // Used to track the path down the tree for replica layers.
     struct ReplicaState {
