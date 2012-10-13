@@ -1,5 +1,16 @@
 2012-10-12  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed gardening.
+
+        * platform/chromium-linux/fast/forms/form-associated-element-crash3-expected.txt: Removed.
+        * platform/chromium-linux/transforms/3d/point-mapping/3d-point-mapping-3-expected.png:
+        * platform/chromium-linux/transforms/3d/point-mapping/3d-point-mapping-expected.png:
+        * platform/chromium-linux/transforms/3d/point-mapping/3d-point-mapping-origins-expected.png:
+        * platform/chromium-linux/transforms/3d/point-mapping/3d-point-mapping-overlapping-expected.png:
+        * platform/chromium-linux/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.png:
+
+2012-10-12  Adam Barth  <abarth@webkit.org>
+
         Fix lint error in TestExpectations.
 
         * platform/chromium/TestExpectations:
