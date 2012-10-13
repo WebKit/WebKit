@@ -526,6 +526,12 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
+    Jump branchSubPtr(ResultCondition cond, RegisterID src, RegisterID dest)
+    {
+        subPtr(src, dest);
+        return Jump(m_assembler.jCC(x86Condition(cond)));
+    }
+
     Jump branchSubPtr(ResultCondition cond, RegisterID src1, TrustedImm32 src2, RegisterID dest)
     {
         move(src1, dest);

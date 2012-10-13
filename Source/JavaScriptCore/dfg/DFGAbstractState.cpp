@@ -1134,7 +1134,7 @@ bool AbstractState::execute(unsigned indexInBlock)
     case NewArrayWithSize:
         node.setCanExit(true);
         forNode(node.child1()).filter(SpecInt32);
-        forNode(nodeIndex).set(m_graph.globalObjectFor(node.codeOrigin)->arrayStructure());
+        forNode(nodeIndex).set(SpecArray);
         m_haveStructures = true;
         break;
             

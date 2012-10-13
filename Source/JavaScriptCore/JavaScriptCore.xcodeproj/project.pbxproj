@@ -88,6 +88,7 @@
 		0F21C27D14BE727A00ADC64B /* CodeSpecializationKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F21C27914BE727300ADC64B /* CodeSpecializationKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F21C27F14BEAA8200ADC64B /* BytecodeConventions.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F21C27E14BEAA8000ADC64B /* BytecodeConventions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F242DA713F3B1E8007ADD4C /* WeakReferenceHarvester.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F242DA513F3B1BB007ADD4C /* WeakReferenceHarvester.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F256C361627B0AD007F2783 /* DFGCallArrayAllocatorSlowPathGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F256C341627B0AA007F2783 /* DFGCallArrayAllocatorSlowPathGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F2BDC15151C5D4D00CD8910 /* DFGFixupPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F2BDC12151C5D4A00CD8910 /* DFGFixupPhase.cpp */; };
 		0F2BDC16151C5D4F00CD8910 /* DFGFixupPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2BDC13151C5D4A00CD8910 /* DFGFixupPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F2BDC21151E803B00CD8910 /* DFGInsertionSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2BDC1F151E803800CD8910 /* DFGInsertionSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -872,6 +873,7 @@
 		0F21C27A14BE727300ADC64B /* ExecutionHarness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecutionHarness.h; sourceTree = "<group>"; };
 		0F21C27E14BEAA8000ADC64B /* BytecodeConventions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeConventions.h; sourceTree = "<group>"; };
 		0F242DA513F3B1BB007ADD4C /* WeakReferenceHarvester.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakReferenceHarvester.h; sourceTree = "<group>"; };
+		0F256C341627B0AA007F2783 /* DFGCallArrayAllocatorSlowPathGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCallArrayAllocatorSlowPathGenerator.h; path = dfg/DFGCallArrayAllocatorSlowPathGenerator.h; sourceTree = "<group>"; };
 		0F2BDC12151C5D4A00CD8910 /* DFGFixupPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGFixupPhase.cpp; path = dfg/DFGFixupPhase.cpp; sourceTree = "<group>"; };
 		0F2BDC13151C5D4A00CD8910 /* DFGFixupPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGFixupPhase.h; path = dfg/DFGFixupPhase.h; sourceTree = "<group>"; };
 		0F2BDC1F151E803800CD8910 /* DFGInsertionSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGInsertionSet.h; path = dfg/DFGInsertionSet.h; sourceTree = "<group>"; };
@@ -2360,20 +2362,21 @@
 				0F5F08CC146BE602000472A9 /* DFGByteCodeCache.h */,
 				86EC9DB41328DF82002B2AD7 /* DFGByteCodeParser.cpp */,
 				86EC9DB51328DF82002B2AD7 /* DFGByteCodeParser.h */,
+				0F256C341627B0AA007F2783 /* DFGCallArrayAllocatorSlowPathGenerator.h */,
+				0FD82E1E14172C2F00179C94 /* DFGCapabilities.cpp */,
+				0FD82E1F14172C2F00179C94 /* DFGCapabilities.h */,
 				0F7B294814C3CD23007C3DB1 /* DFGCCallHelpers.h */,
 				0FFFC94B14EF909500C72532 /* DFGCFAPhase.cpp */,
 				0FFFC94C14EF909500C72532 /* DFGCFAPhase.h */,
 				0F3B3A241544C991003ED0FF /* DFGCFGSimplificationPhase.cpp */,
 				0F3B3A251544C991003ED0FF /* DFGCFGSimplificationPhase.h */,
-				0FFFC94D14EF909500C72532 /* DFGCSEPhase.cpp */,
-				0FFFC94E14EF909500C72532 /* DFGCSEPhase.h */,
-				0FD82E1E14172C2F00179C94 /* DFGCapabilities.cpp */,
-				0FD82E1F14172C2F00179C94 /* DFGCapabilities.h */,
 				0FC0977E1469EBC400CF2442 /* DFGCommon.h */,
 				0F3B3A17153E68EF003ED0FF /* DFGConstantFoldingPhase.cpp */,
 				0F3B3A18153E68EF003ED0FF /* DFGConstantFoldingPhase.h */,
 				0FC0979D146B271E00CF2442 /* DFGCorrectableJumpPoint.cpp */,
 				0FC0979A146A772000CF2442 /* DFGCorrectableJumpPoint.h */,
+				0FFFC94D14EF909500C72532 /* DFGCSEPhase.cpp */,
+				0FFFC94E14EF909500C72532 /* DFGCSEPhase.h */,
 				0FF427611591A1C9004CB9FF /* DFGDisassembler.cpp */,
 				0FF427621591A1C9004CB9FF /* DFGDisassembler.h */,
 				0FD81ACF154FB4EB00983E72 /* DFGDominators.cpp */,
@@ -2381,9 +2384,10 @@
 				0F1E3A441534CBAD000F9456 /* DFGDoubleFormatState.h */,
 				0FD3C82014115CF800FD81CB /* DFGDriver.cpp */,
 				0FD3C82214115D0E00FD81CB /* DFGDriver.h */,
-				86AE6C4B136A11E400963012 /* DFGFPRInfo.h */,
+				0F66E16914DF3F1300B7B2E4 /* DFGEdge.h */,
 				0F2BDC12151C5D4A00CD8910 /* DFGFixupPhase.cpp */,
 				0F2BDC13151C5D4A00CD8910 /* DFGFixupPhase.h */,
+				86AE6C4B136A11E400963012 /* DFGFPRInfo.h */,
 				86EC9DB61328DF82002B2AD7 /* DFGGenerationInfo.h */,
 				86AE6C4C136A11E400963012 /* DFGGPRInfo.h */,
 				86EC9DB71328DF82002B2AD7 /* DFGGraph.cpp */,
@@ -2398,7 +2402,6 @@
 				0FA581B7150E952A00B9A2D9 /* DFGNodeFlags.cpp */,
 				0FA581B8150E952A00B9A2D9 /* DFGNodeFlags.h */,
 				0FA581B9150E952A00B9A2D9 /* DFGNodeType.h */,
-				0F66E16914DF3F1300B7B2E4 /* DFGEdge.h */,
 				86EC9DBF1328DF82002B2AD7 /* DFGOperations.cpp */,
 				86EC9DC01328DF82002B2AD7 /* DFGOperations.h */,
 				0FD82E52141DAEDE00179C94 /* DFGOSREntry.cpp */,
@@ -2430,11 +2433,11 @@
 				0F63943D15C75F14006A597C /* DFGStructureCheckHoistingPhase.h */,
 				0FC0979F146B28C700CF2442 /* DFGThunks.cpp */,
 				0FC097A0146B28C700CF2442 /* DFGThunks.h */,
+				0F3B3A2915474FF4003ED0FF /* DFGValidate.cpp */,
+				0F3B3A2A15474FF4003ED0FF /* DFGValidate.h */,
 				0F2BDC3F1522801700CD8910 /* DFGValueRecoveryOverride.h */,
 				0F2BDC4E15228BE700CD8910 /* DFGValueSource.cpp */,
 				0F2BDC401522801700CD8910 /* DFGValueSource.h */,
-				0F3B3A2915474FF4003ED0FF /* DFGValidate.cpp */,
-				0F3B3A2A15474FF4003ED0FF /* DFGValidate.h */,
 				0F620172143FCD2F0068B77C /* DFGVariableAccessData.h */,
 				0F2BDC5015228FFA00CD8910 /* DFGVariableEvent.cpp */,
 				0F2BDC411522801700CD8910 /* DFGVariableEvent.h */,
@@ -2999,6 +3002,7 @@
 				862553D216136E1A009F17D0 /* JSProxy.h in Headers */,
 				0F5541B21613C1FB00CE3E25 /* SpecialPointer.h in Headers */,
 				0FEB3ECD16237F4D00AB67AD /* TypedArrayDescriptor.h in Headers */,
+ 				0F256C361627B0AD007F2783 /* DFGCallArrayAllocatorSlowPathGenerator.h in Headers */,
 				C2239D1B16262BDD005AC5FD /* GCThread.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

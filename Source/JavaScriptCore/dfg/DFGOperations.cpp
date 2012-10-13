@@ -1110,18 +1110,24 @@ char* DFG_OPERATION operationNewArray(ExecState* exec, Structure* arrayStructure
 {
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
-
+    
     return bitwise_cast<char*>(constructArray(exec, arrayStructure, static_cast<JSValue*>(buffer), size));
 }
 
 char* DFG_OPERATION operationNewEmptyArray(ExecState* exec, Structure* arrayStructure)
 {
-    return bitwise_cast<char*>(JSArray::create(exec->globalData(), arrayStructure));
+    JSGlobalData* globalData = &exec->globalData();
+    NativeCallFrameTracer tracer(globalData, exec);
+    
+    return bitwise_cast<char*>(JSArray::create(*globalData, arrayStructure));
 }
 
 char* DFG_OPERATION operationNewArrayWithSize(ExecState* exec, Structure* arrayStructure, int32_t size)
 {
-    return bitwise_cast<char*>(JSArray::create(exec->globalData(), arrayStructure, size));
+    JSGlobalData* globalData = &exec->globalData();
+    NativeCallFrameTracer tracer(globalData, exec);
+    
+    return bitwise_cast<char*>(JSArray::create(*globalData, arrayStructure, size));
 }
 
 char* DFG_OPERATION operationNewArrayBuffer(ExecState* exec, Structure* arrayStructure, size_t start, size_t size)

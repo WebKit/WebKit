@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "Arguments.h"
+#include "DFGCallArrayAllocatorSlowPathGenerator.h"
 #include "DFGSlowPathGenerator.h"
 #include "LinkBuffer.h"
 
@@ -54,6 +55,37 @@ SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
 SpeculativeJIT::~SpeculativeJIT()
 {
     WTF::deleteAllValues(m_slowPathGenerators);
+}
+
+void SpeculativeJIT::emitAllocateJSArray(Structure* structure, GPRReg resultGPR, GPRReg storageGPR, unsigned numElements)
+{
+    ASSERT(hasContiguous(structure->indexingType()));
+    
+    GPRTemporary scratch(this);
+    GPRReg scratchGPR = scratch.gpr();
+    
+    unsigned vectorLength = std::max(BASE_VECTOR_LEN, numElements);
+    
+    JITCompiler::JumpList slowCases;
+    slowCases.append(
+        emitAllocateBasicStorage(TrustedImm32(vectorLength * sizeof(JSValue) + sizeof(IndexingHeader)), storageGPR));
+    m_jit.subPtr(TrustedImm32(vectorLength * sizeof(JSValue)), storageGPR);
+    emitAllocateBasicJSObject<JSArray, MarkedBlock::None>(
+        TrustedImmPtr(structure), resultGPR, scratchGPR,
+        storageGPR, sizeof(JSArray), slowCases);
+    
+    // I'm assuming that two 32-bit stores are better than a 64-bit store.
+    // I have no idea if that's true. And it probably doesn't matter anyway.
+    m_jit.store32(TrustedImm32(numElements), MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()));
+    m_jit.store32(TrustedImm32(vectorLength), MacroAssembler::Address(storageGPR, Butterfly::offsetOfVectorLength()));
+    
+    // I want a slow path that also loads out the storage pointer, and that's
+    // what this custom CallArrayAllocatorSlowPathGenerator gives me. It's a lot
+    // of work for a very small piece of functionality. :-/
+    addSlowPathGenerator(adoptPtr(
+        new CallArrayAllocatorSlowPathGenerator(
+            slowCases, this, operationNewArrayWithSize, resultGPR, storageGPR,
+            structure, numElements)));
 }
 
 void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail)
@@ -3434,14 +3466,11 @@ void SpeculativeJIT::compileAllocatePropertyStorage(Node& node)
         
     ASSERT(!node.structureTransitionData().previousStructure->outOfLineCapacity());
     ASSERT(initialOutOfLineCapacity == node.structureTransitionData().newStructure->outOfLineCapacity());
-    size_t newSize = initialOutOfLineCapacity * sizeof(JSValue);
-    CopiedAllocator* copiedAllocator = &m_jit.globalData()->heap.storageAllocator();
+    
+    JITCompiler::Jump slowPath =
+        emitAllocateBasicStorage(
+            TrustedImm32(initialOutOfLineCapacity * sizeof(JSValue)), scratchGPR);
 
-    m_jit.loadPtr(&copiedAllocator->m_currentRemaining, scratchGPR);
-    JITCompiler::Jump slowPath = m_jit.branchSubPtr(JITCompiler::Signed, JITCompiler::TrustedImm32(newSize), scratchGPR);
-    m_jit.storePtr(scratchGPR, &copiedAllocator->m_currentRemaining);
-    m_jit.negPtr(scratchGPR);
-    m_jit.addPtr(JITCompiler::AbsoluteAddress(&copiedAllocator->m_currentPayloadEnd), scratchGPR);
     m_jit.addPtr(JITCompiler::TrustedImm32(sizeof(JSValue)), scratchGPR);
         
     addSlowPathGenerator(
@@ -3482,15 +3511,9 @@ void SpeculativeJIT::compileReallocatePropertyStorage(Node& node)
     GPRReg scratchGPR1 = scratch1.gpr();
     GPRReg scratchGPR2 = scratch2.gpr();
         
-    JITCompiler::Jump slowPath;
-        
-    CopiedAllocator* copiedAllocator = &m_jit.globalData()->heap.storageAllocator();
-        
-    m_jit.loadPtr(&copiedAllocator->m_currentRemaining, scratchGPR2);
-    slowPath = m_jit.branchSubPtr(JITCompiler::Signed, JITCompiler::TrustedImm32(newSize), scratchGPR2);
-    m_jit.storePtr(scratchGPR2, &copiedAllocator->m_currentRemaining);
-    m_jit.negPtr(scratchGPR2);
-    m_jit.addPtr(JITCompiler::AbsoluteAddress(&copiedAllocator->m_currentPayloadEnd), scratchGPR2);
+    JITCompiler::Jump slowPath =
+        emitAllocateBasicStorage(TrustedImm32(newSize), scratchGPR2);
+
     m_jit.addPtr(JITCompiler::TrustedImm32(sizeof(JSValue)), scratchGPR2);
         
     addSlowPathGenerator(

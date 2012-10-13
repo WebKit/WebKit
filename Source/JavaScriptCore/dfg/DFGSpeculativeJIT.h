@@ -1229,6 +1229,11 @@ public:
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure), arg2);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(P_DFGOperation_EStZ operation, GPRReg result, Structure* structure, size_t arg2)
+    {
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure), TrustedImm32(arg2));
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(P_DFGOperation_EStZ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2);
@@ -1555,6 +1560,11 @@ public:
     JITCompiler::Call callOperation(P_DFGOperation_EStZ operation, GPRReg result, Structure* structure, GPRReg arg2)
     {
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure), arg2);
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
+    JITCompiler::Call callOperation(P_DFGOperation_EStZ operation, GPRReg result, Structure* structure, size_t arg2)
+    {
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure), TrustedImm32(arg2));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(P_DFGOperation_EStZ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
@@ -2255,13 +2265,36 @@ public:
     void compileNewFunctionNoCheck(Node&);
     void compileNewFunctionExpression(Node&);
     bool compileRegExpExec(Node&);
-   
+    
+    // size can be an immediate or a register, and must be in bytes. If size is a register,
+    // it must be a different register than resultGPR. Emits code that place a pointer to
+    // the end of the allocation. The returned jump is the jump to the slow path.
+    template<typename SizeType>
+    MacroAssembler::Jump emitAllocateBasicStorage(SizeType size, GPRReg resultGPR)
+    {
+        CopiedAllocator* copiedAllocator = &m_jit.globalData()->heap.storageAllocator();
+        
+        m_jit.loadPtr(&copiedAllocator->m_currentRemaining, resultGPR);
+        MacroAssembler::Jump slowPath = m_jit.branchSubPtr(JITCompiler::Signed, size, resultGPR);
+#if 0
+        MacroAssembler::Jump done = m_jit.jump();
+        slowPath1.link(&m_jit);
+        m_jit.breakpoint();
+        MacroAssembler::Jump slowPath = m_jit.jump();
+        done.link(&m_jit);
+#endif
+        m_jit.storePtr(resultGPR, &copiedAllocator->m_currentRemaining);
+        m_jit.negPtr(resultGPR);
+        m_jit.addPtr(JITCompiler::AbsoluteAddress(&copiedAllocator->m_currentPayloadEnd), resultGPR);
+        
+        return slowPath;
+    }
+    
     // It is NOT okay for the structure and the scratch register to be the same thing because if they are then the Structure will 
     // get clobbered. 
-    template <typename ClassType, MarkedBlock::DestructorType destructorType, typename StructureType> 
-    void emitAllocateBasicJSObject(StructureType structure, GPRReg resultGPR, GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
+    template <typename ClassType, MarkedBlock::DestructorType destructorType, typename StructureType, typename StorageType> 
+    void emitAllocateBasicJSObject(StructureType structure, GPRReg resultGPR, GPRReg scratchGPR, StorageType storage, size_t size, MacroAssembler::JumpList& slowPath)
     {
-        size_t size = ClassType::allocationSize(INLINE_STORAGE_CAPACITY);
         MarkedAllocator* allocator = 0;
         if (destructorType == MarkedBlock::Normal)
             allocator = &m_jit.globalData()->heap.allocatorForObjectWithNormalDestructor(size);
@@ -2282,14 +2315,16 @@ public:
         m_jit.storePtr(structure, MacroAssembler::Address(resultGPR, JSCell::structureOffset()));
         
         // Initialize the object's property storage pointer.
-        m_jit.storePtr(MacroAssembler::TrustedImmPtr(0), MacroAssembler::Address(resultGPR, JSObject::butterflyOffset()));
+        m_jit.storePtr(storage, MacroAssembler::Address(resultGPR, JSObject::butterflyOffset()));
     }
 
     template<typename T>
     void emitAllocateJSFinalObject(T structure, GPRReg resultGPR, GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
     {
-        return emitAllocateBasicJSObject<JSFinalObject, MarkedBlock::None>(structure, resultGPR, scratchGPR, slowPath);
+        return emitAllocateBasicJSObject<JSFinalObject, MarkedBlock::None>(structure, resultGPR, scratchGPR, TrustedImmPtr(0), JSFinalObject::allocationSize(INLINE_STORAGE_CAPACITY), slowPath);
     }
+    
+    void emitAllocateJSArray(Structure*, GPRReg resultGPR, GPRReg storageGPR, unsigned numElements);
 
 #if USE(JSVALUE64) 
     JITCompiler::Jump convertToDouble(GPRReg value, FPRReg result, GPRReg tmp);

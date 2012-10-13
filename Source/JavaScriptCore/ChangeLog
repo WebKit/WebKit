@@ -1,3 +1,48 @@
+2012-10-12  Filip Pizlo  <fpizlo@apple.com>
+
+        Contiguous array allocation should always be inlined
+        https://bugs.webkit.org/show_bug.cgi?id=98608
+
+        Reviewed by Oliver Hunt and Mark Hahnenberg.
+
+        This inlines contiguous array allocation in the most obvious way possible.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::branchSubPtr):
+        (MacroAssembler):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::branchSubPtr):
+        (MacroAssemblerX86_64):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGCCallHelpers.h:
+        (JSC::DFG::CCallHelpers::setupArgumentsWithExecState):
+        (CCallHelpers):
+        * dfg/DFGCallArrayAllocatorSlowPathGenerator.h: Added.
+        (DFG):
+        (CallArrayAllocatorSlowPathGenerator):
+        (JSC::DFG::CallArrayAllocatorSlowPathGenerator::CallArrayAllocatorSlowPathGenerator):
+        (JSC::DFG::CallArrayAllocatorSlowPathGenerator::generateInternal):
+        (CallArrayAllocatorWithVariableSizeSlowPathGenerator):
+        (JSC::DFG::CallArrayAllocatorWithVariableSizeSlowPathGenerator::CallArrayAllocatorWithVariableSizeSlowPathGenerator):
+        (JSC::DFG::CallArrayAllocatorWithVariableSizeSlowPathGenerator::generateInternal):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSArray):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::emitAllocateBasicStorage):
+        (JSC::DFG::SpeculativeJIT::emitAllocateBasicJSObject):
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSFinalObject):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-10-12  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Race condition during CopyingPhase can lead to deadlock

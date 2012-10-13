@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "Arguments.h"
+#include "DFGCallArrayAllocatorSlowPathGenerator.h"
 #include "DFGSlowPathGenerator.h"
 
 namespace JSC { namespace DFG {
@@ -3480,8 +3481,40 @@ void SpeculativeJIT::compile(Node& node)
         
     case NewArray: {
         JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node.codeOrigin);
-        if (!globalObject->isHavingABadTime())
+        if (!globalObject->isHavingABadTime()) {
             globalObject->havingABadTimeWatchpoint()->add(speculationWatchpoint());
+            
+            ASSERT(hasContiguous(globalObject->arrayStructure()->indexingType()));
+            
+            unsigned numElements = node.numChildren();
+            
+            GPRTemporary result(this);
+            GPRTemporary storage(this);
+            
+            GPRReg resultGPR = result.gpr();
+            GPRReg storageGPR = storage.gpr();
+
+            emitAllocateJSArray(globalObject->arrayStructure(), resultGPR, storageGPR, numElements);
+            
+            // At this point, one way or another, resultGPR and storageGPR have pointers to
+            // the JSArray and the Butterfly, respectively.
+            
+            for (unsigned operandIdx = 0; operandIdx < node.numChildren(); ++operandIdx) {
+                JSValueOperand operand(this, m_jit.graph().m_varArgChildren[node.firstChild() + operandIdx]);
+                GPRReg opGPR = operand.gpr();
+                m_jit.storePtr(opGPR, MacroAssembler::Address(storageGPR, sizeof(JSValue) * operandIdx));
+            }
+            
+            // Yuck, we should *really* have a way of also returning the storageGPR. But
+            // that's the least of what's wrong with this code. We really shouldn't be
+            // allocating the array after having computed - and probably spilled to the
+            // stack - all of the things that will go into the array. The solution to that
+            // bigger problem will also likely fix the redundancy in reloading the storage
+            // pointer that we currently have.
+            
+            cellResult(resultGPR, m_compileIndex);
+            break;
+        }
         
         if (!node.numChildren()) {
             flushRegisters();
@@ -3532,8 +3565,46 @@ void SpeculativeJIT::compile(Node& node)
         
     case NewArrayWithSize: {
         JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node.codeOrigin);
-        if (!globalObject->isHavingABadTime())
+        if (!globalObject->isHavingABadTime()) {
             globalObject->havingABadTimeWatchpoint()->add(speculationWatchpoint());
+            
+            SpeculateStrictInt32Operand size(this, node.child1());
+            GPRTemporary result(this);
+            GPRTemporary storage(this);
+            GPRTemporary scratch(this);
+            
+            GPRReg sizeGPR = size.gpr();
+            GPRReg resultGPR = result.gpr();
+            GPRReg storageGPR = storage.gpr();
+            GPRReg scratchGPR = scratch.gpr();
+            
+            MacroAssembler::JumpList slowCases;
+            slowCases.append(m_jit.branch32(MacroAssembler::AboveOrEqual, sizeGPR, TrustedImm32(MIN_SPARSE_ARRAY_INDEX)));
+            
+            ASSERT((1 << 3) == sizeof(JSValue));
+            m_jit.move(sizeGPR, scratchGPR);
+            m_jit.lshift32(TrustedImm32(3), scratchGPR);
+            m_jit.add32(TrustedImm32(sizeof(IndexingHeader)), scratchGPR, resultGPR);
+            slowCases.append(
+                emitAllocateBasicStorage(resultGPR, storageGPR));
+            m_jit.subPtr(scratchGPR, storageGPR);
+            emitAllocateBasicJSObject<JSArray, MarkedBlock::None>(
+                TrustedImmPtr(globalObject->arrayStructure()), resultGPR, scratchGPR,
+                storageGPR, sizeof(JSArray), slowCases);
+            
+            m_jit.store32(sizeGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()));
+            m_jit.store32(sizeGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfVectorLength()));
+            
+            addSlowPathGenerator(adoptPtr(
+                new CallArrayAllocatorWithVariableSizeSlowPathGenerator(
+                    slowCases, this, operationNewArrayWithSize, resultGPR,
+                    globalObject->arrayStructure(),
+                    globalObject->arrayStructureWithArrayStorage(),
+                    sizeGPR)));
+            
+            cellResult(resultGPR, m_compileIndex);
+            break;
+        }
         
         SpeculateStrictInt32Operand size(this, node.child1());
         GPRReg sizeGPR = size.gpr();
@@ -3592,8 +3663,29 @@ void SpeculativeJIT::compile(Node& node)
         
     case NewArrayBuffer: {
         JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node.codeOrigin);
-        if (!globalObject->isHavingABadTime())
+        if (!globalObject->isHavingABadTime()) {
             globalObject->havingABadTimeWatchpoint()->add(speculationWatchpoint());
+            
+            unsigned numElements = node.numConstants();
+            
+            GPRTemporary result(this);
+            GPRTemporary storage(this);
+            
+            GPRReg resultGPR = result.gpr();
+            GPRReg storageGPR = storage.gpr();
+
+            emitAllocateJSArray(globalObject->arrayStructure(), resultGPR, storageGPR, numElements);
+            
+            JSValue* data = m_jit.codeBlock()->constantBuffer(node.startConstant());
+            for (unsigned index = 0; index < node.numConstants(); ++index) {
+                m_jit.storePtr(
+                    ImmPtr(bitwise_cast<void*>(JSValue::encode(data[index]))),
+                    MacroAssembler::Address(storageGPR, sizeof(JSValue) * index));
+            }
+            
+            cellResult(resultGPR, m_compileIndex);
+            break;
+        }
         
         flushRegisters();
         GPRResult result(this);

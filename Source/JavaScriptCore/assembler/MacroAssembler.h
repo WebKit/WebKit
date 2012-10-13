@@ -500,6 +500,11 @@ public:
         return branch32(cond, left, TrustedImm32(right));
     }
 
+    Jump branchSubPtr(ResultCondition cond, RegisterID src, RegisterID dest)
+    {
+        return branchSub32(cond, src, dest);
+    }
+
     Jump branchTestPtr(ResultCondition cond, RegisterID reg, RegisterID mask)
     {
         return branchTest32(cond, reg, mask);
