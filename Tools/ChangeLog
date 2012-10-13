@@ -1,3 +1,15 @@
+2012-10-13  Zan Dobersek  <zandobersek@gmail.com>
+
+        [TestResultServer] Unit tests require an update after r131239
+        https://bugs.webkit.org/show_bug.cgi?id=99236
+
+        Reviewed by Ojan Vafai.
+
+        Replacing 'Webkit' with 'WebKit' in builder names througout the unit tests
+        after the Chromium builders have been renamed recently.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+
 2012-10-12  Zan Dobersek  <zandobersek@gmail.com>
 
         [TestResultServer] Add support for non-Chromium TestExpectations files

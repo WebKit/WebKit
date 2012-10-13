@@ -79,7 +79,7 @@ test('flattenTrie', 1, function() {
 
 test('releaseFail', 2, function() {
     resetGlobals();
-    var builder = 'Webkit Win';
+    var builder = 'WebKit Win';
     var test = 'foo/1.html';
     var expectationsArray = [
         {'modifiers': 'RELEASE', 'expectations': 'FAIL'}
@@ -90,7 +90,7 @@ test('releaseFail', 2, function() {
 
 test('releaseFailDebugCrashReleaseBuilder', 2, function() {
     resetGlobals();
-    var builder = 'Webkit Win';
+    var builder = 'WebKit Win';
     var test = 'foo/1.html';
     var expectationsArray = [
         {'modifiers': 'RELEASE', 'expectations': 'FAIL'},
@@ -103,7 +103,7 @@ test('releaseFailDebugCrashReleaseBuilder', 2, function() {
 
 test('releaseFailDebugCrashDebugBuilder', 2, function() {
     resetGlobals();
-    var builder = 'Webkit Win (dbg)';
+    var builder = 'WebKit Win (dbg)';
     var test = 'foo/1.html';
     var expectationsArray = [
         {'modifiers': 'RELEASE', 'expectations': 'FAIL'},
@@ -121,12 +121,12 @@ test('overrideJustBuildType', 12, function() {
         '[ Mac ] ' + test + ' [ WontFix Failure ]\n' +
         '[ Linux Debug ] ' + test + ' [ Crash ]');
     
-    runExpectationsTest('Webkit Win', test, 'FAIL PASS TIMEOUT', 'WONTFIX');
-    runExpectationsTest('Webkit Win (dbg)(3)', test, 'FAIL PASS TIMEOUT', 'WONTFIX');
-    runExpectationsTest('Webkit Linux', test, 'FAIL PASS TIMEOUT', 'WONTFIX');
-    runExpectationsTest('Webkit Linux (dbg)(3)', test, 'CRASH', 'LINUX DEBUG');
-    runExpectationsTest('Webkit Mac10.7', test, 'FAIL', 'MAC WONTFIX');
-    runExpectationsTest('Webkit Mac10.7 (dbg)(3)', test, 'FAIL', 'MAC WONTFIX');
+    runExpectationsTest('WebKit Win', test, 'FAIL PASS TIMEOUT', 'WONTFIX');
+    runExpectationsTest('WebKit Win (dbg)(3)', test, 'FAIL PASS TIMEOUT', 'WONTFIX');
+    runExpectationsTest('WebKit Linux', test, 'FAIL PASS TIMEOUT', 'WONTFIX');
+    runExpectationsTest('WebKit Linux (dbg)(3)', test, 'CRASH', 'LINUX DEBUG');
+    runExpectationsTest('WebKit Mac10.7', test, 'FAIL', 'MAC WONTFIX');
+    runExpectationsTest('WebKit Mac10.7 (dbg)(3)', test, 'FAIL', 'MAC WONTFIX');
 });
 
 test('platformAndBuildType', 78, function() {
@@ -137,25 +137,25 @@ test('platformAndBuildType', 78, function() {
         equal(buildInfo.platform, expectedPlatform, message);
         equal(buildInfo.buildType, expectedBuildType, message);
     }
-    runPlatformAndBuildTypeTest('Webkit Win (deps)', 'CHROMIUM_XP', 'RELEASE');
-    runPlatformAndBuildTypeTest('Webkit Win (deps)(dbg)(1)', 'CHROMIUM_XP', 'DEBUG');
-    runPlatformAndBuildTypeTest('Webkit Win (deps)(dbg)(2)', 'CHROMIUM_XP', 'DEBUG');
-    runPlatformAndBuildTypeTest('Webkit Linux (deps)', 'CHROMIUM_LUCID', 'RELEASE');
-    runPlatformAndBuildTypeTest('Webkit Linux (deps)(dbg)(1)', 'CHROMIUM_LUCID', 'DEBUG');
-    runPlatformAndBuildTypeTest('Webkit Linux (deps)(dbg)(2)', 'CHROMIUM_LUCID', 'DEBUG');
-    runPlatformAndBuildTypeTest('Webkit Mac10.6 (deps)', 'CHROMIUM_SNOWLEOPARD', 'RELEASE');
-    runPlatformAndBuildTypeTest('Webkit Mac10.6 (deps)(dbg)(1)', 'CHROMIUM_SNOWLEOPARD', 'DEBUG');
-    runPlatformAndBuildTypeTest('Webkit Mac10.6 (deps)(dbg)(2)', 'CHROMIUM_SNOWLEOPARD', 'DEBUG');
-    runPlatformAndBuildTypeTest('Webkit Win', 'CHROMIUM_XP', 'RELEASE');
-    runPlatformAndBuildTypeTest('Webkit Win7', 'CHROMIUM_WIN7', 'RELEASE');
-    runPlatformAndBuildTypeTest('Webkit Win (dbg)(1)', 'CHROMIUM_XP', 'DEBUG');
-    runPlatformAndBuildTypeTest('Webkit Win (dbg)(2)', 'CHROMIUM_XP', 'DEBUG');
-    runPlatformAndBuildTypeTest('Webkit Linux', 'CHROMIUM_LUCID', 'RELEASE');
-    runPlatformAndBuildTypeTest('Webkit Linux 32', 'CHROMIUM_LUCID', 'RELEASE');
-    runPlatformAndBuildTypeTest('Webkit Linux (dbg)(1)', 'CHROMIUM_LUCID', 'DEBUG');
-    runPlatformAndBuildTypeTest('Webkit Linux (dbg)(2)', 'CHROMIUM_LUCID', 'DEBUG');
-    runPlatformAndBuildTypeTest('Webkit Mac10.6', 'CHROMIUM_SNOWLEOPARD', 'RELEASE');
-    runPlatformAndBuildTypeTest('Webkit Mac10.6 (dbg)', 'CHROMIUM_SNOWLEOPARD', 'DEBUG');
+    runPlatformAndBuildTypeTest('WebKit Win (deps)', 'CHROMIUM_XP', 'RELEASE');
+    runPlatformAndBuildTypeTest('WebKit Win (deps)(dbg)(1)', 'CHROMIUM_XP', 'DEBUG');
+    runPlatformAndBuildTypeTest('WebKit Win (deps)(dbg)(2)', 'CHROMIUM_XP', 'DEBUG');
+    runPlatformAndBuildTypeTest('WebKit Linux (deps)', 'CHROMIUM_LUCID', 'RELEASE');
+    runPlatformAndBuildTypeTest('WebKit Linux (deps)(dbg)(1)', 'CHROMIUM_LUCID', 'DEBUG');
+    runPlatformAndBuildTypeTest('WebKit Linux (deps)(dbg)(2)', 'CHROMIUM_LUCID', 'DEBUG');
+    runPlatformAndBuildTypeTest('WebKit Mac10.6 (deps)', 'CHROMIUM_SNOWLEOPARD', 'RELEASE');
+    runPlatformAndBuildTypeTest('WebKit Mac10.6 (deps)(dbg)(1)', 'CHROMIUM_SNOWLEOPARD', 'DEBUG');
+    runPlatformAndBuildTypeTest('WebKit Mac10.6 (deps)(dbg)(2)', 'CHROMIUM_SNOWLEOPARD', 'DEBUG');
+    runPlatformAndBuildTypeTest('WebKit Win', 'CHROMIUM_XP', 'RELEASE');
+    runPlatformAndBuildTypeTest('WebKit Win7', 'CHROMIUM_WIN7', 'RELEASE');
+    runPlatformAndBuildTypeTest('WebKit Win (dbg)(1)', 'CHROMIUM_XP', 'DEBUG');
+    runPlatformAndBuildTypeTest('WebKit Win (dbg)(2)', 'CHROMIUM_XP', 'DEBUG');
+    runPlatformAndBuildTypeTest('WebKit Linux', 'CHROMIUM_LUCID', 'RELEASE');
+    runPlatformAndBuildTypeTest('WebKit Linux 32', 'CHROMIUM_LUCID', 'RELEASE');
+    runPlatformAndBuildTypeTest('WebKit Linux (dbg)(1)', 'CHROMIUM_LUCID', 'DEBUG');
+    runPlatformAndBuildTypeTest('WebKit Linux (dbg)(2)', 'CHROMIUM_LUCID', 'DEBUG');
+    runPlatformAndBuildTypeTest('WebKit Mac10.6', 'CHROMIUM_SNOWLEOPARD', 'RELEASE');
+    runPlatformAndBuildTypeTest('WebKit Mac10.6 (dbg)', 'CHROMIUM_SNOWLEOPARD', 'DEBUG');
     runPlatformAndBuildTypeTest('XP Tests', 'CHROMIUM_XP', 'RELEASE');
     runPlatformAndBuildTypeTest('Interactive Tests (dbg)', 'CHROMIUM_XP', 'DEBUG');
     
@@ -507,10 +507,10 @@ test('generateChromiumDepsFyiGpuBuildersFromBuilderList', 1, function() {
 
 test('generateChromiumTipOfTreeGpuBuildersFromBuilderList', 1, function() {
     var builderList = ["Chrome Frame Tests", "GPU Linux (NVIDIA)", "GPU Linux (dbg) (NVIDIA)", "GPU Mac", "GPU Mac (dbg)", "GPU Win7 (NVIDIA)", "GPU Win7 (dbg) (NVIDIA)", "Linux Perf",
-        "Linux Tests", "Linux Valgrind", "Mac Builder (dbg)", "Mac10.6 Perf", "Mac10.6 Tests", "Vista Perf", "Vista Tests", "Webkit Linux", "Webkit Linux ASAN", "Webkit Linux (dbg)", "Webkit Linux (deps)",
-        "Webkit Linux 32", "Webkit Mac Builder", "Webkit Mac Builder (dbg)", "Webkit Mac Builder (deps)",
-        "Webkit Mac10.6", "Webkit Mac10.6 (dbg)", "Webkit Mac10.6 (deps)", "Webkit Mac10.7", "Webkit Win", "Webkit Win (dbg)(1)", "Webkit Win (dbg)(2)",
-        "Webkit Win (deps)", "Webkit Win Builder", "Webkit Win Builder (dbg)", "Webkit Win Builder (deps)", "Webkit Win7", "Win (dbg)", "Win Builder"];
+        "Linux Tests", "Linux Valgrind", "Mac Builder (dbg)", "Mac10.6 Perf", "Mac10.6 Tests", "Vista Perf", "Vista Tests", "WebKit Linux", "WebKit Linux ASAN", "WebKit Linux (dbg)", "WebKit Linux (deps)",
+        "WebKit Linux 32", "WebKit Mac Builder", "WebKit Mac Builder (dbg)", "WebKit Mac Builder (deps)",
+        "WebKit Mac10.6", "WebKit Mac10.6 (dbg)", "WebKit Mac10.6 (deps)", "WebKit Mac10.7", "WebKit Win", "WebKit Win (dbg)(1)", "WebKit Win (dbg)(2)",
+        "WebKit Win (deps)", "WebKit Win Builder", "WebKit Win Builder (dbg)", "WebKit Win Builder (deps)", "WebKit Win7", "Win (dbg)", "Win Builder"];
     var expectedBuilders = [["GPU Linux (NVIDIA)", 2], ["GPU Linux (dbg) (NVIDIA)"], ["GPU Mac"], ["GPU Mac (dbg)"], ["GPU Win7 (NVIDIA)"], ["GPU Win7 (dbg) (NVIDIA)"]];
     deepEqual(generateBuildersFromBuilderList(builderList, isChromiumTipOfTreeGpuTestRunner), expectedBuilders);
 });
@@ -533,23 +533,23 @@ test('generateWebkitBuildersFromBuilderList', 1, function() {
 
 test('generateChromiumWebkitTipOfTreeBuildersFromBuilderList', 1, function() {
     var builderList = ["Chrome Frame Tests", "GPU Linux (NVIDIA)", "GPU Linux (dbg) (NVIDIA)", "GPU Mac", "GPU Mac (dbg)", "GPU Win7 (NVIDIA)", "GPU Win7 (dbg) (NVIDIA)", "Linux Perf", "Linux Tests",
-        "Linux Valgrind", "Mac Builder (dbg)", "Mac10.6 Perf", "Mac10.6 Tests", "Vista Perf", "Vista Tests", "Webkit Linux", "Webkit Linux ASAN",  "Webkit Linux (dbg)", "Webkit Linux (deps)", "Webkit Linux 32",
-        "Webkit Mac Builder", "Webkit Mac Builder (dbg)", "Webkit Mac Builder (deps)", "Webkit Mac10.6", "Webkit Mac10.6 (dbg)",
-        "Webkit Mac10.6 (deps)", "Webkit Mac10.7", "Webkit Win", "Webkit Win (dbg)(1)", "Webkit Win (dbg)(2)", "Webkit Win (deps)", "Webkit Win Builder", "Webkit Win Builder (dbg)",
-        "Webkit Win Builder (deps)", "Webkit Win7", "Win (dbg)", "Win Builder",
+        "Linux Valgrind", "Mac Builder (dbg)", "Mac10.6 Perf", "Mac10.6 Tests", "Vista Perf", "Vista Tests", "WebKit Linux", "WebKit Linux ASAN",  "WebKit Linux (dbg)", "WebKit Linux (deps)", "WebKit Linux 32",
+        "WebKit Mac Builder", "WebKit Mac Builder (dbg)", "WebKit Mac Builder (deps)", "WebKit Mac10.6", "WebKit Mac10.6 (dbg)",
+        "WebKit Mac10.6 (deps)", "WebKit Mac10.7", "WebKit Win", "WebKit Win (dbg)(1)", "WebKit Win (dbg)(2)", "WebKit Win (deps)", "WebKit Win Builder", "WebKit Win Builder (dbg)",
+        "WebKit Win Builder (deps)", "WebKit Win7", "Win (dbg)", "Win Builder",
         "Linux (Content Shell)"];
-    var expectedBuilders = [["Webkit Linux", 2], ["Webkit Linux (dbg)"], ["Webkit Linux 32"], ["Webkit Mac10.6"],
-        ["Webkit Mac10.6 (dbg)"], ["Webkit Mac10.7"], ["Webkit Win"], ["Webkit Win (dbg)(1)"], ["Webkit Win (dbg)(2)"], ["Webkit Win7"]];
+    var expectedBuilders = [["WebKit Linux", 2], ["WebKit Linux (dbg)"], ["WebKit Linux 32"], ["WebKit Mac10.6"],
+        ["WebKit Mac10.6 (dbg)"], ["WebKit Mac10.7"], ["WebKit Win"], ["WebKit Win (dbg)(1)"], ["WebKit Win (dbg)(2)"], ["WebKit Win7"]];
     deepEqual(generateBuildersFromBuilderList(builderList, isChromiumWebkitTipOfTreeTestRunner), expectedBuilders);
 });
 
 test('generateChromiumWebkitDepsBuildersFromBuilderList', 1, function() {
     var builderList = ["Chrome Frame Tests", "GPU Linux (NVIDIA)", "GPU Linux (dbg) (NVIDIA)", "GPU Mac", "GPU Mac (dbg)", "GPU Win7 (NVIDIA)", "GPU Win7 (dbg) (NVIDIA)", "Linux Perf", "Linux Tests",
-        "Linux Valgrind", "Mac Builder (dbg)", "Mac10.6 Perf", "Mac10.6 Tests", "Vista Perf", "Vista Tests", "Webkit Linux", "Webkit Linux ASAN",  "Webkit Linux (dbg)", "Webkit Linux (deps)", "Webkit Linux 32",
-        "Webkit Mac Builder", "Webkit Mac Builder (dbg)", "Webkit Mac Builder (deps)", "Webkit Mac10.6", "Webkit Mac10.6 (dbg)",
-        "Webkit Mac10.6 (deps)", "Webkit Mac10.7", "Webkit Win", "Webkit Win (dbg)(1)", "Webkit Win (dbg)(2)", "Webkit Win (deps)", "Webkit Win Builder", "Webkit Win Builder (dbg)",
-        "Webkit Win Builder (deps)", "Webkit Win7", "Win (dbg)", "Win Builder"];
-    var expectedBuilders = [["Webkit Linux (deps)", 2], ["Webkit Mac10.6 (deps)"], ["Webkit Win (deps)"]];
+        "Linux Valgrind", "Mac Builder (dbg)", "Mac10.6 Perf", "Mac10.6 Tests", "Vista Perf", "Vista Tests", "WebKit Linux", "WebKit Linux ASAN",  "WebKit Linux (dbg)", "WebKit Linux (deps)", "WebKit Linux 32",
+        "WebKit Mac Builder", "WebKit Mac Builder (dbg)", "WebKit Mac Builder (deps)", "WebKit Mac10.6", "WebKit Mac10.6 (dbg)",
+        "WebKit Mac10.6 (deps)", "WebKit Mac10.7", "WebKit Win", "WebKit Win (dbg)(1)", "WebKit Win (dbg)(2)", "WebKit Win (deps)", "WebKit Win Builder", "WebKit Win Builder (dbg)",
+        "WebKit Win Builder (deps)", "WebKit Win7", "Win (dbg)", "Win Builder"];
+    var expectedBuilders = [["WebKit Linux (deps)", 2], ["WebKit Mac10.6 (deps)"], ["WebKit Win (deps)"]];
     deepEqual(generateBuildersFromBuilderList(builderList, isChromiumWebkitDepsTestRunner), expectedBuilders);
 });
 
@@ -580,10 +580,10 @@ test('generateChromiumDepsCrosGTestBuildersFromBuilderList', 1, function() {
 
 test('generateChromiumTipOfTreeGTestBuildersFromBuilderList', 1, function() {
     var builderList = ["Chrome Frame Tests", "GPU Linux (NVIDIA)", "GPU Linux (dbg) (NVIDIA)", "GPU Mac", "GPU Mac (dbg)", "GPU Win7 (NVIDIA)", "GPU Win7 (dbg) (NVIDIA)", "Linux Perf",
-        "Linux Tests", "Linux Valgrind", "Mac Builder (dbg)", "Mac10.6 Perf", "Mac10.6 Tests", "Vista Perf", "Vista Tests", "Webkit Linux", "Webkit Linux (dbg)", "Webkit Linux (deps)",
-        "Webkit Linux 32", "Webkit Mac Builder", "Webkit Mac Builder (dbg)", "Webkit Mac Builder (deps)",
-        "Webkit Mac10.6", "Webkit Mac10.6 (dbg)", "Webkit Mac10.6 (deps)", "Webkit Mac10.7", "Webkit Win", "Webkit Win (dbg)(1)", "Webkit Win (dbg)(2)",
-        "Webkit Win (deps)", "Webkit Win Builder", "Webkit Win Builder (dbg)", "Webkit Win Builder (deps)", "Webkit Win7", "Win (dbg)", "Win Builder"];
+        "Linux Tests", "Linux Valgrind", "Mac Builder (dbg)", "Mac10.6 Perf", "Mac10.6 Tests", "Vista Perf", "Vista Tests", "WebKit Linux", "WebKit Linux (dbg)", "WebKit Linux (deps)",
+        "WebKit Linux 32", "WebKit Mac Builder", "WebKit Mac Builder (dbg)", "WebKit Mac Builder (deps)",
+        "WebKit Mac10.6", "WebKit Mac10.6 (dbg)", "WebKit Mac10.6 (deps)", "WebKit Mac10.7", "WebKit Win", "WebKit Win (dbg)(1)", "WebKit Win (dbg)(2)",
+        "WebKit Win (deps)", "WebKit Win Builder", "WebKit Win Builder (dbg)", "WebKit Win Builder (deps)", "WebKit Win7", "Win (dbg)", "Win Builder"];
     var expectedBuilders = [['Linux Tests', BuilderGroup.DEFAULT_BUILDER], ['Mac10.6 Tests'], ['Vista Tests'], ['Win (dbg)']];
     deepEqual(generateBuildersFromBuilderList(builderList, isChromiumTipOfTreeGTestRunner), expectedBuilders);
 });
