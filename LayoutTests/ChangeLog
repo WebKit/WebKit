@@ -1,3 +1,9 @@
+2012-10-12  Adam Barth  <abarth@webkit.org>
+
+        Fix lint error in TestExpectations.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-12  Simon Fraser  <simon.fraser@apple.com>
 
         Fix GraphicsLayerCA visible rect computation in the face of perspective and preserve-3d
