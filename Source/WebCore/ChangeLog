@@ -1,3 +1,12 @@
+2012-10-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Not reviewed.
+
+        Updated bindings test results.
+
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::JSTestEventTarget::getOwnPropertySlotByIndex):
+
 2012-10-12  Geoffrey Garen  <ggaren@apple.com>
 
         I pity da foo' who's converting numbers to strings
