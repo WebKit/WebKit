@@ -1,5 +1,11 @@
 2012-10-12  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Windows rebaseline afer r130411.
+
+        * platform/win/editing/pasteboard/paste-text-008-expected.txt:
+
+2012-10-12  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Test passes, unskip, update results.
 
         * platform/win/TestExpectations:
