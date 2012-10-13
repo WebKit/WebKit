@@ -119,15 +119,6 @@
     // Introduced in DOM4
     boolean contains(in [Optional=DefaultIsUndefined] Node other);
 
-#if 0
-    DOMObject          getFeature(in DOMString feature, 
-                                  in DOMString version);
-    DOMUserData        setUserData(in DOMString key, 
-                                   in DOMUserData data, 
-                                   in UserDataHandler handler);
-    DOMUserData        getUserData(in DOMString key);
-#endif /* 0 */
-
     // IE extensions
     readonly attribute Element          parentElement;
 

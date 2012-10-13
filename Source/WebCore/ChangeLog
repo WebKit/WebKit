@@ -1,3 +1,15 @@
+2012-10-13  Adam Barth  <abarth@webkit.org>
+
+        Remove dead code in Node.idl
+        https://bugs.webkit.org/show_bug.cgi?id=99237
+
+        Reviewed by Maciej Stachowiak.
+
+        We don't implement this feature. This code is dead and should be
+        removed.
+
+        * dom/Node.idl:
+
 2012-10-12  Simon Fraser  <simon.fraser@apple.com>
 
         Fix GraphicsLayerCA visible rect computation in the face of perspective and preserve-3d
