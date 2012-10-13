@@ -35,29 +35,92 @@ var BACKWARD = 'backward';
 var GTEST_MODIFIERS = ['FLAKY', 'FAILS', 'MAYBE', 'DISABLED'];
 var TEST_URL_BASE_PATH_TRAC = 'http://trac.webkit.org/browser/trunk/LayoutTests/';
 var TEST_URL_BASE_PATH = "http://svn.webkit.org/repository/webkit/trunk/LayoutTests/";
+var EXPECTATIONS_URL_BASE_PATH = TEST_URL_BASE_PATH + "platform/";
 var TEST_RESULTS_BASE_PATH = 'http://build.chromium.org/f/chromium/layout_test_results/';
 var GPU_RESULTS_BASE_PATH = 'http://chromium-browser-gpu-tests.commondatastorage.googleapis.com/runs/'
 
-// FIXME: These platform names should probably be changed to match the directories in LayoutTests/platform
-// instead of matching the values we use in the TestExpectations file.
-var PLATFORMS = ['LION', 'SNOWLEOPARD', 'XP', 'VISTA', 'WIN7', 'LUCID', 'ANDROID', 'APPLE_LION', 'APPLE_SNOWLEOPARD', 'APPLE_XP', 'APPLE_WIN7', 'GTK_LINUX', 'QT_LINUX', 'EFL'];
-var PLATFORM_UNIONS = {
-    'MAC': ['SNOWLEOPARD', 'LION'],
-    'WIN': ['XP', 'WIN7'],
-    'LINUX': ['LUCID']
-}
-
-// FIXME: Make the g_allExpectations data structure explicitly list every platform instead of having a fallbacks concept.
-var PLATFORM_FALLBACKS = {
-    'WIN': 'ALL',
-    'XP': 'WIN',
-    'WIN7': 'WIN',
-    'MAC': 'ALL',
-    'LION': 'MAC',
-    'SNOWLEOPARD': 'MAC',
-    'LINUX': 'ALL',
-    'LUCID': 'LINUX'
+var PLATFORMS = {
+    'CHROMIUM': {
+        expectationsDirectory: 'chromium',
+        subPlatforms: {
+            'LION': { fallbackPlatforms: ['CHROMIUM'] },
+            'SNOWLEOPARD': { fallbackPlatforms: ['CHROMIUM'] },
+            'XP': { fallbackPlatforms: ['CHROMIUM'] },
+            'VISTA': { fallbackPlatforms: ['CHROMIUM'] },
+            'WIN7': { fallbackPlatforms: ['CHROMIUM'] },
+            'LUCID': { fallbackPlatforms: ['CHROMIUM'] },
+            'ANDROID': { fallbackPlatforms: ['CHROMIUM'], expectationsDirectory: 'chromium-android' }
+        },
+        platformModifierUnions: {
+            'MAC': ['CHROMIUM_LION', 'CHROMIUM_SNOWLEOPARD'],
+            'WIN': ['CHROMIUM_XP', 'CHROMIUM_VISTA', 'CHROMIUM_WIN7'],
+            'LINUX': ['CHROMIUM_LUCID']
+        }
+    },
+    'APPLE': {
+        subPlatforms: {
+            'MAC': {
+                expectationsDirectory: 'mac',
+                subPlatforms: {
+                    'LION': {
+                        expectationsDirectory: 'mac-lion',
+                        subPlatforms: {
+                            'WK1': { fallbackPlatforms: ['APPLE_MAC_LION', 'APPLE_MAC'] },
+                            'WK2': { fallbackPlatforms: ['APPLE_MAC_LION', 'APPLE_MAC', 'WK2'] }
+                        }
+                    },
+                    'SNOWLEOPARD': {
+                        expectationsDirectory: 'mac-snowleopard',
+                        subPlatforms: {
+                            'WK1': { fallbackPlatforms: ['APPLE_MAC_SNOWLEOPARD', 'APPLE_MAC'] },
+                            'WK2': { fallbackPlatforms: ['APPLE_MAC_SNOWLEOPARD', 'APPLE_MAC', 'WK2'] }
+                        }
+                    }
+                }
+            },
+            'WIN': {
+                expectationsDirectory: 'win',
+                subPlatforms: {
+                    'XP': { fallbackPlatforms: ['APPLE_WIN'] },
+                    'WIN7': { fallbackPlatforms: ['APPLE_WIN'] }
+                }
+            }
+        }
+    },
+    'GTK': {
+        expectationsDirectory: 'gtk',
+        subPlatforms: {
+            'LINUX': {
+                subPlatforms: {
+                    'WK1': { fallbackPlatforms: ['GTK'] },
+                    'WK2': { fallbackPlatforms: ['GTK', 'WK2'], expectationsDirectory: 'gtk-wk2' }
+                }
+            }
+        }
+    },
+    'QT': {
+        expectationsDirectory: 'qt',
+        subPlatforms: {
+            'LINUX': { fallbackPlatforms: ['QT'] }
+        }
+    },
+    'EFL': {
+        expectationsDirectory: 'efl',
+        subPlatforms: {
+            'LINUX': {
+                subPlatforms: {
+                    'WK1': { fallbackPlatforms: ['EFL'], expectationsDirectory: 'efl-wk1' },
+                    'WK2': { fallbackPlatforms: ['EFL', 'WK2'], expectationsDirectory: 'efl-wk2' }
+                }
+            }
+        }
+    },
+    'WK2': {
+        basePlatform: true,
+        expectationsDirectory: 'wk2'
+    }
 };
+
 var BUILD_TYPES = {'DEBUG': 'DBG', 'RELEASE': 'RELEASE'};
 var MIN_SECONDS_FOR_SLOW_TEST = 4;
 var MIN_SECONDS_FOR_SLOW_TEST_DEBUG = 2 * MIN_SECONDS_FOR_SLOW_TEST;
@@ -217,6 +280,22 @@ var g_testToResultsMap = {};
 // Tests that the user wants to update expectations for.
 var g_confirmedTests = {};
 
+function traversePlatformsTree(callback)
+{
+    function traverse(platformObject, parentPlatform) {
+        Object.keys(platformObject).forEach(function(platformName) {
+            var platform = platformObject[platformName];
+            platformName = parentPlatform ? parentPlatform + platformName : platformName;
+
+            if (platform.subPlatforms)
+                traverse(platform.subPlatforms, platformName + '_');
+            else if (!platform.basePlatform)
+                callback(platform, platformName);
+        });
+    }
+    traverse(PLATFORMS, null);
+}
+
 function createResultsObjectForTest(test, builder)
 {
     return {
@@ -251,45 +330,52 @@ function matchingElement(stringToMatch, elementsMap)
     }
 }
 
+function determineWKPlatform(builderName, basePlatform)
+{
+    var isWK2Builder = stringContains(builderName, 'WK2') || stringContains(builderName, 'WEBKIT2');
+    return basePlatform + (isWK2Builder ? '_WK2' : '_WK1');
+}
+
 function nonChromiumPlatform(builderNameUpperCase)
 {
-    if (stringContains(builderNameUpperCase, 'LION'))
-        return 'APPLE_LION';
-    if (stringContains(builderNameUpperCase, 'SNOWLEOPARD'))
-        return 'APPLE_SNOWLEOPARD';
     if (stringContains(builderNameUpperCase, 'WINDOWS 7'))
-        return 'APPLE_WIN7';
+        return 'APPLE_WIN_WIN7';
     if (stringContains(builderNameUpperCase, 'WINDOWS XP'))
-        return 'APPLE_XP';
-    if (stringContains(builderNameUpperCase, 'GTK LINUX'))
-        return 'GTK_LINUX';
+        return 'APPLE_WIN_XP';
     if (stringContains(builderNameUpperCase, 'QT LINUX'))
         return 'QT_LINUX';
+
+    if (stringContains(builderNameUpperCase, 'LION'))
+        return determineWKPlatform(builderNameUpperCase, 'APPLE_MAC_LION');
+    if (stringContains(builderNameUpperCase, 'SNOWLEOPARD'))
+        return determineWKPlatform(builderNameUpperCase, 'APPLE_MAC_SNOWLEOPARD');
+    if (stringContains(builderNameUpperCase, 'GTK LINUX'))
+        return determineWKPlatform(builderNameUpperCase, 'GTK_LINUX');
     if (stringContains(builderNameUpperCase, 'EFL'))
-        return 'EFL';
+        return determineWKPlatform(builderNameUpperCase, 'EFL_LINUX');
 }
 
 function chromiumPlatform(builderNameUpperCase)
 {
     if (stringContains(builderNameUpperCase, 'MAC')) {
         if (stringContains(builderNameUpperCase, '10.7'))
-            return 'LION';
+            return 'CHROMIUM_LION';
         // The webkit.org 'Chromium Mac Release (Tests)' bot runs SnowLeopard.
-        return 'SNOWLEOPARD';
+        return 'CHROMIUM_SNOWLEOPARD';
     }
     if (stringContains(builderNameUpperCase, 'WIN7'))
-        return 'WIN7';
+        return 'CHROMIUM_WIN7';
     if (stringContains(builderNameUpperCase, 'VISTA'))
-        return 'VISTA';
+        return 'CHROMIUM_VISTA';
     if (stringContains(builderNameUpperCase, 'WIN') || stringContains(builderNameUpperCase, 'XP'))
-        return 'XP';
+        return 'CHROMIUM_XP';
     if (stringContains(builderNameUpperCase, 'LINUX'))
-        return 'LUCID';
+        return 'CHROMIUM_LUCID';
     if (stringContains(builderNameUpperCase, 'ANDROID'))
-        return 'ANDROID';
+        return 'CHROMIUM_ANDROID';
     // The interactive bot is XP, but doesn't have an OS in it's name.
     if (stringContains(builderNameUpperCase, 'INTERACTIVE'))
-        return 'XP';
+        return 'CHROMIUM_XP';
 }
 
 
@@ -338,20 +424,64 @@ function expectationsFileStringForResult(result)
     return expectationsMap()[result];
 }
 
+var TestTrie = function(builders, resultsByBuilder)
+{
+    this._trie = {};
+
+    for (var builder in builders) {
+        var testsForBuilder = resultsByBuilder[builder].tests;
+        for (var test in testsForBuilder)
+            this._addTest(test.split('/'), this._trie);
+    }
+}
+
+TestTrie.prototype.forEach = function(callback, startingTriePath)
+{
+    var testsTrie = this._trie;
+    if (startingTriePath) {
+        var splitPath = startingTriePath.split('/');
+        while (splitPath.length && testsTrie)
+            testsTrie = testsTrie[splitPath.shift()];
+    }
+
+    if (!testsTrie)
+        return;
+
+    function traverse(trie, triePath) {
+        if (trie == true)
+            callback(triePath);
+        else {
+            for (var member in trie)
+                traverse(trie[member], triePath ? triePath + '/' + member : member);
+        }
+    }
+    traverse(testsTrie, startingTriePath);
+}
+
+TestTrie.prototype._addTest = function(test, trie)
+{
+    var rootComponent = test.shift();
+    if (!test.length) {
+        if (!trie[rootComponent])
+            trie[rootComponent] = true;
+        return;
+    }
+
+    if (!trie[rootComponent] || trie[rootComponent] == true)
+        trie[rootComponent] = {};
+    this._addTest(test, trie[rootComponent]);
+}
+
 // Map of all tests to true values. This is just so we can have the list of
 // all tests across all the builders.
-var g_allTests;
+var g_allTestsTrie;
 
-// Returns a map of all tests to true values. This is just so we can have the
-// list of all tests across all the builders.
-function getAllTests()
+function getAllTestsTrie()
 {
-    if (!g_allTests) {
-        g_allTests = {};
-        for (var builder in g_builders)
-            addTestsForBuilder(builder, g_allTests);
-    }
-    return g_allTests;
+    if (!g_allTestsTrie)
+        g_allTestsTrie = new TestTrie(g_builders, g_resultsByBuilder);
+
+    return g_allTestsTrie;
 }
 
 // Returns an array of tests to be displayed in the individual tests view.
@@ -402,14 +532,13 @@ function individualTestsForSubstringList()
         if (path.match(/^\s*$/))
             continue;
 
-        var allTests = getAllTests();
         var hasAnyMatches = false;
-        for (var test in allTests) {
-            if (caseInsensitiveContains(test, path)) {
-                testsMap[test] = 1;
+        getAllTestsTrie().forEach(function(triePath) {
+            if (caseInsensitiveContains(triePath, path)) {
+                testsMap[triePath] = 1;
                 hasAnyMatches = true;
             }
-        }
+        });
 
         // If a path doesn't match any tests, then assume it's a full path
         // to a test that passes on all builders.
@@ -442,16 +571,17 @@ function isFastTest(resultsForTest)
 function allTestsWithResult(result)
 {
     processTestRunsForAllBuilders();
-    var tests = getAllTests();
     var retVal = [];
-    for (var test in tests) {
-        for (var i = 0; i < g_testToResultsMap[test].length; i++) {
-            if (g_testToResultsMap[test][i].actualResults.indexOf(result) != -1) {
-                retVal.push(test);
+
+    getAllTestsTrie().forEach(function(triePath) {
+        for (var i = 0; i < g_testToResultsMap[triePath].length; i++) {
+            if (g_testToResultsMap[triePath][i].actualResults.indexOf(result) != -1) {
+                retVal.push(triePath);
                 break;
             }
         }
-    }
+    });
+
     return retVal;
 }
 
@@ -469,7 +599,9 @@ function addTestsForBuilder(builder, testMapToPopulate)
 // e.g. g_allTestsByPlatformAndBuildType['XP']['DEBUG'] will have the union
 // of all tests run on the xp-debug builders.
 var g_allTestsByPlatformAndBuildType = {};
-PLATFORMS.forEach(function(platform) { g_allTestsByPlatformAndBuildType[platform] = {}; });
+traversePlatformsTree(function(platform, platformName) {
+    g_allTestsByPlatformAndBuildType[platformName] = {};
+});
 
 // Map of all tests to true values by platform and build type.
 // e.g. g_allTestsByPlatformAndBuildType['WIN']['DEBUG'] will have the union
@@ -527,45 +659,14 @@ function populateExpectationsData(resultsObject)
     resultsObject.isWontFixSkip = stringContains(expectations.modifiers, 'WONTFIX') || stringContains(expectations.modifiers, 'SKIP'); 
 }
 
-function addTestToAllExpectations(test, expectations, modifiers)
+function platformObjectForName(platformName)
 {
-    if (!g_allExpectations[test])
-        g_allExpectations[test] = {};
-
-    var allPlatforms = [];
-    var allBuildTypes = [];
-    modifiers.split(' ').forEach(function(modifier) {
-        if (modifier in BUILD_TYPES) {
-            allBuildTypes.push(modifier);
-            return;
-        }
-        
-        if (PLATFORMS.indexOf(modifier) != -1) {
-            allPlatforms.push(modifier);
-            return;
-        }
-        
-        if (modifier in PLATFORM_UNIONS) {
-            PLATFORM_UNIONS[modifier].forEach(function(platform) {
-                allPlatforms.push(platform);
-            });
-        }
-    })
-    
-    if (!allPlatforms.length)
-        allPlatforms = PLATFORMS;
-        
-    if (!allBuildTypes.length)
-        allBuildTypes = Object.keys(BUILD_TYPES);
-    
-    allPlatforms.forEach(function(platform) {
-        if (!g_allExpectations[test][platform])
-            g_allExpectations[test][platform] = {};
-
-        allBuildTypes.forEach(function(buildType) {
-            g_allExpectations[test][platform][buildType] = {modifiers: modifiers, expectations: expectations};
-        }); 
+    var platformsList = platformName.split("_");
+    var platformObject = PLATFORMS[platformsList.shift()];
+    platformsList.forEach(function(platformName) {
+        platformObject = platformObject.subPlatforms[platformName];
     });
+    return platformObject;
 }
 
 // Data structure to hold the processed expectations.
@@ -579,13 +680,10 @@ function addTestToAllExpectations(test, expectations, modifiers)
 // buildType, then ALL.
 var g_allExpectations;
 
-function parsedExpectations()
+function getParsedExpectations(data)
 {
-    if (!g_expectations)
-        return [];
-    
     var expectations = [];
-    var lines = g_expectations.split('\n');
+    var lines = data.split('\n');
     lines.forEach(function(line) {
         line = trimString(line);
         if (!line || startsWith(line, '#'))
@@ -686,41 +784,101 @@ function parsedExpectations()
     return expectations;
 }
 
-function processExpectations()
+
+function addTestToAllExpectationsForPlatform(test, platformName, expectations, modifiers)
 {
-    if (g_allExpectations)
-        return g_allExpectations;
+    if (!g_allExpectations[test])
+        g_allExpectations[test] = {};
 
-    g_allExpectations = {};
+    if (!g_allExpectations[test][platformName])
+        g_allExpectations[test][platformName] = {};
 
-    var expectationsArray = parsedExpectations();
+    var allBuildTypes = [];
+    modifiers.split(' ').forEach(function(modifier) {
+        if (modifier in BUILD_TYPES) {
+            allBuildTypes.push(modifier);
+            return;
+        }
+    });
+    if (!allBuildTypes.length)
+        allBuildTypes = Object.keys(BUILD_TYPES);
+
+    allBuildTypes.forEach(function(buildType) {
+        g_allExpectations[test][platformName][buildType] = {modifiers: modifiers, expectations: expectations};
+    });
+}
+
+function processExpectationsForPlatform(platformObject, platformName, expectationsArray)
+{
+    if (!g_allExpectations)
+        g_allExpectations = {};
+
+    if (!expectationsArray)
+        return;
 
     // Sort the array to hit more specific paths last. More specific
     // paths (e.g. foo/bar/baz.html) override entries for less-specific ones (e.g. foo/bar).
     expectationsArray.sort(alphanumericCompare('path'));
 
-    var allTests = getAllTests();
     for (var i = 0; i < expectationsArray.length; i++) {
         var path = expectationsArray[i].path;
         var modifiers = expectationsArray[i].modifiers;
         var expectations = expectationsArray[i].expectations;
 
-        var pathMatchesAnyTest = false;
-        if (allTests[path]) {
-            pathMatchesAnyTest = true;
-            addTestToAllExpectations(path, expectations, modifiers);
-        } else {
-            for (var test in allTests) {
-                if (startsWith(test, path)) {
-                    pathMatchesAnyTest = true;
-                    addTestToAllExpectations(test, expectations, modifiers);
-                }
-            }
+        var shouldProcessExpectation = false;
+        var hasPlatformModifierUnions = false;
+        if (platformObject.fallbackPlatforms) {
+            platformObject.fallbackPlatforms.forEach(function(fallbackPlatform) {
+                if (shouldProcessExpectation)
+                    return;
+
+                var fallbackPlatformObject = platformObjectForName(fallbackPlatform);
+                if (!fallbackPlatformObject.platformModifierUnions)
+                    return;
+
+                modifiers.split(' ').forEach(function(modifier) {
+                    if (modifier in fallbackPlatformObject.platformModifierUnions) {
+                        hasPlatformModifierUnions = true;
+                        if (fallbackPlatformObject.platformModifierUnions[modifier].indexOf(platformName) != -1)
+                            shouldProcessExpectation = true;
+                    }
+                });
+            });
         }
 
-        if (!pathMatchesAnyTest)
-            addTestToAllExpectations(path, expectations, modifiers);
+        if (!hasPlatformModifierUnions)
+            shouldProcessExpectation = true;
+
+        if (!shouldProcessExpectation)
+            continue;
+
+        getAllTestsTrie().forEach(function(triePath) {
+            addTestToAllExpectationsForPlatform(triePath, platformName, expectations, modifiers);
+        }, path);
     }
+}
+
+function processExpectations()
+{
+    // FIXME: An expectations-by-platform object should be passed into this function rather than checking
+    // for a global object. That way this function can be better tested and meaningful errors can
+    // be reported when expectations for a given platform are not found in that object.
+    if (!g_expectationsByPlatform)
+        return;
+
+    traversePlatformsTree(function(platform, platformName) {
+        if (platform.fallbackPlatforms) {
+            platform.fallbackPlatforms.forEach(function(fallbackPlatform) {
+                if (fallbackPlatform in g_expectationsByPlatform)
+                    processExpectationsForPlatform(platform, platformName, g_expectationsByPlatform[fallbackPlatform]);
+            });
+        }
+
+        if (platformName in g_expectationsByPlatform)
+            processExpectationsForPlatform(platform, platformName, g_expectationsByPlatform[platformName]);
+    });
+
+    g_expectationsByPlatform = undefined;
 }
 
 function processMissingTestsWithExpectations(builder, platform, buildType)
@@ -776,8 +934,8 @@ function processTestRunsForBuilder(builderName)
         return;
     }
 
-    var start = Date.now();
     processExpectations();
+    var start = Date.now();
 
     var buildInfo = platformAndBuildType(builderName);
     var platform = buildInfo.platform;
@@ -1417,7 +1575,29 @@ function realModifiers(modifierString)
 {
     var modifiers = modifierString.split(' ');;
     return modifiers.filter(function(modifier) {
-        return !(modifier in BUILD_TYPES) && PLATFORMS.indexOf(modifier) == -1 && !(modifier in PLATFORM_UNIONS) && !startsWith(modifier, 'BUG');
+        if (modifier in BUILD_TYPES || startsWith(modifier, 'BUG'))
+            return false;
+
+        var matchesPlatformOrUnion = false;
+        traversePlatformsTree(function(platform, platformName) {
+            if (matchesPlatformOrUnion)
+                return;
+
+            if (platform.fallbackPlatforms) {
+                platform.fallbackPlatforms.forEach(function(fallbackPlatform) {
+                    if (matchesPlatformOrUnion)
+                        return;
+
+                    var fallbackPlatformObject = platformObjectForName(fallbackPlatform);
+                    if (!fallbackPlatformObject.platformModifierUnions)
+                        return;
+
+                    matchesPlatformOrUnion = modifier in fallbackPlatformObject.subPlatforms || modifier in fallbackPlatformObject.platformModifierUnions;
+                });
+            }
+        });
+
+        return !matchesPlatformOrUnion;
     }).join(' ');
 }
 

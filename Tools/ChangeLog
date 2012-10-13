@@ -1,3 +1,57 @@
+2012-10-12  Zan Dobersek  <zandobersek@gmail.com>
+
+        [TestResultServer] Add support for non-Chromium TestExpectations files
+        https://bugs.webkit.org/show_bug.cgi?id=98422
+
+        Reviewed by Ojan Vafai.
+
+        Loads TestExpectations files for several other non-Chromium ports, parses them and
+        properly distributes them per various platforms.
+
+        * TestResultServer/static-dashboards/dashboard_base.js: g_expectations is replaced by
+        g_expectationsByPlatform, an object that holds raw TestExpectations file contents for
+        various platforms.
+        (requestExpectationsFiles): First traverses through the platforms tree to gather all
+        the TestExpectations files that should be loaded, then loads them in parallel.
+        (appendJSONScriptElements):
+        * TestResultServer/static-dashboards/flakiness_dashboard.js: The platforms tree is reorganized
+        to describe each platform and possible subplatforms plainly yet in detail. The PLATFORM_FALLBACKS
+        object is removed as it's not used anywhere. g_allTestsByPlatformAndBuildType is now filled by
+        traversing the platforms tree.
+        (traversePlatformsTree.traverse):
+        (traversePlatformsTree): A helper function that traverses the platforms tree, invoking
+        callback on each leaf node.
+        (determineWKPlatform): A helper function to determine whether the builder is running WebKit1 or
+        WebKit2 layer of a given platform.
+        (chromiumPlatform): Chromium-specific platforms are now properly prefixed with 'CHROMIUM_'.
+        (TestTrie): A new class that holds all the tests in a trie. The trie is constructed by iterating
+        through the tests for each builder, adding each test to the trie.
+        (TestTrie.prototype.forEach.traverse):
+        (TestTrie.prototype.forEach): A helper function that traverses the tests trie, invoking callback on each leaf.
+        (TestTrie.prototype._addTest): Aligns the test into the specified trie based on the test's path.
+        (getAllTestsTrie): Instead of in list, the problematic tests from each builder are now stored in a trie.
+        (individualTestsForSubstringList): Modified to traverse the trie instead of iterating the list.
+        (allTestsWithResult): Ditto.
+        (platformObjectForName): Splits the platform name by underscores and finds the appropriate platform object.
+        (getParsedExpectations): Now operates on the passed-in parameter rather than on a global variable.
+        (addTestToAllExpectationsForPlatform): Links expectations and modifiers to the test on the specified platform
+        and any build type the modifiers might apply to (or all build types if there are no such modifiers).
+        (processExpectationsForPlatform): Determines if the expectation should actually be processed for the given
+        platform by checking if any platform's fallback platforms support platform modifier unions and if any modifiers
+        represent such an union. If so, the expectation is then only processed if the given platform is in the union
+        the modifier presents or there are no such modifiers.
+        (processExpectations): Processes all acquired expectations by traversing the platforms tree and taking into
+        account possible fallback platforms.
+        (processTestRunsForBuilder):
+        (realModifiers.return.modifiers.filter):
+        (realModifiers): Modifiers other than build configurations and bug handles are now filtered out only if they
+        are present in the platform's platform modifier unions or represent subplatforms of a platform that supports
+        platform modifier unions.
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js: The test cases are updated and expanded
+        where necessary to cover the changes.
+        (resetGlobals):
+        (test): Added a TestTrie test.
+
 2012-10-12  Dirk Pranke  <dpranke@chromium.org>
 
         Update chromium bot names in garden-o-matic.
