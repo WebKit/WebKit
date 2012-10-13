@@ -2317,9 +2317,6 @@ css3/flexbox/flexbox-baseline.html
 http/tests/inspector/csp-injected-content-warning-contains-stacktrace.html
 http/tests/inspector/csp-inline-warning-contains-stacktrace.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=98209
-fast/text/international/float-as-only-child-of-isolate-crash.html
-
 # HIDDEN_PAGE_DOM_TIMER_THROTTLING is disabled
 fast/dom/timer-throttling-hidden-page.html
 

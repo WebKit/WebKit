@@ -1,3 +1,10 @@
+2012-10-12  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Test passes, unskip, update results.
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/text/international/float-as-only-child-of-isolate-crash-expected.txt:
+
 2012-10-12  Jeffrey Pfau  <jpfau@apple.com>
 
         Unreviewed. Checking in fast/js/random-array-gc-stress.html as timing out.
