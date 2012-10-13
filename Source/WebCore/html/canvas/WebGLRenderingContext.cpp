@@ -1911,12 +1911,12 @@ void WebGLRenderingContext::drawArrays(GC3Denum mode, GC3Dint first, GC3Dsizei c
     if (!isGLES2Compliant())
         vertexAttrib0Simulated = simulateVertexAttrib0(first + count - 1);
     if (!isGLES2NPOTStrict())
-        handleNPOTTextures(true);
+        handleNPOTTextures("drawArrays", true);
     m_context->drawArrays(mode, first, count);
     if (!isGLES2Compliant() && vertexAttrib0Simulated)
         restoreStatesAfterVertexAttrib0Simulation();
     if (!isGLES2NPOTStrict())
-        handleNPOTTextures(false);
+        handleNPOTTextures("drawArrays", false);
     cleanupAfterGraphicsCall(true);
 }
 
@@ -1990,12 +1990,12 @@ void WebGLRenderingContext::drawElements(GC3Denum mode, GC3Dsizei count, GC3Denu
         vertexAttrib0Simulated = simulateVertexAttrib0(numElements);
     }
     if (!isGLES2NPOTStrict())
-        handleNPOTTextures(true);
+        handleNPOTTextures("drawElements", true);
     m_context->drawElements(mode, count, type, static_cast<GC3Dintptr>(offset));
     if (!isGLES2Compliant() && vertexAttrib0Simulated)
         restoreStatesAfterVertexAttrib0Simulation();
     if (!isGLES2NPOTStrict())
-        handleNPOTTextures(false);
+        handleNPOTTextures("drawElements", false);
     cleanupAfterGraphicsCall(true);
 }
 
@@ -4570,7 +4570,7 @@ WebGLGetInfo WebGLRenderingContext::getWebGLIntArrayParameter(GC3Denum pname)
     return WebGLGetInfo(Int32Array::create(value, length));
 }
 
-void WebGLRenderingContext::handleNPOTTextures(bool prepareToDraw)
+void WebGLRenderingContext::handleNPOTTextures(const char* functionName, bool prepareToDraw)
 {
     bool resetActiveUnit = false;
     for (unsigned ii = 0; ii < m_textureUnits.size(); ++ii) {
@@ -4586,6 +4586,9 @@ void WebGLRenderingContext::handleNPOTTextures(bool prepareToDraw)
             WebGLTexture* tex2D;
             WebGLTexture* texCubeMap;
             if (prepareToDraw) {
+                String msg(String("texture bound to texture unit ") + String::number(ii)
+                    + " is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete'");
+                printGLWarningToConsole(functionName, msg.utf8().data());
                 tex2D = m_blackTexture2D.get();
                 texCubeMap = m_blackTextureCubeMap.get();
             } else {

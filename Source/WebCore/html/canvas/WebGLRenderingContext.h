@@ -541,7 +541,7 @@ public:
                            GC3Denum format, GC3Denum type,
                            Image* image, bool flipY, bool premultiplyAlpha, ExceptionCode&);
 
-    void handleNPOTTextures(bool prepareToDraw);
+    void handleNPOTTextures(const char*, bool);
 
     void createFallbackBlackTextures1x1();
 

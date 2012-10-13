@@ -1,3 +1,23 @@
+2012-10-13  Gregg Tavares  <gman@google.com>
+
+        Add warning for unrenderable textures
+        https://bugs.webkit.org/show_bug.cgi?id=99235
+
+        Reviewed by Kenneth Russell.
+
+        Unrenderable textures are often hard to debug. Adds a message to that
+        appears in the JavaScript console to help developers find the issue.
+
+        No new tests as no new functionality.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContext::drawArrays):
+        (WebCore::WebGLRenderingContext::drawElements):
+        (WebCore::WebGLRenderingContext::handleNPOTTextures):
+        * html/canvas/WebGLRenderingContext.h:
+        (WebGLRenderingContext):
+
 2012-10-13  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.
