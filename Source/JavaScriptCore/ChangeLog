@@ -1,3 +1,15 @@
+2012-10-12  Kangil Han  <kangil.han@samsung.com>
+
+        Fix build error on DFGSpeculativeJIT32_64.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=99234
+
+        Reviewed by Anders Carlsson.
+
+        Seems BUG 98608 causes build error on 32bit machine so fix it.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-10-12  Filip Pizlo  <fpizlo@apple.com>
 
         Contiguous array allocation should always be inlined

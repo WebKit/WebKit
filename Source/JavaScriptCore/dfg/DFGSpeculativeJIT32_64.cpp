@@ -3625,7 +3625,7 @@ void SpeculativeJIT::compile(Node& node)
             m_jit.subPtr(scratchGPR, storageGPR);
             emitAllocateBasicJSObject<JSArray, MarkedBlock::None>(
                 TrustedImmPtr(globalObject->arrayStructure()), resultGPR, scratchGPR,
-                storageGPR, slowCases);
+                storageGPR, sizeof(JSArray), slowCases);
             
             m_jit.store32(sizeGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()));
             m_jit.store32(sizeGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfVectorLength()));
