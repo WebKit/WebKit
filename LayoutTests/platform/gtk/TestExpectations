@@ -313,6 +313,9 @@ webkit.org/b/71849 http/tests/security/webgl-remote-read-remote-image-allowed-wi
 webkit.org/b/71849 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [ Skip ]
 webkit.org/b/71849 transforms/3d [ Skip ]
 
+# LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
+compositing/visible-rect [ Skip ]
+
 # Vibration API support not yet.
 webkit.org/b/99029 fast/dom/navigator-vibration.html [ Failure ]
 

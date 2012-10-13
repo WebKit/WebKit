@@ -1,3 +1,30 @@
+2012-10-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Add some initial visible rect tests and tweak the visible wash layer
+        https://bugs.webkit.org/show_bug.cgi?id=99095
+
+        Reviewed by Tim Horton.
+
+        Add some tests of the GraphicsLayerCA visibleRect for simple cases.
+        
+        Skip these tests on platforms that don't log layer visible rects
+        (all non-Mac).
+
+        * compositing/visible-rect/2d-transformed-expected.txt: Added.
+        * compositing/visible-rect/2d-transformed.html: Added.
+        * compositing/visible-rect/clipped-by-viewport-expected.txt: Added.
+        * compositing/visible-rect/clipped-by-viewport.html: Added.
+        * compositing/visible-rect/clipped-visible-rect-expected.txt: Added.
+        * compositing/visible-rect/clipped-visible-rect.html: Added.
+        * platform/chromium-android/TestExpectations:
+        * platform/chromium/TestExpectations:
+        * platform/chromium/virtual/softwarecompositing/TestExpectations: Added.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2012-10-12  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Windows rebaseline afer r130411.

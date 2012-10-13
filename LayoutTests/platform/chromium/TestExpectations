@@ -671,6 +671,10 @@ printing/compositing-layer-printing.html [ WontFix ]
 printing/media-queries-print.html [ WontFix ]
 printing/page-rule-in-media-query.html [ WontFix ]
 
+# LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
+compositing/visible-rect [ Skip ]
+platform/chromium/virtual/softwarecompositing/visible-rect [ Skip ]
+
 # Chrome doesn't call the willCacheResponse callback (a method
 # of ResourceHandleClient).  That function is Mac-specific.
 http/tests/misc/willCacheResponse-delegate-callback.html [ WontFix ]

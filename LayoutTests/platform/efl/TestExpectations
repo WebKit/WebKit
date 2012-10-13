@@ -1077,6 +1077,9 @@ webkit.org/b/79766 compositing/geometry/bounds-ignores-hidden-dynamic-negzindex.
 webkit.org/b/79766 compositing/geometry/bounds-ignores-hidden-dynamic.html [ Failure ]
 webkit.org/b/79766 compositing/geometry/bounds-ignores-hidden.html [ Failure ]
 
+# LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
+compositing/visible-rect [ Skip ]
+
 # EFL's LayoutTestController does not implement displayInvalidatedRegion
 webkit.org/b/86727 compositing/plugins/invalidate_rect.html [ Failure ]
 

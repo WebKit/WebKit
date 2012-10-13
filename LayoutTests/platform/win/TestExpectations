@@ -1856,6 +1856,9 @@ compositing/rtl/rtl-fixed-overflow-scrolled.html
 compositing/rtl/rtl-fixed-overflow.html
 compositing/rtl/rtl-fixed.html
 
+# LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
+compositing/visible-rect [ Skip ]
+
 # Asserts in RenderLayerBacking::paintIntoLayer
 # https://bugs.webkit.org/show_bug.cgi?id=88149
 compositing/backing/no-backing-foreground-layer.html

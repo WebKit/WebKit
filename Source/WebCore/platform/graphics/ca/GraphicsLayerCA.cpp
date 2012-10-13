@@ -945,6 +945,22 @@ void GraphicsLayerCA::recursiveCommitChanges(const TransformState& state, float 
     m_visibleRect = clipRectForSelf;
     
 #ifdef VISIBLE_TILE_WASH
+    // Use having a transform as a key to making the tile wash layer. If every layer gets a wash,
+    // they start to obscure useful information.
+    if (!m_transform.isIdentity() && !m_visibleTileWashLayer) {
+        static Color washFillColor(255, 0, 0, 50);
+        static Color washBorderColor(255, 0, 0, 100);
+        
+        m_visibleTileWashLayer = PlatformCALayer::create(PlatformCALayer::LayerTypeLayer, this);
+        String name = String::format("Visible Tile Wash Layer %p", m_visibleTileWashLayer->platformLayer());
+        m_visibleTileWashLayer->setName(name);
+        m_visibleTileWashLayer->setAnchorPoint(FloatPoint3D(0, 0, 0));
+        m_visibleTileWashLayer->setBorderColor(washBorderColor);
+        m_visibleTileWashLayer->setBorderWidth(8);
+        m_visibleTileWashLayer->setBackgroundColor(washFillColor);
+        noteSublayersChanged();
+    }
+
     if (m_visibleTileWashLayer)
         m_visibleTileWashLayer->setFrame(clipRectForSelf);
 #endif
@@ -2470,27 +2486,6 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer, float pageScale
     m_layer = PlatformCALayer::create(useTiledLayer ? PlatformCALayer::LayerTypeWebTiledLayer : PlatformCALayer::LayerTypeWebLayer, this);
     m_usingTiledLayer = useTiledLayer;
     
-#ifdef VISIBLE_TILE_WASH
-    if (useTiledLayer) {
-        if (!m_visibleTileWashLayer) {
-            static Color washFillColor(255, 0, 0, 50);
-            static Color washBorderColor(255, 0, 0, 100);
-            
-            m_visibleTileWashLayer = PlatformCALayer::create(PlatformCALayer::LayerTypeLayer, this);
-            String name = String::format("Visible Tile Wash Layer %p", m_visibleTileWashLayer->platformLayer());
-            m_visibleTileWashLayer->setName(name);
-            m_visibleTileWashLayer->setAnchorPoint(FloatPoint3D(0, 0, 0));
-            m_visibleTileWashLayer->setBorderColor(washBorderColor);
-            m_visibleTileWashLayer->setBorderWidth(8);
-            m_visibleTileWashLayer->setBackgroundColor(washFillColor);
-        }
-    } else {
-        if (m_visibleTileWashLayer)
-            m_visibleTileWashLayer->removeFromSuperlayer();
-        m_visibleTileWashLayer = 0;
-    }
-#endif
-
     m_layer->adoptSublayers(oldLayer.get());
 
 #ifdef VISIBLE_TILE_WASH

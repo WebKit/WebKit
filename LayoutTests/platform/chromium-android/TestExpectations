@@ -68,6 +68,9 @@ crbug.com/135877 http/tests/canvas/webgl
 crbug.com/135877 platform/chromium/virtual/gpu/fast/canvas/webgl
 crbug.com/135877 platform/chromium/virtual/threaded/compositing/webgl
 
+# LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
+compositing/visible-rect [ Skip ]
+
 # Causes server error. Not feasible to fix because this is a behavior of Apache server.
 webkit.org/b/95378 fast/encoding/percent-escaping.html [ WontFix ]
 

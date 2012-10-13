@@ -1,3 +1,25 @@
+2012-10-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Add some initial visible rect tests and tweak the visible wash layer
+        https://bugs.webkit.org/show_bug.cgi?id=99095
+
+        Reviewed by Tim Horton.
+
+        Make the m_visibleTileWashLayer more useful by showing it for all
+        layers with transforms, not just tiled layers. This is a debugging
+        layer normally disabled, but enabled by #defining VISIBLE_TILE_WASH.
+
+        Tests: compositing/visible-rect/2d-transformed.html
+               compositing/visible-rect/3d-transformed.html
+               compositing/visible-rect/clipped-by-viewport copy.html
+               compositing/visible-rect/clipped-by-viewport.html
+               compositing/visible-rect/clipped-visible-rect.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+
 2012-10-12  Pablo Flouret  <pablof@motorola.com>
 
         Teach GeneratorGObject about [ImplementedAs] extended attribute in functions

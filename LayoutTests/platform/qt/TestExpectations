@@ -182,6 +182,10 @@ fast/regions/style-scoped-in-flow.html
 # Accelerated compositing is disabled for elements in a RenderFlowThread webkit.org/b/84900
 compositing/regions/webkit-flow-renderer-layer-compositing.html
 
+# LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
+compositing/visible-rect [ Skip ]
+
+
 # ENABLE(SHADOW_DOM) is disabled.
 editing/shadow
 fast/dom/shadow/access-key.html
