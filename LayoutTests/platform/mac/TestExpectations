@@ -1306,3 +1306,6 @@ webkit.org/b/98837 http/tests/security/svg-image-leak.html [ Skip ]
 webkit.org/b/98456 compositing/images/truncated-direct-png-image.html [ ImageOnlyFailure ]
 
 webkit.org/b/99096 fast/canvas/webgl/arraybuffer-transfer-of-control.html [ Failure ]
+
+# Timing out on Mountain Lion WK1 release sometimes
+webkit.org/b/99221 fast/js/random-array-gc-stress.html [ Pass Timeout ]

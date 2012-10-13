@@ -1,3 +1,9 @@
+2012-10-12  Jeffrey Pfau  <jpfau@apple.com>
+
+        Unreviewed. Checking in fast/js/random-array-gc-stress.html as timing out.
+
+        * platform/mac/TestExpectations:
+
 2012-10-12  Tony Chang  <tony@chromium.org>
 
         Unreviewed, chromium-mac-snowleopard rebaseline for a slider.
