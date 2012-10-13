@@ -1,3 +1,11 @@
+2012-10-12  Ojan Vafai  <ojan@chromium.org>
+
+        Fix bot name filters now that the Chromium bots have been renamed.
+        * TestResultServer/static-dashboards/builders.js:
+        (isChromiumWebkitTipOfTreeTestRunner):
+        (isChromiumWebkitDepsTestRunner):
+        (isChromiumTipOfTreeGTestRunner):
+
 2012-10-12  Dirk Pranke  <dpranke@chromium.org>
 
         [chromium] add ML bot and update bot names

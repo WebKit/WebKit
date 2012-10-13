@@ -179,12 +179,12 @@ function isChromiumContentShellTestRunner(builder)
 
 function isChromiumWebkitTipOfTreeTestRunner(builder)
 {
-    return builder.indexOf('Webkit') != -1 && builder.indexOf('Builder') == -1 && builder.indexOf('(deps)') == -1 && builder.indexOf('ASAN') == -1;
+    return builder.indexOf('WebKit') != -1 && builder.indexOf('Builder') == -1 && builder.indexOf('(deps)') == -1 && builder.indexOf('ASAN') == -1;
 }
 
 function isChromiumWebkitDepsTestRunner(builder)
 {
-    return builder.indexOf('Webkit') != -1 && builder.indexOf('Builder') == -1 && builder.indexOf('(deps)') != -1;
+    return builder.indexOf('WebKit') != -1 && builder.indexOf('Builder') == -1 && builder.indexOf('(deps)') != -1;
 }
 
 function isChromiumDepsGTestRunner(builder)
@@ -200,7 +200,7 @@ function isChromiumDepsCrosGTestRunner(builder)
 function isChromiumTipOfTreeGTestRunner(builder)
 {
     return !isChromiumTipOfTreeGpuTestRunner(builder) && builder.indexOf('Builder') == -1 && builder.indexOf('Perf') == -1 &&
-         builder.indexOf('Webkit') == -1 && builder.indexOf('Valgrind') == -1 && builder.indexOf('Chrome Frame') == -1;
+         builder.indexOf('WebKit') == -1 && builder.indexOf('Valgrind') == -1 && builder.indexOf('Chrome Frame') == -1;
 }
 
 function isChromiumDepsAVTestRunner(builder)
