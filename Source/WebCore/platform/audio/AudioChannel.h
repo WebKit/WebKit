@@ -79,6 +79,10 @@ public:
     // How many sample-frames do we contain?
     size_t length() const { return m_length; }
 
+    // resizeSmaller() can only be called with a new length <= the current length.
+    // The data stored in the bus will remain undisturbed.
+    void resizeSmaller(size_t newLength);
+
     // Direct access to PCM sample data. Non-const accessor clears silent flag.
     float* mutableData()
     {

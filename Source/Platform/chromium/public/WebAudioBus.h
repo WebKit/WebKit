@@ -49,6 +49,10 @@ public:
     // initialize() allocates memory of the given length for the given number of channels.
     WEBKIT_EXPORT void initialize(unsigned numberOfChannels, size_t length, double sampleRate);
 
+    // resizeSmaller() can only be called after initialize() with a new length <= the initialization length.
+    // The data stored in the bus will remain undisturbed.
+    WEBKIT_EXPORT void resizeSmaller(size_t newLength);
+
     // reset() releases the memory allocated from initialize().
     WEBKIT_EXPORT void reset();
     

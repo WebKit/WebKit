@@ -1,3 +1,28 @@
+2012-10-13  Chris Rogers  <crogers@google.com>
+
+        WebAudioBus needs support for resizing bus to a smaller size
+        https://bugs.webkit.org/show_bug.cgi?id=99215
+
+        Reviewed by Dimitri Glazkov.
+
+        Upgrade AudioBus and WebAudioBus to support resizing to a smaller size, once it has been created.
+        This is useful, for example, when decoding VBR formats and the actual length can't be exactly determined
+        until the entire file is decoded.
+
+        * platform/audio/AudioBus.cpp:
+        (WebCore::AudioBus::resizeSmaller):
+        (WebCore):
+        * platform/audio/AudioBus.h:
+        (AudioBus):
+        * platform/audio/AudioChannel.cpp:
+        (WebCore::AudioChannel::resizeSmaller):
+        (WebCore):
+        * platform/audio/AudioChannel.h:
+        (AudioChannel):
+        * platform/chromium/support/WebAudioBus.cpp:
+        (WebKit::WebAudioBus::resizeSmaller):
+        (WebKit):
+
 2012-10-13  Gregg Tavares  <gman@google.com>
 
         Add warning for unrenderable textures

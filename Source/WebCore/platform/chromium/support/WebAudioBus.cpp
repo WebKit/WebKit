@@ -58,6 +58,19 @@ void WebAudioBus::initialize(unsigned numberOfChannels, size_t length, double sa
 #endif
 }
 
+void WebAudioBus::resizeSmaller(size_t newLength)
+{
+#if ENABLE(WEB_AUDIO)
+    ASSERT(m_private);
+    if (m_private) {
+        ASSERT(newLength <= length());
+        m_private->resizeSmaller(newLength);
+    }
+#else
+    ASSERT_NOT_REACHED();
+#endif
+}
+
 void WebAudioBus::reset()
 {
 #if ENABLE(WEB_AUDIO)

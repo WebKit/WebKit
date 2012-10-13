@@ -76,6 +76,10 @@ public:
     // Number of sample-frames
     size_t length() const { return m_length; }
 
+    // resizeSmaller() can only be called with a new length <= the current length.
+    // The data stored in the bus will remain undisturbed.
+    void resizeSmaller(size_t newLength);
+
     // Sample-rate : 0.0 if unknown or "don't care"
     float sampleRate() const { return m_sampleRate; }
     void setSampleRate(float sampleRate) { m_sampleRate = sampleRate; }
