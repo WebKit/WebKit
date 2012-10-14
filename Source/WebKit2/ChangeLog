@@ -3,6 +3,16 @@
         [wk2] Implement PDFPlugin
         https://bugs.webkit.org/show_bug.cgi?id=99206
 
+        Unreviewed, attempt to manipuate SVN to retain the history of SimplePDFPlugin.
+
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.h: Replaced with Source/WebKit2/WebProcess/Plugins/PDF/BuiltInPDFView.h.
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.mm: Replaced with Source/WebKit2/WebProcess/Plugins/PDF/BuiltInPDFView.mm.
+
+2012-10-14  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Implement PDFPlugin
+        https://bugs.webkit.org/show_bug.cgi?id=99206
+
         Reviewed by Dan Bernstein.
 
         Add PDFPlugin, which uses PDFKit to display PDFs, instead of using PDFKit in the
