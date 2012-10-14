@@ -1,3 +1,67 @@
+2012-10-14  Sam Weinig  <sam@webkit.org>
+
+        Simplify user content in WebKit2 by using WebCore::UserStyleSheet and WebCore::UserScript directly
+        https://bugs.webkit.org/show_bug.cgi?id=99276
+
+        Reviewed by Anders Carlsson.
+
+        - Removes UserContentContainer in favor of Vector<UserStyleSheet> and Vector<UserScript> right on WebPageGroupData.
+        - Adds support for UserScripts, but does not expose API for it just yet.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * Shared/UserContentContainer.cpp: Removed.
+        * Shared/UserContentContainer.h: Removed.
+        Remove UserContentContainer.h/cpp.
+
+        * Shared/API/c/WKBase.h:
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toUserScriptInjectionTime):
+        (WebKit::toUserContentInjectedFrames):
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        Move UserContent enums to WKBase.h so they can be used from both processes, and move the
+        casts to WKSharedAPICast.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        * Shared/WebCoreArgumentCoders.h:
+        Add coders for UserStyleSheet and UserScript.
+
+        * Shared/WebPageGroupData.cpp:
+        (WebKit::WebPageGroupData::encode):
+        (WebKit::WebPageGroupData::decode):
+        * Shared/WebPageGroupData.h:
+        (WebPageGroupData):
+        Replace UserContentContainer with Vector<UserStyleSheet> and Vector<UserScript>. Stop using
+        CoreIPC::In() and CoreIPC::Out(), and instead just call encode/decode multiple times.
+
+        * UIProcess/API/C/WKPageGroup.cpp:
+        (WKPageGroupAddUserStyleSheet):
+        Pass the parameters with as little conversion as possible to the C++ to avoid doing too much
+        work in the API layer.
+
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::toStringVector):
+        (WebKit::WebPageGroup::addUserStyleSheet):
+        (WebKit::WebPageGroup::addUserScript):
+        (WebKit::WebPageGroup::removeAllUserStyleSheets):
+        (WebKit::WebPageGroup::removeAllUserScripts):
+        (WebKit::WebPageGroup::removeAllUserContent):
+        * UIProcess/WebPageGroup.h:
+        * WebProcess/WebPage/WebPageGroupProxy.cpp:
+        (WebKit::WebPageGroupProxy::WebPageGroupProxy):
+        (WebKit::WebPageGroupProxy::addUserStyleSheet):
+        (WebKit::WebPageGroupProxy::addUserScript):
+        (WebKit::WebPageGroupProxy::removeAllUserScripts):
+        (WebKit::WebPageGroupProxy::removeAllUserContent):
+        * WebProcess/WebPage/WebPageGroupProxy.h:
+        (WebPageGroupProxy):
+        * WebProcess/WebPage/WebPageGroupProxy.messages.in:
+        Add support for user scripts and update to use UserScript and UserStyleSheet directly.
+
 2012-10-14  Jon Lee  <jonlee@apple.com>
 
         Allow notification origin permission request when no js callback is provided

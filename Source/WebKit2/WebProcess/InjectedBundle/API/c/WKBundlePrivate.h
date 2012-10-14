@@ -36,12 +36,6 @@
 extern "C" {
 #endif
 
-enum WKUserScriptInjectionTime {
-    kWKInjectAtDocumentStart,
-    kWKInjectAtDocumentEnd
-};
-typedef enum WKUserScriptInjectionTime WKUserScriptInjectionTime;
-
 // TestRunner only SPI
 WK_EXPORT void WKBundleSetShouldTrackVisitedLinks(WKBundleRef bundle, bool shouldTrackVisitedLinks);
 WK_EXPORT void WKBundleSetAlwaysAcceptCookies(WKBundleRef bundle, bool);

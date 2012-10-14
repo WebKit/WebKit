@@ -63,8 +63,11 @@ private:
     
     void didReceiveWebPageGroupProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     
-    void addUserStyleSheet(const UserContentContainer::Item& styleSheet);
+    void addUserStyleSheet(const WebCore::UserStyleSheet&);
+    void addUserScript(const WebCore::UserScript&);
     void removeAllUserStyleSheets();
+    void removeAllUserScripts();
+    void removeAllUserContent();
 
     WebPageGroupData m_data;
     WebCore::PageGroup* m_pageGroup;

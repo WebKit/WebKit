@@ -96,7 +96,6 @@ HEADERS += \
     Shared/StringPairVector.h \
     Shared/SurfaceUpdateInfo.h \
     Shared/UpdateInfo.h \
-    Shared/UserContentContainer.h \
     Shared/UserMessageCoders.h \
     Shared/VisitedLinkTable.h \
     Shared/WebCoreArgumentCoders.h \
@@ -453,7 +452,6 @@ SOURCES += \
     Shared/StatisticsData.cpp \
     Shared/SurfaceUpdateInfo.cpp \
     Shared/UpdateInfo.cpp \
-    Shared/UserContentContainer.cpp \
     Shared/VisitedLinkTable.cpp \
     Shared/WebBackForwardListItem.cpp \
     Shared/WebBatteryStatus.cpp \

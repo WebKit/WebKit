@@ -1,3 +1,19 @@
+2012-10-14  Sam Weinig  <sam@webkit.org>
+
+        Simplify user content in WebKit2 by using WebCore::UserStyleSheet and WebCore::UserScript directly
+        https://bugs.webkit.org/show_bug.cgi?id=99276
+
+        Reviewed by Anders Carlsson.
+
+        Add default constructors for UserScript and UserStyleSheet so they can be used in CoreIPC encoding/decoding.
+
+        * page/UserScript.h:
+        (WebCore::UserScript::UserScript):
+        (UserScript):
+        * page/UserStyleSheet.h:
+        (WebCore::UserStyleSheet::UserStyleSheet):
+        (UserStyleSheet):
+
 2012-10-14  Jon Lee  <jonlee@apple.com>
 
         Allow notification origin permission request when no js callback is provided

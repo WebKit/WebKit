@@ -57,17 +57,34 @@ WebPageGroupProxy::WebPageGroupProxy(const WebPageGroupData& data)
     , m_pageGroup(WebCore::PageGroup::pageGroup(m_data.identifer))
 {
     for (size_t i = 0; i < data.userStyleSheets.size(); ++i)
-        addUserStyleSheet(data.userStyleSheets.at(i));
+        addUserStyleSheet(data.userStyleSheets[i]);
+    for (size_t i = 0; i < data.userScripts.size(); ++i)
+        addUserScript(data.userScripts[i]);
 }
 
-void WebPageGroupProxy::addUserStyleSheet(const UserContentContainer::Item& styleSheet)
+void WebPageGroupProxy::addUserStyleSheet(const WebCore::UserStyleSheet& userStyleSheet)
 {
-    m_pageGroup->addUserStyleSheetToWorld(WebCore::mainThreadNormalWorld(), styleSheet.source(), styleSheet.url(), styleSheet.whitelist(), styleSheet.blacklist(), static_cast<WebCore::UserContentInjectedFrames>(styleSheet.injectedFrames()));
+    m_pageGroup->addUserStyleSheetToWorld(WebCore::mainThreadNormalWorld(), userStyleSheet.source(), userStyleSheet.url(), userStyleSheet.whitelist(), userStyleSheet.blacklist(), userStyleSheet.injectedFrames(), userStyleSheet.level());
+}
+
+void WebPageGroupProxy::addUserScript(const WebCore::UserScript& userScript)
+{
+    m_pageGroup->addUserScriptToWorld(WebCore::mainThreadNormalWorld(), userScript.source(), userScript.url(), userScript.whitelist(), userScript.blacklist(), userScript.injectionTime(), userScript.injectedFrames());
 }
 
 void WebPageGroupProxy::removeAllUserStyleSheets()
 {
     m_pageGroup->removeUserStyleSheetsFromWorld(WebCore::mainThreadNormalWorld());
+}
+
+void WebPageGroupProxy::removeAllUserScripts()
+{
+    m_pageGroup->removeUserStyleSheetsFromWorld(WebCore::mainThreadNormalWorld());
+}
+
+void WebPageGroupProxy::removeAllUserContent()
+{
+    m_pageGroup->removeAllUserContent();
 }
 
 } // namespace WebKit

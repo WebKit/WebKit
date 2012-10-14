@@ -59,8 +59,11 @@ public:
     WebPreferences* preferences() const;
     void preferencesDidChange();
     
-    void addUserStyleSheet(const UserContentContainer::Item& styleSheet);
+    void addUserStyleSheet(const String& source, const String& baseURL, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserContentInjectedFrames, WebCore::UserStyleLevel);
+    void addUserScript(const String& source, const String& baseURL, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserContentInjectedFrames, WebCore::UserScriptInjectionTime);
     void removeAllUserStyleSheets();
+    void removeAllUserScripts();
+    void removeAllUserContent();
 
 private:
     WebPageGroup(const String& identifier, bool visibleToInjectedBundle, bool visibleToHistoryClient);

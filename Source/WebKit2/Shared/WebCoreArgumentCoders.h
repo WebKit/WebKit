@@ -49,6 +49,8 @@ namespace WebCore {
     class ResourceError;
     class ResourceRequest;
     class ResourceResponse;
+    class UserStyleSheet;
+    class UserScript;
     struct CompositionUnderline;
     struct DictationAlternative;
     struct DragSession;
@@ -289,6 +291,15 @@ template<> struct ArgumentCoder<WebCore::GraphicsSurfaceToken> {
 #endif
 #endif
 
+template<> struct ArgumentCoder<WebCore::UserStyleSheet> {
+    static void encode(ArgumentEncoder*, const WebCore::UserStyleSheet&);
+    static bool decode(ArgumentDecoder*, WebCore::UserStyleSheet&);
+};
+
+template<> struct ArgumentCoder<WebCore::UserScript> {
+    static void encode(ArgumentEncoder*, const WebCore::UserScript&);
+    static bool decode(ArgumentDecoder*, WebCore::UserScript&);
+};
 
 } // namespace CoreIPC
 

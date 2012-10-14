@@ -21,6 +21,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebPageGroupProxy {
-    AddUserStyleSheet(WebKit::UserContentContainer::Item styleSheet);
+    AddUserStyleSheet(WebCore::UserStyleSheet userStyleSheet);
+    AddUserScript(WebCore::UserScript userScript);
     RemoveAllUserStyleSheets();
+    RemoveAllUserScripts();
+    RemoveAllUserContent();
 }

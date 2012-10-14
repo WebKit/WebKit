@@ -32,8 +32,6 @@
 #include "WKBundlePrivate.h"
 #include <WebCore/EditorInsertAction.h>
 #include <WebCore/TextAffinity.h>
-#include <WebCore/UserContentTypes.h>
-#include <WebCore/UserScriptTypes.h>
 
 namespace WebCore {
     class CSSStyleDeclaration;
@@ -105,32 +103,6 @@ inline WKAffinityType toAPI(WebCore::EAffinity affinity)
     }
     ASSERT_NOT_REACHED();
     return kWKAffinityUpstream;
-}
-
-inline WebCore::UserScriptInjectionTime toUserScriptInjectionTime(WKUserScriptInjectionTime wkInjectedTime)
-{
-    switch (wkInjectedTime) {
-    case kWKInjectAtDocumentStart:
-        return WebCore::InjectAtDocumentStart;
-    case kWKInjectAtDocumentEnd:
-        return WebCore::InjectAtDocumentEnd;
-    }
-
-    ASSERT_NOT_REACHED();
-    return WebCore::InjectAtDocumentStart;
-}
-
-inline WebCore::UserContentInjectedFrames toUserContentInjectedFrames(WKUserContentInjectedFrames wkInjectedFrames)
-{
-    switch (wkInjectedFrames) {
-    case kWKInjectInAllFrames:
-        return WebCore::InjectInAllFrames;
-    case kWKInjectInTopFrameOnly:
-        return WebCore::InjectInTopFrameOnly;
-    }
-
-    ASSERT_NOT_REACHED();
-    return WebCore::InjectInAllFrames;
 }
 
 } // namespace WebKit

@@ -85,6 +85,12 @@ enum WKUserContentInjectedFrames {
 };
 typedef enum WKUserContentInjectedFrames WKUserContentInjectedFrames;
 
+enum WKUserScriptInjectionTime {
+    kWKInjectAtDocumentStart,
+    kWKInjectAtDocumentEnd
+};
+typedef enum WKUserScriptInjectionTime WKUserScriptInjectionTime;
+
 /* WebKit2 main API types */
 
 typedef const struct OpaqueWKApplicationCacheManager* WKApplicationCacheManagerRef;

@@ -587,14 +587,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Shared\UserContentContainer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\Shared\UserContentContainer.h"
-				>
-			</File>
-			<File
 				RelativePath="..\Shared\UserMessageCoders.h"
 				>
 			</File>

@@ -128,17 +128,66 @@ void WebPageGroup::preferencesDidChange()
         page->preferencesDidChange();
     }
 }
-    
-void WebPageGroup::addUserStyleSheet(const UserContentContainer::Item& styleSheet)
+
+static Vector<String> toStringVector(ImmutableArray* array)
 {
-    m_data.userStyleSheets.addItem(styleSheet);
-    sendToAllProcessesInGroup(Messages::WebPageGroupProxy::AddUserStyleSheet(styleSheet), m_data.pageGroupID);
+    Vector<String> patternVector;
+    if (!array)
+        return patternVector;
+
+    size_t size = array->size();
+    if (!size)
+        return patternVector;
+    
+    patternVector.reserveInitialCapacity(size);
+    for (size_t i = 0; i < size; ++i) {
+        WebString* webString = array->at<WebString>(i);
+        ASSERT(webString);
+        patternVector.uncheckedAppend(webString->string());
+    }
+    
+    return patternVector;
+}
+
+void WebPageGroup::addUserStyleSheet(const String& source, const String& baseURL, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserContentInjectedFrames injectedFrames, WebCore::UserStyleLevel level)
+{
+    if (source.isEmpty())
+        return;
+
+    WebCore::UserStyleSheet userStyleSheet = WebCore::UserStyleSheet(source, (baseURL.isEmpty() ? WebCore::blankURL() : WebCore::KURL(WebCore::KURL(), baseURL)), toStringVector(whitelist), toStringVector(blacklist), injectedFrames, level);
+
+    m_data.userStyleSheets.append(userStyleSheet);
+    sendToAllProcessesInGroup(Messages::WebPageGroupProxy::AddUserStyleSheet(userStyleSheet), m_data.pageGroupID);
+}
+
+void WebPageGroup::addUserScript(const String& source, const String& baseURL, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserContentInjectedFrames injectedFrames, WebCore::UserScriptInjectionTime injectionTime)
+{
+    if (source.isEmpty())
+        return;
+
+    WebCore::UserScript userScript = WebCore::UserScript(source, (baseURL.isEmpty() ? WebCore::blankURL() : WebCore::KURL(WebCore::KURL(), baseURL)), toStringVector(whitelist), toStringVector(blacklist), injectionTime, injectedFrames);
+
+    m_data.userScripts.append(userScript);
+    sendToAllProcessesInGroup(Messages::WebPageGroupProxy::AddUserScript(userScript), m_data.pageGroupID);
 }
 
 void WebPageGroup::removeAllUserStyleSheets()
 {
-    m_data.userStyleSheets.removeAllItems();
+    m_data.userStyleSheets.clear();
     sendToAllProcessesInGroup(Messages::WebPageGroupProxy::RemoveAllUserStyleSheets(), m_data.pageGroupID);
+}
+
+void WebPageGroup::removeAllUserScripts()
+{
+    m_data.userScripts.clear();
+    sendToAllProcessesInGroup(Messages::WebPageGroupProxy::RemoveAllUserScripts(), m_data.pageGroupID);
+}
+
+void WebPageGroup::removeAllUserContent()
+{
+    m_data.userStyleSheets.clear();
+    m_data.userScripts.clear();
+    sendToAllProcessesInGroup(Messages::WebPageGroupProxy::RemoveAllUserContent(), m_data.pageGroupID);
 }
 
 } // namespace WebKit

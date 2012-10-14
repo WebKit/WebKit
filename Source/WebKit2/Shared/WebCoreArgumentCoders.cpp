@@ -45,6 +45,8 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/TextCheckerClient.h>
+#include <WebCore/UserScript.h>
+#include <WebCore/UserStyleSheet.h>
 #include <WebCore/ViewportArguments.h>
 #include <WebCore/WindowFeatures.h>
 #include <wtf/text/StringHash.h>
@@ -1037,5 +1039,85 @@ bool ArgumentCoder<WebCore::GraphicsSurfaceToken>::decode(ArgumentDecoder* decod
 #endif
 
 #endif
+
+void ArgumentCoder<WebCore::UserStyleSheet>::encode(ArgumentEncoder* encoder, const WebCore::UserStyleSheet& userStyleSheet)
+{
+    encoder->encode(userStyleSheet.source());
+    encoder->encode(userStyleSheet.url());
+    encoder->encode(userStyleSheet.whitelist());
+    encoder->encode(userStyleSheet.blacklist());
+    encoder->encodeEnum(userStyleSheet.injectedFrames());
+    encoder->encodeEnum(userStyleSheet.level());
+}
+
+bool ArgumentCoder<WebCore::UserStyleSheet>::decode(ArgumentDecoder* decoder, WebCore::UserStyleSheet& userStyleSheet)
+{
+    String source;
+    if (!decoder->decode(source))
+        return false;
+
+    KURL url;
+    if (!decoder->decode(url))
+        return false;
+
+    Vector<String> whitelist;
+    if (!decoder->decode(whitelist))
+        return false;
+
+    Vector<String> blacklist;
+    if (!decoder->decode(blacklist))
+        return false;
+
+    WebCore::UserContentInjectedFrames injectedFrames;
+    if (!decoder->decodeEnum(injectedFrames))
+        return false;
+
+    WebCore::UserStyleLevel level;
+    if (!decoder->decodeEnum(level))
+        return false;
+
+    userStyleSheet = WebCore::UserStyleSheet(source, url, whitelist, blacklist, injectedFrames, level);
+    return true;
+}
+
+void ArgumentCoder<WebCore::UserScript>::encode(ArgumentEncoder* encoder, const WebCore::UserScript& userScript)
+{
+    encoder->encode(userScript.source());
+    encoder->encode(userScript.url());
+    encoder->encode(userScript.whitelist());
+    encoder->encode(userScript.blacklist());
+    encoder->encodeEnum(userScript.injectionTime());
+    encoder->encodeEnum(userScript.injectedFrames());
+}
+
+bool ArgumentCoder<WebCore::UserScript>::decode(ArgumentDecoder* decoder, WebCore::UserScript& userScript)
+{
+    String source;
+    if (!decoder->decode(source))
+        return false;
+
+    KURL url;
+    if (!decoder->decode(url))
+        return false;
+
+    Vector<String> whitelist;
+    if (!decoder->decode(whitelist))
+        return false;
+
+    Vector<String> blacklist;
+    if (!decoder->decode(blacklist))
+        return false;
+
+    WebCore::UserScriptInjectionTime injectionTime;
+    if (!decoder->decodeEnum(injectionTime))
+        return false;
+
+    WebCore::UserContentInjectedFrames injectedFrames;
+    if (!decoder->decodeEnum(injectedFrames))
+        return false;
+
+    userScript = WebCore::UserScript(source, url, whitelist, blacklist, injectionTime, injectedFrames);
+    return true;
+}
 
 } // namespace CoreIPC

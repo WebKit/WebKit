@@ -36,6 +36,12 @@ namespace WebCore {
 class UserStyleSheet {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    UserStyleSheet()
+        : m_injectedFrames(InjectInAllFrames)
+        , m_level(UserStyleUserLevel)
+    {
+    }
+
     UserStyleSheet(const String& source, const KURL& url, const Vector<String>& whitelist, const Vector<String>& blacklist, UserContentInjectedFrames injectedFrames, UserStyleLevel level)
         : m_source(source)
         , m_url(url)

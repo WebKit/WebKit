@@ -48,6 +48,8 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/LayoutMilestones.h>
+#include <WebCore/UserContentTypes.h>
+#include <WebCore/UserScriptTypes.h>
 #include <wtf/TypeTraits.h>
 
 namespace WebKit {
@@ -809,6 +811,32 @@ inline SnapshotOptions toSnapshotOptions(WKSnapshotOptions wkSnapshotOptions)
         snapshotOptions |= SnapshotOptionsInViewCoordinates;
 
     return snapshotOptions;
+}
+
+inline WebCore::UserScriptInjectionTime toUserScriptInjectionTime(WKUserScriptInjectionTime wkInjectedTime)
+{
+    switch (wkInjectedTime) {
+    case kWKInjectAtDocumentStart:
+        return WebCore::InjectAtDocumentStart;
+    case kWKInjectAtDocumentEnd:
+        return WebCore::InjectAtDocumentEnd;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WebCore::InjectAtDocumentStart;
+}
+
+inline WebCore::UserContentInjectedFrames toUserContentInjectedFrames(WKUserContentInjectedFrames wkInjectedFrames)
+{
+    switch (wkInjectedFrames) {
+    case kWKInjectInAllFrames:
+        return WebCore::InjectInAllFrames;
+    case kWKInjectInTopFrameOnly:
+        return WebCore::InjectInTopFrameOnly;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WebCore::InjectInAllFrames;
 }
 
 } // namespace WebKit

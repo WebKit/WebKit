@@ -36,6 +36,12 @@ namespace WebCore {
 class UserScript {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    UserScript()
+        : m_injectionTime(InjectAtDocumentStart)
+        , m_injectedFrames(InjectInAllFrames)
+    {
+    }
+
     UserScript(const String& source, const KURL& url, const Vector<String>& whitelist, const Vector<String>& blacklist, UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames)
         : m_source(source)
         , m_url(url)
