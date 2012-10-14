@@ -23,6 +23,61 @@
 #include "FormData.h"
 #include <wtf/text/CString.h>
 
+static QDataStream& operator<<(QDataStream& stream, const WebCore::IntPoint& point)
+{
+    stream << point.x() << point.y();
+    return stream;
+}
+
+static QDataStream& operator>>(QDataStream& stream, WebCore::IntPoint& point)
+{
+    int x, y;
+    stream >> x >> y;
+    point.setX(x);
+    point.setY(y);
+    return stream;
+}
+
+static QDataStream& operator<<(QDataStream& stream, const String& str)
+{
+    // could be faster
+    stream << QString(str);
+    return stream;
+}
+
+static QDataStream& operator>>(QDataStream& stream, String& str)
+{
+    // mabe not the fastest way, but really easy
+    QString tmp;
+    stream >> tmp;
+    str = tmp;
+    return stream;
+}
+
+template<typename T>
+QDataStream& operator<<(QDataStream& stream, const Vector<T>& data)
+{
+    stream << qint64(data.size());
+    foreach (const T& i, data)
+        stream << i;
+    return stream;
+}
+
+template<typename T>
+QDataStream& operator>>(QDataStream& stream, Vector<T>& data)
+{
+    data.clear();
+    qint64 count;
+    T item;
+    stream >> count;
+    data.reserveCapacity(count);
+    for (qint64 i = 0; i < count; ++i) {
+        stream >> item;
+        data.append(item);
+    }
+    return stream;
+}
+
 bool WebCore::HistoryItem::restoreState(QDataStream& in, int version)
 {
     // we only support version 1 for now

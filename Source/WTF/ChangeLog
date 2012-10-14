@@ -1,3 +1,18 @@
+2012-10-12  Anders Carlsson  <andersca@apple.com>
+
+        Move QDataStream functions into HistoryItemQt.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=99203
+
+        Reviewed by Andreas Kling.
+
+        It seems like the QDataStream stream operators are only used from HistoryItemQt.cpp
+        inside WebCore, so move them there. If in the future they are required elsewhere, they should
+        be moved into a separate header instead of polluting headers unnecessarily.
+
+        * wtf/Vector.h:
+        * wtf/qt/StringQt.cpp:
+        * wtf/text/WTFString.h:
+
 2012-10-12  Michael Saboff  <msaboff@apple.com>
 
         StringBuilder::append(StringBuilder&) doesn't take into account the bit size of the argument string
