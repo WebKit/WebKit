@@ -356,7 +356,8 @@ ObjectsWithBrokenIndexingFinder::ObjectsWithBrokenIndexingFinder(
 inline bool hasBrokenIndexing(JSObject* object)
 {
     // This will change if we have more indexing types.
-    return !!(object->structure()->indexingType() & (HasArrayStorage | HasContiguous));
+    IndexingType type = object->structure()->indexingType();
+    return hasContiguous(type) || hasFastArrayStorage(type);
 }
 
 void ObjectsWithBrokenIndexingFinder::operator()(JSCell* cell)

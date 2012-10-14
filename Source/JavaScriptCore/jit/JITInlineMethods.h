@@ -452,7 +452,9 @@ inline void JIT::emitAllocateJSArray(unsigned valuesRegister, unsigned length, R
     size_t initialStorage = Butterfly::totalSize(0, 0, true, initialLength * sizeof(EncodedJSValue));
 
     loadPtr(m_codeBlock->globalObject()->addressOfArrayStructure(), scratch);
-    addSlowCase(branchTest8(Zero, Address(scratch, Structure::indexingTypeOffset()), TrustedImm32(HasContiguous)));
+    load8(Address(scratch, Structure::indexingTypeOffset()), storagePtr);
+    and32(TrustedImm32(IndexingShapeMask), storagePtr);
+    addSlowCase(branch32(NotEqual, storagePtr, TrustedImm32(ContiguousShape)));
 
     // We allocate the backing store first to ensure that garbage collection 
     // doesn't happen during JSArray initialization.
@@ -581,7 +583,7 @@ static inline bool arrayProfileSaw(ArrayProfile* profile, IndexingType capabilit
 
 inline JITArrayMode JIT::chooseArrayMode(ArrayProfile* profile)
 {
-    if (arrayProfileSaw(profile, HasArrayStorage))
+    if (arrayProfileSaw(profile, ArrayStorageShape))
         return JITArrayStorage;
     return JITContiguous;
 }

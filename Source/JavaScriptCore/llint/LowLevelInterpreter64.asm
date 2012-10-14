@@ -1018,7 +1018,7 @@ _llint_op_get_array_length:
     loadp JSCell::m_structure[t3], t2
     arrayProfile(t2, t1, t0)
     btiz t2, IsArray, .opGetArrayLengthSlow
-    btiz t2, (HasContiguous | HasArrayStorage | HasSlowPutArrayStorage), .opGetArrayLengthSlow
+    btiz t2, IndexingShapeMask, .opGetArrayLengthSlow
     loadis 8[PB, PC, 8], t1
     loadp 64[PB, PC, 8], t2
     loadp JSObject::m_butterfly[t3], t0
@@ -1150,7 +1150,8 @@ _llint_op_get_by_val:
     loadConstantOrVariableInt32(t3, t1, .opGetByValSlow)
     sxi2p t1, t1
     loadp JSObject::m_butterfly[t0], t3
-    btiz t2, HasContiguous, .opGetByValNotContiguous
+    andi IndexingShapeMask, t2
+    bineq t2, ContiguousShape, .opGetByValNotContiguous
 
     biaeq t1, -sizeof IndexingHeader + IndexingHeader::m_publicLength[t3], .opGetByValSlow
     loadis 8[PB, PC, 8], t0
@@ -1159,7 +1160,8 @@ _llint_op_get_by_val:
     jmp .opGetByValDone
 
 .opGetByValNotContiguous:
-    btiz t2, HasArrayStorage | HasSlowPutArrayStorage, .opGetByValSlow
+    subi ArrayStorageShape, t2
+    bia t2, SlowPutArrayStorageShape - ArrayStorageShape, .opGetByValSlow
     biaeq t1, -sizeof IndexingHeader + IndexingHeader::m_vectorLength[t3], .opGetByValSlow
     loadis 8[PB, PC, 8], t0
     loadp ArrayStorage::m_vector[t3, t1, 8], t2
@@ -1244,7 +1246,8 @@ _llint_op_put_by_val:
     loadConstantOrVariableInt32(t0, t3, .opPutByValSlow)
     sxi2p t3, t3
     loadp JSObject::m_butterfly[t1], t0
-    btiz t2, HasContiguous, .opPutByValNotContiguous
+    andi IndexingShapeMask, t2
+    bineq t2, ContiguousShape, .opPutByValNotContiguous
     
     biaeq t3, -sizeof IndexingHeader + IndexingHeader::m_publicLength[t0], .opPutByValContiguousOutOfBounds
 .opPutByValContiguousStoreResult:
@@ -1265,7 +1268,7 @@ _llint_op_put_by_val:
     jmp .opPutByValContiguousStoreResult
 
 .opPutByValNotContiguous:
-    btiz t2, HasArrayStorage, .opPutByValSlow
+    bineq t2, ArrayStorageShape, .opPutByValSlow
     biaeq t3, -sizeof IndexingHeader + IndexingHeader::m_vectorLength[t0], .opPutByValSlow
     btpz ArrayStorage::m_vector[t0, t3, 8], .opPutByValArrayStorageEmpty
 .opPutByValArrayStorageStoreResult:

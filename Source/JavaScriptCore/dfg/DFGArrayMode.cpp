@@ -171,13 +171,13 @@ bool modeAlreadyChecked(AbstractValue& value, Array::Mode arrayMode)
     case Array::PossiblyArrayWithContiguousToTail:
     case Array::PossiblyArrayWithContiguousOutOfBounds:
         return value.m_currentKnownStructure.hasSingleton()
-            && (value.m_currentKnownStructure.singleton()->indexingType() & HasContiguous);
+            && hasContiguous(value.m_currentKnownStructure.singleton()->indexingType());
         
     case Array::ArrayWithContiguous:
     case Array::ArrayWithContiguousToTail:
     case Array::ArrayWithContiguousOutOfBounds:
         return value.m_currentKnownStructure.hasSingleton()
-            && (value.m_currentKnownStructure.singleton()->indexingType() & HasContiguous)
+            && hasContiguous(value.m_currentKnownStructure.singleton()->indexingType())
             && (value.m_currentKnownStructure.singleton()->indexingType() & IsArray);
 
     case Array::ArrayStorage:
@@ -187,23 +187,23 @@ bool modeAlreadyChecked(AbstractValue& value, Array::Mode arrayMode)
     case Array::PossiblyArrayWithArrayStorageToHole:
     case Array::PossiblyArrayWithArrayStorageOutOfBounds:
         return value.m_currentKnownStructure.hasSingleton()
-            && (value.m_currentKnownStructure.singleton()->indexingType() & HasArrayStorage);
+            && hasFastArrayStorage(value.m_currentKnownStructure.singleton()->indexingType());
         
     case Array::SlowPutArrayStorage:
     case Array::PossiblyArrayWithSlowPutArrayStorage:
         return value.m_currentKnownStructure.hasSingleton()
-            && (value.m_currentKnownStructure.singleton()->indexingType() & (HasArrayStorage | HasSlowPutArrayStorage));
+            && hasArrayStorage(value.m_currentKnownStructure.singleton()->indexingType());
         
     case Array::ArrayWithArrayStorage:
     case Array::ArrayWithArrayStorageToHole:
     case Array::ArrayWithArrayStorageOutOfBounds:
         return value.m_currentKnownStructure.hasSingleton()
-            && (value.m_currentKnownStructure.singleton()->indexingType() & HasArrayStorage)
+            && hasFastArrayStorage(value.m_currentKnownStructure.singleton()->indexingType())
             && (value.m_currentKnownStructure.singleton()->indexingType() & IsArray);
         
     case Array::ArrayWithSlowPutArrayStorage:
         return value.m_currentKnownStructure.hasSingleton()
-            && (value.m_currentKnownStructure.singleton()->indexingType() & (HasArrayStorage | HasSlowPutArrayStorage))
+            && hasArrayStorage(value.m_currentKnownStructure.singleton()->indexingType())
             && (value.m_currentKnownStructure.singleton()->indexingType() & IsArray);
         
     case ALL_EFFECTFUL_MODES:

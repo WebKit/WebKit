@@ -59,16 +59,17 @@ inline IndexingType newIndexingType(IndexingType oldType, NonPropertyTransition 
 {
     switch (transition) {
     case AllocateContiguous:
-        ASSERT(!(oldType & (HasArrayStorage | HasSlowPutArrayStorage)));
-        return oldType | HasContiguous;
+        ASSERT(!hasIndexedProperties(oldType));
+        return oldType | ContiguousShape;
     case AllocateArrayStorage:
-        return (oldType & ~HasContiguous) | HasArrayStorage;
+        ASSERT(!hasIndexedProperties(oldType) || hasContiguous(oldType));
+        return (oldType & ~IndexingShapeMask) | ArrayStorageShape;
     case AllocateSlowPutArrayStorage:
-        return (oldType & ~HasContiguous) | HasSlowPutArrayStorage;
+        ASSERT(!hasIndexedProperties(oldType) || hasContiguous(oldType));
+        return (oldType & ~IndexingShapeMask) | SlowPutArrayStorageShape;
     case SwitchToSlowPutArrayStorage:
-        ASSERT(oldType & HasArrayStorage);
-        ASSERT(!(oldType & HasContiguous));
-        return (oldType & ~HasArrayStorage) | HasSlowPutArrayStorage;
+        ASSERT(hasFastArrayStorage(oldType));
+        return (oldType & ~IndexingShapeMask) | SlowPutArrayStorageShape;
     case AddIndexedAccessors:
         return oldType | MayHaveIndexedAccessors;
     default:

@@ -69,9 +69,10 @@ end
 
 # Constant for reasoning about butterflies.
 const IsArray = 1
-const HasContiguous = 2
-const HasArrayStorage = 8
-const HasSlowPutArrayStorage = 16
+const IndexingShapeMask = 30
+const ContiguousShape = 26
+const ArrayStorageShape = 28
+const SlowPutArrayStorageShape = 30
 
 # Type constants.
 const StringType = 5

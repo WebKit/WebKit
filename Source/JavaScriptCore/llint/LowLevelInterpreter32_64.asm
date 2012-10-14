@@ -1171,7 +1171,7 @@ _llint_op_get_array_length:
     loadp JSCell::m_structure[t3], t2
     arrayProfile(t2, t1, t0)
     btiz t2, IsArray, .opGetArrayLengthSlow
-    btiz t2, (HasContiguous | HasArrayStorage | HasSlowPutArrayStorage), .opGetArrayLengthSlow
+    btiz t2, IndexingShapeMask, .opGetArrayLengthSlow
     loadi 4[PC], t1
     loadp 32[PC], t2
     loadp JSObject::m_butterfly[t3], t0
@@ -1302,11 +1302,11 @@ _llint_op_get_by_val:
     loadp JSCell::m_structure[t0], t2
     loadp 16[PC], t3
     arrayProfile(t2, t3, t1)
-    btiz t2, HasArrayStorage, .opGetByValSlow
     loadi 12[PC], t3
     loadConstantOrVariablePayload(t3, Int32Tag, t1, .opGetByValSlow)
     loadp JSObject::m_butterfly[t0], t3
-    btiz t2, HasContiguous, .opGetByValNotContiguous
+    andi IndexingShapeMask, t2
+    bineq t2, ContiguousShape, .opGetByValNotContiguous
     
     biaeq t1, -sizeof IndexingHeader + IndexingHeader::m_publicLength[t3], .opGetByValSlow
     loadi TagOffset[t3, t1, 8], t2
@@ -1314,7 +1314,8 @@ _llint_op_get_by_val:
     jmp .opGetByValDone
 
 .opGetByValNotContiguous:
-    btiz t2, HasArrayStorage | HasSlowPutArrayStorage, .opGetByValSlow
+    subi ArrayStorageShape, t2
+    bia t2, SlowPutArrayStorageShape - ArrayStorageShape, .opGetByValSlow
     biaeq t1, -sizeof IndexingHeader + IndexingHeader::m_vectorLength[t3], .opGetByValSlow
     loadi ArrayStorage::m_vector + TagOffset[t3, t1, 8], t2
     loadi ArrayStorage::m_vector + PayloadOffset[t3, t1, 8], t1
@@ -1400,7 +1401,8 @@ _llint_op_put_by_val:
     loadi 8[PC], t0
     loadConstantOrVariablePayload(t0, Int32Tag, t3, .opPutByValSlow)
     loadp JSObject::m_butterfly[t1], t0
-    btiz t2, HasContiguous, .opPutByValNotContiguous
+    andi IndexingShapeMask, t2
+    bineq t2, ContiguousShape, .opPutByValNotContiguous
 
     biaeq t3, -sizeof IndexingHeader + IndexingHeader::m_publicLength[t0], .opPutByValContiguousOutOfBounds
 .opPutByValContiguousStoreResult:
@@ -1422,7 +1424,7 @@ _llint_op_put_by_val:
     jmp .opPutByValContiguousStoreResult
 
 .opPutByValNotContiguous:
-    btiz t2, HasArrayStorage, .opPutByValSlow
+    bineq t2, ArrayStorageShape, .opPutByValSlow
     biaeq t3, -sizeof IndexingHeader + IndexingHeader::m_vectorLength[t0], .opPutByValSlow
     bieq ArrayStorage::m_vector + TagOffset[t0, t3, 8], EmptyValueTag, .opPutByValArrayStorageEmpty
 .opPutByValArrayStorageStoreResult:

@@ -34,9 +34,13 @@ typedef uint8_t IndexingType;
 
 // Flags for testing the presence of capabilities.
 static const IndexingType IsArray                  = 1;
-static const IndexingType HasContiguous            = 2;
-static const IndexingType HasArrayStorage          = 8;
-static const IndexingType HasSlowPutArrayStorage   = 16;
+
+// The shape of the indexed property storage.
+static const IndexingType IndexingShapeMask        = 30;
+static const IndexingType NoIndexingShape          = 0; 
+static const IndexingType ContiguousShape          = 26;
+static const IndexingType ArrayStorageShape        = 28;
+static const IndexingType SlowPutArrayStorageShape = 30;
 
 // Additional flags for tracking the history of the type. These are usually
 // masked off unless you ask for them directly.
@@ -44,13 +48,13 @@ static const IndexingType MayHaveIndexedAccessors  = 32;
 
 // List of acceptable array types.
 static const IndexingType NonArray                        = 0;
-static const IndexingType NonArrayWithContiguous          = HasContiguous;
-static const IndexingType NonArrayWithArrayStorage        = HasArrayStorage;
-static const IndexingType NonArrayWithSlowPutArrayStorage = HasSlowPutArrayStorage;
+static const IndexingType NonArrayWithContiguous          = ContiguousShape;
+static const IndexingType NonArrayWithArrayStorage        = ArrayStorageShape;
+static const IndexingType NonArrayWithSlowPutArrayStorage = SlowPutArrayStorageShape;
 static const IndexingType ArrayClass                      = IsArray; // I'd want to call this "Array" but this would lead to disastrous namespace pollution.
-static const IndexingType ArrayWithContiguous             = IsArray | HasContiguous;
-static const IndexingType ArrayWithArrayStorage           = IsArray | HasArrayStorage;
-static const IndexingType ArrayWithSlowPutArrayStorage    = IsArray | HasSlowPutArrayStorage;
+static const IndexingType ArrayWithContiguous             = IsArray | ContiguousShape;
+static const IndexingType ArrayWithArrayStorage           = IsArray | ArrayStorageShape;
+static const IndexingType ArrayWithSlowPutArrayStorage    = IsArray | SlowPutArrayStorageShape;
 
 #define ALL_BLANK_INDEXING_TYPES \
     NonArray:                    \
@@ -71,12 +75,7 @@ static const IndexingType ArrayWithSlowPutArrayStorage    = IsArray | HasSlowPut
 
 static inline bool hasIndexedProperties(IndexingType indexingType)
 {
-    switch (indexingType) {
-    case ALL_BLANK_INDEXING_TYPES:
-        return false;
-    default:
-        return true;
-    }
+    return (indexingType & IndexingShapeMask) != NoIndexingShape;
 }
 
 static inline bool hasIndexingHeader(IndexingType type)
@@ -86,17 +85,24 @@ static inline bool hasIndexingHeader(IndexingType type)
 
 static inline bool hasContiguous(IndexingType indexingType)
 {
-    return !!(indexingType & HasContiguous);
+    return (indexingType & IndexingShapeMask) == ContiguousShape;
+}
+
+// FIXME: This is an awkward name. This should really be called hasArrayStorage()
+// and then next method down should be called hasAnyArrayStorage().
+static inline bool hasFastArrayStorage(IndexingType indexingType)
+{
+    return (indexingType & IndexingShapeMask) == ArrayStorageShape;
 }
 
 static inline bool hasArrayStorage(IndexingType indexingType)
 {
-    return !!(indexingType & (HasArrayStorage | HasSlowPutArrayStorage));
+    return static_cast<uint8_t>((indexingType & IndexingShapeMask) - ArrayStorageShape) <= static_cast<uint8_t>(SlowPutArrayStorageShape - ArrayStorageShape);
 }
 
 static inline bool shouldUseSlowPut(IndexingType indexingType)
 {
-    return !!(indexingType & HasSlowPutArrayStorage);
+    return (indexingType & IndexingShapeMask) == SlowPutArrayStorageShape;
 }
 
 const char* indexingTypeToString(IndexingType);

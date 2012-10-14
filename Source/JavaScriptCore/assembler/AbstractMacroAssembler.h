@@ -579,7 +579,7 @@ public:
             m_jumps.clear();
         }
         
-        const JumpVector& jumps() { return m_jumps; }
+        const JumpVector& jumps() const { return m_jumps; }
 
     private:
         JumpVector m_jumps;

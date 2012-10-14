@@ -113,6 +113,7 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(regT0, base);
     loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
     emitArrayProfilingSite(regT2, regT3, profile);
+    and32(TrustedImm32(IndexingShapeMask), regT2);
 
     PatchableJump badType;
     JumpList slowCases;
@@ -151,7 +152,7 @@ JIT::JumpList JIT::emitContiguousGetByVal(Instruction*, PatchableJump& badType)
 {
     JumpList slowCases;
     
-    badType = patchableBranchTest32(Zero, regT2, TrustedImm32(HasContiguous));
+    badType = patchableBranch32(NotEqual, regT2, TrustedImm32(ContiguousShape));
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
     slowCases.append(branch32(AboveOrEqual, regT1, Address(regT2, Butterfly::offsetOfPublicLength())));
     loadPtr(BaseIndex(regT2, regT1, ScalePtr), regT0);
@@ -163,8 +164,9 @@ JIT::JumpList JIT::emitContiguousGetByVal(Instruction*, PatchableJump& badType)
 JIT::JumpList JIT::emitArrayStorageGetByVal(Instruction*, PatchableJump& badType)
 {
     JumpList slowCases;
-    
-    badType = patchableBranchTest32(Zero, regT2, TrustedImm32(HasArrayStorage | HasSlowPutArrayStorage));
+
+    add32(TrustedImm32(-ArrayStorageShape), regT2, regT3);
+    badType = patchableBranch32(Above, regT3, TrustedImm32(SlowPutArrayStorageShape - ArrayStorageShape));
 
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
     slowCases.append(branch32(AboveOrEqual, regT1, Address(regT2, ArrayStorage::vectorLengthOffset())));
@@ -295,6 +297,7 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(regT0, base);
     loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
     emitArrayProfilingSite(regT2, regT3, profile);
+    and32(TrustedImm32(IndexingShapeMask), regT2);
     
     PatchableJump badType;
     JumpList slowCases;
@@ -327,7 +330,7 @@ JIT::JumpList JIT::emitContiguousPutByVal(Instruction* currentInstruction, Patch
     unsigned value = currentInstruction[3].u.operand;
     ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
     
-    badType = patchableBranchTest32(Zero, regT2, TrustedImm32(HasContiguous));
+    badType = patchableBranch32(NotEqual, regT2, TrustedImm32(ContiguousShape));
     
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
     Jump outOfBounds = branch32(AboveOrEqual, regT1, Address(regT2, Butterfly::offsetOfPublicLength()));
@@ -360,7 +363,7 @@ JIT::JumpList JIT::emitArrayStoragePutByVal(Instruction* currentInstruction, Pat
     
     JumpList slowCases;
     
-    badType = patchableBranchTest32(Zero, regT2, TrustedImm32(HasArrayStorage));
+    badType = patchableBranch32(NotEqual, regT2, TrustedImm32(ArrayStorageShape));
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
     slowCases.append(branch32(AboveOrEqual, regT1, Address(regT2, ArrayStorage::vectorLengthOffset())));
 
@@ -787,7 +790,7 @@ void JIT::privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress)
     loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
     emitArrayProfilingSiteForBytecodeIndex(regT2, regT1, stubInfo->bytecodeIndex);
     Jump failureCases1 = branchTest32(Zero, regT2, TrustedImm32(IsArray));
-    Jump failureCases2 = branchTest32(Zero, regT2, TrustedImm32(HasArrayStorage | HasContiguous));
+    Jump failureCases2 = branchTest32(Zero, regT2, TrustedImm32(IndexingShapeMask));
 
     // Checks out okay! - get the length from the storage
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT3);

@@ -1,3 +1,89 @@
+2012-10-13  Filip Pizlo  <fpizlo@apple.com>
+
+        IndexingType should not have a bit for each type
+        https://bugs.webkit.org/show_bug.cgi?id=98997
+
+        Reviewed by Oliver Hunt.
+
+        Somewhat incidentally, the introduction of butterflies led to each indexing
+        type being represented by a unique bit. This is superficially nice since it
+        allows you to test if a structure corresponds to a particular indexing type
+        by saying !!(structure->indexingType() & TheType). But the downside is that
+        given the 8 bits we have for the m_indexingType field, that leaves only a
+        small number of possible indexing types if we have one per bit.
+        
+        This changeset changes the indexing type to be:
+        
+        Bit #1: Tells you if you're an array.
+        
+        Bits #2 - #5: 16 possible indexing types, including the blank type for
+            objects that don't have indexed properties.
+        
+        Bits #6-8: Auxiliary bits that we could use for other things. Currently we
+            just use one of those bits, for MayHaveIndexedAccessors.
+        
+        This is performance-neutral, and is primarily intended to give us more
+        breathing room for introducing new inferred array modes.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::JumpList::jumps):
+        * assembler/MacroAssembler.h:
+        (MacroAssembler):
+        (JSC::MacroAssembler::patchableBranch32):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::patchableBranch32):
+        (MacroAssemblerARMv7):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::modeAlreadyChecked):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryCacheGetByID):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculationCheck):
+        (JSC::DFG::SpeculativeJIT::forwardSpeculationCheck):
+        (JSC::DFG::SpeculativeJIT::jumpSlowForUnwantedArrayMode):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::checkArray):
+        (JSC::DFG::SpeculativeJIT::arrayify):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitAllocateJSArray):
+        (JSC::JIT::chooseArrayMode):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitContiguousGetByVal):
+        (JSC::JIT::emitArrayStorageGetByVal):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitContiguousPutByVal):
+        (JSC::JIT::emitArrayStoragePutByVal):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitContiguousGetByVal):
+        (JSC::JIT::emitArrayStorageGetByVal):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitContiguousPutByVal):
+        (JSC::JIT::emitArrayStoragePutByVal):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/IndexingType.h:
+        (JSC):
+        (JSC::hasIndexedProperties):
+        (JSC::hasContiguous):
+        (JSC::hasFastArrayStorage):
+        (JSC::hasArrayStorage):
+        (JSC::shouldUseSlowPut):
+        * runtime/JSGlobalObject.cpp:
+        (JSC):
+        * runtime/StructureTransitionTable.h:
+        (JSC::newIndexingType):
+
 2012-10-14  Filip Pizlo  <fpizlo@apple.com>
 
         DFG structure check hoisting should attempt to ignore side effects and make transformations that are sound even in their presence

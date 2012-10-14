@@ -2805,12 +2805,13 @@ void SpeculativeJIT::compile(Node& node)
             m_jit.loadPtr(MacroAssembler::Address(baseReg, JSCell::structureOffset()), resultTagReg);
             m_jit.loadPtr(MacroAssembler::Address(baseReg, JSObject::butterflyOffset()), storageReg);
             m_jit.load8(MacroAssembler::Address(resultTagReg, Structure::indexingTypeOffset()), resultTagReg);
+            m_jit.and32(TrustedImm32(IndexingShapeMask), resultTagReg);
             if (polymorphicIncludesContiguous(node.arrayMode())) {
                 if (fallThrough.isSet()) {
                     doneCases.append(m_jit.jump());
                     fallThrough.link(&m_jit);
                 }
-                fallThrough = m_jit.branchTest32(MacroAssembler::Zero, resultTagReg, MacroAssembler::TrustedImm32(HasContiguous));
+                fallThrough = m_jit.branch32(MacroAssembler::NotEqual, resultTagReg, MacroAssembler::TrustedImm32(ContiguousShape));
                 slowCases.append(compileContiguousGetByVal(node, baseReg, propertyReg, storageReg, resultTagReg, resultPayloadReg));
             }
             if (polymorphicIncludesArrayStorage(node.arrayMode())) {
@@ -2818,7 +2819,7 @@ void SpeculativeJIT::compile(Node& node)
                     doneCases.append(m_jit.jump());
                     fallThrough.link(&m_jit);
                 }
-                fallThrough = m_jit.branchTest32(MacroAssembler::Zero, resultTagReg, MacroAssembler::TrustedImm32(HasArrayStorage));
+                fallThrough = m_jit.branch32(MacroAssembler::NotEqual, resultTagReg, MacroAssembler::TrustedImm32(ArrayStorageShape));
                 slowCases.append(compileArrayStorageGetByVal(node, baseReg, propertyReg, storageReg, resultTagReg, resultPayloadReg));
             }
             ASSERT(fallThrough.isSet());
@@ -3040,12 +3041,13 @@ void SpeculativeJIT::compile(Node& node)
             MacroAssembler::Jump fallThrough;
             m_jit.loadPtr(MacroAssembler::Address(baseReg, JSCell::structureOffset()), storageReg);
             m_jit.load8(MacroAssembler::Address(storageReg, Structure::indexingTypeOffset()), storageReg);
+            m_jit.and32(TrustedImm32(IndexingShapeMask), storageReg);
             if (polymorphicIncludesContiguous(node.arrayMode())) {
                 if (fallThrough.isSet()) {
                     doneCases.append(m_jit.jump());
                     fallThrough.link(&m_jit);
                 }
-                fallThrough = m_jit.branchTest32(MacroAssembler::Zero, storageReg, MacroAssembler::TrustedImm32(HasContiguous));
+                fallThrough = m_jit.branch32(MacroAssembler::NotEqual, storageReg, MacroAssembler::TrustedImm32(ContiguousShape));
                 m_jit.loadPtr(MacroAssembler::Address(baseReg, JSObject::butterflyOffset()), storageReg);
                 slowCases.append(compileContiguousPutByVal(node, baseReg, propertyReg, storageReg, valueTagReg, valuePayloadReg));
             }
@@ -3054,7 +3056,7 @@ void SpeculativeJIT::compile(Node& node)
                     doneCases.append(m_jit.jump());
                     fallThrough.link(&m_jit);
                 }
-                fallThrough = m_jit.branchTest32(MacroAssembler::Zero, storageReg, MacroAssembler::TrustedImm32(HasArrayStorage));
+                fallThrough = m_jit.branch32(MacroAssembler::NotEqual, storageReg, MacroAssembler::TrustedImm32(ArrayStorageShape));
                 m_jit.loadPtr(MacroAssembler::Address(baseReg, JSObject::butterflyOffset()), storageReg);
                 slowCases.append(compileArrayStoragePutByVal(node, baseReg, propertyReg, storageReg, valueTagReg, valuePayloadReg));
             }
