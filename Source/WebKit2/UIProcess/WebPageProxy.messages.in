@@ -29,7 +29,7 @@ messages -> WebPageProxy {
     RunJavaScriptConfirm(uint64_t frameID, WTF::String message) -> (bool result)
     RunJavaScriptPrompt(uint64_t frameID, WTF::String message, WTF::String defaultValue) -> (WTF::String result)
     ShouldInterruptJavaScript() -> (bool shouldInterupt)
-    MouseDidMoveOverElement(WebKit::WebHitTestResult::Data hitTestResultData, uint32_t modifiers, WebKit::InjectedBundleUserMessageEncoder userData);
+    MouseDidMoveOverElement(WebKit::WebHitTestResult::Data hitTestResultData, uint32_t modifiers, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
     UnavailablePluginButtonClicked(uint32_t pluginUnavailabilityReason, WTF::String mimeType, WTF::String url, WTF::String pluginsPageURL)
     DidChangeViewportProperties(WebCore::ViewportAttributes attributes)
     DidReceiveEvent(uint32_t type, bool handled)
@@ -95,17 +95,17 @@ messages -> WebPageProxy {
 #endif
 
     # Policy messages
-    DecidePolicyForResponse(uint64_t frameID, WebCore::ResourceResponse response, WebCore::ResourceRequest request, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) -> (bool receivedPolicyAction, uint64_t policyAction, uint64_t downloadID)
-    DecidePolicyForNavigationAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, WebCore::ResourceRequest request, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) -> (bool receivedPolicyAction, uint64_t policyAction, uint64_t downloadID)
-    DecidePolicyForNewWindowAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, WebCore::ResourceRequest request, WTF::String frameName, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData)
-    UnableToImplementPolicy(uint64_t frameID, WebCore::ResourceError error, WebKit::InjectedBundleUserMessageEncoder userData)
+    DecidePolicyForResponse(uint64_t frameID, WebCore::ResourceResponse response, WebCore::ResourceRequest request, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) -> (bool receivedPolicyAction, uint64_t policyAction, uint64_t downloadID) Variadic
+    DecidePolicyForNavigationAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, WebCore::ResourceRequest request, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) -> (bool receivedPolicyAction, uint64_t policyAction, uint64_t downloadID) Variadic
+    DecidePolicyForNewWindowAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, WebCore::ResourceRequest request, WTF::String frameName, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    UnableToImplementPolicy(uint64_t frameID, WebCore::ResourceError error, WebKit::InjectedBundleUserMessageEncoder userData)  Variadic
 
     # Intent messages
 #if ENABLE(WEB_INTENTS)
-    DidReceiveIntentForFrame(uint64_t frameID, WebKit::IntentData intent, WebKit::InjectedBundleUserMessageEncoder userData)
+    DidReceiveIntentForFrame(uint64_t frameID, WebKit::IntentData intent, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
 #endif
 #if ENABLE(WEB_INTENTS_TAG)
-    RegisterIntentServiceForFrame(uint64_t frameID, WebKit::IntentServiceInfo serviceInfo, WebKit::InjectedBundleUserMessageEncoder userData);
+    RegisterIntentServiceForFrame(uint64_t frameID, WebKit::IntentServiceInfo serviceInfo, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
 #endif
 
     # Progress messages
@@ -120,23 +120,23 @@ messages -> WebPageProxy {
     DidRestoreFrameFromPageCache(uint64_t frameID, uint64_t parentFrameID);
 
     # Frame load messages
-    DidCommitLoadForFrame(uint64_t frameID, WTF::String mimeType, bool hasCustomRepresentation, WebKit::PlatformCertificateInfo certificateInfo, WebKit::InjectedBundleUserMessageEncoder userData)
-    DidFailLoadForFrame(uint64_t frameID, WebCore::ResourceError error, WebKit::InjectedBundleUserMessageEncoder userData)
-    DidFailProvisionalLoadForFrame(uint64_t frameID, WebCore::ResourceError error, WebKit::InjectedBundleUserMessageEncoder userData)
-    DidFinishDocumentLoadForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData)
-    DidFinishLoadForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData)
-    DidFirstLayoutForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData)
-    DidFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData)
-    DidNewFirstVisuallyNonEmptyLayout(WebKit::InjectedBundleUserMessageEncoder userData)
-    DidLayout(uint32_t type, WebKit::InjectedBundleUserMessageEncoder userData)
-    DidReceiveServerRedirectForProvisionalLoadForFrame(uint64_t frameID, WTF::String url, WebKit::InjectedBundleUserMessageEncoder userData)
-    DidRemoveFrameFromHierarchy(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData)
-    DidStartProvisionalLoadForFrame(uint64_t frameID, WTF::String url, WTF::String unreachableURL, WebKit::InjectedBundleUserMessageEncoder userData)
-    DidReceiveTitleForFrame(uint64_t frameID, WTF::String title, WebKit::InjectedBundleUserMessageEncoder userData)
-    DidDisplayInsecureContentForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData)
-    DidRunInsecureContentForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData)
-    DidDetectXSSForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData)
-    DidSameDocumentNavigationForFrame(uint64_t frameID, uint32_t type, WTF::String url, WebKit::InjectedBundleUserMessageEncoder userData)
+    DidCommitLoadForFrame(uint64_t frameID, WTF::String mimeType, bool hasCustomRepresentation, WebKit::PlatformCertificateInfo certificateInfo, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DidFailLoadForFrame(uint64_t frameID, WebCore::ResourceError error, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DidFailProvisionalLoadForFrame(uint64_t frameID, WebCore::ResourceError error, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DidFinishDocumentLoadForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DidFinishLoadForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DidFirstLayoutForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DidFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DidNewFirstVisuallyNonEmptyLayout(WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DidLayout(uint32_t type, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DidReceiveServerRedirectForProvisionalLoadForFrame(uint64_t frameID, WTF::String url, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DidRemoveFrameFromHierarchy(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DidStartProvisionalLoadForFrame(uint64_t frameID, WTF::String url, WTF::String unreachableURL, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DidReceiveTitleForFrame(uint64_t frameID, WTF::String title, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DidDisplayInsecureContentForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DidRunInsecureContentForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DidDetectXSSForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    DidSameDocumentNavigationForFrame(uint64_t frameID, uint32_t type, WTF::String url, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
 
     FrameDidBecomeFrameSet(uint64_t frameID, bool value)
 
@@ -156,7 +156,7 @@ messages -> WebPageProxy {
     DidFinishLoadingDataForCustomRepresentation(WTF::String suggestedFilename, CoreIPC::DataReference data)
 
     # Forms messages
-    WillSubmitForm(uint64_t frameID, uint64_t sourceFrameID, WebKit::StringPairVector textFieldValues, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData)
+    WillSubmitForm(uint64_t frameID, uint64_t sourceFrameID, WebKit::StringPairVector textFieldValues, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
 
     # Callback messages
     VoidCallback(uint64_t callbackID)
@@ -187,7 +187,7 @@ messages -> WebPageProxy {
     BackForwardForwardListCount() -> (int32_t count)
     BackForwardClear()
     ShouldGoToBackForwardListItem(uint64_t itemID) -> (bool shouldGoToBackForwardListItem)
-    WillGoToBackForwardListItem(uint64_t itemID, WebKit::InjectedBundleUserMessageEncoder userData)
+    WillGoToBackForwardListItem(uint64_t itemID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
 
     # Undo/Redo messages
     RegisterEditCommandForUndo(uint64_t commandID, uint32_t editAction)
@@ -219,7 +219,7 @@ messages -> WebPageProxy {
 
 #if ENABLE(CONTEXT_MENUS)
     # ContextMenu messages
-    ShowContextMenu(WebCore::IntPoint menuLocation, WebKit::WebHitTestResult::Data hitTestResultData, Vector<WebKit::WebContextMenuItemData> items, WebKit::InjectedBundleUserMessageEncoder userData)
+    ShowContextMenu(WebCore::IntPoint menuLocation, WebKit::WebHitTestResult::Data hitTestResultData, Vector<WebKit::WebContextMenuItemData> items, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
 #endif
 
     # Authentication messages

@@ -22,7 +22,7 @@
 
 messages -> WebProcess {
     # Initialize the WebProcess. 
-    InitializeWebProcess(WebKit::WebProcessCreationParameters processCreationParameters, WebKit::WebContextUserMessageEncoder initializationUserData)
+    InitializeWebProcess(WebKit::WebProcessCreationParameters processCreationParameters, WebKit::WebContextUserMessageEncoder initializationUserData) Variadic
 
     # Create a new page.
     CreateWebPage(uint64_t newPageID, WebKit::WebPageCreationParameters pageCreationParameters)

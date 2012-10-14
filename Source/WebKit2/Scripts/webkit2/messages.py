@@ -26,6 +26,7 @@ from webkit2 import parser
 
 DELAYED_ATTRIBUTE = 'Delayed'
 DISPATCH_ON_CONNECTION_QUEUE_ATTRIBUTE = 'DispatchOnConnectionQueue'
+VARIADIC_ATTRIBUTE = 'Variadic'
 
 _license_header = """/*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
@@ -71,15 +72,6 @@ def messages_to_kind_enum(messages):
     result.append('};\n')
     return ''.join(result)
 
-
-def message_is_variadic(message):
-    variadic_types = frozenset([
-        'WebKit::InjectedBundleUserMessageEncoder',
-        'WebKit::WebContextUserMessageEncoder',
-    ])
-
-    return len(message.parameters) and message.parameters[-1].type in variadic_types
-
 def function_parameter_type(type):
     # Don't use references for built-in types.
     builtin_types = frozenset([
@@ -122,7 +114,7 @@ def reply_type(message):
 
 
 def decode_type(message):
-    if message_is_variadic(message):
+    if message.has_attribute(VARIADIC_ATTRIBUTE):
         return arguments_type(message.parameters[:-1], reply_parameter_type)
     return base_class(message)
 
@@ -314,7 +306,7 @@ def handler_function(receiver, message):
 def async_case_statement(receiver, message):
     dispatch_function_args = ['arguments', 'this', '&%s' % handler_function(receiver, message)]
     dispatch_function = 'handleMessage'
-    if message_is_variadic(message):
+    if message.has_attribute(VARIADIC_ATTRIBUTE):
         dispatch_function += 'Variadic'
     if message.has_attribute(DISPATCH_ON_CONNECTION_QUEUE_ATTRIBUTE):
         dispatch_function += 'OnConnectionQueue'
@@ -334,7 +326,7 @@ def sync_case_statement(receiver, message):
     dispatch_function = 'handleMessage'
     if message.has_attribute(DELAYED_ATTRIBUTE):
         dispatch_function += 'Delayed'
-    if message_is_variadic(message):
+    if message.has_attribute(VARIADIC_ATTRIBUTE):
         dispatch_function += 'Variadic'
 
     result = []

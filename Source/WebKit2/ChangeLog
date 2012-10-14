@@ -1,3 +1,20 @@
+2012-10-12  Anders Carlsson  <andersca@apple.com>
+
+        Explicitly mark messages variadic
+        https://bugs.webkit.org/show_bug.cgi?id=99229
+
+        Reviewed by Dan Bernstein.
+
+        Instead of deciding whether messages are variadic based on their type, decide it based on the existence of a 'Variadic' message attribute.
+
+        * Scripts/webkit2/messages.py:
+        (messages_to_kind_enum):
+        (decode_type):
+        (async_case_statement):
+        (sync_case_statement):
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebProcess.messages.in:
+
 2012-10-14  Sam Weinig  <sam@webkit.org>
 
         Make UserScript and UserStyleSheet value objects that are copyable
