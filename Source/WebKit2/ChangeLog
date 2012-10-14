@@ -1,3 +1,15 @@
+2012-10-13  Andy Estes  <aestes@apple.com>
+
+        Add a private header for WKWebProcessPlugInBrowserContextController that defines a property for getting the WKBundlePageRef
+        https://bugs.webkit.org/show_bug.cgi?id=99252
+
+        Reviewed by Sam Weinig.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _bundlePageRef]):
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextControllerPrivate.h: Added.
+
 2012-10-12  Brady Eidson  <beidson@apple.com>
 
         Setup basic NetworkProcess messaging and initialization.

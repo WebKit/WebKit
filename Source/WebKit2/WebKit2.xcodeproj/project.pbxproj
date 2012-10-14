@@ -257,6 +257,7 @@
 		29121708161CE7360057D451 /* UserContentContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 29121706161CE7360057D451 /* UserContentContainer.h */; };
 		293EBEAB1627D9C9005F89F1 /* WKDOMText.h in Headers */ = {isa = PBXBuildFile; fileRef = 293EBEA91627D9C9005F89F1 /* WKDOMText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		293EBEAC1627D9C9005F89F1 /* WKDOMText.mm in Sources */ = {isa = PBXBuildFile; fileRef = 293EBEAA1627D9C9005F89F1 /* WKDOMText.mm */; };
+		29501724162A4504004A9D71 /* WKWebProcessPlugInBrowserContextControllerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 29501723162A4504004A9D71 /* WKWebProcessPlugInBrowserContextControllerPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		296BD85D15019BC30071F424 /* StringUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 296BD85B15019BC30071F424 /* StringUtilities.h */; };
 		296BD85E15019BC30071F424 /* StringUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 296BD85C15019BC30071F424 /* StringUtilities.mm */; };
 		29CD55AA128E294F00133C85 /* WKAccessibilityWebPageObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 29CD55A8128E294F00133C85 /* WKAccessibilityWebPageObject.h */; };
@@ -741,7 +742,7 @@
 		BC8780FC1161C2B800CC2768 /* PlatformProcessIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8780FB1161C2B800CC2768 /* PlatformProcessIdentifier.h */; };
 		BC8A501511765F5600757573 /* WKRetainPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8A501411765F5600757573 /* WKRetainPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC8F2F2A16273A2C005FACB5 /* WKWebProcessPlugInBrowserContextController.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8F2F2816273A2B005FACB5 /* WKWebProcessPlugInBrowserContextController.mm */; };
-		BC8F2F2B16273A2C005FACB5 /* WKWebProcessPlugInBrowserContextController.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8F2F2916273A2C005FACB5 /* WKWebProcessPlugInBrowserContextController.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC8F2F2B16273A2C005FACB5 /* WKWebProcessPlugInBrowserContextController.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8F2F2916273A2C005FACB5 /* WKWebProcessPlugInBrowserContextController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC8F2F2E16273ACC005FACB5 /* WKWebProcessPlugInBrowserContextControllerInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8F2F2D16273ACB005FACB5 /* WKWebProcessPlugInBrowserContextControllerInternal.h */; };
 		BC9099801256A98200083756 /* WKStringPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC90997F1256A98200083756 /* WKStringPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC90A1D2122DD55E00CC8C50 /* WebURLResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = BC90A1D0122DD55E00CC8C50 /* WebURLResponse.h */; };
@@ -1368,6 +1369,7 @@
 		29121706161CE7360057D451 /* UserContentContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserContentContainer.h; sourceTree = "<group>"; };
 		293EBEA91627D9C9005F89F1 /* WKDOMText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDOMText.h; sourceTree = "<group>"; };
 		293EBEAA1627D9C9005F89F1 /* WKDOMText.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKDOMText.mm; sourceTree = "<group>"; };
+		29501723162A4504004A9D71 /* WKWebProcessPlugInBrowserContextControllerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcessPlugInBrowserContextControllerPrivate.h; sourceTree = "<group>"; };
 		296BD85B15019BC30071F424 /* StringUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringUtilities.h; sourceTree = "<group>"; };
 		296BD85C15019BC30071F424 /* StringUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StringUtilities.mm; sourceTree = "<group>"; };
 		29CD55A8128E294F00133C85 /* WKAccessibilityWebPageObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKAccessibilityWebPageObject.h; sourceTree = "<group>"; };
@@ -3723,6 +3725,7 @@
 				BC8F2F2916273A2C005FACB5 /* WKWebProcessPlugInBrowserContextController.h */,
 				BC8F2F2816273A2B005FACB5 /* WKWebProcessPlugInBrowserContextController.mm */,
 				BC8F2F2D16273ACB005FACB5 /* WKWebProcessPlugInBrowserContextControllerInternal.h */,
+				29501723162A4504004A9D71 /* WKWebProcessPlugInBrowserContextControllerPrivate.h */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -4534,6 +4537,7 @@
 				5179556E162877B300FA43B6 /* NetworkProcessProxy.h in Headers */,
 				51795571162877D200FA43B6 /* NetworkProcessCreationParameters.h in Headers */,
 				5163199516289A6300E22F00 /* NetworkProcessMessages.h in Headers */,
+				29501724162A4504004A9D71 /* WKWebProcessPlugInBrowserContextControllerPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
