@@ -1108,6 +1108,16 @@ void InspectorPageAgent::setTouchEmulationEnabled(ErrorString* error, bool enabl
 #endif
 }
 
+void InspectorPageAgent::setCompositingBordersVisible(ErrorString*, bool visible)
+{
+    Settings* settings = m_page->settings();
+    if (!settings)
+        return;
+
+    settings->setShowDebugBorders(visible);
+    settings->setShowRepaintCounter(visible);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

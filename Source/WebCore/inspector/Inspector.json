@@ -404,6 +404,14 @@
                 ],
                 "description": "Toggles mouse event-based touch event emulation.",
                 "hidden": true
+            },
+            {
+                "name": "setCompositingBordersVisible",
+                "description": "Controls the visibility of compositing borders.",
+                "parameters": [
+                    { "name": "visible", "type": "boolean", "description": "True for showing compositing borders." }
+                ],
+                "hidden": true
             }
         ],
         "events": [

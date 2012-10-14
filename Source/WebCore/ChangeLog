@@ -1,3 +1,15 @@
+2012-10-14  Antoine Quint  <graouts@apple.com>
+
+        InspectorPageAgent should expose a method to control the compositing debug settings.
+        https://bugs.webkit.org/show_bug.cgi?id=99253
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::setCompositingBordersVisible):
+        * inspector/InspectorPageAgent.h:
+
 2012-10-13  Chris Rogers  <crogers@google.com>
 
         WebAudioBus needs support for resizing bus to a smaller size
