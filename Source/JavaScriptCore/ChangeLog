@@ -1,3 +1,10 @@
+2012-10-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Fix the build of universal binary with ARMv7s of JavaScriptCore
+
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LowLevelInterpreter.asm:
+
 2012-10-13  Filip Pizlo  <fpizlo@apple.com>
 
         Array length array profiling is broken in the baseline JIT

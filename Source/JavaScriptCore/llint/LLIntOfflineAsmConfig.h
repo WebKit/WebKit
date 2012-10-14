@@ -37,6 +37,7 @@
 #define OFFLINE_ASM_X86 0
 #define OFFLINE_ASM_ARMv7 0
 #define OFFLINE_ASM_X86_64 0
+#define OFFLINE_ASM_ARMv7s 0
 
 #else // !ENABLE(LLINT_C_LOOP)
 
@@ -46,6 +47,12 @@
 #define OFFLINE_ASM_X86 1
 #else
 #define OFFLINE_ASM_X86 0
+#endif
+
+#ifdef __ARM_ARCH_7S__
+#define OFFLINE_ASM_ARMv7s 1
+#else
+#define OFFLINE_ASM_ARMv7s 0
 #endif
 
 #if CPU(ARM_THUMB2)
