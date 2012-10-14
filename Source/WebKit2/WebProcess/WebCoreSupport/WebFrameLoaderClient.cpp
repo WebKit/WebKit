@@ -1146,10 +1146,9 @@ void WebFrameLoaderClient::restoreViewState()
     // Inform the UI process of the scale factor.
     double scaleFactor = m_frame->coreFrame()->loader()->history()->currentItem()->pageScaleFactor();
 
-    // A scale factor of 0.0 means the history item actually has the "default scale factor" of 1.0.
-    if (!scaleFactor)
-        scaleFactor = 1.0;
-    m_frame->page()->send(Messages::WebPageProxy::PageScaleFactorDidChange(scaleFactor));
+    // A scale factor of 0 means the history item has the default scale factor, thus we do not need to update it.
+    if (scaleFactor)
+        m_frame->page()->send(Messages::WebPageProxy::PageScaleFactorDidChange(scaleFactor));
 
     // FIXME: This should not be necessary. WebCore should be correctly invalidating
     // the view on restores from the back/forward cache.
@@ -1216,7 +1215,7 @@ void WebFrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame*)
     bool isMainFrame = webPage->mainWebFrame() == m_frame;
     
     const ResourceResponse& response = m_frame->coreFrame()->loader()->documentLoader()->response();
-    m_frameHasCustomRepresentation = isMainFrame && WebProcess::shared().shouldUseCustomRepresentationForResponse(response);
+    m_frameHasCustomRepresentation = isMainFrame && webPage->shouldUseCustomRepresentationForResponse(response);
     m_frameCameFromPageCache = true;
 }
 
@@ -1230,7 +1229,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     IntRect currentVisibleContentBounds = m_frame->visibleContentBounds();
 
     const ResourceResponse& response = m_frame->coreFrame()->loader()->documentLoader()->response();
-    m_frameHasCustomRepresentation = isMainFrame && WebProcess::shared().shouldUseCustomRepresentationForResponse(response);
+    m_frameHasCustomRepresentation = isMainFrame && webPage->shouldUseCustomRepresentationForResponse(response);
     m_frameCameFromPageCache = false;
 
     m_frame->coreFrame()->createView(webPage->size(), backgroundColor, /* transparent */ false, IntSize(), shouldUseFixedLayout);

@@ -271,6 +271,7 @@ PluginView::PluginView(PassRefPtr<HTMLPlugInElement> pluginElement, PassRefPtr<P
 #endif
     , m_manualStreamState(StreamStateInitial)
     , m_pluginSnapshotTimer(this, &PluginView::pluginSnapshotTimerFired, pluginSnapshotTimerDelay)
+    , m_pageScaleFactor(1)
 {
     m_webPage->addPluginView(this);
 }
@@ -425,6 +426,18 @@ RenderBoxModelObject* PluginView::renderer() const
 void PluginView::pageScaleFactorDidChange()
 {
     viewGeometryDidChange();
+}
+
+void PluginView::setPageScaleFactor(double scaleFactor, IntPoint)
+{
+    m_pageScaleFactor = scaleFactor;
+    m_webPage->send(Messages::WebPageProxy::PageScaleFactorDidChange(scaleFactor));
+    pageScaleFactorDidChange();
+}
+
+double PluginView::pageScaleFactor()
+{
+    return m_pageScaleFactor;
 }
 
 void PluginView::webPageDestroyed()
@@ -759,6 +772,16 @@ void PluginView::handleEvent(Event* event)
 
     if (didHandleEvent)
         event->setDefaultHandled();
+}
+    
+bool PluginView::handleEditingCommand(const String& commandName, const String& argument)
+{
+    return m_plugin->handleEditingCommand(commandName, argument);
+}
+    
+bool PluginView::isEditingCommandEnabled(const String& commandName)
+{
+    return m_plugin->isEditingCommandEnabled(commandName);
 }
 
 void PluginView::notifyWidget(WidgetNotification notification)

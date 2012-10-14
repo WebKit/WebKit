@@ -246,9 +246,6 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 
     setDefaultRequestTimeoutInterval(parameters.defaultRequestTimeoutInterval);
 
-    for (size_t i = 0; i < parameters.mimeTypesWithCustomRepresentation.size(); ++i)
-        m_mimeTypesWithCustomRepresentations.add(parameters.mimeTypesWithCustomRepresentation[i]);
-
     if (parameters.shouldAlwaysUseComplexTextCodePath)
         setAlwaysUsesComplexTextCodePath(true);
 
@@ -812,26 +809,6 @@ void WebProcess::removeMessagePortChannel(uint64_t channelID)
     m_messagePortChannels.remove(channelID);
 }
 #endif
-
-static bool canPluginHandleResponse(const ResourceResponse& response)
-{
-    String pluginPath;
-    bool blocked;
-
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebProcessProxy::GetPluginPath(response.mimeType(), response.url().string()), Messages::WebProcessProxy::GetPluginPath::Reply(pluginPath, blocked), 0))
-        return false;
-
-    return !blocked && !pluginPath.isEmpty();
-}
-
-bool WebProcess::shouldUseCustomRepresentationForResponse(const ResourceResponse& response) const
-{
-    if (!m_mimeTypesWithCustomRepresentations.contains(response.mimeType()))
-        return false;
-
-    // If a plug-in exists that claims to support this response, it should take precedence over the custom representation.
-    return !canPluginHandleResponse(response);
-}
 
 void WebProcess::clearResourceCaches(ResourceCachesToClear resourceCachesToClear)
 {

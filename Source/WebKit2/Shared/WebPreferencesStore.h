@@ -137,6 +137,7 @@ namespace WebKit {
     macro(ScreenFontSubstitutionEnabled, screenFontSubstitutionEnabled, Bool, bool, DEFAULT_SCREEN_FONT_SUBSTITUTION_ENABLED) \
     macro(CookieEnabled, cookieEnabled, Bool, bool, true) \
     macro(PlugInSnapshottingEnabled, plugInSnapshottingEnabled, Bool, bool, false) \
+    macro(PDFPluginEnabled, pdfPluginEnabled, Bool, bool, false) \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \

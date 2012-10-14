@@ -54,5 +54,14 @@ Class pdfDocumentClass()
     ASSERT(pdfDocumentClass);
     return pdfDocumentClass;
 }
+    
+#if ENABLE(PDFKIT_PLUGIN)
+Class pdfLayerControllerClass()
+{
+    static Class pdfLayerControllerClass = classFromPDFKit(@"PDFLayerController");
+    ASSERT(pdfLayerControllerClass);
+    return pdfLayerControllerClass;
+}
+#endif
 
 }

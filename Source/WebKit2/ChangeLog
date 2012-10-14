@@ -1,3 +1,199 @@
+2012-10-14  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Implement PDFPlugin
+        https://bugs.webkit.org/show_bug.cgi?id=99206
+
+        Reviewed by Dan Bernstein.
+
+        Add PDFPlugin, which uses PDFKit to display PDFs, instead of using PDFKit in the
+        UIProcess for full-page PDFs. This new plugin will also be used for inline PDFs
+        in place of SimplePDFPlugin (née BuiltInPDFView).
+
+        * Configurations/FeatureDefines.xcconfig: Add ENABLE_PDF_PLUGIN.
+
+        Support three new Plugin methods:
+            - handleEditingCommand, which hands editing commands to the Plugin
+            - isEditingCommandEnabled, which validates editing commands via the Plugin
+            - handlesPageScaleFactor, which asks the plugin whether it wants to
+            opt into a mode where the WebPage doesn't scale in the ordinary fashion,
+            but instead proxies the Plugin's scale factor, so full-page plugins
+            can handle scale factor changes however they need to.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::handleEditingCommand): Proxy handleEditingCommand to the Plugin.
+        (WebKit::PluginControllerProxy::isEditingCommandEnabled): Proxy isEditingCommandEnabled to the Plugin.
+        (WebKit::PluginControllerProxy::handlesPageScaleFactor): Proxy handlesPageScaleFactor to the Plugin.
+        * PluginProcess/PluginControllerProxy.h:
+        (PluginControllerProxy): Add handleEditingCommand, isEditingCommandEnabled, and handlesPageScaleFactor.
+        * PluginProcess/PluginControllerProxy.messages.in: Add HandleEditingCommand, IsEditingCommandEnabled, and HandlesPageScaleFactor.
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::handleEditingCommand): NPAPI plugins support no editing commands by default.
+        (WebKit::NetscapePlugin::isEditingCommandEnabled): NPAPI plugins enable no editing commands by default.
+        (WebKit::NetscapePlugin::handlesPageScaleFactor): NPAPI plugins do not handle page scale factor changes themselves by default.
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h: Add handleEditingCommand, isEditingCommandEnabled, and handlesPageScaleFactor.
+
+        Add PDFPluginEnabled preference. If it is not enabled, or the plugin is
+        not built, behavior will be the same as before (the UIProcess PDFView will
+        handle full-page PDFs, and SimplePDFPlugin will handle inline ones).
+
+        * Shared/WebPreferencesStore.h: Add PDFPluginEnabled preference.
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetPDFPluginEnabled): Setter for PDFPluginEnabled preference.
+        (WKPreferencesGetPDFPluginEnabled): Getter for PDFPluginEnabled preference.
+        * UIProcess/API/C/WKPreferencesPrivate.h: Expose WKPreferences(Set|Get)PDFPluginEnabled as a private preference.
+
+        Move support for MIME types with custom representations onto WebPage instead of WebProcess.
+        This allows us to use preferences to control the use of custom representations (for example,
+        it allows us to have a preference to toggle between UIProcess's PDFView and PDFPlugin).
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode): Don't pass mimeTypesWithCustomRepresentation
+        into the WebProcess, as we can compute it later.
+        (WebKit::WebProcessCreationParameters::decode): Same, on the decode side.
+        * Shared/WebProcessCreationParameters.h: Remove mimeTypesWithCustomRepresentation.
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess): Don't add pdfAndPostScriptMIMETypes to mimeTypesWithCustomRepresentation here, as we're now computing it on WebPage instead.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::canPluginHandleResponse): Move to WebPage from WebProcess so we can use WebPage's new notion of mimeTypesWithCustomRepresentation.
+        (WebKit::WebPage::shouldUseCustomRepresentationForResponse): Move to WebPage from WebProcess so we can use WebPage's new notion of mimeTypesWithCustomRepresentation.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::pdfAndPostScriptMIMETypes): Return the set of MIME types used for PDF and PostScript, which are handled with PDFView if PDFPlugin is not available or enabled.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess): Don't keep m_mimeTypesWithCustomRepresentations on WebProcess, it's owned by WebPage now.
+        * WebProcess/WebProcess.h: Move canPluginHandleResponse and shouldUseCustomRepresentationForResponse to WebPage.
+
+        Add PDFLayerController to the set of classes returned by PDFKitImports.
+
+        * Shared/mac/PDFKitImports.h: Add pdfLayerControllerClass.
+        * Shared/mac/PDFKitImports.mm:
+        (WebKit::pdfLayerControllerClass): Find and return the PDFLayerController class.
+
+        Add PDFPlugin, which inherits from SimplePDFPlugin, but uses PDFKit instead
+        of CoreGraphics, to provide additional interactive functionality.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::sendDidGetPlugins): Add PDFPlugin to the set of supported plugins.
+        * WebKit2.xcodeproj/project.pbxproj: Add PDFPlugin, rename BuiltInPDFView to SimplePDFPlugin.
+        * WebProcess/Plugins/PDF/PDFPlugin.h: Added.
+        * WebProcess/Plugins/PDF/PDFPlugin.mm: Added.
+
+        PDFPlugin uses layers for scrollbars.
+
+        (-[WKPDFPluginScrollbarLayer initWithPDFPlugin:WebKit::]): Initialize our CALayer subclass,
+        storing its parent PDFPlugin so it can delegate drawing there.
+        (-[WKPDFPluginScrollbarLayer actionForKey:]): Disable CoreAnimation implicit actions.
+        (-[WKPDFPluginScrollbarLayer drawInContext:]): Delegate scrollbar drawing to PDFPlugin.
+
+        Implement the PDFLayerController delegate, eventually forwarding calls back to PDFPlugin.
+
+        (-[WKPDFLayerControllerDelegate initWithPDFPlugin:WebKit::]): Initialize our delegate,
+        storing its parent PDFPlugin so it can forward delegate calls there.
+        (-[WKPDFLayerControllerDelegate updateScrollPosition:]): Update PDFPlugin's notion of the
+        current scroll position, when PDFKit changes the scroll position itself.
+        (-[WKPDFLayerControllerDelegate writeItemsToPasteboard:withTypes:]): Write the given
+        array of NSData objects to the pasteboard with the given types.
+
+        The following PDFLayerController delegate methods will be implemented in the future.
+
+        (-[WKPDFLayerControllerDelegate showDefinitionForAttributedString:atPoint:]):
+        (-[WKPDFLayerControllerDelegate performWebSearch:]):
+        (-[WKPDFLayerControllerDelegate openWithPreview]):
+        (-[WKPDFLayerControllerDelegate saveToPDF]):
+
+        (WebKit::PDFPlugin::PDFPlugin): Set up the requisite layer hierarchy, and create a PDFLayerController (and its delegate proxy).
+        (WebKit::PDFPlugin::updateScrollbars): Update the frame of the layers hosting our scrollbars.
+        (WebKit::PDFPlugin::createScrollbar): Create a scrollbar and hosting layer, attaching its layer
+        to PDFPlugin's container layer.
+        (WebKit::PDFPlugin::destroyScrollbar): Destroy a scrollbar, detaching and destroying its hosting layer in the process.
+        (WebKit::PDFPlugin::pdfDocumentDidLoad): Called when the document finishes loading; hand
+        the loaded document to PDFKit, update all of our state (cached document size, scrollbars, etc.), and then execute any scripts in the document (to allow for automatic printing).
+        (WebKit::PDFPlugin::calculateSizes): Determine the size of the PDF and its pages.
+        (WebKit::PDFPlugin::destroy): Tear down the layer hierarchy.
+        (WebKit::PDFPlugin::paint): PDFPlugin is layer-based, so we paint nothing into the tiles.
+        (WebKit::PDFPlugin::paintControlForLayerInContext): Scrollbar controls are drawn into layers, but their painting is delegated here from WKPDFPluginScrollbarLayer.
+        (WebKit::PDFPlugin::snapshot): Perform a paint into a bitmap context.
+        (WebKit::PDFPlugin::pluginLayer): Return PDFPlugin's root layer.
+        (WebKit::PDFPlugin::geometryDidChange): The size or scale of the plugin changed; update
+        PDFLayerController's notion of the size and page scale, and invalidate the scrollbars.
+
+        Mouse and keyboard events are converted back into NSEvents, but with
+        locationInWindow actually in terms of the PDFPlugin's layer, not
+        the window (since there is no window).
+
+        (WebKit::modifierFlagsFromWebEvent): Construct an AppKit-style modifier bitmask from WebEvent's modifier key getters.
+        (WebKit::eventTypeFromWebEvent): Return the NSEventType equivalent to the given WebEvent. Only supports keyboard and mouse events, and only the left and right mouse button.
+        (WebKit::PDFPlugin::handleMouseEvent): Construct an NSEvent from the given WebMouseEvent and hand it to PDFLayerController. Mouse coordinates are in terms of m_contentLayer's origin.
+        (WebKit::PDFPlugin::handleKeyboardEvent): Construct an NSEvent from the given WebKeyboardEvent and hand it to PDFLayerController. PDFLayerController currently only handles keyDown events.
+
+        (WebKit::PDFPlugin::handleEditingCommand): Handle copy and select-all commands, and forward them to PDFLayerController.
+        (WebKit::PDFPlugin::isEditingCommandEnabled): The 'copy' command should be enabled if
+        the user has selected a part of the PDF. The 'select all' command should always be enabled.
+
+        (WebKit::PDFPlugin::setScrollOffset): Update both PDFPlugin and PDFLayerController's notion
+        of the current scroll position.
+        (WebKit::PDFPlugin::invalidateScrollbarRect): Invalidate the whole scrollbar layer.
+        (WebKit::PDFPlugin::invalidateScrollCornerRect): Invalidate the whole scroll corner layer.
+
+        Rename BuiltInPDFView to SimplePDFPlugin, to differentiate it from PDFPlugin
+        and to better denote its inheritance from Plugin.
+
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.h: Renamed from WebProcess/Plugins/PDF/BuiltInPDFView.h.
+        (WebKit::SimplePDFPlugin): Make methods protected so PDFPlugin can override them. Rename m_pluginSize -> m_size, and m_dataBuffer->m_data.
+        (WebKit::SimplePDFPlugin::size): Retrieve the size of the plugin.
+        (WebKit::SimplePDFPlugin::setSize): Set the size of the plugin.
+        (WebKit::SimplePDFPlugin::pdfDocument): Retrieve the currently represented PDF document.
+        (WebKit::SimplePDFPlugin::setPDFDocument): Set the currently represented PDF document.
+        (WebKit::SimplePDFPlugin::pdfDocumentSize): Retrieve the current size of the PDF.
+        (WebKit::SimplePDFPlugin::setPDFDocumentSize): Set the current size of the PDF.
+        (WebKit::SimplePDFPlugin::data): Retrieve the accumulated document data.
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.mm: Renamed from WebProcess/Plugins/PDF/BuiltInPDFView.mm.
+        (WebKit::SimplePDFPlugin::computePageBoxes): Copied out of calculateSizes() so PDFPlugin can use it too.
+        (WebKit::SimplePDFPlugin::runScriptsInPDFDocument): Factored out of pdfDocumentDidLoad() so PDFPlugin can use it too.
+        (WebKit::SimplePDFPlugin::convertFromScrollbarToContainingView): Implement the remaining scrollbar point conversion functions.
+        (WebKit::SimplePDFPlugin::convertFromContainingViewToScrollbar): Implement the remaining scrollbar point conversion functions.
+
+        * WebProcess/Plugins/Plugin.h:
+        (Plugin): Add handleEditingCommand, isEditingCommandEnabled, and handlesPageScaleFactor.
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::handleEditingCommand): Proxy handleEditingCommand to the PluginProcess.
+        (WebKit::PluginProxy::isEditingCommandEnabled): Proxy isEditingCommandEnabled
+        to the PluginProcess.
+        (WebKit::PluginProxy::handlesPageScaleFactor): Proxy handlesPageScaleFactor
+        to the PluginProcess.
+        * WebProcess/Plugins/PluginProxy.h: Add handleEditingCommand, isEditingCommandEnabled,
+        and handlesPageScaleFactor.
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::setPageScaleFactor): Set the plugin's current page scale factor. Also,
+        update WebPageProxy's notion of the current pageScaleFactor when this is called.
+        (WebKit::PluginView::pageScaleFactor): Return the plugin's current page scale factor.
+        (WebKit::PluginView::handleEditingCommand): Proxy handleEditingCommand to the plugin.
+        (WebKit::PluginView::isEditingCommandEnabled): Proxy isEditingCommandEnabled to the plugin.
+        * WebProcess/Plugins/PluginView.h:
+        (PluginView): Add handleEditingCommand, isEditingCommandEnabled,
+        setPageScaleFactor/pageScaleFactor, and handlesPageScaleFactor. Add m_pageScaleFactor.
+        (WebKit::PluginView::handlesPageScaleFactor): Proxy handlesPageScaleFactor to the plugin.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::restoreViewState): Don't update WebPageProxy's notion of the scale factor if it should be the default.
+        (WebKit::WebFrameLoaderClient::transitionToCommittedFromCachedFrame): Make use of shouldUseCustomRepresentationForResponse on WebPage instead of WebProcess.
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage): Make use of shouldUseCustomRepresentationForResponse on WebPage instead of WebProcess.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin): Create a PDFPlugin if appropriate (if it is built and the setting is enabled).
+        (WebKit::pluginViewForFrame): Return the PluginView for the given frame if its document is a PluginDocument.
+        (WebKit::WebPage::executeEditingCommand): Attempt to execute editing commands on the
+        currently focused (or main-frame) plugin.
+        (WebKit::WebPage::isEditingCommandEnabled): Validate editing commands against the
+        currently focused (or main-frame) plugin.
+        (WebKit::WebPage::scalePage): If the plugin reports that it handles page scale factor
+        itself, hand it the new scale instead of WebCore.
+        (WebKit::WebPage::pageScaleFactor): If the plugin reports that it handles page scale
+        factor itself, return its notion of the current scale instead of WebCore's.
+        (WebKit::WebPage::validateCommand): Validate editing commands against the
+        currently focused (or main-frame) plugin.
+        (WebKit::WebPage::updatePreferences): Update m_pdfPluginEnabled given the relevant WebPreference.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::pdfPluginEnabled): Return whether or not PDFPlugin should be used.
+        (WebKit::WebPage::setPDFPluginEnabled): Set whether or not PDFPlugin should be used.
+
 2012-10-13  Sam Weinig  <sam@webkit.org>
 
         Use class extension rather than a void* member for new Objective-C WebProcessPlugIn SPI

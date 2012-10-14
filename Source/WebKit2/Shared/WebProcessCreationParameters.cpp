@@ -66,7 +66,6 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(urlSchemesRegisteredAsNoAccess);
     encoder->encode(urlSchemesRegisteredAsDisplayIsolated);
     encoder->encode(urlSchemesRegisteredAsCORSEnabled);
-    encoder->encode(mimeTypesWithCustomRepresentation);
     encoder->encodeEnum(cacheModel);
     encoder->encode(shouldTrackVisitedLinks);
     encoder->encode(shouldAlwaysUseComplexTextCodePath);
@@ -146,8 +145,6 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
     if (!decoder->decode(parameters.urlSchemesRegisteredAsDisplayIsolated))
         return false;
     if (!decoder->decode(parameters.urlSchemesRegisteredAsCORSEnabled))
-        return false;
-    if (!decoder->decode(parameters.mimeTypesWithCustomRepresentation))
         return false;
     if (!decoder->decodeEnum(parameters.cacheModel))
         return false;

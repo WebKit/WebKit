@@ -913,6 +913,21 @@ bool NetscapePlugin::handleKeyboardEvent(const WebKeyboardEvent& keyboardEvent)
     return platformHandleKeyboardEvent(keyboardEvent);
 }
 
+bool NetscapePlugin::handleEditingCommand(const String& commandName, const String& argument)
+{
+    return false;
+}
+
+bool NetscapePlugin::isEditingCommandEnabled(const String& commandName)
+{
+    return false;
+}
+    
+bool NetscapePlugin::handlesPageScaleFactor()
+{
+    return false;
+}
+
 void NetscapePlugin::setFocus(bool hasFocus)
 {
     ASSERT(m_isStarted);

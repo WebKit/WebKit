@@ -150,13 +150,11 @@ public:
 #if PLATFORM(MAC)
     pid_t presenterApplicationPid() const { return m_presenterApplicationPid; }
     bool shouldForceScreenFontSubstitution() const { return m_shouldForceScreenFontSubstitution; }
-#endif 
+#endif
     
 #if PLATFORM(QT)
     QNetworkAccessManager* networkAccessManager() { return m_networkAccessManager; }
 #endif
-
-    bool shouldUseCustomRepresentationForResponse(const WebCore::ResourceResponse&) const;
 
     // Text Checking
     const TextCheckerState& textCheckerState() const { return m_textCheckerState; }
@@ -319,8 +317,6 @@ private:
 #if ENABLE(WEB_INTENTS)
     HashMap<uint64_t, RefPtr<WebCore::PlatformMessagePortChannel> > m_messagePortChannels;
 #endif
-
-    HashSet<String, CaseFoldingHash> m_mimeTypesWithCustomRepresentations;
 
     TextCheckerState m_textCheckerState;
     WebGeolocationManager m_geolocationManager;

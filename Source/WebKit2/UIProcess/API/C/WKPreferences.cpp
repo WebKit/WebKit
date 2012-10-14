@@ -933,3 +933,13 @@ bool WKPreferencesGetPlugInSnapshottingEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->plugInSnapshottingEnabled();
 }
+
+void WKPreferencesSetPDFPluginEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setPDFPluginEnabled(enabled);
+}
+
+bool WKPreferencesGetPDFPluginEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->pdfPluginEnabled();
+}

@@ -1,3 +1,23 @@
+2012-10-14  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Implement PDFPlugin
+        https://bugs.webkit.org/show_bug.cgi?id=99206
+
+        Reviewed by Dan Bernstein.
+
+        Add a plug-in that uses PDFKit to display PDFs, instead of using PDFKit in the
+        UIProcess for full-page PDFs. This new plugin will also be used for inline PDFs
+        in place of SimplePDFPlugin (née BuiltInPDFView).
+
+        * WebCore.exp.in:
+        Export a few more methods to WebKit(2).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Expose Pasteboard.h as a private header so PDFPlugin can use it.
+
+        * platform/ScrollableArea.h:
+        Make invalidateScrollbar/invalidateScrollCorner virtual.
+
 2012-10-14  Antoine Quint  <graouts@apple.com>
 
         InspectorPageAgent should expose a method to control the compositing debug settings.

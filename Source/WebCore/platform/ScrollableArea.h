@@ -106,10 +106,10 @@ public:
     virtual bool isActive() const = 0;
     virtual int scrollSize(ScrollbarOrientation) const = 0;
     virtual int scrollPosition(Scrollbar*) const = 0;
-    void invalidateScrollbar(Scrollbar*, const IntRect&);
+    virtual void invalidateScrollbar(Scrollbar*, const IntRect&);
     virtual bool isScrollCornerVisible() const = 0;
     virtual IntRect scrollCornerRect() const = 0;
-    void invalidateScrollCorner(const IntRect&);
+    virtual void invalidateScrollCorner(const IntRect&);
     virtual void getTickmarks(Vector<IntRect>&) const { }
 
     // Convert points and rects between the scrollbar and its containing view.

@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BuiltInPDFView_h
-#define BuiltInPDFView_h
+#ifndef SimplePDFPlugin_h
+#define SimplePDFPlugin_h
 
 #include "Plugin.h"
 #include <WebCore/ScrollableArea.h>
@@ -35,7 +35,7 @@ typedef struct OpaqueJSValue* JSObjectRef;
 typedef const struct OpaqueJSValue* JSValueRef;
 
 namespace WebCore {
-    struct PluginInfo;
+struct PluginInfo;
 }
 
 namespace WebKit {
@@ -43,32 +43,48 @@ namespace WebKit {
 class PluginView;
 class WebFrame;
 
-class BuiltInPDFView : public Plugin, private WebCore::ScrollableArea {
+class SimplePDFPlugin : public Plugin, protected WebCore::ScrollableArea {
 public:
-    static PassRefPtr<BuiltInPDFView> create(WebFrame*);
-    ~BuiltInPDFView();
+    static PassRefPtr<SimplePDFPlugin> create(WebFrame*);
+    ~SimplePDFPlugin();
 
     static WebCore::PluginInfo pluginInfo();
 
     // In-process PDFViews don't support asynchronous initialization.
     virtual bool isBeingAsynchronouslyInitialized() const { return false; }
 
-private:
-    explicit BuiltInPDFView(WebFrame*);
+protected:
+    explicit SimplePDFPlugin(WebFrame*);
+
+    WebFrame* webFrame() const { return m_frame; }
+
+    WebCore::IntSize size() const { return m_size; }
+    void setSize(WebCore::IntSize size) { m_size = size; }
+
+    RetainPtr<PDFDocument> pdfDocument() const { return m_pdfDocument; }
+    void setPDFDocument(RetainPtr<PDFDocument> document) { m_pdfDocument = document; }
+
+    WebCore::IntSize pdfDocumentSize() const { return m_pdfDocumentSize; }
+    void setPDFDocumentSize(WebCore::IntSize size) { m_pdfDocumentSize = size; }
+    
+    RetainPtr<CFMutableDataRef> data() const { return m_data; }
 
     // Regular plug-ins don't need access to view, but we add scrollbars to embedding FrameView for proper event handling.
     PluginView* pluginView();
     const PluginView* pluginView() const;
 
-    void updateScrollbars();
-    PassRefPtr<WebCore::Scrollbar> createScrollbar(WebCore::ScrollbarOrientation);
-    void destroyScrollbar(WebCore::ScrollbarOrientation);
-    void addArchiveResource();
-    void pdfDocumentDidLoad();
-    void calculateSizes();
+    virtual void updateScrollbars();
+    virtual PassRefPtr<WebCore::Scrollbar> createScrollbar(WebCore::ScrollbarOrientation);
+    virtual void destroyScrollbar(WebCore::ScrollbarOrientation);
+    virtual void addArchiveResource();
+    virtual void pdfDocumentDidLoad();
+    virtual void computePageBoxes();
+    virtual void calculateSizes();
     void paintBackground(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
     void paintContent(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
     void paintControls(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
+    
+    void runScriptsInPDFDocument();
 
     // Plug-in methods
     virtual bool initialize(const Parameters&);
@@ -143,18 +159,27 @@ private:
     virtual bool scrollbarsCanBeActive() const OVERRIDE;
     virtual bool shouldSuspendScrollAnimations() const OVERRIDE { return false; } // If we return true, ScrollAnimatorMac will keep cycling a timer forever, waiting for a good time to animate.
     virtual void scrollbarStyleChanged(int newStyle, bool forceUpdate) OVERRIDE;
-    // FIXME: Implement the other conversion functions; this one is enough to get scrollbar hit testing working.
+    
+    virtual WebCore::IntRect convertFromScrollbarToContainingView(const WebCore::Scrollbar*, const WebCore::IntRect& scrollbarRect) const OVERRIDE;
+    virtual WebCore::IntRect convertFromContainingViewToScrollbar(const WebCore::Scrollbar*, const WebCore::IntRect& parentRect) const OVERRIDE;
+    virtual WebCore::IntPoint convertFromScrollbarToContainingView(const WebCore::Scrollbar*, const WebCore::IntPoint& scrollbarPoint) const OVERRIDE;
     virtual WebCore::IntPoint convertFromContainingViewToScrollbar(const WebCore::Scrollbar*, const WebCore::IntPoint& parentPoint) const OVERRIDE;
+    
+    virtual bool isEditingCommandEnabled(const String&) OVERRIDE;
+    virtual bool handleEditingCommand(const String&, const String&) OVERRIDE;
+    virtual bool handlesPageScaleFactor() OVERRIDE;
+    
+private:
 
     JSObjectRef makeJSPDFDoc(JSContextRef);
     static JSValueRef jsPDFDocPrint(JSContextRef, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
-    WebCore::IntSize m_pluginSize;
+    WebCore::IntSize m_size;
 
     WebCore::KURL m_sourceURL;
 
     String m_suggestedFilename;
-    RetainPtr<CFMutableDataRef> m_dataBuffer;
+    RetainPtr<CFMutableDataRef> m_data;
 
     RetainPtr<PDFDocument> m_pdfDocument;
     Vector<WebCore::IntRect> m_pageBoxes;
@@ -170,4 +195,4 @@ private:
 
 } // namespace WebKit
 
-#endif // BuiltInPDFView_h
+#endif // SimplePDFPlugin_h

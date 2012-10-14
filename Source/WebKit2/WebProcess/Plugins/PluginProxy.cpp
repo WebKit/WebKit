@@ -403,6 +403,33 @@ void PluginProxy::setFocus(bool hasFocus)
     m_connection->connection()->send(Messages::PluginControllerProxy::SetFocus(hasFocus), m_pluginInstanceID);
 }
 
+bool PluginProxy::handleEditingCommand(const String& commandName, const String& argument)
+{
+    bool handled = false;
+    if (!m_connection->connection()->sendSync(Messages::PluginControllerProxy::HandleEditingCommand(commandName, argument), Messages::PluginControllerProxy::HandleEditingCommand::Reply(handled), m_pluginInstanceID))
+        return false;
+    
+    return handled;
+}
+    
+bool PluginProxy::isEditingCommandEnabled(const String& commandName)
+{
+    bool enabled = false;
+    if (!m_connection->connection()->sendSync(Messages::PluginControllerProxy::IsEditingCommandEnabled(commandName), Messages::PluginControllerProxy::IsEditingCommandEnabled::Reply(enabled), m_pluginInstanceID))
+        return false;
+    
+    return enabled;
+}
+    
+bool PluginProxy::handlesPageScaleFactor()
+{
+    bool handled = false;
+    if (!m_connection->connection()->sendSync(Messages::PluginControllerProxy::HandlesPageScaleFactor(), Messages::PluginControllerProxy::HandlesPageScaleFactor::Reply(handled), m_pluginInstanceID))
+        return false;
+    
+    return handled;
+}
+
 NPObject* PluginProxy::pluginScriptableNPObject()
 {
     // Sending the synchronous Messages::PluginControllerProxy::GetPluginScriptableNPObject message can cause us to dispatch an

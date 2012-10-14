@@ -73,6 +73,15 @@ messages -> PluginControllerProxy {
 
     # Sent when a keyboard should be processed.
     HandleKeyboardEvent(WebKit::WebKeyboardEvent keyboardEvent) -> (bool handled)
+    
+    # Sent when an editing command should be processed.
+    HandleEditingCommand(WTF::String commandName, WTF::String argument) -> (bool handled);
+    
+    # Return whether or not a plugin wants to enable the given editing command.
+    IsEditingCommandEnabled(WTF::String commandName) -> (bool enabled);
+    
+    # Return whether or not a plugin wants to handle page scale factor itself.
+    HandlesPageScaleFactor() -> (bool enabled);
 
     # Sent when the plug-in focus changes.
     SetFocus(bool isFocused)

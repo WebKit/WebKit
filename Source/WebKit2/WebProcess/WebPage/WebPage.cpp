@@ -107,6 +107,7 @@
 #include <WebCore/RenderView.h>
 #include <WebCore/ResourceBuffer.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/ResourceResponse.h>
 #include <WebCore/RunLoop.h>
 #include <WebCore/SchemeRegistry.h>
 #include <WebCore/ScriptValue.h>
@@ -150,7 +151,10 @@
 #endif
 
 #if PLATFORM(MAC)
-#include "BuiltInPDFView.h"
+#include "SimplePDFPlugin.h"
+#if ENABLE(PDFKIT_PLUGIN)
+#include "PDFPlugin.h"
+#endif
 #endif
 
 #if PLATFORM(QT)
@@ -219,6 +223,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_artificialPluginInitializationDelayEnabled(false)
     , m_scrollingPerformanceLoggingEnabled(false)
 #if PLATFORM(MAC)
+    , m_pdfPluginEnabled(false)
     , m_windowIsVisible(false)
     , m_isSmartInsertDeleteEnabled(parameters.isSmartInsertDeleteEnabled)
     , m_layerHostingMode(parameters.layerHostingMode)
@@ -468,8 +473,13 @@ PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* plu
     if (pluginPath.isNull()) {
 #if PLATFORM(MAC)
         if (parameters.mimeType == "application/pdf"
-            || (parameters.mimeType.isEmpty() && parameters.url.path().lower().endsWith(".pdf")))
-            return BuiltInPDFView::create(frame);
+            || (parameters.mimeType.isEmpty() && parameters.url.path().lower().endsWith(".pdf"))) {
+#if ENABLE(PDFKIT_PLUGIN)
+            if (pdfPluginEnabled())
+                return PDFPlugin::create(frame);
+#endif
+            return SimplePDFPlugin::create(frame);
+        }
 #else
         UNUSED_PARAM(frame);
 #endif
@@ -620,11 +630,27 @@ PassRefPtr<ImmutableArray> WebPage::trackedRepaintRects()
     return ImmutableArray::adopt(vector);
 }
 
+static PluginView* pluginViewForFrame(Frame* frame)
+{
+    if (!frame->document()->isPluginDocument())
+        return 0;
+
+    PluginDocument* pluginDocument = static_cast<PluginDocument*>(frame->document());
+    PluginView* pluginView = static_cast<PluginView*>(pluginDocument->pluginWidget());
+    return pluginView;
+}
+
 void WebPage::executeEditingCommand(const String& commandName, const String& argument)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
     if (!frame)
         return;
+
+    if (PluginView* pluginView = pluginViewForFrame(frame)) {
+        pluginView->handleEditingCommand(commandName, argument);
+        return;
+    }
+    
     frame->editor()->command(commandName).execute(argument);
 }
 
@@ -633,6 +659,9 @@ bool WebPage::isEditingCommandEnabled(const String& commandName)
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
     if (!frame)
         return false;
+
+    if (PluginView* pluginView = pluginViewForFrame(frame))
+        return pluginView->isEditingCommandEnabled(commandName);
     
     Editor::Command command = frame->editor()->command(commandName);
     return command.isSupported() && command.isEnabled();
@@ -1073,6 +1102,12 @@ void WebPage::windowScreenDidChange(uint64_t displayID)
 
 void WebPage::scalePage(double scale, const IntPoint& origin)
 {
+    PluginView* pluginView = pluginViewForFrame(m_page->mainFrame());
+    if (pluginView && pluginView->handlesPageScaleFactor()) {
+        pluginView->setPageScaleFactor(scale, origin);
+        return;
+    }
+
     m_page->setPageScaleFactor(scale, origin);
 
     for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
@@ -1083,6 +1118,10 @@ void WebPage::scalePage(double scale, const IntPoint& origin)
 
 double WebPage::pageScaleFactor() const
 {
+    PluginView* pluginView = pluginViewForFrame(m_page->mainFrame());
+    if (pluginView && pluginView->handlesPageScaleFactor())
+        return pluginView->pageScaleFactor();
+    
     return m_page->pageScaleFactor();
 }
 
@@ -1533,9 +1572,13 @@ void WebPage::validateCommand(const String& commandName, uint64_t callbackID)
     int32_t state = 0;
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
     if (frame) {
-        Editor::Command command = frame->editor()->command(commandName);
-        state = command.state();
-        isEnabled = command.isSupported() && command.isEnabled();
+        if (PluginView* pluginView = pluginViewForFrame(frame))
+            isEnabled = pluginView->isEditingCommandEnabled(commandName);
+        else {
+            Editor::Command command = frame->editor()->command(commandName);
+            state = command.state();
+            isEnabled = command.isSupported() && command.isEnabled();
+        }
     }
 
     send(Messages::WebPageProxy::ValidateCommandCallback(commandName, isEnabled, state, callbackID));
@@ -2053,6 +2096,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     m_artificialPluginInitializationDelayEnabled = store.getBoolValueForKey(WebPreferencesKey::artificialPluginInitializationDelayEnabledKey());
 
     m_scrollingPerformanceLoggingEnabled = store.getBoolValueForKey(WebPreferencesKey::scrollingPerformanceLoggingEnabledKey());
+
+#if PLATFORM(MAC)
+    m_pdfPluginEnabled = store.getBoolValueForKey(WebPreferencesKey::pdfPluginEnabledKey());
+#endif
 
     // FIXME: This should be generated from macro expansion for all preferences,
     // but we currently don't match the naming of WebCore exactly so we are
@@ -3395,6 +3442,26 @@ void WebPage::setScrollingPerformanceLoggingEnabled(bool enabled)
         return;
 
     frameView->setScrollingPerformanceLoggingEnabled(enabled);
+}
+
+static bool canPluginHandleResponse(const ResourceResponse& response)
+{
+    String pluginPath;
+    bool blocked;
+    
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebProcessProxy::GetPluginPath(response.mimeType(), response.url().string()), Messages::WebProcessProxy::GetPluginPath::Reply(pluginPath, blocked), 0))
+        return false;
+    
+    return !blocked && !pluginPath.isEmpty();
+}
+
+bool WebPage::shouldUseCustomRepresentationForResponse(const ResourceResponse& response) const
+{
+    if (!m_mimeTypesWithCustomRepresentations.contains(response.mimeType()))
+        return false;
+
+    // If a plug-in exists that claims to support this response, it should take precedence over the custom representation.
+    return !canPluginHandleResponse(response);
 }
 
 } // namespace WebKit

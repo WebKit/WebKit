@@ -79,9 +79,16 @@ public:
 
     // FIXME: Remove this; nobody should have to know about the plug-in view's renderer except the plug-in view itself.
     WebCore::RenderBoxModelObject* renderer() const;
+    
+    void setPageScaleFactor(double scaleFactor, WebCore::IntPoint origin);
+    double pageScaleFactor();
+    bool handlesPageScaleFactor() { return m_plugin->handlesPageScaleFactor(); }
 
     void pageScaleFactorDidChange();
     void webPageDestroyed();
+
+    virtual bool handleEditingCommand(const String& commandName, const String& argument);
+    virtual bool isEditingCommandEnabled(const String& commandName);
 
 private:
     PluginView(PassRefPtr<WebCore::HTMLPlugInElement>, PassRefPtr<Plugin>, const Plugin::Parameters& parameters);
@@ -236,6 +243,8 @@ private:
     RefPtr<ShareableBitmap> m_transientPaintingSnapshot;
     // This timer is used when plugin snapshotting is enabled, to capture a plugin placeholder.
     WebCore::DeferrableOneShotTimer<PluginView> m_pluginSnapshotTimer;
+
+    double m_pageScaleFactor;
 };
 
 } // namespace WebKit

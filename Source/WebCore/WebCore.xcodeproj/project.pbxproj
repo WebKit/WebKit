@@ -1439,7 +1439,7 @@
 		4AD0173D127E82860015035F /* JSHTMLOutputElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AD0173B127E82860015035F /* JSHTMLOutputElement.h */; };
 		4AF1AD3E13FD23A400AA9590 /* EventDispatchMediator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4AF1AD3C13FD23A400AA9590 /* EventDispatchMediator.cpp */; };
 		4AF1AD3F13FD23A400AA9590 /* EventDispatchMediator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AF1AD3D13FD23A400AA9590 /* EventDispatchMediator.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		4B2708C70AF19EE40065127F /* Pasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B2708C50AF19EE40065127F /* Pasteboard.h */; };
+		4B2708C70AF19EE40065127F /* Pasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B2708C50AF19EE40065127F /* Pasteboard.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4B2709830AF2E5E00065127F /* PasteboardMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4B2709810AF2E5E00065127F /* PasteboardMac.mm */; };
 		4B3043C70AE0370300A82647 /* Sound.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B3043C60AE0370300A82647 /* Sound.h */; };
 		4B3043C90AE0371D00A82647 /* SoundMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4B3043C80AE0371D00A82647 /* SoundMac.mm */; };
@@ -22298,6 +22298,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B2708C70AF19EE40065127F /* Pasteboard.h in Headers */,
 				E47E276516036ED200EE2AFB /* DocumentStyleSheetCollection.h in Headers */,
 				97BC69DB1505F076001B74AC /* AbstractDatabase.h in Headers */,
 				41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */,
@@ -24596,7 +24597,6 @@
 				FD3160A312B026F700C1A359 /* Panner.h in Headers */,
 				BC76AC130DD7AD5C00415F34 /* ParserUtilities.h in Headers */,
 				F55B3DCA1251F12D003EF269 /* PasswordInputType.h in Headers */,
-				4B2708C70AF19EE40065127F /* Pasteboard.h in Headers */,
 				C598905714E9C28000E8D18B /* PasteboardStrategy.h in Headers */,
 				B27535800B053814002CE64F /* Path.h in Headers */,
 				A88DD4870B4629A300C02990 /* PathTraversalState.h in Headers */,

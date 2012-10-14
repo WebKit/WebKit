@@ -77,12 +77,6 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 {
     parameters.presenterApplicationPid = getpid();
 
-    if (!omitPDFSupport()) {
-        // We want to use a PDF view in the UI process for PDF MIME types.
-        HashSet<String, CaseFoldingHash> mimeType = pdfAndPostScriptMIMETypes();
-        parameters.mimeTypesWithCustomRepresentation.appendRange(mimeType.begin(), mimeType.end());
-    }
-
     parameters.parentProcessName = [[NSProcessInfo processInfo] processName];    
 
     RetainPtr<CFStringRef> cachePath(AdoptCF, WKCopyFoundationCacheDirectory());

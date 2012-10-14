@@ -137,6 +137,9 @@ private:
     void handleMouseEnterEvent(const WebMouseEvent&, bool& handled);
     void handleMouseLeaveEvent(const WebMouseEvent&, bool& handled);
     void handleKeyboardEvent(const WebKeyboardEvent&, bool& handled);
+    void handleEditingCommand(const String&, const String&, bool&);
+    void isEditingCommandEnabled(const String&, bool&);
+    void handlesPageScaleFactor(bool&);
     void paintEntirePlugin();
     void snapshot(ShareableBitmap::Handle& backingStoreHandle);
     void setFocus(bool);
