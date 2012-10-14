@@ -1,3 +1,10 @@
+2012-10-14  Sam Weinig  <sam@webkit.org>
+
+        Fix the windows build.
+
+        * WebView.cpp:
+        (toStringVector):
+
 2012-10-10  Brady Eidson  <beidson@apple.com>
 
         Switch ResourceLoader::resourceData() from SharedBuffer to ResourceBuffer
