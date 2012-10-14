@@ -1,3 +1,12 @@
+2012-10-14  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for WinCE after r131089.
+
+        WinCE does not support getenv().
+
+        * runtime/Options.cpp:
+        (JSC::overrideOptionWithHeuristic):
+
 2012-10-12  Kangil Han  <kangil.han@samsung.com>
 
         Fix build error on DFGSpeculativeJIT32_64.cpp

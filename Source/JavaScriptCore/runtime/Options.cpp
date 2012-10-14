@@ -75,6 +75,7 @@ static bool parse(const char* string, double& value)
 template<typename T>
 void overrideOptionWithHeuristic(T& variable, const char* name)
 {
+#if !OS(WINCE)
     const char* stringValue = getenv(name);
     if (!stringValue)
         return;
@@ -83,6 +84,7 @@ void overrideOptionWithHeuristic(T& variable, const char* name)
         return;
     
     fprintf(stderr, "WARNING: failed to parse %s=%s\n", name, stringValue);
+#endif
 }
 
 static unsigned computeNumberOfGCMarkers(int maxNumberOfGCMarkers)
