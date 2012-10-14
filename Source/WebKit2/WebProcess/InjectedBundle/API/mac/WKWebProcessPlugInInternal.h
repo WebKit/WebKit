@@ -27,10 +27,6 @@
 
 #import "WKWebProcessPlugIn.h"
 
-namespace WebKit {
-class InjectedBundle;
-}
-
 @interface WKWebProcessPlugInController (Internal)
 
 + (WKWebProcessPlugInController *)_shared;

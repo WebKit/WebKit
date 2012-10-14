@@ -27,7 +27,7 @@
 
 #import "WKWebProcessPlugInBrowserContextController.h"
 
-@interface WKWebProcessPlugInBrowserContextController(Internal)
+@interface WKWebProcessPlugInBrowserContextController (Internal)
 
 - (id)_initWithBundlePageRef:(WKBundlePageRef)bundlePageRef;
 

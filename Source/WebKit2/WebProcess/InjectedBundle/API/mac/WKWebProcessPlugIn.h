@@ -39,11 +39,7 @@
 @end
 
 WK_EXPORT
-@interface WKWebProcessPlugInController : NSObject {
-@private
-    void *_private;
-}
-
+@interface WKWebProcessPlugInController : NSObject
 @end
 
 #endif // defined(__LP64__) && defined(__clang__)

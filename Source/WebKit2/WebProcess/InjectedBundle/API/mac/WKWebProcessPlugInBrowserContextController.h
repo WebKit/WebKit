@@ -31,10 +31,7 @@
 @class WKDOMDocument;
 
 WK_EXPORT
-@interface WKWebProcessPlugInBrowserContextController : NSObject {
-@private
-    void *_data;
-}
+@interface WKWebProcessPlugInBrowserContextController : NSObject
 
 @property(readonly) WKDOMDocument *mainFrameDocument;
 

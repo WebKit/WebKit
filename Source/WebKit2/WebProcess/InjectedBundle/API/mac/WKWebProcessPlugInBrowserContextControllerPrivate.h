@@ -27,7 +27,7 @@
 
 #import <WebKit2/WKWebProcessPlugInBrowserContextController.h>
 
-@interface WKWebProcessPlugInBrowserContextController(Private)
+@interface WKWebProcessPlugInBrowserContextController (Private)
 
 @property(readonly) WKBundlePageRef _bundlePageRef;
 

@@ -1,3 +1,40 @@
+2012-10-13  Sam Weinig  <sam@webkit.org>
+
+        Use class extension rather than a void* member for new Objective-C WebProcessPlugIn SPI
+        https://bugs.webkit.org/show_bug.cgi?id=99256
+
+        Reviewed by Dan Bernstein.
+
+        A bit of good old fashion cleanup.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.h:
+        Remove the void* member.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.mm:
+        Move members from the WKWebProcessPlugInControllerData struct to a class extension.
+
+        (didCreatePage):
+        (willDestroyPage):
+        (-[WKWebProcessPlugInController _initWithPrincipalClassInstance:bundleRef:]):
+        Directly access the members instead of using properties, now that it is not inconvenient.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.h:
+        Remove the void* member.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        Move members from the WKWebProcessPlugInBrowserContextControllerData struct to a class extension.
+        
+        (-[WKWebProcessPlugInBrowserContextController _initWithBundlePageRef:]):
+        (-[WKWebProcessPlugInBrowserContextController _bundlePageRef]):
+        Remove unnecessary casts..
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextControllerInternal.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextControllerPrivate.h:
+        Add space before the parenthesis of a category to be consistent.
+ 
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInInternal.h:
+        Remove unnecessary forward declare.
+
 2012-10-13  Andy Estes  <aestes@apple.com>
 
         Add a private header for WKWebProcessPlugInBrowserContextController that defines a property for getting the WKBundlePageRef
