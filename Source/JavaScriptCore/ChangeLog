@@ -1,5 +1,29 @@
 2012-10-14  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG structure check hoisting should attempt to ignore side effects and make transformations that are sound even in their presence
+        https://bugs.webkit.org/show_bug.cgi?id=99262
+
+        Reviewed by Oliver Hunt.
+
+        This hugely simplifies the structure check hoisting phase. It will no longer be necessary
+        to modify it when the effectfulness of operations changes. This also enables the hoister
+        to hoist effectful things in the future.
+        
+        The downside is that the hoister may end up adding strictly more checks than were present
+        in the original code, if the code truly has a lot of side-effects. I don't see evidence
+        of this happening. This patch does have some speed-ups and some slow-downs, but is
+        neutral in the average, and the slow-downs do not appear to have more structure checks
+        than ToT.
+
+        * dfg/DFGStructureCheckHoistingPhase.cpp:
+        (JSC::DFG::StructureCheckHoistingPhase::run):
+        (JSC::DFG::StructureCheckHoistingPhase::noticeStructureCheck):
+        (StructureCheckHoistingPhase):
+        (CheckData):
+        (JSC::DFG::StructureCheckHoistingPhase::CheckData::CheckData):
+
+2012-10-14  Filip Pizlo  <fpizlo@apple.com>
+
         Fix the build of universal binary with ARMv7s of JavaScriptCore
 
         * llint/LLIntOfflineAsmConfig.h:
