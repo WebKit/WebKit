@@ -1,3 +1,15 @@
+2012-10-14  Sam Weinig  <sam@webkit.org>
+
+        Make UserScript and UserStyleSheet value objects that are copyable
+        https://bugs.webkit.org/show_bug.cgi?id=99275
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::addUserScript):
+        (DumpRenderTreeSupportEfl::addUserStyleSheet):
+        Update for new PageGroup function signatures.
+
 2012-10-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Remove "web" word in web inspector

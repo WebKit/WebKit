@@ -3512,13 +3512,13 @@ void WebView::addUserScript(const WebString& sourceCode,
                             WebView::UserScriptInjectAt injectAt,
                             WebView::UserContentInjectIn injectIn)
 {
-    OwnPtr<Vector<String> > patterns = adoptPtr(new Vector<String>);
+    Vector<String> patterns;
     for (size_t i = 0; i < patternsIn.size(); ++i)
-        patterns->append(patternsIn[i]);
+        patterns.append(patternsIn[i]);
 
     PageGroup* pageGroup = PageGroup::pageGroup(pageGroupName);
     RefPtr<DOMWrapperWorld> world(DOMWrapperWorld::createUninitializedWorld());
-    pageGroup->addUserScriptToWorld(world.get(), sourceCode, WebURL(), patterns.release(), nullptr,
+    pageGroup->addUserScriptToWorld(world.get(), sourceCode, WebURL(), patterns, Vector<String>(),
                                     static_cast<UserScriptInjectionTime>(injectAt),
                                     static_cast<UserContentInjectedFrames>(injectIn));
 }
@@ -3528,9 +3528,9 @@ void WebView::addUserStyleSheet(const WebString& sourceCode,
                                 WebView::UserContentInjectIn injectIn,
                                 WebView::UserStyleInjectionTime injectionTime)
 {
-    OwnPtr<Vector<String> > patterns = adoptPtr(new Vector<String>);
+    Vector<String> patterns;
     for (size_t i = 0; i < patternsIn.size(); ++i)
-        patterns->append(patternsIn[i]);
+        patterns.append(patternsIn[i]);
 
     PageGroup* pageGroup = PageGroup::pageGroup(pageGroupName);
     RefPtr<DOMWrapperWorld> world(DOMWrapperWorld::createUninitializedWorld());
@@ -3539,7 +3539,7 @@ void WebView::addUserStyleSheet(const WebString& sourceCode,
     // callers specify this though, since in other cases the caller will probably want "user" level.
     //
     // FIXME: It would be nice to populate the URL correctly, instead of passing an empty URL.
-    pageGroup->addUserStyleSheetToWorld(world.get(), sourceCode, WebURL(), patterns.release(), nullptr,
+    pageGroup->addUserStyleSheetToWorld(world.get(), sourceCode, WebURL(), patterns, Vector<String>(),
                                         static_cast<UserContentInjectedFrames>(injectIn),
                                         UserStyleAuthorLevel,
                                         static_cast<WebCore::UserStyleInjectionTime>(injectionTime));

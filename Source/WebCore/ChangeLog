@@ -1,3 +1,39 @@
+2012-10-14  Sam Weinig  <sam@webkit.org>
+
+        Make UserScript and UserStyleSheet value objects that are copyable
+        https://bugs.webkit.org/show_bug.cgi?id=99275
+
+        Reviewed by Tim Horton.
+
+        Simplify UserScript and UserStyleSheet and make them more easily usable
+        without sticking them in an OwnPtr.
+
+        * WebCore.exp.in:
+        Update exports.
+
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::addUserScriptToWorld):
+        (WebCore::PageGroup::addUserStyleSheetToWorld):
+        * page/PageGroup.h:
+        (PageGroup):
+        * page/UserContentURLPattern.cpp:
+        (WebCore::UserContentURLPattern::matchesPatterns):
+        * page/UserContentURLPattern.h:
+        (UserContentURLPattern):
+        Update to not assume whitelist and blacklist are in Vector<String>*.
+
+        * page/UserScript.h:
+        (UserScript):
+        (WebCore::UserScript::UserScript):
+        (WebCore::UserScript::whitelist):
+        (WebCore::UserScript::blacklist):
+        * page/UserStyleSheet.h:
+        (UserStyleSheet):
+        (WebCore::UserStyleSheet::UserStyleSheet):
+        (WebCore::UserStyleSheet::whitelist):
+        (WebCore::UserStyleSheet::blacklist):
+        Switch OwnPtr<Vector<String> > to Vector<String> and remove Noncopyable restriction.
+
 2012-10-14  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] Implement PDFPlugin

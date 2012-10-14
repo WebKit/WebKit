@@ -1,3 +1,15 @@
+2012-10-14  Sam Weinig  <sam@webkit.org>
+
+        Make UserScript and UserStyleSheet value objects that are copyable
+        https://bugs.webkit.org/show_bug.cgi?id=99275
+
+        Reviewed by Tim Horton.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebView::addUserScript):
+        (WebKit::WebView::addUserStyleSheet):
+        Update for new PageGroup function signatures.
+
 2012-10-12  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Remove used frameForEnteredContext API

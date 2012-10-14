@@ -31,6 +31,7 @@
 #include "WebURL.h"
 #include <WebCore/KURL.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace CoreIPC {
 class ArgumentDecoder;
@@ -61,16 +62,16 @@ public:
         
         const String& source() const { return m_source->string(); }
         WebCore::KURL url() const { return !m_url || m_url->string().isEmpty() ? WebCore::blankURL() : WebCore::KURL(WebCore::KURL(), m_url->string()); }
-        PassOwnPtr<Vector<String> > whitelist() const;
-        PassOwnPtr<Vector<String> > blacklist() const;
+        const Vector<String>& whitelist() const { return m_whitelist; }
+        const Vector<String>& blacklist() const { return m_blacklist; }
         InjectedFrames injectedFrames() const { return m_injectedFrames; }
         Type type() const { return m_type; }
 
     private:
         RefPtr<WebString> m_source;
         RefPtr<WebURL> m_url;
-        RefPtr<ImmutableArray> m_whitelist;
-        RefPtr<ImmutableArray> m_blacklist;
+        Vector<String> m_whitelist;
+        Vector<String> m_blacklist;
         InjectedFrames m_injectedFrames;
         Type m_type;
     };

@@ -32,6 +32,26 @@
 
 namespace WebKit {
 
+static Vector<String> toStringVector(ImmutableArray* array)
+{
+    Vector<String> patternVector;
+    if (!array)
+        return patternVector;
+
+    size_t size = array->size();
+    if (!size)
+        return patternVector;
+    
+    patternVector.reserveInitialCapacity(size);
+    for (size_t i = 0; i < size; ++i) {
+        WebString* webString = array->at<WebString>(i);
+        ASSERT(webString);
+        patternVector.uncheckedAppend(webString->string());
+    }
+    
+    return patternVector;
+}
+
 UserContentContainer::Item::Item()
 {
 }
@@ -39,65 +59,30 @@ UserContentContainer::Item::Item()
 UserContentContainer::Item::Item(PassRefPtr<WebString> source, PassRefPtr<WebURL> url, PassRefPtr<ImmutableArray> whitelist, PassRefPtr<ImmutableArray> blacklist, InjectedFrames injectedFrames, Type type)
     : m_source(source)
     , m_url(url)
-    , m_whitelist(whitelist)
-    , m_blacklist(blacklist)
+    , m_whitelist(toStringVector(whitelist.get()))
+    , m_blacklist(toStringVector(blacklist.get()))
     , m_injectedFrames(injectedFrames)
     , m_type(type)
 {
     ASSERT(m_source);
 }
 
-static void encodeStringArray(CoreIPC::ArgumentEncoder* encoder, ImmutableArray* array)
-{
-    ASSERT(encoder);
-    uint32_t size = array ? array->size() : 0;
-    encoder->encode(size);
-    for (uint32_t i = 0; i < size; ++i) {
-        WebString* webString = array->at<WebString>(i);
-        ASSERT(webString);
-        encoder->encode(webString->string());
-    }
-}
-
 void UserContentContainer::Item::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encode(m_source->string());
     encoder->encode(m_url ? m_url->string() : String());
-    encodeStringArray(encoder, m_whitelist.get());
-    encodeStringArray(encoder, m_blacklist.get());
+    encoder->encode(m_whitelist);
+    encoder->encode(m_blacklist);
     encoder->encode(static_cast<uint32_t>(m_injectedFrames));
     encoder->encode(static_cast<uint32_t>(m_type));
-}
-
-static bool decodeStringArray(CoreIPC::ArgumentDecoder* decoder, Vector<RefPtr<APIObject> >& vector)
-{
-    ASSERT(decoder);
-    ASSERT(vector.isEmpty());
-
-    uint32_t size;
-    if (!decoder->decode(size))
-        return false;
-
-    if (!size)
-        return true;
-
-    vector.reserveInitialCapacity(size);
-    for (uint32_t i = 0; i < size; ++i) {
-        String string;
-        if (!decoder->decode(string))
-            return false;
-        vector.uncheckedAppend(WebString::create(string));
-    }
-
-    return true;
 }
 
 bool UserContentContainer::Item::decode(CoreIPC::ArgumentDecoder* decoder, UserContentContainer::Item& item)
 {
     ASSERT(!item.m_source);
     ASSERT(!item.m_url);
-    ASSERT(!item.m_whitelist);
-    ASSERT(!item.m_blacklist);
+    ASSERT(item.m_whitelist.isEmpty());
+    ASSERT(item.m_blacklist.isEmpty());
 
     String source;
     if (!decoder->decode(source))
@@ -109,15 +94,10 @@ bool UserContentContainer::Item::decode(CoreIPC::ArgumentDecoder* decoder, UserC
         return false;
     item.m_url = WebURL::create(url);
 
-    Vector<RefPtr<APIObject> > whitelist;
-    if (!decodeStringArray(decoder, whitelist))
+    if (!decoder->decode(item.m_whitelist))
         return false;
-    item.m_whitelist = ImmutableArray::adopt(whitelist);
-
-    Vector<RefPtr<APIObject> > blacklist;
-    if (!decodeStringArray(decoder, blacklist))
+    if (!decoder->decode(item.m_blacklist))
         return false;
-    item.m_blacklist = ImmutableArray::adopt(blacklist);
 
     uint32_t injectedFrames;
     if (!decoder->decode(injectedFrames))
@@ -130,36 +110,6 @@ bool UserContentContainer::Item::decode(CoreIPC::ArgumentDecoder* decoder, UserC
     item.m_type = static_cast<Type>(type);
 
     return true;
-}
-
-static PassOwnPtr<Vector<String> > toStringVector(ImmutableArray* array)
-{
-    if (!array)
-        return nullptr;
-
-    size_t size = array->size();
-    if (!size)
-        return nullptr;
-    
-    OwnPtr<Vector<String> > stringVector = adoptPtr(new Vector<String>());
-    stringVector->reserveInitialCapacity(size);
-    for (size_t i = 0; i < size; ++i) {
-        WebString* webString = array->at<WebString>(i);
-        ASSERT(webString);
-        stringVector->uncheckedAppend(webString->string());
-    }
-    
-    return stringVector.release();
-}
-
-PassOwnPtr<Vector<String> > UserContentContainer::Item::whitelist() const
-{
-    return toStringVector(m_whitelist.get());
-}
-
-PassOwnPtr<Vector<String> > UserContentContainer::Item::blacklist() const
-{
-    return toStringVector(m_blacklist.get());
 }
 
 void UserContentContainer::encode(CoreIPC::ArgumentEncoder* encoder) const

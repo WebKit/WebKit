@@ -426,23 +426,24 @@ bool InjectedBundle::isProcessingUserGesture()
     return ScriptController::processingUserGesture();
 }
 
-static PassOwnPtr<Vector<String> > toStringVector(ImmutableArray* patterns)
+static Vector<String> toStringVector(ImmutableArray* patterns)
 {
+    Vector<String> patternsVector;
+
     if (!patterns)
-        return nullptr;
+        return patternsVector;
 
-    size_t size =  patterns->size();
+    size_t size = patterns->size();
     if (!size)
-        return nullptr;
+        return patternsVector;
 
-    OwnPtr<Vector<String> > patternsVector = adoptPtr(new Vector<String>);
-    patternsVector->reserveInitialCapacity(size);
+    patternsVector.reserveInitialCapacity(size);
     for (size_t i = 0; i < size; ++i) {
         WebString* entry = patterns->at<WebString>(i);
         if (entry)
-            patternsVector->uncheckedAppend(entry->string());
+            patternsVector.uncheckedAppend(entry->string());
     }
-    return patternsVector.release();
+    return patternsVector;
 }
 
 void InjectedBundle::addUserScript(WebPageGroupProxy* pageGroup, InjectedBundleScriptWorld* scriptWorld, const String& source, const String& url, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserScriptInjectionTime injectionTime, WebCore::UserContentInjectedFrames injectedFrames)

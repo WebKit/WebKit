@@ -682,7 +682,7 @@ static NSString *leakMailQuirksUserScriptContents()
 {
     static NSString *mailQuirksScriptContents = leakMailQuirksUserScriptContents();
     core(self)->group().addUserScriptToWorld(core([WebScriptWorld world]),
-        mailQuirksScriptContents, KURL(), nullptr, nullptr, InjectAtDocumentEnd, InjectInAllFrames);
+        mailQuirksScriptContents, KURL(), Vector<String>(), Vector<String>(), InjectAtDocumentEnd, InjectInAllFrames);
 }
 
 static bool needsOutlookQuirksScript()
@@ -703,7 +703,7 @@ static NSString *leakOutlookQuirksUserScriptContents()
 {
     static NSString *outlookQuirksScriptContents = leakOutlookQuirksUserScriptContents();
     core(self)->group().addUserScriptToWorld(core([WebScriptWorld world]),
-        outlookQuirksScriptContents, KURL(), nullptr, nullptr, InjectAtDocumentEnd, InjectInAllFrames);
+        outlookQuirksScriptContents, KURL(), Vector<String>(), Vector<String>(), InjectAtDocumentEnd, InjectInAllFrames);
 }
 
 static bool shouldRespectPriorityInCSSAttributeSetters()
@@ -2627,19 +2627,20 @@ static inline IMP getMethod(id o, SEL s)
         _private->page->focusController()->setActive([[self window] _hasKeyAppearance]);
 }
 
-static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
+static Vector<String> toStringVector(NSArray* patterns)
 {
-    // Convert the patterns into Vectors.
+    Vector<String> patternsVector;
+
     NSUInteger count = [patterns count];
-    if (count == 0)
-        return nullptr;
-    OwnPtr<Vector<String> > patternsVector = adoptPtr(new Vector<String>);
+    if (!count)
+        return patternsVector;
+
     for (NSUInteger i = 0; i < count; ++i) {
         id entry = [patterns objectAtIndex:i];
         if ([entry isKindOfClass:[NSString class]])
-            patternsVector->append(String((NSString*)entry));
+            patternsVector.append(String((NSString *)entry));
     }
-    return patternsVector.release();
+    return patternsVector;
 }
 
 + (void)_addUserScriptToGroup:(NSString *)groupName world:(WebScriptWorld *)world source:(NSString *)source url:(NSURL *)url
