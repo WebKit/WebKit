@@ -412,6 +412,10 @@ namespace JSC {
         static void compilePatchGetArrayLength(JSGlobalData* globalData, CodeBlock* codeBlock, ReturnAddressPtr returnAddress)
         {
             JIT jit(globalData, codeBlock);
+#if ENABLE(DFG_JIT)
+            // Force profiling to be enabled during stub generation.
+            jit.m_canBeOptimized = true;
+#endif // ENABLE(DFG_JIT)
             return jit.privateCompilePatchGetArrayLength(returnAddress);
         }
 

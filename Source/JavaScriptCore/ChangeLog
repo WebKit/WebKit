@@ -1,3 +1,22 @@
+2012-10-13  Filip Pizlo  <fpizlo@apple.com>
+
+        Array length array profiling is broken in the baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=99258
+
+        Reviewed by Oliver Hunt.
+
+        The code generator for array length stubs calls into
+        emitArrayProfilingSiteForBytecodeIndex(), which emits profiling only if
+        canBeOptimized() returns true. But m_canBeOptimized is only initialized during
+        full method compiles, so in a stub compile it may (or may not) be false, meaning
+        that we may, or may not, get meaningful profiling info.
+        
+        This appeared to not affect too many programs since the LLInt has good array
+        length array profiling.
+
+        * jit/JIT.h:
+        (JSC::JIT::compilePatchGetArrayLength):
+
 2012-10-14  Patrick Gansterer  <paroga@webkit.org>
 
         Build fix for WinCE after r131089.
