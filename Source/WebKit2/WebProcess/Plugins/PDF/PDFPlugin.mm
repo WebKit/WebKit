@@ -123,7 +123,7 @@ using namespace WebCore;
 
 @implementation WKPDFPluginScrollbarLayer
 
-@synthesize pdfPlugin;
+@synthesize pdfPlugin=_pdfPlugin;
 
 - (id)initWithPDFPlugin:(WebKit::PDFPlugin *)plugin
 {
@@ -158,7 +158,7 @@ using namespace WebCore;
 
 @implementation WKPDFLayerControllerDelegate
 
-@synthesize pdfPlugin;
+@synthesize pdfPlugin=_pdfPlugin;
 
 - (id)initWithPDFPlugin:(WebKit::PDFPlugin *)plugin
 {
