@@ -4,24 +4,21 @@
 <p id="description"></p>
 <div id="console"></div>
 <script>
-description("This test checks that a request for permission is made.");
+description("This test checks that requesting permission without a callback works. This supports legacy API.");
 
 function step1() {
     debug("Requesting permission with default permission");
     shouldBe("window.webkitNotifications.checkPermission()", "1");
-    webkitNotifications.requestPermission(function() {
-        shouldBe("window.webkitNotifications.checkPermission()", "0");
-        setTimeout(step2, 0);
-    });
+    shouldNotThrow("webkitNotifications.requestPermission()");
+    setTimeout(step2, 0);
 }
 
 function step2() {
     testRunner.denyWebNotificationPermission(testURL);
     debug("Requesting permission with non-default permission");
-    webkitNotifications.requestPermission(function() {
-        shouldBe("window.webkitNotifications.checkPermission()", "2");
-        testCompleted();
-    });
+    shouldBe("window.webkitNotifications.checkPermission()", "2");
+    shouldNotThrow("webkitNotifications.requestPermission()");
+    testCompleted();
 }
 
 if (window.testRunner) {

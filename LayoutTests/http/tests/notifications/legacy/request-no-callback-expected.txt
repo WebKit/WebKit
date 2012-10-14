@@ -1,13 +1,14 @@
-This test checks that a request for permission is made.
+This test checks that requesting permission without a callback works. This supports legacy API.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
 Requesting permission with default permission
 PASS window.webkitNotifications.checkPermission() is 1
-PASS window.webkitNotifications.checkPermission() is 0
+PASS webkitNotifications.requestPermission() did not throw exception.
 Requesting permission with non-default permission
 PASS window.webkitNotifications.checkPermission() is 2
+PASS webkitNotifications.requestPermission() did not throw exception.
 PASS successfullyParsed is true
 
 TEST COMPLETE

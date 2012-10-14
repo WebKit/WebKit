@@ -54,6 +54,7 @@ using namespace WebCore;
 #endif
 #if ENABLE(LEGACY_NOTIFICATIONS)
     RefPtr<VoidCallback> _voidCallback;
+    bool _isLegacyRequest;
 #endif
 }
 #if ENABLE(NOTIFICATIONS)
@@ -252,7 +253,7 @@ uint64_t WebNotificationClient::notificationIDForTesting(WebCore::Notification* 
     if (!(self = [super init]))
         return nil;
 
-    ASSERT(callback);
+    _isLegacyRequest = true;
     _voidCallback = callback;
     return self;
 }
@@ -261,8 +262,9 @@ uint64_t WebNotificationClient::notificationIDForTesting(WebCore::Notification* 
 - (void)allow
 {
 #if ENABLE(LEGACY_NOTIFICATIONS)
-    if (_voidCallback) {
-        _voidCallback->handleEvent();
+    if (_isLegacyRequest) {
+        if (_voidCallback)
+            _voidCallback->handleEvent();
         return;
     }
 #endif
@@ -274,8 +276,9 @@ uint64_t WebNotificationClient::notificationIDForTesting(WebCore::Notification* 
 - (void)deny
 {
 #if ENABLE(LEGACY_NOTIFICATIONS)
-    if (_voidCallback) {
-        _voidCallback->handleEvent();
+    if (_isLegacyRequest) {
+        if (_voidCallback)
+            _voidCallback->handleEvent();
         return;
     }
 #endif

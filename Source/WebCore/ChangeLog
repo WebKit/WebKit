@@ -1,3 +1,18 @@
+2012-10-14  Jon Lee  <jonlee@apple.com>
+
+        Allow notification origin permission request when no js callback is provided
+        https://bugs.webkit.org/show_bug.cgi?id=63615
+        <rdar://problem/11059590>
+
+        Reviewed by Sam Weinig.
+
+        Instead of throwing a type error when no callback is provided, we pass a null callback.
+
+        Test: http/tests/notifications/legacy/request-no-callback.html
+
+        * bindings/js/JSDesktopNotificationsCustom.cpp:
+        (WebCore::JSNotificationCenter::requestPermission):
+
 2012-10-12  Anders Carlsson  <andersca@apple.com>
 
         Move QDataStream functions into HistoryItemQt.cpp

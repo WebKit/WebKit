@@ -1,3 +1,23 @@
+2012-10-14  Jon Lee  <jonlee@apple.com>
+
+        Allow notification origin permission request when no js callback is provided
+        https://bugs.webkit.org/show_bug.cgi?id=63615
+        <rdar://problem/11059590>
+
+        Reviewed by Sam Weinig.
+
+        * http/tests/notifications/legacy/request-expected.txt:
+        * http/tests/notifications/legacy/request-no-callback-expected.txt: Added.
+        * http/tests/notifications/legacy/request-no-callback.html: Calls webkitNotifications.requestPermission()
+        with no callback, with default and denied permission. For WebKit2, if the permission is not default, it
+        will short circuit instead of creating a pending request.
+        * http/tests/notifications/legacy/request.html: The test mistakenly uses the standard API instead of
+        the legacy API. The results don't change, but we make sure that we call
+        webkitNotifications.requestPermission() with a callback to test full coverage of the legacy API. We also
+        expand the test to cover both default and denied permissions.
+        * http/tests/notifications/request-expected.txt:
+        * http/tests/notifications/request.html: Expand test to cover both default and denied permissions.
+
 2012-10-12  Adam Barth  <abarth@webkit.org>
 
         Unreviewed gardening.

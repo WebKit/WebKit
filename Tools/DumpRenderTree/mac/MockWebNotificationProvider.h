@@ -48,7 +48,8 @@ typedef HashMap<uint64_t, WebView *> NotificationViewMap;
 + (MockWebNotificationProvider *)shared;
 
 - (void)simulateWebNotificationClick:(uint64_t)notificationID;
-- (void)setWebNotificationOrigin:(NSString*)origin permission:(BOOL)allowed;
+- (void)setWebNotificationOrigin:(NSString *)origin permission:(BOOL)allowed;
+- (WebNotificationPermission)policyForOrigin:(WebSecurityOrigin *)origin;
 - (void)removeAllWebNotificationPermissions;
 
 - (void)reset;

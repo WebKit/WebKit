@@ -58,10 +58,14 @@ JSValue JSNotificationCenter::requestPermission(ExecState* exec)
     if (context->isWorkerContext())
         return throwSyntaxError(exec);
 
-    if (!exec->argument(0).isObject())
-        return throwTypeError(exec);
-
-    impl()->requestPermission(JSVoidCallback::create(exec->argument(0).getObject(), toJSDOMGlobalObject(static_cast<Document*>(context), exec)));
+    // If a callback function is provided as first argument, convert to a VoidCallback.
+    RefPtr<JSVoidCallback> callback;
+    if (exec->argument(0).isObject()) {
+        callback = JSVoidCallback::create(exec->argument(0).getObject(), toJSDOMGlobalObject(static_cast<Document*>(context), exec));
+        if (exec->hadException())
+            return jsUndefined();
+    }
+    impl()->requestPermission(callback.release());
     return jsUndefined();
 }
 

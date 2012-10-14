@@ -129,7 +129,7 @@
     return WebNotificationPermissionDenied;
 }
 
-- (void)setWebNotificationOrigin:(NSString*)origin permission:(BOOL)allowed
+- (void)setWebNotificationOrigin:(NSString *)origin permission:(BOOL)allowed
 {
     [_permissions.get() setObject:[NSNumber numberWithBool:allowed] forKey:origin];
 }
