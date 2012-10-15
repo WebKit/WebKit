@@ -36,6 +36,7 @@
 
 #include "MediaConstraints.h"
 #include "RTCConfiguration.h"
+#include "RTCDataChannelDescriptor.h"
 #include "RTCIceCandidateDescriptor.h"
 #include "RTCPeerConnectionHandlerClient.h"
 #include "RTCSessionDescriptionDescriptor.h"
@@ -210,6 +211,29 @@ void RTCPeerConnectionHandlerChromium::didAddRemoteStream(const WebKit::WebMedia
 void RTCPeerConnectionHandlerChromium::didRemoveRemoteStream(const WebKit::WebMediaStreamDescriptor& webMediaStreamDescriptor)
 {
     m_client->didRemoveRemoteStream(webMediaStreamDescriptor);
+}
+
+bool RTCPeerConnectionHandlerChromium::openDataChannel(PassRefPtr<RTCDataChannelDescriptor> dataChannel)
+{
+    // FIXME: Implement when WebKit changes have landed.
+    return false;
+}
+
+bool RTCPeerConnectionHandlerChromium::sendStringData(PassRefPtr<RTCDataChannelDescriptor> dataChannel, const String& data)
+{
+    // FIXME: Implement when WebKit changes have landed.
+    return false;
+}
+
+bool RTCPeerConnectionHandlerChromium::sendRawData(PassRefPtr<RTCDataChannelDescriptor> dataChannel, const char* data, size_t dataLength)
+{
+    // FIXME: Implement when WebKit changes have landed.
+    return false;
+}
+
+void RTCPeerConnectionHandlerChromium::closeDataChannel(PassRefPtr<RTCDataChannelDescriptor> dataChannel)
+{
+    // FIXME: Implement when WebKit changes have landed.
 }
 
 } // namespace WebCore

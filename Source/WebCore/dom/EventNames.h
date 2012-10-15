@@ -228,6 +228,7 @@ namespace WebCore {
     macro(icechange) \
     macro(icecandidate) \
     macro(negotiationneeded) \
+    macro(datachannel) \
     \
     macro(show) \
     \

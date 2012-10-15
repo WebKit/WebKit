@@ -38,6 +38,7 @@
 namespace WebCore {
 
 class MediaStreamDescriptor;
+class RTCDataChannelDescriptor;
 class RTCIceCandidateDescriptor;
 
 class RTCPeerConnectionHandlerClient {
@@ -69,6 +70,9 @@ public:
     virtual void didChangeIceState(IceState) = 0;
     virtual void didAddRemoteStream(PassRefPtr<MediaStreamDescriptor>) = 0;
     virtual void didRemoveRemoteStream(MediaStreamDescriptor*) = 0;
+
+    // RTCDataChannel.
+    virtual void didAddRemoteDataChannel(PassRefPtr<RTCDataChannelDescriptor>) = 0;
 };
 
 } // namespace WebCore

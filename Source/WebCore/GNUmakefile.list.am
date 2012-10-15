@@ -627,6 +627,10 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSRequestAnimationFrameCallback.h \
 	DerivedSources/WebCore/JSRGBColor.cpp \
 	DerivedSources/WebCore/JSRGBColor.h \
+	DerivedSources/WebCore/JSRTCDataChannel.cpp \
+	DerivedSources/WebCore/JSRTCDataChannel.h \
+	DerivedSources/WebCore/JSRTCDataChannelEvent.cpp \
+	DerivedSources/WebCore/JSRTCDataChannelEvent.h \
 	DerivedSources/WebCore/JSRTCErrorCallback.cpp \
 	DerivedSources/WebCore/JSRTCErrorCallback.h \
 	DerivedSources/WebCore/JSRTCIceCandidate.cpp \
@@ -1236,6 +1240,8 @@ dom_binding_idls += \
 	$(WebCore)/Modules/mediastream/NavigatorUserMediaErrorCallback.idl \
 	$(WebCore)/Modules/mediastream/NavigatorUserMediaSuccessCallback.idl \
 	$(WebCore)/Modules/mediastream/PeerConnection00.idl \
+	$(WebCore)/Modules/mediastream/RTCDataChannel.idl \
+	$(WebCore)/Modules/mediastream/RTCDataChannelEvent.idl \
 	$(WebCore)/Modules/mediastream/RTCErrorCallback.idl \
 	$(WebCore)/Modules/mediastream/RTCIceCandidate.idl \
 	$(WebCore)/Modules/mediastream/RTCIceCandidateEvent.idl \
@@ -1934,6 +1940,10 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/mediastream/NavigatorUserMediaSuccessCallback.h \
 	Source/WebCore/Modules/mediastream/PeerConnection00.cpp \
 	Source/WebCore/Modules/mediastream/PeerConnection00.h \
+	Source/WebCore/Modules/mediastream/RTCDataChannel.cpp \
+	Source/WebCore/Modules/mediastream/RTCDataChannel.h \
+	Source/WebCore/Modules/mediastream/RTCDataChannelEvent.cpp \
+	Source/WebCore/Modules/mediastream/RTCDataChannelEvent.h \
 	Source/WebCore/Modules/mediastream/RTCErrorCallback.h \
 	Source/WebCore/Modules/mediastream/RTCIceCandidate.cpp \
 	Source/WebCore/Modules/mediastream/RTCIceCandidate.h \
@@ -4612,9 +4622,10 @@ webcore_sources += \
 	Source/WebCore/platform/mediastream/PeerConnection00Handler.h \
 	Source/WebCore/platform/mediastream/PeerConnection00HandlerClient.h \
 	Source/WebCore/platform/mediastream/RTCConfiguration.h \
+	Source/WebCore/platform/mediastream/RTCDataChannelDescriptor.cpp \
+	Source/WebCore/platform/mediastream/RTCDataChannelDescriptor.h \
 	Source/WebCore/platform/mediastream/RTCIceCandidateDescriptor.cpp \
 	Source/WebCore/platform/mediastream/RTCIceCandidateDescriptor.h \
-	Source/WebCore/platform/mediastream/SessionDescriptionDescriptor.h \
 	Source/WebCore/platform/mediastream/RTCPeerConnectionHandler.cpp \
 	Source/WebCore/platform/mediastream/RTCPeerConnectionHandler.h \
 	Source/WebCore/platform/mediastream/RTCPeerConnectionHandlerClient.h \

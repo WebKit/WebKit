@@ -72,6 +72,9 @@
 
     void getStats(in [Callback] RTCStatsCallback successCallback, in [Optional=DefaultIsUndefined] MediaStreamTrack selector);
 
+    RTCDataChannel createDataChannel(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString label, in [Optional=DefaultIsUndefined] Dictionary options)
+         raises(DOMException);
+
     void close()
         raises(DOMException);
 
@@ -82,6 +85,7 @@
     attribute EventListener onaddstream;
     attribute EventListener onremovestream;
     attribute EventListener onicechange;
+    attribute EventListener ondatachannel;
 
     // EventTarget interface
     void addEventListener(in DOMString type,

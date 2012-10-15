@@ -67,6 +67,11 @@ public:
     virtual void getStats(PassRefPtr<RTCStatsRequest>) OVERRIDE;
     virtual void stop() OVERRIDE;
 
+    virtual bool openDataChannel(PassRefPtr<RTCDataChannelDescriptor>) OVERRIDE;
+    virtual bool sendStringData(PassRefPtr<RTCDataChannelDescriptor>, const String&) OVERRIDE;
+    virtual bool sendRawData(PassRefPtr<RTCDataChannelDescriptor>, const char*, size_t) OVERRIDE;
+    virtual void closeDataChannel(PassRefPtr<RTCDataChannelDescriptor>) OVERRIDE;
+
     // WebKit::WebRTCPeerConnectionHandlerClient implementation.
     virtual void negotiationNeeded() OVERRIDE;
     virtual void didGenerateICECandidate(const WebKit::WebRTCICECandidate&) OVERRIDE;

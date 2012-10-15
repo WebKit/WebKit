@@ -1,3 +1,117 @@
+2012-10-15  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Implement RTCDataChannel
+        https://bugs.webkit.org/show_bug.cgi?id=99080
+
+        Reviewed by Adam Barth.
+
+        This patch introduces RTCDataChannel which is a pipe for sending data between two RTCPeerConnections.
+        Since the data channel belongs to a peer connection object I have reused part of its infrastructure.
+
+        Not currently testable. My next patch will add the chromium WebKit functionality, together with mocks and tests.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Modules/mediastream/RTCDataChannel.cpp: Added.
+        (WebCore):
+        (WebCore::RTCDataChannel::create):
+        (WebCore::RTCDataChannel::RTCDataChannel):
+        (WebCore::RTCDataChannel::~RTCDataChannel):
+        (WebCore::RTCDataChannel::label):
+        (WebCore::RTCDataChannel::reliable):
+        (WebCore::RTCDataChannel::readyState):
+        (WebCore::RTCDataChannel::bufferedAmount):
+        (WebCore::RTCDataChannel::binaryType):
+        (WebCore::RTCDataChannel::setBinaryType):
+        (WebCore::RTCDataChannel::send):
+        (WebCore::RTCDataChannel::close):
+        (WebCore::RTCDataChannel::readyStateChanged):
+        (WebCore::RTCDataChannel::dataArrived):
+        (WebCore::RTCDataChannel::error):
+        (WebCore::RTCDataChannel::descriptor):
+        (WebCore::RTCDataChannel::interfaceName):
+        (WebCore::RTCDataChannel::scriptExecutionContext):
+        (WebCore::RTCDataChannel::stop):
+        (WebCore::RTCDataChannel::eventTargetData):
+        (WebCore::RTCDataChannel::ensureEventTargetData):
+        * Modules/mediastream/RTCDataChannel.h: Added.
+        (WebCore):
+        (RTCDataChannel):
+        (WebCore::RTCDataChannel::refEventTarget):
+        (WebCore::RTCDataChannel::derefEventTarget):
+        * Modules/mediastream/RTCDataChannel.idl: Added.
+        * Modules/mediastream/RTCDataChannelEvent.cpp: Added.
+        (WebCore):
+        (WebCore::RTCDataChannelEvent::create):
+        (WebCore::RTCDataChannelEvent::RTCDataChannelEvent):
+        (WebCore::RTCDataChannelEvent::~RTCDataChannelEvent):
+        (WebCore::RTCDataChannelEvent::channel):
+        (WebCore::RTCDataChannelEvent::interfaceName):
+        * Modules/mediastream/RTCDataChannelEvent.h: Added.
+        (WebCore):
+        (RTCDataChannelEvent):
+        * Modules/mediastream/RTCDataChannelEvent.idl: Added.
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::createDataChannel):
+        (WebCore):
+        (WebCore::RTCPeerConnection::close):
+        (WebCore::RTCPeerConnection::didAddRemoteDataChannel):
+        (WebCore::RTCPeerConnection::stop):
+        * Modules/mediastream/RTCPeerConnection.h:
+        (WebCore):
+        (RTCPeerConnection):
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * WebCore.gypi:
+        * dom/EventNames.h:
+        (WebCore):
+        * dom/EventNames.in:
+        * dom/EventTargetFactory.in:
+        * platform/mediastream/RTCDataChannelDescriptor.cpp: Added.
+        (WebCore):
+        (WebCore::RTCDataChannelDescriptor::create):
+        (WebCore::RTCDataChannelDescriptor::RTCDataChannelDescriptor):
+        (WebCore::RTCDataChannelDescriptor::~RTCDataChannelDescriptor):
+        (WebCore::RTCDataChannelDescriptor::readyStateChanged):
+        (WebCore::RTCDataChannelDescriptor::dataArrived):
+        (WebCore::RTCDataChannelDescriptor::error):
+        * platform/mediastream/RTCDataChannelDescriptor.h: Added.
+        (WebCore):
+        (RTCDataChannelDescriptorClient):
+        (WebCore::RTCDataChannelDescriptorClient::~RTCDataChannelDescriptorClient):
+        (RTCDataChannelDescriptor):
+        (ExtraData):
+        (WebCore::RTCDataChannelDescriptor::ExtraData::~ExtraData):
+        (WebCore::RTCDataChannelDescriptor::client):
+        (WebCore::RTCDataChannelDescriptor::setClient):
+        (WebCore::RTCDataChannelDescriptor::label):
+        (WebCore::RTCDataChannelDescriptor::reliable):
+        (WebCore::RTCDataChannelDescriptor::readyState):
+        (WebCore::RTCDataChannelDescriptor::bufferedAmount):
+        (WebCore::RTCDataChannelDescriptor::setBufferedAmount):
+        (WebCore::RTCDataChannelDescriptor::extraData):
+        (WebCore::RTCDataChannelDescriptor::setExtraData):
+        * platform/mediastream/RTCPeerConnectionHandler.cpp:
+        (RTCPeerConnectionHandlerDummy):
+        (WebCore::RTCPeerConnectionHandlerDummy::openDataChannel):
+        (WebCore):
+        (WebCore::RTCPeerConnectionHandlerDummy::sendStringData):
+        (WebCore::RTCPeerConnectionHandlerDummy::sendRawData):
+        (WebCore::RTCPeerConnectionHandlerDummy::closeDataChannel):
+        * platform/mediastream/RTCPeerConnectionHandler.h:
+        (WebCore):
+        (RTCPeerConnectionHandler):
+        * platform/mediastream/RTCPeerConnectionHandlerClient.h:
+        (WebCore):
+        (RTCPeerConnectionHandlerClient):
+        * platform/mediastream/chromium/RTCPeerConnectionHandlerChromium.cpp:
+        (WebCore::RTCPeerConnectionHandlerChromium::openDataChannel):
+        (WebCore):
+        (WebCore::RTCPeerConnectionHandlerChromium::sendStringData):
+        (WebCore::RTCPeerConnectionHandlerChromium::sendRawData):
+        (WebCore::RTCPeerConnectionHandlerChromium::closeDataChannel):
+        * platform/mediastream/chromium/RTCPeerConnectionHandlerChromium.h:
+        (RTCPeerConnectionHandlerChromium):
+
 2012-10-15  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Pass type of error causing abort to IDBTransaction::onAbort
