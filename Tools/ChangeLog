@@ -1,3 +1,16 @@
+2012-10-15  Ojan Vafai  <ojan@chromium.org>
+
+        Don't show the content shell and android test bots for webkit ToT
+        https://bugs.webkit.org/show_bug.cgi?id=99380
+
+        Reviewed by Dirk Pranke.
+
+        Content shell used to coincidentally be skipped because it spelled WebKit correctly.
+        Now skip it explicitly. The Android bot is up and running, but only has a stub for
+        running tests. Skip it so we don't show a false error.
+        * TestResultServer/static-dashboards/builders.js:
+        (isChromiumWebkitTipOfTreeTestRunner):
+
 2012-10-15  Zoltan Horvath  <zoltan@webkit.org>
 
         Add MountainLion Performance-bot to the Performance bots waterfall link
