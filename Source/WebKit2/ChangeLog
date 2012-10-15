@@ -1,3 +1,16 @@
+2012-10-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Regression(r130031) coverRect is used in wrong coordinates.
+        https://bugs.webkit.org/show_bug.cgi?id=97777
+
+        Reviewed by Jocelyn Turcotte.
+
+        Convert coverRect from screen coordinates to content coordinates before using it
+        outside tiled-backing store.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        (WebCore::CoordinatedGraphicsLayer::coverRect):
+
 2012-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.
