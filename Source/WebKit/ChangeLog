@@ -1,3 +1,13 @@
+2012-10-15  David Kilzer  <ddkilzer@apple.com>
+
+        Move framework and library linking into WebKit.xcconfig
+        <http://webkit.org/b/99284>
+
+        Reviewed by Mark Rowe.
+
+        * WebKit.xcodeproj/project.pbxproj: Remove frameworks and
+        libraries from Xcode project file.
+
 2012-10-15  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Implement Favicons API

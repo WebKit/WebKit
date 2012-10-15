@@ -67,10 +67,11 @@ INSTALLHDRS_SCRIPT_PHASE = YES;
 PRODUCT_NAME = WebKit;
 UMBRELLA_FRAMEWORKS_DIR = $(PRODUCTION_FRAMEWORKS_DIR)/WebKit.framework/Versions/A/Frameworks;
 
-OTHER_LDFLAGS = $(OTHER_LDFLAGS_$(REAL_PLATFORM_NAME));
-OTHER_LDFLAGS_iphoneos = -lobjc -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework GraphicsServices -framework ImageIO -framework QuartzCore;
+OTHER_LDFLAGS_BASE = -licucore -framework JavaScriptCore -framework QuartzCore -framework WebCore;
+OTHER_LDFLAGS = $(OTHER_LDFLAGS_BASE) $(OTHER_LDFLAGS_$(REAL_PLATFORM_NAME));
+OTHER_LDFLAGS_iphoneos = -lobjc -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework GraphicsServices -framework ImageIO;
 OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);
-OTHER_LDFLAGS_macosx = -sub_umbrella WebCore $(OTHER_LDFLAGS) $(OTHER_LDFLAGS_macosx_$(TARGET_MAC_OS_X_VERSION_MAJOR));
+OTHER_LDFLAGS_macosx = -sub_umbrella WebCore -framework Carbon -framework Cocoa -framework DiskArbitration -framework IOKit -framework OpenGL -framework Security $(OTHER_LDFLAGS_macosx_$(TARGET_MAC_OS_X_VERSION_MAJOR));
 OTHER_LDFLAGS_macosx_1070 = -Xlinker -objc_gc_compaction;
 OTHER_LDFLAGS_macosx_1080 = $(OTHER_LDFLAGS_macosx_1070);
 OTHER_LDFLAGS_macosx_1090 = $(OTHER_LDFLAGS_macosx_1070);

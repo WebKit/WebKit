@@ -1,3 +1,13 @@
+2012-10-15  David Kilzer  <ddkilzer@apple.com>
+
+        Move framework and library linking into WebKit.xcconfig
+        <http://webkit.org/b/99284>
+
+        Reviewed by Mark Rowe.
+
+        * Configurations/WebKit.xcconfig: Move frameworks and libraries
+        link flags to OTHER_LDFLAGS so that they work for iOS and OS X.
+
 2012-10-14  Jon Lee  <jonlee@apple.com>
 
         Allow notification origin permission request when no js callback is provided

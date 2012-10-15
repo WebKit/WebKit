@@ -13,14 +13,12 @@
 		06693DDD0BFBA85200216072 /* WebInspectorClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06693DDB0BFBA85200216072 /* WebInspectorClient.mm */; };
 		0AB752370FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0AB752350FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.h */; };
 		0AB752380FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0AB752360FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.mm */; };
-		0ACE917310FE47E30096A45F /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0ACE917210FE47E30096A45F /* OpenGL.framework */; };
 		0AEBFF630F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0AEBFF610F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0AEBFF640F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0AEBFF620F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.mm */; };
 		0F30985F11ECFE4500F559DF /* WebRenderLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F30985D11ECFE4400F559DF /* WebRenderLayer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F30986011ECFE4500F559DF /* WebRenderLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F30985E11ECFE4500F559DF /* WebRenderLayer.mm */; };
 		14D8252F0AF955090004F057 /* WebChromeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D8252D0AF955090004F057 /* WebChromeClient.h */; };
 		14D825300AF955090004F057 /* WebChromeClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 14D8252E0AF955090004F057 /* WebChromeClient.mm */; };
-		1A20D08B0ED384F20043FA9F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A20D08A0ED384F20043FA9F /* QuartzCore.framework */; };
 		1A2DBE9F0F251E3A0036F8A6 /* ProxyInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2DBE9D0F251E3A0036F8A6 /* ProxyInstance.h */; };
 		1A2DBEA00F251E3A0036F8A6 /* ProxyInstance.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A2DBE9E0F251E3A0036F8A6 /* ProxyInstance.mm */; };
 		1A4DF5220EC8C74D006BD4B4 /* WebNetscapePluginView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4DF5200EC8C74D006BD4B4 /* WebNetscapePluginView.h */; };
@@ -118,7 +116,6 @@
 		598AD9281201CF3200ABAE4E /* WebDeviceOrientationProviderMock.mm in Sources */ = {isa = PBXBuildFile; fileRef = 598AD9271201CF3200ABAE4E /* WebDeviceOrientationProviderMock.mm */; };
 		598AD92A1201CF3B00ABAE4E /* WebDeviceOrientationProviderMockInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 598AD9291201CF3B00ABAE4E /* WebDeviceOrientationProviderMockInternal.h */; };
 		598ADA461202275000ABAE4E /* WebDeviceOrientationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 598ADA451202275000ABAE4E /* WebDeviceOrientationProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5D4DE0991479CBDF00EA3DF4 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D4DE0981479CBDF00EA3DF4 /* DiskArbitration.framework */; };
 		5D7BF8140C2A1D90008CE06D /* WebInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D7BF8120C2A1D90008CE06D /* WebInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5D7BF8150C2A1D90008CE06D /* WebInspector.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5D7BF8130C2A1D90008CE06D /* WebInspector.mm */; };
 		5DE83A7A0D0F7F9400CAD12A /* WebJavaScriptTextInputPanel.nib in Resources */ = {isa = PBXBuildFile; fileRef = 5DE83A740D0F7F9400CAD12A /* WebJavaScriptTextInputPanel.nib */; };
@@ -310,12 +307,6 @@
 		9398111E0824BF01008DF038 /* WebPDFView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E94C3506C0321200A9B09E /* WebPDFView.mm */; };
 		9398111F0824BF01008DF038 /* WebPDFRepresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E94C6906C0347500A9B09E /* WebPDFRepresentation.mm */; };
 		939811260824BF01008DF038 /* WebPluginContainerCheck.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65E1150407EFFEBF009B8BF7 /* WebPluginContainerCheck.mm */; };
-		939811290824BF01008DF038 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869402846DCD018635CA /* Carbon.framework */; };
-		9398112A0824BF01008DF038 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869502846DCD018635CA /* Cocoa.framework */; };
-		9398112B0824BF01008DF038 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F738C9E903FAD3DF0321FBE0 /* JavaScriptCore.framework */; };
-		9398112C0824BF01008DF038 /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F738C9EA03FAD3DF0321FBE0 /* WebCore.framework */; };
-		9398112E0824BF01008DF038 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93D623DD051E791F002F47DD /* libicucore.dylib */; };
-		9398112F0824BF01008DF038 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 830E81E005853AC000AD0891 /* Security.framework */; };
 		93E2A1A4123B0B3C009FE12A /* WebDashboardRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E2A1A2123B0B3C009FE12A /* WebDashboardRegion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93E2A1A5123B0B3C009FE12A /* WebDashboardRegion.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93E2A1A3123B0B3C009FE12A /* WebDashboardRegion.mm */; };
 		93EB178D09F88D460091F8FF /* WebSystemInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93EB178C09F88D460091F8FF /* WebSystemInterface.mm */; };
@@ -367,7 +358,6 @@
 		C0C5B3EF1177A4A0002B0AEF /* WebUserContentURLPattern.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0C5B3ED1177A4A0002B0AEF /* WebUserContentURLPattern.mm */; };
 		CD8BFCE715531224005AFB25 /* WebKitFullScreenListener.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD8BFCE515531224005AFB25 /* WebKitFullScreenListener.mm */; };
 		CD8BFCE815531224005AFB25 /* WebKitFullScreenListener.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8BFCE615531224005AFB25 /* WebKitFullScreenListener.h */; };
-		CD8EAC7311CAC9A300774075 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD8EAC7211CAC9A300774075 /* IOKit.framework */; };
 		CDA62AE2125F87C2007FD118 /* WebFullScreenController.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA62AE0125F87C2007FD118 /* WebFullScreenController.h */; };
 		CDA62AE3125F87C2007FD118 /* WebFullScreenController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA62AE1125F87C2007FD118 /* WebFullScreenController.mm */; };
 		CEDA12DB152CBE6800D9E08D /* WebAlternativeTextClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEDA12D9152CBE6800D9E08D /* WebAlternativeTextClient.mm */; };
@@ -779,16 +769,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				939811290824BF01008DF038 /* Carbon.framework in Frameworks */,
-				9398112A0824BF01008DF038 /* Cocoa.framework in Frameworks */,
-				5D4DE0991479CBDF00EA3DF4 /* DiskArbitration.framework in Frameworks */,
-				CD8EAC7311CAC9A300774075 /* IOKit.framework in Frameworks */,
-				9398112B0824BF01008DF038 /* JavaScriptCore.framework in Frameworks */,
-				9398112E0824BF01008DF038 /* libicucore.dylib in Frameworks */,
-				0ACE917310FE47E30096A45F /* OpenGL.framework in Frameworks */,
-				1A20D08B0ED384F20043FA9F /* QuartzCore.framework in Frameworks */,
-				9398112F0824BF01008DF038 /* Security.framework in Frameworks */,
-				9398112C0824BF01008DF038 /* WebCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
