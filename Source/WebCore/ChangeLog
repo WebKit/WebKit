@@ -1,3 +1,21 @@
+2012-10-15  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL][WK2] Refactoring initialization and shutdown codes of EFL libraries.
+        https://bugs.webkit.org/show_bug.cgi?id=97173
+
+        Reviewed by Gyuyoung Kim.
+
+        Remove codes to initialize and shutdown the EFL libraries from
+        RunLoopEfl.cpp. Initialization and shutdown will be done in the
+        ewk_main.cpp for ui process and WebProcessMainEfl.cpp for web
+        process.
+
+        No new tests. This patch doesn't change behavior.
+
+        * platform/efl/RunLoopEfl.cpp:
+        (WebCore::RunLoop::RunLoop):
+        (WebCore::RunLoop::~RunLoop):
+
 2012-10-15  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Add support for auto-height regions (without region-breaks)

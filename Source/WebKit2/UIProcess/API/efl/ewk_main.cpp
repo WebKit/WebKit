@@ -79,6 +79,11 @@ int ewk_init(void)
     }
 #endif
 
+    if (!edje_init()) {
+        CRITICAL("could not init edje.");
+        goto error_edje;
+    }
+
     g_type_init();
 
     if (!ecore_main_loop_glib_integrate()) {
@@ -89,7 +94,12 @@ int ewk_init(void)
     return ++_ewkInitCount;
 
 #ifdef HAVE_ECORE_X
+error_edje:
+    ecore_x_shutdown();
 error_ecore_x:
+    ecore_evas_shutdown();
+#else
+error_edje:
     ecore_evas_shutdown();
 #endif
 error_ecore_evas:
@@ -110,6 +120,7 @@ int ewk_shutdown(void)
     if (--_ewkInitCount)
         return _ewkInitCount;
 
+    edje_shutdown();
 #ifdef HAVE_ECORE_X
     ecore_x_shutdown();
 #endif

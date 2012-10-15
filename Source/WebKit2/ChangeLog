@@ -1,3 +1,19 @@
+2012-10-15  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL][WK2] Refactoring initialization and shutdown codes of EFL libraries.
+        https://bugs.webkit.org/show_bug.cgi?id=97173
+
+        Reviewed by Gyuyoung Kim.
+
+        Initialize and shutdown the EFL libraries in the ewk_main.cpp for ui
+        process and WebProcessMainEfl.cpp for web process.
+
+        * UIProcess/API/efl/ewk_main.cpp:
+        (ewk_init):
+        (ewk_shutdown):
+        * WebProcess/efl/WebProcessMainEfl.cpp:
+        (WebKit::WebProcessMainEfl):
+
 2012-10-15  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Provide implementation for PageClientImpl::toolTipChanged()
