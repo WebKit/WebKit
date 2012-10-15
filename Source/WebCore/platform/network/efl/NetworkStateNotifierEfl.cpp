@@ -51,6 +51,8 @@ void NetworkStateNotifier::updateState()
     // Assume that we're offline until proven otherwise.
     m_isOnLine = false;
 
+    LOG(Network, "Checking online state...");
+
     Eina_List* networkInterfaces = eeze_net_list();
 
     Eina_List* list;
@@ -65,16 +67,25 @@ void NetworkStateNotifier::updateState()
 
         // Skip interfaces that are not up.
         const char* state = eeze_net_attribute_get(networkInterface, udevOperstateAttribute);
+        LOG(Network, "Found network interface \"%s\" with state: \"%s\"", syspath, state);
         if (!state || strcmp(state, udevOperstateUp))
             continue;
 
         // Check if the interface has an IP address.
         eeze_net_scan(networkInterface);
         if (eeze_net_addr_get(networkInterface, EEZE_NET_ADDR_TYPE_IP) || eeze_net_addr_get(networkInterface, EEZE_NET_ADDR_TYPE_IP6)) {
+#if !LOG_DISABLED
+            const char* ipAddress = eeze_net_addr_get(networkInterface, EEZE_NET_ADDR_TYPE_IP);
+            if (!ipAddress)
+                ipAddress = eeze_net_addr_get(networkInterface, EEZE_NET_ADDR_TYPE_IP6);
+            LOG(Network, "Network interface at %s has the following IP address: %s", syspath, ipAddress);
+#endif
             m_isOnLine = true;
             break;
         }
     }
+
+    LOG(Network, "Detected online state is \"%s\"", m_isOnLine ? "online" : "offline");
 
     EINA_LIST_FREE(networkInterfaces, data)
         eeze_net_free(static_cast<Eeze_Net*>(data));

@@ -1,3 +1,18 @@
+2012-10-15  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Provide logging for OnlineState detection code
+        https://bugs.webkit.org/show_bug.cgi?id=99299
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add logging to NetworkStateNotifierEfl.cpp to facilitate
+        debugging of this functionality.
+
+        No new tests, no behavior change.
+
+        * platform/network/efl/NetworkStateNotifierEfl.cpp:
+        (WebCore::NetworkStateNotifier::updateState):
+
 2012-10-15  MORITA Hajime  <morrita@google.com>
 
         [Regression r131167] run-webkit-tests fails
