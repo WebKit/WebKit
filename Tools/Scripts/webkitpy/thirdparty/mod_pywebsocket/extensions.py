@@ -126,6 +126,7 @@ class DeflateFrameExtensionProcessor(ExtensionProcessorInterface):
 
         self._response_window_bits = None
         self._response_no_context_takeover = False
+        self._bfinal = False
 
         # Counters for statistics.
 
@@ -219,6 +220,9 @@ class DeflateFrameExtensionProcessor(ExtensionProcessorInterface):
     def set_response_no_context_takeover(self, value):
         self._response_no_context_takeover = value
 
+    def set_bfinal(self, value):
+        self._bfinal = value
+
     def enable_outgoing_compression(self):
         self._compress_outgoing = True
 
@@ -239,7 +243,8 @@ class DeflateFrameExtensionProcessor(ExtensionProcessorInterface):
                 original_payload_size)
             return
 
-        frame.payload = self._deflater.filter(frame.payload)
+        frame.payload = self._deflater.filter(
+            frame.payload, bfinal=self._bfinal)
         frame.rsv1 = 1
 
         filtered_payload_size = len(frame.payload)
@@ -418,6 +423,7 @@ class DeflateMessageProcessor(ExtensionProcessorInterface):
 
         self._c2s_max_window_bits = None
         self._c2s_no_context_takeover = False
+        self._bfinal = False
 
         self._compress_outgoing_enabled = False
 
@@ -565,6 +571,9 @@ class DeflateMessageProcessor(ExtensionProcessorInterface):
     def set_c2s_no_context_takeover(self, value):
         self._c2s_no_context_takeover = value
 
+    def set_bfinal(self, value):
+        self._bfinal = value
+
     def enable_outgoing_compression(self):
         self._compress_outgoing_enabled = True
 
@@ -600,7 +609,8 @@ class DeflateMessageProcessor(ExtensionProcessorInterface):
         original_payload_size = len(message)
         self._total_outgoing_payload_bytes += original_payload_size
 
-        message = self._deflater.filter(message, flush=end)
+        message = self._deflater.filter(
+            message, flush=end, bfinal=self._bfinal)
 
         filtered_payload_size = len(message)
         self._total_filtered_outgoing_payload_bytes += filtered_payload_size

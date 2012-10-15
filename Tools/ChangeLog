@@ -1,3 +1,25 @@
+2012-10-15  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [WebSocket] Update pywebsocket to 0.7.8
+        https://bugs.webkit.org/show_bug.cgi?id=99293
+
+        Reviewed by Yuta Kitamura.
+
+        Version 0.7.8 supports WebSocket frames and messages compression
+        with blocks in which BFINAL bit is set to 1.
+        We need this feature to add a test case of compression extension.
+
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/extensions.py:
+        (DeflateFrameExtensionProcessor.__init__):
+        (DeflateFrameExtensionProcessor.set_bfinal):
+        (DeflateFrameExtensionProcessor._outgoing_filter):
+        (DeflateMessageProcessor.__init__):
+        (DeflateMessageProcessor.set_bfinal):
+        (DeflateMessageProcessor._process_outgoing_message):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/util.py:
+        (_Deflater.compress_and_finish):
+        (_RFC1979Deflater.filter):
+
 2012-10-15  Zan Dobersek  <zandobersek@gmail.com>
 
         [TestResultServer] TestExpectations should only be loaded for the flakiness dashboard

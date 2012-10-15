@@ -245,6 +245,12 @@ class _Deflater(object):
         self._logger.debug('Compress result %r', compressed_bytes)
         return compressed_bytes
 
+    def compress_and_finish(self, bytes):
+        compressed_bytes = self._compress.compress(bytes)
+        compressed_bytes += self._compress.flush(zlib.Z_FINISH)
+        self._logger.debug('Compress input %r', bytes)
+        self._logger.debug('Compress result %r', compressed_bytes)
+        return compressed_bytes
 
 class _Inflater(object):
 
@@ -324,10 +330,16 @@ class _RFC1979Deflater(object):
         self._window_bits = window_bits
         self._no_context_takeover = no_context_takeover
 
-    def filter(self, bytes, flush=True):
+    def filter(self, bytes, flush=True, bfinal=False):
         if self._deflater is None or (self._no_context_takeover and flush):
             self._deflater = _Deflater(self._window_bits)
 
+        if bfinal:
+            result = self._deflater.compress_and_finish(bytes)
+            # Add a padding block with BFINAL = 0 and BTYPE = 0.
+            result = result + chr(0)
+            self._deflater = None
+            return result
         if flush:
             # Strip last 4 octets which is LEN and NLEN field of a
             # non-compressed block added for Z_SYNC_FLUSH.
