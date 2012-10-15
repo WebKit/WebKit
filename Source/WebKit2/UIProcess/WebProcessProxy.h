@@ -63,6 +63,8 @@ public:
     static PassRefPtr<WebProcessProxy> create(PassRefPtr<WebContext>);
     ~WebProcessProxy();
 
+    static WebProcessProxy* fromConnection(CoreIPC::Connection*);
+
     void terminate();
 
     template<typename T> bool send(const T& message, uint64_t destinationID, unsigned messageSendFlags = 0);

@@ -1,5 +1,43 @@
 2012-10-14  Anders Carlsson  <andersca@apple.com>
 
+        Re-land of "WebContext should be a MessageReceiver"
+        https://bugs.webkit.org/show_bug.cgi?id=98958
+
+        Reviewed by Sam Weinig.
+
+        Make WebContext be a MessageReceiver that lives in its own map. This allows us to get rid of the
+        knowsHowToHandleMessage functions on MessageReceiverMap and WebContext.
+
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::client):
+        (Connection):
+        * Platform/CoreIPC/MessageReceiverMap.cpp:
+        (CoreIPC::MessageReceiverMap::addMessageReceiver):
+        (CoreIPC::MessageReceiverMap::invalidate):
+        (CoreIPC::MessageReceiverMap::knowsHowToHandleMessage):
+        (CoreIPC::MessageReceiverMap::dispatchMessage):
+        (CoreIPC::MessageReceiverMap::dispatchSyncMessage):
+        * Platform/CoreIPC/MessageReceiverMap.h:
+        (MessageReceiverMap):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::~WebContext):
+        (WebKit::WebContext::dispatchMessage):
+        (WebKit::WebContext::dispatchSyncMessage):
+        (WebKit::WebContext::didReceiveMessage):
+        (WebKit::WebContext::didReceiveSyncMessage):
+        * UIProcess/WebContext.h:
+        (WebContext):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::fromConnection):
+        (WebKit):
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+
+2012-10-14  Anders Carlsson  <andersca@apple.com>
+
         WebPage::PostInjectedBundleMessage should be a variadic message
         https://bugs.webkit.org/show_bug.cgi?id=99277
 

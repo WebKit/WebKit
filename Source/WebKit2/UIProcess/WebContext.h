@@ -81,7 +81,7 @@ struct WebProcessCreationParameters;
     
 typedef GenericCallback<WKDictionaryRef> DictionaryCallback;
 
-class WebContext : public APIObject {
+class WebContext : public APIObject, private CoreIPC::MessageReceiver {
 public:
     static const Type APIType = TypeContext;
 
@@ -91,7 +91,8 @@ public:
     static const Vector<WebContext*>& allContexts();
 
     void addMessageReceiver(CoreIPC::MessageClass, CoreIPC::MessageReceiver*);
-    bool knowsHowToHandleMessage(CoreIPC::MessageID) const;
+    bool dispatchMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    bool dispatchSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, OwnPtr<CoreIPC::ArgumentEncoder>&);
 
     void initializeInjectedBundleClient(const WKContextInjectedBundleClient*);
     void initializeConnectionClient(const WKContextConnectionClient*);
@@ -149,8 +150,9 @@ public:
     void addVisitedLink(const String&);
     void addVisitedLinkHash(WebCore::LinkHash);
 
-    void didReceiveMessage(WebProcessProxy*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-    void didReceiveSyncMessage(WebProcessProxy*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, OwnPtr<CoreIPC::ArgumentEncoder>&);
+    // MessageReceiver.
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*) OVERRIDE;
+    virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, OwnPtr<CoreIPC::ArgumentEncoder>&) OVERRIDE;
 
     void setCacheModel(CacheModel);
     CacheModel cacheModel() const { return m_cacheModel; }

@@ -43,7 +43,8 @@ public:
     ~MessageReceiverMap();
 
     void addMessageReceiver(MessageClass, MessageReceiver*);
-    void clearAllMessageReceivers();
+
+    void invalidate();
     bool knowsHowToHandleMessage(MessageID) const;
 
     bool dispatchMessage(Connection*, MessageID, ArgumentDecoder*);
@@ -51,7 +52,7 @@ public:
 
 private:
     // Message receivers that don't require a destination ID.
-    HashMap<unsigned, MessageReceiver*> m_globalMessageReceiverMap;
+    HashMap<unsigned, MessageReceiver*> m_globalMessageReceivers;
 };
 
 };
