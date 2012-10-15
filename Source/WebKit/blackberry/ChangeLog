@@ -1,3 +1,24 @@
+2012-10-15  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] Clean up BackingStoreClient (part I)
+        https://bugs.webkit.org/show_bug.cgi?id=99327
+
+        Reviewed by Yong Li.
+
+        Now that we won't use the BackingStoreClient code path to scroll inner frames at all
+        (instead we use AC layers!), we can remove all "!isMainFrame" code paths.
+
+        No behavior change, since the code path being removed was not in use.
+
+        * WebKitSupport/BackingStoreClient.cpp:
+        (BlackBerry::WebKit::BackingStoreClient::absoluteRect):
+        (BlackBerry::WebKit::BackingStoreClient::transformedActualVisibleSize):
+        (BlackBerry::WebKit::BackingStoreClient::viewportSize):
+        (BlackBerry::WebKit::BackingStoreClient::transformedViewportSize):
+        (BlackBerry::WebKit::BackingStoreClient::visibleContentsRect):
+        (BlackBerry::WebKit::BackingStoreClient::transformedVisibleContentsRect):
+        (BlackBerry::WebKit::BackingStoreClient::checkOriginOfCurrentScrollOperation):
+
 2012-10-13  Jakob Petsovits  <jpetsovits@rim.com>
 
         [BlackBerry] Fetch blit rects from a viewport accessor

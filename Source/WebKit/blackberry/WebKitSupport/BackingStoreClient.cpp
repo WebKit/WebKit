@@ -126,15 +126,7 @@ IntRect BackingStoreClient::absoluteRect() const
 {
     IntRect rect = IntRect(IntPoint::zero(), viewportSize());
 
-    if (!isMainFrame()) {
-        // It is possible that the owner HTML element has been removed at this point,
-        // especially when the frame is loading a JavaScript URL.
-        if (Element* elt = m_frame->ownerElement()) {
-            if (RenderBox* obj = elt->renderBox())
-                rect.move(obj->borderLeft() + obj->paddingLeft(), obj->borderTop() + obj->paddingTop());
-        }
-    }
-
+    // FIXME: Speed it up!
     Frame* frame = m_frame;
     while (frame) {
         if (Element* element = static_cast<Element*>(frame->ownerElement())) {
@@ -221,10 +213,8 @@ IntSize BackingStoreClient::actualVisibleSize() const
 
 IntSize BackingStoreClient::transformedActualVisibleSize() const
 {
-    if (isMainFrame())
-        return m_webPage->d->transformedActualVisibleSize();
-
-    return transformedViewportSize();
+    ASSERT(isMainFrame());
+    return m_webPage->d->transformedActualVisibleSize();
 }
 
 IntSize BackingStoreClient::viewportSize() const
@@ -233,10 +223,8 @@ IntSize BackingStoreClient::viewportSize() const
     if (!m_frame->view())
         return IntSize();
 
-    if (isMainFrame())
-        return m_webPage->d->viewportSize();
-
-    return m_frame->view()->visibleContentRect().size();
+    ASSERT(isMainFrame());
+    return m_webPage->d->viewportSize();
 }
 
 IntSize BackingStoreClient::transformedViewportSize() const
@@ -245,13 +233,8 @@ IntSize BackingStoreClient::transformedViewportSize() const
     if (!m_frame->view())
         return IntSize();
 
-    if (isMainFrame())
-        return m_webPage->d->transformedViewportSize();
-
-    const IntSize untransformedViewportSize = m_frame->view()->visibleContentRect().size();
-    const FloatPoint transformedBottomRight = m_webPage->d->m_transformationMatrix->mapPoint(
-        FloatPoint(untransformedViewportSize.width(), untransformedViewportSize.height()));
-    return IntSize(floorf(transformedBottomRight.x()), floorf(transformedBottomRight.y()));
+    ASSERT(isMainFrame());
+    return m_webPage->d->transformedViewportSize();
 }
 
 IntRect BackingStoreClient::visibleContentsRect() const
@@ -261,14 +244,7 @@ IntRect BackingStoreClient::visibleContentsRect() const
         return IntRect();
 
     IntRect visibleContentRect = m_frame->view()->visibleContentRect();
-    if (isMainFrame())
-        return visibleContentRect;
-
-    IntPoint offset = absoluteLocation();
-    visibleContentRect.move(offset.x(), offset.y());
-    if (m_parent)
-        visibleContentRect.intersect(m_parent->visibleContentsRect());
-
+    ASSERT(isMainFrame());
     return visibleContentRect;
 }
 
@@ -281,11 +257,7 @@ IntRect BackingStoreClient::transformedVisibleContentsRect() const
     // viewport size as it is, which ensures that e.g. blitting operations
     // always cover the whole widget/screen.
     IntRect visibleContentsRect = IntRect(transformedScrollPosition(), transformedViewportSize());
-    if (isMainFrame())
-        return visibleContentsRect;
-
-    IntPoint offset = transformedAbsoluteLocation();
-    visibleContentsRect.move(offset.x(), offset.y());
+    ASSERT(isMainFrame());
     return visibleContentsRect;
 }
 
@@ -410,10 +382,8 @@ void BackingStoreClient::checkOriginOfCurrentScrollOperation()
     if (isScrollNotificationSuppressed())
         return;
 
-    if (isMainFrame())
-        m_webPage->d->notifyTransformedScrollChanged();
-    else
-        m_backingStore->d->scrollChanged(transformedScrollPosition());
+    ASSERT(isMainFrame());
+    m_webPage->d->notifyTransformedScrollChanged();
 }
 
 }
