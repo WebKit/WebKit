@@ -713,6 +713,9 @@ elm_main(int argc, char *argv[])
     if (quitOption)
         return quit(EINA_TRUE, NULL);
 
+    if (evas_engine_name)
+        elm_config_preferred_engine_set(evas_engine_name);
+
     if (args < argc) {
         char *url = url_from_user_input(argv[args]);
         window = window_create(url);

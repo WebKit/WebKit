@@ -1,3 +1,15 @@
+2012-10-15  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][WK2] Cannot set evas engine from command line
+        https://bugs.webkit.org/show_bug.cgi?id=99286
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        If an engine name is passed on the command line, pass it along to evas.
+
+        * MiniBrowser/efl/main.c:
+        (elm_main):
+
 2012-10-15  Ojan Vafai  <ojan@chromium.org>
 
         Lower the minimum time required to keep a test in the test results json
