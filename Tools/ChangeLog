@@ -1,3 +1,9 @@
+2012-10-15  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Build fix for Mac debug build.
+
+        * TestWebKitAPI/Tests/WTF/MemoryInstrumentationTest.cpp:
+
 2012-10-15  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Implement pixel snapshot generation in WTR

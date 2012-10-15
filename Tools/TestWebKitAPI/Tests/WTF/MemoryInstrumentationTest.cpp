@@ -472,7 +472,7 @@ TEST(MemoryInstrumentationTest, detectReportMemoryUsageMethod)
     {
         InstrumentationTestHelper helper;
 
-        OwnPtr<InstrumentedTemplate<String> > value = adoptPtr(new InstrumentedTemplate<String>(""));
+        OwnPtr<InstrumentedTemplate<String> > value(adoptPtr(new InstrumentedTemplate<String>("")));
         InstrumentedOwner<InstrumentedTemplate<String>* > root(value.get());
         helper.addRootObject(root);
         EXPECT_EQ(sizeof(InstrumentedTemplate<String>) + sizeof(StringImpl), helper.reportedSizeForAllTypes());
@@ -482,7 +482,7 @@ TEST(MemoryInstrumentationTest, detectReportMemoryUsageMethod)
     {
         InstrumentationTestHelper helper;
 
-        OwnPtr<InstrumentedTemplate<NotInstrumented> > value = adoptPtr(new InstrumentedTemplate<NotInstrumented>(""));
+        OwnPtr<InstrumentedTemplate<NotInstrumented> > value(adoptPtr(new InstrumentedTemplate<NotInstrumented>("")));
         InstrumentedOwner<InstrumentedTemplate<NotInstrumented>* > root(value.get());
         helper.addRootObject(root);
         EXPECT_EQ(sizeof(InstrumentedTemplate<NotInstrumented>), helper.reportedSizeForAllTypes());
@@ -634,7 +634,7 @@ TEST(MemoryInstrumentationTest, hashMapWithInstrumentedPointerKeysAndPointerValu
     InstrumentationTestHelper helper;
 
     typedef HashMap<Instrumented*, Instrumented*> InstrumentedToInstrumentedMap;
-    OwnPtr<InstrumentedToInstrumentedMap> value = adoptPtr(new InstrumentedToInstrumentedMap());
+    OwnPtr<InstrumentedToInstrumentedMap> value(adoptPtr(new InstrumentedToInstrumentedMap()));
     Vector<OwnPtr<Instrumented> > valuesVector;
     size_t count = 10;
     for (size_t i = 0; i < count; ++i) {
@@ -673,7 +673,7 @@ TEST(MemoryInstrumentationTest, hashMapWithValuesConvertibleToInt)
     InstrumentationTestHelper helper;
 
     typedef HashMap<InstrumentedConvertibleToInt*, InstrumentedConvertibleToInt> TestMap;
-    OwnPtr<TestMap> value = adoptPtr(new TestMap());
+    OwnPtr<TestMap> value(adoptPtr(new TestMap()));
     Vector<OwnPtr<InstrumentedConvertibleToInt> > keysVector;
     Vector<OwnPtr<NotInstrumented> > valuesVector;
     size_t count = 10;
@@ -694,7 +694,7 @@ TEST(MemoryInstrumentationTest, hashMapWithEnumKeysAndInstrumentedValues)
     InstrumentationTestHelper helper;
 
     typedef HashMap<TestEnum, String> EnumToStringMap;
-    OwnPtr<EnumToStringMap> value = adoptPtr(new EnumToStringMap());
+    OwnPtr<EnumToStringMap> value(adoptPtr(new EnumToStringMap()));
     size_t count = MY_ENUM_MAX;
     for (size_t i = ONE; i <= count; ++i)
         value->set(static_cast<TestEnum>(i), String::number(i));
@@ -709,7 +709,7 @@ TEST(MemoryInstrumentationTest, hashCountedSetWithInstrumentedValues)
     InstrumentationTestHelper helper;
 
     typedef HashCountedSet<Instrumented*> TestSet;
-    OwnPtr<TestSet> set = adoptPtr(new TestSet());
+    OwnPtr<TestSet> set(adoptPtr(new TestSet()));
     Vector<OwnPtr<Instrumented> > keysVector;
     size_t count = 10;
     for (size_t i = 0; i < count; ++i) {
