@@ -82,6 +82,14 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
         return;
     }
 
+    if (renderStyle == RenderToCurrentGLContext) {
+        // Evas doesn't allow including gl headers and Evas_GL headers at the same time,
+        // so we need to query the current gl context/surface here instead of in GraphicsContext3DPrivate.
+        void* currentContext = (void*)glXGetCurrentContext();
+        void* currentSurface = (void*)glXGetCurrentDrawable();
+        m_private->setCurrentGLContext(currentContext, currentSurface);
+    }
+
     if (renderStyle == RenderOffscreen) {
         // Create buffers for the canvas FBO.
         glGenFramebuffers(/* count */ 1, &m_fbo);

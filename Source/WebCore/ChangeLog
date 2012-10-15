@@ -1,3 +1,19 @@
+2012-10-15  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][WK2][Texmap] Set gl context in GraphicsContext3DPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=99325
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Based on a patch from Regina Chung.
+        This piece of code was lost in the final patch of https://bugs.webkit.org/show_bug.cgi?id=96627.
+        The gl context is used as key in a hash map and cannot be NULL.
+
+        No new tests. Accelerated compositing is not yet enabled in the EFL port.
+
+        * platform/graphics/efl/GraphicsContext3DEfl.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
 2012-10-15  Mike West  <mkwst@chromium.org>
 
         Console messages containing long URLs should cut at some reasonable length.
