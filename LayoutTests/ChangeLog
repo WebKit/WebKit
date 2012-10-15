@@ -1,3 +1,27 @@
+2012-10-15  Dana Jansens  <danakj@chromium.org>
+
+        Rebaselines after 131358
+
+        Unreviewed gardening.
+
+        * platform/chromium-mac-snowleopard/css1/basic/inheritance-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-snowleopard/fast/sub-pixel/selection/selection-rect-in-sub-pixel-table-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug73321-expected.png:
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac/fast/sub-pixel/selection/selection-rect-in-sub-pixel-table-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug73321-expected.png:
+
 2012-10-12  Tony Chang  <tony@chromium.org>
 
         input[type=range] as a flex item renders thumb at wrong position
