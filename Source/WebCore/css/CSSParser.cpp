@@ -291,31 +291,50 @@ CSSParser::~CSSParser()
 }
 
 template <typename CharacterType>
-ALWAYS_INLINE static void makeLower(CharacterType* characters, unsigned length)
+ALWAYS_INLINE static void makeLower(const CharacterType* input, CharacterType* output, unsigned length)
 {
     // FIXME: If we need Unicode lowercasing here, then we probably want the real kind
     // that can potentially change the length of the string rather than the character
     // by character kind. If we don't need Unicode lowercasing, it would be good to
     // simplify this function.
 
-    if (charactersAreAllASCII(characters, length)) {
+    if (charactersAreAllASCII(input, length)) {
         // Fast case for all-ASCII.
         for (unsigned i = 0; i < length; i++)
-            characters[i] = toASCIILower(characters[i]);
+            output[i] = toASCIILower(input[i]);
     } else {
         for (unsigned i = 0; i < length; i++)
-            characters[i] = Unicode::toLower(characters[i]);
+            output[i] = Unicode::toLower(input[i]);
     }
 }
 
 void CSSParserString::lower()
 {
     if (is8Bit()) {
-        makeLower(characters8(), length());
+        makeLower(characters8(), characters8(), length());
         return;
     }
 
-    makeLower(characters16(), length());
+    makeLower(characters16(), characters16(), length());
+}
+
+AtomicString CSSParserString::lowerSubstring(unsigned position, unsigned length) const
+{
+    ASSERT(m_length >= position + length);
+
+    RefPtr<StringImpl> result;
+
+    if (is8Bit()) {
+        LChar* buffer;
+        result = StringImpl::createUninitialized(length, buffer);
+        makeLower(characters8() + position, buffer, length);
+    } else {
+        UChar* buffer = 0;
+        result = StringImpl::createUninitialized(length, buffer);
+        makeLower(characters16() + position, buffer, length);
+    }
+
+    return AtomicString(result);
 }
 
 void CSSParser::setupParser(const char* prefix, const String& string, const char* suffix)
@@ -1575,7 +1594,7 @@ inline PassRefPtr<CSSPrimitiveValue> CSSParser::createPrimitiveNumericValue(CSSP
 {
 #if ENABLE(CSS_VARIABLES)
     if (value->unit == CSSPrimitiveValue::CSS_VARIABLE_NAME)
-        return CSSPrimitiveValue::create(value->string, CSSPrimitiveValue::CSS_VARIABLE_NAME);
+        return createPrimitiveVariableNameValue(value);
 #endif
 
     if (m_parsedCalculation) {
@@ -1601,6 +1620,15 @@ inline PassRefPtr<CSSPrimitiveValue> CSSParser::createPrimitiveStringValue(CSSPa
     ASSERT(value->unit == CSSPrimitiveValue::CSS_STRING || value->unit == CSSPrimitiveValue::CSS_IDENT);
     return cssValuePool().createValue(value->string, CSSPrimitiveValue::CSS_STRING);
 }
+
+#if ENABLE(CSS_VARIABLES)
+inline PassRefPtr<CSSPrimitiveValue> CSSParser::createPrimitiveVariableNameValue(CSSParserValue* value)
+{
+    ASSERT(value->unit == CSSPrimitiveValue::CSS_VARIABLE_NAME);
+    AtomicString variableName = String(value->string).lower();
+    return CSSPrimitiveValue::create(variableName, CSSPrimitiveValue::CSS_VARIABLE_NAME);
+}
+#endif
 
 static inline bool isComma(CSSParserValue* value)
 { 
@@ -1642,7 +1670,7 @@ inline PassRefPtr<CSSPrimitiveValue> CSSParser::parseValidPrimitive(int identifi
 #endif
 #if ENABLE(CSS_VARIABLES)
     if (value->unit == CSSPrimitiveValue::CSS_VARIABLE_NAME)
-        return CSSPrimitiveValue::create(value->string, CSSPrimitiveValue::CSS_VARIABLE_NAME);
+        return createPrimitiveVariableNameValue(value);
 #endif
     if (value->unit >= CSSParserValue::Q_EMS)
         return CSSPrimitiveValue::createAllowingMarginQuirk(value->fValue, CSSPrimitiveValue::CSS_EMS);
@@ -1685,7 +1713,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
 
 #if ENABLE(CSS_VARIABLES)
     if (!id && value->unit == CSSPrimitiveValue::CSS_VARIABLE_NAME && num == 1) {
-        addProperty(propId, CSSPrimitiveValue::create(value->string, CSSPrimitiveValue::CSS_VARIABLE_NAME), important);
+        addProperty(propId, createPrimitiveVariableNameValue(value), important);
         m_valueList->next();
         return true;
     }
@@ -3028,8 +3056,10 @@ void CSSParser::storeVariableDeclaration(const CSSParserString& name, PassOwnPtr
     if (!value)
         return;
     
-    ASSERT(name.length() > 12);
-    AtomicString variableName = name.is8Bit() ? AtomicString(name.characters8() + 12, name.length() - 12) : AtomicString(name.characters16() + 12, name.length() - 12);
+    static const unsigned prefixLength = sizeof("-webkit-var-") - 1;
+    
+    ASSERT(name.length() > prefixLength);
+    AtomicString variableName = name.lowerSubstring(prefixLength, name.length() - prefixLength);
 
     StringBuilder builder;
     for (unsigned i = 0, size = value->size(); i < size; i++) {
@@ -3040,7 +3070,7 @@ void CSSParser::storeVariableDeclaration(const CSSParserString& name, PassOwnPtr
             return;
         builder.append(cssValue->cssText());
     }
-    addProperty(CSSPropertyVariable, CSSVariableValue::create(variableName, builder.toString()), important, false);
+    addProperty(CSSPropertyVariable, CSSVariableValue::create(variableName, builder.toString().lower()), important, false);
 }
 #endif
 

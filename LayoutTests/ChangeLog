@@ -1,3 +1,15 @@
+2012-10-15  Luke Macpherson   <macpherson@chromium.org>
+
+        Make CSS variable names case-insensitive.
+        https://bugs.webkit.org/show_bug.cgi?id=98712
+
+        Reviewed by Tony Chang.
+
+        Add test that variable names are match correctly when different case is used.
+
+        * fast/css/variables/case-insensitive-expected.html: Added.
+        * fast/css/variables/case-insensitive.html: Added.
+
 2012-10-15  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed inspector tests fix.

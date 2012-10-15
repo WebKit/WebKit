@@ -366,6 +366,9 @@ public:
 
     PassRefPtr<CSSPrimitiveValue> createPrimitiveNumericValue(CSSParserValue*);
     PassRefPtr<CSSPrimitiveValue> createPrimitiveStringValue(CSSParserValue*);
+#if ENABLE(CSS_VARIABLES)
+    PassRefPtr<CSSPrimitiveValue> createPrimitiveVariableNameValue(CSSParserValue*);
+#endif
 
     static KURL completeURL(const CSSParserContext&, const String& url);
 

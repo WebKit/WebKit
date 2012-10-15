@@ -1,3 +1,31 @@
+2012-10-15  Luke Macpherson   <macpherson@chromium.org>
+
+        Make CSS variable names case-insensitive.
+        https://bugs.webkit.org/show_bug.cgi?id=98712
+
+        Reviewed by Tony Chang.
+
+        This patch modifies the parser to normalize all variable names to lower case,
+        making variable definitions consistent with other property names, which are also case insensitive.
+        Spec: http://dev.w3.org/csswg/css-variables/#defining-variables
+
+        Test: fast/css/variables/case-insensitive.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createPrimitiveNumericValue):
+        (WebCore):
+        (WebCore::CSSParser::createPrimitiveVariableNameValue):
+        (WebCore::CSSParser::parseValidPrimitive):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::storeVariableDeclaration):
+        (WebCore::CSSParserString::lowerSubstring):
+        Added function to compute a lower case substring as an AtomicString from a CSSParserString.
+        * css/CSSParser.h:
+        (CSSParser):
+        * css/CSSParserValues.h:
+        (CSSParserString):
+        (WebCore::CSSParserString::lowerSubstring):
+
 2012-10-15  Michael Saboff  <msaboff@apple.com>
 
         Update RenderText to use String instead of UChar* for text
