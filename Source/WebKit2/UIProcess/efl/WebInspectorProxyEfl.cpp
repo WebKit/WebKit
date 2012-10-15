@@ -35,6 +35,7 @@
 #include <WebCore/NotImplemented.h>
 #include <unistd.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -139,14 +140,18 @@ void WebInspectorProxy::platformInspectedURLChanged(const String&)
 
 String WebInspectorProxy::inspectorPageURL() const
 {
-    return makeString(inspectorBaseURL(), "/inspector.html");
+    StringBuilder builder;
+    builder.append(inspectorBaseURL());
+    builder.appendLiteral("/inspector.html");
+
+    return builder.toString();
 }
 
 String WebInspectorProxy::inspectorBaseURL() const
 {
-    String inspectorFilesPath = makeString("file://", WK2_WEB_INSPECTOR_INSTALL_DIR);
+    String inspectorFilesPath = ASCIILiteral("file://" WEB_INSPECTOR_INSTALL_DIR);
     if (access(inspectorFilesPath.utf8().data(), R_OK))
-        inspectorFilesPath = makeString("file://", WK2_WEB_INSPECTOR_DIR);
+        inspectorFilesPath = ASCIILiteral("file://" WEB_INSPECTOR_DIR);
 
     return inspectorFilesPath;
 }
