@@ -162,13 +162,15 @@ void SurfacePool::createBuffers()
         return;
 
     // Create the tile pool.
-    for (size_t i = 0; i < m_tilePool.size(); ++i)
-        Platform::Graphics::createPixmapBuffer(m_tilePool[i]->frontBuffer()->nativeBuffer());
+    for (size_t i = 0; i < m_tilePool.size(); ++i) {
+        if (m_tilePool[i]->frontBuffer()->wasNativeBufferCreated())
+            Platform::Graphics::createPixmapBuffer(m_tilePool[i]->frontBuffer()->nativeBuffer());
+    }
 
-    if (m_visibleTileBuffer)
+    if (m_visibleTileBuffer && m_visibleTileBuffer->frontBuffer()->wasNativeBufferCreated())
         Platform::Graphics::createPixmapBuffer(m_visibleTileBuffer->frontBuffer()->nativeBuffer());
 
-    if (backBuffer())
+    if (backBuffer() && backBuffer()->wasNativeBufferCreated())
         Platform::Graphics::createPixmapBuffer(backBuffer()->nativeBuffer());
 
     m_buffersSuspended = false;
@@ -183,19 +185,21 @@ void SurfacePool::releaseBuffers()
 
     // Release the tile pool.
     for (size_t i = 0; i < m_tilePool.size(); ++i) {
+        if (!m_tilePool[i]->frontBuffer()->wasNativeBufferCreated())
+            continue;
         m_tilePool[i]->frontBuffer()->clearRenderedRegion();
         // Clear the buffer to prevent accidental leakage of (possibly sensitive) pixel data.
         Platform::Graphics::clearBuffer(m_tilePool[i]->frontBuffer()->nativeBuffer(), 0, 0, 0, 0);
         Platform::Graphics::destroyPixmapBuffer(m_tilePool[i]->frontBuffer()->nativeBuffer());
     }
 
-    if (m_visibleTileBuffer) {
+    if (m_visibleTileBuffer && m_visibleTileBuffer->frontBuffer()->wasNativeBufferCreated()) {
         m_visibleTileBuffer->frontBuffer()->clearRenderedRegion();
         Platform::Graphics::clearBuffer(m_visibleTileBuffer->frontBuffer()->nativeBuffer(), 0, 0, 0, 0);
         Platform::Graphics::destroyPixmapBuffer(m_visibleTileBuffer->frontBuffer()->nativeBuffer());
     }
 
-    if (backBuffer()) {
+    if (backBuffer() && backBuffer()->wasNativeBufferCreated()) {
         backBuffer()->clearRenderedRegion();
         Platform::Graphics::clearBuffer(backBuffer()->nativeBuffer(), 0, 0, 0, 0);
         Platform::Graphics::destroyPixmapBuffer(backBuffer()->nativeBuffer());

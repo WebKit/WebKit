@@ -86,6 +86,7 @@ class TileBuffer {
         void setScale(double scale) { m_scale = scale; };
 
         Platform::Graphics::Buffer* nativeBuffer() const;
+        bool wasNativeBufferCreated() const;
 
         Fence* fence() const { return m_fence.get(); }
         void setFence(PassRefPtr<Fence> fence) { m_fence = fence; }

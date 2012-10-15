@@ -99,6 +99,11 @@ Platform::Graphics::Buffer* TileBuffer::nativeBuffer() const
     return m_buffer;
 }
 
+bool TileBuffer::wasNativeBufferCreated() const
+{
+    return static_cast<bool>(m_buffer);
+}
+
 
 BackingStoreTile::BackingStoreTile(const Platform::IntSize& size, BufferingMode mode)
     : m_bufferingMode(mode)

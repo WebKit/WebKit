@@ -1,3 +1,28 @@
+2012-10-15  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Only reallocate buffers that were allocated before suspending
+        https://bugs.webkit.org/show_bug.cgi?id=99205
+        RIM PR 99395
+
+        Reviewed by Antonio Gomes.
+
+        When we call releaseBuffers(), not all of the backingstore
+        tile buffers might have been allocated yet. Still we try
+        to release all of them, which causes us to lazy-initialize
+        the tile buffers so we can release them again.
+
+        This is stupid and we should just ignore buffers that
+        haven't been initialized yet. This patch makes that change.
+
+        * WebKitSupport/BackingStoreTile.cpp:
+        (BlackBerry::WebKit::TileBuffer::wasNativeBufferCreated):
+        (WebKit):
+        * WebKitSupport/BackingStoreTile.h:
+        (TileBuffer):
+        * WebKitSupport/SurfacePool.cpp:
+        (BlackBerry::WebKit::SurfacePool::createBuffers):
+        (BlackBerry::WebKit::SurfacePool::releaseBuffers):
+
 2012-10-15  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [BlackBerry] replace BlackBerry::Platform::log() with BBLOG()
