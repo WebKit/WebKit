@@ -1,3 +1,53 @@
+2012-10-15  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Make CopiedSpace and MarkedSpace regions independent
+        https://bugs.webkit.org/show_bug.cgi?id=99222
+
+        Reviewed by Filip Pizlo.
+
+        Right now CopiedSpace and MarkedSpace have the same block size and share the same regions, 
+        but there's no reason that they can't have different block sizes while still sharing the 
+        same underlying regions. We should factor the two "used" lists of regions apart so that 
+        MarkedBlocks and CopiedBlocks can be different sizes. Regions will still be a uniform size 
+        so that when they become empty they may be shared between the CopiedSpace and the MarkedSpace, 
+        since benchmarks indicate that sharing is a boon for performance.
+
+        * heap/BlockAllocator.cpp:
+        (JSC::BlockAllocator::BlockAllocator):
+        * heap/BlockAllocator.h:
+        (JSC):
+        (Region):
+        (JSC::Region::create): We now have a fixed size for Regions so that empty regions can continue to 
+        be shared between the MarkedSpace and CopiedSpace. Once they are used for a specific type of block,
+        however, they can only be used for that type of block until they become empty again.
+        (JSC::Region::createCustomSize):
+        (JSC::Region::Region):
+        (JSC::Region::~Region):
+        (JSC::Region::reset):
+        (BlockAllocator):
+        (JSC::BlockAllocator::RegionSet::RegionSet):
+        (RegionSet):
+        (JSC::BlockAllocator::tryAllocateFromRegion): We change this function so that it correctly 
+        moves blocks between empty, partial, and full lists.
+        (JSC::BlockAllocator::allocate):
+        (JSC::BlockAllocator::allocateCustomSize):
+        (JSC::BlockAllocator::deallocate): Ditto.
+        (JSC::CopiedBlock):
+        (JSC::MarkedBlock):
+        (JSC::BlockAllocator::regionSetFor): We use this so that we can use the same allocate/deallocate
+        functions with different RegionSets. We specialize the function for each type of block that we 
+        want to allocate.
+        * heap/CopiedBlock.h:
+        (CopiedBlock):
+        * heap/CopiedSpace.h:
+        (CopiedSpace):
+        * heap/HeapBlock.h:
+        (HeapBlock):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::MarkedBlock): For oversize MarkedBlocks, if the block size gets too big we can 
+        underflow the endAtom, which will cause us to segfault when we try to sweep a block. If we're a 
+        custom size MarkedBlock we need to calculate endAtom so it doesn't underflow.
+
 2012-10-14  Filip Pizlo  <fpizlo@apple.com>
 
         JIT::JIT fails to initialize all of its fields

@@ -26,13 +26,16 @@
 #include "config.h"
 #include "BlockAllocator.h"
 
+#include "CopiedBlock.h"
+#include "MarkedBlock.h"
 #include <wtf/CurrentTime.h>
 
 namespace JSC {
 
 BlockAllocator::BlockAllocator()
-    : m_numberOfEmptyRegions(0)
-    , m_numberOfPartialRegions(0)
+    : m_copiedRegionSet(CopiedBlock::blockSize)
+    , m_markedRegionSet(MarkedBlock::blockSize)
+    , m_numberOfEmptyRegions(0)
     , m_isCurrentlyAllocating(false)
     , m_blockFreeingThreadShouldQuit(false)
     , m_blockFreeingThread(createThread(blockFreeingThreadStartFunc, this, "JavaScriptCore::BlockFree"))

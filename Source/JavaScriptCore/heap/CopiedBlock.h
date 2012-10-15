@@ -72,7 +72,7 @@ public:
     size_t size();
     size_t capacity();
 
-    static const size_t blockSize = 64 * KB;
+    static const size_t blockSize = 32 * KB;
 
 private:
     CopiedBlock(Region*);

@@ -42,7 +42,7 @@ MarkedBlock* MarkedBlock::create(DeadBlock* block, MarkedAllocator* allocator, s
 MarkedBlock::MarkedBlock(Region* region, MarkedAllocator* allocator, size_t cellSize, DestructorType destructorType)
     : HeapBlock<MarkedBlock>(region)
     , m_atomsPerCell((cellSize + atomSize - 1) / atomSize)
-    , m_endAtom(atomsPerBlock - m_atomsPerCell + 1)
+    , m_endAtom((allocator->cellSize() ? atomsPerBlock : region->blockSize() / atomSize) - m_atomsPerCell + 1)
     , m_destructorType(destructorType)
     , m_allocator(allocator)
     , m_state(New) // All cells start out unmarked.

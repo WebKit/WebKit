@@ -117,9 +117,9 @@ private:
     ThreadCondition m_loanedBlocksCondition;
     size_t m_numberOfLoanedBlocks;
 
-    static const size_t s_maxAllocationSize = 32 * KB;
+    static const size_t s_maxAllocationSize = CopiedBlock::blockSize / 2;
     static const size_t s_initialBlockNum = 16;
-    static const size_t s_blockMask = ~(CopiedBlock::s_blockSize - 1);
+    static const size_t s_blockMask = ~(CopiedBlock::blockSize - 1);
 };
 
 } // namespace JSC

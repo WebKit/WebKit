@@ -35,6 +35,7 @@
 
 namespace JSC {
 
+class BlockAllocator;
 class CopiedBlock;
 class MarkedBlock;
 class Region;
@@ -54,9 +55,12 @@ inline DeadBlock::DeadBlock(Region* region)
 
 class Region : public DoublyLinkedListNode<Region> {
     friend CLASS_IF_GCC DoublyLinkedListNode<Region>;
+    friend class BlockAllocator;
 public:
     ~Region();
-    static Region* create(size_t blockSize, size_t blockAlignment, size_t numberOfBlocks);
+    static Region* create(size_t blockSize);
+    static Region* createCustomSize(size_t blockSize, size_t blockAlignment);
+    Region* reset(size_t blockSize);
 
     size_t blockSize() const { return m_blockSize; }
     bool isFull() const { return m_blocksInUse == m_totalBlocks; }
@@ -64,6 +68,8 @@ public:
 
     DeadBlock* allocate();
     void deallocate(void*);
+
+    static const size_t s_regionSize = 64 * KB;
 
 private:
     Region(PageAllocationAligned&, size_t blockSize, size_t totalBlocks);
@@ -77,13 +83,22 @@ private:
     DoublyLinkedList<DeadBlock> m_deadBlocks;
 };
 
-inline Region* Region::create(size_t blockSize, size_t blockAlignment, size_t numberOfBlocks)
+inline Region* Region::create(size_t blockSize)
 {
-    size_t regionSize = blockSize * numberOfBlocks;
-    PageAllocationAligned allocation = PageAllocationAligned::allocate(regionSize, blockAlignment, OSAllocator::JSGCHeapPages);
+    ASSERT(blockSize <= s_regionSize);
+    ASSERT(!(s_regionSize % blockSize));
+    PageAllocationAligned allocation = PageAllocationAligned::allocate(s_regionSize, s_regionSize, OSAllocator::JSGCHeapPages);
     if (!static_cast<bool>(allocation))
         CRASH();
-    return new Region(allocation, blockSize, numberOfBlocks);
+    return new Region(allocation, blockSize, s_regionSize / blockSize);
+}
+
+inline Region* Region::createCustomSize(size_t blockSize, size_t blockAlignment)
+{
+    PageAllocationAligned allocation = PageAllocationAligned::allocate(blockSize, blockAlignment, OSAllocator::JSGCHeapPages);
+    if (!static_cast<bool>(allocation))
+        CRASH();
+    return new Region(allocation, blockSize, 1);
 }
 
 inline Region::Region(PageAllocationAligned& allocation, size_t blockSize, size_t totalBlocks)
@@ -96,16 +111,23 @@ inline Region::Region(PageAllocationAligned& allocation, size_t blockSize, size_
     , m_next(0)
 {
     ASSERT(allocation);
-    char* start = static_cast<char*>(allocation.base());
-    char* end = start + allocation.size();
+    char* start = static_cast<char*>(m_allocation.base());
+    char* end = start + m_allocation.size();
     for (char* current = start; current < end; current += blockSize)
         m_deadBlocks.append(new (NotNull, current) DeadBlock(this));
 }
 
 inline Region::~Region()
 {
-    ASSERT(!m_blocksInUse);
+    ASSERT(isEmpty());
     m_allocation.deallocate();
+}
+
+inline Region* Region::reset(size_t blockSize)
+{
+    ASSERT(isEmpty());
+    PageAllocationAligned allocation = m_allocation;
+    return new (NotNull, this) Region(allocation, blockSize, s_regionSize / blockSize);
 }
 
 inline DeadBlock* Region::allocate()
@@ -136,21 +158,36 @@ public:
     template <typename T> void deallocateCustomSize(T*);
 
 private:
-    DeadBlock* tryAllocateFromRegion(DoublyLinkedList<Region>&, size_t&);
-
     void waitForRelativeTimeWhileHoldingLock(double relative);
     void waitForRelativeTime(double relative);
 
     void blockFreeingThreadMain();
     static void blockFreeingThreadStartFunc(void* heap);
 
+    struct RegionSet {
+        RegionSet(size_t blockSize)
+            : m_numberOfPartialRegions(0)
+            , m_blockSize(blockSize)
+        {
+        }
+        DoublyLinkedList<Region> m_fullRegions;
+        DoublyLinkedList<Region> m_partialRegions;
+        size_t m_numberOfPartialRegions;
+        size_t m_blockSize;
+    };
+
+    DeadBlock* tryAllocateFromRegion(RegionSet&, DoublyLinkedList<Region>&, size_t&);
+
     void releaseFreeRegions();
 
-    DoublyLinkedList<Region> m_fullRegions;
-    DoublyLinkedList<Region> m_partialRegions;
+    template <typename T> RegionSet& regionSetFor();
+
+    RegionSet m_copiedRegionSet;
+    RegionSet m_markedRegionSet;
+
     DoublyLinkedList<Region> m_emptyRegions;
     size_t m_numberOfEmptyRegions;
-    size_t m_numberOfPartialRegions;
+
     bool m_isCurrentlyAllocating;
     bool m_blockFreeingThreadShouldQuit;
     SpinLock m_regionLock;
@@ -159,17 +196,28 @@ private:
     ThreadIdentifier m_blockFreeingThread;
 };
 
-inline DeadBlock* BlockAllocator::tryAllocateFromRegion(DoublyLinkedList<Region>& regions, size_t& numberOfRegions)
+inline DeadBlock* BlockAllocator::tryAllocateFromRegion(RegionSet& set, DoublyLinkedList<Region>& regions, size_t& numberOfRegions)
 {
     if (numberOfRegions) {
         ASSERT(!regions.isEmpty());
         Region* region = regions.head();
         ASSERT(!region->isFull());
-        DeadBlock* block = region->allocate();
-        if (region->isFull()) {
-            numberOfRegions--;
-            m_fullRegions.push(regions.removeHead());
+
+        if (region->isEmpty()) {
+            ASSERT(region == m_emptyRegions.head());
+            m_numberOfEmptyRegions--;
+            set.m_numberOfPartialRegions++;
+            region = m_emptyRegions.removeHead()->reset(set.m_blockSize);
+            set.m_partialRegions.push(region);
         }
+
+        DeadBlock* block = region->allocate();
+
+        if (region->isFull()) {
+            set.m_numberOfPartialRegions--;
+            set.m_fullRegions.push(set.m_partialRegions.removeHead());
+        }
+
         return block;
     }
     return 0;
@@ -178,22 +226,23 @@ inline DeadBlock* BlockAllocator::tryAllocateFromRegion(DoublyLinkedList<Region>
 template<typename T>
 inline DeadBlock* BlockAllocator::allocate()
 {
+    RegionSet& set = regionSetFor<T>();
     DeadBlock* block;
     m_isCurrentlyAllocating = true;
     {
         SpinLockHolder locker(&m_regionLock);
-        if ((block = tryAllocateFromRegion(m_partialRegions, m_numberOfPartialRegions)))
+        if ((block = tryAllocateFromRegion(set, set.m_partialRegions, set.m_numberOfPartialRegions)))
             return block;
-        if ((block = tryAllocateFromRegion(m_emptyRegions, m_numberOfEmptyRegions)))
+        if ((block = tryAllocateFromRegion(set, m_emptyRegions, m_numberOfEmptyRegions)))
             return block;
     }
 
-    Region* newRegion = Region::create(T::blockSize, T::blockSize, 1);
+    Region* newRegion = Region::create(T::blockSize);
 
     SpinLockHolder locker(&m_regionLock);
     m_emptyRegions.push(newRegion);
     m_numberOfEmptyRegions++;
-    block = tryAllocateFromRegion(m_emptyRegions, m_numberOfEmptyRegions);
+    block = tryAllocateFromRegion(set, m_emptyRegions, m_numberOfEmptyRegions);
     ASSERT(block);
     return block;
 }
@@ -201,7 +250,7 @@ inline DeadBlock* BlockAllocator::allocate()
 inline DeadBlock* BlockAllocator::allocateCustomSize(size_t blockSize, size_t blockAlignment)
 {
     size_t realSize = WTF::roundUpToMultipleOf(blockAlignment, blockSize);
-    Region* newRegion = Region::create(realSize, blockAlignment, 1);
+    Region* newRegion = Region::createCustomSize(realSize, blockAlignment);
     DeadBlock* block = newRegion->allocate();
     ASSERT(block);
     return block;
@@ -210,20 +259,28 @@ inline DeadBlock* BlockAllocator::allocateCustomSize(size_t blockSize, size_t bl
 template<typename T>
 inline void BlockAllocator::deallocate(T* block)
 {
+    RegionSet& set = regionSetFor<T>();
     bool shouldWakeBlockFreeingThread = false;
     {
         SpinLockHolder locker(&m_regionLock);
         Region* region = block->region();
+        ASSERT(!region->isEmpty());
         if (region->isFull())
-            m_fullRegions.remove(region);
+            set.m_fullRegions.remove(region);
+        else {
+            set.m_partialRegions.remove(region);
+            set.m_numberOfPartialRegions--;
+        }
+
         region->deallocate(block);
+
         if (region->isEmpty()) {
             m_emptyRegions.push(region);
             shouldWakeBlockFreeingThread = !m_numberOfEmptyRegions;
             m_numberOfEmptyRegions++;
         } else {
-            m_partialRegions.push(region);
-            m_numberOfPartialRegions++;
+            set.m_partialRegions.push(region);
+            set.m_numberOfPartialRegions++;
         }
     }
 
@@ -239,6 +296,37 @@ inline void BlockAllocator::deallocateCustomSize(T* block)
     Region* region = block->region();
     region->deallocate(block);
     delete region;
+}
+
+template <>
+inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<CopiedBlock>()
+{
+    return m_copiedRegionSet;
+}
+
+template <>
+inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<MarkedBlock>()
+{
+    return m_markedRegionSet;
+}
+
+template <>
+inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<CopiedBlock> >()
+{
+    return m_copiedRegionSet;
+}
+
+template <>
+inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<MarkedBlock> >()
+{
+    return m_markedRegionSet;
+}
+
+template <typename T>
+inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor()
+{
+    ASSERT_NOT_REACHED();
+    return *(RegionSet*)0;
 }
 
 } // namespace JSC

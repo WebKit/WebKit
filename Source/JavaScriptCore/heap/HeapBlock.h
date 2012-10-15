@@ -45,8 +45,6 @@ template<typename T>
 class HeapBlock : public DoublyLinkedListNode<T> {
     friend CLASS_IF_GCC DoublyLinkedListNode<T>;
 public:
-    static const size_t s_blockSize = 64 * KB;
-
     static HeapBlock* destroy(HeapBlock* block)
     {
         static_cast<T*>(block)->~T();
