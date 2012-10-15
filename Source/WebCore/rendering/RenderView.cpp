@@ -134,6 +134,7 @@ bool RenderView::isChildAllowed(RenderObject* child, RenderStyle*) const
 
 void RenderView::layoutContent(const LayoutState& state)
 {
+    UNUSED_PARAM(state);
     ASSERT(needsLayout());
 
     RenderBlock::layout();
