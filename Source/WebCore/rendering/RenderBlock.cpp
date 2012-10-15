@@ -5914,6 +5914,11 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                     inlineMin = 0;
                 }
 
+                if (autoWrap && canBreakReplacedElement && isPrevChildInlineFlow) {
+                    updatePreferredWidth(m_minPreferredLogicalWidth, inlineMin);
+                    inlineMin = 0;
+                }
+
                 // We are no longer stripping whitespace at the start of
                 // a line.
                 if (!child->isFloating()) {

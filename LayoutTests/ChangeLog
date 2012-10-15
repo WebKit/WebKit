@@ -1,3 +1,13 @@
+2012-10-15  Levi Weintraub  <leviw@chromium.org>
+
+        Regression r130057: incorrect block pref width for alternating InlineFlow and inline Replaced
+        https://bugs.webkit.org/show_bug.cgi?id=99194
+
+        Reviewed by Eric Seidel.
+
+        * fast/block/block-with-inline-replaced-children-in-inline-flows-expected.html: Added.
+        * fast/block/block-with-inline-replaced-children-in-inline-flows.html: Added.
+
 2012-10-15  Emil A Eklund  <eae@chromium.org>
 
         Revert rounding change in RenderTable::paintObject
