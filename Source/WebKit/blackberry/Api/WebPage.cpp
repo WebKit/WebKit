@@ -2479,29 +2479,10 @@ IntSize WebPagePrivate::fixedLayoutSize(bool snapToIncrement) const
     return IntSize(defaultLayoutWidth, defaultLayoutHeight);
 }
 
-BackingStoreClient* WebPagePrivate::backingStoreClientForFrame(const Frame* frame) const
+BackingStoreClient* WebPagePrivate::backingStoreClient() const
 {
-    ASSERT(frame);
-    BackingStoreClient* backingStoreClient = 0;
-    if (m_backingStoreClientForFrameMap.contains(frame))
-        backingStoreClient = m_backingStoreClientForFrameMap.get(frame);
-    return backingStoreClient;
+    return m_backingStoreClient;
 }
-
-void WebPagePrivate::addBackingStoreClientForFrame(const Frame* frame, BackingStoreClient* client)
-{
-    ASSERT(frame);
-    ASSERT(client);
-    m_backingStoreClientForFrameMap.add(frame, client);
-}
-
-void WebPagePrivate::removeBackingStoreClientForFrame(const Frame* frame)
-{
-    ASSERT(frame);
-    if (m_backingStoreClientForFrameMap.contains(frame))
-        m_backingStoreClientForFrameMap.remove(frame);
-}
-
 
 void WebPagePrivate::clearDocumentData(const Document* documentGoingAway)
 {
@@ -3124,15 +3105,6 @@ void WebPage::destroy()
     pageCache()->releaseAutoreleasedPagesNow();
 
     FrameLoader* loader = d->m_mainFrame->loader();
-
-    // Remove main frame's backing store client from the map
-    // to prevent FrameLoaderClientBlackyBerry::detachFromParent2(),
-    // which is called by loader->detachFromParent(), deleting it.
-    // We will delete it in ~WebPagePrivate().
-    // Reason: loader->detachFromParent() may ping back to backing store
-    // indirectly through ChromeClientBlackBerry::invalidateContentsAndWindow().
-    // see RIM PR #93256.
-    d->removeBackingStoreClientForFrame(d->m_mainFrame);
 
     // Set m_mainFrame to 0 to avoid calls back in to the backingstore during webpage deletion.
     d->m_mainFrame = 0;

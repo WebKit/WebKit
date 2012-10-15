@@ -435,9 +435,8 @@ void FrameLoaderClientBlackBerry::transitionToCommittedForNewPage()
     // in the backing store from another thread (see BackingStorePrivate::blitVisibleContents method),
     // so we suspend and resume screen update to make sure we do not get a invalid FrameView
     // state.
-    BackingStoreClient* backingStoreClientForFrame = m_webPagePrivate->backingStoreClientForFrame(m_frame);
-    if (backingStoreClientForFrame)
-        backingStoreClientForFrame->backingStore()->d->suspendScreenAndBackingStoreUpdates();
+    if (isMainFrame() && m_webPagePrivate->backingStoreClient())
+        m_webPagePrivate->backingStoreClient()->backingStore()->d->suspendScreenAndBackingStoreUpdates();
 
     // We are navigating away from this document, so clean up any footprint we might have.
     if (m_frame->document())
@@ -456,8 +455,9 @@ void FrameLoaderClientBlackBerry::transitionToCommittedForNewPage()
                         ScrollbarAlwaysOff,                    /* ver mode */
                         true);                                 /* lock the mode */
 
-    if (backingStoreClientForFrame)
-        backingStoreClientForFrame->backingStore()->d->resumeScreenAndBackingStoreUpdates(BackingStore::None);
+    if (isMainFrame() && m_webPagePrivate->backingStoreClient())
+        m_webPagePrivate->backingStoreClient()->backingStore()->d->resumeScreenAndBackingStoreUpdates(BackingStore::None);
+
     m_frame->view()->updateCanHaveScrollbars();
 
     if (isMainFrame()) {
@@ -787,8 +787,6 @@ PassRefPtr<Frame> FrameLoaderClientBlackBerry::createFrame(const KURL& url, cons
     if (!childFrame->tree()->parent())
         return 0;
 
-    BackingStoreClient::create(childFrame.get(), m_frame, m_webPagePrivate->m_webPage);
-
     m_frame->loader()->loadURLIntoChildFrame(url, referrer, childFrame.get());
 
     if (!childFrame->tree()->parent())
@@ -956,12 +954,6 @@ Frame* FrameLoaderClientBlackBerry::dispatchCreatePage(const NavigationAction& n
 
 void FrameLoaderClientBlackBerry::detachedFromParent2()
 {
-    BackingStoreClient* backingStoreClientForFrame = m_webPagePrivate->backingStoreClientForFrame(m_frame);
-    if (backingStoreClientForFrame) {
-        delete backingStoreClientForFrame;
-        backingStoreClientForFrame = 0;
-    }
-
     if (m_frame->document())
         m_webPagePrivate->clearDocumentData(m_frame->document());
 

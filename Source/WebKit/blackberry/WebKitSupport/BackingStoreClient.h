@@ -45,10 +45,6 @@ public:
     WebCore::Frame* frame() const { return m_frame; }
     bool isMainFrame() const { return m_frame == m_webPage->d->m_mainFrame; }
 
-    void addChild(BackingStoreClient* child);
-    WTF::Vector <BackingStoreClient*> children() const;
-    BackingStoreClient* parent() const { return m_parent; }
-
     WebCore::IntPoint absoluteLocation() const;
     WebCore::IntPoint transformedAbsoluteLocation() const;
     WebCore::IntRect absoluteRect() const;
@@ -104,12 +100,11 @@ public:
     void checkOriginOfCurrentScrollOperation();
 
 private:
-    BackingStoreClient(WebCore::Frame*, WebCore::Frame* parentFrame, WebPage* parentPage);
+    BackingStoreClient(WebCore::Frame*, WebPage* parentPage);
 
     WebCore::Frame* m_frame;
     WebPage* m_webPage;
     BackingStore* m_backingStore;
-    BackingStoreClient* m_parent;
     bool m_isClientGeneratedScroll;
     bool m_isScrollNotificationSuppressed;
 };

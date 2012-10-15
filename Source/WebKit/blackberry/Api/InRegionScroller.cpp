@@ -299,19 +299,7 @@ bool InRegionScrollerPrivate::setLayerScrollPosition(RenderLayer* layer, const I
         ASSERT(canScrollInnerFrame(frame));
 
         view->setCanBlitOnScroll(false);
-
-        BackingStoreClient* backingStoreClient = m_webPage->backingStoreClientForFrame(view->frame());
-        if (backingStoreClient) {
-            backingStoreClient->setIsClientGeneratedScroll(true);
-            backingStoreClient->setIsScrollNotificationSuppressed(true);
-        }
-
         view->setScrollPosition(scrollPosition);
-
-        if (backingStoreClient) {
-            backingStoreClient->setIsClientGeneratedScroll(false);
-            backingStoreClient->setIsScrollNotificationSuppressed(false);
-        }
 
     } else {
 

@@ -1745,14 +1745,14 @@ bool InputHandler::setBatchEditingActive(bool active)
 
     // FIXME switch this to m_currentFocusElement->document()->frame() when we have separate
     // backingstore for each frame.
-    BackingStoreClient* backingStoreClientForFrame = m_webPage->backingStoreClientForFrame(m_webPage->mainFrame());
-    ASSERT(backingStoreClientForFrame);
+    BackingStoreClient* backingStoreClient = m_webPage->backingStoreClient();
+    ASSERT(backingStoreClient);
 
     // Enable / Disable the backingstore to prevent visual updates.
     if (!active)
-        backingStoreClientForFrame->backingStore()->resumeScreenAndBackingStoreUpdates(BackingStore::RenderAndBlit);
+        backingStoreClient->backingStore()->resumeScreenAndBackingStoreUpdates(BackingStore::RenderAndBlit);
     else
-        backingStoreClientForFrame->backingStore()->suspendScreenAndBackingStoreUpdates();
+        backingStoreClient->backingStore()->suspendScreenAndBackingStoreUpdates();
 
     return true;
 }

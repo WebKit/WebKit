@@ -432,9 +432,7 @@ public:
     bool dispatchTouchPointAsMouseEventToFullScreenPlugin(WebCore::PluginView*, const Platform::TouchPoint&);
     bool dispatchMouseEventToFullScreenPlugin(WebCore::PluginView*, const Platform::MouseEvent&);
 
-    BackingStoreClient* backingStoreClientForFrame(const WebCore::Frame*) const;
-    void addBackingStoreClientForFrame(const WebCore::Frame*, BackingStoreClient*);
-    void removeBackingStoreClientForFrame(const WebCore::Frame*);
+    BackingStoreClient* backingStoreClient() const;
 
     void setParentPopup(WebCore::PagePopupBlackBerry* webPopup);
 

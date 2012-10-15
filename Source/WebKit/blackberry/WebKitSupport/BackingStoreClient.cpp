@@ -51,75 +51,26 @@ static inline IntSize pointToSize(const IntPoint& point)
 
 BackingStoreClient* BackingStoreClient::create(Frame* frame, Frame* parentFrame, WebPage* parentPage)
 {
-    ASSERT(parentPage);
-    ASSERT(frame->view());
-
-    // FIXME: We do not support inner frames for now.
-    if (parentFrame)
-        return 0;
-
-    BackingStoreClient* parentBackingStoreClient
-        = parentFrame
-        ? parentPage->d->backingStoreClientForFrame(parentFrame)
-        : 0;
-
-    // If this frame has a parent with no backingstore then just stop since
-    // our frame heirarchy is done.
-    if (parentFrame && !parentBackingStoreClient)
-        return 0;
-
-    BackingStoreClient* it = new BackingStoreClient(frame, parentFrame, parentPage);
-    ASSERT(it);
-
-    // Frame -> BackingStoreClient mapping is controlled by the Page.
-    parentPage->d->addBackingStoreClientForFrame(frame, it);
-
-    // Add the backing store client to the child list of its parent.
-    if (parentBackingStoreClient)
-        parentBackingStoreClient->addChild(it);
-
+    ASSERT(!parentFrame);
+    BackingStoreClient* it = new BackingStoreClient(frame, parentPage);
     return it;
 }
 
-BackingStoreClient::BackingStoreClient(Frame* frame, Frame* parentFrame, WebPage* parentPage)
+BackingStoreClient::BackingStoreClient(Frame* frame, WebPage* parentPage)
     : m_frame(frame)
     , m_webPage(parentPage)
     , m_backingStore(0)
-    , m_parent(0)
     , m_isClientGeneratedScroll(false)
     , m_isScrollNotificationSuppressed(false)
 {
-    UNUSED_PARAM(parentFrame);
     m_backingStore = new BackingStore(m_webPage, this);
 }
 
 BackingStoreClient::~BackingStoreClient()
 {
-    m_webPage->d->removeBackingStoreClientForFrame(m_frame);
-
     delete m_backingStore;
     m_backingStore = 0;
     m_frame = 0;
-}
-
-void BackingStoreClient::addChild(BackingStoreClient* child)
-{
-    ASSERT(child);
-    child->m_parent = this;
-}
-
-WTF::Vector <BackingStoreClient*> BackingStoreClient::children() const
-{
-    WTF::Vector<BackingStoreClient*> children;
-    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
-        BlackBerry::WebKit::BackingStoreClient* client =
-            m_webPage->d->backingStoreClientForFrame(child);
-
-        if (client)
-            children.append(client);
-    }
-
-    return children;
 }
 
 IntRect BackingStoreClient::absoluteRect() const

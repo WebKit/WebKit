@@ -585,9 +585,9 @@ void ChromeClientBlackBerry::invalidateContentsForSlowScroll(const IntSize& delt
     if (scrollView != m_webPagePrivate->m_mainFrame->view())
         invalidateContentsAndRootView(updateRect, true /*immediate*/);
     else {
-        BackingStoreClient* backingStoreClientForFrame = m_webPagePrivate->backingStoreClientForFrame(m_webPagePrivate->m_mainFrame);
-        ASSERT(backingStoreClientForFrame);
-        backingStoreClientForFrame->checkOriginOfCurrentScrollOperation();
+        BackingStoreClient* backingStoreClient = m_webPagePrivate->backingStoreClient();
+        ASSERT(backingStoreClient);
+        backingStoreClient->checkOriginOfCurrentScrollOperation();
 
         m_webPagePrivate->m_backingStore->d->slowScroll(delta, updateRect, immediate);
     }
@@ -601,9 +601,9 @@ void ChromeClientBlackBerry::scroll(const IntSize& delta, const IntRect& scrollV
     if (!m_webPagePrivate->m_mainFrame->view())
         return;
 
-    BackingStoreClient* backingStoreClientForFrame = m_webPagePrivate->backingStoreClientForFrame(m_webPagePrivate->m_mainFrame);
-    ASSERT(backingStoreClientForFrame);
-    backingStoreClientForFrame->checkOriginOfCurrentScrollOperation();
+    BackingStoreClient* backingStoreClient = m_webPagePrivate->backingStoreClient();
+    ASSERT(backingStoreClient);
+    backingStoreClient->checkOriginOfCurrentScrollOperation();
 
     m_webPagePrivate->m_backingStore->d->scroll(delta, scrollViewRect, clipRect);
 }

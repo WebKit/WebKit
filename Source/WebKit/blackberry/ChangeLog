@@ -1,5 +1,49 @@
 2012-10-15  Antonio Gomes  <agomes@rim.com>
 
+        [BlackBerry] Clean up BackingStoreClient (part II)
+        https://bugs.webkit.org/show_bug.cgi?id=99327
+
+        Reviewed by Yong Li.
+
+        Remove more unneeded BackingStoreClient <-> WebPageClient integration
+        methods:
+        - BackingStoreClient* backingStoreClientForFrame(...)
+        - void addBackingStoreClientForFrame(...)
+        - void removeBackingStoreClientForFrame(...)
+
+        Change places calling WPPriv::backingStoreClientForFrame to directly
+        access WPPriv::backingStoreClient instead, since only the main frame will
+        have a BackingStoreClient instance associated with it, and it is owned by
+        the WKPriv.
+
+        Remove non-mainframe only references to BackingStoreClient completely,
+        since it is dead code now.
+
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScrollerPrivate::setLayerScrollPosition):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::backingStoreClient):
+        (BlackBerry::WebKit::WebPage::destroy):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::invalidateContentsForSlowScroll):
+        (WebCore::ChromeClientBlackBerry::scroll):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::transitionToCommittedForNewPage):
+        (WebCore::FrameLoaderClientBlackBerry::createFrame):
+        (WebCore::FrameLoaderClientBlackBerry::detachedFromParent2):
+        * WebKitSupport/BackingStoreClient.cpp:
+        (BlackBerry::WebKit::BackingStoreClient::create):
+        (BlackBerry::WebKit::BackingStoreClient::BackingStoreClient):
+        (BlackBerry::WebKit::BackingStoreClient::~BackingStoreClient):
+        * WebKitSupport/BackingStoreClient.h:
+        (BackingStoreClient):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::setBatchEditingActive):
+
+2012-10-15  Antonio Gomes  <agomes@rim.com>
+
         [BlackBerry] Clean up BackingStoreClient (part I)
         https://bugs.webkit.org/show_bug.cgi?id=99327
 
