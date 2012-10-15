@@ -25,10 +25,30 @@
 #include "ShareableBitmap.h"
 #include "WKSharedAPICast.h"
 #include "WebImage.h"
+#include <QPainter>
+#include <WebCore/GraphicsContext.h>
+#include <WebCore/IntSize.h>
 
+using namespace WebCore;
 using namespace WebKit;
 
 QImage WKImageCreateQImage(WKImageRef imageRef)
 {
     return toImpl(imageRef)->bitmap()->createQImage().copy();
+}
+
+WKImageRef WKImageCreateFromQImage(const QImage& image)
+{
+    if (image.isNull())
+        return 0;
+
+    ASSERT(image.bytesPerLine() == image.width() * 4);
+
+    RefPtr<WebImage> webImage = WebImage::create(image.size(), static_cast<ImageOptions>(0));
+    if (!webImage->bitmap())
+        return 0;
+    OwnPtr<GraphicsContext> graphicsContext = webImage->bitmap()->createGraphicsContext();
+    QPainter* painter = graphicsContext->platformContext();
+    painter->drawImage(QPoint(0, 0), image);
+    return toAPI(webImage.release().leakRef());
 }

@@ -154,7 +154,7 @@ WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
 {
     // FIXME: implement to capture pixels in the UI process,
     // which may be necessary to capture things like 3D transforms.
-    return 0;
+    return adoptWK(WKImageCreateFromQImage(QImage()));
 }
 
 } // namespace WTR

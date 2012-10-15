@@ -46,9 +46,15 @@ public:
 
     static void dumpWebProcessUnresponsiveness(const char* textToStdout);
 private:
+    void dumpResults();
     static void dump(const char* textToStdout, const char* textToStderr = 0, bool seenError = false);
     void dumpPixelsAndCompareWithExpected(WKImageRef, WKArrayRef repaintRects);
     bool compareActualHashToExpectedAndDumpResults(const char[33]);
+
+#if PLATFORM(QT)
+    static void forceRepaintDoneCallback(WKErrorRef, void* context);
+    void forceRepaintDone();
+#endif
     
     WKRetainPtr<WKURLRef> m_url;
     std::string m_pathOrURL;
@@ -61,6 +67,10 @@ private:
     bool m_gotFinalMessage;
     bool m_gotRepaint;
     bool m_error;
+
+    WKRetainPtr<WKStringRef> m_textOutput;
+    WKRetainPtr<WKImageRef> m_pixelResult;
+    WKRetainPtr<WKArrayRef> m_repaintRects;
 };
 
 } // namespace WTR
