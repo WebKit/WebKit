@@ -235,6 +235,9 @@ void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollP
     frameView->setConstrainsScrollingToContentEdge(true);
 
     frameView->setInProgrammaticScroll(oldProgrammaticScroll);
+
+    if (GraphicsLayer* scrollLayer = scrollLayerForFrameView(frameView))
+        scrollLayer->syncPosition(-frameView->scrollPosition());
 }
 
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))

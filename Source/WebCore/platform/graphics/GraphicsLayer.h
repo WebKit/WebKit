@@ -246,6 +246,9 @@ public:
     // The position of the layer (the location of its top-left corner in its parent)
     const FloatPoint& position() const { return m_position; }
     virtual void setPosition(const FloatPoint& p) { m_position = p; }
+
+    // For platforms that move underlying platform layers on a different thread for scrolling; just update the GraphicsLayer state.
+    virtual void syncPosition(const FloatPoint& p) { m_position = p; }
     
     // Anchor point: (0, 0) is top left, (1, 1) is bottom right. The anchor point
     // affects the origin of the transforms.

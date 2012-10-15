@@ -1,3 +1,22 @@
+2012-10-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Ensure that GraphicsLayer positions are updated while doing threaded scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=99372
+
+        Reviewed by Anders Carlsson.
+
+        When doing threaded scrolling, the scrolling thread updates the positions of CALayers,
+        but doesn't update GraphicsLayers. This means that code that relies on GraphicsLayer positions
+        works incorrectly.
+        
+        Threaded scrolling is not testabled in layout tests.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::updateMainFrameScrollPosition):
+        * platform/graphics/GraphicsLayer.h:
+        (GraphicsLayer):
+        (WebCore::GraphicsLayer::syncPosition):
+
 2012-10-15  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Implement RTCDataChannel
