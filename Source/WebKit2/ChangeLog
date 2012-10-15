@@ -1,3 +1,14 @@
+2012-10-14  Sam Weinig  <sam@webkit.org>
+
+        Stop all the crashing!
+
+        The WebProcessProxy is not the Connection::Client, the WebConnectionToWebProcess is.
+
+        * UIProcess/WebConnectionToWebProcess.h:
+        (WebKit::WebConnectionToWebProcess::webProcessProxy):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::fromConnection):
+
 2012-10-14  Anders Carlsson  <andersca@apple.com>
 
         Re-land of "WebContext should be a MessageReceiver"
