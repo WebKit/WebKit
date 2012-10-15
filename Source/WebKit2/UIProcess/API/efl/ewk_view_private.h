@@ -76,6 +76,7 @@ void ewk_view_new_window_policy_decision(Evas_Object* ewkView, Ewk_Navigation_Po
 void ewk_view_page_close(Evas_Object* ewkView);
 WKPageRef ewk_view_page_create(Evas_Object* ewkView);
 void ewk_view_title_changed(Evas_Object* ewkView, const char* title);
+void ewk_view_tooltip_text_set(Evas_Object* ewkView, const char* text);
 void ewk_view_resource_load_failed(Evas_Object* ewkView, uint64_t resourceIdentifier, Ewk_Error* error);
 void ewk_view_resource_load_finished(Evas_Object* ewkView, uint64_t resourceIdentifier);
 void ewk_view_resource_load_initiated(Evas_Object* ewkView, uint64_t resourceIdentifier, Ewk_Resource* resource, Ewk_Url_Request* request);

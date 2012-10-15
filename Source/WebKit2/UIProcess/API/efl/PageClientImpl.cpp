@@ -123,9 +123,9 @@ void PageClientImpl::pageClosed()
     notImplemented();
 }
 
-void PageClientImpl::toolTipChanged(const String&, const String&)
+void PageClientImpl::toolTipChanged(const String&, const String& newToolTip)
 {
-    notImplemented();
+    ewk_view_tooltip_text_set(m_viewWidget, newToolTip.utf8().data());
 }
 
 void PageClientImpl::setCursor(const Cursor& cursor)

@@ -1,3 +1,20 @@
+2012-10-15  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Provide implementation for PageClientImpl::toolTipChanged()
+        https://bugs.webkit.org/show_bug.cgi?id=98589
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implement PageClientImpl::toolTipChanged() to emit signal 'tooltip,text,set' with a tooltip text,
+        or 'tooltip,text,unset' if tooltip was unset.
+
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::toolTipChanged):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_tooltip_text_set):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_private.h:
+
 2012-10-15  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Partial build fix for Windows after r131308.

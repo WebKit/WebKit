@@ -1155,6 +1155,17 @@ void ewk_view_title_changed(Evas_Object* ewkView, const char* title)
     evas_object_smart_callback_call(ewkView, "title,changed", const_cast<char*>(title));
 }
 
+/**
+ * @internal
+ */
+void ewk_view_tooltip_text_set(Evas_Object* ewkView, const char* text)
+{
+    if (text && *text)
+        evas_object_smart_callback_call(ewkView, "tooltip,text,set", const_cast<char*>(text));
+    else
+        evas_object_smart_callback_call(ewkView, "tooltip,text,unset", 0);
+}
+
 double ewk_view_load_progress_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, -1.0);
