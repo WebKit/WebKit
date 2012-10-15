@@ -1,5 +1,24 @@
 2012-10-15  Dana Jansens  <danakj@chromium.org>
 
+        Rebaselines after 131358.
+
+        Unreviewed gardening.
+
+        * platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug18359-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug24200-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug28928-expected.png:
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug18359-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug24200-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug28928-expected.png:
+
+2012-10-15  Dana Jansens  <danakj@chromium.org>
+
         Rebaselines after 131358
 
         Unreviewed gardening.
