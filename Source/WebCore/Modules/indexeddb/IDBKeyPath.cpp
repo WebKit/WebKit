@@ -31,6 +31,7 @@
 #include "DOMStringList.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/dtoa.h>
+#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 
@@ -84,25 +85,39 @@ IDBKeyPathLexer::TokenType IDBKeyPathLexer::lex(String& element)
     return lexIdentifier(element);
 }
 
-static inline bool isSafeIdentifierStartCharacter(UChar c)
+namespace {
+
+using namespace WTF::Unicode;
+
+// The following correspond to grammar in ECMA-262.
+const uint32_t unicodeLetter = Letter_Uppercase | Letter_Lowercase | Letter_Titlecase | Letter_Modifier | Letter_Other | Number_Letter;
+const uint32_t unicodeCombiningMark = Mark_NonSpacing | Mark_SpacingCombining;
+const uint32_t unicodeDigit = Number_DecimalDigit;
+const uint32_t unicodeConnectorPunctuation = Punctuation_Connector;
+const UChar ZWNJ = 0x200C;
+const UChar ZWJ = 0x200D;
+
+static inline bool isIdentifierStartCharacter(UChar c)
 {
-    return isASCIIAlpha(c) || (c == '_') || (c == '$');
+    return (category(c) & unicodeLetter) || (c == '$') || (c == '_');
 }
 
-static inline bool isSafeIdentifierCharacter(UChar c)
+static inline bool isIdentifierCharacter(UChar c)
 {
-    return isASCIIAlphanumeric(c) || (c == '_') || (c == '$');
+    return (category(c) & (unicodeLetter | unicodeCombiningMark | unicodeDigit | unicodeConnectorPunctuation)) || (c == '$') || (c == '_') || (c == ZWNJ) || (c == ZWJ);
 }
+
+} // namespace
 
 IDBKeyPathLexer::TokenType IDBKeyPathLexer::lexIdentifier(String& element)
 {
     const UChar* start = m_ptr;
-    if (m_ptr < m_end && isSafeIdentifierStartCharacter(*m_ptr))
+    if (m_ptr < m_end && isIdentifierStartCharacter(*m_ptr))
         ++m_ptr;
     else
         return TokenError;
 
-    while (m_ptr < m_end && isSafeIdentifierCharacter(*m_ptr))
+    while (m_ptr < m_end && isIdentifierCharacter(*m_ptr))
         ++m_ptr;
 
     element = String(start, m_ptr - start);
