@@ -1,3 +1,9 @@
+2012-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing header file.
+
 2012-10-14  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should handle polymorphic array modes by eagerly transforming arrays into the most general applicable form

@@ -170,6 +170,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGCCallHelpers.h \
 	Source/JavaScriptCore/dfg/DFGCFGSimplificationPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGCFGSimplificationPhase.h \
+	Source/JavaScriptCore/dfg/DFGCallArrayAllocatorSlowPathGenerator.h \
 	Source/JavaScriptCore/dfg/DFGCapabilities.cpp \
 	Source/JavaScriptCore/dfg/DFGCapabilities.h \
 	Source/JavaScriptCore/dfg/DFGCFAPhase.cpp \

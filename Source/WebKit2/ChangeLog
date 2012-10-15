@@ -1,3 +1,10 @@
+2012-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.am: Add .in files in WebKit2/Shared to EXTRA_DIST.
+        * GNUmakefile.list.am: Remove deleted file.
+
 2012-10-14  Anders Carlsson  <andersca@apple.com>
 
         Fix the world.

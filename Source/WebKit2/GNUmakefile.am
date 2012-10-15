@@ -529,6 +529,7 @@ EXTRA_DIST += \
 	$(WebKit2)/UIProcess/API/gtk/webkit2marshal.list \
 	$(WebKit2)/Scripts/generate-forwarding-headers.pl \
 	$(shell ls $(WebKit2)/PluginProcess/*.in) \
+	$(shell ls $(WebKit2)/Shared/*.in) \
 	$(shell ls $(WebKit2)/Shared/Plugins/*.in) \
 	$(shell ls $(WebKit2)/UIProcess/*.in) \
 	$(shell ls $(WebKit2)/UIProcess/Downloads/*.in) \
