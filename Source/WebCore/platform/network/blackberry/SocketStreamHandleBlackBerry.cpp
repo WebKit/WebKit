@@ -97,7 +97,7 @@ void SocketStreamHandle::platformClose()
 
 // FilterStream interface
 
-void SocketStreamHandle::notifyStatusReceived(int status, const char* message)
+void SocketStreamHandle::notifyStatusReceived(int status, const BlackBerry::Platform::String& message)
 {
     ASSERT(m_client);
 

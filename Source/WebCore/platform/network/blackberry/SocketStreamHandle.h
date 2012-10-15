@@ -53,7 +53,7 @@ public:
     virtual ~SocketStreamHandle();
 
     // FilterStream interface
-    virtual void notifyStatusReceived(int status, const char* message);
+    virtual void notifyStatusReceived(int status, const BlackBerry::Platform::String& message);
     virtual void notifyDataReceived(BlackBerry::Platform::NetworkBuffer*);
     virtual void notifyReadyToSendData();
     virtual void notifyClose(int status);

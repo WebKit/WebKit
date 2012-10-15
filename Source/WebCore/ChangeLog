@@ -1,3 +1,22 @@
+2012-10-15  Joe Mason  <jmason@rim.com>
+
+        [BlackBerry] Fix WebSockets which was disabled by recent string changes
+        https://bugs.webkit.org/show_bug.cgi?id=99248
+
+        Reviewed by George Staikos.
+
+        PR 223681: The signature of FilterStream::notifyStatusReceived changed to take a
+        BlackBerry::Platform::String instead of a char *. But SocketStreamHandleBlackBerry was not
+        updated to the new signature, so the status message is not getting passed on because it is
+        not calling the correct override.
+
+        No new tests because this is fixing a regression.
+
+        * platform/network/blackberry/SocketStreamHandle.h:
+        (SocketStreamHandle):
+        * platform/network/blackberry/SocketStreamHandleBlackBerry.cpp:
+        (WebCore::SocketStreamHandle::notifyStatusReceived):
+
 2012-10-15  Rob Buis  <rbuis@rim.com>
 
         Remove RenderTextControl::isSelectableElement
