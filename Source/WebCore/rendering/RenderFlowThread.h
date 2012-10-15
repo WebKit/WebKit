@@ -118,8 +118,8 @@ public:
     void getRegionRangeForBox(const RenderBox*, RenderRegion*& startRegion, RenderRegion*& endRegion) const;
 
     void clearRenderObjectCustomStyle(const RenderObject*,
-                                      const RenderRegion* oldStartRegion = 0, const RenderRegion* oldEndRegion = 0,
-                                      const RenderRegion* newStartRegion = 0, const RenderRegion* newEndRegion = 0);
+        const RenderRegion* oldStartRegion = 0, const RenderRegion* oldEndRegion = 0,
+        const RenderRegion* newStartRegion = 0, const RenderRegion* newEndRegion = 0);
     
     void computeOverflowStateForRegions(LayoutUnit oldClientAfterEdge);
 
@@ -127,6 +127,11 @@ public:
 
     // Check if the object is in region and the region is part of this flow thread.
     bool objectInFlowRegion(const RenderObject*, const RenderRegion*) const;
+
+    void resetRegionsOverrideLogicalContentHeight();
+    void markAutoLogicalHeightRegionsForLayout();
+
+    void addForcedRegionBreak(LayoutUnit);
 
     bool pageLogicalHeightChanged() const { return m_pageLogicalHeightChanged; }
 
@@ -137,6 +142,7 @@ public:
 protected:
     virtual const char* renderName() const = 0;
 
+    void updateRegionsFlowThreadPortionRect();
     bool shouldRepaint(const LayoutRect&) const;
     bool regionInRange(const RenderRegion* targetRegion, const RenderRegion* startRegion, const RenderRegion* endRegion) const;
     

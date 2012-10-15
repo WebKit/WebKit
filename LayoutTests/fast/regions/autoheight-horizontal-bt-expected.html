@@ -1,0 +1,19 @@
+<!doctype html>
+<html style="-webkit-writing-mode: horizontal-bt;">
+    <head>
+        <style>
+            .greenBox { position: absolute; width: 250px; height: 50px; background-color: green; }
+            #green { bottom: 125px; }
+            #green1 { bottom: 225px; }
+            #green2 { bottom: 325px; }
+        </style>
+    </head>
+    <body>
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=91097"> Auto height is not working for regions</a>.</p>
+        <p>The region is a block element, writing mode horizontal-bt.</p>
+        <p>On success, you should see 3 green rectangles.</p>
+        <div id="green" class="greenBox"></div>
+        <div id="green1" class="greenBox"></div>
+        <div id="green2" class="greenBox"></div>
+    </body>
+</html>

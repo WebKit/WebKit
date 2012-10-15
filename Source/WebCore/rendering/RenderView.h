@@ -188,6 +188,10 @@ public:
     bool hasRenderNamedFlowThreads() const;
     FlowThreadController* flowThreadController();
 
+    enum RenderViewLayoutPhase { RenderViewNormalLayout, ConstrainedFlowThreadsLayoutInAutoLogicalHeightRegions };
+    bool normalLayoutPhase() const { return m_layoutPhase == RenderViewNormalLayout; }
+    bool constrainedFlowThreadsLayoutPhase() const { return m_layoutPhase == ConstrainedFlowThreadsLayoutInAutoLogicalHeightRegions; }
+
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     IntervalArena* intervalArena();
@@ -249,6 +253,11 @@ private:
     void disableLayoutState() { m_layoutStateDisableCount++; }
     void enableLayoutState() { ASSERT(m_layoutStateDisableCount > 0); m_layoutStateDisableCount--; }
 
+    void layoutContent(const LayoutState&);
+#ifndef NDEBUG
+    void checkLayoutState(const LayoutState&);
+#endif
+
     size_t getRetainedWidgets(Vector<RenderWidget*>&);
     void releaseWidgets(Vector<RenderWidget*>&);
     
@@ -307,6 +316,7 @@ private:
 
     RenderQuote* m_renderQuoteHead;
     unsigned m_renderCounterCount;
+    RenderViewLayoutPhase m_layoutPhase;
 };
 
 inline RenderView* toRenderView(RenderObject* object)

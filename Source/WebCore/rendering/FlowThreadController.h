@@ -75,6 +75,9 @@ public:
     bool isAutoLogicalHeightRegionsFlagConsistent() const;
 #endif
 
+    void resetRegionsOverrideLogicalContentHeight();
+    void markAutoLogicalHeightRegionsForLayout();
+
 protected:
     FlowThreadController(RenderView*);
 

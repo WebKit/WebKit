@@ -176,4 +176,18 @@ bool FlowThreadController::isAutoLogicalHeightRegionsFlagConsistent() const
 }
 #endif
 
+void FlowThreadController::resetRegionsOverrideLogicalContentHeight()
+{
+    ASSERT(m_view->normalLayoutPhase());
+    for (RenderNamedFlowThreadList::iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter)
+        (*iter)->resetRegionsOverrideLogicalContentHeight();
+}
+
+void FlowThreadController::markAutoLogicalHeightRegionsForLayout()
+{
+    ASSERT(m_view->constrainedFlowThreadsLayoutPhase());
+    for (RenderNamedFlowThreadList::iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter)
+        (*iter)->markAutoLogicalHeightRegionsForLayout();
+}
+
 } // namespace WebCore

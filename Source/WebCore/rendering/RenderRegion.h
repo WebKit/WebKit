@@ -122,6 +122,10 @@ public:
     }
     bool hasAutoLogicalHeight() const { return m_hasAutoLogicalHeight; }
 
+    bool needsOverrideLogicalContentHeightComputation() const;
+
+    virtual void updateLogicalHeight() OVERRIDE;
+
     // The top of the nearest page inside the region. For RenderRegions, this is just the logical top of the
     // flow thread portion we contain. For sets, we have to figure out the top of the nearest column or
     // page.
@@ -140,7 +144,7 @@ protected:
 
     LayoutRect overflowRectForFlowThreadPortion(LayoutRect flowThreadPortionRect, bool isFirstPortion, bool isLastPortion) const;
     void repaintFlowThreadContentRectangle(const LayoutRect& repaintRect, bool immediate, const LayoutRect& flowThreadPortionRect,
-                                           const LayoutRect& flowThreadPortionOverflowRect, const LayoutPoint& regionLocation) const;
+        const LayoutRect& flowThreadPortionOverflowRect, const LayoutPoint& regionLocation) const;
 
 private:
     virtual const char* renderName() const { return "RenderRegion"; }

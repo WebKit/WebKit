@@ -1,3 +1,33 @@
+2012-10-15  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Add support for auto-height regions (without region-breaks)
+        https://bugs.webkit.org/show_bug.cgi?id=97533
+
+        Reviewed by Julien Chaffraix.
+
+        Added tests for auto-height regions, with different writing modes, with min/max-height.
+        The bug referenced in the tests is the master bug for auto-height support, 91097.
+
+        * fast/regions/autoheight-abspos-region-expected.html: Added.
+        * fast/regions/autoheight-abspos-region.html: Added.
+        * fast/regions/autoheight-floatright-region-expected.html: Added.
+        * fast/regions/autoheight-floatright-region.html: Added.
+        * fast/regions/autoheight-horizontal-bt-expected.html: Added.
+        * fast/regions/autoheight-horizontal-bt.html: Added.
+        * fast/regions/autoheight-inlineblock-normalflow-region-expected.html: Added.
+        * fast/regions/autoheight-inlineblock-normalflow-region.html: Added.
+        * fast/regions/autoheight-maxheight-region-expected.html: Added.
+        * fast/regions/autoheight-maxheight-region.html: Added.
+        * fast/regions/autoheight-minheight-region-expected.html: Added.
+        * fast/regions/autoheight-minheight-region.html: Added.
+        * fast/regions/autoheight-normalflow-region-expected.html: Added.
+        * fast/regions/autoheight-normalflow-region.html: Added.
+        * fast/regions/autoheight-vertical-lr-expected.html: Added.
+        * fast/regions/autoheight-vertical-lr.html: Added.
+        * fast/regions/autoheight-vertical-rl-expected.html: Added.
+        * fast/regions/autoheight-vertical-rl.html: Added.
+        * fast/regions/webkit-named-flow-first-empty-region-index.html: Fix an element style (though the test was passing before).
+
 2012-10-15  Dana Jansens  <danakj@chromium.org>
 
         Layout Test webaudio/codec-tests/vorbis/vbr-70kbps-44khz.html is failing

@@ -300,6 +300,8 @@ public:
     void setOverrideLogicalContentHeight(LayoutUnit);
     void setOverrideLogicalContentWidth(LayoutUnit);
     void clearOverrideSize();
+    void clearOverrideLogicalContentHeight();
+    void clearOverrideLogicalContentWidth();
 
     virtual LayoutSize offsetFromContainer(RenderObject*, const LayoutPoint&, bool* offsetDependsOnPoint = 0) const;
     

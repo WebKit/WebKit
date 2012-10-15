@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            .flowContent { font-size: 50px; font-family: Ahem; line-height: 2; color: green; }
+            #article { -webkit-flow-into: flow; padding-top: 25px; }
+
+            .regionSize { width: 250px; max-height: 100px; }
+            #region { -webkit-flow-from: flow; overflow: hidden; position: absolute; top: 100px; }
+
+            .expectedRegionSize { width: 250px; height: 50px;  }
+            #red { position: absolute; top: 150px; background-color:red; }
+        </style>
+    </head>
+    <body>
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=91097"> Auto height is not working for regions</a>.</p>
+        <p>The region is a block element in normal flow, having max-height specified.</p>
+        <p>On success, you should see 1 green line.</p>
+        <div id="red" class="expectedRegionSize"></div>
+        <div id="article" class="flowContent">
+            <span style="background-color: green">
+                a a a a a a a a a
+            </span>
+        </div>
+        <div id="region" class="regionSize"></div>
+    </body>
+</html>

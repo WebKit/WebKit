@@ -1,3 +1,88 @@
+2012-10-15  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Add support for auto-height regions (without region-breaks)
+        https://bugs.webkit.org/show_bug.cgi?id=97533
+
+        Reviewed by Julien Chaffraix.
+
+        Implement the 2pass layout algorithm for computing the height of regions with auto logical height, without taking region breaks into account.
+        The algorithm is described in the CSSRegions spec: http://dev.w3.org/csswg/css3-regions/#regions-visual-formatting-steps
+
+        When the flow thread contains regions with auto logical height, a 2pass layout algorithm is needed to determine the height of auto logical height regions.
+        In each step of the layout, the regions are laid out before the flow thread is laid out.
+
+        In the first pass of layout (normal layout phase), the content of the flow thread is laid out unconstrained in the regions. The region marked as having auto logical height
+        displays all the corresponding content from the flow thread (taking min-height and max-height into account), and the height of the content displayed
+        determines the overridden logical content height. Thus, after the first pass of layout, each auto logical height region will store the logical height
+        value for the second pass in its overridden logical content height property.
+
+        In the second pass of layout (constrained flow threads layout phase), when the content of the flow thread is laid out constrained in the regions, the regions are laid out again and they are using
+        the overridden logical content height from the first pass to update their logical height. Then, the flow thread content is laid out in the associated region chain,
+        for which the auto logical height regions have proper logical height.
+
+        A future patch will properly take region breaks into account for the first pass of layout.
+
+        Tests: fast/regions/autoheight-abspos-region.html
+               fast/regions/autoheight-floatright-region.html
+               fast/regions/autoheight-horizontal-bt.html
+               fast/regions/autoheight-inlineblock-normalflow-region.html
+               fast/regions/autoheight-maxheight-region.html
+               fast/regions/autoheight-minheight-region.html
+               fast/regions/autoheight-normalflow-region.html
+               fast/regions/autoheight-vertical-lr.html
+               fast/regions/autoheight-vertical-rl.html
+
+        * rendering/FlowThreadController.cpp:
+        (WebCore::FlowThreadController::resetRegionsOverrideLogicalContentHeight):
+        For all the auto logical height regions, resets their associated overrideLogicalContentHeight.
+        Those regions are marked as needing layout (along with their ancestors).
+        (WebCore::FlowThreadController::markAutoLogicalHeightRegionsForLayout):
+        Mark all the auto logical height regions and their associated flow thread as needing layout (along with their ancestors).
+        * rendering/FlowThreadController.h:
+        * rendering/RenderBox.cpp:
+        Add helper functions to clear out individual logical content width/height.
+        (WebCore::RenderBox::clearOverrideLogicalContentHeight):
+        (WebCore::RenderBox::clearOverrideLogicalContentWidth):
+        (WebCore::RenderBox::clearOverrideSize):
+        * rendering/RenderBox.h:
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::layout):
+        (WebCore::RenderFlowThread::computeLogicalHeight):
+        If the flow thread has an auto logical height region for which we did not yet compute the overrideLogicalContentHeight value,
+        bail out early since we cannot compute the flow thread logical height.
+        (WebCore::RenderFlowThread::regionAtBlockOffset):
+        If the offset is inside an auto logical height region for which we did not compute the overrideLogicalContentHeight, then we consider this region tall enough to accommodate all
+        the content and we return this region. Otherwise, for an auto logical height region, we use either the overrideLogicalContentHeight (if we are in the first layout phase) or
+        the logicalHeight if we are in the second layout phase (because the overriderLogicalContentHeight was already transferred into region logical height).
+        (WebCore::RenderFlowThread::pageLogicalHeightForOffset):
+        (WebCore::RenderFlowThread::pageRemainingLogicalHeightForOffset):
+        (WebCore::RenderFlowThread::computeOverflowStateForRegions):
+        (WebCore::RenderFlowThread::resetRegionsOverrideLogicalContentHeight):
+        (WebCore::RenderFlowThread::markAutoLogicalHeightRegionsForLayout):
+        (WebCore::RenderFlowThread::updateRegionsFlowThreadPortionRect):
+        (WebCore::RenderFlowThread::addForcedRegionBreak):
+        Simulate a region break at the specified offset. It will be extended to properly process the region breaks. At this moment, only one auto height region for a thread
+        can have its height properly computed.
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::boxIntersectsRegion):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::updateLogicalHeight):
+        If the auto logical height region has an overrideLogicalContentHeight and we are in the second pass of layout,
+        we use the overrideLogicalContentHeight to update the region logical height.
+        (WebCore::RenderRegion::needsOverrideLogicalContentHeightComputation):
+        * rendering/RenderRegion.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        (WebCore::RenderView::layoutContent):
+        Added a new function to contain the RenderView block layout and flow threads layout.
+        (WebCore::RenderView::checkLayoutState):
+        Helper function keeping the original asserts from RenderView, used in more than one place.
+        (WebCore::RenderView::layout):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::normalLayoutPhase):
+        (WebCore::RenderView::constrainedFlowThreadsLayoutPhase):
+
 2012-10-15  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Fix memory leak in TreeOutline

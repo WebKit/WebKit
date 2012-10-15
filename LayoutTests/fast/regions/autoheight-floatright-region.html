@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            body { margin: 10px; }
+
+            .flowContentSize { width: 50px; height: 50px; }
+            #article { -webkit-flow-into: flow;  background-color: green; }
+
+            .expectedRegionSize { width: 50px; height: 50px; }
+            #red { background-color: red; position: absolute; top: 150px; left: 60px; }
+
+            .regionContainerSize { width: 100px; height: 100px; }
+            #container { position: absolute;  top: 150px; }
+            #region { -webkit-flow-from: flow; width: 50px; float: right; }
+        </style>
+    </head>
+    <body>
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=91097"> Auto height is not working for regions</a>.</p>
+        <p>The region is a block element, right floating.</p>
+        <p>On success, you should not see a red rectangle below.</p>
+        <div id="red" class="expectedRegionSize"></div>
+        <div id="article" class="flowContentSize"></div>
+        <div id="container" class="regionContainerSize">
+            <div id="region"></div>
+        </div>
+    </body>
+</html>

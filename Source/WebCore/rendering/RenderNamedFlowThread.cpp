@@ -435,10 +435,10 @@ static bool isContainedInNodes(Vector<Node*> others, Node* node)
 static bool boxIntersectsRegion(LayoutUnit logicalTopForBox, LayoutUnit logicalBottomForBox, LayoutUnit logicalTopForRegion, LayoutUnit logicalBottomForRegion)
 {
     bool regionIsEmpty = logicalBottomForRegion != MAX_LAYOUT_UNIT && logicalTopForRegion != MIN_LAYOUT_UNIT
-                         && (logicalBottomForRegion - logicalTopForRegion) <= 0;
+        && (logicalBottomForRegion - logicalTopForRegion) <= 0;
     return  (logicalBottomForBox - logicalTopForBox) > 0
-            && !regionIsEmpty
-            && logicalTopForBox < logicalBottomForRegion && logicalTopForRegion < logicalBottomForBox;
+        && !regionIsEmpty
+        && logicalTopForBox < logicalBottomForRegion && logicalTopForRegion < logicalBottomForBox;
 }
 
 void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range> >& rangeObjects, const RenderRegion* region) const

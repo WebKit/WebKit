@@ -1,0 +1,31 @@
+<!doctype html>
+<html style="-webkit-writing-mode: vertical-lr;">
+    <head>
+        <style>
+            .flowContent { font-size: 50px; font-family: Ahem; line-height: 2; color: green; }
+            #article { -webkit-flow-into: flow; }
+
+            .regionSize { height: 250px; }
+            #region { -webkit-flow-from: flow; position: absolute; left: 100px; }
+
+            .redBox { position: absolute; background-color: red; width: 50px; height: 250px; }
+            #red { left: 125px; }
+            #red1 { left: 225px; }
+            #red2 { left: 325px; }
+        </style>
+    </head>
+    <body>
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=91097"> Auto height is not working for regions</a>.</p>
+        <p>The region is a block element, writing mode vertical-lr.</p>
+        <p>On success, you should see 3 green rectangles.</p>
+        <div id="red" class="redBox"></div>
+        <div id="red1" class="redBox"></div>
+        <div id="red2" class="redBox"></div>
+        <div id="article" class="flowContent">
+            <span style="background-color: green">
+                a a a a a a a a a
+            </span>
+        </div>
+        <div id="region" class="regionSize"></div>
+    </body>
+</html>

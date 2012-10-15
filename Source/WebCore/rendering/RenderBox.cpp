@@ -698,12 +698,22 @@ void RenderBox::setOverrideLogicalContentWidth(LayoutUnit width)
     gOverrideWidthMap->set(this, width);
 }
 
-void RenderBox::clearOverrideSize()
+void RenderBox::clearOverrideLogicalContentHeight()
 {
     if (gOverrideHeightMap)
         gOverrideHeightMap->remove(this);
+}
+
+void RenderBox::clearOverrideLogicalContentWidth()
+{
     if (gOverrideWidthMap)
         gOverrideWidthMap->remove(this);
+}
+
+void RenderBox::clearOverrideSize()
+{
+    clearOverrideLogicalContentHeight();
+    clearOverrideLogicalContentWidth();
 }
 
 LayoutUnit RenderBox::overrideLogicalContentWidth() const

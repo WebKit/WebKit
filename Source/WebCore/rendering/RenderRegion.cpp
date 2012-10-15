@@ -472,7 +472,7 @@ PassRefPtr<RenderStyle> RenderRegion::computeStyleInRegion(const RenderObject* o
 
     return renderObjectRegionStyle.release();
 }
- 
+
 void RenderRegion::computeChildrenStyleInRegion(const RenderObject* object)
 {
     for (RenderObject* child = object->firstChild(); child; child = child->nextSibling()) {
@@ -498,7 +498,7 @@ void RenderRegion::computeChildrenStyleInRegion(const RenderObject* object)
         computeChildrenStyleInRegion(child);
     }
 }
- 
+
 void RenderRegion::setObjectStyleInRegion(RenderObject* object, PassRefPtr<RenderStyle> styleInRegion, bool objectRegionStyleCached)
 {
     ASSERT(object->inRenderFlowThread());
@@ -522,7 +522,7 @@ void RenderRegion::setObjectStyleInRegion(RenderObject* object, PassRefPtr<Rende
     styleInfo.cached = objectRegionStyleCached;
     m_renderObjectRegionStyle.set(object, styleInfo);
 }
- 
+
 void RenderRegion::clearObjectStyleInRegion(const RenderObject* object)
 {
     ASSERT(object);
@@ -577,6 +577,36 @@ void RenderRegion::getRanges(Vector<RefPtr<Range> >& rangeObjects) const
 {
     RenderNamedFlowThread* namedFlow = view()->flowThreadController()->ensureRenderFlowThreadWithName(style()->regionThread());
     namedFlow->getRanges(rangeObjects, this);
+}
+
+void RenderRegion::updateLogicalHeight()
+{
+    RenderReplaced::updateLogicalHeight();
+
+    if (!hasAutoLogicalHeight())
+        return;
+
+    // We want to update the logical height based on the computed override logical
+    // content height only if the view is in the layout phase
+    // in which all the auto logical height regions have their override logical height set.
+    if (view()->normalLayoutPhase())
+        return;
+
+    // There may be regions with auto logical height that during the prerequisite layout phase
+    // did not have the chance to layout flow thread content. Because of that, these regions do not
+    // have an overrideLogicalContentHeight computed and they will not be able to fragment any flow
+    // thread content.
+    if (!hasOverrideHeight())
+        return;
+
+    LayoutUnit newLogicalHeight = overrideLogicalContentHeight() + borderAndPaddingLogicalHeight();
+    if (newLogicalHeight > logicalHeight())
+        setLogicalHeight(newLogicalHeight);
+}
+
+bool RenderRegion::needsOverrideLogicalContentHeightComputation() const
+{
+    return hasAutoLogicalHeight() && view()->normalLayoutPhase() && !hasOverrideHeight();
 }
 
 } // namespace WebCore
