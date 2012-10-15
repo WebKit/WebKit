@@ -2446,9 +2446,8 @@ webkit.org/b/48034 [ Win ] platform/win/plugins/npn-invalidate-rect-invalidates-
 # Added in WK r71424
 # We should probably just skip this test, everyone else has since
 # https://bugs.webkit.org/show_bug.cgi?id=49182
-crbug.com/62138 [ Mac Win Debug ] animations/stop-animation-on-suspend.html [ Crash Failure Pass ]
-crbug.com/62138 [ Mac Win Release ] animations/stop-animation-on-suspend.html [ Failure Pass ]
-crbug.com/62138 [ Android Linux ] animations/stop-animation-on-suspend.html [ Failure Pass ]
+crbug.com/62138 [ Debug ] animations/stop-animation-on-suspend.html [ Crash Failure Pass ]
+crbug.com/62138 [ Release ] animations/stop-animation-on-suspend.html [ Failure Pass ]
 
 crbug.com/61739 [ Debug ] animations/suspend-resume-animation-events.html [ Failure Pass ]
 crbug.com/61739 [ Win Release ] animations/suspend-resume-animation-events.html [ Failure Pass ]
