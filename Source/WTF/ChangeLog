@@ -1,3 +1,9 @@
+2012-10-15  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Parallel GC should not be disabled for all platforms
+
+        * wtf/Platform.h: D'oh!
+
 2012-10-15  George Staikos  <staikos@webkit.org>
 
         [BlackBerry] Adapt to Platform API changes in string handling
