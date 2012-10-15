@@ -28,7 +28,9 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBDatabaseError.h"
 #include "IDBTransactionCallbacks.h"
+#include "WebIDBDatabaseError.h"
 
 using namespace WebCore;
 
@@ -43,9 +45,9 @@ WebIDBTransactionCallbacksImpl::~WebIDBTransactionCallbacksImpl()
 {
 }
 
-void WebIDBTransactionCallbacksImpl::onAbort()
+void WebIDBTransactionCallbacksImpl::onAbort(const WebIDBDatabaseError& error)
 {
-    m_callbacks->onAbort();
+    m_callbacks->onAbort(error);
 }
 
 void WebIDBTransactionCallbacksImpl::onComplete()

@@ -289,8 +289,9 @@ void IDBDatabaseBackendImpl::setVersionInternal(ScriptExecutionContext*, PassRef
     database->m_version = version;
     database->m_intVersion = IDBDatabaseMetadata::NoIntVersion;
     if (!database->m_backingStore->updateIDBDatabaseMetaData(transaction->backingStoreTransaction(), databaseId, database->m_version) || !database->m_backingStore->updateIDBDatabaseIntVersion(transaction->backingStoreTransaction(), databaseId, database->m_intVersion)) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage."));
-        transaction->abort();
+        RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage.");
+        callbacks->onError(error);
+        transaction->abort(error);
         return;
     }
     callbacks->onSuccess(PassRefPtr<IDBTransactionBackendInterface>(transaction));
@@ -303,8 +304,9 @@ void IDBDatabaseBackendImpl::setIntVersionInternal(ScriptExecutionContext*, Pass
     ASSERT(version > oldVersion);
     database->m_intVersion = version;
     if (!database->m_backingStore->updateIDBDatabaseIntVersion(transaction->backingStoreTransaction(), databaseId, database->m_intVersion)) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage."));
-        transaction->abort();
+        RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage.");
+        callbacks->onError(error);
+        transaction->abort(error);
         return;
     }
     callbacks->onUpgradeNeeded(oldVersion, transaction, database);

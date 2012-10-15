@@ -31,6 +31,8 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBDatabaseError.h"
+#include "WebIDBDatabaseError.h"
 #include "WebIDBTransactionCallbacks.h"
 
 using namespace WebCore;
@@ -51,9 +53,9 @@ IDBTransactionCallbacksProxy::~IDBTransactionCallbacksProxy()
 {
 }
 
-void IDBTransactionCallbacksProxy::onAbort()
+void IDBTransactionCallbacksProxy::onAbort(PassRefPtr<IDBDatabaseError> idbDatabaseError)
 {
-    m_callbacks->onAbort();
+    m_callbacks->onAbort(WebIDBDatabaseError(idbDatabaseError));
 }
 
 void IDBTransactionCallbacksProxy::onComplete()

@@ -1,3 +1,15 @@
+2012-10-15  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Pass type of error causing abort to IDBTransaction::onAbort
+        https://bugs.webkit.org/show_bug.cgi?id=99097
+
+        Reviewed by Tony Chang.
+
+        Verify that IDBTransaction.error is reporting ConstraintError when indexing fails.
+
+        * storage/indexeddb/lazy-index-population-expected.txt:
+        * storage/indexeddb/lazy-index-population.html:
+
 2012-10-15  Dana Jansens  <danakj@chromium.org>
 
         Rebaselines after 131358.

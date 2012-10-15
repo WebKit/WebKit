@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBDatabaseError.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 

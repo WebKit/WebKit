@@ -31,6 +31,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBDatabaseError.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -39,7 +40,7 @@ class IDBTransactionCallbacks : public RefCounted<IDBTransactionCallbacks> {
 public:
     virtual ~IDBTransactionCallbacks() { }
 
-    virtual void onAbort() = 0;
+    virtual void onAbort(PassRefPtr<IDBDatabaseError>) = 0;
     virtual void onComplete() = 0;
 };
 

@@ -58,6 +58,7 @@ function verifyPreExistingIndex()
             trans.onabort = function () {
                 debug("transaction aborted");
                 shouldBe("++state", "3");
+                shouldBe("trans.error.name", "'ConstraintError'");
                 verifyCreateThenPut();
             };
         };
@@ -98,6 +99,7 @@ function verifyCreateThenPut()
         trans.onabort = function () {
             debug("transaction aborted");
             shouldBe("++state", "3");
+            shouldBe("trans.error.name", "'ConstraintError'");
             verifyPutThenCreate();
         };
     };
@@ -137,6 +139,7 @@ function verifyPutThenCreate()
         trans.onabort = function () {
             debug("transaction aborted");
             shouldBe("++state", "3");
+            shouldBe("trans.error.name", "'ConstraintError'");
             verifyPutThenCreateThenPut();
         };
     };
@@ -176,6 +179,7 @@ function verifyPutThenCreateThenPut()
         trans.onabort = function () {
             debug("transaction aborted");
             shouldBe("++state", "3");
+            shouldBe("trans.error.name", "'ConstraintError'");
             finishJSTest();
         };
     };

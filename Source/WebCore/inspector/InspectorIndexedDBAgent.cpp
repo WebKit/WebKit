@@ -133,7 +133,7 @@ public:
 
     virtual ~InspectorIDBTransactionCallback() { }
 
-    virtual void onAbort() { }
+    virtual void onAbort(PassRefPtr<IDBDatabaseError>) { }
     virtual void onComplete() { }
 private:
     InspectorIDBTransactionCallback() { }

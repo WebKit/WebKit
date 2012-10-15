@@ -104,7 +104,7 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
 
     // IDBTransactionCallbacks
-    virtual void onAbort();
+    virtual void onAbort(PassRefPtr<IDBDatabaseError>);
     virtual void onComplete();
 
     // EventTarget

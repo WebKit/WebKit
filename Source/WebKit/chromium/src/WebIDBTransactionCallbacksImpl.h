@@ -41,7 +41,7 @@ public:
     WebIDBTransactionCallbacksImpl(PassRefPtr<WebCore::IDBTransactionCallbacks>);
     virtual ~WebIDBTransactionCallbacksImpl();
 
-    virtual void onAbort();
+    virtual void onAbort(const WebIDBDatabaseError&);
     virtual void onComplete();
 
 private:

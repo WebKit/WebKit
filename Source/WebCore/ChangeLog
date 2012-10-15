@@ -1,3 +1,37 @@
+2012-10-15  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Pass type of error causing abort to IDBTransaction::onAbort
+        https://bugs.webkit.org/show_bug.cgi?id=99097
+
+        Reviewed by Tony Chang.
+
+        Include the error causing the abort in the callback from back end to
+        front end so it can be exposed on the IDBTransaction.error property.
+
+        Test: lazy-index-population.html
+
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::setVersionInternal):
+        (WebCore::IDBDatabaseBackendImpl::setIntVersionInternal):
+        * Modules/indexeddb/IDBDatabaseCallbacks.h:
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::setIndexKeys):
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::onAbort):
+        * Modules/indexeddb/IDBTransaction.h:
+        (IDBTransaction):
+        * Modules/indexeddb/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::abort):
+        (WebCore):
+        (WebCore::IDBTransactionBackendImpl::commit):
+        * Modules/indexeddb/IDBTransactionBackendImpl.h:
+        (IDBTransactionBackendImpl):
+        * Modules/indexeddb/IDBTransactionCallbacks.h:
+        (IDBTransactionCallbacks):
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore):
+
 2012-10-15  Mike Reed  <reed@google.com>
 
         In Skia's ImageFrame, only set the isOpaque flag when the frame is complete

@@ -44,7 +44,7 @@ public:
     static PassRefPtr<IDBTransactionCallbacksProxy> create(PassOwnPtr<WebIDBTransactionCallbacks>);
     virtual ~IDBTransactionCallbacksProxy();
 
-    virtual void onAbort();
+    virtual void onAbort(PassRefPtr<WebCore::IDBDatabaseError>);
     virtual void onComplete();
 
 private:
