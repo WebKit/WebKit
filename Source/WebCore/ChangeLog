@@ -1,3 +1,36 @@
+2012-10-15  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Make RenderTable columns() and columnPositions() return a const reference
+        https://bugs.webkit.org/show_bug.cgi?id=99339
+
+        Reviewed by Abhishek Arya.
+
+        The 2 getters were returning a non-const reference. This means that callers
+        could have modified the Vector's where only FixedTableLayout and AutoTableLayout
+        were expected to (for columnPositions(), no one should modify columns()).
+
+        Refactoring covered by existing tests.
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::layout):
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::layout):
+        Updated those functions to use the new setter.
+
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::columns):
+        (WebCore::RenderTable::columnPositions):
+        Made the 2 functions return a const reference. They are also const now!
+
+        (WebCore::RenderTable::setColumnPosition):
+        Added this setter.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addCell):
+        (WebCore::RenderTableSection::setCellLogicalWidths):
+        (WebCore::RenderTableSection::dirtiedColumns):
+        Updated to use a const reference.
+
 2012-10-15  Dan Bernstein  <mitz@apple.com>
 
         WebCore part of <rdar://problem/12470680> Font’s fast code path doesn’t support kerning and ligatures

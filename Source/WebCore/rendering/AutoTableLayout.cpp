@@ -771,10 +771,10 @@ void AutoTableLayout::layout()
 
     int pos = 0;
     for (size_t i = 0; i < nEffCols; ++i) {
-        m_table->columnPositions()[i] = pos;
+        m_table->setColumnPosition(i, pos);
         pos += m_layoutStruct[i].computedLogicalWidth + m_table->hBorderSpacing();
     }
-    m_table->columnPositions()[m_table->columnPositions().size() - 1] = pos;
+    m_table->setColumnPosition(m_table->columnPositions().size() - 1, pos);
 }
 
 }

@@ -143,8 +143,13 @@ public:
         recalcSections();
     }
 
-    Vector<ColumnStruct>& columns() { return m_columns; }
-    Vector<int>& columnPositions() { return m_columnPos; }
+    const Vector<ColumnStruct>& columns() const { return m_columns; }
+    const Vector<int>& columnPositions() const { return m_columnPos; }
+    void setColumnPosition(unsigned index, int position)
+    {
+        m_columnPos[index] = position;
+    }
+
     RenderTableSection* header() const { return m_head; }
     RenderTableSection* footer() const { return m_foot; }
     RenderTableSection* firstBody() const { return m_firstBody; }

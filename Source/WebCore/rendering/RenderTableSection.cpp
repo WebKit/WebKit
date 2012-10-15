@@ -212,7 +212,7 @@ void RenderTableSection::addCell(RenderTableCell* cell, RenderTableRow* row)
 
     unsigned rSpan = cell->rowSpan();
     unsigned cSpan = cell->colSpan();
-    Vector<RenderTable::ColumnStruct>& columns = table()->columns();
+    const Vector<RenderTable::ColumnStruct>& columns = table()->columns();
     unsigned nCols = columns.size();
     unsigned insertionRow = row->rowIndex();
 
@@ -263,7 +263,7 @@ void RenderTableSection::addCell(RenderTableCell* cell, RenderTableRow* row)
 
 void RenderTableSection::setCellLogicalWidths()
 {
-    Vector<int>& columnPos = table()->columnPositions();
+    const Vector<int>& columnPos = table()->columnPositions();
 
     LayoutStateMaintainer statePusher(view());
 
@@ -1034,7 +1034,7 @@ CellSpan RenderTableSection::dirtiedColumns(const LayoutRect& damageRect) const
 
     CellSpan coveredColumns = spannedColumns(damageRect);
 
-    Vector<int>& columnPos = table()->columnPositions();
+    const Vector<int>& columnPos = table()->columnPositions();
     // To repaint the border we might need to repaint first or last column even if they are not spanned themselves.
     if (coveredColumns.start() >= columnPos.size() - 1 && columnPos[columnPos.size() - 1] + table()->outerBorderEnd() >= damageRect.x())
         --coveredColumns.start();

@@ -309,12 +309,12 @@ void FixedTableLayout::layout()
     
     int pos = 0;
     for (unsigned i = 0; i < nEffCols; i++) {
-        m_table->columnPositions()[i] = pos;
+        m_table->setColumnPosition(i, pos);
         pos += calcWidth[i] + hspacing;
     }
     int colPositionsSize = m_table->columnPositions().size();
     if (colPositionsSize > 0)
-        m_table->columnPositions()[colPositionsSize - 1] = pos;
+        m_table->setColumnPosition(colPositionsSize - 1, pos);
 }
 
 } // namespace WebCore
