@@ -23,10 +23,13 @@
 #include "PagePopupClient.h"
 #include "ScopePointer.h"
 #include "Timer.h"
-#include "WebString.h"
 #include <wtf/text/WTFString.h>
 
 namespace BlackBerry {
+namespace Platform {
+class String;
+}
+
 namespace WebKit {
 class WebPagePrivate;
 }
@@ -39,12 +42,12 @@ class PagePopup;
 
 class SelectPopupClient : public PagePopupClient {
 public:
-    SelectPopupClient(bool multiple, int size, const ScopeArray<BlackBerry::WebKit::WebString>& labels, bool* enableds, const int* itemType, bool* selecteds, BlackBerry::WebKit::WebPagePrivate*, HTMLSelectElement*);
+    SelectPopupClient(bool multiple, int size, const ScopeArray<BlackBerry::Platform::String>& labels, bool* enableds, const int* itemType, bool* selecteds, BlackBerry::WebKit::WebPagePrivate*, HTMLSelectElement*);
     ~SelectPopupClient();
 
-    void update(bool multiple, int size, const ScopeArray<BlackBerry::WebKit::WebString>& labels, bool* enableds, const int* itemType, bool* selecteds, BlackBerry::WebKit::WebPagePrivate*, HTMLSelectElement*);
+    void update(bool multiple, int size, const ScopeArray<BlackBerry::Platform::String>& labels, bool* enableds, const int* itemType, bool* selecteds, BlackBerry::WebKit::WebPagePrivate*, HTMLSelectElement*);
 
-    void generateHTML(bool multiple, int size, const ScopeArray<BlackBerry::WebKit::WebString>& labels, bool* enableds, const int* itemType, bool* selecteds);
+    void generateHTML(bool multiple, int size, const ScopeArray<BlackBerry::Platform::String>& labels, bool* enableds, const int* itemType, bool* selecteds);
     void notifySelectionChange(WebCore::Timer<SelectPopupClient> *);
 
     void writeDocument(DocumentWriter&);

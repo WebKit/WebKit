@@ -42,7 +42,6 @@
 #include <BlackBerryPlatformSettings.h>
 #include <FrameLoaderClientBlackBerry.h>
 #include <set>
-#include <string>
 #include <wtf/text/CString.h>
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -67,15 +66,15 @@ void MediaPlayerPrivate::registerMediaEngine(MediaEngineRegistrar registrar)
     registrar(create, getSupportedTypes, supportsType, 0, 0, 0);
 }
 
-void MediaPlayerPrivate::getSupportedTypes(HashSet<String>& types)
+void MediaPlayerPrivate::getSupportedTypes(HashSet<WTF::String>& types)
 {
-    set<string> supported = PlatformPlayer::allSupportedMimeTypes();
-    set<string>::iterator i = supported.begin();
+    set<BlackBerry::Platform::String> supported = PlatformPlayer::allSupportedMimeTypes();
+    set<BlackBerry::Platform::String>::iterator i = supported.begin();
     for (; i != supported.end(); i++)
-        types.add(i->c_str());
+        types.add(*i);
 }
 
-MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const String& type, const String& codecs, const KURL&)
+MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const WTF::String& type, const WTF::String& codecs, const KURL&)
 {
     if (type.isNull() || type.isEmpty()) {
         LOG(Media, "MediaPlayer does not support type; type is null or empty.");
@@ -96,9 +95,9 @@ void MediaPlayerPrivate::notifyAppActivatedEvent(bool activated)
     PlatformPlayer::notifyAppActivatedEvent(activated);
 }
 
-void MediaPlayerPrivate::setCertificatePath(const String& caPath)
+void MediaPlayerPrivate::setCertificatePath(const WTF::String& caPath)
 {
-    PlatformPlayer::setCertificatePath(string(caPath.utf8().data()));
+    PlatformPlayer::setCertificatePath(caPath);
 }
 
 MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
@@ -138,14 +137,14 @@ MediaPlayerPrivate::~MediaPlayerPrivate()
     deleteGuardedObject(m_platformPlayer);
 }
 
-void MediaPlayerPrivate::load(const String& url)
+void MediaPlayerPrivate::load(const WTF::String& url)
 {
-    String modifiedUrl(url);
+    WTF::String modifiedUrl(url);
 
     if (modifiedUrl.startsWith("local://")) {
         KURL kurl = KURL(KURL(), modifiedUrl);
         kurl.setProtocol("file");
-        String tempPath(BlackBerry::Platform::Settings::instance()->applicationLocalDirectory().c_str());
+        WTF::String tempPath(BlackBerry::Platform::Settings::instance()->applicationLocalDirectory().c_str());
         tempPath.append(kurl.path());
         kurl.setPath(tempPath);
         modifiedUrl = kurl.string();
@@ -165,7 +164,7 @@ void MediaPlayerPrivate::load(const String& url)
     m_platformPlayer = PlatformPlayer::create(this, tabId, false, modifiedUrl.utf8().data());
 #endif
 
-    String cookiePairs;
+    WTF::String cookiePairs;
     if (!url.isEmpty())
         cookiePairs = cookieManager().getCookie(KURL(ParsedURLString, url.utf8().data()), WithHttpOnlyCookies);
     if (!cookiePairs.isEmpty() && cookiePairs.utf8().data())
@@ -696,7 +695,7 @@ void MediaPlayerPrivate::onBuffering(bool flag)
 
 static ProtectionSpace generateProtectionSpaceFromMMRAuthChallenge(const MMRAuthChallenge& authChallenge)
 {
-    KURL url(ParsedURLString, String(authChallenge.url().c_str()));
+    KURL url(ParsedURLString, WTF::String(authChallenge.url().c_str()));
     ASSERT(url.isValid());
 
     return ProtectionSpace(url.host(), url.port(),
@@ -707,7 +706,7 @@ static ProtectionSpace generateProtectionSpaceFromMMRAuthChallenge(const MMRAuth
 
 void MediaPlayerPrivate::onAuthenticationNeeded(MMRAuthChallenge& authChallenge)
 {
-    KURL url(ParsedURLString, String(authChallenge.url().c_str()));
+    KURL url(ParsedURLString, WTF::String(authChallenge.url().c_str()));
     if (!url.isValid())
         return;
 
@@ -740,7 +739,7 @@ void MediaPlayerPrivate::notifyChallengeResult(const KURL& url, const Protection
 
 void MediaPlayerPrivate::onAuthenticationAccepted(const MMRAuthChallenge& authChallenge) const
 {
-    KURL url(ParsedURLString, String(authChallenge.url().c_str()));
+    KURL url(ParsedURLString, WTF::String(authChallenge.url().c_str()));
     if (!url.isValid())
         return;
 
@@ -805,9 +804,9 @@ static WebMediaStreamDescriptor toWebMediaStreamDescriptor(MediaStreamDescriptor
     return WebMediaStreamDescriptor(d->label().utf8().data(), audioSources, videoSources);
 }
 
-WebMediaStreamDescriptor MediaPlayerPrivate::lookupMediaStream(const string& url)
+WebMediaStreamDescriptor MediaPlayerPrivate::lookupMediaStream(const BlackBerry::Platform::String& url)
 {
-    MediaStreamDescriptor* descriptor = MediaStreamRegistry::registry().lookupMediaStreamDescriptor(String::fromUTF8(url.c_str()));
+    MediaStreamDescriptor* descriptor = MediaStreamRegistry::registry().lookupMediaStreamDescriptor(WTF::String::fromUTF8(url.c_str()));
     if (!descriptor)
         return WebMediaStreamDescriptor();
 

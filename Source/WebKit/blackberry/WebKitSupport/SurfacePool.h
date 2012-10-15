@@ -60,7 +60,7 @@ public:
     // backingstore.
     TileBuffer* backBuffer() const;
 
-    std::string sharedPixmapGroup() const;
+    const char *sharedPixmapGroup() const;
 
     void releaseBuffers();
     void createBuffers();

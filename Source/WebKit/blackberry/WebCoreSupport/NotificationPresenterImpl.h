@@ -23,11 +23,16 @@
 #include <NotificationAckListener.h>
 #include <NotificationClient.h>
 #include <NotificationPresenterBlackBerry.h>
-#include <string>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/text/StringHash.h>
+
+namespace BlackBerry {
+namespace Platform {
+class String;
+}
+}
 
 namespace WebCore {
 
@@ -61,8 +66,8 @@ public:
     virtual Permission checkPermission(WebCore::ScriptExecutionContext*);
 
     // Interfaces inherited from NotificationAckListener.
-    virtual void notificationClicked(const std::string& id);
-    virtual void onPermission(const std::string& domain, bool isAllowed);
+    virtual void notificationClicked(const BlackBerry::Platform::String& id);
+    virtual void onPermission(const BlackBerry::Platform::String& domain, bool isAllowed);
 
 private:
     NotificationPresenterImpl();

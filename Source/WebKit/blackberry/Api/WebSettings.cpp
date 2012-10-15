@@ -22,10 +22,10 @@
 #include "MIMETypeRegistry.h"
 #include "WebSettings_p.h"
 
-#include "WebString.h"
 #include <BlackBerryPlatformDeviceInfo.h>
 #include <BlackBerryPlatformFontInfo.h>
 #include <BlackBerryPlatformScreen.h>
+#include <BlackBerryPlatformString.h>
 #include <Color.h>
 #include <FloatSize.h>
 #include <PageCache.h>
@@ -201,15 +201,15 @@ WebSettings* WebSettings::standardSettings()
     settings->m_private->setInteger(WebKitMinimumFontSize, 8);
     settings->m_private->setBoolean(WebKitWebSocketsEnabled, true);
 
-    settings->m_private->setString(WebKitFixedFontFamily, BlackBerry::Platform::FontInfo::instance()->fontFamily("-webkit-monospace", "").c_str());
-    settings->m_private->setString(WebKitSansSeriffFontFamily, BlackBerry::Platform::FontInfo::instance()->fontFamily("-webkit-sans-serif", "").c_str());
-    settings->m_private->setString(WebKitSeriffFontFamily, BlackBerry::Platform::FontInfo::instance()->fontFamily("-webkit-serif", "").c_str());
-    settings->m_private->setString(WebKitStandardFontFamily, BlackBerry::Platform::FontInfo::instance()->fontFamily("-webkit-standard", "").c_str());
+    settings->m_private->setString(WebKitFixedFontFamily, BlackBerry::Platform::FontInfo::instance()->fontFamily("-webkit-monospace", ""));
+    settings->m_private->setString(WebKitSansSeriffFontFamily, BlackBerry::Platform::FontInfo::instance()->fontFamily("-webkit-sans-serif", ""));
+    settings->m_private->setString(WebKitSeriffFontFamily, BlackBerry::Platform::FontInfo::instance()->fontFamily("-webkit-serif", ""));
+    settings->m_private->setString(WebKitStandardFontFamily, BlackBerry::Platform::FontInfo::instance()->fontFamily("-webkit-standard", ""));
 
     return settings;
 }
 
-void WebSettings::addSupportedObjectPluginMIMEType(const char* type)
+void WebSettings::addSupportedObjectPluginMIMEType(const BlackBerry::Platform::String& type)
 {
     if (!s_supportedObjectMIMETypes)
         s_supportedObjectMIMETypes = new HashSet<String>;
@@ -217,9 +217,9 @@ void WebSettings::addSupportedObjectPluginMIMEType(const char* type)
     s_supportedObjectMIMETypes->add(type);
 }
 
-bool WebSettings::isSupportedObjectMIMEType(const WebString& mimeType)
+bool WebSettings::isSupportedObjectMIMEType(const BlackBerry::Platform::String& mimeType)
 {
-    if (mimeType.isEmpty())
+    if (mimeType.empty())
         return false;
 
     if (!s_supportedObjectMIMETypes)
@@ -328,62 +328,62 @@ void WebSettings::setMinimumFontSize(int minimumFontSize)
     m_private->setInteger(WebKitMinimumFontSize, minimumFontSize);
 }
 
-WebString WebSettings::serifFontFamily() const
+BlackBerry::Platform::String WebSettings::serifFontFamily() const
 {
     return m_private->getString(WebKitSeriffFontFamily);
 }
 
-void WebSettings::setSerifFontFamily(const char* seriffFontFamily)
+void WebSettings::setSerifFontFamily(const BlackBerry::Platform::String& seriffFontFamily)
 {
     m_private->setString(WebKitSeriffFontFamily, seriffFontFamily);
 }
 
-WebString WebSettings::fixedFontFamily() const
+BlackBerry::Platform::String WebSettings::fixedFontFamily() const
 {
     return m_private->getString(WebKitFixedFontFamily);
 }
 
-void WebSettings::setFixedFontFamily(const char* fixedFontFamily)
+void WebSettings::setFixedFontFamily(const BlackBerry::Platform::String& fixedFontFamily)
 {
     m_private->setString(WebKitFixedFontFamily, fixedFontFamily);
 }
 
-WebString WebSettings::sansSerifFontFamily() const
+BlackBerry::Platform::String WebSettings::sansSerifFontFamily() const
 {
     return m_private->getString(WebKitSansSeriffFontFamily);
 }
 
-void WebSettings::setSansSerifFontFamily(const char* sansSeriffFontFamily)
+void WebSettings::setSansSerifFontFamily(const BlackBerry::Platform::String& sansSeriffFontFamily)
 {
     m_private->setString(WebKitSansSeriffFontFamily, sansSeriffFontFamily);
 }
 
-WebString WebSettings::standardFontFamily() const
+BlackBerry::Platform::String WebSettings::standardFontFamily() const
 {
     return m_private->getString(WebKitStandardFontFamily);
 }
 
-void WebSettings::setStandardFontFamily(const char* standardFontFamily)
+void WebSettings::setStandardFontFamily(const BlackBerry::Platform::String& standardFontFamily)
 {
     m_private->setString(WebKitStandardFontFamily, standardFontFamily);
 }
 
-WebString WebSettings::userAgentString() const
+BlackBerry::Platform::String WebSettings::userAgentString() const
 {
     return m_private->getString(BlackBerryUserAgentString);
 }
 
-void WebSettings::setUserAgentString(const WebString& userAgentString)
+void WebSettings::setUserAgentString(const BlackBerry::Platform::String& userAgentString)
 {
     m_private->setString(BlackBerryUserAgentString, userAgentString);
 }
 
-WebString WebSettings::defaultTextEncodingName() const
+BlackBerry::Platform::String WebSettings::defaultTextEncodingName() const
 {
     return m_private->getString(WebKitDefaultTextEncodingName);
 }
 
-void WebSettings::setDefaultTextEncodingName(const char* defaultTextEncodingName)
+void WebSettings::setDefaultTextEncodingName(const BlackBerry::Platform::String& defaultTextEncodingName)
 {
     m_private->setString(WebKitDefaultTextEncodingName, defaultTextEncodingName);
 }
@@ -458,20 +458,19 @@ void WebSettings::setGetFocusNodeContext(bool enabled)
     m_private->setBoolean(BlackBerryGetFocusNodeContextEnabled, enabled);
 }
 
-WebString WebSettings::userStyleSheetString() const
+BlackBerry::Platform::String WebSettings::userStyleSheetString() const
 {
     return m_private->getString(WebKitUserStyleSheet);
 }
 
-void WebSettings::setUserStyleSheetString(const char* userStyleSheetString)
+void WebSettings::setUserStyleSheetString(const BlackBerry::Platform::String& userStyleSheetString)
 {
     // FIXME: This doesn't seem like the appropriate place to do this as WebSettings should ideally be a state store.
     // Either the caller of this function should do this conversion or caller of the getter corresponding to this function
     // should do this conversion.
 
-    size_t length = strlen(userStyleSheetString);
     Vector<char> data;
-    data.append(userStyleSheetString, length);
+    data.append(userStyleSheetString.c_str(), userStyleSheetString.length());
 
     Vector<char> encodedData;
     base64Encode(data, encodedData);
@@ -485,12 +484,12 @@ void WebSettings::setUserStyleSheetString(const char* userStyleSheetString)
     m_private->setString(WebKitUserStyleSheet, String(dataURL.data(), dataURL.size()));
 }
 
-WebString WebSettings::userStyleSheetLocation()
+BlackBerry::Platform::String WebSettings::userStyleSheetLocation()
 {
     return m_private->getString(WebKitUserStyleSheetLocation);
 }
 
-void WebSettings::setUserStyleSheetLocation(const char* userStyleSheetLocation)
+void WebSettings::setUserStyleSheetLocation(const BlackBerry::Platform::String& userStyleSheetLocation)
 {
     m_private->setString(WebKitUserStyleSheetLocation, userStyleSheetLocation);
 }
@@ -640,52 +639,52 @@ void WebSettings::setMaximumPagesInCache(int pages)
     m_private->setUnsigned(WebKitMaximumPagesInCache, realPages);
 }
 
-WebString WebSettings::localStoragePath() const
+BlackBerry::Platform::String WebSettings::localStoragePath() const
 {
     return m_private->getString(WebKitLocalStoragePath);
 }
 
-void WebSettings::setLocalStoragePath(const WebString& path)
+void WebSettings::setLocalStoragePath(const BlackBerry::Platform::String& path)
 {
     m_private->setString(WebKitLocalStoragePath, path);
 }
 
-WebString WebSettings::indexedDataBasePath() const
+BlackBerry::Platform::String WebSettings::indexedDataBasePath() const
 {
     return m_private->getString(WebKitIndexedDataBasePath);
 }
 
-void WebSettings::setIndexedDataBasePath(const WebString& path)
+void WebSettings::setIndexedDataBasePath(const BlackBerry::Platform::String& path)
 {
     m_private->setString(WebKitIndexedDataBasePath, path);
 }
 
-WebString WebSettings::databasePath() const
+BlackBerry::Platform::String WebSettings::databasePath() const
 {
     return m_private->getString(WebKitDatabasePath);
 }
 
-void WebSettings::setDatabasePath(const WebString& path)
+void WebSettings::setDatabasePath(const BlackBerry::Platform::String& path)
 {
     m_private->setString(WebKitDatabasePath, path);
 }
 
-WebString WebSettings::appCachePath() const
+BlackBerry::Platform::String WebSettings::appCachePath() const
 {
     return m_private->getString(WebKitOfflineWebApplicationCachePath);
 }
 
-void WebSettings::setAppCachePath(const WebString& path)
+void WebSettings::setAppCachePath(const BlackBerry::Platform::String& path)
 {
     m_private->setString(WebKitOfflineWebApplicationCachePath, path);
 }
 
-WebString WebSettings::pageGroupName() const
+BlackBerry::Platform::String WebSettings::pageGroupName() const
 {
     return m_private->getString(WebKitPageGroupName);
 }
 
-void WebSettings::setPageGroupName(const WebString& pageGroupName)
+void WebSettings::setPageGroupName(const BlackBerry::Platform::String& pageGroupName)
 {
     m_private->setString(WebKitPageGroupName, pageGroupName);
 }

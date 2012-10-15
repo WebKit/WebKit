@@ -20,36 +20,23 @@
 #include "WebKitMIMETypeConverter.h"
 
 #include "MIMETypeRegistry.h"
+#include <BlackBerryPlatformString.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 namespace BlackBerry {
 namespace WebKit {
 
-bool getExtensionForMimeType(const std::string& mime, std::string& extension)
+bool getExtensionForMimeType(const BlackBerry::Platform::String& mime, BlackBerry::Platform::String& extension)
 {
-    String mimeType(mime.data(), mime.length());
-    String preferredExtension = WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType(mimeType);
-    if (preferredExtension.isEmpty())
-        return false;
-
-    CString utf8 = preferredExtension.utf8();
-    extension.clear();
-    extension.append(utf8.data(), utf8.length());
-    return true;
+    extension = WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType(mime);
+    return !extension.empty();
 }
 
-bool getMimeTypeForExtension(const std::string& extension, std::string& mimeType)
+bool getMimeTypeForExtension(const BlackBerry::Platform::String& extension, BlackBerry::Platform::String& mimeType)
 {
-    String extStr(extension.data(), extension.length());
-    String mime = WebCore::MIMETypeRegistry::getMediaMIMETypeForExtension(extStr);
-    if (mime.isEmpty())
-        return false;
-
-    CString utf8 = mime.utf8();
-    mimeType.clear();
-    mimeType.append(utf8.data(), utf8.length());
-    return true;
+    mimeType = WebCore::MIMETypeRegistry::getMediaMIMETypeForExtension(extension);
+    return !mimeType.empty();
 }
 
 } // namespace WebKit

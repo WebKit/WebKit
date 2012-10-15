@@ -32,13 +32,14 @@
 #include "RenderObject.h"
 #include "WebPage_p.h"
 
+#include <BlackBerryPlatformString.h>
 #include <wtf/text/StringBuilder.h>
 
 #define CELL_HEIGHT 30
 
 namespace WebCore {
 
-SelectPopupClient::SelectPopupClient(bool multiple, int size, const ScopeArray<BlackBerry::WebKit::WebString>& labels, bool* enableds,
+SelectPopupClient::SelectPopupClient(bool multiple, int size, const ScopeArray<BlackBerry::Platform::String>& labels, bool* enableds,
     const int* itemType, bool* selecteds, BlackBerry::WebKit::WebPagePrivate* webPage, HTMLSelectElement* element)
     : m_multiple(multiple)
     , m_size(size)
@@ -53,7 +54,7 @@ SelectPopupClient::~SelectPopupClient()
 {
 }
 
-void SelectPopupClient::update(bool multiple, int size, const ScopeArray<BlackBerry::WebKit::WebString>& labels, bool* enableds,
+void SelectPopupClient::update(bool multiple, int size, const ScopeArray<BlackBerry::Platform::String>& labels, bool* enableds,
     const int* itemType, bool* selecteds, BlackBerry::WebKit::WebPagePrivate*, HTMLSelectElement* element)
 {
     m_multiple = multiple;
@@ -62,7 +63,7 @@ void SelectPopupClient::update(bool multiple, int size, const ScopeArray<BlackBe
     generateHTML(multiple, size, labels, enableds, itemType, selecteds);
 }
 
-void SelectPopupClient::generateHTML(bool multiple, int size, const ScopeArray<BlackBerry::WebKit::WebString>& labels, bool* enableds,
+void SelectPopupClient::generateHTML(bool multiple, int size, const ScopeArray<BlackBerry::Platform::String>& labels, bool* enableds,
     const int* itemType, bool* selecteds)
 {
     StringBuilder source;
@@ -83,7 +84,7 @@ void SelectPopupClient::generateHTML(bool multiple, int size, const ScopeArray<B
     // Add labels.
     source.append('[');
     for (int i = 0; i < size; i++) {
-        source.append("'" + String(labels[i].impl()).replace('\\', "\\\\").replace('\'', "\\'") + "'");
+        source.append("'" + String(labels[i]).replace('\\', "\\\\").replace('\'', "\\'") + "'");
         // Don't append ',' to last element.
         if (i != size - 1)
             source.appendLiteral(", ");

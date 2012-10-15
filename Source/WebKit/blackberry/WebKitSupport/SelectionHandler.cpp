@@ -91,7 +91,7 @@ void SelectionHandler::cancelSelection()
         m_webPage->focusedOrMainFrame()->selection()->clear();
 }
 
-WebString SelectionHandler::selectedText() const
+BlackBerry::Platform::String SelectionHandler::selectedText() const
 {
     return m_webPage->focusedOrMainFrame()->editor()->selectedText();
 }

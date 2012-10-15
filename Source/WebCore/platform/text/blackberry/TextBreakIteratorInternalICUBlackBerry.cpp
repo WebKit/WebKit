@@ -19,6 +19,7 @@
 #include "config.h"
 #include "TextBreakIteratorInternalICU.h"
 
+#include <BlackBerryPlatformString.h>
 #include <LocaleHandler.h>
 
 namespace WebCore {

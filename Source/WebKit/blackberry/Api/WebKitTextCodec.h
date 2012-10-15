@@ -20,10 +20,13 @@
 #define WebKitTextCodec_h
 
 #include "BlackBerryGlobal.h"
-#include <string>
 #include <vector>
 
 namespace BlackBerry {
+namespace Platform {
+class String;
+}
+
 namespace WebKit {
 
 enum TranscodeResult {
@@ -49,11 +52,11 @@ BLACKBERRY_EXPORT bool isSameEncoding(const char* encoding1, const char* encodin
 BLACKBERRY_EXPORT bool isASCIICompatibleEncoding(const char* encoding);
 BLACKBERRY_EXPORT TranscodeResult transcode(const char* sourceEncoding, const char* targetEncoding, const char*& sourceStart, int sourceLength, char*& targetStart, unsigned targetLength);
 
-BLACKBERRY_EXPORT bool base64Decode(const std::string& base64, std::vector<char>& binary, Base64DecodePolicy);
-BLACKBERRY_EXPORT bool base64Encode(const std::vector<char>& binary, std::string& base64, Base64EncodePolicy);
+BLACKBERRY_EXPORT bool base64Decode(const BlackBerry::Platform::String& base64, std::vector<char>& binary, Base64DecodePolicy);
+BLACKBERRY_EXPORT bool base64Encode(const std::vector<char>& binary, BlackBerry::Platform::String& base64, Base64EncodePolicy);
 
-BLACKBERRY_EXPORT void unescapeURL(const std::string& escaped, std::string& url);
-BLACKBERRY_EXPORT void escapeURL(const std::string& url, std::string& escaped);
+BLACKBERRY_EXPORT void unescapeURL(const BlackBerry::Platform::String& escaped, BlackBerry::Platform::String& url);
+BLACKBERRY_EXPORT void escapeURL(const BlackBerry::Platform::String& url, BlackBerry::Platform::String& escaped);
 
 } // namespace WebKit
 } // namespace BlackBerry

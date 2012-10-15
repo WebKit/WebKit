@@ -100,7 +100,7 @@ TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, c
     , m_mediaElement(0)
     , m_label(label)
     , m_language(language)
-    , m_mode(disabledKeyword())
+    , m_mode(disabledKeyword().string())
     , m_client(client)
     , m_trackType(type)
     , m_readinessState(NotLoaded)

@@ -29,6 +29,10 @@ class GraphicsLayerClient;
 }
 
 namespace BlackBerry {
+namespace Platform {
+class String;
+}
+
 namespace WebKit {
 
 class WebAnimation;
@@ -36,7 +40,6 @@ class WebOverlayClient;
 class WebOverlayOverride;
 class WebOverlayPrivate;
 class WebPage;
-class WebString;
 
 /**
  * Represents an overlay that is rendered superimposed on a web page.
@@ -90,10 +93,10 @@ public:
     void setOpacity(float);
 
     // Adds/removes an animation
-    // Note that WebAnimation and WebString are not thread safe and have to be
+    // Note that WebAnimation and BlackBerry::Platform::String are not thread safe and have to be
     // created on the thread where they'll be used.
     void addAnimation(const WebAnimation&);
-    void removeAnimation(const WebString& name);
+    void removeAnimation(const BlackBerry::Platform::String& name);
 
     WebOverlay* parent() const;
     bool addChild(WebOverlay*);

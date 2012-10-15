@@ -24,9 +24,9 @@
 #include "WebAnimation.h"
 #include "WebAnimation_p.h"
 #include "WebOverlay_p.h"
-#include "WebString.h"
 
 #include <BlackBerryPlatformMessageClient.h>
+#include <BlackBerryPlatformString.h>
 #include <wtf/CurrentTime.h>
 
 namespace BlackBerry {
@@ -86,9 +86,9 @@ void WebOverlayOverride::addAnimation(const WebAnimation& animation)
     d->scheduleCompositingRun();
 }
 
-void WebOverlayOverride::removeAnimation(const WebString& name)
+void WebOverlayOverride::removeAnimation(const BlackBerry::Platform::String& name)
 {
-    d->layerCompositingThread()->override()->removeAnimation(String(PassRefPtr<StringImpl>(name.impl())));
+    d->layerCompositingThread()->override()->removeAnimation(name);
     d->scheduleCompositingRun();
 }
 
@@ -130,7 +130,7 @@ void WebOverlayOverride::addAnimation(const WebAnimation&)
 {
 }
 
-void WebOverlayOverride::removeAnimation(const WebString&)
+void WebOverlayOverride::removeAnimation(const BlackBerry::Platform::String&)
 {
 }
 

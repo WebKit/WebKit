@@ -45,10 +45,15 @@ JavaScriptVariant JSValueRefToBlackBerryJavaScriptVariant(const JSGlobalContextR
         break;
     case kJSTypeString: {
         JSStringRef stringRef = JSValueToStringCopy(ctx, value, 0);
+        if (!stringRef) {
+            returnValue.setString(BlackBerry::Platform::String::emptyString());
+            break;
+        }
         size_t bufferSize = JSStringGetMaximumUTF8CStringSize(stringRef);
         WTF::Vector<char> buffer(bufferSize);
-        JSStringGetUTF8CString(stringRef, buffer.data(), bufferSize);
-        returnValue.setString(WebString::fromUtf8(buffer.data()).utf8().c_str());
+        size_t rc = JSStringGetUTF8CString(stringRef, buffer.data(), bufferSize);
+        returnValue.setString(BlackBerry::Platform::String(buffer.data(), rc - 1));
+        JSStringRelease(stringRef);
         break;
     }
     case kJSTypeObject:
@@ -78,7 +83,7 @@ JSValueRef BlackBerryJavaScriptVariantToJSValueRef(const JSGlobalContextRef& ctx
         ref = JSValueMakeNumber(ctx, variant.doubleValue());
         break;
     case JavaScriptVariant::String: {
-        JSStringRef str = JSStringCreateWithUTF8CString(variant.stringValue());
+        JSStringRef str = JSStringCreateWithUTF8CString(variant.stringValue().c_str());
         ref = JSValueMakeString(ctx, str);
         JSStringRelease(str);
         break;
@@ -93,56 +98,41 @@ JSValueRef BlackBerryJavaScriptVariantToJSValueRef(const JSGlobalContextRef& ctx
 
 JavaScriptVariant::JavaScriptVariant()
     : m_type(Undefined)
-    , m_stringValue(0)
 {
 }
 
 JavaScriptVariant::JavaScriptVariant(double value)
     : m_type(Undefined)
-    , m_stringValue(0)
 {
     setDouble(value);
 }
 
 JavaScriptVariant::JavaScriptVariant(int value)
     : m_type(Undefined)
-    , m_stringValue(0)
 {
     setDouble(value);
 }
 
-JavaScriptVariant::JavaScriptVariant(const char* value)
+JavaScriptVariant::JavaScriptVariant(const BlackBerry::Platform::String& value)
     : m_type(Undefined)
-    , m_stringValue(0)
 {
     setString(value);
 }
 
-JavaScriptVariant::JavaScriptVariant(const std::string& value)
-    : m_type(Undefined)
-    , m_stringValue(0)
-{
-    setString(value.c_str());
-}
-
 JavaScriptVariant::JavaScriptVariant(bool value)
     : m_type(Undefined)
-    , m_stringValue(0)
 {
     setBoolean(value);
 }
 
 JavaScriptVariant::JavaScriptVariant(const JavaScriptVariant &v)
     : m_type(Undefined)
-    , m_stringValue(0)
 {
     this->operator=(v);
 }
 
 JavaScriptVariant::~JavaScriptVariant()
 {
-    // Prevent memory leaks if we have strings
-    setType(Undefined);
 }
 
 JavaScriptVariant& JavaScriptVariant::operator=(const JavaScriptVariant& v)
@@ -171,9 +161,8 @@ JavaScriptVariant& JavaScriptVariant::operator=(const JavaScriptVariant& v)
 void JavaScriptVariant::setType(const DataType& type)
 {
     if (m_type == String)
-        free(m_stringValue);
+        m_stringValue = BlackBerry::Platform::String::emptyString();
     m_type = type;
-    m_stringValue = 0;
 }
 
 JavaScriptVariant::DataType JavaScriptVariant::type() const
@@ -192,13 +181,13 @@ double JavaScriptVariant::doubleValue() const
     return m_doubleValue;
 }
 
-void JavaScriptVariant::setString(const char* value)
+void JavaScriptVariant::setString(const BlackBerry::Platform::String& value)
 {
     setType(String);
-    m_stringValue = strdup(value);
+    m_stringValue = value;
 }
 
-char* JavaScriptVariant::stringValue() const
+const BlackBerry::Platform::String& JavaScriptVariant::stringValue() const
 {
     return m_stringValue;
 }

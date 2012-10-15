@@ -131,9 +131,6 @@ public:
     virtual void exitFullScreenForElement(Element*);
     virtual void fullScreenRendererChanged(RenderBox*);
 #endif
-#if ENABLE(WEBGL)
-    virtual void requestWebGLPermission(Frame*);
-#endif
 
 #if ENABLE(SVG)
     virtual void didSetSVGZoomAndPan(Frame*, unsigned short zoomAndPan);

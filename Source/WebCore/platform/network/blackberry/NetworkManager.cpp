@@ -28,7 +28,6 @@
 #include "FrameLoaderClientBlackBerry.h"
 #include "NetworkJob.h"
 #include "Page.h"
-#include "ReadOnlyLatin1String.h"
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
 #include "ResourceHandleClient.h"
 #endif
@@ -87,12 +86,10 @@ bool NetworkManager::startJob(int playerId, const String& pageGroupName, PassRef
 
     const String& documentUrl = frame.document()->url().string();
     if (!documentUrl.isEmpty()) {
-        ReadOnlyLatin1String referrer(documentUrl);
-        platformRequest.setReferrer(referrer.data(), referrer.length());
+        platformRequest.setReferrer(documentUrl);
     }
 
-    ReadOnlyLatin1String securityOrigin(frame.document()->securityOrigin()->toRawString());
-    platformRequest.setSecurityOrigin(securityOrigin.data(), securityOrigin.length());
+    platformRequest.setSecurityOrigin(frame.document()->securityOrigin()->toRawString());
 
     // Attach any applicable auth credentials to the NetworkRequest.
     AuthenticationChallenge& challenge = guardJob->getInternal()->m_currentWebChallenge;

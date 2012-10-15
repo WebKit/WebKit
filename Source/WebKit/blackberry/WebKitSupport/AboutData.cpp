@@ -460,8 +460,8 @@ static String cachePage(String cacheCommand)
     if (cacheCommand.isEmpty())
         result.append(String(BlackBerry::Platform::generateHtmlFragmentForCacheKeys().data()));
     else if (cacheCommand.startsWith("?query=", false)) {
-        std::string key(cacheCommand.substring(7).utf8().data()); // 7 is length of "query=".
-        result.append(String(key.data()));
+        String key(cacheCommand.substring(7).utf8().data()); // 7 is length of "query=".
+        result.append(key);
         result.append(String("<hr>"));
         result.append(String(BlackBerry::Platform::generateHtmlFragmentForCacheHeaders(key).data()));
     } else {

@@ -115,7 +115,7 @@ static void vprintf_stderr_common(const char* format, va_list args)
     // Fall through to write to stderr in the same manner as other platforms.
 
 #elif PLATFORM(BLACKBERRY)
-    BlackBerry::Platform::logStreamV(format, args);
+    BBLOGV(BlackBerry::Platform::LogLevelCritical, format, args);
 #elif OS(ANDROID)
     __android_log_vprint(ANDROID_LOG_WARN, "WebKit", format, args);
 #elif HAVE(ISDEBUGGERPRESENT)
@@ -215,26 +215,8 @@ static void printCallSite(const char* file, int line, const char* function)
 #endif
 }
 
-#if PLATFORM(BLACKBERRY)
-struct WTFLogLocker {
-    WTFLogLocker(BlackBerry::Platform::MessageLogLevel logLevel)
-    {
-        BlackBerry::Platform::lockLogging(logLevel);
-    }
-
-    ~WTFLogLocker()
-    {
-        BlackBerry::Platform::unlockLogging();
-    }
-};
-#endif
-
 void WTFReportAssertionFailure(const char* file, int line, const char* function, const char* assertion)
 {
-#if PLATFORM(BLACKBERRY)
-    WTFLogLocker locker(BlackBerry::Platform::LogLevelCritical);
-#endif
-
     if (assertion)
         printf_stderr_common("ASSERTION FAILED: %s\n", assertion);
     else
@@ -244,10 +226,6 @@ void WTFReportAssertionFailure(const char* file, int line, const char* function,
 
 void WTFReportAssertionFailureWithMessage(const char* file, int line, const char* function, const char* assertion, const char* format, ...)
 {
-#if PLATFORM(BLACKBERRY)
-    WTFLogLocker locker(BlackBerry::Platform::LogLevelCritical);
-#endif
-
     va_list args;
     va_start(args, format);
     vprintf_stderr_with_prefix("ASSERTION FAILED: ", format, args);
@@ -258,10 +236,6 @@ void WTFReportAssertionFailureWithMessage(const char* file, int line, const char
 
 void WTFReportArgumentAssertionFailure(const char* file, int line, const char* function, const char* argName, const char* assertion)
 {
-#if PLATFORM(BLACKBERRY)
-    WTFLogLocker locker(BlackBerry::Platform::LogLevelCritical);
-#endif
-
     printf_stderr_common("ARGUMENT BAD: %s, %s\n", argName, assertion);
     printCallSite(file, line, function);
 }
@@ -399,10 +373,6 @@ void WTFInstallReportBacktraceOnCrashHook()
 
 void WTFReportFatalError(const char* file, int line, const char* function, const char* format, ...)
 {
-#if PLATFORM(BLACKBERRY)
-    WTFLogLocker locker(BlackBerry::Platform::LogLevelCritical);
-#endif
-
     va_list args;
     va_start(args, format);
     vprintf_stderr_with_prefix("FATAL ERROR: ", format, args);
@@ -413,10 +383,6 @@ void WTFReportFatalError(const char* file, int line, const char* function, const
 
 void WTFReportError(const char* file, int line, const char* function, const char* format, ...)
 {
-#if PLATFORM(BLACKBERRY)
-    WTFLogLocker locker(BlackBerry::Platform::LogLevelWarn);
-#endif
-
     va_list args;
     va_start(args, format);
     vprintf_stderr_with_prefix("ERROR: ", format, args);
@@ -430,10 +396,6 @@ void WTFLog(WTFLogChannel* channel, const char* format, ...)
     if (channel->state != WTFLogChannelOn)
         return;
 
-#if PLATFORM(BLACKBERRY)
-    WTFLogLocker locker(BlackBerry::Platform::LogLevelInfo);
-#endif
-
     va_list args;
     va_start(args, format);
     vprintf_stderr_with_trailing_newline(format, args);
@@ -445,10 +407,6 @@ void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChann
     if (channel->state != WTFLogChannelOn)
         return;
 
-#if PLATFORM(BLACKBERRY)
-    WTFLogLocker locker(BlackBerry::Platform::LogLevelInfo);
-#endif
-
     va_list args;
     va_start(args, format);
     vprintf_stderr_with_trailing_newline(format, args);
@@ -459,10 +417,6 @@ void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChann
 
 void WTFLogAlways(const char* format, ...)
 {
-#if PLATFORM(BLACKBERRY)
-    WTFLogLocker locker(BlackBerry::Platform::LogLevelInfo);
-#endif
-
     va_list args;
     va_start(args, format);
     vprintf_stderr_with_trailing_newline(format, args);

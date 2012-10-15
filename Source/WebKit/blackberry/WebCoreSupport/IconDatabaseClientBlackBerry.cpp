@@ -22,7 +22,6 @@
 #include "BlackBerryPlatformSettings.h"
 #include "IconDatabase.h"
 #include "WebSettings.h"
-#include "WebString.h"
 
 namespace WebCore {
 

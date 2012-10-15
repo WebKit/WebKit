@@ -54,8 +54,8 @@ public:
     void setDelegate(WebSettingsDelegate*);
     WebSettingsDelegate* delegate();
 
-    static void addSupportedObjectPluginMIMEType(const char*);
-    static bool isSupportedObjectMIMEType(const WebString&);
+    static void addSupportedObjectPluginMIMEType(const BlackBerry::Platform::String&);
+    static bool isSupportedObjectMIMEType(const BlackBerry::Platform::String&);
 
     bool xssAuditorEnabled() const;
     void setXSSAuditorEnabled(bool);
@@ -84,23 +84,23 @@ public:
     int minimumFontSize() const;
     void setMinimumFontSize(int);
 
-    WebString serifFontFamily() const;
-    void setSerifFontFamily(const char*);
-    WebString fixedFontFamily() const;
-    void setFixedFontFamily(const char*);
-    WebString sansSerifFontFamily() const;
-    void setSansSerifFontFamily(const char*);
-    WebString standardFontFamily() const;
-    void setStandardFontFamily(const char*);
+    BlackBerry::Platform::String serifFontFamily() const;
+    void setSerifFontFamily(const BlackBerry::Platform::String&);
+    BlackBerry::Platform::String fixedFontFamily() const;
+    void setFixedFontFamily(const BlackBerry::Platform::String&);
+    BlackBerry::Platform::String sansSerifFontFamily() const;
+    void setSansSerifFontFamily(const BlackBerry::Platform::String&);
+    BlackBerry::Platform::String standardFontFamily() const;
+    void setStandardFontFamily(const BlackBerry::Platform::String&);
 
     void setDownloadableBinaryFontsEnabled(bool);
     bool downloadableBinaryFontsEnabled() const;
 
-    WebString userAgentString() const;
-    void setUserAgentString(const WebString&);
+    BlackBerry::Platform::String userAgentString() const;
+    void setUserAgentString(const BlackBerry::Platform::String&);
 
-    WebString defaultTextEncodingName() const;
-    void setDefaultTextEncodingName(const char*);
+    BlackBerry::Platform::String defaultTextEncodingName() const;
+    void setDefaultTextEncodingName(const BlackBerry::Platform::String&);
 
     bool isZoomToFitOnLoad() const;
     void setZoomToFitOnLoad(bool);
@@ -126,11 +126,11 @@ public:
     bool doesGetFocusNodeContext() const;
     void setGetFocusNodeContext(bool);
 
-    WebString userStyleSheetString() const;
-    void setUserStyleSheetString(const char*);
+    BlackBerry::Platform::String userStyleSheetString() const;
+    void setUserStyleSheetString(const BlackBerry::Platform::String&);
 
-    WebString userStyleSheetLocation();
-    void setUserStyleSheetLocation(const char*);
+    BlackBerry::Platform::String userStyleSheetLocation();
+    void setUserStyleSheetLocation(const BlackBerry::Platform::String&);
 
     // External link handlers
     bool areLinksHandledExternally() const;
@@ -175,20 +175,20 @@ public:
     void setMaximumPagesInCache(int);
     int maximumPagesInCache() const;
 
-    WebString localStoragePath() const;
-    void setLocalStoragePath(const WebString&);
+    BlackBerry::Platform::String localStoragePath() const;
+    void setLocalStoragePath(const BlackBerry::Platform::String&);
 
-    WebString indexedDataBasePath() const;
-    void setIndexedDataBasePath(const WebString&);
+    BlackBerry::Platform::String indexedDataBasePath() const;
+    void setIndexedDataBasePath(const BlackBerry::Platform::String&);
 
-    WebString databasePath() const;
-    void setDatabasePath(const WebString&);
+    BlackBerry::Platform::String databasePath() const;
+    void setDatabasePath(const BlackBerry::Platform::String&);
 
-    WebString appCachePath() const;
-    void setAppCachePath(const WebString&);
+    BlackBerry::Platform::String appCachePath() const;
+    void setAppCachePath(const BlackBerry::Platform::String&);
 
-    WebString pageGroupName() const;
-    void setPageGroupName(const WebString&);
+    BlackBerry::Platform::String pageGroupName() const;
+    void setPageGroupName(const BlackBerry::Platform::String&);
 
     // FIXME: We shouldn't have an email mode. Instead, we should expose all email-related settings
     // so that the email client can toggle them directly.

@@ -130,14 +130,12 @@ bool NetworkJob::initialize(int playerId,
     // We don't need to explicitly call notifyHeaderReceived, as the Content-Type
     // will ultimately get parsed when sendResponseIfNeeded gets called.
     if (!request.getOverrideContentType().empty()) {
-        m_contentType = String(request.getOverrideContentType().c_str());
+        m_contentType = String(request.getOverrideContentType());
         m_isOverrideContentType = true;
     }
 
-    if (!request.getSuggestedSaveName().empty()) {
-        m_contentDisposition = "filename=";
-        m_contentDisposition += request.getSuggestedSaveName().c_str();
-    }
+    if (!request.getSuggestedSaveName().empty())
+        m_contentDisposition = "filename=" + String(request.getSuggestedSaveName());
 
     BlackBerry::Platform::FilterStream* wrappedStream = m_streamFactory->createNetworkStream(request, m_playerId);
     if (!wrappedStream)
@@ -175,7 +173,7 @@ void NetworkJob::updateDeferLoadingCount(int delta)
     }
 }
 
-void NetworkJob::notifyStatusReceived(int status, const char* message)
+void NetworkJob::notifyStatusReceived(int status, const BlackBerry::Platform::String& message)
 {
     if (shouldDeferLoading())
         m_deferredData.deferOpen(status, message);
@@ -214,9 +212,9 @@ void NetworkJob::notifyHeadersReceived(BlackBerry::Platform::NetworkRequest::Hea
     BlackBerry::Platform::NetworkRequest::HeaderList::const_iterator endIt = headers.end();
     for (BlackBerry::Platform::NetworkRequest::HeaderList::const_iterator it = headers.begin(); it != endIt; ++it) {
         if (shouldDeferLoading())
-            m_deferredData.deferHeaderReceived(it->first.c_str(), it->second.c_str());
+            m_deferredData.deferHeaderReceived(it->first, it->second);
         else {
-            String keyString(it->first.c_str());
+            String keyString(it->first);
             String valueString;
             if (equalIgnoringCase(keyString, "Location")) {
                 // Location, like all headers, is supposed to be Latin-1. But some sites (wikipedia) send it in UTF-8.
@@ -227,11 +225,11 @@ void NetworkJob::notifyHeadersReceived(BlackBerry::Platform::NetworkRequest::Hea
                 // FIXME: maybe we should do this with other headers?
                 // Skip it for now - we don't want to rewrite random bytes unless we're sure. (Definitely don't want to
                 // rewrite cookies, for instance.) Needs more investigation.
-                valueString = String::fromUTF8(it->second.c_str());
+                valueString = it->second;
                 if (valueString.isNull())
-                    valueString = it->second.c_str();
+                    valueString = it->second;
             } else
-                valueString = it->second.c_str();
+                valueString = it->second;
 
             handleNotifyHeaderReceived(keyString, valueString);
         }
@@ -498,7 +496,7 @@ void NetworkJob::handleNotifyClose(int status)
     if (!m_cancelled) {
         if (!m_statusReceived) {
             // Connection failed before sending notifyStatusReceived: use generic NetworkError.
-            notifyStatusReceived(BlackBerry::Platform::FilterStream::StatusNetworkError, 0);
+            notifyStatusReceived(BlackBerry::Platform::FilterStream::StatusNetworkError, BlackBerry::Platform::String::emptyString());
         }
 
         if (shouldReleaseClientResource()) {
@@ -752,7 +750,7 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
         else
             proxyAddress.append("https://");
 
-        proxyAddress.append(BlackBerry::Platform::Settings::instance()->proxyAddress(newURL.string().ascii().data()).c_str());
+        proxyAddress.append(BlackBerry::Platform::Settings::instance()->proxyAddress(newURL.string()));
         KURL proxyURL(KURL(), proxyAddress.toString());
         host = proxyURL.host();
         port = proxyURL.port();
@@ -787,8 +785,8 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
         String password;
 
         if (type == ProtectionSpaceProxyHTTP || type == ProtectionSpaceProxyHTTPS) {
-            username = String(BlackBerry::Platform::Settings::instance()->proxyUsername().c_str());
-            password = String(BlackBerry::Platform::Settings::instance()->proxyPassword().c_str());
+            username = String(BlackBerry::Platform::Settings::instance()->proxyUsername());
+            password = String(BlackBerry::Platform::Settings::instance()->proxyPassword());
         } else {
             username = m_handle->getInternal()->m_user;
             password = m_handle->getInternal()->m_pass;

@@ -29,20 +29,20 @@
 #include "PopupPicker.h"
 #include "RenderObject.h"
 #include "WebPage_p.h"
-#include "WebString.h"
 
+#include <BlackBerryPlatformString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-ColorPickerClient::ColorPickerClient(const BlackBerry::WebKit::WebString& value, BlackBerry::WebKit::WebPagePrivate* webPage, HTMLInputElement* element)
+ColorPickerClient::ColorPickerClient(const BlackBerry::Platform::String& value, BlackBerry::WebKit::WebPagePrivate* webPage, HTMLInputElement* element)
     : m_webPage(webPage)
     , m_element(element)
 {
     generateHTML(value);
 }
 
-void ColorPickerClient::generateHTML(const BlackBerry::WebKit::WebString& value)
+void ColorPickerClient::generateHTML(const BlackBerry::Platform::String& value)
 {
     StringBuilder source;
     source.appendLiteral("<style>\n");
@@ -56,8 +56,8 @@ void ColorPickerClient::generateHTML(const BlackBerry::WebKit::WebString& value)
     source.appendLiteral("<script>\n");
     source.appendLiteral("window.addEventListener('load', function () {");
     source.appendLiteral("window.popupcontrol.show(");
-    if (!value.isEmpty())
-        source.append("\"" + String(value.impl()) + "\"); \n }); \n");
+    if (!value.empty())
+        source.append("\"" + String(value) + "\"); \n }); \n");
     else
         source.appendLiteral("); \n }); \n");
     source.append(colorControlBlackBerryJs, sizeof(colorControlBlackBerryJs));

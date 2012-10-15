@@ -21,7 +21,7 @@
 
 #include "BlackBerryGlobal.h"
 
-#include <string>
+#include <BlackBerryPlatformString.h>
 
 namespace BlackBerry {
 namespace WebKit {
@@ -42,9 +42,8 @@ public:
     JavaScriptVariant(const JavaScriptVariant&);
     JavaScriptVariant(double);
     JavaScriptVariant(int);
-    JavaScriptVariant(const char*);
-    JavaScriptVariant(bool);
-    JavaScriptVariant(const std::string&);
+    explicit JavaScriptVariant(bool);
+    JavaScriptVariant(const BlackBerry::Platform::String&);
     ~JavaScriptVariant();
 
     JavaScriptVariant& operator=(const JavaScriptVariant&);
@@ -55,20 +54,22 @@ public:
     void setDouble(double);
     double doubleValue() const;
 
-    void setString(const char*);
-    char* stringValue() const;
+    void setString(const BlackBerry::Platform::String&);
+    const BlackBerry::Platform::String& stringValue() const;
 
     void setBoolean(bool);
     bool booleanValue() const;
 
 private:
+    JavaScriptVariant(const char*);
     DataType m_type;
 
     union {
         bool m_booleanValue;
         double m_doubleValue;
-        char* m_stringValue;
     };
+
+    BlackBerry::Platform::String m_stringValue;
 };
 
 }

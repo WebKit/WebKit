@@ -27,8 +27,8 @@
 class PageClientBlackBerry;
 
 namespace BlackBerry {
-namespace WebKit {
-class WebString;
+namespace Platform {
+class String;
 }
 }
 
@@ -39,7 +39,7 @@ class CredentialTransformData;
 
 class CredentialManager {
 public:
-    void autofillAuthenticationChallenge(const ProtectionSpace&, BlackBerry::WebKit::WebString& username, BlackBerry::WebKit::WebString& password);
+    void autofillAuthenticationChallenge(const ProtectionSpace&, BlackBerry::Platform::String& username, BlackBerry::Platform::String& password);
     void autofillPasswordForms(PassRefPtr<HTMLCollection> docForms);
     void saveCredentialIfConfirmed(PageClientBlackBerry*, const CredentialTransformData&);
     void clearCredentials();

@@ -29,13 +29,13 @@
 #include "PopupPicker.h"
 #include "RenderObject.h"
 #include "WebPage_p.h"
-#include "WebString.h"
 
+#include <BlackBerryPlatformString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-DatePickerClient::DatePickerClient(BlackBerry::Platform::BlackBerryInputType type, const BlackBerry::WebKit::WebString& value, const BlackBerry::WebKit::WebString& min, const BlackBerry::WebKit::WebString& max, double step, BlackBerry::WebKit::WebPagePrivate* webPage, HTMLInputElement* element)
+DatePickerClient::DatePickerClient(BlackBerry::Platform::BlackBerryInputType type, const BlackBerry::Platform::String& value, const BlackBerry::Platform::String& min, const BlackBerry::Platform::String& max, double step, BlackBerry::WebKit::WebPagePrivate* webPage, HTMLInputElement* element)
     : m_type(type)
     , m_webPage(webPage)
     , m_element(element)
@@ -47,7 +47,7 @@ DatePickerClient::~DatePickerClient()
 {
 }
 
-void DatePickerClient::generateHTML(BlackBerry::Platform::BlackBerryInputType type, const BlackBerry::WebKit::WebString& value, const BlackBerry::WebKit::WebString& min, const BlackBerry::WebKit::WebString& max, double step)
+void DatePickerClient::generateHTML(BlackBerry::Platform::BlackBerryInputType type, const BlackBerry::Platform::String& value, const BlackBerry::Platform::String& min, const BlackBerry::Platform::String& max, double step)
 {
     StringBuilder source;
     source.appendLiteral("<style>\n");
@@ -80,17 +80,17 @@ void DatePickerClient::generateHTML(BlackBerry::Platform::BlackBerryInputType ty
     default:
         break;
     }
-    if (!value.isEmpty())
-        source.append("\"" + String(value.impl()) + "\", ");
+    if (!value.empty())
+        source.append("\"" + String(value) + "\", ");
     else
         source.appendLiteral("0, ");
 
-    if (!min.isEmpty())
-        source.append(String(min.impl()) + ", ");
+    if (!min.empty())
+        source.append(String(min) + ", ");
     else
         source.appendLiteral("0, ");
-    if (!max.isEmpty())
-        source.append(String(max.impl()) + ", ");
+    if (!max.empty())
+        source.append(String(max) + ", ");
     else
         source.appendLiteral("0, ");
     source.append(String::number(step));

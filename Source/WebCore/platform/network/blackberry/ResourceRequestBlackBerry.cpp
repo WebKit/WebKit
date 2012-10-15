@@ -21,7 +21,6 @@
 
 #include "BlobRegistryImpl.h"
 #include "CookieManager.h"
-#include "ReadOnlyLatin1String.h"
 #include <network/NetworkRequest.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
@@ -148,16 +147,14 @@ void ResourceRequest::initializePlatformRequest(NetworkRequest& platformRequest,
     if (isInitial)
         platformRequest.setRequestInitial(timeoutInterval());
     else {
-        ReadOnlyLatin1String latin1URL(url().string());
-        ReadOnlyLatin1String latin1HttpMethod(httpMethod());
-        platformRequest.setRequestUrl(latin1URL.data(), latin1URL.length(),
-                latin1HttpMethod.data(), latin1HttpMethod.length(),
+        platformRequest.setRequestUrl(url().string(),
+            httpMethod(),
                 platformCachePolicyForRequest(*this),
                 platformTargetTypeForRequest(*this),
                 timeoutInterval());
 
         platformRequest.setConditional(isConditional());
-        platformRequest.setSuggestedSaveName(suggestedSaveName().utf8().data());
+        platformRequest.setSuggestedSaveName(suggestedSaveName());
 
         if (httpBody() && !httpBody()->isEmpty()) {
             const Vector<FormDataElement>& elements = httpBody()->elements();
@@ -210,9 +207,7 @@ void ResourceRequest::initializePlatformRequest(NetworkRequest& platformRequest,
                         continue;
                     }
                 }
-                ReadOnlyLatin1String latin1Key(key);
-                ReadOnlyLatin1String latin1Value(value);
-                platformRequest.addHeader(latin1Key.data(), latin1Key.length(), latin1Value.data(), latin1Value.length());
+                platformRequest.addHeader(key, value);
             }
         }
 

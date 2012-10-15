@@ -22,7 +22,7 @@
 
 #include "CookieManager.h"
 #include "KURL.h"
-#include "WebString.h"
+#include <BlackBerryPlatformString.h>
 
 using namespace WebCore;
 
@@ -33,26 +33,26 @@ WebCookieJar::WebCookieJar()
 {
 }
 
-std::vector<WebString> WebCookieJar::cookies(const char* url)
+std::vector<BlackBerry::Platform::String> WebCookieJar::cookies(const BlackBerry::Platform::String& url)
 {
-    KURL kurl = KURL(KURL(), String(url));
+    KURL kurl = KURL(KURL(), url);
 
     Vector<ParsedCookie*> rawCookies;
     cookieManager().getRawCookies(rawCookies, kurl, WithHttpOnlyCookies);
 
-    std::vector<WebString> result;
+    std::vector<BlackBerry::Platform::String> result;
     for (size_t i = 0; i < rawCookies.size(); ++i)
-        result.push_back(WebString(rawCookies[i]->toNameValuePair().impl()));
+        result.push_back(rawCookies[i]->toNameValuePair());
 
     return result;
 }
 
-void WebCookieJar::setCookies(const char* url, const std::vector<WebString>& cookies)
+void WebCookieJar::setCookies(const BlackBerry::Platform::String& url, const std::vector<BlackBerry::Platform::String>& cookies)
 {
-    KURL kurl = KURL(KURL(), String(url));
+    KURL kurl = KURL(KURL(), url);
     Vector<String> coreCookies;
     for (size_t i = 0; i < cookies.size(); ++i)
-        coreCookies.append(String(cookies[i].impl()));
+        coreCookies.append(cookies[i]);
     cookieManager().setCookies(kurl, coreCookies, WithHttpOnlyCookies);
 }
 

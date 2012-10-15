@@ -1,3 +1,228 @@
+2012-10-15  George Staikos  <staikos@webkit.org>
+
+        [BlackBerry] Adapt to Platform API changes in string handling
+        https://bugs.webkit.org/show_bug.cgi?id=99248
+
+        Reviewed by Yong Li.
+
+        Convert usage of WebString, char* and std::string to BlackBerry::Platform::String.
+
+        * Api/BlackBerryGlobal.cpp:
+        (BlackBerry::WebKit::clearAppCache):
+        (BlackBerry::WebKit::clearDatabase):
+        * Api/BlackBerryGlobal.h:
+        (Platform):
+        (WebKit):
+        * Api/JavaScriptVariant.cpp:
+        (BlackBerry::WebKit::JSValueRefToBlackBerryJavaScriptVariant):
+        (BlackBerry::WebKit::BlackBerryJavaScriptVariantToJSValueRef):
+        (BlackBerry::WebKit::JavaScriptVariant::JavaScriptVariant):
+        (WebKit):
+        (BlackBerry::WebKit::JavaScriptVariant::~JavaScriptVariant):
+        (BlackBerry::WebKit::JavaScriptVariant::setType):
+        (BlackBerry::WebKit::JavaScriptVariant::setString):
+        (BlackBerry::WebKit::JavaScriptVariant::stringValue):
+        * Api/JavaScriptVariant.h:
+        * Api/WebAnimation.cpp:
+        (BlackBerry::WebKit::WebAnimation::fadeAnimation):
+        (BlackBerry::WebKit::WebAnimation::name):
+        * Api/WebAnimation.h:
+        * Api/WebCookieJar.cpp:
+        (BlackBerry::WebKit::WebCookieJar::cookies):
+        (BlackBerry::WebKit::WebCookieJar::setCookies):
+        * Api/WebCookieJar.h:
+        (Platform):
+        (BlackBerry):
+        (WebKit):
+        * Api/WebKitMIMETypeConverter.cpp:
+        (BlackBerry::WebKit::getExtensionForMimeType):
+        (BlackBerry::WebKit::getMimeTypeForExtension):
+        * Api/WebKitMIMETypeConverter.h:
+        (Platform):
+        (BlackBerry):
+        (WebKit):
+        * Api/WebKitTextCodec.cpp:
+        (BlackBerry::WebKit::base64Decode):
+        (BlackBerry::WebKit::base64Encode):
+        (BlackBerry::WebKit::unescapeURL):
+        (BlackBerry::WebKit::escapeURL):
+        * Api/WebKitTextCodec.h:
+        (Platform):
+        (BlackBerry):
+        * Api/WebOverlay.cpp:
+        (BlackBerry::WebKit::WebOverlay::removeAnimation):
+        * Api/WebOverlay.h:
+        (Platform):
+        (BlackBerry):
+        (WebKit):
+        * Api/WebOverlayOverride.cpp:
+        (BlackBerry::WebKit::WebOverlayOverride::removeAnimation):
+        * Api/WebOverlayOverride.h:
+        (Platform):
+        (BlackBerry):
+        (WebKit):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::autofillTextField):
+        (BlackBerry::WebKit::WebPage::renderTreeAsText):
+        (BlackBerry::WebKit::WebPage::WebPage):
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        (BlackBerry::WebKit::WebPagePrivate::load):
+        (BlackBerry::WebKit::WebPage::load):
+        (BlackBerry::WebKit::WebPage::loadFile):
+        (BlackBerry::WebKit::WebPage::download):
+        (BlackBerry::WebKit::WebPagePrivate::loadString):
+        (BlackBerry::WebKit::WebPage::loadString):
+        (BlackBerry::WebKit::WebPagePrivate::executeJavaScript):
+        (BlackBerry::WebKit::WebPage::executeJavaScript):
+        (BlackBerry::WebKit::WebPagePrivate::executeJavaScriptInIsolatedWorld):
+        (BlackBerry::WebKit::WebPage::executeJavaScriptInIsolatedWorld):
+        (BlackBerry::WebKit::WebPage::executeJavaScriptFunction):
+        (BlackBerry::WebKit::WebPagePrivate::addOriginAccessWhitelistEntry):
+        (BlackBerry::WebKit::WebPage::addOriginAccessWhitelistEntry):
+        (BlackBerry::WebKit::WebPagePrivate::removeOriginAccessWhitelistEntry):
+        (BlackBerry::WebKit::WebPage::removeOriginAccessWhitelistEntry):
+        (BlackBerry::WebKit::WebPagePrivate::authenticationChallenge):
+        (BlackBerry::WebKit::WebPagePrivate::syncProxyCredential):
+        (BlackBerry::WebKit::WebPagePrivate::notifyPopupAutofillDialog):
+        (BlackBerry::WebKit::WebPagePrivate::webContext):
+        (BlackBerry::WebKit::WebPage::setDateTimeInput):
+        (BlackBerry::WebKit::WebPage::setColorInput):
+        (BlackBerry::WebKit::WebPage::textEncoding):
+        (BlackBerry::WebKit::WebPage::forcedTextEncoding):
+        (BlackBerry::WebKit::WebPage::setForcedTextEncoding):
+        (BlackBerry::WebKit::WebPage::title):
+        (BlackBerry::WebKit::WebPage::selectedText):
+        (BlackBerry::WebKit::WebPage::cutSelectedText):
+        (BlackBerry::WebKit::WebPage::insertText):
+        (BlackBerry::WebKit::WebPage::getBackForwardList):
+        (BlackBerry::WebKit::WebPage::onCertificateStoreLocationSet):
+        (BlackBerry::WebKit::WebPage::dispatchInspectorMessage):
+        (BlackBerry::WebKit::WebPagePrivate::didChangeSettings):
+        (BlackBerry::WebKit::WebPage::textHasAttribute):
+        (BlackBerry::WebKit::WebPage::setAllowNotification):
+        (BlackBerry::WebKit::WebPagePrivate::defaultUserAgent):
+        * Api/WebPage.h:
+        * Api/WebPageClient.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * Api/WebSettings.cpp:
+        (BlackBerry::WebKit::WebSettings::standardSettings):
+        (BlackBerry::WebKit::WebSettings::addSupportedObjectPluginMIMEType):
+        (BlackBerry::WebKit::WebSettings::isSupportedObjectMIMEType):
+        (BlackBerry::WebKit::WebSettings::serifFontFamily):
+        (BlackBerry::WebKit::WebSettings::setSerifFontFamily):
+        (BlackBerry::WebKit::WebSettings::fixedFontFamily):
+        (BlackBerry::WebKit::WebSettings::setFixedFontFamily):
+        (BlackBerry::WebKit::WebSettings::sansSerifFontFamily):
+        (BlackBerry::WebKit::WebSettings::setSansSerifFontFamily):
+        (BlackBerry::WebKit::WebSettings::standardFontFamily):
+        (BlackBerry::WebKit::WebSettings::setStandardFontFamily):
+        (BlackBerry::WebKit::WebSettings::userAgentString):
+        (BlackBerry::WebKit::WebSettings::setUserAgentString):
+        (BlackBerry::WebKit::WebSettings::defaultTextEncodingName):
+        (BlackBerry::WebKit::WebSettings::setDefaultTextEncodingName):
+        (BlackBerry::WebKit::WebSettings::userStyleSheetString):
+        (BlackBerry::WebKit::WebSettings::setUserStyleSheetString):
+        (BlackBerry::WebKit::WebSettings::userStyleSheetLocation):
+        (BlackBerry::WebKit::WebSettings::setUserStyleSheetLocation):
+        (BlackBerry::WebKit::WebSettings::localStoragePath):
+        (BlackBerry::WebKit::WebSettings::setLocalStoragePath):
+        (BlackBerry::WebKit::WebSettings::indexedDataBasePath):
+        (BlackBerry::WebKit::WebSettings::setIndexedDataBasePath):
+        (BlackBerry::WebKit::WebSettings::databasePath):
+        (BlackBerry::WebKit::WebSettings::setDatabasePath):
+        (BlackBerry::WebKit::WebSettings::appCachePath):
+        (BlackBerry::WebKit::WebSettings::setAppCachePath):
+        (BlackBerry::WebKit::WebSettings::pageGroupName):
+        (BlackBerry::WebKit::WebSettings::setPageGroupName):
+        * Api/WebSettings.h:
+        * Api/WebString.cpp: Removed.
+        * Api/WebString.h: Removed.
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::runJavaScriptPrompt):
+        (WebCore::ChromeClientBlackBerry::createWindow):
+        (WebCore::ChromeClientBlackBerry::runOpenPanel):
+        (WebCore):
+        * WebCoreSupport/ChromeClientBlackBerry.h:
+        (ChromeClientBlackBerry):
+        * WebCoreSupport/ClientExtension.cpp:
+        (clientExtensionMethod):
+        * WebCoreSupport/ColorPickerClient.cpp:
+        (WebCore::ColorPickerClient::ColorPickerClient):
+        (WebCore::ColorPickerClient::generateHTML):
+        * WebCoreSupport/ColorPickerClient.h:
+        (Platform):
+        (BlackBerry):
+        (WebKit):
+        (ColorPickerClient):
+        * WebCoreSupport/CredentialManager.cpp:
+        (WebCore::CredentialManager::autofillAuthenticationChallenge):
+        * WebCoreSupport/CredentialManager.h:
+        (Platform):
+        (CredentialManager):
+        * WebCoreSupport/DatePickerClient.cpp:
+        (WebCore::DatePickerClient::DatePickerClient):
+        (WebCore::DatePickerClient::generateHTML):
+        * WebCoreSupport/DatePickerClient.h:
+        (Platform):
+        (BlackBerry):
+        (WebKit):
+        (DatePickerClient):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDecidePolicyForResponse):
+        (WebCore::FrameLoaderClientBlackBerry::createDocumentLoader):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidFinishLoad):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidFailProvisionalLoad):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchCreatePage):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchWillSendRequest):
+        (WebCore::FrameLoaderClientBlackBerry::loadIconExternally):
+        (WebCore::FrameLoaderClientBlackBerry::startDownload):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidReceiveIcon):
+        * WebCoreSupport/IconDatabaseClientBlackBerry.cpp:
+        * WebCoreSupport/NotificationPresenterImpl.cpp:
+        (WebCore::NotificationPresenterImpl::show):
+        (WebCore::NotificationPresenterImpl::cancel):
+        (WebCore::NotificationPresenterImpl::requestPermission):
+        (WebCore::NotificationPresenterImpl::onPermission):
+        (WebCore::NotificationPresenterImpl::notificationClicked):
+        * WebCoreSupport/NotificationPresenterImpl.h:
+        (Platform):
+        (NotificationPresenterImpl):
+        * WebCoreSupport/SelectPopupClient.cpp:
+        (WebCore::SelectPopupClient::SelectPopupClient):
+        (WebCore::SelectPopupClient::update):
+        (WebCore::SelectPopupClient::generateHTML):
+        * WebCoreSupport/SelectPopupClient.h:
+        (Platform):
+        (BlackBerry):
+        (SelectPopupClient):
+        * WebCoreSupport/UserMediaClientImpl.cpp:
+        (WebCore::toMediaStreamSource):
+        (WebCore::toMediaStreamDescriptor):
+        (WebCore::UserMediaClientImpl::requestUserMedia):
+        (WebCore::UserMediaClientImpl::cancelUserMediaRequest):
+        * WebKitSupport/AboutData.cpp:
+        (BlackBerry::WebKit::cachePage):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::convertStringToWchar):
+        (BlackBerry::WebKit::convertStringToWcharVector):
+        (BlackBerry::WebKit::convertSpannableStringToString):
+        (BlackBerry::WebKit::InputHandler::learnText):
+        (BlackBerry::WebKit::InputHandler::spellCheckingRequestProcessed):
+        (BlackBerry::WebKit::InputHandler::openDatePopup):
+        (BlackBerry::WebKit::InputHandler::openSelectPopup):
+        (BlackBerry::WebKit::InputHandler::setText):
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::selectedText):
+        * WebKitSupport/SelectionHandler.h:
+        (Platform):
+        (WebKit):
+        (SelectionHandler):
+        * WebKitSupport/SurfacePool.cpp:
+        (BlackBerry::WebKit::SurfacePool::sharedPixmapGroup):
+        * WebKitSupport/SurfacePool.h:
+        (SurfacePool):
+
 2012-10-15  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] Clean up BackingStoreClient (part II)

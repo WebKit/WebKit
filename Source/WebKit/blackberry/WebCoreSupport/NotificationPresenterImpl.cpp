@@ -20,6 +20,7 @@
 #include "NotificationPresenterImpl.h"
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+#include <BlackBerryPlatformString.h>
 #include <Event.h>
 #include <Notification.h>
 #include <NotificationPresenterBlackBerry.h>
@@ -68,7 +69,7 @@ bool NotificationPresenterImpl::show(Notification* notification)
         message = n->contents().title + ": " + n->contents().body;
     }
 
-    m_platformPresenter->show(std::string(uuid.utf8().data()), std::string(message.utf8().data()));
+    m_platformPresenter->show(uuid, message);
     return true;
 }
 
@@ -81,7 +82,7 @@ void NotificationPresenterImpl::cancel(Notification* notification)
     if (it == m_notifications.end())
         return;
 
-    m_platformPresenter->cancel(std::string(it->value.utf8().data()));
+    m_platformPresenter->cancel(it->value);
     m_notifications.remove(it);
 }
 
@@ -99,23 +100,22 @@ void NotificationPresenterImpl::requestPermission(ScriptExecutionContext* contex
 {
     ASSERT(context);
     m_permissionRequests.add(context, callback);
-    m_platformPresenter->requestPermission(std::string(context->url().host().utf8().data()));
+    m_platformPresenter->requestPermission(context->url().host());
 }
 
-void NotificationPresenterImpl::onPermission(const std::string& domain, bool isAllowed)
+void NotificationPresenterImpl::onPermission(const BlackBerry::Platform::String& domain, bool isAllowed)
 {
     ASSERT(!domain.empty());
-    String domainString = String::fromUTF8(domain.c_str());
     PermissionRequestMap::iterator it = m_permissionRequests.begin();
     for (; it != m_permissionRequests.end(); ++it) {
-        if (it->key->url().host() != domainString)
+        if (it->key->url().host() != domain)
             continue;
 
         if (isAllowed) {
-            m_allowedDomains.add(domainString);
+            m_allowedDomains.add(domain);
             it->value->handleEvent();
         } else
-            m_allowedDomains.remove(domainString);
+            m_allowedDomains.remove(domain);
 
         m_permissionRequests.remove(it);
         return;
@@ -138,13 +138,12 @@ NotificationClient::Permission NotificationPresenterImpl::checkPermission(Script
 }
 
 // This function is called in platform side.
-void NotificationPresenterImpl::notificationClicked(const std::string& id)
+void NotificationPresenterImpl::notificationClicked(const BlackBerry::Platform::String& id)
 {
     ASSERT(!id.empty());
-    String idString = String::fromUTF8(id.c_str());
     NotificationMap::iterator it = m_notifications.begin();
     for (; it != m_notifications.end(); ++it) {
-        if (it->value == idString && it->key->scriptExecutionContext()) {
+        if (it->value == id && it->key->scriptExecutionContext()) {
             RefPtr<Notification> notification = it->key;
             it->key->dispatchEvent(Event::create(eventNames().clickEvent, false, true));
             m_notifications.remove(notification);

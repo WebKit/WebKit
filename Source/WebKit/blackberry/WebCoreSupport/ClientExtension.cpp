@@ -50,9 +50,10 @@ static JSValueRef clientExtensionMethod(
     }
 
     WebPageClient* client = reinterpret_cast<WebPageClient*>(JSObjectGetPrivate(thisObject));
-    string retVal;
+    BlackBerry::Platform::String retVal;
     if (client)
-        retVal = client->invokeClientJavaScriptCallback(strArgs, argumentCount).utf8();
+        retVal = client->invokeClientJavaScriptCallback(strArgs, argumentCount);
+    // FIXME: add a mechanism to pass the length of the string here
     if (!retVal.empty())
         jsRetVal = JSValueMakeString(ctx, JSStringCreateWithUTF8CString(retVal.c_str()));
 

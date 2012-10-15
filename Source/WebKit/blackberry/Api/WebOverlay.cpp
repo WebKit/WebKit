@@ -34,9 +34,9 @@
 #include "WebPageCompositorClient.h"
 #include "WebPageCompositor_p.h"
 #include "WebPage_p.h"
-#include "WebString.h"
 
 #include <BlackBerryPlatformMessageClient.h>
+#include <BlackBerryPlatformString.h>
 #include <GLES2/gl2.h>
 #include <SkDevice.h>
 
@@ -137,9 +137,9 @@ void WebOverlay::addAnimation(const WebAnimation& animation)
     d->addAnimation(animation.d->name, animation.d->animation.get(), animation.d->keyframes);
 }
 
-void WebOverlay::removeAnimation(const WebString& name)
+void WebOverlay::removeAnimation(const BlackBerry::Platform::String& name)
 {
-    d->removeAnimation(String(PassRefPtr<StringImpl>(name.impl())));
+    d->removeAnimation(name);
 }
 
 WebOverlay* WebOverlay::parent() const
@@ -754,7 +754,7 @@ void WebOverlay::addAnimation(const WebAnimation&)
 {
 }
 
-void WebOverlay::removeAnimation(const WebString&)
+void WebOverlay::removeAnimation(const BlackBerry::Platform::String&)
 {
 }
 

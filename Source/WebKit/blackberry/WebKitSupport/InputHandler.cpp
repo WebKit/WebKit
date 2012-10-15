@@ -459,7 +459,7 @@ void InputHandler::setPluginFocused(Element* element)
     m_currentFocusElement = element;
 }
 
-static bool convertStringToWchar(const String& string, wchar_t* dest, int destCapacity, int* destLength)
+static bool convertStringToWchar(const WTF::String& string, wchar_t* dest, int destCapacity, int* destLength)
 {
     ASSERT(dest);
 
@@ -479,7 +479,7 @@ static bool convertStringToWchar(const String& string, wchar_t* dest, int destCa
     return true;
 }
 
-static bool convertStringToWcharVector(const String& string, WTF::Vector<wchar_t>& wcharString)
+static bool convertStringToWcharVector(const WTF::String& string, WTF::Vector<wchar_t>& wcharString)
 {
     ASSERT(wcharString.isEmpty());
 
@@ -500,16 +500,16 @@ static bool convertStringToWcharVector(const String& string, WTF::Vector<wchar_t
     return true;
 }
 
-static String convertSpannableStringToString(spannable_string_t* src)
+static WTF::String convertSpannableStringToString(spannable_string_t* src)
 {
     if (!src || !src->str || !src->length)
-        return String();
+        return WTF::String();
 
     WTF::Vector<UChar> dest;
     int destCapacity = (src->length * 2) + 1;
     if (!dest.tryReserveCapacity(destCapacity)) {
         logAlways(LogLevelCritical, "InputHandler::convertSpannableStringToString Cannot allocate memory for string.");
-        return String();
+        return WTF::String();
     }
 
     int destLength = 0;
@@ -518,10 +518,10 @@ static String convertSpannableStringToString(spannable_string_t* src)
     u_strFromUTF32(dest.data(), destCapacity, &destLength, reinterpret_cast<UChar32*>(src->str), src->length, &ec);
     if (ec) {
         logAlways(LogLevelCritical, "InputHandler::convertSpannableStringToString Error converting string ec (%d).", ec);
-        return String();
+        return WTF::String();
     }
     dest.resize(destLength);
-    return String(dest.data(), destLength);
+    return WTF::String(dest.data(), destLength);
 }
 
 void InputHandler::sendLearnTextDetails(const WTF::String& string)
@@ -542,7 +542,7 @@ void InputHandler::learnText()
     if (m_currentFocusElementTextEditMask & NO_PREDICTION || m_currentFocusElementTextEditMask & NO_AUTO_TEXT)
         return;
 
-    String textInField(elementText());
+    WTF::String textInField(elementText());
     textInField = textInField.substring(std::max(0, static_cast<int>(textInField.length() - MaxLearnTextDataSize)), textInField.length());
     textInField.remove(0, textInField.find(" "));
 
@@ -642,7 +642,7 @@ void InputHandler::spellCheckingRequestProcessed(int32_t transactionId, spannabl
     Vector<TextCheckingResult> results;
 
     // Convert the spannableString to TextCheckingResult then append to results vector.
-    String replacement;
+    WTF::String replacement;
     TextCheckingResult textCheckingResult;
     textCheckingResult.type = TextCheckingTypeSpelling;
     textCheckingResult.replacement = replacement;
@@ -959,9 +959,9 @@ bool InputHandler::openDatePopup(HTMLInputElement* element, BlackBerryInputType 
     case BlackBerry::Platform::InputTypeMonth: {
         // Check if popup already exists, close it if does.
         m_webPage->m_page->chrome()->client()->closePagePopup(0);
-        String value = element->value();
-        String min = element->getAttribute(HTMLNames::minAttr).string();
-        String max = element->getAttribute(HTMLNames::maxAttr).string();
+        WTF::String value = element->value();
+        WTF::String min = element->getAttribute(HTMLNames::minAttr).string();
+        WTF::String max = element->getAttribute(HTMLNames::maxAttr).string();
         double step = element->getAttribute(HTMLNames::stepAttr).toDouble();
 
         DatePickerClient* client = new DatePickerClient(type, value, min, max, step,  m_webPage, element);
@@ -1641,8 +1641,8 @@ bool InputHandler::openSelectPopup(HTMLSelectElement* select)
     int size = listItems.size();
 
     bool multiple = select->multiple();
-    ScopeArray<WebString> labels;
-    labels.reset(new WebString[size]);
+    ScopeArray<BlackBerry::Platform::String> labels;
+    labels.reset(new BlackBerry::Platform::String[size]);
 
     // Check if popup already exists, close it if does.
     m_webPage->m_page->chrome()->client()->closePagePopup(0);
@@ -2051,7 +2051,7 @@ bool InputHandler::setText(spannable_string_t* spannableString)
     // changes should not be handled as notification event.
     m_webPage->m_selectionHandler->setSelectionActive(false);
 
-    String textToInsert = convertSpannableStringToString(spannableString);
+    WTF::String textToInsert = convertSpannableStringToString(spannableString);
     int textLength = textToInsert.length();
 
     InputLog(LogLevelInfo, "InputHandler::setText spannableString is '%s', of length %d", textToInsert.latin1().data(), textLength);

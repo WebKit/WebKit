@@ -48,8 +48,8 @@ class wxString;
 
 #if PLATFORM(BLACKBERRY)
 namespace BlackBerry {
-namespace WebKit {
-    class WebString;
+namespace Platform {
+class String;
 }
 }
 #endif
@@ -409,8 +409,8 @@ public:
 #endif
 
 #if PLATFORM(BLACKBERRY)
-    String(const BlackBerry::WebKit::WebString&);
-    operator BlackBerry::WebKit::WebString() const;
+    String(const BlackBerry::Platform::String&);
+    operator BlackBerry::Platform::String() const;
 #endif
 
     WTF_EXPORT_STRING_API static String make8BitFrom16BitSource(const UChar*, size_t);

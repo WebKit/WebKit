@@ -151,7 +151,7 @@ TileBuffer* SurfacePool::backBuffer() const
     return reinterpret_cast<TileBuffer*>(m_backBuffer);
 }
 
-std::string SurfacePool::sharedPixmapGroup() const
+const char *SurfacePool::sharedPixmapGroup() const
 {
     return SHARED_PIXMAP_GROUP;
 }

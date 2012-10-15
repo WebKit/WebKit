@@ -21,6 +21,7 @@
 
 #include "KURL.h"
 #include "TextCodecICU.h"
+#include <BlackBerryPlatformString.h>
 #include <wtf/Vector.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
@@ -92,7 +93,7 @@ WTF::Base64DecodePolicy base64DecodePolicyForWTF(Base64DecodePolicy policy)
     return static_cast<WTF::Base64DecodePolicy>(policy);
 }
 
-bool base64Decode(const std::string& base64, std::vector<char>& binary, Base64DecodePolicy policy)
+bool base64Decode(const BlackBerry::Platform::String& base64, std::vector<char>& binary, Base64DecodePolicy policy)
 {
     Vector<char> result;
     if (!WTF::base64Decode(base64.c_str(), base64.length(), result, base64DecodePolicyForWTF(policy)))
@@ -110,37 +111,26 @@ WTF::Base64DecodePolicy base64EncodePolicyForWTF(Base64EncodePolicy policy)
     return static_cast<WTF::Base64EncodePolicy>(policy);
 }
 
-bool base64Encode(const std::vector<char>& binary, std::string& base64, Base64EncodePolicy policy)
+bool base64Encode(const std::vector<char>& binary, BlackBerry::Platform::String& base64, Base64EncodePolicy policy)
 {
     Vector<char> result;
     result.append(&binary[0], binary.size());
 
     WTF::base64Encode(&binary[0], binary.size(), result, base64EncodePolicyForWTF(policy));
 
-    base64.clear();
-    base64.append(&result[0], result.size());
+    base64 = Blackberry::Platform::String(&result[0], result.size());
 
     return true;
 }
 
-void unescapeURL(const std::string& escaped, std::string& url)
+void unescapeURL(const BlackBerry::Platform::String& escaped, BlackBerry::Platform::String& url)
 {
-    String escapedString(escaped.data(), escaped.length());
-    String urlString = WebCore::decodeURLEscapeSequences(escapedString);
-    CString utf8 = urlString.utf8();
-
-    url.clear();
-    url.append(utf8.data(), utf8.length());
+    url = WebCore::decodeURLEscapeSequences(escaped);
 }
 
-void escapeURL(const std::string& url, std::string& escaped)
+void escapeURL(const BlackBerry::Platform::String& url, BlackBerry::Platform::String& escaped)
 {
-    String urlString(url.data(), url.length());
-    String escapedString = WebCore::encodeWithURLEscapeSequences(urlString);
-    CString utf8 = escapedString.utf8();
-
-    escaped.clear();
-    escaped.append(utf8.data(), utf8.length());
+    escaped = WebCore::encodeWithURLEscapeSequences(url);
 }
 
 } // namespace WebKit

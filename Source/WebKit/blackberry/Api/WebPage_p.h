@@ -106,21 +106,21 @@ public:
 
     WebPageClient* client() const { return m_client; }
 
-    void init(const WebString& pageGroupName);
+    void init(const BlackBerry::Platform::String& pageGroupName);
     bool handleMouseEvent(WebCore::PlatformMouseEvent&);
     bool handleWheelEvent(WebCore::PlatformWheelEvent&);
 
-    void load(const char* url, const char* networkToken, const char* method, Platform::NetworkRequest::CachePolicy, const char* data, size_t dataLength, const char* const* headers, size_t headersLength, bool isInitial, bool mustHandleInternally = false, bool forceDownload = false, const char* overrideContentType = "", const char* suggestedSaveName = "");
-    void loadString(const char* string, const char* baseURL, const char* mimeType, const char* failingURL = 0);
-    bool executeJavaScript(const char* script, JavaScriptDataType& returnType, WebString& returnValue);
-    bool executeJavaScriptInIsolatedWorld(const WebCore::ScriptSourceCode&, JavaScriptDataType& returnType, WebString& returnValue);
+    void load(const BlackBerry::Platform::String& url, const BlackBerry::Platform::String& networkToken, const BlackBerry::Platform::String& method, Platform::NetworkRequest::CachePolicy, const char* data, size_t dataLength, const char* const* headers, size_t headersLength, bool isInitial, bool mustHandleInternally = false, bool forceDownload = false, const BlackBerry::Platform::String& overrideContentType = BlackBerry::Platform::String::emptyString(), const BlackBerry::Platform::String& suggestedSaveName = BlackBerry::Platform::String::emptyString());
+    void loadString(const BlackBerry::Platform::String&, const BlackBerry::Platform::String& baseURL, const BlackBerry::Platform::String& mimeType, const BlackBerry::Platform::String& failingURL);
+    bool executeJavaScript(const BlackBerry::Platform::String& script, JavaScriptDataType& returnType, BlackBerry::Platform::String& returnValue);
+    bool executeJavaScriptInIsolatedWorld(const WebCore::ScriptSourceCode&, JavaScriptDataType& returnType, BlackBerry::Platform::String& returnValue);
 
     void stopCurrentLoad();
     void prepareToDestroy();
 
     void enableCrossSiteXHR();
-    void addOriginAccessWhitelistEntry(const char* sourceOrigin, const char* destinationOrigin, bool allowDestinationSubdomains);
-    void removeOriginAccessWhitelistEntry(const char* sourceOrigin, const char* destinationOrigin, bool allowDestinationSubdomains);
+    void addOriginAccessWhitelistEntry(const BlackBerry::Platform::String& sourceOrigin, const BlackBerry::Platform::String& destinationOrigin, bool allowDestinationSubdomains);
+    void removeOriginAccessWhitelistEntry(const BlackBerry::Platform::String& sourceOrigin, const BlackBerry::Platform::String& destinationOrigin, bool allowDestinationSubdomains);
 
     LoadState loadState() const { return m_loadState; }
     bool isLoading() const { return m_loadState == WebPagePrivate::Provisional || m_loadState == WebPagePrivate::Committed; }
@@ -444,7 +444,7 @@ public:
     static WebCore::RenderLayer* enclosingPositionedAncestorOrSelfIfPositioned(WebCore::RenderLayer*);
     static WebCore::RenderLayer* enclosingFixedPositionedAncestorOrSelfIfFixedPositioned(WebCore::RenderLayer*);
 
-    static const String& defaultUserAgent();
+    static const BlackBerry::Platform::String& defaultUserAgent();
 
     void setVisible(bool);
 #if ENABLE(PAGE_VISIBILITY_API)
@@ -601,14 +601,13 @@ public:
     bool m_wouldLoadManualScript;
     bool m_wouldSetFocused;
     bool m_wouldSetPageVisibilityState;
+    bool m_cachedFocused;
+    bool m_enableQnxJavaScriptObject;
     Vector<bool> m_cachedPopupListSelecteds;
     int m_cachedPopupListSelectedIndex;
-    WebString m_cachedDateTimeInput;
-    WebString m_cachedColorInput;
+    BlackBerry::Platform::String m_cachedDateTimeInput;
+    BlackBerry::Platform::String m_cachedColorInput;
     WebCore::KURL m_cachedManualScript;
-    bool m_cachedFocused;
-
-    bool m_enableQnxJavaScriptObject;
 
     class DeferredTaskBase {
     public:

@@ -25,19 +25,19 @@
 #include "LayerCompositingThread.h"
 #include "LayerWebKitThread.h"
 #include "WebAnimation_p.h"
-#include "WebString.h"
 
 #include <BlackBerryPlatformMessageClient.h>
+#include <BlackBerryPlatformString.h>
 
 namespace BlackBerry {
 namespace WebKit {
 
 using namespace WebCore;
 
-WebAnimation WebAnimation::fadeAnimation(const WebString& name, float from, float to, double duration)
+WebAnimation WebAnimation::fadeAnimation(const BlackBerry::Platform::String& name, float from, float to, double duration)
 {
     WebAnimation tmp;
-    tmp.d->name = String(name.impl());
+    tmp.d->name = name;
     tmp.d->animation = Animation::create();
     tmp.d->animation->setDuration(duration);
     tmp.d->keyframes = KeyframeValueList(AnimatedPropertyOpacity);
@@ -47,9 +47,9 @@ WebAnimation WebAnimation::fadeAnimation(const WebString& name, float from, floa
     return tmp;
 }
 
-WebString WebAnimation::name() const
+BlackBerry::Platform::String WebAnimation::name() const
 {
-    return d->name.impl();
+    return d->name;
 }
 
 WebAnimation::WebAnimation()

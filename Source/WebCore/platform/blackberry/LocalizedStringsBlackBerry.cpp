@@ -21,6 +21,7 @@
 
 #include "IntSize.h"
 #include "NotImplemented.h"
+#include <BlackBerryPlatformString.h>
 #include <LocaleHandler.h>
 #include <LocalizeResource.h>
 #include <wtf/Vector.h>

@@ -50,7 +50,7 @@ static UserMediaRequestsMap& userMediaRequestsMap()
 
 static PassRefPtr<MediaStreamSource> toMediaStreamSource(const WebMediaStreamSource& src)
 {
-    return MediaStreamSource::create(String::fromUTF8(src.id().c_str()), static_cast<MediaStreamSource::Type>(src.type()), String::fromUTF8(src.name().c_str()));
+    return MediaStreamSource::create(WTF::String::fromUTF8(src.id().c_str()), static_cast<MediaStreamSource::Type>(src.type()), WTF::String::fromUTF8(src.name().c_str()));
 }
 
 static PassRefPtr<MediaStreamDescriptor> toMediaStreamDescriptor(const WebMediaStreamDescriptor& d)
@@ -67,7 +67,7 @@ static PassRefPtr<MediaStreamDescriptor> toMediaStreamDescriptor(const WebMediaS
         videoSources.append(src.release());
     }
 
-    return MediaStreamDescriptor::create(String::fromUTF8(d.label().c_str()), audioSources, videoSources);
+    return MediaStreamDescriptor::create(WTF::String::fromUTF8(d.label().c_str()), audioSources, videoSources);
 }
 
 class WebUserMediaRequestClientImpl : public WebUserMediaRequestClient {
@@ -118,7 +118,7 @@ void UserMediaClientImpl::requestUserMedia(PassRefPtr<UserMediaRequest> prpReque
     OwnPtr<WebUserMediaRequestClientImpl> requestClient = adoptPtr(new WebUserMediaRequestClientImpl(prpRequest));
 
     SecurityOrigin* origin = request->scriptExecutionContext()->securityOrigin();
-    m_page->client()->requestUserMedia(WebUserMediaRequest(request->audio(), request->video(), origin->toString().utf8().data(), requestClient.get()));
+    m_page->client()->requestUserMedia(WebUserMediaRequest(request->audio(), request->video(), origin->toString(), requestClient.get()));
     userMediaRequestsMap().add(request, requestClient.release());
 }
 
@@ -129,7 +129,7 @@ void UserMediaClientImpl::cancelUserMediaRequest(UserMediaRequest* request)
         return;
 
     SecurityOrigin* origin = request->scriptExecutionContext()->securityOrigin();
-    m_page->client()->cancelUserMediaRequest(WebUserMediaRequest(request->audio(), request->video(), origin->toString().utf8().data(), it->value.get()));
+    m_page->client()->cancelUserMediaRequest(WebUserMediaRequest(request->audio(), request->video(), origin->toString(), it->value.get()));
     userMediaRequestsMap().remove(it);
 }
 

@@ -69,7 +69,7 @@ public:
     int cancelJob();
     bool isDeferringLoading() const { return m_deferLoadingCount > 0; }
     void updateDeferLoadingCount(int delta);
-    virtual void notifyStatusReceived(int status, const char* message);
+    virtual void notifyStatusReceived(int status, const BlackBerry::Platform::String& message);
     void handleNotifyStatusReceived(int status, const String& message);
     virtual void notifyHeadersReceived(BlackBerry::Platform::NetworkRequest::HeaderList& headers);
     virtual void notifyMultipartHeaderReceived(const char* key, const char* value);

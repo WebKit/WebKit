@@ -94,7 +94,6 @@ LIST(APPEND WebKit_SOURCES
     blackberry/Api/WebPageCompositor.cpp
     blackberry/Api/WebPageGroupLoadDeferrer.cpp
     blackberry/Api/WebSettings.cpp
-    blackberry/Api/WebString.cpp
     blackberry/Api/WebViewportArguments.cpp
     blackberry/Api/JavaScriptVariant.cpp
     blackberry/WebCoreSupport/AutofillManager.cpp

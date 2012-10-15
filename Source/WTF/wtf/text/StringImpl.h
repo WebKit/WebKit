@@ -43,6 +43,10 @@ typedef const struct __CFString * CFStringRef;
 @class NSString;
 #endif
 
+#if PLATFORM(BLACKBERRY)
+#include <BlackBerryPlatformString.h>
+#endif
+
 // FIXME: This is a temporary layering violation while we move string code to WTF.
 // Landing the file moves in one patch, will follow on with patches to change the namespaces.
 namespace JSC {

@@ -196,8 +196,7 @@ void FrameLoaderClientBlackBerry::dispatchDecidePolicyForResponse(FramePolicyFun
         policy = PolicyDownload;
     else if (canShowMIMEType(response.mimeType()))
         policy = PolicyUse;
-    else if ((ResourceRequest::TargetIsMainFrame == request.targetType())
-             && m_webPagePrivate->m_client->downloadAllowed(request.url().string().utf8().data()))
+    else if (ResourceRequest::TargetIsMainFrame == request.targetType() && m_webPagePrivate->m_client->downloadAllowed(request.url().string()))
         policy = PolicyDownload;
 
     (m_frame->loader()->policyChecker()->*function)(policy);
@@ -405,7 +404,7 @@ PassRefPtr<DocumentLoader> FrameLoaderClientBlackBerry::createDocumentLoader(con
             String aboutWhat = request.url().string().substring(6);
             source = aboutData(aboutWhat);
         } else if (request.url().protocolIs("rtsp"))
-            source = BlackBerry::Platform::mediaDocument(request.url().string().utf8().data()).c_str();
+            source = BlackBerry::Platform::mediaDocument(request.url().string());
 
         if (!source.isEmpty()) {
             // Always ignore existing substitute data if any.
@@ -596,10 +595,10 @@ void FrameLoaderClientBlackBerry::dispatchDidFinishLoad()
     // Process document metadata.
     RefPtr<NodeList> nodeList = headElement->getElementsByTagName(HTMLNames::metaTag.localName());
     unsigned int size = nodeList->length();
-    ScopeArray<WebString> headers;
+    ScopeArray<BlackBerry::Platform::String> headers;
 
     // This may allocate more space than needed since not all meta elements will be http-equiv.
-    headers.reset(new WebString[2 * size]);
+    headers.reset(new BlackBerry::Platform::String[2 * size]);
     unsigned headersLength = 0;
 
     for (unsigned i = 0; i < size; ++i) {
@@ -634,11 +633,11 @@ void FrameLoaderClientBlackBerry::dispatchDidFinishLoad()
                 m_webPagePrivate->m_client->setLargeIcon(href.latin1().data());
             else if (WTF::equalIgnoringCase(linkElement->rel(), "search")) {
                 if (WTF::equalIgnoringCase(linkElement->type(), "application/opensearchdescription+xml"))
-                    m_webPagePrivate->m_client->setSearchProviderDetails(title.utf8().data(), href.utf8().data());
+                    m_webPagePrivate->m_client->setSearchProviderDetails(title, href);
             } else if (WTF::equalIgnoringCase(linkElement->rel(), "alternate")
                 && (WTF::equalIgnoringCase(linkElement->type(), "application/rss+xml")
                 || WTF::equalIgnoringCase(linkElement->type(), "application/atom+xml")))
-                m_webPagePrivate->m_client->setAlternateFeedDetails(title.utf8().data(), href.utf8().data());
+                m_webPagePrivate->m_client->setAlternateFeedDetails(title, href);
         }
     }
 
@@ -708,9 +707,7 @@ void FrameLoaderClientBlackBerry::dispatchDidFailProvisionalLoad(const ResourceE
     if (!isMainFrame())
         return;
 
-    String errorPage = m_webPagePrivate->m_client->getErrorPage(error.errorCode()
-            , error.localizedDescription().isEmpty() ? "" : error.localizedDescription().utf8().data()
-            , error.failingURL().isEmpty() ? "" : error.failingURL().utf8().data());
+    String errorPage = m_webPagePrivate->m_client->getErrorPage(error.errorCode(), error.localizedDescription(), error.failingURL());
 
     // Make sure we're still in the provisionalLoad state - getErrorPage runs a
     // nested event loop while it's waiting for client resources to load so
@@ -945,7 +942,7 @@ void FrameLoaderClientBlackBerry::notifyBackForwardListChanged() const
 
 Frame* FrameLoaderClientBlackBerry::dispatchCreatePage(const NavigationAction& navigation)
 {
-    WebPage* webPage = m_webPagePrivate->m_client->createWindow(0, 0, -1, -1, WebPageClient::FlagWindowDefault, navigation.url().string(), WebString());
+    WebPage* webPage = m_webPagePrivate->m_client->createWindow(0, 0, -1, -1, WebPageClient::FlagWindowDefault, navigation.url().string(), BlackBerry::Platform::String::emptyString());
     if (!webPage)
         return 0;
 
@@ -977,8 +974,8 @@ void FrameLoaderClientBlackBerry::dispatchWillSendRequest(DocumentLoader* docLoa
     m_webPagePrivate->m_client->populateCustomHeaders(platformRequest);
     const NetworkRequest::HeaderList& headerLists = platformRequest.getHeaderListRef();
     for (NetworkRequest::HeaderList::const_iterator it = headerLists.begin(); it != headerLists.end(); ++it) {
-        std::string headerString = it->first;
-        std::string headerValueString = it->second;
+        BlackBerry::Platform::String headerString = it->first;
+        BlackBerry::Platform::String headerValueString = it->second;
         request.setHTTPHeaderField(String::fromUTF8WithLatin1Fallback(headerString.data(), headerString.length()), String::fromUTF8WithLatin1Fallback(headerValueString.data(), headerValueString.length()));
     }
     if (!isMainResourceLoad) {
@@ -1024,7 +1021,7 @@ bool FrameLoaderClientBlackBerry::shouldUseCredentialStorage(DocumentLoader* loa
 
 void FrameLoaderClientBlackBerry::loadIconExternally(const String& originalPageUrl, const String& finalPageUrl, const String& iconUrl)
 {
-    m_webPagePrivate->m_client->setIconForUrl(originalPageUrl.utf8().data(), finalPageUrl.utf8().data(), iconUrl.utf8().data());
+    m_webPagePrivate->m_client->setIconForUrl(originalPageUrl, finalPageUrl, iconUrl);
 }
 
 void FrameLoaderClientBlackBerry::saveViewStateToItem(HistoryItem* item)
@@ -1182,7 +1179,7 @@ PassRefPtr<FrameNetworkingContext> FrameLoaderClientBlackBerry::createNetworking
 
 void FrameLoaderClientBlackBerry::startDownload(const ResourceRequest& request, const String& suggestedName)
 {
-    m_webPagePrivate->load(request.url().string().utf8().data(), 0, "GET", NetworkRequest::UseProtocolCachePolicy, 0, 0, 0, 0, false, false, true, "", suggestedName.utf8().data());
+    m_webPagePrivate->load(request.url().string(), BlackBerry::Platform::String::emptyString(), "GET", NetworkRequest::UseProtocolCachePolicy, 0, 0, 0, 0, false, false, true, "", suggestedName);
 }
 
 void FrameLoaderClientBlackBerry::download(ResourceHandle* handle, const ResourceRequest&, const ResourceRequest&, const ResourceResponse& r)
@@ -1211,7 +1208,7 @@ void FrameLoaderClientBlackBerry::dispatchDidReceiveIcon()
     base64Encode(static_cast<const char*>(data->data()), data->size(), out);
     out.append('\0'); // Make it null-terminated.
     String iconUrl = iconDatabase().synchronousIconURLForPageURL(url);
-    m_webPagePrivate->m_client->setFavicon(out.data(), iconUrl.utf8().data());
+    m_webPagePrivate->m_client->setFavicon(out.data(), iconUrl);
     data->unref();
 }
 

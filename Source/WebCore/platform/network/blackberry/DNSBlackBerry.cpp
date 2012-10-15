@@ -31,7 +31,7 @@ void prefetchDNS(const String& host)
 {
     if (host.isEmpty())
         return;
-    BlackBerry::Platform::prefetchDNS(host.latin1().data());
+    BlackBerry::Platform::prefetchDNS(host);
 }
 
 }

@@ -31,18 +31,19 @@
 
 #include "NotImplemented.h"
 #include <BlackBerryPlatformCommonFunctions.h>
+#include <BlackBerryPlatformString.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
 
 String MIMETypeRegistry::getMIMETypeForExtension(const String& extension)
 {
-    return String(BlackBerry::Platform::getMIMETypeForExtension(extension.lower().utf8().data()).c_str());
+    return BlackBerry::Platform::getMIMETypeForExtension(extension.lower());
 }
 
 String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& type)
 {
-    return String(BlackBerry::Platform::getPreferredExtensionForMIMEType(type.lower().utf8().data()).c_str());
+    return BlackBerry::Platform::getPreferredExtensionForMIMEType(type.lower());
 }
 
 bool MIMETypeRegistry::isApplicationPluginMIMEType(const String&)

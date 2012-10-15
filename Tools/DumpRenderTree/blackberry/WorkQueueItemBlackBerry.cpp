@@ -61,7 +61,7 @@ bool LoadHTMLStringItem::invoke() const
     JSStringGetUTF8CString(m_content.get(), content.get(), contentSize);
     JSStringGetUTF8CString(m_baseURL.get(), baseURL.get(), baseURLSize);
     JSStringGetUTF8CString(m_unreachableURL.get(), unreachableURL.get(), unreachableURLSize);
-    BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->loadString(content.get(), baseURL.get(), "text/html", unreachableURLSize ? unreachableURL.get() : 0);
+    BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->loadString(content.get(), baseURL.get(), "text/html", unreachableURLSize ? unreachableURL.get() : "");
     return true;
 }
 
@@ -74,11 +74,11 @@ bool ReloadItem::invoke() const
 bool ScriptItem::invoke() const
 {
     BlackBerry::WebKit::JavaScriptDataType type;
-    BlackBerry::WebKit::WebString result;
+    BlackBerry::Platform::String result;
     size_t scriptArrSize = JSStringGetMaximumUTF8CStringSize(m_script.get());
     OwnArrayPtr<char> script = adoptArrayPtr(new char[scriptArrSize]);
     JSStringGetUTF8CString(m_script.get(), script.get(), scriptArrSize);
-    BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->executeJavaScript(script.get(), type, result);
+    BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->executeJavaScript(BlackBerry::Platform::String::fromRawData(script.get(), scriptArrSize), type, result);
     return true;
 }
 

@@ -24,16 +24,19 @@
 #include <BlackBerryPlatformPrimitives.h>
 
 namespace BlackBerry {
+namespace Platform {
+class String;
+}
+
 namespace WebKit {
 
 class WebAnimation;
 class WebOverlayPrivate;
-class WebString;
 
 /**
  * Compositing thread only
  *
- * Note that the WebAnimation and WebString classes are not thread safe, but
+ * Note that the WebAnimation class is not thread safe, but
  * reentrant, and have to be created on the thread where they'll be used.
  */
 class BLACKBERRY_EXPORT WebOverlayOverride {
@@ -49,7 +52,7 @@ public:
     void setOpacity(float);
 
     void addAnimation(const WebAnimation&);
-    void removeAnimation(const WebString& name);
+    void removeAnimation(const BlackBerry::Platform::String& name);
 
 private:
     friend class WebOverlayPrivate;

@@ -40,11 +40,13 @@ class VisibleSelection;
 }
 
 namespace BlackBerry {
+namespace Platform {
+class String;
+}
 
 namespace WebKit {
 
 class WebPagePrivate;
-class WebString;
 
 class SelectionHandler {
 public:
@@ -55,7 +57,7 @@ public:
     void setSelectionActive(bool active) { m_selectionActive = active; }
 
     void cancelSelection();
-    WebString selectedText() const;
+    BlackBerry::Platform::String selectedText() const;
 
     bool selectionContains(const WebCore::IntPoint&);
 

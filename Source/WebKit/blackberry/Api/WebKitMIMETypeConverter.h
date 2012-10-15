@@ -20,13 +20,16 @@
 #define WebKitMIMETypeConverter_h
 
 #include "BlackBerryGlobal.h"
-#include <string>
 
 namespace BlackBerry {
+namespace Platform {
+class String;
+}
+
 namespace WebKit {
 
-BLACKBERRY_EXPORT bool getExtensionForMimeType(const std::string& mime, std::string& extension);
-BLACKBERRY_EXPORT bool getMimeTypeForExtension(const std::string& extension, std::string& mimeType);
+BLACKBERRY_EXPORT bool getExtensionForMimeType(const BlackBerry::Platform::String& mime, BlackBerry::Platform::String& extension);
+BLACKBERRY_EXPORT bool getMimeTypeForExtension(const BlackBerry::Platform::String& extension, BlackBerry::Platform::String& mimeType);
 
 } // namespace WebKit
 } // namespace BlackBerry

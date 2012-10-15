@@ -193,7 +193,7 @@ void DumpRenderTree::runTest(const String& url)
     FILE* current = fopen(m_currentTestFile.utf8().data(), "w");
     fwrite(m_currentTest->utf8().data(), 1, m_currentTest->utf8().length(), current);
     fclose(current);
-    m_page->load(url.utf8().data(), 0, false);
+    m_page->load(url, BlackBerry::Platform::String::emptyString(), false);
 }
 
 void DumpRenderTree::doneDrt()

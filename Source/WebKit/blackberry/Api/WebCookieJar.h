@@ -24,10 +24,13 @@
 #include <vector>
 
 namespace BlackBerry {
+namespace Platform {
+class String;
+}
+
 namespace WebKit {
 
 class WebPage;
-class WebString;
 
 /**
  * Represents the cookie database.
@@ -41,7 +44,7 @@ public:
      *
      * All cookies whose domain and path match the provided URL will be returned.
      */
-    std::vector<WebString> cookies(const char* url);
+    std::vector<BlackBerry::Platform::String> cookies(const BlackBerry::Platform::String& url);
 
     /**
      * This will add the cookies provided in the list to the cookie database.
@@ -52,7 +55,7 @@ public:
      * If no domain and/or path is provided in a cookie, the domain and/or path
      * will be inferred from the provided URL.
      */
-    void setCookies(const char* url, const std::vector<WebString>& cookies);
+    void setCookies(const BlackBerry::Platform::String& url, const std::vector<BlackBerry::Platform::String>& cookies);
 
 private:
     friend class WebPage;

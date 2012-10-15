@@ -27,9 +27,8 @@
 #include "KURL.h"
 #include "Logging.h"
 #include "PageClientBlackBerry.h"
-#include "WebString.h"
 
-using BlackBerry::WebKit::WebString;
+#include <BlackBerryPlatformString.h>
 
 namespace WebCore {
 
@@ -41,7 +40,7 @@ CredentialManager& credentialManager()
     return *credentialManager;
 }
 
-void CredentialManager::autofillAuthenticationChallenge(const ProtectionSpace& protectionSpace, WebString& username, WebString& password)
+void CredentialManager::autofillAuthenticationChallenge(const ProtectionSpace& protectionSpace, BlackBerry::Platform::String& username, BlackBerry::Platform::String& password)
 {
     if (credentialBackingStore().hasNeverRemember(protectionSpace))
         return;

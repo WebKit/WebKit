@@ -37,7 +37,7 @@ class WebAnimationPrivate;
  */
 class BLACKBERRY_EXPORT WebAnimation {
 public:
-    static WebAnimation fadeAnimation(const WebString& name, float from, float to, double duration);
+    static WebAnimation fadeAnimation(const BlackBerry::Platform::String& name, float from, float to, double duration);
 
     WebAnimation();
     WebAnimation(const WebAnimation&);
@@ -45,7 +45,7 @@ public:
 
     WebAnimation& operator=(const WebAnimation&);
 
-    WebString name() const;
+    BlackBerry::Platform::String name() const;
 
 protected:
     friend class WebOverlay;

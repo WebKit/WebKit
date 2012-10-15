@@ -39,12 +39,12 @@ public:
 
     static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
     static void registerMediaEngine(MediaEngineRegistrar);
-    static void getSupportedTypes(HashSet<String>&);
-    static MediaPlayer::SupportsType supportsType(const String&, const String&, const KURL&);
+    static void getSupportedTypes(HashSet<WTF::String>&);
+    static MediaPlayer::SupportsType supportsType(const WTF::String&, const WTF::String&, const KURL&);
     static void notifyAppActivatedEvent(bool);
-    static void setCertificatePath(const String&);
+    static void setCertificatePath(const WTF::String&);
 
-    virtual void load(const String& url);
+    virtual void load(const WTF::String& url);
     virtual void cancelLoad();
 
     virtual void prepareToPlay();
@@ -143,15 +143,15 @@ public:
     virtual bool isTabVisible() const;
     virtual int showErrorDialog(BlackBerry::Platform::PlatformPlayer::Error);
     virtual BlackBerry::Platform::Graphics::Window* platformWindow();
-    virtual BlackBerry::Platform::WebMediaStreamDescriptor lookupMediaStream(const std::string& url);
+    virtual BlackBerry::Platform::WebMediaStreamDescriptor lookupMediaStream(const BlackBerry::Platform::String& url);
 
 private:
     MediaPlayerPrivate(MediaPlayer*);
 
     void updateStates();
-    String userAgent(const String&) const;
+    WTF::String userAgent(const WTF::String&) const;
 
-    virtual String engineDescription() const { return "BlackBerry"; }
+    virtual WTF::String engineDescription() const { return "BlackBerry"; }
 
     MediaPlayer* m_webCorePlayer;
     BlackBerry::Platform::PlatformPlayer* m_platformPlayer;
