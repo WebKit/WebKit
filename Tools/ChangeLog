@@ -1,3 +1,14 @@
+2012-10-11  Kinuko Yasuda  <kinuko@chromium.org>
+
+        [chromium] Removes unnecessary dependencies in DumpRenderTree.gyp
+        https://bugs.webkit.org/show_bug.cgi?id=99132
+
+        Reviewed by Kent Tamura.
+
+        Removing webkit_support:blob dependency for DumpRenderTree target as it doesn't seem necessary.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
 2012-10-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Buildfix for newer Qt5.
