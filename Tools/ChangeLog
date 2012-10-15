@@ -1,3 +1,17 @@
+2012-10-15  Zan Dobersek  <zandobersek@gmail.com>
+
+        [TestResultServer] TestExpectations should only be loaded for the flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=99245
+
+        Reviewed by Ojan Vafai.
+
+        Only load the TestExpectations when using the flakiness dashboard. Other dashboards
+        don't need them so there's no reason to load them.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (isFlakinessDashboard):
+        (appendJSONScriptElements):
+
 2012-10-15  Zoltan Horvath  <zoltan@webkit.org>
 
         [chromium] Provide used JSHeap size in chromium's DRT for pageloadtest memory measurements 

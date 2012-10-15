@@ -587,6 +587,11 @@ function isTreeMap()
     return endsWith(window.location.pathname, 'treemap.html');
 }
 
+function isFlakinessDashboard()
+{
+    return endsWith(window.location.pathname, 'flakiness_dashboard.html');
+}
+
 function appendJSONScriptElementFor(builderName)
 {
     var resultsFilename;
@@ -617,7 +622,7 @@ function appendJSONScriptElements()
     for (var builderName in g_builders)
         appendJSONScriptElementFor(builderName);
 
-    g_waitingOnExpectations = isLayoutTestResults() && !isTreeMap();
+    g_waitingOnExpectations = isLayoutTestResults() && isFlakinessDashboard();
     if (g_waitingOnExpectations)
         requestExpectationsFiles();
 }
