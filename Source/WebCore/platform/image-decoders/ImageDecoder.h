@@ -177,10 +177,10 @@ namespace WebCore {
         Vector<PixelData> m_backingStore;
         PixelData* m_bytes; // The memory is backed by m_backingStore.
         IntSize m_size;
-        bool m_hasAlpha;
         // FIXME: Do we need m_colorProfile anymore?
         ColorProfile m_colorProfile;
 #endif
+        bool m_hasAlpha;
         IntRect m_originalFrameRect; // This will always just be the entire
                                      // buffer except for GIF frames whose
                                      // original rect was smaller than the

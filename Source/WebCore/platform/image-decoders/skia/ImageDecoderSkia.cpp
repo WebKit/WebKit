@@ -30,7 +30,8 @@
 namespace WebCore {
 
 ImageFrame::ImageFrame()
-    : m_status(FrameEmpty)
+    : m_hasAlpha(false)
+    , m_status(FrameEmpty)
     , m_duration(0)
     , m_disposalMethod(DisposeNotSpecified)
     , m_premultiplyAlpha(true)
@@ -51,6 +52,9 @@ ImageFrame& ImageFrame::operator=(const ImageFrame& other)
     setDuration(other.duration());
     setDisposalMethod(other.disposalMethod());
     setPremultiplyAlpha(other.premultiplyAlpha());
+    // Be sure that this is called after we've called setStatus(), since we
+    // look at our status to know what to do with the alpha value.
+    setHasAlpha(other.hasAlpha());
     return *this;
 }
 
@@ -67,6 +71,7 @@ void ImageFrame::clearPixelData()
 void ImageFrame::zeroFillPixelData()
 {
     m_bitmap.bitmap().eraseARGB(0, 0, 0, 0);
+    m_hasAlpha = true;
 }
 
 bool ImageFrame::copyBitmapData(const ImageFrame& other)
@@ -99,12 +104,20 @@ NativeImagePtr ImageFrame::asNewNativeImage() const
 
 bool ImageFrame::hasAlpha() const
 {
-    return !m_bitmap.bitmap().isOpaque();
+    return m_hasAlpha;
 }
 
 void ImageFrame::setHasAlpha(bool alpha)
 {
-    m_bitmap.bitmap().setIsOpaque(!alpha);
+    m_hasAlpha = alpha;
+
+    // If the frame is not fully loaded, there will be transparent pixels,
+    // so we can't tell skia we're opaque, even for image types that logically
+    // always are (e.g. jpeg).
+    bool isOpaque = !m_hasAlpha;
+    if (m_status != FrameComplete)
+        isOpaque = false;
+    m_bitmap.bitmap().setIsOpaque(isOpaque);
 }
 
 void ImageFrame::setColorProfile(const ColorProfile& colorProfile)
@@ -116,8 +129,10 @@ void ImageFrame::setColorProfile(const ColorProfile& colorProfile)
 void ImageFrame::setStatus(FrameStatus status)
 {
     m_status = status;
-    if (m_status == FrameComplete)
+    if (m_status == FrameComplete) {
+        m_bitmap.bitmap().setIsOpaque(!m_hasAlpha);
         m_bitmap.setDataComplete();  // Tell the bitmap it's done.
+    }
 }
 
 int ImageFrame::width() const
