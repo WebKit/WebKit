@@ -30,7 +30,6 @@
 
 #include "config.h"
 #include "TestEventPrinter.h"
-#include "v8.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -56,12 +55,6 @@ void TestEventPrinter::handleTimedOut() const
 {
     fprintf(stderr, "FAIL: Timed out waiting for notifyDone to be called\n");
     fprintf(stdout, "FAIL: Timed out waiting for notifyDone to be called\n");
-}
-
-void TestEventPrinter::handleDumpMemoryHeader() const
-{
-    v8::HeapStatistics heapStatistics;
-    printf("DumpJSHeap: %li\n", heapStatistics.used_heap_size());
 }
 
 void TestEventPrinter::handleTextHeader() const

@@ -575,7 +575,6 @@ void TestShell::dump()
     if (m_params.dumpTree) {
         dumpedAnything = true;
         m_printer.handleTextHeader();
-        m_printer.handleDumpMemoryHeader();
         // Text output: the test page can request different types of output
         // which we handle here.
         if (!shouldDumpAsText) {
