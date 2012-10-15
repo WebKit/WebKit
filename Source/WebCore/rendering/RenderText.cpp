@@ -58,7 +58,7 @@ struct SameSizeAsRenderText : public RenderObject {
     uint32_t bitfields : 16;
     float widths[4];
     String text;
-    void* pointers[2];
+    void* pointers[3];
 };
 
 COMPILE_ASSERT(sizeof(RenderText) == sizeof(SameSizeAsRenderText), RenderText_should_stay_small);
@@ -151,6 +151,11 @@ RenderText::RenderText(Node* node, PassRefPtr<StringImpl> str)
 {
     ASSERT(m_text);
 
+    m_is8Bit = m_text.is8Bit();
+    if (is8Bit())
+        m_data.characters8 = m_text.characters8();
+    else
+        m_data.characters16 = m_text.characters16();
     m_isAllASCII = m_text.containsOnlyASCII();
     m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
     setIsText();
@@ -755,7 +760,7 @@ ALWAYS_INLINE float RenderText::widthFromCache(const Font& f, int start, int len
         return w;
     }
 
-    TextRun run = RenderBlock::constructTextRun(const_cast<RenderText*>(this), f, text()->characters() + start, len, style());
+    TextRun run = RenderBlock::constructTextRun(const_cast<RenderText*>(this), f, this, start, len, style());
     run.setCharactersLength(textLength() - start);
     ASSERT(run.charactersLength() >= run.length());
 
@@ -954,7 +959,6 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
     const Font& f = styleToUse->font(); // FIXME: This ignores first-line.
     float wordSpacing = styleToUse->wordSpacing();
     int len = textLength();
-    const UChar* txt = characters();
     LazyLineBreakIterator breakIterator(m_text, styleToUse->locale());
     bool needsWordSpacing = false;
     bool ignoringSpaces = false;
@@ -992,7 +996,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
     bool breakAll = (styleToUse->wordBreak() == BreakAllWordBreak || styleToUse->wordBreak() == BreakWordBreak) && styleToUse->autoWrap();
 
     for (int i = 0; i < len; i++) {
-        UChar c = txt[i];
+        UChar c = characterAt(i);
 
         bool previousCharacterIsSpace = isSpace;
 
@@ -1044,8 +1048,8 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
             j++;
             if (j == len)
                 break;
-            c = txt[j];
-            if (isBreakable(breakIterator, j, nextBreakable, breakNBSP) && txt[j - 1] != softHyphen)
+            c = characterAt(j);
+            if (isBreakable(breakIterator, j, nextBreakable, breakNBSP) && characterAt(j - 1) != softHyphen)
                 break;
             if (breakAll) {
                 betweenWords = false;
@@ -1067,7 +1071,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
 
             if (w > maxWordWidth) {
                 int suffixStart;
-                float maxFragmentWidth = maxWordFragmentWidth(this, styleToUse, f, txt + i, wordLen, minimumPrefixLength, minimumSuffixLength, suffixStart);
+                float maxFragmentWidth = maxWordFragmentWidth(this, styleToUse, f, characters() + i, wordLen, minimumPrefixLength, minimumSuffixLength, suffixStart);
 
                 if (suffixStart) {
                     float suffixWidth;
@@ -1142,7 +1146,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
                     m_maxWidth = currMaxWidth;
                 currMaxWidth = 0;
             } else {
-                TextRun run = RenderBlock::constructTextRun(this, f, txt + i, 1, styleToUse);
+                TextRun run = RenderBlock::constructTextRun(this, f, this, i, 1, styleToUse);
                 run.setCharactersLength(len - i);
                 ASSERT(run.charactersLength() >= run.length());
                 run.setTabSize(!style()->collapseWhiteSpace(), style()->tabSize());
@@ -1418,6 +1422,11 @@ void RenderText::setTextInternal(PassRefPtr<StringImpl> text)
     ASSERT(m_text);
     ASSERT(!isBR() || (textLength() == 1 && m_text[0] == '\n'));
 
+    m_is8Bit = m_text.is8Bit();
+    if (is8Bit())
+        m_data.characters8 = m_text.characters8();
+    else
+        m_data.characters16 = m_text.characters16();
     m_isAllASCII = m_text.containsOnlyASCII();
     m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
 }
@@ -1540,7 +1549,7 @@ float RenderText::width(unsigned from, unsigned len, float xPos, bool firstLine,
 float RenderText::width(unsigned from, unsigned len, const Font& f, float xPos, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     ASSERT(from + len <= textLength());
-    if (!characters())
+    if (!textLength())
         return 0;
 
     float w;
@@ -1559,7 +1568,7 @@ float RenderText::width(unsigned from, unsigned len, const Font& f, float xPos, 
         } else
             w = widthFromCache(f, from, len, xPos, fallbackFonts, glyphOverflow);
     } else {
-        TextRun run = RenderBlock::constructTextRun(const_cast<RenderText*>(this), f, text()->characters() + from, len, style());
+        TextRun run = RenderBlock::constructTextRun(const_cast<RenderText*>(this), f, this, from, len, style());
         run.setCharactersLength(textLength() - from);
         ASSERT(run.charactersLength() >= run.length());
 

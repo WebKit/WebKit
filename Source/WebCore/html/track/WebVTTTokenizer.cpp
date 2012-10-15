@@ -52,13 +52,16 @@ inline bool MarkupTokenizerBase<WebVTTToken, WebVTTTokenizerState>::shouldSkipNu
     return true;
 }
 
-inline bool vectorEqualsString(const Vector<UChar, 32>& vector, const String& string)
+template <typename CharacterType>
+inline bool vectorEqualsString(const Vector<CharacterType, 32>& vector, const String& string)
 {
     if (vector.size() != string.length())
         return false;
-    const UChar* stringData = string.characters();
-    const UChar* vectorData = vector.data();
-    return !memcmp(stringData, vectorData, vector.size() * sizeof(UChar));
+
+    if (!string.length())
+        return true;
+
+    return equal(string.impl(), vector.data(), vector.size());
 }
 
 void WebVTTTokenizer::reset()
@@ -84,11 +87,11 @@ bool WebVTTTokenizer::nextToken(SegmentedString& source, WebVTTToken& token)
     switch (m_state) {
     WEBVTT_BEGIN_STATE(DataState) {
         if (cc == '&') {
-            m_buffer.append(cc);
+            m_buffer.append(static_cast<LChar>(cc));
             WEBVTT_ADVANCE_TO(EscapeState);
         } else if (cc == '<') {
             if (m_token->type() == WebVTTTokenTypes::Uninitialized
-                || vectorEqualsString(m_token->characters(), emptyString()))
+                || vectorEqualsString<UChar>(m_token->characters(), emptyString()))
                 WEBVTT_ADVANCE_TO(TagState);
             else
                 return emitAndResumeIn(source, WebVTTTokenizerState::TagState);
@@ -110,13 +113,13 @@ bool WebVTTTokenizer::nextToken(SegmentedString& source, WebVTTToken& token)
             else if (vectorEqualsString(m_buffer, "&gt"))
                 bufferCharacter('>');
             else {
-                m_buffer.append(cc);
+                m_buffer.append(static_cast<LChar>(cc));
                 m_token->appendToCharacter(m_buffer);
             }
             m_buffer.clear();
             WEBVTT_ADVANCE_TO(DataState);
         } else if (isASCIIAlphanumeric(cc)) {
-            m_buffer.append(cc);
+            m_buffer.append(static_cast<LChar>(cc));
             WEBVTT_ADVANCE_TO(EscapeState);
         } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
             m_token->appendToCharacter(m_buffer);

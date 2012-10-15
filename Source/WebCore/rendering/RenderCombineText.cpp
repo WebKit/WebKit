@@ -73,15 +73,17 @@ void RenderCombineText::adjustTextOrigin(FloatPoint& textOrigin, const FloatRect
         textOrigin.move(boxRect.height() / 2 - ceilf(m_combinedTextWidth) / 2, style()->font().pixelSize());
 }
 
-void RenderCombineText::charactersToRender(int start, const UChar*& characters, int& length) const
+void RenderCombineText::getStringToRender(int start, String& string, int& length) const
 {
+    ASSERT(start >= 0);
     if (m_isCombined) {
-        length = originalText()->length();
-        characters = originalText()->characters();
+        string = originalText();
+        length = string.length();
         return;
     }
  
-    characters = text()->characters() + start;
+    string = text();
+    string = string.substringSharingImpl(static_cast<unsigned>(start), length);
 }
 
 void RenderCombineText::combineText()
@@ -96,7 +98,7 @@ void RenderCombineText::combineText()
     if (style()->isHorizontalWritingMode())
         return;
 
-    TextRun run = RenderBlock::constructTextRun(this, originalFont(), String(text()), style());
+    TextRun run = RenderBlock::constructTextRun(this, originalFont(), this, style());
     FontDescription description = originalFont().fontDescription();
     float emWidth = description.computedSize() * textCombineMargin;
     bool shouldUpdateFont = false;

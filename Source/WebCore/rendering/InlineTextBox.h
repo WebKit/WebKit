@@ -107,7 +107,7 @@ private:
     LayoutUnit selectionHeight();
 
     TextRun constructTextRun(RenderStyle*, const Font&, BufferForAppendingHyphen* = 0) const;
-    TextRun constructTextRun(RenderStyle*, const Font&, const UChar*, int length, int maximumLength, BufferForAppendingHyphen* = 0) const;
+    TextRun constructTextRun(RenderStyle*, const Font&, String, int maximumLength, BufferForAppendingHyphen* = 0) const;
 
 public:
     virtual FloatRect calculateBoundaries() const { return FloatRect(x(), y(), width(), height()); }

@@ -515,25 +515,34 @@ InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj, const LineInfo& l
     return result;
 }
 
+template <typename CharacterType>
+static inline bool endsWithASCIISpaces(const CharacterType* characters, unsigned pos, unsigned end)
+{
+    while (isASCIISpace(characters[pos])) {
+        pos++;
+        if (pos >= end)
+            return true;
+    }
+    return false;
+}
+
 static bool reachedEndOfTextRenderer(const BidiRunList<BidiRun>& bidiRuns)
 {
     BidiRun* run = bidiRuns.logicallyLastRun();
     if (!run)
         return true;
-    unsigned int pos = run->stop();
+    unsigned pos = run->stop();
     RenderObject* r = run->m_object;
     if (!r->isText() || r->isBR())
         return false;
     RenderText* renderText = toRenderText(r);
-    if (pos >= renderText->textLength())
+    unsigned length = renderText->textLength();
+    if (pos >= length)
         return true;
 
-    while (isASCIISpace(renderText->characters()[pos])) {
-        pos++;
-        if (pos >= renderText->textLength())
-            return true;
-    }
-    return false;
+    if (renderText->is8Bit())
+        return endsWithASCIISpaces(renderText->characters8(), pos, length);
+    return endsWithASCIISpaces(renderText->characters16(), pos, length);
 }
 
 RootInlineBox* RenderBlock::constructLine(BidiRunList<BidiRun>& bidiRuns, const LineInfo& lineInfo)
@@ -905,15 +914,19 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
             if (textAlign == JUSTIFY && r != trailingSpaceRun) {
                 if (!isAfterExpansion)
                     toInlineTextBox(r->m_box)->setCanHaveLeadingExpansion(true);
-                unsigned opportunitiesInRun = Font::expansionOpportunityCount(rt->characters() + r->m_start, r->m_stop - r->m_start, r->m_box->direction(), isAfterExpansion);
+                unsigned opportunitiesInRun;
+                if (rt->is8Bit())
+                    opportunitiesInRun = Font::expansionOpportunityCount(rt->characters8() + r->m_start, r->m_stop - r->m_start, r->m_box->direction(), isAfterExpansion);
+                else
+                    opportunitiesInRun = Font::expansionOpportunityCount(rt->characters16() + r->m_start, r->m_stop - r->m_start, r->m_box->direction(), isAfterExpansion);
                 expansionOpportunities.append(opportunitiesInRun);
                 expansionOpportunityCount += opportunitiesInRun;
             }
 
             if (int length = rt->textLength()) {
-                if (!r->m_start && needsWordSpacing && isSpaceOrNewline(rt->characters()[r->m_start]))
+                if (!r->m_start && needsWordSpacing && isSpaceOrNewline(rt->characterAt(r->m_start)))
                     totalLogicalWidth += rt->style(lineInfo.isFirstLine())->font().wordSpacing();
-                needsWordSpacing = !isSpaceOrNewline(rt->characters()[r->m_stop - 1]) && r->m_stop == length;
+                needsWordSpacing = !isSpaceOrNewline(rt->characterAt(r->m_stop - 1)) && r->m_stop == length;
             }
 
             setLogicalWidthForTextRun(lineBox, r, rt, totalLogicalWidth, lineInfo, textBoxDataMap, verticalPositionCache, wordMeasurements);
@@ -2104,7 +2117,7 @@ static bool shouldSkipWhitespaceAfterStartObject(RenderBlock* block, RenderObjec
     RenderObject* next = bidiNextSkippingEmptyInlines(block, o);
     if (next && !next->isBR() && next->isText() && toRenderText(next)->textLength() > 0) {
         RenderText* nextText = toRenderText(next);
-        UChar nextChar = nextText->characters()[0];
+        UChar nextChar = nextText->characterAt(0);
         if (nextText->style()->isCollapsibleWhiteSpace(nextChar)) {
             addMidpoint(lineMidpointState, InlineIterator(0, o, 0));
             return true;
@@ -2123,7 +2136,7 @@ static ALWAYS_INLINE float textWidth(RenderText* text, unsigned from, unsigned l
     if (layout)
         return Font::width(*layout, from, len, fallbackFonts);
 
-    TextRun run = RenderBlock::constructTextRun(text, font, text->characters() + from, len, text->style());
+    TextRun run = RenderBlock::constructTextRun(text, font, text, from, len, text->style());
     run.setCharactersLength(text->textLength() - from);
     ASSERT(run.charactersLength() >= run.length());
 
@@ -2133,14 +2146,21 @@ static ALWAYS_INLINE float textWidth(RenderText* text, unsigned from, unsigned l
     return font.width(run, fallbackFonts, &glyphOverflow);
 }
 
-static void tryHyphenating(RenderText* text, const Font& font, const AtomicString& localeIdentifier, unsigned consecutiveHyphenatedLines, int consecutiveHyphenatedLinesLimit, int minimumPrefixLength, int minimumSuffixLength, int lastSpace, int pos, float xPos, int availableWidth, bool isFixedPitch, bool collapseWhiteSpace, int lastSpaceWordSpacing, InlineIterator& lineBreak, int nextBreakable, bool& hyphenated)
+static void tryHyphenating(RenderText* text, const Font& font, const AtomicString& localeIdentifier, unsigned consecutiveHyphenatedLines, int consecutiveHyphenatedLinesLimit, int minimumPrefixLimit, int minimumSuffixLimit, unsigned lastSpace, unsigned pos, float xPos, int availableWidth, bool isFixedPitch, bool collapseWhiteSpace, int lastSpaceWordSpacing, InlineIterator& lineBreak, int nextBreakable, bool& hyphenated)
 {
     // Map 'hyphenate-limit-{before,after}: auto;' to 2.
-    if (minimumPrefixLength < 0)
-        minimumPrefixLength = 2;
+    unsigned minimumPrefixLength;
+    unsigned minimumSuffixLength;
 
-    if (minimumSuffixLength < 0)
+    if (minimumPrefixLimit < 0)
+        minimumPrefixLength = 2;
+    else
+        minimumPrefixLength = static_cast<unsigned>(minimumPrefixLimit);
+
+    if (minimumSuffixLimit < 0)
         minimumSuffixLength = 2;
+    else
+        minimumSuffixLength = static_cast<unsigned>(minimumSuffixLimit);
 
     if (pos - lastSpace <= minimumSuffixLength)
         return;
@@ -2156,7 +2176,7 @@ static void tryHyphenating(RenderText* text, const Font& font, const AtomicStrin
     if (maxPrefixWidth <= font.pixelSize() * 5 / 4)
         return;
 
-    TextRun run = RenderBlock::constructTextRun(text, font, text->characters() + lastSpace, pos - lastSpace, text->style());
+    TextRun run = RenderBlock::constructTextRun(text, font, text, lastSpace, pos - lastSpace, text->style());
     run.setCharactersLength(text->textLength() - lastSpace);
     ASSERT(run.charactersLength() >= run.length());
 
@@ -2164,22 +2184,22 @@ static void tryHyphenating(RenderText* text, const Font& font, const AtomicStrin
     run.setXPos(xPos + lastSpaceWordSpacing);
 
     unsigned prefixLength = font.offsetForPosition(run, maxPrefixWidth, false);
-    if (prefixLength < static_cast<unsigned>(minimumPrefixLength))
+    if (prefixLength < minimumPrefixLength)
         return;
 
-    prefixLength = lastHyphenLocation(text->characters() + lastSpace, pos - lastSpace, min(prefixLength, static_cast<unsigned>(pos - lastSpace - minimumSuffixLength)) + 1, localeIdentifier);
-    if (!prefixLength || prefixLength < static_cast<unsigned>(minimumPrefixLength))
+    prefixLength = lastHyphenLocation(text->characters() + lastSpace, pos - lastSpace, min(prefixLength, pos - lastSpace - minimumSuffixLength) + 1, localeIdentifier);
+    if (!prefixLength || prefixLength < minimumPrefixLength)
         return;
 
     // When lastSapce is a space, which it always is except sometimes at the beginning of a line or after collapsed
     // space, it should not count towards hyphenate-limit-before.
-    if (prefixLength == static_cast<unsigned>(minimumPrefixLength)) {
-        UChar characterAtLastSpace = text->characters()[lastSpace];
+    if (prefixLength == minimumPrefixLength) {
+        UChar characterAtLastSpace = text->characterAt(lastSpace);
         if (characterAtLastSpace == ' ' || characterAtLastSpace == '\n' || characterAtLastSpace == '\t' || characterAtLastSpace == noBreakSpace)
             return;
     }
 
-    ASSERT(pos - lastSpace - prefixLength >= static_cast<unsigned>(minimumSuffixLength));
+    ASSERT(pos - lastSpace - prefixLength >= minimumSuffixLength);
 
 #if !ASSERT_DISABLED
     float prefixWidth = hyphenWidth + textWidth(text, lastSpace, prefixLength, font, xPos, isFixedPitch, collapseWhiteSpace) + lastSpaceWordSpacing;
@@ -2499,7 +2519,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
             bool isFixedPitch = f.isFixedPitch();
             bool canHyphenate = style->hyphens() == HyphensAuto && WebCore::canHyphenate(style->locale());
 
-            int lastSpace = current.m_pos;
+            unsigned lastSpace = current.m_pos;
             float wordSpacing = currentStyle->wordSpacing();
             float lastSpaceWordSpacing = 0;
             float wordSpacingForWordMeasurement = 0;
@@ -2642,7 +2662,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
                                 lineInfo.setPreviousLineBrokeCleanly(true);
                                 wordMeasurement.endOffset = lBreak.m_pos;
                             }
-                            if (lBreak.m_obj && lBreak.m_pos && lBreak.m_obj->isText() && toRenderText(lBreak.m_obj)->textLength() && toRenderText(lBreak.m_obj)->characters()[lBreak.m_pos - 1] == softHyphen && style->hyphens() != HyphensNone)
+                            if (lBreak.m_obj && lBreak.m_pos && lBreak.m_obj->isText() && toRenderText(lBreak.m_obj)->textLength() && toRenderText(lBreak.m_obj)->characterAt(lBreak.m_pos - 1) == softHyphen && style->hyphens() != HyphensNone)
                                 m_hyphenated = true;
                             if (lBreak.m_pos && lBreak.m_pos != (unsigned)wordMeasurement.endOffset && !wordMeasurement.width) {
                                 if (charWidth) {
@@ -2783,7 +2803,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
             else {
                 RenderText* nextText = toRenderText(next);
                 if (nextText->textLength()) {
-                    UChar c = nextText->characters()[0];
+                    UChar c = nextText->characterAt(0);
                     checkForBreak = (c == ' ' || c == '\t' || (c == '\n' && !next->preservesNewline()));
                     // If the next item on the line is text, and if we did not end with
                     // a space, then the next text run continues our word (and so it needs to

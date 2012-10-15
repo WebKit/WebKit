@@ -382,9 +382,9 @@ float InlineFlowBox::placeBoxesInInlineDirection(float logicalLeft, bool& needsW
             InlineTextBox* text = toInlineTextBox(curr);
             RenderText* rt = toRenderText(text->renderer());
             if (rt->textLength()) {
-                if (needsWordSpacing && isSpaceOrNewline(rt->characters()[text->start()]))
+                if (needsWordSpacing && isSpaceOrNewline(rt->characterAt(text->start())))
                     logicalLeft += rt->style(isFirstLineStyle())->font().wordSpacing();
-                needsWordSpacing = !isSpaceOrNewline(rt->characters()[text->end()]);
+                needsWordSpacing = !isSpaceOrNewline(rt->characterAt(text->end()));
             }
             text->setLogicalLeft(logicalLeft);
             if (knownToHaveNoOverflow())

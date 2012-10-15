@@ -77,7 +77,7 @@ public:
     inline bool atTextParagraphSeparator()
     {
         return m_obj && m_obj->preservesNewline() && m_obj->isText() && toRenderText(m_obj)->textLength()
-            && !toRenderText(m_obj)->isWordBreak() && toRenderText(m_obj)->characters()[m_pos] == '\n';
+            && !toRenderText(m_obj)->isWordBreak() && toRenderText(m_obj)->characterAt(m_pos) == '\n';
     }
     
     inline bool atParagraphSeparator()
@@ -361,7 +361,7 @@ inline UChar InlineIterator::current() const
     if (m_pos >= text->textLength())
         return 0;
 
-    return text->characters()[m_pos];
+    return text->characterAt(m_pos);
 }
 
 inline UChar InlineIterator::previousInSameNode() const
@@ -370,7 +370,7 @@ inline UChar InlineIterator::previousInSameNode() const
         return 0;
 
     RenderText* text = toRenderText(m_obj);
-    return text->characters()[m_pos - 1];
+    return text->characterAt(m_pos - 1);
 }
 
 ALWAYS_INLINE WTF::Unicode::Direction InlineIterator::direction() const

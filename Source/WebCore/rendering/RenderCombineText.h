@@ -32,7 +32,7 @@ public:
 
     void combineText();
     void adjustTextOrigin(FloatPoint& textOrigin, const FloatRect& boxRect) const;
-    void charactersToRender(int start, const UChar*& characters, int& length) const;
+    void getStringToRender(int, String& string, int& length) const;
     bool isCombined() const { return m_isCombined; }
     float combinedTextWidth(const Font& font) const { return font.size(); }
     const Font& originalFont() const { return parent()->style()->font(); }

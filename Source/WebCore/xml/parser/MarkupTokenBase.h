@@ -174,6 +174,12 @@ public:
         m_data.append(character);
     }
 
+    void appendToCharacter(char character)
+    {
+        ASSERT(m_type == TypeSet::Character);
+        m_data.append(character);
+    }
+
     void appendToCharacter(UChar character)
     {
         ASSERT(m_type == TypeSet::Character);
@@ -181,11 +187,10 @@ public:
         m_orAllData |= character;
     }
 
-    template<typename T>
-    void appendToCharacter(T characters)
+    void appendToCharacter(Vector<LChar, 32> characters)
     {
         ASSERT(m_type == TypeSet::Character);
-        m_data.append(characters);
+        m_data.appendVector(characters);
     }
 
     void appendToComment(UChar character)
@@ -304,14 +309,9 @@ public:
         return m_data;
     }
 
-    void setConvertTo8BitIfPossible()
-    {
-        m_convertTo8BitIfPossible = true;
-    }
-
     bool isAll8BitData() const
     {
-        return m_convertTo8BitIfPossible && (m_orAllData <= 0xff);
+        return (m_orAllData <= 0xff);
     }
 
     // FIXME: Distinguish between a missing public identifer and an empty one.

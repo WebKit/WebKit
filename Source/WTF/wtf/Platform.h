@@ -1025,6 +1025,11 @@
 #define ENABLE_PAN_SCROLLING 1
 #endif
 
+/*Add other platforms as they update their platfrom specific code to handle TextRun's with 8 bit data. */
+#if PLATFORM(MAC)
+#define WTF_USE_8BIT_TEXTRUN 1
+#endif
+
 /* Use the QXmlStreamReader implementation for XMLDocumentParser */
 /* Use the QXmlQuery implementation for XSLTProcessor */
 #if PLATFORM(QT)

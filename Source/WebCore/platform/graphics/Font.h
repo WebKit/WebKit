@@ -184,7 +184,10 @@ public:
 
     const SimpleFontData* primaryFont() const;
     const FontData* fontDataAt(unsigned) const;
-    GlyphData glyphDataForCharacter(UChar32, bool mirror, FontDataVariant = AutoVariant) const;
+    inline GlyphData glyphDataForCharacter(UChar32 c, bool mirror, FontDataVariant variant = AutoVariant) const
+    {
+        return glyphDataAndPageForCharacter(c, mirror, variant).first;
+    }
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
     const SimpleFontData* fontDataForCombiningCharacterSequence(const UChar*, size_t length, FontDataVariant) const;
 #endif

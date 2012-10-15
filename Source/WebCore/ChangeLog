@@ -1,3 +1,97 @@
+2012-10-15  Michael Saboff  <msaboff@apple.com>
+
+        Update RenderText to use String instead of UChar* for text
+        https://bugs.webkit.org/show_bug.cgi?id=96979
+
+        Reviewed by Dan Bernstein.
+
+        RenderText now uses a String for text.  It keeps a cached LCHar* or UChar* pointer to the
+        actual text data for performance.  Added a characterAt() indexed accessor to RenderText to avoid the
+        somewhat confusing construct for a RenderText* rt, e.g. (*re)[n] or rt->characters()[n].  This is
+        now written as rt->characterAt(n).
+        Enabled patch in the HTML parser to create 8 bit text data.  Modified TextRun to create 
+        text runs using 8 bit string data where possible.  Added several flavors of RenderBlock::constructTextRun
+        to create TextRuns from RenderText objects including with an offset.  Added an LChar flavor of constructTextRun()
+        as well.  Eliminated the TextRunFlags argument to all but the String flavor as all other flavors used the default
+        parameter.  
+        Encased the code that creates 8 bit TextRun's in #if USE(8BIT_TEXTRUN).  Enabled WTF_USE_8BIT_TEXTRUN
+        for PLATFORM(MAC).  Other platform can update this setting in Platform.h when their platform specific code is
+        updated to TextRun's with 8 bit data.
+        Added many 8/16 bit aware paths.  Cleanup up some int / unsigned confusion in RenderBlockLineLayout.cpp.
+
+        No function change therefore no new tests.
+
+        * html/parser/HTMLTokenizer.cpp:
+        (WebCore::vectorEqualsString):
+        (WebCore::HTMLTokenizer::nextToken):
+        * html/parser/HTMLTokenizer.h:
+        (HTMLTokenizer):
+        * html/track/WebVTTTokenizer.cpp:
+        (WebCore::vectorEqualsString):
+        (WebCore::WebVTTTokenizer::nextToken):
+        * html/track/WebVTTTokenizer.h:
+        (WebVTTTokenizer):
+        * platform/graphics/Font.h:
+        (WebCore::Font::glyphDataForCharacter):
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore):
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::TextRun):
+        (WebCore::TextRun::subRun):
+        (TextRun):
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::TextLayout::isNeeded):
+        (WebCore::TextLayout::constructTextRun):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesInInlineDirection):
+        * rendering/InlineIterator.h:
+        (WebCore::InlineIterator::atTextParagraphSeparator):
+        (WebCore::InlineIterator::current):
+        (WebCore::InlineIterator::previousInSameNode):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::adjustCharactersAndLengthForHyphen):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::constructTextRun):
+        * rendering/InlineTextBox.h:
+        (InlineTextBox):
+        * rendering/RenderBlock.cpp:
+        (WebCore::constructTextRunInternal):
+        (WebCore::RenderBlock::constructTextRun):
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::endsWithASCIISpaces):
+        (WebCore::reachedEndOfTextRenderer):
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine):
+        (WebCore::shouldSkipWhitespaceAfterStartObject):
+        (WebCore::textWidth):
+        (WebCore::tryHyphenating):
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak):
+        * rendering/RenderCombineText.cpp:
+        (WebCore::RenderCombineText::getStringToRender):
+        (WebCore::RenderCombineText::combineText):
+        * rendering/RenderCombineText.h:
+        (RenderCombineText):
+        * rendering/RenderText.cpp:
+        (SameSizeAsRenderText):
+        (WebCore::RenderText::RenderText):
+        (WebCore::RenderText::widthFromCache):
+        (WebCore::RenderText::computePreferredLogicalWidths):
+        (WebCore::RenderText::setTextInternal):
+        (WebCore::RenderText::width):
+        * rendering/RenderText.h:
+        (WebCore::RenderText::is8Bit):
+        (WebCore::RenderText::characters8):
+        (WebCore::RenderText::characters16):
+        (WebCore::RenderText::characterAt):
+        (WebCore::RenderText::operator[]):
+        (RenderText):
+        * xml/parser/MarkupTokenBase.h:
+        (WebCore::MarkupTokenBase::appendToCharacter):
+        (MarkupTokenBase):
+        (WebCore::MarkupTokenBase::isAll8BitData):
+
 2012-10-15  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Scripts for dynamically added script elements are not shown in sources panel.

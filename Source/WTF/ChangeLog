@@ -1,3 +1,21 @@
+2012-10-15  Michael Saboff  <msaboff@apple.com>
+
+        Update RenderText to use String instead of UChar* for text
+        https://bugs.webkit.org/show_bug.cgi?id=96979
+
+        Reviewed by Dan Bernstein.
+
+        Added WTF_USE_8BIT_TEXTRUN to encase code that creates 8 bit TextRun's.  Enabled WTF_USE_8BIT_TEXTRUN
+        for PLATFORM(MAC).  Other platform can update this setting in Platform.h when their platform specific use of
+        TextRun handle 8 bit data.  Added a new Vector::appendVector to allow appending the contents of a vector
+        containing one type to the end of vector containing another.  This is used to append a Vector<LChar> to
+        the end of a Vector<UChar>.
+
+        * wtf/Platform.h:
+        * wtf/Vector.h:
+        (Vector):
+        (WTF::Vector::appendVector):
+
 2012-10-15  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: convert manual size calculation of different WebKit things into MemoryInstrumentation.

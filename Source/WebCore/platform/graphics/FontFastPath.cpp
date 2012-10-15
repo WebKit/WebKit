@@ -42,11 +42,6 @@ using namespace std;
 
 namespace WebCore {
 
-GlyphData Font::glyphDataForCharacter(UChar32 c, bool mirror, FontDataVariant variant) const
-{
-    return glyphDataAndPageForCharacter(c, mirror, variant).first;
-}
-
 static inline std::pair<GlyphData, GlyphPage*> glyphDataAndPageForCharacterWithTextOrientation(UChar32 character, TextOrientation orientation, GlyphData& data, GlyphPage* page, unsigned pageNumber)
 {
     if (orientation == TextOrientationVerticalRight) {

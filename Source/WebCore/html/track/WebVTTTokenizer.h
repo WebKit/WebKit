@@ -67,7 +67,7 @@ public:
 private:
     WebVTTTokenizer();
     
-    Vector<UChar, 32> m_buffer;
+    Vector<LChar, 32> m_buffer;
 };
 
 }

@@ -209,7 +209,7 @@ private:
     bool m_shouldAllowCDATA;
 
     // http://www.whatwg.org/specs/web-apps/current-work/#temporary-buffer
-    Vector<UChar, 32> m_temporaryBuffer;
+    Vector<LChar, 32> m_temporaryBuffer;
 
     // We occationally want to emit both a character token and an end tag
     // token (e.g., when lexing script). We buffer the name of the end tag
