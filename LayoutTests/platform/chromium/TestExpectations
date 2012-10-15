@@ -3440,7 +3440,7 @@ webkit.org/b/81416 fast/dom/wrapper-scope.html [ Failure ]
 webkit.org/b/86439 [ Linux Win ] inspector/extensions/extensions-events.html [ Pass Timeout ]
 webkit.org/b/86439 [ Linux Win Debug ] inspector/extensions/extensions-sidebar.html [ Pass Timeout ]
 
-webkit.org/b/86114 [ Mac Debug ] animations/combo-transform-translate+scale.html [ Failure Pass ]
+webkit.org/b/86114 [ Mac Win Debug ] animations/combo-transform-translate+scale.html [ Failure Pass ]
 
 webkit.org/b/92279 [ Linux Win ] http/tests/inspector/resource-har-pages.html [ Failure Pass Slow ]
 

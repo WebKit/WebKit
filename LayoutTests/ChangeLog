@@ -1,3 +1,9 @@
+2012-10-14  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Chromium] Unreviewed gardening, TestExpectations updated.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-14  Jon Lee  <jonlee@apple.com>
 
         Allow notification origin permission request when no js callback is provided
