@@ -65,7 +65,7 @@ void VideoLayerWebKitThread::setHolePunchRect(const IntRect& rect)
 {
     m_holePunchRect = rect;
 #if DEBUG_VIDEO_CLIPPING
-    BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo, "VideoLayerWebKitThread m_holePunchRect=(x=%d,y=%d,width=%d,height=%d).", m_holePunchRect.x(), m_holePunchRect.y(), m_holePunchRect.width(), m_holePunchRect.height());
+    BBLOG(BlackBerry::Platform::LogLevelInfo, "VideoLayerWebKitThread m_holePunchRect=(x=%d,y=%d,width=%d,height=%d).", m_holePunchRect.x(), m_holePunchRect.y(), m_holePunchRect.width(), m_holePunchRect.height());
 #endif
     setNeedsCommit();
 }
@@ -95,7 +95,7 @@ void VideoLayerWebKitThread::boundsChanged()
         m_holePunchClipRect = holePunchRect();
 
 #if DEBUG_VIDEO_CLIPPING
-    BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo, "VideoLayerWebKitThread m_holePunchClipRect=(x=%d,y=%d,width=%d,height=%d).", m_holePunchClipRect.x(), m_holePunchClipRect.y(), m_holePunchClipRect.width(), m_holePunchClipRect.height());
+    BBLOG(BlackBerry::Platform::LogLevelInfo, "VideoLayerWebKitThread m_holePunchClipRect=(x=%d,y=%d,width=%d,height=%d).", m_holePunchClipRect.x(), m_holePunchClipRect.y(), m_holePunchClipRect.width(), m_holePunchClipRect.height());
 #endif
 }
 

@@ -1063,7 +1063,7 @@ void WebPagePrivate::setLoadState(LoadState state)
     m_loadState = state;
 
 #if DEBUG_WEBPAGE_LOAD
-    Platform::log(Platform::LogLevelInfo, "WebPagePrivate::setLoadState %d", state);
+    BBLOG(Platform::LogLevelInfo, "WebPagePrivate::setLoadState %d", state);
 #endif
 
     switch (m_loadState) {
@@ -1235,7 +1235,7 @@ bool WebPagePrivate::zoomAboutPoint(double unclampedScale, const FloatPoint& anc
 
 #if DEBUG_WEBPAGE_LOAD
     if (loadState() < Finished)
-        Platform::log(Platform::LogLevelInfo, "WebPagePrivate::zoomAboutPoint scale %f anchor (%f, %f)", scale, anchor.x(), anchor.y());
+        BBLOG(Platform::LogLevelInfo, "WebPagePrivate::zoomAboutPoint scale %f anchor (%f, %f)", scale, anchor.x(), anchor.y());
 #endif
 
     // Our current scroll position in float.
@@ -1572,7 +1572,7 @@ void WebPagePrivate::contentsSizeChanged(const IntSize& contentsSize)
     m_contentsSizeChanged = true;
 
 #if DEBUG_WEBPAGE_LOAD
-    Platform::log(Platform::LogLevelInfo, "WebPagePrivate::contentsSizeChanged %dx%d", contentsSize.width(), contentsSize.height());
+    BBLOG(Platform::LogLevelInfo, "WebPagePrivate::contentsSizeChanged %dx%d", contentsSize.width(), contentsSize.height());
 #endif
 }
 
@@ -1643,7 +1643,7 @@ void WebPagePrivate::layoutFinished()
 void WebPagePrivate::zoomToInitialScaleOnLoad()
 {
 #if DEBUG_WEBPAGE_LOAD
-    Platform::log(Platform::LogLevelInfo, "WebPagePrivate::zoomToInitialScaleOnLoad");
+    BBLOG(Platform::LogLevelInfo, "WebPagePrivate::zoomToInitialScaleOnLoad");
 #endif
 
     bool needsLayout = false;
@@ -1661,7 +1661,7 @@ void WebPagePrivate::zoomToInitialScaleOnLoad()
 
     if (contentsSize().isEmpty()) {
 #if DEBUG_WEBPAGE_LOAD
-        Platform::log(Platform::LogLevelInfo, "WebPagePrivate::zoomToInitialScaleOnLoad content is empty!");
+        BBLOG(Platform::LogLevelInfo, "WebPagePrivate::zoomToInitialScaleOnLoad content is empty!");
 #endif
         requestLayoutIfNeeded();
         m_client->resetBitmapZoomScale(currentScale());
@@ -5468,7 +5468,7 @@ void WebPagePrivate::scheduleRootLayerCommit()
     m_needsCommit = true;
     if (!m_rootLayerCommitTimer->isActive()) {
 #if DEBUG_AC_COMMIT
-        Platform::log(Platform::LogLevelCritical, "%s: m_rootLayerCommitTimer->isActive() = %d", WTF_PRETTY_FUNCTION, m_rootLayerCommitTimer->isActive());
+        BBLOG(Platform::LogLevelCritical, "%s: m_rootLayerCommitTimer->isActive() = %d", WTF_PRETTY_FUNCTION, m_rootLayerCommitTimer->isActive());
 #endif
         m_rootLayerCommitTimer->startOneShot(0);
     }
@@ -5556,7 +5556,7 @@ void WebPagePrivate::commitRootLayer(const IntRect& layoutRectForCompositing,
                                      bool drawsRootLayer)
 {
 #if DEBUG_AC_COMMIT
-    Platform::log(Platform::LogLevelCritical, "%s: m_compositor = 0x%x",
+    BBLOG(Platform::LogLevelCritical, "%s: m_compositor = 0x%x",
             WTF_PRETTY_FUNCTION, m_compositor.get());
 #endif
 
@@ -5595,7 +5595,7 @@ void WebPagePrivate::commitRootLayer(const IntRect& layoutRectForCompositing,
 bool WebPagePrivate::commitRootLayerIfNeeded()
 {
 #if DEBUG_AC_COMMIT
-    Platform::log(Platform::LogLevelCritical, "%s: m_suspendRootLayerCommit = %d, m_needsCommit = %d, m_frameLayers = 0x%x, m_frameLayers->hasLayer() = %d, needsLayoutRecursive() = %d",
+    BBLOG(Platform::LogLevelCritical, "%s: m_suspendRootLayerCommit = %d, m_needsCommit = %d, m_frameLayers = 0x%x, m_frameLayers->hasLayer() = %d, needsLayoutRecursive() = %d",
             WTF_PRETTY_FUNCTION,
             m_suspendRootLayerCommit,
             m_needsCommit,
@@ -5673,7 +5673,7 @@ void WebPagePrivate::rootLayerCommitTimerFired(Timer<WebPagePrivate>*)
         return;
 
 #if DEBUG_AC_COMMIT
-    Platform::log(Platform::LogLevelCritical, "%s", WTF_PRETTY_FUNCTION);
+    BBLOG(Platform::LogLevelCritical, "%s", WTF_PRETTY_FUNCTION);
 #endif
 
     m_backingStore->d->instrumentBeginFrame();
@@ -5700,7 +5700,7 @@ void WebPagePrivate::rootLayerCommitTimerFired(Timer<WebPagePrivate>*)
 
         if (needsOneShotDrawingSynchronization()) {
 #if DEBUG_AC_COMMIT
-            Platform::log(Platform::LogLevelCritical, "%s: OneShotDrawingSynchronization code path!", WTF_PRETTY_FUNCTION);
+            BBLOG(Platform::LogLevelCritical, "%s: OneShotDrawingSynchronization code path!", WTF_PRETTY_FUNCTION);
 #endif
 
             const IntRect windowRect = IntRect(IntPoint::zero(), viewportSize());

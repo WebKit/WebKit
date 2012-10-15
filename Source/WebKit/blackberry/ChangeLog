@@ -1,3 +1,63 @@
+2012-10-15  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] replace BlackBerry::Platform::log() with BBLOG()
+        https://bugs.webkit.org/show_bug.cgi?id=99302
+
+        Reviewed by Rob Buis.
+
+        RIM PR: 210884
+        The marco BBLOG() is defined as a no-op in release mode which will
+        save a function call in the release build.
+        Internally reviewed by Charles Wei.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::bestDivisor):
+        (BlackBerry::WebKit::BackingStorePrivate::suspendScreenAndBackingStoreUpdates):
+        (BlackBerry::WebKit::BackingStorePrivate::resumeScreenAndBackingStoreUpdates):
+        (BlackBerry::WebKit::BackingStorePrivate::repaint):
+        (BlackBerry::WebKit::BackingStorePrivate::slowScroll):
+        (BlackBerry::WebKit::BackingStorePrivate::scroll):
+        (BlackBerry::WebKit::BackingStorePrivate::setBackingStoreRect):
+        (BlackBerry::WebKit::BackingStorePrivate::scrollBackingStore):
+        (BlackBerry::WebKit::BackingStorePrivate::render):
+        (BlackBerry::WebKit::BackingStorePrivate::blitVisibleContents):
+        (BlackBerry::WebKit::BackingStorePrivate::updateTilesForScrollOrNotRenderedRegion):
+        (BlackBerry::WebKit::BackingStorePrivate::renderContents):
+        (BlackBerry::WebKit::BackingStorePrivate::blitToWindow):
+        (BlackBerry::WebKit::BackingStorePrivate::fillWindow):
+        (BlackBerry::WebKit::BackingStorePrivate::invalidateWindow):
+        (BlackBerry::WebKit::BackingStorePrivate::clearWindow):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+        (BlackBerry::WebKit::WebPagePrivate::zoomAboutPoint):
+        (BlackBerry::WebKit::WebPagePrivate::contentsSizeChanged):
+        (BlackBerry::WebKit::WebPagePrivate::zoomToInitialScaleOnLoad):
+        (BlackBerry::WebKit::WebPagePrivate::scheduleRootLayerCommit):
+        (BlackBerry::WebKit::WebPagePrivate::commitRootLayer):
+        (BlackBerry::WebKit::WebPagePrivate::commitRootLayerIfNeeded):
+        (BlackBerry::WebKit::WebPagePrivate::rootLayerCommitTimerFired):
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::overflowExceedsContentsSize):
+        (WebCore::ChromeClientBlackBerry::didDiscoverFrameSet):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidLayout):
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::checkFingerIntersection):
+        (BlackBerry::WebKit::FatFingers::findIntersectingRegions):
+        (BlackBerry::WebKit::FatFingers::checkForText):
+        * WebKitSupport/RenderQueue.cpp:
+        (BlackBerry::WebKit::RenderQueue::addToRegularQueue):
+        (BlackBerry::WebKit::RenderQueue::addToScrollZoomQueue):
+        (BlackBerry::WebKit::RenderQueue::render):
+        (BlackBerry::WebKit::RenderQueue::renderAllCurrentRegularRenderJobs):
+        (BlackBerry::WebKit::RenderQueue::startRegularRenderJobBatchIfNeeded):
+        (BlackBerry::WebKit::RenderQueue::renderVisibleZoomJob):
+        (BlackBerry::WebKit::RenderQueue::renderVisibleScrollJob):
+        (BlackBerry::WebKit::RenderQueue::renderRegularRenderJob):
+        (BlackBerry::WebKit::RenderQueue::renderNonVisibleScrollJob):
+        * WebKitSupport/SurfacePool.cpp:
+        (BlackBerry::WebKit::SurfacePool::initialize):
+
 2012-10-15  Xiaobo Wang  <xbwang@torchmobile.com.cn>
 
         [BlackBerry] [DRT] Skip region of interest zooming when running DRT

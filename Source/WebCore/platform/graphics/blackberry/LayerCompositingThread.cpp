@@ -197,8 +197,8 @@ FloatQuad LayerCompositingThread::getTransformedHolePunchRect() const
     drawRect.move(-location.x(), -location.y());
 
 #if DEBUG_VIDEO_CLIPPING
-     IntRect drawRectInWebKitDocumentCoordination = m_layerRenderer->toWebKitDocumentCoordinates(m_drawRect);
-     BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo, "LayerCompositingThread::getTransformedHolePunchRect() - drawRect=(x=%d,y=%d,width=%d,height=%d) clipRect=(x=%d,y=%d,width=%d,height=%d) clippedRect=(x=%d,y=%d,width=%d,height=%d).",
+    IntRect drawRectInWebKitDocumentCoordination = m_layerRenderer->toWebKitDocumentCoordinates(m_drawRect);
+    BBLOG(BlackBerry::Platform::LogLevelInfo, "LayerCompositingThread::getTransformedHolePunchRect() - drawRect=(x=%d,y=%d,width=%d,height=%d) clipRect=(x=%d,y=%d,width=%d,height=%d) clippedRect=(x=%d,y=%d,width=%d,height=%d).",
         drawRectInWebKitDocumentCoordination.x(), drawRectInWebKitDocumentCoordination.y(), drawRectInWebKitDocumentCoordination.width(), drawRectInWebKitDocumentCoordination.height(),
         m_holePunchClipRect.x(), m_holePunchClipRect.y(), m_holePunchClipRect.width(), m_holePunchClipRect.height(),
         drawRect.x(), drawRect.y(), drawRect.width(), drawRect.height());

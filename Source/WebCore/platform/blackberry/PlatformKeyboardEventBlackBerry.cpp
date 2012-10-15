@@ -452,7 +452,7 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(const BlackBerry::Platform::Keyboar
     if (event.character() == KEYCODE_BACK_TAB)
         m_modifiers |= ShiftKey; // BackTab should be treated as Shift + Tab.
 
-    BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo, "Keyboard event received text=%lc, keyIdentifier=%s, windowsVirtualKeyCode=%d", event.character(), m_keyIdentifier.latin1().data(), m_windowsVirtualKeyCode);
+    BBLOG(BlackBerry::Platform::LogLevelInfo, "Keyboard event received text=%lc, keyIdentifier=%s, windowsVirtualKeyCode=%d", event.character(), m_keyIdentifier.latin1().data(), m_windowsVirtualKeyCode);
 }
 
 bool PlatformKeyboardEvent::currentCapsLockState()

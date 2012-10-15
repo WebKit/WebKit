@@ -234,46 +234,46 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
 
 void GraphicsContext3D::logFrameBufferStatus(int line)
 {
-    BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo, "Checking FrameBuffer status at line %d: ", line);
+    BBLOG(BlackBerry::Platform::LogLevelInfo, "Checking FrameBuffer status at line %d: ", line);
     switch (glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT)) {
     case GL_FRAMEBUFFER_COMPLETE:
-        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo, "COMPLETE | ");
+        BBLOG(BlackBerry::Platform::LogLevelInfo, "COMPLETE | ");
         break;
     case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo, "INCOMPLETE ATTACHMENT | ");
+        BBLOG(BlackBerry::Platform::LogLevelInfo, "INCOMPLETE ATTACHMENT | ");
         break;
     case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo, "MISSING ATTACHMENT | ");
+        BBLOG(BlackBerry::Platform::LogLevelInfo, "MISSING ATTACHMENT | ");
         break;
     case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
-        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo, "INCOMPLETE DIMENSIONS | ");
+        BBLOG(BlackBerry::Platform::LogLevelInfo, "INCOMPLETE DIMENSIONS | ");
         break;
     case GL_FRAMEBUFFER_UNSUPPORTED:
-        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo, "UNSUPPORTED | ");
+        BBLOG(BlackBerry::Platform::LogLevelInfo, "UNSUPPORTED | ");
         break;
     case FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_EXT:
-        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo, "INCOMPLETE MULTISAMPLE | ");
+        BBLOG(BlackBerry::Platform::LogLevelInfo, "INCOMPLETE MULTISAMPLE | ");
         break;
     }
 
     switch (glGetError()) {
     case GL_NO_ERROR:
-        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo, "NO ERROR");
+        BBLOG(BlackBerry::Platform::LogLevelInfo, "NO ERROR");
         break;
     case GL_INVALID_ENUM:
-        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo, "INVALID ENUM");
+        BBLOG(BlackBerry::Platform::LogLevelInfo, "INVALID ENUM");
         break;
     case GL_INVALID_VALUE:
-        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo, "INVALID VALUE");
+        BBLOG(BlackBerry::Platform::LogLevelInfo, "INVALID VALUE");
         break;
     case GL_INVALID_OPERATION:
-        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo, "INVALID OPERATION");
+        BBLOG(BlackBerry::Platform::LogLevelInfo, "INVALID OPERATION");
         break;
     case GL_OUT_OF_MEMORY:
-        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo, "OUT OF MEMORY");
+        BBLOG(BlackBerry::Platform::LogLevelInfo, "OUT OF MEMORY");
         break;
     }
-    BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo, "\n");
+    BBLOG(BlackBerry::Platform::LogLevelInfo, "\n");
 }
 
 void GraphicsContext3D::readPixelsIMG(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, void* data)

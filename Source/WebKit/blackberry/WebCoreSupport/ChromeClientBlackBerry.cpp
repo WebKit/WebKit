@@ -679,7 +679,7 @@ void ChromeClientBlackBerry::overflowExceedsContentsSize(Frame* frame) const
         return;
 
 #if DEBUG_OVERFLOW_DETECTION
-    BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo, "ChromeClientBlackBerry::overflowExceedsContentsSize contents=%dx%d overflow=%dx%d",
+    BBLOG(BlackBerry::Platform::LogLevelInfo, "ChromeClientBlackBerry::overflowExceedsContentsSize contents=%dx%d overflow=%dx%d",
                            frame->contentRenderer()->rightLayoutOverflow(),
                            frame->contentRenderer()->bottomLayoutOverflow(),
                            frame->contentRenderer()->rightAbsoluteVisibleOverflow(),
@@ -693,7 +693,7 @@ void ChromeClientBlackBerry::didDiscoverFrameSet(Frame* frame) const
     if (frame != m_webPagePrivate->m_mainFrame)
         return;
 
-    BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo, "ChromeClientBlackBerry::didDiscoverFrameSet");
+    BBLOG(BlackBerry::Platform::LogLevelInfo, "ChromeClientBlackBerry::didDiscoverFrameSet");
     if (m_webPagePrivate->loadState() == WebPagePrivate::Committed) {
         m_webPagePrivate->setShouldUseFixedDesktopMode(true);
         m_webPagePrivate->zoomToInitialScaleOnLoad();

@@ -77,7 +77,7 @@ void SurfacePool::initialize(const Platform::IntSize& tileSize)
         unsigned byteLimit = (maxNumberOfTiles /*pool*/ + 2 /*visible tile buffer, backbuffer*/) * tileSize.width() * tileSize.height() * 4;
         bool success = Platform::Graphics::createPixmapGroup(SHARED_PIXMAP_GROUP, byteLimit);
         if (!success) {
-            Platform::log(Platform::LogLevelWarn,
+            BBLOG(Platform::LogLevelWarn,
                 "Shared buffer pool could not be set up, using regular memory allocation instead.");
         }
     }

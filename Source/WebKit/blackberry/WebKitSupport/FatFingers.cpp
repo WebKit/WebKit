@@ -278,7 +278,7 @@ bool FatFingers::checkFingerIntersection(const IntRectRegion& region, const IntR
         nodeName = String::format("%s node", toElement(node)->tagName().latin1().data());
     else
         nodeName = "unknown node";
-    log(LogLevelInfo, "%s has region %s, intersecting at %s (area %d)", nodeName.latin1().data(),
+    BBLOG(LogLevelInfo, "%s has region %s, intersecting at %s (area %d)", nodeName.latin1().data(),
         regionCopy.toString().c_str(), intersection.toString().c_str(), intersection.area());
 #endif
 
@@ -303,7 +303,7 @@ bool FatFingers::findIntersectingRegions(Document* document, Vector<Intersecting
 #if DEBUG_FAT_FINGERS
     IntRect fingerRect(fingerRectForPoint(frameContentPos));
     IntRect screenFingerRect = m_webPage->mapToTransformed(fingerRect);
-    log(LogLevelInfo, "fat finger rect now %d, %d, %d, %d", screenFingerRect.x(), screenFingerRect.y(), screenFingerRect.width(), screenFingerRect.height());
+    BBLOG(LogLevelInfo, "fat finger rect now %d, %d, %d, %d", screenFingerRect.x(), screenFingerRect.y(), screenFingerRect.width(), screenFingerRect.height());
 
     // only record the first finger rect
     if (document == m_webPage->m_mainFrame->document())
@@ -433,7 +433,7 @@ bool FatFingers::checkForText(Node* curNode, Vector<IntersectingRegion>& interse
             RefPtr<Range> range = Range::create(document, curText, lastOffset, curText, offset);
             if (!range->text().stripWhiteSpace().isEmpty()) {
 #if DEBUG_FAT_FINGERS
-                log(LogLevelInfo, "Checking word '%s'", range->text().latin1().data());
+                BBLOG(LogLevelInfo, "Checking word '%s'", range->text().latin1().data());
 #endif
                 IntRectRegion rangeRegion(DOMSupport::transformedBoundingBoxForRange(*range));
                 foundOne |= checkFingerIntersection(rangeRegion, fingerRegion, curNode, intersectingRegions);

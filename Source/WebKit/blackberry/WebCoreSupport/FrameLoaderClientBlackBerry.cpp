@@ -851,7 +851,7 @@ void FrameLoaderClientBlackBerry::dispatchDidLayout(LayoutMilestones milestones)
         return;
 
     if (milestones & DidFirstVisuallyNonEmptyLayout) {
-        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo, "dispatchDidFirstVisuallyNonEmptyLayout");
+        BBLOG(BlackBerry::Platform::LogLevelInfo, "dispatchDidFirstVisuallyNonEmptyLayout");
 
         readyToRender(true);
 
