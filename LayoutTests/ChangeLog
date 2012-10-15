@@ -1,3 +1,14 @@
+2012-10-15  Chris Rogers  <crogers@google.com>
+
+        Rebaseline webaudio/codec-tests/vorbis/vbr-70kbps-44khz.html for Mac/Win
+        https://bugs.webkit.org/show_bug.cgi?id=99368
+
+        Unreviewed rebaseline.
+
+        * platform/chromium-mac-snowleopard/webaudio/codec-tests/vorbis/vbr-70kbps-44khz-expected.wav: Added.
+        * platform/chromium-win-xp/webaudio/codec-tests/vorbis/vbr-70kbps-44khz-expected.wav: Added.
+        * platform/chromium/TestExpectations:
+
 2012-10-15  Levi Weintraub  <leviw@chromium.org>
 
         Regression r130057: incorrect block pref width for alternating InlineFlow and inline Replaced
