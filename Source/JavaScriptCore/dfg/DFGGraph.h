@@ -484,7 +484,6 @@ public:
         case OUT_OF_BOUNDS_ARRAY_STORAGE_MODES:
         case SLOW_PUT_ARRAY_STORAGE_MODES:
         case ALL_EFFECTFUL_MODES:
-        case POLYMORPHIC_MODES:
             return false;
         case Array::String:
             return node.op() == GetByVal;

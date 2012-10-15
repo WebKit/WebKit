@@ -2788,55 +2788,6 @@ void SpeculativeJIT::compile(Node& node)
             jsValueResult(resultReg, m_compileIndex);
             break;
         }
-        case ALL_POLYMORPHIC_MODES: {
-            SpeculateCellOperand base(this, node.child1());
-            SpeculateStrictInt32Operand property(this, node.child2());
-            
-            GPRReg baseReg = base.gpr();
-            GPRReg propertyReg = property.gpr();
-            
-            if (!m_compileOkay)
-                return;
-            
-            GPRTemporary storage(this);
-            GPRTemporary result(this);
-            GPRReg storageReg = storage.gpr();
-            GPRReg resultReg = result.gpr();
-            
-            MacroAssembler::JumpList slowCases;
-            MacroAssembler::JumpList doneCases;
-            MacroAssembler::Jump fallThrough;
-            m_jit.loadPtr(MacroAssembler::Address(baseReg, JSCell::structureOffset()), resultReg);
-            m_jit.loadPtr(MacroAssembler::Address(baseReg, JSObject::butterflyOffset()), storageReg);
-            m_jit.load8(MacroAssembler::Address(resultReg, Structure::indexingTypeOffset()), resultReg);
-            m_jit.and32(TrustedImm32(IndexingShapeMask), resultReg);
-            if (polymorphicIncludesContiguous(node.arrayMode())) {
-                if (fallThrough.isSet()) {
-                    doneCases.append(m_jit.jump());
-                    fallThrough.link(&m_jit);
-                }
-                fallThrough = m_jit.branch32(MacroAssembler::NotEqual, resultReg, MacroAssembler::TrustedImm32(ContiguousShape));
-                slowCases.append(compileContiguousGetByVal(node, baseReg, propertyReg, storageReg, resultReg));
-            }
-            if (polymorphicIncludesArrayStorage(node.arrayMode())) {
-                if (fallThrough.isSet()) {
-                    doneCases.append(m_jit.jump());
-                    fallThrough.link(&m_jit);
-                }
-                fallThrough = m_jit.branch32(MacroAssembler::NotEqual, resultReg, MacroAssembler::TrustedImm32(ArrayStorageShape));
-                slowCases.append(compileArrayStorageGetByVal(node, baseReg, propertyReg, storageReg, resultReg));
-            }
-            ASSERT(fallThrough.isSet());
-            doneCases.link(&m_jit);
-            slowCases.append(fallThrough);
-            addSlowPathGenerator(
-                slowPathCall(
-                    slowCases, this, operationGetByValArrayInt,
-                    result.gpr(), baseReg, propertyReg));
-            
-            jsValueResult(resultReg, m_compileIndex);
-            break;
-        }
         case Array::String:
             compileGetByValOnString(node);
             break;
@@ -3026,64 +2977,6 @@ void SpeculativeJIT::compile(Node& node)
                         NoResult, baseReg, propertyReg, valueReg));
             }
 
-            noResult(m_compileIndex, UseChildrenCalledExplicitly);
-            break;
-        }
-            
-        case ALL_POLYMORPHIC_MODES: {
-            ASSERT(node.op() == PutByVal);
-            
-            JSValueOperand value(this, child3);
-            
-            GPRReg valueReg = value.gpr();
-            
-            if (!m_compileOkay)
-                return;
-            
-            GPRTemporary storage(this);
-            GPRTemporary temporary(this);
-            GPRReg storageReg = storage.gpr();
-            GPRReg temporaryReg = temporary.gpr();
-            
-            MacroAssembler::JumpList slowCases;
-            MacroAssembler::JumpList doneCases;
-            MacroAssembler::Jump fallThrough;
-            m_jit.loadPtr(MacroAssembler::Address(baseReg, JSCell::structureOffset()), temporaryReg);
-            m_jit.loadPtr(MacroAssembler::Address(baseReg, JSObject::butterflyOffset()), storageReg);
-            m_jit.load8(MacroAssembler::Address(temporaryReg, Structure::indexingTypeOffset()), temporaryReg);
-            m_jit.and32(TrustedImm32(IndexingShapeMask), temporaryReg);
-            if (polymorphicIncludesContiguous(node.arrayMode())) {
-                if (fallThrough.isSet()) {
-                    doneCases.append(m_jit.jump());
-                    fallThrough.link(&m_jit);
-                }
-                fallThrough = m_jit.branch32(MacroAssembler::NotEqual, temporaryReg, MacroAssembler::TrustedImm32(ContiguousShape));
-                slowCases.append(compileContiguousPutByVal(node, baseReg, propertyReg, storageReg, valueReg, temporaryReg));
-            }
-            if (polymorphicIncludesArrayStorage(node.arrayMode())) {
-                if (fallThrough.isSet()) {
-                    doneCases.append(m_jit.jump());
-                    fallThrough.link(&m_jit);
-                }
-                fallThrough = m_jit.branch32(MacroAssembler::NotEqual, temporaryReg, MacroAssembler::TrustedImm32(ArrayStorageShape));
-                slowCases.append(compileArrayStoragePutByVal(node, baseReg, propertyReg, storageReg, valueReg, temporaryReg));
-            }
-            ASSERT(fallThrough.isSet());
-            doneCases.link(&m_jit);
-            slowCases.append(fallThrough);
-
-            base.use();
-            property.use();
-            value.use();
-
-            // FIXME: the decision of whether or not we're in strict mode should be made
-            // based on the inline call frame, not the machine code block.
-            addSlowPathGenerator(
-                slowPathCall(
-                    slowCases, this,
-                    m_jit.codeBlock()->isStrictMode() ? operationPutByValBeyondArrayBoundsStrict : operationPutByValBeyondArrayBoundsNonStrict,
-                    NoResult, baseReg, propertyReg, valueReg));
-            
             noResult(m_compileIndex, UseChildrenCalledExplicitly);
             break;
         }

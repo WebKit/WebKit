@@ -868,7 +868,6 @@ bool AbstractState::execute(unsigned indexInBlock)
         case OUT_OF_BOUNDS_ARRAY_STORAGE_MODES:
         case SLOW_PUT_ARRAY_STORAGE_MODES:
         case ALL_EFFECTFUL_MODES:
-        case POLYMORPHIC_MODES:
             forNode(node.child1()).filter(SpecCell);
             forNode(node.child2()).filter(SpecInt32);
             clobberWorld(node.codeOrigin, indexInBlock);
@@ -943,7 +942,6 @@ bool AbstractState::execute(unsigned indexInBlock)
         case OUT_OF_BOUNDS_ARRAY_STORAGE_MODES:
         case SLOW_PUT_ARRAY_STORAGE_MODES:
         case ALL_EFFECTFUL_MODES:
-        case POLYMORPHIC_MODES:
             forNode(child1).filter(SpecCell);
             forNode(child2).filter(SpecInt32);
             clobberWorld(node.codeOrigin, indexInBlock);
@@ -1384,7 +1382,6 @@ bool AbstractState::execute(unsigned indexInBlock)
             break;
         case ALL_CONTIGUOUS_MODES:
         case ALL_ARRAY_STORAGE_MODES:
-        case POLYMORPHIC_MODES: // These only get a CheckArray for GetArrayLength
             // This doesn't filter anything meaningful right now. We may want to add
             // CFA tracking of array mode speculations, but we don't have that, yet.
             forNode(node.child1()).filter(SpecCell);
@@ -1430,7 +1427,8 @@ bool AbstractState::execute(unsigned indexInBlock)
         case ALL_EFFECTFUL_MODES:
             node.setCanExit(true);
             forNode(node.child1()).filter(SpecCell);
-            forNode(node.child2()).filter(SpecInt32);
+            if (node.child2())
+                forNode(node.child2()).filter(SpecInt32);
             forNode(nodeIndex).clear();
             clobberStructures(indexInBlock);
             break;

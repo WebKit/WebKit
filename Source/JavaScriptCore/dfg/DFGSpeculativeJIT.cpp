@@ -379,17 +379,6 @@ JITCompiler::JumpList SpeculativeJIT::jumpSlowForUnwantedArrayMode(GPRReg tempGP
                 TrustedImm32(SlowPutArrayStorageShape - ArrayStorageShape)));
         break;
     }
-    case POLYMORPHIC_MODES: {
-        if (modeIsJSArray(arrayMode)) {
-            result.append(
-                m_jit.branchTest32(
-                    MacroAssembler::Zero, tempGPR, TrustedImm32(IsArray)));
-        }
-        result.append(
-            m_jit.branchTest32(
-                MacroAssembler::Zero, tempGPR, TrustedImm32(IndexingShapeMask)));
-        break;
-    }
     default:
         CRASH();
         break;
@@ -421,8 +410,7 @@ void SpeculativeJIT::checkArray(Node& node)
     case NON_ARRAY_CONTIGUOUS_MODES:
     case ARRAY_WITH_CONTIGUOUS_MODES:
     case NON_ARRAY_ARRAY_STORAGE_MODES:
-    case ARRAY_WITH_ARRAY_STORAGE_MODES:
-    case POLYMORPHIC_MODES: {
+    case ARRAY_WITH_ARRAY_STORAGE_MODES: {
         GPRTemporary temp(this);
         GPRReg tempGPR = temp.gpr();
         m_jit.loadPtr(
@@ -467,30 +455,25 @@ void SpeculativeJIT::checkArray(Node& node)
     noResult(m_compileIndex);
 }
 
-void SpeculativeJIT::arrayify(Node& node)
+void SpeculativeJIT::arrayify(Node& node, GPRReg baseReg, GPRReg propertyReg)
 {
-    ASSERT(modeIsSpecific(node.arrayMode()));
-    ASSERT(!modeAlreadyChecked(m_state.forNode(node.child1()), node.arrayMode()));
-    
-    SpeculateCellOperand base(this, node.child1());
-    SpeculateIntegerOperand property(this, node.child2());
-    GPRReg baseReg = base.gpr();
-    GPRReg propertyReg = property.gpr();
-    
     Array::Mode desiredArrayMode;
     
     switch (node.arrayMode()) {
-    case Array::BlankToContiguous:
+    case Array::ToContiguous:
         desiredArrayMode = Array::Contiguous;
         break;
-    case Array::BlankToArrayStorage:
+    case Array::ToArrayStorage:
         desiredArrayMode = Array::ArrayStorage;
         break;
-    case Array::BlankToSlowPutArrayStorage:
+    case Array::ToSlowPutArrayStorage:
         desiredArrayMode = Array::SlowPutArrayStorage;
         break;
-    case Array::BlankToContiguousOrArrayStorage:
-        desiredArrayMode = Array::ContiguousOrArrayStorage;
+    case Array::ArrayToArrayStorage:
+        desiredArrayMode = Array::ArrayWithArrayStorage;
+        break;
+    case Array::PossiblyArrayToArrayStorage:
+        desiredArrayMode = Array::PossiblyArrayWithArrayStorage;
         break;
     default:
         CRASH();
@@ -522,7 +505,7 @@ void SpeculativeJIT::arrayify(Node& node)
     
     // If we're allegedly creating contiguous storage and the index is bogus, then
     // just don't.
-    if (node.arrayMode() == Array::BlankToContiguous) {
+    if (node.arrayMode() == Array::ToContiguous && propertyReg != InvalidGPRReg) {
         speculationCheck(
             Uncountable, JSValueRegs(), NoNode,
             m_jit.branch32(
@@ -541,15 +524,11 @@ void SpeculativeJIT::arrayify(Node& node)
     // Now call out to create the array storage.
     silentSpillAllRegisters(tempGPR);
     switch (node.arrayMode()) {
-    case Array::BlankToContiguous:
+    case ALL_EFFECTFUL_CONTIGUOUS_MODES:
         callOperation(operationEnsureContiguous, tempGPR, baseReg);
         break;
-    case Array::BlankToArrayStorage:
-    case Array::BlankToSlowPutArrayStorage:
+    case ALL_EFFECTFUL_ARRAY_STORAGE_MODES:
         callOperation(operationEnsureArrayStorage, tempGPR, baseReg);
-        break;
-    case Array::BlankToContiguousOrArrayStorage:
-        callOperation(operationEnsureContiguousOrArrayStorage, tempGPR, baseReg, propertyReg);
         break;
     default:
         CRASH();
@@ -572,9 +551,26 @@ void SpeculativeJIT::arrayify(Node& node)
     speculationCheck(
         Uncountable, JSValueRegs(), NoNode,
         jumpSlowForUnwantedArrayMode(structureGPR, desiredArrayMode));
-        
+    
     done.link(&m_jit);
     storageResult(tempGPR, m_compileIndex);
+}
+
+void SpeculativeJIT::arrayify(Node& node)
+{
+    ASSERT(modeIsSpecific(node.arrayMode()));
+    ASSERT(!modeAlreadyChecked(m_state.forNode(node.child1()), node.arrayMode()));
+    
+    SpeculateCellOperand base(this, node.child1());
+    
+    if (!node.child2()) {
+        arrayify(node, base.gpr(), InvalidGPRReg);
+        return;
+    }
+    
+    SpeculateIntegerOperand property(this, node.child2());
+    
+    arrayify(node, base.gpr(), property.gpr());
 }
 
 GPRReg SpeculativeJIT::fillStorage(NodeIndex nodeIndex)
@@ -3336,7 +3332,7 @@ void SpeculativeJIT::compileGetArrayLength(Node& node)
         break;
     }
     case ARRAY_WITH_ARRAY_STORAGE_MODES:
-    case Array::ArrayWithContiguousOrArrayStorage: {
+    case ARRAY_EFFECTFUL_MODES: {
         StorageOperand storage(this, node.child2());
         GPRTemporary result(this, storage);
         GPRReg storageReg = storage.gpr();

@@ -2215,10 +2215,6 @@ public:
         case ALL_EFFECTFUL_CONTIGUOUS_MODES:
             return true;
             
-        // All polymorphic modes need an extra reg.
-        case ALL_POLYMORPHIC_MODES:
-            return true;
-            
         default:
             return false;
         }
@@ -2373,6 +2369,7 @@ public:
     
     JITCompiler::JumpList jumpSlowForUnwantedArrayMode(GPRReg tempWithIndexingTypeReg, Array::Mode arrayMode);
     void checkArray(Node&);
+    void arrayify(Node&, GPRReg baseReg, GPRReg propertyReg);
     void arrayify(Node&);
     
     template<bool strict>
