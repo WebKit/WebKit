@@ -41,6 +41,7 @@ using WTF::MemoryObjectType;
 
 class WebCoreMemoryTypes : public PlatformMemoryTypes {
 public:
+    static MemoryObjectType Page;
     static MemoryObjectType DOM;
     static MemoryObjectType CSS;
     static MemoryObjectType Binding;
@@ -58,6 +59,23 @@ public:
 
     static MemoryObjectType ExternalStrings;
     static MemoryObjectType ExternalArrays;
+
+    static MemoryObjectType Inspector;
+    static MemoryObjectType InspectorController;
+    static MemoryObjectType InspectorMemoryAgent;
+    static MemoryObjectType InspectorDOMStorageAgent;
+    static MemoryObjectType InspectorDOMStorageResources;
+    static MemoryObjectType InspectorProfilerAgent;
+
+    static MemoryObjectType JSHeapUsed;
+    static MemoryObjectType JSHeapUnused;
+
+    static MemoryObjectType DOMStorageCache;
+
+    static MemoryObjectType RenderTreeUsed;
+    static MemoryObjectType RenderTreeUnused;
+
+    static MemoryObjectType ProcessPrivateMemory;
 };
 
 } // namespace WebCore

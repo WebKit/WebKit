@@ -102,8 +102,6 @@ public:
         processDeferredInstrumentedPointers();
     }
 
-    template<typename Container> static size_t calculateContainerSize(const Container&, bool contentOnly = false);
-
 protected:
     class InstrumentedPointerBase {
     public:
@@ -258,12 +256,6 @@ void MemoryInstrumentation::addListHashSet(const ListHashSetType& hashSet, Memor
         return;
     size_t size = (contentOnly ? 0 : sizeof(ListHashSetType)) + hashSet.capacity() * sizeof(void*) + hashSet.size() * (sizeof(typename ListHashSetType::ValueType) + 2 * sizeof(void*));
     countObjectSize(ownerObjectType, size);
-}
-
-template<typename Container>
-size_t MemoryInstrumentation::calculateContainerSize(const Container& container, bool contentOnly)
-{
-    return (contentOnly ? 0 : sizeof(container)) + container.capacity() * sizeof(typename Container::ValueType);
 }
 
 template<typename T>

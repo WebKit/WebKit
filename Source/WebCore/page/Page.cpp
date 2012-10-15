@@ -72,6 +72,7 @@
 #include "StyleResolver.h"
 #include "TextResourceDecoder.h"
 #include "VoidCallback.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include "Widget.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCountedLeakCounter.h>
@@ -1264,6 +1265,49 @@ void Page::sawPlugin(const String& serviceType)
 void Page::resetSeenPlugins()
 {
     m_seenPlugins.clear();
+}
+
+void Page::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Page);
+    info.addMember(m_chrome);
+    info.addMember(m_dragCaretController);
+
+#if ENABLE(DRAG_SUPPORT)
+    info.addMember(m_dragController);
+#endif
+    info.addMember(m_focusController);
+#if ENABLE(CONTEXT_MENUS)
+    info.addMember(m_contextMenuController);
+#endif
+#if ENABLE(INSPECTOR)
+    info.addMember(m_inspectorController);
+#endif
+#if ENABLE(POINTER_LOCK)
+    info.addMember(m_pointerLockController);
+#endif
+    info.addMember(m_scrollingCoordinator);
+    info.addMember(m_settings);
+    info.addMember(m_progress);
+    info.addMember(m_backForwardController);
+    info.addMember(m_mainFrame);
+    info.addMember(m_pluginData);
+    info.addMember(m_theme);
+    info.addMember(m_editorClient);
+    info.addMember(m_featureObserver);
+    info.addMember(m_groupName);
+    info.addMember(m_pagination);
+    info.addMember(m_userStyleSheetPath);
+    info.addMember(m_userStyleSheet);
+    info.addMember(m_singlePageGroup);
+    info.addMember(m_group);
+    info.addWeakPointer(m_debugger);
+    info.addMember(m_sessionStorage);
+    info.addMember(m_relevantUnpaintedRenderObjects);
+    info.addMember(m_relevantPaintedRegion);
+    info.addMember(m_relevantUnpaintedRegion);
+    info.addMember(m_alternativeTextClient);
+    info.addMember(m_seenPlugins);
 }
 
 Page::PageClients::PageClients()

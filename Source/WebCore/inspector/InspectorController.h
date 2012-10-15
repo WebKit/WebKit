@@ -114,6 +114,8 @@ public:
     InspectorClient* inspectorClient() const { return m_inspectorClient; }
     InspectorPageAgent* pageAgent() const { return m_pageAgent; }
 
+    void reportMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     InspectorController(Page*, InspectorClient*);
 

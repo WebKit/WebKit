@@ -1,3 +1,16 @@
+2012-10-15  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: convert manual size calculation of different WebKit things into MemoryInstrumentation.
+        https://bugs.webkit.org/show_bug.cgi?id=99309
+
+        Reviewed by Yury Semikhatsky.
+
+        JSHeap, DOMStorage and HeapProfiler data were counted manually.
+        Now we count the sizes more generic way.
+
+        * wtf/MemoryInstrumentation.h: calculateContainerSize were removed.
+        * wtf/MemoryInstrumentationSequence.h: empty instrumentations were added for 'const char*' and 'const void*' sequences.
+
 2012-10-12  Anders Carlsson  <andersca@apple.com>
 
         Move QDataStream functions into HistoryItemQt.cpp

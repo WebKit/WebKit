@@ -45,7 +45,9 @@
 #include "Storage.h"
 #include "StorageArea.h"
 #include "VoidCallback.h"
+#include "WebCoreMemoryInstrumentation.h"
 
+#include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -214,14 +216,13 @@ void InspectorDOMStorageAgent::clearResources()
     m_resources.clear();
 }
 
-size_t InspectorDOMStorageAgent::memoryBytesUsedByStorageCache() const
+void InspectorDOMStorageAgent::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    size_t size = 0;
-    for (DOMStorageResourcesMap::const_iterator it = m_resources.begin(); it != m_resources.end(); ++it)
-        size += it->value->storageArea()->memoryBytesUsedByCache();
-    return size;
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::InspectorDOMStorageAgent);
+    InspectorBaseAgent<InspectorDOMStorageAgent>::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_resources);
+    info.addMember(m_frontend);
 }
-
 
 } // namespace WebCore
 

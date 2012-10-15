@@ -1,3 +1,57 @@
+2012-10-15  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: convert manual size calculation of different WebKit things into MemoryInstrumentation.
+        https://bugs.webkit.org/show_bug.cgi?id=99309
+
+        Reviewed by Yury Semikhatsky.
+
+        JSHeap, DOMStorage and HeapProfiler data were counted manually.
+        Now we count the sizes more generic way.
+
+        * dom/WebCoreMemoryInstrumentation.cpp:
+        * dom/WebCoreMemoryInstrumentation.h:
+        (WebCoreMemoryTypes): new string identifiers were added for Inspector's data.
+        * inspector/InspectorBaseAgent.cpp:
+        (WebCore::InspectorBaseAgentInterface::InspectorBaseAgentInterface): common data members were moved from template to base class.
+        (WebCore::InspectorBaseAgentInterface::reportMemoryUsage): NMI instrumentation was added to the base template.
+        * inspector/InspectorBaseAgent.h:
+        (InspectorBaseAgentInterface): ditto
+        (WebCore::InspectorBaseAgent::InspectorBaseAgent): ditto
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::reportMemoryUsage): NMI instrumentation was added to the class.
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::reportMemoryUsage): NMI instrumentation was added to the class.
+        * inspector/InspectorDOMStorageAgent.h:
+        * inspector/InspectorDOMStorageResource.cpp:
+        (WebCore::InspectorDOMStorageResource::reportMemoryUsage): NMI instrumentation was added to the class.
+        * inspector/InspectorDOMStorageResource.h:
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore::reportJSHeapInfo): these methods now use MemoryInstrumentation for reporting the size of underlying data.
+        (WebCore::reportRenderTreeInfo):
+        (WebCore::collectDomTreeInfo):
+        (WebCore::InspectorMemoryAgent::getProcessMemoryDistribution):
+        (WebCore::InspectorMemoryAgent::reportMemoryUsage): NMI instrumentation was added to the class.
+        * inspector/InspectorMemoryAgent.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::reportMemoryUsage):
+        * inspector/InspectorProfilerAgent.h:
+        (InspectorProfilerAgent): NMI instrumentation was added to the class.
+        * inspector/MemoryInstrumentationImpl.cpp: allocatedObjects map was converted from InspectorMemoryAgent::getProcessMemoryDistribution local variable to member variable.
+        (WebCore::MemoryInstrumentationClientImpl::checkCountedObject):
+        (WebCore::MemoryInstrumentationClientImpl::reportMemoryUsage): NMI instrumentation was added to the class.
+        (WebCore::MemoryInstrumentationImpl::reportMemoryUsage): NMI instrumentation was added to the class.
+        * inspector/MemoryInstrumentationImpl.h:
+        (WebCore::MemoryInstrumentationClientImpl::MemoryInstrumentationClientImpl):
+        (WebCore::MemoryInstrumentationClientImpl::allocatedObjects):
+        (WebCore::MemoryInstrumentationClientImpl::checkInstrumentedObjects):
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        (WebInspector.MemoryBlockViewProperties._initialize):
+        (WebInspector.NativeMemoryBarChart.prototype._updateView):
+        * page/Page.cpp:
+        (WebCore::Page::reportMemoryUsage): NMI instrumentation was added to the class.
+        * page/Page.h:
+
 2012-10-15  Kent Tamura  <tkent@chromium.org>
 
         Improve code of LocaleMac.mm

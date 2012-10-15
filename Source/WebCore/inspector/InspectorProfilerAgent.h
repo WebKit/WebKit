@@ -100,6 +100,8 @@ public:
     virtual void getObjectByHeapObjectId(ErrorString*, const String& heapSnapshotObjectId, const String* objectGroup, RefPtr<TypeBuilder::Runtime::RemoteObject>& result);
     virtual void getHeapObjectId(ErrorString*, const String& objectId, String* heapSnapshotObjectId);
 
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
+
 protected:
     InspectorProfilerAgent(InstrumentingAgents*, InspectorConsoleAgent*, InspectorState*, InjectedScriptManager*);
     virtual void startProfiling(const String& title) = 0;

@@ -58,6 +58,8 @@ public:
     StorageArea* storageArea() const { return m_storageArea.get(); }
     Frame* frame() const { return m_frame.get(); }
 
+    void reportMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     InspectorDOMStorageResource(StorageArea*, bool isLocalStorage, Frame*);
 

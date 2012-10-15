@@ -48,7 +48,9 @@
 #include "ScriptObject.h"
 #include "ScriptProfile.h"
 #include "ScriptProfiler.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include "WorkerScriptDebugServer.h"
+#include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/text/StringConcatenate.h>
 
@@ -480,6 +482,19 @@ void InspectorProfilerAgent::getHeapObjectId(ErrorString* errorString, const Str
     }
     unsigned id = ScriptProfiler::getHeapObjectId(value);
     *heapSnapshotObjectId = String::number(id);
+}
+
+void InspectorProfilerAgent::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::InspectorProfilerAgent);
+    InspectorBaseAgent<InspectorProfilerAgent>::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_consoleAgent);
+    info.addMember(m_injectedScriptManager);
+    info.addMember(m_frontend);
+    info.addMember(m_profiles);
+    info.addMember(m_snapshots);
+
+    info.addPrivateBuffer(ScriptProfiler::profilerSnapshotsSize());
 }
 
 } // namespace WebCore

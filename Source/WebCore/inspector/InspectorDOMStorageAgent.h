@@ -78,8 +78,7 @@ public:
     void didUseDOMStorage(StorageArea*, bool isLocalStorage, Frame*);
     void didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*, Page*);
 
-    // Called from InspectorMemoryAgent
-    size_t memoryBytesUsedByStorageCache() const;
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
 private:
     InspectorDOMStorageAgent(InstrumentingAgents*, InspectorState*);

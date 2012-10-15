@@ -59,6 +59,14 @@ template<> struct SequenceMemoryInstrumentationTraits<char*> {
     template <typename I> static void reportMemoryUsage(I, I, MemoryClassInfo&) { }
 };
 
+template<> struct SequenceMemoryInstrumentationTraits<const char*> {
+    template <typename I> static void reportMemoryUsage(I, I, MemoryClassInfo&) { }
+};
+
+template<> struct SequenceMemoryInstrumentationTraits<const void*> {
+    template <typename I> static void reportMemoryUsage(I, I, MemoryClassInfo&) { }
+};
+
 template<typename ValueType, typename I> void reportSequenceMemoryUsage(I begin, I end, MemoryClassInfo& info)
 {
     // Check if type is convertible to integer to handle iteration through enum values.

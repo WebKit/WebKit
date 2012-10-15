@@ -352,6 +352,8 @@ namespace WebCore {
         void sawPlugin(const String& serviceType);
         void resetSeenPlugins();
 
+        void reportMemoryUsage(MemoryObjectInfo*) const;
+
     private:
         void initGroup();
 

@@ -219,17 +219,17 @@ WebInspector.MemoryBlockViewProperties._initialize = function()
     addBlock("hsl(  0,  0%,  80%)", "OwnersTypePlaceholder", "OwnersTypePlaceholder");
     addBlock("hsl(  0,  0%,  80%)", "Other", "Other");
     addBlock("hsl(300, 30%,  80%)", "Page", "Page's structures");
-    addBlock("hsl( 90, 60%,  80%)", "JSHeapAllocated", "JavaScript heap");
-    addBlock("hsl( 90, 80%,  80%)", "JSHeapUsed", "Used JavaScript heap");
+    addBlock("hsl( 90, 60%,  80%)", "JSHeap", "JavaScript heap");
+    addBlock("hsl( 90, 80%,  80%)", "JSHeap.Used", "Used JavaScript heap");
     addBlock("hsl( 90, 30%,  80%)", "JSExternalResources", "JavaScript external resources");
     addBlock("hsl( 90, 40%,  80%)", "JSExternalArrays", "JavaScript external arrays");
     addBlock("hsl( 90, 50%,  80%)", "JSExternalStrings", "JavaScript external strings");
-    addBlock("hsl(210, 60%,  80%)", "InspectorData", "Inspector data");
+    addBlock("hsl(210, 60%,  80%)", "WebInspector", "Inspector data");
     addBlock("hsl( 30, 60%,  80%)", "MemoryCache", "Memory cache resources");
     addBlock("hsl( 40, 60%,  80%)", "GlyphCache", "Glyph cache resources");
     addBlock("hsl( 35, 60%,  80%)", "DOMStorageCache", "DOM storage cache");
-    addBlock("hsl( 60, 60%,  80%)", "RenderTreeAllocated", "Render tree");
-    addBlock("hsl( 60, 60%,  80%)", "RenderTreeUsed", "Render tree used");
+    addBlock("hsl( 60, 60%,  80%)", "RenderTree", "Render tree");
+    addBlock("hsl( 60, 60%,  80%)", "RenderTree.Used", "Render tree used");
 }
 
 WebInspector.MemoryBlockViewProperties._forMemoryBlock = function(memoryBlock)
@@ -474,9 +474,13 @@ WebInspector.NativeMemoryBarChart.prototype = {
             }
             var unusedSize = 0;
             if (!!child.children) {
-                unusedSize = child.size;
-                for (var j = 0; j < child.children.length; ++j)
-                    unusedSize -= child.children[j].size;
+                var unusedName = name + ".Unused";
+                for (var j = 0; j < child.children.length; ++j) {
+                    if (child.children[j].name === unusedName) {
+                        unusedSize = child.children[j].size;
+                        break;
+                    }
+                }
             }
             var unusedLength = unusedSize * barLengthSizeRatio;
             var barLength = child.size * barLengthSizeRatio;
