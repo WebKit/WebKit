@@ -1,5 +1,12 @@
 2012-10-15  Dan Bernstein  <mitz@apple.com>
 
+        Try to fix the build again after r131375.
+
+        * platform/graphics/WidthIterator.h:
+        (WebCore::WidthIterator::shouldApplyFontTransforms): Removed the length check from here.
+
+2012-10-15  Dan Bernstein  <mitz@apple.com>
+
         Try to fix assertion failures on ports that do not support kerning and ligatures on the fast
         code path after r131365.
 
