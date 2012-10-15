@@ -1,3 +1,14 @@
+2012-10-15  Chris Rogers  <crogers@google.com>
+
+        Rebaseline webaudio/codec-tests/vorbis/vbr-70kbps-44khz.html for chromium-linux
+        https://bugs.webkit.org/show_bug.cgi?id=99377
+
+        Unreviewed rebaseline.
+
+        * platform/chromium-linux-x86/webaudio/codec-tests/vorbis/vbr-70kbps-44khz-expected.wav: Added.
+        * platform/chromium-linux/webaudio/codec-tests/vorbis/vbr-70kbps-44khz-expected.wav: Added.
+        * platform/chromium-mac/webaudio/codec-tests/vorbis/vbr-70kbps-44khz-expected.wav: Added.
+
 2012-10-15  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Pass type of error causing abort to IDBTransaction::onAbort
