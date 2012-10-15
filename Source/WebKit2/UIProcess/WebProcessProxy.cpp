@@ -390,6 +390,11 @@ void WebProcessProxy::didClearPluginSiteData(uint64_t callbackID)
 
 #endif
 
+void WebProcessProxy::getSharedWorkerProcessConnection(const String& url, const String& name, PassRefPtr<Messages::WebProcessProxy::GetSharedWorkerProcessConnection::DelayedReply> reply)
+{
+    // FIXME: Implement
+}
+
 void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     if (m_context->dispatchMessage(connection, messageID, arguments))

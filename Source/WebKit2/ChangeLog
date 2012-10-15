@@ -1,3 +1,55 @@
+2012-10-13  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Add SharedWorkerProcess
+        https://bugs.webkit.org/show_bug.cgi?id=99218
+
+        Reviewed by Sam Weinig.
+
+        Not yet functional, just some boilerplate code.
+
+        * Configurations/SharedWorkerProcess.xcconfig: Added.
+
+        * DerivedSources.make: Generate message dispatch for SharedWorkerProcess and
+        SharedWorkerProcessProxy.
+
+        * Platform/CoreIPC/MessageID.h: Added shared worker messages classes.
+
+        * Scripts/webkit2/messages.py: (struct_or_class):
+        SharedWorkerProcessCreationParameters is a struct.
+
+        * Shared/SharedWorkerProcessCreationParameters.cpp: Added.
+        * SharedWorkerProcess/Info.plist: Added.
+        * SharedWorkerProcess/SharedWorkerProcess.cpp: Added.
+        * SharedWorkerProcess/SharedWorkerProcess.h: Added.
+        * SharedWorkerProcess/SharedWorkerProcess.messages.in: Added.
+        * SharedWorkerProcess/SharedWorkerProcessMain.h: Added.
+        * SharedWorkerProcess/mac/SharedWorkerProcessMac.mm: Added.
+        * SharedWorkerProcess/mac/SharedWorkerProcessMainMac.mm: Added.
+        * SharedWorkerProcess/mac/com.apple.WebKit.SharedWorkerProcess.sb: Added.
+        * UIProcess/SharedWorkers/SharedWorkerProcessManager.cpp: Added.
+        * UIProcess/SharedWorkers/SharedWorkerProcessManager.h: Added.
+        * UIProcess/SharedWorkers/SharedWorkerProcessProxy.cpp: Added.
+        * UIProcess/SharedWorkers/SharedWorkerProcessProxy.h: Added.
+        * UIProcess/SharedWorkers/SharedWorkerProcessProxy.messages.in: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+        Added SharedWorkerProcess boilerplate, modeled after PluginProcess.
+
+        * UIProcess/WebProcessProxy.cpp:
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        Added getSharedWorkerProcessConnection() message.
+
+        * WebProcess/WebKitMain.cpp: (WebKitMain):
+        * UIProcess/Launcher/ProcessLauncher.cpp:
+        (WebKit::ProcessLauncher::processTypeAsString):
+        (WebKit::ProcessLauncher::getProcessTypeFromString):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm: (WebKit::createProcess):
+        Added branches for SharedWorkerProcess.
+
+        * Platform/CoreIPC/HandleMessage.h: (CoreIPC::callMemberFunction): Added a version
+        for delayed reply messages with two arguments.
+
 2012-10-15  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WTR] Do a forced repaint before generating pixel results

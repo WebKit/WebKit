@@ -153,6 +153,8 @@ private:
     void handleGetPlugins(uint64_t requestID, bool refresh);
     void sendDidGetPlugins(uint64_t requestID, PassOwnPtr<Vector<WebCore::PluginInfo> >);
 
+    void getSharedWorkerProcessConnection(const String& url, const String& name, PassRefPtr<Messages::WebProcessProxy::GetSharedWorkerProcessConnection::DelayedReply>);
+
 #if USE(SECURITY_FRAMEWORK)
     void secItemRequest(CoreIPC::Connection*, uint64_t requestID, const SecItemRequestData&);
     void secKeychainItemRequest(CoreIPC::Connection*, uint64_t requestID, const SecKeychainItemRequestData&);

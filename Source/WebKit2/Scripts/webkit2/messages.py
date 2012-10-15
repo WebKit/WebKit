@@ -195,6 +195,7 @@ def struct_or_class(namespace, type):
         'WebKit::PluginProcessCreationParameters',
         'WebKit::PrintInfo',
         'WebKit::SecurityOriginData',
+        'WebKit::SharedWorkerProcessCreationParameters',
         'WebKit::StatisticsData',
         'WebKit::TextCheckerState',
         'WebKit::WebNavigationDataStore',

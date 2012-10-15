@@ -18,6 +18,7 @@
 			dependencies = (
 				1A50DB3C110A3C19000D3FE5 /* PBXTargetDependency */,
 				BCDE0AC113272712001259FB /* PBXTargetDependency */,
+				E13A8A4D16287A5B00392929 /* PBXTargetDependency */,
 				510CC8481613C85300D03ED3 /* PBXTargetDependency */,
 				BCAE9DFD160C0AB000A33217 /* PBXTargetDependency */,
 				BCA8D46815BCE0D6009DC1F1 /* PBXTargetDependency */,
@@ -947,6 +948,7 @@
 		E133FD8A1423DD7F00FC7BFB /* WebKit.icns in Resources */ = {isa = PBXBuildFile; fileRef = E133FD891423DD7F00FC7BFB /* WebKit.icns */; };
 		E134F01712EA5D33004EC58D /* WKPrintingView.h in Headers */ = {isa = PBXBuildFile; fileRef = E134F01512EA5D11004EC58D /* WKPrintingView.h */; };
 		E134F01A12EA5D99004EC58D /* WKPrintingView.mm in Sources */ = {isa = PBXBuildFile; fileRef = E134F01912EA5D99004EC58D /* WKPrintingView.mm */; };
+		E13A8A30162879AC00392929 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E13A8A2F162879AC00392929 /* Cocoa.framework */; };
 		E179FD9C134D38060015B883 /* ArgumentCodersMac.h in Headers */ = {isa = PBXBuildFile; fileRef = E179FD9B134D38060015B883 /* ArgumentCodersMac.h */; };
 		E179FD9F134D38250015B883 /* ArgumentCodersMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */; };
 		E17BF99614D0A73E00A5A069 /* NetscapeSandboxFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E17BF99514D0A73E00A5A069 /* NetscapeSandboxFunctions.h */; };
@@ -963,6 +965,20 @@
 		E1AEA23014687BDB00804569 /* WKFullKeyboardAccessWatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1AEA22E14687BDB00804569 /* WKFullKeyboardAccessWatcher.mm */; };
 		E1CC1B9012D7EADF00625838 /* PrintInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = E1CC1B8E12D7EADF00625838 /* PrintInfo.h */; };
 		E1CC1B9112D7EADF00625838 /* PrintInfoMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1CC1B8F12D7EADF00625838 /* PrintInfoMac.mm */; };
+		E1EDFDA61628868E0039ECDA /* MainMacProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FA31011E3921E00DB1371 /* MainMacProcess.cpp */; };
+		E1EDFDA7162886960039ECDA /* SharedWorkerProcessMainMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1EDFD9B16287D0B0039ECDA /* SharedWorkerProcessMainMac.mm */; };
+		E1EDFDA8162886990039ECDA /* SharedWorkerProcessMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1EDFDA21628838C0039ECDA /* SharedWorkerProcessMac.mm */; };
+		E1EDFDA9162886AC0039ECDA /* SharedWorkerProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EDFD9E162882100039ECDA /* SharedWorkerProcess.cpp */; };
+		E1EDFDAE1628893B0039ECDA /* SharedWorkerProcessCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EDFDAD1628893B0039ECDA /* SharedWorkerProcessCreationParameters.h */; };
+		E1EDFDB0162889820039ECDA /* SharedWorkerProcessCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EDFDAF162889810039ECDA /* SharedWorkerProcessCreationParameters.cpp */; };
+		E1EDFDB51628AD730039ECDA /* SharedWorkerProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EDFDB11628AD730039ECDA /* SharedWorkerProcessMessageReceiver.cpp */; };
+		E1EDFDB61628AD730039ECDA /* SharedWorkerProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EDFDB21628AD730039ECDA /* SharedWorkerProcessMessages.h */; };
+		E1EDFDB71628AD730039ECDA /* SharedWorkerProcessProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EDFDB31628AD730039ECDA /* SharedWorkerProcessProxyMessageReceiver.cpp */; };
+		E1EDFDB81628AD730039ECDA /* SharedWorkerProcessProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EDFDB41628AD730039ECDA /* SharedWorkerProcessProxyMessages.h */; };
+		E1EDFDBA1628B0450039ECDA /* SharedWorkerProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EDFDB91628B0450039ECDA /* SharedWorkerProcessProxy.h */; };
+		E1EDFE121628CFB20039ECDA /* SharedWorkerProcessManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EDFE111628CFB20039ECDA /* SharedWorkerProcessManager.cpp */; };
+		E1EDFE131628CFBD0039ECDA /* SharedWorkerProcessManager.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EDFE0F1628CF4E0039ECDA /* SharedWorkerProcessManager.h */; };
+		E1EDFE151628DD7A0039ECDA /* SharedWorkerProcessProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EDFE141628DD7A0039ECDA /* SharedWorkerProcessProxy.cpp */; };
 		E1EE53E311F8CFC000CCBEE4 /* InjectedBundlePageEditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */; };
 		E1EE53E711F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */; };
 		ED82A7F2128C6FAF004477B3 /* WKBundlePageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A22F0FF1289FCD90085E74F /* WKBundlePageOverlay.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1069,6 +1085,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = BCDE093313272496001259FB;
 			remoteInfo = "Plugin Process";
+		};
+		E13A8A4C16287A5B00392929 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E13A8A2B162879AC00392929;
+			remoteInfo = SharedWorkerProcess;
+		};
+		E13A8A4E16287A6600392929 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = WebKit2;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -2116,6 +2146,13 @@
 		E133FD891423DD7F00FC7BFB /* WebKit.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = WebKit.icns; path = WebProcess/mac/WebKit.icns; sourceTree = "<group>"; };
 		E134F01512EA5D11004EC58D /* WKPrintingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPrintingView.h; sourceTree = "<group>"; };
 		E134F01912EA5D99004EC58D /* WKPrintingView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPrintingView.mm; sourceTree = "<group>"; };
+		E13A8A2C162879AC00392929 /* SharedWorkerProcess.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SharedWorkerProcess.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E13A8A2F162879AC00392929 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		E13A8A32162879AC00392929 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		E13A8A33162879AC00392929 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		E13A8A34162879AC00392929 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		E13A8A37162879AC00392929 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = SharedWorkerProcess/Info.plist; sourceTree = "<group>"; };
+		E13A8A4B16287A1B00392929 /* SharedWorkerProcess.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = SharedWorkerProcess.xcconfig; sourceTree = "<group>"; };
 		E14E99F814D879B4001D221F /* PluginProcess.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PluginProcess.entitlements; sourceTree = "<group>"; };
 		E14E99F914D879C9001D221F /* add-entitlements.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "add-entitlements.sh"; sourceTree = "<group>"; };
 		E179FD9B134D38060015B883 /* ArgumentCodersMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentCodersMac.h; sourceTree = "<group>"; };
@@ -2136,6 +2173,24 @@
 		E1AEA22E14687BDB00804569 /* WKFullKeyboardAccessWatcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKFullKeyboardAccessWatcher.mm; sourceTree = "<group>"; };
 		E1CC1B8E12D7EADF00625838 /* PrintInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintInfo.h; sourceTree = "<group>"; };
 		E1CC1B8F12D7EADF00625838 /* PrintInfoMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PrintInfoMac.mm; sourceTree = "<group>"; };
+		E1EDFD9816287BD10039ECDA /* SharedWorkerProcessMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedWorkerProcessMain.h; sourceTree = "<group>"; };
+		E1EDFD9B16287D0B0039ECDA /* SharedWorkerProcessMainMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SharedWorkerProcessMainMac.mm; sourceTree = "<group>"; };
+		E1EDFD9D16287F190039ECDA /* SharedWorkerProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedWorkerProcess.h; sourceTree = "<group>"; };
+		E1EDFD9E162882100039ECDA /* SharedWorkerProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedWorkerProcess.cpp; sourceTree = "<group>"; };
+		E1EDFDA0162883030039ECDA /* SharedWorkerProcess.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SharedWorkerProcess.messages.in; sourceTree = "<group>"; };
+		E1EDFDA21628838C0039ECDA /* SharedWorkerProcessMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SharedWorkerProcessMac.mm; sourceTree = "<group>"; };
+		E1EDFDA4162884640039ECDA /* com.apple.WebKit.SharedWorkerProcess.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebKit.SharedWorkerProcess.sb; sourceTree = "<group>"; };
+		E1EDFDAB162887B00039ECDA /* SharedWorkerProcessProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SharedWorkerProcessProxy.messages.in; sourceTree = "<group>"; };
+		E1EDFDAD1628893B0039ECDA /* SharedWorkerProcessCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedWorkerProcessCreationParameters.h; sourceTree = "<group>"; };
+		E1EDFDAF162889810039ECDA /* SharedWorkerProcessCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedWorkerProcessCreationParameters.cpp; sourceTree = "<group>"; };
+		E1EDFDB11628AD730039ECDA /* SharedWorkerProcessMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedWorkerProcessMessageReceiver.cpp; sourceTree = "<group>"; };
+		E1EDFDB21628AD730039ECDA /* SharedWorkerProcessMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedWorkerProcessMessages.h; sourceTree = "<group>"; };
+		E1EDFDB31628AD730039ECDA /* SharedWorkerProcessProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedWorkerProcessProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		E1EDFDB41628AD730039ECDA /* SharedWorkerProcessProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedWorkerProcessProxyMessages.h; sourceTree = "<group>"; };
+		E1EDFDB91628B0450039ECDA /* SharedWorkerProcessProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedWorkerProcessProxy.h; sourceTree = "<group>"; };
+		E1EDFE0F1628CF4E0039ECDA /* SharedWorkerProcessManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedWorkerProcessManager.h; sourceTree = "<group>"; };
+		E1EDFE111628CFB20039ECDA /* SharedWorkerProcessManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedWorkerProcessManager.cpp; sourceTree = "<group>"; };
+		E1EDFE141628DD7A0039ECDA /* SharedWorkerProcessProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedWorkerProcessProxy.cpp; sourceTree = "<group>"; };
 		E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageEditorClient.h; sourceTree = "<group>"; };
 		E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageEditorClient.cpp; sourceTree = "<group>"; };
 		F036978315F4BE6B00C3A80E /* WKColorPickerResultListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKColorPickerResultListener.cpp; sourceTree = "<group>"; };
@@ -2211,6 +2266,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E13A8A29162879AC00392929 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E13A8A30162879AC00392929 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -2225,6 +2288,7 @@
 				BC3DE46615A91763008D26FC /* com.apple.WebKit2.WebProcessService.xpc */,
 				BCAE9DE9160C097400A33217 /* com.apple.WebKit2.WebProcessServiceForWebKitDevelopment.xpc */,
 				510CC80E1613C79900D03ED3 /* NetworkProcess.app */,
+				E13A8A2C162879AC00392929 /* SharedWorkerProcess.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2243,12 +2307,14 @@
 				BC032D5C10F436D50058C15A /* WebProcess */,
 				510CC7DA16138E0100D03ED3 /* NetworkProcess */,
 				1A0EC6B0124BBD36007EF4A5 /* PluginProcess */,
+				E13A8A35162879AC00392929 /* SharedWorkerProcess */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				C0CE729D1247E71D00BC0EC4 /* Derived Sources */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				C0CE73351247F70E00BC0EC4 /* Scripts */,
 				1A4F9769100E7B6600637A18 /* Configurations */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
+				E13A8A2E162879AC00392929 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
 			);
 			name = WebKit2;
@@ -2270,6 +2336,7 @@
 			children = (
 				510CC84A1613C8AB00D03ED3 /* NetworkProcess */,
 				BC122FA51327085D00F7EAC1 /* PluginProcess */,
+				E1EDFD9716287AEC0039ECDA /* SharedWorkerProcess */,
 				BC8A500E11765AD400757573 /* WebKit2 */,
 				BC8A500F11765AE300757573 /* WebProcess */,
 				BCAE9DED160C097400A33217 /* WebProcessServiceForWebKitDevelopment */,
@@ -2373,6 +2440,7 @@
 				1A4F976C100E7B6600637A18 /* FeatureDefines.xcconfig */,
 				510CC8461613C7C600D03ED3 /* NetworkProcess.xcconfig */,
 				BC122FA3132707F300F7EAC1 /* PluginProcess.xcconfig */,
+				E13A8A4B16287A1B00392929 /* SharedWorkerProcess.xcconfig */,
 				5183B3931379F85C00E8754E /* Shim.xcconfig */,
 				1A4F976E100E7B6600637A18 /* Version.xcconfig */,
 				BCB86F4B116AAACD00CE20B7 /* WebKit2.xcconfig */,
@@ -2648,6 +2716,10 @@
 				BC90A1D0122DD55E00CC8C50 /* WebURLResponse.h */,
 				F6113E24126CE1820057D0A7 /* WebUserContentURLPattern.h */,
 				C0337DD0127A2980008FF4F4 /* WebWheelEvent.cpp */,
+				E1EDFDAD1628893B0039ECDA /* SharedWorkerProcessCreationParameters.h */,
+				E1EDFDAF162889810039ECDA /* SharedWorkerProcessCreationParameters.cpp */,
+				29121705161CE7360057D451 /* UserContentContainer.cpp */,
+				29121706161CE7360057D451 /* UserContentContainer.h */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -3145,6 +3217,7 @@
 				510CC7E716138E7200D03ED3 /* Network */,
 				31A2EC401489973700810D71 /* Notifications */,
 				1AEFCC0511D01F34008219D3 /* Plugins */,
+				E1EDFDAA1628878E0039ECDA /* SharedWorkers */,
 				1A64256712DE42EC00CAAE2C /* BackingStore.cpp */,
 				1A64256612DE42EC00CAAE2C /* BackingStore.h */,
 				BC2652121182608100243E12 /* DrawingAreaProxy.cpp */,
@@ -3930,6 +4003,10 @@
 				1A043B5C124D5E9D00FFBFB5 /* PluginProcessProxyMessages.h */,
 				1A8EFA6E1252B84100F7067F /* PluginProxyMessageReceiver.cpp */,
 				1A8EFA6F1252B84100F7067F /* PluginProxyMessages.h */,
+				E1EDFDB11628AD730039ECDA /* SharedWorkerProcessMessageReceiver.cpp */,
+				E1EDFDB21628AD730039ECDA /* SharedWorkerProcessMessages.h */,
+				E1EDFDB31628AD730039ECDA /* SharedWorkerProcessProxyMessageReceiver.cpp */,
+				E1EDFDB41628AD730039ECDA /* SharedWorkerProcessProxyMessages.h */,
 				512E3568130B57F000ABD19A /* WebApplicationCacheManagerMessageReceiver.cpp */,
 				512E3569130B57F000ABD19A /* WebApplicationCacheManagerMessages.h */,
 				512E35F6130B642E00ABD19A /* WebApplicationCacheManagerProxyMessageReceiver.cpp */,
@@ -4028,6 +4105,37 @@
 			path = FullScreen/mac;
 			sourceTree = "<group>";
 		};
+		E13A8A2E162879AC00392929 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E13A8A2F162879AC00392929 /* Cocoa.framework */,
+				E13A8A31162879AC00392929 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E13A8A31162879AC00392929 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E13A8A32162879AC00392929 /* AppKit.framework */,
+				E13A8A33162879AC00392929 /* CoreData.framework */,
+				E13A8A34162879AC00392929 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		E13A8A35162879AC00392929 /* SharedWorkerProcess */ = {
+			isa = PBXGroup;
+			children = (
+				E1EDFD9A16287CF50039ECDA /* mac */,
+				E1EDFD9816287BD10039ECDA /* SharedWorkerProcessMain.h */,
+				E1EDFD9D16287F190039ECDA /* SharedWorkerProcess.h */,
+				E1EDFD9E162882100039ECDA /* SharedWorkerProcess.cpp */,
+				E1EDFDA0162883030039ECDA /* SharedWorkerProcess.messages.in */,
+			);
+			path = SharedWorkerProcess;
+			sourceTree = "<group>";
+		};
 		E199875B142BF9CF00BB2DE7 /* PDF */ = {
 			isa = PBXGroup;
 			children = (
@@ -4037,6 +4145,36 @@
 				E199875A142BF9B800BB2DE7 /* SimplePDFPlugin.h */,
 			);
 			name = PDF;
+			sourceTree = "<group>";
+		};
+		E1EDFD9716287AEC0039ECDA /* SharedWorkerProcess */ = {
+			isa = PBXGroup;
+			children = (
+				E13A8A37162879AC00392929 /* Info.plist */,
+			);
+			name = SharedWorkerProcess;
+			sourceTree = "<group>";
+		};
+		E1EDFD9A16287CF50039ECDA /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				E1EDFD9B16287D0B0039ECDA /* SharedWorkerProcessMainMac.mm */,
+				E1EDFDA21628838C0039ECDA /* SharedWorkerProcessMac.mm */,
+				E1EDFDA4162884640039ECDA /* com.apple.WebKit.SharedWorkerProcess.sb */,
+			);
+			path = mac;
+			sourceTree = "<group>";
+		};
+		E1EDFDAA1628878E0039ECDA /* SharedWorkers */ = {
+			isa = PBXGroup;
+			children = (
+				E1EDFE0F1628CF4E0039ECDA /* SharedWorkerProcessManager.h */,
+				E1EDFE111628CFB20039ECDA /* SharedWorkerProcessManager.cpp */,
+				E1EDFDAB162887B00039ECDA /* SharedWorkerProcessProxy.messages.in */,
+				E1EDFDB91628B0450039ECDA /* SharedWorkerProcessProxy.h */,
+				E1EDFE141628DD7A0039ECDA /* SharedWorkerProcessProxy.cpp */,
+			);
+			path = SharedWorkers;
 			sourceTree = "<group>";
 		};
 		F638955A133BF57D008941D5 /* mac */ = {
@@ -4520,6 +4658,10 @@
 				1A3EED0F161A535400AEB4F5 /* MessageReceiverMap.h in Headers */,
 				1A3EED12161A53D600AEB4F5 /* MessageReceiver.h in Headers */,
 				29D55DF2161BF9F10031A2E3 /* WebPageGroupProxyMessages.h in Headers */,
+				E1EDFDAE1628893B0039ECDA /* SharedWorkerProcessCreationParameters.h in Headers */,
+				E1EDFDB61628AD730039ECDA /* SharedWorkerProcessMessages.h in Headers */,
+				E1EDFDB81628AD730039ECDA /* SharedWorkerProcessProxyMessages.h in Headers */,
+				E1EDFDBA1628B0450039ECDA /* SharedWorkerProcessProxy.h in Headers */,
 				BC017D0716260FF4007054F5 /* WKDOMDocument.h in Headers */,
 				BC017D0916260FF4007054F5 /* WKDOMElement.h in Headers */,
 				BC017D0B16260FF4007054F5 /* WKDOMInternals.h in Headers */,
@@ -4535,6 +4677,7 @@
 				5179556E162877B300FA43B6 /* NetworkProcessProxy.h in Headers */,
 				51795571162877D200FA43B6 /* NetworkProcessCreationParameters.h in Headers */,
 				5163199516289A6300E22F00 /* NetworkProcessMessages.h in Headers */,
+				E1EDFE131628CFBD0039ECDA /* SharedWorkerProcessManager.h in Headers */,
 				29501724162A4504004A9D71 /* WKWebProcessPlugInBrowserContextControllerPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4694,6 +4837,24 @@
 			productReference = BCDE094213272496001259FB /* PluginProcess.app */;
 			productType = "com.apple.product-type.application";
 		};
+		E13A8A2B162879AC00392929 /* SharedWorkerProcess */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E13A8A4A162879AC00392929 /* Build configuration list for PBXNativeTarget "SharedWorkerProcess" */;
+			buildPhases = (
+				E13A8A28162879AC00392929 /* Sources */,
+				E13A8A29162879AC00392929 /* Frameworks */,
+				E13A8A2A162879AC00392929 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E13A8A4F16287A6600392929 /* PBXTargetDependency */,
+			);
+			name = SharedWorkerProcess;
+			productName = SharedWorkerProcess;
+			productReference = E13A8A2C162879AC00392929 /* SharedWorkerProcess.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -4723,6 +4884,7 @@
 				1A50DB1D110A3BDC000D3FE5 /* WebProcess */,
 				BCDE093313272496001259FB /* PluginProcess */,
 				510CC80D1613C79900D03ED3 /* NetworkProcess */,
+				E13A8A2B162879AC00392929 /* SharedWorkerProcess */,
 				C0CE72851247E66800BC0EC4 /* Derived Sources */,
 				1AC25FAF12A48EA700BD2671 /* PluginProcessShim */,
 				510031EA1379CACB00C8DFE4 /* WebProcessShim */,
@@ -4780,6 +4942,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				E1967E36150AB5D500C73169 /* com.apple.WebKit.PluginProcess.sb in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E13A8A2A162879AC00392929 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5429,6 +5598,12 @@
 				BC989D81161A7E5D000D46D3 /* WKWebProcessPlugIn.mm in Sources */,
 				1A3EED0E161A535400AEB4F5 /* MessageReceiverMap.cpp in Sources */,
 				29D55DF1161BF9F10031A2E3 /* WebPageGroupProxyMessageReceiver.cpp in Sources */,
+				E1EDFDA7162886960039ECDA /* SharedWorkerProcessMainMac.mm in Sources */,
+				E1EDFDA8162886990039ECDA /* SharedWorkerProcessMac.mm in Sources */,
+				E1EDFDA9162886AC0039ECDA /* SharedWorkerProcess.cpp in Sources */,
+				E1EDFDB0162889820039ECDA /* SharedWorkerProcessCreationParameters.cpp in Sources */,
+				E1EDFDB51628AD730039ECDA /* SharedWorkerProcessMessageReceiver.cpp in Sources */,
+				E1EDFDB71628AD730039ECDA /* SharedWorkerProcessProxyMessageReceiver.cpp in Sources */,
 				BC017D0816260FF4007054F5 /* WKDOMDocument.mm in Sources */,
 				BC017D0A16260FF4007054F5 /* WKDOMElement.mm in Sources */,
 				BC017D0C16260FF4007054F5 /* WKDOMInternals.mm in Sources */,
@@ -5445,6 +5620,8 @@
 				51795570162877CF00FA43B6 /* NetworkProcessCreationParameters.cpp in Sources */,
 				516319921628980A00E22F00 /* NetworkProcessProxyMac.mm in Sources */,
 				5163199416289A6000E22F00 /* NetworkProcessMessageReceiver.cpp in Sources */,
+				E1EDFE121628CFB20039ECDA /* SharedWorkerProcessManager.cpp in Sources */,
+				E1EDFE151628DD7A0039ECDA /* SharedWorkerProcessProxy.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5469,6 +5646,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				BCDE093B13272496001259FB /* MainMacProcess.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E13A8A28162879AC00392929 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E1EDFDA61628868E0039ECDA /* MainMacProcess.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5529,6 +5714,16 @@
 			isa = PBXTargetDependency;
 			target = BCDE093313272496001259FB /* PluginProcess */;
 			targetProxy = BCDE0AC013272712001259FB /* PBXContainerItemProxy */;
+		};
+		E13A8A4D16287A5B00392929 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E13A8A2B162879AC00392929 /* SharedWorkerProcess */;
+			targetProxy = E13A8A4C16287A5B00392929 /* PBXContainerItemProxy */;
+		};
+		E13A8A4F16287A6600392929 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8DC2EF4F0486A6940098B216 /* WebKit2 */;
+			targetProxy = E13A8A4E16287A6600392929 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -5817,6 +6012,27 @@
 			};
 			name = Production;
 		};
+		E13A8A47162879AC00392929 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E13A8A4B16287A1B00392929 /* SharedWorkerProcess.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		E13A8A48162879AC00392929 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E13A8A4B16287A1B00392929 /* SharedWorkerProcess.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		E13A8A49162879AC00392929 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E13A8A4B16287A1B00392929 /* SharedWorkerProcess.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -5926,6 +6142,16 @@
 				C0CE72861247E66800BC0EC4 /* Debug */,
 				C0CE72871247E66800BC0EC4 /* Release */,
 				C0CE72881247E66800BC0EC4 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		E13A8A4A162879AC00392929 /* Build configuration list for PBXNativeTarget "SharedWorkerProcess" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E13A8A47162879AC00392929 /* Debug */,
+				E13A8A48162879AC00392929 /* Release */,
+				E13A8A49162879AC00392929 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

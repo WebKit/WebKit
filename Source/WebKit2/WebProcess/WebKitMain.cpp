@@ -28,6 +28,7 @@
 
 #include "PluginProcessMain.h"
 #include "ProcessLauncher.h"
+#include "SharedWorkerProcessMain.h"
 #include "WebProcessMain.h"
 #include <wtf/text/CString.h>
 
@@ -64,6 +65,8 @@ static int WebKitMain(const CommandLine& commandLine)
 #else
             break;
 #endif
+        case ProcessLauncher::SharedWorkerProcess:
+            return SharedWorkerProcessMain(commandLine);
     }
 
     return EXIT_FAILURE;

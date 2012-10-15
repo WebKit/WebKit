@@ -49,7 +49,8 @@ public:
     enum ProcessType {
         WebProcess,
         PluginProcess,
-        NetworkProcess
+        NetworkProcess,
+        SharedWorkerProcess
     };
 
     struct LaunchOptions {

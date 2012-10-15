@@ -380,6 +380,9 @@ static void createProcess(const ProcessLauncher::LaunchOptions& launchOptions, b
         processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"NetworkProcess.app"];
         break;
 #endif
+    case ProcessLauncher::SharedWorkerProcess:
+        processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"SharedWorkerProcess.app"];
+        break;
     }
 
     NSString *frameworkExecutablePath = [webKit2Bundle executablePath];
