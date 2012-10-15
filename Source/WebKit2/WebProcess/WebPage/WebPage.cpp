@@ -1222,7 +1222,7 @@ void WebPage::postInjectedBundleMessage(const String& messageName, CoreIPC::Argu
         return;
 
     RefPtr<APIObject> messageBody;
-    if (argumentDecoder->decode(InjectedBundleUserMessageDecoder(messageBody)))
+    if (!argumentDecoder->decode(InjectedBundleUserMessageDecoder(messageBody)))
         return;
 
     injectedBundle->didReceiveMessageToPage(this, messageName, messageBody.get());
