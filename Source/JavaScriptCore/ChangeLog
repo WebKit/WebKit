@@ -1,3 +1,17 @@
+2012-10-15  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        We should avoid weakCompareAndSwap when parallel GC is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=99331
+
+        Reviewed by Filip Pizlo.
+
+        CopiedBlock::reportLiveBytes and didEvacuateBytes uses weakCompareAndSwap, which some platforms 
+        don't support. For platforms that don't have parallel GC enabled, we should just use a normal store.
+
+        * heap/CopiedBlock.h:
+        (JSC::CopiedBlock::reportLiveBytes):
+        (JSC::CopiedBlock::didEvacuateBytes):
+
 2012-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.
