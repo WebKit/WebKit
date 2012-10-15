@@ -1215,20 +1215,14 @@ void WebPage::setGapBetweenPages(double gap)
     m_page->setPagination(pagination);
 }
 
-void WebPage::postInjectedBundleMessage(const CoreIPC::DataReference& messageData)
+void WebPage::postInjectedBundleMessage(const String& messageName, CoreIPC::ArgumentDecoder* argumentDecoder)
 {
     InjectedBundle* injectedBundle = WebProcess::shared().injectedBundle();
     if (!injectedBundle)
         return;
 
-    CoreIPC::ArgumentDecoder messageDecoder(messageData.data(), messageData.size());
-
-    String messageName;
-    if (!messageDecoder.decode(messageName))
-        return;
-
     RefPtr<APIObject> messageBody;
-    if (!messageDecoder.decode(InjectedBundleUserMessageDecoder(messageBody)))
+    if (argumentDecoder->decode(InjectedBundleUserMessageDecoder(messageBody)))
         return;
 
     injectedBundle->didReceiveMessageToPage(this, messageName, messageBody.get());

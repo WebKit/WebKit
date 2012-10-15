@@ -46,8 +46,8 @@ messages -> WebPage {
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    DidEndColorChooser();
-    DidChooseColor(WebCore::Color color);
+    DidEndColorChooser()
+    DidChooseColor(WebCore::Color color)
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
@@ -62,7 +62,7 @@ messages -> WebPage {
     GoToBackForwardItem(uint64_t backForwardItemID)
     TryRestoreScrollPosition()
     LoadHTMLString(WTF::String htmlString, WTF::String baseURL)
-    LoadAlternateHTMLString(WTF::String htmlString, WTF::String baseURL, WTF::String unreachableURL); 
+    LoadAlternateHTMLString(WTF::String htmlString, WTF::String baseURL, WTF::String unreachableURL)
     LoadPlainTextString(WTF::String string)
     LoadWebArchiveData(CoreIPC::DataReference webArchiveData)
     LoadURL(WTF::String url, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
@@ -142,12 +142,12 @@ messages -> WebPage {
     ListenForLayoutMilestones(uint32_t milestones)
     SetSuppressScrollbarAnimations(bool suppressAnimations)
 
-    SetPaginationMode(uint32_t mode);
-    SetPaginationBehavesLikeColumns(bool behavesLikeColumns);
-    SetPageLength(double pageLength);
-    SetGapBetweenPages(double gap);
+    SetPaginationMode(uint32_t mode)
+    SetPaginationBehavesLikeColumns(bool behavesLikeColumns)
+    SetPageLength(double pageLength)
+    SetGapBetweenPages(double gap)
 
-    PostInjectedBundleMessage(CoreIPC::DataReference messageData);
+    PostInjectedBundleMessage(WTF::String messageName, WebKit::WebContextUserMessageEncoder messageBody) Variadic
 
     # Find.
     FindString(WTF::String string, uint32_t findOptions, unsigned maxMatchCount)
@@ -169,19 +169,19 @@ messages -> WebPage {
 #endif
 
     # Popup menu.
-    DidChangeSelectedIndexForActivePopupMenu(int32_t newIndex);
-    SetTextForActivePopupMenu(int32_t index);
-#if PLATFORM(GTK)    
-    FailedToShowPopupMenu();
+    DidChangeSelectedIndexForActivePopupMenu(int32_t newIndex)
+    SetTextForActivePopupMenu(int32_t index)
+#if PLATFORM(GTK)
+    FailedToShowPopupMenu()
 #endif
 #if PLATFORM(QT)
-    HidePopupMenu();
-    SelectedIndex(int32_t newIndex);
+    HidePopupMenu()
+    SelectedIndex(int32_t newIndex)
 #endif
     
 #if ENABLE(CONTEXT_MENUS)
     # Context menu.
-    DidSelectItemFromActiveContextMenu(WebKit::WebContextMenuItemData menuItem);
+    DidSelectItemFromActiveContextMenu(WebKit::WebContextMenuItemData menuItem)
 #endif
 
     # Open panel.
@@ -195,11 +195,11 @@ messages -> WebPage {
     AdvanceToNextMisspelling(bool startBeforeSelection)
     ChangeSpellingToWord(WTF::String word)
 #if USE(APPKIT)
-    UppercaseWord();
-    LowercaseWord();
-    CapitalizeWord();
+    UppercaseWord()
+    LowercaseWord()
+    CapitalizeWord()
 
-    SetSmartInsertDeleteEnabled(bool isSmartInsertDeleteEnabled);
+    SetSmartInsertDeleteEnabled(bool isSmartInsertDeleteEnabled)
 #endif
 
 #if ENABLE(GEOLOCATION)
@@ -214,7 +214,7 @@ messages -> WebPage {
 
     # Printing.
     BeginPrinting(uint64_t frameID, WebKit::PrintInfo printInfo)
-    EndPrinting();
+    EndPrinting()
     ComputePagesForPrinting(uint64_t frameID, WebKit::PrintInfo printInfo, uint64_t callbackID)
 #if PLATFORM(MAC) || PLATFORM(WIN)
     DrawRectToPDF(uint64_t frameID, WebKit::PrintInfo printInfo, WebCore::IntRect rect, uint64_t callbackID)
@@ -238,7 +238,7 @@ messages -> WebPage {
 
     # Web Intents
 #if ENABLE(WEB_INTENTS)
-    DeliverIntentToFrame(uint64_t frameID, WebKit::IntentData intentData);
+    DeliverIntentToFrame(uint64_t frameID, WebKit::IntentData intentData)
 #endif
 
 #if PLATFORM(EFL)
@@ -301,7 +301,7 @@ messages -> WebPage {
 #endif
 
 #if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-    SetVisibilityState(int visibilityState, bool isInitialState);
+    SetVisibilityState(int visibilityState, bool isInitialState)
 #endif
 
 #if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)

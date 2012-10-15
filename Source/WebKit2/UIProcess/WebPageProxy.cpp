@@ -2964,13 +2964,7 @@ NativeWebMouseEvent* WebPageProxy::currentlyProcessedMouseDownEvent()
 
 void WebPageProxy::postMessageToInjectedBundle(const String& messageName, APIObject* messageBody)
 {
-    OwnPtr<CoreIPC::ArgumentEncoder> messageData = CoreIPC::ArgumentEncoder::create(0);
-
-    messageData->encode(messageName);
-    messageData->encode(WebContextUserMessageEncoder(messageBody));
-
-    // FIXME: We should consider returning false from this function if the messageBody cannot be encoded.
-    process()->send(Messages::WebPage::PostInjectedBundleMessage(CoreIPC::DataReference(messageData->buffer(), messageData->bufferSize())), m_pageID);
+    process()->send(Messages::WebPage::PostInjectedBundleMessage(messageName, WebContextUserMessageEncoder(messageBody)), m_pageID);
 }
 
 #if PLATFORM(GTK)

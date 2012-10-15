@@ -1,3 +1,21 @@
+2012-10-14  Anders Carlsson  <andersca@apple.com>
+
+        WebPage::PostInjectedBundleMessage should be a variadic message
+        https://bugs.webkit.org/show_bug.cgi?id=99277
+
+        Reviewed by Sam Weinig.
+
+        Don't use a data reference for messages posted to the injected bundle; they could contain data that requires attachments
+        (such as shared memory).
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::postMessageToInjectedBundle):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::postInjectedBundleMessage):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2012-10-14  Sam Weinig  <sam@webkit.org>
 
         Simplify user content in WebKit2 by using WebCore::UserStyleSheet and WebCore::UserScript directly
