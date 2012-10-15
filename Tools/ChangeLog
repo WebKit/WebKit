@@ -1,3 +1,18 @@
+2012-10-15  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL][EWebLauncher] Add encoding detector option.
+        https://bugs.webkit.org/show_bug.cgi?id=98726
+
+        Reviewed by Gyuyoung Kim.
+
+        Added an option to test WebCore's encoding detector functionality on EWebLauncher.
+        With this patch, EWebLauncher would display text correctly even if web page wouldn't specify charset information.
+
+        * EWebLauncher/main.c:
+        (_User_Arguments):
+        (windowCreate):
+        (parseUserArguments):
+
 2012-10-15  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Build fix for Mac debug build.

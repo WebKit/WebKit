@@ -116,6 +116,8 @@ static const Ecore_Getopt options = {
         ECORE_GETOPT_CHOICE
             ('b', "backing-store", "choose backing store to use.", backingStores),
         ECORE_GETOPT_STORE_DEF_BOOL
+            ('c', "encoding-detector", "enable/disable encoding detector", 0),
+        ECORE_GETOPT_STORE_DEF_BOOL
             ('f', "flattening", "frame flattening.", 0),
         ECORE_GETOPT_STORE_DEF_BOOL
             ('F', "fullscreen", "fullscreen mode.", 0),
@@ -144,6 +146,7 @@ typedef struct _User_Arguments {
     const char *engine;
     Eina_Bool quitOption;
     const char *backingStore;
+    Eina_Bool enableEncodingDetector;
     Eina_Bool isFlattening;
     Eina_Bool isFullscreen;
     Eina_Rectangle geometry;
@@ -833,6 +836,7 @@ windowCreate(User_Arguments *userArgs)
 
     ewk_view_setting_local_storage_database_path_set(app->browser, userArgs->databasePath);
     ewk_view_setting_enable_frame_flattening_set(app->browser, userArgs->isFlattening);
+    ewk_view_setting_encoding_detector_set(app->browser, userArgs->enableEncodingDetector);
 
     app->userArgs = userArgs;
     app->url_bar = NULL;
@@ -908,6 +912,7 @@ parseUserArguments(int argc, char *argv[], User_Arguments *userArgs)
     userArgs->engine = NULL;
     userArgs->quitOption = EINA_FALSE;
     userArgs->backingStore = (char *)backingStores[1];
+    userArgs->enableEncodingDetector = EINA_FALSE;
     userArgs->isFlattening = EINA_FALSE;
     userArgs->isFullscreen = EINA_FALSE;
     userArgs->geometry.x = 0;
@@ -921,6 +926,7 @@ parseUserArguments(int argc, char *argv[], User_Arguments *userArgs)
         ECORE_GETOPT_VALUE_STR(userArgs->engine),
         ECORE_GETOPT_VALUE_BOOL(userArgs->quitOption),
         ECORE_GETOPT_VALUE_STR(userArgs->backingStore),
+        ECORE_GETOPT_VALUE_BOOL(userArgs->enableEncodingDetector),
         ECORE_GETOPT_VALUE_BOOL(userArgs->isFlattening),
         ECORE_GETOPT_VALUE_BOOL(userArgs->isFullscreen),
         ECORE_GETOPT_VALUE_PTR_CAST(userArgs->geometry),
