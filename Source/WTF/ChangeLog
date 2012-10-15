@@ -1,3 +1,17 @@
+2012-10-15  Andreas Kling  <kling@webkit.org>
+
+        Remove WTF::fastDeleteAllValues().
+        <http://webkit.org/b/99345>
+
+        Reviewed by Eric Seidel.
+
+        It was only used to fastDelete() a class that was already overriding operator delete
+        by way of WTF_MAKE_FAST_ALLOCATED anyway.
+
+        * wtf/HashSet.h:
+        (WTF):
+        (HashSet):
+
 2012-10-15  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Parallel GC should not be disabled for all platforms

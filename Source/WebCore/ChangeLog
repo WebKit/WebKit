@@ -1,3 +1,16 @@
+2012-10-15  Andreas Kling  <kling@webkit.org>
+
+        Remove WTF::fastDeleteAllValues().
+        <http://webkit.org/b/99345>
+
+        Reviewed by Eric Seidel.
+
+        It was only used to fastDelete() a class that was already overriding operator delete
+        by way of WTF_MAKE_FAST_ALLOCATED anyway.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::~CSSParser):
+
 2012-10-15  Levi Weintraub  <leviw@chromium.org>
 
         Regression r130057: incorrect block pref width for alternating InlineFlow and inline Replaced

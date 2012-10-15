@@ -31,8 +31,6 @@ namespace WTF {
     template<typename Value, typename HashFunctions, typename Traits> class HashSet;
     template<typename Value, typename HashFunctions, typename Traits>
     void deleteAllValues(const HashSet<Value, HashFunctions, Traits>&);
-    template<typename Value, typename HashFunctions, typename Traits>
-    void fastDeleteAllValues(const HashSet<Value, HashFunctions, Traits>&);
 
     template<typename ValueArg, typename HashArg = typename DefaultHash<ValueArg>::Hash,
         typename TraitsArg = HashTraits<ValueArg> > class HashSet {
@@ -95,7 +93,6 @@ namespace WTF {
 
     private:
         friend void deleteAllValues<>(const HashSet&);
-        friend void fastDeleteAllValues<>(const HashSet&);
 
         HashTableType m_impl;
     };
@@ -227,21 +224,6 @@ namespace WTF {
         deleteAllValues<typename HashSet<T, U, V>::ValueType>(collection.m_impl);
     }
 
-    template<typename ValueType, typename HashTableType>
-    void fastDeleteAllValues(HashTableType& collection)
-    {
-        typedef typename HashTableType::const_iterator iterator;
-        iterator end = collection.end();
-        for (iterator it = collection.begin(); it != end; ++it)
-            fastDelete(*it);
-    }
-
-    template<typename T, typename U, typename V>
-    inline void fastDeleteAllValues(const HashSet<T, U, V>& collection)
-    {
-        fastDeleteAllValues<typename HashSet<T, U, V>::ValueType>(collection.m_impl);
-    }
-    
     template<typename T, typename U, typename V, typename W>
     inline void copyToVector(const HashSet<T, U, V>& collection, W& vector)
     {

@@ -284,7 +284,7 @@ CSSParser::~CSSParser()
 {
     clearProperties();
 
-    fastDeleteAllValues(m_floatingSelectors);
+    deleteAllValues(m_floatingSelectors);
     deleteAllValues(m_floatingSelectorVectors);
     deleteAllValues(m_floatingValueLists);
     deleteAllValues(m_floatingFunctions);
