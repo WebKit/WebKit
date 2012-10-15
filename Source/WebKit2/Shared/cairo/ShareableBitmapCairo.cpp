@@ -38,6 +38,19 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static const cairo_format_t cairoFormat = CAIRO_FORMAT_ARGB32;
+
+size_t ShareableBitmap::numBytesForSize(const WebCore::IntSize& size)
+{
+    return cairo_format_stride_for_width(cairoFormat, size.width()) * size.height();
+}
+
+static inline PassRefPtr<cairo_surface_t> createSurfaceFromData(void* data, const WebCore::IntSize& size)
+{
+    const int stride = cairo_format_stride_for_width(cairoFormat, size.width());
+    return adoptRef(cairo_image_surface_create_for_data(static_cast<unsigned char*>(data), cairoFormat, size.width(), size.height(), stride));
+}
+
 PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
     RefPtr<cairo_surface_t> image = createCairoSurface();
@@ -47,10 +60,7 @@ PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 
 void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& dstPoint, const IntRect& srcRect)
 {
-    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create_for_data(static_cast<unsigned char*>(data()),
-                                                                                   CAIRO_FORMAT_ARGB32,
-                                                                                   m_size.width(), m_size.height(),
-                                                                                   m_size.width() * 4));
+    RefPtr<cairo_surface_t> surface = createSurfaceFromData(data(), m_size);
     FloatRect destRect(dstPoint, srcRect.size());
     context.platformContext()->drawSurfaceToContext(surface.get(), destRect, srcRect, &context);
 }
@@ -67,10 +77,7 @@ void ShareableBitmap::paint(GraphicsContext& context, float scaleFactor, const I
 
 PassRefPtr<cairo_surface_t> ShareableBitmap::createCairoSurface()
 {
-    RefPtr<cairo_surface_t> image = adoptRef(cairo_image_surface_create_for_data(static_cast<unsigned char*>(data()),
-                                                                                 CAIRO_FORMAT_ARGB32,
-                                                                                 m_size.width(), m_size.height(),
-                                                                                 m_size.width() * 4));
+    RefPtr<cairo_surface_t> image = createSurfaceFromData(data(), m_size);
 
     ref(); // Balanced by deref in releaseSurfaceData.
     static cairo_user_data_key_t dataKey;

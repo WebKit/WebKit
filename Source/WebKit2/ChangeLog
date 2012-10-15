@@ -1,3 +1,39 @@
+2012-10-15  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][CAIRO] Use cairo_format_stride_for_width() in ShareableBitmap
+        https://bugs.webkit.org/show_bug.cgi?id=99332
+
+        Reviewed by Martin Robinson.
+
+        Cairo implementation of ShareableBitmap is calling
+        cairo_image_surface_create_for_data() to create an image surface for
+        the provided pixel data. However, it was passing "m_size.width() * 4"
+        for the stride argument instead of calling
+        cairo_format_stride_for_width().
+
+        The Cairo documentation states:
+        "Note that the stride may be larger than width*bytes_per_pixel to
+        provide proper alignment for each pixel and row. This alignment is
+        required to allow high-performance rendering within cairo. The correct
+        way to obtain a legal stride value is to call
+        cairo_format_stride_for_width() with the desired format and maximum
+        image width value, and then use the resulting stride value to allocate
+        the data and to create the image surface."
+
+        This patch calls cairo_format_stride_for_width() is ShareableBitmap
+        in order to obtain a legal stride value to make sure we provide proper
+        alignment for each pixel and row, and allow high-performance rendering
+        within cairo.
+
+        * Shared/ShareableBitmap.h:
+        (ShareableBitmap):
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit):
+        (WebKit::ShareableBitmap::numBytesForSize):
+        (WebKit::createSurfaceFromData):
+        (WebKit::ShareableBitmap::paint):
+        (WebKit::ShareableBitmap::createCairoSurface):
+
 2012-10-15  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL][WK2] Refactoring initialization and shutdown codes of EFL libraries.

@@ -143,7 +143,11 @@ private:
     ShareableBitmap(const WebCore::IntSize&, Flags, void*);
     ShareableBitmap(const WebCore::IntSize&, Flags, PassRefPtr<SharedMemory>);
 
+#if USE(CAIRO)
+    static size_t numBytesForSize(const WebCore::IntSize&);
+#else
     static size_t numBytesForSize(const WebCore::IntSize& size) { return size.width() * size.height() * 4; }
+#endif
 
 #if USE(CG)
     RetainPtr<CGImageRef> createCGImage(CGDataProviderRef) const;
