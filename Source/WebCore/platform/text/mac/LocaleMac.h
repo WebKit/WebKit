@@ -37,6 +37,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+OBJC_CLASS NSCalendar;
 OBJC_CLASS NSDateFormatter;
 OBJC_CLASS NSLocale;
 
@@ -70,18 +71,19 @@ public:
 
 private:
     explicit LocaleMac(NSLocale*);
-    NSDateFormatter *createShortDateFormatter();
+    RetainPtr<NSDateFormatter> shortDateFormatter();
     virtual void initializeLocalizerData() OVERRIDE;
 
     RetainPtr<NSLocale> m_locale;
+    RetainPtr<NSCalendar> m_gregorianCalendar;
 #if ENABLE(CALENDAR_PICKER)
     String m_localizedDateFormatText;
     Vector<String> m_monthLabels;
     Vector<String> m_weekDayShortLabels;
 #endif
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-    NSDateFormatter *createTimeFormatter();
-    NSDateFormatter *createShortTimeFormatter();
+    RetainPtr<NSDateFormatter> timeFormatter();
+    RetainPtr<NSDateFormatter> shortTimeFormatter();
 
     String m_dateFormat;
     String m_localizedTimeFormatText;

@@ -1,3 +1,49 @@
+2012-10-15  Kent Tamura  <tkent@chromium.org>
+
+        Improve code of LocaleMac.mm
+        https://bugs.webkit.org/show_bug.cgi?id=98383
+
+        Reviewed by Darin Adler.
+
+        - Use isNull instead of isEmpty because isNull is more efficient.
+        - create*Formatter should return RetainPtr to avoid to retain in each of callsites.
+        - Explicit String conversion is not needed.
+
+        No new tests. This doesn't change any behavior.
+
+        * platform/text/mac/LocaleMac.h:
+        (LocaleMac):
+        - Change the return types of createShortDateFormatter,
+        createTimeFormatter, and createShortTimeFormatter from NSDateFormatter*
+        to RetainPtr<NSDateFormatter>.
+        - Omit 'create' from their names.
+        - Add m_gregorianCalendar.
+        * platform/text/mac/LocaleMac.mm:
+        (WebCore::createDateTimeFormatter):
+        Change the return type from NSDateFormatter* to RetainPtr<NSDateFormatter>.
+        Add an NSCalendar argument.
+        (WebCore::LocaleMac::shortDateFormatter):
+        Renamed from createShortTimeFormatter.
+        Change the return type from NSDateFormatter* to RetainPtr<NSDateFormatter>.
+        (WebCore::LocaleMac::parseDateTime): Follow the return type change and the renaming.
+        (WebCore::LocaleMac::formatDateTime): Ditto. Also, remove explicit String construction.
+        (WebCore::LocaleMac::dateFormatText): Ditto. Also, use isNull.
+        (WebCore::LocaleMac::monthLabels): Follow the return type change and the renaming.
+        (WebCore::LocaleMac::weekDayShortLabels): Ditto.
+        (WebCore::LocaleMac::timeFormatter):
+        Change the return type from NSDateFormatter* to RetainPtr<NSDateFormatter>.
+        Renamed from createTimeFormatter.
+        (WebCore::LocaleMac::shortTimeFormatter): Ditto.
+        (WebCore::LocaleMac::dateFormat):
+        Use isNull. Remove explicit String construction. Follow the return type
+        change and the renaming.
+        (WebCore::LocaleMac::timeFormat): ditto.
+        (WebCore::LocaleMac::shortTimeFormat): ditto.
+        (WebCore::LocaleMac::timeAMPMLabels):
+        Remove explicit String construction. Follow the return type change.
+        (WebCore::LocaleMac::initializeLocalizerData):
+        Remove explicit String construction.
+
 2012-10-12  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: NMI remove hand made object builders with automatic builder.
