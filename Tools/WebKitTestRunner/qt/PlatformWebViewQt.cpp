@@ -34,7 +34,6 @@
 #include <QEventLoop>
 #include <QQmlProperty>
 #include <QtQuick/QQuickView>
-#include <QtQuick/private/qquickwindow_p.h>
 #include <WebKit2/WKImageQt.h>
 #include <qpa/qwindowsysteminterface.h>
 
@@ -61,11 +60,6 @@ private Q_SLOTS:
         setResizeMode(QQuickView::SizeRootObjectToView);
         m_view->setParentItem(rootObject());
         QQmlProperty::write(m_view, "anchors.fill", qVariantFromValue(rootObject()));
-
-        setSurfaceType(OpenGLSurface);
-        create();
-
-        QQuickWindowPrivate::get(this)->setRenderWithoutShowing(true);
 
         QWindowSystemInterface::handleWindowActivated(this);
         m_view->page()->setFocus(true);
@@ -158,7 +152,9 @@ void PlatformWebView::makeWebViewFirstResponder()
 
 WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
 {
-    return adoptWK(WKImageCreateFromQImage(m_window->grabWindow()));
+    // FIXME: implement to capture pixels in the UI process,
+    // which may be necessary to capture things like 3D transforms.
+    return 0;
 }
 
 } // namespace WTR
