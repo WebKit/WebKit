@@ -1,3 +1,14 @@
+2012-10-15  Dongwoo Joshua Im  <dw.im@samsung.com>
+
+        [EFL] Set the basepath of the File System API.
+        https://bugs.webkit.org/show_bug.cgi?id=98344
+
+        Reviewed by Gyuyoung Kim.
+
+        Set the basepath of the File System API using the internal setter function.
+
+        * PlatformEfl.cmake: Add new include path.
+
 2012-10-15  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Share resources installed for inspector

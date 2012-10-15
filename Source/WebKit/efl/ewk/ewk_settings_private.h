@@ -23,4 +23,6 @@
 
 const char* ewk_settings_default_user_agent_get();
 
+void ewk_settings_file_system_path_set(const char *path);
+
 #endif // ewk_settings_private_h

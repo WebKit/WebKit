@@ -31,6 +31,7 @@
 #include "Image.h"
 #include "IntSize.h"
 #include "KURL.h"
+#include "LocalFileSystem.h"
 #include "MemoryCache.h"
 #include "PageCache.h"
 #include "RuntimeEnabledFeatures.h"
@@ -321,6 +322,23 @@ const char* ewk_settings_default_user_agent_get()
     WTF::String staticUa = "Mozilla/5.0 (" + _ewk_settings_webkit_platform_get() + "; " + _ewk_settings_webkit_os_version_get() + ") AppleWebKit/" + uaVersion + " (KHTML, like Gecko) Version/5.0 Safari/" + uaVersion;
 
     return eina_stringshare_add(staticUa.utf8().data());
+}
+
+/**
+ * @internal
+ *
+ * Sets the given path to the directory where WebKit will write for
+ * the HTML5 file system API.
+ *
+ * @param path the new file system directory path
+ */
+void ewk_settings_file_system_path_set(const char* path)
+{
+#if ENABLE(FILE_SYSTEM)
+    WebCore::LocalFileSystem::initializeLocalFileSystem(String::fromUTF8(path));
+#else
+    UNUSED_PARAM(path);
+#endif
 }
 
 void ewk_settings_application_cache_path_set(const char* path)
