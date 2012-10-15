@@ -20,9 +20,9 @@
 #define BlackBerryGlobal_h
 
 #if defined(__QNXNTO__) && defined(BUILD_WEBKIT)
-        #define BLACKBERRY_EXPORT __attribute__ ((visibility("default")))
+#define BLACKBERRY_EXPORT __attribute__ ((visibility("default")))
 #else
-    #define BLACKBERRY_EXPORT
+#define BLACKBERRY_EXPORT
 #endif
 
 namespace BlackBerry {
@@ -43,6 +43,7 @@ void clearDatabase(const BlackBerry::Platform::String& pageGroupName);
 void reopenAllTrackerDatabases();
 void closeAllTrackerDatabases();
 void updateOnlineStatus(bool online);
+bool isRunningDrt();
 }
 }
 

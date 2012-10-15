@@ -537,7 +537,7 @@ void WebPagePrivate::init(const BlackBerry::Platform::String& pageGroupName)
 
     m_page = new Page(pageClients);
 #if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
-    if (getenv("drtRun")) {
+    if (isRunningDrt()) {
         // In case running in DumpRenderTree mode set the controller to mock provider.
         GeolocationClientMock* mock = new GeolocationClientMock();
         WebCore::provideGeolocationTo(m_page, mock);

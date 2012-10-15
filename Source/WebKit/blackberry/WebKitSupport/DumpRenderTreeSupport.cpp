@@ -45,8 +45,8 @@ bool DumpRenderTreeSupport::s_linksIncludedInTabChain = true;
 
 GeolocationClientMock* toGeolocationClientMock(GeolocationClient* client)
 {
-     ASSERT(getenv("drtRun"));
-     return static_cast<GeolocationClientMock*>(client);
+    ASSERT(isRunningDrt());
+    return static_cast<GeolocationClientMock*>(client);
 }
 
 DumpRenderTreeSupport::DumpRenderTreeSupport()

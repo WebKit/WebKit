@@ -149,5 +149,14 @@ void updateOnlineStatus(bool online)
     networkStateNotifier().networkStateChange(online);
 }
 
+bool isRunningDrt()
+{
+#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
+    return getenv("drtRun");
+#else
+    return false;
+#endif
+}
+
 }
 }

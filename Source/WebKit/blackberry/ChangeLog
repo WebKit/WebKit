@@ -1,3 +1,26 @@
+2012-10-15  Xiaobo Wang  <xbwang@torchmobile.com.cn>
+
+        [BlackBerry] [DRT] Skip region of interest zooming when running DRT
+        https://bugs.webkit.org/show_bug.cgi?id=97663
+
+        Reviewed by Rob Buis.
+
+        This patch fixes test fast/forms/textarea-scrolled-endline-caret.html, and
+        1. Add a global function isRunningDrt to check if we're currently running DRT.
+        2. Use the new function in places where getenv("drtRun") is used.
+
+        * Api/BlackBerryGlobal.cpp:
+        (BlackBerry::WebKit::isRunningDrt):
+        (WebKit):
+        * Api/BlackBerryGlobal.h:
+        (WebKit):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        * WebKitSupport/DumpRenderTreeSupport.cpp:
+        (toGeolocationClientMock):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::ensureFocusTextElementVisible):
+
 2012-10-15  George Staikos  <staikos@webkit.org>
 
         [BlackBerry] Adapt to Platform API changes in string handling
