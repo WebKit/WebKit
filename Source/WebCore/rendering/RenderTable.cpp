@@ -600,11 +600,9 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     info.phase = paintPhase;
     info.updatePaintingRootForChildren(this);
 
-    IntPoint alignedOffset = roundedIntPoint(paintOffset);
-
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer() && (child->isTableSection() || child->isTableCaption())) {
-            LayoutPoint childPoint = flipForWritingModeForChild(toRenderBox(child), alignedOffset);
+            LayoutPoint childPoint = flipForWritingModeForChild(toRenderBox(child), paintOffset);
             child->paint(info, childPoint);
         }
     }

@@ -1,3 +1,23 @@
+2012-10-15  Emil A Eklund  <eae@chromium.org>
+
+        Revert rounding change in RenderTable::paintObject
+        https://bugs.webkit.org/show_bug.cgi?id=99364
+
+        Reviewed by Levi Weintraub.
+
+        Revert pixel expected results to what we had prior to r122769.
+
+        * platform/chromium/TestExpectations:
+        * platform/chromium-linux/css1/basic/inheritance-expected.png:
+        * platform/chromium-linux/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-linux/fast/sub-pixel/selection/selection-rect-in-sub-pixel-table-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug73321-expected.png:
+
 2012-10-15  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Key paths should support non-ASCII identifiers
