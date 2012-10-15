@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../inspector/inspector-test.js"></script>
+<script>
+function appendDynamicScriptElement(src, content)
+{
+    var scriptElement = document.createElement("script");
+    if (src)
+        scriptElement.src = src;
+    else
+        scriptElement.textContent = content;
+    document.head.appendChild(scriptElement);
+}
+
+function loadScripts()
+{
+    var sourceURLComment = "\n //@ sourceURL=";
+    window.eval("function fooEval() {}");
+    window.eval("function fooEvalSourceURL() {}" + sourceURLComment + "evalSourceURL.js");
+    appendDynamicScriptElement("", "function fooScriptElementContent1() {}");
+    appendDynamicScriptElement("", "function fooScriptElementContent2() {}");
+    appendDynamicScriptElement("", "function fooScriptElementContentSourceURL() {}" + sourceURLComment + "scriptElementContentSourceURL.js");
+    appendDynamicScriptElement("resources/dynamic-script.js");
+}
+
+function onload()
+{
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+    loadScripts();
+}
+
+function scriptLoaded()
+{
+    if (window.testRunner)
+        testRunner.showWebInspector();
+    runTest();
+}
+
+function test()
+{
+    InspectorTest.runAfterPendingDispatches(step1);
+
+    function step1()
+    {
+        var panel = WebInspector.showPanel("scripts");
+        var uiSourceCodes = WebInspector.workspace.uiSourceCodes();
+        var urls = uiSourceCodes.map(function(uiSourceCode) { return uiSourceCode.parsedURL.lastPathComponent; });
+        var urls = urls.sort();
+        InspectorTest.addResult("UISourceCodes:");
+        for (var i = 0; i < urls.length; ++i)
+            InspectorTest.addResult("    " + urls[i]);
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="onload()">
+<p>Tests that scripts for dynamically added script elements are shown in sources panel if inspector is opened after the scripts were loaded.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=99324">Bug 99324</a>
+</body>
+</html>

@@ -51,6 +51,19 @@ WebInspector.NetworkLog.prototype = {
     },
 
     /**
+     * @param {string} url
+     * @return {WebInspector.NetworkRequest}
+     */
+    requestForURL: function(url)
+    {
+        for (var i = 0; i < this._requests.length; ++i) {
+            if (this._requests[i].url === url)
+                return this._requests[i];
+        }
+        return null;
+    },
+
+    /**
      * @param {WebInspector.NetworkRequest} request
      * @return {WebInspector.PageLoad}
      */

@@ -41,6 +41,7 @@ WebInspector.NetworkUISourceCodeProvider = function(workspace)
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, this._parsedScriptSource, this);
 
     this._uiSourceCodeForResource = {};
+    this._lastDynamicAnonymousScriptIndexForURL = {};
 }
 
 WebInspector.NetworkUISourceCodeProvider.prototype = {
@@ -65,19 +66,36 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
     _parsedScriptSource: function(event)
     {
         var script = /** @type {WebInspector.Script} */ event.data;
-        if (!script.hasSourceURL && !script.isContentScript)
+        if (!script.sourceURL || script.isInlineScript())
             return;
-        if (!script.sourceURL)
-            return;
+        var isDynamicAnonymousScript;
+        // Only add uiSourceCodes for
+        // - content scripts;
+        // - scripts with explicit sourceURL comment;
+        // - dynamic anonymous scripts (script elements without src attribute);
+        // - dynamic scripts (script elements with src attribute) when inspector is opened after the script was loaded.
+        if (!script.hasSourceURL && !script.isContentScript) {
+            var resource = WebInspector.resourceForURL(script.sourceURL);
+            if (resource && resource.contentType() === WebInspector.resourceTypes.Document)
+                isDynamicAnonymousScript = true;
+            else if (resource || WebInspector.networkLog.requestForURL(script.sourceURL))
+                return;
+        }
         // Filter out embedder injected content scripts.
         if (script.isContentScript && !script.hasSourceURL) {
             var parsedURL = new WebInspector.ParsedURL(script.sourceURL);
             if (!parsedURL.host)
                 return;
         }
-        if (this._uiSourceCodeForResource[script.sourceURL])
+        if (this._uiSourceCodeForResource[script.sourceURL] && !isDynamicAnonymousScript)
             return;
-        var uiSourceCode = new WebInspector.JavaScriptSource(script.sourceURL, script, true);
+        var url = script.sourceURL;
+        if (isDynamicAnonymousScript) {
+            var dynamicAnonymousScriptIndex = (this._lastDynamicAnonymousScriptIndexForURL[url] || 0) + 1;
+            this._lastDynamicAnonymousScriptIndexForURL[url] = dynamicAnonymousScriptIndex;
+            url += " (" + dynamicAnonymousScriptIndex + ")";
+        }
+        var uiSourceCode = new WebInspector.JavaScriptSource(url, script, true);
         this._uiSourceCodeForResource[script.sourceURL] = uiSourceCode;
         this._workspace.project().addUISourceCode(uiSourceCode);
     },
@@ -111,6 +129,7 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
     _projectWillReset: function()
     {
         this._uiSourceCodeForResource = {};
+        this._lastDynamicAnonymousScriptIndexForURL = {};
     },
 
     _projectDidReset: function()

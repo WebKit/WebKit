@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+function appendDynamicScriptElement(src, content)
+{
+    var scriptElement = document.createElement("script");
+    if (src)
+        scriptElement.src = src;
+    else
+        scriptElement.textContent = content;
+    document.head.appendChild(scriptElement);
+}
+
+function loadScripts()
+{
+    var sourceURLComment = "\n //@ sourceURL=";
+    window.eval("function fooEval() {}");
+    window.eval("function fooEvalSourceURL() {}" + sourceURLComment + "evalSourceURL.js");
+    appendDynamicScriptElement("", "function fooScriptElementContent1() {}");
+    appendDynamicScriptElement("", "function fooScriptElementContent2() {}");
+    appendDynamicScriptElement("", "function fooScriptElementContentSourceURL() {}" + sourceURLComment + "scriptElementContentSourceURL.js");
+    appendDynamicScriptElement("resources/dynamic-script.js");
+}
+
+function scriptLoaded()
+{
+    console.log("Done.");
+}
+
+function test()
+{
+    InspectorTest.addConsoleSniffer(step1);
+    InspectorTest.evaluateInPage("loadScripts()", function() { })
+
+    function step1()
+    {
+        InspectorTest.runAfterPendingDispatches(step2);
+    }
+
+    function step2()
+    {
+        var panel = WebInspector.showPanel("scripts");
+        var uiSourceCodes = WebInspector.workspace.uiSourceCodes();
+        var urls = uiSourceCodes.map(function(uiSourceCode) { return uiSourceCode.parsedURL.lastPathComponent; });
+        urls.sort();
+        InspectorTest.addResult("UISourceCodes:");
+        for (var i = 0; i < urls.length; ++i)
+            InspectorTest.addResult("    " + urls[i]);
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that scripts for dynamically added script elements are shown in sources panel if loaded with inspector open.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=99324">Bug 99324</a>
+</body>
+</html>
