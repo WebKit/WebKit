@@ -95,7 +95,8 @@ void PlatformWebView::resizeTo(unsigned width, unsigned height)
     // resized to what the layout test expects.
     if (!m_window->handle()) {
         QRect newGeometry(m_window->x(), m_window->y(), width, height);
-        QWindowSystemInterface::handleSynchronousGeometryChange(m_window, newGeometry);
+        QWindowSystemInterface::handleGeometryChange(m_window, newGeometry);
+        QWindowSystemInterface::flushWindowSystemEvents();
     }
 
     m_window->resize(width, height);
