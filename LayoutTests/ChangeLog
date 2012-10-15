@@ -1,3 +1,12 @@
+2012-10-15  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed inspector tests fix.
+
+        * http/tests/inspector-enabled/dynamic-scripts-expected.txt:
+        * http/tests/inspector-enabled/dynamic-scripts.html:
+        * inspector/debugger/dynamic-scripts-expected.txt:
+        * inspector/debugger/dynamic-scripts.html:
+
 2012-10-15  Dana Jansens  <danakj@chromium.org>
 
         Layout Test plugins/update-widgets-crash.html is failing

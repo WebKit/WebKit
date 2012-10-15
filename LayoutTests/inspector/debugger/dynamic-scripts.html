@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
 <script>
 function appendDynamicScriptElement(src, content)
 {
@@ -36,10 +37,15 @@ function test()
 
     function step1()
     {
-        InspectorTest.runAfterPendingDispatches(step2);
+        InspectorTest.startDebuggerTest(step2);
     }
 
     function step2()
+    {
+        InspectorTest.runAfterPendingDispatches(step3);
+    }
+
+    function step3()
     {
         var panel = WebInspector.showPanel("scripts");
         var uiSourceCodes = WebInspector.workspace.uiSourceCodes();
@@ -48,7 +54,7 @@ function test()
         InspectorTest.addResult("UISourceCodes:");
         for (var i = 0; i < urls.length; ++i)
             InspectorTest.addResult("    " + urls[i]);
-        InspectorTest.completeTest();
+        InspectorTest.completeDebuggerTest();
     }
 }
 </script>

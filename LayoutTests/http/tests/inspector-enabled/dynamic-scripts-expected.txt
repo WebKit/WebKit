@@ -1,7 +1,9 @@
 Tests that scripts for dynamically added script elements are shown in sources panel if inspector is opened after the scripts were loaded.
 
 Bug 99324
+Debugger was enabled.
 UISourceCodes:
+    debugger-test.js
     dynamic-script.js
     dynamic-scripts.html
     dynamic-scripts.html (1)
@@ -9,4 +11,5 @@ UISourceCodes:
     evalSourceURL.js
     inspector-test.js
     scriptElementContentSourceURL.js
+Debugger was disabled.
 
