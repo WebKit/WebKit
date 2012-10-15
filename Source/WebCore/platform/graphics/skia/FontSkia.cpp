@@ -131,8 +131,8 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
 
     for (int i = 0; i < numGlyphs; i++) {
         pos[i].set(x, y);
-        x += SkFloatToScalar(adv[i].width);
-        y += SkFloatToScalar(adv[i].height);
+        x += SkFloatToScalar(adv[i].width());
+        y += SkFloatToScalar(adv[i].height());
     }
 
     SkCanvas* canvas = gc->platformContext()->canvas();

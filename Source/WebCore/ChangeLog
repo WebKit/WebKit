@@ -1,3 +1,12 @@
+2012-10-15  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix the Chromium Mac build after r131365.
+
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBufferAdvance::height): Added.
+        * platform/graphics/skia/FontSkia.cpp:
+        (WebCore::Font::drawGlyphs): Changed to use accessors for the GlyphBufferAdvance’s width and height.
+
 2012-10-15  Simon Fraser  <simon.fraser@apple.com>
 
         Ensure that GraphicsLayer positions are updated while doing threaded scrolling

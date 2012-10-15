@@ -71,6 +71,7 @@ public:
 
     void setWidth(CGFloat width) { this->CGSize::width = width; }
     CGFloat width() const { return this->CGSize::width; }
+    CGFloat height() const { return this->CGSize::height; }
 };
 #elif OS(WINCE)
 // There is no cross-platform code that uses the height of GlyphBufferAdvance,
