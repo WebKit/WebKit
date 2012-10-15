@@ -1002,7 +1002,6 @@ static gboolean requestTimeoutCallback(gpointer data)
 {
     RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
     handle->client()->didFail(handle.get(), ResourceError::timeoutError(handle->getInternal()->m_firstRequest.url().string()));
-    cleanupSoupRequestOperation(handle.get());
     handle->cancel();
 
     return FALSE;
