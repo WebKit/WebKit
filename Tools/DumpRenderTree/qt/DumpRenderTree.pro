@@ -17,7 +17,7 @@ INCLUDEPATH += \
     $${ROOT_WEBKIT_DIR}/Source/WebKit/qt/WebCoreSupport \
     $${ROOT_WEBKIT_DIR}/Source/WTF
 
-QT = core gui network testlib webkit widgets
+QT = core gui network testlib webkitwidgets widgets
 have?(QTPRINTSUPPORT): QT += printsupport
 macx: QT += xml
 

@@ -1,2 +1,2 @@
-QT       += webkit
+QT       += webkitwidgets
 SOURCES   = main.cpp

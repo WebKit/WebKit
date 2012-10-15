@@ -1,3 +1,22 @@
+2012-10-15  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Separate Qt WebKit into Qt WebKit and Qt WebKit Widgets
+        https://bugs.webkit.org/show_bug.cgi?id=88162
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Rename the QtWebKit module to QtWebKitWidgets.
+
+        * PluginProcess.pro:
+        * UIProcess/API/qt/tests/inspectorserver/inspectorserver.pro:
+        * UIProcess/API/qt/tests/publicapi/publicapi.pro:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior.pro:
+        * UIProcess/API/qt/tests/qmltests/WebView.pro:
+        * UIProcess/API/qt/tests/qquickwebview/qquickwebview.pro:
+        * UIProcess/API/qt/tests/qrawwebview/qrawwebview.pro:
+        * UIProcess/API/qt/tests/tests.pri:
+        * WebProcess.pro:
+
 2012-10-15  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Encapsulate ref counting for Ewk objects in a parent class

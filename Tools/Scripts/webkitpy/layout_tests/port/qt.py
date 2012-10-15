@@ -88,9 +88,9 @@ class QtPort(Port):
 
     def _path_to_webcore_library(self):
         if self.operating_system() == 'mac':
-            return self._build_path('lib/QtWebKit.framework/QtWebKit')
+            return self._build_path('lib/QtWebKitWidgets.framework/QtWebKitWidgets')
         else:
-            return self._build_path('lib/libQtWebKit.so')
+            return self._build_path('lib/libQtWebKitWidgets.so')
 
     def _modules_to_search_for_symbols(self):
         # We search in every library to be reliable in the case of building with CONFIG+=force_static_libs_as_shared.

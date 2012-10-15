@@ -6,7 +6,7 @@ TARGET = tst_$$TARGET
 INCLUDEPATH += $$PWD
 SOURCES +=  ../util.cpp
 
-QT += testlib webkit
+QT += testlib webkitwidgets
 have?(QTQUICK) {
     QT += qml quick quick-private
     HEADERS += ../bytearraytestdata.h \

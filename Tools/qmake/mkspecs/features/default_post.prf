@@ -180,7 +180,7 @@ contains(TEMPLATE, lib) {
 # For anyone trying to include stdint.h
 win32-msvc*|win32-icc|wince*: INCLUDEPATH += $$ROOT_WEBKIT_DIR/Source/JavaScriptCore/os-win32
 
-contains(QT, webkit) {
+contains(QT, webkitwidgets) {
     # In addition to the main shared QtWebKit library we also
     # need to link to any intermediate shared libraries.
     force_static_libs_as_shared {
@@ -201,12 +201,12 @@ defineTest(needToLink) {
         contains(libraries, $$TARGET): return(true)
 
         # Or anything that uses QtWebKit in this special config
-        contains(QT, webkit): return(true)
+        contains(QT, webkitwidgets): return(true)
     }
 
     # Lastly, we allow apps (jsc) to link directly to the intermediate
     # libraries intead of using the exported symbols from QtWebKit.
-    contains(TEMPLATE, app):!contains(QT, webkit): return(true)
+    contains(TEMPLATE, app):!contains(QT, webkitwidgets): return(true)
 
     # Anything else should just get include paths, etc, not link
     return(false)

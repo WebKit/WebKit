@@ -40,4 +40,4 @@ shared:contains(TEMPLATE, lib) {
 }
 
 # To ensure the Qt export macros are set to dllexport
-contains(TEMPLATE, lib):!contains(QT, webkit): DEFINES += QT_MAKEDLL
+contains(TEMPLATE, lib):!contains(QT, webkitwidgets): DEFINES += QT_MAKEDLL

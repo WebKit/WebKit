@@ -9,6 +9,6 @@ SOURCES += \
 
 DESTDIR = $${ROOT_BUILD_DIR}/bin
 
-QT = core gui network webkit
+QT = core gui network webkitwidgets
 
 WEBKIT += wtf javascriptcore webkit2

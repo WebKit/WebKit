@@ -6,7 +6,7 @@
 
 TEMPLATE = app
 
-QT += webkit
+QT += webkitwidgets
 
 TARGET = QtWebPluginProcess
 DESTDIR = $${ROOT_BUILD_DIR}/bin

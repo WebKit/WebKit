@@ -1,3 +1,15 @@
+2012-10-15  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Separate Qt WebKit into Qt WebKit and Qt WebKit Widgets
+        https://bugs.webkit.org/show_bug.cgi?id=88162
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Rename the QtWebKit module to QtWebKitWidgets.
+
+        * Source/api.pri:
+        * Source/sync.profile:
+
 2012-10-14  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed, rolling out r130656.

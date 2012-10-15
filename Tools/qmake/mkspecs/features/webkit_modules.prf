@@ -34,7 +34,7 @@ for(library, WEBKIT) {
 
     # Anything not linking dynamically to QtWebKit should make sure to have its export
     # macros synchronized with the code that it will be linked with statically.
-    !contains(QT, webkit): DEFINES += STATICALLY_LINKED_WITH_$$library
+    !contains(QT, webkitwidgets): DEFINES += STATICALLY_LINKED_WITH_$$library
 }
 
 !isEmpty(MODULE): CONFIG += creating_module

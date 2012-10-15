@@ -1,3 +1,18 @@
+2012-10-15  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Separate Qt WebKit into Qt WebKit and Qt WebKit Widgets
+        https://bugs.webkit.org/show_bug.cgi?id=88162
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Rename the QtWebKit module to QtWebKitWidgets.
+
+        * declarative/experimental/experimental.pri:
+        * declarative/public.pri:
+        * docs/webkitsnippets/simple/simple.pro:
+        * docs/webkitsnippets/webpage/webpage.pro:
+        * tests/tests.pri:
+
 2012-10-10  Jon Lee  <jonlee@apple.com>
 
         [WK2] Activate plugins when user clicks on snapshot
