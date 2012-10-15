@@ -1,5 +1,17 @@
 2012-10-15  Dan Bernstein  <mitz@apple.com>
 
+        Try to fix assertion failures on ports that do not support kerning and ligatures on the fast
+        code path after r131365.
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::applyFontTransforms): Changed the early return condition to not bother with 1-glyph
+        sequences.
+        * platform/graphics/WidthIterator.h:
+        (WebCore::WidthIterator::shouldApplyFontTransforms): Changed to return false if the run is
+        shorter than 2 characters.
+
+2012-10-15  Dan Bernstein  <mitz@apple.com>
+
         Try to fix the Chromium Mac build after r131365.
 
         * platform/graphics/GlyphBuffer.h:

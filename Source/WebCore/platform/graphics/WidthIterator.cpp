@@ -109,7 +109,7 @@ static inline float applyFontTransforms(GlyphBuffer* glyphBuffer, bool ltr, int&
         return 0;
 
     int glyphBufferSize = glyphBuffer->size();
-    if (glyphBuffer->size() <= lastGlyphCount)
+    if (glyphBuffer->size() <= lastGlyphCount + 1)
         return 0;
 
     GlyphBufferAdvance* advances = glyphBuffer->advances(0);
