@@ -208,8 +208,12 @@ TreeOutline.prototype._rememberTreeElement = function(element)
 
 TreeOutline.prototype._forgetTreeElement = function(element)
 {
-    if (this._treeElementsMap.get(element.representedObject))
-        this._treeElementsMap.get(element.representedObject).remove(element, true);
+    if (this._treeElementsMap.get(element.representedObject)) {
+        var elements = this._treeElementsMap.get(element.representedObject);
+        elements.remove(element, true);
+        if (!elements.length)
+            this._treeElementsMap.remove(element.representedObject);
+    }
 }
 
 TreeOutline.prototype._forgetChildrenRecursive = function(parentElement)
