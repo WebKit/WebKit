@@ -57,18 +57,16 @@ static void didInitiateLoadForResource(WKPageRef, WKFrameRef wkFrame, uint64_t r
     WKRetainPtr<WKURLRef> wkUrl(AdoptWK, WKURLRequestCopyURL(wkRequest));
 
     Ewk_Resource* resource = ewk_resource_new(toImpl(wkUrl.get())->string().utf8().data(), isMainResource);
-    Ewk_Url_Request* request = ewk_url_request_new(wkRequest);
-    ewk_view_resource_load_initiated(toEwkView(clientInfo), resourceIdentifier, resource, request);
+    RefPtr<Ewk_Url_Request> request = adoptRef(ewk_url_request_new(wkRequest));
+    ewk_view_resource_load_initiated(toEwkView(clientInfo), resourceIdentifier, resource, request.get());
     ewk_resource_unref(resource);
-    ewk_url_request_unref(request);
 }
 
 static void didSendRequestForResource(WKPageRef, WKFrameRef, uint64_t resourceIdentifier, WKURLRequestRef wkRequest, WKURLResponseRef wkRedirectResponse, const void* clientInfo)
 {
-    Ewk_Url_Request* request = ewk_url_request_new(wkRequest);
+    RefPtr<Ewk_Url_Request> request = adoptRef(ewk_url_request_new(wkRequest));
     Ewk_Url_Response* redirectResponse = wkRedirectResponse ? ewk_url_response_new(toImpl(wkRedirectResponse)->resourceResponse()) : 0;
-    ewk_view_resource_request_sent(toEwkView(clientInfo), resourceIdentifier, request, redirectResponse);
-    ewk_url_request_unref(request);
+    ewk_view_resource_request_sent(toEwkView(clientInfo), resourceIdentifier, request.get(), redirectResponse);
     if (redirectResponse)
         ewk_url_response_unref(redirectResponse);
 }

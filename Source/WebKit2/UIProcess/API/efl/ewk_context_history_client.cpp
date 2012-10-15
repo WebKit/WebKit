@@ -55,9 +55,8 @@ static void didNavigateWithNavigationData(WKContextRef, WKPageRef page, WKNaviga
     if (!historyDelegate->navigate_func)
         return;
 
-    Ewk_Navigation_Data* navigationDataEwk = ewk_navigation_data_new(navigationData);
-    historyDelegate->navigate_func(ewk_view_from_page_get(toImpl(page)), navigationDataEwk, historyDelegate->user_data);
-    ewk_navigation_data_unref(navigationDataEwk);
+    RefPtr<Ewk_Navigation_Data> navigationDataEwk = adoptRef(ewk_navigation_data_new(navigationData));
+    historyDelegate->navigate_func(ewk_view_from_page_get(toImpl(page)), navigationDataEwk.get(), historyDelegate->user_data);
 }
 
 static void didPerformClientRedirect(WKContextRef, WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef, const void* clientInfo)

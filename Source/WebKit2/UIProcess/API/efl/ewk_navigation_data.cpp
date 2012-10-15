@@ -26,47 +26,15 @@
 #include "config.h"
 #include "ewk_navigation_data.h"
 
-#include "WKAPICast.h"
-#include "WKEinaSharedString.h"
-#include "WKRetainPtr.h"
 #include "ewk_navigation_data_private.h"
-#include "ewk_private.h"
-#include "ewk_url_request_private.h"
 
 using namespace WebKit;
-
-/**
- * \struct  _Ewk_Navigation_Data
- * @brief   Contains the navigation data details.
- */
-struct _Ewk_Navigation_Data {
-    unsigned __ref; /**< the reference count of the object */
-    WKEinaSharedString title;
-    WKEinaSharedString url;
-    Ewk_Url_Request* request;
-
-    _Ewk_Navigation_Data(WKNavigationDataRef dataRef)
-        : __ref(1)
-        , title(AdoptWK, WKNavigationDataCopyTitle(dataRef))
-        , url(AdoptWK, WKNavigationDataCopyURL(dataRef))
-        , request(0)
-    {
-        WKRetainPtr<WKURLRequestRef> requestWK(AdoptWK, WKNavigationDataCopyOriginalRequest(dataRef));
-        request = ewk_url_request_new(requestWK.get());
-    }
-
-    ~_Ewk_Navigation_Data()
-    {
-        ASSERT(!__ref);
-        ewk_url_request_unref(request);
-    }
-};
 
 Ewk_Navigation_Data* ewk_navigation_data_ref(Ewk_Navigation_Data* data)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(data, 0);
 
-    ++data->__ref;
+    data->ref();
 
     return data;
 }
@@ -75,10 +43,7 @@ void ewk_navigation_data_unref(Ewk_Navigation_Data* data)
 {
     EINA_SAFETY_ON_NULL_RETURN(data);
 
-    if (--data->__ref)
-        return;
-
-    delete data;
+    data->deref();
 }
 
 const char* ewk_navigation_data_title_get(const Ewk_Navigation_Data* data)
@@ -92,7 +57,7 @@ Ewk_Url_Request* ewk_navigation_data_original_request_get(const Ewk_Navigation_D
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(data, 0);
 
-    return data->request;
+    return data->request.get();
 }
 
 const char* ewk_navigation_data_url_get(const Ewk_Navigation_Data* data)

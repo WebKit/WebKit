@@ -26,6 +26,29 @@
 #ifndef ewk_url_request_private_h
 #define ewk_url_request_private_h
 
+#include "WKEinaSharedString.h"
+#include "WKURL.h"
+#include "WKURLRequest.h"
+#include "WebURLRequest.h"
+
+/**
+ * \struct  _Ewk_Url_Request
+ * @brief   Contains the URL request data.
+ */
+struct _Ewk_Url_Request : public RefCounted<_Ewk_Url_Request> {
+    WKEinaSharedString url;
+    WKEinaSharedString firstParty;
+    WKEinaSharedString httpMethod;
+
+    _Ewk_Url_Request(WKURLRequestRef requestRef)
+        : url(AdoptWK, WKURLRequestCopyURL(requestRef))
+        , firstParty(AdoptWK, WKURLRequestCopyFirstPartyForCookies(requestRef))
+        , httpMethod(AdoptWK, WKURLRequestCopyHTTPMethod(requestRef))
+    { }
+};
+
+typedef struct _Ewk_Url_Request Ewk_Url_Request;
+
 Ewk_Url_Request* ewk_url_request_new(WKURLRequestRef);
 
 #endif // ewk_url_request_private_h

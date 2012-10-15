@@ -46,7 +46,7 @@ struct _Ewk_Download_Job {
     DownloadProxy* downloadProxy;
     Evas_Object* view;
     Ewk_Download_Job_State state;
-    Ewk_Url_Request* request;
+    RefPtr<Ewk_Url_Request> request;
     Ewk_Url_Response* response;
     double startTime;
     double endTime;
@@ -59,7 +59,6 @@ struct _Ewk_Download_Job {
         , downloadProxy(download)
         , view(ewkView)
         , state(EWK_DOWNLOAD_JOB_STATE_NOT_STARTED)
-        , request(0)
         , response(0)
         , startTime(-1)
         , endTime(-1)
@@ -69,8 +68,6 @@ struct _Ewk_Download_Job {
     ~_Ewk_Download_Job()
     {
         ASSERT(!__ref);
-        if (request)
-            ewk_url_request_unref(request);
         if (response)
             ewk_url_response_unref(response);
     }
@@ -133,10 +130,10 @@ Ewk_Url_Request* ewk_download_job_request_get(const Ewk_Download_Job* download)
     if (!download->request) {
         EINA_SAFETY_ON_NULL_RETURN_VAL(download->downloadProxy, 0);
         WKRetainPtr<WKURLRequestRef> wkURLRequest(AdoptWK, toAPI(WebURLRequest::create(download->downloadProxy->request()).leakRef()));
-        const_cast<Ewk_Download_Job*>(download)->request = ewk_url_request_new(wkURLRequest.get());
+        const_cast<Ewk_Download_Job*>(download)->request = adoptRef(ewk_url_request_new(wkURLRequest.get()));
     }
 
-    return download->request;
+    return download->request.get();
 }
 
 Ewk_Url_Response* ewk_download_job_response_get(const Ewk_Download_Job* download)

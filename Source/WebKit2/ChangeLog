@@ -1,3 +1,46 @@
+2012-10-15  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Encapsulate ref counting for Ewk objects in a parent class
+        https://bugs.webkit.org/show_bug.cgi?id=99174
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Ewk objects can be inherited from RefCounted class, so that ref counting is encapsulated and RefPtr can be used.
+        Applied the new approach for Ewk_Navigation_Data and Ewk_Url_Request objects as an example.
+        The requirement of adoption can be satisfied as long as we keep dealing with smart pointers only. 
+        In case external client provides an already referenced object as a raw pointer, relaxAdoptionRequirement() can be set
+        explicitly in this specific place.
+
+        * UIProcess/API/efl/ewk_context_history_client.cpp:
+        (didNavigateWithNavigationData):
+        * UIProcess/API/efl/ewk_download_job.cpp:
+        (_Ewk_Download_Job):
+        (_Ewk_Download_Job::_Ewk_Download_Job):
+        (_Ewk_Download_Job::~_Ewk_Download_Job):
+        (ewk_download_job_request_get):
+        * UIProcess/API/efl/ewk_navigation_data.cpp:
+        (ewk_navigation_data_ref):
+        (ewk_navigation_data_unref):
+        (ewk_navigation_data_original_request_get):
+        * UIProcess/API/efl/ewk_navigation_data_private.h:
+        (_Ewk_Navigation_Data):
+        (_Ewk_Navigation_Data::_Ewk_Navigation_Data):
+        * UIProcess/API/efl/ewk_navigation_policy_decision.cpp:
+        (_Ewk_Navigation_Policy_Decision):
+        (_Ewk_Navigation_Policy_Decision::_Ewk_Navigation_Policy_Decision):
+        (_Ewk_Navigation_Policy_Decision::~_Ewk_Navigation_Policy_Decision):
+        (ewk_navigation_policy_request_get):
+        (ewk_navigation_policy_decision_new):
+        * UIProcess/API/efl/ewk_url_request.cpp:
+        (ewk_url_request_ref):
+        (ewk_url_request_unref):
+        * UIProcess/API/efl/ewk_url_request_private.h:
+        (_Ewk_Url_Request):
+        (_Ewk_Url_Request::_Ewk_Url_Request):
+        * UIProcess/API/efl/ewk_view_resource_load_client.cpp:
+        (didInitiateLoadForResource):
+        (didSendRequestForResource):
+
 2012-10-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Regression(r130031) coverRect is used in wrong coordinates.
