@@ -1,3 +1,15 @@
+2012-10-14  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(126886): Fat binary builds don't know how to handle architecture variants to which the LLInt is agnostic
+        https://bugs.webkit.org/show_bug.cgi?id=99270
+
+        Reviewed by Geoffrey Garen.
+
+        The fix is to hash cons the offsets based on configuration index, not the offsets
+        themselves.
+
+        * offlineasm/offsets.rb:
+
 2012-10-13  Filip Pizlo  <fpizlo@apple.com>
 
         IndexingType should not have a bit for each type
