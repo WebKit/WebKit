@@ -4800,11 +4800,12 @@ PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperation(Web
     RefPtr<StyleShader> vertexShader = styleShader(shadersList->itemWithoutBoundsCheck(0));
 
     RefPtr<StyleShader> fragmentShader;
+    CustomFilterProgramType programType = PROGRAM_TYPE_NO_ELEMENT_TEXTURE;
     CustomFilterProgramMixSettings mixSettings;
     if (shadersList->length() > 1) {
         CSSValue* fragmentShaderOrMixFunction = shadersList->itemWithoutBoundsCheck(1);
         if (fragmentShaderOrMixFunction->isWebKitCSSMixFunctionValue()) {
-            mixSettings.enabled = true;
+            programType = PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE;
             WebKitCSSMixFunctionValue* mixFunction = static_cast<WebKitCSSMixFunctionValue*>(fragmentShaderOrMixFunction);
             CSSValueListIterator iterator(mixFunction);
 
@@ -4894,7 +4895,7 @@ PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperation(Web
     if (parametersValue && !parseCustomFilterParameterList(parametersValue, parameterList))
         return 0;
     
-    RefPtr<StyleCustomFilterProgram> program = StyleCustomFilterProgram::create(vertexShader.release(), fragmentShader.release(), mixSettings);
+    RefPtr<StyleCustomFilterProgram> program = StyleCustomFilterProgram::create(vertexShader.release(), fragmentShader.release(), programType, mixSettings);
     return CustomFilterOperation::create(program.release(), parameterList, meshRows, meshColumns, meshBoxType, meshType);
 }
 #endif

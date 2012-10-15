@@ -64,9 +64,10 @@ bool CustomFilterProgramInfo::isHashTableDeletedValue() const
         && m_fragmentShaderString.isHashTableDeletedValue();
 }
 
-CustomFilterProgramInfo::CustomFilterProgramInfo(const String& vertexShader, const String& fragmentShader, const CustomFilterProgramMixSettings& mixSettings)
+CustomFilterProgramInfo::CustomFilterProgramInfo(const String& vertexShader, const String& fragmentShader, CustomFilterProgramType programType, const CustomFilterProgramMixSettings& mixSettings)
     : m_vertexShaderString(vertexShader)
     , m_fragmentShaderString(fragmentShader)
+    , m_programType(programType)
     , m_mixSettings(mixSettings)
 {
     // At least one of the shaders needs to be non-null.
@@ -80,9 +81,9 @@ unsigned CustomFilterProgramInfo::hash() const
     uintptr_t hashCodes[5] = {
         hashPossiblyNullString(m_vertexShaderString),
         hashPossiblyNullString(m_fragmentShaderString),
-        m_mixSettings.enabled,
-        m_mixSettings.enabled ? m_mixSettings.blendMode : 0,
-        m_mixSettings.enabled ? m_mixSettings.compositeOperator : 0
+        m_programType == PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE,
+        m_programType == PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE ? m_mixSettings.blendMode : 0,
+        m_programType == PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE ? m_mixSettings.compositeOperator : 0
     };
     return StringHasher::hashMemory<sizeof(hashCodes)>(&hashCodes);
 }
@@ -91,9 +92,16 @@ bool CustomFilterProgramInfo::operator==(const CustomFilterProgramInfo& o) const
 {
     ASSERT(!isHashTableDeletedValue());
     ASSERT(!o.isHashTableDeletedValue());
+
+    if (m_programType == PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE)
+        return m_vertexShaderString == o.m_vertexShaderString
+            && m_fragmentShaderString == o.m_fragmentShaderString
+            && m_programType == o.m_programType
+            && m_mixSettings == o.m_mixSettings;
+
     return m_vertexShaderString == o.m_vertexShaderString
         && m_fragmentShaderString == o.m_fragmentShaderString
-        && m_mixSettings == o.m_mixSettings;
+        && m_programType == o.m_programType;
 }
 
 } // namespace WebCore

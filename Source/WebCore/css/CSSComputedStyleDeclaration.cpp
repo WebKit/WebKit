@@ -921,7 +921,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForFilter(const RenderObj
                 shadersList->append(cssValuePool().createIdentifierValue(CSSValueNone));
 
             const CustomFilterProgramMixSettings mixSettings = program->mixSettings();
-            if (mixSettings.enabled) {
+            if (program->programType() == PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE) {
                 RefPtr<WebKitCSSMixFunctionValue> mixFunction = WebKitCSSMixFunctionValue::create();
                 mixFunction->append(program->fragmentShader()->cssValue());
                 mixFunction->append(cssValuePool().createValue(mixSettings.blendMode));

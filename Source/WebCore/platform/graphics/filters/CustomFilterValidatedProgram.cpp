@@ -83,7 +83,8 @@ CustomFilterValidatedProgram::CustomFilterValidatedProgram(CustomFilterGlobalCon
         originalFragmentShader = defaultFragmentShaderString();
 
     // Shaders referenced from the CSS mix function use a different validator than regular WebGL shaders. See CustomFilterGlobalContext.h for more details.
-    ANGLEWebKitBridge* validator = programInfo.mixSettings().enabled ? m_globalContext->mixShaderValidator() : m_globalContext->webglShaderValidator();
+    bool blendsElementTexture = (programInfo.programType() == PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE);
+    ANGLEWebKitBridge* validator = blendsElementTexture ? m_globalContext->mixShaderValidator() : m_globalContext->webglShaderValidator();
     String vertexShaderLog, fragmentShaderLog;
     Vector<ANGLEShaderSymbol> symbols;
     bool vertexShaderValid = validator->compileShaderSource(originalVertexShader.utf8().data(), SHADER_TYPE_VERTEX, m_validatedVertexShader, vertexShaderLog, symbols);
@@ -107,7 +108,7 @@ CustomFilterValidatedProgram::CustomFilterValidatedProgram(CustomFilterGlobalCon
     }
 
     // We need to add texture access, blending, and compositing code to shaders that are referenced from the CSS mix function.
-    if (programInfo.mixSettings().enabled) {
+    if (blendsElementTexture) {
         rewriteMixVertexShader();
         rewriteMixFragmentShader();
     }
@@ -125,7 +126,7 @@ PassRefPtr<CustomFilterCompiledProgram> CustomFilterValidatedProgram::compiledPr
 
 void CustomFilterValidatedProgram::rewriteMixVertexShader()
 {
-    ASSERT(m_programInfo.mixSettings().enabled);
+    ASSERT(m_programInfo.programType() == PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE);
 
     // During validation, ANGLE renamed the author's "main" function to "css_main".
     // We write our own "main" function and call "css_main" from it.
@@ -144,7 +145,7 @@ void CustomFilterValidatedProgram::rewriteMixVertexShader()
 
 void CustomFilterValidatedProgram::rewriteMixFragmentShader()
 {
-    ASSERT(m_programInfo.mixSettings().enabled);
+    ASSERT(m_programInfo.programType() == PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE);
 
     StringBuilder builder;
     // ANGLE considered these symbols as built-ins during validation under the SH_CSS_SHADERS_SPEC flag.

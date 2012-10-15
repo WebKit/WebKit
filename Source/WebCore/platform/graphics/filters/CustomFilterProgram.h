@@ -58,6 +58,7 @@ public:
     void removeClient(CustomFilterProgramClient*);
     
     CustomFilterProgramInfo programInfo() const;
+    CustomFilterProgramType programType() const { return m_programType; }
 
     // StyleCustomFilterProgram has the only implementation for the following method. That means, it casts to StyleCustomFilterProgram
     // withouth checking the type. If you add another implementation, also add a mechanism to check for the correct type.
@@ -75,11 +76,12 @@ protected:
     virtual void didRemoveLastClient() = 0;
 
     // Keep the constructor protected to prevent creating this object directly.
-    CustomFilterProgram(CustomFilterProgramMixSettings);
+    CustomFilterProgram(CustomFilterProgramType, const CustomFilterProgramMixSettings&);
 
 private:
     typedef HashCountedSet<CustomFilterProgramClient*> CustomFilterProgramClientList;
     CustomFilterProgramClientList m_clients;
+    CustomFilterProgramType m_programType;
     CustomFilterProgramMixSettings m_mixSettings;
 };
 
