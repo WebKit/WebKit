@@ -1,3 +1,15 @@
+2012-10-15  Jay Civelli  <jcivelli@chromium.org>
+
+        Calling WebCore::SharedBuffer::append(data, 0) on a shared buffer when
+        its current position is at a segment boundary (4096) ends up adding an
+        unitialized segment (with uninitialized memory) to the SharedBuffer.
+        https://bugs.webkit.org/show_bug.cgi?id=99000
+
+        Reviewed by Adam Barth.
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::append):
+
 2012-10-15  Luke Macpherson   <macpherson@chromium.org>
 
         Make CSS variable names case-insensitive.
