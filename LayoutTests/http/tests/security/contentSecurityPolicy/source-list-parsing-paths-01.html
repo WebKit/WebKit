@@ -10,9 +10,9 @@ var tests = [
     ['no', 'script-src 127.0.0.1:*/sec/', 'resources/script.js'],
     ['no', 'script-src 127.0.0.1:8000/not-security', 'resources/script.js'],
     ['no', 'script-src 127.0.0.1:8000/security%3bnot-contentSecurityPolicy', 'resources/script.js'],
-    ['yes', 'script-src 127.0.0.1:*/' + security, 'resources/script.js'],
-    ['yes', 'script-src 127.0.0.1:*/security', resources + '/script.js'],
-    ['yes', 'script-src 127.0.0.1:*/' + security, resources + '/script.js'],
+    ['yes', 'script-src 127.0.0.1:*/' + security + '/', 'resources/script.js'],
+    ['yes', 'script-src 127.0.0.1:*/security/', resources + '/script.js'],
+    ['yes', 'script-src 127.0.0.1:*/' + security + '/', resources + '/script.js'],
 ];
 </script>
 </head>

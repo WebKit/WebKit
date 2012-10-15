@@ -1,3 +1,18 @@
+2012-10-15  Mike West  <mkwst@chromium.org>
+
+        CSP source expressions should support paths at file-level granularity.
+        https://bugs.webkit.org/show_bug.cgi?id=99250
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-paths-01.html:
+            Adjust tests by adding trailing slashes to source expressions that
+            should match directories.
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-paths-02-expected.txt:
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-paths-02.html:
+            Adjust tests to check the new behavior: matching individiual files,
+            and matching directories only with a trailing '/'.
+
 2012-10-15  Jay Civelli  <jcivelli@chromium.org>
 
         Calling WebCore::SharedBuffer::append(data, 0) on a shared buffer when

@@ -181,7 +181,10 @@ private:
 
         String path = decodeURLEscapeSequences(url.path());
 
-        return path.startsWith(m_path, false);
+        if (m_path.endsWith("/"))
+            return path.startsWith(m_path, false);
+
+        return path == m_path;
     }
 
     bool portMatches(const KURL& url) const
@@ -505,12 +508,9 @@ bool CSPSourceList::parsePath(const UChar* begin, const UChar* end, String& path
         m_policy->reportInvalidPathCharacter(m_directiveName, String(begin, end - begin), *position);
 
     path = decodeURLEscapeSequences(String(begin, position - begin));
-    if (!path.endsWith('/'))
-        path = path + '/';
 
     ASSERT(position <= end);
     ASSERT(position == end || (*position == '#' || *position == '?'));
-    ASSERT(path.endsWith('/'));
     return true;
 }
 
