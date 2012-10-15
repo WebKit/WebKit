@@ -3626,6 +3626,7 @@ webkit.org/b/92022 [ Debug ] svg/W3C-SVG-1.1/struct-dom-06-b.svg [ Failure Pass 
 webkit.org/b/92026 [ SnowLeopard Debug ] css3/selectors3/xml/css3-modsel-179a.xml [ Failure Pass ]
 webkit.org/b/92027 [ SnowLeopard Debug ] fast/performance/performance-now-timestamps.html [ Failure Pass ]
 webkit.org/b/92288 [ SnowLeopard Debug ] plugins/update-widgets-crash.html [ Pass Timeout ]
+webkit.org/b/99333 [ Lion Debug ] plugins/update-widgets-crash.html [ Pass Timeout ]
 webkit.org/b/92297 [ Linux Mac Win Debug ] media/video-set-rate-from-pause.html [ Crash Pass ]
 
 webkit.org/b/92570 [ Win Debug ] inspector/debugger/dom-breakpoints.html [ Pass Timeout ]
