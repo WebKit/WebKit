@@ -1,3 +1,13 @@
+2012-10-15  Dan Bernstein  <mitz@apple.com>
+
+        WebKit2 part of <rdar://problem/12470680> Font’s fast code path doesn’t support kerning and ligatures
+        https://bugs.webkit.org/show_bug.cgi?id=99113
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Added wkCTFontTransformGlyphs.
+
 2012-10-15  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][CAIRO] Use cairo_format_stride_for_width() in ShareableBitmap

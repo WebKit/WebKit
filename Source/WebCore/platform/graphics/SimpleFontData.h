@@ -29,6 +29,7 @@
 #include "FontMetrics.h"
 #include "FontPlatformData.h"
 #include "FloatRect.h"
+#include "GlyphBuffer.h"
 #include "GlyphMetricsMap.h"
 #include "GlyphPageTreeNode.h"
 #if ENABLE(OPENTYPE_VERTICAL)
@@ -37,7 +38,12 @@
 #include "TypesettingFeatures.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/UnusedParam.h>
 #include <wtf/text/StringHash.h>
+
+#if PLATFORM(MAC)
+#include "WebCoreSystemInterface.h"
+#endif
 
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN)) || (PLATFORM(WX) && OS(DARWIN))
 #include <wtf/RetainPtr.h>
@@ -189,6 +195,21 @@ public:
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN)) || (PLATFORM(WX) && OS(DARWIN)) || USE(HARFBUZZ_NG)
     bool canRenderCombiningCharacterSequence(const UChar*, size_t) const;
 #endif
+
+    bool applyTransforms(GlyphBufferGlyph* glyphs, GlyphBufferAdvance* advances, size_t glyphCount, TypesettingFeatures typesettingFeatures) const
+    {
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 1080
+        UNUSED_PARAM(glyphs);
+        UNUSED_PARAM(advances);
+        UNUSED_PARAM(glyphCount);
+        UNUSED_PARAM(typesettingFeatures);
+        ASSERT_NOT_REACHED();
+        return false;
+#else
+    wkCTFontTransformOptions options = (typesettingFeatures & Kerning ? wkCTFontTransformApplyPositioning : 0) | (typesettingFeatures & Ligatures ? wkCTFontTransformApplyShaping : 0);
+    return wkCTFontTransformGlyphs(m_platformData.ctFont(), glyphs, reinterpret_cast<CGSize*>(advances), glyphCount, options);
+#endif
+    }
 
 #if PLATFORM(QT)
     QRawFont getQtRawFont() const { return m_platformData.rawFont(); }

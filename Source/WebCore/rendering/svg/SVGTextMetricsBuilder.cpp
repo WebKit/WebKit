@@ -58,7 +58,8 @@ bool SVGTextMetricsBuilder::advance()
 
 void SVGTextMetricsBuilder::advanceSimpleText()
 {
-    unsigned metricsLength = m_simpleWidthIterator->advance(m_textPosition + 1);
+    GlyphBuffer glyphBuffer;
+    unsigned metricsLength = m_simpleWidthIterator->advance(m_textPosition + 1, &glyphBuffer);
     if (!metricsLength) {
         m_currentMetrics = SVGTextMetrics();
         return;

@@ -1,3 +1,56 @@
+2012-10-15  Dan Bernstein  <mitz@apple.com>
+
+        WebCore part of <rdar://problem/12470680> Font’s fast code path doesn’t support kerning and ligatures
+        https://bugs.webkit.org/show_bug.cgi?id=99113
+
+        Reviewed by Tim Horton.
+
+        * WebCore.exp.in: Exported wkCTFontTransformGlyphs.
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::width): Added a local GlyphBuffer to pass to floatWidthForSimpleText().
+        (WebCore::Font::codePath): Rather than always use the complex code path when any typesetting
+        features are enabled, changed to do so only if WidthIterator doesn’t support this Font’s
+        typesetting features.
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::getGlyphsAndAdvancesForSimpleText): Added a local GlyphBuffer to pass to
+        WidthIterator::advance() when advancing to or from the range of interest. Added a FIXME
+        about how this is not entirely correct when kerning or ligatures are enabled.
+        (WebCore::Font::selectionRectForSimpleText): Added a local GlyphBuffer to pass to
+        WidthIterator::advance() when advancing to or from the range of interest.
+        (WebCore::Font::offsetForPositionForSimpleText): Updated for the change to
+        WidthIterator::advanceOneCharacter().
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::SimpleFontData::applyTransforms): Added. Calls wkCTFontTransformGlyphs() where
+        available.
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::WidthIterator): Added initializer for the new m_typesettingFeatures
+        data member.
+        (OriginalAdvancesForCharacterTreatedAsSpace): Added this data type, used to track spaces and
+        characters treated as spaces.
+        (WebCore::applyFontTransforms): Added. Applies shaping and positioning transforms, as
+        required by the typesetting features, to the glyphs recently added to a GlyphBuffer, while
+        maintaining the advances of characters that are treated as spaces and the characters
+        preceding them, if necessary.
+        (WebCore::WidthIterator::advanceInternal): Added calls to applyFontTransforms() at the end
+        of each contiguous run of glyphs from the same font. Also added code to maintain a vector
+        of spaces and characters treated as space.
+        (WebCore::WidthIterator::advanceOneCharacter): Changed the parameter type from a pointer to
+        a reference.
+        * platform/graphics/WidthIterator.h:
+        (WebCore::WidthIterator::supportsTypesettingFeatures): Added. Returns whether WidthIterator
+        instances support the typesetting features of the given font. Returns true if the font is
+        not a screen font and its typesetting features are kerning, ligatures or both.
+        (WebCore::WidthIterator::shouldApplyFontTransforms): Added. Returns true if the typesetting
+        features include kerning or ligatures.
+        * platform/mac/WebCoreSystemInterface.h: Defined wkCTFontTransformOptions and declared
+        wkCTFontTransformGlyphs.
+        * platform/mac/WebCoreSystemInterface.mm: Defined wkCTFontTransformGlyphs.
+        * rendering/svg/SVGTextMetricsBuilder.cpp:
+        (WebCore::SVGTextMetricsBuilder::advanceSimpleText): Added a local GlyphBuffer to pass to
+        WidthIterator::advance().
+        * rendering/svg/SVGTextRunRenderingContext.cpp:
+        (WebCore::SVGTextRunRenderingContext::floatWidthUsingSVGFont): Ditto.
+
 2012-10-15  Mark Lam  <mark.lam@apple.com>
 
         Fix build broken by r131348.

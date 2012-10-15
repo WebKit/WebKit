@@ -1,3 +1,13 @@
+2012-10-15  Dan Bernstein  <mitz@apple.com>
+
+        WebKit/mac part of <rdar://problem/12470680> Font’s fast code path doesn’t support kerning and ligatures
+        https://bugs.webkit.org/show_bug.cgi?id=99113
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Added wkCTFontTransformGlyphs.
+
 2012-10-15  David Kilzer  <ddkilzer@apple.com>
 
         Move framework and library linking into WebKit.xcconfig

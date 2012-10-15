@@ -76,7 +76,8 @@ static inline RenderSVGResource* activePaintingResourceFromRun(const TextRun& ru
 float SVGTextRunRenderingContext::floatWidthUsingSVGFont(const Font& font, const TextRun& run, int& charsConsumed, String& glyphName) const
 {
     WidthIterator it(&font, run);
-    charsConsumed += it.advance(run.length());
+    GlyphBuffer glyphBuffer;
+    charsConsumed += it.advance(run.length(), &glyphBuffer);
     glyphName = it.lastGlyphName();
     return it.runWidthSoFar();
 }

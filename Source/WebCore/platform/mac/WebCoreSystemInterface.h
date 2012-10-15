@@ -235,6 +235,17 @@ extern int (*wkGetNSEventMomentumPhase)(NSEvent *);
 
 extern CTLineRef (*wkCreateCTLineWithUniCharProvider)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*);
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+enum {
+    wkCTFontTransformApplyShaping = (1 << 0),
+    wkCTFontTransformApplyPositioning = (1 << 1)
+};
+
+typedef int wkCTFontTransformOptions;
+
+extern bool (*wkCTFontTransformGlyphs)(CTFontRef font, CGGlyph glyphs[], CGSize advances[], CFIndex count, wkCTFontTransformOptions options);
+#endif
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 
 extern CTTypesetterRef (*wkCreateCTTypesetterWithUniCharProviderAndOptions)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*, CFDictionaryRef options);

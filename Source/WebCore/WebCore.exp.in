@@ -1457,6 +1457,9 @@ _wkCGContextResetClip
 _wkCGContextDrawsWithCorrectShadowOffsets
 #endif
 _wkCGPatternCreateWithImageAndTransform
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+_wkCTFontTransformGlyphs
+#endif
 _wkCopyCFLocalizationPreferredName
 _wkCopyCFURLResponseSuggestedFilename
 _wkCopyCONNECTProxyResponse

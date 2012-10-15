@@ -63,11 +63,32 @@ typedef Glyph GlyphBufferGlyph;
 // CG uses CGSize instead of FloatSize so that the result of advances()
 // can be passed directly to CGContextShowGlyphsWithAdvances in FontMac.mm
 #if USE(CG) || (OS(DARWIN) && (PLATFORM(WX) || PLATFORM(CHROMIUM)))
-typedef CGSize GlyphBufferAdvance;
+struct GlyphBufferAdvance : CGSize {
+public:
+    GlyphBufferAdvance(CGSize size) : CGSize(size)
+    {
+    }
+
+    void setWidth(CGFloat width) { this->CGSize::width = width; }
+    CGFloat width() const { return this->CGSize::width; }
+};
 #elif OS(WINCE)
 // There is no cross-platform code that uses the height of GlyphBufferAdvance,
 // so we can save memory space on embedded devices by storing only the width
-typedef float GlyphBufferAdvance;
+struct GlyphBufferAdvance {
+public:
+    GlyphBufferAdvance(float width)
+        : advance(width)
+    {
+    }
+
+    void setWidth(float width) { advance = width; }
+    float& width() { return advance; }
+    const float& width() const { return advance; }
+
+private:
+    float advance;
+};
 #else
 typedef FloatSize GlyphBufferAdvance;
 #endif
@@ -126,13 +147,7 @@ public:
 
     float advanceAt(int index) const
     {
-#if USE(CG) || (OS(DARWIN) && (PLATFORM(WX) || PLATFORM(CHROMIUM)))
-        return m_advances[index].width;
-#elif OS(WINCE)
-        return m_advances[index];
-#else
         return m_advances[index].width();
-#endif
     }
 
     FloatSize offsetAt(int index) const
@@ -196,13 +211,7 @@ public:
     {
         ASSERT(!isEmpty());
         GlyphBufferAdvance& lastAdvance = m_advances.last();
-#if USE(CG) || (OS(DARWIN) && (PLATFORM(WX) || PLATFORM(CHROMIUM)))
-        lastAdvance.width += width;
-#elif OS(WINCE)
-        lastAdvance += width;
-#else
-        lastAdvance += FloatSize(width, 0);
-#endif
+        lastAdvance.setWidth(lastAdvance.width() + width);
     }
 
 private:
