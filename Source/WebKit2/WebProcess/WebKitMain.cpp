@@ -28,12 +28,15 @@
 
 #include "PluginProcessMain.h"
 #include "ProcessLauncher.h"
-#include "SharedWorkerProcessMain.h"
 #include "WebProcessMain.h"
 #include <wtf/text/CString.h>
 
 #if ENABLE(NETWORK_PROCESS)
 #include "NetworkProcessMain.h"
+#endif
+
+#if ENABLE(SHARED_WORKER_PROCESS)
+#include "SharedWorkerProcessMain.h"
 #endif
 
 #if PLATFORM(MAC)
@@ -65,8 +68,10 @@ static int WebKitMain(const CommandLine& commandLine)
 #else
             break;
 #endif
+#if ENABLE(SHARED_WORKER_PROCESS)
         case ProcessLauncher::SharedWorkerProcess:
             return SharedWorkerProcessMain(commandLine);
+#endif
     }
 
     return EXIT_FAILURE;

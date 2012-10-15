@@ -1,3 +1,11 @@
+2012-10-15  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Partial build fix for Windows after r131308.
+
+        * WebKit2Prefix.h:
+        * WebProcess/WebKitMain.cpp:
+        (WebKitMain):
+
 2012-10-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r131306 and r131307.

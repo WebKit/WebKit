@@ -57,6 +57,10 @@
 
 #endif // PLATFORM(MAC)
 
+#if !PLATFORM(WIN)
+#define ENABLE_SHARED_WORKER_PROCESS 1
+#endif
+
 /* When C++ exceptions are disabled, the C++ library defines |try| and |catch|
 * to allow C++ code that expects exceptions to build. These definitions
 * interfere with Objective-C++ uses of Objective-C exception handlers, which
