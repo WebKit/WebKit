@@ -39,6 +39,7 @@ public:
     ~TestEventPrinter();
     void handleTestHeader(const char* url) const;
     void handleTimedOut() const;
+    void handleDumpMemoryHeader() const;
     void handleTextHeader() const;
     void handleTextFooter() const;
     void handleAudio(const void* audioData, size_t audioSize) const;
