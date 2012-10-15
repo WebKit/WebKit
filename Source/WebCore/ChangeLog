@@ -1,3 +1,33 @@
+2012-10-12  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI remove hand made object builders with automatic builder.
+        https://bugs.webkit.org/show_bug.cgi?id=99186
+
+        Reviewed by Yury Semikhatsky.
+
+        Old builders were replaced with single automatic builder.
+        It does the next things:
+        a) deduplicates entries in the MemoryInstrumentationClient's map and converts objectType pointers to String;
+        b) creates parent entries and assigns their aggregated sizes;
+        c) creates the hierarchy of MemoryBlocks recursively.
+
+        * dom/WebCoreMemoryInstrumentation.cpp:
+        (WebCore):
+        * dom/WebCoreMemoryInstrumentation.h:
+        (WebCoreMemoryTypes):
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore):
+        (WebCore::jsHeapInfo):
+        (WebCore::renderTreeInfo):
+        (WebCore::addPlatformComponentsInfo):
+        (WebCore::InspectorMemoryAgent::getProcessMemoryDistribution):
+        * inspector/MemoryInstrumentationImpl.cpp:
+        (WebCore::MemoryInstrumentationClientImpl::sizesMap):
+        (WebCore):
+        * inspector/MemoryInstrumentationImpl.h:
+        (WebCore):
+        (MemoryInstrumentationClientImpl):
+
 2012-10-14  Sam Weinig  <sam@webkit.org>
 
         Simplify user content in WebKit2 by using WebCore::UserStyleSheet and WebCore::UserScript directly

@@ -34,8 +34,24 @@
 
 #include "MemoryInstrumentationImpl.h"
 #include <wtf/Assertions.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
+
+TypeNameToSizeMap MemoryInstrumentationClientImpl::sizesMap() const
+{
+    // TypeToSizeMap uses const char* as the key.
+    // Thus it could happen that we have two different keys with equal string.
+    TypeNameToSizeMap sizesMap;
+    for (TypeToSizeMap::const_iterator i = m_totalSizes.begin(); i != m_totalSizes.end(); ++i) {
+        String objectType(i->key);
+        TypeNameToSizeMap::AddResult result = sizesMap.add(objectType, i->value);
+        if (!result.isNewEntry)
+            result.iterator->value += i->value;
+    }
+
+    return sizesMap;
+}
 
 void MemoryInstrumentationClientImpl::countObjectSize(MemoryObjectType objectType, size_t size)
 {

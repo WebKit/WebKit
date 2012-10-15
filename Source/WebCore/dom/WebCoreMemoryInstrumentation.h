@@ -41,12 +41,10 @@ using WTF::MemoryObjectType;
 
 class WebCoreMemoryTypes : public PlatformMemoryTypes {
 public:
-    static MemoryObjectType Page;
     static MemoryObjectType DOM;
     static MemoryObjectType CSS;
     static MemoryObjectType Binding;
 
-    static MemoryObjectType MemoryCache;
     static MemoryObjectType MemoryCacheStructures;
     static MemoryObjectType CachedResource;
     static MemoryObjectType CachedResourceRaw;
@@ -58,7 +56,6 @@ public:
     static MemoryObjectType CachedResourceShader;
     static MemoryObjectType CachedResourceXSLT;
 
-    static MemoryObjectType ExternalResources;
     static MemoryObjectType ExternalStrings;
     static MemoryObjectType ExternalArrays;
 };

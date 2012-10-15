@@ -33,12 +33,10 @@
 
 namespace WebCore {
 
-MemoryObjectType WebCoreMemoryTypes::Page = "Page";
 MemoryObjectType WebCoreMemoryTypes::DOM = "Page.DOM";
 MemoryObjectType WebCoreMemoryTypes::CSS = "Page.CSS";
 MemoryObjectType WebCoreMemoryTypes::Binding = "Page.Binding";
 
-MemoryObjectType WebCoreMemoryTypes::MemoryCache = "MemoryCache";
 MemoryObjectType WebCoreMemoryTypes::MemoryCacheStructures = "MemoryCache.InternalStructures";
 MemoryObjectType WebCoreMemoryTypes::CachedResource = "MemoryCache.Resource";
 MemoryObjectType WebCoreMemoryTypes::CachedResourceRaw = "MemoryCache.RawResource";
@@ -50,7 +48,6 @@ MemoryObjectType WebCoreMemoryTypes::CachedResourceSVG = "MemoryCache.SVG";
 MemoryObjectType WebCoreMemoryTypes::CachedResourceShader = "MemoryCache.Shader";
 MemoryObjectType WebCoreMemoryTypes::CachedResourceXSLT = "MemoryCache.XSLT";
 
-MemoryObjectType WebCoreMemoryTypes::ExternalResources = "JSExternalResources";
 MemoryObjectType WebCoreMemoryTypes::ExternalStrings = "JSExternalResources.Strings";
 MemoryObjectType WebCoreMemoryTypes::ExternalArrays = "JSExternalResources.Arrays";
 

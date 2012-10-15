@@ -56,6 +56,7 @@
 #include <wtf/ArrayBufferView.h>
 #include <wtf/HashSet.h>
 #include <wtf/MemoryInstrumentationArrayBufferView.h>
+#include <wtf/NonCopyingSort.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
@@ -70,6 +71,7 @@ using WebCore::TypeBuilder::Memory::StringStatistics;
 
 // Use a type alias instead of 'using' here which would cause a conflict on Mac.
 typedef WebCore::TypeBuilder::Memory::MemoryBlock InspectorMemoryBlock;
+typedef WebCore::TypeBuilder::Array<InspectorMemoryBlock> InspectorMemoryBlocks;
 
 namespace WebCore {
 
@@ -93,78 +95,59 @@ class MemoryUsageStatsGenerator {
 public:
     MemoryUsageStatsGenerator(MemoryInstrumentationClientImpl* client) : m_client(client) { }
 
-    void dump(TypeBuilder::Array<InspectorMemoryBlock>* children)
+    void dump(InspectorMemoryBlocks* children)
     {
-        children->addItem(buildObjectForMemoryCache());
-        children->addItem(buildObjectForPage());
-        children->addItem(buildObjectForExternalResources());
+        m_sizesMap = m_client->sizesMap();
+
+        Vector<String> objectTypes;
+        objectTypes.appendRange(m_sizesMap.keys().begin(), m_sizesMap.keys().end());
+
+        for (Vector<String>::const_iterator i = objectTypes.begin(); i != objectTypes.end(); ++i)
+            updateParentSizes(*i, m_sizesMap.get(*i));
+
+        objectTypes.clear();
+        objectTypes.appendRange(m_sizesMap.keys().begin(), m_sizesMap.keys().end());
+        nonCopyingSort(objectTypes.begin(), objectTypes.end(), stringCompare);
+
+        size_t index = 0;
+        while (index < objectTypes.size())
+            index = buildObjectForIndex(index, objectTypes, children);
 
         addMemoryInstrumentationDebugData(children);
     }
 
 private:
-    PassRefPtr<InspectorMemoryBlock> buildObjectForMemoryCache() const
+    static bool stringCompare(const String& a, const String& b) { return WTF::codePointCompare(a, b) < 0; }
+
+    void updateParentSizes(String objectType, const size_t size)
     {
-        size_t totalSize = 0;
-
-        RefPtr<TypeBuilder::Array<InspectorMemoryBlock> > children = TypeBuilder::Array<InspectorMemoryBlock>::create();
-        totalSize += addMemoryBlockFor(children.get(), WebCoreMemoryTypes::MemoryCacheStructures);
-        totalSize += addMemoryBlockFor(children.get(), WebCoreMemoryTypes::CachedResourceRaw);
-        totalSize += addMemoryBlockFor(children.get(), WebCoreMemoryTypes::CachedResourceCSS);
-        totalSize += addMemoryBlockFor(children.get(), WebCoreMemoryTypes::CachedResourceFont);
-        totalSize += addMemoryBlockFor(children.get(), WebCoreMemoryTypes::CachedResourceImage);
-        totalSize += addMemoryBlockFor(children.get(), WebCoreMemoryTypes::CachedResourceScript);
-        totalSize += addMemoryBlockFor(children.get(), WebCoreMemoryTypes::CachedResourceSVG);
-        totalSize += addMemoryBlockFor(children.get(), WebCoreMemoryTypes::CachedResourceShader);
-        totalSize += addMemoryBlockFor(children.get(), WebCoreMemoryTypes::CachedResourceXSLT);
-
-        RefPtr<InspectorMemoryBlock> block = InspectorMemoryBlock::create().setName(WebCoreMemoryTypes::MemoryCache);
-        block->setSize(totalSize);
-        block->setChildren(children.release());
-        return block.release();
+        for (size_t dotPosition = objectType.reverseFind('.'); dotPosition != notFound; dotPosition = objectType.reverseFind('.', dotPosition)) {
+            objectType = objectType.substring(0, dotPosition);
+            TypeNameToSizeMap::AddResult result = m_sizesMap.add(objectType, size);
+            if (!result.isNewEntry)
+                result.iterator->value += size;
+        }
     }
 
-    PassRefPtr<InspectorMemoryBlock> buildObjectForPage() const
+    size_t buildObjectForIndex(size_t index, const Vector<String>& objectTypes, InspectorMemoryBlocks* array)
     {
-        size_t totalSize = 0;
-
-        RefPtr<TypeBuilder::Array<InspectorMemoryBlock> > domChildren = TypeBuilder::Array<InspectorMemoryBlock>::create();
-        totalSize += addMemoryBlockFor(domChildren.get(), WebCoreMemoryTypes::DOM);
-        totalSize += addMemoryBlockFor(domChildren.get(), WebCoreMemoryTypes::Image);
-        totalSize += addMemoryBlockFor(domChildren.get(), WebCoreMemoryTypes::CSS);
-        totalSize += addMemoryBlockFor(domChildren.get(), WebCoreMemoryTypes::Binding);
-        totalSize += addMemoryBlockFor(domChildren.get(), WebCoreMemoryTypes::Loader);
-
-        RefPtr<InspectorMemoryBlock> dom = InspectorMemoryBlock::create().setName(WebCoreMemoryTypes::Page);
-        dom->setSize(totalSize);
-        dom->setChildren(domChildren.release());
-        return dom.release();
+        String typeName = objectTypes[index];
+        RefPtr<InspectorMemoryBlock> block = InspectorMemoryBlock::create().setName(typeName);
+        block->setSize(m_sizesMap.get(typeName));
+        array->addItem(block);
+        ++index;
+        RefPtr<InspectorMemoryBlocks> children;
+        while (index < objectTypes.size() && objectTypes[index].startsWith(typeName)) {
+            if (!children)
+                children = InspectorMemoryBlocks::create();
+            index = buildObjectForIndex(index, objectTypes, children.get());
+        }
+        if (children)
+            block->setChildren(children.release());
+        return index;
     }
 
-    PassRefPtr<InspectorMemoryBlock> buildObjectForExternalResources() const
-    {
-        size_t totalSize = 0;
-
-        RefPtr<TypeBuilder::Array<InspectorMemoryBlock> > resourcesChildren = TypeBuilder::Array<InspectorMemoryBlock>::create();
-        totalSize += addMemoryBlockFor(resourcesChildren.get(), WebCoreMemoryTypes::ExternalStrings);
-        totalSize += addMemoryBlockFor(resourcesChildren.get(), WebCoreMemoryTypes::ExternalArrays);
-
-        RefPtr<InspectorMemoryBlock> resources = InspectorMemoryBlock::create().setName(WebCoreMemoryTypes::ExternalResources);
-        resources->setSize(totalSize);
-        resources->setChildren(resourcesChildren.release());
-        return resources.release();
-    }
-
-    size_t addMemoryBlockFor(TypeBuilder::Array<InspectorMemoryBlock>* array, MemoryObjectType typeName) const
-    {
-        RefPtr<InspectorMemoryBlock> result = InspectorMemoryBlock::create().setName(typeName);
-        size_t size = m_client->totalSize(typeName);
-        result->setSize(size);
-        array->addItem(result);
-        return size;
-    }
-
-    void addMemoryInstrumentationDebugData(TypeBuilder::Array<InspectorMemoryBlock>* children)
+    void addMemoryInstrumentationDebugData(InspectorMemoryBlocks* children)
     {
         if (m_client->checkInstrumentedObjects()) {
             RefPtr<InspectorMemoryBlock> totalInstrumented = InspectorMemoryBlock::create().setName("InstrumentedObjectsCount");
@@ -179,6 +162,7 @@ private:
     }
 
     MemoryInstrumentationClientImpl* m_client;
+    TypeNameToSizeMap m_sizesMap;
 };
 
 String nodeName(Node* node)
@@ -499,7 +483,7 @@ static PassRefPtr<InspectorMemoryBlock> jsHeapInfo()
     RefPtr<InspectorMemoryBlock> jsHeapAllocated = InspectorMemoryBlock::create().setName(MemoryBlockName::jsHeapAllocated);
     jsHeapAllocated->setSize(static_cast<int>(info.totalJSHeapSize));
 
-    RefPtr<TypeBuilder::Array<InspectorMemoryBlock> > children = TypeBuilder::Array<InspectorMemoryBlock>::create();
+    RefPtr<TypeBuilder::Array<InspectorMemoryBlock> > children = InspectorMemoryBlocks::create();
     RefPtr<InspectorMemoryBlock> jsHeapUsed = InspectorMemoryBlock::create().setName(MemoryBlockName::jsHeapUsed);
     jsHeapUsed->setSize(static_cast<int>(info.usedJSHeapSize));
     children->addItem(jsHeapUsed);
@@ -515,7 +499,7 @@ static PassRefPtr<InspectorMemoryBlock> renderTreeInfo(Page* page)
     RefPtr<InspectorMemoryBlock> renderTreeAllocated = InspectorMemoryBlock::create().setName(MemoryBlockName::renderTreeAllocated);
     renderTreeAllocated->setSize(arenaSize.allocated);
 
-    RefPtr<TypeBuilder::Array<InspectorMemoryBlock> > children = TypeBuilder::Array<InspectorMemoryBlock>::create();
+    RefPtr<InspectorMemoryBlocks> children = InspectorMemoryBlocks::create();
     RefPtr<InspectorMemoryBlock> renderTreeUsed = InspectorMemoryBlock::create().setName(MemoryBlockName::renderTreeUsed);
     renderTreeUsed->setSize(arenaSize.treeSize);
     children->addItem(renderTreeUsed);
@@ -589,7 +573,7 @@ static void collectDomTreeInfo(Page* page, MemoryInstrumentationImpl& memoryInst
     domTreesIterator.visitMemoryCache();
 }
 
-static void addPlatformComponentsInfo(PassRefPtr<TypeBuilder::Array<InspectorMemoryBlock> > children)
+static void addPlatformComponentsInfo(PassRefPtr<InspectorMemoryBlocks> children)
 {
     Vector<MemoryUsageSupport::ComponentInfo> components;
     MemoryUsageSupport::memoryUsageByComponents(components);
@@ -619,7 +603,7 @@ void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<Ins
     MemoryInstrumentationClientImpl memoryInstrumentationClient(allocatedObjects.isEmpty() ? 0 : &allocatedObjects);
     MemoryInstrumentationImpl memoryInstrumentation(&memoryInstrumentationClient);
 
-    RefPtr<TypeBuilder::Array<InspectorMemoryBlock> > children = TypeBuilder::Array<InspectorMemoryBlock>::create();
+    RefPtr<InspectorMemoryBlocks> children = InspectorMemoryBlocks::create();
     children->addItem(jsHeapInfo());
     children->addItem(renderTreeInfo(m_page)); // FIXME: collect for all pages?
     collectDomTreeInfo(m_page, memoryInstrumentation); // FIXME: collect for all pages?

@@ -37,12 +37,14 @@
 #include <wtf/HashSet.h>
 #include <wtf/MemoryInstrumentation.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 
 using WTF::MemoryObjectType;
 
 namespace WebCore {
 
 typedef HashSet<const void*> VisitedObjects;
+typedef HashMap<String, size_t> TypeNameToSizeMap;
 
 class MemoryInstrumentationClientImpl : public WTF::MemoryInstrumentationClient {
 public:
@@ -71,6 +73,8 @@ public:
         return m_visitedObjects.capacity() * sizeof(VisitedObjects::ValueType) +
             m_totalSizes.capacity() * sizeof(TypeToSizeMap::ValueType);
     }
+
+    TypeNameToSizeMap sizesMap() const;
 
     bool checkInstrumentedObjects() const { return m_allocatedObjects; }
     size_t visitedObjects() const { return m_visitedObjects.size(); }
