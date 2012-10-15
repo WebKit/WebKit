@@ -18,12 +18,20 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef ewk_util_private_h
-#define ewk_util_private_h
+#ifndef CairoUtilitiesEfl_h
+#define CairoUtilitiesEfl_h
 
+#include <Ecore_Evas.h>
 #include <Evas.h>
 #include <cairo.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/efl/RefPtrEfl.h>
 
-Evas_Object *ewk_util_image_from_cairo_surface_add(Evas *canvas, cairo_surface_t *surface);
+namespace WebCore {
 
-#endif // ewk_util_private_h
+PassRefPtr<Evas_Object> evasObjectFromCairoImageSurface(Evas* canvas, cairo_surface_t*);
+PassRefPtr<cairo_surface_t> createSurfaceForBackingStore(Ecore_Evas* ee);
+
+}
+
+#endif // CairoUtilitiesEfl_h

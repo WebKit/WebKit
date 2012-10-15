@@ -34,6 +34,7 @@
 #include "ewk_cookie_manager.h"
 #include "ewk_download_job.h"
 #include "ewk_error.h"
+#include "ewk_favicon_database.h"
 #include "ewk_form_submission_request.h"
 #include "ewk_intent.h"
 #include "ewk_intent_service.h"

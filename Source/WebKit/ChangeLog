@@ -1,3 +1,15 @@
+2012-10-15  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Implement Favicons API
+        https://bugs.webkit.org/show_bug.cgi?id=99087
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Remove ewk_util.cpp from PlatformEfl.cmake now that its
+        code has been moved to WebCore to be reused in WK2.
+
+        * PlatformEfl.cmake:
+
 2012-10-15  Dongwoo Joshua Im  <dw.im@samsung.com>
 
         [EFL] Set the basepath of the File System API.

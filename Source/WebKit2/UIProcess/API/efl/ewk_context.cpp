@@ -37,7 +37,9 @@
 #include "ewk_cookie_manager_private.h"
 #include "ewk_download_job.h"
 #include "ewk_download_job_private.h"
+#include "ewk_favicon_database_private.h"
 #include <WebCore/FileSystem.h>
+#include <WebCore/IconDatabase.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
@@ -66,6 +68,7 @@ struct _Ewk_Context {
     WKRetainPtr<WKContextRef> context;
 
     Ewk_Cookie_Manager* cookieManager;
+    Ewk_Favicon_Database* faviconDatabase;
 #if ENABLE(BATTERY_STATUS)
     RefPtr<BatteryProvider> batteryProvider;
 #endif
@@ -86,6 +89,7 @@ struct _Ewk_Context {
         : __ref(1)
         , context(contextRef)
         , cookieManager(0)
+        , faviconDatabase(0)
         , requestManager(WKContextGetSoupRequestManager(contextRef.get()))
         , historyClient()
     {
@@ -121,6 +125,9 @@ struct _Ewk_Context {
         if (cookieManager)
             ewk_cookie_manager_free(cookieManager);
 
+        if (faviconDatabase)
+            ewk_favicon_database_free(faviconDatabase);
+
         HashMap<uint64_t, Ewk_Download_Job*>::iterator it = downloadJobs.begin();
         HashMap<uint64_t, Ewk_Download_Job*>::iterator end = downloadJobs.end();
         for ( ; it != end; ++it)
@@ -155,6 +162,22 @@ Ewk_Cookie_Manager* ewk_context_cookie_manager_get(const Ewk_Context* ewkContext
         const_cast<Ewk_Context*>(ewkContext)->cookieManager = ewk_cookie_manager_new(WKContextGetCookieManager(ewkContext->context.get()));
 
     return ewkContext->cookieManager;
+}
+
+Ewk_Favicon_Database* ewk_context_favicon_database_get(const Ewk_Context* ewkContext)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ewkContext, 0);
+
+    if (!ewkContext->faviconDatabase) {
+        // Set database path.
+        WebContext* webContext = toImpl(ewkContext->context.get());
+        String databasePath = webContext->iconDatabasePath() + "/" + WebCore::IconDatabase::defaultDatabaseFilename();
+        webContext->setIconDatabasePath(databasePath);
+
+        const_cast<Ewk_Context*>(ewkContext)->faviconDatabase = ewk_favicon_database_new(WKContextGetIconDatabase(ewkContext->context.get()));
+    }
+
+    return ewkContext->faviconDatabase;
 }
 
 WKContextRef ewk_context_WKContext_get(const Ewk_Context* ewkContext)

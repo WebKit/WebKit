@@ -22,6 +22,7 @@
 #include "ewk_history.h"
 
 #include "BackForwardListImpl.h"
+#include "CairoUtilitiesEfl.h"
 #include "HistoryItem.h"
 #include "IconDatabaseBase.h"
 #include "Image.h"
@@ -30,7 +31,6 @@
 #include "PageGroup.h"
 #include "ewk_history_private.h"
 #include "ewk_private.h"
-#include "ewk_util_private.h"
 #include <Eina.h>
 #include <eina_safety_checks.h>
 #include <wtf/text/CString.h>
@@ -355,7 +355,7 @@ Evas_Object* ewk_history_item_icon_object_add(const Ewk_History_Item* item, Evas
     }
 
     cairo_surface_t* surface = icon->surface();
-    return surface ? ewk_util_image_from_cairo_surface_add(canvas, surface) : 0;
+    return surface ? WebCore::evasObjectFromCairoImageSurface(canvas, surface).leakRef() : 0;
 }
 
 Eina_Bool ewk_history_item_page_cache_exists(const Ewk_History_Item* item)

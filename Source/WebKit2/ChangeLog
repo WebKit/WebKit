@@ -1,3 +1,70 @@
+2012-10-15  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Implement Favicons API
+        https://bugs.webkit.org/show_bug.cgi?id=99087
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add support for favicon API to EFL WK2 port via
+        Ewk_Favicon_Database. The API can be used to
+        retrieve the favicon URL and data for a given
+        page URL.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/ewk_context.cpp:
+        (_Ewk_Context):
+        (_Ewk_Context::_Ewk_Context):
+        (_Ewk_Context::~_Ewk_Context):
+        (ewk_context_favicon_database_get): Add getter to retrieve the favicon
+        database instance from the context.
+        * UIProcess/API/efl/ewk_context.h:
+        * UIProcess/API/efl/ewk_favicon_database.cpp: Added.
+        (IconChangeCallbackData):
+        (IconChangeCallbackData::IconChangeCallbackData):
+        (IconRequestCallbackData):
+        (IconRequestCallbackData::IconRequestCallbackData):
+        (_Ewk_Favicon_Database):
+        (_Ewk_Favicon_Database::_Ewk_Favicon_Database):
+        (didChangeIconForPageURL):
+        (getIconSurfaceSynchronously):
+        (iconDataReadyForPageURL):
+        (ewk_favicon_database_new):
+        (ewk_favicon_database_free):
+        (ewk_favicon_database_icon_url_get):
+        (AsyncIconRequestResponse):
+        (AsyncIconRequestResponse::AsyncIconRequestResponse):
+        (respond_icon_request_idle):
+        (ewk_favicon_database_async_icon_get):
+        (ewk_favicon_database_icon_change_callback_add):
+        (ewk_favicon_database_icon_change_callback_del):
+        * UIProcess/API/efl/ewk_favicon_database.h: Added.
+        * UIProcess/API/efl/ewk_favicon_database_private.h: Copied from Source/WebKit2/UIProcess/efl/WebContextEfl.cpp.
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_Ewk_View_Private_Data::~_Ewk_View_Private_Data):
+        (_ewk_view_on_favicon_changed):
+        (_ewk_view_initialize):
+        (ewk_view_url_update):
+        (ewk_view_icon_url_get): Add a getter to the view to retrieve the icon URL for
+        the page that is currently shown.
+        (ewk_view_update_icon):
+        * UIProcess/API/efl/ewk_view.h: Emit a new "icon,changed" signal on the view whenever
+        the view's icon has changed.
+        * UIProcess/API/efl/ewk_view_private.h:
+        * UIProcess/API/efl/tests/resources/blank.ico: Added.
+        * UIProcess/API/efl/tests/test_ewk2_context.cpp: Add unit test for new favicon database getter.
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_favicon_database.cpp: Added unit tests for the new Ewk_Favicon_Database API.
+        (serverCallback):
+        (onIconChanged):
+        (TEST_F):
+        (onIconDataReady):
+        (IconRequestData):
+        (requestFaviconData):
+        * UIProcess/efl/WebContextEfl.cpp:
+        (WebKit::WebContext::platformDefaultIconDatabasePath): Return a valid default path for the icon database.
+
 2012-10-15  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Share resources installed for inspector

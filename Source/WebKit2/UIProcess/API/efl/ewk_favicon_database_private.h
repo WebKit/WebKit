@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Samsung Electronics
+ * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,7 +10,7 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS AS IS''
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
@@ -23,43 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebContext.h"
+#ifndef ewk_favicon_database_private_h
+#define ewk_favicon_database_private_h
 
-#include <Efreet.h>
-#include <WebCore/ApplicationCacheStorage.h>
-#include <WebCore/NotImplemented.h>
+#include <WebKit2/WKBase.h>
 
-namespace WebKit {
+Ewk_Favicon_Database* ewk_favicon_database_new(WKIconDatabaseRef wkIconDatabase);
+void ewk_favicon_database_free(Ewk_Favicon_Database* ewkIconDatabase);
 
-String WebContext::applicationCacheDirectory()
-{
-    return String::fromUTF8(efreet_cache_home_get()) + "/WebKitEfl/Applications";
-}
-
-void WebContext::platformInitializeWebProcess(WebProcessCreationParameters&)
-{
-    notImplemented();
-}
-
-void WebContext::platformInvalidateContext()
-{
-    notImplemented();
-}
-
-String WebContext::platformDefaultDatabaseDirectory() const
-{
-    return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/Databases";
-}
-
-String WebContext::platformDefaultIconDatabasePath() const
-{
-    return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/IconDatabase";
-}
-
-String WebContext::platformDefaultLocalStorageDirectory() const
-{
-    return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/LocalStorage";
-}
-
-} // namespace WebKit
+#endif // ewk_favicon_database_private_h

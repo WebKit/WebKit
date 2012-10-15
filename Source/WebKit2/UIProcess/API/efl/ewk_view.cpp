@@ -85,6 +85,7 @@ static const int defaultCursorSize = 16;
 
 typedef HashMap<uint64_t, Ewk_Resource*> LoadingResourcesMap;
 static void _ewk_view_priv_loading_resources_clear(LoadingResourcesMap& loadingResourcesMap);
+static void _ewk_view_on_favicon_changed(const char* pageURL, void* eventInfo);
 
 typedef HashMap<const WebPageProxy*, const Evas_Object*> PageViewMap;
 
@@ -122,6 +123,7 @@ struct _Ewk_View_Private_Data {
     WKEinaSharedString theme;
     WKEinaSharedString customEncoding;
     WKEinaSharedString cursorGroup;
+    WKEinaSharedString faviconURL;
     Evas_Object* cursorObject;
     LoadingResourcesMap loadingResourcesMap;
     Ewk_Back_Forward_List* backForwardList;
@@ -170,6 +172,10 @@ struct _Ewk_View_Private_Data {
     ~_Ewk_View_Private_Data()
     {
         _ewk_view_priv_loading_resources_clear(loadingResourcesMap);
+
+        /* Unregister icon change callback */
+        Ewk_Favicon_Database* iconDatabase = ewk_context_favicon_database_get(context);
+        ewk_favicon_database_icon_change_callback_del(iconDatabase, _ewk_view_on_favicon_changed);
 
         if (cursorObject)
             evas_object_del(cursorObject);
@@ -248,6 +254,17 @@ static void _ewk_view_smart_changed(Ewk_View_Smart_Data* smartData)
         return;
     smartData->changed.any = true;
     evas_object_smart_changed(smartData->self);
+}
+
+static void _ewk_view_on_favicon_changed(const char* pageURL, void* eventInfo)
+{
+    Evas_Object* ewkView = static_cast<Evas_Object*>(eventInfo);
+
+    const char* view_url = ewk_view_url_get(ewkView);
+    if (strcasecmp(view_url, pageURL))
+        return;
+
+    ewk_view_update_icon(ewkView);
 }
 
 // Default Event Handling.
@@ -834,6 +851,10 @@ static void _ewk_view_initialize(Evas_Object* ewkView, Ewk_Context* context, WKP
     priv->pageProxy->fullScreenManager()->setWebView(ewkView);
     ewk_settings_fullscreen_enabled_set(priv->settings.get(), true);
 #endif
+
+    /* Listen for favicon changes */
+    Ewk_Favicon_Database* iconDatabase = ewk_context_favicon_database_get(priv->context);
+    ewk_favicon_database_icon_change_callback_add(iconDatabase, _ewk_view_on_favicon_changed, ewkView);
 }
 
 static Evas_Object* _ewk_view_add_with_smart(Evas* canvas, Evas_Smart* smart)
@@ -931,6 +952,9 @@ void ewk_view_url_update(Evas_Object* ewkView)
     priv->url = activeURL.utf8().data();
     const char* callbackArgument = static_cast<const char*>(priv->url);
     evas_object_smart_callback_call(ewkView, "url,changed", const_cast<char*>(callbackArgument));
+
+    // Update the view's favicon.
+    ewk_view_update_icon(ewkView);
 }
 
 Eina_Bool ewk_view_url_set(Evas_Object* ewkView, const char* url)
@@ -951,6 +975,14 @@ const char* ewk_view_url_get(const Evas_Object* ewkView)
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
 
     return priv->url;
+}
+
+const char *ewk_view_icon_url_get(const Evas_Object *ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
+
+    return priv->faviconURL;
 }
 
 Eina_Bool ewk_view_reload(Evas_Object* ewkView)
@@ -1533,6 +1565,26 @@ void ewk_view_load_provisional_started(Evas_Object* ewkView)
 void ewk_view_back_forward_list_changed(Evas_Object* ewkView)
 {
     evas_object_smart_callback_call(ewkView, "back,forward,list,changed", 0);
+}
+
+/**
+ * @internal
+ * Update the view's favicon and emits a "icon,changed" signal if it has
+ * changed.
+ *
+ * This function is called whenever the URL has changed or when the icon for
+ * the current page URL has changed.
+ */
+void ewk_view_update_icon(Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    Ewk_Favicon_Database* iconDatabase = ewk_context_favicon_database_get(priv->context);
+    ASSERT(iconDatabase);
+
+    priv->faviconURL = ewk_favicon_database_icon_url_get(iconDatabase, priv->url);
+    evas_object_smart_callback_call(ewkView, "icon,changed", 0);
 }
 
 /**

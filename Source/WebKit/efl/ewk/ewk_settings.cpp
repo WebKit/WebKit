@@ -23,6 +23,7 @@
 #include "ewk_settings.h"
 
 #include "ApplicationCacheStorage.h"
+#include "CairoUtilitiesEfl.h"
 #include "CrossOriginPreflightResultCache.h"
 #include "DatabaseTracker.h"
 #include "FontCache.h"
@@ -39,7 +40,6 @@
 #include "StorageTracker.h"
 #include "WebKitVersion.h"
 #include "ewk_private.h"
-#include "ewk_util_private.h"
 #include <Eina.h>
 #include <eina_safety_checks.h>
 #include <errno.h>
@@ -230,7 +230,7 @@ Evas_Object* ewk_settings_icon_database_icon_object_get(const char* url, Evas* c
     }
 
     cairo_surface_t* surface = icon->surface();
-    return surface ? ewk_util_image_from_cairo_surface_add(canvas, surface) : 0;
+    return surface ? WebCore::evasObjectFromCairoImageSurface(canvas, surface).leakRef() : 0;
 }
 
 void ewk_settings_object_cache_capacity_set(unsigned minDeadCapacity, unsigned maxDeadCapacity, unsigned totalCapacity)

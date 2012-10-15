@@ -43,6 +43,7 @@
  *   when done to continue with the form submission. If the last reference is removed on a
  *   #Ewk_Form_Submission_Request and the form has not been submitted yet,
  *   ewk_form_submission_request_submit() will be called automatically.
+ * - "icon,changed", void: reports that the view's favicon has changed.
  * - "intent,request,new", Ewk_Intent*: reports new Web intent request.
  * - "intent,service,register", Ewk_Intent_Service*: reports new Web intent service registration.
  * - "load,error", const Ewk_Error*: reports main frame load failed.
@@ -355,6 +356,18 @@ EAPI Eina_Bool ewk_view_url_set(Evas_Object *o, const char *url);
  * @return current URL on success or @c NULL on failure
  */
 EAPI const char *ewk_view_url_get(const Evas_Object *o);
+
+/**
+ * Returns the current icon URL of view object.
+ *
+ * It returns an internal string and should not
+ * be modified. The string is guaranteed to be stringshared.
+ *
+ * @param o view object to get current icon URL
+ *
+ * @return current icon URL on success or @c NULL if unavailable or on failure
+ */
+EAPI const char *ewk_view_icon_url_get(const Evas_Object *o);
 
 /**
  * Asks the main frame to reload the current document.

@@ -1,3 +1,27 @@
+2012-10-15  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Implement Favicons API
+        https://bugs.webkit.org/show_bug.cgi?id=99087
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Moved ewk_util from WebKit to WebCore and rename it
+        to CairoUtilityEfl so that the code can be shared
+        between WebKit1 and WebKit2. Some related utility
+        code was also moved from RenderThemeEfl to
+        CairoUtilityEfl.
+
+        No new tests, no behavior change.
+
+        * PlatformEfl.cmake:
+        * platform/efl/RenderThemeEfl.cpp:
+        * platform/graphics/efl/CairoUtilitiesEfl.cpp: Renamed from Source/WebKit/efl/ewk/ewk_util.cpp.
+        (WebCore):
+        (WebCore::evasObjectFromCairoImageSurface):
+        (WebCore::createSurfaceForBackingStore):
+        * platform/graphics/efl/CairoUtilitiesEfl.h: Renamed from Source/WebKit/efl/ewk/ewk_util_private.h.
+        (WebCore):
+
 2012-10-15  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=99350

@@ -52,6 +52,7 @@ LIST(APPEND WebCore_SOURCES
   platform/efl/TemporaryLinkStubs.cpp
   platform/efl/WidgetEfl.cpp
   platform/graphics/ImageSource.cpp
+  platform/graphics/efl/CairoUtilitiesEfl.cpp
   platform/graphics/efl/IconEfl.cpp
   platform/graphics/efl/ImageEfl.cpp
   platform/graphics/efl/IntPointEfl.cpp

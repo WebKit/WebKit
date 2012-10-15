@@ -38,6 +38,7 @@
 #define ewk_context_h
 
 #include "ewk_cookie_manager.h"
+#include "ewk_favicon_database.h"
 #include "ewk_navigation_data.h"
 #include "ewk_url_scheme_request.h"
 #include <Evas.h>
@@ -163,6 +164,15 @@ EAPI Ewk_Context *ewk_context_new_with_injected_bundle_path(const char *path);
  * @return Ewk_Cookie_Manager object instance or @c NULL in case of failure.
  */
 EAPI Ewk_Cookie_Manager *ewk_context_cookie_manager_get(const Ewk_Context *context);
+
+/**
+ * Gets the favicon database instance for this @a context.
+ *
+ * @param context context object to query.
+ *
+ * @return Ewk_Favicon_Database object instance or @c NULL in case of failure.
+ */
+EAPI Ewk_Favicon_Database *ewk_context_favicon_database_get(const Ewk_Context *context);
 
 /**
  * Register @a scheme in @a context.
