@@ -79,8 +79,6 @@ private:
     virtual bool canBeProgramaticallyScrolled() const { return true; }
 
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
-
-    static bool isSelectableElement(HTMLElement*, Node*);
 };
 
 inline RenderTextControl* toRenderTextControl(RenderObject* object)

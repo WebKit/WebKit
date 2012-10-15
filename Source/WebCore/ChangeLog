@@ -1,3 +1,15 @@
+2012-10-15  Rob Buis  <rbuis@rim.com>
+
+        Remove RenderTextControl::isSelectableElement
+        https://bugs.webkit.org/show_bug.cgi?id=99334
+
+        Reviewed by Andreas Kling.
+
+        It seems this method is not used anymore.
+
+        * WebCore.order:
+        * rendering/RenderTextControl.h:
+
 2012-10-15  Mike West  <mkwst@chromium.org>
 
         CSP source expressions should support paths at file-level granularity.
