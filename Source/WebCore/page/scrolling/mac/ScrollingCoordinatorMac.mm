@@ -257,12 +257,16 @@ void ScrollingCoordinatorMac::detachFromStateTree(ScrollingNodeID scrollLayerID)
     if (!scrollLayerID)
         return;
 
+    // The node may not be found if clearStateTree() was recently called.
     ScrollingStateNode* node = m_stateNodeMap.take(scrollLayerID);
+    if (!node)
+        return;
+
     m_scrollingStateTree->removeNode(node);
 
     // ScrollingStateTree::removeNode() will destroy children, so we have to make sure we remove those children
     // from the HashMap.
-   const Vector<ScrollingNodeID>& removedNodes = m_scrollingStateTree->removedNodes();
+    const Vector<ScrollingNodeID>& removedNodes = m_scrollingStateTree->removedNodes();
     size_t size = removedNodes.size();
     for (size_t i = 0; i < size; ++i)
         m_stateNodeMap.remove(removedNodes[i]);

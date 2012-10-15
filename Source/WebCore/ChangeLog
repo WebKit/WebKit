@@ -1,3 +1,19 @@
+2012-10-15  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=99350
+        REGRESSION (r131238): Repro crash in 
+       WebCore::ScrollingStateTree::removeNode(WebCore::ScrollingStateNode*) 
+        opening pdf page
+        -and corresponding-
+        <rdar://problem/12499839>
+
+        Reviewed by Simon Fraser.
+
+        We have to null-check node here. It won't be found if  
+        clearStateTree() was recently called.
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::detachFromStateTree):
+
 2012-10-15  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [BlackBerry] replace BlackBerry::Platform::log() with BBLOG()
