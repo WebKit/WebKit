@@ -1,3 +1,17 @@
+2012-10-15  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Hide useless controls in remote-debugging mode.
+        https://bugs.webkit.org/show_bug.cgi?id=99300
+
+        Reviewed by Vsevolod Vlasov.
+
+        "Close inspector" and "change docking mode" buttons seem to be rather
+        useless in remote debugging mode.
+
+        * inspector/front-end/inspector.css:
+        (body.remote .toolbar-item.close-left, body.remote .toolbar-item.close-right):
+        (body.remote .dock-status-bar-item):
+
 2012-10-15  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Implement Favicons API
