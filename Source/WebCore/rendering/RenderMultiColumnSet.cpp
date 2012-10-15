@@ -66,12 +66,21 @@ void RenderMultiColumnSet::updateLogicalWidth()
 
 void RenderMultiColumnSet::updateLogicalHeight()
 {
+    // FIXME: This is the only class that overrides updateLogicalHeight. If we didn't have to set computedColumnHeight,
+    // we could remove this and make updateLogicalHeight non-virtual. https://bugs.webkit.org/show_bug.cgi?id=96804
     // Make sure our column height is up to date.
-    RenderMultiColumnBlock* parentBlock = toRenderMultiColumnBlock(parent());
-    setComputedColumnHeight(parentBlock->columnHeight()); // FIXME: Once we make more than one column set, this will become variable.
+    LogicalExtentComputedValues computedValues;
+    computeLogicalHeight(0, 0, computedValues);
+    setComputedColumnHeight(computedValues.m_extent); // FIXME: Once we make more than one column set, this will become variable.
     
     // Our logical height is always just the height of our columns.
     setLogicalHeight(computedColumnHeight());
+}
+
+void RenderMultiColumnSet::computeLogicalHeight(LayoutUnit, LayoutUnit, LogicalExtentComputedValues& computedValues) const
+{
+    RenderMultiColumnBlock* parentBlock = toRenderMultiColumnBlock(parent());
+    computedValues.m_extent = parentBlock->columnHeight();
 }
 
 LayoutUnit RenderMultiColumnSet::columnGap() const

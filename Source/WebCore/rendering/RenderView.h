@@ -60,7 +60,7 @@ public:
 
     virtual void layout() OVERRIDE;
     virtual void updateLogicalWidth() OVERRIDE;
-    virtual void updateLogicalHeight() OVERRIDE;
+    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
     // FIXME: This override is not needed and should be removed
     // it only exists to make computePreferredLogicalWidths public.
     virtual void computePreferredLogicalWidths() OVERRIDE;

@@ -1,3 +1,27 @@
+2012-10-15  Tony Chang  <tony@chromium.org>
+
+        Add computeLogicalHeight override methods to RenderView and RenderMultiColumnSet
+        https://bugs.webkit.org/show_bug.cgi?id=99348
+
+        Reviewed by Ojan Vafai.
+
+        Add computeLogicalHeight to the last 2 RenderBoxes that override the method.
+        I'm unable to remove RenderMultiColumnSet::updateLogicalHeight and make the method
+        non-virtual since it sets ComputedColumnHeight.  I'd like to remove this
+        eventually.
+
+        No new tests, this is just a code refactor.
+
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::updateLogicalHeight): Set computedColumnHeight.
+        (WebCore::RenderMultiColumnSet::computeLogicalHeight):
+        (WebCore):
+        * rendering/RenderMultiColumnSet.h:
+        (RenderMultiColumnSet):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::computeLogicalHeight):
+        * rendering/RenderView.h:
+
 2012-10-15  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL][WK2] Refactoring initialization and shutdown codes of EFL libraries.
