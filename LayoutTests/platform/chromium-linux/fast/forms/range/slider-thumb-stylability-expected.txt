@@ -4,8 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderSlider {INPUT} at (2,2) size 129x20 [color=#9D968E] [bgcolor=#FFFFFF]
-        RenderFlexibleBox {DIV} at (0,0) size 129x20
+        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 129x20
           RenderBlock {DIV} at (0,0) size 109x20
-            RenderBlock {DIV} at (0,0) size 20x20 [bgcolor=#008000]
           RenderBlock {DIV} at (109,0) size 20x20 [bgcolor=#008000]
       RenderText {#text} at (0,0) size 0x0
+layer at (10,10) size 20x20
+  RenderBlock (relative positioned) {DIV} at (0,0) size 20x20 [bgcolor=#008000]

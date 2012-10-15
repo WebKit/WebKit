@@ -340,8 +340,7 @@ HTMLElement* RangeInputType::sliderTrackElement() const
 void RangeInputType::listAttributeTargetChanged()
 {
     m_tickMarkValuesDirty = true;
-    if (element()->renderer())
-        element()->renderer()->setNeedsLayout(true);
+    element()->setNeedsStyleRecalc();
 }
 
 static bool decimalCompare(const Decimal& a, const Decimal& b)

@@ -1,3 +1,41 @@
+2012-10-15  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, rolling out r131367.
+        http://trac.webkit.org/changeset/131367
+        https://bugs.webkit.org/show_bug.cgi?id=98666
+
+        crashes on Apple Mac
+
+        * css/html.css:
+        (input[type="range"]::-webkit-slider-container, input[type="range"]::-webkit-media-slider-container):
+        (input[type="range"]::-webkit-slider-runnable-track):
+        (input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-media-slider-thumb):
+        * css/mediaControlsChromium.css:
+        (input[type="range"]::-webkit-media-slider-thumb):
+        * css/mediaControlsChromiumAndroid.css:
+        (input[type="range"]::-webkit-media-slider-thumb):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::listAttributeTargetChanged):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::RenderSliderThumb::layout):
+        (WebCore):
+        (WebCore::RenderSliderContainer::RenderSliderContainer):
+        (RenderSliderContainer):
+        (WebCore::RenderSliderContainer::layout):
+        * html/shadow/SliderThumbElement.h:
+        (RenderSliderThumb):
+        * rendering/RenderSlider.cpp:
+        (WebCore):
+        (WebCore::RenderSlider::RenderSlider):
+        (WebCore::RenderSlider::layout):
+        * rendering/RenderSlider.h:
+        (WebCore):
+        (RenderSlider):
+        (WebCore::RenderSlider::renderName):
+        (WebCore::RenderSlider::isSlider):
+        (WebCore::RenderSlider::requiresForcedStyleRecalcPropagation):
+        (WebCore::toRenderSlider):
+
 2012-10-15  Dan Bernstein  <mitz@apple.com>
 
         Try to fix the build again after r131375.

@@ -46,10 +46,10 @@ using std::min;
 
 namespace WebCore {
 
-const int RenderSlider::defaultTrackLength = 129;
+static const int defaultTrackLength = 129;
 
 RenderSlider::RenderSlider(HTMLInputElement* element)
-    : RenderFlexibleBox(element)
+    : RenderBlock(element)
 {
     // We assume RenderSlider works only with <input type=range>.
     ASSERT(element->isRangeControl());
@@ -105,18 +105,20 @@ void RenderSlider::layout()
     // FIXME: Find a way to cascade appearance.
     // http://webkit.org/b/62535
     RenderBox* thumbBox = sliderThumbElementOf(node())->renderBox();
-    if (thumbBox && thumbBox->isSliderThumb()) {
+    if (thumbBox && thumbBox->isSliderThumb())
         static_cast<RenderSliderThumb*>(thumbBox)->updateAppearance(style());
-        if (RenderObject* limiterRenderer = trackLimiterElementOf(node())->renderer()) {
-            if (limiterRenderer->isSliderThumb()) {
-                static_cast<RenderSliderThumb*>(limiterRenderer)->updateAppearance(style());
-                limiterRenderer->style()->setWidth(thumbBox->style()->width());
-                limiterRenderer->style()->setHeight(thumbBox->style()->height());
-            }
-        }
+    if (RenderObject* limiterRenderer = trackLimiterElementOf(node())->renderer()) {
+        if (limiterRenderer->isSliderThumb())
+          static_cast<RenderSliderThumb*>(limiterRenderer)->updateAppearance(style());
     }
 
     RenderBlock::layout();
+
+    if (!thumbBox)
+        return;
+    LayoutUnit heightDiff = thumbBox->height() - contentHeight();
+    if (heightDiff > 0)
+        thumbBox->setY(thumbBox->y() - (heightDiff / 2));
 }
 
 bool RenderSlider::inDragMode() const

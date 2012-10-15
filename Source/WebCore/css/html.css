@@ -746,20 +746,17 @@ input[type="range"] {
 }
 
 input[type="range"]::-webkit-slider-container, input[type="range"]::-webkit-media-slider-container {
-    -webkit-flex: 1;
-    min-width: 0;
-
+    -webkit-box-align: center;
+    -webkit-box-orient: horizontal; /* This property is updated by C++ code. */
     box-sizing: border-box;
     -webkit-user-modify: read-only !important;
-    display: -webkit-flex;
-    -webkit-align-contents: center;
+    display: -webkit-box;
+    height: 100%;
+    width: 100%;
 }
 
 input[type="range"]::-webkit-slider-runnable-track {
-    -webkit-flex: 1;
-    min-width: 0;
-    -webkit-align-self: center;
-
+    -webkit-box-flex: 1;
     box-sizing: border-box;
     -webkit-user-modify: read-only !important;
     display: block;
@@ -770,6 +767,7 @@ input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-media-sl
     box-sizing: border-box;
     -webkit-user-modify: read-only !important;
     display: block;
+    position: relative;
 }
 
 input[type="button"]:disabled, input[type="submit"]:disabled, input[type="reset"]:disabled,

@@ -111,6 +111,7 @@ public:
 
 private:
     virtual bool isSliderThumb() const;
+    virtual void layout();
 };
 
 // --------------------------------
