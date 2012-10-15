@@ -1,3 +1,16 @@
+2012-10-15  Mike West  <mkwst@chromium.org>
+
+        Console messages containing long URLs should cut at some reasonable length.
+        https://bugs.webkit.org/show_bug.cgi?id=97980
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/console/console-trim-long-urls-expected.txt: Added.
+        * inspector/console/console-trim-long-urls.html: Added.
+        * inspector/styles/inject-stylesheet-expected.txt:
+        * platform/chromium/inspector/styles/inject-stylesheet-expected.txt:
+            Updating test expectations.
+
 2012-10-15  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Add support for auto-height regions (without region-breaks)

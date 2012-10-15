@@ -1,3 +1,25 @@
+2012-10-15  Mike West  <mkwst@chromium.org>
+
+        Console messages containing long URLs should cut at some reasonable length.
+        https://bugs.webkit.org/show_bug.cgi?id=97980
+
+        Reviewed by Pavel Feldman.
+
+        This patch lightly modifies the current styling of linkified URLs inside
+        console messages in order to cut them down to some reasonable size for
+        viewing. The middle of the URL is snipped out such that the whole
+        thing fits into 150 characters. This only effects the displayed text;
+        the link's href isn't changed; the link remains available via the
+        context menu, accessible via the title attribute, and clicking it still
+        takes the user directly to the resource in question.
+
+        Test: inspector/console/console-trim-long-urls.html
+
+        * inspector/front-end/ResourceUtils.js:
+        (WebInspector.linkifyURLAsNode):
+            Trim the middle of the URL to bring the whole string down to  down
+            to 150 characters, and set the link's title to the full URL.
+
 2012-10-15  Tony Chang  <tony@chromium.org>
 
         Add computeLogicalHeight override methods to RenderView and RenderMultiColumnSet
