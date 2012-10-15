@@ -1,3 +1,14 @@
+2012-10-15  Zoltan Horvath  <zoltan@webkit.org>
+
+        Add MountainLion Performance-bot to the Performance bots waterfall link
+        https://bugs.webkit.org/show_bug.cgi?id=99378
+
+        Reviewed by Dirk Pranke.
+
+        Add MountainLion Performance-bot to the Performance bots waterfall link on the buildbots frontpage.
+
+        * BuildSlaveSupport/build.webkit.org-config/templates/root.html:
+
 2012-10-15  Yael Aharon  <yael.aharon@intel.com>
 
         [EFL][WK2] Cannot set evas engine from command line
