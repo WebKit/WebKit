@@ -1,3 +1,9 @@
+2012-10-15  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Silencing a style-checker warning.
+
 2012-10-15  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Scripts for dynamically added script elements are not shown in sources panel.
