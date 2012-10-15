@@ -1,3 +1,22 @@
+2012-10-15  Tullio Lucena  <tullio.lucena@openbossa.org>
+
+        [Qt] Unskip and rebase now passing tests.
+        https://bugs.webkit.org/show_bug.cgi?id=98824
+
+        Reviewed by Csaba Osztrogonác.
+
+        Updating tests results.
+
+        * platform/qt/TestExpectations:
+        * platform/qt/editing/selection/caret-rtl-2-expected.png: Added.
+        * platform/qt/editing/selection/caret-rtl-2-expected.txt:
+        * platform/qt/editing/selection/caret-rtl-expected.png: Added.
+        * platform/qt/editing/selection/caret-rtl-expected.txt:
+        * platform/qt/editing/selection/extend-selection-bidi-expected.png: Added.
+        * platform/qt/editing/selection/extend-selection-bidi-expected.txt: Added.
+        * platform/qt/editing/selection/move-past-trailing-space-expected.png: Added.
+        * platform/qt/editing/selection/move-past-trailing-space-expected.txt: Added.
+
 2012-10-15  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Chromium] Unreviewed gardening, TestExpectations updated.

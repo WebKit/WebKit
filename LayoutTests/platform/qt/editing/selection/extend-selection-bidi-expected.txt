@@ -1,0 +1,42 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 341x19
+          text run at (0,0) width 341: "The selection range in the red box should look like this:   "
+        RenderInline {SPAN} at (0,0) size 108x19 [bgcolor=#AFDAFF]
+          RenderText {#text} at (341,0) size 108x19
+            text run at (341,0) width 26: "abc "
+            text run at (394,0) width 8: "1"
+            text run at (418,0) width 31 RTL: "\x{5D0}\x{5D1}\x{5D2} "
+        RenderText {#text} at (367,0) size 109x19
+          text run at (367,0) width 27 RTL: " \x{5D3}\x{5D4}\x{5D5}"
+          text run at (402,0) width 16: "23"
+          text run at (449,0) width 27: " def "
+        RenderBR {BR} at (476,15) size 0x0
+        RenderBR {BR} at (0,19) size 0x19
+      RenderBlock {DIV} at (0,38) size 784x56 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 198x28
+          RenderText {#text} at (14,14) size 198x28
+            text run at (14,14) width 40: "abc "
+            text run at (54,14) width 40 RTL: " \x{5D3}\x{5D4}\x{5D5}"
+            text run at (94,14) width 36: "123"
+            text run at (130,14) width 45 RTL: "\x{5D0}\x{5D1}\x{5D2} "
+            text run at (175,14) width 37: " def"
+        RenderText {#text} at (0,0) size 0x0
+selection start: position 0 of child 0 {#text} of child 1 {SPAN} of child 6 {DIV} of body
+selection end:   position 9 of child 0 {#text} of child 1 {SPAN} of child 6 {DIV} of body

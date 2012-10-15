@@ -839,7 +839,6 @@ editing/selection/drag-to-contenteditable-iframe.html
 editing/selection/fake-drag.html
 editing/selection/select-from-textfield-outwards.html
 editing/selection/move-left-right.html
-editing/selection/move-past-trailing-space.html
 
 # [Qt] editing tests fails after r54980
 # https://bugs.webkit.org/show_bug.cgi?id=35145
@@ -851,11 +850,6 @@ editing/selection/drag-text-delay.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=38656
 editing/selection/shift-click.html
-
-# -- pass with --platform mac --ignore-metrics
-editing/selection/extend-selection-bidi.html
-editing/selection/caret-rtl-2.html
-editing/selection/caret-rtl.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=41918
 editing/selection/5195166-1.html
