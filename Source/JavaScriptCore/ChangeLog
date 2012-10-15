@@ -1,3 +1,25 @@
+2012-10-14  Filip Pizlo  <fpizlo@apple.com>
+
+        JIT::JIT fails to initialize all of its fields
+        https://bugs.webkit.org/show_bug.cgi?id=99283
+
+        Reviewed by Andreas Kling.
+
+        There were two groups of such fields, all of which are eventually initialized
+        prior to use inside of privateCompile(). But it's safer to make sure that they
+        are initialized in the constructor as well, since we may use the JIT to do a
+        stub compile without calling into privateCompile().
+        
+        Unsigned index fields for dynamic repatching meta-data: this change
+        initializes them to UINT_MAX, so we should crash if we try to use those
+        indices without initializing them.
+        
+        Boolean flags for value profiling: this change initializes them to false, so
+        we at worst turn off value profiling.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+
 2012-10-15  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         We should avoid weakCompareAndSwap when parallel GC is disabled

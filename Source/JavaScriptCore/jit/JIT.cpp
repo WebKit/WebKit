@@ -75,6 +75,10 @@ JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
     , m_codeBlock(codeBlock)
     , m_labels(codeBlock ? codeBlock->numberOfInstructions() : 0)
     , m_bytecodeOffset((unsigned)-1)
+    , m_propertyAccessInstructionIndex(UINT_MAX)
+    , m_byValInstructionIndex(UINT_MAX)
+    , m_globalResolveInfoIndex(UINT_MAX)
+    , m_callLinkInfoIndex(UINT_MAX)
 #if USE(JSVALUE32_64)
     , m_jumpTargetIndex(0)
     , m_mappedBytecodeOffset((unsigned)-1)
@@ -89,6 +93,10 @@ JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
     , m_randomGenerator(cryptographicallyRandomNumber())
 #else
     , m_randomGenerator(static_cast<unsigned>(randomNumber() * 0xFFFFFFF))
+#endif
+#if ENABLE(VALUE_PROFILER)
+    , m_canBeOptimized(false)
+    , m_shouldEmitProfiling(false)
 #endif
 {
 }
