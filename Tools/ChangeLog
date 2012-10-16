@@ -1,3 +1,12 @@
+2012-10-16  Chris Rogers  <crogers@google.com>
+
+        Rename some AudioNodes
+        https://bugs.webkit.org/show_bug.cgi?id=99358
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/do-webcore-rename:
+
 2012-10-16  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         Implement testRunner.dumpSelectionRect() in WebKitTestRunner

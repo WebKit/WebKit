@@ -93,10 +93,16 @@ sub wanted
 
 # Setting isDOMTypeRename to 1 rather than 0 expands the regexps used
 # below to handle custom JavaScript bindings.
-my $isDOMTypeRename = 0;
+my $isDOMTypeRename = 1;
 my %renames = (
     # Renames go here in the form of:
-    "MediaControls" => "MediaControlRootElement",
+    "JavaScriptAudioNode" => "ScriptProcessorNode",
+    "RealtimeAnalyserNode" => "AnalyserNode",
+    "AudioGainNode" => "GainNode",
+    "AudioPannerNode" => "PannerNode",
+    "AudioChannelSplitter" => "ChannelSplitterNode",
+    "AudioChannelMerger" => "ChannelMergerNode",
+    "Oscillator" => "OscillatorNode",
 );
 
 my %renamesContemplatedForTheFuture = (

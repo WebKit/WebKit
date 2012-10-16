@@ -51,10 +51,10 @@ class AudioBufferSourceNode;
 class MediaElementAudioSourceNode;
 class MediaStreamAudioSourceNode;
 class HTMLMediaElement;
-class AudioChannelMerger;
-class AudioChannelSplitter;
-class AudioGainNode;
-class AudioPannerNode;
+class ChannelMergerNode;
+class ChannelSplitterNode;
+class GainNode;
+class PannerNode;
 class AudioListener;
 class AudioSummingJunction;
 class BiquadFilterNode;
@@ -62,10 +62,10 @@ class DelayNode;
 class Document;
 class ConvolverNode;
 class DynamicsCompressorNode;
-class RealtimeAnalyserNode;
+class AnalyserNode;
 class WaveShaperNode;
-class JavaScriptAudioNode;
-class Oscillator;
+class ScriptProcessorNode;
+class OscillatorNode;
 class WaveTable;
 
 // AudioContext is the cornerstone of the web audio API and all AudioNodes are created from it.
@@ -119,23 +119,23 @@ public:
 #if ENABLE(MEDIA_STREAM)
     PassRefPtr<MediaStreamAudioSourceNode> createMediaStreamSource(MediaStream*, ExceptionCode&);
 #endif
-    PassRefPtr<AudioGainNode> createGainNode();
+    PassRefPtr<GainNode> createGainNode();
     PassRefPtr<BiquadFilterNode> createBiquadFilter();
     PassRefPtr<WaveShaperNode> createWaveShaper();
     PassRefPtr<DelayNode> createDelayNode();
     PassRefPtr<DelayNode> createDelayNode(double maxDelayTime);
-    PassRefPtr<AudioPannerNode> createPanner();
+    PassRefPtr<PannerNode> createPanner();
     PassRefPtr<ConvolverNode> createConvolver();
     PassRefPtr<DynamicsCompressorNode> createDynamicsCompressor();    
-    PassRefPtr<RealtimeAnalyserNode> createAnalyser();
-    PassRefPtr<JavaScriptAudioNode> createJavaScriptNode(size_t bufferSize, ExceptionCode&);
-    PassRefPtr<JavaScriptAudioNode> createJavaScriptNode(size_t bufferSize, size_t numberOfInputChannels, ExceptionCode&);
-    PassRefPtr<JavaScriptAudioNode> createJavaScriptNode(size_t bufferSize, size_t numberOfInputChannels, size_t numberOfOutputChannels, ExceptionCode&);
-    PassRefPtr<AudioChannelSplitter> createChannelSplitter(ExceptionCode&);
-    PassRefPtr<AudioChannelSplitter> createChannelSplitter(size_t numberOfOutputs, ExceptionCode&);
-    PassRefPtr<AudioChannelMerger> createChannelMerger(ExceptionCode&);
-    PassRefPtr<AudioChannelMerger> createChannelMerger(size_t numberOfInputs, ExceptionCode&);
-    PassRefPtr<Oscillator> createOscillator();
+    PassRefPtr<AnalyserNode> createAnalyser();
+    PassRefPtr<ScriptProcessorNode> createJavaScriptNode(size_t bufferSize, ExceptionCode&);
+    PassRefPtr<ScriptProcessorNode> createJavaScriptNode(size_t bufferSize, size_t numberOfInputChannels, ExceptionCode&);
+    PassRefPtr<ScriptProcessorNode> createJavaScriptNode(size_t bufferSize, size_t numberOfInputChannels, size_t numberOfOutputChannels, ExceptionCode&);
+    PassRefPtr<ChannelSplitterNode> createChannelSplitter(ExceptionCode&);
+    PassRefPtr<ChannelSplitterNode> createChannelSplitter(size_t numberOfOutputs, ExceptionCode&);
+    PassRefPtr<ChannelMergerNode> createChannelMerger(ExceptionCode&);
+    PassRefPtr<ChannelMergerNode> createChannelMerger(size_t numberOfInputs, ExceptionCode&);
+    PassRefPtr<OscillatorNode> createOscillator();
     PassRefPtr<WaveTable> createWaveTable(Float32Array* real, Float32Array* imag, ExceptionCode&);
 
     // When a source node has no more processing to do (has finished playing), then it tells the context to dereference it.

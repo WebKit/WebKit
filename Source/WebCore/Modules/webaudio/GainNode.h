@@ -22,43 +22,50 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WEB_AUDIO,
-    JSGenerateToJSObject
-] interface AudioPannerNode : AudioNode {
-    // Panning model
-    const unsigned short EQUALPOWER = 0;
-    const unsigned short HRTF = 1;
-    const unsigned short SOUNDFIELD = 2;
+#ifndef GainNode_h
+#define GainNode_h
 
-    // Distance model
-    const unsigned short LINEAR_DISTANCE = 0;
-    const unsigned short INVERSE_DISTANCE = 1;
-    const unsigned short EXPONENTIAL_DISTANCE = 2;
+#include "AudioGain.h"
+#include "AudioNode.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/Threading.h>
 
-    // Default model for stereo is HRTF 
-    attribute unsigned short panningModel
-        setter raises(DOMException);
+namespace WebCore {
 
-    // Uses a 3D cartesian coordinate system 
-    void setPosition(in float x, in float y, in float z);
-    void setOrientation(in float x, in float y, in float z);
-    void setVelocity(in float x, in float y, in float z);
+class AudioContext;
+    
+// GainNode is an AudioNode with one input and one output which applies a gain (volume) change to the audio signal.
+// De-zippering (smoothing) is applied when the gain value is changed dynamically.
 
-    // Distance model
-    attribute unsigned short distanceModel
-        setter raises(DOMException);
+class GainNode : public AudioNode {
+public:
+    static PassRefPtr<GainNode> create(AudioContext* context, float sampleRate)
+    {
+        return adoptRef(new GainNode(context, sampleRate));      
+    }
+    
+    // AudioNode
+    virtual void process(size_t framesToProcess);
+    virtual void reset();
 
-    attribute float refDistance;
-    attribute float maxDistance;
-    attribute float rolloffFactor;
+    // Called in the main thread when the number of channels for the input may have changed.
+    virtual void checkNumberOfChannelsForInput(AudioNodeInput*);
 
-    // Directional sound cone
-    attribute float coneInnerAngle;
-    attribute float coneOuterAngle;
-    attribute float coneOuterGain;
+    // JavaScript interface
+    AudioGain* gain() { return m_gain.get(); }                                   
+    
+private:
+    virtual double tailTime() const OVERRIDE { return 0; }
+    virtual double latencyTime() const OVERRIDE { return 0; }
 
-    // Dynamically calculated gain values          
-    readonly attribute AudioGain coneGain;
-    readonly attribute AudioGain distanceGain;
+    GainNode(AudioContext*, float sampleRate);
+
+    float m_lastGain; // for de-zippering
+    RefPtr<AudioGain> m_gain;
+
+    AudioFloatArray m_sampleAccurateGainValues;
 };
+
+} // namespace WebCore
+
+#endif // GainNode_h

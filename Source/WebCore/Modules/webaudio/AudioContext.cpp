@@ -28,18 +28,17 @@
 
 #include "AudioContext.h"
 
+#include "AnalyserNode.h"
 #include "AsyncAudioDecoder.h"
 #include "AudioBuffer.h"
 #include "AudioBufferCallback.h"
 #include "AudioBufferSourceNode.h"
-#include "AudioChannelMerger.h"
-#include "AudioChannelSplitter.h"
-#include "AudioGainNode.h"
 #include "AudioListener.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
-#include "AudioPannerNode.h"
 #include "BiquadFilterNode.h"
+#include "ChannelMergerNode.h"
+#include "ChannelSplitterNode.h"
 #include "ConvolverNode.h"
 #include "DefaultAudioDestinationNode.h"
 #include "DelayNode.h"
@@ -47,14 +46,15 @@
 #include "DynamicsCompressorNode.h"
 #include "ExceptionCode.h"
 #include "FFTFrame.h"
+#include "GainNode.h"
 #include "HRTFDatabaseLoader.h"
 #include "HRTFPanner.h"
-#include "JavaScriptAudioNode.h"
 #include "OfflineAudioCompletionEvent.h"
 #include "OfflineAudioDestinationNode.h"
-#include "Oscillator.h"
-#include "RealtimeAnalyserNode.h"
+#include "OscillatorNode.h"
+#include "PannerNode.h"
 #include "ScriptCallStack.h"
+#include "ScriptProcessorNode.h"
 #include "WaveShaperNode.h"
 #include "WaveTable.h"
 
@@ -420,23 +420,23 @@ PassRefPtr<MediaStreamAudioSourceNode> AudioContext::createMediaStreamSource(Med
 }
 #endif
 
-PassRefPtr<JavaScriptAudioNode> AudioContext::createJavaScriptNode(size_t bufferSize, ExceptionCode& ec)
+PassRefPtr<ScriptProcessorNode> AudioContext::createJavaScriptNode(size_t bufferSize, ExceptionCode& ec)
 {
     // Set number of input/output channels to stereo by default.
     return createJavaScriptNode(bufferSize, 2, 2, ec);
 }
 
-PassRefPtr<JavaScriptAudioNode> AudioContext::createJavaScriptNode(size_t bufferSize, size_t numberOfInputChannels, ExceptionCode& ec)
+PassRefPtr<ScriptProcessorNode> AudioContext::createJavaScriptNode(size_t bufferSize, size_t numberOfInputChannels, ExceptionCode& ec)
 {
     // Set number of output channels to stereo by default.
     return createJavaScriptNode(bufferSize, numberOfInputChannels, 2, ec);
 }
 
-PassRefPtr<JavaScriptAudioNode> AudioContext::createJavaScriptNode(size_t bufferSize, size_t numberOfInputChannels, size_t numberOfOutputChannels, ExceptionCode& ec)
+PassRefPtr<ScriptProcessorNode> AudioContext::createJavaScriptNode(size_t bufferSize, size_t numberOfInputChannels, size_t numberOfOutputChannels, ExceptionCode& ec)
 {
     ASSERT(isMainThread());
     lazyInitialize();
-    RefPtr<JavaScriptAudioNode> node = JavaScriptAudioNode::create(this, m_destinationNode->sampleRate(), bufferSize, numberOfInputChannels, numberOfOutputChannels);
+    RefPtr<ScriptProcessorNode> node = ScriptProcessorNode::create(this, m_destinationNode->sampleRate(), bufferSize, numberOfInputChannels, numberOfOutputChannels);
 
     if (!node.get()) {
         ec = SYNTAX_ERR;
@@ -461,11 +461,11 @@ PassRefPtr<WaveShaperNode> AudioContext::createWaveShaper()
     return WaveShaperNode::create(this);
 }
 
-PassRefPtr<AudioPannerNode> AudioContext::createPanner()
+PassRefPtr<PannerNode> AudioContext::createPanner()
 {
     ASSERT(isMainThread());
     lazyInitialize();
-    return AudioPannerNode::create(this, m_destinationNode->sampleRate());
+    return PannerNode::create(this, m_destinationNode->sampleRate());
 }
 
 PassRefPtr<ConvolverNode> AudioContext::createConvolver()
@@ -482,18 +482,18 @@ PassRefPtr<DynamicsCompressorNode> AudioContext::createDynamicsCompressor()
     return DynamicsCompressorNode::create(this, m_destinationNode->sampleRate());
 }
 
-PassRefPtr<RealtimeAnalyserNode> AudioContext::createAnalyser()
+PassRefPtr<AnalyserNode> AudioContext::createAnalyser()
 {
     ASSERT(isMainThread());
     lazyInitialize();
-    return RealtimeAnalyserNode::create(this, m_destinationNode->sampleRate());
+    return AnalyserNode::create(this, m_destinationNode->sampleRate());
 }
 
-PassRefPtr<AudioGainNode> AudioContext::createGainNode()
+PassRefPtr<GainNode> AudioContext::createGainNode()
 {
     ASSERT(isMainThread());
     lazyInitialize();
-    return AudioGainNode::create(this, m_destinationNode->sampleRate());
+    return GainNode::create(this, m_destinationNode->sampleRate());
 }
 
 PassRefPtr<DelayNode> AudioContext::createDelayNode()
@@ -509,18 +509,18 @@ PassRefPtr<DelayNode> AudioContext::createDelayNode(double maxDelayTime)
     return DelayNode::create(this, m_destinationNode->sampleRate(), maxDelayTime);
 }
 
-PassRefPtr<AudioChannelSplitter> AudioContext::createChannelSplitter(ExceptionCode& ec)
+PassRefPtr<ChannelSplitterNode> AudioContext::createChannelSplitter(ExceptionCode& ec)
 {
     const unsigned ChannelSplitterDefaultNumberOfOutputs = 6;
     return createChannelSplitter(ChannelSplitterDefaultNumberOfOutputs, ec);
 }
 
-PassRefPtr<AudioChannelSplitter> AudioContext::createChannelSplitter(size_t numberOfOutputs, ExceptionCode& ec)
+PassRefPtr<ChannelSplitterNode> AudioContext::createChannelSplitter(size_t numberOfOutputs, ExceptionCode& ec)
 {
     ASSERT(isMainThread());
     lazyInitialize();
 
-    RefPtr<AudioChannelSplitter> node = AudioChannelSplitter::create(this, m_destinationNode->sampleRate(), numberOfOutputs);
+    RefPtr<ChannelSplitterNode> node = ChannelSplitterNode::create(this, m_destinationNode->sampleRate(), numberOfOutputs);
 
     if (!node.get()) {
         ec = SYNTAX_ERR;
@@ -530,18 +530,18 @@ PassRefPtr<AudioChannelSplitter> AudioContext::createChannelSplitter(size_t numb
     return node;
 }
 
-PassRefPtr<AudioChannelMerger> AudioContext::createChannelMerger(ExceptionCode& ec)
+PassRefPtr<ChannelMergerNode> AudioContext::createChannelMerger(ExceptionCode& ec)
 {
     const unsigned ChannelMergerDefaultNumberOfInputs = 6;
     return createChannelMerger(ChannelMergerDefaultNumberOfInputs, ec);
 }
 
-PassRefPtr<AudioChannelMerger> AudioContext::createChannelMerger(size_t numberOfInputs, ExceptionCode& ec)
+PassRefPtr<ChannelMergerNode> AudioContext::createChannelMerger(size_t numberOfInputs, ExceptionCode& ec)
 {
     ASSERT(isMainThread());
     lazyInitialize();
 
-    RefPtr<AudioChannelMerger> node = AudioChannelMerger::create(this, m_destinationNode->sampleRate(), numberOfInputs);
+    RefPtr<ChannelMergerNode> node = ChannelMergerNode::create(this, m_destinationNode->sampleRate(), numberOfInputs);
 
     if (!node.get()) {
         ec = SYNTAX_ERR;
@@ -551,12 +551,12 @@ PassRefPtr<AudioChannelMerger> AudioContext::createChannelMerger(size_t numberOf
     return node;
 }
 
-PassRefPtr<Oscillator> AudioContext::createOscillator()
+PassRefPtr<OscillatorNode> AudioContext::createOscillator()
 {
     ASSERT(isMainThread());
     lazyInitialize();
 
-    RefPtr<Oscillator> node = Oscillator::create(this, m_destinationNode->sampleRate());
+    RefPtr<OscillatorNode> node = OscillatorNode::create(this, m_destinationNode->sampleRate());
 
     // Because this is an AudioScheduledSourceNode, the context keeps a reference until it has finished playing.
     // When this happens, AudioScheduledSourceNode::finish() calls AudioContext::notifyNodeFinishedProcessing().

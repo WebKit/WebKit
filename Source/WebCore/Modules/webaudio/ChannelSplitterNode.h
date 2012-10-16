@@ -22,56 +22,31 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RealtimeAnalyserNode_h
-#define RealtimeAnalyserNode_h
+#ifndef ChannelSplitterNode_h
+#define ChannelSplitterNode_h
 
-#include "AudioBasicInspectorNode.h"
-#include "RealtimeAnalyser.h"
-#include <wtf/Forward.h>
+#include "AudioNode.h"
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-class RealtimeAnalyserNode : public AudioBasicInspectorNode {
-public:
-    static PassRefPtr<RealtimeAnalyserNode> create(AudioContext* context, float sampleRate)
-    {
-        return adoptRef(new RealtimeAnalyserNode(context, sampleRate));      
-    }
-
-    virtual ~RealtimeAnalyserNode();
+class AudioContext;
     
+class ChannelSplitterNode : public AudioNode {
+public:
+    static PassRefPtr<ChannelSplitterNode> create(AudioContext*, float sampleRate, unsigned numberOfOutputs);
+
     // AudioNode
     virtual void process(size_t framesToProcess);
     virtual void reset();
-
-    // Javascript bindings
-    unsigned int fftSize() const { return m_analyser.fftSize(); }
-    void setFftSize(unsigned int size, ExceptionCode&);
-
-    unsigned frequencyBinCount() const { return m_analyser.frequencyBinCount(); }
-
-    void setMinDecibels(float k) { m_analyser.setMinDecibels(k); }
-    float minDecibels() const { return m_analyser.minDecibels(); }
-
-    void setMaxDecibels(float k) { m_analyser.setMaxDecibels(k); }
-    float maxDecibels() const { return m_analyser.maxDecibels(); }
-
-    void setSmoothingTimeConstant(float k) { m_analyser.setSmoothingTimeConstant(k); }
-    float smoothingTimeConstant() const { return m_analyser.smoothingTimeConstant(); }
-
-    void getFloatFrequencyData(Float32Array* array) { m_analyser.getFloatFrequencyData(array); }
-    void getByteFrequencyData(Uint8Array* array) { m_analyser.getByteFrequencyData(array); }
-    void getByteTimeDomainData(Uint8Array* array) { m_analyser.getByteTimeDomainData(array); }
 
 private:
     virtual double tailTime() const OVERRIDE { return 0; }
     virtual double latencyTime() const OVERRIDE { return 0; }
 
-    RealtimeAnalyserNode(AudioContext*, float sampleRate);
-
-    RealtimeAnalyser m_analyser;
+    ChannelSplitterNode(AudioContext*, float sampleRate, unsigned numberOfOutputs);
 };
 
 } // namespace WebCore
 
-#endif // RealtimeAnalyserNode_h
+#endif // ChannelSplitterNode_h

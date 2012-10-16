@@ -26,7 +26,7 @@
 
 #if ENABLE(WEB_AUDIO)
 
-#include "AudioPannerNode.h"
+#include "PannerNode.h"
 
 #include "AudioBufferSourceNode.h"
 #include "AudioBus.h"
@@ -47,7 +47,7 @@ static void fixNANs(double &x)
         x = 0.0;
 }
 
-AudioPannerNode::AudioPannerNode(AudioContext* context, float sampleRate)
+PannerNode::PannerNode(AudioContext* context, float sampleRate)
     : AudioNode(context, sampleRate)
     , m_panningModel(Panner::PanningModelHRTF)
     , m_lastGain(-1.0)
@@ -68,12 +68,12 @@ AudioPannerNode::AudioPannerNode(AudioContext* context, float sampleRate)
     initialize();
 }
 
-AudioPannerNode::~AudioPannerNode()
+PannerNode::~PannerNode()
 {
     uninitialize();
 }
 
-void AudioPannerNode::pullInputs(size_t framesToProcess)
+void PannerNode::pullInputs(size_t framesToProcess)
 {
     // We override pullInputs(), so we can detect new AudioSourceNodes which have connected to us when new connections are made.
     // These AudioSourceNodes need to be made aware of our existence in order to handle doppler shift pitch changes.
@@ -87,7 +87,7 @@ void AudioPannerNode::pullInputs(size_t framesToProcess)
     AudioNode::pullInputs(framesToProcess);
 }
 
-void AudioPannerNode::process(size_t framesToProcess)
+void PannerNode::process(size_t framesToProcess)
 {
     AudioBus* destination = output(0)->bus();
 
@@ -120,14 +120,14 @@ void AudioPannerNode::process(size_t framesToProcess)
     destination->copyWithGainFrom(*destination, &m_lastGain, totalGain);
 }
 
-void AudioPannerNode::reset()
+void PannerNode::reset()
 {
     m_lastGain = -1.0; // force to snap to initial gain
     if (m_panner.get())
         m_panner->reset();
 }
 
-void AudioPannerNode::initialize()
+void PannerNode::initialize()
 {
     if (isInitialized())
         return;
@@ -137,7 +137,7 @@ void AudioPannerNode::initialize()
     AudioNode::initialize();
 }
 
-void AudioPannerNode::uninitialize()
+void PannerNode::uninitialize()
 {
     if (!isInitialized())
         return;
@@ -146,12 +146,12 @@ void AudioPannerNode::uninitialize()
     AudioNode::uninitialize();
 }
 
-AudioListener* AudioPannerNode::listener()
+AudioListener* PannerNode::listener()
 {
     return context()->listener();
 }
 
-void AudioPannerNode::setPanningModel(unsigned short model, ExceptionCode& ec)
+void PannerNode::setPanningModel(unsigned short model, ExceptionCode& ec)
 {
     switch (model) {
     case EQUALPOWER:
@@ -171,7 +171,7 @@ void AudioPannerNode::setPanningModel(unsigned short model, ExceptionCode& ec)
     }
 }
 
-void AudioPannerNode::setDistanceModel(unsigned short model, ExceptionCode& ec)
+void PannerNode::setDistanceModel(unsigned short model, ExceptionCode& ec)
 {
     switch (model) {
     case DistanceEffect::ModelLinear:
@@ -185,7 +185,7 @@ void AudioPannerNode::setDistanceModel(unsigned short model, ExceptionCode& ec)
     }
 }
 
-void AudioPannerNode::getAzimuthElevation(double* outAzimuth, double* outElevation)
+void PannerNode::getAzimuthElevation(double* outAzimuth, double* outElevation)
 {
     // FIXME: we should cache azimuth and elevation (if possible), so we only re-calculate if a change has been made.
 
@@ -249,7 +249,7 @@ void AudioPannerNode::getAzimuthElevation(double* outAzimuth, double* outElevati
         *outElevation = elevation;
 }
 
-float AudioPannerNode::dopplerRate()
+float PannerNode::dopplerRate()
 {
     double dopplerShift = 1.0;
 
@@ -297,7 +297,7 @@ float AudioPannerNode::dopplerRate()
     return static_cast<float>(dopplerShift);
 }
 
-float AudioPannerNode::distanceConeGain()
+float PannerNode::distanceConeGain()
 {
     FloatPoint3D listenerPosition = listener()->position();
 
@@ -314,13 +314,13 @@ float AudioPannerNode::distanceConeGain()
     return float(distanceGain * coneGain);
 }
 
-void AudioPannerNode::notifyAudioSourcesConnectedToNode(AudioNode* node)
+void PannerNode::notifyAudioSourcesConnectedToNode(AudioNode* node)
 {
     ASSERT(node);
     if (!node)
         return;
         
-    // First check if this node is an AudioBufferSourceNode.  If so, let it know about us so that doppler shift pitch can be taken into account.
+    // First check if this node is an AudioBufferSourceNode. If so, let it know about us so that doppler shift pitch can be taken into account.
     if (node->nodeType() == NodeTypeAudioBufferSource) {
         AudioBufferSourceNode* bufferSourceNode = reinterpret_cast<AudioBufferSourceNode*>(node);
         bufferSourceNode->setPannerNode(this);

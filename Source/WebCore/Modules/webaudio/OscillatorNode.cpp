@@ -26,7 +26,7 @@
 
 #if ENABLE(WEB_AUDIO)
 
-#include "Oscillator.h"
+#include "OscillatorNode.h"
 
 #include "AudioContext.h"
 #include "AudioNodeOutput.h"
@@ -43,17 +43,17 @@ namespace WebCore {
 
 using namespace VectorMath;
 
-WaveTable* Oscillator::s_waveTableSine = 0;
-WaveTable* Oscillator::s_waveTableSquare = 0;
-WaveTable* Oscillator::s_waveTableSawtooth = 0;
-WaveTable* Oscillator::s_waveTableTriangle = 0;
+WaveTable* OscillatorNode::s_waveTableSine = 0;
+WaveTable* OscillatorNode::s_waveTableSquare = 0;
+WaveTable* OscillatorNode::s_waveTableSawtooth = 0;
+WaveTable* OscillatorNode::s_waveTableTriangle = 0;
 
-PassRefPtr<Oscillator> Oscillator::create(AudioContext* context, float sampleRate)
+PassRefPtr<OscillatorNode> OscillatorNode::create(AudioContext* context, float sampleRate)
 {
-    return adoptRef(new Oscillator(context, sampleRate));
+    return adoptRef(new OscillatorNode(context, sampleRate));
 }
 
-Oscillator::Oscillator(AudioContext* context, float sampleRate)
+OscillatorNode::OscillatorNode(AudioContext* context, float sampleRate)
     : AudioScheduledSourceNode(context, sampleRate)
     , m_type(SINE)
     , m_firstRender(true)
@@ -78,12 +78,12 @@ Oscillator::Oscillator(AudioContext* context, float sampleRate)
     initialize();
 }
 
-Oscillator::~Oscillator()
+OscillatorNode::~OscillatorNode()
 {
     uninitialize();
 }
 
-void Oscillator::setType(unsigned short type, ExceptionCode& ec)
+void OscillatorNode::setType(unsigned short type, ExceptionCode& ec)
 {
     WaveTable* waveTable = 0;
     float sampleRate = this->sampleRate();
@@ -121,7 +121,7 @@ void Oscillator::setType(unsigned short type, ExceptionCode& ec)
     m_type = type;
 }
 
-bool Oscillator::calculateSampleAccuratePhaseIncrements(size_t framesToProcess)
+bool OscillatorNode::calculateSampleAccuratePhaseIncrements(size_t framesToProcess)
 {
     bool isGood = framesToProcess <= m_phaseIncrements.size() && framesToProcess <= m_detuneValues.size();
     ASSERT(isGood);
@@ -187,7 +187,7 @@ bool Oscillator::calculateSampleAccuratePhaseIncrements(size_t framesToProcess)
     return hasSampleAccurateValues;
 }
 
-void Oscillator::process(size_t framesToProcess)
+void OscillatorNode::process(size_t framesToProcess)
 {
     AudioBus* outputBus = output(0)->bus();
 
@@ -217,10 +217,7 @@ void Oscillator::process(size_t framesToProcess)
     size_t quantumFrameOffset;
     size_t nonSilentFramesToProcess;
 
-    updateSchedulingInfo(framesToProcess,
-                         outputBus,
-                         quantumFrameOffset,
-                         nonSilentFramesToProcess);
+    updateSchedulingInfo(framesToProcess, outputBus, quantumFrameOffset, nonSilentFramesToProcess);
 
     if (!nonSilentFramesToProcess) {
         outputBus->zero();
@@ -303,12 +300,12 @@ void Oscillator::process(size_t framesToProcess)
     outputBus->clearSilentFlag();
 }
 
-void Oscillator::reset()
+void OscillatorNode::reset()
 {
     m_virtualReadIndex = 0;
 }
 
-void Oscillator::setWaveTable(WaveTable* waveTable)
+void OscillatorNode::setWaveTable(WaveTable* waveTable)
 {
     ASSERT(isMainThread());
 
@@ -318,7 +315,7 @@ void Oscillator::setWaveTable(WaveTable* waveTable)
     m_type = CUSTOM;
 }
 
-bool Oscillator::propagatesSilence() const
+bool OscillatorNode::propagatesSilence() const
 {
     return !isPlayingOrScheduled() || hasFinished() || !m_waveTable.get();
 }

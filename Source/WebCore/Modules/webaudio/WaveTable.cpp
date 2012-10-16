@@ -33,7 +33,7 @@
 #include "WaveTable.h"
 
 #include "FFTFrame.h"
-#include "Oscillator.h"
+#include "OscillatorNode.h"
 #include "VectorMath.h"
 #include <algorithm>
 #include <wtf/OwnPtr.h>
@@ -62,28 +62,28 @@ PassRefPtr<WaveTable> WaveTable::create(float sampleRate, Float32Array* real, Fl
 PassRefPtr<WaveTable> WaveTable::createSine(float sampleRate)
 {
     RefPtr<WaveTable> waveTable = adoptRef(new WaveTable(sampleRate));
-    waveTable->generateBasicWaveform(Oscillator::SINE);
+    waveTable->generateBasicWaveform(OscillatorNode::SINE);
     return waveTable;
 }
 
 PassRefPtr<WaveTable> WaveTable::createSquare(float sampleRate)
 {
     RefPtr<WaveTable> waveTable = adoptRef(new WaveTable(sampleRate));
-    waveTable->generateBasicWaveform(Oscillator::SQUARE);
+    waveTable->generateBasicWaveform(OscillatorNode::SQUARE);
     return waveTable;
 }
 
 PassRefPtr<WaveTable> WaveTable::createSawtooth(float sampleRate)
 {
     RefPtr<WaveTable> waveTable = adoptRef(new WaveTable(sampleRate));
-    waveTable->generateBasicWaveform(Oscillator::SAWTOOTH);
+    waveTable->generateBasicWaveform(OscillatorNode::SAWTOOTH);
     return waveTable;
 }
 
 PassRefPtr<WaveTable> WaveTable::createTriangle(float sampleRate)
 {
     RefPtr<WaveTable> waveTable = adoptRef(new WaveTable(sampleRate));
-    waveTable->generateBasicWaveform(Oscillator::TRIANGLE);
+    waveTable->generateBasicWaveform(OscillatorNode::TRIANGLE);
     return waveTable;
 }
 
@@ -244,22 +244,22 @@ void WaveTable::generateBasicWaveform(int shape)
         // Calculate Fourier coefficients depending on the shape.
         // Note that the overall scaling (magnitude) of the waveforms is normalized in createBandLimitedTables().
         switch (shape) {
-        case Oscillator::SINE:
+        case OscillatorNode::SINE:
             // Standard sine wave function.
             a = 0;
             b = (n == 1) ? 1 : 0;
             break;
-        case Oscillator::SQUARE:
+        case OscillatorNode::SQUARE:
             // Square-shaped waveform with the first half its maximum value and the second half its minimum value.
             a = 0;
             b = invOmega * ((n & 1) ? 2 : 0);
             break;
-        case Oscillator::SAWTOOTH:
+        case OscillatorNode::SAWTOOTH:
             // Sawtooth-shaped waveform with the first half ramping from zero to maximum and the second half from minimum to zero.
             a = 0;
             b = -invOmega * cos(0.5 * omega);
             break;
-        case Oscillator::TRIANGLE:
+        case OscillatorNode::TRIANGLE:
             // Triangle-shaped waveform going from its maximum value to its minimum value then back to the maximum value.
             a = (4 - 4 * cos(0.5 * omega)) / (n * n * piFloat * piFloat);
             b = 0;

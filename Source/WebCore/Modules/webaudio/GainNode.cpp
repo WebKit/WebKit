@@ -26,7 +26,7 @@
 
 #if ENABLE(WEB_AUDIO)
 
-#include "AudioGainNode.h"
+#include "GainNode.h"
 
 #include "AudioBus.h"
 #include "AudioNodeInput.h"
@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-AudioGainNode::AudioGainNode(AudioContext* context, float sampleRate)
+GainNode::GainNode(AudioContext* context, float sampleRate)
     : AudioNode(context, sampleRate)
     , m_lastGain(1.0)
     , m_sampleAccurateGainValues(AudioNode::ProcessingSizeInFrames) // FIXME: can probably share temp buffer in context
@@ -49,7 +49,7 @@ AudioGainNode::AudioGainNode(AudioContext* context, float sampleRate)
     initialize();
 }
 
-void AudioGainNode::process(size_t framesToProcess)
+void GainNode::process(size_t framesToProcess)
 {
     // FIXME: for some cases there is a nice optimization to avoid processing here, and let the gain change
     // happen in the summing junction input of the AudioNode we're connected to.
@@ -78,7 +78,7 @@ void AudioGainNode::process(size_t framesToProcess)
     }
 }
 
-void AudioGainNode::reset()
+void GainNode::reset()
 {
     // Snap directly to desired gain.
     m_lastGain = gain()->value();
@@ -89,7 +89,7 @@ void AudioGainNode::reset()
 // As soon as we know the channel count of our input, we can lazily initialize.
 // Sometimes this may be called more than once with different channel counts, in which case we must safely
 // uninitialize and then re-initialize with the new channel count.
-void AudioGainNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
+void GainNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
 {
     ASSERT(context()->isAudioThread() && context()->isGraphOwner());
 

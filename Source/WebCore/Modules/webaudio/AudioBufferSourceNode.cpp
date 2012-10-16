@@ -447,7 +447,7 @@ bool AudioBufferSourceNode::propagatesSilence() const
     return !isPlayingOrScheduled() || hasFinished() || !m_buffer;
 }
 
-void AudioBufferSourceNode::setPannerNode(AudioPannerNode* pannerNode)
+void AudioBufferSourceNode::setPannerNode(PannerNode* pannerNode)
 {
     if (m_pannerNode != pannerNode && !hasFinished()) {
         if (pannerNode)

@@ -69,24 +69,24 @@
 #endif
 
     // Processing nodes
-    AudioGainNode createGainNode();
+    GainNode createGainNode();
     DelayNode createDelayNode(in [Optional] double maxDelayTime);
     BiquadFilterNode createBiquadFilter();
     WaveShaperNode createWaveShaper();
-    AudioPannerNode createPanner();
+    PannerNode createPanner();
     ConvolverNode createConvolver();
     DynamicsCompressorNode createDynamicsCompressor();
-    RealtimeAnalyserNode createAnalyser();
-    JavaScriptAudioNode createJavaScriptNode(in unsigned long bufferSize, in [Optional] unsigned long numberOfInputChannels, in [Optional] unsigned long numberOfOutputChannels)
+    AnalyserNode createAnalyser();
+    ScriptProcessorNode createJavaScriptNode(in unsigned long bufferSize, in [Optional] unsigned long numberOfInputChannels, in [Optional] unsigned long numberOfOutputChannels)
         raises(DOMException);
-    Oscillator createOscillator();
+    OscillatorNode createOscillator();
     WaveTable createWaveTable(in Float32Array real, in Float32Array imag)
         raises(DOMException);
 
     // Channel splitting and merging
-    AudioChannelSplitter createChannelSplitter(in [Optional] unsigned long numberOfOutputs)
+    ChannelSplitterNode createChannelSplitter(in [Optional] unsigned long numberOfOutputs)
         raises(DOMException);
-    AudioChannelMerger createChannelMerger(in [Optional] unsigned long numberOfInputs)
+    ChannelMergerNode createChannelMerger(in [Optional] unsigned long numberOfInputs)
         raises(DOMException);
 
     // Offline rendering

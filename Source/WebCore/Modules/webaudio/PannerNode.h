@@ -22,8 +22,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioPannerNode_h
-#define AudioPannerNode_h
+#ifndef PannerNode_h
+#define PannerNode_h
 
 #include "AudioBus.h"
 #include "AudioGain.h"
@@ -37,14 +37,14 @@
 
 namespace WebCore {
 
-// AudioPannerNode is an AudioNode with one input and one output.
+// PannerNode is an AudioNode with one input and one output.
 // It positions a sound in 3D space, with the exact effect dependent on the panning model.
 // It has a position and an orientation in 3D space which is relative to the position and orientation of the context's AudioListener.
 // A distance effect will attenuate the gain as the position moves away from the listener.
 // A cone effect will attenuate the gain as the orientation moves away from the listener.
 // All of these effects follow the OpenAL specification very closely.
 
-class AudioPannerNode : public AudioNode {
+class PannerNode : public AudioNode {
 public:
     // These must be defined as in the .idl file and must match those in the Panner class.
     enum {
@@ -61,12 +61,12 @@ public:
         EXPONENTIAL_DISTANCE = 2,
     };
     
-    static PassRefPtr<AudioPannerNode> create(AudioContext* context, float sampleRate)
+    static PassRefPtr<PannerNode> create(AudioContext* context, float sampleRate)
     {
-        return adoptRef(new AudioPannerNode(context, sampleRate));
+        return adoptRef(new PannerNode(context, sampleRate));
     }
 
-    virtual ~AudioPannerNode();
+    virtual ~PannerNode();
 
     // AudioNode
     virtual void process(size_t framesToProcess);
@@ -128,7 +128,7 @@ public:
     virtual double latencyTime() const OVERRIDE { return m_panner ? m_panner->latencyTime() : 0; }
 
 private:
-    AudioPannerNode(AudioContext*, float sampleRate);
+    PannerNode(AudioContext*, float sampleRate);
 
     // Returns the combined distance and cone gain attenuation.
     float distanceConeGain();
@@ -156,4 +156,4 @@ private:
 
 } // namespace WebCore
 
-#endif // AudioPannerNode_h
+#endif // PannerNode_h

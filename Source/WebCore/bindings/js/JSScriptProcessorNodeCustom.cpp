@@ -22,26 +22,28 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WEB_AUDIO,
-    JSGenerateToJSObject
-] interface RealtimeAnalyserNode : AudioNode {
-    attribute unsigned long fftSize
-        setter raises(DOMException);
-    readonly attribute unsigned long frequencyBinCount;
+#include "config.h"
 
-    // minDecibels / maxDecibels represent the range to scale the FFT analysis data for conversion to unsigned byte values.
-    attribute float minDecibels;
-    attribute float maxDecibels;
+#if ENABLE(WEB_AUDIO)
 
-    // A value from 0.0 -> 1.0 where 0.0 represents no time averaging with the last analysis frame.
-    attribute float smoothingTimeConstant;
+#include "ScriptProcessorNode.h"
 
-    // Copies the current frequency data into the passed array.
-    // If the array has fewer elements than the frequencyBinCount, the excess elements will be dropped.
-    void getFloatFrequencyData(in Float32Array array);
-    void getByteFrequencyData(in Uint8Array array);
+#include "JSScriptProcessorNode.h"
 
-    // Real-time waveform data
-    void getByteTimeDomainData(in Uint8Array array);
-};
+using namespace JSC;
+
+namespace WebCore {
+
+void JSScriptProcessorNode::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSScriptProcessorNode* thisObject = jsCast<JSScriptProcessorNode*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
+    static_cast<ScriptProcessorNode*>(thisObject->impl())->visitJSEventListeners(visitor);
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(WEB_AUDIO)

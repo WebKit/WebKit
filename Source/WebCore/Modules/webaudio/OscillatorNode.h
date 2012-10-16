@@ -22,8 +22,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Oscillator_h
-#define Oscillator_h
+#ifndef OscillatorNode_h
+#define OscillatorNode_h
 
 #include "AudioBus.h"
 #include "AudioParam.h"
@@ -38,9 +38,9 @@ namespace WebCore {
 class AudioContext;
 class WaveTable;
 
-// Oscillator is an audio generator of periodic waveforms.
+// OscillatorNode is an audio generator of periodic waveforms.
 
-class Oscillator : public AudioScheduledSourceNode {
+class OscillatorNode : public AudioScheduledSourceNode {
 public:
     // The waveform type.
     // These must be defined as in the .idl file.
@@ -52,9 +52,9 @@ public:
         CUSTOM = 4
     };
 
-    static PassRefPtr<Oscillator> create(AudioContext*, float sampleRate);
+    static PassRefPtr<OscillatorNode> create(AudioContext*, float sampleRate);
 
-    virtual ~Oscillator();
+    virtual ~OscillatorNode();
     
     // AudioNode
     virtual void process(size_t framesToProcess);
@@ -69,7 +69,7 @@ public:
     void setWaveTable(WaveTable*);
 
 private:
-    Oscillator(AudioContext*, float sampleRate);
+    OscillatorNode(AudioContext*, float sampleRate);
 
     // Returns true if there are sample-accurate timeline parameter changes.
     bool calculateSampleAccuratePhaseIncrements(size_t framesToProcess);
@@ -109,4 +109,4 @@ private:
 
 } // namespace WebCore
 
-#endif // Oscillator_h
+#endif // OscillatorNode_h

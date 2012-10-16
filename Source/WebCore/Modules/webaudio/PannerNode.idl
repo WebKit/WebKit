@@ -22,31 +22,43 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioChannelSplitter_h
-#define AudioChannelSplitter_h
+[
+    Conditional=WEB_AUDIO,
+    JSGenerateToJSObject
+] interface PannerNode : AudioNode {
+    // Panning model
+    const unsigned short EQUALPOWER = 0;
+    const unsigned short HRTF = 1;
+    const unsigned short SOUNDFIELD = 2;
 
-#include "AudioNode.h"
-#include <wtf/PassRefPtr.h>
+    // Distance model
+    const unsigned short LINEAR_DISTANCE = 0;
+    const unsigned short INVERSE_DISTANCE = 1;
+    const unsigned short EXPONENTIAL_DISTANCE = 2;
 
-namespace WebCore {
+    // Default model for stereo is HRTF 
+    attribute unsigned short panningModel
+        setter raises(DOMException);
 
-class AudioContext;
-    
-class AudioChannelSplitter : public AudioNode {
-public:
-    static PassRefPtr<AudioChannelSplitter> create(AudioContext*, float sampleRate, unsigned numberOfOutputs);
+    // Uses a 3D cartesian coordinate system 
+    void setPosition(in float x, in float y, in float z);
+    void setOrientation(in float x, in float y, in float z);
+    void setVelocity(in float x, in float y, in float z);
 
-    // AudioNode
-    virtual void process(size_t framesToProcess);
-    virtual void reset();
+    // Distance model
+    attribute unsigned short distanceModel
+        setter raises(DOMException);
 
-private:
-    virtual double tailTime() const OVERRIDE { return 0; }
-    virtual double latencyTime() const OVERRIDE { return 0; }
+    attribute float refDistance;
+    attribute float maxDistance;
+    attribute float rolloffFactor;
 
-    AudioChannelSplitter(AudioContext*, float sampleRate, unsigned numberOfOutputs);
+    // Directional sound cone
+    attribute float coneInnerAngle;
+    attribute float coneOuterAngle;
+    attribute float coneOuterGain;
+
+    // Dynamically calculated gain values          
+    readonly attribute AudioGain coneGain;
+    readonly attribute AudioGain distanceGain;
 };
-
-} // namespace WebCore
-
-#endif // AudioChannelSplitter_h

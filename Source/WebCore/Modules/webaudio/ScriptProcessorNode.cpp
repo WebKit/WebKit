@@ -26,7 +26,7 @@
 
 #if ENABLE(WEB_AUDIO)
 
-#include "JavaScriptAudioNode.h"
+#include "ScriptProcessorNode.h"
 
 #include "AudioBuffer.h"
 #include "AudioBus.h"
@@ -42,7 +42,7 @@ namespace WebCore {
 
 const size_t DefaultBufferSize = 4096;
 
-PassRefPtr<JavaScriptAudioNode> JavaScriptAudioNode::create(AudioContext* context, float sampleRate, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels)
+PassRefPtr<ScriptProcessorNode> ScriptProcessorNode::create(AudioContext* context, float sampleRate, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels)
 {
     // Check for valid buffer size.
     switch (bufferSize) {
@@ -67,10 +67,10 @@ PassRefPtr<JavaScriptAudioNode> JavaScriptAudioNode::create(AudioContext* contex
     if (numberOfOutputChannels > AudioContext::maxNumberOfChannels())
         return 0;
 
-    return adoptRef(new JavaScriptAudioNode(context, sampleRate, bufferSize, numberOfInputChannels, numberOfOutputChannels));
+    return adoptRef(new ScriptProcessorNode(context, sampleRate, bufferSize, numberOfInputChannels, numberOfOutputChannels));
 }
 
-JavaScriptAudioNode::JavaScriptAudioNode(AudioContext* context, float sampleRate, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels)
+ScriptProcessorNode::ScriptProcessorNode(AudioContext* context, float sampleRate, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels)
     : AudioNode(context, sampleRate)
     , m_doubleBufferIndex(0)
     , m_doubleBufferIndexForEvent(0)
@@ -95,12 +95,12 @@ JavaScriptAudioNode::JavaScriptAudioNode(AudioContext* context, float sampleRate
     initialize();
 }
 
-JavaScriptAudioNode::~JavaScriptAudioNode()
+ScriptProcessorNode::~ScriptProcessorNode()
 {
     uninitialize();
 }
 
-void JavaScriptAudioNode::initialize()
+void ScriptProcessorNode::initialize()
 {
     if (isInitialized())
         return;
@@ -120,7 +120,7 @@ void JavaScriptAudioNode::initialize()
     AudioNode::initialize();
 }
 
-void JavaScriptAudioNode::uninitialize()
+void ScriptProcessorNode::uninitialize()
 {
     if (!isInitialized())
         return;
@@ -131,10 +131,10 @@ void JavaScriptAudioNode::uninitialize()
     AudioNode::uninitialize();
 }
 
-void JavaScriptAudioNode::process(size_t framesToProcess)
+void ScriptProcessorNode::process(size_t framesToProcess)
 {
     // Discussion about inputs and outputs:
-    // As in other AudioNodes, JavaScriptAudioNode uses an AudioBus for its input and output (see inputBus and outputBus below).
+    // As in other AudioNodes, ScriptProcessorNode uses an AudioBus for its input and output (see inputBus and outputBus below).
     // Additionally, there is a double-buffering for input and output which is exposed directly to JavaScript (see inputBuffer and outputBuffer below).
     // This node is the producer for inputBuffer and the consumer for outputBuffer.
     // The JavaScript code is the consumer of inputBuffer and the producer for outputBuffer.
@@ -143,7 +143,7 @@ void JavaScriptAudioNode::process(size_t framesToProcess)
     AudioBus* inputBus = this->input(0)->bus();
     AudioBus* outputBus = this->output(0)->bus();
 
-    // Get input and output buffers.  We double-buffer both the input and output sides.
+    // Get input and output buffers. We double-buffer both the input and output sides.
     unsigned doubleBufferIndex = this->doubleBufferIndex();
     bool isDoubleBufferIndexGood = doubleBufferIndex < 2 && doubleBufferIndex < m_inputBuffers.size() && doubleBufferIndex < m_outputBuffers.size();
     ASSERT(isDoubleBufferIndexGood);
@@ -197,7 +197,7 @@ void JavaScriptAudioNode::process(size_t framesToProcess)
         // Avoid building up requests on the main thread to fire process events when they're not being handled.
         // This could be a problem if the main thread is very busy doing other things and is being held up handling previous requests.
         if (m_isRequestOutstanding) {
-            // We're late in handling the previous request.  The main thread must be very busy.
+            // We're late in handling the previous request. The main thread must be very busy.
             // The best we can do is clear out the buffer ourself here.
             outputBuffer->zero();            
         } else {
@@ -214,9 +214,9 @@ void JavaScriptAudioNode::process(size_t framesToProcess)
     }
 }
 
-void JavaScriptAudioNode::fireProcessEventDispatch(void* userData)
+void ScriptProcessorNode::fireProcessEventDispatch(void* userData)
 {
-    JavaScriptAudioNode* jsAudioNode = static_cast<JavaScriptAudioNode*>(userData);
+    ScriptProcessorNode* jsAudioNode = static_cast<ScriptProcessorNode*>(userData);
     ASSERT(jsAudioNode);
     if (!jsAudioNode)
         return;
@@ -227,7 +227,7 @@ void JavaScriptAudioNode::fireProcessEventDispatch(void* userData)
     jsAudioNode->deref();
 }
 
-void JavaScriptAudioNode::fireProcessEvent()
+void ScriptProcessorNode::fireProcessEvent()
 {
     ASSERT(isMainThread() && m_isRequestOutstanding);
     
@@ -252,7 +252,7 @@ void JavaScriptAudioNode::fireProcessEvent()
     }
 }
 
-void JavaScriptAudioNode::reset()
+void ScriptProcessorNode::reset()
 {
     m_bufferReadWriteIndex = 0;
     m_doubleBufferIndex = 0;
@@ -263,22 +263,22 @@ void JavaScriptAudioNode::reset()
     }
 }
 
-const AtomicString& JavaScriptAudioNode::interfaceName() const
+const AtomicString& ScriptProcessorNode::interfaceName() const
 {
-    return eventNames().interfaceForJavaScriptAudioNode;
+    return eventNames().interfaceForScriptProcessorNode;
 }
 
-ScriptExecutionContext* JavaScriptAudioNode::scriptExecutionContext() const
+ScriptExecutionContext* ScriptProcessorNode::scriptExecutionContext() const
 {
-    return const_cast<JavaScriptAudioNode*>(this)->context()->document();
+    return const_cast<ScriptProcessorNode*>(this)->context()->document();
 }
 
-double JavaScriptAudioNode::tailTime() const
+double ScriptProcessorNode::tailTime() const
 {
     return std::numeric_limits<double>::infinity();
 }
 
-double JavaScriptAudioNode::latencyTime() const
+double ScriptProcessorNode::latencyTime() const
 {
     return std::numeric_limits<double>::infinity();
 }

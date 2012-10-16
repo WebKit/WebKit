@@ -26,7 +26,7 @@
 
 #if ENABLE(WEB_AUDIO)
 
-#include "AudioChannelSplitter.h"
+#include "ChannelSplitterNode.h"
 
 #include "AudioContext.h"
 #include "AudioNodeInput.h"
@@ -34,15 +34,15 @@
 
 namespace WebCore {
     
-PassRefPtr<AudioChannelSplitter> AudioChannelSplitter::create(AudioContext* context, float sampleRate, unsigned numberOfOutputs)
+PassRefPtr<ChannelSplitterNode> ChannelSplitterNode::create(AudioContext* context, float sampleRate, unsigned numberOfOutputs)
 {
     if (!numberOfOutputs || numberOfOutputs > AudioContext::maxNumberOfChannels())
         return 0;
 
-    return adoptRef(new AudioChannelSplitter(context, sampleRate, numberOfOutputs));      
+    return adoptRef(new ChannelSplitterNode(context, sampleRate, numberOfOutputs));      
 }
 
-AudioChannelSplitter::AudioChannelSplitter(AudioContext* context, float sampleRate, unsigned numberOfOutputs)
+ChannelSplitterNode::ChannelSplitterNode(AudioContext* context, float sampleRate, unsigned numberOfOutputs)
     : AudioNode(context, sampleRate)
 {
     addInput(adoptPtr(new AudioNodeInput(this)));
@@ -56,7 +56,7 @@ AudioChannelSplitter::AudioChannelSplitter(AudioContext* context, float sampleRa
     initialize();
 }
 
-void AudioChannelSplitter::process(size_t framesToProcess)
+void ChannelSplitterNode::process(size_t framesToProcess)
 {
     AudioBus* source = input(0)->bus();
     ASSERT(source);
@@ -79,7 +79,7 @@ void AudioChannelSplitter::process(size_t framesToProcess)
     }
 }
 
-void AudioChannelSplitter::reset()
+void ChannelSplitterNode::reset()
 {
 }
 

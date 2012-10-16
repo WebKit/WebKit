@@ -43,24 +43,24 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSAudioBufferCallback.h \
 	DerivedSources/WebCore/JSAudioBufferSourceNode.cpp \
 	DerivedSources/WebCore/JSAudioBufferSourceNode.h \
-	DerivedSources/WebCore/JSAudioChannelMerger.cpp \
-	DerivedSources/WebCore/JSAudioChannelMerger.h \
-	DerivedSources/WebCore/JSAudioChannelSplitter.cpp \
-	DerivedSources/WebCore/JSAudioChannelSplitter.h \
+	DerivedSources/WebCore/JSChannelMergerNode.cpp \
+	DerivedSources/WebCore/JSChannelMergerNode.h \
+	DerivedSources/WebCore/JSChannelSplitterNode.cpp \
+	DerivedSources/WebCore/JSChannelSplitterNode.h \
 	DerivedSources/WebCore/JSAudioContext.cpp \
 	DerivedSources/WebCore/JSAudioContext.h \
 	DerivedSources/WebCore/JSAudioDestinationNode.cpp \
 	DerivedSources/WebCore/JSAudioDestinationNode.h \
 	DerivedSources/WebCore/JSAudioGain.cpp \
 	DerivedSources/WebCore/JSAudioGain.h \
-	DerivedSources/WebCore/JSAudioGainNode.cpp \
-	DerivedSources/WebCore/JSAudioGainNode.h \
+	DerivedSources/WebCore/JSGainNode.cpp \
+	DerivedSources/WebCore/JSGainNode.h \
 	DerivedSources/WebCore/JSAudioListener.cpp \
 	DerivedSources/WebCore/JSAudioListener.h \
 	DerivedSources/WebCore/JSAudioNode.cpp \
 	DerivedSources/WebCore/JSAudioNode.h \
-	DerivedSources/WebCore/JSAudioPannerNode.cpp \
-	DerivedSources/WebCore/JSAudioPannerNode.h \
+	DerivedSources/WebCore/JSPannerNode.cpp \
+	DerivedSources/WebCore/JSPannerNode.h \
 	DerivedSources/WebCore/JSAudioParam.cpp \
 	DerivedSources/WebCore/JSAudioParam.h \
 	DerivedSources/WebCore/JSAudioProcessingEvent.cpp \
@@ -487,8 +487,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSInt32Array.h \
 	DerivedSources/WebCore/JSInt8Array.cpp \
 	DerivedSources/WebCore/JSInt8Array.h \
-	DerivedSources/WebCore/JSJavaScriptAudioNode.cpp \
-	DerivedSources/WebCore/JSJavaScriptAudioNode.h \
+	DerivedSources/WebCore/JSScriptProcessorNode.cpp \
+	DerivedSources/WebCore/JSScriptProcessorNode.h \
 	DerivedSources/WebCore/JSJavaScriptCallFrame.cpp \
 	DerivedSources/WebCore/JSJavaScriptCallFrame.h \
 	DerivedSources/WebCore/JSKeyboardEvent.cpp \
@@ -581,8 +581,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSOESVertexArrayObject.h \
 	DerivedSources/WebCore/JSOfflineAudioCompletionEvent.cpp \
 	DerivedSources/WebCore/JSOfflineAudioCompletionEvent.h \
-	DerivedSources/WebCore/JSOscillator.cpp \
-	DerivedSources/WebCore/JSOscillator.h \
+	DerivedSources/WebCore/JSOscillatorNode.cpp \
+	DerivedSources/WebCore/JSOscillatorNode.h \
 	DerivedSources/WebCore/JSOverflowEvent.cpp \
 	DerivedSources/WebCore/JSOverflowEvent.h \
 	DerivedSources/WebCore/JSPageTransitionEvent.cpp \
@@ -619,8 +619,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSRangeException.cpp \
 	DerivedSources/WebCore/JSRangeException.h \
 	DerivedSources/WebCore/JSRange.h \
-	DerivedSources/WebCore/JSRealtimeAnalyserNode.cpp \
-	DerivedSources/WebCore/JSRealtimeAnalyserNode.h \
+	DerivedSources/WebCore/JSAnalyserNode.cpp \
+	DerivedSources/WebCore/JSAnalyserNode.h \
 	DerivedSources/WebCore/JSRect.cpp \
 	DerivedSources/WebCore/JSRect.h \
 	DerivedSources/WebCore/JSRequestAnimationFrameCallback.cpp \
@@ -1265,15 +1265,15 @@ dom_binding_idls += \
 	$(WebCore)/Modules/webaudio/AudioBuffer.idl \
 	$(WebCore)/Modules/webaudio/AudioBufferCallback.idl \
 	$(WebCore)/Modules/webaudio/AudioBufferSourceNode.idl \
-	$(WebCore)/Modules/webaudio/AudioChannelMerger.idl \
-	$(WebCore)/Modules/webaudio/AudioChannelSplitter.idl \
+	$(WebCore)/Modules/webaudio/ChannelMergerNode.idl \
+	$(WebCore)/Modules/webaudio/ChannelSplitterNode.idl \
 	$(WebCore)/Modules/webaudio/AudioContext.idl \
 	$(WebCore)/Modules/webaudio/AudioDestinationNode.idl \
 	$(WebCore)/Modules/webaudio/AudioGain.idl \
-	$(WebCore)/Modules/webaudio/AudioGainNode.idl \
+	$(WebCore)/Modules/webaudio/GainNode.idl \
 	$(WebCore)/Modules/webaudio/AudioListener.idl \
 	$(WebCore)/Modules/webaudio/AudioNode.idl \
-	$(WebCore)/Modules/webaudio/AudioPannerNode.idl \
+	$(WebCore)/Modules/webaudio/PannerNode.idl \
 	$(WebCore)/Modules/webaudio/AudioParam.idl \
 	$(WebCore)/Modules/webaudio/AudioProcessingEvent.idl \
 	$(WebCore)/Modules/webaudio/AudioSourceNode.idl \
@@ -1282,12 +1282,12 @@ dom_binding_idls += \
 	$(WebCore)/Modules/webaudio/DelayNode.idl \
 	$(WebCore)/Modules/webaudio/DOMWindowWebAudio.idl \
 	$(WebCore)/Modules/webaudio/DynamicsCompressorNode.idl \
-	$(WebCore)/Modules/webaudio/JavaScriptAudioNode.idl \
+	$(WebCore)/Modules/webaudio/ScriptProcessorNode.idl \
 	$(WebCore)/Modules/webaudio/MediaElementAudioSourceNode.idl \
 	$(WebCore)/Modules/webaudio/MediaStreamAudioSourceNode.idl \
 	$(WebCore)/Modules/webaudio/OfflineAudioCompletionEvent.idl \
-    $(WebCore)/Modules/webaudio/Oscillator.idl \
-	$(WebCore)/Modules/webaudio/RealtimeAnalyserNode.idl \
+    $(WebCore)/Modules/webaudio/OscillatorNode.idl \
+	$(WebCore)/Modules/webaudio/AnalyserNode.idl \
 	$(WebCore)/Modules/webaudio/WaveShaperNode.idl \
     $(WebCore)/Modules/webaudio/WaveTable.idl \
 	$(WebCore)/Modules/webdatabase/DOMWindowWebDatabase.idl \
@@ -2007,17 +2007,17 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/webaudio/AudioBufferCallback.h \
 	Source/WebCore/Modules/webaudio/AudioBufferSourceNode.cpp \
 	Source/WebCore/Modules/webaudio/AudioBufferSourceNode.h \
-	Source/WebCore/Modules/webaudio/AudioChannelMerger.cpp \
-	Source/WebCore/Modules/webaudio/AudioChannelMerger.h \
-	Source/WebCore/Modules/webaudio/AudioChannelSplitter.cpp \
-	Source/WebCore/Modules/webaudio/AudioChannelSplitter.h \
+	Source/WebCore/Modules/webaudio/ChannelMergerNode.cpp \
+	Source/WebCore/Modules/webaudio/ChannelMergerNode.h \
+	Source/WebCore/Modules/webaudio/ChannelSplitterNode.cpp \
+	Source/WebCore/Modules/webaudio/ChannelSplitterNode.h \
 	Source/WebCore/Modules/webaudio/AudioContext.cpp \
 	Source/WebCore/Modules/webaudio/AudioContext.h \
 	Source/WebCore/Modules/webaudio/AudioDestinationNode.cpp \
 	Source/WebCore/Modules/webaudio/AudioDestinationNode.h \
 	Source/WebCore/Modules/webaudio/AudioGain.h \
-	Source/WebCore/Modules/webaudio/AudioGainNode.cpp \
-	Source/WebCore/Modules/webaudio/AudioGainNode.h \
+	Source/WebCore/Modules/webaudio/GainNode.cpp \
+	Source/WebCore/Modules/webaudio/GainNode.h \
 	Source/WebCore/Modules/webaudio/AudioListener.cpp \
 	Source/WebCore/Modules/webaudio/AudioListener.h \
 	Source/WebCore/Modules/webaudio/AudioNode.cpp \
@@ -2026,8 +2026,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/webaudio/AudioNodeInput.h \
 	Source/WebCore/Modules/webaudio/AudioNodeOutput.cpp \
 	Source/WebCore/Modules/webaudio/AudioNodeOutput.h \
-	Source/WebCore/Modules/webaudio/AudioPannerNode.cpp \
-	Source/WebCore/Modules/webaudio/AudioPannerNode.h \
+	Source/WebCore/Modules/webaudio/PannerNode.cpp \
+	Source/WebCore/Modules/webaudio/PannerNode.h \
 	Source/WebCore/Modules/webaudio/AudioParam.cpp \
 	Source/WebCore/Modules/webaudio/AudioParam.h \
 	Source/WebCore/Modules/webaudio/AudioParamTimeline.cpp \
@@ -2057,8 +2057,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/webaudio/DelayProcessor.h \
 	Source/WebCore/Modules/webaudio/DynamicsCompressorNode.cpp \
 	Source/WebCore/Modules/webaudio/DynamicsCompressorNode.h \
-	Source/WebCore/Modules/webaudio/JavaScriptAudioNode.cpp \
-	Source/WebCore/Modules/webaudio/JavaScriptAudioNode.h \
+	Source/WebCore/Modules/webaudio/ScriptProcessorNode.cpp \
+	Source/WebCore/Modules/webaudio/ScriptProcessorNode.h \
 	Source/WebCore/Modules/webaudio/MediaElementAudioSourceNode.cpp \
 	Source/WebCore/Modules/webaudio/MediaElementAudioSourceNode.h \
 	Source/WebCore/Modules/webaudio/MediaStreamAudioSourceNode.cpp \
@@ -2067,12 +2067,12 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/webaudio/OfflineAudioDestinationNode.cpp \
 	Source/WebCore/Modules/webaudio/OfflineAudioCompletionEvent.h \
 	Source/WebCore/Modules/webaudio/OfflineAudioCompletionEvent.cpp \
-	Source/WebCore/Modules/webaudio/Oscillator.h \
-	Source/WebCore/Modules/webaudio/Oscillator.cpp \
+	Source/WebCore/Modules/webaudio/OscillatorNode.h \
+	Source/WebCore/Modules/webaudio/OscillatorNode.cpp \
 	Source/WebCore/Modules/webaudio/RealtimeAnalyser.cpp \
 	Source/WebCore/Modules/webaudio/RealtimeAnalyser.h \
-	Source/WebCore/Modules/webaudio/RealtimeAnalyserNode.cpp \
-	Source/WebCore/Modules/webaudio/RealtimeAnalyserNode.h \
+	Source/WebCore/Modules/webaudio/AnalyserNode.cpp \
+	Source/WebCore/Modules/webaudio/AnalyserNode.h \
 	Source/WebCore/Modules/webaudio/WaveShaperNode.cpp \
 	Source/WebCore/Modules/webaudio/WaveShaperProcessor.h \
 	Source/WebCore/Modules/webaudio/WaveShaperDSPKernel.cpp \
@@ -2346,7 +2346,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSInjectedScriptHostCustom.cpp \
 	Source/WebCore/bindings/js/JSInjectedScriptManager.cpp \
 	Source/WebCore/bindings/js/JSInspectorFrontendHostCustom.cpp \
-	Source/WebCore/bindings/js/JSJavaScriptAudioNodeCustom.cpp \
+	Source/WebCore/bindings/js/JSScriptProcessorNodeCustom.cpp \
 	Source/WebCore/bindings/js/JSJavaScriptCallFrameCustom.cpp \
 	Source/WebCore/bindings/js/JSLazyEventListener.cpp \
 	Source/WebCore/bindings/js/JSLazyEventListener.h \

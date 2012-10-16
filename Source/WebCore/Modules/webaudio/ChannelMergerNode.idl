@@ -26,34 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioChannelMerger_h
-#define AudioChannelMerger_h
-
-#include "AudioNode.h"
-#include <wtf/PassRefPtr.h>
-
-namespace WebCore {
-
-class AudioContext;
-    
-class AudioChannelMerger : public AudioNode {
-public:
-    static PassRefPtr<AudioChannelMerger> create(AudioContext*, float sampleRate, unsigned numberOfInputs);
-
-    // AudioNode
-    virtual void process(size_t framesToProcess);
-    virtual void reset();
-
-    // Called in the audio thread (pre-rendering task) when the number of channels for an input may have changed.
-    virtual void checkNumberOfChannelsForInput(AudioNodeInput*);
-
-private:
-    virtual double tailTime() const OVERRIDE { return 0; }
-    virtual double latencyTime() const OVERRIDE { return 0; }
-
-    AudioChannelMerger(AudioContext*, float sampleRate, unsigned numberOfInputs);
+[
+    Conditional=WEB_AUDIO
+] interface ChannelMergerNode : AudioNode {
 };
-
-} // namespace WebCore
-
-#endif // AudioChannelMerger_h

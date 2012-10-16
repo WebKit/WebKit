@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2012, Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,15 +22,41 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// For real-time audio stream synthesis/processing in JavaScript 
+// OscillatorNode is an audio generator of periodic waveforms.
 [
     Conditional=WEB_AUDIO,
-    JSGenerateToJSObject,
-    JSCustomMarkFunction,
-    EventTarget
-] interface JavaScriptAudioNode : AudioNode {
-    // Rendering callback
-    attribute EventListener onaudioprocess;
-    
-    readonly attribute long bufferSize;
+    JSGenerateToJSObject
+] interface OscillatorNode : AudioSourceNode {
+
+    // Type constants.
+    const unsigned short SINE = 0;
+    const unsigned short SQUARE = 1;
+    const unsigned short SAWTOOTH = 2;
+    const unsigned short TRIANGLE = 3;
+    const unsigned short CUSTOM = 4;
+
+    attribute unsigned short type
+        setter raises(DOMException);        
+
+    // Playback state constants.
+    const unsigned short UNSCHEDULED_STATE = 0;
+    const unsigned short SCHEDULED_STATE = 1;
+    const unsigned short PLAYING_STATE = 2;
+    const unsigned short FINISHED_STATE = 3;
+
+    readonly attribute unsigned short playbackState;
+
+    readonly attribute AudioParam frequency; // in Hertz
+    readonly attribute AudioParam detune; // in Cents
+
+    void start(in double when);
+    void stop(in double when);
+
+#if defined(ENABLE_LEGACY_WEB_AUDIO) && ENABLE_LEGACY_WEB_AUDIO
+    void noteOn(in double when);
+    void noteOff(in double when);
+#endif
+
+    void setWaveTable(in WaveTable waveTable);
+
 };

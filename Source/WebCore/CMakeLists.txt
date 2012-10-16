@@ -262,15 +262,15 @@ SET(WebCore_IDL_FILES
     Modules/webaudio/AudioBuffer.idl
     Modules/webaudio/AudioBufferCallback.idl
     Modules/webaudio/AudioBufferSourceNode.idl
-    Modules/webaudio/AudioChannelSplitter.idl
-    Modules/webaudio/AudioChannelMerger.idl
+    Modules/webaudio/ChannelSplitterNode.idl
+    Modules/webaudio/ChannelMergerNode.idl
     Modules/webaudio/AudioContext.idl
     Modules/webaudio/AudioDestinationNode.idl
     Modules/webaudio/AudioGain.idl
-    Modules/webaudio/AudioGainNode.idl
+    Modules/webaudio/GainNode.idl
     Modules/webaudio/AudioListener.idl
     Modules/webaudio/AudioNode.idl
-    Modules/webaudio/AudioPannerNode.idl
+    Modules/webaudio/PannerNode.idl
     Modules/webaudio/AudioParam.idl
     Modules/webaudio/AudioProcessingEvent.idl
     Modules/webaudio/AudioSourceNode.idl
@@ -279,12 +279,12 @@ SET(WebCore_IDL_FILES
     Modules/webaudio/DOMWindowWebAudio.idl
     Modules/webaudio/DelayNode.idl
     Modules/webaudio/DynamicsCompressorNode.idl
-    Modules/webaudio/JavaScriptAudioNode.idl
+    Modules/webaudio/ScriptProcessorNode.idl
     Modules/webaudio/MediaElementAudioSourceNode.idl
     Modules/webaudio/MediaStreamAudioSourceNode.idl
     Modules/webaudio/OfflineAudioCompletionEvent.idl
-    Modules/webaudio/Oscillator.idl
-    Modules/webaudio/RealtimeAnalyserNode.idl
+    Modules/webaudio/OscillatorNode.idl
+    Modules/webaudio/AnalyserNode.idl
     Modules/webaudio/WaveShaperNode.idl
     Modules/webaudio/WaveTable.idl
 
@@ -906,16 +906,16 @@ SET(WebCore_SOURCES
     Modules/webaudio/AudioBasicProcessorNode.cpp
     Modules/webaudio/AudioBuffer.cpp
     Modules/webaudio/AudioBufferSourceNode.cpp
-    Modules/webaudio/AudioChannelMerger.cpp
-    Modules/webaudio/AudioChannelSplitter.cpp
+    Modules/webaudio/ChannelMergerNode.cpp
+    Modules/webaudio/ChannelSplitterNode.cpp
     Modules/webaudio/AudioContext.cpp
     Modules/webaudio/AudioDestinationNode.cpp
-    Modules/webaudio/AudioGainNode.cpp
+    Modules/webaudio/GainNode.cpp
     Modules/webaudio/AudioListener.cpp
     Modules/webaudio/AudioNode.cpp
     Modules/webaudio/AudioNodeInput.cpp
     Modules/webaudio/AudioNodeOutput.cpp
-    Modules/webaudio/AudioPannerNode.cpp
+    Modules/webaudio/PannerNode.cpp
     Modules/webaudio/AudioParam.cpp
     Modules/webaudio/AudioParamTimeline.cpp
     Modules/webaudio/AudioProcessingEvent.cpp
@@ -930,14 +930,14 @@ SET(WebCore_SOURCES
     Modules/webaudio/DelayNode.cpp
     Modules/webaudio/DelayProcessor.cpp
     Modules/webaudio/DynamicsCompressorNode.cpp
-    Modules/webaudio/JavaScriptAudioNode.cpp
+    Modules/webaudio/ScriptProcessorNode.cpp
     Modules/webaudio/MediaElementAudioSourceNode.cpp
     Modules/webaudio/MediaStreamAudioSourceNode.cpp
     Modules/webaudio/OfflineAudioCompletionEvent.cpp
     Modules/webaudio/OfflineAudioDestinationNode.cpp
-    Modules/webaudio/Oscillator.cpp
+    Modules/webaudio/OscillatorNode.cpp
     Modules/webaudio/RealtimeAnalyser.cpp
-    Modules/webaudio/RealtimeAnalyserNode.cpp
+    Modules/webaudio/AnalyserNode.cpp
     Modules/webaudio/WaveShaperDSPKernel.cpp
     Modules/webaudio/WaveShaperNode.cpp
     Modules/webaudio/WaveShaperProcessor.cpp

@@ -22,8 +22,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JavaScriptAudioNode_h
-#define JavaScriptAudioNode_h
+#ifndef ScriptProcessorNode_h
+#define ScriptProcessorNode_h
 
 #include "ActiveDOMObject.h"
 #include "AudioBus.h"
@@ -41,22 +41,22 @@ class AudioBuffer;
 class AudioContext;
 class AudioProcessingEvent;
 
-// JavaScriptAudioNode is an AudioNode which allows for arbitrary synthesis or processing directly using JavaScript.
+// ScriptProcessorNode is an AudioNode which allows for arbitrary synthesis or processing directly using JavaScript.
 // The API allows for a variable number of inputs and outputs, although it must have at least one input or output.
 // This basic implementation supports no more than one input and output.
 // The "onaudioprocess" attribute is an event listener which will get called periodically with an AudioProcessingEvent which has
 // AudioBuffers for each input and output.
 
 // FIXME: EventTarget should be introduced at the base of the inheritance hierarchy (i.e., as a base class for AudioNode).
-class JavaScriptAudioNode : public AudioNode, public EventTarget {
+class ScriptProcessorNode : public AudioNode, public EventTarget {
 public:
     // bufferSize must be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384.
     // This value controls how frequently the onaudioprocess event handler is called and how many sample-frames need to be processed each call.
     // Lower numbers for bufferSize will result in a lower (better) latency. Higher numbers will be necessary to avoid audio breakup and glitches.
     // The value chosen must carefully balance between latency and audio quality.
-    static PassRefPtr<JavaScriptAudioNode> create(AudioContext*, float sampleRate, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels);
+    static PassRefPtr<ScriptProcessorNode> create(AudioContext*, float sampleRate, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels);
 
-    virtual ~JavaScriptAudioNode();
+    virtual ~ScriptProcessorNode();
 
     // AudioNode
     virtual void process(size_t framesToProcess);
@@ -82,7 +82,7 @@ private:
     virtual double tailTime() const OVERRIDE;
     virtual double latencyTime() const OVERRIDE;
 
-    JavaScriptAudioNode(AudioContext*, float sampleRate, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels);
+    ScriptProcessorNode(AudioContext*, float sampleRate, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels);
 
     static void fireProcessEventDispatch(void* userData);
     void fireProcessEvent();
@@ -111,4 +111,4 @@ private:
 
 } // namespace WebCore
 
-#endif // JavaScriptAudioNode_h
+#endif // ScriptProcessorNode_h

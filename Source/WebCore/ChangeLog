@@ -1,3 +1,90 @@
+2012-10-16  Chris Rogers  <crogers@google.com>
+
+        Rename some AudioNodes
+        https://bugs.webkit.org/show_bug.cgi?id=99358
+
+        Reviewed by Daniel Bates.
+
+        Here's a list of the node names, showing the changing ones:
+            AudioBufferSourceNode
+            MediaElementAudioSourceNode
+            MediaStreamAudioSourceNode
+            JavaScriptAudioNode ------------> ScriptProcessorNode
+            RealtimeAnalyserNode ------------> AnalyserNode
+            AudioGainNode ------------> GainNode
+            DelayNode
+            BiquadFilterNode
+            AudioPannerNode ------------> PannerNode
+            ConvolverNode
+            AudioChannelSplitter ------------> ChannelSplitterNode
+            AudioChannelMerger ------------> ChannelMergerNode
+            DynamicsCompressorNode
+            Oscillator ------------> OscillatorNode
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Modules/webaudio/AnalyserNode.cpp: Renamed from Source/WebCore/Modules/webaudio/RealtimeAnalyserNode.cpp.
+        * Modules/webaudio/AnalyserNode.idl: Renamed from Source/WebCore/Modules/webaudio/RealtimeAnalyserNode.idl.
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::setPannerNode):
+        * Modules/webaudio/AudioBufferSourceNode.h:
+        (AudioBufferSourceNode):
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createJavaScriptNode):
+        (WebCore::AudioContext::createPanner):
+        (WebCore::AudioContext::createAnalyser):
+        (WebCore::AudioContext::createGainNode):
+        (WebCore::AudioContext::createChannelSplitter):
+        (WebCore::AudioContext::createChannelMerger):
+        (WebCore::AudioContext::createOscillator):
+        * Modules/webaudio/AudioContext.h:
+        (WebCore):
+        (AudioContext):
+        * Modules/webaudio/AudioContext.idl:
+        * Modules/webaudio/ChannelMergerNode.cpp: Renamed from Source/WebCore/Modules/webaudio/AudioChannelMerger.cpp.
+        * Modules/webaudio/ChannelMergerNode.h: Renamed from Source/WebCore/Modules/webaudio/AudioChannelMerger.h.
+        (WebCore):
+        (ChannelMergerNode):
+        * Modules/webaudio/ChannelMergerNode.idl: Renamed from Source/WebCore/Modules/webaudio/AudioChannelMerger.idl.
+        * Modules/webaudio/ChannelSplitterNode.cpp: Renamed from Source/WebCore/Modules/webaudio/AudioChannelSplitter.cpp.
+        * Modules/webaudio/ChannelSplitterNode.h: Renamed from Source/WebCore/Modules/webaudio/AudioChannelSplitter.h.
+        (WebCore):
+        (ChannelSplitterNode):
+        * Modules/webaudio/ChannelSplitterNode.idl: Renamed from Source/WebCore/Modules/webaudio/AudioChannelSplitter.idl.
+        * Modules/webaudio/DOMWindowWebAudio.idl:
+        * Modules/webaudio/GainNode.cpp: Renamed from Source/WebCore/Modules/webaudio/AudioGainNode.cpp.
+        * Modules/webaudio/GainNode.h: Renamed from Source/WebCore/Modules/webaudio/AudioGainNode.h.
+        * Modules/webaudio/GainNode.idl: Renamed from Source/WebCore/Modules/webaudio/AudioGainNode.idl.
+        * Modules/webaudio/OscillatorNode.cpp: Renamed from Source/WebCore/Modules/webaudio/Oscillator.cpp.
+        * Modules/webaudio/OscillatorNode.h: Renamed from Source/WebCore/Modules/webaudio/Oscillator.h.
+        * Modules/webaudio/OscillatorNode.idl: Renamed from Source/WebCore/Modules/webaudio/Oscillator.idl.
+        * Modules/webaudio/PannerNode.cpp: Renamed from Source/WebCore/Modules/webaudio/AudioPannerNode.cpp.
+        * Modules/webaudio/PannerNode.h: Renamed from Source/WebCore/Modules/webaudio/AudioPannerNode.h.
+        (WebCore):
+        * Modules/webaudio/PannerNode.idl: Renamed from Source/WebCore/Modules/webaudio/AudioPannerNode.idl.
+        * Modules/webaudio/ScriptProcessorNode.cpp: Renamed from Source/WebCore/Modules/webaudio/JavaScriptAudioNode.cpp.
+        * Modules/webaudio/ScriptProcessorNode.h: Renamed from Source/WebCore/Modules/webaudio/JavaScriptAudioNode.h.
+        (WebCore):
+        * Modules/webaudio/ScriptProcessorNode.idl: Renamed from Source/WebCore/Modules/webaudio/JavaScriptAudioNode.idl.
+        * Modules/webaudio/WaveTable.cpp:
+        (WebCore::WaveTable::createSine):
+        (WebCore::WaveTable::createSquare):
+        (WebCore::WaveTable::createSawtooth):
+        (WebCore::WaveTable::createTriangle):
+        (WebCore::WaveTable::generateBasicWaveform):
+        * Target.pri:
+        * UseJSC.cmake:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSScriptProcessorNodeCustom.cpp: Renamed from Source/WebCore/bindings/js/JSJavaScriptAudioNodeCustom.cpp.
+        (WebCore):
+        (WebCore::JSScriptProcessorNode::visitChildren):
+        * dom/EventTarget.h:
+        (WebCore):
+        * dom/EventTargetFactory.in:
+
 2012-10-16  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         [Texmap] Refactor TextureMapperShaderManager to be clearer

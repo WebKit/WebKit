@@ -22,50 +22,56 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioGainNode_h
-#define AudioGainNode_h
+#ifndef AnalyserNode_h
+#define AnalyserNode_h
 
-#include "AudioGain.h"
-#include "AudioNode.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/Threading.h>
+#include "AudioBasicInspectorNode.h"
+#include "RealtimeAnalyser.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
-class AudioContext;
-    
-// AudioGainNode is an AudioNode with one input and one output which applies a gain (volume) change to the audio signal.
-// De-zippering (smoothing) is applied when the gain value is changed dynamically.
-
-class AudioGainNode : public AudioNode {
+class AnalyserNode : public AudioBasicInspectorNode {
 public:
-    static PassRefPtr<AudioGainNode> create(AudioContext* context, float sampleRate)
+    static PassRefPtr<AnalyserNode> create(AudioContext* context, float sampleRate)
     {
-        return adoptRef(new AudioGainNode(context, sampleRate));      
+        return adoptRef(new AnalyserNode(context, sampleRate));      
     }
+
+    virtual ~AnalyserNode();
     
     // AudioNode
     virtual void process(size_t framesToProcess);
     virtual void reset();
 
-    // Called in the main thread when the number of channels for the input may have changed.
-    virtual void checkNumberOfChannelsForInput(AudioNodeInput*);
+    // Javascript bindings
+    unsigned fftSize() const { return m_analyser.fftSize(); }
+    void setFftSize(unsigned size, ExceptionCode&);
 
-    // JavaScript interface
-    AudioGain* gain() { return m_gain.get(); }                                   
-    
+    unsigned frequencyBinCount() const { return m_analyser.frequencyBinCount(); }
+
+    void setMinDecibels(float k) { m_analyser.setMinDecibels(k); }
+    float minDecibels() const { return m_analyser.minDecibels(); }
+
+    void setMaxDecibels(float k) { m_analyser.setMaxDecibels(k); }
+    float maxDecibels() const { return m_analyser.maxDecibels(); }
+
+    void setSmoothingTimeConstant(float k) { m_analyser.setSmoothingTimeConstant(k); }
+    float smoothingTimeConstant() const { return m_analyser.smoothingTimeConstant(); }
+
+    void getFloatFrequencyData(Float32Array* array) { m_analyser.getFloatFrequencyData(array); }
+    void getByteFrequencyData(Uint8Array* array) { m_analyser.getByteFrequencyData(array); }
+    void getByteTimeDomainData(Uint8Array* array) { m_analyser.getByteTimeDomainData(array); }
+
 private:
     virtual double tailTime() const OVERRIDE { return 0; }
     virtual double latencyTime() const OVERRIDE { return 0; }
 
-    AudioGainNode(AudioContext*, float sampleRate);
+    AnalyserNode(AudioContext*, float sampleRate);
 
-    float m_lastGain; // for de-zippering
-    RefPtr<AudioGain> m_gain;
-
-    AudioFloatArray m_sampleAccurateGainValues;
+    RealtimeAnalyser m_analyser;
 };
 
 } // namespace WebCore
 
-#endif // AudioGainNode_h
+#endif // AnalyserNode_h

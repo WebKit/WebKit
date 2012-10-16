@@ -6353,17 +6353,11 @@
 		FD315FF912B0267600C1A359 /* AudioBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FAF12B0267500C1A359 /* AudioBuffer.h */; };
 		FD315FFB12B0267600C1A359 /* AudioBufferSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FB112B0267500C1A359 /* AudioBufferSourceNode.cpp */; };
 		FD315FFC12B0267600C1A359 /* AudioBufferSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FB212B0267500C1A359 /* AudioBufferSourceNode.h */; };
-		FD315FFE12B0267600C1A359 /* AudioChannelMerger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FB412B0267500C1A359 /* AudioChannelMerger.cpp */; };
-		FD315FFF12B0267600C1A359 /* AudioChannelMerger.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FB512B0267500C1A359 /* AudioChannelMerger.h */; };
-		FD31600112B0267600C1A359 /* AudioChannelSplitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FB712B0267500C1A359 /* AudioChannelSplitter.cpp */; };
-		FD31600212B0267600C1A359 /* AudioChannelSplitter.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FB812B0267500C1A359 /* AudioChannelSplitter.h */; };
 		FD31600412B0267600C1A359 /* AudioContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FBA12B0267500C1A359 /* AudioContext.cpp */; };
 		FD31600512B0267600C1A359 /* AudioContext.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FBB12B0267500C1A359 /* AudioContext.h */; };
 		FD31600712B0267600C1A359 /* AudioDestinationNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FBD12B0267500C1A359 /* AudioDestinationNode.cpp */; };
 		FD31600812B0267600C1A359 /* AudioDestinationNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FBE12B0267500C1A359 /* AudioDestinationNode.h */; };
 		FD31600A12B0267600C1A359 /* AudioGain.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FC012B0267500C1A359 /* AudioGain.h */; };
-		FD31600C12B0267600C1A359 /* AudioGainNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FC212B0267500C1A359 /* AudioGainNode.cpp */; };
-		FD31600D12B0267600C1A359 /* AudioGainNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FC312B0267500C1A359 /* AudioGainNode.h */; };
 		FD31600F12B0267600C1A359 /* AudioListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FC512B0267500C1A359 /* AudioListener.cpp */; };
 		FD31601012B0267600C1A359 /* AudioListener.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FC612B0267500C1A359 /* AudioListener.h */; };
 		FD31601212B0267600C1A359 /* AudioNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FC812B0267500C1A359 /* AudioNode.cpp */; };
@@ -6372,8 +6366,6 @@
 		FD31601612B0267600C1A359 /* AudioNodeInput.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FCC12B0267500C1A359 /* AudioNodeInput.h */; };
 		FD31601712B0267600C1A359 /* AudioNodeOutput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FCD12B0267500C1A359 /* AudioNodeOutput.cpp */; };
 		FD31601812B0267600C1A359 /* AudioNodeOutput.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FCE12B0267500C1A359 /* AudioNodeOutput.h */; };
-		FD31601912B0267600C1A359 /* AudioPannerNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FCF12B0267500C1A359 /* AudioPannerNode.cpp */; };
-		FD31601A12B0267600C1A359 /* AudioPannerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FD012B0267500C1A359 /* AudioPannerNode.h */; };
 		FD31601C12B0267600C1A359 /* AudioParam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FD212B0267500C1A359 /* AudioParam.cpp */; };
 		FD31601D12B0267600C1A359 /* AudioParam.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FD312B0267500C1A359 /* AudioParam.h */; };
 		FD31601F12B0267600C1A359 /* AudioProcessingEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FD512B0267600C1A359 /* AudioProcessingEvent.cpp */; };
@@ -6383,6 +6375,10 @@
 		FD31602512B0267600C1A359 /* BiquadDSPKernel.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FDB12B0267600C1A359 /* BiquadDSPKernel.h */; };
 		FD31602612B0267600C1A359 /* BiquadProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FDC12B0267600C1A359 /* BiquadProcessor.cpp */; };
 		FD31602712B0267600C1A359 /* BiquadProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FDD12B0267600C1A359 /* BiquadProcessor.h */; };
+		FD315FFE12B0267600C1A359 /* ChannelMergerNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FB412B0267500C1A359 /* ChannelMergerNode.cpp */; };
+		FD315FFF12B0267600C1A359 /* ChannelMergerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FB512B0267500C1A359 /* ChannelMergerNode.h */; };
+		FD31600112B0267600C1A359 /* ChannelSplitterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FB712B0267500C1A359 /* ChannelSplitterNode.cpp */; };
+		FD31600212B0267600C1A359 /* ChannelSplitterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FB812B0267500C1A359 /* ChannelSplitterNode.h */; };
 		FD31602812B0267600C1A359 /* ConvolverNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FDE12B0267600C1A359 /* ConvolverNode.cpp */; };
 		FD31602912B0267600C1A359 /* ConvolverNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FDF12B0267600C1A359 /* ConvolverNode.h */; };
 		FD31602B12B0267600C1A359 /* DelayDSPKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FE112B0267600C1A359 /* DelayDSPKernel.cpp */; };
@@ -6391,12 +6387,16 @@
 		FD31602E12B0267600C1A359 /* DelayNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FE412B0267600C1A359 /* DelayNode.h */; };
 		FD31603012B0267600C1A359 /* DelayProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FE612B0267600C1A359 /* DelayProcessor.cpp */; };
 		FD31603112B0267600C1A359 /* DelayProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FE712B0267600C1A359 /* DelayProcessor.h */; };
-		FD31603512B0267600C1A359 /* JavaScriptAudioNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FEB12B0267600C1A359 /* JavaScriptAudioNode.cpp */; };
-		FD31603612B0267600C1A359 /* JavaScriptAudioNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FEC12B0267600C1A359 /* JavaScriptAudioNode.h */; };
+		FD31600C12B0267600C1A359 /* GainNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FC212B0267500C1A359 /* GainNode.cpp */; };
+		FD31600D12B0267600C1A359 /* GainNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FC312B0267500C1A359 /* GainNode.h */; };
+		FD31601912B0267600C1A359 /* PannerNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FCF12B0267500C1A359 /* PannerNode.cpp */; };
+		FD31601A12B0267600C1A359 /* PannerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FD012B0267500C1A359 /* PannerNode.h */; };
 		FD31603B12B0267600C1A359 /* RealtimeAnalyser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FF112B0267600C1A359 /* RealtimeAnalyser.cpp */; };
 		FD31603C12B0267600C1A359 /* RealtimeAnalyser.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FF212B0267600C1A359 /* RealtimeAnalyser.h */; };
-		FD31603D12B0267600C1A359 /* RealtimeAnalyserNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FF312B0267600C1A359 /* RealtimeAnalyserNode.cpp */; };
-		FD31603E12B0267600C1A359 /* RealtimeAnalyserNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FF412B0267600C1A359 /* RealtimeAnalyserNode.h */; };
+		FD31603512B0267600C1A359 /* ScriptProcessorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FEB12B0267600C1A359 /* ScriptProcessorNode.cpp */; };
+		FD31603612B0267600C1A359 /* ScriptProcessorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FEC12B0267600C1A359 /* ScriptProcessorNode.h */; };
+		FD31603D12B0267600C1A359 /* AnalyserNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FF312B0267600C1A359 /* AnalyserNode.cpp */; };
+		FD31603E12B0267600C1A359 /* AnalyserNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FF412B0267600C1A359 /* AnalyserNode.h */; };
 		FD31607A12B026F700C1A359 /* AudioArray.h in Headers */ = {isa = PBXBuildFile; fileRef = FD31604412B026F700C1A359 /* AudioArray.h */; };
 		FD31607B12B026F700C1A359 /* AudioBus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD31604512B026F700C1A359 /* AudioBus.cpp */; };
 		FD31607C12B026F700C1A359 /* AudioBus.h in Headers */ = {isa = PBXBuildFile; fileRef = FD31604612B026F700C1A359 /* AudioBus.h */; };
@@ -6466,8 +6466,8 @@
 		FD5686C913AC180200B69C68 /* AsyncAudioDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD5686C713AC180200B69C68 /* AsyncAudioDecoder.cpp */; };
 		FD5686CA13AC180200B69C68 /* AsyncAudioDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = FD5686C813AC180200B69C68 /* AsyncAudioDecoder.h */; };
 		FD5686CC13AC181400B69C68 /* AudioBufferCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = FD5686CB13AC181400B69C68 /* AudioBufferCallback.h */; };
-		FD581FAE1520F91F003A7A75 /* Oscillator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD581FAB1520F91F003A7A75 /* Oscillator.cpp */; };
-		FD581FAF1520F91F003A7A75 /* Oscillator.h in Headers */ = {isa = PBXBuildFile; fileRef = FD581FAC1520F91F003A7A75 /* Oscillator.h */; };
+		FD581FAE1520F91F003A7A75 /* OscillatorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD581FAB1520F91F003A7A75 /* OscillatorNode.cpp */; };
+		FD581FAF1520F91F003A7A75 /* OscillatorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD581FAC1520F91F003A7A75 /* OscillatorNode.h */; };
 		FD581FB41520F93B003A7A75 /* WaveTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD581FB11520F93B003A7A75 /* WaveTable.cpp */; };
 		FD581FB51520F93B003A7A75 /* WaveTable.h in Headers */ = {isa = PBXBuildFile; fileRef = FD581FB21520F93B003A7A75 /* WaveTable.h */; };
 		FD629EA3154B47160006D026 /* AudioBasicInspectorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD629EA1154B47160006D026 /* AudioBasicInspectorNode.h */; };
@@ -6495,40 +6495,40 @@
 		FD82D7F813D4C8BD004E4372 /* JSWaveShaperNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD82D7F613D4C8BD004E4372 /* JSWaveShaperNode.h */; };
 		FD8C46EB154608E700A5910C /* AudioScheduledSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD8C46E9154608E700A5910C /* AudioScheduledSourceNode.cpp */; };
 		FD8C46EC154608E700A5910C /* AudioScheduledSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD8C46EA154608E700A5910C /* AudioScheduledSourceNode.h */; };
+		FDA15EC912B03F50003A583A /* JSAnalyserNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15EC712B03F50003A583A /* JSAnalyserNode.cpp */; };
+		FDA15ECA12B03F50003A583A /* JSAnalyserNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15EC812B03F50003A583A /* JSAnalyserNode.h */; };
 		FDA15E9D12B03EE1003A583A /* JSAudioBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8112B03EE1003A583A /* JSAudioBuffer.cpp */; };
 		FDA15E9E12B03EE1003A583A /* JSAudioBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E8212B03EE1003A583A /* JSAudioBuffer.h */; };
 		FDA15E9F12B03EE1003A583A /* JSAudioBufferSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8312B03EE1003A583A /* JSAudioBufferSourceNode.cpp */; };
 		FDA15EA012B03EE1003A583A /* JSAudioBufferSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E8412B03EE1003A583A /* JSAudioBufferSourceNode.h */; };
-		FDA15EA112B03EE1003A583A /* JSAudioChannelMerger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8512B03EE1003A583A /* JSAudioChannelMerger.cpp */; };
-		FDA15EA212B03EE1003A583A /* JSAudioChannelMerger.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E8612B03EE1003A583A /* JSAudioChannelMerger.h */; };
-		FDA15EA312B03EE1003A583A /* JSAudioChannelSplitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8712B03EE1003A583A /* JSAudioChannelSplitter.cpp */; };
-		FDA15EA412B03EE1003A583A /* JSAudioChannelSplitter.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E8812B03EE1003A583A /* JSAudioChannelSplitter.h */; };
 		FDA15EA512B03EE1003A583A /* JSAudioContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8912B03EE1003A583A /* JSAudioContext.cpp */; };
 		FDA15EA612B03EE1003A583A /* JSAudioContext.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E8A12B03EE1003A583A /* JSAudioContext.h */; };
 		FDA15EA712B03EE1003A583A /* JSAudioDestinationNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8B12B03EE1003A583A /* JSAudioDestinationNode.cpp */; };
 		FDA15EA812B03EE1003A583A /* JSAudioDestinationNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E8C12B03EE1003A583A /* JSAudioDestinationNode.h */; };
 		FDA15EA912B03EE1003A583A /* JSAudioGain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8D12B03EE1003A583A /* JSAudioGain.cpp */; };
 		FDA15EAA12B03EE1003A583A /* JSAudioGain.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E8E12B03EE1003A583A /* JSAudioGain.h */; };
-		FDA15EAB12B03EE1003A583A /* JSAudioGainNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8F12B03EE1003A583A /* JSAudioGainNode.cpp */; };
-		FDA15EAC12B03EE1003A583A /* JSAudioGainNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E9012B03EE1003A583A /* JSAudioGainNode.h */; };
 		FDA15EAD12B03EE1003A583A /* JSAudioListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E9112B03EE1003A583A /* JSAudioListener.cpp */; };
 		FDA15EAE12B03EE1003A583A /* JSAudioListener.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E9212B03EE1003A583A /* JSAudioListener.h */; };
 		FDA15EAF12B03EE1003A583A /* JSAudioNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E9312B03EE1003A583A /* JSAudioNode.cpp */; };
 		FDA15EB012B03EE1003A583A /* JSAudioNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E9412B03EE1003A583A /* JSAudioNode.h */; };
-		FDA15EB112B03EE1003A583A /* JSAudioPannerNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E9512B03EE1003A583A /* JSAudioPannerNode.cpp */; };
-		FDA15EB212B03EE1003A583A /* JSAudioPannerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E9612B03EE1003A583A /* JSAudioPannerNode.h */; };
 		FDA15EB312B03EE1003A583A /* JSAudioParam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E9712B03EE1003A583A /* JSAudioParam.cpp */; };
 		FDA15EB412B03EE1003A583A /* JSAudioParam.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E9812B03EE1003A583A /* JSAudioParam.h */; };
 		FDA15EB512B03EE1003A583A /* JSAudioProcessingEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E9912B03EE1003A583A /* JSAudioProcessingEvent.cpp */; };
 		FDA15EB612B03EE1003A583A /* JSAudioProcessingEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E9A12B03EE1003A583A /* JSAudioProcessingEvent.h */; };
 		FDA15EB712B03EE1003A583A /* JSAudioSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E9B12B03EE1003A583A /* JSAudioSourceNode.cpp */; };
 		FDA15EB812B03EE1003A583A /* JSAudioSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E9C12B03EE1003A583A /* JSAudioSourceNode.h */; };
+		FDA15EA112B03EE1003A583A /* JSChannelMergerNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8512B03EE1003A583A /* JSChannelMergerNode.cpp */; };
+		FDA15EA212B03EE1003A583A /* JSChannelMergerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E8612B03EE1003A583A /* JSChannelMergerNode.h */; };
+		FDA15EA312B03EE1003A583A /* JSChannelSplitterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8712B03EE1003A583A /* JSChannelSplitterNode.cpp */; };
+		FDA15EA412B03EE1003A583A /* JSChannelSplitterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E8812B03EE1003A583A /* JSChannelSplitterNode.h */; };
 		FDA15EBD12B03F0B003A583A /* JSConvolverNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15EBB12B03F0B003A583A /* JSConvolverNode.cpp */; };
 		FDA15EBE12B03F0B003A583A /* JSConvolverNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15EBC12B03F0B003A583A /* JSConvolverNode.h */; };
-		FDA15EC912B03F50003A583A /* JSRealtimeAnalyserNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15EC712B03F50003A583A /* JSRealtimeAnalyserNode.cpp */; };
-		FDA15ECA12B03F50003A583A /* JSRealtimeAnalyserNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15EC812B03F50003A583A /* JSRealtimeAnalyserNode.h */; };
-		FDA15ECD12B03F61003A583A /* JSJavaScriptAudioNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15ECB12B03F61003A583A /* JSJavaScriptAudioNode.cpp */; };
-		FDA15ECE12B03F61003A583A /* JSJavaScriptAudioNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15ECC12B03F61003A583A /* JSJavaScriptAudioNode.h */; };
+		FDA15EAB12B03EE1003A583A /* JSGainNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8F12B03EE1003A583A /* JSGainNode.cpp */; };
+		FDA15EAC12B03EE1003A583A /* JSGainNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E9012B03EE1003A583A /* JSGainNode.h */; };
+		FDA15EB112B03EE1003A583A /* JSPannerNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E9512B03EE1003A583A /* JSPannerNode.cpp */; };
+		FDA15EB212B03EE1003A583A /* JSPannerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E9612B03EE1003A583A /* JSPannerNode.h */; };
+		FDA15ECD12B03F61003A583A /* JSScriptProcessorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15ECB12B03F61003A583A /* JSScriptProcessorNode.cpp */; };
+		FDA15ECE12B03F61003A583A /* JSScriptProcessorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15ECC12B03F61003A583A /* JSScriptProcessorNode.h */; };
 		FDA15ED112B03F94003A583A /* JSDelayNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15ECF12B03F94003A583A /* JSDelayNode.cpp */; };
 		FDA15ED212B03F94003A583A /* JSDelayNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15ED012B03F94003A583A /* JSDelayNode.h */; };
 		FDA3E959134A49EF008D4B5A /* OfflineAudioCompletionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA3E955134A49EF008D4B5A /* OfflineAudioCompletionEvent.cpp */; };
@@ -6546,17 +6546,17 @@
 		FDC54F041399B0DA008D9117 /* BiquadFilterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDC54F011399B0DA008D9117 /* BiquadFilterNode.cpp */; };
 		FDC54F051399B0DA008D9117 /* BiquadFilterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDC54F021399B0DA008D9117 /* BiquadFilterNode.h */; };
 		FDE2D55B159E66EB00DCCCF8 /* AudioIOCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = FDE2D55A159E66EB00DCCCF8 /* AudioIOCallback.h */; };
-		FDEA6242152102E200479DF0 /* JSOscillator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEA6240152102E200479DF0 /* JSOscillator.cpp */; };
-		FDEA6243152102E200479DF0 /* JSOscillator.h in Headers */ = {isa = PBXBuildFile; fileRef = FDEA6241152102E200479DF0 /* JSOscillator.h */; };
+		FDEA6242152102E200479DF0 /* JSOscillatorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEA6240152102E200479DF0 /* JSOscillatorNode.cpp */; };
+		FDEA6243152102E200479DF0 /* JSOscillatorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDEA6241152102E200479DF0 /* JSOscillatorNode.h */; };
 		FDEA6246152102FC00479DF0 /* JSWaveTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEA6244152102FC00479DF0 /* JSWaveTable.cpp */; };
 		FDEA6247152102FC00479DF0 /* JSWaveTable.h in Headers */ = {isa = PBXBuildFile; fileRef = FDEA6245152102FC00479DF0 /* JSWaveTable.h */; };
 		FDEAAAF312B02EE400DCF33B /* JSAudioBufferSourceNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEAAAEF12B02EE400DCF33B /* JSAudioBufferSourceNodeCustom.cpp */; };
 		FDEAAAF412B02EE400DCF33B /* JSAudioContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEAAAF012B02EE400DCF33B /* JSAudioContextCustom.cpp */; };
-		FDEAAAFE12B02F4900DCF33B /* JSJavaScriptAudioNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEAAAFD12B02F4900DCF33B /* JSJavaScriptAudioNodeCustom.cpp */; };
 		FDF09DC81399B62200688E5B /* JSBiquadFilterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDF09DC61399B62200688E5B /* JSBiquadFilterNode.cpp */; };
 		FDF09DC91399B62200688E5B /* JSBiquadFilterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDF09DC71399B62200688E5B /* JSBiquadFilterNode.h */; };
 		FDF6BAF8134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDF6BAF6134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp */; };
 		FDF6BAF9134A4C9800822920 /* JSOfflineAudioCompletionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = FDF6BAF7134A4C9800822920 /* JSOfflineAudioCompletionEvent.h */; };
+		FDEAAAFE12B02F4900DCF33B /* JSScriptProcessorNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEAAAFD12B02F4900DCF33B /* JSScriptProcessorNodeCustom.cpp */; };
 		FDF7E9C313AC21DB00A51EAC /* JSAudioBufferCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDF7E9C113AC21DB00A51EAC /* JSAudioBufferCallback.cpp */; };
 		FDF7E9C413AC21DB00A51EAC /* JSAudioBufferCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = FDF7E9C213AC21DB00A51EAC /* JSAudioBufferCallback.h */; };
 		FE6FD4880F676E5700092873 /* Coordinates.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6FD4850F676E5700092873 /* Coordinates.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13790,12 +13790,6 @@
 		FD315FB112B0267500C1A359 /* AudioBufferSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioBufferSourceNode.cpp; sourceTree = "<group>"; };
 		FD315FB212B0267500C1A359 /* AudioBufferSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioBufferSourceNode.h; sourceTree = "<group>"; };
 		FD315FB312B0267500C1A359 /* AudioBufferSourceNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AudioBufferSourceNode.idl; sourceTree = "<group>"; };
-		FD315FB412B0267500C1A359 /* AudioChannelMerger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioChannelMerger.cpp; sourceTree = "<group>"; };
-		FD315FB512B0267500C1A359 /* AudioChannelMerger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioChannelMerger.h; sourceTree = "<group>"; };
-		FD315FB612B0267500C1A359 /* AudioChannelMerger.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AudioChannelMerger.idl; sourceTree = "<group>"; };
-		FD315FB712B0267500C1A359 /* AudioChannelSplitter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioChannelSplitter.cpp; sourceTree = "<group>"; };
-		FD315FB812B0267500C1A359 /* AudioChannelSplitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioChannelSplitter.h; sourceTree = "<group>"; };
-		FD315FB912B0267500C1A359 /* AudioChannelSplitter.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AudioChannelSplitter.idl; sourceTree = "<group>"; };
 		FD315FBA12B0267500C1A359 /* AudioContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioContext.cpp; sourceTree = "<group>"; };
 		FD315FBB12B0267500C1A359 /* AudioContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioContext.h; sourceTree = "<group>"; };
 		FD315FBC12B0267500C1A359 /* AudioContext.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AudioContext.idl; sourceTree = "<group>"; };
@@ -13804,9 +13798,9 @@
 		FD315FBF12B0267500C1A359 /* AudioDestinationNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AudioDestinationNode.idl; sourceTree = "<group>"; };
 		FD315FC012B0267500C1A359 /* AudioGain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioGain.h; sourceTree = "<group>"; };
 		FD315FC112B0267500C1A359 /* AudioGain.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AudioGain.idl; sourceTree = "<group>"; };
-		FD315FC212B0267500C1A359 /* AudioGainNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioGainNode.cpp; sourceTree = "<group>"; };
-		FD315FC312B0267500C1A359 /* AudioGainNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioGainNode.h; sourceTree = "<group>"; };
-		FD315FC412B0267500C1A359 /* AudioGainNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AudioGainNode.idl; sourceTree = "<group>"; };
+		FD315FF312B0267600C1A359 /* AnalyserNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnalyserNode.cpp; sourceTree = "<group>"; };
+		FD315FF412B0267600C1A359 /* AnalyserNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnalyserNode.h; sourceTree = "<group>"; };
+		FD315FF512B0267600C1A359 /* AnalyserNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AnalyserNode.idl; sourceTree = "<group>"; };
 		FD315FC512B0267500C1A359 /* AudioListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioListener.cpp; sourceTree = "<group>"; };
 		FD315FC612B0267500C1A359 /* AudioListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioListener.h; sourceTree = "<group>"; };
 		FD315FC712B0267500C1A359 /* AudioListener.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AudioListener.idl; sourceTree = "<group>"; };
@@ -13817,9 +13811,6 @@
 		FD315FCC12B0267500C1A359 /* AudioNodeInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioNodeInput.h; sourceTree = "<group>"; };
 		FD315FCD12B0267500C1A359 /* AudioNodeOutput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioNodeOutput.cpp; sourceTree = "<group>"; };
 		FD315FCE12B0267500C1A359 /* AudioNodeOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioNodeOutput.h; sourceTree = "<group>"; };
-		FD315FCF12B0267500C1A359 /* AudioPannerNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioPannerNode.cpp; sourceTree = "<group>"; };
-		FD315FD012B0267500C1A359 /* AudioPannerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioPannerNode.h; sourceTree = "<group>"; };
-		FD315FD112B0267500C1A359 /* AudioPannerNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AudioPannerNode.idl; sourceTree = "<group>"; };
 		FD315FD212B0267500C1A359 /* AudioParam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioParam.cpp; sourceTree = "<group>"; };
 		FD315FD312B0267500C1A359 /* AudioParam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioParam.h; sourceTree = "<group>"; };
 		FD315FD412B0267500C1A359 /* AudioParam.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AudioParam.idl; sourceTree = "<group>"; };
@@ -13832,6 +13823,12 @@
 		FD315FDB12B0267600C1A359 /* BiquadDSPKernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BiquadDSPKernel.h; sourceTree = "<group>"; };
 		FD315FDC12B0267600C1A359 /* BiquadProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BiquadProcessor.cpp; sourceTree = "<group>"; };
 		FD315FDD12B0267600C1A359 /* BiquadProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BiquadProcessor.h; sourceTree = "<group>"; };
+		FD315FB412B0267500C1A359 /* ChannelMergerNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChannelMergerNode.cpp; sourceTree = "<group>"; };
+		FD315FB512B0267500C1A359 /* ChannelMergerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChannelMergerNode.h; sourceTree = "<group>"; };
+		FD315FB612B0267500C1A359 /* ChannelMergerNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChannelMergerNode.idl; sourceTree = "<group>"; };
+		FD315FB712B0267500C1A359 /* ChannelSplitterNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChannelSplitterNode.cpp; sourceTree = "<group>"; };
+		FD315FB812B0267500C1A359 /* ChannelSplitterNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChannelSplitterNode.h; sourceTree = "<group>"; };
+		FD315FB912B0267500C1A359 /* ChannelSplitterNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChannelSplitterNode.idl; sourceTree = "<group>"; };
 		FD315FDE12B0267600C1A359 /* ConvolverNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConvolverNode.cpp; sourceTree = "<group>"; };
 		FD315FDF12B0267600C1A359 /* ConvolverNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConvolverNode.h; sourceTree = "<group>"; };
 		FD315FE012B0267600C1A359 /* ConvolverNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ConvolverNode.idl; sourceTree = "<group>"; };
@@ -13842,14 +13839,17 @@
 		FD315FE512B0267600C1A359 /* DelayNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DelayNode.idl; sourceTree = "<group>"; };
 		FD315FE612B0267600C1A359 /* DelayProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DelayProcessor.cpp; sourceTree = "<group>"; };
 		FD315FE712B0267600C1A359 /* DelayProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelayProcessor.h; sourceTree = "<group>"; };
-		FD315FEB12B0267600C1A359 /* JavaScriptAudioNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptAudioNode.cpp; sourceTree = "<group>"; };
-		FD315FEC12B0267600C1A359 /* JavaScriptAudioNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptAudioNode.h; sourceTree = "<group>"; };
-		FD315FED12B0267600C1A359 /* JavaScriptAudioNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = JavaScriptAudioNode.idl; sourceTree = "<group>"; };
+		FD315FC212B0267500C1A359 /* GainNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GainNode.cpp; sourceTree = "<group>"; };
+		FD315FC312B0267500C1A359 /* GainNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GainNode.h; sourceTree = "<group>"; };
+		FD315FC412B0267500C1A359 /* GainNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GainNode.idl; sourceTree = "<group>"; };
+		FD315FCF12B0267500C1A359 /* PannerNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PannerNode.cpp; sourceTree = "<group>"; };
+		FD315FD012B0267500C1A359 /* PannerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PannerNode.h; sourceTree = "<group>"; };
+		FD315FD112B0267500C1A359 /* PannerNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PannerNode.idl; sourceTree = "<group>"; };
+		FD315FEB12B0267600C1A359 /* ScriptProcessorNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptProcessorNode.cpp; sourceTree = "<group>"; };
+		FD315FEC12B0267600C1A359 /* ScriptProcessorNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptProcessorNode.h; sourceTree = "<group>"; };
+		FD315FED12B0267600C1A359 /* ScriptProcessorNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ScriptProcessorNode.idl; sourceTree = "<group>"; };
 		FD315FF112B0267600C1A359 /* RealtimeAnalyser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeAnalyser.cpp; sourceTree = "<group>"; };
 		FD315FF212B0267600C1A359 /* RealtimeAnalyser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealtimeAnalyser.h; sourceTree = "<group>"; };
-		FD315FF312B0267600C1A359 /* RealtimeAnalyserNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeAnalyserNode.cpp; sourceTree = "<group>"; };
-		FD315FF412B0267600C1A359 /* RealtimeAnalyserNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealtimeAnalyserNode.h; sourceTree = "<group>"; };
-		FD315FF512B0267600C1A359 /* RealtimeAnalyserNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RealtimeAnalyserNode.idl; sourceTree = "<group>"; };
 		FD31604412B026F700C1A359 /* AudioArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioArray.h; sourceTree = "<group>"; };
 		FD31604512B026F700C1A359 /* AudioBus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioBus.cpp; sourceTree = "<group>"; };
 		FD31604612B026F700C1A359 /* AudioBus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioBus.h; sourceTree = "<group>"; };
@@ -13920,9 +13920,9 @@
 		FD5686C813AC180200B69C68 /* AsyncAudioDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncAudioDecoder.h; sourceTree = "<group>"; };
 		FD5686CB13AC181400B69C68 /* AudioBufferCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioBufferCallback.h; sourceTree = "<group>"; };
 		FD5686CD13AC183E00B69C68 /* AudioBufferCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AudioBufferCallback.idl; sourceTree = "<group>"; };
-		FD581FAB1520F91F003A7A75 /* Oscillator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Oscillator.cpp; sourceTree = "<group>"; };
-		FD581FAC1520F91F003A7A75 /* Oscillator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Oscillator.h; sourceTree = "<group>"; };
-		FD581FAD1520F91F003A7A75 /* Oscillator.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Oscillator.idl; sourceTree = "<group>"; };
+		FD581FAB1520F91F003A7A75 /* OscillatorNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OscillatorNode.cpp; sourceTree = "<group>"; };
+		FD581FAC1520F91F003A7A75 /* OscillatorNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OscillatorNode.h; sourceTree = "<group>"; };
+		FD581FAD1520F91F003A7A75 /* OscillatorNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OscillatorNode.idl; sourceTree = "<group>"; };
 		FD581FB11520F93B003A7A75 /* WaveTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WaveTable.cpp; sourceTree = "<group>"; };
 		FD581FB21520F93B003A7A75 /* WaveTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaveTable.h; sourceTree = "<group>"; };
 		FD581FB31520F93B003A7A75 /* WaveTable.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WaveTable.idl; sourceTree = "<group>"; };
@@ -13955,42 +13955,42 @@
 		FD82D7F613D4C8BD004E4372 /* JSWaveShaperNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWaveShaperNode.h; sourceTree = "<group>"; };
 		FD8C46E9154608E700A5910C /* AudioScheduledSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioScheduledSourceNode.cpp; sourceTree = "<group>"; };
 		FD8C46EA154608E700A5910C /* AudioScheduledSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioScheduledSourceNode.h; sourceTree = "<group>"; };
+		FDA15EC712B03F50003A583A /* JSAnalyserNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAnalyserNode.cpp; sourceTree = "<group>"; };
+		FDA15EC812B03F50003A583A /* JSAnalyserNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAnalyserNode.h; sourceTree = "<group>"; };
 		FDA15E8112B03EE1003A583A /* JSAudioBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioBuffer.cpp; sourceTree = "<group>"; };
 		FDA15E8212B03EE1003A583A /* JSAudioBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioBuffer.h; sourceTree = "<group>"; };
 		FDA15E8312B03EE1003A583A /* JSAudioBufferSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioBufferSourceNode.cpp; sourceTree = "<group>"; };
 		FDA15E8412B03EE1003A583A /* JSAudioBufferSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioBufferSourceNode.h; sourceTree = "<group>"; };
-		FDA15E8512B03EE1003A583A /* JSAudioChannelMerger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioChannelMerger.cpp; sourceTree = "<group>"; };
-		FDA15E8612B03EE1003A583A /* JSAudioChannelMerger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioChannelMerger.h; sourceTree = "<group>"; };
-		FDA15E8712B03EE1003A583A /* JSAudioChannelSplitter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioChannelSplitter.cpp; sourceTree = "<group>"; };
-		FDA15E8812B03EE1003A583A /* JSAudioChannelSplitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioChannelSplitter.h; sourceTree = "<group>"; };
 		FDA15E8912B03EE1003A583A /* JSAudioContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioContext.cpp; sourceTree = "<group>"; };
 		FDA15E8A12B03EE1003A583A /* JSAudioContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioContext.h; sourceTree = "<group>"; };
 		FDA15E8B12B03EE1003A583A /* JSAudioDestinationNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioDestinationNode.cpp; sourceTree = "<group>"; };
 		FDA15E8C12B03EE1003A583A /* JSAudioDestinationNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioDestinationNode.h; sourceTree = "<group>"; };
 		FDA15E8D12B03EE1003A583A /* JSAudioGain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioGain.cpp; sourceTree = "<group>"; };
 		FDA15E8E12B03EE1003A583A /* JSAudioGain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioGain.h; sourceTree = "<group>"; };
-		FDA15E8F12B03EE1003A583A /* JSAudioGainNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioGainNode.cpp; sourceTree = "<group>"; };
-		FDA15E9012B03EE1003A583A /* JSAudioGainNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioGainNode.h; sourceTree = "<group>"; };
 		FDA15E9112B03EE1003A583A /* JSAudioListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioListener.cpp; sourceTree = "<group>"; };
 		FDA15E9212B03EE1003A583A /* JSAudioListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioListener.h; sourceTree = "<group>"; };
 		FDA15E9312B03EE1003A583A /* JSAudioNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioNode.cpp; sourceTree = "<group>"; };
 		FDA15E9412B03EE1003A583A /* JSAudioNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioNode.h; sourceTree = "<group>"; };
-		FDA15E9512B03EE1003A583A /* JSAudioPannerNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioPannerNode.cpp; sourceTree = "<group>"; };
-		FDA15E9612B03EE1003A583A /* JSAudioPannerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioPannerNode.h; sourceTree = "<group>"; };
 		FDA15E9712B03EE1003A583A /* JSAudioParam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioParam.cpp; sourceTree = "<group>"; };
 		FDA15E9812B03EE1003A583A /* JSAudioParam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioParam.h; sourceTree = "<group>"; };
 		FDA15E9912B03EE1003A583A /* JSAudioProcessingEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioProcessingEvent.cpp; sourceTree = "<group>"; };
 		FDA15E9A12B03EE1003A583A /* JSAudioProcessingEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioProcessingEvent.h; sourceTree = "<group>"; };
 		FDA15E9B12B03EE1003A583A /* JSAudioSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioSourceNode.cpp; sourceTree = "<group>"; };
 		FDA15E9C12B03EE1003A583A /* JSAudioSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioSourceNode.h; sourceTree = "<group>"; };
+		FDA15E8512B03EE1003A583A /* JSChannelMergerNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSChannelMergerNode.cpp; sourceTree = "<group>"; };
+		FDA15E8612B03EE1003A583A /* JSChannelMergerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSChannelMergerNode.h; sourceTree = "<group>"; };
+		FDA15E8712B03EE1003A583A /* JSChannelSplitterNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSChannelSplitterNode.cpp; sourceTree = "<group>"; };
+		FDA15E8812B03EE1003A583A /* JSChannelSplitterNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSChannelSplitterNode.h; sourceTree = "<group>"; };
 		FDA15EBB12B03F0B003A583A /* JSConvolverNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSConvolverNode.cpp; sourceTree = "<group>"; };
 		FDA15EBC12B03F0B003A583A /* JSConvolverNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSConvolverNode.h; sourceTree = "<group>"; };
-		FDA15EC712B03F50003A583A /* JSRealtimeAnalyserNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRealtimeAnalyserNode.cpp; sourceTree = "<group>"; };
-		FDA15EC812B03F50003A583A /* JSRealtimeAnalyserNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRealtimeAnalyserNode.h; sourceTree = "<group>"; };
-		FDA15ECB12B03F61003A583A /* JSJavaScriptAudioNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSJavaScriptAudioNode.cpp; sourceTree = "<group>"; };
-		FDA15ECC12B03F61003A583A /* JSJavaScriptAudioNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSJavaScriptAudioNode.h; sourceTree = "<group>"; };
 		FDA15ECF12B03F94003A583A /* JSDelayNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDelayNode.cpp; sourceTree = "<group>"; };
 		FDA15ED012B03F94003A583A /* JSDelayNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDelayNode.h; sourceTree = "<group>"; };
+		FDA15E8F12B03EE1003A583A /* JSGainNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGainNode.cpp; sourceTree = "<group>"; };
+		FDA15E9012B03EE1003A583A /* JSGainNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGainNode.h; sourceTree = "<group>"; };
+		FDA15E9512B03EE1003A583A /* JSPannerNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPannerNode.cpp; sourceTree = "<group>"; };
+		FDA15E9612B03EE1003A583A /* JSPannerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPannerNode.h; sourceTree = "<group>"; };
+		FDA15ECB12B03F61003A583A /* JSScriptProcessorNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSScriptProcessorNode.cpp; sourceTree = "<group>"; };
+		FDA15ECC12B03F61003A583A /* JSScriptProcessorNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScriptProcessorNode.h; sourceTree = "<group>"; };
 		FDA3E955134A49EF008D4B5A /* OfflineAudioCompletionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OfflineAudioCompletionEvent.cpp; sourceTree = "<group>"; };
 		FDA3E956134A49EF008D4B5A /* OfflineAudioCompletionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OfflineAudioCompletionEvent.h; sourceTree = "<group>"; };
 		FDA3E957134A49EF008D4B5A /* OfflineAudioDestinationNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OfflineAudioDestinationNode.cpp; sourceTree = "<group>"; };
@@ -14008,17 +14008,17 @@
 		FDC54F021399B0DA008D9117 /* BiquadFilterNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BiquadFilterNode.h; sourceTree = "<group>"; };
 		FDC54F031399B0DA008D9117 /* BiquadFilterNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BiquadFilterNode.idl; sourceTree = "<group>"; };
 		FDE2D55A159E66EB00DCCCF8 /* AudioIOCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioIOCallback.h; sourceTree = "<group>"; };
-		FDEA6240152102E200479DF0 /* JSOscillator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOscillator.cpp; sourceTree = "<group>"; };
-		FDEA6241152102E200479DF0 /* JSOscillator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOscillator.h; sourceTree = "<group>"; };
+		FDEA6240152102E200479DF0 /* JSOscillatorNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOscillatorNode.cpp; sourceTree = "<group>"; };
+		FDEA6241152102E200479DF0 /* JSOscillatorNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOscillatorNode.h; sourceTree = "<group>"; };
 		FDEA6244152102FC00479DF0 /* JSWaveTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWaveTable.cpp; sourceTree = "<group>"; };
 		FDEA6245152102FC00479DF0 /* JSWaveTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWaveTable.h; sourceTree = "<group>"; };
 		FDEAAAEF12B02EE400DCF33B /* JSAudioBufferSourceNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioBufferSourceNodeCustom.cpp; sourceTree = "<group>"; };
 		FDEAAAF012B02EE400DCF33B /* JSAudioContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioContextCustom.cpp; sourceTree = "<group>"; };
-		FDEAAAFD12B02F4900DCF33B /* JSJavaScriptAudioNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSJavaScriptAudioNodeCustom.cpp; sourceTree = "<group>"; };
 		FDF09DC61399B62200688E5B /* JSBiquadFilterNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBiquadFilterNode.cpp; sourceTree = "<group>"; };
 		FDF09DC71399B62200688E5B /* JSBiquadFilterNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBiquadFilterNode.h; sourceTree = "<group>"; };
 		FDF6BAF6134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOfflineAudioCompletionEvent.cpp; sourceTree = "<group>"; };
 		FDF6BAF7134A4C9800822920 /* JSOfflineAudioCompletionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOfflineAudioCompletionEvent.h; sourceTree = "<group>"; };
+		FDEAAAFD12B02F4900DCF33B /* JSScriptProcessorNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSScriptProcessorNodeCustom.cpp; sourceTree = "<group>"; };
 		FDF7E9C113AC21DB00A51EAC /* JSAudioBufferCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioBufferCallback.cpp; sourceTree = "<group>"; };
 		FDF7E9C213AC21DB00A51EAC /* JSAudioBufferCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioBufferCallback.h; sourceTree = "<group>"; };
 		FE6FD4850F676E5700092873 /* Coordinates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Coordinates.h; sourceTree = "<group>"; };
@@ -14626,8 +14626,8 @@
 		1C5FAECA0DCFD8C900D58F78 /* Inspector */ = {
 			isa = PBXGroup;
 			children = (
-				7A563E5412DE32B000F4536D /* InjectedScriptSource.h */,
 				AA912750157E35A500454E54 /* InjectedScriptCanvasModuleSource.h */,
+				7A563E5412DE32B000F4536D /* InjectedScriptSource.h */,
 				4F707A9711EF679400ACDA69 /* InspectorBackendDispatcher.cpp */,
 				4F707A9811EF679400ACDA69 /* InspectorBackendDispatcher.h */,
 				4F4F5FFA11CBD2D200A186BF /* InspectorFrontend.cpp */,
@@ -14667,6 +14667,9 @@
 				F3644AFE1119805900E0D537 /* InjectedScript.h */,
 				AAB6054A15874C58007B5031 /* InjectedScriptBase.cpp */,
 				AAB6054B15874C58007B5031 /* InjectedScriptBase.h */,
+				AA73183C159255B900A93E6E /* InjectedScriptCanvasModule.cpp */,
+				AA73183D159255B900A93E6E /* InjectedScriptCanvasModule.h */,
+				AA9030FE157E16A000276247 /* InjectedScriptCanvasModuleSource.js */,
 				7A0E76F610BF08ED00A0276E /* InjectedScriptHost.cpp */,
 				7A0E76F710BF08ED00A0276E /* InjectedScriptHost.h */,
 				7A0E76F810BF08ED00A0276E /* InjectedScriptHost.idl */,
@@ -14675,9 +14678,6 @@
 				AAB6054C15874C58007B5031 /* InjectedScriptModule.cpp */,
 				AAB6054D15874C58007B5031 /* InjectedScriptModule.h */,
 				7A563F9512DF5C9100F4536D /* InjectedScriptSource.js */,
-				AA73183C159255B900A93E6E /* InjectedScriptCanvasModule.cpp */,
-				AA73183D159255B900A93E6E /* InjectedScriptCanvasModule.h */,
-				AA9030FE157E16A000276247 /* InjectedScriptCanvasModuleSource.js */,
 				1C435CD414E8545B004E10EA /* Inspector-0.1.json */,
 				1C435CD514E8545B004E10EA /* Inspector-1.0.json */,
 				1C435CD314E8544F004E10EA /* Inspector.json */,
@@ -14687,6 +14687,9 @@
 				B885E8D311E06DD2009FFBF4 /* InspectorApplicationCacheAgent.h */,
 				7AA51B6D1483B61600AD2752 /* InspectorBaseAgent.cpp */,
 				7AA51B6C1483B61600AD2752 /* InspectorBaseAgent.h */,
+				AAD766E8157E502F00E85423 /* InspectorCanvasAgent.cpp */,
+				AAD766E9157E502F00E85423 /* InspectorCanvasAgent.h */,
+				AAD766EA157E502F00E85423 /* InspectorCanvasInstrumentation.h */,
 				7A1F2B51126C61B20006A7E6 /* InspectorClient.cpp */,
 				1C81B9580E97330800266E07 /* InspectorClient.h */,
 				F3335BF612E07DC300D33011 /* InspectorConsoleAgent.cpp */,
@@ -14752,9 +14755,6 @@
 				754133A7102E00E800075D00 /* InspectorTimelineAgent.h */,
 				4F3289B311A42AAB005ABE7E /* InspectorValues.cpp */,
 				4F3289B411A42AAB005ABE7E /* InspectorValues.h */,
-				AAD766E8157E502F00E85423 /* InspectorCanvasAgent.cpp */,
-				AAD766E9157E502F00E85423 /* InspectorCanvasAgent.h */,
-				AAD766EA157E502F00E85423 /* InspectorCanvasInstrumentation.h */,
 				F3810C191365A49600ED6E33 /* InspectorWorkerAgent.cpp */,
 				F3810C1A1365A49600ED6E33 /* InspectorWorkerAgent.h */,
 				F375CC061150D300008DDB81 /* InspectorWorkerResource.h */,
@@ -15815,9 +15815,9 @@
 				E0FEF371B27C53EAC1C1FBEE /* EventSource.cpp */,
 				E0FEF371B17C53EAC1C1FBEE /* EventSource.h */,
 				E0FEF371B07C53EAC1C1FBEE /* EventSource.idl */,
-				14993BE30B2F2B1C0050497F /* FocusController.cpp */,
 				97C740121603F7A10011FF2D /* FeatureObserver.cpp */,
 				97C740131603F7A10011FF2D /* FeatureObserver.h */,
+				14993BE30B2F2B1C0050497F /* FocusController.cpp */,
 				14993BE40B2F2B1C0050497F /* FocusController.h */,
 				062287830B4DB322000C34DF /* FocusDirection.h */,
 				65BF02290974816300C43196 /* Frame.cpp */,
@@ -17367,7 +17367,6 @@
 				F55B3D7D1251F12D003EF269 /* CheckboxInputType.cpp */,
 				F55B3D7E1251F12D003EF269 /* CheckboxInputType.h */,
 				4ACBC0BC12713CBD0094F9B2 /* ClassList.cpp */,
-				CDB859F4160D489900E5B07F /* MediaKeyEvent.cpp */,
 				4ACBC0BD12713CBD0094F9B2 /* ClassList.h */,
 				93C441FF0F813AE100C1A634 /* CollectionType.h */,
 				F55B3D7F1251F12D003EF269 /* ColorInputType.cpp */,
@@ -17684,9 +17683,12 @@
 				E446139C0CD6331000FADA75 /* MediaError.idl */,
 				07A6D1E91491137700051D0C /* MediaFragmentURIParser.cpp */,
 				07A6D1EA1491137700051D0C /* MediaFragmentURIParser.h */,
-				9B2F7CF714562120007F8B50 /* MicroDataItemValue.cpp */,
 				CDB859F2160D489900E5B07F /* MediaKeyError.h */,
+				CDB859F3160D489900E5B07F /* MediaKeyError.idl */,
+				CDB859F4160D489900E5B07F /* MediaKeyEvent.cpp */,
 				CDB859F5160D489900E5B07F /* MediaKeyEvent.h */,
+				CDB859F6160D489900E5B07F /* MediaKeyEvent.idl */,
+				9B2F7CF714562120007F8B50 /* MicroDataItemValue.cpp */,
 				9B2F7CF814562120007F8B50 /* MicroDataItemValue.h */,
 				1059457115B428C3004D37FD /* MicroDataItemValue.idl */,
 				F55B3D911251F12D003EF269 /* MonthInputType.cpp */,
@@ -17738,8 +17740,6 @@
 				E44613A00CD6331000FADA75 /* VoidCallback.idl */,
 				F55B3DAB1251F12D003EF269 /* WeekInputType.cpp */,
 				F55B3DAC1251F12D003EF269 /* WeekInputType.h */,
-				CDB859F3160D489900E5B07F /* MediaKeyError.idl */,
-				CDB859F6160D489900E5B07F /* MediaKeyEvent.idl */,
 			);
 			path = html;
 			sourceTree = "<group>";
@@ -18281,10 +18281,6 @@
 		A83B79080CCAFF2B000B0825 /* HTML */ = {
 			isa = PBXGroup;
 			children = (
-				CDB859F8160D493E00E5B07F /* JSMediaKeyEvent.cpp */,
-				CDB859F9160D493E00E5B07F /* JSMediaKeyEvent.h */,
-				CDB859F0160D42DD00E5B07F /* JSMediaKeyError.cpp */,
-				CDB859F1160D42DD00E5B07F /* JSMediaKeyError.h */,
 				49EECEF2105070C400099FAB /* JSArrayBuffer.cpp */,
 				49EECEF3105070C400099FAB /* JSArrayBuffer.h */,
 				49EECF19105072F300099FAB /* JSArrayBufferView.cpp */,
@@ -18477,6 +18473,10 @@
 				CD27F6E3145767580078207D /* JSMediaController.h */,
 				E44614100CD6826900FADA75 /* JSMediaError.cpp */,
 				E44614110CD6826900FADA75 /* JSMediaError.h */,
+				CDB859F0160D42DD00E5B07F /* JSMediaKeyError.cpp */,
+				CDB859F1160D42DD00E5B07F /* JSMediaKeyError.h */,
+				CDB859F8160D493E00E5B07F /* JSMediaKeyEvent.cpp */,
+				CDB859F9160D493E00E5B07F /* JSMediaKeyEvent.h */,
 				1059457515B42A0D004D37FD /* JSMicroDataItemValue.cpp */,
 				1059457915B42A43004D37FD /* JSMicroDataItemValue.h */,
 				9001787E12E0370700648462 /* JSOESStandardDerivatives.cpp */,
@@ -19968,6 +19968,7 @@
 				E134F5AA12EE343F004EC58D /* IntRectHash.h */,
 				B27535470B053814002CE64F /* IntSize.h */,
 				B27535480B053814002CE64F /* IntSizeHash.h */,
+				65CC6BED16014EC0000ED27D /* Latin1TextIterator.h */,
 				E4B41E0C0CBF90BD00AF2ECE /* MediaPlayer.cpp */,
 				E4B41E0D0CBF90BD00AF2ECE /* MediaPlayer.h */,
 				079F5E4B0F3BEBEA005E0782 /* MediaPlayerPrivate.h */,
@@ -19992,7 +19993,6 @@
 				B23540F00D00782E002382FA /* StringTruncator.cpp */,
 				B23540F10D00782E002382FA /* StringTruncator.h */,
 				087558C313B4A57D00F49307 /* SurrogatePairAwareTextIterator.cpp */,
-				65CC6BED16014EC0000ED27D /* Latin1TextIterator.h */,
 				087558C413B4A57D00F49307 /* SurrogatePairAwareTextIterator.h */,
 				087E0AF413606D0B00FA4BA8 /* SVGGlyph.cpp */,
 				087E0AF513606D0B00FA4BA8 /* SVGGlyph.h */,
@@ -20416,7 +20416,6 @@
 				7A0E76D410BF050700A0276E /* JSInjectedScriptHostCustom.cpp */,
 				F316396D1329487600A649CB /* JSInjectedScriptManager.cpp */,
 				7A74ECBC101839DA00BF939E /* JSInspectorFrontendHostCustom.cpp */,
-				FDEAAAFD12B02F4900DCF33B /* JSJavaScriptAudioNodeCustom.cpp */,
 				1C5FAEE60DCFDA6800D58F78 /* JSJavaScriptCallFrameCustom.cpp */,
 				BCE1C43F0D9830F4003B02F2 /* JSLocationCustom.cpp */,
 				1464E06B135EC10600FDB00A /* JSMediaListCustom.cpp */,
@@ -20438,6 +20437,7 @@
 				A85F22081430377D007CC884 /* JSPopStateEventCustom.cpp */,
 				E1AD12D51295D0BD00ACA989 /* JSProcessingInstructionCustom.cpp */,
 				4998AED313FC417F0090B1AA /* JSRequestAnimationFrameCallbackCustom.cpp */,
+				FDEAAAFD12B02F4900DCF33B /* JSScriptProcessorNodeCustom.cpp */,
 				9FA37EE61172FCF000C4CD55 /* JSScriptProfileNodeCustom.cpp */,
 				51DCE8010CAC9F1C00488358 /* JSSQLResultSetRowListCustom.cpp */,
 				1AD2316D0CD269E700C1F194 /* JSSQLTransactionCustom.cpp */,
@@ -21473,6 +21473,8 @@
 				0F580CF90F12DE9B0051D689 /* RenderLayerCompositor.h */,
 				50D10D971545F5760096D288 /* RenderLayerFilterInfo.cpp */,
 				50D10D981545F5760096D288 /* RenderLayerFilterInfo.h */,
+				3C244FE5A375AC633F88BE6F /* RenderLayerModelObject.cpp */,
+				3C244FE4A375AC633F88BE6F /* RenderLayerModelObject.h */,
 				BC33FB1A0F30EE85002CDD7C /* RenderLineBoxList.cpp */,
 				0BE030A10F3112FB003C1A46 /* RenderLineBoxList.h */,
 				ABB5419C0ACDDFE4002820EB /* RenderListBox.cpp */,
@@ -21567,8 +21569,6 @@
 				BCEA484B097D93020094C9E4 /* RenderTheme.h */,
 				BCEA4848097D93020094C9E4 /* RenderThemeMac.h */,
 				BCEA4849097D93020094C9E4 /* RenderThemeMac.mm */,
-				3C244FE5A375AC633F88BE6F /* RenderLayerModelObject.cpp */,
-				3C244FE4A375AC633F88BE6F /* RenderLayerModelObject.h */,
 				93955A4203D72932008635CE /* RenderTreeAsText.cpp */,
 				93955A4103D72932008635CE /* RenderTreeAsText.h */,
 				E4B41E330CBFB60900AF2ECE /* RenderVideo.cpp */,
@@ -22012,6 +22012,9 @@
 		FD315FA212B025B100C1A359 /* webaudio */ = {
 			isa = PBXGroup;
 			children = (
+				FD315FF312B0267600C1A359 /* AnalyserNode.cpp */,
+				FD315FF412B0267600C1A359 /* AnalyserNode.h */,
+				FD315FF512B0267600C1A359 /* AnalyserNode.idl */,
 				FD5686C713AC180200B69C68 /* AsyncAudioDecoder.cpp */,
 				FD5686C813AC180200B69C68 /* AsyncAudioDecoder.h */,
 				FD629EA2154B47160006D026 /* AudioBasicInspectorNode.cpp */,
@@ -22026,12 +22029,6 @@
 				FD315FB112B0267500C1A359 /* AudioBufferSourceNode.cpp */,
 				FD315FB212B0267500C1A359 /* AudioBufferSourceNode.h */,
 				FD315FB312B0267500C1A359 /* AudioBufferSourceNode.idl */,
-				FD315FB412B0267500C1A359 /* AudioChannelMerger.cpp */,
-				FD315FB512B0267500C1A359 /* AudioChannelMerger.h */,
-				FD315FB612B0267500C1A359 /* AudioChannelMerger.idl */,
-				FD315FB712B0267500C1A359 /* AudioChannelSplitter.cpp */,
-				FD315FB812B0267500C1A359 /* AudioChannelSplitter.h */,
-				FD315FB912B0267500C1A359 /* AudioChannelSplitter.idl */,
 				FD315FBA12B0267500C1A359 /* AudioContext.cpp */,
 				FD315FBB12B0267500C1A359 /* AudioContext.h */,
 				FD315FBC12B0267500C1A359 /* AudioContext.idl */,
@@ -22040,9 +22037,6 @@
 				FD315FBF12B0267500C1A359 /* AudioDestinationNode.idl */,
 				FD315FC012B0267500C1A359 /* AudioGain.h */,
 				FD315FC112B0267500C1A359 /* AudioGain.idl */,
-				FD315FC212B0267500C1A359 /* AudioGainNode.cpp */,
-				FD315FC312B0267500C1A359 /* AudioGainNode.h */,
-				FD315FC412B0267500C1A359 /* AudioGainNode.idl */,
 				FD315FC512B0267500C1A359 /* AudioListener.cpp */,
 				FD315FC612B0267500C1A359 /* AudioListener.h */,
 				FD315FC712B0267500C1A359 /* AudioListener.idl */,
@@ -22053,9 +22047,6 @@
 				FD315FCC12B0267500C1A359 /* AudioNodeInput.h */,
 				FD315FCD12B0267500C1A359 /* AudioNodeOutput.cpp */,
 				FD315FCE12B0267500C1A359 /* AudioNodeOutput.h */,
-				FD315FCF12B0267500C1A359 /* AudioPannerNode.cpp */,
-				FD315FD012B0267500C1A359 /* AudioPannerNode.h */,
-				FD315FD112B0267500C1A359 /* AudioPannerNode.idl */,
 				FD315FD212B0267500C1A359 /* AudioParam.cpp */,
 				FD315FD312B0267500C1A359 /* AudioParam.h */,
 				FD315FD412B0267500C1A359 /* AudioParam.idl */,
@@ -22077,6 +22068,12 @@
 				FDC54F031399B0DA008D9117 /* BiquadFilterNode.idl */,
 				FD315FDC12B0267600C1A359 /* BiquadProcessor.cpp */,
 				FD315FDD12B0267600C1A359 /* BiquadProcessor.h */,
+				FD315FB412B0267500C1A359 /* ChannelMergerNode.cpp */,
+				FD315FB512B0267500C1A359 /* ChannelMergerNode.h */,
+				FD315FB612B0267500C1A359 /* ChannelMergerNode.idl */,
+				FD315FB712B0267500C1A359 /* ChannelSplitterNode.cpp */,
+				FD315FB812B0267500C1A359 /* ChannelSplitterNode.h */,
+				FD315FB912B0267500C1A359 /* ChannelSplitterNode.idl */,
 				FD315FDE12B0267600C1A359 /* ConvolverNode.cpp */,
 				FD315FDF12B0267600C1A359 /* ConvolverNode.h */,
 				FD315FE012B0267600C1A359 /* ConvolverNode.idl */,
@@ -22092,9 +22089,9 @@
 				FD6ED2C1136B8E42003CF072 /* DynamicsCompressorNode.cpp */,
 				FD6ED2C2136B8E42003CF072 /* DynamicsCompressorNode.h */,
 				FD6ED2C9136B8E9D003CF072 /* DynamicsCompressorNode.idl */,
-				FD315FEB12B0267600C1A359 /* JavaScriptAudioNode.cpp */,
-				FD315FEC12B0267600C1A359 /* JavaScriptAudioNode.h */,
-				FD315FED12B0267600C1A359 /* JavaScriptAudioNode.idl */,
+				FD315FC212B0267500C1A359 /* GainNode.cpp */,
+				FD315FC312B0267500C1A359 /* GainNode.h */,
+				FD315FC412B0267500C1A359 /* GainNode.idl */,
 				FD6F252913F5EF0E0065165F /* MediaElementAudioSourceNode.cpp */,
 				FD6F252A13F5EF0E0065165F /* MediaElementAudioSourceNode.h */,
 				FD6F252B13F5EF0E0065165F /* MediaElementAudioSourceNode.idl */,
@@ -22106,14 +22103,17 @@
 				FDA3E95D134A49FF008D4B5A /* OfflineAudioCompletionEvent.idl */,
 				FDA3E957134A49EF008D4B5A /* OfflineAudioDestinationNode.cpp */,
 				FDA3E958134A49EF008D4B5A /* OfflineAudioDestinationNode.h */,
-				FD581FAB1520F91F003A7A75 /* Oscillator.cpp */,
-				FD581FAC1520F91F003A7A75 /* Oscillator.h */,
-				FD581FAD1520F91F003A7A75 /* Oscillator.idl */,
+				FD581FAB1520F91F003A7A75 /* OscillatorNode.cpp */,
+				FD581FAC1520F91F003A7A75 /* OscillatorNode.h */,
+				FD581FAD1520F91F003A7A75 /* OscillatorNode.idl */,
+				FD315FCF12B0267500C1A359 /* PannerNode.cpp */,
+				FD315FD012B0267500C1A359 /* PannerNode.h */,
+				FD315FD112B0267500C1A359 /* PannerNode.idl */,
 				FD315FF112B0267600C1A359 /* RealtimeAnalyser.cpp */,
 				FD315FF212B0267600C1A359 /* RealtimeAnalyser.h */,
-				FD315FF312B0267600C1A359 /* RealtimeAnalyserNode.cpp */,
-				FD315FF412B0267600C1A359 /* RealtimeAnalyserNode.h */,
-				FD315FF512B0267600C1A359 /* RealtimeAnalyserNode.idl */,
+				FD315FEB12B0267600C1A359 /* ScriptProcessorNode.cpp */,
+				FD315FEC12B0267600C1A359 /* ScriptProcessorNode.h */,
+				FD315FED12B0267600C1A359 /* ScriptProcessorNode.idl */,
 				FD7F298A13D4C0CB00AD9535 /* WaveShaperDSPKernel.cpp */,
 				FD7F298B13D4C0CB00AD9535 /* WaveShaperDSPKernel.h */,
 				FD7F298C13D4C0CB00AD9535 /* WaveShaperNode.cpp */,
@@ -22222,30 +22222,24 @@
 		FDA15E7B12B03E04003A583A /* WebAudio */ = {
 			isa = PBXGroup;
 			children = (
+				FDA15EC712B03F50003A583A /* JSAnalyserNode.cpp */,
+				FDA15EC812B03F50003A583A /* JSAnalyserNode.h */,
 				FDA15E8112B03EE1003A583A /* JSAudioBuffer.cpp */,
 				FDA15E8212B03EE1003A583A /* JSAudioBuffer.h */,
 				FDF7E9C113AC21DB00A51EAC /* JSAudioBufferCallback.cpp */,
 				FDF7E9C213AC21DB00A51EAC /* JSAudioBufferCallback.h */,
 				FDA15E8312B03EE1003A583A /* JSAudioBufferSourceNode.cpp */,
 				FDA15E8412B03EE1003A583A /* JSAudioBufferSourceNode.h */,
-				FDA15E8512B03EE1003A583A /* JSAudioChannelMerger.cpp */,
-				FDA15E8612B03EE1003A583A /* JSAudioChannelMerger.h */,
-				FDA15E8712B03EE1003A583A /* JSAudioChannelSplitter.cpp */,
-				FDA15E8812B03EE1003A583A /* JSAudioChannelSplitter.h */,
 				FDA15E8912B03EE1003A583A /* JSAudioContext.cpp */,
 				FDA15E8A12B03EE1003A583A /* JSAudioContext.h */,
 				FDA15E8B12B03EE1003A583A /* JSAudioDestinationNode.cpp */,
 				FDA15E8C12B03EE1003A583A /* JSAudioDestinationNode.h */,
 				FDA15E8D12B03EE1003A583A /* JSAudioGain.cpp */,
 				FDA15E8E12B03EE1003A583A /* JSAudioGain.h */,
-				FDA15E8F12B03EE1003A583A /* JSAudioGainNode.cpp */,
-				FDA15E9012B03EE1003A583A /* JSAudioGainNode.h */,
 				FDA15E9112B03EE1003A583A /* JSAudioListener.cpp */,
 				FDA15E9212B03EE1003A583A /* JSAudioListener.h */,
 				FDA15E9312B03EE1003A583A /* JSAudioNode.cpp */,
 				FDA15E9412B03EE1003A583A /* JSAudioNode.h */,
-				FDA15E9512B03EE1003A583A /* JSAudioPannerNode.cpp */,
-				FDA15E9612B03EE1003A583A /* JSAudioPannerNode.h */,
 				FDA15E9712B03EE1003A583A /* JSAudioParam.cpp */,
 				FDA15E9812B03EE1003A583A /* JSAudioParam.h */,
 				FDA15E9912B03EE1003A583A /* JSAudioProcessingEvent.cpp */,
@@ -22254,24 +22248,30 @@
 				FDA15E9C12B03EE1003A583A /* JSAudioSourceNode.h */,
 				FDF09DC61399B62200688E5B /* JSBiquadFilterNode.cpp */,
 				FDF09DC71399B62200688E5B /* JSBiquadFilterNode.h */,
+				FDA15E8512B03EE1003A583A /* JSChannelMergerNode.cpp */,
+				FDA15E8612B03EE1003A583A /* JSChannelMergerNode.h */,
+				FDA15E8712B03EE1003A583A /* JSChannelSplitterNode.cpp */,
+				FDA15E8812B03EE1003A583A /* JSChannelSplitterNode.h */,
 				FDA15EBB12B03F0B003A583A /* JSConvolverNode.cpp */,
 				FDA15EBC12B03F0B003A583A /* JSConvolverNode.h */,
 				FDA15ECF12B03F94003A583A /* JSDelayNode.cpp */,
 				FDA15ED012B03F94003A583A /* JSDelayNode.h */,
 				FD7868B7136B999200D403DF /* JSDynamicsCompressorNode.cpp */,
 				FD7868B8136B999200D403DF /* JSDynamicsCompressorNode.h */,
-				FDA15ECB12B03F61003A583A /* JSJavaScriptAudioNode.cpp */,
-				FDA15ECC12B03F61003A583A /* JSJavaScriptAudioNode.h */,
+				FDA15E8F12B03EE1003A583A /* JSGainNode.cpp */,
+				FDA15E9012B03EE1003A583A /* JSGainNode.h */,
 				FD23A12313F5FA5900F67001 /* JSMediaElementAudioSourceNode.cpp */,
 				FD23A12413F5FA5900F67001 /* JSMediaElementAudioSourceNode.h */,
 				FDBD480A159BC6870093EB4F /* JSMediaStreamAudioSourceNode.cpp */,
 				FDBD480B159BC6870093EB4F /* JSMediaStreamAudioSourceNode.h */,
 				FDF6BAF6134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp */,
 				FDF6BAF7134A4C9800822920 /* JSOfflineAudioCompletionEvent.h */,
-				FDEA6240152102E200479DF0 /* JSOscillator.cpp */,
-				FDEA6241152102E200479DF0 /* JSOscillator.h */,
-				FDA15EC712B03F50003A583A /* JSRealtimeAnalyserNode.cpp */,
-				FDA15EC812B03F50003A583A /* JSRealtimeAnalyserNode.h */,
+				FDEA6240152102E200479DF0 /* JSOscillatorNode.cpp */,
+				FDEA6241152102E200479DF0 /* JSOscillatorNode.h */,
+				FDA15E9512B03EE1003A583A /* JSPannerNode.cpp */,
+				FDA15E9612B03EE1003A583A /* JSPannerNode.h */,
+				FDA15ECB12B03F61003A583A /* JSScriptProcessorNode.cpp */,
+				FDA15ECC12B03F61003A583A /* JSScriptProcessorNode.h */,
 				FD82D7F513D4C8BD004E4372 /* JSWaveShaperNode.cpp */,
 				FD82D7F613D4C8BD004E4372 /* JSWaveShaperNode.h */,
 				FDEA6244152102FC00479DF0 /* JSWaveTable.cpp */,
@@ -22300,8 +22300,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B2708C70AF19EE40065127F /* Pasteboard.h in Headers */,
-				E47E276516036ED200EE2AFB /* DocumentStyleSheetCollection.h in Headers */,
 				97BC69DB1505F076001B74AC /* AbstractDatabase.h in Headers */,
 				41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */,
 				29A8122E0FBB9C1D00510293 /* AccessibilityARIAGridCell.h in Headers */,
@@ -22334,6 +22332,7 @@
 				CEDA12D7152CA1CB00D9E08D /* AlternativeTextClient.h in Headers */,
 				CE08C3D2152B599A0021B8C2 /* AlternativeTextController.h in Headers */,
 				CE7B2DB31586ABAD0098B3FA /* AlternativeTextUIController.h in Headers */,
+				FD31603E12B0267600C1A359 /* AnalyserNode.h in Headers */,
 				490707E71219C04300D90E51 /* ANGLEWebKitBridge.h in Headers */,
 				49E912AB0EFAC906009D0CAF /* Animation.h in Headers */,
 				316FE1120E6E1DA700BF6088 /* AnimationBase.h in Headers */,
@@ -22372,8 +22371,6 @@
 				FD315FFC12B0267600C1A359 /* AudioBufferSourceNode.h in Headers */,
 				FD31607C12B026F700C1A359 /* AudioBus.h in Headers */,
 				FD31607E12B026F700C1A359 /* AudioChannel.h in Headers */,
-				FD315FFF12B0267600C1A359 /* AudioChannelMerger.h in Headers */,
-				FD31600212B0267600C1A359 /* AudioChannelSplitter.h in Headers */,
 				FD31600512B0267600C1A359 /* AudioContext.h in Headers */,
 				FD31607F12B026F700C1A359 /* AudioDestination.h in Headers */,
 				FD3160BD12B0272A00C1A359 /* AudioDestinationMac.h in Headers */,
@@ -22383,13 +22380,11 @@
 				FD31608312B026F700C1A359 /* AudioFileReader.h in Headers */,
 				FD3160BF12B0272A00C1A359 /* AudioFileReaderMac.h in Headers */,
 				FD31600A12B0267600C1A359 /* AudioGain.h in Headers */,
-				FD31600D12B0267600C1A359 /* AudioGainNode.h in Headers */,
 				FDE2D55B159E66EB00DCCCF8 /* AudioIOCallback.h in Headers */,
 				FD31601012B0267600C1A359 /* AudioListener.h in Headers */,
 				FD31601312B0267600C1A359 /* AudioNode.h in Headers */,
 				FD31601612B0267600C1A359 /* AudioNodeInput.h in Headers */,
 				FD31601812B0267600C1A359 /* AudioNodeOutput.h in Headers */,
-				FD31601A12B0267600C1A359 /* AudioPannerNode.h in Headers */,
 				FD31601D12B0267600C1A359 /* AudioParam.h in Headers */,
 				FD359190138DB22000E1EBEC /* AudioParamTimeline.h in Headers */,
 				FD31602012B0267600C1A359 /* AudioProcessingEvent.h in Headers */,
@@ -22488,6 +22483,8 @@
 				49484FCE102CF23C00187DD3 /* CanvasStyle.h in Headers */,
 				6550B69E099DF0270090D781 /* CDATASection.h in Headers */,
 				97BC69DD1505F076001B74AC /* ChangeVersionWrapper.h in Headers */,
+				FD315FFF12B0267600C1A359 /* ChannelMergerNode.h in Headers */,
+				FD31600212B0267600C1A359 /* ChannelSplitterNode.h in Headers */,
 				6550B6A0099DF0270090D781 /* CharacterData.h in Headers */,
 				00022E6913CE1BBA00282D5B /* CharacterReferenceParserInlineMethods.h in Headers */,
 				B2C3DA2A0D006C1D00EF6F26 /* CharsetData.h in Headers */,
@@ -22506,6 +22503,7 @@
 				4B8AF4AA0B1CE02B00687690 /* ClipboardAccessPolicy.h in Headers */,
 				85031B400A44EFC700F992E0 /* ClipboardEvent.h in Headers */,
 				93F199E708245E59001E9ABC /* ClipboardMac.h in Headers */,
+				FB92DF4B15FED08700994433 /* ClipPathOperation.h in Headers */,
 				97AABD1314FA09D5007457AE /* CloseEvent.h in Headers */,
 				C0C054CB1118C8E400CE2636 /* CodeGenerator.pm in Headers */,
 				BC5EB5DF0E81B9AB00B25965 /* CollapsedBorderValue.h in Headers */,
@@ -22664,10 +22662,10 @@
 				45861C8216194A7400010F3A /* DateTimeFieldElement.h in Headers */,
 				45861C8416194A7400010F3A /* DateTimeFieldElements.h in Headers */,
 				453EB637159C570400001BB7 /* DateTimeFormat.h in Headers */,
-				45861C8616194A7400010F3A /* DateTimeNumericFieldElement.h in Headers */,
-				45861C8816194A7400010F3A /* DateTimeSymbolicFieldElement.h in Headers */,
 				F55B3DB81251F12D003EF269 /* DateTimeInputType.h in Headers */,
 				F55B3DBA1251F12D003EF269 /* DateTimeLocalInputType.h in Headers */,
+				45861C8616194A7400010F3A /* DateTimeNumericFieldElement.h in Headers */,
+				45861C8816194A7400010F3A /* DateTimeSymbolicFieldElement.h in Headers */,
 				45FEA5D0156DDE8C00654101 /* Decimal.h in Headers */,
 				A8C228A111D5722E00D5A7D3 /* DecodedDataDocumentParser.h in Headers */,
 				CECCFC3B141973D5002A0AC1 /* DecodeEscapeSequences.h in Headers */,
@@ -22716,6 +22714,7 @@
 				CE057FA61220731100A476D5 /* DocumentMarkerController.h in Headers */,
 				14947FFE12F80CD200A0F631 /* DocumentOrderedMap.h in Headers */,
 				BCCFBAE80B5152ED0001F1D7 /* DocumentParser.h in Headers */,
+				E47E276516036ED200EE2AFB /* DocumentStyleSheetCollection.h in Headers */,
 				0B90561A0F2578BF0095FF6A /* DocumentThreadableLoader.h in Headers */,
 				86D982F7125C154000AD9E3D /* DocumentTiming.h in Headers */,
 				A8185F3909765766005826D9 /* DocumentType.h in Headers */,
@@ -23416,6 +23415,7 @@
 				9767CE0B145ABC13005E64DB /* ExceptionHeaders.h in Headers */,
 				9767CE0C145ABC13005E64DB /* ExceptionInterfaces.h in Headers */,
 				6E8798BB15F81E4A00BFE4AA /* ExclusionInterval.h in Headers */,
+				6EAF34101613869A00859625 /* ExclusionPolygon.h in Headers */,
 				6E8798BD15F81E4A00BFE4AA /* ExclusionRectangle.h in Headers */,
 				6E8798BF15F81E4A00BFE4AA /* ExclusionShape.h in Headers */,
 				FD748AC015BF74ED0059CF0D /* ExclusionShapeInsideInfo.h in Headers */,
@@ -23423,6 +23423,7 @@
 				6E67D2A71280E8A4008758F7 /* Extensions3DOpenGL.h in Headers */,
 				44DAB5B215A623580097C1E4 /* Extensions3DOpenGLCommon.h in Headers */,
 				7728694F14F8882500F484DC /* EXTTextureFilterAnisotropic.h in Headers */,
+				97C740151603F7A10011FF2D /* FeatureObserver.h in Headers */,
 				A75E8B890E1DE2D6007F2481 /* FEBlend.h in Headers */,
 				A75E8B8B0E1DE2D6007F2481 /* FEColorMatrix.h in Headers */,
 				A75E8B8D0E1DE2D6007F2481 /* FEComponentTransfer.h in Headers */,
@@ -23446,7 +23447,6 @@
 				84730D8D1248F0B300D3A9C9 /* FETurbulence.h in Headers */,
 				FD31609512B026F700C1A359 /* FFTConvolver.h in Headers */,
 				FD31609712B026F700C1A359 /* FFTFrame.h in Headers */,
-				97C740151603F7A10011FF2D /* FeatureObserver.h in Headers */,
 				976D6C81122B8A3D001FD1F7 /* File.h in Headers */,
 				893C47A71238908B002B3D86 /* FileCallback.h in Headers */,
 				066C772B0AB603B700238CC4 /* FileChooser.h in Headers */,
@@ -23545,6 +23545,7 @@
 				65CBFEFA0974F607001DAC25 /* FrameView.h in Headers */,
 				97205AB0123928CA00B17380 /* FTPDirectoryDocument.h in Headers */,
 				51C81B8A0C4422F70019ECE3 /* FTPDirectoryParser.h in Headers */,
+				FD31600D12B0267600C1A359 /* GainNode.h in Headers */,
 				935C477509AC4D8E00A6AAB4 /* GapRects.h in Headers */,
 				1432E8470C51493800B1500F /* GCController.h in Headers */,
 				C0C054CC1118C8E400CE2636 /* generate-bindings.pl in Headers */,
@@ -23574,6 +23575,7 @@
 				0F580B0D0F12A2690051D689 /* GraphicsLayer.h in Headers */,
 				499B3ED7128CD31400E726C2 /* GraphicsLayerCA.h in Headers */,
 				0F580B0E0F12A2690051D689 /* GraphicsLayerClient.h in Headers */,
+				1AC69593161A1E53003732CB /* GraphicsLayerFactory.h in Headers */,
 				B2A015AB0AF6CD53006BCE0E /* GraphicsTypes.h in Headers */,
 				77A17A7B12F2890B004E02F6 /* GraphicsTypes3D.h in Headers */,
 				C50B561712119D23008B46E0 /* GroupSettings.h in Headers */,
@@ -23787,10 +23789,10 @@
 				DB23C2CC0A508D29002489EB /* IndentOutdentCommand.h in Headers */,
 				F3644B001119805900E0D537 /* InjectedScript.h in Headers */,
 				AAB6054F15874C58007B5031 /* InjectedScriptBase.h in Headers */,
+				AA73183F159255B900A93E6E /* InjectedScriptCanvasModule.h in Headers */,
 				7A0E76FA10BF08ED00A0276E /* InjectedScriptHost.h in Headers */,
 				F316396C1329481A00A649CB /* InjectedScriptManager.h in Headers */,
 				AAB6055115874C58007B5031 /* InjectedScriptModule.h in Headers */,
-				AA73183F159255B900A93E6E /* InjectedScriptCanvasModule.h in Headers */,
 				A8CFF5E50A155A05000A4234 /* InlineBox.h in Headers */,
 				A8CFF5E30A155A05000A4234 /* InlineFlowBox.h in Headers */,
 				BCE789161120D6080060ECE5 /* InlineIterator.h in Headers */,
@@ -23808,6 +23810,8 @@
 				B885E8D511E06DD2009FFBF4 /* InspectorApplicationCacheAgent.h in Headers */,
 				4F707A9A11EF679400ACDA69 /* InspectorBackendDispatcher.h in Headers */,
 				7AA51B6E1483B61600AD2752 /* InspectorBaseAgent.h in Headers */,
+				AAD766EC157E502F00E85423 /* InspectorCanvasAgent.h in Headers */,
+				AAD766ED157E502F00E85423 /* InspectorCanvasInstrumentation.h in Headers */,
 				1C81B95C0E97330800266E07 /* InspectorClient.h in Headers */,
 				F3335BF912E07DC300D33011 /* InspectorConsoleAgent.h in Headers */,
 				F3F5CF1112ED81A80084C569 /* InspectorConsoleInstrumentation.h in Headers */,
@@ -23843,8 +23847,6 @@
 				754133A8102E00E800075D00 /* InspectorTimelineAgent.h in Headers */,
 				578DA20F1520EBA3006141C1 /* InspectorTypeBuilder.h in Headers */,
 				4F3289B611A42AAB005ABE7E /* InspectorValues.h in Headers */,
-				AAD766EC157E502F00E85423 /* InspectorCanvasAgent.h in Headers */,
-				AAD766ED157E502F00E85423 /* InspectorCanvasInstrumentation.h in Headers */,
 				F3810C1C1365A49600ED6E33 /* InspectorWorkerAgent.h in Headers */,
 				F375CC071150D300008DDB81 /* InspectorWorkerResource.h in Headers */,
 				F3ABFE0C130E9DA000E7F7D1 /* InstrumentingAgents.h in Headers */,
@@ -23854,9 +23856,9 @@
 				E134F5AB12EE343F004EC58D /* IntRectHash.h in Headers */,
 				B27535750B053814002CE64F /* IntSize.h in Headers */,
 				B27535760B053814002CE64F /* IntSizeHash.h in Headers */,
-				FD31603612B0267600C1A359 /* JavaScriptAudioNode.h in Headers */,
 				1C81BA0A0E97348300266E07 /* JavaScriptCallFrame.h in Headers */,
 				418F88050FF957AF0080F045 /* JSAbstractWorker.h in Headers */,
+				FDA15ECA12B03F50003A583A /* JSAnalyserNode.h in Headers */,
 				49EECF01105070C400099FAB /* JSArrayBuffer.h in Headers */,
 				49EECF1C105072F300099FAB /* JSArrayBufferView.h in Headers */,
 				86243D0111BC31F700CC006A /* JSArrayBufferViewHelper.h in Headers */,
@@ -23864,15 +23866,11 @@
 				FDA15E9E12B03EE1003A583A /* JSAudioBuffer.h in Headers */,
 				FDF7E9C413AC21DB00A51EAC /* JSAudioBufferCallback.h in Headers */,
 				FDA15EA012B03EE1003A583A /* JSAudioBufferSourceNode.h in Headers */,
-				FDA15EA212B03EE1003A583A /* JSAudioChannelMerger.h in Headers */,
-				FDA15EA412B03EE1003A583A /* JSAudioChannelSplitter.h in Headers */,
 				FDA15EA612B03EE1003A583A /* JSAudioContext.h in Headers */,
 				FDA15EA812B03EE1003A583A /* JSAudioDestinationNode.h in Headers */,
 				FDA15EAA12B03EE1003A583A /* JSAudioGain.h in Headers */,
-				FDA15EAC12B03EE1003A583A /* JSAudioGainNode.h in Headers */,
 				FDA15EAE12B03EE1003A583A /* JSAudioListener.h in Headers */,
 				FDA15EB012B03EE1003A583A /* JSAudioNode.h in Headers */,
-				FDA15EB212B03EE1003A583A /* JSAudioPannerNode.h in Headers */,
 				FDA15EB412B03EE1003A583A /* JSAudioParam.h in Headers */,
 				FDA15EB612B03EE1003A583A /* JSAudioProcessingEvent.h in Headers */,
 				FDA15EB812B03EE1003A583A /* JSAudioSourceNode.h in Headers */,
@@ -23886,6 +23884,8 @@
 				49EED1431051969400099FAB /* JSCanvasRenderingContext.h in Headers */,
 				49EED1451051969400099FAB /* JSCanvasRenderingContext2D.h in Headers */,
 				93F9B7A10BA6032600854064 /* JSCDATASection.h in Headers */,
+				FDA15EA212B03EE1003A583A /* JSChannelMergerNode.h in Headers */,
+				FDA15EA412B03EE1003A583A /* JSChannelSplitterNode.h in Headers */,
 				65DF31F409D1CC60000BE325 /* JSCharacterData.h in Headers */,
 				BCC065880F3CE2A700CD2D87 /* JSClientRect.h in Headers */,
 				BCC0658A0F3CE2A700CD2D87 /* JSClientRectList.h in Headers */,
@@ -23989,6 +23989,7 @@
 				893C47BC1238A0A9002B3D86 /* JSFileWriterCallback.h in Headers */,
 				49EECF03105070C400099FAB /* JSFloat32Array.h in Headers */,
 				6EBC5EB0138B50F200A0CF8A /* JSFloat64Array.h in Headers */,
+				FDA15EAC12B03EE1003A583A /* JSGainNode.h in Headers */,
 				FE80DA640E9C4703000D6F75 /* JSGeolocation.h in Headers */,
 				FE80DA660E9C4703000D6F75 /* JSGeoposition.h in Headers */,
 				8482B7521198CB6B00BFB005 /* JSHashChangeEvent.h in Headers */,
@@ -24095,7 +24096,6 @@
 				49EECF07105070C400099FAB /* JSInt16Array.h in Headers */,
 				49EECF05105070C400099FAB /* JSInt32Array.h in Headers */,
 				49C7B9961042D2D30009D447 /* JSInt8Array.h in Headers */,
-				FDA15ECE12B03F61003A583A /* JSJavaScriptAudioNode.h in Headers */,
 				1C5FAED20DCFD90100D58F78 /* JSJavaScriptCallFrame.h in Headers */,
 				A86629D309DA2B48009633A5 /* JSKeyboardEvent.h in Headers */,
 				935F45430F7C3B5F00D7C1FB /* JSLazyEventListener.h in Headers */,
@@ -24133,9 +24133,10 @@
 				6EBF0E7712A9868800DB1709 /* JSOESTextureFloat.h in Headers */,
 				77A17AA712F28B2A004E02F6 /* JSOESVertexArrayObject.h in Headers */,
 				FDF6BAF9134A4C9800822920 /* JSOfflineAudioCompletionEvent.h in Headers */,
-				FDEA6243152102E200479DF0 /* JSOscillator.h in Headers */,
+				FDEA6243152102E200479DF0 /* JSOscillatorNode.h in Headers */,
 				1A0D57410A5C7867007EDD4C /* JSOverflowEvent.h in Headers */,
 				E1284BB110449FFA00EAEB52 /* JSPageTransitionEvent.h in Headers */,
+				FDA15EB212B03EE1003A583A /* JSPannerNode.h in Headers */,
 				8A9A587511E84C81008ACFD1 /* JSPerformance.h in Headers */,
 				8A9A587111E84C36008ACFD1 /* JSPerformanceNavigation.h in Headers */,
 				8A9A588811E84F37008ACFD1 /* JSPerformanceTiming.h in Headers */,
@@ -24150,11 +24151,11 @@
 				B658FFA21522EF3A00DD5595 /* JSRadioNodeList.h in Headers */,
 				65DF320209D1CC60000BE325 /* JSRange.h in Headers */,
 				D23CA55D0AB0EAAE005108A5 /* JSRangeException.h in Headers */,
-				FDA15ECA12B03F50003A583A /* JSRealtimeAnalyserNode.h in Headers */,
 				BCFE2F120C1B58380020235F /* JSRect.h in Headers */,
 				4998AECE13F9D6C90090B1AA /* JSRequestAnimationFrameCallback.h in Headers */,
 				BC74DA491013F468007987AD /* JSRGBColor.h in Headers */,
 				BCEC01C30C274DDD009F4EC9 /* JSScreen.h in Headers */,
+				FDA15ECE12B03F61003A583A /* JSScriptProcessorNode.h in Headers */,
 				9FA37EFB1172FDA600C4CD55 /* JSScriptProfile.h in Headers */,
 				9FA37EFD1172FDA600C4CD55 /* JSScriptProfileNode.h in Headers */,
 				4A1E71A614E106AC00626F9D /* JSShadowRoot.h in Headers */,
@@ -24405,6 +24406,7 @@
 				85EC9AFB0A71A2C600EEEAED /* Language.h in Headers */,
 				2917B5621473496C0052C9D0 /* LayerFlushScheduler.h in Headers */,
 				2917B5631473496C0052C9D0 /* LayerFlushSchedulerClient.h in Headers */,
+				931D72F615FE695300C4C07E /* LayoutMilestones.h in Headers */,
 				A12538D413F9B60A00024754 /* LayoutRepainter.h in Headers */,
 				2D9066070BE141D400956998 /* LayoutState.h in Headers */,
 				D630E2AC149BF344005B2F93 /* LayoutTestSupport.h in Headers */,
@@ -24572,7 +24574,7 @@
 				0014628B103CD1DE000B20DB /* OriginAccessEntry.h in Headers */,
 				97BC6A381505F081001B74AC /* OriginQuotaManager.h in Headers */,
 				97BC6A3A1505F081001B74AC /* OriginUsageRecord.h in Headers */,
-				FD581FAF1520F91F003A7A75 /* Oscillator.h in Headers */,
+				FD581FAF1520F91F003A7A75 /* OscillatorNode.h in Headers */,
 				BC5EB5DD0E81B8DD00B25965 /* OutlineValue.h in Headers */,
 				1A0D57370A5C77FE007EDD4C /* OverflowEvent.h in Headers */,
 				3774ABA50FA21EB400AD7DE9 /* OverlapTestRequestClient.h in Headers */,
@@ -24597,8 +24599,10 @@
 				0885068011DA045B00182B98 /* PaintPhase.h in Headers */,
 				A80E6CFB0A1989CA007FB8C5 /* Pair.h in Headers */,
 				FD3160A312B026F700C1A359 /* Panner.h in Headers */,
+				FD31601A12B0267600C1A359 /* PannerNode.h in Headers */,
 				BC76AC130DD7AD5C00415F34 /* ParserUtilities.h in Headers */,
 				F55B3DCA1251F12D003EF269 /* PasswordInputType.h in Headers */,
+				4B2708C70AF19EE40065127F /* Pasteboard.h in Headers */,
 				C598905714E9C28000E8D18B /* PasteboardStrategy.h in Headers */,
 				B27535800B053814002CE64F /* Path.h in Headers */,
 				A88DD4870B4629A300C02990 /* PathTraversalState.h in Headers */,
@@ -24625,6 +24629,7 @@
 				49182B5315DCE6F000548418 /* PlatformInstrumentation.h in Headers */,
 				935C476809AC4D4300A6AAB4 /* PlatformKeyboardEvent.h in Headers */,
 				0562F9611573F88F0031CA16 /* PlatformLayer.h in Headers */,
+				4F7B4A6615FF6D6A006B5F22 /* PlatformMemoryInstrumentation.h in Headers */,
 				932871C00B20DEB70049035A /* PlatformMenuDescription.h in Headers */,
 				41BF70100FE86F61005E8DEC /* PlatformMessagePortChannel.h in Headers */,
 				935C476909AC4D4300A6AAB4 /* PlatformMouseEvent.h in Headers */,
@@ -24686,7 +24691,6 @@
 				F55B3DCE1251F12D003EF269 /* RangeInputType.h in Headers */,
 				A84D827C11D333ED00972990 /* RawDataDocumentParser.h in Headers */,
 				FD31603C12B0267600C1A359 /* RealtimeAnalyser.h in Headers */,
-				FD31603E12B0267600C1A359 /* RealtimeAnalyserNode.h in Headers */,
 				BC4368E80C226E32005EFB5F /* Rect.h in Headers */,
 				A72EA3BB1585CF55004FAA26 /* RefCountedSupplement.h in Headers */,
 				9831AE4A154225C900FE2644 /* ReferrerPolicy.h in Headers */,
@@ -24734,6 +24738,7 @@
 				0F580CFF0F12DE9B0051D689 /* RenderLayerBacking.h in Headers */,
 				0F580CFD0F12DE9B0051D689 /* RenderLayerCompositor.h in Headers */,
 				50D10D9A1545F5760096D288 /* RenderLayerFilterInfo.h in Headers */,
+				3C244FEAA375AC633F88BE6F /* RenderLayerModelObject.h in Headers */,
 				0BE030A20F3112FB003C1A46 /* RenderLineBoxList.h in Headers */,
 				ABB5419F0ACDDFE4002820EB /* RenderListBox.h in Headers */,
 				A8EA7A520A191A5200A8EF5F /* RenderListItem.h in Headers */,
@@ -24777,6 +24782,7 @@
 				458FE40A1589DF0B005609E6 /* RenderSearchField.h in Headers */,
 				0F11A54F0F39233100C37884 /* RenderSelectionInfo.h in Headers */,
 				AB247A6D0AFD6383003FA5FD /* RenderSlider.h in Headers */,
+				31955A88160D199200858025 /* RenderSnapshottedPlugIn.h in Headers */,
 				BC8C8FAE0DDCD31B00B592F4 /* RenderStyle.h in Headers */,
 				BC5EB6680E81CB7100B25965 /* RenderStyleConstants.h in Headers */,
 				436708C112D9CA4B00044234 /* RenderSVGBlock.h in Headers */,
@@ -24824,7 +24830,6 @@
 				86FF886215DE3D0700BD6B28 /* RenderTextTrackCue.h in Headers */,
 				BCEA488A097D93020094C9E4 /* RenderTheme.h in Headers */,
 				BCEA4887097D93020094C9E4 /* RenderThemeMac.h in Headers */,
-				3C244FEAA375AC633F88BE6F /* RenderLayerModelObject.h in Headers */,
 				93F1998C08245E59001E9ABC /* RenderTreeAsText.h in Headers */,
 				E44614520CD68A3500FADA75 /* RenderVideo.h in Headers */,
 				BCEA4868097D93020094C9E4 /* RenderView.h in Headers */,
@@ -24834,6 +24839,7 @@
 				93309E0A099E64920056E581 /* ReplaceSelectionCommand.h in Headers */,
 				4998AEC613F9D0EA0090B1AA /* RequestAnimationFrameCallback.h in Headers */,
 				F55B3DD01251F12D003EF269 /* ResetInputType.h in Headers */,
+				514BC843161CF05C004D52F4 /* ResourceBuffer.h in Headers */,
 				7EE6846A12D26E3800E79415 /* ResourceError.h in Headers */,
 				934F713C0D5A6F1900018D69 /* ResourceErrorBase.h in Headers */,
 				514C76790CE923A1007EF3CD /* ResourceHandle.h in Headers */,
@@ -24856,12 +24862,12 @@
 				FD3160A912B026F700C1A359 /* ReverbConvolver.h in Headers */,
 				FD3160AB12B026F700C1A359 /* ReverbConvolverStage.h in Headers */,
 				FD3160AD12B026F700C1A359 /* ReverbInputBuffer.h in Headers */,
-				A79BADA2161E7F3F00C2E652 /* RuleFeature.h in Headers */,
-				A79BADA4161E7F3F00C2E652 /* RuleSet.h in Headers */,
 				BC74DA371013F3F7007987AD /* RGBColor.h in Headers */,
 				A8CFF5E10A155A05000A4234 /* RootInlineBox.h in Headers */,
 				49E911C90EF86D47009D0CAF /* RotateTransformOperation.h in Headers */,
 				A73F95FF12C97BFE0031AAF9 /* RoundedRect.h in Headers */,
+				A79BADA2161E7F3F00C2E652 /* RuleFeature.h in Headers */,
+				A79BADA4161E7F3F00C2E652 /* RuleSet.h in Headers */,
 				BC0B358814C4F9830055E22A /* RunLoop.h in Headers */,
 				1C63A2480F71646600C09D5A /* RunLoopTimer.h in Headers */,
 				1A569D1F0D7E2B82007C3983 /* runtime_array.h in Headers */,
@@ -24896,6 +24902,7 @@
 				9F3B947E12241758005304E7 /* ScriptHeapSnapshot.h in Headers */,
 				934CC1170EDCAC7300A658F2 /* ScriptInstance.h in Headers */,
 				41F066E40F64BCF600A07EAC /* ScriptObject.h in Headers */,
+				FD31603612B0267600C1A359 /* ScriptProcessorNode.h in Headers */,
 				9F72304F11184B4100AD0126 /* ScriptProfile.h in Headers */,
 				9FA37EE41172FC8000C4CD55 /* ScriptProfileNode.h in Headers */,
 				9F72305111184B4100AD0126 /* ScriptProfiler.h in Headers */,
@@ -24917,6 +24924,10 @@
 				1AA84F05143BA7BD0051D153 /* ScrollElasticityController.h in Headers */,
 				0F605AED15F94848004DF0C0 /* ScrollingConstraints.h in Headers */,
 				1AF62EE814DA22A70041556C /* ScrollingCoordinator.h in Headers */,
+				9391A991162746CB00297330 /* ScrollingCoordinatorMac.h in Headers */,
+				931CBD0D161A44E900E4C874 /* ScrollingStateNode.h in Headers */,
+				931CBD0F161A44E900E4C874 /* ScrollingStateScrollingNode.h in Headers */,
+				931CBD11161A44E900E4C874 /* ScrollingStateTree.h in Headers */,
 				1AF62F2614DAFEA10041556C /* ScrollingThread.h in Headers */,
 				1AAADDA414DB409F00AF64B3 /* ScrollingTree.h in Headers */,
 				1AAADDE414DC8C8F00AF64B3 /* ScrollingTreeNode.h in Headers */,
@@ -24951,6 +24962,7 @@
 				41D168E810226E89009BC827 /* SharedWorkerContext.h in Headers */,
 				41D168EA10226E89009BC827 /* SharedWorkerRepository.h in Headers */,
 				41D168EE10226E89009BC827 /* SharedWorkerThread.h in Headers */,
+				5728BD9E1625369600C40B56 /* SiblingTraversalStrategies.h in Headers */,
 				B2C3DA650D006CD600EF6F26 /* SimpleFontData.h in Headers */,
 				C5A1EA7D152BCF08004D00B6 /* SimplifyMarkupCommand.h in Headers */,
 				FD00D7A514A3F61900734011 /* SincResampler.h in Headers */,
@@ -25588,18 +25600,6 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
-				FB92DF4B15FED08700994433 /* ClipPathOperation.h in Headers */,
-				4F7B4A6615FF6D6A006B5F22 /* PlatformMemoryInstrumentation.h in Headers */,
-				931D72F615FE695300C4C07E /* LayoutMilestones.h in Headers */,
-				1AC69593161A1E53003732CB /* GraphicsLayerFactory.h in Headers */,
-				931CBD0D161A44E900E4C874 /* ScrollingStateNode.h in Headers */,
-				931CBD0F161A44E900E4C874 /* ScrollingStateScrollingNode.h in Headers */,
-				931CBD11161A44E900E4C874 /* ScrollingStateTree.h in Headers */,
-				6EAF34101613869A00859625 /* ExclusionPolygon.h in Headers */,
-				31955A88160D199200858025 /* RenderSnapshottedPlugIn.h in Headers */,
-				514BC843161CF05C004D52F4 /* ResourceBuffer.h in Headers */,
-				5728BD9E1625369600C40B56 /* SiblingTraversalStrategies.h in Headers */,
-				9391A991162746CB00297330 /* ScrollingCoordinatorMac.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25981,6 +25981,7 @@
 				84D0C4041115F1D40018AA34 /* AffineTransform.cpp in Sources */,
 				CE08C3D1152B599A0021B8C2 /* AlternativeTextController.cpp in Sources */,
 				CE7B2DB41586ABAD0098B3FA /* AlternativeTextUIController.mm in Sources */,
+				FD31603D12B0267600C1A359 /* AnalyserNode.cpp in Sources */,
 				490707E61219C04300D90E51 /* ANGLEWebKitBridge.cpp in Sources */,
 				49E912AA0EFAC906009D0CAF /* Animation.cpp in Sources */,
 				316FE1110E6E1DA700BF6088 /* AnimationBase.cpp in Sources */,
@@ -26011,19 +26012,15 @@
 				FD31607B12B026F700C1A359 /* AudioBus.cpp in Sources */,
 				FD3160BB12B0272A00C1A359 /* AudioBusMac.mm in Sources */,
 				FD31607D12B026F700C1A359 /* AudioChannel.cpp in Sources */,
-				FD315FFE12B0267600C1A359 /* AudioChannelMerger.cpp in Sources */,
-				FD31600112B0267600C1A359 /* AudioChannelSplitter.cpp in Sources */,
 				FD31600412B0267600C1A359 /* AudioContext.cpp in Sources */,
 				FD3160BC12B0272A00C1A359 /* AudioDestinationMac.cpp in Sources */,
 				FD31600712B0267600C1A359 /* AudioDestinationNode.cpp in Sources */,
 				FD31608112B026F700C1A359 /* AudioDSPKernelProcessor.cpp in Sources */,
 				FD3160BE12B0272A00C1A359 /* AudioFileReaderMac.cpp in Sources */,
-				FD31600C12B0267600C1A359 /* AudioGainNode.cpp in Sources */,
 				FD31600F12B0267600C1A359 /* AudioListener.cpp in Sources */,
 				FD31601212B0267600C1A359 /* AudioNode.cpp in Sources */,
 				FD31601512B0267600C1A359 /* AudioNodeInput.cpp in Sources */,
 				FD31601712B0267600C1A359 /* AudioNodeOutput.cpp in Sources */,
-				FD31601912B0267600C1A359 /* AudioPannerNode.cpp in Sources */,
 				FD31601C12B0267600C1A359 /* AudioParam.cpp in Sources */,
 				FD35918F138DB22000E1EBEC /* AudioParamTimeline.cpp in Sources */,
 				FD31601F12B0267600C1A359 /* AudioProcessingEvent.cpp in Sources */,
@@ -26100,6 +26097,8 @@
 				49484FCD102CF23C00187DD3 /* CanvasStyle.cpp in Sources */,
 				6550B69D099DF0270090D781 /* CDATASection.cpp in Sources */,
 				97BC69DC1505F076001B74AC /* ChangeVersionWrapper.cpp in Sources */,
+				FD315FFE12B0267600C1A359 /* ChannelMergerNode.cpp in Sources */,
+				FD31600112B0267600C1A359 /* ChannelSplitterNode.cpp in Sources */,
 				6550B69F099DF0270090D781 /* CharacterData.cpp in Sources */,
 				9326DC0C09DAD5D600AFC847 /* CharsetData.cpp in Sources */,
 				F55B3DB11251F12D003EF269 /* CheckboxInputType.cpp in Sources */,
@@ -26244,10 +26243,10 @@
 				45861C8116194A7400010F3A /* DateTimeFieldElement.cpp in Sources */,
 				45861C8316194A7400010F3A /* DateTimeFieldElements.cpp in Sources */,
 				453EB636159C570400001BB7 /* DateTimeFormat.cpp in Sources */,
-				45861C8516194A7400010F3A /* DateTimeNumericFieldElement.cpp in Sources */,
-				45861C8716194A7400010F3A /* DateTimeSymbolicFieldElement.cpp in Sources */,
 				F55B3DB71251F12D003EF269 /* DateTimeInputType.cpp in Sources */,
 				F55B3DB91251F12D003EF269 /* DateTimeLocalInputType.cpp in Sources */,
+				45861C8516194A7400010F3A /* DateTimeNumericFieldElement.cpp in Sources */,
+				45861C8716194A7400010F3A /* DateTimeSymbolicFieldElement.cpp in Sources */,
 				45FEA5CF156DDE8C00654101 /* Decimal.cpp in Sources */,
 				A8C228A211D5722E00D5A7D3 /* DecodedDataDocumentParser.cpp in Sources */,
 				4162A450101145AE00DFF3ED /* DedicatedWorkerContext.cpp in Sources */,
@@ -26295,6 +26294,7 @@
 				CE057FA51220731100A476D5 /* DocumentMarkerController.cpp in Sources */,
 				14947FFD12F80CD200A0F631 /* DocumentOrderedMap.cpp in Sources */,
 				A8C2280E11D4A59700D5A7D3 /* DocumentParser.cpp in Sources */,
+				E47E276816036EDC00EE2AFB /* DocumentStyleSheetCollection.cpp in Sources */,
 				0B9056190F2578BE0095FF6A /* DocumentThreadableLoader.cpp in Sources */,
 				A8185F3A09765766005826D9 /* DocumentType.cpp in Sources */,
 				973889A0116EA9DC00ADF313 /* DocumentWriter.cpp in Sources */,
@@ -26674,12 +26674,14 @@
 				A7CACDB113CE875C00BBBE3F /* ExceptionCodePlaceholder.cpp in Sources */,
 				148AFDA60AF58360008CC700 /* ExceptionHandlers.mm in Sources */,
 				6E8798BA15F81E4A00BFE4AA /* ExclusionInterval.cpp in Sources */,
+				6EAF340F1613869A00859625 /* ExclusionPolygon.cpp in Sources */,
 				6E8798BC15F81E4A00BFE4AA /* ExclusionRectangle.cpp in Sources */,
 				6E8798BE15F81E4A00BFE4AA /* ExclusionShape.cpp in Sources */,
 				FD748ABF15BF74ED0059CF0D /* ExclusionShapeInsideInfo.cpp in Sources */,
 				6E67D2A61280E8A4008758F7 /* Extensions3DOpenGL.cpp in Sources */,
 				44DAB5B115A623580097C1E4 /* Extensions3DOpenGLCommon.cpp in Sources */,
 				7728694E14F8882500F484DC /* EXTTextureFilterAnisotropic.cpp in Sources */,
+				97C740141603F7A10011FF2D /* FeatureObserver.cpp in Sources */,
 				A75E8B880E1DE2D6007F2481 /* FEBlend.cpp in Sources */,
 				A75E8B8A0E1DE2D6007F2481 /* FEColorMatrix.cpp in Sources */,
 				A75E8B8C0E1DE2D6007F2481 /* FEComponentTransfer.cpp in Sources */,
@@ -26702,7 +26704,6 @@
 				FD31609412B026F700C1A359 /* FFTConvolver.cpp in Sources */,
 				FD31609612B026F700C1A359 /* FFTFrame.cpp in Sources */,
 				FD3160C012B0272A00C1A359 /* FFTFrameMac.cpp in Sources */,
-				97C740141603F7A10011FF2D /* FeatureObserver.cpp in Sources */,
 				976D6C80122B8A3D001FD1F7 /* File.cpp in Sources */,
 				934FE9E50B5CA539003E4A73 /* FileChooser.cpp in Sources */,
 				89878561122CA064003AABDA /* FileEntry.cpp in Sources */,
@@ -26785,6 +26786,7 @@
 				65CBFEF90974F607001DAC25 /* FrameView.cpp in Sources */,
 				97205AAF123928CA00B17380 /* FTPDirectoryDocument.cpp in Sources */,
 				51C81B890C4422F70019ECE3 /* FTPDirectoryParser.cpp in Sources */,
+				FD31600C12B0267600C1A359 /* GainNode.cpp in Sources */,
 				1432E8490C51493F00B1500F /* GCController.cpp in Sources */,
 				4FB390AD15EF61F3007AD51F /* GeneratedImage.cpp in Sources */,
 				2D481F03146B5C6500AA7834 /* GeneratorGeneratedImage.cpp in Sources */,
@@ -26997,10 +26999,10 @@
 				DB23C2CB0A508D29002489EB /* IndentOutdentCommand.cpp in Sources */,
 				F3644AFF1119805900E0D537 /* InjectedScript.cpp in Sources */,
 				AAB6054E15874C58007B5031 /* InjectedScriptBase.cpp in Sources */,
+				AA73183E159255B900A93E6E /* InjectedScriptCanvasModule.cpp in Sources */,
 				7A0E76F910BF08ED00A0276E /* InjectedScriptHost.cpp in Sources */,
 				F316396B1329481A00A649CB /* InjectedScriptManager.cpp in Sources */,
 				AAB6055015874C58007B5031 /* InjectedScriptModule.cpp in Sources */,
-				AA73183E159255B900A93E6E /* InjectedScriptCanvasModule.cpp in Sources */,
 				A8CFF5E60A155A05000A4234 /* InlineBox.cpp in Sources */,
 				A8CFF5E40A155A05000A4234 /* InlineFlowBox.cpp in Sources */,
 				BCEA4859097D93020094C9E4 /* InlineTextBox.cpp in Sources */,
@@ -27017,6 +27019,7 @@
 				B885E8D411E06DD2009FFBF4 /* InspectorApplicationCacheAgent.cpp in Sources */,
 				4F707A9911EF679400ACDA69 /* InspectorBackendDispatcher.cpp in Sources */,
 				7AA51B6F1483B61600AD2752 /* InspectorBaseAgent.cpp in Sources */,
+				AAD766EB157E502F00E85423 /* InspectorCanvasAgent.cpp in Sources */,
 				7A1F2B52126C61B20006A7E6 /* InspectorClient.cpp in Sources */,
 				F3335BF812E07DC300D33011 /* InspectorConsoleAgent.cpp in Sources */,
 				1C81B95B0E97330800266E07 /* InspectorController.cpp in Sources */,
@@ -27048,7 +27051,6 @@
 				754133AA102E00F400075D00 /* InspectorTimelineAgent.cpp in Sources */,
 				573D134714CE39FF0057ABCA /* InspectorTypeBuilder.cpp in Sources */,
 				4F3289B511A42AAB005ABE7E /* InspectorValues.cpp in Sources */,
-				AAD766EB157E502F00E85423 /* InspectorCanvasAgent.cpp in Sources */,
 				F3810C1B1365A49600ED6E33 /* InspectorWorkerAgent.cpp in Sources */,
 				F350B73513F1377D00880C43 /* InstrumentingAgents.cpp in Sources */,
 				B27535600B053814002CE64F /* IntPointCG.cpp in Sources */,
@@ -27058,9 +27060,9 @@
 				B275357D0B053814002CE64F /* IntRectMac.mm in Sources */,
 				B27535620B053814002CE64F /* IntSizeCG.cpp in Sources */,
 				B275357E0B053814002CE64F /* IntSizeMac.mm in Sources */,
-				FD31603512B0267600C1A359 /* JavaScriptAudioNode.cpp in Sources */,
 				1C81BA090E97348300266E07 /* JavaScriptCallFrame.cpp in Sources */,
 				418F88040FF957AE0080F045 /* JSAbstractWorker.cpp in Sources */,
+				FDA15EC912B03F50003A583A /* JSAnalyserNode.cpp in Sources */,
 				49EECF00105070C400099FAB /* JSArrayBuffer.cpp in Sources */,
 				BC275CB311C5E85C00C9206C /* JSArrayBufferCustom.cpp in Sources */,
 				49EECF1B105072F300099FAB /* JSArrayBufferView.cpp in Sources */,
@@ -27070,16 +27072,12 @@
 				FDF7E9C313AC21DB00A51EAC /* JSAudioBufferCallback.cpp in Sources */,
 				FDA15E9F12B03EE1003A583A /* JSAudioBufferSourceNode.cpp in Sources */,
 				FDEAAAF312B02EE400DCF33B /* JSAudioBufferSourceNodeCustom.cpp in Sources */,
-				FDA15EA112B03EE1003A583A /* JSAudioChannelMerger.cpp in Sources */,
-				FDA15EA312B03EE1003A583A /* JSAudioChannelSplitter.cpp in Sources */,
 				FDA15EA512B03EE1003A583A /* JSAudioContext.cpp in Sources */,
 				FDEAAAF412B02EE400DCF33B /* JSAudioContextCustom.cpp in Sources */,
 				FDA15EA712B03EE1003A583A /* JSAudioDestinationNode.cpp in Sources */,
 				FDA15EA912B03EE1003A583A /* JSAudioGain.cpp in Sources */,
-				FDA15EAB12B03EE1003A583A /* JSAudioGainNode.cpp in Sources */,
 				FDA15EAD12B03EE1003A583A /* JSAudioListener.cpp in Sources */,
 				FDA15EAF12B03EE1003A583A /* JSAudioNode.cpp in Sources */,
-				FDA15EB112B03EE1003A583A /* JSAudioPannerNode.cpp in Sources */,
 				FDA15EB312B03EE1003A583A /* JSAudioParam.cpp in Sources */,
 				FDA15EB512B03EE1003A583A /* JSAudioProcessingEvent.cpp in Sources */,
 				FDA15EB712B03EE1003A583A /* JSAudioSourceNode.cpp in Sources */,
@@ -27097,6 +27095,8 @@
 				49EED1501051971A00099FAB /* JSCanvasRenderingContextCustom.cpp in Sources */,
 				93F9B7A00BA6032600854064 /* JSCDATASection.cpp in Sources */,
 				93BA59B20F2AA5FE008E8E99 /* JSCDATASectionCustom.cpp in Sources */,
+				FDA15EA112B03EE1003A583A /* JSChannelMergerNode.cpp in Sources */,
+				FDA15EA312B03EE1003A583A /* JSChannelSplitterNode.cpp in Sources */,
 				65DF31F309D1CC60000BE325 /* JSCharacterData.cpp in Sources */,
 				BCC065870F3CE2A700CD2D87 /* JSClientRect.cpp in Sources */,
 				BCC065890F3CE2A700CD2D87 /* JSClientRectList.cpp in Sources */,
@@ -27235,6 +27235,7 @@
 				893C47BB1238A0A9002B3D86 /* JSFileWriterCallback.cpp in Sources */,
 				49EECF02105070C400099FAB /* JSFloat32Array.cpp in Sources */,
 				6EBC5EAF138B50F200A0CF8A /* JSFloat64Array.cpp in Sources */,
+				FDA15EAB12B03EE1003A583A /* JSGainNode.cpp in Sources */,
 				FE80DA630E9C4703000D6F75 /* JSGeolocation.cpp in Sources */,
 				FE80D7AB0E9C1ED2000D6F75 /* JSGeolocationCustom.cpp in Sources */,
 				FE80DA650E9C4703000D6F75 /* JSGeoposition.cpp in Sources */,
@@ -27363,8 +27364,6 @@
 				49EECF06105070C400099FAB /* JSInt16Array.cpp in Sources */,
 				49EECF04105070C400099FAB /* JSInt32Array.cpp in Sources */,
 				49C7B9951042D2D30009D447 /* JSInt8Array.cpp in Sources */,
-				FDA15ECD12B03F61003A583A /* JSJavaScriptAudioNode.cpp in Sources */,
-				FDEAAAFE12B02F4900DCF33B /* JSJavaScriptAudioNodeCustom.cpp in Sources */,
 				1C5FAED10DCFD90100D58F78 /* JSJavaScriptCallFrame.cpp in Sources */,
 				1C5FAEE70DCFDA6800D58F78 /* JSJavaScriptCallFrameCustom.cpp in Sources */,
 				A86629D409DA2B48009633A5 /* JSKeyboardEvent.cpp in Sources */,
@@ -27375,8 +27374,8 @@
 				CD27F6E51457685A0078207D /* JSMediaController.cpp in Sources */,
 				FD23A12513F5FA5900F67001 /* JSMediaElementAudioSourceNode.cpp in Sources */,
 				E44614180CD6826900FADA75 /* JSMediaError.cpp in Sources */,
-				CDB859FA160D494900E5B07F /* JSMediaKeyEvent.cpp in Sources */,
 				CDB859FB160D494F00E5B07F /* JSMediaKeyError.cpp in Sources */,
+				CDB859FA160D494900E5B07F /* JSMediaKeyEvent.cpp in Sources */,
 				BC3C39B60C0D3D8D005F4D7A /* JSMediaList.cpp in Sources */,
 				1464E06C135EC10600FDB00A /* JSMediaListCustom.cpp in Sources */,
 				D3A94A46122DC40F00A37BBC /* JSMediaQueryList.cpp in Sources */,
@@ -27421,9 +27420,10 @@
 				6EBF0E7612A9868800DB1709 /* JSOESTextureFloat.cpp in Sources */,
 				77A17AA612F28B2A004E02F6 /* JSOESVertexArrayObject.cpp in Sources */,
 				FDF6BAF8134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp in Sources */,
-				FDEA6242152102E200479DF0 /* JSOscillator.cpp in Sources */,
+				FDEA6242152102E200479DF0 /* JSOscillatorNode.cpp in Sources */,
 				1A0D57400A5C7867007EDD4C /* JSOverflowEvent.cpp in Sources */,
 				E1284BB210449FFA00EAEB52 /* JSPageTransitionEvent.cpp in Sources */,
+				FDA15EB112B03EE1003A583A /* JSPannerNode.cpp in Sources */,
 				8A9A587411E84C81008ACFD1 /* JSPerformance.cpp in Sources */,
 				8A9A587011E84C36008ACFD1 /* JSPerformanceNavigation.cpp in Sources */,
 				8A9A588711E84F37008ACFD1 /* JSPerformanceTiming.cpp in Sources */,
@@ -27440,12 +27440,13 @@
 				B658FFA11522EF3A00DD5595 /* JSRadioNodeList.cpp in Sources */,
 				65DF320109D1CC60000BE325 /* JSRange.cpp in Sources */,
 				D23CA55F0AB0EAB6005108A5 /* JSRangeException.cpp in Sources */,
-				FDA15EC912B03F50003A583A /* JSRealtimeAnalyserNode.cpp in Sources */,
 				BCFE2F110C1B58370020235F /* JSRect.cpp in Sources */,
 				4998AECD13F9D6C90090B1AA /* JSRequestAnimationFrameCallback.cpp in Sources */,
 				4998AED413FC417F0090B1AA /* JSRequestAnimationFrameCallbackCustom.cpp in Sources */,
 				BC74DA481013F468007987AD /* JSRGBColor.cpp in Sources */,
 				BCEC01C20C274DDD009F4EC9 /* JSScreen.cpp in Sources */,
+				FDA15ECD12B03F61003A583A /* JSScriptProcessorNode.cpp in Sources */,
+				FDEAAAFE12B02F4900DCF33B /* JSScriptProcessorNodeCustom.cpp in Sources */,
 				9FA37EFA1172FDA600C4CD55 /* JSScriptProfile.cpp in Sources */,
 				9FA37EFC1172FDA600C4CD55 /* JSScriptProfileNode.cpp in Sources */,
 				9FA37EE71172FCF000C4CD55 /* JSScriptProfileNodeCustom.cpp in Sources */,
@@ -27872,7 +27873,7 @@
 				0014628A103CD1DE000B20DB /* OriginAccessEntry.cpp in Sources */,
 				97BC6A371505F081001B74AC /* OriginQuotaManager.cpp in Sources */,
 				97BC6A391505F081001B74AC /* OriginUsageRecord.cpp in Sources */,
-				FD581FAE1520F91F003A7A75 /* Oscillator.cpp in Sources */,
+				FD581FAE1520F91F003A7A75 /* OscillatorNode.cpp in Sources */,
 				1A0D57360A5C77FE007EDD4C /* OverflowEvent.cpp in Sources */,
 				65FEA86909833ADE00BED4AB /* Page.cpp in Sources */,
 				1477E7760BF4134A00152872 /* PageCache.cpp in Sources */,
@@ -27889,6 +27890,7 @@
 				51E1ECC20C91C90400DC255B /* PageURLRecord.cpp in Sources */,
 				FFD5B97A135CC97800D5E92A /* PageVisibilityState.cpp in Sources */,
 				FD3160A212B026F700C1A359 /* Panner.cpp in Sources */,
+				FD31601912B0267600C1A359 /* PannerNode.cpp in Sources */,
 				F55B3DC91251F12D003EF269 /* PasswordInputType.cpp in Sources */,
 				4B2709830AF2E5E00065127F /* PasteboardMac.mm in Sources */,
 				B275357F0B053814002CE64F /* Path.cpp in Sources */,
@@ -27914,6 +27916,7 @@
 				BC5C762A1497FE1400BC4775 /* PlatformEvent.cpp in Sources */,
 				BCAA486F14A052530088FAC4 /* PlatformEventFactoryMac.mm in Sources */,
 				49182B5215DCE6F000548418 /* PlatformInstrumentation.cpp in Sources */,
+				4F1D11BF15FF37200026E908 /* PlatformMemoryInstrumentation.cpp in Sources */,
 				41BF700F0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp in Sources */,
 				C598902E14E9B0F800E8D18B /* PlatformPasteboardMac.mm in Sources */,
 				BC94D1080C274F88006BC617 /* PlatformScreenMac.mm in Sources */,
@@ -27952,7 +27955,6 @@
 				978D07BA145A0F3C0096908D /* RangeException.cpp in Sources */,
 				F55B3DCD1251F12D003EF269 /* RangeInputType.cpp in Sources */,
 				FD31603B12B0267600C1A359 /* RealtimeAnalyser.cpp in Sources */,
-				FD31603D12B0267600C1A359 /* RealtimeAnalyserNode.cpp in Sources */,
 				BCAB418113E356E800D8AAF3 /* Region.cpp in Sources */,
 				85031B4B0A44EFC700F992E0 /* RegisteredEventListener.cpp in Sources */,
 				B2C3DA2C0D006C1D00EF6F26 /* RegularExpression.cpp in Sources */,
@@ -27996,6 +27998,7 @@
 				0F580D000F12DE9B0051D689 /* RenderLayerBacking.cpp in Sources */,
 				0F580CFE0F12DE9B0051D689 /* RenderLayerCompositor.cpp in Sources */,
 				50D10D991545F5760096D288 /* RenderLayerFilterInfo.cpp in Sources */,
+				3C244FEBA375AC633F88BE6F /* RenderLayerModelObject.cpp in Sources */,
 				BC33FB1B0F30EE85002CDD7C /* RenderLineBoxList.cpp in Sources */,
 				ABB5419E0ACDDFE4002820EB /* RenderListBox.cpp in Sources */,
 				A8EA7A4E0A191A5200A8EF5F /* RenderListItem.cpp in Sources */,
@@ -28037,6 +28040,7 @@
 				BC3BE9A50E9C239600835588 /* RenderScrollbarTheme.cpp in Sources */,
 				458FE4091589DF0B005609E6 /* RenderSearchField.cpp in Sources */,
 				AB247A6C0AFD6383003FA5FD /* RenderSlider.cpp in Sources */,
+				31955A86160D199000858025 /* RenderSnapshottedPlugIn.cpp in Sources */,
 				BC8C8FAD0DDCD31B00B592F4 /* RenderStyle.cpp in Sources */,
 				0F4E57171313276200CF85AF /* RenderSVGAllInOne.cpp in Sources */,
 				A8DF4AEC0980C42C0052981B /* RenderTable.cpp in Sources */,
@@ -28054,7 +28058,6 @@
 				BCEA4889097D93020094C9E4 /* RenderTheme.cpp in Sources */,
 				BCEA4888097D93020094C9E4 /* RenderThemeMac.mm in Sources */,
 				93F19AD508245E59001E9ABC /* RenderTreeAsText.cpp in Sources */,
-				3C244FEBA375AC633F88BE6F /* RenderLayerModelObject.cpp in Sources */,
 				E44614510CD68A3500FADA75 /* RenderVideo.cpp in Sources */,
 				BCEA4867097D93020094C9E4 /* RenderView.cpp in Sources */,
 				A871DFE50A15376B00B12A68 /* RenderWidget.cpp in Sources */,
@@ -28062,6 +28065,8 @@
 				A89CCC520F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.cpp in Sources */,
 				93309E09099E64920056E581 /* ReplaceSelectionCommand.cpp in Sources */,
 				F55B3DCF1251F12D003EF269 /* ResetInputType.cpp in Sources */,
+				514BC842161CF05C004D52F4 /* ResourceBuffer.cpp in Sources */,
+				514BC83F161CF04A004D52F4 /* ResourceBuffer.mm in Sources */,
 				934F713E0D5A6F2800018D69 /* ResourceErrorBase.cpp in Sources */,
 				7EE6846B12D26E3800E79415 /* ResourceErrorCF.cpp in Sources */,
 				514C76500CE9234E007EF3CD /* ResourceErrorMac.mm in Sources */,
@@ -28125,6 +28130,7 @@
 				41002CCE0F66EDEF009E660D /* ScriptFunctionCall.cpp in Sources */,
 				4FD8D0F2119C718B002FA825 /* ScriptGCEvent.cpp in Sources */,
 				41F066E50F64BCF600A07EAC /* ScriptObject.cpp in Sources */,
+				FD31603512B0267600C1A359 /* ScriptProcessorNode.cpp in Sources */,
 				F33F0282120947F200E5743A /* ScriptProfile.cpp in Sources */,
 				9F72305011184B4100AD0126 /* ScriptProfiler.cpp in Sources */,
 				8A413AE11207BBA50082016E /* ScriptRunner.cpp in Sources */,
@@ -28143,6 +28149,10 @@
 				0F605AEC15F94848004DF0C0 /* ScrollingConstraints.cpp in Sources */,
 				1AF62EE714DA22A70041556C /* ScrollingCoordinator.cpp in Sources */,
 				1AF62EE614DA22A70041556C /* ScrollingCoordinatorMac.mm in Sources */,
+				931CBD0C161A44E900E4C874 /* ScrollingStateNode.cpp in Sources */,
+				931CBD13161A44F800E4C874 /* ScrollingStateNodeMac.mm in Sources */,
+				931CBD0E161A44E900E4C874 /* ScrollingStateScrollingNode.cpp in Sources */,
+				931CBD10161A44E900E4C874 /* ScrollingStateTree.cpp in Sources */,
 				1AF62F2514DAFE9E0041556C /* ScrollingThread.cpp in Sources */,
 				1AF62F2414DAFE910041556C /* ScrollingThreadMac.mm in Sources */,
 				1AAADDA314DB409F00AF64B3 /* ScrollingTree.cpp in Sources */,
@@ -28694,16 +28704,6 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
-				E47E276816036EDC00EE2AFB /* DocumentStyleSheetCollection.cpp in Sources */,
-				4F1D11BF15FF37200026E908 /* PlatformMemoryInstrumentation.cpp in Sources */,
-				931CBD0C161A44E900E4C874 /* ScrollingStateNode.cpp in Sources */,
-				931CBD0E161A44E900E4C874 /* ScrollingStateScrollingNode.cpp in Sources */,
-				931CBD10161A44E900E4C874 /* ScrollingStateTree.cpp in Sources */,
-				931CBD13161A44F800E4C874 /* ScrollingStateNodeMac.mm in Sources */,
-				6EAF340F1613869A00859625 /* ExclusionPolygon.cpp in Sources */,
-				31955A86160D199000858025 /* RenderSnapshottedPlugIn.cpp in Sources */,
-				514BC83F161CF04A004D52F4 /* ResourceBuffer.mm in Sources */,
-				514BC842161CF05C004D52F4 /* ResourceBuffer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
