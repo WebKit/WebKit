@@ -28,7 +28,8 @@ InspectorTest.dumpConsoleMessagesWithStyles = function(sortMessages)
     for (var i = 0; i < messages.length; ++i) {
         var element = messages[i].toMessageElement();
         InspectorTest.addResult(element.textContent.replace(/\u200b/g, ""));
-        InspectorTest.addResult("Style: " + element.querySelector(".console-message-text span").getAttribute("style"));
+        var cssText = element.querySelector(".console-message-text span").style.cssText || "NO STYLES DEFINED.";
+        InspectorTest.addResult("Style: " + cssText);
     }
 }
 

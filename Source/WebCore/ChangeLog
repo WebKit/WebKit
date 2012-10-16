@@ -1,3 +1,34 @@
+2012-10-16  Mike West  <mkwst@chromium.org>
+
+        Web Inspector: Whitelist safe styles for 'console.log('%c...', ...)'.
+        https://bugs.webkit.org/show_bug.cgi?id=98945
+
+        Reviewed by Pavel Feldman.
+
+        Support for styling console messages via '%c' landed without any
+        parsing of the style information provided. This means that it's fairly
+        simple to accidentally or maliciously break the console with cleverly
+        styled messages. To mitigate this risk, whitelisting a safe subset of
+        CSS seems appropriate.
+
+        As a first pass at a reasonable whitelist, this patch allows
+        'background[-*]', 'border[-*]', 'color[-*]', 'font[-*]',
+        'margin[-*]', 'padding[-*]', 'text[-*]', '-webkit-background[-*]',
+        '-webkit-border[-*]', '-webkit-font[-*]', '-webkit-margin[-*]',
+        '-webkit-padding[-*]', and '-webkit-text[-*]'.
+
+        Test: inspector/console/console-format-style-whitelist.html
+
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessageImpl.prototype._formatWithSubstitutionString.styleFormatter):
+            Create a buffer element onto which the user-provided styles are
+            applied. Whitelisted styles are transfered from the buffer onto
+            the actual console message.
+        (WebInspector.ConsoleMessageImpl.prototype._formatWithSubstitutionString.isWhitelistedProperty):
+             Returns true if the specific style is whitelisted. Expects styles
+             in the hyphenated form (that is, '-webkit-padding-start' rather than
+             CSSOM's 'webkitPaddingStart').
+
 2012-10-16  Luke Macpherson   <macpherson@chromium.org>
 
         Handle CSSPropertyOpacity in StyleBuilder.

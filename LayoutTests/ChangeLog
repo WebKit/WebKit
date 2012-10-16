@@ -1,3 +1,18 @@
+2012-10-16  Mike West  <mkwst@chromium.org>
+
+        Web Inspector: Whitelist safe styles for 'console.log('%c...', ...)'.
+        https://bugs.webkit.org/show_bug.cgi?id=98945
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/console-test.js:
+        (initialize_ConsoleTest.InspectorTest.dumpConsoleMessagesWithStyles):
+            Use the 'cssText' property of an element, rather than reading from
+            its 'style' attribute. Also, gracefully handle unstyled elements
+            by explicitly noting their emptyness.
+        * inspector/console/console-format-style-whitelist-expected.txt: Added.
+        * inspector/console/console-format-style-whitelist.html: Added.
+
 2012-10-16  Keishi Hattori  <keishi@webkit.org>
 
         [Chromium] Rebaseline calendar-picker-key-operations.html due to r162114

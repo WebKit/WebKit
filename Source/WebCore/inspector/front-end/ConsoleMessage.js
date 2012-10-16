@@ -449,7 +449,23 @@ WebInspector.ConsoleMessageImpl.prototype = {
 
         function styleFormatter(obj)
         {
-            formattedResult.setAttribute("style", obj.description);
+            var buffer = document.createElement("span");
+            buffer.setAttribute("style", obj.description);
+            for (var i = 0; i < buffer.style.length; i++) {
+                var property = buffer.style[i];
+                if (isWhitelistedProperty(property))
+                    formattedResult.style[property] = buffer.style[property];
+            }
+        }
+
+        function isWhitelistedProperty(property)
+        {
+            var prefixes = ["background", "border", "color", "font", "line", "margin", "padding", "text", "-webkit-background", "-webkit-border", "-webkit-font", "-webkit-margin", "-webkit-padding", "-webkit-text"];
+            for (var i = 0; i < prefixes.length; i++) {
+                if (property.startsWith(prefixes[i]))
+                    return true;
+            }
+            return false;
         }
 
         // Firebug uses %o for formatting objects.
