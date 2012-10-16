@@ -180,3 +180,19 @@ TEST_F(EWK2UnitTestBase, ewk_context_ref)
     ewk_context_unref(context);
     ewk_context_unref(context);
 }
+
+TEST_F(EWK2UnitTestBase, ewk_context_cache_model)
+{
+    Ewk_Context* context = ewk_view_context_get(webView());
+
+    ASSERT_EQ(EWK_CACHE_MODEL_DOCUMENT_BROWSER, ewk_context_cache_model_get(context));
+
+    ASSERT_TRUE(ewk_context_cache_model_set(context, EWK_CACHE_MODEL_DOCUMENT_VIEWER));
+    ASSERT_EQ(EWK_CACHE_MODEL_DOCUMENT_VIEWER, ewk_context_cache_model_get(context));
+
+    ASSERT_TRUE(ewk_context_cache_model_set(context, EWK_CACHE_MODEL_DOCUMENT_BROWSER));
+    ASSERT_EQ(EWK_CACHE_MODEL_DOCUMENT_BROWSER, ewk_context_cache_model_get(context));
+
+    ASSERT_TRUE(ewk_context_cache_model_set(context, EWK_CACHE_MODEL_PRIMARY_WEBBROWSER));
+    ASSERT_EQ(EWK_CACHE_MODEL_PRIMARY_WEBBROWSER, ewk_context_cache_model_get(context));
+}

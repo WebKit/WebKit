@@ -38,6 +38,7 @@
 #include "ewk_download_job.h"
 #include "ewk_download_job_private.h"
 #include "ewk_favicon_database_private.h"
+#include "ewk_private.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/IconDatabase.h>
 #include <wtf/HashMap.h>
@@ -338,3 +339,23 @@ void ewk_context_visited_link_add(Ewk_Context* ewkContext, const char* visitedUR
     WKRetainPtr<WKStringRef> wkVisitedURL(AdoptWK, WKStringCreateWithUTF8CString(visitedURL));
     WKContextAddVisitedLink(ewkContext->context.get(), wkVisitedURL.get());
 }
+
+// Ewk_Cache_Model enum validation
+COMPILE_ASSERT_MATCHING_ENUM(EWK_CACHE_MODEL_DOCUMENT_VIEWER, kWKCacheModelDocumentViewer);
+COMPILE_ASSERT_MATCHING_ENUM(EWK_CACHE_MODEL_DOCUMENT_BROWSER, kWKCacheModelDocumentBrowser);
+COMPILE_ASSERT_MATCHING_ENUM(EWK_CACHE_MODEL_PRIMARY_WEBBROWSER, kWKCacheModelPrimaryWebBrowser);
+
+Eina_Bool ewk_context_cache_model_set(Ewk_Context* ewkContext, Ewk_Cache_Model cacheModel)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ewkContext, false);
+    WKContextSetCacheModel(ewk_context_WKContext_get(ewkContext), static_cast<Ewk_Cache_Model>(cacheModel));
+    return true;
+}
+
+Ewk_Cache_Model ewk_context_cache_model_get(const Ewk_Context* ewkContext)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ewkContext, EWK_CACHE_MODEL_DOCUMENT_VIEWER);
+    WKCacheModel cacheModel = WKContextGetCacheModel(ewk_context_WKContext_get(ewkContext));
+    return static_cast<Ewk_Cache_Model>(cacheModel);
+}
+

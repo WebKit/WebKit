@@ -51,6 +51,23 @@ extern "C" {
 typedef struct _Ewk_Context Ewk_Context;
 
 /**
+ * \enum    _Ewk_Cache_Model
+ *
+ * @brief   Contains option for cache model
+ */
+enum _Ewk_Cache_Model {
+    /// Use the smallest cache capacity.
+    EWK_CACHE_MODEL_DOCUMENT_VIEWER,
+    /// Use bigger cache capacity than EWK_CACHE_MODEL_DOCUMENT_VIEWER.
+    EWK_CACHE_MODEL_DOCUMENT_BROWSER,
+    /// Use the biggest cache capacity.
+    EWK_CACHE_MODEL_PRIMARY_WEBBROWSER
+};
+
+/// Creates a type name for the _Ewk_Cache_Model.
+typedef enum _Ewk_Cache_Model Ewk_Cache_Model;
+
+/**
  * @typedef Ewk_Url_Scheme_Request_Cb Ewk_Url_Scheme_Request_Cb
  * @brief Callback type for use with ewk_context_url_scheme_register().
  */
@@ -267,6 +284,27 @@ EAPI void ewk_context_history_callbacks_set(Ewk_Context *context,
  * @see Ewk_Context_History_Client
  */
 EAPI void ewk_context_visited_link_add(Ewk_Context *context, const char *visited_url);
+
+/**
+ * Set @a cache_model as the cache model for @a context.
+ *
+ * By default, it is EWK_CACHE_MODEL_DOCUMENT_BROWSER.
+ *
+ * @param context context object to update.
+ * @param cache_model a #Ewk_Cache_Model.
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_context_cache_model_set(Ewk_Context *context, Ewk_Cache_Model cache_model);
+
+/**
+ * Gets the cache model for @a context.
+ *
+ * @param context context object to query.
+ *
+ * @return the cache model for the @a context.
+ */
+EAPI Ewk_Cache_Model ewk_context_cache_model_get(const Ewk_Context *context);
 
 #ifdef __cplusplus
 }
