@@ -95,6 +95,9 @@ class ChromiumMacPortTest(chromium_port_testcase.ChromiumPortTestCase):
     def test_path_to_image_diff(self):
         self.assertEquals(self.make_port()._path_to_image_diff(), '/mock-checkout/out/Release/ImageDiff')
 
+    def test_ml_expectations(self):
+        self.assertTrue(self.make_port(port_name='chromium-mac-mountainlion').expectations_files()[-1].endswith('-mountainlion/TestExpectations'))
+        self.assertFalse(self.make_port(port_name='chromium-mac-lion').expectations_files()[-1].endswith('-mountainlion/TestExpectations'))
 
 if __name__ == '__main__':
     port_testcase.main()

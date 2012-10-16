@@ -1,3 +1,16 @@
+2012-10-16  Dirk Pranke  <dpranke@chromium.org>
+
+        [chromium] add Mountain Lion baselines
+        https://bugs.webkit.org/show_bug.cgi?id=99505
+
+        Reviewed by Ojan Vafai.
+
+        This change adds a temporary 10.8/MountainLion-specific
+        expectations file for Chromium so that the bot can be green
+        while we are updating all the baselines and triaging failures.
+
+        * platform/chromium-mac-mountainlion/TestExpectations: Added.
+
 2012-10-16  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] accessibility/inline-continuations.html is failing

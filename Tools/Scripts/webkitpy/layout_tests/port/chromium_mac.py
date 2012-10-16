@@ -94,6 +94,14 @@ class ChromiumMacPort(chromium.ChromiumPort):
     def operating_system(self):
         return 'mac'
 
+    def expectations_files(self):
+        # FIXME: This is a temporary hack while getting the 10.8 baselines up to date.
+        # See https://bugs.webkit.org/show_bug.cgi?id=99505
+        files = super(ChromiumMacPort, self).expectations_files()
+        if self.name() == 'chromium-mac-mountainlion':
+            files.append(self._filesystem.join(self._webkit_baseline_path(self.name()), 'TestExpectations'))
+        return files
+
     #
     # PROTECTED METHODS
     #
