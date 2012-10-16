@@ -1,3 +1,46 @@
+2012-10-16  Brady Eidson  <beidson@apple.com>
+
+        Update indentation in *ResourceLoader headers to match modern WebKit style
+        https://bugs.webkit.org/show_bug.cgi?id=99487
+
+        Reviewed by Beth Dakin.
+
+        I'm going to be working on these classes and the indentation is driving me crazy.
+
+        * loader/MainResourceLoader.h:
+        (WebCore):
+        (MainResourceLoader):
+        (WebCore::MainResourceLoader::isLoadingMultipartContent):
+
+        * loader/NetscapePlugInStreamLoader.h:
+        (WebCore):
+        (NetscapePlugInStreamLoaderClient):
+        (WebCore::NetscapePlugInStreamLoaderClient::didFinishLoading):
+        (WebCore::NetscapePlugInStreamLoaderClient::wantsAllStreams):
+        (WebCore::NetscapePlugInStreamLoaderClient::~NetscapePlugInStreamLoaderClient):
+        (NetscapePlugInStreamLoader):
+
+        * loader/ResourceLoader.h:
+        (WebCore):
+        (ResourceLoader):
+        (WebCore::ResourceLoader::documentLoader):
+        (WebCore::ResourceLoader::originalRequest):
+        (WebCore::ResourceLoader::identifier):
+        (WebCore::ResourceLoader::didReceiveCachedMetadata):
+        (WebCore::ResourceLoader::willStopBufferingData):
+        (WebCore::ResourceLoader::shouldUseCredentialStorage):
+        (WebCore::ResourceLoader::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceLoader::didCancelAuthenticationChallenge):
+        (WebCore::ResourceLoader::canAuthenticateAgainstProtectionSpace):
+        (WebCore::ResourceLoader::receivedCancellation):
+        (WebCore::ResourceLoader::url):
+        (WebCore::ResourceLoader::handle):
+        (WebCore::ResourceLoader::sendResourceLoadCallbacks):
+        (WebCore::ResourceLoader::reachedTerminalState):
+        (WebCore::ResourceLoader::request):
+        (WebCore::ResourceLoader::cancelled):
+        (WebCore::ResourceLoader::defersLoading):
+
 2012-10-16  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=99254

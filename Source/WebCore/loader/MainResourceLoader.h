@@ -46,78 +46,78 @@ OBJC_CLASS WebFilterEvaluator;
 
 namespace WebCore {
 
-    class FormState;
-    class ResourceRequest;
+class FormState;
+class ResourceRequest;
 
-    class MainResourceLoader : public ResourceLoader {
-    public:
-        static PassRefPtr<MainResourceLoader> create(Frame*);
-        virtual ~MainResourceLoader();
+class MainResourceLoader : public ResourceLoader {
+public:
+    static PassRefPtr<MainResourceLoader> create(Frame*);
+    virtual ~MainResourceLoader();
 
-        void load(const ResourceRequest&, const SubstituteData&);
-        virtual void addData(const char*, int, bool allAtOnce) OVERRIDE;
+    void load(const ResourceRequest&, const SubstituteData&);
+    virtual void addData(const char*, int, bool allAtOnce) OVERRIDE;
 
-        virtual void setDefersLoading(bool) OVERRIDE;
+    virtual void setDefersLoading(bool) OVERRIDE;
 
-        virtual void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse) OVERRIDE;
-        virtual void didReceiveResponse(const ResourceResponse&) OVERRIDE;
-        virtual void didReceiveData(const char*, int, long long encodedDataLength, bool allAtOnce) OVERRIDE;
-        virtual void didFinishLoading(double finishTime) OVERRIDE;
-        virtual void didFail(const ResourceError&) OVERRIDE;
+    virtual void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse) OVERRIDE;
+    virtual void didReceiveResponse(const ResourceResponse&) OVERRIDE;
+    virtual void didReceiveData(const char*, int, long long encodedDataLength, bool allAtOnce) OVERRIDE;
+    virtual void didFinishLoading(double finishTime) OVERRIDE;
+    virtual void didFail(const ResourceError&) OVERRIDE;
 
 #if HAVE(RUNLOOP_TIMER)
-        typedef RunLoopTimer<MainResourceLoader> MainResourceLoaderTimer;
+    typedef RunLoopTimer<MainResourceLoader> MainResourceLoaderTimer;
 #else
-        typedef Timer<MainResourceLoader> MainResourceLoaderTimer;
+    typedef Timer<MainResourceLoader> MainResourceLoaderTimer;
 #endif
 
-        bool isLoadingMultipartContent() const { return m_loadingMultipartContent; }
+    bool isLoadingMultipartContent() const { return m_loadingMultipartContent; }
 
-        virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
-    private:
-        explicit MainResourceLoader(Frame*);
+private:
+    explicit MainResourceLoader(Frame*);
 
-        virtual void willCancel(const ResourceError&) OVERRIDE;
-        virtual void didCancel(const ResourceError&) OVERRIDE;
+    virtual void willCancel(const ResourceError&) OVERRIDE;
+    virtual void didCancel(const ResourceError&) OVERRIDE;
 
-        bool loadNow(ResourceRequest&);
+    bool loadNow(ResourceRequest&);
 
-        void handleEmptyLoad(const KURL&, bool forURLScheme);
-        void handleSubstituteDataLoadSoon(const ResourceRequest&);
-        void handleSubstituteDataLoadNow(MainResourceLoaderTimer*);
+    void handleEmptyLoad(const KURL&, bool forURLScheme);
+    void handleSubstituteDataLoadSoon(const ResourceRequest&);
+    void handleSubstituteDataLoadNow(MainResourceLoaderTimer*);
 
-        void startDataLoadTimer();
+    void startDataLoadTimer();
 
-        void receivedError(const ResourceError&);
-        ResourceError interruptedForPolicyChangeError() const;
-        void stopLoadingForPolicyChange();
-        bool isPostOrRedirectAfterPost(const ResourceRequest& newRequest, const ResourceResponse& redirectResponse);
+    void receivedError(const ResourceError&);
+    ResourceError interruptedForPolicyChangeError() const;
+    void stopLoadingForPolicyChange();
+    bool isPostOrRedirectAfterPost(const ResourceRequest& newRequest, const ResourceResponse& redirectResponse);
 
-        static void callContinueAfterNavigationPolicy(void*, const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue);
-        void continueAfterNavigationPolicy(const ResourceRequest&, bool shouldContinue);
+    static void callContinueAfterNavigationPolicy(void*, const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue);
+    void continueAfterNavigationPolicy(const ResourceRequest&, bool shouldContinue);
 
-        static void callContinueAfterContentPolicy(void*, PolicyAction);
-        void continueAfterContentPolicy(PolicyAction);
-        void continueAfterContentPolicy(PolicyAction, const ResourceResponse&);
-        
+    static void callContinueAfterContentPolicy(void*, PolicyAction);
+    void continueAfterContentPolicy(PolicyAction);
+    void continueAfterContentPolicy(PolicyAction, const ResourceResponse&);
+    
 #if PLATFORM(QT)
-        void substituteMIMETypeFromPluginDatabase(const ResourceResponse&);
+    void substituteMIMETypeFromPluginDatabase(const ResourceResponse&);
 #endif
 
-        ResourceRequest m_initialRequest;
-        SubstituteData m_substituteData;
+    ResourceRequest m_initialRequest;
+    SubstituteData m_substituteData;
 
-        MainResourceLoaderTimer m_dataLoadTimer;
+    MainResourceLoaderTimer m_dataLoadTimer;
 
-        bool m_loadingMultipartContent;
-        bool m_waitingForContentPolicy;
-        double m_timeOfLastDataReceived;
+    bool m_loadingMultipartContent;
+    bool m_waitingForContentPolicy;
+    double m_timeOfLastDataReceived;
 
 #if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
-        WebFilterEvaluator *m_filter;
+    WebFilterEvaluator *m_filter;
 #endif
-    };
+};
 
 }
 
