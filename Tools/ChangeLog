@@ -1,3 +1,19 @@
+2012-10-15  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Display page favicons in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=99265
+
+        Reviewed by Gyuyoung Kim.
+
+        Display current page favicon in the URL bar.
+        This uses the new favicon database API in
+        EFL WebKit2.
+
+        * MiniBrowser/efl/main.c:
+        (on_favicon_received):
+        (on_view_icon_changed):
+        (window_create):
+
 2012-10-15  Simon Fraser  <simon.fraser@apple.com>
 
         Update the url bar in MiniBrowser when getting the committed URL

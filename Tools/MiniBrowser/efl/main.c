@@ -322,6 +322,45 @@ on_download_failed(void *user_data, Evas_Object *webview, void *event_info)
     info("Download failed!\n");
 }
 
+static void
+on_favicon_received(const char *page_url, Evas_Object *icon, void *event_info)
+{
+    Browser_Window *app_data = (Browser_Window *)event_info;
+    if (strcmp(page_url, ewk_view_url_get(app_data->webview)))
+        return;
+
+    /* Remove previous icon from URL bar */
+    Evas_Object *old_icon = elm_object_part_content_unset(app_data->url_bar, "icon");
+    if (old_icon) {
+        evas_object_unref(old_icon);
+        evas_object_del(old_icon);
+    }
+
+    /* Show new icon in URL bar */
+    if (icon) {
+        /* Workaround for icon display bug:
+         * http://trac.enlightenment.org/e/ticket/1616 */
+        evas_object_size_hint_min_set(icon, 48, 24);
+        evas_object_image_filled_set(icon, EINA_FALSE);
+        evas_object_image_fill_set(icon, 24, 0, 24, 24);
+        elm_object_part_content_set(app_data->url_bar, "icon", icon);
+        evas_object_ref(icon);
+    }
+}
+
+static void
+on_view_icon_changed(void *user_data, Evas_Object *webview, void *event_info)
+{
+    Browser_Window *app_data = (Browser_Window *)user_data;
+    /* Retrieve the view's favicon */
+    Ewk_Context *context = ewk_view_context_get(webview);
+    Ewk_Favicon_Database *icon_database = ewk_context_favicon_database_get(context);
+
+    const char *page_url = ewk_view_url_get(webview);
+    Evas *evas = evas_object_evas_get(webview);
+    ewk_favicon_database_async_icon_get(icon_database, page_url, evas, on_favicon_received, app_data);
+}
+
 static int
 quit(Eina_Bool success, const char *msg)
 {
@@ -610,6 +649,7 @@ static Browser_Window *window_create(const char *url)
     /* Create URL bar */
     app_data->url_bar = elm_entry_add(app_data->window);
     elm_entry_scrollable_set(app_data->url_bar, EINA_TRUE);
+    elm_entry_scrollbar_policy_set(app_data->url_bar, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
     elm_entry_single_line_set(app_data->url_bar, EINA_TRUE);
     elm_entry_cnp_mode_set(app_data->url_bar, ELM_CNP_MODE_PLAINTEXT);
     elm_entry_text_style_user_push(app_data->url_bar, "DEFAULT='font_size=18'");
@@ -657,6 +697,7 @@ static Browser_Window *window_create(const char *url)
     evas_object_smart_callback_add(app_data->webview, "download,failed", on_download_failed, app_data);
     evas_object_smart_callback_add(app_data->webview, "download,finished", on_download_finished, app_data);
     evas_object_smart_callback_add(app_data->webview, "download,request", on_download_request, app_data);
+    evas_object_smart_callback_add(app_data->webview, "icon,changed", on_view_icon_changed, app_data);
     evas_object_smart_callback_add(app_data->webview, "load,error", on_error, app_data);
     evas_object_smart_callback_add(app_data->webview, "load,progress", on_progress, app_data);
     evas_object_smart_callback_add(app_data->webview, "title,changed", on_title_changed, app_data);
