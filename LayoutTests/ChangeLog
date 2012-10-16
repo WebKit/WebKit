@@ -1,3 +1,16 @@
+2012-10-16  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] accessibility/inline-continuations.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=98367
+
+        Unreviewed. Unskipped test, new port-specific expectations.
+
+        ATs for the GTK port are expecting only meaningful text objects, with
+        the text of spans getting folded into the parent object.
+
+        * platform/gtk/TestExpectations: Updated to unskip test.
+        * platform/gtk/accessibility/inline-continuations-expected.txt: Added.
+
 2012-10-16  Emil A Eklund  <eae@chromium.org>
 
         Remove special-case flooring of baselinePosition for replaced elements in InlineFlowBox::placeBoxesInBlockDirection
