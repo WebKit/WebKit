@@ -1,5 +1,11 @@
 2012-10-16  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, revert previous WebKit2.def change. Exports shouldn't matter.
+
+        * win/WebKit2.def:
+
+2012-10-16  Tony Chang  <tony@chromium.org>
+
         Unreviewed, try to fix the Apple Win build.
 
         * win/WebKit2.def:
