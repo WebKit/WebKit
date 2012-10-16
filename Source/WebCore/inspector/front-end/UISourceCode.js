@@ -308,10 +308,6 @@ WebInspector.UISourceCode.prototype = {
             delete this._workingCopy;
         else
             this._workingCopy = newWorkingCopy;
-        if (this.scriptFile())
-            this.scriptFile().workingCopyChanged();
-        else if (this.styleFile())
-            this.styleFile().workingCopyChanged();
         this.dispatchEventToListeners(WebInspector.UISourceCode.Events.WorkingCopyChanged, {oldWorkingCopy: oldWorkingCopy, workingCopy: this.workingCopy()});
     },
 
@@ -325,11 +321,8 @@ WebInspector.UISourceCode.prototype = {
             return;
         }
 
-        if (this.scriptFile())
-            this.scriptFile().workingCopyCommitted(callback);
-        else if (this.styleFile())
-            this.styleFile().workingCopyCommitted(callback);
         this._commitContent(this._workingCopy);
+        callback(null);
     },
 
     /**

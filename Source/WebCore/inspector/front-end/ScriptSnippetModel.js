@@ -450,6 +450,8 @@ WebInspector.SnippetScriptFile = function(scriptSnippetModel, snippetJavaScriptS
     this._scriptSnippetModel = scriptSnippetModel;
     this._snippetJavaScriptSource = snippetJavaScriptSource;
     this._hasDivergedFromVM = true;
+    this._snippetJavaScriptSource.addEventListener(WebInspector.UISourceCode.Events.WorkingCopyCommitted, this._workingCopyCommitted, this);
+    this._snippetJavaScriptSource.addEventListener(WebInspector.UISourceCode.Events.WorkingCopyChanged, this._workingCopyChanged, this);
 }
 
 WebInspector.SnippetScriptFile.prototype = {
@@ -485,16 +487,12 @@ WebInspector.SnippetScriptFile.prototype = {
         this._isDivergingFromVM = isDivergingFromVM;
     },
 
-    /**
-     * @param {function(?string)} callback
-     */
-    workingCopyCommitted: function(callback)
+    _workingCopyCommitted: function()
     {
         this._scriptSnippetModel._setScriptSnippetContent(this._snippetJavaScriptSource, this._snippetJavaScriptSource.workingCopy());
-        callback(null);
     },
 
-    workingCopyChanged: function()
+    _workingCopyChanged: function()
     {
         this._scriptSnippetModel._scriptSnippetEdited(this._snippetJavaScriptSource);
     },

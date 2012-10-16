@@ -14,25 +14,24 @@ function test()
 
     function step1(node)
     {
-        WebInspector.panel("scripts")._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, sourceCodeAdded);
         WebInspector.cssModel.addRule(node.id, "#inspected", successCallback, failureCallback);
 
-        function successCallback() { }
+        function successCallback()
+        {
+            // setTimwout is needed here because showScriptSource callback is triggered by uiSourceCode addRevision handling
+            // and we need to wait until the code flow exits StyleFile.addRevision.
+            InspectorTest.showScriptSource("inspector-stylesheet", setTimeout.bind(this, step2, 0));
+        }
         function failureCallback()
         {
             InspectorTest.addResult("Failed to add rule.");
             InspectorTest.completeTest();
         }
-
-        function sourceCodeAdded(event)
-        {
-            if (event.data.parsedURL.scheme === "inspector")
-                InspectorTest.showScriptSource("inspector-stylesheet", step2.bind(this, event.data));
-        }
     }
 
-    function step2(styleSource, sourceFrame)
+    function step2(sourceFrame)
     {
+        var styleSource = sourceFrame._uiSourceCode;
         InspectorTest.addResult("Inspector stylesheet URL: " + styleSource.parsedURL.displayName);
         styleSource.requestContent(printContent());
 

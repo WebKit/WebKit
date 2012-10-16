@@ -1,3 +1,14 @@
+2012-10-15  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Extract domain specific editing handling logic from UISourceCode (step 2).
+        https://bugs.webkit.org/show_bug.cgi?id=99301
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/debugger-test.js:
+        (initialize_DebuggerTest):
+        * inspector/styles/edit-inspector-stylesheet.html:
+
 2012-10-16  Dana Jansens  <danakj@chromium.org>
 
         Layout Test fast/forms/date/calendar-picker-key-operations.html is failing

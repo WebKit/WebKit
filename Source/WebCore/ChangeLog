@@ -1,3 +1,45 @@
+2012-10-15  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Extract domain specific editing handling logic from UISourceCode (step 2).
+        https://bugs.webkit.org/show_bug.cgi?id=99301
+
+        Reviewed by Pavel Feldman.
+
+        StyleFile and ScriptFile now listen for the UISourceCode WorkingCopyChanged/Committed events and process
+        them instead of being called explicitly.
+
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame):
+        (WebInspector.JavaScriptSourceFrame.prototype.onTextChanged):
+        (WebInspector.JavaScriptSourceFrame.prototype._willMergeToVM):
+        (WebInspector.JavaScriptSourceFrame.prototype._didMergeToVM):
+        (WebInspector.JavaScriptSourceFrame.prototype._willDivergeFromVM):
+        (WebInspector.JavaScriptSourceFrame.prototype._didDivergeFromVM):
+        (WebInspector.JavaScriptSourceFrame.prototype._muteBreakpointsWhileEditing):
+        (WebInspector.JavaScriptSourceFrame.prototype._restoreBreakpointsAfterEditing):
+        * inspector/front-end/ResourceScriptMapping.js:
+        (WebInspector.ResourceScriptMapping.prototype._hasMergedToVM):
+        (WebInspector.ResourceScriptMapping.prototype._hasDivergedFromVM):
+        (WebInspector.ResourceScriptMapping.prototype._bindUISourceCodeToScripts):
+        (WebInspector.ResourceScriptFile):
+        (WebInspector.ResourceScriptFile.prototype._workingCopyCommitted):
+        (WebInspector.ResourceScriptFile.prototype._workingCopyChanged):
+        * inspector/front-end/ScriptSnippetModel.js:
+        (WebInspector.SnippetScriptFile):
+        (WebInspector.SnippetScriptFile.prototype._workingCopyCommitted):
+        (WebInspector.SnippetScriptFile.prototype._workingCopyChanged):
+        * inspector/front-end/StylesSourceMapping.js:
+        (WebInspector.StyleFile):
+        (WebInspector.StyleFile.prototype._workingCopyCommitted):
+        (WebInspector.StyleFile.prototype._workingCopyChanged):
+        (WebInspector.StyleFile.prototype._commitIncrementalEdit):
+        (WebInspector.StyleFile.prototype._clearIncrementalUpdateTimer):
+        (WebInspector.StyleFile.prototype.addRevision):
+        (WebInspector.StyleContentBinding.prototype._innerStyleSheetChanged):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode.prototype.setWorkingCopy):
+        (WebInspector.UISourceCode.prototype.commitWorkingCopy):
+
 2012-10-16  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Elements] Double-click to live edit style tags changes text to 'undefined' in some situations
