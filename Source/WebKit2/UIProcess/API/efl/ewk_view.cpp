@@ -261,7 +261,7 @@ static void _ewk_view_on_favicon_changed(const char* pageURL, void* eventInfo)
     Evas_Object* ewkView = static_cast<Evas_Object*>(eventInfo);
 
     const char* view_url = ewk_view_url_get(ewkView);
-    if (strcasecmp(view_url, pageURL))
+    if (!view_url || strcasecmp(view_url, pageURL))
         return;
 
     ewk_view_update_icon(ewkView);

@@ -1,3 +1,16 @@
+2012-10-16  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [WK2][EFL] Crash in _ewk_view_on_favicon_changed()
+        https://bugs.webkit.org/show_bug.cgi?id=99454
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added missing null check to avoid a crash if the current URL of
+        view is NULL.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_on_favicon_changed):
+
 2012-10-16  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2] Provide WKURL API for resolving the relative URL with the given base URL
