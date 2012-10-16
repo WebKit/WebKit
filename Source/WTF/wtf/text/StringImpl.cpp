@@ -1021,14 +1021,9 @@ size_t StringImpl::find(StringImpl* matchString, unsigned index)
 
     // Optimization 1: fast case for strings of length 1.
     if (matchLength == 1) {
-        if (is8Bit()) {
-            if (matchString->is8Bit())
-                return WTF::find(characters8(), length(), matchString->characters8()[0], index);
-            return WTF::find(characters8(), length(), matchString->characters16()[0], index);
-        }
-        if (matchString->is8Bit())
-            return WTF::find(characters16(), length(), matchString->characters8()[0], index);
-        return WTF::find(characters16(), length(), matchString->characters16()[0], index);
+        if (is8Bit())
+            return WTF::find(characters8(), length(), (*matchString)[0], index);
+        return WTF::find(characters16(), length(), (*matchString)[0], index);
     }
 
     if (UNLIKELY(!matchLength))
@@ -1130,9 +1125,9 @@ size_t StringImpl::reverseFind(StringImpl* matchString, unsigned index)
 
     // Optimization 1: fast case for strings of length 1.
     if (matchLength == 1) {
-        if (is8Bit() && matchString->is8Bit())
-            return WTF::reverseFind(characters8(), ourLength, matchString->characters8()[0], index);
-        return WTF::reverseFind(characters(), ourLength, matchString->characters()[0], index);
+        if (is8Bit())
+            return WTF::reverseFind(characters8(), ourLength, (*matchString)[0], index);
+        return WTF::reverseFind(characters16(), ourLength, (*matchString)[0], index);
     }
 
     // Check index & matchLength are in range.

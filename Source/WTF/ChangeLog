@@ -1,3 +1,20 @@
+2012-10-16  Michael Saboff  <msaboff@apple.com>
+
+        StringImpl::reverseFind() with a single match character isn't optimal for mixed 8/16 bit cases
+        https://bugs.webkit.org/show_bug.cgi?id=99363
+
+        Reviewed by Benjamin Poulain.
+
+        Factored out the 8/16 bitness check of the match character from the subject character bitness
+        check.  Did this for both find() and reverseFind().  Added all UChar/LChar combinations to the
+        inline reverseFind().
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::find):
+        (WTF::StringImpl::reverseFind):
+        * wtf/text/StringImpl.h:
+        (WTF::reverseFind):
+
 2012-10-16  Dima Gorbik  <dgorbik@apple.com>
 
         Remove Platform.h include from the header files.
