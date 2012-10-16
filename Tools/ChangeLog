@@ -1,3 +1,16 @@
+2012-10-16  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] Decrease the Cario jhbuild dep version back to 1.10.2
+        https://bugs.webkit.org/show_bug.cgi?id=99443
+
+        Reviewed by Philippe Normand.
+
+        Crashes started to occur after the Cairo version in the JHBuild dependencies
+        was bumped up to 1.12.4. This change brings it back down to 1.10.2, which
+        worked fine.
+
+        * gtk/jhbuild.modules:
+
 2012-10-16  Szilard Ledan  <szledan@inf.u-szeged.hu>
 
         Separate WebKit2 instances use the same local storage
