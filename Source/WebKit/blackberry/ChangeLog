@@ -1,3 +1,18 @@
+2012-10-16  Mike Lattanzio  <mlattanzio@rim.com>
+
+        2012-10-16  Mike Lattanzio  <mlattanzio@rim.com>
+
+        [BlackBerry] calculateInRegionScrollableAreasForPoint should use a ReadOnly HitTest
+        https://bugs.webkit.org/show_bug.cgi?id=99497
+
+        Reviewed by Antonio Gomes.
+
+        Fix calculateInRegionScrollableAreasForPoint to use a ReadOnly
+        hit test to improve its performance.
+
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScrollerPrivate::calculateInRegionScrollableAreasForPoint):
+
 2012-10-15  Peter Wang  <peter.wang@torchmobile.com.cn>
 
         [BlackBerry] Web Inspector: Remove the useless preferences items in "inspectorBB.js"
