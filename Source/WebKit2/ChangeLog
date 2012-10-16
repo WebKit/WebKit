@@ -1,3 +1,21 @@
+2012-10-16  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        Implement testRunner.dumpSelectionRect() in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=69545
+
+        Reviewed by Simon Fraser.
+
+        * Shared/API/c/WKImage.h: Add another option that controls whether
+        the selection rectangle should be painted onto the snapshot.
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toSnapshotOptions): Add a case for the new option
+        mentioned above.
+        * Shared/ImageOptions.h: More plumbing for the option above.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scaledSnapshotWithOptions): Draw a red rectangle
+        around the selection area when
+        SnapshotOptionsPaintSelectionRectangle is set.
+
 2012-10-16  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Have intent classes subclass RefCounted

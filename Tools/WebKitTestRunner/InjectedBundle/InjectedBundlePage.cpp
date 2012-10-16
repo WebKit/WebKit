@@ -951,7 +951,11 @@ void InjectedBundlePage::dump()
         InjectedBundle::shared().dumpBackForwardListsForAllPages();
 
     if (InjectedBundle::shared().shouldDumpPixels() && InjectedBundle::shared().testRunner()->shouldDumpPixels()) {
-        InjectedBundle::shared().setPixelResult(adoptWK(WKBundlePageCreateSnapshotWithOptions(m_page, WKBundleFrameGetVisibleContentBounds(WKBundlePageGetMainFrame(m_page)), kWKSnapshotOptionsShareable | kWKSnapshotOptionsInViewCoordinates)).get());
+        WKSnapshotOptions options = kWKSnapshotOptionsShareable | kWKSnapshotOptionsInViewCoordinates;
+        if (InjectedBundle::shared().testRunner()->shouldDumpSelectionRect())
+            options |= kWKSnapshotOptionsPaintSelectionRectangle;
+
+        InjectedBundle::shared().setPixelResult(adoptWK(WKBundlePageCreateSnapshotWithOptions(m_page, WKBundleFrameGetVisibleContentBounds(WKBundlePageGetMainFrame(m_page)), options)).get());
         if (WKBundlePageIsTrackingRepaints(m_page))
             InjectedBundle::shared().setRepaintRects(adoptWK(WKBundlePageCopyTrackedRepaintRects(m_page)).get());
     }

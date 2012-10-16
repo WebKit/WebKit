@@ -809,6 +809,8 @@ inline SnapshotOptions toSnapshotOptions(WKSnapshotOptions wkSnapshotOptions)
         snapshotOptions |= SnapshotOptionsExcludeSelectionHighlighting;
     if (wkSnapshotOptions & kWKSnapshotOptionsInViewCoordinates)
         snapshotOptions |= SnapshotOptionsInViewCoordinates;
+    if (wkSnapshotOptions & kWKSnapshotOptionsPaintSelectionRectangle)
+        snapshotOptions |= SnapshotOptionsPaintSelectionRectangle;
 
     return snapshotOptions;
 }

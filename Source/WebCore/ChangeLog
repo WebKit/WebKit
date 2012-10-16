@@ -1,3 +1,12 @@
+2012-10-16  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        Implement testRunner.dumpSelectionRect() in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=69545
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.exp.in:
+
 2012-10-16  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Implement fastBoundingPath/boundingPath distinction.
