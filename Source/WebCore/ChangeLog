@@ -1,3 +1,20 @@
+2012-10-16  Nate Chapin  <japhet@chromium.org>
+
+        Re-order CachedRawResource::data() to set m_data earlier
+        https://bugs.webkit.org/show_bug.cgi?id=99361
+
+        Reviewed by Adam Barth.
+
+        Currently, we calculate the diff between the data parameter and m_data, call
+        dataReceived(), then set m_data to data. If something inside dataReceived()
+        tries to access m_data via CachedResource::resourceBuffer(), it will see the
+        old data instead of the new data, which seems inconsistent.
+
+        No new tests, as no one appears to try to access m_data within dataReceived() currently.
+
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::data):
+
 2012-10-16  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Fold setCellLogicalWidths logic into RenderTableSection layout
