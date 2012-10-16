@@ -1,3 +1,13 @@
+2012-10-15  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        REGRESSION: Build break after r131373 when ACCELERATED_COMPOSITING disabled
+        https://bugs.webkit.org/show_bug.cgi?id=99397
+
+        Unreviewed, build fix.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::updateMainFrameScrollPosition):
+
 2012-10-14  Kent Tamura  <tkent@chromium.org>
 
         Input elements with multiple fields UI should set appropriate direction for browser locale automatically
