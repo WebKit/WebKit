@@ -1,3 +1,17 @@
+2012-10-16  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Implement fastBoundingPath/boundingPath distinction.
+        https://bugs.webkit.org/show_bug.cgi?id=99471
+
+        Reviewed by Noam Rosenthal.
+
+        Tested by existing test: svg/custom/getBBox-path.svg
+
+        * platform/graphics/Path.cpp:
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::fastBoundingRect):
+        (WebCore::Path::boundingRect):
+
 2012-10-16  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] replace BlackBerry::Platform::log() with BBLOG()

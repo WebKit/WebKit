@@ -184,7 +184,7 @@ void Path::addBeziersForRoundedRect(const FloatRect& rect, const FloatSize& topL
     closeSubpath();
 }
 
-#if !USE(CG)
+#if !USE(CG) && !PLATFORM(QT)
 FloatRect Path::fastBoundingRect() const
 {
     return boundingRect();
