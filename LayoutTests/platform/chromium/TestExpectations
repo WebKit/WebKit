@@ -2278,6 +2278,7 @@ crbug.com/11246 fast/dom/Window/window-properties-geolocation.html [ Skip ]
 
 crbug.com/46603 [ Release ] fast/frames/lots-of-iframes.html [ Pass Timeout ]
 crbug.com/46603 [ Release ] fast/frames/lots-of-objects.html [ Pass Timeout ]
+crbug.com/46603 [ Mac Release ] fast/frames/lots-of-objects.html [ Pass Timeout Crash ]
 # These tests are really slow in debug.
 crbug.com/46603 [ Debug ] fast/frames/lots-of-iframes.html [ Skip ]
 crbug.com/46603 [ Debug ] fast/frames/lots-of-objects.html [ Skip ]

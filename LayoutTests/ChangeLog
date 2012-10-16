@@ -1,3 +1,12 @@
+2012-10-16  Dana Jansens  <danakj@chromium.org>
+
+        lots-of-objects.html is flaky crashing on the webkit.org mac bot.
+        http://code.google.com/p/chromium/issues/detail?id=46603
+
+        Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-16  Tony Chang  <tony@chromium.org>
 
         input[type=range] as a flex item renders thumb at wrong position
