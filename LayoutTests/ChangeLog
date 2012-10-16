@@ -1,3 +1,13 @@
+2012-10-16  Keishi Hattori  <keishi@webkit.org>
+
+        [Chromium] Mark date-suggestion-picker-appearance.html as need rebaseline
+
+        Unreviewed.
+
+        Mark date-suggestion-picker-appearance.html as need rebaseline until chromium side change lands.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-15  Keishi Hattori  <keishi@webkit.org>
 
         Move suggestion picker tests to suggestion-picker directory
