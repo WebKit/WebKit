@@ -1,3 +1,16 @@
+2012-10-16  Keishi Hattori  <keishi@webkit.org>
+
+        Add test that checks that reloading after setting a value for an input element from a suggestion picker resets the values
+        https://bugs.webkit.org/show_bug.cgi?id=99407
+
+        Reviewed by Kent Tamura.
+
+        We want to test that a reload resets values of input elements, even if
+        they were set by the suggestion picker.
+
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-reset-value-after-reload-expected.txt: Added.
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-reset-value-after-reload.html: Added.
+
 2012-10-16  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Chromium] Unreviewed gardening, TestExpectations updated.
