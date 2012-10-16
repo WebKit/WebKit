@@ -1,3 +1,49 @@
+2012-10-15  Kent Tamura  <tkent@chromium.org>
+
+        Fix some appearance glitches of multiple fields input elements
+        https://bugs.webkit.org/show_bug.cgi?id=99412
+
+        Reviewed by Kentaro Hara.
+
+        1. If CSS-specified width is wider than the intrinsic width of an input,
+        the spin button and the picker indicator triangle should be put at the
+        right side of the content area.
+
+        2. Remove top, right, and bottom paddings to match input[type=number]
+        appearance as possible.
+
+        3. Remove unnecessary position:relative for spin buttons.
+
+        4. Center content vertically if the height is taller than the intrinsic height.
+
+        Tests: Update all of rendering tests for input element with multiple fields UI.
+
+        * css/html.css:
+        (input[type="date"]):
+        - Specify display:-webkit-inline-flex and -webkit-align-items:stretch to center contents.
+        - Remove top/right/bottom paddings.
+        (input[type="datetime"]): Ditto.
+        (input[type="datetime-local"]): Ditto.
+        (input[type="month"]): Ditto.
+        (input[type="time"]): Ditto.
+        (input[type="week"]): Ditto.
+        (input::-webkit-datetime-edit):
+        - Switch to the starndard flexible box from the legacy one.
+        - Add white-space:pre to avoid to collapse white spaces.
+        (input::-webkit-datetime-edit-gap):
+        Added. This element is added to push a spin button to the right side.
+        (input::-webkit-date-and-time-container):
+        Add -webkit-flex:1 for the input flexible box.
+        Sort properties.
+        (input[type="week"]::-webkit-inner-spin-button):
+        - Use this in date, datetime, datetime-local, and week types.
+        - Add display:inline-block because other elements in -webkit-datetime-edit is inilne.
+        - Add position:static to cancel position:relative below.
+
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore::DateTimeEditElement::layout):
+        Add an element with -webkit-datetime-edit-gap before a spin button.
+
 2012-10-15  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: can't click delete button if watch expression is very long

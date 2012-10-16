@@ -1,3 +1,20 @@
+2012-10-15  Kent Tamura  <tkent@chromium.org>
+
+        Fix some appearance glitches of multiple fields input elements
+        https://bugs.webkit.org/show_bug.cgi?id=99412
+
+        Reviewed by Kentaro Hara.
+
+        All of rendering tests for multiple fields inputs need rebaseline
+        because of the padding change.
+
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.txt:
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-style.html:
+        Add a fixed height case.
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-10-16  Keishi Hattori  <keishi@webkit.org>
 
         [Chromium] Mark date-suggestion-picker-appearance.html as need rebaseline

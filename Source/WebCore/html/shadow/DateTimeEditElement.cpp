@@ -396,6 +396,10 @@ void DateTimeEditElement::layout(const LayoutParameters& layoutParameters, const
         }
     }
 
+    DEFINE_STATIC_LOCAL(AtomicString, gapPseudoId, ("-webkit-datetime-edit-gap", AtomicString::ConstructFromLiteral));
+    RefPtr<HTMLDivElement> gapElement = HTMLDivElement::create(document());
+    gapElement->setShadowPseudoId(gapPseudoId);
+    appendChild(gapElement);
     RefPtr<SpinButtonElement> spinButton = SpinButtonElement::create(document(), *this);
     m_spinButton = spinButton.get();
     appendChild(spinButton);

@@ -479,39 +479,59 @@ datalist {
 #if defined(ENABLE_INPUT_MULTIPLE_FIELDS_UI) && ENABLE_INPUT_MULTIPLE_FIELDS_UI
 #if defined(ENABLE_INPUT_TYPE_DATE) && ENABLE_INPUT_TYPE_DATE
 input[type="date"] {
+    -webkit-align-items: stretch;
+    display: -webkit-inline-flex;
     font-family: monospace;
+    padding: 0 0 0 1px;
 }
 #endif
 #if defined(ENABLE_INPUT_TYPE_DATETIME) && ENABLE_INPUT_TYPE_DATETIME
 input[type="datetime"] {
+    -webkit-align-items: stretch;
+    display: -webkit-inline-flex;
     font-family: monospace;
+    padding: 0 0 0 1px;
 }
 #endif
 #if defined(ENABLE_INPUT_TYPE_DATETIMELOCAL) && ENABLE_INPUT_TYPE_DATETIMELOCAL
 input[type="datetime-local"] {
+    -webkit-align-items: stretch;
+    display: -webkit-inline-flex;
     font-family: monospace;
+    padding: 0 0 0 1px;
 }
 #endif
 #if defined(ENABLE_INPUT_TYPE_MONTH) && ENABLE_INPUT_TYPE_MONTH
 input[type="month"] {
+    -webkit-align-items: stretch;
+    display: -webkit-inline-flex;
     font-family: monospace;
+    padding: 0 0 0 1px;
 }
 #endif
 #if defined(ENABLE_INPUT_TYPE_TIME) && ENABLE_INPUT_TYPE_TIME
 input[type="time"] {
+    -webkit-align-items: stretch;
+    display: -webkit-inline-flex;
     font-family: monospace;
+    padding: 0 0 0 1px;
 }
 #endif
 #if defined(ENABLE_INPUT_TYPE_WEEK) && ENABLE_INPUT_TYPE_WEEK
 input[type="week"] {
+    -webkit-align-items: stretch;
+    display: -webkit-inline-flex;
     font-family: monospace;
+    padding: 0 0 0 1px;
 }
 #endif
 
 input::-webkit-datetime-edit {
+    -webkit-align-items: center;
+    -webkit-flex: 1;
     -webkit-user-modify: read-only !important;
-    display: -webkit-box;
-    -webkit-box-align: center;
+    display: -webkit-flex;
+    white-space: pre;
 }
 
 input::-webkit-datetime-edit-ampm-field {
@@ -591,9 +611,16 @@ input::-webkit-datetime-edit-year-field {
     padding: 0.15em;
 }
 
+input::-webkit-datetime-edit-gap {
+    -webkit-flex: 1;
+    -webkit-user-modify: read-only !important;
+    display: inline-block;
+}
+
 input::-webkit-date-and-time-container {
-    display: -webkit-flex;
     -webkit-align-items: center;
+    -webkit-flex: 1;
+    display: -webkit-flex;
 }
 
 /* Remove focus ring from fields and use highlight color */
@@ -616,9 +643,15 @@ input::-webkit-datetime-edit-second-field[readonly] {
     color: GrayText;
 }
 
+input[type="date"]::-webkit-inner-spin-button,
+input[type="datetime"]::-webkit-inner-spin-button,
+input[type="datetime-local"]::-webkit-inner-spin-button,
 input[type="month"]::-webkit-inner-spin-button,
-input[type="time"]::-webkit-inner-spin-button {
+input[type="time"]::-webkit-inner-spin-button,
+input[type="week"]::-webkit-inner-spin-button {
+    display: inline-block;
     margin-left: 0.2em;
+    position: static;
 }
 #endif
 

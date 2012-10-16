@@ -3,3 +3,4 @@ text-transform:
 background, color: 
 font-size: 
 font-size with fixed input width: 
+Fixed input height: 
