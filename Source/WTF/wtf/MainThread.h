@@ -30,8 +30,6 @@
 #ifndef MainThread_h
 #define MainThread_h
 
-#include <wtf/Platform.h>
-
 #include <stdint.h>
 
 namespace WTF {

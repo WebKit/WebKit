@@ -27,8 +27,6 @@
 #ifndef FELightingNeon_h
 #define FELightingNeon_h
 
-#include <wtf/Platform.h>
-
 #if CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC)
 
 #include "FELighting.h"

@@ -27,8 +27,6 @@
 #ifndef FECompositeArithmeticNEON_h
 #define FECompositeArithmeticNEON_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FILTERS) && HAVE(ARM_NEON_INTRINSICS)
 
 #include "FEComposite.h"
