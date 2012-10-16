@@ -1,3 +1,30 @@
+2012-10-15  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION (r131365): WidthIterator::advance() is needlessly passed a GlyphBuffer in many cases
+        https://bugs.webkit.org/show_bug.cgi?id=99413
+
+        Reviewed by Adele Peterson.
+
+        r131365 made Font::width() always pass a GlyphBuffer pointer to floatWidthForSimpleText and
+        from there down to WidthIterator::advance(). However, when measuring the width of a run, a
+        GlyphBuffer is only needed if font transforms (kerning and ligatures) need to be applied.
+
+        No new test, because there is no change in behavior.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::width): Removed the local GlyphBuffer that was passed down to
+        floatWidthForSimpleText().
+        * platform/graphics/Font.h: Removed the GlyphBuffer* parameter to floatWidthForSimpleText.
+        All but the above caller were passing 0.
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::floatWidthForSimpleText): Removed the GlyphBuffer* parameter and added a
+        local GlyphBuffer, which is passed by reference to WidthIterator::advance() only if
+        typesetting features require it.
+        (WebCore::Font::offsetForPositionForSimpleText): Updated for change to
+        floatWidthForSimpleText.
+        * platform/graphics/pango/FontPango.cpp:
+        (WebCore::Font::floatWidthForComplexText): Ditto.
+
 2012-10-15  Pablo Flouret  <pablof@motorola.com>
 
         Add force parameter to DOMTokenList.toggle

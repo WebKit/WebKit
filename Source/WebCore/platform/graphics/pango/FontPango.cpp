@@ -371,7 +371,7 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
 {
 #if USE(FREETYPE)
     if (!primaryFont()->platformData().m_pattern)
-        return floatWidthForSimpleText(run, 0, fallbackFonts, overflow);
+        return floatWidthForSimpleText(run, fallbackFonts, overflow);
 #endif
 
     if (!run.length())

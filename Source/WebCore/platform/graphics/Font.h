@@ -223,7 +223,7 @@ private:
     void drawGlyphs(GraphicsContext*, const SimpleFontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const;
     void drawGlyphBuffer(GraphicsContext*, const TextRun&, const GlyphBuffer&, const FloatPoint&) const;
     void drawEmphasisMarks(GraphicsContext*, const TextRun&, const GlyphBuffer&, const AtomicString&, const FloatPoint&) const;
-    float floatWidthForSimpleText(const TextRun&, GlyphBuffer*, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
+    float floatWidthForSimpleText(const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
     int offsetForPositionForSimpleText(const TextRun&, float position, bool includePartialGlyphs) const;
     FloatRect selectionRectForSimpleText(const TextRun&, const FloatPoint&, int h, int from, int to) const;
 

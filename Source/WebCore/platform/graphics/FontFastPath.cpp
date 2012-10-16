@@ -469,10 +469,11 @@ void Font::drawEmphasisMarks(GraphicsContext* context, const TextRun& run, const
     drawGlyphBuffer(context, run, markBuffer, startPoint);
 }
 
-float Font::floatWidthForSimpleText(const TextRun& run, GlyphBuffer* glyphBuffer, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float Font::floatWidthForSimpleText(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     WidthIterator it(this, run, fallbackFonts, glyphOverflow);
-    it.advance(run.length(), glyphBuffer);
+    GlyphBuffer glyphBuffer;
+    it.advance(run.length(), (typesettingFeatures() & (Kerning | Ligatures)) ? &glyphBuffer : 0);
 
     if (glyphOverflow) {
         glyphOverflow->top = max<int>(glyphOverflow->top, ceilf(-it.minGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : fontMetrics().ascent()));
@@ -511,7 +512,7 @@ int Font::offsetForPositionForSimpleText(const TextRun& run, float x, bool inclu
     GlyphBuffer localGlyphBuffer;
     unsigned offset;
     if (run.rtl()) {
-        delta -= floatWidthForSimpleText(run, 0);
+        delta -= floatWidthForSimpleText(run);
         while (1) {
             offset = it.m_currentCharacter;
             float w;
