@@ -1,3 +1,52 @@
+2012-10-16  Tony Chang  <tony@chromium.org>
+
+        input[type=range] as a flex item renders thumb at wrong position
+        https://bugs.webkit.org/show_bug.cgi?id=98666
+
+        Reviewed by Ojan Vafai.
+
+        Changing the render tree to use RenderFlexibleBox instead of RenderDeprecatedFlexibleBox
+        and not using a RenderLayer unless noted otherwise.
+
+        * css3/flexbox/flexitem-stretch-range-expected.html: Added.
+        * css3/flexbox/flexitem-stretch-range.html: Added. New test to verify stretched flex item has the
+        thumb in the correct place.
+        * platform/chromium-linux/fast/dom/HTMLInputElement/input-slider-update-expected.txt:
+        * platform/chromium-linux/fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt:
+        * platform/chromium-linux/fast/forms/box-shadow-override-expected.txt:
+        * platform/chromium-linux/fast/forms/datalist/input-appearance-range-with-datalist-expected.png: Changed the default height to
+        129px for vertical controls. This makes more sense than having a height of 100%.
+        * platform/chromium-linux/fast/forms/input-appearance-height-expected.txt:
+        * platform/chromium-linux/fast/forms/range/input-appearance-range-expected.png: The thumb now appears below the
+        focus ring. This matches other form controls like buttons and textareas.
+        * platform/chromium-linux/fast/forms/range/input-appearance-range-expected.txt:
+        * platform/chromium-linux/fast/forms/range/range-thumb-height-percentage-expected.txt:
+        * platform/chromium-linux/fast/forms/range/slider-padding-expected.txt:
+        * platform/chromium-linux/fast/forms/range/slider-thumb-shared-style-expected.txt:
+        * platform/chromium-linux/fast/forms/range/slider-thumb-stylability-expected.txt:
+        * platform/chromium-linux/fast/hidpi/video-controls-in-hidpi-expected.txt:
+        * platform/chromium-linux/fast/multicol/client-rects-expected.txt:
+        * platform/chromium-linux/fast/repaint/slider-thumb-drag-release-expected.txt:
+        * platform/chromium-linux/fast/repaint/slider-thumb-float-expected.txt:
+        * platform/chromium-linux/media/track/track-cue-rendering-vertical-expected.txt:
+        * platform/chromium-win/fast/layers/video-layer-expected.txt:
+        * platform/chromium-win/media/audio-controls-rendering-expected.txt:
+        * platform/chromium-win/media/audio-repaint-expected.txt:
+        * platform/chromium-win/media/controls-after-reload-expected.txt:
+        * platform/chromium-win/media/controls-strict-expected.txt:
+        * platform/chromium-win/media/controls-styling-expected.txt:
+        * platform/chromium-win/media/controls-styling-strict-expected.txt:
+        * platform/chromium-win/media/controls-without-preload-expected.txt:
+        * platform/chromium-win/media/media-controls-clone-expected.txt:
+        * platform/chromium-win/media/media-document-audio-repaint-expected.txt:
+        * platform/chromium-win/media/track/track-cue-rendering-horizontal-expected.txt:
+        * platform/chromium-win/media/video-controls-rendering-expected.txt:
+        * platform/chromium-win/media/video-display-toggle-expected.txt:
+        * platform/chromium-win/media/video-empty-source-expected.txt:
+        * platform/chromium-win/media/video-no-audio-expected.txt:
+        * platform/chromium-win/media/video-playing-and-pause-expected.txt:
+        * platform/chromium-win/media/video-zoom-controls-expected.txt:
+
 2012-10-16  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium] Android: Need a way to get appropriate font for some specific characters.

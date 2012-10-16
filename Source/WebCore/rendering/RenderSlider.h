@@ -21,40 +21,42 @@
 #ifndef RenderSlider_h
 #define RenderSlider_h
 
-#include "RenderBlock.h"
+#include "RenderFlexibleBox.h"
 
 namespace WebCore {
 
-    class HTMLInputElement;
-    class MouseEvent;
-    class SliderThumbElement;
-    
-    class RenderSlider : public RenderBlock {
-    public:
-        RenderSlider(HTMLInputElement*);
-        virtual ~RenderSlider();
+class HTMLInputElement;
+class MouseEvent;
+class SliderThumbElement;
 
-        bool inDragMode() const;
+class RenderSlider : public RenderFlexibleBox {
+public:
+    static const int defaultTrackLength;
 
-    private:
-        virtual const char* renderName() const { return "RenderSlider"; }
-        virtual bool isSlider() const { return true; }
-        virtual bool canBeReplacedWithInlineRunIn() const OVERRIDE;
+    RenderSlider(HTMLInputElement*);
+    virtual ~RenderSlider();
 
-        virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
-        virtual void computePreferredLogicalWidths();
-        virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
-        virtual void layout();
-    };
+    bool inDragMode() const;
 
-    inline RenderSlider* toRenderSlider(RenderObject* object)
-    {
-        ASSERT(!object || object->isSlider());
-        return static_cast<RenderSlider*>(object);
-    }
+private:
+    virtual const char* renderName() const { return "RenderSlider"; }
+    virtual bool isSlider() const { return true; }
+    virtual bool canBeReplacedWithInlineRunIn() const OVERRIDE;
 
-    // This will catch anyone doing an unnecessary cast.
-    void toRenderSlider(const RenderSlider*);
+    virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
+    virtual void computePreferredLogicalWidths();
+    virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
+    virtual void layout();
+};
+
+inline RenderSlider* toRenderSlider(RenderObject* object)
+{
+    ASSERT(!object || object->isSlider());
+    return static_cast<RenderSlider*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderSlider(const RenderSlider*);
 
 } // namespace WebCore
 

@@ -169,11 +169,6 @@ input[type="range"]::-webkit-media-slider-container {
 }
 
 input[type="range"]::-webkit-media-slider-thumb {
-    display: block;
-    -webkit-appearance: sliderthumb-horizontal;
-    box-sizing: border-box;
-    position: relative;
-    bottom: 1px;
     margin-left: -7px;
     margin-right: -7px;
 }

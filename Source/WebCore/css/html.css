@@ -779,17 +779,20 @@ input[type="range"] {
 }
 
 input[type="range"]::-webkit-slider-container, input[type="range"]::-webkit-media-slider-container {
-    -webkit-box-align: center;
-    -webkit-box-orient: horizontal; /* This property is updated by C++ code. */
+    -webkit-flex: 1;
+    min-width: 0;
+
     box-sizing: border-box;
     -webkit-user-modify: read-only !important;
-    display: -webkit-box;
-    height: 100%;
-    width: 100%;
+    display: -webkit-flex;
+    -webkit-align-contents: center;
 }
 
 input[type="range"]::-webkit-slider-runnable-track {
-    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    min-width: 0;
+    -webkit-align-self: center;
+
     box-sizing: border-box;
     -webkit-user-modify: read-only !important;
     display: block;
@@ -800,7 +803,6 @@ input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-media-sl
     box-sizing: border-box;
     -webkit-user-modify: read-only !important;
     display: block;
-    position: relative;
 }
 
 input[type="button"]:disabled, input[type="submit"]:disabled, input[type="reset"]:disabled,

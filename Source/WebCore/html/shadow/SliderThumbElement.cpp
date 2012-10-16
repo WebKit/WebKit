@@ -40,7 +40,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLParserIdioms.h"
 #include "MouseEvent.h"
-#include "RenderDeprecatedFlexibleBox.h"
+#include "RenderFlexibleBox.h"
 #include "RenderSlider.h"
 #include "RenderTheme.h"
 #include "ShadowRoot.h"
@@ -121,88 +121,74 @@ bool RenderSliderThumb::isSliderThumb() const
     return true;
 }
 
-void RenderSliderThumb::layout()
-{
-    // Do not cast node() to SliderThumbElement. This renderer is used for
-    // TrackLimitElement too.
-    HTMLInputElement* input = node()->shadowHost()->toInputElement();
-    bool isVertical = hasVerticalAppearance(input);
-
-    double fraction = (sliderPosition(input) * 100).toDouble();
-    if (isVertical)
-        style()->setTop(Length(100 - fraction, Percent));
-    else if (style()->isLeftToRightDirection())
-        style()->setLeft(Length(fraction, Percent));
-    else
-        style()->setRight(Length(fraction, Percent));
-
-    RenderBlock::layout();
-}
-
 // --------------------------------
 
 // FIXME: Find a way to cascade appearance and adjust heights, and get rid of this class.
 // http://webkit.org/b/62535
-class RenderSliderContainer : public RenderDeprecatedFlexibleBox {
+class RenderSliderContainer : public RenderFlexibleBox {
 public:
     RenderSliderContainer(Node* node)
-        : RenderDeprecatedFlexibleBox(node) { }
+        : RenderFlexibleBox(node) { }
+public:
+    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
 
 private:
-    virtual void layout();
+    virtual void layout() OVERRIDE;
 };
+
+void RenderSliderContainer::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
+{
+    HTMLInputElement* input = node()->shadowHost()->toInputElement();
+    bool isVertical = hasVerticalAppearance(input);
+
+#if ENABLE(DATALIST_ELEMENT)
+    if (input->renderer()->isSlider() && !isVertical && input->list()) {
+        int offsetFromCenter = theme()->sliderTickOffsetFromTrackCenter();
+        LayoutUnit trackHeight = 0;
+        if (offsetFromCenter < 0)
+            trackHeight = -2 * offsetFromCenter;
+        else {
+            int tickLength = theme()->sliderTickSize().height();
+            trackHeight = 2 * (offsetFromCenter + tickLength);
+        }
+        float zoomFactor = style()->effectiveZoom();
+        if (zoomFactor != 1.0)
+            trackHeight *= zoomFactor;
+
+        RenderBox::computeLogicalHeight(trackHeight, logicalTop, computedValues);
+        return;
+    }
+#endif
+    if (isVertical)
+        logicalHeight = RenderSlider::defaultTrackLength;
+    RenderBox::computeLogicalHeight(logicalHeight, logicalTop, computedValues);
+}
 
 void RenderSliderContainer::layout()
 {
     HTMLInputElement* input = node()->shadowHost()->toInputElement();
     bool isVertical = hasVerticalAppearance(input);
-    style()->setBoxOrient(isVertical ? VERTICAL : HORIZONTAL);
-    // Sets the concrete height if the height of the <input> is not fixed or a
-    // percentage value because a percentage height value of this box won't be
-    // based on the <input> height in such case.
-    if (input->renderer()->isSlider()) {
-        if (!isVertical) {
-            RenderObject* trackRenderer = node()->firstChild()->renderer();
-            Length inputHeight = input->renderer()->style()->height();
-            if (!inputHeight.isSpecified()) {
-                RenderObject* thumbRenderer = input->sliderThumbElement()->renderer();
-                if (thumbRenderer) {
-                    Length height = thumbRenderer->style()->height();
-#if ENABLE(DATALIST_ELEMENT)
-                    if (input && input->list()) {
-                        int offsetFromCenter = theme()->sliderTickOffsetFromTrackCenter();
-                        int trackHeight = 0;
-                        if (offsetFromCenter < 0)
-                            trackHeight = -2 * offsetFromCenter;
-                        else {
-                            int tickLength = theme()->sliderTickSize().height();
-                            trackHeight = 2 * (offsetFromCenter + tickLength);
-                        }
-                        float zoomFactor = style()->effectiveZoom();
-                        if (zoomFactor != 1.0)
-                            trackHeight *= zoomFactor;
-                        height = Length(trackHeight, Fixed);
-                    }
-#endif
-                    style()->setHeight(height);
-                }
-            } else {
-                style()->setHeight(Length(100, Percent));
-                if (trackRenderer)
-                    trackRenderer->style()->setHeight(Length());
-            }
-        }
-    }
+    style()->setFlexDirection(isVertical ? FlowColumn : FlowRow);
 
-    RenderDeprecatedFlexibleBox::layout();
+    RenderFlexibleBox::layout();
 
-    // Percentage 'top' for the thumb doesn't work if the parent style has no
-    // concrete height.
-    Node* track = node()->firstChild();
-    if (track && track->renderer()->isBox()) {
-        RenderBox* trackBox = track->renderBox();
-        trackBox->style()->setHeight(Length(trackBox->height() - trackBox->borderAndPaddingHeight(), Fixed));
-    }
+    // These should always exist, unless someone mutates the shadow DOM (e.g., in the inspector).
+    if (!input->sliderThumbElement() || !input->sliderThumbElement()->renderer())
+        return;
+    RenderBox* thumb = toRenderBox(input->sliderThumbElement()->renderer());
+    RenderBox* track = toRenderBox(thumb->parent());
+
+    double percentageOffset = sliderPosition(input).toDouble();
+    LayoutUnit availableExtent = isVertical ? track->contentHeight() : track->contentWidth();
+    LayoutUnit offset = percentageOffset * availableExtent;
+    LayoutPoint thumbLocation = thumb->location();
+    if (isVertical)
+        thumbLocation.setY(thumbLocation.y() + track->contentHeight() - offset);
+    else if (style()->isLeftToRightDirection())
+        thumbLocation.setX(thumbLocation.x() + offset);
+    else
+        thumbLocation.setX(thumbLocation.x() - offset);
+    thumb->setLocation(thumbLocation);
 }
 
 // --------------------------------

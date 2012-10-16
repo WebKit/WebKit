@@ -1,3 +1,44 @@
+2012-10-16  Tony Chang  <tony@chromium.org>
+
+        input[type=range] as a flex item renders thumb at wrong position
+        https://bugs.webkit.org/show_bug.cgi?id=98666
+
+        Reviewed by Ojan Vafai.
+
+        Replace RenderSlider implementation with new flexbox and clean up the shadow DOM.
+        The previous code was trying to set the height to 100% and had a bunch of hacks in
+        the renderer code to set an explicit height. Using the new flexbox allows us to
+        remove these renderer hacks.
+
+        Test: css3/flexbox/flexitem-stretch-range.html
+
+        * css/html.css:
+        (input[type="range"]::-webkit-slider-container, input[type="range"]::-webkit-media-slider-container): Use new flexbox.
+        (input[type="range"]::-webkit-slider-runnable-track): Use new flexbox.
+        (input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-media-slider-thumb): Remove relative positioning since we're
+        no longer setting top/left in the layout code.
+        * css/mediaControlsChromium.css: Remove redundant styles and bottom: 1px hack.
+        * css/mediaControlsChromiumAndroid.css: Remove redundant styles and bottom: 1px hack.
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::listAttributeTargetChanged): We need to force a layout
+        since the height of the control should change when adding/removing a datalist.
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::RenderSliderContainer::RenderSliderContainer): Use new flexbox.
+        (WebCore::RenderSliderContainer::computeLogicalHeight): Rather than setting style()->height() in layout, just compute the correct
+        height when asked.  If we have a datalist, we increase the height (same code as before).  If we're vertical,
+        we use the intrinsic size.
+        (WebCore::RenderSliderContainer::layout): Remove extra layout code, but handle the position of the thumb.
+        This used to be handled in the thumb's layout method, but I deleted that.
+        * html/shadow/SliderThumbElement.h:
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::RenderSlider): Use new flexbox.
+        (WebCore::RenderSlider::layout): Set the limiter size to the size of the thumb. This is necessary
+        for fast/css/unknown-pseudo-element-matching.html which tries to set the height of the thumb to 1px
+        and expects the input to also have a height of 1px.  It worked before because the height of the input
+        didn't depend on the height of its children.
+        * rendering/RenderSlider.h: Fix indentation.
+        (RenderSlider): Use new flexible box.
+
 2012-10-16  Dima Gorbik  <dgorbik@apple.com>
 
         Remove Platform.h include from the header files.

@@ -466,7 +466,6 @@ webkit.org/b/99452 [ Debug ] platform/gtk/fonts/font-face-with-complex-text.html
 
 webkit.org/b/44199 perf [ Skip ]
 
-webkit.org/b/68878 media/video-playing-and-pause.html [ Failure Pass ]
 webkit.org/b/55126 media/video-aspect-ratio.html [ Failure Pass ]
 
 webkit.org/b/56561 svg/custom/clip-path-referencing-use2.svg [ Failure Pass ]
@@ -1365,6 +1364,38 @@ webkit.org/b/49142 fast/regions/style-scoped-in-flow-override-region-styling-mul
 Bug(GTK) fast/dom/Geolocation/coordinates-interface-attributes.html [ Failure ]
 
 webkit.org/b/98585 fast/exclusions/shape-inside/shape-inside-rounded-rectangle-003.html [ ImageOnlyFailure ]
+
+webkit.org/b/98666 fast/dom/HTMLInputElement/input-slider-update.html [ Failure ]
+webkit.org/b/98666 fast/dom/HTMLInputElement/input-slider-update-styled.html [ Failure ]
+webkit.org/b/98666 fast/forms/box-shadow-override.html [ Failure ]
+webkit.org/b/98666 fast/forms/input-appearance-height.html [ Failure ]
+webkit.org/b/98666 fast/forms/range/input-appearance-range.html [ Failure ]
+webkit.org/b/98666 fast/forms/range/range-thumb-height-percentage.html [ Failure ]
+webkit.org/b/98666 fast/forms/range/slider-padding.html [ Failure ]
+webkit.org/b/98666 fast/forms/range/slider-thumb-shared-style.html [ Failure ]
+webkit.org/b/98666 fast/forms/range/slider-thumb-stylability.html [ Failure ]
+webkit.org/b/98666 fast/hidpi/video-controls-in-hidpi.html [ Failure ]
+webkit.org/b/98666 fast/multicol/client-rects.html [ Failure ]
+webkit.org/b/98666 fast/repaint/slider-thumb-drag-release.html [ Failure ]
+webkit.org/b/98666 fast/repaint/slider-thumb-float.html [ Failure ]
+webkit.org/b/98666 media/track/track-cue-rendering-vertical.html [ Failure ]
+webkit.org/b/98666 fast/layers/video-layer.html [ Failure ]
+webkit.org/b/98666 media/audio-controls-rendering.html [ Failure ]
+webkit.org/b/98666 media/audio-repaint.html [ Failure ]
+webkit.org/b/98666 media/controls-after-reload.html [ Failure ]
+webkit.org/b/98666 media/controls-strict.html [ Failure ]
+webkit.org/b/98666 media/controls-styling.html [ Failure ]
+webkit.org/b/98666 media/controls-styling-strict.html [ Failure ]
+webkit.org/b/98666 media/controls-without-preload.html [ Failure ]
+webkit.org/b/98666 media/media-controls-clone.html [ Failure ]
+webkit.org/b/98666 media/media-document-audio-repaint.html [ Failure ]
+webkit.org/b/98666 media/track/track-cue-rendering-horizontal.html [ Failure ]
+webkit.org/b/98666 media/video-controls-rendering.html [ Failure ]
+webkit.org/b/98666 media/video-display-toggle.html [ Failure ]
+webkit.org/b/98666 media/video-empty-source.html [ Failure ]
+webkit.org/b/98666 media/video-no-audio.html [ Failure ]
+webkit.org/b/68878 webkit.org/b/98666 media/video-playing-and-pause.html [ Failure Pass ]
+webkit.org/b/98666 media/video-zoom-controls.html [ Failure ]
 
 webkit.org/b/98587 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ ImageOnlyFailure ]
 
