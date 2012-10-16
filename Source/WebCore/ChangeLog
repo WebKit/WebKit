@@ -1,3 +1,15 @@
+2012-10-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r131403.
+        http://trac.webkit.org/changeset/131403
+        https://bugs.webkit.org/show_bug.cgi?id=99420
+
+        Suspicious to cause Performance test failing (Requested by
+        shinyak|gardenin on #webkit).
+
+        * dom/Document.cpp:
+        (WebCore::Document::isValidName):
+
 2012-10-15  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: restore watch expression expansion state

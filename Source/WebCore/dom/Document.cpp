@@ -3923,19 +3923,6 @@ String Document::lastModified() const
     return String::format("%02d/%02d/%04d %02d:%02d:%02d", date.month() + 1, date.monthDay(), date.fullYear(), date.hour(), date.minute(), date.second());
 }
 
-static bool isValidNameNonASCII(const LChar* characters, unsigned length)
-{
-    if (!isValidNameStart(characters[0]))
-        return false;
-
-    for (unsigned i = 1; i < length; ++i) {
-        if (!isValidNamePart(characters[i]))
-            return false;
-    }
-
-    return true;
-}
-
 static bool isValidNameNonASCII(const UChar* characters, unsigned length)
 {
     unsigned i = 0;
@@ -3976,20 +3963,16 @@ bool Document::isValidName(const String& name)
     if (!length)
         return false;
 
+    const UChar* characters;
     if (name.is8Bit()) {
-        const LChar* characters = name.characters8();
-
+        if (isValidNameASCII(name.characters8(), length))
+            return true;
+        characters = name.characters();
+    } else {
+        characters = name.characters16();
         if (isValidNameASCII(characters, length))
             return true;
-
-        return isValidNameNonASCII(characters, length);
     }
-
-    const UChar* characters = name.characters16();
-
-    if (isValidNameASCII(characters, length))
-        return true;
-
     return isValidNameNonASCII(characters, length);
 }
 
