@@ -1,3 +1,13 @@
+2012-10-16  Kent Tamura  <tkent@chromium.org>
+
+        Fix some appearance glitches of multiple fields input elements
+        https://bugs.webkit.org/show_bug.cgi?id=99412
+
+        A follow-up change for r131421.
+
+        * css/themeWin.css:
+        (input[type="text"]): Don't reset paddings for date/time types.
+
 2012-10-16  Kenichi Ishibashi  <bashi@chromium.org>
 
         hb_face_t instances should not depend on FontPlatformData
