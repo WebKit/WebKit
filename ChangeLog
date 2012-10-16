@@ -1,3 +1,14 @@
+2012-10-16  Simon Hausmann  <simon.hausmann@digia.com>, Tor Arne Vestbø <tor.arne.vestbo@digia.com>
+
+        [Qt] Add logic for triggering clean builds on changes to build system files
+
+        Reviewed by Csaba Osztrogonác.
+
+        Add a line here that can be re-used for recording dummy commits to count how the clean-build-needed
+        logic failed.
+
+        * WebKit.pro:
+
 2012-10-16  Simon Hausmann  <simon.hausmann@digia.com>
 
         Unreviewed, rolling out r131436.

@@ -1,3 +1,19 @@
+2012-10-16  Simon Hausmann  <simon.hausmann@digia.com>, Tor Arne Vestbø <tor.arne.vestbo@digia.com>
+
+        [Qt] Add logic for triggering clean builds on changes to build system files
+
+        Reviewed by Csaba Osztrogonác.
+
+        Re-use the existing logic that gives us a range between old and new SVN revision and
+        parse the summarized output of diff to see if any of the changed files include files
+        that are part of the Qt build system. If they change we likely need a clean build and
+        trigger it just to be on the safe side and reduce the amount of manual intervention
+        needed on the Qt build bots.
+
+        * Scripts/VCSUtils.pm:
+        * Scripts/webkitdirs.pm:
+        (buildQMakeProjects):
+
 2012-10-16  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Fix the paths for QtGraphics related WebKit2 files.

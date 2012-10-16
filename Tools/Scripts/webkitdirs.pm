@@ -2318,14 +2318,34 @@ sub buildQMakeProjects
        die "\nFailed to set up build environment using $qmakebin!\n";
     }
 
-    if ($configChanged) {
-        print "Calling '$command wipeclean' in " . $dir . "\n\n";
-        $result = system "$command wipeclean";
-    }
+    my $needsCleanBuild = 0;
+    my $needsIncrementalBuild = 0;
 
     if ($svnRevision ne $previousSvnRevision) {
         print "Last built revision was " . $previousSvnRevision .
             ", now at revision $svnRevision. Full incremental build needed.\n";
+        $needsIncrementalBuild = 1;
+
+        my @fileList = listOfChangedFilesBetweenRevisions($previousSvnRevision, $svnRevision);
+
+        foreach (@fileList) {
+            if (m/\.pr[oif]$/ or
+                m/\.qmake.conf$/ or
+                m/^Tools\/qmake\//
+               ) {
+                print "Change to $_ detected, clean build needed.\n";
+                $needsCleanBuild = 1;
+                last;
+            }
+        }
+    }
+
+    if ($configChanged or $needsCleanBuild) {
+        print "Calling '$command wipeclean' in " . $dir . "\n\n";
+        $result = system "$command wipeclean";
+    }
+
+    if ($needsIncrementalBuild) {
         $command .= " incremental";
     }
 

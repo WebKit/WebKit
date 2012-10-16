@@ -47,3 +47,5 @@ SUBDIRS += QtWebKit
 Tools.file = Tools/Tools.pro
 Tools.makefile = Makefile.Tools
 SUBDIRS += Tools
+
+# Number of times incremental builds have failed: 0
