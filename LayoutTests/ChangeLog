@@ -1,5 +1,13 @@
 2012-10-16  Dana Jansens  <danakj@chromium.org>
 
+        Rebaseline for css1/basic/inheritance.html
+
+        Unreviewed gardening.
+
+        * platform/chromium-mac/css1/basic/inheritance-expected.png:
+
+2012-10-16  Dana Jansens  <danakj@chromium.org>
+
         Web Inspector: inspector/styles/styles-history.html is failing Text on win7
         https://bugs.webkit.org/show_bug.cgi?id=99519
 
