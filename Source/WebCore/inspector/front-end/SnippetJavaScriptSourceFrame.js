@@ -32,13 +32,13 @@
  * @constructor
  * @extends {WebInspector.JavaScriptSourceFrame}
  * @param {WebInspector.ScriptsPanel} scriptsPanel
- * @param {WebInspector.SnippetJavaScriptSource} snippetJavaScriptSource
+ * @param {WebInspector.UISourceCode} uiSourceCode
  */
-WebInspector.SnippetJavaScriptSourceFrame = function(scriptsPanel, snippetJavaScriptSource)
+WebInspector.SnippetJavaScriptSourceFrame = function(scriptsPanel, uiSourceCode)
 {
-    WebInspector.JavaScriptSourceFrame.call(this, scriptsPanel, snippetJavaScriptSource);
+    WebInspector.JavaScriptSourceFrame.call(this, scriptsPanel, uiSourceCode);
     
-    this._snippetJavaScriptSource = snippetJavaScriptSource;
+    this._uiSourceCode = uiSourceCode;
     this._runButton = new WebInspector.StatusBarButton(WebInspector.UIString("Run"), "evaluate-snippet-status-bar-item");
     this._runButton.addEventListener("click", this._runButtonClicked, this);
 }
@@ -54,7 +54,7 @@ WebInspector.SnippetJavaScriptSourceFrame.prototype = {
 
     _runButtonClicked: function()
     {
-        WebInspector.scriptSnippetModel.evaluateScriptSnippet(this._snippetJavaScriptSource);
+        WebInspector.scriptSnippetModel.evaluateScriptSnippet(this._uiSourceCode);
     },
 
     __proto__: WebInspector.JavaScriptSourceFrame.prototype

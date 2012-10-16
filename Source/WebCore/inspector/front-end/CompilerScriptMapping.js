@@ -84,7 +84,7 @@ WebInspector.CompilerScriptMapping.prototype = {
      */
     addScript: function(script)
     {
-        var originalUISourceCode = new WebInspector.JavaScriptSource(script.sourceURL, script, true);
+        var originalUISourceCode = new WebInspector.UISourceCode(script.sourceURL, script, true);
         this._originalUISourceCodeForScriptId[script.scriptId] = originalUISourceCode;
         this._scriptForOriginalUISource.put(originalUISourceCode, script);
         this._workspace.project().addUISourceCode(originalUISourceCode);
@@ -109,7 +109,7 @@ WebInspector.CompilerScriptMapping.prototype = {
                 contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Script, sourceContent);
             else
                 contentProvider = new WebInspector.CompilerSourceMappingContentProvider(sourceURL);
-            var uiSourceCode = new WebInspector.JavaScriptSource(sourceURL, contentProvider, false);
+            var uiSourceCode = new WebInspector.UISourceCode(sourceURL, contentProvider, false);
             uiSourceCode.setSourceMapping(this);
             uiSourceCode.isContentScript = script.isContentScript;
             this._uiSourceCodeByURL[sourceURL] = uiSourceCode;

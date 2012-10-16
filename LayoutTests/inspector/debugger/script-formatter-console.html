@@ -33,7 +33,7 @@ var test = function()
                 InspectorTest.addResult("Pre-format row message list:");
                 InspectorTest.addResult(JSON.stringify(Object.keys(sourceFrame._rowMessages)));
                 InspectorTest.addResult(JSON.stringify(Object.keys(sourceFrame._messageBubbles)));
-                sourceFrame._javaScriptSource.setFormatted(true, didFormatLinkText);
+                sourceFrame._uiSourceCode.setFormatted(true, didFormatLinkText);
             }
 
             function didFormatLinkText()

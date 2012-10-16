@@ -21,10 +21,10 @@ function test()
         function testWorkspaceReset(next)
         {
             resetSnippetsSettings();
-            var snippetJavaScriptSource = WebInspector.scriptSnippetModel.createScriptSnippet();
+            var uiSourceCode = WebInspector.scriptSnippetModel.createScriptSnippet();
             var snippetName = "TestSnippet" + Math.random();
             InspectorTest.addResult("Snippet created.");
-            WebInspector.scriptSnippetModel.renameScriptSnippet(snippetJavaScriptSource, snippetName);
+            WebInspector.scriptSnippetModel.renameScriptSnippet(uiSourceCode, snippetName);
             workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCodeAdded);
             InspectorTest.addResult("Resetting snippet script mapping.");
             workspaceController._mainFrameNavigated();
@@ -45,32 +45,32 @@ function test()
         {
             resetSnippetsSettings();
 
-            var snippetJavaScriptSource1 = WebInspector.scriptSnippetModel.createScriptSnippet();
-            WebInspector.scriptSnippetModel.renameScriptSnippet(snippetJavaScriptSource1, "Snippet1");
+            var uiSourceCode1 = WebInspector.scriptSnippetModel.createScriptSnippet();
+            WebInspector.scriptSnippetModel.renameScriptSnippet(uiSourceCode1, "Snippet1");
             var content = "";
             content += "// This snippet does nothing.\n";
             content += "var i = 2+2;\n";
-            snippetJavaScriptSource1.setWorkingCopy(content);
+            uiSourceCode1.setWorkingCopy(content);
 
-            var snippetJavaScriptSource2 = WebInspector.scriptSnippetModel.createScriptSnippet();
-            WebInspector.scriptSnippetModel.renameScriptSnippet(snippetJavaScriptSource2, "Snippet2");
+            var uiSourceCode2 = WebInspector.scriptSnippetModel.createScriptSnippet();
+            WebInspector.scriptSnippetModel.renameScriptSnippet(uiSourceCode2, "Snippet2");
             content = "";
             content += "// This snippet creates a function that does nothing and returns it.\n";
             content += "function doesNothing() {\n";
             content += "    var  i = 2+2;\n";
             content += "};\n";
             content += "doesNothing;\n";
-            snippetJavaScriptSource2.setWorkingCopy(content);
+            uiSourceCode2.setWorkingCopy(content);
 
-            function evaluateSnippetAndDumpEvaluationDetails(snippetJavaScriptSource, callback)
+            function evaluateSnippetAndDumpEvaluationDetails(uiSourceCode, callback)
             {
                 InspectorTest.addSniffer(WebInspector.SnippetScriptMapping.prototype, "addScript", dumpScript);
                 // JSC does not support compile-and-run for snippet evaluation, so different platforms have slightly different codeflow here, hence two sniffers.
                 InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "_printResult", dumpResult);
                 InspectorTest.addSniffer(WebInspector.ScriptSnippetModel.prototype, "_printRunScriptResult", dumpResult);
-                WebInspector.scriptSnippetModel.evaluateScriptSnippet(snippetJavaScriptSource);
-                var evaluationSourceURL = WebInspector.scriptSnippetModel._evaluationSourceURL(snippetJavaScriptSource);
-                var snippetId = WebInspector.scriptSnippetModel._snippetIdForJavaScriptSource.get(snippetJavaScriptSource);
+                WebInspector.scriptSnippetModel.evaluateScriptSnippet(uiSourceCode);
+                var evaluationSourceURL = WebInspector.scriptSnippetModel._evaluationSourceURL(uiSourceCode);
+                var snippetId = WebInspector.scriptSnippetModel._snippetIdForUISourceCode.get(uiSourceCode);
                 InspectorTest.addResult("Last evaluation source url for snippet: " + evaluationSourceURL);
                 InspectorTest.assertEquals(snippetId, WebInspector.scriptSnippetModel._snippetIdForSourceURL(evaluationSourceURL), "Snippet can not be identified by its evaluation sourceURL.");
 
@@ -86,16 +86,16 @@ function test()
                 }
             }
 
-            evaluateSnippetAndDumpEvaluationDetails(snippetJavaScriptSource1, step2);
+            evaluateSnippetAndDumpEvaluationDetails(uiSourceCode1, step2);
 
             function step2()
             {
-                evaluateSnippetAndDumpEvaluationDetails(snippetJavaScriptSource2, step3);
+                evaluateSnippetAndDumpEvaluationDetails(uiSourceCode2, step3);
             }
 
             function step3()
             {
-                evaluateSnippetAndDumpEvaluationDetails(snippetJavaScriptSource1, next);
+                evaluateSnippetAndDumpEvaluationDetails(uiSourceCode1, next);
             }
         }
     ]);

@@ -24,7 +24,7 @@ function test()
     
     function createUISouceCode(url)
     {
-        var uiSourceCode = new WebInspector.JavaScriptSource(url, contentProvider, false);
+        var uiSourceCode = new WebInspector.UISourceCode(url, contentProvider, false);
         uiSourceCode.requestContent = function(callback)
         {
             InspectorTest.addResult("Source requested for " + url);

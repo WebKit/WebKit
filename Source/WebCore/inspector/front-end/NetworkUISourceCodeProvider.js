@@ -95,7 +95,7 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
             this._lastDynamicAnonymousScriptIndexForURL[url] = dynamicAnonymousScriptIndex;
             url += " (" + dynamicAnonymousScriptIndex + ")";
         }
-        var uiSourceCode = new WebInspector.JavaScriptSource(url, script, true);
+        var uiSourceCode = new WebInspector.UISourceCode(url, script, true);
         this._uiSourceCodeForResource[script.sourceURL] = uiSourceCode;
         this._workspace.project().addUISourceCode(uiSourceCode);
     },
@@ -111,13 +111,13 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
         var uiSourceCode;
         switch (resource.type) {
         case WebInspector.resourceTypes.Stylesheet:
-            uiSourceCode = new WebInspector.StyleSource(resource);
+            uiSourceCode = new WebInspector.UISourceCode(resource.url, resource, true);
             break;
         case WebInspector.resourceTypes.Document:
-            uiSourceCode = new WebInspector.JavaScriptSource(resource.url, resource, false);
+            uiSourceCode = new WebInspector.UISourceCode(resource.url, resource, false);
             break;
         case WebInspector.resourceTypes.Script:
-            uiSourceCode = new WebInspector.JavaScriptSource(resource.url, resource, true);
+            uiSourceCode = new WebInspector.UISourceCode(resource.url, resource, true);
             break;
         }
         if (uiSourceCode) {

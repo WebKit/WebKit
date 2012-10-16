@@ -30,26 +30,26 @@
  * @constructor
  * @implements {WebInspector.SelectionDialogContentProvider}
  * @param {WebInspector.View} view
- * @param {WebInspector.StyleSource} styleSource
+ * @param {WebInspector.UISourceCode} uiSourceCode
  */
-WebInspector.StyleSheetOutlineDialog = function(view, styleSource)
+WebInspector.StyleSheetOutlineDialog = function(view, uiSourceCode)
 {
     WebInspector.SelectionDialogContentProvider.call(this);
 
     this._rules = [];
     this._view = view;
-    this._styleSource = styleSource;
+    this._uiSourceCode = uiSourceCode;
 }
 
 /**
  * @param {WebInspector.View} view
- * @param {WebInspector.StyleSource} styleSource
+ * @param {WebInspector.UISourceCode} uiSourceCode
  */
-WebInspector.StyleSheetOutlineDialog.show = function(view, styleSource)
+WebInspector.StyleSheetOutlineDialog.show = function(view, uiSourceCode)
 {
     if (WebInspector.Dialog.currentInstance())
         return null;
-    var delegate = new WebInspector.StyleSheetOutlineDialog(view, styleSource);
+    var delegate = new WebInspector.StyleSheetOutlineDialog(view, uiSourceCode);
     var filteredItemSelectionDialog = new WebInspector.FilteredItemSelectionDialog(delegate);
     WebInspector.Dialog.show(view.element, filteredItemSelectionDialog);
 }
@@ -113,7 +113,7 @@ WebInspector.StyleSheetOutlineDialog.prototype = {
   
             for (var i = 0; i < infos.length; ++i) {
                 var info = infos[i];
-                if (info.sourceURL === this._styleSource.contentURL()) {
+                if (info.sourceURL === this._uiSourceCode.contentURL()) {
                     WebInspector.CSSStyleSheet.createForId(info.styleSheetId, didGetStyleSheet.bind(this));
                     return;
                 }

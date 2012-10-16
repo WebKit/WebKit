@@ -92,7 +92,7 @@ WebInspector.BreakpointManager.prototype = {
     _uiSourceCodeAdded: function(event)
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
-        if (uiSourceCode instanceof WebInspector.JavaScriptSource)
+        if (uiSourceCode.contentType() === WebInspector.resourceTypes.Script || uiSourceCode.contentType() === WebInspector.resourceTypes.Document)
             this.restoreBreakpoints(uiSourceCode);
     },
 
@@ -102,7 +102,7 @@ WebInspector.BreakpointManager.prototype = {
     _uiSourceCodeRemoved: function(event)
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
-        if (!(uiSourceCode instanceof WebInspector.JavaScriptSource))
+        if (uiSourceCode.contentType() !== WebInspector.resourceTypes.Script && uiSourceCode.contentType() !== WebInspector.resourceTypes.Document)
             return;
         if (uiSourceCode.divergedVersion)
             return;

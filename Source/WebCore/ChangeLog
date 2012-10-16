@@ -1,3 +1,74 @@
+2012-10-16  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Get rid of (now empty) JavaScriptSource and StyleSource, rename all usages to UISourceCode.
+        https://bugs.webkit.org/show_bug.cgi?id=99469
+
+        Reviewed by Pavel Feldman.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.py:
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.prototype._uiSourceCodeAdded):
+        (WebInspector.BreakpointManager.prototype._uiSourceCodeRemoved):
+        * inspector/front-end/CompilerScriptMapping.js:
+        * inspector/front-end/JavaScriptSource.js: Removed.
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame):
+        (WebInspector.JavaScriptSourceFrame.prototype.canEditSource):
+        (WebInspector.JavaScriptSourceFrame.prototype._onWorkingCopyChanged):
+        (WebInspector.JavaScriptSourceFrame.prototype._onWorkingCopyCommitted):
+        (WebInspector.JavaScriptSourceFrame.prototype._innerSetContent):
+        (WebInspector.JavaScriptSourceFrame.prototype.populateLineGutterContextMenu):
+        (WebInspector.JavaScriptSourceFrame.prototype.populateTextAreaContextMenu):
+        (WebInspector.JavaScriptSourceFrame.prototype.onTextChanged):
+        (WebInspector.JavaScriptSourceFrame.prototype._supportsEnabledBreakpointsWhileEditing):
+        (WebInspector.JavaScriptSourceFrame.prototype._restoreBreakpointsAfterEditing):
+        (WebInspector.JavaScriptSourceFrame.prototype._breakpointAdded):
+        (WebInspector.JavaScriptSourceFrame.prototype._breakpointRemoved):
+        (WebInspector.JavaScriptSourceFrame.prototype.onTextEditorContentLoaded):
+        (WebInspector.JavaScriptSourceFrame.prototype._handleGutterClick):
+        (WebInspector.JavaScriptSourceFrame.prototype._toggleBreakpoint):
+        (WebInspector.JavaScriptSourceFrame.prototype._setBreakpoint):
+        (WebInspector.JavaScriptSourceFrame.prototype._continueToLine):
+        * inspector/front-end/NetworkUISourceCodeProvider.js:
+        (WebInspector.NetworkUISourceCodeProvider.prototype._parsedScriptSource):
+        (WebInspector.NetworkUISourceCodeProvider.prototype._resourceAdded):
+        * inspector/front-end/ResourceScriptMapping.js:
+        (WebInspector.ResourceScriptMapping.prototype._getOrCreateTemporaryUISourceCode):
+        * inspector/front-end/ScriptSnippetModel.js:
+        (WebInspector.ScriptSnippetModel):
+        (WebInspector.ScriptSnippetModel.prototype._addScriptSnippet):
+        (WebInspector.ScriptSnippetModel.prototype.evaluateScriptSnippet.get var):
+        (WebInspector.ScriptSnippetModel.prototype.evaluateScriptSnippet.compileCallback):
+        (WebInspector.ScriptSnippetModel.prototype.evaluateScriptSnippet):
+        (WebInspector.ScriptSnippetModel.prototype._createUISourceCodeForScript):
+        (WebInspector.ScriptSnippetModel.prototype._removeBreakpoints):
+        (WebInspector.ScriptSnippetModel.prototype._projectWillReset):
+        (WebInspector.SnippetScriptFile):
+        (WebInspector.SnippetScriptFile.prototype._workingCopyCommitted):
+        (WebInspector.SnippetScriptFile.prototype._workingCopyChanged):
+        * inspector/front-end/ScriptsNavigator.js:
+        (WebInspector.SnippetsNavigatorView.prototype._handleEvaluateSnippet):
+        (WebInspector.SnippetsNavigatorView.prototype._handleRemoveSnippet):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._createSourceFrame):
+        (WebInspector.ScriptsPanel.prototype._uiSourceCodeFormatted):
+        (WebInspector.ScriptsPanel.prototype._showOutlineDialog):
+        (WebInspector.ScriptsPanel.prototype.set _fileRenamed):
+        (WebInspector.ScriptsPanel.prototype._snippetCreationRequested.callback):
+        (WebInspector.ScriptsPanel.prototype._snippetCreationRequested):
+        * inspector/front-end/SnippetJavaScriptSourceFrame.js:
+        (WebInspector.SnippetJavaScriptSourceFrame):
+        (WebInspector.SnippetJavaScriptSourceFrame.prototype._runButtonClicked):
+        * inspector/front-end/StyleSheetOutlineDialog.js:
+        (WebInspector.StyleSheetOutlineDialog):
+        (WebInspector.StyleSheetOutlineDialog.show):
+        (WebInspector.StyleSheetOutlineDialog.prototype.requestItems):
+        * inspector/front-end/StyleSource.js: Removed.
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2012-10-15  Jer Noble  <jer.noble@apple.com>
 
         WebAudio: limit output level to 0db

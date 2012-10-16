@@ -53,7 +53,7 @@ InspectorTest.addMockUISourceCodeToWorkspace = function(url, type, content)
 {
     var isDocument = type === WebInspector.resourceTypes.Document;
     var mockContentProvider = new WebInspector.StaticContentProvider(type, content);
-    var uiSourceCode = new WebInspector.JavaScriptSource(url, mockContentProvider, !isDocument);
+    var uiSourceCode = new WebInspector.UISourceCode(url, mockContentProvider, !isDocument);
     InspectorTest.testWorkspace.project().addUISourceCode(uiSourceCode);
 }
 
@@ -66,10 +66,9 @@ InspectorTest.dumpUISourceCode = function(uiSourceCode, callback)
 {
     var url = uiSourceCode.url.replace(/.*LayoutTests/, "LayoutTests");
     InspectorTest.addResult("UISourceCode: " + url);
-    if (uiSourceCode instanceof WebInspector.JavaScriptSource) {
-        InspectorTest.addResult("UISourceCode is editable: " + uiSourceCode.isEditable());
+    InspectorTest.addResult("UISourceCode is editable: " + uiSourceCode.isEditable());
+    if (uiSourceCode.contentType() === WebInspector.resourceTypes.Script || uiSourceCode.contentType() === WebInspector.resourceTypes.Document)
         InspectorTest.addResult("UISourceCode is content script: " + uiSourceCode.isContentScript);
-    }
     uiSourceCode.requestContent(didRequestContent);
 
     function didRequestContent(content, contentEncoded, mimeType)

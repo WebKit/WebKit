@@ -99,7 +99,6 @@
     <file>InspectorFrontendHostStub.js</file>
     <file>InspectorView.js</file>
     <file>JavaScriptFormatter.js</file>
-    <file>JavaScriptSource.js</file>
     <file>JavaScriptSourceFrame.js</file>
     <file>jsdifflib.js</file>
     <file>KeyboardShortcut.js</file>
@@ -184,7 +183,6 @@
     <file>SplitView.js</file>
     <file>StatusBarButton.js</file>
     <file>StyleSheetOutlineDialog.js</file>
-    <file>StyleSource.js</file>
     <file>StylesSourceMapping.js</file>
     <file>StylesSidebarPane.js</file>
     <file>TabbedEditorContainer.js</file>

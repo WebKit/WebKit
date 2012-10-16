@@ -12,18 +12,18 @@ function test()
 {
     InspectorTest.runAfterCachedResourcesProcessed(runTestSuite);
 
-    var styleSource;
+    var uiSourceCode;
 
     function runTestSuite()
     {
         InspectorTest.runTestSuite([
             function testSetUp(next)
             {
-                function visitUISourceCodes(uiSourceCode)
+                function visitUISourceCodes(currentUISourceCode)
                 {
-                    if (uiSourceCode.url.indexOf("styles-history.css") === -1)
+                    if (currentUISourceCode.url.indexOf("styles-history.css") === -1)
                         return;
-                    styleSource = uiSourceCode;
+                    uiSourceCode = currentUISourceCode;
                     next();
                 }
                 WebInspector.workspace.uiSourceCodes().forEach(visitUISourceCodes);
@@ -31,14 +31,14 @@ function test()
 
             function testSetResourceContentMinor(next)
             {
-                styleSource.setWorkingCopy("body {\n  margin: 15px;\n  padding: 10px;\n}");
+                uiSourceCode.setWorkingCopy("body {\n  margin: 15px;\n  padding: 10px;\n}");
                 dumpHistory(next)();
             },
 
             function testSetResourceContentMajor(next)
             {
-                styleSource.setWorkingCopy("body {\n  margin: 20px;\n  padding: 10px;\n}");
-                styleSource.commitWorkingCopy(dumpHistory(next));
+                uiSourceCode.setWorkingCopy("body {\n  margin: 20px;\n  padding: 10px;\n}");
+                uiSourceCode.commitWorkingCopy(dumpHistory(next));
             },
 
             function testSetContentViaModelMinor(next)
@@ -95,10 +95,10 @@ function test()
     {
         function result()
         {
-            InspectorTest.addResult("History length: " + styleSource.history.length);
-            for (var i = 0; i < styleSource.history.length; ++i) {
+            InspectorTest.addResult("History length: " + uiSourceCode.history.length);
+            for (var i = 0; i < uiSourceCode.history.length; ++i) {
                 InspectorTest.addResult("Item " + i + ":");
-                InspectorTest.addResult(styleSource.history[i].content);
+                InspectorTest.addResult(uiSourceCode.history[i].content);
             }
             next();
         }

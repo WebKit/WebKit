@@ -229,8 +229,7 @@ WebInspector.SnippetsNavigatorView.prototype = {
     {
         if (!uiSourceCode.isSnippet)
             return;
-        var snippetJavaScriptSource = /** @type {WebInspector.SnippetJavaScriptSource} */ uiSourceCode;
-        WebInspector.scriptSnippetModel.evaluateScriptSnippet(snippetJavaScriptSource);
+        WebInspector.scriptSnippetModel.evaluateScriptSnippet(uiSourceCode);
     },
 
     /**
@@ -250,8 +249,7 @@ WebInspector.SnippetsNavigatorView.prototype = {
     {
         if (!uiSourceCode.isSnippet)
             return;
-        var snippetJavaScriptSource = /** @type {WebInspector.SnippetJavaScriptSource} */ uiSourceCode;
-        WebInspector.scriptSnippetModel.deleteScriptSnippet(snippetJavaScriptSource);
+        WebInspector.scriptSnippetModel.deleteScriptSnippet(uiSourceCode);
     },
 
     /**

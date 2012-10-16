@@ -41,7 +41,7 @@ var test = function()
 
             function resumed()
             {
-                sourceFrame._javaScriptSource.setFormatted(true, didFormatPage);
+                sourceFrame._uiSourceCode.setFormatted(true, didFormatPage);
             }
 
             function didFormatPage()
@@ -54,7 +54,7 @@ var test = function()
             function pausedInF1Again(callFrames)
             {
                 dumpBreakpointSidebarPane("while paused in pretty printed");
-                sourceFrame._javaScriptSource.setFormatted(false);
+                sourceFrame._uiSourceCode.setFormatted(false);
                 dumpBreakpointSidebarPane("while paused in raw");
                 InspectorTest.resumeExecution(next);
             }

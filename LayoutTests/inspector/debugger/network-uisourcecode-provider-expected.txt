@@ -20,6 +20,7 @@ UISourceCode content: <script resource content>
 Running: testStylesheetResource
 Creating resource.
 UISourceCode: http://fake.url/3
+UISourceCode is editable: true
 Mime type: text/css
 UISourceCode content: <stylesheet resource content>
 
