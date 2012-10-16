@@ -111,6 +111,11 @@ void vsvesq(const float* sourceP, int sourceStride, float* sumP, size_t framesTo
 {
     vDSP_svesq(const_cast<float*>(sourceP), sourceStride, sumP, framesToProcess);
 }
+
+void vclip(const float* sourceP, int sourceStride, const float* lowThresholdP, const float* highThresholdP, float* destP, int destStride, size_t framesToProcess)
+{
+    vDSP_vclip(const_cast<float*>(sourceP), sourceStride, const_cast<float*>(lowThresholdP), const_cast<float*>(highThresholdP), destP, destStride, framesToProcess);
+}
 #else
 
 void vsma(const float* sourceP, int sourceStride, const float* scale, float* destP, int destStride, size_t framesToProcess)
@@ -642,6 +647,22 @@ void vmaxmgv(const float* sourceP, int sourceStride, float* maxP, size_t framesT
     ASSERT(maxP);
     *maxP = max;
 }
+
+void vclip(const float* sourceP, int sourceStride, const float* lowThresholdP, const float* highThresholdP, float* destP, int destStride, size_t framesToProcess)
+{
+    int n = framesToProcess;
+    float lowThreshold = *lowThresholdP;
+    float highThreshold = *highThresholdP;
+
+    // FIXME: Optimize for SSE2.
+    // FIXME: Optimize for NEON.
+    while (n--) {
+        *destP = std::max(std::min(*sourceP, highThreshold), lowThreshold);
+        sourceP += sourceStride;
+        destP += destStride;
+    }
+}
+
 #endif // OS(DARWIN)
 
 } // namespace VectorMath

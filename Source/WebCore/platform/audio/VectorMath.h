@@ -49,6 +49,9 @@ void vmul(const float* source1P, int sourceStride1, const float* source2P, int s
 // Multiplies two complex vectors.
 void zvmul(const float* real1P, const float* imag1P, const float* real2P, const float* imag2P, float* realDestP, float* imagDestP, size_t framesToProcess);
 
+// Copies elements while clipping values to the threshold inputs.
+void vclip(const float* sourceP, int sourceStride, const float* lowThresholdP, const float* highThresholdP, float* destP, int destStride, size_t framesToProcess);
+
 } // namespace VectorMath
 
 } // namespace WebCore
