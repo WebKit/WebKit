@@ -1,3 +1,18 @@
+2012-10-15  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Remove page visibility hidden histograms
+        https://bugs.webkit.org/show_bug.cgi?id=99360
+
+        Reviewed by Ojan Vafai.
+
+        The 2 page visibility hidden histograms were added in http://webkit.org/b/85537 to
+        investigate a potential optimization where we would destroy the render tree when
+        a tab was hidden. The optimization was abandoned but the histograms were never
+        removed. They are too narrow to be reused so this change removes them.
+
+        * page/Page.cpp:
+        (WebCore::Page::setVisibilityState):
+
 2012-10-15  Ryuan Choi  <ryuan.choi@samsung.com>
 
         REGRESSION: Build break after r131373 when ACCELERATED_COMPOSITING disabled
