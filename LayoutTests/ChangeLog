@@ -1,3 +1,18 @@
+2012-10-16  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] accessibility/radio-button-title-label.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=98374
+
+        Unreviewed. Unskipped test, new port-specific baseline.
+
+        New baseline for the GTK port. If there is a proper label tag, we
+        expect the widget to get its name/title from that label. The aria
+        labelledby property is exposed in addition to the label; not instead
+        of the label.
+
+        * platform/gtk/TestExpectations: Unskipped failing test.
+        * platform/gtk/accessibility/radio-button-title-label-expected.txt: Added.
+
 2012-10-16  Dirk Pranke  <dpranke@chromium.org>
 
         [chromium] add Mountain Lion baselines

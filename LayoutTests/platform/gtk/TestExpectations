@@ -706,7 +706,6 @@ webkit.org/b/98370 accessibility/loading-iframe-sends-notification.html [ Failur
 webkit.org/b/98371 accessibility/loading-iframe-updates-axtree.html [ Failure ]
 webkit.org/b/98372 accessibility/onclick-handlers.html [ Failure ]
 webkit.org/b/98373 accessibility/placeholder.html [ Failure ]
-webkit.org/b/98374 accessibility/radio-button-title-label.html [ Failure ]
 webkit.org/b/98375 accessibility/secure-textfield-title-ui.html [ Failure ]
 webkit.org/b/98376 accessibility/selection-states.html [ Failure ]
 webkit.org/b/98377 accessibility/textarea-insertion-point-line-number.html [ Failure ]
