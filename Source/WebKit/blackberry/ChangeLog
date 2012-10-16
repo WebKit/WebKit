@@ -1,3 +1,14 @@
+2012-10-15  Peter Wang  <peter.wang@torchmobile.com.cn>
+
+        [BlackBerry] Web Inspector: Remove the useless preferences items in "inspectorBB.js"
+        https://bugs.webkit.org/show_bug.cgi?id=99404
+
+        Reviewed by George Staikos.
+
+        In "inspectorBB.js", remove the useless preferences items to catch up the new code of frontend.
+
+        * WebCoreSupport/inspectorBB.js:
+
 2012-10-15  Jakob Petsovits  <jpetsovits@rim.com>
 
         [BlackBerry] Only reallocate buffers that were allocated before suspending
