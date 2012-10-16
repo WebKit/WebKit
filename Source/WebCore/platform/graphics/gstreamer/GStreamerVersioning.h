@@ -20,6 +20,7 @@
 #ifndef GStreamerVersioning_h
 #define GStreamerVersioning_h
 
+#include "GRefPtrGStreamer.h"
 #include <gst/gst.h>
 #include <gst/video/video.h>
 
@@ -28,7 +29,7 @@ class IntSize;
 };
 
 void webkitGstObjectRefSink(GstObject*);
-GstCaps* webkitGstGetPadCaps(GstPad*);
+GRefPtr<GstCaps> webkitGstGetPadCaps(GstPad*);
 bool getVideoSizeAndFormatFromCaps(GstCaps*, WebCore::IntSize&, GstVideoFormat&, int& pixelAspectRatioNumerator, int& pixelAspectRatioDenominator, int& stride);
 GstBuffer* createGstBuffer(GstBuffer*);
 void setGstElementClassMetadata(GstElementClass*, const char* name, const char* longName, const char* description, const char* author);

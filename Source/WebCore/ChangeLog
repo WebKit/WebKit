@@ -1,3 +1,31 @@
+2012-10-15  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        [GStreamer] GstCaps are leaked when building with gstreamer-1.0
+        https://bugs.webkit.org/show_bug.cgi?id=99362
+
+        Reviewed by Martin Robinson.
+
+        Implement GRefPtr<GstCaps> adoptGRef(GstCaps*).
+
+        Change webkitGstGetPadCaps signature to return a GRefPtr<GstCaps>, and
+        use GRefPtr<GstCaps> also in webkitVideoSinkRender to simply GstCaps
+        refeference count.
+
+        Covered by existing tests.
+
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp:
+        (WTF::adoptGRef):
+        (WTF):
+        * platform/graphics/gstreamer/GRefPtrGStreamer.h:
+        (WTF):
+        * platform/graphics/gstreamer/GStreamerVersioning.cpp:
+        (webkitGstGetPadCaps):
+        * platform/graphics/gstreamer/GStreamerVersioning.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::naturalSize):
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (webkitVideoSinkRender):
+
 2012-10-15  Tony Chang  <tony@chromium.org>
 
         Unreviewed, rolling out r131367.

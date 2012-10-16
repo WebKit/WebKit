@@ -540,7 +540,7 @@ IntSize MediaPlayerPrivateGStreamer::naturalSize() const
     if (!m_videoSize.isEmpty())
         return m_videoSize;
 
-    GstCaps* caps = webkitGstGetPadCaps(m_videoSinkPad.get());
+    GRefPtr<GstCaps> caps = webkitGstGetPadCaps(m_videoSinkPad.get());
     if (!caps)
         return IntSize();
 
@@ -555,7 +555,7 @@ IntSize MediaPlayerPrivateGStreamer::naturalSize() const
     int pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride;
     IntSize originalSize;
     GstVideoFormat format;
-    if (!getVideoSizeAndFormatFromCaps(caps, originalSize, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride))
+    if (!getVideoSizeAndFormatFromCaps(caps.get(), originalSize, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride))
         return IntSize();
 
     LOG_MEDIA_MESSAGE("Original video size: %dx%d", originalSize.width(), originalSize.height());
@@ -1566,11 +1566,11 @@ void MediaPlayerPrivateGStreamer::paint(GraphicsContext* context, const IntRect&
     if (!m_buffer)
         return;
 
-    GstCaps* caps = webkitGstGetPadCaps(m_videoSinkPad.get());
+    GRefPtr<GstCaps> caps = webkitGstGetPadCaps(m_videoSinkPad.get());
     if (!caps)
         return;
 
-    RefPtr<ImageGStreamer> gstImage = ImageGStreamer::createImage(m_buffer, caps);
+    RefPtr<ImageGStreamer> gstImage = ImageGStreamer::createImage(m_buffer, caps.get());
     if (!gstImage)
         return;
 

@@ -29,6 +29,7 @@
 #if USE(GSTREAMER)
 #include "VideoSinkGStreamer.h"
 
+#include "GRefPtrGStreamer.h"
 #include "GStreamerVersioning.h"
 #include "IntSize.h"
 #include <glib.h>
@@ -172,26 +173,19 @@ static GstFlowReturn webkitVideoSinkRender(GstBaseSink* baseSink, GstBuffer* buf
         gst_buffer_set_caps(priv->buffer, GST_PAD_CAPS(GST_BASE_SINK_PAD(baseSink)));
     }
 
-    GstCaps* caps = GST_BUFFER_CAPS(buffer);
+    GRefPtr<GstCaps> caps = GST_BUFFER_CAPS(buffer);
 #else
-    GstCaps* caps = gst_video_info_to_caps(&priv->info);
+    GRefPtr<GstCaps> caps = adoptGRef(gst_video_info_to_caps(&priv->info));
 #endif
 
     GstVideoFormat format;
     WebCore::IntSize size;
     int pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride;
-    if (!getVideoSizeAndFormatFromCaps(caps, size, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride)) {
+    if (!getVideoSizeAndFormatFromCaps(caps.get(), size, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride)) {
         gst_buffer_unref(buffer);
-#ifdef GST_API_VERSION_1
-        gst_caps_unref(caps);
-#endif
         g_mutex_unlock(priv->bufferMutex);
         return GST_FLOW_ERROR;
     }
-
-#ifdef GST_API_VERSION_1
-    gst_caps_unref(caps);
-#endif
 
     // Cairo's ARGB has pre-multiplied alpha while GStreamer's doesn't.
     // Here we convert to Cairo's ARGB.

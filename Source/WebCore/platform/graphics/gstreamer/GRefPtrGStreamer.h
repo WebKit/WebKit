@@ -45,6 +45,7 @@ template<> GRefPtr<GstPadTemplate> adoptGRef(GstPadTemplate* ptr);
 template<> GstPadTemplate* refGPtr<GstPadTemplate>(GstPadTemplate* ptr);
 template<> void derefGPtr<GstPadTemplate>(GstPadTemplate* ptr);
 
+template<> GRefPtr<GstCaps> adoptGRef(GstCaps* ptr);
 template<> GstCaps* refGPtr<GstCaps>(GstCaps* ptr);
 template<> void derefGPtr<GstCaps>(GstCaps* ptr);
 

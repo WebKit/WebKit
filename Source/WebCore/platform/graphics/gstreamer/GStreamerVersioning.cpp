@@ -34,20 +34,19 @@ void webkitGstObjectRefSink(GstObject* gstObject)
 #endif
 }
 
-GstCaps* webkitGstGetPadCaps(GstPad* pad)
+GRefPtr<GstCaps> webkitGstGetPadCaps(GstPad* pad)
 {
     if (!pad)
         return 0;
 
-    GstCaps* caps;
 #ifdef GST_API_VERSION_1
-    caps = gst_pad_get_current_caps(pad);
+    GstCaps* caps = gst_pad_get_current_caps(pad);
     if (!caps)
         caps = gst_pad_query_caps(pad, 0);
+    return adoptGRef(caps); // gst_pad_query_caps and gst_pad_get_current_caps return a new reference.
 #else
-    caps = GST_PAD_CAPS(pad);
+    return GST_PAD_CAPS(pad);
 #endif
-    return caps;
 }
 
 bool getVideoSizeAndFormatFromCaps(GstCaps* caps, WebCore::IntSize& size, GstVideoFormat& format, int& pixelAspectRatioNumerator, int& pixelAspectRatioDenominator, int& stride)
