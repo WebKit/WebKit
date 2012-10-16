@@ -1,5 +1,16 @@
 2012-10-16  Filip Pizlo  <fpizlo@apple.com>
 
+        Accidental switch fall-through in DFG::FixupPhase
+        https://bugs.webkit.org/show_bug.cgi?id=96956
+        <rdar://problem/12313242>
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
+2012-10-16  Filip Pizlo  <fpizlo@apple.com>
+
         GetScopedVar CSE matches dead GetScopedVar's leading to IR corruption
         https://bugs.webkit.org/show_bug.cgi?id=99470
         <rdar://problem/12363698>

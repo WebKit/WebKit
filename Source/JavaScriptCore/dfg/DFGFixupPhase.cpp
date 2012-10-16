@@ -148,6 +148,7 @@ private:
             
         case ArrayPop: {
             blessArrayOperation(node.child1(), node.child2(), 1);
+            break;
         }
             
         case ValueToInt32: {
