@@ -3470,6 +3470,7 @@ webkit.org/b/87273 [ Release ] webaudio/audioparam-connect-audioratesignal.html 
 
 webkit.org/b/97439 [ Release ] webaudio/biquad-getFrequencyResponse.html [ Failure Pass ]
 webkit.org/b/97439 [ Debug ] webaudio/biquad-getFrequencyResponse.html [ Crash Pass ]
+webkit.org/b/99357 [ Win Mac Linux ] webaudio/codec-tests/vorbis/vbr-70kbps-44khz.html [ Failure ]
 
 webkit.org/b/87321 [ XP ] fast/history/history-subframe-with-name.html [ Failure Pass ]
 webkit.org/b/87321 [ XP ] fast/history/history-traversal-is-asynchronous.html [ Failure Pass ]
