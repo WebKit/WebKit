@@ -1,3 +1,12 @@
+2012-10-16  Keishi Hattori  <keishi@webkit.org>
+
+        [Chromium] Rebaseline calendar-picker-key-operations.html due to r162114
+
+        Unreviewed.
+
+        * fast/forms/date/calendar-picker-key-operations-expected.txt:
+        * platform/chromium-win/fast/forms/date/calendar-picker-key-operations-expected.txt:
+
 2012-10-16  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
