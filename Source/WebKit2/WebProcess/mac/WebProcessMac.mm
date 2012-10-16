@@ -257,18 +257,18 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     SandboxExtension::consumePermanently(parameters.localStorageDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.databaseDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.applicationCacheDirectoryExtensionHandle);
-    SandboxExtension::consumePermanently(parameters.nsURLCachePathExtensionHandle);
+    SandboxExtension::consumePermanently(parameters.diskCacheDirectoryExtensionHandle);
 
     if (!parameters.parentProcessName.isNull()) {
         NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Content", "Visible name of the web process. The argument is the application name."), (NSString *)parameters.parentProcessName];
         WKSetVisibleApplicationName((CFStringRef)applicationName);
     }
 
-    if (!parameters.nsURLCachePath.isNull()) {
+    if (!parameters.diskCacheDirectory.isNull()) {
         NSUInteger cacheMemoryCapacity = parameters.nsURLCacheMemoryCapacity;
         NSUInteger cacheDiskCapacity = parameters.nsURLCacheDiskCapacity;
 
-        RetainPtr<NSURLCache> parentProcessURLCache(AdoptNS, [[NSURLCache alloc] initWithMemoryCapacity:cacheMemoryCapacity diskCapacity:cacheDiskCapacity diskPath:parameters.nsURLCachePath]);
+        RetainPtr<NSURLCache> parentProcessURLCache(AdoptNS, [[NSURLCache alloc] initWithMemoryCapacity:cacheMemoryCapacity diskCapacity:cacheDiskCapacity diskPath:parameters.diskCacheDirectory]);
         [NSURLCache setSharedURLCache:parentProcessURLCache.get()];
     }
 

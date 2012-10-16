@@ -215,6 +215,8 @@ public:
     void setIconDatabasePath(const String&);
     String iconDatabasePath() const;
     void setLocalStorageDirectory(const String& dir) { m_overrideLocalStorageDirectory = dir; }
+    void setDiskCacheDirectory(const String& dir) { m_overrideDiskCacheDirectory = dir; }
+    void setCookieStorageDirectory(const String& dir) { m_overrideCookieStorageDirectory = dir; }
 
     void ensureSharedWebProcess();
     PassRefPtr<WebProcessProxy> createNewWebProcess();
@@ -295,6 +297,12 @@ private:
     String localStorageDirectory() const;
     String platformDefaultLocalStorageDirectory() const;
 
+    String diskCacheDirectory() const;
+    String platformDefaultDiskCacheDirectory() const;
+
+    String cookieStorageDirectory() const;
+    String platformDefaultCookieStorageDirectory() const;
+
     ProcessModel m_processModel;
     
     Vector<RefPtr<WebProcessProxy> > m_processes;
@@ -373,6 +381,8 @@ private:
     String m_overrideDatabaseDirectory;
     String m_overrideIconDatabasePath;
     String m_overrideLocalStorageDirectory;
+    String m_overrideDiskCacheDirectory;
+    String m_overrideCookieStorageDirectory;
 
     bool m_processTerminationEnabled;
 

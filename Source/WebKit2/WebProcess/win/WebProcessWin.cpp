@@ -148,7 +148,7 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     if (defaultStorageSession)
         return;
 
-    RetainPtr<CFStringRef> cachePath(AdoptCF, parameters.cfURLCachePath.createCFString());
+    RetainPtr<CFStringRef> cachePath(AdoptCF, parameters.diskCacheDirectory.createCFString());
     if (!cachePath)
         return;
 

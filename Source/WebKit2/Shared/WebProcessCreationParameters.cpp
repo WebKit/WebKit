@@ -59,6 +59,10 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(databaseDirectoryExtensionHandle);
     encoder->encode(localStorageDirectory);
     encoder->encode(localStorageDirectoryExtensionHandle);
+    encoder->encode(diskCacheDirectory);
+    encoder->encode(diskCacheDirectoryExtensionHandle);
+    encoder->encode(cookieStorageDirectory);
+    encoder->encode(cookieStorageDirectoryExtensionHandle);
     encoder->encode(urlSchemesRegistererdAsEmptyDocument);
     encoder->encode(urlSchemesRegisteredAsSecure);
     encoder->encode(urlSchemesForWhichDomainRelaxationIsForbidden);
@@ -82,8 +86,6 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
 #if PLATFORM(MAC)
     encoder->encode(parentProcessName);
     encoder->encode(presenterApplicationPid);
-    encoder->encode(nsURLCachePath);
-    encoder->encode(nsURLCachePathExtensionHandle);
     encoder->encode(nsURLCacheMemoryCapacity);
     encoder->encode(nsURLCacheDiskCapacity);
     encoder->encode(acceleratedCompositingPort);
@@ -93,7 +95,6 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(shouldEnableKerningAndLigaturesByDefault);
 #elif PLATFORM(WIN)
     encoder->encode(shouldPaintNativeControls);
-    encoder->encode(cfURLCachePath);
     encoder->encode(cfURLCacheDiskCapacity);
     encoder->encode(cfURLCacheMemoryCapacity);
     encoder->encode(initialHTTPCookieAcceptPolicy);
@@ -103,10 +104,6 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     if (storageSession)
         CoreIPC::encode(encoder, storageSession);
 #endif // USE(CFURLSTORAGESESSIONS)
-#endif
-#if PLATFORM(QT)
-    encoder->encode(cookieStorageDirectory);
-    encoder->encode(diskCacheDirectory);
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
@@ -131,6 +128,14 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
     if (!decoder->decode(parameters.localStorageDirectory))
         return false;
     if (!decoder->decode(parameters.localStorageDirectoryExtensionHandle))
+        return false;
+    if (!decoder->decode(parameters.diskCacheDirectory))
+        return false;
+    if (!decoder->decode(parameters.diskCacheDirectoryExtensionHandle))
+        return false;
+    if (!decoder->decode(parameters.cookieStorageDirectory))
+        return false;
+    if (!decoder->decode(parameters.cookieStorageDirectoryExtensionHandle))
         return false;
     if (!decoder->decode(parameters.urlSchemesRegistererdAsEmptyDocument))
         return false;
@@ -176,10 +181,6 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
         return false;
     if (!decoder->decode(parameters.presenterApplicationPid))
         return false;
-    if (!decoder->decode(parameters.nsURLCachePath))
-        return false;
-    if (!decoder->decode(parameters.nsURLCachePathExtensionHandle))
-        return false;
     if (!decoder->decode(parameters.nsURLCacheMemoryCapacity))
         return false;
     if (!decoder->decode(parameters.nsURLCacheDiskCapacity))
@@ -197,8 +198,6 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
 #elif PLATFORM(WIN)
     if (!decoder->decode(parameters.shouldPaintNativeControls))
         return false;
-    if (!decoder->decode(parameters.cfURLCachePath))
-        return false;
     if (!decoder->decode(parameters.cfURLCacheDiskCapacity))
         return false;
     if (!decoder->decode(parameters.cfURLCacheMemoryCapacity))
@@ -212,13 +211,6 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
     if (hasStorageSession && !CoreIPC::decode(decoder, parameters.serializedDefaultStorageSession))
         return false;
 #endif // USE(CFURLSTORAGESESSIONS)
-#endif
-
-#if PLATFORM(QT)
-    if (!decoder->decode(parameters.cookieStorageDirectory))
-        return false;
-    if (!decoder->decode(parameters.diskCacheDirectory))
-        return false;
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

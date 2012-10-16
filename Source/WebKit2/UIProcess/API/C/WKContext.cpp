@@ -266,6 +266,16 @@ void WKContextSetLocalStorageDirectory(WKContextRef contextRef, WKStringRef loca
     toImpl(contextRef)->setLocalStorageDirectory(toImpl(localStorageDirectory)->string());
 }
 
+WK_EXPORT void WKContextSetDiskCacheDirectory(WKContextRef contextRef, WKStringRef diskCacheDirectory)
+{
+    toImpl(contextRef)->setDiskCacheDirectory(toImpl(diskCacheDirectory)->string());
+}
+
+WK_EXPORT void WKContextSetCookieStorageDirectory(WKContextRef contextRef, WKStringRef cookieStorageDirectory)
+{
+    toImpl(contextRef)->setCookieStorageDirectory(toImpl(cookieStorageDirectory)->string());
+}
+
 void WKContextDisableProcessTermination(WKContextRef contextRef)
 {
     toImpl(contextRef)->disableProcessTermination();

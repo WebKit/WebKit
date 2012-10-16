@@ -1,3 +1,62 @@
+2012-10-16  Szilard Ledan  <szledan@inf.u-szeged.hu>
+
+        Separate WebKit2 instances use the same local storage
+        https://bugs.webkit.org/show_bug.cgi?id=89666
+
+        Reviewed by Simon Hausmann.
+
+        For multi-threaded (parallel) testing, WTRs must not write into the same directory.
+        To avoid that, results need to be stored in the location defined by DUMPRENDERTREE_TEMP
+        environment variable that is created by NRWT. To do that, WebContext needed to be
+        extended with diskCacheDirectory and cookieStorageDirectory APIs.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        (WebProcessCreationParameters):
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetDiskCacheDirectory):
+        (WKContextSetCookieStorageDirectory):
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createNewWebProcess):
+        (WebKit::WebContext::diskCacheDirectory):
+        (WebKit):
+        (WebKit::WebContext::cookieStorageDirectory):
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::setDiskCacheDirectory):
+        (WebKit::WebContext::setCookieStorageDirectory):
+        (WebContext):
+        * UIProcess/efl/WebContextEfl.cpp:
+        (WebKit::WebContext::platformDefaultDiskCacheDirectory):
+        (WebKit):
+        (WebKit::WebContext::platformDefaultCookieStorageDirectory):
+        * UIProcess/gtk/WebContextGtk.cpp:
+        (WebKit::WebContext::platformDefaultDiskCacheDirectory):
+        (WebKit):
+        (WebKit::WebContext::platformDefaultCookieStorageDirectory):
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        (WebKit):
+        (WebKit::WebContext::platformDefaultDiskCacheDirectory):
+        (WebKit::WebContext::platformDefaultCookieStorageDirectory):
+        * UIProcess/qt/WebContextQt.cpp:
+        (WebKit):
+        (WebKit::WebContext::platformDefaultDiskCacheDirectory):
+        (WebKit::WebContext::applicationCacheDirectory):
+        (WebKit::WebContext::platformInitializeWebProcess):
+        (WebKit::WebContext::platformDefaultCookieStorageDirectory):
+        * UIProcess/win/WebContextWin.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        (WebKit::WebContext::platformDefaultDiskCacheDirectory):
+        (WebKit):
+        (WebKit::WebContext::platformDefaultCookieStorageDirectory):
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        * WebProcess/win/WebProcessWin.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2012-10-16  Jongseok Yang  <js45.yang@samsung.com>
 
         [EFL][WK2] Fix Cache Model API tests

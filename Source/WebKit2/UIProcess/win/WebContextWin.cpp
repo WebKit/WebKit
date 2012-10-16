@@ -29,6 +29,7 @@
 #include "WebProcessCreationParameters.h"
 #include "WebProcessMessages.h"
 #include <WebCore/FileSystem.h>
+#include <WebCore/NotImplemented.h>
 
 #if USE(CFNETWORK)
 #include <CFNetwork/CFURLCachePriv.h>
@@ -61,11 +62,11 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     parameters.cfURLCacheMemoryCapacity = CFURLCacheMemoryCapacity(cfurlCache.get());
 
     RetainPtr<CFStringRef> cfURLCachePath(AdoptCF, wkCopyFoundationCacheDirectory(0));
-    parameters.cfURLCachePath = String(cfURLCachePath.get());
+    parameters.diskCacheDirectory = String(cfURLCachePath.get());
     // Remove the ending '\' (necessary to have CFNetwork find the Cache file).
-    ASSERT(parameters.cfURLCachePath.length());
-    if (parameters.cfURLCachePath[parameters.cfURLCachePath.length() - 1] == '\\')
-        parameters.cfURLCachePath.remove(parameters.cfURLCachePath.length() - 1);
+    ASSERT(parameters.diskCacheDirectory.length());
+    if (parameters.diskCacheDirectory.endsWith(UChar('\\')))
+        parameters.diskCacheDirectory.remove(parameters.diskCacheDirectory.length() - 1);
 
 #if USE(CFURLSTORAGESESSIONS)
     parameters.uiProcessBundleIdentifier = String(reinterpret_cast<CFStringRef>(CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), kCFBundleIdentifierKey)));
@@ -95,6 +96,17 @@ String WebContext::platformDefaultIconDatabasePath() const
 String WebContext::platformDefaultLocalStorageDirectory() const
 {
     return WebCore::pathByAppendingComponent(WebCore::localUserSpecificStorageDirectory(), "LocalStorage");
+}
+
+String WebContext::platformDefaultDiskCacheDirectory() const
+{
+    return WebCore::pathByAppendingComponent(WebCore::localUserSpecificStorageDirectory(), "cache");
+}
+
+String WebContext::platformDefaultCookieStorageDirectory() const
+{
+    notImplemented();
+    return String();
 }
 
 } // namespace WebKit

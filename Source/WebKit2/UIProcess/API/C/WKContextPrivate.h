@@ -60,6 +60,8 @@ WK_EXPORT void WKContextSetIconDatabasePath(WKContextRef context, WKStringRef ic
 // we should really change these settings to be on WebPreferences and changeable at runtime.
 WK_EXPORT void WKContextSetDatabaseDirectory(WKContextRef context, WKStringRef databaseDirectory);
 WK_EXPORT void WKContextSetLocalStorageDirectory(WKContextRef context, WKStringRef localStorageDirectory);
+WK_EXPORT void WKContextSetDiskCacheDirectory(WKContextRef context, WKStringRef diskCacheDirectory);
+WK_EXPORT void WKContextSetCookieStorageDirectory(WKContextRef context, WKStringRef cookieStorageDirectory);
 
 // FIXME: This is a workaround for testing purposes only and should be removed once a better
 // solution has been found for testing.

@@ -1,3 +1,19 @@
+2012-10-16  Szilard Ledan  <szledan@inf.u-szeged.hu>
+
+        Separate WebKit2 instances use the same local storage
+        https://bugs.webkit.org/show_bug.cgi?id=89666
+
+        Reviewed by Simon Hausmann.
+
+        TestController has been modified to get the local storage from
+        DUMPRENDERTREE_TEMP environment variable. If it's undefined
+        then it works with the default directory. The aim is for the parallelly
+        started WTRs to use separate directories. It was implemented for WK1
+        long time ago and it works fine.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+
 2012-10-15  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Display page favicons in MiniBrowser

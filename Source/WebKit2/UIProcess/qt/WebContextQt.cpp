@@ -43,8 +43,9 @@ namespace WebKit {
 
 static QString s_defaultDatabaseDirectory;
 static QString s_defaultLocalStorageDirectory;
+static QString s_defaultCookieStorageDirectory;
 
-static String defaultDiskCacheDirectory()
+String WebContext::platformDefaultDiskCacheDirectory() const
 {
     static String s_defaultDiskCacheDirectory;
 
@@ -61,7 +62,7 @@ String WebContext::applicationCacheDirectory()
     const String cacheDirectory = WebCore::cacheStorage().cacheDirectory();
 
     if (cacheDirectory.isEmpty())
-        return defaultDiskCacheDirectory();
+        return platformDefaultDiskCacheDirectory();
 
     return cacheDirectory;
 }
@@ -69,8 +70,6 @@ String WebContext::applicationCacheDirectory()
 void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
     qRegisterMetaType<QProcess::ExitStatus>("QProcess::ExitStatus");
-    parameters.cookieStorageDirectory = defaultDataLocation();
-    parameters.diskCacheDirectory = defaultDiskCacheDirectory();
 #if ENABLE(GEOLOCATION)
     static WebGeolocationProviderQt* location = WebGeolocationProviderQt::create(toAPI(geolocationManagerProxy()));
     WKGeolocationManagerSetProvider(toAPI(geolocationManagerProxy()), WebGeolocationProviderQt::provider(location));
@@ -104,6 +103,15 @@ String WebContext::platformDefaultLocalStorageDirectory() const
     s_defaultLocalStorageDirectory = defaultDataLocation() + QLatin1String("LocalStorage");
     QDir().mkpath(s_defaultLocalStorageDirectory);
     return s_defaultLocalStorageDirectory;
+}
+
+String WebContext::platformDefaultCookieStorageDirectory() const
+{
+    if (!s_defaultCookieStorageDirectory.isEmpty())
+        return s_defaultCookieStorageDirectory;
+
+    s_defaultCookieStorageDirectory = defaultDataLocation();
+    return s_defaultCookieStorageDirectory;
 }
 
 } // namespace WebKit

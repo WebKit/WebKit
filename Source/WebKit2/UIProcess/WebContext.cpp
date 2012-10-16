@@ -355,6 +355,14 @@ PassRefPtr<WebProcessProxy> WebContext::createNewWebProcess()
     if (!parameters.localStorageDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.localStorageDirectory, parameters.localStorageDirectoryExtensionHandle);
 
+    parameters.diskCacheDirectory = diskCacheDirectory();
+    if (!parameters.diskCacheDirectory.isEmpty())
+        SandboxExtension::createHandle(parameters.diskCacheDirectory, SandboxExtension::ReadWrite, parameters.diskCacheDirectoryExtensionHandle);
+
+    parameters.cookieStorageDirectory = cookieStorageDirectory();
+    if (!parameters.cookieStorageDirectory.isEmpty())
+        SandboxExtension::createHandle(parameters.cookieStorageDirectory, SandboxExtension::ReadWrite, parameters.cookieStorageDirectoryExtensionHandle);
+
     parameters.shouldTrackVisitedLinks = m_historyClient.shouldTrackVisitedLinks();
     parameters.cacheModel = m_cacheModel;
     parameters.languages = userPreferredLanguages();
@@ -915,6 +923,22 @@ String WebContext::localStorageDirectory() const
         return m_overrideLocalStorageDirectory;
 
     return platformDefaultLocalStorageDirectory();
+}
+
+String WebContext::diskCacheDirectory() const
+{
+    if (!m_overrideDiskCacheDirectory.isEmpty())
+        return m_overrideDiskCacheDirectory;
+
+    return platformDefaultDiskCacheDirectory();
+}
+
+String WebContext::cookieStorageDirectory() const
+{
+    if (!m_overrideCookieStorageDirectory.isEmpty())
+        return m_overrideCookieStorageDirectory;
+
+    return platformDefaultCookieStorageDirectory();
 }
 
 void WebContext::setHTTPPipeliningEnabled(bool enabled)

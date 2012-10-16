@@ -30,6 +30,7 @@
 #import "WebProcessCreationParameters.h"
 #import <WebCore/Color.h>
 #import <WebCore/FileSystem.h>
+#include <WebCore/NotImplemented.h>
 #import <WebCore/PlatformPasteboard.h>
 #import <sys/param.h>
 
@@ -79,14 +80,6 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     parameters.parentProcessName = [[NSProcessInfo processInfo] processName];    
 
-    RetainPtr<CFStringRef> cachePath(AdoptCF, WKCopyFoundationCacheDirectory());
-    if (!cachePath)
-        cachePath = reinterpret_cast<CFStringRef>(NSHomeDirectory());
-
-    parameters.nsURLCachePath = [(NSString *)cachePath.get() stringByStandardizingPath];
-    SandboxExtension::createHandleForReadWriteDirectory(parameters.nsURLCachePath, parameters.nsURLCachePathExtensionHandle);
-    ASSERT(!parameters.nsURLCachePath.isEmpty());
-
     NSURLCache *urlCache = [NSURLCache sharedURLCache];
     parameters.nsURLCacheMemoryCapacity = [urlCache memoryCapacity];
     parameters.nsURLCacheDiskCapacity = [urlCache diskCapacity];
@@ -122,7 +115,22 @@ void WebContext::platformInvalidateContext()
 {
     [[NSNotificationCenter defaultCenter] removeObserver:(id)m_enhancedAccessibilityObserver.get()];
 }
-    
+
+String WebContext::platformDefaultDiskCacheDirectory() const
+{
+    RetainPtr<CFStringRef> cachePath(AdoptCF, WKCopyFoundationCacheDirectory());
+    if (!cachePath)
+        cachePath = reinterpret_cast<CFStringRef>(NSHomeDirectory());
+
+    return [(NSString *)cachePath.get() stringByStandardizingPath];
+}
+
+String WebContext::platformDefaultCookieStorageDirectory() const
+{
+    notImplemented();
+    return [@"" stringByStandardizingPath];
+}
+
 String WebContext::platformDefaultDatabaseDirectory() const
 {
     NSString *databasesDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebDatabaseDirectoryDefaultsKey];
