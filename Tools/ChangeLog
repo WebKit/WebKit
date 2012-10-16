@@ -1,3 +1,17 @@
+2012-10-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r131461.
+        http://trac.webkit.org/changeset/131461
+        https://bugs.webkit.org/show_bug.cgi?id=99474
+
+        Broke win7 bots (Requested by danakj|gardening on #webkit).
+
+        * DumpRenderTree/chromium/TestEventPrinter.cpp:
+        * DumpRenderTree/chromium/TestEventPrinter.h:
+        (TestEventPrinter):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::dump):
+
 2012-10-16  Zoltan Horvath  <zoltan@webkit.org>
 
         [chromium] Provide used JSHeap size in chromium's DRT for pageloadtest memory measurements
