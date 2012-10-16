@@ -1,5 +1,13 @@
 2012-10-16  Dana Jansens  <danakj@chromium.org>
 
+        Lint fixes for TestExpectations
+
+        Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+
+2012-10-16  Dana Jansens  <danakj@chromium.org>
+
         Rebaselines for r131503
         https://bugs.webkit.org/show_bug.cgi?id=99516
 
