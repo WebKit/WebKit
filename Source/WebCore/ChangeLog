@@ -1,3 +1,22 @@
+2012-10-16  Nate Chapin  <japhet@chromium.org>
+
+        sendResourceLoadCallbacks() is poorly named
+        https://bugs.webkit.org/show_bug.cgi?id=99482
+
+        Reviewed by Alexey Proskuryakov.
+
+        In both CachedResource and ResourceLoader, rename sendResourceLoadCallbacks()
+        to shouldSendResourceLoadCallbacks() to better indicate that it is a simple getter.
+
+        No new tests, simple renaming.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadedResourceFromMemoryCache):
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::shouldSendResourceLoadCallbacks):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::shouldSendResourceLoadCallbacks):
+
 2012-10-16  Chris Rogers  <crogers@google.com>
 
         Rename some AudioNodes

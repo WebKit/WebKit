@@ -2891,7 +2891,7 @@ void FrameLoader::loadedResourceFromMemoryCache(CachedResource* resource)
     if (!page)
         return;
 
-    if (!resource->sendResourceLoadCallbacks() || m_documentLoader->haveToldClientAboutLoad(resource->url()))
+    if (!resource->shouldSendResourceLoadCallbacks() || m_documentLoader->haveToldClientAboutLoad(resource->url()))
         return;
 
     if (!page->areMemoryCacheClientCallsEnabled()) {

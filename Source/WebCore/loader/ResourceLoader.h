@@ -139,7 +139,7 @@ namespace WebCore {
 
         const KURL& url() const { return m_request.url(); } 
         ResourceHandle* handle() const { return m_handle.get(); }
-        bool sendResourceLoadCallbacks() const { return m_options.sendLoadCallbacks == SendCallbacks; }
+        bool shouldSendResourceLoadCallbacks() const { return m_options.sendLoadCallbacks == SendCallbacks; }
 
         bool reachedTerminalState() const { return m_reachedTerminalState; }
 
