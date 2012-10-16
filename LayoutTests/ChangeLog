@@ -1,5 +1,11 @@
 2012-10-16  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, fix lint error in chromium-android/TestExpectations.
+
+        * platform/chromium-android/TestExpectations:
+
+2012-10-16  Tony Chang  <tony@chromium.org>
+
         Unreviewed, lint fixes for TestExpectations.
 
         * platform/chromium/TestExpectations:
