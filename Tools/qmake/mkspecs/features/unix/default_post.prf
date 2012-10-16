@@ -28,8 +28,8 @@ linux-g++* {
 
 # Don't warn about OVERRIDE and FINAL, since they are feature-checked anyways
 *clang:!contains(QMAKE_CXXFLAGS, -std=c++11) {
-    QMAKE_CXXFLAGS += -Wno-c++11-extensions
-    QMAKE_OBJECTIVE_CFLAGS += -Wno-c++11-extensions
+    QMAKE_CXXFLAGS += -Wno-c++11-extensions -Wno-c++0x-extensions
+    QMAKE_OBJECTIVE_CFLAGS += -Wno-c++11-extensions -Wno-c++0x-extensions
 }
 
 contains(TEMPLATE, app): CONFIG += rpath

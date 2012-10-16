@@ -1,3 +1,14 @@
+2012-10-16  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Silence C++11 warnings with older versions of clang
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        Some clang versions support -Wno-c++11-extensions and some use -Wno-c++0x-extensions.
+        We cater both :)
+
+        * qmake/mkspecs/features/unix/default_post.prf:
+
 2012-10-16  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2] Provide WKURL API for resolving the relative URL with the given base URL
