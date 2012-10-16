@@ -1316,21 +1316,33 @@ WebInspector.ElementsTreeElement.prototype = {
         return true;
     },
 
-    _startEditingTextNode: function(textNode)
+    /**
+     * @param {Element} textNodeElement
+     */
+    _startEditingTextNode: function(textNodeElement)
     {
-        if (WebInspector.isBeingEdited(textNode))
+        if (WebInspector.isBeingEdited(textNodeElement))
             return true;
 
-        var container = textNode.enclosingNodeOrSelfWithClass("webkit-html-text-node");
+        var textNode = this.representedObject;
+        // We only show text nodes inline in elements if the element only
+        // has a single child, and that child is a text node.
+        if (textNode.nodeType() === Node.ELEMENT_NODE && textNode.firstChild)
+            textNode = textNode.firstChild;
+
+        var container = textNodeElement.enclosingNodeOrSelfWithClass("webkit-html-text-node");
         if (container)
-            container.innerText = textNode._originalContent; // Strip the CSS or JS highlighting if present.
-        var config = new WebInspector.EditingConfig(this._textNodeEditingCommitted.bind(this), this._editingCancelled.bind(this));
-        this._editing = WebInspector.startEditing(textNode, config);
-        window.getSelection().setBaseAndExtent(textNode, 0, textNode, 1);
+            container.textContent = textNode.nodeValue(); // Strip the CSS or JS highlighting if present.
+        var config = new WebInspector.EditingConfig(this._textNodeEditingCommitted.bind(this, textNode), this._editingCancelled.bind(this));
+        this._editing = WebInspector.startEditing(textNodeElement, config);
+        window.getSelection().setBaseAndExtent(textNodeElement, 0, textNodeElement, 1);
 
         return true;
     },
 
+    /**
+     * @param {Element=} tagNameElement
+     */
     _startEditingTagName: function(tagNameElement)
     {
         if (!tagNameElement) {
@@ -1554,21 +1566,26 @@ WebInspector.ElementsTreeElement.prototype = {
         this.representedObject.setNodeName(newText, changeTagNameCallback);
     },
 
-    _textNodeEditingCommitted: function(element, newText)
+    /**
+     * @param {WebInspector.DOMNode} textNode
+     * @param {Element} element
+     * @param {string} newText
+     */
+    _textNodeEditingCommitted: function(textNode, element, newText)
     {
         this._editing = false;
 
-        var textNode;
-        if (this.representedObject.nodeType() === Node.ELEMENT_NODE) {
-            // We only show text nodes inline in elements if the element only
-            // has a single child, and that child is a text node.
-            textNode = this.representedObject.firstChild;
-        } else if (this.representedObject.nodeType() == Node.TEXT_NODE)
-            textNode = this.representedObject;
-
-        textNode.setNodeValue(newText, this.updateTitle.bind(this));
+        function callback()
+        {
+            this.updateTitle();
+        }
+        textNode.setNodeValue(newText, callback.bind(this));
     },
 
+    /**
+     * @param {Element} element
+     * @param {*} context
+     */
     _editingCancelled: function(element, context)
     {
         this._editing = false;
@@ -1767,7 +1784,7 @@ WebInspector.ElementsTreeElement.prototype = {
                 this._buildTagDOM(info.titleDOM, tagName, false, false, linkify);
 
                 var textChild = this._singleTextChild(node);
-                var showInlineText = textChild && textChild.nodeValue().length < Preferences.maxInlineTextChildLength;
+                var showInlineText = textChild && textChild.nodeValue().length < Preferences.maxInlineTextChildLength && !this.hasChildren;
 
                 if (!this.expanded && (!showInlineText && (this.treeOutline.isXMLMimeType || !WebInspector.ElementsTreeElement.ForbiddenClosingTagElements[tagName]))) {
                     if (this.hasChildren) {
@@ -1784,7 +1801,6 @@ WebInspector.ElementsTreeElement.prototype = {
                 if (showInlineText) {
                     var textNodeElement = info.titleDOM.createChild("span", "webkit-html-text-node");
                     textNodeElement.textContent = this._convertWhitespaceToEntities(textChild.nodeValue());
-                    textNodeElement._originalContent = textChild.nodeValue();
                     info.titleDOM.appendChild(document.createTextNode("\u200B"));
                     this._buildTagDOM(info.titleDOM, tagName, true, false);
                     info.hasChildren = false;
@@ -1808,7 +1824,6 @@ WebInspector.ElementsTreeElement.prototype = {
                     info.titleDOM.appendChild(document.createTextNode("\""));
                     var textNodeElement = info.titleDOM.createChild("span", "webkit-html-text-node");
                     textNodeElement.textContent = this._convertWhitespaceToEntities(node.nodeValue());
-                    textNodeElement._originalContent = node.nodeValue();
                     info.titleDOM.appendChild(document.createTextNode("\""));
                 }
                 break;

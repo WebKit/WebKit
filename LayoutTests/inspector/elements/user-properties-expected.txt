@@ -9,7 +9,7 @@ attr1 set on aNode
           <script src="resources/user-properties.js"></script>
       </head>
     - <body onload="runTest()"> [descendantUserAttributeCounters:[attr1=1]]
-          <p>Tests that DOMNode properly tracks own and descendants' user properties.</p>
+          <p>\nTests that DOMNode properly tracks own and descendants' user properties.\n</p>
         - <div id="container"> [descendantUserAttributeCounters:[attr1=1]]
               <div id="child1"></div>
             - <div id="child2"> [descendantUserAttributeCounters:[attr1=1]]
@@ -27,7 +27,7 @@ attr2 set on child2
           <script src="resources/user-properties.js"></script>
       </head>
     - <body onload="runTest()"> [descendantUserAttributeCounters:[attr1=1,attr2=1]]
-          <p>Tests that DOMNode properly tracks own and descendants' user properties.</p>
+          <p>\nTests that DOMNode properly tracks own and descendants' user properties.\n</p>
         - <div id="container"> [descendantUserAttributeCounters:[attr1=1,attr2=1]]
               <div id="child1"></div>
             - <div id="child2"> [userProperties:[attr2=value], descendantUserAttributeCounters:[attr1=1]]
@@ -45,7 +45,7 @@ attr1 set on child2
           <script src="resources/user-properties.js"></script>
       </head>
     - <body onload="runTest()"> [descendantUserAttributeCounters:[attr1=2,attr2=1]]
-          <p>Tests that DOMNode properly tracks own and descendants' user properties.</p>
+          <p>\nTests that DOMNode properly tracks own and descendants' user properties.\n</p>
         - <div id="container"> [descendantUserAttributeCounters:[attr1=2,attr2=1]]
               <div id="child1"></div>
             - <div id="child2"> [userProperties:[attr2=value,attr1=true], descendantUserAttributeCounters:[attr1=1]]
@@ -63,7 +63,7 @@ attr1 modified on aNode
           <script src="resources/user-properties.js"></script>
       </head>
     - <body onload="runTest()"> [descendantUserAttributeCounters:[attr1=2,attr2=1]]
-          <p>Tests that DOMNode properly tracks own and descendants' user properties.</p>
+          <p>\nTests that DOMNode properly tracks own and descendants' user properties.\n</p>
         - <div id="container"> [descendantUserAttributeCounters:[attr1=2,attr2=1]]
               <div id="child1"></div>
             - <div id="child2"> [userProperties:[attr2=value,attr1=true], descendantUserAttributeCounters:[attr1=1]]
@@ -81,7 +81,7 @@ attr2 modified on child2
           <script src="resources/user-properties.js"></script>
       </head>
     - <body onload="runTest()"> [descendantUserAttributeCounters:[attr1=2,attr2=1]]
-          <p>Tests that DOMNode properly tracks own and descendants' user properties.</p>
+          <p>\nTests that DOMNode properly tracks own and descendants' user properties.\n</p>
         - <div id="container"> [descendantUserAttributeCounters:[attr1=2,attr2=1]]
               <div id="child1"></div>
             - <div id="child2"> [userProperties:[attr2=anotherValue,attr1=true], descendantUserAttributeCounters:[attr1=1]]
@@ -99,7 +99,7 @@ attr1 removed from aNode
           <script src="resources/user-properties.js"></script>
       </head>
     - <body onload="runTest()"> [descendantUserAttributeCounters:[attr1=1,attr2=1]]
-          <p>Tests that DOMNode properly tracks own and descendants' user properties.</p>
+          <p>\nTests that DOMNode properly tracks own and descendants' user properties.\n</p>
         - <div id="container"> [descendantUserAttributeCounters:[attr1=1,attr2=1]]
               <div id="child1"></div>
             - <div id="child2"> [userProperties:[attr2=anotherValue,attr1=true]]
@@ -117,7 +117,7 @@ aNode removed
           <script src="resources/user-properties.js"></script>
       </head>
     - <body onload="runTest()"> [descendantUserAttributeCounters:[attr1=1,attr2=1]]
-          <p>Tests that DOMNode properly tracks own and descendants' user properties.</p>
+          <p>\nTests that DOMNode properly tracks own and descendants' user properties.\n</p>
         - <div id="container"> [descendantUserAttributeCounters:[attr1=1,attr2=1]]
               <div id="child1"></div>
             - <div id="child2"> [userProperties:[attr2=anotherValue,attr1=true]]
@@ -135,7 +135,7 @@ child2 removed
           <script src="resources/user-properties.js"></script>
       </head>
     - <body onload="runTest()">
-          <p>Tests that DOMNode properly tracks own and descendants' user properties.</p>
+          <p>\nTests that DOMNode properly tracks own and descendants' user properties.\n</p>
         - <div id="container">
               <div id="child1"></div>
           </div>

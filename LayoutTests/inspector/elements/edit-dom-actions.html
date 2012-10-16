@@ -55,7 +55,7 @@ function test()
 
             function testBody(node, done)
             {
-                editNodePartAndRun(node, "webkit-html-text-node", "Edited Text", done);
+                editNodePartAndRun(node, "webkit-html-text-node", "  \n  Edited Text  \n  ", done);
             }
         },
 
@@ -177,6 +177,16 @@ function test()
                     InspectorTest.runAfterPendingDispatches(InspectorTest.expandElementsTree.bind(InspectorTest, done));
                 }
             }
+        },
+
+        function testEditScript(next)
+        {
+            domActionTestForNodeId("testEditScript", "node-to-edit-script", testBody, next);
+
+            function testBody(node, done)
+            {
+                editNodePartAndRun(node, "webkit-html-text-node", "\n    var i = 0;\n    var j = 0;\n", done);
+            }
         }
     ]);
 
@@ -219,6 +229,8 @@ function test()
     {
         var treeElement = WebInspector.panels.elements.treeOutline.findTreeElement(node);
         var textElement = treeElement.listItemElement.getElementsByClassName(className)[0];
+        if (!textElement && treeElement.childrenListElement)
+            textElement = treeElement.childrenListElement.getElementsByClassName(className)[0];
         treeElement._startEditingTarget(textElement);
         return textElement;
     }
@@ -257,7 +269,9 @@ Tests that user can mutate DOM by means of elements panel.
     </div>
 
     <div id="testSetNodeValue">
-        <div id="node-to-set-value">Text</div>
+        <div id="node-to-set-value">
+          Text
+        </div>
     </div>
 
     <div id="testSetAttribute">
@@ -278,6 +292,18 @@ Tests that user can mutate DOM by means of elements panel.
 
     <div id="testEditInvisibleCharsAsHTML">
         <div id="node-with-invisible-chars">A&nbsp;B&ensp;C&emsp;D&thinsp;E&zwnj;F&zwj;G&rlm;H&lrm;I</div>
+    </div>
+
+    <div id="testEditScript">
+        <script id="node-to-edit-script">
+
+          var i = 0;
+          var j = 5;
+          for (; i < j; ++i) {
+              // Do nothing.
+          }
+
+        </script>
     </div>
 
     <div id="testEditCommentAsHTML">

@@ -1,3 +1,17 @@
+2012-10-16  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Elements] Double-click to live edit style tags changes text to 'undefined' in some situations
+        https://bugs.webkit.org/show_bug.cgi?id=99336
+
+        Reviewed by Vsevolod Vlasov.
+
+        Before editing text nodes, set their textContent to the nodeValue() of the corresponding WebInspector.DOMNode in the UI.
+        Drive-by: fix text node editing artifact in the DOM tree.
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._startEditingTextNode):
+        (WebInspector.ElementsTreeElement.prototype._tagNameEditingCommitted):
+
 2012-10-16  Mike West  <mkwst@chromium.org>
 
         Web Inspector: Whitelist safe styles for 'console.log('%c...', ...)'.

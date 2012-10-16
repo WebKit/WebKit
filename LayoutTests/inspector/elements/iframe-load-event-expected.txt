@@ -12,9 +12,9 @@ After frame navigate
       </head>
     - <body>
         - <p>
-              "Tests that iframe content is available after iframe's load event fired. See "
+              "\nTests that iframe content is available after iframe's load event fired. See "
               <a href="http://webkit.org/b/76552">bug 76552</a>
-              "."
+              ".\n"
           </p>
         - <iframe id="myframe" src="resources/iframe-load-event-iframe-2.html" onload="runTest()">
             - #document

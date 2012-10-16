@@ -333,7 +333,7 @@ InspectorTest.dumpElementsTree = function(rootNode, depth)
 {
     function beautify(element)
     {
-        return element.textContent.replace(/\u200b/g, "").replace(/\n/g, "").trim();
+        return element.innerText.replace(/\u200b/g, "").replace(/\n/g, "\\n").trim();
     }
 
     function dumpMap(name, map)

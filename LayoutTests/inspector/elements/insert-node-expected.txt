@@ -60,7 +60,7 @@ Running: testInsertFirstTextNode
       <div id="child1"></div>
       <div id="child-middle"></div>
       <div id="child2"></div>
-    - <div id="child3">First text</div>
+    - <div id="child3">
           "First text"
       </div>
       <div id="child-after"></div>

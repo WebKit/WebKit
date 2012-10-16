@@ -40,11 +40,11 @@ Running: testSetNodeNameInput
 Running: testSetNodeValue
 ==== before ====
 - <div id="testSetNodeValue">
-      <div id="node-to-set-value">Text</div>
+      <div id="node-to-set-value">\n          Text\n        </div>
   </div>
 ==== after ====
 - <div id="testSetNodeValue">
-      <div id="node-to-set-value">Edited Text</div>
+      <div id="node-to-set-value">  \n  Edited Text  \n  </div>
   </div>
 
 Running: testSetAttribute
@@ -112,5 +112,19 @@ Running: testEditInvisibleCharsAsHTML
 ==== after ====
 - <div id="testEditInvisibleCharsAsHTML">
       <div id="node-with-invisible-chars">A#nbsp;B#ensp;C#emsp;D#thinsp;E#zwnj;F#zwj;G#rlm;H#lrm;I</div>
+  </div>
+
+Running: testEditScript
+==== before ====
+- <div id="testEditScript">
+    - <script id="node-to-edit-script">
+          \n          var i = 0;\n          var j = 5;\n          for (; i < j; ++i) {\n              // Do nothing.\n          }\n\n
+      </script>
+  </div>
+==== after ====
+- <div id="testEditScript">
+    - <script id="node-to-edit-script">
+          var i = 0;\n    var j = 0;\n
+      </script>
   </div>
 
