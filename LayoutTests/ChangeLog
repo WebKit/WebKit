@@ -1,3 +1,11 @@
+2012-10-16  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, fix TestExpectations for Qt and GTK after RenderSlider change.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/media/video-volume-slider-expected.txt:
+        * platform/qt/TestExpectations:
+
 2012-10-16  Dana Jansens  <danakj@chromium.org>
 
         Rebaseline for css1/basic/inheritance.html
