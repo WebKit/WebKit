@@ -288,7 +288,7 @@ EAPI void ewk_context_visited_link_add(Ewk_Context *context, const char *visited
 /**
  * Set @a cache_model as the cache model for @a context.
  *
- * By default, it is EWK_CACHE_MODEL_DOCUMENT_BROWSER.
+ * By default, it is EWK_CACHE_MODEL_DOCUMENT_VIEWER.
  *
  * @param context context object to update.
  * @param cache_model a #Ewk_Cache_Model.

@@ -1,3 +1,20 @@
+2012-10-16  Jongseok Yang  <js45.yang@samsung.com>
+
+        [EFL][WK2] Fix Cache Model API tests
+        https://bugs.webkit.org/show_bug.cgi?id=99427
+
+        Reviewed by Gyuyoung Kim.
+
+        Cache Model API tests caused "Segmentation fault" because the default value 
+        for cache model was incorrect.
+
+        Fix the default value for cache model.
+        Fix Cache Model API tests.
+
+        * UIProcess/API/efl/ewk_context.h:
+        * UIProcess/API/efl/tests/test_ewk2_context.cpp:
+        (TEST_F):
+
 2012-10-15  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Regression(r131337): Made 3 Cookie Manager API tests fail
