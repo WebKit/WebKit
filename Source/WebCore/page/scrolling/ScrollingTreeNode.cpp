@@ -34,13 +34,8 @@ namespace WebCore {
 
 ScrollingTreeNode::ScrollingTreeNode(ScrollingTree* scrollingTree)
     : m_scrollingTree(scrollingTree)
-    , m_shouldUpdateScrollLayerPositionOnMainThread(0)
-    , m_horizontalScrollElasticity(ScrollElasticityNone)
-    , m_verticalScrollElasticity(ScrollElasticityNone)
-    , m_hasEnabledHorizontalScrollbar(false)
-    , m_hasEnabledVerticalScrollbar(false)
-    , m_horizontalScrollbarMode(ScrollbarAuto)
-    , m_verticalScrollbarMode(ScrollbarAuto)
+    , m_nodeID(0)
+    , m_parent(0)
 {
 }
 
@@ -48,37 +43,29 @@ ScrollingTreeNode::~ScrollingTreeNode()
 {
 }
 
-void ScrollingTreeNode::update(ScrollingStateScrollingNode* state)
+void ScrollingTreeNode::appendChild(PassOwnPtr<ScrollingTreeNode> childNode)
 {
-    if (state->changedProperties() & ScrollingStateScrollingNode::ViewportRect)
-        m_viewportRect = state->viewportRect();
+    childNode->setParent(this);
 
-    if (state->changedProperties() & ScrollingStateScrollingNode::ContentsSize)
-        m_contentsSize = state->contentsSize();
+    if (!m_children)
+        m_children = adoptPtr(new Vector<OwnPtr<ScrollingTreeNode> >);
 
-    if (state->changedProperties() & ScrollingStateScrollingNode::ShouldUpdateScrollLayerPositionOnMainThread)
-        m_shouldUpdateScrollLayerPositionOnMainThread = state->shouldUpdateScrollLayerPositionOnMainThread();
+    m_children->append(childNode);
+}
 
-    if (state->changedProperties() & ScrollingStateScrollingNode::HorizontalScrollElasticity)
-        m_horizontalScrollElasticity = state->horizontalScrollElasticity();
+void ScrollingTreeNode::removeChild(ScrollingTreeNode* node)
+{
+    if (!m_children)
+        return;
 
-    if (state->changedProperties() & ScrollingStateScrollingNode::VerticalScrollElasticity)
-        m_verticalScrollElasticity = state->verticalScrollElasticity();
+    if (size_t index = m_children->find(node)) {
+        m_children->remove(index);
+        return;
+    }
 
-    if (state->changedProperties() & ScrollingStateScrollingNode::HasEnabledHorizontalScrollbar)
-        m_hasEnabledHorizontalScrollbar = state->hasEnabledHorizontalScrollbar();
-
-    if (state->changedProperties() & ScrollingStateScrollingNode::HasEnabledVerticalScrollbar)
-        m_hasEnabledVerticalScrollbar = state->hasEnabledVerticalScrollbar();
-
-    if (state->changedProperties() & ScrollingStateScrollingNode::HorizontalScrollbarMode)
-        m_horizontalScrollbarMode = state->horizontalScrollbarMode();
-
-    if (state->changedProperties() & ScrollingStateScrollingNode::VerticalScrollbarMode)
-        m_verticalScrollbarMode = state->verticalScrollbarMode();
-
-    if (state->changedProperties() & ScrollingStateScrollingNode::ScrollOrigin)
-        m_scrollOrigin = state->scrollOrigin();
+    size_t size = m_children->size();
+    for (size_t i = 0; i < size; ++i)
+        m_children->at(i)->removeChild(node);
 }
 
 } // namespace WebCore

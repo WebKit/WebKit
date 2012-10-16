@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "ScrollingTreeNodeMac.h"
+#include "ScrollingTreeScrollingNodeMac.h"
 
 #if ENABLE(THREADED_SCROLLING)
 
@@ -45,26 +45,27 @@ namespace WebCore {
 
 static void logThreadedScrollingMode(unsigned mainThreadScrollingReasons);
 
-PassOwnPtr<ScrollingTreeNode> ScrollingTreeNode::create(ScrollingTree* scrollingTree)
+PassOwnPtr<ScrollingTreeScrollingNode> ScrollingTreeScrollingNode::create(ScrollingTree* scrollingTree)
 {
-    return adoptPtr(new ScrollingTreeNodeMac(scrollingTree));
+    return adoptPtr(new ScrollingTreeScrollingNodeMac(scrollingTree));
 }
 
-ScrollingTreeNodeMac::ScrollingTreeNodeMac(ScrollingTree* scrollingTree)
-    : ScrollingTreeNode(scrollingTree)
+ScrollingTreeScrollingNodeMac::ScrollingTreeScrollingNodeMac(ScrollingTree* scrollingTree)
+    : ScrollingTreeScrollingNode(scrollingTree)
     , m_scrollElasticityController(this)
 {
 }
 
-ScrollingTreeNodeMac::~ScrollingTreeNodeMac()
+ScrollingTreeScrollingNodeMac::~ScrollingTreeScrollingNodeMac()
 {
     if (m_snapRubberbandTimer)
         CFRunLoopTimerInvalidate(m_snapRubberbandTimer.get());
 }
 
-void ScrollingTreeNodeMac::update(ScrollingStateScrollingNode* state)
+void ScrollingTreeScrollingNodeMac::update(ScrollingStateNode* stateNode)
 {
-    ScrollingTreeNode::update(state);
+    ScrollingTreeScrollingNode::update(stateNode);
+    ScrollingStateScrollingNode* state = toScrollingStateScrollingNode(stateNode);
 
     if (state->scrollLayerDidChange())
         m_scrollLayer = state->platformScrollLayer();
@@ -94,7 +95,7 @@ void ScrollingTreeNodeMac::update(ScrollingStateScrollingNode* state)
     }
 }
 
-void ScrollingTreeNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
+void ScrollingTreeScrollingNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     if (!canHaveScrollbars())
         return;
@@ -103,7 +104,7 @@ void ScrollingTreeNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent
     scrollingTree()->handleWheelEventPhase(wheelEvent.phase());
 }
 
-bool ScrollingTreeNodeMac::allowsHorizontalStretching()
+bool ScrollingTreeScrollingNodeMac::allowsHorizontalStretching()
 {
     switch (horizontalScrollElasticity()) {
     case ScrollElasticityAutomatic:
@@ -118,7 +119,7 @@ bool ScrollingTreeNodeMac::allowsHorizontalStretching()
     return false;
 }
 
-bool ScrollingTreeNodeMac::allowsVerticalStretching()
+bool ScrollingTreeScrollingNodeMac::allowsVerticalStretching()
 {
     switch (verticalScrollElasticity()) {
     case ScrollElasticityAutomatic:
@@ -133,7 +134,7 @@ bool ScrollingTreeNodeMac::allowsVerticalStretching()
     return false;
 }
 
-IntSize ScrollingTreeNodeMac::stretchAmount()
+IntSize ScrollingTreeScrollingNodeMac::stretchAmount()
 {
     IntSize stretch;
 
@@ -150,7 +151,7 @@ IntSize ScrollingTreeNodeMac::stretchAmount()
     return stretch;
 }
 
-bool ScrollingTreeNodeMac::pinnedInDirection(const FloatSize& delta)
+bool ScrollingTreeScrollingNodeMac::pinnedInDirection(const FloatSize& delta)
 {
     FloatSize limitDelta;
 
@@ -178,17 +179,17 @@ bool ScrollingTreeNodeMac::pinnedInDirection(const FloatSize& delta)
     return false;
 }
 
-bool ScrollingTreeNodeMac::canScrollHorizontally()
+bool ScrollingTreeScrollingNodeMac::canScrollHorizontally()
 {
     return hasEnabledHorizontalScrollbar();
 }
 
-bool ScrollingTreeNodeMac::canScrollVertically()
+bool ScrollingTreeScrollingNodeMac::canScrollVertically()
 {
     return hasEnabledVerticalScrollbar();
 }
 
-bool ScrollingTreeNodeMac::shouldRubberBandInDirection(ScrollDirection direction)
+bool ScrollingTreeScrollingNodeMac::shouldRubberBandInDirection(ScrollDirection direction)
 {
     if (direction == ScrollLeft)
         return !scrollingTree()->canGoBack();
@@ -199,22 +200,22 @@ bool ScrollingTreeNodeMac::shouldRubberBandInDirection(ScrollDirection direction
     return false;
 }
 
-IntPoint ScrollingTreeNodeMac::absoluteScrollPosition()
+IntPoint ScrollingTreeScrollingNodeMac::absoluteScrollPosition()
 {
     return scrollPosition();
 }
 
-void ScrollingTreeNodeMac::immediateScrollBy(const FloatSize& offset)
+void ScrollingTreeScrollingNodeMac::immediateScrollBy(const FloatSize& offset)
 {
     scrollBy(roundedIntSize(offset));
 }
 
-void ScrollingTreeNodeMac::immediateScrollByWithoutContentEdgeConstraints(const FloatSize& offset)
+void ScrollingTreeScrollingNodeMac::immediateScrollByWithoutContentEdgeConstraints(const FloatSize& offset)
 {
     scrollByWithoutContentEdgeConstraints(roundedIntSize(offset));
 }
 
-void ScrollingTreeNodeMac::startSnapRubberbandTimer()
+void ScrollingTreeScrollingNodeMac::startSnapRubberbandTimer()
 {
     ASSERT(!m_snapRubberbandTimer);
 
@@ -226,7 +227,7 @@ void ScrollingTreeNodeMac::startSnapRubberbandTimer()
     CFRunLoopAddTimer(CFRunLoopGetCurrent(), m_snapRubberbandTimer.get(), kCFRunLoopDefaultMode);
 }
 
-void ScrollingTreeNodeMac::stopSnapRubberbandTimer()
+void ScrollingTreeScrollingNodeMac::stopSnapRubberbandTimer()
 {
     if (!m_snapRubberbandTimer)
         return;
@@ -235,7 +236,7 @@ void ScrollingTreeNodeMac::stopSnapRubberbandTimer()
     m_snapRubberbandTimer = nullptr;
 }
 
-IntPoint ScrollingTreeNodeMac::scrollPosition() const
+IntPoint ScrollingTreeScrollingNodeMac::scrollPosition() const
 {
     if (shouldUpdateScrollLayerPositionOnMainThread())
         return m_probableMainThreadScrollPosition;
@@ -244,7 +245,7 @@ IntPoint ScrollingTreeNodeMac::scrollPosition() const
     return IntPoint(-scrollLayerPosition.x + scrollOrigin().x(), -scrollLayerPosition.y + scrollOrigin().y());
 }
 
-void ScrollingTreeNodeMac::setScrollPosition(const IntPoint& scrollPosition)
+void ScrollingTreeScrollingNodeMac::setScrollPosition(const IntPoint& scrollPosition)
 {
     IntPoint newScrollPosition = scrollPosition;
     newScrollPosition = newScrollPosition.shrunkTo(maximumScrollPosition());
@@ -256,7 +257,7 @@ void ScrollingTreeNodeMac::setScrollPosition(const IntPoint& scrollPosition)
         logExposedUnfilledArea();
 }
 
-void ScrollingTreeNodeMac::setScrollPositionWithoutContentEdgeConstraints(const IntPoint& scrollPosition)
+void ScrollingTreeScrollingNodeMac::setScrollPositionWithoutContentEdgeConstraints(const IntPoint& scrollPosition)
 {
     updateMainFramePinState(scrollPosition);
 
@@ -270,18 +271,18 @@ void ScrollingTreeNodeMac::setScrollPositionWithoutContentEdgeConstraints(const 
     scrollingTree()->updateMainFrameScrollPosition(scrollPosition);
 }
 
-void ScrollingTreeNodeMac::setScrollLayerPosition(const IntPoint& position)
+void ScrollingTreeScrollingNodeMac::setScrollLayerPosition(const IntPoint& position)
 {
     ASSERT(!shouldUpdateScrollLayerPositionOnMainThread());
     m_scrollLayer.get().position = CGPointMake(-position.x() + scrollOrigin().x(), -position.y() + scrollOrigin().y());
 }
 
-IntPoint ScrollingTreeNodeMac::minimumScrollPosition() const
+IntPoint ScrollingTreeScrollingNodeMac::minimumScrollPosition() const
 {
     return IntPoint(0, 0);
 }
 
-IntPoint ScrollingTreeNodeMac::maximumScrollPosition() const
+IntPoint ScrollingTreeScrollingNodeMac::maximumScrollPosition() const
 {
     IntPoint position(contentsSize().width() - viewportRect().width(),
                       contentsSize().height() - viewportRect().height());
@@ -291,17 +292,17 @@ IntPoint ScrollingTreeNodeMac::maximumScrollPosition() const
     return position;
 }
 
-void ScrollingTreeNodeMac::scrollBy(const IntSize& offset)
+void ScrollingTreeScrollingNodeMac::scrollBy(const IntSize& offset)
 {
     setScrollPosition(scrollPosition() + offset);
 }
 
-void ScrollingTreeNodeMac::scrollByWithoutContentEdgeConstraints(const IntSize& offset)
+void ScrollingTreeScrollingNodeMac::scrollByWithoutContentEdgeConstraints(const IntSize& offset)
 {
     setScrollPositionWithoutContentEdgeConstraints(scrollPosition() + offset);
 }
 
-void ScrollingTreeNodeMac::updateMainFramePinState(const IntPoint& scrollPosition)
+void ScrollingTreeScrollingNodeMac::updateMainFramePinState(const IntPoint& scrollPosition)
 {
     bool pinnedToTheLeft = scrollPosition.x() <= minimumScrollPosition().x();
     bool pinnedToTheRight = scrollPosition.x() >= maximumScrollPosition().x();
@@ -309,7 +310,7 @@ void ScrollingTreeNodeMac::updateMainFramePinState(const IntPoint& scrollPositio
     scrollingTree()->setMainFramePinState(pinnedToTheLeft, pinnedToTheRight);
 }
 
-void ScrollingTreeNodeMac::logExposedUnfilledArea()
+void ScrollingTreeScrollingNodeMac::logExposedUnfilledArea()
 {
     Region paintedVisibleTiles;
 

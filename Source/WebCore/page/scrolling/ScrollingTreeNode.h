@@ -35,56 +35,32 @@
 
 namespace WebCore {
 
-class PlatformWheelEvent;
-class ScrollingTree;
-class ScrollingStateScrollingNode;
-
 class ScrollingTreeNode {
 public:
-    static PassOwnPtr<ScrollingTreeNode> create(ScrollingTree*);
+    explicit ScrollingTreeNode(ScrollingTree*);
     virtual ~ScrollingTreeNode();
 
-    virtual void update(ScrollingStateScrollingNode*);
-    virtual void handleWheelEvent(const PlatformWheelEvent&) = 0;
-    virtual void setScrollPosition(const IntPoint&) = 0;
+    virtual void update(ScrollingStateNode*) = 0;
 
-    MainThreadScrollingReasons shouldUpdateScrollLayerPositionOnMainThread() const { return m_shouldUpdateScrollLayerPositionOnMainThread; }
+    ScrollingNodeID scrollingNodeID() const { return m_nodeID; }
+    void setScrollingNodeID(ScrollingNodeID nodeID) { m_nodeID = nodeID; }
+
+    ScrollingTreeNode* parent() const { return m_parent; }
+    void setParent(ScrollingTreeNode* parent) { m_parent = parent; }
+
+    void appendChild(PassOwnPtr<ScrollingTreeNode>);
+    void removeChild(ScrollingTreeNode*);
 
 protected:
-    explicit ScrollingTreeNode(ScrollingTree*);
-
     ScrollingTree* scrollingTree() const { return m_scrollingTree; }
-
-    const IntRect& viewportRect() const { return m_viewportRect; }
-    const IntSize& contentsSize() const { return m_contentsSize; }
-
-    ScrollElasticity horizontalScrollElasticity() const { return m_horizontalScrollElasticity; }
-    ScrollElasticity verticalScrollElasticity() const { return m_verticalScrollElasticity; }
-
-    bool hasEnabledHorizontalScrollbar() const { return m_hasEnabledHorizontalScrollbar; }
-    bool hasEnabledVerticalScrollbar() const { return m_hasEnabledVerticalScrollbar; }
-
-    bool canHaveScrollbars() const { return m_horizontalScrollbarMode != ScrollbarAlwaysOff || m_verticalScrollbarMode != ScrollbarAlwaysOff; }
-
-    const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
 
 private:
     ScrollingTree* m_scrollingTree;
 
-    IntRect m_viewportRect;
-    IntSize m_contentsSize;
-    IntPoint m_scrollOrigin;
+    ScrollingNodeID m_nodeID;
 
-    MainThreadScrollingReasons m_shouldUpdateScrollLayerPositionOnMainThread;
-
-    ScrollElasticity m_horizontalScrollElasticity;
-    ScrollElasticity m_verticalScrollElasticity;
-    
-    bool m_hasEnabledHorizontalScrollbar;
-    bool m_hasEnabledVerticalScrollbar;
-
-    ScrollbarMode m_horizontalScrollbarMode;
-    ScrollbarMode m_verticalScrollbarMode;
+    ScrollingTreeNode* m_parent;
+    OwnPtr<Vector<OwnPtr<ScrollingTreeNode> > > m_children;
 };
 
 } // namespace WebCore

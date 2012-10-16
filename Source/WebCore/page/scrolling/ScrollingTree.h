@@ -30,7 +30,9 @@
 
 #include "PlatformWheelEvent.h"
 #include "Region.h"
+#include "ScrollingCoordinator.h"
 #include <wtf/Functional.h>
+#include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -45,8 +47,8 @@ OBJC_CLASS CALayer;
 namespace WebCore {
 
 class IntPoint;
-class ScrollingCoordinator;
 class ScrollingTreeNode;
+class ScrollingTreeScrollingNode;
 class ScrollingStateTree;
 
 // The ScrollingTree class lives almost exclusively on the scrolling thread and manages the
@@ -105,8 +107,14 @@ private:
 
     void updateDebugRootLayer();
 
+    void removeDestroyedNodes(ScrollingStateTree*);
+    void updateTreeFromStateNode(ScrollingStateNode*);
+
     RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
-    OwnPtr<ScrollingTreeNode> m_rootNode;
+    OwnPtr<ScrollingTreeScrollingNode> m_rootNode;
+
+    typedef HashMap<ScrollingNodeID, ScrollingTreeNode*> ScrollingTreeNodeMap;
+    ScrollingTreeNodeMap m_nodeMap;
 
     Mutex m_mutex;
     Region m_nonFastScrollableRegion;

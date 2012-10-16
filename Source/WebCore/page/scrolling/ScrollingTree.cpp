@@ -33,6 +33,7 @@
 #include "ScrollingStateTree.h"
 #include "ScrollingThread.h"
 #include "ScrollingTreeNode.h"
+#include "ScrollingTreeScrollingNode.h"
 #include <wtf/MainThread.h>
 #include <wtf/TemporaryChange.h>
 
@@ -45,7 +46,7 @@ PassRefPtr<ScrollingTree> ScrollingTree::create(ScrollingCoordinator* scrollingC
 
 ScrollingTree::ScrollingTree(ScrollingCoordinator* scrollingCoordinator)
     : m_scrollingCoordinator(scrollingCoordinator)
-    , m_rootNode(ScrollingTreeNode::create(this))
+    , m_rootNode(ScrollingTreeScrollingNode::create(this))
     , m_hasWheelEventHandlers(false)
     , m_canGoBack(false)
     , m_canGoForward(false)
@@ -137,9 +138,67 @@ void ScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingStateTree> scrollingS
     
     TemporaryChange<bool> changeHandlingProgrammaticScroll(m_isHandlingProgrammaticScroll, scrollingStateTree->rootStateNode()->requestedScrollPositionRepresentsProgrammaticScroll());
 
-    m_rootNode->update(scrollingStateTree->rootStateNode());
+    removeDestroyedNodes(scrollingStateTree.get());
+    updateTreeFromStateNode(scrollingStateTree->rootStateNode());
 
     updateDebugRootLayer();
+}
+
+void ScrollingTree::updateTreeFromStateNode(ScrollingStateNode* stateNode)
+{
+    // This fuction recurses through the ScrollingStateTree and updates the corresponding ScrollingTreeNodes.
+    // Find the ScrollingTreeNode associated with the current stateNode using the shared ID and our HashMap.
+    ScrollingTreeNodeMap::const_iterator it = m_nodeMap.find(stateNode->scrollingNodeID());
+
+    if (it != m_nodeMap.end()) {
+        ScrollingTreeNode* node = it->value;
+        node->update(stateNode);
+    } else {
+        // If the node isn't found, it's either new and needs to be added to the tree, or there is a new ID for our
+        // root node.
+        if (!stateNode->parent()) {
+            // This is the root node.
+            m_rootNode->setScrollingNodeID(stateNode->scrollingNodeID());
+            m_nodeMap.set(stateNode->scrollingNodeID(), m_rootNode.get());
+            m_rootNode->update(stateNode);
+        } else {
+            // FIXME: In the future, we will have more than just ScrollingTreeScrollingNode, so we'll have to
+            // figure out which type of node to create.
+            OwnPtr<ScrollingTreeNode> newNode = ScrollingTreeScrollingNode::create(this);
+            ScrollingTreeNode* newNodeRawPtr = newNode.get();
+            m_nodeMap.set(stateNode->scrollingNodeID(), newNodeRawPtr);
+            ScrollingTreeNodeMap::const_iterator it = m_nodeMap.find(stateNode->parent()->scrollingNodeID());
+            ASSERT(it != m_nodeMap.end());
+            if (it != m_nodeMap.end()) {
+                ScrollingTreeNode* parent = it->value;
+                newNode->setParent(parent);
+                parent->appendChild(newNode.release());
+            }
+            newNodeRawPtr->update(stateNode);
+        }
+    }
+
+    // Now update the children if we have any.
+    Vector<OwnPtr<ScrollingStateNode> >* stateNodeChildren = stateNode->children();
+    if (!stateNodeChildren)
+        return;
+
+    size_t size = stateNodeChildren->size();
+    for (size_t i = 0; i < size; ++i)
+        updateTreeFromStateNode(stateNodeChildren->at(i).get());
+}
+
+void ScrollingTree::removeDestroyedNodes(ScrollingStateTree* stateTree)
+{
+    const Vector<ScrollingNodeID>& removedNodes = stateTree->removedNodes();
+    size_t size = removedNodes.size();
+    for (size_t i = 0; i < size; ++i) {
+        ScrollingTreeNode* node = m_nodeMap.take(removedNodes[i]);
+        // Never destroy the root node. There will be a new root node in the state tree, and we will
+        // associate it with our existing root node in updateTreeFromStateNode().
+        if (node && node->parent())
+            m_rootNode->removeChild(node);
+    }
 }
 
 void ScrollingTree::setMainFramePinState(bool pinnedToTheLeft, bool pinnedToTheRight)

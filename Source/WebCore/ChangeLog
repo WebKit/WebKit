@@ -1,3 +1,139 @@
+2012-10-16  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=99254
+        Make ScrollingTree an actual tree of nodes, and have it reflect the 
+        ScrollingStateTree
+
+        Reviewed by Simon Fraser.
+
+        This patch finally makes the ScrollingTree over on the 
+        ScrollingThread aware of the changes that we have been making to the 
+        ScrollingStateTree.
+
+        First, it makes ScrollingTreeNode a much more generic class, similar 
+        to ScrollingStateNode. It is an abstract class and we will add other 
+        types of nodes such as ScrollingTreeFixedNodes that will inherit from 
+        this class. 
+
+        All of the scrolling functionality that was in ScrollingTreeNode has 
+        been moved to ScrollingTreeScrollingNode. And likewise, 
+        ScrollingTreeNodeMac has been re-named to 
+        ScrollingTreeScrollingNodeMac. 
+
+        And finally, instead of just updating and creating the root node, 
+        ScrollingTree now recurses through the whole ScrollingStateTree to 
+        create and update a full tree of nodes.
+
+        New files and moves files.
+        * WebCore.xcodeproj/project.pbxproj:
+
+        Add a getter for the children vector since we need to recurse it in 
+        ScrollingTree.
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore::ScrollingStateNode::children):
+        (ScrollingStateNode):
+
+        m_rootNode is now a ScrollingTreeScrollingNode.
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::ScrollingTree):
+
+        Instead of just updating the root node, call two new functions that 
+        will take care of updating the whole tree.
+        (WebCore::ScrollingTree::commitNewTreeState):
+
+        This function ecurses through the ScrollingStateTree and updates the 
+        corresponding ScrollingTreeNodes.
+        (WebCore::ScrollingTree::updateNodesFromStateNode):
+
+        This function takes the ScrollingStateTree's list of removed nodes 
+        and removes the corresponding nodes from the ScrollingTree. It will 
+        destroy the nodes after removing it as long as it's not the root 
+        node. I think it's the safest choice for now to never remove the root 
+        node. 
+        (WebCore::ScrollingTree::removeDestroyedNodes):
+
+        ScrollingTree now keeps a HashMap mapping ScrollingNodeIDs to 
+        ScrollingTreeNodes.
+        * page/scrolling/ScrollingTree.h:
+
+        All of the scrolling-related functionality has been moved from this 
+        class to new class ScrollingTreeScrollingNode. And some basic tree 
+        traversal functionality has been added.
+        * page/scrolling/ScrollingTreeNode.cpp:
+        (WebCore::ScrollingTreeNode::ScrollingTreeNode):
+        (WebCore::ScrollingTreeNode::appendChild):
+        (WebCore::ScrollingTreeNode::removeChild):
+        * page/scrolling/ScrollingTreeNode.h:
+        (WebCore):
+        (ScrollingTreeNode):
+        (WebCore::ScrollingTreeNode::scrollingNodeID):
+        (WebCore::ScrollingTreeNode::setScrollingNodeID):
+        (WebCore::ScrollingTreeNode::parent):
+        (WebCore::ScrollingTreeNode::setParent):
+        (WebCore::ScrollingTreeNode::scrollingTree):
+
+        This class contains all of the scrolling-related work that used to be 
+        done in ScrollingTreeNode.
+        * page/scrolling/ScrollingTreeScrollingNode.cpp: Added.
+        (WebCore):
+        (WebCore::ScrollingTreeScrollingNode::ScrollingTreeScrollingNode):
+        (WebCore::ScrollingTreeScrollingNode::~ScrollingTreeScrollingNode):
+        (WebCore::ScrollingTreeScrollingNode::update):
+        * page/scrolling/ScrollingTreeScrollingNode.h: Added.
+        (WebCore):
+        (ScrollingTreeScrollingNode):
+        (WebCore::ScrollingTreeScrollingNode::shouldUpdateScrollLayerPositionOnMainThread):
+        (WebCore::ScrollingTreeScrollingNode::viewportRect):
+        (WebCore::ScrollingTreeScrollingNode::contentsSize):
+        (WebCore::ScrollingTreeScrollingNode::horizontalScrollElasticity):
+        (WebCore::ScrollingTreeScrollingNode::verticalScrollElasticity):
+        (WebCore::ScrollingTreeScrollingNode::hasEnabledHorizontalScrollbar):
+        (WebCore::ScrollingTreeScrollingNode::hasEnabledVerticalScrollbar):
+        (WebCore::ScrollingTreeScrollingNode::canHaveScrollbars):
+        (WebCore::ScrollingTreeScrollingNode::scrollOrigin):
+
+        I noticed this whitespace error and had to fix it.
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::detachFromStateTree):
+
+        Include ScrollingTreeScrollingNodeMac.h instead of 
+        ScrollingTreeNodeMac.h
+        * page/scrolling/mac/ScrollingTreeMac.mm:
+
+        This class was just re-named.
+        * page/scrolling/mac/ScrollingTreeNodeMac.h: Removed.
+        * page/scrolling/mac/ScrollingTreeNodeMac.mm: Removed.
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.h: Copied from page/scrolling/mac/ScrollingTreeNodeMac.h.
+        (ScrollingTreeScrollingNodeMac):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm: Copied from page/scrolling/mac/ScrollingTreeNodeMac.mm.
+        (WebCore::ScrollingTreeScrollingNode::create):
+        (WebCore::ScrollingTreeScrollingNodeMac::ScrollingTreeScrollingNodeMac):
+        (WebCore::ScrollingTreeScrollingNodeMac::~ScrollingTreeScrollingNodeMac):
+        (WebCore::ScrollingTreeScrollingNodeMac::update):
+        (WebCore::ScrollingTreeScrollingNodeMac::handleWheelEvent):
+        (WebCore::ScrollingTreeScrollingNodeMac::allowsHorizontalStretching):
+        (WebCore::ScrollingTreeScrollingNodeMac::allowsVerticalStretching):
+        (WebCore::ScrollingTreeScrollingNodeMac::stretchAmount):
+        (WebCore::ScrollingTreeScrollingNodeMac::pinnedInDirection):
+        (WebCore::ScrollingTreeScrollingNodeMac::canScrollHorizontally):
+        (WebCore::ScrollingTreeScrollingNodeMac::canScrollVertically):
+        (WebCore::ScrollingTreeScrollingNodeMac::shouldRubberBandInDirection):
+        (WebCore::ScrollingTreeScrollingNodeMac::absoluteScrollPosition):
+        (WebCore::ScrollingTreeScrollingNodeMac::immediateScrollBy):
+        (WebCore::ScrollingTreeScrollingNodeMac::immediateScrollByWithoutContentEdgeConstraints):
+        (WebCore::ScrollingTreeScrollingNodeMac::startSnapRubberbandTimer):
+        (WebCore::ScrollingTreeScrollingNodeMac::stopSnapRubberbandTimer):
+        (WebCore::ScrollingTreeScrollingNodeMac::scrollPosition):
+        (WebCore::ScrollingTreeScrollingNodeMac::setScrollPosition):
+        (WebCore::ScrollingTreeScrollingNodeMac::setScrollPositionWithoutContentEdgeConstraints):
+        (WebCore::ScrollingTreeScrollingNodeMac::setScrollLayerPosition):
+        (WebCore::ScrollingTreeScrollingNodeMac::minimumScrollPosition):
+        (WebCore::ScrollingTreeScrollingNodeMac::maximumScrollPosition):
+        (WebCore::ScrollingTreeScrollingNodeMac::scrollBy):
+        (WebCore::ScrollingTreeScrollingNodeMac::scrollByWithoutContentEdgeConstraints):
+        (WebCore::ScrollingTreeScrollingNodeMac::updateMainFramePinState):
+        (WebCore::ScrollingTreeScrollingNodeMac::logExposedUnfilledArea):
+
 2012-10-16  Simon Fraser  <simon.fraser@apple.com>
 
         Add a new layer type for the page tiled cache layer

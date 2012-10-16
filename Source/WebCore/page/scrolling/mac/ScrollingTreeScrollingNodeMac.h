@@ -23,27 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollingTreeNodeMac_h
-#define ScrollingTreeNodeMac_h
+#ifndef ScrollingTreeScrollingNodeMac_h
+#define ScrollingTreeScrollingNodeMac_h
 
 #if ENABLE(THREADED_SCROLLING)
 
 #include "ScrollElasticityController.h"
-#include "ScrollingTreeNode.h"
+#include "ScrollingTreeScrollingNode.h"
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS CALayer;
 
 namespace WebCore {
 
-class ScrollingTreeNodeMac : public ScrollingTreeNode, private ScrollElasticityControllerClient {
+class ScrollingTreeScrollingNodeMac : public ScrollingTreeScrollingNode, private ScrollElasticityControllerClient {
 public:
-    explicit ScrollingTreeNodeMac(ScrollingTree*);
-    virtual ~ScrollingTreeNodeMac();
+    explicit ScrollingTreeScrollingNodeMac(ScrollingTree*);
+    virtual ~ScrollingTreeScrollingNodeMac();
 
 private:
     // ScrollingTreeNode member functions.
-    virtual void update(ScrollingStateScrollingNode*) OVERRIDE;
+    virtual void update(ScrollingStateNode*) OVERRIDE;
     virtual void handleWheelEvent(const PlatformWheelEvent&) OVERRIDE;
 
     // ScrollElasticityController member functions.
@@ -87,4 +87,4 @@ private:
 
 #endif // ENABLE(THREADED_SCROLLING)
 
-#endif // ScrollingTreeNodeMac_h
+#endif // ScrollingTreeScrollingNodeMac_h

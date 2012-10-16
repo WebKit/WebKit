@@ -29,7 +29,7 @@
 #if ENABLE(THREADED_SCROLLING)
 
 #import "AutodrainedPool.h"
-#import "ScrollingTreeNodeMac.h"
+#import "ScrollingTreeScrollingNodeMac.h"
 #import <QuartzCore/CATextLayer.h>
 
 namespace WebCore {
