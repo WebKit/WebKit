@@ -29,8 +29,8 @@
 
 #if ENABLE(ASSEMBLER) && CPU(MIPS)
 
-#include "MIPSAssembler.h"
 #include "AbstractMacroAssembler.h"
+#include "MIPSAssembler.h"
 
 namespace JSC {
 
@@ -155,12 +155,10 @@ public:
             m_assembler.lw(dataTempRegister, address.base, address.offset);
             if (imm.m_value >= -32768 && imm.m_value <= 32767
                 && !m_fixedWidth)
-                m_assembler.addiu(dataTempRegister, dataTempRegister,
-                                  imm.m_value);
+                m_assembler.addiu(dataTempRegister, dataTempRegister, imm.m_value);
             else {
                 move(imm, immTempRegister);
-                m_assembler.addu(dataTempRegister, dataTempRegister,
-                                 immTempRegister);
+                m_assembler.addu(dataTempRegister, dataTempRegister, immTempRegister);
             }
             m_assembler.sw(dataTempRegister, address.base, address.offset);
         } else {
@@ -177,12 +175,10 @@ public:
             m_assembler.lw(dataTempRegister, addrTempRegister, address.offset);
 
             if (imm.m_value >= -32768 && imm.m_value <= 32767 && !m_fixedWidth)
-                m_assembler.addiu(dataTempRegister, dataTempRegister,
-                                  imm.m_value);
+                m_assembler.addiu(dataTempRegister, dataTempRegister, imm.m_value);
             else {
                 move(imm, immTempRegister);
-                m_assembler.addu(dataTempRegister, dataTempRegister,
-                                 immTempRegister);
+                m_assembler.addu(dataTempRegister, dataTempRegister, immTempRegister);
             }
             m_assembler.sw(dataTempRegister, addrTempRegister, address.offset);
         }
@@ -257,8 +253,7 @@ public:
     {
         if (!imm.m_value && !m_fixedWidth)
             move(MIPSRegisters::zero, dest);
-        else if (imm.m_value > 0 && imm.m_value < 65535
-                 && !m_fixedWidth)
+        else if (imm.m_value > 0 && imm.m_value < 65535 && !m_fixedWidth)
             m_assembler.andi(dest, dest, imm.m_value);
         else {
             /*
@@ -419,14 +414,11 @@ public:
               sw        dataTemp, offset(base)
             */
             m_assembler.lw(dataTempRegister, address.base, address.offset);
-            if (imm.m_value >= -32767 && imm.m_value <= 32768
-                && !m_fixedWidth)
-                m_assembler.addiu(dataTempRegister, dataTempRegister,
-                                  -imm.m_value);
+            if (imm.m_value >= -32767 && imm.m_value <= 32768 && !m_fixedWidth)
+                m_assembler.addiu(dataTempRegister, dataTempRegister, -imm.m_value);
             else {
                 move(imm, immTempRegister);
-                m_assembler.subu(dataTempRegister, dataTempRegister,
-                                 immTempRegister);
+                m_assembler.subu(dataTempRegister, dataTempRegister, immTempRegister);
             }
             m_assembler.sw(dataTempRegister, address.base, address.offset);
         } else {
@@ -444,12 +436,10 @@ public:
 
             if (imm.m_value >= -32767 && imm.m_value <= 32768
                 && !m_fixedWidth)
-                m_assembler.addiu(dataTempRegister, dataTempRegister,
-                                  -imm.m_value);
+                m_assembler.addiu(dataTempRegister, dataTempRegister, -imm.m_value);
             else {
                 move(imm, immTempRegister);
-                m_assembler.subu(dataTempRegister, dataTempRegister,
-                                 immTempRegister);
+                m_assembler.subu(dataTempRegister, dataTempRegister, immTempRegister);
             }
             m_assembler.sw(dataTempRegister, addrTempRegister, address.offset);
         }
@@ -473,11 +463,9 @@ public:
         move(TrustedImmPtr(address.m_ptr), addrTempRegister);
         m_assembler.lw(dataTempRegister, addrTempRegister, 0);
 
-        if (imm.m_value >= -32767 && imm.m_value <= 32768
-            && !m_fixedWidth) {
-            m_assembler.addiu(dataTempRegister, dataTempRegister,
-                              -imm.m_value);
-        } else {
+        if (imm.m_value >= -32767 && imm.m_value <= 32768 && !m_fixedWidth)
+            m_assembler.addiu(dataTempRegister, dataTempRegister, -imm.m_value);
+        else {
             move(imm, immTempRegister);
             m_assembler.subu(dataTempRegister, dataTempRegister, immTempRegister);
         }
@@ -531,7 +519,7 @@ public:
     // Memory access operations:
     //
     // Loads are of the form load(address, destination) and stores of the form
-    // store(source, address).  The source for a store may be an TrustedImm32.  Address
+    // store(source, address). The source for a store may be an TrustedImm32. Address
     // operand objects to loads and store will be implicitly constructed if a
     // register is passed.
 
@@ -576,12 +564,11 @@ public:
             m_assembler.sll(addrTempRegister, address.index, address.scale);
             m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
             m_assembler.lui(immTempRegister, (address.offset + 0x8000) >> 16);
-            m_assembler.addu(addrTempRegister, addrTempRegister,
-                             immTempRegister);
+            m_assembler.addu(addrTempRegister, addrTempRegister, immTempRegister);
             m_assembler.lbu(dest, addrTempRegister, address.offset);
         }
     }
-
+    
     void load32(ImplicitAddress address, RegisterID dest)
     {
         if (address.offset >= -32768 && address.offset <= 32767
@@ -622,8 +609,7 @@ public:
             m_assembler.sll(addrTempRegister, address.index, address.scale);
             m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
             m_assembler.lui(immTempRegister, (address.offset + 0x8000) >> 16);
-            m_assembler.addu(addrTempRegister, addrTempRegister,
-                             immTempRegister);
+            m_assembler.addu(addrTempRegister, addrTempRegister, immTempRegister);
             m_assembler.lw(dest, addrTempRegister, address.offset);
         }
     }
@@ -675,8 +661,7 @@ public:
             m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
             m_assembler.lui(immTempRegister, address.offset >> 16);
             m_assembler.ori(immTempRegister, immTempRegister, address.offset);
-            m_assembler.addu(addrTempRegister, addrTempRegister,
-                             immTempRegister);
+            m_assembler.addu(addrTempRegister, addrTempRegister, immTempRegister);
 #if CPU(BIG_ENDIAN)
             m_assembler.lwl(dest, addrTempRegister, 0);
             m_assembler.lwr(dest, addrTempRegister, 3);
@@ -763,8 +748,7 @@ public:
             m_assembler.sll(addrTempRegister, address.index, address.scale);
             m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
             m_assembler.lui(immTempRegister, (address.offset + 0x8000) >> 16);
-            m_assembler.addu(addrTempRegister, addrTempRegister,
-                             immTempRegister);
+            m_assembler.addu(addrTempRegister, addrTempRegister, immTempRegister);
             m_assembler.lhu(dest, addrTempRegister, address.offset);
         }
     }
@@ -809,8 +793,7 @@ public:
             m_assembler.sll(addrTempRegister, address.index, address.scale);
             m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
             m_assembler.lui(immTempRegister, (address.offset + 0x8000) >> 16);
-            m_assembler.addu(addrTempRegister, addrTempRegister,
-                             immTempRegister);
+            m_assembler.addu(addrTempRegister, addrTempRegister, immTempRegister);
             m_assembler.sb(src, addrTempRegister, address.offset);
         }
     }
@@ -855,8 +838,7 @@ public:
             m_assembler.sll(addrTempRegister, address.index, address.scale);
             m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
             m_assembler.lui(immTempRegister, (address.offset + 0x8000) >> 16);
-            m_assembler.addu(addrTempRegister, addrTempRegister,
-                             immTempRegister);
+            m_assembler.addu(addrTempRegister, addrTempRegister, immTempRegister);
             m_assembler.sh(src, addrTempRegister, address.offset);
         }
     }
@@ -901,8 +883,7 @@ public:
             m_assembler.sll(addrTempRegister, address.index, address.scale);
             m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
             m_assembler.lui(immTempRegister, (address.offset + 0x8000) >> 16);
-            m_assembler.addu(addrTempRegister, addrTempRegister,
-                             immTempRegister);
+            m_assembler.addu(addrTempRegister, addrTempRegister, immTempRegister);
             m_assembler.sw(src, addrTempRegister, address.offset);
         }
     }
@@ -912,8 +893,7 @@ public:
         if (address.offset >= -32768 && address.offset <= 32767
             && !m_fixedWidth) {
             if (!imm.m_value)
-                m_assembler.sw(MIPSRegisters::zero, address.base,
-                               address.offset);
+                m_assembler.sw(MIPSRegisters::zero, address.base, address.offset);
             else {
                 move(imm, immTempRegister);
                 m_assembler.sw(immTempRegister, address.base, address.offset);
@@ -927,12 +907,10 @@ public:
             m_assembler.lui(addrTempRegister, (address.offset + 0x8000) >> 16);
             m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
             if (!imm.m_value && !m_fixedWidth)
-                m_assembler.sw(MIPSRegisters::zero, addrTempRegister,
-                               address.offset);
+                m_assembler.sw(MIPSRegisters::zero, addrTempRegister, address.offset);
             else {
                 move(imm, immTempRegister);
-                m_assembler.sw(immTempRegister, addrTempRegister,
-                               address.offset);
+                m_assembler.sw(immTempRegister, addrTempRegister, address.offset);
             }
         }
     }
@@ -997,9 +975,9 @@ public:
     // Stack manipulation operations:
     //
     // The ABI is assumed to provide a stack abstraction to memory,
-    // containing machine word sized units of data.  Push and pop
+    // containing machine word sized units of data. Push and pop
     // operations add and remove a single register sized unit of data
-    // to or from the stack.  Peek and poke operations read or write
+    // to or from the stack. Peek and poke operations read or write
     // values on the stack, without moving the current stack position.
 
     void pop(RegisterID dest)
@@ -1286,7 +1264,7 @@ public:
     // Arithmetic control flow operations:
     //
     // This set of conditional branch operations branch based
-    // on the result of an arithmetic operation.  The operation
+    // on the result of an arithmetic operation. The operation
     // is performed as normal, storing the result.
     //
     // * jz operations branch if the result is zero.
@@ -1495,7 +1473,7 @@ public:
 
     Call nearCall()
     {
-        /* We need two words for relaxation.  */
+        /* We need two words for relaxation. */
         m_assembler.nop();
         m_assembler.nop();
         m_assembler.jal();
@@ -1583,8 +1561,7 @@ public:
                 m_assembler.sltu(dest, MIPSRegisters::zero, dataTempRegister);
         } else {
             move(mask, immTempRegister);
-            m_assembler.andInsn(cmpTempRegister, dataTempRegister,
-                                immTempRegister);
+            m_assembler.andInsn(cmpTempRegister, dataTempRegister, immTempRegister);
             if (cond == Zero)
                 m_assembler.sltiu(dest, cmpTempRegister, 1);
             else
@@ -1603,8 +1580,7 @@ public:
                 m_assembler.sltu(dest, MIPSRegisters::zero, dataTempRegister);
         } else {
             move(mask, immTempRegister);
-            m_assembler.andInsn(cmpTempRegister, dataTempRegister,
-                                immTempRegister);
+            m_assembler.andInsn(cmpTempRegister, dataTempRegister, immTempRegister);
             if (cond == Zero)
                 m_assembler.sltiu(dest, cmpTempRegister, 1);
             else
@@ -1730,7 +1706,6 @@ public:
         m_assembler.ldc1(dest, addrTempRegister, 0);
 #endif
     }
-
 
     void storeDouble(FPRegisterID src, ImplicitAddress address)
     {

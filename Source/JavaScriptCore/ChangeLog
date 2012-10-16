@@ -1,3 +1,68 @@
+2012-10-16  Balazs Kilvady  <kilvadyb@homejinni.com>
+
+        MIPS assembler coding-style fix.
+        https://bugs.webkit.org/show_bug.cgi?id=99359
+
+        Reviewed by Oliver Hunt.
+
+        Coding style fix of existing MIPS assembler header files.
+
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::addiu):
+        (JSC::MIPSAssembler::addu):
+        (JSC::MIPSAssembler::subu):
+        (JSC::MIPSAssembler::mul):
+        (JSC::MIPSAssembler::andInsn):
+        (JSC::MIPSAssembler::andi):
+        (JSC::MIPSAssembler::nor):
+        (JSC::MIPSAssembler::orInsn):
+        (JSC::MIPSAssembler::ori):
+        (JSC::MIPSAssembler::xorInsn):
+        (JSC::MIPSAssembler::xori):
+        (JSC::MIPSAssembler::slt):
+        (JSC::MIPSAssembler::sltu):
+        (JSC::MIPSAssembler::sltiu):
+        (JSC::MIPSAssembler::sll):
+        (JSC::MIPSAssembler::sllv):
+        (JSC::MIPSAssembler::sra):
+        (JSC::MIPSAssembler::srav):
+        (JSC::MIPSAssembler::srl):
+        (JSC::MIPSAssembler::srlv):
+        (JSC::MIPSAssembler::lbu):
+        (JSC::MIPSAssembler::lw):
+        (JSC::MIPSAssembler::lwl):
+        (JSC::MIPSAssembler::lwr):
+        (JSC::MIPSAssembler::lhu):
+        (JSC::MIPSAssembler::sb):
+        (JSC::MIPSAssembler::sh):
+        (JSC::MIPSAssembler::sw):
+        (JSC::MIPSAssembler::addd):
+        (JSC::MIPSAssembler::subd):
+        (JSC::MIPSAssembler::muld):
+        (JSC::MIPSAssembler::divd):
+        (JSC::MIPSAssembler::lwc1):
+        (JSC::MIPSAssembler::ldc1):
+        (JSC::MIPSAssembler::swc1):
+        (JSC::MIPSAssembler::sdc1):
+        (MIPSAssembler):
+        (JSC::MIPSAssembler::relocateJumps):
+        (JSC::MIPSAssembler::linkWithOffset):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::add32):
+        (JSC::MacroAssemblerMIPS::and32):
+        (JSC::MacroAssemblerMIPS::sub32):
+        (MacroAssemblerMIPS):
+        (JSC::MacroAssemblerMIPS::load8):
+        (JSC::MacroAssemblerMIPS::load32):
+        (JSC::MacroAssemblerMIPS::load32WithUnalignedHalfWords):
+        (JSC::MacroAssemblerMIPS::load16):
+        (JSC::MacroAssemblerMIPS::store8):
+        (JSC::MacroAssemblerMIPS::store16):
+        (JSC::MacroAssemblerMIPS::store32):
+        (JSC::MacroAssemblerMIPS::nearCall):
+        (JSC::MacroAssemblerMIPS::test8):
+        (JSC::MacroAssemblerMIPS::test32):
+
 2012-10-16  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Refactor MacroAssembler interfaces to differentiate the pointer operands from the 64-bit integer operands
