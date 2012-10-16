@@ -116,27 +116,6 @@ public:
 
     const SimpleFontData* fontDataAt(int index) const { return m_fontData[index]; }
     
-    void swap(int index1, int index2)
-    {
-        const SimpleFontData* f = m_fontData[index1];
-        m_fontData[index1] = m_fontData[index2];
-        m_fontData[index2] = f;
-
-        GlyphBufferGlyph g = m_glyphs[index1];
-        m_glyphs[index1] = m_glyphs[index2];
-        m_glyphs[index2] = g;
-
-        GlyphBufferAdvance s = m_advances[index1];
-        m_advances[index1] = m_advances[index2];
-        m_advances[index2] = s;
-
-#if PLATFORM(WIN)
-        FloatSize offset = m_offsets[index1];
-        m_offsets[index1] = m_offsets[index2];
-        m_offsets[index2] = offset;
-#endif
-    }
-
     Glyph glyphAt(int index) const
     {
 #if USE(CAIRO) || (PLATFORM(WX) && defined(wxUSE_CAIRO) && wxUSE_CAIRO)
@@ -208,6 +187,12 @@ public:
     }
 #endif
 
+    void reverse(int from, int length)
+    {
+        for (int i = from, end = from + length - 1; i < end; ++i, --end)
+            swap(i, end);
+    }
+
     void expandLastAdvance(float width)
     {
         ASSERT(!isEmpty());
@@ -216,6 +201,27 @@ public:
     }
 
 private:
+    void swap(int index1, int index2)
+    {
+        const SimpleFontData* f = m_fontData[index1];
+        m_fontData[index1] = m_fontData[index2];
+        m_fontData[index2] = f;
+
+        GlyphBufferGlyph g = m_glyphs[index1];
+        m_glyphs[index1] = m_glyphs[index2];
+        m_glyphs[index2] = g;
+
+        GlyphBufferAdvance s = m_advances[index1];
+        m_advances[index1] = m_advances[index2];
+        m_advances[index2] = s;
+
+#if PLATFORM(WIN)
+        FloatSize offset = m_offsets[index1];
+        m_offsets[index1] = m_offsets[index2];
+        m_offsets[index2] = offset;
+#endif
+    }
+
     Vector<const SimpleFontData*, 2048> m_fontData;
     Vector<GlyphBufferGlyph, 2048> m_glyphs;
     Vector<GlyphBufferAdvance, 2048> m_advances;

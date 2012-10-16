@@ -347,10 +347,8 @@ float Font::getGlyphsAndAdvancesForSimpleText(const TextRun& run, int from, int 
     } else
         initialAdvance = beforeWidth;
 
-    if (run.rtl()) {
-        for (int i = 0, end = glyphBuffer.size() - 1; i < end; ++i, --end)
-            glyphBuffer.swap(i, end);
-    }
+    if (run.rtl())
+        glyphBuffer.reverse(0, glyphBuffer.size());
 
     return initialAdvance;
 }

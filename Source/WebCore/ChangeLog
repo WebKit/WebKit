@@ -1,3 +1,23 @@
+2012-10-16  Dan Bernstein  <mitz@apple.com>
+
+        Code to reverse a GlyphBuffer range is repeated in several places
+        https://bugs.webkit.org/show_bug.cgi?id=99424
+
+        Reviewed by Adele Peterson.
+
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::getGlyphsAndAdvancesForSimpleText): Replaced for loop with a call to
+        GlyphBuffer::reverse.
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::reverse): Added. Reverses the given range.
+        (WebCore::GlyphBuffer::swap): Made private.
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::applyFontTransforms): Replaced for loops with calls to GlyphBuffer::reverse and
+        corrected their bounds.
+        * platform/graphics/mac/FontComplexTextMac.cpp:
+        (WebCore::Font::getGlyphsAndAdvancesForComplexText): Replaced for loop with a call to
+        GlyphBuffer::range.
+
 2012-10-16  Nate Chapin  <japhet@chromium.org>
 
         Re-order CachedRawResource::data() to set m_data earlier
