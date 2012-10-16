@@ -80,9 +80,9 @@ shouldBeEqualToString('element.className', 'y');
 
 debug('Ensure that we can handle empty class name correctly');
 element = document.createElement('span');
-element.classList.toggle('x');
+shouldBeTrue("element.classList.toggle('x')");
 shouldBeEqualToString('element.className', 'x');
-element.classList.toggle('x');
+shouldBeFalse("element.classList.toggle('x')");
 shouldBeEqualToString('element.className', '');
 
 element = document.createElement('span');
@@ -90,6 +90,27 @@ shouldBeFalse('element.classList.contains(\'x\')');
 shouldBeUndefined('element.classList[1]');
 element.classList.remove('x');
 element.classList.add('x')
+
+
+debug('Test toggle with force argument')
+
+createElement('');
+shouldBeTrue("element.classList.toggle('x', true)");
+shouldBeEqualToString('element.className', 'x');
+shouldBeTrue("element.classList.toggle('x', true)");
+shouldBeEqualToString('element.className', 'x');
+shouldBeFalse("element.classList.toggle('x', false)");
+shouldBeEqualToString('element.className', '');
+shouldBeFalse("element.classList.toggle('x', false)");
+shouldBeEqualToString('element.className', '');
+
+shouldThrowDOMException(function() {
+    element.classList.toggle('', true);
+}, DOMException.SYNTAX_ERR);
+
+shouldThrowDOMException(function() {
+    element.classList.toggle('x y', false);
+}, DOMException.INVALID_CHARACTER_ERR);
 
 
 debug('Testing add in presence of trailing white spaces.');

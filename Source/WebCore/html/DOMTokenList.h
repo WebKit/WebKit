@@ -52,6 +52,7 @@ public:
     virtual void remove(const Vector<String>&, ExceptionCode&);
     void remove(const AtomicString&, ExceptionCode&);
     bool toggle(const AtomicString&, ExceptionCode&);
+    bool toggle(const AtomicString&, bool force, ExceptionCode&);
 
     AtomicString toString() const { return value(); }
 

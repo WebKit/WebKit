@@ -128,6 +128,19 @@ bool DOMTokenList::toggle(const AtomicString& token, ExceptionCode& ec)
     return true;
 }
 
+bool DOMTokenList::toggle(const AtomicString& token, bool force, ExceptionCode& ec)
+{
+    if (!validateToken(token, ec))
+        return false;
+
+    if (force)
+        addInternal(token);
+    else
+        removeInternal(token);
+
+    return force;
+}
+
 void DOMTokenList::addInternal(const AtomicString& token)
 {
     if (!containsInternal(token))

@@ -18,10 +18,23 @@ PASS element.className is ""
 PASS element.className is " y y "
 PASS element.className is "y"
 Ensure that we can handle empty class name correctly
+PASS element.classList.toggle('x') is true
 PASS element.className is "x"
+PASS element.classList.toggle('x') is false
 PASS element.className is ""
 PASS element.classList.contains('x') is false
 PASS element.classList[1] is undefined.
+Test toggle with force argument
+PASS element.classList.toggle('x', true) is true
+PASS element.className is "x"
+PASS element.classList.toggle('x', true) is true
+PASS element.className is "x"
+PASS element.classList.toggle('x', false) is false
+PASS element.className is ""
+PASS element.classList.toggle('x', false) is false
+PASS element.className is ""
+PASS element.classList.toggle('', true) threw expected DOMException with code 12
+PASS element.classList.toggle('x y', false) threw expected DOMException with code 5
 Testing add in presence of trailing white spaces.
 PASS element.className is "x y"
 PASS element.className is "x\ty"

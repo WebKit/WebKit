@@ -1,3 +1,27 @@
+2012-10-15  Pablo Flouret  <pablof@motorola.com>
+
+        Add force parameter to DOMTokenList.toggle
+        https://bugs.webkit.org/show_bug.cgi?id=99375
+
+        Reviewed by Darin Adler.
+
+        See http://dom.spec.whatwg.org/#dom-domtokenlist-toggle and
+        https://www.w3.org/Bugs/Public/show_bug.cgi?id=18463
+
+        Essentially, the optional boolean force parameter, if present, makes
+        toggle always add or remove a class.
+
+        No new tests, modified fast/dom/HTMLElement/script-tests/class-list.js
+
+        * html/DOMTokenList.cpp:
+        (WebCore::DOMTokenList::toggle):
+        (WebCore):
+        * html/DOMTokenList.h:
+        (DOMTokenList):
+        * html/DOMTokenList.idl:
+            New toggle() overload that takes a force parameter and calls
+            addInternal() or removeInternal() based on it.
+
 2012-10-15  Dan Bernstein  <mitz@apple.com>
 
         Layout Test fast/text/justify-ideograph-leading-expansion.html is failing an assertion chromium mac
