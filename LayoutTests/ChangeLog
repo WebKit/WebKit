@@ -1,3 +1,33 @@
+2012-10-14  Kent Tamura  <tkent@chromium.org>
+
+        Input elements with multiple fields UI should set appropriate direction for browser locale automatically
+        https://bugs.webkit.org/show_bug.cgi?id=99291
+
+        Reviewed by Hajime Morita.
+
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n.html:
+        Added. We can confirm ar-eg and he-il have RTL layout.
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.txt: Added.
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.png: Added.
+
+        * fast/forms/date-multiple-fields/date-multiple-fields-keyboard-events-expected.txt:
+        * fast/forms/date-multiple-fields/date-multiple-fields-keyboard-events.html:
+        - Enable the lang-attribute-aware-form-control-UI feature.
+        - Set lang=he-il instead of dir=rtl because dir=rtl is ignored.
+        * fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events.html: Ditto.
+        * fast/forms/time-multiple-fields/time-multiple-fields-keyboard-events.html: Ditto.
+
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.png:
+        Updated becaues dir=RTL doesn't affect.
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic-expected.png:
+        Ditto.
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png:
+        Ditto.
+        * platform/chromium-mac/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png:
+        Ditto.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-15  Dana Jansens  <danakj@chromium.org>
 
         inspector/styles/styles-computed-trace.html is timing out

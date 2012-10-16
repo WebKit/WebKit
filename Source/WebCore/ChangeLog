@@ -1,3 +1,22 @@
+2012-10-14  Kent Tamura  <tkent@chromium.org>
+
+        Input elements with multiple fields UI should set appropriate direction for browser locale automatically
+        https://bugs.webkit.org/show_bug.cgi?id=99291
+
+        Reviewed by Hajime Morita.
+
+        Input elemnts with multiple fields UI ignores HTML dir attribute or CSS
+        direction property, and their direction should be decided by the browser
+        locale. If the browser locale is a RTL language, date/time input fields
+        show formats/digits for the RTL language. The layout should be always
+        RTL regardless of the direction in such case.
+
+        Test: fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n.html
+
+        * html/BaseMultipleFieldsDateAndTimeInputType.cpp:
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::updateInnerTextValue):
+        Set approriate dir attribute value to the child element of the UA shadow root.
+
 2012-10-15  Andreas Kling  <kling@webkit.org>
 
         StyleResolver: Garbage collect the matched properties cache on a timer.

@@ -22,6 +22,8 @@ Test following keys:
 <div id="console"></div>
 <script>
 description("Multiple fields UI of time input type with keyboard events");
+if (window.internals)
+    internals.settings.setLangAttributeAwareFormControlUIEnabled(true);
 var input = document.getElementById("input");
 
 function keyDown(key, modifiers)
@@ -162,16 +164,19 @@ keyDown('leftArrow');
 keyDown('2');
 shouldBeEqualToString('input.value', '12:02:56');
 
+// The tests in the following block fail on platforms without the
+// lang-attribute-aware-form-control-UI feature.
+input.setAttribute("lang", "he-il");
 beginTest('RTL Left/Right keys', '04:56');
-input.setAttribute("dir", "rtl");
-keyDown('1');
+keyDown('1'); //          -> 56:[01]
 shouldBeEqualToString('input.value', '01:56');
-keyDown('leftArrow');
-keyDown('2');
+keyDown('leftArrow'); //  -> [56]:01
+keyDown('2'); //          -> [02]:01
 shouldBeEqualToString('input.value', '01:02');
-keyDown('rightArrow');
-keyDown('3');
+keyDown('rightArrow'); // -> 02:[01]
+keyDown('3'); //          -> 01:[03]
 shouldBeEqualToString('input.value', '03:02');
+input.removeAttribute("lang");
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

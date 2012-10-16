@@ -22,6 +22,8 @@ Test following keys:
 <div id="console"></div>
 <script>
 description('Multiple fields UI of month input type with keyboard events');
+if (window.internals)
+    internals.settings.setLangAttributeAwareFormControlUIEnabled(true);
 var input = document.getElementById('input');
 
 function keyDown(key, modifiers)
@@ -187,16 +189,20 @@ keyDown('rightArrow'); // -> 12/[01]/2012
 keyDown('2'); //          -> 12/[02]/2012
 shouldBeEqualToString('input.value', '2012-12-02');
 
+// The tests in the following block fail on platforms without the
+// lang-attribute-aware-form-control-UI feature.
+input.setAttribute("lang", "he-il");
 beginTest('RTL Left/Right keys', '2012-09-28');
-input.setAttribute("dir", "rtl"); // -> 2012/28/[09]
-keyDown('1'); //          -> 2012/28/[01]
-shouldBeEqualToString('input.value', '2012-01-28');
-keyDown('leftArrow'); //  -> 2012/[28]/01
-keyDown('2'); //          -> 2012/[02]/01
-shouldBeEqualToString('input.value', '2012-01-02');
-keyDown('rightArrow'); // -> 2012/02/[01]
-keyDown('3'); //          -> 2012/02/[03]
-shouldBeEqualToString('input.value', '2012-03-02');
+// 2012/09/[28]
+keyDown('1'); //          -> 2012/09/[01]
+shouldBeEqualToString('input.value', '2012-09-01');
+keyDown('leftArrow'); //  -> 2012/[09]/01
+keyDown('2'); //          -> [2012]/02/01
+shouldBeEqualToString('input.value', '2012-02-01');
+keyDown('rightArrow'); // -> 2012/[02]/01
+keyDown('3'); //          -> [2012]/03/01
+shouldBeEqualToString('input.value', '2012-03-01');
+input.removeAttribute("lang");
 
 beginTest('Disabled/readonly', '2012-10-08');
 input.disabled = true;

@@ -273,6 +273,10 @@ void BaseMultipleFieldsDateAndTimeInputType::updateInnerTextValue()
     if (!m_dateTimeEditElement)
         return;
 
+    AtomicString direction = element()->localizer().isRTL() ? AtomicString("rtl", AtomicString::ConstructFromLiteral) : AtomicString("ltr", AtomicString::ConstructFromLiteral);
+    if (Element* container = firstElementChild(element()->userAgentShadowRoot()))
+        container->setAttribute(HTMLNames::dirAttr, direction);
+
     DateTimeEditElement::LayoutParameters layoutParameters(element()->localizer(), createStepRange(AnyIsDefaultStep));
 
     DateComponents date;
