@@ -4036,6 +4036,9 @@ webkit.org/b/98545 [ Mac ] fast/writing-mode/Kusa-Makura-background-canvas.html 
 
 webkit.org/b/98686 editing/pasteboard/data-transfer-items.html [ Failure ]
 
+webkit.org/b/23166 [ Android Mac Win ] fast/css/background-clip-radius-values.html [ Pass ImageOnlyFailure ]
+webkit.org/b/23166 [ Android Mac Win ] ietestcenter/css3/bordersbackgrounds/border-radius-clip-002.htm [ Pass ImageOnlyFailure ]
+
 webkit.org/b/98699 [ Lion ] fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ Crash ]
 webkit.org/b/98811 [ Mac ] fast/transforms/transformed-focused-text-input.html [ Pass ImageOnlyFailure ]
 

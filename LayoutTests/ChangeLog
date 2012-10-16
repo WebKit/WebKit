@@ -1,3 +1,20 @@
+2012-10-15  Vlad Grecescu  <igrecesc@adobe.com>, Douglas Stockwell  <dstockwell@chromium.org>
+
+        Support for background-clip:content-box and padding-box with border-radius
+        https://bugs.webkit.org/show_bug.cgi?id=23166
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/background-clip-radius-values-expected.png: Added.
+        * fast/css/background-clip-radius-values-expected.txt: Added.
+        * fast/css/background-clip-radius-values.html: Added.
+        * platform/chromium-linux/fast/css/background-clip-radius-values-expected.png: Added.
+        * platform/chromium-linux/ietestcenter/css3/bordersbackgrounds/border-radius-clip-002-expected.png:
+        * platform/chromium/TestExpectations:
+        * platform/mac/ietestcenter/css3/bordersbackgrounds/border-radius-clip-002-expected.png: Added.
+        * platform/qt/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2012-10-15  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Layout Test *-multiple-fields-keyboard-events.html etc. are failing on Win XP

@@ -1528,6 +1528,10 @@ webkit.org/b/97990 mathml/presentation/subsup.xhtml [ Failure ]
 # fast/selectors/unqualified-hover-quirks.html or itself.
 webkit.org/b/10890 fast/selectors/unqualified-hover-strict.html [ Failure Pass ]
 
+# May need rebaseline
+webkit.org/b/23166 fast/css/background-clip-radius-values.html [ Pass ImageOnlyFailure ]
+webkit.org/b/23166 ietestcenter/css3/bordersbackgrounds/border-radius-clip-002.htm [ Pass ImageOnlyFailure ]
+
 # Regressions after r130699
 webkit.org/b/98729 fast/css/import-style-update.html [ Failure ]
 webkit.org/b/98729 fast/events/attribute-listener-cloned-from-frameless-doc-context-2.html [ Failure ]
