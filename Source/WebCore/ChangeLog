@@ -1,3 +1,18 @@
+2012-10-16  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        Init timeout flag in ResourceErrorMac
+        https://bugs.webkit.org/show_bug.cgi?id=99478
+
+        Reviewed by Alexey Proskuryakov.
+
+        On construction from platform error types, initialize the timeout flag 
+        to true if the error results from a timeout.
+
+        No new tests, covered by tests that will be added in bug 74802.
+
+        * platform/network/mac/ResourceErrorMac.mm:
+        (WebCore::ResourceError::platformLazyInit): Initializing timeout flag if the error was a timeout.
+
 2012-10-16  Tony Chang  <tony@chromium.org>
 
         input[type=range] as a flex item renders thumb at wrong position

@@ -95,6 +95,8 @@ ResourceError::ResourceError(NSError *nsError)
     , m_platformError(nsError)
 {
     m_isNull = !nsError;
+    if (!m_isNull)
+        m_isTimeout = [m_platformError.get() code] == NSURLErrorTimedOut;
 }
 
 ResourceError::ResourceError(CFErrorRef cfError)
@@ -102,6 +104,8 @@ ResourceError::ResourceError(CFErrorRef cfError)
     , m_platformError((NSError *)cfError)
 {
     m_isNull = !cfError;
+    if (!m_isNull)
+        m_isTimeout = [m_platformError.get() code] == NSURLErrorTimedOut;
 }
 
 void ResourceError::platformLazyInit()
