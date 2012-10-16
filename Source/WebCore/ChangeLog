@@ -1,3 +1,61 @@
+2012-10-16  Stephen Chenney  <schenney@chromium.org> 
+        An feImage that tries to render itself should be stopped
+        https://bugs.webkit.org/show_bug.cgi?id=94652
+
+        Reviewed by Eric Seidel.
+
+        An SVG feImage filter element will accept, as the src to render, an
+        SVG document that makes use of the feImage itself. This causes the
+        feImage to try to draw itself while already in the process of drawing
+        itself. Various problems arise from this. The invariant we wish to
+        maintain is that no element in the src tree of an feImage element
+        refers to that feImage.
+
+        This patch adds a flag to all FilterData objects that tracks whether or
+        not the filter is currently applying itself, and avoids applying the
+        filter recursively.
+
+        While it may seem better to catch this problem when the src is set, or
+        when the filter is built, that turns out to be challenging and
+        inefficient. Say we choose to test when the src atttribute is set. To
+        do so would require looking through all of the DOM nodes that will be
+        rendered for the src, finding all resources used, and checking if any
+        of them make use fo the feImage element that we are setting the source
+        for. The infrastructure is not in place to do that, and it would
+        involve walking a potentially very large portion of the DOM in order
+        to detect a very rare situation. Note that it is not enough just to
+        walk the DOM directly under the src; we also need to recursively follow any
+        resource links to see if they use the feImage (e.g. patterns or
+        masks or use or ...).
+
+        If we instead try to use the renderer node to find self referencing,
+        we need to recursively walk a potentially very large render tree,
+        tracing all resources in search of the feImage. This would need to be
+        done every time the filter is built, which is again a significant
+        overhead for a situation that is very unlikely to occur. And we do not
+        have methods that make it easy to find feImage filter effect nodes; they are
+        hidden behind filter resource nodes.
+
+        Hence the runtime check to catch the problem. The check must be in
+        FilterData and RenderSVGResourceFilter code because we must prevent
+        the destruction of the feImage when we encounter it recursively.
+
+        This patch also renames FilterData::builded to FilterData::isBuilt.
+
+        Test: svg/filters/feImage-self-referencing.html
+
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::ApplyingFilterEffectGuard): Guard to ensure that, in the future, we always
+        clear the isApplying flag even if the postApplyResource method returns early.
+        (WebCore::RenderSVGResourceFilter::applyResource): Do not apply a resource that is already applying and
+        rename builded to isBuilt.
+        (WebCore::RenderSVGResourceFilter::postApplyResource): Mark a resource as applying and clear after
+        it is done. Abort if a resource is already applying when the method begins. Rename builded to isBuilt.
+        (WebCore::RenderSVGResourceFilter::primitiveAttributeChanged): Rename builded to isBuilt.
+        * rendering/svg/RenderSVGResourceFilter.h:
+        (WebCore::FilterData::FilterData):
+        (FilterData): Add isApplying and rename builded to isBuilt.
+
 2012-10-16  Nate Chapin  <japhet@chromium.org>
 
         sendResourceLoadCallbacks() is poorly named

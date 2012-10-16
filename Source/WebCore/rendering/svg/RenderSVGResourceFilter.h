@@ -44,7 +44,8 @@ struct FilterData {
 public:
     FilterData()
         : savedContext(0)
-        , builded(false)
+        , isBuilt(false)
+        , isApplying(false)
         , markedForRemoval(false)
     {
     }
@@ -56,7 +57,8 @@ public:
     AffineTransform shearFreeAbsoluteTransform;
     FloatRect boundaries;
     FloatSize scale;
-    bool builded : 1;
+    bool isBuilt : 1;
+    bool isApplying : 1;
     bool markedForRemoval : 1;
 };
 
