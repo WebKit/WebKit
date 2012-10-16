@@ -16,12 +16,9 @@ indexedDB.deleteDatabase(dbname)
 onVersionChange():
 old = 1
 new = ""
-scheduling timeout to close
 
 deleteDatabaseOnBlocked():
 blockedEventFired = true
-
-timeoutCallback():
 h.close()
 
 deleteDatabaseOnSuccess():

@@ -82,19 +82,21 @@ function unexpectedVersionChangeCallback()
     finishJSTest();
 }
 
-function evalAndExpectException(cmd, exceptionCode, exceptionName)
+function evalAndExpectException(cmd, exceptionCode, exceptionName, _quiet)
 {
-    debug("Expecting exception from " + cmd);
+    if (!_quiet)
+        debug("Expecting exception from " + cmd);
     try {
         eval(cmd);
         testFailed("No exception thrown! Should have been " + exceptionCode);
     } catch (e) {
         code = e.code;
-        testPassed("Exception was thrown.");
-        shouldBe("code", exceptionCode);
+        if (!_quiet)
+            testPassed("Exception was thrown.");
+        shouldBe("code", exceptionCode, _quiet);
         if (exceptionName) {
             ename = e.name;
-            shouldBe("ename", exceptionName);
+            shouldBe("ename", exceptionName, _quiet);
         }
     }
 }

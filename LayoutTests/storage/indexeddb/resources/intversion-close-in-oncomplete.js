@@ -20,6 +20,7 @@ function deleteSuccess(evt) {
     request.onsuccess = openSuccess;
     request.onupgradeneeded = upgradeNeeded;
     request.onblocked = unexpectedBlockedCallback;
+    request.onerror = unexpectedErrorCallback;
 }
 
 var sawTransactionComplete = false;

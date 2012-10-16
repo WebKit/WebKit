@@ -1,3 +1,50 @@
+2012-10-16  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: setTimeout in layout tests causes flakiness in multiprocess ports
+        https://bugs.webkit.org/show_bug.cgi?id=98949
+
+        Reviewed by Tony Chang.
+
+        In multiprocess ports with asynchronous IPC, events and timers may race causing script
+        callbacks to execute in different orders.
+
+        Eliminate the uses of setTimeout() where the intent is to have code delayed but may
+        race with a pending event.
+
+        * fast/js/resources/js-test-pre.js:
+        (evalAndLog) Added quiet flag.
+        * storage/indexeddb/deletedatabase-blocked-expected.txt:
+        * storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-expected.txt:
+        * storage/indexeddb/deletedatabase-delayed-by-versionchange-expected.txt:
+        * storage/indexeddb/intversion-close-between-events-expected.txt:
+        * storage/indexeddb/resources/deletedatabase-blocked.js: Remove setTimeout.
+        (test.request.onsuccess.openOnSuccess.h.onversionchange):
+        (test.request.onsuccess.openOnSuccess.request.onblocked):
+        * storage/indexeddb/resources/deletedatabase-delayed-by-open-and-versionchange.js: Remove setTimeout.
+        (test.request.onsuccess.openOnSuccess.h.onversionchange):
+        (test.request.onsuccess.openOnSuccess.request.onblocked):
+        * storage/indexeddb/resources/deletedatabase-delayed-by-versionchange.js: Remove setTimeout.
+        (test.request.onsuccess.openOnSuccess.h.onversionchange):
+        (test.request.onsuccess.openOnSuccess.request.onsuccess.h2OpenOnSuccess.request.onblocked):
+        * storage/indexeddb/resources/intversion-close-between-events.js: Test was intended to call db.close()
+        between "complete" and "success" but in single process ports this is not possible, and in multi-process
+        ports is not reliable. To make the test not flaky and watch out for regressions in this edge case, it
+        is changed to have minimal logging.
+        (deleteSuccess):
+        (upgradeNeeded.transaction.oncomplete):
+        (upgradeNeeded):
+        (closeDB):
+        (openSuccess):
+        (checkFinished):
+        * storage/indexeddb/resources/intversion-close-in-oncomplete.js: Log on error rather than timing out.
+        (deleteSuccess):
+        * storage/indexeddb/resources/setversion-blocked.js: Removed setTimeout.
+        (test.request.onsuccess.h1OpenOnSuccess.request.onsuccess.h2OpenOnSuccess.h2.onversionchange):
+        (test.request.onsuccess.h1OpenOnSuccess.request.onsuccess.h2OpenOnSuccess.request.onblocked):
+        * storage/indexeddb/resources/shared.js:
+        (evalAndExpectException) Added quiet flag.
+        * storage/indexeddb/setversion-blocked-expected.txt:
+
 2012-10-16  Takashi Sakamoto  <tasak@google.com>
 
         [Meta] [Shadow] contenteditable attribute for distributed nodes.

@@ -24,11 +24,8 @@ versionChangeComplete = true
 onVersionChange():
 old = "1"
 new = ""
-scheduling timeout to close
 
 deleteDatabaseOnBlocked():
-
-timeoutCallback():
 h.close()
 
 deleteDatabaseOnSuccess():

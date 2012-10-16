@@ -145,13 +145,14 @@ function stringify(v)
     else return "" + v;
 }
 
-function evalAndLog(_a)
+function evalAndLog(_a, _quiet)
 {
   if (typeof _a != "string")
     debug("WARN: tryAndLog() expects a string argument");
 
   // Log first in case things go horribly wrong or this causes a sync event.
-  debug(_a);
+  if (!_quiet)
+    debug(_a);
 
   var _av;
   try {
@@ -527,7 +528,6 @@ if (isWorker()) {
             workerPort = e.ports[0];
             workerPort.onmessage = function(event)
             {
-                
                 var colon = event.data.indexOf(":");
                 if (colon == -1) {
                     testFailed("Unrecognized message to shared worker: " + event.data);

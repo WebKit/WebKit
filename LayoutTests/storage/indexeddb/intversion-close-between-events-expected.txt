@@ -7,8 +7,9 @@ indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.
 
 dbname = "intversion-close-between-events.html"
 indexedDB.deleteDatabase(dbname)
-request = indexedDB.open(dbname, 7)
 
+deleteSuccess():
+request = indexedDB.open(dbname, 7)
 
 upgradeNeeded():
 db = event.target.result
@@ -16,21 +17,23 @@ PASS event.newVersion is 7
 db.createObjectStore('objectstore')
 transaction = event.target.transaction
 
-transaction.oncomplete:
+transactionComplete():
 sawTransactionComplete = true
+
+Now try and close the database after oncomplete but before onsuccess.
+This will not happen in single process ports. In multi-process ports
+it may and is fine; but flaky crashes would indicate a regression.
+
 setTimeout(closeDB, 0)
 
-openSuccess():
-PASS didCallCloseDB is false
+checkFinished():
+Not done yet...
+
+checkFinished():
+PASS didCallCloseDB is true
 PASS sawTransactionComplete is true
-db = event.target.result
 PASS db.version is 7
 PASS db.objectStoreNames.length is 1
-db.transaction(db.objectStoreNames)
-
-closeDB():
-didCallCloseDB = true
-db.close()
 PASS successfullyParsed is true
 
 TEST COMPLETE

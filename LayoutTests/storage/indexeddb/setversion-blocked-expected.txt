@@ -22,12 +22,9 @@ h1.setVersion(String(ver++))
 h2OnVersionChange():
 old = 1
 new = "1"
-scheduling timeout to close h2
 
 h1SetVersionOnBlocked():
 blockedEventFired = true
-
-timeoutCallback():
 h2.close()
 
 h1SetVersionOnSuccess():

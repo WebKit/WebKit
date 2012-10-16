@@ -38,7 +38,7 @@ function createAndVerifyIndex()
 
     indexName = "1";
     indexKeyPath = "unique_value";
-    index = evalAndLog("index = objectStore.createIndex(indexName, indexKeyPath, { unique: true });", "IDBDatabaseException.CONSTRAINT_ERR");
+    index = evalAndLog("index = objectStore.createIndex(indexName, indexKeyPath, { unique: true });");
     shouldBe("index.name", "indexName");
     shouldBe("index.keyPath", "indexKeyPath");
     shouldBe("index.unique", "true");
