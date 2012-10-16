@@ -4064,6 +4064,10 @@ webkit.org/b/98666 [ Mac ] media/video-empty-source.html [ Failure ]
 webkit.org/b/98666 [ Mac ] media/video-no-audio.html [ Failure ]
 webkit.org/b/98666 [ Mac ] media/video-playing-and-pause.html [ Failure ]
 webkit.org/b/98666 [ Mac ] media/video-zoom-controls.html [ Failure ]
+webkit.org/b/99511 fast/forms/datalist/input-appearance-range-with-datalist-zoomed.html [ Pass Failure ]
+webkit.org/b/99511 platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi.html [ Pass Failure ]
+webkit.org/b/99511 fast/forms/datalist/input-appearance-range-with-datalist.html [ Pass Failure ]
+webkit.org/b/99511 fast/multicol/client-rects.html [ Pass Failure ]
 
 # These are real failues due to 95121.
 # This is spilling caused by LANCZOS3 scaling algorithm that samples outside the source rect.
@@ -4186,11 +4190,6 @@ webkit.org/b/99376 fast/inline-block/contenteditable-baseline.html [ Pass Failur
 webkit.org/b/99376 platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing.html [ Pass Failure ]
 webkit.org/b/99376 tables/mozilla/bugs/bug30692.html [ Pass Failure ]
 
-webkit.org/b/99511 fast/forms/datalist/input-appearance-range-with-datalist-zoomed.html [ Pass Failure ]
-webkit.org/b/99511 platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi.html [ Pass Failure ]
-webkit.org/b/99511 fast/forms/datalist/input-appearance-range-with-datalist.html [ Pass Failure ]
-webkit.org/b/99511 fast/multicol/client-rects.html [ Pass Failure ]
-
 # Need a rebase after r131503?
 webkit.org/b/99516 [ Mac ] editing/selection/3690703-2.html [ Failure ]
 webkit.org/b/99516 [ Mac ] editing/selection/3690703.html [ Failure ]
@@ -4203,7 +4202,6 @@ webkit.org/b/99516 [ Mac ] fast/block/float/float-avoidance.html [ Failure ]
 webkit.org/b/99516 [ Mac ] fast/css/continuationCrash.html [ Failure ]
 webkit.org/b/99516 [ Mac ] fast/css/margin-top-bottom-dynamic.html [ Failure ]
 webkit.org/b/99516 [ Mac ] fast/css/rtl-ordering.html [ Failure ]
-webkit.org/b/99516 [ Mac ] fast/dom/HTMLProgressElement/progress-element.html [ Failure ]
 webkit.org/b/99516 [ Mac ] fast/dom/HTMLTextAreaElement/reset-textarea.html [ Failure ]
 webkit.org/b/99516 [ Mac ] fast/forms/001.html [ Failure ]
 webkit.org/b/99516 [ Mac ] fast/forms/blankbuttons.html [ Failure ]

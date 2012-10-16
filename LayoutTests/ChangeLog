@@ -1,3 +1,9 @@
+2012-10-16  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, lint fixes for TestExpectations.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-16  Dana Jansens  <danakj@chromium.org>
 
         Lint fixes for TestExpectations
