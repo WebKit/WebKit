@@ -27,8 +27,8 @@
 #define GraphicsContext3D_h
 
 #include "IntRect.h"
-#include "GraphicsLayer.h"
 #include "GraphicsTypes3D.h"
+#include "PlatformLayer.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>

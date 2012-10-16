@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ScrollingStateNode.h"
 
+#include "GraphicsLayer.h"
 #include "ScrollingStateTree.h"
 
 #if ENABLE(THREADED_SCROLLING)

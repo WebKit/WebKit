@@ -40,7 +40,7 @@
 #include <wtf/text/WTFString.h>
 
 #if USE(ACCELERATED_COMPOSITING)
-#include "GraphicsLayer.h"
+#include "PlatformLayer.h"
 #endif
 
 namespace WebCore {

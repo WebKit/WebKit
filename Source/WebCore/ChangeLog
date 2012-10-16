@@ -1,3 +1,28 @@
+2012-10-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Some #include hygiene
+        https://bugs.webkit.org/show_bug.cgi?id=99500
+
+        Reviewed by Tony Chang.
+
+        Clean up some #includes, mostly related to GraphicsLayer.h. In many
+        cases this can be replaced by PlatformLayer.h.
+        
+        Remove an #include of PluginViewBase.h from Page.h, which was a source
+        of #include fan-out.
+
+        * html/canvas/CanvasRenderingContext2D.h:
+        * page/Page.h:
+        * page/scrolling/ScrollingCoordinator.h:
+        * page/scrolling/ScrollingStateNode.h:
+        * page/scrolling/mac/ScrollingStateNodeMac.mm:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        * platform/graphics/gpu/DrawingBuffer.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        * plugins/PluginViewBase.h:
+
 2012-10-16  Adam Barth  <abarth@webkit.org>
 
         Document::adoptNode shouldn't special-case <iframe>

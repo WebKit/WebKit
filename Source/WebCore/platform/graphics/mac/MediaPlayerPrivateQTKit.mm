@@ -47,7 +47,7 @@
 #import <wtf/UnusedParam.h>
 
 #if USE(ACCELERATED_COMPOSITING)
-#include "GraphicsLayer.h"
+#include "PlatformLayer.h"
 #endif
 
 #if DRAW_FRAME_RATE

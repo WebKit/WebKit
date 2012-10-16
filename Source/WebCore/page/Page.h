@@ -29,7 +29,6 @@
 #include "PageVisibilityState.h"
 #include "Pagination.h"
 #include "PlatformScreen.h"
-#include "PluginViewBase.h"
 #include "Region.h"
 #include "Supplementable.h"
 #include "ViewportArguments.h"
@@ -78,6 +77,7 @@ namespace WebCore {
     class Node;
     class PageGroup;
     class PluginData;
+    class PluginViewBase;
     class PointerLockController;
     class ProgressTracker;
     class Range;

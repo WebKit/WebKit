@@ -33,9 +33,9 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "GraphicsLayer.h"
 #include "KURL.h"
 #include "Logging.h"
+#include "PlatformLayer.h"
 #include "SoftLinking.h"
 #include "TimeRanges.h"
 #include <CoreMedia/CoreMedia.h>

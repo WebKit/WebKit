@@ -28,7 +28,7 @@
 
 #if ENABLE(THREADED_SCROLLING)
 
-#include "GraphicsLayer.h"
+#include "PlatformLayer.h"
 #include "ScrollingCoordinator.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -40,6 +40,7 @@
 
 namespace WebCore {
 
+class GraphicsLayer;
 class ScrollingStateTree;
 
 class ScrollingStateNode {

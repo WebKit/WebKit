@@ -32,9 +32,9 @@
 #define DrawingBuffer_h
 
 #include "GraphicsContext3D.h"
-#include "GraphicsLayer.h"
 #include "GraphicsTypes3D.h"
 #include "IntSize.h"
+#include "PlatformLayer.h"
 
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>

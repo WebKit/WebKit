@@ -25,9 +25,9 @@
 #ifndef PluginWidget_h
 #define PluginWidget_h
 
-#include "Widget.h"
-#include "GraphicsLayer.h"
+#include "PlatformLayer.h"
 #include "ScrollTypes.h"
+#include "Widget.h"
 #include <wtf/text/WTFString.h>
 
 namespace JSC {

@@ -26,7 +26,6 @@
 #ifndef ScrollingCoordinator_h
 #define ScrollingCoordinator_h
 
-#include "GraphicsLayer.h"
 #include "IntRect.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollTypes.h"
