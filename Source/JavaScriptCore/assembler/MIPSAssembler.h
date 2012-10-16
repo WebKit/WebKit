@@ -350,6 +350,12 @@ public:
         emitInst(0x00000006 | (rd << OP_SH_RD) | (rt << OP_SH_RT) | (rs << OP_SH_RS));
     }
 
+    void lb(RegisterID rt, RegisterID rs, int offset)
+    {
+        emitInst(0x80000000 | (rt << OP_SH_RT) | (rs << OP_SH_RS) | (offset & 0xffff));
+        loadDelayNop();
+    }
+
     void lbu(RegisterID rt, RegisterID rs, int offset)
     {
         emitInst(0x90000000 | (rt << OP_SH_RT) | (rs << OP_SH_RS) | (offset & 0xffff));
@@ -371,6 +377,12 @@ public:
     void lwr(RegisterID rt, RegisterID rs, int offset)
     {
         emitInst(0x98000000 | (rt << OP_SH_RT) | (rs << OP_SH_RS) | (offset & 0xffff));
+        loadDelayNop();
+    }
+
+    void lh(RegisterID rt, RegisterID rs, int offset)
+    {
+        emitInst(0x84000000 | (rt << OP_SH_RT) | (rs << OP_SH_RS) | (offset & 0xffff));
         loadDelayNop();
     }
 
@@ -525,9 +537,19 @@ public:
         emitInst(0x46800021 | (fd << OP_SH_FD) | (fs << OP_SH_FS));
     }
 
+    void cvtds(FPRegisterID fd, FPRegisterID fs)
+    {
+        emitInst(0x46000021 | (fd << OP_SH_FD) | (fs << OP_SH_FS));
+    }
+
     void cvtwd(FPRegisterID fd, FPRegisterID fs)
     {
         emitInst(0x46200024 | (fd << OP_SH_FD) | (fs << OP_SH_FS));
+    }
+
+    void cvtsd(FPRegisterID fd, FPRegisterID fs)
+    {
+        emitInst(0x46200020 | (fd << OP_SH_FD) | (fs << OP_SH_FS));
     }
 
     void ceqd(FPRegisterID fs, FPRegisterID ft)
@@ -638,6 +660,19 @@ public:
     }
 
     unsigned debugOffset() { return m_buffer.debugOffset(); }
+
+    // Assembly helpers for moving data between fp and registers.
+    void vmov(RegisterID rd1, RegisterID rd2, FPRegisterID rn)
+    {
+        mfc1(rd1, rn);
+        mfc1(rd2, FPRegisterID(rn + 1));
+    }
+
+    void vmov(FPRegisterID rd, RegisterID rn1, RegisterID rn2)
+    {
+        mtc1(rn1, rd);
+        mtc1(rn2, FPRegisterID(rd + 1));
+    }
 
     static unsigned getCallReturnOffset(AssemblerLabel call)
     {
