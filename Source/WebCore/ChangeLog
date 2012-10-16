@@ -1,3 +1,16 @@
+2012-10-15  Michael Saboff  <msaboff@apple.com>
+
+        Add 8 bit patch to Document::isValidName() for the non ASCII case
+        https://bugs.webkit.org/show_bug.cgi?id=99402
+
+        Reviewed by Darin Adler.
+
+        Added 8 bit path to complete the processing of an 8 bit names without up-converting.
+
+        * dom/Document.cpp:
+        (WebCore::isValidNameNonASCII):
+        (WebCore::Document::isValidName):
+
 2012-10-15  Vlad Grecescu  <igrecesc@adobe.com>, Douglas Stockwell  <dstockwell@chromium.org>
 
         Support for background-clip:content-box and padding-box with border-radius
