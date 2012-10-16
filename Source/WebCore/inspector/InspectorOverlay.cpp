@@ -50,6 +50,7 @@
 #include "ScriptValue.h"
 #include "Settings.h"
 #include "StyledElement.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -497,6 +498,20 @@ void InspectorOverlay::evaluateInOverlay(const String& method, PassRefPtr<Inspec
     command->pushString(method);
     command->pushValue(argument);
     overlayPage()->mainFrame()->script()->evaluate(ScriptSourceCode(makeString("dispatch(", command->toJSONString(), ")")));
+}
+
+void InspectorOverlay::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::InspectorOverlay);
+    info.addMember(m_page);
+    info.addMember(m_client);
+    info.addMember(m_pausedInDebuggerMessage);
+    info.addMember(m_highlightNode);
+    info.addMember(m_nodeHighlightConfig);
+    info.addMember(m_highlightRect);
+    info.addMember(m_overlayPage);
+    info.addMember(m_rectHighlightConfig);
+    info.addMember(m_size);
 }
 
 } // namespace WebCore

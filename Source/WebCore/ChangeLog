@@ -1,3 +1,23 @@
+2012-10-16  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI Instrument InspectorOverlay. It costs us ~9Mb because it creates page size canvas.
+        https://bugs.webkit.org/show_bug.cgi?id=99426
+
+        Reviewed by Yury Semikhatsky.
+
+        New object type InspectorOverlay was added. InspectorOverlay was instrumented.
+        The instrumentation code automatically visits all the objects that can be reached via m_overlayPage.
+
+        * dom/WebCoreMemoryInstrumentation.cpp:
+        (WebCore):
+        * dom/WebCoreMemoryInstrumentation.h:
+        (WebCoreMemoryTypes):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::reportMemoryUsage):
+        (WebCore):
+        * inspector/InspectorOverlay.h:
+        (InspectorOverlay):
+
 2012-10-16  Kent Tamura  <tkent@chromium.org>
 
         Remove unused functions in Locale* classes

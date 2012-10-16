@@ -110,6 +110,8 @@ public:
 
     Node* highlightedNode() const;
 
+    void reportMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     InspectorOverlay(Page*, InspectorClient*);
 
