@@ -1,5 +1,14 @@
 2012-10-16  Dana Jansens  <danakj@chromium.org>
 
+        Web Inspector: inspector/styles/styles-history.html is failing Text on win7
+        https://bugs.webkit.org/show_bug.cgi?id=99519
+
+        Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+
+2012-10-16  Dana Jansens  <danakj@chromium.org>
+
         Rebaselines for r131503
         https://bugs.webkit.org/show_bug.cgi?id=99516
 

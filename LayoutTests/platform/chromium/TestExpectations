@@ -2852,6 +2852,9 @@ webkit.org/b/84900 platform/chromium/virtual/softwarecompositing/regions/webkit-
 
 webkit.org/b/92131 inspector/styles/region-style-crash.html
 
+# New failure with a large regression range.
+webkit.org/b/99519 [ Win ] inspector/styles/styles-history.html [ Text ]
+
 crbug.com/85755 fast/js/exception-properties.html [ Failure ]
 
 webkit.org/b/62580 fast/loader/inherit-charset-to-empty-frame.html [ Failure Pass ]
