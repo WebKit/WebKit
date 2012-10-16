@@ -58,6 +58,8 @@ def web_socket_do_extra_handshake(request):
         processor.set_response_window_bits(window_bits)
     if 'no_context_takeover' in parameters:
         processor.set_response_no_context_takeover(True)
+    if 'set_bfinal' in parameters:
+        processor.set_bfinal(True)
 
 
 def web_socket_transfer_data(request):

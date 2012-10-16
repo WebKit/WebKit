@@ -1,3 +1,21 @@
+2012-10-15  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [WebSocket] WebSocketInflater should handle BFINAL = 1 blocks
+        https://bugs.webkit.org/show_bug.cgi?id=99282
+
+        Reviewed by Yuta Kitamura.
+
+        Reset decompression state if WebSocketInflater decompress a block with
+        BFINAL set to 1.
+
+        Test: http/tests/websocket/tests/hybi/deflate-frame-set-bfinal.html
+
+        * Modules/websockets/WebSocketDeflater.cpp:
+        (WebCore::WebSocketInflater::addBytes):
+        Reset decompression state if inflate() returns Z_STREAM_END, which means the BFINAL
+        of the current block was set to 1.
+        (WebCore::WebSocketInflater::finish): Add an assertion.
+
 2012-10-15  Simon Fraser  <simon.fraser@apple.com>
 
         Fix GraphicsLayer visible rect computation when scrolling in WebKit1

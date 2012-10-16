@@ -1,3 +1,17 @@
+2012-10-15  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [WebSocket] WebSocketInflater should handle BFINAL = 1 blocks
+        https://bugs.webkit.org/show_bug.cgi?id=99282
+
+        Reviewed by Yuta Kitamura.
+
+        Added a test for receiving compressed blocks with BFINAL set to 1.
+
+        * http/tests/websocket/tests/hybi/deflate-frame-set-bfinal-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/deflate-frame-set-bfinal.html: Added.
+        * http/tests/websocket/tests/hybi/deflate-frame_wsh.py:
+        (web_socket_do_extra_handshake): Call set_bfinal() if the 'set_bfinal' parameter is passed.
+
 2012-10-15  Simon Fraser  <simon.fraser@apple.com>
 
         Fix GraphicsLayer visible rect computation when scrolling in WebKit1
