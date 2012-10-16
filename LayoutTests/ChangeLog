@@ -1,3 +1,14 @@
+2012-10-15  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Layout Test *-multiple-fields-keyboard-events.html etc. are failing on Win XP
+        https://bugs.webkit.org/show_bug.cgi?id=99408
+
+        These failures are expected. Just do rebaseline.
+
+        * platform/chromium-win-xp/fast/forms/date-multiple-fields/date-multiple-fields-keyboard-events-expected.txt: Added.
+        * platform/chromium-win-xp/fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events-expected.txt: Added.
+        * platform/chromium-win-xp/fast/forms/time-multiple-fields/time-multiple-fields-keyboard-events-expected.txt: Added.
+
 2012-10-15  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Chromium] Unreviewed gardening, TestExpectations updated.
