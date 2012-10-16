@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,53 +24,20 @@
  */
 
 #include "config.h"
-#include "WKURL.h"
 
-#include "WKAPICast.h"
+namespace TestWebKitAPI {
 
-using namespace WebKit;
+TEST(WebKit2, WKURL)
+{        
+    WKURLRef baseURL = WKURLCreateWithUTF8CString("http://trac.webkit.org");
+    WKURLRef URL = WKURLCreateWithBaseURL(baseURL, "wiki");
+    WKRelease(baseURL);
 
-WKTypeID WKURLGetTypeID()
-{
-    return toAPI(WebURL::APIType);
+    WKStringRef string = WKURLCopyString(URL);
+    EXPECT_TRUE(WKStringIsEqualToUTF8CString(string, "http://trac.webkit.org/wiki"));
+
+    WKRelease(string);
+    WKRelease(URL);
 }
 
-WKURLRef WKURLCreateWithUTF8CString(const char* string)
-{
-    return toAPI(WebURL::create(String::fromUTF8(string)).leakRef());
-}
-
-WKURLRef WKURLCreateWithBaseURL(WKURLRef baseURL, const char* relative)
-{
-    return toAPI(WebURL::create(toImpl(baseURL), String::fromUTF8(relative)).leakRef());
-}
-
-WKStringRef WKURLCopyString(WKURLRef url)
-{
-    return toCopiedAPI(toImpl(url)->string());
-}
-
-bool WKURLIsEqual(WKURLRef a, WKURLRef b)
-{
-    return toImpl(a)->string() == toImpl(b)->string();
-}
-
-WKStringRef WKURLCopyHostName(WKURLRef url)
-{
-    return toCopiedAPI(toImpl(url)->host());
-}
-
-WKStringRef WKURLCopyScheme(WKURLRef url)
-{
-    return toCopiedAPI(toImpl(url)->protocol());
-}
-
-WK_EXPORT WKStringRef WKURLCopyPath(WKURLRef url)
-{
-    return toCopiedAPI(toImpl(url)->path());
-}
-
-WKStringRef WKURLCopyLastPathComponent(WKURLRef url)
-{
-    return toCopiedAPI(toImpl(url)->lastPathComponent());
-}
+} // namespace TestWebKitAPI

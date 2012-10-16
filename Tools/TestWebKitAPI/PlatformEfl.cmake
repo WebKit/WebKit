@@ -66,6 +66,7 @@ SET(test_webkit2_api_BINARIES
     WKConnection
     WKString
     WKStringJSString
+    WKURL
     WillSendSubmitEvent
 )
 

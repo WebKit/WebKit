@@ -1,3 +1,21 @@
+2012-10-16  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2] Provide WKURL API for resolving the relative URL with the given base URL
+        https://bugs.webkit.org/show_bug.cgi?id=99317
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added new constructor function WKURLCreateWithBaseURL for WKURL which
+        resolves the relative URL with the given base URL.
+
+        * Shared/API/c/WKURL.cpp:
+        (WKURLCreateWithBaseURL):
+        * Shared/API/c/WKURL.h:
+        * Shared/WebURL.h:
+        (WebKit::WebURL::create):
+        (WebURL):
+        (WebKit::WebURL::WebURL):
+
 2012-10-16  Szilard Ledan  <szledan@inf.u-szeged.hu>
 
         Separate WebKit2 instances use the same local storage

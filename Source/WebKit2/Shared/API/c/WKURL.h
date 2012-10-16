@@ -35,6 +35,7 @@ extern "C" {
 WK_EXPORT WKTypeID WKURLGetTypeID();
 
 WK_EXPORT WKURLRef WKURLCreateWithUTF8CString(const char* string);
+WK_EXPORT WKURLRef WKURLCreateWithBaseURL(WKURLRef baseURL, const char* relative);
 
 WK_EXPORT WKStringRef WKURLCopyString(WKURLRef url);
 WK_EXPORT WKStringRef WKURLCopyHostName(WKURLRef url);

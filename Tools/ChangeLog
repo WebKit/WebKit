@@ -1,3 +1,17 @@
+2012-10-16  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2] Provide WKURL API for resolving the relative URL with the given base URL
+        https://bugs.webkit.org/show_bug.cgi?id=99317
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added API test for newly added WKURLCreateWithBaseURL().
+
+        * TestWebKitAPI/PlatformEfl.cmake:
+        * TestWebKitAPI/Tests/WebKit2/WKURL.cpp: Added.
+        (TestWebKitAPI):
+        (TestWebKitAPI::TEST):
+
 2012-10-16  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] Decrease the Cario jhbuild dep version back to 1.10.2

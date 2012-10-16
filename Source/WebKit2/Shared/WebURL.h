@@ -46,6 +46,17 @@ public:
         return adoptRef(new WebURL(string));
     }
 
+    static PassRefPtr<WebURL> create(const WebURL* baseURL, const String& relativeURL)
+    {
+        using WebCore::KURL;
+
+        ASSERT(baseURL);
+        baseURL->parseURLIfNecessary();
+        KURL* absoluteURL = new KURL(*baseURL->m_parsedURL.get(), relativeURL);
+
+        return adoptRef(new WebURL(adoptPtr(absoluteURL), absoluteURL->string()));
+    }
+
     bool isNull() const { return m_string.isNull(); }
     bool isEmpty() const { return m_string.isEmpty(); }
 
@@ -78,6 +89,12 @@ public:
 private:
     WebURL(const String& string)
         : m_string(string)
+    {
+    }
+
+    WebURL(PassOwnPtr<WebCore::KURL> parsedURL, const String& string)
+        : m_string(string)
+        , m_parsedURL(parsedURL)
     {
     }
 
