@@ -1,3 +1,103 @@
+2012-10-16  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Refactor MacroAssembler interfaces to differentiate the pointer operands from the 64-bit integer operands
+        https://bugs.webkit.org/show_bug.cgi?id=99154
+
+        Reviewed by Gavin Barraclough.
+
+        In current JavaScriptCore implementation for JSVALUE64 platform (i.e.,
+        the X64 platform), we assume that the JSValue size is same to the
+        pointer size, and thus EncodedJSValue is simply type defined as a
+        "void*". In the JIT compiler, we also take this assumption and invoke
+        the same macro assembler interfaces for both JSValue and pointer
+        operands. We need to differentiate the operations on pointers from the
+        operations on JSValues, and let them invoking different macro
+        assembler interfaces. For example, we now use the interface of
+        "loadPtr" to load either a pointer or a JSValue, and we need to switch
+        to using "loadPtr" to load a pointer and some new "load64" interface
+        to load a JSValue. This would help us supporting other JSVALUE64
+        platforms where pointer size is not necessarily 64-bits, for example
+        x32 (bug #99153).
+
+        The major modification I made is to introduce the "*64" interfaces in
+        the MacroAssembler for those operations on JSValues, keep the "*Ptr"
+        interfaces for those operations on real pointers, and go through all
+        the JIT compiler code to correct the usage.
+
+        This is the first part of the work, i.e, to add the *64 interfaces to
+        the MacroAssembler.
+
+        * assembler/AbstractMacroAssembler.h: Add the Imm64 interfaces.
+        (AbstractMacroAssembler):
+        (JSC::AbstractMacroAssembler::TrustedImm64::TrustedImm64):
+        (TrustedImm64):
+        (JSC::AbstractMacroAssembler::Imm64::Imm64):
+        (Imm64):
+        (JSC::AbstractMacroAssembler::Imm64::asTrustedImm64):
+        * assembler/MacroAssembler.h: map <foo>Ptr methods to <foo>64 for X86_64.
+        (MacroAssembler):
+        (JSC::MacroAssembler::peek64):
+        (JSC::MacroAssembler::poke):
+        (JSC::MacroAssembler::poke64):
+        (JSC::MacroAssembler::addPtr):
+        (JSC::MacroAssembler::andPtr):
+        (JSC::MacroAssembler::negPtr):
+        (JSC::MacroAssembler::orPtr):
+        (JSC::MacroAssembler::rotateRightPtr):
+        (JSC::MacroAssembler::subPtr):
+        (JSC::MacroAssembler::xorPtr):
+        (JSC::MacroAssembler::loadPtr):
+        (JSC::MacroAssembler::loadPtrWithAddressOffsetPatch):
+        (JSC::MacroAssembler::loadPtrWithCompactAddressOffsetPatch):
+        (JSC::MacroAssembler::storePtr):
+        (JSC::MacroAssembler::storePtrWithAddressOffsetPatch):
+        (JSC::MacroAssembler::movePtrToDouble):
+        (JSC::MacroAssembler::moveDoubleToPtr):
+        (JSC::MacroAssembler::comparePtr):
+        (JSC::MacroAssembler::testPtr):
+        (JSC::MacroAssembler::branchPtr):
+        (JSC::MacroAssembler::branchTestPtr):
+        (JSC::MacroAssembler::branchAddPtr):
+        (JSC::MacroAssembler::branchSubPtr):
+        (JSC::MacroAssembler::shouldBlindDouble):
+        (JSC::MacroAssembler::shouldBlind):
+        (JSC::MacroAssembler::RotatedImm64::RotatedImm64):
+        (RotatedImm64):
+        (JSC::MacroAssembler::rotationBlindConstant):
+        (JSC::MacroAssembler::loadRotationBlindedConstant):
+        (JSC::MacroAssembler::move):
+        (JSC::MacroAssembler::and64):
+        (JSC::MacroAssembler::store64):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::shouldBlindForSpecificArch):
+        (MacroAssemblerX86Common):
+        (JSC::MacroAssemblerX86Common::move):
+        * assembler/MacroAssemblerX86_64.h: Add the <foo>64 methods for X86_64.
+        (JSC::MacroAssemblerX86_64::branchAdd32):
+        (JSC::MacroAssemblerX86_64::add64):
+        (MacroAssemblerX86_64):
+        (JSC::MacroAssemblerX86_64::and64):
+        (JSC::MacroAssemblerX86_64::neg64):
+        (JSC::MacroAssemblerX86_64::or64):
+        (JSC::MacroAssemblerX86_64::rotateRight64):
+        (JSC::MacroAssemblerX86_64::sub64):
+        (JSC::MacroAssemblerX86_64::xor64):
+        (JSC::MacroAssemblerX86_64::load64):
+        (JSC::MacroAssemblerX86_64::load64WithAddressOffsetPatch):
+        (JSC::MacroAssemblerX86_64::load64WithCompactAddressOffsetPatch):
+        (JSC::MacroAssemblerX86_64::store64):
+        (JSC::MacroAssemblerX86_64::store64WithAddressOffsetPatch):
+        (JSC::MacroAssemblerX86_64::move64ToDouble):
+        (JSC::MacroAssemblerX86_64::moveDoubleTo64):
+        (JSC::MacroAssemblerX86_64::compare64):
+        (JSC::MacroAssemblerX86_64::branch64):
+        (JSC::MacroAssemblerX86_64::branchTest64):
+        (JSC::MacroAssemblerX86_64::test64):
+        (JSC::MacroAssemblerX86_64::branchAdd64):
+        (JSC::MacroAssemblerX86_64::branchSub64):
+        (JSC::MacroAssemblerX86_64::branchPtrWithPatch):
+        (JSC::MacroAssemblerX86_64::storePtrWithPatch):
+
 2012-10-15  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Make CopiedSpace and MarkedSpace regions independent
