@@ -1,5 +1,14 @@
 2012-10-15  Dana Jansens  <danakj@chromium.org>
 
+        inspector/debugger/xhr-breakpoints.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=99389
+
+        Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+
+2012-10-15  Dana Jansens  <danakj@chromium.org>
+
         Layout Test webaudio/codec-tests/vorbis/vbr-70kbps-44khz.html is failing.
         https://bugs.webkit.org/show_bug.cgi?id=99357
 
