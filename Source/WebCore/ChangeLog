@@ -1,3 +1,25 @@
+2012-10-16  Kenichi Ishibashi  <bashi@chromium.org>
+
+        hb_face_t instances should not depend on FontPlatformData
+        https://bugs.webkit.org/show_bug.cgi?id=99430
+
+        Reviewed by Kent Tamura.
+
+        Use platform specific font data (e.g. SkTypeface) to get
+        font tables for harfbuzz-ng.
+
+        No new tests. No changes in behavior.
+
+        * platform/graphics/harfbuzz/ng/HarfBuzzNGFaceCairo.cpp:
+        (WebCore::harfbuzzCairoGetTable): Takes cairo_scaled_font_t* as userData.
+        (WebCore::HarfBuzzNGFace::createFace):
+        * platform/graphics/harfbuzz/ng/HarfBuzzNGFaceCoreText.cpp:
+        (WebCore::harfbuzzCoreTextGetTable): Takes CGFontRef as userData.
+        (WebCore::HarfBuzzNGFace::createFace):
+        * platform/graphics/harfbuzz/ng/HarfBuzzNGFaceSkia.cpp:
+        (WebCore::harfbuzzSkiaGetTable): Takes SkFontID as userData.
+        (WebCore::HarfBuzzNGFace::createFace):
+
 2012-10-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r131418.

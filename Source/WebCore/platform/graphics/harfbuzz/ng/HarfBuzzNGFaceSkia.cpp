@@ -144,16 +144,16 @@ static hb_font_funcs_t* harfbuzzSkiaGetFontFuncs()
 
 static hb_blob_t* harfbuzzSkiaGetTable(hb_face_t* face, hb_tag_t tag, void* userData)
 {
-    FontPlatformData* font = reinterpret_cast<FontPlatformData*>(userData);
+    SkFontID uniqueID = static_cast<SkFontID>(reinterpret_cast<uint64_t>(userData));
 
-    const size_t tableSize = SkFontHost::GetTableSize(font->uniqueID(), tag);
+    const size_t tableSize = SkFontHost::GetTableSize(uniqueID, tag);
     if (!tableSize)
         return 0;
 
     char* buffer = reinterpret_cast<char*>(fastMalloc(tableSize));
     if (!buffer)
         return 0;
-    size_t actualSize = SkFontHost::GetTableData(font->uniqueID(), tag, 0, tableSize, buffer);
+    size_t actualSize = SkFontHost::GetTableData(uniqueID, tag, 0, tableSize, buffer);
     if (tableSize != actualSize) {
         fastFree(buffer);
         return 0;
@@ -171,7 +171,7 @@ static void destroyHarfBuzzFontData(void* userData)
 
 hb_face_t* HarfBuzzNGFace::createFace()
 {
-    hb_face_t* face = hb_face_create_for_tables(harfbuzzSkiaGetTable, m_platformData, 0);
+    hb_face_t* face = hb_face_create_for_tables(harfbuzzSkiaGetTable, reinterpret_cast<void*>(m_platformData->uniqueID()), 0);
     ASSERT(face);
     return face;
 }

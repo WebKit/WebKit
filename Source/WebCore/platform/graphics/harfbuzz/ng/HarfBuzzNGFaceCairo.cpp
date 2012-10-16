@@ -155,9 +155,7 @@ static hb_font_funcs_t* harfbuzzCairoTextGetFontFuncs()
 
 static hb_blob_t* harfbuzzCairoGetTable(hb_face_t*, hb_tag_t tag, void* userData)
 {
-    FontPlatformData* font = reinterpret_cast<FontPlatformData*>(userData);
-
-    cairo_scaled_font_t* scaledFont = font->scaledFont();
+    cairo_scaled_font_t* scaledFont = reinterpret_cast<cairo_scaled_font_t*>(userData);
     if (!scaledFont)
         return 0;
 
@@ -186,7 +184,7 @@ static hb_blob_t* harfbuzzCairoGetTable(hb_face_t*, hb_tag_t tag, void* userData
 
 hb_face_t* HarfBuzzNGFace::createFace()
 {
-    hb_face_t* face = hb_face_create_for_tables(harfbuzzCairoGetTable, m_platformData, 0);
+    hb_face_t* face = hb_face_create_for_tables(harfbuzzCairoGetTable, m_platformData->scaledFont(), 0);
     ASSERT(face);
     return face;
 }
