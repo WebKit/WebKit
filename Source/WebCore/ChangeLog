@@ -1,3 +1,19 @@
+2012-10-16  Nico Weber  <thakis@chromium.org>
+
+        [chromium/mac] Make spelling indicator HighDPI
+        https://bugs.webkit.org/show_bug.cgi?id=99417
+
+        Reviewed by Stephen White.
+
+        This is the mac version of http://trac.webkit.org/changeset/130940
+        Since the mac and non-mac code are very similar again, merge the two
+        code paths again.
+
+        Covered by editing/spelling/(inline-spelling|grammar)-markers-hidpi.html
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::drawLineForDocumentMarker):
+
 2012-10-16  Tony Chang  <tony@chromium.org>
 
         in a column flexbox, input overflows the box when stretched

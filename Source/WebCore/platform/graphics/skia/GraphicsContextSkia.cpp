@@ -595,79 +595,13 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     platformContext()->didDrawPoints(SkCanvas::kLines_PointMode, 2, pts, paint);
 }
 
-#if PLATFORM(CHROMIUM) && OS(DARWIN)
-void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& pt, float width, DocumentMarkerLineStyle style)
-{
-    if (paintingDisabled())
-        return;
-
-    // Create the pattern we'll use to draw the underline.
-    int index = style == DocumentMarkerGrammarLineStyle ? 1 : 0;
-    static SkBitmap* misspellBitmap[2] = { 0, 0 };
-    if (!misspellBitmap[index]) {
-        // Match the artwork used by the Mac.
-        const int rowPixels = 4;
-        const int colPixels = 3;
-        misspellBitmap[index] = new SkBitmap;
-        misspellBitmap[index]->setConfig(SkBitmap::kARGB_8888_Config,
-                                         rowPixels, colPixels);
-        misspellBitmap[index]->allocPixels();
-
-        misspellBitmap[index]->eraseARGB(0, 0, 0, 0);
-        const uint32_t colors[2][6] = {
-            { 0x2A2A0600, 0x57571000, 0xA8A81B00, 0xBFBF1F00, 0x70701200, 0xE0E02400 },
-            { 0x2A001503, 0x57002A08, 0xA800540D, 0xBF005F0F, 0x70003809, 0xE0007012 }
-        };
-        const uint32_t transparentColor = 0x00000000;
-
-        // Pattern: a b a   a b a
-        //          c d c   c d c
-        //          e f e   e f e
-        for (int x = 0; x < colPixels; ++x) {
-            uint32_t* row = misspellBitmap[index]->getAddr32(0, x);
-            row[0] = colors[index][x * 2];
-            row[1] = colors[index][x * 2 + 1];
-            row[2] = colors[index][x * 2];
-            row[3] = transparentColor;
-        }
-    }
-
-    SkScalar originX = WebCoreFloatToSkScalar(pt.x());
-    SkScalar originY = WebCoreFloatToSkScalar(pt.y());
-    // Make sure to draw only complete dots.
-    int rowPixels = misspellBitmap[index]->width();
-    float widthMod = fmodf(width, rowPixels);
-    if (rowPixels - widthMod > 1)
-        width -= widthMod;
-
-    // Make a shader for the bitmap with an origin of the box we'll draw. This
-    // shader is refcounted and will have an initial refcount of 1.
-    SkShader* shader = SkShader::CreateBitmapShader(
-        *misspellBitmap[index], SkShader::kRepeat_TileMode,
-        SkShader::kRepeat_TileMode);
-    SkMatrix matrix;
-    matrix.setTranslate(originX, originY);
-    shader->setLocalMatrix(matrix);
-
-    // Assign the shader to the paint & release our reference. The paint will
-    // now own the shader and the shader will be destroyed when the paint goes
-    // out of scope.
-    SkPaint paint;
-    paint.setShader(shader)->unref();
-
-    SkRect rect;
-    rect.set(originX, originY, originX + WebCoreFloatToSkScalar(width), originY + SkIntToScalar(misspellBitmap[index]->height()));
-    platformContext()->canvas()->drawRect(rect, paint);
-    platformContext()->didDrawRect(rect, paint);
-}
-#else
 void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& pt, float width, DocumentMarkerLineStyle style)
 {
     if (paintingDisabled())
         return;
 
     int deviceScaleFactor = SkScalarRoundToInt(WebCoreFloatToSkScalar(platformContext()->deviceScaleFactor()));
-    ASSERT(deviceScaleFactor > 0);
+    ASSERT(deviceScaleFactor == 1 || deviceScaleFactor == 2);
 
     // Create the pattern we'll use to draw the underline.
     int index = style == DocumentMarkerGrammarLineStyle ? 1 : 0;
@@ -675,6 +609,62 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& pt, float widt
     static SkBitmap* misspellBitmap2x[2] = { 0, 0 };
     SkBitmap** misspellBitmap = deviceScaleFactor == 2 ? misspellBitmap2x : misspellBitmap1x;
     if (!misspellBitmap[index]) {
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+        // Match the artwork used by the Mac.
+        const int rowPixels = 4 * deviceScaleFactor;
+        const int colPixels = 3 * deviceScaleFactor;
+        misspellBitmap[index] = new SkBitmap;
+        misspellBitmap[index]->setConfig(SkBitmap::kARGB_8888_Config,
+                                         rowPixels, colPixels);
+        misspellBitmap[index]->allocPixels();
+
+        misspellBitmap[index]->eraseARGB(0, 0, 0, 0);
+        const uint32_t transparentColor = 0x00000000;
+
+        if (deviceScaleFactor == 1) {
+            const uint32_t colors[2][6] = {
+                { 0x2A2A0600, 0x57571000,  0xA8A81B00, 0xBFBF1F00,  0x70701200, 0xE0E02400 },
+                { 0x2A001503, 0x57002A08,  0xA800540D, 0xBF005F0F,  0x70003809, 0xE0007012 }
+            };
+
+            // Pattern: a b a   a b a
+            //          c d c   c d c
+            //          e f e   e f e
+            for (int x = 0; x < colPixels; ++x) {
+                uint32_t* row = misspellBitmap[index]->getAddr32(0, x);
+                row[0] = colors[index][x * 2];
+                row[1] = colors[index][x * 2 + 1];
+                row[2] = colors[index][x * 2];
+                row[3] = transparentColor;
+            }
+        } else if (deviceScaleFactor == 2) {
+            const uint32_t colors[2][18] = {
+                { 0x0a090101, 0x33320806, 0x55540f0a,  0x37360906, 0x6e6c120c, 0x6e6c120c,  0x7674140d, 0x8d8b1810, 0x8d8b1810,
+                  0x96941a11, 0xb3b01f15, 0xb3b01f15,  0x6d6b130c, 0xd9d62619, 0xd9d62619,  0x19180402, 0x7c7a150e, 0xcecb2418 },
+                { 0x0a000400, 0x33031b06, 0x55062f0b,  0x37041e06, 0x6e083d0d, 0x6e083d0d,  0x7608410e, 0x8d094e11, 0x8d094e11,
+                  0x960a5313, 0xb30d6417, 0xb30d6417,  0x6d073c0d, 0xd90f781c, 0xd90f781c,  0x19010d03, 0x7c094510, 0xce0f731a }
+            };
+
+            // Pattern: a b c c b a
+            //          d e f f e d
+            //          g h j j h g
+            //          k l m m l k
+            //          n o p p o n
+            //          q r s s r q
+            for (int x = 0; x < colPixels; ++x) {
+                uint32_t* row = misspellBitmap[index]->getAddr32(0, x);
+                row[0] = colors[index][x * 3];
+                row[1] = colors[index][x * 3 + 1];
+                row[2] = colors[index][x * 3 + 2];
+                row[3] = colors[index][x * 3 + 2];
+                row[4] = colors[index][x * 3 + 1];
+                row[5] = colors[index][x * 3];
+                row[6] = transparentColor;
+                row[7] = transparentColor;
+            }
+        } else
+            ASSERT_NOT_REACHED();
+#else
         // We use a 2-pixel-high misspelling indicator because that seems to be
         // what WebKit is designed for, and how much room there is in a typical
         // page for it.
@@ -685,18 +675,32 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& pt, float widt
         misspellBitmap[index]->allocPixels();
 
         misspellBitmap[index]->eraseARGB(0, 0, 0, 0);
-        if (deviceScaleFactor == 2)
+        if (deviceScaleFactor == 1)
+            draw1xMarker(misspellBitmap[index], index);
+        else if (deviceScaleFactor == 2)
             draw2xMarker(misspellBitmap[index], index);
         else
-            draw1xMarker(misspellBitmap[index], index);
+            ASSERT_NOT_REACHED();
+#endif
     }
 
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+    SkScalar originX = WebCoreFloatToSkScalar(pt.x()) * deviceScaleFactor;
+    SkScalar originY = WebCoreFloatToSkScalar(pt.y()) * deviceScaleFactor;
+
+    // Make sure to draw only complete dots.
+    int rowPixels = misspellBitmap[index]->width();
+    float widthMod = fmodf(width * deviceScaleFactor, rowPixels);
+    if (rowPixels - widthMod > deviceScaleFactor)
+        width -= widthMod / deviceScaleFactor;
+#else
     SkScalar originX = WebCoreFloatToSkScalar(pt.x());
 
     // Offset it vertically by 1 so that there's some space under the text.
     SkScalar originY = WebCoreFloatToSkScalar(pt.y()) + 1;
     originX *= deviceScaleFactor;
     originY *= deviceScaleFactor;
+#endif
 
     // Make a shader for the bitmap with an origin of the box we'll draw. This
     // shader is refcounted and will have an initial refcount of 1.
@@ -726,7 +730,6 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& pt, float widt
 
     platformContext()->didDrawRect(rect, paint);
 }
-#endif
 
 void GraphicsContext::drawLineForText(const FloatPoint& pt,
                                       float width,

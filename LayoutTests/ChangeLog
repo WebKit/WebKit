@@ -1,3 +1,15 @@
+2012-10-16  Nico Weber  <thakis@chromium.org>
+
+        [chromium/mac] Make spelling indicator HighDPI
+        https://bugs.webkit.org/show_bug.cgi?id=99417
+
+        Reviewed by Stephen White.
+
+        New baselines.
+
+        * platform/chromium-mac/editing/spelling/inline-spelling-markers-hidpi-expected.png :
+        * platform/chromium-mac/editing/spelling/grammar-markers-hidpi-expected.png :
+
 2012-10-16  Dana Jansens  <danakj@chromium.org>
 
         Remove expected fails for tests that need rebaseline after http://trac.webkit.org/changeset/131358
