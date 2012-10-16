@@ -261,8 +261,10 @@ void MediaControlPanelElement::makeTransparent()
     if (!m_opaque)
         return;
 
+    double duration = document()->page() ? document()->page()->theme()->mediaControlsFadeOutDuration() : 0;
+
     setInlineStyleProperty(CSSPropertyWebkitTransitionProperty, CSSPropertyOpacity);
-    setInlineStyleProperty(CSSPropertyWebkitTransitionDuration, document()->page()->theme()->mediaControlsFadeOutDuration(), CSSPrimitiveValue::CSS_S);
+    setInlineStyleProperty(CSSPropertyWebkitTransitionDuration, duration, CSSPrimitiveValue::CSS_S);
     setInlineStyleProperty(CSSPropertyOpacity, 0.0, CSSPrimitiveValue::CSS_NUMBER);
 
     m_opaque = false;

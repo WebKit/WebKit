@@ -1,3 +1,17 @@
+2012-10-16  Andrew Scherkus  <scherkus@chromium.org>
+
+        Fix crash in WebCore::MediaControlPanelElement::makeTransparent()
+        https://bugs.webkit.org/show_bug.cgi?id=97951
+
+        Reviewed by Simon Fraser.
+
+        No new tests as it's a speculative fix based on crash dump analysis.
+     
+        Despite MediaControlPanelElement checking for document()->page() nullity in other places, it forgot one check in makeTransparent().
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlPanelElement::makeTransparent):
+
 2012-10-16  Emil A Eklund  <eae@chromium.org>
 
         Remove special-case flooring of baselinePosition for replaced elements in InlineFlowBox::placeBoxesInBlockDirection
