@@ -47,6 +47,7 @@
 #include <public/WebMediaConstraints.h>
 #include <public/WebMediaStreamDescriptor.h>
 #include <public/WebRTCConfiguration.h>
+#include <public/WebRTCDataChannel.h>
 #include <public/WebRTCICECandidate.h>
 #include <public/WebRTCSessionDescription.h>
 #include <public/WebRTCSessionDescriptionRequest.h>
@@ -175,6 +176,38 @@ void RTCPeerConnectionHandlerChromium::getStats(PassRefPtr<RTCStatsRequest> requ
     m_webHandler->getStats(request);
 }
 
+bool RTCPeerConnectionHandlerChromium::openDataChannel(PassRefPtr<RTCDataChannelDescriptor> dataChannel)
+{
+    if (!m_webHandler)
+        return false;
+
+    return m_webHandler->openDataChannel(dataChannel);
+}
+
+bool RTCPeerConnectionHandlerChromium::sendStringData(PassRefPtr<RTCDataChannelDescriptor> dataChannel, const String& data)
+{
+    if (!m_webHandler)
+        return false;
+
+    return m_webHandler->sendStringData(dataChannel, data);
+}
+
+bool RTCPeerConnectionHandlerChromium::sendRawData(PassRefPtr<RTCDataChannelDescriptor> dataChannel, const char* data, size_t dataLength)
+{
+    if (!m_webHandler)
+        return false;
+
+    return m_webHandler->sendRawData(dataChannel, data, dataLength);
+}
+
+void RTCPeerConnectionHandlerChromium::closeDataChannel(PassRefPtr<RTCDataChannelDescriptor> dataChannel)
+{
+    if (!m_webHandler)
+        return;
+
+    return m_webHandler->closeDataChannel(dataChannel);
+}
+
 void RTCPeerConnectionHandlerChromium::stop()
 {
     if (!m_webHandler)
@@ -211,29 +244,6 @@ void RTCPeerConnectionHandlerChromium::didAddRemoteStream(const WebKit::WebMedia
 void RTCPeerConnectionHandlerChromium::didRemoveRemoteStream(const WebKit::WebMediaStreamDescriptor& webMediaStreamDescriptor)
 {
     m_client->didRemoveRemoteStream(webMediaStreamDescriptor);
-}
-
-bool RTCPeerConnectionHandlerChromium::openDataChannel(PassRefPtr<RTCDataChannelDescriptor> dataChannel)
-{
-    // FIXME: Implement when WebKit changes have landed.
-    return false;
-}
-
-bool RTCPeerConnectionHandlerChromium::sendStringData(PassRefPtr<RTCDataChannelDescriptor> dataChannel, const String& data)
-{
-    // FIXME: Implement when WebKit changes have landed.
-    return false;
-}
-
-bool RTCPeerConnectionHandlerChromium::sendRawData(PassRefPtr<RTCDataChannelDescriptor> dataChannel, const char* data, size_t dataLength)
-{
-    // FIXME: Implement when WebKit changes have landed.
-    return false;
-}
-
-void RTCPeerConnectionHandlerChromium::closeDataChannel(PassRefPtr<RTCDataChannelDescriptor> dataChannel)
-{
-    // FIXME: Implement when WebKit changes have landed.
 }
 
 } // namespace WebCore

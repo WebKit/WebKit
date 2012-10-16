@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests RTCDataChannel.");
+
+var pc = null;
+var dc = null;
+var data;
+var array;
+
+function dc_onclose() {
+    testPassed("dc_onclose was called");
+    shouldBe("dc.readyState", "'closed'");
+
+    finishJSTest();
+}
+
+function dc_onmessage_arraybufferview(e) {
+    testPassed("dc_onmessage_arraybufferview was called");
+    data = e.data;
+    shouldBe("data.byteLength", "2");
+    array = new Int8Array(e.data);
+    shouldBe("array[0]", "11");
+    shouldBe("array[1]", "13");
+
+    dc.onclose = dc_onclose;
+    dc.close();
+}
+
+function dc_onmessage_arraybuffer(e) {
+    testPassed("dc_onmessage_arraybuffer was called");
+    data = e.data;
+    shouldBe("data.byteLength", "2");
+    array = new Int8Array(e.data);
+    shouldBe("array[0]", "17");
+    shouldBe("array[1]", "19");
+
+    array[0] = 11;
+    array[1] = 13;
+    dc.onmessage = dc_onmessage_arraybufferview;
+    dc.send(array);
+}
+
+function dc_onmessage_string(e) {
+    testPassed("dc_onmessage_string was called");
+    data = e.data;
+    shouldBe("data", "'xyzzy'");
+
+    dc.binaryType = "arraybuffer";
+    var buffer = new ArrayBuffer(2);
+    var array = new Int8Array(buffer);
+    array[0] = 17;
+    array[1] = 19;
+    dc.onmessage = dc_onmessage_arraybuffer;
+    dc.send(buffer);
+}
+
+function dc_onopen() {
+    testPassed("dc_onopen was called");
+    shouldBe("dc.readyState", "'open'");
+    shouldBe("dc.label", "'label'");
+
+    dc.onmessage = dc_onmessage_string;
+    dc.send("xyzzy");
+}
+
+function pc_onopen() {
+    testPassed("pc_onopen was called");
+    dc = pc.createDataChannel("label1");
+    shouldBe("dc.readyState", "'connecting'");
+    shouldBe("dc.reliable", "true");
+
+    dc = pc.createDataChannel("label2", {});
+    shouldBe("dc.reliable", "true");
+
+    dc = pc.createDataChannel("label3", {reliable:true});
+    shouldBe("dc.reliable", "true");
+
+    dc = pc.createDataChannel("label", {reliable:false});
+    shouldBe("dc.reliable", "false");
+    dc.onopen = dc_onopen;
+}
+
+pc = new webkitRTCPeerConnection(null, null);
+pc.onopen = pc_onopen;
+
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -8391,6 +8391,7 @@
             'platform/chromium/support/WebMediaStreamSourcesRequest.cpp',
             'platform/chromium/support/WebPrerender.cpp',
             'platform/chromium/support/WebRTCConfiguration.cpp',
+            'platform/chromium/support/WebRTCDataChannel.cpp',
             'platform/chromium/support/WebRTCICECandidate.cpp',
             'platform/chromium/support/WebRTCSessionDescription.cpp',
             'platform/chromium/support/WebRTCSessionDescriptionRequest.cpp',

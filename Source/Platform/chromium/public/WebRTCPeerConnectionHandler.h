@@ -35,12 +35,14 @@ namespace WebKit {
 class WebMediaConstraints;
 class WebMediaStreamDescriptor;
 class WebRTCConfiguration;
+class WebRTCDataChannel;
 class WebRTCICECandidate;
 class WebRTCPeerConnectionHandlerClient;
 class WebRTCSessionDescription;
 class WebRTCSessionDescriptionRequest;
 class WebRTCStatsRequest;
 class WebRTCVoidRequest;
+class WebString;
 
 class WebRTCPeerConnectionHandler {
 public:
@@ -61,6 +63,12 @@ public:
     // FIXME: Remove default implementation when clients have changed.
     virtual void getStats(const WebRTCStatsRequest&) { }
     virtual void stop() = 0;
+
+    // RTCDataChannel
+    virtual bool openDataChannel(const WebRTCDataChannel&) { return false; }
+    virtual bool sendStringData(const WebRTCDataChannel&, const WebString&) { return false; }
+    virtual bool sendRawData(const WebRTCDataChannel&, const char*, size_t) { return false; }
+    virtual void closeDataChannel(const WebRTCDataChannel&) { }
 };
 
 } // namespace WebKit

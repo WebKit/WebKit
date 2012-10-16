@@ -1,3 +1,31 @@
+2012-10-16  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Add the chromium API for RTCDataChannel
+        https://bugs.webkit.org/show_bug.cgi?id=99435
+
+        Reviewed by Adam Barth.
+
+        Adding WebRTCDataChannel.
+
+        * Platform.gypi:
+        * chromium/public/WebRTCDataChannel.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebRTCDataChannel):
+        (ExtraData):
+        (WebKit::WebRTCDataChannel::ExtraData::~ExtraData):
+        (WebKit::WebRTCDataChannel::WebRTCDataChannel):
+        (WebKit::WebRTCDataChannel::~WebRTCDataChannel):
+        (WebKit::WebRTCDataChannel::operator=):
+        (WebKit::WebRTCDataChannel::isNull):
+        * chromium/public/WebRTCPeerConnectionHandler.h:
+        (WebKit):
+        (WebRTCPeerConnectionHandler):
+        (WebKit::WebRTCPeerConnectionHandler::openDataChannel):
+        (WebKit::WebRTCPeerConnectionHandler::sendStringData):
+        (WebKit::WebRTCPeerConnectionHandler::sendRawData):
+        (WebKit::WebRTCPeerConnectionHandler::closeDataChannel):
+
 2012-10-13  Chris Rogers  <crogers@google.com>
 
         WebAudioBus needs support for resizing bus to a smaller size

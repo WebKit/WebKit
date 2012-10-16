@@ -1,0 +1,30 @@
+Tests RTCDataChannel.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pc_onopen was called
+PASS dc.readyState is 'connecting'
+PASS dc.reliable is true
+PASS dc.reliable is true
+PASS dc.reliable is true
+PASS dc.reliable is false
+PASS dc_onopen was called
+PASS dc.readyState is 'open'
+PASS dc.label is 'label'
+PASS dc_onmessage_string was called
+PASS data is 'xyzzy'
+PASS dc_onmessage_arraybuffer was called
+PASS data.byteLength is 2
+PASS array[0] is 17
+PASS array[1] is 19
+PASS dc_onmessage_arraybufferview was called
+PASS data.byteLength is 2
+PASS array[0] is 11
+PASS array[1] is 13
+PASS dc_onclose was called
+PASS dc.readyState is 'closed'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

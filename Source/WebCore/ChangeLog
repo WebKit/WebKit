@@ -1,3 +1,42 @@
+2012-10-16  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Add the chromium API for RTCDataChannel
+        https://bugs.webkit.org/show_bug.cgi?id=99435
+
+        Reviewed by Adam Barth.
+
+        Adding WebRTCDataChannel.
+
+        Test: fast/mediastream/RTCPeerConnection-datachannel.html
+
+        * WebCore.gypi:
+        * platform/chromium/support/WebRTCDataChannel.cpp: Added.
+        (WebKit):
+        (ExtraDataContainer):
+        (WebKit::ExtraDataContainer::ExtraDataContainer):
+        (WebKit::ExtraDataContainer::extraData):
+        (WebKit::WebRTCDataChannel::WebRTCDataChannel):
+        (WebKit::WebRTCDataChannel::initialize):
+        (WebKit::WebRTCDataChannel::assign):
+        (WebKit::WebRTCDataChannel::reset):
+        (WebKit::WebRTCDataChannel::operator PassRefPtr<WebCore::RTCDataChannelDescriptor>):
+        (WebKit::WebRTCDataChannel::operator WebCore::RTCDataChannelDescriptor*):
+        (WebKit::WebRTCDataChannel::extraData):
+        (WebKit::WebRTCDataChannel::setExtraData):
+        (WebKit::WebRTCDataChannel::label):
+        (WebKit::WebRTCDataChannel::reliable):
+        (WebKit::WebRTCDataChannel::setBufferedAmount):
+        (WebKit::WebRTCDataChannel::readyStateChanged):
+        (WebKit::WebRTCDataChannel::dataArrived):
+        (WebKit::WebRTCDataChannel::error):
+        * platform/mediastream/chromium/RTCPeerConnectionHandlerChromium.cpp:
+        (WebCore::RTCPeerConnectionHandlerChromium::negotiationNeeded):
+        (WebCore::RTCPeerConnectionHandlerChromium::didGenerateICECandidate):
+        (WebCore):
+        (WebCore::RTCPeerConnectionHandlerChromium::didChangeReadyState):
+        (WebCore::RTCPeerConnectionHandlerChromium::didChangeICEState):
+        (WebCore::RTCPeerConnectionHandlerChromium::didRemoveRemoteStream):
+
 2012-10-16  Brady Eidson  <beidson@apple.com>
 
         Update indentation in *ResourceLoader headers to match modern WebKit style
