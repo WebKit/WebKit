@@ -1,5 +1,18 @@
 2012-10-16  Simon Hausmann  <simon.hausmann@digia.com>
 
+        [Qt] Fix determination of changed files from SVN revisions
+
+        Reviewed by Csaba Osztrogonác.
+
+        isSVN() doesn't work from within the build directory, so change to the source directory before
+        doing any VCS operations.
+
+        * Scripts/VCSUtils.pm:
+        * Scripts/webkitdirs.pm:
+        (buildQMakeProjects):
+
+2012-10-16  Simon Hausmann  <simon.hausmann@digia.com>
+
         Fix build-webkit bailing out of !isSVN() and !isGit()
 
         Reviewed by Tor Arne Vestbø.

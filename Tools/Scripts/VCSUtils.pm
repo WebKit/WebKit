@@ -2107,12 +2107,17 @@ sub gitCommitForSVNRevision
 
 sub listOfChangedFilesBetweenRevisions
 {
-    my ($firstRevision, $lastRevision) = @_;
+    my ($sourceDir, $firstRevision, $lastRevision) = @_;
     my $command;
 
     if ($firstRevision eq "unknown" or $lastRevision eq "unknown") {
         return ();
     }
+
+    # Some VCS functions don't work from within the build dir, so always
+    # go to the source dir first.
+    my $cwd = Cwd::getcwd();
+    chdir $sourceDir;
 
     if (isGit()) {
         my $firstCommit = gitCommitForSVNRevision($firstRevision);
@@ -2120,12 +2125,19 @@ sub listOfChangedFilesBetweenRevisions
         $command = "git diff --name-status $firstCommit..$lastCommit";
     } elsif (isSVN()) {
         $command = "svn diff --summarize -r $firstRevision:$lastRevision";
-    } else {
-        return ();
     }
-    my $diffOutput = `$command`;
-    $diffOutput =~ s/^[A-Z]\s+//gm;
-    return split(/[\r\n]+/, $diffOutput)
+
+    my @result = ();
+
+    if ($command) {
+        my $diffOutput = `$command`;
+        $diffOutput =~ s/^[A-Z]\s+//gm;
+        @result = split(/[\r\n]+/, $diffOutput);
+    }
+
+    chdir $cwd;
+
+    return @result;
 }
 
 

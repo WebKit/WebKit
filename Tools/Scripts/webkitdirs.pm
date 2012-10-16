@@ -2326,7 +2326,7 @@ sub buildQMakeProjects
             ", now at revision $svnRevision. Full incremental build needed.\n";
         $needsIncrementalBuild = 1;
 
-        my @fileList = listOfChangedFilesBetweenRevisions($previousSvnRevision, $svnRevision);
+        my @fileList = listOfChangedFilesBetweenRevisions(sourceDir(), $previousSvnRevision, $svnRevision);
 
         foreach (@fileList) {
             if (m/\.pr[oif]$/ or
