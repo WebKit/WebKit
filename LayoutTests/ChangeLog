@@ -1,3 +1,12 @@
+2012-10-16  Emil A Eklund  <eae@chromium.org>
+
+        Remove special-case flooring of baselinePosition for replaced elements in InlineFlowBox::placeBoxesInBlockDirection
+        https://bugs.webkit.org/show_bug.cgi?id=99376
+
+        Reviewed by Levi Weintraub.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-16  Filip Pizlo  <fpizlo@apple.com>
 
         GetScopedVar CSE matches dead GetScopedVar's leading to IR corruption

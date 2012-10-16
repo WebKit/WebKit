@@ -1,3 +1,27 @@
+2012-10-16  Emil A Eklund  <eae@chromium.org>
+
+        Remove special-case flooring of baselinePosition for replaced elements in InlineFlowBox::placeBoxesInBlockDirection
+        https://bugs.webkit.org/show_bug.cgi?id=99376
+
+        Reviewed by Levi Weintraub.
+
+        In r122769 (bug 91410) we added a special-case handling for
+        replaced elements in InlineFlowBox::placeBoxesInBlockDirection
+        to work around positioning issues in a couple of svg tests.
+        This was needed to compensate for a workaround in the table
+        painting code that was fixed in r131358 (bug 99364). As such the
+        special-case handling for replaced elements is no longer needed
+        in InlineFlowBox::placeBoxesInBlockDirection.
+
+        Furthermore this caused problems with caret repainting leaving
+        residual pixels which motivated this change.
+
+        No new tests, have not been able to write a repaint test to
+        demonstrate the caret repaint issue.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+
 2012-10-16  Simon Fraser  <simon.fraser@apple.com>
 
         Some #include hygiene
