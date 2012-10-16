@@ -8,7 +8,7 @@
         * platform/graphics/WidthIterator.cpp:
         * platform/graphics/WidthIterator.h:
         (WebCore::WidthIterator::shouldApplyFontTransforms): Changed to return false if the run is
-        shorter than 2 characters. 1-character are invariant under font transforms, and therefore
+        shorter than 2 characters. 1-character runs are invariant under font transforms, and therefore
         Font::codePath() sends them through WidthIterator even on platforms where WidthIterator
         does not support kerning and ligatures.
 
