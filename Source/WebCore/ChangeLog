@@ -1,3 +1,35 @@
+2012-10-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a new layer type for the page tiled cache layer
+        https://bugs.webkit.org/show_bug.cgi?id=99491
+
+        Reviewed by Dean Jackson.
+
+        In preparation for using tile cache layers in place of CATiledLayer,
+        add a new PlatformCALayer layer type LayerTypePageTileCacheLayer,
+        since the page tile cache will have some different behavior from
+        other tile cache layers.
+        
+        Generalize code that was looking at LayerTypeTileCacheLayer to use
+        usesTileCacheLayer() if it applies to both types of tile caches.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA):
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges): Show the tile
+        wash for tiled layers as well as layers with transforms (the tile
+        wash is just for debugging).
+        (WebCore::GraphicsLayerCA::platformCALayerDidCreateTiles):
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+        * platform/graphics/ca/PlatformCALayer.h:
+        (WebCore::PlatformCALayer::usesTileCacheLayer):
+        (PlatformCALayer):
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayer::PlatformCALayer):
+        (PlatformCALayer::~PlatformCALayer):
+        (PlatformCALayer::tiledBacking):
+        * platform/graphics/mac/WebLayer.mm:
+        (drawLayerContents): Avoid double-drawing the repaint counter in tile cache layers.
+
 2012-10-16  Stephen Chenney  <schenney@chromium.org> 
         An feImage that tries to render itself should be stopped
         https://bugs.webkit.org/show_bug.cgi?id=94652
