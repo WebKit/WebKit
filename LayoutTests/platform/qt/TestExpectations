@@ -1374,10 +1374,6 @@ svg/animations/animate-text-nested-transforms.html
 # https://bugs.webkit.org/show_bug.cgi?id=76534
 svg/carto.net/combobox.svg
 
-# [Qt] svg/custom/getBBox-path.svg fails
-# https://bugs.webkit.org/show_bug.cgi?id=71766
-svg/custom/getBBox-path.svg
-
 #[Qt] New svg/hittest tests introduced in r106882 fail
 #https://bugs.webkit.org/show_bug.cgi?id=77964
 svg/hittest/zero-length-round-cap-path.xhtml
