@@ -13,6 +13,7 @@
 <div id="non-contenteditable-host2"></div>
 <div id="non-contenteditable-host3"></div>
 <div id="sandbox"></div>
+<div id="sandbox2"></div>
 <pre id="console"></pre>
 <script>
 description("Tests to ensure that a '-webkit-user-modify' CSS porperty is not inherited across shadow boundaries.");
@@ -62,8 +63,18 @@ document.getElementById('sandbox').appendChild(
 document.body.offsetLeft;
 
 shouldBeEqualToString('getUserModifyProperty("child-a")', 'read-write');
-/* FIXME(90017): css property: -user-modify should be inherited from parent.*/
 shouldBeEqualToString('getUserModifyProperty("child-b")', 'read-write');
+
+document.getElementById('sandbox2').appendChild(
+    createDOM('div', {'id': 'host', 'contenteditable': 'false'},
+              createShadowRoot(createDOM('content', {'select': '#child-c'}),
+                               createDOM('div', {'contenteditable' : 'true'},
+                                         createDOM('content', {'select': '#child-d'}))),
+              createDOM('div', {'id': 'child-c'}),
+              createDOM('div', {'id': 'child-d'})));
+
+shouldBeEqualToString('getUserModifyProperty("child-c")', 'read-only');
+shouldBeEqualToString('getUserModifyProperty("child-d")', 'read-only');
 
 </script>
 <script src="../../js/resources/js-test-post.js"></script>

@@ -1,3 +1,21 @@
+2012-10-16  Takashi Sakamoto  <tasak@google.com>
+
+        [Meta] [Shadow] contenteditable attribute for distributed nodes.
+        https://bugs.webkit.org/show_bug.cgi?id=90017
+
+        Reviewed by Dimitri Glazkov.
+
+        If an element is distributed to an insertion point, the element's
+        webkit-user-modify is inherited from its shadow host.
+
+        No new tests, because the existing test: user-modify-inheritance.html
+        covers this change.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleForElement):
+        After an element inherits a style from its parent, override user-modify
+        by using the shadow host's style if the element is distributed.
+
 2012-10-16  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Get rid of (now empty) JavaScriptSource and StyleSource, rename all usages to UISourceCode.

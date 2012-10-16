@@ -1543,6 +1543,13 @@ PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderS
         cloneForParent = RenderStyle::clone(style());
         m_parentStyle = cloneForParent.get();
     }
+    // contenteditable attribute (implemented by -webkit-user-modify) should
+    // be propagated from shadow host to distributed node.
+    if (m_distributedToInsertionPoint) {
+        ASSERT(element->parentElement());
+        ASSERT(element->parentElement()->renderStyle());
+        m_style->setUserModify(element->parentElement()->renderStyle()->userModify());
+    }
 
     if (element->isLink()) {
         m_style->setIsLink(true);

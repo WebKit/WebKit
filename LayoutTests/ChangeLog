@@ -1,3 +1,13 @@
+2012-10-16  Takashi Sakamoto  <tasak@google.com>
+
+        [Meta] [Shadow] contenteditable attribute for distributed nodes.
+        https://bugs.webkit.org/show_bug.cgi?id=90017
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/user-modify-inheritance-expected.txt:
+        * fast/dom/shadow/user-modify-inheritance.html:
+
 2012-10-16  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Get rid of (now empty) JavaScriptSource and StyleSource, rename all usages to UISourceCode.
