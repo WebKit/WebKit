@@ -1,3 +1,26 @@
+2012-10-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix GraphicsLayer visible rect computation when scrolling in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=99385
+
+        Reviewed by Dean Jackson, Tim Horton.
+
+        RenderLayerCompositor always used frameView->frameRect() as the visible
+        rect on the root used for GraphicsLayer visibleRect computation. This
+        was wrong for subframes, which require a rect with an origin of (0,0)
+        and size of the contentsSize().
+        
+        It was also wrong when the scrolling is not represented in the GraphicsLayer
+        tree. When scrolling is done elsewhere, we need to use the ScrollView's
+        visibleContentRect().
+
+        Tests: compositing/visible-rect/scrolled.html
+               compositing/visible-rect/iframe-and-layers.html
+               compositing/visible-rect/iframe-no-layers.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+
 2012-10-15  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Remove page visibility hidden histograms

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            height: 1500px;
+            width: 1500px;
+        }
+        
+        .container {
+            position: relative;
+            height: 200px;
+            width: 500px;
+            border: 1px solid black;
+            overflow: hidden;
+            z-index: 0;
+        }
+        
+        .box {
+            width: 200px;
+            height: 200px;
+            background-color: blue;
+        }
+        
+        .composited {
+            -webkit-transform: translateZ(1px);
+        }
+        
+        iframe {
+            margin: 10px;
+        }
+        
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function dumpLayers()
+        {
+            window.scrollTo(40, 40);
+            if (window.internals) {
+                // Dump the iframe's layers.
+                var iframe = document.getElementById('iframe');
+                document.getElementById('layers').innerText = internals.layerTreeAsText(iframe.contentDocument, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS)
+            }
+        }
+        window.addEventListener('load', dumpLayers, false);
+    </script>
+</head>
+<body>
+
+    <iframe id="iframe" src="resources/subframe-with-layers.html" scrolling="nadso"></iframe>
+
+<pre id="layers">Layer tree goes here when testing</pre>
+</body>
+</html>

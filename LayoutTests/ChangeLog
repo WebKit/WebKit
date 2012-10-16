@@ -1,3 +1,23 @@
+2012-10-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix GraphicsLayer visible rect computation when scrolling in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=99385
+
+        Reviewed by Dean Jackson, Tim Horton.
+
+        scrolled.html tests the visible rect after scrolling. The other tests
+        are for visibleRect in iframes, with and without compositing layers
+        in the parent document (which exercises different code paths in WebKit1).
+
+        * compositing/visible-rect/iframe-and-layers-expected.txt: Added.
+        * compositing/visible-rect/iframe-and-layers.html: Added.
+        * compositing/visible-rect/iframe-no-layers-expected.txt: Added.
+        * compositing/visible-rect/iframe-no-layers.html: Added.
+        * compositing/visible-rect/resources/subframe-with-layers.html: Added.
+        * compositing/visible-rect/scrolled-expected.txt: Added.
+        * compositing/visible-rect/scrolled.html: Added.
+        * platform/mac-wk2/compositing/visible-rect/iframe-no-layers-expected.txt: Added.
+
 2012-10-14  Kent Tamura  <tkent@chromium.org>
 
         Input elements with multiple fields UI should set appropriate direction for browser locale automatically

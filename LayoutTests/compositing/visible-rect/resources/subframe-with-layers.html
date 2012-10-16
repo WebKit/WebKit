@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            height: 1500px;
+            width: 1500px;
+        }
+        .box {
+            height: 300px;
+            width: 100px;
+            background-color: blue;
+            -webkit-transform: translateZ(1px);
+        }
+    </style>
+    <script>
+        function scroll()
+        {
+            window.setTimeout(function() {
+                window.scrollTo(10, 100);
+            }, 2000);
+        }
+        window.addEventListener('load', scroll, false);
+    </script>
+</head>
+<body>
+    <div class="box">asdf</div>
+</body>
+</html>
