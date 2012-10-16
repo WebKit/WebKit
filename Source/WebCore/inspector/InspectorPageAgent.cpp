@@ -1108,6 +1108,17 @@ void InspectorPageAgent::setTouchEmulationEnabled(ErrorString* error, bool enabl
 #endif
 }
 
+void InspectorPageAgent::getCompositingBordersVisible(ErrorString* error, bool* outParam)
+{
+    Settings* settings = m_page->settings();
+    if (!settings) {
+        *error = "Internal error: unable to read settings.";
+        return;
+    }
+
+    *outParam = settings->showDebugBorders() || settings->showRepaintCounter();
+}
+
 void InspectorPageAgent::setCompositingBordersVisible(ErrorString*, bool visible)
 {
     Settings* settings = m_page->settings();

@@ -118,6 +118,7 @@ public:
     virtual void clearDeviceOrientationOverride(ErrorString*);
     virtual void canOverrideDeviceOrientation(ErrorString*, bool*);
     virtual void setTouchEmulationEnabled(ErrorString*, bool);
+    virtual void getCompositingBordersVisible(ErrorString*, bool* out_param);
     virtual void setCompositingBordersVisible(ErrorString*, bool);
 
     // Geolocation override helpers.
