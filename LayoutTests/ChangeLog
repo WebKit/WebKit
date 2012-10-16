@@ -1,3 +1,28 @@
+2012-10-15  Keishi Hattori  <keishi@webkit.org>
+
+        Add tests for suggestion picker that test step/min/max attributes
+        https://bugs.webkit.org/show_bug.cgi?id=99168
+
+        Reviewed by Kent Tamura.
+
+        These tests that setting step/min/max attributes filters out values from the suggestion picker.
+
+        * fast/forms/resources/suggestion-picker-common.js:
+        (valueForEntry): Returns value for an suggestion list entry element.
+        (highlightedEntry):
+        (entryValues): Returns an array of entry values.
+        (openPicker): Added callback argument.
+        (popupOpenCallbackWrapper):
+        * platform/chromium-android/TestExpectations:
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-min-max-attribute-expected.txt: Added.
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-min-max-attribute.html: Added.
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-step-attribute-expected.txt: Added.
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-step-attribute.html: Added.
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-min-max-attribute-expected.txt: Added.
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-min-max-attribute.html: Added.
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-step-attribute-expected.txt: Added.
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-step-attribute.html: Added.
+
 2012-10-15  Vlad Grecescu  <igrecesc@adobe.com>, Douglas Stockwell  <dstockwell@chromium.org>
 
         Support for background-clip:content-box and padding-box with border-radius

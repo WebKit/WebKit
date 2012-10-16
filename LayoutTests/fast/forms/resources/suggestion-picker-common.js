@@ -4,23 +4,44 @@ if (window.internals)
 
 var popupWindow = null;
 
-function highlightedEntry() {
-    var activeElement = popupWindow.document.activeElement;
-    if (!activeElement)
+function valueForEntry(element) {
+    if (!element)
         return null;
-    var value = activeElement.dataset.value;
+    var value = element.dataset.value;
     if (typeof value === "string")
         return value;
-    var action = activeElement.dataset.action;
+    var action = element.dataset.action;
     if (typeof action === "string")
         return "@" + action;
     return null;
 }
 
-function openPicker(input) {
+function highlightedEntry() {
+    return valueForEntry(popupWindow.document.activeElement);
+}
+
+function entryValues() {
+    var elements = popupWindow.document.getElementsByClassName("suggestion-list-entry");
+    var values = [];
+    for (var i = 0; i < elements.length; ++i)
+        values.push(valueForEntry(elements[i]));
+    return values;
+}
+
+var popupOpenCallback = null;
+function openPicker(input, callback) {
     input.offsetTop; // Force to lay out
     sendKey(input, "Down", false, true);
     popupWindow = document.getElementById('mock-page-popup').contentWindow;
+    if (typeof callback === "function") {
+        popupOpenCallback = callback;
+        popupWindow.addEventListener("resize", popupOpenCallbackWrapper, false);
+    }
+}
+
+function popupOpenCallbackWrapper() {
+    popupWindow.removeEventListener("resize", popupOpenCallbackWrapper);
+    popupOpenCallback();
 }
 
 function sendKey(input, keyName, ctrlKey, altKey) {
