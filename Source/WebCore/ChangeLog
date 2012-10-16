@@ -1,3 +1,16 @@
+2012-10-15  Nate Chapin  <japhet@chromium.org>
+
+        ResourceLoader::sendResourceLoadCallbacks() is backwards
+        https://bugs.webkit.org/show_bug.cgi?id=99366
+
+        Reviewed by Daniel Bates.
+
+        No new tests, this function is uncalled but will be used
+        in a later patch.
+
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::sendResourceLoadCallbacks):
+
 2012-10-15  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r131365): WidthIterator::advance() is needlessly passed a GlyphBuffer in many cases
