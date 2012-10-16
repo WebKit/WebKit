@@ -1,3 +1,17 @@
+2012-10-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r131418.
+        http://trac.webkit.org/changeset/131418
+        https://bugs.webkit.org/show_bug.cgi?id=99431
+
+        since 131403 seems innocent (Requested by shinyak|_ on
+        #webkit).
+
+        * dom/Document.cpp:
+        (WebCore::isValidNameNonASCII):
+        (WebCore):
+        (WebCore::Document::isValidName):
+
 2012-10-16  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: NMI Instrument InspectorOverlay. It costs us ~9Mb because it creates page size canvas.
