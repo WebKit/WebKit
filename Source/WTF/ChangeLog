@@ -1,5 +1,16 @@
 2012-10-16  Michael Saboff  <msaboff@apple.com>
 
+        Change WTF_USE_8BIT_TEXTRUN to ENABLE_8BIT_TEXTRUN
+        https://bugs.webkit.org/show_bug.cgi?id=99484
+
+        Reviewed by Eric Seidel.
+
+        Changed macro name to align with it's purpose.
+
+        * wtf/Platform.h:
+
+2012-10-16  Michael Saboff  <msaboff@apple.com>
+
         StringImpl::reverseFind() with a single match character isn't optimal for mixed 8/16 bit cases
         https://bugs.webkit.org/show_bug.cgi?id=99363
 

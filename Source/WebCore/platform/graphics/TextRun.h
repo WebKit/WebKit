@@ -59,7 +59,7 @@ public:
 
     typedef unsigned RoundingHacks;
 
-#if USE(8BIT_TEXTRUN)
+#if ENABLE(8BIT_TEXTRUN)
     TextRun(const LChar* c, unsigned len, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
         : m_charactersLength(len)
         , m_len(len)
@@ -123,7 +123,7 @@ public:
         , m_disableSpacing(false)
         , m_tabSize(0)
     {
-#if USE(8BIT_TEXTRUN)
+#if ENABLE(8BIT_TEXTRUN)
         if (m_charactersLength && s.is8Bit()) {
             m_data.characters8 = s.characters8();
             m_is8Bit = true;
@@ -143,7 +143,7 @@ public:
 
         TextRun result = *this;
 
-#if USE(8BIT_TEXTRUN)
+#if ENABLE(8BIT_TEXTRUN)
         if (is8Bit()) {
             result.setText(data8(startOffset), length);
             return result;
@@ -166,7 +166,7 @@ public:
     int length() const { return m_len; }
     int charactersLength() const { return m_charactersLength; }
 
-#if USE(8BIT_TEXTRUN)
+#if ENABLE(8BIT_TEXTRUN)
     void setText(const LChar* c, unsigned len) { m_data.characters8 = c; m_len = len; m_is8Bit = true;}
 #endif
     void setText(const UChar* c, unsigned len) { m_data.characters16 = c; m_len = len; m_is8Bit = false;}

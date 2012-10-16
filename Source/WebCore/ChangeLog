@@ -1,3 +1,22 @@
+2012-10-16  Michael Saboff  <msaboff@apple.com>
+
+        Change WTF_USE_8BIT_TEXTRUN to ENABLE_8BIT_TEXTRUN
+        https://bugs.webkit.org/show_bug.cgi?id=99484
+
+        Reviewed by Eric Seidel.
+
+        Changed macro name to align with it's purpose, therefore changed USE(8BIT_TEXTRUN) to ENABLE(8BIT_TEXTRUN).
+
+        No new tests.  Changed macro name, no functional change.
+
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::TextRun):
+        (WebCore::TextRun::subRun):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::constructTextRun):
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+
 2012-10-16  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt] REGRESSION(r131485): It broke the build
