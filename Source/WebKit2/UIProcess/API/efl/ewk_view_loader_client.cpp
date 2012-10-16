@@ -52,9 +52,8 @@ static void didReceiveTitleForFrame(WKPageRef, WKStringRef title, WKFrameRef fra
 static void didReceiveIntentForFrame(WKPageRef, WKFrameRef, WKIntentDataRef intent, WKTypeRef, const void* clientInfo)
 {
     Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
-    Ewk_Intent* ewkIntent = ewk_intent_new(intent);
-    ewk_view_intent_request_new(ewkView, ewkIntent);
-    ewk_intent_unref(ewkIntent);
+    RefPtr<Ewk_Intent> ewkIntent = adoptRef(ewk_intent_new(intent));
+    ewk_view_intent_request_new(ewkView, ewkIntent.get());
 }
 #endif
 
@@ -62,9 +61,8 @@ static void didReceiveIntentForFrame(WKPageRef, WKFrameRef, WKIntentDataRef inte
 static void registerIntentServiceForFrame(WKPageRef, WKFrameRef, WKIntentServiceInfoRef serviceInfo, WKTypeRef, const void *clientInfo)
 {
     Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
-    Ewk_Intent_Service* ewkIntentService = ewk_intent_service_new(serviceInfo);
-    ewk_view_intent_service_register(ewkView, ewkIntentService);
-    ewk_intent_service_unref(ewkIntentService);
+    RefPtr<Ewk_Intent_Service> ewkIntentService = adoptRef(ewk_intent_service_new(serviceInfo));
+    ewk_view_intent_service_register(ewkView, ewkIntentService.get());
 }
 #endif
 

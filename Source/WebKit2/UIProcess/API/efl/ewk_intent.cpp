@@ -29,44 +29,12 @@
 #include "WKAPICast.h"
 #include "WKArray.h"
 #include "WKDictionary.h"
-#include "WKEinaSharedString.h"
-#include "WKIntentData.h"
-#include "WKRetainPtr.h"
 #include "WKString.h"
 #include "WKURL.h"
 #include "ewk_intent_private.h"
 #include <wtf/text/CString.h>
 
 using namespace WebKit;
-
-/**
- * \struct  _Ewk_Intent
- * @brief   Contains the intent data.
- */
-struct _Ewk_Intent {
-    unsigned int __ref; /**< the reference count of the object */
-#if ENABLE(WEB_INTENTS)
-    WKRetainPtr<WKIntentDataRef> wkIntent;
-#endif
-    WKEinaSharedString action;
-    WKEinaSharedString type;
-    WKEinaSharedString service;
-
-    _Ewk_Intent(WKIntentDataRef intentRef)
-        : __ref(1)
-#if ENABLE(WEB_INTENTS)
-        , wkIntent(intentRef)
-        , action(AdoptWK, WKIntentDataCopyAction(intentRef))
-        , type(AdoptWK, WKIntentDataCopyType(intentRef))
-        , service(AdoptWK, WKIntentDataCopyService(intentRef))
-#endif
-    { }
-
-    ~_Ewk_Intent()
-    {
-        ASSERT(!__ref);
-    }
-};
 
 #define EWK_INTENT_WK_GET_OR_RETURN(intent, wkIntent_, ...)    \
     if (!(intent)) {                                           \
@@ -83,7 +51,8 @@ Ewk_Intent* ewk_intent_ref(Ewk_Intent* intent)
 {
 #if ENABLE(WEB_INTENTS)
     EINA_SAFETY_ON_NULL_RETURN_VAL(intent, 0);
-    ++intent->__ref;
+
+    intent->ref();
 #endif
 
     return intent;
@@ -94,10 +63,7 @@ void ewk_intent_unref(Ewk_Intent* intent)
 #if ENABLE(WEB_INTENTS)
     EINA_SAFETY_ON_NULL_RETURN(intent);
 
-    if (--intent->__ref)
-        return;
-
-    delete intent;
+    intent->deref();
 #endif
 }
 

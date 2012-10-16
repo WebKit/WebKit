@@ -1,3 +1,30 @@
+2012-10-16  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Have intent classes subclass RefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=99467
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make Ewk_Intent and Ewk_Intent_Service subclass
+        RefCounted so that we can use smart pointers
+        internally.
+
+        * UIProcess/API/efl/ewk_intent.cpp:
+        (ewk_intent_ref):
+        (ewk_intent_unref):
+        * UIProcess/API/efl/ewk_intent_private.h:
+        (_Ewk_Intent):
+        (_Ewk_Intent::_Ewk_Intent):
+        * UIProcess/API/efl/ewk_intent_service.cpp:
+        (ewk_intent_service_ref):
+        (ewk_intent_service_unref):
+        * UIProcess/API/efl/ewk_intent_service_private.h:
+        (_Ewk_Intent_Service):
+        (_Ewk_Intent_Service::_Ewk_Intent_Service):
+        * UIProcess/API/efl/ewk_view_loader_client.cpp:
+        (didReceiveIntentForFrame):
+        (registerIntentServiceForFrame):
+
 2012-10-16  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Inherit Ewk_Download_Job, Ewk_Back_Forward_List_Item, Ewk_Url_Response, Ewk_Navigation_Policy_Decision from RefCounted

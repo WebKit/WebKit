@@ -28,8 +28,6 @@
 
 #include "IntentServiceInfo.h"
 #include "WKAPICast.h"
-#include "WKEinaSharedString.h"
-#include "WKIntentServiceInfo.h"
 #include "WKRetainPtr.h"
 #include "WKURL.h"
 #include "ewk_intent_service_private.h"
@@ -37,41 +35,11 @@
 
 using namespace WebKit;
 
-/**
- * \struct _Ewk_Intent_Service
- * @brief Contains the intent service data.
- */
-struct _Ewk_Intent_Service {
-    unsigned int __ref; /**< the reference count of the object */
-
-    WKEinaSharedString action;
-    WKEinaSharedString type;
-    WKEinaSharedString href;
-    WKEinaSharedString title;
-    WKEinaSharedString disposition;
-
-    _Ewk_Intent_Service(WKIntentServiceInfoRef serviceRef)
-        : __ref(1)
-#if ENABLE(WEB_INTENTS_TAG)
-        , action(AdoptWK, WKIntentServiceInfoCopyAction(serviceRef))
-        , type(AdoptWK, WKIntentServiceInfoCopyType(serviceRef))
-        , href(AdoptWK, WKIntentServiceInfoCopyHref(serviceRef))
-        , title(AdoptWK, WKIntentServiceInfoCopyTitle(serviceRef))
-        , disposition(AdoptWK, WKIntentServiceInfoCopyDisposition(serviceRef))
-#endif
-    { }
-
-    ~_Ewk_Intent_Service()
-    {
-        ASSERT(!__ref);
-    }
-};
-
 Ewk_Intent_Service* ewk_intent_service_ref(Ewk_Intent_Service* service)
 {
 #if ENABLE(WEB_INTENTS_TAG)
     EINA_SAFETY_ON_NULL_RETURN_VAL(service, 0);
-    ++service->__ref;
+    service->ref();
 #endif
 
     return service;
@@ -82,10 +50,7 @@ void ewk_intent_service_unref(Ewk_Intent_Service* service)
 #if ENABLE(WEB_INTENTS_TAG)
     EINA_SAFETY_ON_NULL_RETURN(service);
 
-    if (--service->__ref)
-        return;
-
-    delete service;
+    service->deref();
 #endif
 }
 
