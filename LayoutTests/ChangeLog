@@ -1,3 +1,16 @@
+2012-10-16  Mike Reed  <reed@google.com>
+
+        update expectations preparing for skia optimization
+        https://bugs.webkit.org/show_bug.cgi?id=99476
+
+        Reviewed by NOBODY.
+
+        crbug.com/156097
+        Chrome will enable a skia optimization (see crbug/156097). In preparation for that, we mark these tests
+        to be rebaselined after that change lands.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-16  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: setTimeout in layout tests causes flakiness in multiprocess ports
