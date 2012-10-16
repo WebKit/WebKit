@@ -1,3 +1,11 @@
+2012-10-16  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        CSS and TouchAdjustment - I am watching you!
+
+        Unreviewed update of watchlist.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-10-16  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Silence C++11 warnings with older versions of clang
