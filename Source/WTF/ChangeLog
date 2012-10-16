@@ -1,3 +1,14 @@
+2012-10-16  Adrienne Walker  <enne@google.com>
+
+        Remove unused WTF_NEW_HASHMAP_ITERATORS_INTERFACE #define
+        https://bugs.webkit.org/show_bug.cgi?id=99367
+
+        Reviewed by James Robinson.
+
+        Does what it says on the tin.
+
+        * wtf/HashTraits.h:
+
 2012-10-15  Andreas Kling  <kling@webkit.org>
 
         Remove WTF::fastDeleteAllValues().

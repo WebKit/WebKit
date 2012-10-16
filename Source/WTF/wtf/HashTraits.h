@@ -165,9 +165,6 @@ namespace WTF {
         return HashTraitsEmptyValueChecker<Traits, Traits::hasIsEmptyValueFunction>::isEmptyValue(value);
     }
 
-// Workaround from Chromium. See https://bugs.webkit.org/show_bug.cgi?id=82784.
-#define WTF_NEW_HASHMAP_ITERATORS_INTERFACE 1
-
     template<typename FirstTraitsArg, typename SecondTraitsArg>
     struct PairHashTraits : GenericHashTraits<std::pair<typename FirstTraitsArg::TraitType, typename SecondTraitsArg::TraitType> > {
         typedef FirstTraitsArg FirstTraits;
