@@ -675,6 +675,10 @@ printing/page-rule-in-media-query.html [ WontFix ]
 compositing/visible-rect [ WontFix ]
 platform/chromium/virtual/softwarecompositing/visible-rect [ WontFix ]
 
+# Repaint test doesn't seem to work on Chromium.
+webkit.org/b/98579 compositing/repaint/requires-backing-repaint.html [ ImageOnlyFailure ]
+webkit.org/b/98579 platform/chromium/virtual/softwarecompositing/repaint/requires-backing-repaint.html [ ImageOnlyFailure ]
+
 # Chrome doesn't call the willCacheResponse callback (a method
 # of ResourceHandleClient).  That function is Mac-specific.
 http/tests/misc/willCacheResponse-delegate-callback.html [ WontFix ]

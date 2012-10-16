@@ -1,3 +1,19 @@
+2012-10-16  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r128787): Fixed position div causes other elements to not update correctly
+        https://bugs.webkit.org/show_bug.cgi?id=98579
+
+        Reviewed by Beth Dakin.
+
+        RenderLayers cache repaint rects which are computed relative to the repaint container.
+        Repaint containers depend on whether a RenderLayerBacking has its own backing store,
+        so if that changes, we need to recompute repaint rects for all descendants.
+        
+        Test: compositing/repaint/requires-backing-repaint.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::setRequiresOwnBackingStore):
+
 2012-10-16  Zan Dobersek  <zandobersek@gmail.com>
 
         [GStreamer] GstBuffer ref race in WebKitWebAudioSrcLoop
