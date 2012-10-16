@@ -1,3 +1,16 @@
+2012-10-16  Tony Chang  <tony@chromium.org>
+
+        in a column flexbox, input overflows the box when stretched
+        https://bugs.webkit.org/show_bug.cgi?id=99273
+
+        Reviewed by Ojan Vafai.
+
+        Add a ref test since we're testing form rendering. Make sure that we get the
+        right behavior without the performance optimization (e.g., in multiline flexbox).
+
+        * css3/flexbox/stretch-input-in-column-expected.html: Added.
+        * css3/flexbox/stretch-input-in-column.html: Added.
+
 2012-10-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, unskip a now passing test.

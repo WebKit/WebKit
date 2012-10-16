@@ -1,3 +1,23 @@
+2012-10-16  Tony Chang  <tony@chromium.org>
+
+        in a column flexbox, input overflows the box when stretched
+        https://bugs.webkit.org/show_bug.cgi?id=99273
+
+        Reviewed by Ojan Vafai.
+
+        Fix a bug where we didn't properly subtract padding and border when overriding the child size.
+        We didn't see this because of a performance optimization in RenderBox where we stretch children.
+        Also apply this performance optimization in new flexbox for form controls.
+
+        Test: css3/flexbox/stretch-input-in-column.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::flexboxChildHasStretchAlignment):
+        (WebCore::isStretchingVerticalFlexboxChild):
+        (WebCore::RenderBox::sizesLogicalWidthToFitContent): Apply performance optimization to form controls in new flexbox.
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::applyStretchAlignmentToChild): Properly subtract border and padding.
+
 2012-10-16  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r128787): Fixed position div causes other elements to not update correctly

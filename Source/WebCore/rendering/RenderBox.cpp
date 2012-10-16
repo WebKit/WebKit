@@ -1772,6 +1772,24 @@ LayoutUnit RenderBox::computeLogicalWidthInRegionUsing(SizeType widthType, Layou
     return logicalWidthResult;
 }
 
+static bool flexItemHasStretchAlignment(const RenderObject* flexitem)
+{
+    RenderObject* parent = flexitem->parent();
+    return flexitem->style()->alignSelf() == AlignStretch || (flexitem->style()->alignSelf() == AlignAuto && parent->style()->alignItems() == AlignStretch);
+}
+
+static bool isStretchingColumnFlexItem(const RenderObject* flexitem)
+{
+    RenderObject* parent = flexitem->parent();
+    if (parent->isDeprecatedFlexibleBox() && parent->style()->boxOrient() == VERTICAL && parent->style()->boxAlign() == BSTRETCH)
+        return true;
+
+    // We don't stretch multiline flexboxes because they need to apply line spacing (align-content) first.
+    if (parent->isFlexibleBox() && parent->style()->flexWrap() == FlexWrapNone && parent->style()->isColumnFlexDirection() && flexItemHasStretchAlignment(flexitem))
+        return true;
+    return false;
+}
+
 bool RenderBox::sizesLogicalWidthToFitContent(SizeType widthType) const
 {
     // Marquees in WinIE are like a mixture of blocks and inline-blocks.  They size as though they're blocks,
@@ -1800,11 +1818,10 @@ bool RenderBox::sizesLogicalWidthToFitContent(SizeType widthType) const
     // In the case of columns that have a stretch alignment, we go ahead and layout at the
     // stretched size to avoid an extra layout when applying alignment.
     if (parent()->isFlexibleBox()) {
-        // For multiline columns, we need to apply the flex-line-pack first, so we can't stretch now.
+        // For multiline columns, we need to apply align-content first, so we can't stretch now.
         if (!parent()->style()->isColumnFlexDirection() || parent()->style()->flexWrap() != FlexWrapNone)
             return true;
-        EAlignItems itemAlign = style()->alignSelf();
-        if (itemAlign != AlignStretch && (itemAlign != AlignAuto || parent()->style()->alignItems() != AlignStretch))
+        if (!flexItemHasStretchAlignment(this))
             return true;
     }
 
@@ -1812,16 +1829,14 @@ bool RenderBox::sizesLogicalWidthToFitContent(SizeType widthType) const
     // that don't stretch their kids lay out their children at their intrinsic widths.
     // FIXME: Think about block-flow here.
     // https://bugs.webkit.org/show_bug.cgi?id=46473
-    if (parent()->isDeprecatedFlexibleBox()
-            && (parent()->style()->boxOrient() == HORIZONTAL || parent()->style()->boxAlign() != BSTRETCH))
+    if (parent()->isDeprecatedFlexibleBox() && (parent()->style()->boxOrient() == HORIZONTAL || parent()->style()->boxAlign() != BSTRETCH))
         return true;
 
-    // Button, input, select, textarea, and legend treat
-    // width value of 'auto' as 'intrinsic' unless it's in a
-    // stretching vertical flexbox.
+    // Button, input, select, textarea, and legend treat width value of 'auto' as 'intrinsic' unless it's in a
+    // stretching column flexbox.
     // FIXME: Think about block-flow here.
     // https://bugs.webkit.org/show_bug.cgi?id=46473
-    if (logicalWidth.type() == Auto && !(parent()->isDeprecatedFlexibleBox() && parent()->style()->boxOrient() == VERTICAL && parent()->style()->boxAlign() == BSTRETCH) && node() && (node()->hasTagName(inputTag) || node()->hasTagName(selectTag) || node()->hasTagName(buttonTag) || node()->hasTagName(textareaTag) || node()->hasTagName(legendTag)))
+    if (logicalWidth.type() == Auto && !isStretchingColumnFlexItem(this) && node() && (node()->hasTagName(inputTag) || node()->hasTagName(selectTag) || node()->hasTagName(buttonTag) || node()->hasTagName(textareaTag) || node()->hasTagName(legendTag)))
         return true;
 
     if (isHorizontalWritingMode() != containingBlock()->isHorizontalWritingMode())
