@@ -352,9 +352,6 @@ struct Node {
         case GetByIdFlush:
         case PutById:
         case PutByIdDirect:
-        case Resolve:
-        case ResolveBase:
-        case ResolveBaseStrictPut:
             return true;
         default:
             return false;
@@ -370,6 +367,12 @@ struct Node {
     unsigned resolveGlobalDataIndex()
     {
         ASSERT(op() == ResolveGlobal);
+        return m_opInfo;
+    }
+
+    unsigned resolveOperationsDataIndex()
+    {
+        ASSERT(op() == Resolve || op() == ResolveBase || op() == ResolveBaseStrictPut);
         return m_opInfo;
     }
 

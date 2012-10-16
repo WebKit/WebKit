@@ -70,11 +70,10 @@ void compileOSRExit(ExecState* exec)
     Operands<ValueRecovery> operands;
     codeBlock->variableEventStream().reconstruct(codeBlock, exit.m_codeOrigin, codeBlock->minifiedDFG(), exit.m_streamIndex, operands);
     
-    // There may be an override, for forward speculations.
-    if (!!exit.m_valueRecoveryOverride) {
-        operands.setOperand(
-            exit.m_valueRecoveryOverride->operand, exit.m_valueRecoveryOverride->recovery);
-    }
+    // There may be overrides, for forward speculations.
+    for (size_t i = 0; i < exit.m_valueRecoveryOverrides.size(); i++)
+        operands.setOperand(exit.m_valueRecoveryOverrides[i]->operand, exit.m_valueRecoveryOverrides[i]->recovery);
+
     
     SpeculationRecovery* recovery = 0;
     if (exit.m_recoveryIndex)

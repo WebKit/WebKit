@@ -110,9 +110,9 @@ struct OSRExit {
     }
     
     unsigned m_streamIndex;
-    int m_lastSetOperand;
+    Vector<int, 1> m_setOperands;
     
-    RefPtr<ValueRecoveryOverride> m_valueRecoveryOverride;
+    Vector<RefPtr<ValueRecoveryOverride>, 1> m_valueRecoveryOverrides;
 
 private:
     bool considerAddingAsFrequentExitSiteSlow(CodeBlock* dfgCodeBlock, CodeBlock* profiledCodeBlock);

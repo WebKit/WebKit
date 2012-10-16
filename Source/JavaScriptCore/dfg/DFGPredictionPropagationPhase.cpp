@@ -674,6 +674,7 @@ private:
         case CheckNumber:
         case CheckArgumentsNotCreated:
         case GlobalVarWatchpoint:
+        case GarbageValue:
             changed |= mergeDefaultFlags(node);
             break;
             

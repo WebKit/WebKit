@@ -35,6 +35,7 @@
 #include "LowLevelInterpreter.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Register.h"
+#include "ResolveOperation.h"
 #include "ThunkGenerators.h"
 #include <wtf/HashMap.h>
 
@@ -82,6 +83,8 @@ namespace JSC {
         JSString* jsString() { return static_cast<JSString*>(asPointer); }
         Structure* structure() { return static_cast<Structure*>(asPointer); }
         ReturnAddressPtr returnAddress() { return ReturnAddressPtr(asPointer); }
+        ResolveOperations* resolveOperations() { return static_cast<ResolveOperations*>(asPointer); }
+        PutToBaseOperation* putToBaseOperation() { return static_cast<PutToBaseOperation*>(asPointer); }
     };
     
     struct TrampolineStructure {
@@ -398,11 +401,9 @@ extern "C" {
     EncodedJSValue JIT_STUB cti_op_resolve_base(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     EncodedJSValue JIT_STUB cti_op_resolve_base_strict_put(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     EncodedJSValue JIT_STUB cti_op_ensure_property_exists(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-    EncodedJSValue JIT_STUB cti_op_resolve_global(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-    EncodedJSValue JIT_STUB cti_op_resolve_global_dynamic(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-    EncodedJSValue JIT_STUB cti_op_resolve_skip(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     EncodedJSValue JIT_STUB cti_op_resolve_with_base(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     EncodedJSValue JIT_STUB cti_op_resolve_with_this(STUB_ARGS_DECLARATION) WTF_INTERNAL;
+    void JIT_STUB cti_op_put_to_base(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     EncodedJSValue JIT_STUB cti_op_rshift(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     EncodedJSValue JIT_STUB cti_op_strcat(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     EncodedJSValue JIT_STUB cti_op_stricteq(STUB_ARGS_DECLARATION) WTF_INTERNAL;
@@ -449,7 +450,7 @@ extern "C" {
     void JIT_STUB cti_op_put_by_val(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     void JIT_STUB cti_op_put_by_val_generic(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     void JIT_STUB cti_op_put_getter_setter(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-    void JIT_STUB cti_op_put_global_var_check(STUB_ARGS_DECLARATION) WTF_INTERNAL;
+    void JIT_STUB cti_op_init_global_const_check(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     void JIT_STUB cti_op_tear_off_activation(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     void JIT_STUB cti_op_tear_off_arguments(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     void JIT_STUB cti_op_throw_reference_error(STUB_ARGS_DECLARATION) WTF_INTERNAL;

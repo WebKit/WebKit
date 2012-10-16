@@ -270,10 +270,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_get_by_val)
         DEFINE_OP(op_get_argument_by_val)
         DEFINE_OP(op_get_by_pname)
-        DEFINE_OP(op_get_global_var_watchable)
-        DEFINE_OP(op_get_global_var)
         DEFINE_OP(op_get_pnames)
-        DEFINE_OP(op_get_scoped_var)
         DEFINE_OP(op_check_has_instance)
         DEFINE_OP(op_instanceof)
         DEFINE_OP(op_is_undefined)
@@ -338,17 +335,26 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_put_by_index)
         DEFINE_OP(op_put_by_val)
         DEFINE_OP(op_put_getter_setter)
-        case op_init_global_const:
-        DEFINE_OP(op_put_global_var)
-        case op_init_global_const_check:
-        DEFINE_OP(op_put_global_var_check)
-        DEFINE_OP(op_put_scoped_var)
+        DEFINE_OP(op_init_global_const)
+        DEFINE_OP(op_init_global_const_check)
+
+        case op_resolve_global_property:
+        case op_resolve_global_var:
+        case op_resolve_scoped_var:
+        case op_resolve_scoped_var_on_top_scope:
+        case op_resolve_scoped_var_with_top_scope_check:
         DEFINE_OP(op_resolve)
+
+        case op_resolve_base_to_global:
+        case op_resolve_base_to_global_dynamic:
+        case op_resolve_base_to_scope:
+        case op_resolve_base_to_scope_with_top_scope_check:
         DEFINE_OP(op_resolve_base)
+
+        case op_put_to_base_variable:
+        DEFINE_OP(op_put_to_base)
+
         DEFINE_OP(op_ensure_property_exists)
-        DEFINE_OP(op_resolve_global)
-        DEFINE_OP(op_resolve_global_dynamic)
-        DEFINE_OP(op_resolve_skip)
         DEFINE_OP(op_resolve_with_base)
         DEFINE_OP(op_resolve_with_this)
         DEFINE_OP(op_ret)
@@ -502,16 +508,32 @@ void JIT::privateCompileSlowCases()
         case op_put_by_id_transition_normal_out_of_line:
         DEFINE_SLOWCASE_OP(op_put_by_id)
         DEFINE_SLOWCASE_OP(op_put_by_val)
-        case op_init_global_const_check:
-        DEFINE_SLOWCASE_OP(op_put_global_var_check);
-        DEFINE_SLOWCASE_OP(op_resolve_global)
-        DEFINE_SLOWCASE_OP(op_resolve_global_dynamic)
+        DEFINE_SLOWCASE_OP(op_init_global_const_check);
         DEFINE_SLOWCASE_OP(op_rshift)
         DEFINE_SLOWCASE_OP(op_urshift)
         DEFINE_SLOWCASE_OP(op_stricteq)
         DEFINE_SLOWCASE_OP(op_sub)
         DEFINE_SLOWCASE_OP(op_to_jsnumber)
         DEFINE_SLOWCASE_OP(op_to_primitive)
+
+        case op_resolve_global_property:
+        case op_resolve_global_var:
+        case op_resolve_scoped_var:
+        case op_resolve_scoped_var_on_top_scope:
+        case op_resolve_scoped_var_with_top_scope_check:
+        DEFINE_SLOWCASE_OP(op_resolve)
+
+        case op_resolve_base_to_global:
+        case op_resolve_base_to_global_dynamic:
+        case op_resolve_base_to_scope:
+        case op_resolve_base_to_scope_with_top_scope_check:
+        DEFINE_SLOWCASE_OP(op_resolve_base)
+        DEFINE_SLOWCASE_OP(op_resolve_with_base)
+        DEFINE_SLOWCASE_OP(op_resolve_with_this)
+
+        case op_put_to_base_variable:
+        DEFINE_SLOWCASE_OP(op_put_to_base)
+
         default:
             ASSERT_NOT_REACHED();
         }

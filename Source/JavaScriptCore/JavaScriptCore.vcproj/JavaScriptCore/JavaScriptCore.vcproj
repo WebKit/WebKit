@@ -1646,10 +1646,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\bytecode\GlobalResolveInfo.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\bytecode\HandlerInfo.h"
 				>
 			</File>
@@ -1711,6 +1707,10 @@
 			</File>
 			<File
 				RelativePath="..\..\bytecode\PolymorphicPutByIdList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\ResolveOperations.h"
 				>
 			</File>
 			<File

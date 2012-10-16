@@ -1524,7 +1524,12 @@ bool AbstractState::execute(unsigned indexInBlock)
         clobberWorld(node.codeOrigin, indexInBlock);
         forNode(nodeIndex).makeTop();
         break;
-            
+
+    case GarbageValue:
+        clobberWorld(node.codeOrigin, indexInBlock);
+        forNode(nodeIndex).makeTop();
+        break;
+
     case ForceOSRExit:
         node.setCanExit(true);
         m_isValid = false;
