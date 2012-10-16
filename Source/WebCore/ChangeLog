@@ -1,3 +1,16 @@
+2012-10-15  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: can't click delete button if watch expression is very long
+        https://bugs.webkit.org/show_bug.cgi?id=99414
+
+        Reviewed by Vsevolod Vlasov.
+
+        Minus button in watch expression section doesn't overlap with the
+        expression/value anymore.
+
+        * inspector/front-end/inspector.css:
+        (.properties-tree.watch-expressions > li.hovered):
+
 2012-10-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r131403.

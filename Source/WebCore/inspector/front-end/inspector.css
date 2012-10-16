@@ -1596,6 +1596,10 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     padding-left: 15px;
 }
 
+.properties-tree.watch-expressions > li.hovered {
+    padding-right: 14px;
+}
+
 .watch-expressions > li.editing-sub-part .text-prompt {
     display: block;
     width: 100%;
