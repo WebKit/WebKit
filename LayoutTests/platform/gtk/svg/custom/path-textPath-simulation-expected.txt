@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (79,226) size 651x148
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGPath {path} at (80,226) size 640x148 [fill={[type=SOLID] [color=#000000]}] [data="M 100 200 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100"]
-    RenderSVGContainer {use} at (79,226) size 641x148
-      RenderSVGPath {path} at (79,226) size 641x148 [stroke={[type=SOLID] [color=#FF0000]}] [data="M 100 200 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100"]
+    RenderSVGContainer {use} at (79,226) size 642x148
+      RenderSVGPath {path} at (79,226) size 642x148 [stroke={[type=SOLID] [color=#FF0000]}] [data="M 100 200 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100"]
     RenderSVGContainer {g} at (80,248) size 650x96
       RenderSVGText {text} at (100,185) size 12x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 12x19

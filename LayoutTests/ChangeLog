@@ -1,3 +1,25 @@
+2012-10-16  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Updating baselines and expectations after downgrading the Cairo
+        version used in JHBuild dependencies back to 1.10.2.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-83-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/paths-data-01-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/paths-data-02-t-expected.txt:
+        * platform/gtk/svg/batik/text/smallFonts-expected.txt:
+        * platform/gtk/svg/batik/text/textGlyphOrientationHorizontal-expected.txt:
+        * platform/gtk/svg/batik/text/textOnPath-expected.txt:
+        * platform/gtk/svg/batik/text/textOnPath2-expected.txt:
+        * platform/gtk/svg/batik/text/textOnPath3-expected.txt:
+        * platform/gtk/svg/batik/text/textOnPathSpaces-expected.txt:
+        * platform/gtk/svg/batik/text/verticalTextOnPath-expected.txt:
+        * platform/gtk/svg/custom/js-update-path-changes-expected.txt:
+        * platform/gtk/svg/custom/js-update-path-removal-expected.txt:
+        * platform/gtk/svg/custom/path-textPath-simulation-expected.txt:
+
 2012-10-16  Keishi Hattori  <keishi@webkit.org>
 
         Add test that checks that reloading after setting a value for an input element from a suggestion picker resets the values
