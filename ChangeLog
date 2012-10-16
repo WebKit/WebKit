@@ -1,3 +1,15 @@
+2012-10-16  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Fix support for silent builds
+
+        Reviewed by Tor Arne Vestbø.
+
+        The .qmake.conf file in Qt modules usually contains a load(qt_build_config), which
+        ends up loading qmodule.pri, which contains the CONFIG += silent if Qt was configured
+        with -silent.
+
+        * .qmake.conf:
+
 2012-10-15  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Share resources installed for inspector
