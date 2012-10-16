@@ -1050,10 +1050,9 @@ PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
             return 0;
         }
 
-        // FIXME: What about <frame> and <object>?
-        if (source->hasTagName(iframeTag)) {
-            HTMLIFrameElement* iframe = static_cast<HTMLIFrameElement*>(source.get());
-            if (frame() && frame()->tree()->isDescendantOf(iframe->contentFrame())) {
+        if (source->isFrameOwnerElement()) {
+            HTMLFrameOwnerElement* frameOwnerElement = toFrameOwnerElement(source.get());
+            if (frame() && frame()->tree()->isDescendantOf(frameOwnerElement->contentFrame())) {
                 ec = HIERARCHY_REQUEST_ERR;
                 return 0;
             }

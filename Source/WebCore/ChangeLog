@@ -1,3 +1,21 @@
+2012-10-16  Adam Barth  <abarth@webkit.org>
+
+        Document::adoptNode shouldn't special-case <iframe>
+        https://bugs.webkit.org/show_bug.cgi?id=99247
+
+        Reviewed by Ryosuke Niwa.
+
+        The special case was added in http://trac.webkit.org/changeset/75293 to
+        fix a bug with magic iframes. Originally, I planned to remove this
+        special case, but further investigation reveals that other browsers
+        throw exceptions for other frame owner elements as well. Now we treat
+        all frame owner elements the same way.
+
+        Test: fast/frames/adopt-object-into-itself.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::adoptNode):
+
 2012-10-16  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         Init timeout flag in ResourceErrorMac

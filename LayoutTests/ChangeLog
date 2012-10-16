@@ -1,3 +1,16 @@
+2012-10-16  Adam Barth  <abarth@webkit.org>
+
+        Document::adoptNode shouldn't special-case <iframe>
+        https://bugs.webkit.org/show_bug.cgi?id=99247
+
+        Reviewed by Ryosuke Niwa.
+
+        Test that adopting an object element into itself also throws an
+        exception.
+
+        * fast/frames/adopt-object-into-itself-expected.txt: Added.
+        * fast/frames/adopt-object-into-itself.html: Added.
+
 2012-10-16  Dana Jansens  <danakj@chromium.org>
 
         lots-of-objects.html is flaky crashing on the webkit.org mac bot.
