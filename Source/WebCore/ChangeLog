@@ -1,3 +1,26 @@
+2012-10-16  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GStreamer] GstBuffer ref race in WebKitWebAudioSrcLoop
+        https://bugs.webkit.org/show_bug.cgi?id=95833
+
+        Reviewed by Philippe Normand.
+
+        The render bus used in GStreamer's implementation of AudioDestination no longer
+        allocates memory for each of its channels. Rather than that, when looping, the
+        data is rendered into a channel-specific GstBuffer. Each buffer is then chained
+        to the appropriate GstPad, as has been the case before.
+
+        No new tests - there are tests covering this change but they are not yet working
+        on the GTK port or any other GStreamer implementation of Web Audio.
+
+        * platform/audio/gstreamer/AudioDestinationGStreamer.cpp:
+        (WebCore::AudioDestinationGStreamer::AudioDestinationGStreamer):
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (_WebKitWebAudioSourcePrivate): Remove an unused member variable.
+        (webkit_web_audio_src_init): Remove an unnecessary line.
+        (webKitWebAudioSrcConstructed): Ditto.
+        (webKitWebAudioSrcLoop):
+
 2012-10-16  Pablo Flouret  <pablof@motorola.com>
 
         Pre-process CSSGrammar.y before running through bison.

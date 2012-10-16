@@ -53,7 +53,7 @@ static void onGStreamerWavparsePadAddedCallback(GstElement* element, GstPad* pad
 
 AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, float sampleRate)
     : m_callback(callback)
-    , m_renderBus(2, framesToPull, true)
+    , m_renderBus(2, framesToPull, false)
     , m_sampleRate(sampleRate)
     , m_isPlaying(false)
 {
