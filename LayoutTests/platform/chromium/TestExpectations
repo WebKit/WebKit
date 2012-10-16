@@ -4067,13 +4067,4 @@ webkit.org/b/99134 platform/chromium/compositing/tiny-layer-rotated.html [ Pass 
 
 webkit.org/b/99138 [ SnowLeopard ] svg/custom/foreign-object-skew.svg [ Pass ImageOnlyFailure ]
 
-webkit.org/b/99437 [ Win Mac ] css1/basic/inheritance.html [ Pass ImageOnlyFailure ]
-webkit.org/b/99440 [ Win Mac ] fast/sub-pixel/selection/selection-rect-in-sub-pixel-table.html [ Pass ImageOnlyFailure ] 
-webkit.org/b/99441 [ Win ] svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ Pass ImageOnlyFailure ]
-webkit.org/b/99441 [ Win ] svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm  [ Pass ImageOnlyFailure ] 
-webkit.org/b/99441 [ Win ] svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml [ Pass ImageOnlyFailure ] 
-webkit.org/b/99441 [ Win ] svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml [ Pass ImageOnlyFailure ] 
-webkit.org/b/99441 [ Win ] svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml [ Pass ImageOnlyFailure ] 
-webkit.org/b/99441 [ Win ] tables/mozilla/bugs/bug73321.html [ Pass ImageOnlyFailure ] 
-
 webkit.org/b/99466 fast/forms/date/calendar-picker-key-operations.html [ Text ]
