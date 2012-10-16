@@ -1,3 +1,15 @@
+2012-10-16  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] replace BlackBerry::Platform::log() with BBLOG()
+        https://bugs.webkit.org/show_bug.cgi?id=99302
+
+        Reviewed by Yong Li.
+
+        Fix a warning introduced by r131335. Since in release BBLOG is empty, only enable this block in debug builds.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::compileShader):
+
 2012-10-16  Antoine Quint  <graouts@apple.com>
 
         Inspector should allow reading the compositing debug settings
