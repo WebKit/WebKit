@@ -1,3 +1,45 @@
+2012-10-15  Mike West  <mkwst@chromium.org>
+
+        Warn when CSP headers don't separate directives with ';'.
+        https://bugs.webkit.org/show_bug.cgi?id=99274
+
+        Reviewed by Adam Barth.
+
+        A recent bug report exhibited confusion as to what role, exactly,
+        semicolons play in Content Security Policy definitions. This patch
+        adjusts the parser to warn web authors if a directive name is
+        encountered while parsing a source list, which would almost certainly
+        point to a missing semicolon. For example, something like:
+
+            script-src 'self' object-src 'self' style-src *
+
+        would throw two warnings, noting that 'object-src' and 'style-src' are
+        probably meant as directives, and not as source expressions in the
+        'script-src' source list.
+
+        Test: http/tests/security/contentSecurityPolicy/source-list-parsing-no-semicolon.html
+
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::CSPSourceList::parse):
+            Throw the new warning onto the console if the hostname of a source
+            expression matches a CSP directive name.
+        (WebCore::CSPDirectiveList::addDirective):
+            Use the exciting new static variables so that the names of various
+            directives are available outside of CSPDirectiveList::addDirective.
+            These were previously defined as local static ASCIILiterals. Now
+            they're static const char[] in an anonymous namespace.
+        (WebCore::ContentSecurityPolicy::isDirectiveName):
+            Static method that compares a string to all the known directive
+            names, returning true if there's a (case-insensitive) match.
+        (WebCore):
+        (WebCore::ContentSecurityPolicy::reportDirectiveAsSourceExpression):
+            A new warning message which should be printed when a directive name
+            is encountered as a source expression. Matching the directive name
+            is done via a new 'isDirectiveName' function which lives in an
+            anonymous namespace along with the other CSP helper functions.
+        * page/ContentSecurityPolicy.h:
+            Added 'reportDirectiveAsSourceExpression' signature.
+
 2012-10-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, rolling out r131349.

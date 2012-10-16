@@ -1,3 +1,13 @@
+2012-10-15  Mike West  <mkwst@chromium.org>
+
+        Warn when CSP headers don't separate directives with ';'.
+        https://bugs.webkit.org/show_bug.cgi?id=99274
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-no-semicolon-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-no-semicolon.html: Added.
+
 2012-10-15  Pablo Flouret  <pablof@motorola.com>
 
         Add force parameter to DOMTokenList.toggle
