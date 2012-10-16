@@ -4190,3 +4190,7 @@ webkit.org/b/99376 fast/inline-block/contenteditable-baseline.html [ Pass Failur
 webkit.org/b/99376 platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing.html [ Pass Failure ]
 webkit.org/b/99376 tables/mozilla/bugs/bug30692.html [ Pass Failure ]
 
+webkit.org/b/99511 fast/forms/datalist/input-appearance-range-with-datalist-zoomed.html [ Pass Failure ]
+webkit.org/b/99511 platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi.html [ Pass Failure ]
+webkit.org/b/99511 fast/forms/datalist/input-appearance-range-with-datalist.html [ Pass Failure ]
+webkit.org/b/99511 fast/multicol/client-rects.html [ Pass Failure ]
