@@ -61,7 +61,8 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
     } else if (!strcmp(path, "/image.png"))
         soup_message_headers_replace(message->response_headers, "Set-Cookie", "baz=qux; Max-Age=60");
     else
-        FAIL();
+        soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
+
     soup_message_body_complete(message->response_body);
 }
 

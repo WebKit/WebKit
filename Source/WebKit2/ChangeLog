@@ -1,3 +1,20 @@
+2012-10-15  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Regression(r131337): Made 3 Cookie Manager API tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=99416
+
+        Reviewed by Gyuyoung Kim.
+
+        After r131337, the favicon database is enabled and it causes new
+        requests to "/favicon.ico" on the http server. The http server used
+        in the cookie manager test was too strict and was calling FAIL() for
+        any unrecognized HTTP request (such as the one to /favicon.ico).
+        This patch makes the http server in cookie manager API tests less
+        strict.
+
+        * UIProcess/API/efl/tests/test_ewk2_cookie_manager.cpp:
+        (serverCallback):
+
 2012-10-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, rolling out r131349.
