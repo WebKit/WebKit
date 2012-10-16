@@ -118,7 +118,7 @@ void WebPluginContainerImpl::paint(GraphicsContext* gc, const IntRect& damageRec
         return;
 
     FloatRect scaledDamageRect = damageRect;
-    float frameScaleFactor = m_element->document()->page()->mainFrame()->frameScaleFactor();
+    float frameScaleFactor = m_element->document()->frame()->frameScaleFactor();
     scaledDamageRect.scale(frameScaleFactor);
     scaledDamageRect.move(-frameRect().x() * (frameScaleFactor - 1), -frameRect().y() * (frameScaleFactor - 1));
 
@@ -139,7 +139,7 @@ void WebPluginContainerImpl::paint(GraphicsContext* gc, const IntRect& damageRec
     WebCanvas* canvas = gc->platformContext()->canvas();
 
     IntRect windowRect =
-        IntRect(view->contentsToWindow(enclosingIntRect(scaledDamageRect)));
+        IntRect(view->contentsToWindow(enclosingIntRect(scaledDamageRect).location()), enclosingIntRect(scaledDamageRect).size());
     m_webPlugin->paint(canvas, windowRect);
 
     gc->restore();

@@ -1,3 +1,18 @@
+2012-10-16  Min Qin  <qinmin@chromium.org>
+
+        Fix a bug that we are using scaled damage rect for plugins inside an iframe
+        https://bugs.webkit.org/show_bug.cgi?id=99488
+
+        Reviewed by Adam Barth.
+
+        There is a bug with a previous webkit patch: https://bugs.webkit.org/show_bug.cgi?id=98468
+        In that patch, we incorrectly applied the main frame's scale factor to inner iframes.
+        However, the damageRect is not scaled inside an iFrame. So doing the intersect will retrieve wrong result here.
+        In WebPluginContainerImpl::calculateGeometry, the windowRect also does not apply main frame's scale factor.
+
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::paint):
+
 2012-10-16  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium] Android: Need a way to get appropriate font for some specific characters.
