@@ -28,6 +28,9 @@
 #include "RunLoop.h"
 
 #include <Ecore.h>
+#include <Ecore_Evas.h>
+#include <Ecore_File.h>
+#include <Edje.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -39,12 +42,47 @@ namespace WebCore {
 RunLoop::RunLoop()
     : m_initEfl(false)
 {
+    if (!ecore_init()) {
+        LOG_ERROR("could not init ecore.");
+        return;
+    }
+
+    if (!ecore_evas_init()) {
+        LOG_ERROR("could not init ecore_evas.");
+        goto errorEcoreEvas;
+    }
+
+    if (!ecore_file_init()) {
+        LOG_ERROR("could not init ecore_file.");
+        goto errorEcoreFile;
+    }
+
+    if (!edje_init()) {
+        LOG_ERROR("could not init edje.");
+        goto errorEdje;
+    }
+
     m_pipe = adoptPtr(ecore_pipe_add(wakeUpEvent, this));
     m_initEfl = true;
+
+    return;
+
+errorEdje:
+    ecore_file_shutdown();
+errorEcoreFile:
+    ecore_evas_shutdown();
+errorEcoreEvas:
+    ecore_shutdown();
 }
 
 RunLoop::~RunLoop()
 {
+    if (m_initEfl) {
+        edje_shutdown();
+        ecore_file_shutdown();
+        ecore_evas_shutdown();
+        ecore_shutdown();
+    }
 }
 
 void RunLoop::run()
