@@ -1,3 +1,9 @@
+2012-10-16  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, try to fix the Apple Win build.
+
+        * win/WebKit2.def:
+
 2012-10-16  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         Implement testRunner.dumpSelectionRect() in WebKitTestRunner
