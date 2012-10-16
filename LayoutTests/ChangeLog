@@ -1,3 +1,9 @@
+2012-10-15  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Chromium] Unreviewed gardening, TestExpectations updated.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-15  Keishi Hattori  <keishi@webkit.org>
 
         Add tests for suggestion picker that test step/min/max attributes
