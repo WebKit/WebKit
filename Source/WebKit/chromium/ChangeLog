@@ -4,6 +4,12 @@
 
         * DEPS:
 
+2012-10-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-10-15  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Enable FAST_MOBILE_SCROLLING for Android
