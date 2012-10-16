@@ -1,3 +1,11 @@
+2012-10-15  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Chromium] Unreviewed gardening, TestExpectations updated.
+
+        Now lint passes.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-15  Kenichi Ishibashi  <bashi@chromium.org>
 
         [WebSocket] WebSocketInflater should handle BFINAL = 1 blocks
