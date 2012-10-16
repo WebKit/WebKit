@@ -1,3 +1,65 @@
+2012-10-15  Keishi Hattori  <keishi@webkit.org>
+
+        Move suggestion picker tests to suggestion-picker directory
+        https://bugs.webkit.org/show_bug.cgi?id=99415
+
+        Reviewed by Kent Tamura.
+
+        Moving the tests suggestion picker tests to platform/chromium/fast/forms/suggestion-picker chromium android can easily skip them.
+
+        * platform/chromium-linux/platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-expected.png: Renamed from LayoutTests/platform/chromium-linux/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-expected.png.
+        * platform/chromium-linux/platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-rtl-expected.png: Renamed from LayoutTests/platform/chromium-linux/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-rtl-expected.png.
+        * platform/chromium-linux/platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-with-scroll-bar-expected.png: Renamed from LayoutTests/platform/chromium-linux/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-with-scroll-bar-expected.png.
+        * platform/chromium-linux/platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-expected.png: Renamed from LayoutTests/platform/chromium-linux/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-expected.png.
+        * platform/chromium-linux/platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-rtl-expected.png: Renamed from LayoutTests/platform/chromium-linux/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-rtl-expected.png.
+        * platform/chromium-linux/platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-with-scroll-bar-expected.png: Renamed from LayoutTests/platform/chromium-linux/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-with-scroll-bar-expected.png.
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-expected.png: Renamed from LayoutTests/platform/chromium-mac-snowleopard/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-expected.png.
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-rtl-expected.png: Renamed from LayoutTests/platform/chromium-mac-snowleopard/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-rtl-expected.png.
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-with-scroll-bar-expected.png: Renamed from LayoutTests/platform/chromium-mac-snowleopard/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-with-scroll-bar-expected.png.
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-expected.png: Renamed from LayoutTests/platform/chromium-mac-snowleopard/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-expected.png.
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-rtl-expected.png: Renamed from LayoutTests/platform/chromium-mac-snowleopard/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-rtl-expected.png.
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-with-scroll-bar-expected.png: Renamed from LayoutTests/platform/chromium-mac-snowleopard/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-with-scroll-bar-expected.png.
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-expected.png: Renamed from LayoutTests/platform/chromium-mac/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-expected.png.
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-rtl-expected.png: Renamed from LayoutTests/platform/chromium-mac/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-rtl-expected.png.
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-with-scroll-bar-expected.png: Renamed from LayoutTests/platform/chromium-mac/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-with-scroll-bar-expected.png.
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-expected.png: Renamed from LayoutTests/platform/chromium-mac/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-expected.png.
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-rtl-expected.png: Renamed from LayoutTests/platform/chromium-mac/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-rtl-expected.png.
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-with-scroll-bar-expected.png: Renamed from LayoutTests/platform/chromium-mac/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-with-scroll-bar-expected.png.
+        * platform/chromium-win/platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-expected.png: Renamed from LayoutTests/platform/chromium-win/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-expected.png.
+        * platform/chromium-win/platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-rtl-expected.png: Renamed from LayoutTests/platform/chromium-win/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-rtl-expected.png.
+        * platform/chromium-win/platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-with-scroll-bar-expected.png: Renamed from LayoutTests/platform/chromium-win/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-with-scroll-bar-expected.png.
+        * platform/chromium-win/platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-key-operations-expected.txt: Renamed from LayoutTests/platform/chromium-win/platform/chromium/fast/forms/date/date-suggestion-picker-key-operations-expected.txt.
+        * platform/chromium-win/platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-expected.png: Renamed from LayoutTests/platform/chromium-win/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-expected.png.
+        * platform/chromium-win/platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-rtl-expected.png: Renamed from LayoutTests/platform/chromium-win/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-rtl-expected.png.
+        * platform/chromium-win/platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-with-scroll-bar-expected.png: Renamed from LayoutTests/platform/chromium-win/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-with-scroll-bar-expected.png.
+        * platform/chromium-win/platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-key-operations-expected.txt: Renamed from LayoutTests/platform/chromium-win/platform/chromium/fast/forms/time/time-suggestion-picker-key-operations-expected.txt.
+        * platform/chromium/TestExpectations: Removed obsolete lines.
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-expected.txt: Renamed from LayoutTests/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-expected.txt.
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-rtl-expected.txt: Renamed from LayoutTests/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-rtl-expected.txt.
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-rtl.html: Renamed from LayoutTests/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-rtl.html.
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-with-scroll-bar-expected.txt: Renamed from LayoutTests/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-with-scroll-bar-expected.txt.
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-with-scroll-bar.html: Renamed from LayoutTests/platform/chromium/fast/forms/date/date-suggestion-picker-appearance-with-scroll-bar.html.
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance.html: Renamed from LayoutTests/platform/chromium/fast/forms/date/date-suggestion-picker-appearance.html.
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-key-operations-expected.txt: Renamed from LayoutTests/platform/chromium/fast/forms/date/date-suggestion-picker-key-operations-expected.txt.
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-key-operations.html: Renamed from LayoutTests/platform/chromium/fast/forms/date/date-suggestion-picker-key-operations.html.
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-min-max-attribute.html:
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-mouse-operations-expected.txt: Renamed from LayoutTests/platform/chromium/fast/forms/date/date-suggestion-picker-mouse-operations-expected.txt.
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-mouse-operations.html: Renamed from LayoutTests/platform/chromium/fast/forms/date/date-suggestion-picker-mouse-operations.html.
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-step-attribute.html:
+        * platform/chromium/fast/forms/suggestion-picker/suggestion-picker-common.js: Renamed from LayoutTests/fast/forms/resources/suggestion-picker-common.js.
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-expected.txt: Renamed from LayoutTests/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-expected.txt.
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-rtl-expected.txt: Renamed from LayoutTests/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-rtl-expected.txt.
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-rtl.html: Renamed from LayoutTests/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-rtl.html.
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-with-scroll-bar-expected.txt: Renamed from LayoutTests/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-with-scroll-bar-expected.txt.
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-with-scroll-bar.html: Renamed from LayoutTests/platform/chromium/fast/forms/time/time-suggestion-picker-appearance-with-scroll-bar.html.
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance.html: Renamed from LayoutTests/platform/chromium/fast/forms/time/time-suggestion-picker-appearance.html.
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-key-operations-expected.txt: Renamed from LayoutTests/platform/chromium/fast/forms/time/time-suggestion-picker-key-operations-expected.txt.
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-key-operations.html: Renamed from LayoutTests/platform/chromium/fast/forms/time/time-suggestion-picker-key-operations.html.
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-min-max-attribute.html:
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-mouse-operations-expected.txt: Renamed from LayoutTests/platform/chromium/fast/forms/time/time-suggestion-picker-mouse-operations-expected.txt.
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-mouse-operations.html: Renamed from LayoutTests/platform/chromium/fast/forms/time/time-suggestion-picker-mouse-operations.html.
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-step-attribute.html:
+
 2012-10-15  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: restore watch expression expansion state

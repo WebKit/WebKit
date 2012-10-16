@@ -1896,15 +1896,6 @@ webkit.org/b/98783 [ Android ] fast/forms/datetimelocal/datetimelocal-input-visi
 webkit.org/b/98783 [ Android ] fast/forms/datetime/datetime-stepup-stepdown-from-renderer.html [ Failure ]
 webkit.org/b/98783 [ Android ] fast/forms/datetime/datetime-input-visible-string.html [ Failure ]
 
-# [Chromium-Android] Date and time suggestion picker tests time out
-webkit.org/b/98902 [ Android ] platform/chromium/fast/forms/date/date-suggestion-picker-appearance-with-scroll-bar.html [ Timeout Pass ]
-webkit.org/b/98902 [ Android ] platform/chromium/fast/forms/date/date-suggestion-picker-appearance.html [ Timeout Pass ]
-webkit.org/b/98902 [ Android ] platform/chromium/fast/forms/date/date-suggestion-picker-key-operations.html [ Timeout Pass ]
-webkit.org/b/98902 [ Android ] platform/chromium/fast/forms/date/date-suggestion-picker-appearance-rtl.html [ Timeout Pass ]
-webkit.org/b/98902 [ Android ] platform/chromium/fast/forms/time/time-suggestion-picker-appearance-with-scroll-bar.html [ Timeout Pass ]
-webkit.org/b/98902 [ Android ] platform/chromium/fast/forms/time/time-suggestion-picker-appearance.html [ Timeout Pass ]
-webkit.org/b/98902 [ Android ] platform/chromium/fast/forms/time/time-suggestion-picker-appearance-rtl.html [ Timeout Pass ]
-
 # [Chromium-Android] image-inside-nested-blocks-with-border.html crashes
 webkit.org/b/98901 [ Android ] fast/multicol/image-inside-nested-blocks-with-border.html [ Crash Pass ]
 
@@ -2822,11 +2813,6 @@ webkit.org/b/61169 [ Android Linux Win ] css3/images/optimize-contrast-canvas.ht
 webkit.org/b/61169 [ Android Linux Win ] css3/images/optimize-contrast-image.html [ ImageOnlyFailure ]
 
 webkit.org/b/92710 fast/forms/date/calendar-picker-appearance.html [ ImageOnlyFailure Pass ]
-
-# The following tests time out for Android. Tracked by webkit.org/b/98902
-webkit.org/b/98906 platform/chromium/fast/forms/date/date-suggestion-picker-mouse-operations.html [ Pass Text Timeout ]
-webkit.org/b/98906 platform/chromium/fast/forms/time/time-suggestion-picker-mouse-operations.html [ Pass Text Timeout ]
-webkit.org/b/98906 platform/chromium/fast/forms/time/time-suggestion-picker-key-operations.html [ Pass Text Timeout ]
 
 # New test added in r87324
 crbug.com/83994 [ Win ] platform/win/plugins/call-javascript-that-destroys-plugin.html [ Failure ]
@@ -3902,8 +3888,8 @@ webkit.org/b/99291 fast/forms/date-multiple-fields/date-multiple-fields-appearan
 webkit.org/b/99291 fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic.html [ Pass ImageOnlyFailure ]
 webkit.org/b/99291 fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic.html [ Pass ImageOnlyFailure ]
 webkit.org/b/99291 fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic.html [ Pass ImageOnlyFailure ]
-webkit.org/b/99291 [ Mac Linux Win ] platform/chromium/fast/forms/date/date-suggestion-picker-appearance-rtl.html [ Pass ImageOnlyFailure ]
-webkit.org/b/99291 [ Mac Linux Win ] platform/chromium/fast/forms/time/time-suggestion-picker-appearance-rtl.html [ Pass ImageOnlyFailure ]
+webkit.org/b/99291 [ Mac Linux Win ] platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-rtl.html [ Pass ImageOnlyFailure ]
+webkit.org/b/99291 [ Mac Linux Win ] platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-rtl.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/96549 [ Mac Android ] platform/chromium/virtual/gpu/fast/hidpi/focus-rings.html [ ImageOnlyFailure ]
 webkit.org/b/96549 [ Mac ] platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi.html [ ImageOnlyFailure ]
