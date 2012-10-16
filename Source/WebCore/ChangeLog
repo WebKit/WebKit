@@ -1,3 +1,13 @@
+2012-10-16  David Grogan  <dgrogan@chromium.org>
+
+        Inspector: Don't fire assert when inspecting an empty db
+        https://bugs.webkit.org/show_bug.cgi?id=99370
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore):
+
 2012-10-16  Tony Chang  <tony@chromium.org>
 
         Unreviewed, try to fix the Apple Win build by forcing a rebuild of RenderingAllInOne.cpp.

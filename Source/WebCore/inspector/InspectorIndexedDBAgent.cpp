@@ -104,6 +104,7 @@ public:
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, const IDBKeyPath&) OVERRIDE { }
     virtual void onSuccess(PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SerializedScriptValue>) OVERRIDE { }
     virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<SerializedScriptValue> >&) OVERRIDE { }
+    virtual void onUpgradeNeeded(int64_t, PassRefPtr<WebCore::IDBTransactionBackendInterface>, PassRefPtr<WebCore::IDBDatabaseBackendInterface>) OVERRIDE { }
     virtual void onBlocked() OVERRIDE { }
 };
 
