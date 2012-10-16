@@ -1,3 +1,15 @@
+2012-10-16  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [GTK] Update baselines for failing svg test after r131435
+        https://bugs.webkit.org/show_bug.cgi?id=99462
+
+        Unreviewed GTK gardening.
+
+        Updating baselines after downgrading the Cairo to version 1.10.2.
+
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-08-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-08-t-expected.txt:
+
 2012-10-16  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
