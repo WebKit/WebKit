@@ -1,3 +1,13 @@
+2012-10-16  Pablo Flouret  <pablof@motorola.com>
+
+        Pre-process CSSGrammar.y before running through bison.
+        https://bugs.webkit.org/show_bug.cgi?id=94290
+
+        Reviewed by Tony Chang.
+
+        * Source/cmake/WebKitMacros.cmake:
+            Use WebCore/css/makegrammar.pl to generate bison grammar files.
+
 2012-10-15  Jer Noble  <jer.noble@apple.com>
 
         WebAudio: limit output level to 0db
