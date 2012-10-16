@@ -1,5 +1,14 @@
 2012-10-16  Simon Hausmann  <simon.hausmann@digia.com>
 
+        Unreviewed, rolling out r131436.
+        http://trac.webkit.org/changeset/131436
+
+        Broke various Qt bots strangely
+
+        * .qmake.conf:
+
+2012-10-16  Simon Hausmann  <simon.hausmann@digia.com>
+
         [Qt] Fix support for silent builds
 
         Reviewed by Tor Arne Vestbø.
