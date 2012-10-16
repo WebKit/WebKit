@@ -66,11 +66,11 @@ bool ArgumentCoder<ResourceResponse>::decodePlatformData(ArgumentDecoder* decode
 }
 
 
-void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder* encoder, const ResourceError& resourceError)
+void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder*, const ResourceError&)
 {
 }
 
-bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder* decoder, ResourceError& resourceError)
+bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder*, ResourceError&)
 {
     return true;
 }

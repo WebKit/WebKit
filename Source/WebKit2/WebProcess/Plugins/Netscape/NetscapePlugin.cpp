@@ -913,12 +913,12 @@ bool NetscapePlugin::handleKeyboardEvent(const WebKeyboardEvent& keyboardEvent)
     return platformHandleKeyboardEvent(keyboardEvent);
 }
 
-bool NetscapePlugin::handleEditingCommand(const String& commandName, const String& argument)
+bool NetscapePlugin::handleEditingCommand(const String& /* commandName */, const String& /* argument */)
 {
     return false;
 }
 
-bool NetscapePlugin::isEditingCommandEnabled(const String& commandName)
+bool NetscapePlugin::isEditingCommandEnabled(const String& /* commandName */)
 {
     return false;
 }
