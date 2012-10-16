@@ -91,6 +91,7 @@ fast/js/dfg-check-two-structures
 fast/js/dfg-constant-fold-first-local-read-after-block-merge
 fast/js/dfg-convert-this-dom-window
 fast/js/dfg-cse-cfa-discrepancy
+fast/js/dfg-cse-dead-get-scoped-var
 fast/js/dfg-dead-min-one-arg
 fast/js/dfg-dead-min-two-args
 fast/js/dfg-dead-redundant-get-array-length

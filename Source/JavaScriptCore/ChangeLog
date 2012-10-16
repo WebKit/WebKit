@@ -1,3 +1,22 @@
+2012-10-16  Filip Pizlo  <fpizlo@apple.com>
+
+        GetScopedVar CSE matches dead GetScopedVar's leading to IR corruption
+        https://bugs.webkit.org/show_bug.cgi?id=99470
+        <rdar://problem/12363698>
+
+        Reviewed by Mark Hahnenberg.
+
+        All it takes is to follow the "if (!shouldGenerate) continue" idiom and everything will be OK.
+
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::globalVarLoadElimination):
+        (JSC::DFG::CSEPhase::scopedVarLoadElimination):
+        (JSC::DFG::CSEPhase::globalVarWatchpointElimination):
+        (JSC::DFG::CSEPhase::getByValLoadElimination):
+        (JSC::DFG::CSEPhase::checkStructureElimination):
+        (JSC::DFG::CSEPhase::structureTransitionWatchpointElimination):
+        (JSC::DFG::CSEPhase::getByOffsetLoadElimination):
+
 2012-10-16  Dima Gorbik  <dgorbik@apple.com>
 
         Remove Platform.h include from the header files.

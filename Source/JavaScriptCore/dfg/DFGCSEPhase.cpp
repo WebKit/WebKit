@@ -198,6 +198,8 @@ private:
         for (unsigned i = m_indexInBlock; i--;) {
             NodeIndex index = m_currentBlock->at(i);
             Node& node = m_graph[index];
+            if (!node.shouldGenerate())
+                continue;
             switch (node.op()) {
             case GetGlobalVar:
                 if (node.registerPointer() == registerPointer)
@@ -221,6 +223,8 @@ private:
         for (unsigned i = m_indexInBlock; i--;) {
             NodeIndex index = m_currentBlock->at(i);
             Node& node = m_graph[index];
+            if (!node.shouldGenerate())
+                continue;
             switch (node.op()) {
             case GetScopedVar: {
                 Node& getScopeRegisters = m_graph[node.child1()];
@@ -249,6 +253,8 @@ private:
         for (unsigned i = m_indexInBlock; i--;) {
             NodeIndex index = m_currentBlock->at(i);
             Node& node = m_graph[index];
+            if (!node.shouldGenerate())
+                continue;
             switch (node.op()) {
             case GlobalVarWatchpoint:
                 if (node.registerPointer() == registerPointer)
@@ -335,6 +341,8 @@ private:
                 break;
 
             Node& node = m_graph[index];
+            if (!node.shouldGenerate())
+                continue;
             switch (node.op()) {
             case GetByVal:
                 if (!m_graph.byValIsPure(node))
@@ -391,6 +399,8 @@ private:
                 break;
 
             Node& node = m_graph[index];
+            if (!node.shouldGenerate())
+                continue;
             switch (node.op()) {
             case CheckStructure:
             case ForwardCheckStructure:
@@ -445,6 +455,8 @@ private:
                 break;
 
             Node& node = m_graph[index];
+            if (!node.shouldGenerate())
+                continue;
             switch (node.op()) {
             case CheckStructure:
             case ForwardCheckStructure:
@@ -547,6 +559,8 @@ private:
                 break;
 
             Node& node = m_graph[index];
+            if (!node.shouldGenerate())
+                continue;
             switch (node.op()) {
             case GetByOffset:
                 if (node.child1() == child1
