@@ -1,3 +1,9 @@
+2012-10-16  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Chromium] Unreviewed gardening, TestExpectations updated.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-15  Kent Tamura  <tkent@chromium.org>
 
         Fix some appearance glitches of multiple fields input elements
