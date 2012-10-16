@@ -1,3 +1,12 @@
+2012-10-16  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, rebaseline 2 Chromium Mac test.
+        Small differences due to using MESA.
+
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/hidpi/focus-rings-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-10-16  Stephen Chenney  <schenney@chromium.org>
 
         An feImage that tries to render itself should be stopped

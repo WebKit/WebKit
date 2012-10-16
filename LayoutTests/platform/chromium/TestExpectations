@@ -3921,8 +3921,7 @@ webkit.org/b/99412 [ Mac Linux Win ] platform/chromium/fast/forms/suggestion-pic
 webkit.org/b/99412 [ Mac Linux Win ] platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-with-scroll-bar.html [ Pass ImageOnlyFailure ]
 webkit.org/b/99412 [ Mac Linux Win ] platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/96549 [ Mac Android ] platform/chromium/virtual/gpu/fast/hidpi/focus-rings.html [ ImageOnlyFailure ]
-webkit.org/b/96549 [ Mac ] platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi.html [ ImageOnlyFailure ]
+webkit.org/b/96549 [ Android ] platform/chromium/virtual/gpu/fast/hidpi/focus-rings.html [ ImageOnlyFailure ]
 webkit.org/b/96628 [ Lion ] fast/frames/calculate-order.html [ Failure Pass ]
 webkit.org/b/96550 http/tests/media/media-source/seek-to-end-after-duration-change.html [ Pass Timeout ]
 webkit.org/b/96725 [ Linux Mac Win ] http/tests/media/media-source/video-media-source-state-changes.html [ Failure Pass ]
