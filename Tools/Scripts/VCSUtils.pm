@@ -2120,6 +2120,8 @@ sub listOfChangedFilesBetweenRevisions
         $command = "git diff --name-status $firstCommit..$lastCommit";
     } elsif (isSVN()) {
         $command = "svn diff --summarize -r $firstRevision:$lastRevision";
+    } else {
+        return ();
     }
     my $diffOutput = `$command`;
     $diffOutput =~ s/^[A-Z]\s+//gm;

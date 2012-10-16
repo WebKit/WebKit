@@ -1,3 +1,13 @@
+2012-10-16  Simon Hausmann  <simon.hausmann@digia.com>
+
+        Fix build-webkit bailing out of !isSVN() and !isGit()
+
+        Reviewed by Tor Arne Vestbø.
+
+        Added missing else case with early return.
+
+        * Scripts/VCSUtils.pm:
+
 2012-10-16  Simon Hausmann  <simon.hausmann@digia.com>, Tor Arne Vestbø <tor.arne.vestbo@digia.com>
 
         [Qt] Add logic for triggering clean builds on changes to build system files
