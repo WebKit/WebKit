@@ -1,3 +1,24 @@
+2012-10-16  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium] Android: Need a way to get appropriate font for some specific characters.
+        https://bugs.webkit.org/show_bug.cgi?id=67587
+
+        Reviewed by Adam Barth.
+
+        Use the new Skia API SkGetFallbackFamilyNameForChar() to get the family name for individual characters.
+
+        No new tests. The following existing tests pass with the change:
+        fast/writing-mode/vertical-subst-font-vert-no-dflt.html
+        fast/dynamic/text-combine.html
+        fast/writing-mode/japanese-rl-text.html
+        fast/writing-mode/japanese-rl-selection.html
+        fast/writing-mode/japanese-lr-text.html
+        fast/repaint/japanese-rl-selection-repaint.html
+        fast/writing-mode/border-vertical-lr.html
+
+        * platform/graphics/chromium/FontCacheAndroid.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+
 2012-10-16  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add the chromium API for RTCDataChannel

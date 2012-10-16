@@ -1,3 +1,21 @@
+2012-10-16  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium] Android: Need a way to get appropriate font for some specific characters.
+        https://bugs.webkit.org/show_bug.cgi?id=67587
+
+        Reviewed by Adam Barth.
+
+        Removed unnecessary rebaselines.
+        Removed failure expectations for the tests now pass.
+        Added pixel only rebaselines for some of the above tests.
+
+        * platform/chromium-android/fast/repaint/japanese-rl-selection-repaint-expected.png: Added. New pixel rebaseline.
+        * platform/chromium-android/fast/writing-mode/japanese-lr-selection-expected.png: Removed. Unnecessary rebaseline.
+        * platform/chromium-android/fast/writing-mode/japanese-lr-selection-expected.txt: Removed. Unnecessary rebaseline.
+        * platform/chromium-android/fast/writing-mode/japanese-rl-selection-expected.png: Added. New pixel rebaseline.
+        * platform/chromium-android/fast/writing-mode/japanese-rl-text-with-broken-font-expected.png: Removed. Unnecessary rebaseline.
+        * platform/chromium/TestExpectations: Removed the failure expectations for the tests now pass.
+
 2012-10-16  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add the chromium API for RTCDataChannel

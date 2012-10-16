@@ -1,3 +1,14 @@
+2012-10-16  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium] Android: Need a way to get appropriate font for some specific characters.
+        https://bugs.webkit.org/show_bug.cgi?id=67587
+
+        Reviewed by Adam Barth.
+
+        Define ENABLE_OPENTYPE_VERTICAL=1 on Android.
+
+        * features.gypi:
+
 2012-10-16  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add the chromium API for RTCDataChannel

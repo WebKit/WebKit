@@ -1783,21 +1783,11 @@ webkit.org/b/98767 [ Android ] fullscreen/full-screen-iframe-legacy.html [ Failu
 webkit.org/b/98767 [ Android ] fullscreen/full-screen-crash-offsetLeft.html [ Skip ]
 webkit.org/b/98767 [ Android ] fullscreen/full-screen-stacking-context.html [ Skip ]
 
-# [Chromium-Android] Vertical text with punctuation should be rotated
-webkit.org/b/98768 [ Android ] fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ Failure ]
-webkit.org/b/98768 [ Android ] fast/dynamic/text-combine.html [ Failure ]
-
 # [Chromium-Android] CJK characters are not being anti-aliased
 webkit.org/b/98769 [ Android ] fast/writing-mode/vertical-font-fallback.html [ Failure ]
 webkit.org/b/98769 [ Android ] fast/text/international/001.html [ Failure ]
 webkit.org/b/98769 [ Android ] fast/text/backslash-to-yen-sign.html [ Failure ]
 webkit.org/b/98769 [ Android ] fast/ruby/nested-ruby.html [ Failure ]
-
-# [Chromium-Android] Vertical CJK text has different dimensions
-webkit.org/b/98770 [ Android ] fast/writing-mode/japanese-rl-text.html [ Failure ]
-webkit.org/b/98770 [ Android ] fast/writing-mode/japanese-rl-selection.html [ Failure ]
-webkit.org/b/98770 [ Android ] fast/writing-mode/japanese-lr-text.html [ Failure ]
-webkit.org/b/98770 [ Android ] fast/repaint/japanese-rl-selection-repaint.html [ Failure ]
 
 # [Chromium-Android] Select boxes render different on Android
 webkit.org/b/98771 [ Android ] fast/text/updateNewFont.html [ ImageOnlyFailure ]
@@ -2421,7 +2411,6 @@ crbug.com/143479 platform/gtk/accessibility/aria-table-hierarchy.html [ Failure 
 crbug.com/143476 fast/js/date-parse-test.html [ Failure ]
 
 # Vertical text needs to be implemented in platforms other than OS X.
-crbug.com/65877 [ Android ] fast/writing-mode/border-vertical-lr.html [ Failure ]
 crbug.com/65877 fast/writing-mode/japanese-ruby-vertical-lr.html [ Failure Pass ]
 crbug.com/65877 fast/writing-mode/japanese-ruby-vertical-rl.html [ Failure Pass ]
 crbug.com/65877 [ Android Linux Win ] fast/writing-mode/japanese-ruby-horizontal-bt.html [ Failure Pass ]

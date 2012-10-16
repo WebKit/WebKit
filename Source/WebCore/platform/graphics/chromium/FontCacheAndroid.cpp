@@ -99,10 +99,20 @@ void FontCache::platformInit()
 
 PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
-    // FIXME: We do not use fontconfig on Android, so use simple logic for now.
-    // https://bugs.webkit.org/show_bug.cgi?id=67587
-    AtomicString atomicFamily("Arial");
-    return getCachedFontData(getCachedFontPlatformData(font.fontDescription(), atomicFamily, DoNotRetain), DoNotRetain);
+    if (!length)
+        return 0;
+
+    SkUnichar skiaChar;
+    if (U16_IS_LEAD(characters[0])) {
+        ASSERT(length >= 2);
+        skiaChar = U16_GET_SUPPLEMENTARY(characters[0], characters[1]);
+    } else
+        skiaChar = characters[0];
+
+    SkString skiaFamilyName;
+    if (!SkGetFallbackFamilyNameForChar(skiaChar, &skiaFamilyName) || skiaFamilyName.isEmpty())
+        return 0;
+    return getCachedFontData(getCachedFontPlatformData(font.fontDescription(), AtomicString(skiaFamilyName.c_str()), DoNotRetain), DoNotRetain);
 }
 
 PassRefPtr<SimpleFontData> FontCache::getSimilarFontPlatformData(const Font& font)
