@@ -26,9 +26,45 @@
 #ifndef ewk_navigation_policy_decision_private_h
 #define ewk_navigation_policy_decision_private_h
 
+#include "WKAPICast.h"
 #include "WKBase.h"
+#include "WKEinaSharedString.h"
 #include "WKEvent.h"
+#include "WKFramePolicyListener.h"
 #include "WKPageLoadTypes.h"
+#include "WKRetainPtr.h"
+#include "ewk_url_request_private.h"
+
+/**
+ * \struct  _Ewk_Navigation_Policy_Decision
+ * @brief   Contains the navigation policy decision data.
+ */
+struct _Ewk_Navigation_Policy_Decision : public RefCounted<_Ewk_Navigation_Policy_Decision> {
+    WKRetainPtr<WKFramePolicyListenerRef> listener;
+    bool actedUponByClient;
+    Ewk_Navigation_Type navigationType;
+    Event_Mouse_Button mouseButton;
+    Event_Modifier_Keys modifiers;
+    RefPtr<Ewk_Url_Request> request;
+    WKEinaSharedString frameName;
+
+    _Ewk_Navigation_Policy_Decision(WKFramePolicyListenerRef listener, Ewk_Navigation_Type navigationType, Event_Mouse_Button mouseButton, Event_Modifier_Keys modifiers, PassRefPtr<Ewk_Url_Request> request, const char* frameName)
+        : listener(listener)
+        , actedUponByClient(false)
+        , navigationType(navigationType)
+        , mouseButton(mouseButton)
+        , modifiers(modifiers)
+        , request(request)
+        , frameName(frameName)
+    { }
+
+    ~_Ewk_Navigation_Policy_Decision()
+    {
+        // This is the default choice for all policy decisions in WebPageProxy.cpp.
+        if (!actedUponByClient)
+            WKFramePolicyListenerUse(listener.get());
+    }
+};
 
 typedef struct _Ewk_Navigation_Policy_Decision Ewk_Navigation_Policy_Decision;
 

@@ -26,56 +26,17 @@
 #include "config.h"
 #include "ewk_navigation_policy_decision.h"
 
-#include "WKAPICast.h"
-#include "WKEinaSharedString.h"
-#include "WKFramePolicyListener.h"
-#include "WKRetainPtr.h"
 #include "ewk_navigation_policy_decision_private.h"
 #include "ewk_private.h"
 #include "ewk_url_request_private.h"
 
 using namespace WebKit;
 
-/**
- * \struct  _Ewk_Navigation_Policy_Decision
- * @brief   Contains the navigation policy decision data.
- */
-struct _Ewk_Navigation_Policy_Decision {
-    unsigned int __ref; /**< the reference count of the object */
-    WKRetainPtr<WKFramePolicyListenerRef> listener;
-    bool actedUponByClient;
-    Ewk_Navigation_Type navigationType;
-    Event_Mouse_Button mouseButton;
-    Event_Modifier_Keys modifiers;
-    RefPtr<Ewk_Url_Request> request;
-    WKEinaSharedString frameName;
-
-    _Ewk_Navigation_Policy_Decision(WKFramePolicyListenerRef _listener, Ewk_Navigation_Type _navigationType, Event_Mouse_Button _mouseButton, Event_Modifier_Keys _modifiers, PassRefPtr<Ewk_Url_Request> _request, const char* _frameName)
-        : __ref(1)
-        , listener(_listener)
-        , actedUponByClient(false)
-        , navigationType(_navigationType)
-        , mouseButton(_mouseButton)
-        , modifiers(_modifiers)
-        , request(_request)
-        , frameName(_frameName)
-    { }
-
-    ~_Ewk_Navigation_Policy_Decision()
-    {
-        ASSERT(!__ref);
-
-        // This is the default choice for all policy decisions in WebPageProxy.cpp.
-        if (!actedUponByClient)
-            WKFramePolicyListenerUse(listener.get());
-    }
-};
-
 Ewk_Navigation_Policy_Decision* ewk_navigation_policy_decision_ref(Ewk_Navigation_Policy_Decision* decision)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(decision, 0);
 
-    ++decision->__ref;
+    decision->ref();
 
     return decision;
 }
@@ -84,10 +45,7 @@ void ewk_navigation_policy_decision_unref(Ewk_Navigation_Policy_Decision* decisi
 {
     EINA_SAFETY_ON_NULL_RETURN(decision);
 
-    if (--decision->__ref)
-        return;
-
-    delete decision;
+    decision->deref();
 }
 
 Ewk_Navigation_Type ewk_navigation_policy_navigation_type_get(const Ewk_Navigation_Policy_Decision* decision)

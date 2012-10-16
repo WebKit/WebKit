@@ -35,7 +35,7 @@
 
 using namespace WebKit;
 
-typedef HashMap<WKBackForwardListItemRef, Ewk_Back_Forward_List_Item*> ItemsMap;
+typedef HashMap<WKBackForwardListItemRef, RefPtr<Ewk_Back_Forward_List_Item> > ItemsMap;
 
 /**
  * \struct  _Ewk_Back_Forward_List
@@ -48,14 +48,6 @@ struct _Ewk_Back_Forward_List {
     _Ewk_Back_Forward_List(WKBackForwardListRef listRef)
         : wkList(listRef)
     { }
-
-    ~_Ewk_Back_Forward_List()
-    {
-        ItemsMap::iterator it = wrapperCache.begin();
-        ItemsMap::iterator end = wrapperCache.end();
-        for (; it != end; ++it)
-            ewk_back_forward_list_item_unref(it->value);
-    }
 };
 
 #define EWK_BACK_FORWARD_LIST_WK_GET_OR_RETURN(list, wkList_, ...)  \
@@ -75,13 +67,13 @@ static inline Ewk_Back_Forward_List_Item* addItemToWrapperCache(const Ewk_Back_F
     EINA_SAFETY_ON_NULL_RETURN_VAL(list, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(wkItem, 0);
 
-    Ewk_Back_Forward_List_Item* item = list->wrapperCache.get(wkItem);
+    RefPtr<Ewk_Back_Forward_List_Item> item = list->wrapperCache.get(wkItem);
     if (!item) {
-        item = ewk_back_forward_list_item_new(wkItem);
+        item = adoptRef(ewk_back_forward_list_item_new(wkItem));
         list->wrapperCache.set(wkItem, item);
     }
 
-    return item;
+    return item.get();
 }
 
 static inline Eina_List* createEinaList(const Ewk_Back_Forward_List* list, WKArrayRef wkList)
@@ -174,8 +166,7 @@ void ewk_back_forward_list_changed(Ewk_Back_Forward_List* list, WKBackForwardLis
     const size_t removedItemsSize = wkRemovedItems ? WKArrayGetSize(wkRemovedItems) : 0;
     for (size_t i = 0; i < removedItemsSize; ++i) {
         WKBackForwardListItemRef wkItem = static_cast<WKBackForwardListItemRef>(WKArrayGetItemAtIndex(wkRemovedItems, i));
-        if (Ewk_Back_Forward_List_Item* item = list->wrapperCache.take(wkItem))
-            ewk_back_forward_list_item_unref(item);
+        list->wrapperCache.remove(wkItem);
     }
 }
 

@@ -32,6 +32,7 @@
 #include "WKRetainPtr.h"
 #include "ewk_private.h"
 #include "ewk_url_request_private.h"
+#include <wtf/RefCounted.h>
 
 /**
  * \struct  _Ewk_Navigation_Data

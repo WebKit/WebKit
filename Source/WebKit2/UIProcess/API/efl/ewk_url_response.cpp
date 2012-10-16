@@ -26,42 +26,15 @@
 #include "config.h"
 #include "ewk_url_response.h"
 
-#include "WKAPICast.h"
-#include "WKEinaSharedString.h"
-#include "WKURLResponse.h"
 #include "ewk_url_response_private.h"
 #include <wtf/text/CString.h>
 
 using namespace WebKit;
 
-/**
- * \struct  _Ewk_Url_Response
- * @brief   Contains the URL response data.
- */
-struct _Ewk_Url_Response {
-    unsigned int __ref; /**< the reference count of the object */
-    WebCore::ResourceResponse coreResponse;
-
-    WKEinaSharedString url;
-    WKEinaSharedString mimeType;
-
-    _Ewk_Url_Response(const WebCore::ResourceResponse& _coreResponse)
-        : __ref(1)
-        , coreResponse(_coreResponse)
-        , url(AdoptWK, WKURLResponseCopyURL(toAPI(coreResponse)))
-        , mimeType(AdoptWK, WKURLResponseCopyMIMEType(toAPI(coreResponse)))
-    { }
-
-    ~_Ewk_Url_Response()
-    {
-        ASSERT(!__ref);
-    }
-};
-
 Ewk_Url_Response* ewk_url_response_ref(Ewk_Url_Response* response)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(response, 0);
-    ++response->__ref;
+    response->ref();
 
     return response;
 }
@@ -70,10 +43,7 @@ void ewk_url_response_unref(Ewk_Url_Response* response)
 {
     EINA_SAFETY_ON_NULL_RETURN(response);
 
-    if (--response->__ref)
-        return;
-
-    delete response;
+    response->deref();
 }
 
 const char* ewk_url_response_url_get(const Ewk_Url_Response* response)

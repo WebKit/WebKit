@@ -79,7 +79,7 @@ struct _Ewk_Context {
 #if ENABLE(VIBRATION)
     RefPtr<VibrationProvider> vibrationProvider;
 #endif
-    HashMap<uint64_t, Ewk_Download_Job*> downloadJobs;
+    HashMap<uint64_t, RefPtr<Ewk_Download_Job> > downloadJobs;
 
     WKRetainPtr<WKSoupRequestManagerRef> requestManager;
     URLSchemeHandlerMap urlSchemeHandlers;
@@ -128,11 +128,6 @@ struct _Ewk_Context {
 
         if (faviconDatabase)
             ewk_favicon_database_free(faviconDatabase);
-
-        HashMap<uint64_t, Ewk_Download_Job*>::iterator it = downloadJobs.begin();
-        HashMap<uint64_t, Ewk_Download_Job*>::iterator end = downloadJobs.end();
-        for ( ; it != end; ++it)
-            ewk_download_job_unref(it->value);
     }
 };
 
@@ -210,7 +205,7 @@ void ewk_context_download_job_add(Ewk_Context* ewkContext, Ewk_Download_Job* ewk
     if (ewkContext->downloadJobs.contains(downloadId))
         return;
 
-    ewkContext->downloadJobs.add(downloadId, ewk_download_job_ref(ewkDownload));
+    ewkContext->downloadJobs.add(downloadId, ewkDownload);
 }
 
 /**
@@ -222,7 +217,7 @@ Ewk_Download_Job* ewk_context_download_job_get(const Ewk_Context* ewkContext, ui
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(ewkContext, 0);
 
-    return ewkContext->downloadJobs.get(downloadId);
+    return ewkContext->downloadJobs.get(downloadId).get();
 }
 
 /**
@@ -233,9 +228,7 @@ Ewk_Download_Job* ewk_context_download_job_get(const Ewk_Context* ewkContext, ui
 void ewk_context_download_job_remove(Ewk_Context* ewkContext, uint64_t downloadId)
 {
     EINA_SAFETY_ON_NULL_RETURN(ewkContext);
-    Ewk_Download_Job* download = ewkContext->downloadJobs.take(downloadId);
-    if (download)
-        ewk_download_job_unref(download);
+    ewkContext->downloadJobs.remove(downloadId);
 }
 
 /**

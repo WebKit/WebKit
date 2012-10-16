@@ -1,3 +1,62 @@
+2012-10-16  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Inherit Ewk_Download_Job, Ewk_Back_Forward_List_Item, Ewk_Url_Response, Ewk_Navigation_Policy_Decision from RefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=99455
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The API objects mentioned in bug title are inherited from WTF::RefCounted which made it possible
+        to use smart pointers with them.
+
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::handleDownloadRequest):
+        * UIProcess/API/efl/ewk_back_forward_list.cpp:
+        (_Ewk_Back_Forward_List::_Ewk_Back_Forward_List):
+        (addItemToWrapperCache):
+        (ewk_back_forward_list_changed):
+        * UIProcess/API/efl/ewk_back_forward_list_item.cpp:
+        (ewk_back_forward_list_item_ref):
+        (ewk_back_forward_list_item_unref):
+        * UIProcess/API/efl/ewk_back_forward_list_item_private.h:
+        (_Ewk_Back_Forward_List_Item):
+        (_Ewk_Back_Forward_List_Item::_Ewk_Back_Forward_List_Item):
+        * UIProcess/API/efl/ewk_context.cpp:
+        (_Ewk_Context):
+        (_Ewk_Context::~_Ewk_Context):
+        (ewk_context_download_job_add):
+        (ewk_context_download_job_get):
+        (ewk_context_download_job_remove):
+        * UIProcess/API/efl/ewk_context_download_client.cpp:
+        (didReceiveResponse):
+        * UIProcess/API/efl/ewk_download_job.cpp:
+        (ewk_download_job_ref):
+        (ewk_download_job_unref):
+        (ewk_download_job_response_get):
+        (ewk_download_job_estimated_progress_get):
+        * UIProcess/API/efl/ewk_download_job_private.h:
+        (_Ewk_Download_Job):
+        (_Ewk_Download_Job::_Ewk_Download_Job):
+        * UIProcess/API/efl/ewk_navigation_data_private.h:
+        * UIProcess/API/efl/ewk_navigation_policy_decision.cpp:
+        (ewk_navigation_policy_decision_ref):
+        (ewk_navigation_policy_decision_unref):
+        * UIProcess/API/efl/ewk_navigation_policy_decision_private.h:
+        (_Ewk_Navigation_Policy_Decision):
+        (_Ewk_Navigation_Policy_Decision::_Ewk_Navigation_Policy_Decision):
+        (_Ewk_Navigation_Policy_Decision::~_Ewk_Navigation_Policy_Decision):
+        * UIProcess/API/efl/ewk_url_response.cpp:
+        (ewk_url_response_ref):
+        (ewk_url_response_unref):
+        * UIProcess/API/efl/ewk_url_response_private.h:
+        (_Ewk_Url_Response):
+        (_Ewk_Url_Response::_Ewk_Url_Response):
+        * UIProcess/API/efl/ewk_view_policy_client.cpp:
+        (decidePolicyForNavigationAction):
+        (decidePolicyForNewWindowAction):
+        * UIProcess/API/efl/ewk_view_resource_load_client.cpp:
+        (didSendRequestForResource):
+        (didReceiveResponseForResource):
+
 2012-10-16  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [WK2][EFL] Crash in _ewk_view_on_favicon_changed()

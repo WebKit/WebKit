@@ -26,7 +26,25 @@
 #ifndef ewk_url_response_private_h
 #define ewk_url_response_private_h
 
+#include "WKAPICast.h"
+#include "WKEinaSharedString.h"
+#include "WKURLResponse.h"
 #include <WebCore/ResourceResponse.h>
+/**
+ * \struct  _Ewk_Url_Response
+ * @brief   Contains the URL response data.
+ */
+struct _Ewk_Url_Response : public RefCounted<_Ewk_Url_Response> {
+    WebCore::ResourceResponse coreResponse;
+    WKEinaSharedString url;
+    WKEinaSharedString mimeType;
+
+    _Ewk_Url_Response(const WebCore::ResourceResponse& _coreResponse)
+        : coreResponse(_coreResponse)
+        , url(AdoptWK, WKURLResponseCopyURL(WebKit::toAPI(coreResponse)))
+        , mimeType(AdoptWK, WKURLResponseCopyMIMEType(WebKit::toAPI(coreResponse)))
+    { }
+};
 
 typedef struct _Ewk_Url_Response Ewk_Url_Response;
 
