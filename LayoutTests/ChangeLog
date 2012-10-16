@@ -1,3 +1,14 @@
+2012-10-16  Dana Jansens  <danakj@chromium.org>
+
+        Rebaseline mac compositing/geometry/fixed-position-transform-composited-page-scale-down.html
+        https://bugs.webkit.org/show_bug.cgi?id=89702
+
+        Unreviewed gardening.
+
+        * platform/chromium-mac-snowleopard/compositing/geometry/fixed-position-transform-composited-page-scale-down-expected.png: Removed.
+        * platform/chromium-mac/compositing/geometry/fixed-position-transform-composited-page-scale-down-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-10-16  Tony Chang  <tony@chromium.org>
 
         Unreviewed, fix TestExpectations for Qt and GTK after RenderSlider change.
