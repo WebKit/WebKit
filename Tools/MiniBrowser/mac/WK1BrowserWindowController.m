@@ -233,6 +233,15 @@
 {
 }
 
+- (void)webView:(WebView *)sender didCommitLoadForFrame:(WebFrame *)frame
+{
+    if (frame != [sender mainFrame])
+        return;
+
+    NSURL *committedURL = [[[frame dataSource] request] URL];
+    [urlText setStringValue:[committedURL absoluteString]];
+}
+
 - (void)webView:(WebView *)sender didReceiveTitle:(NSString *)title forFrame:(WebFrame *)frame
 {
     if (frame != [sender mainFrame])

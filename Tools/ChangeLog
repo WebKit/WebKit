@@ -1,3 +1,22 @@
+2012-10-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Update the url bar in MiniBrowser when getting the committed URL
+        https://bugs.webkit.org/show_bug.cgi?id=99388
+
+        Reviewed by Sam Weinig.
+
+        Fix both WK1 and WK2 window controllers to update the URL in the 
+        text field when transitioning to the committed URL. This fixes
+        the URL when dragging local files into the window.
+
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController webView:didCommitLoadForFrame:]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController updateTextFieldFromURL:]):
+        (-[WK2BrowserWindowController updateProvisionalURLForFrame:]):
+        (-[WK2BrowserWindowController updateCommittedURLForFrame:]):
+        (-[WK2BrowserWindowController didCommitLoadForFrame:]):
+
 2012-10-15  Ojan Vafai  <ojan@chromium.org>
 
         Don't show the content shell and android test bots for webkit ToT
