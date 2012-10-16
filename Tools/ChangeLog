@@ -1,5 +1,13 @@
 2012-10-16  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
+        Fix the paths for QtGraphics related WebKit2 files.
+
+        Unreviewed update of watchlist.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
+2012-10-16  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
         CSS and TouchAdjustment - I am watching you!
 
         Unreviewed update of watchlist.

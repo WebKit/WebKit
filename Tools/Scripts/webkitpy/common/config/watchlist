@@ -115,8 +115,8 @@
         },
         "QtGraphics": {
             "filename": r"Source/WebCore/platform/graphics/qt/"
-                        r"|Source/WebKit2/WebProcess/WebPage/LayerTreeCoordinator/"
-                        r"|Source/WebKit2/UIProcess/WebLayerTreeRenderer(?!\.(h|cpp))",
+                        r"|Source/WebKit2/WebProcess/WebPage/CoordinatedGraphics/"
+                        r"|Source/WebKit2/UIProcess/CoordinatedGraphics",
         },
         "TextureMapper": {
             "filename": r"Source/WebCore/platform/graphics/texmap/",
