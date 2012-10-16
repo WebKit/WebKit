@@ -1,3 +1,22 @@
+2012-10-16  Kent Tamura  <tkent@chromium.org>
+
+        Remove unused functions in Locale* classes
+        https://bugs.webkit.org/show_bug.cgi?id=99425
+
+        Reviewed by Yuta Kitamura.
+
+        Locale*::currentLocale has been unused since LocalizedDate* and
+        LocalizedNumber* were removed.
+
+        No new tests. This shouldn't change any behavior.
+
+        * platform/text/LocaleICU.cpp: Remove createForCurrentLocale and currentLocale.
+        * platform/text/LocaleICU.h: Ditto.
+        * platform/text/LocaleWin.cpp: Remove currentLocale.
+        * platform/text/LocaleWin.h: Ditto.
+        * platform/text/mac/LocaleMac.h: Remove currentLocale.
+        * platform/text/mac/LocaleMac.mm: Ditto.
+
 2012-10-15  Kent Tamura  <tkent@chromium.org>
 
         Fix some appearance glitches of multiple fields input elements

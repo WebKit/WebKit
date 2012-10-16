@@ -80,17 +80,6 @@ PassOwnPtr<LocaleICU> LocaleICU::create(const char* localeString)
     return adoptPtr(new LocaleICU(localeString));
 }
 
-PassOwnPtr<LocaleICU> LocaleICU::createForCurrentLocale()
-{
-    return adoptPtr(new LocaleICU(0));
-}
-
-LocaleICU* LocaleICU::currentLocale()
-{
-    static LocaleICU* currentLocale = LocaleICU::createForCurrentLocale().leakPtr();
-    return currentLocale;
-}
-
 String LocaleICU::decimalSymbol(UNumberFormatSymbol symbol)
 {
     UErrorCode status = U_ZERO_ERROR;

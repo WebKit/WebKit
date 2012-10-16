@@ -45,7 +45,6 @@ struct DateFormatToken;
 class LocaleWin : public Localizer {
 public:
     static PassOwnPtr<LocaleWin> create(LCID);
-    static LocaleWin* currentLocale();
     ~LocaleWin();
     virtual double parseDateTime(const String&, DateComponents::Type) OVERRIDE;
     virtual String formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified) OVERRIDE;

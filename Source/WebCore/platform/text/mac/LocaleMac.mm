@@ -108,12 +108,6 @@ PassOwnPtr<LocaleMac> LocaleMac::create(NSLocale* locale)
     return adoptPtr(new LocaleMac(locale));
 }
 
-LocaleMac* LocaleMac::currentLocale()
-{
-    static LocaleMac* currentLocale = new LocaleMac(determineLocale(defaultLanguage()));
-    return currentLocale;
-}
-
 RetainPtr<NSDateFormatter> LocaleMac::shortDateFormatter()
 {
     return createDateTimeFormatter(m_locale.get(), m_gregorianCalendar.get(), NSDateFormatterShortStyle, NSDateFormatterNoStyle);

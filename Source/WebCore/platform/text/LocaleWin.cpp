@@ -119,12 +119,6 @@ PassOwnPtr<LocaleWin> LocaleWin::create(LCID lcid)
     return adoptPtr(new LocaleWin(lcid));
 }
 
-LocaleWin* LocaleWin::currentLocale()
-{
-    static LocaleWin* currentLocale = LocaleWin::create(LCIDFromLocale(defaultLanguage())).leakPtr();
-    return currentLocale;
-}
-
 LocaleWin::~LocaleWin()
 {
 }
