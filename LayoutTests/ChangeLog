@@ -1,3 +1,11 @@
+2012-10-16  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding (flaky) crashing expectations for a couple of tests.
+
+        * platform/gtk/TestExpectations:
+
 2012-10-16  Mike West  <mkwst@chromium.org>
 
         Web Inspector: Whitelist safe styles for 'console.log('%c...', ...)'.
