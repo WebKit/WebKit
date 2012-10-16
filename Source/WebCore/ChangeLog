@@ -1,3 +1,26 @@
+2012-10-15  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: restore watch expression expansion state
+        https://bugs.webkit.org/show_bug.cgi?id=99304
+
+        Reviewed by Pavel Feldman.
+
+        Expand watch expression value and its properties if they were expanded
+        before update.
+
+        Test: inspector/debugger/watch-expressions-preserve-expansion.html
+
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        (WebInspector.WatchExpressionTreeElement.prototype.onexpand):
+        (WebInspector.WatchExpressionTreeElement.prototype.oncollapse):
+        (WebInspector.WatchExpressionTreeElement.prototype.onattach):
+        (WebInspector.WatchExpressionTreeElement.prototype._expression):
+        (WebInspector.WatchedPropertyTreeElement):
+        (WebInspector.WatchedPropertyTreeElement.prototype.onattach):
+        (WebInspector.WatchedPropertyTreeElement.prototype.onexpand):
+        (WebInspector.WatchedPropertyTreeElement.prototype.oncollapse):
+        (WebInspector.WatchedPropertyTreeElement.prototype._propertyPath):
+
 2012-10-15  Mike West  <mkwst@chromium.org>
 
         Warn when CSP headers don't separate directives with ';'.

@@ -158,30 +158,8 @@ WebInspector.ScopeVariableTreeElement.prototype = {
         if ("_propertyIdentifier" in this)
             return this._propertyIdentifier;
         var section = this.treeOutline.section;
-        this._propertyIdentifier = section.title + ":" + (section.subtitle ? section.subtitle + ":" : "") + this.propertyPath;
+        this._propertyIdentifier = section.title + ":" + (section.subtitle ? section.subtitle + ":" : "") + this.propertyPath();
         return this._propertyIdentifier;
-    },
-
-    get propertyPath()
-    {
-        if ("_propertyPath" in this)
-            return this._propertyPath;
-
-        var current = this;
-        var result;
-
-        do {
-            if (current.property) {
-                if (result)
-                    result = current.property.name + "." + result;
-                else
-                    result = current.property.name;
-            }
-            current = current.parent;
-        } while (current && !current.root);
-
-        this._propertyPath = result;
-        return result;
     },
 
     __proto__: WebInspector.ObjectPropertyTreeElement.prototype
