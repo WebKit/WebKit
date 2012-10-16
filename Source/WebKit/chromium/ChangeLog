@@ -1,3 +1,14 @@
+2012-10-15  Kent Tamura  <tkent@chromium.org>
+
+        LocaleMacTest.formatDate is failing on Mac 10.8
+        https://bugs.webkit.org/show_bug.cgi?id=99330
+
+        It seems OS X 10.8 and 10.7 return different date formats for ja_JP
+        locale. We should not test such locales.
+
+        * tests/LocaleMacTest.cpp:
+        (TEST_F): Remove a test for ja_JP locale.
+
 2012-10-15  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Pass type of error causing abort to IDBTransaction::onAbort
