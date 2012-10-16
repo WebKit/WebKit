@@ -131,7 +131,7 @@ defineTest(finalizeConfigure) {
 
     # Add target for wiping clean the build
     wipeclean.target = wipeclean
-    win_cmd_shell: wipeclean.commands = FOR /D %%p IN (.) DO rmdir "%%p" /s /q
+    win_cmd_shell: wipeclean.commands = FOR /D %%p IN (*) DO rmdir "%%p" /s /q
     else: wipeclean.commands = $(COPY_FILE) $(MAKEFILE) .$(MAKEFILE) && rm -Rf * && $(MOVE) .$(MAKEFILE) $(MAKEFILE)
     QMAKE_EXTRA_TARGETS += wipeclean
     export(wipeclean.target)
