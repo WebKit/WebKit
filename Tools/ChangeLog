@@ -1,5 +1,18 @@
 2012-10-16  Simon Hausmann  <simon.hausmann@digia.com>
 
+        [Qt] Fix wipeclean on Windows
+
+        Reviewed by Csaba Osztrogonác.
+
+        Make sure to close the .qmake.cache file after opening it, otherwise it cannot be deleted on
+        a clean build because this process (build-webkit) is still using it due to Windows' exclusive
+        way of opening files.
+
+        * Scripts/webkitdirs.pm:
+        (buildQMakeProjects):
+
+2012-10-16  Simon Hausmann  <simon.hausmann@digia.com>
+
         [Qt] Fix determination of changed files from SVN revisions
 
         Reviewed by Csaba Osztrogonác.

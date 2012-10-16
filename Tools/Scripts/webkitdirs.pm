@@ -2288,6 +2288,7 @@ sub buildQMakeProjects
                 $previousSvnRevision = $1;
             }
         }
+        close(QMAKECACHE);
     }
 
     my $result = 0;
