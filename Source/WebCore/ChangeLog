@@ -1,3 +1,19 @@
+2012-10-16  Luke Macpherson   <macpherson@chromium.org>
+
+        Handle CSSPropertyOpacity in StyleBuilder.
+        https://bugs.webkit.org/show_bug.cgi?id=99418
+
+        Reviewed by Alexis Menard.
+
+        One small step in moving from the huge switch in StyleResolver::applyProperty() to the StyleBuilder approach.
+
+        Covered by many existing tests, for example fast/text/complex-text-opacity.html.
+
+        * css/StyleBuilder.cpp:
+        (WebCore::StyleBuilder::StyleBuilder):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+
 2012-10-16  Kent Tamura  <tkent@chromium.org>
 
         Fix some appearance glitches of multiple fields input elements

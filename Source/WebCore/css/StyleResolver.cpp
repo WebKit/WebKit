@@ -3235,9 +3235,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         m_style->setBoxReflect(reflection.release());
         return;
     }
-    case CSSPropertyOpacity:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(opacity, Opacity)
-        return;
     case CSSPropertySrc: // Only used in @font-face rules.
         return;
     case CSSPropertyUnicodeRange: // Only used in @font-face rules.
@@ -3724,6 +3721,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyMaxWidth:
     case CSSPropertyMinHeight:
     case CSSPropertyMinWidth:
+    case CSSPropertyOpacity:
     case CSSPropertyOrphans:
     case CSSPropertyOutline:
     case CSSPropertyOutlineColor:
