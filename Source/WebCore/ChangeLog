@@ -1,3 +1,46 @@
+2012-10-16  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Fold setCellLogicalWidths logic into RenderTableSection layout
+        https://bugs.webkit.org/show_bug.cgi?id=99382
+
+        Reviewed by Eric Seidel.
+
+        setCellLogicalWidths was implemented as a pre-phase to laying out
+        the table's sections. This split was artificial as any change in
+        the columns' logical width should trigger a sections' relayout, which
+        could propagate and mark the cells / rows as needed.
+
+        Merging setCellLogicalWidths into RenderTableSection::layout removes
+        an unneeded cells walking and some clunkiness from our implementation.
+
+        Refactoring covered by the existing tests.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::RenderTable): Initialize our new boolean.
+        (WebCore::RenderTable::layout):
+        If m_columnLogicalWidthChanged, we force a relayout on our sections so that the cells and rows
+        are marked for layout if there is the logical width change.
+
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable):
+        Added a new boolean to track if a column logical width changed (m_columnLogicalWidthChanged).
+
+        (WebCore::RenderTable::setColumnPosition):
+        If a column position changed, register that our column logical widths changed. This is not
+        totally true, so added a comment about when it will be wrong.
+
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::setCellLogicalWidth):
+        Updated the function to mark the cell and the row for layout. Also changed the argument to
+        be an 'int' as this was what was passed in.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layout):
+        * rendering/RenderTableSection.h:
+        Removed setCellLogicalWidths and merged the logic into RenderTableSection::layout. We propagate
+        the table layout's logical widths first so that rows are marked as needing layout as appropriate.
+
 2012-10-16  Takashi Sakamoto  <tasak@google.com>
 
         [Meta] [Shadow] contenteditable attribute for distributed nodes.

@@ -104,7 +104,7 @@ public:
 
     virtual void computePreferredLogicalWidths();
 
-    void setCellLogicalWidth(LayoutUnit);
+    void setCellLogicalWidth(int constrainedLogicalWidth);
 
     virtual int borderLeft() const;
     virtual int borderRight() const;

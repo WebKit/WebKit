@@ -224,12 +224,18 @@ void RenderTableCell::updateLogicalWidth()
 {
 }
 
-void RenderTableCell::setCellLogicalWidth(LayoutUnit w)
+void RenderTableCell::setCellLogicalWidth(int tableLayoutLogicalWidth)
 {
-    if (w == logicalWidth())
+    if (tableLayoutLogicalWidth == logicalWidth())
         return;
 
-    setLogicalWidth(w);
+    setNeedsLayout(true, MarkOnlyThis);
+    row()->setChildNeedsLayout(true, MarkOnlyThis);
+
+    if (!table()->selfNeedsLayout() && checkForRepaintDuringLayout())
+        repaint();
+
+    setLogicalWidth(tableLayoutLogicalWidth);
     setCellWidthChanged(true);
 }
 

@@ -58,6 +58,7 @@ RenderTable::RenderTable(Node* node)
     , m_collapsedBordersValid(false)
     , m_hasColElements(false)
     , m_needsSectionRecalc(false)
+    , m_columnLogicalWidthChanged(false)
     , m_hSpacing(0)
     , m_vSpacing(0)
     , m_borderStart(0)
@@ -369,8 +370,6 @@ void RenderTable::layout()
 //     if ( oldWidth != width() || columns.size() + 1 != columnPos.size() )
     m_tableLayout->layout();
 
-    setCellLogicalWidths();
-
     LayoutUnit totalSectionLogicalHeight = 0;
     LayoutUnit oldTableLogicalTop = 0;
     for (unsigned i = 0; i < m_captions.size(); i++)
@@ -380,8 +379,10 @@ void RenderTable::layout()
 
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->isTableSection()) {
-            child->layoutIfNeeded();
             RenderTableSection* section = toRenderTableSection(child);
+            if (m_columnLogicalWidthChanged)
+                section->setChildNeedsLayout(true, MarkOnlyThis);
+            section->layoutIfNeeded();
             totalSectionLogicalHeight += section->calcRowLogicalHeight();
             if (collapsing)
                 section->recalcOuterBorder();
@@ -496,6 +497,7 @@ void RenderTable::layout()
             repaintRectangle(LayoutRect(movedSectionLogicalTop, visualOverflowRect().y(), visualOverflowRect().maxX() - movedSectionLogicalTop, visualOverflowRect().height()));
     }
 
+    m_columnLogicalWidthChanged = false;
     setNeedsLayout(false);
 }
 
@@ -548,12 +550,6 @@ void RenderTable::addOverflowFromChildren()
     // Add overflow from our sections.
     for (RenderTableSection* section = topSection(); section; section = sectionBelow(section))
         addOverflowFromChild(section);
-}
-
-void RenderTable::setCellLogicalWidths()
-{
-    for (RenderTableSection* section = topSection(); section; section = sectionBelow(section))
-        section->setCellLogicalWidths();
 }
 
 void RenderTable::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

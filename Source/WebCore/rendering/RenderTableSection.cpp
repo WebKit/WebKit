@@ -261,47 +261,6 @@ void RenderTableSection::addCell(RenderTableCell* cell, RenderTableRow* row)
     cell->setCol(table()->effColToCol(col));
 }
 
-void RenderTableSection::setCellLogicalWidths()
-{
-    const Vector<int>& columnPos = table()->columnPositions();
-
-    LayoutStateMaintainer statePusher(view());
-
-    for (unsigned i = 0; i < m_grid.size(); i++) {
-        Row& row = m_grid[i].row;
-        unsigned cols = row.size();
-        for (unsigned j = 0; j < cols; j++) {
-            CellStruct& current = row[j];
-            RenderTableCell* cell = current.primaryCell();
-            if (!cell || current.inColSpan)
-              continue;
-            unsigned endCol = j;
-            unsigned cspan = cell->colSpan();
-            while (cspan && endCol < cols) {
-                ASSERT(endCol < table()->columns().size());
-                cspan -= table()->columns()[endCol].span;
-                endCol++;
-            }
-            int w = columnPos[endCol] - columnPos[j] - table()->hBorderSpacing();
-            int oldLogicalWidth = cell->logicalWidth();
-            if (w != oldLogicalWidth) {
-                cell->setNeedsLayout(true);
-                if (!table()->selfNeedsLayout() && cell->checkForRepaintDuringLayout()) {
-                    if (!statePusher.didPush()) {
-                        // Technically, we should also push state for the row, but since
-                        // rows don't push a coordinate transform, that's not necessary.
-                        statePusher.push(this, locationOffset());
-                    }
-                    cell->repaint();
-                }
-                cell->setCellLogicalWidth(w);
-            }
-        }
-    }
-    
-    statePusher.pop(); // only pops if we pushed
-}
-
 int RenderTableSection::calcRowLogicalHeight()
 {
 #ifndef NDEBUG
@@ -404,12 +363,35 @@ void RenderTableSection::layout()
     m_grid.shrinkToFit();
 
     LayoutStateMaintainer statePusher(view(), this, locationOffset(), style()->isFlippedBlocksWritingMode());
-    for (RenderObject* child = children()->firstChild(); child; child = child->nextSibling()) {
-        if (child->isTableRow()) {
-            child->layoutIfNeeded();
-            ASSERT(!child->needsLayout());
+
+    const Vector<int>& columnPos = table()->columnPositions();
+
+    for (unsigned r = 0; r < m_grid.size(); ++r) {
+        Row& row = m_grid[r].row;
+        unsigned cols = row.size();
+        // First, propagate our table layout's information to the cells. This will mark the row as needing layout
+        // if there was a column logical width change.
+        for (unsigned startColumn = 0; startColumn < cols; ++startColumn) {
+            CellStruct& current = row[startColumn];
+            RenderTableCell* cell = current.primaryCell();
+            if (!cell || current.inColSpan)
+                continue;
+
+            unsigned endCol = startColumn;
+            unsigned cspan = cell->colSpan();
+            while (cspan && endCol < cols) {
+                ASSERT(endCol < table()->columns().size());
+                cspan -= table()->columns()[endCol].span;
+                endCol++;
+            }
+            int tableLayoutLogicalWidth = columnPos[endCol] - columnPos[startColumn] - table()->hBorderSpacing();
+            cell->setCellLogicalWidth(tableLayoutLogicalWidth);
         }
+
+        if (RenderTableRow* rowRenderer = m_grid[r].rowRenderer)
+            rowRenderer->layoutIfNeeded();
     }
+
     statePusher.pop();
     setNeedsLayout(false);
 }

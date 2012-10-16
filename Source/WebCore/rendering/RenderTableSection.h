@@ -74,7 +74,6 @@ public:
 
     void addCell(RenderTableCell*, RenderTableRow* row);
 
-    void setCellLogicalWidths();
     int calcRowLogicalHeight();
     void layoutRows();
 
