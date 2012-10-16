@@ -1,5 +1,14 @@
 2012-10-15  Dana Jansens  <danakj@chromium.org>
 
+        inspector/styles/styles-computed-trace.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=99391
+
+        Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+
+2012-10-15  Dana Jansens  <danakj@chromium.org>
+
         inspector/debugger/xhr-breakpoints.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=99389
 
