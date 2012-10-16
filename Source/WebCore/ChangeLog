@@ -1,3 +1,17 @@
+2012-10-15  Dan Bernstein  <mitz@apple.com>
+
+        Layout Test fast/text/justify-ideograph-leading-expansion.html is failing an assertion chromium mac
+        https://bugs.webkit.org/show_bug.cgi?id=99406
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/WidthIterator.cpp:
+        * platform/graphics/WidthIterator.h:
+        (WebCore::WidthIterator::shouldApplyFontTransforms): Changed to return false if the run is
+        shorter than 2 characters. 1-character are invariant under font transforms, and therefore
+        Font::codePath() sends them through WidthIterator even on platforms where WidthIterator
+        does not support kerning and ligatures.
+
 2012-10-15  Michael Saboff  <msaboff@apple.com>
 
         Add 8 bit patch to Document::isValidName() for the non ASCII case

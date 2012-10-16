@@ -27,7 +27,6 @@
 #include "Latin1TextIterator.h"
 #include "SimpleFontData.h"
 #include "SurrogatePairAwareTextIterator.h"
-#include "TextRun.h"
 #include <wtf/MathExtras.h>
 
 using namespace WTF;

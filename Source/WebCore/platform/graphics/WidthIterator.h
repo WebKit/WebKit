@@ -24,6 +24,7 @@
 
 #include "Font.h"
 #include "SVGGlyph.h"
+#include "TextRun.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/Unicode.h>
@@ -91,7 +92,7 @@ private:
     template <typename TextIterator>
     inline unsigned advanceInternal(TextIterator&, GlyphBuffer*);
 
-    bool shouldApplyFontTransforms() const { return m_typesettingFeatures & (Kerning | Ligatures); }
+    bool shouldApplyFontTransforms() const { return m_run.length() > 1 && (m_typesettingFeatures & (Kerning | Ligatures)); }
 
     TypesettingFeatures m_typesettingFeatures;
     HashSet<const SimpleFontData*>* m_fallbackFonts;
