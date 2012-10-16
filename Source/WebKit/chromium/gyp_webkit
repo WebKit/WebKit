@@ -89,6 +89,11 @@ if __name__ == '__main__':
     else:
       args.remove('--no-envsetup-recursion')
 
+    # Chromium's Android configuration uses the "All" target instead of "all", as it
+    # uses a different list of dependencies. WebKit needs to use "all" for Ninja to work.
+    if 'default_target=All' in os.environ.get('GYP_GENERATOR_FLAGS', ''):
+      args.append('-Gdefault_target=all')
+
   # Add includes.
   args.extend(['-I' + i for i in additional_include_files(args)])
 

@@ -1,3 +1,17 @@
+2012-10-15  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] The default target for Android builds should be "all" instead of "All"
+        https://bugs.webkit.org/show_bug.cgi?id=98879
+
+        Reviewed by Adam Barth.
+
+        The default gyp target for Android builds is being overridden in Chromium's
+        envsetup_functions.sh to "All" (whereas the rest of Chromium and WebKit use "all"),
+        because Android wants to use a different list of main targets. There is
+        no need to do this for the WebKit project, and it's breaking ninja.
+
+        * gyp_webkit:
+
 2012-10-15  Kent Tamura  <tkent@chromium.org>
 
         LocaleMacTest.formatDate is failing on Mac 10.8
