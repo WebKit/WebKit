@@ -1,3 +1,13 @@
+2012-10-16  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] REGRESSION(r131485): It broke the build
+        https://bugs.webkit.org/show_bug.cgi?id=99499
+
+        Unreviewed build (warning) fix.
+
+        * platform/graphics/texmap/TextureMapperShaderManager.cpp:
+        (WebCore::TextureMapperShaderProgram::getLocation):
+
 2012-10-16  David Grogan  <dgrogan@chromium.org>
 
         Inspector: Don't fire assert when inspecting an empty db

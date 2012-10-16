@@ -76,7 +76,7 @@ GC3Duint TextureMapperShaderProgram::getLocation(const AtomicString& name, Varia
     if (it != m_variables.end())
         return it->value;
 
-    GC3Duint location;
+    GC3Duint location = 0;
     switch (type) {
     case UniformVariable:
         location = m_context->getUniformLocation(m_id, name);
