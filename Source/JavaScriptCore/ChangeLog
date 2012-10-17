@@ -1,3 +1,16 @@
+2012-10-17  Michael Saboff  <msaboff@apple.com>
+
+        StringPrototype::jsSpliceSubstringsWithSeparators() doesn't optimally handle 8 bit strings
+        https://bugs.webkit.org/show_bug.cgi?id=99230
+
+        Reviewed by Geoffrey Garen.
+
+        Added code to select characters8() or characters16() on the not all 8 bit path for both the 
+        processing of the source and the separators.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::jsSpliceSubstringsWithSeparators):
+
 2012-10-17  Filip Pizlo  <fpizlo@apple.com>
 
         Array and object allocations via 'new Object' or 'new Array' should be inlined in bytecode to allow allocation site profiling
