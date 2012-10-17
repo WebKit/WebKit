@@ -1,3 +1,22 @@
+2012-10-17  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Use smart pointers inside Ewk_View
+        https://bugs.webkit.org/show_bug.cgi?id=99611
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Use smart pointers instead of raw ones for several
+        Ewk_View members to avoid handling memory manually.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_Ewk_View_Private_Data::_Ewk_View_Private_Data):
+        (_Ewk_View_Private_Data::~_Ewk_View_Private_Data):
+        (ewk_view_cursor_set):
+        (ewk_view_color_picker_dismiss):
+        (ewk_view_color_picker_color_set):
+
 2012-10-17  Byungwoo Lee  <bw80.lee@samsung.com>
 
         Fix build warnings : -Wunused-parameter, -Wunused-variable
