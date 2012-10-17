@@ -293,9 +293,9 @@ double CachedResource::currentAge() const
     // RFC2616 13.2.3
     // No compensation for latency as that is not terribly important in practice
     double dateValue = m_response.date();
-    double apparentAge = isfinite(dateValue) ? max(0., m_responseTimestamp - dateValue) : 0;
+    double apparentAge = isfinite(dateValue) ? std::max(0., m_responseTimestamp - dateValue) : 0;
     double ageValue = m_response.age();
-    double correctedReceivedAge = isfinite(ageValue) ? max(apparentAge, ageValue) : apparentAge;
+    double correctedReceivedAge = isfinite(ageValue) ? std::max(apparentAge, ageValue) : apparentAge;
     double residentTime = currentTime() - m_responseTimestamp;
     return correctedReceivedAge + residentTime;
 }

@@ -76,29 +76,4 @@ TEST(WTF_Vector, ReverseIterator)
     EXPECT_TRUE(end == it);
 }
 
-TEST(WTF_Vector, ReversedProxy)
-{
-    Vector<int> intVector;
-    intVector.append(10);
-    intVector.append(11);
-    intVector.append(12);
-    intVector.append(13);
-    
-    Vector<int>::reverse_iterator it = intVector.reversed().begin();
-    Vector<int>::reverse_iterator end = intVector.reversed().end();
-    
-    EXPECT_TRUE(end != it);
-
-    EXPECT_EQ(13, *it);
-    ++it;
-    EXPECT_EQ(12, *it);
-    ++it;
-    EXPECT_EQ(11, *it);
-    ++it;
-    EXPECT_EQ(10, *it);
-    ++it;
-
-    EXPECT_TRUE(end == it);
-}
-
 } // namespace TestWebKitAPI

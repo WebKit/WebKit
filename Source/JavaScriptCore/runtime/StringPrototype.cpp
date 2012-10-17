@@ -280,7 +280,7 @@ static ALWAYS_INLINE JSValue jsSpliceSubstrings(ExecState* exec, JSString* sourc
         if (position <= 0 && length >= sourceSize)
             return sourceVal;
         // We could call String::substringSharingImpl(), but this would result in redundant checks.
-        return jsString(exec, StringImpl::create(source.impl(), max(0, position), min(sourceSize, length)));
+        return jsString(exec, StringImpl::create(source.impl(), std::max(0, position), std::min(sourceSize, length)));
     }
 
     int totalLength = 0;
@@ -335,7 +335,7 @@ static ALWAYS_INLINE JSValue jsSpliceSubstringsWithSeparators(ExecState* exec, J
         if (position <= 0 && length >= sourceSize)
             return sourceVal;
         // We could call String::substringSharingImpl(), but this would result in redundant checks.
-        return jsString(exec, StringImpl::create(source.impl(), max(0, position), min(sourceSize, length)));
+        return jsString(exec, StringImpl::create(source.impl(), std::max(0, position), std::min(sourceSize, length)));
     }
 
     int totalLength = 0;
@@ -359,7 +359,7 @@ static ALWAYS_INLINE JSValue jsSpliceSubstringsWithSeparators(ExecState* exec, J
         if (!impl)
             return throwOutOfMemoryError(exec);
 
-        int maxCount = max(rangeCount, separatorCount);
+        int maxCount = std::max(rangeCount, separatorCount);
         int bufferPos = 0;
         for (int i = 0; i < maxCount; i++) {
             if (i < rangeCount) {
@@ -384,7 +384,7 @@ static ALWAYS_INLINE JSValue jsSpliceSubstringsWithSeparators(ExecState* exec, J
     if (!impl)
         return throwOutOfMemoryError(exec);
 
-    int maxCount = max(rangeCount, separatorCount);
+    int maxCount = std::max(rangeCount, separatorCount);
     int bufferPos = 0;
     for (int i = 0; i < maxCount; i++) {
         if (i < rangeCount) {
@@ -773,7 +773,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIndexOf(ExecState* exec)
         unsigned pos;
         int len = s.length();
         if (a1.isUInt32())
-            pos = min<uint32_t>(a1.asUInt32(), len);
+            pos = std::min<uint32_t>(a1.asUInt32(), len);
         else {
             double dpos = a1.toInteger(exec);
             if (dpos < 0)

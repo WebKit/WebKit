@@ -34,9 +34,6 @@
 
 namespace WTF {
 
-    using std::min;
-    using std::max;
-
     template <bool needsDestruction, typename T>
     struct VectorDestructor;
 
@@ -305,7 +302,6 @@ namespace WTF {
 
         T* buffer() { return m_buffer; }
         const T* buffer() const { return m_buffer; }
-        T** bufferSlot() { return &m_buffer; }
         size_t capacity() const { return m_capacity; }
 
         T* releaseBuffer()
@@ -378,7 +374,6 @@ namespace WTF {
         using Base::deallocateBuffer;
 
         using Base::buffer;
-        using Base::bufferSlot;
         using Base::capacity;
 
         using Base::releaseBuffer;
@@ -479,7 +474,6 @@ namespace WTF {
         }
 
         using Base::buffer;
-        using Base::bufferSlot;
         using Base::capacity;
 
         T* releaseBuffer()
@@ -506,8 +500,6 @@ namespace WTF {
     private:
         typedef VectorBuffer<T, inlineCapacity> Buffer;
         typedef VectorTypeOperations<T> TypeOperations;
-
-        class VectorReverseProxy;
 
     public:
         typedef T ValueType;
@@ -580,9 +572,6 @@ namespace WTF {
         reverse_iterator rend() { return reverse_iterator(begin()); }
         const_reverse_iterator rbegin() const { return const_reverse_iterator(end()); }
         const_reverse_iterator rend() const { return const_reverse_iterator(begin()); }
-
-        VectorReverseProxy& reversed() { return static_cast<VectorReverseProxy&>(*this); }
-        const VectorReverseProxy& reversed() const { return static_cast<const VectorReverseProxy&>(*this); }
 
         T& first() { return at(0); }
         const T& first() const { return at(0); }
@@ -660,26 +649,6 @@ namespace WTF {
         const T* tryExpandCapacity(size_t newMinCapacity, const T*);
         template<typename U> U* expandCapacity(size_t newMinCapacity, U*); 
         template<typename U> void appendSlowCase(const U&);
-
-        class VectorReverseProxy : private Vector {
-        public:
-            typedef typename Vector::reverse_iterator iterator;
-            typedef typename Vector::const_reverse_iterator const_iterator;
-            
-            iterator begin() { return Vector::rbegin(); }
-            iterator end() { return Vector::rend(); }
-            const_iterator begin() const { return Vector::rbegin(); }
-            const_iterator end() const { return Vector::rend(); }
-
-        private:
-            friend class Vector;
-
-            // These are intentionally not implemented.
-            VectorReverseProxy();
-            VectorReverseProxy(const VectorReverseProxy&);
-            VectorReverseProxy& operator=(const VectorReverseProxy&);
-            ~VectorReverseProxy();
-        };
 
         size_t m_size;
         Buffer m_buffer;
@@ -841,7 +810,7 @@ namespace WTF {
     template<typename T, size_t inlineCapacity>
     void Vector<T, inlineCapacity>::expandCapacity(size_t newMinCapacity)
     {
-        reserveCapacity(max(newMinCapacity, max(static_cast<size_t>(16), capacity() + capacity() / 4 + 1)));
+        reserveCapacity(std::max(newMinCapacity, std::max(static_cast<size_t>(16), capacity() + capacity() / 4 + 1)));
     }
     
     template<typename T, size_t inlineCapacity>
@@ -859,7 +828,7 @@ namespace WTF {
     template<typename T, size_t inlineCapacity>
     bool Vector<T, inlineCapacity>::tryExpandCapacity(size_t newMinCapacity)
     {
-        return tryReserveCapacity(max(newMinCapacity, max(static_cast<size_t>(16), capacity() + capacity() / 4 + 1)));
+        return tryReserveCapacity(std::max(newMinCapacity, std::max(static_cast<size_t>(16), capacity() + capacity() / 4 + 1)));
     }
     
     template<typename T, size_t inlineCapacity>

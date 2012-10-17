@@ -1,3 +1,19 @@
+2012-10-17  Anders Carlsson  <andersca@apple.com>
+
+        Clean up Vector.h
+        https://bugs.webkit.org/show_bug.cgi?id=99622
+
+        Reviewed by Benjamin Poulain.
+
+        Fix fallout from removing std::max and std::min using declarations.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::jsSpliceSubstrings):
+        (JSC::jsSpliceSubstringsWithSeparators):
+        (JSC::stringProtoFuncIndexOf):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::setupDisjunctionOffsets):
+
 2012-10-17  Oliver Hunt  <oliver@apple.com>
 
         Committing new files is so overrated.

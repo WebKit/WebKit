@@ -173,8 +173,9 @@ static bool encodePixels(IntSize imageSize, unsigned char* inputPixels, bool pre
     row.resize(cinfo.image_width * cinfo.input_components);
     const size_t pixelRowStride = cinfo.image_width * 4;
     while (cinfo.next_scanline < cinfo.image_height) {
-        extractRowRGB(pixels, cinfo.image_width, row.data());
-        jpeg_write_scanlines(&cinfo, row.dataSlot(), 1);
+        JSAMPLE* rowData = row.data();
+        extractRowRGB(pixels, cinfo.image_width, rowData);
+        jpeg_write_scanlines(&cinfo, &rowData, 1);
         pixels += pixelRowStride;
     }
 

@@ -657,8 +657,8 @@ public:
         for (unsigned alt = 0; alt < disjunction->m_alternatives.size(); ++alt) {
             PatternAlternative* alternative = disjunction->m_alternatives[alt];
             unsigned currentAlternativeCallFrameSize = setupAlternativeOffsets(alternative, initialCallFrameSize, initialInputPosition);
-            minimumInputSize = min(minimumInputSize, alternative->m_minimumSize);
-            maximumCallFrameSize = max(maximumCallFrameSize, currentAlternativeCallFrameSize);
+            minimumInputSize = std::min(minimumInputSize, alternative->m_minimumSize);
+            maximumCallFrameSize = std::max(maximumCallFrameSize, currentAlternativeCallFrameSize);
             hasFixedSize &= alternative->m_hasFixedSize;
         }
         
