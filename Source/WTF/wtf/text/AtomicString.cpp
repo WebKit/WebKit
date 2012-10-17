@@ -187,11 +187,26 @@ struct HashAndUTF8CharactersTranslator {
         if (buffer.utf16Length != string->length())
             return false;
 
-        const UChar* stringCharacters = string->characters();
-
         // If buffer contains only ASCII characters UTF-8 and UTF16 length are the same.
-        if (buffer.utf16Length != buffer.length)
+        if (buffer.utf16Length != buffer.length) {
+            const UChar* stringCharacters = string->characters();
+
             return equalUTF16WithUTF8(stringCharacters, stringCharacters + string->length(), buffer.characters, buffer.characters + buffer.length);
+        }
+
+        if (string->is8Bit()) {
+            const LChar* stringCharacters = string->characters8();
+
+            for (unsigned i = 0; i < buffer.length; ++i) {
+                ASSERT(isASCII(buffer.characters[i]));
+                if (stringCharacters[i] != buffer.characters[i])
+                    return false;
+            }
+
+            return true;
+        }
+
+        const UChar* stringCharacters = string->characters16();
 
         for (unsigned i = 0; i < buffer.length; ++i) {
             ASSERT(isASCII(buffer.characters[i]));
