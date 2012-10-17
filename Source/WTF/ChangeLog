@@ -1,3 +1,16 @@
+2012-10-17  Anders Carlsson  <andersca@apple.com>
+
+        Always use fastRealloc when growing or shrinking the Vector buffer
+        https://bugs.webkit.org/show_bug.cgi?id=99616
+
+        Reviewed by Andreas Kling.
+
+        Remove the pointless #if PLATFORM(BLACKBERRY) and always try to use fastRealloc to grow or shrink the
+        vector buffer when possible; realloc should always be at least as fast as free+malloc.
+
+        * wtf/Vector.h:
+        (WTF::VectorBufferBase::shouldReallocateBuffer):
+
 2012-10-16  Michael Saboff  <msaboff@apple.com>
 
         Change WTF_USE_8BIT_TEXTRUN to ENABLE_8BIT_TEXTRUN

@@ -278,14 +278,7 @@ namespace WTF {
 
         bool shouldReallocateBuffer(size_t newCapacity) const
         {
-#if PLATFORM(BLACKBERRY)
-            // Tested on BlackBerry.
             return VectorTraits<T>::canMoveWithMemcpy && m_capacity && newCapacity;
-#else
-            // FIXME: Return true on the platforms where realloc() gives better performance.
-            UNUSED_PARAM(newCapacity);
-            return false;
-#endif
         }
 
         void reallocateBuffer(size_t newCapacity)
