@@ -1,3 +1,30 @@
+2012-10-17  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [WK2][GTK] Favicons are incorrectly released before receiving the actual data
+        https://bugs.webkit.org/show_bug.cgi?id=99492
+
+        Reviewed by Carlos Garcia Campos.
+
+        Don't release the icon for a page URL in the first stage of the
+        asynchronous call webkit_favicon_database_get_favicon() but do it
+        later instead, to avoid a race condition with the initial
+        synchronization process the first time we request an icon which is
+        actually in the icon database, but has not made available yet.
+
+        * UIProcess/API/gtk/WebKitFaviconDatabase.cpp:
+        (GetFaviconSurfaceAsyncData::~GetFaviconSurfaceAsyncData): Release
+        here the icon for the page URL if not a valid icon has been found.
+        (GetFaviconSurfaceAsyncData): Add a new boolean parameter to flag
+        when a given icon for a page URL should be released.
+        (getIconSurfaceSynchronously): Don't release the icon, just return 0.
+        (processPendingIconsForPageURL): If a valid icon is got at this
+        point, disable the flag shouldReleaseIconForPageURL not to release
+        the icon later on.
+        (webkit_favicon_database_get_favicon): Make sure we retain the
+        icon for a given page URL before trying to retrieve it from the
+        IconDatabase, and that we flag it to be released in case not a
+        valid icon has been found yet.
+
 2012-10-17  Grzegorz Czajkowski  <g.czajkowski@samsung.com>, Michal Roj <m.roj@samsung.com>
 
         Implementation of spellchecking feature.
