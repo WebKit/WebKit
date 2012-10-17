@@ -268,6 +268,7 @@ webkit.org/b/98942 storage/storageinfo-request-quota.html [ Skip ]
 webkit.org/b/97324 fast/events/page-visibility-iframe-delete-test.html [ Skip ]
 webkit.org/b/97324 fast/events/page-visibility-iframe-move-test.html [ Skip ]
 webkit.org/b/97324 fast/events/page-visibility-iframe-propagation-test.html [ Skip ]
+webkit.org/b/97324 fast/events/page-visibility-null-view.html [ Skip ]
 webkit.org/b/97324 fast/events/page-visibility-transition-test.html [ Skip ]
 
 # GTK doesn't support smart replace.

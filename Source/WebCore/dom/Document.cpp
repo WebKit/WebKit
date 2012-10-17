@@ -1624,10 +1624,10 @@ PageVisibilityState Document::visibilityState() const
 {
     // The visibility of the document is inherited from the visibility of the
     // page. If there is no page associated with the document, we will assume
-    // that the page is visible i.e. invisibility has to be explicitly
-    // specified by the embedder.
+    // that the page is hidden, as specified by the spec:
+    // http://dvcs.w3.org/hg/webperf/raw-file/tip/specs/PageVisibility/Overview.html#dom-document-hidden
     if (!m_frame || !m_frame->page())
-        return PageVisibilityStateVisible;
+        return PageVisibilityStateHidden;
     return m_frame->page()->visibilityState();
 }
 
