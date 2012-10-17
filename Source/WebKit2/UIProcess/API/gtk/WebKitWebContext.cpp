@@ -318,7 +318,7 @@ WebKitCookieManager* webkit_web_context_get_cookie_manager(WebKitWebContext* con
 
     WebKitWebContextPrivate* priv = context->priv;
     if (!priv->cookieManager)
-        priv->cookieManager = adoptGRef(webkitCookieManagerCreate(toAPI(priv->context->cookieManagerProxy())));
+        priv->cookieManager = adoptGRef(webkitCookieManagerCreate(priv->context->cookieManagerProxy()));
 
     return priv->cookieManager.get();
 }
