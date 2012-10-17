@@ -3932,6 +3932,8 @@ webkit.org/b/97816 [ Linux ] platform/chromium/compositing/plugins/webplugin-alp
 webkit.org/b/97816 [ Linux ] platform/chromium/compositing/plugins/webplugin-no-alpha.html [ Pass ImageOnlyFailure ]
 webkit.org/b/97816 [ Linux ] platform/chromium/compositing/plugins/webplugin-reflection.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/63899 [ Mac Win Android ] fast/replaced/border-radius-clip-content-edge.html [ Pass ImageOnlyFailure ]
+
 # Started failing on r128793
 webkit.org/b/96953 [ Win ] http/tests/inspector/network/network-xhr-replay.html [ Timeout ]
 

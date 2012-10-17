@@ -145,7 +145,9 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         else {
             // Push a clip if we have a border radius, since we want to round the foreground content that gets painted.
             paintInfo.context->save();
-            paintInfo.context->addRoundedRectClip(style()->getRoundedBorderFor(paintRect, view()));
+            RoundedRect roundedInnerRect = style()->getRoundedInnerBorderFor(paintRect,
+                paddingTop() + borderTop(), paddingBottom() + borderBottom(), paddingLeft() + borderLeft(), paddingRight() + borderRight(), true, true);
+            clipRoundedInnerRect(paintInfo.context, paintRect, roundedInnerRect);
         }
     }
 

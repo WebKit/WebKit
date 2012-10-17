@@ -1,3 +1,25 @@
+2012-10-17  Douglas Stockwell  <dstockwell@chromium.org>
+
+        Content of replaced elements should be trimmed to the content edge curve.
+        https://bugs.webkit.org/show_bug.cgi?id=63899
+
+        Reviewed by Simon Fraser.
+
+        When a border-radius is specified the content of replaced elements needs to be clipped to avoid
+        being painted over the padding or border in the corners. Previously the clip that was applied
+        was set to the border-edge curve, this patch contracts the clip by the size of the border and
+        padding (the content-edge curve) to match the css3 spec.
+        Spec: http://www.w3.org/TR/css3-background/#corner-clipping
+
+        Test: fast/replaced/border-radius-clip-content-edge.html
+
+        * rendering/RenderBoxModelObject.h:
+        (RenderBoxModelObject):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+
 2012-10-17  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         The HTML5 formtarget/formaction/formenctyp/formmethod/formnovalidate attributes don't work in button tags with nested elements

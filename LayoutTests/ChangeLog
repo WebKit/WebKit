@@ -1,3 +1,17 @@
+2012-10-17  Douglas Stockwell  <dstockwell@chromium.org>
+
+        Content of replaced elements should be trimmed to the content edge curve.
+        https://bugs.webkit.org/show_bug.cgi?id=63899
+
+        Reviewed by Simon Fraser.
+
+        * fast/replaced/border-radius-clip-content-edge-expected.txt: Added.
+        * fast/replaced/border-radius-clip-content-edge.html: Added.
+        * platform/fast/replaced/border-radius-clip-content-edge-expected.png: Added.
+        * platform/chromium/TestExpectations:
+        * platform/chromium-linux/fast/replaced/border-radius-clip-content-edge-expected.png: Added.
+        * platform/chromium-linux/ietestcenter/css3/bordersbackgrounds/border-radius-content-edge-001-expected.png:
+
 2012-10-17  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         The HTML5 formtarget/formaction/formenctyp/formmethod/formnovalidate attributes don't work in button tags with nested elements
