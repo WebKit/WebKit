@@ -164,7 +164,7 @@ static gpointer createDefaultWebContext(gpointer)
     attachRequestManagerClientToContext(webContext.get());
 
 #if ENABLE(GEOLOCATION)
-    priv->geolocationProvider = WebKitGeolocationProvider::create(toAPI(priv->context->geolocationManagerProxy()));
+    priv->geolocationProvider = WebKitGeolocationProvider::create(priv->context->geolocationManagerProxy());
 #endif
 #if ENABLE(SPELLCHECK)
     priv->textChecker = WebKitTextChecker::create();

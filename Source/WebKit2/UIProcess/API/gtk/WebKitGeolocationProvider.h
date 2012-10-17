@@ -28,22 +28,24 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
+using namespace WebKit;
+
 class WebKitGeolocationProvider : public RefCounted<WebKitGeolocationProvider>, public WebCore::GeolocationProviderGeoclueClient {
 public:
     virtual ~WebKitGeolocationProvider();
-    static PassRefPtr<WebKitGeolocationProvider> create(WKGeolocationManagerRef);
+    static PassRefPtr<WebKitGeolocationProvider> create(WebGeolocationManagerProxy*);
 
     void startUpdating();
     void stopUpdating();
 
 private:
-    WebKitGeolocationProvider(WKGeolocationManagerRef);
+    WebKitGeolocationProvider(WebGeolocationManagerProxy*);
 
     // GeolocationProviderGeoclueClient interface.
     virtual void notifyPositionChanged(int, double, double, double, double, double);
     virtual void notifyErrorOccurred(const char*);
 
-    WKRetainPtr<WKGeolocationManagerRef> m_wkGeolocationManager;
+    RefPtr<WebGeolocationManagerProxy> m_geolocationManager;
     WebCore::GeolocationProviderGeoclue m_provider;
 };
 

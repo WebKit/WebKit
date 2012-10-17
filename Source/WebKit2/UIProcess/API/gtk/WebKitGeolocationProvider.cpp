@@ -26,6 +26,9 @@
 #include "config.h"
 #include "WebKitGeolocationProvider.h"
 
+#include "WebGeolocationManagerProxy.h"
+#include "WebGeolocationPosition.h"
+
 #if ENABLE(GEOLOCATION)
 
 static inline WebKitGeolocationProvider* toGeolocationProvider(const void* clientInfo)
@@ -48,16 +51,16 @@ WebKitGeolocationProvider::~WebKitGeolocationProvider()
     m_provider.stopUpdating();
 }
 
-PassRefPtr<WebKitGeolocationProvider> WebKitGeolocationProvider::create(WKGeolocationManagerRef wkGeolocationManager)
+PassRefPtr<WebKitGeolocationProvider> WebKitGeolocationProvider::create(WebGeolocationManagerProxy* geolocationManager)
 {
-    return adoptRef(new WebKitGeolocationProvider(wkGeolocationManager));
+    return adoptRef(new WebKitGeolocationProvider(geolocationManager));
 }
 
-WebKitGeolocationProvider::WebKitGeolocationProvider(WKGeolocationManagerRef wkGeolocationManager)
-    : m_wkGeolocationManager(wkGeolocationManager)
+WebKitGeolocationProvider::WebKitGeolocationProvider(WebGeolocationManagerProxy* geolocationManager)
+    : m_geolocationManager(geolocationManager)
     , m_provider(this)
 {
-    ASSERT(wkGeolocationManager);
+    ASSERT(geolocationManager);
 
     WKGeolocationProvider wkGeolocationProvider = {
         kWKGeolocationProviderCurrentVersion,
@@ -65,7 +68,7 @@ WebKitGeolocationProvider::WebKitGeolocationProvider(WKGeolocationManagerRef wkG
         startUpdatingCallback,
         stopUpdatingCallback
     };
-    WKGeolocationManagerSetProvider(m_wkGeolocationManager.get(), &wkGeolocationProvider);
+    WKGeolocationManagerSetProvider(toAPI(geolocationManager), &wkGeolocationProvider);
 }
 
 void WebKitGeolocationProvider::startUpdating()
@@ -80,13 +83,13 @@ void WebKitGeolocationProvider::stopUpdating()
 
 void WebKitGeolocationProvider::notifyPositionChanged(int timestamp, double latitude, double longitude, double altitude, double accuracy, double altitudeAccuracy)
 {
-    WKRetainPtr<WKGeolocationPositionRef> wkGeolocationPosition(AdoptWK, WKGeolocationPositionCreate(timestamp, latitude, longitude, accuracy));
-    WKGeolocationManagerProviderDidChangePosition(m_wkGeolocationManager.get(), wkGeolocationPosition.get());
+    RefPtr<WebGeolocationPosition> position = WebGeolocationPosition::create(timestamp, latitude, longitude, accuracy, true, altitude, true, altitudeAccuracy, false, 0, false, 0);
+    m_geolocationManager->providerDidChangePosition(position.get());
 }
 
 void WebKitGeolocationProvider::notifyErrorOccurred(const char* message)
 {
-    WKGeolocationManagerProviderDidFailToDeterminePosition(m_wkGeolocationManager.get());
+    m_geolocationManager->providerDidFailToDeterminePosition();
 }
 
 #endif // ENABLE(GEOLOCATION)

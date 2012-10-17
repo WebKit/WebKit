@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitGeolocationPermissionRequest.h"
 
+#include "GeolocationPermissionRequestProxy.h"
 #include "WebKitGeolocationPermissionRequestPrivate.h"
 #include "WebKitPermissionRequest.h"
 
@@ -39,7 +40,7 @@ G_DEFINE_TYPE_WITH_CODE(WebKitGeolocationPermissionRequest, webkit_geolocation_p
                                               webkit_permission_request_interface_init))
 
 struct _WebKitGeolocationPermissionRequestPrivate {
-    WKRetainPtr<WKGeolocationPermissionRequestRef> wkRequest;
+    RefPtr<GeolocationPermissionRequestProxy> request;
     bool madeDecision;
 };
 
@@ -53,7 +54,7 @@ static void webkitGeolocationPermissionRequestAllow(WebKitPermissionRequest* req
     if (priv->madeDecision)
         return;
 
-    WKGeolocationPermissionRequestAllow(priv->wkRequest.get());
+    priv->request->allow();
     priv->madeDecision = true;
 }
 
@@ -67,7 +68,7 @@ static void webkitGeolocationPermissionRequestDeny(WebKitPermissionRequest* requ
     if (priv->madeDecision)
         return;
 
-    WKGeolocationPermissionRequestDeny(priv->wkRequest.get());
+    priv->request->deny();
     priv->madeDecision = true;
 }
 
@@ -89,7 +90,7 @@ static void webkitGeolocationPermissionRequestFinalize(GObject* object)
 
     // Default behaviour when no decision has been made is denying the request.
     if (!priv->madeDecision)
-        WKGeolocationPermissionRequestDeny(priv->wkRequest.get());
+        priv->request->deny();
 
     priv->~WebKitGeolocationPermissionRequestPrivate();
     G_OBJECT_CLASS(webkit_geolocation_permission_request_parent_class)->finalize(object);
@@ -102,9 +103,9 @@ static void webkit_geolocation_permission_request_class_init(WebKitGeolocationPe
     g_type_class_add_private(klass, sizeof(WebKitGeolocationPermissionRequestPrivate));
 }
 
-WebKitGeolocationPermissionRequest* webkitGeolocationPermissionRequestCreate(WKGeolocationPermissionRequestRef wkRequest)
+WebKitGeolocationPermissionRequest* webkitGeolocationPermissionRequestCreate(GeolocationPermissionRequestProxy* request)
 {
     WebKitGeolocationPermissionRequest* geolocationPermissionRequest = WEBKIT_GEOLOCATION_PERMISSION_REQUEST(g_object_new(WEBKIT_TYPE_GEOLOCATION_PERMISSION_REQUEST, NULL));
-    geolocationPermissionRequest->priv->wkRequest = wkRequest;
+    geolocationPermissionRequest->priv->request = request;
     return geolocationPermissionRequest;
 }

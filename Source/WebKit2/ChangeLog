@@ -1,3 +1,33 @@
+2012-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Don't use the C API internally in WebKitGeolocation classes
+        https://bugs.webkit.org/show_bug.cgi?id=96778
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Using the C++ classes directly instead of the C API wrappers we
+        avoid a lot of toImpl/toAPI casts, string conversions and
+        allocations. The code is also a lot simpler and easier to read.
+
+        * UIProcess/API/gtk/WebKitGeolocationPermissionRequest.cpp:
+        (_WebKitGeolocationPermissionRequestPrivate):
+        (webkitGeolocationPermissionRequestAllow):
+        (webkitGeolocationPermissionRequestDeny):
+        (webkitGeolocationPermissionRequestFinalize):
+        (webkitGeolocationPermissionRequestCreate):
+        * UIProcess/API/gtk/WebKitGeolocationPermissionRequestPrivate.h:
+        * UIProcess/API/gtk/WebKitGeolocationProvider.cpp:
+        (WebKitGeolocationProvider::create):
+        (WebKitGeolocationProvider::WebKitGeolocationProvider):
+        (WebKitGeolocationProvider::notifyPositionChanged):
+        (WebKitGeolocationProvider::notifyErrorOccurred):
+        * UIProcess/API/gtk/WebKitGeolocationProvider.h:
+        (WebKitGeolocationProvider):
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+        (decidePolicyForGeolocationPermissionRequest):
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (createDefaultWebContext):
+
 2012-10-17  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [WK2][EFL] Add unit tests for Spelling
