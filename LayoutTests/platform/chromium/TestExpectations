@@ -2818,7 +2818,7 @@ crbug.com/83504 [ Mac ] fast/css/custom-font-xheight.html [ Failure Pass ]
 webkit.org/b/61169 [ Android Linux Win ] css3/images/optimize-contrast-canvas.html [ ImageOnlyFailure ]
 webkit.org/b/61169 [ Android Linux Win ] css3/images/optimize-contrast-image.html [ ImageOnlyFailure ]
 
-webkit.org/b/92710 fast/forms/date/calendar-picker-appearance.html [ ImageOnlyFailure Pass ]
+webkit.org/b/92710 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance.html [ ImageOnlyFailure Pass ]
 
 # New test added in r87324
 crbug.com/83994 [ Win ] platform/win/plugins/call-javascript-that-destroys-plugin.html [ Failure ]
@@ -4098,7 +4098,7 @@ webkit.org/b/99134 platform/chromium/compositing/tiny-layer-rotated.html [ Pass 
 
 webkit.org/b/99138 [ SnowLeopard ] svg/custom/foreign-object-skew.svg [ Pass ImageOnlyFailure ]
 
-webkit.org/b/99466 fast/forms/date/calendar-picker-key-operations.html [ Text ]
+webkit.org/b/99466 platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations.html [ Text ]
 
 # Needs rebaselining once the bots cycle.
 webkit.org/b/99376 css3/flexbox/flexbox-baseline.html [ Pass Failure ]

@@ -1,3 +1,65 @@
+2012-10-16  Kent Tamura  <tkent@chromium.org>
+
+        Move tests for calendar picker to platform/chromium/fast/forms/calendar-picker/
+        https://bugs.webkit.org/show_bug.cgi?id=98103
+
+        Reviewed by Yuta Kitamura.
+
+        Move tests for calendar picker to platform/chromium/fast/forms/
+        calendar-picker/ because
+         - Ease of skipping
+         - We're going to support non-date types in the calendar picker.
+         - Not sure the calendar picker code will be used on other platforms.
+
+        * fast/forms/date/calendar-picker-appearance-expected.txt: Removed.
+        * fast/forms/date/calendar-picker-appearance-pre-100-expected.txt: Removed.
+        * fast/forms/date/calendar-picker-appearance-pre-100.html: Removed.
+        * fast/forms/date/calendar-picker-appearance.html: Removed.
+        * fast/forms/date/calendar-picker-common.js: Removed.
+        * fast/forms/date/calendar-picker-key-operations-expected.txt: Removed.
+        * fast/forms/date/calendar-picker-key-operations.html: Removed.
+        * fast/forms/date/calendar-picker-mouse-operations-expected.txt: Removed.
+        * fast/forms/date/calendar-picker-mouse-operations.html: Removed.
+        * fast/forms/date/calendar-picker-type-change-onclick-expected.txt: Removed.
+        * fast/forms/date/calendar-picker-type-change-onclick.html: Removed.
+        * fast/forms/date/calendar-picker-with-step-expected.txt: Removed.
+        * fast/forms/date/calendar-picker-with-step.html: Removed.
+        * platform/chromium-linux-x86/fast/forms/date/calendar-picker-appearance-expected.png: Removed.
+        * platform/chromium-linux-x86/platform/chromium/fast/forms/calendar-picker: Added.
+        * platform/chromium-linux-x86/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.png: Copied from LayoutTests/platform/chromium-linux-x86/fast/forms/date/calendar-picker-appearance-expected.png.
+        * platform/chromium-linux/fast/forms/date/calendar-picker-appearance-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium/fast/forms/calendar-picker: Added.
+        * platform/chromium-linux/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/date/calendar-picker-appearance-expected.png.
+        * platform/chromium-mac-snowleopard/fast/forms/date/calendar-picker-appearance-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/date/calendar-picker-appearance-expected.png.
+        * platform/chromium-mac/fast/forms/date/calendar-picker-appearance-expected.png: Removed.
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/date/calendar-picker-appearance-expected.png.
+        * platform/chromium-win-xp/fast/forms/date/calendar-picker-appearance-expected.png: Removed.
+        * platform/chromium-win-xp/platform/chromium/fast/forms/calendar-picker: Added.
+        * platform/chromium-win-xp/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.png: Copied from LayoutTests/platform/chromium-win-xp/fast/forms/date/calendar-picker-appearance-expected.png.
+        * platform/chromium-win/fast/forms/date/calendar-picker-appearance-expected.png: Removed.
+        * platform/chromium-win/fast/forms/date/calendar-picker-key-operations-expected.txt: Removed.
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker: Added.
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/date/calendar-picker-appearance-expected.png.
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/forms/date/calendar-picker-key-operations-expected.txt.
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.txt: Copied from LayoutTests/fast/forms/date/calendar-picker-appearance-expected.txt.
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step.html:
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance.html: Copied from LayoutTests/fast/forms/date/calendar-picker-appearance.html.
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations-expected.txt: Copied from LayoutTests/fast/forms/date/calendar-picker-key-operations-expected.txt.
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations.html: Copied from LayoutTests/fast/forms/date/calendar-picker-key-operations.html.
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-mouse-operations-expected.txt: Copied from LayoutTests/fast/forms/date/calendar-picker-mouse-operations-expected.txt.
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-mouse-operations.html: Copied from LayoutTests/fast/forms/date/calendar-picker-mouse-operations.html.
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-pre-100-year-expected.txt: Copied from LayoutTests/fast/forms/date/calendar-picker-appearance-pre-100-expected.txt.
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-pre-100-year.html: Copied from LayoutTests/fast/forms/date/calendar-picker-appearance-pre-100.html.
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-with-step-expected.txt: Copied from LayoutTests/fast/forms/date/calendar-picker-with-step-expected.txt.
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-with-step.html: Copied from LayoutTests/fast/forms/date/calendar-picker-with-step.html.
+        * platform/chromium/fast/forms/calendar-picker/resources: Added.
+        * platform/chromium/fast/forms/calendar-picker/resources/calendar-picker-common.js: Copied from LayoutTests/fast/forms/date/calendar-picker-common.js.
+        * platform/chromium/fast/forms/page-popup/page-popup-adjust-rect.html: Fix calendar-picker-common.js path.
+        * platform/gtk/TestExpectations:
+
 2012-10-16  Dirk Pranke  <dpranke@chromium.org>
 
         Update Chromium ML expectations
