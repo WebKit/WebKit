@@ -13,7 +13,7 @@ var chunks = [];
 var chunkSize = 500000; // 6.09mb / 500k = approx 13 chunks (thus 13 forced layouts/style resolves).
 var chunkCount = Math.ceil(spec.length / chunkSize);
 for (var chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++) {
-    var chunk = spec.substring(chunkIndex * chunkSize, chunkSize);
+    var chunk = spec.substr(chunkIndex * chunkSize, chunkSize);
     chunks.push(chunk);
 }
 

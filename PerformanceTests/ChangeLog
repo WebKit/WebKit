@@ -1,3 +1,16 @@
+2012-10-16  Elliott Sprehn  <esprehn@chromium.org>
+
+        html5-full-render.html test uses substring but meant substr
+        https://bugs.webkit.org/show_bug.cgi?id=99495
+
+        Reviewed by Adam Barth.
+
+        This test intended to chunk up the HTML5 spec into chunks of 500k chars, but used
+        substring(to,from) instead of substr(from,length) so it actually loaded 5x more
+        content than was in the HTML5 spec.
+
+        * Parser/html5-full-render.html:
+
 2012-10-11  James Simonsen  <simonjam@chromium.org>
 
         unprefix window.performance.webkitNow()
