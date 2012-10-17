@@ -27,13 +27,13 @@
 #include "Position.h"
 
 #include "CSSComputedStyleDeclaration.h"
-#include "ContextFeatures.h"
 #include "HTMLNames.h"
 #include "InlineTextBox.h"
 #include "Logging.h"
 #include "PositionIterator.h"
 #include "RenderBlock.h"
 #include "RenderText.h"
+#include "RuntimeEnabledFeatures.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"
@@ -82,7 +82,7 @@ Position::Position(PassRefPtr<Node> anchorNode, LegacyEditingOffset offset)
     , m_isLegacyEditingPosition(true)
 {
 #if ENABLE(SHADOW_DOM)
-    ASSERT((m_anchorNode && ContextFeatures::shadowDOMEnabled(m_anchorNode->document()))
+    ASSERT((m_anchorNode && RuntimeEnabledFeatures::shadowDOMEnabled())
            || !m_anchorNode || !m_anchorNode->isShadowRoot());
 #else
     ASSERT(!m_anchorNode || !m_anchorNode->isShadowRoot());
@@ -96,7 +96,7 @@ Position::Position(PassRefPtr<Node> anchorNode, AnchorType anchorType)
     , m_isLegacyEditingPosition(false)
 {
 #if ENABLE(SHADOW_DOM)
-    ASSERT((m_anchorNode && ContextFeatures::shadowDOMEnabled(m_anchorNode->document()))
+    ASSERT((m_anchorNode && RuntimeEnabledFeatures::shadowDOMEnabled())
            || !m_anchorNode || !m_anchorNode->isShadowRoot());
 #else
     ASSERT(!m_anchorNode || !m_anchorNode->isShadowRoot());
@@ -114,7 +114,7 @@ Position::Position(PassRefPtr<Node> anchorNode, int offset, AnchorType anchorTyp
     , m_isLegacyEditingPosition(false)
 {
 #if ENABLE(SHADOW_DOM)
-    ASSERT((m_anchorNode && ContextFeatures::shadowDOMEnabled(m_anchorNode->document()))
+    ASSERT((m_anchorNode && RuntimeEnabledFeatures::shadowDOMEnabled())
            || !m_anchorNode || !editingIgnoresContent(m_anchorNode.get()) || !m_anchorNode->isShadowRoot());
 #else
     ASSERT(!m_anchorNode || !editingIgnoresContent(m_anchorNode.get()) || !m_anchorNode->isShadowRoot());
@@ -858,7 +858,7 @@ ContainerNode* Position::findParent(const Node* node)
     // FIXME: See http://web.ug/82697
 
 #if ENABLE(SHADOW_DOM)
-    if (ContextFeatures::shadowDOMEnabled(node->document()))
+    if (RuntimeEnabledFeatures::shadowDOMEnabled())
         return node->parentNode();
 #endif
 

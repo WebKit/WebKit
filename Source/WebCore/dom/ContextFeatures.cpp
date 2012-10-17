@@ -63,18 +63,6 @@ bool ContextFeatures::dialogElementEnabled(Document* document)
 #endif
 }
 
-bool ContextFeatures::shadowDOMEnabled(Document* document)
-{
-#if ENABLE(SHADOW_DOM)
-    if (!document)
-        return RuntimeEnabledFeatures::shadowDOMEnabled();
-    return document->contextFeatures()->isEnabled(document, ShadowDOM, RuntimeEnabledFeatures::shadowDOMEnabled());
-#else
-    UNUSED_PARAM(document);
-    return false;
-#endif
-}
-
 bool ContextFeatures::styleScopedEnabled(Document* document)
 {
 #if ENABLE(STYLE_SCOPED)

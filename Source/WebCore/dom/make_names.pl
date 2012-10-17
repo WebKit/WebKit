@@ -186,7 +186,8 @@ sub defaultTagPropertyHash
         'mapToTagName' => '',
         'wrapperOnlyIfMediaIsAvailable' => 0,
         'conditional' => 0,
-        'contextConditional' => 0
+        'contextConditional' => 0,
+        'runtimeConditional' => 0
     );
 }
 
@@ -379,6 +380,15 @@ END
     if ($contextConditional) {
         print F <<END
     if (!ContextFeatures::${contextConditional}Enabled(document))
+        return 0;
+END
+;
+    }
+
+    my $runtimeConditional = $enabledTags{$tagName}{runtimeConditional};
+    if ($runtimeConditional) {
+        print F <<END
+    if (!RuntimeEnabledFeatures::${runtimeConditional}Enabled())
         return 0;
 END
 ;
@@ -811,6 +821,7 @@ printConditionalElementIncludes($F);
 print F <<END
 
 #include "ContextFeatures.h"
+#include "RuntimeEnabledFeatures.h"
 
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(VIDEO)
 #include "Document.h"
@@ -1028,6 +1039,20 @@ static JSDOMWrapper* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGloba
 }
 END
 ;
+            } elsif ($enabledTags{$tagName}{runtimeConditional}) {
+                my $runtimeConditional = $enabledTags{$tagName}{runtimeConditional};
+                print F <<END
+static JSDOMWrapper* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
+{
+    if (!RuntimeEnabledFeatures::${runtimeConditional}Enabled()) {
+        ASSERT(!element || element->is$parameters{fallbackInterfaceName}());
+        return CREATE_DOM_WRAPPER(exec, globalObject, $parameters{fallbackInterfaceName}, element.get());
+    }
+
+    return CREATE_DOM_WRAPPER(exec, globalObject, ${JSInterfaceName}, element.get());
+}
+END
+;
             } else {
                 print F <<END
 static JSDOMWrapper* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
@@ -1057,6 +1082,17 @@ END
 static v8::Handle<v8::Value> create${JSInterfaceName}Wrapper($parameters{namespace}Element* element, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     if (!ContextFeatures::${contextConditional}Enabled(element->document()))
+        return V8$parameters{fallbackInterfaceName}::wrap(to$parameters{fallbackInterfaceName}(element), creationContext, isolate);
+    return toV8(static_cast<${JSInterfaceName}*>(element), creationContext, isolate);
+}
+END
+;
+            } elsif ($enabledTags{$tagName}{runtimeConditional}) {
+                my $runtimeConditional = $enabledTags{$tagName}{runtimeConditional};
+                print F <<END
+static v8::Handle<v8::Value> create${JSInterfaceName}Wrapper($parameters{namespace}Element* element, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+{
+    if (!RuntimeEnabledFeatures::${runtimeConditional}Enabled())
         return V8$parameters{fallbackInterfaceName}::wrap(to$parameters{fallbackInterfaceName}(element), creationContext, isolate);
     return toV8(static_cast<${JSInterfaceName}*>(element), creationContext, isolate);
 }
@@ -1118,6 +1154,7 @@ sub printWrapperFactoryCppFile
     print F <<END
 
 #include "ContextFeatures.h"
+#include "RuntimeEnabledFeatures.h"
 
 #if ENABLE(VIDEO)
 #include "Document.h"

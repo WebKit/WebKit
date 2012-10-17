@@ -1,3 +1,34 @@
+2012-10-16  MORITA Hajime  <morrita@google.com>
+
+        [Shadow DOM][V8] WebCore::V8DOMWindow::installPerContextProperties() is slow when shadowDOMEnabled flag is on.
+        https://bugs.webkit.org/show_bug.cgi?id=99428
+
+        Reviewed by Adam Barth.
+
+        A benchmark unveiled that installPerContextProperties() could have made DOMWindow setup slower when
+        - Some properties are added per-context basis by turnin the flag on and
+        - There are bunch of DOMWindow object in the page (that is, there are many iframes.)
+
+        This change eliminates Shadow DOM related per-context properties from DOMWindow for getting rid of that slowness.
+
+        * dom/ContextFeatures.cpp:
+        * dom/ContextFeatures.h: Removed shadowDOMEnabled() method and related enum entry.
+        * dom/Position.cpp:
+        (WebCore::Position::Position):
+        (WebCore::Position::findParent):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::getSelection):
+        * dom/make_names.pl: Re-introduced "runtimeConditional" directive.
+        (defaultTagPropertyHash):
+        (printConstructorInterior):
+        (printFactoryCppFile):
+        (printWrapperFunctions):
+        (printWrapperFactoryCppFile):
+        * html/HTMLTagNames.in:
+        * html/shadow/HTMLContentElement.cpp:
+        (WebCore::contentTagName):
+        * page/DOMWindow.idl:
+
 2012-10-16  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Make RenderObject destruction during detach a top-down operation
