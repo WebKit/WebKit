@@ -1,3 +1,13 @@
+2012-10-16  Dana Jansens  <danakj@chromium.org>
+
+        Unreviewed, rebaselines after r131358
+        https://bugs.webkit.org/show_bug.cgi?id=99441
+
+        * platform/chromium-win-xp/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-win-xp/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png:
+        * platform/chromium-win-xp/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/chromium-win-xp/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+
 2012-10-16  James Simonsen  <simonjam@chromium.org>
 
         [Page Visibility API] View-less documents should report as hidden
