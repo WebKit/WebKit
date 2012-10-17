@@ -1,3 +1,31 @@
+2012-10-17  Keishi Hattori  <keishi@webkit.org>
+
+        Localized date should be based on LDML
+        https://bugs.webkit.org/show_bug.cgi?id=99570
+
+        Reviewed by Kent Tamura.
+
+        Localized date should be based on LDML to match the format inside DateTimeEditElement.
+
+        No new tests. Covered by LocaleMacTest.formatDate and LocaleWinTest.formatDate.
+
+        * platform/text/LocaleICU.cpp: Removed formatDateTime.
+        * platform/text/LocaleICU.h:
+        (LocaleICU):
+        * platform/text/LocaleNone.cpp: Removed formatDateTime.
+        (LocaleNone):
+        * platform/text/LocaleWin.cpp: Removed formatDateTime and formatDate.
+        (WebCore):
+        * platform/text/LocaleWin.h:
+        (LocaleWin):
+        * platform/text/Localizer.cpp:
+        (WebCore::DateTimeStringBuilder::visitField): Added support for year/month/day.
+        (WebCore::Localizer::formatDateTime): Creates the formatted string based on the format from dateFormat().
+        * platform/text/Localizer.h:
+        * platform/text/mac/LocaleMac.h:
+        (LocaleMac):
+        * platform/text/mac/LocaleMac.mm: Removed formatDateTime.
+
 2012-10-17  Harald Alvestrand  <hta@google.com>
 
         Implement the Selector argument to RTCPeerConnection.getStats

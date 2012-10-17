@@ -148,8 +148,8 @@ protected:
 
 TEST_F(LocaleMacTest, formatDate)
 {
-    EXPECT_STREQ("4/27/05", formatDate("en_US", 2005, April, 27).utf8().data());
-    EXPECT_STREQ("27/04/05", formatDate("fr_FR", 2005, April, 27).utf8().data());
+    EXPECT_STREQ("04/27/2005", formatDate("en_US", 2005, April, 27).utf8().data());
+    EXPECT_STREQ("27/04/2005", formatDate("fr_FR", 2005, April, 27).utf8().data());
     // Do not test ja_JP locale. OS X 10.8 and 10.7 have different formats.
 }
 

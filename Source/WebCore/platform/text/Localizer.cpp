@@ -94,6 +94,18 @@ void DateTimeStringBuilder::appendNumber(int number, size_t width)
 void DateTimeStringBuilder::visitField(DateTimeFormat::FieldType fieldType, int numberOfPatternCharacters)
 {
     switch (fieldType) {
+    case DateTimeFormat::FieldTypeYear:
+        // Always use padding width of 4 so it matches DateTimeEditElement.
+        appendNumber(m_date.fullYear(), 4);
+        return;
+    case DateTimeFormat::FieldTypeMonth:
+        // Always use padding width of 2 so it matches DateTimeEditElement.
+        appendNumber(m_date.month() + 1, 2);
+        return;
+    case DateTimeFormat::FieldTypeDayOfMonth:
+        // Always use padding width of 2 so it matches DateTimeEditElement.
+        appendNumber(m_date.monthDay(), 2);
+        return;
     case DateTimeFormat::FieldTypePeriod:
         m_builder.append(m_localizer.timeAMPMLabels()[(m_date.hour() >= 12 ? 1 : 0)]);
         return;
@@ -359,10 +371,13 @@ const Vector<String>& Localizer::timeAMPMLabels()
 String Localizer::formatDateTime(const DateComponents& date, FormatType formatType)
 {
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-    if (date.type() != DateComponents::Time)
+    if (date.type() != DateComponents::Time && date.type() != DateComponents::Date)
         return String();
     DateTimeStringBuilder builder(*this, date);
-    builder.build(formatType == FormatTypeShort ? shortTimeFormat() : timeFormat());
+    if (date.type() == DateComponents::Time)
+        builder.build(formatType == FormatTypeShort ? shortTimeFormat() : timeFormat());
+    else if (date.type() == DateComponents::Date)
+        builder.build(dateFormat());
     return builder.toString();
 #else
     UNUSED_PARAM(date);

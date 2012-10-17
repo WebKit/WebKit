@@ -1,3 +1,15 @@
+2012-10-17  Keishi Hattori  <keishi@webkit.org>
+
+        Localized date should be based on LDML
+        https://bugs.webkit.org/show_bug.cgi?id=99570
+
+        Reviewed by Kent Tamura.
+
+        * tests/LocaleMacTest.cpp:
+        (TEST_F): Updated expectations.
+        * tests/LocaleWinTest.cpp:
+        (TEST_F): Updated expectations.
+
 2012-10-16  MORITA Hajime  <morrita@google.com>
 
         [Shadow DOM][V8] WebCore::V8DOMWindow::installPerContextProperties() is slow when shadowDOMEnabled flag is on.

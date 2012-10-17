@@ -118,7 +118,7 @@ public:
     // Serializes the specified date into a formatted date string to
     // display to the user. If an implementation doesn't support
     // localized dates the function should return an empty string.
-    virtual String formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified);
+    String formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified);
 
     virtual ~Localizer();
 
