@@ -109,6 +109,7 @@ watchers_who_are_not_contributors = [
 contributors_who_are_not_committers = [
     Contributor("Aharon Lanin", "aharon@google.com"),
     Contributor("Alan Stearns", "stearns@adobe.com", "astearns"),
+    Contributor("Alejandro Pineiro", "apinheiro@igalia.com"),
     Contributor("Alexey Marinichev", ["amarinichev@chromium.org", "amarinichev@google.com"], "amarinichev"),
     Contributor("Andras Piroska", "pandras@inf.u-szeged.hu", "andris88"),
     Contributor("Andrei Bucur", "abucur@adobe.com", "abucur"),
@@ -140,6 +141,7 @@ contributors_who_are_not_committers = [
     Contributor("Jonathan Backer", "backer@chromium.org", "backer"),
     Contributor("Jeff Timanus", ["twiz@chromium.org", "twiz@google.com"], "twiz"),
     Contributor("Jing Zhao", "jingzhao@chromium.org"),
+    Contributor("Joanmarie Diggs", "jdiggs@igalia.com"),
     Contributor("John Bates", ["jbates@google.com", "jbates@chromium.org"], "jbates"),
     Contributor("John Bauman", ["jbauman@chromium.org", "jbauman@google.com"], "jbauman"),
     Contributor("John Mellor", "johnme@chromium.org", "johnme"),

@@ -1,3 +1,10 @@
+2012-10-17  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Unreviewed. Create an accessibility watchlist.
+
+        * Scripts/webkitpy/common/config/committers.py:
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-10-17  Jochen Eisinger  <jochen@chromium.org>
 
         [gyp] fix bundle resources for DumpRenderTree on mac
