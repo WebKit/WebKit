@@ -2493,6 +2493,11 @@ SET(WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/view-source.css
 )
 
+SET(WebCore_LIBRARIES
+    ${WTF_LIBRARY_NAME}
+    ${JavaScriptCore_LIBRARY_NAME}
+)
+
 IF (ENABLE_SQL_DATABASE AND ENABLE_WORKERS)
     LIST(APPEND WebCore_SOURCES
         Modules/webdatabase/WorkerContextWebDatabase.cpp
@@ -2723,7 +2728,6 @@ SET(IDL_ATTRIBUTES_FILE ${WEBCORE_DIR}/bindings/scripts/IDLAttributes.txt)
 
 INCLUDE(${WEBCORE_DIR}/UseJSC.cmake)
 
-SET(WebCore_LIBRARIES ${WTF_LIBRARY_NAME} ${JavaScriptCore_LIBRARY_NAME})
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 # ANGLE tokenizer & parser

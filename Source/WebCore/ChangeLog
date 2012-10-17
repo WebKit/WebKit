@@ -1,3 +1,15 @@
+2012-10-17  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [CMake] Set WebCore_LIBRARIES earlier.
+        https://bugs.webkit.org/show_bug.cgi?id=99630
+
+        Reviewed by Rob Buis.
+
+        * CMakeLists.txt: Follow the style we use in other CMakeList.txt
+        files and set the Foo_LIBRARIES variables before we start checking
+        for optional features, as they might append other libraries to the
+        list (it already happens with WTF_USE_3D_GRAPHICS, for example).
+
 2012-10-17  Philip Rogers  <pdr@google.com>
 
         Allow lazy initialization of SVG XML animated properties.
