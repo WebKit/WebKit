@@ -408,7 +408,7 @@ static void webkitWebViewConstructed(GObject* object)
     attachContextMenuClientToView(webView);
     attachFormClientToView(webView);
 
-    priv->backForwardList = adoptGRef(webkitBackForwardListCreate(toAPI(getPage(webView)->backForwardList())));
+    priv->backForwardList = adoptGRef(webkitBackForwardListCreate(getPage(webView)->backForwardList()));
 
     GRefPtr<WebKitSettings> settings = adoptGRef(webkit_settings_new());
     webkitWebViewSetSettings(webView, settings.get());
@@ -2057,7 +2057,7 @@ void webkit_web_view_go_to_back_forward_list_item(WebKitWebView* webView, WebKit
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(WEBKIT_IS_BACK_FORWARD_LIST_ITEM(listItem));
 
-    getPage(webView)->goToBackForwardItem(toImpl(webkitBackForwardListItemGetWKItem(listItem)));
+    getPage(webView)->goToBackForwardItem(webkitBackForwardListItemGetItem(listItem));
 }
 
 /**

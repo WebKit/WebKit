@@ -52,10 +52,10 @@ enum {
     LAST_SIGNAL
 };
 
-typedef HashMap<WKBackForwardListItemRef, GRefPtr<WebKitBackForwardListItem> > BackForwardListItemsMap;
+typedef HashMap<WebBackForwardListItem*, GRefPtr<WebKitBackForwardListItem> > BackForwardListItemsMap;
 
 struct _WebKitBackForwardListPrivate {
-    WKBackForwardListRef wkList;
+    WebBackForwardList* backForwardItems;
     BackForwardListItemsMap itemsMap;
 };
 
@@ -107,55 +107,55 @@ static void webkit_back_forward_list_class_init(WebKitBackForwardListClass* list
     g_type_class_add_private(listClass, sizeof(WebKitBackForwardListPrivate));
 }
 
-static WebKitBackForwardListItem* webkitBackForwardListGetOrCreateItem(WebKitBackForwardList* list, WKBackForwardListItemRef wkListItem)
+static WebKitBackForwardListItem* webkitBackForwardListGetOrCreateItem(WebKitBackForwardList* list, WebBackForwardListItem* webListItem)
 {
-    if (!wkListItem)
+    if (!webListItem)
         return 0;
 
     WebKitBackForwardListPrivate* priv = list->priv;
-    GRefPtr<WebKitBackForwardListItem> listItem = priv->itemsMap.get(wkListItem);
+    GRefPtr<WebKitBackForwardListItem> listItem = priv->itemsMap.get(webListItem);
     if (listItem)
         return listItem.get();
 
-    listItem = webkitBackForwardListItemGetOrCreate(wkListItem);
-    priv->itemsMap.set(wkListItem, listItem);
+    listItem = webkitBackForwardListItemGetOrCreate(webListItem);
+    priv->itemsMap.set(webListItem, listItem);
 
     return listItem.get();
 }
 
-static GList* webkitBackForwardListCreateList(WebKitBackForwardList* list, WKArrayRef wkList)
+static GList* webkitBackForwardListCreateList(WebKitBackForwardList* list, ImmutableArray* backForwardItems)
 {
-    if (!wkList)
+    if (!backForwardItems)
         return 0;
 
     GList* returnValue = 0;
-    for (size_t i = 0; i < WKArrayGetSize(wkList); ++i) {
-        WKBackForwardListItemRef wkItem = static_cast<WKBackForwardListItemRef>(WKArrayGetItemAtIndex(wkList, i));
-        returnValue = g_list_prepend(returnValue, webkitBackForwardListGetOrCreateItem(list, wkItem));
+    for (size_t i = 0; i < backForwardItems->size(); ++i) {
+        WebBackForwardListItem* webItem = static_cast<WebBackForwardListItem*>(backForwardItems->at(i));
+        returnValue = g_list_prepend(returnValue, webkitBackForwardListGetOrCreateItem(list, webItem));
     }
 
     return returnValue;
 }
 
-WebKitBackForwardList* webkitBackForwardListCreate(WKBackForwardListRef wkList)
+WebKitBackForwardList* webkitBackForwardListCreate(WebBackForwardList* backForwardItems)
 {
     WebKitBackForwardList* list = WEBKIT_BACK_FORWARD_LIST(g_object_new(WEBKIT_TYPE_BACK_FORWARD_LIST, NULL));
-    list->priv->wkList = wkList;
+    list->priv->backForwardItems = backForwardItems;
 
     return list;
 }
 
-void webkitBackForwardListChanged(WebKitBackForwardList* backForwardList, WKBackForwardListItemRef wkAddedItem, WKArrayRef wkRemovedItems)
+void webkitBackForwardListChanged(WebKitBackForwardList* backForwardList, WebBackForwardListItem* webAddedItem, ImmutableArray* webRemovedItems)
 {
-    WebKitBackForwardListItem* addedItem = webkitBackForwardListGetOrCreateItem(backForwardList, wkAddedItem);
+    WebKitBackForwardListItem* addedItem = webkitBackForwardListGetOrCreateItem(backForwardList, webAddedItem);
     GList* removedItems = 0;
 
-    size_t removedItemsSize = wkRemovedItems ? WKArrayGetSize(wkRemovedItems) : 0;
+    size_t removedItemsSize = webRemovedItems ? webRemovedItems->size() : 0;
     WebKitBackForwardListPrivate* priv = backForwardList->priv;
     for (size_t i = 0; i < removedItemsSize; ++i) {
-        WKBackForwardListItemRef wkItem = static_cast<WKBackForwardListItemRef>(WKArrayGetItemAtIndex(wkRemovedItems, i));
-        removedItems = g_list_prepend(removedItems, g_object_ref(G_OBJECT(priv->itemsMap.get(wkItem).get())));
-        priv->itemsMap.remove(wkItem);
+        WebBackForwardListItem* webItem = static_cast<WebBackForwardListItem*>(webRemovedItems->at(i));
+        removedItems = g_list_prepend(removedItems, g_object_ref(G_OBJECT(priv->itemsMap.get(webItem).get())));
+        priv->itemsMap.remove(webItem);
     }
 
     g_signal_emit(backForwardList, signals[CHANGED], 0, addedItem, removedItems, NULL);
@@ -175,7 +175,7 @@ WebKitBackForwardListItem* webkit_back_forward_list_get_current_item(WebKitBackF
 {
     g_return_val_if_fail(WEBKIT_IS_BACK_FORWARD_LIST(backForwardList), 0);
 
-    return webkitBackForwardListGetOrCreateItem(backForwardList, WKBackForwardListGetCurrentItem(backForwardList->priv->wkList));
+    return webkitBackForwardListGetOrCreateItem(backForwardList, backForwardList->priv->backForwardItems->currentItem());
 }
 
 /**
@@ -191,7 +191,7 @@ WebKitBackForwardListItem* webkit_back_forward_list_get_back_item(WebKitBackForw
 {
     g_return_val_if_fail(WEBKIT_IS_BACK_FORWARD_LIST(backForwardList), 0);
 
-    return webkitBackForwardListGetOrCreateItem(backForwardList, WKBackForwardListGetBackItem(backForwardList->priv->wkList));
+    return webkitBackForwardListGetOrCreateItem(backForwardList, backForwardList->priv->backForwardItems->backItem());
 }
 
 /**
@@ -207,7 +207,7 @@ WebKitBackForwardListItem* webkit_back_forward_list_get_forward_item(WebKitBackF
 {
     g_return_val_if_fail(WEBKIT_IS_BACK_FORWARD_LIST(backForwardList), 0);
 
-    return webkitBackForwardListGetOrCreateItem(backForwardList, WKBackForwardListGetForwardItem(backForwardList->priv->wkList));
+    return webkitBackForwardListGetOrCreateItem(backForwardList, backForwardList->priv->backForwardItems->forwardItem());
 }
 
 /**
@@ -224,7 +224,7 @@ WebKitBackForwardListItem* webkit_back_forward_list_get_nth_item(WebKitBackForwa
 {
     g_return_val_if_fail(WEBKIT_IS_BACK_FORWARD_LIST(backForwardList), 0);
 
-    return webkitBackForwardListGetOrCreateItem(backForwardList, WKBackForwardListGetItemAtIndex(backForwardList->priv->wkList, index));
+    return webkitBackForwardListGetOrCreateItem(backForwardList, backForwardList->priv->backForwardItems->itemAtIndex(index));
 }
 
 /**
@@ -239,7 +239,7 @@ guint webkit_back_forward_list_get_length(WebKitBackForwardList* backForwardList
 
     WebKitBackForwardListPrivate* priv = backForwardList->priv;
     guint currentItem = webkit_back_forward_list_get_current_item(backForwardList) ? 1 : 0;
-    return WKBackForwardListGetBackListCount(priv->wkList) + WKBackForwardListGetForwardListCount(priv->wkList) + currentItem;
+    return priv->backForwardItems->backListCount() + priv->backForwardItems->forwardListCount() + currentItem;
 }
 
 /**
@@ -253,9 +253,7 @@ GList* webkit_back_forward_list_get_back_list(WebKitBackForwardList* backForward
 {
     g_return_val_if_fail(WEBKIT_IS_BACK_FORWARD_LIST(backForwardList), 0);
 
-    guint limit = WKBackForwardListGetBackListCount(backForwardList->priv->wkList);
-    WKRetainPtr<WKArrayRef> wkList(AdoptWK, WKBackForwardListCopyBackListWithLimit(backForwardList->priv->wkList, limit));
-    return webkitBackForwardListCreateList(backForwardList, wkList.get());
+    return webkit_back_forward_list_get_back_list_with_limit(backForwardList, backForwardList->priv->backForwardItems->backListCount());
 }
 
 /**
@@ -270,8 +268,8 @@ GList* webkit_back_forward_list_get_back_list_with_limit(WebKitBackForwardList* 
 {
     g_return_val_if_fail(WEBKIT_IS_BACK_FORWARD_LIST(backForwardList), 0);
 
-    WKRetainPtr<WKArrayRef> wkList(AdoptWK, WKBackForwardListCopyBackListWithLimit(backForwardList->priv->wkList, limit));
-    return webkitBackForwardListCreateList(backForwardList, wkList.get());
+    WebKitBackForwardListPrivate* priv = backForwardList->priv;
+    return webkitBackForwardListCreateList(backForwardList, priv->backForwardItems->backListAsImmutableArrayWithLimit(limit).leakRef());
 }
 
 /**
@@ -285,9 +283,7 @@ GList* webkit_back_forward_list_get_forward_list(WebKitBackForwardList* backForw
 {
     g_return_val_if_fail(WEBKIT_IS_BACK_FORWARD_LIST(backForwardList), 0);
 
-    guint limit = WKBackForwardListGetForwardListCount(backForwardList->priv->wkList);
-    WKRetainPtr<WKArrayRef> wkList(AdoptWK, WKBackForwardListCopyForwardListWithLimit(backForwardList->priv->wkList, limit));
-    return webkitBackForwardListCreateList(backForwardList, wkList.get());
+    return webkit_back_forward_list_get_forward_list_with_limit(backForwardList, backForwardList->priv->backForwardItems->forwardListCount());
 }
 
 /**
@@ -302,6 +298,6 @@ GList* webkit_back_forward_list_get_forward_list_with_limit(WebKitBackForwardLis
 {
     g_return_val_if_fail(WEBKIT_IS_BACK_FORWARD_LIST(backForwardList), 0);
 
-    WKRetainPtr<WKArrayRef> wkList(AdoptWK, WKBackForwardListCopyForwardListWithLimit(backForwardList->priv->wkList, limit));
-    return webkitBackForwardListCreateList(backForwardList, wkList.get());
+    WebKitBackForwardListPrivate* priv = backForwardList->priv;
+    return webkitBackForwardListCreateList(backForwardList, priv->backForwardItems->forwardListAsImmutableArrayWithLimit(limit).leakRef());
 }

@@ -1,5 +1,46 @@
 2012-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Don't use the C API internally in WebKitBackForwardList
+        https://bugs.webkit.org/show_bug.cgi?id=96769
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Using the C++ classes directly instead of the C API wrappers we
+        avoid a lot of toImpl/toAPI casts, string conversions and
+        allocations. The code is also a lot simpler and easier to read.
+
+        * UIProcess/API/gtk/WebKitBackForwardList.cpp:
+        (_WebKitBackForwardListPrivate):
+        (webkitBackForwardListGetOrCreateItem):
+        (webkitBackForwardListCreateList):
+        (webkitBackForwardListCreate):
+        (webkitBackForwardListChanged):
+        (webkit_back_forward_list_get_current_item):
+        (webkit_back_forward_list_get_back_item):
+        (webkit_back_forward_list_get_forward_item):
+        (webkit_back_forward_list_get_nth_item):
+        (webkit_back_forward_list_get_length):
+        (webkit_back_forward_list_get_back_list):
+        (webkit_back_forward_list_get_back_list_with_limit):
+        (webkit_back_forward_list_get_forward_list):
+        (webkit_back_forward_list_get_forward_list_with_limit):
+        * UIProcess/API/gtk/WebKitBackForwardListItem.cpp:
+        (_WebKitBackForwardListItemPrivate):
+        (webkitBackForwardListItemFinalized):
+        (webkitBackForwardListItemGetOrCreate):
+        (webkitBackForwardListItemGetItem):
+        (webkit_back_forward_list_item_get_uri):
+        (webkit_back_forward_list_item_get_title):
+        (webkit_back_forward_list_item_get_original_uri):
+        * UIProcess/API/gtk/WebKitBackForwardListPrivate.h:
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+        (didChangeBackForwardList):
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewConstructed):
+        (webkit_web_view_go_to_back_forward_list_item):
+
+2012-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Don't use the C API internally in WebKitURISchemeRequest
         https://bugs.webkit.org/show_bug.cgi?id=96787
 

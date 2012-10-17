@@ -29,7 +29,7 @@
 using namespace WebKit;
 
 struct _WebKitBackForwardListItemPrivate {
-    WKRetainPtr<WKBackForwardListItemRef> wkListItem;
+    RefPtr<WebBackForwardListItem> webListItem;
     CString uri;
     CString title;
     CString originalURI;
@@ -59,7 +59,7 @@ static void webkit_back_forward_list_item_class_init(WebKitBackForwardListItemCl
     g_type_class_add_private(listItemClass, sizeof(WebKitBackForwardListItemPrivate));
 }
 
-typedef HashMap<WKBackForwardListItemRef, WebKitBackForwardListItem*> HistoryItemsMap;
+typedef HashMap<WebBackForwardListItem*, WebKitBackForwardListItem*> HistoryItemsMap;
 
 static HistoryItemsMap& historyItemsMap()
 {
@@ -67,34 +67,33 @@ static HistoryItemsMap& historyItemsMap()
     return itemsMap;
 }
 
-static void webkitBackForwardListItemFinalized(gpointer wkListItem, GObject* finalizedListItem)
+static void webkitBackForwardListItemFinalized(gpointer webListItem, GObject* finalizedListItem)
 {
-    ASSERT(G_OBJECT(historyItemsMap().get(static_cast<WKBackForwardListItemRef>(wkListItem))) == finalizedListItem);
-    historyItemsMap().remove(static_cast<WKBackForwardListItemRef>(wkListItem));
+    ASSERT(G_OBJECT(historyItemsMap().get(static_cast<WebBackForwardListItem*>(webListItem))) == finalizedListItem);
+    historyItemsMap().remove(static_cast<WebBackForwardListItem*>(webListItem));
 }
 
-WebKitBackForwardListItem* webkitBackForwardListItemGetOrCreate(WKBackForwardListItemRef wkListItem)
+WebKitBackForwardListItem* webkitBackForwardListItemGetOrCreate(WebBackForwardListItem* webListItem)
 {
-    if (!wkListItem)
+    if (!webListItem)
         return 0;
 
-    WebKitBackForwardListItem* listItem = historyItemsMap().get(wkListItem);
+    WebKitBackForwardListItem* listItem = historyItemsMap().get(webListItem);
     if (listItem)
         return listItem;
 
     listItem = WEBKIT_BACK_FORWARD_LIST_ITEM(g_object_new(WEBKIT_TYPE_BACK_FORWARD_LIST_ITEM, NULL));
-    listItem->priv->wkListItem = wkListItem;
+    listItem->priv->webListItem = webListItem;
 
-    g_object_weak_ref(G_OBJECT(listItem), webkitBackForwardListItemFinalized,
-                      const_cast<OpaqueWKBackForwardListItem*>(wkListItem));
-    historyItemsMap().set(wkListItem, listItem);
+    g_object_weak_ref(G_OBJECT(listItem), webkitBackForwardListItemFinalized, webListItem);
+    historyItemsMap().set(webListItem, listItem);
 
     return listItem;
 }
 
-WKBackForwardListItemRef webkitBackForwardListItemGetWKItem(WebKitBackForwardListItem* listItem)
+WebBackForwardListItem* webkitBackForwardListItemGetItem(WebKitBackForwardListItem* listItem)
 {
-    return listItem->priv->wkListItem.get();
+    return listItem->priv->webListItem.get();
 }
 
 /**
@@ -113,11 +112,11 @@ const gchar* webkit_back_forward_list_item_get_uri(WebKitBackForwardListItem* li
     g_return_val_if_fail(WEBKIT_IS_BACK_FORWARD_LIST_ITEM(listItem), 0);
 
     WebKitBackForwardListItemPrivate* priv = listItem->priv;
-    WKRetainPtr<WKURLRef> wkURI(AdoptWK, WKBackForwardListItemCopyURL(priv->wkListItem.get()));
-    if (toImpl(wkURI.get())->string().isEmpty())
+    String url = priv->webListItem->url();
+    if (url.isEmpty())
         return 0;
 
-    priv->uri = toImpl(wkURI.get())->string().utf8();
+    priv->uri = url.utf8();
     return priv->uri.data();
 }
 
@@ -133,11 +132,11 @@ const gchar* webkit_back_forward_list_item_get_title(WebKitBackForwardListItem* 
     g_return_val_if_fail(WEBKIT_IS_BACK_FORWARD_LIST_ITEM(listItem), 0);
 
     WebKitBackForwardListItemPrivate* priv = listItem->priv;
-    WKRetainPtr<WKStringRef> wkTitle(AdoptWK, WKBackForwardListItemCopyTitle(priv->wkListItem.get()));
-    if (toImpl(wkTitle.get())->string().isEmpty())
+    String title = priv->webListItem->title();
+    if (title.isEmpty())
         return 0;
 
-    priv->title = toImpl(wkTitle.get())->string().utf8();
+    priv->title = title.utf8();
     return priv->title.data();
 }
 
@@ -155,10 +154,10 @@ const gchar* webkit_back_forward_list_item_get_original_uri(WebKitBackForwardLis
     g_return_val_if_fail(WEBKIT_IS_BACK_FORWARD_LIST_ITEM(listItem), 0);
 
     WebKitBackForwardListItemPrivate* priv = listItem->priv;
-    WKRetainPtr<WKURLRef> wkOriginalURI(AdoptWK, WKBackForwardListItemCopyOriginalURL(priv->wkListItem.get()));
-    if (toImpl(wkOriginalURI.get())->string().isEmpty())
+    String originalURL = priv->webListItem->originalURL();
+    if (originalURL.isEmpty())
         return 0;
 
-    priv->originalURI = toImpl(wkOriginalURI.get())->string().utf8();
+    priv->originalURI = originalURL.utf8();
     return priv->originalURI.data();
 }
