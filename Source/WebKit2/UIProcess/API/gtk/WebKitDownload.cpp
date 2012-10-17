@@ -31,7 +31,6 @@
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 
-using namespace WebKit;
 using namespace WebCore;
 
 enum {
@@ -53,7 +52,7 @@ enum {
 };
 
 struct _WebKitDownloadPrivate {
-    WKRetainPtr<WKDownloadRef> wkDownload;
+    RefPtr<DownloadProxy> download;
 
     GRefPtr<WebKitURIRequest> request;
     GRefPtr<WebKitURIResponse> response;
@@ -264,11 +263,11 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
     g_type_class_add_private(downloadClass, sizeof(WebKitDownloadPrivate));
 }
 
-WebKitDownload* webkitDownloadCreate(WKDownloadRef wkDownload)
+WebKitDownload* webkitDownloadCreate(DownloadProxy* downloadProxy)
 {
-    ASSERT(wkDownload);
+    ASSERT(downloadProxy);
     WebKitDownload* download = WEBKIT_DOWNLOAD(g_object_new(WEBKIT_TYPE_DOWNLOAD, NULL));
-    download->priv->wkDownload = wkDownload;
+    download->priv->download = downloadProxy;
     return download;
 }
 
@@ -379,8 +378,8 @@ WebKitURIRequest* webkit_download_get_request(WebKitDownload* download)
 
     WebKitDownloadPrivate* priv = download->priv;
     if (!priv->request)
-        priv->request = adoptGRef(webkitURIRequestCreateForResourceRequest(toImpl(priv->wkDownload.get())->request()));
-    return download->priv->request.get();
+        priv->request = adoptGRef(webkitURIRequestCreateForResourceRequest(priv->download->request()));
+    return priv->request.get();
 }
 
 /**
@@ -465,7 +464,7 @@ void webkit_download_cancel(WebKitDownload* download)
     g_return_if_fail(WEBKIT_IS_DOWNLOAD(download));
 
     download->priv->isCancelled = true;
-    WKDownloadCancel(download->priv->wkDownload.get());
+    download->priv->download->cancel();
 }
 
 /**

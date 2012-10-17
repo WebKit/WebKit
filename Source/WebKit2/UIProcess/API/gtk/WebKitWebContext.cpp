@@ -299,7 +299,7 @@ WebKitDownload* webkit_web_context_download_uri(WebKitWebContext* context, const
     g_return_val_if_fail(uri, 0);
 
     DownloadProxy* downloadProxy = context->priv->context->download(0, WebCore::ResourceRequest(String::fromUTF8(uri)));
-    WebKitDownload* download = webkitDownloadCreate(toAPI(downloadProxy));
+    WebKitDownload* download = webkitDownloadCreate(downloadProxy);
     downloadsMap().set(downloadProxy, download);
     return download;
 }
@@ -688,7 +688,7 @@ WebKitDownload* webkitWebContextGetOrCreateDownload(DownloadProxy* downloadProxy
     if (download)
         return download.get();
 
-    download = adoptGRef(webkitDownloadCreate(toAPI(downloadProxy)));
+    download = adoptGRef(webkitDownloadCreate(downloadProxy));
     downloadsMap().set(downloadProxy, download.get());
     return download.get();
 }

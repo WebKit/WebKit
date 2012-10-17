@@ -1,5 +1,26 @@
 2012-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Don't use the C API internally in WebKitDownload
+        https://bugs.webkit.org/show_bug.cgi?id=96773
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Using the C++ classes directly instead of the C API wrappers we
+        avoid a lot of toImpl/toAPI casts, string conversions and
+        allocations. The code is also a lot simpler and easier to read.
+
+        * UIProcess/API/gtk/WebKitDownload.cpp:
+        (_WebKitDownloadPrivate):
+        (webkitDownloadCreate):
+        (webkit_download_get_request):
+        (webkit_download_cancel):
+        * UIProcess/API/gtk/WebKitDownloadPrivate.h:
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_download_uri):
+        (webkitWebContextGetOrCreateDownload):
+
+2012-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Don't use the C API internally in WebKitCookieManager
         https://bugs.webkit.org/show_bug.cgi?id=96772
 
