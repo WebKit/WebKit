@@ -1,5 +1,19 @@
 2012-10-17  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Web Inspector: Stylesheets saved with FileManager are not saved to disk when edited from Elements panel.
+        https://bugs.webkit.org/show_bug.cgi?id=99554
+
+        Reviewed by Yury Semikhatsky.
+
+        Moved saving to disk from SourceFrame to UISourceCode.
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._commitEditing):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode.prototype._commitContent):
+
+2012-10-17  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: [Regression] SASS sources are not saved to disk.
         https://bugs.webkit.org/show_bug.cgi?id=99551
 

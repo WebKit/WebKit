@@ -647,8 +647,6 @@ WebInspector.SourceFrame.prototype = {
 
         var content = this._textEditor.text();
         this.commitEditing(content);
-        if (this._url && WebInspector.fileManager.isURLSaved(this._url))
-            WebInspector.fileManager.save(this._url, content, false);
         return true;
     },
 
