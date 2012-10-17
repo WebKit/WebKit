@@ -1,3 +1,15 @@
+2012-10-17  Jochen Eisinger  <jochen@chromium.org>
+
+        [gyp] fix bundle resources for DumpRenderTree on mac
+        https://bugs.webkit.org/show_bug.cgi?id=99558
+
+        Reviewed by Adam Barth.
+
+        mac_bundle_resources doesn't propagate to targets that depend on it,
+        so I'm wrapping it in an all_dependent_settings block.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
 2012-10-17  Harald Alvestrand  <hta@google.com>
 
         Add myself to the MediaStream watchlist
