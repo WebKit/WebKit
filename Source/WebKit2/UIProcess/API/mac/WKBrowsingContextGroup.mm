@@ -103,10 +103,10 @@ static WKArrayRef createWKArray(NSArray *array)
     return WKArrayCreateAdoptingValues(stringVector.data(), stringVector.size());
 }
 
--(void)addUserStyleSheet:(NSString *)source baseURL:(NSURL *)baseURL whitelist:(NSArray *)whitelist blacklist:(NSArray *)blacklist mainFrameOnly:(BOOL)mainFrameOnly
+-(void)addUserStyleSheet:(NSString *)source baseURL:(NSURL *)baseURL whitelistedURLPatterns:(NSArray *)whitelist blacklistedURLPatterns:(NSArray *)blacklist mainFrameOnly:(BOOL)mainFrameOnly
 {
     if (!source)
-        return;
+        CRASH();
 
     WKRetainPtr<WKStringRef> wkSource = adoptWK(WKStringCreateWithCFString((CFStringRef)source));
     WKRetainPtr<WKURLRef> wkBaseURL = adoptWK(WKURLCreateWithCFURL((CFURLRef)baseURL));
@@ -120,6 +120,25 @@ static WKArrayRef createWKArray(NSArray *array)
 - (void)removeAllUserStyleSheets
 {
     WKPageGroupRemoveAllUserStyleSheets(self._pageGroupRef);
+}
+
+- (void)addUserScript:(NSString *)source baseURL:(NSURL *)baseURL whitelistedURLPatterns:(NSArray *)whitelist blacklistedURLPatterns:(NSArray *)blacklist injectionTime:(WKUserScriptInjectionTime)injectionTime mainFrameOnly:(BOOL)mainFrameOnly
+{
+    if (!source)
+        CRASH();
+
+    WKRetainPtr<WKStringRef> wkSource = adoptWK(WKStringCreateWithCFString((CFStringRef)source));
+    WKRetainPtr<WKURLRef> wkBaseURL = adoptWK(WKURLCreateWithCFURL((CFURLRef)baseURL));
+    WKRetainPtr<WKArrayRef> wkWhitelist = adoptWK(createWKArray(whitelist));
+    WKRetainPtr<WKArrayRef> wkBlacklist = adoptWK(createWKArray(blacklist));
+    WKUserContentInjectedFrames injectedFrames = mainFrameOnly ? kWKInjectInTopFrameOnly : kWKInjectInAllFrames;
+
+    WKPageGroupAddUserScript(self._pageGroupRef, wkSource.get(), wkBaseURL.get(), wkWhitelist.get(), wkBlacklist.get(), injectedFrames, injectionTime);
+}
+
+- (void)removeAllUserScripts
+{
+    WKPageGroupRemoveAllUserScripts(self._pageGroupRef);
 }
 
 @end

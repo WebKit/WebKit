@@ -1,3 +1,17 @@
+2012-10-16  Andy Estes  <aestes@apple.com>
+
+        [WebKit2] Create Objective-C API for adding and removing user scripts
+        https://bugs.webkit.org/show_bug.cgi?id=99528
+
+        Reviewed by Anders Carlsson.
+
+        Add three new API tests.
+
+        * TestWebKitAPI/Tests/WebKit2ObjC/UserContentTest.mm:
+        (expectScriptValueIsString):
+        (expectScriptValueIsBoolean):
+        (expectScriptValueIsUndefined):
+
 2012-10-16  Dirk Pranke  <dpranke@chromium.org>
 
         [chromium] add Mountain Lion baselines

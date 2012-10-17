@@ -38,8 +38,11 @@ WK_EXPORT
 
 /* User Content */
 
-- (void)addUserStyleSheet:(NSString *)source baseURL:(NSURL *)baseURL whitelist:(NSArray *)whitelist blacklist:(NSArray *)blacklist mainFrameOnly:(BOOL)mainFrameOnly;
+- (void)addUserStyleSheet:(NSString *)source baseURL:(NSURL *)baseURL whitelistedURLPatterns:(NSArray *)whitelist blacklistedURLPatterns:(NSArray *)blacklist mainFrameOnly:(BOOL)mainFrameOnly;
 - (void)removeAllUserStyleSheets;
+
+- (void)addUserScript:(NSString *)source baseURL:(NSURL *)baseURL whitelistedURLPatterns:(NSArray *)whitelist blacklistedURLPatterns:(NSArray *)blacklist injectionTime:(WKUserScriptInjectionTime)injectionTime mainFrameOnly:(BOOL)mainFrameOnly;
+- (void)removeAllUserScripts;
 
 
 /* Settings */

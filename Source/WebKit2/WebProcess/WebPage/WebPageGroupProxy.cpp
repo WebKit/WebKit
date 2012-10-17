@@ -79,7 +79,7 @@ void WebPageGroupProxy::removeAllUserStyleSheets()
 
 void WebPageGroupProxy::removeAllUserScripts()
 {
-    m_pageGroup->removeUserStyleSheetsFromWorld(WebCore::mainThreadNormalWorld());
+    m_pageGroup->removeUserScriptsFromWorld(WebCore::mainThreadNormalWorld());
 }
 
 void WebPageGroupProxy::removeAllUserContent()

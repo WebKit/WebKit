@@ -1,3 +1,26 @@
+2012-10-16  Andy Estes  <aestes@apple.com>
+
+        [WebKit2] Create Objective-C API for adding and removing user scripts
+        https://bugs.webkit.org/show_bug.cgi?id=99528
+
+        Reviewed by Anders Carlsson.
+
+        This patch adds the following API to WKBrowsingContextGroup:
+
+        - (void)addUserScript:(NSString *)source baseURL:(NSURL *)baseURL whitelistedURLPatterns:(NSArray *)whitelist blacklistedURLPatterns:(NSArray *)blacklist injectionTime:(WKUserScriptInjectionTime)injectionTime mainFrameOnly:(BOOL)mainFrameOnly;
+        - (void)removeAllUserScripts;
+
+        * UIProcess/API/C/WKPageGroup.cpp:
+        (WKPageGroupAddUserScript): Define a C SPI equivalent of addUserScript: that calls existing methods in WebPageGroup.
+        (WKPageGroupRemoveAllUserScripts): Ditto for removeAllUserScripts.
+        * UIProcess/API/C/WKPageGroup.h: Declare the above-mentioned functions.
+        * UIProcess/API/mac/WKBrowsingContextGroup.h: Declare the Objective-C API
+        * UIProcess/API/mac/WKBrowsingContextGroup.mm:
+        (-[WKBrowsingContextGroup addUserScript:baseURL:whitelist:blacklist:injectionTime:mainFrameOnly:]): Call WKPageGroupAddUserScript.
+        (-[WKBrowsingContextGroup removeAllUserScripts]): Call WKPageGroupRemoveAllUserScripts.
+        * WebProcess/WebPage/WebPageGroupProxy.cpp:
+        (WebKit::WebPageGroupProxy::removeAllUserScripts): This was calling PageGroup::removeUserStyleSheetsFromWorld() by mistake.
+
 2012-10-16  Yael Aharon  <yael.aharon@intel.com>
 
         [EFL][WK2][AC] Url bar should not be covered by the web view
