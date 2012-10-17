@@ -1,3 +1,13 @@
+2012-10-17  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] Unreviewed gardening.
+
+        Unskipping 4 cases after regression was fixed in r131229,
+        moving out a crash and incorrect console loggin on the wk2 bot.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2012-10-17  Mike West  <mkwst@chromium.org>
 
         V8 should throw a more descriptive exception when blocking 'eval' via CSP.

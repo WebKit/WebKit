@@ -49,6 +49,8 @@ webkit.org/b/98747 plugins/document-open.html [ Crash ]
 Bug(EFL) fast/dom/HTMLAnchorElement/anchor-download.html [ Crash ]
 Bug(EFL) fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Crash ]
 
+webkit.org/b/99571 http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -244,12 +246,6 @@ webkit.org/b/98740 plugins/npruntime/delete-plugin-within-setProperty.html [ Fai
 
 # Comparison of two javascript objects in C++ is failing.
 webkit.org/b/98739 plugins/npruntime/embed-property-equality.html [ Failure ]
-
-# Fails after r131057.
-webkit.org/b/99152 plugins/plugin-document-back-forward.html [ Failure ]
-webkit.org/b/99152 http/tests/security/contentSecurityPolicy/object-src-url-allowed.html [ Failure ]
-webkit.org/b/99152 http/tests/security/contentSecurityPolicy/object-src-url-blocked.html [ Failure ]
-webkit.org/b/99152 plugins/iframe-plugin-bgcolor.html [ Failure ]
 
 # Flaky on EFL port.
 webkit.org/b/96641 media/video-seek-past-end-playing.html [ Failure ]
