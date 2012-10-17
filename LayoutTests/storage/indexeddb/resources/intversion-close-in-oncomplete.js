@@ -17,18 +17,16 @@ function test()
 
 function deleteSuccess(evt) {
     evalAndLog("request = indexedDB.open(dbname, 7)");
-    request.onsuccess = openSuccess;
     request.onupgradeneeded = upgradeNeeded;
+    request.onerror = openError;
     request.onblocked = unexpectedBlockedCallback;
-    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = unexpectedSuccessCallback;
 }
 
 var sawTransactionComplete = false;
 function upgradeNeeded(evt)
 {
-    event = evt;
-    debug("");
-    debug("upgradeNeeded():");
+    preamble(evt);
     evalAndLog("db = event.target.result");
     shouldBe("event.newVersion", "7");
     evalAndLog("db.createObjectStore('os')");
@@ -41,17 +39,15 @@ function upgradeNeeded(evt)
         debug("transaction.oncomplete:");
         evalAndLog("sawTransactionComplete = true");
         evalAndLog("db.close()");
-    }
+    };
 }
 
-function openSuccess(evt)
+function openError(evt)
 {
-    event = evt;
-    debug("");
-    debug("openSuccess():");
+    preamble(evt);
     shouldBeTrue("sawTransactionComplete");
-    evalAndLog("db = event.target.result");
-    shouldBe('db.version', "7");
+    shouldBeNull("event.target.result");
+    shouldBeEqualToString("event.target.error.name", "AbortError");
     evalAndExpectException("transaction = db.transaction('os', 'readwrite')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
     finishJSTest();
 }

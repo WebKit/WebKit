@@ -1,3 +1,19 @@
+2012-10-17  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Closing connection in upgradeneeded should result in error event
+        https://bugs.webkit.org/show_bug.cgi?id=99486
+
+        Reviewed by Tony Chang.
+
+        Updated test expectation - error, not success.
+
+        * storage/indexeddb/intversion-close-in-oncomplete-expected.txt:
+        * storage/indexeddb/resources/intversion-close-in-oncomplete.js:
+        (deleteSuccess):
+        (upgradeNeeded.transaction.oncomplete):
+        (upgradeNeeded):
+        (openError):
+
 2012-10-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r131651.

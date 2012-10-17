@@ -19,10 +19,10 @@ transaction.oncomplete:
 sawTransactionComplete = true
 db.close()
 
-openSuccess():
+openError():
 PASS sawTransactionComplete is true
-db = event.target.result
-PASS db.version is 7
+PASS event.target.result is null
+PASS event.target.error.name is "AbortError"
 Expecting exception from transaction = db.transaction('os', 'readwrite')
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR

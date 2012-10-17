@@ -1,3 +1,23 @@
+2012-10-17  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Closing connection in upgradeneeded should result in error event
+        https://bugs.webkit.org/show_bug.cgi?id=99486
+
+        Reviewed by Tony Chang.
+
+        The IDB spec requires that "...if connection is closed, return a DOMError of type AbortError".
+        This was being handled during the "enqueue" phase, which was too early either for synchronously
+        executing scripts or asynchronous messaging in multiprocess ports (crbug.com/150691). Move the
+        logic to the "dispatch" phase.
+
+        Test: storage/indexeddb/intversion-close-in-oncomplete.html
+
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        (WebCore::IDBOpenDBRequest::onSuccess): Move success to error morphing from here...
+        (WebCore::IDBOpenDBRequest::dispatchEvent): To here.
+        * Modules/indexeddb/IDBOpenDBRequest.h:
+        (IDBOpenDBRequest):
+
 2012-10-17  Elliott Sprehn  <esprehn@chromium.org>
 
         Use virtual dispatch to create ContentData renderers
