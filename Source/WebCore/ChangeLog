@@ -1,3 +1,20 @@
+2012-10-17  Christophe Dumez  <christophe.dumez@intel.com>
+
+        xss-DENIED-xsl-document-securityOrigin.xml crashes with icon assertion
+        https://bugs.webkit.org/show_bug.cgi?id=99571
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Check that the iconURL is not empty in IconController::continueLoadWithDecision()
+        to avoid hitting assertions later when trying to commit this empty URL to the
+        database. IconController::url() may indeed return an empty URL but there was
+        no check for it.
+
+        No new tests, already covered by http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml.
+
+        * loader/icon/IconController.cpp:
+        (WebCore::IconController::continueLoadWithDecision):
+
 2012-10-17  Byungwoo Lee  <bw80.lee@samsung.com>
 
         Fix build warnings : -Wunused-parameter, -Wunused-variable

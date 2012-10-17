@@ -213,6 +213,8 @@ void IconController::continueLoadWithDecision(IconLoadDecision iconLoadDecision)
     if (iconLoadDecision == IconLoadNo) {
         KURL iconURL(url());
         String urlString(iconURL.string());
+        if (urlString.isEmpty())
+            return;
 
         LOG(IconDatabase, "IconController::startLoader() - Told not to load this icon, committing iconURL %s to database for pageURL mapping", urlString.ascii().data());
         commitToDatabase(iconURL);
