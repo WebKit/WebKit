@@ -1,5 +1,6 @@
-Tests live edit feature.
+Tests breakpoints are correctly dimmed and restored in JavaScriptSourceFrame during live edit.
 
+Bug 99598
 Debugger was enabled.
 
 Running: testEditUndo

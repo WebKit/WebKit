@@ -1,3 +1,16 @@
+2012-10-17  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed inspector test fixed and skipped on JSC.
+
+        * inspector/debugger/live-edit-breakpoints-expected.txt:
+        * inspector/debugger/live-edit-breakpoints.html:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2012-10-17  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] Additional simple polygon tests

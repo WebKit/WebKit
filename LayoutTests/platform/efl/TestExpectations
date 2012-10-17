@@ -353,6 +353,7 @@ http/tests/inspector/console-websocket-error.html
 inspector/styles/svg-style.xhtml
 inspector/debugger/event-listener-breakpoints.html
 inspector/debugger/live-edit.html
+inspector/debugger/live-edit-breakpoints.html
 inspector/debugger/step-through-event-listeners.html
 inspector/debugger/xhr-breakpoints.html
 inspector/debugger/debugger-compile-and-run.html
