@@ -1,3 +1,18 @@
+2012-10-17  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Remove shadowAncestorNode() from VisibleSelection
+        https://bugs.webkit.org/show_bug.cgi?id=99544
+
+        Reviewed by Hajime Morita.
+
+        An effort to replace shadowAncestorNode() with shadowHost(), since shadowAncestorNode() is now deprecated.
+
+        No new tests, no change in behavior.
+
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries): Since shadowHost() returns 0 if
+        an element is not in shadowRoot, it's ok to compare shadowAncestor to 0.
+
 2012-10-17  Douglas Stockwell  <dstockwell@chromium.org>
 
         Content of replaced elements should be trimmed to the content edge curve.
