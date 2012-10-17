@@ -1,3 +1,17 @@
+2012-10-17  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Block freeing thread should sleep indefinitely when there's no work to do
+        https://bugs.webkit.org/show_bug.cgi?id=98084
+
+        Reviewed by Geoffrey Garen.
+
+        r130212 didn't fully fix the problem.
+
+        * heap/BlockAllocator.cpp:
+        (JSC::BlockAllocator::blockFreeingThreadMain): We would just continue to the next iteration if 
+        we found that we had zero blocks to copy. We should move the indefinite wait up to where that 
+        check is done so that we properly detect the "no more blocks to copy, wait for more" condition.
+
 2012-10-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, rolling out r131516 and r131550.

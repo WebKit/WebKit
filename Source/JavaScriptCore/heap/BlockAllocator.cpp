@@ -102,6 +102,7 @@ void BlockAllocator::blockFreeingThreadStartFunc(void* blockAllocator)
 
 void BlockAllocator::blockFreeingThreadMain()
 {
+    size_t currentNumberOfEmptyRegions;
     while (!m_blockFreeingThreadShouldQuit) {
         // Generally wait for one second before scavenging free blocks. This
         // may return early, particularly when we're being asked to quit.
@@ -114,12 +115,17 @@ void BlockAllocator::blockFreeingThreadMain()
             continue;
         }
 
-        // Now process the list of free blocks. Keep freeing until half of the
-        // blocks that are currently on the list are gone. Assume that a size_t
-        // field can be accessed atomically.
-        size_t currentNumberOfEmptyRegions = m_numberOfEmptyRegions;
-        if (!currentNumberOfEmptyRegions)
-            continue;
+        // Sleep until there is actually work to do rather than waking up every second to check.
+        {
+            MutexLocker locker(m_emptyRegionConditionLock);
+            SpinLockHolder regionLocker(&m_regionLock);
+            while (!m_numberOfEmptyRegions && !m_blockFreeingThreadShouldQuit) {
+                m_regionLock.Unlock();
+                m_emptyRegionCondition.wait(m_emptyRegionConditionLock);
+                m_regionLock.Lock();
+            }
+            currentNumberOfEmptyRegions = m_numberOfEmptyRegions;
+        }
         
         size_t desiredNumberOfEmptyRegions = currentNumberOfEmptyRegions / 2;
         
@@ -141,16 +147,6 @@ void BlockAllocator::blockFreeingThreadMain()
             
             delete region;
         }
-
-        // Sleep until there is actually work to do rather than waking up every second to check.
-        MutexLocker locker(m_emptyRegionConditionLock);
-        m_regionLock.Lock();
-        while (!m_numberOfEmptyRegions && !m_blockFreeingThreadShouldQuit) {
-            m_regionLock.Unlock();
-            m_emptyRegionCondition.wait(m_emptyRegionConditionLock);
-            m_regionLock.Lock();
-        }
-        m_regionLock.Unlock();
     }
 }
 
