@@ -1,3 +1,16 @@
+2012-10-17  Jian Li  <jianli@chromium.org>
+
+        [chromium] Remove legacy members from WebDraggableRegion
+        https://bugs.webkit.org/show_bug.cgi?id=99612
+
+        Reviewed by Adam Barth.
+
+        Those legacy members to support old syntax are not longer needed after
+        chromium side changes landed.
+
+        * public/WebDraggableRegion.h:
+        (WebDraggableRegion):
+
 2012-10-17  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] IndexedDB: Delete obsolete public API method
