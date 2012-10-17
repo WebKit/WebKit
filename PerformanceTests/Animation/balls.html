@@ -90,8 +90,6 @@
     <script type="text/javascript">
 
     var FRAMES_PER_TIMER_READING = 10;
-    var MAX_ITERATIONS = 110;
-    var MAX_RUNS = 1;
     var MAX_PARTICLES = 2500;
     var MAX_VELOCITY = 50;
     var PARTICLE_RADIUS = 6;
@@ -107,18 +105,8 @@
     var frameRates = [];
     var particles = [];
 
-    window.onload = init;
-
-    function init()
-    {
-        PerfTestRunner.resetRandomSeed();
-
-        var location = window.location.href;
-        frameRates = [];
-        frameTimes = [];
-        iteration = 0;
-        animateIntervalId = 0;
-        particles = [];
+    window.onload = function () {
+        PerfTestRunner.prepareToMeasureValuesAsync({runCount: 10, done: onCompletedRun, unit: 'fps'});
 
         // Create the particles
         for (var i = 0; i < MAX_PARTICLES; i++)
@@ -130,7 +118,7 @@
 
     function animate()
     {
-        var currTime = new Date().getTime();
+        var currTime = PerfTestRunner.now();
         var timeDelta = currTime - frameTimes[frameTimes.length - 1];
 
         if (isNaN(timeDelta))
@@ -151,18 +139,8 @@
             var frameRate = document.getElementById("frameRate");
             var frameRateVal = FRAMES_PER_TIMER_READING * 1000 / ((currTime - frameTimes[0]) / (frameTimes.length - 1));
 
-            if (!isNaN(frameRateVal)) {
-                frameRates.push(frameRateVal);
-                var frameRateText = frameRateVal + "";
-                frameRateText = frameRateText.replace(/(^[^.]+\...).*/, "$1");
-                frameRateText += " fps";
-                frameRate.innerHTML = frameRateText;
-            }
-        }
-
-        if (iteration > MAX_ITERATIONS) {
-            clearInterval(animateIntervalId);
-            onCompletedRun();
+            if (!isNaN(frameRateVal))
+                PerfTestRunner.measureValueAync(frameRateVal);
         }
     }
 
@@ -237,6 +215,8 @@
     }
 
     function onCompletedRun() {
+        clearInterval(animateIntervalId);
+
         for (var particle in particles) {
             var p = particles[particle];
             particles[particle] = 0;
@@ -245,22 +225,6 @@
         particles = [];
 
         frameRate.innerHTML = "";
-
-        for (var rate in frameRates)
-            PerfTestRunner.log(frameRates[rate].toFixed(2) + " fps");
-
-        var stats = PerfTestRunner.computeStatistics(frameRates, "fps");
-        statistics.push(stats);
-
-        PerfTestRunner.printStatistics(stats, "Time:");
-        PerfTestRunner.getAndPrintMemoryStatistics();
-
-        if (++run < MAX_RUNS) {
-            PerfTestRunner.log("<br>===================================================<br>");
-            init();
-        }
-        else if (window.testRunner)
-            testRunner.notifyDone();
     }
     </script>
     <script src="../resources/runner.js"></script>
