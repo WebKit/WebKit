@@ -1,3 +1,24 @@
+2012-10-17  Elliott Sprehn  <esprehn@chromium.org>
+
+        Clean up ContentData operator overloads
+        https://bugs.webkit.org/show_bug.cgi?id=99556
+
+        Reviewed by Eric Seidel.
+
+        Use virtual dispatch for checking ContentData equality instead
+        of a switch over the type. This the first step in getting rid
+        of the StyleContentType enum and all the switch statements over
+        the type().
+
+        No tests needed, this is just a refactor.        
+
+        * rendering/style/ContentData.cpp:
+        * rendering/style/ContentData.h:
+        (ContentData):
+        (WebCore::operator==):
+        (WebCore):
+        (WebCore::operator!=):
+
 2012-10-17  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         NEON intrinsics Gauss filter does not work properly

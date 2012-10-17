@@ -22,8 +22,6 @@
 #include "config.h"
 #include "ContentData.h"
 
-#include "StyleImage.h"
-
 namespace WebCore {
 
 PassOwnPtr<ContentData> ContentData::create(PassRefPtr<StyleImage> image)
@@ -58,32 +56,6 @@ PassOwnPtr<ContentData> ContentData::clone() const
     }
         
     return result.release();
-}
-
-bool operator==(const ContentData& a, const ContentData& b)
-{
-    if (a.type() != b.type())
-        return false;
-
-    switch (a.type()) {
-    case CONTENT_NONE:
-        return true;
-    case CONTENT_OBJECT:
-        return *static_cast<const ImageContentData*>(&a)->image() == *static_cast<const ImageContentData*>(&b)->image();
-    case CONTENT_TEXT:
-        return static_cast<const TextContentData*>(&a)->text() == static_cast<const TextContentData*>(&b)->text();
-    case CONTENT_COUNTER:
-        return *static_cast<const CounterContentData*>(&a)->counter() == *static_cast<const CounterContentData*>(&b)->counter();
-    case CONTENT_QUOTE:
-        return static_cast<const QuoteContentData*>(&a)->quote() == static_cast<const QuoteContentData*>(&b)->quote();
-    }
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool operator!=(const ContentData& a, const ContentData& b)
-{
-    return !(a == b);
 }
 
 } // namespace WebCore
