@@ -655,11 +655,14 @@ static void _ewk_view_smart_calculate(Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
-    Evas_Coord x, y, width, height;
+
+#if USE(ACCELERATED_COMPOSITING)
     bool needsNewSurface = false;
+#endif
 
     smartData->changed.any = false;
 
+    Evas_Coord x, y, width, height;
     evas_object_geometry_get(ewkView, &x, &y, &width, &height);
 
     if (smartData->changed.size) {
