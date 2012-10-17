@@ -1079,7 +1079,7 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
     // The minimum size being defined as 3 mm is a good value based on my observations.
     static const int s_minimumTextHeightInPixels = Graphics::Screen::primaryScreen()->heightInMMToPixels(3);
 
-    if (fontHeight && fontHeight * m_webPage->currentScale() < s_minimumTextHeightInPixels && !isRunningDrt()) {
+    if (m_webPage->isUserScalable() && fontHeight && fontHeight * m_webPage->currentScale() < s_minimumTextHeightInPixels && !isRunningDrt()) {
         if (!m_focusZoomScale) {
             m_focusZoomScale = m_webPage->currentScale();
             m_focusZoomLocation = selectionFocusRect.location();

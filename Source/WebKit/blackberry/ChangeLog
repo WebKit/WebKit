@@ -1,3 +1,19 @@
+2012-10-17  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Prevent focus zoom on non-userscalable pages.
+        https://bugs.webkit.org/show_bug.cgi?id=99608
+
+        Reviewed by Rob Buis.
+
+        PR 222378.
+
+        Disable focus zoom when the page is non-user scalable.
+
+        Reviewed Internally by Nima Ghanavatian.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::ensureFocusTextElementVisible):
+
 2012-10-16  Mike Lattanzio  <mlattanzio@rim.com>
 
         2012-10-16  Mike Lattanzio  <mlattanzio@rim.com>
