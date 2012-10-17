@@ -1,5 +1,13 @@
 2012-10-16  Kent Tamura  <tkent@chromium.org>
 
+        Re-add a test which was removed mistakenly in r131538.
+        https://bugs.webkit.org/show_bug.cgi?id=98103
+
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-type-change-onclick-expected.txt: Added.
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-type-change-onclick.html: Added.
+
+2012-10-16  Kent Tamura  <tkent@chromium.org>
+
         Move tests for calendar picker to platform/chromium/fast/forms/calendar-picker/
         https://bugs.webkit.org/show_bug.cgi?id=98103
 
