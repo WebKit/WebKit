@@ -1,3 +1,10 @@
+2012-10-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r131651.
+
+        * fast/harness/perftests/runs-per-second-iterations.html:
+        * fast/harness/perftests/runs-per-second-log.html:
+
 2012-10-17  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Certain SVG content freezes QtWebKit

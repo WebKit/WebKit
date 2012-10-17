@@ -26,7 +26,7 @@ PerfTestRunner.log = function (line) { logLines.push(line); }
 
 var originalTimesInIterations = timesInIterations.slice();
 
-PerfTestRunner.runPerSecond({
+PerfTestRunner.measureRunsPerSecond({
     run: function () {
         var i = Math.floor(iteration / 2);
         if (callsInIterations[i] == undefined)

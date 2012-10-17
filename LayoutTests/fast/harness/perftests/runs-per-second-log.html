@@ -30,7 +30,7 @@ PerfTestRunner.printStatistics = function (statistics, title) {
     return printStatistics.call(PerfTestRunner, statistics, title);
 }
 
-PerfTestRunner.runPerSecond({
+PerfTestRunner.measureRunsPerSecond({
     setup: function () {
         runs++;
         // Avoid 3, 6, 7, 9.
