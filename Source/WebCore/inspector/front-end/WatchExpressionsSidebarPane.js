@@ -391,12 +391,21 @@ WebInspector.WatchExpressionTreeElement.prototype = {
         this.listItemElement.insertBefore(deleteButton, this.listItemElement.firstChild);
     },
     
-    _contextMenu: function(event)
+    /**
+     * @param {WebInspector.ContextMenu} contextMenu
+     * @override
+     */
+    populateContextMenu: function(contextMenu)
     {
-        var contextMenu = new WebInspector.ContextMenu();
         contextMenu.appendItem(WebInspector.UIString("Delete watch expression"), this._deleteButtonClicked.bind(this));
         if (this.treeOutline.section.watchExpressions.length > 1)
             contextMenu.appendItem(WebInspector.UIString("Delete all watch expressions"), this._deleteAllButtonClicked.bind(this));
+    },
+
+    _contextMenu: function(event)
+    {
+        var contextMenu = new WebInspector.ContextMenu();
+        this.populateContextMenu(contextMenu);
         contextMenu.show(event);
     },
     

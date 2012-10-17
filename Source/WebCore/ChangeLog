@@ -1,3 +1,19 @@
+2012-10-17  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: no "delete watch expression" context menu item when clicking on the expression value
+        https://bugs.webkit.org/show_bug.cgi?id=99602
+
+        Reviewed by Pavel Feldman.
+
+        Add delete items to the watch expression's value's context menu.
+
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype._contextMenuFired):
+        (WebInspector.ObjectPropertyTreeElement.prototype.populateContextMenu):
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        (WebInspector.WatchExpressionTreeElement.prototype.populateContextMenu):
+        (WebInspector.WatchExpressionTreeElement.prototype._contextMenu):
+
 2012-10-17  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [Regression] Undoing script changes does not restore breakpoints.

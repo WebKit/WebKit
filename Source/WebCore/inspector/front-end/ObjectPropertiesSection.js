@@ -254,8 +254,16 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
     _contextMenuFired: function(value, event)
     {
         var contextMenu = new WebInspector.ContextMenu();
+        this.populateContextMenu(contextMenu);
         contextMenu.appendApplicableItems(value);
         contextMenu.show(event);
+    },
+
+    /**
+     * @param {WebInspector.ContextMenu} contextMenu
+     */
+    populateContextMenu: function(contextMenu)
+    {
     },
 
     updateSiblings: function()
