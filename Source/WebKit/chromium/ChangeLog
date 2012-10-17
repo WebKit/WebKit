@@ -1,3 +1,9 @@
+2012-10-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-10-16  Jian Li  <jianli@chromium.org>
 
         Rename feature define ENABLE_WIDGET_REGION to ENABLE_DRAGGBALE_REGION
