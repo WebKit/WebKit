@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests the RTCPeerConnection stats selector argument.");
+
+var pc = null;
+var result;
+var timestamp;
+var local;
+
+function getUserMedia(dictionary, callback) {
+    try {
+        navigator.webkitGetUserMedia(dictionary, callback, error);
+    } catch (e) {
+        testFailed('webkitGetUserMedia threw exception :' + e);
+        finishJSTest();
+    }
+}
+
+function error() {
+    testFailed('Stream generation failed.');
+    finishJSTest();
+}
+
+function gotStream(s) {
+    testPassed('Got a stream.');
+    stream = s;
+
+    pc.addStream(stream);
+    shouldNotThrow('pc.getStats(statsHandler2, pc.localStreams[0].videoTracks[0])');
+}
+
+function statsHandler2(status)
+{
+    testPassed("statsHandler2 was called");
+    result = status.result();
+    shouldBeGreaterThanOrEqual('result.length', '1');
+    local = result[0].local;
+    timestamp = local.timestamp;
+    shouldBeGreaterThanOrEqual('timestamp', 'startTime');
+    shouldBe('local.stat("type")', '"video"');
+    finishJSTest();
+}
+
+var startTime = new Date().getTime();
+shouldNotThrow('pc = new webkitRTCPeerConnection(null)');
+shouldNotThrow('getUserMedia({audio:true, video:true}, gotStream)');
+
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,3 +1,40 @@
+2012-10-17  Harald Alvestrand  <hta@google.com>
+
+        Implement the Selector argument to RTCPeerConnection.getStats
+        https://bugs.webkit.org/show_bug.cgi?id=99460
+
+        Reviewed by Adam Barth.
+
+        The change adds two new parameters to the RTCStatsRequest object:
+        stream and component. Together these are enough to identify a
+        MediaStreamTrack.
+
+        Test: fast/mediastream/RTCPeerConnection-statsSelector.html
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::streamDescriptor):
+        (WebCore):
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::getStats):
+        * Modules/mediastream/RTCStatsRequestImpl.cpp:
+        (WebCore::RTCStatsRequestImpl::create):
+        (WebCore::RTCStatsRequestImpl::RTCStatsRequestImpl):
+        (WebCore::RTCStatsRequestImpl::hasSelector):
+        (WebCore):
+        (WebCore::RTCStatsRequestImpl::stream):
+        (WebCore::RTCStatsRequestImpl::component):
+        * Modules/mediastream/RTCStatsRequestImpl.h:
+        (RTCStatsRequestImpl):
+        * platform/chromium/support/WebRTCStatsRequest.cpp:
+        (WebKit):
+        (WebKit::WebRTCStatsRequest::hasSelector):
+        (WebKit::WebRTCStatsRequest::stream):
+        (WebKit::WebRTCStatsRequest::component):
+        * platform/mediastream/RTCStatsRequest.h:
+        (WebCore):
+        (RTCStatsRequest):
+
 2012-10-17  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Enable use of more AllInOne files

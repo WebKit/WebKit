@@ -35,6 +35,8 @@
 
 #include "MockConstraints.h"
 #include <public/WebMediaConstraints.h>
+#include <public/WebMediaStreamComponent.h>
+#include <public/WebMediaStreamDescriptor.h>
 #include <public/WebRTCPeerConnectionHandlerClient.h>
 #include <public/WebRTCSessionDescription.h>
 #include <public/WebRTCSessionDescriptionRequest.h>
@@ -303,13 +305,22 @@ void MockWebRTCPeerConnectionHandler::getStats(const WebRTCStatsRequest& request
 {
     WebRTCStatsResponse response = request.createResponse();
     double currentDate = WTF::jsCurrentTime();
-    for (int i = 0; i < m_streamCount; ++i) {
+    if (request.hasSelector()) {
+        WebMediaStreamDescriptor stream = request.stream();
+        WebMediaStreamComponent component = request.component();
+        // FIXME: There is no check that the fetched values are valid.
         size_t reportIndex = response.addReport();
         response.addElement(reportIndex, true, currentDate);
-        response.addStatistic(reportIndex, true, "type", "audio");
-        reportIndex = response.addReport();
-        response.addElement(reportIndex, true, currentDate);
         response.addStatistic(reportIndex, true, "type", "video");
+    } else {
+        for (int i = 0; i < m_streamCount; ++i) {
+            size_t reportIndex = response.addReport();
+            response.addElement(reportIndex, true, currentDate);
+            response.addStatistic(reportIndex, true, "type", "audio");
+            reportIndex = response.addReport();
+            response.addElement(reportIndex, true, currentDate);
+            response.addStatistic(reportIndex, true, "type", "video");
+        }
     }
     postTask(new RTCStatsRequestSucceededTask(this, request, response));
 }

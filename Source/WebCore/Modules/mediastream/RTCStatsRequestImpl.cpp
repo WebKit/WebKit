@@ -34,16 +34,18 @@
 
 namespace WebCore {
 
-PassRefPtr<RTCStatsRequestImpl> RTCStatsRequestImpl::create(ScriptExecutionContext* context, PassRefPtr<RTCStatsCallback> callback)
+PassRefPtr<RTCStatsRequestImpl> RTCStatsRequestImpl::create(ScriptExecutionContext* context, PassRefPtr<RTCStatsCallback> callback, PassRefPtr<MediaStreamTrack> selector)
 {
-    RefPtr<RTCStatsRequestImpl> request = adoptRef(new RTCStatsRequestImpl(context, callback));
+    RefPtr<RTCStatsRequestImpl> request = adoptRef(new RTCStatsRequestImpl(context, callback, selector));
     request->suspendIfNeeded();
     return request.release();
 }
 
-RTCStatsRequestImpl::RTCStatsRequestImpl(ScriptExecutionContext* context, PassRefPtr<RTCStatsCallback> callback)
+RTCStatsRequestImpl::RTCStatsRequestImpl(ScriptExecutionContext* context, PassRefPtr<RTCStatsCallback> callback, PassRefPtr<MediaStreamTrack> selector)
     : ActiveDOMObject(context, this)
     , m_successCallback(callback)
+    , m_stream(selector ? selector->streamDescriptor() : 0)
+    , m_component(selector ? selector->component() : 0)
 {
 }
 
@@ -54,6 +56,21 @@ RTCStatsRequestImpl::~RTCStatsRequestImpl()
 PassRefPtr<RTCStatsResponseBase> RTCStatsRequestImpl::createResponse()
 {
     return RTCStatsResponse::create();
+}
+
+bool RTCStatsRequestImpl::hasSelector()
+{
+    return m_stream;
+}
+
+MediaStreamDescriptor* RTCStatsRequestImpl::stream()
+{
+    return m_stream.get();
+}
+
+MediaStreamComponent* RTCStatsRequestImpl::component()
+{
+    return m_component.get();
 }
 
 void RTCStatsRequestImpl::requestSucceeded(PassRefPtr<RTCStatsResponseBase> response)

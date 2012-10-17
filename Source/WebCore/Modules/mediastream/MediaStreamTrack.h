@@ -64,6 +64,7 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(unmute);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(ended);
 
+    MediaStreamDescriptor* streamDescriptor();
     MediaStreamComponent* component();
 
     // EventTarget

@@ -41,6 +41,8 @@ class RTCStatsRequest;
 
 namespace WebKit {
 
+class WebMediaStreamComponent;
+class WebMediaStreamDescriptor;
 class WebRTCStatsResponse;
 
 // The WebRTCStatsRequest class represents a JavaScript call on
@@ -79,6 +81,16 @@ public:
     WEBKIT_EXPORT void assign(const WebRTCStatsRequest&);
 
     WEBKIT_EXPORT void reset();
+
+    // This function returns true if a selector argument was given to getStats.
+    WEBKIT_EXPORT bool hasSelector() const;
+
+    // The stream() and component() accessors give the two pieces of information
+    // required to look up a MediaStreamTrack implementation.
+    // It is only useful to call them when hasSelector() returns true.
+    WEBKIT_EXPORT const WebMediaStreamDescriptor stream() const;
+
+    WEBKIT_EXPORT const WebMediaStreamComponent component() const;
 
     WEBKIT_EXPORT void requestSucceeded(const WebRTCStatsResponse&) const;
 

@@ -130,6 +130,11 @@ void MediaStreamTrack::sourceChangedState()
     }
 }
 
+MediaStreamDescriptor* MediaStreamTrack::streamDescriptor()
+{
+    return m_streamDescriptor.get();
+}
+
 MediaStreamComponent* MediaStreamTrack::component()
 {
     return m_component.get();

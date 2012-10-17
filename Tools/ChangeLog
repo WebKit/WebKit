@@ -1,3 +1,17 @@
+2012-10-17  Harald Alvestrand  <hta@google.com>
+
+        Implement the Selector argument to RTCPeerConnection.getStats
+        https://bugs.webkit.org/show_bug.cgi?id=99460
+
+        Reviewed by Adam Barth.
+
+        The MockWebRTCPeerConnectionHandler will return one object only
+        when it gets a selector, and an even number when there is no selector.
+        This allows to verify that the argument is passed, but not its value.
+
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.cpp:
+        (MockWebRTCPeerConnectionHandler::getStats):
+
 2012-10-17  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         WebKitTestRunner needs layoutTestController.queueReload
