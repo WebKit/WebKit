@@ -89,6 +89,9 @@ void ContentDistributor::distribute(Element* host)
                 distributeNodeChildrenTo(point, older);
                 older->setAssignedTo(point);
             }
+
+            if (ElementShadow* shadow = node->parentNode()->isElementNode() ? toElement(node->parentNode())->shadow() : 0)
+                shadow->invalidateDistribution();
         }
     }
 }

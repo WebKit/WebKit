@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<html>
+
+<div id="host1"></div>
+
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+var shadowRoot1 = new WebKitShadowRoot(host1);
+shadowRoot1.innerHTML = '<div><div id="host2"><content></content></div></div>';
+
+var host2 = shadowRoot1.getElementById('host2');
+var shadowRoot2 = new WebKitShadowRoot(host2);
+shadowRoot2.innerHTML = '<div id="host3"><content></content></div>';
+
+var host3 = shadowRoot2.getElementById('host3');
+var shadowRoot3 = new WebKitShadowRoot(host3);
+shadowRoot3.innerHTML = '<div><content></content></div>';
+
+setTimeout(function() {
+    var div = document.createElement('div');
+    div.innerHTML = 'dynamically added div';
+    host1.appendChild(div);
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
+</script>
+
+</html>

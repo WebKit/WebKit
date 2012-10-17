@@ -1,3 +1,18 @@
+2012-10-17  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Dynamically added elements do not get re-projected.
+        https://bugs.webkit.org/show_bug.cgi?id=99227
+
+        Reviewed by Dimitri Glazkov.
+
+        When distribution happens, we have to invalidate its host shadow's distribution, since the children of the host
+        is changed.
+
+        Test: fast/dom/shadow/content-reprojection-dynamic.html
+
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ContentDistributor::distribute):
+
 2012-10-17  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: no "delete watch expression" context menu item when clicking on the expression value
