@@ -34,7 +34,6 @@
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 
-using namespace WebKit;
 using namespace WebCore;
 
 struct _WebKitContextMenuItemPrivate {
@@ -91,10 +90,10 @@ static void webkitContextMenuItemSetSubMenu(WebKitContextMenuItem* item, GRefPtr
         webkitContextMenuSetParentItem(subMenu.get(), item);
 }
 
-WebKitContextMenuItem* webkitContextMenuItemCreate(WKContextMenuItemRef wkItem)
+WebKitContextMenuItem* webkitContextMenuItemCreate(WebContextMenuItem* webItem)
 {
     WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, NULL));
-    WebContextMenuItemData* itemData = toImpl(wkItem)->data();
+    WebContextMenuItemData* itemData = webItem->data();
     item->priv->menuItem = WTF::adoptPtr(new ContextMenuItem(itemData->type(), itemData->action(), itemData->title(), itemData->enabled(), itemData->checked()));
     const Vector<WebContextMenuItemData>& subMenu = itemData->submenu();
     if (!subMenu.size())
@@ -104,7 +103,7 @@ WebKitContextMenuItem* webkitContextMenuItemCreate(WKContextMenuItemRef wkItem)
     subMenuItems->reserveCapacity(subMenu.size());
     for (size_t i = 0; i < subMenu.size(); ++i)
         subMenuItems->append(WebContextMenuItem::create(subMenu[i]).get());
-    webkitContextMenuItemSetSubMenu(item, adoptGRef(webkitContextMenuCreate(toAPI(subMenuItems.get()))));
+    webkitContextMenuItemSetSubMenu(item, adoptGRef(webkitContextMenuCreate(subMenuItems.get())));
 
     return item;
 }

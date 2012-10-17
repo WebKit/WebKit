@@ -20,10 +20,11 @@
 #include "config.h"
 #include "WebKitContextMenu.h"
 
+#include "ImmutableArray.h"
+#include "WebContextMenuItem.h"
 #include "WebKitContextMenuItemPrivate.h"
 #include "WebKitContextMenuPrivate.h"
 
-using namespace WebKit;
 using namespace WebCore;
 
 struct _WebKitContextMenuPrivate {
@@ -64,12 +65,12 @@ void webkitContextMenuPopulate(WebKitContextMenu* menu, Vector<ContextMenuItem>&
     }
 }
 
-WebKitContextMenu* webkitContextMenuCreate(WKArrayRef wkItems)
+WebKitContextMenu* webkitContextMenuCreate(ImmutableArray* items)
 {
     WebKitContextMenu* menu = webkit_context_menu_new();
-    for (size_t i = 0; i < WKArrayGetSize(wkItems); ++i) {
-        WKContextMenuItemRef wkItem = static_cast<WKContextMenuItemRef>(WKArrayGetItemAtIndex(wkItems, i));
-        webkit_context_menu_prepend(menu, webkitContextMenuItemCreate(wkItem));
+    for (size_t i = 0; i < items->size(); ++i) {
+        WebContextMenuItem* item = static_cast<WebContextMenuItem*>(items->at(i));
+        webkit_context_menu_prepend(menu, webkitContextMenuItemCreate(item));
     }
     menu->priv->items = g_list_reverse(menu->priv->items);
 

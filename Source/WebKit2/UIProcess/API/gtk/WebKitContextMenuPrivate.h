@@ -23,7 +23,9 @@
 #include "WebKitContextMenu.h"
 #include "WebKitPrivate.h"
 
-WebKitContextMenu* webkitContextMenuCreate(WKArrayRef wkItems);
+using namespace WebKit;
+
+WebKitContextMenu* webkitContextMenuCreate(ImmutableArray* items);
 void webkitContextMenuPopulate(WebKitContextMenu*, Vector<WebCore::ContextMenuItem>&);
 void webkitContextMenuSetParentItem(WebKitContextMenu*, WebKitContextMenuItem*);
 WebKitContextMenuItem* webkitContextMenuGetParentItem(WebKitContextMenu*);

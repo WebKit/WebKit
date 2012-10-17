@@ -1577,7 +1577,7 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, ImmutableArray* pr
     WebContextMenuProxyGtk* contextMenuProxy = webkitWebViewBaseGetActiveContextMenuProxy(webViewBase);
     ASSERT(contextMenuProxy);
 
-    GRefPtr<WebKitContextMenu> contextMenu = adoptGRef(webkitContextMenuCreate(toAPI(proposedMenu)));
+    GRefPtr<WebKitContextMenu> contextMenu = adoptGRef(webkitContextMenuCreate(proposedMenu));
     if (webHitTestResult->isContentEditable())
         webkitWebViewCreateAndAppendInputMethodsMenuItem(webView, contextMenu.get());
 
