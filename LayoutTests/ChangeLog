@@ -1,3 +1,26 @@
+2012-10-17  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, second set of GTK+ baselines for shadow DOM changes to RenderSlider.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/media/audio-controls-rendering-expected.txt:
+        * platform/gtk/media/audio-repaint-expected.txt:
+        * platform/gtk/media/controls-after-reload-expected.txt:
+        * platform/gtk/media/controls-strict-expected.txt:
+        * platform/gtk/media/controls-styling-expected.txt:
+        * platform/gtk/media/controls-styling-strict-expected.txt:
+        * platform/gtk/media/controls-without-preload-expected.txt:
+        * platform/gtk/media/media-controls-clone-expected.txt:
+        * platform/gtk/media/media-document-audio-repaint-expected.txt:
+        * platform/gtk/media/track/track-cue-rendering-horizontal-expected.txt:
+        * platform/gtk/media/track/track-cue-rendering-vertical-expected.txt:
+        * platform/gtk/media/video-controls-rendering-expected.txt:
+        * platform/gtk/media/video-display-toggle-expected.txt:
+        * platform/gtk/media/video-empty-source-expected.txt:
+        * platform/gtk/media/video-no-audio-expected.txt:
+        * platform/gtk/media/video-playing-and-pause-expected.txt:
+        * platform/gtk/media/video-zoom-controls-expected.txt:
+
 2012-10-17  Scott Graham  <scottmg@chromium.org>
 
         Integer overflows/underflows in all Gamepad controller api calls.
