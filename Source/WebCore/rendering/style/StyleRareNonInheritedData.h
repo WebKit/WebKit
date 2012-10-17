@@ -105,7 +105,7 @@ public:
 #if ENABLE(DASHBOARD_SUPPORT)
     Vector<StyleDashboardRegion> m_dashboardRegions;
 #endif
-#if ENABLE(WIDGET_REGION)
+#if ENABLE(DRAGGABLE_REGION)
     DraggableRegionMode m_draggableRegionMode;
 #endif
 

@@ -351,7 +351,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitRegionBreakBefore,
     CSSPropertyWebkitRegionBreakInside,
 #endif
-#if ENABLE(WIDGET_REGION)
+#if ENABLE(DRAGGABLE_REGION)
     CSSPropertyWebkitAppRegion,
 #endif
 #if ENABLE(CSS_EXCLUSIONS)
@@ -2201,7 +2201,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             return cssValuePool().createValue(firstRegion.release());
         }
 #endif
-#if ENABLE(WIDGET_REGION)
+#if ENABLE(DRAGGABLE_REGION)
         case CSSPropertyWebkitAppRegion:
             return cssValuePool().createIdentifierValue(style->getDraggableRegionMode() == DraggableRegionDrag ? CSSValueDrag : CSSValueNoDrag);
 #endif

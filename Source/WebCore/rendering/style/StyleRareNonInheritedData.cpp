@@ -44,7 +44,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_perspectiveOriginX(RenderStyle::initialPerspectiveOriginX())
     , m_perspectiveOriginY(RenderStyle::initialPerspectiveOriginY())
     , lineClamp(RenderStyle::initialLineClamp())
-#if ENABLE(WIDGET_REGION)
+#if ENABLE(DRAGGABLE_REGION)
     , m_draggableRegionMode(DraggableRegionNone)
 #endif
     , m_mask(FillLayer(MaskFillLayer))
@@ -101,7 +101,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_perspectiveOriginX(o.m_perspectiveOriginX)
     , m_perspectiveOriginY(o.m_perspectiveOriginY)
     , lineClamp(o.lineClamp)
-#if ENABLE(WIDGET_REGION)
+#if ENABLE(DRAGGABLE_REGION)
     , m_draggableRegionMode(o.m_draggableRegionMode)
 #endif
     , m_deprecatedFlexibleBox(o.m_deprecatedFlexibleBox)
@@ -186,7 +186,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
 #if ENABLE(DASHBOARD_SUPPORT)
         && m_dashboardRegions == o.m_dashboardRegions
 #endif
-#if ENABLE(WIDGET_REGION)
+#if ENABLE(DRAGGABLE_REGION)
         && m_draggableRegionMode == o.m_draggableRegionMode
 #endif
         && m_deprecatedFlexibleBox == o.m_deprecatedFlexibleBox

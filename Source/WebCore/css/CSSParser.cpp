@@ -2553,7 +2553,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
 #endif
     // End Apple-specific properties
 
-#if ENABLE(WIDGET_REGION)
+#if ENABLE(DRAGGABLE_REGION)
     case CSSPropertyWebkitAppRegion:
         if (id >= CSSValueDrag && id <= CSSValueNoDrag)
             validPrimitive = true;

@@ -2477,7 +2477,7 @@ http/tests/security/contentSecurityPolicy/1.1
 # Skip tests in fast/text/shaping
 fast/text/shaping
 
-# ENABLE(WIDGET_REGION) is disabled
+# ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html
 
 # CSS image-orientation property not yet supported

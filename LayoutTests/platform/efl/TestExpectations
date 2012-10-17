@@ -365,7 +365,7 @@ inspector/debugger/debugger-compile-and-run.html
 inspector/debugger/dom-breakpoints.html
 inspector/timeline/timeline-receive-response-event.html
 
-# ENABLE(WIDGET_REGION) is disabled
+# ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html
 
 # http://webkit.org/b/96828

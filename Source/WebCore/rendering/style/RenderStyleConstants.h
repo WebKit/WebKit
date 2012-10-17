@@ -473,7 +473,7 @@ enum WrapFlow { WrapFlowAuto, WrapFlowBoth, WrapFlowStart, WrapFlowEnd, WrapFlow
 
 enum WrapThrough { WrapThroughWrap, WrapThroughNone };
 
-#if ENABLE(WIDGET_REGION)
+#if ENABLE(DRAGGABLE_REGION)
 enum DraggableRegionMode { DraggableRegionNone, DraggableRegionDrag, DraggableRegionNoDrag };
 #endif
 

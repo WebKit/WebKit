@@ -1,3 +1,19 @@
+2012-10-16  Jian Li  <jianli@chromium.org>
+
+        Rename feature define ENABLE_WIDGET_REGION to ENABLE_DRAGGBALE_REGION
+        https://bugs.webkit.org/show_bug.cgi?id=98975
+
+        Reviewed by Adam Barth.
+
+        Renaming is needed to better match with the draggable region code.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2012-10-16  Dana Jansens  <danakj@chromium.org>
 
         Unreviewed, rebaselines after r131358

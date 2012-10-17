@@ -441,7 +441,7 @@ fast/forms/month-multiple-fields
 fast/forms/time-multiple-fields
 fast/forms/week-multiple-fields
 
-# ENABLE(WIDGET_REGION) is disabled
+# ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html
 
 # Text Autosizing is not enabled.

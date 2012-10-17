@@ -1039,7 +1039,7 @@ public:
     }
 #endif
 
-#if ENABLE(WIDGET_REGION)
+#if ENABLE(DRAGGABLE_REGION)
     DraggableRegionMode getDraggableRegionMode() const { return rareNonInheritedData->m_draggableRegionMode; }
     void setDraggableRegionMode(DraggableRegionMode v) { SET_VAR(rareNonInheritedData, m_draggableRegionMode, v); }
 #endif

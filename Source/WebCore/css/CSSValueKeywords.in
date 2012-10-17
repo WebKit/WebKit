@@ -964,7 +964,7 @@ snap
 -webkit-paged-y
 
 // -webkit-app-region
-#if defined(ENABLE_WIDGET_REGION) && ENABLE_WIDGET_REGION
+#if defined(ENABLE_DRAGGABLE_REGION) && ENABLE_DRAGGABLE_REGION
 drag
 no-drag
 #endif

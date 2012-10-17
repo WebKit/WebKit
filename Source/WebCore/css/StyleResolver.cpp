@@ -3385,7 +3385,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     }
 #endif
-#if ENABLE(WIDGET_REGION)
+#if ENABLE(DRAGGABLE_REGION)
     case CSSPropertyWebkitAppRegion: {
         if (!primitiveValue || !primitiveValue->getIdent())
             return;

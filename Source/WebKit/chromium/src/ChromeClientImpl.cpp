@@ -1119,7 +1119,7 @@ bool ChromeClientImpl::isPointerLocked()
 }
 #endif
 
-#if ENABLE(WIDGET_REGION)
+#if ENABLE(DRAGGABLE_REGION)
 void ChromeClientImpl::annotatedRegionsChanged()
 {
     WebViewClient* client = m_webView->client();

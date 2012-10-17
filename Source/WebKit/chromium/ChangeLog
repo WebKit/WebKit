@@ -1,3 +1,20 @@
+2012-10-16  Jian Li  <jianli@chromium.org>
+
+        Rename feature define ENABLE_WIDGET_REGION to ENABLE_DRAGGBALE_REGION
+        https://bugs.webkit.org/show_bug.cgi?id=98975
+
+        Reviewed by Adam Barth.
+
+        Renaming is needed to better match with the draggable region code.
+
+        * features.gypi:
+        * src/ChromeClientImpl.cpp:
+        (WebKit):
+        * src/ChromeClientImpl.h:
+        (ChromeClientImpl):
+        * src/WebDocument.cpp:
+        (WebKit::WebDocument::draggableRegions):
+
 2012-10-16  Min Qin  <qinmin@chromium.org>
 
         Fix a bug that we are using scaled damage rect for plugins inside an iframe

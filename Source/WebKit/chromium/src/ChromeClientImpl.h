@@ -138,7 +138,7 @@ public:
         WebCore::Frame*, const WTF::String& databaseName);
     virtual void reachedMaxAppCacheSize(int64_t spaceNeeded);
     virtual void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin*, int64_t totalSpaceNeeded);
-#if ENABLE(WIDGET_REGION)
+#if ENABLE(DRAGGABLE_REGION)
     virtual void annotatedRegionsChanged();
 #endif
     virtual bool paintCustomOverhangArea(WebCore::GraphicsContext*, const WebCore::IntRect&, const WebCore::IntRect&, const WebCore::IntRect&);

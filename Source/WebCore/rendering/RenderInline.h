@@ -161,7 +161,7 @@ private:
 
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
     virtual void addAnnotatedRegions(Vector<AnnotatedRegionValue>&);
 #endif
     

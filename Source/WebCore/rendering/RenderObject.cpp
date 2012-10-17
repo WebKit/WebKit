@@ -1817,7 +1817,7 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
             bool visibilityChanged = m_style->visibility() != newStyle->visibility() 
                 || m_style->zIndex() != newStyle->zIndex() 
                 || m_style->hasAutoZIndex() != newStyle->hasAutoZIndex();
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
             if (visibilityChanged)
                 document()->setAnnotatedRegionsDirty(true);
 #endif
@@ -2735,7 +2735,7 @@ void RenderObject::getTextDecorationColors(int decorations, Color& underline, Co
     }
 }
 
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
 void RenderObject::addAnnotatedRegions(Vector<AnnotatedRegionValue>& regions)
 {
     // Convert the style regions to absolute coordinates.
@@ -2774,7 +2774,7 @@ void RenderObject::addAnnotatedRegions(Vector<AnnotatedRegionValue>& regions)
 
         regions.append(region);
     }
-#else // ENABLE(WIDGET_REGION)
+#else // ENABLE(DRAGGABLE_REGION)
     if (style()->getDraggableRegionMode() == DraggableRegionNone)
         return;
     AnnotatedRegionValue region;

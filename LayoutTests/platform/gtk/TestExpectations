@@ -74,7 +74,7 @@ media/unsupported-rtsp.html [ WontFix ]
 fast/canvas/canvas-gradient-addStop-error.html [ WontFix ]
 http/tests/xmlhttprequest/default-content-type-dashboard.html [ WontFix ]
 
-# ENABLE(WIDGET_REGION) is disabled
+# ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html [ WontFix ]
 
 # These test -apple- and -khtml- prefixed CSS properties, which we don't support.

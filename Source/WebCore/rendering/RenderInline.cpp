@@ -42,7 +42,7 @@
 
 #include <wtf/TemporaryChange.h>
 
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
 #include "Frame.h"
 #endif
 
@@ -1534,7 +1534,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, const L
             antialias);
 }
 
-#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
 void RenderInline::addAnnotatedRegions(Vector<AnnotatedRegionValue>& regions)
 {
     // Convert the style regions to absolute coordinates.
@@ -1576,7 +1576,7 @@ void RenderInline::addAnnotatedRegions(Vector<AnnotatedRegionValue>& regions)
 
         regions.append(region);
     }
-#else // ENABLE(WIDGET_REGION)
+#else // ENABLE(DRAGGABLE_REGION)
     if (style()->getDraggableRegionMode() == DraggableRegionNone)
         return;
 

@@ -260,7 +260,7 @@ WebAccessibilityObject WebDocument::accessibilityObjectFromID(int axID) const
 WebVector<WebDraggableRegion> WebDocument::draggableRegions() const
 {
     WebVector<WebDraggableRegion> draggableRegions;
-#if ENABLE(WIDGET_REGION)
+#if ENABLE(DRAGGABLE_REGION)
     const Document* document = constUnwrap<Document>();
     if (document->hasAnnotatedRegions()) {
         const Vector<AnnotatedRegionValue>& regions = document->annotatedRegions();
