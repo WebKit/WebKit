@@ -36,8 +36,6 @@ class WebIDBTransactionCallbacks {
 public:
     virtual ~WebIDBTransactionCallbacks() { }
 
-    // FIXME: Remove after callers are updated following WK99097.
-    virtual void onAbort() { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onAbort(const WebIDBDatabaseError&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onComplete() { WEBKIT_ASSERT_NOT_REACHED(); }
 };

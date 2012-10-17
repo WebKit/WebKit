@@ -1,3 +1,14 @@
+2012-10-17  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] IndexedDB: Delete obsolete public API method
+        https://bugs.webkit.org/show_bug.cgi?id=99603
+
+        Reviewed by Dimitri Glazkov.
+
+        Remove a stub that was necessary while the Chromium side of webkit.org/b/99097 was landing.
+
+        * public/WebIDBTransactionCallbacks.h:
+
 2012-10-17  Keishi Hattori  <keishi@webkit.org>
 
         Localized date should be based on LDML
