@@ -1,3 +1,26 @@
+2012-10-16  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI instrument ImageDecoder. It owns a buffer that could be quite big.
+        https://bugs.webkit.org/show_bug.cgi?id=99540
+
+        Reviewed by Yury Semikhatsky.
+
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::reportMemoryUsage):
+        (WebCore):
+        * platform/graphics/ImageSource.h:
+        (ImageSource):
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageFrame::reportMemoryUsage):
+        (WebCore):
+        (WebCore::ImageDecoder::reportMemoryUsage):
+        * platform/image-decoders/ImageDecoder.h:
+        (ImageFrame):
+        (ImageDecoder):
+        * platform/image-decoders/skia/ImageDecoderSkia.cpp:
+        (WebCore::ImageFrame::reportMemoryUsage):
+        (WebCore):
+
 2012-10-17  Zeno Albisser  <zeno@webkit.org>
 
         [Qt] Fix build on Mac OSX 10.6 and earlier.

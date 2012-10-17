@@ -396,6 +396,12 @@ unsigned ImageSource::frameBytesAtIndex(size_t index) const
     return frameSize.width() * frameSize.height() * 4;
 }
 
+void ImageSource::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
+    info.addMember(m_decoder);
+}
+
 }
 
 #endif // USE(CG)

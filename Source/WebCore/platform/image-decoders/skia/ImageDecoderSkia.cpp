@@ -27,6 +27,8 @@
 #include "config.h"
 #include "ImageDecoder.h"
 
+#include "PlatformMemoryInstrumentation.h"
+
 namespace WebCore {
 
 ImageFrame::ImageFrame()
@@ -143,6 +145,12 @@ int ImageFrame::width() const
 int ImageFrame::height() const
 {
     return m_bitmap.bitmap().height();
+}
+
+void ImageFrame::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
+    info.addMember(m_bitmap);
 }
 
 } // namespace WebCore

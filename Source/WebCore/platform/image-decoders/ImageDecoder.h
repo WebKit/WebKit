@@ -145,6 +145,9 @@ namespace WebCore {
             return m_bytes + (y * width()) + x;
 #endif
         }
+
+        void reportMemoryUsage(MemoryObjectInfo*) const;
+
     private:
         int width() const;
         int height() const;
@@ -358,6 +361,8 @@ namespace WebCore {
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
         void setMaxNumPixels(int m) { m_maxNumPixels = m; }
 #endif
+
+        virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
     protected:
         void prepareScaleDataIfNecessary();
