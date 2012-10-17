@@ -9,11 +9,6 @@ function onmessage(evt)
 {
     postMessage("SUCCESS");
 }
-try {
-if (onmessage == null)
-    throw "argh!";
+
 addEventListener("message", onmessage, true);
 gc();
-} catch(e) {
-    postMessage(e)
-}

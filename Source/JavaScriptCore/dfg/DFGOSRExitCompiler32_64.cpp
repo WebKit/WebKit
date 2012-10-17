@@ -675,9 +675,9 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     
     // 15) Load the result of the last bytecode operation into regT0.
     
-    for (size_t i = 0; i < exit.m_setOperands.size(); i++) {
-        m_jit.load32(AssemblyHelpers::payloadFor((VirtualRegister)exit.m_setOperands[i]), GPRInfo::cachedResultRegister);
-        m_jit.load32(AssemblyHelpers::tagFor((VirtualRegister)exit.m_setOperands[i]), GPRInfo::cachedResultRegister2);
+    if (exit.m_lastSetOperand != std::numeric_limits<int>::max()) {
+        m_jit.load32(AssemblyHelpers::payloadFor((VirtualRegister)exit.m_lastSetOperand), GPRInfo::cachedResultRegister);
+        m_jit.load32(AssemblyHelpers::tagFor((VirtualRegister)exit.m_lastSetOperand), GPRInfo::cachedResultRegister2);
     }
     
     // 16) Adjust the call frame pointer.

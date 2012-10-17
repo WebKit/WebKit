@@ -54,28 +54,8 @@ if JSVALUE64
     const PB = t6
     const tagTypeNumber = csr1
     const tagMask = csr2
-    
-    macro loadisFromInstruction(offset, dest)
-        loadis offset * 8[PB, PC, 8], dest
-    end
-    
-    macro loadpFromInstruction(offset, dest)
-        loadp offset * 8[PB, PC, 8], dest
-    end
-    
-    macro storepToInstruction(value, offset)
-        storep value, offset * 8[PB, PC, 8]
-    end
-
 else
     const PC = t4
-    macro loadisFromInstruction(offset, dest)
-        loadis offset * 4[PC], dest
-    end
-    
-    macro loadpFromInstruction(offset, dest)
-        loadp offset * 4[PC], dest
-    end
 end
 
 # Constants for reasoning about value representation.
@@ -119,29 +99,6 @@ const HashFlags8BitBuffer = 64
 
 # Copied from PropertyOffset.h
 const firstOutOfLineOffset = 100
-
-# From ResolveOperations.h
-const ResolveOperationFail = 0
-const ResolveOperationSetBaseToUndefined = 1
-const ResolveOperationReturnScopeAsBase = 2
-const ResolveOperationSetBaseToScope = 3
-const ResolveOperationSetBaseToGlobal = 4
-const ResolveOperationGetAndReturnScopedVar = 5
-const ResolveOperationGetAndReturnGlobalVar = 6
-const ResolveOperationGetAndReturnGlobalVarWatchable = 7
-const ResolveOperationSkipTopScopeNode = 8
-const ResolveOperationSkipScopes = 9
-const ResolveOperationReturnGlobalObjectAsBase = 10
-const ResolveOperationGetAndReturnGlobalProperty = 11
-const ResolveOperationCheckForDynamicEntriesBeforeGlobalScope = 12
-
-const PutToBaseOperationKindUninitialised = 0
-const PutToBaseOperationKindGeneric = 1
-const PutToBaseOperationKindReadonly = 2
-const PutToBaseOperationKindGlobalVariablePut = 3
-const PutToBaseOperationKindGlobalVariablePutChecked = 4
-const PutToBaseOperationKindGlobalPropertyPut = 5
-const PutToBaseOperationKindVariablePut = 6
 
 # Allocation constants
 if JSVALUE64
@@ -536,417 +493,41 @@ _llint_op_in:
     callSlowPath(_llint_slow_path_in)
     dispatch(4)
 
-macro getPutToBaseOperationField(scratch, scratch1, fieldOffset, fieldGetter)
-    loadisFromInstruction(4, scratch)
-    mulp sizeof PutToBaseOperation, scratch, scratch
-    loadp CodeBlock[cfr], scratch1
-    loadp VectorBufferOffset + CodeBlock::m_putToBaseOperations[scratch1], scratch1
-    fieldGetter(fieldOffset[scratch1, scratch, 1])
-end
-
-macro moveJSValueFromRegisterWithoutProfiling(value, destBuffer, destOffsetReg)
-    storep value, [destBuffer, destOffsetReg, 8]
-end
-
-
-macro moveJSValueFromRegistersWithoutProfiling(tag, payload, destBuffer, destOffsetReg)
-    storep tag, TagOffset[destBuffer, destOffsetReg, 8]
-    storep payload, PayloadOffset[destBuffer, destOffsetReg, 8]
-end
-
-macro putToBaseVariableBody(variableOffset, scratch1, scratch2, scratch3)
-    loadisFromInstruction(1, scratch1)
-    loadp PayloadOffset[cfr, scratch1, 8], scratch1
-    loadp JSVariableObject::m_registers[scratch1], scratch1
-    loadisFromInstruction(3, scratch2)
-    if JSVALUE64
-        loadConstantOrVariable(scratch2, scratch3)
-        moveJSValueFromRegisterWithoutProfiling(scratch3, scratch1, variableOffset)
-    else
-        loadConstantOrVariable(scratch2, scratch3, scratch2) # scratch3=tag, scratch2=payload
-        moveJSValueFromRegistersWithoutProfiling(scratch3, scratch2, scratch1, variableOffset)
-    end
-end
-
-_llint_op_put_to_base_variable:
-    traceExecution()
-    getPutToBaseOperationField(t0, t1, PutToBaseOperation::m_offset, macro(addr)
-                                              loadis  addr, t0
-                                          end)
-    putToBaseVariableBody(t0, t1, t2, t3)
-    dispatch(5)
-
-_llint_op_put_to_base:
-    traceExecution()
-    getPutToBaseOperationField(t0, t1, 0, macro(addr)
-                                              leap addr, t0
-                                              bbneq PutToBaseOperation::m_kindAsUint8[t0], PutToBaseOperationKindVariablePut, .notPutToBaseVariable
-                                              loadis PutToBaseOperation::m_offset[t0], t0
-                                              putToBaseVariableBody(t0, t1, t2, t3)
-                                              dispatch(5)
-                                              .notPutToBaseVariable:
-                                          end)
-    callSlowPath(_llint_slow_path_put_to_base)
-    dispatch(5)
-
-macro getResolveOperation(resolveOperationIndex, dest, scratch)
-    loadisFromInstruction(resolveOperationIndex, dest)
-    mulp sizeof ResolveOperations, dest, dest
-    loadp CodeBlock[cfr], scratch
-    loadp VectorBufferOffset + CodeBlock::m_resolveOperations[scratch], scratch
-    loadp VectorBufferOffset[scratch, dest, 1], dest
-end
-
-macro getScope(loadInitialScope, scopeCount, dest, scratch)
-    loadInitialScope(dest)
-    loadi scopeCount, scratch
-
-    btiz scratch, .done
-.loop:
-    loadp JSScope::m_next[dest], dest
-    subi 1, scratch
-    btinz scratch, .loop
-
-.done:
-end
-
-macro moveJSValue(sourceBuffer, sourceOffsetReg, destBuffer, destOffsetReg, profileOffset, scratchRegister)
-    if JSVALUE64
-        loadp [sourceBuffer, sourceOffsetReg, 8], scratchRegister
-        storep scratchRegister, [destBuffer, destOffsetReg, 8]
-        loadpFromInstruction(profileOffset, destOffsetReg)
-        valueProfile(scratchRegister, destOffsetReg)
-    else
-        loadp PayloadOffset[sourceBuffer, sourceOffsetReg, 8], scratchRegister
-        storep scratchRegister, PayloadOffset[destBuffer, destOffsetReg, 8]
-        loadp TagOffset[sourceBuffer, sourceOffsetReg, 8], sourceOffsetReg
-        storep sourceOffsetReg, TagOffset[destBuffer, destOffsetReg, 8]
-        loadpFromInstruction(profileOffset, destOffsetReg)
-        valueProfile(sourceOffsetReg, scratchRegister, destOffsetReg)
-    end
-end
-
-macro moveJSValueFromSlot(slot, destBuffer, destOffsetReg, profileOffset, scratchRegister)
-    if JSVALUE64
-        loadp [slot], scratchRegister
-        storep scratchRegister, [destBuffer, destOffsetReg, 8]
-        loadpFromInstruction(profileOffset, destOffsetReg)
-        valueProfile(scratchRegister, destOffsetReg)
-    else
-        loadp PayloadOffset[slot], scratchRegister
-        storep scratchRegister, PayloadOffset[destBuffer, destOffsetReg, 8]
-        loadp TagOffset[slot], slot
-        storep slot, TagOffset[destBuffer, destOffsetReg, 8]
-        loadpFromInstruction(profileOffset, destOffsetReg)
-        valueProfile(slot, scratchRegister, destOffsetReg)
-    end
-end
-
-macro moveJSValueFromRegister(value, destBuffer, destOffsetReg, profileOffset)
-    storep value, [destBuffer, destOffsetReg, 8]
-    loadpFromInstruction(profileOffset, destOffsetReg)
-    valueProfile(value, destOffsetReg)
-end
-
-macro moveJSValueFromRegisters(tag, payload, destBuffer, destOffsetReg, profileOffset)
-    storep tag, TagOffset[destBuffer, destOffsetReg, 8]
-    storep payload, PayloadOffset[destBuffer, destOffsetReg, 8]
-    loadpFromInstruction(profileOffset, destOffsetReg)
-    valueProfile(tag, payload, destOffsetReg)
-end
-
-_llint_op_resolve_global_property:
-    traceExecution()
-    getResolveOperation(3, t0, t1)
-    loadp CodeBlock[cfr], t1
-    loadp CodeBlock::m_globalObject[t1], t1
-    loadp ResolveOperation::m_structure[t0], t2
-    bpneq JSCell::m_structure[t1], t2, _llint_op_resolve
-    loadis ResolveOperation::m_offset[t0], t0
-    if JSVALUE64
-        loadPropertyAtVariableOffsetKnownNotInline(t0, t1, t2)
-        loadisFromInstruction(1, t0)
-        moveJSValueFromRegister(t2, cfr, t0, 4)
-    else
-        loadPropertyAtVariableOffsetKnownNotInline(t0, t1, t2, t3)
-        loadisFromInstruction(1, t0)
-        moveJSValueFromRegisters(t2, t3, cfr, t0, 4)
-    end
-    dispatch(5)
-
-_llint_op_resolve_global_var:
-    traceExecution()
-    getResolveOperation(3, t0, t1)
-    loadp ResolveOperation::m_registerAddress[t0], t0
-    loadisFromInstruction(1, t1)
-    moveJSValueFromSlot(t0, cfr, t1, 4, t3)
-    dispatch(5)
-
-macro resolveScopedVarBody(resolveOperations)
-    # First ResolveOperation is to skip scope chain nodes
-    getScope(macro(dest)
-                 loadp ScopeChain + PayloadOffset[cfr], dest
-             end,
-             ResolveOperation::m_scopesToSkip[resolveOperations], t1, t2)
-    loadp JSVariableObject::m_registers[t1], t1 # t1 now contains the activation registers
-    
-    # Second ResolveOperation tells us what offset to use
-    loadis ResolveOperation::m_offset + sizeof ResolveOperation[resolveOperations], t2
-    loadisFromInstruction(1, t3)
-    moveJSValue(t1, t2, cfr, t3, 4, t0)
-end
-
-_llint_op_resolve_scoped_var:
-    traceExecution()
-    getResolveOperation(3, t0, t1)
-    resolveScopedVarBody(t0)
-    dispatch(5)
-    
-_llint_op_resolve_scoped_var_on_top_scope:
-    traceExecution()
-    getResolveOperation(3, t0, t1)
-
-    # Load destination index
-    loadisFromInstruction(1, t3)
-
-    # We know we want the top scope chain entry
-    loadp ScopeChain + PayloadOffset[cfr], t1
-    loadp JSVariableObject::m_registers[t1], t1 # t1 now contains the activation registers
-    
-    # Second ResolveOperation tells us what offset to use
-    loadis ResolveOperation::m_offset + sizeof ResolveOperation[t0], t2
-
-    moveJSValue(t1, t2, cfr, t3, 4, t0)
-    dispatch(5)
-
-_llint_op_resolve_scoped_var_with_top_scope_check:
-    traceExecution()
-    getResolveOperation(3, t0, t1)
-    # First ResolveOperation tells us what register to check
-    loadis ResolveOperation::m_activationRegister[t0], t1
-
-    loadp PayloadOffset[cfr, t1, 8], t1
-
-    getScope(macro(dest)
-                 btpz t1, .scopeChainNotCreated
-                     loadp JSScope::m_next[t1], dest
-                 jmp .done
-                 .scopeChainNotCreated:
-                     loadp ScopeChain + PayloadOffset[cfr], dest
-                 .done:
-             end, 
-             # Second ResolveOperation tells us how many more nodes to skip
-             ResolveOperation::m_scopesToSkip + sizeof ResolveOperation[t0], t1, t2)
-    loadp JSVariableObject::m_registers[t1], t1 # t1 now contains the activation registers
-    
-    # Third operation tells us what offset to use
-    loadis ResolveOperation::m_offset + 2 * sizeof ResolveOperation[t0], t2
-    loadisFromInstruction(1, t3)
-    moveJSValue(t1, t2, cfr, t3, 4, t0)
-    dispatch(5)
 
 _llint_op_resolve:
     traceExecution()
-    getResolveOperation(3, t0, t1)
-    btpz t0, .noInstructions
-    loadis ResolveOperation::m_operation[t0], t1
-    bineq t1, ResolveOperationSkipScopes, .notSkipScopes
-        resolveScopedVarBody(t0)
-        dispatch(5)
-.notSkipScopes:
-    bineq t1, ResolveOperationGetAndReturnGlobalVar, .notGetAndReturnGlobalVar
-        loadp ResolveOperation::m_registerAddress[t0], t0
-        loadisFromInstruction(1, t1)
-        moveJSValueFromSlot(t0, cfr, t1, 4, t3)
-        dispatch(5)
-.notGetAndReturnGlobalVar:
-
-.noInstructions:
     callSlowPath(_llint_slow_path_resolve)
+    dispatch(4)
+
+
+_llint_op_resolve_skip:
+    traceExecution()
+    callSlowPath(_llint_slow_path_resolve_skip)
     dispatch(5)
 
-_llint_op_resolve_base_to_global:
-    traceExecution()
-    loadp CodeBlock[cfr], t1
-    loadp CodeBlock::m_globalObject[t1], t1
-    loadisFromInstruction(1, t3)
-    if JSVALUE64
-        moveJSValueFromRegister(t1, cfr, t3, 6)
-    else
-        move CellTag, t2
-        moveJSValueFromRegisters(t2, t1, cfr, t3, 6)
-    end
-    dispatch(7)
-
-_llint_op_resolve_base_to_global_dynamic:
-    jmp _llint_op_resolve_base
-
-_llint_op_resolve_base_to_scope:
-    traceExecution()
-    getResolveOperation(4, t0, t1)
-    # First ResolveOperation is to skip scope chain nodes
-    getScope(macro(dest)
-                 loadp ScopeChain + PayloadOffset[cfr], dest
-             end,
-             ResolveOperation::m_scopesToSkip[t0], t1, t2)
-    loadisFromInstruction(1, t3)
-    if JSVALUE64
-        moveJSValueFromRegister(t1, cfr, t3, 6)
-    else
-        move CellTag, t2
-        moveJSValueFromRegisters(t2, t1, cfr, t3, 6)
-    end
-    dispatch(7)
-
-_llint_op_resolve_base_to_scope_with_top_scope_check:
-    traceExecution()
-    getResolveOperation(4, t0, t1)
-    # First ResolveOperation tells us what register to check
-    loadis ResolveOperation::m_activationRegister[t0], t1
-
-    loadp PayloadOffset[cfr, t1, 8], t1
-
-    getScope(macro(dest)
-                 btpz t1, .scopeChainNotCreated
-                     loadp JSScope::m_next[t1], dest
-                 jmp .done
-                 .scopeChainNotCreated:
-                     loadp ScopeChain + PayloadOffset[cfr], dest
-                 .done:
-             end, 
-             # Second ResolveOperation tells us how many more nodes to skip
-             ResolveOperation::m_scopesToSkip + sizeof ResolveOperation[t0], t1, t2)
-
-    loadisFromInstruction(1, t3)
-    if JSVALUE64
-        moveJSValueFromRegister(t1, cfr, t3, 6)
-    else
-        move CellTag, t2
-        moveJSValueFromRegisters(t2, t1, cfr, t3, 6)
-    end
-    dispatch(7)
 
 _llint_op_resolve_base:
     traceExecution()
     callSlowPath(_llint_slow_path_resolve_base)
-    dispatch(7)
+    dispatch(5)
+
 
 _llint_op_ensure_property_exists:
     traceExecution()
     callSlowPath(_llint_slow_path_ensure_property_exists)
     dispatch(3)
 
-macro interpretResolveWithBase(opcodeLength, slowPath)
-    traceExecution()
-    getResolveOperation(4, t0, t1)
-    btpz t0, .slowPath
-
-    loadp ScopeChain[cfr], t3
-    # Get the base
-    loadis ResolveOperation::m_operation[t0], t2
-
-    bineq t2, ResolveOperationSkipScopes, .notSkipScopes
-        getScope(macro(dest) move t3, dest end,
-                 ResolveOperation::m_scopesToSkip[t0], t1, t2)
-        move t1, t3
-        addp sizeof ResolveOperation, t0, t0
-        jmp .haveCorrectScope
-
-    .notSkipScopes:
-
-    bineq t2, ResolveOperationSkipTopScopeNode, .notSkipTopScopeNode
-        loadis ResolveOperation::m_activationRegister[t0], t1
-        loadp PayloadOffset[cfr, t1, 8], t1
-
-        getScope(macro(dest)
-                     btpz t1, .scopeChainNotCreated
-                         loadp JSScope::m_next[t1], dest
-                     jmp .done
-                     .scopeChainNotCreated:
-                         loadp ScopeChain + PayloadOffset[cfr], dest
-                     .done:
-                 end,
-                 sizeof ResolveOperation + ResolveOperation::m_scopesToSkip[t0], t1, t2)
-        move t1, t3
-        # We've handled two opcodes here
-        addp 2 * sizeof ResolveOperation, t0, t0
-
-    .notSkipTopScopeNode:
-
-    .haveCorrectScope:
-
-    # t3 now contains the correct Scope
-    # t0 contains a pointer to the current ResolveOperation
-
-    loadis ResolveOperation::m_operation[t0], t2
-    # t2 contains the next instruction
-
-    loadisFromInstruction(1, t1)
-    # t1 now contains the index for the base register
-
-    bineq t2, ResolveOperationSetBaseToScope, .notSetBaseToScope
-        storep t3, PayloadOffset[cfr, t1, 8]
-        if JSVALUE64
-        else
-            storep CellTag, TagOffset[cfr, t1, 8]
-        end
-        jmp .haveSetBase
-
-    .notSetBaseToScope:
-
-    bineq t2, ResolveOperationSetBaseToUndefined, .notSetBaseToUndefined
-        if JSVALUE64
-            storep ValueUndefined, PayloadOffset[cfr, t1, 8]
-        else
-            storep 0, PayloadOffset[cfr, t1, 8]
-            storep UndefinedTag, TagOffset[cfr, t1, 8]
-        end
-        jmp .haveSetBase
-
-    .notSetBaseToUndefined:
-    bineq t2, ResolveOperationSetBaseToGlobal, .slowPath
-        loadp JSCell::m_structure[t3], t2
-        loadp Structure::m_globalObject[t2], t2
-        storep t2, PayloadOffset[cfr, t1, 8]
-        if JSVALUE64
-        else
-            storep CellTag, TagOffset[cfr, t1, 8]
-        end
-
-    .haveSetBase:
-
-    # Get the value
-
-    # Load the operation into t2
-    loadis ResolveOperation::m_operation + sizeof ResolveOperation[t0], t2
-
-    # Load the index for the value register into t1
-    loadisFromInstruction(2, t1)
-
-    bineq t2, ResolveOperationGetAndReturnScopedVar, .notGetAndReturnScopedVar
-        loadp JSVariableObject::m_registers[t3], t3 # t3 now contains the activation registers
-
-        # Second ResolveOperation tells us what offset to use
-        loadis ResolveOperation::m_offset + sizeof ResolveOperation[t0], t2
-        moveJSValue(t3, t2, cfr, t1, opcodeLength - 1, t0)
-        dispatch(opcodeLength)
-
-    .notGetAndReturnScopedVar:
-    bineq t2, ResolveOperationGetAndReturnGlobalProperty, .slowPath
-        callSlowPath(slowPath)
-        dispatch(opcodeLength)
-
-.slowPath:
-    callSlowPath(slowPath)
-    dispatch(opcodeLength)
-end
 
 _llint_op_resolve_with_base:
-    interpretResolveWithBase(7, _llint_slow_path_resolve_with_base)
+    traceExecution()
+    callSlowPath(_llint_slow_path_resolve_with_base)
+    dispatch(5)
 
 
 _llint_op_resolve_with_this:
-    interpretResolveWithBase(6, _llint_slow_path_resolve_with_this)
+    traceExecution()
+    callSlowPath(_llint_slow_path_resolve_with_this)
+    dispatch(5)
 
 
 macro withInlineStorage(object, propertyStorage, continuation)

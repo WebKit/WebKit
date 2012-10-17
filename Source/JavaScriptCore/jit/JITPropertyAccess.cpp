@@ -1190,35 +1190,90 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
     repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(cti_op_get_by_id_proto_list));
 }
 
-void JIT::emit_op_init_global_const(Instruction* currentInstruction)
+void JIT::emit_op_get_scoped_var(Instruction* currentInstruction)
+{
+    int skip = currentInstruction[3].u.operand;
+
+    emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT0);
+    bool checkTopLevel = m_codeBlock->codeType() == FunctionCode && m_codeBlock->needsFullScopeChain();
+    ASSERT(skip || !checkTopLevel);
+    if (checkTopLevel && skip--) {
+        Jump activationNotCreated;
+        if (checkTopLevel)
+            activationNotCreated = branchTestPtr(Zero, addressFor(m_codeBlock->activationRegister()));
+        loadPtr(Address(regT0, JSScope::offsetOfNext()), regT0);
+        activationNotCreated.link(this);
+    }
+    while (skip--)
+        loadPtr(Address(regT0, JSScope::offsetOfNext()), regT0);
+
+    loadPtr(Address(regT0, JSVariableObject::offsetOfRegisters()), regT0);
+    loadPtr(Address(regT0, currentInstruction[2].u.operand * sizeof(Register)), regT0);
+    emitValueProfilingSite();
+    emitPutVirtualRegister(currentInstruction[1].u.operand);
+}
+
+void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
+{
+    int skip = currentInstruction[2].u.operand;
+
+    emitGetVirtualRegister(currentInstruction[3].u.operand, regT0);
+
+    emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT1);
+    bool checkTopLevel = m_codeBlock->codeType() == FunctionCode && m_codeBlock->needsFullScopeChain();
+    ASSERT(skip || !checkTopLevel);
+    if (checkTopLevel && skip--) {
+        Jump activationNotCreated;
+        if (checkTopLevel)
+            activationNotCreated = branchTestPtr(Zero, addressFor(m_codeBlock->activationRegister()));
+        loadPtr(Address(regT1, JSScope::offsetOfNext()), regT1);
+        activationNotCreated.link(this);
+    }
+    while (skip--)
+        loadPtr(Address(regT1, JSScope::offsetOfNext()), regT1);
+
+    emitWriteBarrier(regT1, regT0, regT2, regT3, ShouldFilterImmediates, WriteBarrierForVariableAccess);
+
+    loadPtr(Address(regT1, JSVariableObject::offsetOfRegisters()), regT1);
+    storePtr(regT0, Address(regT1, currentInstruction[1].u.operand * sizeof(Register)));
+}
+
+void JIT::emit_op_get_global_var(Instruction* currentInstruction)
+{
+    loadPtr(currentInstruction[2].u.registerPointer, regT0);
+    emitValueProfilingSite();
+    emitPutVirtualRegister(currentInstruction[1].u.operand);
+}
+
+void JIT::emit_op_put_global_var(Instruction* currentInstruction)
 {
     JSGlobalObject* globalObject = m_codeBlock->globalObject();
 
     emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
-
+    
     storePtr(regT0, currentInstruction[1].u.registerPointer);
     if (Heap::isWriteBarrierEnabled())
         emitWriteBarrier(globalObject, regT0, regT2, ShouldFilterImmediates, WriteBarrierForVariableAccess);
 }
 
-void JIT::emit_op_init_global_const_check(Instruction* currentInstruction)
+void JIT::emit_op_put_global_var_check(Instruction* currentInstruction)
 {
     emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
-
+    
     addSlowCase(branchTest8(NonZero, AbsoluteAddress(currentInstruction[3].u.predicatePointer)));
 
     JSGlobalObject* globalObject = m_codeBlock->globalObject();
-
+    
     storePtr(regT0, currentInstruction[1].u.registerPointer);
     if (Heap::isWriteBarrierEnabled())
         emitWriteBarrier(globalObject, regT0, regT2, ShouldFilterImmediates, WriteBarrierForVariableAccess);
 }
 
-void JIT::emitSlow_op_init_global_const_check(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_put_global_var_check(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkSlowCase(iter);
-
-    JITStubCall stubCall(this, cti_op_init_global_const_check);
+    
+    JITStubCall stubCall(this, cti_op_put_global_var_check);
     stubCall.addArgument(regT0);
     stubCall.addArgument(TrustedImm32(currentInstruction[4].u.operand));
     stubCall.call();

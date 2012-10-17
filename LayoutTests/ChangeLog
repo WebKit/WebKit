@@ -1,3 +1,14 @@
+2012-10-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, rolling out r131516 and r131550.
+        http://trac.webkit.org/changeset/131516
+        http://trac.webkit.org/changeset/131550
+        https://bugs.webkit.org/show_bug.cgi?id=99349
+
+        It caused zillion different problem on different platforms
+
+        * fast/workers/resources/worker-event-listener.js:
+
 2012-10-16  Keishi Hattori  <keishi@webkit.org>
 
         Add test that checks if scrolling works inside the suggestion picker

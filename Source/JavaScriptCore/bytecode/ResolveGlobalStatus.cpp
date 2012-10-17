@@ -32,11 +32,13 @@
 
 namespace JSC {
 
+#if ENABLE(LLINT) || (ENABLE(JIT) && ENABLE(VALUE_PROFILER))
 static ResolveGlobalStatus computeForStructure(CodeBlock* codeBlock, Structure* structure, Identifier& identifier)
 {
     unsigned attributesIgnored;
     JSCell* specificValue;
-    PropertyOffset offset = structure->get(*codeBlock->globalData(), identifier, attributesIgnored, specificValue);
+    PropertyOffset offset = structure->get(
+        *codeBlock->globalData(), identifier, attributesIgnored, specificValue);
     if (structure->isDictionary())
         specificValue = 0;
     if (!isValidOffset(offset))
@@ -44,14 +46,46 @@ static ResolveGlobalStatus computeForStructure(CodeBlock* codeBlock, Structure* 
     
     return ResolveGlobalStatus(ResolveGlobalStatus::Simple, structure, offset, specificValue);
 }
+#endif // ENABLE(LLINT) || ENABLE(JIT)
 
-ResolveGlobalStatus ResolveGlobalStatus::computeFor(CodeBlock* codeBlock, int, ResolveOperation* operation, Identifier& identifier)
+static ResolveGlobalStatus computeForLLInt(CodeBlock* codeBlock, unsigned bytecodeIndex, Identifier& identifier)
 {
-    ASSERT(operation->m_operation == ResolveOperation::GetAndReturnGlobalProperty);
-    if (!operation->m_structure)
+#if ENABLE(LLINT)
+    Instruction* instruction = codeBlock->instructions().begin() + bytecodeIndex;
+
+    ASSERT(instruction[0].u.opcode == LLInt::getOpcode(op_resolve_global));
+    
+    Structure* structure = instruction[3].u.structure.get();
+    if (!structure)
         return ResolveGlobalStatus();
     
-    return computeForStructure(codeBlock, operation->m_structure.get(), identifier);
+    return computeForStructure(codeBlock, structure, identifier);
+#else
+    UNUSED_PARAM(codeBlock);
+    UNUSED_PARAM(bytecodeIndex);
+    UNUSED_PARAM(identifier);
+    return ResolveGlobalStatus();
+#endif
+}
+
+ResolveGlobalStatus ResolveGlobalStatus::computeFor(CodeBlock* codeBlock, unsigned bytecodeIndex, Identifier& identifier)
+{
+#if ENABLE(JIT) && ENABLE(VALUE_PROFILER)
+    if (!codeBlock->numberOfGlobalResolveInfos())
+        return computeForLLInt(codeBlock, bytecodeIndex, identifier);
+    
+    if (codeBlock->likelyToTakeSlowCase(bytecodeIndex))
+        return ResolveGlobalStatus(TakesSlowPath);
+    
+    GlobalResolveInfo& globalResolveInfo = codeBlock->globalResolveInfoForBytecodeOffset(bytecodeIndex);
+    
+    if (!globalResolveInfo.structure)
+        return computeForLLInt(codeBlock, bytecodeIndex, identifier);
+    
+    return computeForStructure(codeBlock, globalResolveInfo.structure.get(), identifier);
+#else
+    return computeForLLInt(codeBlock, bytecodeIndex, identifier);
+#endif
 }
 
 } // namespace JSC

@@ -36,7 +36,6 @@
 #include "JSCell.h"
 #include "JSFunction.h"
 #include "JSPropertyNameIterator.h"
-#include "JSVariableObject.h"
 #include "LinkBuffer.h"
 
 namespace JSC {
@@ -719,6 +718,13 @@ void JIT::emit_op_tear_off_arguments(Instruction* currentInstruction)
     argsNotCreated.link(this);
 }
 
+void JIT::emit_op_resolve(Instruction* currentInstruction)
+{
+    JITStubCall stubCall(this, cti_op_resolve);
+    stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
+    stubCall.callWithValueProfiling(currentInstruction[1].u.operand);
+}
+
 void JIT::emit_op_to_primitive(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
@@ -754,12 +760,66 @@ void JIT::emit_op_strcat(Instruction* currentInstruction)
     stubCall.call(currentInstruction[1].u.operand);
 }
 
+void JIT::emit_op_resolve_base(Instruction* currentInstruction)
+{
+    JITStubCall stubCall(this, currentInstruction[3].u.operand ? cti_op_resolve_base_strict_put : cti_op_resolve_base);
+    stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
+    stubCall.callWithValueProfiling(currentInstruction[1].u.operand);
+}
+
 void JIT::emit_op_ensure_property_exists(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_ensure_property_exists);
     stubCall.addArgument(TrustedImm32(currentInstruction[1].u.operand));
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
     stubCall.call(currentInstruction[1].u.operand);
+}
+
+void JIT::emit_op_resolve_skip(Instruction* currentInstruction)
+{
+    JITStubCall stubCall(this, cti_op_resolve_skip);
+    stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
+    stubCall.addArgument(TrustedImm32(currentInstruction[3].u.operand));
+    stubCall.callWithValueProfiling(currentInstruction[1].u.operand);
+}
+
+void JIT::emit_op_resolve_global(Instruction* currentInstruction, bool dynamic)
+{
+    // FIXME: Optimize to use patching instead of so many memory accesses.
+
+    unsigned dst = currentInstruction[1].u.operand;
+    void* globalObject = m_codeBlock->globalObject();
+
+    unsigned currentIndex = m_globalResolveInfoIndex++;
+    GlobalResolveInfo* resolveInfoAddress = &m_codeBlock->globalResolveInfo(currentIndex);
+
+
+    // Verify structure.
+    move(TrustedImmPtr(globalObject), regT2);
+    move(TrustedImmPtr(resolveInfoAddress), regT3);
+    loadPtr(Address(regT3, OBJECT_OFFSETOF(GlobalResolveInfo, structure)), regT1);
+    addSlowCase(branchPtr(NotEqual, regT1, Address(regT2, JSCell::structureOffset())));
+
+    // Load property.
+    load32(Address(regT3, OBJECT_OFFSETOF(GlobalResolveInfo, offset)), regT3);
+    compileGetDirectOffset(regT2, regT1, regT0, regT3, KnownNotFinal);
+    emitValueProfilingSite();
+    emitStore(dst, regT1, regT0);
+    map(m_bytecodeOffset + (dynamic ? OPCODE_LENGTH(op_resolve_global_dynamic) : OPCODE_LENGTH(op_resolve_global)), dst, regT1, regT0);
+}
+
+void JIT::emitSlow_op_resolve_global(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    unsigned dst = currentInstruction[1].u.operand;
+    Identifier* ident = &m_codeBlock->identifier(currentInstruction[2].u.operand);
+
+    unsigned currentIndex = m_globalResolveInfoIndex++;
+
+    linkSlowCase(iter);
+    JITStubCall stubCall(this, cti_op_resolve_global);
+    stubCall.addArgument(TrustedImmPtr(ident));
+    stubCall.addArgument(TrustedImm32(currentIndex));
+    stubCall.callWithValueProfiling(dst);
 }
 
 void JIT::emit_op_not(Instruction* currentInstruction)
@@ -1152,6 +1212,22 @@ void JIT::emit_op_neq_null(Instruction* currentInstruction)
     wasNotMasqueradesAsUndefined.link(this);
 
     emitStoreBool(dst, regT1);
+}
+
+void JIT::emit_op_resolve_with_base(Instruction* currentInstruction)
+{
+    JITStubCall stubCall(this, cti_op_resolve_with_base);
+    stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[3].u.operand)));
+    stubCall.addArgument(TrustedImm32(currentInstruction[1].u.operand));
+    stubCall.callWithValueProfiling(currentInstruction[2].u.operand);
+}
+
+void JIT::emit_op_resolve_with_this(Instruction* currentInstruction)
+{
+    JITStubCall stubCall(this, cti_op_resolve_with_this);
+    stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[3].u.operand)));
+    stubCall.addArgument(TrustedImm32(currentInstruction[1].u.operand));
+    stubCall.callWithValueProfiling(currentInstruction[2].u.operand);
 }
 
 void JIT::emit_op_throw(Instruction* currentInstruction)
@@ -1608,71 +1684,6 @@ void JIT::emitSlow_op_get_argument_by_val(Instruction* currentInstruction, Vecto
     stubCall.addArgument(arguments);
     stubCall.addArgument(property);
     stubCall.callWithValueProfiling(dst);
-}
-
-void JIT::emit_op_put_to_base(Instruction* currentInstruction)
-{
-    int base = currentInstruction[1].u.operand;
-    int id = currentInstruction[2].u.operand;
-    int value = currentInstruction[3].u.operand;
-
-    PutToBaseOperation* operation = m_codeBlock->putToBaseOperation(currentInstruction[4].u.operand);
-
-
-    switch (operation->m_kind) {
-    case PutToBaseOperation::GlobalVariablePutChecked:
-        addSlowCase(branchTest8(NonZero, AbsoluteAddress(operation->m_predicatePointer)));
-    case PutToBaseOperation::GlobalVariablePut: {
-        JSGlobalObject* globalObject = m_codeBlock->globalObject();
-        if (operation->m_isDynamic)
-            addSlowCase(branchPtr(NotEqual, payloadFor(base), TrustedImmPtr(globalObject)));
-
-        emitLoad(value, regT1, regT0);
-        storePtr(regT0, reinterpret_cast<char*>(operation->m_registerAddress) + OBJECT_OFFSETOF(JSValue, u.asBits.payload));
-        storePtr(regT1, reinterpret_cast<char*>(operation->m_registerAddress) + OBJECT_OFFSETOF(JSValue, u.asBits.tag));
-        if (Heap::isWriteBarrierEnabled())
-            emitWriteBarrier(globalObject, regT0, regT2, ShouldFilterImmediates, WriteBarrierForVariableAccess);
-        break;
-    }
-    case PutToBaseOperation::VariablePut: {
-        loadPtr(payloadFor(base), regT3);
-        emitLoad(value, regT1, regT0);
-        loadPtr(Address(regT3, JSVariableObject::offsetOfRegisters()), regT2);
-        store32(regT0, Address(regT2, operation->m_offset * sizeof(Register) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
-        store32(regT1, Address(regT2, operation->m_offset * sizeof(Register) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
-        if (Heap::isWriteBarrierEnabled())
-            emitWriteBarrier(regT3, regT1, regT0, regT2, ShouldFilterImmediates, WriteBarrierForVariableAccess);
-        break;
-    }
-
-    case PutToBaseOperation::GlobalPropertyPut: {
-        JSGlobalObject* globalObject = m_codeBlock->globalObject();
-        loadPtr(payloadFor(base), regT3);
-        emitLoad(value, regT1, regT0);
-        loadPtr(&operation->m_structure, regT2);
-        addSlowCase(branchPtr(NotEqual, Address(regT3, JSCell::structureOffset()), regT2));
-        ASSERT(!operation->m_structure || !operation->m_structure->inlineCapacity());
-        loadPtr(Address(regT3, JSObject::butterflyOffset()), regT2);
-        load32(&operation->m_offsetInButterfly, regT3);
-        storePtr(regT0, BaseIndex(regT2, regT3, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
-        storePtr(regT1, BaseIndex(regT2, regT3, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
-        if (Heap::isWriteBarrierEnabled())
-            emitWriteBarrier(globalObject, regT1, regT2, ShouldFilterImmediates, WriteBarrierForVariableAccess);
-        break;
-    }
-
-    case PutToBaseOperation::Uninitialised:
-    case PutToBaseOperation::Readonly:
-    case PutToBaseOperation::Generic:
-        JITStubCall stubCall(this, cti_op_put_to_base);
-
-        stubCall.addArgument(TrustedImm32(base));
-        stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(id)));
-        stubCall.addArgument(TrustedImm32(value));
-        stubCall.addArgument(TrustedImmPtr(operation));
-        stubCall.call();
-        break;
-    }
 }
 
 } // namespace JSC

@@ -49,6 +49,7 @@
 #include "EvalCodeCache.h"
 #include "ExecutionCounter.h"
 #include "ExpressionRangeInfo.h"
+#include "GlobalResolveInfo.h"
 #include "HandlerInfo.h"
 #include "MethodCallLinkInfo.h"
 #include "Options.h"
@@ -63,7 +64,6 @@
 #include "LineInfo.h"
 #include "Nodes.h"
 #include "RegExpObject.h"
-#include "ResolveOperation.h"
 #include "StructureStubInfo.h"
 #include "UnconditionalFinalizer.h"
 #include "ValueProfile.h"
@@ -196,30 +196,6 @@ namespace JSC {
         HandlerInfo* handlerForBytecodeOffset(unsigned bytecodeOffset);
         int lineNumberForBytecodeOffset(unsigned bytecodeOffset);
         void expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot, int& startOffset, int& endOffset);
-
-        uint32_t addResolve()
-        {
-            m_resolveOperations.grow(m_resolveOperations.size() + 1);
-            return m_resolveOperations.size() - 1;
-        }
-        uint32_t addPutToBase()
-        {
-            m_putToBaseOperations.append(PutToBaseOperation(isStrictMode()));
-            return m_putToBaseOperations.size() - 1;
-        }
-
-        ResolveOperations* resolveOperations(uint32_t i)
-        {
-            return &m_resolveOperations[i];
-        }
-
-        PutToBaseOperation* putToBaseOperation(uint32_t i)
-        {
-            return &m_putToBaseOperations[i];
-        }
-
-        size_t numberOfResolveOperations() const { return m_resolveOperations.size(); }
-        size_t numberOfPutToBaseOperations() const { return m_putToBaseOperations.size(); }
 
 #if ENABLE(JIT)
 
@@ -624,6 +600,11 @@ namespace JSC {
         {
             m_propertyAccessInstructions.append(propertyAccessInstruction);
         }
+        void addGlobalResolveInstruction(unsigned globalResolveInstruction)
+        {
+            m_globalResolveInstructions.append(globalResolveInstruction);
+        }
+        bool hasGlobalResolveInstructionAtBytecodeOffset(unsigned bytecodeOffset);
 #if ENABLE(LLINT)
         LLIntCallLinkInfo* addLLIntCallLinkInfo()
         {
@@ -639,6 +620,15 @@ namespace JSC {
         void setNumberOfByValInfos(size_t size) { m_byValInfos.grow(size); }
         size_t numberOfByValInfos() const { return m_byValInfos.size(); }
         ByValInfo& byValInfo(size_t index) { return m_byValInfos[index]; }
+
+        void addGlobalResolveInfo(unsigned globalResolveInstruction)
+        {
+            m_globalResolveInfos.append(GlobalResolveInfo(globalResolveInstruction));
+        }
+        GlobalResolveInfo& globalResolveInfo(int index) { return m_globalResolveInfos[index]; }
+        bool hasGlobalResolveInfoAtBytecodeOffset(unsigned bytecodeOffset);
+        GlobalResolveInfo& globalResolveInfoForBytecodeOffset(unsigned bytecodeOffset);
+        unsigned numberOfGlobalResolveInfos() { return m_globalResolveInfos.size(); }
 
         void setNumberOfCallLinkInfos(size_t size) { m_callLinkInfos.grow(size); }
         size_t numberOfCallLinkInfos() const { return m_callLinkInfos.size(); }
@@ -791,6 +781,15 @@ namespace JSC {
         ArrayProfile* getArrayProfile(unsigned bytecodeOffset);
         ArrayProfile* getOrAddArrayProfile(unsigned bytecodeOffset);
 #endif
+        
+        unsigned globalResolveInfoCount() const
+        {
+#if ENABLE(JIT)    
+            if (m_globalData->canUseJIT())
+                return m_globalResolveInfos.size();
+#endif
+            return 0;
+        }
 
         // Exception handling support
 
@@ -1216,16 +1215,13 @@ namespace JSC {
         int m_numVars;
         bool m_isConstructor;
 
-        int globalObjectConstant() const { return m_globalObjectConstant; }
-        void setGlobalObjectConstant(int globalRegister) { m_globalObjectConstant = globalRegister; }
-
     protected:
 #if ENABLE(JIT)
         virtual bool jitCompileImpl(ExecState*) = 0;
 #endif
         virtual void visitWeakReferences(SlotVisitor&);
         virtual void finalizeUnconditionally();
-
+        
     private:
         friend class DFGCodeBlocks;
         
@@ -1298,7 +1294,6 @@ namespace JSC {
         int m_thisRegister;
         int m_argumentsRegister;
         int m_activationRegister;
-        int m_globalObjectConstant;
 
         bool m_needsFullScopeChain;
         bool m_usesEval;
@@ -1311,6 +1306,7 @@ namespace JSC {
         unsigned m_sourceOffset;
 
         Vector<unsigned> m_propertyAccessInstructions;
+        Vector<unsigned> m_globalResolveInstructions;
 #if ENABLE(LLINT)
         SegmentedVector<LLIntCallLinkInfo, 8> m_llintCallLinkInfos;
         SentinelLinkedList<LLIntCallLinkInfo, BasicRawSentinelNode<LLIntCallLinkInfo> > m_incomingLLIntCalls;
@@ -1318,6 +1314,7 @@ namespace JSC {
 #if ENABLE(JIT)
         Vector<StructureStubInfo> m_structureStubInfos;
         Vector<ByValInfo> m_byValInfos;
+        Vector<GlobalResolveInfo> m_globalResolveInfos;
         Vector<CallLinkInfo> m_callLinkInfos;
         Vector<MethodCallLinkInfo> m_methodCallLinkInfos;
         JITCode m_jitCode;
@@ -1409,8 +1406,6 @@ namespace JSC {
         Vector<Comment>  m_bytecodeComments;
         size_t m_bytecodeCommentIterator;
 #endif
-        Vector<ResolveOperations> m_resolveOperations;
-        Vector<PutToBaseOperation> m_putToBaseOperations;
 
         struct RareData {
            WTF_MAKE_FAST_ALLOCATED;
