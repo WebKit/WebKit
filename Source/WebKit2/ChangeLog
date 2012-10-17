@@ -1,3 +1,15 @@
+2012-10-16  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/12462993> Use a sensible fallback for cache directory
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/WebContext.cpp: (WebKit::WebContext::createNewWebProcess): Cache directory
+        should be created if it doesn't exist yet, so use createHandleForReadWriteDirectory.
+
+        * UIProcess/mac/WebContextMac.mm: (WebKit::WebContext::platformDefaultDiskCacheDirectory):
+        We don't want caches in home directory, they should go to ~/Library/Caches.
+
 2012-10-16  Andy Estes  <aestes@apple.com>
 
         [WebKit2] Create Objective-C API for adding and removing user scripts

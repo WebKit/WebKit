@@ -118,11 +118,11 @@ void WebContext::platformInvalidateContext()
 
 String WebContext::platformDefaultDiskCacheDirectory() const
 {
-    RetainPtr<CFStringRef> cachePath(AdoptCF, WKCopyFoundationCacheDirectory());
+    RetainPtr<NSString> cachePath(AdoptNS, (NSString *)WKCopyFoundationCacheDirectory());
     if (!cachePath)
-        cachePath = reinterpret_cast<CFStringRef>(NSHomeDirectory());
+        cachePath = @"~/Library/Caches/com.apple.WebKit2.WebProcess";
 
-    return [(NSString *)cachePath.get() stringByStandardizingPath];
+    return [cachePath.get() stringByStandardizingPath];
 }
 
 String WebContext::platformDefaultCookieStorageDirectory() const

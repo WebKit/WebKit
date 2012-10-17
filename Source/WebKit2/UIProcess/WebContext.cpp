@@ -357,7 +357,7 @@ PassRefPtr<WebProcessProxy> WebContext::createNewWebProcess()
 
     parameters.diskCacheDirectory = diskCacheDirectory();
     if (!parameters.diskCacheDirectory.isEmpty())
-        SandboxExtension::createHandle(parameters.diskCacheDirectory, SandboxExtension::ReadWrite, parameters.diskCacheDirectoryExtensionHandle);
+        SandboxExtension::createHandleForReadWriteDirectory(parameters.diskCacheDirectory, parameters.diskCacheDirectoryExtensionHandle);
 
     parameters.cookieStorageDirectory = cookieStorageDirectory();
     if (!parameters.cookieStorageDirectory.isEmpty())
