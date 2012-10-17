@@ -253,6 +253,17 @@ http/tests/misc/redirect-to-external-url.html
 http/tests/loading/basic-auth-resend-wrong-credentials.html
 
 # BUG: wrong test results that need investigation
+editing/execCommand/crash-extend-selection-forward.html [ Failure ]
+editing/selection/5825350-1.html [ Failure ]
+editing/selection/5825350-2.html [ Failure ]
+editing/selection/directionality-after-undo-replace.html [ Failure ]
+editing/selection/doubleclick-beside-cr-span.html [ Failure ]
+editing/selection/doubleclick-whitespace-img-crash.html [ Failure ]
+editing/selection/doubleclick-whitespace.html [ Failure ]
+editing/selection/extend-selection-after-double-click.html [ Failure ]
+editing/selection/mixed-editability-10.html [ Failure ]
+editing/selection/move-left-right.html [ Failure ]
+editing/selection/select-bidi-run.html [ Failure ]
 http/tests/navigation/go-back-to-error-page.html
 
 # Content Security Policy 1.1 (ENABLE_CSP_NEXT) is not enabled
@@ -283,6 +294,9 @@ webkit.org/b/56567 http/tests/cache/history-only-cached-subresource-loads.html [
 
 # EFL WK1 does not support plugins yet.
 webkit.org/b/96881 plugins [ Skip ]
+
+# EFL WK1 does not support the spellchecker feature
+webkit.org/b/86633 editing/spelling [ Skip ]
 
 # Needs custom policy delegate enhancement to log DOM node info - EFL port is missing DOM node abstraction
 webkit.org/b/87972 fast/loader/policy-delegate-action-hit-test-zoomed.html [ Failure ]

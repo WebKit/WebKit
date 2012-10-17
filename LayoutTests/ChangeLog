@@ -1,3 +1,15 @@
+2012-10-17  Mariusz Grzegorczyk  <mariusz.g@samsung.com>
+
+        Unreviewed EFL gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=99596
+
+        Unskip editing/inserting, editing/selection, editing/spelling and editing/style categories.
+        Mark missing text expectations for these.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2012-10-17  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][WTR] InjectedBundlePage::decidePolicyForNavigationAction() should print only filename part of local URLs

@@ -217,6 +217,19 @@ webkit.org/b/98745 plugins/keyboard-events.html [ Failure ]
 webkit.org/b/98745 plugins/mouse-events-fixedpos.html [ Failure ]
 webkit.org/b/98745 plugins/mouse-events.html [ Failure ]
 
+# Test runner needs setSmartInsertDeleteEnabled implementation
+webkit.org/b/99436 editing/selection/doubleclick-beside-cr-span.html [ Failure ]
+webkit.org/b/99436 editing/selection/doubleclick-whitespace-crash.html [ Failure ]
+webkit.org/b/99436 editing/selection/doubleclick-whitespace-img-crash.html [ Failure ]
+webkit.org/b/99436 editing/selection/doubleclick-whitespace.html [ Failure ]
+
+# Text input controller needs selectedRange implementation
+webkit.org/b/99438 editing/selection/mixed-editability-10.html [ Failure ]
+
+# BUG: wrong test results that need investigation
+editing/selection/anchor-focus3.html [ Failure ]
+editing/selection/click-in-margins-inside-editable-div.html [ Failure ]
+
 # NPN_ReloadPlugins is not implemented.
 webkit.org/b/98744 plugins/reloadplugins-and-pages.html [ Failure ]
 
@@ -246,3 +259,6 @@ webkit.org/b/98739 plugins/npruntime/embed-property-equality.html [ Failure ]
 
 # Flaky on EFL port.
 webkit.org/b/96641 media/video-seek-past-end-playing.html [ Failure ]
+
+# EFL WK2 does not support the spellchecker feature
+webkit.org/b/91854 editing/spelling [ Skip ]
