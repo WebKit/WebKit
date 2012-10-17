@@ -29,46 +29,16 @@
 #include "WKAPICast.h"
 #include "WKArray.h"
 #include "WKBase.h"
-#include "WKDictionary.h"
-#include "WKFormSubmissionListener.h"
-#include "WKRetainPtr.h"
 #include "WKString.h"
 #include "ewk_form_submission_request_private.h"
 #include <wtf/text/CString.h>
 
 using namespace WebKit;
 
-/**
- * \struct _Ewk_Form_Submission_Request
- * @brief Contains the form submission request data.
- */
-struct _Ewk_Form_Submission_Request {
-    unsigned int __ref; /**< the reference count of the object */
-    WKRetainPtr<WKDictionaryRef> wkValues;
-    WKRetainPtr<WKFormSubmissionListenerRef> wkListener;
-    bool handledRequest;
-
-    _Ewk_Form_Submission_Request(WKDictionaryRef values, WKFormSubmissionListenerRef listener)
-        : __ref(1)
-        , wkValues(values)
-        , wkListener(listener)
-        , handledRequest(false)
-    { }
-
-    ~_Ewk_Form_Submission_Request()
-    {
-        ASSERT(!__ref);
-
-        // Make sure the request is always handled before destroying.
-        if (!handledRequest)
-            WKFormSubmissionListenerContinue(wkListener.get());
-    }
-};
-
 Ewk_Form_Submission_Request* ewk_form_submission_request_ref(Ewk_Form_Submission_Request* request)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(request, 0);
-    ++request->__ref;
+    request->ref();
 
     return request;
 }
@@ -77,10 +47,7 @@ void ewk_form_submission_request_unref(Ewk_Form_Submission_Request* request)
 {
     EINA_SAFETY_ON_NULL_RETURN(request);
 
-    if (--request->__ref)
-        return;
-
-    delete request;
+    request->deref();
 }
 
 Eina_List* ewk_form_submission_request_field_names_get(Ewk_Form_Submission_Request* request)
@@ -118,16 +85,4 @@ Eina_Bool ewk_form_submission_request_submit(Ewk_Form_Submission_Request* reques
     request->handledRequest = true;
 
     return true;
-}
-
-/**
- * @internal ewk_form_submission_request_new
- * Creates a Ewk_Form_Submission_Request from a dictionary and a WKFormSubmissionListenerRef.
- */
-Ewk_Form_Submission_Request* ewk_form_submission_request_new(WKDictionaryRef values, WKFormSubmissionListenerRef listener)
-{
-    EINA_SAFETY_ON_NULL_RETURN_VAL(values, 0);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(listener, 0);
-
-    return new Ewk_Form_Submission_Request(values, listener);
 }

@@ -1,3 +1,42 @@
+2012-10-17  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Use WTF RefCounted and RefPtr for Ewk_Resource and Ewk_Form_Submission_Request
+        https://bugs.webkit.org/show_bug.cgi?id=99542
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Use WTF RefCounted and RefPtr for Ewk_Resource and Ewk_Form_Submission_Request
+        to avoid handling raw pointers internally.
+
+        * UIProcess/API/efl/ewk_form_submission_request.cpp:
+        (ewk_form_submission_request_ref):
+        (ewk_form_submission_request_unref):
+        (ewk_form_submission_request_submit):
+        * UIProcess/API/efl/ewk_form_submission_request_private.h:
+        (_Ewk_Form_Submission_Request):
+        (_Ewk_Form_Submission_Request::~_Ewk_Form_Submission_Request):
+        (_Ewk_Form_Submission_Request::create):
+        (_Ewk_Form_Submission_Request::_Ewk_Form_Submission_Request):
+        * UIProcess/API/efl/ewk_resource.cpp:
+        (ewk_resource_ref):
+        (ewk_resource_unref):
+        * UIProcess/API/efl/ewk_resource_private.h:
+        (_Ewk_Resource):
+        (_Ewk_Resource::create):
+        (_Ewk_Resource::_Ewk_Resource):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_Ewk_View_Private_Data::~_Ewk_View_Private_Data):
+        (ewk_view_resource_load_initiated):
+        (ewk_view_resource_load_response):
+        (ewk_view_resource_load_failed):
+        (ewk_view_resource_load_finished):
+        (ewk_view_resource_request_sent):
+        (ewk_view_load_provisional_started):
+        * UIProcess/API/efl/ewk_view_form_client.cpp:
+        (willSubmitForm):
+        * UIProcess/API/efl/ewk_view_resource_load_client.cpp:
+        (didInitiateLoadForResource):
+
 2012-10-16  Dongwoo Joshua Im  <dw.im@samsung.com>
 
         [mac] Fix build break - processPath should be initialized.

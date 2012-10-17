@@ -35,9 +35,8 @@ static void willSubmitForm(WKPageRef, WKFrameRef /*frame*/, WKFrameRef /*sourceF
 {
     Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
 
-    Ewk_Form_Submission_Request* request = ewk_form_submission_request_new(values, listener);
-    ewk_view_form_submission_request_new(ewkView, request);
-    ewk_form_submission_request_unref(request);
+    RefPtr<Ewk_Form_Submission_Request> request = Ewk_Form_Submission_Request::create(values, listener);
+    ewk_view_form_submission_request_new(ewkView, request.get());
 }
 
 void ewk_view_form_client_attach(WKPageRef pageRef, Evas_Object* ewkView)

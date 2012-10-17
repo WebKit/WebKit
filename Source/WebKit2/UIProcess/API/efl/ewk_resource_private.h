@@ -26,8 +26,30 @@
 #ifndef ewk_resource_private_h
 #define ewk_resource_private_h
 
+#include "WKEinaSharedString.h"
+#include "WKURL.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
+
 typedef struct _Ewk_Resource Ewk_Resource;
 
-Ewk_Resource* ewk_resource_new(const char* url, bool isMainResource);
+class _Ewk_Resource : public RefCounted<_Ewk_Resource> {
+public:
+    WKEinaSharedString url;
+    bool isMainResource;
+
+    static PassRefPtr<_Ewk_Resource> create(WKURLRef url, bool isMainResource)
+    {
+        return adoptRef(new _Ewk_Resource(url, isMainResource));
+    }
+
+private:
+    _Ewk_Resource(WKURLRef url, bool isMainResource)
+        : url(url)
+        , isMainResource(isMainResource)
+    { }
+};
 
 #endif // ewk_resource_private_h

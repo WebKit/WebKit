@@ -56,10 +56,9 @@ static void didInitiateLoadForResource(WKPageRef, WKFrameRef wkFrame, uint64_t r
     bool isMainResource = (WKFrameIsMainFrame(wkFrame) && pageIsProvisionallyLoading);
     WKRetainPtr<WKURLRef> wkUrl(AdoptWK, WKURLRequestCopyURL(wkRequest));
 
-    Ewk_Resource* resource = ewk_resource_new(toImpl(wkUrl.get())->string().utf8().data(), isMainResource);
+    RefPtr<Ewk_Resource> resource = Ewk_Resource::create(wkUrl.get(), isMainResource);
     RefPtr<Ewk_Url_Request> request = Ewk_Url_Request::create(wkRequest);
-    ewk_view_resource_load_initiated(toEwkView(clientInfo), resourceIdentifier, resource, request.get());
-    ewk_resource_unref(resource);
+    ewk_view_resource_load_initiated(toEwkView(clientInfo), resourceIdentifier, resource.get(), request.get());
 }
 
 static void didSendRequestForResource(WKPageRef, WKFrameRef, uint64_t resourceIdentifier, WKURLRequestRef wkRequest, WKURLResponseRef wkRedirectResponse, const void* clientInfo)
