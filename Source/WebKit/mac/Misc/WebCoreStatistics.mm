@@ -273,37 +273,12 @@ using namespace WebCore;
     return externalRepresentation(_private->coreFrame, forPrinting ? RenderAsTextPrintingMode : RenderAsTextBehaviorNormal);
 }
 
-- (NSString *)counterValueForElement:(DOMElement*)element
-{
-    return counterValueForElement(core(element));
-}
-
-- (int)pageNumberForElement:(DOMElement*)element:(float)pageWidthInPixels:(float)pageHeightInPixels
-{
-    return PrintContext::pageNumberForElement(core(element), FloatSize(pageWidthInPixels, pageHeightInPixels));
-}
-
-- (int)numberOfPages:(float)pageWidthInPixels:(float)pageHeightInPixels
+- (int)numberOfPagesWithPageWidth:(float)pageWidthInPixels pageHeight:(float)pageHeightInPixels
 {
     return PrintContext::numberOfPages(_private->coreFrame, FloatSize(pageWidthInPixels, pageHeightInPixels));
 }
 
-- (NSString *)pageProperty:(const char *)propertyName:(int)pageNumber
-{
-    return PrintContext::pageProperty(_private->coreFrame, propertyName, pageNumber);
-}
-
-- (bool)isPageBoxVisible:(int)pageNumber
-{
-    return PrintContext::isPageBoxVisible(_private->coreFrame, pageNumber);
-}
-
-- (NSString *)pageSizeAndMarginsInPixels:(int)pageNumber:(int)width:(int)height:(int)marginTop:(int)marginRight:(int)marginBottom:(int)marginLeft
-{
-    return PrintContext::pageSizeAndMarginsInPixels(_private->coreFrame, pageNumber, width, height, marginTop, marginRight, marginBottom, marginLeft);
-}
-
-- (void)printToCGContext:(CGContextRef)cgContext:(float)pageWidthInPixels:(float)pageHeightInPixels
+- (void)printToCGContext:(CGContextRef)cgContext pageWidth:(float)pageWidthInPixels pageHeight:(float)pageHeightInPixels
 {
     Frame* coreFrame = _private->coreFrame;
     if (!coreFrame)

@@ -1,3 +1,21 @@
+2012-10-17  Mark Rowe  <mrowe@apple.com>
+
+        Fix the build with a newer version of clang.
+
+        Reviewed by Dan Bernstein.
+
+        Some of the methods in WebCoreStatistics appear to have been added by someone not familiar with Objective-C.
+        While it's technically valid to have empty components in a selector, it's rarely done and is not consistent
+        with our style guidelines. In this particular case it's also done in such a manner that it's ambiguous and
+        therefore generates a warning in newer versions of the compiler.
+
+        Fixes <rdar://problem/12503709>.
+
+        * Misc/WebCoreStatistics.h: Remove unused methods and rename the two poorly-named methods that remain.
+        * Misc/WebCoreStatistics.mm: Ditto.
+        (-[WebFrame numberOfPagesWithPageWidth:pageHeight:]):
+        (-[WebFrame printToCGContext:pageWidth:pageHeight:]):
+
 2012-10-16  Jian Li  <jianli@chromium.org>
 
         Rename feature define ENABLE_WIDGET_REGION to ENABLE_DRAGGBALE_REGION

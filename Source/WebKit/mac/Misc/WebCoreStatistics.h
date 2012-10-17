@@ -85,11 +85,6 @@
 
 @interface WebFrame (WebKitDebug)
 - (NSString *)renderTreeAsExternalRepresentationForPrinting:(BOOL)forPrinting;
-- (NSString *)counterValueForElement:(DOMElement*)element;
-- (int)pageNumberForElement:(DOMElement*)element:(float)pageWidthInPixels:(float)pageHeightInPixels;
-- (int)numberOfPages:(float)pageWidthInPixels:(float)pageHeightInPixels;
-- (NSString *)pageProperty:(const char*)propertyName:(int)pageNumber;
-- (bool)isPageBoxVisible:(int)pageNumber;
-- (NSString *)pageSizeAndMarginsInPixels:(int)pageNumber:(int)width:(int)height:(int)marginTop:(int)marginRight:(int)marginBottom:(int)marginLeft;
-- (void)printToCGContext:(CGContextRef)cgContext:(float)pageWidthInPixels:(float)pageHeightInPixels;
+- (int)numberOfPagesWithPageWidth:(float)pageWidthInPixels pageHeight:(float)pageHeightInPixels;
+- (void)printToCGContext:(CGContextRef)cgContext pageWidth:(float)pageWidthInPixels pageHeight:(float)pageHeightInPixels;
 @end
