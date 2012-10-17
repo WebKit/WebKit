@@ -2848,6 +2848,8 @@ webkit.org/b/92131 inspector/styles/region-style-crash.html
 
 # New failure with a large regression range.
 webkit.org/b/99519 [ Win ] inspector/styles/styles-history.html [ Text ]
+# Flaky on Linux.
+webkit.org/b/99519 [ Linux ] inspector/styles/styles-history.html [ Pass Text ]
 
 crbug.com/85755 fast/js/exception-properties.html [ Failure ]
 
