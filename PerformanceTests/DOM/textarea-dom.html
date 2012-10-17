@@ -16,7 +16,7 @@ var nodes = [];
 var childCount = 1000;
 for (var i = 0; i < childCount; ++i)
     nodes.push(document.createTextNode('A quick brown fox jumps over the lazy dog.\n'));
-PerfTestRunner.runPerSecond({run: function() {
+PerfTestRunner.measureRunsPerSecond({run: function() {
     for (var i = 0; i < childCount; ++i)
         container.appendChild(nodes[i]);
     container.innerHTML = '';

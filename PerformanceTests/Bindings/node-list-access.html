@@ -7,7 +7,7 @@ var div = document.createElement("div");
 for (var i = 0; i < 100000; i++)
     div.appendChild(document.createElement("div"));
 
-PerfTestRunner.runPerSecond({
+PerfTestRunner.measureRunsPerSecond({
     description: "This benchmark covers 'childNodes' in Dromaeo/dom-traverse.html, and other DOM attributes that access NodeList.",
     run: function() {
         var childNodes = div.childNodes;

@@ -28,7 +28,7 @@ function runTest()
     document.body.clientHeight;
 }
 
-PerfTestRunner.runPerSecond({run:runTest, done:function() {
+PerfTestRunner.measureRunsPerSecond({run:runTest, done:function() {
     document.getElementById("flexbox").style.display = 'none';
 }});
 </script>

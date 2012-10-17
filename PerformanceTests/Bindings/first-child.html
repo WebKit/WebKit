@@ -6,7 +6,7 @@
 var div = document.createElement("div");
 div.appendChild(document.createElement("div"));
 
-PerfTestRunner.runPerSecond({
+PerfTestRunner.measureRunsPerSecond({
     description: "This benchmark covers 'firstChild', 'lastChild', 'nextSibling' and 'previousSibling' in Dromaeo/dom-traverse.html, and other DOM attributes that return a Node object.",
     run: function() {
         var localDiv = div;

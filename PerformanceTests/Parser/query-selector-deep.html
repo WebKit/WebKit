@@ -17,7 +17,7 @@ h1.id = "id";
 h1.className = "class";
 parentDiv.appendChild(h1);
 
-PerfTestRunner.runPerSecond({
+PerfTestRunner.measureRunsPerSecond({
     description: "This benchmark tests querySelector() for an element that appears in the depths in the document",
     run: function() {
         for (var i = 0; i < 100; i++) {

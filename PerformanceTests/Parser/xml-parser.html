@@ -11,7 +11,7 @@ for (var i = 0; i < 0x7FFF; ++i)
 xmlArray.push('</root>')
 var xmlData = xmlArray.join('');
 
-PerfTestRunner.runPerSecond({run:function() {
+PerfTestRunner.measureRunsPerSecond({run:function() {
     domParser.parseFromString(xmlData, "text/xml");
 }});
 </script>

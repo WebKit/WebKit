@@ -8,7 +8,7 @@ var source = new Uint8Array(length);
 for (var i = 0; i < length; i++)
     source[i] = i;
 
-PerfTestRunner.runPerSecond({run: function() {
+PerfTestRunner.measureRunsPerSecond({run: function() {
     var target = new Uint8Array(source);
 }});
 </script>

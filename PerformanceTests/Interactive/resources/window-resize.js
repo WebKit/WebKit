@@ -20,7 +20,7 @@ if (window.testRunner)
     };
 
     function startTest() {
-        PerfTestRunner.runPerSecond({
+        PerfTestRunner.measureRunsPerSecond({
             description: "Exercising window resize and following relayout",
             run: run,
             done: onTestDone

@@ -273,7 +273,7 @@ if (window.testRunner) {
         return end - start;
     }
 
-    PerfTestRunner.runPerSecond = function (test) {
+    PerfTestRunner.measureRunsPerSecond = function (test) {
         PerfTestRunner.unit = "runs/s";
         start(test, measureRunsPerSecondOnce);
     }

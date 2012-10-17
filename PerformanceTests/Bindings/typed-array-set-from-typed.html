@@ -9,7 +9,7 @@ for (var i = 0; i < length; i++)
     source[i] = i;
 var target = new Float64Array(length);
 
-PerfTestRunner.runPerSecond({run: function() {
+PerfTestRunner.measureRunsPerSecond({run: function() {
     target.set(source);
 }});
 </script>

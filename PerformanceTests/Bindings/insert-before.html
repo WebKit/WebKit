@@ -6,7 +6,7 @@
 var div = document.createElement("div");
 var childDiv = document.createElement("div");
 
-PerfTestRunner.runPerSecond({
+PerfTestRunner.measureRunsPerSecond({
     description: "This benchmark covers 'insertBefore' in Dromaeo/dom-modify.html and replaceChild()",
     setup: function() {
         div.innerHTML = "";

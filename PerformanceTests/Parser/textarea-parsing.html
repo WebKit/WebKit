@@ -20,7 +20,7 @@ for (var i = 0; i < 1000; ++i) {
 htmlText += "</textarea>"
 
 var container = document.getElementById('container');
-PerfTestRunner.runPerSecond({run: function() {
+PerfTestRunner.measureRunsPerSecond({run: function() {
     container.innerHTML = htmlText;
 }});
 </script>

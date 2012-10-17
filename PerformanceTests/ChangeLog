@@ -1,5 +1,58 @@
 2012-10-17  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Rename PerfTestRunner.runPerSecond to PerfTestRunner.measureRunsPerSecond for consistency
+        https://bugs.webkit.org/show_bug.cgi?id=99642
+
+        Reviewed by Dirk Pranke.
+
+        Renamed the method.
+
+        * Bindings/append-child.html:
+        * Bindings/create-element.html:
+        * Bindings/event-target-wrapper.html:
+        * Bindings/first-child.html:
+        * Bindings/get-attribute.html:
+        * Bindings/get-element-by-id.html:
+        * Bindings/get-elements-by-tag-name.html:
+        * Bindings/id-getter.html:
+        * Bindings/id-setter.html:
+        * Bindings/insert-before.html:
+        * Bindings/node-list-access.html:
+        * Bindings/scroll-top.html:
+        * Bindings/set-attribute.html:
+        * Bindings/typed-array-construct-from-array.html:
+        * Bindings/typed-array-construct-from-same-type.html:
+        * Bindings/typed-array-construct-from-typed.html:
+        * Bindings/typed-array-set-from-typed.html:
+        * Bindings/undefined-first-child.html:
+        * Bindings/undefined-get-element-by-id.html:
+        * Bindings/undefined-id-getter.html:
+        * CSS/CSSPropertySetterGetter.html:
+        * CSS/CSSPropertyUpdateValue.html:
+        * CSS/PseudoClassSelectors.html:
+        * DOM/textarea-dom.html:
+        * DOM/textarea-edit.html:
+        * Interactive/resources/window-resize.js:
+        * Layout/flexbox-column-nowrap.html:
+        * Layout/flexbox-column-wrap.html:
+        * Layout/flexbox-row-nowrap.html:
+        * Layout/flexbox-row-wrap.html:
+        * Layout/line-layout.html:
+        * Parser/css-parser-yui.html:
+        * Parser/innerHTML-setter.html:
+        * Parser/query-selector-deep.html:
+        * Parser/query-selector-first.html:
+        * Parser/query-selector-last.html:
+        * Parser/simple-url.html:
+        * Parser/textarea-parsing.html:
+        * Parser/tiny-innerHTML.html:
+        * Parser/url-parser.html:
+        * Parser/xml-parser.html:
+        * SVG/SvgNestedUse.html:
+        * resources/runner.js:
+
+2012-10-17  Ryosuke Niwa  <rniwa@webkit.org>
+
         Performance test should support asynchronous tests
         https://bugs.webkit.org/show_bug.cgi?id=95668
 

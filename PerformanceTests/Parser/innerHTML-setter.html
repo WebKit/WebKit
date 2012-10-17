@@ -11,7 +11,7 @@ var div = document.createElement("div");
 document.body.appendChild(div);
 var tree = generateBinDOMTree(10);
 
-PerfTestRunner.runPerSecond({
+PerfTestRunner.measureRunsPerSecond({
     description: "This benchmark tests innerHTML setter for a large DOM tree",
     run: function() {
         div.innerHTML = tree;

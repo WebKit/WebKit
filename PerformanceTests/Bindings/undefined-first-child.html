@@ -5,7 +5,7 @@
 <script>
 var div = document.createElement("div");
 
-PerfTestRunner.runPerSecond({
+PerfTestRunner.measureRunsPerSecond({
     description: "This benchmark covers undefined DOM attributes that return a null.",
     run: function() {
         var localDiv = div;

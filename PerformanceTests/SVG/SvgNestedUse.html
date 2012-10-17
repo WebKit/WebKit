@@ -72,7 +72,7 @@
         }
 
         if (window.testRunner) {
-            PerfTestRunner.runPerSecond({ run: newFrame, done: function() {
+            PerfTestRunner.measureRunsPerSecond({ run: newFrame, done: function() {
                 document.getElementById('wrapper').style.display = 'none';
             }});
         } else

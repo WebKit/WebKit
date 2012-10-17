@@ -6,7 +6,7 @@
 <script>
 var div = document.getElementById("foo");
 
-PerfTestRunner.runPerSecond({
+PerfTestRunner.measureRunsPerSecond({
     description: "This benchmark covers 'element.property = value' in Dromaeo/dom-attr.html, and other DOM attributes that sets a String.",
     run: function() {
         var localDiv = div;

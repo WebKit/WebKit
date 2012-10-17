@@ -6,7 +6,7 @@
 <script>
 var div = document.getElementById("foo");
 
-PerfTestRunner.runPerSecond({
+PerfTestRunner.measureRunsPerSecond({
     description: "This benchmark covers 'setAttribute' in Dromaeo/dom-attr.html and other DOM methods that return an undefined.",
     run: function() {
         var localDiv = div;

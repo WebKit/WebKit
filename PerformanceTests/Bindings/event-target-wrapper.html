@@ -12,7 +12,7 @@ link.addEventListener('click', function(event) {
     window.evt = event;
     event.preventDefault();
 
-    PerfTestRunner.runPerSecond({run: function () {
+    PerfTestRunner.measureRunsPerSecond({run: function () {
         var e = window.evt;
         for (var x = 0; x < kIteratonsPerTest; x++)
             e.target;

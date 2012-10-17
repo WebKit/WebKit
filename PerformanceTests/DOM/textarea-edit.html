@@ -13,7 +13,7 @@ textarea:invalid {
 <script>
 var container = document.getElementById('container');
 container.focus();
-PerfTestRunner.runPerSecond({run: function() {
+PerfTestRunner.measureRunsPerSecond({run: function() {
     for (var i = 0; i < 500; ++i)
         document.execCommand('insertText', false, 'A quick brown fox jumps over the lazy dog.\n');
     container.value = '';
