@@ -250,6 +250,11 @@ namespace JSC {
             m_storage->m_inCompactInitialization = false;
 #endif
         }
+        
+        bool hasSparseMap()
+        {
+            return m_sparseValueMap;
+        }
 
         bool inSparseMode()
         {
@@ -312,7 +317,7 @@ namespace JSC {
         bool increaseVectorLength(JSGlobalData&, unsigned newLength);
         bool unshiftCountSlowCase(JSGlobalData&, unsigned count);
         
-        unsigned compactForSorting(JSGlobalData&);
+        unsigned compactForSorting();
 
         enum ConsistencyCheckType { NormalConsistencyCheck, DestructorConsistencyCheck, SortConsistencyCheck };
         void checkConsistency(ConsistencyCheckType = NormalConsistencyCheck);

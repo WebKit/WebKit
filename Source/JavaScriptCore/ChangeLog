@@ -1,5 +1,27 @@
 2012-10-16  Lucas Forschler  <lforschler@apple.com>
 
+        Merge <rdar://problem/12474784>
+
+    2012-10-10  Filip Pizlo  <fpizlo@apple.com> 
+     
+         <rdar://problem/12455945> SUSundance: JSArray::sort with an evil compare function allows access into arbitrary memory 
+      
+         Reviewed by Geoffrey Garen. 
+          
+         This patch correctly omits the removal of the !header check in unshift(). 
+          
+             * runtime/ArrayPrototype.cpp: 
+             (JSC::arrayProtoFuncSort): 
+             * runtime/JSArray.cpp: 
+             (JSC::JSArray::sortNumeric): 
+             (JSC::JSArray::sort): 
+             (JSC::JSArray::compactForSorting): 
+             * runtime/JSArray.h: 
+             (JSArray): 
+             (JSC::JSArray::hasSparseMap):
+
+2012-10-16  Lucas Forschler  <lforschler@apple.com>
+
     Merge r129577
 
         2012-09-25  Filip Pizlo  <fpizlo@apple.com>
