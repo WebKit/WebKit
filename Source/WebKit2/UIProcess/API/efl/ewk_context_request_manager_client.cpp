@@ -27,6 +27,7 @@
 
 #include "WKBase.h"
 #include "WKSoupRequestManager.h"
+#include "WKURL.h"
 #include "ewk_context_private.h"
 #include "ewk_context_request_manager_client_private.h"
 #include "ewk_url_scheme_request.h"
@@ -39,9 +40,8 @@ static inline Ewk_Context* toEwkContext(const void* clientInfo)
 
 static void didReceiveURIRequest(WKSoupRequestManagerRef soupRequestManagerRef, WKURLRef urlRef, WKPageRef, uint64_t requestID, const void* clientInfo)
 {
-    Ewk_Url_Scheme_Request* schemeRequest = ewk_url_scheme_request_new(soupRequestManagerRef, urlRef, requestID);
-    ewk_context_url_scheme_request_received(toEwkContext(clientInfo), schemeRequest);
-    ewk_url_scheme_request_unref(schemeRequest);
+    RefPtr<Ewk_Url_Scheme_Request> schemeRequest = Ewk_Url_Scheme_Request::create(soupRequestManagerRef, urlRef, requestID);
+    ewk_context_url_scheme_request_received(toEwkContext(clientInfo), schemeRequest.get());
 }
 
 void ewk_context_request_manager_client_attach(Ewk_Context* context)

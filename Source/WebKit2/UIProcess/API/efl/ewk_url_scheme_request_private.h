@@ -26,13 +26,42 @@
 #ifndef ewk_url_scheme_request_private_h
 #define ewk_url_scheme_request_private_h
 
+#include "GOwnPtrSoup.h"
+#include "WKAPICast.h"
 #include "WKBase.h"
+#include "WKEinaSharedString.h"
+#include "WKRetainPtr.h"
+#include "WKSoupRequestManager.h"
 
-typedef struct _Ewk_Url_Scheme_Request Ewk_Url_Scheme_Request;
-typedef struct _Ewk_Context Ewk_Context;
+/**
+ * \struct  _Ewk_Url_Scheme_Request
+ * @brief   Contains the URL scheme request data.
+ */
+struct Ewk_Url_Scheme_Request : public RefCounted<Ewk_Url_Scheme_Request> {
+    WKRetainPtr<WKSoupRequestManagerRef> wkRequestManager;
+    WKEinaSharedString url;
+    uint64_t requestID;
+    WKEinaSharedString scheme;
+    WKEinaSharedString path;
 
-Ewk_Url_Scheme_Request* ewk_url_scheme_request_new(WKSoupRequestManagerRef, WKURLRef, uint64_t requestID);
+    static PassRefPtr<Ewk_Url_Scheme_Request> create(WKSoupRequestManagerRef manager, WKURLRef url, uint64_t requestID)
+    {
+        if (!manager || !url)
+            return 0;
 
-uint64_t ewk_url_scheme_request_id_get(const Ewk_Url_Scheme_Request* request);
+        return adoptRef(new Ewk_Url_Scheme_Request(manager, url, requestID));
+    }
+
+private:
+    Ewk_Url_Scheme_Request(WKSoupRequestManagerRef manager, WKURLRef urlRef, uint64_t requestID)
+        : wkRequestManager(manager)
+        , url(urlRef)
+        , requestID(requestID)
+    {
+        GOwnPtr<SoupURI> soupURI(soup_uri_new(url));
+        scheme = soupURI->scheme;
+        path = soupURI->path;        
+    }
+};
 
 #endif // ewk_url_scheme_request_private_h

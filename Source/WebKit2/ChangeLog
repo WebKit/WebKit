@@ -1,3 +1,25 @@
+2012-10-17  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Ewk_Url_Scheme_Request has to be refactored
+        https://bugs.webkit.org/show_bug.cgi?id=99549
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Ewk_Url_Scheme_Requestis inherited from RefCounted, WKEinaSharedString is used,
+        removed weird _Ewk_Url_Scheme_Request.
+
+        * UIProcess/API/efl/ewk_context_private.h:
+        * UIProcess/API/efl/ewk_context_request_manager_client.cpp:
+        (didReceiveURIRequest):
+        * UIProcess/API/efl/ewk_url_scheme_request.cpp:
+        (ewk_url_scheme_request_ref):
+        (ewk_url_scheme_request_unref):
+        * UIProcess/API/efl/ewk_url_scheme_request.h:
+        * UIProcess/API/efl/ewk_url_scheme_request_private.h:
+        (Ewk_Url_Scheme_Request):
+        (Ewk_Url_Scheme_Request::create):
+        (Ewk_Url_Scheme_Request::Ewk_Url_Scheme_Request):
+
 2012-10-17  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [WK2][GTK] Unneeded GError field in internal structure in WebKitFaviconDatabase.cpp

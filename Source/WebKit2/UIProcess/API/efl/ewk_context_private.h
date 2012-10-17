@@ -24,7 +24,7 @@
 
 typedef struct _Ewk_Context Ewk_Context;
 typedef struct _Ewk_Download_Job Ewk_Download_Job;
-typedef struct _Ewk_Url_Scheme_Request Ewk_Url_Scheme_Request;
+typedef struct Ewk_Url_Scheme_Request Ewk_Url_Scheme_Request;
 typedef struct _Ewk_Context_History_Client Ewk_Context_History_Client;
 
 WKContextRef ewk_context_WKContext_get(const Ewk_Context*);
