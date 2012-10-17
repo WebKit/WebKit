@@ -24,6 +24,8 @@
       min: 12 12;
 
       images {
+         image: "widget/radio/img_radio_bg_enabled.png" COMP;
+         image: "widget/radio/img_radio_bg_disabled.png" COMP;
          image: "widget/radio/img_radio_on.png" COMP;
          image: "widget/radio/img_radio_off.png" COMP;
          image: "widget/radio/img_radio_on_focus.png" COMP;
@@ -42,6 +44,7 @@
           public show() {
               if (get_int(isEnabled) == 1) {
                   set_state(PART:"radio_button", "default", 0.0);
+                  set_state(PART:"bg", "enabled", 0.0);
                   if (get_int(isChecked) == 1) {
                       set_state(PART:"radio_button", "enabled_checked", 0.0);
                       if (get_int(isFocused) == 1)
@@ -58,6 +61,7 @@
               }
               else {
                   set_state(PART:"radio_button", "disabled", 0.0);
+                  set_state(PART:"bg", "disabled", 0.0);
                   if (get_int(isChecked) == 1)
                       set_state(PART:"radio_button", "disabled_checked", 0.0);
               }
@@ -65,6 +69,29 @@
       }
 
       parts {
+         part {
+            name: "bg";
+            type: IMAGE;
+            description {
+               state: "default" 0.0;
+               min: 12 12;
+               max: 12 12;
+               image {
+                  normal: "widget/radio/img_radio_bg_enabled.png";
+               }
+            }
+            description {
+               state: "enabled" 0.0;
+               inherit: "default" 0.0;
+            }
+            description {
+               state: "disabled" 0.0;
+               inherit: "default" 0.0;
+               image {
+                  normal: "widget/radio/img_radio_bg_disabled.png";
+               }
+            }
+         }
          part {
             name: "radio_button";
             type: IMAGE;
