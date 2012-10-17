@@ -108,13 +108,19 @@ PassRefPtr<IDBRequest> IDBFactory::getDatabaseNames(ScriptExecutionContext* cont
 
 PassRefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext* context, const String& name, int64_t version, ExceptionCode& ec)
 {
-    if (name.isNull()) {
+    // FIXME: This should only need to check for 0 once webkit.org/b/96798 lands.
+    const int64_t maxECMAScriptInteger = 0x20000000000000LL - 1;
+    if (version < 1 || version > maxECMAScriptInteger) {
         ec = NATIVE_TYPE_ERR;
         return 0;
     }
-    // FIXME: We need to throw an error if script passes -1. Somehow refactor
-    // this to avoid wanting to throw an error with the sentinel.
-    if (!version || version < IDBDatabaseMetadata::NoIntVersion) {
+    return openInternal(context, name, version, ec);
+}
+
+PassRefPtr<IDBOpenDBRequest> IDBFactory::openInternal(ScriptExecutionContext* context, const String& name, int64_t version, ExceptionCode& ec)
+{
+    ASSERT(version >= 1 || version == IDBDatabaseMetadata::NoIntVersion);
+    if (name.isNull()) {
         ec = NATIVE_TYPE_ERR;
         return 0;
     }
@@ -129,7 +135,7 @@ PassRefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext* context, c
 
 PassRefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
 {
-    return open(context, name, IDBDatabaseMetadata::NoIntVersion, ec);
+    return openInternal(context, name, IDBDatabaseMetadata::NoIntVersion, ec);
 }
 
 PassRefPtr<IDBVersionChangeRequest> IDBFactory::deleteDatabase(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)

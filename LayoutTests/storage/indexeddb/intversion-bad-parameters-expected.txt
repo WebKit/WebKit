@@ -18,11 +18,12 @@ PASS indexedDB.open(dbname, 0) threw TypeError: Type error
 Expecting TypeError exception from indexedDB.open(dbname, -5)
 PASS Exception was thrown.
 PASS indexedDB.open(dbname, -5) threw TypeError: Type error
-
-FIXME: Using -1 doesn't throw TypeError but it should
-Expecting TypeError exception from request = indexedDB.open(dbname, -1)
-FAIL No exception thrown!
-FAIL onupgradeneeded called unexpectedly
+Expecting TypeError exception from indexedDB.open(dbname, -1)
+PASS Exception was thrown.
+PASS indexedDB.open(dbname, -1) threw TypeError: Type error
+Expecting TypeError exception from indexedDB.open(dbname, 0x20000000000000)
+PASS Exception was thrown.
+PASS indexedDB.open(dbname, 0x20000000000000) threw TypeError: Type error
 PASS successfullyParsed is true
 
 TEST COMPLETE

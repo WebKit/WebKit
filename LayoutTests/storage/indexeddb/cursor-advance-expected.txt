@@ -137,6 +137,12 @@ request = objectStore.openCursor()
 Expecting TypeError exception from cursor.advance(0)
 PASS Exception was thrown.
 PASS cursor.advance(0) threw TypeError: Type error
+Expecting TypeError exception from cursor.advance(-1)
+PASS Exception was thrown.
+PASS cursor.advance(-1) threw TypeError: Type error
+Expecting TypeError exception from cursor.advance(0x20000000000000)
+PASS Exception was thrown.
+PASS cursor.advance(0x20000000000000) threw TypeError: Type error
 testDelete()
 trans = db.transaction(objectStoreName, 'readwrite')
 objectStore = trans.objectStore(objectStoreName)

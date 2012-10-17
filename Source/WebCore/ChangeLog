@@ -1,3 +1,39 @@
+2012-10-17  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Enforce unsigned long/unsigned long long ranges
+        https://bugs.webkit.org/show_bug.cgi?id=99637
+
+        Reviewed by Tony Chang.
+
+        The IndexedDB spec has [EnforceRange] specified on unsigned long and unsigned long long
+        arguments, which requires the implementation to throw TypeError for negative values or
+        values that exceed 2^53-1 (maximum JS number that behaves like an integer) - and 0 is
+        specifically forbidden by the APIs as well.
+
+        A more correct fix in the binding layer is in webkit.org/b/96798 but we can temporarily
+        address this in the implementation.
+
+        Also refactor to prevent IDBFactory.open(name, -1) from triggering an internal code path.
+
+        Tests: storage/indexeddb/cursor-advance.html
+               storage/indexeddb/intversion-bad-parameters.html
+               storage/indexeddb/intversion-encoding.html
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::advance): Validate argument range.
+        * Modules/indexeddb/IDBCursor.h:
+        (IDBCursor):
+        * Modules/indexeddb/IDBCursor.idl: Drop "unsigned" qualifier as the binding code is
+        not yet doing the correct validation.
+        * Modules/indexeddb/IDBFactory.cpp: Refactor to prevent open(name, -1)
+        (WebCore):
+        (WebCore::IDBFactory::open): Validate the int version here, then pass to...
+        (WebCore::IDBFactory::openInternal): ... this method.
+        * Modules/indexeddb/IDBFactory.h:
+        (IDBFactory):
+        * Modules/indexeddb/IDBFactory.idl: Drop "unsigned" qualifier; meaningless to binding
+        code right now, can be re-added once webkit.org/b/96798 lands.
+
 2012-10-17  Tony Chang  <tony@chromium.org>
 
         fast/forms/range/input-appearance-range-rtl.html off by one pixel

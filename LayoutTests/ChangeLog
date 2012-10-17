@@ -1,3 +1,22 @@
+2012-10-17  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Enforce unsigned long/unsigned long long ranges
+        https://bugs.webkit.org/show_bug.cgi?id=99637
+
+        Reviewed by Tony Chang.
+
+        Additional edge case tests and updated expectations.
+
+        * storage/indexeddb/cursor-advance-expected.txt:
+        * storage/indexeddb/intversion-bad-parameters-expected.txt:
+        * storage/indexeddb/intversion-encoding-expected.txt:
+        * storage/indexeddb/resources/cursor-advance.js:
+        (testBadAdvance.advanceBadly):
+        (testBadAdvance):
+        * storage/indexeddb/resources/intversion-bad-parameters.js:
+        (deleteSuccess):
+        * storage/indexeddb/resources/intversion-encoding.js:
+
 2012-10-17  Tony Chang  <tony@chromium.org>
 
         fast/forms/range/input-appearance-range-rtl.html off by one pixel

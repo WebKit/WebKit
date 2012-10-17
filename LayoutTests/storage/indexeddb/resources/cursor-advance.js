@@ -330,6 +330,8 @@ function testBadAdvance()
         cursor = event.target.result;
 
         evalAndExpectExceptionClass("cursor.advance(0)", "TypeError");
+        evalAndExpectExceptionClass("cursor.advance(-1)", "TypeError");
+        evalAndExpectExceptionClass("cursor.advance(0x20000000000000)", "TypeError");
         testDelete();
     }
     request.onsuccess = advanceBadly;

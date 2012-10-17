@@ -20,13 +20,9 @@ function deleteSuccess(evt) {
     evalAndExpectExceptionClass("indexedDB.open(dbname, 'stringversion')", "TypeError");
     evalAndExpectExceptionClass("indexedDB.open(dbname, 0)", "TypeError");
     evalAndExpectExceptionClass("indexedDB.open(dbname, -5)", "TypeError");
-    debug("");
-    debug("FIXME: Using -1 doesn't throw TypeError but it should");
-    evalAndExpectExceptionClass("request = indexedDB.open(dbname, -1)", "TypeError");
-    request.onsuccess = unexpectedSuccessCallback;
-    request.onerror = unexpectedErrorCallback;
-    request.onblocked = unexpectedBlockedCallback;
-    request.onupgradeneeded = unexpectedUpgradeNeededCallback;
+    evalAndExpectExceptionClass("indexedDB.open(dbname, -1)", "TypeError");
+    evalAndExpectExceptionClass("indexedDB.open(dbname, 0x20000000000000)", "TypeError");
+    finishJSTest();
 }
 
 test();

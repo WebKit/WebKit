@@ -67,6 +67,8 @@ public:
 private:
     IDBFactory(IDBFactoryBackendInterface*);
 
+    PassRefPtr<IDBOpenDBRequest> openInternal(ScriptExecutionContext*, const String& name, int64_t version, ExceptionCode&);
+
     RefPtr<IDBFactoryBackendInterface> m_backend;
 };
 

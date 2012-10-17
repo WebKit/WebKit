@@ -81,7 +81,7 @@ PASS db.version is version
 db.close()
 
 openFirstTime():
-version = 9007199254740992
+version = 9007199254740991
 upgradeNeededFired = false
 request = indexedDB.open(dbname, version)
 upgradeNeededFired = true

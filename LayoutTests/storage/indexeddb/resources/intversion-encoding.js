@@ -9,7 +9,7 @@ versions = [1,
             0x7f,
             0x80,
             0x80000000,
-            9007199254740992]; // 2^53, maximum JavaScript integer.
+            9007199254740991]; // 2^53-1, maximum JavaScript integer.
 
 function test()
 {
