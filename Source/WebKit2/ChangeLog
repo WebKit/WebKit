@@ -1,3 +1,27 @@
+2012-10-17  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [WK2][EFL] Add unit tests for Spelling
+        https://bugs.webkit.org/show_bug.cgi?id=95956
+
+        Reviewed by Gyuyoung Kim.
+
+        Add the unit tests which covers API from ewk_text_checker.h
+        and text checker settings from ewk_settings.h
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/tests/resources/spelling_test.html: Added.
+        * UIProcess/API/efl/tests/test_ewk2_text_checker.cpp: Added.
+        (resetCallbacksExecutionStats):
+        (onTimeout):
+        (onSettingChange):
+        (onSpellDocumentTag):
+        (onSpellDocumentTagClose):
+        (onSpellingCheck):
+        (onWordGuesses):
+        (onWordLearn):
+        (onWordIgnore):
+        (TEST_F):
+
 2012-10-17  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [WK2][GTK] Favicons are incorrectly released before receiving the actual data

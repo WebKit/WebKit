@@ -339,6 +339,7 @@ SET(EWK2UnitTests_BINARIES
     test_ewk2_refptr_evas_object
     test_ewk2_intents
     test_ewk2_settings
+    test_ewk2_text_checker
     test_ewk2_view
 )
 
