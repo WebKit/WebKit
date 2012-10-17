@@ -292,17 +292,9 @@ svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard.html
 svg/custom/manually-parsed-svg-allowed-in-dashboard.html
 svg/custom/svg-allowed-in-dashboard-object.html
 
-# WebKitTestRunner needs testRunner.queueReload
-# <https://bugs.webkit.org/show_bug.cgi?id=42672>
-fast/css/compare-content-style.html
-fast/frames/frame-display-none-focus.html
-fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html
-fast/loader/images-enabled-unset-can-block-image-and-can-reload-in-place.html
+# InjectedBundlePage::decidePolicyForNavigationAction() should print only filename part of local URLs.
+# <https://bugs.webkit.org/show_bug.cgi?id=99581>
 fast/loader/reload-policy-delegate.html
-http/tests/navigation/fallback-anchor-reload.html
-http/tests/navigation/reload-subframe-frame.html
-http/tests/navigation/reload-subframe-iframe.html
-http/tests/navigation/reload-subframe-object.html
 
 # WebKitTestRunner needs testRunner.queueNonLoadingScript
 # <https://bugs.webkit.org/show_bug.cgi?id=98141>

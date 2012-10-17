@@ -44,6 +44,7 @@ public:
 
     void queueLoad(const String& url, const String& target);
     void queueBackNavigation(unsigned howFarBackward);
+    void queueReload();
 
 private:
     class WorkQueueItem {

@@ -459,6 +459,11 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "QueueReload")) {
+        TestController::shared().workQueueManager().queueReload();
+        return;
+    }
+
     ASSERT_NOT_REACHED();
 }
 

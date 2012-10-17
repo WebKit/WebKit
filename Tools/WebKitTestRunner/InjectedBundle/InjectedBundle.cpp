@@ -499,4 +499,12 @@ void InjectedBundle::queueLoad(WKStringRef url, WKStringRef target)
     WKBundlePostMessage(m_bundle, messageName.get(), loadData.get());
 }
 
+void InjectedBundle::queueReload()
+{
+    m_useWorkQueue = true;
+
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("QueueReload"));
+    WKBundlePostMessage(m_bundle, messageName.get(), 0);
+}
+
 } // namespace WTR

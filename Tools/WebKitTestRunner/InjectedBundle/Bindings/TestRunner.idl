@@ -185,5 +185,6 @@ interface TestRunner {
     // Work queue.
     void queueBackNavigation(in unsigned long howFarBackward);
     void queueLoad(in DOMString url, in DOMString target);
+    void queueReload();
 };
 

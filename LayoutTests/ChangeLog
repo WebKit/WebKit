@@ -1,3 +1,15 @@
+2012-10-17  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        WebKitTestRunner needs layoutTestController.queueReload
+        https://bugs.webkit.org/show_bug.cgi?id=42672
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskipped the related test cases for WK2.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2012-10-17  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r131421): Text baseline becomes incorrect after re-layout of input[type=time]

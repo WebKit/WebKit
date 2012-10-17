@@ -847,4 +847,9 @@ void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
     InjectedBundle::shared().queueLoad(urlStringWK.get(), toWK(target).get());
 }
 
+void TestRunner::queueReload()
+{
+    InjectedBundle::shared().queueReload();
+}
+
 } // namespace WTR

@@ -103,6 +103,7 @@ public:
     void processWorkQueue();
     void queueBackNavigation(unsigned howFarBackward);
     void queueLoad(WKStringRef url, WKStringRef target);
+    void queueReload();
 
 private:
     InjectedBundle();

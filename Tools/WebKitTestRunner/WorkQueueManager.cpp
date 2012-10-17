@@ -117,6 +117,20 @@ void WorkQueueManager::queueBackNavigation(unsigned howFarBackward)
     enqueue(new BackNavigationItem(howFarBackward));
 }
 
+void WorkQueueManager::queueReload()
+{
+    class ReloadItem : public WorkQueueItem {
+    public:
+        bool invoke() const
+        {
+            WKPageReload(mainPage());
+            return true;
+        }
+    };
+
+    enqueue(new ReloadItem());
+}
+
 void WorkQueueManager::enqueue(WorkQueueItem* item)
 {
     ASSERT(item);
