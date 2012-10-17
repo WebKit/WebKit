@@ -1,3 +1,29 @@
+2012-10-17  Philip Rogers  <pdr@google.com>
+
+        Allow lazy initialization of SVG XML animated properties.
+        https://bugs.webkit.org/show_bug.cgi?id=84657
+
+        Reviewed by Tim Horton.
+
+        When animating a property in the shadow tree, instance properties and tearoffs are created
+        but they simply reference the animated element's animating properties.
+
+        When starting an animation for the first time (see SVGAnimateElement::resetAnimatedType),
+        we initialize the root property and instance properties using startAnimValAnimation(...).
+        If an instance property is added while the root property is animating, this initialization
+        will not occur and we crash.
+
+        This patch updates the resetAnimValToBaseVal codepath to start (and initialize) an animated
+        property if it is not already animating. After this patch, instance properties can be added
+        in the middle of animation and they will be properly started/initialized.
+
+        Test: svg/animations/use-while-animating-crash.html
+
+        * svg/SVGAnimatedTypeAnimator.h:
+        (WebCore::SVGAnimatedTypeAnimator::resetFromBaseValue):
+        (WebCore::SVGAnimatedTypeAnimator::resetFromBaseValues):
+        (WebCore::SVGAnimatedTypeAnimator::executeAction):
+
 2012-10-17  Dan Carney  <dcarney@google.com>
 
         Bind isolatedWorldSecurityOrigin to world
