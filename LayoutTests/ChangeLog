@@ -1,3 +1,11 @@
+2012-10-16  Dirk Pranke  <dpranke@chromium.org>
+
+        Update Chromium ML expectations
+
+        Unreviewed, expectations change.
+
+        * platform/chromium-mac-mountainlion/TestExpectations:
+
 2012-10-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         HTMLSelectElement::optionSelectedByUser confuses listIndex and optionIndex
