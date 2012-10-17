@@ -1,3 +1,14 @@
+2012-10-17  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Fixing expectation for fast/forms/range/input-appearance-range-rtl.html,
+        it's a reftest so the failure is actually of pixel nature.
+
+        Also removing some expectations for tests that now consistently pass.
+
+        * platform/gtk/TestExpectations:
+
 2012-10-17  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] Unreviewed gardening.
