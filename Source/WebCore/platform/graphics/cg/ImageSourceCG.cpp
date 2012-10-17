@@ -400,7 +400,7 @@ unsigned ImageSource::frameBytesAtIndex(size_t index) const
 void ImageSource::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
-    info.addMember(m_decoder);
+    // FIXME: addMember call required for m_decoder.
 }
 
 }

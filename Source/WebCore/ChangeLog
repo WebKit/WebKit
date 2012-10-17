@@ -1,5 +1,12 @@
 2012-10-17  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        Unreviewed fix for ImageSourceCG.
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::reportMemoryUsage):
+
+2012-10-17  Ilya Tikhonovsky  <loislo@chromium.org>
+
         Unreviewed fix for compilation on CG bots.
 
         * platform/graphics/cg/ImageSourceCG.cpp:
