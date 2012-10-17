@@ -132,7 +132,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/PutKind.h \
 	Source/JavaScriptCore/bytecode/ResolveGlobalStatus.cpp \
 	Source/JavaScriptCore/bytecode/ResolveGlobalStatus.h \
-	Source/JavaScriptCore/bytecode/ResolveOperations.h \
+	Source/JavaScriptCore/bytecode/ResolveOperation.h \
 	Source/JavaScriptCore/bytecode/SamplingTool.cpp \
 	Source/JavaScriptCore/bytecode/SamplingTool.h \
 	Source/JavaScriptCore/bytecode/SpecialPointer.cpp \

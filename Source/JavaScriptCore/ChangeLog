@@ -1,3 +1,15 @@
+2012-10-16  Dongwoo Joshua Im  <dw.im@samsung.com>
+
+        [GTK] Fix build break - ResolveOperations.h is not in WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=99538
+
+        Unreviewed build fix.
+
+        There are some files including ResolveOperations.h which is not exist at all.
+
+        * GNUmakefile.list.am: s/ResolveOperations.h/ResolveOperation.h/
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: s/ResolveOperations.h/ResolveOperation.h/
+
 2012-10-16  Jian Li  <jianli@chromium.org>
 
         Rename feature define ENABLE_WIDGET_REGION to ENABLE_DRAGGBALE_REGION

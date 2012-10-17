@@ -1710,7 +1710,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\bytecode\ResolveOperations.h"
+				RelativePath="..\..\bytecode\ResolveOperation.h"
 				>
 			</File>
 			<File
