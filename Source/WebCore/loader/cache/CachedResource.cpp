@@ -32,6 +32,7 @@
 #include "CachedResourceLoader.h"
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "FrameLoaderClient.h"
 #include "InspectorInstrumentation.h"
 #include "KURL.h"
@@ -40,6 +41,8 @@
 #include "ResourceBuffer.h"
 #include "ResourceHandle.h"
 #include "ResourceLoadScheduler.h"
+#include "SecurityOrigin.h"
+#include "SecurityPolicy.h"
 #include "SubresourceLoader.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/CurrentTime.h>
@@ -190,8 +193,55 @@ CachedResource::~CachedResource()
         m_owningCachedResourceLoader->removeCachedResource(this);
 }
 
+void CachedResource::failBeforeStarting()
+{
+    // FIXME: What if resources in other frames were waiting for this revalidation?
+    LOG(ResourceLoading, "Cannot start loading '%s'", url().string().latin1().data());
+    if (m_resourceToRevalidate) 
+        memoryCache()->revalidationFailed(this); 
+    error(CachedResource::LoadError);
+}
+
+void CachedResource::addAdditionalRequestHeaders(CachedResourceLoader* cachedResourceLoader)
+{
+    // Note: We skip the Content-Security-Policy check here because we check
+    // the Content-Security-Policy at the CachedResourceLoader layer so we can
+    // handle different resource types differently.
+
+    FrameLoader* frameLoader = cachedResourceLoader->frame()->loader();
+    String outgoingReferrer;
+    String outgoingOrigin;
+    if (m_resourceRequest.httpReferrer().isNull()) {
+        outgoingReferrer = frameLoader->outgoingReferrer();
+        outgoingOrigin = frameLoader->outgoingOrigin();
+    } else {
+        outgoingReferrer = m_resourceRequest.httpReferrer();
+        outgoingOrigin = SecurityOrigin::createFromString(outgoingReferrer)->toString();
+    }
+
+    outgoingReferrer = SecurityPolicy::generateReferrerHeader(cachedResourceLoader->document()->referrerPolicy(), m_resourceRequest.url(), outgoingReferrer);
+    if (outgoingReferrer.isEmpty())
+        m_resourceRequest.clearHTTPReferrer();
+    else if (!m_resourceRequest.httpReferrer())
+        m_resourceRequest.setHTTPReferrer(outgoingReferrer);
+    FrameLoader::addHTTPOriginIfNeeded(m_resourceRequest, outgoingOrigin);
+
+    frameLoader->addExtraFieldsToSubresourceRequest(m_resourceRequest);
+}
+
 void CachedResource::load(CachedResourceLoader* cachedResourceLoader, const ResourceLoaderOptions& options)
 {
+    if (!cachedResourceLoader->frame()) {
+        failBeforeStarting();
+        return;
+    }
+
+    FrameLoader* frameLoader = cachedResourceLoader->frame()->loader();
+    if (options.securityCheck == DoSecurityCheck && (frameLoader->state() == FrameStateProvisional || !frameLoader->activeDocumentLoader() || frameLoader->activeDocumentLoader()->isStopping())) {
+        failBeforeStarting();
+        return;
+    }
+
     m_options = options;
     m_loading = true;
 
@@ -225,14 +275,11 @@ void CachedResource::load(CachedResourceLoader* cachedResourceLoader, const Reso
         m_resourceRequest.setHTTPHeaderField("Purpose", "prefetch");
 #endif
     m_resourceRequest.setPriority(loadPriority());
-    
-    m_loader = resourceLoadScheduler()->scheduleSubresourceLoad(cachedResourceLoader->document()->frame(), this, m_resourceRequest, m_resourceRequest.priority(), options);
+    addAdditionalRequestHeaders(cachedResourceLoader);
+
+    m_loader = resourceLoadScheduler()->scheduleSubresourceLoad(cachedResourceLoader->frame(), this, m_resourceRequest, m_resourceRequest.priority(), options);
     if (!m_loader) {
-        // FIXME: What if resources in other frames were waiting for this revalidation?
-        LOG(ResourceLoading, "Cannot start loading '%s'", url().string().latin1().data());
-        if (m_resourceToRevalidate) 
-            memoryCache()->revalidationFailed(this); 
-        error(CachedResource::LoadError);
+        failBeforeStarting();
         return;
     }
 

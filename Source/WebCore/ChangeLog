@@ -1,3 +1,32 @@
+2012-10-17  Nate Chapin  <japhet@chromium.org>
+
+        Move ResourceRequest construction out of SubresourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=99627
+
+        Reviewed by Adam Barth.
+
+        CachedResource::load() fills out a bunch of http headers.
+        SubresourceLoader::create() adds a bunch more. Merge them.
+        Note that this merge requires a bit more care in CachedRawResource::canReuse(),
+        because more headers are set directly on CachedResource::m_resourceRequest, rather
+        than on a copy of it.
+
+        No new tests, no functionality change intended.
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::create):
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::shouldIgnoreHeaderForCacheReuse):
+        (WebCore):
+        (WebCore::CachedRawResource::canReuse):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::failBeforeStarting):
+        (WebCore):
+        (WebCore::CachedResource::addAdditionalRequestHeaders):
+        (WebCore::CachedResource::load):
+        * loader/cache/CachedResource.h:
+        (CachedResource):
+
 2012-10-17  Anders Carlsson  <andersca@apple.com>
 
         Clean up Vector.h

@@ -33,12 +33,9 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
-#include "FrameLoader.h"
 #include "Logging.h"
 #include "MemoryCache.h"
 #include "ResourceBuffer.h"
-#include "SecurityOrigin.h"
-#include "SecurityPolicy.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
@@ -83,40 +80,8 @@ SubresourceLoader::~SubresourceLoader()
 
 PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, CachedResource* resource, const ResourceRequest& request, const ResourceLoaderOptions& options)
 {
-    if (!frame)
-        return 0;
-
-    FrameLoader* frameLoader = frame->loader();
-    if (options.securityCheck == DoSecurityCheck && (frameLoader->state() == FrameStateProvisional || !frameLoader->activeDocumentLoader() || frameLoader->activeDocumentLoader()->isStopping()))
-        return 0;
-
-    ResourceRequest newRequest = request;
-
-    // Note: We skip the Content-Security-Policy check here because we check
-    // the Content-Security-Policy at the CachedResourceLoader layer so we can
-    // handle different resource types differently.
-
-    String outgoingReferrer;
-    String outgoingOrigin;
-    if (request.httpReferrer().isNull()) {
-        outgoingReferrer = frameLoader->outgoingReferrer();
-        outgoingOrigin = frameLoader->outgoingOrigin();
-    } else {
-        outgoingReferrer = request.httpReferrer();
-        outgoingOrigin = SecurityOrigin::createFromString(outgoingReferrer)->toString();
-    }
-
-    outgoingReferrer = SecurityPolicy::generateReferrerHeader(frame->document()->referrerPolicy(), request.url(), outgoingReferrer);
-    if (outgoingReferrer.isEmpty())
-        newRequest.clearHTTPReferrer();
-    else if (!request.httpReferrer())
-        newRequest.setHTTPReferrer(outgoingReferrer);
-    FrameLoader::addHTTPOriginIfNeeded(newRequest, outgoingOrigin);
-
-    frameLoader->addExtraFieldsToSubresourceRequest(newRequest);
-
     RefPtr<SubresourceLoader> subloader(adoptRef(new SubresourceLoader(frame, resource, options)));
-    if (!subloader->init(newRequest))
+    if (!subloader->init(request))
         return 0;
     return subloader.release();
 }

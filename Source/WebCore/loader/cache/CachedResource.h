@@ -255,6 +255,8 @@ public:
 protected:
     virtual void checkNotify();
 
+    virtual void addAdditionalRequestHeaders(CachedResourceLoader*);
+
     void setEncodedSize(unsigned);
     void setDecodedSize(unsigned);
     void didAccessDecodedData(double timeStamp);
@@ -300,6 +302,8 @@ private:
 
     double currentAge() const;
     double freshnessLifetime() const;
+
+    void failBeforeStarting();
 
     RefPtr<CachedMetadata> m_cachedMetadata;
 
