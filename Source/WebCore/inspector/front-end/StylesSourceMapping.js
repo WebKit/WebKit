@@ -72,7 +72,9 @@ WebInspector.StylesSourceMapping.prototype = {
             return;
         if (uiSourceCode.contentType() !== WebInspector.resourceTypes.Stylesheet)
             return;
-            
+        if (!WebInspector.resourceForURL(uiSourceCode.url))
+            return;
+
         this._addUISourceCode(uiSourceCode);
     },
 
@@ -187,6 +189,11 @@ WebInspector.StyleContentBinding.prototype = {
     setStyleContent: function(uiSourceCode, content, majorChange, userCallback)
     {
         var resource = WebInspector.resourceForURL(uiSourceCode.url);
+        if (!resource) {
+            userCallback("No resource found: " + uiSourceCode.url);
+            return;
+        }
+            
         this._cssModel.resourceBinding().requestStyleSheetIdForResource(resource, callback.bind(this));
 
         /**
