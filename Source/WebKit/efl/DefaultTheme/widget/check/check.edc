@@ -25,6 +25,8 @@
       min: 12 12;
 
       images {
+         image: "widget/check/img_check_bg_enabled.png" COMP;
+         image: "widget/check/img_check_bg_disabled.png" COMP;
          image: "widget/check/img_check_on.png" COMP;
          image: "widget/check/img_check_off.png" COMP;
          image: "widget/check/img_check_off_focus.png" COMP;
@@ -43,6 +45,7 @@
           public show() {
               if (get_int(isEnabled) == 1) {
                   set_state(PART:"check_button", "default", 0.0);
+                  set_state(PART:"bg", "enabled", 0.0);
                   if (get_int(isChecked) == 1) {
                       set_state(PART:"check_button", "enabled_checked", 0.0);
                       if (get_int(isFocused) == 1)
@@ -59,6 +62,7 @@
               }
               else {
                   set_state(PART:"check_button", "disabled", 0.0);
+                  set_state(PART:"bg", "disabled", 0.0);
                   if (get_int(isChecked) == 1)
                       set_state(PART:"check_button", "disabled_checked", 0.0);
               }
@@ -66,6 +70,29 @@
       }
 
       parts {
+         part {
+            name: "bg";
+            type: IMAGE;
+            description {
+               state: "default" 0.0;
+               min: 12 12;
+               max: 12 12;
+               image {
+                  normal: "widget/check/img_check_bg_enabled.png";
+               }
+            }
+            description {
+               state: "enabled" 0.0;
+               inherit: "default" 0.0;
+            }
+            description {
+               state: "disabled" 0.0;
+               inherit: "default" 0.0;
+               image {
+                  normal: "widget/check/img_check_bg_disabled.png";
+               }
+            }
+         }
          part {
             name: "check_button";
             type: IMAGE;
