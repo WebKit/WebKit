@@ -46,8 +46,11 @@ if (window.testRunner) {
             switch (message.type) {
                 case 'test-done':
                     currentTest++;
-                    if (currentTest == tests.length)
+                    if (currentTest == tests.length) {
+                        testRunner.setIsolatedWorldSecurityOrigin(1, null);
+                        testRunner.setIsolatedWorldSecurityOrigin(2, null);
                         finishJSTest();
+                    }
                     else
                         tests[currentTest]();
                     break;

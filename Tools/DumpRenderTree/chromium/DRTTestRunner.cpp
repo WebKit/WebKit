@@ -1392,12 +1392,13 @@ void DRTTestRunner::setIsolatedWorldSecurityOrigin(const CppArgumentList& argume
 {
     result->setNull();
 
-    if (arguments.size() != 2 || !arguments[0].isNumber() || !arguments[1].isString())
+    if (arguments.size() != 2 || !arguments[0].isNumber() || !(arguments[1].isString() || arguments[1].isNull()))
         return;
 
-    m_shell->webView()->focusedFrame()->setIsolatedWorldSecurityOrigin(
-        arguments[0].toInt32(),
-        WebSecurityOrigin::createFromString(cppVariantToWebString(arguments[1])));
+    WebSecurityOrigin origin;
+    if (arguments[1].isString())
+        origin = WebSecurityOrigin::createFromString(cppVariantToWebString(arguments[1]));
+    m_shell->webView()->focusedFrame()->setIsolatedWorldSecurityOrigin(arguments[0].toInt32(), origin);
 }
 
 void DRTTestRunner::setAllowUniversalAccessFromFileURLs(const CppArgumentList& arguments, CppVariant* result)

@@ -32,6 +32,7 @@
 #define DOMWrapperWorld_h
 
 #include "DOMDataStore.h"
+#include "SecurityOrigin.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -45,14 +46,22 @@ public:
     static const int mainWorldExtensionGroup = 0;
     static const int uninitializedWorldId = -1;
     static const int uninitializedExtensionGroup = -1;
-    // If 0 is passed as worldId, the world will be assigned a temporary id instead.
+    // If uninitializedWorldId is passed as worldId, the world will be assigned a temporary id instead.
     static PassRefPtr<DOMWrapperWorld> ensureIsolatedWorld(int worldId, int extensionGroup);
     static bool isolatedWorldsExist() { return isolatedWorldCount; }
+    static bool isIsolatedWorldId(int worldId) { return worldId != mainWorldId && worldId != uninitializedWorldId; }
+    // Associates an isolated world (see above for description) with a security
+    // origin. XMLHttpRequest instances used in that world will be considered
+    // to come from that origin, not the frame's.
+    static void setIsolatedWorldSecurityOrigin(int worldID, PassRefPtr<SecurityOrigin>);
+    static void clearIsolatedWorldSecurityOrigin(int worldID);
+    SecurityOrigin* isolatedWorldSecurityOrigin();
     // FIXME: this is a workaround for a problem in WebViewImpl.
     // Do not use this anywhere else!!
     static PassRefPtr<DOMWrapperWorld> createUninitializedWorld();
 
     bool isMainWorld() { return m_worldId == mainWorldId; }
+    bool isIsolatedWorld() { return isIsolatedWorldId(m_worldId); }
     int worldId() const { return m_worldId; }
     int extensionGroup() const { return m_extensionGroup; }
     DOMDataStore* domDataStore() const

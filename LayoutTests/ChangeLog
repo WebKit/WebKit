@@ -1,3 +1,14 @@
+2012-10-17  Dan Carney  <dcarney@google.com>
+
+        Bind isolatedWorldSecurityOrigin to world
+        https://bugs.webkit.org/show_bug.cgi?id=99582
+
+        Reviewed by Adam Barth.
+
+        Clean up of isolated worlds added after test completion.
+
+        * http/tests/security/isolatedWorld/cross-origin-xhr.html:
+
 2012-10-17  Simon Fraser  <simon.fraser@apple.com>
 
         GraphicsLayer visible rect computation needs to use the current animating transform

@@ -1,3 +1,40 @@
+2012-10-17  Dan Carney  <dcarney@google.com>
+
+        Bind isolatedWorldSecurityOrigin to world
+        https://bugs.webkit.org/show_bug.cgi?id=99582
+
+        Reviewed by Adam Barth.
+
+        Security origin of isolated worlds was not previously set at the world
+        level, although it could have been. 
+
+        No new tests. No change in functionality.
+
+        * bindings/v8/DOMWrapperWorld.cpp:
+        (WebCore::DOMWrapperWorld::deallocate):
+        (WebCore):
+        (WebCore::isolatedWorldSecurityOrigins):
+        (WebCore::DOMWrapperWorld::isolatedWorldSecurityOrigin):
+        (WebCore::DOMWrapperWorld::setIsolatedWorldSecurityOrigin):
+        (WebCore::DOMWrapperWorld::clearIsolatedWorldSecurityOrigin):
+        * bindings/v8/DOMWrapperWorld.h:
+        (DOMWrapperWorld):
+        (WebCore::DOMWrapperWorld::isIsolatedWorldId):
+        (WebCore::DOMWrapperWorld::isIsolatedWorld):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::resetIsolatedWorlds):
+        (WebCore::ScriptController::evaluateInIsolatedWorld):
+        (WebCore::ScriptController::collectIsolatedContexts):
+        * bindings/v8/ScriptController.h:
+        (ScriptController):
+        (WebCore::ScriptController::setIsolatedWorldSecurityOrigin):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::initializeIfNeeded):
+        * bindings/v8/V8DOMWindowShell.h:
+        (V8DOMWindowShell):
+        * bindings/v8/custom/V8XMLHttpRequestConstructor.cpp:
+        (WebCore::V8XMLHttpRequest::constructorCallback):
+
 2012-10-17  Simon Fraser  <simon.fraser@apple.com>
 
         GraphicsLayer visible rect computation needs to use the current animating transform

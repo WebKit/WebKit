@@ -381,6 +381,12 @@ bool V8DOMWindowShell::initializeIfNeeded()
         //        document domain
         //        changes.
         m_context->UseDefaultSecurityToken();
+
+        SecurityOrigin* origin = m_world->isolatedWorldSecurityOrigin();
+        if (origin && InspectorInstrumentation::hasFrontends()) {
+            ScriptState* scriptState = ScriptState::forContext(v8::Local<v8::Context>::New(m_context.get()));
+            InspectorInstrumentation::didCreateIsolatedContext(m_frame, scriptState, origin);
+        }
     }
     m_frame->loader()->client()->didCreateScriptContext(m_context.get(), m_world->extensionGroup(), m_world->worldId());
 
@@ -609,18 +615,6 @@ void V8DOMWindowShell::updateSecurityOrigin()
         return;
     v8::HandleScope handleScope;
     setSecurityToken();
-}
-
-void V8DOMWindowShell::setIsolatedWorldSecurityOrigin(PassRefPtr<SecurityOrigin> securityOrigin)
-{
-    ASSERT(!m_world->isMainWorld());
-    // FIXME: Should this be here?
-    if (!m_isolatedWorldShellSecurityOrigin && !context().IsEmpty() && InspectorInstrumentation::runtimeAgentEnabled(m_frame)) {
-        v8::HandleScope handleScope;
-        ScriptState* scriptState = ScriptState::forContext(v8::Local<v8::Context>::New(context()));
-        InspectorInstrumentation::didCreateIsolatedContext(m_frame, scriptState, securityOrigin.get());
-    }
-    m_isolatedWorldShellSecurityOrigin = securityOrigin;
 }
 
 } // WebCore

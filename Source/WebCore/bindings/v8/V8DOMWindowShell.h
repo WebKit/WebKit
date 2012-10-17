@@ -83,13 +83,6 @@ public:
 
     DOMWrapperWorld* world() { return m_world.get(); }
 
-    void setIsolatedWorldSecurityOrigin(PassRefPtr<SecurityOrigin>);
-    SecurityOrigin* isolatedWorldSecurityOrigin() const
-    {
-        ASSERT(!m_world->isMainWorld());
-        return m_isolatedWorldShellSecurityOrigin.get();
-    };
-
     // Returns the isolated world associated with
     // v8::Context::GetEntered(). Because worlds are isolated, the entire
     // JavaScript call stack should be from the same isolated world.
@@ -136,9 +129,6 @@ private:
     ScopedPersistent<v8::Context> m_context;
     ScopedPersistent<v8::Object> m_global;
     ScopedPersistent<v8::Object> m_document;
-
-    // FIXME: Either remove this or the map in ScriptController.
-    RefPtr<SecurityOrigin> m_isolatedWorldShellSecurityOrigin;
 };
 
 } // namespace WebCore

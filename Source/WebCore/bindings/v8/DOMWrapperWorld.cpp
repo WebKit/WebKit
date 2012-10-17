@@ -112,4 +112,35 @@ PassRefPtr<DOMWrapperWorld> DOMWrapperWorld::ensureIsolatedWorld(int worldId, in
     return world.release();
 }
 
+typedef HashMap<int, RefPtr<SecurityOrigin> > IsolatedWorldSecurityOriginMap;
+static IsolatedWorldSecurityOriginMap& isolatedWorldSecurityOrigins()
+{
+    ASSERT(isMainThread());
+    DEFINE_STATIC_LOCAL(IsolatedWorldSecurityOriginMap, map, ());
+    return map;
+}
+
+SecurityOrigin* DOMWrapperWorld::isolatedWorldSecurityOrigin()
+{
+    ASSERT(this->isIsolatedWorld());
+    IsolatedWorldSecurityOriginMap& origins = isolatedWorldSecurityOrigins();
+    IsolatedWorldSecurityOriginMap::iterator it = origins.find(worldId());
+    return it == origins.end() ? 0 : it->value.get();
+}
+
+void DOMWrapperWorld::setIsolatedWorldSecurityOrigin(int worldID, PassRefPtr<SecurityOrigin> securityOrigin)
+{
+    ASSERT(DOMWrapperWorld::isIsolatedWorldId(worldID));
+    if (securityOrigin)
+        isolatedWorldSecurityOrigins().set(worldID, securityOrigin);
+    else
+        isolatedWorldSecurityOrigins().remove(worldID);
+}
+
+void DOMWrapperWorld::clearIsolatedWorldSecurityOrigin(int worldID)
+{
+    ASSERT(DOMWrapperWorld::isIsolatedWorldId(worldID));
+    isolatedWorldSecurityOrigins().remove(worldID);
+}
+
 } // namespace WebCore

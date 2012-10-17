@@ -149,7 +149,6 @@ void ScriptController::resetIsolatedWorlds()
         iter->value->destroyIsolatedShell();
     }
     m_isolatedWorlds.clear();
-    m_isolatedWorldSecurityOrigins.clear();
 }
 
 void ScriptController::clearForClose()
@@ -369,12 +368,6 @@ void ScriptController::evaluateInIsolatedWorld(int worldID, const Vector<ScriptS
         v8::HandleScope evaluateHandleScope;
         V8DOMWindowShell* isolatedWorldShell = ensureIsolatedWorldContext(worldID, extensionGroup);
 
-        if (worldID != DOMWrapperWorld::uninitializedWorldId) {
-            IsolatedWorldSecurityOriginMap::iterator securityOriginIter = m_isolatedWorldSecurityOrigins.find(worldID);
-            if (securityOriginIter != m_isolatedWorldSecurityOrigins.end())
-                isolatedWorldShell->setIsolatedWorldSecurityOrigin(securityOriginIter->value);
-        }
-
         isolatedWorldShell->initializeIfNeeded();
         if (isolatedWorldShell->context().IsEmpty())
             return;
@@ -404,15 +397,6 @@ void ScriptController::evaluateInIsolatedWorld(int worldID, const Vector<ScriptS
         for (size_t i = 0; i < v8Results->Length(); ++i)
             results->append(ScriptValue(v8Results->Get(i)));
     }
-}
-
-void ScriptController::setIsolatedWorldSecurityOrigin(int worldID, PassRefPtr<SecurityOrigin> securityOrigin)
-{
-    ASSERT(worldID);
-    m_isolatedWorldSecurityOrigins.set(worldID, securityOrigin);
-    IsolatedWorldMap::iterator iter = m_isolatedWorlds.find(worldID);
-    if (iter != m_isolatedWorlds.end())
-        iter->value->setIsolatedWorldSecurityOrigin(securityOrigin);
 }
 
 TextPosition ScriptController::eventHandlerPosition() const
@@ -667,13 +651,14 @@ void ScriptController::collectIsolatedContexts(Vector<std::pair<ScriptState*, Se
     v8::HandleScope handleScope;
     for (IsolatedWorldMap::iterator it = m_isolatedWorlds.begin(); it != m_isolatedWorlds.end(); ++it) {
         V8DOMWindowShell* isolatedWorldShell = it->value;
-        if (!isolatedWorldShell->isolatedWorldSecurityOrigin())
+        SecurityOrigin* origin = isolatedWorldShell->world()->isolatedWorldSecurityOrigin();
+        if (!origin)
             continue;
         v8::Handle<v8::Context> v8Context = isolatedWorldShell->context();
         if (v8Context.IsEmpty())
             continue;
         ScriptState* scriptState = ScriptState::forContext(v8::Local<v8::Context>::New(v8Context));
-        result.append(std::pair<ScriptState*, SecurityOrigin*>(scriptState, isolatedWorldShell->isolatedWorldSecurityOrigin()));
+        result.append(std::pair<ScriptState*, SecurityOrigin*>(scriptState, origin));
     }
 }
 #endif
