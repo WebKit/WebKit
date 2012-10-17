@@ -32,7 +32,9 @@
 
 namespace WebCore {
 
-class StyleImage;
+class Document;
+class RenderObject;
+class RenderStyle;
 
 class ContentData {
     WTF_MAKE_FAST_ALLOCATED;
@@ -48,6 +50,8 @@ public:
     virtual bool isImage() const { return false; }
     virtual bool isQuote() const { return false; }
     virtual bool isText() const { return false; }
+
+    virtual RenderObject* createRenderer(Document*, RenderStyle*) const = 0;
 
     virtual StyleContentType type() const = 0;
     virtual PassOwnPtr<ContentData> clone() const;
@@ -69,6 +73,8 @@ public:
     const StyleImage* image() const { return m_image.get(); }
     StyleImage* image() { return m_image.get(); }
     void setImage(PassRefPtr<StyleImage> image) { m_image = image; }
+
+    virtual RenderObject* createRenderer(Document*, RenderStyle*) const OVERRIDE;
 
     virtual bool equals(const ContentData& data) const OVERRIDE
     {
@@ -100,6 +106,8 @@ public:
     const String& text() const { return m_text; }
     void setText(const String& text) { m_text = text; }
 
+    virtual RenderObject* createRenderer(Document*, RenderStyle*) const OVERRIDE;
+
     virtual bool equals(const ContentData& data) const OVERRIDE
     {
         if (!data.isText())
@@ -125,6 +133,8 @@ class CounterContentData : public ContentData {
 public:
     const CounterContent* counter() const { return m_counter.get(); }
     void setCounter(PassOwnPtr<CounterContent> counter) { m_counter = counter; }
+
+    virtual RenderObject* createRenderer(Document*, RenderStyle*) const OVERRIDE;
 
 private:
     CounterContentData(PassOwnPtr<CounterContent> counter)
@@ -155,6 +165,8 @@ class QuoteContentData : public ContentData {
 public:
     QuoteType quote() const { return m_quote; }
     void setQuote(QuoteType quote) { m_quote = quote; }
+
+    virtual RenderObject* createRenderer(Document*, RenderStyle*) const OVERRIDE;
 
     virtual bool equals(const ContentData& data) const OVERRIDE
     {

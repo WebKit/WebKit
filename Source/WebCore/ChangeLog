@@ -1,3 +1,41 @@
+2012-10-17  Elliott Sprehn  <esprehn@chromium.org>
+
+        Use virtual dispatch to create ContentData renderers
+        https://bugs.webkit.org/show_bug.cgi?id=99646
+
+        Reviewed by Eric Seidel.
+
+        ContentData are conceptually very similar to Nodes and we can use
+        the same createRenderer pattern on them to simplify creating
+        renderers for generated content. Now each ContentData class knows
+        how to create its own renderer.
+
+        Previously we switched over the StyleContentType which required a
+        case for CONTENT_NONE and made the code look like it could return
+        null, but this case is actually impossible because no ContentData
+        class ever has a type of CONTENT_NONE and no null checks are really
+        needed.
+
+        This is the final step in removing dependence on StyleContentType.
+
+        No new tests needed, this is just a refactor.
+
+        * rendering/RenderObjectChildList.cpp: Remove createRendererForBeforeAfterContent.
+        (WebCore::RenderObjectChildList::updateBeforeAfterContent):
+        * rendering/style/ContentData.cpp:
+        (WebCore::ImageContentData::createRenderer):
+        (WebCore):
+        (WebCore::TextContentData::createRenderer):
+        (WebCore::CounterContentData::createRenderer):
+        (WebCore::QuoteContentData::createRenderer):
+        * rendering/style/ContentData.h: Added a new virtual method createRenderer.
+        (WebCore):
+        (ContentData):
+        (ImageContentData):
+        (TextContentData):
+        (CounterContentData):
+        (QuoteContentData):
+
 2012-10-17  Julien Chaffraix  <jchaffraix@webkit.org>
 
         RenderLayer subtrees without any self-painting layer shouldn't be walked during hit testing

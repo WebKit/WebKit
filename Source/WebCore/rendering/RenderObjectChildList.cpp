@@ -31,16 +31,11 @@
 #include "ContentData.h"
 #include "RenderBlock.h"
 #include "RenderCounter.h"
-#include "RenderImage.h"
-#include "RenderImageResourceStyleImage.h"
-#include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderListItem.h"
 #include "RenderNamedFlowThread.h"
-#include "RenderQuote.h"
 #include "RenderRegion.h"
 #include "RenderStyle.h"
-#include "RenderTextFragment.h"
 #include "RenderView.h"
 
 namespace WebCore {
@@ -305,40 +300,6 @@ void RenderObjectChildList::updateBeforeAfterStyle(RenderObject* child, PseudoId
     }
 }
 
-static RenderObject* createRendererForBeforeAfterContent(RenderObject* owner, const ContentData* content, RenderStyle* pseudoElementStyle)
-{
-    RenderObject* renderer = 0;
-    switch (content->type()) {
-    case CONTENT_NONE:
-        break;
-    case CONTENT_TEXT:
-        renderer = new (owner->renderArena()) RenderTextFragment(owner->document() /* anonymous object */, static_cast<const TextContentData*>(content)->text().impl());
-        renderer->setStyle(pseudoElementStyle);
-        break;
-    case CONTENT_OBJECT: {
-        RenderImage* image = new (owner->renderArena()) RenderImage(owner->document()); // anonymous object
-        RefPtr<RenderStyle> style = RenderStyle::create();
-        style->inheritFrom(pseudoElementStyle);
-        image->setStyle(style.release());
-        if (const StyleImage* styleImage = static_cast<const ImageContentData*>(content)->image())
-            image->setImageResource(RenderImageResourceStyleImage::create(const_cast<StyleImage*>(styleImage)));
-        else
-            image->setImageResource(RenderImageResource::create());
-        renderer = image;
-        break;
-    }
-    case CONTENT_COUNTER:
-        renderer = new (owner->renderArena()) RenderCounter(owner->document(), *static_cast<const CounterContentData*>(content)->counter());
-        renderer->setStyle(pseudoElementStyle);
-        break;
-    case CONTENT_QUOTE:
-        renderer = new (owner->renderArena()) RenderQuote(owner->document(), static_cast<const QuoteContentData*>(content)->quote());
-        renderer->setStyle(pseudoElementStyle);
-        break;
-    }
-    return renderer;
-}
-
 static RenderObject* ensureBeforeAfterContainer(RenderObject* owner, PseudoId type, RenderStyle* pseudoElementStyle, Node* generatingNode, RenderObject* insertBefore)
 {
     // Make a generated box that might be any display type now that we are able to drill down into children
@@ -465,21 +426,19 @@ void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, Pseudo
     else {
         // Walk our list of generated content and create render objects for each.
         for (const ContentData* content = pseudoElementStyle->contentData(); content; content = content->next()) {
-            RenderObject* renderer = createRendererForBeforeAfterContent(owner, content, pseudoElementStyle);
+            RenderObject* renderer = content->createRenderer(owner->document(), pseudoElementStyle);
 
-            if (renderer) {
+            if (!generatedContentContainer) {
+                generatedContentContainer = ensureBeforeAfterContainer(owner, type, pseudoElementStyle, styledObject->node(), insertBefore);
                 if (!generatedContentContainer) {
-                    generatedContentContainer = ensureBeforeAfterContainer(owner, type, pseudoElementStyle, styledObject->node(), insertBefore);
-                    if (!generatedContentContainer) {
-                        renderer->destroy();
-                        return;
-                    }
-                }
-                if (generatedContentContainer->isChildAllowed(renderer, pseudoElementStyle))
-                    generatedContentContainer->addChild(renderer);
-                else
                     renderer->destroy();
+                    return;
+                }
             }
+            if (generatedContentContainer->isChildAllowed(renderer, pseudoElementStyle))
+                generatedContentContainer->addChild(renderer);
+            else
+                renderer->destroy();
         }
     }
 
