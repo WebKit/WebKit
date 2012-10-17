@@ -1,3 +1,17 @@
+2012-10-16  Keishi Hattori  <keishi@webkit.org>
+
+        Add test that checks if scrolling works inside the suggestion picker
+        https://bugs.webkit.org/show_bug.cgi?id=99409
+
+        Reviewed by Kent Tamura.
+
+        We want to test that scrolling, both by scrollbar and mouse wheel, work inside the suggestion picker.
+
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-mouse-operations-expected.txt:
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-mouse-operations.html:
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-mouse-operations-expected.txt:
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-mouse-operations.html:
+
 2012-10-16  Kent Tamura  <tkent@chromium.org>
 
         Re-add a test which was removed mistakenly in r131538.

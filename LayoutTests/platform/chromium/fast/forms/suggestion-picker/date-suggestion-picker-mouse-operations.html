@@ -3,6 +3,7 @@
 <head>
 <script src="../../../../../fast/js/resources/js-test-pre.js"></script>
 <script src="../../../../../fast/forms/resources/common.js"></script>
+<script src="../../../../../fast/forms/resources/common-wheel-event.js"></script>
 <script src="suggestion-picker-common.js"></script>
 </head>
 <body style="background-color: #bbbbbb;">
@@ -83,11 +84,14 @@
 </datalist>
 <script>
 debug('Check that page popup doesn\'t exist at first.');
-shouldBeNull('document.getElementById("mock-page-popup")');
+shouldBeNull('$("mock-page-popup")');
 
-openPicker($('date'));
+window.onload = function() {
+    openPicker($('date'), test1);
+};
 
-popupWindow.addEventListener("resize", function() {
+
+function test1() {
     debug('Check that page popup exists.');
     shouldBe('popupWindow.pagePopupController.toString()', '"[object PagePopupController]"');
 
@@ -101,11 +105,55 @@ popupWindow.addEventListener("resize", function() {
 
     debug('Check that mouse click closes the popup and sets the value.');
     clickElement(popupWindow.document.querySelector(".suggestion-list-entry:nth-child(3)"));
-    shouldBeNull('document.getElementById("mock-page-popup")');
+    shouldBeNull('$("mock-page-popup")');
     shouldBe('document.getElementById("date").value', '"2012-01-03"');
 
+    openPicker($('date'), test2);
+}
+
+var scrollTopBeforeWheelEvent = 0;
+var scrollTopAfterWheelEvent = 0;
+
+function test2() {
+    var suggestionList = popupWindow.document.getElementsByClassName("suggestion-list")[0];
+
+    debug('Check that you can scroll using the mouse wheel.');
+
+    scrollTopBeforeWheelEvent = suggestionList.scrollTop;
+    dispatchWheelEvent(suggestionList, 0, -100);
+    scrollTopAfterWheelEvent = suggestionList.scrollTop;
+    shouldBeTrue('scrollTopBeforeWheelEvent < scrollTopAfterWheelEvent');
+
+    scrollTopBeforeWheelEvent = suggestionList.scrollTop;
+    dispatchWheelEvent(suggestionList, 0, 100);
+    scrollTopAfterWheelEvent = suggestionList.scrollTop;
+    shouldBeTrue('scrollTopBeforeWheelEvent > scrollTopAfterWheelEvent');
+
+    popupWindow.focus();
+    eventSender.keyDown('\x1B');
+    shouldBeNull('$("mock-page-popup")');
+
+    openPicker($('date'), test3);
+}
+
+function test3() {
+    debug('Check that you can scroll using the scroll bar.');
+
+    var suggestionList = popupWindow.document.getElementsByClassName("suggestion-list")[0];
+    var suggestionListOffset = cumulativeOffset(suggestionList);
+    var scrollbarCenterX = suggestionListOffset[0] + suggestionList.offsetWidth - popupWindow.getScrollbarWidth() / 2;
+
+    scrollTopBeforeWheelEvent = suggestionList.scrollTop;
+    eventSender.mouseMoveTo(scrollbarCenterX, suggestionListOffset[1] + 20); // 20 is the height of the up arrow button plus a few pixels
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(scrollbarCenterX, suggestionListOffset[1] + suggestionList.offsetHeight);
+    eventSender.mouseUp();
+    scrollTopAfterWheelEvent = suggestionList.scrollTop;
+    shouldBeTrue('scrollTopBeforeWheelEvent < scrollTopAfterWheelEvent');
+
     finishJSTest();
-}, false);
+}
+
 </script>
 <script src="../../../../../fast/js/resources/js-test-post.js"></script>
 </body>
