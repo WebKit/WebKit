@@ -110,7 +110,6 @@ struct GetFaviconSurfaceAsyncData {
     GRefPtr<WebKitFaviconDatabase> faviconDatabase;
     String pageURL;
     RefPtr<cairo_surface_t> icon;
-    GOwnPtr<GError> error;
     GRefPtr<GCancellable> cancellable;
 };
 WEBKIT_DEFINE_ASYNC_DATA_STRUCT(GetFaviconSurfaceAsyncData)
@@ -160,7 +159,7 @@ static void processPendingIconsForPageURL(WebKitFaviconDatabase* database, const
         GetFaviconSurfaceAsyncData* data = static_cast<GetFaviconSurfaceAsyncData*>(g_simple_async_result_get_op_res_gpointer(result));
         if (!g_cancellable_is_cancelled(data->cancellable.get())) {
             if (error)
-                g_propagate_error(&data->error.outPtr(), error.release());
+                g_simple_async_result_take_error(result, error.release());
             else
                 data->icon = icon;
         }
@@ -345,11 +344,6 @@ cairo_surface_t* webkit_favicon_database_get_favicon_finish(WebKitFaviconDatabas
 
     GetFaviconSurfaceAsyncData* data = static_cast<GetFaviconSurfaceAsyncData*>(g_simple_async_result_get_op_res_gpointer(simpleResult));
     ASSERT(data);
-    if (data->error) {
-        g_propagate_error(error, data->error.release());
-        return 0;
-    }
-
     return cairo_surface_reference(data->icon.get());
 }
 

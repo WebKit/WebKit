@@ -1,3 +1,19 @@
+2012-10-17  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [WK2][GTK] Unneeded GError field in internal structure in WebKitFaviconDatabase.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=99564
+
+        Reviewed by Carlos Garcia Campos.
+
+        Removed field 'error' from GetFaviconSurfaceAsyncData and updated
+        the code accordingly, by using g_simple_async_result_take_error().
+
+        * UIProcess/API/gtk/WebKitFaviconDatabase.cpp:
+        (GetFaviconSurfaceAsyncData): Removed unneeded field.
+        (processPendingIconsForPageURL): Avoid using g_propagate_error and
+        use g_simple_async_result_take_error directly instead.
+        (webkit_favicon_database_get_favicon_finish): Remove unneeded code.
+
 2012-10-17  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Start using OwnPtr for non-ref counted ewk types
