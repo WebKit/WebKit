@@ -1,3 +1,18 @@
+2012-10-17  MORITA Hajime  <morrita@google.com>
+
+        Crash on Frame::inScope() part 2
+        https://bugs.webkit.org/show_bug.cgi?id=99543
+
+        Reviewed by Kent Tamura.
+
+        FrameTree::scopedChildCount() can be called even when the one of child frames
+        is in orphan state. This change added a guard for that case.
+
+        No new tests. A hard-to-test timing issue.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::inScope):
+
 2012-10-17  Shinya Kawanaka  <shinyak@chromium.org>
 
         Remove shadowAncestorNode() from VisibleSelection

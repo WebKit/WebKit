@@ -236,9 +236,12 @@ Frame::~Frame()
 bool Frame::inScope(TreeScope* scope) const
 {
     ASSERT(scope);
-    HTMLFrameOwnerElement* owner = document()->ownerElement();
-    // Scoping test should be done only for child frames.
-    ASSERT(owner);
+    Document* doc = document();
+    if (!doc)
+        return false;
+    HTMLFrameOwnerElement* owner = doc->ownerElement();
+    if (!owner)
+        return false;
     return owner->treeScope() == scope;
 }
 
