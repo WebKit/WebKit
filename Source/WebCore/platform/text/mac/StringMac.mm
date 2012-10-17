@@ -34,9 +34,17 @@ String::String(NSString* str)
     if (size == 0)
         m_impl = StringImpl::empty();
     else {
-        Vector<UChar, 1024> buffer(size);
-        CFStringGetCharacters(reinterpret_cast<CFStringRef>(str), CFRangeMake(0, size), buffer.data());
-        m_impl = StringImpl::create(buffer.data(), size);
+        Vector<LChar, 1024> lcharBuffer(size);
+        CFIndex usedBufLen;
+        CFIndex convertedsize = CFStringGetBytes(reinterpret_cast<CFStringRef>(str), CFRangeMake(0, size), kCFStringEncodingISOLatin1, 0, false, lcharBuffer.data(), size, &usedBufLen);
+        if ((convertedsize == size) && (usedBufLen == size)) {
+            m_impl = StringImpl::create(lcharBuffer.data(), size);
+            return;
+        }
+
+        Vector<UChar, 1024> ucharBuffer(size);
+        CFStringGetCharacters(reinterpret_cast<CFStringRef>(str), CFRangeMake(0, size), ucharBuffer.data());
+        m_impl = StringImpl::create(ucharBuffer.data(), size);
     }
 }
 

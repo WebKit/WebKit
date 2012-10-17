@@ -1,5 +1,17 @@
 2012-10-17  Michael Saboff  <msaboff@apple.com>
 
+        Creating a String from an NSString should check for all 8 bit strings
+        https://bugs.webkit.org/show_bug.cgi?id=99392
+
+        Reviewed by Geoffrey Garen.
+
+        Exported the LChar* version of create().
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::create):
+
+2012-10-17  Michael Saboff  <msaboff@apple.com>
+
         StringImpl::findIgnoringCase() and reverseFindIgnoringCase() don't optimally handle a mix of 8 and 16 bit strings
         https://bugs.webkit.org/show_bug.cgi?id=99224
 
