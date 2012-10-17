@@ -319,7 +319,7 @@
         "WatchListScript": [ "levin+watchlist@chromium.org", ],
         "WebGL": [ "dino@apple.com" ],
         "WebIDL": [ "abarth@webkit.org", "ojan@chromium.org" ],
-        "WebInspectorProtocol": [ "timothy@apple.com", ],
+        "WebInspectorProtocol": [ "timothy@apple.com", "pecoraro@apple.com" ],
         "WebKitGTKTranslations": [ "gns@gnome.org", "mrobinson@webkit.org" ],
         "WebSocket": [ "yutak@chromium.org" ],
         "XSS": [ "dbates@webkit.org" ],

@@ -1,3 +1,9 @@
+2012-10-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed watchlist addition.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-10-17  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         plugins: Allow a plugin to dictate whether it can receive drag events or not.
