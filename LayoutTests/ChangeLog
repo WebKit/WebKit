@@ -1,3 +1,13 @@
+2012-10-17  Scott Graham  <scottmg@chromium.org>
+
+        Integer overflows/underflows in all Gamepad controller api calls.
+        https://bugs.webkit.org/show_bug.cgi?id=97262
+
+        Reviewed by Abhishek Arya.
+
+        * gamepad/gamepad-out-of-range-crasher.html: Added.
+        * gamepad/gamepad-out-of-range-crasher-expected.txt: Added.
+
 2012-10-17  Tony Chang  <tony@chromium.org>
 
         Unreviewed, Chromium baselines for shadow DOM changes to RenderSlider.

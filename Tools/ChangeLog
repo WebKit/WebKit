@@ -1,3 +1,19 @@
+2012-10-17  Scott Graham  <scottmg@chromium.org>
+
+        Integer overflows/underflows in all Gamepad controller api calls.
+        https://bugs.webkit.org/show_bug.cgi?id=97262
+
+        Reviewed by Abhishek Arya.
+
+        Range check controller inputs. This code is not exposed to the web,
+        but makes fuzzers try less hard to break uninteresting code.
+
+        * DumpRenderTree/chromium/TestRunner/GamepadController.cpp:
+        (GamepadController::setButtonCount):
+        (GamepadController::setButtonData):
+        (GamepadController::setAxisCount):
+        (GamepadController::setAxisData):
+
 2012-10-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed watchlist email change.
