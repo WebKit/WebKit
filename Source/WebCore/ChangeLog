@@ -1,3 +1,17 @@
+2012-10-17  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Avoid re-creating CSSGrammar.cpp with each (incremental) build
+
+        Reviewed by Tor Arne Vestbø.
+
+        The expected output is CSSGrammar.cpp and the input file used to be CSSGrammar.y,
+        so ${QMAKE_FILE_BASE}.cpp did the correct transformation. Recently the input has
+        changed to CSSGrammar.y.in, in which case the ${QMAKE_FILE_BASE} is CSSGrammar.y
+        unfortunately. The resulting target CSSGrammar.y.cpp will never be created and
+        therefore the target will always run.
+
+        * DerivedSources.pri:
+
 2012-10-17  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed fix for ImageSourceCG.

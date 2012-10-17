@@ -801,7 +801,7 @@ InjectedScriptCanvasModuleSource.add_output_to_sources = false
 GENERATORS += InjectedScriptCanvasModuleSource
 
 # GENERATOR 4: CSS grammar
-cssbison.output = ${QMAKE_FILE_BASE}.cpp
+cssbison.output = CSSGrammar.cpp
 cssbison.input = CSSBISON
 cssbison.script = $$PWD/css/makegrammar.pl
 cssbison.commands = perl -I $$PWD/bindings/scripts $$cssbison.script --outputDir ${QMAKE_FUNC_FILE_OUT_PATH} --extraDefines \"$${DEFINES} $$configDefines()\" --preprocessor \"$${QMAKE_MOC} -E\" --symbolsPrefix cssyy ${QMAKE_FILE_NAME}
