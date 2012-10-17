@@ -1,3 +1,26 @@
+2012-10-17  Tom Sepez  <tsepez@chromium.org>
+
+        Crash in ContainerNode::removeAllChildren()
+        https://bugs.webkit.org/show_bug.cgi?id=98443
+
+        Reviewed by Eric Carlson.
+
+        This patch makes the errorEventSender added in WebKit Revision 112190 interact
+        with the updatedHasPendingLoadEvent() mechanism in the same manner as the other
+        existing event senders.
+
+        Test: http/tests/security/video-poster-cross-origin-crash2.html
+
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::setImage):
+        (WebCore::ImageLoader::updateFromElement):
+        (WebCore::ImageLoader::notifyFinished):
+        (WebCore::ImageLoader::updatedHasPendingEvent):
+        (WebCore::ImageLoader::dispatchPendingBeforeLoadEvent):
+        (WebCore::ImageLoader::dispatchPendingLoadEvent):
+        * loader/ImageLoader.h:
+        (ImageLoader):
+
 2012-10-17  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Closing connection in upgradeneeded should result in error event
