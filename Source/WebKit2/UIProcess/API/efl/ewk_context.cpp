@@ -30,6 +30,7 @@
 #include "WKRetainPtr.h"
 #include "WKString.h"
 #include "WebContext.h"
+#include "WebIconDatabase.h"
 #include "ewk_context_download_client_private.h"
 #include "ewk_context_history_client_private.h"
 #include "ewk_context_private.h"
@@ -166,12 +167,14 @@ Ewk_Favicon_Database* ewk_context_favicon_database_get(const Ewk_Context* ewkCon
     EINA_SAFETY_ON_NULL_RETURN_VAL(ewkContext, 0);
 
     if (!ewkContext->faviconDatabase) {
-        // Set database path.
-        WebContext* webContext = toImpl(ewkContext->context.get());
-        String databasePath = webContext->iconDatabasePath() + "/" + WebCore::IconDatabase::defaultDatabaseFilename();
-        webContext->setIconDatabasePath(databasePath);
-
-        const_cast<Ewk_Context*>(ewkContext)->faviconDatabase = Ewk_Favicon_Database::create(WKContextGetIconDatabase(ewkContext->context.get()));
+        WKRetainPtr<WKIconDatabaseRef> iconDatabase = WKContextGetIconDatabase(ewkContext->context.get());
+        // Set the database path if it is not open yet.
+        if (!toImpl(iconDatabase.get())->isOpen()) {
+            WebContext* webContext = toImpl(ewkContext->context.get());
+            String databasePath = webContext->iconDatabasePath() + "/" + WebCore::IconDatabase::defaultDatabaseFilename();
+            webContext->setIconDatabasePath(databasePath);
+        }
+        const_cast<Ewk_Context*>(ewkContext)->faviconDatabase = Ewk_Favicon_Database::create(iconDatabase.get());
     }
 
     return ewkContext->faviconDatabase.get();

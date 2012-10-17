@@ -1,3 +1,17 @@
+2012-10-17  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Make sure the favicon database path is set only once
+        https://bugs.webkit.org/show_bug.cgi?id=99597
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make sure the icon database path is set only once by checking
+        that the database is not already open before settign the path.
+        This avoids printing error message on stderr.
+
+        * UIProcess/API/efl/ewk_context.cpp:
+        (ewk_context_favicon_database_get):
+
 2012-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Don't use the C API internally in WebKitWebInspector
