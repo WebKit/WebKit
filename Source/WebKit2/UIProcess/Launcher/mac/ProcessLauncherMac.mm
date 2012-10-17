@@ -367,7 +367,7 @@ static void createProcess(const ProcessLauncher::LaunchOptions& launchOptions, b
 
     NSBundle *webKit2Bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit2"];
 
-    NSString *processPath;
+    NSString *processPath = nil;
     switch(launchOptions.processType) {
     case ProcessLauncher::WebProcess:
         processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"WebProcess.app"];

@@ -1,3 +1,15 @@
+2012-10-16  Dongwoo Joshua Im  <dw.im@samsung.com>
+
+        [mac] Fix build break - processPath should be initialized.
+        https://bugs.webkit.org/show_bug.cgi?id=99541
+
+        Unreviewed build fix.
+
+        Initialize processPath as nil.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::createProcess):
+
 2012-10-16  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Add factory methods for refcounted Ewk types
