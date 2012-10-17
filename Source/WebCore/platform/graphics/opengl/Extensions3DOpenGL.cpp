@@ -102,6 +102,8 @@ void Extensions3DOpenGL::bindVertexArrayOES(Platform3DObject array)
     m_context->makeContextCurrent();
 #if !PLATFORM(GTK) && !PLATFORM(QT) && !PLATFORM(EFL) && defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
     glBindVertexArrayAPPLE(array);
+#else
+    UNUSED_PARAM(array);
 #endif
 }
 

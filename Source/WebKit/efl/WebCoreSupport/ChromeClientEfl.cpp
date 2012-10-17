@@ -591,7 +591,7 @@ PassRefPtr<SearchPopupMenu> ChromeClientEfl::createSearchPopupMenu(PopupMenuClie
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void ChromeClientEfl::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* rootLayer)
+void ChromeClientEfl::attachRootGraphicsLayer(Frame*, GraphicsLayer*)
 {
     notImplemented();
 }
@@ -649,7 +649,7 @@ void ChromeClientEfl::exitFullScreenForElement(WebCore::Element*)
 #endif
 
 #if USE(TILED_BACKING_STORE)
-void ChromeClientEfl::delegatedScrollRequested(const IntPoint& point)
+void ChromeClientEfl::delegatedScrollRequested(const IntPoint&)
 {
     notImplemented();
 }

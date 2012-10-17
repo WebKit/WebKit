@@ -46,6 +46,11 @@ void BitmapTextureImageBuffer::updateContents(const void* data, const IntRect& t
                                                                                    bytesPerLine));
     m_image->context()->platformContext()->drawSurfaceToContext(surface.get(), targetRect,
                                                                 IntRect(sourceOffset, targetRect.size()), m_image->context());
+#else
+    UNUSED_PARAM(data);
+    UNUSED_PARAM(targetRect);
+    UNUSED_PARAM(sourceOffset);
+    UNUSED_PARAM(bytesPerLine);
 #endif
 }
 

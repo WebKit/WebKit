@@ -345,6 +345,10 @@ void TextureMapperGL::drawRepaintCounter(int value, int pointSize, const FloatPo
     texture->updateContents(bits, sourceRect, IntPoint::zero(), image.bytesPerLine());
     drawTexture(*texture, targetRect, modelViewMatrix, 1.0f, 0, AllEdges);
 #else
+    UNUSED_PARAM(value);
+    UNUSED_PARAM(pointSize);
+    UNUSED_PARAM(targetPoint);
+    UNUSED_PARAM(modelViewMatrix);
     notImplemented();
 #endif
 }

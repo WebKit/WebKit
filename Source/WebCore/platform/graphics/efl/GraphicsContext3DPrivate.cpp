@@ -108,8 +108,6 @@ bool GraphicsContext3DPrivate::createSurface(PageClientEfl* pageClient, bool ren
 {
     // If RenderStyle is RenderOffscreen, we will be rendering to a FBO,
     // so Evas_GL_Surface has a 1x1 dummy surface.
-    int x = 0;
-    int y = 0;
     int width = 1;
     int height = 1;
 
@@ -165,7 +163,7 @@ bool GraphicsContext3DPrivate::makeContextCurrent()
 }
 
 #if USE(TEXTURE_MAPPER_GL)
-void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper*, const FloatRect& target, const TransformationMatrix&, float opacity, BitmapTexture* mask)
+void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper*, const FloatRect& /* target */, const TransformationMatrix&, float /* opacity */, BitmapTexture* /* mask */)
 {
     notImplemented();
 }

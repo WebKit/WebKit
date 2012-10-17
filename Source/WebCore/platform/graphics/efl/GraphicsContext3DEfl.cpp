@@ -229,8 +229,7 @@ void GraphicsContext3D::createGraphicsSurfaces(const IntSize& size)
 }
 #endif
 
-bool GraphicsContext3D::getImageData(Image* image, GC3Denum format, GC3Denum type, bool premultiplyAlpha,
-                                     bool ignoreGammaAndColorProfile, Vector<uint8_t>& outputVector)
+bool GraphicsContext3D::getImageData(Image*, GC3Denum /* format */, GC3Denum /* type */, bool /* premultiplyAlpha */, bool /* ignoreGammaAndColorProfile */, Vector<uint8_t>& /* outputVector */)
 {
     notImplemented();
     return false;

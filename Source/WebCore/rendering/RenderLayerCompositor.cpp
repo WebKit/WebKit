@@ -1397,6 +1397,8 @@ bool RenderLayerCompositor::allowsIndependentlyCompositedFrames(const FrameView*
 #if PLATFORM(MAC)
     // frames are only independently composited in Mac pre-WebKit2.
     return view->platformWidget();
+#else
+    UNUSED_PARAM(view);
 #endif
     return false;
 }

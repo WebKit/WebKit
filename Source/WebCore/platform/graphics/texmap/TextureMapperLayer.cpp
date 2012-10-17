@@ -183,7 +183,7 @@ int TextureMapperLayer::compareGraphicsLayersZValue(const void* a, const void* b
     return int(((*layerA)->m_centerZ - (*layerB)->m_centerZ) * 1000);
 }
 
-void TextureMapperLayer::sortByZOrder(Vector<TextureMapperLayer* >& array, int first, int last)
+void TextureMapperLayer::sortByZOrder(Vector<TextureMapperLayer* >& array, int /* first */, int /* last */)
 {
     qsort(array.data(), array.size(), sizeof(TextureMapperLayer*), compareGraphicsLayersZValue);
 }
@@ -407,7 +407,7 @@ void TextureMapperLayer::flushCompositingState(GraphicsLayerTextureMapper* graph
     flushCompositingState(graphicsLayer, rootLayer()->m_textureMapper, options);
 }
 
-void TextureMapperLayer::flushCompositingStateSelf(GraphicsLayerTextureMapper* graphicsLayer, TextureMapper* textureMapper)
+void TextureMapperLayer::flushCompositingStateSelf(GraphicsLayerTextureMapper* graphicsLayer, TextureMapper*)
 {
     int changeMask = graphicsLayer->changeMask();
 

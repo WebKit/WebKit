@@ -106,7 +106,7 @@ bool CoordinatedTile::isReadyToPaint() const
     return !!m_ID;
 }
 
-void CoordinatedTile::paint(GraphicsContext* context, const IntRect& rect)
+void CoordinatedTile::paint(GraphicsContext*, const IntRect&)
 {
     ASSERT_NOT_REACHED();
 }

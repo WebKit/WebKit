@@ -104,7 +104,7 @@ static bool shouldShowTileDebugVisuals()
     return false;
 }
 
-void CoordinatedBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
+void CoordinatedBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& /* targetRect */, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
 {
     Vector<TextureMapperTile*> tilesToPaint;
 

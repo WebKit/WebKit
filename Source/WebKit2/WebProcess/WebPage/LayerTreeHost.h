@@ -90,8 +90,8 @@ public:
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return 0; }
 
 #if USE(COORDINATED_GRAPHICS)
-    virtual void setVisibleContentsRect(const WebCore::IntRect&, float scale, const WebCore::FloatPoint&) { }
-    virtual void setVisibleContentsRectForLayer(int layerID, const WebCore::IntRect&) { }
+    virtual void setVisibleContentsRect(const WebCore::IntRect&, float /* scale */, const WebCore::FloatPoint&) { }
+    virtual void setVisibleContentsRectForLayer(int /* layerID */, const WebCore::IntRect&) { }
     virtual void renderNextFrame() { }
     virtual void purgeBackingStores() { }
     virtual void didReceiveLayerTreeCoordinatorMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*) = 0;

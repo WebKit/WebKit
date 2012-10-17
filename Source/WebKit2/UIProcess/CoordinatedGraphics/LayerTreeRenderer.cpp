@@ -95,7 +95,7 @@ LayerTreeRenderer::~LayerTreeRenderer()
 {
 }
 
-PassOwnPtr<GraphicsLayer> LayerTreeRenderer::createLayer(WebLayerID layerID)
+PassOwnPtr<GraphicsLayer> LayerTreeRenderer::createLayer(WebLayerID)
 {
     GraphicsLayer* newLayer = new GraphicsLayerTextureMapper(this);
     TextureMapperLayer* layer = toTextureMapperLayer(newLayer);

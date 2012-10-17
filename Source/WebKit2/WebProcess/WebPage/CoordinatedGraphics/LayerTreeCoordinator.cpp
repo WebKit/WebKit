@@ -171,7 +171,7 @@ void LayerTreeCoordinator::setNonCompositedContentsNeedDisplay(const WebCore::In
     scheduleLayerFlush();
 }
 
-void LayerTreeCoordinator::scrollNonCompositedContents(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset)
+void LayerTreeCoordinator::scrollNonCompositedContents(const WebCore::IntRect& scrollRect, const WebCore::IntSize& /* scrollOffset */)
 {
     setNonCompositedContentsNeedDisplay(scrollRect);
 }
@@ -512,7 +512,7 @@ void LayerTreeCoordinator::releaseImageBackingStore(int64_t key)
 }
 
 
-void LayerTreeCoordinator::notifyAnimationStarted(const WebCore::GraphicsLayer*, double time)
+void LayerTreeCoordinator::notifyAnimationStarted(const WebCore::GraphicsLayer*, double /* time */)
 {
 }
 

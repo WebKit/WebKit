@@ -1,3 +1,40 @@
+2012-10-17  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        Fix build warnings : -Wunused-parameter, -Wunused-variable
+        https://bugs.webkit.org/show_bug.cgi?id=99539
+
+        Reviewed by Kentaro Hara.
+
+        Fix build warnings about unused parameter or unused variable when
+        WTF_USE_TILED_BACKING_STORE option is enabled.
+
+        * UIProcess/CoordinatedGraphics/CoordinatedBackingStore.cpp:
+        (WebKit::CoordinatedBackingStore::paintToTextureMapper):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::createLayer):
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::didReceiveLayerTreeCoordinatorProxyMessage):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::setVisibleContentsRect):
+        (WebKit::DrawingAreaProxy::createTileForLayer):
+        (WebKit::DrawingAreaProxy::updateTileForLayer):
+        (WebKit::DrawingAreaProxy::removeTileForLayer):
+        (WebKit::DrawingAreaProxy::update):
+        (WebKit::DrawingAreaProxy::didUpdateBackingStoreState):
+        (WebKit::DrawingAreaProxy::enterAcceleratedCompositingMode):
+        (WebKit::DrawingAreaProxy::exitAcceleratedCompositingMode):
+        (WebKit::DrawingAreaProxy::updateAcceleratedCompositingMode):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::tiledBackingStorePaintEnd):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedTile.cpp:
+        (WebKit::CoordinatedTile::paint):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::scrollNonCompositedContents):
+        (WebKit::LayerTreeCoordinator::notifyAnimationStarted):
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (WebKit::LayerTreeHost::setVisibleContentsRect):
+        (WebKit::LayerTreeHost::setVisibleContentsRectForLayer):
+
 2012-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Don't use the C API internally in WebKitDownload

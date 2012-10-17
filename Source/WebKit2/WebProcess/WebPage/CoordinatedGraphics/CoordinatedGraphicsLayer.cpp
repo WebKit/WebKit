@@ -621,7 +621,7 @@ void CoordinatedGraphicsLayer::tiledBackingStorePaint(GraphicsContext* context, 
     paintGraphicsLayerContents(*context, rect);
 }
 
-void CoordinatedGraphicsLayer::tiledBackingStorePaintEnd(const Vector<IntRect>& updatedRects)
+void CoordinatedGraphicsLayer::tiledBackingStorePaintEnd(const Vector<IntRect>& /* updatedRects */)
 {
 }
 
