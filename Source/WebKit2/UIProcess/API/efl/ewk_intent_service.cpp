@@ -88,12 +88,3 @@ const char* ewk_intent_service_disposition_get(const Ewk_Intent_Service* service
 
     return service->disposition;
 }
-
-#if ENABLE(WEB_INTENTS_TAG)
-Ewk_Intent_Service* ewk_intent_service_new(WKIntentServiceInfoRef wkService)
-{
-    EINA_SAFETY_ON_NULL_RETURN_VAL(wkService, 0);
-
-    return new Ewk_Intent_Service(wkService);
-}
-#endif

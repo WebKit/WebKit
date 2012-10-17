@@ -44,13 +44,13 @@ static inline Evas_Object* toEwkView(const void* clientInfo)
 
 static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef /*userData*/, const void* clientInfo)
 {
-    RefPtr<Ewk_Navigation_Policy_Decision> decision = adoptRef(ewk_navigation_policy_decision_new(navigationType, mouseButton, modifiers, request, 0, listener));
+    RefPtr<Ewk_Navigation_Policy_Decision> decision = Ewk_Navigation_Policy_Decision::create(navigationType, mouseButton, modifiers, request, 0, listener);
     ewk_view_navigation_policy_decision(toEwkView(clientInfo), decision.get());
 }
 
 static void decidePolicyForNewWindowAction(WKPageRef, WKFrameRef, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKStringRef frameName, WKFramePolicyListenerRef listener, WKTypeRef /*userData*/, const void* clientInfo)
 {
-    RefPtr<Ewk_Navigation_Policy_Decision> decision = adoptRef(ewk_navigation_policy_decision_new(navigationType, mouseButton, modifiers, request, toImpl(frameName)->string().utf8().data(), listener));
+    RefPtr<Ewk_Navigation_Policy_Decision> decision = Ewk_Navigation_Policy_Decision::create(navigationType, mouseButton, modifiers, request, toImpl(frameName)->string().utf8().data(), listener);
     ewk_view_new_window_policy_decision(toEwkView(clientInfo), decision.get());
 }
 

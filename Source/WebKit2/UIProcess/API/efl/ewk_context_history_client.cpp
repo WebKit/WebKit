@@ -55,7 +55,7 @@ static void didNavigateWithNavigationData(WKContextRef, WKPageRef page, WKNaviga
     if (!historyDelegate->navigate_func)
         return;
 
-    RefPtr<Ewk_Navigation_Data> navigationDataEwk = adoptRef(ewk_navigation_data_new(navigationData));
+    RefPtr<Ewk_Navigation_Data> navigationDataEwk = Ewk_Navigation_Data::create(navigationData);
     historyDelegate->navigate_func(ewk_view_from_page_get(toImpl(page)), navigationDataEwk.get(), historyDelegate->user_data);
 }
 

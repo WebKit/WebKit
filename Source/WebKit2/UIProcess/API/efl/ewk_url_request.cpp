@@ -65,14 +65,3 @@ const char* ewk_url_request_http_method_get(const Ewk_Url_Request* request)
 
     return request->httpMethod;
 }
-
-/**
- * @internal
- * Constructs a Ewk_Url_Request from a WKURLRequest.
- */
-Ewk_Url_Request* ewk_url_request_new(WKURLRequestRef wkUrlRequest)
-{
-    EINA_SAFETY_ON_NULL_RETURN_VAL(wkUrlRequest, 0);
-
-    return new Ewk_Url_Request(wkUrlRequest);
-}

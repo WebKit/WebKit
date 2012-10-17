@@ -126,13 +126,3 @@ COMPILE_ASSERT_MATCHING_ENUM(EVENT_MODIFIER_KEY_SHIFT, kWKEventModifiersShiftKey
 COMPILE_ASSERT_MATCHING_ENUM(EVENT_MODIFIER_KEY_CTRL, kWKEventModifiersControlKey);
 COMPILE_ASSERT_MATCHING_ENUM(EVENT_MODIFIER_KEY_ALT, kWKEventModifiersAltKey);
 COMPILE_ASSERT_MATCHING_ENUM(EVENT_MODIFIER_KEY_META, kWKEventModifiersMetaKey);
-
-Ewk_Navigation_Policy_Decision* ewk_navigation_policy_decision_new(WKFrameNavigationType navigationType, WKEventMouseButton mouseButton, WKEventModifiers modifiers, WKURLRequestRef request, const char* frameName, WKFramePolicyListenerRef listener)
-{
-    return new Ewk_Navigation_Policy_Decision(listener,
-                                              static_cast<Ewk_Navigation_Type>(navigationType),
-                                              static_cast<Event_Mouse_Button>(mouseButton),
-                                              static_cast<Event_Modifier_Keys>(modifiers),
-                                              adoptRef(ewk_url_request_new(request)),
-                                              frameName);
-}

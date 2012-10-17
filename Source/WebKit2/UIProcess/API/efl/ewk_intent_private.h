@@ -32,6 +32,7 @@
 #include "WKIntentData.h"
 #include "WKRetainPtr.h"
 #include <WebKit2/WKBase.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 typedef struct _Ewk_Intent Ewk_Intent;
@@ -40,22 +41,26 @@ typedef struct _Ewk_Intent Ewk_Intent;
  * \struct  _Ewk_Intent
  * @brief   Contains the intent data.
  */
-struct _Ewk_Intent : public RefCounted<_Ewk_Intent> {
+class _Ewk_Intent : public RefCounted<_Ewk_Intent> {
+public:
     WKRetainPtr<WKIntentDataRef> wkIntent;
     WKEinaSharedString action;
     WKEinaSharedString type;
     WKEinaSharedString service;
 
-    _Ewk_Intent(WKIntentDataRef intentRef)
+    static PassRefPtr<_Ewk_Intent> create(WKIntentDataRef intentRef)
+    {
+        return adoptRef(new _Ewk_Intent(intentRef));
+    }
+
+private:
+    explicit _Ewk_Intent(WKIntentDataRef intentRef)
         : wkIntent(intentRef)
         , action(AdoptWK, WKIntentDataCopyAction(intentRef))
         , type(AdoptWK, WKIntentDataCopyType(intentRef))
         , service(AdoptWK, WKIntentDataCopyService(intentRef))
     { }
 };
-
-Ewk_Intent* ewk_intent_new(WKIntentDataRef intentData);
-WKIntentDataRef ewk_intent_WKIntentDataRef_get(const Ewk_Intent* intent);
 
 #endif // ENABLE(WEB_INTENTS)
 

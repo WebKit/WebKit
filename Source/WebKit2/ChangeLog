@@ -1,3 +1,89 @@
+2012-10-16  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Add factory methods for refcounted Ewk types
+        https://bugs.webkit.org/show_bug.cgi?id=99479
+
+        Reviewed by Gyuyoung Kim.
+
+        Add factory methods to refcounted Ewk types that return
+        a PassRefPtr for refcounted Ewk types. Their constructors
+        were made privates as well, in order to promote the use
+        of smart pointers internally.
+
+        Remove _new() functions for refcounted Ewk types as they
+        are no longer needed now that the classes are defined
+        in the private headers instead of the cpp files.
+
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::handleDownloadRequest):
+        * UIProcess/API/efl/ewk_back_forward_list.cpp:
+        (addItemToWrapperCache):
+        * UIProcess/API/efl/ewk_back_forward_list_item.cpp:
+        (ewk_back_forward_list_item_original_url_get):
+        * UIProcess/API/efl/ewk_back_forward_list_item_private.h:
+        (_Ewk_Back_Forward_List_Item):
+        (_Ewk_Back_Forward_List_Item::create):
+        (_Ewk_Back_Forward_List_Item::_Ewk_Back_Forward_List_Item):
+        * UIProcess/API/efl/ewk_context_download_client.cpp:
+        (didReceiveResponse):
+        * UIProcess/API/efl/ewk_context_history_client.cpp:
+        (didNavigateWithNavigationData):
+        * UIProcess/API/efl/ewk_download_job.cpp:
+        (ewk_download_job_request_get):
+        (ewk_download_job_state_set):
+        * UIProcess/API/efl/ewk_download_job_private.h:
+        (_Ewk_Download_Job):
+        (_Ewk_Download_Job::create):
+        (_Ewk_Download_Job::_Ewk_Download_Job):
+        * UIProcess/API/efl/ewk_intent.cpp:
+        (ewk_intent_extra_names_get):
+        * UIProcess/API/efl/ewk_intent_private.h:
+        (_Ewk_Intent):
+        (_Ewk_Intent::create):
+        (_Ewk_Intent::_Ewk_Intent):
+        * UIProcess/API/efl/ewk_intent_service.cpp:
+        (ewk_intent_service_disposition_get):
+        * UIProcess/API/efl/ewk_intent_service_private.h:
+        (_Ewk_Intent_Service):
+        (_Ewk_Intent_Service::create):
+        (_Ewk_Intent_Service::_Ewk_Intent_Service):
+        * UIProcess/API/efl/ewk_navigation_data.cpp:
+        (ewk_navigation_data_url_get):
+        * UIProcess/API/efl/ewk_navigation_data_private.h:
+        (_Ewk_Navigation_Data):
+        (_Ewk_Navigation_Data::create):
+        (_Ewk_Navigation_Data::_Ewk_Navigation_Data):
+        * UIProcess/API/efl/ewk_navigation_policy_decision.cpp:
+        * UIProcess/API/efl/ewk_navigation_policy_decision_private.h:
+        (_Ewk_Navigation_Policy_Decision):
+        (_Ewk_Navigation_Policy_Decision::~_Ewk_Navigation_Policy_Decision):
+        (_Ewk_Navigation_Policy_Decision::create):
+        (_Ewk_Navigation_Policy_Decision::_Ewk_Navigation_Policy_Decision):
+        * UIProcess/API/efl/ewk_url_request.cpp:
+        (ewk_url_request_http_method_get):
+        * UIProcess/API/efl/ewk_url_request_private.h:
+        (_Ewk_Url_Request):
+        (_Ewk_Url_Request::create):
+        (_Ewk_Url_Request::_Ewk_Url_Request):
+        * UIProcess/API/efl/ewk_url_response.cpp:
+        (ewk_url_response_content_length_get):
+        * UIProcess/API/efl/ewk_url_response_private.h:
+        (_Ewk_Url_Response):
+        (_Ewk_Url_Response::create):
+        (_Ewk_Url_Response::_Ewk_Url_Response):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_intent_deliver):
+        * UIProcess/API/efl/ewk_view_loader_client.cpp:
+        (didReceiveIntentForFrame):
+        (registerIntentServiceForFrame):
+        * UIProcess/API/efl/ewk_view_policy_client.cpp:
+        (decidePolicyForNavigationAction):
+        (decidePolicyForNewWindowAction):
+        * UIProcess/API/efl/ewk_view_resource_load_client.cpp:
+        (didInitiateLoadForResource):
+        (didSendRequestForResource):
+        (didReceiveResponseForResource):
+
 2012-10-16  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/12462993> Use a sensible fallback for cache directory

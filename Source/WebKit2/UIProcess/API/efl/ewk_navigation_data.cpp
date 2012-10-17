@@ -66,11 +66,3 @@ const char* ewk_navigation_data_url_get(const Ewk_Navigation_Data* data)
 
     return data->url;
 }
-
-Ewk_Navigation_Data* ewk_navigation_data_new(WKNavigationDataRef dataRef)
-{
-    ASSERT(dataRef);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(dataRef, 0);
-
-    return new Ewk_Navigation_Data(dataRef);
-}

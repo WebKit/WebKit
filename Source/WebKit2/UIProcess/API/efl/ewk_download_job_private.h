@@ -31,6 +31,7 @@
 #include "ewk_url_request_private.h"
 #include "ewk_url_response_private.h"
 #include <Evas.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebKit {
 class DownloadProxy;
@@ -40,7 +41,8 @@ class DownloadProxy;
  * \struct  _Ewk_Download_Job
  * @brief   Contains the download data.
  */
-struct _Ewk_Download_Job : public RefCounted<_Ewk_Download_Job> {
+class _Ewk_Download_Job : public RefCounted<_Ewk_Download_Job> {
+public:
     WebKit::DownloadProxy* downloadProxy;
     Evas_Object* view;
     Ewk_Download_Job_State state;
@@ -52,11 +54,16 @@ struct _Ewk_Download_Job : public RefCounted<_Ewk_Download_Job> {
     WKEinaSharedString destination;
     WKEinaSharedString suggestedFilename;
 
+    static PassRefPtr<_Ewk_Download_Job> create(WebKit::DownloadProxy* download, Evas_Object* ewkView)
+    {
+        return adoptRef(new _Ewk_Download_Job(download, ewkView));
+    }
+
+private:
     _Ewk_Download_Job(WebKit::DownloadProxy* download, Evas_Object* ewkView)
         : downloadProxy(download)
         , view(ewkView)
         , state(EWK_DOWNLOAD_JOB_STATE_NOT_STARTED)
-        , response(0)
         , startTime(-1)
         , endTime(-1)
         , downloaded(0)
@@ -66,7 +73,6 @@ struct _Ewk_Download_Job : public RefCounted<_Ewk_Download_Job> {
 typedef struct _Ewk_Download_Job Ewk_Download_Job;
 typedef struct _Ewk_Error Ewk_Error;
 
-Ewk_Download_Job* ewk_download_job_new(WebKit::DownloadProxy*, Evas_Object* ewkView);
 uint64_t ewk_download_job_id_get(const Ewk_Download_Job*);
 Evas_Object* ewk_download_job_view_get(const Ewk_Download_Job*);
 

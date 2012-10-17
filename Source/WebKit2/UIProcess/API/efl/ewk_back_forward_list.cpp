@@ -69,7 +69,7 @@ static inline Ewk_Back_Forward_List_Item* addItemToWrapperCache(const Ewk_Back_F
 
     RefPtr<Ewk_Back_Forward_List_Item> item = list->wrapperCache.get(wkItem);
     if (!item) {
-        item = adoptRef(ewk_back_forward_list_item_new(wkItem));
+        item = Ewk_Back_Forward_List_Item::create(wkItem);
         list->wrapperCache.set(wkItem, item);
     }
 

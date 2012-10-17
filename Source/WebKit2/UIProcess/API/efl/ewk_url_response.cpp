@@ -73,12 +73,3 @@ unsigned long ewk_url_response_content_length_get(const Ewk_Url_Response* respon
 
     return response->coreResponse.expectedContentLength();
 }
-
-/**
- * @internal
- * Constructs a Ewk_Url_Response from a WebCore::ResourceResponse.
- */
-Ewk_Url_Response* ewk_url_response_new(const WebCore::ResourceResponse& coreResponse)
-{
-    return new Ewk_Url_Response(coreResponse);
-}

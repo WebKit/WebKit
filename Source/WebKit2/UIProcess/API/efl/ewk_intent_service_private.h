@@ -31,6 +31,7 @@
 #include "WKEinaSharedString.h"
 #include "WKIntentServiceInfo.h"
 #include <WebKit2/WKBase.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 typedef struct _Ewk_Intent_Service Ewk_Intent_Service;
@@ -39,14 +40,21 @@ typedef struct _Ewk_Intent_Service Ewk_Intent_Service;
  * \struct _Ewk_Intent_Service
  * @brief Contains the intent service data.
  */
-struct _Ewk_Intent_Service : public RefCounted<_Ewk_Intent_Service> {
+class _Ewk_Intent_Service : public RefCounted<_Ewk_Intent_Service> {
+public:
     WKEinaSharedString action;
     WKEinaSharedString type;
     WKEinaSharedString href;
     WKEinaSharedString title;
     WKEinaSharedString disposition;
 
-    _Ewk_Intent_Service(WKIntentServiceInfoRef serviceRef)
+    static PassRefPtr<_Ewk_Intent_Service> create(WKIntentServiceInfoRef serviceRef)
+    {
+        return adoptRef(new _Ewk_Intent_Service(serviceRef));
+    }
+
+private:
+    explicit _Ewk_Intent_Service(WKIntentServiceInfoRef serviceRef)
         : action(AdoptWK, WKIntentServiceInfoCopyAction(serviceRef))
         , type(AdoptWK, WKIntentServiceInfoCopyType(serviceRef))
         , href(AdoptWK, WKIntentServiceInfoCopyHref(serviceRef))
@@ -54,8 +62,6 @@ struct _Ewk_Intent_Service : public RefCounted<_Ewk_Intent_Service> {
         , disposition(AdoptWK, WKIntentServiceInfoCopyDisposition(serviceRef))
     { }
 };
-
-Ewk_Intent_Service* ewk_intent_service_new(WKIntentServiceInfoRef wkService);
 
 #endif // ENABLE(WEB_INTENTS_TAG)
 

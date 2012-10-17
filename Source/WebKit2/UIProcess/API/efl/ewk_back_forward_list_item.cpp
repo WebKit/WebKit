@@ -84,10 +84,3 @@ const char* ewk_back_forward_list_item_original_url_get(const Ewk_Back_Forward_L
 
     return item->originalURL;
 }
-
-Ewk_Back_Forward_List_Item* ewk_back_forward_list_item_new(WKBackForwardListItemRef backForwardListItemData)
-{
-    EINA_SAFETY_ON_NULL_RETURN_VAL(backForwardListItemData, 0);
-
-    return new Ewk_Back_Forward_List_Item(backForwardListItemData);
-}

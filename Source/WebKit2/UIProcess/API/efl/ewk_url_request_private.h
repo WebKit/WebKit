@@ -30,17 +30,25 @@
 #include "WKURL.h"
 #include "WKURLRequest.h"
 #include "WebURLRequest.h"
+#include <wtf/PassRefPtr.h>
 
 /**
  * \struct  _Ewk_Url_Request
  * @brief   Contains the URL request data.
  */
-struct _Ewk_Url_Request : public RefCounted<_Ewk_Url_Request> {
+class _Ewk_Url_Request : public RefCounted<_Ewk_Url_Request> {
+public:
     WKEinaSharedString url;
     WKEinaSharedString firstParty;
     WKEinaSharedString httpMethod;
 
-    _Ewk_Url_Request(WKURLRequestRef requestRef)
+    static PassRefPtr<_Ewk_Url_Request> create(WKURLRequestRef requestRef)
+    {
+        return adoptRef(new _Ewk_Url_Request(requestRef));
+    }
+
+private:
+    explicit _Ewk_Url_Request(WKURLRequestRef requestRef)
         : url(AdoptWK, WKURLRequestCopyURL(requestRef))
         , firstParty(AdoptWK, WKURLRequestCopyFirstPartyForCookies(requestRef))
         , httpMethod(AdoptWK, WKURLRequestCopyHTTPMethod(requestRef))
@@ -48,7 +56,5 @@ struct _Ewk_Url_Request : public RefCounted<_Ewk_Url_Request> {
 };
 
 typedef struct _Ewk_Url_Request Ewk_Url_Request;
-
-Ewk_Url_Request* ewk_url_request_new(WKURLRequestRef);
 
 #endif // ewk_url_request_private_h

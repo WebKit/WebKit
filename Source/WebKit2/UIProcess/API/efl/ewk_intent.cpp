@@ -143,18 +143,3 @@ Eina_List* ewk_intent_extra_names_get(const Ewk_Intent* intent)
     return 0;
 #endif
 }
-
-#if ENABLE(WEB_INTENTS)
-Ewk_Intent* ewk_intent_new(WKIntentDataRef intentData)
-{
-    EINA_SAFETY_ON_NULL_RETURN_VAL(intentData, 0);
-
-    return new Ewk_Intent(intentData);
-}
-
-WKIntentDataRef ewk_intent_WKIntentDataRef_get(const Ewk_Intent* intent)
-{
-    EINA_SAFETY_ON_NULL_RETURN_VAL(intent, 0);
-    return intent->wkIntent.get();
-}
-#endif

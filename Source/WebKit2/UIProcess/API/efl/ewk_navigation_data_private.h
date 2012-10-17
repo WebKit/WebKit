@@ -32,28 +32,32 @@
 #include "WKRetainPtr.h"
 #include "ewk_private.h"
 #include "ewk_url_request_private.h"
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 /**
  * \struct  _Ewk_Navigation_Data
  * @brief   Contains the navigation data details.
  */
-struct _Ewk_Navigation_Data : public RefCounted<_Ewk_Navigation_Data> {
+class _Ewk_Navigation_Data : public RefCounted<_Ewk_Navigation_Data> {
+public:
+    RefPtr<Ewk_Url_Request> request;
     WKEinaSharedString title;
     WKEinaSharedString url;
-    RefPtr<Ewk_Url_Request> request;
 
-    _Ewk_Navigation_Data(WKNavigationDataRef dataRef)
-        : title(AdoptWK, WKNavigationDataCopyTitle(dataRef))
-        , url(AdoptWK, WKNavigationDataCopyURL(dataRef))
+    static PassRefPtr<_Ewk_Navigation_Data> create(WKNavigationDataRef dataRef)
     {
-        WKRetainPtr<WKURLRequestRef> requestWK(AdoptWK, WKNavigationDataCopyOriginalRequest(dataRef));
-        request = adoptRef(ewk_url_request_new(requestWK.get()));
+        return adoptRef(new _Ewk_Navigation_Data(dataRef));
     }
+
+private:
+    explicit _Ewk_Navigation_Data(WKNavigationDataRef dataRef)
+        : request(Ewk_Url_Request::create(adoptWK(WKNavigationDataCopyOriginalRequest(dataRef)).get()))
+        , title(AdoptWK, WKNavigationDataCopyTitle(dataRef))
+        , url(AdoptWK, WKNavigationDataCopyURL(dataRef))
+    { }
 };
 
 typedef struct _Ewk_Navigation_Data Ewk_Navigation_Data;
-
-Ewk_Navigation_Data* ewk_navigation_data_new(WKNavigationDataRef dataRef);
 
 #endif // ewk_navigation_data_private_h
