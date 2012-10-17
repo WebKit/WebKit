@@ -1,3 +1,13 @@
+2012-10-17  Grzegorz Czajkowski  <g.czajkowski@samsung.com>, Michal Roj <m.roj@samsung.com>
+
+        [WK2][EFL] Implementation of spellchecking feature.
+        https://bugs.webkit.org/show_bug.cgi?id=91854
+
+        Reviewed by Gyuyoung Kim.
+
+        * PlatformEfl.cmake:
+        Add enchant-related compiler flags: header paths and the library flag.
+
 2012-10-17  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Avoid style updates when retrieving the inline stylesheet text

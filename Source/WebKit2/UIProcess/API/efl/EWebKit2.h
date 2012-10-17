@@ -44,6 +44,7 @@
 #include "ewk_popup_menu_item.h"
 #include "ewk_resource.h"
 #include "ewk_settings.h"
+#include "ewk_text_checker.h"
 #include "ewk_touch.h"
 #include "ewk_url_request.h"
 #include "ewk_url_response.h"

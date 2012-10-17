@@ -46,6 +46,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/API/efl/NetworkInfoProvider.cpp
     UIProcess/API/efl/PageClientImpl.cpp
     UIProcess/API/efl/VibrationProvider.cpp
+    UIProcess/API/efl/WebKitTextChecker.cpp
     UIProcess/API/efl/ewk_back_forward_list.cpp
     UIProcess/API/efl/ewk_back_forward_list_item.cpp
     UIProcess/API/efl/ewk_context.cpp
@@ -65,6 +66,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/API/efl/ewk_popup_menu_item.cpp
     UIProcess/API/efl/ewk_resource.cpp
     UIProcess/API/efl/ewk_settings.cpp
+    UIProcess/API/efl/ewk_text_checker.cpp
     UIProcess/API/efl/ewk_url_request.cpp
     UIProcess/API/efl/ewk_url_response.cpp
     UIProcess/API/efl/ewk_url_scheme_request.cpp
@@ -136,6 +138,7 @@ LIST(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/efl"
     "${WEBCORE_DIR}/platform/graphics/cairo"
     "${WEBCORE_DIR}/platform/network/soup"
+    "${WEBCORE_DIR}/platform/text/enchant"
     "${WEBCORE_DIR}/svg/graphics"
     "${WEBKIT2_DIR}/Shared/efl"
     "${WEBKIT2_DIR}/Shared/soup"
@@ -242,6 +245,7 @@ SET (EWebKit2_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_popup_menu_item.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_resource.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_settings.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_text_checker.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_touch.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_url_request.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_url_response.h"
@@ -349,3 +353,12 @@ IF (ENABLE_API_TESTS)
     ADD_LIBRARY(ewk2UnitTestInjectedBundleSample SHARED ${TEST_INJECTED_BUNDLE_DIR}/injected_bundle_sample.cpp)
     TARGET_LINK_LIBRARIES(ewk2UnitTestInjectedBundleSample ${WebKit2_LIBRARY_NAME})
 ENDIF ()
+
+IF (ENABLE_SPELLCHECK)
+    LIST(APPEND WebKit2_INCLUDE_DIRECTORIES
+        ${ENCHANT_INCLUDE_DIRS}
+    )
+    LIST(APPEND WebKit2_LIBRARIES
+        ${ENCHANT_LIBRARIES}
+    )
+ENDIF()

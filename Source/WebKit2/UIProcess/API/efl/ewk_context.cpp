@@ -44,6 +44,11 @@
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(SPELLCHECK)
+#include "ewk_settings.h"
+#include "ewk_text_checker_private.h"
+#endif
+
 using namespace WebCore;
 using namespace WebKit;
 
@@ -117,6 +122,13 @@ struct _Ewk_Context {
         ewk_context_request_manager_client_attach(this);
         ewk_context_download_client_attach(this);
         ewk_context_history_client_attach(this);
+#if ENABLE(SPELLCHECK)
+        ewk_text_checker_client_attach();
+        if (ewk_settings_continuous_spell_checking_enabled_get()) {
+            // Load the default language.
+            ewk_settings_spell_checking_languages_set(0);
+        }
+#endif
     }
 };
 

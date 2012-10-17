@@ -1,3 +1,19 @@
+2012-10-17  Grzegorz Czajkowski  <g.czajkowski@samsung.com>, Michal Roj <m.roj@sasmung.com>
+
+        [WK2][EFL] Implementation of spellchecking feature.
+        https://bugs.webkit.org/show_bug.cgi?id=91854
+
+        Reviewed by Gyuyoung Kim.
+
+        Define SPELLCHECK macro and enable it for WK2-Efl.
+        The spellchecking implementation is based on the Enchant library.
+        It can be used by other WebKit ports.
+
+        * Source/cmake/FindEnchant.cmake: Added.
+        * Source/cmake/OptionsEfl.cmake: Enable spellchecking feature for WebKit2-EFL.
+        * Source/cmake/WebKitFeatures.cmake: Define the SPELLCHECK macro.
+        * Source/cmakeconfig.h.cmake: Add the feature.
+
 2012-10-16  Pablo Flouret  <pablof@motorola.com>
 
         Pre-process CSSGrammar.y before running through bison.

@@ -1,3 +1,109 @@
+2012-10-17  Grzegorz Czajkowski  <g.czajkowski@samsung.com>, Michal Roj <m.roj@samsung.com>
+
+        Implementation of spellchecking feature.
+        https://bugs.webkit.org/show_bug.cgi?id=91854
+
+        Reviewed by Gyuyoung Kim.
+
+        Add spelling implementation for WebKit2-EFL that is based on Enchant library.
+
+        Additionally the patch provides API to overwrite the default WebKit
+        spellchecker implementation as Enchant library doesn't ensure grammar checking.
+        Application is able to overwrite it by defining its own implementation and
+        setting appropriate callback functions.
+
+        * PlatformEfl.cmake:
+        Add enchant-related compiler flags: header paths and the library flag.
+
+        * UIProcess/API/efl/EWebKit2.h:
+        Add ewk_text_checker.h to the main WebKit2-EFL's header to be available for applications.
+
+        * UIProcess/API/efl/WebKitTextChecker.cpp: Added.
+        Implement the callbacks functions of WKTextChecker.
+
+        (WebKit):
+        (WebKit::isContinuousSpellCheckingEnabled):
+        (WebKit::setContinuousSpellCheckingEnabled):
+        (WebKit::uniqueSpellDocumentTag):
+        (WebKit::closeSpellDocumentWithTag):
+        (WebKit::checkSpellingOfString):
+        (WebKit::guessesForWord):
+        (WebKit::learnWord):
+        (WebKit::ignoreWord):
+        Those functions are directly given as callback functions for WKTextChecker's client.
+        They choose between WebKit's spelling implementation and client's ones.
+
+        (WebKit::availableSpellCheckingLanguages):
+        (WebKit::updateSpellCheckingLanguages):
+        (WebKit::loadedSpellCheckingLanguages):
+        They are used by ewk_settings.cpp file and allow to do not
+        expose 'textCheckerEnchant'.
+
+        * UIProcess/API/efl/WebKitTextChecker.h: Added.
+        Define the functions which choose between WebKit's spelling implementation and
+        the client's ones.
+
+        (WebKit):
+        * UIProcess/API/efl/ewk_context.cpp:
+        (_Ewk_Context::_Ewk_Context):
+        Attach the spellchecker feature for the context.
+
+        * UIProcess/API/efl/ewk_text_checker.cpp: Added.
+        (ewk_text_checker_callbacks_get):
+        An internal function to get the client's callback functions.
+
+        * UIProcess/API/efl/ewk_text_checker.h: Added.
+        Define API to set the client's own spelling implementation.
+
+        * UIProcess/API/efl/ewk_text_checker_private.h: Added.
+        (_Ewk_Text_Checker):
+        Define the struct with the client's callbacks responisble for spelling.
+
+        * UIProcess/API/efl/ewk_settings.cpp:
+        (onContinuousSpellCheckingIdler):
+        The application is notified about the spelling setting change on idler
+        to do not block WebKit.
+        The the continuous spell checking may be changed through the context menu option.
+
+        (spellCheckingLanguagesSetUpdate):
+        The dictionaries are requested on 'idler' to do not block WebKit.
+
+        (spellCheckingLanguagesSet):
+        Set the languages.
+
+        (ewk_settings_continuous_spell_checking_change_cb_set):
+        Set the callback function used to notify the client when the spelling
+        setting was changed by WebKit.
+
+        (ewk_settings_continuous_spell_checking_enabled_get):
+        (ewk_settings_continuous_spell_checking_enabled_set):
+        API to set/get the continuous spell checking.
+
+        (ewk_settings_spell_checking_available_languages_get):
+        (ewk_settings_spell_checking_languages_set):
+        (ewk_settings_spell_checking_languages_get):
+        API to get/set languages to use by WebKit implementation based on Enchant library.
+
+        * UIProcess/efl/TextCheckerEfl.cpp:
+        (WebKit::TextChecker::state):
+        (WebKit::TextChecker::isContinuousSpellCheckingAllowed):
+        (WebKit::TextChecker::setContinuousSpellCheckingEnabled):
+        (WebKit::TextChecker::setGrammarCheckingEnabled):
+        (WebKit::TextChecker::continuousSpellCheckingEnabledStateChanged):
+        (WebKit::TextChecker::grammarCheckingEnabledStateChanged):
+        (WebKit::TextChecker::uniqueSpellDocumentTag):
+        (WebKit::TextChecker::closeSpellDocumentWithTag):
+        (WebKit::TextChecker::checkSpellingOfString):
+        (WebKit::TextChecker::checkGrammarOfString): Remove WebCore namaspace as it's already defined for the whole file.
+        (WebKit::TextChecker::spellingUIIsShowing):
+        (WebKit::TextChecker::toggleSpellingUIIsShowing):
+        (WebKit::TextChecker::updateSpellingUIWithMisspelledWord):
+        (WebKit::TextChecker::updateSpellingUIWithGrammarString):
+        (WebKit::TextChecker::getGuessesForWord):
+        (WebKit::TextChecker::learnWord):
+        (WebKit::TextChecker::ignoreWord):
+        Those call WKTextChecker client's methods.
+
 2012-10-17  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Ewk_Url_Scheme_Request has to be refactored

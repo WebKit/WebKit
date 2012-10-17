@@ -44,6 +44,15 @@ extern "C" {
 typedef struct _Ewk_Settings Ewk_Settings;
 
 /**
+ * Creates a type name for the callback function used to notify the client when
+ * the continuous spell checking setting was changed by WebKit.
+ *
+ * @param enable @c EINA_TRUE if continuous spell checking is enabled or @c EINA_FALSE if it's disabled
+ */
+typedef void (*Ewk_Settings_Continuous_Spell_Checking_Change_Cb)(Eina_Bool enable);
+
+
+/**
  * Enables/disables the Javascript Fullscreen API. The Javascript API allows
  * to request full screen mode, for more information see:
  * http://dvcs.w3.org/hg/fullscreen/raw-file/tip/Overview.html
@@ -218,6 +227,76 @@ EAPI Eina_Bool ewk_settings_dns_prefetching_enabled_set(Ewk_Settings *settings, 
  *         @c EINA_FALSE if not or on failure
  */
 EAPI Eina_Bool ewk_settings_dns_prefetching_enabled_get(const Ewk_Settings *settings);
+
+/**
+ * Sets a callback function used to notify the client when
+ * the continuous spell checking setting was changed by WebKit.
+ *
+ * Specifying of this callback is needed if the application wants to receive notifications
+ * once WebKit changes this setting.
+ * If the application is not interested, this callback is not set.
+ * Changing of this setting at the WebKit level can be made as a result of modifying
+ * options in a Context Menu by a user.
+ *
+ * @param cb a new callback function to set or @c NULL to invalidate the previous one
+ */
+EAPI void ewk_settings_continuous_spell_checking_change_cb_set(Ewk_Settings_Continuous_Spell_Checking_Change_Cb cb);
+
+/**
+ * Queries if continuous spell checking is enabled.
+ *
+ * @return @c EINA_TRUE if continuous spell checking is enabled or @c EINA_FALSE if it's disabled
+ */
+EAPI Eina_Bool ewk_settings_continuous_spell_checking_enabled_get(void);
+
+/**
+ * Enables/disables continuous spell checking.
+ *
+ * Additionally, this function calls a callback function (if defined) to notify
+ * the client about the change of the setting.
+ * This feature is disabled by default.
+ *
+ * @see ewk_settings_continuous_spell_checking_change_cb_set
+ *
+ * @param enable @c EINA_TRUE to enable continuous spell checking or @c EINA_FALSE to disable
+ */
+EAPI void ewk_settings_continuous_spell_checking_enabled_set(Eina_Bool enable);
+
+/**
+ * Gets the the list of all available the spell checking languages to use.
+ *
+ * @see ewk_settings_spell_checking_languages_set
+ *
+ * @return the list with available spell checking languages, or @c NULL on failure
+ *         the Eina_List and its items should be freed after, use eina_stringshare_del()
+ */
+EAPI Eina_List *ewk_settings_spell_checking_available_languages_get(void);
+
+/**
+ * Sets @a languages as the list of languages to use by default WebKit
+ * implementation of spellchecker feature with Enchant library support.
+ *
+ * If @languages is @c NULL, the default language is used.
+ * If the default language can not be determined then any available dictionary will be used.
+ *
+ * @note This function invalidates the previously set languages.
+ *       The dictionaries are requested asynchronously.
+ *
+ * @param languages a list of comma (',') separated language codes
+ *        of the form 'en_US', ie, language_VARIANT, may be @c NULL.
+ */
+EAPI void ewk_settings_spell_checking_languages_set(const char *languages);
+
+/**
+ * Gets the the list of the spell checking languages in use.
+ *
+ * @see ewk_settings_spell_checking_available_languages_get
+ * @see ewk_settings_spell_checking_languages_set
+ *
+ * @return the list with the spell checking languages in use,
+ *         the Eina_List and its items should be freed after, use eina_stringshare_del()
+ */
+EAPI Eina_List *ewk_settings_spell_checking_languages_get(void);
 
 #ifdef __cplusplus
 }
