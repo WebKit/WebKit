@@ -1,3 +1,24 @@
+2012-10-17  Oliver Hunt  <oliver@apple.com>
+
+        Committing new files is so overrated.
+
+        * bytecode/ResolveOperation.h: Added.
+        (JSC):
+        (JSC::ResolveOperation::getAndReturnScopedVar):
+        (JSC::ResolveOperation::checkForDynamicEntriesBeforeGlobalScope):
+        (ResolveOperation):
+        (JSC::ResolveOperation::getAndReturnGlobalVar):
+        (JSC::ResolveOperation::getAndReturnGlobalProperty):
+        (JSC::ResolveOperation::resolveFail):
+        (JSC::ResolveOperation::skipTopScopeNode):
+        (JSC::ResolveOperation::skipScopes):
+        (JSC::ResolveOperation::returnGlobalObjectAsBase):
+        (JSC::ResolveOperation::setBaseToGlobal):
+        (JSC::ResolveOperation::setBaseToUndefined):
+        (JSC::ResolveOperation::setBaseToScope):
+        (JSC::ResolveOperation::returnScopeAsBase):
+        (JSC::PutToBaseOperation::PutToBaseOperation):
+
 2012-10-17  Michael Saboff  <msaboff@apple.com>
 
         StringPrototype::jsSpliceSubstringsWithSeparators() doesn't optimally handle 8 bit strings
