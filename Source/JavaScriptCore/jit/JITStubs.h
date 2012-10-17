@@ -413,6 +413,7 @@ extern "C" {
     EncodedJSValue JIT_STUB cti_op_urshift(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     EncodedJSValue JIT_STUB cti_to_object(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     JSObject* JIT_STUB cti_op_new_array(STUB_ARGS_DECLARATION) WTF_INTERNAL;
+    JSObject* JIT_STUB cti_op_new_array_with_size(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     JSObject* JIT_STUB cti_op_new_array_buffer(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     JSObject* JIT_STUB cti_op_new_func(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     JSObject* JIT_STUB cti_op_new_func_exp(STUB_ARGS_DECLARATION) WTF_INTERNAL;

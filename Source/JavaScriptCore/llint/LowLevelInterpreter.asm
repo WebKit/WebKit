@@ -428,6 +428,12 @@ _llint_op_new_array:
     dispatch(4)
 
 
+_llint_op_new_array_with_size:
+    traceExecution()
+    callSlowPath(_llint_slow_path_new_array_with_size)
+    dispatch(3)
+
+
 _llint_op_new_array_buffer:
     traceExecution()
     callSlowPath(_llint_slow_path_new_array_buffer)

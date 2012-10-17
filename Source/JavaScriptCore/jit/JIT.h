@@ -718,6 +718,7 @@ namespace JSC {
         void emit_op_neq(Instruction*);
         void emit_op_neq_null(Instruction*);
         void emit_op_new_array(Instruction*);
+        void emit_op_new_array_with_size(Instruction*);
         void emit_op_new_array_buffer(Instruction*);
         void emit_op_new_func(Instruction*);
         void emit_op_new_func_exp(Instruction*);

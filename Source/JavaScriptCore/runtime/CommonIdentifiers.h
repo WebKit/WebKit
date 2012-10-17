@@ -29,6 +29,7 @@
 #define JSC_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
     macro(apply) \
     macro(arguments) \
+    macro(Array) \
     macro(bind) \
     macro(call) \
     macro(callee) \
@@ -54,6 +55,7 @@
     macro(multiline) \
     macro(name) \
     macro(now) \
+    macro(Object) \
     macro(parse) \
     macro(propertyIsEnumerable) \
     macro(prototype) \

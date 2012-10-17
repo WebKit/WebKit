@@ -1694,6 +1694,17 @@ void JIT::emitSlow_op_new_array(Instruction* currentInstruction, Vector<SlowCase
     stubCall.call(currentInstruction[1].u.operand);
 }
 
+void JIT::emit_op_new_array_with_size(Instruction* currentInstruction)
+{
+    JITStubCall stubCall(this, cti_op_new_array_with_size);
+#if USE(JSVALUE64)
+    stubCall.addArgument(currentInstruction[2].u.operand, regT2);
+#else
+    stubCall.addArgument(currentInstruction[2].u.operand);
+#endif
+    stubCall.call(currentInstruction[1].u.operand);
+}
+
 void JIT::emit_op_new_array_buffer(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_new_array_buffer);

@@ -26,6 +26,7 @@
 namespace JSC {
 
     class ArrayPrototype;
+    class JSArray;
 
     class ArrayConstructor : public InternalFunction {
     public:
@@ -58,6 +59,8 @@ namespace JSC {
         static ConstructType getConstructData(JSCell*, ConstructData&);
         static CallType getCallData(JSCell*, CallData&);
     };
+
+    JSObject* constructArrayWithSizeQuirk(ExecState*, JSGlobalObject*, JSValue);
 
 } // namespace JSC
 

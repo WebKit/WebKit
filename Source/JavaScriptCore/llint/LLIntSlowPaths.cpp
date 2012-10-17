@@ -29,6 +29,7 @@
 #if ENABLE(LLINT)
 
 #include "Arguments.h"
+#include "ArrayConstructor.h"
 #include "CallFrame.h"
 #include "CommonSlowPaths.h"
 #include "GetterSetter.h"
@@ -502,6 +503,12 @@ LLINT_SLOW_PATH_DECL(slow_path_new_array)
 {
     LLINT_BEGIN();
     LLINT_RETURN(constructArray(exec, bitwise_cast<JSValue*>(&LLINT_OP(2)), pc[3].u.operand));
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_new_array_with_size)
+{
+    LLINT_BEGIN();
+    LLINT_RETURN(constructArrayWithSizeQuirk(exec, exec->lexicalGlobalObject(), LLINT_OP_C(2).jsValue()));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_new_array_buffer)

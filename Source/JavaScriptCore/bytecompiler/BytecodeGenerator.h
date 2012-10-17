@@ -51,6 +51,12 @@ namespace JSC {
     class Label;
     class JSScope;
 
+    enum ExpectedFunction {
+        NoExpectedFunction,
+        ExpectObjectConstructor,
+        ExpectArrayConstructor
+    };
+
     class CallArguments {
     public:
         CallArguments(BytecodeGenerator& generator, ArgumentsNode* argumentsNode);
@@ -483,8 +489,9 @@ namespace JSC {
         RegisterID* emitDeleteByVal(RegisterID* dst, RegisterID* base, RegisterID* property);
         RegisterID* emitPutByIndex(RegisterID* base, unsigned index, RegisterID* value);
         void emitPutGetterSetter(RegisterID* base, const Identifier& property, RegisterID* getter, RegisterID* setter);
-
-        RegisterID* emitCall(RegisterID* dst, RegisterID* func, CallArguments&, unsigned divot, unsigned startOffset, unsigned endOffset);
+        
+        ExpectedFunction expectedFunctionForIdentifier(const Identifier&);
+        RegisterID* emitCall(RegisterID* dst, RegisterID* func, ExpectedFunction, CallArguments&, unsigned divot, unsigned startOffset, unsigned endOffset);
         RegisterID* emitCallEval(RegisterID* dst, RegisterID* func, CallArguments&, unsigned divot, unsigned startOffset, unsigned endOffset);
         RegisterID* emitCallVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, RegisterID* profileHookRegister, unsigned divot, unsigned startOffset, unsigned endOffset);
         RegisterID* emitLoadVarargs(RegisterID* argCountDst, RegisterID* thisRegister, RegisterID* args);
@@ -492,7 +499,7 @@ namespace JSC {
         RegisterID* emitReturn(RegisterID* src);
         RegisterID* emitEnd(RegisterID* src) { return emitUnaryNoDstOp(op_end, src); }
 
-        RegisterID* emitConstruct(RegisterID* dst, RegisterID* func, CallArguments&, unsigned divot, unsigned startOffset, unsigned endOffset);
+        RegisterID* emitConstruct(RegisterID* dst, RegisterID* func, ExpectedFunction, CallArguments&, unsigned divot, unsigned startOffset, unsigned endOffset);
         RegisterID* emitStrcat(RegisterID* dst, RegisterID* src, int count);
         void emitToPrimitive(RegisterID* dst, RegisterID* src);
 
@@ -590,7 +597,12 @@ namespace JSC {
         typedef HashMap<double, JSValue> NumberMap;
         typedef HashMap<StringImpl*, JSString*, IdentifierRepHash> IdentifierStringMap;
         
-        RegisterID* emitCall(OpcodeID, RegisterID* dst, RegisterID* func, CallArguments&, unsigned divot, unsigned startOffset, unsigned endOffset);
+        // Helper for emitCall() and emitConstruct(). This works because the set of
+        // expected functions have identical behavior for both call and construct
+        // (i.e. "Object()" is identical to "new Object()").
+        ExpectedFunction emitExpectedFunctionSnippet(RegisterID* dst, RegisterID* func, ExpectedFunction, CallArguments&, Label* done);
+        
+        RegisterID* emitCall(OpcodeID, RegisterID* dst, RegisterID* func, ExpectedFunction, CallArguments&, unsigned divot, unsigned startOffset, unsigned endOffset);
 
         RegisterID* newRegister();
 

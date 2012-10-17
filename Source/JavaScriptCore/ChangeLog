@@ -1,5 +1,69 @@
 2012-10-17  Filip Pizlo  <fpizlo@apple.com>
 
+        Array and object allocations via 'new Object' or 'new Array' should be inlined in bytecode to allow allocation site profiling
+        https://bugs.webkit.org/show_bug.cgi?id=99557
+
+        Reviewed by Geoffrey Garen.
+
+        This uses the old jneq_ptr trick to allow for the bytecode to "see" that the
+        operation in question is what we almost certainly know it to be.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/Opcode.h:
+        (JSC):
+        (JSC::padOpcodeName):
+        * bytecode/SpecialPointer.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitCallEval):
+        (JSC::BytecodeGenerator::expectedFunctionForIdentifier):
+        (JSC):
+        (JSC::BytecodeGenerator::emitExpectedFunctionSnippet):
+        (JSC::BytecodeGenerator::emitConstruct):
+        * bytecompiler/BytecodeGenerator.h:
+        (BytecodeGenerator):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::NewExprNode::emitBytecode):
+        (JSC::FunctionCallValueNode::emitBytecode):
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::FunctionCallBracketNode::emitBytecode):
+        (JSC::FunctionCallDotNode::emitBytecode):
+        (JSC::CallFunctionCallDotNode::emitBytecode):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        (JIT):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_array_with_size):
+        (JSC):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC):
+        * jit/JITStubs.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (LLInt):
+        * llint/LLIntSlowPaths.h:
+        (LLInt):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/ArrayConstructor.cpp:
+        (JSC::constructArrayWithSizeQuirk):
+        (JSC):
+        * runtime/ArrayConstructor.h:
+        (JSC):
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC):
+
+2012-10-17  Filip Pizlo  <fpizlo@apple.com>
+
         JIT op_get_by_pname should call cti_get_by_val_generic and not cti_get_by_val
         https://bugs.webkit.org/show_bug.cgi?id=99631
         <rdar://problem/12483221>

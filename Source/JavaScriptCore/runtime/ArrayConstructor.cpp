@@ -77,17 +77,24 @@ bool ArrayConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exe
 
 // ------------------------------ Functions ---------------------------
 
+JSObject* constructArrayWithSizeQuirk(ExecState* exec, JSGlobalObject* globalObject, JSValue length)
+{
+    if (!length.isNumber())
+        return constructArray(exec, globalObject, &length, 1);
+    
+    uint32_t n = length.toUInt32(exec);
+    if (n != length.toNumber(exec))
+        return throwError(exec, createRangeError(exec, ASCIILiteral("Array size is not a small enough positive integer.")));
+    return constructEmptyArray(exec, globalObject, n);
+}
+
 static inline JSObject* constructArrayWithSizeQuirk(ExecState* exec, const ArgList& args)
 {
     JSGlobalObject* globalObject = asInternalFunction(exec->callee())->globalObject();
 
     // a single numeric argument denotes the array size (!)
-    if (args.size() == 1 && args.at(0).isNumber()) {
-        uint32_t n = args.at(0).toUInt32(exec);
-        if (n != args.at(0).toNumber(exec))
-            return throwError(exec, createRangeError(exec, ASCIILiteral("Array size is not a small enough positive integer.")));
-        return constructEmptyArray(exec, globalObject, n);
-    }
+    if (args.size() == 1)
+        return constructArrayWithSizeQuirk(exec, globalObject, args.at(0));
 
     // otherwise the array is constructed with the arguments in it
     return constructArray(exec, globalObject, args);

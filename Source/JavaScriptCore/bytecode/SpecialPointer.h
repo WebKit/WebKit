@@ -35,6 +35,8 @@ namespace Special {
 enum Pointer {
     CallFunction,
     ApplyFunction,
+    ObjectConstructor,
+    ArrayConstructor,
     TableSize // Not a real special pointer. Use this to determine the number of pointers.
 };
 } // namespace Special

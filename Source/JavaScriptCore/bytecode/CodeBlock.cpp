@@ -704,6 +704,13 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             dumpBytecodeCommentAndNewLine(location);
             break;
         }
+        case op_new_array_with_size: {
+            int dst = (++it)->u.operand;
+            int length = (++it)->u.operand;
+            dataLog("[%4d] new_array_with_size\t %s, %s", location, registerName(exec, dst).data(), registerName(exec, length).data());
+            dumpBytecodeCommentAndNewLine(location);
+            break;
+        }
         case op_new_array_buffer: {
             int dst = (++it)->u.operand;
             int argv = (++it)->u.operand;
@@ -1245,9 +1252,9 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         }
         case op_jneq_ptr: {
             int r0 = (++it)->u.operand;
-            void* pointer = (++it)->u.pointer;
+            Special::Pointer pointer = (++it)->u.specialPointer;
             int offset = (++it)->u.operand;
-            dataLog("[%4d] jneq_ptr\t\t %s, %p, %d(->%d)", location, registerName(exec, r0).data(), pointer, offset, location + offset);
+            dataLog("[%4d] jneq_ptr\t\t %s, %d (%p), %d(->%d)", location, registerName(exec, r0).data(), pointer, m_globalObject->actualPointerFor(pointer), offset, location + offset);
             dumpBytecodeCommentAndNewLine(location);
             break;
         }

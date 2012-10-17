@@ -35,6 +35,7 @@
 
 #include "CommonSlowPaths.h"
 #include "Arguments.h"
+#include "ArrayConstructor.h"
 #include "CallFrame.h"
 #include "CodeBlock.h"
 #include "CodeProfiling.h"
@@ -2358,6 +2359,13 @@ DEFINE_STUB_FUNCTION(JSObject*, op_new_array)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     return constructArray(stackFrame.callFrame, reinterpret_cast<JSValue*>(&stackFrame.callFrame->registers()[stackFrame.args[0].int32()]), stackFrame.args[1].int32());
+}
+
+DEFINE_STUB_FUNCTION(JSObject*, op_new_array_with_size)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+    
+    return constructArrayWithSizeQuirk(stackFrame.callFrame, stackFrame.callFrame->lexicalGlobalObject(), stackFrame.args[0].jsValue());
 }
 
 DEFINE_STUB_FUNCTION(JSObject*, op_new_array_buffer)

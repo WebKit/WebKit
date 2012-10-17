@@ -1966,6 +1966,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_new_array);
         }
             
+        case op_new_array_with_size: {
+            int lengthOperand = currentInstruction[2].u.operand;
+            set(currentInstruction[1].u.operand, addToGraph(NewArrayWithSize, get(lengthOperand)));
+            NEXT_OPCODE(op_new_array_with_size);
+        }
+            
         case op_new_array_buffer: {
             int startConstant = currentInstruction[2].u.operand;
             int numConstants = currentInstruction[3].u.operand;

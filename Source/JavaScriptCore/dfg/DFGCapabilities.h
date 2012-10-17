@@ -162,6 +162,7 @@ inline CapabilityLevel canCompileOpcode(OpcodeID opcodeID, CodeBlock*, Instructi
     case op_resolve_global:
     case op_new_object:
     case op_new_array:
+    case op_new_array_with_size:
     case op_new_array_buffer:
     case op_strcat:
     case op_to_primitive:

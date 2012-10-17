@@ -289,9 +289,9 @@ void JSGlobalObject::reset(JSValue prototype)
     m_regExpPrototype->putDirectWithoutTransition(exec->globalData(), exec->propertyNames().constructor, m_regExpConstructor.get(), DontEnum);
     m_errorPrototype->putDirectWithoutTransition(exec->globalData(), exec->propertyNames().constructor, m_errorConstructor.get(), DontEnum);
 
-    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "Object"), objectConstructor, DontEnum);
+    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().Object, objectConstructor, DontEnum);
     putDirectWithoutTransition(exec->globalData(), Identifier(exec, "Function"), functionConstructor, DontEnum);
-    putDirectWithoutTransition(exec->globalData(), Identifier(exec, "Array"), arrayConstructor, DontEnum);
+    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().Array, arrayConstructor, DontEnum);
     putDirectWithoutTransition(exec->globalData(), Identifier(exec, "Boolean"), booleanConstructor, DontEnum);
     putDirectWithoutTransition(exec->globalData(), Identifier(exec, "String"), stringConstructor, DontEnum);
     putDirectWithoutTransition(exec->globalData(), Identifier(exec, "Number"), numberConstructor, DontEnum);
@@ -320,6 +320,8 @@ void JSGlobalObject::reset(JSValue prototype)
     
     m_specialPointers[Special::CallFunction] = m_callFunction.get();
     m_specialPointers[Special::ApplyFunction] = m_applyFunction.get();
+    m_specialPointers[Special::ObjectConstructor] = objectConstructor;
+    m_specialPointers[Special::ArrayConstructor] = arrayConstructor;
 
     if (m_experimentsEnabled) {
         NamePrototype* privateNamePrototype = NamePrototype::create(exec, NamePrototype::createStructure(exec->globalData(), this, m_objectPrototype.get()));

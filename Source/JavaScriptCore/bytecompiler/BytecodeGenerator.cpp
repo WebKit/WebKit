@@ -2013,9 +2013,9 @@ RegisterID* BytecodeGenerator::emitNewFunctionExpression(RegisterID* r0, FuncExp
     return r0;
 }
 
-RegisterID* BytecodeGenerator::emitCall(RegisterID* dst, RegisterID* func, CallArguments& callArguments, unsigned divot, unsigned startOffset, unsigned endOffset)
+RegisterID* BytecodeGenerator::emitCall(RegisterID* dst, RegisterID* func, ExpectedFunction expectedFunction, CallArguments& callArguments, unsigned divot, unsigned startOffset, unsigned endOffset)
 {
-    return emitCall(op_call, dst, func, callArguments, divot, startOffset, endOffset);
+    return emitCall(op_call, dst, func, expectedFunction, callArguments, divot, startOffset, endOffset);
 }
 
 void BytecodeGenerator::createArgumentsIfNecessary()
@@ -2048,10 +2048,85 @@ void BytecodeGenerator::createActivationIfNecessary()
 
 RegisterID* BytecodeGenerator::emitCallEval(RegisterID* dst, RegisterID* func, CallArguments& callArguments, unsigned divot, unsigned startOffset, unsigned endOffset)
 {
-    return emitCall(op_call_eval, dst, func, callArguments, divot, startOffset, endOffset);
+    return emitCall(op_call_eval, dst, func, NoExpectedFunction, callArguments, divot, startOffset, endOffset);
 }
 
-RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, RegisterID* func, CallArguments& callArguments, unsigned divot, unsigned startOffset, unsigned endOffset)
+ExpectedFunction BytecodeGenerator::expectedFunctionForIdentifier(const Identifier& identifier)
+{
+    if (identifier == m_globalData->propertyNames->Object)
+        return ExpectObjectConstructor;
+    if (identifier == m_globalData->propertyNames->Array)
+        return ExpectArrayConstructor;
+    return NoExpectedFunction;
+}
+
+ExpectedFunction BytecodeGenerator::emitExpectedFunctionSnippet(RegisterID* dst, RegisterID* func, ExpectedFunction expectedFunction, CallArguments& callArguments, Label* done)
+{
+    RefPtr<Label> realCall = newLabel();
+    switch (expectedFunction) {
+    case ExpectObjectConstructor: {
+        // If the number of arguments is non-zero, then we can't do anything interesting.
+        if (callArguments.argumentCountIncludingThis() >= 2)
+            return NoExpectedFunction;
+        
+        size_t begin = instructions().size();
+        emitOpcode(op_jneq_ptr);
+        instructions().append(func->index());
+        instructions().append(Special::ObjectConstructor);
+        instructions().append(realCall->bind(begin, instructions().size()));
+        
+        if (dst != ignoredResult()) {
+            emitOpcode(op_new_object);
+            instructions().append(dst->index());
+        }
+        break;
+    }
+        
+    case ExpectArrayConstructor: {
+        // If you're doing anything other than "new Array()" or "new Array(foo)" then we
+        // don't do inline it, for now. The only reason is that call arguments are in
+        // the opposite order of what op_new_array expects, so we'd either need to change
+        // how op_new_array works or we'd need an op_new_array_reverse. Neither of these
+        // things sounds like it's worth it.
+        if (callArguments.argumentCountIncludingThis() > 2)
+            return NoExpectedFunction;
+        
+        size_t begin = instructions().size();
+        emitOpcode(op_jneq_ptr);
+        instructions().append(func->index());
+        instructions().append(Special::ArrayConstructor);
+        instructions().append(realCall->bind(begin, instructions().size()));
+        
+        if (dst != ignoredResult()) {
+            if (callArguments.argumentCountIncludingThis() == 2) {
+                emitOpcode(op_new_array_with_size);
+                instructions().append(dst->index());
+                instructions().append(callArguments.argumentRegister(0)->index());
+            } else {
+                ASSERT(callArguments.argumentCountIncludingThis() == 1);
+                emitOpcode(op_new_array);
+                instructions().append(dst->index());
+                instructions().append(0);
+                instructions().append(0);
+            }
+        }
+        break;
+    }
+        
+    default:
+        ASSERT(expectedFunction == NoExpectedFunction);
+        return NoExpectedFunction;
+    }
+    
+    size_t begin = instructions().size();
+    emitOpcode(op_jmp);
+    instructions().append(done->bind(begin, instructions().size()));
+    emitLabel(realCall.get());
+    
+    return expectedFunction;
+}
+
+RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, RegisterID* func, ExpectedFunction expectedFunction, CallArguments& callArguments, unsigned divot, unsigned startOffset, unsigned endOffset)
 {
     ASSERT(opcodeID == op_call || opcodeID == op_call_eval);
     ASSERT(func->refCount());
@@ -2076,6 +2151,9 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
 
     emitExpressionInfo(divot, startOffset, endOffset);
 
+    RefPtr<Label> done = newLabel();
+    expectedFunction = emitExpectedFunctionSnippet(dst, func, expectedFunction, callArguments, done.get());
+    
     // Emit call.
     ArrayProfile* arrayProfile = newArrayProfile();
     emitOpcode(opcodeID);
@@ -2093,6 +2171,9 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
         instructions().append(dst->index()); // dst
         instructions().append(profile);
     }
+    
+    if (expectedFunction != NoExpectedFunction)
+        emitLabel(done.get());
 
     if (m_shouldEmitProfileHooks) {
         emitOpcode(op_profile_did_call);
@@ -2162,7 +2243,7 @@ RegisterID* BytecodeGenerator::emitUnaryNoDstOp(OpcodeID opcodeID, RegisterID* s
     return src;
 }
 
-RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, CallArguments& callArguments, unsigned divot, unsigned startOffset, unsigned endOffset)
+RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, ExpectedFunction expectedFunction, CallArguments& callArguments, unsigned divot, unsigned startOffset, unsigned endOffset)
 {
     ASSERT(func->refCount());
 
@@ -2187,6 +2268,9 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
         callFrame.append(newTemporary());
 
     emitExpressionInfo(divot, startOffset, endOffset);
+    
+    RefPtr<Label> done = newLabel();
+    expectedFunction = emitExpectedFunctionSnippet(dst, func, expectedFunction, callArguments, done.get());
 
     emitOpcode(op_construct);
     instructions().append(func->index()); // func
@@ -2203,6 +2287,9 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
         instructions().append(dst->index()); // dst
         instructions().append(profile);
     }
+
+    if (expectedFunction != NoExpectedFunction)
+        emitLabel(done.get());
 
     if (m_shouldEmitProfileHooks) {
         emitOpcode(op_profile_did_call);
