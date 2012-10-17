@@ -30,7 +30,7 @@
 		29210EB4144CACD500835BB5 /* AccessibilityTextMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EB1144CACD400835BB5 /* AccessibilityTextMarker.cpp */; };
 		29210EB5144CACD500835BB5 /* AccessibilityTextMarkerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29210EB3144CACD400835BB5 /* AccessibilityTextMarkerMac.mm */; };
 		29210EDA144CC3EA00835BB5 /* AccessibilityUIElementMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29210EAB144CACB200835BB5 /* AccessibilityUIElementMac.mm */; };
-		29210EDA144CC3EA00835BB6 /* AccessibilityCommonMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29210EAB144CACB200835BB6 /* AccessibilityUIElementMac.mm */; };
+		29210EDA144CC3EA00835BB6 /* AccessibilityCommonMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29210EAB144CACB200835BB6 /* AccessibilityCommonMac.mm */; };
 		29210EDB144CD47900835BB5 /* JSAccessibilityController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 583913D014335E95008307E5 /* JSAccessibilityController.cpp */; };
 		29210EE1144CDB2600835BB5 /* JSAccessibilityUIElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EDB146727E711835BB5 /* JSAccessibilityUIElement.cpp */; };
 		29A8FCCB145EF02E009045A6 /* JSAccessibilityTextMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EE1144CDE6789815EE5 /* JSAccessibilityTextMarker.cpp */; };
@@ -38,6 +38,7 @@
 		29A8FCE2145F037B009045A6 /* AccessibilityTextMarkerRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE1145F037B009045A6 /* AccessibilityTextMarkerRange.cpp */; };
 		29A8FCE5145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */; };
 		3164C8F015D1ADA100EF1FE0 /* WebNotificationProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3164C8EF15D1ADA100EF1FE0 /* WebNotificationProvider.cpp */; };
+		4429FC5F1627089600F66D8B /* WorkQueueManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4429FC5E1627089600F66D8B /* WorkQueueManager.cpp */; };
 		5322FB4313FDA0CD0041ABCC /* CyclicRedundancyCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5322FB4113FDA0CD0041ABCC /* CyclicRedundancyCheck.cpp */; };
 		5322FB4613FDA0EA0041ABCC /* PixelDumpSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5322FB4413FDA0EA0041ABCC /* PixelDumpSupport.cpp */; };
 		5641E2D014335E95008307E5 /* JSTextInputController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5641E2CE14335E95008307E5 /* JSTextInputController.cpp */; };
@@ -133,6 +134,8 @@
 		378D442213346D00006A777B /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		41230E16138C78BF00BCCFCA /* libWebCoreTestSupport.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libWebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4181731B138AD39D0057AAA4 /* WebCoreTestSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCoreTestSupport.h; path = WebCoreTestSupport/WebCoreTestSupport.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		4429FC5E1627089600F66D8B /* WorkQueueManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueueManager.cpp; sourceTree = "<group>"; };
+		4429FC611627089600F66D8B /* WorkQueueManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkQueueManager.h; sourceTree = "<group>"; };
 		5322FB4113FDA0CD0041ABCC /* CyclicRedundancyCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CyclicRedundancyCheck.cpp; sourceTree = "<group>"; };
 		5322FB4213FDA0CD0041ABCC /* CyclicRedundancyCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CyclicRedundancyCheck.h; sourceTree = "<group>"; };
 		5322FB4413FDA0EA0041ABCC /* PixelDumpSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PixelDumpSupport.cpp; sourceTree = "<group>"; };
@@ -274,6 +277,8 @@
 				BC251A1711D16774002EBC01 /* WebKitTestRunnerPrefix.h */,
 				3110BE0F15BA011400D216AC /* WebNotificationProvider.h */,
 				3164C8EF15D1ADA100EF1FE0 /* WebNotificationProvider.cpp */,
+				4429FC611627089600F66D8B /* WorkQueueManager.h */,
+				4429FC5E1627089600F66D8B /* WorkQueueManager.cpp */,
 			);
 			name = TestRunner;
 			sourceTree = "<group>";
@@ -585,6 +590,7 @@
 				BC9192051333E4F8003011DC /* TestInvocationCG.cpp in Sources */,
 				5670B8281386FCA5002EB355 /* EventSenderProxy.mm in Sources */,
 				3164C8F015D1ADA100EF1FE0 /* WebNotificationProvider.cpp in Sources */,
+				4429FC5F1627089600F66D8B /* WorkQueueManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -530,6 +530,8 @@ bool TestController::resetStateToConsistentValues()
     // Reset Custom Policy Delegate.
     setCustomPolicyDelegate(false, false);
 
+    m_workQueueManager.clearWorkQueue();
+
     // Reset main page back to about:blank
     m_doneResetting = false;
 

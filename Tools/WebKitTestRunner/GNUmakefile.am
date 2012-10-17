@@ -31,7 +31,9 @@ Programs_WebKitTestRunner_SOURCES = \
 	Tools/WebKitTestRunner/TestInvocation.h \
 	Tools/WebKitTestRunner/WebNotificationProvider.cpp \
 	Tools/WebKitTestRunner/WebNotificationProvider.h \
-	Tools/WebKitTestRunner/WebKitTestRunnerPrefix.h
+	Tools/WebKitTestRunner/WebKitTestRunnerPrefix.h \
+	Tools/WebKitTestRunner/WorkQueueManager.cpp \
+	Tools/WebKitTestRunner/WorkQueueManager.h
 
 Programs_WebKitTestRunner_CPPFLAGS = \
 	-include Tools/WebKitTestRunner/WebKitTestRunnerPrefix.h \

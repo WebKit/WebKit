@@ -54,6 +54,7 @@ InjectedBundle::InjectedBundle()
     , m_state(Idle)
     , m_dumpPixels(false)
     , m_useWaitToDumpWatchdogTimer(true)
+    , m_useWorkQueue(false)
 {
 }
 
@@ -190,6 +191,11 @@ void InjectedBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messag
     if (WKStringIsEqualToUTF8CString(messageName, "CallSetBackingScaleFactorCallback")) {
         m_testRunner->callSetBackingScaleFactorCallback();
         return;
+    }   
+    if (WKStringIsEqualToUTF8CString(messageName, "WorkQueueProcessedCallback")) {
+        if (!topLoadingFrame() && !m_testRunner->waitToDump())
+            page()->dump();
+        return;
     }
 
     WKRetainPtr<WKStringRef> errorMessageName(AdoptWK, WKStringCreateWithUTF8CString("Error"));
@@ -271,6 +277,8 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
 void InjectedBundle::done()
 {
     m_state = Stopping;
+
+    m_useWorkQueue = false;
 
     page()->stopLoading();
     setTopLoadingFrame(0);
@@ -444,6 +452,51 @@ void InjectedBundle::setCustomPolicyDelegate(bool enabled, bool permissive)
     WKDictionaryAddItem(messageBody.get(), permissiveKeyWK.get(), permissiveWK.get());
 
     WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
+}
+
+bool InjectedBundle::shouldProcessWorkQueue() const
+{
+    if (!m_useWorkQueue)
+        return false;
+
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("IsWorkQueueEmpty"));
+    WKTypeRef resultToPass = 0;
+    WKBundlePostSynchronousMessage(m_bundle, messageName.get(), 0, &resultToPass);
+    WKRetainPtr<WKBooleanRef> isEmpty(AdoptWK, static_cast<WKBooleanRef>(resultToPass));
+
+    return !WKBooleanGetValue(isEmpty.get());
+}
+
+void InjectedBundle::processWorkQueue()
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("ProcessWorkQueue"));
+    WKBundlePostMessage(m_bundle, messageName.get(), 0);
+}
+
+void InjectedBundle::queueBackNavigation(unsigned howFarBackward)
+{
+    m_useWorkQueue = true;
+
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("QueueBackNavigation"));
+    WKRetainPtr<WKUInt64Ref> messageBody(AdoptWK, WKUInt64Create(howFarBackward));
+    WKBundlePostMessage(m_bundle, messageName.get(),  messageBody.get());
+}
+
+void InjectedBundle::queueLoad(WKStringRef url, WKStringRef target)
+{
+    m_useWorkQueue = true;
+
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("QueueLoad"));
+
+    WKRetainPtr<WKMutableDictionaryRef> loadData(AdoptWK, WKMutableDictionaryCreate());
+
+    WKRetainPtr<WKStringRef> urlKey(AdoptWK, WKStringCreateWithUTF8CString("url"));
+    WKDictionaryAddItem(loadData.get(), urlKey.get(), url);
+
+    WKRetainPtr<WKStringRef> targetKey(AdoptWK, WKStringCreateWithUTF8CString("target"));
+    WKDictionaryAddItem(loadData.get(), targetKey.get(), target);
+
+    WKBundlePostMessage(m_bundle, messageName.get(), loadData.get());
 }
 
 } // namespace WTR

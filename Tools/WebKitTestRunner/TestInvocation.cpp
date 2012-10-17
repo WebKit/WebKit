@@ -430,6 +430,35 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "ProcessWorkQueue")) {
+        if (TestController::shared().workQueueManager().processWorkQueue()) {
+            WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("WorkQueueProcessedCallback"));
+            WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), 0);
+        }
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "QueueBackNavigation")) {
+        ASSERT(WKGetTypeID(messageBody) == WKUInt64GetTypeID());
+        uint64_t stepCount = WKUInt64GetValue(static_cast<WKUInt64Ref>(messageBody));
+        TestController::shared().workQueueManager().queueBackNavigation(stepCount);
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "QueueLoad")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+        WKDictionaryRef loadDataDictionary = static_cast<WKDictionaryRef>(messageBody);
+
+        WKRetainPtr<WKStringRef> urlKey(AdoptWK, WKStringCreateWithUTF8CString("url"));
+        WKStringRef urlWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(loadDataDictionary, urlKey.get()));
+
+        WKRetainPtr<WKStringRef> targetKey(AdoptWK, WKStringCreateWithUTF8CString("target"));
+        WKStringRef targetWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(loadDataDictionary, targetKey.get()));
+
+        TestController::shared().workQueueManager().queueLoad(toWTFString(urlWK), toWTFString(targetWK));
+        return;
+    }
+
     ASSERT_NOT_REACHED();
 }
 
@@ -440,6 +469,12 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         WKBooleanRef isKeyValue = static_cast<WKBooleanRef>(messageBody);
         TestController::shared().mainWebView()->setWindowIsKey(WKBooleanGetValue(isKeyValue));
         return 0;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "IsWorkQueueEmpty")) {
+        bool isEmpty = TestController::shared().workQueueManager().isWorkQueueEmpty();
+        WKRetainPtr<WKTypeRef> result(AdoptWK, WKBooleanCreate(isEmpty));
+        return result;
     }
 
     ASSERT_NOT_REACHED();

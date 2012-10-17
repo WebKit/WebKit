@@ -261,6 +261,9 @@ public:
 
     bool callShouldCloseOnWebView();
 
+    void queueBackNavigation(unsigned howFarBackward);
+    void queueLoad(JSStringRef url, JSStringRef target);
+
 private:
     static const double waitToDumpWatchdogTimerInterval;
 

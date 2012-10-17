@@ -48,6 +48,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
 #if ENABLE(WEB_INTENTS)
@@ -830,6 +831,20 @@ bool TestRunner::callShouldCloseOnWebView()
 {
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
     return WKBundleFrameCallShouldCloseOnWebView(mainFrame);
+}
+
+void TestRunner::queueBackNavigation(unsigned howFarBackward)
+{
+    InjectedBundle::shared().queueBackNavigation(howFarBackward);
+}
+
+void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
+{
+    WKRetainPtr<WKURLRef> baseURLWK(AdoptWK, WKBundleFrameCopyURL(WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page())));
+    WKRetainPtr<WKURLRef> urlWK(AdoptWK, WKURLCreateWithBaseURL(baseURLWK.get(), toWTFString(toWK(url)).utf8().data()));
+    WKRetainPtr<WKStringRef> urlStringWK(AdoptWK, WKURLCopyString(urlWK.get()));
+
+    InjectedBundle::shared().queueLoad(urlStringWK.get(), toWK(target).get());
 }
 
 } // namespace WTR

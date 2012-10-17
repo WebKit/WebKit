@@ -98,6 +98,12 @@ public:
     // Policy delegate.
     void setCustomPolicyDelegate(bool enabled, bool permissive);
 
+    // Work queue.
+    bool shouldProcessWorkQueue() const;
+    void processWorkQueue();
+    void queueBackNavigation(unsigned howFarBackward);
+    void queueLoad(WKStringRef url, WKStringRef target);
+
 private:
     InjectedBundle();
     ~InjectedBundle();
@@ -144,6 +150,7 @@ private:
 
     bool m_dumpPixels;
     bool m_useWaitToDumpWatchdogTimer;
+    bool m_useWorkQueue;
 
     WKRetainPtr<WKImageRef> m_pixelResult;
     WKRetainPtr<WKArrayRef> m_repaintRects;

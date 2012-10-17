@@ -174,6 +174,8 @@ private:
 
     void platformDidStartProvisionalLoadForFrame(WKBundleFrameRef);
 
+    void frameDidChangeLocation(WKBundleFrameRef, bool shouldDump = false);
+
     WKBundlePageRef m_page;
     WKRetainPtr<WKBundleScriptWorldRef> m_world;
     WKRetainPtr<WKBundleBackForwardListItemRef> m_previousTestBackForwardListItem;

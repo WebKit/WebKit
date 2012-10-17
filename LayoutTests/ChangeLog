@@ -1,3 +1,15 @@
+2012-10-17  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        WebKitTestRunner needs testRunner.queueLoad
+        https://bugs.webkit.org/show_bug.cgi?id=42674
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskipped corresponding tests for WK2 and WK2 EFL, put those which still failing to appropriate groups.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2012-10-17  Douglas Stockwell  <dstockwell@chromium.org>
 
         Content of replaced elements should be trimmed to the content edge curve.

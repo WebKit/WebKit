@@ -526,6 +526,14 @@
 			RelativePath="..\WebKitTestRunnerPrefix.h"
 			>
 		</File>
+		<File
+			RelativePath="..\WorkQueueManager.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\WorkQueueManager.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

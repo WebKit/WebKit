@@ -292,7 +292,7 @@ svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard.html
 svg/custom/manually-parsed-svg-allowed-in-dashboard.html
 svg/custom/svg-allowed-in-dashboard-object.html
 
-# WebKitTestRunner needs layoutTestController.queueReload
+# WebKitTestRunner needs testRunner.queueReload
 # <https://bugs.webkit.org/show_bug.cgi?id=42672>
 fast/css/compare-content-style.html
 fast/frames/frame-display-none-focus.html
@@ -300,68 +300,38 @@ fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html
 fast/loader/images-enabled-unset-can-block-image-and-can-reload-in-place.html
 fast/loader/reload-policy-delegate.html
 http/tests/navigation/fallback-anchor-reload.html
+http/tests/navigation/reload-subframe-frame.html
+http/tests/navigation/reload-subframe-iframe.html
+http/tests/navigation/reload-subframe-object.html
 
-# WebKitTestRunner needs layoutTestController.queueLoad
-# <https://bugs.webkit.org/show_bug.cgi?id=42674>
-http/tests/navigation/back-twice-without-commit.html
-http/tests/xmlhttprequest/basic-auth-nopassword.html
-http/tests/xmlhttprequest/basic-auth-nouser.html
-http/tests/navigation/forward-and-cancel.html
-fast/frames/frame-navigation.html
-fast/history/go-back-to-changed-name.html
-http/tests/navigation/anchor-basic.html
+# WebKitTestRunner needs testRunner.queueNonLoadingScript
+# <https://bugs.webkit.org/show_bug.cgi?id=98141>
 http/tests/navigation/anchor-goback.html
-http/tests/navigation/anchor-subframeload.html
-http/tests/navigation/back-to-slow-frame.html
-http/tests/navigation/error404-basic.html
 http/tests/navigation/error404-goback.html
-http/tests/navigation/error404-subframeload.html
-http/tests/navigation/javascriptlink-basic.html
-http/tests/navigation/javascriptlink-frames.html
 http/tests/navigation/javascriptlink-goback.html
-http/tests/navigation/javascriptlink-subframeload.html
-http/tests/navigation/metaredirect-basic.html
-http/tests/navigation/metaredirect-frames.html
 http/tests/navigation/metaredirect-goback.html
-http/tests/navigation/metaredirect-subframeload.html
-http/tests/navigation/post-goback-same-url.html
 http/tests/navigation/post-goback2.html
 http/tests/navigation/postredirect-basic.html
 http/tests/navigation/postredirect-frames.html
 http/tests/navigation/postredirect-goback1.html
 http/tests/navigation/postredirect-goback2.html
-http/tests/navigation/postredirect-reload.html
-http/tests/navigation/redirect-cycle.html
-http/tests/navigation/redirect302-basic.html
-http/tests/navigation/redirect302-frames.html
 http/tests/navigation/redirect302-goback.html
-http/tests/navigation/redirect302-metaredirect.html
-http/tests/navigation/redirect302-subframeload.html
 http/tests/navigation/relativeanchor-basic.html
 http/tests/navigation/relativeanchor-frames.html
 http/tests/navigation/relativeanchor-goback.html
-http/tests/navigation/reload-subframe-frame.html
-http/tests/navigation/reload-subframe-iframe.html
-http/tests/navigation/reload-subframe-object.html
-http/tests/navigation/response204.html
 http/tests/navigation/restore-form-state-https.html
-http/tests/navigation/slowmetaredirect-basic.html
-http/tests/navigation/slowtimerredirect-basic.html
-http/tests/navigation/success200-basic.html
 http/tests/navigation/success200-frames-loadsame.html
-http/tests/navigation/success200-frames.html
 http/tests/navigation/success200-goback.html
 http/tests/navigation/success200-loadsame.html
 http/tests/navigation/success200-reload.html
-http/tests/navigation/success200-subframeload.html
-http/tests/navigation/timerredirect-basic.html
-http/tests/navigation/timerredirect-frames.html
 http/tests/navigation/timerredirect-goback.html
-http/tests/navigation/timerredirect-subframeload.html
 
-# WebKitTestRunner needs layoutTestController.queueLoadingScript
+# WebKitTestRunner needs testRunner.queueLoadingScript
 # <https://bugs.webkit.org/show_bug.cgi?id=42675>
 http/tests/cache/subresource-failover-to-network.html
+http/tests/navigation/forward-and-cancel.html
+http/tests/navigation/post-goback-same-url.html
+http/tests/navigation/postredirect-reload.html
 
 # WebKitTestRunner needs layoutTestController.setCacheModel
 # <https://bugs.webkit.org/show_bug.cgi?id=42684>
@@ -552,6 +522,8 @@ http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authen
 http/tests/loading/basic-auth-resend-wrong-credentials.html
 http/tests/loading/basic-credentials-sent-automatically.html
 http/tests/security/401-logout/401-logout.php
+http/tests/xmlhttprequest/basic-auth-nopassword.html
+http/tests/xmlhttprequest/basic-auth-nouser.html
 http/tests/xmlhttprequest/remember-bad-password.html
 http/tests/xmlhttprequest/failed-auth.html
 http/tests/misc/401-alternative-content.php
@@ -773,6 +745,17 @@ http/tests/download/inherited-encoding.html
 
 # WebFrameLoaderClient::canHandleRequest() has to be implemented.
 http/tests/misc/redirect-to-external-url.html
+
+# testRunner.queueLoad should consider given target.
+fast/frames/frame-navigation.html
+http/tests/navigation/anchor-subframeload.html
+http/tests/navigation/error404-subframeload.html
+http/tests/navigation/javascriptlink-subframeload.html
+http/tests/navigation/metaredirect-subframeload.html
+http/tests/navigation/redirect302-subframeload.html
+http/tests/navigation/response204.html
+http/tests/navigation/success200-subframeload.html
+http/tests/navigation/timerredirect-subframeload.html
 
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################

@@ -15,7 +15,8 @@ HEADERS += \
     StringFunctions.h \
     TestController.h \
     TestInvocation.h \
-    WebNotificationProvider.h
+    WebNotificationProvider.h \
+    WorkQueueManager.h
 
 SOURCES += \
     $${ROOT_WEBKIT_DIR}/Tools/DumpRenderTree/qt/QtInitializeTestFonts.cpp \
@@ -27,7 +28,8 @@ SOURCES += \
     GeolocationProviderMock.cpp \
     TestController.cpp \
     TestInvocation.cpp \
-    WebNotificationProvider.cpp
+    WebNotificationProvider.cpp \
+    WorkQueueManager.cpp
 
 DESTDIR = $${ROOT_BUILD_DIR}/bin
 

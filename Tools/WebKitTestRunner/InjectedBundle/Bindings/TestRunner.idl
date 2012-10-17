@@ -181,5 +181,9 @@ interface TestRunner {
     void setMockGeolocationPositionUnavailableError(in DOMString errorMessage);
 
     boolean callShouldCloseOnWebView();
+
+    // Work queue.
+    void queueBackNavigation(in unsigned long howFarBackward);
+    void queueLoad(in DOMString url, in DOMString target);
 };
 

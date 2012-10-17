@@ -772,7 +772,7 @@ void InjectedBundlePage::didReceiveServerRedirectForProvisionalLoadForFrame(WKBu
     InjectedBundle::shared().stringBuilder()->appendLiteral(" - didReceiveServerRedirectForProvisionalLoadForFrame\n");
 }
 
-void InjectedBundlePage::didFailProvisionalLoadWithErrorForFrame(WKBundleFrameRef frame, WKErrorRef error)
+void InjectedBundlePage::didFailProvisionalLoadWithErrorForFrame(WKBundleFrameRef frame, WKErrorRef)
 {
     if (!InjectedBundle::shared().isTestRunning())
         return;
@@ -782,14 +782,7 @@ void InjectedBundlePage::didFailProvisionalLoadWithErrorForFrame(WKBundleFrameRe
         InjectedBundle::shared().stringBuilder()->appendLiteral(" - didFailProvisionalLoadWithError\n");
     }
 
-    if (frame != InjectedBundle::shared().topLoadingFrame())
-        return;
-    InjectedBundle::shared().setTopLoadingFrame(0);
-
-    if (InjectedBundle::shared().testRunner()->waitToDump())
-        return;
-
-    InjectedBundle::shared().done();
+    frameDidChangeLocation(frame);
 }
 
 void InjectedBundlePage::didCommitLoadForFrame(WKBundleFrameRef frame)
@@ -973,14 +966,7 @@ void InjectedBundlePage::didFinishLoadForFrame(WKBundleFrameRef frame)
         InjectedBundle::shared().stringBuilder()->appendLiteral(" - didFinishLoadForFrame\n");
     }
 
-    if (frame != InjectedBundle::shared().topLoadingFrame())
-        return;
-    InjectedBundle::shared().setTopLoadingFrame(0);
-
-    if (InjectedBundle::shared().testRunner()->waitToDump())
-        return;
-
-    InjectedBundle::shared().page()->dump();
+    frameDidChangeLocation(frame, /*shouldDump*/ true);
 }
 
 void InjectedBundlePage::didFailLoadWithErrorForFrame(WKBundleFrameRef frame, WKErrorRef)
@@ -993,14 +979,7 @@ void InjectedBundlePage::didFailLoadWithErrorForFrame(WKBundleFrameRef frame, WK
         InjectedBundle::shared().stringBuilder()->appendLiteral(" - didFailLoadWithError\n");
     }
 
-    if (frame != InjectedBundle::shared().topLoadingFrame())
-        return;
-    InjectedBundle::shared().setTopLoadingFrame(0);
-
-    if (InjectedBundle::shared().testRunner()->waitToDump())
-        return;
-
-    InjectedBundle::shared().done();
+    frameDidChangeLocation(frame);
 }
 
 void InjectedBundlePage::didReceiveTitleForFrame(WKStringRef title, WKBundleFrameRef frame)
@@ -1888,5 +1867,26 @@ void InjectedBundlePage::platformDidStartProvisionalLoadForFrame(WKBundleFrameRe
 {
 }
 #endif
+
+void InjectedBundlePage::frameDidChangeLocation(WKBundleFrameRef frame, bool shouldDump)
+{
+    if (frame != InjectedBundle::shared().topLoadingFrame())
+        return;
+
+    InjectedBundle::shared().setTopLoadingFrame(0);
+
+    if (InjectedBundle::shared().testRunner()->waitToDump())
+        return;
+
+    if (InjectedBundle::shared().shouldProcessWorkQueue()) {
+        InjectedBundle::shared().processWorkQueue();
+        return;
+    }
+
+    if (shouldDump)
+        InjectedBundle::shared().page()->dump();
+    else
+        InjectedBundle::shared().done();
+}
 
 } // namespace WTR
