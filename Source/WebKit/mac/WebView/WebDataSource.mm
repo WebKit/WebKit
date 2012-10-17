@@ -73,6 +73,8 @@ class WebDataSourcePrivate
 public:
     WebDataSourcePrivate(PassRefPtr<WebDocumentLoaderMac> loader)
         : loader(loader)
+        , representationFinishedLoading(NO)
+        , includedInWebKitStatistics(NO)
     {
         ASSERT(this->loader);
     }
