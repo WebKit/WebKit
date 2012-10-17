@@ -1,3 +1,21 @@
+2012-10-17  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r131421): Text baseline becomes incorrect after re-layout of input[type=time]
+        https://bugs.webkit.org/show_bug.cgi?id=99572
+
+        Reviewed by Kentaro Hara.
+
+        We use flexible box since r131421, and it seems text baseline becomes
+        incorrect if there are text nodes in a flex container.
+
+        Test: fast/forms/time-multiple-fields/time-multiple-fields-static-relayout.html
+
+        * css/html.css:
+        (input::-webkit-datetime-edit-text): Added.
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore::DateTimeEditBuilder::visitLiteral):
+        Wrap text with an element with ::-webkit-datetime-edit-text.
+
 2012-10-17  Grzegorz Czajkowski  <g.czajkowski@samsung.com>, Michal Roj <m.roj@samsung.com>
 
         [WK2][EFL] Implementation of spellchecking feature.

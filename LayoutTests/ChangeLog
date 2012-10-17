@@ -1,3 +1,13 @@
+2012-10-17  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r131421): Text baseline becomes incorrect after re-layout of input[type=time]
+        https://bugs.webkit.org/show_bug.cgi?id=99572
+
+        Reviewed by Kentaro Hara.
+
+        * fast/forms/time-multiple-fields/time-multiple-fields-static-relayout-expected.txt: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-static-relayout.html: Added.
+
 2012-10-17  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

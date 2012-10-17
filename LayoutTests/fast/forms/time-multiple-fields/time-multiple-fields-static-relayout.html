@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<body>
+<script src="../../js/resources/js-test-pre.js"></script>
+<div id="container">
+<span style="font-size: 64px;">Foo</span>
+<input type="time" id="time1">
+<input type="time" id="time2">
+</div>
+<script>
+time1.value = '23:59';
+shouldBe('time1.offsetTop', 'time2.offsetTop');
+container.remove();
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>

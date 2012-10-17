@@ -611,6 +611,11 @@ input::-webkit-datetime-edit-year-field {
     padding: 0.15em;
 }
 
+input::-webkit-datetime-edit-text {
+    -webkit-user-modify: read-only !important;
+    display: inline-block;
+}
+
 input::-webkit-datetime-edit-gap {
     -webkit-flex: 1;
     -webkit-user-modify: read-only !important;

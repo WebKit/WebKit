@@ -204,8 +204,12 @@ bool DateTimeEditBuilder::shouldSecondFieldReadOnly() const
 
 void DateTimeEditBuilder::visitLiteral(const String& text)
 {
+    DEFINE_STATIC_LOCAL(AtomicString, textPseudoId, ("-webkit-datetime-edit-text", AtomicString::ConstructFromLiteral));
     ASSERT(text.length());
-    m_editElement.appendChild(Text::create(m_editElement.document(), text));
+    RefPtr<HTMLDivElement> element = HTMLDivElement::create(m_editElement.document());
+    element->setShadowPseudoId(textPseudoId);
+    element->appendChild(Text::create(m_editElement.document(), text));
+    m_editElement.appendChild(element);
 }
 
 // ----------------------------
