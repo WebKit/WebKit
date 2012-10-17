@@ -1,3 +1,9 @@
+2012-10-17  Dana Jansens  <danakj@chromium.org>
+
+        Unreviewed rebaseline for ietestcenter/css3/bordersbackgrounds/border-radius-content-edge-001.htm
+
+        * platform/chromium-win-xp/ietestcenter/css3/bordersbackgrounds/border-radius-content-edge-001-expected.png: Added.
+
 2012-10-17  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] accessibility/ignore-spacer-elements.html is failing
