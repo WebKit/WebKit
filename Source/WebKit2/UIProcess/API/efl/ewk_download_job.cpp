@@ -174,12 +174,12 @@ double ewk_download_job_elapsed_time_get(const Ewk_Download_Job* download)
  * @internal
  * Sets the URL @a response for this @a download.
  */
-void ewk_download_job_response_set(Ewk_Download_Job* download, Ewk_Url_Response* response)
+void ewk_download_job_response_set(Ewk_Download_Job* download, PassRefPtr<Ewk_Url_Response> response)
 {
     EINA_SAFETY_ON_NULL_RETURN(download);
     EINA_SAFETY_ON_NULL_RETURN(response);
 
-    download->response = ewk_url_response_ref(response);
+    download->response = response;
 }
 
 /**

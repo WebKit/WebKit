@@ -1,5 +1,22 @@
 2012-10-17  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL][WK2] Memory leak in ewk_download_job_response_set()
+        https://bugs.webkit.org/show_bug.cgi?id=99621
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        No longer call ewk_url_response_ref() on the response
+        object in ewk_download_job_response_set() since it will
+        be ref'd when assigning to the RefPtr member already.
+
+        * UIProcess/API/efl/ewk_context_download_client.cpp:
+        (didReceiveResponse):
+        * UIProcess/API/efl/ewk_download_job.cpp:
+        (ewk_download_job_response_set):
+        * UIProcess/API/efl/ewk_download_job_private.h: Remove several unimplemented functions.
+
+2012-10-17  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL][WK2] Compilation warning in Ewk_View when accelerated compositing is disabled
         https://bugs.webkit.org/show_bug.cgi?id=99613
 

@@ -75,15 +75,9 @@ typedef struct _Ewk_Error Ewk_Error;
 
 uint64_t ewk_download_job_id_get(const Ewk_Download_Job*);
 Evas_Object* ewk_download_job_view_get(const Ewk_Download_Job*);
-
 void ewk_download_job_state_set(Ewk_Download_Job*, Ewk_Download_Job_State);
-void ewk_download_job_cancelled(Ewk_Download_Job*);
-void ewk_download_job_failed(Ewk_Download_Job*);
-void ewk_download_job_finished(Ewk_Download_Job*);
-void ewk_download_job_started(Ewk_Download_Job*);
-
 void ewk_download_job_received_data(Ewk_Download_Job*, uint64_t length);
-void ewk_download_job_response_set(Ewk_Download_Job*, Ewk_Url_Response*);
+void ewk_download_job_response_set(Ewk_Download_Job*, PassRefPtr<Ewk_Url_Response>);
 void ewk_download_job_suggested_filename_set(Ewk_Download_Job*, const char* suggestedFilename);
 
 #endif // ewk_download_job_private_h

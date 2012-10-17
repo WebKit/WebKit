@@ -69,8 +69,7 @@ static void didReceiveResponse(WKContextRef, WKDownloadRef wkDownload, WKURLResp
 {
     Ewk_Download_Job* download = ewk_context_download_job_get(toEwkContext(clientInfo), toImpl(wkDownload)->downloadID());
     ASSERT(download);
-    RefPtr<Ewk_Url_Response> response = Ewk_Url_Response::create(wkResponse);
-    ewk_download_job_response_set(download, response.get());
+    ewk_download_job_response_set(download, Ewk_Url_Response::create(wkResponse));
 }
 
 static void didCreateDestination(WKContextRef, WKDownloadRef wkDownload, WKStringRef /*path*/, const void* clientInfo)
