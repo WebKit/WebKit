@@ -1353,8 +1353,6 @@ Bug(GTK) fast/dom/Geolocation/coordinates-interface-attributes.html [ Failure ]
 
 webkit.org/b/98585 fast/exclusions/shape-inside/shape-inside-rounded-rectangle-003.html [ ImageOnlyFailure ]
 
-webkit.org/b/98666 fast/forms/range/input-appearance-range-rtl.html [ ImageOnlyFailure ]
-
 webkit.org/b/98587 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ ImageOnlyFailure ]
 
 webkit.org/b/98612 [ Release ] fast/dom/gc-dom-tree-lifetime.html [ Failure ]

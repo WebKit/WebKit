@@ -2412,7 +2412,6 @@ webkit.org/b/91379 http/tests/security/contentSecurityPolicy/policy-does-not-aff
 webkit.org/b/91379 http/tests/security/contentSecurityPolicy/object-src-none-allowed.html [ Failure Pass ]
 
 webkit.org/b/98666 fast/events/touch/touch-slider.html [ Failure ]
-webkit.org/b/98666 fast/forms/range/input-appearance-range-rtl.html [ ImageOnlyFailure ]
 webkit.org/b/98666 media/video-playing-and-pause.html [ Failure ]
 
 webkit.org/b/93247 [ Debug ] fast/lists/list-marker-remove-crash.html [ Crash ]

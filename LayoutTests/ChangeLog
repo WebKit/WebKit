@@ -1,5 +1,17 @@
 2012-10-17  Tony Chang  <tony@chromium.org>
 
+        fast/forms/range/input-appearance-range-rtl.html off by one pixel
+        https://bugs.webkit.org/show_bug.cgi?id=99625
+
+        Reviewed by Ojan Vafai.
+
+        Run test on GTK+ and Qt now that it is fixed.
+
+        * platform/gtk/TestExpectations:
+        * platform/qt/TestExpectations:
+
+2012-10-17  Tony Chang  <tony@chromium.org>
+
         Unreviewed, Qt baselines for shadow DOM changes to RenderSlider.
         There are a couple unexplained failures that I'm still investigating.
 

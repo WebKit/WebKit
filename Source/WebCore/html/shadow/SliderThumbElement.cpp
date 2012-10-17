@@ -169,9 +169,17 @@ void RenderSliderContainer::layout()
     HTMLInputElement* input = node()->shadowHost()->toInputElement();
     bool isVertical = hasVerticalAppearance(input);
     style()->setFlexDirection(isVertical ? FlowColumn : FlowRow);
+    TextDirection oldTextDirection = style()->direction();
+    if (isVertical) {
+        // FIXME: Work around rounding issues in RTL vertical sliders. We want them to
+        // render identically to LTR vertical sliders. We can remove this work around when
+        // subpixel rendering is enabled on all ports.
+        style()->setDirection(LTR);
+    }
 
     RenderFlexibleBox::layout();
 
+    style()->setDirection(oldTextDirection);
     // These should always exist, unless someone mutates the shadow DOM (e.g., in the inspector).
     if (!input->sliderThumbElement() || !input->sliderThumbElement()->renderer())
         return;
