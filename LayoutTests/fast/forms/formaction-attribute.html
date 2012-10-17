@@ -9,16 +9,23 @@
 <form action="javascript: failTest(this)" method="get">
 <input id="button1" type="submit" formaction="javascript: passTest1(this)" />
 <button id="button2" type="submit" formaction="javascript: passTest2(this)" />
+<button type="submit" formaction="javascript: passTest3(this)">
+  <span id="span" formaction="javascript: failTest2(this)">submit</span>
+</button>
 </form>
 <script>
 description("Test for formaction attributes in input and button tags.");
 var doneAction = false;
-var doneAction2 = false;
 
 function failTest(ul)
 {
     doneAction = true;
     testFailed('The formaction attribute in the input or button tag was ignored.');
+}
+function failTest2(ul)
+{
+    doneAction = true;
+    testFailed('The formaction attribute in the span tag was used.');
 }
 function passTest1(ul)
 {
@@ -26,6 +33,11 @@ function passTest1(ul)
     testPassed('The formaction attribute in the input tag was used.');
 }
 function passTest2(ul)
+{
+    doneAction = true;
+    testPassed('The formaction attribute in the button tag was used.');
+}
+function passTest3(ul)
 {
     doneAction = true;
     testPassed('The formaction attribute in the button tag was used.');
@@ -40,6 +52,12 @@ if (!doneAction)
 doneAction = false;
 var button = document.getElementById('button2');
 button.click();
+if (!doneAction)
+    testFailed('Both of the action and the formaction attributes were ignored.');
+
+doneAction = false;
+var span = document.getElementById('span');
+span.click();
 if (!doneAction)
     testFailed('Both of the action and the formaction attributes were ignored.');
 </script>

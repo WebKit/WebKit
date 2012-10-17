@@ -1,3 +1,19 @@
+2012-10-17  Kunihiko Sakamoto  <ksakamoto@chromium.org>
+
+        The HTML5 formtarget/formaction/formenctyp/formmethod/formnovalidate attributes don't work in button tags with nested elements
+        https://bugs.webkit.org/show_bug.cgi?id=90539
+
+        Reviewed by Kent Tamura.
+
+        Fix a bug where form(action|enctype|method|target) attributes of <button> are not
+        honored if the target of the click event is an element nested within the button.
+
+        Test: fast/forms/formaction-attribute.html
+
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::create): Looks for the attributes for form submission
+        from the nearest FormControlElement ancestor of the event target.
+
 2012-10-16  MORITA Hajime  <morrita@google.com>
 
         [Shadow DOM][V8] WebCore::V8DOMWindow::installPerContextProperties() is slow when shadowDOMEnabled flag is on.
