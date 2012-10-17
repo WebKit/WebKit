@@ -26,11 +26,44 @@
 #ifndef ewk_cookie_manager_private_h
 #define ewk_cookie_manager_private_h
 
+#include "WKCookieManager.h"
+#include "WKRetainPtr.h"
+#include "ewk_cookie_manager.h"
 #include <WebKit2/WKBase.h>
+#include <wtf/PassOwnPtr.h>
+
+struct Cookie_Change_Handler {
+    Ewk_Cookie_Manager_Changes_Watch_Cb callback;
+    void* userData;
+
+    Cookie_Change_Handler()
+        : callback(0)
+        , userData(0)
+    { }
+
+    Cookie_Change_Handler(Ewk_Cookie_Manager_Changes_Watch_Cb _callback, void* _userData)
+        : callback(_callback)
+        , userData(_userData)
+    { }
+};
+
 
 typedef struct _Ewk_Cookie_Manager Ewk_Cookie_Manager;
 
-Ewk_Cookie_Manager* ewk_cookie_manager_new(WKCookieManagerRef wkCookieManager);
-void ewk_cookie_manager_free(Ewk_Cookie_Manager* manager);
+class _Ewk_Cookie_Manager {
+public:
+    WKRetainPtr<WKCookieManagerRef> wkCookieManager;
+    Cookie_Change_Handler changeHandler;
+
+    static PassOwnPtr<_Ewk_Cookie_Manager> create(WKCookieManagerRef cookieManagerRef)
+    {
+        return adoptPtr(new _Ewk_Cookie_Manager(cookieManagerRef));
+    }
+
+    ~_Ewk_Cookie_Manager();
+
+private:
+    explicit _Ewk_Cookie_Manager(WKCookieManagerRef cookieManagerRef);
+};
 
 #endif // ewk_cookie_manager_private_h

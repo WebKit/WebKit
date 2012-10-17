@@ -26,64 +26,26 @@
 #include "config.h"
 #include "ewk_popup_menu_item.h"
 
-#include "WKEinaSharedString.h"
 #include "ewk_popup_menu_item_private.h"
 #include "ewk_private.h"
 #include <wtf/text/CString.h>
 
 using namespace WebKit;
 
-/**
- * \struct  _Ewk_Popup_Menu_Item
- * @brief   Contains the popup menu data.
- */
-struct _Ewk_Popup_Menu_Item {
-    Ewk_Popup_Menu_Item_Type type;
-    Ewk_Text_Direction textDirection;
-
-    bool hasTextDirectionOverride;
-    bool isEnabled;
-    bool isLabel;
-    bool isSelected;
-
-    WKEinaSharedString text;
-    WKEinaSharedString toolTip;
-    WKEinaSharedString accessibilityText;
-
-    explicit _Ewk_Popup_Menu_Item(const WebKit::WebPopupItem& item)
-        : type(static_cast<Ewk_Popup_Menu_Item_Type>(item.m_type))
-        , textDirection(static_cast<Ewk_Text_Direction>(item.m_textDirection))
-        , hasTextDirectionOverride(item.m_hasTextDirectionOverride)
-        , isEnabled(item.m_isEnabled)
-        , isLabel(item.m_isLabel)
-        , isSelected(item.m_isSelected)
-        , text(item.m_text.utf8().data())
-        , toolTip(item.m_toolTip.utf8().data())
-        , accessibilityText(item.m_accessibilityText.utf8().data())
-    { }
-};
+_Ewk_Popup_Menu_Item::_Ewk_Popup_Menu_Item(const WebKit::WebPopupItem& item)
+    : type(static_cast<Ewk_Popup_Menu_Item_Type>(item.m_type))
+    , textDirection(static_cast<Ewk_Text_Direction>(item.m_textDirection))
+    , hasTextDirectionOverride(item.m_hasTextDirectionOverride)
+    , isEnabled(item.m_isEnabled)
+    , isLabel(item.m_isLabel)
+    , isSelected(item.m_isSelected)
+    , text(item.m_text.utf8().data())
+    , toolTip(item.m_toolTip.utf8().data())
+    , accessibilityText(item.m_accessibilityText.utf8().data())
+{ }
 
 COMPILE_ASSERT_MATCHING_ENUM(EWK_POPUP_MENU_SEPARATOR, WebPopupItem::Separator);
 COMPILE_ASSERT_MATCHING_ENUM(EWK_POPUP_MENU_ITEM, WebPopupItem::Item);
-
-/**
- * @internal
- * Constructs a Ewk_Popup_Menu_Item.
- */
-Ewk_Popup_Menu_Item* ewk_popup_menu_item_new(const WebKit::WebPopupItem& item)
-{
-    return new Ewk_Popup_Menu_Item(item);
-}
-
-/**
- * @internal
- * Frees a Ewk_Popup_Menu_Item.
- */
-void ewk_popup_menu_item_free(Ewk_Popup_Menu_Item* item)
-{
-    EINA_SAFETY_ON_NULL_RETURN(item);
-    delete item;
-}
 
 Ewk_Popup_Menu_Item_Type ewk_popup_menu_item_type_get(const Ewk_Popup_Menu_Item* item)
 {

@@ -26,9 +26,36 @@
 #ifndef ewk_popup_menu_item_private_h
 #define ewk_popup_menu_item_private_h
 
+#include "WKEinaSharedString.h"
 #include "WebPopupItem.h"
+#include "ewk_popup_menu_item.h"
+#include <wtf/PassOwnPtr.h>
 
-Ewk_Popup_Menu_Item* ewk_popup_menu_item_new(const WebKit::WebPopupItem& item);
-void ewk_popup_menu_item_free(Ewk_Popup_Menu_Item* item);
+/**
+ * \struct  _Ewk_Popup_Menu_Item
+ * @brief   Contains the popup menu data.
+ */
+class _Ewk_Popup_Menu_Item {
+public:
+    Ewk_Popup_Menu_Item_Type type;
+    Ewk_Text_Direction textDirection;
+
+    bool hasTextDirectionOverride;
+    bool isEnabled;
+    bool isLabel;
+    bool isSelected;
+
+    WKEinaSharedString text;
+    WKEinaSharedString toolTip;
+    WKEinaSharedString accessibilityText;
+
+    static PassOwnPtr<_Ewk_Popup_Menu_Item> create(const WebKit::WebPopupItem& item)
+    {
+        return adoptPtr(new _Ewk_Popup_Menu_Item(item));
+    }
+
+private:
+    explicit _Ewk_Popup_Menu_Item(const WebKit::WebPopupItem& item);
+};
 
 #endif // ewk_popup_menu_item_private_h

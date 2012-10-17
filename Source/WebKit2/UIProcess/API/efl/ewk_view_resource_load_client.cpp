@@ -41,6 +41,7 @@
 #include "ewk_url_response_private.h"
 #include "ewk_view_private.h"
 #include "ewk_view_resource_load_client_private.h"
+#include <wtf/OwnPtr.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
@@ -81,10 +82,9 @@ static void didFinishLoadForResource(WKPageRef, WKFrameRef, uint64_t resourceIde
 
 static void didFailLoadForResource(WKPageRef, WKFrameRef, uint64_t resourceIdentifier, WKErrorRef wkError, const void* clientInfo)
 {
-    Ewk_Error* ewkError = ewk_error_new(wkError);
-    ewk_view_resource_load_failed(toEwkView(clientInfo), resourceIdentifier, ewkError);
+    OwnPtr<Ewk_Error> ewkError = Ewk_Error::create(wkError);
+    ewk_view_resource_load_failed(toEwkView(clientInfo), resourceIdentifier, ewkError.get());
     ewk_view_resource_load_finished(toEwkView(clientInfo), resourceIdentifier);
-    ewk_error_free(ewkError);
 }
 
 void ewk_view_resource_load_client_attach(WKPageRef pageRef, Evas_Object* ewkView)

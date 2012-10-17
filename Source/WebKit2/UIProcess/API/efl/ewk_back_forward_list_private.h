@@ -26,12 +26,32 @@
 #ifndef ewk_back_forward_list_private_h
 #define ewk_back_forward_list_private_h
 
+#include "WKRetainPtr.h"
+#include "ewk_back_forward_list_item_private.h"
 #include <WebKit2/WKBase.h>
+#include <wtf/HashMap.h>
+#include <wtf/PassOwnPtr.h>
 
 typedef struct _Ewk_Back_Forward_List Ewk_Back_Forward_List;
 
+typedef HashMap<WKBackForwardListItemRef, RefPtr<Ewk_Back_Forward_List_Item> > ItemsMap;
+
+class _Ewk_Back_Forward_List {
+public:
+    WKRetainPtr<WKBackForwardListRef> wkList;
+    mutable ItemsMap wrapperCache;
+
+    static PassOwnPtr<_Ewk_Back_Forward_List> create(WKBackForwardListRef listRef)
+    {
+        return adoptPtr(new _Ewk_Back_Forward_List(listRef));
+    }
+
+private:
+    explicit _Ewk_Back_Forward_List(WKBackForwardListRef listRef)
+        : wkList(listRef)
+    { }
+};
+
 void ewk_back_forward_list_changed(Ewk_Back_Forward_List*, WKBackForwardListItemRef wkAddedItem, WKArrayRef wkRemovedItems);
-Ewk_Back_Forward_List* ewk_back_forward_list_new(WKBackForwardListRef wkBackForwardListRef);
-void ewk_back_forward_list_free(Ewk_Back_Forward_List* list);
 
 #endif // ewk_back_forward_list_private_h

@@ -26,11 +26,29 @@
 #ifndef ewk_error_private_h
 #define ewk_error_private_h
 
+#include "WKEinaSharedString.h"
 #include <WKError.h>
+#include <WKRetainPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 typedef struct _Ewk_Error Ewk_Error;
 
-Ewk_Error* ewk_error_new(WKErrorRef error);
-void ewk_error_free(Ewk_Error* error);
+class _Ewk_Error {
+public:
+    WKRetainPtr<WKErrorRef> wkError;
+    WKEinaSharedString url;
+    WKEinaSharedString description;
+
+    static PassOwnPtr<_Ewk_Error> create(WKErrorRef errorRef)
+    {
+        if (!errorRef)
+            return nullptr;
+
+        return adoptPtr(new _Ewk_Error(errorRef));
+    }
+
+private:
+    explicit _Ewk_Error(WKErrorRef errorRef);
+};
 
 #endif // ewk_error_private_h

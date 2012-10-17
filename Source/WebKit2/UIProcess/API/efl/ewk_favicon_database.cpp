@@ -27,81 +27,31 @@
 #include "ewk_favicon_database.h"
 
 #include "WKAPICast.h"
-#include "WKIconDatabase.h"
-#include "WKRetainPtr.h"
 #include "WKURL.h"
 #include "WebIconDatabase.h"
 #include "WebURL.h"
 #include "ewk_favicon_database_private.h"
 #include <WebCore/CairoUtilitiesEfl.h>
 #include <WebCore/RefPtrCairo.h>
-#include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebKit;
 
-struct IconChangeCallbackData {
-    Ewk_Favicon_Database_Icon_Change_Cb callback;
-    void* userData;
-
-    IconChangeCallbackData()
-        : callback(0)
-        , userData(0)
-    { }
-
-    IconChangeCallbackData(Ewk_Favicon_Database_Icon_Change_Cb _callback, void* _userData)
-        : callback(_callback)
-        , userData(_userData)
-    { }
-};
-
-struct IconRequestCallbackData {
-    Ewk_Favicon_Database_Async_Icon_Get_Cb callback;
-    void* userData;
-    Evas* evas;
-
-    IconRequestCallbackData()
-        : callback(0)
-        , userData(0)
-        , evas(0)
-    { }
-
-    IconRequestCallbackData(Ewk_Favicon_Database_Async_Icon_Get_Cb _callback, void* _userData, Evas* _evas)
-        : callback(_callback)
-        , userData(_userData)
-        , evas(_evas)
-    { }
-};
-
 static void didChangeIconForPageURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL, const void* clientInfo);
 static void iconDataReadyForPageURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL, const void* clientInfo);
 
-typedef HashMap<Ewk_Favicon_Database_Icon_Change_Cb, IconChangeCallbackData> ChangeListenerMap;
-typedef Vector<IconRequestCallbackData> PendingIconRequestVector;
-typedef HashMap<String /* pageURL */, PendingIconRequestVector> PendingIconRequestMap;
-
-/**
- * \struct  _Ewk_Favicon_Database
- * @brief   Contains the favicon database data.
- */
-struct _Ewk_Favicon_Database {
-    WKRetainPtr<WKIconDatabaseRef> wkIconDatabase;
-    ChangeListenerMap changeListeners;
-    PendingIconRequestMap iconRequests;
-
-    _Ewk_Favicon_Database(WKIconDatabaseRef iconDatabaseRef)
-        :  wkIconDatabase(iconDatabaseRef)
-    {
-        WKIconDatabaseClient iconDatabaseClient;
-        memset(&iconDatabaseClient, 0, sizeof(WKIconDatabaseClient));
-        iconDatabaseClient.version = kWKIconDatabaseClientCurrentVersion;
-        iconDatabaseClient.clientInfo = this;
-        iconDatabaseClient.didChangeIconForPageURL = didChangeIconForPageURL;
-        iconDatabaseClient.iconDataReadyForPageURL = iconDataReadyForPageURL;
-        WKIconDatabaseSetIconDatabaseClient(wkIconDatabase.get(), &iconDatabaseClient);
-    }
-};
+_Ewk_Favicon_Database::_Ewk_Favicon_Database(WKIconDatabaseRef iconDatabaseRef)
+    :  wkIconDatabase(iconDatabaseRef)
+{
+    WKIconDatabaseClient iconDatabaseClient;
+    memset(&iconDatabaseClient, 0, sizeof(WKIconDatabaseClient));
+    iconDatabaseClient.version = kWKIconDatabaseClientCurrentVersion;
+    iconDatabaseClient.clientInfo = this;
+    iconDatabaseClient.didChangeIconForPageURL = didChangeIconForPageURL;
+    iconDatabaseClient.iconDataReadyForPageURL = iconDataReadyForPageURL;
+    WKIconDatabaseSetIconDatabaseClient(wkIconDatabase.get(), &iconDatabaseClient);
+}
 
 static void didChangeIconForPageURL(WKIconDatabaseRef, WKURLRef pageURLRef, const void* clientInfo)
 {
@@ -149,28 +99,6 @@ static void iconDataReadyForPageURL(WKIconDatabaseRef, WKURLRef pageURL, const v
         RefPtr<Evas_Object> icon = surface ? WebCore::evasObjectFromCairoImageSurface(callbackData.evas, surface.get()) : 0;
         callbackData.callback(urlString.utf8().data(), icon.get(), callbackData.userData);
     }
-}
-
-/**
- * @internal
- * Constructs a Ewk_Favicon_Database instance.
- */
-Ewk_Favicon_Database* ewk_favicon_database_new(WKIconDatabaseRef wkIconDatabase)
-{
-    ASSERT(wkIconDatabase);
-
-    return new Ewk_Favicon_Database(wkIconDatabase);
-}
-
-/**
- * @internal
- * Frees a Ewk_Favicon_Database instance.
- */
-void ewk_favicon_database_free(Ewk_Favicon_Database* ewkIconDatabase)
-{
-    EINA_SAFETY_ON_NULL_RETURN(ewkIconDatabase);
-
-    delete ewkIconDatabase;
 }
 
 const char* ewk_favicon_database_icon_url_get(Ewk_Favicon_Database* ewkIconDatabase, const char* pageURL)

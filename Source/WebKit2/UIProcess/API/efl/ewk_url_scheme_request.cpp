@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ewk_url_scheme_request.h"
 
+#include "GOwnPtrSoup.h"
 #include "WKData.h"
 #include "WKRetainPtr.h"
 #include "WKSoupRequestManager.h"
@@ -52,10 +53,9 @@ struct _Ewk_Url_Scheme_Request {
         , url(eina_stringshare_add(_url))
         , requestID(_requestID)
     {
-        SoupURI* soupURI = soup_uri_new(_url);
+        GOwnPtr<SoupURI> soupURI(soup_uri_new(_url));
         scheme = eina_stringshare_add(soupURI->scheme);
         path = eina_stringshare_add(soupURI->path);
-        soup_uri_free(soupURI);
     }
 
     ~_Ewk_Url_Scheme_Request()

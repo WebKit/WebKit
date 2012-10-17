@@ -29,59 +29,35 @@
 #include "SoupCookiePersistentStorageType.h"
 #include "WKAPICast.h"
 #include "WKArray.h"
-#include "WKCookieManager.h"
-#include "WKRetainPtr.h"
 #include "WKString.h"
 #include "WebCookieManagerProxy.h"
+#include "ewk_cookie_manager_private.h"
 #include "ewk_error_private.h"
 #include "ewk_private.h"
+#include <wtf/OwnPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebKit;
 
-struct Cookie_Change_Handler {
-    Ewk_Cookie_Manager_Changes_Watch_Cb callback;
-    void* userData;
-
-    Cookie_Change_Handler()
-        : callback(0)
-        , userData(0)
-    { }
-
-    Cookie_Change_Handler(Ewk_Cookie_Manager_Changes_Watch_Cb _callback, void* _userData)
-        : callback(_callback)
-        , userData(_userData)
-    { }
-};
-
 static void cookiesDidChange(WKCookieManagerRef, const void* clientInfo);
 
-/**
- * \struct  _Ewk_Cookie_Manager
- * @brief   Contains the cookie manager data.
- */
-struct _Ewk_Cookie_Manager {
-    WKRetainPtr<WKCookieManagerRef> wkCookieManager;
-    Cookie_Change_Handler changeHandler;
+_Ewk_Cookie_Manager::_Ewk_Cookie_Manager(WKCookieManagerRef cookieManagerRef)
+    : wkCookieManager(cookieManagerRef)
+{
+    WKCookieManagerClient wkCookieManagerClient = {
+        kWKCookieManagerClientCurrentVersion,
+        this, // clientInfo
+        cookiesDidChange
+    };
+    WKCookieManagerSetClient(wkCookieManager.get(), &wkCookieManagerClient);
+}
 
-    _Ewk_Cookie_Manager(WKCookieManagerRef cookieManagerRef)
-        : wkCookieManager(cookieManagerRef)
-    {
-        WKCookieManagerClient wkCookieManagerClient = {
-            kWKCookieManagerClientCurrentVersion,
-            this, // clientInfo
-            cookiesDidChange
-        };
-        WKCookieManagerSetClient(wkCookieManager.get(), &wkCookieManagerClient);
-    }
-
-    ~_Ewk_Cookie_Manager()
-    {
-        if (changeHandler.callback)
-            WKCookieManagerStopObservingCookieChanges(wkCookieManager.get());
-    }
-};
+_Ewk_Cookie_Manager::~_Ewk_Cookie_Manager()
+{
+    if (changeHandler.callback)
+        WKCookieManagerStopObservingCookieChanges(wkCookieManager.get());
+}
 
 #define EWK_COOKIE_MANAGER_WK_GET_OR_RETURN(manager, wkManager_, ...)    \
     if (!(manager)) {                                                    \
@@ -142,12 +118,10 @@ struct Get_Policy_Async_Data {
 static void getAcceptPolicyCallback(WKHTTPCookieAcceptPolicy policy, WKErrorRef wkError, void* data)
 {
     Get_Policy_Async_Data* callbackData = static_cast<Get_Policy_Async_Data*>(data);
-    Ewk_Error* ewkError = wkError ? ewk_error_new(wkError) : 0;
+    OwnPtr<Ewk_Error> ewkError = Ewk_Error::create(wkError);
 
-    callbackData->callback(static_cast<Ewk_Cookie_Accept_Policy>(policy), ewkError, callbackData->userData);
+    callbackData->callback(static_cast<Ewk_Cookie_Accept_Policy>(policy), ewkError.get(), callbackData->userData);
 
-    if (ewkError)
-        ewk_error_free(ewkError);
     delete callbackData;
 }
 
@@ -172,7 +146,7 @@ static void getHostnamesWithCookiesCallback(WKArrayRef wkHostnames, WKErrorRef w
 {
     Eina_List* hostnames = 0;
     Get_Hostnames_Async_Data* callbackData = static_cast<Get_Hostnames_Async_Data*>(context);
-    Ewk_Error* ewkError = wkError ? ewk_error_new(wkError) : 0;
+    OwnPtr<Ewk_Error> ewkError = Ewk_Error::create(wkError);
 
     const size_t hostnameCount = WKArrayGetSize(wkHostnames);
     for (size_t i = 0; i < hostnameCount; ++i) {
@@ -183,13 +157,12 @@ static void getHostnamesWithCookiesCallback(WKArrayRef wkHostnames, WKErrorRef w
         hostnames = eina_list_append(hostnames, eina_stringshare_add(hostname.utf8().data()));
     }
 
-    callbackData->callback(hostnames, ewkError, callbackData->userData);
+    callbackData->callback(hostnames, ewkError.get(), callbackData->userData);
 
     void* item;
     EINA_LIST_FREE(hostnames, item)
       eina_stringshare_del(static_cast<Eina_Stringshare*>(item));
-    if (ewkError)
-        ewk_error_free(ewkError);
+
     delete callbackData;
 }
 
@@ -231,26 +204,4 @@ void ewk_cookie_manager_changes_watch(Ewk_Cookie_Manager* manager, Ewk_Cookie_Ma
         WKCookieManagerStartObservingCookieChanges(wkManager);
     else
         WKCookieManagerStopObservingCookieChanges(wkManager);
-}
-
-/**
- * @internal
- * Frees a Ewk_Cookie_Manager object.
- */
-void ewk_cookie_manager_free(Ewk_Cookie_Manager* manager)
-{
-    EINA_SAFETY_ON_NULL_RETURN(manager);
-
-    delete manager;
-}
-
-/**
- * @internal
- * Constructs a Ewk_Cookie_Manager from a WKCookieManagerRef.
- */
-Ewk_Cookie_Manager* ewk_cookie_manager_new(WKCookieManagerRef wkCookieManager)
-{
-    EINA_SAFETY_ON_NULL_RETURN_VAL(wkCookieManager, 0);
-
-    return new Ewk_Cookie_Manager(wkCookieManager);
 }

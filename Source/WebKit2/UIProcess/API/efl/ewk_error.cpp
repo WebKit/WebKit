@@ -27,34 +27,20 @@
 #include "ewk_error.h"
 
 #include "ErrorsEfl.h"
-#include "WKEinaSharedString.h"
 #include "WKString.h"
 #include "WKURL.h"
 #include "ewk_error_private.h"
 #include <WKAPICast.h>
-#include <WKError.h>
-#include <WKRetainPtr.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
 using namespace WebKit;
 
-struct _Ewk_Error {
-    WKRetainPtr<WKErrorRef> wkError;
-
-    WKEinaSharedString url;
-    WKEinaSharedString description;
-
-    _Ewk_Error(WKErrorRef errorRef)
-        : wkError(errorRef)
-        , url(AdoptWK, WKErrorCopyFailingURL(errorRef))
-        , description(AdoptWK, WKErrorCopyLocalizedDescription(errorRef))
-    { }
-
-    ~_Ewk_Error()
-    {
-    }
-};
+_Ewk_Error::_Ewk_Error(WKErrorRef errorRef)
+    : wkError(errorRef)
+    , url(AdoptWK, WKErrorCopyFailingURL(errorRef))
+    , description(AdoptWK, WKErrorCopyLocalizedDescription(errorRef))
+{ }
 
 #define EWK_ERROR_WK_GET_OR_RETURN(error, wkError_, ...)    \
     if (!(error)) {                                           \
@@ -66,17 +52,6 @@ struct _Ewk_Error {
         return __VA_ARGS__;                                    \
     }                                                          \
     WKErrorRef wkError_ = (error)->wkError.get()
-
-/**
- * @internal
- * Frees the given object.
- */
-void ewk_error_free(Ewk_Error* error)
-{
-    EINA_SAFETY_ON_NULL_RETURN(error);
-
-    delete error;
-}
 
 Ewk_Error_Type ewk_error_type_get(const Ewk_Error* error)
 {
@@ -124,11 +99,4 @@ Eina_Bool ewk_error_cancellation_get(const Ewk_Error* error)
     EWK_ERROR_WK_GET_OR_RETURN(error, wkError, false);
 
     return toImpl(wkError)->platformError().isCancellation();
-}
-
-Ewk_Error* ewk_error_new(WKErrorRef error)
-{
-    EINA_SAFETY_ON_NULL_RETURN_VAL(error, 0);
-
-    return new Ewk_Error(error);
 }

@@ -26,9 +26,62 @@
 #ifndef ewk_favicon_database_private_h
 #define ewk_favicon_database_private_h
 
+#include "WKIconDatabase.h"
+#include "WKRetainPtr.h"
+#include "ewk_favicon_database.h"
 #include <WebKit2/WKBase.h>
+#include <wtf/HashMap.h>
 
-Ewk_Favicon_Database* ewk_favicon_database_new(WKIconDatabaseRef wkIconDatabase);
-void ewk_favicon_database_free(Ewk_Favicon_Database* ewkIconDatabase);
+struct IconChangeCallbackData {
+    Ewk_Favicon_Database_Icon_Change_Cb callback;
+    void* userData;
+
+    IconChangeCallbackData()
+        : callback(0)
+        , userData(0)
+    { }
+
+    IconChangeCallbackData(Ewk_Favicon_Database_Icon_Change_Cb _callback, void* _userData)
+        : callback(_callback)
+        , userData(_userData)
+    { }
+};
+
+struct IconRequestCallbackData {
+    Ewk_Favicon_Database_Async_Icon_Get_Cb callback;
+    void* userData;
+    Evas* evas;
+
+    IconRequestCallbackData()
+        : callback(0)
+        , userData(0)
+        , evas(0)
+    { }
+
+    IconRequestCallbackData(Ewk_Favicon_Database_Async_Icon_Get_Cb _callback, void* _userData, Evas* _evas)
+        : callback(_callback)
+        , userData(_userData)
+        , evas(_evas)
+    { }
+};
+
+typedef HashMap<Ewk_Favicon_Database_Icon_Change_Cb, IconChangeCallbackData> ChangeListenerMap;
+typedef Vector<IconRequestCallbackData> PendingIconRequestVector;
+typedef HashMap<String /* pageURL */, PendingIconRequestVector> PendingIconRequestMap;
+
+class _Ewk_Favicon_Database {
+public:
+    WKRetainPtr<WKIconDatabaseRef> wkIconDatabase;
+    ChangeListenerMap changeListeners;
+    PendingIconRequestMap iconRequests;
+
+    static PassOwnPtr<_Ewk_Favicon_Database> create(WKIconDatabaseRef iconDatabaseRef)
+    {
+        return adoptPtr(new _Ewk_Favicon_Database(iconDatabaseRef));
+    }
+
+private:
+    explicit _Ewk_Favicon_Database(WKIconDatabaseRef iconDatabaseRef);
+};
 
 #endif // ewk_favicon_database_private_h

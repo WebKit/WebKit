@@ -29,6 +29,7 @@
 #include "WKEinaSharedString.h"
 #include <WebKit2/WKBase.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 /**
  * \struct  _Ewk_Back_Forward_List

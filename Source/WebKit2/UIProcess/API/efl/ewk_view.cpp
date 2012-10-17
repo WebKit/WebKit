@@ -126,7 +126,7 @@ struct _Ewk_View_Private_Data {
     WKEinaSharedString faviconURL;
     Evas_Object* cursorObject;
     LoadingResourcesMap loadingResourcesMap;
-    Ewk_Back_Forward_List* backForwardList;
+    OwnPtr<Ewk_Back_Forward_List> backForwardList;
     OwnPtr<Ewk_Settings> settings;
     bool areMouseEventsEnabled;
     WKColorPickerResultListenerRef colorPickerResultListener;
@@ -150,7 +150,6 @@ struct _Ewk_View_Private_Data {
 
     _Ewk_View_Private_Data()
         : cursorObject(0)
-        , backForwardList(0)
         , areMouseEventsEnabled(false)
         , colorPickerResultListener(0)
         , context(0)
@@ -178,11 +177,9 @@ struct _Ewk_View_Private_Data {
         if (cursorObject)
             evas_object_del(cursorObject);
 
-        ewk_back_forward_list_free(backForwardList);
-
         void* item;
         EINA_LIST_FREE(popupMenuItems, item)
-            ewk_popup_menu_item_free(static_cast<Ewk_Popup_Menu_Item*>(item));
+            delete static_cast<Ewk_Popup_Menu_Item*>(item);
     }
 };
 
@@ -823,7 +820,7 @@ static void _ewk_view_initialize(Evas_Object* ewkView, Ewk_Context* context, WKP
 #endif
     priv->pageProxy->initializeWebPage();
 
-    priv->backForwardList = ewk_back_forward_list_new(toAPI(priv->pageProxy->backForwardList()));
+    priv->backForwardList = Ewk_Back_Forward_List::create(toAPI(priv->pageProxy->backForwardList()));
     priv->settings = adoptPtr(new Ewk_Settings(WKPageGroupGetPreferences(WKPageGetPageGroup(toAPI(priv->pageProxy.get())))));
     priv->context = ewk_context_ref(context);
 
@@ -1466,7 +1463,7 @@ Ewk_Back_Forward_List* ewk_view_back_forward_list_get(const Evas_Object* ewkView
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
 
-    return priv->backForwardList;
+    return priv->backForwardList.get();
 }
 
 void ewk_view_image_data_set(Evas_Object* ewkView, void* imageData, const IntSize& size)
@@ -1769,7 +1766,7 @@ void ewk_view_popup_menu_request(Evas_Object* ewkView, WebPopupMenuProxyEfl* pop
     Eina_List* popupItems = 0;
     size_t size = items.size();
     for (size_t i = 0; i < size; ++i)
-        popupItems = eina_list_append(popupItems, ewk_popup_menu_item_new(items[i]));
+        popupItems = eina_list_append(popupItems, Ewk_Popup_Menu_Item::create(items[i]).leakPtr());
     priv->popupMenuItems = popupItems;
 
     smartData->api->popup_menu_show(smartData, rect, static_cast<Ewk_Text_Direction>(textDirection), pageScaleFactor, popupItems, selectedIndex);
@@ -1791,7 +1788,7 @@ Eina_Bool ewk_view_popup_menu_close(Evas_Object* ewkView)
 
     void* item;
     EINA_LIST_FREE(priv->popupMenuItems, item)
-        ewk_popup_menu_item_free(static_cast<Ewk_Popup_Menu_Item*>(item));
+        delete static_cast<Ewk_Popup_Menu_Item*>(item);
 
     return true;
 }

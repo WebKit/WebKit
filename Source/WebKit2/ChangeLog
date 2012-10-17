@@ -1,5 +1,83 @@
 2012-10-17  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL][WK2] Start using OwnPtr for non-ref counted ewk types
+        https://bugs.webkit.org/show_bug.cgi?id=99472
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Use OwnPtr internally for non-ref counted Ewk types to avoid
+        manual memory handling.
+
+        Private _new() and _free() functions are removed since they
+        are not needed now that the classes are defined in the
+        private headers instead of the cpp files. The constructor
+        for those classes was made private and factory methods were
+        added to encourage developers to use smart pointers instead
+        of raw ones.
+
+        * UIProcess/API/efl/ewk_back_forward_list.cpp:
+        (ewk_back_forward_list_changed):
+        * UIProcess/API/efl/ewk_back_forward_list_item_private.h:
+        * UIProcess/API/efl/ewk_back_forward_list_private.h:
+        (_Ewk_Back_Forward_List):
+        (_Ewk_Back_Forward_List::create):
+        (_Ewk_Back_Forward_List::_Ewk_Back_Forward_List):
+        * UIProcess/API/efl/ewk_context.cpp:
+        (_Ewk_Context):
+        (_Ewk_Context::_Ewk_Context):
+        (ewk_context_cookie_manager_get):
+        (ewk_context_favicon_database_get):
+        * UIProcess/API/efl/ewk_context_download_client.cpp:
+        (didFail):
+        * UIProcess/API/efl/ewk_cookie_manager.cpp:
+        (_Ewk_Cookie_Manager::_Ewk_Cookie_Manager):
+        (_Ewk_Cookie_Manager::~_Ewk_Cookie_Manager):
+        (getAcceptPolicyCallback):
+        (getHostnamesWithCookiesCallback):
+        (ewk_cookie_manager_changes_watch):
+        * UIProcess/API/efl/ewk_cookie_manager_private.h:
+        (Cookie_Change_Handler):
+        (Cookie_Change_Handler::Cookie_Change_Handler):
+        (_Ewk_Cookie_Manager):
+        (_Ewk_Cookie_Manager::create):
+        * UIProcess/API/efl/ewk_error.cpp:
+        (_Ewk_Error::_Ewk_Error):
+        (ewk_error_cancellation_get):
+        * UIProcess/API/efl/ewk_error_private.h:
+        (_Ewk_Error):
+        (_Ewk_Error::create):
+        * UIProcess/API/efl/ewk_favicon_database.cpp:
+        (_Ewk_Favicon_Database::_Ewk_Favicon_Database):
+        * UIProcess/API/efl/ewk_favicon_database_private.h:
+        (IconChangeCallbackData):
+        (IconChangeCallbackData::IconChangeCallbackData):
+        (IconRequestCallbackData):
+        (IconRequestCallbackData::IconRequestCallbackData):
+        (_Ewk_Favicon_Database):
+        (_Ewk_Favicon_Database::create):
+        * UIProcess/API/efl/ewk_popup_menu_item.cpp:
+        (_Ewk_Popup_Menu_Item::_Ewk_Popup_Menu_Item):
+        * UIProcess/API/efl/ewk_popup_menu_item_private.h:
+        (_Ewk_Popup_Menu_Item):
+        (_Ewk_Popup_Menu_Item::create):
+        * UIProcess/API/efl/ewk_url_scheme_request.cpp:
+        (_Ewk_Url_Scheme_Request::_Ewk_Url_Scheme_Request):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_Ewk_View_Private_Data::_Ewk_View_Private_Data):
+        (_Ewk_View_Private_Data::~_Ewk_View_Private_Data):
+        (_ewk_view_initialize):
+        (ewk_view_back_forward_list_get):
+        (ewk_view_popup_menu_request):
+        (ewk_view_popup_menu_close):
+        * UIProcess/API/efl/ewk_view_loader_client.cpp:
+        (didFailLoadWithErrorForFrame):
+        (didFailProvisionalLoadWithErrorForFrame):
+        * UIProcess/API/efl/ewk_view_resource_load_client.cpp:
+        (didFailLoadForResource):
+
+2012-10-17  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL][WK2] Use WTF RefCounted and RefPtr for Ewk_Resource and Ewk_Form_Submission_Request
         https://bugs.webkit.org/show_bug.cgi?id=99542
 
