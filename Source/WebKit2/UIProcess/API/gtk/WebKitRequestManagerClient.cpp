@@ -29,7 +29,7 @@ using namespace WebKit;
 static void didReceiveURIRequest(WKSoupRequestManagerRef soupRequestManagerRef, WKURLRef urlRef, WKPageRef initiatingPageRef, uint64_t requestID, const void* clientInfo)
 {
     WebKitWebContext* webContext = WEBKIT_WEB_CONTEXT(clientInfo);
-    GRefPtr<WebKitURISchemeRequest> request = adoptGRef(webkitURISchemeRequestCreate(webContext, soupRequestManagerRef, urlRef, initiatingPageRef, requestID));
+    GRefPtr<WebKitURISchemeRequest> request = adoptGRef(webkitURISchemeRequestCreate(webContext, toImpl(soupRequestManagerRef), toImpl(urlRef), toImpl(initiatingPageRef), requestID));
     webkitWebContextReceivedURIRequest(webContext, request.get());
 }
 
