@@ -1,3 +1,29 @@
+2012-10-17  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, first set of GTK+ baselines for shadow DOM changes to RenderSlider.
+
+        * fast/forms/range/slider-thumb-stylability-expected.txt: Renamed from LayoutTests/platform/efl/fast/forms/range/slider-thumb-stylability-expected.txt.
+        * platform/chromium-mac-snowleopard/fast/hidpi/video-controls-in-hidpi-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/multicol/client-rects-expected.txt: Removed.
+        * platform/chromium-win-xp/fast/multicol/client-rects-expected.txt: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/dom/HTMLInputElement/input-slider-update-expected.txt:
+        * platform/gtk/fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt: Added.
+        * platform/gtk/fast/forms/box-shadow-override-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-height-expected.txt:
+        * platform/gtk/fast/forms/range/input-appearance-range-expected.txt:
+        * platform/gtk/fast/forms/range/range-thumb-height-percentage-expected.txt: Added.
+        * platform/gtk/fast/forms/range/slider-padding-expected.txt:
+        * platform/gtk/fast/forms/range/slider-thumb-shared-style-expected.txt:
+        * platform/gtk/fast/forms/range/slider-thumb-stylability-expected.png: Removed.
+        * platform/gtk/fast/forms/range/slider-thumb-stylability-expected.txt:
+        * platform/gtk/fast/hidpi/video-controls-in-hidpi-expected.txt:
+        * platform/gtk/fast/layers/video-layer-expected.txt:
+        * platform/gtk/fast/multicol/client-rects-expected.txt:
+        * platform/gtk/fast/repaint/slider-thumb-drag-release-expected.txt:
+        * platform/gtk/fast/repaint/slider-thumb-float-expected.txt: Added.
+        * platform/mac/fast/forms/range/slider-thumb-stylability-expected.txt: Removed.
+
 2012-10-17  Dana Jansens  <danakj@chromium.org>
 
         Rebaseline some windows tests now that the bot is providing results in the right place.
