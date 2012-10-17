@@ -1,3 +1,17 @@
+2012-10-17  Mike West  <mkwst@chromium.org>
+
+        V8 should throw a more descriptive exception when blocking 'eval' via CSP.
+        https://bugs.webkit.org/show_bug.cgi?id=94332
+
+        Reviewed by Adam Barth.
+
+        * platform/chromium/TestExpectations:
+            Unskipping these tests, as this patch unbreaks them.
+        * platform/chromium/http/tests/security/contentSecurityPolicy/eval-blocked-expected.txt:
+        * platform/chromium/http/tests/security/contentSecurityPolicy/eval-blocked-in-about-blank-iframe-expected.txt:
+        * platform/chromium/http/tests/security/contentSecurityPolicy/function-constructor-blocked-expected.txt:
+            Updating expectations with the new error message.
+
 2012-10-17  MORITA Hajime  <morrita@google.com>
 
         Assertion failed on HTMLFormControlElement.cpp: updateFromElementCallback()

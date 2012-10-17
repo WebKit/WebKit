@@ -69,7 +69,7 @@ namespace WebCore {
         void trackEvent(Event*);
 
         // Alow use of eval() and is equivalents in scripts.
-        void setEvalAllowed(bool enable);
+        void setEvalAllowed(bool enable, const String& errorMessage);
 
         // Evaluate a script file in the current execution environment.
         ScriptValue evaluate(const String& script, const String& fileName, const TextPosition& scriptStartPosition, WorkerContextExecutionState*);
@@ -93,7 +93,7 @@ namespace WebCore {
 
         OwnPtr<V8PerContextData> m_perContextData;
 
-        bool m_disableEvalPending;
+        String m_disableEvalPending;
     };
 
 } // namespace WebCore

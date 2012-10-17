@@ -97,12 +97,6 @@ webkit.org/b/98659 [ Debug ] fast/dom/gc-dom-tree-lifetime.html [ Pass Timeout ]
 # TEMPORARILY SKIPPED TESTS
 # -----------------------------------------------------------------
 
-# Rolling in a V8 change that will break these tests. We'll update with the new
-# test expectations along with the change that this roll will enable.
-webkit.org/b/94332 http/tests/security/contentSecurityPolicy/eval-blocked-in-about-blank-iframe.html [ Skip ]
-webkit.org/b/94332 http/tests/security/contentSecurityPolicy/eval-blocked.html [ Skip ]
-webkit.org/b/94332 http/tests/security/contentSecurityPolicy/function-constructor-blocked.html [ Skip ]
-
 # Fails due to different window.close() rules.  We need to decide whether we
 # ever expect to pass this.
 crbug.com/24189 fast/dom/open-and-close-by-DOM.html [ Skip ]

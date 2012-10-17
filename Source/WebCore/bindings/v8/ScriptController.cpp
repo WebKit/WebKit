@@ -486,7 +486,7 @@ void ScriptController::enableEval()
     v8Context->AllowCodeGenerationFromStrings(true);
 }
 
-void ScriptController::disableEval(const String& /* errorMessage */)
+void ScriptController::disableEval(const String& errorMessage)
 {
     v8::HandleScope handleScope;
     v8::Handle<v8::Context> v8Context = windowShell()->context();
@@ -494,6 +494,7 @@ void ScriptController::disableEval(const String& /* errorMessage */)
         return;
 
     v8Context->AllowCodeGenerationFromStrings(false);
+    v8Context->SetErrorMessageForCodeGenerationFromStrings(v8String(errorMessage));
 }
 
 PassScriptInstance ScriptController::createScriptInstanceForWidget(Widget* widget)

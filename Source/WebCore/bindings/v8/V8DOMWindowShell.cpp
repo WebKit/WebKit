@@ -368,8 +368,11 @@ bool V8DOMWindowShell::initializeIfNeeded()
     if (isMainWorld) {
         updateDocument();
         setSecurityToken();
-        if (m_frame->document())
-            context->AllowCodeGenerationFromStrings(m_frame->document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport));
+        if (m_frame->document()) {
+            ContentSecurityPolicy* csp = m_frame->document()->contentSecurityPolicy();
+            context->AllowCodeGenerationFromStrings(csp->allowEval(0, ContentSecurityPolicy::SuppressReport));
+            context->SetErrorMessageForCodeGenerationFromStrings(v8String(csp->evalDisabledErrorMessage()));
+        }
     } else {
         // Using the default security token means that the canAccess is always
         // called, which is slow.

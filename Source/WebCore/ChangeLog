@@ -1,3 +1,33 @@
+2012-10-17  Mike West  <mkwst@chromium.org>
+
+        V8 should throw a more descriptive exception when blocking 'eval' via CSP.
+        https://bugs.webkit.org/show_bug.cgi?id=94332
+
+        Reviewed by Adam Barth.
+
+        Following up on https://bugs.webkit.org/show_bug.cgi?id=94331, this
+        patch wires up the new error message mechanism to V8, and updates the
+        Chromium test expectations accordingly.
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::disableEval):
+            Pass 'errorMessage' through to V8.
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::initializeIfNeeded):
+            Grab the error message from ContentSecurityPolicy, and pass it
+            through to V8.
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::WorkerContextExecutionProxy):
+        (WebCore::WorkerContextExecutionProxy::evaluate):
+        (WebCore::WorkerContextExecutionProxy::setEvalAllowed):
+        * bindings/v8/WorkerContextExecutionProxy.h:
+        (WorkerContextExecutionProxy):
+            Convert 'm_disableEvalPending' to a string to store the current
+            error message, and use it to set the eval state.
+        * bindings/v8/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::disableEval):
+            Pass 'errorMessage' through to V8.
+
 2012-10-17  MORITA Hajime  <morrita@google.com>
 
         Assertion failed on HTMLFormControlElement.cpp: updateFromElementCallback()

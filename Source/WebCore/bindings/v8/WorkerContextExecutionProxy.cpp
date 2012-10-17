@@ -87,7 +87,7 @@ static void v8MessageHandler(v8::Handle<v8::Message> message, v8::Handle<v8::Val
 
 WorkerContextExecutionProxy::WorkerContextExecutionProxy(WorkerContext* workerContext)
     : m_workerContext(workerContext)
-    , m_disableEvalPending(false)
+    , m_disableEvalPending(String())
 {
     initIsolate();
 }
@@ -213,9 +213,10 @@ ScriptValue WorkerContextExecutionProxy::evaluate(const String& script, const St
     if (!initializeIfNeeded())
         return ScriptValue();
 
-    if (m_disableEvalPending) {
+    if (!m_disableEvalPending.isEmpty()) {
         m_context->AllowCodeGenerationFromStrings(false);
-        m_disableEvalPending = false;
+        m_context->SetErrorMessageForCodeGenerationFromStrings(v8String(m_disableEvalPending));
+        m_disableEvalPending = String();
     }
 
     v8::Context::Scope scope(m_context);
@@ -252,9 +253,9 @@ ScriptValue WorkerContextExecutionProxy::evaluate(const String& script, const St
     return ScriptValue(result);
 }
 
-void WorkerContextExecutionProxy::setEvalAllowed(bool enable)
+void WorkerContextExecutionProxy::setEvalAllowed(bool enable, const String& errorMessage)
 {
-    m_disableEvalPending = !enable;
+    m_disableEvalPending = enable ? String() : errorMessage;
 }
 
 void WorkerContextExecutionProxy::trackEvent(Event* event)
