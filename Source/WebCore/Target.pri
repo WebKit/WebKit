@@ -2864,6 +2864,7 @@ win32-*|wince* {
 mac {
     SOURCES += \
         platform/text/cf/StringCF.cpp \
+        platform/cf/SharedBufferCF.cpp \
         platform/text/cf/StringImplCF.cpp
 }
 
@@ -3207,7 +3208,6 @@ enable?(VIDEO) {
             platform/mac/DisplaySleepDisabler.cpp \
             platform/graphics/cg/IntRectCG.cpp \
             platform/graphics/cg/FloatSizeCG.cpp \
-            platform/cf/SharedBufferCF.cpp \
             platform/cf/KURLCFNet.cpp
 
          OBJECTIVE_SOURCES += \
