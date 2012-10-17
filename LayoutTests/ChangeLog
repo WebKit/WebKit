@@ -1,3 +1,12 @@
+2012-10-17  Dana Jansens  <danakj@chromium.org>
+
+        Layout Test http/tests/workers/text-encoding.html is flaky crashing on debug bots
+        https://bugs.webkit.org/show_bug.cgi?id=99604
+
+        Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-17  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed inspector test fixed and skipped on JSC.

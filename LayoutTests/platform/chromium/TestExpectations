@@ -4254,3 +4254,6 @@ webkit.org/b/99516 [ Mac ] tables/mozilla_expected_failures/bugs/bug2479-5.html 
 webkit.org/b/99516 [ Mac ] tables/mozilla_expected_failures/bugs/bug58402-2.html [ Failure ]
 webkit.org/b/99516 [ Win ] editing/selection/vertical-rl-ltr-extend-line-backward-wrap.html [ Failure ]
 webkit.org/b/99516 [ Win ] editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html [ Failure ]
+
+# Flaky crashing on debug
+webkit.org/b/99604 [ Mac Win ] http/tests/workers/text-encoding.html [ Pass Crash ]
