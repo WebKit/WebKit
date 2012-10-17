@@ -1,3 +1,15 @@
+2012-10-17  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: delete watch expression button overlaps with the expression value
+        https://bugs.webkit.org/show_bug.cgi?id=99569
+
+        Reviewed by Vsevolod Vlasov.
+
+        Delete watch expression button now doesn't overlap with the watch expression.
+
+        * inspector/front-end/inspector.css:
+        (.properties-tree.watch-expressions > li > .value):
+
 2012-10-17  Luke Macpherson   <macpherson@chromium.org>
 
         Move handling of CSSPropertyPointerEvents from StyleResolver into StyleBuilder.

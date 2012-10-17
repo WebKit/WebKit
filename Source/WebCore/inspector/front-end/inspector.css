@@ -1591,6 +1591,11 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     padding-left: 4px;
 }
 
+.properties-tree.watch-expressions > li > .value {
+    display: inline;
+    position: static;
+}
+
 .properties-tree.watch-expressions > li:not(.parent) {
     margin-left: 1px;
     padding-left: 15px;
