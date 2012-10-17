@@ -285,9 +285,6 @@ IF (WTF_USE_3D_GRAPHICS)
     "${WEBCORE_DIR}/platform/graphics/opengl"
     "${WEBCORE_DIR}/platform/graphics/texmap"
   )
-  LIST(APPEND WebCore_LIBRARIES
-    ${OPENGL_gl_LIBRARY}
-  )
   LIST(APPEND WebCore_SOURCES
     platform/graphics/OpenGLShims.cpp
     platform/graphics/cairo/DrawingBufferCairo.cpp

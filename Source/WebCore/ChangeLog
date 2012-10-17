@@ -1,5 +1,16 @@
 2012-10-17  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        [EFL] Remove redundant OpenGL library addition from the build system.
+        https://bugs.webkit.org/show_bug.cgi?id=99629
+
+        Reviewed by Rob Buis.
+
+        * PlatformEfl.cmake: Do not add OPENGL_gl_LIBRARY to
+        WebCore_LIBRARIES, this is already done in CMakeLists.txt these
+        days.
+
+2012-10-17  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         [CMake] Set WebCore_LIBRARIES earlier.
         https://bugs.webkit.org/show_bug.cgi?id=99630
 
