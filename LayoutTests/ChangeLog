@@ -1,3 +1,13 @@
+2012-10-17  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Certain SVG content freezes QtWebKit
+        https://bugs.webkit.org/show_bug.cgi?id=97258
+
+        Reviewed by Simon Hausmann.
+
+        * svg/stroke/zero-width-hang-expected.txt: Added.
+        * svg/stroke/zero-width-hang.html: Added.
+
 2012-10-17  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION (r130826 or r130828): Twitter top bar is dysfunctional
