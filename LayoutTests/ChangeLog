@@ -1,3 +1,11 @@
+2012-10-17  Anton Muhin  <antonm@chromium.org>
+
+        Unreviewed Chromium rebaselines.
+
+        * platform/chromium-mac-snowleopard/ietestcenter/css3/bordersbackgrounds/border-radius-content-edge-001-expected.png:
+        * platform/chromium-mac/ietestcenter/css3/bordersbackgrounds/border-radius-content-edge-001-expected.png:
+        * platform/chromium-win-xp/ietestcenter/css3/bordersbackgrounds/border-radius-content-edge-001-expected.png: Added.
+
 2012-10-17  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviwed gardening. Skip failing reftest after r131497.
