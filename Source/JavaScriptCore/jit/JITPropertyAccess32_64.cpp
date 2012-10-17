@@ -1226,7 +1226,7 @@ void JIT::emitSlow_op_get_by_pname(Instruction* currentInstruction, Vector<SlowC
     linkSlowCase(iter);
     linkSlowCase(iter);
     
-    JITStubCall stubCall(this, cti_op_get_by_val);
+    JITStubCall stubCall(this, cti_op_get_by_val_generic);
     stubCall.addArgument(base);
     stubCall.addArgument(property);
     stubCall.call(dst);

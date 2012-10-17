@@ -1,3 +1,19 @@
+2012-10-17  Filip Pizlo  <fpizlo@apple.com>
+
+        JIT op_get_by_pname should call cti_get_by_val_generic and not cti_get_by_val
+        https://bugs.webkit.org/show_bug.cgi?id=99631
+        <rdar://problem/12483221>
+
+        Reviewed by Mark Hahnenberg.
+
+        cti_get_by_val assumes that the return address has patching metadata associated with it, which won't
+        be true for op_get_by_pname. cti_get_by_val_generic makes no such assumptions.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitSlow_op_get_by_pname):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitSlow_op_get_by_pname):
+
 2012-10-17  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Block freeing thread should sleep indefinitely when there's no work to do

@@ -204,6 +204,7 @@ fast/js/function-toString-semicolon-insertion
 fast/js/getter-setter-gc
 fast/js/get-by-pname
 fast/js/get-by-pname-non-final-object
+fast/js/get-by-pname-that-looks-like-a-patchable-get-by-val
 fast/js/global-resolve-through-eval
 fast/js/gmail-re-re
 fast/js/has-own-property
