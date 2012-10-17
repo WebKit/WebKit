@@ -1,3 +1,41 @@
+2012-10-17  Simon Fraser  <simon.fraser@apple.com>
+
+        GraphicsLayer visible rect computation needs to use the current animating transform
+        https://bugs.webkit.org/show_bug.cgi?id=99529
+
+        Reviewed by Dean Jackson.
+
+        If we're running an accelerated animation of transform
+        on a GraphicsLayerCA, the current value of the transform won't
+        be reflected in the GraphicsLayer's m_transform. However,
+        we need the current value of the transform in order to correctly
+        compute the visible rect of this layer and descendants.
+        
+        Add a function to GraphicsLayerClient to retrieve the current
+        value of the transform from the client.
+        
+        RenderLayer's currentTransform() used to return a transform
+        with transform-origin baked in; GraphicsLayerClient needs one
+        that excludes transform-origin, so enhance RenderLayer::currentTransform()
+        to be able to produce either.
+
+        Tests: compositing/visible-rect/animated-from-none.html
+               compositing/visible-rect/animated.html
+
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore):
+        (GraphicsLayerClient):
+        (WebCore::GraphicsLayerClient::getCurrentTransform):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::computeVisibleRect):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::currentTransform):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::currentTransform):
+        * rendering/RenderLayerBacking.h:
+        (RenderLayerBacking):
+
 2012-10-17  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         plugins: Allow a plugin to dictate whether it can receive drag events or not.

@@ -30,11 +30,12 @@
 
 namespace WebCore {
 
+class FloatPoint;
 class GraphicsContext;
 class GraphicsLayer;
 class IntPoint;
 class IntRect;
-class FloatPoint;
+class TransformationMatrix;
 
 enum GraphicsLayerPaintingPhaseFlags {
     GraphicsLayerPaintBackground = (1 << 0),
@@ -68,6 +69,10 @@ public:
     
     virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& inClip) = 0;
     virtual void didCommitChangesForLayer(const GraphicsLayer*) const { }
+
+    // Provides current transform (taking transform-origin and animations into account). Input matrix has been
+    // initialized to identity already. Returns false if the layer has no transform.
+    virtual bool getCurrentTransform(const GraphicsLayer*, TransformationMatrix&) const { return false; }
 
     // Multiplier for backing store size, related to high DPI.
     virtual float deviceScaleFactor() const { return 1; }

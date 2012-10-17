@@ -595,7 +595,7 @@ public:
     // currentTransform computes a transform which takes accelerated animations into account. The
     // resulting transform has transform-origin baked in. If the layer does not have a transform,
     // returns the identity matrix.
-    TransformationMatrix currentTransform() const;
+    TransformationMatrix currentTransform(RenderStyle::ApplyTransformOrigin = RenderStyle::IncludeTransformOrigin) const;
     TransformationMatrix renderableTransform(PaintBehavior) const;
     
     // Get the perspective transform, which is applied to transformed sublayers.

@@ -1539,6 +1539,18 @@ void RenderLayerBacking::didCommitChangesForLayer(const GraphicsLayer*) const
     compositor()->didFlushChangesForLayer(m_owningLayer);
 }
 
+bool RenderLayerBacking::getCurrentTransform(const GraphicsLayer* graphicsLayer, TransformationMatrix& transform) const
+{
+    if (graphicsLayer != m_graphicsLayer)
+        return false;
+
+    if (m_owningLayer->hasTransform()) {
+        transform = m_owningLayer->currentTransform(RenderStyle::ExcludeTransformOrigin);
+        return true;
+    }
+    return false;
+}
+
 bool RenderLayerBacking::showDebugBorders(const GraphicsLayer*) const
 {
     return compositor() ? compositor()->compositorShowDebugBorders() : false;

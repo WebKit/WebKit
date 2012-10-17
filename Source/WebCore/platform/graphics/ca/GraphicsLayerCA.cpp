@@ -921,12 +921,13 @@ void GraphicsLayerCA::computeVisibleRect(TransformState& state)
 
     TransformationMatrix layerTransform;
     layerTransform.translate(m_position.x(), m_position.y());
-    
-    if (!transform().isIdentity()) {
+
+    TransformationMatrix currentTransform;
+    if (client() && client()->getCurrentTransform(this, currentTransform) && !currentTransform.isIdentity()) {
         FloatPoint3D absoluteAnchorPoint(anchorPoint());
         absoluteAnchorPoint.scale(size().width(), size().height(), 1);
         layerTransform.translate3d(absoluteAnchorPoint.x(), absoluteAnchorPoint.y(), absoluteAnchorPoint.z());
-        layerTransform.multiply(transform());
+        layerTransform.multiply(currentTransform);
         layerTransform.translate3d(-absoluteAnchorPoint.x(), -absoluteAnchorPoint.y(), -absoluteAnchorPoint.z());
     }
 

@@ -148,6 +148,7 @@ public:
     virtual float deviceScaleFactor() const;
     virtual float pageScaleFactor() const;
     virtual void didCommitChangesForLayer(const GraphicsLayer*) const;
+    virtual bool getCurrentTransform(const GraphicsLayer*, TransformationMatrix&) const;
 
     virtual bool showDebugBorders(const GraphicsLayer*) const;
     virtual bool showRepaintCounter(const GraphicsLayer*) const;

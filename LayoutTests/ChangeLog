@@ -1,3 +1,17 @@
+2012-10-17  Simon Fraser  <simon.fraser@apple.com>
+
+        GraphicsLayer visible rect computation needs to use the current animating transform
+        https://bugs.webkit.org/show_bug.cgi?id=99529
+
+        Reviewed by Dean Jackson.
+
+        Tests that exercise visible-rect computation on an animating layer.
+
+        * compositing/visible-rect/animated-expected.txt: Added.
+        * compositing/visible-rect/animated-from-none-expected.txt: Added.
+        * compositing/visible-rect/animated-from-none.html: Added.
+        * compositing/visible-rect/animated.html: Added.
+
 2012-10-17  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         plugins: Allow a plugin to dictate whether it can receive drag events or not.

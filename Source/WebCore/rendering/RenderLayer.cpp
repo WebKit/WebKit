@@ -597,7 +597,7 @@ void RenderLayer::updateTransform()
         dirty3DTransformedDescendantStatus();
 }
 
-TransformationMatrix RenderLayer::currentTransform() const
+TransformationMatrix RenderLayer::currentTransform(RenderStyle::ApplyTransformOrigin applyOrigin) const
 {
     if (!m_transform)
         return TransformationMatrix();
@@ -606,7 +606,16 @@ TransformationMatrix RenderLayer::currentTransform() const
     if (renderer()->style()->isRunningAcceleratedAnimation()) {
         TransformationMatrix currTransform;
         RefPtr<RenderStyle> style = renderer()->animation()->getAnimatedStyleForRenderer(renderer());
-        style->applyTransform(currTransform, renderBox()->pixelSnappedBorderBoxRect().size(), RenderStyle::IncludeTransformOrigin);
+        style->applyTransform(currTransform, renderBox()->pixelSnappedBorderBoxRect().size(), applyOrigin);
+        makeMatrixRenderable(currTransform, canRender3DTransforms());
+        return currTransform;
+    }
+
+    // m_transform includes transform-origin, so we need to recompute the transform here.
+    if (applyOrigin == RenderStyle::ExcludeTransformOrigin) {
+        RenderBox* box = renderBox();
+        TransformationMatrix currTransform;
+        box->style()->applyTransform(currTransform, box->pixelSnappedBorderBoxRect().size(), RenderStyle::ExcludeTransformOrigin);
         makeMatrixRenderable(currTransform, canRender3DTransforms());
         return currTransform;
     }
