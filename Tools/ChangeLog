@@ -1,3 +1,16 @@
+2012-10-17  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][WTR] InjectedBundlePage::decidePolicyForNavigationAction() should print only filename part of local URLs
+        https://bugs.webkit.org/show_bug.cgi?id=99581
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Now InjectedBundlePage::decidePolicyForNavigationAction() prints only filename part of local URLs (URLs where scheme
+        equals to 'file').
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::decidePolicyForNavigationAction):
+
 2012-10-17  Harald Alvestrand  <hta@google.com>
 
         Implement the Selector argument to RTCPeerConnection.getStats

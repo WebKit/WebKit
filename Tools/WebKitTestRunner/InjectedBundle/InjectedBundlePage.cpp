@@ -1286,9 +1286,17 @@ WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForNavigationAction(WKB
     if (!InjectedBundle::shared().testRunner()->isPolicyDelegateEnabled())
         return WKBundlePagePolicyActionUse;
 
-    WKRetainPtr<WKStringRef> url = adoptWK(WKURLCopyString(WKURLRequestCopyURL(request)));
+    WKRetainPtr<WKURLRef> url = adoptWK(WKURLRequestCopyURL(request));
+    WKRetainPtr<WKStringRef> urlScheme = adoptWK(WKURLCopyScheme(url.get()));
+
     InjectedBundle::shared().stringBuilder()->appendLiteral("Policy delegate: attempt to load ");
-    InjectedBundle::shared().stringBuilder()->append(toWTFString(url));
+    if (isLocalFileScheme(urlScheme.get())) {
+        WKRetainPtr<WKStringRef> filename = adoptWK(WKURLCopyLastPathComponent(url.get()));
+        InjectedBundle::shared().stringBuilder()->append(toWTFString(filename));
+    } else {
+        WKRetainPtr<WKStringRef> urlString = adoptWK(WKURLCopyString(url.get()));
+        InjectedBundle::shared().stringBuilder()->append(toWTFString(urlString));
+    }
     InjectedBundle::shared().stringBuilder()->appendLiteral(" with navigation type \'");
     InjectedBundle::shared().stringBuilder()->append(toWTFString(NavigationTypeToString(WKBundleNavigationActionGetNavigationType(navigationAction))));
     InjectedBundle::shared().stringBuilder()->appendLiteral("\'");
