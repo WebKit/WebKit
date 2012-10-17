@@ -1,5 +1,16 @@
 2012-10-17  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Web Inspector: When dirty uiSourceCode is saved to disk from scripts navigator context menu working copy is not committed.
+        https://bugs.webkit.org/show_bug.cgi?id=99555
+
+        Reviewed by Yury Semikhatsky.
+
+        Save As context menu handler now commits working copy for dirty UISourceCodes.
+
+        * inspector/front-end/HandlerRegistry.js:
+
+2012-10-17  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: Stylesheets saved with FileManager are not saved to disk when edited from Elements panel.
         https://bugs.webkit.org/show_bug.cgi?id=99554
 
