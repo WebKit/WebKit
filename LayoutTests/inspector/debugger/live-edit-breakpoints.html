@@ -1,0 +1,248 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script src="../../http/tests/inspector/live-edit-test.js"></script>
+<script src="resources/edit-me.js"></script>
+<script>
+function test()
+{
+    var panel = WebInspector.showPanel("scripts");  
+
+    function pathToFileName(path)
+    {
+        return path.substring(path.lastIndexOf("/") + 1);
+    }
+
+    function dumpBreakpointStorageAndLocations()
+    {
+        var breakpointManager = WebInspector.breakpointManager;
+        var breakpoints = breakpointManager._storage._setting.get();
+        InspectorTest.addResult("    Dumping breakpoint storage");
+        for (var i = 0; i < breakpoints.length; ++i) {
+            var url = 
+            InspectorTest.addResult("        " + pathToFileName(breakpoints[i].sourceFileId) + ":" + breakpoints[i].lineNumber + ", enabled:" + breakpoints[i].enabled);
+        }
+
+        var breakpointManager = WebInspector.breakpointManager;
+        locations = breakpointManager.allBreakpointLocations();
+        InspectorTest.addResult("    Dumping breakpoint locations");
+        for (var i = 0; i < locations.length; ++i) {
+            var uiLocation = locations[i].uiLocation;
+            var uiSourceCode = uiLocation.uiSourceCode;
+            InspectorTest.addResult("        url: " + pathToFileName(uiSourceCode.url) + ", lineNumber: " + uiLocation.lineNumber + ", isTemporary: " + !!uiSourceCode.isTemporary);
+        }
+    }
+
+    function addBreakpointSniffer(lineNumber, disabled)
+    {
+        InspectorTest.addResult("    TextEditor.addBreakpoint(lineNumber = " + lineNumber + ", disabled = " + disabled + ")");
+    }
+
+    function removeBreakpointSniffer(lineNumber)
+    {
+        InspectorTest.addResult("    TextEditor.removeBreakpoint(lineNumber = " + lineNumber + ")");
+    }
+
+    WebInspector.breakpointManager._storage._breakpoints = {};
+    InspectorTest.addSniffer(WebInspector.DefaultTextEditor.prototype, "addBreakpoint", addBreakpointSniffer, true);
+    InspectorTest.addSniffer(WebInspector.DefaultTextEditor.prototype, "removeBreakpoint", removeBreakpointSniffer, true);
+
+    InspectorTest.runDebuggerTestSuite([
+        function testEditUndo(next)
+        {
+            var javaScriptSourceFrame, uiSourceCode, scriptFile;
+
+            InspectorTest.showScriptSource("edit-me.js", didShowScriptSource);
+
+            function didShowScriptSource(sourceFrame)
+            {
+                javaScriptSourceFrame = sourceFrame;
+                uiSourceCode = sourceFrame._uiSourceCode;
+                scriptFile = sourceFrame._uiSourceCode.scriptFile();
+                
+                InspectorTest.addResult("Setting breakpoint:");
+                InspectorTest.addSniffer(WebInspector.BreakpointManager.Breakpoint.prototype, "_addResolvedLocation", breakpointResolved);
+                InspectorTest.setBreakpoint(sourceFrame, 2, "", true);
+            }
+
+            function breakpointResolved()
+            {
+                dumpBreakpointStorageAndLocations();
+                InspectorTest.addResult("Editing source:");
+                InspectorTest.replaceInSource(javaScriptSourceFrame, "}", "}//");
+
+                dumpBreakpointStorageAndLocations();
+                InspectorTest.addResult("Undoing source editing:");
+                InspectorTest.addSniffer(WebInspector.BreakpointManager.Breakpoint.prototype, "_addResolvedLocation", breakpointResolvedAgain);
+                InspectorTest.undoSourceEditing(javaScriptSourceFrame);
+            }
+
+            function breakpointResolvedAgain()
+            {
+                dumpBreakpointStorageAndLocations();
+                InspectorTest.addResult("Finally removing breakpoint:");
+                InspectorTest.removeBreakpoint(javaScriptSourceFrame, 2);
+
+                dumpBreakpointStorageAndLocations();
+                next();
+            }
+        },
+
+        function testEditCommit(next)
+        {
+            var javaScriptSourceFrame, uiSourceCode, scriptFile;
+
+            InspectorTest.showScriptSource("edit-me.js", didShowScriptSource);
+
+            function didShowScriptSource(sourceFrame)
+            {
+                javaScriptSourceFrame = sourceFrame;
+                uiSourceCode = sourceFrame._uiSourceCode;
+                scriptFile = sourceFrame._uiSourceCode.scriptFile();
+                
+                InspectorTest.addResult("Setting breakpoint:");
+                InspectorTest.addSniffer(WebInspector.BreakpointManager.Breakpoint.prototype, "_addResolvedLocation", breakpointResolved);
+                InspectorTest.setBreakpoint(sourceFrame, 2, "", true);
+            }
+
+            function breakpointResolved()
+            {
+                dumpBreakpointStorageAndLocations();
+                InspectorTest.addResult("Editing source:");
+                InspectorTest.replaceInSource(javaScriptSourceFrame, "}", "}//");
+
+                dumpBreakpointStorageAndLocations();
+                InspectorTest.addResult("Committing edited source:");
+                InspectorTest.addSniffer(WebInspector.BreakpointManager.Breakpoint.prototype, "_addResolvedLocation", breakpointResolvedAgain);
+                InspectorTest.commitSource(javaScriptSourceFrame);
+            }
+
+            function breakpointResolvedAgain()
+            {
+                dumpBreakpointStorageAndLocations();
+                InspectorTest.addResult("Finally removing breakpoint:");
+                InspectorTest.removeBreakpoint(javaScriptSourceFrame, 2);
+
+                dumpBreakpointStorageAndLocations();
+                next();
+            }
+        },
+
+        function testEditCommitFailEditCommit(next)
+        {
+            var javaScriptSourceFrame, uiSourceCode, scriptFile;
+
+            InspectorTest.showScriptSource("edit-me.js", didShowScriptSource);
+
+            function didShowScriptSource(sourceFrame)
+            {
+                javaScriptSourceFrame = sourceFrame;
+                uiSourceCode = sourceFrame._uiSourceCode;
+                scriptFile = sourceFrame._uiSourceCode.scriptFile();
+                
+                InspectorTest.addResult("Setting breakpoint:");
+                InspectorTest.addSniffer(WebInspector.BreakpointManager.Breakpoint.prototype, "_addResolvedLocation", breakpointResolved);
+                InspectorTest.setBreakpoint(sourceFrame, 2, "", true);
+            }
+
+            function breakpointResolved()
+            {
+                dumpBreakpointStorageAndLocations();
+                InspectorTest.addResult("Editing source:");
+                InspectorTest.replaceInSource(javaScriptSourceFrame, "}", "//}");
+
+                dumpBreakpointStorageAndLocations();
+                InspectorTest.addResult("Committing edited source:");
+                InspectorTest.addSniffer(WebInspector.debuggerModel, "_didEditScriptSource", commitFailed);
+                InspectorTest.commitSource(javaScriptSourceFrame);
+            }
+
+            function commitFailed(error)
+            {
+                InspectorTest.assertTrue(!!error, "Commit should have failed.");
+                dumpBreakpointStorageAndLocations();
+                InspectorTest.addResult("Editing source again so that live edit could succeed:");
+                InspectorTest.replaceInSource(javaScriptSourceFrame, "//}", "}//");
+
+                dumpBreakpointStorageAndLocations();
+                InspectorTest.addResult("Committing edited source again:");
+                InspectorTest.addSniffer(WebInspector.BreakpointManager.Breakpoint.prototype, "_addResolvedLocation", breakpointResolvedAgain);
+                InspectorTest.commitSource(javaScriptSourceFrame);
+            }
+
+            function breakpointResolvedAgain()
+            {
+                dumpBreakpointStorageAndLocations();
+                InspectorTest.addResult("Finally removing breakpoint:");
+                InspectorTest.removeBreakpoint(javaScriptSourceFrame, 2);
+
+                dumpBreakpointStorageAndLocations();
+                next();
+            }
+        },
+
+        function testEditCommitFailUndoCommit(next)
+        {
+            var javaScriptSourceFrame, uiSourceCode, scriptFile;
+
+            InspectorTest.showScriptSource("edit-me.js", didShowScriptSource);
+
+            function didShowScriptSource(sourceFrame)
+            {
+                javaScriptSourceFrame = sourceFrame;
+                uiSourceCode = sourceFrame._uiSourceCode;
+                scriptFile = sourceFrame._uiSourceCode.scriptFile();
+                
+                InspectorTest.addResult("Setting breakpoint:");
+                InspectorTest.addSniffer(WebInspector.BreakpointManager.Breakpoint.prototype, "_addResolvedLocation", breakpointResolved);
+                InspectorTest.setBreakpoint(sourceFrame, 2, "", true);
+            }
+
+            function breakpointResolved()
+            {
+                dumpBreakpointStorageAndLocations();
+                InspectorTest.addResult("Editing source:");
+                InspectorTest.replaceInSource(javaScriptSourceFrame, "}", "//}");
+
+                dumpBreakpointStorageAndLocations();
+                InspectorTest.addResult("Committing edited source:");
+                InspectorTest.addSniffer(WebInspector.debuggerModel, "_didEditScriptSource", commitFailed);
+                InspectorTest.commitSource(javaScriptSourceFrame);
+            }
+
+            function commitFailed(error)
+            {
+                InspectorTest.assertTrue(!!error, "Commit should have failed.");
+                dumpBreakpointStorageAndLocations();
+                InspectorTest.addResult("Undoing source editing:");
+                InspectorTest.undoSourceEditing(javaScriptSourceFrame);
+
+                dumpBreakpointStorageAndLocations();
+                InspectorTest.addResult("Committing edited source again:");
+                InspectorTest.addSniffer(WebInspector.BreakpointManager.Breakpoint.prototype, "_addResolvedLocation", breakpointResolvedAgain);
+                InspectorTest.commitSource(javaScriptSourceFrame);
+            }
+
+            function breakpointResolvedAgain()
+            {
+                dumpBreakpointStorageAndLocations();
+                InspectorTest.addResult("Finally removing breakpoint:");
+                InspectorTest.removeBreakpoint(javaScriptSourceFrame, 2);
+
+                dumpBreakpointStorageAndLocations();
+                next();
+            }
+        },
+    ]);
+};
+
+</script>
+
+</head>
+
+<body onload="runTest()">
+<p>Tests live edit feature.</p>
+
+</body>
+</html>

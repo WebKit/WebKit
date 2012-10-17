@@ -126,6 +126,8 @@ function test()
     {
         InspectorTest.addSniffer(WebInspector.debuggerModel, "_didEditScriptSource", callback);
         InspectorTest.replaceInSource(sourceFrame, string, replacement);
+        InspectorTest.commitSource(sourceFrame);
+        
     }
 };
 

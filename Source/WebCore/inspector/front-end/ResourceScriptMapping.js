@@ -323,6 +323,7 @@ WebInspector.ResourceScriptFile.prototype = {
         function innerCallback(error)
         {
             if (error) {
+                this._hasDivergedFromVM = true;
                 WebInspector.showErrorMessage(error);
                 return;
             }
@@ -342,12 +343,18 @@ WebInspector.ResourceScriptFile.prototype = {
 
     _workingCopyChanged: function(event)
     {
-        this._isDivergingFromVM = true;
-        this.dispatchEventToListeners(WebInspector.ScriptFile.Events.WillDivergeFromVM, this._uiSourceCode);
-        this._hasDivergedFromVM = true;
-        this._resourceScriptMapping._hasDivergedFromVM(this._uiSourceCode);
-        this.dispatchEventToListeners(WebInspector.ScriptFile.Events.DidDivergeFromVM, this._uiSourceCode);
-        delete this._isDivergingFromVM;
+        var wasDirty = /** @type {boolean} */ event.data.wasDirty;
+        if (!wasDirty && this._uiSourceCode.isDirty() && !this._hasDivergedFromVM) {
+            this._isDivergingFromVM = true;
+            this.dispatchEventToListeners(WebInspector.ScriptFile.Events.WillDivergeFromVM, this._uiSourceCode);
+            this._resourceScriptMapping._hasDivergedFromVM(this._uiSourceCode);
+            this.dispatchEventToListeners(WebInspector.ScriptFile.Events.DidDivergeFromVM, this._uiSourceCode);
+            delete this._isDivergingFromVM;
+        } else if (wasDirty && !this._uiSourceCode.isDirty() && !this._hasDivergedFromVM) {
+            this.dispatchEventToListeners(WebInspector.ScriptFile.Events.WillMergeToVM, this._uiSourceCode);
+            this._resourceScriptMapping._hasMergedToVM(this._uiSourceCode);
+            this.dispatchEventToListeners(WebInspector.ScriptFile.Events.DidMergeToVM, this._uiSourceCode);
+        }
     },
 
     /**

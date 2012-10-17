@@ -1,3 +1,22 @@
+2012-10-17  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [Regression] Undoing script changes does not restore breakpoints.
+        https://bugs.webkit.org/show_bug.cgi?id=99598
+
+        Reviewed by Pavel Feldman.
+
+        workingCopyChanged now dispatches did/willMergeToVM instead of did/willDivergeFromVM
+        when change returns uiSourceCode to non dirty state.
+        Added wasDirty parameter to workingCopyChanged event.
+
+        Test: inspector/debugger/live-edit-breakpoints.html
+
+        * inspector/front-end/ResourceScriptMapping.js:
+        (WebInspector.ResourceScriptFile.prototype._workingCopyCommitted):
+        (WebInspector.ResourceScriptFile.prototype._workingCopyChanged):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode.prototype.setWorkingCopy):
+
 2012-10-17  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Avoid re-creating CSSGrammar.cpp with each (incremental) build

@@ -1,3 +1,19 @@
+2012-10-17  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [Regression] Undoing script changes does not restore breakpoints.
+        https://bugs.webkit.org/show_bug.cgi?id=99598
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/live-edit-test.js:
+        (initialize_LiveEditTest.InspectorTest.replaceInSource):
+        (initialize_LiveEditTest.InspectorTest.commitSource):
+        (initialize_LiveEditTest.InspectorTest.undoSourceEditing):
+        (initialize_LiveEditTest):
+        * inspector/debugger/live-edit-breakpoints-expected.txt: Added.
+        * inspector/debugger/live-edit-breakpoints.html: Added.
+        * inspector/debugger/live-edit.html:
+
 2012-10-17  Dana Jansens  <danakj@chromium.org>
 
         Unreviewed rebaseline for ietestcenter/css3/bordersbackgrounds/border-radius-content-edge-001.htm

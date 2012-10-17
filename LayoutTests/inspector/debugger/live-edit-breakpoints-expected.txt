@@ -1,0 +1,133 @@
+Tests live edit feature.
+
+Debugger was enabled.
+
+Running: testEditUndo
+Setting breakpoint:
+    TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
+    Dumping breakpoint storage
+        edit-me.js:2, enabled:true
+    Dumping breakpoint locations
+        url: edit-me.js, lineNumber: 2, isTemporary: false
+Editing source:
+    TextEditor.removeBreakpoint(lineNumber = 2)
+    TextEditor.addBreakpoint(lineNumber = 2, disabled = true)
+    Dumping breakpoint storage
+        edit-me.js:2, enabled:true
+    Dumping breakpoint locations
+        url: edit-me.js, lineNumber: 2, isTemporary: true
+Undoing source editing:
+    TextEditor.removeBreakpoint(lineNumber = 2)
+    TextEditor.removeBreakpoint(lineNumber = 2)
+    TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
+    Dumping breakpoint storage
+        edit-me.js:2, enabled:true
+    Dumping breakpoint locations
+        url: edit-me.js, lineNumber: 2, isTemporary: false
+Finally removing breakpoint:
+    TextEditor.removeBreakpoint(lineNumber = 2)
+    Dumping breakpoint storage
+    Dumping breakpoint locations
+
+Running: testEditCommit
+Setting breakpoint:
+    TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
+    Dumping breakpoint storage
+        edit-me.js:2, enabled:true
+    Dumping breakpoint locations
+        url: edit-me.js, lineNumber: 2, isTemporary: false
+Editing source:
+    TextEditor.removeBreakpoint(lineNumber = 2)
+    TextEditor.addBreakpoint(lineNumber = 2, disabled = true)
+    Dumping breakpoint storage
+        edit-me.js:2, enabled:true
+    Dumping breakpoint locations
+        url: edit-me.js, lineNumber: 2, isTemporary: true
+Committing edited source:
+    TextEditor.removeBreakpoint(lineNumber = 2)
+    TextEditor.removeBreakpoint(lineNumber = 2)
+    TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
+    Dumping breakpoint storage
+        edit-me.js:2, enabled:true
+    Dumping breakpoint locations
+        url: edit-me.js, lineNumber: 2, isTemporary: false
+Finally removing breakpoint:
+    TextEditor.removeBreakpoint(lineNumber = 2)
+    Dumping breakpoint storage
+    Dumping breakpoint locations
+
+Running: testEditCommitFailEditCommit
+Setting breakpoint:
+    TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
+    Dumping breakpoint storage
+        edit-me.js:2, enabled:true
+    Dumping breakpoint locations
+        url: edit-me.js, lineNumber: 2, isTemporary: false
+Editing source:
+    TextEditor.removeBreakpoint(lineNumber = 2)
+    TextEditor.addBreakpoint(lineNumber = 2, disabled = true)
+    Dumping breakpoint storage
+        edit-me.js:2, enabled:true
+    Dumping breakpoint locations
+        url: edit-me.js, lineNumber: 2, isTemporary: true
+Committing edited source:
+    Dumping breakpoint storage
+        edit-me.js:2, enabled:true
+    Dumping breakpoint locations
+        url: edit-me.js, lineNumber: 2, isTemporary: true
+Editing source again so that live edit could succeed:
+    Dumping breakpoint storage
+        edit-me.js:2, enabled:true
+    Dumping breakpoint locations
+        url: edit-me.js, lineNumber: 2, isTemporary: true
+Committing edited source again:
+    TextEditor.removeBreakpoint(lineNumber = 2)
+    TextEditor.removeBreakpoint(lineNumber = 2)
+    TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
+    Dumping breakpoint storage
+        edit-me.js:2, enabled:true
+    Dumping breakpoint locations
+        url: edit-me.js, lineNumber: 2, isTemporary: false
+Finally removing breakpoint:
+    TextEditor.removeBreakpoint(lineNumber = 2)
+    Dumping breakpoint storage
+    Dumping breakpoint locations
+
+Running: testEditCommitFailUndoCommit
+Setting breakpoint:
+    TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
+    Dumping breakpoint storage
+        edit-me.js:2, enabled:true
+    Dumping breakpoint locations
+        url: edit-me.js, lineNumber: 2, isTemporary: false
+Editing source:
+    TextEditor.removeBreakpoint(lineNumber = 2)
+    TextEditor.addBreakpoint(lineNumber = 2, disabled = true)
+    Dumping breakpoint storage
+        edit-me.js:2, enabled:true
+    Dumping breakpoint locations
+        url: edit-me.js, lineNumber: 2, isTemporary: true
+Committing edited source:
+    Dumping breakpoint storage
+        edit-me.js:2, enabled:true
+    Dumping breakpoint locations
+        url: edit-me.js, lineNumber: 2, isTemporary: true
+Undoing source editing:
+    Dumping breakpoint storage
+        edit-me.js:2, enabled:true
+    Dumping breakpoint locations
+        url: edit-me.js, lineNumber: 2, isTemporary: true
+Committing edited source again:
+    TextEditor.removeBreakpoint(lineNumber = 2)
+    TextEditor.removeBreakpoint(lineNumber = 2)
+    TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
+    Dumping breakpoint storage
+        edit-me.js:2, enabled:true
+    Dumping breakpoint locations
+        url: edit-me.js, lineNumber: 2, isTemporary: false
+Finally removing breakpoint:
+    TextEditor.removeBreakpoint(lineNumber = 2)
+    Dumping breakpoint storage
+    Dumping breakpoint locations
+Debugger was disabled.
+
