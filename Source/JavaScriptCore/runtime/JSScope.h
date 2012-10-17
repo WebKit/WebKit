@@ -27,6 +27,7 @@
 #define JSScope_h
 
 #include "JSObject.h"
+#include "ResolveOperation.h"
 
 namespace JSC {
 
@@ -41,25 +42,12 @@ public:
 
     JS_EXPORT_PRIVATE static JSObject* objectAtScope(JSScope*);
 
-    static JSValue resolve(CallFrame*, const Identifier&);
-    static JSValue resolveSkip(CallFrame*, const Identifier&, int skip);
-    static JSValue resolveGlobal(
-        CallFrame*,
-        const Identifier&,
-        JSGlobalObject* globalObject,
-        WriteBarrierBase<Structure>* cachedStructure,
-        PropertyOffset* cachedOffset
-    );
-    static JSValue resolveGlobalDynamic(
-        CallFrame*,
-        const Identifier&,
-        int skip,
-        WriteBarrierBase<Structure>* cachedStructure,
-        PropertyOffset* cachedOffset
-    );
-    static JSValue resolveBase(CallFrame*, const Identifier&, bool isStrict);
-    static JSValue resolveWithBase(CallFrame*, const Identifier&, Register* base);
-    static JSValue resolveWithThis(CallFrame*, const Identifier&, Register* base);
+    static JSValue resolve(CallFrame*, const Identifier&, ResolveOperations*);
+    static JSValue resolveBase(CallFrame*, const Identifier&, bool isStrict, ResolveOperations*, PutToBaseOperation*);
+    static JSValue resolveWithBase(CallFrame*, const Identifier&, Register* base, ResolveOperations*, PutToBaseOperation*);
+    static JSValue resolveWithThis(CallFrame*, const Identifier&, Register* base, ResolveOperations*);
+    static JSValue resolveGlobal(CallFrame*, const Identifier&, JSGlobalObject*, ResolveOperation*);
+    static void resolvePut(CallFrame*, JSValue base, const Identifier&, JSValue, PutToBaseOperation*);
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
@@ -80,6 +68,16 @@ protected:
 
 private:
     WriteBarrier<JSScope> m_next;
+    enum ReturnValues {
+        ReturnValue = 1,
+        ReturnBase = 2,
+        ReturnThis = 4,
+        ReturnBaseAndValue = ReturnValue | ReturnBase,
+        ReturnThisAndValue = ReturnValue | ReturnThis,
+    };
+    enum LookupMode { UnknownResolve, KnownResolve };
+    template <LookupMode, ReturnValues> static JSObject* resolveContainingScopeInternal(CallFrame*, const Identifier&, PropertySlot&, ResolveOperations*, PutToBaseOperation*, bool isStrict);
+    template <ReturnValues> static JSObject* resolveContainingScope(CallFrame*, const Identifier&, PropertySlot&, ResolveOperations*, PutToBaseOperation*, bool isStrict);
 };
 
 inline JSScope::JSScope(JSGlobalData& globalData, Structure* structure, JSScope* next)

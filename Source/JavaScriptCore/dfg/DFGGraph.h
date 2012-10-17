@@ -57,10 +57,23 @@ struct StorageAccessData {
 
 struct ResolveGlobalData {
     unsigned identifierNumber;
-    unsigned resolveInfoIndex;
+    unsigned resolveOperationsIndex;
+    unsigned putToBaseOperationIndex;
+    unsigned resolvePropertyIndex;
 };
 
-// 
+struct ResolveOperationData {
+    unsigned identifierNumber;
+    unsigned resolveOperationsIndex;
+    unsigned putToBaseOperationIndex;
+};
+
+struct PutToBaseOperationData {
+    unsigned putToBaseOperationIndex;
+};
+
+
+//
 // === Graph ===
 //
 // The dataflow graph is an ordered vector of nodes.
@@ -669,6 +682,8 @@ public:
     Vector<Edge, 16> m_varArgChildren;
     Vector<StorageAccessData> m_storageAccessData;
     Vector<ResolveGlobalData> m_resolveGlobalData;
+    Vector<ResolveOperationData> m_resolveOperationsData;
+    Vector<PutToBaseOperationData> m_putToBaseOperationData;
     Vector<NodeIndex, 8> m_arguments;
     SegmentedVector<VariableAccessData, 16> m_variableAccessData;
     SegmentedVector<ArgumentPosition, 8> m_argumentPositions;

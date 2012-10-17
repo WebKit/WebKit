@@ -1059,35 +1059,38 @@ void DFG_OPERATION operationNotifyGlobalVarWrite(WatchpointSet* watchpointSet)
     watchpointSet->notifyWrite();
 }
 
-EncodedJSValue DFG_OPERATION operationResolve(ExecState* exec, Identifier* propertyName)
+EncodedJSValue DFG_OPERATION operationResolve(ExecState* exec, Identifier* propertyName, ResolveOperations* operations)
 {
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
-    return JSValue::encode(JSScope::resolve(exec, *propertyName));
+    return JSValue::encode(JSScope::resolve(exec, *propertyName, operations));
 }
 
-EncodedJSValue DFG_OPERATION operationResolveBase(ExecState* exec, Identifier* propertyName)
+EncodedJSValue DFG_OPERATION operationResolveBase(ExecState* exec, Identifier* propertyName, ResolveOperations* operations, PutToBaseOperation* putToBaseOperations)
 {
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
     
-    return JSValue::encode(JSScope::resolveBase(exec, *propertyName, false));
+    return JSValue::encode(JSScope::resolveBase(exec, *propertyName, false, operations, putToBaseOperations));
 }
 
-EncodedJSValue DFG_OPERATION operationResolveBaseStrictPut(ExecState* exec, Identifier* propertyName)
+EncodedJSValue DFG_OPERATION operationResolveBaseStrictPut(ExecState* exec, Identifier* propertyName, ResolveOperations* operations, PutToBaseOperation* putToBaseOperations)
 {
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
     
-    return JSValue::encode(JSScope::resolveBase(exec, *propertyName, true));
+    return JSValue::encode(JSScope::resolveBase(exec, *propertyName, true, operations, putToBaseOperations));
 }
 
-EncodedJSValue DFG_OPERATION operationResolveGlobal(ExecState* exec, GlobalResolveInfo* resolveInfo, JSGlobalObject* globalObject, Identifier* propertyName)
+EncodedJSValue DFG_OPERATION operationResolveGlobal(ExecState* exec, ResolveOperation* resolveOperation, JSGlobalObject* globalObject, Identifier* propertyName)
 {
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
-
-    return JSValue::encode(JSScope::resolveGlobal(exec, *propertyName, globalObject, &resolveInfo->structure, &resolveInfo->offset));
+    ASSERT(globalObject);
+    UNUSED_PARAM(resolveOperation);
+    UNUSED_PARAM(globalObject);
+    ASSERT(resolveOperation->m_operation == ResolveOperation::GetAndReturnGlobalProperty);
+    return JSValue::encode(JSScope::resolveGlobal(exec, *propertyName, globalObject, resolveOperation));
 }
 
 EncodedJSValue DFG_OPERATION operationToPrimitive(ExecState* exec, EncodedJSValue value)

@@ -144,6 +144,8 @@ public:
                     m_graph.vote(node, VoteOther);
                     break;
                 }
+                case GarbageValue:
+                    break;
                     
                 default:
                     m_graph.vote(node, VoteOther);

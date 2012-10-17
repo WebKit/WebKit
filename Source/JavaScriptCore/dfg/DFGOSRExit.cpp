@@ -45,9 +45,9 @@ OSRExit::OSRExit(ExitKind kind, JSValueSource jsValueSource, MethodOfGettingAVal
     , m_kind(kind)
     , m_count(0)
     , m_streamIndex(streamIndex)
-    , m_lastSetOperand(jit->m_lastSetOperand)
 {
     ASSERT(m_codeOrigin.isSet());
+    m_setOperands.append(jit->m_lastSetOperand);
 }
 
 bool OSRExit::considerAddingAsFrequentExitSiteSlow(CodeBlock* dfgCodeBlock, CodeBlock* profiledCodeBlock)

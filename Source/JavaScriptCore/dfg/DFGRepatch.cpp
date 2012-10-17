@@ -299,7 +299,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
     Structure* structure = baseCell->structure();
     if (!slot.isCacheable())
         return false;
-    if (structure->isUncacheableDictionary() || structure->typeInfo().prohibitsPropertyCaching())
+    if (!structure->propertyAccessesAreCacheable())
         return false;
 
     // Optimize self access.
