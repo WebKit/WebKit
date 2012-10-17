@@ -3157,19 +3157,22 @@ void SpeculativeJIT::compile(Node& node)
         case Array::ArrayWithContiguous:
         case Array::ArrayWithContiguousOutOfBounds: {
             m_jit.load32(
-                MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), valueTagGPR);
+                MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), valuePayloadGPR);
             MacroAssembler::Jump undefinedCase =
-                m_jit.branchTest32(MacroAssembler::Zero, valueTagGPR);
-            m_jit.sub32(TrustedImm32(1), valueTagGPR);
+                m_jit.branchTest32(MacroAssembler::Zero, valuePayloadGPR);
+            m_jit.sub32(TrustedImm32(1), valuePayloadGPR);
             m_jit.store32(
-                valueTagGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()));
+                valuePayloadGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()));
             m_jit.load32(
-                MacroAssembler::BaseIndex(storageGPR, valueTagGPR, MacroAssembler::TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)),
-                valuePayloadGPR);
-            m_jit.load32(
-                MacroAssembler::BaseIndex(storageGPR, valueTagGPR, MacroAssembler::TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)),
+                MacroAssembler::BaseIndex(storageGPR, valuePayloadGPR, MacroAssembler::TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)),
                 valueTagGPR);
             MacroAssembler::Jump slowCase = m_jit.branch32(MacroAssembler::Equal, valueTagGPR, TrustedImm32(JSValue::EmptyValueTag));
+            m_jit.store32(
+                MacroAssembler::TrustedImm32(JSValue::EmptyValueTag),
+                MacroAssembler::BaseIndex(storageGPR, valuePayloadGPR, MacroAssembler::TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
+            m_jit.load32(
+                MacroAssembler::BaseIndex(storageGPR, valuePayloadGPR, MacroAssembler::TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)),
+                valuePayloadGPR);
 
             addSlowPathGenerator(
                 slowPathMove(

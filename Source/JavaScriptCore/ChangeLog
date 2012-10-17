@@ -1,3 +1,21 @@
+2012-10-17  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION (r130826 or r130828): Twitter top bar is dysfunctional
+        https://bugs.webkit.org/show_bug.cgi?id=99577
+        <rdar://problem/12518883>
+
+        Reviewed by Mark Hahnenberg.
+
+        It turns out that it's a good idea to maintain the invariants of your object model, such as that
+        elements past publicLength should have the hole value.
+
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-10-17  Anders Carlsson  <andersca@apple.com>
 
         Clean up Vector.h

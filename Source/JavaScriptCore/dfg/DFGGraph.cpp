@@ -246,12 +246,12 @@ void Graph::dump(const char* prefix, NodeIndex nodeIndex)
     }
     if (node.hasStructureSet()) {
         for (size_t i = 0; i < node.structureSet().size(); ++i) {
-            dataLog("%sstruct(%p)", hasPrinted ? ", " : "", node.structureSet()[i]);
+            dataLog("%sstruct(%p: %s)", hasPrinted ? ", " : "", node.structureSet()[i], indexingTypeToString(node.structureSet()[i]->indexingType()));
             hasPrinted = true;
         }
     }
     if (node.hasStructure()) {
-        dataLog("%sstruct(%p)", hasPrinted ? ", " : "", node.structure());
+        dataLog("%sstruct(%p: %s)", hasPrinted ? ", " : "", node.structure(), indexingTypeToString(node.structure()->indexingType()));
         hasPrinted = true;
     }
     if (node.hasStructureTransitionData()) {

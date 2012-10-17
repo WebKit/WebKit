@@ -3191,24 +3191,30 @@ void SpeculativeJIT::compile(Node& node)
         SpeculateCellOperand base(this, node.child1());
         StorageOperand storage(this, node.child2());
         GPRTemporary value(this);
+        GPRTemporary storageLength(this);
         
         GPRReg baseGPR = base.gpr();
         GPRReg storageGPR = storage.gpr();
         GPRReg valueGPR = value.gpr();
+        GPRReg storageLengthGPR = storageLength.gpr();
         
         switch (node.arrayMode()) {
         case Array::ArrayWithContiguous:
         case Array::ArrayWithContiguousOutOfBounds: {
             m_jit.load32(
-                MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), valueGPR);
+                MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), storageLengthGPR);
             MacroAssembler::Jump undefinedCase =
-                m_jit.branchTest32(MacroAssembler::Zero, valueGPR);
-            m_jit.sub32(TrustedImm32(1), valueGPR);
+                m_jit.branchTest32(MacroAssembler::Zero, storageLengthGPR);
+            m_jit.sub32(TrustedImm32(1), storageLengthGPR);
             m_jit.store32(
-                valueGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()));
+                storageLengthGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()));
             m_jit.loadPtr(
-                MacroAssembler::BaseIndex(storageGPR, valueGPR, MacroAssembler::ScalePtr),
+                MacroAssembler::BaseIndex(storageGPR, storageLengthGPR, MacroAssembler::ScalePtr),
                 valueGPR);
+            // FIXME: This would not have to be here if changing the publicLength also zeroed the values between the old
+            // length and the new length.
+            m_jit.storePtr(
+                MacroAssembler::TrustedImmPtr(0), MacroAssembler::BaseIndex(storageGPR, storageLengthGPR, MacroAssembler::ScalePtr));
             MacroAssembler::Jump slowCase = m_jit.branchTestPtr(MacroAssembler::Zero, valueGPR);
 
             addSlowPathGenerator(
@@ -3225,8 +3231,6 @@ void SpeculativeJIT::compile(Node& node)
             
         case Array::ArrayWithArrayStorage:
         case Array::ArrayWithArrayStorageOutOfBounds: {
-            GPRTemporary storageLength(this);
-            GPRReg storageLengthGPR = storageLength.gpr();
             m_jit.load32(MacroAssembler::Address(storageGPR, ArrayStorage::lengthOffset()), storageLengthGPR);
         
             JITCompiler::Jump undefinedCase =
