@@ -78,6 +78,7 @@ public:
     // PluginViewBase methods
     virtual bool getFormValue(String&);
     virtual bool supportsKeyboardFocus() const;
+    virtual bool canProcessDrag() const;
 
     // Widget methods
     virtual void setFrameRect(const WebCore::IntRect&);

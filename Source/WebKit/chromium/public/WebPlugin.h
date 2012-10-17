@@ -70,6 +70,8 @@ public:
     virtual bool getFormValue(WebString&) { return false; }
     virtual bool supportsKeyboardFocus() const { return false; }
 
+    virtual bool canProcessDrag() const { return false; }
+
     virtual void paint(WebCanvas*, const WebRect&) = 0;
 
     // Coordinates are relative to the containing window.

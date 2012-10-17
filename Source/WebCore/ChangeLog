@@ -1,3 +1,32 @@
+2012-10-17  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        plugins: Allow a plugin to dictate whether it can receive drag events or not.
+        https://bugs.webkit.org/show_bug.cgi?id=99355
+
+        Reviewed by Tony Chang.
+
+        When doing a drag over a plugin, ask the plugin whether it can accept
+        drag/drop to decide whether drag/drop is possible or not. At present,
+        plugins do not receive drag events through WebCore (i.e. various
+        implementations of PluginView::handleMouseEvent ignores the
+        drop-events). This change makes it possible for the ports to ask the
+        plugin first to decide whether it can (or wants to) accept drag events.
+        The default implementation remains the same, i.e. plugins do not receive
+        drag events. For chromium, the overridden implementation uses the
+        WebPlugin interface to check whether the plugin can accept drag events.
+
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::canProcessDrag):
+        (WebCore):
+        * html/HTMLPlugInElement.h:
+        (WebCore):
+        (HTMLPlugInElement):
+        * page/DragController.cpp:
+        (WebCore::DragController::canProcessDrag):
+        * plugins/PluginViewBase.h:
+        (WebCore):
+        (WebCore::PluginViewBase::canProcessDrag):
+
 2012-10-17  Andreas Kling  <kling@webkit.org>
 
         Shrink EventTargetData by making firingEventListeners vector optional.

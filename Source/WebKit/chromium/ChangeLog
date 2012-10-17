@@ -1,3 +1,22 @@
+2012-10-17  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        plugins: Allow a plugin to dictate whether it can receive drag events or not.
+        https://bugs.webkit.org/show_bug.cgi?id=99355
+
+        Reviewed by Tony Chang.
+
+        Introduce WebPlugin::canProcessDrag() and use that to implement PluginViewBase::canProcessDrag.
+
+        * public/WebPlugin.h:
+        (WebKit::WebPlugin::canProcessDrag):
+        (WebPlugin):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::canProcessDrag):
+        (WebKit):
+        (WebKit::WebPluginContainerImpl::handleMouseEvent):
+        * src/WebPluginContainerImpl.h:
+        (WebPluginContainerImpl):
+
 2012-10-17  Jian Li  <jianli@chromium.org>
 
         [chromium] Remove legacy members from WebDraggableRegion

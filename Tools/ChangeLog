@@ -1,3 +1,15 @@
+2012-10-17  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        plugins: Allow a plugin to dictate whether it can receive drag events or not.
+        https://bugs.webkit.org/show_bug.cgi?id=99355
+
+        Reviewed by Tony Chang.
+
+        Update the TestWebPlugin to implement the new |canProcessDrag| interface.
+
+        * DumpRenderTree/chromium/TestWebPlugin.h:
+        (TestWebPlugin::canProcessDrag):
+
 2012-10-17  Dominic Mazzoni  <dmazzoni@google.com>
 
         Unreviewed. Create an accessibility watchlist.

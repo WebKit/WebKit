@@ -1,3 +1,15 @@
+2012-10-17  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        plugins: Allow a plugin to dictate whether it can receive drag events or not.
+        https://bugs.webkit.org/show_bug.cgi?id=99355
+
+        Reviewed by Tony Chang.
+
+        Update test to not set contentEditable on the plugin anymore.
+
+        * platform/chromium/plugins/drag-events-expected.txt:
+        * platform/chromium/plugins/drag-events.html:
+
 2012-10-17  Christophe Dumez  <christophe.dumez@intel.com>
 
         xss-DENIED-xsl-document-securityOrigin.xml crashes with icon assertion

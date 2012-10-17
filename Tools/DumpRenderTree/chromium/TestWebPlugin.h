@@ -56,6 +56,7 @@ public:
     virtual bool initialize(WebKit::WebPluginContainer*);
     virtual void destroy();
     virtual NPObject* scriptableObject() { return 0; }
+    virtual bool canProcessDrag() const { return m_canProcessDrag; }
     virtual void paint(WebKit::WebCanvas*, const WebKit::WebRect&) { }
     virtual void updateGeometry(const WebKit::WebRect& frameRect,
                                 const WebKit::WebRect& clipRect,
@@ -132,6 +133,7 @@ private:
 
     bool m_acceptsTouchEvent;
     bool m_printEventDetails;
+    bool m_canProcessDrag;
 };
 
 #endif // TestPepperPlugin_h

@@ -577,6 +577,11 @@ bool WebPluginContainerImpl::supportsKeyboardFocus() const
     return m_webPlugin->supportsKeyboardFocus();
 }
 
+bool WebPluginContainerImpl::canProcessDrag() const
+{
+    return m_webPlugin->canProcessDrag();
+}
+
 void WebPluginContainerImpl::willDestroyPluginLoadObserver(WebPluginLoadObserver* observer)
 {
     size_t pos = m_pluginLoadObservers.find(observer);
@@ -661,7 +666,8 @@ void WebPluginContainerImpl::handleMouseEvent(MouseEvent* event)
     ASSERT(parent()->isFrameView());
 
     if (event->isDragEvent()) {
-        handleDragEvent(event);
+        if (m_webPlugin->canProcessDrag())
+            handleDragEvent(event);
         return;
     }
 
