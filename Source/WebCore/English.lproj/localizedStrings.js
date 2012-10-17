@@ -751,3 +751,5 @@ localizedStrings["%s (%s%s)"] = "%s (%s%s)";
 localizedStrings["Running audit"] = "Running audit";
 localizedStrings["Collecting content…"] = "Collecting content…";
 localizedStrings["Writing file…"] = "Writing file…";
+localizedStrings["Debug target terminated"] = "Debug target terminated";
+localizedStrings["This remote debugging client is no longer functional. Please re-attach to the new target."] = "This remote debugging client is no longer functional. Please re-attach to the new target.";

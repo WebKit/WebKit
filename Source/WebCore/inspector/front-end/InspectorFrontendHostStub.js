@@ -222,3 +222,19 @@ WebInspector.ClipboardAccessDeniedScreen.prototype = {
 }
 
 }
+
+/**
+ * @constructor
+ * @extends {WebInspector.HelpScreen}
+ */
+WebInspector.RemoteDebuggingTerminatedScreen = function()
+{
+    WebInspector.HelpScreen.call(this, WebInspector.UIString("Debug target terminated"));
+    var p = this.contentElement.createChild("p");
+    p.addStyleClass("help-section");
+    p.textContent = WebInspector.UIString("This remote debugging client is no longer functional. Please re-attach to the new target.");
+}
+
+WebInspector.RemoteDebuggingTerminatedScreen.prototype = {
+    __proto__: WebInspector.HelpScreen.prototype
+}

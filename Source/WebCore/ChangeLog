@@ -1,3 +1,18 @@
+2012-10-17  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: display "disconnected" message when remote debugging terminates
+        https://bugs.webkit.org/show_bug.cgi?id=99316
+
+        Reviewed by Yury Semikhatsky.
+
+        Otherwise, it is not clear that the front-end is no longer functional.
+
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        (WebInspector.RemoteDebuggingTerminatedScreen):
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded.WebInspector.socket.onclose):
+        (WebInspector.loaded):
+
 2012-10-17  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: delete watch expression button overlaps with the expression value

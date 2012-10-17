@@ -335,6 +335,9 @@ WebInspector.loaded = function()
             InspectorFrontendHost.sendMessageToBackend = WebInspector.socket.send.bind(WebInspector.socket);
             WebInspector.doLoadedDone();
         }
+        WebInspector.socket.onclose = function() {
+            (new WebInspector.RemoteDebuggingTerminatedScreen()).showModal();
+        }
         return;
     }
 
