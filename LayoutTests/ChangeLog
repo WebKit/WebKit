@@ -1,3 +1,77 @@
+2012-10-17  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, Chromium baselines for shadow DOM changes to RenderSlider.
+
+        * platform/chromium-linux-x86/fast/multicol/client-rects-expected.txt: Removed.
+        * platform/chromium-linux/fast/forms/datalist/input-appearance-range-with-datalist-zoomed-expected.png:
+        * platform/chromium-mac-snowleopard/fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt.
+        * platform/chromium-mac-snowleopard/fast/forms/box-shadow-override-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/datalist/input-appearance-range-with-datalist-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/datalist/input-appearance-range-with-datalist-zoomed-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-appearance-height-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/range/slider-thumb-stylability-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/forms/range/slider-thumb-stylability-expected.txt.
+        * platform/chromium-mac-snowleopard/fast/repaint/slider-thumb-float-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/repaint/slider-thumb-float-expected.txt.
+        * platform/chromium-mac/fast/dom/HTMLInputElement/input-slider-update-expected.txt: Added.
+        * platform/chromium-mac/fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt.
+        * platform/chromium-mac/fast/forms/box-shadow-override-expected.png:
+        * platform/chromium-mac/fast/forms/box-shadow-override-expected.txt:
+        * platform/chromium-mac/fast/forms/datalist/input-appearance-range-with-datalist-expected.png:
+        * platform/chromium-mac/fast/forms/datalist/input-appearance-range-with-datalist-zoomed-expected.png:
+        * platform/chromium-mac/fast/forms/input-appearance-height-expected.png:
+        * platform/chromium-mac/fast/forms/input-appearance-height-expected.txt:
+        * platform/chromium-mac/fast/forms/range/input-appearance-range-expected.txt:
+        * platform/chromium-mac/fast/forms/range/range-thumb-height-percentage-expected.txt: Added.
+        * platform/chromium-mac/fast/forms/range/slider-padding-expected.txt: Added.
+        * platform/chromium-mac/fast/forms/range/slider-thumb-shared-style-expected.txt: Added.
+        * platform/chromium-mac/fast/forms/range/slider-thumb-stylability-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/forms/range/slider-thumb-stylability-expected.txt.
+        * platform/chromium-mac/fast/hidpi/video-controls-in-hidpi-expected.txt:
+        * platform/chromium-mac/fast/layers/video-layer-expected.txt:
+        * platform/chromium-mac/fast/multicol/client-rects-expected.txt:
+        * platform/chromium-mac/fast/repaint/slider-thumb-drag-release-expected.txt: Added.
+        * platform/chromium-mac/fast/repaint/slider-thumb-float-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/repaint/slider-thumb-float-expected.txt.
+        * platform/chromium-mac/media/audio-controls-rendering-expected.txt:
+        * platform/chromium-mac/media/audio-repaint-expected.txt:
+        * platform/chromium-mac/media/controls-after-reload-expected.txt:
+        * platform/chromium-mac/media/controls-strict-expected.txt:
+        * platform/chromium-mac/media/controls-styling-expected.txt:
+        * platform/chromium-mac/media/controls-styling-strict-expected.txt:
+        * platform/chromium-mac/media/controls-without-preload-expected.txt:
+        * platform/chromium-mac/media/media-controls-clone-expected.txt:
+        * platform/chromium-mac/media/media-document-audio-repaint-expected.txt:
+        * platform/chromium-mac/media/track/track-cue-rendering-horizontal-expected.txt:
+        * platform/chromium-mac/media/track/track-cue-rendering-vertical-expected.txt:
+        * platform/chromium-mac/media/video-controls-rendering-expected.txt:
+        * platform/chromium-mac/media/video-display-toggle-expected.txt:
+        * platform/chromium-mac/media/video-empty-source-expected.txt:
+        * platform/chromium-mac/media/video-no-audio-expected.txt:
+        * platform/chromium-mac/media/video-playing-and-pause-expected.txt:
+        * platform/chromium-mac/media/video-zoom-controls-expected.txt:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi-expected.txt: Copied from LayoutTests/platform/chromium-mac/fast/hidpi/video-controls-in-hidpi-expected.txt.
+        * platform/chromium-win-xp/fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt.
+        * platform/chromium-win-xp/fast/forms/datalist/input-appearance-range-with-datalist-expected.png: Removed.
+        * platform/chromium-win-xp/fast/forms/range/slider-thumb-stylability-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/forms/range/slider-thumb-stylability-expected.txt.
+        * platform/chromium-win-xp/fast/repaint/slider-thumb-float-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/repaint/slider-thumb-float-expected.txt.
+        * platform/chromium-win/fast/dom/HTMLInputElement/input-slider-update-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt:
+        * platform/chromium-win/fast/forms/box-shadow-override-expected.txt:
+        * platform/chromium-win/fast/forms/datalist/input-appearance-range-with-datalist-expected.png:
+        * platform/chromium-win/fast/forms/datalist/input-appearance-range-with-datalist-zoomed-expected.png:
+        * platform/chromium-win/fast/forms/input-appearance-height-expected.txt:
+        * platform/chromium-win/fast/forms/range/input-appearance-range-expected.png:
+        * platform/chromium-win/fast/forms/range/input-appearance-range-expected.txt:
+        * platform/chromium-win/fast/forms/range/range-thumb-height-percentage-expected.txt:
+        * platform/chromium-win/fast/forms/range/slider-padding-expected.txt:
+        * platform/chromium-win/fast/forms/range/slider-thumb-shared-style-expected.txt:
+        * platform/chromium-win/fast/forms/range/slider-thumb-stylability-expected.txt:
+        * platform/chromium-win/fast/hidpi/video-controls-in-hidpi-expected.txt:
+        * platform/chromium-win/fast/multicol/client-rects-expected.txt:
+        * platform/chromium-win/fast/repaint/slider-thumb-drag-release-expected.txt:
+        * platform/chromium-win/fast/repaint/slider-thumb-float-expected.txt:
+        * platform/chromium-win/media/track/track-cue-rendering-vertical-expected.txt:
+        * platform/chromium-win/platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi-expected.txt: Renamed from LayoutTests/platform/chromium-linux/fast/hidpi/video-controls-in-hidpi-expected.txt.
+        * platform/chromium/TestExpectations:
+        * platform/mac-lion/media/audio-repaint-expected.txt: Removed.
+
 2012-10-17  Dana Jansens  <danakj@chromium.org>
 
         Unreviewed gardening, mark inspector/styles/styles-history.html as flaky on Linux.
