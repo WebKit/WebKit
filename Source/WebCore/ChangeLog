@@ -1,3 +1,15 @@
+2012-10-17  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Avoid style updates when retrieving the inline stylesheet text
+        https://bugs.webkit.org/show_bug.cgi?id=99576
+
+        Reviewed by Vsevolod Vlasov.
+
+        Avoid using innerText() to retrieve inline stylesheet text, which may result in style and layout updates.
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::inlineStyleSheetText):
+
 2012-10-17  Patrick Gansterer  <paroga@webkit.org>
 
         Build fix for WinCE after r131365.

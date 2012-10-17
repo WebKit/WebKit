@@ -1266,7 +1266,7 @@ bool InspectorStyleSheet::inlineStyleSheetText(String* result) const
 #endif
     )
         return false;
-    *result = ownerElement->innerText();
+    *result = ownerElement->textContent();
     return true;
 }
 
