@@ -5,7 +5,7 @@
 </script>
 <body id="body">
  
-    <!-- This test makes sure that spacer elements are not returned as elements. There should only be 4 elements returned -->
+    <!-- This test makes sure that spacer elements are not returned as elements. There should be at most 4 elements returned -->
  
    <b>First</b>
    <b>Second</b>
@@ -23,8 +23,10 @@
             var body = document.getElementById("body");
             body.focus();
             var container = accessibilityController.focusedElement.childAtIndex(0);
-            
-            if (container.childrenCount == 4) {
+
+            // The Gtk port ATs expect the bold inline text to not have accessible objects.
+            var expectedCount = (testRunner.platformName == "gtk") ? 2 : 4;
+            if (container.childrenCount == expectedCount) {
                 result.innerText += "Test passed\n";
             }
             else {
