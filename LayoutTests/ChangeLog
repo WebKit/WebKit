@@ -1,3 +1,10 @@
+2012-10-17  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviwed gardening. Skip failing reftest after r131497.
+        https://bugs.webkit.org/show_bug.cgi?id=98666
+
+        * platform/qt/TestExpectations: Skip fast/forms/range/input-appearance-range-rtl.html.
+
 2012-10-17  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         WebKitTestRunner needs testRunner.queueLoad

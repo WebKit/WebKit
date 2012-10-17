@@ -2196,6 +2196,7 @@ fast/block/line-layout/selection-highlight-overlap.html
 fast/css/empty-cell-baseline.html
 fast/forms/datalist/input-appearance-range-with-datalist-rtl.html
 fast/forms/datalist/update-range-with-datalist.html
+fast/forms/range/input-appearance-range-rtl.html
 fast/multicol/cell-shrinkback.html
 fast/multicol/overflow-into-columngap.html
 fast/overflow/line-clamp-and-columns.html
