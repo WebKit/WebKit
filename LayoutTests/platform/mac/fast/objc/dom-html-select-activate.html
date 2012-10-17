@@ -27,6 +27,17 @@
         <option>2</option>
     </select>
 
+    <select id="multiple-3" multiple>
+        <optgroup>
+            <option>0</option>
+            <option>1</option>
+        </optgroup>
+        <optgroup>
+            <option>2</option>
+            <option>3</option>
+        </optgroup>
+    </select>
+
     <pre id="console"></pre>
 
     <script>
@@ -81,6 +92,7 @@
         wrapper("Select a single index in a sized <select>.", "sized", testSized);
         wrapper("Select multiple indexes, in a <select multiple>.", "multiple-1", testMultiple1);
         wrapper("Select multiple indexes, with multi-select on, in a <select multiple>.", "multiple-2", testMultiple2);
+        wrapper("Select multiple indexes, with multi-select on, in a <select multiple> with <optgroup>s.", "multiple-3", testMultiple3);
     }
 
     function wrapper(msg, id, func) {
@@ -113,6 +125,13 @@
         objCController.setSelectElementSelectedIndexAllowingMultiple(elem, 1, true);
         objCController.setSelectElementSelectedIndexAllowingMultiple(elem, 2, true);
         assertSelectedIndexes(elem, [false, true, true]);
+    }
+
+    function testMultiple3(elem) {
+        // Triggers selecting index 1 then 2, expecting the result to be both are selected.
+        objCController.setSelectElementSelectedIndexAllowingMultiple(elem, 1, true);
+        objCController.setSelectElementSelectedIndexAllowingMultiple(elem, 2, true);
+        assertSelectedIndexes(elem, [false, true, true, false]);
     }
 
     </script>

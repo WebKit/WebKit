@@ -1,3 +1,18 @@
+2012-10-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        HTMLSelectElement::optionSelectedByUser confuses listIndex and optionIndex
+        https://bugs.webkit.org/show_bug.cgi?id=99523
+
+        Reviewed by Simon Fraser.
+
+        There was a call site where the optionIndex was being passed to a
+        function that expected the listIndex. Convert appropriately.
+
+        Extends Test: platform/mac/fast/objc/dom-html-select-activate.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::optionSelectedByUser):
+
 2012-10-16  Jian Li  <jianli@chromium.org>
 
         Rename feature define ENABLE_WIDGET_REGION to ENABLE_DRAGGBALE_REGION

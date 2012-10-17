@@ -1,4 +1,4 @@
-      
+        
 This tests the Private Objective-C DOM HTML Bindings API for selecting indexes of a <select> that also activate the "change" event.
 
 Select a single index in a normal <select>.
@@ -15,6 +15,11 @@ Select multiple indexes, in a <select multiple>.
 PASS - selected options were what we expected.
 
 Select multiple indexes, with multi-select on, in a <select multiple>.
+** change event fired **
+** change event fired **
+PASS - selected options were what we expected.
+
+Select multiple indexes, with multi-select on, in a <select multiple> with <optgroup>s.
 ** change event fired **
 ** change event fired **
 PASS - selected options were what we expected.
