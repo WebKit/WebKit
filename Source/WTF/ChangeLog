@@ -1,5 +1,19 @@
 2012-10-17  Michael Saboff  <msaboff@apple.com>
 
+        StringImpl::findIgnoringCase() and reverseFindIgnoringCase() don't optimally handle a mix of 8 and 16 bit strings
+        https://bugs.webkit.org/show_bug.cgi?id=99224
+
+        Reviewed by Geoffrey Garen.
+
+        Added helper templated functions and all four combinations similar to find() and reverseFind().
+
+        (WTF::findIgnoringCaseInner):
+        (WTF::StringImpl::findIgnoringCase):
+        (WTF::reverseFindIgnoringCaseInner):
+        (WTF::StringImpl::reverseFindIgnoringCase):
+
+2012-10-17  Michael Saboff  <msaboff@apple.com>
+
         AtomicString::HashAndUTF8CharactersTranslator::equal() doesn't optimally handle 8 bit strings
         https://bugs.webkit.org/show_bug.cgi?id=99223
 
