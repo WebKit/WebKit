@@ -6,9 +6,7 @@
     if (window.internals)
         window.internals.settings.setCSSExclusionsEnabled(true);
 
-    // Concave assymetric simple polygon with horizontal top and bottom edges.  Similar to test 001
-    // with a vertical left edge.
-    var vertices = [{x:40, y:40}, {x:440, y:40}, {x:320, y:160}, {x:480, y:320}, {x:40, y:320}];
+    var vertices = createRegularPolygonVertices(400, 8); // 400x400 regular octahedron
     var lineHeight = 40;
     var hasSubpixelSupport;
 

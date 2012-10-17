@@ -9,6 +9,13 @@
     // Concave assymetric simple polygon with horizontal top and bottom edges.  Roughly an hourglass shape.
     var vertices = [{x:40, y:40}, {x:440, y:40}, {x:320, y:160}, {x:480, y:320}, {x:80, y:320}, {x:200, y:200}];
     var lineHeight = 40;
+    var hasSubpixelSupport;
+
+    function init() {
+        var rect = document.getElementById("subpixel-test").getBoundingClientRect();
+        hasSubpixelSupport = rect.width != Math.floor(rect.width);
+        createPolygonShapeInsideTestCaseExpected();
+    }
 </script>
 
 <style id="stylesheet">
@@ -20,13 +27,14 @@
 </style>
 </head>
 
-<body onload="createPolygonShapeInsideTestCaseExpected(vertices)">
-    <svg id="polygon-svg-shape" xmlns="http://www.w3.org/2000/svg"></svg>
-    <div id="polygon-shape-inside"></div>
-    <p id="informative-text">
-        This test requires the Ahem font. It creates a polygonal shape-inside and a matching
-        filled SVG polygon. The content should just fill the shape with alternating black and
-        empty rectangles on each line.</p>
+<body onload="init()">
+  <svg id="polygon-svg-shape" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div id="polygon-shape-inside"></div>
+  <p id="informative-text">
+      This test requires the Ahem font. It creates a polygonal shape-inside and a matching
+      filled SVG polygon. The content should just fill the shape with alternating black and
+      empty rectangles on each line.</p>
+  <div id="subpixel-test" style="width: 4.5px; height: 5px;"></div>
 </body>
 
 </html>

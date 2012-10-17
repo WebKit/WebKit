@@ -13,6 +13,30 @@ function createPolygon(vertices) {
     };
 }
 
+function createRegularPolygonVertices(size, nSides)
+{
+    var radius = size / (2 * Math.cos(Math.PI / nSides));
+    var inset = size / 2 + 20;
+    var vertices = [];
+
+    for (var i = 0; i < nSides/2; i++) {
+        var a = (1 + 2*i) * (Math.PI / nSides);
+        vertices[i] = {x: Math.floor(radius * Math.cos(a)), y: Math.floor(radius * Math.sin(a))};
+        vertices[nSides - i - 1] = {x: vertices[i].x, y: -vertices[i].y}  // Y axis symmetry
+    }
+
+    for (var i = 0; i < nSides; i++) {
+        vertices[i].x += inset;
+        vertices[i].y += inset;
+    }
+
+    return vertices;
+}
+
+function subpixelRound(f) { 
+    return Math.floor(!hasSubpixelSupport ? f : (Math.floor(f * 64) + 32) / 64);  // see FractionLayoutUnit::round()
+}
+
 // Return two X intercepts of the horizontal line at y. We're assuming that the polygon
 // 0 or 2 intercepts for all y.Of course this isn't true for polygons in general,
 // just the ones used by the test cases supported by this file.
@@ -53,7 +77,10 @@ function polygonXIntercepts(polygon, y) {
         }
     }
 
-    return (xIntercepts.length == 2)  ? [Math.min.apply(null, xIntercepts), Math.max.apply(null, xIntercepts)] : [];
+    if (xIntercepts.length != 2)
+        return [];
+
+    return [subpixelRound(Math.min.apply(null, xIntercepts)), Math.floor(Math.max.apply(null, xIntercepts))];
 }
 
 function polygonLineIntercepts(polygon, y, lineHeight) {
@@ -109,7 +136,11 @@ function generatePolygonSVGElements(elementId, stylesheet, polygon, lineHeight) 
     var svgPolygon = document.createElementNS(svgNS, "polygon");
     svgPolygon.setAttribute("points", polygon.vertices.map( function(p) { return p.x + "," + p.y; } ).join(" "));
     svgPolygon.setAttribute("fill", "#636363");
-    document.getElementById(elementId).appendChild(svgPolygon);
+
+    var svgElement = document.getElementById(elementId);
+    svgElement.style.width = polygon.maxX + "px";
+    svgElement.style.height = polygon.maxY + "px";
+    svgElement.appendChild(svgPolygon);
 }
 
 function simulatePolygonShape(elementId, stylesheet, polygon, lineHeight) {
@@ -131,8 +162,8 @@ function simulatePolygonShape(elementId, stylesheet, polygon, lineHeight) {
 
     for (var y = polygon.minY; y < polygon.maxY; y += lineHeight) {
         var xIntercepts = polygonLineIntercepts(polygon, y, lineHeight);
-        var left = Math.ceil(xIntercepts[0 ]);
-        var right = Math.floor(xIntercepts[1]);
+        var left = xIntercepts[0];
+        var right = xIntercepts[1];
 
         var paddingLeft = document.createElement("div");
         paddingLeft.setAttribute("class", "float left");
@@ -166,8 +197,8 @@ function generateSimulatedPolygonShapeInsideElement(elementId, stylesheet, polyg
 
     for (var y = polygon.minY; y < polygon.maxY; y += lineHeight) {
         var xIntercepts = polygonLineIntercepts(polygon, y, lineHeight);
-        var left = Math.ceil(xIntercepts[0 ]);
-        var right = Math.floor(xIntercepts[1]);
+        var left = xIntercepts[0];
+        var right = xIntercepts[1];
 
         var paddingLeft = document.createElement("div");
         paddingLeft.setAttribute("class", "float left");
@@ -188,15 +219,12 @@ function generateSimulatedPolygonShapeInsideElement(elementId, stylesheet, polyg
     element.appendChild(p);
 }
 
-
-
-
 function positionInformativeText(elementId, stylesheet, polygon, lineHeight)
 {
     stylesheet.insertRule("#" + elementId + " { position: absolute; top: " + (polygon.maxY + lineHeight) + "px;}");
 }
 
-function createPolygonShapeInsideTestCase(vertices) {
+function createPolygonShapeInsideTestCase() {
     var stylesheet = document.getElementById("stylesheet").sheet;
     var polygon = createPolygon(vertices);
     generatePolygonShapeInsideElement("polygon-shape-inside", stylesheet, polygon, lineHeight);
@@ -204,11 +232,10 @@ function createPolygonShapeInsideTestCase(vertices) {
     positionInformativeText("informative-text", stylesheet, polygon, lineHeight)
 }
 
-function createPolygonShapeInsideTestCaseExpected(vertices) {
+function createPolygonShapeInsideTestCaseExpected() {
     var stylesheet = document.getElementById("stylesheet").sheet;
     var polygon = createPolygon(vertices);
     generateSimulatedPolygonShapeInsideElement("polygon-shape-inside", stylesheet, polygon, lineHeight);
     generatePolygonSVGElements("polygon-svg-shape", stylesheet, polygon, lineHeight);
     positionInformativeText("informative-text", stylesheet, polygon, lineHeight)
 }
-
