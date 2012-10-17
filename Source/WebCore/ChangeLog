@@ -1,3 +1,9 @@
+2012-10-17  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed fix for compilation on CG bots.
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+
 2012-10-16  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: NMI instrument ImageDecoder. It owns a buffer that could be quite big.

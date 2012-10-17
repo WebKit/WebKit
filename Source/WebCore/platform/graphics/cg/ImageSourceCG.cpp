@@ -33,6 +33,7 @@
 #include "IntPoint.h"
 #include "IntSize.h"
 #include "MIMETypeRegistry.h"
+#include "PlatformMemoryInstrumentation.h"
 #include "SharedBuffer.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <wtf/UnusedParam.h>
