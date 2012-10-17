@@ -290,7 +290,7 @@
         "Loader": [ "japhet@chromium.org" ],
         "MathML": [ "dbarton@mathscribe.com" ],
         "Media": [ "feature-media-reviews@chromium.org", "eric.carlson@apple.com" ],
-        "MediaStream": [ "tommyw@google.com" ],
+        "MediaStream": [ "tommyw@google.com", "hta@google.com" ],
         "NetworkInfo": [ "gyuyoung.kim@samsung.com" ],
         "OpenGL" : [ "noam.rosenthal@nokia.com", "dino@apple.com" ],
         "QtBuildSystem" : [ "vestbo@webkit.org", "abecsi@webkit.org" ],

@@ -134,6 +134,7 @@ contributors_who_are_not_committers = [
     Contributor("Greg Simon", "gregsimon@chromium.org", "gregsimon"),
     Contributor("Gregg Tavares", ["gman@google.com", "gman@chromium.org"], "gman"),
     Contributor("Hao Zheng", "zhenghao@chromium.org"),
+    Contributor("Harald Alvestrand", "hta@google.com", "hta"),
     Contributor("Ian Hickson", "ian@hixie.ch", "hixie"),
     Contributor("Janos Badics", "jbadics@inf.u-szeged.hu", "dicska"),
     Contributor("Jonathan Backer", "backer@chromium.org", "backer"),
