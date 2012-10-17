@@ -1,3 +1,20 @@
+2012-10-17  Luke Macpherson   <macpherson@chromium.org>
+
+        Move handling of CSSPropertyPointerEvents from StyleResolver into StyleBuilder.
+        https://bugs.webkit.org/show_bug.cgi?id=99536
+
+        Reviewed by Alexis Menard.
+
+        One small step towards removing the giant switch statement in StyleResolver,
+        this patch moves pointer event property into StyleBuilder.
+
+        Covered by fast/events/pointer-events.html and fast/events/pointer-events-2.html.
+
+        * css/StyleBuilder.cpp:
+        (WebCore::StyleBuilder::StyleBuilder):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+
 2012-10-17  Keishi Hattori  <keishi@webkit.org>
 
         Localized date should be based on LDML
