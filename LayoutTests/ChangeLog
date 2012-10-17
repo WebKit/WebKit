@@ -1,3 +1,20 @@
+2012-10-17  Dana Jansens  <danakj@chromium.org>
+
+        Rebaseline some windows tests now that the bot is providing results in the right place.
+
+        Unreviewed gardening.
+
+        * platform/chromium-win-xp/css1/basic/inheritance-expected.png: Removed.
+        * platform/chromium-win-xp/fast/sub-pixel/selection/selection-rect-in-sub-pixel-table-expected.png: Removed.
+        * platform/chromium-win-xp/ietestcenter/css3/bordersbackgrounds/border-radius-content-edge-001-expected.png: Removed.
+        * platform/chromium-win-xp/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png: Removed.
+        * platform/chromium-win-xp/tables/mozilla/bugs/bug73321-expected.png: Removed.
+        * platform/chromium-win/css1/basic/inheritance-expected.png:
+        * platform/chromium-win/fast/sub-pixel/selection/selection-rect-in-sub-pixel-table-expected.png:
+        * platform/chromium-win/ietestcenter/css3/bordersbackgrounds/border-radius-content-edge-001-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug73321-expected.png:
+
 2012-10-17  Philip Rogers  <pdr@google.com>
 
         Allow lazy initialization of SVG XML animated properties.
