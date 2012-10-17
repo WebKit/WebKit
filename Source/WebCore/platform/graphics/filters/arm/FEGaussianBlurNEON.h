@@ -35,13 +35,14 @@
 namespace WebCore {
 
 inline void boxBlurNEON(Uint8ClampedArray* srcPixelArray, Uint8ClampedArray* dstPixelArray,
-                    unsigned dx, int dxLeft, int dxRight, int stride, int strideLine, int effectWidth, int effectHeight)
+                        unsigned dx, int dxLeft, int dxRight, int stride, int strideLine, int effectWidth, int effectHeight)
 {
     uint32_t* sourcePixel = reinterpret_cast<uint32_t*>(srcPixelArray->data());
     uint32_t* destinationPixel = reinterpret_cast<uint32_t*>(dstPixelArray->data());
 
     float32x4_t deltaX = vdupq_n_f32(1.0 / dx);
     int pixelLine = strideLine / 4;
+    int pixelStride = stride / 4;
 
     for (int y = 0; y < effectHeight; ++y) {
         int line = y * pixelLine;
@@ -49,21 +50,21 @@ inline void boxBlurNEON(Uint8ClampedArray* srcPixelArray, Uint8ClampedArray* dst
         // Fill the kernel
         int maxKernelSize = std::min(dxRight, effectWidth);
         for (int i = 0; i < maxKernelSize; ++i) {
-            float32x4_t sourcePixelAsFloat = loadRGBA8AsFloat(sourcePixel + line + i);
+            float32x4_t sourcePixelAsFloat = loadRGBA8AsFloat(sourcePixel + line + i * pixelStride);
             sum = vaddq_f32(sum, sourcePixelAsFloat);
         }
 
         // Blurring
         for (int x = 0; x < effectWidth; ++x) {
-            int pixelOffset = line + x;
+            int pixelOffset = line + x * pixelStride;
             float32x4_t result = vmulq_f32(sum, deltaX);
-            storeFloatAsRGBA8(result, destinationPixel+pixelOffset);
+            storeFloatAsRGBA8(result, destinationPixel + pixelOffset);
             if (x >= dxLeft) {
-                float32x4_t sourcePixelAsFloat = loadRGBA8AsFloat(sourcePixel + pixelOffset - dxLeft);
+                float32x4_t sourcePixelAsFloat = loadRGBA8AsFloat(sourcePixel + pixelOffset - dxLeft * pixelStride);
                 sum = vsubq_f32(sum, sourcePixelAsFloat);
             }
             if (x + dxRight < effectWidth) {
-                float32x4_t sourcePixelAsFloat = loadRGBA8AsFloat(sourcePixel + pixelOffset + dxRight);
+                float32x4_t sourcePixelAsFloat = loadRGBA8AsFloat(sourcePixel + pixelOffset + dxRight * pixelStride);
                 sum = vaddq_f32(sum, sourcePixelAsFloat);
             }
         }

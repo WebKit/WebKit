@@ -1,3 +1,17 @@
+2012-10-17  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        NEON intrinsics Gauss filter does not work properly
+        https://bugs.webkit.org/show_bug.cgi?id=98875
+
+        Reviewed by Zoltan Herczeg.
+
+        Fixing the NEON intrinsics Gauss filter. The stride parameter
+        was missing from the intrinsics algorithm. Tested with pixel
+        checks, now it's working properly.
+
+        * platform/graphics/filters/arm/FEGaussianBlurNEON.h:
+        (WebCore::boxBlurNEON):
+
 2012-10-17  MORITA Hajime  <morrita@google.com>
 
         Crash on Frame::inScope() part 2
