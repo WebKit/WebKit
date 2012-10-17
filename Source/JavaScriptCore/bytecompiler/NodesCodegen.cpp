@@ -445,7 +445,6 @@ RegisterID* FunctionCallResolveNode::emitBytecode(BytecodeGenerator& generator, 
 
     generator.emitExpressionInfo(identifierStart + m_ident.length(), m_ident.length(), 0);
     generator.emitResolveWithThis(callArguments.thisRegister(), func.get(), resolveResult, m_ident);
-    // FIXME: Reconsider passing expectedFunction instead of NoExpectedFunction.
     return generator.emitCall(generator.finalDestinationOrIgnored(dst, func.get()), func.get(), expectedFunction, callArguments, divot(), startOffset(), endOffset());
 }
 
