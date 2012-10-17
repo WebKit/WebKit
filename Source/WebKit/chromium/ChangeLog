@@ -1,3 +1,15 @@
+2012-10-16  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Stub out chromium success handlers for integers and undefined values
+        https://bugs.webkit.org/show_bug.cgi?id=99527
+
+        Reviewed by Adam Barth.
+
+        Add onSuccess stubs so that chromium IPC glue can land.
+
+        * public/WebIDBCallbacks.h:
+        (WebKit::WebIDBCallbacks::onSuccess):
+
 2012-10-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.
