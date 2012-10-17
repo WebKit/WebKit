@@ -1,3 +1,22 @@
+2012-10-17  Andreas Kling  <kling@webkit.org>
+
+        Shrink EventTargetData by making firingEventListeners vector optional.
+        <http://webkit.org/b/99532>
+        <rdar://problem/12515099>
+
+        Reviewed by Anders Carlsson.
+
+        The majority of event listeners never actually fire, and EventTargetData::firingEventListeners
+        is just sitting there taking up space. Make it an OwnPtr instead, shrinking EventTargetData
+        by 48 bytes and progressing Membuster3 by 395kB.
+
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::removeEventListener):
+        (WebCore::EventTarget::fireEventListeners):
+        (WebCore::EventTarget::removeAllEventListeners):
+        * dom/EventTarget.h:
+        (WebCore::EventTarget::isFiringEventListeners):
+
 2012-10-17  Christophe Dumez  <christophe.dumez@intel.com>
 
         xss-DENIED-xsl-document-securityOrigin.xml crashes with icon assertion

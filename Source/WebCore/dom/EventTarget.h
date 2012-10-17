@@ -97,7 +97,7 @@ namespace WebCore {
         ~EventTargetData();
 
         EventListenerMap eventListenerMap;
-        FiringEventIteratorVector firingEventIterators;
+        OwnPtr<FiringEventIteratorVector> firingEventIterators;
     };
 
     class EventTarget {
@@ -190,7 +190,7 @@ namespace WebCore {
         EventTargetData* d = eventTargetData();
         if (!d)
             return false;
-        return d->firingEventIterators.size() != 0;
+        return d->firingEventIterators && !d->firingEventIterators->isEmpty();
     }
 
     inline bool EventTarget::hasEventListeners()
