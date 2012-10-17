@@ -1,3 +1,33 @@
+2012-10-17  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        RenderLayer subtrees without any self-painting layer shouldn't be walked during hit testing
+        https://bugs.webkit.org/show_bug.cgi?id=89393
+
+        Reviewed by Eric Seidel.
+
+        Performance optimization, covered by existing tests.
+
+        Bug 88888 added an peformance optimization for painting. As hit testing is very similar to
+        painting, it would benefit from the same optimization.
+
+        On http://dglazkov.github.com/performance-tests/biggrid.html, with a 10,000 * 100 tables,
+        it reduces the time to select some text inside a cell from 1-2 seconds to a usable time
+        (I didn't measure the exact timing).
+
+        Note that as in bug 88888, the multi-column code is not covered by this optimization.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTest):
+        This is the entrance to the hit testing code so we check if we can bail out early.
+
+        (WebCore::RenderLayer::hitTestList):
+        If we have no self-painting descendant layers, we can bail out.
+
+        (WebCore::RenderLayer::hitTestContents):
+        (WebCore::RenderLayer::hitTestLayer):
+        hitTest should filter the layers that call these functions. Added some ASSERT to
+        make sure we don't mistakenly call them when could avoid it.
+
 2012-10-17  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Certain SVG content freezes QtWebKit
