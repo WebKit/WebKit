@@ -67,7 +67,9 @@
 #include <SetSelectionCommand.cpp>
 #include <SimplifyMarkupCommand.cpp>
 #include <SmartReplace.cpp>
+#if USE(CF)
 #include <SmartReplaceCF.cpp>
+#endif
 #include <SpellingCorrectionCommand.cpp>
 #include <SpellChecker.cpp>
 #include <SplitElementCommand.cpp>

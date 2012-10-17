@@ -1,3 +1,20 @@
+2012-10-17  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Enable use of more AllInOne files
+        https://bugs.webkit.org/show_bug.cgi?id=99579
+
+        Reviewed by Tor Arne Vestbø.
+
+        The AllInOne files reduce pressure during final link time because the object files contain less duplicated
+        symbols.
+
+        * Target.pri: Add HTMLElementsAllInOne, EditingAllInOne and RenderingAllInOne to the build
+        * editing/EditingAllInOne.cpp: Place a #if USE(CF) around the inclusion of SmartReplaceCF.cpp
+        * html/HTMLElementsAllInOne.cpp: Move HTMLPlugInElement.cpp to the top to fix builds on X11 based platforms
+        where the X headers get confused by the "Region" type that's also declared in WebCore.
+        * rendering/RenderingAllInOne.cpp: Fix build on case-sensitive file systems (Plugin -> PlugIn) and added a
+        #if PLATFORM(WIN) around the inclusion of RenderThemeWin.cpp.
+
 2012-10-17  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r131421): Text baseline becomes incorrect after re-layout of input[type=time]

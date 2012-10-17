@@ -31,6 +31,9 @@
 // This source file coalesces the HTML elements into a single object file to
 // reduce bloat and allow us to link release builds on 32-bit Windows.
 
+// This file comes first due to the inclusion of conflicting X11 headers
+#include "HTMLPlugInElement.cpp"
+
 #include "HTMLAnchorElement.cpp"
 #include "HTMLAppletElement.cpp"
 #include "HTMLAreaElement.cpp"
@@ -85,7 +88,6 @@
 #include "HTMLOptionElement.cpp"
 #include "HTMLParagraphElement.cpp"
 #include "HTMLParamElement.cpp"
-#include "HTMLPlugInElement.cpp"
 #include "HTMLPlugInImageElement.cpp"
 #include "HTMLPreElement.cpp"
 #include "HTMLProgressElement.cpp"

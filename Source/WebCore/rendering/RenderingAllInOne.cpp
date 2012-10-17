@@ -95,7 +95,7 @@
 #include "RenderScrollbarTheme.cpp"
 #include "RenderSearchField.cpp"
 #include "RenderSlider.cpp"
-#include "RenderSnapshottedPlugin.cpp"
+#include "RenderSnapshottedPlugIn.cpp"
 #include "RenderTable.cpp"
 #include "RenderTableCaption.cpp"
 #include "RenderTableCell.cpp"
@@ -108,7 +108,9 @@
 #include "RenderTextControlSingleLine.cpp"
 #include "RenderTextFragment.cpp"
 #include "RenderTheme.cpp"
+#if PLATFORM(WIN)
 #include "RenderThemeWin.cpp"
+#endif
 #include "RenderTreeAsText.cpp"
 #include "RenderVideo.cpp"
 #include "RenderView.cpp"

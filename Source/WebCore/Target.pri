@@ -4063,7 +4063,10 @@ ALL_IN_ONE_SOURCES += \
     inspector/InspectorAllInOne.cpp \
     loader/appcache/ApplicationCacheAllInOne.cpp \
     platform/text/TextAllInOne.cpp \
-    rendering/style/StyleAllInOne.cpp
+    rendering/style/StyleAllInOne.cpp \
+    html/HTMLElementsAllInOne.cpp \
+    editing/EditingAllInOne.cpp \
+    rendering/RenderingAllInOne.cpp
 
 enable?(XSLT):use?(LIBXML2) {
     ALL_IN_ONE_SOURCES += \
@@ -4073,9 +4076,6 @@ enable?(XSLT):use?(LIBXML2) {
 # These do not compile at the moment:
 #    css/MediaAllInOne.cpp
 #    css/CSSAllInOne.cpp
-#    editing/EditingAllInOne.cpp
-#    html/HTMLElementsAllInOne.cpp
-#    rendering/RenderingAllInOne.cpp
 
 # Make sure the derived sources are built
 include(DerivedSources.pri)
