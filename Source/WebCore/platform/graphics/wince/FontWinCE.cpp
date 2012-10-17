@@ -313,7 +313,8 @@ static float cursorToX(const Font* font, const TextRunComponents& components, in
             return xs + pos * comp.m_width / comp.m_spaces;
         }
         WidthIterator it(font, comp.m_textRun);
-        it.advance(pos);
+        GlyphBuffer glyphBuffer;
+        it.advance(pos, &glyphBuffer);
         return xs + it.m_runWidthSoFar;
     }
     return width;

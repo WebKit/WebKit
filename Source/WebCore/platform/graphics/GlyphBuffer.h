@@ -84,8 +84,7 @@ public:
     }
 
     void setWidth(float width) { advance = width; }
-    float& width() { return advance; }
-    const float& width() const { return advance; }
+    float width() const { return advance; }
 
 private:
     float advance;

@@ -1,3 +1,14 @@
+2012-10-17  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for WinCE after r131365.
+
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBufferAdvance::width):
+        * platform/graphics/wince/FontWinCE.cpp:
+        (WebCore::cursorToX):
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::GraphicsContext::drawText):
+
 2012-10-17  Mike West  <mkwst@chromium.org>
 
         V8 should throw a more descriptive exception when blocking 'eval' via CSP.
