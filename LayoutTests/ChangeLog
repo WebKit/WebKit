@@ -1,3 +1,13 @@
+2012-10-17  MORITA Hajime  <morrita@google.com>
+
+        Assertion failed on HTMLFormControlElement.cpp: updateFromElementCallback()
+        https://bugs.webkit.org/show_bug.cgi?id=99566
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/textarea/textarea-autofocus-removal-while-focusing.txt: Added.
+        * fast/forms/textarea/textarea-autofocus-removal-while-focusing.html: Added.
+
 2012-10-17  Anton Muhin  <antonm@chromium.org>
 
         Unreviewed Chromium rebaselines.

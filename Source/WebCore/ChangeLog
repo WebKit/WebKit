@@ -1,3 +1,17 @@
+2012-10-17  MORITA Hajime  <morrita@google.com>
+
+        Assertion failed on HTMLFormControlElement.cpp: updateFromElementCallback()
+        https://bugs.webkit.org/show_bug.cgi?id=99566
+
+        Reviewed by Kent Tamura.
+
+        It had a too optimistic assertion. This change removes it.
+
+        Test: fast/forms/textarea/textarea-autofocus-removal-while-focusing.html
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::updateFromElementCallback):
+
 2012-10-17  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: When dirty uiSourceCode is saved to disk from scripts navigator context menu working copy is not committed.

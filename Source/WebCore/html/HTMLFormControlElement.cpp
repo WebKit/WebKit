@@ -297,7 +297,6 @@ static void updateFromElementCallback(Node* node, unsigned)
 {
     ASSERT_ARG(node, node->isElementNode());
     ASSERT_ARG(node, static_cast<Element*>(node)->isFormControlElement());
-    ASSERT(node->renderer());
     if (RenderObject* renderer = node->renderer())
         renderer->updateFromElement();
 }
