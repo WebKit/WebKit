@@ -58,15 +58,17 @@ void EflViewportHandler::setRendererActive(bool active)
     drawingArea()->layerTreeCoordinatorProxy()->layerTreeRenderer()->setActive(active);
 }
 
-void EflViewportHandler::display(const IntRect& rect)
+void EflViewportHandler::display(const IntRect& rect, const IntPoint& viewPosition)
 {
     WebCore::TransformationMatrix matrix;
-    matrix.setMatrix(m_scaleFactor, 0, 0, m_scaleFactor, -m_visibleContentRect.x(), -m_visibleContentRect.y());
+    matrix.setMatrix(m_scaleFactor, 0, 0, m_scaleFactor, -m_visibleContentRect.x() + viewPosition.x(), -m_visibleContentRect.y() + viewPosition.y());
 
     LayerTreeRenderer* renderer = drawingArea()->layerTreeCoordinatorProxy()->layerTreeRenderer();
     renderer->setActive(true);
     renderer->syncRemoteContent();
-    renderer->paintToCurrentGLContext(matrix, 1, rect);
+    IntRect clipRect(rect);
+    clipRect.move(viewPosition.x(), viewPosition.y());
+    renderer->paintToCurrentGLContext(matrix, 1, clipRect);
 }
 
 void EflViewportHandler::updateViewportSize(const IntSize& viewportSize)

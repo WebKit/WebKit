@@ -676,6 +676,7 @@ static void _ewk_view_smart_calculate(Evas_Object* ewkView)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
     Evas_Coord x, y, width, height;
+    bool needsNewSurface = false;
 
     smartData->changed.any = false;
 
@@ -685,18 +686,12 @@ static void _ewk_view_smart_calculate(Evas_Object* ewkView)
 #if USE(COORDINATED_GRAPHICS)
         priv->viewportHandler->updateViewportSize(IntSize(width, height));
 #endif
+#if USE(ACCELERATED_COMPOSITING)
+        needsNewSurface = priv->evasGlSurface;
+#endif
 
         if (priv->pageProxy->drawingArea())
             priv->pageProxy->drawingArea()->setSize(IntSize(width, height), IntSize());
-
-#if USE(ACCELERATED_COMPOSITING)
-        if (!priv->evasGlSurface)
-            return;
-        evas_gl_surface_destroy(priv->evasGl, priv->evasGlSurface);
-        priv->evasGlSurface = 0;
-        ewk_view_create_gl_surface(ewkView, IntSize(width, height));
-        ewk_view_display(ewkView, IntRect(IntPoint(), IntSize(width, height)));
-#endif
 
         smartData->view.w = width;
         smartData->view.h = height;
@@ -709,6 +704,15 @@ static void _ewk_view_smart_calculate(Evas_Object* ewkView)
         smartData->view.y = y;
         smartData->changed.position = false;
     }
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (needsNewSurface) {
+        evas_gl_surface_destroy(priv->evasGl, priv->evasGlSurface);
+        priv->evasGlSurface = 0;
+        ewk_view_create_gl_surface(ewkView, IntSize(width, height));
+        ewk_view_display(ewkView, IntRect(IntPoint(), IntSize(width, height)));
+    }
+#endif
 }
 
 static void _ewk_view_smart_show(Evas_Object* ewkView)
@@ -1314,7 +1318,7 @@ void ewk_view_display(Evas_Object* ewkView, const IntRect& rect)
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
 
     evas_gl_make_current(priv->evasGl, priv->evasGlSurface, priv->evasGlContext);
-    priv->viewportHandler->display(rect);
+    priv->viewportHandler->display(rect, IntPoint(smartData->view.x, smartData->view.y));
 #endif
 
     evas_object_image_data_update_add(smartData->image, rect.x(), rect.y(), rect.width(), rect.height());

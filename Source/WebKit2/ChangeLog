@@ -1,3 +1,25 @@
+2012-10-16  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][WK2][AC] Url bar should not be covered by the web view
+        https://bugs.webkit.org/show_bug.cgi?id=99485
+
+        Reviewed by Laszlo Gombos.
+
+        When accelerated compositing is enabled, the url bar is covered by the web view.
+        This was caused by 2 issues:
+        - _ewk_view_smart_calculate was called before the first gl surface was created,
+          so an early return caused it to not save the new view position.
+        - When painting the view, we need to take into account the position of
+          the view within the window, i.e. the url bar.
+
+        * UIProcess/API/efl/EflViewportHandler.cpp:
+        (WebKit::EflViewportHandler::display):
+        * UIProcess/API/efl/EflViewportHandler.h:
+        (EflViewportHandler):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_smart_calculate):
+        (ewk_view_display):
+
 2012-10-16  Jian Li  <jianli@chromium.org>
 
         Rename feature define ENABLE_WIDGET_REGION to ENABLE_DRAGGBALE_REGION
