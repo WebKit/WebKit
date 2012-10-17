@@ -41,6 +41,7 @@
 #include "IDBEventDispatcher.h"
 #include "IDBTracing.h"
 #include "IDBTransaction.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
@@ -374,6 +375,16 @@ void IDBRequest::onSuccess(PassRefPtr<SerializedScriptValue> prpSerializedScript
     bool injected = injectIDBKeyIntoScriptValue(primaryKey, value, keyPath);
     ASSERT_UNUSED(injected, injected);
     onSuccessInternal(value);
+}
+
+void IDBRequest::onSuccess(int64_t value)
+{
+    return onSuccess(SerializedScriptValue::numberValue(value));
+}
+
+void IDBRequest::onSuccess()
+{
+    return onSuccess(SerializedScriptValue::undefinedValue());
 }
 
 void IDBRequest::onSuccessInternal(const ScriptValue& value)

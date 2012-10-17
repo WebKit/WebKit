@@ -1,3 +1,59 @@
+2012-10-17  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Explicitly send null/undefined/integers to frontend IDBCallbacks
+        https://bugs.webkit.org/show_bug.cgi?id=99619
+
+        Reviewed by Adam Barth.
+
+        Rather than pass SerializedScriptValue tokens from the backend,
+        send explicit null, (as onSuccess(static_cast<SerializedScriptValue*>(0)))
+        undefined, (as onSucess()), and integers (as onSuccess(long long))
+
+        This reduces backend dependency on things that might require a JS
+        interpreter on the backend.
+
+        No new tests, this is a refactor and existing tests cover
+        correctness. Tests that might fail include:
+
+        Test: storage/indexeddb/index-count.html
+        Test: storage/indexeddb/objectstore-count.html
+        Test: storage/indexeddb/database-basics.html
+
+        * Modules/indexeddb/IDBCallbacks.h:
+        (IDBCallbacks):
+        * Modules/indexeddb/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::advanceInternal):
+        (WebCore::IDBCursorBackendImpl::continueFunctionInternal):
+        (WebCore::IDBCursorBackendImpl::prefetchContinueInternal):
+        * Modules/indexeddb/IDBCursorBackendImpl.h:
+        (WebCore::IDBCursorBackendImpl::value):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::deleteDatabase):
+        * Modules/indexeddb/IDBIndex.cpp:
+        * Modules/indexeddb/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::openCursorInternal):
+        (WebCore::IDBIndexBackendImpl::countInternal):
+        (WebCore::IDBIndexBackendImpl::getInternal):
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::getInternal):
+        (WebCore::IDBObjectStoreBackendImpl::deleteInternal):
+        (WebCore::IDBObjectStoreBackendImpl::clearInternal):
+        (WebCore::IDBObjectStoreBackendImpl::openCursorInternal):
+        (WebCore::IDBObjectStoreBackendImpl::countInternal):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess):
+        (WebCore):
+        * Modules/indexeddb/IDBRequest.h:
+        * Modules/indexeddb/IDBTransaction.cpp:
+        * Modules/indexeddb/IDBTransactionBackendImpl.cpp:
+        * Modules/indexeddb/IDBTransactionBackendImpl.h:
+        * Modules/indexeddb/IDBTransactionBackendInterface.h:
+        * bindings/v8/IDBBindingUtilities.cpp:
+        (WebCore::deserializeIDBValue):
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore):
+
 2012-10-17  Nate Chapin  <japhet@chromium.org>
 
         Move ResourceRequest construction out of SubresourceLoader

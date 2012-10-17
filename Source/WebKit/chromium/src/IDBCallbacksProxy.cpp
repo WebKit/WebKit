@@ -106,6 +106,16 @@ void IDBCallbacksProxy::onSuccess(PassRefPtr<SerializedScriptValue> serializedSc
     m_callbacks->onSuccess(serializedScriptValue, key, keyPath);
 }
 
+void IDBCallbacksProxy::onSuccess(int64_t value)
+{
+    m_callbacks->onSuccess(value);
+}
+
+void IDBCallbacksProxy::onSuccess()
+{
+    m_callbacks->onSuccess();
+}
+
 void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue> value)
 {
     m_callbacks->onSuccess(key, primaryKey, value);

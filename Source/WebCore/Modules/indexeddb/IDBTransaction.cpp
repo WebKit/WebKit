@@ -40,6 +40,7 @@
 #include "IDBPendingTransactionMonitor.h"
 #include "IDBTracing.h"
 #include "ScriptCallStack.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 

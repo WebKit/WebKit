@@ -33,6 +33,7 @@
 #include "IDBDatabaseError.h"
 #include "IDBTransactionBackendInterface.h"
 #include "IDBTransactionCallbacks.h"
+#include "ScriptExecutionContext.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
 #include <wtf/HashSet.h>

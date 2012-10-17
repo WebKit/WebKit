@@ -42,7 +42,6 @@
 #include "IDBKeyRange.h"
 #include "IDBTracing.h"
 #include "IDBTransactionBackendImpl.h"
-#include "ScriptExecutionContext.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -91,7 +90,7 @@ void IDBObjectStoreBackendImpl::getInternal(ScriptExecutionContext*, PassRefPtr<
     else {
         RefPtr<IDBBackingStore::Cursor> backingStoreCursor = objectStore->backingStore()->openObjectStoreCursor(transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->id(), keyRange.get(), IDBCursor::NEXT);
         if (!backingStoreCursor) {
-            callbacks->onSuccess(SerializedScriptValue::undefinedValue());
+            callbacks->onSuccess();
             return;
         }
         key = backingStoreCursor->key();
@@ -100,7 +99,7 @@ void IDBObjectStoreBackendImpl::getInternal(ScriptExecutionContext*, PassRefPtr<
 
     String wireData = objectStore->backingStore()->getObjectStoreRecord(transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->id(), *key);
     if (wireData.isNull()) {
-        callbacks->onSuccess(SerializedScriptValue::undefinedValue());
+        callbacks->onSuccess();
         return;
     }
 
@@ -404,7 +403,7 @@ void IDBObjectStoreBackendImpl::deleteInternal(ScriptExecutionContext*, PassRefP
         backingStoreCursor->close();
     }
 
-    callbacks->onSuccess(SerializedScriptValue::undefinedValue());
+    callbacks->onSuccess();
 }
 
 void IDBObjectStoreBackendImpl::clear(PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transactionPtr, ExceptionCode&)
@@ -425,7 +424,7 @@ void IDBObjectStoreBackendImpl::clear(PassRefPtr<IDBCallbacks> prpCallbacks, IDB
 void IDBObjectStoreBackendImpl::clearInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendImpl> transaction)
 {
     objectStore->backingStore()->clearObjectStore(transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->id());
-    callbacks->onSuccess(SerializedScriptValue::undefinedValue());
+    callbacks->onSuccess();
 }
 
 PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::createIndex(int64_t id, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
@@ -521,7 +520,7 @@ void IDBObjectStoreBackendImpl::openCursorInternal(ScriptExecutionContext*, Pass
     if (taskType == IDBTransactionBackendInterface::PreemptiveTask)
         transaction->addPreemptiveEvent();
     if (!backingStoreCursor) {
-        callbacks->onSuccess(SerializedScriptValue::nullValue());
+        callbacks->onSuccess(static_cast<SerializedScriptValue*>(0));
         return;
     }
 
@@ -544,7 +543,7 @@ void IDBObjectStoreBackendImpl::countInternal(ScriptExecutionContext*, PassRefPt
     uint32_t count = 0;
     RefPtr<IDBBackingStore::Cursor> backingStoreCursor = objectStore->backingStore()->openObjectStoreKeyCursor(transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->id(), range.get(), IDBCursor::NEXT);
     if (!backingStoreCursor) {
-        callbacks->onSuccess(SerializedScriptValue::numberValue(count));
+        callbacks->onSuccess(count);
         return;
     }
 
@@ -553,7 +552,7 @@ void IDBObjectStoreBackendImpl::countInternal(ScriptExecutionContext*, PassRefPt
     } while (backingStoreCursor->continueFunction(0));
 
     backingStoreCursor->close();
-    callbacks->onSuccess(SerializedScriptValue::numberValue(count));
+    callbacks->onSuccess(count);
 }
 
 void IDBObjectStoreBackendImpl::loadIndexes()

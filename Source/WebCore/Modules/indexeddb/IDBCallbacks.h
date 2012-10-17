@@ -62,6 +62,12 @@ public:
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>) = 0;
     // From IDBObjectStore/IDBIndex.get() (with key injection)
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, const IDBKeyPath&) = 0;
+    // From IDBObjectStore/IDBIndex.count()
+    virtual void onSuccess(int64_t value) = 0;
+
+    // From IDBFactor.deleteDatabase(), IDBObjectStore/IDBIndex.get(), IDBObjectStore.delete(), IDBObjectStore.clear()
+    virtual void onSuccess() = 0;
+    
     // From IDBCursor.advance()/continue()
     virtual void onSuccess(PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue>) = 0;
     // From IDBCursor.advance()/continue()

@@ -37,6 +37,7 @@
 #include "IDBRequest.h"
 #include "IDBTracing.h"
 #include "IDBTransaction.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 

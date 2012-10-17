@@ -87,7 +87,7 @@ void IDBCursorBackendImpl::advanceInternal(ScriptExecutionContext*, PassRefPtr<I
     RefPtr<IDBCursorBackendImpl> cursor = prpCursor;
     if (!cursor->m_cursor || !cursor->m_cursor->advance(count)) {
         cursor->m_cursor = 0;
-        callbacks->onSuccess(SerializedScriptValue::nullValue());
+        callbacks->onSuccess(static_cast<SerializedScriptValue*>(0));
         return;
     }
 
@@ -102,7 +102,7 @@ void IDBCursorBackendImpl::continueFunctionInternal(ScriptExecutionContext*, Pas
 
     if (!cursor->m_cursor || !cursor->m_cursor->continueFunction(key.get())) {
         cursor->m_cursor = 0;
-        callbacks->onSuccess(SerializedScriptValue::nullValue());
+        callbacks->onSuccess(static_cast<SerializedScriptValue*>(0));
         return;
     }
 
@@ -169,7 +169,7 @@ void IDBCursorBackendImpl::prefetchContinueInternal(ScriptExecutionContext*, Pas
     }
 
     if (!foundKeys.size()) {
-        callbacks->onSuccess(SerializedScriptValue::nullValue());
+        callbacks->onSuccess(static_cast<SerializedScriptValue*>(0));
         return;
     }
 

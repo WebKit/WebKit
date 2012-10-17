@@ -84,7 +84,7 @@ void IDBIndexBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr
     }
 
     if (!backingStoreCursor) {
-        callbacks->onSuccess(SerializedScriptValue::nullValue());
+        callbacks->onSuccess(static_cast<SerializedScriptValue*>(0));
         return;
     }
 
@@ -123,7 +123,7 @@ void IDBIndexBackendImpl::countInternal(ScriptExecutionContext*, PassRefPtr<IDBI
 
     RefPtr<IDBBackingStore::Cursor> backingStoreCursor = index->backingStore()->openIndexKeyCursor(transaction->backingStoreTransaction(), index->databaseId(), index->m_objectStoreBackend->id(), index->id(), range.get(), IDBCursor::NEXT);
     if (!backingStoreCursor) {
-        callbacks->onSuccess(SerializedScriptValue::numberValue(count));
+        callbacks->onSuccess(count);
         return;
     }
 
@@ -131,7 +131,7 @@ void IDBIndexBackendImpl::countInternal(ScriptExecutionContext*, PassRefPtr<IDBI
         ++count;
     } while (backingStoreCursor->continueFunction(0));
     backingStoreCursor->close();
-    callbacks->onSuccess(SerializedScriptValue::numberValue(count));
+    callbacks->onSuccess(count);
 }
 
 void IDBIndexBackendImpl::count(PassRefPtr<IDBKeyRange> range, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transactionPtr, ExceptionCode&)
@@ -155,7 +155,7 @@ void IDBIndexBackendImpl::getInternal(ScriptExecutionContext*, PassRefPtr<IDBInd
         RefPtr<IDBBackingStore::Cursor> backingStoreCursor = index->backingStore()->openIndexCursor(transaction->backingStoreTransaction(), index->databaseId(), index->m_objectStoreBackend->id(), index->id(), keyRange.get(), IDBCursor::NEXT);
 
         if (!backingStoreCursor) {
-            callbacks->onSuccess(SerializedScriptValue::undefinedValue());
+            callbacks->onSuccess();
             return;
         }
         key = backingStoreCursor->key();
@@ -167,7 +167,7 @@ void IDBIndexBackendImpl::getInternal(ScriptExecutionContext*, PassRefPtr<IDBInd
     String value = index->backingStore()->getObjectStoreRecord(transaction->backingStoreTransaction(), index->databaseId(), index->m_objectStoreBackend->id(), *primaryKey);
 
     if (value.isNull()) {
-        callbacks->onSuccess(SerializedScriptValue::undefinedValue());
+        callbacks->onSuccess();
         return;
     }
     if (index->m_objectStoreBackend->autoIncrement() && !index->m_objectStoreBackend->keyPath().isNull()) {

@@ -214,7 +214,10 @@ ScriptValue deserializeIDBValue(ScriptExecutionContext* scriptContext, PassRefPt
 {
     v8::HandleScope handleScope;
     v8::Context::Scope contextScope(toV8Context(scriptContext, UseCurrentWorld));
-    return ScriptValue(prpValue->deserialize());
+    RefPtr<SerializedScriptValue> serializedValue = prpValue;
+    if (serializedValue)
+        return ScriptValue(serializedValue->deserialize());
+    return ScriptValue(v8::Null());
 }
 
 bool injectIDBKeyIntoScriptValue(PassRefPtr<IDBKey> key, ScriptValue& value, const IDBKeyPath& keyPath)

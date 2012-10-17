@@ -27,7 +27,6 @@
 #define IDBTransactionBackendInterface_h
 
 #include "IDBCallbacks.h"
-#include "ScriptExecutionContext.h"
 #include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
 

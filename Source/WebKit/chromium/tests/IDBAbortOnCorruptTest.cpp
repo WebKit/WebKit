@@ -61,6 +61,8 @@ public:
     virtual void onSuccess(PassRefPtr<IDBTransactionBackendInterface>) { }
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>) { }
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, const IDBKeyPath&) { }
+    virtual void onSuccess(int64_t) OVERRIDE { }
+    virtual void onSuccess() OVERRIDE { }
     virtual void onSuccess(PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SerializedScriptValue>) { };
     virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<SerializedScriptValue> >&) { }
     virtual void onBlocked() { }
