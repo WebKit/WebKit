@@ -2336,6 +2336,11 @@ void RenderObject::willBeDestroyed()
 
     remove();
 
+    // Continuation and first-letter can generate several renderers associated with a single node.
+    // We only want to clear the node's renderer if we are the associated renderer.
+    if (node() && node()->renderer() == this)
+        node()->setRenderer(0);
+
 #ifndef NDEBUG
     if (!documentBeingDestroyed() && view() && view()->hasRenderNamedFlowThreads()) {
         // After remove, the object and the associated information should not be in any flow thread.

@@ -1312,9 +1312,19 @@ void Node::detach()
     detachingNode = this;
 #endif
 
-    if (renderer())
+    if (renderer()) {
         renderer()->destroyAndCleanupAnonymousWrappers();
-    setRenderer(0);
+#ifndef NDEBUG
+        for (Node* node = this; node; node = node->traverseNextNode(this)) {
+            RenderObject* renderer = node->renderer();
+            // RenderFlowThread removes some elements from the regular tree
+            // hierarchy. They will be cleaned up when we call detach on them.
+            ASSERT(!renderer || renderer->inRenderFlowThread());
+        }
+#endif
+    }
+
+    ASSERT(!renderer());
 
     Document* doc = document();
     if (hovered())

@@ -710,9 +710,9 @@ void ContainerNode::attach()
 
 void ContainerNode::detach()
 {
+    Node::detach();
     detachChildren();
     clearChildNeedsStyleRecalc();
-    Node::detach();
 }
 
 void ContainerNode::childrenChanged(bool changedByParser, Node*, Node*, int childCountDelta)

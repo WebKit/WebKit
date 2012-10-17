@@ -1,3 +1,49 @@
+2012-10-16  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Make RenderObject destruction during detach a top-down operation
+        https://bugs.webkit.org/show_bug.cgi?id=98336
+
+        Reviewed by Eric Seidel.
+
+        detach() is a DOM-driven operation that destroys the renderers bottom-up.
+        While this is correct, it causes extra-work to be done (tree cleaning, ...)
+        as it doesn't know about the render tree's structure.
+
+        The render tree on the other side already supports top-down operations
+        but it was overriden by the DOM side of detach.
+
+        This change only makes ContainerNode::detach do a top-down render tree
+        destruction. This is a required step towards doing smarter destruction.
+
+        Refactoring covered by existing tests.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::detach):
+        Changed the method to do a top-down destruction.
+
+        * dom/Node.cpp:
+        (WebCore::Node::detach):
+        Added this ASSERT that ensures that we have properly cleaned up the
+        whole DOM subtree. The only exception is child content belonging to a
+        flow-thread as the code will shuffle the renderers under the flow-thread.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::willBeDestroyed):
+        As we don't update the node's renderer on the DOM side, do it here.
+        The upside is that it ensures that we don't left any stray renderer
+        in the tree.
+
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::destroyLeftoverChildren):
+        Removed the calls to setRenderer as they are redundant with what we do
+        in willBeDestroyed.
+
+        * rendering/RenderTextFragment.cpp:
+        (WebCore::RenderTextFragment::setText):
+        Removed some now unneeded code, replaced by an ASSERT. This is because
+        destroying m_firstLetter would automatically reset the node's renderer
+        in destroyLeftoverChildren.
+
 2012-10-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         HTMLSelectElement::optionSelectedByUser confuses listIndex and optionIndex

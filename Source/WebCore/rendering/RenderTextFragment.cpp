@@ -85,10 +85,7 @@ void RenderTextFragment::setText(PassRefPtr<StringImpl> text, bool force)
         ASSERT(!m_contentString);
         m_firstLetter->destroy();
         m_firstLetter = 0;
-        if (Node* t = node()) {
-            ASSERT(!t->renderer());
-            t->setRenderer(this);
-        }
+        ASSERT(!node() || node()->renderer() == this);
     }
 }
 
