@@ -1,5 +1,31 @@
 2012-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Don't use the C API internally in WebKitWebInspector
+        https://bugs.webkit.org/show_bug.cgi?id=96786
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Using the C++ classes directly instead of the C API wrappers we
+        avoid a lot of toImpl/toAPI casts, string conversions and
+        allocations. The code is also a lot simpler and easier to read.
+
+        * UIProcess/API/gtk/WebKitWebInspector.cpp:
+        (_WebKitWebInspectorPrivate):
+        (webkitWebInspectorFinalize):
+        (webkitWebInspectorCreate):
+        (webkit_web_inspector_get_web_view):
+        (webkit_web_inspector_is_attached):
+        (webkit_web_inspector_attach):
+        (webkit_web_inspector_detach):
+        (webkit_web_inspector_show):
+        (webkit_web_inspector_close):
+        (webkit_web_inspector_get_attached_height):
+        * UIProcess/API/gtk/WebKitWebInspectorPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_get_inspector):
+
+2012-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Don't use the C API internally in WebKitGeolocation classes
         https://bugs.webkit.org/show_bug.cgi?id=96778
 

@@ -23,6 +23,8 @@
 #include "WebKitPrivate.h"
 #include "WebKitWebInspector.h"
 
-WebKitWebInspector* webkitWebInspectorCreate(WKInspectorRef);
+using namespace WebKit;
+
+WebKitWebInspector* webkitWebInspectorCreate(WebInspectorProxy*);
 
 #endif // WebKitWebInspectorPrivate_h

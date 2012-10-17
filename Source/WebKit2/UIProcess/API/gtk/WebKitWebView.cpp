@@ -2569,7 +2569,7 @@ WebKitWebInspector* webkit_web_view_get_inspector(WebKitWebView* webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
 
     if (!webView->priv->inspector)
-        webView->priv->inspector = adoptGRef(webkitWebInspectorCreate(toAPI(getPage(webView)->inspector())));
+        webView->priv->inspector = adoptGRef(webkitWebInspectorCreate(getPage(webView)->inspector()));
 
     return webView->priv->inspector.get();
 }
