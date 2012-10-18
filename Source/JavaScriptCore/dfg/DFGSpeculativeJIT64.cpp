@@ -4263,7 +4263,8 @@ void SpeculativeJIT::compile(Node& node)
     case Resolve: {
         flushRegisters();
         GPRResult result(this);
-        callOperation(operationResolve, result.gpr(), identifier(node.identifierNumber()));
+        ResolveOperationData& data = m_jit.graph().m_resolveOperationsData[node.resolveOperationsDataIndex()];
+        callOperation(operationResolve, result.gpr(), identifier(data.identifierNumber), resolveOperations(data.resolveOperationsIndex));
         jsValueResult(result.gpr(), m_compileIndex);
         break;
     }
@@ -4271,7 +4272,8 @@ void SpeculativeJIT::compile(Node& node)
     case ResolveBase: {
         flushRegisters();
         GPRResult result(this);
-        callOperation(operationResolveBase, result.gpr(), identifier(node.identifierNumber()));
+        ResolveOperationData& data = m_jit.graph().m_resolveOperationsData[node.resolveOperationsDataIndex()];
+        callOperation(operationResolveBase, result.gpr(), identifier(data.identifierNumber), resolveOperations(data.resolveOperationsIndex), putToBaseOperation(data.putToBaseOperationIndex));
         jsValueResult(result.gpr(), m_compileIndex);
         break;
     }
@@ -4279,7 +4281,8 @@ void SpeculativeJIT::compile(Node& node)
     case ResolveBaseStrictPut: {
         flushRegisters();
         GPRResult result(this);
-        callOperation(operationResolveBaseStrictPut, result.gpr(), identifier(node.identifierNumber()));
+        ResolveOperationData& data = m_jit.graph().m_resolveOperationsData[node.resolveOperationsDataIndex()];
+        callOperation(operationResolveBaseStrictPut, result.gpr(), identifier(data.identifierNumber), resolveOperations(data.resolveOperationsIndex), putToBaseOperation(data.putToBaseOperationIndex));
         jsValueResult(result.gpr(), m_compileIndex);
         break;
     }
@@ -4294,16 +4297,16 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg resultGPR = result.gpr();
 
         ResolveGlobalData& data = m_jit.graph().m_resolveGlobalData[node.resolveGlobalDataIndex()];
-        GlobalResolveInfo* resolveInfoAddress = &(m_jit.codeBlock()->globalResolveInfo(data.resolveInfoIndex));
+        ResolveOperation* resolveOperationAddress = &(m_jit.codeBlock()->resolveOperations(data.resolveOperationsIndex)->data()[data.resolvePropertyIndex]);
 
         // Check Structure of global object
         m_jit.move(JITCompiler::TrustedImmPtr(m_jit.globalObjectFor(node.codeOrigin)), globalObjectGPR);
-        m_jit.move(JITCompiler::TrustedImmPtr(resolveInfoAddress), resolveInfoGPR);
-        m_jit.loadPtr(JITCompiler::Address(resolveInfoGPR, OBJECT_OFFSETOF(GlobalResolveInfo, structure)), resultGPR);
+        m_jit.move(JITCompiler::TrustedImmPtr(resolveOperationAddress), resolveInfoGPR);
+        m_jit.loadPtr(JITCompiler::Address(resolveInfoGPR, OBJECT_OFFSETOF(ResolveOperation, m_structure)), resultGPR);
         JITCompiler::Jump structuresDontMatch = m_jit.branchPtr(JITCompiler::NotEqual, resultGPR, JITCompiler::Address(globalObjectGPR, JSCell::structureOffset()));
 
         // Fast case
-        m_jit.load32(JITCompiler::Address(resolveInfoGPR, OBJECT_OFFSETOF(GlobalResolveInfo, offset)), resolveInfoGPR);
+        m_jit.load32(JITCompiler::Address(resolveInfoGPR, OBJECT_OFFSETOF(ResolveOperation, m_offset)), resolveInfoGPR);
 #if DFG_ENABLE(JIT_ASSERT)
         JITCompiler::Jump isOutOfLine = m_jit.branch32(JITCompiler::GreaterThanOrEqual, resolveInfoGPR, TrustedImm32(firstOutOfLineOffset));
         m_jit.breakpoint();
@@ -4670,6 +4673,11 @@ void SpeculativeJIT::compile(Node& node)
         
     case NewFunctionExpression:
         compileNewFunctionExpression(node);
+        break;
+
+    case GarbageValue:
+        // We should never get to the point of code emission for a GarbageValue
+        CRASH();
         break;
 
     case ForceOSRExit: {

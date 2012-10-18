@@ -234,6 +234,8 @@ namespace JSC { namespace DFG {
     macro(Throw, NodeMustGenerate) \
     macro(ThrowReferenceError, NodeMustGenerate) \
     \
+    macro(GarbageValue, NodeResultJS | NodeClobbersWorld) \
+    \
     /* This is a pseudo-terminal. It means that execution should fall out of DFG at */\
     /* this point, but execution does continue in the basic block - just in a */\
     /* different compiler. */\

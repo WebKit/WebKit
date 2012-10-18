@@ -1,3 +1,223 @@
+2012-10-18  Oliver Hunt  <oliver@apple.com>
+
+        Bytecode should not have responsibility for determining how to perform non-local resolves
+        https://bugs.webkit.org/show_bug.cgi?id=99349
+
+        Reviewed by Gavin Barraclough.
+
+        This patch removes lexical analysis from the bytecode generation.  This allows
+        us to delay lookup of a non-local variables until the lookup is actually necessary,
+        and simplifies a lot of the resolve logic in BytecodeGenerator.
+
+        Once a lookup is performed we cache the lookup information in a set of out-of-line
+        buffers in CodeBlock.  This allows subsequent lookups to avoid unnecessary hashing,
+        etc, and allows the respective JITs to recreated optimal lookup code.
+
+        This is currently still a performance regression in LLInt, but most of the remaining
+        regression is caused by a lot of indirection that I'll remove in future work, as well
+        as some work necessary to allow LLInt to perform in line instruction repatching.
+        We will also want to improve the behaviour of the baseline JIT for some of the lookup
+        operations, however this patch was getting quite large already so I'm landing it now
+        that we've reached the bar of "performance-neutral".
+
+        Basic browsing seems to work.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printStructures):
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::visitStructures):
+        (JSC):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addResolve):
+        (JSC::CodeBlock::addPutToBase):
+        (CodeBlock):
+        (JSC::CodeBlock::resolveOperations):
+        (JSC::CodeBlock::putToBaseOperation):
+        (JSC::CodeBlock::numberOfResolveOperations):
+        (JSC::CodeBlock::numberOfPutToBaseOperations):
+        (JSC::CodeBlock::addPropertyAccessInstruction):
+        (JSC::CodeBlock::globalObjectConstant):
+        (JSC::CodeBlock::setGlobalObjectConstant):
+        * bytecode/Opcode.h:
+        (JSC):
+        (JSC::padOpcodeName):
+        * bytecode/ResolveGlobalStatus.cpp:
+        (JSC::computeForStructure):
+        (JSC::ResolveGlobalStatus::computeFor):
+        * bytecode/ResolveGlobalStatus.h:
+        (JSC):
+        (ResolveGlobalStatus):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::ResolveResult::checkValidity):
+        (JSC):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::resolve):
+        (JSC::BytecodeGenerator::resolveConstDecl):
+        (JSC::BytecodeGenerator::shouldAvoidResolveGlobal):
+        (JSC::BytecodeGenerator::emitResolve):
+        (JSC::BytecodeGenerator::emitResolveBase):
+        (JSC::BytecodeGenerator::emitResolveBaseForPut):
+        (JSC::BytecodeGenerator::emitResolveWithBaseForPut):
+        (JSC::BytecodeGenerator::emitResolveWithThis):
+        (JSC::BytecodeGenerator::emitGetLocalVar):
+        (JSC::BytecodeGenerator::emitInitGlobalConst):
+        (JSC::BytecodeGenerator::emitPutToBase):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::ResolveResult::registerResolve):
+        (JSC::ResolveResult::dynamicResolve):
+        (ResolveResult):
+        (JSC::ResolveResult::ResolveResult):
+        (JSC):
+        (NonlocalResolveInfo):
+        (JSC::NonlocalResolveInfo::NonlocalResolveInfo):
+        (JSC::NonlocalResolveInfo::~NonlocalResolveInfo):
+        (JSC::NonlocalResolveInfo::resolved):
+        (JSC::NonlocalResolveInfo::put):
+        (BytecodeGenerator):
+        (JSC::BytecodeGenerator::getResolveOperations):
+        (JSC::BytecodeGenerator::getResolveWithThisOperations):
+        (JSC::BytecodeGenerator::getResolveBaseOperations):
+        (JSC::BytecodeGenerator::getResolveBaseForPutOperations):
+        (JSC::BytecodeGenerator::getResolveWithBaseForPutOperations):
+        (JSC::BytecodeGenerator::getPutToBaseOperation):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ResolveNode::isPure):
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::PostfixNode::emitResolve):
+        (JSC::PrefixNode::emitResolve):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::ConstDeclNode::emitCodeSingle):
+        (JSC::ForInNode::emitBytecode):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (ByteCodeParser):
+        (InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::handleGetByOffset):
+        (DFG):
+        (JSC::DFG::ByteCodeParser::parseResolveOperations):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canInlineResolveOperations):
+        (DFG):
+        (JSC::DFG::canCompileOpcode):
+        (JSC::DFG::canInlineOpcode):
+        * dfg/DFGGraph.h:
+        (ResolveGlobalData):
+        (ResolveOperationData):
+        (DFG):
+        (PutToBaseOperationData):
+        (Graph):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasIdentifier):
+        (JSC::DFG::Node::resolveOperationsDataIndex):
+        (Node):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::OSRExit):
+        * dfg/DFGOSRExit.h:
+        (OSRExit):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryCacheGetByID):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::convertLastOSRExitToForward):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::resolveOperations):
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::putToBaseOperation):
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStructureCheckHoistingPhase.cpp:
+        (JSC::DFG::StructureCheckHoistingPhase::run):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        (JIT):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_put_to_base):
+        (JSC):
+        (JSC::JIT::emit_resolve_operations):
+        (JSC::JIT::emitSlow_link_resolve_operations):
+        (JSC::JIT::emit_op_resolve):
+        (JSC::JIT::emitSlow_op_resolve):
+        (JSC::JIT::emit_op_resolve_base):
+        (JSC::JIT::emitSlow_op_resolve_base):
+        (JSC::JIT::emit_op_resolve_with_base):
+        (JSC::JIT::emitSlow_op_resolve_with_base):
+        (JSC::JIT::emit_op_resolve_with_this):
+        (JSC::JIT::emitSlow_op_resolve_with_this):
+        (JSC::JIT::emitSlow_op_put_to_base):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_put_to_base):
+        (JSC):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_init_global_const):
+        (JSC::JIT::emit_op_init_global_const_check):
+        (JSC::JIT::emitSlow_op_init_global_const_check):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_init_global_const):
+        (JSC::JIT::emit_op_init_global_const_check):
+        (JSC::JIT::emitSlow_op_init_global_const_check):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC):
+        * jit/JITStubs.h:
+        * llint/LLIntSlowPaths.cpp:
+        (LLInt):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        (LLInt):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSScope.cpp:
+        (JSC::LookupResult::base):
+        (JSC::LookupResult::value):
+        (JSC::LookupResult::setBase):
+        (JSC::LookupResult::setValue):
+        (LookupResult):
+        (JSC):
+        (JSC::setPutPropertyAccessOffset):
+        (JSC::executeResolveOperations):
+        (JSC::JSScope::resolveContainingScopeInternal):
+        (JSC::JSScope::resolveContainingScope):
+        (JSC::JSScope::resolve):
+        (JSC::JSScope::resolveBase):
+        (JSC::JSScope::resolveWithBase):
+        (JSC::JSScope::resolveWithThis):
+        (JSC::JSScope::resolvePut):
+        (JSC::JSScope::resolveGlobal):
+        * runtime/JSScope.h:
+        (JSScope):
+        * runtime/JSVariableObject.cpp:
+        (JSC):
+        * runtime/JSVariableObject.h:
+        (JSVariableObject):
+        * runtime/Structure.h:
+        (JSC::Structure::propertyAccessesAreCacheable):
+        (Structure):
+
 2012-10-18  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Live oversize copied blocks should count toward overall heap fragmentation
@@ -129,201 +349,6 @@
         Attempt to fix the build.
 
         * bytecode/GlobalResolveInfo.h: Copied from bytecode/GlobalResolveInfo.h.
-
-2012-10-17  Oliver Hunt  <oliver@apple.com>
-
-        Roll out r131645 as it causes random site crashes.
-        
-        * GNUmakefile.list.am:
-        * JavaScriptCore.xcodeproj/project.pbxproj:
-        * bytecode/CodeBlock.cpp:
-        (JSC):
-        (JSC::isGlobalResolve):
-        (JSC::instructionOffsetForNth):
-        (JSC::printGlobalResolveInfo):
-        (JSC::CodeBlock::printStructures):
-        (JSC::CodeBlock::dump):
-        (JSC::CodeBlock::CodeBlock):
-        (JSC::CodeBlock::visitStructures):
-        (JSC::CodeBlock::finalizeUnconditionally):
-        (JSC::CodeBlock::hasGlobalResolveInfoAtBytecodeOffset):
-        (JSC::CodeBlock::globalResolveInfoForBytecodeOffset):
-        (JSC::CodeBlock::shrinkToFit):
-        * bytecode/CodeBlock.h:
-        (CodeBlock):
-        (JSC::CodeBlock::addGlobalResolveInstruction):
-        (JSC::CodeBlock::addGlobalResolveInfo):
-        (JSC::CodeBlock::globalResolveInfo):
-        (JSC::CodeBlock::numberOfGlobalResolveInfos):
-        (JSC::CodeBlock::globalResolveInfoCount):
-        * bytecode/Opcode.h:
-        (JSC):
-        (JSC::padOpcodeName):
-        * bytecode/ResolveGlobalStatus.cpp:
-        (JSC):
-        (JSC::computeForStructure):
-        (JSC::computeForLLInt):
-        (JSC::ResolveGlobalStatus::computeFor):
-        * bytecode/ResolveGlobalStatus.h:
-        (JSC):
-        (ResolveGlobalStatus):
-        * bytecompiler/BytecodeGenerator.cpp:
-        (JSC::ResolveResult::checkValidity):
-        (JSC::ResolveResult::registerPointer):
-        (JSC):
-        (JSC::BytecodeGenerator::BytecodeGenerator):
-        (JSC::BytecodeGenerator::resolve):
-        (JSC::BytecodeGenerator::resolveConstDecl):
-        (JSC::BytecodeGenerator::shouldAvoidResolveGlobal):
-        (JSC::BytecodeGenerator::emitResolve):
-        (JSC::BytecodeGenerator::emitResolveBase):
-        (JSC::BytecodeGenerator::emitResolveBaseForPut):
-        (JSC::BytecodeGenerator::emitResolveWithBase):
-        (JSC::BytecodeGenerator::emitResolveWithThis):
-        (JSC::BytecodeGenerator::emitGetStaticVar):
-        (JSC::BytecodeGenerator::emitInitGlobalConst):
-        (JSC::BytecodeGenerator::emitPutStaticVar):
-        * bytecompiler/BytecodeGenerator.h:
-        (JSC::ResolveResult::registerResolve):
-        (JSC::ResolveResult::dynamicResolve):
-        (JSC::ResolveResult::lexicalResolve):
-        (JSC::ResolveResult::indexedGlobalResolve):
-        (JSC::ResolveResult::dynamicIndexedGlobalResolve):
-        (JSC::ResolveResult::globalResolve):
-        (JSC::ResolveResult::dynamicGlobalResolve):
-        (JSC::ResolveResult::type):
-        (JSC::ResolveResult::index):
-        (JSC::ResolveResult::depth):
-        (JSC::ResolveResult::globalObject):
-        (ResolveResult):
-        (JSC::ResolveResult::isStatic):
-        (JSC::ResolveResult::isIndexed):
-        (JSC::ResolveResult::isScoped):
-        (JSC::ResolveResult::isGlobal):
-        (JSC::ResolveResult::ResolveResult):
-        (BytecodeGenerator):
-        * bytecompiler/NodesCodegen.cpp:
-        (JSC::ResolveNode::isPure):
-        (JSC::FunctionCallResolveNode::emitBytecode):
-        (JSC::PostfixNode::emitResolve):
-        (JSC::PrefixNode::emitResolve):
-        (JSC::ReadModifyResolveNode::emitBytecode):
-        (JSC::AssignResolveNode::emitBytecode):
-        (JSC::ConstDeclNode::emitCodeSingle):
-        (JSC::ForInNode::emitBytecode):
-        * dfg/DFGAbstractState.cpp:
-        (JSC::DFG::AbstractState::execute):
-        * dfg/DFGByteCodeParser.cpp:
-        (ByteCodeParser):
-        (InlineStackEntry):
-        (JSC::DFG::ByteCodeParser::handleGetByOffset):
-        (JSC::DFG::ByteCodeParser::parseBlock):
-        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
-        * dfg/DFGCapabilities.h:
-        (DFG):
-        (JSC::DFG::canCompileOpcode):
-        (JSC::DFG::canInlineOpcode):
-        * dfg/DFGGraph.h:
-        (ResolveGlobalData):
-        (DFG):
-        (Graph):
-        * dfg/DFGNode.h:
-        (JSC::DFG::Node::hasIdentifier):
-        * dfg/DFGNodeType.h:
-        (DFG):
-        * dfg/DFGOSRExit.cpp:
-        (JSC::DFG::OSRExit::OSRExit):
-        * dfg/DFGOSRExit.h:
-        (OSRExit):
-        * dfg/DFGOSRExitCompiler.cpp:
-        * dfg/DFGOSRExitCompiler32_64.cpp:
-        (JSC::DFG::OSRExitCompiler::compileExit):
-        * dfg/DFGOSRExitCompiler64.cpp:
-        (JSC::DFG::OSRExitCompiler::compileExit):
-        * dfg/DFGOperations.cpp:
-        * dfg/DFGOperations.h:
-        (JSC):
-        * dfg/DFGPredictionPropagationPhase.cpp:
-        (JSC::DFG::PredictionPropagationPhase::propagate):
-        * dfg/DFGRepatch.cpp:
-        (JSC::DFG::tryCacheGetByID):
-        * dfg/DFGSpeculativeJIT.cpp:
-        (JSC::DFG::SpeculativeJIT::convertLastOSRExitToForward):
-        * dfg/DFGSpeculativeJIT.h:
-        (JSC::DFG::SpeculativeJIT::callOperation):
-        * dfg/DFGSpeculativeJIT32_64.cpp:
-        (JSC::DFG::SpeculativeJIT::compile):
-        * dfg/DFGSpeculativeJIT64.cpp:
-        (JSC::DFG::SpeculativeJIT::compile):
-        * dfg/DFGStructureCheckHoistingPhase.cpp:
-        (JSC::DFG::StructureCheckHoistingPhase::run):
-        * jit/JIT.cpp:
-        (JSC::JIT::privateCompileMainPass):
-        (JSC::JIT::privateCompileSlowCases):
-        * jit/JIT.h:
-        (JIT):
-        (JSC::JIT::emit_op_get_global_var_watchable):
-        * jit/JITOpcodes.cpp:
-        (JSC::JIT::emit_op_resolve):
-        (JSC):
-        (JSC::JIT::emit_op_resolve_base):
-        (JSC::JIT::emit_op_resolve_skip):
-        (JSC::JIT::emit_op_resolve_global):
-        (JSC::JIT::emitSlow_op_resolve_global):
-        (JSC::JIT::emit_op_resolve_with_base):
-        (JSC::JIT::emit_op_resolve_with_this):
-        (JSC::JIT::emit_op_resolve_global_dynamic):
-        (JSC::JIT::emitSlow_op_resolve_global_dynamic):
-        * jit/JITOpcodes32_64.cpp:
-        (JSC::JIT::emit_op_resolve):
-        (JSC):
-        (JSC::JIT::emit_op_resolve_base):
-        (JSC::JIT::emit_op_resolve_skip):
-        (JSC::JIT::emit_op_resolve_global):
-        (JSC::JIT::emitSlow_op_resolve_global):
-        (JSC::JIT::emit_op_resolve_with_base):
-        (JSC::JIT::emit_op_resolve_with_this):
-        * jit/JITPropertyAccess.cpp:
-        (JSC::JIT::emit_op_get_scoped_var):
-        (JSC):
-        (JSC::JIT::emit_op_put_scoped_var):
-        (JSC::JIT::emit_op_get_global_var):
-        (JSC::JIT::emit_op_put_global_var):
-        (JSC::JIT::emit_op_put_global_var_check):
-        (JSC::JIT::emitSlow_op_put_global_var_check):
-        * jit/JITPropertyAccess32_64.cpp:
-        (JSC::JIT::emit_op_get_scoped_var):
-        (JSC):
-        (JSC::JIT::emit_op_put_scoped_var):
-        (JSC::JIT::emit_op_get_global_var):
-        (JSC::JIT::emit_op_put_global_var):
-        (JSC::JIT::emit_op_put_global_var_check):
-        (JSC::JIT::emitSlow_op_put_global_var_check):
-        * jit/JITStubs.cpp:
-        (JSC::DEFINE_STUB_FUNCTION):
-        (JSC):
-        * jit/JITStubs.h:
-        * llint/LLIntSlowPaths.cpp:
-        (LLInt):
-        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
-        * llint/LLIntSlowPaths.h:
-        (LLInt):
-        * llint/LowLevelInterpreter.asm:
-        * llint/LowLevelInterpreter32_64.asm:
-        * llint/LowLevelInterpreter64.asm:
-        * runtime/JSScope.cpp:
-        (JSC::JSScope::resolve):
-        (JSC::JSScope::resolveSkip):
-        (JSC::JSScope::resolveGlobal):
-        (JSC::JSScope::resolveGlobalDynamic):
-        (JSC::JSScope::resolveBase):
-        (JSC::JSScope::resolveWithBase):
-        (JSC::JSScope::resolveWithThis):
-        * runtime/JSScope.h:
-        (JSScope):
-        * runtime/JSVariableObject.cpp:
-        * runtime/JSVariableObject.h:
-        * runtime/Structure.h:
 
 2012-10-17  Filip Pizlo  <fpizlo@apple.com>
 
