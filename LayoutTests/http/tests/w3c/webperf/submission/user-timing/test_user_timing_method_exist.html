@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>user timing extension interface in window.performance</title>
+        <link rel="author" title="Intel" href="http://www.intel.com/" />
+        <link rel="help" href="http://www.w3.org/TR/user-timing/#extensions-performance-interface"/>
+        <script src="/w3c/resources/testharness.js"></script>
+        <script src="/w3c/resources/testharnessreport.js"></script>
+        <script src="/w3c/webperf/resources/webperftestharness.js"></script>
+        <script src="/w3c/webperf/resources/webperftestharnessextension.js"></script>
+    </head>
+    <body>
+        <h1>Description</h1>
+        <p>This test validates that all of the user timing methods exist in window.performance (but does not validate that their functionality).</p>
+
+        <div id="log"></div>
+        <script>
+        var context = new PerformanceContext(window.performance);
+        test_namespace();
+
+        var mark = performance.mark || performance.mozMark || performance.msMark || performance.oMark || performance.webkitMark;
+        var clearMarks = performance.clearMarks || performance.mozClearMarks || performance.msClearMarks || performance.oClearMarks || performance.webkitClearMarks;
+        var measure = performance.measure || performance.mozMeasure || performance.msMeasure || performance.oMeasure || performance.webkitMeasure;
+        var clearMeasures = performance.clearMeasures || performance.mozClearMeasures || performance.msClearMeasures || performance.oClearMeasures || performance.webkitClearMeasures;
+        var getEntries = performance.getEntries || performance.mozGetEntries || performance.msGetEntries || performance.oGetEntries || performance.webkitGetEntries;
+        var getEntriesByType = performance.getEntriesByType || performance.mozGetEntriesByType || performance.msGetEntriesByType || performance.oGetEntriesByType || performance.webkitGetEntriesByType;
+        var getEntriesByName = performance.getEntriesByName || performance.mozGetEntriesByName || performance.msGetEntriesByName || performance.oGetEntriesByName || performance.webkitGetEntriesByName;
+
+        test_method_exists(mark, 'mark');
+        test_method_exists(clearMarks, 'clearMarks');
+        test_method_exists(measure, 'measure');
+        test_method_exists(clearMeasures, 'clearMeasures');
+        test_method_exists(getEntries, 'getEntries');
+        test_method_exists(getEntriesByType, 'getEntriesByType');
+        test_method_exists(getEntriesByName, 'getEntriesByName');
+        </script>
+    </body>
+</html>

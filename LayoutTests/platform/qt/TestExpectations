@@ -587,6 +587,9 @@ fast/events/constructors/device-proximity-event-constructor.html
 # Missing support in DRT for Geolocation's Coordinate attributes.
 fast/dom/Geolocation/coordinates-interface-attributes.html
 
+# User Timing is not enabled
+webkit.org/b/84893 http/tests/w3c/webperf/submission/user-timing
+
 # =========================================================================== #
 #       Drag and Drop Support in DRT.                                         #
 # =========================================================================== #

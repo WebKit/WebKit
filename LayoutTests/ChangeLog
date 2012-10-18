@@ -1,3 +1,52 @@
+2012-10-17  Pan Deng  <pan.deng@intel.com>
+
+        [User Timing] Test Cases of User Timing. According to http://www.w3.org/TR/2012/CR-user-timing-20120726/
+        https://bugs.webkit.org/show_bug.cgi?id=90963
+
+        Reviewed by Tony Gentilcore.
+
+        Test cases in this patch validate functionality of W3C User Timing interface. These test cases use W3C testharness. Since User Timing feature is not enabled in any platform yet, all skipped currenttly. 
+
+        * http/tests/w3c/webperf/resources/webperftestharnessextension.js: Added.
+        (test_method_exists):
+        (test_noless_than):
+        (performance_entrylist_checker.entry_check.test_equals):
+        (performance_entrylist_checker.entry_check):
+        (performance_entrylist_checker.entrylist_order_check):
+        (performance_entrylist_checker.entrylist_check):
+        (PerformanceContext):
+        (PerformanceContext.prototype.initialMeasures):
+        (PerformanceContext.prototype.mark):
+        (PerformanceContext.prototype.measure):
+        (PerformanceContext.prototype.clearMarks):
+        (PerformanceContext.prototype.clearMeasures):
+        (PerformanceContext.prototype.getEntries):
+        (PerformanceContext.prototype.getEntriesByType):
+        (PerformanceContext.prototype.getEntriesByName):
+        * http/tests/w3c/webperf/submission/user-timing/test_user_timing_clearMarks-expected.txt: Added.
+        * http/tests/w3c/webperf/submission/user-timing/test_user_timing_clearMarks.html: Added.
+        * http/tests/w3c/webperf/submission/user-timing/test_user_timing_clearMeasures-expected.txt: Added.
+        * http/tests/w3c/webperf/submission/user-timing/test_user_timing_clearMeasures.html: Added.
+        * http/tests/w3c/webperf/submission/user-timing/test_user_timing_mark-expected.txt: Added.
+        * http/tests/w3c/webperf/submission/user-timing/test_user_timing_mark.html: Added.
+        * http/tests/w3c/webperf/submission/user-timing/test_user_timing_mark_exception-expected.txt: Added.
+        * http/tests/w3c/webperf/submission/user-timing/test_user_timing_mark_exception.html: Added.
+        * http/tests/w3c/webperf/submission/user-timing/test_user_timing_measure-expected.txt: Added.
+        * http/tests/w3c/webperf/submission/user-timing/test_user_timing_measure.html: Added.
+        * http/tests/w3c/webperf/submission/user-timing/test_user_timing_measure_associate_with_navigation_timing-expected.txt: Added.
+        * http/tests/w3c/webperf/submission/user-timing/test_user_timing_measure_associate_with_navigation_timing.html: Added.
+        * http/tests/w3c/webperf/submission/user-timing/test_user_timing_measure_exception-expected.txt: Added.
+        * http/tests/w3c/webperf/submission/user-timing/test_user_timing_measure_exception.html: Added.
+        * http/tests/w3c/webperf/submission/user-timing/test_user_timing_method_exist-expected.txt: Added.
+        * http/tests/w3c/webperf/submission/user-timing/test_user_timing_method_exist.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+
 2012-10-17  Dirk Pranke  <dpranke@chromium.org>
 
         Clone baselines from platform/mac to platform/chromium [3 of 7]

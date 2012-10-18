@@ -2342,3 +2342,6 @@ fast/dom/timer-throttling-hidden-page.html
 # CSS_COMPOSITING is disabled (CIFilters don't work on Windows)
 css3/compositing/
 transitions/blendmode-transitions.html
+
+# User Timing is not enabled
+webkit.org/b/84893 http/tests/w3c/webperf/submission/user-timing

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>exception test of window.performance.measure</title>
+        <link rel="author" title="Intel" href="http://www.intel.com/" />
+        <link rel="help" href="http://www.w3.org/TR/user-timing/#extensions-performance-interface"/>
+        <script src="/w3c/resources/testharness.js"></script>
+        <script src="/w3c/resources/testharnessreport.js"></script>
+        <script src="/w3c/webperf/resources/webperftestharness.js"></script>
+        <script src="/w3c/webperf/resources/webperftestharnessextension.js"></script>
+    </head>
+    <body>
+        <h1>Description</h1>
+        <p>This test validates all exception scenarios of method window.performance.measure in User Timing API</p>
+
+        <div id="log"></div>
+        <script>
+        var context = new PerformanceContext(window.performance);
+        context.mark('ExistMark');
+        test_method_throw_exception('context.measure()', TypeError());
+        test_method_throw_exception('context.measure("Exception1", "NonExistMark1")', 'SYNTAX_ERR');
+        test_method_throw_exception('context.measure("Exception2", "NonExistMark1", "navigationStart")', 'SYNTAX_ERR');
+        test_method_throw_exception('context.measure("Exception3", "navigationStart", "NonExistMark1")', 'SYNTAX_ERR');
+        test_method_throw_exception('context.measure("Exception4", "NonExistMark1", "ExistMark")', 'SYNTAX_ERR');
+        test_method_throw_exception('context.measure("Exception5", "ExistMark", "NonExistMark1")', 'SYNTAX_ERR');
+        test_method_throw_exception('context.measure("Exception6", "NonExistMark1", "NonExistMark2")', 'SYNTAX_ERR');
+        </script>
+    </body>
+</html>

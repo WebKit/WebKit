@@ -1,3 +1,65 @@
+2012-10-17  Pan Deng  <pan.deng@intel.com>
+
+        [User Timing] implement main interface in of User Timing, according to http://www.w3.org/TR/2012/CR-user-timing-20120726/
+        https://bugs.webkit.org/show_bug.cgi?id=90963
+
+        Reviewed by Tony Gentilcore.
+
+        This patch implemented mark(), measure(), clearMarks() and clearMeasures() interface of User Timing. Getters are not exposed by Performance Timeline yet, it will be future patch.
+
+        Tests: http/tests/w3c/webperf/submission/user-timing/test_user_timing_clearMarks.html
+               http/tests/w3c/webperf/submission/user-timing/test_user_timing_clearMeasures.html
+               http/tests/w3c/webperf/submission/user-timing/test_user_timing_mark.html
+               http/tests/w3c/webperf/submission/user-timing/test_user_timing_mark_exception.html
+               http/tests/w3c/webperf/submission/user-timing/test_user_timing_measure.html
+               http/tests/w3c/webperf/submission/user-timing/test_user_timing_measure_associate_with_navigation_timing.html
+               http/tests/w3c/webperf/submission/user-timing/test_user_timing_measure_exception.html
+               http/tests/w3c/webperf/submission/user-timing/test_user_timing_method_exist.html
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * page/Performance.cpp:
+        (WebCore::Performance::webkitGetEntries):
+        (WebCore::Performance::webkitGetEntriesByType):
+        (WebCore::Performance::webkitGetEntriesByName):
+        (WebCore):
+        (WebCore::Performance::webkitMark):
+        (WebCore::Performance::webkitClearMarks):
+        (WebCore::Performance::webkitMeasure):
+        (WebCore::Performance::webkitClearMeasures):
+        * page/Performance.h:
+        (WebCore):
+        (Performance):
+        * page/Performance.idl:
+        * page/PerformanceMark.h: Added.
+        (WebCore):
+        (PerformanceMark):
+        (WebCore::PerformanceMark::create):
+        (WebCore::PerformanceMark::PerformanceMark):
+        (WebCore::PerformanceMark::~PerformanceMark):
+        * page/PerformanceMark.idl: Added.
+        * page/PerformanceMeasure.h: Added.
+        (WebCore):
+        (PerformanceMeasure):
+        (WebCore::PerformanceMeasure::create):
+        (WebCore::PerformanceMeasure::PerformanceMeasure):
+        (WebCore::PerformanceMeasure::~PerformanceMeasure):
+        * page/PerformanceMeasure.idl: Added.
+        * page/PerformanceUserTiming.cpp: Added.
+        (WebCore):
+        (WebCore::UserTiming::UserTiming):
+        (WebCore::insertPerformanceEntry):
+        (WebCore::clearPeformanceEntries):
+        (WebCore::UserTiming::mark):
+        (WebCore::UserTiming::clearMarks):
+        (WebCore::UserTiming::findExistingMarkStartTime):
+        (WebCore::UserTiming::measure):
+        (WebCore::UserTiming::clearMeasures):
+        * page/PerformanceUserTiming.h: Added.
+        (WebCore):
+        (UserTiming):
+        (WebCore::UserTiming::create):
+
 2012-10-17  James Robinson  <jamesr@chromium.org>
 
         Unreviewed clang compile fix - GraphicsLayerUpdater needs a virtual destructor.

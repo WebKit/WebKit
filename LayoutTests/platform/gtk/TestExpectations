@@ -1374,6 +1374,9 @@ webkit.org/b/99071 media/context-menu-actions.html [ Failure ]
 
 webkit.org/b/98950 transitions/blendmode-transitions.html [ Failure ]
 
+# User Timing is not enable yet. so skip it.
+webkit.org/b/84893 http/tests/w3c/webperf/submission/user-timing [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

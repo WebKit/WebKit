@@ -1,0 +1,28 @@
+Description
+
+This test validates all exception scenarios of method window.performance.mark in User Timing API.
+
+
+PASS Invocation of context.mark() should throw TypeError Exception. 
+PASS Invocation of context.mark("navigationStart") should throw SYNTAX_ERR Exception. 
+PASS Invocation of context.mark("unloadEventStart") should throw SYNTAX_ERR Exception. 
+PASS Invocation of context.mark("unloadEventEnd") should throw SYNTAX_ERR Exception. 
+PASS Invocation of context.mark("redirectStart") should throw SYNTAX_ERR Exception. 
+PASS Invocation of context.mark("redirectEnd") should throw SYNTAX_ERR Exception. 
+PASS Invocation of context.mark("fetchStart") should throw SYNTAX_ERR Exception. 
+PASS Invocation of context.mark("domainLookupStart") should throw SYNTAX_ERR Exception. 
+PASS Invocation of context.mark("domainLookupEnd") should throw SYNTAX_ERR Exception. 
+PASS Invocation of context.mark("connectStart") should throw SYNTAX_ERR Exception. 
+PASS Invocation of context.mark("connectEnd") should throw SYNTAX_ERR Exception. 
+PASS Invocation of context.mark("secureConnectionStart") should throw SYNTAX_ERR Exception. 
+PASS Invocation of context.mark("requestStart") should throw SYNTAX_ERR Exception. 
+PASS Invocation of context.mark("responseStart") should throw SYNTAX_ERR Exception. 
+PASS Invocation of context.mark("responseEnd") should throw SYNTAX_ERR Exception. 
+PASS Invocation of context.mark("domLoading") should throw SYNTAX_ERR Exception. 
+PASS Invocation of context.mark("domInteractive") should throw SYNTAX_ERR Exception. 
+PASS Invocation of context.mark("domContentLoadedEventStart") should throw SYNTAX_ERR Exception. 
+PASS Invocation of context.mark("domContentLoadedEventEnd") should throw SYNTAX_ERR Exception. 
+PASS Invocation of context.mark("domComplete") should throw SYNTAX_ERR Exception. 
+PASS Invocation of context.mark("loadEventStart") should throw SYNTAX_ERR Exception. 
+PASS Invocation of context.mark("loadEventEnd") should throw SYNTAX_ERR Exception. 
+

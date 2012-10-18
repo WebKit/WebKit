@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Intel Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -50,6 +51,18 @@
 
     attribute EventListener onwebkitresourcetimingbufferfull;
 #endif
+
+    // See http://www.w3.org/TR/2012/CR-user-timing-20120726/
+#if defined(ENABLE_USER_TIMING) && ENABLE_USER_TIMING
+    void webkitMark(in DOMString markName)
+        raises(DOMException);
+    void webkitClearMarks(in [Optional=DefaultIsNullString]  DOMString markName);
+
+    void webkitMeasure(in DOMString measureName, in [Optional=DefaultIsNullString] DOMString startMark, in [Optional=DefaultIsNullString] DOMString endMark)
+        raises(DOMException);
+    void webkitClearMeasures(in [Optional=DefaultIsNullString] DOMString measureName);
+#endif
+
     // See http://www.w3.org/TR/hr-time/ for details.
     double now();
 };

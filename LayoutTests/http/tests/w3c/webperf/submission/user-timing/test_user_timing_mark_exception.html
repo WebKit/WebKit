@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>exception test of window.performance.mark</title>
+        <link rel="author" title="Intel" href="http://www.intel.com/" />
+        <link rel="help" href="http://www.w3.org/TR/user-timing/#extensions-performance-interface"/>
+        <script src="/w3c/resources/testharness.js"></script>
+        <script src="/w3c/resources/testharnessreport.js"></script>
+        <script src="/w3c/webperf/resources/webperftestharness.js"></script>
+        <script src="/w3c/webperf/resources/webperftestharnessextension.js"></script>
+    </head>
+    <body>
+        <h1>Description</h1>
+        <p>This test validates all exception scenarios of method window.performance.mark in User Timing API.</p>
+
+        <div id="log"></div>
+        <script>
+        var context = new PerformanceContext(window.performance);
+        test_method_throw_exception('context.mark()', TypeError());
+        test_method_throw_exception('context.mark("navigationStart")', 'SYNTAX_ERR');
+        test_method_throw_exception('context.mark("unloadEventStart")', 'SYNTAX_ERR');
+        test_method_throw_exception('context.mark("unloadEventEnd")', 'SYNTAX_ERR');
+        test_method_throw_exception('context.mark("redirectStart")', 'SYNTAX_ERR');
+        test_method_throw_exception('context.mark("redirectEnd")', 'SYNTAX_ERR');
+        test_method_throw_exception('context.mark("fetchStart")', 'SYNTAX_ERR');
+        test_method_throw_exception('context.mark("domainLookupStart")', 'SYNTAX_ERR');
+        test_method_throw_exception('context.mark("domainLookupEnd")', 'SYNTAX_ERR');
+        test_method_throw_exception('context.mark("connectStart")', 'SYNTAX_ERR');
+        test_method_throw_exception('context.mark("connectEnd")', 'SYNTAX_ERR');
+        test_method_throw_exception('context.mark("secureConnectionStart")', 'SYNTAX_ERR');
+        test_method_throw_exception('context.mark("requestStart")', 'SYNTAX_ERR');
+        test_method_throw_exception('context.mark("responseStart")', 'SYNTAX_ERR');
+        test_method_throw_exception('context.mark("responseEnd")', 'SYNTAX_ERR');
+        test_method_throw_exception('context.mark("domLoading")', 'SYNTAX_ERR');
+        test_method_throw_exception('context.mark("domInteractive")', 'SYNTAX_ERR');
+        test_method_throw_exception('context.mark("domContentLoadedEventStart")', 'SYNTAX_ERR');
+        test_method_throw_exception('context.mark("domContentLoadedEventEnd")', 'SYNTAX_ERR');
+        test_method_throw_exception('context.mark("domComplete")', 'SYNTAX_ERR');
+        test_method_throw_exception('context.mark("loadEventStart")', 'SYNTAX_ERR');
+        test_method_throw_exception('context.mark("loadEventEnd")', 'SYNTAX_ERR');
+        </script>
+    </body>
+</html>

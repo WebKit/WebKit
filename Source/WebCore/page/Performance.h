@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Intel Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -47,8 +48,11 @@
 namespace WebCore {
 
 class Document;
+class PerformanceEntry;
+class PerformanceEntryList;
 class ResourceRequest;
 class ResourceResponse;
+class UserTiming;
 
 class Performance : public RefCounted<Performance>, public DOMWindowProperty, public EventTarget {
 public:
@@ -81,6 +85,14 @@ public:
     using RefCounted<Performance>::ref;
     using RefCounted<Performance>::deref;
 
+#if ENABLE(USER_TIMING)
+    void webkitMark(const String& markName, ExceptionCode&);
+    void webkitClearMarks(const String& markName);
+
+    void webkitMeasure(const String& measureName, const String& startMark, const String& endMark, ExceptionCode&);
+    void webkitClearMeasures(const String& measureName);
+#endif // ENABLE(USER_TIMING)
+
 private:
     explicit Performance(Frame*);
 
@@ -97,6 +109,10 @@ private:
 #if ENABLE(RESOURCE_TIMING)
     Vector<RefPtr<PerformanceEntry> > m_resourceTimingBuffer;
 #endif
+
+#if ENABLE(USER_TIMING)
+    RefPtr<UserTiming> m_userTiming;
+#endif // ENABLE(USER_TIMING)
 };
 
 }

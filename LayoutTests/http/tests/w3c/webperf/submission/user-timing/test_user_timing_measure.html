@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>functionality test of window.performance.measure</title>
+        <link rel="author" title="Intel" href="http://www.intel.com/" />
+        <link rel="help" href="http://www.w3.org/TR/user-timing/#extensions-performance-interface"/>
+        <script src="/w3c/resources/testharness.js"></script>
+        <script src="/w3c/resources/testharnessreport.js"></script>
+        <script src="/w3c/webperf/resources/webperftestharness.js"></script>
+        <script src="/w3c/webperf/resources/webperftestharnessextension.js"></script>
+        <script>
+        setup({ explicit_done: true });
+
+        function onload_test()
+        {
+            var context = new PerformanceContext(window.performance);
+            var entrylist_checker = new performance_entrylist_checker("measure");
+            var measure_names = measures.map(function(x) {return x[0];});
+
+            test_equals(context.getEntriesByType("measure").length, 0, 'There should be ' + 0 + ' entries returned.');
+
+            mark_names.forEach(context.mark, context);
+            measures.forEach(context.initialMeasures, context);
+
+            var measure_entrylist = context.getEntriesByType("measure");
+            entrylist_checker.entrylist_check(measure_entrylist, measures.length, measure_names);
+
+            for (var i = 0; i < measure_entrylist.length; ++i)
+            {
+                var measure_entrylist_by_name = context.getEntriesByName(measure_entrylist[i].name, "measure");
+                entrylist_checker.entrylist_check(measure_entrylist_by_name, 1, measure_names);
+            }
+
+            // Following cases test for scenarios that measure names are tied for two times
+            mark_names.forEach(context.mark, context);
+            measures.forEach(context.initialMeasures, context);
+            
+            var measure_entrylist = context.getEntriesByType("measure");
+            entrylist_checker.entrylist_check(measure_entrylist, measures.length * 2, measure_names);
+
+            for (var i = 0; i < measure_entrylist.length; ++i)
+            {
+                var measure_entrylist_by_name = context.getEntriesByName(measure_entrylist[i].name, "measure");
+                entrylist_checker.entrylist_check(measure_entrylist_by_name, 2, measure_names);
+            }
+
+            done();  
+        }
+        </script>
+    </head>
+    <body onload=onload_test()>
+        <h1>Description</h1>
+        <p>This test validates functionality of the interface window.performance.measure.</p>
+        <div id="log"></div>
+    </body>
+</html>

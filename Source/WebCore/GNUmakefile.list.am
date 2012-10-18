@@ -595,6 +595,10 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSPerformanceEntry.h \
 	DerivedSources/WebCore/JSPerformanceEntryList.cpp \
 	DerivedSources/WebCore/JSPerformanceEntryList.h \
+	DerivedSources/WebCore/JSPerformanceMark.cpp \
+	DerivedSources/WebCore/JSPerformanceMark.h \
+	DerivedSources/WebCore/JSPerformanceMeasure.cpp \
+	DerivedSources/WebCore/JSPerformanceMeasure.h \
 	DerivedSources/WebCore/JSPerformanceNavigation.cpp \
 	DerivedSources/WebCore/JSPerformanceNavigation.h \
 	DerivedSources/WebCore/JSPerformanceTiming.cpp \
@@ -1566,6 +1570,8 @@ dom_binding_idls += \
 	$(WebCore)/page/Performance.idl \
 	$(WebCore)/page/PerformanceEntry.idl \
 	$(WebCore)/page/PerformanceEntryList.idl \
+	$(WebCore)/page/PerformanceMark.idl \
+	$(WebCore)/page/PerformanceMeasure.idl \
 	$(WebCore)/page/PerformanceNavigation.idl \
 	$(WebCore)/page/PerformanceResourceTiming.idl \
 	$(WebCore)/page/PerformanceTiming.idl \
@@ -4066,12 +4072,16 @@ webcore_sources += \
 	Source/WebCore/page/PerformanceEntry.h \
 	Source/WebCore/page/PerformanceEntryList.cpp \
 	Source/WebCore/page/PerformanceEntryList.h \
+	Source/WebCore/page/PerformanceMark.h \
+	Source/WebCore/page/PerformanceMeasure.h \
 	Source/WebCore/page/PerformanceNavigation.cpp \
 	Source/WebCore/page/PerformanceNavigation.h \
 	Source/WebCore/page/PerformanceResourceTiming.cpp \
 	Source/WebCore/page/PerformanceResourceTiming.h \
 	Source/WebCore/page/PerformanceTiming.cpp \
 	Source/WebCore/page/PerformanceTiming.h \
+	Source/WebCore/page/PerformanceUserTiming.cpp \
+	Source/WebCore/page/PerformanceUserTiming.h \
 	Source/WebCore/page/PointerLockController.cpp \
 	Source/WebCore/page/PointerLockController.h \
 	Source/WebCore/page/PrintContext.cpp \
