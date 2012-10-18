@@ -1997,6 +1997,10 @@
 		7E12E91015FA5D3A005E4126 /* CustomFilterMeshGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E12E90E15FA5D3A005E4126 /* CustomFilterMeshGenerator.cpp */; };
 		7E33CD01127F340D00BE8F17 /* PurgePriority.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E33CD00127F340D00BE8F17 /* PurgePriority.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E37EF2E1339208800B29250 /* SubresourceLoaderCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E37EF2D1339208800B29250 /* SubresourceLoaderCF.cpp */; };
+		7E46F6FA1627A2CA00062223 /* JSOESElementIndexUint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E46F6F81627A2C900062223 /* JSOESElementIndexUint.cpp */; };
+		7E46F6FB1627A2CA00062223 /* JSOESElementIndexUint.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E46F6F91627A2C900062223 /* JSOESElementIndexUint.h */; };
+		7E5D7A76161D3F8F00896C34 /* OESElementIndexUint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E5D7A73161D3F8F00896C34 /* OESElementIndexUint.cpp */; };
+		7E5D7A77161D3F8F00896C34 /* OESElementIndexUint.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E5D7A74161D3F8F00896C34 /* OESElementIndexUint.h */; };
 		7E99AF510B13846468FB01A5 /* WindowFocusAllowedIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E99AF520B13846468FB01A5 /* WindowFocusAllowedIndicator.cpp */; };
 		7E99AF530B13846468FB01A5 /* WindowFocusAllowedIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E99AF540B13846468FB01A5 /* WindowFocusAllowedIndicator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7EE6845F12D26E3800E79415 /* AuthenticationCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6844C12D26E3800E79415 /* AuthenticationCF.cpp */; };
@@ -9236,6 +9240,10 @@
 		7E12E90E15FA5D3A005E4126 /* CustomFilterMeshGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CustomFilterMeshGenerator.cpp; path = filters/CustomFilterMeshGenerator.cpp; sourceTree = "<group>"; };
 		7E33CD00127F340D00BE8F17 /* PurgePriority.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PurgePriority.h; sourceTree = "<group>"; };
 		7E37EF2D1339208800B29250 /* SubresourceLoaderCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SubresourceLoaderCF.cpp; path = cf/SubresourceLoaderCF.cpp; sourceTree = "<group>"; };
+		7E46F6F81627A2C900062223 /* JSOESElementIndexUint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOESElementIndexUint.cpp; sourceTree = "<group>"; };
+		7E46F6F91627A2C900062223 /* JSOESElementIndexUint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESElementIndexUint.h; sourceTree = "<group>"; };
+		7E5D7A73161D3F8F00896C34 /* OESElementIndexUint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OESElementIndexUint.cpp; path = canvas/OESElementIndexUint.cpp; sourceTree = "<group>"; };
+		7E5D7A74161D3F8F00896C34 /* OESElementIndexUint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OESElementIndexUint.h; path = canvas/OESElementIndexUint.h; sourceTree = "<group>"; };
 		7E99AF520B13846468FB01A5 /* WindowFocusAllowedIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WindowFocusAllowedIndicator.cpp; sourceTree = "<group>"; };
 		7E99AF540B13846468FB01A5 /* WindowFocusAllowedIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WindowFocusAllowedIndicator.h; sourceTree = "<group>"; };
 		7EE6844C12D26E3800E79415 /* AuthenticationCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticationCF.cpp; sourceTree = "<group>"; };
@@ -15144,6 +15152,8 @@
 		49484FAE102CF01E00187DD3 /* canvas */ = {
 			isa = PBXGroup;
 			children = (
+				7E5D7A73161D3F8F00896C34 /* OESElementIndexUint.cpp */,
+				7E5D7A74161D3F8F00896C34 /* OESElementIndexUint.h */,
 				49EECDCC10503C2300099FAB /* ArrayBuffer.idl */,
 				49EECDC910503C2300099FAB /* ArrayBufferView.idl */,
 				6E4E91A710F7FB3100A2779C /* CanvasContextAttributes.cpp */,
@@ -18493,6 +18503,8 @@
 				CDB859F9160D493E00E5B07F /* JSMediaKeyEvent.h */,
 				1059457515B42A0D004D37FD /* JSMicroDataItemValue.cpp */,
 				1059457915B42A43004D37FD /* JSMicroDataItemValue.h */,
+				7E46F6F81627A2C900062223 /* JSOESElementIndexUint.cpp */,
+				7E46F6F91627A2C900062223 /* JSOESElementIndexUint.h */,
 				9001787E12E0370700648462 /* JSOESStandardDerivatives.cpp */,
 				9001787F12E0370700648462 /* JSOESStandardDerivatives.h */,
 				6EBF0E7412A9868800DB1709 /* JSOESTextureFloat.cpp */,
@@ -25621,6 +25633,8 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
+				7E5D7A77161D3F8F00896C34 /* OESElementIndexUint.h in Headers */,
+				7E46F6FB1627A2CA00062223 /* JSOESElementIndexUint.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -28728,6 +28742,8 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
+				7E5D7A76161D3F8F00896C34 /* OESElementIndexUint.cpp in Sources */,
+				7E46F6FA1627A2CA00062223 /* JSOESElementIndexUint.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

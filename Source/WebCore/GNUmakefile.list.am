@@ -579,6 +579,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSOESTextureFloat.h \
 	DerivedSources/WebCore/JSOESVertexArrayObject.cpp \
 	DerivedSources/WebCore/JSOESVertexArrayObject.h \
+	DerivedSources/WebCore/JSOESElementIndexUint.cpp \
+	DerivedSources/WebCore/JSOESElementIndexUint.h \
 	DerivedSources/WebCore/JSOfflineAudioCompletionEvent.cpp \
 	DerivedSources/WebCore/JSOfflineAudioCompletionEvent.h \
 	DerivedSources/WebCore/JSOscillatorNode.cpp \
@@ -1522,6 +1524,7 @@ dom_binding_idls += \
 	$(WebCore)/html/canvas/OESStandardDerivatives.idl \
 	$(WebCore)/html/canvas/OESTextureFloat.idl \
 	$(WebCore)/html/canvas/OESVertexArrayObject.idl \
+	$(WebCore)/html/canvas/OESElementIndexUint.idl \
 	$(WebCore)/html/canvas/Uint16Array.idl \
 	$(WebCore)/html/canvas/Uint32Array.idl \
 	$(WebCore)/html/canvas/Uint8Array.idl \
@@ -3200,6 +3203,8 @@ webcore_sources += \
 	Source/WebCore/html/canvas/OESTextureFloat.h \
 	Source/WebCore/html/canvas/OESVertexArrayObject.cpp \
 	Source/WebCore/html/canvas/OESVertexArrayObject.h \
+	Source/WebCore/html/canvas/OESElementIndexUint.cpp \
+	Source/WebCore/html/canvas/OESElementIndexUint.h \
 	Source/WebCore/html/canvas/WebGLActiveInfo.h \
 	Source/WebCore/html/canvas/WebGLBuffer.cpp \
 	Source/WebCore/html/canvas/WebGLBuffer.h \

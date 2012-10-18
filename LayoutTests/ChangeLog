@@ -1,3 +1,19 @@
+2012-10-18  Brandon Jones  <bajones@google.com>
+
+        Implement OES_element_index_uint / WEBKIT_OES_element_index_uint
+        https://bugs.webkit.org/show_bug.cgi?id=97400
+
+        Reviewed by Kenneth Russell.
+
+        Added OES_element_index_uint extension conformance test from KHRONOS
+
+        * fast/canvas/webgl/oes-element-index-uint-expected.txt: Added.
+        * fast/canvas/webgl/oes-element-index-uint.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2012-10-18  Dana Jansens  <danakj@chromium.org>
 
         Unreviewed, mark http/tests/xmlhttprequest/request-encoding2.html as flaky.

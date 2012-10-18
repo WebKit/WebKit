@@ -45,6 +45,7 @@
 #include "ImageData.h"
 #include "IntSize.h"
 #include "NotImplemented.h"
+#include "OESElementIndexUint.h"
 #include "OESStandardDerivatives.h"
 #include "OESTextureFloat.h"
 #include "OESVertexArrayObject.h"
@@ -1690,7 +1691,18 @@ bool WebGLRenderingContext::validateElementArraySize(GC3Dsizei count, GC3Denum t
     if (offset < 0)
         return false;
 
-    if (type == GraphicsContext3D::UNSIGNED_SHORT) {
+    if (type == GraphicsContext3D::UNSIGNED_INT) {
+        // For an unsigned int array, offset must be divisible by 4 for alignment reasons.
+        if (offset % 4)
+            return false;
+
+        // Make uoffset an element offset.
+        offset /= 4;
+
+        GC3Dsizeiptr n = elementArrayBuffer->byteLength() / 4;
+        if (offset > n || count > n - offset)
+            return false;
+    } else if (type == GraphicsContext3D::UNSIGNED_SHORT) {
         // For an unsigned short array, offset must be divisible by 2 for alignment reasons.
         if (offset % 2)
             return false;
@@ -1709,7 +1721,7 @@ bool WebGLRenderingContext::validateElementArraySize(GC3Dsizei count, GC3Denum t
     return true;
 }
 
-bool WebGLRenderingContext::validateIndexArrayConservative(GC3Denum type, int& numElementsRequired)
+bool WebGLRenderingContext::validateIndexArrayConservative(GC3Denum type, unsigned& numElementsRequired)
 {
     // Performs conservative validation by caching a maximum index of
     // the given type per element array buffer. If all of the bound
@@ -1746,6 +1758,15 @@ bool WebGLRenderingContext::validateIndexArrayConservative(GC3Denum type, int& n
                 maxIndex = max(maxIndex, static_cast<int>(p[i]));
             break;
         }
+        case GraphicsContext3D::UNSIGNED_INT: {
+            if (!m_oesElementIndexUint)
+                return false;
+            numElements /= sizeof(GC3Duint);
+            const GC3Duint* p = static_cast<const GC3Duint*>(buffer->data());
+            for (GC3Dsizeiptr i = 0; i < numElements; i++)
+                maxIndex = max(maxIndex, static_cast<int>(p[i]));
+            break;
+        }
         default:
             return false;
         }
@@ -1762,10 +1783,10 @@ bool WebGLRenderingContext::validateIndexArrayConservative(GC3Denum type, int& n
     return false;
 }
 
-bool WebGLRenderingContext::validateIndexArrayPrecise(GC3Dsizei count, GC3Denum type, GC3Dintptr offset, int& numElementsRequired)
+bool WebGLRenderingContext::validateIndexArrayPrecise(GC3Dsizei count, GC3Denum type, GC3Dintptr offset, unsigned& numElementsRequired)
 {
     ASSERT(count >= 0 && offset >= 0);
-    int lastIndex = -1;
+    unsigned lastIndex = 0;
     
     RefPtr<WebGLBuffer> elementArrayBuffer = m_boundVertexArrayObject->getElementArrayBuffer();
 
@@ -1783,7 +1804,16 @@ bool WebGLRenderingContext::validateIndexArrayPrecise(GC3Dsizei count, GC3Denum 
     unsigned long uoffset = offset;
     unsigned long n = count;
 
-    if (type == GraphicsContext3D::UNSIGNED_SHORT) {
+    if (type == GraphicsContext3D::UNSIGNED_INT) {
+        // Make uoffset an element offset.
+        uoffset /= sizeof(GC3Duint);
+        const GC3Duint* p = static_cast<const GC3Duint*>(elementArrayBuffer->elementArrayBuffer()->data()) + uoffset;
+        while (n-- > 0) {
+            if (*p > lastIndex)
+                lastIndex = *p;
+            ++p;
+        }
+    } else if (type == GraphicsContext3D::UNSIGNED_SHORT) {
         // Make uoffset an element offset.
         uoffset /= sizeof(GC3Dushort);
         const GC3Dushort* p = static_cast<const GC3Dushort*>(elementArrayBuffer->elementArrayBuffer()->data()) + uoffset;
@@ -1806,7 +1836,7 @@ bool WebGLRenderingContext::validateIndexArrayPrecise(GC3Dsizei count, GC3Denum 
     return numElementsRequired > 0;
 }
 
-bool WebGLRenderingContext::validateRenderingState(int numElementsRequired)
+bool WebGLRenderingContext::validateRenderingState(unsigned numElementsRequired)
 {
     if (!m_currentProgram)
         return false;
@@ -1823,7 +1853,7 @@ bool WebGLRenderingContext::validateRenderingState(int numElementsRequired)
         return true;
 
     // Look in each consumed vertex attrib (by the current program) and find the smallest buffer size
-    int smallestNumElements = INT_MAX;
+    unsigned smallestNumElements = UINT_MAX;
     int numActiveAttribLocations = m_currentProgram->numActiveAttribLocations();
     for (int i = 0; i < numActiveAttribLocations; ++i) {
         int loc = m_currentProgram->getActiveAttribLocation(i);
@@ -1834,7 +1864,7 @@ bool WebGLRenderingContext::validateRenderingState(int numElementsRequired)
                 // For the last element, we will only touch the data for the
                 // element and nothing beyond it.
                 int bytesRemaining = static_cast<int>(state.bufferBinding->byteLength() - state.offset);
-                int numElements = 0;
+                unsigned numElements = 0;
                 ASSERT(state.stride > 0);
                 if (bytesRemaining >= state.bytesPerElement)
                     numElements = 1 + (bytesRemaining - state.bytesPerElement) / state.stride;
@@ -1934,6 +1964,11 @@ void WebGLRenderingContext::drawElements(GC3Denum mode, GC3Dsizei count, GC3Denu
     case GraphicsContext3D::UNSIGNED_BYTE:
     case GraphicsContext3D::UNSIGNED_SHORT:
         break;
+    case GraphicsContext3D::UNSIGNED_INT:
+        if (m_oesElementIndexUint)
+            break;
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "drawElements", "invalid type");
+        return;
     default:
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "drawElements", "invalid type");
         return;
@@ -1954,7 +1989,7 @@ void WebGLRenderingContext::drawElements(GC3Denum mode, GC3Dsizei count, GC3Denu
         return;
     }
 
-    int numElements = 0;
+    unsigned numElements = 0;
     if (!isErrorGeneratedOnOutOfBoundsAccesses()) {
         // Ensure we have a valid rendering state
         if (!validateElementArraySize(count, type, static_cast<GC3Dintptr>(offset))) {
@@ -2314,6 +2349,14 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
             m_oesVertexArrayObject = OESVertexArrayObject::create(this);
         }
         return m_oesVertexArrayObject.get();
+    }
+    if (equalIgnoringCase(name, "OES_element_index_uint")
+        && m_context->getExtensions()->supports("GL_OES_element_index_uint")) {
+        if (!m_oesElementIndexUint) {
+            m_context->getExtensions()->ensureEnabled("GL_OES_element_index_uint");
+            m_oesElementIndexUint = OESElementIndexUint::create(this);
+        }
+        return m_oesElementIndexUint.get();
     }
     if (equalIgnoringCase(name, "WEBKIT_WEBGL_lose_context")
         // FIXME: remove this after a certain grace period.
@@ -2816,6 +2859,8 @@ Vector<String> WebGLRenderingContext::getSupportedExtensions()
         result.append("WEBKIT_EXT_texture_filter_anisotropic");
     if (m_context->getExtensions()->supports("GL_OES_vertex_array_object"))
         result.append("OES_vertex_array_object");
+    if (m_context->getExtensions()->supports("GL_OES_element_index_uint"))
+        result.append("OES_element_index_uint");
     result.append("WEBKIT_WEBGL_lose_context");
     if (WebGLCompressedTextureS3TC::supported(this))
         result.append("WEBKIT_WEBGL_compressed_texture_s3tc");

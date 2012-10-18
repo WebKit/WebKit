@@ -4226,3 +4226,7 @@ webkit.org/b/99604 [ Mac Win ] http/tests/workers/text-encoding.html [ Pass Cras
 
 # User Timing is not enable yet. so skip it.
 webkit.org/b/84893 http/tests/w3c/webperf/submission/user-timing [ Skip ]
+
+# Expected to fail until WebGL extension implementation lands
+webkit.org/b/98257 fast/canvas/webgl/oes-element-index-uint.html [ Failure Pass ]
+webkit.org/b/98257 platform/chromium/virtual/gpu/fast/canvas/webgl/oes-element-index-uint.html [ Failure Pass ]

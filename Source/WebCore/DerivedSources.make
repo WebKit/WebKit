@@ -377,6 +377,7 @@ BINDING_IDLS = \
     $(WebCore)/html/canvas/Int16Array.idl \
     $(WebCore)/html/canvas/Int32Array.idl \
     $(WebCore)/html/canvas/Int8Array.idl \
+    $(WebCore)/html/canvas/OESElementIndexUint.idl \
     $(WebCore)/html/canvas/OESStandardDerivatives.idl \
     $(WebCore)/html/canvas/OESTextureFloat.idl \
     $(WebCore)/html/canvas/OESVertexArrayObject.idl \

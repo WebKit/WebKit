@@ -191,6 +191,7 @@ fast/canvas/webgl/viewport-unchanged-upon-resize.html
 fast/canvas/webgl/webgl-array-invalid-ranges.html
 fast/canvas/webgl/webgl-specific.html
 fast/canvas/webgl/oes-vertex-array-object.html
+fast/canvas/webgl/oes-element-index-uint.html
 fast/harness/override-preferences-2.html
 fast/images/animated-gif-restored-from-bfcache.html
 fast/loader/display-image-unset-allows-cached-image-load.html

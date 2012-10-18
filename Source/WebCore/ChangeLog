@@ -1,3 +1,53 @@
+2012-10-18  Brandon Jones  <bajones@google.com>
+
+        Implement OES_element_index_uint / WEBKIT_OES_element_index_uint
+        https://bugs.webkit.org/show_bug.cgi?id=97400
+
+        Reviewed by Kenneth Russell.
+
+        Implemented OES_element_index_uint WebGL extension
+
+        Test: fast/canvas/webgl/oes-element-index-uint.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::toV8Object):
+        * html/canvas/OESElementIndexUint.cpp: Copied from Source/WebCore/html/canvas/WebGLExtension.h.
+        (WebCore):
+        (WebCore::OESElementIndexUint::OESElementIndexUint):
+        (WebCore::OESElementIndexUint::~OESElementIndexUint):
+        (WebCore::OESElementIndexUint::getName):
+        (WebCore::OESElementIndexUint::create):
+        * html/canvas/OESElementIndexUint.h: Copied from Source/WebCore/html/canvas/WebGLExtension.h.
+        (WebCore):
+        (OESElementIndexUint):
+        * html/canvas/OESElementIndexUint.idl: Copied from Source/WebCore/html/canvas/WebGLExtension.h.
+        * html/canvas/WebGLExtension.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContext::validateElementArraySize):
+        (WebCore::WebGLRenderingContext::validateIndexArrayConservative):
+        (WebCore::WebGLRenderingContext::validateIndexArrayPrecise):
+        (WebCore::WebGLRenderingContext::validateRenderingState):
+        (WebCore::WebGLRenderingContext::drawElements):
+        (WebCore::WebGLRenderingContext::getExtension):
+        (WebCore::WebGLRenderingContext::getSupportedExtensions):
+        * html/canvas/WebGLRenderingContext.h:
+        (WebCore):
+        (WebGLRenderingContext):
+        * platform/graphics/Extensions3D.h:
+        (Extensions3D):
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::supportsExtension):
+
 2012-10-18  Jer Noble  <jer.noble@apple.com>
 
         Add diagnostic logging to track per-page media engine usage.

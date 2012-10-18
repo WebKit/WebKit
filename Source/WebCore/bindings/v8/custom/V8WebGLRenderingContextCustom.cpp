@@ -47,6 +47,7 @@
 #include "V8Int16Array.h"
 #include "V8Int32Array.h"
 #include "V8Int8Array.h"
+#include "V8OESElementIndexUint.h"
 #include "V8OESStandardDerivatives.h"
 #include "V8OESTextureFloat.h"
 #include "V8OESVertexArrayObject.h"
@@ -190,6 +191,10 @@ static v8::Handle<v8::Value> toV8Object(WebGLExtension* extension, v8::Handle<v8
     case WebGLExtension::OESVertexArrayObjectName:
         extensionObject = toV8(static_cast<OESVertexArrayObject*>(extension), contextObject, isolate);
         referenceName = "oesVertexArrayObjectName";
+        break;
+    case WebGLExtension::OESElementIndexUintName:
+        extensionObject = toV8(static_cast<OESElementIndexUint*>(extension), contextObject, isolate);
+        referenceName = "oesElementIndexUintName";
         break;
     case WebGLExtension::WebGLDebugRendererInfoName:
         extensionObject = toV8(static_cast<WebGLDebugRendererInfo*>(extension), contextObject, isolate);

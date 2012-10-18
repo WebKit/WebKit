@@ -49,6 +49,7 @@ class IntSize;
 class OESStandardDerivatives;
 class OESTextureFloat;
 class OESVertexArrayObject;
+class OESElementIndexUint;
 class WebGLActiveInfo;
 class WebGLBuffer;
 class WebGLContextGroup;
@@ -358,12 +359,12 @@ public:
     bool validateElementArraySize(GC3Dsizei count, GC3Denum type, GC3Dintptr offset);
 
     // Conservative but quick index validation
-    bool validateIndexArrayConservative(GC3Denum type, int& numElementsRequired);
+    bool validateIndexArrayConservative(GC3Denum type, unsigned& numElementsRequired);
 
     // Precise but slow index validation -- only done if conservative checks fail
-    bool validateIndexArrayPrecise(GC3Dsizei count, GC3Denum type, GC3Dintptr offset, int& numElementsRequired);
+    bool validateIndexArrayPrecise(GC3Dsizei count, GC3Denum type, GC3Dintptr offset, unsigned& numElementsRequired);
     // If numElements <= 0, we only check if each enabled vertex attribute is bound to a buffer.
-    bool validateRenderingState(int numElements);
+    bool validateRenderingState(unsigned numElements);
 
     bool validateWebGLObject(const char*, WebGLObject*);
 
@@ -505,6 +506,7 @@ public:
     OwnPtr<OESTextureFloat> m_oesTextureFloat;
     OwnPtr<OESStandardDerivatives> m_oesStandardDerivatives;
     OwnPtr<OESVertexArrayObject> m_oesVertexArrayObject;
+    OwnPtr<OESElementIndexUint> m_oesElementIndexUint;
     OwnPtr<WebGLLoseContext> m_webglLoseContext;
     OwnPtr<WebGLDebugRendererInfo> m_webglDebugRendererInfo;
     OwnPtr<WebGLDebugShaders> m_webglDebugShaders;

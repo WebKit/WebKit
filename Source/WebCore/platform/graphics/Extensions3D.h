@@ -56,6 +56,7 @@ public:
     //   GL_OES_standard_derivatives
     //   GL_OES_rgb8_rgba8
     //   GL_OES_vertex_array_object
+    //   GL_OES_element_index_uint
     //   GL_ANGLE_translated_shader_source
     //   GL_ARB_texture_rectangle (only the subset required to
     //     implement IOSurface binding; it's recommended to support

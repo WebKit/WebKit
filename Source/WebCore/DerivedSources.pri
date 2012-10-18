@@ -301,6 +301,7 @@ IDL_BINDINGS += \
     $$PWD/html/canvas/OESStandardDerivatives.idl \
     $$PWD/html/canvas/OESTextureFloat.idl \
     $$PWD/html/canvas/OESVertexArrayObject.idl \
+    $$PWD/html/canvas/OESElementIndexUint.idl \
     $$PWD/html/canvas/WebGLActiveInfo.idl \
     $$PWD/html/canvas/WebGLBuffer.idl \
     $$PWD/html/canvas/WebGLCompressedTextureS3TC.idl \

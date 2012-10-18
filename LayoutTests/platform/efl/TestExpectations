@@ -366,6 +366,9 @@ fast/css/draggable-region-parser.html
 # http://webkit.org/b/96828
 fast/canvas/webgl/oes-vertex-array-object.html
 
+# Expected to fail until OES_element_index_uint extension is implemented
+webkit.org/b/98257 fast/canvas/webgl/oes-element-index-uint.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # TESTS EXPECTED TO FAIL
 #////////////////////////////////////////////////////////////////////////////////////////

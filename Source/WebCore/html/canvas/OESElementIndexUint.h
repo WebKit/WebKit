@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,25 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGLExtension_h
-#define WebGLExtension_h
+#ifndef OESElementIndexUint_h
+#define OESElementIndexUint_h
 
-#include "WebGLRenderingContext.h"
+#include "WebGLExtension.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-class WebGLExtension {
-    WTF_MAKE_FAST_ALLOCATED;
+class OESElementIndexUint : public WebGLExtension {
 public:
-    // Extension names are needed to properly wrap instances in JavaScript objects.
-    enum ExtensionName {
-        WebKitWebGLLoseContextName, // WEBKIT_ prefix until extension is official
-        EXTTextureFilterAnisotropicName,
-        OESTextureFloatName,
-        OESStandardDerivativesName,
-        OESVertexArrayObjectName,
-        WebGLDebugRendererInfoName,
-        WebGLDebugShadersName,
-        WebKitWebGLCompressedTextureS3TCName, // WEBKIT_ prefix until extension is official
-        WebKitWebGLDepthTextureName, // WEBKIT_ prefix until extension is official
-        OESElementIndexUintName,
-    };
+    static PassOwnPtr<OESElementIndexUint> create(WebGLRenderingContext*);
 
-    void ref() { m_context->ref(); }
-    void deref() { m_context->deref(); }
-    WebGLRenderingContext* context() { return m_context; }
+    virtual ~OESElementIndexUint();
+    virtual ExtensionName getName() const;
 
-    virtual ~WebGLExtension();
-    virtual ExtensionName getName() const = 0;
-
-protected:
-    WebGLExtension(WebGLRenderingContext*);
-    WebGLRenderingContext* m_context;
+private:
+    OESElementIndexUint(WebGLRenderingContext*);
 };
 
 } // namespace WebCore
 
-#endif // WebGLExtension_h
+#endif // OESElementIndexUint_h

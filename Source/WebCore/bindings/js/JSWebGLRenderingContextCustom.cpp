@@ -39,6 +39,7 @@
 #include "JSHTMLImageElement.h"
 #include "JSImageData.h"
 #include "JSInt32Array.h"
+#include "JSOESElementIndexUint.h"
 #include "JSOESStandardDerivatives.h"
 #include "JSOESTextureFloat.h"
 #include "JSOESVertexArrayObject.h"
@@ -57,6 +58,7 @@
 #include "JSWebGLVertexArrayObjectOES.h"
 #include "JSWebKitCSSMatrix.h"
 #include "NotImplemented.h"
+#include "OESElementIndexUint.h"
 #include "OESStandardDerivatives.h"
 #include "OESTextureFloat.h"
 #include "OESVertexArrayObject.h"
@@ -200,6 +202,8 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebGLExten
         return toJS(exec, globalObject, static_cast<OESTextureFloat*>(extension));
     case WebGLExtension::OESVertexArrayObjectName:
         return toJS(exec, globalObject, static_cast<OESVertexArrayObject*>(extension));
+    case WebGLExtension::OESElementIndexUintName:
+        return toJS(exec, globalObject, static_cast<OESElementIndexUint*>(extension));
     case WebGLExtension::WebGLDebugRendererInfoName:
         return toJS(exec, globalObject, static_cast<WebGLDebugRendererInfo*>(extension));
     case WebGLExtension::WebGLDebugShadersName:
