@@ -1,3 +1,13 @@
+2012-10-18  Marja Hölttä  <marja@chromium.org>
+
+        Fix: CachedResourceLoader::requestSVGDocument was passing an URL as charset
+        https://bugs.webkit.org/show_bug.cgi?id=99730
+
+        Reviewed by Jochen Eisinger.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestSVGDocument):
+
 2012-10-18  Jer Noble  <jer.noble@apple.com>
 
         Fullscreen movie controls behave incorrectly when clicked (and dragged)

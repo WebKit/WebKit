@@ -229,7 +229,7 @@ CachedResourceHandle<CachedXSLStyleSheet> CachedResourceLoader::requestXSLStyleS
 #if ENABLE(SVG)
 CachedResourceHandle<CachedSVGDocument> CachedResourceLoader::requestSVGDocument(ResourceRequest& request)
 {
-    return static_cast<CachedSVGDocument*>(requestResource(CachedResource::SVGDocumentResource, request, request.url(), defaultCachedResourceOptions()).get());
+    return static_cast<CachedSVGDocument*>(requestResource(CachedResource::SVGDocumentResource, request, String(), defaultCachedResourceOptions()).get());
 }
 #endif
 
