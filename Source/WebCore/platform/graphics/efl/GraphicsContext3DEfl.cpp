@@ -48,6 +48,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     , m_currentHeight(0)
     , m_compiler(isGLES2Compliant() ? SH_ESSL_OUTPUT : SH_GLSL_OUTPUT)
     , m_attrs(attrs)
+    , m_renderStyle(renderStyle)
     , m_texture(0)
     , m_compositorTexture(0)
     , m_fbo(0)

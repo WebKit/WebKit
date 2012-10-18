@@ -1,3 +1,17 @@
+2012-10-18  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL] GraphicsContext3D::m_renderStyle is not initialized
+        https://bugs.webkit.org/show_bug.cgi?id=99721
+
+        Reviewed by Antonio Gomes.
+
+        Initialize GraphicsContext3D::m_renderStyle.
+
+        No new tests, no new functionality.
+
+        * platform/graphics/efl/GraphicsContext3DEfl.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
 2012-10-18  Brian White  <bcwhite@chromium.org>
 
         WebKit Doesn't Recognize Content-Language HTTP Header
