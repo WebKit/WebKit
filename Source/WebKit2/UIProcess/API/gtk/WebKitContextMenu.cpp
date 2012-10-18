@@ -25,6 +25,7 @@
 #include "WebKitContextMenuItemPrivate.h"
 #include "WebKitContextMenuPrivate.h"
 
+using namespace WebKit;
 using namespace WebCore;
 
 struct _WebKitContextMenuPrivate {

@@ -31,6 +31,8 @@
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
+using namespace WebKit;
+
 static const unsigned int gReadBufferSize = 8192;
 
 G_DEFINE_TYPE(WebKitURISchemeRequest, webkit_uri_scheme_request, G_TYPE_OBJECT)

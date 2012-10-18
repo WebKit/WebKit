@@ -1,5 +1,62 @@
 2012-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Don't use using namespace WebKit in private headers in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=99724
+
+        Reviewed by Xan Lopez.
+
+        Move using namespace WebKit from private headers to the cpp file.
+
+        * UIProcess/API/gtk/WebKitBackForwardList.cpp:
+        * UIProcess/API/gtk/WebKitBackForwardListPrivate.h:
+        * UIProcess/API/gtk/WebKitContextMenu.cpp:
+        * UIProcess/API/gtk/WebKitContextMenuItem.cpp:
+        * UIProcess/API/gtk/WebKitContextMenuItemPrivate.h:
+        * UIProcess/API/gtk/WebKitContextMenuPrivate.h:
+        * UIProcess/API/gtk/WebKitCookieManager.cpp:
+        * UIProcess/API/gtk/WebKitCookieManagerPrivate.h:
+        * UIProcess/API/gtk/WebKitDownload.cpp:
+        * UIProcess/API/gtk/WebKitDownloadPrivate.h:
+        * UIProcess/API/gtk/WebKitFaviconDatabasePrivate.h:
+        * UIProcess/API/gtk/WebKitFileChooserRequest.cpp:
+        * UIProcess/API/gtk/WebKitFileChooserRequestPrivate.h:
+        * UIProcess/API/gtk/WebKitFindController.cpp:
+        * UIProcess/API/gtk/WebKitFormSubmissionRequest.cpp:
+        * UIProcess/API/gtk/WebKitFormSubmissionRequestPrivate.h:
+        * UIProcess/API/gtk/WebKitGeolocationPermissionRequest.cpp:
+        * UIProcess/API/gtk/WebKitGeolocationPermissionRequestPrivate.h:
+        * UIProcess/API/gtk/WebKitGeolocationProvider.cpp:
+        * UIProcess/API/gtk/WebKitGeolocationProvider.h:
+        * UIProcess/API/gtk/WebKitHitTestResult.cpp:
+        * UIProcess/API/gtk/WebKitHitTestResultPrivate.h:
+        * UIProcess/API/gtk/WebKitJavascriptResult.cpp:
+        * UIProcess/API/gtk/WebKitJavascriptResultPrivate.h:
+        * UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:
+        * UIProcess/API/gtk/WebKitNavigationPolicyDecisionPrivate.h:
+        * UIProcess/API/gtk/WebKitPolicyDecision.cpp:
+        * UIProcess/API/gtk/WebKitPolicyDecisionPrivate.h:
+        * UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:
+        * UIProcess/API/gtk/WebKitResponsePolicyDecisionPrivate.h:
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        * UIProcess/API/gtk/WebKitSettingsPrivate.h:
+        * UIProcess/API/gtk/WebKitURIResponse.cpp:
+        * UIProcess/API/gtk/WebKitURIResponsePrivate.h:
+        * UIProcess/API/gtk/WebKitURISchemeRequest.cpp:
+        * UIProcess/API/gtk/WebKitURISchemeRequestPrivate.h:
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        * UIProcess/API/gtk/WebKitWebContextPrivate.h:
+        * UIProcess/API/gtk/WebKitWebInspector.cpp:
+        * UIProcess/API/gtk/WebKitWebInspectorPrivate.h:
+        * UIProcess/API/gtk/WebKitWebResource.cpp:
+        * UIProcess/API/gtk/WebKitWebResourcePrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/WebKitWindowProperties.cpp:
+        * UIProcess/API/gtk/WebKitWindowPropertiesPrivate.h:
+
+2012-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Don't use the C API internally in WebKitFileChooserRequest
         https://bugs.webkit.org/show_bug.cgi?id=96774
 

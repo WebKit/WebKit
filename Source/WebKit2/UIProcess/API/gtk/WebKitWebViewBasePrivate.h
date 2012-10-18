@@ -33,23 +33,21 @@
 #include "WebKitWebViewBase.h"
 #include "WebPageProxy.h"
 
-using namespace WebKit;
-
-WebKitWebViewBase* webkitWebViewBaseCreate(WebContext*, WebPageGroup*);
+WebKitWebViewBase* webkitWebViewBaseCreate(WebKit::WebContext*, WebKit::WebPageGroup*);
 GtkIMContext* webkitWebViewBaseGetIMContext(WebKitWebViewBase*);
-WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase*);
-void webkitWebViewBaseCreateWebPage(WebKitWebViewBase*, WebContext*, WebPageGroup*);
+WebKit::WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase*);
+void webkitWebViewBaseCreateWebPage(WebKitWebViewBase*, WebKit::WebContext*, WebKit::WebPageGroup*);
 void webkitWebViewBaseSetTooltipText(WebKitWebViewBase*, const char*);
 void webkitWebViewBaseSetTooltipArea(WebKitWebViewBase*, const WebCore::IntRect&);
 void webkitWebViewBaseForwardNextKeyEvent(WebKitWebViewBase*);
-void webkitWebViewBaseStartDrag(WebKitWebViewBase*, const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage);
+void webkitWebViewBaseStartDrag(WebKitWebViewBase*, const WebCore::DragData&, PassRefPtr<WebKit::ShareableBitmap> dragImage);
 void webkitWebViewBaseChildMoveResize(WebKitWebViewBase*, GtkWidget*, const WebCore::IntRect&);
 void webkitWebViewBaseEnterFullScreen(WebKitWebViewBase*);
 void webkitWebViewBaseExitFullScreen(WebKitWebViewBase*);
 void webkitWebViewBaseInitializeFullScreenClient(WebKitWebViewBase*, const WKFullScreenClientGtk*);
 void webkitWebViewBaseSetInspectorViewHeight(WebKitWebViewBase*, unsigned height);
-void webkitWebViewBaseSetActiveContextMenuProxy(WebKitWebViewBase*, WebContextMenuProxyGtk*);
-WebContextMenuProxyGtk* webkitWebViewBaseGetActiveContextMenuProxy(WebKitWebViewBase*);
+void webkitWebViewBaseSetActiveContextMenuProxy(WebKitWebViewBase*, WebKit::WebContextMenuProxyGtk*);
+WebKit::WebContextMenuProxyGtk* webkitWebViewBaseGetActiveContextMenuProxy(WebKitWebViewBase*);
 GdkEvent* webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase*);
 
 #if USE(TEXTURE_MAPPER_GL)

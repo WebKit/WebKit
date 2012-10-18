@@ -28,7 +28,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
-using namespace WebKit;
+namespace WebKit {
 
 class WebKitGeolocationProvider : public RefCounted<WebKitGeolocationProvider>, public WebCore::GeolocationProviderGeoclueClient {
 public:
@@ -48,6 +48,8 @@ private:
     RefPtr<WebGeolocationManagerProxy> m_geolocationManager;
     WebCore::GeolocationProviderGeoclue m_provider;
 };
+
+} // namespace WebKit
 
 #endif // ENABLE(GEOLOCATION)
 

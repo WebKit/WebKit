@@ -29,6 +29,8 @@
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
+using namespace WebKit;
+
 enum {
     SENT_REQUEST,
     RECEIVED_DATA,

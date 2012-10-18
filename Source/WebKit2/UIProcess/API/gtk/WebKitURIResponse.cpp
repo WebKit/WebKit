@@ -27,6 +27,9 @@
 #include <glib/gi18n-lib.h>
 #include <wtf/text/CString.h>
 
+using namespace WebKit;
+using namespace WebCore;
+
 enum {
     PROP_0,
 
@@ -37,12 +40,10 @@ enum {
     PROP_SUGGESTED_FILENAME
 };
 
-using namespace WebCore;
-
 G_DEFINE_TYPE(WebKitURIResponse, webkit_uri_response, G_TYPE_OBJECT)
 
 struct _WebKitURIResponsePrivate {
-    WebCore::ResourceResponse resourceResponse;
+    ResourceResponse resourceResponse;
     CString uri;
     CString mimeType;
     CString suggestedFilename;

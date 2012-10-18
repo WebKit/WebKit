@@ -25,6 +25,8 @@
 #include <glib/gi18n-lib.h>
 #include <wtf/text/CString.h>
 
+using namespace WebKit;
+
 /**
  * SECTION: WebKitHitTestResult
  * @Short_description: Result of a Hit Test

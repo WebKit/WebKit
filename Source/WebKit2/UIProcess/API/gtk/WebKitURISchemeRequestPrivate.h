@@ -24,9 +24,7 @@
 #include "WebKitURISchemeRequest.h"
 #include "WebKitWebContext.h"
 
-using namespace WebKit;
-
-WebKitURISchemeRequest* webkitURISchemeRequestCreate(WebKitWebContext*, WebSoupRequestManagerProxy*, WebURL*, WebPageProxy*, uint64_t requestID);
+WebKitURISchemeRequest* webkitURISchemeRequestCreate(WebKitWebContext*, WebKit::WebSoupRequestManagerProxy*, WebKit::WebURL*, WebKit::WebPageProxy*, uint64_t requestID);
 uint64_t webkitURISchemeRequestGetID(WebKitURISchemeRequest*);
 void webkitURISchemeRequestCancel(WebKitURISchemeRequest*);
 

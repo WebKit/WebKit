@@ -24,6 +24,8 @@
 #include "WebKitGeolocationPermissionRequestPrivate.h"
 #include "WebKitPermissionRequest.h"
 
+using namespace WebKit;
+
 /**
  * SECTION: WebKitGeolocationPermissionRequest
  * @Short_description: A permission request for sharing user's location

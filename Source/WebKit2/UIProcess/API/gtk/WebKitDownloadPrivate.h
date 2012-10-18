@@ -25,9 +25,7 @@
 #include <WebCore/ResourceError.h>
 #include <wtf/text/CString.h>
 
-using namespace WebKit;
-
-WebKitDownload* webkitDownloadCreate(DownloadProxy*);
+WebKitDownload* webkitDownloadCreate(WebKit::DownloadProxy*);
 bool webkitDownloadIsCancelled(WebKitDownload*);
 void webkitDownloadSetResponse(WebKitDownload*, WebKitURIResponse*);
 void webkitDownloadNotifyProgress(WebKitDownload*, guint64 bytesReceived);

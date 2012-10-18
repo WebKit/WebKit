@@ -34,6 +34,7 @@
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 
+using namespace WebKit;
 using namespace WebCore;
 
 struct _WebKitContextMenuItemPrivate {

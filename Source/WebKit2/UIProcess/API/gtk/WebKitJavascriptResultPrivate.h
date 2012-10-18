@@ -24,8 +24,6 @@
 #include "WebKitPrivate.h"
 #include "WebKitWebView.h"
 
-using namespace WebKit;
-
-WebKitJavascriptResult* webkitJavascriptResultCreate(WebKitWebView*, WebSerializedScriptValue*);
+WebKitJavascriptResult* webkitJavascriptResultCreate(WebKitWebView*, WebKit::WebSerializedScriptValue*);
 
 #endif // WebKitJavascriptResultPrivate_h

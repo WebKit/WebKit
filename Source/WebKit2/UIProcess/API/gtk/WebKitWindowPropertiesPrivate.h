@@ -30,10 +30,8 @@
 #include "WebKitPrivate.h"
 #include "WebKitWindowProperties.h"
 
-using namespace WebKit;
-
 WebKitWindowProperties* webkitWindowPropertiesCreate();
-void webkitWindowPropertiesUpdateFromWebWindowFeatures(WebKitWindowProperties*, ImmutableDictionary* features);
+void webkitWindowPropertiesUpdateFromWebWindowFeatures(WebKitWindowProperties*, WebKit::ImmutableDictionary* features);
 void webkitWindowPropertiesSetGeometry(WebKitWindowProperties*, GdkRectangle*);
 void webkitWindowPropertiesSetToolbarVisible(WebKitWindowProperties*, bool toolbarsVisible);
 void webkitWindowPropertiesSetMenubarVisible(WebKitWindowProperties*, bool menuBarVisible);

@@ -28,6 +28,9 @@
 #include <WebCore/IntRect.h>
 #include <glib/gi18n-lib.h>
 
+using namespace WebKit;
+using namespace WebCore;
+
 /**
  * SECTION: WebKitWindowProperties
  * @short_description: Window properties of a #WebKitWebView
@@ -102,8 +105,6 @@ enum {
     PROP_RESIZABLE,
     PROP_FULLSCREEN
 };
-
-using namespace WebCore;
 
 G_DEFINE_TYPE(WebKitWindowProperties, webkit_window_properties, G_TYPE_OBJECT)
 

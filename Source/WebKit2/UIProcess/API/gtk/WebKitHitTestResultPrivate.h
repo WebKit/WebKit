@@ -23,9 +23,7 @@
 #include "WebKitHitTestResult.h"
 #include "WebKitPrivate.h"
 
-using namespace WebKit;
-
-WebKitHitTestResult* webkitHitTestResultCreate(WebHitTestResult*);
-bool webkitHitTestResultCompare(WebKitHitTestResult*, WebHitTestResult*);
+WebKitHitTestResult* webkitHitTestResultCreate(WebKit::WebHitTestResult*);
+bool webkitHitTestResultCompare(WebKitHitTestResult*, WebKit::WebHitTestResult*);
 
 #endif // WebKitHitTestResultPrivate_h

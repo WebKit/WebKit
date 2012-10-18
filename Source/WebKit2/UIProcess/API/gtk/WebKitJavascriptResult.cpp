@@ -24,6 +24,8 @@
 #include "WebSerializedScriptValue.h"
 #include <wtf/gobject/GRefPtr.h>
 
+using namespace WebKit;
+
 struct _WebKitJavascriptResult {
     _WebKitJavascriptResult(WebKitWebView* view, WebSerializedScriptValue* serializedScriptValue)
         : webView(view)

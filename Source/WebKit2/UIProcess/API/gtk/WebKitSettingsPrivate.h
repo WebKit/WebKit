@@ -28,8 +28,6 @@
 
 #include "WebKitSettings.h"
 
-using namespace WebKit;
-
-void webkitSettingsAttachSettingsToPage(WebKitSettings*, WebPageProxy*);
+void webkitSettingsAttachSettingsToPage(WebKitSettings*, WebKit::WebPageProxy*);
 
 #endif // WebKitSettingsPrivate_h

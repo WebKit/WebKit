@@ -26,6 +26,8 @@
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
+using namespace WebKit;
+
 G_DEFINE_TYPE(WebKitFormSubmissionRequest, webkit_form_submission_request, G_TYPE_OBJECT)
 
 struct _WebKitFormSubmissionRequestPrivate {

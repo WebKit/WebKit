@@ -29,6 +29,8 @@
 #include "WebGeolocationManagerProxy.h"
 #include "WebGeolocationPosition.h"
 
+using namespace WebKit;
+
 #if ENABLE(GEOLOCATION)
 
 static inline WebKitGeolocationProvider* toGeolocationProvider(const void* clientInfo)

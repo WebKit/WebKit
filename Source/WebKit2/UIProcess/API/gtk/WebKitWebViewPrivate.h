@@ -30,14 +30,12 @@
 #include "WebKitWebView.h"
 #include <wtf/text/CString.h>
 
-using namespace WebKit;
-
 void webkitWebViewLoadChanged(WebKitWebView*, WebKitLoadEvent);
 void webkitWebViewLoadFailed(WebKitWebView*, WebKitLoadEvent, const char* failingURI, GError*);
 void webkitWebViewSetEstimatedLoadProgress(WebKitWebView*, double estimatedLoadProgress);
 void webkitWebViewSetTitle(WebKitWebView*, const CString&);
 void webkitWebViewUpdateURI(WebKitWebView*);
-WebPageProxy* webkitWebViewCreateNewPage(WebKitWebView*, ImmutableDictionary* windowFeatures);
+WebKit::WebPageProxy* webkitWebViewCreateNewPage(WebKitWebView*, WebKit::ImmutableDictionary* windowFeatures);
 void webkitWebViewReadyToShowPage(WebKitWebView*);
 void webkitWebViewRunAsModal(WebKitWebView*);
 void webkitWebViewClosePage(WebKitWebView*);
@@ -46,16 +44,16 @@ bool webkitWebViewRunJavaScriptConfirm(WebKitWebView*, const CString& message);
 CString webkitWebViewRunJavaScriptPrompt(WebKitWebView*, const CString& message, const CString& defaultText);
 void webkitWebViewMakePermissionRequest(WebKitWebView*, WebKitPermissionRequest*);
 void webkitWebViewMakePolicyDecision(WebKitWebView*, WebKitPolicyDecisionType, WebKitPolicyDecision*);
-void webkitWebViewMouseTargetChanged(WebKitWebView*, WebHitTestResult*, unsigned modifiers);
-void webkitWebViewPrintFrame(WebKitWebView*, WebFrameProxy*);
-void webkitWebViewResourceLoadStarted(WebKitWebView*, WebFrameProxy*, uint64_t resourceIdentifier, WebKitURIRequest*);
+void webkitWebViewMouseTargetChanged(WebKitWebView*, WebKit::WebHitTestResult*, unsigned modifiers);
+void webkitWebViewPrintFrame(WebKitWebView*, WebKit::WebFrameProxy*);
+void webkitWebViewResourceLoadStarted(WebKitWebView*, WebKit::WebFrameProxy*, uint64_t resourceIdentifier, WebKitURIRequest*);
 void webkitWebViewRunFileChooserRequest(WebKitWebView*, WebKitFileChooserRequest*);
 WebKitWebResource* webkitWebViewGetLoadingWebResource(WebKitWebView*, uint64_t resourceIdentifier);
 void webkitWebViewRemoveLoadingWebResource(WebKitWebView*, uint64_t resourceIdentifier);
 WebKitWebResource* webkitWebViewResourceLoadFinished(WebKitWebView*, uint64_t resourceIdentifier);
 bool webkitWebViewEnterFullScreen(WebKitWebView*);
 bool webkitWebViewLeaveFullScreen(WebKitWebView*);
-void webkitWebViewPopulateContextMenu(WebKitWebView*, ImmutableArray* proposedMenu, WebHitTestResult*);
+void webkitWebViewPopulateContextMenu(WebKitWebView*, WebKit::ImmutableArray* proposedMenu, WebKit::WebHitTestResult*);
 void webkitWebViewSubmitFormRequest(WebKitWebView*, WebKitFormSubmissionRequest*);
 
 #endif // WebKitWebViewPrivate_h

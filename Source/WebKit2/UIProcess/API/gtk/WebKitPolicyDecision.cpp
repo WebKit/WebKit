@@ -23,6 +23,8 @@
 #include "WebFramePolicyListenerProxy.h"
 #include "WebKitPolicyDecisionPrivate.h"
 
+using namespace WebKit;
+
 /**
  * SECTION: WebKitPolicyDecision
  * @Short_description: A pending policy decision

@@ -46,6 +46,8 @@
  * item or items.
  */
 
+using namespace WebKit;
+
 enum {
     CHANGED,
 

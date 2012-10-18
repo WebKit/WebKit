@@ -23,8 +23,6 @@
 #include "WebKitPolicyDecision.h"
 #include "WebKitPrivate.h"
 
-using namespace WebKit;
-
-void webkitPolicyDecisionSetListener(WebKitPolicyDecision*, WebFramePolicyListenerProxy*);
+void webkitPolicyDecisionSetListener(WebKitPolicyDecision*, WebKit::WebFramePolicyListenerProxy*);
 
 #endif // WebKitResponsePolicyDecisionPrivate_h
