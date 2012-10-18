@@ -1,3 +1,15 @@
+2012-10-18  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Clean up variables controlling Qt module creation/handling
+
+        Reviewed by Tor Arne Vestbø.
+
+        We now depend on a Qt 5 version that is new enough to allow us to
+        clean this up. Qt's default_pre.prf uses MODULE_QMAKE_OUTDIR, but
+        the other MODULE_BASE_* variables are onl used in qmodule.prf.
+
+        * Source/api.pri:
+
 2012-10-17  Tor Arne Vestbø  <tor.arne.vestbo@digia.com>
 
         [Qt] Modularize documentation for QtWebKit

@@ -31,12 +31,9 @@ MODULE = webkitwidgets
 QT_API_DEPENDS = core gui network
 build?(webkit1): QT_API_DEPENDS += widgets
 
-qmakeVersion=$$[QMAKE_VERSION]
-equals(qmakeVersion, 3.0) {
-    # We want the QtWebKit API forwarding includes to live in the root build dir.
-    MODULE_BASE_DIR = $$_PRO_FILE_PWD_
-    MODULE_BASE_OUTDIR = $$ROOT_BUILD_DIR
-}
+# We want the QtWebKit API forwarding includes to live in the root build dir.
+MODULE_BASE_DIR = $$_PRO_FILE_PWD_
+MODULE_BASE_OUTDIR = $$ROOT_BUILD_DIR
 
 QMAKE_DOCS = $$PWD/qtwebkit.qdocconf
 
