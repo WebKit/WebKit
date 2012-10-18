@@ -47,20 +47,10 @@ class IntSize;
 class SharedBuffer;
 
 #if USE(CG)
-typedef CGImageSourceRef NativeImageDecoderPtr;
-#elif !PLATFORM(CHROMIUM)
-class ImageDecoder;
-typedef ImageDecoder* NativeImageDecoderPtr;
-#endif
-
-#if PLATFORM(CHROMIUM)
-class DeferredImageDecoder;
-typedef DeferredImageDecoder NativeImageDecoder;
-typedef DeferredImageDecoder* NativeImageDecoderPtr;
-#elif USE(CG)
-#define NativeImageDecoder ImageDecoder
+typedef CGImageSourceRef NativeImageSourcePtr;
 #else
-typedef ImageDecoder NativeImageDecoder;
+class ImageDecoder;
+typedef ImageDecoder* NativeImageSourcePtr;
 #endif
 
 // Right now GIFs are the only recognized image format that supports animation.
@@ -168,7 +158,7 @@ public:
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
-    NativeImageDecoderPtr m_decoder;
+    NativeImageSourcePtr m_decoder;
 
 #if !USE(CG)
     AlphaOption m_alphaOption;

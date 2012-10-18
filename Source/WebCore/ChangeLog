@@ -1,3 +1,33 @@
+2012-10-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r131810.
+        http://trac.webkit.org/changeset/131810
+        https://bugs.webkit.org/show_bug.cgi?id=99762
+
+        Broke linux debug webkit_unit_tests (Requested by
+        danakj|gardening on #webkit).
+
+        * WebCore.gypi:
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::setData):
+        * platform/graphics/ImageSource.h:
+        (WebCore):
+        (ImageSource):
+        * platform/graphics/chromium/DeferredImageDecoder.cpp: Removed.
+        * platform/graphics/chromium/DeferredImageDecoder.h: Removed.
+        * platform/graphics/chromium/ImageDecodingStore.cpp: Removed.
+        * platform/graphics/chromium/ImageDecodingStore.h: Removed.
+        * platform/graphics/chromium/ImageFrameGenerator.cpp: Removed.
+        * platform/graphics/chromium/ImageFrameGenerator.h: Removed.
+        * platform/graphics/chromium/LazyDecodingPixelRef.cpp: Removed.
+        * platform/graphics/chromium/LazyDecodingPixelRef.h: Removed.
+        * platform/graphics/chromium/ScaledImageFragment.cpp: Removed.
+        * platform/graphics/chromium/ScaledImageFragment.h: Removed.
+        * platform/graphics/skia/NativeImageSkia.cpp:
+        (WebCore::NativeImageSkia::resizedBitmap):
+        * platform/image-decoders/ImageDecoder.h:
+        (ImageFrame):
+
 2012-10-18  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Do some cleanup in the chromium WebKit API

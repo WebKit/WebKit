@@ -390,9 +390,6 @@ class ChromiumPort(Port):
             VirtualTestSuite('platform/chromium/virtual/softwarecompositing',
                              'compositing',
                              ['--enable-software-compositing']),
-            VirtualTestSuite('platform/chromium/virtual/deferred/fast/images',
-                             'fast/images',
-                             ['--enable-deferred-image-decoding', '--enable-per-tile-painting', '--force-compositing-mode']),
         ]
 
     #

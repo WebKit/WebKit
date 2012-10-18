@@ -78,7 +78,6 @@ public:
     virtual void setDefaultTextEncodingName(const WebString&);
     virtual void setDefaultTileSize(WebSize);
     virtual void setDeferred2dCanvasEnabled(bool);
-    virtual void setDeferredImageDecodingEnabled(bool);
     virtual void setDeveloperExtrasEnabled(bool);
     virtual void setDeviceSupportsMouse(bool);
     virtual void setDeviceSupportsTouch(bool);
@@ -179,7 +178,6 @@ private:
     bool m_applyDefaultDeviceScaleFactorInCompositor;
     bool m_gestureTapHighlightEnabled;
     bool m_autoZoomFocusedNodeToLegibleScale;
-    bool m_deferredImageDecodingEnabled;
     WebSize m_defaultTileSize;
     WebSize m_maxUntiledLayerSize;
 };

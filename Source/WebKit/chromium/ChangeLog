@@ -1,3 +1,23 @@
+2012-10-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r131810.
+        http://trac.webkit.org/changeset/131810
+        https://bugs.webkit.org/show_bug.cgi?id=99762
+
+        Broke linux debug webkit_unit_tests (Requested by
+        danakj|gardening on #webkit).
+
+        * WebKit.gypi:
+        * public/WebSettings.h:
+        * src/WebKit.cpp:
+        (WebKit::shutdown):
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::WebSettingsImpl):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+        * tests/DeferredImageDecoderTest.cpp: Removed.
+        * tests/MockImageDecoder.h: Removed.
+
 2012-10-18  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Implement deferred image decoding

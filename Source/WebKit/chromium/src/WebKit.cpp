@@ -31,7 +31,6 @@
 #include "config.h"
 #include "WebKit.h"
 
-#include "ImageDecodingStore.h"
 #include "LayoutTestSupport.h"
 #include "Logging.h"
 #include "MutationObserver.h"
@@ -166,7 +165,6 @@ void shutdown()
     }
 #endif
     s_webKitPlatformSupport = 0;
-    WebCore::ImageDecodingStore::shutdown();
     Platform::shutdown();
     WebPrerenderingSupport::shutdown();
 }
