@@ -1,5 +1,15 @@
 2012-10-18  Simon Hausmann  <simon.hausmann@digia.com>
 
+        [Qt] Improved support for silent builds
+
+        Reviewed by Tor Arne Vestbø.
+
+        Silence our extra compilers when CONFIG+=silent is set.
+
+        * qmake/mkspecs/features/default_post.prf:
+
+2012-10-18  Simon Hausmann  <simon.hausmann@digia.com>
+
         [Qt] Reduce memory pressure at link time with less compromise on speed of linking
 
         Reviewed by Csaba Osztrogonác.
