@@ -80,6 +80,10 @@ var InspectorFrontendAPI = {
             WebInspector.dockController.setDocked(attached);
     },
 
+    setDockSide: function(dockSide)
+    {
+    },
+
     showConsole: function()
     {
         WebInspector.showPanel("console");
