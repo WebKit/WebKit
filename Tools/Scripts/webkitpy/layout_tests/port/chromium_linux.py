@@ -46,14 +46,12 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
             'chromium-linux',
             'chromium-win',
             'chromium',
-            'mac',
         ],
         'x86': [
             'chromium-linux-x86',
             'chromium-linux',
             'chromium-win',
             'chromium',
-            'mac',
         ],
     }
 

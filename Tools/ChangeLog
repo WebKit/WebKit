@@ -1,3 +1,33 @@
+2012-10-17  Dirk Pranke  <dpranke@chromium.org>
+
+        [chromium] stop falling back to platform/mac for LayoutTest results
+        https://bugs.webkit.org/show_bug.cgi?id=99666
+
+        Reviewed by James Robinson.
+
+        Previously the Chromium ports would fall back to results in
+        platform/mac if a result was not found in platform/chromium-*.
+        This allowed us to share a lot of results w/ the Apple Mac port,
+        but often surprised people (especially at Apple ;) when changing
+        something in that directory would break a Chromium build.
+
+        The tests that are deleted in baselineoptimizer were for cases
+        that are no longer relevant or possible in the current fallback
+        graph.
+
+        * Scripts/webkitpy/common/checkout/baselineoptimizer_unittest.py:
+        (BaselineOptimizerTest.test_move_baselines):
+        (BaselineOptimizerTest.test_chromium_covers_mac_win_linux):
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort):
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        (ChromiumLinuxPort):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        (ChromiumMacPort):
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        (ChromiumWinPort):
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+
 2012-10-17  Shashi Shekhar  <shashishekhar@google.com>
 
         Remove redundant sdk_build parameter.
