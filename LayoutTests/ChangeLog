@@ -1,3 +1,23 @@
+2012-10-18  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] Validate types of built-in vertex attributes
+        https://bugs.webkit.org/show_bug.cgi?id=98972
+
+        Reviewed by Dean Jackson.
+
+        invalid-custom-filter-attribute-types.html uses a set of vertex shaders. Each vertex shader
+        defines a specific attribute with the wrong type. None of the vertex shaders in the test
+        should execute. If a vertex shader does execute, its associated fragment shader will render
+        a green div as red.
+
+        * css3/filters/custom/invalid-custom-filter-attribute-types-expected.html: Added.
+        * css3/filters/custom/invalid-custom-filter-attribute-types.html: Added.
+        * css3/filters/resources/invalid-type-a-mesh-coord.vs: Added.
+        * css3/filters/resources/invalid-type-a-position.vs: Added.
+        * css3/filters/resources/invalid-type-a-tex-coord.vs: Added.
+        * css3/filters/resources/invalid-type-a-triangle-coord.vs: Added.
+        * css3/filters/resources/invalid-type-attribute-array.vs: Added.
+
 2012-10-18  Tony Chang  <tony@chromium.org>
 
         Unreviewed, update Qt expectations for slider tests.

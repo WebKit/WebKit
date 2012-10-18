@@ -54,7 +54,7 @@ struct ANGLEShaderSymbol {
     ShDataType dataType;
     int size;
 
-    bool isSampler()
+    bool isSampler() const
     {
         return symbolType == SHADER_SYMBOL_TYPE_UNIFORM
             && (dataType == SH_SAMPLER_2D

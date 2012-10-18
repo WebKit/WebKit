@@ -1,3 +1,33 @@
+2012-10-18  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] Validate types of built-in vertex attributes
+        https://bugs.webkit.org/show_bug.cgi?id=98972
+
+        Reviewed by Dean Jackson.
+
+        Reject custom filters in which the author defined built-in attributes with the wrong type.
+        For example, the GLSL declaration "attribute float a_position" is incorrect because
+        a_position should be a vec4, not a float.
+
+        Test: css3/filters/custom/invalid-custom-filter-attribute-types.html
+
+        * platform/graphics/ANGLEWebKitBridge.h:
+        (WebCore::ANGLEShaderSymbol::isSampler):
+            Add const qualifier to isSampler method.
+        * platform/graphics/filters/CustomFilterValidatedProgram.cpp:
+        (WebCore):
+        (WebCore::builtInAttributeNameToTypeMap):
+            New file static function. Returns a map of the CSS Custom Filters built-in attribute
+            names and their expected types.
+        (WebCore::validateSymbols):
+            New file static function. Loop through all of the symbols. Reject the shader if we find
+            a built-in attribute defined with the wrong type.
+        (WebCore::CustomFilterValidatedProgram::CustomFilterValidatedProgram):
+            Call the new validateSymbols function. If it returns false, exit the constructor early,
+            which rejects the program.
+            Move the loop that checks if any uniform is a sampler into the the validateSymbols
+            function.
+
 2012-10-18  Mike Reed  <reed@google.com>
 
         Handle if we fail to allocate nonPlatformCanvas in ImageBuffer constructor

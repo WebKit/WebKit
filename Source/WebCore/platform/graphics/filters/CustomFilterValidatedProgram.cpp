@@ -37,11 +37,69 @@
 #include "CustomFilterGlobalContext.h"
 #include "CustomFilterProgramInfo.h"
 #include "NotImplemented.h"
+#include <wtf/HashMap.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
 #define SHADER(Src) (#Src) 
+
+// FIXME: Reuse this type when we validate the types of built-in uniforms.
+// https://bugs.webkit.org/show_bug.cgi?id=98974
+typedef HashMap<String, ShDataType> SymbolNameToTypeMap;
+
+static SymbolNameToTypeMap* builtInAttributeNameToTypeMap()
+{
+    static SymbolNameToTypeMap* nameToTypeMap = 0;
+    if (!nameToTypeMap) {
+        nameToTypeMap = new SymbolNameToTypeMap;        
+        nameToTypeMap->set("a_meshCoord", SH_FLOAT_VEC2);
+        nameToTypeMap->set("a_position", SH_FLOAT_VEC4);
+        nameToTypeMap->set("a_texCoord", SH_FLOAT_VEC2);
+        nameToTypeMap->set("a_triangleCoord", SH_FLOAT_VEC3);
+    }
+    return nameToTypeMap;
+}
+
+static bool validateSymbols(const Vector<ANGLEShaderSymbol>& symbols)
+{
+    for (size_t i = 0; i < symbols.size(); ++i) {
+        const ANGLEShaderSymbol& symbol = symbols[i];
+        switch (symbol.symbolType) {
+        case SHADER_SYMBOL_TYPE_ATTRIBUTE: {
+            SymbolNameToTypeMap* attributeNameToTypeMap = builtInAttributeNameToTypeMap();
+            SymbolNameToTypeMap::iterator builtInAttribute = attributeNameToTypeMap->find(symbol.name);
+            if (builtInAttribute != attributeNameToTypeMap->end() && symbol.dataType != builtInAttribute->value) {
+                // The author defined one of the built-in attributes with the wrong type.
+                return false;
+            }
+
+            // FIXME: Return false when the attribute is not one of the built-in attributes.
+            // https://bugs.webkit.org/show_bug.cgi?id=98973
+            break;
+        }
+        case SHADER_SYMBOL_TYPE_UNIFORM:
+            if (symbol.isSampler()) {
+                // FIXME: For now, we restrict shaders with any sampler defined.
+                // When we implement texture parameters, we will allow shaders whose samplers are bound to valid textures.
+                // We must not allow OpenGL to give unbound samplers a default value of 0 because that references the element texture,
+                // which should be inaccessible to the author's shader code.
+                // https://bugs.webkit.org/show_bug.cgi?id=96230
+                return false;
+            }
+
+            // FIXME: Validate the types of built-in uniforms.
+            // https://bugs.webkit.org/show_bug.cgi?id=98974
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+
+    return true;
+}
 
 String CustomFilterValidatedProgram::defaultVertexShaderString()
 {
@@ -95,16 +153,10 @@ CustomFilterValidatedProgram::CustomFilterValidatedProgram(CustomFilterGlobalCon
         return;
     }
 
-    // Validate the author's samplers.
-    for (Vector<ANGLEShaderSymbol>::iterator it = symbols.begin(); it != symbols.end(); ++it) {
-        if (it->isSampler()) {
-            // FIXME: For now, we restrict shaders with any sampler defined.
-            // When we implement texture parameters, we will allow shaders whose samplers are bound to valid textures.
-            // We must not allow OpenGL to give unbound samplers a default value of 0 because that references the DOM element texture,
-            // which should be inaccessible to the author's shader code.
-            // https://bugs.webkit.org/show_bug.cgi?id=96230
-            return;
-        }
+    if (!validateSymbols(symbols)) {
+        // FIXME: Report validation errors.
+        // https://bugs.webkit.org/show_bug.cgi?id=74416
+        return;
     }
 
     // We need to add texture access, blending, and compositing code to shaders that are referenced from the CSS mix function.
