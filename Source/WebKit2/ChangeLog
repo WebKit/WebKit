@@ -1,3 +1,16 @@
+2012-10-18  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [WK2] Fix incorrect test expectations of messages_unittest.py.
+        https://bugs.webkit.org/show_bug.cgi?id=99699
+
+        Reviewed by Gyuyoung Kim.
+
+        Fix the expected results of messages_unittest.py.
+
+        The expected result of messages_unittest.py has bugs, and it makes failure on python test.
+
+        * Scripts/webkit2/messages_unittest.py:
+
 2012-10-18  Jussi Kukkonen  <jussi.kukkonen@intel.com>
 
         Add PluginProcessProxy::platformInitializeLaunchOptions

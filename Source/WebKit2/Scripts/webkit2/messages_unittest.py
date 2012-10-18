@@ -467,14 +467,14 @@ struct GetPlugins : CoreIPC::Arguments1<bool> {
 struct GetPluginProcessConnection : CoreIPC::Arguments1<const WTF::String&> {
     static const Kind messageID = GetPluginProcessConnectionID;
     struct DelayedReply : public ThreadSafeRefCounted<DelayedReply> {
-        DelayedReply(PassRefPtr<CoreIPC::Connection>, PassOwnPtr<CoreIPC::MessageEncoder>);
+        DelayedReply(PassRefPtr<CoreIPC::Connection>, PassOwnPtr<CoreIPC::ArgumentEncoder>);
         ~DelayedReply();
 
         bool send(const CoreIPC::Connection::Handle& connectionHandle);
 
     private:
         RefPtr<CoreIPC::Connection> m_connection;
-        OwnPtr<CoreIPC::MessageEncoder> m_encoder;
+        OwnPtr<CoreIPC::ArgumentEncoder> m_arguments;
     };
 
     typedef CoreIPC::Arguments1<CoreIPC::Connection::Handle&> Reply;
@@ -488,14 +488,14 @@ struct GetPluginProcessConnection : CoreIPC::Arguments1<const WTF::String&> {
 struct TestMultipleAttributes : CoreIPC::Arguments0 {
     static const Kind messageID = TestMultipleAttributesID;
     struct DelayedReply : public ThreadSafeRefCounted<DelayedReply> {
-        DelayedReply(PassRefPtr<CoreIPC::Connection>, PassOwnPtr<CoreIPC::MessageEncoder>);
+        DelayedReply(PassRefPtr<CoreIPC::Connection>, PassOwnPtr<CoreIPC::ArgumentEncoder>);
         ~DelayedReply();
 
         bool send();
 
     private:
         RefPtr<CoreIPC::Connection> m_connection;
-        OwnPtr<CoreIPC::MessageEncoder> m_encoder;
+        OwnPtr<CoreIPC::ArgumentEncoder> m_arguments;
     };
 
     typedef CoreIPC::Arguments0 Reply;
@@ -640,9 +640,9 @@ namespace Messages {
 
 namespace WebPage {
 
-GetPluginProcessConnection::DelayedReply::DelayedReply(PassRefPtr<CoreIPC::Connection> connection, PassOwnPtr<CoreIPC::MessageEncoder> arguments)
+GetPluginProcessConnection::DelayedReply::DelayedReply(PassRefPtr<CoreIPC::Connection> connection, PassOwnPtr<CoreIPC::ArgumentEncoder> arguments)
     : m_connection(connection)
-    , m_encoder(arguments)
+    , m_arguments(arguments)
 {
 }
 
@@ -653,16 +653,16 @@ GetPluginProcessConnection::DelayedReply::~DelayedReply()
 
 bool GetPluginProcessConnection::DelayedReply::send(const CoreIPC::Connection::Handle& connectionHandle)
 {
-    ASSERT(m_encoder);
-    m_encoder->encode(connectionHandle);
+    ASSERT(m_arguments);
+    m_arguments->encode(connectionHandle);
     bool result = m_connection->sendSyncReply(static_pointer_cast<CoreIPC::MessageEncoder>(m_arguments.release()));
     m_connection = nullptr;
     return result;
 }
 
-TestMultipleAttributes::DelayedReply::DelayedReply(PassRefPtr<CoreIPC::Connection> connection, PassOwnPtr<CoreIPC::MessageEncoder> arguments)
+TestMultipleAttributes::DelayedReply::DelayedReply(PassRefPtr<CoreIPC::Connection> connection, PassOwnPtr<CoreIPC::ArgumentEncoder> arguments)
     : m_connection(connection)
-    , m_encoder(arguments)
+    , m_arguments(arguments)
 {
 }
 
@@ -673,7 +673,7 @@ TestMultipleAttributes::DelayedReply::~DelayedReply()
 
 bool TestMultipleAttributes::DelayedReply::send()
 {
-    ASSERT(m_encoder);
+    ASSERT(m_arguments);
     bool result = m_connection->sendSyncReply(static_pointer_cast<CoreIPC::MessageEncoder>(m_arguments.release()));
     m_connection = nullptr;
     return result;
@@ -755,7 +755,7 @@ void WebPage::didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID 
     ASSERT_NOT_REACHED();
 }
 
-void WebPage::didReceiveSyncWebPageMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::MessageEncoder>& reply)
+void WebPage::didReceiveSyncWebPageMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
 {
     switch (messageID.get<Messages::WebPage::Kind>()) {
     case Messages::WebPage::CreatePluginID:
