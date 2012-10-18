@@ -73,20 +73,23 @@ void TestInvocation::forceRepaintDoneCallback(WKErrorRef, void *context)
 
 void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef imageRef, WKArrayRef repaintRects)
 {
-    WKPageRef page = TestController::shared().mainWebView()->page();
-    WKPageForceRepaint(page, this, &forceRepaintDoneCallback);
-
-    TestController::shared().runUntil(m_gotRepaint, TestController::ShortTimeout);
-
     QImage image;
-    if (m_gotRepaint)
-        image = WKImageCreateQImage(TestController::shared().mainWebView()->windowSnapshotImage().get());
-    else {
-        // The test harness expects an image so we output an empty one.
-        WKRect windowRect = TestController::shared().mainWebView()->windowFrame();
-        image = QImage(QSize(windowRect.size.width, windowRect.size.height), QImage::Format_ARGB32_Premultiplied);
-        image.fill(Qt::red);
-    }
+    if (PlatformWebView::windowShapshotEnabled()) {
+        WKPageRef page = TestController::shared().mainWebView()->page();
+        WKPageForceRepaint(page, this, &forceRepaintDoneCallback);
+
+        TestController::shared().runUntil(m_gotRepaint, TestController::ShortTimeout);
+
+        if (m_gotRepaint)
+            image = WKImageCreateQImage(TestController::shared().mainWebView()->windowSnapshotImage().get());
+        else {
+            // The test harness expects an image so we output an empty one.
+            WKRect windowRect = TestController::shared().mainWebView()->windowFrame();
+            image = QImage(QSize(windowRect.size.width, windowRect.size.height), QImage::Format_ARGB32_Premultiplied);
+            image.fill(Qt::red);
+        }
+    } else
+        image = WKImageCreateQImage(imageRef);
 
     if (repaintRects) {
         QImage mask(image.size(), image.format());

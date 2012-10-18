@@ -62,10 +62,11 @@ private Q_SLOTS:
         m_view->setParentItem(rootObject());
         QQmlProperty::write(m_view, "anchors.fill", qVariantFromValue(rootObject()));
 
-        setSurfaceType(OpenGLSurface);
-        create();
-
-        QQuickWindowPrivate::get(this)->setRenderWithoutShowing(true);
+        if (PlatformWebView::windowShapshotEnabled()) {
+            setSurfaceType(OpenGLSurface);
+            create();
+            QQuickWindowPrivate::get(this)->setRenderWithoutShowing(true);
+        }
 
         QWindowSystemInterface::handleWindowActivated(this);
         m_view->page()->setFocus(true);
@@ -159,6 +160,15 @@ void PlatformWebView::makeWebViewFirstResponder()
 WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
 {
     return adoptWK(WKImageCreateFromQImage(m_window->grabWindow()));
+}
+
+bool PlatformWebView::windowShapshotEnabled()
+{
+    static bool result;
+    static bool hasChecked = false;
+    if (!hasChecked)
+        result = qgetenv("QT_WEBKIT_DISABLE_UIPROCESS_DUMPPIXELS") != "1";
+    return result;
 }
 
 } // namespace WTR

@@ -160,6 +160,7 @@ class QtPort(Port):
         self._copy_value_from_environ_if_set(clean_env, 'DISABLE_NI_WARNING')
         self._copy_value_from_environ_if_set(clean_env, 'QT_WEBKIT_PAUSE_UI_PROCESS')
         self._copy_value_from_environ_if_set(clean_env, 'QT_QPA_PLATFORM_PLUGIN_PATH')
+        self._copy_value_from_environ_if_set(clean_env, 'QT_WEBKIT_DISABLE_UIPROCESS_DUMPPIXELS')
         return clean_env
 
     # FIXME: We should find a way to share this implmentation with Gtk,

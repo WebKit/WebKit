@@ -1,3 +1,33 @@
+2012-10-18  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] OpenGL rendering is not possible on bots using Xvfb
+        https://bugs.webkit.org/show_bug.cgi?id=99463
+
+        Reviewed by Jocelyn Turcotte.
+
+        Added a workaround to be able to disallow UI side OpenGL rendering
+        if the environment is not suitable because it can be extremely slow
+        with a software backend.
+
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort.setup_environ_for_server): Let the environment variable
+        QT_WEBKIT_DISABLE_UIPROCESS_DUMPPIXELS reach the driver. This variable
+        should be defined on bots that don't have a suitable OpenGL environment.
+        * WebKitTestRunner/PlatformWebView.h:
+        (PlatformWebView):
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::WrapperWindow::handleStatusChanged): Don't try to create an OpenGL
+        surface and set the setRenderWithoutShowing flag on the window if the
+        variable is set.
+        (WTR::PlatformWebView::windowSnapshotImage):
+        (WTR::PlatformWebView::windowShapshotEnabled):
+        (WTR):
+        * WebKitTestRunner/qt/TestInvocationQt.cpp:
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected): Use the old method
+        of evaluating pixel results if the snapshot is not supported, that is to check
+        the image we got from the web process. This is necessary for the bots to be able
+        to run ref tests.
+
 2012-10-15  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Implement pixel snapshot generation in WTR
