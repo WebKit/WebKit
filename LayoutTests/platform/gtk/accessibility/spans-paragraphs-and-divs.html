@@ -59,51 +59,51 @@ if (window.accessibilityController) {
     var webArea = accessibilityController.focusedElement;
 
     var element = webArea.childAtIndex(0);
-    shouldBe("element.role", "'AXRole: paragraph'");
+    shouldBe("element.role", "'AXRole: AXParagraph'");
     shouldBe("element.childrenCount", "1");
 
     var link = element.childAtIndex(0);
-    shouldBe("link.role", "'AXRole: link'");
+    shouldBe("link.role", "'AXRole: AXLink'");
     shouldBe("link.childrenCount", "0");
 
     element = webArea.childAtIndex(1);
-    shouldBe("element.role", "'AXRole: paragraph'");
+    shouldBe("element.role", "'AXRole: AXParagraph'");
     shouldBe("element.childrenCount", "0");
 
     element = webArea.childAtIndex(2);
-    shouldBe("element.role", "'AXRole: paragraph'");
+    shouldBe("element.role", "'AXRole: AXParagraph'");
     shouldBe("element.childrenCount", "1");
 
     link = element.childAtIndex(0);
-    shouldBe("link.role", "'AXRole: link'");
+    shouldBe("link.role", "'AXRole: AXLink'");
     shouldBe("link.childrenCount", "0");
 
     element = webArea.childAtIndex(3);
-    shouldBe("element.role", "'AXRole: paragraph'");
+    shouldBe("element.role", "'AXRole: AXParagraph'");
     shouldBe("element.childrenCount", "0");
 
     element = webArea.childAtIndex(4);
-    shouldBe("element.role", "'AXRole: section'");
+    shouldBe("element.role", "'AXRole: AXDiv'");
     shouldBe("element.childrenCount", "1");
 
     link = element.childAtIndex(0);
-    shouldBe("link.role", "'AXRole: link'");
+    shouldBe("link.role", "'AXRole: AXLink'");
     shouldBe("link.childrenCount", "0");
 
     element = webArea.childAtIndex(5);
-    shouldBe("element.role", "'AXRole: section'");
+    shouldBe("element.role", "'AXRole: AXDiv'");
     shouldBe("element.childrenCount", "0");
 
     element = webArea.childAtIndex(6);
-    shouldBe("element.role", "'AXRole: section'");
+    shouldBe("element.role", "'AXRole: AXDiv'");
     shouldBe("element.childrenCount", "1");
 
     link = element.childAtIndex(0);
-    shouldBe("link.role", "'AXRole: link'");
+    shouldBe("link.role", "'AXRole: AXLink'");
     shouldBe("link.childrenCount", "0");
 
     element = webArea.childAtIndex(7);
-    shouldBe("element.role", "'AXRole: section'");
+    shouldBe("element.role", "'AXRole: AXDiv'");
     shouldBe("element.childrenCount", "0");
 }
 

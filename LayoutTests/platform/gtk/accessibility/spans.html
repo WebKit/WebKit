@@ -44,31 +44,31 @@ if (window.accessibilityController) {
     var webArea = accessibilityController.focusedElement;
 
     var element = webArea.childAtIndex(0);
-    shouldBe("element.role", "'AXRole: heading'");
+    shouldBe("element.role", "'AXRole: AXHeading'");
     shouldBe("element.childrenCount", "0");
 
     element = webArea.childAtIndex(1);
-    shouldBe("element.role", "'AXRole: heading'");
+    shouldBe("element.role", "'AXRole: AXHeading'");
     shouldBe("element.childrenCount", "1");
 
     var link = element.childAtIndex(0);
-    shouldBe("link.role", "'AXRole: link'");
+    shouldBe("link.role", "'AXRole: AXLink'");
     shouldBe("link.childrenCount", "0");
 
     element = webArea.childAtIndex(2);
-    shouldBe("element.role", "'AXRole: list'");
+    shouldBe("element.role", "'AXRole: AXList'");
     shouldBe("element.childrenCount", "2");
 
     var item = element.childAtIndex(0);
-    shouldBe("item.role", "'AXRole: list item'");
+    shouldBe("item.role", "'AXRole: AXListItem'");
     shouldBe("item.childrenCount", "0");
 
     item = element.childAtIndex(1);
-    shouldBe("item.role", "'AXRole: list item'");
+    shouldBe("item.role", "'AXRole: AXListItem'");
     shouldBe("item.childrenCount", "1");
 
     link = item.childAtIndex(0);
-    shouldBe("link.role", "'AXRole: link'");
+    shouldBe("link.role", "'AXRole: AXLink'");
     shouldBe("link.childrenCount", "0");
 }
 

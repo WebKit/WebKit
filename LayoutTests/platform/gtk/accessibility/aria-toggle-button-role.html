@@ -10,19 +10,19 @@ function runTest()
 
     document.getElementById("body").focus();
     obj = accessibilityController.focusedElement;
-    shouldBe("obj.childAtIndex(0).childAtIndex(0).role", "'AXRole: list item'");
+    shouldBe("obj.childAtIndex(0).childAtIndex(0).role", "'AXRole: AXListItem'");
 
     document.getElementById("obj1").focus();
     obj1 = accessibilityController.focusedElement;
-    shouldBe("obj1.role", "'AXRole: toggle button'");
+    shouldBe("obj1.role", "'AXRole: AXToggleButton'");
 
     document.getElementById("obj2").focus();
     obj2 = accessibilityController.focusedElement;
-    shouldBe("obj2.role", "'AXRole: toggle button'");
+    shouldBe("obj2.role", "'AXRole: AXToggleButton'");
 
     document.getElementById("obj3").focus();
     obj3 = accessibilityController.focusedElement;
-    shouldBe("obj3.role", "'AXRole: push button'");
+    shouldBe("obj3.role", "'AXRole: AXButton'");
   }
 }
 </script>

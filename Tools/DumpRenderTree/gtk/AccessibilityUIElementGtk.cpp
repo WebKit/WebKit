@@ -37,6 +37,114 @@
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
+static inline String roleToString(AtkRole role)
+{
+    switch (role) {
+    case ATK_ROLE_ALERT:
+        return "AXRole: AXAlert";
+    case ATK_ROLE_CANVAS:
+        return "AXRole: AXCanvas";
+    case ATK_ROLE_CHECK_BOX:
+        return "AXRole: AXCheckBox";
+    case ATK_ROLE_COLUMN_HEADER:
+        return "AXRole: AXColumnHeader";
+    case ATK_ROLE_COMBO_BOX:
+        return "AXRole: AXComboBox";
+    case ATK_ROLE_DOCUMENT_FRAME:
+        return "AXRole: AXWebArea";
+    case ATK_ROLE_ENTRY:
+        return "AXRole: AXTextField";
+    case ATK_ROLE_FOOTER:
+        return "AXRole: AXFooter";
+    case ATK_ROLE_FORM:
+        return "AXRole: AXForm";
+    case ATK_ROLE_GROUPING:
+        return "AXRole: AXGroup";
+    case ATK_ROLE_HEADING:
+        return "AXRole: AXHeading";
+    case ATK_ROLE_IMAGE:
+        return "AXRole: AXImage";
+    case ATK_ROLE_IMAGE_MAP:
+        return "AXRole: AXImageMap";
+    case ATK_ROLE_LABEL:
+        return "AXRole: AXLabel";
+    case ATK_ROLE_LINK:
+        return "AXRole: AXLink";
+    case ATK_ROLE_LIST:
+        return "AXRole: AXList";
+    case ATK_ROLE_LIST_BOX:
+        return "AXRole: AXListBox";
+    case ATK_ROLE_LIST_ITEM:
+        return "AXRole: AXListItem";
+    case ATK_ROLE_MENU:
+        return "AXRole: AXMenu";
+    case ATK_ROLE_MENU_BAR:
+        return "AXRole: AXMenuBar";
+    case ATK_ROLE_MENU_ITEM:
+        return "AXRole: AXMenuItem";
+    case ATK_ROLE_PAGE_TAB:
+        return "AXRole: AXTab";
+    case ATK_ROLE_PAGE_TAB_LIST:
+        return "AXRole: AXTabGroup";
+    case ATK_ROLE_PANEL:
+        return "AXRole: AXGroup";
+    case ATK_ROLE_PARAGRAPH:
+        return "AXRole: AXParagraph";
+    case ATK_ROLE_PASSWORD_TEXT:
+        return "AXRole: AXPasswordField";
+    case ATK_ROLE_PUSH_BUTTON:
+        return "AXRole: AXButton";
+    case ATK_ROLE_RADIO_BUTTON:
+        return "AXRole: AXRadioButton";
+    case ATK_ROLE_ROW_HEADER:
+        return "AXRole: AXRowHeader";
+    case ATK_ROLE_RULER:
+        return "AXRole: AXRuler";
+    case ATK_ROLE_SCROLL_BAR:
+        return "AXRole: AXScrollBar";
+    case ATK_ROLE_SCROLL_PANE:
+        return "AXRole: AXScrollArea";
+    case ATK_ROLE_SECTION:
+        return "AXRole: AXDiv";
+    case ATK_ROLE_SEPARATOR:
+        return "AXRole: AXHorizontalRule";
+    case ATK_ROLE_SLIDER:
+        return "AXRole: AXSlider";
+    case ATK_ROLE_SPIN_BUTTON:
+        return "AXRole: AXSpinButton";
+    case ATK_ROLE_TABLE:
+        return "AXRole: AXTable";
+    case ATK_ROLE_TABLE_CELL:
+        return "AXRole: AXCell";
+    case ATK_ROLE_TABLE_COLUMN_HEADER:
+        return "AXRole: AXColumnHeader";
+    case ATK_ROLE_TABLE_ROW:
+        return "AXRole: AXRow";
+    case ATK_ROLE_TABLE_ROW_HEADER:
+        return "AXRole: AXRowHeader";
+    case ATK_ROLE_TOGGLE_BUTTON:
+        return "AXRole: AXToggleButton";
+    case ATK_ROLE_TOOL_BAR:
+        return "AXRole: AXToolbar";
+    case ATK_ROLE_TOOL_TIP:
+        return "AXRole: AXUserInterfaceTooltip";
+    case ATK_ROLE_TREE:
+        return "AXRole: AXTree";
+    case ATK_ROLE_TREE_TABLE:
+        return "AXRole: AXTreeGrid";
+    case ATK_ROLE_TREE_ITEM:
+        return "AXRole: AXTreeItem";
+    case ATK_ROLE_WINDOW:
+        return "AXRole: AXWindow";
+    case ATK_ROLE_UNKNOWN:
+        return "AXRole: AXUnknown";
+    default:
+        // We want to distinguish ATK_ROLE_UNKNOWN from a known AtkRole which
+        // our DRT isn't properly handling.
+        return "AXRole: FIXME not identified";
+    }
+}
+
 static inline gchar* replaceCharactersForResults(gchar* str)
 {
     String uString = String::fromUTF8(str);
@@ -246,14 +354,11 @@ JSStringRef AccessibilityUIElement::parameterizedAttributeNames()
 JSStringRef AccessibilityUIElement::role()
 {
     AtkRole role = atk_object_get_role(ATK_OBJECT(m_element));
-
     if (!role)
         return JSStringCreateWithCharacters(0, 0);
 
-    const gchar* roleName = atk_role_get_name(role);
-    GOwnPtr<gchar> axRole(g_strdup_printf("AXRole: %s", roleName));
-
-    return JSStringCreateWithUTF8CString(axRole.get());
+    String roleString = roleToString(role);
+    return JSStringCreateWithUTF8CString(roleString.utf8().data());
 }
 
 JSStringRef AccessibilityUIElement::subrole()

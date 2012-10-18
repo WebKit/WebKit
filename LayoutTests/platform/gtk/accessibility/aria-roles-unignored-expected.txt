@@ -12,14 +12,14 @@ This tests that ARIA roles are not ignored for 'p','label', 'form' and 'div' ele
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS element.role is 'AXRole: paragraph'
-PASS element.role is 'AXRole: table'
-PASS element.role is 'AXRole: label'
-PASS element.role is 'AXRole: heading'
-PASS element.role is 'AXRole: form'
-PASS element.role is 'AXRole: push button'
-PASS element.role is 'AXRole: section'
-PASS element.role is 'AXRole: entry'
+PASS element.role is 'AXRole: AXParagraph'
+PASS element.role is 'AXRole: AXTable'
+PASS element.role is 'AXRole: AXLabel'
+PASS element.role is 'AXRole: AXHeading'
+PASS element.role is 'AXRole: AXForm'
+PASS element.role is 'AXRole: AXButton'
+PASS element.role is 'AXRole: AXDiv'
+PASS element.role is 'AXRole: AXTextField'
 PASS successfullyParsed is true
 
 TEST COMPLETE

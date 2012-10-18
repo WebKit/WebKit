@@ -15,7 +15,7 @@ function runTest()
 
     axSlider = accessibilityController.focusedElement;
 
-    shouldBe("axSlider.role", "'AXRole: slider'");
+    shouldBe("axSlider.role", "'AXRole: AXSlider'");
     shouldBe("axSlider.intValue", "50");
     shouldBe("axSlider.minValue", "0");
     shouldBe("axSlider.maxValue", "100");

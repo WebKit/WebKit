@@ -26,10 +26,10 @@ if (window.testRunner) {
     var item2 = list.childAtIndex(1);
     var paragraph = item2.childAtIndex(0);
 
-    shouldBe("list.role", "'AXRole: list'");
-    shouldBe("item1.role", "'AXRole: list item'");
-    shouldBe("item2.role", "'AXRole: list item'");
-    shouldBe("paragraph.role", "'AXRole: paragraph'");
+    shouldBe("list.role", "'AXRole: AXList'");
+    shouldBe("item1.role", "'AXRole: AXListItem'");
+    shouldBe("item2.role", "'AXRole: AXListItem'");
+    shouldBe("paragraph.role", "'AXRole: AXParagraph'");
   }
 }
 

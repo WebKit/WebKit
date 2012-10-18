@@ -22,29 +22,29 @@ This tests that paragraphs and divs with anonymous block children are not ignore
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS element.role is 'AXRole: paragraph'
+PASS element.role is 'AXRole: AXParagraph'
 PASS element.childrenCount is 1
-PASS link.role is 'AXRole: link'
+PASS link.role is 'AXRole: AXLink'
 PASS link.childrenCount is 0
-PASS element.role is 'AXRole: paragraph'
+PASS element.role is 'AXRole: AXParagraph'
 PASS element.childrenCount is 0
-PASS element.role is 'AXRole: paragraph'
+PASS element.role is 'AXRole: AXParagraph'
 PASS element.childrenCount is 1
-PASS link.role is 'AXRole: link'
+PASS link.role is 'AXRole: AXLink'
 PASS link.childrenCount is 0
-PASS element.role is 'AXRole: paragraph'
+PASS element.role is 'AXRole: AXParagraph'
 PASS element.childrenCount is 0
-PASS element.role is 'AXRole: section'
+PASS element.role is 'AXRole: AXDiv'
 PASS element.childrenCount is 1
-PASS link.role is 'AXRole: link'
+PASS link.role is 'AXRole: AXLink'
 PASS link.childrenCount is 0
-PASS element.role is 'AXRole: section'
+PASS element.role is 'AXRole: AXDiv'
 PASS element.childrenCount is 0
-PASS element.role is 'AXRole: section'
+PASS element.role is 'AXRole: AXDiv'
 PASS element.childrenCount is 1
-PASS link.role is 'AXRole: link'
+PASS link.role is 'AXRole: AXLink'
 PASS link.childrenCount is 0
-PASS element.role is 'AXRole: section'
+PASS element.role is 'AXRole: AXDiv'
 PASS element.childrenCount is 0
 PASS successfullyParsed is true
 

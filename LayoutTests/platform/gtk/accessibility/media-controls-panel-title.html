@@ -13,10 +13,10 @@ if (window.accessibilityController) {
     document.getElementById("body").focus();
     var webArea = accessibilityController.focusedElement;
     var element = webArea.childAtIndex(0);
-    shouldBe("element.role", "'AXRole: panel'");
+    shouldBe("element.role", "'AXRole: AXGroup'");
     shouldBe("element.title", "'AXTitle: '");
     element = element.childAtIndex(0);
-    shouldBe("element.role", "'AXRole: tool bar'");
+    shouldBe("element.role", "'AXRole: AXToolbar'");
     shouldBe("element.title", "'AXTitle: media controls'");
 }
 

@@ -7,7 +7,7 @@ RUN(sliderAXObject = accessibilityController.focusedElement)
 EXPECTED (sliderAXObject.minValue == '0') OK
 EXPECTED (sliderAXObject.maxValue == '100') OK
 EXPECTED (sliderAXObject.childrenCount == '0') OK
-EXPECTED (sliderAXObject.role == 'AXRole: slider') OK
+EXPECTED (sliderAXObject.role == 'AXRole: AXSlider') OK
 
 ** Increment the slider, test slider value and div set on 'update' event
 RUN(sliderAXObject.increment())

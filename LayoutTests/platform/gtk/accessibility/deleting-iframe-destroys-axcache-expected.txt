@@ -11,24 +11,24 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Before:
-AXRole: scroll pane 
-    AXRole: document frame 
-        AXRole: paragraph AXValue: Before
-        AXRole: panel AXValue: <obj>
-            AXRole: scroll pane 
-                AXRole: document frame 
-                    AXRole: panel AXValue: <obj>Click me
-                        AXRole: push button 
-        AXRole: paragraph AXValue: After
-        AXRole: paragraph AXValue: End of test
+AXRole: AXScrollArea 
+    AXRole: AXWebArea 
+        AXRole: AXParagraph AXValue: Before
+        AXRole: AXGroup AXValue: <obj>
+            AXRole: AXScrollArea 
+                AXRole: AXWebArea 
+                    AXRole: AXGroup AXValue: <obj>Click me
+                        AXRole: AXButton 
+        AXRole: AXParagraph AXValue: After
+        AXRole: AXParagraph AXValue: End of test
 
 After:
-AXRole: scroll pane 
-    AXRole: document frame 
-        AXRole: paragraph AXValue: Before
-        AXRole: panel AXValue: 
-        AXRole: paragraph AXValue: After
-        AXRole: paragraph AXValue: End of test
+AXRole: AXScrollArea 
+    AXRole: AXWebArea 
+        AXRole: AXParagraph AXValue: Before
+        AXRole: AXGroup AXValue: 
+        AXRole: AXParagraph AXValue: After
+        AXRole: AXParagraph AXValue: End of test
 
 PASS frameBodyRole == frameBody.role is false
 PASS frameGroupRole == frameGroup.role is false

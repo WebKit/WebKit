@@ -1,3 +1,16 @@
+2012-10-17  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] AccessibilityUIElement::role() should be consistent across platforms wherever possible
+        https://bugs.webkit.org/show_bug.cgi?id=99640
+
+        Reviewed by Chris Fleizach.
+
+        Convert AtkRole instances to the Mac/Safari-style AXRole string.
+
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (roleToString): New method to convert AtkRole instances to the Mac/Safari-style AXRole string
+        (AccessibilityUIElement::role): Output the Mac/Safair-style AXRole string rather than the AtkRole's name
+
 2012-10-17  Anders Carlsson  <andersca@apple.com>
 
         Clean up Vector.h

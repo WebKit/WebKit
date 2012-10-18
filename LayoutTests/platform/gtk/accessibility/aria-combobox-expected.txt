@@ -5,10 +5,10 @@ This tests that the aria roles for combobox and aria-expanded work correctly in 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Role: AXRole: combo box
+Role: AXRole: AXComboBox
 PASS combobox.isExpanded is false
 PASS combobox.isExpanded is false
-Role: AXRole: list
+Role: AXRole: AXList
 PASS successfullyParsed is true
 
 TEST COMPLETE

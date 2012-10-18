@@ -3,9 +3,9 @@ This tests that the media controls panel has the correct name and role
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS element.role is 'AXRole: panel'
+PASS element.role is 'AXRole: AXGroup'
 PASS element.title is 'AXTitle: '
-PASS element.role is 'AXRole: tool bar'
+PASS element.role is 'AXRole: AXToolbar'
 PASS element.title is 'AXTitle: media controls'
 PASS successfullyParsed is true
 

@@ -7,9 +7,9 @@ Make sure that a debug assert is not triggered when constructing the accessibili
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-AXRole: document frame 
-    AXRole: section AXValue: y
-    AXRole: section AXValue: End of test
+AXRole: AXWebArea 
+    AXRole: AXDiv AXValue: y
+    AXRole: AXDiv AXValue: End of test
 PASS successfullyParsed is true
 
 TEST COMPLETE

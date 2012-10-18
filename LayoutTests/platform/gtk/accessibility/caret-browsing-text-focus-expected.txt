@@ -8,8 +8,8 @@ This tests the FOCUSABLE and FOCUSED states for text objects.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS axPar1.role is 'AXRole: paragraph'
-PASS axPar2.role is 'AXRole: paragraph'
+PASS axPar1.role is 'AXRole: AXParagraph'
+PASS axPar2.role is 'AXRole: AXParagraph'
 PASS axPar1.isFocusable is true
 PASS axPar2.isFocusable is true
 PASS axPar1.isFocused is false

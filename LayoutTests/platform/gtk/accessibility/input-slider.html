@@ -96,7 +96,7 @@
                 run("sliderAXObject = accessibilityController.focusedElement");
                 testRanges(0, 100);
                 testExpected("sliderAXObject.childrenCount", 0);
-                testExpected("sliderAXObject.role", "AXRole: slider");
+                testExpected("sliderAXObject.role", "AXRole: AXSlider");
 
                 consoleWrite("");
                 consoleWrite("** Increment the slider, test slider value and div set on 'update' event");

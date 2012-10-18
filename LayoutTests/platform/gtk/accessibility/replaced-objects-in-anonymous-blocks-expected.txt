@@ -10,21 +10,21 @@ button
 
 
 End of test
-AXRole: document frame 
-    AXRole: paragraph AXValue: Paragraph
-    AXRole: panel AXValue: <obj>button<\n>
-        AXRole: push button 
-    AXRole: panel AXValue: <obj>
-        AXRole: scroll pane 
-            AXRole: document frame 
-    AXRole: panel AXValue: <obj>text area<\n>
-        AXRole: entry AXValue: text area
-    AXRole: section AXValue: Div<\n><obj>button
-        AXRole: push button 
-    AXRole: heading AXValue: Heading<\n><obj>button<\n><obj>
-        AXRole: push button 
-        AXRole: image 
-    AXRole: section AXValue: End of test
+AXRole: AXWebArea 
+    AXRole: AXParagraph AXValue: Paragraph
+    AXRole: AXGroup AXValue: <obj>button<\n>
+        AXRole: AXButton 
+    AXRole: AXGroup AXValue: <obj>
+        AXRole: AXScrollArea 
+            AXRole: AXWebArea 
+    AXRole: AXGroup AXValue: <obj>text area<\n>
+        AXRole: AXTextField AXValue: text area
+    AXRole: AXDiv AXValue: Div<\n><obj>button
+        AXRole: AXButton 
+    AXRole: AXHeading AXValue: Heading<\n><obj>button<\n><obj>
+        AXRole: AXButton 
+        AXRole: AXImage 
+    AXRole: AXDiv AXValue: End of test
 This tests that the text associated with replaced objects in an anonymous block is correct.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

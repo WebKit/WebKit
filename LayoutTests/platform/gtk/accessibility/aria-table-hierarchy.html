@@ -30,41 +30,41 @@
         var webArea = accessibilityController.focusedElement;
 
         var table1 = webArea.childAtIndex(0);
-        shouldBe("table1.role", "'AXRole: table'");
+        shouldBe("table1.role", "'AXRole: AXTable'");
         shouldBe("table1.rowCount", "1");
         shouldBe("table1.columnCount", "2");
         var table2 = webArea.childAtIndex(1);
-        shouldBe("table2.role", "'AXRole: table'");
+        shouldBe("table2.role", "'AXRole: AXTable'");
         shouldBe("table2.rowCount", "3");
         shouldBe("table2.columnCount", "2");
         var table3 = webArea.childAtIndex(2);
-        shouldBe("table3.role", "'AXRole: table'");
+        shouldBe("table3.role", "'AXRole: AXTable'");
         shouldBe("table3.rowCount", "1");
         shouldBe("table3.columnCount", "2");
         var table4 = webArea.childAtIndex(3);
-        shouldBe("table4.role", "'AXRole: table'");
+        shouldBe("table4.role", "'AXRole: AXTable'");
         shouldBe("table4.rowCount", "3");
         shouldBe("table4.columnCount", "2");
 
         var children = table1.childrenCount;
         shouldBe("children", "2");
         for (i = 0; i < children; ++i) {
-            shouldBe("table1.childAtIndex(i).role", "'AXRole: table cell'");
+            shouldBe("table1.childAtIndex(i).role", "'AXRole: AXCell'");
         }
         children = table2.childrenCount;
         shouldBe("children", "6");
         for (i = 0; i < children; ++i) {
-            shouldBe("table2.childAtIndex(i).role", "'AXRole: table cell'");
+            shouldBe("table2.childAtIndex(i).role", "'AXRole: AXCell'");
         }
         children = table3.childrenCount;
         shouldBe("children", "2");
         for (i = 0; i < children; ++i) {
-            shouldBe("table3.childAtIndex(i).role", "'AXRole: table cell'");
+            shouldBe("table3.childAtIndex(i).role", "'AXRole: AXCell'");
         }
         children = table4.childrenCount;
         shouldBe("children", "6");
         for (i = 0; i < children; ++i) {
-            shouldBe("table4.childAtIndex(i).role", "'AXRole: table cell'");
+            shouldBe("table4.childAtIndex(i).role", "'AXRole: AXCell'");
         }
     }
 </script>

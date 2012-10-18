@@ -32,28 +32,28 @@ if (window.accessibilityController) {
 
     // Paragraphs
     var element = webArea.childAtIndex(0);
-    shouldBe("element.role", "'AXRole: paragraph'");
+    shouldBe("element.role", "'AXRole: AXParagraph'");
     element = webArea.childAtIndex(1);
-    shouldBe("element.role", "'AXRole: table'");
+    shouldBe("element.role", "'AXRole: AXTable'");
 
     // Labels are exposed as inside a panel
     var labelsPanel = webArea.childAtIndex(2);
     element = labelsPanel.childAtIndex(0);
-    shouldBe("element.role", "'AXRole: label'");
+    shouldBe("element.role", "'AXRole: AXLabel'");
     element = labelsPanel.childAtIndex(1);
-    shouldBe("element.role", "'AXRole: heading'");
+    shouldBe("element.role", "'AXRole: AXHeading'");
 
     // Forms
     element = webArea.childAtIndex(3);
-    shouldBe("element.role", "'AXRole: form'");
+    shouldBe("element.role", "'AXRole: AXForm'");
     element = webArea.childAtIndex(4);
-    shouldBe("element.role", "'AXRole: push button'");
+    shouldBe("element.role", "'AXRole: AXButton'");
 
     // Divs
     element = webArea.childAtIndex(5);
-    shouldBe("element.role", "'AXRole: section'");
+    shouldBe("element.role", "'AXRole: AXDiv'");
     element = webArea.childAtIndex(6);
-    shouldBe("element.role", "'AXRole: entry'");
+    shouldBe("element.role", "'AXRole: AXTextField'");
 }
 
 </script>

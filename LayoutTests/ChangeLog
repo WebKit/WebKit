@@ -1,3 +1,55 @@
+2012-10-17  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] AccessibilityUIElement::role() should be consistent across platforms wherever possible
+        https://bugs.webkit.org/show_bug.cgi?id=99640
+
+        Reviewed by Chris Fleizach.
+
+        Updated tests and expectations to use the Mac/Safari-style AXRole strings
+
+        * platform/gtk/accessibility/adjacent-continuations-cause-assertion-failure-expected.txt:
+        * platform/gtk/accessibility/aria-combobox-expected.txt:
+        * platform/gtk/accessibility/aria-fallback-roles-expected.txt:
+        * platform/gtk/accessibility/aria-menubar-menuitems-expected.txt:
+        * platform/gtk/accessibility/aria-roles-expected.txt:
+        * platform/gtk/accessibility/aria-roles-unignored-expected.txt:
+        * platform/gtk/accessibility/aria-roles-unignored.html:
+        * platform/gtk/accessibility/aria-slider-required-attributes-expected.txt:
+        * platform/gtk/accessibility/aria-slider-required-attributes.html:
+        * platform/gtk/accessibility/aria-table-hierarchy-expected.txt:
+        * platform/gtk/accessibility/aria-table-hierarchy.html:
+        * platform/gtk/accessibility/aria-tables-expected.txt:
+        * platform/gtk/accessibility/aria-toggle-button-role-expected.txt:
+        * platform/gtk/accessibility/aria-toggle-button-role.html:
+        * platform/gtk/accessibility/aria-toggle-button-with-title-expected.txt:
+        * platform/gtk/accessibility/button-accessible-name-expected.txt:
+        * platform/gtk/accessibility/button-accessible-name.html:
+        * platform/gtk/accessibility/canvas-description-and-role-expected.txt:
+        * platform/gtk/accessibility/caret-browsing-text-focus-expected.txt:
+        * platform/gtk/accessibility/caret-browsing-text-focus.html:
+        * platform/gtk/accessibility/deleting-iframe-destroys-axcache-expected.txt:
+        * platform/gtk/accessibility/div-within-anchors-causes-crash-expected.txt:
+        * platform/gtk/accessibility/entry-and-password-expected.txt:
+        * platform/gtk/accessibility/input-slider-expected.txt:
+        * platform/gtk/accessibility/input-slider.html:
+        * platform/gtk/accessibility/legend-expected.txt:
+        * platform/gtk/accessibility/list-items-always-exposed-expected.txt:
+        * platform/gtk/accessibility/list-items-always-exposed.html:
+        * platform/gtk/accessibility/media-controls-panel-title-expected.txt:
+        * platform/gtk/accessibility/media-controls-panel-title.html:
+        * platform/gtk/accessibility/name-from-label-expected.txt:
+        * platform/gtk/accessibility/name-from-label.html:
+        * platform/gtk/accessibility/object-with-title-expected.txt:
+        * platform/gtk/accessibility/object-with-title.html:
+        * platform/gtk/accessibility/replaced-objects-in-anonymous-blocks-expected.txt:
+        * platform/gtk/accessibility/spans-expected.txt:
+        * platform/gtk/accessibility/spans-paragraphs-and-divs-expected.txt:
+        * platform/gtk/accessibility/spans-paragraphs-and-divs.html:
+        * platform/gtk/accessibility/spans.html:
+        * platform/gtk/accessibility/svg-image-expected.txt:
+        * platform/gtk/accessibility/table-hierarchy-expected.txt:
+        * platform/gtk/accessibility/table-hierarchy.html:
+
 2012-10-17  Arpita Bahuguna  <arpitabahuguna@gmail.com>
 
         Incorrect rendering of borders on <col> with span > 1

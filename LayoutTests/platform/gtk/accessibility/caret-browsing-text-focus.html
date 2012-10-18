@@ -24,8 +24,8 @@ if (window.testRunner) {
     var axPar2 = webArea.childAtIndex(1);
 
     // Check roles and initial states
-    shouldBe("axPar1.role", "'AXRole: paragraph'");
-    shouldBe("axPar2.role", "'AXRole: paragraph'");
+    shouldBe("axPar1.role", "'AXRole: AXParagraph'");
+    shouldBe("axPar2.role", "'AXRole: AXParagraph'");
     shouldBe("axPar1.isFocusable", "true");
     shouldBe("axPar2.isFocusable", "true");
     shouldBe("axPar1.isFocused", "false");
