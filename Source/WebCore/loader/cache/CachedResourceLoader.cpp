@@ -261,7 +261,7 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
         // These resource can inject script into the current document (Script,
         // XSL) or exfiltrate the content of the current document (CSS).
         if (Frame* f = frame())
-            if (!f->loader()->checkIfRunInsecureContent(m_document->securityOrigin(), url))
+            if (!f->loader()->mixedContentChecker()->canRunInsecureContent(m_document->securityOrigin(), url))
                 return false;
         break;
 #if ENABLE(VIDEO_TRACK)
@@ -276,7 +276,7 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
         // These resources can corrupt only the frame's pixels.
         if (Frame* f = frame()) {
             Frame* top = f->tree()->top();
-            if (!top->loader()->checkIfDisplayInsecureContent(top->document()->securityOrigin(), url))
+            if (!top->loader()->mixedContentChecker()->canDisplayInsecureContent(top->document()->securityOrigin(), url))
                 return false;
         }
         break;

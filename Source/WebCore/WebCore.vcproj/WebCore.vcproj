@@ -27615,6 +27615,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\MixedContentChecker.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\MixedContentChecker.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\NavigationAction.cpp"
 				>
 			</File>

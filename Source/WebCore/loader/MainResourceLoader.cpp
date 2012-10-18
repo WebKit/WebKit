@@ -236,7 +236,7 @@ void MainResourceLoader::willSendRequest(ResourceRequest& newRequest, const Reso
 
     Frame* top = m_frame->tree()->top();
     if (top != m_frame) {
-        if (!frameLoader()->checkIfDisplayInsecureContent(top->document()->securityOrigin(), newRequest.url())) {
+        if (!frameLoader()->mixedContentChecker()->canDisplayInsecureContent(top->document()->securityOrigin(), newRequest.url())) {
             cancel();
             return;
         }

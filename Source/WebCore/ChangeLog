@@ -1,3 +1,59 @@
+2012-10-17  Mike West  <mkwst@chromium.org>
+
+        Move mixed content logic out of FrameLoader
+        https://bugs.webkit.org/show_bug.cgi?id=45638
+
+        Reviewed by Eric Seidel.
+
+        This change moves checks for mixed content out of FrameLoader, and into
+        a new MixedContentChecker object. It's a pretty straightforward
+        refactoring with no change to the overall logic, and only minor changes
+        to the code to reduce repetition.
+
+        The only substantive change is renaming the methods from 'checkIf*' to
+        'can*' to reflect the value of the boolean they return.
+
+        The visible functionality shouldn't change; this change should be
+        covered by existing tests in http/tests/security/mixedContent.
+
+        This patch is mostly a revitalization of Eric Sidel's original
+        patch: https://bugs.webkit.org/attachment.cgi?id=67432&action=prettypatch
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+            Hey, look! A new file!
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::mixedContentChecker):
+        (FrameLoader):
+        * loader/MixedContentChecker.cpp: Added.
+        (WebCore):
+        (WebCore::MixedContentChecker::MixedContentChecker):
+        (WebCore::MixedContentChecker::client):
+        (WebCore::asUTF8):
+        (WebCore::MixedContentChecker::isMixedContent):
+        (WebCore::MixedContentChecker::canDisplayInsecureContent):
+        (WebCore::MixedContentChecker::canRunInsecureContent):
+        (WebCore::MixedContentChecker::logWarning):
+        * loader/MixedContentChecker.h: Added.
+        (WebCore):
+        (MixedContentChecker):
+            Migrate functionality from FrameLoader::checkIf* to
+            MixedContentChecker::can*.
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::willSendRequest):
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::pluginIsLoadable):
+        (WebCore::SubframeLoader::loadMediaPlayerProxyPlugin):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::checkInsecureContent):
+            Use the new method locations.
+
 2012-10-17  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r95391): ComplexTextController is unnecessarily slow with characters with combining marks when the base character is not covered by any font

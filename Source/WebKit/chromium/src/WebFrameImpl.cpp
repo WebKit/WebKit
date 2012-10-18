@@ -866,7 +866,7 @@ void WebFrameImpl::collectGarbage()
 bool WebFrameImpl::checkIfRunInsecureContent(const WebURL& url) const
 {
     ASSERT(frame());
-    return frame()->loader()->checkIfRunInsecureContent(frame()->document()->securityOrigin(), url);
+    return frame()->loader()->mixedContentChecker()->canRunInsecureContent(frame()->document()->securityOrigin(), url);
 }
 
 v8::Handle<v8::Value> WebFrameImpl::executeScriptAndReturnValue(const WebScriptSource& source)

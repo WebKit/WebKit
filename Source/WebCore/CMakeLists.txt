@@ -1634,6 +1634,7 @@ SET(WebCore_SOURCES
     loader/ImageLoader.cpp
     loader/LinkLoader.cpp
     loader/MainResourceLoader.cpp
+    loader/MixedContentChecker.cpp
     loader/NavigationAction.cpp
     loader/NetscapePlugInStreamLoader.cpp
     loader/PingLoader.cpp

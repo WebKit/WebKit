@@ -2995,6 +2995,8 @@
             'loader/LinkLoaderClient.h',
             'loader/MainResourceLoader.cpp',
             'loader/MainResourceLoader.h',
+            'loader/MixedContentChecker.cpp',
+            'loader/MixedContentChecker.h',
             'loader/NavigationAction.cpp',
             'loader/NavigationScheduler.cpp',
             'loader/NetscapePlugInStreamLoader.cpp',
