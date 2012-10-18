@@ -352,6 +352,11 @@ namespace WebCore {
         void sawPlugin(const String& serviceType);
         void resetSeenPlugins();
 
+        bool hasSeenMediaEngine(const String& engineName) const;
+        bool hasSeenAnyMediaEngine() const;
+        void sawMediaEngine(const String& engineName);
+        void resetSeenMediaEngines();
+
         void reportMemoryUsage(MemoryObjectInfo*) const;
 
     private:
@@ -473,6 +478,7 @@ namespace WebCore {
         bool m_scriptedAnimationsSuspended;
 
         HashSet<String> m_seenPlugins;
+        HashSet<String> m_seenMediaEngines;
     };
 
 } // namespace WebCore
