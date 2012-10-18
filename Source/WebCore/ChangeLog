@@ -1,3 +1,19 @@
+2012-10-18  Michael Saboff  <msaboff@apple.com>
+
+        Add 8-bit path to RenderBlock::handleTrailingSpaces()
+        https://bugs.webkit.org/show_bug.cgi?id=99731
+
+        Reviewed by Dan Bernstein.
+
+        Factored out and added findFirstTrailingSpace() templated helper function that is called with the 
+        approriate character pointer type.
+
+        No tests needed, change covered by existing tests.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::findFirstTrailingSpace):
+        (WebCore::RenderBlock::handleTrailingSpaces):
+
 2012-10-18  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] Add ExclusionShape::shapeBoundingBox() method

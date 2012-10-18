@@ -1021,6 +1021,20 @@ static void setStaticPositions(RenderBlock* block, RenderBox* child)
     child->layer()->setStaticBlockPosition(blockHeight);
 }
 
+template <typename CharacterType>
+static inline int findFirstTrailingSpace(RenderText* lastText, const CharacterType* characters, int start, int stop)
+{
+    int firstSpace = stop;
+    while (firstSpace > start) {
+        UChar current = characters[firstSpace - 1];
+        if (!isCollapsibleSpace(current, lastText))
+            break;
+        firstSpace--;
+    }
+
+    return firstSpace;
+}
+
 inline BidiRun* RenderBlock::handleTrailingSpaces(BidiRunList<BidiRun>& bidiRuns, BidiContext* currentContext)
 {
     if (!bidiRuns.runCount()
@@ -1034,14 +1048,12 @@ inline BidiRun* RenderBlock::handleTrailingSpaces(BidiRunList<BidiRun>& bidiRuns
         return 0;
 
     RenderText* lastText = toRenderText(lastObject);
-    const UChar* characters = lastText->characters();
-    int firstSpace = trailingSpaceRun->stop();
-    while (firstSpace > trailingSpaceRun->start()) {
-        UChar current = characters[firstSpace - 1];
-        if (!isCollapsibleSpace(current, lastText))
-            break;
-        firstSpace--;
-    }
+    int firstSpace;
+    if (lastText->is8Bit())
+        firstSpace = findFirstTrailingSpace(lastText, lastText->characters8(), trailingSpaceRun->start(), trailingSpaceRun->stop());
+    else
+        firstSpace = findFirstTrailingSpace(lastText, lastText->characters16(), trailingSpaceRun->start(), trailingSpaceRun->stop());
+
     if (firstSpace == trailingSpaceRun->stop())
         return 0;
 
