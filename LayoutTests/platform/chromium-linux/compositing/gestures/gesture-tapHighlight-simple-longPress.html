@@ -24,7 +24,6 @@ function runTest() {
     if (window.eventSender) {
         // Generate valid link highlight.
         eventSender.gestureTapDown(x, y);
-        window.testRunner.display();
 
         // Generate long press ... this should cancel highlight.
         eventSender.gestureLongPress(x, y);

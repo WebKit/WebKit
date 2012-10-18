@@ -1,3 +1,15 @@
+2012-10-18  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Re-enable gesture highlight layout tests, fix GestureLongPress regression.
+        https://bugs.webkit.org/show_bug.cgi?id=99632
+
+        Reviewed by James Robinson.
+
+        Re-enable layout tests for gesture highlights. Includes fix for GestureTapCancel test.
+
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-longPress.html:
+        * platform/chromium/TestExpectations:
+
 2012-10-18  Dirk Pranke  <dpranke@chromium.org>
 
         [chromium] fix lint errors/conflicts in ML TestExpectations

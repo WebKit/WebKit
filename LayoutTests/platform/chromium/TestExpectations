@@ -3838,9 +3838,6 @@ webkit.org/b/95136 [ Linux Win ] fast/css/sticky/sticky-writing-mode-vertical-rl
 
 webkit.org/b/95617 fast/js/function-constructor-this-value.html [ Failure Pass ]
 
-# These tests appear to be making bots flaky. See bug for details.
-webkit.org/b/96951 platform/chromium-linux/compositing/gestures [ Skip ]
-
 # Does not yet support new web notifications TestRunner API
 webkit.org/b/95506 http/tests/notifications
 
