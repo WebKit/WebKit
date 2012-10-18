@@ -1,3 +1,9 @@
+2012-10-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Lion build fix after r131686. Add back if-def around #imports.
+
+        * UIProcess/API/mac/WKView.mm:
+
 2012-10-17  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [WK2] Fix build break

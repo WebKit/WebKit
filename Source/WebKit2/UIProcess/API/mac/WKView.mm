@@ -26,6 +26,11 @@
 #import "config.h"
 #import "WKView.h"
 
+#if USE(DICTATION_ALTERNATIVES) 
+#import <AppKit/NSTextAlternatives.h> 
+#import <AppKit/NSAttributedString.h> 
+#endif
+
 #import "AttributedString.h"
 #import "ColorSpaceData.h"
 #import "DataReference.h"
@@ -62,8 +67,6 @@
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import "WebSystemInterface.h"
-#import <AppKit/NSAttributedString.h>
-#import <AppKit/NSTextAlternatives.h>
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/DragController.h>
