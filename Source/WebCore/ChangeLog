@@ -1,3 +1,19 @@
+2012-10-18  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Styles] Forcibly invoke property names suggestion box for empty prefix
+        https://bugs.webkit.org/show_bug.cgi?id=99711
+
+        Reviewed by Vsevolod Vlasov.
+
+        Suggestions should be returned unconditionally for CSS property names, regardless of the prefix.
+
+        * inspector/front-end/CSSCompletions.js:
+        (WebInspector.CSSCompletions):
+        (WebInspector.CSSCompletions.requestCSSNameCompletions):
+        (WebInspector.CSSCompletions.prototype._firstIndexOfPrefix):
+        * inspector/front-end/CSSKeywordCompletions.js:
+        (WebInspector.CSSKeywordCompletions.forProperty):
+
 2012-10-18  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         Unreviewed, do not make UseV8.cmake executable.

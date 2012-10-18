@@ -39,7 +39,7 @@ WebInspector.CSSKeywordCompletions.forProperty = function(propertyName)
         acceptedKeywords = acceptedKeywords.concat(WebInspector.CSSKeywordCompletions._colors);
     if (propertyName in WebInspector.CSSKeywordCompletions.InheritedProperties)
         acceptedKeywords.push("inherit");
-    return new WebInspector.CSSCompletions(acceptedKeywords, true);
+    return new WebInspector.CSSCompletions(acceptedKeywords);
 }
 
 WebInspector.CSSKeywordCompletions.isColorAwareProperty = function(propertyName)

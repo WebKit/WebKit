@@ -34,7 +34,7 @@
  * @constructor
  * @param {Array.<CSSAgent.CSSPropertyInfo|string>} properties
  */
-WebInspector.CSSCompletions = function(properties, acceptEmptyPrefix)
+WebInspector.CSSCompletions = function(properties)
 {
     this._values = [];
     this._longhands = {};
@@ -64,7 +64,6 @@ WebInspector.CSSCompletions = function(properties, acceptEmptyPrefix)
         }
     }
     this._values.sort();
-    this._acceptEmptyPrefix = acceptEmptyPrefix;
 }
 
 
@@ -78,7 +77,7 @@ WebInspector.CSSCompletions.requestCSSNameCompletions = function()
     function propertyNamesCallback(error, properties)
     {
         if (!error)
-            WebInspector.CSSCompletions.cssPropertiesMetainfo = new WebInspector.CSSCompletions(properties, false);
+            WebInspector.CSSCompletions.cssPropertiesMetainfo = new WebInspector.CSSCompletions(properties);
     }
     CSSAgent.getSupportedCSSProperties(propertyNamesCallback);
 }
@@ -246,7 +245,7 @@ WebInspector.CSSCompletions.prototype = {
         if (!this._values.length)
             return -1;
         if (!prefix)
-            return this._acceptEmptyPrefix ? 0 : -1;
+            return 0;
 
         var maxIndex = this._values.length - 1;
         var minIndex = 0;
