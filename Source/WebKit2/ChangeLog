@@ -1,5 +1,99 @@
 2012-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Don't use the C API internally in WebKitSettings
+        https://bugs.webkit.org/show_bug.cgi?id=96784
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Using the C++ classes directly instead of the C API wrappers we
+        avoid a lot of toImpl/toAPI casts, string conversions and
+        allocations. The code is also a lot simpler and easier to read.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (_WebKitSettingsPrivate):
+        (webkit_settings_class_init):
+        (webkit_settings_init):
+        (webkitSettingsAttachSettingsToPage):
+        (webkit_settings_get_enable_javascript):
+        (webkit_settings_set_enable_javascript):
+        (webkit_settings_get_auto_load_images):
+        (webkit_settings_set_auto_load_images):
+        (webkit_settings_get_load_icons_ignoring_image_load_setting):
+        (webkit_settings_set_load_icons_ignoring_image_load_setting):
+        (webkit_settings_get_enable_offline_web_application_cache):
+        (webkit_settings_set_enable_offline_web_application_cache):
+        (webkit_settings_get_enable_html5_local_storage):
+        (webkit_settings_set_enable_html5_local_storage):
+        (webkit_settings_get_enable_html5_database):
+        (webkit_settings_set_enable_html5_database):
+        (webkit_settings_get_enable_xss_auditor):
+        (webkit_settings_set_enable_xss_auditor):
+        (webkit_settings_get_enable_frame_flattening):
+        (webkit_settings_set_enable_frame_flattening):
+        (webkit_settings_get_enable_plugins):
+        (webkit_settings_set_enable_plugins):
+        (webkit_settings_get_enable_java):
+        (webkit_settings_set_enable_java):
+        (webkit_settings_get_javascript_can_open_windows_automatically):
+        (webkit_settings_set_javascript_can_open_windows_automatically):
+        (webkit_settings_get_enable_hyperlink_auditing):
+        (webkit_settings_set_enable_hyperlink_auditing):
+        (webkit_settings_set_default_font_family):
+        (webkit_settings_set_monospace_font_family):
+        (webkit_settings_set_serif_font_family):
+        (webkit_settings_set_sans_serif_font_family):
+        (webkit_settings_set_cursive_font_family):
+        (webkit_settings_set_fantasy_font_family):
+        (webkit_settings_set_pictograph_font_family):
+        (webkit_settings_get_default_font_size):
+        (webkit_settings_set_default_font_size):
+        (webkit_settings_get_default_monospace_font_size):
+        (webkit_settings_set_default_monospace_font_size):
+        (webkit_settings_get_minimum_font_size):
+        (webkit_settings_set_minimum_font_size):
+        (webkit_settings_set_default_charset):
+        (webkit_settings_get_enable_private_browsing):
+        (webkit_settings_set_enable_private_browsing):
+        (webkit_settings_get_enable_developer_extras):
+        (webkit_settings_set_enable_developer_extras):
+        (webkit_settings_get_enable_resizable_text_areas):
+        (webkit_settings_set_enable_resizable_text_areas):
+        (webkit_settings_get_enable_tabs_to_links):
+        (webkit_settings_set_enable_tabs_to_links):
+        (webkit_settings_get_enable_dns_prefetching):
+        (webkit_settings_set_enable_dns_prefetching):
+        (webkit_settings_get_enable_caret_browsing):
+        (webkit_settings_set_enable_caret_browsing):
+        (webkit_settings_get_enable_fullscreen):
+        (webkit_settings_set_enable_fullscreen):
+        (webkit_settings_get_print_backgrounds):
+        (webkit_settings_set_print_backgrounds):
+        (webkit_settings_get_enable_webaudio):
+        (webkit_settings_set_enable_webaudio):
+        (webkit_settings_get_enable_webgl):
+        (webkit_settings_set_enable_webgl):
+        (webkit_settings_get_allow_modal_dialogs):
+        (webkit_settings_get_zoom_text_only):
+        (webkit_settings_get_javascript_can_access_clipboard):
+        (webkit_settings_set_javascript_can_access_clipboard):
+        (webkit_settings_get_media_playback_requires_user_gesture):
+        (webkit_settings_set_media_playback_requires_user_gesture):
+        (webkit_settings_get_media_playback_allows_inline):
+        (webkit_settings_set_media_playback_allows_inline):
+        (webkit_settings_get_draw_compositing_indicators):
+        (webkit_settings_set_draw_compositing_indicators):
+        (webkit_settings_get_enable_site_specific_quirks):
+        (webkit_settings_set_enable_site_specific_quirks):
+        (webkit_settings_get_enable_page_cache):
+        (webkit_settings_set_enable_page_cache):
+        (webkit_settings_get_enable_smooth_scrolling):
+        (webkit_settings_set_enable_smooth_scrolling):
+        * UIProcess/API/gtk/WebKitSettingsPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewSetSettings):
+
+2012-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK+ debug build.
 
         * UIProcess/API/gtk/WebKitWebResource.cpp:

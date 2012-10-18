@@ -301,7 +301,7 @@ static void iconReadyCallback(WebKitFaviconDatabase* database, const char* uri, 
 static void webkitWebViewSetSettings(WebKitWebView* webView, WebKitSettings* settings)
 {
     webView->priv->settings = settings;
-    webkitSettingsAttachSettingsToPage(webView->priv->settings.get(), toAPI(getPage(webView)));
+    webkitSettingsAttachSettingsToPage(webView->priv->settings.get(), getPage(webView));
     g_signal_connect(settings, "notify::allow-modal-dialogs", G_CALLBACK(allowModalDialogsChanged), webView);
     g_signal_connect(settings, "notify::zoom-text-only", G_CALLBACK(zoomTextOnlyChanged), webView);
     g_signal_connect(settings, "notify::user-agent", G_CALLBACK(userAgentChanged), webView);

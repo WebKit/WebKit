@@ -27,8 +27,9 @@
 #define WebKitSettingsPrivate_h
 
 #include "WebKitSettings.h"
-#include <WebKit2/WebKit2_C.h>
 
-void webkitSettingsAttachSettingsToPage(WebKitSettings*, WKPageRef);
+using namespace WebKit;
+
+void webkitSettingsAttachSettingsToPage(WebKitSettings*, WebPageProxy*);
 
 #endif // WebKitSettingsPrivate_h
