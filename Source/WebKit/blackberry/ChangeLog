@@ -1,3 +1,29 @@
+2012-10-18  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Page viewport aspect ratio not kept on navigating back
+        https://bugs.webkit.org/show_bug.cgi?id=99760
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Konrad Piascik.
+
+        PR: 190469
+        This was added in r127628 which was trying to fix some rendering
+        defects on maps.google.com and news.qq.com, however it was very harmful
+        and caused regressions.
+        zoomToFitScale() depends on the current contents size. During history
+        navigation and device rotation, if zoomToFitScale() is based on the
+        final contents size which is expected, there will still be a scale
+        calculation like this afterwards
+        screenSize.width()/screenSize.height()*zoomToFitScale() which will
+        result in a wrong scale. During the history navigation, if
+        zoomToFitScale() isn't based on the final contents size, then we will
+        get the wrong scale as well for sure.
+        This issue will be fixed by removing the wrong calculation.
+        The original issue of r127628 was fixed by the patch of PR225981.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::restoreViewState):
+
 2012-10-18  John Griggs  <jgriggs@rim.com>
 
         2012-10-18  John Griggs  <jgriggs@rim.com>
