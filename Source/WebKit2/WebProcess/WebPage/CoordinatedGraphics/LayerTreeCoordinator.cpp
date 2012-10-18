@@ -29,6 +29,7 @@
 #if USE(COORDINATED_GRAPHICS)
 #include "LayerTreeCoordinator.h"
 
+#include "CoordinatedGraphicsArgumentCoders.h"
 #include "CoordinatedGraphicsLayer.h"
 #include "DrawingAreaImpl.h"
 #include "GraphicsContext.h"

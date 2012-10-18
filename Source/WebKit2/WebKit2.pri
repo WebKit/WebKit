@@ -16,6 +16,7 @@ INCLUDEPATH += \
     $$SOURCE_DIR/Platform/qt \
     $$SOURCE_DIR/Shared \
     $$SOURCE_DIR/Shared/API/c \
+    $$SOURCE_DIR/Shared/CoordinatedGraphics \
     $$SOURCE_DIR/Shared/CoreIPCSupport \
     $$SOURCE_DIR/Shared/Plugins \
     $$SOURCE_DIR/Shared/Plugins/Netscape \

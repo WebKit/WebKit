@@ -69,24 +69,6 @@ namespace WebCore {
 }
 #endif
 
-#if USE(COORDINATED_GRAPHICS)
-namespace WebCore {
-    class FloatPoint3D;
-    class TransformationMatrix;
-    struct Length;
-
-#if USE(GRAPHICS_SURFACE)
-    struct GraphicsSurfaceToken;
-#endif
-}
-
-#if ENABLE(CSS_FILTERS)
-namespace WebCore {
-    class FilterOperations;
-}
-#endif
-#endif
-
 namespace CoreIPC {
 
 template<> struct ArgumentCoder<WebCore::AffineTransform> {
@@ -259,37 +241,6 @@ template<> struct ArgumentCoder<WebCore::KURL> {
     static void encode(ArgumentEncoder*, const WebCore::KURL&);
     static bool decode(ArgumentDecoder*, WebCore::KURL&);
 };
-
-#if USE(COORDINATED_GRAPHICS)
-template<> struct ArgumentCoder<WebCore::FloatPoint3D> {
-    static void encode(ArgumentEncoder*, const WebCore::FloatPoint3D&);
-    static bool decode(ArgumentDecoder*, WebCore::FloatPoint3D&);
-};
-
-template<> struct ArgumentCoder<WebCore::Length> {
-    static void encode(ArgumentEncoder*, const WebCore::Length&);
-    static bool decode(ArgumentDecoder*, WebCore::Length&);
-};
-
-template<> struct ArgumentCoder<WebCore::TransformationMatrix> {
-    static void encode(ArgumentEncoder*, const WebCore::TransformationMatrix&);
-    static bool decode(ArgumentDecoder*, WebCore::TransformationMatrix&);
-};
-
-#if ENABLE(CSS_FILTERS)
-template<> struct ArgumentCoder<WebCore::FilterOperations> {
-    static void encode(ArgumentEncoder*, const WebCore::FilterOperations&);
-    static bool decode(ArgumentDecoder*, WebCore::FilterOperations&);
-};
-#endif
-
-#if USE(GRAPHICS_SURFACE)
-template<> struct ArgumentCoder<WebCore::GraphicsSurfaceToken> {
-    static void encode(ArgumentEncoder*, const WebCore::GraphicsSurfaceToken&);
-    static bool decode(ArgumentDecoder*, WebCore::GraphicsSurfaceToken&);
-};
-#endif
-#endif
 
 template<> struct ArgumentCoder<WebCore::UserStyleSheet> {
     static void encode(ArgumentEncoder*, const WebCore::UserStyleSheet&);

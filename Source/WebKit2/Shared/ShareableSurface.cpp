@@ -20,6 +20,7 @@
 #include "config.h"
 #include "ShareableSurface.h"
 
+#include "CoordinatedGraphicsArgumentCoders.h"
 #include "GraphicsContext.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/GraphicsSurfaceToken.h>

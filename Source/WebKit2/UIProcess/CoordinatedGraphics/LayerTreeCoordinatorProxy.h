@@ -23,6 +23,7 @@
 #if USE(COORDINATED_GRAPHICS)
 
 #include "BackingStore.h"
+#include "CoordinatedGraphicsArgumentCoders.h"
 #include "DrawingAreaProxy.h"
 #include "Region.h"
 #include "SurfaceUpdateInfo.h"

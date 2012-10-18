@@ -69,7 +69,7 @@ public:
     
     CustomFilterProgram* program() const { return m_program.get(); }
     
-    const CustomFilterParameterList& parameters() { return m_parameters; }
+    const CustomFilterParameterList& parameters() const { return m_parameters; }
     
     unsigned meshRows() const { return m_meshRows; }
     unsigned meshColumns() const { return m_meshColumns; }

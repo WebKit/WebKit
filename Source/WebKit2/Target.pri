@@ -132,6 +132,8 @@ HEADERS += \
     Shared/WebURLRequest.h \
     Shared/WebURLResponse.h \
     Shared/WebUserContentURLPattern.h \
+    Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.h \
+    Shared/CoordinatedGraphics/WebCustomFilterProgram.h \
     Shared/Plugins/Netscape/NetscapePluginModule.h \
     Shared/Plugins/NPRemoteObjectMap.h \
     Shared/Plugins/NPIdentifierData.h \
@@ -490,6 +492,7 @@ SOURCES += \
     Shared/WebURLRequest.cpp \
     Shared/WebURLResponse.cpp \
     Shared/WebWheelEvent.cpp \
+    Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp \
     Shared/qt/ArgumentCodersQt.cpp \
     Shared/qt/LayerTreeContextQt.cpp \
     Shared/qt/ShareableBitmapQt.cpp \
