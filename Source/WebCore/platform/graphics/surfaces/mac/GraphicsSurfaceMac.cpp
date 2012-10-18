@@ -91,11 +91,22 @@ public:
         , m_drawFbo(0)
     {
 #if PLATFORM(QT)
+#if 0
+        // This code path requires QCocoaNativeInterface::nativeResourceForContext() which is not availble in Qt5 on the build bots yet.
         QPlatformNativeInterface* nativeInterface = QGuiApplication::platformNativeInterface();
         CGLContextObj shareContextObject = static_cast<CGLContextObj>(nativeInterface->nativeResourceForContext(QByteArrayLiteral("cglContextObj"), shareContext));
         if (!shareContextObject)
             return;
+#else
+        // This code path should be removed as soon as QCocoaNativeInterface::nativeResourceForContext() has become available in Qt5 on the build bots.
+        CGLContextObj previousContext = CGLGetCurrentContext();
+        QSurface* currentSurface = shareContext->surface();
+        shareContext->makeCurrent(currentSurface);
 
+        CGLContextObj shareContextObject = CGLGetCurrentContext();
+
+        CGLSetCurrentContext(previousContext);
+#endif
         CGLPixelFormatObj pixelFormatObject = CGLGetPixelFormat(shareContextObject);
         if (kCGLNoError != CGLCreateContext(pixelFormatObject, shareContextObject, &m_context))
             return;
