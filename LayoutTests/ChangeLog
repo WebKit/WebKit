@@ -1,3 +1,13 @@
+2012-10-18  MORITA Hajime  <morrita@google.com>
+
+        Assertion failure at TreeScopeAdopter::moveNodeToNewDocument()
+        https://bugs.webkit.org/show_bug.cgi?id=99510
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/textarea/textarea-autofocus-removal-while-focusing-with-style-expected.txt: Added.
+        * fast/forms/textarea/textarea-autofocus-removal-while-focusing-with-style.html: Added.
+
 2012-10-18  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
