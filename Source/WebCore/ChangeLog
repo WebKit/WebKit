@@ -1,3 +1,24 @@
+2012-10-17  Eric Seidel  <eric@webkit.org>
+
+        Make dom-query.html slightly faster by removing unnecessary ref-churn in StringTraits
+        https://bugs.webkit.org/show_bug.cgi?id=99652
+
+        Reviewed by Adam Barth.
+
+        My testing showed this moved dom-query.html from  465560 runs/s to 479019
+        which is about 2% if I'm doing my math correctly.
+
+        I suspect that's due to avoiding the ref-churn we were incurring by using
+        return-by-value symantics here.
+
+        This is just the tip of the iceburg. :)
+
+        * bindings/v8/V8StringResource.cpp:
+        (StringTraits):
+        * bindings/v8/V8ValueCache.h:
+        (WebCore::WebCoreStringResource::webcoreString):
+        (WebCore::WebCoreStringResource::atomicString):
+
 2012-10-17  Luke Macpherson   <macpherson@chromium.org>
 
         Move handling of CSSPropertyWebkitLineClamp from StyleResolver into StyleBuilder.

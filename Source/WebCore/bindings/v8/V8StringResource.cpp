@@ -30,14 +30,14 @@
 
 namespace WebCore {
 
-template <class S> struct StringTraits {
-    static S fromStringResource(WebCoreStringResource*);
-    static S fromV8String(v8::Handle<v8::String>, int);
+template <class StringClass> struct StringTraits {
+    static const StringClass& fromStringResource(WebCoreStringResource*);
+    static StringClass fromV8String(v8::Handle<v8::String>, int);
 };
 
 template<>
 struct StringTraits<String> {
-    static String fromStringResource(WebCoreStringResource* resource)
+    static const String& fromStringResource(WebCoreStringResource* resource)
     {
         return resource->webcoreString();
     }
@@ -56,7 +56,7 @@ struct StringTraits<String> {
 
 template<>
 struct StringTraits<AtomicString> {
-    static AtomicString fromStringResource(WebCoreStringResource* resource)
+    static const AtomicString& fromStringResource(WebCoreStringResource* resource)
     {
         return resource->atomicString();
     }

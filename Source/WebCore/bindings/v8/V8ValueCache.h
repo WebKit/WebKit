@@ -113,9 +113,9 @@ public:
 
     virtual size_t length() const { return m_plainString.impl()->length(); }
 
-    String webcoreString() { return m_plainString; }
+    const String& webcoreString() { return m_plainString; }
 
-    AtomicString atomicString()
+    const AtomicString& atomicString()
     {
 #ifndef NDEBUG
         ASSERT(m_threadId == WTF::currentThread());
