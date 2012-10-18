@@ -2050,8 +2050,6 @@ webkit.org/b/99189 fast/borders/inline-mask-overlay-image.html [ ImageOnlyFailur
 webkit.org/b/99189 ietestcenter/css3/bordersbackgrounds/border-radius-style-001.htm [ ImageOnlyFailure ]
 webkit.org/b/99189 ietestcenter/css3/bordersbackgrounds/border-radius-style-002.htm [ ImageOnlyFailure ]
 
-webkit.org/b/99573 http/tests/security/xss-DENIED-xsl-external-entity.xml [ Failure ]
-
 # User Timing is not enable yet. so skip it.
 webkit.org/b/84893 http/tests/w3c/webperf/submission/user-timing [ Skip ]
 
