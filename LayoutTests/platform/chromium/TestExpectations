@@ -2036,8 +2036,8 @@ crbug.com/28005 [ Mac ] fast/css/color-correction-on-text-shadow.html [ ImageOnl
 crbug.com/28005 [ Android Linux Win ] fast/css/color-correction-on-background-image.html [ Failure ]
 crbug.com/28005 [ Android Linux Win ] fast/css/color-correction-untagged-images.html [ Failure ]
 
-# Fails on Snow Leopard - see BUGWK82954
-webkit.org/b/82954 [ Mac ] svg/hixie/perf/007.xml [ Pass Slow ]
+# Timeout on Debug.
+webkit.org/b/82954 svg/hixie/perf/007.xml [ Pass Slow ]
 
 crbug.com/22700 [ Android Linux Win ] fast/canvas/canvas-shadow.html [ Failure ]
 
