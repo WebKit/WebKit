@@ -4094,6 +4094,22 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Platform\CoreIPC\MessageDecoder.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Platform\CoreIPC\MessageDecoder.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Platform\CoreIPC\MessageEncoder.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Platform\CoreIPC\MessageEncoder.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Platform\CoreIPC\MessageID.h"
 					>
 				</File>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DecoderAdapter_h
-#define DecoderAdapter_h
+#include "config.h"
+#include "MessageDecoder.h"
 
-#include "ArgumentDecoder.h"
-#include <wtf/Decoder.h>
-#include <wtf/Forward.h>
+#include "ArgumentCoders.h"
+#include "DataReference.h"
+#include <wtf/text/CString.h>
 
-namespace WebKit {
+namespace CoreIPC {
 
-class DecoderAdapter : public Decoder {
-public:
-    DecoderAdapter(const uint8_t* buffer, size_t bufferSize);
+PassOwnPtr<MessageDecoder> MessageDecoder::create(const DataReference& buffer)
+{
+    Deque<Attachment> attachments;
+    return adoptPtr(new MessageDecoder(buffer, attachments));
+}
 
-private:
-    virtual bool decodeBytes(Vector<uint8_t>&);
-    virtual bool decodeBool(bool&);
-    virtual bool decodeUInt16(uint16_t&);
-    virtual bool decodeUInt32(uint32_t&);
-    virtual bool decodeUInt64(uint64_t&);
-    virtual bool decodeInt32(int32_t&);
-    virtual bool decodeInt64(int64_t&);
-    virtual bool decodeFloat(float&);
-    virtual bool decodeDouble(double&);
-    virtual bool decodeString(String&);
+PassOwnPtr<MessageDecoder> MessageDecoder::create(const DataReference& buffer, Deque<Attachment>& attachments)
+{
+    return adoptPtr(new MessageDecoder(buffer, attachments));
+}
 
-    OwnPtr<CoreIPC::ArgumentDecoder> m_decoder;
-};
+MessageDecoder::~MessageDecoder()
+{
+}
 
-} // namespace WebKit
+MessageDecoder::MessageDecoder(const DataReference& buffer, Deque<Attachment>& attachments)
+    : ArgumentDecoder(buffer.data(), buffer.size(), attachments)
+{
+    CString messageReceiverName;
+    if (!decode(messageReceiverName))
+        return;
 
-#endif // DecoderAdapter_h
+    CString messageName;
+    if (!decode(messageName))
+        return;
+
+    decodeUInt64(m_destinationID);
+}
+
+} // namespace CoreIPC

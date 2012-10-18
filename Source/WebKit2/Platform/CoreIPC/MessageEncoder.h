@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DecoderAdapter_h
-#define DecoderAdapter_h
+#ifndef MessageEncoder_h
+#define MessageEncoder_h
 
-#include "ArgumentDecoder.h"
-#include <wtf/Decoder.h>
+#include "ArgumentEncoder.h"
 #include <wtf/Forward.h>
 
-namespace WebKit {
+namespace CoreIPC {
 
-class DecoderAdapter : public Decoder {
+class MessageEncoder : public ArgumentEncoder {
 public:
-    DecoderAdapter(const uint8_t* buffer, size_t bufferSize);
+    static PassOwnPtr<MessageEncoder> create(const CString& messageReceiverName, const CString& messageName, uint64_t destinationID);
+    virtual ~MessageEncoder();
 
 private:
-    virtual bool decodeBytes(Vector<uint8_t>&);
-    virtual bool decodeBool(bool&);
-    virtual bool decodeUInt16(uint16_t&);
-    virtual bool decodeUInt32(uint32_t&);
-    virtual bool decodeUInt64(uint64_t&);
-    virtual bool decodeInt32(int32_t&);
-    virtual bool decodeInt64(int64_t&);
-    virtual bool decodeFloat(float&);
-    virtual bool decodeDouble(double&);
-    virtual bool decodeString(String&);
+    MessageEncoder(const CString& messageReceiverName, const CString& messageName, uint64_t destinationID);
 
-    OwnPtr<CoreIPC::ArgumentDecoder> m_decoder;
 };
 
-} // namespace WebKit
+} // namespace CoreIPC
 
-#endif // DecoderAdapter_h
+#endif // MessageEncoder_h

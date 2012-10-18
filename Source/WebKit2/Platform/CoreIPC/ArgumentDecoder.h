@@ -29,6 +29,7 @@
 #include "ArgumentCoder.h"
 #include "Attachment.h"
 #include <wtf/Deque.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/TypeTraits.h>
 #include <wtf/Vector.h>
 
@@ -38,9 +39,8 @@ class DataReference;
     
 class ArgumentDecoder {
 public:
-    ArgumentDecoder(const uint8_t* buffer, size_t bufferSize);
-    ArgumentDecoder(const uint8_t* buffer, size_t bufferSize, Deque<Attachment>&);
-    ~ArgumentDecoder();
+    static PassOwnPtr<ArgumentDecoder> create(const uint8_t* buffer, size_t bufferSize);
+    virtual ~ArgumentDecoder();
 
     uint64_t destinationID() const { return m_destinationID; }
 
@@ -103,17 +103,19 @@ public:
     void debug();
 #endif
 
-private:
-    ArgumentDecoder(const ArgumentDecoder*);
-    ArgumentDecoder* operator=(const ArgumentDecoder*);
+protected:
+    ArgumentDecoder(const uint8_t* buffer, size_t bufferSize, Deque<Attachment>&);
 
     void initialize(const uint8_t* buffer, size_t bufferSize);
 
     bool alignBufferPosition(unsigned alignment, size_t size);
     bool bufferIsLargeEnoughToContain(unsigned alignment, size_t size) const;
 
+// FIXME: Move m_destinationID to MessageDecoder.
+protected:
     uint64_t m_destinationID;
 
+private:
     uint8_t* m_allocatedBase;
     uint8_t* m_buffer;
     uint8_t* m_bufferPos;

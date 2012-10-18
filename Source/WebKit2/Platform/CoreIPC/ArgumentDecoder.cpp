@@ -31,9 +31,10 @@
 
 namespace CoreIPC {
 
-ArgumentDecoder::ArgumentDecoder(const uint8_t* buffer, size_t bufferSize)
+PassOwnPtr<ArgumentDecoder> ArgumentDecoder::create(const uint8_t* buffer, size_t bufferSize)
 {
-    initialize(buffer, bufferSize);
+    Deque<Attachment> attachments;
+    return adoptPtr(new ArgumentDecoder(buffer, bufferSize, attachments));
 }
 
 ArgumentDecoder::ArgumentDecoder(const uint8_t* buffer, size_t bufferSize, Deque<Attachment>& attachments)
@@ -76,9 +77,6 @@ void ArgumentDecoder::initialize(const uint8_t* buffer, size_t bufferSize)
     m_bufferPos = m_buffer;
     m_bufferEnd = m_buffer + bufferSize;
     memcpy(m_buffer, buffer, bufferSize);
-
-    // Decode the destination ID.
-    decodeUInt64(m_destinationID);
 }
 
 static inline bool alignedBufferIsLargeEnoughToContain(const uint8_t* alignedPosition, const uint8_t* bufferEnd, size_t size)

@@ -32,19 +32,17 @@
 
 namespace CoreIPC {
 
-PassOwnPtr<ArgumentEncoder> ArgumentEncoder::create(uint64_t destinationID)
+PassOwnPtr<ArgumentEncoder> ArgumentEncoder::create()
 {
-    return adoptPtr(new ArgumentEncoder(destinationID));
+    return adoptPtr(new ArgumentEncoder);
 }
 
-ArgumentEncoder::ArgumentEncoder(uint64_t destinationID)
+ArgumentEncoder::ArgumentEncoder()
     : m_buffer(0)
     , m_bufferPointer(0)
     , m_bufferSize(0)
     , m_bufferCapacity(0)
 {
-    // Encode the destination ID.
-    encodeUInt64(destinationID);
 }
 
 ArgumentEncoder::~ArgumentEncoder()

@@ -1011,14 +1011,14 @@ void WebProcess::postInjectedBundleMessage(const CoreIPC::DataReference& message
     if (!injectedBundle)
         return;
 
-    CoreIPC::ArgumentDecoder messageDecoder(messageData.data(), messageData.size());
+    OwnPtr<CoreIPC::ArgumentDecoder> decoder = CoreIPC::ArgumentDecoder::create(messageData.data(), messageData.size());
 
     String messageName;
-    if (!messageDecoder.decode(messageName))
+    if (!decoder->decode(messageName))
         return;
 
     RefPtr<APIObject> messageBody;
-    if (!messageDecoder.decode(InjectedBundleUserMessageDecoder(messageBody)))
+    if (!decoder->decode(InjectedBundleUserMessageDecoder(messageBody)))
         return;
 
     injectedBundle->didReceiveMessage(messageName, messageBody.get());

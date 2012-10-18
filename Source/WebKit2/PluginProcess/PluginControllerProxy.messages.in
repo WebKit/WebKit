@@ -112,7 +112,7 @@ messages -> PluginControllerProxy {
     SetLayerHostingMode(uint32_t layerHostingMode)
 #endif
 
-    # Return a snapshot of the plugin
+    # Return a snapshot of the plugin.
     Snapshot() -> (WebKit::ShareableBitmap::Handle backingStoreHandle)
     
     # Sent when storage blocking policy changes

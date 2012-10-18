@@ -39,8 +39,8 @@ class DataReference;
 
 class ArgumentEncoder {
 public:
-    static PassOwnPtr<ArgumentEncoder> create(uint64_t destinationID);
-    ~ArgumentEncoder();
+    static PassOwnPtr<ArgumentEncoder> create();
+    virtual ~ArgumentEncoder();
 
     void encodeFixedLengthData(const uint8_t*, size_t, unsigned alignment);
     void encodeVariableLengthByteArray(const DataReference&);
@@ -77,8 +77,10 @@ public:
     void debug();
 #endif
 
+protected:
+    ArgumentEncoder();
+
 private:
-    explicit ArgumentEncoder(uint64_t destinationID);
     uint8_t* grow(unsigned alignment, size_t size);
     
     uint8_t* m_buffer;

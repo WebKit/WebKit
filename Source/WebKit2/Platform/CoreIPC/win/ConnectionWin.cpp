@@ -26,8 +26,8 @@
 #include "config.h"
 #include "Connection.h"
 
-#include "ArgumentEncoder.h"
 #include "BinarySemaphore.h"
+#include "DataReference.h"
 #include <wtf/Functional.h>
 #include <wtf/RandomNumber.h>
 #include <wtf/text/WTFString.h>
@@ -172,7 +172,8 @@ void Connection::readEventHandler()
 
             unsigned messageID = *reinterpret_cast<unsigned*>(m_readBuffer.data() + realBufferSize);
 
-            processIncomingMessage(MessageID::fromInt(messageID), adoptPtr(new ArgumentDecoder(m_readBuffer.data(), realBufferSize)));
+            OwnPtr<MessageDecoder> decoder = MessageDecoder::create(DataReference(m_readBuffer.data(), realBufferSize));
+            processIncomingMessage(MessageID::fromInt(messageID), decoder.release());
         }
 
         // Find out the size of the next message in the pipe (if there is one) so that we can read
@@ -247,9 +248,9 @@ void Connection::writeEventHandler()
         ASSERT_NOT_REACHED();
     }
 
-    // The pending write has finished, so we are now done with its arguments. Clearing this member
+    // The pending write has finished, so we are now done with its encoder. Clearing this member
     // will allow us to send messages again.
-    m_pendingWriteArguments = nullptr;
+    m_pendingWriteEncoder = nullptr;
 
     // Now that the pending write has finished, we can try to send a new message.
     sendOutgoingMessages();
@@ -274,24 +275,24 @@ bool Connection::platformCanSendOutgoingMessages() const
 {
     // We only allow sending one asynchronous message at a time. If we wanted to send more than one
     // at once, we'd have to use multiple OVERLAPPED structures and hold onto multiple pending
-    // ArgumentEncoders (one of each for each simultaneous asynchronous message).
-    return !m_pendingWriteArguments;
+    // MessageEncoders (one of each for each simultaneous asynchronous message).
+    return !m_pendingWriteEncoder;
 }
 
-bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEncoder> arguments)
+bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<MessageEncoder> encoder)
 {
-    ASSERT(!m_pendingWriteArguments);
+    ASSERT(!m_pendingWriteEncoder);
 
     // Just bail if the handle has been closed.
     if (m_connectionPipe == INVALID_HANDLE_VALUE)
         return false;
 
     // We put the message ID last.
-    arguments->encodeUInt32(messageID.toInt());
+    encoder->encodeUInt32(messageID.toInt());
 
     // Write the outgoing message.
 
-    if (::WriteFile(m_connectionPipe, arguments->buffer(), arguments->bufferSize(), 0, &m_writeState)) {
+    if (::WriteFile(m_connectionPipe, encoder->buffer(), encoder->bufferSize(), 0, &m_writeState)) {
         // We successfully sent this message.
         return true;
     }
@@ -309,9 +310,9 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
         return false;
     }
 
-    // The message will be sent soon. Hold onto the arguments so that they won't be destroyed
+    // The message will be sent soon. Hold onto the encoder so that it won't be destroyed
     // before the write completes.
-    m_pendingWriteArguments = arguments;
+    m_pendingWriteEncoder = encoder;
 
     // We can only send one asynchronous message at a time (see comment in platformCanSendOutgoingMessages).
     return false;

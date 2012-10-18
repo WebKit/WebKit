@@ -25,6 +25,8 @@ HEADERS += \
     Platform/CoreIPC/CoreIPCMessageKinds.h \
     Platform/CoreIPC/DataReference.h \
     Platform/CoreIPC/HandleMessage.h \
+    Platform/CoreIPC/MessageDecoder.h \
+    Platform/CoreIPC/MessageEncoder.h \
     Platform/CoreIPC/MessageID.h \
     Platform/CoreIPC/MessageReceiver.h \
     Platform/CoreIPC/MessageReceiverMap.h \
@@ -384,6 +386,8 @@ SOURCES += \
     Platform/CoreIPC/Attachment.cpp \
     Platform/CoreIPC/Connection.cpp \
     Platform/CoreIPC/DataReference.cpp \
+    Platform/CoreIPC/MessageDecoder.cpp \
+    Platform/CoreIPC/MessageEncoder.cpp \
     Platform/CoreIPC/MessageReceiverMap.cpp \
     Platform/Logging.cpp \
     Platform/Module.cpp \

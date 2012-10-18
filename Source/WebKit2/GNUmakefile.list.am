@@ -257,6 +257,10 @@ webkit2_sources += \
 	Source/WebKit2/Platform/CoreIPC/DataReference.cpp \
 	Source/WebKit2/Platform/CoreIPC/DataReference.h \
 	Source/WebKit2/Platform/CoreIPC/HandleMessage.h \
+	Source/WebKit2/Platform/CoreIPC/MessageDecoder.cpp \
+	Source/WebKit2/Platform/CoreIPC/MessageDecoder.h \
+	Source/WebKit2/Platform/CoreIPC/MessageEncoder.cpp \
+	Source/WebKit2/Platform/CoreIPC/MessageEncoder.h \
 	Source/WebKit2/Platform/CoreIPC/MessageID.h \
 	Source/WebKit2/Platform/CoreIPC/MessageReceiver.h \
 	Source/WebKit2/Platform/CoreIPC/MessageReceiverMap.cpp \
@@ -1219,6 +1223,10 @@ webkit2_plugin_process_sources += \
 	Source/WebKit2/Platform/CoreIPC/DataReference.cpp \
 	Source/WebKit2/Platform/CoreIPC/DataReference.h \
 	Source/WebKit2/Platform/CoreIPC/HandleMessage.h \
+	Source/WebKit2/Platform/CoreIPC/MessageDecoder.cpp \
+	Source/WebKit2/Platform/CoreIPC/MessageDecoder.h \
+	Source/WebKit2/Platform/CoreIPC/MessageEncoder.cpp \
+	Source/WebKit2/Platform/CoreIPC/MessageEncoder.h \
 	Source/WebKit2/Platform/CoreIPC/MessageID.h \
 	Source/WebKit2/Platform/CoreIPC/MessageReceiver.h \
 	Source/WebKit2/Platform/CoreIPC/MessageReceiverMap.cpp \

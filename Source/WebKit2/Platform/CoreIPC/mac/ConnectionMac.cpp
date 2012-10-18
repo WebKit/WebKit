@@ -27,6 +27,7 @@
 #include "Connection.h"
 
 #include "CoreIPCMessageKinds.h"
+#include "DataReference.h"
 #include "MachPort.h"
 #include "MachUtilities.h"
 #include <WebCore/RunLoop.h>
@@ -111,10 +112,10 @@ bool Connection::open()
         m_isConnected = true;
         
         // Send the initialize message, which contains a send right for the server to use.
-        OwnPtr<ArgumentEncoder> argumentEncoder = ArgumentEncoder::create(0);
-        argumentEncoder->encode(MachPort(m_receivePort, MACH_MSG_TYPE_MAKE_SEND));
+        OwnPtr<MessageEncoder> encoder = MessageEncoder::create("", "", 0);
+        encoder->encode(MachPort(m_receivePort, MACH_MSG_TYPE_MAKE_SEND));
 
-        sendMessage(MessageID(CoreIPCMessage::InitializeConnection), argumentEncoder.release());
+        sendMessage(MessageID(CoreIPCMessage::InitializeConnection), encoder.release());
 
         // Set the dead name handler for our send port.
         initializeDeadNameSource();
@@ -130,10 +131,10 @@ bool Connection::open()
     if (m_exceptionPort) {
         m_connectionQueue.registerMachPortEventHandler(m_exceptionPort, WorkQueue::MachPortDataAvailable, bind(&Connection::exceptionSourceEventHandler, this));
 
-        OwnPtr<ArgumentEncoder> argumentEncoder = ArgumentEncoder::create(0);
-        argumentEncoder->encode(MachPort(m_exceptionPort, MACH_MSG_TYPE_MAKE_SEND));
+        OwnPtr<MessageEncoder> encoder = MessageEncoder::create("", "", 0);
+        encoder->encode(MachPort(m_exceptionPort, MACH_MSG_TYPE_MAKE_SEND));
 
-        sendMessage(MessageID(CoreIPCMessage::SetExceptionPort), argumentEncoder.release());
+        sendMessage(MessageID(CoreIPCMessage::SetExceptionPort), encoder.release());
     }
 
     return true;
@@ -157,9 +158,9 @@ bool Connection::platformCanSendOutgoingMessages() const
     return true;
 }
 
-bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEncoder> arguments)
+bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<MessageEncoder> encoder)
 {
-    Vector<Attachment> attachments = arguments->releaseAttachments();
+    Vector<Attachment> attachments = encoder->releaseAttachments();
     
     size_t numberOfPortDescriptors = 0;
     size_t numberOfOOLMemoryDescriptors = 0;
@@ -171,14 +172,14 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
             numberOfOOLMemoryDescriptors++;
     }
     
-    size_t messageSize = machMessageSize(arguments->bufferSize(), numberOfPortDescriptors, numberOfOOLMemoryDescriptors);
+    size_t messageSize = machMessageSize(encoder->bufferSize(), numberOfPortDescriptors, numberOfOOLMemoryDescriptors);
     char buffer[inlineMessageMaxSize];
 
     bool messageBodyIsOOL = false;
     if (messageSize > sizeof(buffer)) {
         messageBodyIsOOL = true;
 
-        attachments.append(Attachment(arguments->buffer(), arguments->bufferSize(), MACH_MSG_VIRTUAL_COPY, false));
+        attachments.append(Attachment(encoder->buffer(), encoder->bufferSize(), MACH_MSG_VIRTUAL_COPY, false));
         numberOfOOLMemoryDescriptors++;
         messageSize = machMessageSize(0, numberOfPortDescriptors, numberOfOOLMemoryDescriptors);
     }
@@ -233,7 +234,7 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
 
     // Copy the data if it is not being sent out-of-line.
     if (!messageBodyIsOOL)
-        memcpy(messageData, arguments->buffer(), arguments->bufferSize());
+        memcpy(messageData, encoder->buffer(), encoder->bufferSize());
 
     ASSERT(m_sendPort);
     
@@ -251,14 +252,14 @@ void Connection::initializeDeadNameSource()
     m_connectionQueue.registerMachPortEventHandler(m_sendPort, WorkQueue::MachPortDeadNameNotification, bind(&Connection::connectionDidClose, this));
 }
 
-static PassOwnPtr<ArgumentDecoder> createArgumentDecoder(mach_msg_header_t* header)
+static PassOwnPtr<MessageDecoder> createMessageDecoder(mach_msg_header_t* header)
 {
     if (!(header->msgh_bits & MACH_MSGH_BITS_COMPLEX)) {
         // We have a simple message.
-        size_t bodySize = header->msgh_size - sizeof(mach_msg_header_t);
         uint8_t* body = reinterpret_cast<uint8_t*>(header + 1);
-        
-        return adoptPtr(new ArgumentDecoder(body, bodySize));
+        size_t bodySize = header->msgh_size - sizeof(mach_msg_header_t);
+
+        return MessageDecoder::create(DataReference(body, bodySize));
     }
 
     bool messageBodyIsOOL = header->msgh_id & MessageBodyIsOOL;
@@ -303,22 +304,22 @@ static PassOwnPtr<ArgumentDecoder> createArgumentDecoder(mach_msg_header_t* head
         uint8_t* messageBody = static_cast<uint8_t*>(messageBodyAttachment.address());
         size_t messageBodySize = messageBodyAttachment.size();
 
-        ArgumentDecoder* argumentDecoder;
+        OwnPtr<MessageDecoder> decoder;
 
         if (attachments.isEmpty())
-            argumentDecoder = new ArgumentDecoder(messageBody, messageBodySize);
+            decoder = MessageDecoder::create(DataReference(messageBody, messageBodySize));
         else
-            argumentDecoder = new ArgumentDecoder(messageBody, messageBodySize, attachments);
+            decoder = MessageDecoder::create(DataReference(messageBody, messageBodySize), attachments);
 
         vm_deallocate(mach_task_self(), reinterpret_cast<vm_address_t>(messageBodyAttachment.address()), messageBodyAttachment.size());
 
-        return adoptPtr(argumentDecoder);
+        return decoder.release();
     }
 
     uint8_t* messageBody = descriptorData;
     size_t messageBodySize = header->msgh_size - (descriptorData - reinterpret_cast<uint8_t*>(header));
 
-    return adoptPtr(new ArgumentDecoder(messageBody, messageBodySize, attachments));
+    return MessageDecoder::create(DataReference(messageBody, messageBodySize), attachments);
 }
 
 // The receive buffer size should always include the maximum trailer size.
@@ -360,8 +361,8 @@ void Connection::receiveSourceEventHandler()
         return;
 
     MessageID messageID = MessageID::fromInt(header->msgh_id);
-    OwnPtr<ArgumentDecoder> arguments = createArgumentDecoder(header);
-    ASSERT(arguments);
+    OwnPtr<MessageDecoder> decoder = createMessageDecoder(header);
+    ASSERT(decoder);
 
     if (messageID == MessageID(CoreIPCMessage::InitializeConnection)) {
         ASSERT(m_isServer);
@@ -369,7 +370,7 @@ void Connection::receiveSourceEventHandler()
         ASSERT(!m_sendPort);
 
         MachPort port;
-        if (!arguments->decode(port)) {
+        if (!decoder->decode(port)) {
             // FIXME: Disconnect.
             return;
         }
@@ -390,14 +391,14 @@ void Connection::receiveSourceEventHandler()
 
     if (messageID == MessageID(CoreIPCMessage::SetExceptionPort)) {
         MachPort exceptionPort;
-        if (!arguments->decode(exceptionPort))
+        if (!decoder->decode(exceptionPort))
             return;
 
         setMachExceptionPort(exceptionPort.port());
         return;
     }
 
-    processIncomingMessage(messageID, arguments.release());
+    processIncomingMessage(messageID, decoder.release());
 }    
 
 void Connection::exceptionSourceEventHandler()

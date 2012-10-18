@@ -33,8 +33,11 @@
 namespace WebKit {
 
 EncoderAdapter::EncoderAdapter()
-    : m_encoder(CoreIPC::ArgumentEncoder::create(0))
+    : m_encoder(CoreIPC::ArgumentEncoder::create())
 {
+    // Keep format compatibility by decoding an unused uint64_t value
+    // that used to be encoded by the argument encoder.
+    m_encoder->encode(static_cast<uint64_t>(0));
 }
 
 CoreIPC::DataReference EncoderAdapter::dataReference() const

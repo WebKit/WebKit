@@ -28,7 +28,7 @@
 #include "config.h"
 #include "Connection.h"
 
-#include "ArgumentEncoder.h"
+#include "DataReference.h"
 #include "SharedMemory.h"
 #include <sys/socket.h>
 #include <unistd.h>
@@ -282,13 +282,13 @@ bool Connection::processMessage()
     if (messageInfo.isMessageBodyOOL())
         messageBody = reinterpret_cast<uint8_t*>(oolMessageBody->data());
 
-    ArgumentDecoder* argumentDecoder;
+    OwnPtr<MessageDecoder> decoder;
     if (attachments.isEmpty())
-        argumentDecoder = new ArgumentDecoder(messageBody, messageInfo.bodySize());
+        decoder = MessageDecoder::create(DataReference(messageBody, messageInfo.bodySize()));
     else
-        argumentDecoder = new ArgumentDecoder(messageBody, messageInfo.bodySize(), attachments);
+        decoder = MessageDecoder::create(DataReference(messageBody, messageInfo.bodySize()), attachments);
 
-    processIncomingMessage(messageInfo.messageID(), adoptPtr(argumentDecoder));
+    processIncomingMessage(messageInfo.messageID(), decoder.release());
 
     if (m_readBufferSize > messageLength) {
         memmove(m_readBuffer.data(), m_readBuffer.data() + messageLength, m_readBufferSize - messageLength);
@@ -441,7 +441,7 @@ bool Connection::platformCanSendOutgoingMessages() const
     return m_isConnected;
 }
 
-bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEncoder> arguments)
+bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<MessageEncoder> encoder)
 {
 #if PLATFORM(QT)
     ASSERT(m_socketNotifier);
@@ -449,7 +449,7 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
 
     COMPILE_ASSERT(sizeof(MessageInfo) + attachmentMaxAmount * sizeof(size_t) <= messageMaxSize, AttachmentsFitToMessageInline);
 
-    Vector<Attachment> attachments = arguments->releaseAttachments();
+    Vector<Attachment> attachments = encoder->releaseAttachments();
     AttachmentResourceGuard<Vector<Attachment>, Vector<Attachment>::iterator> attachementDisposer(attachments);
 
     if (attachments.size() > (attachmentMaxAmount - 1)) {
@@ -457,10 +457,10 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
         return false;
     }
 
-    MessageInfo messageInfo(messageID, arguments->bufferSize(), attachments.size());
-    size_t messageSizeWithBodyInline = sizeof(messageInfo) + (attachments.size() * sizeof(AttachmentInfo)) + arguments->bufferSize();
-    if (messageSizeWithBodyInline > messageMaxSize && arguments->bufferSize()) {
-        RefPtr<WebKit::SharedMemory> oolMessageBody = WebKit::SharedMemory::create(arguments->bufferSize());
+    MessageInfo messageInfo(messageID, encoder->bufferSize(), attachments.size());
+    size_t messageSizeWithBodyInline = sizeof(messageInfo) + (attachments.size() * sizeof(AttachmentInfo)) + encoder->bufferSize();
+    if (messageSizeWithBodyInline > messageMaxSize && encoder->bufferSize()) {
+        RefPtr<WebKit::SharedMemory> oolMessageBody = WebKit::SharedMemory::create(encoder->bufferSize());
         if (!oolMessageBody)
             return false;
 
@@ -470,7 +470,7 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
 
         messageInfo.setMessageBodyOOL();
 
-        memcpy(oolMessageBody->data(), arguments->buffer(), arguments->bufferSize());
+        memcpy(oolMessageBody->data(), encoder->buffer(), encoder->bufferSize());
 
         attachments.append(handle.releaseToAttachment());
     }
@@ -540,9 +540,9 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
         ++iovLength;
     }
 
-    if (!messageInfo.isMessageBodyOOL() && arguments->bufferSize()) {
-        iov[iovLength].iov_base = reinterpret_cast<void*>(arguments->buffer());
-        iov[iovLength].iov_len = arguments->bufferSize();
+    if (!messageInfo.isMessageBodyOOL() && encoder->bufferSize()) {
+        iov[iovLength].iov_base = reinterpret_cast<void*>(encoder->buffer());
+        iov[iovLength].iov_len = encoder->bufferSize();
         ++iovLength;
     }
 

@@ -40,18 +40,18 @@ public:
 
     template<typename U> bool send(const U& message, uint64_t destinationID)
     {
-        OwnPtr<ArgumentEncoder> argumentEncoder = ArgumentEncoder::create(destinationID);
-        argumentEncoder->encode(message);
+        OwnPtr<MessageEncoder> encoder = MessageEncoder::create("", "", destinationID);
+        encoder->encode(message);
         
-        return static_cast<T*>(this)->sendMessage(MessageID(U::messageID), argumentEncoder.release());
+        return static_cast<T*>(this)->sendMessage(MessageID(U::messageID), encoder.release());
     }
     
-    bool sendMessage(MessageID messageID, PassOwnPtr<ArgumentEncoder> argumentEncoder)
+    bool sendMessage(MessageID messageID, PassOwnPtr<MessageEncoder> encoder)
     {
         Connection* connection = static_cast<T*>(this)->connection();
         ASSERT(connection);
 
-        return connection->sendMessage(messageID, argumentEncoder);
+        return connection->sendMessage(messageID, encoder);
     }
 
     template<typename U> bool sendSync(const U& message, const typename U::Reply& reply, double timeout = Connection::NoTimeout)

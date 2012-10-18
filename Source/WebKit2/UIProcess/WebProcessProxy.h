@@ -132,7 +132,7 @@ private:
     // Will potentially cause the WebProcessProxy object to be freed.
     void disconnect();
 
-    bool sendMessage(CoreIPC::MessageID, PassOwnPtr<CoreIPC::ArgumentEncoder>, unsigned messageSendFlags);
+    bool sendMessage(CoreIPC::MessageID, PassOwnPtr<CoreIPC::MessageEncoder>, unsigned messageSendFlags);
 
     // CoreIPC message handlers.
     void addBackForwardItem(uint64_t itemID, const String& originalURLString, const String& urlString, const String& title, const CoreIPC::DataReference& backForwardData);
@@ -216,19 +216,19 @@ private:
 template<typename E, typename T>
 bool WebProcessProxy::deprecatedSend(E messageID, uint64_t destinationID, const T& arguments)
 {
-    OwnPtr<CoreIPC::ArgumentEncoder> argumentEncoder = CoreIPC::ArgumentEncoder::create(destinationID);
-    argumentEncoder->encode(arguments);
+    OwnPtr<CoreIPC::MessageEncoder> encoder = CoreIPC::MessageEncoder::create("", "", destinationID);
+    encoder->encode(arguments);
 
-    return sendMessage(CoreIPC::MessageID(messageID), argumentEncoder.release(), 0);
+    return sendMessage(CoreIPC::MessageID(messageID), encoder.release(), 0);
 }
 
 template<typename T>
 bool WebProcessProxy::send(const T& message, uint64_t destinationID, unsigned messageSendFlags)
 {
-    OwnPtr<CoreIPC::ArgumentEncoder> argumentEncoder = CoreIPC::ArgumentEncoder::create(destinationID);
-    argumentEncoder->encode(message);
+    OwnPtr<CoreIPC::MessageEncoder> encoder = CoreIPC::MessageEncoder::create("", "", destinationID);
+    encoder->encode(message);
 
-    return sendMessage(CoreIPC::MessageID(T::messageID), argumentEncoder.release(), messageSendFlags);
+    return sendMessage(CoreIPC::MessageID(T::messageID), encoder.release(), messageSendFlags);
 }
 
 template<typename U> 

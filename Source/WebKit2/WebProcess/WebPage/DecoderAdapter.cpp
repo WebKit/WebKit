@@ -33,14 +33,19 @@
 namespace WebKit {
 
 DecoderAdapter::DecoderAdapter(const uint8_t* buffer, size_t bufferSize)
-    : m_decoder(buffer, bufferSize)
+    : m_decoder(CoreIPC::ArgumentDecoder::create(buffer, bufferSize))
 {
+    // Keep format compatibility by decoding an unused uint64_t value
+    // that used to be encoded by the argument encoder.
+    uint64_t value;
+    m_decoder->decode(value);
+    ASSERT(!value);
 }
 
 bool DecoderAdapter::decodeBytes(Vector<uint8_t>& bytes)
 {
     CoreIPC::DataReference dataReference;
-    if (!m_decoder.decodeVariableLengthByteArray(dataReference))
+    if (!m_decoder->decodeVariableLengthByteArray(dataReference))
         return false;
 
     bytes = dataReference.vector();
@@ -49,42 +54,42 @@ bool DecoderAdapter::decodeBytes(Vector<uint8_t>& bytes)
 
 bool DecoderAdapter::decodeBool(bool& value)
 {
-    return m_decoder.decodeBool(value);
+    return m_decoder->decodeBool(value);
 }
 
 bool DecoderAdapter::decodeUInt16(uint16_t& value)
 {
-    return m_decoder.decodeUInt16(value);
+    return m_decoder->decodeUInt16(value);
 }
 
 bool DecoderAdapter::decodeUInt32(uint32_t& value)
 {
-    return m_decoder.decodeUInt32(value);
+    return m_decoder->decodeUInt32(value);
 }
 
 bool DecoderAdapter::decodeUInt64(uint64_t& value)
 {
-    return m_decoder.decodeUInt64(value);
+    return m_decoder->decodeUInt64(value);
 }
 
 bool DecoderAdapter::decodeInt32(int32_t& value)
 {
-    return m_decoder.decodeInt32(value);
+    return m_decoder->decodeInt32(value);
 }
 
 bool DecoderAdapter::decodeInt64(int64_t& value)
 {
-    return m_decoder.decodeInt64(value);
+    return m_decoder->decodeInt64(value);
 }
 
 bool DecoderAdapter::decodeFloat(float& value)
 {
-    return m_decoder.decodeFloat(value);
+    return m_decoder->decodeFloat(value);
 }
 
 bool DecoderAdapter::decodeDouble(double& value)
 {
-    return m_decoder.decodeDouble(value);
+    return m_decoder->decodeDouble(value);
 }
 
 bool DecoderAdapter::decodeString(String& value)
@@ -96,7 +101,7 @@ bool DecoderAdapter::decodeString(String& value)
     // without breaking encoding/decoding of the history tree.
 
     uint32_t length;
-    if (!m_decoder.decode(length))
+    if (!m_decoder->decode(length))
         return false;
 
     if (length == std::numeric_limits<uint32_t>::max()) {
@@ -106,22 +111,22 @@ bool DecoderAdapter::decodeString(String& value)
     }
 
     uint64_t lengthInBytes;
-    if (!m_decoder.decode(lengthInBytes))
+    if (!m_decoder->decode(lengthInBytes))
         return false;
 
     if (lengthInBytes % sizeof(UChar) || lengthInBytes / sizeof(UChar) != length) {
-        m_decoder.markInvalid();
+        m_decoder->markInvalid();
         return false;
     }
 
-    if (!m_decoder.bufferIsLargeEnoughToContain<UChar>(length)) {
-        m_decoder.markInvalid();
+    if (!m_decoder->bufferIsLargeEnoughToContain<UChar>(length)) {
+        m_decoder->markInvalid();
         return false;
     }
 
     UChar* buffer;
     String string = String::createUninitialized(length, buffer);
-    if (!m_decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length * sizeof(UChar), __alignof(UChar)))
+    if (!m_decoder->decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length * sizeof(UChar), __alignof(UChar)))
         return false;
 
     value = string;

@@ -35,6 +35,8 @@ namespace CoreIPC {
     class ArgumentEncoder;
     class Connection;
     class DataReference;
+    class MessageDecoder;
+    class MessageEncoder;
     class MessageID;
 }
 
