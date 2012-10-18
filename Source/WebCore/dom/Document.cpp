@@ -132,7 +132,6 @@
 #include "QualifiedName.h"
 #include "RegisteredEventListener.h"
 #include "RenderArena.h"
-#include "RenderLayerCompositor.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderTextControl.h"
 #include "RenderView.h"
@@ -182,6 +181,10 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuffer.h>
+
+#if USE(ACCELERATED_COMPOSITING)
+#include "RenderLayerCompositor.h"
+#endif
 
 #if ENABLE(SHARED_WORKERS)
 #include "SharedWorkerRepository.h"

@@ -1,3 +1,11 @@
+2012-10-17  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Attempt to fix the build after r131680.
+
+        Unreviewed build fix.
+
+        * dom/Document.cpp: Guard ACCELERATED_COMPOSITING for RenderLayerCompositor.h
+
 2012-10-17  Elliott Sprehn  <esprehn@chromium.org>
 
         StyleRareNonInheritedData::contentDataEquivalent only looks at the first ContentData
