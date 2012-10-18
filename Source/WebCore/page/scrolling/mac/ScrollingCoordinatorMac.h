@@ -66,7 +66,7 @@ public:
 
     // These functions are used to indicate that a layer should be (or should not longer be) represented by a node
     // in the scrolling tree.
-    virtual ScrollingNodeID attachToStateTree(ScrollingNodeID);
+    virtual ScrollingNodeID attachToStateTree(ScrollingNodeID newNodeID, ScrollingNodeID parentID);
     virtual void detachFromStateTree(ScrollingNodeID);
 
     // This function wipes out the current tree.

@@ -56,7 +56,6 @@ public:
         VerticalScrollbarMode = 1 << 10,
         ScrollOrigin = 1 << 11,
         RequestedScrollPosition = 1 << 12,
-        All = (1 << 13) - 1 // This will need to be updated if we add or remove anything the ChangedProperties.
     };
 
     virtual bool isScrollingStateScrollingNode() OVERRIDE { return true; }
@@ -66,7 +65,6 @@ public:
     virtual bool hasChangedProperties() const OVERRIDE { return m_changedProperties; }
     virtual unsigned changedProperties() const OVERRIDE { return m_changedProperties; }
     virtual void resetChangedProperties() OVERRIDE { m_changedProperties = 0; }
-    virtual void setHasChangedProperties();
 
     const IntRect& viewportRect() const { return m_viewportRect; }
     void setViewportRect(const IntRect&);

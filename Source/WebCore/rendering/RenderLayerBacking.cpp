@@ -965,7 +965,7 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
     return layerChanged;
 }
 
-void RenderLayerBacking::attachToScrollingCoordinator()
+void RenderLayerBacking::attachToScrollingCoordinator(RenderLayerBacking* parent)
 {
     // If m_scrollLayerID non-zero, then this backing is already attached to the ScrollingCoordinator.
     if (m_scrollLayerID)
@@ -978,8 +978,9 @@ void RenderLayerBacking::attachToScrollingCoordinator()
     ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator();
     if (!scrollingCoordinator)
         return;
-    
-    m_scrollLayerID = scrollingCoordinator->attachToStateTree(scrollingCoordinator->uniqueScrollLayerID());
+
+    ScrollingNodeID parentID = parent ? parent->scrollLayerID() : 0;
+    m_scrollLayerID = scrollingCoordinator->attachToStateTree(scrollingCoordinator->uniqueScrollLayerID(), parentID);
 }
 
 void RenderLayerBacking::detachFromScrollingCoordinator()

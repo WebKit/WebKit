@@ -109,7 +109,7 @@ public:
     virtual bool requestScrollPositionUpdate(FrameView*, const IntPoint&) { return false; }
     virtual bool handleWheelEvent(FrameView*, const PlatformWheelEvent&) { return true; }
     virtual void updateMainFrameScrollPositionAndScrollLayerPosition() { }
-    virtual ScrollingNodeID attachToStateTree(ScrollingNodeID nodeID) { return nodeID; }
+    virtual ScrollingNodeID attachToStateTree(ScrollingNodeID newNodeID, ScrollingNodeID /*parentID*/) { return newNodeID; }
     virtual void detachFromStateTree(ScrollingNodeID) { }
     virtual void clearStateTree() { }
 

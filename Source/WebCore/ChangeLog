@@ -1,3 +1,88 @@
+2012-10-18  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=99668
+        REGRESSION: Crash in 
+        WebCore::ScrollingStateScrollingNode::setNonFastScrollableRegion
+        -and corresponding-
+        <rdar://problem/12491901>
+
+        Reviewed by Simon Fraser.
+
+        http://trac.webkit.org/changeset/130783 changed the lifetime of the 
+        ScrollingStateTree's rootStateNode. Before that patch, the root state 
+        node was never destroyed. It was just constantly re-used for 
+        different RenderLayerBackings. This crash is just one of a few bugs 
+        that has occurred because of that change. I have fixed the other bugs 
+        individually, but I think that long-term, it is the safest solution 
+        to go back to the original ownership model.
+
+        So this patch ensures that the state tree will always have a root 
+        state node. Instead of destroying and re-creating the root node when 
+        it's scroll ID changes, we just update the ID.
+
+        attachToStateTree() now takes an additional ID representing the ID of 
+        the parent node.
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::attachToStateTree):
+
+        Add a way to set the scrolling node ID.
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore::ScrollingStateNode::setScrollingNodeID):
+
+        This code that provided a way to mark all properties as having 
+        changed was added in http://trac.webkit.org/changeset/130989 as a way 
+        to ensure we would re-set ScrollingThread's nodes when we destroyed 
+        and re-created the rootStateNode. Now that we are no longer 
+        destroying and re-creating the rootStateNode, this code is no longer 
+        necessary.
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        * page/scrolling/ScrollingStateScrollingNode.h:
+
+        create m_rootStateNode right in the ScrollingStateTree's constructor.
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::ScrollingStateTree):
+
+        Don't let removeNode() destroy m_rootStateNode.
+        (WebCore::ScrollingStateTree::removeNode):
+
+        Also a part of r130989 that is no longer needed.
+        (WebCore::ScrollingStateTree::rootLayerDidChange():
+        * page/scrolling/ScrollingStateTree.h:
+        (WebCore::ScrollingStateTree::rootStateNode):
+        (ScrollingStateTree):
+        (WebCore::ScrollingStateTree::setRootStateNode):
+
+        attachToStateTree() now takes an additional ID representing the ID of 
+        the parent node.
+        * page/scrolling/mac/ScrollingCoordinatorMac.h:
+        (ScrollingCoordinatorMac):
+
+        We no longer need ScrollingStateTree::rootLayerDidChange()
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::frameViewRootLayerDidChange):
+
+        Do not destroy and re-create the state node. Just update its ID. When 
+        we support child nodes soon, we will create them in this function.
+        (WebCore::ScrollingCoordinatorMac::attachToStateTree):
+
+        No need to null-check the rootStateNode.
+        (WebCore::ScrollingCoordinatorMac::clearStateTree):
+
+        Send 0 as the parent node ID to attachToStateTree() to represent the 
+        root node.
+        (WebCore::ScrollingCoordinatorMac::ensureRootStateNodeForFrameView):
+        * rendering/RenderLayerBacking.cpp:
+
+        RenderLayerBacking::attachToScrollingCoordinator() now takes a parent 
+        layer.
+        (WebCore::RenderLayerBacking::attachToScrollingCoordinator):
+        * rendering/RenderLayerBacking.h:
+        (RenderLayerBacking):
+
+        Since this is the root, send 0 to represent the parent layer.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking):
+
 2012-10-18  Yael Aharon  <yael.aharon@intel.com>
 
         [EFL] GraphicsContext3D::m_renderStyle is not initialized

@@ -510,7 +510,7 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
 
             // At this time, the ScrollingCooridnator only supports the top-level frame.
             if (layer->isRootLayer() && !m_renderView->document()->ownerElement()) {
-                layer->backing()->attachToScrollingCoordinator();
+                layer->backing()->attachToScrollingCoordinator(0);
                 if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
                     scrollingCoordinator->frameViewRootLayerDidChange(m_renderView->frameView());
             }
