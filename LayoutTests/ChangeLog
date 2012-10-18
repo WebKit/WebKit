@@ -1,3 +1,13 @@
+2012-10-18  Anton Muhin  <antonm@chromium.org>
+
+        Unreviewed Chromium rebaselines.
+
+        * platform/chromium-linux/fast/table/border-collapsing/collapsed-border-with-col-colgroup-span-expected.png: Removed.
+        * platform/chromium-mac/fast/table/border-collapsing/cached-change-colgroup-border-color-expected.png:
+        * platform/chromium-mac/fast/table/border-collapsing/cached-change-colgroup-border-width-expected.png:
+        * platform/chromium-mac/fast/table/border-collapsing/collapsed-border-with-col-colgroup-span-expected.png: Added.
+        * platform/chromium-win/fast/table/border-collapsing/collapsed-border-with-col-colgroup-span-expected.png: Added.
+
 2012-10-18  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Update pixel expectation for a datalist test.
