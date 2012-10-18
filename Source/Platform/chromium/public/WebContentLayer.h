@@ -27,6 +27,7 @@
 #define WebContentLayer_h
 
 #include "WebCommon.h"
+#include "WebLayer.h"
 
 namespace WebKit {
 class WebContentLayerClient;
