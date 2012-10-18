@@ -1,3 +1,14 @@
+2012-10-17  Kangil Han  <kangil.han@samsung.com>
+
+        Let's move use-while-animating-crash-expected.txt to common place.
+        https://bugs.webkit.org/show_bug.cgi?id=99678
+
+        Unreviewed, expectations change.
+
+        Move expected result to common place to pass svg/animations/use-while-animating-crash.html case.
+
+        * svg/animations/use-while-animating-crash-expected.txt: Renamed from LayoutTests/platform/mac/svg/animations/use-while-animating-crash-expected.txt.
+
 2012-10-17  Hayato Ito  <hayato@chromium.org>
 
         Content element does not expose distributedNodes property.
