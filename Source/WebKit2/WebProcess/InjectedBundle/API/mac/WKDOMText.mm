@@ -38,6 +38,13 @@
     return WebCore::toText(_impl.get())->data();
 }
 
+- (void)setData:(NSString *)data
+{
+    // FIXME: Do something about the exception.
+    WebCore::ExceptionCode ec;
+    WebCore::toText(_impl.get())->setData(data, ec);
+}
+
 @end
 
 #endif // defined(__LP64__) && defined(__clang__)

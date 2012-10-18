@@ -65,6 +65,13 @@
     _impl->appendChild(WebKit::toWebCoreNode(node), ec);
 }
 
+- (void)removeChild:(WKDOMNode *)node
+{
+    // FIXME: Do something about the exception.
+    WebCore::ExceptionCode ec;
+    _impl->removeChild(WebKit::toWebCoreNode(node), ec);
+}
+
 - (WKDOMDocument *)document
 {
     return WebKit::toWKDOMDocument(_impl->document());

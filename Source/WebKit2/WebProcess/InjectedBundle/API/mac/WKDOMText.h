@@ -30,7 +30,7 @@
 WK_EXPORT
 @interface WKDOMText : WKDOMNode
 
-@property(readonly) NSString *data;
+@property(nonatomic, copy) NSString *data;
 
 @end
 

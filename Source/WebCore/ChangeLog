@@ -1,3 +1,14 @@
+2012-10-17  Andy Estes  <aestes@apple.com>
+
+        [WebKit2] Add removeChild: to WKDOMNode and make WKDOMText.data read/write
+        https://bugs.webkit.org/show_bug.cgi?id=99662
+
+        Reviewed by Sam Weinig.
+
+        Export needed symbols.
+
+        * WebCore.exp.in:
+
 2012-10-17  Adam Barth  <abarth@webkit.org>
 
         [V8] Don't generate code that declares visitDOMWrapper if we're not going to generate the implementation

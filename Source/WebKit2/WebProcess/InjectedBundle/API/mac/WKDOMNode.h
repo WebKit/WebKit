@@ -35,6 +35,7 @@ WK_EXPORT
 
 - (void)insertNode:(WKDOMNode *)node before:(WKDOMNode *)refNode;
 - (void)appendChild:(WKDOMNode *)node;
+- (void)removeChild:(WKDOMNode *)node;
 
 @property(readonly) WKDOMDocument *document;
 @property(readonly) WKDOMNode *parentNode;
