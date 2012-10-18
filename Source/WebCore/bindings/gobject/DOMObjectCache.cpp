@@ -97,8 +97,17 @@ void DOMObjectCache::clearByFrame(WebCore::Frame* frame)
             // If this is the last unref we are going to do,
             // disconnect the weak ref. We cannot do it afterwards
             // because the object might be dead at that point.
-            if (data->timesReturned == 1)
+            if (data->timesReturned == 1) {
                 g_object_weak_unref(data->object, weakRefNotify, &objectDead);
+                // At this point, the next time the DOMObject is
+                // unref'ed it will be finalized,
+                // DOMObject::finalize() will call
+                // DOMObjectCache::forget(), which will free 'data'.
+                // Toggling 'objectDead' here will ensure we don't
+                // dereference an invalid pointer in the next
+                // iteration.
+                objectDead = TRUE;
+            }
             data->timesReturned--;
             g_object_unref(data->object);
         }
