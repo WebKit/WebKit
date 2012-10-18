@@ -76,4 +76,8 @@ void WebPreferences::platformUpdateDoubleValueForKey(const String&, double)
 {
 }
 
+void WebPreferences::platformUpdateFloatValueForKey(const String&, float)
+{
+}
+
 } // namespace WebKit

@@ -92,10 +92,12 @@ private:
     void updateBoolValueForKey(const String& key, bool value);
     void updateUInt32ValueForKey(const String& key, uint32_t value);
     void updateDoubleValueForKey(const String& key, double value);
+    void updateFloatValueForKey(const String& key, float value);
     void platformUpdateStringValueForKey(const String& key, const String& value);
     void platformUpdateBoolValueForKey(const String& key, bool value);
     void platformUpdateUInt32ValueForKey(const String& key, uint32_t value);
     void platformUpdateDoubleValueForKey(const String& key, double value);
+    void platformUpdateFloatValueForKey(const String& key, float value);
 
     HashSet<WebPageGroup*> m_pageGroups;
     WebPreferencesStore m_store;

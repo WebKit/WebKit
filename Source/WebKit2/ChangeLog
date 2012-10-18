@@ -1,3 +1,41 @@
+2012-10-18  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Add support for float-valued prefernces
+        https://bugs.webkit.org/show_bug.cgi?id=99419
+
+        Reviewed by Anders Carlsson.
+
+        Support float values for preferences in WK2.
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::encode):
+        (WebKit::WebPreferencesStore::decode):
+        (WebKit):
+        (WebKit::defaultValueForKey):
+        * Shared/WebPreferencesStore.h:
+        (WebKit):
+        (WebPreferencesStore):
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::updateFloatValueForKey):
+        (WebKit):
+        * UIProcess/WebPreferences.h:
+        (WebPreferences):
+        * UIProcess/cf/WebPreferencesCF.cpp:
+        (WebKit::WebPreferences::platformUpdateFloatValueForKey):
+        (WebKit):
+        * UIProcess/efl/WebPreferencesEfl.cpp:
+        (WebKit::WebPreferences::platformUpdateFloatValueForKey):
+        (WebKit):
+        * UIProcess/gtk/WebPreferencesGtk.cpp:
+        (WebKit::WebPreferences::platformUpdateFloatValueForKey):
+        (WebKit):
+        * UIProcess/mac/WebPreferencesMac.mm:
+        (WebKit::WebPreferences::platformUpdateFloatValueForKey):
+        (WebKit):
+        * UIProcess/qt/WebPreferencesQt.cpp:
+        (WebKit::WebPreferences::platformUpdateFloatValueForKey):
+        (WebKit):
+
 2012-10-18  Anders Carlsson  <andersca@apple.com>
 
         Replace uses of ArgumentEncoder/ArgumentDecoder with MessageEncoder/MessageDecoder

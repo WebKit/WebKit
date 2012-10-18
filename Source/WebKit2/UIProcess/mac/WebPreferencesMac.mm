@@ -125,4 +125,12 @@ void WebPreferences::platformUpdateDoubleValueForKey(const String& key, double v
     [[NSUserDefaults standardUserDefaults] setDouble:value forKey:makeKey(m_identifier, key)];
 }
 
+void WebPreferences::platformUpdateFloatValueForKey(const String& key, float value)
+{
+    if (!m_identifier)
+        return;
+
+    [[NSUserDefaults standardUserDefaults] setFloat:value forKey:makeKey(m_identifier, key)];
+}
+
 } // namespace WebKit

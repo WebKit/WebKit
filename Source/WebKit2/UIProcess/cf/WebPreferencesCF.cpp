@@ -141,6 +141,15 @@ void WebPreferences::platformUpdateDoubleValueForKey(const String& key, double v
     CFPreferencesSetAppValue(makeKey(m_identifier, key).get(), number.get(), kCFPreferencesCurrentApplication);
 }
 
+void WebPreferences::platformUpdateFloatValueForKey(const String& key, float value)
+{
+    if (!m_identifier)
+        return;
+
+    RetainPtr<CFNumberRef> number(AdoptCF, CFNumberCreate(0, kCFNumberFloatType, &value));
+    CFPreferencesSetAppValue(makeKey(m_identifier, key).get(), number.get(), kCFPreferencesCurrentApplication);
+}
+
 } // namespace WebKit
 
 #endif // !PLATFORM(MAC)

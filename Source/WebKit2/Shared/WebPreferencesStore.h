@@ -144,6 +144,9 @@ namespace WebKit {
     macro(PDFScaleFactor, pdfScaleFactor, Double, double, 0) \
     \
 
+#define FOR_EACH_WEBKIT_FLOAT_PREFERENCE(macro) \
+    \
+
 #if PLATFORM(WIN)
 #define DEFAULT_WEBKIT_FONT_SMOOTHING_LEVEL FontSmoothingLevelWindows
 #else
@@ -212,6 +215,7 @@ namespace WebKit {
 #define FOR_EACH_WEBKIT_PREFERENCE(macro) \
     FOR_EACH_WEBKIT_BOOL_PREFERENCE(macro) \
     FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \
+    FOR_EACH_WEBKIT_FLOAT_PREFERENCE(macro) \
     FOR_EACH_WEBKIT_UINT32_PREFERENCE(macro) \
     FOR_EACH_WEBKIT_STRING_PREFERENCE(macro) \
     \
@@ -246,6 +250,9 @@ struct WebPreferencesStore {
     bool setDoubleValueForKey(const String& key, double value);
     double getDoubleValueForKey(const String& key) const;
 
+    bool setFloatValueForKey(const String& key, float value);
+    float getFloatValueForKey(const String& key) const;
+
     // For WebKitTestRunner usage.
     static void overrideBoolValueForKey(const String& key, bool value);
     static void removeTestRunnerOverrides();
@@ -254,6 +261,7 @@ struct WebPreferencesStore {
     HashMap<String, bool> m_boolValues;
     HashMap<String, uint32_t> m_uint32Values;
     HashMap<String, double> m_doubleValues;
+    HashMap<String, float> m_floatValues;
 };
 
 } // namespace WebKit

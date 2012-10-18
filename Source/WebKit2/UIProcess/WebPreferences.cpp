@@ -92,6 +92,12 @@ void WebPreferences::updateDoubleValueForKey(const String& key, double value)
     update(); // FIXME: Only send over the changed key and value.
 }
 
+void WebPreferences::updateFloatValueForKey(const String& key, float value)
+{
+    platformUpdateFloatValueForKey(key, value);
+    update(); // FIXME: Only send over the changed key and value.
+}
+
 #define DEFINE_PREFERENCE_GETTER_AND_SETTERS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) \
     void WebPreferences::set##KeyUpper(const Type& value) \
     { \
