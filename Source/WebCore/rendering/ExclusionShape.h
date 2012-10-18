@@ -64,6 +64,7 @@ public:
     virtual ~ExclusionShape() { }
 
     virtual FloatRect shapeLogicalBoundingBox() const = 0;
+    virtual FloatRect shapeBoundingBox() const { return m_boundingBox; }
     virtual void getIncludedIntervals(float logicalTop, float logicalBottom, SegmentList&) const = 0;
     virtual void getExcludedIntervals(float logicalTop, float logicalBottom, SegmentList&) const = 0;
     virtual bool isEmpty() const = 0;
@@ -77,6 +78,7 @@ private:
     WritingMode m_writingMode;
     float m_logicalBoxWidth;
     float m_logicalBoxHeight;
+    FloatRect m_boundingBox;
 };
 
 } // namespace WebCore

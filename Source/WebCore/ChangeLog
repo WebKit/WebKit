@@ -1,5 +1,31 @@
 2012-10-18  Hans Muller  <hmuller@adobe.com>
 
+        [CSS Exclusions] Add ExclusionShape::shapeBoundingBox() method
+        https://bugs.webkit.org/show_bug.cgi?id=99216
+
+        Reviewed by Dirk Schulze.
+
+        Added a FloatRect::extend() method which simplifies writing loops that
+        accumulate the bounding box for a sequence of FloatPoints. The new method
+        is used by ExclusionPolygon to initialize the shape's logical and physical
+        bounding boxes. This a clean-up, not a change in functionality. It's already
+        covered by the existing fast/exclusions LayoutTests.
+
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::FloatRect::extend): Extend the FloatRect's bounds to include a FloatPoint.
+        (WebCore):
+        * platform/graphics/FloatRect.h:
+        (FloatRect): Added extend() method.
+        * rendering/ExclusionPolygon.cpp:
+        (WebCore::ExclusionPolygon::ExclusionPolygon): Use FloatRect::extend() to compute the polygon's internal bounding box.
+        * rendering/ExclusionShape.cpp:
+        (WebCore::ExclusionShape::createExclusionShape): Use FloatRect::extend() to compute the polygon's physical bounding box.
+        * rendering/ExclusionShape.h:
+        (WebCore::ExclusionShape::shapeBoundingBox): Return the shape's bounding box in physical coordinates.
+        (ExclusionShape):
+
+2012-10-18  Hans Muller  <hmuller@adobe.com>
+
         [CSS Exclusions] Handle special case "empty" shapes
         https://bugs.webkit.org/show_bug.cgi?id=99342
 

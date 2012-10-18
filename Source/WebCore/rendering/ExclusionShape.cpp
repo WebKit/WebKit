@@ -82,18 +82,21 @@ PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape
 
     case BasicShape::BASIC_SHAPE_RECTANGLE: {
         const BasicShapeRectangle* rectangle = static_cast<const BasicShapeRectangle*>(basicShape);
-        float x = floatValueForLength(rectangle->x(), boxWidth);
-        float y = floatValueForLength(rectangle->y(), boxHeight);
-        float width = floatValueForLength(rectangle->width(), boxWidth);
-        float height = floatValueForLength(rectangle->height(), boxHeight);
+        FloatRect bounds(
+            floatValueForLength(rectangle->x(), boxWidth),
+            floatValueForLength(rectangle->y(), boxHeight),
+            floatValueForLength(rectangle->width(), boxWidth),
+            floatValueForLength(rectangle->height(), boxHeight));
         Length radiusXLength = rectangle->cornerRadiusX();
         Length radiusYLength = rectangle->cornerRadiusY();
-        float radiusX = radiusXLength.isUndefined() ? 0 : floatValueForLength(radiusXLength, boxWidth);
-        float radiusY = radiusYLength.isUndefined() ? 0 : floatValueForLength(radiusYLength, boxHeight);
+        FloatSize cornerRadii(
+            radiusXLength.isUndefined() ? 0 : floatValueForLength(radiusXLength, boxWidth),
+            radiusYLength.isUndefined() ? 0 : floatValueForLength(radiusYLength, boxHeight));
 
         exclusionShape = horizontalWritingMode
-            ? createExclusionRectangle(FloatRect(x, y, width, height), FloatSize(radiusX, radiusY))
-            : createExclusionRectangle(FloatRect(y, x, height, width), FloatSize(radiusY, radiusX));
+            ? createExclusionRectangle(bounds, cornerRadii)
+            : createExclusionRectangle(bounds.transposedRect(), cornerRadii.transposedSize());
+        exclusionShape->m_boundingBox = bounds;
         break;
     }
 
@@ -106,6 +109,7 @@ PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape
         exclusionShape = horizontalWritingMode
             ? createExclusionCircle(FloatPoint(centerX, centerY), radius)
             : createExclusionCircle(FloatPoint(centerY, centerX), radius);
+        exclusionShape->m_boundingBox = FloatRect(centerX - radius, centerY - radius, radius * 2, radius * 2);
         break;
     }
 
@@ -119,6 +123,7 @@ PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape
         exclusionShape = horizontalWritingMode
             ? createExclusionEllipse(FloatPoint(centerX, centerY), FloatSize(radiusX, radiusY))
             : createExclusionEllipse(FloatPoint(centerY, centerX), FloatSize(radiusY, radiusX));
+        exclusionShape->m_boundingBox = FloatRect(centerX - radiusX, centerY - radiusY, radiusX * 2, radiusY * 2);
         break;
     }
 
@@ -127,14 +132,20 @@ PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape
         const Vector<Length>& values = polygon->values();
         size_t valuesSize = values.size();
         ASSERT(!(valuesSize % 2));
+        FloatRect boundingBox;
         Vector<FloatPoint>* vertices = new Vector<FloatPoint>(valuesSize / 2);
         for (unsigned i = 0; i < valuesSize; i += 2) {
             FloatPoint vertex(
                 floatValueForLength(values.at(i), boxWidth),
                 floatValueForLength(values.at(i + 1), boxHeight));
             (*vertices)[i / 2] = horizontalWritingMode ? vertex : vertex.transposedPoint();
+            if (!i)
+                boundingBox.setLocation(vertex);
+            else
+                boundingBox.extend(vertex);
         }
         exclusionShape = createExclusionPolygon(adoptPtr(vertices), polygon->windRule());
+        exclusionShape->m_boundingBox = boundingBox;
         break;
     }
 

@@ -134,6 +134,16 @@ void FloatRect::uniteIfNonZero(const FloatRect& other)
     uniteEvenIfEmpty(other);
 }
 
+void FloatRect::extend(const FloatPoint& p)
+{
+    float minX = min(x(), p.x());
+    float minY = min(y(), p.y());
+    float maxX = max(this->maxX(), p.x());
+    float maxY = max(this->maxY(), p.y());
+
+    setLocationAndSizeFromEdges(minX, minY, maxX, maxY);
+}
+
 void FloatRect::scale(float sx, float sy)
 {
     m_location.setX(x() * sx);
