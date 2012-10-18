@@ -1,5 +1,11 @@
 2012-10-18  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        [EFL] Update pixel expectation for a datalist test.
+
+        * platform/efl/fast/forms/datalist/input-appearance-range-with-datalist-expected.png:
+
+2012-10-18  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         [EFL] Gardening. Remove pixel expectation for a test that's actually a reftest.
 
         * platform/efl/fast/forms/datalist/update-range-with-datalist-expected.png: Removed.
