@@ -1,5 +1,17 @@
 2012-10-17  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Bump up the number of iterations of html5-full-render to 5
+        https://bugs.webkit.org/show_bug.cgi?id=99657
+
+        Reviewed by Andreas Kling.
+
+        Now that html5-full-render.html runs in less than 15 seconds after r131553,
+        we can afford to get 5 instead of 2 samples.
+
+        * Parser/html5-full-render.html:
+
+2012-10-17  Ryosuke Niwa  <rniwa@webkit.org>
+
         Rename PerfTestRunner.runPerSecond to PerfTestRunner.measureRunsPerSecond for consistency
         https://bugs.webkit.org/show_bug.cgi?id=99642
 
