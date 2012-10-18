@@ -30,4 +30,5 @@
 ] interface HTMLContentElement : HTMLElement {
     [Reflect] attribute DOMString select;
     attribute boolean resetStyleInheritance;
+    NodeList getDistributedNodes();
 };

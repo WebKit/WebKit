@@ -90,7 +90,6 @@ public:
     bool isValidContentSelect(Element* insertionPoint, ExceptionCode&);
     Node* treeScopeRootNode(Node*, ExceptionCode&);
     Node* parentTreeScope(Node*, ExceptionCode&);
-    PassRefPtr<NodeList> distributedNodes(Element* insertionPoint, ExceptionCode&);
 
     bool attached(Node*, ExceptionCode&);
 

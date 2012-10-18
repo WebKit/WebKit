@@ -297,16 +297,6 @@ Node* Internals::parentTreeScope(Node* node, ExceptionCode& ec)
     return parentTreeScope ? parentTreeScope->rootNode() : 0;
 }
 
-PassRefPtr<NodeList> Internals::distributedNodes(Element* insertionPoint, ExceptionCode& ec)
-{
-    if (!insertionPoint || !isInsertionPoint(insertionPoint)) {
-        ec = INVALID_ACCESS_ERR;
-        return 0;
-    }
-
-    return toInsertionPoint(insertionPoint)->distributedNodes();
-}
-
 bool Internals::hasShadowInsertionPoint(const Node* root, ExceptionCode& ec) const
 {
     if (root && root->isShadowRoot())

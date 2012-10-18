@@ -1,3 +1,25 @@
+2012-10-17  Hayato Ito  <hayato@chromium.org>
+
+        Content element does not expose distributedNodes property.
+        https://bugs.webkit.org/show_bug.cgi?id=99232
+
+        Reviewed by Dimitri Glazkov.
+
+        Add getDistributedNodes() to HTMLContentElement's IDL, which returns a
+        static NodeList whose node are distributed to the content element.
+
+        Test: fast/dom/shadow/content-element-distributed-nodes.html
+
+        * html/shadow/HTMLContentElement.idl:
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::getDistributedNodes):
+        * html/shadow/InsertionPoint.h:
+        (InsertionPoint):
+        * testing/Internals.cpp:
+        * testing/Internals.h:
+        (Internals):
+        * testing/Internals.idl:
+
 2012-10-17  Pan Deng  <pan.deng@intel.com>
 
         [User Timing] implement main interface in of User Timing, according to http://www.w3.org/TR/2012/CR-user-timing-20120726/

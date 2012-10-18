@@ -1,3 +1,19 @@
+2012-10-17  Hayato Ito  <hayato@chromium.org>
+
+        Content element does not expose distributedNodes property.
+        https://bugs.webkit.org/show_bug.cgi?id=99232
+
+        Reviewed by Dimitri Glazkov.
+
+        Add getDistributedNodes() to HTMLContentElement's IDL, which returns a
+        static NodeList whose node are distributed to the content element.
+
+        * fast/dom/shadow/content-element-distributed-nodes-expected.txt: Added.
+        * fast/dom/shadow/content-element-distributed-nodes.html: Added.
+        * fast/dom/shadow/distributed-nodes-expected.txt: Removed.
+        * fast/dom/shadow/distributed-nodes.html: Removed.
+        * platform/qt/TestExpectations:
+
 2012-10-17  Dirk Pranke  <dpranke@chromium.org>
 
         Clone baselines from platform/mac to platform/chromium [7 of 7]

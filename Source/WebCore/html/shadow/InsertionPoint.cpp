@@ -88,11 +88,9 @@ bool InsertionPoint::isActive() const
     return true;
 }
 
-PassRefPtr<NodeList> InsertionPoint::distributedNodes() const
+PassRefPtr<NodeList> InsertionPoint::getDistributedNodes() const
 {
-    if (!attached())
-        return 0;
-
+    document()->updateLayout();
     Vector<RefPtr<Node> > nodes;
 
     for (size_t i = 0; i < m_distribution.size(); ++i)
