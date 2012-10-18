@@ -40,7 +40,7 @@ public:
 
     template<typename U> bool send(const U& message, uint64_t destinationID)
     {
-        OwnPtr<MessageEncoder> encoder = MessageEncoder::create("", "", destinationID);
+        OwnPtr<MessageEncoder> encoder = MessageEncoder::create(U::receiverName(), U::name(), destinationID);
         encoder->encode(message);
         
         return static_cast<T*>(this)->sendMessage(MessageID(U::messageID), encoder.release());

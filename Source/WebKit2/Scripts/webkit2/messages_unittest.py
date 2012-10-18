@@ -339,8 +339,12 @@ namespace WebKit {
 }
 
 namespace Messages {
-
 namespace WebPage {
+
+static inline const char const* messageReceiverName()
+{
+    return "WebPage";
+}
 
 enum Kind {
     LoadURLID,
@@ -375,6 +379,9 @@ enum Kind {
 
 struct LoadURL : CoreIPC::Arguments1<const WTF::String&> {
     static const Kind messageID = LoadURLID;
+    static const char const* receiverName() { return messageReceiverName(); }
+    static const char const* name() { return "LoadURL"; }
+
     typedef CoreIPC::Arguments1<const WTF::String&> DecodeType;
     explicit LoadURL(const WTF::String& url)
         : CoreIPC::Arguments1<const WTF::String&>(url)
@@ -385,6 +392,9 @@ struct LoadURL : CoreIPC::Arguments1<const WTF::String&> {
 #if ENABLE(TOUCH_EVENTS)
 struct TouchEvent : CoreIPC::Arguments1<const WebKit::WebTouchEvent&> {
     static const Kind messageID = TouchEventID;
+    static const char const* receiverName() { return messageReceiverName(); }
+    static const char const* name() { return "TouchEvent"; }
+
     typedef CoreIPC::Arguments1<const WebKit::WebTouchEvent&> DecodeType;
     explicit TouchEvent(const WebKit::WebTouchEvent& event)
         : CoreIPC::Arguments1<const WebKit::WebTouchEvent&>(event)
@@ -395,6 +405,9 @@ struct TouchEvent : CoreIPC::Arguments1<const WebKit::WebTouchEvent&> {
 
 struct DidReceivePolicyDecision : CoreIPC::Arguments3<uint64_t, uint64_t, uint32_t> {
     static const Kind messageID = DidReceivePolicyDecisionID;
+    static const char const* receiverName() { return messageReceiverName(); }
+    static const char const* name() { return "DidReceivePolicyDecision"; }
+
     typedef CoreIPC::Arguments3<uint64_t, uint64_t, uint32_t> DecodeType;
     DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction)
         : CoreIPC::Arguments3<uint64_t, uint64_t, uint32_t>(frameID, listenerID, policyAction)
@@ -404,11 +417,17 @@ struct DidReceivePolicyDecision : CoreIPC::Arguments3<uint64_t, uint64_t, uint32
 
 struct Close : CoreIPC::Arguments0 {
     static const Kind messageID = CloseID;
+    static const char const* receiverName() { return messageReceiverName(); }
+    static const char const* name() { return "Close"; }
+
     typedef CoreIPC::Arguments0 DecodeType;
 };
 
 struct PreferencesDidChange : CoreIPC::Arguments1<const WebKit::WebPreferencesStore&> {
     static const Kind messageID = PreferencesDidChangeID;
+    static const char const* receiverName() { return messageReceiverName(); }
+    static const char const* name() { return "PreferencesDidChange"; }
+
     typedef CoreIPC::Arguments1<const WebKit::WebPreferencesStore&> DecodeType;
     explicit PreferencesDidChange(const WebKit::WebPreferencesStore& store)
         : CoreIPC::Arguments1<const WebKit::WebPreferencesStore&>(store)
@@ -418,6 +437,9 @@ struct PreferencesDidChange : CoreIPC::Arguments1<const WebKit::WebPreferencesSt
 
 struct SendDoubleAndFloat : CoreIPC::Arguments2<double, float> {
     static const Kind messageID = SendDoubleAndFloatID;
+    static const char const* receiverName() { return messageReceiverName(); }
+    static const char const* name() { return "SendDoubleAndFloat"; }
+
     typedef CoreIPC::Arguments2<double, float> DecodeType;
     SendDoubleAndFloat(double d, float f)
         : CoreIPC::Arguments2<double, float>(d, f)
@@ -427,6 +449,9 @@ struct SendDoubleAndFloat : CoreIPC::Arguments2<double, float> {
 
 struct SendInts : CoreIPC::Arguments2<const Vector<uint64_t>&, const Vector<Vector<uint64_t> >&> {
     static const Kind messageID = SendIntsID;
+    static const char const* receiverName() { return messageReceiverName(); }
+    static const char const* name() { return "SendInts"; }
+
     typedef CoreIPC::Arguments2<const Vector<uint64_t>&, const Vector<Vector<uint64_t> >&> DecodeType;
     SendInts(const Vector<uint64_t>& ints, const Vector<Vector<uint64_t> >& intVectors)
         : CoreIPC::Arguments2<const Vector<uint64_t>&, const Vector<Vector<uint64_t> >&>(ints, intVectors)
@@ -436,6 +461,9 @@ struct SendInts : CoreIPC::Arguments2<const Vector<uint64_t>&, const Vector<Vect
 
 struct CreatePlugin : CoreIPC::Arguments2<uint64_t, const WebKit::Plugin::Parameters&> {
     static const Kind messageID = CreatePluginID;
+    static const char const* receiverName() { return messageReceiverName(); }
+    static const char const* name() { return "CreatePlugin"; }
+
     typedef CoreIPC::Arguments1<bool&> Reply;
     typedef CoreIPC::Arguments2<uint64_t, const WebKit::Plugin::Parameters&> DecodeType;
     CreatePlugin(uint64_t pluginInstanceID, const WebKit::Plugin::Parameters& parameters)
@@ -446,6 +474,9 @@ struct CreatePlugin : CoreIPC::Arguments2<uint64_t, const WebKit::Plugin::Parame
 
 struct RunJavaScriptAlert : CoreIPC::Arguments2<uint64_t, const WTF::String&> {
     static const Kind messageID = RunJavaScriptAlertID;
+    static const char const* receiverName() { return messageReceiverName(); }
+    static const char const* name() { return "RunJavaScriptAlert"; }
+
     typedef CoreIPC::Arguments0 Reply;
     typedef CoreIPC::Arguments2<uint64_t, const WTF::String&> DecodeType;
     RunJavaScriptAlert(uint64_t frameID, const WTF::String& message)
@@ -456,6 +487,9 @@ struct RunJavaScriptAlert : CoreIPC::Arguments2<uint64_t, const WTF::String&> {
 
 struct GetPlugins : CoreIPC::Arguments1<bool> {
     static const Kind messageID = GetPluginsID;
+    static const char const* receiverName() { return messageReceiverName(); }
+    static const char const* name() { return "GetPlugins"; }
+
     typedef CoreIPC::Arguments1<Vector<WebCore::PluginInfo>&> Reply;
     typedef CoreIPC::Arguments1<bool> DecodeType;
     explicit GetPlugins(bool refresh)
@@ -466,6 +500,9 @@ struct GetPlugins : CoreIPC::Arguments1<bool> {
 
 struct GetPluginProcessConnection : CoreIPC::Arguments1<const WTF::String&> {
     static const Kind messageID = GetPluginProcessConnectionID;
+    static const char const* receiverName() { return messageReceiverName(); }
+    static const char const* name() { return "GetPluginProcessConnection"; }
+
     struct DelayedReply : public ThreadSafeRefCounted<DelayedReply> {
         DelayedReply(PassRefPtr<CoreIPC::Connection>, PassOwnPtr<CoreIPC::ArgumentEncoder>);
         ~DelayedReply();
@@ -487,6 +524,9 @@ struct GetPluginProcessConnection : CoreIPC::Arguments1<const WTF::String&> {
 
 struct TestMultipleAttributes : CoreIPC::Arguments0 {
     static const Kind messageID = TestMultipleAttributesID;
+    static const char const* receiverName() { return messageReceiverName(); }
+    static const char const* name() { return "TestMultipleAttributes"; }
+
     struct DelayedReply : public ThreadSafeRefCounted<DelayedReply> {
         DelayedReply(PassRefPtr<CoreIPC::Connection>, PassOwnPtr<CoreIPC::ArgumentEncoder>);
         ~DelayedReply();
@@ -504,6 +544,9 @@ struct TestMultipleAttributes : CoreIPC::Arguments0 {
 
 struct TestConnectionQueue : CoreIPC::Arguments1<uint64_t> {
     static const Kind messageID = TestConnectionQueueID;
+    static const char const* receiverName() { return messageReceiverName(); }
+    static const char const* name() { return "TestConnectionQueue"; }
+
     typedef CoreIPC::Arguments1<uint64_t> DecodeType;
     explicit TestConnectionQueue(uint64_t pluginID)
         : CoreIPC::Arguments1<uint64_t>(pluginID)
@@ -513,6 +556,9 @@ struct TestConnectionQueue : CoreIPC::Arguments1<uint64_t> {
 
 struct TestParameterAttributes : CoreIPC::Arguments3<uint64_t, double, double> {
     static const Kind messageID = TestParameterAttributesID;
+    static const char const* receiverName() { return messageReceiverName(); }
+    static const char const* name() { return "TestParameterAttributes"; }
+
     typedef CoreIPC::Arguments3<uint64_t, double, double> DecodeType;
     TestParameterAttributes(uint64_t foo, double bar, double baz)
         : CoreIPC::Arguments3<uint64_t, double, double>(foo, bar, baz)
@@ -523,6 +569,9 @@ struct TestParameterAttributes : CoreIPC::Arguments3<uint64_t, double, double> {
 #if PLATFORM(MAC)
 struct DidCreateWebProcessConnection : CoreIPC::Arguments1<const CoreIPC::MachPort&> {
     static const Kind messageID = DidCreateWebProcessConnectionID;
+    static const char const* receiverName() { return messageReceiverName(); }
+    static const char const* name() { return "DidCreateWebProcessConnection"; }
+
     typedef CoreIPC::Arguments1<const CoreIPC::MachPort&> DecodeType;
     explicit DidCreateWebProcessConnection(const CoreIPC::MachPort& connectionIdentifier)
         : CoreIPC::Arguments1<const CoreIPC::MachPort&>(connectionIdentifier)
@@ -534,6 +583,9 @@ struct DidCreateWebProcessConnection : CoreIPC::Arguments1<const CoreIPC::MachPo
 #if PLATFORM(MAC)
 struct InterpretKeyEvent : CoreIPC::Arguments1<uint32_t> {
     static const Kind messageID = InterpretKeyEventID;
+    static const char const* receiverName() { return messageReceiverName(); }
+    static const char const* name() { return "InterpretKeyEvent"; }
+
     typedef CoreIPC::Arguments1<Vector<WebCore::KeypressCommand>&> Reply;
     typedef CoreIPC::Arguments1<uint32_t> DecodeType;
     explicit InterpretKeyEvent(uint32_t type)
@@ -546,6 +598,9 @@ struct InterpretKeyEvent : CoreIPC::Arguments1<uint32_t> {
 #if ENABLE(DEPRECATED_FEATURE)
 struct DeprecatedOperation : CoreIPC::Arguments1<const CoreIPC::DummyType&> {
     static const Kind messageID = DeprecatedOperationID;
+    static const char const* receiverName() { return messageReceiverName(); }
+    static const char const* name() { return "DeprecatedOperation"; }
+
     typedef CoreIPC::Arguments1<const CoreIPC::DummyType&> DecodeType;
     explicit DeprecatedOperation(const CoreIPC::DummyType& dummy)
         : CoreIPC::Arguments1<const CoreIPC::DummyType&>(dummy)
@@ -557,6 +612,9 @@ struct DeprecatedOperation : CoreIPC::Arguments1<const CoreIPC::DummyType&> {
 #if ENABLE(EXPERIMENTAL_FEATURE)
 struct ExperimentalOperation : CoreIPC::Arguments1<const CoreIPC::DummyType&> {
     static const Kind messageID = ExperimentalOperationID;
+    static const char const* receiverName() { return messageReceiverName(); }
+    static const char const* name() { return "ExperimentalOperation"; }
+
     typedef CoreIPC::Arguments1<const CoreIPC::DummyType&> DecodeType;
     explicit ExperimentalOperation(const CoreIPC::DummyType& dummy)
         : CoreIPC::Arguments1<const CoreIPC::DummyType&>(dummy)
@@ -566,7 +624,6 @@ struct ExperimentalOperation : CoreIPC::Arguments1<const CoreIPC::DummyType&> {
 #endif
 
 } // namespace WebPage
-
 } // namespace Messages
 
 namespace CoreIPC {

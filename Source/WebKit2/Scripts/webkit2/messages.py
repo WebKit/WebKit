@@ -129,6 +129,9 @@ def message_to_struct_declaration(message):
     result.append('struct %s : %s' % (message.name, base_class(message)))
     result.append(' {\n')
     result.append('    static const Kind messageID = %s;\n' % message.id())
+    result.append('    static const char const* receiverName() { return messageReceiverName(); }\n')
+    result.append('    static const char const* name() { return "%s"; }\n' % message.name)
+    result.append('\n')
     if message.reply_parameters != None:
         if message.has_attribute(DELAYED_ATTRIBUTE):
             send_parameters = [(function_parameter_type(x.type), x.name) for x in message.reply_parameters]
@@ -279,11 +282,19 @@ def generate_messages_header(file):
     result.append(forward_declarations)
     result.append('\n')
 
-    result.append('namespace Messages {\n\nnamespace %s {\n\n' % receiver.name)
+    result.append('namespace Messages {\nnamespace %s {\n' % receiver.name)
+    result.append('\n')
+    result.append('static inline const char const* messageReceiverName()\n')
+    result.append('{\n')
+    result.append('    return "%s";\n' % receiver.name)
+    result.append('}\n')
+    result.append('\n')
+
     result.append(messages_to_kind_enum(receiver.messages))
     result.append('\n')
     result.append('\n'.join([message_to_struct_declaration(x) for x in receiver.messages]))
-    result.append('\n} // namespace %s\n\n} // namespace Messages\n' % receiver.name)
+    result.append('\n')
+    result.append('} // namespace %s\n} // namespace Messages\n' % receiver.name)
 
     result.append('\nnamespace CoreIPC {\n\n')
     result.append('template<> struct MessageKindTraits<Messages::%s::Kind> {\n' % receiver.name)
