@@ -192,6 +192,8 @@ void TestInvocation::invoke()
         goto end;
     }
 
+    dumpResults();
+
 end:
 #if ENABLE(INSPECTOR)
     if (m_gotInitialResponse)
@@ -233,6 +235,17 @@ void TestInvocation::dump(const char* textToStdout, const char* textToStderr, bo
         fputs("#EOF\n", stdout);
     fflush(stdout);
     fflush(stderr);
+}
+
+void TestInvocation::dumpResults()
+{
+    dump(toWTFString(m_textOutput.get()).utf8().data());
+
+    if (m_dumpPixels && m_pixelResult)
+        dumpPixelsAndCompareWithExpected(m_pixelResult.get(), m_repaintRects.get());
+
+    fputs("#EOF\n", stdout);
+    fflush(stdout);
 }
 
 bool TestInvocation::compareActualHashToExpectedAndDumpResults(const char actualHash[33])
@@ -278,26 +291,15 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
 
         WKRetainPtr<WKStringRef> textOutputKey(AdoptWK, WKStringCreateWithUTF8CString("TextOutput"));
-        WKStringRef textOutput = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, textOutputKey.get()));
+        m_textOutput = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, textOutputKey.get()));
 
         WKRetainPtr<WKStringRef> pixelResultKey = adoptWK(WKStringCreateWithUTF8CString("PixelResult"));
-        WKImageRef pixelResult = static_cast<WKImageRef>(WKDictionaryGetItemForKey(messageBodyDictionary, pixelResultKey.get()));
-        ASSERT(!pixelResult || m_dumpPixels);
-        
+        m_pixelResult = static_cast<WKImageRef>(WKDictionaryGetItemForKey(messageBodyDictionary, pixelResultKey.get()));
+        ASSERT(!m_pixelResult || m_dumpPixels);
+
         WKRetainPtr<WKStringRef> repaintRectsKey = adoptWK(WKStringCreateWithUTF8CString("RepaintRects"));
-        WKArrayRef repaintRects = static_cast<WKArrayRef>(WKDictionaryGetItemForKey(messageBodyDictionary, repaintRectsKey.get()));        
+        m_repaintRects = static_cast<WKArrayRef>(WKDictionaryGetItemForKey(messageBodyDictionary, repaintRectsKey.get()));
 
-        // Dump text.
-        dump(toWTFString(textOutput).utf8().data());
-
-        // Dump pixels (if necessary).
-        if (m_dumpPixels && pixelResult)
-            dumpPixelsAndCompareWithExpected(pixelResult, repaintRects);
-
-        fputs("#EOF\n", stdout);
-        fflush(stdout);
-        fflush(stderr);
-        
         m_gotFinalMessage = true;
         TestController::shared().notifyDone();
         return;

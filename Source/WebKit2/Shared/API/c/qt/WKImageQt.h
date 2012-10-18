@@ -27,5 +27,6 @@
 #include <WebKit2/WKImage.h>
 
 WK_EXPORT QImage WKImageCreateQImage(WKImageRef image);
+WK_EXPORT WKImageRef WKImageCreateFromQImage(const QImage& image);
 
 #endif

@@ -27,6 +27,8 @@
 
 #include "TestInvocation.h"
 
+#include "PlatformWebView.h"
+#include "TestController.h"
 #include <QBuffer>
 #include <QCryptographicHash>
 #include <QtGui/QPainter>
@@ -63,9 +65,28 @@ static void dumpImage(const QImage& image)
     fflush(stdout);
 }
 
+void TestInvocation::forceRepaintDoneCallback(WKErrorRef, void *context)
+{
+    static_cast<TestInvocation*>(context)->m_gotRepaint = true;
+    TestController::shared().notifyDone();
+}
+
 void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef imageRef, WKArrayRef repaintRects)
 {
-    QImage image = WKImageCreateQImage(imageRef);
+    WKPageRef page = TestController::shared().mainWebView()->page();
+    WKPageForceRepaint(page, this, &forceRepaintDoneCallback);
+
+    TestController::shared().runUntil(m_gotRepaint, TestController::ShortTimeout);
+
+    QImage image;
+    if (m_gotRepaint)
+        image = WKImageCreateQImage(TestController::shared().mainWebView()->windowSnapshotImage().get());
+    else {
+        // The test harness expects an image so we output an empty one.
+        WKRect windowRect = TestController::shared().mainWebView()->windowFrame();
+        image = QImage(QSize(windowRect.size.width, windowRect.size.height), QImage::Format_ARGB32_Premultiplied);
+        image.fill(Qt::red);
+    }
 
     if (repaintRects) {
         QImage mask(image.size(), image.format());

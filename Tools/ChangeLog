@@ -1,3 +1,35 @@
+2012-10-15  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WTR] Do a forced repaint before generating pixel results
+        https://bugs.webkit.org/show_bug.cgi?id=98654
+
+        Reviewed by Jocelyn Turcotte.
+
+        Do a forced repaint before grabbing the pixel snapshot. This extra
+        synchronisation is necessary with the CoordinatedGraphics rendering
+        backend because it has a fully asynchronous nature. This patch make
+        us using the window snapshot for pixel results which is necessary to
+        capture animations and other dynamic content. The actual grabbing of
+        the window has not been implemented in this patch. It will come in
+        a follow-up.
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke):
+        (WTR::TestInvocation::dump): Store results in member variables.
+        Don't close output channels yet.
+        (WTR::TestInvocation::dumpResults): Added. This is where we dump
+        the results if no error happened.
+        (WTR):
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        * WebKitTestRunner/TestInvocation.h:
+        (TestInvocation):
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::PlatformWebView::windowSnapshotImage):
+        * WebKitTestRunner/qt/TestInvocationQt.cpp:
+        (WTR::TestInvocation::forceRepaintDoneCallback):
+        (WTR):
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected):
+
 2012-10-18  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Clean up variables controlling Qt module creation/handling
