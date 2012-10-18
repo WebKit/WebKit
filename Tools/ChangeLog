@@ -1,3 +1,15 @@
+2012-10-17  Shashi Shekhar  <shashishekhar@google.com>
+
+        Remove redundant sdk_build parameter.
+        https://bugs.webkit.org/show_bug.cgi?id=99648
+
+        Reviewed by Adam Barth.
+
+        sdk_build parameter is no longer needed.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * TestWebKitAPI/TestWebKitAPI.gyp/TestWebKitAPI.gyp:
+
 2012-10-17  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] AccessibilityUIElement::role() should be consistent across platforms wherever possible
