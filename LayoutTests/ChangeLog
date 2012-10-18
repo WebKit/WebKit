@@ -1,3 +1,9 @@
+2012-10-18  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Gardening. Remove pixel expectation for a test that's actually a reftest.
+
+        * platform/efl/fast/forms/datalist/update-range-with-datalist-expected.png: Removed.
+
 2012-10-18  KwangYong Choi  <ky0.choi@samsung.com>
 
         [EFL] Rebaseline http/tests/plugins/ after r129972
