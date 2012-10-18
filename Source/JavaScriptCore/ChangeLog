@@ -1,3 +1,9 @@
+2012-10-17  Sam Weinig  <sam@webkit.org>
+
+        Attempt to fix the build.
+
+        * bytecode/GlobalResolveInfo.h: Copied from bytecode/GlobalResolveInfo.h.
+
 2012-10-17  Oliver Hunt  <oliver@apple.com>
 
         Roll out r131645 as it causes random site crashes.
