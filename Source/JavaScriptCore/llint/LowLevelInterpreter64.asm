@@ -815,7 +815,139 @@ macro loadPropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, value)
     loadp (firstOutOfLineOffset - 2) * 8[objectAndStorage, propertyOffsetAsInt, 8], value
 end
 
+macro resolveGlobal(size, slow)
+    # Operands are as follows:
+    # 8[PB, PC, 8]   Destination for the load.
+    # 16[PB, PC, 8]  Property identifier index in the code block.
+    # 24[PB, PC, 8]  Structure pointer, initialized to 0 by bytecode generator.
+    # 32[PB, PC, 8]  Offset in global object, initialized to 0 by bytecode generator.
+    loadp CodeBlock[cfr], t0
+    loadp CodeBlock::m_globalObject[t0], t0
+    loadp JSCell::m_structure[t0], t1
+    bpneq t1, 24[PB, PC, 8], slow
+    loadis 32[PB, PC, 8], t1
+    loadPropertyAtVariableOffsetKnownNotInline(t1, t0, t2)
+    loadis 8[PB, PC, 8], t0
+    storep t2, [cfr, t0, 8]
+    loadp (size - 1) * 8[PB, PC, 8], t0
+    valueProfile(t2, t0)
+end
+
+_llint_op_resolve_global:
+    traceExecution()
+    resolveGlobal(6, .opResolveGlobalSlow)
+    dispatch(6)
+
+.opResolveGlobalSlow:
+    callSlowPath(_llint_slow_path_resolve_global)
+    dispatch(6)
+
+
+# Gives you the scope in t0, while allowing you to optionally perform additional checks on the
+# scopes as they are traversed. scopeCheck() is called with two arguments: the register
+# holding the scope, and a register that can be used for scratch. Note that this does not
+# use t3, so you can hold stuff in t3 if need be.
+macro getScope(deBruijinIndexOperand, scopeCheck)
+    loadp ScopeChain[cfr], t0
+    loadis deBruijinIndexOperand, t2
+    
+    btiz t2, .done
+    
+    loadp CodeBlock[cfr], t1
+    bineq CodeBlock::m_codeType[t1], FunctionCode, .loop
+    btbz CodeBlock::m_needsFullScopeChain[t1], .loop
+    
+    loadis CodeBlock::m_activationRegister[t1], t1
+
+    # Need to conditionally skip over one scope.
+    btpz [cfr, t1, 8], .noActivation
+    scopeCheck(t0, t1)
+    loadp JSScope::m_next[t0], t0
+.noActivation:
+    subi 1, t2
+    
+    btiz t2, .done
+.loop:
+    scopeCheck(t0, t1)
+    loadp JSScope::m_next[t0], t0
+    subi 1, t2
+    btinz t2, .loop
+
+.done:
+end
+
+_llint_op_resolve_global_dynamic:
+    traceExecution()
+    loadp CodeBlock[cfr], t3
+    loadp CodeBlock::m_globalObject[t3], t3
+    loadp JSGlobalObject::m_activationStructure[t3], t3
+    getScope(
+        40[PB, PC, 8],
+        macro (scope, scratch)
+            bpneq JSCell::m_structure[scope], t3, .opResolveGlobalDynamicSuperSlow
+        end)
+    resolveGlobal(7, .opResolveGlobalDynamicSlow)
+    dispatch(7)
+
+.opResolveGlobalDynamicSuperSlow:
+    callSlowPath(_llint_slow_path_resolve_for_resolve_global_dynamic)
+    dispatch(7)
+
+.opResolveGlobalDynamicSlow:
+    callSlowPath(_llint_slow_path_resolve_global_dynamic)
+    dispatch(7)
+
+
+_llint_op_get_scoped_var:
+    traceExecution()
+    # Operands are as follows:
+    # 8[PB, PC, 8]   Destination for the load
+    # 16[PB, PC, 8]  Index of register in the scope
+    # 24[PB, PC, 8]  De Bruijin index.
+    getScope(24[PB, PC, 8], macro (scope, scratch) end)
+    loadis 8[PB, PC, 8], t1
+    loadis 16[PB, PC, 8], t2
+    loadp JSVariableObject::m_registers[t0], t0
+    loadp [t0, t2, 8], t3
+    storep t3, [cfr, t1, 8]
+    loadp 32[PB, PC, 8], t1
+    valueProfile(t3, t1)
+    dispatch(5)
+
+
+_llint_op_put_scoped_var:
+    traceExecution()
+    getScope(16[PB, PC, 8], macro (scope, scratch) end)
+    loadis 24[PB, PC, 8], t1
+    loadConstantOrVariable(t1, t3)
+    loadis 8[PB, PC, 8], t1
+    writeBarrier(t3)
+    loadp JSVariableObject::m_registers[t0], t0
+    storep t3, [t0, t1, 8]
+    dispatch(4)
+
+
+macro getGlobalVar(size)
+    traceExecution()
+    loadp 16[PB, PC, 8], t0
+    loadis 8[PB, PC, 8], t3
+    loadp [t0], t1
+    storep t1, [cfr, t3, 8]
+    loadp (size - 1) * 8[PB, PC, 8], t0
+    valueProfile(t1, t0)
+    dispatch(size)
+end
+
+_llint_op_get_global_var:
+    getGlobalVar(4)
+
+
+_llint_op_get_global_var_watchable:
+    getGlobalVar(5)
+
+
 _llint_op_init_global_const:
+_llint_op_put_global_var:
     traceExecution()
     loadis 16[PB, PC, 8], t1
     loadp 8[PB, PC, 8], t0
@@ -826,18 +958,20 @@ _llint_op_init_global_const:
 
 
 _llint_op_init_global_const_check:
+_llint_op_put_global_var_check:
     traceExecution()
     loadp 24[PB, PC, 8], t2
     loadis 16[PB, PC, 8], t1
     loadp 8[PB, PC, 8], t0
-    btbnz [t2], .opInitGlobalConstCheckSlow
+    btbnz [t2], .opPutGlobalVarCheckSlow
     loadConstantOrVariable(t1, t2)
     writeBarrier(t2)
     storep t2, [t0]
     dispatch(5)
-.opInitGlobalConstCheckSlow:
-    callSlowPath(_llint_slow_path_init_global_const_check)
+.opPutGlobalVarCheckSlow:
+    callSlowPath(_llint_slow_path_put_global_var_check)
     dispatch(5)
+
 
 macro getById(getPropertyStorage)
     traceExecution()

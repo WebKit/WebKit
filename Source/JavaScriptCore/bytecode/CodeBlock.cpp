@@ -439,6 +439,34 @@ void CodeBlock::printPutByIdOp(ExecState* exec, int location, Vector<Instruction
     it += 5;
 }
 
+#if ENABLE(JIT)
+static bool isGlobalResolve(OpcodeID opcodeID)
+{
+    return opcodeID == op_resolve_global || opcodeID == op_resolve_global_dynamic;
+}
+
+static unsigned instructionOffsetForNth(ExecState* exec, const RefCountedArray<Instruction>& instructions, int nth, bool (*predicate)(OpcodeID))
+{
+    size_t i = 0;
+    while (i < instructions.size()) {
+        OpcodeID currentOpcode = exec->interpreter()->getOpcodeID(instructions[i].u.opcode);
+        if (predicate(currentOpcode)) {
+            if (!--nth)
+                return i;
+        }
+        i += opcodeLengths[currentOpcode];
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+static void printGlobalResolveInfo(const GlobalResolveInfo& resolveInfo, unsigned instructionOffset)
+{
+    dataLog("  [%4d] %s: %s\n", instructionOffset, "resolve_global", pointerToSourceString(resolveInfo.structure).utf8().data());
+}
+#endif
+
 void CodeBlock::printStructure(const char* name, const Instruction* vPC, int operand)
 {
     unsigned instructionOffset = vPC - instructions().begin();
@@ -476,6 +504,14 @@ void CodeBlock::printStructures(const Instruction* vPC)
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_replace)) {
         printStructure("put_by_id_replace", vPC, 4);
+        return;
+    }
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_resolve_global)) {
+        printStructure("resolve_global", vPC, 4);
+        return;
+    }
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_resolve_global_dynamic)) {
+        printStructure("resolve_global_dynamic", vPC, 4);
         return;
     }
 
@@ -541,8 +577,16 @@ void CodeBlock::dump(ExecState* exec)
     }
 
 #if ENABLE(JIT)
-    if (!m_structureStubInfos.isEmpty())
+    if (!m_globalResolveInfos.isEmpty() || !m_structureStubInfos.isEmpty())
         dataLog("\nStructures:\n");
+
+    if (!m_globalResolveInfos.isEmpty()) {
+        size_t i = 0;
+        do {
+             printGlobalResolveInfo(m_globalResolveInfos[i], instructionOffsetForNth(exec, instructions(), i + 1, isGlobalResolve));
+             ++i;
+        } while (i < m_globalResolveInfos.size());
+    }
 #endif
 
     if (m_rareData && !m_rareData->m_exceptionHandlers.isEmpty()) {
@@ -865,27 +909,89 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printBinaryOp(exec, location, it, "in");
             break;
         }
-        case op_put_to_base_variable:
-        case op_put_to_base: {
-            int base = (++it)->u.operand;
+        case op_resolve: {
+            int r0 = (++it)->u.operand;
             int id0 = (++it)->u.operand;
-            int value = (++it)->u.operand;
-            int resolveInfo = (++it)->u.operand;
-            dataLog("[%4d] put_to_base\t %s, %s, %s, %d", location, registerName(exec, base).data(), idName(id0, m_identifiers[id0]).data(), registerName(exec, value).data(), resolveInfo);
+            dataLog("[%4d] resolve\t\t %s, %s", location, registerName(exec, r0).data(), idName(id0, m_identifiers[id0]).data());
+            dumpBytecodeCommentAndNewLine(location);
+            it++;
+            break;
+        }
+        case op_resolve_skip: {
+            int r0 = (++it)->u.operand;
+            int id0 = (++it)->u.operand;
+            int skipLevels = (++it)->u.operand;
+            dataLog("[%4d] resolve_skip\t %s, %s, %d", location, registerName(exec, r0).data(), idName(id0, m_identifiers[id0]).data(), skipLevels);
+            dumpBytecodeCommentAndNewLine(location);
+            it++;
+            break;
+        }
+        case op_resolve_global: {
+            int r0 = (++it)->u.operand;
+            int id0 = (++it)->u.operand;
+            dataLog("[%4d] resolve_global\t %s, %s", location, registerName(exec, r0).data(), idName(id0, m_identifiers[id0]).data());
+            dumpBytecodeCommentAndNewLine(location);
+            it += 3;
+            break;
+        }
+        case op_resolve_global_dynamic: {
+            int r0 = (++it)->u.operand;
+            int id0 = (++it)->u.operand;
+            JSValue scope = JSValue((++it)->u.jsCell.get());
+            ++it;
+            int depth = (++it)->u.operand;
+            dataLog("[%4d] resolve_global_dynamic\t %s, %s, %s, %d", location, registerName(exec, r0).data(), valueToSourceString(exec, scope).utf8().data(), idName(id0, m_identifiers[id0]).data(), depth);
+            dumpBytecodeCommentAndNewLine(location);
+            ++it;
+            break;
+        }
+        case op_get_scoped_var: {
+            int r0 = (++it)->u.operand;
+            int index = (++it)->u.operand;
+            int skipLevels = (++it)->u.operand;
+            dataLog("[%4d] get_scoped_var\t %s, %d, %d", location, registerName(exec, r0).data(), index, skipLevels);
+            dumpBytecodeCommentAndNewLine(location);
+            it++;
+            break;
+        }
+        case op_put_scoped_var: {
+            int index = (++it)->u.operand;
+            int skipLevels = (++it)->u.operand;
+            int r0 = (++it)->u.operand;
+            dataLog("[%4d] put_scoped_var\t %d, %d, %s", location, index, skipLevels, registerName(exec, r0).data());
             dumpBytecodeCommentAndNewLine(location);
             break;
         }
-        case op_resolve:
-        case op_resolve_global_property:
-        case op_resolve_global_var:
-        case op_resolve_scoped_var:
-        case op_resolve_scoped_var_on_top_scope:
-        case op_resolve_scoped_var_with_top_scope_check: {
+        case op_get_global_var: {
             int r0 = (++it)->u.operand;
-            int id0 = (++it)->u.operand;
-            int resolveInfo = (++it)->u.operand;
-            dataLog("[%4d] resolve\t\t %s, %s, %d", location, registerName(exec, r0).data(), idName(id0, m_identifiers[id0]).data(), resolveInfo);
+            WriteBarrier<Unknown>* registerPointer = (++it)->u.registerPointer;
+            dataLog("[%4d] get_global_var\t %s, g%d(%p)", location, registerName(exec, r0).data(), m_globalObject->findRegisterIndex(registerPointer), registerPointer);
             dumpBytecodeCommentAndNewLine(location);
+            it++;
+            break;
+        }
+        case op_get_global_var_watchable: {
+            int r0 = (++it)->u.operand;
+            WriteBarrier<Unknown>* registerPointer = (++it)->u.registerPointer;
+            dataLog("[%4d] get_global_var_watchable\t %s, g%d(%p)", location, registerName(exec, r0).data(), m_globalObject->findRegisterIndex(registerPointer), registerPointer);
+            dumpBytecodeCommentAndNewLine(location);
+            it++;
+            it++;
+            break;
+        }
+        case op_put_global_var: {
+            WriteBarrier<Unknown>* registerPointer = (++it)->u.registerPointer;
+            int r0 = (++it)->u.operand;
+            dataLog("[%4d] put_global_var\t g%d(%p), %s", location, m_globalObject->findRegisterIndex(registerPointer), registerPointer, registerName(exec, r0).data());
+            dumpBytecodeCommentAndNewLine(location);
+            break;
+        }
+        case op_put_global_var_check: {
+            WriteBarrier<Unknown>* registerPointer = (++it)->u.registerPointer;
+            int r0 = (++it)->u.operand;
+            dataLog("[%4d] put_global_var_check\t g%d(%p), %s", location, m_globalObject->findRegisterIndex(registerPointer), registerPointer, registerName(exec, r0).data());
+            dumpBytecodeCommentAndNewLine(location);
+            it++;
             it++;
             break;
         }
@@ -905,17 +1011,11 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             it++;
             break;
         }
-        case op_resolve_base_to_global:
-        case op_resolve_base_to_global_dynamic:
-        case op_resolve_base_to_scope:
-        case op_resolve_base_to_scope_with_top_scope_check:
         case op_resolve_base: {
             int r0 = (++it)->u.operand;
             int id0 = (++it)->u.operand;
             int isStrict = (++it)->u.operand;
-            int resolveInfo = (++it)->u.operand;
-            int putToBaseInfo = (++it)->u.operand;
-            dataLog("[%4d] resolve_base%s\t %s, %s, %d, %d", location, isStrict ? "_strict" : "", registerName(exec, r0).data(), idName(id0, m_identifiers[id0]).data(), resolveInfo, putToBaseInfo);
+            dataLog("[%4d] resolve_base%s\t %s, %s", location, isStrict ? "_strict" : "", registerName(exec, r0).data(), idName(id0, m_identifiers[id0]).data());
             dumpBytecodeCommentAndNewLine(location);
             it++;
             break;
@@ -931,9 +1031,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int id0 = (++it)->u.operand;
-            int resolveInfo = (++it)->u.operand;
-            int putToBaseInfo = (++it)->u.operand;
-            dataLog("[%4d] resolve_with_base %s, %s, %s, %d, %d", location, registerName(exec, r0).data(), registerName(exec, r1).data(), idName(id0, m_identifiers[id0]).data(), resolveInfo, putToBaseInfo);
+            dataLog("[%4d] resolve_with_base %s, %s, %s", location, registerName(exec, r0).data(), registerName(exec, r1).data(), idName(id0, m_identifiers[id0]).data());
             dumpBytecodeCommentAndNewLine(location);
             it++;
             break;
@@ -942,8 +1040,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int id0 = (++it)->u.operand;
-            int resolveInfo = (++it)->u.operand;
-            dataLog("[%4d] resolve_with_this %s, %s, %s, %d", location, registerName(exec, r0).data(), registerName(exec, r1).data(), idName(id0, m_identifiers[id0]).data(), resolveInfo);
+            dataLog("[%4d] resolve_with_this %s, %s, %s", location, registerName(exec, r0).data(), registerName(exec, r1).data(), idName(id0, m_identifiers[id0]).data());
             dumpBytecodeCommentAndNewLine(location);
             it++;
             break;
@@ -1607,7 +1704,6 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     , m_thisRegister(other.m_thisRegister)
     , m_argumentsRegister(other.m_argumentsRegister)
     , m_activationRegister(other.m_activationRegister)
-    , m_globalObjectConstant(other.m_globalObjectConstant)
     , m_needsFullScopeChain(other.m_needsFullScopeChain)
     , m_usesEval(other.m_usesEval)
     , m_isNumericCompareFunction(other.m_isNumericCompareFunction)
@@ -1615,6 +1711,9 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     , m_codeType(other.m_codeType)
     , m_source(other.m_source)
     , m_sourceOffset(other.m_sourceOffset)
+#if ENABLE(JIT)
+    , m_globalResolveInfos(other.m_globalResolveInfos.size())
+#endif
 #if ENABLE(VALUE_PROFILER)
     , m_executionEntryCount(0)
 #endif
@@ -1629,8 +1728,6 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     , m_optimizationDelayCounter(0)
     , m_reoptimizationRetryCounter(0)
     , m_lineInfo(other.m_lineInfo)
-    , m_resolveOperations(other.m_resolveOperations)
-    , m_putToBaseOperations(other.m_putToBaseOperations)
 #if ENABLE(BYTECODE_COMMENTS)
     , m_bytecodeCommentIterator(0)
 #endif
@@ -1641,6 +1738,11 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     setNumParameters(other.numParameters());
     optimizeAfterWarmUp();
     jitAfterWarmUp();
+
+#if ENABLE(JIT)
+    for (unsigned i = m_globalResolveInfos.size(); i--;)
+        m_globalResolveInfos[i] = GlobalResolveInfo(other.m_globalResolveInfos[i].bytecodeOffset);
+#endif
 
     if (other.m_rareData) {
         createRareDataIfNecessary();
@@ -1685,16 +1787,13 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlo
 #endif
 {
     ASSERT(m_source);
-
+    
     optimizeAfterWarmUp();
     jitAfterWarmUp();
 
 #if DUMP_CODE_BLOCK_STATISTICS
     liveCodeBlockSet.add(this);
 #endif
-    // We have a stub putToBase operation to allow resolve_base to
-    // remain branchless
-    m_putToBaseOperations.append(PutToBaseOperation(isStrictMode()));
 }
 
 CodeBlock::~CodeBlock()
@@ -1791,6 +1890,11 @@ void CodeBlock::visitStructures(SlotVisitor& visitor, Instruction* vPC)
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_replace)) {
         visitor.append(&vPC[4].u.structure);
+        return;
+    }
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_resolve_global) || vPC[0].u.opcode == interpreter->getOpcode(op_resolve_global_dynamic)) {
+        if (vPC[3].u.structure)
+            visitor.append(&vPC[3].u.structure);
         return;
     }
 
@@ -1944,7 +2048,7 @@ static const bool verboseUnlinking = true;
 #else
 static const bool verboseUnlinking = false;
 #endif
-
+    
 void CodeBlock::finalizeUnconditionally()
 {
 #if ENABLE(LLINT)
@@ -1989,7 +2093,17 @@ void CodeBlock::finalizeUnconditionally()
                 ASSERT_NOT_REACHED();
             }
         }
-
+        for (size_t size = m_globalResolveInstructions.size(), i = 0; i < size; ++i) {
+            Instruction* curInstruction = &instructions()[m_globalResolveInstructions[i]];
+            ASSERT(interpreter->getOpcodeID(curInstruction[0].u.opcode) == op_resolve_global
+                   || interpreter->getOpcodeID(curInstruction[0].u.opcode) == op_resolve_global_dynamic);
+            if (!curInstruction[3].u.structure || Heap::isMarked(curInstruction[3].u.structure.get()))
+                continue;
+            if (verboseUnlinking)
+                dataLog("Clearing LLInt global resolve cache with structure %p.\n", curInstruction[3].u.structure.get());
+            curInstruction[3].u.structure.clear();
+            curInstruction[4].u.operand = 0;
+        }
         for (unsigned i = 0; i < m_llintCallLinkInfos.size(); ++i) {
             if (m_llintCallLinkInfos[i].isLinked() && !Heap::isMarked(m_llintCallLinkInfos[i].callee.get())) {
                 if (verboseUnlinking)
@@ -2016,29 +2130,7 @@ void CodeBlock::finalizeUnconditionally()
         return;
     }
 #endif // ENABLE(DFG_JIT)
-
-    for (size_t size = m_putToBaseOperations.size(), i = 0; i < size; ++i) {
-        if (m_putToBaseOperations[i].m_structure && !Heap::isMarked(m_putToBaseOperations[i].m_structure.get())) {
-            if (verboseUnlinking)
-                dataLog("Clearing putToBase info in %p.\n", this);
-            m_putToBaseOperations[i].m_structure.clear();
-        }
-    }
-    for (size_t size = m_resolveOperations.size(), i = 0; i < size; ++i) {
-        if (m_resolveOperations[i].isEmpty())
-            continue;
-#ifndef NDEBUG
-        for (size_t insnSize = m_resolveOperations[i].size() - 1, k = 0; k < insnSize; ++k)
-            ASSERT(!m_resolveOperations[i][k].m_structure);
-#endif
-        m_resolveOperations[i].last().m_structure.clear();
-        if (m_resolveOperations[i].last().m_structure && !Heap::isMarked(m_resolveOperations[i].last().m_structure.get())) {
-            if (verboseUnlinking)
-                dataLog("Clearing resolve info in %p.\n", this);
-            m_resolveOperations[i].last().m_structure.clear();
-        }
-    }
-
+    
 #if ENABLE(JIT)
     // Handle inline caches.
     if (!!getJITCode()) {
@@ -2053,6 +2145,14 @@ void CodeBlock::finalizeUnconditionally()
                 && !Heap::isMarked(callLinkInfo(i).lastSeenCallee.get()))
                 callLinkInfo(i).lastSeenCallee.clear();
         }
+        for (size_t size = m_globalResolveInfos.size(), i = 0; i < size; ++i) {
+            if (m_globalResolveInfos[i].structure && !Heap::isMarked(m_globalResolveInfos[i].structure.get())) {
+                if (verboseUnlinking)
+                    dataLog("Clearing resolve info in %p.\n", this);
+                m_globalResolveInfos[i].structure.clear();
+            }
+        }
+
         for (size_t size = m_structureStubInfos.size(), i = 0; i < size; ++i) {
             StructureStubInfo& stubInfo = m_structureStubInfos[i];
             
@@ -2322,14 +2422,43 @@ void CodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& d
     return;
 }
 
+#if ENABLE(JIT)
+bool CodeBlock::hasGlobalResolveInfoAtBytecodeOffset(unsigned bytecodeOffset)
+{
+    if (m_globalResolveInfos.isEmpty())
+        return false;
+
+    int low = 0;
+    int high = m_globalResolveInfos.size();
+    while (low < high) {
+        int mid = low + (high - low) / 2;
+        if (m_globalResolveInfos[mid].bytecodeOffset <= bytecodeOffset)
+            low = mid + 1;
+        else
+            high = mid;
+    }
+
+    if (!low || m_globalResolveInfos[low - 1].bytecodeOffset != bytecodeOffset)
+        return false;
+    return true;
+}
+GlobalResolveInfo& CodeBlock::globalResolveInfoForBytecodeOffset(unsigned bytecodeOffset)
+{
+    return *(binarySearch<GlobalResolveInfo, unsigned, getGlobalResolveInfoBytecodeOffset>(m_globalResolveInfos.begin(), m_globalResolveInfos.size(), bytecodeOffset));
+}
+#endif
+
 void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
 {
     m_propertyAccessInstructions.shrinkToFit();
+    m_globalResolveInstructions.shrinkToFit();
 #if ENABLE(LLINT)
     m_llintCallLinkInfos.shrinkToFit();
 #endif
 #if ENABLE(JIT)
     m_structureStubInfos.shrinkToFit();
+    if (shrinkMode == EarlyShrink)
+        m_globalResolveInfos.shrinkToFit();
     m_callLinkInfos.shrinkToFit();
     m_methodCallLinkInfos.shrinkToFit();
 #endif
@@ -2348,7 +2477,6 @@ void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
         m_constantRegisters.shrinkToFit();
     } // else don't shrink these, because we would have already pointed pointers into these tables.
 
-    m_resolveOperations.shrinkToFit();
     m_lineInfo.shrinkToFit();
     if (m_rareData) {
         m_rareData->m_exceptionHandlers.shrinkToFit();

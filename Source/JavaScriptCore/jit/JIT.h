@@ -676,6 +676,9 @@ namespace JSC {
         void emit_op_get_by_val(Instruction*);
         void emit_op_get_argument_by_val(Instruction*);
         void emit_op_get_by_pname(Instruction*);
+        void emit_op_get_global_var(Instruction*);
+        void emit_op_get_global_var_watchable(Instruction* instruction) { emit_op_get_global_var(instruction); }
+        void emit_op_get_scoped_var(Instruction*);
         void emit_op_init_lazy_reg(Instruction*);
         void emit_op_check_has_instance(Instruction*);
         void emit_op_instanceof(Instruction*);
@@ -738,16 +741,17 @@ namespace JSC {
         void emit_op_put_by_index(Instruction*);
         void emit_op_put_by_val(Instruction*);
         void emit_op_put_getter_setter(Instruction*);
-        void emit_op_init_global_const(Instruction*);
-        void emit_op_init_global_const_check(Instruction*);
-        void emit_resolve_operations(ResolveOperations*, const int* base, const int* value);
-        void emitSlow_link_resolve_operations(ResolveOperations*, Vector<SlowCaseEntry>::iterator&);
+        void emit_op_put_global_var(Instruction*);
+        void emit_op_put_global_var_check(Instruction*);
+        void emit_op_put_scoped_var(Instruction*);
         void emit_op_resolve(Instruction*);
         void emit_op_resolve_base(Instruction*);
         void emit_op_ensure_property_exists(Instruction*);
+        void emit_op_resolve_global(Instruction*, bool dynamic = false);
+        void emit_op_resolve_global_dynamic(Instruction*);
+        void emit_op_resolve_skip(Instruction*);
         void emit_op_resolve_with_base(Instruction*);
         void emit_op_resolve_with_this(Instruction*);
-        void emit_op_put_to_base(Instruction*);
         void emit_op_ret(Instruction*);
         void emit_op_ret_object_or_this(Instruction*);
         void emit_op_rshift(Instruction*);
@@ -816,7 +820,9 @@ namespace JSC {
         void emitSlow_op_pre_inc(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_put_by_id(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_put_by_val(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_init_global_const_check(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_put_global_var_check(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_resolve_global(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_resolve_global_dynamic(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_rshift(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_stricteq(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_sub(Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -824,13 +830,7 @@ namespace JSC {
         void emitSlow_op_to_primitive(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_urshift(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_new_array(Instruction*, Vector<SlowCaseEntry>::iterator&);
-
-        void emitSlow_op_resolve(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_resolve_base(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_resolve_with_base(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_resolve_with_this(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_put_to_base(Instruction*, Vector<SlowCaseEntry>::iterator&);
-
+        
         void emitRightShift(Instruction*, bool isUnsigned);
         void emitRightShiftSlowCase(Instruction*, Vector<SlowCaseEntry>::iterator&, bool isUnsigned);
 

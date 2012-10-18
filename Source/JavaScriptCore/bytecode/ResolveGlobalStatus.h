@@ -34,7 +34,6 @@ namespace JSC {
 
 class CodeBlock;
 class Identifier;
-struct ResolveOperation;
 class Structure;
 
 class ResolveGlobalStatus {
@@ -62,7 +61,7 @@ public:
     {
     }
     
-    static ResolveGlobalStatus computeFor(CodeBlock*, int bytecodeIndex, ResolveOperation*, Identifier&);
+    static ResolveGlobalStatus computeFor(CodeBlock*, unsigned bytecodeIndex, Identifier&);
     
     State state() const { return m_state; }
     

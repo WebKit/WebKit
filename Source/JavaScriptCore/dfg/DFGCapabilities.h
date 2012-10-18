@@ -68,48 +68,6 @@ inline bool mightInlineFunctionForConstruct(CodeBlock* codeBlock)
 }
 
 // Opcode checking.
-inline bool canInlineResolveOperations(OpcodeID opcode, ResolveOperations* operations)
-{
-    // Don't try to inline a resolve for which we have no information
-    if (operations->isEmpty())
-        return false;
-
-    for (unsigned i = 0; i < operations->size(); i++) {
-        switch (operations->data()[i].m_operation) {
-        case ResolveOperation::ReturnGlobalObjectAsBase:
-        case ResolveOperation::SetBaseToGlobal:
-        case ResolveOperation::SetBaseToUndefined:
-        case ResolveOperation::GetAndReturnGlobalProperty:
-        case ResolveOperation::GetAndReturnGlobalVar:
-        case ResolveOperation::GetAndReturnGlobalVarWatchable:
-            continue;
-
-        case ResolveOperation::Fail:
-            // The DFG can handle generic cases of failed resolves
-            ASSERT(opcode != op_resolve_base_to_global_dynamic);
-            ASSERT(opcode != op_resolve_base_to_scope_with_top_scope_check);
-            ASSERT(opcode != op_resolve_base_to_global);
-            ASSERT(opcode != op_resolve_base_to_scope);
-            if (opcode != op_resolve && opcode != op_resolve_base)
-                return false;
-
-        case ResolveOperation::SkipTopScopeNode:
-        case ResolveOperation::SkipScopes:
-        case ResolveOperation::SetBaseToScope:
-        case ResolveOperation::ReturnScopeAsBase:
-        case ResolveOperation::GetAndReturnScopedVar:
-            // These opcodes would be easy to support with inlining, but we currently don't do it.
-            // The issue is that the scope chain will not be set correctly.
-            return false;
-
-        case ResolveOperation::CheckForDynamicEntriesBeforeGlobalScope:
-            // This would be easy to support in all cases.
-            return false;
-        }
-    }
-    return true;
-}
-
 inline CapabilityLevel canCompileOpcode(OpcodeID opcodeID, CodeBlock*, Instruction*)
 {
     switch (opcodeID) {
@@ -158,6 +116,8 @@ inline CapabilityLevel canCompileOpcode(OpcodeID opcodeID, CodeBlock*, Instructi
     case op_get_by_val:
     case op_put_by_val:
     case op_method_check:
+    case op_get_scoped_var:
+    case op_put_scoped_var:
     case op_get_by_id:
     case op_get_by_id_out_of_line:
     case op_get_array_length:
@@ -167,6 +127,10 @@ inline CapabilityLevel canCompileOpcode(OpcodeID opcodeID, CodeBlock*, Instructi
     case op_put_by_id_transition_direct_out_of_line:
     case op_put_by_id_transition_normal:
     case op_put_by_id_transition_normal_out_of_line:
+    case op_get_global_var:
+    case op_get_global_var_watchable:
+    case op_put_global_var:
+    case op_put_global_var_check:
     case op_init_global_const:
     case op_init_global_const_check:
     case op_jmp:
@@ -193,6 +157,9 @@ inline CapabilityLevel canCompileOpcode(OpcodeID opcodeID, CodeBlock*, Instructi
     case op_ret:
     case op_end:
     case op_call_put_result:
+    case op_resolve:
+    case op_resolve_base:
+    case op_resolve_global:
     case op_new_object:
     case op_new_array:
     case op_new_array_with_size:
@@ -214,29 +181,10 @@ inline CapabilityLevel canCompileOpcode(OpcodeID opcodeID, CodeBlock*, Instructi
     case op_get_argument_by_val:
     case op_get_arguments_length:
     case op_jneq_ptr:
-    case op_put_to_base_variable:
-    case op_put_to_base:
         return CanCompile;
         
     case op_call_varargs:
         return ShouldProfile;
-
-    case op_resolve:
-    case op_resolve_global_property:
-    case op_resolve_global_var:
-    case op_resolve_scoped_var:
-    case op_resolve_scoped_var_on_top_scope:
-    case op_resolve_scoped_var_with_top_scope_check:
-        return CanCompile;
-
-    case op_resolve_base_to_global:
-    case op_resolve_base_to_global_dynamic:
-    case op_resolve_base_to_scope:
-    case op_resolve_base_to_scope_with_top_scope_check:
-    case op_resolve_base:
-    case op_resolve_with_base:
-    case op_resolve_with_this:
-        return CanCompile;
 
     default:
         return CannotCompile;
@@ -246,22 +194,13 @@ inline CapabilityLevel canCompileOpcode(OpcodeID opcodeID, CodeBlock*, Instructi
 inline bool canInlineOpcode(OpcodeID opcodeID, CodeBlock* codeBlock, Instruction* pc)
 {
     switch (opcodeID) {
+        
+    // These opcodes would be easy to support with inlining, but we currently don't do it.
+    // The issue is that the scope chain will not be set correctly.
+    case op_get_scoped_var:
+    case op_put_scoped_var:
     case op_resolve:
-    case op_resolve_global_property:
-    case op_resolve_global_var:
-    case op_resolve_scoped_var:
-    case op_resolve_scoped_var_on_top_scope:
-    case op_resolve_scoped_var_with_top_scope_check:
-        return canInlineResolveOperations(opcodeID, codeBlock->resolveOperations(pc[3].u.operand));
-
-    case op_resolve_base_to_global:
-    case op_resolve_base_to_global_dynamic:
-    case op_resolve_base_to_scope:
-    case op_resolve_base_to_scope_with_top_scope_check:
     case op_resolve_base:
-    case op_resolve_with_base:
-    case op_resolve_with_this:
-        return canInlineResolveOperations(opcodeID, codeBlock->resolveOperations(pc[4].u.operand));
         
     // Inlining doesn't correctly remap regular expression operands.
     case op_new_regexp:

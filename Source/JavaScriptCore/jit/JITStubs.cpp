@@ -2375,7 +2375,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_new_array_buffer)
     return constructArray(stackFrame.callFrame, stackFrame.callFrame->codeBlock()->constantBuffer(stackFrame.args[0].int32()), stackFrame.args[1].int32());
 }
 
-DEFINE_STUB_FUNCTION(void, op_init_global_const_check)
+DEFINE_STUB_FUNCTION(void, op_put_global_var_check)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
     
@@ -2390,20 +2390,9 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve)
 
     CallFrame* callFrame = stackFrame.callFrame;
 
-    JSValue result = JSScope::resolve(callFrame, stackFrame.args[0].identifier(), stackFrame.args[1].resolveOperations());
+    JSValue result = JSScope::resolve(callFrame, stackFrame.args[0].identifier());
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
-}
-
-DEFINE_STUB_FUNCTION(void, op_put_to_base)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    CallFrame* callFrame = stackFrame.callFrame;
-    JSValue base = callFrame->r(stackFrame.args[0].int32()).jsValue();
-    JSValue value = callFrame->r(stackFrame.args[2].int32()).jsValue();
-    JSScope::resolvePut(callFrame, base, stackFrame.args[1].identifier(), value, stackFrame.args[3].putToBaseOperation());
-    CHECK_FOR_EXCEPTION_AT_END();
 }
 
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_construct_NotJSConstruct)
@@ -2730,14 +2719,14 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_base)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    return JSValue::encode(JSScope::resolveBase(stackFrame.callFrame, stackFrame.args[0].identifier(), false, stackFrame.args[1].resolveOperations(), stackFrame.args[2].putToBaseOperation()));
+    return JSValue::encode(JSScope::resolveBase(stackFrame.callFrame, stackFrame.args[0].identifier(), false));
 }
 
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_base_strict_put)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    if (JSValue result = JSScope::resolveBase(stackFrame.callFrame, stackFrame.args[0].identifier(), true, stackFrame.args[1].resolveOperations(), stackFrame.args[2].putToBaseOperation()))
+    if (JSValue result = JSScope::resolveBase(stackFrame.callFrame, stackFrame.args[0].identifier(), true))
         return JSValue::encode(result);
     VM_THROW_EXCEPTION();
 }
@@ -2755,6 +2744,36 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_ensure_property_exists)
     }
 
     return JSValue::encode(base);
+}
+    
+DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_skip)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+
+    JSValue result = JSScope::resolveSkip(stackFrame.callFrame, stackFrame.args[0].identifier(), stackFrame.args[1].int32());
+    CHECK_FOR_EXCEPTION_AT_END();
+    return JSValue::encode(result);
+}
+
+DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_global)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+
+    CallFrame* callFrame = stackFrame.callFrame;
+    Identifier& ident = stackFrame.args[0].identifier();
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    unsigned globalResolveInfoIndex = stackFrame.args[1].int32();
+    GlobalResolveInfo& globalResolveInfo = codeBlock->globalResolveInfo(globalResolveInfoIndex);
+
+    JSValue result = JSScope::resolveGlobal(
+        callFrame,
+        ident,
+        callFrame->lexicalGlobalObject(),
+        &globalResolveInfo.structure,
+        &globalResolveInfo.offset
+    );
+    CHECK_FOR_EXCEPTION();
+    return JSValue::encode(result);
 }
 
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_div)
@@ -3036,7 +3055,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_with_base)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     CallFrame* callFrame = stackFrame.callFrame;
-    JSValue result = JSScope::resolveWithBase(callFrame, stackFrame.args[0].identifier(), &callFrame->registers()[stackFrame.args[1].int32()], stackFrame.args[2].resolveOperations(), stackFrame.args[3].putToBaseOperation());
+    JSValue result = JSScope::resolveWithBase(callFrame, stackFrame.args[0].identifier(), &callFrame->registers()[stackFrame.args[1].int32()]);
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
@@ -3046,7 +3065,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_with_this)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     CallFrame* callFrame = stackFrame.callFrame;
-    JSValue result = JSScope::resolveWithThis(callFrame, stackFrame.args[0].identifier(), &callFrame->registers()[stackFrame.args[1].int32()], stackFrame.args[2].resolveOperations());
+    JSValue result = JSScope::resolveWithThis(callFrame, stackFrame.args[0].identifier(), &callFrame->registers()[stackFrame.args[1].int32()]);
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }

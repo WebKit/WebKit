@@ -96,30 +96,22 @@ namespace JSC {
         macro(op_is_function, 3) \
         macro(op_in, 4) \
         \
-        macro(op_resolve, 5) /* has value profiling */  \
-        macro(op_resolve_global_property, 5) /* has value profiling */  \
-        macro(op_resolve_global_var, 5) /* has value profiling */  \
-        macro(op_resolve_scoped_var, 5) /* has value profiling */  \
-        macro(op_resolve_scoped_var_on_top_scope, 5) /* has value profiling */  \
-        macro(op_resolve_scoped_var_with_top_scope_check, 5) /* has value profiling */  \
-        \
-        macro(op_resolve_base_to_global, 7) /* has value profiling */ \
-        macro(op_resolve_base_to_global_dynamic, 7) /* has value profiling */ \
-        macro(op_resolve_base_to_scope, 7) /* has value profiling */ \
-        macro(op_resolve_base_to_scope_with_top_scope_check, 7) /* has value profiling */ \
-        macro(op_resolve_base, 7) /* has value profiling */ \
-        \
-        macro(op_ensure_property_exists, 3) \
-        \
-        macro(op_resolve_with_base, 7) /* has value profiling */ \
-        \
-        macro(op_resolve_with_this, 6) /* has value profiling */ \
-        \
-        macro(op_put_to_base, 5) \
-        macro(op_put_to_base_variable, 5) \
-        \
+        macro(op_resolve, 4) /* has value profiling */  \
+        macro(op_resolve_skip, 5) /* has value profiling */ \
+        macro(op_resolve_global, 6) /* has value profiling */ \
+        macro(op_resolve_global_dynamic, 7) /* has value profiling */ \
+        macro(op_get_scoped_var, 5) /* has value profiling */ \
+        macro(op_put_scoped_var, 4) \
+        macro(op_get_global_var, 4) /* has value profiling */ \
+        macro(op_get_global_var_watchable, 5) /* has value profiling */ \
+        macro(op_put_global_var, 3) \
+        macro(op_put_global_var_check, 5) \
         macro(op_init_global_const, 3) \
         macro(op_init_global_const_check, 5) \
+        macro(op_resolve_base, 5) /* has value profiling */ \
+        macro(op_ensure_property_exists, 3) \
+        macro(op_resolve_with_base, 5) /* has value profiling */ \
+        macro(op_resolve_with_this, 5) /* has value profiling */ \
         macro(op_get_by_id, 9) /* has value profiling */ \
         macro(op_get_by_id_out_of_line, 9) /* has value profiling */ \
         macro(op_get_by_id_self, 9) /* has value profiling */ \

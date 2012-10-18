@@ -1232,7 +1232,72 @@ void JIT::emitSlow_op_get_by_pname(Instruction* currentInstruction, Vector<SlowC
     stubCall.call(dst);
 }
 
-void JIT::emit_op_init_global_const(Instruction* currentInstruction)
+void JIT::emit_op_get_scoped_var(Instruction* currentInstruction)
+{
+    int dst = currentInstruction[1].u.operand;
+    int index = currentInstruction[2].u.operand;
+    int skip = currentInstruction[3].u.operand;
+
+    emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT2);
+    bool checkTopLevel = m_codeBlock->codeType() == FunctionCode && m_codeBlock->needsFullScopeChain();
+    ASSERT(skip || !checkTopLevel);
+    if (checkTopLevel && skip--) {
+        Jump activationNotCreated;
+        if (checkTopLevel)
+            activationNotCreated = branch32(Equal, tagFor(m_codeBlock->activationRegister()), TrustedImm32(JSValue::EmptyValueTag));
+        loadPtr(Address(regT2, JSScope::offsetOfNext()), regT2);
+        activationNotCreated.link(this);
+    }
+    while (skip--)
+        loadPtr(Address(regT2, JSScope::offsetOfNext()), regT2);
+
+    loadPtr(Address(regT2, JSVariableObject::offsetOfRegisters()), regT2);
+
+    emitLoad(index, regT1, regT0, regT2);
+    emitValueProfilingSite();
+    emitStore(dst, regT1, regT0);
+    map(m_bytecodeOffset + OPCODE_LENGTH(op_get_scoped_var), dst, regT1, regT0);
+}
+
+void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
+{
+    int index = currentInstruction[1].u.operand;
+    int skip = currentInstruction[2].u.operand;
+    int value = currentInstruction[3].u.operand;
+
+    emitLoad(value, regT1, regT0);
+
+    emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT2);
+    bool checkTopLevel = m_codeBlock->codeType() == FunctionCode && m_codeBlock->needsFullScopeChain();
+    ASSERT(skip || !checkTopLevel);
+    if (checkTopLevel && skip--) {
+        Jump activationNotCreated;
+        if (checkTopLevel)
+            activationNotCreated = branch32(Equal, tagFor(m_codeBlock->activationRegister()), TrustedImm32(JSValue::EmptyValueTag));
+        loadPtr(Address(regT2, JSScope::offsetOfNext()), regT2);
+        activationNotCreated.link(this);
+    }
+    while (skip--)
+        loadPtr(Address(regT2, JSScope::offsetOfNext()), regT2);
+
+    loadPtr(Address(regT2, JSVariableObject::offsetOfRegisters()), regT3);
+    emitStore(index, regT1, regT0, regT3);
+    emitWriteBarrier(regT2, regT1, regT0, regT1, ShouldFilterImmediates, WriteBarrierForVariableAccess);
+}
+
+void JIT::emit_op_get_global_var(Instruction* currentInstruction)
+{
+    int dst = currentInstruction[1].u.operand;
+    WriteBarrier<Unknown>* registerPointer = currentInstruction[2].u.registerPointer;
+
+    load32(registerPointer->tagPointer(), regT1);
+    load32(registerPointer->payloadPointer(), regT0);
+    emitValueProfilingSite();
+    emitStore(dst, regT1, regT0);
+    map(m_bytecodeOffset + OPCODE_LENGTH(op_get_global_var), dst, regT1, regT0);
+}
+
+void JIT::emit_op_put_global_var(Instruction* currentInstruction)
 {
     WriteBarrier<Unknown>* registerPointer = currentInstruction[1].u.registerPointer;
     int value = currentInstruction[2].u.operand;
@@ -1249,10 +1314,10 @@ void JIT::emit_op_init_global_const(Instruction* currentInstruction)
 
     store32(regT1, registerPointer->tagPointer());
     store32(regT0, registerPointer->payloadPointer());
-    map(m_bytecodeOffset + OPCODE_LENGTH(op_init_global_const), value, regT1, regT0);
+    map(m_bytecodeOffset + OPCODE_LENGTH(op_put_global_var), value, regT1, regT0);
 }
 
-void JIT::emit_op_init_global_const_check(Instruction* currentInstruction)
+void JIT::emit_op_put_global_var_check(Instruction* currentInstruction)
 {
     WriteBarrier<Unknown>* registerPointer = currentInstruction[1].u.registerPointer;
     int value = currentInstruction[2].u.operand;
@@ -1273,11 +1338,11 @@ void JIT::emit_op_init_global_const_check(Instruction* currentInstruction)
     unmap();
 }
 
-void JIT::emitSlow_op_init_global_const_check(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_put_global_var_check(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkSlowCase(iter);
     
-    JITStubCall stubCall(this, cti_op_init_global_const_check);
+    JITStubCall stubCall(this, cti_op_put_global_var_check);
     stubCall.addArgument(regT1, regT0);
     stubCall.addArgument(TrustedImm32(currentInstruction[4].u.operand));
     stubCall.call();
