@@ -2054,3 +2054,6 @@ webkit.org/b/99573 http/tests/security/xss-DENIED-xsl-external-entity.xml [ Fail
 
 # User Timing is not enable yet. so skip it.
 webkit.org/b/84893 http/tests/w3c/webperf/submission/user-timing [ Skip ]
+
+# Regression after r131640.
+webkit.org/b/99691 gamepad/gamepad-out-of-range-crasher.html [ Failure ]
