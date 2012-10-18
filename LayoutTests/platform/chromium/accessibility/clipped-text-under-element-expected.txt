@@ -1,0 +1,13 @@
+I am the visible link text.
+
+This tests that even if an element is not visible, textUnderElement() will still give the text.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS hiddenLink.title is 'AXTitle: I am the hidden link text.'
+PASS visibleLink.title is 'AXTitle: I am the visible link text.'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

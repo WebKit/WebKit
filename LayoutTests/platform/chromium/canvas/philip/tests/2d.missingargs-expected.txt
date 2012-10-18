@@ -1,0 +1,76 @@
+Failed assertion: should throw exception of type TypeError: ctx.scale()
+Failed assertion: should throw exception of type TypeError: ctx.scale(1)
+Failed assertion: should throw exception of type TypeError: ctx.rotate()
+Failed assertion: should throw exception of type TypeError: ctx.translate()
+Failed assertion: should throw exception of type TypeError: ctx.translate(0)
+Failed assertion: should throw exception of type TypeError: ctx.transform()
+Failed assertion: should throw exception of type TypeError: ctx.transform(1)
+Failed assertion: should throw exception of type TypeError: ctx.transform(1, 0)
+Failed assertion: should throw exception of type TypeError: ctx.transform(1, 0, 0)
+Failed assertion: should throw exception of type TypeError: ctx.transform(1, 0, 0, 1)
+Failed assertion: should throw exception of type TypeError: ctx.transform(1, 0, 0, 1, 0)
+Failed assertion: should throw exception of type TypeError: ctx.setTransform()
+Failed assertion: should throw exception of type TypeError: ctx.setTransform(1)
+Failed assertion: should throw exception of type TypeError: ctx.setTransform(1, 0)
+Failed assertion: should throw exception of type TypeError: ctx.setTransform(1, 0, 0)
+Failed assertion: should throw exception of type TypeError: ctx.setTransform(1, 0, 0, 1)
+Failed assertion: should throw exception of type TypeError: ctx.setTransform(1, 0, 0, 1, 0)
+Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
+Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
+Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
+Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
+Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
+Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
+Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
+Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
+Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
+Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
+Failed assertion: should throw exception of type TypeError: ctx.clearRect()
+Failed assertion: should throw exception of type TypeError: ctx.clearRect(0)
+Failed assertion: should throw exception of type TypeError: ctx.clearRect(0, 0)
+Failed assertion: should throw exception of type TypeError: ctx.clearRect(0, 0, 0)
+Failed assertion: should throw exception of type TypeError: ctx.fillRect()
+Failed assertion: should throw exception of type TypeError: ctx.fillRect(0)
+Failed assertion: should throw exception of type TypeError: ctx.fillRect(0, 0)
+Failed assertion: should throw exception of type TypeError: ctx.fillRect(0, 0, 0)
+Failed assertion: should throw exception of type TypeError: ctx.strokeRect()
+Failed assertion: should throw exception of type TypeError: ctx.strokeRect(0)
+Failed assertion: should throw exception of type TypeError: ctx.strokeRect(0, 0)
+Failed assertion: should throw exception of type TypeError: ctx.strokeRect(0, 0, 0)
+Failed assertion: should throw exception of type TypeError: ctx.moveTo()
+Failed assertion: should throw exception of type TypeError: ctx.moveTo(0)
+Failed assertion: should throw exception of type TypeError: ctx.lineTo()
+Failed assertion: should throw exception of type TypeError: ctx.lineTo(0)
+Failed assertion: should throw exception of type TypeError: ctx.quadraticCurveTo()
+Failed assertion: should throw exception of type TypeError: ctx.quadraticCurveTo(0)
+Failed assertion: should throw exception of type TypeError: ctx.quadraticCurveTo(0, 0)
+Failed assertion: should throw exception of type TypeError: ctx.quadraticCurveTo(0, 0, 0)
+Failed assertion: should throw exception of type TypeError: ctx.bezierCurveTo()
+Failed assertion: should throw exception of type TypeError: ctx.bezierCurveTo(0)
+Failed assertion: should throw exception of type TypeError: ctx.bezierCurveTo(0, 0)
+Failed assertion: should throw exception of type TypeError: ctx.bezierCurveTo(0, 0, 0)
+Failed assertion: should throw exception of type TypeError: ctx.bezierCurveTo(0, 0, 0, 0)
+Failed assertion: should throw exception of type TypeError: ctx.bezierCurveTo(0, 0, 0, 0, 0)
+Failed assertion: should throw exception of type TypeError: ctx.arcTo()
+Failed assertion: should throw exception of type TypeError: ctx.arcTo(0)
+Failed assertion: should throw exception of type TypeError: ctx.arcTo(0, 0)
+Failed assertion: should throw exception of type TypeError: ctx.arcTo(0, 0, 0)
+Failed assertion: should throw exception of type TypeError: ctx.arcTo(0, 0, 0, 0)
+Failed assertion: should throw exception of type TypeError: ctx.rect()
+Failed assertion: should throw exception of type TypeError: ctx.rect(0)
+Failed assertion: should throw exception of type TypeError: ctx.rect(0, 0)
+Failed assertion: should throw exception of type TypeError: ctx.rect(0, 0, 0)
+Failed assertion: should throw exception of type TypeError: ctx.arc()
+Failed assertion: should throw exception of type TypeError: ctx.arc(0)
+Failed assertion: should throw exception of type TypeError: ctx.arc(0, 0)
+Failed assertion: should throw exception of type TypeError: ctx.arc(0, 0, 1)
+Failed assertion: should throw exception of type TypeError: ctx.arc(0, 0, 1, 0)
+Failed assertion: should throw exception of type TypeError: ctx.isPointInPath()
+Failed assertion: should throw exception of type TypeError: ctx.isPointInPath(0)
+Failed assertion: should throw exception of type TypeError: ctx.measureText()
+Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
+Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
+Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
+Failed assertion: expected exception of type TypeError, got: Error: NOT_SUPPORTED_ERR: DOM Exception 9
+Failed assertion: expected exception of type TypeError, got: Error: INDEX_SIZE_ERR: DOM Exception 1
+Failed assertion: expected exception of type TypeError, got: Error: SYNTAX_ERR: DOM Exception 12

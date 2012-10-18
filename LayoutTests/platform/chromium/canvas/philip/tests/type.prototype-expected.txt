@@ -1,0 +1,1 @@
+Failed assertion window.HTMLCanvasElement.prototype.getContext === undefined (got 1[number], expected [undefined])
