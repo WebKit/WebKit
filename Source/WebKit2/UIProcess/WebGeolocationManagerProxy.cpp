@@ -73,9 +73,9 @@ void WebGeolocationManagerProxy::providerDidFailToDeterminePosition(const String
     m_context->sendToAllProcesses(Messages::WebGeolocationManager::DidFailToDeterminePosition(errorMessage));
 }
 
-void WebGeolocationManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void WebGeolocationManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceiveWebGeolocationManagerProxyMessage(connection, messageID, arguments);
+    didReceiveWebGeolocationManagerProxyMessage(connection, messageID, decoder);
 }
 
 void WebGeolocationManagerProxy::startUpdating()

@@ -36,8 +36,8 @@
 #include <wtf/text/AtomicString.h>
 
 namespace CoreIPC {
-class ArgumentDecoder;
 class Connection;
+class MessageDecoder;
 }
 
 namespace WebKit {
@@ -58,11 +58,11 @@ public:
     void didChangeBatteryStatus(const WTF::AtomicString& eventType, const WebBatteryStatus::Data&);
     void updateBatteryStatus(const WebBatteryStatus::Data&);
 
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
 private:
     // Implemented in generated WebBatteryManagerMessageReceiver.cpp
-    void didReceiveWebBatteryManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveWebBatteryManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
     WebProcess* m_process;
     HashSet<WebPage*> m_pageSet;

@@ -54,20 +54,20 @@ bool MessageReceiverMap::knowsHowToHandleMessage(MessageID messageID) const
     return m_globalMessageReceivers.contains(messageID.messageClass());
 }
 
-bool MessageReceiverMap::dispatchMessage(Connection* connection, MessageID messageID, ArgumentDecoder* argumentDecoder)
+bool MessageReceiverMap::dispatchMessage(Connection* connection, MessageID messageID, MessageDecoder& decoder)
 {
     if (MessageReceiver* messageReceiver = m_globalMessageReceivers.get(messageID.messageClass())) {
-        messageReceiver->didReceiveMessage(connection, messageID, argumentDecoder);
+        messageReceiver->didReceiveMessage(connection, messageID, decoder);
         return true;
     }
 
     return false;
 }
 
-bool MessageReceiverMap::dispatchSyncMessage(Connection* connection, MessageID messageID, ArgumentDecoder* argumentDecoder, OwnPtr<ArgumentEncoder>& reply)
+bool MessageReceiverMap::dispatchSyncMessage(Connection* connection, MessageID messageID, MessageDecoder& decoder, OwnPtr<MessageEncoder>& replyEncoder)
 {
     if (MessageReceiver* messageReceiver = m_globalMessageReceivers.get(messageID.messageClass())) {
-        messageReceiver->didReceiveSyncMessage(connection, messageID, argumentDecoder, reply);
+        messageReceiver->didReceiveSyncMessage(connection, messageID, decoder, replyEncoder);
         return true;
     }
 

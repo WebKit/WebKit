@@ -49,9 +49,9 @@ WebGeolocationManager::~WebGeolocationManager()
 {
 }
 
-void WebGeolocationManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void WebGeolocationManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceiveWebGeolocationManagerMessage(connection, messageID, arguments);
+    didReceiveWebGeolocationManagerMessage(connection, messageID, decoder);
 }
 
 void WebGeolocationManager::registerWebPage(WebPage* page)

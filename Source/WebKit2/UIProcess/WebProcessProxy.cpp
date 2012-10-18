@@ -395,17 +395,17 @@ void WebProcessProxy::getSharedWorkerProcessConnection(const String& /* url */, 
     // FIXME: Implement
 }
 
-void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    if (m_context->dispatchMessage(connection, messageID, arguments))
+    if (m_context->dispatchMessage(connection, messageID, decoder))
         return;
 
     if (messageID.is<CoreIPC::MessageClassWebProcessProxy>()) {
-        didReceiveWebProcessProxyMessage(connection, messageID, arguments);
+        didReceiveWebProcessProxyMessage(connection, messageID, decoder);
         return;
     }
 
-    uint64_t pageID = arguments->destinationID();
+    uint64_t pageID = decoder.destinationID();
     if (!pageID)
         return;
 
@@ -413,20 +413,20 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
     if (!pageProxy)
         return;
     
-    pageProxy->didReceiveMessage(connection, messageID, arguments);
+    pageProxy->didReceiveMessage(connection, messageID, decoder);
 }
 
-void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
+void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
-    if (m_context->dispatchSyncMessage(connection, messageID, arguments, reply))
+    if (m_context->dispatchSyncMessage(connection, messageID, decoder, replyEncoder))
         return;
 
     if (messageID.is<CoreIPC::MessageClassWebProcessProxy>()) {
-        didReceiveSyncWebProcessProxyMessage(connection, messageID, arguments, reply);
+        didReceiveSyncWebProcessProxyMessage(connection, messageID, decoder, replyEncoder);
         return;
     }
 
-    uint64_t pageID = arguments->destinationID();
+    uint64_t pageID = decoder.destinationID();
     if (!pageID)
         return;
     
@@ -434,13 +434,13 @@ void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, Cor
     if (!pageProxy)
         return;
     
-    pageProxy->didReceiveSyncMessage(connection, messageID, arguments, reply);
+    pageProxy->didReceiveSyncMessage(connection, messageID, decoder, replyEncoder);
 }
 
-void WebProcessProxy::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, bool& didHandleMessage)
+void WebProcessProxy::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, bool& didHandleMessage)
 {
     if (messageID.is<CoreIPC::MessageClassWebProcessProxy>())
-        didReceiveWebProcessProxyMessageOnConnectionWorkQueue(connection, messageID, arguments, didHandleMessage);
+        didReceiveWebProcessProxyMessageOnConnectionWorkQueue(connection, messageID, decoder, didHandleMessage);
 }
 
 void WebProcessProxy::didClose(CoreIPC::Connection*)

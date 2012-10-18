@@ -64,9 +64,9 @@ bool NetworkProcess::shouldTerminate()
     return true;
 }
 
-void NetworkProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void NetworkProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceiveNetworkProcessMessage(connection, messageID, arguments);
+    didReceiveNetworkProcessMessage(connection, messageID, decoder);
 }
 
 void NetworkProcess::didClose(CoreIPC::Connection*)

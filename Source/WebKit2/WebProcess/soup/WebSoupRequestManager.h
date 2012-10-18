@@ -30,9 +30,9 @@ typedef struct _GInputStream GInputStream;
 typedef struct _GSimpleAsyncResult GSimpleAsyncResult;
 
 namespace CoreIPC {
-class ArgumentDecoder;
 class Connection;
 class DataReference;
+class MessageDecoder;
 class MessageID;
 }
 
@@ -50,10 +50,10 @@ public:
     void send(GSimpleAsyncResult*, GCancellable*);
     GInputStream* finish(GSimpleAsyncResult*);
 
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
 private:
-    void didReceiveWebSoupRequestManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveWebSoupRequestManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
     void registerURIScheme(const String& scheme);
     void didHandleURIRequest(const CoreIPC::DataReference&, uint64_t contentLength, const String& mimeType, uint64_t requestID);

@@ -62,9 +62,9 @@ WebDatabaseManager::~WebDatabaseManager()
 {
 }
 
-void WebDatabaseManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void WebDatabaseManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceiveWebDatabaseManagerMessage(connection, messageID, arguments);
+    didReceiveWebDatabaseManagerMessage(connection, messageID, decoder);
 }
 
 void WebDatabaseManager::getDatabasesByOrigin(uint64_t callbackID) const

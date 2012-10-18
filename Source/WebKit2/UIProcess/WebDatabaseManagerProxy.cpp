@@ -232,9 +232,9 @@ void WebDatabaseManagerProxy::didModifyDatabase(const String& originIdentifier, 
     m_client.didModifyDatabase(this, origin.get(), databaseIdentifier);
 }
 
-void WebDatabaseManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void WebDatabaseManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceiveWebDatabaseManagerProxyMessage(connection, messageID, arguments);
+    didReceiveWebDatabaseManagerProxyMessage(connection, messageID, decoder);
 }
 
 } // namespace WebKit

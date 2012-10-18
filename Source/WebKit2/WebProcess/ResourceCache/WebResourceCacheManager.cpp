@@ -56,9 +56,9 @@ WebResourceCacheManager::~WebResourceCacheManager()
 {
 }
 
-void WebResourceCacheManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void WebResourceCacheManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceiveWebResourceCacheManagerMessage(connection, messageID, arguments);
+    didReceiveWebResourceCacheManagerMessage(connection, messageID, decoder);
 }
 
 

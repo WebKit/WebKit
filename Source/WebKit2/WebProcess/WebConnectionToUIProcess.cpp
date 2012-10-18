@@ -49,34 +49,33 @@ WebConnectionToUIProcess::WebConnectionToUIProcess(WebProcess* process, CoreIPC:
 
 // WebConnection
 
-void WebConnectionToUIProcess::encodeMessageBody(CoreIPC::ArgumentEncoder* argumentEncoder, APIObject* messageBody)
+void WebConnectionToUIProcess::encodeMessageBody(CoreIPC::ArgumentEncoder& encoder, APIObject* messageBody)
 {
-    argumentEncoder->encode(InjectedBundleUserMessageEncoder(messageBody));
+    encoder.encode(InjectedBundleUserMessageEncoder(messageBody));
 }
 
-bool WebConnectionToUIProcess::decodeMessageBody(CoreIPC::ArgumentDecoder* argumentDecoder, RefPtr<APIObject>& messageBody)
+bool WebConnectionToUIProcess::decodeMessageBody(CoreIPC::ArgumentDecoder& decoder, RefPtr<APIObject>& messageBody)
 {
-    if (!argumentDecoder->decode(InjectedBundleUserMessageDecoder(messageBody)))
+    if (!decoder.decode(InjectedBundleUserMessageDecoder(messageBody)))
         return false;
 
     return true;
 }
 
 // CoreIPC::Connection::Client
-
-void WebConnectionToUIProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void WebConnectionToUIProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
     if (messageID.is<CoreIPC::MessageClassWebConnection>()) {
-        didReceiveWebConnectionMessage(connection, messageID, arguments);
+        didReceiveWebConnectionMessage(connection, messageID, decoder);
         return;
     }
 
-    m_process->didReceiveMessage(connection, messageID, arguments);
+    m_process->didReceiveMessage(connection, messageID, decoder);
 }
 
-void WebConnectionToUIProcess::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
+void WebConnectionToUIProcess::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
-    m_process->didReceiveSyncMessage(connection, messageID, arguments, reply);
+    m_process->didReceiveSyncMessage(connection, messageID, decoder, replyEncoder);
 }
 
 void WebConnectionToUIProcess::didClose(CoreIPC::Connection* connection)

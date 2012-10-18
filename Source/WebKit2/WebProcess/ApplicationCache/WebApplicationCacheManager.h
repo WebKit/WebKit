@@ -30,9 +30,9 @@
 #include <wtf/text/WTFString.h>
 
 namespace CoreIPC {
-    class ArgumentDecoder;
-    class Connection;
-    class MessageID;
+class Connection;
+class MessageDecoder;
+class MessageID;
 }
 
 namespace WebKit {
@@ -45,7 +45,7 @@ class WebApplicationCacheManager {
 public:
     static WebApplicationCacheManager& shared();
 
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
     void deleteAllEntries();
     void setAppCacheMaximumSize(uint64_t);
@@ -55,7 +55,7 @@ private:
     void getApplicationCacheOrigins(uint64_t callbackID);
     void deleteEntriesForOrigin(const SecurityOriginData&);
 
-    void didReceiveWebApplicationCacheManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveWebApplicationCacheManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 };
 
 } // namespace WebKit

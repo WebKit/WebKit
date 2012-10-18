@@ -51,9 +51,9 @@ void WebSoupRequestManagerProxy::initializeClient(const WKSoupRequestManagerClie
     m_client.initialize(client);
 }
 
-void WebSoupRequestManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void WebSoupRequestManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceiveWebSoupRequestManagerProxyMessage(connection, messageID, arguments);
+    didReceiveWebSoupRequestManagerProxyMessage(connection, messageID, decoder);
 }
 
 void WebSoupRequestManagerProxy::registerURIScheme(const String& scheme)

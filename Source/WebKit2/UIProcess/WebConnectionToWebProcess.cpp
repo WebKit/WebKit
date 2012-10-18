@@ -52,14 +52,14 @@ WebConnectionToWebProcess::WebConnectionToWebProcess(WebProcessProxy* process, C
 
 // WebConnection
 
-void WebConnectionToWebProcess::encodeMessageBody(CoreIPC::ArgumentEncoder* argumentEncoder, APIObject* messageBody)
+void WebConnectionToWebProcess::encodeMessageBody(CoreIPC::ArgumentEncoder& encoder, APIObject* messageBody)
 {
-    argumentEncoder->encode(WebContextUserMessageEncoder(messageBody));
+    encoder.encode(WebContextUserMessageEncoder(messageBody));
 }
 
-bool WebConnectionToWebProcess::decodeMessageBody(CoreIPC::ArgumentDecoder* argumentDecoder, RefPtr<APIObject>& messageBody)
+bool WebConnectionToWebProcess::decodeMessageBody(CoreIPC::ArgumentDecoder& decoder, RefPtr<APIObject>& messageBody)
 {
-    if (!argumentDecoder->decode(WebContextUserMessageDecoder(messageBody, m_process)))
+    if (!decoder.decode(WebContextUserMessageDecoder(messageBody, m_process)))
         return false;
 
     return true;
@@ -67,19 +67,19 @@ bool WebConnectionToWebProcess::decodeMessageBody(CoreIPC::ArgumentDecoder* argu
 
 // CoreIPC::Connection::Client
 
-void WebConnectionToWebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void WebConnectionToWebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
     if (messageID.is<CoreIPC::MessageClassWebConnection>()) {
-        didReceiveWebConnectionMessage(connection, messageID, arguments);
+        didReceiveWebConnectionMessage(connection, messageID, decoder);
         return;
     }
 
-    m_process->didReceiveMessage(connection, messageID, arguments);
+    m_process->didReceiveMessage(connection, messageID, decoder);
 }
 
-void WebConnectionToWebProcess::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
+void WebConnectionToWebProcess::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
-    m_process->didReceiveSyncMessage(connection, messageID, arguments, reply);
+    m_process->didReceiveSyncMessage(connection, messageID, decoder, replyEncoder);
 }
 
 void WebConnectionToWebProcess::didClose(CoreIPC::Connection* connection)

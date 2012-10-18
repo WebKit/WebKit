@@ -33,8 +33,8 @@
 #include <wtf/text/WTFString.h>
 
 namespace CoreIPC {
-class ArgumentDecoder;
 class Connection;
+class MessageDecoder;
 class MessageID;
 }
 
@@ -47,14 +47,14 @@ class WebResourceCacheManager {
 public:
     static WebResourceCacheManager& shared();
 
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
 private:
     WebResourceCacheManager();
     virtual ~WebResourceCacheManager();
 
     // Implemented in generated WebResourceCacheManagerMessageReceiver.cpp
-    void didReceiveWebResourceCacheManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveWebResourceCacheManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
     void getCacheOrigins(uint64_t callbackID) const;
     void clearCacheForOrigin(SecurityOriginData, uint32_t cachesToClear) const;

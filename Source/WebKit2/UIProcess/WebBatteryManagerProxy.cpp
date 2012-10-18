@@ -59,9 +59,9 @@ void WebBatteryManagerProxy::initializeProvider(const WKBatteryProvider* provide
     m_provider.initialize(provider);
 }
 
-void WebBatteryManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void WebBatteryManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceiveWebBatteryManagerProxyMessage(connection, messageID, arguments);
+    didReceiveWebBatteryManagerProxyMessage(connection, messageID, decoder);
 }
 
 void WebBatteryManagerProxy::startUpdating()

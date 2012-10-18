@@ -35,8 +35,8 @@
 #include <wtf/text/StringHash.h>
 
 namespace CoreIPC {
-class ArgumentDecoder;
 class Connection;
+class MessageDecoder;
 }
 
 namespace WebCore {
@@ -63,7 +63,7 @@ public:
     // This callback comes from WebCore, not messaged from the UI process.
     void didDestroyNotification(WebCore::Notification*, WebPage*);
 
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     void didUpdateNotificationDecision(const String& originString, bool allowed);
 
     // Looks in local cache for permission. If not found, returns DefaultDenied.
@@ -74,7 +74,7 @@ public:
 
 private:
     // Implemented in generated WebNotificationManagerMessageReceiver.cpp
-    void didReceiveWebNotificationManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveWebNotificationManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     
     void didShowNotification(uint64_t notificationID);
     void didClickNotification(uint64_t notificationID);

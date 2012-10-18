@@ -782,26 +782,26 @@ void WebContext::addMessageReceiver(CoreIPC::MessageClass messageClass, CoreIPC:
     m_messageReceiverMap.addMessageReceiver(messageClass, messageReceiver);
 }
 
-bool WebContext::dispatchMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* argumentDecoder)
+bool WebContext::dispatchMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    return m_messageReceiverMap.dispatchMessage(connection, messageID, argumentDecoder);
+    return m_messageReceiverMap.dispatchMessage(connection, messageID, decoder);
 }
 
-bool WebContext::dispatchSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* argumentDecoder, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
+bool WebContext::dispatchSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
-    return m_messageReceiverMap.dispatchSyncMessage(connection, messageID, argumentDecoder, reply);
+    return m_messageReceiverMap.dispatchSyncMessage(connection, messageID, decoder, replyEncoder);
 }
 
-void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
     if (messageID.is<CoreIPC::MessageClassWebContext>()) {
-        didReceiveWebContextMessage(connection, messageID, arguments);
+        didReceiveWebContextMessage(connection, messageID, decoder);
         return;
     }
 
     if (messageID.is<CoreIPC::MessageClassDownloadProxy>()) {
-        if (DownloadProxy* downloadProxy = m_downloads.get(arguments->destinationID()).get())
-            downloadProxy->didReceiveDownloadProxyMessage(connection, messageID, arguments);
+        if (DownloadProxy* downloadProxy = m_downloads.get(decoder.destinationID()).get())
+            downloadProxy->didReceiveDownloadProxyMessage(connection, messageID, decoder);
         
         return;
     }
@@ -811,7 +811,7 @@ void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
             String messageName;
             RefPtr<APIObject> messageBody;
             WebContextUserMessageDecoder messageDecoder(messageBody, WebProcessProxy::fromConnection(connection));
-            if (!arguments->decode(CoreIPC::Out(messageName, messageDecoder)))
+            if (!decoder.decode(CoreIPC::Out(messageName, messageDecoder)))
                 return;
 
             didReceiveMessageFromInjectedBundle(messageName, messageBody.get());
@@ -824,16 +824,16 @@ void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
     ASSERT_NOT_REACHED();
 }
 
-void WebContext::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
+void WebContext::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
     if (messageID.is<CoreIPC::MessageClassWebContext>()) {
-        didReceiveSyncWebContextMessage(connection, messageID, arguments, reply);
+        didReceiveSyncWebContextMessage(connection, messageID, decoder, replyEncoder);
         return;
     }
 
     if (messageID.is<CoreIPC::MessageClassDownloadProxy>()) {
-        if (DownloadProxy* downloadProxy = m_downloads.get(arguments->destinationID()).get())
-            downloadProxy->didReceiveSyncDownloadProxyMessage(connection, messageID, arguments, reply);
+        if (DownloadProxy* downloadProxy = m_downloads.get(decoder.destinationID()).get())
+            downloadProxy->didReceiveSyncDownloadProxyMessage(connection, messageID, decoder, replyEncoder);
         return;
     }
 
@@ -844,12 +844,12 @@ void WebContext::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC:
             String messageName;
             RefPtr<APIObject> messageBody;
             WebContextUserMessageDecoder messageDecoder(messageBody, WebProcessProxy::fromConnection(connection));
-            if (!arguments->decode(CoreIPC::Out(messageName, messageDecoder)))
+            if (!decoder.decode(CoreIPC::Out(messageName, messageDecoder)))
                 return;
 
             RefPtr<APIObject> returnData;
             didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody.get(), returnData);
-            reply->encode(CoreIPC::In(WebContextUserMessageEncoder(returnData.get())));
+            replyEncoder->encode(CoreIPC::In(WebContextUserMessageEncoder(returnData.get())));
             return;
         }
         case WebContextLegacyMessage::PostMessage:

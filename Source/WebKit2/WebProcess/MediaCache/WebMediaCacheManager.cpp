@@ -46,9 +46,9 @@ WebMediaCacheManager::WebMediaCacheManager()
 {
 }
 
-void WebMediaCacheManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void WebMediaCacheManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceiveWebMediaCacheManagerMessage(connection, messageID, arguments);
+    didReceiveWebMediaCacheManagerMessage(connection, messageID, decoder);
 }
 
 void WebMediaCacheManager::getHostnamesWithMediaCache(uint64_t callbackID)

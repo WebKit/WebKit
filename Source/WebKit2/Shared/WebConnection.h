@@ -58,11 +58,11 @@ protected:
     explicit WebConnection(PassRefPtr<CoreIPC::Connection>);
 
     virtual Type type() const { return APIType; }
-    virtual void encodeMessageBody(CoreIPC::ArgumentEncoder*, APIObject*) = 0;
-    virtual bool decodeMessageBody(CoreIPC::ArgumentDecoder*, RefPtr<APIObject>&) = 0;
+    virtual void encodeMessageBody(CoreIPC::ArgumentEncoder&, APIObject*) = 0;
+    virtual bool decodeMessageBody(CoreIPC::ArgumentDecoder&, RefPtr<APIObject>&) = 0;
 
     // Implemented in generated WebConnectionMessageReceiver.cpp
-    void didReceiveWebConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveWebConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     void handleMessage(const CoreIPC::DataReference& messageData);
 
     RefPtr<CoreIPC::Connection> m_connection;

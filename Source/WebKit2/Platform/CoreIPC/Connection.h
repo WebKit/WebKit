@@ -101,7 +101,7 @@ public:
 
     class QueueClient {
     public:
-        virtual void didReceiveMessageOnConnectionWorkQueue(Connection*, MessageID, ArgumentDecoder*, bool& didHandleMessage) = 0;
+        virtual void didReceiveMessageOnConnectionWorkQueue(Connection*, MessageID, MessageDecoder&, bool& didHandleMessage) = 0;
 
     protected:
         virtual ~QueueClient() { }
@@ -276,8 +276,8 @@ private:
     void dispatchConnectionDidClose();
     void dispatchOneMessage();
     void dispatchMessage(IncomingMessage&);
-    void dispatchMessage(MessageID, MessageDecoder*);
-    void dispatchSyncMessage(MessageID, MessageDecoder*);
+    void dispatchMessage(MessageID, MessageDecoder&);
+    void dispatchSyncMessage(MessageID, MessageDecoder&);
     void didFailToSendSyncMessage();
 
     // Can be called on any thread.
@@ -440,7 +440,7 @@ template<typename T> bool Connection::waitForAndDispatchImmediately(uint64_t des
         return false;
 
     ASSERT(decoder->destinationID() == destinationID);
-    m_client->didReceiveMessage(this, MessageID(T::messageID), decoder.get());
+    m_client->didReceiveMessage(this, MessageID(T::messageID), *decoder);
     return true;
 }
 

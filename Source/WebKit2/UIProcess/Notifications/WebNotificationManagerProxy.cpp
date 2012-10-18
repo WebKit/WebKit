@@ -72,9 +72,9 @@ void WebNotificationManagerProxy::populateCopyOfNotificationPermissions(HashMap<
     }
 }
 
-void WebNotificationManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void WebNotificationManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceiveWebNotificationManagerProxyMessage(connection, messageID, arguments);
+    didReceiveWebNotificationManagerProxyMessage(connection, messageID, decoder);
 }
 
 void WebNotificationManagerProxy::show(WebPageProxy* page, const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, const String& dir, const String& originString, uint64_t notificationID)

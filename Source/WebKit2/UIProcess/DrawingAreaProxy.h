@@ -44,8 +44,8 @@ typedef struct _cairo cairo_t;
 #endif
 
 namespace CoreIPC {
-    class ArgumentDecoder;
     class Connection;
+    class MessageDecoder;
     class MessageID;
 }
 
@@ -70,7 +70,7 @@ public:
 
     DrawingAreaType type() const { return m_type; }
 
-    void didReceiveDrawingAreaProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveDrawingAreaProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
     virtual void deviceScaleFactorDidChange() = 0;
 
@@ -100,7 +100,7 @@ public:
     virtual void createTileForLayer(int /* layerID */, int /* tileID */, const WebKit::UpdateInfo&) { }
     virtual void updateTileForLayer(int /* layerID */, int /* tileID */, const WebKit::UpdateInfo&) { }
     virtual void removeTileForLayer(int /* layerID */, int /* tileID */) { }
-    virtual void didReceiveLayerTreeCoordinatorProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    virtual void didReceiveLayerTreeCoordinatorProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
     WebPageProxy* page() { return m_webPageProxy; }
 #endif

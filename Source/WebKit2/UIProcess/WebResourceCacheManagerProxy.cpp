@@ -95,9 +95,9 @@ void WebResourceCacheManagerProxy::clearCacheForAllOrigins(ResourceCachesToClear
     m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebResourceCacheManager::ClearCacheForAllOrigins(cachesToClear));
 }
 
-void WebResourceCacheManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void WebResourceCacheManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceiveWebResourceCacheManagerProxyMessage(connection, messageID, arguments);
+    didReceiveWebResourceCacheManagerProxyMessage(connection, messageID, decoder);
 }
 
 } // namespace WebKit

@@ -30,9 +30,9 @@
 #include <wtf/text/WTFString.h>
 
 namespace CoreIPC {
-    class ArgumentDecoder;
-    class Connection;
-    class MessageID;
+class Connection;
+class MessageDecoder;
+class MessageID;
 }
 
 namespace WebKit {
@@ -43,7 +43,7 @@ class WebMediaCacheManager {
 public:
     static WebMediaCacheManager& shared();
 
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
 private:
     WebMediaCacheManager();
@@ -52,7 +52,7 @@ private:
     void clearCacheForHostname(const String&);
     void clearCacheForAllHostnames();
 
-    void didReceiveWebMediaCacheManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveWebMediaCacheManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 };
 
 } // namespace WebKit

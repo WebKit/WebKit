@@ -251,7 +251,7 @@ static id NSApplicationAccessibilityFocusedUIElement(NSApplication*, SEL)
     return [page->accessibilityRemoteObject() accessibilityFocusedUIElement];
 }
     
-void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters& parameters, CoreIPC::ArgumentDecoder*)
+void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters& parameters, CoreIPC::MessageDecoder&)
 {
     SandboxExtension::consumePermanently(parameters.uiProcessBundleResourcePathExtensionHandle);
     SandboxExtension::consumePermanently(parameters.localStorageDirectoryExtensionHandle);

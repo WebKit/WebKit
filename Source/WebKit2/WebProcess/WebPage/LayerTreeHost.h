@@ -31,8 +31,8 @@
 #include <wtf/RefCounted.h>
 
 namespace CoreIPC {
-class ArgumentDecoder;
 class Connection;
+class MessageDecoder;
 class MessageID;
 }
 
@@ -94,7 +94,7 @@ public:
     virtual void setVisibleContentsRectForLayer(int /* layerID */, const WebCore::IntRect&) { }
     virtual void renderNextFrame() { }
     virtual void purgeBackingStores() { }
-    virtual void didReceiveLayerTreeCoordinatorMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*) = 0;
+    virtual void didReceiveLayerTreeCoordinatorMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) = 0;
 #endif
 
 #if PLATFORM(WIN)

@@ -63,9 +63,9 @@ WebNotificationManager::~WebNotificationManager()
 {
 }
 
-void WebNotificationManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void WebNotificationManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceiveWebNotificationManagerMessage(connection, messageID, arguments);
+    didReceiveWebNotificationManagerMessage(connection, messageID, decoder);
 }
 
 void WebNotificationManager::initialize(const HashMap<String, bool>& permissions)

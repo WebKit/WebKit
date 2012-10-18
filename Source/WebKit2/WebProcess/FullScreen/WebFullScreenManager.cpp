@@ -78,9 +78,9 @@ WebCore::Element* WebFullScreenManager::element()
     return m_element.get(); 
 }
 
-void WebFullScreenManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void WebFullScreenManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceiveWebFullScreenManagerMessage(connection, messageID, arguments);
+    didReceiveWebFullScreenManagerMessage(connection, messageID, decoder);
 }
 
 bool WebFullScreenManager::supportsFullScreen(bool withKeyboard)

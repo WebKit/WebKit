@@ -87,28 +87,28 @@ void PluginProcessConnection::removePluginProxy(PluginProxy* plugin)
     m_pluginProcessConnectionManager->removePluginProcessConnection(this);
 }
 
-void PluginProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void PluginProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    ASSERT(arguments->destinationID());
+    ASSERT(decoder.destinationID());
 
-    PluginProxy* pluginProxy = m_plugins.get(arguments->destinationID());
+    PluginProxy* pluginProxy = m_plugins.get(decoder.destinationID());
     if (!pluginProxy)
         return;
 
-    pluginProxy->didReceivePluginProxyMessage(connection, messageID, arguments);
+    pluginProxy->didReceivePluginProxyMessage(connection, messageID, decoder);
 }
 
-void PluginProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
+void PluginProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
     if (messageID.is<CoreIPC::MessageClassNPObjectMessageReceiver>()) {
-        m_npRemoteObjectMap->didReceiveSyncMessage(connection, messageID, arguments, reply);
+        m_npRemoteObjectMap->didReceiveSyncMessage(connection, messageID, decoder, replyEncoder);
         return;
     }
 
-    uint64_t destinationID = arguments->destinationID();
+    uint64_t destinationID = decoder.destinationID();
 
     if (!destinationID) {
-        didReceiveSyncPluginProcessConnectionMessage(connection, messageID, arguments, reply);
+        didReceiveSyncPluginProcessConnectionMessage(connection, messageID, decoder, replyEncoder);
         return;
     }
 
@@ -116,7 +116,7 @@ void PluginProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connect
     if (!pluginProxy)
         return;
 
-    pluginProxy->didReceiveSyncPluginProxyMessage(connection, messageID, arguments, reply);
+    pluginProxy->didReceiveSyncPluginProxyMessage(connection, messageID, decoder, replyEncoder);
 }
 
 void PluginProcessConnection::didClose(CoreIPC::Connection*)

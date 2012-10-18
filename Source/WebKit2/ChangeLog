@@ -1,3 +1,13 @@
+2012-10-18  Anders Carlsson  <andersca@apple.com>
+
+        Replace uses of ArgumentEncoder/ArgumentDecoder with MessageEncoder/MessageDecoder
+        https://bugs.webkit.org/show_bug.cgi?id=99746
+
+        Reviewed by Andreas Kling.
+
+        Change all occurrences of ArgumentDecoder* to MessageDecoder& and all occurrences of ArgumentEncoder*
+        to ArgumentEncoder& in all the message receivers. This is the second step towards getting rid of MessageID.
+
 2012-10-18  Yael Aharon  <yael.aharon@intel.com>
 
         PageViewportController::m_rawAttributes.devicePixelRatio is not initialized

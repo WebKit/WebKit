@@ -36,8 +36,8 @@
 #include <wtf/text/AtomicString.h>
 
 namespace CoreIPC {
-class ArgumentDecoder;
 class Connection;
+class MessageDecoder;
 }
 
 namespace WebKit {
@@ -57,11 +57,11 @@ public:
     double bandwidth(WebPage*) const;
     bool metered(WebPage*) const;
 
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
 private:
     // Implemented in generated WebNetworkInfoManagerMessageReceiver.cpp
-    void didReceiveWebNetworkInfoManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveWebNetworkInfoManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
     void didChangeNetworkInformation(const AtomicString& eventType, const WebNetworkInfo::Data&);
 

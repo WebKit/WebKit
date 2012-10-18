@@ -136,14 +136,14 @@ def message_to_struct_declaration(message):
         if message.has_attribute(DELAYED_ATTRIBUTE):
             send_parameters = [(function_parameter_type(x.type), x.name) for x in message.reply_parameters]
             result.append('    struct DelayedReply : public ThreadSafeRefCounted<DelayedReply> {\n')
-            result.append('        DelayedReply(PassRefPtr<CoreIPC::Connection>, PassOwnPtr<CoreIPC::ArgumentEncoder>);\n')
+            result.append('        DelayedReply(PassRefPtr<CoreIPC::Connection>, PassOwnPtr<CoreIPC::MessageEncoder>);\n')
             result.append('        ~DelayedReply();\n')
             result.append('\n')
             result.append('        bool send(%s);\n' % ', '.join([' '.join(x) for x in send_parameters]))
             result.append('\n')
             result.append('    private:\n')
             result.append('        RefPtr<CoreIPC::Connection> m_connection;\n')
-            result.append('        OwnPtr<CoreIPC::ArgumentEncoder> m_arguments;\n')
+            result.append('        OwnPtr<CoreIPC::MessageEncoder> m_encoder;\n')
             result.append('    };\n\n')
 
         result.append('    typedef %s Reply;\n' % reply_type(message))
@@ -317,7 +317,7 @@ def handler_function(receiver, message):
 
 
 def async_case_statement(receiver, message):
-    dispatch_function_args = ['arguments', 'this', '&%s' % handler_function(receiver, message)]
+    dispatch_function_args = ['decoder', 'this', '&%s' % handler_function(receiver, message)]
     dispatch_function = 'handleMessage'
     if message.has_attribute(VARIADIC_ATTRIBUTE):
         dispatch_function += 'Variadic'
@@ -344,7 +344,7 @@ def sync_case_statement(receiver, message):
 
     result = []
     result.append('    case Messages::%s::%s:\n' % (receiver.name, message.id()))
-    result.append('        CoreIPC::%s<Messages::%s::%s>(%sarguments, reply%s, this, &%s);\n' % (dispatch_function, receiver.name, message.name, 'connection, ' if message.has_attribute(DELAYED_ATTRIBUTE) else '', '' if message.has_attribute(DELAYED_ATTRIBUTE) else '.get()', handler_function(receiver, message)))
+    result.append('        CoreIPC::%s<Messages::%s::%s>(%sdecoder, %sreplyEncoder, this, &%s);\n' % (dispatch_function, receiver.name, message.name, 'connection, ' if message.has_attribute(DELAYED_ATTRIBUTE) else '', '' if message.has_attribute(DELAYED_ATTRIBUTE) else '*', handler_function(receiver, message)))
     result.append('        return;\n')
 
     return surround_in_condition(''.join(result), message.condition)
@@ -420,7 +420,7 @@ def generate_message_handler(file):
     headers = {
         '"%s"' % messages_header_filename(receiver): [None],
         '"HandleMessage.h"': [None],
-        '"ArgumentDecoder.h"': [None],
+        '"MessageDecoder.h"': [None],
     }
 
     type_conditions = {}
@@ -499,9 +499,9 @@ def generate_message_handler(file):
             if message.condition:
                 result.append('#if %s\n\n' % message.condition)
             
-            result.append('%s::DelayedReply::DelayedReply(PassRefPtr<CoreIPC::Connection> connection, PassOwnPtr<CoreIPC::ArgumentEncoder> arguments)\n' % message.name)
+            result.append('%s::DelayedReply::DelayedReply(PassRefPtr<CoreIPC::Connection> connection, PassOwnPtr<CoreIPC::MessageEncoder> encoder)\n' % message.name)
             result.append('    : m_connection(connection)\n')
-            result.append('    , m_arguments(arguments)\n')
+            result.append('    , m_encoder(encoder)\n')
             result.append('{\n')
             result.append('}\n')
             result.append('\n')
@@ -512,9 +512,9 @@ def generate_message_handler(file):
             result.append('\n')
             result.append('bool %s::DelayedReply::send(%s)\n' % (message.name, ', '.join([' '.join(x) for x in send_parameters])))
             result.append('{\n')
-            result.append('    ASSERT(m_arguments);\n')
-            result += ['    m_arguments->encode(%s);\n' % x.name for x in message.reply_parameters]
-            result.append('    bool result = m_connection->sendSyncReply(static_pointer_cast<CoreIPC::MessageEncoder>(m_arguments.release()));\n')
+            result.append('    ASSERT(m_encoder);\n')
+            result += ['    m_encoder->encode(%s);\n' % x.name for x in message.reply_parameters]
+            result.append('    bool result = m_connection->sendSyncReply(m_encoder.release());\n')
             result.append('    m_connection = nullptr;\n')
             result.append('    return result;\n')
             result.append('}\n')
@@ -544,7 +544,7 @@ def generate_message_handler(file):
                 async_messages.append(message)
 
     if async_dispatch_on_connection_queue_messages:
-        result.append('void %s::didReceive%sMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, bool& didHandleMessage)\n' % (receiver.name, receiver.name))
+        result.append('void %s::didReceive%sMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, bool& didHandleMessage)\n' % (receiver.name, receiver.name))
         result.append('{\n')
         result.append('#if COMPILER(MSVC)\n')
         result.append('#pragma warning(push)\n')
@@ -561,7 +561,7 @@ def generate_message_handler(file):
         result.append('}\n\n')
 
     if async_messages:
-        result.append('void %s::didReceive%sMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)\n' % (receiver.name, receiver.name))
+        result.append('void %s::didReceive%sMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)\n' % (receiver.name, receiver.name))
         result.append('{\n')
         result.append('    switch (messageID.get<Messages::%s::Kind>()) {\n' % receiver.name)
         result += [async_case_statement(receiver, message) for message in async_messages]
@@ -573,7 +573,7 @@ def generate_message_handler(file):
 
     if sync_messages:
         result.append('\n')
-        result.append('void %s::didReceiveSync%sMessage(CoreIPC::Connection*%s, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)\n' % (receiver.name, receiver.name, ' connection' if sync_delayed_messages else ''))
+        result.append('void %s::didReceiveSync%sMessage(CoreIPC::Connection*%s, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)\n' % (receiver.name, receiver.name, ' connection' if sync_delayed_messages else ''))
         result.append('{\n')
         result.append('    switch (messageID.get<Messages::%s::Kind>()) {\n' % receiver.name)
         result += [sync_case_statement(receiver, message) for message in sync_messages]

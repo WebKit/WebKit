@@ -36,8 +36,8 @@
 #include <wtf/Vector.h>
 
 namespace CoreIPC {
-class ArgumentDecoder;
 class Connection;
+class MessageDecoder;
 class MessageID;
 }
 
@@ -70,10 +70,10 @@ public:
     void receivedIconLoadDecision(int decision, uint64_t callbackID);
     virtual void iconDataForIconURL(const String&, PassRefPtr<WebCore::IconDataCallback>);
         
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     
 private:
-    void didReceiveWebIconDatabaseProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveWebIconDatabaseProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     
     // Callbacks from the UIProcess
     void urlImportFinished();

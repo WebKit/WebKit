@@ -32,16 +32,16 @@
 
 namespace CoreIPC {
 
-class ArgumentDecoder;
-class ArgumentEncoder;
+class MessageDecoder;
+class MessageEncoder;
 class Connection;
 
 class MessageReceiver {
 public:
     virtual ~MessageReceiver() { }
 
-    virtual void didReceiveMessage(Connection*, MessageID, ArgumentDecoder*) = 0;
-    virtual void didReceiveSyncMessage(Connection*, MessageID, ArgumentDecoder*, OwnPtr<ArgumentEncoder>&)
+    virtual void didReceiveMessage(Connection*, MessageID, MessageDecoder&) = 0;
+    virtual void didReceiveSyncMessage(Connection*, MessageID, MessageDecoder&, OwnPtr<MessageEncoder>&)
     {
         ASSERT_NOT_REACHED();
     }

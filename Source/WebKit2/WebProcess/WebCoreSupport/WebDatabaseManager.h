@@ -34,7 +34,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace CoreIPC {
-class ArgumentDecoder;
+class MessageDecoder;
 class Connection;
 class MessageID;
 }
@@ -47,7 +47,7 @@ public:
     static WebDatabaseManager& shared();
     static void initialize(const String& databaseDirectory);
 
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     void setQuotaForOrigin(const String& originIdentifier, unsigned long long quota) const;
 
 public:
@@ -58,7 +58,7 @@ private:
     virtual ~WebDatabaseManager();
 
     // Implemented in generated WebDatabaseManagerMessageReceiver.cpp
-    void didReceiveWebDatabaseManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveWebDatabaseManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
     void getDatabasesByOrigin(uint64_t callbackID) const;
     void getDatabaseOrigins(uint64_t callbackID) const;

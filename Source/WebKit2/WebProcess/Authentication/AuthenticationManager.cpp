@@ -58,9 +58,9 @@ AuthenticationManager::AuthenticationManager()
     WebProcess::shared().connection()->addMessageReceiver(CoreIPC::MessageClassAuthenticationManager, this);
 }
 
-void AuthenticationManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void AuthenticationManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceiveAuthenticationManagerMessage(connection, messageID, arguments);
+    didReceiveAuthenticationManagerMessage(connection, messageID, decoder);
 }
 
 void AuthenticationManager::didReceiveAuthenticationChallenge(WebFrame* frame, const AuthenticationChallenge& authenticationChallenge)

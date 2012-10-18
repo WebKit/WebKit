@@ -133,7 +133,7 @@ void WebProcess::platformClearResourceCaches(ResourceCachesToClear cachesToClear
 #endif // USE(CFNETWORK)
 }
 
-void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters& parameters, CoreIPC::ArgumentDecoder*)
+void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters& parameters, CoreIPC::MessageDecoder&)
 {
     setShouldPaintNativeControls(parameters.shouldPaintNativeControls);
 

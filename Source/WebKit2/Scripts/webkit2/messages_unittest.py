@@ -504,14 +504,14 @@ struct GetPluginProcessConnection : CoreIPC::Arguments1<const WTF::String&> {
     static const char* name() { return "GetPluginProcessConnection"; }
 
     struct DelayedReply : public ThreadSafeRefCounted<DelayedReply> {
-        DelayedReply(PassRefPtr<CoreIPC::Connection>, PassOwnPtr<CoreIPC::ArgumentEncoder>);
+        DelayedReply(PassRefPtr<CoreIPC::Connection>, PassOwnPtr<CoreIPC::MessageEncoder>);
         ~DelayedReply();
 
         bool send(const CoreIPC::Connection::Handle& connectionHandle);
 
     private:
         RefPtr<CoreIPC::Connection> m_connection;
-        OwnPtr<CoreIPC::ArgumentEncoder> m_arguments;
+        OwnPtr<CoreIPC::MessageEncoder> m_encoder;
     };
 
     typedef CoreIPC::Arguments1<CoreIPC::Connection::Handle&> Reply;
@@ -528,14 +528,14 @@ struct TestMultipleAttributes : CoreIPC::Arguments0 {
     static const char* name() { return "TestMultipleAttributes"; }
 
     struct DelayedReply : public ThreadSafeRefCounted<DelayedReply> {
-        DelayedReply(PassRefPtr<CoreIPC::Connection>, PassOwnPtr<CoreIPC::ArgumentEncoder>);
+        DelayedReply(PassRefPtr<CoreIPC::Connection>, PassOwnPtr<CoreIPC::MessageEncoder>);
         ~DelayedReply();
 
         bool send();
 
     private:
         RefPtr<CoreIPC::Connection> m_connection;
-        OwnPtr<CoreIPC::ArgumentEncoder> m_arguments;
+        OwnPtr<CoreIPC::MessageEncoder> m_encoder;
     };
 
     typedef CoreIPC::Arguments0 Reply;
@@ -670,7 +670,6 @@ _expected_receiver_implementation = """/*
 #include "WebPage.h"
 
 #include "ArgumentCoders.h"
-#include "ArgumentDecoder.h"
 #include "Connection.h"
 #if ENABLE(DEPRECATED_FEATURE) || ENABLE(EXPERIMENTAL_FEATURE)
 #include "DummyType.h"
@@ -679,6 +678,7 @@ _expected_receiver_implementation = """/*
 #if PLATFORM(MAC)
 #include "MachPort.h"
 #endif
+#include "MessageDecoder.h"
 #include "Plugin.h"
 #include "WebCoreArgumentCoders.h"
 #if ENABLE(TOUCH_EVENTS)
@@ -697,9 +697,9 @@ namespace Messages {
 
 namespace WebPage {
 
-GetPluginProcessConnection::DelayedReply::DelayedReply(PassRefPtr<CoreIPC::Connection> connection, PassOwnPtr<CoreIPC::ArgumentEncoder> arguments)
+GetPluginProcessConnection::DelayedReply::DelayedReply(PassRefPtr<CoreIPC::Connection> connection, PassOwnPtr<CoreIPC::MessageEncoder> encoder)
     : m_connection(connection)
-    , m_arguments(arguments)
+    , m_encoder(encoder)
 {
 }
 
@@ -710,16 +710,16 @@ GetPluginProcessConnection::DelayedReply::~DelayedReply()
 
 bool GetPluginProcessConnection::DelayedReply::send(const CoreIPC::Connection::Handle& connectionHandle)
 {
-    ASSERT(m_arguments);
-    m_arguments->encode(connectionHandle);
-    bool result = m_connection->sendSyncReply(static_pointer_cast<CoreIPC::MessageEncoder>(m_arguments.release()));
+    ASSERT(m_encoder);
+    m_encoder->encode(connectionHandle);
+    bool result = m_connection->sendSyncReply(m_encoder.release());
     m_connection = nullptr;
     return result;
 }
 
-TestMultipleAttributes::DelayedReply::DelayedReply(PassRefPtr<CoreIPC::Connection> connection, PassOwnPtr<CoreIPC::ArgumentEncoder> arguments)
+TestMultipleAttributes::DelayedReply::DelayedReply(PassRefPtr<CoreIPC::Connection> connection, PassOwnPtr<CoreIPC::MessageEncoder> encoder)
     : m_connection(connection)
-    , m_arguments(arguments)
+    , m_encoder(encoder)
 {
 }
 
@@ -730,8 +730,8 @@ TestMultipleAttributes::DelayedReply::~DelayedReply()
 
 bool TestMultipleAttributes::DelayedReply::send()
 {
-    ASSERT(m_arguments);
-    bool result = m_connection->sendSyncReply(static_pointer_cast<CoreIPC::MessageEncoder>(m_arguments.release()));
+    ASSERT(m_encoder);
+    bool result = m_connection->sendSyncReply(m_encoder.release());
     m_connection = nullptr;
     return result;
 }
@@ -742,7 +742,7 @@ bool TestMultipleAttributes::DelayedReply::send()
 
 namespace WebKit {
 
-void WebPage::didReceiveWebPageMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, bool& didHandleMessage)
+void WebPage::didReceiveWebPageMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, bool& didHandleMessage)
 {
 #if COMPILER(MSVC)
 #pragma warning(push)
@@ -750,7 +750,7 @@ void WebPage::didReceiveWebPageMessageOnConnectionWorkQueue(CoreIPC::Connection*
 #endif
     switch (messageID.get<Messages::WebPage::Kind>()) {
     case Messages::WebPage::TestConnectionQueueID:
-        CoreIPC::handleMessageOnConnectionQueue<Messages::WebPage::TestConnectionQueue>(connection, arguments, this, &WebPage::testConnectionQueue);
+        CoreIPC::handleMessageOnConnectionQueue<Messages::WebPage::TestConnectionQueue>(connection, decoder, this, &WebPage::testConnectionQueue);
         didHandleMessage = true;
         return;
     default:
@@ -761,48 +761,48 @@ void WebPage::didReceiveWebPageMessageOnConnectionWorkQueue(CoreIPC::Connection*
 #endif
 }
 
-void WebPage::didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void WebPage::didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
     switch (messageID.get<Messages::WebPage::Kind>()) {
     case Messages::WebPage::LoadURLID:
-        CoreIPC::handleMessage<Messages::WebPage::LoadURL>(arguments, this, &WebPage::loadURL);
+        CoreIPC::handleMessage<Messages::WebPage::LoadURL>(decoder, this, &WebPage::loadURL);
         return;
 #if ENABLE(TOUCH_EVENTS)
     case Messages::WebPage::TouchEventID:
-        CoreIPC::handleMessage<Messages::WebPage::TouchEvent>(arguments, this, &WebPage::touchEvent);
+        CoreIPC::handleMessage<Messages::WebPage::TouchEvent>(decoder, this, &WebPage::touchEvent);
         return;
 #endif
     case Messages::WebPage::DidReceivePolicyDecisionID:
-        CoreIPC::handleMessage<Messages::WebPage::DidReceivePolicyDecision>(arguments, this, &WebPage::didReceivePolicyDecision);
+        CoreIPC::handleMessage<Messages::WebPage::DidReceivePolicyDecision>(decoder, this, &WebPage::didReceivePolicyDecision);
         return;
     case Messages::WebPage::CloseID:
-        CoreIPC::handleMessage<Messages::WebPage::Close>(arguments, this, &WebPage::close);
+        CoreIPC::handleMessage<Messages::WebPage::Close>(decoder, this, &WebPage::close);
         return;
     case Messages::WebPage::PreferencesDidChangeID:
-        CoreIPC::handleMessage<Messages::WebPage::PreferencesDidChange>(arguments, this, &WebPage::preferencesDidChange);
+        CoreIPC::handleMessage<Messages::WebPage::PreferencesDidChange>(decoder, this, &WebPage::preferencesDidChange);
         return;
     case Messages::WebPage::SendDoubleAndFloatID:
-        CoreIPC::handleMessage<Messages::WebPage::SendDoubleAndFloat>(arguments, this, &WebPage::sendDoubleAndFloat);
+        CoreIPC::handleMessage<Messages::WebPage::SendDoubleAndFloat>(decoder, this, &WebPage::sendDoubleAndFloat);
         return;
     case Messages::WebPage::SendIntsID:
-        CoreIPC::handleMessage<Messages::WebPage::SendInts>(arguments, this, &WebPage::sendInts);
+        CoreIPC::handleMessage<Messages::WebPage::SendInts>(decoder, this, &WebPage::sendInts);
         return;
     case Messages::WebPage::TestParameterAttributesID:
-        CoreIPC::handleMessage<Messages::WebPage::TestParameterAttributes>(arguments, this, &WebPage::testParameterAttributes);
+        CoreIPC::handleMessage<Messages::WebPage::TestParameterAttributes>(decoder, this, &WebPage::testParameterAttributes);
         return;
 #if PLATFORM(MAC)
     case Messages::WebPage::DidCreateWebProcessConnectionID:
-        CoreIPC::handleMessage<Messages::WebPage::DidCreateWebProcessConnection>(arguments, this, &WebPage::didCreateWebProcessConnection);
+        CoreIPC::handleMessage<Messages::WebPage::DidCreateWebProcessConnection>(decoder, this, &WebPage::didCreateWebProcessConnection);
         return;
 #endif
 #if ENABLE(DEPRECATED_FEATURE)
     case Messages::WebPage::DeprecatedOperationID:
-        CoreIPC::handleMessage<Messages::WebPage::DeprecatedOperation>(arguments, this, &WebPage::deprecatedOperation);
+        CoreIPC::handleMessage<Messages::WebPage::DeprecatedOperation>(decoder, this, &WebPage::deprecatedOperation);
         return;
 #endif
 #if ENABLE(EXPERIMENTAL_FEATURE)
     case Messages::WebPage::ExperimentalOperationID:
-        CoreIPC::handleMessage<Messages::WebPage::ExperimentalOperation>(arguments, this, &WebPage::experimentalOperation);
+        CoreIPC::handleMessage<Messages::WebPage::ExperimentalOperation>(decoder, this, &WebPage::experimentalOperation);
         return;
 #endif
     default:
@@ -812,21 +812,21 @@ void WebPage::didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID 
     ASSERT_NOT_REACHED();
 }
 
-void WebPage::didReceiveSyncWebPageMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
+void WebPage::didReceiveSyncWebPageMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
     switch (messageID.get<Messages::WebPage::Kind>()) {
     case Messages::WebPage::CreatePluginID:
-        CoreIPC::handleMessage<Messages::WebPage::CreatePlugin>(arguments, reply.get(), this, &WebPage::createPlugin);
+        CoreIPC::handleMessage<Messages::WebPage::CreatePlugin>(decoder, *replyEncoder, this, &WebPage::createPlugin);
         return;
     case Messages::WebPage::RunJavaScriptAlertID:
-        CoreIPC::handleMessage<Messages::WebPage::RunJavaScriptAlert>(arguments, reply.get(), this, &WebPage::runJavaScriptAlert);
+        CoreIPC::handleMessage<Messages::WebPage::RunJavaScriptAlert>(decoder, *replyEncoder, this, &WebPage::runJavaScriptAlert);
         return;
     case Messages::WebPage::GetPluginProcessConnectionID:
-        CoreIPC::handleMessageDelayed<Messages::WebPage::GetPluginProcessConnection>(connection, arguments, reply, this, &WebPage::getPluginProcessConnection);
+        CoreIPC::handleMessageDelayed<Messages::WebPage::GetPluginProcessConnection>(connection, decoder, replyEncoder, this, &WebPage::getPluginProcessConnection);
         return;
 #if PLATFORM(MAC)
     case Messages::WebPage::InterpretKeyEventID:
-        CoreIPC::handleMessage<Messages::WebPage::InterpretKeyEvent>(arguments, reply.get(), this, &WebPage::interpretKeyEvent);
+        CoreIPC::handleMessage<Messages::WebPage::InterpretKeyEvent>(decoder, *replyEncoder, this, &WebPage::interpretKeyEvent);
         return;
 #endif
     default:

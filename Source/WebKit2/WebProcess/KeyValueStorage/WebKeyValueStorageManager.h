@@ -31,9 +31,9 @@
 #include <wtf/text/WTFString.h>
 
 namespace CoreIPC {
-    class ArgumentDecoder;
-    class Connection;
-    class MessageID;
+class Connection;
+class MessageDecoder;
+class MessageID;
 }
 
 namespace WebKit {
@@ -46,7 +46,7 @@ class WebKeyValueStorageManager : public WebCore::StorageTrackerClient {
 public:
     static WebKeyValueStorageManager& shared();
 
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
 private:
     WebKeyValueStorageManager();
@@ -59,7 +59,7 @@ private:
     virtual void dispatchDidModifyOrigin(const String&) OVERRIDE;
     virtual void didFinishLoadingOrigins() OVERRIDE;
 
-    void didReceiveWebKeyValueStorageManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveWebKeyValueStorageManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
     Vector<uint64_t> m_originsRequestCallbackIDs;
     bool m_originsLoaded;

@@ -536,7 +536,8 @@ void Connection::processIncomingMessage(MessageID messageID, PassOwnPtr<MessageD
     for (size_t i = 0; i < m_connectionQueueClients.size(); ++i) {
         bool didHandleMessage = false;
 
-        m_connectionQueueClients[i]->didReceiveMessageOnConnectionWorkQueue(this, incomingMessage.messageID(), incomingMessage.arguments(), didHandleMessage);
+        MessageDecoder* decoder = incomingMessage.arguments();
+        m_connectionQueueClients[i]->didReceiveMessageOnConnectionWorkQueue(this, incomingMessage.messageID(), *decoder, didHandleMessage);
         if (didHandleMessage) {
             // A connection queue client handled the message, our work here is done.
             incomingMessage.releaseArguments();
@@ -614,25 +615,24 @@ void Connection::sendOutgoingMessages()
     }
 }
 
-void Connection::dispatchSyncMessage(MessageID messageID, MessageDecoder* decoder)
+void Connection::dispatchSyncMessage(MessageID messageID, MessageDecoder& decoder)
 {
     ASSERT(messageID.isSync());
 
     uint64_t syncRequestID = 0;
-    if (!decoder->decodeUInt64(syncRequestID) || !syncRequestID) {
+    if (!decoder.decodeUInt64(syncRequestID) || !syncRequestID) {
         // We received an invalid sync message.
-        decoder->markInvalid();
+        decoder.markInvalid();
         return;
     }
 
-    // FIXME: ArgumentEncoder should be MessageEncoder here.
-    OwnPtr<ArgumentEncoder> replyEncoder = MessageEncoder::create("", "", syncRequestID);
+    OwnPtr<MessageEncoder> replyEncoder = MessageEncoder::create("", "", syncRequestID);
 
     // Hand off both the decoder and encoder to the client.
     m_client->didReceiveSyncMessage(this, messageID, decoder, replyEncoder);
 
     // FIXME: If the message was invalid, we should send back a SyncMessageError.
-    ASSERT(!decoder->isInvalid());
+    ASSERT(!decoder.isInvalid());
 
     if (replyEncoder)
         sendSyncReply(adoptPtr(static_cast<MessageEncoder*>(replyEncoder.leakPtr())));
@@ -654,7 +654,7 @@ void Connection::enqueueIncomingMessage(IncomingMessage& incomingMessage)
     m_clientRunLoop->dispatch(WTF::bind(&Connection::dispatchOneMessage, this));
 }
 
-void Connection::dispatchMessage(MessageID messageID, MessageDecoder* decoder)
+void Connection::dispatchMessage(MessageID messageID, MessageDecoder& decoder)
 {
     // Try the message receiver map first.
     if (m_messageReceiverMap.dispatchMessage(this, messageID, decoder))
@@ -681,9 +681,9 @@ void Connection::dispatchMessage(IncomingMessage& message)
     m_didReceiveInvalidMessage = false;
 
     if (message.messageID().isSync())
-        dispatchSyncMessage(message.messageID(), arguments.get());
+        dispatchSyncMessage(message.messageID(), *arguments);
     else
-        dispatchMessage(message.messageID(), arguments.get());
+        dispatchMessage(message.messageID(), *arguments);
 
     m_didReceiveInvalidMessage |= arguments->isInvalid();
     m_inDispatchMessageCount--;

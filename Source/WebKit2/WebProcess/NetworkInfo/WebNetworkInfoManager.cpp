@@ -48,9 +48,9 @@ WebNetworkInfoManager::~WebNetworkInfoManager()
 {
 }
 
-void WebNetworkInfoManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void WebNetworkInfoManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceiveWebNetworkInfoManagerMessage(connection, messageID, arguments);
+    didReceiveWebNetworkInfoManagerMessage(connection, messageID, decoder);
 }
 
 void WebNetworkInfoManager::registerWebPage(WebPage* page)

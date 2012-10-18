@@ -62,7 +62,7 @@ NetworkProcessProxy::~NetworkProcessProxy()
 
 }
 
-void NetworkProcessProxy::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*)
+void NetworkProcessProxy::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&)
 {
 
 }

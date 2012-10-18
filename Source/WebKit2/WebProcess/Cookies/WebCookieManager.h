@@ -35,8 +35,8 @@
 #endif
 
 namespace CoreIPC {
-    class ArgumentDecoder;
     class Connection;
+    class MessageDecoder;
     class MessageID;
 }
 
@@ -47,7 +47,7 @@ class WebCookieManager {
 public:
     static WebCookieManager& shared();
 
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     
     void dispatchCookiesDidChange();
 
@@ -71,7 +71,7 @@ private:
     void setCookiePersistentStorage(const String& storagePath, uint32_t storageType);
 #endif
 
-    void didReceiveWebCookieManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveWebCookieManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 };
 
 } // namespace WebKit

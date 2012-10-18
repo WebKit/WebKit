@@ -727,10 +727,10 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
 }
 
 #if USE(COORDINATED_GRAPHICS)
-void DrawingAreaImpl::didReceiveLayerTreeCoordinatorMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void DrawingAreaImpl::didReceiveLayerTreeCoordinatorMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
     if (m_layerTreeHost)
-        m_layerTreeHost->didReceiveLayerTreeCoordinatorMessage(connection, messageID, arguments);
+        m_layerTreeHost->didReceiveLayerTreeCoordinatorMessage(connection, messageID, decoder);
 }
 #endif
 

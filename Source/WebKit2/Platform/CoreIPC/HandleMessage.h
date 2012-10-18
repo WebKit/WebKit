@@ -2,6 +2,8 @@
 #define HandleMessage_h
 
 #include "Arguments.h"
+#include "MessageDecoder.h"
+#include "MessageEncoder.h"
 
 namespace CoreIPC {
 
@@ -230,132 +232,131 @@ void callMemberFunction(Connection* connection, const Arguments4<P1, P2, P3, P4>
 // Variadic dispatch functions.
 
 template<typename C, typename MF>
-void callMemberFunction(const Arguments0&, ArgumentDecoder* argumentDecoder, C* object, MF function)
+void callMemberFunction(const Arguments0&, MessageDecoder& decoder, C* object, MF function)
 {
-    (object->*function)(argumentDecoder);
+    (object->*function)(decoder);
 }
 
 template<typename C, typename MF, typename P1>
-void callMemberFunction(const Arguments1<P1>& args, ArgumentDecoder* argumentDecoder, C* object, MF function)
+void callMemberFunction(const Arguments1<P1>& args, MessageDecoder& decoder, C* object, MF function)
 {
-    (object->*function)(args.argument1, argumentDecoder);
+    (object->*function)(args.argument1, decoder);
 }
 
 template<typename C, typename MF, typename P1, typename P2>
-void callMemberFunction(const Arguments2<P1, P2>& args, ArgumentDecoder* argumentDecoder, C* object, MF function)
+void callMemberFunction(const Arguments2<P1, P2>& args, MessageDecoder& decoder, C* object, MF function)
 {
-    (object->*function)(args.argument1, args.argument2, argumentDecoder);
+    (object->*function)(args.argument1, args.argument2, decoder);
 }
 
 template<typename C, typename MF, typename P1, typename P2, typename P3>
-void callMemberFunction(const Arguments3<P1, P2, P3>& args, ArgumentDecoder* argumentDecoder, C* object, MF function)
+void callMemberFunction(const Arguments3<P1, P2, P3>& args, MessageDecoder& decoder, C* object, MF function)
 {
-    (object->*function)(args.argument1, args.argument2, args.argument3, argumentDecoder);
+    (object->*function)(args.argument1, args.argument2, args.argument3, decoder);
 }
 
 template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4>
-void callMemberFunction(const Arguments4<P1, P2, P3, P4>& args, ArgumentDecoder* argumentDecoder, C* object, MF function)
+void callMemberFunction(const Arguments4<P1, P2, P3, P4>& args, MessageDecoder& decoder, C* object, MF function)
 {
-    (object->*function)(args.argument1, args.argument2, args.argument3, args.argument4, argumentDecoder);
+    (object->*function)(args.argument1, args.argument2, args.argument3, args.argument4, decoder);
 }
 
 template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5>
-void callMemberFunction(const Arguments5<P1, P2, P3, P4, P5>& args, ArgumentDecoder* argumentDecoder, C* object, MF function)
+void callMemberFunction(const Arguments5<P1, P2, P3, P4, P5>& args, MessageDecoder& decoder, C* object, MF function)
 {
-    (object->*function)(args.argument1, args.argument2, args.argument3, args.argument4, args.argument5, argumentDecoder);
+    (object->*function)(args.argument1, args.argument2, args.argument3, args.argument4, args.argument5, decoder);
 }
     
 template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6>
-void callMemberFunction(const Arguments6<P1, P2, P3, P4, P5, P6>& args, ArgumentDecoder* argumentDecoder, C* object, MF function)
+void callMemberFunction(const Arguments6<P1, P2, P3, P4, P5, P6>& args, MessageDecoder& decoder, C* object, MF function)
 {
-    (object->*function)(args.argument1, args.argument2, args.argument3, args.argument4, args.argument5, args.argument6, argumentDecoder);
+    (object->*function)(args.argument1, args.argument2, args.argument3, args.argument4, args.argument5, args.argument6, decoder);
 }
 
 template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7>
-void callMemberFunction(const Arguments7<P1, P2, P3, P4, P5, P6, P7>& args, ArgumentDecoder* argumentDecoder, C* object, MF function)
+void callMemberFunction(const Arguments7<P1, P2, P3, P4, P5, P6, P7>& args, MessageDecoder& decoder, C* object, MF function)
 {
-    (object->*function)(args.argument1, args.argument2, args.argument3, args.argument4, args.argument5, args.argument6, args.argument7, argumentDecoder);
+    (object->*function)(args.argument1, args.argument2, args.argument3, args.argument4, args.argument5, args.argument6, args.argument7, decoder);
 }
 
 // Variadic dispatch functions with non-variadic reply arguments.
 
 template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename R1, typename R2, typename R3>
-void callMemberFunction(const Arguments4<P1, P2, P3, P4>& args, ArgumentDecoder* argumentDecoder, Arguments3<R1, R2, R3>& replyArgs, C* object, MF function)
+void callMemberFunction(const Arguments4<P1, P2, P3, P4>& args, MessageDecoder& decoder, Arguments3<R1, R2, R3>& replyArgs, C* object, MF function)
 {
-    (object->*function)(args.argument1, args.argument2, args.argument3, args.argument4, argumentDecoder, replyArgs.argument1, replyArgs.argument2, replyArgs.argument3);
+    (object->*function)(args.argument1, args.argument2, args.argument3, args.argument4, decoder, replyArgs.argument1, replyArgs.argument2, replyArgs.argument3);
 }
 
 template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename R1, typename R2>
-void callMemberFunction(const Arguments6<P1, P2, P3, P4, P5, P6>& args, ArgumentDecoder* argumentDecoder, Arguments2<R1, R2>& replyArgs, C* object, MF function)
+void callMemberFunction(const Arguments6<P1, P2, P3, P4, P5, P6>& args, MessageDecoder& decoder, Arguments2<R1, R2>& replyArgs, C* object, MF function)
 {
-    (object->*function)(args.argument1, args.argument2, args.argument3, args.argument4, args.argument5, args.argument6, argumentDecoder, replyArgs.argument1, replyArgs.argument2);
+    (object->*function)(args.argument1, args.argument2, args.argument3, args.argument4, args.argument5, args.argument6, decoder, replyArgs.argument1, replyArgs.argument2);
 }
 
 template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename R1, typename R2, typename R3>
-void callMemberFunction(const Arguments6<P1, P2, P3, P4, P5, P6>& args, ArgumentDecoder* argumentDecoder, Arguments3<R1, R2, R3>& replyArgs, C* object, MF function)
+void callMemberFunction(const Arguments6<P1, P2, P3, P4, P5, P6>& args, MessageDecoder& decoder, Arguments3<R1, R2, R3>& replyArgs, C* object, MF function)
 {
-    (object->*function)(args.argument1, args.argument2, args.argument3, args.argument4, args.argument5, args.argument6, argumentDecoder, replyArgs.argument1, replyArgs.argument2, replyArgs.argument3);
+    (object->*function)(args.argument1, args.argument2, args.argument3, args.argument4, args.argument5, args.argument6, decoder, replyArgs.argument1, replyArgs.argument2, replyArgs.argument3);
 }
 
 // Main dispatch functions
 
 template<typename T, typename C, typename MF>
-void handleMessage(ArgumentDecoder* argumentDecoder, C* object, MF function)
+void handleMessage(MessageDecoder& decoder, C* object, MF function)
 {
     typename T::DecodeType::ValueType arguments;
-    if (!argumentDecoder->decode(arguments))
+    if (!decoder.decode(arguments))
         return;
     callMemberFunction(arguments, object, function);
 }
 
 template<typename T, typename C, typename MF>
-void handleMessage(ArgumentDecoder* argumentDecoder, ArgumentEncoder* replyEncoder, C* object, MF function)
+void handleMessage(MessageDecoder& decoder, MessageEncoder& replyEncoder, C* object, MF function)
 {
     typename T::DecodeType::ValueType arguments;
-    if (!argumentDecoder->decode(arguments))
+    if (!decoder.decode(arguments))
         return;
 
     typename T::Reply::ValueType replyArguments;
     callMemberFunction(arguments, replyArguments, object, function);
-    replyEncoder->encode(replyArguments);
+    replyEncoder.encode(replyArguments);
 }
 
 template<typename T, typename C, typename MF>
-void handleMessageOnConnectionQueue(Connection* connection, ArgumentDecoder* argumentDecoder, C* object, MF function)
+void handleMessageOnConnectionQueue(Connection* connection, MessageDecoder& decoder, C* object, MF function)
 {
     typename T::DecodeType::ValueType arguments;
-    if (!argumentDecoder->decode(arguments))
+    if (!decoder.decode(arguments))
         return;
     callMemberFunction(connection, arguments, object, function);
 }
 
 template<typename T, typename C, typename MF>
-void handleMessageVariadic(ArgumentDecoder* argumentDecoder, C* object, MF function)
+void handleMessageVariadic(MessageDecoder& decoder, C* object, MF function)
 {
     typename T::DecodeType::ValueType arguments;
-    if (!argumentDecoder->decode(arguments))
+    if (!decoder.decode(arguments))
         return;
-    callMemberFunction(arguments, argumentDecoder, object, function);
+    callMemberFunction(arguments, decoder, object, function);
 }
 
-
 template<typename T, typename C, typename MF>
-void handleMessageVariadic(ArgumentDecoder* argumentDecoder, ArgumentEncoder* replyEncoder, C* object, MF function)
+void handleMessageVariadic(MessageDecoder& decoder, MessageEncoder& replyEncoder, C* object, MF function)
 {
     typename T::DecodeType::ValueType arguments;
-    if (!argumentDecoder->decode(arguments))
+    if (!decoder.decode(arguments))
         return;
 
     typename T::Reply::ValueType replyArguments;
-    callMemberFunction(arguments, argumentDecoder, replyArguments, object, function);
-    replyEncoder->encode(replyArguments);
+    callMemberFunction(arguments, decoder, replyArguments, object, function);
+    replyEncoder.encode(replyArguments);
 }
 
 template<typename T, typename C, typename MF>
-void handleMessageDelayed(Connection* connection, ArgumentDecoder* argumentDecoder, OwnPtr<ArgumentEncoder>& replyEncoder, C* object, MF function)
+void handleMessageDelayed(Connection* connection, MessageDecoder& decoder, OwnPtr<MessageEncoder>& replyEncoder, C* object, MF function)
 {
     typename T::DecodeType::ValueType arguments;
-    if (!argumentDecoder->decode(arguments))
+    if (!decoder.decode(arguments))
         return;
 
     RefPtr<typename T::DelayedReply> delayedReply = adoptRef(new typename T::DelayedReply(connection, replyEncoder.release()));

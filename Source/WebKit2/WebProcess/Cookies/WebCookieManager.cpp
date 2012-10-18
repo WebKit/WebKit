@@ -46,9 +46,9 @@ WebCookieManager::WebCookieManager()
 {
 }
 
-void WebCookieManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void WebCookieManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceiveWebCookieManagerMessage(connection, messageID, arguments);
+    didReceiveWebCookieManagerMessage(connection, messageID, decoder);
 }
 
 void WebCookieManager::getHostnamesWithCookies(uint64_t callbackID)

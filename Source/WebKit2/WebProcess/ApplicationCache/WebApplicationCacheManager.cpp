@@ -49,9 +49,9 @@ WebApplicationCacheManager::WebApplicationCacheManager()
 {
 }
 
-void WebApplicationCacheManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void WebApplicationCacheManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceiveWebApplicationCacheManagerMessage(connection, messageID, arguments);
+    didReceiveWebApplicationCacheManagerMessage(connection, messageID, decoder);
 }
 
 void WebApplicationCacheManager::getApplicationCacheOrigins(uint64_t callbackID)

@@ -49,9 +49,9 @@ WebKeyValueStorageManager::WebKeyValueStorageManager()
 {
 }
 
-void WebKeyValueStorageManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void WebKeyValueStorageManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    didReceiveWebKeyValueStorageManagerMessage(connection, messageID, arguments);
+    didReceiveWebKeyValueStorageManagerMessage(connection, messageID, decoder);
 }
 
 static void keyValueStorageOriginIdentifiers(Vector<SecurityOriginData>& identifiers)
