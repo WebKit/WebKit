@@ -962,14 +962,6 @@ Node::InsertionNotificationRequest Element::insertedInto(ContainerNode* insertio
     return InsertionDone;
 }
 
-static inline TreeScope* treeScopeOfParent(Node* node, ContainerNode* insertionPoint)
-{
-    if (Node* parent = node->parentNode())
-        parent->treeScope();
-    return insertionPoint->treeScope();
-}
-
-
 void Element::removedFrom(ContainerNode* insertionPoint)
 {
 #if ENABLE(FULLSCREEN_API)
@@ -986,7 +978,7 @@ void Element::removedFrom(ContainerNode* insertionPoint)
     if (insertionPoint->inDocument()) {
         const AtomicString& idValue = getIdAttribute();
         if (!idValue.isNull() && inDocument())
-            updateId(treeScopeOfParent(this, insertionPoint), idValue, nullAtom);
+            updateId(insertionPoint->treeScope(), idValue, nullAtom);
 
         const AtomicString& nameValue = getNameAttribute();
         if (!nameValue.isNull())
