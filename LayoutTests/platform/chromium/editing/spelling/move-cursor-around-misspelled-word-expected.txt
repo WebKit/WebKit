@@ -1,0 +1,7 @@
+The test verified that if the caret is move to the beginning, end, and middle of a word that is marked as misspelled, the misspell underline will remain. You should see phrase "it's a meagesga", in which the word 'meagesga' has red underline.
+
+
+SUCCESS
+SUCCESS
+SUCCESS
+

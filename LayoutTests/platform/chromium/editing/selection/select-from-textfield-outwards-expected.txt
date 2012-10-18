@@ -1,0 +1,50 @@
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 10 of #text > DIV > #shadow-root to 10 of #text > DIV > #shadow-root affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 10 of #text > DIV > #shadow-root to 10 of #text > DIV > #shadow-root toDOMRange:range from 6 of #text > DIV > #shadow-root to 11 of #text > DIV > #shadow-root affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 6 of #text > DIV > #shadow-root to 11 of #text > DIV > #shadow-root toDOMRange:range from 0 of #text > DIV > #shadow-root to 11 of #text > DIV > #shadow-root affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > #shadow-root to 11 of #text > DIV > #shadow-root toDOMRange:range from 6 of #text > DIV > #shadow-root to 17 of #text > DIV > #shadow-root affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 6 of #text > DIV > #shadow-root to 17 of #text > DIV > #shadow-root toDOMRange:range from 0 of #text > DIV > #shadow-root to 11 of #text > DIV > #shadow-root affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > #shadow-root to 11 of #text > DIV > #shadow-root toDOMRange:range from 6 of #text > DIV > #shadow-root to 17 of #text > DIV > #shadow-root affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 104x18
+          text run at (0,0) width 104: "This is a test for "
+        RenderInline {I} at (0,0) size 755x36
+          RenderInline {A} at (0,0) size 348x18 [color=#0000EE]
+            RenderText {#text} at (104,0) size 348x18
+              text run at (104,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9312"
+          RenderText {#text} at (452,0) size 755x36
+            text run at (452,0) width 4: " "
+            text run at (456,0) width 299: "REGRESSION: Selection bug in new text fields"
+            text run at (0,18) width 210: "when selecting past the first letter"
+        RenderText {#text} at (210,18) size 4x18
+          text run at (210,18) width 4: "."
+      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,70) size 784x54
+        RenderText {#text} at (0,0) size 778x54
+          text run at (0,0) width 778: "Curabitur pretium, quam quis semper malesuada, est libero feugiat libero, vel fringilla orci nibh sed neque. Quisque eu nulla"
+          text run at (0,18) width 732: "non nisi molestie accumsan. Etiam tellus urna, laoreet ac, laoreet non, suscipit sed, sapien. Phasellus vehicula, sem at"
+          text run at (0,36) width 541: "posuere vehicula, augue nibh molestie nisl, nec ullamcorper lacus ante vulputate pede."
+      RenderBlock (anonymous) at (0,140) size 784x92
+        RenderTextControl {INPUT} at (20,20) size 280x52 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,248) size 784x54
+        RenderText {#text} at (0,0) size 769x54
+          text run at (0,0) width 754: "Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris viverra augue vitae purus."
+          text run at (0,18) width 769: "Morbi sed sem. Donec dui nisi, ultrices non, pretium quis, hendrerit non, est. Donec tellus. Donec eget dui id eros pharetra"
+          text run at (0,36) width 733: "rutrum. Suspendisse sodales lectus sit amet nulla. Morbi tortor arcu, convallis blandit, elementum eu, aliquet a, tellus."
+layer at (40,180) size 256x28
+  RenderBlock {DIV} at (12,12) size 256x28
+    RenderText {#text} at (0,0) size 222x28
+      text run at (0,0) width 222: "Lorem ipsum dolor"
+selection start: position 6 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 7 {INPUT} of body
+selection end:   position 17 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 7 {INPUT} of body

@@ -1,0 +1,89 @@
+This tests the parser and serializer for dashboard region values.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS parseDashboardRegion('none') is 'none'
+
+PASS parseDashboardRegion('dashboard-region(label circle)') is 'dashboard-region(label circle)'
+PASS parseDashboardRegion('dashboard-region(label circle 1px 2px 3px 4px)') is 'dashboard-region(label circle 1px 2px 3px 4px)'
+PASS parseDashboardRegion('dashboard-region(label circle 0px 0px 0px 0px)') is 'dashboard-region(label circle 0px 0px 0px 0px)'
+PASS parseDashboardRegion('dashboard-region(label circle auto auto auto auto)') is 'dashboard-region(label circle auto auto auto auto)'
+PASS parseDashboardRegion('dashboard-region(label circle 1px 2px 3px 4px)') is 'dashboard-region(label circle 1px 2px 3px 4px)'
+
+PASS parseDashboardRegion('dashboard-region(label rectangle)') is 'dashboard-region(label rectangle)'
+PASS parseDashboardRegion('dashboard-region(label rectangle 1px 2px 3px 4px)') is 'dashboard-region(label rectangle 1px 2px 3px 4px)'
+
+PASS parseDashboardRegion('dashboard-region(label circle) dashboard-region(label circle)') is 'dashboard-region(label circle) dashboard-region(label circle)'
+PASS parseDashboardRegion('dashboard-region(label circle) dashboard-region(label rectangle)') is 'dashboard-region(label circle) dashboard-region(label rectangle)'
+PASS parseDashboardRegion('dashboard-region(label circle 1px 2px 3px 4px) dashboard-region(label rectangle 5px 6px 7px 8px)') is 'dashboard-region(label circle 1px 2px 3px 4px) dashboard-region(label rectangle 5px 6px 7px 8px)'
+PASS parseDashboardRegion('dashboard-region(label rectangle 1px 2px 3px 4px) dashboard-region(label circle 5px 6px 7px 8px)') is 'dashboard-region(label rectangle 1px 2px 3px 4px) dashboard-region(label circle 5px 6px 7px 8px)'
+
+Tests to demonstrate that commas are allowed.
+
+PASS parseDashboardRegion('dashboard-region(label, circle)') is 'dashboard-region(label circle)'
+PASS parseDashboardRegion('dashboard-region(label, circle, 1px, 2px, 3px, 4px)') is 'dashboard-region(label circle 1px 2px 3px 4px)'
+
+Tests for variations in whitespace that are allowed.
+
+PASS parseDashboardRegion('  dashboard-region(  label  circle  )  ') is 'dashboard-region(label circle)'
+PASS parseDashboardRegion('  dashboard-region(  label   circle  1px  2px  3px  4px  )  dashboard-region(label  rectangle  5px  6px  7px  8px  )  ') is 'dashboard-region(label circle 1px 2px 3px 4px) dashboard-region(label rectangle 5px 6px 7px 8px)'
+PASS parseDashboardRegion('dashboard-region(label circle 1px 2px 3px 4px)dashboard-region(label rectangle 5px 6px 7px 8px)') is 'dashboard-region(label circle 1px 2px 3px 4px) dashboard-region(label rectangle 5px 6px 7px 8px)'
+
+Tests for case insensitivity.
+
+PASS parseDashboardRegion('Dashboard-region(label Circle)') is 'dashboard-region(label circle)'
+PASS parseDashboardRegion('DASHBOARD-REGION(LABEL CIRCLE)') is 'dashboard-region(LABEL circle)'
+PASS parseDashboardRegion('DaShBoArD-ReGiOn(LaBeL CiRcLe)') is 'dashboard-region(LaBeL circle)'
+PASS parseDashboardRegion('dAsHbOaRd-rEgIoN(lAbEl cIrClE)') is 'dashboard-region(lAbEl circle)'
+PASS parseDashboardRegion('Dashboard-region(label Rectangle)') is 'dashboard-region(label rectangle)'
+PASS parseDashboardRegion('DASHBOARD-REGION(LABEL RECTANGLE)') is 'dashboard-region(LABEL rectangle)'
+PASS parseDashboardRegion('DaShBoArD-ReGiOn(LaBeL ReCtAnGlE)') is 'dashboard-region(LaBeL rectangle)'
+PASS parseDashboardRegion('dAsHbOaRd-rEgIoN(lAbEl rEcTaNgLe)') is 'dashboard-region(lAbEl rectangle)'
+
+Some expected failures.
+
+PASS parseDashboardRegion('') is null
+PASS parseDashboardRegion(' ') is null
+PASS parseDashboardRegion('x') is null
+PASS parseDashboardRegion('dashboard-') is null
+PASS parseDashboardRegion('dashboard-region') is null
+PASS parseDashboardRegion('dashboard-region(') is null
+PASS parseDashboardRegion('dashboard-region(label') is null
+PASS parseDashboardRegion('dashboard-region(label ') is null
+PASS parseDashboardRegion('dashboard-region(label c') is null
+PASS parseDashboardRegion('dashboard-region(label circle') is null
+PASS parseDashboardRegion('dashboard-region(label)') is null
+PASS parseDashboardRegion('dashboard-region (label circle)') is null
+PASS parseDashboardRegion('dashboard-region(label,, circle)') is null
+PASS parseDashboardRegion('dashboard-region(label circle 1px2px 3px 4px)') is null
+PASS parseDashboardRegion('dashboard-region(label,, circle, 1px, 2px, 3px, 4px)') is null
+PASS parseDashboardRegion('dashboard-region(label, circle 1px 2px 3px 4px)') is null
+PASS parseDashboardRegion('dashboard-region(label, circle, 1px 2px 3px 4px)') is null
+PASS parseDashboardRegion('dashboard-region(label, circle, 1px, 2px 3px 4px)') is null
+PASS parseDashboardRegion('dashboard-region(label, circle, 1px, 2px, 3px 4px)') is null
+PASS parseDashboardRegion('dashboard-region(label circle, 1px, 2px, 3px, 4px)') is null
+PASS parseDashboardRegion('dashboard-region(label circle 1px, 2px, 3px, 4px)') is null
+PASS parseDashboardRegion('dashboard-region(label circle x)') is null
+PASS parseDashboardRegion('dashboard-region(label circle x x)') is null
+PASS parseDashboardRegion('dashboard-region(label circle x x x)') is null
+PASS parseDashboardRegion('dashboard-region(label circle x x x x)') is null
+PASS parseDashboardRegion('dashboard-region(label circle x x x x x)') is null
+PASS parseDashboardRegion('dashboard-region(label circle 1px 2px 3px 4px x)') is null
+PASS parseDashboardRegion('dashboard-region(label circle 1px 2px 3px 4px x x)') is null
+PASS parseDashboardRegion('dashboard-region(label circle 1px 2px 3px 4px x x x)') is null
+PASS parseDashboardRegion('dashboard-region(label circle 1px 2px 3px 4px x x x x)') is null
+PASS parseDashboardRegion('dashboard-region(label circle 1px 2px 3px 4px x x x x x)') is null
+PASS parseDashboardRegion('dashboard-region(label circle 1px 2px 3px 4px circle 5px 6px 7px 8px)') is null
+PASS parseDashboardRegion('dashboard-region(label, circle, 1px, 2px, 3px, 4px, circle, 5px, 6px, 7px, 8px)') is null
+PASS parseDashboardRegion('none x') is null
+PASS parseDashboardRegion('none x x') is null
+PASS parseDashboardRegion('none x x x') is null
+PASS parseDashboardRegion('none x x x x') is null
+PASS parseDashboardRegion('none dashboard-region(label, circle)') is null
+PASS parseDashboardRegion('dashboard-region(label, circle) none') is null
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

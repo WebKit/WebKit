@@ -1,0 +1,21 @@
+CONSOLE MESSAGE: this is an exception
+An automated test for basic AppleScript "do JavaScript" support.
+4 ('long')
+4 ('long')
+0.6666666666666666 ('doub')
+0.6666666666666666 ('doub')
+INF ('doub')
+-INF ('doub')
+false ('bool')
+false ('bool')
+"a string" ('utxt')
+"a string" ('utxt')
+"An automated test for basic AppleScript "do JavaScript" support." ('utxt')
+"An automated test for basic AppleScript "do JavaScript" support." ('utxt')
+"[object HTMLDocument]" ('utxt')
+"do JavaScript - converting to AppleScript types" ('utxt')
+'msng' ('type')
+(null)
+"[object Object]" ('utxt')
+
+

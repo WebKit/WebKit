@@ -1,0 +1,5 @@
+Test that text retrieved from the clipboard is always precomposed.
+
+PASS: text/plain data on the clipboard is precomposed
+PASS: pasted text is precomposed
+

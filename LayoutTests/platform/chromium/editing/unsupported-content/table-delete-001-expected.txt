@@ -1,0 +1,71 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > TD > TR > TBODY > TABLE > DIV > DIV > BODY > HTML > #document to 2 of DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of DIV > DIV > BODY > HTML > #document to 2 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 2 of DIV > DIV > BODY > HTML > #document to 2 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x250 [border: (4px solid #0000FF)]
+        RenderBlock {DIV} at (20,20) size 744x72
+          RenderText {#text} at (0,0) size 67x28
+            text run at (0,0) width 67: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,28) size 663x22
+            text run at (0,28) width 663: "Our ability to \"edit around\" content the HTML editing code does not yet handle very well. "
+          RenderBR {BR} at (663,45) size 0x0
+          RenderInline {I} at (0,0) size 99x22
+            RenderText {#text} at (0,50) size 99x22
+              text run at (0,50) width 99: "For this test: "
+          RenderText {#text} at (99,50) size 181x22
+            text run at (99,50) width 181: "Select and delete a table."
+        RenderBlock (anonymous) at (20,92) size 744x22
+          RenderBR {BR} at (0,0) size 0x22
+        RenderBlock {DIV} at (20,114) size 744x116
+          RenderText {#text} at (0,0) size 189x28
+            text run at (0,0) width 189: "Expected Results: "
+          RenderBR {BR} at (189,22) size 0x0
+          RenderText {#text} at (0,28) size 709x44
+            text run at (0,28) width 709: "The content in the red box must exactly match the content in the green box (except for the border"
+            text run at (0,50) width 53: "color). "
+          RenderBR {BR} at (53,67) size 0x0
+          RenderInline {I} at (0,0) size 99x22
+            RenderText {#text} at (0,72) size 99x22
+              text run at (0,72) width 99: "For this test: "
+          RenderText {#text} at (99,72) size 663x44
+            text run at (99,72) width 564: "Only table should get deleted. Surrounding content that is not selected should"
+            text run at (0,94) width 201: "(obviously) not be affected."
+      RenderBlock {DIV} at (0,260) size 784x32 [border: (2px solid #008000)]
+        RenderText {#text} at (2,2) size 107x28
+          text run at (2,2) width 107: "beforeafter"
+      RenderBlock {DIV} at (0,302) size 784x60
+        RenderBlock {DIV} at (0,0) size 784x60 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 62x28
+            text run at (2,2) width 62: "before"
+          RenderBR {BR} at (64,24) size 0x0
+          RenderText {#text} at (2,30) size 45x28
+            text run at (2,30) width 45: "after"
+caret: position 0 of child 2 {#text} of child 1 {DIV} of child 5 {DIV} of body

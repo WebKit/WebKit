@@ -1,0 +1,66 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 10 of BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > P > DIV > DIV > BODY > HTML > #document to 0 of P > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of P > DIV > DIV > BODY > HTML > #document to 6 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of P > DIV > DIV > BODY > HTML > #document to 0 of P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 2 of P > DIV > DIV > BODY > HTML > #document to 2 of P > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of P > DIV > DIV > BODY > HTML > #document to 3 of P > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > P > DIV > DIV > BODY > HTML > #document to 0 of DIV > P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 96x18
+          text run at (0,0) width 96: "Fixes this bug: "
+        RenderInline {A} at (0,0) size 167x18 [color=#0000EE]
+          RenderText {#text} at (96,0) size 167x18
+            text run at (96,0) width 167: "<rdar://problem/3927554>"
+        RenderText {#text} at (263,0) size 385x18
+          text run at (263,0) width 385: " REGRESSION (Mail): Paste inserts content in wrong place "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {#text} at (0,18) size 378x18
+          text run at (0,18) width 378: "***TEST*** line should be second, following the first line."
+      RenderBlock {DIV} at (0,36) size 784x12
+      RenderBlock {DIV} at (0,48) size 784x224
+        RenderBlock {DIV} at (0,0) size 784x224 [border: (2px solid #FF0000)]
+          RenderBlock {P} at (14,14) size 756x112
+            RenderBlock (anonymous) at (0,0) size 756x28
+              RenderText {#text} at (0,0) size 319x28
+                text run at (0,0) width 319: "Should be first line of document."
+              RenderBR {BR} at (319,22) size 0x0
+            RenderBlock {P} at (0,28) size 756x28
+              RenderText {#text} at (0,0) size 130x28
+                text run at (0,0) width 130: "***TEST***"
+            RenderBlock {DIV} at (0,56) size 756x28
+              RenderBR {BR} at (0,0) size 0x28
+            RenderBlock (anonymous) at (0,84) size 756x28
+              RenderText {#text} at (0,0) size 128x28
+                text run at (0,0) width 128: "Another line."
+          RenderBlock {P} at (14,126) size 756x0
+          RenderBlock (anonymous) at (14,126) size 756x28
+            RenderText {#text} at (0,0) size 6x28
+              text run at (0,0) width 6: " "
+          RenderBlock {P} at (14,154) size 756x0
+          RenderBlock (anonymous) at (14,154) size 756x28
+            RenderText {#text} at (0,0) size 6x28
+              text run at (0,0) width 6: " "
+          RenderBlock {P} at (14,182) size 756x28
+            RenderBR {BR} at (0,0) size 0x28
+caret: position 0 of child 0 {BR} of child 3 {DIV} of child 0 {P} of child 1 {DIV} of child 7 {DIV} of body

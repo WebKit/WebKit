@@ -1,0 +1,28 @@
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of BODY > HTML > #document to 0 of BODY > HTML > #document givenAction:WebViewInsertActionDropped
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of BODY > HTML > #document to 0 of BODY > HTML > #document toDOMRange:range from 0 of BODY > HTML > #document to 1 of BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (0,0) size 800x584
+      RenderBlock (anonymous) at (0,0) size 800x212
+        RenderPartObject {IFRAME} at (0,0) size 208x208 [border: (4px solid #000000)]
+          layer at (0,0) size 200x200
+            RenderView at (0,0) size 200x200
+          layer at (0,0) size 200x200
+            RenderBlock {HTML} at (0,0) size 200x200
+              RenderBody {BODY} at (8,8) size 184x184 [bgcolor=#FFFFE0]
+                RenderImage {IMG} at (0,0) size 76x103
+                RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (208,194) size 4x18
+          text run at (208,194) width 4: " "
+        RenderImage {IMG} at (212,105) size 76x103
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {UL} at (0,228) size 800x18
+        RenderListItem {LI} at (40,0) size 760x18
+          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderText {#text} at (0,0) size 288x18
+            text run at (0,0) width 288: "Abe should be outside the frame and inside it."
