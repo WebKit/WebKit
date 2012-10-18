@@ -1,0 +1,36 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x450
+  RenderBlock {html} at (0,0) size 800x450
+    RenderBody {body} at (8,16) size 784x418
+      RenderBlock {p} at (0,0) size 784x92
+        RenderInline {span} at (0,0) size 87x46
+          RenderText {#text} at (0,0) size 87x46
+            text run at (0,0) width 87: "a \x{BE2} o"
+        RenderBR {br} at (87,22) size 0x18
+        RenderInline {span} at (0,0) size 87x46
+          RenderText {#text} at (0,46) size 87x46
+            text run at (0,46) width 87: "a \x{BE2} o"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {hr} at (0,108) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {p} at (0,126) size 784x56
+        RenderInline {span} at (0,0) size 90x52
+          RenderText {#text} at (0,2) size 90x52
+            text run at (0,2) width 90: "a \x{BE2} o"
+        RenderBR {br} at (89,30) size 1x18
+      RenderBlock {hr} at (0,198) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {p} at (0,216) size 784x112
+        RenderInline {span} at (0,0) size 93x52
+          RenderText {#text} at (0,2) size 93x52
+            text run at (0,2) width 93: "a \x{BE2} o"
+        RenderBR {br} at (92,30) size 1x18
+        RenderInline {span} at (0,0) size 93x52
+          RenderText {#text} at (0,58) size 93x52
+            text run at (0,58) width 93: "a \x{BE2} o"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {hr} at (0,344) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {p} at (0,362) size 784x56
+        RenderInline {span} at (0,0) size 73x52
+          RenderText {#text} at (0,2) size 73x52
+            text run at (0,2) width 73: "a \x{BE2} o"
+        RenderBR {br} at (72,30) size 1x18

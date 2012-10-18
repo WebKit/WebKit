@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 110x110
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceFilter {filter} [id="foo"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feConvolveMatrix order="width=3 height=3" kernelMatrix="[0.00, 0.00, 0.00, 0.00, 1.00, 0.00, 0.00, 0.00, -1.00]" divisor="1.00" bias="0.00" target="(1,1)" edgeMode="DUPLICATE" kernelUnitLength="(1,1)" preserveAlpha="0"]
+          [SourceGraphic]
+    RenderSVGImage {image} at (0,0) size 3x4
+      [filter="foo"] RenderSVGResourceFilter {filter} at (-0.20,-0.30) size 2.40x3.60
+    RenderSVGRect {rect} at (10,10) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=100.00] [height=100.00]

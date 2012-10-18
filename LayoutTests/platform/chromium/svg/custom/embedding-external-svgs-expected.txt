@@ -1,0 +1,126 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x328
+  RenderBlock {html} at (0,0) size 800x328
+    RenderBody {body} at (0,16) size 800x296 [bgcolor=#BBBBBB]
+      RenderBlock {p} at (50,0) size 750x44
+        RenderText {#text} at (0,26) size 239x18
+          text run at (0,26) width 239: "SVG in a \"transparent\" EMBED tag: "
+        RenderEmbeddedObject {embed} at (239,0) size 40x40
+          layer at (0,0) size 40x40
+            RenderView at (0,0) size 40x40
+          layer at (0,0) size 40x40
+            RenderSVGRoot {svg} at (0,0) size 40x40
+              RenderSVGHiddenContainer {symbol} at (0,0) size 0x0
+                RenderSVGPath {polygon} at (17,0) size 6x12 [fill={[type=SOLID] [color=#000000]}] [points="22 0 28 0 23 15 23 15"]
+              RenderSVGContainer {g} at (0,0) size 40x40
+                RenderSVGContainer {use} at (17,0) size 6x12
+                  RenderSVGViewportContainer {svg} at (17,0) size 6x12
+                    RenderSVGPath {polygon} at (17,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.50]}] [points="22 0 28 0 23 15 23 15"]
+                RenderSVGContainer {use} at (21,1) size 12x14 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(15.85,-9.15)}]
+                  RenderSVGViewportContainer {svg} at (21,1) size 12x14
+                    RenderSVGPath {polygon} at (21,1) size 12x14 [fill={[type=SOLID] [color=#000000] [opacity=0.08]}] [points="22 0 28 0 23 15 23 15"]
+                RenderSVGContainer {use} at (25,7) size 14x12 [transform={m=((0.50,0.87)(-0.87,0.50)) t=(34.15,-9.15)}]
+                  RenderSVGViewportContainer {svg} at (25,7) size 14x12
+                    RenderSVGPath {polygon} at (25,7) size 14x12 [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [points="22 0 28 0 23 15 23 15"]
+                RenderSVGContainer {use} at (28,17) size 12x6 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(50.00,0.00)}]
+                  RenderSVGViewportContainer {svg} at (28,17) size 12x6
+                    RenderSVGPath {polygon} at (28,17) size 12x6 [fill={[type=SOLID] [color=#000000] [opacity=0.16]}] [points="22 0 28 0 23 15 23 15"]
+                RenderSVGContainer {use} at (25,21) size 14x12 [transform={m=((-0.50,0.87)(-0.87,-0.50)) t=(59.15,15.85)}]
+                  RenderSVGViewportContainer {svg} at (25,21) size 14x12
+                    RenderSVGPath {polygon} at (25,21) size 14x12 [fill={[type=SOLID] [color=#000000] [opacity=0.20]}] [points="22 0 28 0 23 15 23 15"]
+                RenderSVGContainer {use} at (21,25) size 12x14 [transform={m=((-0.87,0.50)(-0.50,-0.87)) t=(59.15,34.15)}]
+                  RenderSVGViewportContainer {svg} at (21,25) size 12x14
+                    RenderSVGPath {polygon} at (21,25) size 12x14 [fill={[type=SOLID] [color=#000000] [opacity=0.24]}] [points="22 0 28 0 23 15 23 15"]
+                RenderSVGContainer {use} at (17,28) size 6x12 [transform={m=((-1.00,0.00)(-0.00,-1.00)) t=(50.00,50.00)}]
+                  RenderSVGViewportContainer {svg} at (17,28) size 6x12
+                    RenderSVGPath {polygon} at (17,28) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.29]}] [points="22 0 28 0 23 15 23 15"]
+                RenderSVGContainer {use} at (7,25) size 12x14 [transform={m=((-0.87,-0.50)(0.50,-0.87)) t=(34.15,59.15)}]
+                  RenderSVGViewportContainer {svg} at (7,25) size 12x14
+                    RenderSVGPath {polygon} at (7,25) size 12x14 [fill={[type=SOLID] [color=#000000] [opacity=0.33]}] [points="22 0 28 0 23 15 23 15"]
+                RenderSVGContainer {use} at (1,21) size 14x12 [transform={m=((-0.50,-0.87)(0.87,-0.50)) t=(15.85,59.15)}]
+                  RenderSVGViewportContainer {svg} at (1,21) size 14x12
+                    RenderSVGPath {polygon} at (1,21) size 14x12 [fill={[type=SOLID] [color=#000000] [opacity=0.37]}] [points="22 0 28 0 23 15 23 15"]
+                RenderSVGContainer {use} at (0,17) size 12x6 [transform={m=((-0.00,-1.00)(1.00,-0.00)) t=(0.00,50.00)}]
+                  RenderSVGViewportContainer {svg} at (0,17) size 12x6
+                    RenderSVGPath {polygon} at (0,17) size 12x6 [fill={[type=SOLID] [color=#000000] [opacity=0.41]}] [points="22 0 28 0 23 15 23 15"]
+                RenderSVGContainer {use} at (1,7) size 14x12 [transform={m=((0.50,-0.87)(0.87,0.50)) t=(-9.15,34.15)}]
+                  RenderSVGViewportContainer {svg} at (1,7) size 14x12
+                    RenderSVGPath {polygon} at (1,7) size 14x12 [fill={[type=SOLID] [color=#000000] [opacity=0.45]}] [points="22 0 28 0 23 15 23 15"]
+                RenderSVGContainer {use} at (7,1) size 12x14 [transform={m=((0.87,-0.50)(0.50,0.87)) t=(-9.15,15.85)}]
+                  RenderSVGViewportContainer {svg} at (7,1) size 12x14
+                    RenderSVGPath {polygon} at (7,1) size 12x14 [fill={[type=SOLID] [color=#000000] [opacity=0.50]}] [points="22 0 28 0 23 15 23 15"]
+      RenderBlock {p} at (50,60) size 750x34
+        RenderText {#text} at (0,16) size 134x18
+          text run at (0,16) width 134: "SVG in an IMG tag: "
+        RenderImage {img} at (134,0) size 30x30
+      RenderBlock {p} at (50,110) size 750x18
+        RenderText {#text} at (0,0) size 186x18
+          text run at (0,0) width 186: "SVG in a background-image:"
+      RenderBlock {p} at (50,202) size 750x44
+        RenderText {#text} at (0,26) size 199x18
+          text run at (0,26) width 199: "SVG in a \"transparent\" iframe: "
+        RenderPartObject {iframe} at (199,0) size 40x40
+          layer at (0,0) size 40x40
+            RenderView at (0,0) size 40x40
+          layer at (0,0) size 40x40
+            RenderSVGRoot {svg} at (0,0) size 40x40
+              RenderSVGHiddenContainer {symbol} at (0,0) size 0x0
+                RenderSVGPath {polygon} at (17,0) size 6x12 [fill={[type=SOLID] [color=#000000]}] [points="22 0 28 0 23 15 23 15"]
+              RenderSVGContainer {g} at (0,0) size 40x40
+                RenderSVGContainer {use} at (17,0) size 6x12
+                  RenderSVGViewportContainer {svg} at (17,0) size 6x12
+                    RenderSVGPath {polygon} at (17,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.50]}] [points="22 0 28 0 23 15 23 15"]
+                RenderSVGContainer {use} at (21,1) size 12x14 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(15.85,-9.15)}]
+                  RenderSVGViewportContainer {svg} at (21,1) size 12x14
+                    RenderSVGPath {polygon} at (21,1) size 12x14 [fill={[type=SOLID] [color=#000000] [opacity=0.08]}] [points="22 0 28 0 23 15 23 15"]
+                RenderSVGContainer {use} at (25,7) size 14x12 [transform={m=((0.50,0.87)(-0.87,0.50)) t=(34.15,-9.15)}]
+                  RenderSVGViewportContainer {svg} at (25,7) size 14x12
+                    RenderSVGPath {polygon} at (25,7) size 14x12 [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [points="22 0 28 0 23 15 23 15"]
+                RenderSVGContainer {use} at (28,17) size 12x6 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(50.00,0.00)}]
+                  RenderSVGViewportContainer {svg} at (28,17) size 12x6
+                    RenderSVGPath {polygon} at (28,17) size 12x6 [fill={[type=SOLID] [color=#000000] [opacity=0.16]}] [points="22 0 28 0 23 15 23 15"]
+                RenderSVGContainer {use} at (25,21) size 14x12 [transform={m=((-0.50,0.87)(-0.87,-0.50)) t=(59.15,15.85)}]
+                  RenderSVGViewportContainer {svg} at (25,21) size 14x12
+                    RenderSVGPath {polygon} at (25,21) size 14x12 [fill={[type=SOLID] [color=#000000] [opacity=0.20]}] [points="22 0 28 0 23 15 23 15"]
+                RenderSVGContainer {use} at (21,25) size 12x14 [transform={m=((-0.87,0.50)(-0.50,-0.87)) t=(59.15,34.15)}]
+                  RenderSVGViewportContainer {svg} at (21,25) size 12x14
+                    RenderSVGPath {polygon} at (21,25) size 12x14 [fill={[type=SOLID] [color=#000000] [opacity=0.24]}] [points="22 0 28 0 23 15 23 15"]
+                RenderSVGContainer {use} at (17,28) size 6x12 [transform={m=((-1.00,0.00)(-0.00,-1.00)) t=(50.00,50.00)}]
+                  RenderSVGViewportContainer {svg} at (17,28) size 6x12
+                    RenderSVGPath {polygon} at (17,28) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.29]}] [points="22 0 28 0 23 15 23 15"]
+                RenderSVGContainer {use} at (7,25) size 12x14 [transform={m=((-0.87,-0.50)(0.50,-0.87)) t=(34.15,59.15)}]
+                  RenderSVGViewportContainer {svg} at (7,25) size 12x14
+                    RenderSVGPath {polygon} at (7,25) size 12x14 [fill={[type=SOLID] [color=#000000] [opacity=0.33]}] [points="22 0 28 0 23 15 23 15"]
+                RenderSVGContainer {use} at (1,21) size 14x12 [transform={m=((-0.50,-0.87)(0.87,-0.50)) t=(15.85,59.15)}]
+                  RenderSVGViewportContainer {svg} at (1,21) size 14x12
+                    RenderSVGPath {polygon} at (1,21) size 14x12 [fill={[type=SOLID] [color=#000000] [opacity=0.37]}] [points="22 0 28 0 23 15 23 15"]
+                RenderSVGContainer {use} at (0,17) size 12x6 [transform={m=((-0.00,-1.00)(1.00,-0.00)) t=(0.00,50.00)}]
+                  RenderSVGViewportContainer {svg} at (0,17) size 12x6
+                    RenderSVGPath {polygon} at (0,17) size 12x6 [fill={[type=SOLID] [color=#000000] [opacity=0.41]}] [points="22 0 28 0 23 15 23 15"]
+                RenderSVGContainer {use} at (1,7) size 14x12 [transform={m=((0.50,-0.87)(0.87,0.50)) t=(-9.15,34.15)}]
+                  RenderSVGViewportContainer {svg} at (1,7) size 14x12
+                    RenderSVGPath {polygon} at (1,7) size 14x12 [fill={[type=SOLID] [color=#000000] [opacity=0.45]}] [points="22 0 28 0 23 15 23 15"]
+                RenderSVGContainer {use} at (7,1) size 12x14 [transform={m=((0.87,-0.50)(0.50,0.87)) t=(-9.15,15.85)}]
+                  RenderSVGViewportContainer {svg} at (7,1) size 12x14
+                    RenderSVGPath {polygon} at (7,1) size 12x14 [fill={[type=SOLID] [color=#000000] [opacity=0.50]}] [points="22 0 28 0 23 15 23 15"]
+      RenderBlock {p} at (50,262) size 750x34
+        RenderText {#text} at (0,16) size 40x18
+          text run at (0,16) width 40: "Inline "
+        RenderSVGRoot {svg:svg} at (90,278) size 30x30
+          RenderSVGContainer {svg:g} at (90,278) size 30x30
+            RenderSVGPath {svg:polygon} at (103,278) size 4x8 [fill={[type=SOLID] [color=#000000] [opacity=0.04]}] [points="22 0 28 0 27 12 23 12"]
+            RenderSVGPath {svg:polygon} at (107,279) size 8x9 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(15.85,-9.15)}] [fill={[type=SOLID] [color=#000000] [opacity=0.08]}] [points="22 0 28 0 27 12 23 12"]
+            RenderSVGPath {svg:polygon} at (110,283) size 9x8 [transform={m=((0.50,0.87)(-0.87,0.50)) t=(34.15,-9.15)}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [points="22 0 28 0 27 12 23 12"]
+            RenderSVGPath {svg:polygon} at (112,291) size 8x4 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(50.00,0.00)}] [fill={[type=SOLID] [color=#000000] [opacity=0.16]}] [points="22 0 28 0 27 12 23 12"]
+            RenderSVGPath {svg:polygon} at (110,295) size 9x8 [transform={m=((-0.50,0.87)(-0.87,-0.50)) t=(59.15,15.85)}] [fill={[type=SOLID] [color=#000000] [opacity=0.20]}] [points="22 0 28 0 27 12 23 12"]
+            RenderSVGPath {svg:polygon} at (107,298) size 8x9 [transform={m=((-0.87,0.50)(-0.50,-0.87)) t=(59.15,34.15)}] [fill={[type=SOLID] [color=#000000] [opacity=0.24]}] [points="22 0 28 0 27 12 23 12"]
+            RenderSVGPath {svg:polygon} at (103,300) size 4x8 [transform={m=((-1.00,0.00)(-0.00,-1.00)) t=(50.00,50.00)}] [fill={[type=SOLID] [color=#000000] [opacity=0.29]}] [points="22 0 28 0 27 12 23 12"]
+            RenderSVGPath {svg:polygon} at (95,298) size 8x9 [transform={m=((-0.87,-0.50)(0.50,-0.87)) t=(34.15,59.15)}] [fill={[type=SOLID] [color=#000000] [opacity=0.33]}] [points="22 0 28 0 27 12 23 12"]
+            RenderSVGPath {svg:polygon} at (91,295) size 9x8 [transform={m=((-0.50,-0.87)(0.87,-0.50)) t=(15.85,59.15)}] [fill={[type=SOLID] [color=#000000] [opacity=0.37]}] [points="22 0 28 0 27 12 23 12"]
+            RenderSVGPath {svg:polygon} at (90,291) size 8x4 [transform={m=((-0.00,-1.00)(1.00,-0.00)) t=(0.00,50.00)}] [fill={[type=SOLID] [color=#000000] [opacity=0.41]}] [points="22 0 28 0 27 12 23 12"]
+            RenderSVGPath {svg:polygon} at (91,283) size 9x8 [transform={m=((0.50,-0.87)(0.87,0.50)) t=(-9.15,34.15)}] [fill={[type=SOLID] [color=#000000] [opacity=0.45]}] [points="22 0 28 0 27 12 23 12"]
+            RenderSVGPath {svg:polygon} at (95,279) size 8x9 [transform={m=((0.87,-0.50)(0.50,0.87)) t=(-9.15,15.85)}] [fill={[type=SOLID] [color=#000000] [opacity=0.50]}] [points="22 0 28 0 27 12 23 12"]
+        RenderText {#text} at (0,0) size 0x0
+layer at (250,112) size 42x42
+  RenderBlock (relative positioned) {div} at (0,144) size 42x42 [border: (1px solid #AAAAAA)]

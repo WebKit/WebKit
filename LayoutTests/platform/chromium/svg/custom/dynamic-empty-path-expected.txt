@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 9: Error: Problem parsing d=""
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 151x151
+  RenderSVGRoot {svg} at (37,37) size 77x77
+    RenderSVGPath {path} at (37,37) size 77x77 [fill={[type=SOLID] [color=#008000]}] [data="M 100 100 L 300 100 L 200 300"]
+    RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FF0000]}] [data=""]
