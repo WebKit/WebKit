@@ -144,7 +144,7 @@ GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D* context, H
                     | GraphicsSurface::SupportsSharing;
 
     if (!surfaceSize.isEmpty()) {
-        m_graphicsSurface = GraphicsSurface::create(surfaceSize, m_surfaceFlags);
+        m_graphicsSurface = GraphicsSurface::create(surfaceSize, m_surfaceFlags, m_platformContext);
     }
 #endif
 }
@@ -284,7 +284,7 @@ uint32_t GraphicsContext3DPrivate::copyToGraphicsSurface()
 
     blitMultisampleFramebufferAndRestoreContext();
     makeCurrentIfNeeded();
-    m_graphicsSurface->copyFromFramebuffer(m_context->m_fbo, IntRect(0, 0, m_context->m_currentWidth, m_context->m_currentHeight));
+    m_graphicsSurface->copyFromTexture(m_context->m_texture, IntRect(0, 0, m_context->m_currentWidth, m_context->m_currentHeight));
     uint32_t frontBuffer = m_graphicsSurface->swapBuffers();
     return frontBuffer;
 }
@@ -342,7 +342,7 @@ void GraphicsContext3DPrivate::createGraphicsSurfaces(const IntSize& size)
     if (size.isEmpty())
         m_graphicsSurface.clear();
     else
-        m_graphicsSurface = GraphicsSurface::create(size, m_surfaceFlags);
+        m_graphicsSurface = GraphicsSurface::create(size, m_surfaceFlags, m_platformContext);
 #endif
 }
 

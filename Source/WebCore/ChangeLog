@@ -1,3 +1,70 @@
+2012-10-18  Zeno Albisser  <zeno@webkit.org>
+
+        GraphicsSurface should not modify the current GL context.
+        https://bugs.webkit.org/show_bug.cgi?id=99320
+
+        Instead of reusing the currently bound GL context for drawing
+        the texture onto the GraphicsSurface, GraphicsSurface should
+        create a new context that shares the texture names with a context
+        provided by the caller.
+        This way the OpenGL states are clearly separated and we do not
+        risk interfeering with the currently bound GL context.
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DPrivate::GraphicsContext3DPrivate):
+            When creating a GraphicsSurface pass the platform GL context
+            as a parameter, so it can be used for sharing textures with.
+        (WebCore::GraphicsContext3DPrivate::copyToGraphicsSurface):
+            Pass the texture instead of the FBO. A Texture can be drawn
+            directly or bound to another FBO, where a framebuffer
+            always needs to be blit onto the surface.
+        (WebCore::GraphicsContext3DPrivate::createGraphicsSurfaces):
+            Pass the platform GL context as a parameter.
+        * platform/graphics/surfaces/GraphicsSurface.cpp:
+        (WebCore::GraphicsSurface::create):
+        (WebCore::GraphicsSurface::copyFromTexture):
+        * platform/graphics/surfaces/GraphicsSurface.h:
+        (GraphicsSurface):
+        * platform/graphics/surfaces/mac/GraphicsSurfaceMac.cpp:
+        (WebCore::GraphicsSurfacePrivate::GraphicsSurfacePrivate):
+            Create a new GL context that shares the textures with the
+            context provided by the caller.
+        (WebCore::GraphicsSurfacePrivate::~GraphicsSurfacePrivate):
+        (WebCore::GraphicsSurfacePrivate::makeCurrent):
+            Add a convenience function to make the context that
+            belongs to the surface current.
+        (GraphicsSurfacePrivate):
+        (WebCore::GraphicsSurfacePrivate::doneCurrent):
+            Add a convenience function to make the previously
+            bound context current again.
+        (WebCore::GraphicsSurfacePrivate::copyFromTexture):
+            Move blitting of the texture onto the surface
+            into a separate function within GraphicsSurfacePrivate.
+        (WebCore::GraphicsSurface::platformCopyFromTexture):
+            Rename function platformCopyFromFramebuffer to
+            platformCopyFromTexture, as we are now passing the texture only.
+        (WebCore::GraphicsSurface::platformCreate):
+        * platform/graphics/surfaces/qt/GraphicsSurfaceGLX.cpp:
+        (WebCore):
+        (WebCore::GraphicsSurfacePrivate::GraphicsSurfacePrivate):
+        (WebCore::GraphicsSurfacePrivate::makeCurrent):
+            Add a convenience function to make the context that
+            belongs to the surface current.
+        (GraphicsSurfacePrivate):
+        (WebCore::GraphicsSurfacePrivate::doneCurrent):
+            Add a convenience function to make the previously
+        (WebCore::GraphicsSurfacePrivate::copyFromTexture):
+            Move blitting of the texture onto the surface
+            into a separate function within GraphicsSurfacePrivate.
+        (WebCore::resolveGLMethods):
+            Resolve additional GL methods necessary for this change.
+        (WebCore::GraphicsSurface::platformCopyFromTexture):
+            Rename function platformCopyFromFramebuffer to
+            platformCopyFromTexture, as we are now passing the texture only.
+        (WebCore::GraphicsSurface::platformCreate):
+
 2012-10-18  Kent Tamura  <tkent@chromium.org>
 
         Set min-width property instead of width property for date/time fields

@@ -30,9 +30,9 @@ PassRefPtr<GraphicsSurface> GraphicsSurface::create(const IntSize& size, Flags f
     return platformImport(size, flags, token);
 }
 
-PassRefPtr<GraphicsSurface> GraphicsSurface::create(const IntSize& size, GraphicsSurface::Flags flags)
+PassRefPtr<GraphicsSurface> GraphicsSurface::create(const IntSize& size, GraphicsSurface::Flags flags, const PlatformGraphicsContext3D shareContext)
 {
-    return platformCreate(size, flags);
+    return platformCreate(size, flags, shareContext);
 }
 
 GraphicsSurfaceToken GraphicsSurface::exportToken()
@@ -58,9 +58,9 @@ void GraphicsSurface::copyToGLTexture(uint32_t target, uint32_t texture, const I
     platformCopyToGLTexture(target, texture, targetRect, offset);
 }
 
-void GraphicsSurface::copyFromFramebuffer(uint32_t fbo, const IntRect& sourceRect)
+void GraphicsSurface::copyFromTexture(uint32_t texture, const IntRect& sourceRect)
 {
-    platformCopyFromFramebuffer(fbo, sourceRect);
+    platformCopyFromTexture(texture, sourceRect);
 }
 
 void GraphicsSurface::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)

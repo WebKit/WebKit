@@ -21,6 +21,7 @@
 #define GraphicsSurface_h
 
 #include "GraphicsContext.h"
+#include "GraphicsContext3D.h"
 #include "GraphicsSurfaceToken.h"
 #include "IntRect.h"
 #include <wtf/OwnPtr.h>
@@ -70,10 +71,10 @@ public:
     PlatformGraphicsSurface platformSurface() const { return m_platformSurface; }
     IntSize size() const { return m_size; }
 
-    static PassRefPtr<GraphicsSurface> create(const IntSize&, Flags);
+    static PassRefPtr<GraphicsSurface> create(const IntSize&, Flags, const PlatformGraphicsContext3D shareContext = 0);
     static PassRefPtr<GraphicsSurface> create(const IntSize&, Flags, const GraphicsSurfaceToken&);
     void copyToGLTexture(uint32_t target, uint32_t texture, const IntRect& targetRect, const IntPoint& sourceOffset);
-    void copyFromFramebuffer(uint32_t fbo, const IntRect& sourceRect);
+    void copyFromTexture(uint32_t texture, const IntRect& sourceRect);
     void paintToTextureMapper(TextureMapper*, const FloatRect& targetRect, const TransformationMatrix&, float opacity, BitmapTexture* mask);
     uint32_t frontBuffer();
     uint32_t swapBuffers();
@@ -84,7 +85,7 @@ public:
     ~GraphicsSurface();
 
 protected:
-    static PassRefPtr<GraphicsSurface> platformCreate(const IntSize&, Flags);
+    static PassRefPtr<GraphicsSurface> platformCreate(const IntSize&, Flags, const PlatformGraphicsContext3D);
     static PassRefPtr<GraphicsSurface> platformImport(const IntSize&, Flags, const GraphicsSurfaceToken&);
     GraphicsSurfaceToken platformExport();
     void platformDestroy();
@@ -93,7 +94,7 @@ protected:
     char* platformLock(const IntRect&, int* stride, LockOptions);
     void platformUnlock();
     void platformCopyToGLTexture(uint32_t target, uint32_t texture, const IntRect&, const IntPoint&);
-    void platformCopyFromFramebuffer(uint32_t fbo, const IntRect& sourceRect);
+    void platformCopyFromTexture(uint32_t texture, const IntRect& sourceRect);
     void platformPaintToTextureMapper(TextureMapper*, const FloatRect& targetRect, const TransformationMatrix&, float opacity, BitmapTexture* mask);
     uint32_t platformFrontBuffer() const;
     uint32_t platformSwapBuffers();
