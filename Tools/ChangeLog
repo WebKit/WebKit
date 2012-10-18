@@ -1,3 +1,24 @@
+2012-10-18  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] Simplify TestInterfaces, as this class won't be directly exposed in the TestRunner library's interface
+        https://bugs.webkit.org/show_bug.cgi?id=99766
+
+        Reviewed by Adam Barth.
+
+        This reverts http://trac.webkit.org/changeset/123240
+
+        * DumpRenderTree/chromium/TestRunner/TestInterfaces.cpp:
+        (TestInterfaces::TestInterfaces):
+        (TestInterfaces::~TestInterfaces):
+        (TestInterfaces::setWebView):
+        (TestInterfaces::setDelegate):
+        (TestInterfaces::bindTo):
+        (TestInterfaces::resetAll):
+        (TestInterfaces::accessibilityController):
+        (TestInterfaces::eventSender):
+        * DumpRenderTree/chromium/TestRunner/TestInterfaces.h:
+        (TestInterfaces):
+
 2012-10-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r131810.

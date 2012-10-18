@@ -31,6 +31,8 @@
 #ifndef TestInterfaces_h
 #define TestInterfaces_h
 
+#include <wtf/OwnPtr.h>
+
 namespace WebKit {
 class WebFrame;
 class WebView;
@@ -38,7 +40,9 @@ class WebView;
 
 class AccessibilityController;
 class EventSender;
+class GamepadController;
 class TestDelegate;
+class TextInputController;
 
 class TestInterfaces {
 public:
@@ -54,8 +58,10 @@ public:
     EventSender* eventSender();
 
 private:
-    class Internal;
-    Internal* m_internal;
+    OwnPtr<AccessibilityController> m_accessibilityController;
+    OwnPtr<EventSender> m_eventSender;
+    OwnPtr<GamepadController> m_gamepadController;
+    OwnPtr<TextInputController> m_textInputController;
 };
 
 #endif // TestInterfaces_h
