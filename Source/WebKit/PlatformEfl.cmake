@@ -242,6 +242,7 @@ TARGET_LINK_LIBRARIES(ewkTestUtils ${EWKUnitTests_LIBRARIES})
 SET(WEBKIT_EFL_TEST_DIR "${WEBKIT_DIR}/efl/tests/")
 
 SET(EWKUnitTests_BINARIES
+    test_ewk_frame
     test_ewk_view
 )
 

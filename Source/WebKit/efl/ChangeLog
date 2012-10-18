@@ -1,3 +1,19 @@
+2012-10-18  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL] Add unit test for ewk_frame_source_get.
+        https://bugs.webkit.org/show_bug.cgi?id=95984
+
+        Reviewed by Gyuyoung Kim.
+
+        Add three unit test cases to verify ewk_frame_source_get function.
+        Additionally, insert code to check if uri exists in order to return error since view itself has blank html.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_source_get):
+        * tests/test_ewk_frame.cpp: Added.
+        (initBuffer):
+        (TEST_F):
+
 2012-10-17  Byungwoo Lee  <bw80.lee@samsung.com>
 
         Fix build warnings : -Wunused-parameter, -Wunused-variable

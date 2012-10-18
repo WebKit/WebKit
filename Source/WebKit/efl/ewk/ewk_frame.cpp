@@ -1641,6 +1641,9 @@ ssize_t ewk_frame_source_get(const Evas_Object* ewkFrame, char** frameSource)
     StringBuilder builder;
     *frameSource = 0; // Saves 0 to pointer until it's not allocated.
 
+    if (!ewk_frame_uri_get(ewkFrame))
+        return -1;
+
     if (!smartData->frame->document()->isHTMLDocument()) {
         // FIXME: Support others documents.
         WARN("Only HTML documents are supported");
