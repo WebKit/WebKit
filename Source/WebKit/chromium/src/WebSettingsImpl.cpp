@@ -32,6 +32,7 @@
 #include "WebSettingsImpl.h"
 
 #include "FontRenderingMode.h"
+#include "ImageDecodingStore.h"
 #include "Settings.h"
 #include <public/WebString.h>
 #include <public/WebURL.h>
@@ -55,6 +56,7 @@ WebSettingsImpl::WebSettingsImpl(Settings* settings)
     , m_applyDefaultDeviceScaleFactorInCompositor(false)
     , m_gestureTapHighlightEnabled(true)
     , m_autoZoomFocusedNodeToLegibleScale(false)
+    , m_deferredImageDecodingEnabled(false)
     , m_defaultTileSize(WebSize(256, 256))
     , m_maxUntiledLayerSize(WebSize(512, 512))
 {
@@ -478,6 +480,15 @@ void WebSettingsImpl::setAccelerated2dCanvasEnabled(bool enabled)
 void WebSettingsImpl::setDeferred2dCanvasEnabled(bool enabled)
 {
     m_settings->setDeferred2dCanvasEnabled(enabled);
+}
+
+void WebSettingsImpl::setDeferredImageDecodingEnabled(bool enabled)
+{
+    if (!m_deferredImageDecodingEnabled && enabled)
+        ImageDecodingStore::initializeOnMainThread();
+    if (m_deferredImageDecodingEnabled && !enabled)
+        ImageDecodingStore::shutdown();
+    m_deferredImageDecodingEnabled = enabled;
 }
 
 void WebSettingsImpl::setAcceleratedCompositingForFixedPositionEnabled(bool enabled)

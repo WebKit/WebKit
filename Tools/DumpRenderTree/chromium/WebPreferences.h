@@ -109,6 +109,7 @@ struct WebPreferences {
     bool accelerated2dCanvasEnabled;
     bool deferred2dCanvasEnabled;
     bool acceleratedPaintingEnabled;
+    bool deferredImageDecodingEnabled;
     bool mediaPlaybackRequiresUserGesture;
     bool mockScrollbarsEnabled;
     bool cssCustomFilterEnabled;

@@ -1,3 +1,18 @@
+2012-10-18  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Implement deferred image decoding
+        https://bugs.webkit.org/show_bug.cgi?id=94240
+
+        Reviewed by Stephen White.
+
+        Adding a virtual test suite for Chromium to test deferred image
+        decoding.
+
+        platform/chromium/virtual/deferred/fast/images will be tested with
+        --force-compositing --enable-per-tile-painting --enable-deferred-image-decoding.
+
+        * platform/chromium/virtual/deferred/fast/images/README.txt: Added.
+
 2012-10-18  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Shaders] Validate types of built-in vertex attributes

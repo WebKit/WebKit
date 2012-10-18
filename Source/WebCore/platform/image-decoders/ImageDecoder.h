@@ -148,6 +148,18 @@ namespace WebCore {
 
         void reportMemoryUsage(MemoryObjectInfo*) const;
 
+#if PLATFORM(CHROMIUM)
+        void setSkBitmap(const SkBitmap& bitmap)
+        {
+            m_bitmap = NativeImageSkia(bitmap, 1);
+        }
+
+        const SkBitmap& getSkBitmap() const
+        {
+            return m_bitmap.bitmap();
+        }
+#endif
+
     private:
         int width() const;
         int height() const;
