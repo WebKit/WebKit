@@ -1,3 +1,14 @@
+2012-10-18  James Simonsen  <simonjam@chromium.org>
+
+        Add a script for exporting http/tests/w3c/webperf/submission to W3C
+        https://bugs.webkit.org/show_bug.cgi?id=99675
+
+        Reviewed by Tony Gentilcore.
+
+        This does the inverse of Scripts/import-w3c-performance-wg-tests.
+
+        * Scripts/export-w3c-performance-wg-tests: Added.
+
 2012-10-18  Pablo Flouret  <pablof@motorola.com>
 
         Implement css3-conditional's @supports rule
