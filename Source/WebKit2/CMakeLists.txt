@@ -589,6 +589,10 @@ FOREACH (_file ${WebKit2_MESSAGES_IN_FILES})
     ADD_CUSTOM_COMMAND(
         OUTPUT ${DERIVED_SOURCES_WEBKIT2_DIR}/${_name}MessageReceiver.cpp ${DERIVED_SOURCES_WEBKIT2_DIR}/${_name}Messages.h
         MAIN_DEPENDENCY ${_file}
+        DEPENDS ${WEBKIT2_DIR}/Scripts/webkit2/__init__.py
+                ${WEBKIT2_DIR}/Scripts/webkit2/messages.py
+                ${WEBKIT2_DIR}/Scripts/webkit2/model.py
+                ${WEBKIT2_DIR}/Scripts/webkit2/parser.py
         COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-message-receiver.py ${_file} > ${DERIVED_SOURCES_WEBKIT2_DIR}/${_name}MessageReceiver.cpp
         COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-messages-header.py ${_file} > ${DERIVED_SOURCES_WEBKIT2_DIR}/${_name}Messages.h
         WORKING_DIRECTORY ${WEBKIT2_DIR}
