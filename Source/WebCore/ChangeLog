@@ -1,3 +1,21 @@
+2012-10-18  Mike Reed  <reed@google.com>
+
+        Handle if we fail to allocate nonPlatformCanvas in ImageBuffer constructor
+        https://bugs.webkit.org/show_bug.cgi?id=99752
+
+        Reviewed by Stephen White.
+
+        Current code does not check if we were able to allocate the pixels, but still returns the canvas.
+        However, the caller explicitly is checking for null on failure, so it will continue (and possibly
+        crash later on).
+        This change brings the nonPlatformCanvas behavior inline with createAcceleratedCanvas and
+        TryCreateBitmapCanvas, both of which are also called by ImageBuffer's constructor.
+
+        No new tests. Existing tests exercise ImageBuffer constructor.
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::createNonPlatformCanvas):
+
 2012-10-18  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=99668

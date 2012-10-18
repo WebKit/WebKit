@@ -104,9 +104,9 @@ static SkCanvas* createAcceleratedCanvas(const IntSize& size, ImageBufferData* d
 
 static SkCanvas* createNonPlatformCanvas(const IntSize& size)
 {
-    SkCanvas* canvas = new SkCanvas();
-    canvas->setDevice(new SkDevice(SkBitmap::kARGB_8888_Config, size.width(), size.height()))->unref();
-    return canvas;
+    SkAutoTUnref<SkDevice> device(new SkDevice(SkBitmap::kARGB_8888_Config, size.width(), size.height()));
+    SkPixelRef* pixelRef = device->accessBitmap(false).pixelRef();
+    return pixelRef ? new SkCanvas(device) : 0;
 }
 
 ImageBuffer::ImageBuffer(const IntSize& size, float resolutionScale, ColorSpace, RenderingMode renderingMode, DeferralMode deferralMode, bool& success)
