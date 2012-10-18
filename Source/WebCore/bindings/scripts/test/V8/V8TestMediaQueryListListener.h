@@ -43,7 +43,6 @@ public:
     }
     inline static v8::Handle<v8::Object> wrap(TestMediaQueryListListener*, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* = 0);
     static void derefObject(void*);
-    static void visitDOMWrapper(DOMDataStore*, void*, v8::Persistent<v8::Object>);
     static WrapperTypeInfo info;
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
     static void installPerContextProperties(v8::Handle<v8::Object>, TestMediaQueryListListener*) { }

@@ -1,3 +1,32 @@
+2012-10-17  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Rebaselined run-bindings-tests.
+
+        * bindings/scripts/test/V8/V8Float64Array.h:
+        (V8Float64Array):
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.h:
+        (V8TestActiveDOMObject):
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.h:
+        (V8TestCustomNamedGetter):
+        * bindings/scripts/test/V8/V8TestEventConstructor.h:
+        (V8TestEventConstructor):
+        * bindings/scripts/test/V8/V8TestEventTarget.h:
+        (V8TestEventTarget):
+        * bindings/scripts/test/V8/V8TestException.h:
+        (V8TestException):
+        * bindings/scripts/test/V8/V8TestInterface.h:
+        (V8TestInterface):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.h:
+        (V8TestMediaQueryListListener):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.h:
+        (V8TestNamedConstructor):
+        * bindings/scripts/test/V8/V8TestNode.h:
+        (V8TestNode):
+        * bindings/scripts/test/V8/V8TestObj.h:
+        (V8TestObj):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.h:
+        (V8TestSerializedScriptValueInterface):
+
 2012-10-17  Mike West  <mkwst@chromium.org>
 
         Move mixed content logic out of FrameLoader
