@@ -1,3 +1,15 @@
+2012-10-18  Michael Saboff  <msaboff@apple.com>
+
+        Make conversion between JSStringRef and WKStringRef work without character size conversions
+        https://bugs.webkit.org/show_bug.cgi?id=99727
+
+        Reviewed by Anders Carlsson.
+
+        Export the string() method for use in WebKit.
+
+        * API/OpaqueJSString.h:
+        (OpaqueJSString::string):
+
 2012-10-18  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [CMake] Avoid unnecessarily running the LLInt generation commands.

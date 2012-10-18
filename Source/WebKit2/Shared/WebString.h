@@ -27,7 +27,9 @@
 #define WebString_h
 
 #include "APIObject.h"
+#include <JavaScriptCore/InitializeThreading.h>
 #include <JavaScriptCore/JSStringRef.h>
+#include <JavaScriptCore/OpaqueJSString.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/UTF8.h>
@@ -52,7 +54,7 @@ public:
 
     static PassRefPtr<WebString> create(JSStringRef jsStringRef)
     {
-        return adoptRef(new WebString(String(JSStringGetCharactersPtr(jsStringRef), JSStringGetLength(jsStringRef))));
+        return adoptRef(new WebString(String(jsStringRef->string())));
     }
 
     static PassRefPtr<WebString> createFromUTF8String(const char* string)
@@ -93,7 +95,11 @@ public:
 
     const String& string() const { return m_string; }
 
-    JSStringRef createJSString() const { return JSStringCreateWithCharacters(m_string.characters(), m_string.length()); }
+    JSStringRef createJSString() const
+    {
+        JSC::initializeThreading();
+        return OpaqueJSString::create(m_string).leakRef();
+    }
 
 private:
     WebString()

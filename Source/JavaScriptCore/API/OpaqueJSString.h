@@ -51,7 +51,7 @@ struct OpaqueJSString : public ThreadSafeRefCounted<OpaqueJSString> {
     const UChar* characters() { return !!this ? m_string.characters() : 0; }
     unsigned length() { return !!this ? m_string.length() : 0; }
 
-    String string() const;
+    JS_EXPORT_PRIVATE String string() const;
     JSC::Identifier identifier(JSC::JSGlobalData*) const;
 
 private:

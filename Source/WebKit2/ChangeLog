@@ -1,3 +1,17 @@
+2012-10-18  Michael Saboff  <msaboff@apple.com>
+
+        Make conversion between JSStringRef and WKStringRef work without character size conversions
+        https://bugs.webkit.org/show_bug.cgi?id=99727
+
+        Reviewed by Anders Carlsson.
+
+        Use the wrapped WTFString object to convert between JSStringRef and WKStringRef.
+
+        * Shared/WebString.h:
+        (WebKit::JSStringCreateWithString):
+        (WebKit::WebString::create):
+        (WebKit::WebString::createJSString):
+
 2012-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Don't use using namespace WebKit in private headers in WebKit2
