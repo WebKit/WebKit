@@ -70,6 +70,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
+#include "HTMLParserIdioms.h"
 #include "HTTPParsers.h"
 #include "HistoryItem.h"
 #include "InspectorController.h"
@@ -666,6 +667,15 @@ void FrameLoader::didBeginDocument(bool dispatch)
         String reportOnlyContentSecurityPolicy = m_documentLoader->response().httpHeaderField("X-WebKit-CSP-Report-Only");
         if (!reportOnlyContentSecurityPolicy.isEmpty())
             m_frame->document()->contentSecurityPolicy()->didReceiveHeader(reportOnlyContentSecurityPolicy, ContentSecurityPolicy::ReportOnly);
+
+        String headerContentLanguage = m_documentLoader->response().httpHeaderField("Content-Language");
+        if (!headerContentLanguage.isEmpty()) {
+            size_t commaIndex = headerContentLanguage.find(',');
+            headerContentLanguage.truncate(commaIndex); // notFound == -1 == don't truncate
+            headerContentLanguage = headerContentLanguage.stripWhiteSpace(isHTMLSpace);
+            if (!headerContentLanguage.isEmpty())
+                m_frame->document()->setContentLanguage(headerContentLanguage);
+        }
     }
 
     history()->restoreDocumentState();

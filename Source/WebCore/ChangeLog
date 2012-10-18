@@ -1,3 +1,16 @@
+2012-10-18  Brian White  <bcwhite@chromium.org>
+
+        WebKit Doesn't Recognize Content-Language HTTP Header
+        https://bugs.webkit.org/show_bug.cgi?id=97929
+
+        Reviewed by Alexey Proskuryakov.
+
+        The HTTP "Content-Language" header may be present and include the
+        language of the page contents (as opposed to an embedded meta tag).
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didBeginDocument):
+
 2012-10-18  Jer Noble  <jer.noble@apple.com>
 
         Crash in WebCore::Document::webkitExitFullscreen + 618
