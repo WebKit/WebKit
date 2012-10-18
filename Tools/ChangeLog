@@ -1,3 +1,38 @@
+2012-10-18  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Reduce memory pressure at link time with less compromise on speed of linking
+
+        Reviewed by Csaba Osztrogonác.
+
+        Revert r131718 that made us pass -fno-keep-memory to the linker for any
+        i386 builds. The downside of passing that option is that it slows down
+        the process of linking and as Ossy determined, release builds do _not_
+        take as much memory (2.x GB) for linking but much less (~350MB).
+
+        However there is one condition where even release builds do take up too
+        much memory, and that is when Qt is configured with
+        -separate-debug-info, because it adds a -g next to -O2. The recent
+        introduction of loading qt_build_config enabled us to read qmodule.pri,
+        which adds the -g if Qt is configured with -separate-debug-info. So
+        instead of playing with -fno-keep-memory (which is a last resort
+        measure for debug builds) we should tweak our existing mechanism of
+        dealing with the debug info:
+
+        production_build.prf tries to ensure that we use -g only in static
+        libraries that contain API facing code, so that we get nice backtraces
+        at least into the API layer. For other static libraries such as WebCore
+        we skip -g via CONFIG += no_debug_info. One of the conditions for
+        enabling this tweak is CONFIG(debug, debug|release). This patch adds
+        contains(QT_CONFIG,separate_debug_info) to the conditions.
+
+        The patch also extend the CONFIG += no_debug_info part with the removal
+        of no_separate_debug_info. There is no point in running an extra
+        build step to strip out debug info into a separate file if at the same
+        time we tell the compiler to not generate any debug info altogether.
+
+        * qmake/mkspecs/features/production_build.prf:
+        * qmake/mkspecs/features/unix/default_post.prf:
+
 2012-10-18  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] OpenGL rendering is not possible on bots using Xvfb

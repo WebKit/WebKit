@@ -34,7 +34,7 @@ linux-g++* {
 
 contains(TEMPLATE, app): CONFIG += rpath
 
-isEqual(QT_ARCH,i386) {
+isEqual(QT_ARCH,i386):CONFIG(debug, debug|release) {
   # Make ld not cache the symbol tables of input files in memory to avoid memory exhaustion during the linking phase.
   config_gnuld: QMAKE_LFLAGS += -Wl,--no-keep-memory
 }
