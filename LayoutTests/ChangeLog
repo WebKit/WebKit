@@ -1,5 +1,14 @@
 2012-10-17  Dirk Pranke  <dpranke@chromium.org>
 
+        Clone baselines from platform/mac to platform/chromium [5 of 7]
+        https://bugs.webkit.org/show_bug.cgi?id=99666
+
+        Unreviewed, expectations change.
+
+        (long list of expectations files omitted).
+
+2012-10-17  Dirk Pranke  <dpranke@chromium.org>
+
         Clone baselines from platform/mac to platform/chromium [4 of 7]
         https://bugs.webkit.org/show_bug.cgi?id=99666
 

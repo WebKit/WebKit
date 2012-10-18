@@ -1,0 +1,3 @@
+This tests that we don’t crash when forcing a style recalc when inside RenderPartObject::updateWidget.
+
+SUCCESS - Did not crash!

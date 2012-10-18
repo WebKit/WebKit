@@ -1,0 +1,12 @@
+Testing text with br elements (<div><br></div>hello<br>)
+(0, 0):
+(0, 1):
+(0, 2): h
+(1, 1): h
+(1, 5): hello
+(1, 6): hello
+(1, 100): hello
+(6, 1):
+(7, 1):
+(100, 0): undefined
+(100, 100): undefined

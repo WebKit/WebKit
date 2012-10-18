@@ -1,0 +1,8 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x71
+        RenderText {#text} at (0,1) size 546x69
+          text run at (0,1) width 546: "\x{1021}\x{1015}\x{103C}\x{100A}\x{103A}\x{1015}\x{103C}\x{100A}\x{103A}\x{1006}\x{102D}\x{102F}\x{1004}\x{103A}\x{101B}\x{102C}\x{101C}\x{103E}\x{102F}\x{1015}\x{103A}\x{101B}\x{103E}\x{102C}\x{1038}\x{1019}\x{103E}\x{102F}\x{104A}"

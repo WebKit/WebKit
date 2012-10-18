@@ -1,0 +1,58 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (82,20) size 364x264
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGResourceFilter {filter} [id="null"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        RenderSVGResourceFilter {filter} [id="nullreg"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+      RenderSVGContainer {g} at (90,20) size 80x114
+        RenderSVGEllipse {circle} at (100,30) size 60x60 [fill={[type=SOLID] [color=#FF0000]}] [cx=130.00] [cy=60.00] [r=30.00]
+        RenderSVGEllipse {circle} at (90,20) size 80x80 [fill={[type=SOLID] [color=#00FF00]}] [cx=130.00] [cy=60.00] [r=40.00]
+        RenderSVGText {text} at (95,114) size 69x20 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 69x20
+            chunk 1 (middle anchor) text run 1 at (95.69,130.00) startOffset 0 endOffset 1 width 14.44: "N"
+            chunk 1 (middle anchor) text run 2 at (110.17,130.00) startOffset 1 endOffset 4 width 22.24: "o f"
+            chunk 1 (middle anchor) text run 3 at (132.37,130.00) startOffset 4 endOffset 7 width 14.44: "ilt"
+            chunk 1 (middle anchor) text run 4 at (146.53,130.00) startOffset 7 endOffset 9 width 17.78: "er"
+      RenderSVGContainer {g} at (82,162) size 96x122
+        RenderSVGEllipse {circle} at (100,180) size 60x60 [fill={[type=SOLID] [color=#00FF00]}] [cx=130.00] [cy=210.00] [r=30.00]
+        RenderSVGEllipse {circle} at (82,162) size 96x96 [fill={[type=SOLID] [color=#FF0000]}] [cx=130.00] [cy=210.00] [r=40.00]
+          [filter="null"] RenderSVGResourceFilter {filter} at (82,162) size 96x96
+        RenderSVGText {text} at (91,264) size 78x20 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 78x20
+            chunk 1 (middle anchor) text run 1 at (91.27,280.00) startOffset 0 endOffset 6 width 45.56: "Null f"
+            chunk 1 (middle anchor) text run 2 at (136.79,280.00) startOffset 6 endOffset 9 width 14.44: "ilt"
+            chunk 1 (middle anchor) text run 3 at (150.95,280.00) startOffset 9 endOffset 11 width 17.78: "er"
+      RenderSVGContainer {g} at (252,20) size 156x114
+        RenderSVGEllipse {circle} at (300,30) size 60x60 [fill={[type=SOLID] [color=#00FF00]}] [cx=330.00] [cy=60.00] [r=30.00]
+        RenderSVGEllipse {circle} at (290,20) size 80x80 [fill={[type=SOLID] [color=#FF0000]}] [cx=330.00] [cy=60.00] [r=40.00]
+        RenderSVGText {text} at (252,114) size 155x20 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 155x20
+            chunk 1 (middle anchor) text run 1 at (252.78,130.00) startOffset 0 endOffset 1 width 14.44: "N"
+            chunk 1 (middle anchor) text run 2 at (267.26,130.00) startOffset 1 endOffset 5 width 40.02: "on-e"
+            chunk 1 (middle anchor) text run 3 at (306.74,130.00) startOffset 5 endOffset 8 width 24.44: "xis"
+            chunk 1 (middle anchor) text run 4 at (331.12,130.00) startOffset 8 endOffset 9 width 5.56: "t"
+            chunk 1 (middle anchor) text run 5 at (336.40,130.00) startOffset 9 endOffset 14 width 38.92: "ent f"
+            chunk 1 (middle anchor) text run 6 at (375.28,130.00) startOffset 14 endOffset 17 width 14.44: "ilt"
+            chunk 1 (middle anchor) text run 7 at (389.44,130.00) startOffset 17 endOffset 19 width 17.78: "er"
+      RenderSVGContainer {g} at (214,180) size 232x104
+        RenderSVGEllipse {circle} at (300,180) size 60x60 [fill={[type=SOLID] [color=#00FF00]}] [cx=330.00] [cy=210.00] [r=30.00]
+        RenderSVGEllipse {circle} at (322,202) size 16x16 [fill={[type=SOLID] [color=#FF0000]}] [cx=330.00] [cy=210.00] [r=40.00]
+          [filter="nullreg"] RenderSVGResourceFilter {filter} at (322,202) size 16x16
+        RenderSVGText {text} at (214,264) size 232x20 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 232x20
+            chunk 1 (middle anchor) text run 1 at (214.17,280.00) startOffset 0 endOffset 8 width 64.44: "Null wit"
+            chunk 1 (middle anchor) text run 2 at (278.55,280.00) startOffset 8 endOffset 17 width 75.56: "h small r"
+            chunk 1 (middle anchor) text run 3 at (353.89,280.00) startOffset 17 endOffset 24 width 60.04: "egion f"
+            chunk 1 (middle anchor) text run 4 at (413.89,280.00) startOffset 24 endOffset 27 width 14.44: "ilt"
+            chunk 1 (middle anchor) text run 5 at (428.05,280.00) startOffset 27 endOffset 29 width 17.78: "er"
+    RenderSVGContainer {g} at (10,314) size 227x33
+      RenderSVGText {text} at (10,314) size 227x32 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 227x32
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 2 width 40.90: "$R"
+          chunk 1 text run 2 at (50.51,340.00) startOffset 2 endOffset 3 width 17.79: "e"
+          chunk 1 text run 3 at (67.82,340.00) startOffset 3 endOffset 12 width 117.38: "vision: 1"
+          chunk 1 text run 4 at (182.83,340.00) startOffset 12 endOffset 16 width 53.38: ".7 $"
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
