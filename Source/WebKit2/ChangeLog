@@ -1,3 +1,20 @@
+2012-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Don't use the C API internally in WebKitWindowProperties
+        https://bugs.webkit.org/show_bug.cgi?id=96785
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Using the C++ classes directly instead of the C API wrappers we
+        avoid a lot of toImpl/toAPI casts, string conversions and
+        allocations. The code is also a lot simpler and easier to read.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewCreateNewPage):
+        * UIProcess/API/gtk/WebKitWindowProperties.cpp:
+        (webkitWindowPropertiesUpdateFromWebWindowFeatures):
+        * UIProcess/API/gtk/WebKitWindowPropertiesPrivate.h:
+
 2012-10-18  Huang Dongsung  <luxtella@company100.net>
 
         [WK2] Add CustomFilterOperation serialization in ArgumentCoder.

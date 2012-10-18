@@ -1355,7 +1355,7 @@ WebPageProxy* webkitWebViewCreateNewPage(WebKitWebView* webView, ImmutableDictio
     if (!newWebView)
         return 0;
 
-    webkitWindowPropertiesUpdateFromWKWindowFeatures(newWebView->priv->windowProperties.get(), toAPI(windowFeatures));
+    webkitWindowPropertiesUpdateFromWebWindowFeatures(newWebView->priv->windowProperties.get(), windowFeatures);
 
     RefPtr<WebPageProxy> newPage = getPage(newWebView);
     return newPage.release().leakRef();

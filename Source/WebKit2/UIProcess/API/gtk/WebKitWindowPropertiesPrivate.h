@@ -27,11 +27,13 @@
 #ifndef WebKitWindowPropertiesPrivate_h
 #define WebKitWindowPropertiesPrivate_h
 
+#include "WebKitPrivate.h"
 #include "WebKitWindowProperties.h"
-#include <WebKit2/WKBase.h>
+
+using namespace WebKit;
 
 WebKitWindowProperties* webkitWindowPropertiesCreate();
-void webkitWindowPropertiesUpdateFromWKWindowFeatures(WebKitWindowProperties*, WKDictionaryRef wkFeatures);
+void webkitWindowPropertiesUpdateFromWebWindowFeatures(WebKitWindowProperties*, ImmutableDictionary* features);
 void webkitWindowPropertiesSetGeometry(WebKitWindowProperties*, GdkRectangle*);
 void webkitWindowPropertiesSetToolbarVisible(WebKitWindowProperties*, bool toolbarsVisible);
 void webkitWindowPropertiesSetMenubarVisible(WebKitWindowProperties*, bool menuBarVisible);
