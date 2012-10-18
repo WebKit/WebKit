@@ -74,6 +74,7 @@ private:
     GRefPtr<GstElement> m_decodebin;
     GRefPtr<GstElement> m_deInterleave;
     GRefPtr<GMainLoop> m_loop;
+    bool m_errorOccurred;
 };
 
 static GstCaps* getGStreamerAudioCaps(int channels, float sampleRate)
@@ -131,6 +132,7 @@ AudioFileReader::AudioFileReader(const char* filePath)
     , m_dataSize(0)
     , m_filePath(filePath)
     , m_channelSize(0)
+    , m_errorOccurred(false)
 {
 }
 
@@ -139,11 +141,34 @@ AudioFileReader::AudioFileReader(const void* data, size_t dataSize)
     , m_dataSize(dataSize)
     , m_filePath(0)
     , m_channelSize(0)
+    , m_errorOccurred(false)
 {
 }
 
 AudioFileReader::~AudioFileReader()
 {
+    if (m_pipeline) {
+        GRefPtr<GstBus> bus = gst_pipeline_get_bus(GST_PIPELINE(m_pipeline));
+        g_signal_handlers_disconnect_by_func(bus.get(), reinterpret_cast<gpointer>(messageCallback), this);
+        gst_element_set_state(m_pipeline, GST_STATE_NULL);
+        gst_object_unref(GST_OBJECT(m_pipeline));
+    }
+
+    if (m_decodebin) {
+        g_signal_handlers_disconnect_by_func(m_decodebin.get(), reinterpret_cast<gpointer>(onGStreamerDecodebinPadAddedCallback), this);
+        m_decodebin.clear();
+    }
+
+    if (m_deInterleave) {
+        g_signal_handlers_disconnect_by_func(m_deInterleave.get(), reinterpret_cast<gpointer>(onGStreamerDeinterleavePadAddedCallback), this);
+        g_signal_handlers_disconnect_by_func(m_deInterleave.get(), reinterpret_cast<gpointer>(onGStreamerDeinterleaveReadyCallback), this);
+        m_deInterleave.clear();
+    }
+
+    gst_buffer_list_iterator_free(m_frontLeftBuffersIterator);
+    gst_buffer_list_iterator_free(m_frontRightBuffersIterator);
+    gst_buffer_list_unref(m_frontLeftBuffers);
+    gst_buffer_list_unref(m_frontRightBuffers);
 }
 
 GstFlowReturn AudioFileReader::handleBuffer(GstAppSink* sink)
@@ -211,11 +236,13 @@ gboolean AudioFileReader::handleMessage(GstMessage* message)
         break;
     case GST_MESSAGE_WARNING:
         gst_message_parse_warning(message, &error.outPtr(), &debug.outPtr());
-        g_warning("Warning: %d, %s", error->code,  error->message);
+        g_warning("Warning: %d, %s. Debug output: %s", error->code,  error->message, debug.get());
         break;
     case GST_MESSAGE_ERROR:
         gst_message_parse_error(message, &error.outPtr(), &debug.outPtr());
-        ASSERT_WITH_MESSAGE(0, "Fatal error: %d, %s", error->code,  error->message);
+        g_warning("Error: %d, %s. Debug output: %s", error->code,  error->message, debug.get());
+        m_errorOccurred = true;
+        g_main_loop_quit(m_loop.get());
         break;
     default:
         break;
@@ -351,31 +378,17 @@ PassOwnPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono
     g_main_loop_run(m_loop.get());
     g_main_context_pop_thread_default(context.get());
 
-    GRefPtr<GstBus> bus = gst_pipeline_get_bus(GST_PIPELINE(m_pipeline));
-    g_signal_handlers_disconnect_by_func(bus.get(), reinterpret_cast<gpointer>(messageCallback), this);
-
-    g_signal_handlers_disconnect_by_func(m_decodebin.get(), reinterpret_cast<gpointer>(onGStreamerDecodebinPadAddedCallback), this);
-    g_signal_handlers_disconnect_by_func(m_deInterleave.get(), reinterpret_cast<gpointer>(onGStreamerDeinterleavePadAddedCallback), this);
-    g_signal_handlers_disconnect_by_func(m_deInterleave.get(), reinterpret_cast<gpointer>(onGStreamerDeinterleaveReadyCallback), this);
-
     unsigned channels = mixToMono ? 1 : 2;
     OwnPtr<AudioBus> audioBus = adoptPtr(new AudioBus(channels, m_channelSize, true));
     audioBus->setSampleRate(m_sampleRate);
+
+    if (m_errorOccurred)
+        return audioBus.release();
 
     copyGstreamerBuffersToAudioChannel(m_frontLeftBuffers, audioBus->channel(0));
     if (!mixToMono)
         copyGstreamerBuffersToAudioChannel(m_frontRightBuffers, audioBus->channel(1));
 
-    gst_buffer_list_iterator_free(m_frontLeftBuffersIterator);
-    gst_buffer_list_iterator_free(m_frontRightBuffersIterator);
-    gst_buffer_list_unref(m_frontLeftBuffers);
-    gst_buffer_list_unref(m_frontRightBuffers);
-
-    gst_element_set_state(m_pipeline, GST_STATE_NULL);
-    gst_object_unref(GST_OBJECT(m_pipeline));
-
-    m_decodebin.clear();
-    m_deInterleave.clear();
     return audioBus.release();
 }
 

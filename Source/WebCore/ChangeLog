@@ -1,3 +1,31 @@
+2012-10-17  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] AudioBusGtk sometimes fails to load the HRTF database
+        https://bugs.webkit.org/show_bug.cgi?id=99601
+
+        Reviewed by Martin Robinson.
+
+        AudioBusGtk now first lookup for the uninstalled resource files,
+        if the AUDIO_RESOURCES_PATH environment variable is
+        set. Additionally the audio file reader is now better dealing with
+        errors, returning an empty AudioBus in such cases and issuing
+        warnings on the console output. The cleanup of some member
+        variables was also moved to the destructor.
+
+        * platform/audio/gstreamer/AudioFileReaderGStreamer.cpp:
+        (AudioFileReader):
+        (WebCore::AudioFileReader::AudioFileReader):
+        (WebCore::AudioFileReader::~AudioFileReader): Clear and free
+        member variables. This was done in createBus before.
+        (WebCore::AudioFileReader::handleMessage): Issue warnings in case
+        of error and exit from the main loop so the pipeline is not
+        forever stuck.
+        (WebCore::AudioFileReader::createBus): Return an empty bus in case
+        of error.
+        * platform/audio/gtk/AudioBusGtk.cpp:
+        (WebCore::AudioBus::loadPlatformResource): Load uninstalled
+        resources first if AUDIO_RESOURCES_PATH is set.
+
 2012-10-18  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: provisional change for merging "doced" state into the "dock side" enum.
