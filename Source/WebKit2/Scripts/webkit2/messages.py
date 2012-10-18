@@ -129,8 +129,8 @@ def message_to_struct_declaration(message):
     result.append('struct %s : %s' % (message.name, base_class(message)))
     result.append(' {\n')
     result.append('    static const Kind messageID = %s;\n' % message.id())
-    result.append('    static const char const* receiverName() { return messageReceiverName(); }\n')
-    result.append('    static const char const* name() { return "%s"; }\n' % message.name)
+    result.append('    static const char* receiverName() { return messageReceiverName(); }\n')
+    result.append('    static const char* name() { return "%s"; }\n' % message.name)
     result.append('\n')
     if message.reply_parameters != None:
         if message.has_attribute(DELAYED_ATTRIBUTE):
@@ -284,7 +284,7 @@ def generate_messages_header(file):
 
     result.append('namespace Messages {\nnamespace %s {\n' % receiver.name)
     result.append('\n')
-    result.append('static inline const char const* messageReceiverName()\n')
+    result.append('static inline const char* messageReceiverName()\n')
     result.append('{\n')
     result.append('    return "%s";\n' % receiver.name)
     result.append('}\n')

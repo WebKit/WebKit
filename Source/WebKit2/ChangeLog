@@ -1,5 +1,14 @@
 2012-10-18  Anders Carlsson  <andersca@apple.com>
 
+        Build fix.
+
+        * Scripts/webkit2/messages.py:
+        (message_to_struct_declaration):
+        (generate_messages_header):
+        * Scripts/webkit2/messages_unittest.py:
+
+2012-10-18  Anders Carlsson  <andersca@apple.com>
+
         Generated messages should have a receiver name and a name
         https://bugs.webkit.org/show_bug.cgi?id=99740
 
