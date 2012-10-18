@@ -199,6 +199,7 @@ fast/dom/shadow/content-element-outside-shadow.html
 fast/dom/shadow/content-element-outside-shadow-style.html
 fast/dom/shadow/content-element-in-media-element.html
 fast/dom/shadow/content-element-in-meter-element.html
+fast/dom/shadow/content-reprojection-dynamic.html
 fast/dom/shadow/drop-event-for-input-in-shadow.html
 fast/dom/shadow/drop-event-in-shadow.html
 fast/dom/shadow/elements-in-frameless-document.html

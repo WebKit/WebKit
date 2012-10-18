@@ -1,3 +1,13 @@
+2012-10-18  Nandor Huszka  <hnandor@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening
+
+        Skipping a test, remove unnecessary expected files.
+
+        * platform/qt-5.0/fast/forms/box-shadow-override-expected.png: Removed.
+        * platform/qt-5.0/fast/forms/box-shadow-override-expected.txt: Removed.
+        * platform/qt/TestExpectations:
+
 2012-10-18  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] Gardening after r131640
