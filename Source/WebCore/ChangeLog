@@ -1,3 +1,23 @@
+2012-10-17  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Destroy leveldb directory if unknown schema is detected
+        https://bugs.webkit.org/show_bug.cgi?id=99636
+
+        Reviewed by Tony Chang.
+
+        chromium browser test in progress at
+        https://codereview.chromium.org/11196029
+
+        * Modules/indexeddb/IDBLevelDBBackingStore.cpp:
+        (WebCore):
+        (WebCore::isSchemaKnown):
+        Return true when the schema key doesn't exist because new databases
+        won't have one.
+
+        (WebCore::setUpMetadata):
+        (WebCore::IDBLevelDBBackingStore::open):
+        Piggy-back on existing leveldb::destroy code.
+
 2012-10-17  Arpita Bahuguna  <arpitabahuguna@gmail.com>
 
         Incorrect rendering of borders on <col> with span > 1

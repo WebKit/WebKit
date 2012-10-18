@@ -146,9 +146,18 @@ public:
     virtual const char* name() const { return "idb_cmp1"; }
 };
 
+const int64_t latestSchemaVersion = 1;
+static bool isSchemaKnown(LevelDBDatabase* db)
+{
+    int64_t schemaVersion = 0;
+    const Vector<char> metaDataKey = SchemaVersionKey::encode();
+    if (!getInt(db, metaDataKey, schemaVersion))
+        return true;
+    return schemaVersion <= latestSchemaVersion;
+}
+
 static bool setUpMetadata(LevelDBDatabase* db, const String& origin)
 {
-    const int64_t latestSchemaVersion = 1;
     const Vector<char> metaDataKey = SchemaVersionKey::encode();
 
     int64_t schemaVersion = 0;
@@ -157,6 +166,7 @@ static bool setUpMetadata(LevelDBDatabase* db, const String& origin)
         if (!putInt(db, metaDataKey, latestSchemaVersion))
             return false;
     } else {
+        ASSERT(schemaVersion <= latestSchemaVersion);
         if (!schemaVersion) {
             schemaVersion = latestSchemaVersion;
             RefPtr<LevelDBTransaction> transaction = LevelDBTransaction::create(db);
@@ -248,8 +258,11 @@ PassRefPtr<IDBBackingStore> IDBLevelDBBackingStore::open(SecurityOrigin* securit
         String path = pathByAppendingComponent(pathBase, securityOrigin->databaseIdentifier() + ".indexeddb.leveldb");
 
         db = LevelDBDatabase::open(path, comparator.get());
+        bool knownSchema = isSchemaKnown(db.get());
+        if (!knownSchema)
+            LOG_ERROR("IndexedDB backing store had unknown schema, treating it as failure to open");
 
-        if (!db) {
+        if (!db || !knownSchema) {
             LOG_ERROR("IndexedDB backing store open failed, attempting cleanup");
             bool success = LevelDBDatabase::destroy(path);
             if (!success) {
