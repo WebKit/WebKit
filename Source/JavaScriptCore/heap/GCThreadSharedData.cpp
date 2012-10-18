@@ -61,13 +61,16 @@ GCThreadSharedData::GCThreadSharedData(JSGlobalData* globalData)
     , m_parallelMarkersShouldExit(false)
     , m_blocksToCopy(globalData->heap.m_blockSnapshot)
     , m_copyIndex(0)
+    , m_numberOfActiveGCThreads(0)
+    , m_gcThreadsShouldWait(false)
     , m_currentPhase(NoPhase)
 {
     m_copyLock.Init();
 #if ENABLE(PARALLEL_GC)
     // Grab the lock so the new GC threads can be properly initialized before they start running.
-    MutexLocker locker(m_markingLock);
+    MutexLocker locker(m_phaseLock);
     for (unsigned i = 1; i < Options::numberOfGCMarkers(); ++i) {
+        m_numberOfActiveGCThreads++;
         SlotVisitor* slotVisitor = new SlotVisitor(*this);
         CopyVisitor* copyVisitor = new CopyVisitor(*this);
         GCThread* newThread = new GCThread(*this, slotVisitor, copyVisitor);
@@ -75,6 +78,10 @@ GCThreadSharedData::GCThreadSharedData(JSGlobalData* globalData)
         newThread->initializeThreadID(threadID);
         m_gcThreads.append(newThread);
     }
+
+    // Wait for all the GCThreads to get to the right place.
+    while (m_numberOfActiveGCThreads)
+        m_activityCondition.wait(m_phaseLock);
 #endif
 }
 
@@ -87,6 +94,7 @@ GCThreadSharedData::~GCThreadSharedData()
         MutexLocker phaseLocker(m_phaseLock);
         ASSERT(m_currentPhase == NoPhase);
         m_parallelMarkersShouldExit = true;
+        m_gcThreadsShouldWait = false;
         m_currentPhase = Exit;
         m_phaseCondition.broadcast();
     }
@@ -115,24 +123,44 @@ void GCThreadSharedData::reset()
     }
 }
 
+void GCThreadSharedData::startNextPhase(GCPhase phase)
+{
+    MutexLocker phaseLocker(m_phaseLock);
+    ASSERT(!m_gcThreadsShouldWait);
+    ASSERT(m_currentPhase == NoPhase);
+    m_gcThreadsShouldWait = true;
+    m_currentPhase = phase;
+    m_phaseCondition.broadcast();
+}
+
+void GCThreadSharedData::endCurrentPhase()
+{
+    ASSERT(m_gcThreadsShouldWait);
+    MutexLocker locker(m_phaseLock);
+    m_currentPhase = NoPhase;
+    m_gcThreadsShouldWait = false;
+    m_phaseCondition.broadcast();
+    while (m_numberOfActiveGCThreads)
+        m_activityCondition.wait(m_phaseLock);
+}
+
 void GCThreadSharedData::didStartMarking()
 {
     MutexLocker markingLocker(m_markingLock);
-    MutexLocker phaseLocker(m_phaseLock);
-    ASSERT(m_currentPhase == NoPhase);
-    m_currentPhase = Mark;
     m_parallelMarkersShouldExit = false;
-    m_phaseCondition.broadcast();
+    startNextPhase(Mark);
 }
 
 void GCThreadSharedData::didFinishMarking()
 {
-    MutexLocker markingLocker(m_markingLock);
-    MutexLocker phaseLocker(m_phaseLock);
+    {
+        MutexLocker markingLocker(m_markingLock);
+        m_parallelMarkersShouldExit = true;
+        m_markingCondition.broadcast();
+    }
+
     ASSERT(m_currentPhase == Mark);
-    m_currentPhase = NoPhase;
-    m_parallelMarkersShouldExit = true;
-    m_markingCondition.broadcast();
+    endCurrentPhase();
 }
 
 void GCThreadSharedData::didStartCopying()
@@ -150,18 +178,13 @@ void GCThreadSharedData::didStartCopying()
     for (size_t i = 0; i < m_gcThreads.size(); i++)
         m_gcThreads[i]->copyVisitor()->startCopying();
 
-    MutexLocker locker(m_phaseLock);
-    ASSERT(m_currentPhase == NoPhase);
-    m_currentPhase = Copy;
-    m_phaseCondition.broadcast(); 
+    startNextPhase(Copy);
 }
 
 void GCThreadSharedData::didFinishCopying()
 {
-    MutexLocker locker(m_phaseLock);
     ASSERT(m_currentPhase == Copy);
-    m_currentPhase = NoPhase;
-    m_phaseCondition.broadcast();
+    endCurrentPhase();
 }
 
 } // namespace JSC

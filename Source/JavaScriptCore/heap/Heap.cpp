@@ -612,10 +612,9 @@ void Heap::copyBackingStores()
     m_storageSpace.startedCopying();
     if (m_storageSpace.shouldDoCopyPhase()) {
         m_sharedData.didStartCopying();
-        CopyVisitor& visitor = m_copyVisitor;
-        visitor.startCopying();
-        visitor.copyFromShared();
-        visitor.doneCopying();
+        m_copyVisitor.startCopying();
+        m_copyVisitor.copyFromShared();
+        m_copyVisitor.doneCopying();
         // We need to wait for everybody to finish and return their CopiedBlocks 
         // before signaling that the phase is complete.
         m_storageSpace.doneCopying();

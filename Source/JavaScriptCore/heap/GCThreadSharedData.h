@@ -74,6 +74,8 @@ private:
     friend class CopyVisitor;
 
     void getNextBlocksToCopy(size_t&, size_t&);
+    void startNextPhase(GCPhase);
+    void endCurrentPhase();
 
     JSGlobalData* m_globalData;
     CopiedSpace* m_copiedSpace;
@@ -100,6 +102,9 @@ private:
 
     Mutex m_phaseLock;
     ThreadCondition m_phaseCondition;
+    ThreadCondition m_activityCondition;
+    unsigned m_numberOfActiveGCThreads;
+    bool m_gcThreadsShouldWait;
     GCPhase m_currentPhase;
 
     ListableHandler<WeakReferenceHarvester>::List m_weakReferenceHarvesters;

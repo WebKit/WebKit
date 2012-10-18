@@ -1,3 +1,46 @@
+2012-10-18  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Race condition between GCThread and main thread during copying phase
+        https://bugs.webkit.org/show_bug.cgi?id=99641
+
+        Reviewed by Filip Pizlo.
+
+        When a GCThread returns from copyFromShared(), it then calls doneCopying(), which returns 
+        its borrowed CopiedBlock to the CopiedSpace. This final block allows the CopiedSpace to 
+        continue and finish the cleanup of the copying phase. However, the GCThread can loop back 
+        around, see that m_currentPhase is still "Copy", and try to go through the copying phase again. 
+        This can cause all sorts of issues. To fix this, we should add a cyclic barrier to GCThread::waitForNextPhase().
+
+        * heap/GCThread.cpp:
+        (JSC::GCThread::waitForNextPhase): All GCThreads will wait when they finish one iteration until the main thread 
+        notifies them to move down to the second while loop, where they wait for the next GCPhase to start. They also 
+        decrement the m_numberOfActiveGCThreads counter as they begin to wait for the next phase and increment it as 
+        they enter the next phase. This allows the main thread to wait in endCurrentPhase() until all the threads have 
+        finished the current phase and are waiting on the next phase to begin. Without the counter, there would be 
+        no way to ensure that every thread was available for each GCPhase.
+        (JSC::GCThread::gcThreadMain): We now use the m_phaseLock to synchronize with the main thread when we're being created.
+        * heap/GCThreadSharedData.cpp:
+        (JSC::GCThreadSharedData::GCThreadSharedData): As we create each GCThread, we increment the m_numberOfActiveGCThreads
+        counter. When we are done creating the threads, we wait until they're all waiting for the next GCPhase. This prevents 
+        us from leaving some GCThreads behind during the first GCPhase, which could hurt us on our very short-running 
+        benchmarks (e.g. SunSpider).
+        (JSC::GCThreadSharedData::~GCThreadSharedData):
+        (JSC::GCThreadSharedData::startNextPhase): We atomically swap the two flags, m_gcThreadsShouldWait and m_currentPhase, 
+        so that if the threads finish very quickly, they will wait until the main thread is ready to end the current phase.
+        (JSC::GCThreadSharedData::endCurrentPhase): Here atomically we swap the two flags again to allow the threads to 
+        advance to waiting on the next GCPhase. We wait until all of the GCThreads have settled into the second wait loop
+        before allowing the main thread to continue. This prevents us from leaving one of the GCThreads stuck in the first 
+        wait loop if we were to call startNextPhase() before it had time to wake up and move on to the second wait loop.
+        (JSC):
+        (JSC::GCThreadSharedData::didStartMarking): We now use startNextPhase() to properly swap the flags.
+        (JSC::GCThreadSharedData::didFinishMarking): Ditto for endCurrentPhase().
+        (JSC::GCThreadSharedData::didStartCopying): Ditto.
+        (JSC::GCThreadSharedData::didFinishCopying): Ditto.
+        * heap/GCThreadSharedData.h:
+        (GCThreadSharedData):
+        * heap/Heap.cpp: 
+        (JSC::Heap::copyBackingStores): No reason to use the extra reference.
+
 2012-10-18  Pablo Flouret  <pablof@motorola.com>
 
         Implement css3-conditional's @supports rule
