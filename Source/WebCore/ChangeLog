@@ -1,3 +1,9 @@
+2012-10-17  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix the build after r131701.
+
+        * WebCore.exp.in:
+
 2012-10-17  Hayato Ito  <hayato@chromium.org>
 
         Content element does not expose distributedNodes property.
