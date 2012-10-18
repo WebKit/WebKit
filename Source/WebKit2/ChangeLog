@@ -1,3 +1,15 @@
+2012-10-18  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [WK2] Update test expectation for the python message test after r131700
+        https://bugs.webkit.org/show_bug.cgi?id=99689
+
+        Reviewed by Gyuyoung Kim.
+
+        Need to update test expectations about including headers and forwarding
+        declarations on derived sources for ipc message. (after r131700 : build fix)
+
+        * Scripts/webkit2/messages_unittest.py:
+
 2012-10-18  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Remove '_' prefix from private API structure names

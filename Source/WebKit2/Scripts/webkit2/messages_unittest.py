@@ -315,6 +315,7 @@ _expected_header = """/*
 
 #include "Arguments.h"
 #include "Connection.h"
+#include "MessageEncoder.h"
 #include "MessageID.h"
 #include "Plugin.h"
 #include <WebCore/KeyboardEvent.h>
@@ -324,7 +325,6 @@ _expected_header = """/*
 
 namespace CoreIPC {
     class Connection;
-    class MessageEncoder;
     class DummyType;
     class MachPort;
 }
