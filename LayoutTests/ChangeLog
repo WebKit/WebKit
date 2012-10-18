@@ -1,3 +1,17 @@
+2012-10-18  Kent Tamura  <tkent@chromium.org>
+
+        Set min-width property instead of width property for date/time fields
+        https://bugs.webkit.org/show_bug.cgi?id=99673
+
+        Reviewed by Hajime Morita.
+
+        Update affected test results. Non-Mac chromium ports already have lines
+        for them in TestExpectations.
+
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png:
+
 2012-10-18  MORITA Hajime  <morrita@google.com>
 
         Assertion failure at TreeScopeAdopter::moveNodeToNewDocument()

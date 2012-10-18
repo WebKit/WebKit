@@ -68,7 +68,7 @@ PassRefPtr<RenderStyle> DateTimeSymbolicFieldElement::customStyleForRenderer()
     float maxiumWidth = style->font().width(visibleEmptyValue());
     for (unsigned index = 0; index < m_symbols.size(); ++index)
         maxiumWidth = std::max(maxiumWidth, style->font().width(m_symbols[index]));
-    style->setWidth(Length(maxiumWidth, Fixed));
+    style->setMinWidth(Length(maxiumWidth, Fixed));
     return style.release();
 }
 
