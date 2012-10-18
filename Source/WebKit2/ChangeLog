@@ -1,3 +1,192 @@
+2012-10-17  Darin Adler  <darin@apple.com>
+
+        Make subclassing of WKView safer by namespacing methods and eliminating its use as an observer and delegate
+        https://bugs.webkit.org/show_bug.cgi?id=99251
+
+        Reviewed by Anders Carlsson.
+
+        Apps that subclass WKView should be able to freely choose method names without conflicting with a name
+        we chose to use internally in WKView's own implementation. Thus, it's a good idea to add a "_wk_" prefix
+        to any method names that are solely for internal WebKit2 use. Exceptions to this are method names that
+        are predetermined by AppKit, or names that are part of API or SPI.
+
+        Apps that subclass WKView should be able to add observers or use the WKView as a delegate without
+        conflicting with similar use in the WKView implementations. Thus, changed to use separate block-style
+        observers for the window notifications and a separate delegate for the tool tip implementation.
+
+        The challenging aspect of this patch was to research which method names were determined by AppKit.
+        There's nothing in the WebKit2 source code that necessarily states this explicitly.
+
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::createDrawingAreaProxy): Updated for new method name.
+        (WebKit::PageClientImpl::scrollView): Ditto.
+        (WebKit::PageClientImpl::isViewFocused): Ditto.
+        (WebKit::PageClientImpl::colorSpace): Ditto.
+        (WebKit::PageClientImpl::processDidCrash): Ditto.
+        (WebKit::PageClientImpl::pageClosed): Ditto.
+        (WebKit::PageClientImpl::didRelaunchProcess): Ditto.
+        (WebKit::PageClientImpl::toolTipChanged): Ditto.
+        (WebKit::PageClientImpl::setCursor): Ditto.
+        (WebKit::PageClientImpl::interpretKeyEvent): Ditto.
+        (WebKit::PageClientImpl::setDragImage): Ditto.
+        (WebKit::PageClientImpl::setPromisedData): Ditto.
+        (WebKit::PageClientImpl::updateTextInputState): Ditto.
+        (WebKit::PageClientImpl::resetTextInputState): Ditto.
+        (WebKit::PageClientImpl::convertToDeviceSpace): Ditto.
+        (WebKit::PageClientImpl::convertToUserSpace): Ditto.
+        (WebKit::PageClientImpl::doneWithKeyEvent): Ditto.
+        (WebKit::PageClientImpl::setFindIndicator): Ditto.
+        (WebKit::PageClientImpl::accessibilityWebProcessTokenReceived): Ditto.
+        (WebKit::PageClientImpl::enterAcceleratedCompositingMode): Ditto.
+        (WebKit::PageClientImpl::exitAcceleratedCompositingMode): Ditto.
+        (WebKit::PageClientImpl::updateAcceleratedCompositingMode): Ditto.
+        (WebKit::PageClientImpl::pluginFocusOrWindowFocusChanged): Ditto.
+        (WebKit::PageClientImpl::setPluginComplexTextInputState): Ditto.
+        (WebKit::PageClientImpl::didChangeScrollbarsForMainFrame): Ditto.
+        (WebKit::PageClientImpl::didCommitLoadForMainFrame): Ditto.
+        (WebKit::PageClientImpl::didFinishLoadingDataForCustomRepresentation): Ditto.
+        (WebKit::PageClientImpl::customRepresentationZoomFactor): Ditto.
+        (WebKit::PageClientImpl::setCustomRepresentationZoomFactor): Ditto.
+        (WebKit::PageClientImpl::findStringInCustomRepresentation): Ditto.
+        (WebKit::PageClientImpl::countStringMatchesInCustomRepresentation): Ditto.
+        (WebKit::PageClientImpl::executeSavedCommandBySelector): Ditto.
+        (WebKit::PageClientImpl::showDictationAlternativeUI): Ditto.
+
+        * UIProcess/API/mac/WKView.mm: Simplified imports a bit. No need for conditional imports of basic classes
+        like NSTextAlternatives.h and NSAttributedString.h. No need to put internal headers in a separate paragraph.
+        Added WKToolTipDelegate class and added _toolTipDelegate and _observers fields to WKViewData.
+        (-[WKView becomeFirstResponder]): Updated for new method name.
+        (-[WKView resignFirstResponder]): Ditto.
+        (-[WKView setFrameSize:]): Ditto.
+        (-[WKView _wk_updateWindowAndViewFrames]): Ditto.
+        (-[WKView renewGState]): Ditto.
+        (-[WKView _wk_setPluginComplexTextInputState:]): Ditto.
+        (validateCommandCallback): Ditto.
+        (-[WKView displayIfNeeded]): Fixed a comment typo.
+        (-[WKView _wk_setMouseDownEvent:]): Updated for new method name.
+        (-[WKView mouseDown:]): Ditto.
+        (-[WKView mouseUp:]): Ditto.
+        (-[WKView acceptsFirstMouse:]): Ditto.
+        (-[WKView shouldDelayWindowOrderingForEvent:]): Ditto.
+        (-[WKView _wk_handleStyleKeyEquivalent:]): Ditto.
+        (-[WKView performKeyEquivalent:]): Ditto.
+        (-[WKView _wk_disableComplexTextInputIfNecessary]): Ditto.
+        (-[WKView _wk_handlePluginComplexTextInputKeyDown:]): Ditto.
+        (-[WKView _wk_tryHandlePluginComplexTextInputKeyDown:]): Ditto.
+        (-[WKView keyDown:]): Ditto.
+        (-[WKView _wk_executeSavedKeypressCommands]): Ditto.
+        (-[WKView _wk_notifyInputContextAboutDiscardedComposition]): Ditto.
+        (-[WKView selectedRange]): Ditto.
+        (-[WKView hasMarkedText]): Ditto.
+        (-[WKView unmarkText]): Ditto.
+        (-[WKView setMarkedText:selectedRange:replacementRange:]): Ditto.
+        (-[WKView markedRange]): Ditto.
+        (-[WKView attributedSubstringForProposedRange:actualRange:]): Ditto.
+        (-[WKView characterIndexForPoint:]): Ditto.
+        (-[WKView firstRectForCharacterRange:actualRange:]): Ditto.
+        (-[WKView _wk_updateWindowVisibility]): Ditto.
+        (-[WKView _wk_updateWindowObserversForWindow:]): Replaced the two separate methods
+        addWindowObserversForWindow and removeWindowObservers with this single method, since
+        the two are only used in tandem. Changed code to use blocks for the observers and to
+        keep the observers in an array.
+        (-[WKView viewWillMoveToWindow:]): Updated to use _wk_updateWindowObserversForWindow.
+        (-[WKView viewDidMoveToWindow]): Updated for new method names.
+        (-[WKView _wk_windowScreenDidChange]): Ditto.
+        (-[WKView _wk_windowDidBecomeKey:]): Ditto.
+        (-[WKView _wk_windowDidChangeScreen:]): Ditto.
+        (-[WKView _wk_windowDidResignKey:]): Ditto.
+        (-[WKView _wk_windowDidMiniaturize:]): Ditto.
+        (-[WKView _wk_windowDidDeminiaturize:]): Ditto.
+        (-[WKView _wk_windowDidMove:]): Ditto.
+        (-[WKView _wk_windowDidResize:]): Ditto.
+        (-[WKView _wk_windowDidOrderOffScreen:]): Ditto.
+        (-[WKView _wk_windowDidOrderOnScreen:]): Ditto.
+        (-[WKView _wk_windowDidChangeBackingProperties:]): Ditto.
+        (-[WKView drawRect:]): Ditto.
+        (-[WKView _wk_accessibilityRegisterUIProcessTokens]): Ditto.
+        (-[WKView _wk_updateRemoteAccessibilityRegistration:]): Ditto.
+        (-[WKView _wk_postFakeMouseMovedEventForFlagsChangedEvent:]): Ditto.
+        (-[WKView _wk_intrinsicDeviceScaleFactor]): Ditto.
+        (-[WKView _wk_setDrawingAreaSize:]): Ditto.
+        (-[WKView _wk_shouldUseTiledDrawingArea]): Ditto.
+        (-[WKView _wk_createDrawingAreaProxy]): Ditto.
+        (-[WKView _wk_isFocused]): Ditto.
+        (-[WKView _wk_processDidCrash]): Ditto.
+        (-[WKView _wk_pageClosed]): Ditto.
+        (-[WKView _wk_didRelaunchProcess]): Ditto.
+        (-[WKView _wk_setCursor:]): Ditto.
+        (-[WKView _wk_setUserInterfaceItemState:enabled:state:]): Ditto.
+        (-[WKView _wk_tryPostProcessPluginComplexTextInputKeyDown:]): Ditto.
+        (-[WKView _wk_doneWithKeyEvent:eventWasHandled:]): Ditto.
+        (-[WKView _wk_interpretKeyEvent:savingCommandsTo:]): Ditto.
+        (-[WKView _wk_convertToDeviceSpace:]): Ditto.
+        (-[WKView _wk_convertToUserSpace:]): Ditto.
+        (-[WKView _wk_addTrackingRect:owner:userData:assumeInside:useTrackingNum:]): Ditto.
+        (-[WKView _wk_addTrackingRects:owner:userDataList:assumeInsideList:trackingNums:count:]): Ditto.
+        (-[WKView _wk_removeTrackingRects:count:]): Ditto.
+        (-[WKView _wk_sendToolTipMouseExited]): Ditto.
+        (-[WKView _wk_sendToolTipMouseEntered]): Ditto.
+        (-[WKView _wk_toolTipChangedFrom:to:]): Changed to use the data object as the tool tip owner so
+        the delegate method can be there rather than on WKView.
+        (-[WKView _wk_setFindIndicator:fadeOut:animate:]): Updated for new method names.
+        (-[WKView _wk_enterAcceleratedCompositingMode:]): Ditto.
+        (-[WKView _wk_exitAcceleratedCompositingMode]): Ditto.
+        (-[WKView _wk_updateAcceleratedCompositingMode:]): Ditto.
+        (-[WKView _wk_setAccessibilityWebProcessToken:]): Ditto.
+        (-[WKView _wk_pluginFocusOrWindowFocusChanged:pluginComplexTextInputIdentifier:]): Ditto.
+        (-[WKView _wk_setPluginComplexTextInputState:pluginComplexTextInputIdentifier:]): Ditto.
+        (-[WKView _wk_setPageHasCustomRepresentation:]): Ditto.
+        (-[WKView _wk_didFinishLoadingDataForCustomRepresentationWithSuggestedFilename:dataReference:]): Ditto.
+        (-[WKView _wk_customRepresentationZoomFactor]): Ditto.
+        (-[WKView _wk_setCustomRepresentationZoomFactor:]): Ditto.
+        (-[WKView _wk_findStringInCustomRepresentation:withFindOptions:maxMatchCount:]): Ditto.
+        (-[WKView _wk_countStringMatchesInCustomRepresentation:withFindOptions:maxMatchCount:]): Ditto.
+        (-[WKView _wk_setDragImage:at:linkDrag:]): Ditto.
+        (-[WKView _wk_setPromisedData:withFileName:withExtension:withTitle:withURL:withVisibleURL:withArchive:forPasteboard:]): Ditto.
+        (-[WKView _wk_updateSecureInputState]): Ditto.
+        (-[WKView _wk_updateTextInputStateIncludingSecureInputState:]): Ditto.
+        (-[WKView _wk_resetTextInputState]): Ditto.
+        (-[WKView _wk_didChangeScrollbarsForMainFrame]): Ditto.
+        (-[WKView _wk_hasFullScreenWindowController]): Ditto.
+        (-[WKView _wk_fullScreenWindowController]): Ditto.
+        (-[WKView _wk_closeFullScreenWindowController]): Ditto.
+        (-[WKView _wk_executeSavedCommandBySelector:]): Ditto.
+        (-[WKView _wk_cacheWindowBottomCornerRect]): Ditto.
+        (-[WKView _wk_spellCheckerDocumentTag]): Ditto.
+        (-[WKView _wk_handleAcceptedAlternativeText:]): Ditto.
+        (-[WKView _wk_setSuppressVisibilityUpdates:]): Ditto.
+        (-[WKView _wk_suppressVisibilityUpdates]): Ditto.
+        (-[WKView _wk_registerDraggedTypes]): Ditto.
+        (-[WKView initWithFrame:contextRef:pageGroupRef:relatedToPage:]): Ditto.
+        (-[WKView wantsUpdateLayer]): Ditto.
+        (-[WKView enableFrameSizeUpdates]): Ditto.
+        (-[WKToolTipDelegate initWithPage:]): Added.
+        (-[WKToolTipDelegate view:stringForToolTip:point:userData:]): Added.
+
+
+        * UIProcess/API/mac/WKViewInternal.h: Changed all internal method names to have a _wk_ prefix.
+        * UIProcess/API/mac/WKViewPrivate.h: Expose the _shouldUseTiledDrawingArea method formally as SPI
+        since Safari is currently overriding this method.
+
+        * UIProcess/mac/CorrectionPanel.mm:
+        (WebKit::CorrectionPanel::recordAutocorrectionResponse): Updated for new method names.
+        (WebKit::CorrectionPanel::handleAcceptedReplacement): Ditto.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController enterFullScreen:]): Updated for new method names.
+        (-[WKFullScreenWindowController exitFullScreen]): Ditto.
+        (-[WKFullScreenWindowController _startEnterFullScreenAnimationWithDuration:]): Ditto.
+        (-[WKFullScreenWindowController _startExitFullScreenAnimationWithDuration:]): Ditto.
+
+        * UIProcess/mac/WebFullScreenManagerProxyMac.mm:
+        (WebKit::WebFullScreenManagerProxy::invalidate): Updated for new method names.
+        (WebKit::WebFullScreenManagerProxy::close): Ditto.
+        (WebKit::WebFullScreenManagerProxy::isFullScreen): Ditto.
+        (WebKit::WebFullScreenManagerProxy::enterFullScreen): Ditto.
+        (WebKit::WebFullScreenManagerProxy::exitFullScreen): Ditto.
+        (WebKit::WebFullScreenManagerProxy::beganEnterFullScreen): Ditto.
+        (WebKit::WebFullScreenManagerProxy::beganExitFullScreen): Ditto.
+
 2012-10-15  Anders Carlsson  <andersca@apple.com>
 
         Add MessageEncoder and MessageDecoder subclasses

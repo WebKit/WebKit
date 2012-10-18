@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,5 +49,9 @@
 
 - (void)performDictionaryLookupAtCurrentMouseLocation;
 + (void)hideWordDefinitionWindow;
+
+// FIXME: This method currently overridden by Safari to turn tiled drawing area on.
+// We should come up with a cleaner SPI or API for this.
+- (BOOL)_shouldUseTiledDrawingArea;
 
 @end
