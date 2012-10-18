@@ -1,3 +1,10 @@
+2012-10-18  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, rebaseline a slider test on Mac.
+        I think I grabbed the baseline at the wrong time or from the wrong bot yesterday.
+
+        * platform/mac/media/video-playing-and-pause-expected.txt:
+
 2012-10-18  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] Handle special case "empty" shapes
