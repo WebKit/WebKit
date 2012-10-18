@@ -1,0 +1,41 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
+resources/cache-expired-subresource.webarchive - willSendRequest <NSURLRequest URL resources/cache-expired-subresource.webarchive, main document URL cache-expired-subresource.html, http method GET> redirectResponse (null)
+main frame - didFinishDocumentLoadForFrame
+<unknown> - didFinishLoading
+resources/cache-expired-subresource.webarchive - didReceiveResponse <NSURLResponse resources/cache-expired-subresource.webarchive, http status code 0>
+frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
+http://localhost/pink-bullet.png - willSendRequest <NSURLRequest URL http://localhost/pink-bullet.png, main document URL cache-expired-subresource.html, http method GET> redirectResponse (null)
+frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
+resources/cache-expired-subresource.webarchive - didFinishLoading
+http://localhost/pink-bullet.png - didReceiveResponse <NSURLResponse http://localhost/test.php, http status code 200>
+http://localhost/pink-bullet.png - didFinishLoading
+frame "<!--framePath //<!--frame0-->-->" - didHandleOnloadEventsForFrame
+main frame - didHandleOnloadEventsForFrame
+frame "<!--framePath //<!--frame0-->-->" - didFinishLoadForFrame
+main frame - didFinishLoadForFrame
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderPartObject {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
+        layer at (0,0) size 300x150
+          RenderView at (0,0) size 300x150
+        layer at (0,0) size 300x150
+          RenderBlock {HTML} at (0,0) size 300x150
+            RenderBody {BODY} at (8,8) size 284x134
+              RenderText {#text} at (0,0) size 233x18
+                text run at (0,0) width 233: "This page has a small pink circle in it"
+              RenderBR {BR} at (233,14) size 0x0
+              RenderImage {IMG} at (0,18) size 11x9
+              RenderBR {BR} at (11,27) size 0x0
+              RenderText {#text} at (0,27) size 159x18
+                text run at (0,27) width 104: "See, right there! "
+                text run at (104,27) width 55: "A circle!"
+              RenderBR {BR} at (159,41) size 0x0
+      RenderBR {BR} at (304,154) size 0x0
+      RenderText {#text} at (0,154) size 777x36
+        text run at (0,154) width 777: "This tests that loading a webarchive with a subresource that has an expired cache header does not attempt to hit the network"
+        text run at (0,172) width 301: "for resource, and actually uses the archived data"
