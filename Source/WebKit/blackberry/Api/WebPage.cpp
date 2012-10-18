@@ -1160,8 +1160,6 @@ void WebPagePrivate::setLoadState(LoadState state)
             if (m_backingStore->d->renderVisibleContents() && !m_backingStore->d->isSuspended() && !m_backingStore->d->shouldDirectRenderingToWindow())
                 m_backingStore->d->blitVisibleContents();
 
-            zoomToInitialScaleOnLoad();
-
             // Update cursor status.
             updateCursor();
 

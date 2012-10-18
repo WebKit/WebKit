@@ -1,3 +1,31 @@
+2012-10-17  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Possible redundant zoomToInitialScaleOnLoad() in WebPagePrivate::setLoadState
+        https://bugs.webkit.org/show_bug.cgi?id=99624
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Arvid Nilsson
+
+        PR: 225981
+        Several reasons to eliminate the ancient unnecessary
+        zoomToInitialScaleOnLoad() in WebPagePrivate::setLoadState committed:
+        - At this point, we have only committed the data we received.
+        - For the new load, we haven't started parsing the tokens and building
+          the DOM tree and the first layout will happen after that.
+        - For the load restored from cache, the first layout will happen after
+          setLoadState committed which is called by
+          FrameLoader::dispatchDidCommitLoad().
+        - zoomToInitialScaleOnLoad() can still be called after the first
+          layout finished.
+        - zoomToInitialScaleOnLoad() is expensive and it will boost the load
+          performance after the removal.
+        - Removal of this can fix some weird rendering defects on yahoo.com,
+          maps.google.com, news.qq.com and so on during load and rotation
+          mentioned on the PR.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+
 2012-10-17  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Prevent focus zoom on non-userscalable pages.
