@@ -66,8 +66,9 @@ PageViewportController::PageViewportController(WebKit::WebPageProxy* proxy, Page
     , m_hadUserInteraction(false)
     , m_effectiveScale(1)
 {
-    // Initializing Viewport Raw Attributes to avoid random negative scale factors
+    // Initializing Viewport Raw Attributes to avoid random negative or infinity scale factors
     // if there is a race condition between the first layout and setting the viewport attributes for the first time.
+    m_rawAttributes.devicePixelRatio = 1;
     m_rawAttributes.initialScale = 1;
     m_rawAttributes.minimumScale = 1;
     m_rawAttributes.maximumScale = 1;

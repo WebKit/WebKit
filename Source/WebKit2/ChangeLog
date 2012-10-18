@@ -1,3 +1,18 @@
+2012-10-18  Yael Aharon  <yael.aharon@intel.com>
+
+        PageViewportController::m_rawAttributes.devicePixelRatio is not initialized
+        https://bugs.webkit.org/show_bug.cgi?id=99751
+
+        Reviewed by Antonio Gomes.
+
+        PageViewportController::m_rawAttributes.devicePixelRatio needs to be initialized.
+        Due to race condition, we could set the viewport attributes before the first layout.
+        If that happens, PageViewportController::m_rawAttributes.devicePixelRatio
+        is used without being initialized.
+
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::PageViewportController):
+
 2012-10-18  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Build fix after r131701 and r131777.
