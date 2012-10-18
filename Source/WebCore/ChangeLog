@@ -1,3 +1,24 @@
+2012-10-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r130411): Copying & pasting the first line of text can move caret to the end of text area
+        https://bugs.webkit.org/show_bug.cgi?id=99663
+
+        Reviewed by Enrica Casucci and Levi Weintraub.
+
+        The bug was caused by positionOnlyToBeUpdated's offset not being shifted correctly in
+        ReplaceSelectionCommand::mergeTextNodesAroundPosition. Suppose we have text nodes t1 and t2 and
+        positionOnlyToBeUpdated had offset k in t2. When t2 is merged into t1, positionOnlyToBeUpdated should be
+        moved to (t1, n + k) where n is the ORIGINAL length of t1 before t2 is merged. But we were using
+        the length after t2 is merged.
+
+        Fixed the bug by saving the original length of t1 and using that in the offset adjustment.
+        Also use the right offset.
+
+        Test: editing/pasteboard/copy-paste-first-line-in-textarea.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::mergeTextNodesAroundPosition):
+
 2012-10-18  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Invalid read from WebKit::DOMObjectCache::clearByFrame

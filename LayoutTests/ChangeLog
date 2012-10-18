@@ -1,3 +1,15 @@
+2012-10-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r130411): Copying & pasting the first line of text can move caret to the end of text area
+        https://bugs.webkit.org/show_bug.cgi?id=99663
+
+        Reviewed by Enrica Casucci and Levi Weintraub.
+
+        Add a regression test for copying and pasting the first line in a textarea with two lines of text.
+
+        * editing/pasteboard/copy-paste-first-line-in-textarea-expected.txt: Added.
+        * editing/pasteboard/copy-paste-first-line-in-textarea.html: Added.
+
 2012-10-18  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Re-enable gesture highlight layout tests, fix GestureLongPress regression.

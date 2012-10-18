@@ -1265,7 +1265,7 @@ void ReplaceSelectionCommand::mergeTextNodesAroundPosition(Position& position, P
             if (positionOnlyToBeUpdated.containerNode() == text)
                 positionOnlyToBeUpdated.moveToOffset(previous->length() + positionOnlyToBeUpdated.offsetInContainerNode());
             else if (positionOnlyToBeUpdated.containerNode() == previous)
-                positionOnlyToBeUpdated.moveToPosition(text, position.offsetInContainerNode());
+                positionOnlyToBeUpdated.moveToPosition(text, positionOnlyToBeUpdated.offsetInContainerNode());
         } else
             updatePositionForNodeRemoval(positionOnlyToBeUpdated, previous.get());
 
@@ -1273,13 +1273,14 @@ void ReplaceSelectionCommand::mergeTextNodesAroundPosition(Position& position, P
     }
     if (text->nextSibling() && text->nextSibling()->isTextNode()) {
         RefPtr<Text> next = toText(text->nextSibling());
-        insertTextIntoNode(text, text->length(), next->data());
+        unsigned originalLength = text->length();
+        insertTextIntoNode(text, originalLength, next->data());
 
         if (!positionIsOffsetInAnchor)
             updatePositionForNodeRemoval(position, next.get());
 
         if (positionOnlyToBeUpdatedIsOffsetInAnchor && positionOnlyToBeUpdated.containerNode() == next)
-            positionOnlyToBeUpdated.moveToPosition(text, text->length() + position.offsetInContainerNode());
+            positionOnlyToBeUpdated.moveToPosition(text, originalLength + positionOnlyToBeUpdated.offsetInContainerNode());
         else
             updatePositionForNodeRemoval(positionOnlyToBeUpdated, next.get());
 
