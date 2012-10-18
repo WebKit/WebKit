@@ -1,3 +1,19 @@
+2012-10-17  Elliott Sprehn  <esprehn@chromium.org>
+
+        Remove StyleContentType since it's not used anymore
+        https://bugs.webkit.org/show_bug.cgi?id=99659
+
+        Reviewed by Eric Seidel.
+
+        Remove StyleContentType enum since it's not used anymore and
+        make the is*() type checking methods on ContentData public.
+
+        No new tests needed, this is just deleting dead code.
+
+        * rendering/style/ContentData.h:
+        (ContentData):
+        * rendering/style/RenderStyleConstants.h:
+
 2012-10-17  Simon Fraser  <simon.fraser@apple.com>
 
         Create a GraphicsLayerUpdater class that will do periodic layer flushes for layer trees containing tile caches

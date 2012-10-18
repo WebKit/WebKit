@@ -53,7 +53,6 @@ public:
 
     virtual RenderObject* createRenderer(Document*, RenderStyle*) const = 0;
 
-    virtual StyleContentType type() const = 0;
     virtual PassOwnPtr<ContentData> clone() const;
 
     ContentData* next() const { return m_next.get(); }
@@ -74,6 +73,7 @@ public:
     StyleImage* image() { return m_image.get(); }
     void setImage(PassRefPtr<StyleImage> image) { m_image = image; }
 
+    virtual bool isImage() const OVERRIDE { return true; }
     virtual RenderObject* createRenderer(Document*, RenderStyle*) const OVERRIDE;
 
     virtual bool equals(const ContentData& data) const OVERRIDE
@@ -89,8 +89,6 @@ private:
     {
     }
 
-    virtual StyleContentType type() const { return CONTENT_OBJECT; }
-    virtual bool isImage() const { return true; }
     virtual PassOwnPtr<ContentData> cloneInternal() const
     {
         RefPtr<StyleImage> image = const_cast<StyleImage*>(this->image());
@@ -106,6 +104,7 @@ public:
     const String& text() const { return m_text; }
     void setText(const String& text) { m_text = text; }
 
+    virtual bool isText() const OVERRIDE { return true; }
     virtual RenderObject* createRenderer(Document*, RenderStyle*) const OVERRIDE;
 
     virtual bool equals(const ContentData& data) const OVERRIDE
@@ -121,8 +120,6 @@ private:
     {
     }
 
-    virtual StyleContentType type() const { return CONTENT_TEXT; }
-    virtual bool isText() const { return true; }
     virtual PassOwnPtr<ContentData> cloneInternal() const { return create(text()); }
 
     String m_text;
@@ -134,6 +131,7 @@ public:
     const CounterContent* counter() const { return m_counter.get(); }
     void setCounter(PassOwnPtr<CounterContent> counter) { m_counter = counter; }
 
+    virtual bool isCounter() const OVERRIDE { return true; }
     virtual RenderObject* createRenderer(Document*, RenderStyle*) const OVERRIDE;
 
 private:
@@ -142,8 +140,6 @@ private:
     {
     }
 
-    virtual StyleContentType type() const { return CONTENT_COUNTER; }
-    virtual bool isCounter() const { return true; }
     virtual PassOwnPtr<ContentData> cloneInternal() const
     {
         OwnPtr<CounterContent> counterData = adoptPtr(new CounterContent(*counter()));
@@ -166,6 +162,7 @@ public:
     QuoteType quote() const { return m_quote; }
     void setQuote(QuoteType quote) { m_quote = quote; }
 
+    virtual bool isQuote() const OVERRIDE { return true; }
     virtual RenderObject* createRenderer(Document*, RenderStyle*) const OVERRIDE;
 
     virtual bool equals(const ContentData& data) const OVERRIDE
@@ -181,8 +178,6 @@ private:
     {
     }
 
-    virtual StyleContentType type() const { return CONTENT_QUOTE; }
-    virtual bool isQuote() const { return true; }
     virtual PassOwnPtr<ContentData> cloneInternal() const { return create(quote()); }
 
     QuoteType m_quote;
