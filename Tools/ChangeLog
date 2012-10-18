@@ -1,3 +1,15 @@
+2012-10-18  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Reduce memory pressure during link time
+
+        Reviewed by Tor Arne Vestbø.
+
+        If possible always pass -fkeep-memory to the linker on i386. The
+        library has grown so big that we need this not only for i386 debug
+        builds but at least also for release.
+
+        * qmake/mkspecs/features/unix/default_post.prf:
+
 2012-10-17  Tor Arne Vestbø  <tor.arne.vestbo@digia.com>
 
         [Qt] Modularize documentation for QtWebKit
