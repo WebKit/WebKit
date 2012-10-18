@@ -72,6 +72,8 @@ config.kPlatforms = {
             'WebKit Mac10.6': {version: 'snowleopard'},
             'WebKit Mac10.6 (dbg)': {version: 'snowleopard', debug: true},
             'WebKit Mac10.7': {version: 'lion'},
+            'WebKit Mac10.7 (dbg)': {version: 'lion', debug: true},
+            'WebKit Mac10.8': {version: 'mountainlion'},
         },
         haveBuilderAccumulatedResults : true,
         useDirectoryListingForOldBuilds: true,
