@@ -1,3 +1,13 @@
+2012-10-18  Takashi Sakamoto  <tasak@google.com>
+
+        REGRESSION(r131464): Null-pointer crash in StyleResolver::styleForElement
+        https://bugs.webkit.org/show_bug.cgi?id=99587
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/user-modify-in-datalist-crash-expected.txt: Added.
+        * fast/dom/shadow/user-modify-in-datalist-crash.html: Added.
+
 2012-10-18  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update mainly for

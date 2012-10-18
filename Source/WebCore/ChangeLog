@@ -1,3 +1,23 @@
+2012-10-18  Takashi Sakamoto  <tasak@google.com>
+
+        REGRESSION(r131464): Null-pointer crash in StyleResolver::styleForElement
+        https://bugs.webkit.org/show_bug.cgi?id=99587
+
+        Reviewed by Dimitri Glazkov.
+
+        Since contents in datalist are not shown, summary in datalist is not
+        shown either. So the summary has no render style. On the other hand,
+        the summary is implemented by shadow DOM and it has some insertion
+        point. Its child, e.g. title in the below test, is distributed.
+        To solve the child's user-modify, looking at shadow host(=summary)'s
+        style causes null-pointer crash.
+
+        Test: fast/dom/shadow/user-modify-in-datalist-crash.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleForElement):
+        Added a code to check whether the shadow host has any style or not.
+
 2012-10-17  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] AudioBusGtk sometimes fails to load the HRTF database

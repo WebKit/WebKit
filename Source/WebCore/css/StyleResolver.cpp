@@ -1547,8 +1547,8 @@ PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderS
     // be propagated from shadow host to distributed node.
     if (m_distributedToInsertionPoint) {
         ASSERT(element->parentElement());
-        ASSERT(element->parentElement()->renderStyle());
-        m_style->setUserModify(element->parentElement()->renderStyle()->userModify());
+        if (RenderStyle* styleOfShadowHost = element->parentElement()->renderStyle())
+            m_style->setUserModify(styleOfShadowHost->userModify());
     }
 
     if (element->isLink()) {
