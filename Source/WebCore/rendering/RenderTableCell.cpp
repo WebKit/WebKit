@@ -500,26 +500,49 @@ CollapsedBorderValue RenderTableCell::computeCollapsedStartBorder(IncludeBorderC
     // (5) Our column and column group's start borders.
     bool startColEdge;
     bool endColEdge;
-    RenderTableCol* colElt = table->colElement(col(), &startColEdge, &endColEdge);
-    if (colElt && startColEdge) {
-        result = chooseBorder(result, CollapsedBorderValue(colElt->borderAdjoiningCellStartBorder(this), includeColor ? colElt->style()->visitedDependentColor(startColorProperty) : Color(), BCOL));
-        if (!result.exists())
-            return result;
-        if (RenderTableCol* enclosingColumnGroup = colElt->enclosingColumnGroupIfAdjacentBefore()) {
-            result = chooseBorder(result, CollapsedBorderValue(enclosingColumnGroup->borderAdjoiningCellStartBorder(this), includeColor ? enclosingColumnGroup->style()->visitedDependentColor(startColorProperty) : Color(), BCOLGROUP));
+    if (RenderTableCol* colElt = table->colElement(col(), &startColEdge, &endColEdge)) {
+        if (colElt->isTableColumnGroup() && startColEdge) {
+            // The |colElt| is a column group and is also the first colgroup (in case of spanned colgroups).
+            result = chooseBorder(result, CollapsedBorderValue(colElt->borderAdjoiningCellStartBorder(this), includeColor ? colElt->style()->visitedDependentColor(startColorProperty) : Color(), BCOLGROUP));
             if (!result.exists())
                 return result;
+        } else if (!colElt->isTableColumnGroup()) {
+            // We first consider the |colElt| and irrespective of whether it is a spanned col or not, we apply
+            // its start border. This is as per HTML5 which states that: "For the purposes of the CSS table model,
+            // the col element is expected to be treated as if it was present as many times as its span attribute specifies".
+            result = chooseBorder(result, CollapsedBorderValue(colElt->borderAdjoiningCellStartBorder(this), includeColor ? colElt->style()->visitedDependentColor(startColorProperty) : Color(), BCOL));
+            if (!result.exists())
+                return result;
+            // Next, apply the start border of the enclosing colgroup but only if it is adjacent to the cell's edge.
+            if (RenderTableCol* enclosingColumnGroup = colElt->enclosingColumnGroupIfAdjacentBefore()) {
+                result = chooseBorder(result, CollapsedBorderValue(enclosingColumnGroup->borderAdjoiningCellStartBorder(this), includeColor ? enclosingColumnGroup->style()->visitedDependentColor(startColorProperty) : Color(), BCOLGROUP));
+                if (!result.exists())
+                    return result;
+            }
         }
     }
     
     // (6) The end border of the preceding column.
     if (cellBefore) {
-        colElt = table->colElement(col() -1, &startColEdge, &endColEdge);
-        if (colElt && endColEdge) {
-            CollapsedBorderValue columnBeforeAdjoiningBorder = CollapsedBorderValue(colElt->borderAdjoiningCellAfter(this), includeColor ? colElt->style()->visitedDependentColor(endColorProperty) : Color(), BCOL);
-            result = chooseBorder(columnBeforeAdjoiningBorder, result);
-            if (!result.exists())
-                return result;
+        if (RenderTableCol* colElt = table->colElement(col() - 1, &startColEdge, &endColEdge)) {
+            if (colElt->isTableColumnGroup() && endColEdge) {
+                // The element is a colgroup and is also the last colgroup (in case of spanned colgroups).
+                result = chooseBorder(CollapsedBorderValue(colElt->borderAdjoiningCellAfter(this), includeColor ? colElt->style()->visitedDependentColor(endColorProperty) : Color(), BCOLGROUP), result);
+                if (!result.exists())
+                    return result;
+            } else if (colElt->isTableColumn()) {
+                // Resolve the collapsing border against the col's border ignoring any 'span' as per HTML5.
+                result = chooseBorder(CollapsedBorderValue(colElt->borderAdjoiningCellAfter(this), includeColor ? colElt->style()->visitedDependentColor(endColorProperty) : Color(), BCOL), result);
+                if (!result.exists())
+                    return result;
+                // Next, if the previous col has a parent colgroup then its end border should be applied
+                // but only if it is adjacent to the cell's edge.
+                if (RenderTableCol* enclosingColumnGroup = colElt->enclosingColumnGroupIfAdjacentAfter()) {
+                    result = chooseBorder(CollapsedBorderValue(enclosingColumnGroup->borderAdjoiningCellEndBorder(this), includeColor ? enclosingColumnGroup->style()->visitedDependentColor(endColorProperty) : Color(), BCOLGROUP), result);
+                    if (!result.exists())
+                        return result;
+                }
+            }
         }
     } else {
         // (7) The table's start border.
@@ -575,26 +598,48 @@ CollapsedBorderValue RenderTableCell::computeCollapsedEndBorder(IncludeBorderCol
     // (5) Our column and column group's end borders.
     bool startColEdge;
     bool endColEdge;
-    RenderTableCol* colElt = table->colElement(col() + colSpan() - 1, &startColEdge, &endColEdge);
-    if (colElt && endColEdge) {
-        result = chooseBorder(result, CollapsedBorderValue(colElt->borderAdjoiningCellEndBorder(this), includeColor ? colElt->style()->visitedDependentColor(endColorProperty) : Color(), BCOL));
-        if (!result.exists())
-            return result;
-        if (RenderTableCol* enclosingColumnGroup = colElt->enclosingColumnGroupIfAdjacentAfter()) {
-            result = chooseBorder(result, CollapsedBorderValue(enclosingColumnGroup->borderAdjoiningCellEndBorder(this), includeColor ? enclosingColumnGroup->style()->visitedDependentColor(endColorProperty) : Color(), BCOLGROUP));
+    if (RenderTableCol* colElt = table->colElement(col() + colSpan() - 1, &startColEdge, &endColEdge)) {
+        if (colElt->isTableColumnGroup() && endColEdge) {
+            // The element is a colgroup and is also the last colgroup (in case of spanned colgroups).
+            result = chooseBorder(result, CollapsedBorderValue(colElt->borderAdjoiningCellEndBorder(this), includeColor ? colElt->style()->visitedDependentColor(endColorProperty) : Color(), BCOLGROUP));
             if (!result.exists())
                 return result;
+        } else if (!colElt->isTableColumnGroup()) {
+            // First apply the end border of the column irrespective of whether it is spanned or not. This is as per
+            // HTML5 which states that: "For the purposes of the CSS table model, the col element is expected to be
+            // treated as if it was present as many times as its span attribute specifies".
+            result = chooseBorder(result, CollapsedBorderValue(colElt->borderAdjoiningCellEndBorder(this), includeColor ? colElt->style()->visitedDependentColor(endColorProperty) : Color(), BCOL));
+            if (!result.exists())
+                return result;
+            // Next, if it has a parent colgroup then we apply its end border but only if it is adjacent to the cell.
+            if (RenderTableCol* enclosingColumnGroup = colElt->enclosingColumnGroupIfAdjacentAfter()) {
+                result = chooseBorder(result, CollapsedBorderValue(enclosingColumnGroup->borderAdjoiningCellEndBorder(this), includeColor ? enclosingColumnGroup->style()->visitedDependentColor(endColorProperty) : Color(), BCOLGROUP));
+                if (!result.exists())
+                    return result;
+            }
         }
     }
     
     // (6) The start border of the next column.
     if (!isEndColumn) {
-        colElt = table->colElement(col() + colSpan(), &startColEdge, &endColEdge);
-        if (colElt && startColEdge) {
-            CollapsedBorderValue columnAfterAdjoiningBorder = CollapsedBorderValue(colElt->borderAdjoiningCellBefore(this), includeColor ? colElt->style()->visitedDependentColor(startColorProperty) : Color(), BCOL);
-            result = chooseBorder(result, columnAfterAdjoiningBorder);
-            if (!result.exists())
-                return result;
+        if (RenderTableCol* colElt = table->colElement(col() + colSpan(), &startColEdge, &endColEdge)) {
+            if (colElt->isTableColumnGroup() && startColEdge) {
+                // This case is a colgroup without any col, we only compute it if it is adjacent to the cell's edge.
+                result = chooseBorder(result, CollapsedBorderValue(colElt->borderAdjoiningCellBefore(this), includeColor ? colElt->style()->visitedDependentColor(startColorProperty) : Color(), BCOLGROUP));
+                if (!result.exists())
+                    return result;
+            } else if (colElt->isTableColumn()) {
+                // Resolve the collapsing border against the col's border ignoring any 'span' as per HTML5.
+                result = chooseBorder(result, CollapsedBorderValue(colElt->borderAdjoiningCellBefore(this), includeColor ? colElt->style()->visitedDependentColor(startColorProperty) : Color(), BCOL));
+                if (!result.exists())
+                    return result;
+                // If we have a parent colgroup, resolve the border only if it is adjacent to the cell.
+                if (RenderTableCol* enclosingColumnGroup = colElt->enclosingColumnGroupIfAdjacentBefore()) {
+                    result = chooseBorder(result, CollapsedBorderValue(enclosingColumnGroup->borderAdjoiningCellStartBorder(this), includeColor ? enclosingColumnGroup->style()->visitedDependentColor(startColorProperty) : Color(), BCOLGROUP));
+                    if (!result.exists())
+                        return result;
+                }
+            }
         }
     } else {
         // (7) The table's end border.

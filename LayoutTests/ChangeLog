@@ -1,3 +1,32 @@
+2012-10-17  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        Incorrect rendering of borders on <col> with span > 1
+        https://bugs.webkit.org/show_bug.cgi?id=76246
+
+        Reviewed by Julien Chaffraix.
+
+        * fast/table/border-collapsing/cached-change-colgroup-border-color-expected.png:
+        * fast/table/border-collapsing/cached-change-colgroup-border-color-expected.txt:
+        * fast/table/border-collapsing/cached-change-colgroup-border-width-expected.png:
+        * fast/table/border-collapsing/cached-change-colgroup-border-width-expected.txt:
+        Existing tests modified. This is because previously, while computing collapsed
+        start border, we did not take the preceeding col's enclosing colgroup's end border
+        into consideration. While computing the collapsed start border, only the preceeding
+        col element's end border was considered.
+
+        With this fix, for the above two tests, the last col's width now changes due to
+        the border being applied to it (the preceeding col's enclosing colgroup's end border)
+        which causes the table's width to change. Also, we should note that the cell's grow
+        by half the border's width; which is expected (on account of their being collapsed
+        borders).
+
+        * fast/table/border-collapsing/collapsed-border-with-col-colgroup-span-expected.txt: Added.
+        * fast/table/border-collapsing/collapsed-border-with-col-colgroup-span.html: Added.
+        * platform/chromium-linux/fast/table/border-collapsing/collapsed-border-with-col-colgroup-span-expected.png: Added.
+        Image only test added for verifying the behavior of collapsed borders with
+        col and colgroup span.
+        New expected image file added for the chromium-linux port.
+
 2012-10-17  Tom Sepez  <tsepez@chromium.org>
 
         Crash in ContainerNode::removeAllChildren()
