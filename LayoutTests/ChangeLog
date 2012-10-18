@@ -1,3 +1,17 @@
+2012-10-18  Mike West  <mkwst@chromium.org>
+
+        Add layout tests for wildcarded hosts in CSP directives.
+        https://bugs.webkit.org/show_bug.cgi?id=99693
+
+        Reviewed by Adam Barth.
+
+        Adds four test cases to ensure that wildcarded hosts in Content Security
+        Policy source expressions function correctly with and without paths,
+        and with wildcarded ports.
+
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-09-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-09.html: Added.
+
 2012-10-18  Dirk Pranke  <dpranke@chromium.org>
 
         [chromium] update ML-specific failures
