@@ -52,8 +52,6 @@
  *
  */
 
-using namespace WebKit;
-
 enum {
     PROP_0,
 
@@ -237,27 +235,27 @@ static void webkit_hit_test_result_class_init(WebKitHitTestResultClass* hitTestR
     g_type_class_add_private(hitTestResultClass, sizeof(WebKitHitTestResultPrivate));
 }
 
-WebKitHitTestResult* webkitHitTestResultCreate(WKHitTestResultRef wkHitTestResult)
+WebKitHitTestResult* webkitHitTestResultCreate(WebHitTestResult* hitTestResult)
 {
     unsigned context = WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT;
 
-    const String& linkURL = toImpl(wkHitTestResult)->absoluteLinkURL();
+    const String& linkURL = hitTestResult->absoluteLinkURL();
     if (!linkURL.isEmpty())
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK;
 
-    const String& imageURL = toImpl(wkHitTestResult)->absoluteImageURL();
+    const String& imageURL = hitTestResult->absoluteImageURL();
     if (!imageURL.isEmpty())
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE;
 
-    const String& mediaURL = toImpl(wkHitTestResult)->absoluteMediaURL();
+    const String& mediaURL = hitTestResult->absoluteMediaURL();
     if (!mediaURL.isEmpty())
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA;
 
-    if (WKHitTestResultIsContentEditable(wkHitTestResult))
+    if (hitTestResult->isContentEditable())
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE;
 
-    const String& linkTitle = toImpl(wkHitTestResult)->linkTitle();
-    const String& linkLabel = toImpl(wkHitTestResult)->linkLabel();
+    const String& linkTitle = hitTestResult->linkTitle();
+    const String& linkLabel = hitTestResult->linkLabel();
 
     return WEBKIT_HIT_TEST_RESULT(g_object_new(WEBKIT_TYPE_HIT_TEST_RESULT,
                                                "context", context,
@@ -274,15 +272,15 @@ static bool stringIsEqualToCString(const String& string, const CString& cString)
     return ((string.isEmpty() && cString.isNull()) || (string.utf8() == cString));
 }
 
-bool webkitHitTestResultCompare(WebKitHitTestResult* hitTestResult, WKHitTestResultRef wkHitTestResult)
+bool webkitHitTestResultCompare(WebKitHitTestResult* hitTestResult, WebHitTestResult* webHitTestResult)
 {
     WebKitHitTestResultPrivate* priv = hitTestResult->priv;
-    return WKHitTestResultIsContentEditable(wkHitTestResult) == webkit_hit_test_result_context_is_editable(hitTestResult)
-        && stringIsEqualToCString(toImpl(wkHitTestResult)->absoluteLinkURL(), priv->linkURI)
-        && stringIsEqualToCString(toImpl(wkHitTestResult)->linkTitle(), priv->linkTitle)
-        && stringIsEqualToCString(toImpl(wkHitTestResult)->linkLabel(), priv->linkLabel)
-        && stringIsEqualToCString(toImpl(wkHitTestResult)->absoluteImageURL(), priv->imageURI)
-        && stringIsEqualToCString(toImpl(wkHitTestResult)->absoluteMediaURL(), priv->mediaURI);
+    return webHitTestResult->isContentEditable() == webkit_hit_test_result_context_is_editable(hitTestResult)
+        && stringIsEqualToCString(webHitTestResult->absoluteLinkURL(), priv->linkURI)
+        && stringIsEqualToCString(webHitTestResult->linkTitle(), priv->linkTitle)
+        && stringIsEqualToCString(webHitTestResult->linkLabel(), priv->linkLabel)
+        && stringIsEqualToCString(webHitTestResult->absoluteImageURL(), priv->imageURI)
+        && stringIsEqualToCString(webHitTestResult->absoluteMediaURL(), priv->mediaURI);
 }
 
 /**

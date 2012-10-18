@@ -1423,11 +1423,11 @@ void webkitWebViewMouseTargetChanged(WebKitWebView* webView, WebHitTestResult* h
     WebKitWebViewPrivate* priv = webView->priv;
     if (priv->mouseTargetHitTestResult
         && priv->mouseTargetModifiers == modifiers
-        && webkitHitTestResultCompare(priv->mouseTargetHitTestResult.get(), toAPI(hitTestResult)))
+        && webkitHitTestResultCompare(priv->mouseTargetHitTestResult.get(), hitTestResult))
         return;
 
     priv->mouseTargetModifiers = modifiers;
-    priv->mouseTargetHitTestResult = adoptGRef(webkitHitTestResultCreate(toAPI(hitTestResult)));
+    priv->mouseTargetHitTestResult = adoptGRef(webkitHitTestResultCreate(hitTestResult));
     g_signal_emit(webView, signals[MOUSE_TARGET_CHANGED], 0, priv->mouseTargetHitTestResult.get(), modifiers);
 }
 
@@ -1581,7 +1581,7 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, ImmutableArray* pr
     if (webHitTestResult->isContentEditable())
         webkitWebViewCreateAndAppendInputMethodsMenuItem(webView, contextMenu.get());
 
-    GRefPtr<WebKitHitTestResult> hitTestResult = adoptGRef(webkitHitTestResultCreate(toAPI(webHitTestResult)));
+    GRefPtr<WebKitHitTestResult> hitTestResult = adoptGRef(webkitHitTestResultCreate(webHitTestResult));
     GOwnPtr<GdkEvent> contextMenuEvent(webkitWebViewBaseTakeContextMenuEvent(webViewBase));
 
     gboolean returnValue;
