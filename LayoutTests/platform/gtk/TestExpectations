@@ -553,6 +553,8 @@ webkit.org/b/98036 fast/dom/inline-event-attributes-release.html [ Failure Pass 
 
 webkit.org/b/98133 fast/css/sticky/sticky-writing-mode-vertical-rl.html [ ImageOnlyFailure Pass ]
 
+webkit.org/b/68878 media/video-playing-and-pause.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////

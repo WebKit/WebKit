@@ -6,7 +6,7 @@ This test checks that the right accessibility tree is generated in the presence 
 2
 34
 5
-FAIL nonGroupDescendants(accessibilityController.focusedElement) should be 5. Was 2.
+FAIL nonGroupDescendants(accessibilityController.focusedElement) should be 5. Was 0.
 PASS successfullyParsed is true
 
 TEST COMPLETE

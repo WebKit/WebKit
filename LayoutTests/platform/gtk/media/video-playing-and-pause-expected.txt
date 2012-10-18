@@ -25,7 +25,7 @@ layer at (8,288) size 320x20 scrollHeight 31
       RenderSlider {INPUT} at (66,0) size 153x20
         RenderFlexibleBox {DIV} at (2,0) size 149x20
           RenderBlock {DIV} at (0,4) size 137x12
-            RenderBlock {DIV} at (5,0) size 12x12
+            RenderBlock {DIV} at (4,0) size 12x12
           RenderBlock {DIV} at (137,0) size 12x12
     RenderButton {INPUT} at (240,0) size 20x20
     RenderButton {INPUT} at (260,0) size 20x20

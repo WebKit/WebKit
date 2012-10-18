@@ -1,3 +1,18 @@
+2012-10-18  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Updating baselines for two accessibility tests after r131674.
+
+        Updating baseline for media/video-playing-and-pause.html but still
+        marking the test a flaky as the render tree output can differ from
+        the new baseline.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/accessibility/inline-continuations-expected.txt:
+        * platform/gtk/accessibility/media-element-expected.txt:
+        * platform/gtk/media/video-playing-and-pause-expected.txt:
+
 2012-10-17  Kangil Han  <kangil.han@samsung.com>
 
         Let's move use-while-animating-crash-expected.txt to common place.
