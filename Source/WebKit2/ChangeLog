@@ -1,5 +1,29 @@
 2012-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Don't use the C API internally in WebKitFileChooserRequest
+        https://bugs.webkit.org/show_bug.cgi?id=96774
+
+        Reviewed by Xan Lopez.
+
+        Using the C++ classes directly instead of the C API wrappers we
+        avoid a lot of toImpl/toAPI casts, string conversions and
+        allocations. The code is also a lot simpler and easier to read.
+
+        * UIProcess/API/gtk/WebKitFileChooserRequest.cpp:
+        (_WebKitFileChooserRequestPrivate):
+        (webkitFileChooserRequestCreate):
+        (webkit_file_chooser_request_get_mime_types):
+        (webkit_file_chooser_request_get_mime_types_filter):
+        (webkit_file_chooser_request_get_select_multiple):
+        (webkit_file_chooser_request_select_files):
+        (webkit_file_chooser_request_get_selected_files):
+        (webkit_file_chooser_request_cancel):
+        * UIProcess/API/gtk/WebKitFileChooserRequestPrivate.h:
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+        (runOpenPanel):
+
+2012-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Don't use the C API internally in WebKitFormSubmissionRequest
         https://bugs.webkit.org/show_bug.cgi?id=96777
 

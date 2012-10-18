@@ -20,8 +20,10 @@
 #include "config.h"
 #include "WebKitFileChooserRequest.h"
 
+#include "ImmutableArray.h"
 #include "WebKitFileChooserRequestPrivate.h"
 #include "WebOpenPanelParameters.h"
+#include "WebOpenPanelResultListenerProxy.h"
 #include <WebCore/FileSystem.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/gobject/GOwnPtr.h>
@@ -29,7 +31,6 @@
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
-using namespace WebKit;
 
 /**
  * SECTION: WebKitFileChooserRequest
@@ -57,8 +58,8 @@ using namespace WebKit;
 G_DEFINE_TYPE(WebKitFileChooserRequest, webkit_file_chooser_request, G_TYPE_OBJECT)
 
 struct _WebKitFileChooserRequestPrivate {
-    WKRetainPtr<WKOpenPanelParametersRef> wkParameters;
-    WKRetainPtr<WKOpenPanelResultListenerRef> wkListener;
+    RefPtr<WebOpenPanelParameters> parameters;
+    RefPtr<WebOpenPanelResultListenerProxy> listener;
     GRefPtr<GtkFileFilter> filter;
     GRefPtr<GPtrArray> mimeTypes;
     GRefPtr<GPtrArray> selectedFiles;
@@ -179,11 +180,11 @@ static void webkit_file_chooser_request_class_init(WebKitFileChooserRequestClass
                                                       WEBKIT_PARAM_READABLE));
 }
 
-WebKitFileChooserRequest* webkitFileChooserRequestCreate(WKOpenPanelParametersRef wkParameters, WKOpenPanelResultListenerRef wkListener)
+WebKitFileChooserRequest* webkitFileChooserRequestCreate(WebOpenPanelParameters* parameters, WebOpenPanelResultListenerProxy* listener)
 {
     WebKitFileChooserRequest* request = WEBKIT_FILE_CHOOSER_REQUEST(g_object_new(WEBKIT_TYPE_FILE_CHOOSER_REQUEST, NULL));
-    request->priv->wkParameters = wkParameters;
-    request->priv->wkListener = wkListener;
+    request->priv->parameters = parameters;
+    request->priv->listener = listener;
     return request;
 }
 
@@ -210,15 +211,15 @@ const gchar* const* webkit_file_chooser_request_get_mime_types(WebKitFileChooser
     if (request->priv->mimeTypes)
         return reinterpret_cast<gchar**>(request->priv->mimeTypes->pdata);
 
-    WKRetainPtr<WKArrayRef> wkMimeTypes(AdoptWK, WKOpenPanelParametersCopyAcceptedMIMETypes(request->priv->wkParameters.get()));
-    size_t numOfMimeTypes = WKArrayGetSize(wkMimeTypes.get());
+    RefPtr<ImmutableArray> mimeTypes = request->priv->parameters->acceptMIMETypes();
+    size_t numOfMimeTypes = mimeTypes->size();
     if (!numOfMimeTypes)
         return 0;
 
     request->priv->mimeTypes = adoptGRef(g_ptr_array_new_with_free_func(g_free));
     for (size_t i = 0; i < numOfMimeTypes; ++i) {
-        WKStringRef wkMimeType = static_cast<WKStringRef>(WKArrayGetItemAtIndex(wkMimeTypes.get(), i));
-        String mimeTypeString = toImpl(wkMimeType)->string();
+        WebString* webMimeType = static_cast<WebString*>(mimeTypes->at(i));
+        String mimeTypeString = webMimeType->string();
         if (mimeTypeString.isEmpty())
             continue;
         g_ptr_array_add(request->priv->mimeTypes.get(), g_strdup(mimeTypeString.utf8().data()));
@@ -251,8 +252,8 @@ GtkFileFilter* webkit_file_chooser_request_get_mime_types_filter(WebKitFileChoos
     if (request->priv->filter)
         return request->priv->filter.get();
 
-    WKRetainPtr<WKArrayRef> wkMimeTypes(AdoptWK, WKOpenPanelParametersCopyAcceptedMIMETypes(request->priv->wkParameters.get()));
-    size_t numOfMimeTypes = WKArrayGetSize(wkMimeTypes.get());
+    RefPtr<ImmutableArray> mimeTypes = request->priv->parameters->acceptMIMETypes();
+    size_t numOfMimeTypes = mimeTypes->size();
     if (!numOfMimeTypes)
         return 0;
 
@@ -261,8 +262,8 @@ GtkFileFilter* webkit_file_chooser_request_get_mime_types_filter(WebKitFileChoos
     // sure we keep the ownership during the lifetime of the request.
     request->priv->filter = gtk_file_filter_new();
     for (size_t i = 0; i < numOfMimeTypes; ++i) {
-        WKStringRef wkMimeType = static_cast<WKStringRef>(WKArrayGetItemAtIndex(wkMimeTypes.get(), i));
-        String mimeTypeString = toImpl(wkMimeType)->string();
+        WebString* webMimeType = static_cast<WebString*>(mimeTypes->at(i));
+        String mimeTypeString = webMimeType->string();
         if (mimeTypeString.isEmpty())
             continue;
         gtk_file_filter_add_mime_type(request->priv->filter.get(), mimeTypeString.utf8().data());
@@ -285,7 +286,7 @@ GtkFileFilter* webkit_file_chooser_request_get_mime_types_filter(WebKitFileChoos
 gboolean webkit_file_chooser_request_get_select_multiple(WebKitFileChooserRequest* request)
 {
     g_return_val_if_fail(WEBKIT_IS_FILE_CHOOSER_REQUEST(request), FALSE);
-    return WKOpenPanelParametersGetAllowsMultipleFiles(request->priv->wkParameters.get());
+    return request->priv->parameters->allowMultipleFiles();
 }
 
 /**
@@ -303,7 +304,7 @@ void webkit_file_chooser_request_select_files(WebKitFileChooserRequest* request,
     g_return_if_fail(files);
 
     GRefPtr<GPtrArray> selectedFiles = adoptGRef(g_ptr_array_new_with_free_func(g_free));
-    WKRetainPtr<WKMutableArrayRef> wkChosenFiles(AdoptWK, WKMutableArrayCreate());
+    Vector<RefPtr<APIObject> > choosenFiles;
     for (int i = 0; files[i]; i++) {
         GRefPtr<GFile> filename = adoptGRef(g_file_new_for_path(files[i]));
 
@@ -311,8 +312,7 @@ void webkit_file_chooser_request_select_files(WebKitFileChooserRequest* request,
         // string, with the 'file://' prefix) to WebCore otherwise the
         // FileChooser won't actually choose it.
         GOwnPtr<char> uri(g_file_get_uri(filename.get()));
-        WKRetainPtr<WKURLRef> wkURL(AdoptWK, WKURLCreateWithUTF8CString(uri.get()));
-        WKArrayAppendItem(wkChosenFiles.get(), wkURL.get());
+        choosenFiles.append(WebURL::create(String::fromUTF8(uri.get())));
 
         // Do not use the URI here because this won't reach WebCore.
         g_ptr_array_add(selectedFiles.get(), g_strdup(files[i]));
@@ -320,7 +320,7 @@ void webkit_file_chooser_request_select_files(WebKitFileChooserRequest* request,
     g_ptr_array_add(selectedFiles.get(), 0);
 
     // Select the files in WebCore and update local private attributes.
-    WKOpenPanelResultListenerChooseFiles(request->priv->wkListener.get(), wkChosenFiles.get());
+    request->priv->listener->chooseFiles(ImmutableArray::adopt(choosenFiles).get());
     request->priv->selectedFiles = selectedFiles;
     request->priv->handledRequest = true;
 }
@@ -351,7 +351,7 @@ const gchar* const* webkit_file_chooser_request_get_selected_files(WebKitFileCho
     if (request->priv->selectedFiles)
         return reinterpret_cast<gchar**>(request->priv->selectedFiles->pdata);
 
-    const Vector<String> selectedFileNames = toImpl(request->priv->wkParameters.get())->selectedFileNames();
+    const Vector<String> selectedFileNames = request->priv->parameters->selectedFileNames();
     size_t numOfFiles = selectedFileNames.size();
     if (!numOfFiles)
         return 0;
@@ -380,6 +380,6 @@ const gchar* const* webkit_file_chooser_request_get_selected_files(WebKitFileCho
 void webkit_file_chooser_request_cancel(WebKitFileChooserRequest* request)
 {
     g_return_if_fail(WEBKIT_IS_FILE_CHOOSER_REQUEST(request));
-    WKOpenPanelResultListenerCancel(request->priv->wkListener.get());
+    request->priv->listener->cancel();
     request->priv->handledRequest = true;
 }
