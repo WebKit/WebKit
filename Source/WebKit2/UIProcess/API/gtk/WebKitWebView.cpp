@@ -1231,7 +1231,7 @@ static void setCertificateToMainResource(WebKitWebView* webView)
     ASSERT(priv->mainResource.get());
 
     webkitURIResponseSetCertificateInfo(webkit_web_resource_get_response(priv->mainResource.get()),
-                                        WKFrameGetCertificateInfo(webkitWebResourceGetFrame(priv->mainResource.get())));
+                                        toImpl(WKFrameGetCertificateInfo(webkitWebResourceGetFrame(priv->mainResource.get()))));
 }
 
 static void webkitWebViewEmitLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)

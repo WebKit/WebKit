@@ -1,5 +1,22 @@
 2012-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Don't use the C API internally in WebKitURIResponse
+        https://bugs.webkit.org/show_bug.cgi?id=96782
+
+        Reviewed by Xan Lopez.
+
+        Using the C++ classes directly instead of the C API wrappers we
+        avoid a lot of toImpl/toAPI casts, string conversions and
+        allocations. The code is also a lot simpler and easier to read.
+
+        * UIProcess/API/gtk/WebKitURIResponse.cpp:
+        (webkitURIResponseSetCertificateInfo):
+        * UIProcess/API/gtk/WebKitURIResponsePrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (setCertificateToMainResource):
+
+2012-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Don't use the C API internally in PolicyClient classes
         https://bugs.webkit.org/show_bug.cgi?id=96781
 

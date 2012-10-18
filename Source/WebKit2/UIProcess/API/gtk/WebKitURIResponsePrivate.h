@@ -29,8 +29,10 @@
 #include "WebKitURIResponse.h"
 #include <WebCore/ResourceResponse.h>
 
+using namespace WebKit;
+
 WebKitURIResponse* webkitURIResponseCreateForResourceResponse(const WebCore::ResourceResponse&);
 const WebCore::ResourceResponse& webkitURIResponseGetResourceResponse(WebKitURIResponse*);
-void webkitURIResponseSetCertificateInfo(WebKitURIResponse*, WKCertificateInfoRef);
+void webkitURIResponseSetCertificateInfo(WebKitURIResponse*, WebCertificateInfo*);
 
 #endif // WebKitURIResponsePrivate_h
