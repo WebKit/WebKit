@@ -2036,12 +2036,8 @@ crbug.com/28005 [ Mac ] fast/css/color-correction-on-text-shadow.html [ ImageOnl
 crbug.com/28005 [ Android Linux Win ] fast/css/color-correction-on-background-image.html [ Failure ]
 crbug.com/28005 [ Android Linux Win ] fast/css/color-correction-untagged-images.html [ Failure ]
 
-# Producing incorrect results, or flakey after a Skia change
-crbug.com/118411 [ Android Linux Win ] fast/repaint/focus-ring.html [ ImageOnlyFailure ]
-crbug.com/118411 fast/repaint/list-marker.html [ ImageOnlyFailure ]
-
 # Fails on Snow Leopard - see BUGWK82954
-crbug.com/118411 svg/hixie/perf/007.xml [ ImageOnlyFailure Pass Slow ]
+webkit.org/b/82954 [ Mac ] svg/hixie/perf/007.xml [ Pass Slow ]
 
 crbug.com/22700 [ Android Linux Win ] fast/canvas/canvas-shadow.html [ Failure ]
 

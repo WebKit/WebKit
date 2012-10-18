@@ -1,3 +1,28 @@
+2012-10-18  Stephen Chenney  <schenney@chromium.org>
+
+        Rebaselining some longstanding Chromium expectations.
+
+        Unreviewed test expectations update.
+
+        These were marked as expected fail when a Skia roll went in. That was ago.
+
+        * platform/chromium-linux/fast/repaint/list-marker-expected.png:
+        * platform/chromium-linux/svg/as-background-image/background-image-preserveaspectRatio-support-expected.png:
+        * platform/chromium-linux/svg/as-image/img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/list-marker-expected.png:
+        * platform/chromium-mac-snowleopard/svg/as-background-image/background-image-preserveaspectRatio-support-expected.png:
+        * platform/chromium-mac-snowleopard/svg/as-image/img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-mac-snowleopard/svg/hixie/perf/007-expected.png:
+        * platform/chromium-mac/fast/repaint/list-marker-expected.png:
+        * platform/chromium-mac/svg/as-background-image/background-image-preserveaspectRatio-support-expected.png:
+        * platform/chromium-mac/svg/as-image/img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-win-xp/svg/as-image/img-preserveAspectRatio-support-1-expected.png: Added.
+        * platform/chromium-win/fast/repaint/focus-ring-expected.png:
+        * platform/chromium-win/fast/repaint/list-marker-expected.png:
+        * platform/chromium-win/svg/as-background-image/background-image-preserveaspectRatio-support-expected.png:
+        * platform/chromium-win/svg/as-image/img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-10-18  Anton Muhin  <antonm@chromium.org>
 
         Unreviewed Chromium rebaselines.
