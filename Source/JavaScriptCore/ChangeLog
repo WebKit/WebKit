@@ -1,3 +1,17 @@
+2012-10-17  Zoltan Horvath  <zoltan@webkit.org>
+
+        Remove the JSHeap memory measurement of the PageLoad performacetests since it creates bogus JSGlobalDatas
+        https://bugs.webkit.org/show_bug.cgi?id=99609 
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove the implementation since it creates bogus JSGlobalDatas in the layout tests.
+
+        * heap/HeapStatistics.cpp:
+        (JSC):
+        * heap/HeapStatistics.h:
+        (HeapStatistics):
+
 2012-10-17  Sam Weinig  <sam@webkit.org>
 
         Attempt to fix the build.

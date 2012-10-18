@@ -1186,7 +1186,6 @@ void dump()
 
         WTF::FastMallocStatistics mallocStats = WTF::fastMallocStatistics();
         printf("DumpMalloc: %li\n", mallocStats.committedVMBytes);
-        printf("DumpJSHeap: %li\n", JSC::HeapStatistics::usedJSHeap());
 
         if (resultData) {
             fwrite([resultData bytes], 1, [resultData length], stdout);

@@ -138,12 +138,6 @@ void HeapStatistics::reportSuccess()
 
 #endif // OS(UNIX)
 
-size_t HeapStatistics::usedJSHeap()
-{
-    JSGlobalData* globalData = &JSGlobalData::sharedInstance();
-    return globalData->heap.size();
-}
-
 size_t HeapStatistics::parseMemoryAmount(char* s)
 {
     size_t multiplier = 1;
