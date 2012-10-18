@@ -249,6 +249,31 @@ for(subdir, SUBDIRS) {
     }
 }
 
+root_project_file {
+    # Tweak documentation rules so that we only get documentation
+    # for the QtWebKit subdir, which means we don't have to run
+    # qmake_all and generate all the derived sources, just to
+    # build documentation.
+    previous_subdir =
+    doc_targets = docs install_docs uninstall_docs
+    for(subdir, SUBDIRS) {
+        equals(subdir, QtWebKit) {
+            for(doc_target, doc_targets) {
+                # Since we use CONFIG += ordered, we need to provide a fake dummy
+                # doc-target for the immediate dependency of the QtWebKit target.
+                dummy_target = sub-$$replace($${previous_subdir}.file, [^a-zA-Z0-9_], -)-$${doc_target}_ordered
+                $${dummy_target}.target = $${dummy_target}
+                QMAKE_EXTRA_TARGETS += $${dummy_target}
+            }
+        } else {
+            previous_subdir = $$subdir # Save for later
+
+            # For all the other subdirs, we disable docs the regular way
+            for(doc_target, doc_targets): $${subdir}.CONFIG += no_$${doc_target}_target
+        }
+    }
+}
+
 incremental.target = incremental
 incremental.commands = $(MAKE) -f $(MAKEFILE) qmake_all && $(MAKE) -f $(MAKEFILE)
 QMAKE_EXTRA_TARGETS += incremental

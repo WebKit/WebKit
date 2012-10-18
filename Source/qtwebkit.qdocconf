@@ -1,0 +1,13 @@
+include($QT_INSTALL_DOCS/global/qt-html-templates-offline.qdocconf)
+include($QT_INSTALL_DOCS/global/qt-module-defaults.qdocconf)
+
+project     = qtwebkit
+description = "Qt WebKit API Documentation"
+version     = 5.0.0
+
+headerdirs = WebKit/qt/Api WebKit2/UIProcess/API/qt
+sourcedirs = WebKit/qt/Api WebKit/qt/docs Source/JavaScriptCore/qt/api WebKit2/UIProcess/API/qt
+exampledirs = WebKit/qt/docs
+imagedirs = WebKit/qt/docs
+
+depends += qtcore qtwidgets qtgui qtscript qtdoc qtprintsupport qtxml

@@ -19,8 +19,6 @@ build?(webkit2) {
     }
 }
 
-include(WebKit/qt/docs/docs.pri)
-
 declarative.file = WebKit/qt/declarative/declarative.pro
 declarative.makefile = Makefile.declarative
 have?(QTQUICK): SUBDIRS += declarative

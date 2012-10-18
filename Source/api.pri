@@ -38,6 +38,8 @@ equals(qmakeVersion, 3.0) {
     MODULE_BASE_OUTDIR = $$ROOT_BUILD_DIR
 }
 
+QMAKE_DOCS = $$PWD/qtwebkit.qdocconf
+
 # We load the relevant modules here, so that the effects of each module
 # on the QT variable can be picked up when we later load(qt_module).
 load(webkit_modules)
