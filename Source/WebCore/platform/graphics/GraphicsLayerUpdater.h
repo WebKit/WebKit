@@ -48,7 +48,7 @@ class GraphicsLayerUpdater
 {
 public:
     GraphicsLayerUpdater(GraphicsLayerUpdaterClient*, PlatformDisplayID);
-    ~GraphicsLayerUpdater();
+    virtual ~GraphicsLayerUpdater();
 
     void scheduleUpdate();
     void screenDidChange(PlatformDisplayID);

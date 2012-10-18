@@ -1,3 +1,10 @@
+2012-10-17  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed clang compile fix - GraphicsLayerUpdater needs a virtual destructor.
+
+        * platform/graphics/GraphicsLayerUpdater.h:
+        (GraphicsLayerUpdater):
+
 2012-10-17  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Attempt to fix the build after r131680.
