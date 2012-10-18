@@ -1218,7 +1218,7 @@ sub get_function_line_ranges_for_javascript($$)
         }
 
         # Find function names.
-        while (m-(\w+|[(){}=:;])-g) {
+        while (m-(\w+|[(){}=:;,])-g) {
             # Open parenthesis.
             if ($1 eq '(') {
                 $parenthesesDepth++;
@@ -1259,8 +1259,8 @@ sub get_function_line_ranges_for_javascript($$)
                 next;
             }
 
-            # Semicolon.
-            if ($1 eq ';') {
+            # Semicolon or comma.
+            if ($1 eq ';' or $1 eq ',') {
                 @currentIdentifiers = ();
                 next;
             }

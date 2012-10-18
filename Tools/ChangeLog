@@ -1,3 +1,15 @@
+2012-10-18  Timothy Hatcher  <timothy@apple.com>
+
+        Teach prepare-ChangeLog how to handle non-function properties in JavaScript prototypes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=99747
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges_for_javascript): Clear currentIdentifiers when comma is encountered
+        so it does not tack those identifiers onto the next changed function.
+
 2012-10-18  James Simonsen  <simonjam@chromium.org>
 
         Add a script for exporting http/tests/w3c/webperf/submission to W3C
