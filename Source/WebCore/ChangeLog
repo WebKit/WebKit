@@ -1,3 +1,15 @@
+2012-10-18  Jer Noble  <jer.noble@apple.com>
+
+        Crash in WebCore::Document::webkitExitFullscreen + 618
+        https://bugs.webkit.org/show_bug.cgi?id=99496
+
+        Reviewed by Eric Carlson.
+
+        Prospective fix for null-dereference crash in Document::webkitExitFullscreen().
+
+        * dom/Document.cpp:
+        (WebCore::Document::webkitExitFullscreen): Null check page() before calling page()->chrome.
+
 2012-10-18  Pablo Flouret  <pablof@motorola.com>
 
         Implement css3-conditional's @supports rule

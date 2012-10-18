@@ -5241,6 +5241,9 @@ void Document::webkitExitFullscreen()
     // 6. Return, and run the remaining steps asynchronously.
     // 7. Optionally, perform some animation.
 
+    if (!page())
+        return;
+
     // Only exit out of full screen window mode if there are no remaining elements in the 
     // full screen stack.
     if (!newTop) {
