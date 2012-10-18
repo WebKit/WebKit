@@ -1,3 +1,19 @@
+2012-10-18  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Do some cleanup in the chromium WebKit API
+        https://bugs.webkit.org/show_bug.cgi?id=99713
+
+        Reviewed by Adam Barth.
+
+        Removing the deprecated version of WebMediaStreamDescriptor::initialize and making
+        the two constructSDP functions in WebMediaStreamCenter optional to override.
+        This is part of the preparation to remove PeerConnection00.
+
+        * chromium/public/WebMediaStreamCenter.h:
+        (WebKit::WebMediaStreamCenter::constructSDP):
+        * chromium/public/WebMediaStreamDescriptor.h:
+        (WebMediaStreamDescriptor):
+
 2012-10-17  Adrienne Walker  <enne@chromium.org>
 
         [chromium] Make WebContentLayer include what it uses

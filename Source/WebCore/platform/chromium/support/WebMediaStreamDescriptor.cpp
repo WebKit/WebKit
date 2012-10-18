@@ -125,20 +125,6 @@ WebMediaStreamDescriptor::operator WebCore::MediaStreamDescriptor*() const
     return m_private.get();
 }
 
-// FIXME: Cleanup when the chromium code has switched to the split sources implementation.
-void WebMediaStreamDescriptor::initialize(const WebString& label, const WebVector<WebMediaStreamSource>& sources)
-{
-    MediaStreamSourceVector audio, video;
-    for (size_t i = 0; i < sources.size(); ++i) {
-        MediaStreamSource* curr = sources[i];
-        if (curr->type() == MediaStreamSource::TypeAudio)
-            audio.append(curr);
-        else if (curr->type() == MediaStreamSource::TypeVideo)
-            video.append(curr);
-    }
-    m_private = MediaStreamDescriptor::create(label, audio, video);
-}
-
 void WebMediaStreamDescriptor::initialize(const WebString& label, const WebVector<WebMediaStreamSource>& audioSources, const WebVector<WebMediaStreamSource>& videoSources)
 {
     MediaStreamSourceVector audio, video;

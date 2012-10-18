@@ -51,8 +51,8 @@ public:
     virtual bool didRemoveMediaStreamTrack(const WebMediaStreamDescriptor&, const WebMediaStreamComponent&) { return false; };
     virtual void didStopLocalMediaStream(const WebMediaStreamDescriptor&) = 0;
     virtual void didCreateMediaStream(WebMediaStreamDescriptor&) = 0;
-    virtual WebString constructSDP(const WebICECandidateDescriptor&) = 0;
-    virtual WebString constructSDP(const WebSessionDescriptionDescriptor&) = 0;
+    virtual WebString constructSDP(const WebICECandidateDescriptor&) { return WebString(); }
+    virtual WebString constructSDP(const WebSessionDescriptionDescriptor&) { return WebString(); }
 };
 
 } // namespace WebKit

@@ -59,9 +59,6 @@ public:
 
     WEBKIT_EXPORT void assign(const WebMediaStreamDescriptor&);
 
-    // DEPRECATED
-    WEBKIT_EXPORT void initialize(const WebString& label, const WebVector<WebMediaStreamSource>&);
-
     WEBKIT_EXPORT void initialize(const WebString& label, const WebVector<WebMediaStreamSource>& audioSources, const WebVector<WebMediaStreamSource>& videoSources);
     WEBKIT_EXPORT void reset();
     bool isNull() const { return m_private.isNull(); }
