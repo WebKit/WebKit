@@ -1,5 +1,42 @@
 2012-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Don't use the C API internally in PolicyClient classes
+        https://bugs.webkit.org/show_bug.cgi?id=96781
+
+        Reviewed by Xan Lopez.
+
+        Using the C++ classes directly instead of the C API wrappers we
+        avoid a lot of toImpl/toAPI casts, string conversions and
+        allocations. The code is also a lot simpler and easier to read.
+
+        * UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:
+        (webkitNavigationPolicyDecisionCreate):
+        * UIProcess/API/gtk/WebKitNavigationPolicyDecisionPrivate.h:
+        * UIProcess/API/gtk/WebKitPolicyClient.cpp:
+        (decidePolicyForNavigationActionCallback):
+        (decidePolicyForNewWindowActionCallback):
+        (decidePolicyForResponseCallback):
+        (attachPolicyClientToView):
+        * UIProcess/API/gtk/WebKitPolicyClient.h:
+        * UIProcess/API/gtk/WebKitPolicyDecision.cpp:
+        (_WebKitPolicyDecisionPrivate):
+        (webkitPolicyDecisionFinalize):
+        (webkitPolicyDecisionSetListener):
+        (webkit_policy_decision_use):
+        (webkit_policy_decision_ignore):
+        (webkit_policy_decision_download):
+        * UIProcess/API/gtk/WebKitPolicyDecisionPrivate.h:
+        * UIProcess/API/gtk/WebKitPrivate.cpp:
+        (wkEventMouseButtonToWebKitMouseButton):
+        * UIProcess/API/gtk/WebKitPrivate.h:
+        * UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:
+        (webkitResponsePolicyDecisionCreate):
+        * UIProcess/API/gtk/WebKitResponsePolicyDecisionPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewConstructed):
+
+2012-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Don't use the C API internally in WebKitHitTestResult
         https://bugs.webkit.org/show_bug.cgi?id=96779
 

@@ -20,9 +20,8 @@
 #include "config.h"
 #include "WebKitPolicyDecision.h"
 
+#include "WebFramePolicyListenerProxy.h"
 #include "WebKitPolicyDecisionPrivate.h"
-#include "WebKitPrivate.h"
-
 
 /**
  * SECTION: WebKitPolicyDecision
@@ -43,7 +42,7 @@
 G_DEFINE_ABSTRACT_TYPE(WebKitPolicyDecision, webkit_policy_decision, G_TYPE_OBJECT)
 
 struct _WebKitPolicyDecisionPrivate {
-    WKRetainPtr<WKFramePolicyListenerRef> listener;
+    RefPtr<WebFramePolicyListenerProxy> listener;
     bool madePolicyDecision;
 };
 
@@ -60,13 +59,13 @@ static void webkitPolicyDecisionFinalize(GObject* object)
 
     // This is the default choice for all policy decisions in WebPageProxy.cpp.
     if (!priv->madePolicyDecision)
-        WKFramePolicyListenerUse(priv->listener.get());
+        priv->listener->use();
 
     priv->~WebKitPolicyDecisionPrivate();
     G_OBJECT_CLASS(webkit_policy_decision_parent_class)->finalize(object);
 }
 
-void webkitPolicyDecisionSetListener(WebKitPolicyDecision* decision, WKFramePolicyListenerRef listener)
+void webkitPolicyDecisionSetListener(WebKitPolicyDecision* decision, WebFramePolicyListenerProxy* listener)
 {
      decision->priv->listener = listener;
 }
@@ -87,7 +86,7 @@ static void webkit_policy_decision_class_init(WebKitPolicyDecisionClass* decisio
 void webkit_policy_decision_use(WebKitPolicyDecision* decision)
 {
     g_return_if_fail(WEBKIT_IS_POLICY_DECISION(decision));
-    WKFramePolicyListenerUse(decision->priv->listener.get());
+    decision->priv->listener->use();
     decision->priv->madePolicyDecision = true;
 }
 
@@ -101,7 +100,7 @@ void webkit_policy_decision_use(WebKitPolicyDecision* decision)
 void webkit_policy_decision_ignore(WebKitPolicyDecision* decision)
 {
     g_return_if_fail(WEBKIT_IS_POLICY_DECISION(decision));
-    WKFramePolicyListenerIgnore(decision->priv->listener.get());
+    decision->priv->listener->ignore();
     decision->priv->madePolicyDecision = true;
 }
 
@@ -114,6 +113,6 @@ void webkit_policy_decision_ignore(WebKitPolicyDecision* decision)
 void webkit_policy_decision_download(WebKitPolicyDecision* decision)
 {
     g_return_if_fail(WEBKIT_IS_POLICY_DECISION(decision));
-    WKFramePolicyListenerDownload(decision->priv->listener.get());
+    decision->priv->listener->download();
     decision->priv->madePolicyDecision = true;
 }

@@ -21,24 +21,23 @@
 #include "WebKitPolicyClient.h"
 
 #include "WebKitNavigationPolicyDecisionPrivate.h"
-#include "WebKitPolicyDecision.h"
-#include "WebKitPrivate.h"
 #include "WebKitResponsePolicyDecisionPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/text/CString.h>
 
 using namespace WebKit;
 
 static void decidePolicyForNavigationActionCallback(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
 {
     GRefPtr<WebKitNavigationPolicyDecision> decision =
-        adoptGRef(webkitNavigationPolicyDecisionCreate(navigationType,
-                                                       mouseButton,
-                                                       modifiers,
-                                                       request,
+        adoptGRef(webkitNavigationPolicyDecisionCreate(static_cast<WebKitNavigationType>(navigationType),
+                                                       wkEventMouseButtonToWebKitMouseButton(mouseButton),
+                                                       wkEventModifiersToGdkModifiers(modifiers),
+                                                       toImpl(request),
                                                        0, /* frame name */
-                                                       listener));
+                                                       toImpl(listener)));
     webkitWebViewMakePolicyDecision(WEBKIT_WEB_VIEW(clientInfo),
                                     WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION,
                                     WEBKIT_POLICY_DECISION(decision.get()));
@@ -47,12 +46,12 @@ static void decidePolicyForNavigationActionCallback(WKPageRef page, WKFrameRef f
 static void decidePolicyForNewWindowActionCallback(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKStringRef frameName, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
 {
     GRefPtr<WebKitNavigationPolicyDecision> decision =
-        adoptGRef(webkitNavigationPolicyDecisionCreate(navigationType,
-                                                       mouseButton,
-                                                       modifiers,
-                                                       request,
+        adoptGRef(webkitNavigationPolicyDecisionCreate(static_cast<WebKitNavigationType>(navigationType),
+                                                       wkEventMouseButtonToWebKitMouseButton(mouseButton),
+                                                       wkEventModifiersToGdkModifiers(modifiers),
+                                                       toImpl(request),
                                                        toImpl(frameName)->string().utf8().data(),
-                                                       listener));
+                                                       toImpl(listener)));
     webkitWebViewMakePolicyDecision(WEBKIT_WEB_VIEW(clientInfo),
                                     WEBKIT_POLICY_DECISION_TYPE_NEW_WINDOW_ACTION,
                                     WEBKIT_POLICY_DECISION(decision.get()));
@@ -61,13 +60,13 @@ static void decidePolicyForNewWindowActionCallback(WKPageRef page, WKFrameRef fr
 static void decidePolicyForResponseCallback(WKPageRef page, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
 {
     GRefPtr<WebKitResponsePolicyDecision> decision =
-        adoptGRef(webkitResponsePolicyDecisionCreate(request, response, listener));
+        adoptGRef(webkitResponsePolicyDecisionCreate(toImpl(request), toImpl(response), toImpl(listener)));
     webkitWebViewMakePolicyDecision(WEBKIT_WEB_VIEW(clientInfo),
                                     WEBKIT_POLICY_DECISION_TYPE_RESPONSE,
                                     WEBKIT_POLICY_DECISION(decision.get()));
 }
 
-void attachPolicyClientToPage(WebKitWebView* webView)
+void attachPolicyClientToView(WebKitWebView* webView)
 {
     WKPagePolicyClient policyClient = {
         kWKPagePolicyClientCurrentVersion,

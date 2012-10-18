@@ -21,8 +21,10 @@
 #define WebKitPolicyDecisionPrivate_h
 
 #include "WebKitPolicyDecision.h"
-#include <WebKit2/WebKit2_C.h>
+#include "WebKitPrivate.h"
 
-void webkitPolicyDecisionSetListener(WebKitPolicyDecision*, WKFramePolicyListenerRef);
+using namespace WebKit;
+
+void webkitPolicyDecisionSetListener(WebKitPolicyDecision*, WebFramePolicyListenerProxy*);
 
 #endif // WebKitResponsePolicyDecisionPrivate_h

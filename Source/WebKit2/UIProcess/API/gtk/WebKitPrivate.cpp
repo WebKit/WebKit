@@ -35,3 +35,19 @@ unsigned wkEventModifiersToGdkModifiers(WKEventModifiers wkModifiers)
         modifiers |= GDK_META_MASK;
     return modifiers;
 }
+
+unsigned wkEventMouseButtonToWebKitMouseButton(WKEventMouseButton wkButton)
+{
+    switch (wkButton) {
+    case kWKEventMouseButtonNoButton:
+        return 0;
+    case kWKEventMouseButtonLeftButton:
+        return 1;
+    case kWKEventMouseButtonMiddleButton:
+        return 2;
+    case kWKEventMouseButtonRightButton:
+        return 3;
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}

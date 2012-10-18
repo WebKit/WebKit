@@ -22,6 +22,6 @@
 
 #include "WebKitWebView.h"
 
-void attachPolicyClientToPage(WebKitWebView*);
+void attachPolicyClientToView(WebKitWebView*);
 
 #endif // WebKitPolicyClient_h

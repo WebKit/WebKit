@@ -30,8 +30,6 @@
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
-using namespace WebKit;
-
 /**
  * SECTION: WebKitResponsePolicyDecision
  * @Short_description: A policy decision for resource responses
@@ -150,11 +148,11 @@ WebKitURIResponse* webkit_response_policy_decision_get_response(WebKitResponsePo
     return decision->priv->response.get();
 }
 
-WebKitResponsePolicyDecision* webkitResponsePolicyDecisionCreate(WKURLRequestRef request, WKURLResponseRef response, WKFramePolicyListenerRef listener)
+WebKitResponsePolicyDecision* webkitResponsePolicyDecisionCreate(WebURLRequest* request, WebURLResponse* response, WebFramePolicyListenerProxy* listener)
 {
     WebKitResponsePolicyDecision* decision = WEBKIT_RESPONSE_POLICY_DECISION(g_object_new(WEBKIT_TYPE_RESPONSE_POLICY_DECISION, NULL));
-    decision->priv->request = adoptGRef(webkitURIRequestCreateForResourceRequest(toImpl(request)->resourceRequest()));
-    decision->priv->response = adoptGRef(webkitURIResponseCreateForResourceResponse(toImpl(response)->resourceResponse()));
+    decision->priv->request = adoptGRef(webkitURIRequestCreateForResourceRequest(request->resourceRequest()));
+    decision->priv->response = adoptGRef(webkitURIResponseCreateForResourceResponse(response->resourceResponse()));
     webkitPolicyDecisionSetListener(WEBKIT_POLICY_DECISION(decision), listener);
     return decision;
 }

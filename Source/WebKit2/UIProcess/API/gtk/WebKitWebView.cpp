@@ -402,7 +402,7 @@ static void webkitWebViewConstructed(GObject* object)
 
     attachLoaderClientToView(webView);
     attachUIClientToView(webView);
-    attachPolicyClientToPage(webView);
+    attachPolicyClientToView(webView);
     attachResourceLoadClientToView(webView);
     attachFullScreenClientToView(webView);
     attachContextMenuClientToView(webView);

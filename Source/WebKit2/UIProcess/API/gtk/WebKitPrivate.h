@@ -67,5 +67,6 @@ static void destroy##structName(structName* data) \
 }
 
 unsigned wkEventModifiersToGdkModifiers(WKEventModifiers);
+unsigned wkEventMouseButtonToWebKitMouseButton(WKEventMouseButton);
 
 #endif // WebKitPrivate_h
