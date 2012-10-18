@@ -293,6 +293,7 @@ webkit.org/b/85599 http/tests/navigation/postredirect-goback1.html [ Failure ]
 webkit.org/b/56567 http/tests/cache/history-only-cached-subresource-loads.html [ Failure ]
 
 # EFL WK1 does not support plugins yet.
+webkit.org/b/96881 http/tests/plugins [ Skip ]
 webkit.org/b/96881 plugins [ Skip ]
 
 # EFL WK1 does not support the spellchecker feature
