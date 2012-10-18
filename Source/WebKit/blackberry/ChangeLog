@@ -1,3 +1,17 @@
+2012-10-18  John Griggs  <jgriggs@rim.com>
+
+        2012-10-18  John Griggs  <jgriggs@rim.com>
+
+        Crash in InRegionScrollableArea constructor while loading page
+        https://bugs.webkit.org/show_bug.cgi?id=99733
+
+        Reviewed by Antonio Gomes.
+
+        Check scrollLayer and avoid constructing InRegionScrollableArea when it is NULL.
+
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScrollerPrivate::calculateInRegionScrollableAreasForPoint):
+
 2012-10-17  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Possible redundant zoomToInitialScaleOnLoad() in WebPagePrivate::setLoadState

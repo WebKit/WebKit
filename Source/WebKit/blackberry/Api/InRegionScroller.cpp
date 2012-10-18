@@ -219,6 +219,9 @@ void InRegionScrollerPrivate::calculateInRegionScrollableAreasForPoint(const Web
                     return;
                 }
 
+                if (!renderView->compositor()->scrollLayer())
+                    continue;
+
                 if (canScrollInnerFrame(view->frame())) {
                     pushBackInRegionScrollable(new InRegionScrollableArea(m_webPage, layer));
                     continue;
