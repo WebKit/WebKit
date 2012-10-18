@@ -1,3 +1,9 @@
+2012-10-18  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Build fix after r131701 and r131777.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2012-10-18  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Race condition between GCThread and main thread during copying phase

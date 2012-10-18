@@ -1,3 +1,9 @@
+2012-10-18  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Build fix after r131701 and r131777.
+
+        * WebKit.vcproj/WebKit.sln:
+
 2012-10-14  Sam Weinig  <sam@webkit.org>
 
         Fix the windows build.

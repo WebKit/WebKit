@@ -119,6 +119,7 @@ EXPORTS
     ?copyBackingStore@JSObject@JSC@@SAXPAVJSCell@2@AAVCopyVisitor@2@@Z
     ?create@JSFunction@JSC@@SAPAV12@PAVExecState@2@PAVJSGlobalObject@2@HABVString@WTF@@P6I_J0@ZW4Intrinsic@2@3@Z
     ?create@JSGlobalData@JSC@@SA?AV?$PassRefPtr@VJSGlobalData@JSC@@@WTF@@W4ThreadStackType@2@W4HeapType@2@@Z
+    ?create@OpaqueJSString@@SA?AV?$PassRefPtr@UOpaqueJSString@@@WTF@@ABVString@3@@Z
     ?create@RegExp@JSC@@SAPAV12@AAVJSGlobalData@2@ABVString@WTF@@W4RegExpFlags@2@@Z
     ?createEmptyString@SmallStrings@JSC@@AAEXPAVJSGlobalData@2@@Z
     ?createError@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVString@WTF@@@Z
@@ -354,6 +355,7 @@ EXPORTS
     ?startSampling@JSGlobalData@JSC@@QAEXXZ
     ?stopProfiling@Profiler@JSC@@QAE?AV?$PassRefPtr@VProfile@JSC@@@WTF@@PAVExecState@2@ABVString@4@@Z
     ?stopSampling@JSGlobalData@JSC@@QAEXXZ
+    ?string@OpaqueJSString@@QBE?AVString@WTF@@XZ
     ?StringToDouble@StringToDoubleConverter@double_conversion@WTF@@SANPBDIPAI@Z
     ?suggestedNewOutOfLineStorageCapacity@Structure@JSC@@QAEIXZ
     ?sweeper@Heap@JSC@@QAEPAVIncrementalSweeper@2@XZ

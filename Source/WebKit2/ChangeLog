@@ -1,3 +1,9 @@
+2012-10-18  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Build fix after r131701 and r131777.
+
+        * win/WebKit2.def:
+
 2012-10-18  Anders Carlsson  <andersca@apple.com>
 
         Build fix.
