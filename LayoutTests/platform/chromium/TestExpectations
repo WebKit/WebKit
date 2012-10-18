@@ -3724,6 +3724,9 @@ webkit.org/b/94492 [ Linux Win ] css3/filters/custom/filter-repaint-custom-rotat
 webkit.org/b/95581 http/tests/xmlhttprequest/zero-length-response.html [ Pass Timeout ]
 webkit.org/b/95581 http/tests/misc/javascript-url-stop-loaders.html [ Pass Timeout ]
 
+# Flaky timeouts.
+webkit.org/b/99734 [ Mac ] http/tests/xmlhttprequest/request-encoding2.html [ Pass Timeout ]
+
 # ENABLE_ACCELERATED_OVERFLOW_SCROLLING is not currently enabled in Chromium.
 webkit.org/b/94353 compositing/overflow/scrolling-content-clip-to-viewport.html [ Failure ]
 webkit.org/b/94353 platform/chromium/virtual/softwarecompositing/overflow/scrolling-content-clip-to-viewport.html [ Failure ]

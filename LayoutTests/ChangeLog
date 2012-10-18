@@ -1,3 +1,10 @@
+2012-10-18  Dana Jansens  <danakj@chromium.org>
+
+        Unreviewed, mark http/tests/xmlhttprequest/request-encoding2.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=99734
+
+        * platform/chromium/TestExpectations:
+
 2012-10-18  Stephen Chenney  <schenney@chromium.org>
 
         Unreviewed testExpectation change for Chromium.
