@@ -52,6 +52,8 @@ public:
     explicit RTCPeerConnectionHandlerChromium(RTCPeerConnectionHandlerClient*);
     virtual ~RTCPeerConnectionHandlerChromium();
 
+    bool createWebHandler();
+
     virtual bool initialize(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>) OVERRIDE;
 
     virtual void createOffer(PassRefPtr<RTCSessionDescriptionRequest>, PassRefPtr<MediaConstraints>) OVERRIDE;

@@ -1,3 +1,39 @@
+2012-10-18  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Add better RTCPeerConnectionHandler creation logic
+        https://bugs.webkit.org/show_bug.cgi?id=99308
+
+        Reviewed by Adam Barth.
+
+        This patch makes sure that if the RTCPeerConnectionHandler can't be fully initialized/created
+        the RTCPeerConnection constructor throws an exception.
+
+        Not full testable, existing tests cover the normal case though.
+
+        * platform/mediastream/chromium/RTCPeerConnectionHandlerChromium.cpp:
+        (WebCore::RTCPeerConnectionHandler::create):
+        (WebCore::RTCPeerConnectionHandlerChromium::RTCPeerConnectionHandlerChromium):
+        (WebCore::RTCPeerConnectionHandlerChromium::createWebHandler):
+        (WebCore::RTCPeerConnectionHandlerChromium::initialize):
+        (WebCore::RTCPeerConnectionHandlerChromium::createOffer):
+        (WebCore::RTCPeerConnectionHandlerChromium::createAnswer):
+        (WebCore::RTCPeerConnectionHandlerChromium::setLocalDescription):
+        (WebCore::RTCPeerConnectionHandlerChromium::setRemoteDescription):
+        (WebCore::RTCPeerConnectionHandlerChromium::updateIce):
+        (WebCore::RTCPeerConnectionHandlerChromium::addIceCandidate):
+        (WebCore::RTCPeerConnectionHandlerChromium::localDescription):
+        (WebCore::RTCPeerConnectionHandlerChromium::remoteDescription):
+        (WebCore::RTCPeerConnectionHandlerChromium::addStream):
+        (WebCore::RTCPeerConnectionHandlerChromium::removeStream):
+        (WebCore::RTCPeerConnectionHandlerChromium::getStats):
+        (WebCore::RTCPeerConnectionHandlerChromium::openDataChannel):
+        (WebCore::RTCPeerConnectionHandlerChromium::sendStringData):
+        (WebCore::RTCPeerConnectionHandlerChromium::sendRawData):
+        (WebCore::RTCPeerConnectionHandlerChromium::closeDataChannel):
+        (WebCore::RTCPeerConnectionHandlerChromium::stop):
+        * platform/mediastream/chromium/RTCPeerConnectionHandlerChromium.h:
+        (RTCPeerConnectionHandlerChromium):
+
 2012-10-19  Zeno Albisser  <zeno@webkit.org>
 
         Temporarily disable use of QCocoaNativeInterface in GraphicsSurfaceMac.
