@@ -1,3 +1,22 @@
+2012-10-18  Xiaobo Wang  <xbwang@torchmobile.com.cn>
+
+        [BlackBerry] Dump DRT output to stdout if test is passed as command line argument
+        https://bugs.webkit.org/show_bug.cgi?id=99150
+
+        Reviewed by Rob Buis.
+
+        Fixed some code style errors as well.
+
+        * DumpRenderTree/blackberry/DumpRenderTree.cpp:
+        (BlackBerry::WebKit::DumpRenderTree::runTest):
+        (BlackBerry::WebKit::DumpRenderTree::runRemainingTests):
+        (BlackBerry::WebKit::DumpRenderTree::runTests):
+        (BlackBerry::WebKit::DumpRenderTree::isHTTPTest):
+        (BlackBerry::WebKit::DumpRenderTree::dump):
+        (BlackBerry::WebKit::DumpRenderTree::addMessageToConsole):
+        * DumpRenderTree/blackberry/DumpRenderTreeBlackBerry.h:
+        (DumpRenderTree):
+
 2012-10-18  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Improved support for silent builds

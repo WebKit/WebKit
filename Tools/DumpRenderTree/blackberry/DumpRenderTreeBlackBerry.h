@@ -77,7 +77,7 @@ public:
     void didReceiveResponseForFrame(WebCore::Frame*, const WebCore::ResourceResponse&);
 
     // ChromeClient delegates
-    void addMessageToConsole(const String& message, unsigned int lineNumber, const String& sourceID);
+    void addMessageToConsole(const String& message, unsigned lineNumber, const String& sourceID);
     void runJavaScriptAlert(const String& message);
     bool runJavaScriptConfirm(const String& message);
     String runJavaScriptPrompt(const String& message, const String& defaultValue);
