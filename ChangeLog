@@ -1,3 +1,15 @@
+2012-10-18  Pablo Flouret  <pablof@motorola.com>
+
+        Implement css3-conditional's @supports rule
+        https://bugs.webkit.org/show_bug.cgi?id=86146
+
+        Reviewed by Antti Koivisto.
+
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+        * configure.ac:
+            Add an ENABLE_CSS3_CONDITIONAL_RULES flag.
+
 2012-10-18  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Clean up variables controlling Qt module creation/handling

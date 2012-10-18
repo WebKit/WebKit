@@ -1974,6 +1974,9 @@ webkit.org/b/97990 mathml/presentation/roots.xhtml [ Failure ]
 webkit.org/b/97990 mathml/presentation/row-alignment.xhtml [ Failure ]
 webkit.org/b/97990 mathml/presentation/subsup.xhtml [ Failure ]
 
+# css3-conditionals support is not yet enabled.
+webkit.org/b/86146 css3/supports.html
+
 # Occasionally fails if run after right after
 # fast/selectors/unqualified-hover-quirks.html or itself.
 webkit.org/b/10890 fast/selectors/unqualified-hover-strict.html [ Failure Pass ]

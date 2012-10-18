@@ -335,6 +335,15 @@ feature_defines_overrides += ENABLE_SPELLCHECK=0
 endif  # END ENABLE_SPELLCHECK
 
 # ---
+# CSS3 Conditional Rules support
+# ---
+if ENABLE_CSS3_CONDITIONAL_RULES
+feature_defines_overrides += ENABLE_CSS3_CONDITIONAL_RULES=1
+else
+feature_defines_overrides += ENABLE_CSS3_CONDITIONAL_RULES=0
+endif  # END ENABLE_CSS3_CONDITIONAL_RULES
+
+# ---
 # Unstable features
 # If unstable features should not be enabled, their defines should be overriden with a 0 value.
 # ---

@@ -800,6 +800,14 @@ AC_ARG_ENABLE(coverage,
               [],[enable_coverage="no"])
 AC_MSG_RESULT([$enable_coverage])
 
+# check whether to enable CSS conditional rules support
+AC_MSG_CHECKING([whether to enable CSS3 conditional rules support])
+AC_ARG_ENABLE(css3_conditional_rules,
+              AC_HELP_STRING([--enable-css3-conditional-rules],
+                             [enable CSS3 conditional rules support [default=no]]),
+              [],[enable_css3_conditional_rules="no"])
+AC_MSG_RESULT([$enable_css3_conditional_rules])
+
 # check whether to enable FastMalloc
 AC_MSG_CHECKING([whether to enable optimized memory allocator])
 AC_ARG_ENABLE(fast_malloc,
@@ -1166,6 +1174,7 @@ AM_CONDITIONAL([ENABLE_MEDIA_STREAM],[test "$enable_media_stream" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG],[test "$enable_svg" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_FONTS],[test "$enable_svg_fonts" = "yes"])
 AM_CONDITIONAL([ENABLE_COVERAGE],[test "$enable_coverage" = "yes"])
+AM_CONDITIONAL([ENABLE_CSS3_CONDITIONAL_RULES],[test "$enable_css3_conditional_rules" = "yes"])
 AM_CONDITIONAL([ENABLE_FAST_MALLOC],[test "$enable_fast_malloc" = "yes"])
 AM_CONDITIONAL([ENABLE_WEB_AUDIO],[test "$enable_web_audio" = "yes"])
 AM_CONDITIONAL([ENABLE_OPCODE_STATS],[test "$enable_opcode_stats" = "yes"])
@@ -1228,6 +1237,7 @@ Build configuration:
 Features:
 =======
  Accelerated Compositing                                  : $enable_accelerated_compositing
+ CSS3 Conditional Rules support                           : $enable_css3_conditional_rules
  Filters support                                          : $enable_filters
  Gamepad support                                          : $enable_gamepad
  Geolocation support                                      : $enable_geolocation

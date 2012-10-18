@@ -2807,3 +2807,6 @@ http/tests/security/xssAuditor/script-tag-with-callbacks.html
 http/tests/security/xssAuditor/xss-filter-bypass-long-string.html
 http/tests/xmlhttprequest/access-control-allow-lists-starting-with-comma.html
 http/tests/xmlhttprequest/range-test.html
+
+# css3-conditionals support is not yet enabled.
+webkit.org/b/86146 css3/supports.html

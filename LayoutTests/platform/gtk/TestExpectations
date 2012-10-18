@@ -416,6 +416,9 @@ webkit.org/b/99060 fast/events/constructors/device-proximity-event-constructor.h
 # HIDDEN_PAGE_DOM_TIMER_THROTTLING is not enabled
 webkit.org/b/99059 fast/dom/timer-throttling-hidden-page.html [ Skip ]
 
+# css3-conditionals support is not yet enabled.
+webkit.org/b/86146 css3/supports.html
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,23 @@
+2012-10-18  Pablo Flouret  <pablof@motorola.com>
+
+        Implement css3-conditional's @supports rule
+        https://bugs.webkit.org/show_bug.cgi?id=86146
+
+        Reviewed by Antti Koivisto.
+
+        * css3/supports-expected.txt: Added.
+        * css3/supports.html: Added.
+
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wk2/TestExpectations:
+            Skip the test until the feature is enabled.
+
 2012-10-18  Jer Noble  <jer.noble@apple.com>
 
         Fullscreen movie controls behave incorrectly when clicked (and dragged)

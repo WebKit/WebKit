@@ -91,6 +91,9 @@ static inline int cssyyerror(void*, const char*)
 %token IMPORT_SYM
 %token PAGE_SYM
 %token MEDIA_SYM
+#if ENABLE_CSS3_CONDITIONAL_RULES
+%token SUPPORTS_SYM
+#endif
 %token FONT_FACE_SYM
 %token CHARSET_SYM
 %token NAMESPACE_SYM
@@ -126,6 +129,11 @@ static inline int cssyyerror(void*, const char*)
 %token MEDIA_ONLY
 %token MEDIA_NOT
 %token MEDIA_AND
+#if ENABLE_CSS3_CONDITIONAL_RULES
+%token SUPPORTS_NOT
+%token SUPPORTS_AND
+%token SUPPORTS_OR
+#endif
 
 %token <number> REMS
 %token <number> QEMS
@@ -189,6 +197,9 @@ static inline int cssyyerror(void*, const char*)
 %type <rule> block_rule
 %type <rule> block_valid_rule
 %type <rule> region
+#if ENABLE_CSS3_CONDITIONAL_RULES
+%type <rule> supports
+#endif
 
 %type <string> maybe_ns_prefix
 
@@ -208,6 +219,15 @@ static inline int cssyyerror(void*, const char*)
 %type <mediaQueryExp> media_query_exp
 %type <mediaQueryExpList> media_query_exp_list
 %type <mediaQueryExpList> maybe_and_media_query_exp_list
+
+#if ENABLE_CSS3_CONDITIONAL_RULES
+%type <boolean> supports_condition
+%type <boolean> supports_condition_in_parens
+%type <boolean> supports_negation
+%type <boolean> supports_conjunction
+%type <boolean> supports_disjunction
+%type <boolean> supports_declaration_condition
+#endif
 
 %type <string> keyframe_name
 %type <keyframe> keyframe_rule
@@ -379,6 +399,9 @@ valid_rule:
   | namespace
   | import
   | region
+#if ENABLE_CSS3_CONDITIONAL_RULES
+  | supports
+#endif
   ;
 
 rule:
@@ -416,6 +439,9 @@ block_rule:
   | namespace
   | import
   | media
+#if ENABLE_CSS3_CONDITIONAL_RULES
+  | supports
+#endif
   ;
 
 at_import_header_end_maybe_space:
@@ -610,6 +636,74 @@ medium:
       $$ = $1;
   }
   ;
+
+#if ENABLE_CSS3_CONDITIONAL_RULES
+supports:
+    SUPPORTS_SYM maybe_space supports_condition '{' maybe_space block_rule_list save_block {
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        if ($3 && $6 && p->m_styleSheet) {
+            for (unsigned i = 0; i < $6->size(); i++)
+                p->m_styleSheet->parserAppendRule($6->at(i).release());
+        }
+        $$ = 0;
+    }
+    ;
+
+supports_condition:
+    supports_condition_in_parens
+    | supports_negation
+    | supports_conjunction
+    | supports_disjunction
+    ;
+
+supports_negation:
+    SUPPORTS_NOT maybe_space supports_condition_in_parens {
+        $$ = !$3;
+    }
+    ;
+
+supports_conjunction:
+    supports_condition_in_parens SUPPORTS_AND maybe_space supports_condition_in_parens {
+        $$ = $1 && $4;
+    }
+    | supports_conjunction SUPPORTS_AND maybe_space supports_condition_in_parens {
+        $$ = $1 && $4;
+    }
+    ;
+
+supports_disjunction:
+    supports_condition_in_parens SUPPORTS_OR maybe_space supports_condition_in_parens {
+        $$ = $1 || $4;
+    }
+    | supports_disjunction SUPPORTS_OR maybe_space supports_condition_in_parens {
+        $$ = $1 || $4;
+    }
+    ;
+
+supports_condition_in_parens:
+    '(' maybe_space supports_condition ')' maybe_space {
+        $$ = $3;
+    }
+    | supports_declaration_condition
+    ;
+
+supports_declaration_condition:
+    '(' maybe_space property ':' maybe_space expr prio ')' maybe_space {
+        $$ = false;
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        if ($3 && $6) {
+            p->m_valueList = p->sinkFloatingValueList($6);
+            int oldParsedProperties = p->m_parsedProperties->size();
+            $$ = p->parseValue(static_cast<CSSPropertyID>($3), $7);
+            // We just need to know if the declaration is supported as it is written. Rollback any additions.
+            if ($$)
+                p->rollbackLastProperties(p->m_parsedProperties->size() - oldParsedProperties);
+            p->m_valueList = nullptr;
+        }
+        p->markPropertyEnd($7, false);
+    }
+    ;
+#endif
 
 before_keyframes_rule:
     /* empty */ {

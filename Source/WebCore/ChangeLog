@@ -1,3 +1,31 @@
+2012-10-18  Pablo Flouret  <pablof@motorola.com>
+
+        Implement css3-conditional's @supports rule
+        https://bugs.webkit.org/show_bug.cgi?id=86146
+
+        Reviewed by Antti Koivisto.
+
+        The "@supports" rule is a conditional group rule whose condition tests
+        whether the user agent supports CSS property:value pairs.
+
+        http://dev.w3.org/csswg/css3-conditional/#at-supports
+
+        Test: css3/supports.html
+
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.am:
+        * GNUmakefile.features.am:
+            Add an ENABLE_CSS3_CONDITIONAL_RULES flag.
+
+        * css/CSSGrammar.y.in:
+        * css/CSSParser.cpp:
+        (WebCore):
+        (WebCore::CSSParser::detectSupportsToken): Tries to find 'and', 'not' and 'or' tokens.
+        (WebCore::CSSParser::detectAtToken): Enter SupportsMode if @supports is detected.
+        (WebCore::CSSParser::realLex): Try to detect supports tokens when in SupportsMode.
+        * css/CSSParser.h: Added new SupportsMode parsing mode.
+        (CSSParser):
+
 2012-10-18  Marja Hölttä  <marja@chromium.org>
 
         Fix: CachedResourceLoader::requestSVGDocument was passing an URL as charset

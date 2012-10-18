@@ -1,3 +1,13 @@
+2012-10-18  Pablo Flouret  <pablof@motorola.com>
+
+        Implement css3-conditional's @supports rule
+        https://bugs.webkit.org/show_bug.cgi?id=86146
+
+        Reviewed by Antti Koivisto.
+
+        * Configurations/FeatureDefines.xcconfig:
+            Add an ENABLE_CSS3_CONDITIONAL_RULES flag.
+
 2012-10-18  Michael Saboff  <msaboff@apple.com>
 
         Make conversion between JSStringRef and WKStringRef work without character size conversions

@@ -1287,6 +1287,9 @@ webkit.org/b/80394 fast/block/margin-collapse/empty-clear-blocks.html [ Failure 
 webkit.org/b/80394 fast/block/margin-collapse/025.html [ Failure ]
 webkit.org/b/80394 fast/block/margin-collapse/block-inside-inline/025.html [ Failure ]
 
+# css3-conditionals support is not yet enabled.
+webkit.org/b/86146 css3/supports.html
+
 # Asserts in MessagePort::contextDestroyed, but the assert usually gets attributed to later tests.
 webkit.org/b/94458 fast/events/message-port-constructor-for-deleted-document.html
 

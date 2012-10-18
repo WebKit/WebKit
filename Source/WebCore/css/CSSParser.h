@@ -435,6 +435,10 @@ private:
     inline void detectDashToken(int);
     template <typename CharacterType>
     inline void detectAtToken(int, bool);
+#if ENABLE(CSS3_CONDITIONAL_RULES)
+    template <typename CharacterType>
+    inline void detectSupportsToken(int);
+#endif
 
     template <typename CharacterType>
     inline void setRuleHeaderEnd(const CharacterType*);
@@ -483,6 +487,9 @@ private:
     enum ParsingMode {
         NormalMode,
         MediaQueryMode,
+#if ENABLE(CSS3_CONDITIONAL_RULES)
+        SupportsMode,
+#endif
         NthChildMode
     };
 
