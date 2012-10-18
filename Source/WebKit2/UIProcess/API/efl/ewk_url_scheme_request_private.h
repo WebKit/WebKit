@@ -34,7 +34,7 @@
 #include "WKSoupRequestManager.h"
 
 /**
- * \struct  _Ewk_Url_Scheme_Request
+ * \struct  Ewk_Url_Scheme_Request
  * @brief   Contains the URL scheme request data.
  */
 struct Ewk_Url_Scheme_Request : public RefCounted<Ewk_Url_Scheme_Request> {

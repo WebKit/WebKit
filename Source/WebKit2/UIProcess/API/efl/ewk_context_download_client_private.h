@@ -26,7 +26,7 @@
 #ifndef ewk_context_download_client_private_h
 #define ewk_context_download_client_private_h
 
-typedef struct _Ewk_Context Ewk_Context;
+typedef struct Ewk_Context Ewk_Context;
 
 void ewk_context_download_client_attach(Ewk_Context*);
 

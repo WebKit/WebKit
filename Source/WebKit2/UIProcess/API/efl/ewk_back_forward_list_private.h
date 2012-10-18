@@ -32,22 +32,20 @@
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 
-typedef struct _Ewk_Back_Forward_List Ewk_Back_Forward_List;
-
 typedef HashMap<WKBackForwardListItemRef, RefPtr<Ewk_Back_Forward_List_Item> > ItemsMap;
 
-class _Ewk_Back_Forward_List {
+class Ewk_Back_Forward_List {
 public:
     WKRetainPtr<WKBackForwardListRef> wkList;
     mutable ItemsMap wrapperCache;
 
-    static PassOwnPtr<_Ewk_Back_Forward_List> create(WKBackForwardListRef listRef)
+    static PassOwnPtr<Ewk_Back_Forward_List> create(WKBackForwardListRef listRef)
     {
-        return adoptPtr(new _Ewk_Back_Forward_List(listRef));
+        return adoptPtr(new Ewk_Back_Forward_List(listRef));
     }
 
 private:
-    explicit _Ewk_Back_Forward_List(WKBackForwardListRef listRef)
+    explicit Ewk_Back_Forward_List(WKBackForwardListRef listRef)
         : wkList(listRef)
     { }
 };

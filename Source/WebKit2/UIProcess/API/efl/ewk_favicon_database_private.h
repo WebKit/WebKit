@@ -69,19 +69,19 @@ typedef HashMap<Ewk_Favicon_Database_Icon_Change_Cb, IconChangeCallbackData> Cha
 typedef Vector<IconRequestCallbackData> PendingIconRequestVector;
 typedef HashMap<String /* pageURL */, PendingIconRequestVector> PendingIconRequestMap;
 
-class _Ewk_Favicon_Database {
+class Ewk_Favicon_Database {
 public:
     WKRetainPtr<WKIconDatabaseRef> wkIconDatabase;
     ChangeListenerMap changeListeners;
     PendingIconRequestMap iconRequests;
 
-    static PassOwnPtr<_Ewk_Favicon_Database> create(WKIconDatabaseRef iconDatabaseRef)
+    static PassOwnPtr<Ewk_Favicon_Database> create(WKIconDatabaseRef iconDatabaseRef)
     {
-        return adoptPtr(new _Ewk_Favicon_Database(iconDatabaseRef));
+        return adoptPtr(new Ewk_Favicon_Database(iconDatabaseRef));
     }
 
 private:
-    explicit _Ewk_Favicon_Database(WKIconDatabaseRef iconDatabaseRef);
+    explicit Ewk_Favicon_Database(WKIconDatabaseRef iconDatabaseRef);
 };
 
 #endif // ewk_favicon_database_private_h

@@ -38,7 +38,7 @@ extern "C" {
 #endif
 
 /** Creates a type name for @a Ewk_Error. */
-typedef struct _Ewk_Error Ewk_Error;
+typedef struct Ewk_Error Ewk_Error;
 
 /// Creates a type name for Ewk_Error_Type.
 typedef enum {

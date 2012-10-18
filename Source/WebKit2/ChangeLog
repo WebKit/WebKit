@@ -1,3 +1,110 @@
+2012-10-18  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Remove '_' prefix from private API structure names
+        https://bugs.webkit.org/show_bug.cgi?id=99575
+
+        Reviewed by Gyuyoung Kim.
+
+        Removed underscore prefix from WK2 EFL internal structure names.
+
+        * UIProcess/API/efl/VibrationProvider.cpp:
+        (Ewk_Vibration_Client::Ewk_Vibration_Client):
+        * UIProcess/API/efl/VibrationProvider.h:
+        * UIProcess/API/efl/ewk_back_forward_list.h:
+        * UIProcess/API/efl/ewk_back_forward_list_item.h:
+        * UIProcess/API/efl/ewk_back_forward_list_item_private.h:
+        (Ewk_Back_Forward_List_Item::create):
+        (Ewk_Back_Forward_List_Item::Ewk_Back_Forward_List_Item):
+        * UIProcess/API/efl/ewk_back_forward_list_private.h:
+        (Ewk_Back_Forward_List::create):
+        (Ewk_Back_Forward_List::Ewk_Back_Forward_List):
+        * UIProcess/API/efl/ewk_context.cpp:
+        (Ewk_Url_Scheme_Handler::Ewk_Url_Scheme_Handler):
+        (Ewk_Context::Ewk_Context):
+        (ewk_context_url_scheme_request_received):
+        (ewk_context_url_scheme_register):
+        * UIProcess/API/efl/ewk_context.h:
+        * UIProcess/API/efl/ewk_context_download_client_private.h:
+        * UIProcess/API/efl/ewk_context_history_client_private.h:
+        * UIProcess/API/efl/ewk_context_private.h:
+        * UIProcess/API/efl/ewk_context_request_manager_client_private.h:
+        * UIProcess/API/efl/ewk_cookie_manager.cpp:
+        (Ewk_Cookie_Manager::Ewk_Cookie_Manager):
+        (Ewk_Cookie_Manager::~Ewk_Cookie_Manager):
+        * UIProcess/API/efl/ewk_cookie_manager.h:
+        * UIProcess/API/efl/ewk_cookie_manager_private.h:
+        (Ewk_Cookie_Manager::create):
+        (Ewk_Cookie_Manager):
+        * UIProcess/API/efl/ewk_download_job.h:
+        * UIProcess/API/efl/ewk_download_job_private.h:
+        (Ewk_Download_Job::create):
+        (Ewk_Download_Job::Ewk_Download_Job):
+        * UIProcess/API/efl/ewk_error.cpp:
+        (Ewk_Error::Ewk_Error):
+        * UIProcess/API/efl/ewk_error.h:
+        * UIProcess/API/efl/ewk_error_private.h:
+        (Ewk_Error::create):
+        (Ewk_Error):
+        * UIProcess/API/efl/ewk_favicon_database.cpp:
+        (Ewk_Favicon_Database::Ewk_Favicon_Database):
+        * UIProcess/API/efl/ewk_favicon_database.h:
+        * UIProcess/API/efl/ewk_favicon_database_private.h:
+        (Ewk_Favicon_Database::create):
+        (Ewk_Favicon_Database):
+        * UIProcess/API/efl/ewk_form_submission_request.h:
+        * UIProcess/API/efl/ewk_form_submission_request_private.h:
+        (Ewk_Form_Submission_Request::~Ewk_Form_Submission_Request):
+        (Ewk_Form_Submission_Request::create):
+        (Ewk_Form_Submission_Request::Ewk_Form_Submission_Request):
+        * UIProcess/API/efl/ewk_intent.h:
+        * UIProcess/API/efl/ewk_intent_private.h:
+        (Ewk_Intent::create):
+        (Ewk_Intent::Ewk_Intent):
+        * UIProcess/API/efl/ewk_intent_service.h:
+        * UIProcess/API/efl/ewk_intent_service_private.h:
+        (Ewk_Intent_Service::create):
+        (Ewk_Intent_Service::Ewk_Intent_Service):
+        * UIProcess/API/efl/ewk_navigation_data.h:
+        * UIProcess/API/efl/ewk_navigation_data_private.h:
+        (Ewk_Navigation_Data::create):
+        (Ewk_Navigation_Data::Ewk_Navigation_Data):
+        * UIProcess/API/efl/ewk_navigation_policy_decision.h:
+        * UIProcess/API/efl/ewk_navigation_policy_decision_private.h:
+        (Ewk_Navigation_Policy_Decision::~Ewk_Navigation_Policy_Decision):
+        (Ewk_Navigation_Policy_Decision::create):
+        (Ewk_Navigation_Policy_Decision::Ewk_Navigation_Policy_Decision):
+        * UIProcess/API/efl/ewk_popup_menu_item.cpp:
+        (Ewk_Popup_Menu_Item::Ewk_Popup_Menu_Item):
+        * UIProcess/API/efl/ewk_popup_menu_item.h:
+        * UIProcess/API/efl/ewk_popup_menu_item_private.h:
+        (Ewk_Popup_Menu_Item::create):
+        (Ewk_Popup_Menu_Item):
+        * UIProcess/API/efl/ewk_resource.h:
+        * UIProcess/API/efl/ewk_resource_private.h:
+        (Ewk_Resource::create):
+        (Ewk_Resource::Ewk_Resource):
+        * UIProcess/API/efl/ewk_settings.h:
+        * UIProcess/API/efl/ewk_settings_private.h:
+        (Ewk_Settings::Ewk_Settings):
+        * UIProcess/API/efl/ewk_text_checker_private.h:
+        * UIProcess/API/efl/ewk_touch.h:
+        * UIProcess/API/efl/ewk_url_request.h:
+        * UIProcess/API/efl/ewk_url_request_private.h:
+        (Ewk_Url_Request::create):
+        (Ewk_Url_Request::Ewk_Url_Request):
+        * UIProcess/API/efl/ewk_url_response.h:
+        * UIProcess/API/efl/ewk_url_response_private.h:
+        (Ewk_Url_Response::create):
+        (Ewk_Url_Response::Ewk_Url_Response):
+        * UIProcess/API/efl/ewk_url_scheme_request.h:
+        * UIProcess/API/efl/ewk_url_scheme_request_private.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (Ewk_View_Private_Data::Ewk_View_Private_Data):
+        (Ewk_View_Private_Data::~Ewk_View_Private_Data):
+        (_ewk_view_smart_add):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_private.h:
+
 2012-10-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Lion build fix after r131686. Add back if-def around #imports.

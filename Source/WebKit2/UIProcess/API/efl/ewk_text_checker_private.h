@@ -35,7 +35,7 @@
  *
  * @internal
  */
-struct _Ewk_Text_Checker {
+struct Ewk_Text_Checker {
     Ewk_Text_Checker_Unique_Spell_Document_Tag_Get_Cb unique_spell_document_tag_get;
     Ewk_Text_Checker_Unique_Spell_Document_Tag_Close_Cb unique_spell_document_tag_close;
     Ewk_Text_Checker_String_Spelling_Check_Cb string_spelling_check;
@@ -43,7 +43,6 @@ struct _Ewk_Text_Checker {
     Ewk_Text_Checker_Word_Learn_Cb word_learn;
     Ewk_Text_Checker_Word_Ignore_Cb word_ignore;
 };
-typedef _Ewk_Text_Checker Ewk_Text_Checker;
 
 Ewk_Text_Checker* ewk_text_checker_callbacks_get();
 

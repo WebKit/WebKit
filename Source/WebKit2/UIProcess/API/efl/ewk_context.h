@@ -47,15 +47,15 @@
 extern "C" {
 #endif
 
-/** Creates a type name for @a _Ewk_Context. */
-typedef struct _Ewk_Context Ewk_Context;
+/** Creates a type name for @a Ewk_Context. */
+typedef struct Ewk_Context Ewk_Context;
 
 /**
- * \enum    _Ewk_Cache_Model
+ * \enum    Ewk_Cache_Model
  *
  * @brief   Contains option for cache model
  */
-enum _Ewk_Cache_Model {
+enum Ewk_Cache_Model {
     /// Use the smallest cache capacity.
     EWK_CACHE_MODEL_DOCUMENT_VIEWER,
     /// Use bigger cache capacity than EWK_CACHE_MODEL_DOCUMENT_VIEWER.
@@ -64,8 +64,8 @@ enum _Ewk_Cache_Model {
     EWK_CACHE_MODEL_PRIMARY_WEBBROWSER
 };
 
-/// Creates a type name for the _Ewk_Cache_Model.
-typedef enum _Ewk_Cache_Model Ewk_Cache_Model;
+/// Creates a type name for the Ewk_Cache_Model.
+typedef enum Ewk_Cache_Model Ewk_Cache_Model;
 
 /**
  * @typedef Ewk_Url_Scheme_Request_Cb Ewk_Url_Scheme_Request_Cb

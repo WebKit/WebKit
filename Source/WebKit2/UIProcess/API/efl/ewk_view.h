@@ -96,11 +96,11 @@ typedef enum {
     EWK_TEXT_DIRECTION_LEFT_TO_RIGHT
 } Ewk_Text_Direction;
 
-typedef struct _Ewk_View_Smart_Data Ewk_View_Smart_Data;
-typedef struct _Ewk_View_Smart_Class Ewk_View_Smart_Class;
+typedef struct Ewk_View_Smart_Data Ewk_View_Smart_Data;
+typedef struct Ewk_View_Smart_Class Ewk_View_Smart_Class;
 
 /// Ewk view's class, to be overridden by sub-classes.
-struct _Ewk_View_Smart_Class {
+struct Ewk_View_Smart_Class {
     Evas_Smart_Class sc; /**< all but 'data' is free to be changed. */
     unsigned long version;
 
@@ -182,14 +182,14 @@ struct _Ewk_View_Smart_Class {
  */
 #define EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION(name) EWK_VIEW_SMART_CLASS_INIT(EVAS_SMART_CLASS_INIT_NAME_VERSION(name))
 
-typedef struct _Ewk_View_Private_Data Ewk_View_Private_Data;
+typedef struct Ewk_View_Private_Data Ewk_View_Private_Data;
 /**
  * @brief Contains an internal View data.
  *
  * It is to be considered private by users, but may be extended or
  * changed by sub-classes (that's why it's in public header file).
  */
-struct _Ewk_View_Smart_Data {
+struct Ewk_View_Smart_Data {
     Evas_Object_Smart_Clipped_Data base;
     const Ewk_View_Smart_Class* api; /**< reference to casted class instance */
     Evas_Object* self; /**< reference to owner object */
@@ -205,49 +205,49 @@ struct _Ewk_View_Smart_Data {
     } changed;
 };
 
-/// Creates a type name for _Ewk_Resource_Request.
-typedef struct _Ewk_Resource_Request Ewk_Resource_Request;
+/// Creates a type name for Ewk_Resource_Request.
+typedef struct Ewk_Resource_Request Ewk_Resource_Request;
 
 /**
  * @brief Structure containing details about a resource request.
  */
-struct _Ewk_Resource_Request {
+struct Ewk_Resource_Request {
     Ewk_Resource *resource; /**< resource being requested */
     Ewk_Url_Request *request; /**< URL request for the resource */
     Ewk_Url_Response *redirect_response; /**< Possible redirect response for the resource or @c NULL */
 };
 
-/// Creates a type name for _Ewk_Resource_Load_Response.
-typedef struct _Ewk_Resource_Load_Response Ewk_Resource_Load_Response;
+/// Creates a type name for Ewk_Resource_Load_Response.
+typedef struct Ewk_Resource_Load_Response Ewk_Resource_Load_Response;
 
 /**
  * @brief Structure containing details about a response to a resource request.
  */
-struct _Ewk_Resource_Load_Response {
+struct Ewk_Resource_Load_Response {
     Ewk_Resource *resource; /**< resource requested */
     Ewk_Url_Response *response; /**< resource load response */
 };
 
-/// Creates a type name for _Ewk_Resource_Load_Error.
-typedef struct _Ewk_Resource_Load_Error Ewk_Resource_Load_Error;
+/// Creates a type name for Ewk_Resource_Load_Error.
+typedef struct Ewk_Resource_Load_Error Ewk_Resource_Load_Error;
 
 /**
  * @brief Structure containing details about a resource load error.
  *
  * Details given about a resource load failure.
  */
-struct _Ewk_Resource_Load_Error {
+struct Ewk_Resource_Load_Error {
     Ewk_Resource *resource; /**< resource that failed loading */
     Ewk_Error *error; /**< load error */
 };
 
-/// Creates a type name for _Ewk_Download_Job_Error.
-typedef struct _Ewk_Download_Job_Error Ewk_Download_Job_Error;
+/// Creates a type name for Ewk_Download_Job_Error.
+typedef struct Ewk_Download_Job_Error Ewk_Download_Job_Error;
 
 /**
  * @brief Structure containing details about a download failure.
  */
-struct _Ewk_Download_Job_Error {
+struct Ewk_Download_Job_Error {
     Ewk_Download_Job *download_job; /**< download that failed */
     Ewk_Error *error; /**< download error */
 };
@@ -257,7 +257,7 @@ struct _Ewk_Download_Job_Error {
  * @brief   Provides option to find text
  * @info    Keep this in sync with WKFindOptions.h
  */
-enum _Ewk_Find_Options {
+enum Ewk_Find_Options {
     EWK_FIND_OPTIONS_NONE, /**< no search flags, this means a case sensitive, no wrap, forward only search. */
     EWK_FIND_OPTIONS_CASE_INSENSITIVE = 1 << 0, /**< case insensitive search. */
     EWK_FIND_OPTIONS_AT_WORD_STARTS = 1 << 1, /**< search text only at the beginning of the words. */
@@ -268,7 +268,7 @@ enum _Ewk_Find_Options {
     EWK_FIND_OPTIONS_SHOW_FIND_INDICATOR = 1 << 6, /**< show indicator */
     EWK_FIND_OPTIONS_SHOW_HIGHLIGHT = 1 << 7 /**< show highlight */
 };
-typedef enum _Ewk_Find_Options Ewk_Find_Options;
+typedef enum Ewk_Find_Options Ewk_Find_Options;
 
 /**
  * Sets the smart class APIs, enabling view to be inherited.

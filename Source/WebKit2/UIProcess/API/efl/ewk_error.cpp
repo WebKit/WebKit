@@ -36,7 +36,7 @@
 using namespace WebCore;
 using namespace WebKit;
 
-_Ewk_Error::_Ewk_Error(WKErrorRef errorRef)
+Ewk_Error::Ewk_Error(WKErrorRef errorRef)
     : wkError(errorRef)
     , url(AdoptWK, WKErrorCopyFailingURL(errorRef))
     , description(AdoptWK, WKErrorCopyLocalizedDescription(errorRef))

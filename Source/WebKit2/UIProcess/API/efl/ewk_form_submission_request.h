@@ -40,8 +40,8 @@
 extern "C" {
 #endif
 
-/** Creates a type name for _Ewk_Form_Submission_Request */
-typedef struct _Ewk_Form_Submission_Request Ewk_Form_Submission_Request;
+/** Creates a type name for Ewk_Form_Submission_Request */
+typedef struct Ewk_Form_Submission_Request Ewk_Form_Submission_Request;
 
 /**
  * Increases the reference count of the given object.

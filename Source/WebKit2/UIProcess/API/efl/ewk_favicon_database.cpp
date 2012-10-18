@@ -41,7 +41,7 @@ using namespace WebKit;
 static void didChangeIconForPageURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL, const void* clientInfo);
 static void iconDataReadyForPageURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL, const void* clientInfo);
 
-_Ewk_Favicon_Database::_Ewk_Favicon_Database(WKIconDatabaseRef iconDatabaseRef)
+Ewk_Favicon_Database::Ewk_Favicon_Database(WKIconDatabaseRef iconDatabaseRef)
     :  wkIconDatabase(iconDatabaseRef)
 {
     WKIconDatabaseClient iconDatabaseClient;

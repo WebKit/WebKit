@@ -47,23 +47,20 @@ struct Cookie_Change_Handler {
     { }
 };
 
-
-typedef struct _Ewk_Cookie_Manager Ewk_Cookie_Manager;
-
-class _Ewk_Cookie_Manager {
+class Ewk_Cookie_Manager {
 public:
     WKRetainPtr<WKCookieManagerRef> wkCookieManager;
     Cookie_Change_Handler changeHandler;
 
-    static PassOwnPtr<_Ewk_Cookie_Manager> create(WKCookieManagerRef cookieManagerRef)
+    static PassOwnPtr<Ewk_Cookie_Manager> create(WKCookieManagerRef cookieManagerRef)
     {
-        return adoptPtr(new _Ewk_Cookie_Manager(cookieManagerRef));
+        return adoptPtr(new Ewk_Cookie_Manager(cookieManagerRef));
     }
 
-    ~_Ewk_Cookie_Manager();
+    ~Ewk_Cookie_Manager();
 
 private:
-    explicit _Ewk_Cookie_Manager(WKCookieManagerRef cookieManagerRef);
+    explicit Ewk_Cookie_Manager(WKCookieManagerRef cookieManagerRef);
 };
 
 #endif // ewk_cookie_manager_private_h

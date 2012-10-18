@@ -40,11 +40,11 @@ typedef enum {
     EWK_TOUCH_CANCEL
 } Ewk_Touch_Event_Type;
 
-/// Creates a type name for _Ewk_Touch_Point.
-typedef struct _Ewk_Touch_Point Ewk_Touch_Point;
+/// Creates a type name for Ewk_Touch_Point.
+typedef struct Ewk_Touch_Point Ewk_Touch_Point;
 
 /// Represents a touch point.
-struct _Ewk_Touch_Point {
+struct Ewk_Touch_Point {
     int id; /**< identifier of the touch event */
     int x; /**< the horizontal position of the touch event */
     int y; /**< the vertical position of the touch event */

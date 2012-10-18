@@ -37,10 +37,10 @@
 #include <wtf/PassRefPtr.h>
 
 /**
- * \struct  _Ewk_Navigation_Policy_Decision
+ * \struct  Ewk_Navigation_Policy_Decision
  * @brief   Contains the navigation policy decision data.
  */
-class _Ewk_Navigation_Policy_Decision : public RefCounted<_Ewk_Navigation_Policy_Decision> {
+class Ewk_Navigation_Policy_Decision : public RefCounted<Ewk_Navigation_Policy_Decision> {
 public:
     WKRetainPtr<WKFramePolicyListenerRef> listener;
     bool actedUponByClient;
@@ -50,21 +50,21 @@ public:
     RefPtr<Ewk_Url_Request> request;
     WKEinaSharedString frameName;
 
-    ~_Ewk_Navigation_Policy_Decision()
+    ~Ewk_Navigation_Policy_Decision()
     {
         // This is the default choice for all policy decisions in WebPageProxy.cpp.
         if (!actedUponByClient)
             WKFramePolicyListenerUse(listener.get());
     }
 
-    static PassRefPtr<_Ewk_Navigation_Policy_Decision> create(WKFrameNavigationType navigationType, WKEventMouseButton mouseButton, WKEventModifiers modifiers, WKURLRequestRef requestRef, const char* frameName, WKFramePolicyListenerRef listener)
+    static PassRefPtr<Ewk_Navigation_Policy_Decision> create(WKFrameNavigationType navigationType, WKEventMouseButton mouseButton, WKEventModifiers modifiers, WKURLRequestRef requestRef, const char* frameName, WKFramePolicyListenerRef listener)
     {
         RefPtr<Ewk_Url_Request> request = Ewk_Url_Request::create(requestRef);
-        return adoptRef(new _Ewk_Navigation_Policy_Decision(listener, static_cast<Ewk_Navigation_Type>(navigationType), static_cast<Event_Mouse_Button>(mouseButton), static_cast<Event_Modifier_Keys>(modifiers), request.release(), frameName));
+        return adoptRef(new Ewk_Navigation_Policy_Decision(listener, static_cast<Ewk_Navigation_Type>(navigationType), static_cast<Event_Mouse_Button>(mouseButton), static_cast<Event_Modifier_Keys>(modifiers), request.release(), frameName));
     }
 
 private:
-    _Ewk_Navigation_Policy_Decision(WKFramePolicyListenerRef listener, Ewk_Navigation_Type navigationType, Event_Mouse_Button mouseButton, Event_Modifier_Keys modifiers, PassRefPtr<Ewk_Url_Request> request, const char* frameName)
+    Ewk_Navigation_Policy_Decision(WKFramePolicyListenerRef listener, Ewk_Navigation_Type navigationType, Event_Mouse_Button mouseButton, Event_Modifier_Keys modifiers, PassRefPtr<Ewk_Url_Request> request, const char* frameName)
         : listener(listener)
         , actedUponByClient(false)
         , navigationType(navigationType)
@@ -74,7 +74,5 @@ private:
         , frameName(frameName)
     { }
 };
-
-typedef struct _Ewk_Navigation_Policy_Decision Ewk_Navigation_Policy_Decision;
 
 #endif // ewk_navigation_policy_decision_private_h

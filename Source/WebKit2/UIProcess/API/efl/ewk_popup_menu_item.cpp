@@ -32,7 +32,7 @@
 
 using namespace WebKit;
 
-_Ewk_Popup_Menu_Item::_Ewk_Popup_Menu_Item(const WebKit::WebPopupItem& item)
+Ewk_Popup_Menu_Item::Ewk_Popup_Menu_Item(const WebKit::WebPopupItem& item)
     : type(static_cast<Ewk_Popup_Menu_Item_Type>(item.m_type))
     , textDirection(static_cast<Ewk_Text_Direction>(item.m_textDirection))
     , hasTextDirectionOverride(item.m_hasTextDirectionOverride)

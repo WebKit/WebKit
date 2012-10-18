@@ -38,8 +38,8 @@
 extern "C" {
 #endif
 
-/** Creates a type name for _Ewk_Navigation_Data */
-typedef struct _Ewk_Navigation_Data Ewk_Navigation_Data;
+/** Creates a type name for Ewk_Navigation_Data */
+typedef struct Ewk_Navigation_Data Ewk_Navigation_Data;
 
 /**
  * Increases the reference count of the given object.

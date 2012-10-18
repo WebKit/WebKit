@@ -22,10 +22,10 @@
 
 #include <WebKit2/WKBase.h>
 
-typedef struct _Ewk_Context Ewk_Context;
-typedef struct _Ewk_Download_Job Ewk_Download_Job;
+typedef struct Ewk_Context Ewk_Context;
+typedef struct Ewk_Download_Job Ewk_Download_Job;
 typedef struct Ewk_Url_Scheme_Request Ewk_Url_Scheme_Request;
-typedef struct _Ewk_Context_History_Client Ewk_Context_History_Client;
+typedef struct Ewk_Context_History_Client Ewk_Context_History_Client;
 
 WKContextRef ewk_context_WKContext_get(const Ewk_Context*);
 Ewk_Context* ewk_context_new_from_WKContext(WKContextRef);

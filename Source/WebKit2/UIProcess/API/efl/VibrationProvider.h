@@ -33,7 +33,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
-typedef struct _Ewk_Vibration_Client Ewk_Vibration_Client;
+typedef struct Ewk_Vibration_Client Ewk_Vibration_Client;
 
 class VibrationProvider : public RefCounted<VibrationProvider> {
 public:

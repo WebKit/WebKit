@@ -42,7 +42,7 @@ using namespace WebKit;
 
 static void cookiesDidChange(WKCookieManagerRef, const void* clientInfo);
 
-_Ewk_Cookie_Manager::_Ewk_Cookie_Manager(WKCookieManagerRef cookieManagerRef)
+Ewk_Cookie_Manager::Ewk_Cookie_Manager(WKCookieManagerRef cookieManagerRef)
     : wkCookieManager(cookieManagerRef)
 {
     WKCookieManagerClient wkCookieManagerClient = {
@@ -53,7 +53,7 @@ _Ewk_Cookie_Manager::_Ewk_Cookie_Manager(WKCookieManagerRef cookieManagerRef)
     WKCookieManagerSetClient(wkCookieManager.get(), &wkCookieManagerClient);
 }
 
-_Ewk_Cookie_Manager::~_Ewk_Cookie_Manager()
+Ewk_Cookie_Manager::~Ewk_Cookie_Manager()
 {
     if (changeHandler.callback)
         WKCookieManagerStopObservingCookieChanges(wkCookieManager.get());

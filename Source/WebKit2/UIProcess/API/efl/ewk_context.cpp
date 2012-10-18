@@ -53,24 +53,24 @@
 using namespace WebCore;
 using namespace WebKit;
 
-struct _Ewk_Url_Scheme_Handler {
+struct Ewk_Url_Scheme_Handler {
     Ewk_Url_Scheme_Request_Cb callback;
     void* userData;
 
-    _Ewk_Url_Scheme_Handler()
+    Ewk_Url_Scheme_Handler()
         : callback(0)
         , userData(0)
     { }
 
-    _Ewk_Url_Scheme_Handler(Ewk_Url_Scheme_Request_Cb callback, void* userData)
+    Ewk_Url_Scheme_Handler(Ewk_Url_Scheme_Request_Cb callback, void* userData)
         : callback(callback)
         , userData(userData)
     { }
 };
 
-typedef HashMap<String, _Ewk_Url_Scheme_Handler> URLSchemeHandlerMap;
+typedef HashMap<String, Ewk_Url_Scheme_Handler> URLSchemeHandlerMap;
 
-struct _Ewk_Context {
+struct Ewk_Context {
     unsigned __ref; /**< the reference count of the object */
     WKRetainPtr<WKContextRef> context;
 
@@ -92,7 +92,7 @@ struct _Ewk_Context {
 
     Ewk_Context_History_Client historyClient;
 
-    _Ewk_Context(WKRetainPtr<WKContextRef> contextRef)
+    Ewk_Context(WKRetainPtr<WKContextRef> contextRef)
         : __ref(1)
         , context(contextRef)
         , requestManager(WKContextGetSoupRequestManager(contextRef.get()))
@@ -257,7 +257,7 @@ void ewk_context_url_scheme_request_received(Ewk_Context* ewkContext, Ewk_Url_Sc
     EINA_SAFETY_ON_NULL_RETURN(ewkContext);
     EINA_SAFETY_ON_NULL_RETURN(schemeRequest);
 
-    _Ewk_Url_Scheme_Handler handler = ewkContext->urlSchemeHandlers.get(ewk_url_scheme_request_scheme_get(schemeRequest));
+    Ewk_Url_Scheme_Handler handler = ewkContext->urlSchemeHandlers.get(ewk_url_scheme_request_scheme_get(schemeRequest));
     if (!handler.callback)
         return;
 
@@ -293,7 +293,7 @@ Eina_Bool ewk_context_url_scheme_register(Ewk_Context* ewkContext, const char* s
     EINA_SAFETY_ON_NULL_RETURN_VAL(scheme, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(callback, false);
 
-    ewkContext->urlSchemeHandlers.set(String::fromUTF8(scheme), _Ewk_Url_Scheme_Handler(callback, userData));
+    ewkContext->urlSchemeHandlers.set(String::fromUTF8(scheme), Ewk_Url_Scheme_Handler(callback, userData));
     WKRetainPtr<WKStringRef> wkScheme(AdoptWK, WKStringCreateWithUTF8CString(scheme));
     WKSoupRequestManagerRegisterURIScheme(ewkContext->requestManager.get(), wkScheme.get());
 

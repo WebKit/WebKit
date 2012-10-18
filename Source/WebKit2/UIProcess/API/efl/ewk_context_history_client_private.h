@@ -28,7 +28,7 @@
 
 #include "ewk_context.h"
 
-struct _Ewk_Context_History_Client {
+struct Ewk_Context_History_Client {
     void* user_data;
     Ewk_History_Navigation_Cb navigate_func;
     Ewk_History_Client_Redirection_Cb client_redirect_func;
@@ -36,8 +36,6 @@ struct _Ewk_Context_History_Client {
     Ewk_History_Title_Update_Cb title_update_func;
     Ewk_History_Populate_Visited_Links_Cb populate_visited_links_func;
 };
-
-typedef struct _Ewk_Context_History_Client Ewk_Context_History_Client;
 
 void ewk_context_history_client_attach(Ewk_Context*);
 

@@ -112,7 +112,7 @@ static inline void removeFromPageViewMap(const Evas_Object* ewkView)
     pageViewMap().remove(ewk_view_page_get(ewkView));
 }
 
-struct _Ewk_View_Private_Data {
+struct Ewk_View_Private_Data {
     OwnPtr<PageClientImpl> pageClient;
 #if USE(COORDINATED_GRAPHICS)
     OwnPtr<EflViewportHandler> viewportHandler;
@@ -149,7 +149,7 @@ struct _Ewk_View_Private_Data {
     Evas_GL_Surface* evasGlSurface;
 #endif
 
-    _Ewk_View_Private_Data()
+    Ewk_View_Private_Data()
         : areMouseEventsEnabled(false)
         , context(0)
 #if ENABLE(TOUCH_EVENTS)
@@ -167,7 +167,7 @@ struct _Ewk_View_Private_Data {
 #endif
     { }
 
-    ~_Ewk_View_Private_Data()
+    ~Ewk_View_Private_Data()
     {
         /* Unregister icon change callback */
         Ewk_Favicon_Database* iconDatabase = ewk_context_favicon_database_get(context);
@@ -503,7 +503,7 @@ static void _ewk_view_smart_add(Evas_Object* ewkView)
 
     smartData->priv = _ewk_view_priv_new(smartData);
     if (!smartData->priv) {
-        EINA_LOG_CRIT("could not allocate _Ewk_View_Private_Data");
+        EINA_LOG_CRIT("could not allocate Ewk_View_Private_Data");
         evas_object_smart_data_set(ewkView, 0);
         free(smartData);
         return;

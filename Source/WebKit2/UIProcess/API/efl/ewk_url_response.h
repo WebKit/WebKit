@@ -37,8 +37,8 @@
 extern "C" {
 #endif
 
-/** Creates a type name for _Ewk_Url_Response */
-typedef struct _Ewk_Url_Response Ewk_Url_Response;
+/** Creates a type name for Ewk_Url_Response */
+typedef struct Ewk_Url_Response Ewk_Url_Response;
 
 /**
  * Increases the reference count of the given object.

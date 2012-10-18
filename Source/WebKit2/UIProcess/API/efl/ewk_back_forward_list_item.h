@@ -37,8 +37,8 @@
 extern "C" {
 #endif
 
-/** Creates a type name for _Ewk_Back_Forward_List_Item */
-typedef struct _Ewk_Back_Forward_List_Item Ewk_Back_Forward_List_Item;
+/** Creates a type name for Ewk_Back_Forward_List_Item */
+typedef struct Ewk_Back_Forward_List_Item Ewk_Back_Forward_List_Item;
 
 /**
  * Increases the reference count of the given object.

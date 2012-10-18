@@ -36,28 +36,26 @@
 #include <wtf/RefCounted.h>
 
 /**
- * \struct  _Ewk_Navigation_Data
+ * \struct  Ewk_Navigation_Data
  * @brief   Contains the navigation data details.
  */
-class _Ewk_Navigation_Data : public RefCounted<_Ewk_Navigation_Data> {
+class Ewk_Navigation_Data : public RefCounted<Ewk_Navigation_Data> {
 public:
     RefPtr<Ewk_Url_Request> request;
     WKEinaSharedString title;
     WKEinaSharedString url;
 
-    static PassRefPtr<_Ewk_Navigation_Data> create(WKNavigationDataRef dataRef)
+    static PassRefPtr<Ewk_Navigation_Data> create(WKNavigationDataRef dataRef)
     {
-        return adoptRef(new _Ewk_Navigation_Data(dataRef));
+        return adoptRef(new Ewk_Navigation_Data(dataRef));
     }
 
 private:
-    explicit _Ewk_Navigation_Data(WKNavigationDataRef dataRef)
+    explicit Ewk_Navigation_Data(WKNavigationDataRef dataRef)
         : request(Ewk_Url_Request::create(adoptWK(WKNavigationDataCopyOriginalRequest(dataRef)).get()))
         , title(AdoptWK, WKNavigationDataCopyTitle(dataRef))
         , url(AdoptWK, WKNavigationDataCopyURL(dataRef))
     { }
 };
-
-typedef struct _Ewk_Navigation_Data Ewk_Navigation_Data;
 
 #endif // ewk_navigation_data_private_h

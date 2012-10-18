@@ -39,18 +39,18 @@ class WebPopupItem;
 class WebPopupMenuProxyEfl;
 }
 
-typedef struct _Ewk_Download_Job Ewk_Download_Job;
-typedef struct _Ewk_Form_Submission_Request Ewk_Form_Submission_Request;
-typedef struct _Ewk_Url_Request Ewk_Url_Request;
-typedef struct _Ewk_Url_Response Ewk_Url_Response;
-typedef struct _Ewk_Error Ewk_Error;
-typedef struct _Ewk_Resource Ewk_Resource;
-typedef struct _Ewk_Navigation_Policy_Decision Ewk_Navigation_Policy_Decision;
+typedef struct Ewk_Download_Job Ewk_Download_Job;
+typedef struct Ewk_Form_Submission_Request Ewk_Form_Submission_Request;
+typedef struct Ewk_Url_Request Ewk_Url_Request;
+typedef struct Ewk_Url_Response Ewk_Url_Response;
+typedef struct Ewk_Error Ewk_Error;
+typedef struct Ewk_Resource Ewk_Resource;
+typedef struct Ewk_Navigation_Policy_Decision Ewk_Navigation_Policy_Decision;
 #if ENABLE(WEB_INTENTS)
-typedef struct _Ewk_Intent Ewk_Intent;
+typedef struct Ewk_Intent Ewk_Intent;
 #endif
 #if ENABLE(WEB_INTENTS_TAG)
-typedef struct _Ewk_Intent_Service Ewk_Intent_Service;
+typedef struct Ewk_Intent_Service Ewk_Intent_Service;
 #endif
 
 void ewk_view_cursor_set(Evas_Object* ewkView, const WebCore::Cursor& cursor);

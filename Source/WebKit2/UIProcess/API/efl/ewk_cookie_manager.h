@@ -38,15 +38,15 @@
 extern "C" {
 #endif
 
-/** Creates a type name for _Ewk_Cookie_Manager */
-typedef struct _Ewk_Cookie_Manager Ewk_Cookie_Manager;
+/** Creates a type name for Ewk_Cookie_Manager */
+typedef struct Ewk_Cookie_Manager Ewk_Cookie_Manager;
 
 /**
- * \enum    _Ewk_Cookie_Accept_Policy
+ * \enum    Ewk_Cookie_Accept_Policy
  *
  * @brief   Contains accept policies for the cookies.
  */
-enum _Ewk_Cookie_Accept_Policy {
+enum Ewk_Cookie_Accept_Policy {
     /// Accepts every cookie sent from any page.
     EWK_COOKIE_ACCEPT_POLICY_ALWAYS,
     /// Rejects all cookies.
@@ -55,23 +55,23 @@ enum _Ewk_Cookie_Accept_Policy {
     EWK_COOKIE_ACCEPT_POLICY_NO_THIRD_PARTY
 };
 
-/// Creates a type name for the _Ewk_Cookie_Accept_Policy.
-typedef enum _Ewk_Cookie_Accept_Policy Ewk_Cookie_Accept_Policy;
+/// Creates a type name for the Ewk_Cookie_Accept_Policy.
+typedef enum Ewk_Cookie_Accept_Policy Ewk_Cookie_Accept_Policy;
 
 /**
- * \enum    _Ewk_Cookie_Persistent_Storage
+ * \enum    Ewk_Cookie_Persistent_Storage
  *
  * @brief   Enum values to denote cookies persistent storage type.
  */
-enum _Ewk_Cookie_Persistent_Storage {
+enum Ewk_Cookie_Persistent_Storage {
     /// Cookies are stored in a text file in the Mozilla "cookies.txt" format.
     EWK_COOKIE_PERSISTENT_STORAGE_TEXT,
     /// Cookies are stored in a SQLite file in the current Mozilla format.
     EWK_COOKIE_PERSISTENT_STORAGE_SQLITE
 };
 
-/// Creates a type name for the _Ewk_Cookie_Persistent_Storage.
-typedef enum _Ewk_Cookie_Persistent_Storage Ewk_Cookie_Persistent_Storage;
+/// Creates a type name for the Ewk_Cookie_Persistent_Storage.
+typedef enum Ewk_Cookie_Persistent_Storage Ewk_Cookie_Persistent_Storage;
 
 /**
  * @typedef Ewk_Cookie_Manager_Async_Policy_Get_Cb Ewk_Cookie_Manager_Async_Policy_Get_Cb

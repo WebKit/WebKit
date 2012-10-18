@@ -36,15 +36,15 @@
 using namespace WebCore;
 
 /**
- * \struct  _Ewk_Vibration_Client
+ * \struct  Ewk_Vibration_Client
  * @brief   Contains the vibration client callbacks.
  */
-struct _Ewk_Vibration_Client {
+struct Ewk_Vibration_Client {
     Ewk_Vibration_Client_Vibrate_Cb vibrate;
     Ewk_Vibration_Client_Vibration_Cancel_Cb cancelVibration;
     void* userData;
 
-    _Ewk_Vibration_Client(Ewk_Vibration_Client_Vibrate_Cb vibrate, Ewk_Vibration_Client_Vibration_Cancel_Cb cancelVibration, void* userData)
+    Ewk_Vibration_Client(Ewk_Vibration_Client_Vibrate_Cb vibrate, Ewk_Vibration_Client_Vibration_Cancel_Cb cancelVibration, void* userData)
         : vibrate(vibrate)
         , cancelVibration(cancelVibration)
         , userData(userData)

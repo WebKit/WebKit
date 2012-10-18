@@ -31,17 +31,14 @@
 #include <WebKit2/WKRetainPtr.h>
 #include <wtf/PassOwnPtr.h>
 
-/** Creates a type name for _Ewk_Settings */
-typedef struct _Ewk_Settings Ewk_Settings;
-
 /**
- * \struct  _Ewk_Settings
+ * \struct  Ewk_Settings
  * @brief   Contains the settings data.
  */
-struct _Ewk_Settings {
+struct Ewk_Settings {
     WKRetainPtr<WKPreferencesRef> preferences;
 
-    explicit _Ewk_Settings(WKPreferencesRef wkPreferences)
+    explicit Ewk_Settings(WKPreferencesRef wkPreferences)
         : preferences(wkPreferences)
     { }
 };

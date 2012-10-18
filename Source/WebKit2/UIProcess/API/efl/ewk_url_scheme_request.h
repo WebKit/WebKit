@@ -37,7 +37,7 @@
 extern "C" {
 #endif
 
-/** Creates a type name for _Ewk_Url_Scheme_Request */
+/** Creates a type name for Ewk_Url_Scheme_Request */
 typedef struct Ewk_Url_Scheme_Request Ewk_Url_Scheme_Request;
 
 /**

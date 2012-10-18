@@ -33,31 +33,29 @@
 #include <wtf/PassRefPtr.h>
 
 /**
- * \struct  _Ewk_Url_Response
+ * \struct  Ewk_Url_Response
  * @brief   Contains the URL response data.
  */
-class _Ewk_Url_Response : public RefCounted<_Ewk_Url_Response> {
+class Ewk_Url_Response : public RefCounted<Ewk_Url_Response> {
 public:
     WebCore::ResourceResponse coreResponse;
     WKEinaSharedString url;
     WKEinaSharedString mimeType;
 
-    static PassRefPtr<_Ewk_Url_Response> create(WKURLResponseRef wkResponse)
+    static PassRefPtr<Ewk_Url_Response> create(WKURLResponseRef wkResponse)
     {
         if (!wkResponse)
             return 0;
 
-        return adoptRef(new _Ewk_Url_Response(WebKit::toImpl(wkResponse)->resourceResponse()));
+        return adoptRef(new Ewk_Url_Response(WebKit::toImpl(wkResponse)->resourceResponse()));
     }
 
 private:
-    explicit _Ewk_Url_Response(const WebCore::ResourceResponse& _coreResponse)
+    explicit Ewk_Url_Response(const WebCore::ResourceResponse& _coreResponse)
         : coreResponse(_coreResponse)
         , url(AdoptWK, WKURLResponseCopyURL(WebKit::toAPI(coreResponse)))
         , mimeType(AdoptWK, WKURLResponseCopyMIMEType(WebKit::toAPI(coreResponse)))
     { }
 };
-
-typedef struct _Ewk_Url_Response Ewk_Url_Response;
 
 #endif // ewk_url_response_private_h

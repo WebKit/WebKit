@@ -37,8 +37,8 @@
 extern "C" {
 #endif
 
-/** Creates a type name for @a _Ewk_Favicon_Database. */
-typedef struct _Ewk_Favicon_Database Ewk_Favicon_Database;
+/** Creates a type name for @a Ewk_Favicon_Database. */
+typedef struct Ewk_Favicon_Database Ewk_Favicon_Database;
 
 /**
  * @typedef Ewk_Favicon_Database_Icon_Change_Cb Ewk_Favicon_Database_Icon_Change_Cb

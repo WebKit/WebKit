@@ -40,8 +40,8 @@
 extern "C" {
 #endif
 
-/** Creates a type name for _Ewk_Settings */
-typedef struct _Ewk_Settings Ewk_Settings;
+/** Creates a type name for Ewk_Settings */
+typedef struct Ewk_Settings Ewk_Settings;
 
 /**
  * Creates a type name for the callback function used to notify the client when

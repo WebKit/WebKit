@@ -38,8 +38,8 @@
 extern "C" {
 #endif
 
-/** Creates a type name for _Ewk_Navigation_Policy_Decision */
-typedef struct _Ewk_Navigation_Policy_Decision Ewk_Navigation_Policy_Decision;
+/** Creates a type name for Ewk_Navigation_Policy_Decision */
+typedef struct Ewk_Navigation_Policy_Decision Ewk_Navigation_Policy_Decision;
 
 /// Enum containing navigation types
 typedef enum  {

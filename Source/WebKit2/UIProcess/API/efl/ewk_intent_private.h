@@ -35,26 +35,24 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
-typedef struct _Ewk_Intent Ewk_Intent;
-
 /**
- * \struct  _Ewk_Intent
+ * \struct  Ewk_Intent
  * @brief   Contains the intent data.
  */
-class _Ewk_Intent : public RefCounted<_Ewk_Intent> {
+class Ewk_Intent : public RefCounted<Ewk_Intent> {
 public:
     WKRetainPtr<WKIntentDataRef> wkIntent;
     WKEinaSharedString action;
     WKEinaSharedString type;
     WKEinaSharedString service;
 
-    static PassRefPtr<_Ewk_Intent> create(WKIntentDataRef intentRef)
+    static PassRefPtr<Ewk_Intent> create(WKIntentDataRef intentRef)
     {
-        return adoptRef(new _Ewk_Intent(intentRef));
+        return adoptRef(new Ewk_Intent(intentRef));
     }
 
 private:
-    explicit _Ewk_Intent(WKIntentDataRef intentRef)
+    explicit Ewk_Intent(WKIntentDataRef intentRef)
         : wkIntent(intentRef)
         , action(AdoptWK, WKIntentDataCopyAction(intentRef))
         , type(AdoptWK, WKIntentDataCopyType(intentRef))

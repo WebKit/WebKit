@@ -37,8 +37,8 @@
 extern "C" {
 #endif
 
-/** Creates a type name for _Ewk_Intent */
-typedef struct _Ewk_Intent Ewk_Intent;
+/** Creates a type name for Ewk_Intent */
+typedef struct Ewk_Intent Ewk_Intent;
 
 /**
  * Increases the reference count of the given object.
