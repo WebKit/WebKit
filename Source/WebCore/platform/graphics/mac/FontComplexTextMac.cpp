@@ -176,8 +176,11 @@ const SimpleFontData* Font::fontDataForCombiningCharacterSequence(const UChar* c
 
     GlyphData baseCharacterGlyphData = glyphDataForCharacter(baseCharacter, false, variant);
 
+    if (!baseCharacterGlyphData.glyph)
+        return 0;
+
     if (length == baseCharacterLength)
-        return baseCharacterGlyphData.glyph ? baseCharacterGlyphData.fontData : 0;
+        return baseCharacterGlyphData.fontData;
 
     bool triedBaseCharacterFontData = false;
 
@@ -216,7 +219,7 @@ const SimpleFontData* Font::fontDataForCombiningCharacterSequence(const UChar* c
     if (!triedBaseCharacterFontData && baseCharacterGlyphData.fontData && baseCharacterGlyphData.fontData->canRenderCombiningCharacterSequence(characters, length))
         return baseCharacterGlyphData.fontData;
 
-    return 0;
+    return SimpleFontData::systemFallback();
 }
 
 } // namespace WebCore

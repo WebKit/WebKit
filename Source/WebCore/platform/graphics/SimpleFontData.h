@@ -98,6 +98,8 @@ public:
 
     virtual ~SimpleFontData();
 
+    static const SimpleFontData* systemFallback() { return reinterpret_cast<const SimpleFontData*>(-1); }
+
     const FontPlatformData& platformData() const { return m_platformData; }
 #if ENABLE(OPENTYPE_VERTICAL)
     const OpenTypeVerticalData* verticalData() const { return m_verticalData; }

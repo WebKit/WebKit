@@ -1,5 +1,37 @@
 2012-10-17  Dan Bernstein  <mitz@apple.com>
 
+        REGRESSION (r95391): ComplexTextController is unnecessarily slow with characters with combining marks when the base character is not covered by any font
+        https://bugs.webkit.org/show_bug.cgi?id=99654
+
+        Reviewed by Adele Peterson.
+
+        When the base character of a combining character sequence is not covered by any one of the
+        available fonts, there is no point looking for a font that covers the entire sequence, nor
+        to try to use a combination of fallback fonts for the entire sequence.
+
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::SimpleFontData::systemFallback): Moved ComplexTextController::systemFallbackFontData
+        here and renamed it.
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::collectComplexTextRuns): This function used to use
+        systemFallbackFontData() whenever Font::fontDataForCombiningCharacterSequence returned 0
+        for a base character with combining marks, regardless of whether the base character was
+        covered by any font. Changed it to preserve the return value of
+        fontDataForCombiningCharacterSequence, which is now 0 only if the base charcater is not in
+        any font, while systemFallbackFontData() is used to indicate that no single font in the
+        fallback list covers all characters in the sequence, but the base character is in some font.
+        * platform/graphics/mac/ComplexTextController.h:
+        (ComplexTextController): Moved systemFallbackFontData from here to SimpleFontData.
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters): Updated for the above
+        move.
+        * platform/graphics/mac/FontComplexTextMac.cpp:
+        (WebCore::Font::fontDataForCombiningCharacterSequence): Changed to return
+        systemFallbackFontData() if no single font in the fallback list covers all characters in the
+        sequence, while using 0 to signal the base character does not exist in any font.
+
+2012-10-17  Dan Bernstein  <mitz@apple.com>
+
         Try to fix the build after r131701.
 
         * WebCore.exp.in:
