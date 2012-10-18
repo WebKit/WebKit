@@ -113,6 +113,7 @@ inline void CopiedSpace::recycleBorrowedBlock(CopiedBlock* block)
     {
         MutexLocker locker(m_loanedBlocksLock);
         ASSERT(m_numberOfLoanedBlocks > 0);
+        ASSERT(m_inCopyingPhase);
         m_numberOfLoanedBlocks--;
         if (!m_numberOfLoanedBlocks)
             m_loanedBlocksCondition.signal();

@@ -56,10 +56,8 @@ private:
 
 inline bool CopyVisitor::checkIfShouldCopy(void* oldPtr, size_t bytes)
 {
-    if (CopiedSpace::isOversize(bytes)) {
-        ASSERT(CopiedSpace::oversizeBlockFor(oldPtr)->isPinned());
+    if (CopiedSpace::isOversize(bytes))
         return false;
-    }
 
     if (CopiedSpace::blockFor(oldPtr)->isPinned())
         return false;

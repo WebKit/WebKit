@@ -173,6 +173,7 @@ void CopiedSpace::doneFillingBlock(CopiedBlock* block, CopiedBlock** exchange)
     {
         MutexLocker locker(m_loanedBlocksLock);
         ASSERT(m_numberOfLoanedBlocks > 0);
+        ASSERT(m_inCopyingPhase);
         m_numberOfLoanedBlocks--;
         if (!m_numberOfLoanedBlocks)
             m_loanedBlocksCondition.signal();
@@ -197,6 +198,22 @@ void CopiedSpace::startedCopying()
         }
         totalLiveBytes += block->liveBytes();
         totalUsableBytes += block->payloadCapacity();
+    }
+
+    CopiedBlock* block = m_oversizeBlocks.head();
+    while (block) {
+        CopiedBlock* next = block->next();
+        if (block->isPinned()) {
+            m_blockFilter.add(reinterpret_cast<Bits>(block));
+            totalLiveBytes += block->payloadCapacity();
+            totalUsableBytes += block->payloadCapacity();
+            block->didSurviveGC();
+        } else {
+            m_oversizeBlocks.remove(block);
+            m_blockSet.remove(block);
+            m_heap->blockAllocator().deallocateCustomSize(CopiedBlock::destroy(block));
+        } 
+        block = next;
     }
 
     double markedSpaceBytes = m_heap->objectSpace().capacity();
@@ -224,31 +241,13 @@ void CopiedSpace::doneCopying()
 
     while (!m_fromSpace->isEmpty()) {
         CopiedBlock* block = m_fromSpace->removeHead();
-        if (block->isPinned() || !m_shouldDoCopyPhase) {
-            block->didSurviveGC();
-            // We don't add the block to the blockSet because it was never removed.
-            ASSERT(m_blockSet.contains(block));
-            m_blockFilter.add(reinterpret_cast<Bits>(block));
-            m_toSpace->push(block);
-            continue;
-        }
-
-        m_blockSet.remove(block);
-        m_heap->blockAllocator().deallocate(CopiedBlock::destroy(block));
-    }
-
-    CopiedBlock* curr = m_oversizeBlocks.head();
-    while (curr) {
-        CopiedBlock* next = curr->next();
-        if (!curr->isPinned()) {
-            m_oversizeBlocks.remove(curr);
-            m_blockSet.remove(curr);
-            m_heap->blockAllocator().deallocateCustomSize(CopiedBlock::destroy(curr));
-        } else {
-            m_blockFilter.add(reinterpret_cast<Bits>(curr));
-            curr->didSurviveGC();
-        }
-        curr = next;
+        // All non-pinned blocks in from-space should have been reclaimed as they were evacuated.
+        ASSERT(block->isPinned() || !m_shouldDoCopyPhase);
+        block->didSurviveGC();
+        // We don't add the block to the blockSet because it was never removed.
+        ASSERT(m_blockSet.contains(block));
+        m_blockFilter.add(reinterpret_cast<Bits>(block));
+        m_toSpace->push(block);
     }
 
     if (!m_toSpace->head())

@@ -1,3 +1,27 @@
+2012-10-18  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Live oversize copied blocks should count toward overall heap fragmentation
+        https://bugs.webkit.org/show_bug.cgi?id=99548
+
+        Reviewed by Filip Pizlo.
+
+        The CopiedSpace uses overall heap fragmentation to determine whether or not it should do any copying. 
+        Currently it doesn't include live oversize CopiedBlocks in the calculation, but it should. We should 
+        treat them as 100% utilized, since running a copying phase won't be able to free/compact any of their 
+        memory. We can also free any dead oversize CopiedBlocks while we're iterating over them, rather than 
+        iterating over them again at the end of the copying phase.
+
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::doneFillingBlock):
+        (JSC::CopiedSpace::startedCopying):
+        (JSC::CopiedSpace::doneCopying): Also removed a branch when iterating over from-space at the end of 
+        copying. Since we eagerly recycle blocks as soon as they're fully evacuated, we should see no
+        unpinned blocks in from-space at the end of copying.
+        * heap/CopiedSpaceInlineMethods.h:
+        (JSC::CopiedSpace::recycleBorrowedBlock):
+        * heap/CopyVisitorInlineMethods.h:
+        (JSC::CopyVisitor::checkIfShouldCopy):
+
 2012-10-18  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Build fix after r131701 and r131777.
