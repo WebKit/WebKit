@@ -1016,6 +1016,9 @@ void GraphicsLayerCA::recursiveCommitChanges(const TransformState& state, float 
 
     commitLayerChangesAfterSublayers();
 
+    if (client() && m_layer->layerType() == PlatformCALayer::LayerTypeTileCacheLayer)
+        client()->notifyFlushBeforeDisplayRefresh(this);
+
     if (hadChanges && client())
         client()->didCommitChangesForLayer(this);
 }

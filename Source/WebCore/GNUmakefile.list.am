@@ -4449,6 +4449,8 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/GraphicsLayer.cpp \
 	Source/WebCore/platform/graphics/GraphicsLayerClient.h \
 	Source/WebCore/platform/graphics/GraphicsLayerFactory.h \
+	Source/WebCore/platform/graphics/GraphicsLayerUpdater.h \
+	Source/WebCore/platform/graphics/GraphicsLayerUpdater.cpp \
 	Source/WebCore/platform/graphics/GraphicsTypes.cpp \
 	Source/WebCore/platform/graphics/GraphicsTypes.h \
 	Source/WebCore/platform/graphics/GraphicsTypes3D.h \

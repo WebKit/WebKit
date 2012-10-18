@@ -1,3 +1,75 @@
+2012-10-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Create a GraphicsLayerUpdater class that will do periodic layer flushes for layer trees containing tile caches
+        https://bugs.webkit.org/show_bug.cgi?id=99518
+
+        Reviewed by Dean Jackson.
+
+        When using tile caches in place of tiled layers, we need to recompute their
+        visible area periodically while animations and scrolling are happening.
+        Make a new class, GraphicsLayerUpdater, to handle this updating.
+        Internally, it uses DisplayRefreshMonitor to generate the periodic updates.
+        
+        GraphicsLayer clients are notified that layers need periodic updates. Clients
+        are free to make use of GraphicsLayerUpdater to handle this updating, as
+        RenderLayerCompositor does.
+        
+        Also do some minor refactoring of methods in RenderLayerCompositor that
+        get to Page.
+
+        * CMakeLists.txt: Add GraphicsLayerUpdater.cpp to the build.
+        * GNUmakefile.list.am: Ditto.
+        * PlatformBlackBerry.cmake: Ditto.
+        * Target.pri: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * dom/Document.cpp:
+        (WebCore::Document::windowScreenDidChange): Tell the compositor that the screen
+        changed, so it can tell the GraphicsLayerUpdater if it has one.
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::GraphicsLayerClient::notifyFlushBeforeDisplayRefresh): Method called
+        for layers that need periodic updates, like tile cache layers.
+        * platform/graphics/GraphicsLayerUpdater.cpp: Added. Uses DisplayRefreshMonitorManager
+        to flush layers before the next refresh.
+        (WebCore::GraphicsLayerUpdater::GraphicsLayerUpdater):
+        (WebCore::GraphicsLayerUpdater::~GraphicsLayerUpdater):
+        (WebCore::GraphicsLayerUpdater::scheduleUpdate):
+        (WebCore::GraphicsLayerUpdater::screenDidChange):
+        (WebCore::GraphicsLayerUpdater::displayRefreshFired):
+        * platform/graphics/GraphicsLayerUpdater.h: Added.
+        (GraphicsLayerUpdaterClient): Clients need to implement flushLayers().
+        (WebCore::GraphicsLayerUpdaterClient::~GraphicsLayerUpdaterClient):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges): For tile cache layers,
+        tell the client that this layer should be updated soon to update the visible rect.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::notifyFlushBeforeDisplayRefresh): Pass this message
+        on to the compositor.
+        * rendering/RenderLayerBacking.h:
+        (RenderLayerBacking): Implement notifyFlushBeforeDisplayRefresh.
+        Add OVERRIDE to all the client overrides.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::cacheAcceleratedCompositingFlags): Use helper to get to Page.
+        (WebCore::RenderLayerCompositor::scheduleLayerFlush): Ditto.
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges): Soon we're going to be asking
+        about the current state of animations inside the flush (for visible rect computation), so we
+        need a AnimationUpdateBlock to make sure all the animation times are in sync.
+        (WebCore::RenderLayerCompositor::notifyFlushBeforeDisplayRefresh): Make a GraphicsLayerUpdater
+        if necessary, and tell it to update soon.
+        (WebCore::RenderLayerCompositor::flushLayers): The GraphicsLayerUpdater client method.
+        Just does a flush. For now, considers this Frame as the flush root, which will need fixing for iframes.
+        (WebCore::RenderLayerCompositor::shouldPropagateCompositingToEnclosingFrame): Use helper to get to Page.
+        (WebCore::RenderLayerCompositor::deviceScaleFactor): Ditto.
+        (WebCore::RenderLayerCompositor::pageScaleFactor): Ditto.
+        (WebCore::RenderLayerCompositor::destroyRootLayer): Ditto.
+        (WebCore::RenderLayerCompositor::windowScreenDidChange): Tell the updater if we have one.
+        (WebCore::RenderLayerCompositor::scrollingCoordinator): Use helper to get to Page.
+        (WebCore::RenderLayerCompositor::graphicsLayerFactory): Use helper to get to Page.
+        (WebCore::RenderLayerCompositor::page): The helper.
+        * rendering/RenderLayerCompositor.h:
+        (RenderLayerCompositor): Add OVERRIDE to all the client overrides.
+
 2012-10-17  Eric Seidel  <eric@webkit.org>
 
         Make dom-query.html slightly faster by removing unnecessary ref-churn in StringTraits

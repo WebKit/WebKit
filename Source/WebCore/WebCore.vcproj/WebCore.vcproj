@@ -29606,6 +29606,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\GraphicsLayerUpdater.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\GraphicsLayerUpdater.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\GraphicsTypes.cpp"
 					>
 				</File>

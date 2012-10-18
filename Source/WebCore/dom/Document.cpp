@@ -132,6 +132,7 @@
 #include "QualifiedName.h"
 #include "RegisteredEventListener.h"
 #include "RenderArena.h"
+#include "RenderLayerCompositor.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderTextControl.h"
 #include "RenderView.h"
@@ -4962,14 +4963,18 @@ void Document::resumeScriptedAnimationControllerCallbacks()
 
 void Document::windowScreenDidChange(PlatformDisplayID displayID)
 {
+    UNUSED_PARAM(displayID);
+
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     if (m_scriptedAnimationController)
         m_scriptedAnimationController->windowScreenDidChange(displayID);
-#else
-    UNUSED_PARAM(displayID);
+#endif
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (renderView()->usesCompositing())
+        renderView()->compositor()->windowScreenDidChange(displayID);
 #endif
 }
-
 
 String Document::displayStringModifiedByEncoding(const String& str) const
 {

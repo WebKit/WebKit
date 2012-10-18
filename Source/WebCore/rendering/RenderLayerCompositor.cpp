@@ -230,9 +230,7 @@ void RenderLayerCompositor::cacheAcceleratedCompositingFlags()
         // We allow the chrome to override the settings, in case the page is rendered
         // on a chrome that doesn't allow accelerated compositing.
         if (hasAcceleratedCompositing) {
-            Frame* frame = m_renderView->frameView()->frame();
-            Page* page = frame ? frame->page() : 0;
-            if (page) {
+            if (Page* page = this->page()) {
                 ChromeClient* chromeClient = page->chrome()->client();
                 m_compositingTriggers = chromeClient->allowedCompositingTriggers();
                 hasAcceleratedCompositing = m_compositingTriggers;
@@ -272,12 +270,8 @@ void RenderLayerCompositor::setCompositingLayersNeedRebuild(bool needRebuild)
 
 void RenderLayerCompositor::scheduleLayerFlush()
 {
-    Frame* frame = m_renderView->frameView()->frame();
-    Page* page = frame ? frame->page() : 0;
-    if (!page)
-        return;
-
-    page->chrome()->client()->scheduleCompositingLayerFlush();
+    if (Page* page = this->page())
+        page->chrome()->client()->scheduleCompositingLayerFlush();
 }
 
 void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
@@ -289,6 +283,8 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
     if (!isFlushRoot && rootLayerAttachment() == RootLayerAttachedViaEnclosingFrame)
         return;
     
+    AnimationUpdateBlock animationUpdateBlock(m_renderView->frameView()->frame()->animation());
+
     ASSERT(!m_flushingLayers);
     m_flushingLayers = true;
 
@@ -307,6 +303,24 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
 
 void RenderLayerCompositor::didFlushChangesForLayer(RenderLayer*)
 {
+}
+
+void RenderLayerCompositor::notifyFlushBeforeDisplayRefresh(const GraphicsLayer*)
+{
+    if (!m_layerUpdater) {
+        PlatformDisplayID displayID = 0;
+        if (Page* page = this->page())
+            displayID = page->displayID();
+
+        m_layerUpdater = adoptPtr(new GraphicsLayerUpdater(this, displayID));
+    }
+    
+    m_layerUpdater->scheduleUpdate();
+}
+
+void RenderLayerCompositor::flushLayers(GraphicsLayerUpdater*)
+{
+    flushPendingLayerChanges(true); // FIXME: deal with iframes
 }
 
 RenderLayerCompositor* RenderLayerCompositor::enclosingCompositorFlushingLayers() const
@@ -1423,8 +1437,7 @@ bool RenderLayerCompositor::shouldPropagateCompositingToEnclosingFrame() const
 
     // On Mac, only propagate compositing if the frame is overlapped in the parent
     // document, or the parent is already compositing, or the main frame is scaled.
-    Frame* frame = m_renderView->frameView()->frame();
-    Page* page = frame ? frame->page() : 0;
+    Page* page = this->page();
     if (page && page->pageScaleFactor() != 1)
         return true;
     
@@ -1981,24 +1994,14 @@ bool RenderLayerCompositor::showRepaintCounter(const GraphicsLayer* layer) const
 
 float RenderLayerCompositor::deviceScaleFactor() const
 {
-    Frame* frame = m_renderView->frameView()->frame();
-    if (!frame)
-        return 1;
-    Page* page = frame->page();
-    if (!page)
-        return 1;
-    return page->deviceScaleFactor();
+    Page* page = this->page();
+    return page ? page->deviceScaleFactor() : 1;
 }
 
 float RenderLayerCompositor::pageScaleFactor() const
 {
-    Frame* frame = m_renderView->frameView()->frame();
-    if (!frame)
-        return 1;
-    Page* page = frame->page();
-    if (!page)
-        return 1;
-    return page->pageScaleFactor();
+    Page* page = this->page();
+    return page ? page->pageScaleFactor() : 1;
 }
 
 void RenderLayerCompositor::didCommitChangesForLayer(const GraphicsLayer*) const
@@ -2294,6 +2297,8 @@ void RenderLayerCompositor::destroyRootLayer()
     }
     ASSERT(!m_scrollLayer);
     m_rootContentLayer = nullptr;
+
+    m_layerUpdater = nullptr;
 }
 
 void RenderLayerCompositor::attachRootLayer(RootLayerAttachment attachment)
@@ -2453,23 +2458,33 @@ void RenderLayerCompositor::deviceOrPageScaleFactorChanged()
         rootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 }
 
+void RenderLayerCompositor::windowScreenDidChange(PlatformDisplayID displayID)
+{
+    if (m_layerUpdater)
+        m_layerUpdater->screenDidChange(displayID);
+}
+
 ScrollingCoordinator* RenderLayerCompositor::scrollingCoordinator() const
 {
-    if (Frame* frame = m_renderView->frameView()->frame()) {
-        if (Page* page = frame->page())
-            return page->scrollingCoordinator();
-    }
+    if (Page* page = this->page())
+        return page->scrollingCoordinator();
 
     return 0;
 }
 
 GraphicsLayerFactory* RenderLayerCompositor::graphicsLayerFactory() const
 {
-    if (Frame* frame = m_renderView->frameView()->frame()) {
-        if (Page* page = frame->page())
-            return page->chrome()->client()->graphicsLayerFactory();
-    }
+    if (Page* page = this->page())
+        return page->chrome()->client()->graphicsLayerFactory();
 
+    return 0;
+}
+
+Page* RenderLayerCompositor::page() const
+{
+    if (Frame* frame = m_renderView->frameView()->frame())
+        return frame->page();
+    
     return 0;
 }
 

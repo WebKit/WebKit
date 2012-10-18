@@ -1733,6 +1733,11 @@ void RenderLayerBacking::notifyFlushRequired(const GraphicsLayer*)
         compositor()->scheduleLayerFlush();
 }
 
+void RenderLayerBacking::notifyFlushBeforeDisplayRefresh(const GraphicsLayer* layer)
+{
+    compositor()->notifyFlushBeforeDisplayRefresh(layer);
+}
+
 // This is used for the 'freeze' API, for testing only.
 void RenderLayerBacking::suspendAnimations(double time)
 {

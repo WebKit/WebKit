@@ -67,6 +67,9 @@ public:
     // to appear on the screen.
     virtual void notifyFlushRequired(const GraphicsLayer*) = 0;
     
+    // Notification that this layer requires a flush before the next display refresh.
+    virtual void notifyFlushBeforeDisplayRefresh(const GraphicsLayer*) { }
+
     virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& inClip) = 0;
     virtual void didCommitChangesForLayer(const GraphicsLayer*) const { }
 

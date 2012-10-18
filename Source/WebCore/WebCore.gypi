@@ -4789,6 +4789,8 @@
             'platform/graphics/GraphicsLayer.cpp',
             'platform/graphics/GraphicsLayerAnimation.cpp',
             'platform/graphics/GraphicsLayerAnimation.h',
+            'platform/graphics/GraphicsLayerUpdater.cpp',
+            'platform/graphics/GraphicsLayerUpdater.h',
             'platform/graphics/GraphicsLayerTransform.cpp',
             'platform/graphics/GraphicsLayerTransform.h',
             'platform/graphics/GraphicsTypes.cpp',

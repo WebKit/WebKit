@@ -262,6 +262,8 @@
 		0F5B7A5510F65D7A00376302 /* RenderEmbeddedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5B7A5310F65D7A00376302 /* RenderEmbeddedObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F605AEC15F94848004DF0C0 /* ScrollingConstraints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F605AEA15F94848004DF0C0 /* ScrollingConstraints.cpp */; };
 		0F605AED15F94848004DF0C0 /* ScrollingConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F605AEB15F94848004DF0C0 /* ScrollingConstraints.h */; };
+		0FA24D79162DF91900A3F4C0 /* GraphicsLayerUpdater.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FA24D77162DF91900A3F4C0 /* GraphicsLayerUpdater.cpp */; };
+		0FA24D7A162DF91900A3F4C0 /* GraphicsLayerUpdater.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FA24D78162DF91900A3F4C0 /* GraphicsLayerUpdater.h */; };
 		0FCF33240F2B9715004B6795 /* ColorCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FCF33230F2B9715004B6795 /* ColorCG.cpp */; };
 		0FCF332C0F2B9A25004B6795 /* WebTiledLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FCF33280F2B9A25004B6795 /* WebTiledLayer.mm */; };
 		0FCF332D0F2B9A25004B6795 /* WebTiledLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCF33290F2B9A25004B6795 /* WebTiledLayer.h */; };
@@ -6355,11 +6357,17 @@
 		FD315FF912B0267600C1A359 /* AudioBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FAF12B0267500C1A359 /* AudioBuffer.h */; };
 		FD315FFB12B0267600C1A359 /* AudioBufferSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FB112B0267500C1A359 /* AudioBufferSourceNode.cpp */; };
 		FD315FFC12B0267600C1A359 /* AudioBufferSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FB212B0267500C1A359 /* AudioBufferSourceNode.h */; };
+		FD315FFE12B0267600C1A359 /* ChannelMergerNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FB412B0267500C1A359 /* ChannelMergerNode.cpp */; };
+		FD315FFF12B0267600C1A359 /* ChannelMergerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FB512B0267500C1A359 /* ChannelMergerNode.h */; };
+		FD31600112B0267600C1A359 /* ChannelSplitterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FB712B0267500C1A359 /* ChannelSplitterNode.cpp */; };
+		FD31600212B0267600C1A359 /* ChannelSplitterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FB812B0267500C1A359 /* ChannelSplitterNode.h */; };
 		FD31600412B0267600C1A359 /* AudioContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FBA12B0267500C1A359 /* AudioContext.cpp */; };
 		FD31600512B0267600C1A359 /* AudioContext.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FBB12B0267500C1A359 /* AudioContext.h */; };
 		FD31600712B0267600C1A359 /* AudioDestinationNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FBD12B0267500C1A359 /* AudioDestinationNode.cpp */; };
 		FD31600812B0267600C1A359 /* AudioDestinationNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FBE12B0267500C1A359 /* AudioDestinationNode.h */; };
 		FD31600A12B0267600C1A359 /* AudioGain.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FC012B0267500C1A359 /* AudioGain.h */; };
+		FD31600C12B0267600C1A359 /* GainNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FC212B0267500C1A359 /* GainNode.cpp */; };
+		FD31600D12B0267600C1A359 /* GainNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FC312B0267500C1A359 /* GainNode.h */; };
 		FD31600F12B0267600C1A359 /* AudioListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FC512B0267500C1A359 /* AudioListener.cpp */; };
 		FD31601012B0267600C1A359 /* AudioListener.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FC612B0267500C1A359 /* AudioListener.h */; };
 		FD31601212B0267600C1A359 /* AudioNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FC812B0267500C1A359 /* AudioNode.cpp */; };
@@ -6368,6 +6376,8 @@
 		FD31601612B0267600C1A359 /* AudioNodeInput.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FCC12B0267500C1A359 /* AudioNodeInput.h */; };
 		FD31601712B0267600C1A359 /* AudioNodeOutput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FCD12B0267500C1A359 /* AudioNodeOutput.cpp */; };
 		FD31601812B0267600C1A359 /* AudioNodeOutput.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FCE12B0267500C1A359 /* AudioNodeOutput.h */; };
+		FD31601912B0267600C1A359 /* PannerNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FCF12B0267500C1A359 /* PannerNode.cpp */; };
+		FD31601A12B0267600C1A359 /* PannerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FD012B0267500C1A359 /* PannerNode.h */; };
 		FD31601C12B0267600C1A359 /* AudioParam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FD212B0267500C1A359 /* AudioParam.cpp */; };
 		FD31601D12B0267600C1A359 /* AudioParam.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FD312B0267500C1A359 /* AudioParam.h */; };
 		FD31601F12B0267600C1A359 /* AudioProcessingEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FD512B0267600C1A359 /* AudioProcessingEvent.cpp */; };
@@ -6377,10 +6387,6 @@
 		FD31602512B0267600C1A359 /* BiquadDSPKernel.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FDB12B0267600C1A359 /* BiquadDSPKernel.h */; };
 		FD31602612B0267600C1A359 /* BiquadProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FDC12B0267600C1A359 /* BiquadProcessor.cpp */; };
 		FD31602712B0267600C1A359 /* BiquadProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FDD12B0267600C1A359 /* BiquadProcessor.h */; };
-		FD315FFE12B0267600C1A359 /* ChannelMergerNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FB412B0267500C1A359 /* ChannelMergerNode.cpp */; };
-		FD315FFF12B0267600C1A359 /* ChannelMergerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FB512B0267500C1A359 /* ChannelMergerNode.h */; };
-		FD31600112B0267600C1A359 /* ChannelSplitterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FB712B0267500C1A359 /* ChannelSplitterNode.cpp */; };
-		FD31600212B0267600C1A359 /* ChannelSplitterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FB812B0267500C1A359 /* ChannelSplitterNode.h */; };
 		FD31602812B0267600C1A359 /* ConvolverNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FDE12B0267600C1A359 /* ConvolverNode.cpp */; };
 		FD31602912B0267600C1A359 /* ConvolverNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FDF12B0267600C1A359 /* ConvolverNode.h */; };
 		FD31602B12B0267600C1A359 /* DelayDSPKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FE112B0267600C1A359 /* DelayDSPKernel.cpp */; };
@@ -6389,14 +6395,10 @@
 		FD31602E12B0267600C1A359 /* DelayNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FE412B0267600C1A359 /* DelayNode.h */; };
 		FD31603012B0267600C1A359 /* DelayProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FE612B0267600C1A359 /* DelayProcessor.cpp */; };
 		FD31603112B0267600C1A359 /* DelayProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FE712B0267600C1A359 /* DelayProcessor.h */; };
-		FD31600C12B0267600C1A359 /* GainNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FC212B0267500C1A359 /* GainNode.cpp */; };
-		FD31600D12B0267600C1A359 /* GainNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FC312B0267500C1A359 /* GainNode.h */; };
-		FD31601912B0267600C1A359 /* PannerNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FCF12B0267500C1A359 /* PannerNode.cpp */; };
-		FD31601A12B0267600C1A359 /* PannerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FD012B0267500C1A359 /* PannerNode.h */; };
-		FD31603B12B0267600C1A359 /* RealtimeAnalyser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FF112B0267600C1A359 /* RealtimeAnalyser.cpp */; };
-		FD31603C12B0267600C1A359 /* RealtimeAnalyser.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FF212B0267600C1A359 /* RealtimeAnalyser.h */; };
 		FD31603512B0267600C1A359 /* ScriptProcessorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FEB12B0267600C1A359 /* ScriptProcessorNode.cpp */; };
 		FD31603612B0267600C1A359 /* ScriptProcessorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FEC12B0267600C1A359 /* ScriptProcessorNode.h */; };
+		FD31603B12B0267600C1A359 /* RealtimeAnalyser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FF112B0267600C1A359 /* RealtimeAnalyser.cpp */; };
+		FD31603C12B0267600C1A359 /* RealtimeAnalyser.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FF212B0267600C1A359 /* RealtimeAnalyser.h */; };
 		FD31603D12B0267600C1A359 /* AnalyserNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FF312B0267600C1A359 /* AnalyserNode.cpp */; };
 		FD31603E12B0267600C1A359 /* AnalyserNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FF412B0267600C1A359 /* AnalyserNode.h */; };
 		FD31607A12B026F700C1A359 /* AudioArray.h in Headers */ = {isa = PBXBuildFile; fileRef = FD31604412B026F700C1A359 /* AudioArray.h */; };
@@ -6497,38 +6499,38 @@
 		FD82D7F813D4C8BD004E4372 /* JSWaveShaperNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD82D7F613D4C8BD004E4372 /* JSWaveShaperNode.h */; };
 		FD8C46EB154608E700A5910C /* AudioScheduledSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD8C46E9154608E700A5910C /* AudioScheduledSourceNode.cpp */; };
 		FD8C46EC154608E700A5910C /* AudioScheduledSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD8C46EA154608E700A5910C /* AudioScheduledSourceNode.h */; };
-		FDA15EC912B03F50003A583A /* JSAnalyserNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15EC712B03F50003A583A /* JSAnalyserNode.cpp */; };
-		FDA15ECA12B03F50003A583A /* JSAnalyserNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15EC812B03F50003A583A /* JSAnalyserNode.h */; };
 		FDA15E9D12B03EE1003A583A /* JSAudioBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8112B03EE1003A583A /* JSAudioBuffer.cpp */; };
 		FDA15E9E12B03EE1003A583A /* JSAudioBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E8212B03EE1003A583A /* JSAudioBuffer.h */; };
 		FDA15E9F12B03EE1003A583A /* JSAudioBufferSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8312B03EE1003A583A /* JSAudioBufferSourceNode.cpp */; };
 		FDA15EA012B03EE1003A583A /* JSAudioBufferSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E8412B03EE1003A583A /* JSAudioBufferSourceNode.h */; };
+		FDA15EA112B03EE1003A583A /* JSChannelMergerNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8512B03EE1003A583A /* JSChannelMergerNode.cpp */; };
+		FDA15EA212B03EE1003A583A /* JSChannelMergerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E8612B03EE1003A583A /* JSChannelMergerNode.h */; };
+		FDA15EA312B03EE1003A583A /* JSChannelSplitterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8712B03EE1003A583A /* JSChannelSplitterNode.cpp */; };
+		FDA15EA412B03EE1003A583A /* JSChannelSplitterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E8812B03EE1003A583A /* JSChannelSplitterNode.h */; };
 		FDA15EA512B03EE1003A583A /* JSAudioContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8912B03EE1003A583A /* JSAudioContext.cpp */; };
 		FDA15EA612B03EE1003A583A /* JSAudioContext.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E8A12B03EE1003A583A /* JSAudioContext.h */; };
 		FDA15EA712B03EE1003A583A /* JSAudioDestinationNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8B12B03EE1003A583A /* JSAudioDestinationNode.cpp */; };
 		FDA15EA812B03EE1003A583A /* JSAudioDestinationNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E8C12B03EE1003A583A /* JSAudioDestinationNode.h */; };
 		FDA15EA912B03EE1003A583A /* JSAudioGain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8D12B03EE1003A583A /* JSAudioGain.cpp */; };
 		FDA15EAA12B03EE1003A583A /* JSAudioGain.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E8E12B03EE1003A583A /* JSAudioGain.h */; };
+		FDA15EAB12B03EE1003A583A /* JSGainNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8F12B03EE1003A583A /* JSGainNode.cpp */; };
+		FDA15EAC12B03EE1003A583A /* JSGainNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E9012B03EE1003A583A /* JSGainNode.h */; };
 		FDA15EAD12B03EE1003A583A /* JSAudioListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E9112B03EE1003A583A /* JSAudioListener.cpp */; };
 		FDA15EAE12B03EE1003A583A /* JSAudioListener.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E9212B03EE1003A583A /* JSAudioListener.h */; };
 		FDA15EAF12B03EE1003A583A /* JSAudioNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E9312B03EE1003A583A /* JSAudioNode.cpp */; };
 		FDA15EB012B03EE1003A583A /* JSAudioNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E9412B03EE1003A583A /* JSAudioNode.h */; };
+		FDA15EB112B03EE1003A583A /* JSPannerNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E9512B03EE1003A583A /* JSPannerNode.cpp */; };
+		FDA15EB212B03EE1003A583A /* JSPannerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E9612B03EE1003A583A /* JSPannerNode.h */; };
 		FDA15EB312B03EE1003A583A /* JSAudioParam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E9712B03EE1003A583A /* JSAudioParam.cpp */; };
 		FDA15EB412B03EE1003A583A /* JSAudioParam.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E9812B03EE1003A583A /* JSAudioParam.h */; };
 		FDA15EB512B03EE1003A583A /* JSAudioProcessingEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E9912B03EE1003A583A /* JSAudioProcessingEvent.cpp */; };
 		FDA15EB612B03EE1003A583A /* JSAudioProcessingEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E9A12B03EE1003A583A /* JSAudioProcessingEvent.h */; };
 		FDA15EB712B03EE1003A583A /* JSAudioSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E9B12B03EE1003A583A /* JSAudioSourceNode.cpp */; };
 		FDA15EB812B03EE1003A583A /* JSAudioSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E9C12B03EE1003A583A /* JSAudioSourceNode.h */; };
-		FDA15EA112B03EE1003A583A /* JSChannelMergerNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8512B03EE1003A583A /* JSChannelMergerNode.cpp */; };
-		FDA15EA212B03EE1003A583A /* JSChannelMergerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E8612B03EE1003A583A /* JSChannelMergerNode.h */; };
-		FDA15EA312B03EE1003A583A /* JSChannelSplitterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8712B03EE1003A583A /* JSChannelSplitterNode.cpp */; };
-		FDA15EA412B03EE1003A583A /* JSChannelSplitterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E8812B03EE1003A583A /* JSChannelSplitterNode.h */; };
 		FDA15EBD12B03F0B003A583A /* JSConvolverNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15EBB12B03F0B003A583A /* JSConvolverNode.cpp */; };
 		FDA15EBE12B03F0B003A583A /* JSConvolverNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15EBC12B03F0B003A583A /* JSConvolverNode.h */; };
-		FDA15EAB12B03EE1003A583A /* JSGainNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8F12B03EE1003A583A /* JSGainNode.cpp */; };
-		FDA15EAC12B03EE1003A583A /* JSGainNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E9012B03EE1003A583A /* JSGainNode.h */; };
-		FDA15EB112B03EE1003A583A /* JSPannerNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E9512B03EE1003A583A /* JSPannerNode.cpp */; };
-		FDA15EB212B03EE1003A583A /* JSPannerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E9612B03EE1003A583A /* JSPannerNode.h */; };
+		FDA15EC912B03F50003A583A /* JSAnalyserNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15EC712B03F50003A583A /* JSAnalyserNode.cpp */; };
+		FDA15ECA12B03F50003A583A /* JSAnalyserNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15EC812B03F50003A583A /* JSAnalyserNode.h */; };
 		FDA15ECD12B03F61003A583A /* JSScriptProcessorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15ECB12B03F61003A583A /* JSScriptProcessorNode.cpp */; };
 		FDA15ECE12B03F61003A583A /* JSScriptProcessorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15ECC12B03F61003A583A /* JSScriptProcessorNode.h */; };
 		FDA15ED112B03F94003A583A /* JSDelayNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15ECF12B03F94003A583A /* JSDelayNode.cpp */; };
@@ -6554,11 +6556,11 @@
 		FDEA6247152102FC00479DF0 /* JSWaveTable.h in Headers */ = {isa = PBXBuildFile; fileRef = FDEA6245152102FC00479DF0 /* JSWaveTable.h */; };
 		FDEAAAF312B02EE400DCF33B /* JSAudioBufferSourceNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEAAAEF12B02EE400DCF33B /* JSAudioBufferSourceNodeCustom.cpp */; };
 		FDEAAAF412B02EE400DCF33B /* JSAudioContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEAAAF012B02EE400DCF33B /* JSAudioContextCustom.cpp */; };
+		FDEAAAFE12B02F4900DCF33B /* JSScriptProcessorNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEAAAFD12B02F4900DCF33B /* JSScriptProcessorNodeCustom.cpp */; };
 		FDF09DC81399B62200688E5B /* JSBiquadFilterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDF09DC61399B62200688E5B /* JSBiquadFilterNode.cpp */; };
 		FDF09DC91399B62200688E5B /* JSBiquadFilterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDF09DC71399B62200688E5B /* JSBiquadFilterNode.h */; };
 		FDF6BAF8134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDF6BAF6134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp */; };
 		FDF6BAF9134A4C9800822920 /* JSOfflineAudioCompletionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = FDF6BAF7134A4C9800822920 /* JSOfflineAudioCompletionEvent.h */; };
-		FDEAAAFE12B02F4900DCF33B /* JSScriptProcessorNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEAAAFD12B02F4900DCF33B /* JSScriptProcessorNodeCustom.cpp */; };
 		FDF7E9C313AC21DB00A51EAC /* JSAudioBufferCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDF7E9C113AC21DB00A51EAC /* JSAudioBufferCallback.cpp */; };
 		FDF7E9C413AC21DB00A51EAC /* JSAudioBufferCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = FDF7E9C213AC21DB00A51EAC /* JSAudioBufferCallback.h */; };
 		FE6FD4880F676E5700092873 /* Coordinates.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6FD4850F676E5700092873 /* Coordinates.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7311,6 +7313,8 @@
 		0F5B7A5310F65D7A00376302 /* RenderEmbeddedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderEmbeddedObject.h; sourceTree = "<group>"; };
 		0F605AEA15F94848004DF0C0 /* ScrollingConstraints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingConstraints.cpp; sourceTree = "<group>"; };
 		0F605AEB15F94848004DF0C0 /* ScrollingConstraints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingConstraints.h; sourceTree = "<group>"; };
+		0FA24D77162DF91900A3F4C0 /* GraphicsLayerUpdater.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsLayerUpdater.cpp; sourceTree = "<group>"; };
+		0FA24D78162DF91900A3F4C0 /* GraphicsLayerUpdater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsLayerUpdater.h; sourceTree = "<group>"; };
 		0FCF33230F2B9715004B6795 /* ColorCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorCG.cpp; sourceTree = "<group>"; };
 		0FCF33280F2B9A25004B6795 /* WebTiledLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebTiledLayer.mm; sourceTree = "<group>"; };
 		0FCF33290F2B9A25004B6795 /* WebTiledLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTiledLayer.h; sourceTree = "<group>"; };
@@ -13794,6 +13798,12 @@
 		FD315FB112B0267500C1A359 /* AudioBufferSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioBufferSourceNode.cpp; sourceTree = "<group>"; };
 		FD315FB212B0267500C1A359 /* AudioBufferSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioBufferSourceNode.h; sourceTree = "<group>"; };
 		FD315FB312B0267500C1A359 /* AudioBufferSourceNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AudioBufferSourceNode.idl; sourceTree = "<group>"; };
+		FD315FB412B0267500C1A359 /* ChannelMergerNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChannelMergerNode.cpp; sourceTree = "<group>"; };
+		FD315FB512B0267500C1A359 /* ChannelMergerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChannelMergerNode.h; sourceTree = "<group>"; };
+		FD315FB612B0267500C1A359 /* ChannelMergerNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChannelMergerNode.idl; sourceTree = "<group>"; };
+		FD315FB712B0267500C1A359 /* ChannelSplitterNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChannelSplitterNode.cpp; sourceTree = "<group>"; };
+		FD315FB812B0267500C1A359 /* ChannelSplitterNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChannelSplitterNode.h; sourceTree = "<group>"; };
+		FD315FB912B0267500C1A359 /* ChannelSplitterNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChannelSplitterNode.idl; sourceTree = "<group>"; };
 		FD315FBA12B0267500C1A359 /* AudioContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioContext.cpp; sourceTree = "<group>"; };
 		FD315FBB12B0267500C1A359 /* AudioContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioContext.h; sourceTree = "<group>"; };
 		FD315FBC12B0267500C1A359 /* AudioContext.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AudioContext.idl; sourceTree = "<group>"; };
@@ -13802,9 +13812,9 @@
 		FD315FBF12B0267500C1A359 /* AudioDestinationNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AudioDestinationNode.idl; sourceTree = "<group>"; };
 		FD315FC012B0267500C1A359 /* AudioGain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioGain.h; sourceTree = "<group>"; };
 		FD315FC112B0267500C1A359 /* AudioGain.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AudioGain.idl; sourceTree = "<group>"; };
-		FD315FF312B0267600C1A359 /* AnalyserNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnalyserNode.cpp; sourceTree = "<group>"; };
-		FD315FF412B0267600C1A359 /* AnalyserNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnalyserNode.h; sourceTree = "<group>"; };
-		FD315FF512B0267600C1A359 /* AnalyserNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AnalyserNode.idl; sourceTree = "<group>"; };
+		FD315FC212B0267500C1A359 /* GainNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GainNode.cpp; sourceTree = "<group>"; };
+		FD315FC312B0267500C1A359 /* GainNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GainNode.h; sourceTree = "<group>"; };
+		FD315FC412B0267500C1A359 /* GainNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GainNode.idl; sourceTree = "<group>"; };
 		FD315FC512B0267500C1A359 /* AudioListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioListener.cpp; sourceTree = "<group>"; };
 		FD315FC612B0267500C1A359 /* AudioListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioListener.h; sourceTree = "<group>"; };
 		FD315FC712B0267500C1A359 /* AudioListener.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AudioListener.idl; sourceTree = "<group>"; };
@@ -13815,6 +13825,9 @@
 		FD315FCC12B0267500C1A359 /* AudioNodeInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioNodeInput.h; sourceTree = "<group>"; };
 		FD315FCD12B0267500C1A359 /* AudioNodeOutput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioNodeOutput.cpp; sourceTree = "<group>"; };
 		FD315FCE12B0267500C1A359 /* AudioNodeOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioNodeOutput.h; sourceTree = "<group>"; };
+		FD315FCF12B0267500C1A359 /* PannerNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PannerNode.cpp; sourceTree = "<group>"; };
+		FD315FD012B0267500C1A359 /* PannerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PannerNode.h; sourceTree = "<group>"; };
+		FD315FD112B0267500C1A359 /* PannerNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PannerNode.idl; sourceTree = "<group>"; };
 		FD315FD212B0267500C1A359 /* AudioParam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioParam.cpp; sourceTree = "<group>"; };
 		FD315FD312B0267500C1A359 /* AudioParam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioParam.h; sourceTree = "<group>"; };
 		FD315FD412B0267500C1A359 /* AudioParam.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AudioParam.idl; sourceTree = "<group>"; };
@@ -13827,12 +13840,6 @@
 		FD315FDB12B0267600C1A359 /* BiquadDSPKernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BiquadDSPKernel.h; sourceTree = "<group>"; };
 		FD315FDC12B0267600C1A359 /* BiquadProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BiquadProcessor.cpp; sourceTree = "<group>"; };
 		FD315FDD12B0267600C1A359 /* BiquadProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BiquadProcessor.h; sourceTree = "<group>"; };
-		FD315FB412B0267500C1A359 /* ChannelMergerNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChannelMergerNode.cpp; sourceTree = "<group>"; };
-		FD315FB512B0267500C1A359 /* ChannelMergerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChannelMergerNode.h; sourceTree = "<group>"; };
-		FD315FB612B0267500C1A359 /* ChannelMergerNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChannelMergerNode.idl; sourceTree = "<group>"; };
-		FD315FB712B0267500C1A359 /* ChannelSplitterNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChannelSplitterNode.cpp; sourceTree = "<group>"; };
-		FD315FB812B0267500C1A359 /* ChannelSplitterNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChannelSplitterNode.h; sourceTree = "<group>"; };
-		FD315FB912B0267500C1A359 /* ChannelSplitterNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChannelSplitterNode.idl; sourceTree = "<group>"; };
 		FD315FDE12B0267600C1A359 /* ConvolverNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConvolverNode.cpp; sourceTree = "<group>"; };
 		FD315FDF12B0267600C1A359 /* ConvolverNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConvolverNode.h; sourceTree = "<group>"; };
 		FD315FE012B0267600C1A359 /* ConvolverNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ConvolverNode.idl; sourceTree = "<group>"; };
@@ -13843,17 +13850,14 @@
 		FD315FE512B0267600C1A359 /* DelayNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DelayNode.idl; sourceTree = "<group>"; };
 		FD315FE612B0267600C1A359 /* DelayProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DelayProcessor.cpp; sourceTree = "<group>"; };
 		FD315FE712B0267600C1A359 /* DelayProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DelayProcessor.h; sourceTree = "<group>"; };
-		FD315FC212B0267500C1A359 /* GainNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GainNode.cpp; sourceTree = "<group>"; };
-		FD315FC312B0267500C1A359 /* GainNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GainNode.h; sourceTree = "<group>"; };
-		FD315FC412B0267500C1A359 /* GainNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GainNode.idl; sourceTree = "<group>"; };
-		FD315FCF12B0267500C1A359 /* PannerNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PannerNode.cpp; sourceTree = "<group>"; };
-		FD315FD012B0267500C1A359 /* PannerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PannerNode.h; sourceTree = "<group>"; };
-		FD315FD112B0267500C1A359 /* PannerNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PannerNode.idl; sourceTree = "<group>"; };
 		FD315FEB12B0267600C1A359 /* ScriptProcessorNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptProcessorNode.cpp; sourceTree = "<group>"; };
 		FD315FEC12B0267600C1A359 /* ScriptProcessorNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptProcessorNode.h; sourceTree = "<group>"; };
 		FD315FED12B0267600C1A359 /* ScriptProcessorNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ScriptProcessorNode.idl; sourceTree = "<group>"; };
 		FD315FF112B0267600C1A359 /* RealtimeAnalyser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RealtimeAnalyser.cpp; sourceTree = "<group>"; };
 		FD315FF212B0267600C1A359 /* RealtimeAnalyser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealtimeAnalyser.h; sourceTree = "<group>"; };
+		FD315FF312B0267600C1A359 /* AnalyserNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnalyserNode.cpp; sourceTree = "<group>"; };
+		FD315FF412B0267600C1A359 /* AnalyserNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnalyserNode.h; sourceTree = "<group>"; };
+		FD315FF512B0267600C1A359 /* AnalyserNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AnalyserNode.idl; sourceTree = "<group>"; };
 		FD31604412B026F700C1A359 /* AudioArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioArray.h; sourceTree = "<group>"; };
 		FD31604512B026F700C1A359 /* AudioBus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioBus.cpp; sourceTree = "<group>"; };
 		FD31604612B026F700C1A359 /* AudioBus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioBus.h; sourceTree = "<group>"; };
@@ -13959,42 +13963,42 @@
 		FD82D7F613D4C8BD004E4372 /* JSWaveShaperNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWaveShaperNode.h; sourceTree = "<group>"; };
 		FD8C46E9154608E700A5910C /* AudioScheduledSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioScheduledSourceNode.cpp; sourceTree = "<group>"; };
 		FD8C46EA154608E700A5910C /* AudioScheduledSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioScheduledSourceNode.h; sourceTree = "<group>"; };
-		FDA15EC712B03F50003A583A /* JSAnalyserNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAnalyserNode.cpp; sourceTree = "<group>"; };
-		FDA15EC812B03F50003A583A /* JSAnalyserNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAnalyserNode.h; sourceTree = "<group>"; };
 		FDA15E8112B03EE1003A583A /* JSAudioBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioBuffer.cpp; sourceTree = "<group>"; };
 		FDA15E8212B03EE1003A583A /* JSAudioBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioBuffer.h; sourceTree = "<group>"; };
 		FDA15E8312B03EE1003A583A /* JSAudioBufferSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioBufferSourceNode.cpp; sourceTree = "<group>"; };
 		FDA15E8412B03EE1003A583A /* JSAudioBufferSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioBufferSourceNode.h; sourceTree = "<group>"; };
+		FDA15E8512B03EE1003A583A /* JSChannelMergerNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSChannelMergerNode.cpp; sourceTree = "<group>"; };
+		FDA15E8612B03EE1003A583A /* JSChannelMergerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSChannelMergerNode.h; sourceTree = "<group>"; };
+		FDA15E8712B03EE1003A583A /* JSChannelSplitterNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSChannelSplitterNode.cpp; sourceTree = "<group>"; };
+		FDA15E8812B03EE1003A583A /* JSChannelSplitterNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSChannelSplitterNode.h; sourceTree = "<group>"; };
 		FDA15E8912B03EE1003A583A /* JSAudioContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioContext.cpp; sourceTree = "<group>"; };
 		FDA15E8A12B03EE1003A583A /* JSAudioContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioContext.h; sourceTree = "<group>"; };
 		FDA15E8B12B03EE1003A583A /* JSAudioDestinationNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioDestinationNode.cpp; sourceTree = "<group>"; };
 		FDA15E8C12B03EE1003A583A /* JSAudioDestinationNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioDestinationNode.h; sourceTree = "<group>"; };
 		FDA15E8D12B03EE1003A583A /* JSAudioGain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioGain.cpp; sourceTree = "<group>"; };
 		FDA15E8E12B03EE1003A583A /* JSAudioGain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioGain.h; sourceTree = "<group>"; };
+		FDA15E8F12B03EE1003A583A /* JSGainNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGainNode.cpp; sourceTree = "<group>"; };
+		FDA15E9012B03EE1003A583A /* JSGainNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGainNode.h; sourceTree = "<group>"; };
 		FDA15E9112B03EE1003A583A /* JSAudioListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioListener.cpp; sourceTree = "<group>"; };
 		FDA15E9212B03EE1003A583A /* JSAudioListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioListener.h; sourceTree = "<group>"; };
 		FDA15E9312B03EE1003A583A /* JSAudioNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioNode.cpp; sourceTree = "<group>"; };
 		FDA15E9412B03EE1003A583A /* JSAudioNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioNode.h; sourceTree = "<group>"; };
+		FDA15E9512B03EE1003A583A /* JSPannerNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPannerNode.cpp; sourceTree = "<group>"; };
+		FDA15E9612B03EE1003A583A /* JSPannerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPannerNode.h; sourceTree = "<group>"; };
 		FDA15E9712B03EE1003A583A /* JSAudioParam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioParam.cpp; sourceTree = "<group>"; };
 		FDA15E9812B03EE1003A583A /* JSAudioParam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioParam.h; sourceTree = "<group>"; };
 		FDA15E9912B03EE1003A583A /* JSAudioProcessingEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioProcessingEvent.cpp; sourceTree = "<group>"; };
 		FDA15E9A12B03EE1003A583A /* JSAudioProcessingEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioProcessingEvent.h; sourceTree = "<group>"; };
 		FDA15E9B12B03EE1003A583A /* JSAudioSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioSourceNode.cpp; sourceTree = "<group>"; };
 		FDA15E9C12B03EE1003A583A /* JSAudioSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioSourceNode.h; sourceTree = "<group>"; };
-		FDA15E8512B03EE1003A583A /* JSChannelMergerNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSChannelMergerNode.cpp; sourceTree = "<group>"; };
-		FDA15E8612B03EE1003A583A /* JSChannelMergerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSChannelMergerNode.h; sourceTree = "<group>"; };
-		FDA15E8712B03EE1003A583A /* JSChannelSplitterNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSChannelSplitterNode.cpp; sourceTree = "<group>"; };
-		FDA15E8812B03EE1003A583A /* JSChannelSplitterNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSChannelSplitterNode.h; sourceTree = "<group>"; };
 		FDA15EBB12B03F0B003A583A /* JSConvolverNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSConvolverNode.cpp; sourceTree = "<group>"; };
 		FDA15EBC12B03F0B003A583A /* JSConvolverNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSConvolverNode.h; sourceTree = "<group>"; };
-		FDA15ECF12B03F94003A583A /* JSDelayNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDelayNode.cpp; sourceTree = "<group>"; };
-		FDA15ED012B03F94003A583A /* JSDelayNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDelayNode.h; sourceTree = "<group>"; };
-		FDA15E8F12B03EE1003A583A /* JSGainNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGainNode.cpp; sourceTree = "<group>"; };
-		FDA15E9012B03EE1003A583A /* JSGainNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGainNode.h; sourceTree = "<group>"; };
-		FDA15E9512B03EE1003A583A /* JSPannerNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPannerNode.cpp; sourceTree = "<group>"; };
-		FDA15E9612B03EE1003A583A /* JSPannerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPannerNode.h; sourceTree = "<group>"; };
+		FDA15EC712B03F50003A583A /* JSAnalyserNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAnalyserNode.cpp; sourceTree = "<group>"; };
+		FDA15EC812B03F50003A583A /* JSAnalyserNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAnalyserNode.h; sourceTree = "<group>"; };
 		FDA15ECB12B03F61003A583A /* JSScriptProcessorNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSScriptProcessorNode.cpp; sourceTree = "<group>"; };
 		FDA15ECC12B03F61003A583A /* JSScriptProcessorNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScriptProcessorNode.h; sourceTree = "<group>"; };
+		FDA15ECF12B03F94003A583A /* JSDelayNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDelayNode.cpp; sourceTree = "<group>"; };
+		FDA15ED012B03F94003A583A /* JSDelayNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDelayNode.h; sourceTree = "<group>"; };
 		FDA3E955134A49EF008D4B5A /* OfflineAudioCompletionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OfflineAudioCompletionEvent.cpp; sourceTree = "<group>"; };
 		FDA3E956134A49EF008D4B5A /* OfflineAudioCompletionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OfflineAudioCompletionEvent.h; sourceTree = "<group>"; };
 		FDA3E957134A49EF008D4B5A /* OfflineAudioDestinationNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OfflineAudioDestinationNode.cpp; sourceTree = "<group>"; };
@@ -14018,11 +14022,11 @@
 		FDEA6245152102FC00479DF0 /* JSWaveTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWaveTable.h; sourceTree = "<group>"; };
 		FDEAAAEF12B02EE400DCF33B /* JSAudioBufferSourceNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioBufferSourceNodeCustom.cpp; sourceTree = "<group>"; };
 		FDEAAAF012B02EE400DCF33B /* JSAudioContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioContextCustom.cpp; sourceTree = "<group>"; };
+		FDEAAAFD12B02F4900DCF33B /* JSScriptProcessorNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSScriptProcessorNodeCustom.cpp; sourceTree = "<group>"; };
 		FDF09DC61399B62200688E5B /* JSBiquadFilterNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBiquadFilterNode.cpp; sourceTree = "<group>"; };
 		FDF09DC71399B62200688E5B /* JSBiquadFilterNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBiquadFilterNode.h; sourceTree = "<group>"; };
 		FDF6BAF6134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOfflineAudioCompletionEvent.cpp; sourceTree = "<group>"; };
 		FDF6BAF7134A4C9800822920 /* JSOfflineAudioCompletionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOfflineAudioCompletionEvent.h; sourceTree = "<group>"; };
-		FDEAAAFD12B02F4900DCF33B /* JSScriptProcessorNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSScriptProcessorNodeCustom.cpp; sourceTree = "<group>"; };
 		FDF7E9C113AC21DB00A51EAC /* JSAudioBufferCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioBufferCallback.cpp; sourceTree = "<group>"; };
 		FDF7E9C213AC21DB00A51EAC /* JSAudioBufferCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioBufferCallback.h; sourceTree = "<group>"; };
 		FE6FD4850F676E5700092873 /* Coordinates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Coordinates.h; sourceTree = "<group>"; };
@@ -19953,6 +19957,8 @@
 				0F580B0A0F12A2690051D689 /* GraphicsLayer.h */,
 				0F580B0B0F12A2690051D689 /* GraphicsLayerClient.h */,
 				1AC69592161A1E53003732CB /* GraphicsLayerFactory.h */,
+				0FA24D77162DF91900A3F4C0 /* GraphicsLayerUpdater.cpp */,
+				0FA24D78162DF91900A3F4C0 /* GraphicsLayerUpdater.h */,
 				B2A015940AF6CD53006BCE0E /* GraphicsTypes.cpp */,
 				B2A015950AF6CD53006BCE0E /* GraphicsTypes.h */,
 				77A17A7A12F2890B004E02F6 /* GraphicsTypes3D.h */,
@@ -23582,6 +23588,7 @@
 				499B3ED7128CD31400E726C2 /* GraphicsLayerCA.h in Headers */,
 				0F580B0E0F12A2690051D689 /* GraphicsLayerClient.h in Headers */,
 				1AC69593161A1E53003732CB /* GraphicsLayerFactory.h in Headers */,
+				0FA24D7A162DF91900A3F4C0 /* GraphicsLayerUpdater.h in Headers */,
 				B2A015AB0AF6CD53006BCE0E /* GraphicsTypes.h in Headers */,
 				77A17A7B12F2890B004E02F6 /* GraphicsTypes3D.h in Headers */,
 				C50B561712119D23008B46E0 /* GroupSettings.h in Headers */,
@@ -24937,6 +24944,8 @@
 				1AF62F2614DAFEA10041556C /* ScrollingThread.h in Headers */,
 				1AAADDA414DB409F00AF64B3 /* ScrollingTree.h in Headers */,
 				1AAADDE414DC8C8F00AF64B3 /* ScrollingTreeNode.h in Headers */,
+				9391A99D1629D70000297330 /* ScrollingTreeScrollingNode.h in Headers */,
+				93C4A4151629DF5A00C3EB6E /* ScrollingTreeScrollingNodeMac.h in Headers */,
 				93C09C860B0657AA005ABD4D /* ScrollTypes.h in Headers */,
 				BC6D6E2609AF943500F59759 /* ScrollView.h in Headers */,
 				F55B3DD21251F12D003EF269 /* SearchInputType.h in Headers */,
@@ -25605,8 +25614,6 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
-				9391A99D1629D70000297330 /* ScrollingTreeScrollingNode.h in Headers */,
-				93C4A4151629DF5A00C3EB6E /* ScrollingTreeScrollingNodeMac.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -26815,6 +26822,7 @@
 				B277B4040B22F37C0004BEC6 /* GraphicsContextMac.mm in Sources */,
 				0F580B0C0F12A2690051D689 /* GraphicsLayer.cpp in Sources */,
 				499B3ED6128CD31400E726C2 /* GraphicsLayerCA.cpp in Sources */,
+				0FA24D79162DF91900A3F4C0 /* GraphicsLayerUpdater.cpp in Sources */,
 				B2A015AA0AF6CD53006BCE0E /* GraphicsTypes.cpp in Sources */,
 				C50B561612119D23008B46E0 /* GroupSettings.cpp in Sources */,
 				F55B3DBF1251F12D003EF269 /* HiddenInputType.cpp in Sources */,
@@ -28165,6 +28173,8 @@
 				1AAADDA314DB409F00AF64B3 /* ScrollingTree.cpp in Sources */,
 				1A35862C152522540022A659 /* ScrollingTreeMac.mm in Sources */,
 				1AAADDE314DC8C8F00AF64B3 /* ScrollingTreeNode.cpp in Sources */,
+				9391A99C1629D70000297330 /* ScrollingTreeScrollingNode.cpp in Sources */,
+				93C4A4161629DF5A00C3EB6E /* ScrollingTreeScrollingNodeMac.mm in Sources */,
 				BC2441C40E8B65D00055320F /* ScrollView.cpp in Sources */,
 				9353676B09AED88B00D35CD6 /* ScrollViewMac.mm in Sources */,
 				F55B3DD11251F12D003EF269 /* SearchInputType.cpp in Sources */,
@@ -28710,8 +28720,6 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
-				9391A99C1629D70000297330 /* ScrollingTreeScrollingNode.cpp in Sources */,
-				93C4A4161629DF5A00C3EB6E /* ScrollingTreeScrollingNodeMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
