@@ -51,6 +51,10 @@ namespace WebKit {
 
 class PluginProcessCreationParameters;
 
+void PluginProcessProxy::platformInitializeLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions, const PluginModuleInfo& pluginInfo)
+{
+}
+
 void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationParameters&)
 {
 }

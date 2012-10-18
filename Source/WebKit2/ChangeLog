@@ -1,3 +1,28 @@
+2012-10-18  Jussi Kukkonen  <jussi.kukkonen@intel.com>
+
+        Add PluginProcessProxy::platformInitializeLaunchOptions
+        https://bugs.webkit.org/show_bug.cgi?id=99583
+
+        Reviewed by Sam Weinig.
+
+        Add a platform specific launch options initializer. This enables
+        fixing bug 99297 "[EFL] Make plugin process debugging easier
+        (PLUGIN_PROCESS_COMMAND_PREFIX)".
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::PluginProcessProxy):
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        (PluginProcessProxy):
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::platformInitializeLaunchOptions):
+        (WebKit):
+        * UIProcess/Plugins/qt/PluginProcessProxyQt.cpp:
+        (WebKit::PluginProcessProxy::platformInitializeLaunchOptions):
+        (WebKit):
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp:
+        (WebKit::PluginProcessProxy::platformInitializeLaunchOptions):
+        (WebKit):
+
 2012-10-18  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [WK2] Update test expectation for the python message test after r131700

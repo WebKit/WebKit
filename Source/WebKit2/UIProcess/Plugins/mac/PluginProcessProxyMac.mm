@@ -118,6 +118,15 @@ bool PluginProcessProxy::createPropertyListFile(const PluginModuleInfo& plugin)
     return true;
 }
 
+void PluginProcessProxy::platformInitializeLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions, const PluginModuleInfo& pluginInfo)
+{
+    launchOptions.architecture = pluginInfo.pluginArchitecture;
+    launchOptions.executableHeap = PluginProcessProxy::pluginNeedsExecutableHeap(pluginInfo);
+#if HAVE(XPC)
+    launchOptions.useXPC = false;
+#endif
+}
+
 void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationParameters& parameters)
 {
     // For know only Flash is known to behave with asynchronous plug-in initialization.

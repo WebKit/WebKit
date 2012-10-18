@@ -67,13 +67,8 @@ PluginProcessProxy::PluginProcessProxy(PluginProcessManager* PluginProcessManage
 {
     ProcessLauncher::LaunchOptions launchOptions;
     launchOptions.processType = ProcessLauncher::PluginProcess;
-#if PLATFORM(MAC)
-    launchOptions.architecture = pluginInfo.pluginArchitecture;
-    launchOptions.executableHeap = PluginProcessProxy::pluginNeedsExecutableHeap(pluginInfo);
-#if HAVE(XPC)
-    launchOptions.useXPC = false;
-#endif
-#endif
+
+    platformInitializeLaunchOptions(launchOptions, pluginInfo);
 
     m_processLauncher = ProcessLauncher::create(this, launchOptions);
 }

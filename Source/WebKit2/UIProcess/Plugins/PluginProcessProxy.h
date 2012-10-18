@@ -127,6 +127,7 @@ private:
     void applicationDidBecomeActive();
 #endif
 
+    static void platformInitializeLaunchOptions(ProcessLauncher::LaunchOptions&, const PluginModuleInfo& pluginInfo);
     void platformInitializePluginProcess(PluginProcessCreationParameters& parameters);
 
     // The plug-in host process manager.
