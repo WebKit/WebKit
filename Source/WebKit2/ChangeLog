@@ -1,3 +1,18 @@
+2012-10-17  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [WK2] Fix build break
+        https://bugs.webkit.org/show_bug.cgi?id=99670
+
+        Reviewed by Anders Carlsson.
+
+        Unreviewed build fix.
+
+        Include MessageEncoder.h instead of forwarding declaration for
+        MessageEncoder class.
+
+        * Scripts/webkit2/messages.py:
+        (forward_declarations_and_headers):
+
 2012-10-17  Darin Adler  <darin@apple.com>
 
         Make subclassing of WKView safer by namespacing methods and eliminating its use as an observer and delegate

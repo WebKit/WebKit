@@ -224,13 +224,14 @@ def forward_declarations_and_headers(receiver):
 
     headers = set([
         '"Arguments.h"',
+        '"MessageEncoder.h"',
         '"MessageID.h"',
     ])
 
     for message in receiver.messages:
         if message.reply_parameters != None and message.has_attribute(DELAYED_ATTRIBUTE):
             headers.add('<wtf/ThreadSafeRefCounted.h>')
-            types_by_namespace['CoreIPC'].update(['MessageEncoder', 'Connection'])
+            types_by_namespace['CoreIPC'].update(['Connection'])
 
     for parameter in receiver.iterparameters():
         type = parameter.type
