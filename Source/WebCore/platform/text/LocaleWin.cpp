@@ -713,6 +713,14 @@ String LocaleWin::dateFormat(const String& windowsFormat)
     return convertWindowsDateFormatToLDML(parseDateFormat(windowsFormat));
 }
 
+String LocaleWin::monthFormat()
+{
+    if (!m_monthFormat.isNull())
+        return m_monthFormat;
+    m_monthFormat = convertWindowsDateFormatToLDML(parseDateFormat(getLocaleInfoString(LOCALE_SYEARMONTH)));
+    return m_monthFormat;
+}
+
 String LocaleWin::timeFormat()
 {
     if (m_localizedTimeFormatText.isEmpty())

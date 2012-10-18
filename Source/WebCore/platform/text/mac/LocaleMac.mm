@@ -246,6 +246,16 @@ String LocaleMac::dateFormat()
     return m_dateFormat;
 }
 
+String LocaleMac::monthFormat()
+{
+    if (!m_monthFormat.isNull())
+        return m_monthFormat;
+    // Gets a format for "MMM", not "MM" because Windows API always provides
+    // formats for "MMM".
+    m_monthFormat = [NSDateFormatter dateFormatFromTemplate:@"yyyyMMM" options:0 locale:m_locale.get()];
+    return m_monthFormat;
+}
+
 String LocaleMac::timeFormat()
 {
     if (!m_localizedTimeFormatText.isNull())

@@ -62,6 +62,9 @@ public:
     // [1] LDML http://unicode.org/reports/tr35/#Date_Format_Patterns
     virtual String dateFormat() = 0;
 
+    // Returns a year-month format in Unicode TR35 LDML.
+    virtual String monthFormat() = 0;
+
     // Returns time format in Unicode TR35 LDML[1] containing hour, minute, and
     // second with optional period(AM/PM), e.g. "h:mm:ss a"
     // [1] LDML http://unicode.org/reports/tr35/#Date_Format_Patterns

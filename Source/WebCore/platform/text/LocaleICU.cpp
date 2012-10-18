@@ -33,6 +33,7 @@
 
 #include "LocalizedStrings.h"
 #include <limits>
+#include <unicode/udatpg.h>
 #include <unicode/uloc.h>
 #include <wtf/DateMath.h>
 #include <wtf/PassOwnPtr.h>
@@ -396,6 +397,36 @@ String LocaleICU::dateFormat()
         return ASCIILiteral("dd/MM/yyyy");
     m_dateFormat = getDateFormatPattern(m_shortDateFormat);
     return m_dateFormat;
+}
+
+static String getFormatForSkeleton(const char* locale, const String& skeleton)
+{
+    String format = ASCIILiteral("yyyy-MM");
+    UErrorCode status = U_ZERO_ERROR;
+    UDateTimePatternGenerator* patternGenerator = udatpg_open(locale, &status);
+    if (!patternGenerator)
+        return format;
+    status = U_ZERO_ERROR;
+    int32_t length = udatpg_getBestPattern(patternGenerator, skeleton.characters(), skeleton.length(), 0, 0, &status);
+    if (status == U_BUFFER_OVERFLOW_ERROR && length) {
+        Vector<UChar> buffer(length);
+        status = U_ZERO_ERROR;
+        udatpg_getBestPattern(patternGenerator, skeleton.characters(), skeleton.length(), buffer.data(), length, &status);
+        if (U_SUCCESS(status))
+            format = String::adopt(buffer);
+    }
+    udatpg_close(patternGenerator);
+    return format;
+}
+
+String LocaleICU::monthFormat()
+{
+    if (!m_monthFormat.isNull())
+        return m_monthFormat;
+    // Gets a format for "MMM", not "MM" because Windows API always provides
+    // formats for "MMM".
+    m_monthFormat = getFormatForSkeleton(m_locale.data(), ASCIILiteral("yyyyMMM"));
+    return m_monthFormat;
 }
 
 String LocaleICU::timeFormat()

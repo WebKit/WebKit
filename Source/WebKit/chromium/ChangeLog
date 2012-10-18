@@ -1,3 +1,20 @@
+2012-10-18  Kent Tamura  <tkent@chromium.org>
+
+        Add Localizer::monthFormat and implementations
+        https://bugs.webkit.org/show_bug.cgi?id=99704
+
+        Reviewed by Kentaro Hara.
+
+        * tests/LocaleMacTest.cpp:
+        (LocaleMacTest::monthFormat): A helper function.
+        (TEST_F): Added some tests.
+        * tests/LocaleWinTest.cpp:
+        (LocaleWinTest::monthFormat): A helper function.
+        (TEST_F): Added some tests.
+        * tests/LocalizedDateICUTest.cpp:
+        (LocalizedDateICUTest::monthFormat): A helper function.
+        (TEST_F): Added some tests.
+
 2012-10-17  Mike West  <mkwst@chromium.org>
 
         Move mixed content logic out of FrameLoader

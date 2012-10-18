@@ -42,6 +42,7 @@ private:
 #endif
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     virtual String dateFormat() OVERRIDE;
+    virtual String monthFormat() OVERRIDE;
 #endif
 };
 
@@ -79,6 +80,11 @@ bool LocaleNone::isRTL()
 String LocaleNone::dateFormat()
 {
     return ASCIILiteral("dd/MM/yyyyy");
+}
+
+String LocaleNone::monthFormat()
+{
+    return ASCIILiteral("yyyy-MM");
 }
 #endif
 

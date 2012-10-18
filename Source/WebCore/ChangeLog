@@ -1,3 +1,44 @@
+2012-10-18  Kent Tamura  <tkent@chromium.org>
+
+        Add Localizer::monthFormat and implementations
+        https://bugs.webkit.org/show_bug.cgi?id=99704
+
+        Reviewed by Kentaro Hara.
+
+        Localizer::monthFormat will be used for constructing input[type=month] UI.
+
+        Tests: Add unit tests to Source/WebKit/chromium/tests/.
+
+        * platform/text/Localizer.h:
+        (Localizer): Declare pure virtual monthFormat function.
+
+        * platform/text/LocaleNone.cpp:
+        (LocaleNone): Declare monthFormat.
+        (WebCore::LocaleNone::monthFormat):
+        Added. Always reutrns an ISO-8601 format, "yyyy-MM"
+
+        * platform/text/LocaleICU.h:
+        (LocaleICU): Declare monthFormat.
+        * platform/text/LocaleICU.cpp:
+        (WebCore::getFormatForSkeleton):
+        A helper to get a format for the specified skeleton.
+        The overflow-allocalte-try-again pattern is similar to
+        LocaleICU::decimalSymbol and LocaleICU::decimalTextAttribute.
+        (WebCore::LocaleICU::monthFormat):
+        Added. Calls getFormatForSkeleton with "yyyyMMM".
+
+        * platform/text/mac/LocaleMac.h:
+        (LocaleMac): Declare monthFormat.
+        * platform/text/mac/LocaleMac.mm:
+        (WebCore::LocaleMac::monthFormat):
+        Added. Calls NSDateFormatter::dateFormatFromTemplate with "yyyyMMM".
+
+        * platform/text/LocaleWin.h:
+        (LocaleWin): Declare monthFormat.
+        * platform/text/LocaleWin.cpp:
+        (WebCore::LocaleWin::monthFormat):
+        Get a format by LOCALE_SYEARMONTH, and convert it to an LDML format.
+
 2012-10-18  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: add X-WebKit-CSP header into inspector.html

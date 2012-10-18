@@ -129,6 +129,12 @@ protected:
 #endif
 
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+    String monthFormat(LCID lcid)
+    {
+        OwnPtr<LocaleWin> locale = LocaleWin::create(lcid);
+        return locale->monthFormat();
+    }
+
     String timeFormat(LCID lcid)
     {
         OwnPtr<LocaleWin> locale = LocaleWin::create(lcid);
@@ -282,6 +288,13 @@ TEST_F(LocaleWinTest, dateFormat)
     EXPECT_STREQ("''yy'-'''MM'''-'dd", LocaleWin::dateFormat("''yy-''MM''-dd").utf8().data());
     EXPECT_STREQ("yyyy'-''''-'MMM'''''-'dd", LocaleWin::dateFormat("yyyy-''''-MMM''''-dd").utf8().data());
     EXPECT_STREQ("yyyy'-'''''MMMM'-'dd", LocaleWin::dateFormat("yyyy-''''MMMM-dd").utf8().data());
+}
+
+TEST_F(LocaleWinTest, monthFormat)
+{
+    EXPECT_STREQ("MMMM', 'yyyy", monthFormat(EnglishUS).utf8().data());
+    EXPECT_STREQ("MMMM' 'yyyy", monthFormat(FrenchFR).utf8().data());
+    EXPECT_STREQ("yyyy'\xE5\xB9\xB4'M'\xE6\x9C\x88'", monthFormat(JapaneseJP).utf8().data());
 }
 
 TEST_F(LocaleWinTest, timeFormat)

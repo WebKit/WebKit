@@ -57,6 +57,7 @@ public:
 
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     virtual String dateFormat() OVERRIDE;
+    virtual String monthFormat() OVERRIDE;
     virtual String timeFormat() OVERRIDE;
     virtual String shortTimeFormat() OVERRIDE;
     virtual const Vector<String>& timeAMPMLabels() OVERRIDE;
@@ -98,6 +99,7 @@ private:
     Vector<String> m_monthLabels;
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     String m_dateFormat;
+    String m_monthFormat;
 #endif
 #if ENABLE(CALENDAR_PICKER)
     Vector<String> m_weekDayShortLabels;

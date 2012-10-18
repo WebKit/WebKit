@@ -88,6 +88,12 @@ protected:
         return Labels(labels);
     }
 
+    String monthFormat(const char* localeString)
+    {
+        OwnPtr<LocaleICU> locale = LocaleICU::create(localeString);
+        return locale->monthFormat();
+    }
+
     String localizedDateFormatText(const char* localeString)
     {
         OwnPtr<LocaleICU> locale = LocaleICU::create(localeString);
@@ -124,6 +130,13 @@ TEST_F(LocalizedDateICUTest, isRTL)
     EXPECT_FALSE(isRTL("en-us"));
     EXPECT_FALSE(isRTL("ja-jp"));
     EXPECT_FALSE(isRTL("**invalid**"));
+}
+
+TEST_F(LocalizedDateICUTest, monthFormat)
+{
+    EXPECT_STREQ("MMM yyyy", monthFormat("en_US").utf8().data());
+    EXPECT_STREQ("MMM yyyy", monthFormat("fr").utf8().data());
+    EXPECT_STREQ("yyyy\xE5\xB9\xB4M\xE6\x9C\x88", monthFormat("ja").utf8().data());
 }
 
 TEST_F(LocalizedDateICUTest, localizedDateFormatText)
