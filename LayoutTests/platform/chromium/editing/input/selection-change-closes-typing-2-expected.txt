@@ -1,0 +1,5 @@
+Test for bug 32905: With Pinyin Simplified IM, a wrong character is deleted from google.com suggestion.
+
+Should say PASS: PASS
+
+
