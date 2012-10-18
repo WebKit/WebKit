@@ -156,7 +156,7 @@ void MediaControlPanelElement::startDrag(const LayoutPoint& eventLocation)
     if (!frame)
         return;
 
-    m_dragStartEventLocation = eventLocation;
+    m_lastDragEventLocation = eventLocation;
 
     frame->eventHandler()->setCapturingMouseEventsNode(this);
 
@@ -168,8 +168,10 @@ void MediaControlPanelElement::continueDrag(const LayoutPoint& eventLocation)
     if (!m_isBeingDragged)
         return;
 
-    LayoutSize distanceDragged = eventLocation - m_dragStartEventLocation;
-    setPosition(LayoutPoint(distanceDragged.width(), distanceDragged.height()));
+    LayoutSize distanceDragged = eventLocation - m_lastDragEventLocation;
+    m_cumulativeDragOffset.move(distanceDragged);
+    m_lastDragEventLocation = eventLocation;
+    setPosition(m_cumulativeDragOffset);
 }
 
 void MediaControlPanelElement::endDrag()
@@ -237,6 +239,9 @@ void MediaControlPanelElement::resetPosition()
 
     ExceptionCode ignored;
     classList()->remove("dragged", ignored);
+
+    m_cumulativeDragOffset.setX(0);
+    m_cumulativeDragOffset.setY(0);
 }
 
 void MediaControlPanelElement::makeOpaque()

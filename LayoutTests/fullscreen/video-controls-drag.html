@@ -20,6 +20,8 @@
                 panel = mediaControlsElement(internals.shadowRoot(video).firstChild, '-webkit-media-controls-panel');
                 startBox = internals.boundingBox(panel);
 
+                consoleWrite("First drag.");
+
                 eventSender.mouseMoveTo(startBox.left + 5, startBox.top + 5);
                 eventSender.mouseDown();
 
@@ -30,6 +32,18 @@
 
                 testExpected("endBox.left - startBox.left", 15);
                 testExpected("endBox.top - startBox.top", 15);
+
+                consoleWrite("Second drag.");
+
+                eventSender.mouseDown();
+                eventSender.mouseMoveTo(startBox.left + 10, startBox.top + 10);
+                eventSender.mouseUp();
+
+                endBox = internals.boundingBox(panel);
+
+                testExpected("endBox.left - startBox.left", 5);
+                testExpected("endBox.top - startBox.top", 5);
+
                 endTest();
             }
             else

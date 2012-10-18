@@ -1,3 +1,21 @@
+2012-10-18  Jer Noble  <jer.noble@apple.com>
+
+        Fullscreen movie controls behave incorrectly when clicked (and dragged)
+        https://bugs.webkit.org/show_bug.cgi?id=99610
+
+        Reviewed by Eric Carlson.
+
+        Do not reset the relative drag position to 0,0 at the beginning of every drag.  Instead,
+        store the cumulative drag offset and accumulate during each additional drag.
+
+        No new tests; modified the fullscreen/video-controls-drag.html test.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlPanelElement::startDrag): Reset m_lastDragEventLocation.
+        (WebCore::MediaControlPanelElement::continueDrag): Accumulate drag distance in m_cumulativeDragOffset.
+        (WebCore::MediaControlPanelElement::resetPosition): Reset m_cumulativeDragOffset.
+        * html/shadow/MediaControlElements.h:
+
 2012-10-18  Brandon Jones  <bajones@google.com>
 
         Implement OES_element_index_uint / WEBKIT_OES_element_index_uint

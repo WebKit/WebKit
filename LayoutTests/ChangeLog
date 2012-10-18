@@ -1,3 +1,16 @@
+2012-10-18  Jer Noble  <jer.noble@apple.com>
+
+        Fullscreen movie controls behave incorrectly when clicked (and dragged)
+        https://bugs.webkit.org/show_bug.cgi?id=99610
+
+        Reviewed by Eric Carlson.
+
+        Add a second drag operation, testing that the location does not reset at the beginning of
+        each additional drag.
+
+        * fullscreen/video-controls-drag-expected.txt:
+        * fullscreen/video-controls-drag.html:
+
 2012-10-18  Brandon Jones  <bajones@google.com>
 
         Implement OES_element_index_uint / WEBKIT_OES_element_index_uint

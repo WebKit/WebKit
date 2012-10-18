@@ -139,7 +139,8 @@ private:
     bool m_isBeingDragged;
     bool m_isDisplayed;
     bool m_opaque;
-    LayoutPoint m_dragStartEventLocation;
+    LayoutPoint m_lastDragEventLocation;
+    LayoutPoint m_cumulativeDragOffset;
 
     Timer<MediaControlPanelElement> m_transitionTimer;
 };
