@@ -53,6 +53,7 @@ public:
     virtual FloatRect shapeLogicalBoundingBox() const OVERRIDE { return internalToLogicalBoundingBox(FloatRect(m_x, m_y, m_width, m_height)); }
     virtual void getExcludedIntervals(float logicalTop, float logicalBottom, SegmentList&) const OVERRIDE;
     virtual void getIncludedIntervals(float logicalTop, float logicalBottom, SegmentList&) const OVERRIDE;
+    virtual bool isEmpty() const OVERRIDE { return m_width <= 0 || m_height <= 0; }
 
 private:
     float m_x;

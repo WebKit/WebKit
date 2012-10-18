@@ -42,6 +42,9 @@ static inline float ellipseXIntercept(float y, float rx, float ry)
 
 void ExclusionRectangle::getExcludedIntervals(float logicalTop, float logicalBottom, SegmentList& result) const
 {
+    if (isEmpty())
+        return;
+
     float y1 = minYForLogicalLine(logicalTop, logicalBottom);
     float y2 = maxYForLogicalLine(logicalTop, logicalBottom);
 
@@ -70,6 +73,9 @@ void ExclusionRectangle::getExcludedIntervals(float logicalTop, float logicalBot
 
 void ExclusionRectangle::getIncludedIntervals(float logicalTop, float logicalBottom, SegmentList& result) const
 {
+    if (isEmpty())
+        return;
+
     float y1 = minYForLogicalLine(logicalTop, logicalBottom);
     float y2 = maxYForLogicalLine(logicalTop, logicalBottom);
 

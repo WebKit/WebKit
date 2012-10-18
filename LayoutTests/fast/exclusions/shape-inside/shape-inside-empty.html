@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.internals)
+        window.internals.settings.setCSSExclusionsEnabled(true);
+</script>
+<style>
+    .shape-inside {
+        width: 800px;
+        height: 2em;
+        border: solid green;
+    }
+
+    #shape-inside-rectangle-width0 {
+        -webkit-shape-inside: rectangle(0px, 0px, 0px, 100px);
+    }
+
+    #shape-inside-rectangle-height0 {
+        -webkit-shape-inside: rectangle(0px, 0px, 100px, 0px);
+    }
+
+    #shape-inside-circle-radius0 {
+        -webkit-shape-inside: circle(0px, 0px, 0px);
+    }
+
+    #shape-inside-ellipse-radiusX0 {
+        -webkit-shape-inside: ellipse(0px, 0px, 0px, 100px);
+    }
+
+    #shape-inside-ellipse-radiusY0 {
+        -webkit-shape-inside: ellipse(0px, 0px, 100px, 0px);
+    }
+
+    #shape-inside-polygon-0vertices {
+        -webkit-shape-inside: polygon();
+    }
+
+    #shape-inside-polygon-1vertex {
+        -webkit-shape-inside: polygon(0px 0px);
+    }
+
+    #shape-inside-polygon-2vertices {
+        -webkit-shape-inside: polygon(0px 0px, 10px 0px);
+    }
+</style>
+</head>
+<body>
+    <p class="shape-inside" id="shape-inside-rectangle-width0">
+        This text should be unconstrained by the rectangle(0px, 0px, 0px, 100px) shape-inside CSS property.
+    </p>
+    <p class="shape-inside" id="shape-inside-rectangle-height0">
+        This text should be unconstrained by the rectangle(0px, 0px, 100px, 0px) shape-inside CSS property.
+    </p>
+    <p class="shape-inside" id="shape-inside-circle-radius0">
+        This text should be unconstrained by the circle(0px, 0px, 0px) shape-inside CSS property.
+    </p>
+    <p class="shape-inside" id="shape-inside-ellipse-radiusX0">
+        This text should be unconstrained by the ellipseX0(0px, 0px, 0px, 100px) shape-inside CSS property.
+    </p>
+    <p class="shape-inside" id="shape-inside-ellipse-radiusY0">
+        This text should be unconstrained by the ellipse(0px, 0px, 100px, 0px) shape-inside CSS property.
+    </p>
+    <p class="shape-inside" id="shape-inside-polygon-0vertices">
+        This text should be unconstrained by the polygon() shape-inside CSS property.
+    </p>
+    <p class="shape-inside" id="shape-inside-polygon-1vertex">
+        This text should be unconstrained by the polygon(0px 0px) shape-inside CSS property.
+    </p>
+    <p class="shape-inside" id="shape-inside-polygon-2vertices">
+        This text should be unconstrained by the polygon(0px 0px, 10px 0px) shape-inside CSS property.
+    </p>
+</body>
+</html>

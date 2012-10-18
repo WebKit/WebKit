@@ -57,10 +57,9 @@ ExclusionPolygon::ExclusionPolygon(PassOwnPtr<Vector<FloatPoint> > vertices, Win
     , m_vertices(vertices)
     , m_fillRule(fillRule)
 {
-    // FIXME: Handle polygons defined with less than 3 non-colinear vertices.
-
     unsigned nVertices = numberOfVertices();
     m_edges.resize(nVertices);
+    m_empty = nVertices < 3;
     Vector<ExclusionPolygonEdge*> sortedEdgesMinY(nVertices);
 
     const FloatPoint& vertex0 = vertexAt(0);
@@ -257,6 +256,9 @@ void ExclusionPolygon::computeEdgeIntersections(float y1, float y2, Vector<Exclu
 
 void ExclusionPolygon::getExcludedIntervals(float logicalTop, float logicalBottom, SegmentList& result) const
 {
+    if (isEmpty())
+        return;
+
     float y1 = minYForLogicalLine(logicalTop, logicalBottom);
     float y2 = maxYForLogicalLine(logicalTop, logicalBottom);
 
@@ -281,6 +283,9 @@ void ExclusionPolygon::getExcludedIntervals(float logicalTop, float logicalBotto
 
 void ExclusionPolygon::getIncludedIntervals(float logicalTop, float logicalBottom, SegmentList& result) const
 {
+    if (isEmpty())
+        return;
+
     float y1 = minYForLogicalLine(logicalTop, logicalBottom);
     float y2 = maxYForLogicalLine(logicalTop, logicalBottom);
 

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.internals)
+        window.internals.settings.setCSSExclusionsEnabled(true);
+</script>
+<style>
+    .shape-inside {
+        width: 800px;
+        height: 2em;
+        border: solid green;
+    }
+</style>
+</head>
+<body>
+    <p class="shape-inside">
+        This text should be unconstrained by the rectangle(0px, 0px, 0px, 100px) shape-inside CSS property.
+    </p>
+    <p class="shape-inside">
+        This text should be unconstrained by the rectangle(0px, 0px, 100px, 0px) shape-inside CSS property.
+    </p>
+    <p class="shape-inside">
+        This text should be unconstrained by the circle(0px, 0px, 0px) shape-inside CSS property.
+    </p>
+    <p class="shape-inside">
+        This text should be unconstrained by the ellipseX0(0px, 0px, 0px, 100px) shape-inside CSS property.
+    </p>
+    <p class="shape-inside">
+        This text should be unconstrained by the ellipse(0px, 0px, 100px, 0px) shape-inside CSS property.
+    </p>
+    <p class="shape-inside">
+        This text should be unconstrained by the polygon() shape-inside CSS property.
+    </p>
+    <p class="shape-inside">
+        This text should be unconstrained by the polygon(0px 0px) shape-inside CSS property.
+    </p>
+    <p class="shape-inside">
+        This text should be unconstrained by the polygon(0px 0px, 10px 0px) shape-inside CSS property.
+    </p>
+</body>
+</html>

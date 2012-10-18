@@ -62,6 +62,7 @@ public:
     virtual FloatRect shapeLogicalBoundingBox() const OVERRIDE { return internalToLogicalBoundingBox(m_boundingBox); }
     virtual void getExcludedIntervals(float logicalTop, float logicalBottom, SegmentList&) const OVERRIDE;
     virtual void getIncludedIntervals(float logicalTop, float logicalBottom, SegmentList&) const OVERRIDE;
+    virtual bool isEmpty() const OVERRIDE { return m_empty; }
 
 private:
     float rightVertexY(unsigned) const;
@@ -76,6 +77,7 @@ private:
     FloatRect m_boundingBox;
     Vector<ExclusionPolygonEdge> m_edges;
     EdgeIntervalTree m_edgeTree;
+    bool m_empty;
 };
 
 // EdgeIntervalTree nodes store minY, maxY, and a ("UserData") pointer to an ExclusionPolygonEdge. Edge vertex

@@ -66,6 +66,7 @@ public:
     virtual FloatRect shapeLogicalBoundingBox() const = 0;
     virtual void getIncludedIntervals(float logicalTop, float logicalBottom, SegmentList&) const = 0;
     virtual void getExcludedIntervals(float logicalTop, float logicalBottom, SegmentList&) const = 0;
+    virtual bool isEmpty() const = 0;
 
 protected:
     float minYForLogicalLine(float logicalTop, float logicalBottom) const { return (m_writingMode == RightToLeftWritingMode) ? m_logicalBoxHeight - logicalBottom : logicalTop; }

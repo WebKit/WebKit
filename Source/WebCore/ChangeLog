@@ -1,3 +1,30 @@
+2012-10-18  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] Handle special case "empty" shapes
+        https://bugs.webkit.org/show_bug.cgi?id=99342
+
+        Reviewed by Dirk Schulze.
+
+        Provide expclit coverage of the simple "empty" shape-inside shapes.
+        Shapes will be considered "empty" in the sense that ExclusionShape::getIncludedIntervals()
+        and ExclusionShape::getExcludedIntervals() will always return empty lists of intervals.
+        This patch covers rectangles of zero width or height, circles with 0 radius, ellipses
+        with 0 radiusX or radiusY, polygons with less than 3 vertices.
+
+        Test: fast/exclusions/shape-inside/shape-inside-empty.html
+
+        * rendering/ExclusionPolygon.cpp:
+        (WebCore::ExclusionPolygon::ExclusionPolygon): Initialize the m_empty flag.
+        (WebCore::ExclusionPolygon::getExcludedIntervals): Added short-circuit return when the polygon is empty.
+        (WebCore::ExclusionPolygon::getIncludedIntervals): Added short-circuit return when the polygon is empty.
+        * rendering/ExclusionPolygon.h: Added the isEmpty() method.
+        * rendering/ExclusionRectangle.cpp:
+        (WebCore::ExclusionRectangle::getExcludedIntervals): Added short-circuit return when the rectangle is empty.
+        (WebCore::ExclusionRectangle::getIncludedIntervals): Added short-circuit return when the rectangle is empty.
+        * rendering/ExclusionRectangle.h: Added the isEmpty() method.
+        * rendering/ExclusionShape.h: Added a virtual isEmpty() ExclusionShape method.
+        (ExclusionShape):
+
 2012-10-18  Takashi Sakamoto  <tasak@google.com>
 
         REGRESSION(r131464): Null-pointer crash in StyleResolver::styleForElement
