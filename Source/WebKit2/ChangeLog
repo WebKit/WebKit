@@ -1,5 +1,25 @@
 2012-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Don't use the C API internally in WebKitFormSubmissionRequest
+        https://bugs.webkit.org/show_bug.cgi?id=96777
+
+        Reviewed by Xan Lopez.
+
+        Using the C++ classes directly instead of the C API wrappers we
+        avoid a lot of toImpl/toAPI casts, string conversions and
+        allocations. The code is also a lot simpler and easier to read.
+
+        * UIProcess/API/gtk/WebKitFormClient.cpp:
+        (willSubmitForm):
+        * UIProcess/API/gtk/WebKitFormSubmissionRequest.cpp:
+        (_WebKitFormSubmissionRequestPrivate):
+        (webkitFormSubmissionRequestCreate):
+        (webkit_form_submission_request_get_text_fields):
+        (webkit_form_submission_request_submit):
+        * UIProcess/API/gtk/WebKitFormSubmissionRequestPrivate.h:
+
+2012-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Don't use the C API internally in WebKitSettings
         https://bugs.webkit.org/show_bug.cgi?id=96784
 

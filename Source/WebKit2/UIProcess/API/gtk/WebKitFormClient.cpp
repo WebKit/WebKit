@@ -30,7 +30,7 @@ using namespace WebKit;
 
 static void willSubmitForm(WKPageRef page, WKFrameRef frame, WKFrameRef sourceFrame, WKDictionaryRef values, WKTypeRef userData, WKFormSubmissionListenerRef listener, const void* clientInfo)
 {
-    GRefPtr<WebKitFormSubmissionRequest> request = adoptGRef(webkitFormSubmissionRequestCreate(values, listener));
+    GRefPtr<WebKitFormSubmissionRequest> request = adoptGRef(webkitFormSubmissionRequestCreate(toImpl(values), toImpl(listener)));
     webkitWebViewSubmitFormRequest(WEBKIT_WEB_VIEW(clientInfo), request.get());
 }
 

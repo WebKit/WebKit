@@ -20,17 +20,17 @@
 #include "config.h"
 #include "WebKitFormSubmissionRequest.h"
 
+#include "ImmutableDictionary.h"
+#include "WebFormSubmissionListenerProxy.h"
 #include "WebKitFormSubmissionRequestPrivate.h"
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
-using namespace WebKit;
-
 G_DEFINE_TYPE(WebKitFormSubmissionRequest, webkit_form_submission_request, G_TYPE_OBJECT)
 
 struct _WebKitFormSubmissionRequestPrivate {
-    WKRetainPtr<WKDictionaryRef> wkValues;
-    WKRetainPtr<WKFormSubmissionListenerRef> wkListener;
+    RefPtr<ImmutableDictionary> webValues;
+    RefPtr<WebFormSubmissionListenerProxy> listener;
     GRefPtr<GHashTable> values;
     bool handledRequest;
 };
@@ -61,11 +61,11 @@ static void webkit_form_submission_request_class_init(WebKitFormSubmissionReques
     g_type_class_add_private(requestClass, sizeof(WebKitFormSubmissionRequestPrivate));
 }
 
-WebKitFormSubmissionRequest* webkitFormSubmissionRequestCreate(WKDictionaryRef wkValues, WKFormSubmissionListenerRef wkListener)
+WebKitFormSubmissionRequest* webkitFormSubmissionRequestCreate(ImmutableDictionary* values, WebFormSubmissionListenerProxy* listener)
 {
     WebKitFormSubmissionRequest* request = WEBKIT_FORM_SUBMISSION_REQUEST(g_object_new(WEBKIT_TYPE_FORM_SUBMISSION_REQUEST, NULL));
-    request->priv->wkValues = wkValues;
-    request->priv->wkListener = wkListener;
+    request->priv->webValues = values;
+    request->priv->listener = listener;
     return request;
 }
 
@@ -86,19 +86,19 @@ GHashTable* webkit_form_submission_request_get_text_fields(WebKitFormSubmissionR
     if (request->priv->values)
         return request->priv->values.get();
 
-    if (!WKDictionaryGetSize(request->priv->wkValues.get()))
+    if (!request->priv->webValues->size())
         return 0;
 
     request->priv->values = adoptGRef(g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free));
 
-    WKRetainPtr<WKArrayRef> wkKeys(AdoptWK, WKDictionaryCopyKeys(request->priv->wkValues.get()));
-    for (size_t i = 0; i < WKArrayGetSize(wkKeys.get()); ++i) {
-        WKStringRef wkKey = static_cast<WKStringRef>(WKArrayGetItemAtIndex(wkKeys.get(), i));
-        WKStringRef wkValue = static_cast<WKStringRef>(WKDictionaryGetItemForKey(request->priv->wkValues.get(), wkKey));
-        g_hash_table_insert(request->priv->values.get(), g_strdup(toImpl(wkKey)->string().utf8().data()), g_strdup(toImpl(wkValue)->string().utf8().data()));
+    const ImmutableDictionary::MapType& map = request->priv->webValues->map();
+    ImmutableDictionary::MapType::const_iterator end = map.end();
+    for (ImmutableDictionary::MapType::const_iterator it = map.begin(); it != end; ++it) {
+        WebString* value = static_cast<WebString*>(it->value.get());
+        g_hash_table_insert(request->priv->values.get(), g_strdup(it->key.utf8().data()), g_strdup(value->string().utf8().data()));
     }
 
-    request->priv->wkValues = 0;
+    request->priv->webValues = 0;
 
     return request->priv->values.get();
 }
@@ -113,6 +113,6 @@ void webkit_form_submission_request_submit(WebKitFormSubmissionRequest* request)
 {
     g_return_if_fail(WEBKIT_IS_FORM_SUBMISSION_REQUEST(request));
 
-    WKFormSubmissionListenerContinue(request->priv->wkListener.get());
+    request->priv->listener->continueSubmission();
     request->priv->handledRequest = true;
 }
