@@ -1,3 +1,13 @@
+2012-10-18  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, update Qt expectations for slider tests.
+
+        fast/events/touch/touch-slider.html now has a specific bug number.
+        media/video-playing-and-pause.html is removed. I added it by accident
+        causing it to be run. Qt didn't run this test before my change.
+
+        * platform/qt/TestExpectations:
+
 2012-10-18  James Simonsen  <simonjam@chromium.org>
 
         Add a script for exporting http/tests/w3c/webperf/submission to W3C
