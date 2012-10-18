@@ -1,3 +1,22 @@
+2012-10-18  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update mainly for
+        https://bugs.webkit.org/show_bug.cgi?id=99673
+
+        * platform/chromium-linux/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-linux/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-win-xp/fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.png: Added.
+        * platform/chromium-win/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-win/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png:
+
 2012-10-18  Stephen Chenney  <schenney@chromium.org>
 
         Rebaselining some longstanding Chromium expectations.
