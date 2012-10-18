@@ -1,5 +1,24 @@
 2012-10-17  Elliott Sprehn  <esprehn@chromium.org>
 
+        StyleRareNonInheritedData::contentDataEquivalent only looks at the first ContentData
+        https://bugs.webkit.org/show_bug.cgi?id=99560
+
+        Reviewed by Eric Seidel.
+
+        Previously we only compared the first ContentData in the linked
+        list of ContentData's which meant that if the resolved style
+        for content had the same prefix we wouldn't update the content.
+
+        This patch adds a loop to compare each of the ContentData objects
+        in the linked list.
+
+        Test: fast/css-generated-content/content-property-change.html
+
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::contentDataEquivalent):
+
+2012-10-17  Elliott Sprehn  <esprehn@chromium.org>
+
         Remove StyleContentType since it's not used anymore
         https://bugs.webkit.org/show_bug.cgi?id=99659
 

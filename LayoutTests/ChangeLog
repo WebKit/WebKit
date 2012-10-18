@@ -1,3 +1,15 @@
+2012-10-17  Elliott Sprehn  <esprehn@chromium.org>
+
+        StyleRareNonInheritedData::contentDataEquivalent only looks at the first ContentData
+        https://bugs.webkit.org/show_bug.cgi?id=99560
+
+        Reviewed by Eric Seidel.
+
+        Test that when the content CSS property changes we update the displayed content.
+
+        * fast/css-generated-content/content-property-change-expected.html: Added.
+        * fast/css-generated-content/content-property-change.html: Added.
+
 2012-10-17  Dirk Pranke  <dpranke@chromium.org>
 
         Clone baselines from platform/mac to platform/chromium [1 of 7]

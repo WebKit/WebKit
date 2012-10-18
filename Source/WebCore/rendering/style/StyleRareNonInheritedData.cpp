@@ -256,13 +256,15 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
 
 bool StyleRareNonInheritedData::contentDataEquivalent(const StyleRareNonInheritedData& o) const
 {
-    if (m_content.get() == o.m_content.get())
-        return true;
-        
-    if (m_content && o.m_content && *m_content == *o.m_content)
-        return true;
+    ContentData* a = m_content.get();
+    ContentData* b = o.m_content.get();
 
-    return false;
+    while (a && b && *a == *b) {
+        a = a->next();
+        b = b->next();
+    }
+
+    return !a && !b;
 }
 
 bool StyleRareNonInheritedData::counterDataEquivalent(const StyleRareNonInheritedData& o) const
