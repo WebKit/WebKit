@@ -91,9 +91,6 @@ class BuildCoverageExtrapolatorTest(unittest.TestCase):
         converter = TestConfigurationConverter(port.all_test_configurations(), port.configuration_specifier_macros())
         extrapolator = BuildCoverageExtrapolator(converter)
         self.assertEquals(extrapolator.extrapolate_test_configurations("WebKit XP"), set([TestConfiguration(version='xp', architecture='x86', build_type='release')]))
-        self.assertEquals(extrapolator.extrapolate_test_configurations("WebKit Win7"), set([
-            TestConfiguration(version='win7', architecture='x86', build_type='debug'),
-            TestConfiguration(version='win7', architecture='x86', build_type='release')]))
         self.assertRaises(KeyError, extrapolator.extrapolate_test_configurations, "Potato")
 
 

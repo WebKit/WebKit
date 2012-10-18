@@ -1,5 +1,19 @@
 2012-10-18  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: fix chromium bot configs in builders.py
+        https://bugs.webkit.org/show_bug.cgi?id=99638
+
+        Reviewed by Ojan Vafai.
+
+        Updating after the great bot-renaming and deleting a test case
+        that is no longer needed.
+
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+        (BuildCoverageExtrapolatorTest.test_extrapolate):
+
+2012-10-18  Dirk Pranke  <dpranke@chromium.org>
+
         [chromium] Add 10.8 bot into fallback path, make work with garden-o-matic
         https://bugs.webkit.org/show_bug.cgi?id=99748
 

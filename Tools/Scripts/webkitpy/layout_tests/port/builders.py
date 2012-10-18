@@ -38,9 +38,9 @@ from webkitpy.common.memoized import memoized
 _exact_matches = {
     # These builders are on build.chromium.org.
     "WebKit XP": {"port_name": "chromium-win-xp", "specifiers": set(["xp", "release"])},
-    "WebKit Win7": {"port_name": "chromium-win-win7", "specifiers": set(["win7"])},
-    "WebKit Win7 (dbg)(1)": {"port_name": "chromium-win-xp", "specifiers": set(["win", "debug"])},
-    "WebKit Win7 (dbg)(2)": {"port_name": "chromium-win-xp", "specifiers": set(["win", "debug"])},
+    "WebKit Win7": {"port_name": "chromium-win-win7", "specifiers": set(["win7", "release"])},
+    "WebKit Win7 (dbg)(1)": {"port_name": "chromium-win-win7", "specifiers": set(["win7", "debug"])},
+    "WebKit Win7 (dbg)(2)": {"port_name": "chromium-win-win7", "specifiers": set(["win7", "debug"])},
     "WebKit Linux": {"port_name": "chromium-linux-x86_64", "specifiers": set(["linux", "x86_64", "release"])},
     "WebKit Linux 32": {"port_name": "chromium-linux-x86", "specifiers": set(["linux", "x86"])},
     "WebKit Linux (dbg)": {"port_name": "chromium-linux-x86_64", "specifiers": set(["linux", "debug"])},
