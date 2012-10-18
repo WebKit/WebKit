@@ -1,3 +1,19 @@
+2012-10-17  Luke Macpherson   <macpherson@chromium.org>
+
+        Move handling of CSSPropertyWebkitLineClamp from StyleResolver into StyleBuilder.
+        https://bugs.webkit.org/show_bug.cgi?id=99534
+
+        Reviewed by Alexis Menard.
+
+        One small step towards removing the giant switch statement in StyleResolver, this patch moves line clamp handling into StyleBuilder.
+
+        Covered by fast/overflow/line-clamp.html
+
+        * css/StyleBuilder.cpp:
+        (WebCore::StyleBuilder::StyleBuilder):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+
 2012-10-17  Andy Estes  <aestes@apple.com>
 
         [WebKit2] Add removeChild: to WKDOMNode and make WKDOMText.data read/write
