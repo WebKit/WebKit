@@ -1,0 +1,195 @@
+This tests wrapper class names for Objective-C.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Basics
+
+PASS objCWrapperClass(document.createAttribute()) is 'DOMAttr'
+PASS objCWrapperClass(document.createComment()) is 'DOMComment'
+PASS objCWrapperClass(document.createDocumentFragment()) is 'DOMDocumentFragment'
+PASS objCWrapperClass(document.implementation) is 'DOMImplementation'
+PASS objCWrapperClass(root.attributes) is 'DOMNamedNodeMap'
+PASS objCWrapperClass(document.createNodeIterator(root, 0, null, false)) is 'DOMNodeIterator'
+PASS objCWrapperClass(document.getElementsByTagName('div')) is 'DOMNodeList'
+PASS objCWrapperClass(document.createRange()) is 'DOMRange'
+PASS objCWrapperClass(document.createTextNode()) is 'DOMText'
+PASS objCWrapperClass(document.createTreeWalker(root, 0, null, false)) is 'DOMTreeWalker'
+
+XML
+
+PASS objCWrapperClass(xmlDocument) is 'DOMDocument'
+PASS objCWrapperClass(xmlDocument.createCDATASection()) is 'DOMCDATASection'
+PASS objCWrapperClass(xmlDocument.createElementNS('x', 'x', 'x')) is 'DOMElement'
+PASS objCWrapperClass(xmlDocument.createEntityReference()) is 'DOMEntityReference'
+PASS objCWrapperClass(xmlDocument.createProcessingInstruction()) is 'DOMProcessingInstruction'
+
+Events
+
+PASS objCWrapperClass(document.createEvent('Event')) is 'DOMEvent'
+PASS objCWrapperClass(document.createEvent('KeyboardEvent')) is 'DOMKeyboardEvent'
+PASS objCWrapperClass(document.createEvent('MouseEvent')) is 'DOMMouseEvent'
+PASS objCWrapperClass(document.createEvent('MutationEvent')) is 'DOMMutationEvent'
+PASS objCWrapperClass(document.createEvent('OverflowEvent')) is 'DOMOverflowEvent'
+PASS objCWrapperClass(document.createEvent('TextEvent')) is 'DOMTextEvent'
+PASS objCWrapperClass(document.createEvent('UIEvent')) is 'DOMUIEvent'
+PASS objCWrapperClass(document.createEvent('WheelEvent')) is 'DOMWheelEvent'
+
+CSS DOM
+
+PASS objCWrapperClass(document.styleSheets) is 'DOMStyleSheetList'
+PASS objCWrapperClass(stylesheet) is 'DOMCSSStyleSheet'
+PASS objCWrapperClass(stylesheet.cssRules) is 'DOMCSSRuleList'
+PASS objCWrapperClass(stylesheet.cssRules.item(0)) is 'DOMCSSStyleRule'
+PASS objCWrapperClass(stylesheet.cssRules.item(0).style) is 'DOMCSSStyleDeclaration'
+PASS objCWrapperClass(stylesheet.cssRules.item(0).style.getPropertyCSSValue('color')) is 'DOMCSSPrimitiveValue'
+PASS objCWrapperClass(stylesheet.cssRules.item(0).style.getPropertyCSSValue('color').getRGBColorValue()) is 'DOMRGBColor'
+PASS objCWrapperClass(stylesheet.cssRules.item(0).style.getPropertyCSSValue('clip').getRectValue()) is 'DOMRect'
+PASS objCWrapperClass(stylesheet.cssRules.item(0).style.getPropertyCSSValue('content')) is 'DOMCSSValueList'
+PASS objCWrapperClass(stylesheet.cssRules.item(0).style.getPropertyCSSValue('content').item(0).getCounterValue()) is 'DOMCounter'
+PASS objCWrapperClass(stylesheet.cssRules.item(0).style.getPropertyCSSValue('-webkit-transform')) is 'DOMCSSValueList'
+PASS objCWrapperClass(stylesheet.cssRules.item(0).style.getPropertyCSSValue('-webkit-transform').item(0)) is 'DOMWebKitCSSTransformValue'
+PASS objCWrapperClass(stylesheet.media) is 'DOMMediaList'
+
+XPath
+
+PASS objCWrapperClass(document.createExpression('//*', document.createNSResolver(document))) is 'DOMXPathExpression'
+PASS objCWrapperClass(document.evaluate('//*', document, document.createNSResolver(document), 0, null)) is 'DOMXPathResult'
+
+Other
+
+PASS objCWrapperClass(window) is 'DOMAbstractView'
+
+HTML DOM
+
+PASS objCWrapperClass(root.children) is 'DOMHTMLCollection'
+PASS objCWrapperClass(document) is 'DOMHTMLDocument'
+PASS objCWrapperClass(document.createElement('select').options) is 'DOMHTMLOptionsCollection'
+
+HTML Elements
+
+PASS tagObjCWrapperClass('a') is 'DOMHTMLAnchorElement'
+PASS tagObjCWrapperClass('abbr') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('acronym') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('address') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('applet') is 'DOMHTMLAppletElement'
+PASS tagObjCWrapperClass('area') is 'DOMHTMLAreaElement'
+PASS tagObjCWrapperClass('b') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('base') is 'DOMHTMLBaseElement'
+PASS tagObjCWrapperClass('basefont') is 'DOMHTMLBaseFontElement'
+PASS tagObjCWrapperClass('bdo') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('big') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('blockquote') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('body') is 'DOMHTMLBodyElement'
+PASS tagObjCWrapperClass('br') is 'DOMHTMLBRElement'
+PASS tagObjCWrapperClass('button') is 'DOMHTMLButtonElement'
+PASS tagObjCWrapperClass('canvas') is 'DOMHTMLCanvasElement'
+PASS tagObjCWrapperClass('caption') is 'DOMHTMLTableCaptionElement'
+PASS tagObjCWrapperClass('center') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('cite') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('code') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('col') is 'DOMHTMLTableColElement'
+PASS tagObjCWrapperClass('colgroup') is 'DOMHTMLTableColElement'
+PASS tagObjCWrapperClass('dd') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('del') is 'DOMHTMLModElement'
+PASS tagObjCWrapperClass('dfn') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('dir') is 'DOMHTMLDirectoryElement'
+PASS tagObjCWrapperClass('div') is 'DOMHTMLDivElement'
+PASS tagObjCWrapperClass('dl') is 'DOMHTMLDListElement'
+PASS tagObjCWrapperClass('dt') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('em') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('embed') is 'DOMHTMLEmbedElement'
+PASS tagObjCWrapperClass('fieldset') is 'DOMHTMLFieldSetElement'
+PASS tagObjCWrapperClass('font') is 'DOMHTMLFontElement'
+PASS tagObjCWrapperClass('form') is 'DOMHTMLFormElement'
+PASS tagObjCWrapperClass('frame') is 'DOMHTMLFrameElement'
+PASS tagObjCWrapperClass('frameset') is 'DOMHTMLFrameSetElement'
+PASS tagObjCWrapperClass('head') is 'DOMHTMLHeadElement'
+PASS tagObjCWrapperClass('h1') is 'DOMHTMLHeadingElement'
+PASS tagObjCWrapperClass('h2') is 'DOMHTMLHeadingElement'
+PASS tagObjCWrapperClass('h3') is 'DOMHTMLHeadingElement'
+PASS tagObjCWrapperClass('h4') is 'DOMHTMLHeadingElement'
+PASS tagObjCWrapperClass('h5') is 'DOMHTMLHeadingElement'
+PASS tagObjCWrapperClass('h6') is 'DOMHTMLHeadingElement'
+PASS tagObjCWrapperClass('hr') is 'DOMHTMLHRElement'
+PASS tagObjCWrapperClass('html') is 'DOMHTMLHtmlElement'
+PASS tagObjCWrapperClass('i') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('iframe') is 'DOMHTMLIFrameElement'
+PASS tagObjCWrapperClass('image') is 'DOMHTMLImageElement'
+PASS tagObjCWrapperClass('img') is 'DOMHTMLImageElement'
+PASS tagObjCWrapperClass('input') is 'DOMHTMLInputElement'
+PASS tagObjCWrapperClass('ins') is 'DOMHTMLModElement'
+PASS tagObjCWrapperClass('kbd') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('keygen') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('label') is 'DOMHTMLLabelElement'
+PASS tagObjCWrapperClass('layer') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('legend') is 'DOMHTMLLegendElement'
+PASS tagObjCWrapperClass('li') is 'DOMHTMLLIElement'
+PASS tagObjCWrapperClass('link') is 'DOMHTMLLinkElement'
+PASS tagObjCWrapperClass('listing') is 'DOMHTMLPreElement'
+PASS tagObjCWrapperClass('map') is 'DOMHTMLMapElement'
+PASS tagObjCWrapperClass('marquee') is 'DOMHTMLMarqueeElement'
+PASS tagObjCWrapperClass('menu') is 'DOMHTMLMenuElement'
+PASS tagObjCWrapperClass('meta') is 'DOMHTMLMetaElement'
+PASS tagObjCWrapperClass('nobr') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('noembed') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('noframes') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('nolayer') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('noscript') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('object') is 'DOMHTMLObjectElement'
+PASS tagObjCWrapperClass('ol') is 'DOMHTMLOListElement'
+PASS tagObjCWrapperClass('optgroup') is 'DOMHTMLOptGroupElement'
+PASS tagObjCWrapperClass('option') is 'DOMHTMLOptionElement'
+PASS tagObjCWrapperClass('p') is 'DOMHTMLParagraphElement'
+PASS tagObjCWrapperClass('param') is 'DOMHTMLParamElement'
+PASS tagObjCWrapperClass('plaintext') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('pre') is 'DOMHTMLPreElement'
+PASS tagObjCWrapperClass('q') is 'DOMHTMLQuoteElement'
+PASS tagObjCWrapperClass('s') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('samp') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('script') is 'DOMHTMLScriptElement'
+PASS tagObjCWrapperClass('select') is 'DOMHTMLSelectElement'
+PASS tagObjCWrapperClass('small') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('span') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('strike') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('strong') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('style') is 'DOMHTMLStyleElement'
+PASS tagObjCWrapperClass('sub') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('sup') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('table') is 'DOMHTMLTableElement'
+PASS tagObjCWrapperClass('tbody') is 'DOMHTMLTableSectionElement'
+PASS tagObjCWrapperClass('td') is 'DOMHTMLTableCellElement'
+PASS tagObjCWrapperClass('textarea') is 'DOMHTMLTextAreaElement'
+PASS tagObjCWrapperClass('tfoot') is 'DOMHTMLTableSectionElement'
+PASS tagObjCWrapperClass('th') is 'DOMHTMLTableCellElement'
+PASS tagObjCWrapperClass('thead') is 'DOMHTMLTableSectionElement'
+PASS tagObjCWrapperClass('title') is 'DOMHTMLTitleElement'
+PASS tagObjCWrapperClass('tr') is 'DOMHTMLTableRowElement'
+PASS tagObjCWrapperClass('tt') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('u') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('ul') is 'DOMHTMLUListElement'
+PASS tagObjCWrapperClass('var') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('wbr') is 'DOMHTMLElement'
+PASS tagObjCWrapperClass('xmp') is 'DOMHTMLPreElement'
+
+JavaScript types
+
+PASS objCWrapperIsInstanceOf(null, 'nil') is true
+PASS objCWrapperIsInstanceOf(undefined, 'WebUndefined') is true
+PASS objCWrapperIsInstanceOf(0, 'NSNumber') is true
+PASS objCWrapperIsInstanceOf(1, 'NSNumber') is true
+PASS objCWrapperIsInstanceOf(false, 'NSNumber') is true
+PASS objCWrapperIsInstanceOf(true, 'NSNumber') is true
+PASS objCWrapperIsInstanceOf('', 'NSString') is true
+PASS objCWrapperIsInstanceOf({ }, 'WebScriptObject') is true
+PASS objCWrapperIsInstanceOf([ ], 'WebScriptObject') is true
+PASS objCObjectOfClass('NSNull') is null
+PASS typeof objCObjectOfClass('') is 'undefined'
+PASS typeof objCObjectOfClass('WebUndefined') is 'undefined'
+PASS typeof objCObjectOfClass('NSCFBoolean') is 'boolean'
+PASS typeof objCObjectOfClass('NSCFNumber') is 'number'
+PASS typeof objCObjectOfClass('NSCFString') is 'string'
+PASS typeof objCObjectOfClass('WebScriptObject') is 'object'
+PASS objCObjectOfClass('NSArray') instanceof Array is true
+PASS concatenateArray(objCArrayOfString()) is 'onetwothree'
+

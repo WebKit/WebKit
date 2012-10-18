@@ -1,0 +1,29 @@
+Test sizes of outer-spin-button. A spin-button height should be equal to or less than the corresponding text field height.
+
+PASS spinButton.offsetHeight <= input.offsetHeight + 6 is true
+PASS spinButton.offsetHeight <= input.offsetHeight + 6 is true
+PASS spinButton.offsetHeight <= input.offsetHeight + 6 is true
+PASS spinButton.offsetHeight <= input.offsetHeight + 6 is true
+PASS spinButton.offsetHeight <= input.offsetHeight + 6 is true
+PASS spinButton.offsetHeight <= input.offsetHeight + 6 is true
+PASS spinButton.offsetHeight <= input.offsetHeight + 6 is true
+PASS spinButton.offsetHeight <= input.offsetHeight + 6 is true
+PASS spinButton.offsetHeight <= input.offsetHeight + 6 is true
+PASS spinButton.offsetHeight <= input.offsetHeight + 6 is true
+PASS spinButton.offsetHeight <= input.offsetHeight + 6 is true
+PASS spinButton.offsetHeight <= input.offsetHeight + 6 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+
+
+
+
+
+
+
+
+

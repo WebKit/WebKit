@@ -1,0 +1,12 @@
+layer at (0,0) size 785x676
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x676
+  RenderBlock {HTML} at (0,0) size 785x676
+    RenderBody {BODY} at (8,8) size 769x660
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+layer at (10,10) size 301x656 clip at (11,11) size 299x654
+  RenderTextControl {TEXTAREA} at (2,2) size 301x656 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 295x13
+      RenderText {#text} at (0,0) size 64x13
+        text run at (0,0) width 64: "Sample text"

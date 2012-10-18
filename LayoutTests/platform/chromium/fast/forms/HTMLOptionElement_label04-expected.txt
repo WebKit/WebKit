@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 595x18
+        text run at (0,0) width 595: "The label attribute appears, but is missing the equals value piece, so the containing text is used."
+      RenderBR {BR} at (595,14) size 0x0
+      RenderMenuList {SELECT} at (2,20) size 464x18 [bgcolor=#FFFFFF]
+        RenderBlock (anonymous) at (0,0) size 464x18
+          RenderText at (8,2) size 433x13
+            text run at (8,2) width 433: "the label attribute is mentioned but no value is specified; this text should appear"
+      RenderText {#text} at (0,0) size 0x0
