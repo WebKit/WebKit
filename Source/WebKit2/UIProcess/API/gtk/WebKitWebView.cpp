@@ -1231,7 +1231,7 @@ static void setCertificateToMainResource(WebKitWebView* webView)
     ASSERT(priv->mainResource.get());
 
     webkitURIResponseSetCertificateInfo(webkit_web_resource_get_response(priv->mainResource.get()),
-                                        toImpl(WKFrameGetCertificateInfo(webkitWebResourceGetFrame(priv->mainResource.get()))));
+                                        webkitWebResourceGetFrame(priv->mainResource.get())->certificateInfo());
 }
 
 static void webkitWebViewEmitLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
@@ -1467,7 +1467,7 @@ void webkitWebViewResourceLoadStarted(WebKitWebView* webView, WebFrameProxy* fra
 {
     WebKitWebViewPrivate* priv = webView->priv;
     bool isMainResource = frame->isMainFrame() && !priv->mainResource;
-    WebKitWebResource* resource = webkitWebResourceCreate(toAPI(frame), request, isMainResource);
+    WebKitWebResource* resource = webkitWebResourceCreate(frame, request, isMainResource);
     if (isMainResource) {
         priv->mainResource = resource;
         waitForMainResourceResponseIfWaitingForResource(webView);
