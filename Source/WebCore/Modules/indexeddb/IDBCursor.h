@@ -30,6 +30,7 @@
 
 #include "IDBKey.h"
 #include "IDBTransaction.h"
+#include "ScriptValue.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>

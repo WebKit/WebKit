@@ -1,3 +1,51 @@
+2012-10-18  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Refactor IDBDatabaseBackendImpl to use IDBDatabaseMetadata
+        https://bugs.webkit.org/show_bug.cgi?id=99773
+
+        Reviewed by Tony Chang.
+
+        Refactor to begin separating out metadata from stateful backend objects,
+        in preparation for https://bugs.webkit.org/show_bug.cgi?id=99774.
+
+        Also includes some #include dependency cleanup so that the backing store
+        depends less on the stateful backend objects.
+
+        No new tests as this is purely a refactor.
+
+        * Modules/indexeddb/IDBBackingStore.h:
+        (WebCore):
+        (IDBBackingStore):
+        * Modules/indexeddb/IDBCursor.h:
+        * Modules/indexeddb/IDBCursorBackendImpl.h:
+        (WebCore):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::IDBDatabaseBackendImpl):
+        (WebCore::IDBDatabaseBackendImpl::openInternal):
+        (WebCore::IDBDatabaseBackendImpl::metadata):
+        (WebCore::IDBDatabaseBackendImpl::createObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::setVersion):
+        (WebCore::IDBDatabaseBackendImpl::setVersionInternal):
+        (WebCore::IDBDatabaseBackendImpl::setIntVersionInternal):
+        (WebCore::IDBDatabaseBackendImpl::processPendingCalls):
+        (WebCore::IDBDatabaseBackendImpl::openConnection):
+        (WebCore::IDBDatabaseBackendImpl::runIntVersionChangeTransaction):
+        (WebCore::IDBDatabaseBackendImpl::openConnectionWithVersion):
+        (WebCore::IDBDatabaseBackendImpl::deleteDatabase):
+        (WebCore::IDBDatabaseBackendImpl::loadObjectStores):
+        (WebCore::IDBDatabaseBackendImpl::resetVersion):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.h:
+        (WebCore::IDBDatabaseBackendImpl::id):
+        (IDBDatabaseBackendImpl):
+        * Modules/indexeddb/IDBLevelDBBackingStore.cpp:
+        (WebCore::IDBLevelDBBackingStore::getIDBDatabaseMetaData):
+        (WebCore::IDBLevelDBBackingStore::deleteDatabase):
+        * Modules/indexeddb/IDBLevelDBBackingStore.h:
+        (IDBLevelDBBackingStore):
+        * Modules/indexeddb/IDBObjectStoreBackendInterface.h:
+        * Modules/indexeddb/IDBTransaction.h:
+        (WebCore):
+
 2012-10-18  Peter Kasting  <pkasting@google.com>
 
         [Skia] Set m_hasAlpha correctly in ImageFrame::copyBitmapData.

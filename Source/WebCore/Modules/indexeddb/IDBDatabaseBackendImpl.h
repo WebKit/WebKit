@@ -53,7 +53,7 @@ public:
     PassRefPtr<IDBBackingStore> backingStore() const;
 
     static const int64_t InvalidId = 0;
-    int64_t id() const { return m_id; }
+    int64_t id() const { return m_metadata.id; }
 
     void openConnection(PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>);
     void openConnectionWithVersion(PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, int64_t version);
@@ -94,11 +94,7 @@ private:
     static void resetVersion(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, const String& version, int64_t intVersion);
 
     RefPtr<IDBBackingStore> m_backingStore;
-    int64_t m_id;
-    String m_name;
-    String m_version;
-    int64_t m_intVersion;
-    int64_t m_maxObjectStoreId;
+    IDBDatabaseMetadata m_metadata;
 
     String m_identifier;
     // This might not need to be a RefPtr since the factory's lifetime is that of the page group, but it's better to be conservitive than sorry.

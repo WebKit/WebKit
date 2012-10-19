@@ -32,6 +32,8 @@
 #include "IDBBackingStore.h"
 #include "IDBCursor.h"
 #include "IDBCursorBackendInterface.h"
+#include "IDBTransactionBackendImpl.h"
+#include "SerializedScriptValue.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
@@ -42,8 +44,6 @@ class IDBDatabaseBackendImpl;
 class IDBIndexBackendImpl;
 class IDBKeyRange;
 class IDBObjectStoreBackendImpl;
-class IDBTransactionBackendImpl;
-class SerializedScriptValue;
 
 class IDBCursorBackendImpl : public IDBCursorBackendInterface {
 public:

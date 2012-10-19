@@ -37,6 +37,7 @@
 #include "IDBKeyPath.h"
 #include "IDBKeyRange.h"
 #include "IDBLevelDBCoding.h"
+#include "IDBMetadata.h"
 #include "LevelDBComparator.h"
 #include "LevelDBDatabase.h"
 #include "LevelDBIterator.h"
@@ -313,25 +314,25 @@ void IDBLevelDBBackingStore::getDatabaseNames(Vector<String>& foundNames)
     }
 }
 
-bool IDBLevelDBBackingStore::getIDBDatabaseMetaData(const String& name, String& foundStringVersion, int64_t& foundIntVersion, int64_t& foundId, int64_t& maxObjectStoreId)
+bool IDBLevelDBBackingStore::getIDBDatabaseMetaData(const String& name, IDBDatabaseMetadata* metadata)
 {
     const Vector<char> key = DatabaseNameKey::encode(m_identifier, name);
 
-    bool ok = getInt(m_db.get(), key, foundId);
+    bool ok = getInt(m_db.get(), key, metadata->id);
     if (!ok)
         return false;
 
-    ok = getString(m_db.get(), DatabaseMetaDataKey::encode(foundId, DatabaseMetaDataKey::UserVersion), foundStringVersion);
+    ok = getString(m_db.get(), DatabaseMetaDataKey::encode(metadata->id, DatabaseMetaDataKey::UserVersion), metadata->version);
     if (!ok)
         return false;
 
-    ok = getVarInt(m_db.get(), DatabaseMetaDataKey::encode(foundId, DatabaseMetaDataKey::UserIntVersion), foundIntVersion);
+    ok = getVarInt(m_db.get(), DatabaseMetaDataKey::encode(metadata->id, DatabaseMetaDataKey::UserIntVersion), metadata->intVersion);
     if (!ok)
         return false;
-    if (foundIntVersion == IDBDatabaseMetadata::DefaultIntVersion)
-        foundIntVersion = IDBDatabaseMetadata::NoIntVersion;
+    if (metadata->intVersion == IDBDatabaseMetadata::DefaultIntVersion)
+        metadata->intVersion = IDBDatabaseMetadata::NoIntVersion;
 
-    maxObjectStoreId = getMaxObjectStoreId(m_db.get(), foundId);
+    metadata->maxObjectStoreId = getMaxObjectStoreId(m_db.get(), metadata->id);
 
     return true;
 }
@@ -405,15 +406,12 @@ bool IDBLevelDBBackingStore::deleteDatabase(const String& name)
     IDB_TRACE("IDBLevelDBBackingStore::deleteDatabase");
     OwnPtr<LevelDBWriteOnlyTransaction> transaction = LevelDBWriteOnlyTransaction::create(m_db.get());
 
-    int64_t databaseId;
-    String version;
-    int64_t intVersion;
-    int64_t maxObjectStoreId;
-    if (!getIDBDatabaseMetaData(name, version, intVersion, databaseId, maxObjectStoreId))
+    IDBDatabaseMetadata metadata;
+    if (!getIDBDatabaseMetaData(name, &metadata))
         return true;
 
-    const Vector<char> startKey = DatabaseMetaDataKey::encode(databaseId, DatabaseMetaDataKey::OriginName);
-    const Vector<char> stopKey = DatabaseMetaDataKey::encode(databaseId + 1, DatabaseMetaDataKey::OriginName);
+    const Vector<char> startKey = DatabaseMetaDataKey::encode(metadata.id, DatabaseMetaDataKey::OriginName);
+    const Vector<char> stopKey = DatabaseMetaDataKey::encode(metadata.id + 1, DatabaseMetaDataKey::OriginName);
     OwnPtr<LevelDBIterator> it = m_db->createIterator();
     for (it->seek(startKey); it->isValid() && compareKeys(it->key(), stopKey) < 0; it->next())
         transaction->remove(it->key());

@@ -27,6 +27,7 @@
 #define IDBObjectStoreBackendInterface_h
 
 #include "IDBCursor.h"
+#include "IDBTransactionBackendInterface.h"
 #include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
 

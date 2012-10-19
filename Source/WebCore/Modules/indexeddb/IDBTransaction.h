@@ -35,8 +35,6 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
-#include "IDBMetadata.h"
-#include "IDBTransactionBackendInterface.h"
 #include "IDBTransactionCallbacks.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
@@ -47,6 +45,8 @@ class IDBCursor;
 class IDBDatabase;
 class IDBObjectStore;
 class IDBOpenDBRequest;
+class IDBTransactionBackendInterface;
+struct IDBObjectStoreMetadata;
 
 class IDBTransaction : public IDBTransactionCallbacks, public EventTarget, public ActiveDOMObject {
 public:

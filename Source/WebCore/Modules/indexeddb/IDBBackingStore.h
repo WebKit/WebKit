@@ -29,18 +29,19 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBCursor.h"
-#include "IDBFactoryBackendInterface.h"
-#include "SQLiteDatabase.h"
+#include "IDBKeyPath.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class IDBKey;
 class IDBKeyRange;
 class SecurityOrigin;
+struct IDBDatabaseMetadata;
 
 class IDBBackingStore : public RefCounted<IDBBackingStore> {
 public:
@@ -49,7 +50,7 @@ public:
     virtual ~IDBBackingStore() {};
 
     virtual void getDatabaseNames(Vector<String>& foundNames) = 0;
-    virtual bool getIDBDatabaseMetaData(const String& name, String& foundStringVersion, int64_t& foundIntVersion, int64_t& foundId, int64_t& maxObjectStoreId) = 0;
+    virtual bool getIDBDatabaseMetaData(const String& name, IDBDatabaseMetadata* foundMetadata) = 0;
     virtual bool createIDBDatabaseMetaData(const String& name, const String& stringVersion, int64_t intVersion, int64_t& rowId) = 0;
     virtual bool updateIDBDatabaseIntVersion(Transaction*, int64_t rowId, int64_t intVersion) = 0;
     virtual bool updateIDBDatabaseMetaData(Transaction*, int64_t rowId, const String& version) = 0;

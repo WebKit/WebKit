@@ -45,7 +45,7 @@ public:
     virtual ~IDBLevelDBBackingStore();
 
     virtual void getDatabaseNames(Vector<String>& foundNames);
-    virtual bool getIDBDatabaseMetaData(const String& name, String& foundVersion, int64_t& foundIntVersion, int64_t& foundId, int64_t& maxObjectStoreId);
+    virtual bool getIDBDatabaseMetaData(const String& name, IDBDatabaseMetadata*);
     virtual bool createIDBDatabaseMetaData(const String& name, const String& version, int64_t intVersion, int64_t& rowId);
     virtual bool updateIDBDatabaseMetaData(IDBBackingStore::Transaction*, int64_t rowId, const String& version);
     virtual bool updateIDBDatabaseIntVersion(IDBBackingStore::Transaction*, int64_t rowId, int64_t intVersion);
