@@ -1,3 +1,23 @@
+2012-10-18  Michael Saboff  <msaboff@apple.com>
+
+        convertUTF8ToUTF16() Should Check for ASCII Input
+        ihttps://bugs.webkit.org/show_bug.cgi?id=99739
+
+        Reviewed by Geoffrey Garen.
+
+        Using the updated convertUTF8ToUTF16() , we can determine if is makes more sense to 
+        create a string using the 8 bit source.  Added a new OpaqueJSString::create(LChar*, unsigned).
+        Had to add a cast n JSStringCreateWithCFString to differentiate which create() to call.
+
+        * API/JSStringRef.cpp:
+        (JSStringCreateWithUTF8CString):
+        * API/JSStringRefCF.cpp:
+        (JSStringCreateWithCFString):
+        * API/OpaqueJSString.h:
+        (OpaqueJSString::create):
+        (OpaqueJSString):
+        (OpaqueJSString::OpaqueJSString):
+
 2012-10-18  Oliver Hunt  <oliver@apple.com>
 
         Unbreak jsc tests.  Last minute "clever"-ness is clearly just not

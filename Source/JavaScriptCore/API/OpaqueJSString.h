@@ -41,6 +41,11 @@ struct OpaqueJSString : public ThreadSafeRefCounted<OpaqueJSString> {
         return adoptRef(new OpaqueJSString);
     }
 
+    static PassRefPtr<OpaqueJSString> create(const LChar* characters, unsigned length)
+    {
+        return adoptRef(new OpaqueJSString(characters, length));
+    }
+
     static PassRefPtr<OpaqueJSString> create(const UChar* characters, unsigned length)
     {
         return adoptRef(new OpaqueJSString(characters, length));
@@ -68,6 +73,11 @@ private:
             m_string = String(string.characters8(), string.length());
         else
             m_string = String(string.characters16(), string.length());
+    }
+
+    OpaqueJSString(const LChar* characters, unsigned length)
+    {
+        m_string = String(characters, length);
     }
 
     OpaqueJSString(const UChar* characters, unsigned length)

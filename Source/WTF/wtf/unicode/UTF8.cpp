@@ -297,11 +297,12 @@ static inline UChar32 readUTF8Sequence(const char*& sequence, unsigned length)
 
 ConversionResult convertUTF8ToUTF16(
     const char** sourceStart, const char* sourceEnd, 
-    UChar** targetStart, UChar* targetEnd, bool strict)
+    UChar** targetStart, UChar* targetEnd, bool* sourceAllASCII, bool strict)
 {
     ConversionResult result = conversionOK;
     const char* source = *sourceStart;
     UChar* target = *targetStart;
+    UChar orAllData = 0;
     while (source < sourceEnd) {
         int utf8SequenceLength = inlineUTF8SequenceLength(*source);
         if (sourceEnd - source < utf8SequenceLength)  {
@@ -329,10 +330,14 @@ ConversionResult convertUTF8ToUTF16(
                     source -= utf8SequenceLength; // return to the illegal value itself
                     result = sourceIllegal;
                     break;
-                } else
+                } else {
                     *target++ = replacementCharacter;
-            } else
+                    orAllData |= replacementCharacter;
+                }
+            } else {
                 *target++ = character; // normal case
+                orAllData |= character;
+            }
         } else if (U_IS_SUPPLEMENTARY(character)) {
             // target is a character in range 0xFFFF - 0x10FFFF
             if (target + 1 >= targetEnd) {
@@ -342,17 +347,24 @@ ConversionResult convertUTF8ToUTF16(
             }
             *target++ = U16_LEAD(character);
             *target++ = U16_TRAIL(character);
+            orAllData = 0xffff;
         } else {
             if (strict) {
                 source -= utf8SequenceLength; // return to the start
                 result = sourceIllegal;
                 break; // Bail out; shouldn't continue
-            } else
+            } else {
                 *target++ = replacementCharacter;
+                orAllData |= replacementCharacter;
+            }
         }
     }
     *sourceStart = source;
     *targetStart = target;
+
+    if (sourceAllASCII)
+        *sourceAllASCII = !(orAllData & 0x7f);
+
     return result;
 }
 

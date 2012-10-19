@@ -1,5 +1,19 @@
 2012-10-18  Michael Saboff  <msaboff@apple.com>
 
+        convertUTF8ToUTF16() Should Check for ASCII Input
+        ihttps://bugs.webkit.org/show_bug.cgi?id=99739
+
+        Reviewed by Geoffrey Garen.
+
+        Added code to accumulate the "or" of all characters seen during the UTF8 to UTF16 conversion.  This is
+        used to check to see if all characters are ASCII and is returned via a bool*.
+
+        * wtf/unicode/UTF8.cpp:
+        (WTF::Unicode::convertUTF8ToUTF16):
+        * wtf/unicode/UTF8.h:
+
+2012-10-18  Michael Saboff  <msaboff@apple.com>
+
         Mac WTF build checks dependencies before copying header files
         https://bugs.webkit.org/show_bug.cgi?id=99770
 

@@ -64,7 +64,7 @@ namespace Unicode {
 
     WTF_EXPORT_PRIVATE ConversionResult convertUTF8ToUTF16(
                     const char** sourceStart, const char* sourceEnd, 
-                    UChar** targetStart, UChar* targetEnd, bool strict = true);
+                    UChar** targetStart, UChar* targetEnd, bool* isSourceAllASCII = 0, bool strict = true);
 
     WTF_EXPORT_PRIVATE ConversionResult convertLatin1ToUTF8(
                     const LChar** sourceStart, const LChar* sourceEnd, 
