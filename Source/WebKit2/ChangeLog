@@ -1,3 +1,15 @@
+2012-10-18  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Crashes in WebProcess at com.apple.WebCore: -[AccessibilityObjectWrapper remoteAccessibilityParentObject] + 78
+        https://bugs.webkit.org/show_bug.cgi?id=96443
+
+        Reviewed by Beth Dakin.
+
+        It appears that the crash is due to not checking whether the page object is null. 
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::accessibilityRemoteObject):
+
 2012-10-18  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Add support for float-valued prefernces

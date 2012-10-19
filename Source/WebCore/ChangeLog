@@ -1,3 +1,16 @@
+2012-10-18  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Crashes in WebProcess at com.apple.WebCore: -[AccessibilityObjectWrapper remoteAccessibilityParentObject] + 78
+        https://bugs.webkit.org/show_bug.cgi?id=96443
+
+        Reviewed by Beth Dakin.
+
+        Separate out the chain of calls so that the number of times document() is called is reduced and it will be easier
+        to determine which line this crash is happening on.
+
+        * accessibility/mac/WebAccessibilityObjectWrapper.mm:
+        (-[WebAccessibilityObjectWrapper remoteAccessibilityParentObject]):
+
 2012-10-18  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Refactor IDBDatabaseBackendImpl to use IDBDatabaseMetadata
