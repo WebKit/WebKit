@@ -483,9 +483,9 @@ void RTCPeerConnection::didAddRemoteStream(PassRefPtr<MediaStreamDescriptor> str
 void RTCPeerConnection::didRemoveRemoteStream(MediaStreamDescriptor* streamDescriptor)
 {
     ASSERT(scriptExecutionContext()->isContextThread());
-    ASSERT(streamDescriptor->owner());
+    ASSERT(streamDescriptor->client());
 
-    RefPtr<MediaStream> stream = static_cast<MediaStream*>(streamDescriptor->owner());
+    RefPtr<MediaStream> stream = static_cast<MediaStream*>(streamDescriptor->client());
     stream->streamEnded();
 
     if (m_readyState == ReadyStateClosed)

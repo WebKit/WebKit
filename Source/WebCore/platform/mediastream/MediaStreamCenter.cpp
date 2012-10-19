@@ -49,25 +49,25 @@ MediaStreamCenter::~MediaStreamCenter()
 
 void MediaStreamCenter::endLocalMediaStream(MediaStreamDescriptor* streamDescriptor)
 {
-    MediaStreamDescriptorOwner* owner = streamDescriptor->owner();
-    if (owner)
-        owner->streamEnded();
+    MediaStreamDescriptorClient* client = streamDescriptor->client();
+    if (client)
+        client->streamEnded();
     else
         streamDescriptor->setEnded();
 }
 
 void MediaStreamCenter::addMediaStreamTrack(MediaStreamDescriptor* streamDescriptor, MediaStreamComponent* component)
 {
-    MediaStreamDescriptorOwner* owner = streamDescriptor->owner();
-    if (owner)
-        owner->addTrack(component);
+    MediaStreamDescriptorClient* client = streamDescriptor->client();
+    if (client)
+        client->addTrack(component);
 }
 
 void MediaStreamCenter::removeMediaStreamTrack(MediaStreamDescriptor* streamDescriptor, MediaStreamComponent* component)
 {
-    MediaStreamDescriptorOwner* owner = streamDescriptor->owner();
-    if (owner)
-        owner->removeTrack(component);
+    MediaStreamDescriptorClient* client = streamDescriptor->client();
+    if (client)
+        client->removeTrack(component);
 }
 
 } // namespace WebCore

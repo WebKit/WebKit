@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-class MediaStream : public RefCounted<MediaStream>, public MediaStreamDescriptorOwner, public EventTarget, public ContextDestructionObserver {
+class MediaStream : public RefCounted<MediaStream>, public MediaStreamDescriptorClient, public EventTarget, public ContextDestructionObserver {
 public:
     enum ReadyState {
         LIVE = 1,
@@ -58,7 +58,7 @@ public:
 
     virtual bool isLocal() const { return false; }
 
-    // MediaStreamDescriptorOwner
+    // MediaStreamDescriptorClient
     virtual void streamEnded() OVERRIDE;
 
     MediaStreamDescriptor* descriptor() const { return m_descriptor.get(); }
@@ -82,7 +82,7 @@ private:
     virtual void refEventTarget() OVERRIDE { ref(); }
     virtual void derefEventTarget() OVERRIDE { deref(); }
 
-    // MediaStreamDescriptorOwner
+    // MediaStreamDescriptorClient
     virtual void addTrack(MediaStreamComponent*) OVERRIDE;
     virtual void removeTrack(MediaStreamComponent*) OVERRIDE;
 

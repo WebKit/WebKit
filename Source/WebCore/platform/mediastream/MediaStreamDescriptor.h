@@ -40,9 +40,9 @@
 
 namespace WebCore {
 
-class MediaStreamDescriptorOwner {
+class MediaStreamDescriptorClient {
 public:
-    virtual ~MediaStreamDescriptorOwner() { }
+    virtual ~MediaStreamDescriptorClient() { }
 
     virtual void streamEnded() = 0;
     virtual void addTrack(MediaStreamComponent*) = 0;
@@ -61,8 +61,8 @@ public:
         return adoptRef(new MediaStreamDescriptor(label, audioSources, videoSources));
     }
 
-    MediaStreamDescriptorOwner* owner() const { return m_owner; }
-    void setOwner(MediaStreamDescriptorOwner* owner) { m_owner = owner; }
+    MediaStreamDescriptorClient* client() const { return m_client; }
+    void setClient(MediaStreamDescriptorClient* client) { m_client = client; }
 
     String label() const { return m_label; }
 
@@ -80,7 +80,7 @@ public:
 
 private:
     MediaStreamDescriptor(const String& label, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
-        : m_owner(0)
+        : m_client(0)
         , m_label(label)
         , m_ended(false)
     {
@@ -91,7 +91,7 @@ private:
             m_videoComponents.append(MediaStreamComponent::create(videoSources[i]));
     }
 
-    MediaStreamDescriptorOwner* m_owner;
+    MediaStreamDescriptorClient* m_client;
     String m_label;
     Vector<RefPtr<MediaStreamComponent> > m_audioComponents;
     Vector<RefPtr<MediaStreamComponent> > m_videoComponents;

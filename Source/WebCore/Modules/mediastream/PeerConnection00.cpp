@@ -412,9 +412,9 @@ void PeerConnection00::didAddRemoteStream(PassRefPtr<MediaStreamDescriptor> stre
 void PeerConnection00::didRemoveRemoteStream(MediaStreamDescriptor* streamDescriptor)
 {
     ASSERT(scriptExecutionContext()->isContextThread());
-    ASSERT(streamDescriptor->owner());
+    ASSERT(streamDescriptor->client());
 
-    RefPtr<MediaStream> stream = static_cast<MediaStream*>(streamDescriptor->owner());
+    RefPtr<MediaStream> stream = static_cast<MediaStream*>(streamDescriptor->client());
     stream->streamEnded();
 
     if (m_readyState == CLOSED)

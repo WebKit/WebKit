@@ -88,7 +88,7 @@ MediaStream::MediaStream(ScriptExecutionContext* context, PassRefPtr<MediaStream
     : ContextDestructionObserver(context)
     , m_descriptor(streamDescriptor)
 {
-    m_descriptor->setOwner(this);
+    m_descriptor->setClient(this);
 
     MediaStreamTrackVector audioTrackVector;
     size_t numberOfAudioTracks = m_descriptor->numberOfAudioComponents();
@@ -107,7 +107,7 @@ MediaStream::MediaStream(ScriptExecutionContext* context, PassRefPtr<MediaStream
 
 MediaStream::~MediaStream()
 {
-    m_descriptor->setOwner(0);
+    m_descriptor->setClient(0);
     m_audioTracks->detachOwner();
     m_videoTracks->detachOwner();
 }

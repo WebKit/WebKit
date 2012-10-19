@@ -1,3 +1,34 @@
+2012-10-19  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Rename owner to client in MediaStreamDescriptor
+        https://bugs.webkit.org/show_bug.cgi?id=99593
+
+        Reviewed by Adam Barth.
+
+        This patch renames owner to client in MediaStreamDescriptor as discussed in #99080.
+
+        No new tests needed, covered by existing tests.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::MediaStream):
+        (WebCore::MediaStream::~MediaStream):
+        * Modules/mediastream/MediaStream.h:
+        (MediaStream):
+        * Modules/mediastream/PeerConnection00.cpp:
+        (WebCore::PeerConnection00::didRemoveRemoteStream):
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::didRemoveRemoteStream):
+        * platform/mediastream/MediaStreamCenter.cpp:
+        (WebCore::MediaStreamCenter::endLocalMediaStream):
+        (WebCore::MediaStreamCenter::addMediaStreamTrack):
+        (WebCore::MediaStreamCenter::removeMediaStreamTrack):
+        * platform/mediastream/MediaStreamDescriptor.h:
+        (WebCore::MediaStreamDescriptorClient::~MediaStreamDescriptorClient):
+        (WebCore::MediaStreamDescriptor::client):
+        (WebCore::MediaStreamDescriptor::setClient):
+        (WebCore::MediaStreamDescriptor::MediaStreamDescriptor):
+        (MediaStreamDescriptor):
+
 2012-10-19  Shinya Kawanaka  <shinyak@chromium.org>
 
         Elements assigned to <shadow> should not be reprojected.
