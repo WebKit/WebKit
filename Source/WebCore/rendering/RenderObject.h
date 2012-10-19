@@ -39,6 +39,7 @@
 #include "TextAffinity.h"
 #include "TransformationMatrix.h"
 #include <wtf/HashSet.h>
+#include <wtf/StackStats.h>
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {

@@ -10,6 +10,7 @@
 #include "JSGlobalData.h"
 #include "JSObject.h"
 #include "JSString.h"
+#include <wtf/StackStats.h>
 
 namespace JSC {
 
@@ -58,6 +59,7 @@ void SlotVisitor::reset()
 
 void SlotVisitor::append(ConservativeRoots& conservativeRoots)
 {
+    StackStats::probe();
     JSCell** roots = conservativeRoots.roots();
     size_t size = conservativeRoots.size();
     for (size_t i = 0; i < size; ++i)
@@ -66,6 +68,7 @@ void SlotVisitor::append(ConservativeRoots& conservativeRoots)
 
 ALWAYS_INLINE static void visitChildren(SlotVisitor& visitor, const JSCell* cell)
 {
+    StackStats::probe();
 #if ENABLE(SIMPLE_HEAP_PROFILING)
     m_visitedTypeCounts.count(cell);
 #endif
@@ -92,6 +95,7 @@ ALWAYS_INLINE static void visitChildren(SlotVisitor& visitor, const JSCell* cell
 
 void SlotVisitor::donateKnownParallel()
 {
+    StackStats::probe();
     // NOTE: Because we re-try often, we can afford to be conservative, and
     // assume that donating is not profitable.
 
@@ -119,6 +123,7 @@ void SlotVisitor::donateKnownParallel()
 
 void SlotVisitor::drain()
 {
+    StackStats::probe();
     ASSERT(m_isInParallelMode);
    
 #if ENABLE(PARALLEL_GC)
@@ -144,6 +149,7 @@ void SlotVisitor::drain()
 
 void SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode)
 {
+    StackStats::probe();
     ASSERT(m_isInParallelMode);
     
     ASSERT(Options::numberOfGCMarkers());
@@ -221,6 +227,7 @@ void SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode)
 
 void SlotVisitor::mergeOpaqueRoots()
 {
+    StackStats::probe();
     ASSERT(!m_opaqueRoots.isEmpty()); // Should only be called when opaque roots are non-empty.
     {
         MutexLocker locker(m_shared.m_opaqueRootsLock);
@@ -276,6 +283,7 @@ ALWAYS_INLINE void SlotVisitor::internalAppend(JSValue* slot)
     // as it can change the JSValue pointed to be the argument when the original JSValue
     // is a string that contains the same contents as another string.
 
+    StackStats::probe();
     ASSERT(slot);
     JSValue value = *slot;
     ASSERT(value);
@@ -309,12 +317,14 @@ ALWAYS_INLINE void SlotVisitor::internalAppend(JSValue* slot)
 
 void SlotVisitor::harvestWeakReferences()
 {
+    StackStats::probe();
     for (WeakReferenceHarvester* current = m_shared.m_weakReferenceHarvesters.head(); current; current = current->next())
         current->visitWeakReferences(*this);
 }
 
 void SlotVisitor::finalizeUnconditionalFinalizers()
 {
+    StackStats::probe();
     while (m_shared.m_unconditionalFinalizers.hasNext())
         m_shared.m_unconditionalFinalizers.removeNext()->finalizeUnconditionally();
 }

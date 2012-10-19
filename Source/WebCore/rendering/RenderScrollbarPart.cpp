@@ -48,6 +48,7 @@ RenderScrollbarPart::~RenderScrollbarPart()
 
 void RenderScrollbarPart::layout()
 {
+    StackStats::LayoutCheckPoint layoutCheckPoint;
     setLocation(LayoutPoint()); // We don't worry about positioning ourselves. We're just determining our minimum width/height.
     if (m_scrollbar->orientation() == HorizontalScrollbar)
         layoutHorizontalPart();

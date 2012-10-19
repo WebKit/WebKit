@@ -31,6 +31,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/StackBounds.h>
+#include <wtf/StackStats.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/Threading.h>
@@ -108,7 +109,14 @@ public:
     {
         return m_stackBounds;
     }
+
+#if ENABLE(STACK_STATS)
+    StackStats::PerThreadStats& stackStats()
+    {
+        return m_stackStats;
+    }
 #endif
+#endif // USE(JSC)
 
 private:
     AtomicStringTable* m_atomicStringTable;
@@ -118,7 +126,10 @@ private:
     JSC::IdentifierTable* m_defaultIdentifierTable;
     JSC::IdentifierTable* m_currentIdentifierTable;
     StackBounds m_stackBounds;
+#if ENABLE(STACK_STATS)
+    StackStats::PerThreadStats m_stackStats;
 #endif
+#endif // USE(JSC)
 
     static WTF_EXPORTDATA ThreadSpecific<WTFThreadData>* staticData;
     friend WTFThreadData& wtfThreadData();

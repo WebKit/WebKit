@@ -1,3 +1,35 @@
+2012-10-19  Mark Lam  <mark.lam@apple.com>
+
+        Added WTF::StackStats mechanism.
+        https://bugs.webkit.org/show_bug.cgi?id=99805.
+
+        Reviewed by Geoffrey Garen.
+
+        Added StackStats checkpoints and probes.
+
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitNode):
+        (JSC::BytecodeGenerator::emitNodeInConditionContext):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::append):
+        (JSC::visitChildren):
+        (JSC::SlotVisitor::donateKnownParallel):
+        (JSC::SlotVisitor::drain):
+        (JSC::SlotVisitor::drainFromShared):
+        (JSC::SlotVisitor::mergeOpaqueRoots):
+        (JSC::SlotVisitor::internalAppend):
+        (JSC::SlotVisitor::harvestWeakReferences):
+        (JSC::SlotVisitor::finalizeUnconditionalFinalizers):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        * parser/Parser.h:
+        (JSC::Parser::canRecurse):
+        * runtime/StringRecursionChecker.h:
+        (StringRecursionChecker):
+
 2012-10-19  Oliver Hunt  <oliver@apple.com>
 
         REGRESSION(r131822): It made 500+ tests crash on 32 bit platforms

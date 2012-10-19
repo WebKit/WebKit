@@ -156,6 +156,7 @@ void RenderView::checkLayoutState(const LayoutState& state)
 
 void RenderView::layout()
 {
+    StackStats::LayoutCheckPoint layoutCheckPoint;
     if (!document()->paginated())
         setPageLogicalHeight(0);
 

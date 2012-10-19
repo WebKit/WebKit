@@ -147,6 +147,7 @@ void RenderIFrame::layoutSeamlessly()
 
 void RenderIFrame::layout()
 {
+    StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
     if (isSeamless()) {

@@ -533,6 +533,7 @@ void RenderImage::updateAltText()
 
 void RenderImage::layout()
 {
+    StackStats::LayoutCheckPoint layoutCheckPoint;
     RenderReplaced::layout();
 
     // Propagate container size to image resource.

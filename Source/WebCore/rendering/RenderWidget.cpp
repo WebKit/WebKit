@@ -211,6 +211,7 @@ void RenderWidget::setWidget(PassRefPtr<Widget> widget)
 
 void RenderWidget::layout()
 {
+    StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
     setNeedsLayout(false);

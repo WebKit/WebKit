@@ -123,6 +123,7 @@ void RenderSVGForeignObject::computeLogicalHeight(LayoutUnit, LayoutUnit logical
 
 void RenderSVGForeignObject::layout()
 {
+    StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
     ASSERT(!view()->layoutStateEnabled()); // RenderSVGRoot disables layoutState for the SVG rendering tree.
 

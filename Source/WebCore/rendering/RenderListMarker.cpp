@@ -1302,6 +1302,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 
 void RenderListMarker::layout()
 {
+    StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
  
     if (isImage()) {

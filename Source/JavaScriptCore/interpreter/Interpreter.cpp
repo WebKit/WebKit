@@ -65,6 +65,7 @@
 #include "StrongInlines.h"
 #include <limits.h>
 #include <stdio.h>
+#include <wtf/StackStats.h>
 #include <wtf/Threading.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -752,6 +753,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, J
     if (callFrame->globalData().isCollectorBusy())
         CRASH();
 
+    StackStats::CheckPoint stackCheckPoint;
     if (m_reentryDepth >= MaxSmallThreadReentryDepth && m_reentryDepth >= callFrame->globalData().maxReentryDepth)
         return checkedReturn(throwStackOverflowError(callFrame));
 
@@ -914,6 +916,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
     if (callFrame->globalData().isCollectorBusy())
         return jsNull();
 
+    StackStats::CheckPoint stackCheckPoint;
     if (m_reentryDepth >= MaxSmallThreadReentryDepth && m_reentryDepth >= callFrame->globalData().maxReentryDepth)
         return checkedReturn(throwStackOverflowError(callFrame));
 
@@ -1009,6 +1012,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
     if (callFrame->globalData().isCollectorBusy())
         return checkedReturn(throwStackOverflowError(callFrame));
 
+    StackStats::CheckPoint stackCheckPoint;
     if (m_reentryDepth >= MaxSmallThreadReentryDepth && m_reentryDepth >= callFrame->globalData().maxReentryDepth)
         return checkedReturn(throwStackOverflowError(callFrame));
 
@@ -1106,6 +1110,7 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionE
     if (callFrame->globalData().isCollectorBusy())
         return CallFrameClosure();
 
+    StackStats::CheckPoint stackCheckPoint;
     if (m_reentryDepth >= MaxSmallThreadReentryDepth && m_reentryDepth >= callFrame->globalData().maxReentryDepth) {
         throwStackOverflowError(callFrame);
         return CallFrameClosure();
@@ -1147,6 +1152,8 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
     ASSERT(!closure.oldCallFrame->globalData().isCollectorBusy());
     if (closure.oldCallFrame->globalData().isCollectorBusy())
         return jsNull();
+
+    StackStats::CheckPoint stackCheckPoint;
     closure.resetCallFrame();
     if (Profiler* profiler = closure.oldCallFrame->globalData().enabledProfiler())
         profiler->willExecute(closure.oldCallFrame, closure.function);
@@ -1189,6 +1196,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
 
     DynamicGlobalObjectScope globalObjectScope(*scope->globalData(), scope->globalObject());
 
+    StackStats::CheckPoint stackCheckPoint;
     if (m_reentryDepth >= MaxSmallThreadReentryDepth && m_reentryDepth >= callFrame->globalData().maxReentryDepth)
         return checkedReturn(throwStackOverflowError(callFrame));
 

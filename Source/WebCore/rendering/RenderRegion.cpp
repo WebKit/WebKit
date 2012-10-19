@@ -208,6 +208,7 @@ void RenderRegion::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
 
 void RenderRegion::layout()
 {
+    StackStats::LayoutCheckPoint layoutCheckPoint;
     RenderReplaced::layout();
     if (m_flowThread && isValid()) {
         LayoutRect oldRegionRect(flowThreadPortionRect());

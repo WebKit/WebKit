@@ -311,7 +311,7 @@ namespace JSC {
             // Node::emitCode assumes that dst, if provided, is either a local or a referenced temporary.
             ASSERT(!dst || dst == ignoredResult() || !dst->isTemporary() || dst->refCount());
             addLineInfo(n->lineNo());
-            return m_stack.recursionCheck()
+            return m_stack.isSafeToRecurse()
                 ? n->emitBytecode(*this, dst)
                 : emitThrowExpressionTooDeepException();
         }
@@ -324,7 +324,7 @@ namespace JSC {
         void emitNodeInConditionContext(ExpressionNode* n, Label* trueTarget, Label* falseTarget, bool fallThroughMeansTrue)
         {
             addLineInfo(n->lineNo());
-            if (m_stack.recursionCheck())
+            if (m_stack.isSafeToRecurse())
                 n->emitBytecodeInConditionContext(*this, trueTarget, falseTarget, fallThroughMeansTrue);
             else
                 emitThrowExpressionTooDeepException();

@@ -36,6 +36,7 @@ namespace WebCore {
 
 void RenderDialog::layout()
 {
+    StackStats::LayoutCheckPoint layoutCheckPoint;
     LayoutRepainter repainter(*this, true);
     LayoutStateMaintainer statePusher(view(), this, locationOffset(), hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
 

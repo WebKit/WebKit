@@ -151,6 +151,7 @@ void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
 
 void RenderTableRow::layout()
 {
+    StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
     // Table rows do not add translation.

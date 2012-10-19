@@ -459,6 +459,7 @@ FrameEdgeInfo RenderFrameSet::edgeInfo() const
 
 void RenderFrameSet::layout()
 {
+    StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
     bool doFullRepaint = selfNeedsLayout() && checkForRepaintDuringLayout();

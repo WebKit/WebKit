@@ -218,6 +218,7 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight() const
 
 void RenderSVGRoot::layout()
 {
+    StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
     m_resourcesNeedingToInvalidateClients.clear();

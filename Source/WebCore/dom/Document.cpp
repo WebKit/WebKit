@@ -1926,6 +1926,7 @@ void Document::updateLayout()
 
     updateStyleIfNeeded();
 
+    StackStats::LayoutCheckPoint layoutCheckPoint;
     // Only do a layout if changes have occurred that make it necessary.      
     FrameView* v = view();
     if (v && renderer() && (v->layoutPending() || renderer()->needsLayout()))

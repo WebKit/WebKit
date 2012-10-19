@@ -79,6 +79,7 @@ bool RenderSVGImage::updateImageViewport()
 
 void RenderSVGImage::layout()
 {
+    StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout() && selfNeedsLayout());

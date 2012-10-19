@@ -882,7 +882,7 @@ private:
     
     bool canRecurse()
     {
-        return m_stack.recursionCheck();
+        return m_stack.isSafeToRecurse();
     }
     
     int lastTokenEnd() const

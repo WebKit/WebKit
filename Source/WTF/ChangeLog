@@ -1,3 +1,51 @@
+2012-10-19  Mark Lam  <mark.lam@apple.com>
+
+        Added WTF::StackStats mechanism.
+        https://bugs.webkit.org/show_bug.cgi?id=99805.
+
+        Reviewed by Geoffrey Garen.
+
+        Disabled by default. Should have no performance and memory cost when
+        disabled. To enable, #define ENABLE_STACK_STATS 1 in StackStats.h.
+        The output is currently hardcoded to be dumped in /tmp/stack-stats.log,
+        and is in the form of stack sample events. By default, it only logs
+        a sample event when a new high watermark value is encountered.
+
+        Also renamed StackBounds::recursiveCheck() to isSafeToRecurse().
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/StackBounds.h:
+        (StackBounds):
+        (WTF::StackBounds::size):
+        (WTF::StackBounds::isSafeToRecurse):
+        * wtf/StackStats.cpp: Added.
+        (WTF):
+        (WTF::StackStats::initialize):
+        (WTF::StackStats::PerThreadStats::PerThreadStats):
+        (WTF::StackStats::CheckPoint::CheckPoint):
+        (WTF::StackStats::CheckPoint::~CheckPoint):
+        (WTF::StackStats::probe):
+        (WTF::StackStats::LayoutCheckPoint::LayoutCheckPoint):
+        (WTF::StackStats::LayoutCheckPoint::~LayoutCheckPoint):
+        * wtf/StackStats.h: Added.
+        (WTF):
+        (StackStats):
+        (CheckPoint):
+        (WTF::StackStats::CheckPoint::CheckPoint):
+        (PerThreadStats):
+        (WTF::StackStats::PerThreadStats::PerThreadStats):
+        (LayoutCheckPoint):
+        (WTF::StackStats::LayoutCheckPoint::LayoutCheckPoint):
+        (WTF::StackStats::initialize):
+        (WTF::StackStats::probe):
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::initializeThreading):
+        * wtf/WTFThreadData.cpp:
+        (WTF::WTFThreadData::WTFThreadData):
+        * wtf/WTFThreadData.h:
+        (WTFThreadData):
+        (WTF::WTFThreadData::stackStats):
+
 2012-10-19  Anders Carlsson  <andersca@apple.com>
 
         Deque can use std::reverse_iterator for its reverse iterators

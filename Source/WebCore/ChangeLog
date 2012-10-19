@@ -1,3 +1,92 @@
+2012-10-19  Mark Lam  <mark.lam@apple.com>
+
+        Added WTF::StackStats mechanism.
+        https://bugs.webkit.org/show_bug.cgi?id=99805.
+
+        Reviewed by Geoffrey Garen.
+
+        Added StackStats probes in layout methods.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateLayout):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layout):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::layout):
+        * rendering/RenderDialog.cpp:
+        (WebCore::RenderDialog::layout):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::layout):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::layout):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::layout):
+        * rendering/RenderIFrame.cpp:
+        (WebCore::RenderIFrame::layout):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::layout):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::layout):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::layout):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::layout):
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::layout):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::layout):
+        * rendering/RenderObject.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::layout):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::layout):
+        * rendering/RenderReplica.cpp:
+        (WebCore::RenderReplica::layout):
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::layoutSpecialExcludedChild):
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::layout):
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::layout):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::layout):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::layout):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layout):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::layout):
+        * rendering/RenderTextTrackCue.cpp:
+        (WebCore::RenderTextTrackCue::layout):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::layout):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::layout):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::layout):
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout):
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::layout):
+        * rendering/svg/RenderSVGGradientStop.cpp:
+        (WebCore::RenderSVGGradientStop::layout):
+        * rendering/svg/RenderSVGHiddenContainer.cpp:
+        (WebCore::RenderSVGHiddenContainer::layout):
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::layout):
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::layout):
+        * rendering/svg/RenderSVGResourceMarker.cpp:
+        (WebCore::RenderSVGResourceMarker::layout):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout):
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::layout):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+
 2012-10-19  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: merge "docked" state into the "dock side" enum.

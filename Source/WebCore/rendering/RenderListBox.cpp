@@ -172,6 +172,7 @@ void RenderListBox::selectionChanged()
 
 void RenderListBox::layout()
 {
+    StackStats::LayoutCheckPoint layoutCheckPoint;
     RenderBlock::layout();
 
     if (m_vBar) {

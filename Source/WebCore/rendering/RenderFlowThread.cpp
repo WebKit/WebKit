@@ -132,6 +132,7 @@ private:
 
 void RenderFlowThread::layout()
 {
+    StackStats::LayoutCheckPoint layoutCheckPoint;
     m_pageLogicalHeightChanged = m_regionsInvalidated && everHadLayout();
     if (m_regionsInvalidated) {
         m_regionsInvalidated = false;

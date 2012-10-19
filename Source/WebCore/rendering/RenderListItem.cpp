@@ -286,6 +286,7 @@ void RenderListItem::computePreferredLogicalWidths()
 
 void RenderListItem::layout()
 {
+    StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout()); 
 
     updateMarkerLocation();    

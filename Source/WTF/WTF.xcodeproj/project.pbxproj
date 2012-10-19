@@ -296,6 +296,8 @@
 		F3525E461619A4EE00278BC1 /* MemoryInstrumentationHashMap.h in Headers */ = {isa = PBXBuildFile; fileRef = F3525E451619A4EE00278BC1 /* MemoryInstrumentationHashMap.h */; };
 		F3FBC71E161AF7BF00BB4BD4 /* MemoryInstrumentationHashCountedSet.h in Headers */ = {isa = PBXBuildFile; fileRef = F3FBC71D161AF7BF00BB4BD4 /* MemoryInstrumentationHashCountedSet.h */; };
 		F3FBC720161AF7CD00BB4BD4 /* MemoryInstrumentationSequence.h in Headers */ = {isa = PBXBuildFile; fileRef = F3FBC71F161AF7CD00BB4BD4 /* MemoryInstrumentationSequence.h */; };
+		FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDACD3B1630F83F00C69634 /* StackStats.cpp */; };
+		FEDACD3E1630F83F00C69634 /* StackStats.h in Headers */ = {isa = PBXBuildFile; fileRef = FEDACD3C1630F83F00C69634 /* StackStats.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -594,6 +596,8 @@
 		F3525E451619A4EE00278BC1 /* MemoryInstrumentationHashMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryInstrumentationHashMap.h; sourceTree = "<group>"; };
 		F3FBC71D161AF7BF00BB4BD4 /* MemoryInstrumentationHashCountedSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryInstrumentationHashCountedSet.h; sourceTree = "<group>"; };
 		F3FBC71F161AF7CD00BB4BD4 /* MemoryInstrumentationSequence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryInstrumentationSequence.h; sourceTree = "<group>"; };
+		FEDACD3B1630F83F00C69634 /* StackStats.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackStats.cpp; sourceTree = "<group>"; };
+		FEDACD3C1630F83F00C69634 /* StackStats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackStats.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -804,6 +808,8 @@
 				A8A4730D151A825B004123FF /* Spectrum.h */,
 				A8A4730E151A825B004123FF /* StackBounds.cpp */,
 				A8A4730F151A825B004123FF /* StackBounds.h */,
+				FEDACD3B1630F83F00C69634 /* StackStats.cpp */,
+				FEDACD3C1630F83F00C69634 /* StackStats.h */,
 				A8A47310151A825B004123FF /* StaticConstructors.h */,
 				A8A47311151A825B004123FF /* StdLibExtras.h */,
 				1A6BB768162F300500DD16DB /* StreamBuffer.h */,
@@ -1150,6 +1156,7 @@
 				A8A47424151A825B004123FF /* SinglyLinkedList.h in Headers */,
 				A8A47426151A825B004123FF /* Spectrum.h in Headers */,
 				A8A47428151A825B004123FF /* StackBounds.h in Headers */,
+				FEDACD3E1630F83F00C69634 /* StackStats.h in Headers */,
 				A8A47429151A825B004123FF /* StaticConstructors.h in Headers */,
 				A8A4742A151A825B004123FF /* StdLibExtras.h in Headers */,
 				1A6BB769162F300500DD16DB /* StreamBuffer.h in Headers */,
@@ -1341,6 +1348,7 @@
 				A8A47421151A825B004123FF /* SHA1.cpp in Sources */,
 				A8A47425151A825B004123FF /* SizeLimits.cpp in Sources */,
 				A8A47427151A825B004123FF /* StackBounds.cpp in Sources */,
+				FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */,
 				A8A4743C151A825B004123FF /* StringBuilder.cpp in Sources */,
 				A8A4742B151A825B004123FF /* StringExtras.cpp in Sources */,
 				A8A47440151A825B004123FF /* StringImpl.cpp in Sources */,

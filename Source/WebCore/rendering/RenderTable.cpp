@@ -341,6 +341,7 @@ void RenderTable::distributeExtraLogicalHeight(int extraLogicalHeight)
 
 void RenderTable::layout()
 {
+    StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
     if (simplifiedLayout())

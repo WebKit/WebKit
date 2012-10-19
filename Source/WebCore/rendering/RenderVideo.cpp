@@ -225,6 +225,7 @@ void RenderVideo::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
 void RenderVideo::layout()
 {
+    StackStats::LayoutCheckPoint layoutCheckPoint;
     RenderMedia::layout();
     updatePlayer();
 }

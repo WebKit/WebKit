@@ -51,6 +51,7 @@ RenderSVGContainer::~RenderSVGContainer()
 
 void RenderSVGContainer::layout()
 {
+    StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
     // RenderSVGRoot disables layoutState for the SVG rendering tree.

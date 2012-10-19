@@ -102,6 +102,7 @@ void RenderSlider::computePreferredLogicalWidths()
 
 void RenderSlider::layout()
 {
+    StackStats::LayoutCheckPoint layoutCheckPoint;
     // FIXME: Find a way to cascade appearance.
     // http://webkit.org/b/62535
     RenderBox* thumbBox = sliderThumbElementOf(node())->renderBox();

@@ -241,6 +241,7 @@ void RenderTableCell::setCellLogicalWidth(int tableLayoutLogicalWidth)
 
 void RenderTableCell::layout()
 {
+    StackStats::LayoutCheckPoint layoutCheckPoint;
     updateFirstLetter();
     layoutBlock(cellWidthChanged());
     setCellWidthChanged(false);

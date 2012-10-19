@@ -38,7 +38,10 @@ WTFThreadData::WTFThreadData()
     , m_defaultIdentifierTable(new JSC::IdentifierTable())
     , m_currentIdentifierTable(m_defaultIdentifierTable)
     , m_stackBounds(StackBounds::currentThreadStackBounds())
+#if ENABLE(STACK_STATS)
+    , m_stackStats()
 #endif
+#endif // USE(JSC)
 {
 }
 

@@ -354,6 +354,7 @@ int RenderTableSection::calcRowLogicalHeight()
 
 void RenderTableSection::layout()
 {
+    StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
     ASSERT(!needsCellRecalc());
     ASSERT(!table()->needsSectionRecalc());

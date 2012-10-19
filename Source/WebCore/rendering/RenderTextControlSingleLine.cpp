@@ -96,6 +96,8 @@ LayoutUnit RenderTextControlSingleLine::computeHeightLimit() const
 
 void RenderTextControlSingleLine::layout()
 {
+    StackStats::LayoutCheckPoint layoutCheckPoint;
+
     // FIXME: We should remove the height-related hacks in layout() and
     // styleDidChange(). We need them because
     // - Center the inner elements vertically if the input height is taller than

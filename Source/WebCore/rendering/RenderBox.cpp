@@ -314,6 +314,7 @@ void RenderBox::updateFromStyle()
 
 void RenderBox::layout()
 {
+    StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
     RenderObject* child = firstChild();
