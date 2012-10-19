@@ -1,3 +1,11 @@
+2012-10-19  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Roll DEPS
+
+        Unreviewed DEPS roll.
+
+        * DEPS:
+
 2012-10-19  Dongwoo Joshua Im  <dw.im@samsung.com>
 
         Rename ENABLE_CSS3_TEXT_DECORATION to ENABLE_CSS3_TEXT
