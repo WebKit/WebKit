@@ -257,7 +257,15 @@ static GroupId calculateGroupId(Node* node)
     return GroupId(root);
 }
 
-class GrouperVisitor : public DOMWrapperMap<Node>::Visitor, public DOMWrapperMap<void>::Visitor {
+class ObjectVisitor : public DOMWrapperMap<void>::Visitor {
+public:
+    void visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)
+    {
+        V8DOMWrapper::domWrapperType(wrapper)->visitDOMWrapper(store, object, wrapper);
+    }
+};
+
+class NodeVisitor : public DOMWrapperMap<Node>::Visitor {
 public:
     void visitDOMWrapper(DOMDataStore* store, Node* node, v8::Persistent<v8::Object> wrapper)
     {
@@ -280,12 +288,6 @@ public:
         if (!groupId)
             return;
         m_grouper.append(GrouperItem(groupId, wrapper));
-    }
-
-    void visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)
-    {
-        WrapperTypeInfo* info = V8DOMWrapper::domWrapperType(wrapper);
-        info->visitDOMWrapper(store, object, wrapper);
     }
 
     void applyGrouping()
@@ -338,9 +340,7 @@ void V8GCController::gcPrologue()
 {
     v8::HandleScope scope;
 
-#if PLATFORM(CHROMIUM)
     TRACE_EVENT_BEGIN0("v8", "GC");
-#endif
 
 #ifndef NDEBUG
     DOMObjectVisitor domObjectVisitor;
@@ -354,14 +354,14 @@ void V8GCController::gcPrologue()
     GCPrologueVisitor<Node, SpecialCasePrologueNodeHandler> prologueNodeVisitor;
     visitActiveDOMNodes(&prologueNodeVisitor);
 
-    // Create object groups.
-    GrouperVisitor grouperVisitor;
-    visitDOMNodes(&grouperVisitor);
-    visitActiveDOMNodes(&grouperVisitor);
-    visitDOMObjects(&grouperVisitor);
-    grouperVisitor.applyGrouping();
+    NodeVisitor nodeVisitor;
+    visitDOMNodes(&nodeVisitor);
+    visitActiveDOMNodes(&nodeVisitor);
+    nodeVisitor.applyGrouping();
 
-    // Clean single element cache for string conversions.
+    ObjectVisitor objectVisitor;
+    visitDOMObjects(&objectVisitor);
+
     V8PerIsolateData* data = V8PerIsolateData::current();
     data->stringCache()->clearOnGC();
 }

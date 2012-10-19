@@ -1,3 +1,19 @@
+2012-10-18  Adam Barth  <abarth@webkit.org>
+
+        [V8] GrouperVisitor is secretly two entirely separate objects
+        https://bugs.webkit.org/show_bug.cgi?id=99810
+
+        Reviewed by Kentaro Hara.
+
+        We can separate out the two things that GrouperVisitor is trying to do
+        because they have nothing to do with each other.
+
+        * bindings/v8/V8GCController.cpp:
+        (ObjectVisitor):
+        (WebCore::ObjectVisitor::visitDOMWrapper):
+        (WebCore):
+        (WebCore::V8GCController::gcPrologue):
+
 2012-10-18  Kiran Muppala  <cmuppala@apple.com>
 
         Automatically start plugins created within a user gesture, skipping snapshotting
