@@ -211,7 +211,7 @@ private:
         return m_runningAnimations.find(animationName) != m_runningAnimations.end();
     }
 
-    void commitLayerChangesBeforeSublayers(float pageScaleFactor, const FloatPoint& positionRelativeToBase);
+    void commitLayerChangesBeforeSublayers(float pageScaleFactor, const FloatPoint& positionRelativeToBase, const FloatRect& oldVisibleRect);
     void commitLayerChangesAfterSublayers();
 
     FloatPoint computePositionRelativeToBase(float& pageScale) const;
@@ -233,7 +233,10 @@ private:
 
     void computePixelAlignment(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase,
         FloatPoint& position, FloatSize&, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset) const;
-    void computeVisibleRect(TransformState&);
+    FloatRect computeVisibleRect(TransformState&) const;
+    const FloatRect& visibleRect() const { return m_visibleRect; }
+    
+    FloatRect adjustTiledLayerVisibleRect(TiledBacking*, const FloatRect& oldVisibleRect, const FloatSize& oldSize) const;
 
     // Used to track the path down the tree for replica layers.
     struct ReplicaState {
@@ -323,6 +326,7 @@ private:
     void updateLayerAnimations();
     void updateContentsNeedsDisplay();
     void updateAcceleratesDrawing();
+    void updateVisibleRect(const FloatRect& oldVisibleRect);
     void updateContentsScale(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase);
     
     enum StructuralLayerPurpose {
@@ -372,8 +376,9 @@ private:
         AcceleratesDrawingChanged = 1 << 22,
         ContentsScaleChanged = 1 << 23,
         ContentsVisibilityChanged = 1 << 24,
+        VisibleRectChanged = 1 << 25,
 #if ENABLE(CSS_FILTERS)
-        FiltersChanged = 1 << 25,
+        FiltersChanged = 1 << 26,
 #endif
     };
     typedef unsigned LayerChangeFlags;
@@ -396,6 +401,7 @@ private:
     RefPtr<PlatformCALayer> m_visibleTileWashLayer;
 #endif
     FloatRect m_visibleRect;
+    FloatSize m_sizeAtLastVisibleRectUpdate;
     
     enum ContentsLayerPurpose {
         NoContentsLayer = 0,

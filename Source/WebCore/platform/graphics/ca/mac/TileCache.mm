@@ -220,7 +220,7 @@ void TileCache::setTilesOpaque(bool opaque)
     }
 }
 
-void TileCache::visibleRectChanged(const IntRect& visibleRect)
+void TileCache::setVisibleRect(const IntRect& visibleRect)
 {
     if (m_visibleRect == visibleRect)
         return;

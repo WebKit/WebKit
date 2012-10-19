@@ -73,7 +73,7 @@ public:
     void setTileDebugBorderWidth(float);
     void setTileDebugBorderColor(CGColorRef);
 
-    IntRect visibleRect() const { return m_visibleRect; }
+    virtual IntRect visibleRect() const OVERRIDE { return m_visibleRect; }
 
     unsigned blankPixelCount() const;
     static unsigned blankPixelCountForTiles(const WebTileLayerList&, IntRect, IntPoint);
@@ -82,7 +82,7 @@ private:
     TileCache(WebTileCacheLayer*, const IntSize& tileSize);
 
     // TiledBacking member functions.
-    virtual void visibleRectChanged(const IntRect&) OVERRIDE;
+    virtual void setVisibleRect(const IntRect&) OVERRIDE;
     virtual void setIsInWindow(bool) OVERRIDE;
     virtual void setTileCoverage(TileCoverage) OVERRIDE;
     virtual TileCoverage tileCoverage() const OVERRIDE { return m_tileCoverage; }

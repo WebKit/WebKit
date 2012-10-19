@@ -1,3 +1,55 @@
+2012-10-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Use tile caches in place of CATiledLayer
+        https://bugs.webkit.org/show_bug.cgi?id=99806
+        <rdar://problem/6474145>
+
+        Reviewed by Tim Horton.
+
+        Have GraphicsLayerCA use TileCaches instead of CATiledLayer now for
+        layers that exceed the 2000px size threshold.
+
+        * platform/graphics/TiledBacking.h:
+        (TiledBacking): Have normal getter and setter for the visible rect.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::flushCompositingStateForThisLayerOnly): We need
+        to pass in an old visibleRect to commitLayerChangesBeforeSublayers(). Just use
+        our current visible rect, which result in no tile area work.
+        (WebCore::GraphicsLayerCA::computeVisibleRect): Make this const and have it
+        return the rect, for clarity.
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges): Keep track of the old
+        visible rect, and use the change flags mechanism to ensure that we recompute
+        tile areas later.
+        When calling commitLayerChangesBeforeSublayers() on the mask layer, just pass
+        its own visible rect as the old visible rect.
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers): Pass in the
+        oldVisibleRect so that updateVisibleRect() can use this to see how the
+        visibleRect is changing.
+        (WebCore::GraphicsLayerCA::adjustTiledLayerVisibleRect): This member function
+        compares the old and new visible rects, and extends the tile coverage area
+        in directions where more content is being exposed. It takes care to avoid
+        "jitter" in the visible rect deltas causing edge tiles to get created then
+        destroyed by keeping any extra padding that already exists in a direction
+        where more content is being exposed.
+        (WebCore::GraphicsLayerCA::updateVisibleRect): Call adjustTiledLayerVisibleRect()
+        and use the result to update the TiledBacking's visibleRect.
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer): Create layers of type
+        LayerTypeTileCacheLayer instead of LayerTypeWebTiledLayer. Because tile
+        cache layers involve adding an extra layer to the hierarchy (the tile container),
+        we call updateSublayerList() when changing layer type.
+        * platform/graphics/ca/GraphicsLayerCA.h: New m_sizeAtLastVisibleRectUpdate member
+        that is used to prevent the adjustTiledLayerVisibleRect() logic being confused by
+        size changes.
+        (WebCore::GraphicsLayerCA::visibleRect):
+        * platform/graphics/ca/mac/TileCache.h: Have normal getter and setter for the visible rect.
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::setVisibleRect): Renamed to setVisibleRect().
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges): Avoid doing work
+        for pages in the page cache, for which the root layer is unattached.
+        (WebCore::RenderLayerCompositor::frameViewDidScroll): visibleRectChanged() was renamed
+        to setVisibleRect().
+
 2012-10-19  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=99768

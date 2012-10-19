@@ -283,6 +283,9 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
     if (!isFlushRoot && rootLayerAttachment() == RootLayerAttachedViaEnclosingFrame)
         return;
     
+    if (rootLayerAttachment() == RootLayerUnattached)
+        return;
+
     AnimationUpdateBlock animationUpdateBlock(m_renderView->frameView()->frame()->animation());
 
     ASSERT(!m_flushingLayers);
@@ -1097,7 +1100,7 @@ void RenderLayerCompositor::frameViewDidScroll()
     if (TiledBacking* tiledBacking = frameView->tiledBacking()) {
         IntRect visibleContentRect = frameView->visibleContentRect(false /* exclude scrollbars */);
         visibleContentRect.move(toSize(frameView->scrollOrigin()));
-        tiledBacking->visibleRectChanged(visibleContentRect);
+        tiledBacking->setVisibleRect(visibleContentRect);
     }
 
     if (!m_scrollLayer)

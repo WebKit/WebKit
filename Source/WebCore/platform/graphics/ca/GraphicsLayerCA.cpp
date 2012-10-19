@@ -38,6 +38,7 @@
 #include "ScaleTransformOperation.h"
 #include "SystemTime.h"
 #include "TextStream.h"
+#include "TiledBacking.h"
 #include "TransformState.h"
 #include "TranslateTransformOperation.h"
 #include <QuartzCore/CATransform3D.h>
@@ -905,7 +906,7 @@ void GraphicsLayerCA::flushCompositingStateForThisLayerOnly()
 {
     float pageScaleFactor;
     FloatPoint offset = computePositionRelativeToBase(pageScaleFactor);
-    commitLayerChangesBeforeSublayers(pageScaleFactor, offset);
+    commitLayerChangesBeforeSublayers(pageScaleFactor, offset, m_visibleRect);
     commitLayerChangesAfterSublayers();
 }
 
@@ -914,7 +915,7 @@ TiledBacking* GraphicsLayerCA::tiledBacking()
     return m_layer->tiledBacking();
 }
 
-void GraphicsLayerCA::computeVisibleRect(TransformState& state)
+FloatRect GraphicsLayerCA::computeVisibleRect(TransformState& state) const
 {
     bool preserve3D = preserves3D() || (parent() ? parent()->preserves3D() : false);
     TransformState::TransformAccumulation accumulation = preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform;
@@ -954,13 +955,19 @@ void GraphicsLayerCA::computeVisibleRect(TransformState& state)
         state.setQuad(clipRectForSelf);
     }
 
-    m_visibleRect = clipRectForSelf;
+    return clipRectForSelf;
 }
 
 void GraphicsLayerCA::recursiveCommitChanges(const TransformState& state, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool affectedByPageScale)
 {
     TransformState localState = state;
-    computeVisibleRect(localState);
+    
+    FloatRect visibleRect = computeVisibleRect(localState);
+    FloatRect oldVisibleRect = m_visibleRect;
+    if (visibleRect != m_visibleRect) {
+        m_uncommittedChanges |= VisibleRectChanged;
+        m_visibleRect = visibleRect;
+    }
 
 #ifdef VISIBLE_TILE_WASH
     // Use having a transform as a key to making the tile wash layer. If every layer gets a wash,
@@ -995,10 +1002,12 @@ void GraphicsLayerCA::recursiveCommitChanges(const TransformState& state, float 
     if (affectedByPageScale)
         baseRelativePosition += m_position;
     
-    commitLayerChangesBeforeSublayers(pageScaleFactor, baseRelativePosition);
+    commitLayerChangesBeforeSublayers(pageScaleFactor, baseRelativePosition, oldVisibleRect);
 
-    if (m_maskLayer)
-        static_cast<GraphicsLayerCA*>(m_maskLayer)->commitLayerChangesBeforeSublayers(pageScaleFactor, baseRelativePosition);
+    if (m_maskLayer) {
+        GraphicsLayerCA* maskLayerCA = static_cast<GraphicsLayerCA*>(m_maskLayer);
+        maskLayerCA->commitLayerChangesBeforeSublayers(pageScaleFactor, baseRelativePosition, maskLayerCA->visibleRect());
+    }
 
     const Vector<GraphicsLayer*>& childLayers = children();
     size_t numChildren = childLayers.size();
@@ -1055,7 +1064,7 @@ float GraphicsLayerCA::platformCALayerDeviceScaleFactor()
     return deviceScaleFactor();
 }
 
-void GraphicsLayerCA::commitLayerChangesBeforeSublayers(float pageScaleFactor, const FloatPoint& positionRelativeToBase)
+void GraphicsLayerCA::commitLayerChangesBeforeSublayers(float pageScaleFactor, const FloatPoint& positionRelativeToBase, const FloatRect& oldVisibleRect)
 {
     if (!m_uncommittedChanges)
         return;
@@ -1121,6 +1130,9 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(float pageScaleFactor, c
     // so make sure to update the contents scale before updating the dirty rects.
     if (m_uncommittedChanges & ContentsScaleChanged)
         updateContentsScale(pageScaleFactor, positionRelativeToBase);
+
+    if (m_uncommittedChanges & VisibleRectChanged)
+        updateVisibleRect(oldVisibleRect);
 
     if (m_uncommittedChanges & DirtyRectsChanged)
         repaintLayerDirtyRects();
@@ -1535,7 +1547,78 @@ void GraphicsLayerCA::updateAcceleratesDrawing()
 {
     m_layer->setAcceleratesDrawing(m_acceleratesDrawing);
 }
+
+FloatRect GraphicsLayerCA::adjustTiledLayerVisibleRect(TiledBacking* tiledBacking, const FloatRect& oldVisibleRect, const FloatSize& oldSize) const
+{
+    // If the old visible rect is empty, we have no information about how the visible area is changing
+    // (maybe the layer was just created), so don't attempt to expand. Also don't attempt to expand
+    // if the size changed.
+    if (oldVisibleRect.isEmpty() || m_size != oldSize)
+        return m_visibleRect;
+
+    const float paddingMultiplier = 2;
+
+    float leftEdgeDelta = paddingMultiplier * (m_visibleRect.x() - oldVisibleRect.x());
+    float rightEdgeDelta = paddingMultiplier * (m_visibleRect.maxX() - oldVisibleRect.maxX());
+
+    float topEdgeDelta = paddingMultiplier * (m_visibleRect.y() - oldVisibleRect.y());
+    float bottomEdgeDelta = paddingMultiplier * (m_visibleRect.maxY() - oldVisibleRect.maxY());
     
+    FloatRect existingTileBackingRect = tiledBacking->visibleRect();
+    FloatRect expandedRect = m_visibleRect;
+
+    // More exposed on left side.
+    if (leftEdgeDelta < 0) {
+        float newLeft = expandedRect.x() + leftEdgeDelta;
+        // Pad to the left, but don't reduce padding that's already in the backing store (since we're still exposing to the left).
+        if (newLeft < existingTileBackingRect.x())
+            expandedRect.shiftXEdgeTo(newLeft);
+        else
+            expandedRect.shiftXEdgeTo(existingTileBackingRect.x());
+    }
+
+    // More exposed on right.
+    if (rightEdgeDelta > 0) {
+        float newRight = expandedRect.maxX() + rightEdgeDelta;
+        // Pad to the right, but don't reduce padding that's already in the backing store (since we're still exposing to the right).
+        if (newRight > existingTileBackingRect.maxX())
+            expandedRect.setWidth(newRight - expandedRect.x());
+        else
+            expandedRect.setWidth(existingTileBackingRect.maxX() - expandedRect.x());
+    }
+
+    // More exposed at top.
+    if (topEdgeDelta < 0) {
+        float newTop = expandedRect.y() + topEdgeDelta;
+        if (newTop < existingTileBackingRect.y())
+            expandedRect.shiftYEdgeTo(newTop);
+        else
+            expandedRect.shiftYEdgeTo(existingTileBackingRect.y());
+    }
+
+    // More exposed on bottom.
+    if (bottomEdgeDelta > 0) {
+        float newBottom = expandedRect.maxY() + bottomEdgeDelta;
+        if (newBottom > existingTileBackingRect.maxY())
+            expandedRect.setHeight(newBottom - expandedRect.y());
+        else
+            expandedRect.setHeight(existingTileBackingRect.maxY() - expandedRect.y());
+    }
+    
+    return expandedRect;
+}
+
+void GraphicsLayerCA::updateVisibleRect(const FloatRect& oldVisibleRect)
+{
+    if (m_layer->layerType() != PlatformCALayer::LayerTypeTileCacheLayer)
+        return;
+
+    FloatRect tileArea = adjustTiledLayerVisibleRect(tiledBacking(), oldVisibleRect, m_sizeAtLastVisibleRectUpdate);
+    tiledBacking()->setVisibleRect(enclosingIntRect(tileArea));
+
+    m_sizeAtLastVisibleRectUpdate = m_size;
+}
+
 void GraphicsLayerCA::updateLayerBackgroundColor()
 {
     if (m_isPageTileCacheLayer) {
@@ -2501,7 +2584,7 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer, float pageScale
     ASSERT(useTiledLayer != m_usingTiledLayer);
     RefPtr<PlatformCALayer> oldLayer = m_layer;
     
-    m_layer = PlatformCALayer::create(useTiledLayer ? PlatformCALayer::LayerTypeWebTiledLayer : PlatformCALayer::LayerTypeWebLayer, this);
+    m_layer = PlatformCALayer::create(useTiledLayer ? PlatformCALayer::LayerTypeTileCacheLayer : PlatformCALayer::LayerTypeWebLayer, this);
     m_usingTiledLayer = useTiledLayer;
     
     m_layer->adoptSublayers(oldLayer.get());
@@ -2520,6 +2603,7 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer, float pageScale
     updateGeometry(pageScaleFactor, positionRelativeToBase);
     updateTransform();
     updateChildrenTransform();
+    updateSublayerList();
     updateMasksToBounds();
 #if ENABLE(CSS_FILTERS)
     updateFilters();

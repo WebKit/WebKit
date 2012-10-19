@@ -34,7 +34,9 @@ class TiledBacking {
 public:
     virtual ~TiledBacking() { }
 
-    virtual void visibleRectChanged(const IntRect&) = 0;
+    virtual void setVisibleRect(const IntRect&) = 0;
+    virtual IntRect visibleRect() const = 0;
+
     virtual void setIsInWindow(bool) = 0;
 
     enum {
