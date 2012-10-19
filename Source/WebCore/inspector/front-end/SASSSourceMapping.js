@@ -77,13 +77,13 @@ WebInspector.SASSSourceMapping.prototype = {
             if (!content)
                 return;
             var lines = content.split(/\r?\n/);
-            var debugInfoRegex = /@media\s\-sass\-debug\-info{filename{font-family:([^}]+)}line{font-family:\\[0]+([^}]*)}}/i;
+            var debugInfoRegex = /@media\s\-sass\-debug\-info{filename{font-family:([^}]+)}line{font-family:\\0000(\d\d)([^}]*)}}/i;
             var lineNumbersRegex = /\/\*\s+line\s+([0-9]+),\s+([^*\/]+)/;
             for (var lineNumber = 0; lineNumber < lines.length; ++lineNumber) {
                 var match = debugInfoRegex.exec(lines[lineNumber]);
                 if (match) {
                     var url = match[1].replace(/\\(.)/g, "$1");
-                    var line = parseInt(decodeURI(match[2].replace(/(..)/g, "%$1")), 10);
+                    var line = parseInt(decodeURI("%" + match[2]) + match[3], 10);
                     this._bindUISourceCode(url, line, resource.url, lineNumber);
                     continue;
                 }
