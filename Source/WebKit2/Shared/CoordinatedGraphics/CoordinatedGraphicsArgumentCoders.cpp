@@ -63,7 +63,9 @@
 #endif
 
 using namespace WebCore;
+#if ENABLE(CSS_SHADERS)
 using namespace WebKit;
+#endif
 
 namespace CoreIPC {
 
