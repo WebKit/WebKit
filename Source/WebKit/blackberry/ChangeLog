@@ -1,3 +1,24 @@
+2012-10-19  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Don't attempt to auto scroll on input for Fixed Position elements.
+        https://bugs.webkit.org/show_bug.cgi?id=99833
+
+        Reviewed by Antonio Gomes.
+
+        PR 195024.
+
+        Don't attempt to scroll fixed position elements.
+
+        Reviewed Internally by Arvid Nilsson.
+
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::isFixedPositionOrHasFixedPositionAncestor):
+        (DOMSupport):
+        * WebKitSupport/DOMSupport.h:
+        (WebCore):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::ensureFocusTextElementVisible):
+
 2012-10-18  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Page viewport aspect ratio not kept on navigating back

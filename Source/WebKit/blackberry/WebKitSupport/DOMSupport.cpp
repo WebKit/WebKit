@@ -563,6 +563,20 @@ bool isEmptyRangeOrAllSpaces(VisiblePosition startPosition, VisiblePosition endP
     return false;
 }
 
+bool isFixedPositionOrHasFixedPositionAncestor(RenderObject* renderer)
+{
+    RenderObject* currentRenderer = renderer;
+    while (currentRenderer) {
+
+        if (currentRenderer->isOutOfFlowPositioned() && currentRenderer->style()->position() == FixedPosition)
+            return true;
+
+        currentRenderer = currentRenderer->parent();
+    }
+
+    return false;
+}
+
 } // DOMSupport
 } // WebKit
 } // BlackBerry

@@ -1036,6 +1036,10 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
     if (!(Platform::Settings::instance()->allowedScrollAdjustmentForInputFields() & scrollType))
         return;
 
+    // Fixed position elements cannot be scrolled into view.
+    if (DOMSupport::isFixedPositionOrHasFixedPositionAncestor(m_currentFocusElement->renderer()))
+        return;
+
     Frame* elementFrame = m_currentFocusElement->document()->frame();
     if (!elementFrame)
         return;

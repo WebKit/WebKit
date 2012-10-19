@@ -38,6 +38,7 @@ class Node;
 class Position;
 class QualifiedName;
 class Range;
+class RenderObject;
 class VisiblePosition;
 class VisibleSelection;
 }
@@ -95,6 +96,8 @@ WebCore::Frame* incrementFrame(WebCore::Frame* curr, bool forward, bool wrapFlag
 
 PassRefPtr<WebCore::Range> trimWhitespaceFromRange(WebCore::VisiblePosition startPosition, WebCore::VisiblePosition endPosition);
 bool isEmptyRangeOrAllSpaces(WebCore::VisiblePosition, WebCore::VisiblePosition);
+
+bool isFixedPositionOrHasFixedPositionAncestor(WebCore::RenderObject*);
 
 } // DOMSupport
 } // WebKit
