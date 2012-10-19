@@ -3002,7 +3002,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
             if (putToBase->m_isDynamic) {
                 addToGraph(Phantom, get(base));
-                addToGraph(ForceOSRExit);
+                addToGraph(PutById, OpInfo(identifier), get(base), get(value));
                 NEXT_OPCODE(op_put_to_base);
             }
 

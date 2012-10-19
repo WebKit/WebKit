@@ -1,5 +1,13 @@
 2012-10-18  Oliver Hunt  <oliver@apple.com>
 
+        Unbreak jsc tests.  Last minute "clever"-ness is clearly just not
+        a good plan.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
+2012-10-18  Oliver Hunt  <oliver@apple.com>
+
         Bytecode should not have responsibility for determining how to perform non-local resolves
         https://bugs.webkit.org/show_bug.cgi?id=99349
 
