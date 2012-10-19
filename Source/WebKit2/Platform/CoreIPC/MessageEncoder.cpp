@@ -27,16 +27,19 @@
 #include "MessageEncoder.h"
 
 #include "ArgumentCoders.h"
+#include "StringReference.h"
 
 namespace CoreIPC {
 
-PassOwnPtr<MessageEncoder> MessageEncoder::create(const CString& messageReceiverName, const CString& messageName, uint64_t destinationID)
+PassOwnPtr<MessageEncoder> MessageEncoder::create(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID)
 {
     return adoptPtr(new MessageEncoder(messageReceiverName, messageName, destinationID));
 }
 
-MessageEncoder::MessageEncoder(const CString& messageReceiverName, const CString& messageName, uint64_t destinationID)
+MessageEncoder::MessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID)
 {
+    ASSERT(!messageReceiverName.isEmpty());
+
     encode(messageReceiverName);
     encode(messageName);
     encode(destinationID);

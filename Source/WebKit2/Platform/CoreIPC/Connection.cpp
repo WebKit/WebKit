@@ -283,7 +283,7 @@ void Connection::markCurrentlyDispatchedMessageAsInvalid()
     m_didReceiveInvalidMessage = true;
 }
 
-PassOwnPtr<MessageEncoder> Connection::createSyncMessageEncoder(const CString& messageReceiverName, const CString& messageName, uint64_t destinationID, uint64_t& syncRequestID)
+PassOwnPtr<MessageEncoder> Connection::createSyncMessageEncoder(const StringReference messageReceiverName, const StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID)
 {
     OwnPtr<MessageEncoder> encoder = MessageEncoder::create(messageReceiverName, messageName, destinationID);
 
@@ -626,7 +626,7 @@ void Connection::dispatchSyncMessage(MessageID messageID, MessageDecoder& decode
         return;
     }
 
-    OwnPtr<MessageEncoder> replyEncoder = MessageEncoder::create("", "", syncRequestID);
+    OwnPtr<MessageEncoder> replyEncoder = MessageEncoder::create("IPC", "", syncRequestID);
 
     // Hand off both the decoder and encoder to the client.
     m_client->didReceiveSyncMessage(this, messageID, decoder, replyEncoder);

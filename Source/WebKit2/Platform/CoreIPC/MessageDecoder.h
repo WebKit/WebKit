@@ -27,6 +27,7 @@
 #define MessageDecoder_h
 
 #include "ArgumentDecoder.h"
+#include "StringReference.h"
 
 namespace CoreIPC {
 
@@ -38,8 +39,14 @@ public:
     static PassOwnPtr<MessageDecoder> create(const DataReference& buffer, Deque<Attachment>&);
     virtual ~MessageDecoder();
 
+    StringReference messageReceiverName() const { return m_messageReceiverName; }
+    StringReference messageName() const { return m_messageName; }
+
 private:
     MessageDecoder(const DataReference& buffer, Deque<Attachment>&);
+
+    StringReference m_messageReceiverName;
+    StringReference m_messageName;
 };
 
 } // namespace CoreIPC

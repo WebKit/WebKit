@@ -157,6 +157,8 @@
 		1A64256812DE42EC00CAAE2C /* BackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A64256612DE42EC00CAAE2C /* BackingStore.h */; };
 		1A64256912DE42EC00CAAE2C /* BackingStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A64256712DE42EC00CAAE2C /* BackingStore.cpp */; };
 		1A64292D12DE5F9800CAAE2C /* BackingStoreMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A64292C12DE5F9800CAAE2C /* BackingStoreMac.mm */; };
+		1A6BB76E1630EBB600DD16DB /* StringReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6BB76C1630EBB600DD16DB /* StringReference.cpp */; };
+		1A6BB76F1630EBB600DD16DB /* StringReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6BB76D1630EBB600DD16DB /* StringReference.h */; };
 		1A6F9F9011E13EFC00DB1371 /* CommandLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */; };
 		1A6F9FB711E1408500DB1371 /* CommandLineMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */; };
 		1A6FA01E11E1526300DB1371 /* WebProcessMainMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FA01D11E1526300DB1371 /* WebProcessMainMac.mm */; };
@@ -1290,6 +1292,8 @@
 		1A64256612DE42EC00CAAE2C /* BackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackingStore.h; sourceTree = "<group>"; };
 		1A64256712DE42EC00CAAE2C /* BackingStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackingStore.cpp; sourceTree = "<group>"; };
 		1A64292C12DE5F9800CAAE2C /* BackingStoreMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BackingStoreMac.mm; sourceTree = "<group>"; };
+		1A6BB76C1630EBB600DD16DB /* StringReference.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringReference.cpp; sourceTree = "<group>"; };
+		1A6BB76D1630EBB600DD16DB /* StringReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringReference.h; sourceTree = "<group>"; };
 		1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandLine.h; sourceTree = "<group>"; };
 		1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandLineMac.cpp; sourceTree = "<group>"; };
 		1A6FA01D11E1526300DB1371 /* WebProcessMainMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessMainMac.mm; sourceTree = "<group>"; };
@@ -2803,6 +2807,8 @@
 				1A3EED0C161A535300AEB4F5 /* MessageReceiverMap.cpp */,
 				1A3EED0D161A535300AEB4F5 /* MessageReceiverMap.h */,
 				1A119A94127B796200A9ECB1 /* MessageSender.h */,
+				1A6BB76C1630EBB600DD16DB /* StringReference.cpp */,
+				1A6BB76D1630EBB600DD16DB /* StringReference.h */,
 			);
 			path = CoreIPC;
 			sourceTree = "<group>";
@@ -4698,6 +4704,7 @@
 				1A2328FF162C866A00D82F7A /* MessageEncoder.h in Headers */,
 				1A232903162C867300D82F7A /* MessageDecoder.h in Headers */,
 				5136183E163126DA00A99DDE /* ConnectionStack.h in Headers */,
+				1A6BB76F1630EBB600DD16DB /* StringReference.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5644,6 +5651,7 @@
 				1A2328FE162C866A00D82F7A /* MessageEncoder.cpp in Sources */,
 				1A232902162C867300D82F7A /* MessageDecoder.cpp in Sources */,
 				5136183D163126DA00A99DDE /* ConnectionStack.cpp in Sources */,
+				1A6BB76E1630EBB600DD16DB /* StringReference.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
