@@ -1088,7 +1088,9 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
             m_focusZoomScale = m_webPage->currentScale();
             m_focusZoomLocation = selectionFocusRect.location();
         }
-        m_webPage->zoomAboutPoint(s_minimumTextHeightInPixels / fontHeight, m_focusZoomLocation);
+        double zoomScaleRequired = static_cast<double>(s_minimumTextHeightInPixels) / fontHeight;
+        m_webPage->zoomAboutPoint(zoomScaleRequired, m_focusZoomLocation);
+        InputLog(LogLevelInfo, "InputHandler::ensureFocusTextElementVisible zooming in to %f at point %d, %d", zoomScaleRequired, m_focusZoomLocation.x(), m_focusZoomLocation.y());
     } else {
         m_focusZoomScale = 0.0;
         m_focusZoomLocation = WebCore::IntPoint();
@@ -1161,6 +1163,7 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
             scrollLocation = scrollLocation.shrunkTo(maximumScrollPosition);
             mainFrameView->setScrollPosition(scrollLocation);
             mainFrameView->setConstrainsScrollingToContentEdge(true);
+            InputLog(LogLevelInfo, "InputHandler::ensureFocusTextElementVisible scrolling to point %d, %d", scrollLocation.x(), scrollLocation.y());
         }
     }
     m_webPage->resumeBackingStore();
