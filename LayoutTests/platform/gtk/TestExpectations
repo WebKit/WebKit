@@ -1365,13 +1365,6 @@ webkit.org/b/98612 [ Release ] fast/dom/gc-dom-tree-lifetime.html [ Failure ]
 webkit.org/b/98613 css3/masking/clip-path-reference-userSpaceOnUse.html [ ImageOnlyFailure ]
 webkit.org/b/98613 css3/masking/clip-path-reference.html [ ImageOnlyFailure ]
 
-webkit.org/b/98729 fast/css/import-style-update.html [ Failure ]
-webkit.org/b/98729 fast/html/link-rel-stylesheet.html [ Failure ]
-webkit.org/b/98729 fast/loader/data-url-encoding-html.html [ Failure ]
-webkit.org/b/98729 fast/loader/data-url-encoding-svg.html [ Failure ]
-webkit.org/b/98729 fast/spatial-navigation/snav-iframe-nested.html [ Failure ]
-webkit.org/b/98729 svg/custom/object-data-href.html [ ImageOnlyFailure ]
-
 # New inspector/profiler/memory-instrumentation-canvas.html fails on JSC platforms
 webkit.org/b/99001 inspector/profiler/memory-instrumentation-canvas.html
 

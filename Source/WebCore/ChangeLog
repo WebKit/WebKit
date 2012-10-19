@@ -1,3 +1,18 @@
+2012-10-09  Martin Robinson  <mrobinson@igalia.com>
+
+        REGRESSION (r130699): 5 various fast/ tests started failing
+        https://bugs.webkit.org/show_bug.cgi?id=98729
+
+        Reviewed by Xan Lopez.
+
+        Do not try to remove the URL fragment for data URLs. This will likely
+        just corrupt the URL.
+
+        No new tests. This unskips some previously failing tests.
+
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::urlStringForSoup): Do nothing for data URLs.
+
 2012-10-19  Simon Fraser  <simon.fraser@apple.com>
 
         Use tile caches in place of CATiledLayer

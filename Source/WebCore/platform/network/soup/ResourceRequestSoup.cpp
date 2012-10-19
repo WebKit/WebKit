@@ -126,6 +126,16 @@ unsigned initializeMaximumHTTPConnectionCountPerHost()
 
 String ResourceRequest::urlStringForSoup() const
 {
+    // WebKit does not support fragment identifiers in data URLs, but soup does.
+    // Before passing the URL to soup, we should make sure to urlencode any '#'
+    // characters, so that soup does not interpret them as fragment identifiers.
+    // See http://wkbug.com/68089
+    if (m_url.protocolIsData()) {
+        String urlString = m_url.string();
+        urlString.replace("#", "%23");
+        return urlString;
+    }
+
     KURL url = m_url;
     url.removeFragmentIdentifier();
     return url.string();
