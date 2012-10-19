@@ -1,3 +1,12 @@
+2012-10-19  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Unreviewed fix after r131868.
+
+        On JSVALUE64 platforms, JSValue constants can be Imm64 instead of ImmPtr for JIT compilers.
+
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+
 2012-10-18  Filip Pizlo  <fpizlo@apple.com>
 
         Baseline array profiling should be less accurate, and DFG OSR exit should update array profiles on CheckArray and CheckStructure failure

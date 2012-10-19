@@ -146,7 +146,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                 // since we know how to restore it.
                 m_jit.load64(AssemblyHelpers::Address(exit.m_jsValueSource.asAddress()), GPRInfo::tagTypeNumberRegister);
                 m_jit.store64(GPRInfo::tagTypeNumberRegister, bucket);
-                m_jit.move(AssemblyHelpers::TrustedImmPtr(bitwise_cast<void*>(TagTypeNumber)), GPRInfo::tagTypeNumberRegister);
+                m_jit.move(AssemblyHelpers::TrustedImm64(TagTypeNumber), GPRInfo::tagTypeNumberRegister);
             } else
                 m_jit.store64(exit.m_jsValueSource.gpr(), bucket);
         }
