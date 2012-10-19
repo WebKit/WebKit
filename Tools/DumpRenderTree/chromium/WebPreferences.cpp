@@ -116,6 +116,7 @@ void WebPreferences::reset()
     deferred2dCanvasEnabled = false;
     acceleratedPaintingEnabled = false;
     forceCompositingMode = false;
+    deferredImageDecodingEnabled = false;
     mediaPlaybackRequiresUserGesture = false;
     mockScrollbarsEnabled = false;
     cssCustomFilterEnabled = false;
@@ -224,6 +225,7 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setAccelerated2dCanvasEnabled(accelerated2dCanvasEnabled);
     settings->setDeferred2dCanvasEnabled(deferred2dCanvasEnabled);
     settings->setAcceleratedPaintingEnabled(acceleratedPaintingEnabled);
+    settings->setDeferredImageDecodingEnabled(deferredImageDecodingEnabled);
     settings->setMediaPlaybackRequiresUserGesture(mediaPlaybackRequiresUserGesture);
     settings->setMockScrollbarsEnabled(mockScrollbarsEnabled);
     settings->setApplyDefaultDeviceScaleFactorInCompositor(forceCompositingMode);

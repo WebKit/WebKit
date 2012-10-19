@@ -1,3 +1,41 @@
+2012-09-08  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Implement deferred image decoding
+        https://bugs.webkit.org/show_bug.cgi?id=94240
+
+        Reviewed by Stephen White.
+
+        Adding new unit tests for deferred image decoding.
+        These tests are defined in DeferredImageDecoderTest.cpp. They verify
+        image decoding happens only when SkPicture is rasterized for both
+        scaled and non-scaled cases.
+
+        Tests: DeferredImageDecoderTest.drawIntoSkPicture
+               DeferredImageDecoderTest.drawScaledIntoSkPicture
+
+        * WebKit.gypi:
+        * public/WebSettings.h:
+        * src/WebKit.cpp:
+        (WebKit::shutdown):
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setDeferredImageDecodingEnabled):
+        (WebKit):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+        * tests/DeferredImageDecoderTest.cpp: Added.
+        (WebCore):
+        (DeferredImageDecoderTest):
+        (WebCore::DeferredImageDecoderTest::SetUp):
+        (WebCore::DeferredImageDecoderTest::TearDown):
+        (WebCore::TEST_F):
+        * tests/MockImageDecoder.h: Added.
+        (WebCore):
+        (MockImageDecoder):
+        (WebCore::MockImageDecoder::MockImageDecoder):
+        (WebCore::MockImageDecoder::filenameExtension):
+        (WebCore::MockImageDecoder::frameBufferAtIndex):
+        (WebCore::MockImageDecoder::frameBufferRequestCount):
+
 2012-10-19  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Roll DEPS

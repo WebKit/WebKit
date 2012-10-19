@@ -4036,5 +4036,29 @@ webkit.org/b/98257 platform/chromium/virtual/gpu/fast/canvas/webgl/oes-element-i
 
 # Resource Timing is not enable yet, skip it.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing [ Skip ]
-
 webkit.org/b/99802 [ MountainLion ] fast/forms/text-control-intrinsic-widths.html [ Failure ]
+
+# These tests are failing already and because of virtual test suite for deferred
+# image decoding they need to be suppressed again.
+webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/animated-gif-restored-from-bfcache.html [ Failure ]
+webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/exif-orientation-css.html [ Failure ]
+webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/exif-orientation.html [ Failure ]
+webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/pdf-as-image-landscape.html [ Failure ]
+webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/pdf-as-image.html [ Failure ]
+webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/support-broken-image-delegate.html [ Failure ]
+webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/color-jpeg-with-color-profile.html [ ImageOnlyFailure ]
+webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/gif-large-checkerboard.html [ ImageOnlyFailure ]
+webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/gif-loop-count.html [ ImageOnlyFailure ]
+webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/paint-subrect-grid.html [ ImageOnlyFailure ]
+webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/pixel-crack-image-background-webkit-transform-scale.html [ ImageOnlyFailure ]
+webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/embed-image.html [ Failure ]
+webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/favicon-as-image.html [ Failure ]
+webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/imagemap-circle-focus-ring.html [ Failure ]
+webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html [ Failure ]
+webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html [ Failure ]
+webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color.html [ Failure ]
+webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/imagemap-polygon-focus-ring.html [ Failure ]
+webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/object-image.html [ Failure ]
+webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/repaint-subrect-grid.html [ Timeout ]
+webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/paletted-png-with-color-profile.html [ Missing ]
+webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-zoom.html [ Failure ]

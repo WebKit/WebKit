@@ -1,3 +1,204 @@
+2012-09-08  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Implement deferred image decoding
+        https://bugs.webkit.org/show_bug.cgi?id=94240
+
+        Reviewed by Stephen White.
+
+        Objectives:
+
+        To record image decoding operations during painting and to defer
+        decoding operations until rasterization.
+
+        Rationale:
+
+        This is a key feature that enables impl-side painting which requires
+        fast recording of drawing operations. The existing decode-on-draw
+        restricts that recording has to block on expensive decoding operations.
+        This change allows recording of image decoding operations during paint
+        time.
+
+        Design:
+
+        Image decoding happens when a BitmapImage is drawn into a
+        GraphicsContext. When per-tile painting is enabled GraphicsContext
+        is backed by SkCanvas in recording mode. This SkCanvas records drawing
+        and image decoding operations to minimize recording time.
+
+        An image decoding operation is recorded as a SkPixelRef object
+        implemented by LazyDecodingPixelRef. This object references raw encoded
+        data, regions to be decoded and scaling information.
+
+        When used in conjunction with per-tile painting this feature defers
+        image decoding until the SkCanvas referencing the image is rasterized.
+
+        Both recording and rasterization happen on the main thread.
+
+        Performance Impact:
+
+        This feature is enabled by WebKit::setDeferredImageDecodingEnabled()
+        and does not have an impact when disabled.
+
+        This feature is disabled by default.
+
+        Upcoming Changes:
+
+        1. Implement a full-featured image cache in ImageDecodingStore.
+        2. Allow rasterization and decoding on impl thread.
+
+        Classes Involved:
+
+        BitmapImage
+
+        BitmapImage is the entry point for deferred image decoding. When
+        drawing a BitmapImage into a GraphicsContext it makes a request to
+        create a NativeImageSkia. We substitute the content in NativeImageSkia
+        such that it is lazily decoded.
+
+        DeferredImageDecoder
+
+        This is the platform implementation of a image decoder for Chromium.
+        This is a bridge layer that either delegates calls to the actual
+        ImageDecoder or create a lazily-decoded SkBitmap and delegates calls
+        to ImageDecodingStore.
+
+        ImageDecodingStore
+
+        This object manages all encoded images. It keeps track of encoded
+        data and the corresponding ImageDecoder for doing actual decoding. It
+        is also responsible for generating lazily decoded SkBitmaps. This
+        SkBitmap contains a LazyDecodingPixelRef object which references to an
+        image entry in ImageDecodingStore.
+
+        ScaledImageFragment
+
+        A container for a scaled image fragment. In addition to bitmap pixels
+        it contains information about the ID of the image, scale and clipping.
+
+        ImageFrameGenerator
+
+        This object is responsible for generating decoded pixels. It is also
+        a container for encoded image data and corresponding image decoder.
+
+        LazyDecodingPixelRef
+
+        This object is embedded in a SkBitmap to enable lazy decoding. When
+        SkBitmap needs to access pixels LazyDecodingPixelRef is locked. It
+        contains information to locate an image and scaling info, these
+        information is submitted to ImageDecodingStore to access actual pixels.
+
+        Layout tests. There are about 80 tests in this virtual test suite
+        running this feature in this directory:
+
+        platform/chromium/virtual/deferred/fast/images
+
+        Unit tests. Added DeferredImageDecoderTest to verify deferred
+        image decoding behavior.
+
+        * WebCore.gypi:
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::setData):
+        * platform/graphics/ImageSource.h:
+        (WebCore):
+        (ImageSource):
+        * platform/graphics/chromium/DeferredImageDecoder.cpp: Added.
+        (WebCore):
+        (WebCore::DeferredImageDecoder::DeferredImageDecoder):
+        (WebCore::DeferredImageDecoder::~DeferredImageDecoder):
+        (WebCore::DeferredImageDecoder::create):
+        (WebCore::DeferredImageDecoder::createForTesting):
+        (WebCore::DeferredImageDecoder::filenameExtension):
+        (WebCore::DeferredImageDecoder::frameBufferAtIndex):
+        (WebCore::DeferredImageDecoder::setData):
+        (WebCore::DeferredImageDecoder::isSizeAvailable):
+        (WebCore::DeferredImageDecoder::size):
+        (WebCore::DeferredImageDecoder::frameSizeAtIndex):
+        (WebCore::DeferredImageDecoder::frameCount):
+        (WebCore::DeferredImageDecoder::repetitionCount):
+        (WebCore::DeferredImageDecoder::clearFrameBufferCache):
+        (WebCore::DeferredImageDecoder::frameHasAlphaAtIndex):
+        (WebCore::DeferredImageDecoder::frameBytesAtIndex):
+        * platform/graphics/chromium/DeferredImageDecoder.h: Added.
+        (WebCore):
+        (DeferredImageDecoder):
+        * platform/graphics/chromium/ImageDecodingStore.cpp: Added.
+        (WebCore::ImageDecodingStore::ImageDecodingStore):
+        (WebCore):
+        (WebCore::ImageDecodingStore::~ImageDecodingStore):
+        (WebCore::ImageDecodingStore::instanceOnMainThread):
+        (WebCore::ImageDecodingStore::initializeOnMainThread):
+        (WebCore::ImageDecodingStore::shutdown):
+        (WebCore::ImageDecodingStore::isLazyDecoded):
+        (WebCore::ImageDecodingStore::createLazyDecodedSkBitmap):
+        (WebCore::ImageDecodingStore::resizeLazyDecodedSkBitmap):
+        (WebCore::ImageDecodingStore::setData):
+        (WebCore::ImageDecodingStore::lockPixels):
+        (WebCore::ImageDecodingStore::unlockPixels):
+        (WebCore::ImageDecodingStore::frameGeneratorBeingDestroyed):
+        (WebCore::ImageDecodingStore::calledOnValidThread):
+        (WebCore::ImageDecodingStore::lookupFrameCache):
+        (WebCore::ImageDecodingStore::deleteFrameCache):
+        * platform/graphics/chromium/ImageDecodingStore.h: Added.
+        (WebCore):
+        (ImageDecodingStore):
+        (WebCore::ImageDecodingStore::create):
+        * platform/graphics/chromium/ScaledImageFragment.cpp: Added.
+        (WebCore):
+        (WebCore::ScaledImageFragment::~ScaledImageFragment):
+        (WebCore::ScaledImageFragment::ScaledImageFragment):
+        (WebCore::ScaledImageFragment::isEqual):
+        * platform/graphics/chromium/ScaledImageFragment.h: Added.
+        (WebCore):
+        (ScaledImageFragment):
+        (WebCore::ScaledImageFragment::create):
+        (WebCore::ScaledImageFragment::bitmap):
+        (WebCore::ScaledImageFragment::isComplete):
+        * platform/graphics/chromium/ImageFrameGenerator.cpp: Added.
+        (WebCore):
+        (WebCore::ImageFrameGenerator::ImageFrameGenerator):
+        (WebCore::ImageFrameGenerator::~ImageFrameGenerator):
+        (WebCore::ImageFrameGenerator::decoder):
+        (WebCore::ImageFrameGenerator::setData):
+        * platform/graphics/chromium/ImageFrameGenerator.h: Added.
+        (WebCore):
+        (ImageFrameGenerator):
+        (WebCore::ImageFrameGenerator::create):
+        (WebCore::ImageFrameGenerator::size):
+        (WebCore::ImageFrameGenerator::imageId):
+        * platform/graphics/chromium/LazyDecodingPixelRef.cpp: Added.
+        (WebCore):
+        (WebCore::LazyDecodingPixelRef::LazyDecodingPixelRef):
+        (WebCore::LazyDecodingPixelRef::~LazyDecodingPixelRef):
+        (WebCore::LazyDecodingPixelRef::isScaled):
+        (WebCore::LazyDecodingPixelRef::isClipped):
+        (WebCore::LazyDecodingPixelRef::onLockPixels):
+        (WebCore::LazyDecodingPixelRef::onUnlockPixels):
+        (WebCore::LazyDecodingPixelRef::onLockPixelsAreWritable):
+        * platform/graphics/chromium/LazyDecodingPixelRef.h: Added.
+        (WebCore):
+        (LazyDecodingPixelRef):
+        (WebCore::LazyDecodingPixelRef::frameGenerator):
+        * platform/graphics/skia/NativeImageSkia.cpp:
+        (WebCore::NativeImageSkia::resizedBitmap):
+        * platform/image-decoders/ImageDecoder.h:
+        (ImageFrame):
+        (WebCore::ImageFrame::setSkBitmap):
+        (WebCore::ImageFrame::getSkBitmap):
+
+2012-10-18  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL] GraphicsContext3D::m_renderStyle is not initialized
+        https://bugs.webkit.org/show_bug.cgi?id=99721
+
+        Reviewed by Antonio Gomes.
+
+        Initialize GraphicsContext3D::m_renderStyle.
+
+        No new tests, no new functionality.
+
+        * platform/graphics/efl/GraphicsContext3DEfl.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
 2012-10-19  Dongwoo Joshua Im  <dw.im@samsung.com>
 
         Rename ENABLE_CSS3_TEXT_DECORATION to ENABLE_CSS3_TEXT
