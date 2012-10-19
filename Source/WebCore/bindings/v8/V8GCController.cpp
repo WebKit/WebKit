@@ -68,16 +68,6 @@ namespace WebCore {
 
 #ifndef NDEBUG
 
-class DOMObjectVisitor : public DOMWrapperMap<void>::Visitor {
-public:
-    void visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)
-    {
-        WrapperTypeInfo* type = V8DOMWrapper::domWrapperType(wrapper);
-        UNUSED_PARAM(type);
-        UNUSED_PARAM(object);
-    }
-};
-
 class EnsureWeakDOMNodeVisitor : public DOMWrapperMap<Node>::Visitor {
 public:
     void visitDOMWrapper(DOMDataStore* store, Node* object, v8::Persistent<v8::Object> wrapper)
@@ -335,14 +325,9 @@ private:
 // Create object groups for DOM tree nodes.
 void V8GCController::gcPrologue()
 {
-    v8::HandleScope scope;
-
     TRACE_EVENT_BEGIN0("v8", "GC");
 
-#ifndef NDEBUG
-    DOMObjectVisitor domObjectVisitor;
-    visitDOMObjects(&domObjectVisitor);
-#endif
+    v8::HandleScope scope;
 
     // Run through all objects with possible pending activity making their
     // wrappers non weak if there is pending activity.
@@ -442,17 +427,11 @@ void V8GCController::gcEpilogue()
 #endif
 
 #ifndef NDEBUG
-    // Check all survivals are weak.
-    DOMObjectVisitor domObjectVisitor;
-    visitDOMObjects(&domObjectVisitor);
-
     EnsureWeakDOMNodeVisitor weakDOMNodeVisitor;
     visitDOMNodes(&weakDOMNodeVisitor);
 #endif
 
-#if PLATFORM(CHROMIUM)
     TRACE_EVENT_END0("v8", "GC");
-#endif
 }
 
 void V8GCController::checkMemoryUsage()
