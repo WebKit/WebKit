@@ -1,3 +1,9 @@
+2012-10-19  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed gardening. Fixing a lint issue.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-19  Chris Fleizach  <cfleizach@apple.com>
 
         AX: aria-hidden=false does not work as expected

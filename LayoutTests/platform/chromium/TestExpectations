@@ -3021,7 +3021,6 @@ webkit.org/b/66953 [ Debug ] animations/suspend-resume-animation.html [ Failure 
 webkit.org/b/66953 [ Mac Debug ] animations/animation-direction-reverse.html [ Failure Pass ]
 
 webkit.org/b/72761 accessibility/anonymous-render-block-in-continuation-causes-crash.html [ Pass Timeout ]
-webkit.org/b/77110 [ Win Debug ] accessibility/loading-iframe-sends-notification.html [ Failure Pass ]
 
 webkit.org/b/73514 [ Win ] platform/chromium/compositing/lost-compositor-context-permanently.html [ Pass Timeout ]
 
