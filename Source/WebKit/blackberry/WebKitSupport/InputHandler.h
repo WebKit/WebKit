@@ -212,7 +212,7 @@ private:
     bool m_changingFocus;
 
     FocusElementType m_currentFocusElementType;
-    int m_currentFocusElementTextEditMask;
+    int64_t m_currentFocusElementTextEditMask;
 
     int m_composingTextStart;
     int m_composingTextEnd;

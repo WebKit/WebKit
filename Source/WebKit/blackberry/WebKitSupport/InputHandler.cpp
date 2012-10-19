@@ -188,7 +188,7 @@ static BlackBerryInputType convertInputType(const HTMLInputElement* inputElement
     return InputTypeText;
 }
 
-static int inputStyle(BlackBerryInputType type, const Element* element)
+static int64_t inputStyle(BlackBerryInputType type, const Element* element)
 {
     switch (type) {
     case InputTypeEmail:

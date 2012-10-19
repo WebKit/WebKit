@@ -1,5 +1,24 @@
 2012-10-19  Mike Fenton  <mifenton@rim.com>
 
+        [BlackBerry] Convert input style to int64_t
+        https://bugs.webkit.org/show_bug.cgi?id=99848
+
+        Reviewed by Yong Li.
+
+        PR 227381.
+
+        Switch input style mask to int64_t to match the the updated definition.
+
+        Reviewed Internally by Nima Ghanavatian.
+
+        * Api/WebPageClient.h:
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::inputStyle):
+        * WebKitSupport/InputHandler.h:
+        (InputHandler):
+
+2012-10-19  Mike Fenton  <mifenton@rim.com>
+
         [BlackBerry] Move all keyboard type calculations into InputHandler.
         https://bugs.webkit.org/show_bug.cgi?id=99847
 
