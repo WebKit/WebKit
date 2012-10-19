@@ -20,8 +20,8 @@ Invalid objects:
 PASS input.value = "2010-01-01T00:00Z"; input.valueAsDate = document; input.value is ""
 PASS input.value = "2010-01-01T00:00Z"; input.valueAsDate = null; input.value is ""
 Step attribute value and string representation:
-PASS input.step = "1"; setValueAsDateAndGetValue(2010, 0, 21, 0, 0, 0, 0) is "2010-01-21T00:00:00Z"
-PASS input.step = "0.001"; setValueAsDateAndGetValue(2010, 0, 21, 0, 0, 0, 0) is "2010-01-21T00:00:00.000Z"
+PASS input.step = "1"; setValueAsDateAndGetValue(2010, 0, 21, 0, 0, 0, 0) is "2010-01-21T00:00Z"
+PASS input.step = "0.001"; setValueAsDateAndGetValue(2010, 0, 21, 0, 0, 0, 0) is "2010-01-21T00:00Z"
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -51,7 +51,7 @@ shouldBeValid('275760-09-13T00:00:00.000Z');
 shouldBeValid('0001-01-01T00:00:00.000Z');
 shouldBeValid('0001-01-01T00:00:00.000+00:00');
 shouldBeValid('0001-01-01T01:30+01:30');
-shouldBeValid('0001-01-01T00:00+01:00');
+shouldBeValid('0001-01-01T00:00-01:00');
 
 // Invalid values
 shouldBeInvalid(' 2009-09-07T16:49Z ');
@@ -72,6 +72,7 @@ shouldBeInvalid('2009-09-07T16:49-23:60');
 shouldBeInvalid('0000-12-31T23:59:59Z');
 shouldBeInvalid('2147483647-12-31T23:59-00:01');
 shouldBeInvalid('2147483648-01-01T00:00:00Z');
+shouldBeInvalid('0001-01-01T00:00+01:00');
 
 // Disabled
 shouldBeInvalid('invalid', true);

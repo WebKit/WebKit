@@ -53,10 +53,9 @@ shouldThrow('input.valueAsNumber = Number.NEGATIVE_INFINITY', '"Error: NOT_SUPPO
 shouldThrow('input.valueAsNumber = Date.UTC(275760, 8, 13, 0, 0, 0, 1)', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
 
 debug('Step attribute value and string representation:');
-// If the step attribute value is 1 second and the second part is 0, we should show the second part.
-shouldBe('input.step = "1"; setValueAsNumberAndGetValue(2010, 0, 21, 0, 0, 0, 0)', '"2010-01-21T00:00:00Z"');
-// If the step attribute value is 0.001 second and the millisecond part is 0, we should show the millisecond part.
-shouldBe('input.step = "0.001"; setValueAsNumberAndGetValue(2010, 0, 21, 0, 0, 0, 0)', '"2010-01-21T00:00:00.000Z"');
+// String representation should not depend on the step attribute.
+shouldBe('input.step = "1"; setValueAsNumberAndGetValue(2010, 0, 21, 0, 0, 0, 0)', '"2010-01-21T00:00Z"');
+shouldBe('input.step = "0.001"; setValueAsNumberAndGetValue(2010, 0, 21, 0, 0, 0, 0)', '"2010-01-21T00:00Z"');
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

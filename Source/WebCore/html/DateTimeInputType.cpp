@@ -160,6 +160,14 @@ void DateTimeInputType::setupLayoutParameters(DateTimeEditElement::LayoutParamet
 }
 #endif
 
+String DateTimeInputType::sanitizeValue(const String& proposedValue) const
+{
+    DateComponents date;
+    if (!parseToDateComponents(proposedValue, &date))
+        return String();
+    return date.toString();
+}
+
 } // namespace WebCore
 
 #endif

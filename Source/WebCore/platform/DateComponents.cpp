@@ -247,8 +247,8 @@ bool DateComponents::addMinute(int minute)
     if (minute > 59) {
         carry = minute / 60;
         minute = minute % 60;
-    } else if (m_minute < 0) {
-        carry = (59 - m_minute) / 60;
+    } else if (minute < 0) {
+        carry = (59 - minute) / 60;
         minute += carry * 60;
         carry = -carry;
         ASSERT(minute >= 0 && minute <= 59);

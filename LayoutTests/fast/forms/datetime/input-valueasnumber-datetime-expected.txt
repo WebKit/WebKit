@@ -26,8 +26,8 @@ PASS input.valueAsNumber = Number.POSITIVE_INFINITY threw exception Error: NOT_S
 PASS input.valueAsNumber = Number.NEGATIVE_INFINITY threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 PASS input.valueAsNumber = Date.UTC(275760, 8, 13, 0, 0, 0, 1) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 Step attribute value and string representation:
-PASS input.step = "1"; setValueAsNumberAndGetValue(2010, 0, 21, 0, 0, 0, 0) is "2010-01-21T00:00:00Z"
-PASS input.step = "0.001"; setValueAsNumberAndGetValue(2010, 0, 21, 0, 0, 0, 0) is "2010-01-21T00:00:00.000Z"
+PASS input.step = "1"; setValueAsNumberAndGetValue(2010, 0, 21, 0, 0, 0, 0) is "2010-01-21T00:00Z"
+PASS input.step = "0.001"; setValueAsNumberAndGetValue(2010, 0, 21, 0, 0, 0, 0) is "2010-01-21T00:00Z"
 PASS successfullyParsed is true
 
 TEST COMPLETE

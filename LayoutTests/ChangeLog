@@ -1,3 +1,30 @@
+2012-10-18  Kunihiko Sakamoto  <ksakamoto@chromium.org>
+
+        Implement value sanitization algorithm for type=datetime
+        https://bugs.webkit.org/show_bug.cgi?id=76893
+
+        Reviewed by Kent Tamura.
+
+        Added a test for the value sanitization algorithm for type=datetime.
+        Also updated affected tests.
+
+        * fast/forms/datetime/ValidityState-typeMismatch-datetime-expected.txt:
+        * fast/forms/datetime/ValidityState-typeMismatch-datetime.html:
+        '0001-01-01T00:00+01:00' is an invalid value because that is before
+        0001-01-01 00:00 UTC. '0001-01-01T00:00-01:00' is a valid value.
+        * fast/forms/datetime/datetime-value-sanitization-expected.txt: Added.
+        * fast/forms/datetime/datetime-value-sanitization.html: Added.
+        * fast/forms/datetime/input-valueasdate-datetime-expected.txt:
+        * fast/forms/datetime/input-valueasdate-datetime.html:
+        Setting valueAsDate should run the algorithm to convert a Date object to a
+        string, that returns valid normalized forced-UTC global date and time string.
+        See http://www.whatwg.org/specs/web-apps/current-work/multipage/common-input-element-attributes.html#dom-input-valueasdate
+        * fast/forms/datetime/input-valueasnumber-datetime-expected.txt:
+        * fast/forms/datetime/input-valueasnumber-datetime.html:
+        Setting valueAsNumber should run the algorithm to convert a number to a
+        string, that returns valid normalized forced-UTC global date and time string.
+        See http://www.whatwg.org/specs/web-apps/current-work/multipage/common-input-element-attributes.html#dom-input-valueasnumber
+
 2012-10-18  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations and baselines for chromium-mac-mountainlion

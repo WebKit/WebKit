@@ -1,3 +1,25 @@
+2012-10-18  Kunihiko Sakamoto  <ksakamoto@chromium.org>
+
+        Implement value sanitization algorithm for type=datetime
+        https://bugs.webkit.org/show_bug.cgi?id=76893
+
+        Reviewed by Kent Tamura.
+
+        Implement the value sanitization algorithm for type=datetime that adjusts
+        the value to a valid normalized forced-UTC global date and time string.
+        See http://www.whatwg.org/specs/web-apps/current-work/multipage/common-microsyntaxes.html#valid-normalized-forced-utc-global-date-and-time-string
+
+        Test: fast/forms/datetime/datetime-value-sanitization.html
+
+        * html/DateTimeInputType.cpp:
+        (WebCore::DateTimeInputType::sanitizeValue): Implemented.
+        (WebCore):
+        * html/DateTimeInputType.h:
+        (DateTimeInputType): Add sanitizeValue.
+        * platform/DateComponents.cpp:
+        (WebCore::DateComponents::addMinute): Fixed a bug that caused wrong adjustment
+        of timezone offset (e.g. 2012-10-17T01:00+01:00 -> 2012-10-17T01:-60Z).
+
 2012-10-18  Byungwoo Lee  <bw80.lee@samsung.com>
 
         Fix build warning.
