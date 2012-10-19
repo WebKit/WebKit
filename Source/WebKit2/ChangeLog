@@ -1,3 +1,37 @@
+2012-10-18  Brady Eidson  <beidson@apple.com>
+
+        Move ConnectionStack out of WebProcessConnection into its own files.
+        https://bugs.webkit.org/show_bug.cgi?id=99813
+
+        Reviewed by Andreas Kling.
+
+        ConnectionStack will need to be used in a few upcoming areas, so it needs to be in its own header and implementation files.
+
+        Project file stuff:
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        Move it from here:
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::setGlobalException):
+        (WebKit::WebProcessConnection::didReceiveMessage):
+        (WebKit::WebProcessConnection::didReceiveSyncMessage):
+
+        Into here:
+        * Shared/ConnectionStack.cpp: Added.
+        (WebKit):
+        (WebKit::ConnectionStack::shared):
+        * Shared/ConnectionStack.h: Added.
+        (CoreIPC):
+        (WebKit):
+        (ConnectionStack):
+        (WebKit::ConnectionStack::current):
+        (CurrentConnectionPusher):
+        (WebKit::ConnectionStack::CurrentConnectionPusher::CurrentConnectionPusher):
+        (WebKit::ConnectionStack::CurrentConnectionPusher::~CurrentConnectionPusher):
+
 2012-10-18  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL][WK2] Move ewk_{init,shutdown}() to the main() function of EFL API test.

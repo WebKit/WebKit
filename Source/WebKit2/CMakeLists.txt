@@ -136,6 +136,7 @@ SET(WebKit2_SOURCES
     Shared/APIClientTraits.cpp
     Shared/APIObject.cpp
     Shared/ChildProcess.cpp
+    Shared/ConnectionStack.cpp
     Shared/DictionaryPopupInfo.cpp
     Shared/EditorState.cpp
     Shared/FontInfo.cpp

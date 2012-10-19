@@ -73,6 +73,7 @@ HEADERS += \
     Shared/ShareableSurface.h \
     Shared/CacheModel.h \
     Shared/ChildProcess.h \
+    Shared/ConnectionStack.h \
     Shared/DictionaryPopupInfo.h \
     Shared/EditorState.h \
     Shared/FontInfo.h \
@@ -441,6 +442,7 @@ SOURCES += \
     Shared/Plugins/PluginModuleInfo.cpp \
     Shared/Plugins/PluginProcessCreationParameters.cpp \
     Shared/ChildProcess.cpp \
+    Shared/ConnectionStack.cpp \
     Shared/DictionaryPopupInfo.cpp \
     Shared/EditorState.cpp \
     Shared/FontInfo.cpp \

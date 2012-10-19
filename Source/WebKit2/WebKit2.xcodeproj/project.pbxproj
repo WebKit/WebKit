@@ -406,6 +406,8 @@
 		512F58FA12A88A5400629530 /* WKCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F58F212A88A5400629530 /* WKCredential.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		512F58FB12A88A5400629530 /* WKProtectionSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512F58F312A88A5400629530 /* WKProtectionSpace.cpp */; };
 		512F58FC12A88A5400629530 /* WKProtectionSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F58F412A88A5400629530 /* WKProtectionSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5136183D163126DA00A99DDE /* ConnectionStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5136183B163126DA00A99DDE /* ConnectionStack.cpp */; };
+		5136183E163126DA00A99DDE /* ConnectionStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 5136183C163126DA00A99DDE /* ConnectionStack.h */; };
 		5153569C1291B1D2000749DC /* WebPageContextMenuClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5153569A1291B1D2000749DC /* WebPageContextMenuClient.cpp */; };
 		5153569D1291B1D2000749DC /* WebPageContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 5153569B1291B1D2000749DC /* WebPageContextMenuClient.h */; };
 		51578B831209ECEF00A37C4A /* WebData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51578B821209ECEF00A37C4A /* WebData.h */; };
@@ -1569,6 +1571,8 @@
 		512F58F212A88A5400629530 /* WKCredential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKCredential.h; sourceTree = "<group>"; };
 		512F58F312A88A5400629530 /* WKProtectionSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKProtectionSpace.cpp; sourceTree = "<group>"; };
 		512F58F412A88A5400629530 /* WKProtectionSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProtectionSpace.h; sourceTree = "<group>"; };
+		5136183B163126DA00A99DDE /* ConnectionStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConnectionStack.cpp; sourceTree = "<group>"; };
+		5136183C163126DA00A99DDE /* ConnectionStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectionStack.h; sourceTree = "<group>"; };
 		5153569A1291B1D2000749DC /* WebPageContextMenuClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageContextMenuClient.cpp; sourceTree = "<group>"; };
 		5153569B1291B1D2000749DC /* WebPageContextMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageContextMenuClient.h; sourceTree = "<group>"; };
 		51578B821209ECEF00A37C4A /* WebData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebData.h; sourceTree = "<group>"; };
@@ -2611,6 +2615,8 @@
 				1A2D956E12848564001EB962 /* ChildProcess.cpp */,
 				1A2D956D12848564001EB962 /* ChildProcess.h */,
 				1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */,
+				5136183B163126DA00A99DDE /* ConnectionStack.cpp */,
+				5136183C163126DA00A99DDE /* ConnectionStack.h */,
 				BCE81D96131AE02000241910 /* DictionaryPopupInfo.cpp */,
 				BCE81D97131AE02100241910 /* DictionaryPopupInfo.h */,
 				C517388012DF8F4F00EE3F47 /* DragControllerAction.h */,
@@ -4691,6 +4697,7 @@
 				29501724162A4504004A9D71 /* WKWebProcessPlugInBrowserContextControllerPrivate.h in Headers */,
 				1A2328FF162C866A00D82F7A /* MessageEncoder.h in Headers */,
 				1A232903162C867300D82F7A /* MessageDecoder.h in Headers */,
+				5136183E163126DA00A99DDE /* ConnectionStack.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5636,6 +5643,7 @@
 				E1EDFE151628DD7A0039ECDA /* SharedWorkerProcessProxy.cpp in Sources */,
 				1A2328FE162C866A00D82F7A /* MessageEncoder.cpp in Sources */,
 				1A232902162C867300D82F7A /* MessageDecoder.cpp in Sources */,
+				5136183D163126DA00A99DDE /* ConnectionStack.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
