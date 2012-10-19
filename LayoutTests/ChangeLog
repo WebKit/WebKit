@@ -1,3 +1,39 @@
+2012-10-19  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed gardening, rebaselining deferred image tests for r131928.
+
+        * platform/chromium-mac-lion/platform/chromium/virtual/deferred: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/deferred/fast: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/deferred/fast/images: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/deferred/fast/images/animated-gif-with-offsets-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/deferred/fast/images/favicon-as-image-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/deferred/fast/images/image-map-anchor-children-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/deferred/fast/images/imagemap-case-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/deferred/fast/images/imagemap-circle-focus-ring-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-zero-outline-width-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/deferred/fast/images/imagemap-polygon-focus-ring-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/deferred/fast/images/jpeg-with-color-profile-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/deferred/fast/images/png-with-color-profile-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/deferred: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/deferred/fast: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/deferred/fast/images: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/deferred/fast/images/animated-gif-with-offsets-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/deferred/fast/images/image-map-anchor-children-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/deferred/fast/images/imagemap-case-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/deferred/fast/images/imagemap-circle-focus-ring-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-zero-outline-width-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/deferred/fast/images/imagemap-polygon-focus-ring-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/deferred/fast/images/jpeg-with-color-profile-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/deferred/fast/images/png-with-color-profile-expected.png: Added.
+
 2012-10-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, rolling out r131915.
