@@ -135,6 +135,7 @@ TestShell::TestShell()
     WebRuntimeFeatures::enableEncryptedMedia(true);
     WebRuntimeFeatures::enableMediaStream(true);
     WebRuntimeFeatures::enablePeerConnection(true);
+    WebRuntimeFeatures::enableDeprecatedPeerConnection(true);
     WebRuntimeFeatures::enableWebAudio(true);
     WebRuntimeFeatures::enableVideoTrack(true);
     WebRuntimeFeatures::enableGamepad(true);

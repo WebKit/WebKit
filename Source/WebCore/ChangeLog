@@ -1,3 +1,19 @@
+2012-10-19  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Update the RuntimeEnabledFeatures flags
+        https://bugs.webkit.org/show_bug.cgi?id=99714
+
+        Reviewed by Adam Barth.
+
+        Updating the RuntimeEnabledFeatures flags to match reality:
+        isMediaStreamEnabled and isPeerConnectionEnabled should be true by default and
+        isDeprecatedPeerConnectionEnabled false.
+
+        Patch covered by existing tests.
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore):
+
 2012-10-19  Adam Barth  <abarth@webkit.org>
 
         [V8] Simplify GCPrologueVisitor
