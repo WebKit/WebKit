@@ -1,3 +1,15 @@
+2012-10-19  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION (r131686): Crash in NSToolTipManager mouseEnteredToolTip
+        <rdar://problem/12527528> and https://bugs.webkit.org/show_bug.cgi?id=99792
+
+        Patch by Darin Adler, reviewed by Brady Eidson.
+
+        We should explicitly remove tooltips when the view moves to a new window.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView viewDidMoveToWindow]):
+
 2012-10-19  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WTR] renderToOffscreenBuffer should not be set if the real render loop is active
