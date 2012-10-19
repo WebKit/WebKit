@@ -3,6 +3,14 @@
         Add shortMonthLabels and shortStandAloneMonthLabels to Localizer
         https://bugs.webkit.org/show_bug.cgi?id=99787
 
+        * tests/LocaleMacTest.cpp:
+        (TEST_F): Disable tests depends on OS X versions.
+
+2012-10-18  Kent Tamura  <tkent@chromium.org>
+
+        Add shortMonthLabels and shortStandAloneMonthLabels to Localizer
+        https://bugs.webkit.org/show_bug.cgi?id=99787
+
         Reviewed by Kentaro Hara.
 
         * tests/LocaleMacTest.cpp:
