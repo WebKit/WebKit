@@ -45,8 +45,6 @@ public:
 
     virtual void activateWindow() { }
     virtual void closeWindow() { }
-    virtual void requestDockWindow() { }
-    virtual void requestUndockWindow() { }
     virtual void requestSetDockSide(const WebString& side) { }
     virtual void moveWindowBy(const WebFloatPoint&) { }
     virtual void openInNewTab(const WebString& side) { }

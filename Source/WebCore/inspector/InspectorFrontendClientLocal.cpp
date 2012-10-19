@@ -148,18 +148,15 @@ void InspectorFrontendClientLocal::frontendLoaded()
     m_evaluateOnLoad.clear();
 }
 
-void InspectorFrontendClientLocal::requestAttachWindow()
+void InspectorFrontendClientLocal::requestSetDockSide(DockSide dockSide)
 {
-    if (!canAttachWindow())
-        return;
-    attachWindow();
-    setAttachedWindow(true);
-}
-
-void InspectorFrontendClientLocal::requestDetachWindow()
-{
-    detachWindow();
-    setAttachedWindow(false);
+    if (dockSide == UNDOCKED) {
+        detachWindow();
+        setAttachedWindow(false);
+    } else if (canAttachWindow()) {
+        attachWindow();
+        setAttachedWindow(true);
+    }
 }
 
 bool InspectorFrontendClientLocal::canAttachWindow()
@@ -214,7 +211,7 @@ void InspectorFrontendClientLocal::moveWindowBy(float x, float y)
 
 void InspectorFrontendClientLocal::setAttachedWindow(bool attached)
 {
-    evaluateOnLoad(String::format("[\"setAttachedWindow\", %s]", attached ? "true" : "false"));
+    evaluateOnLoad(String::format("[\"setDockSide\", %s]", attached ? "bottom" : "undocked"));
 }
 
 void InspectorFrontendClientLocal::restoreAttachedWindowHeight()

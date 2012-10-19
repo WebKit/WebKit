@@ -63,9 +63,7 @@ public:
 
     virtual void moveWindowBy(float x, float y);
 
-    virtual void requestAttachWindow();
-    virtual void requestDetachWindow();
-    virtual void requestSetDockSide(const String&) { }
+    virtual void requestSetDockSide(DockSide);
     virtual void changeAttachedWindowHeight(unsigned);
     virtual void openInNewTab(const String& url);
     virtual bool canSave() { return false; }

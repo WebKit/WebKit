@@ -40,8 +40,7 @@ WebInspector.DockController = function()
     if (Preferences.showDockToRight)
         this._dockToggleButton.makeLongClickEnabled(this._createDockOptions.bind(this));
 
-    this._dockSide = WebInspector.queryParamsObject["dockSide"];
-    this._innerSetDocked(WebInspector.queryParamsObject["docked"] === "true");
+    this.setDockSide(WebInspector.queryParamsObject["dockSide"]);
 }
 
 WebInspector.DockController.State = {
@@ -60,33 +59,18 @@ WebInspector.DockController.prototype = {
     },
 
     /**
-     * @param {boolean} docked
+     * @param {string} dockSide
      */
-    setDocked: function(docked)
+    setDockSide: function(dockSide)
     {
-        var isDocked = this._state !== WebInspector.DockController.State.Undocked;
-        if (docked !== isDocked)
-            this._innerSetDocked(docked);
-    },
+        if (this._dockSide)
+            WebInspector.settings.lastDockState.set(this._dockSide);
 
-    /**
-     * @param {boolean} docked
-     */
-    _innerSetDocked: function(docked)
-    {
-        if (this._state)
-            WebInspector.settings.lastDockState.set(this._state);
-
-        if (!docked) {
-            this._state = WebInspector.DockController.State.Undocked;
+        this._dockSide = dockSide;
+        if (dockSide === WebInspector.DockController.State.Undocked) 
             WebInspector.userMetrics.WindowDocked.record();
-        } else if (this._dockSide === "right") {
-            this._state = WebInspector.DockController.State.DockedToRight;
+        else
             WebInspector.userMetrics.WindowUndocked.record();
-        } else {
-            this._state = WebInspector.DockController.State.DockedToBottom;
-            WebInspector.userMetrics.WindowUndocked.record();
-        }
         this._updateUI();
     },
 
@@ -102,7 +86,7 @@ WebInspector.DockController.prototype = {
     _updateUI: function()
     {
         var body = document.body;
-        switch (this._state) {
+        switch (this._dockSide) {
         case WebInspector.DockController.State.DockedToBottom:
             body.removeStyleClass("undocked");
             body.removeStyleClass("dock-to-right");
@@ -129,17 +113,17 @@ WebInspector.DockController.prototype = {
         this._dockToggleButton.disabled = false;
 
         // Choose different last state based on the current one if missing or if is the same.
-        var states = [WebInspector.DockController.State.DockedToBottom, WebInspector.DockController.State.Undocked, WebInspector.DockController.State.DockedToRight];
-        states.remove(this._state);
+        var sides = [WebInspector.DockController.State.DockedToBottom, WebInspector.DockController.State.Undocked, WebInspector.DockController.State.DockedToRight];
+        sides.remove(this._dockSide);
         var lastState = WebInspector.settings.lastDockState.get();
 
-        states.remove(lastState);
-        if (states.length === 2) { // last state was not from the list of potential values
-            lastState = states[0];
-            states.remove(lastState);
+        sides.remove(lastState);
+        if (sides.length === 2) { // last state was not from the list of potential values
+            lastState = sides[0];
+            sides.remove(lastState);
         }
         this._decorateButtonForTargetState(this._dockToggleButton, lastState);
-        this._decorateButtonForTargetState(this._dockToggleButtonOption, states[0]);
+        this._decorateButtonForTargetState(this._dockToggleButtonOption, sides[0]);
     },
 
     /**
@@ -174,22 +158,13 @@ WebInspector.DockController.prototype = {
      */
     _toggleDockState: function(e)
     {
-        var state = e.target.state;
-        switch (state) {
-        case "undock":
-            InspectorFrontendHost.requestDetachWindow();
-            WebInspector.userMetrics.WindowUndocked.record();
-            break;
-        case "right":
-        case "bottom":
-            this._dockSide = state;
-            InspectorFrontendHost.requestSetDockSide(this._dockSide);
-            if (this._state === WebInspector.DockController.State.Undocked)
-                InspectorFrontendHost.requestAttachWindow();
-            else
-                this._innerSetDocked(true);
-            break;
+        var action;
+        switch (e.target.state) {
+        case "bottom": action = "bottom"; break;
+        case "right": action = "right"; break;
+        case "undock": action = "undocked"; break;
         }
+        InspectorFrontendHost.requestSetDockSide(action);
     },
 
     /**

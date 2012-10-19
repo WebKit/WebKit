@@ -69,18 +69,9 @@ WebInspector.InspectorFrontendHostStub.prototype = {
         this._windowVisible = false;
     },
 
-    requestAttachWindow: function()
+    requestSetDockSide: function(side)
     {
-        InspectorFrontendAPI.setAttachedWindow(true);
-    },
-
-    requestDetachWindow: function()
-    {
-        InspectorFrontendAPI.setAttachedWindow(false);
-    },
-
-    requestSetDockSide: function()
-    {
+        InspectorFrontendAPI.setDockSide(side);
     },
 
     setAttachedWindowHeight: function(height)
