@@ -1,3 +1,16 @@
+2012-10-19  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed gardening.
+
+        * platform/chromium-linux/svg/zoom/page/zoom-hixie-mixed-009-expected.txt: Removed.
+        * platform/chromium-mac-lion/svg/zoom/page/zoom-hixie-mixed-009-expected.png: Added.
+        * platform/chromium-mac-lion/svg/zoom/page/zoom-hixie-mixed-009-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-hixie-mixed-009-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-hixie-mixed-009-expected.txt: Removed.
+        * platform/chromium-win-xp/svg/zoom/page/zoom-hixie-mixed-009-expected.png: Removed.
+        * platform/chromium-win/svg/zoom/page/zoom-hixie-mixed-009-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-hixie-mixed-009-expected.txt:
+
 2012-10-19  Joshua Bell  <jsbell@chromium.org>
 
         [V8] IndexedDB: Crash when lazy-indexing Date keys
