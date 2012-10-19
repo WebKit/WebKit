@@ -3,6 +3,127 @@
         [Qt] Pixel tests need rebaseline
         https://bugs.webkit.org/show_bug.cgi?id=99323
 
+        Unreviewed pixel rebase.
+
+        Part 4.
+        Rebaseline pixel results in first part of fast (backgrounds, block, borders,
+        box-shadow, css). All of these tests producing correct results, only the expectations
+        were outdated. Most of the differenes was not detectable by looking at the expected
+        and actual results, only ImageDiff sees the difference.
+
+        * platform/qt/fast/backgrounds/background-inherit-color-bug-expected.png:
+        * platform/qt/fast/backgrounds/background-position-parsing-expected.png:
+        * platform/qt/fast/backgrounds/body-generated-image-propagated-to-root-expected.png:
+        * platform/qt/fast/backgrounds/repeat/mask-negative-offset-repeat-expected.png:
+        * platform/qt/fast/backgrounds/repeat/negative-offset-repeat-expected.png:
+        * platform/qt/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.png:
+        * platform/qt/fast/backgrounds/size/backgroundSize15-expected.png:
+        * platform/qt/fast/backgrounds/size/backgroundSize16-expected.png:
+        * platform/qt/fast/backgrounds/size/contain-and-cover-expected.png: Added.
+        * platform/qt/fast/backgrounds/size/contain-and-cover-zoomed-expected.png:
+        * platform/qt/fast/block/basic/adding-near-anonymous-block-expected.png:
+        * platform/qt/fast/block/basic/truncation-rtl-expected.png:
+        * platform/qt/fast/block/float/002-expected.png:
+        * platform/qt/fast/block/float/020-expected.png:
+        * platform/qt/fast/block/float/centered-float-avoidance-complexity-expected.png:
+        * platform/qt/fast/block/float/float-in-float-painting-expected.png:
+        * platform/qt/fast/block/float/intruding-painted-twice-expected.png:
+        * platform/qt/fast/block/float/nopaint-after-layer-destruction-expected.png:
+        * platform/qt/fast/block/float/nopaint-after-layer-destruction2-expected.png:
+        * platform/qt/fast/block/float/table-relayout-expected.png:
+        * platform/qt/fast/block/float/vertical-move-relayout-expected.png:
+        * platform/qt/fast/block/margin-collapse/055-expected.png:
+        * platform/qt/fast/block/positioning/absolute-in-inline-ltr-3-expected.png:
+        * platform/qt/fast/block/positioning/absolute-in-inline-short-ltr-expected.png:
+        * platform/qt/fast/block/positioning/absolute-in-inline-short-rtl-expected.png:
+        * platform/qt/fast/block/positioning/auto/007-expected.png:
+        * platform/qt/fast/block/positioning/auto/vertical-lr/007-expected.png:
+        * platform/qt/fast/block/positioning/auto/vertical-rl/007-expected.png:
+        * platform/qt/fast/borders/border-image-01-expected.png:
+        * platform/qt/fast/borders/border-image-border-radius-expected.png:
+        * platform/qt/fast/borders/border-image-longhand-expected.png:
+        * platform/qt/fast/borders/border-image-massive-scale-expected.png:
+        * platform/qt/fast/borders/border-image-outset-expected.png:
+        * platform/qt/fast/borders/border-image-outset-in-shorthand-expected.png:
+        * platform/qt/fast/borders/border-image-repeat-expected.png:
+        * platform/qt/fast/borders/border-image-rotate-transform-expected.png:
+        * platform/qt/fast/borders/border-image-scale-transform-expected.png:
+        * platform/qt/fast/borders/border-image-scaled-expected.png:
+        * platform/qt/fast/borders/border-image-scrambled-expected.png:
+        * platform/qt/fast/borders/border-image-side-reduction-expected.png:
+        * platform/qt/fast/borders/border-image-source-expected.png:
+        * platform/qt/fast/borders/border-mixed-alpha-expected.png:
+        * platform/qt/fast/borders/border-radius-complex-inner-expected.png:
+        * platform/qt/fast/borders/border-radius-different-width-001-expected.png:
+        * platform/qt/fast/borders/rtl-border-01-expected.png:
+        * platform/qt/fast/borders/rtl-border-02-expected.png:
+        * platform/qt/fast/borders/rtl-border-03-expected.png:
+        * platform/qt/fast/borders/rtl-border-04-expected.png:
+        * platform/qt/fast/box-shadow/spread-expected.png:
+        * platform/qt/fast/canvas/arc360-expected.png:
+        * platform/qt/fast/canvas/canvas-before-css-expected.png:
+        * platform/qt/fast/canvas/canvas-composite-expected.png:
+        * platform/qt/fast/canvas/canvas-text-alignment-expected.png:
+        * platform/qt/fast/canvas/canvas-text-baseline-expected.png:
+        * platform/qt/fast/canvas/canvasDrawingIntoSelf-expected.png:
+        * platform/qt/fast/canvas/check-stale-putImageData-expected.png: Added.
+        * platform/qt/fast/canvas/drawImage-expected.png:
+        * platform/qt/fast/canvas/drawImage-with-globalAlpha-expected.png:
+        * platform/qt/fast/canvas/fill-stroke-clip-reset-path-expected.png:
+        * platform/qt/fast/canvas/fillrect-gradient-zero-stops-expected.png:
+        * platform/qt/fast/canvas/fillrect_gradient-expected.png:
+        * platform/qt/fast/canvas/image-object-in-canvas-expected.png:
+        * platform/qt/fast/canvas/patternfill-repeat-expected.png:
+        * platform/qt/fast/canvas/quadraticCurveTo-expected.png:
+        * platform/qt/fast/canvas/shadow-offset-1-expected.png:
+        * platform/qt/fast/canvas/shadow-offset-2-expected.png:
+        * platform/qt/fast/canvas/shadow-offset-3-expected.png:
+        * platform/qt/fast/canvas/shadow-offset-4-expected.png:
+        * platform/qt/fast/canvas/shadow-offset-5-expected.png:
+        * platform/qt/fast/canvas/shadow-offset-6-expected.png:
+        * platform/qt/fast/canvas/shadow-offset-7-expected.png:
+        * platform/qt/fast/canvas/zero-size-fill-rect-expected.png:
+        * platform/qt/fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.png:
+        * platform/qt/fast/css/acid2-expected.png:
+        * platform/qt/fast/css/clip-zooming-expected.png:
+        * platform/qt/fast/css/css1_forward_compatible_parsing-expected.png:
+        * platform/qt/fast/css/css2-system-fonts-expected.png:
+        * platform/qt/fast/css/empty-pseudo-class-expected.png:
+        * platform/qt/fast/css/find-next-layer-expected.png:
+        * platform/qt/fast/css/first-child-pseudo-class-expected.png:
+        * platform/qt/fast/css/first-letter-capitalized-expected.png:
+        * platform/qt/fast/css/first-letter-detach-expected.png:
+        * platform/qt/fast/css/first-letter-hover-expected.png:
+        * platform/qt/fast/css/first-line-text-decoration-expected.png:
+        * platform/qt/fast/css/first-line-text-decoration-inherited-from-parent-expected.png:
+        * platform/qt/fast/css/first-of-type-pseudo-class-expected.png:
+        * platform/qt/fast/css/focus-ring-multiline-expected.png:
+        * platform/qt/fast/css/font-face-opentype-expected.png:
+        * platform/qt/fast/css/font-face-synthetic-bold-italic-expected.png:
+        * platform/qt/fast/css/font-face-weight-matching-expected.png:
+        * platform/qt/fast/css/font-shorthand-weight-only-expected.png:
+        * platform/qt/fast/css/hover-subselector-expected.png:
+        * platform/qt/fast/css/hsl-color-expected.png:
+        * platform/qt/fast/css/last-child-pseudo-class-expected.png:
+        * platform/qt/fast/css/last-of-type-pseudo-class-expected.png:
+        * platform/qt/fast/css/line-height-font-order-expected.png:
+        * platform/qt/fast/css/margin-top-bottom-dynamic-expected.png:
+        * platform/qt/fast/css/min-width-with-spanned-cell-expected.png: Added.
+        * platform/qt/fast/css/min-width-with-spanned-cell-fixed-expected.png: Added.
+        * platform/qt/fast/css/nth-child-dynamic-expected.png:
+        * platform/qt/fast/css/only-child-pseudo-class-expected.png:
+        * platform/qt/fast/css/only-of-type-pseudo-class-expected.png:
+        * platform/qt/fast/css/outline-auto-empty-rects-expected.png:
+        * platform/qt/fast/css/outline-auto-location-expected.png:
+        * platform/qt/fast/css/percent-top-value-with-relative-position-expected.png:
+        * platform/qt/fast/css/text-rendering-expected.png:
+        * platform/qt/fast/css/universal-hover-quirk-expected.png:
+
+2012-10-19  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Pixel tests need rebaseline
+        https://bugs.webkit.org/show_bug.cgi?id=99323
+
         Unreviewed rebaseline.
 
         Part 3.
