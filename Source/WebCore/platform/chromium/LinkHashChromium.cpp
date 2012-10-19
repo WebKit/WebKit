@@ -51,6 +51,11 @@ LinkHash visitedLinkHash(const UChar* url, unsigned length)
     return WebKit::Platform::current()->visitedLinkHash(buffer.data(), buffer.length());
 }
 
+LinkHash visitedLinkHash(const String& url)
+{
+    return (url.characters(), url.length()); 
+}
+
 LinkHash visitedLinkHash(const KURL& base, const AtomicString& attributeURL)
 {
     // Resolve the relative URL using googleurl and pass the absolute URL up to

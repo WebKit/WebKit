@@ -210,7 +210,7 @@ void PageGroup::addVisitedLink(const KURL& url)
     if (!shouldTrackVisitedLinks)
         return;
     ASSERT(!url.isEmpty());
-    addVisitedLink(visitedLinkHash(url.string().characters(), url.string().length()));
+    addVisitedLink(visitedLinkHash(url.string()));
 }
 
 void PageGroup::addVisitedLink(const UChar* characters, size_t length)

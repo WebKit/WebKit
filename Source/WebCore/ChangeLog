@@ -1,5 +1,31 @@
 2012-10-19  Michael Saboff  <msaboff@apple.com>
 
+        Add String version of visitedLinkHash() to properly handle 8-bit URL Strings.
+        https://bugs.webkit.org/show_bug.cgi?id=99735
+
+        Reviewed by Filip Pizlo.
+
+        Added String version of visitedLinkHash().  Made speculative addition of visitedLinkHash()
+        to chromium platform version of LinkHashChromium.cpp.
+        Changed calls in the form of visitedLinkHash(string.characters(), string.length()) to use the
+        new form.
+
+        No changes to functionality, so no new tests.
+
+        * WebCore.exp.in:
+        * loader/HistoryController.cpp:
+        (WebCore::addVisitedLink):
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::addVisitedLink):
+        * platform/LinkHash.cpp:
+        (WebCore::visitedLinkHashInline):
+        (WebCore::visitedLinkHash):
+        * platform/LinkHash.h:
+        * platform/chromium/LinkHashChromium.cpp:
+        (WebCore::visitedLinkHash):
+
+2012-10-19  Michael Saboff  <msaboff@apple.com>
+
         String(CFStringRef) should try to converting to an 8 bit string before converting to  16 bit string
         https://bugs.webkit.org/show_bug.cgi?id=99794
 

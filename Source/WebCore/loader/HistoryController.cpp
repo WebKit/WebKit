@@ -60,7 +60,7 @@ namespace WebCore {
 static inline void addVisitedLink(Page* page, const KURL& url)
 {
 #if USE(PLATFORM_STRATEGIES)
-    platformStrategies()->visitedLinkStrategy()->addVisitedLink(page, visitedLinkHash(url.string().characters(), url.string().length()));
+    platformStrategies()->visitedLinkStrategy()->addVisitedLink(page, visitedLinkHash(url.string()));
 #else
     page->group().addVisitedLink(url);
 #endif

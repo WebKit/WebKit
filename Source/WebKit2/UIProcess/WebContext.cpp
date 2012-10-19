@@ -749,7 +749,7 @@ void WebContext::addVisitedLink(const String& visitedURL)
     if (visitedURL.isEmpty())
         return;
 
-    LinkHash linkHash = visitedLinkHash(visitedURL.characters(), visitedURL.length());
+    LinkHash linkHash = visitedLinkHash(visitedURL);
     addVisitedLinkHash(linkHash);
 }
 
