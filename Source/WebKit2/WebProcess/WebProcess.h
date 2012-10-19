@@ -95,6 +95,10 @@ struct WebPageGroupData;
 struct WebPreferencesStore;
 struct WebProcessCreationParameters;
 
+#if ENABLE(NETWORK_PROCESS)
+class NetworkProcessConnection;
+#endif
+
 #if USE(SECURITY_FRAMEWORK)
 class SecItemResponseData;
 class SecKeychainItemResponseData;
@@ -188,6 +192,10 @@ public:
     WebSoupRequestManager& soupRequestManager() { return m_soupRequestManager; }
 #endif
 
+#if ENABLE(NETWORK_PROCESS)
+    void networkProcessConnectionClosed(NetworkProcessConnection*);
+#endif
+
 private:
     WebProcess();
 
@@ -228,7 +236,10 @@ private:
     void getSitesWithPluginData(const Vector<String>& pluginPaths, uint64_t callbackID);
     void clearPluginSiteData(const Vector<String>& pluginPaths, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID);
 #endif
-    
+
+#if ENABLE(NETWORK_PROCESS)
+    void networkProcessCrashed(CoreIPC::Connection*);
+#endif
 #if ENABLE(PLUGIN_PROCESS)
     void pluginProcessCrashed(CoreIPC::Connection*, const String& pluginPath);
 #endif
@@ -334,6 +345,11 @@ private:
     WebIconDatabaseProxy m_iconDatabaseProxy;
     
     String m_localStorageDirectory;
+
+#if ENABLE(NETWORK_PROCESS)
+    void ensureNetworkProcessConnection();
+    RefPtr<NetworkProcessConnection> m_networkProcessConnection;
+#endif
 
 #if ENABLE(PLUGIN_PROCESS)
     PluginProcessConnectionManager m_pluginProcessConnectionManager;

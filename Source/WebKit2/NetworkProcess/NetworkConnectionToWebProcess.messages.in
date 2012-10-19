@@ -22,12 +22,8 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
-messages -> NetworkProcess {
-    # Initializes the network process.
-    InitializeNetworkProcess(WebKit::NetworkProcessCreationParameters processCreationParameters)
+messages -> NetworkConnectionToWebProcess {
 
-    # Creates a connection for communication with a WebProcess
-    CreateNetworkConnectionToWebProcess()
 }
 
 #endif // ENABLE(NETWORK_PROCESS)

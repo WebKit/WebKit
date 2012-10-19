@@ -30,7 +30,11 @@
 
 #include "ArgumentCoders.h"
 #include "Attachment.h"
+#include "NetworkConnectionToWebProcess.h"
+#include "NetworkProcessProxyMessages.h"
+#include <WebCore/ResourceRequest.h>
 #include <WebCore/RunLoop.h>
+#include <wtf/text/CString.h>
 
 using namespace WebCore;
 
@@ -59,6 +63,14 @@ void NetworkProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier
     m_uiConnection->open();
 }
 
+void NetworkProcess::removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess* connection)
+{
+    size_t vectorIndex = m_webProcessConnections.find(connection);
+    ASSERT(vectorIndex != notFound);
+
+    m_webProcessConnections.remove(vectorIndex);
+}
+
 bool NetworkProcess::shouldTerminate()
 {
     return true;
@@ -71,10 +83,7 @@ void NetworkProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC:
 
 void NetworkProcess::didClose(CoreIPC::Connection*)
 {
-    // Either the connection to the UIProcess or a connection to a WebProcess has gone away.
-    // In the future we'll do appropriate cleanup and decide whether or not we want to keep
-    // the NetworkProcess open.
-    // For now we'll always close it.
+    // The UIProcess just crashed.
     RunLoop::current()->stop();
 }
 
@@ -90,6 +99,24 @@ void NetworkProcess::syncMessageSendTimedOut(CoreIPC::Connection*)
 void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
 {
     platformInitialize(parameters);
+}
+
+void NetworkProcess::createNetworkConnectionToWebProcess()
+{
+#if PLATFORM(MAC)
+    // Create the listening port.
+    mach_port_t listeningPort;
+    mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
+
+    // Create a listening connection.
+    RefPtr<NetworkConnectionToWebProcess> connection = NetworkConnectionToWebProcess::create(CoreIPC::Connection::Identifier(listeningPort));
+    m_webProcessConnections.append(connection.release());
+
+    CoreIPC::Attachment clientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
+    m_uiConnection->send(Messages::NetworkProcessProxy::DidCreateNetworkConnectionToWebProcess(clientPort), 0);
+#else
+    notImplemented();
+#endif
 }
 
 } // namespace WebKit

@@ -45,6 +45,9 @@ messages -> WebProcessProxy {
     void DidGetSitesWithPluginData(Vector<WTF::String> sites, uint64_t callbackID)
     void DidClearPluginSiteData(uint64_t callbackID)
 #endif
+#if ENABLE(NETWORK_PROCESS)
+    GetNetworkProcessConnection() -> (CoreIPC::Attachment connectionHandle) Delayed
+#endif
 #if ENABLE(SHARED_WORKER_PROCESS)
     GetSharedWorkerProcessConnection(WTF::String url, WTF::String name) -> (CoreIPC::Attachment connectionHandle) Delayed
 #endif

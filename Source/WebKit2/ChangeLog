@@ -1,3 +1,119 @@
+2012-10-19  Brady Eidson  <beidson@apple.com>
+
+        Add infrastructure for NetworkProcess management
+        https://bugs.webkit.org/show_bug.cgi?id=99817
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add support for the WebProcess itself requesting a connection to the default NetworkProcess.
+
+        Add proper handling of crashes so any of the Web/Network/UI processes crash the others take appropriate action.
+
+        Project file stuff and general messaging changes:
+        * DerivedSources.make:
+        * Platform/CoreIPC/MessageID.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC):
+        (CoreIPC::callMemberFunction): Add some new required templates.
+
+        WebContext now does much less of this stuff:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createNewWebProcess):
+        * UIProcess/WebContext.h:
+        (WebContext):
+
+        UIProcess now has a process manager to handle most of this:
+        * UIProcess/Network/NetworkProcessManager.cpp:
+        (WebKit):
+        (WebKit::NetworkProcessManager::shared):
+        (WebKit::NetworkProcessManager::NetworkProcessManager):
+        (WebKit::NetworkProcessManager::getNetworkProcessConnection):
+        (WebKit::NetworkProcessManager::ensureNetworkProcess):
+        (WebKit::NetworkProcessManager::removeNetworkProcessProxy):
+        * UIProcess/Network/NetworkProcessManager.h:
+        (WebKit):
+        (NetworkProcessManager):
+
+        Flesh out the NetworkProcessProxy to handle creating these connections between Network and Web Processes:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::create):
+        (WebKit::NetworkProcessProxy::NetworkProcessProxy):
+        (WebKit::NetworkProcessProxy::getNetworkProcessConnection):
+        (WebKit):
+        (WebKit::NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch):
+        (WebKit::NetworkProcessProxy::didReceiveMessage):
+        (WebKit::NetworkProcessProxy::didClose):
+        (WebKit::NetworkProcessProxy::didCreateNetworkConnectionToWebProcess):
+        (WebKit::NetworkProcessProxy::didFinishLaunching):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        (WebKit):
+        (NetworkProcessProxy):
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+
+        Add a class representing a connection from a NetworkProcess to a particular WebProcess:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp: Added.
+        (WebKit):
+        (WebKit::NetworkConnectionToWebProcess::create):
+        (WebKit::NetworkConnectionToWebProcess::NetworkConnectionToWebProcess):
+        (WebKit::NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess):
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+        (WebKit::NetworkConnectionToWebProcess::didReceiveSyncMessage):
+        (WebKit::NetworkConnectionToWebProcess::didClose):
+        (WebKit::NetworkConnectionToWebProcess::didReceiveInvalidMessage):
+        (WebKit::NetworkConnectionToWebProcess::didReceiveNetworkConnectionToWebProcessMessage):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        (WebKit):
+        (NetworkConnectionToWebProcess):
+        (WebKit::NetworkConnectionToWebProcess::connection):
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+
+        Add the ability for a NetworkProcess to create a connection for a different process, which is used on behalf of WebProcesses for now:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::removeNetworkConnectionToWebProcess):
+        (WebKit):
+        (WebKit::NetworkProcess::didClose):
+        (WebKit::NetworkProcess::createNetworkConnectionToWebProcess):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit):
+        (NetworkProcess):
+        * NetworkProcess/NetworkProcess.messages.in:
+
+        Forward on the message that a WebProcess wants a connection to a NetworkProcess:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit):
+        (WebKit::WebProcessProxy::getNetworkProcessConnection):
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+        * UIProcess/WebProcessProxy.messages.in:
+
+        Add a class representing the WebProcesses connection to the NetworkProcess:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit):
+        (WebKit::NetworkProcessConnection::NetworkProcessConnection):
+        (WebKit::NetworkProcessConnection::~NetworkProcessConnection):
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        (WebKit::NetworkProcessConnection::didReceiveSyncMessage):
+        (WebKit::NetworkProcessConnection::didClose):
+        (WebKit::NetworkProcessConnection::didReceiveInvalidMessage):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        (WebKit):
+        (NetworkProcessConnection):
+        (WebKit::NetworkProcessConnection::create):
+        (WebKit::NetworkProcessConnection::connection):
+
+        Have the WebProcess make sure it has a connection to the NetworkProcess, even though it currently does nothing with it:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit):
+        (WebKit::WebProcess::ensureNetworkProcessConnection):
+        (WebKit::WebProcess::networkProcessConnectionClosed):
+        (WebKit::WebProcess::networkProcessCrashed):
+        * WebProcess/WebProcess.h:
+        (WebKit):
+        (WebProcess):
+        * WebProcess/WebProcess.messages.in:
+
 2012-10-19  Tony Chang  <tony@chromium.org>
 
         Unreviewed, rolling out r131936.

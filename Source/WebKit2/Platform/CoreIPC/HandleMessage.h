@@ -198,6 +198,12 @@ void callMemberFunction(const Arguments4<P1, P2, P3, P4>& args, Arguments3<R1, R
 }
 
 // Dispatch functions with delayed reply arguments.
+template<typename C, typename MF, typename R>
+void callMemberFunction(const Arguments0&, PassRefPtr<R> delayedReply, C* object, MF function)
+{
+    (object->*function)(delayedReply);
+}
+
 template<typename C, typename MF, typename P1, typename R>
 void callMemberFunction(const Arguments1<P1>& args, PassRefPtr<R> delayedReply, C* object, MF function)
 {
@@ -211,6 +217,12 @@ void callMemberFunction(const Arguments2<P1, P2>& args, PassRefPtr<R> delayedRep
 }
 
 // Dispatch functions with connection parameter.
+template<typename C, typename MF>
+void callMemberFunction(Connection* connection, const Arguments0&, C* object, MF function)
+{
+    (object->*function)(connection);
+}
+
 template<typename C, typename MF, typename P1>
 void callMemberFunction(Connection* connection, const Arguments1<P1>& args, C* object, MF function)
 {

@@ -27,7 +27,10 @@
 #include "NetworkProcessProxy.h"
 
 #include "NetworkProcessCreationParameters.h"
+#include "NetworkProcessManager.h"
 #include "NetworkProcessMessages.h"
+#include "WebContext.h"
+#include "WebProcessMessages.h"
 #include <WebCore/RunLoop.h>
 
 #if ENABLE(NETWORK_PROCESS)
@@ -36,12 +39,14 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<NetworkProcessProxy> NetworkProcessProxy::create()
+PassRefPtr<NetworkProcessProxy> NetworkProcessProxy::create(NetworkProcessManager* manager)
 {
-    return adoptRef(new NetworkProcessProxy);
+    return adoptRef(new NetworkProcessProxy(manager));
 }
 
-NetworkProcessProxy::NetworkProcessProxy()
+NetworkProcessProxy::NetworkProcessProxy(NetworkProcessManager* manager)
+    : m_networkProcessManager(manager)
+    , m_numPendingConnectionRequests(0)
 {
     ProcessLauncher::LaunchOptions launchOptions;
     launchOptions.processType = ProcessLauncher::NetworkProcess;
@@ -62,14 +67,49 @@ NetworkProcessProxy::~NetworkProcessProxy()
 
 }
 
-void NetworkProcessProxy::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&)
+void NetworkProcessProxy::getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> reply)
 {
+    m_pendingConnectionReplies.append(reply);
 
+    if (m_processLauncher->isLaunching()) {
+        m_numPendingConnectionRequests++;
+        return;
+    }
+
+    m_connection->send(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess(), 0, CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
+}
+
+void NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch()
+{
+    // The network process must have crashed or exited, send any pending sync replies we might have.
+    while (!m_pendingConnectionReplies.isEmpty()) {
+        RefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> reply = m_pendingConnectionReplies.takeFirst();
+
+#if PLATFORM(MAC)
+        reply->send(CoreIPC::Attachment(0, MACH_MSG_TYPE_MOVE_SEND));
+#else
+        notImplemented();
+#endif
+    }
+
+    // Tell the network process manager to forget about this network process proxy. This may cause us to be deleted.
+    m_networkProcessManager->removeNetworkProcessProxy(this);
+}
+
+void NetworkProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
+{
+    didReceiveNetworkProcessProxyMessage(connection, messageID, decoder);
 }
 
 void NetworkProcessProxy::didClose(CoreIPC::Connection*)
 {
+    // Notify all WebProcesses that the NetworkProcess crashed.
+    const Vector<WebContext*>& contexts = WebContext::allContexts();
+    for (size_t i = 0; i < contexts.size(); ++i)
+        contexts[i]->sendToAllProcesses(Messages::WebProcess::NetworkProcessCrashed());
 
+    // This may cause us to be deleted.
+    networkProcessCrashedOrFailedToLaunch();
 }
 
 void NetworkProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID)
@@ -80,6 +120,20 @@ void NetworkProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC
 void NetworkProcessProxy::syncMessageSendTimedOut(CoreIPC::Connection*)
 {
 
+}
+
+void NetworkProcessProxy::didCreateNetworkConnectionToWebProcess(const CoreIPC::Attachment& connectionIdentifier)
+{
+    ASSERT(!m_pendingConnectionReplies.isEmpty());
+
+    // Grab the first pending connection reply.
+    RefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> reply = m_pendingConnectionReplies.takeFirst();
+
+#if PLATFORM(MAC)
+    reply->send(CoreIPC::Attachment(connectionIdentifier.port(), MACH_MSG_TYPE_MOVE_SEND));
+#else
+    notImplemented();
+#endif
 }
 
 void NetworkProcessProxy::didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier connectionIdentifier)
@@ -103,6 +157,11 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher*, CoreIPC::Connecti
 
     // Initialize the network host process.
     m_connection->send(Messages::NetworkProcess::InitializeNetworkProcess(parameters), 0);
+
+    for (unsigned i = 0; i < m_numPendingConnectionRequests; ++i)
+        m_connection->send(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess(), 0);
+    
+    m_numPendingConnectionRequests = 0;
 }
 
 } // namespace WebKit

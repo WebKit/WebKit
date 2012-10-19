@@ -69,6 +69,10 @@
 #include "WebNetworkInfoManagerProxy.h"
 #endif
 
+#if ENABLE(NETWORK_PROCESS)
+#include "NetworkProcessManager.h"
+#endif
+
 #if USE(SOUP)
 #include "WebSoupRequestManagerProxy.h"
 #endif
@@ -336,7 +340,7 @@ PassRefPtr<WebProcessProxy> WebContext::createNewWebProcess()
 {
 #if ENABLE(NETWORK_PROCESS)
     if (m_usesNetworkProcess)
-        ensureNetworkProcess();
+        NetworkProcessManager::shared().ensureNetworkProcess();
 #endif
 
     RefPtr<WebProcessProxy> process = WebProcessProxy::create(this);
@@ -434,16 +438,6 @@ void WebContext::warmInitialProcess()
     createNewWebProcess();
     m_haveInitialEmptyProcess = true;
 }
-
-#if ENABLE(NETWORK_PROCESS)
-void WebContext::ensureNetworkProcess()
-{
-    if (m_networkProcess)
-        return;
-
-    m_networkProcess = NetworkProcessProxy::create();
-}
-#endif
 
 void WebContext::enableProcessTermination()
 {

@@ -109,6 +109,12 @@ enum MessageClass {
     // Messages sent by the UI process to the network process.
     MessageClassNetworkProcess,
 
+    // Messages sent by the network process to the UI process.
+    MessageClassNetworkProcessProxy,
+
+    // Messages sent by the web process to the network process.
+    MessageClassNetworkConnectionToWebProcess,
+
 #if ENABLE(SHARED_WORKER_PROCESS)
     // Messages sent by the UI process to the shared worker process.
     MessageClassSharedWorkerProcess,

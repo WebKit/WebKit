@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,62 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetworkProcessProxy_h
-#define NetworkProcessProxy_h
+#ifndef NetworkProcessConnection_h
+#define NetworkProcessConnection_h
+
+#include "Connection.h"
+#include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(NETWORK_PROCESS)
 
-#include "Connection.h"
-#include "ProcessLauncher.h"
-#include "WebProcessProxyMessages.h"
-#include <wtf/Deque.h>
-
 namespace WebKit {
 
-class NetworkProcessManager;
-struct NetworkProcessCreationParameters;
-
-class NetworkProcessProxy : public RefCounted<NetworkProcessProxy>, CoreIPC::Connection::Client, ProcessLauncher::Client {
+class NetworkProcessConnection : public RefCounted<NetworkProcessConnection>, CoreIPC::Connection::Client {
 public:
-    static PassRefPtr<NetworkProcessProxy> create(NetworkProcessManager*);
-    ~NetworkProcessProxy();
-
-    void getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>);
+    static PassRefPtr<NetworkProcessConnection> create(CoreIPC::Connection::Identifier connectionIdentifier)
+    {
+        return adoptRef(new NetworkProcessConnection(connectionIdentifier));
+    }
+    ~NetworkProcessConnection();
+    
+    CoreIPC::Connection* connection() const { return m_connection.get(); }
 
 private:
-    NetworkProcessProxy(NetworkProcessManager*);
-
-    void platformInitializeNetworkProcess(NetworkProcessCreationParameters&);
-
-    void networkProcessCrashedOrFailedToLaunch();
+    NetworkProcessConnection(CoreIPC::Connection::Identifier);
 
     // CoreIPC::Connection::Client
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
     virtual void didClose(CoreIPC::Connection*);
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID);
-    virtual void syncMessageSendTimedOut(CoreIPC::Connection*);
 
-    // Message handlers
-    void didReceiveNetworkProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
-    void didCreateNetworkConnectionToWebProcess(const CoreIPC::Attachment&);
-    
-    // ProcessLauncher::Client
-    virtual void didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier);
-
-    // The connection to the network process.
+    // The connection from the web process to the network process.
     RefPtr<CoreIPC::Connection> m_connection;
-
-    // The process launcher for the network process.
-    RefPtr<ProcessLauncher> m_processLauncher;
-
-    NetworkProcessManager* m_networkProcessManager;
-    
-    unsigned m_numPendingConnectionRequests;
-    Deque<RefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> > m_pendingConnectionReplies;
 };
 
 } // namespace WebKit
 
 #endif // ENABLE(NETWORK_PROCESS)
 
-#endif // NetworkProcessProxy_h
+
+#endif // NetworkProcessConnection_h

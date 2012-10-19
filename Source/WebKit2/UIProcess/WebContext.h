@@ -46,10 +46,6 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(NETWORK_PROCESS)
-#include "NetworkProcessProxy.h"
-#endif
-
 namespace WebKit {
 
 class DownloadProxy;
@@ -257,10 +253,6 @@ private:
     void platformInitializeWebProcess(WebProcessCreationParameters&);
     void platformInvalidateContext();
 
-#if ENABLE(NETWORK_PROCESS)
-    void ensureNetworkProcess();
-#endif
-
 #if PLATFORM(MAC)
     void getPasteboardTypes(const String& pasteboardName, Vector<String>& pasteboardTypes);
     void getPasteboardPathnamesForType(const String& pasteboardName, const String& pasteboardType, Vector<String>& pathnames);
@@ -395,7 +387,6 @@ private:
     bool m_processTerminationEnabled;
 
 #if ENABLE(NETWORK_PROCESS)
-    RefPtr<NetworkProcessProxy> m_networkProcess;
     bool m_usesNetworkProcess;
 #endif
     
