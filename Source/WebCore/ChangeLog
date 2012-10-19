@@ -1,3 +1,25 @@
+2012-10-19  Adam Barth  <abarth@webkit.org>
+
+        [V8] Simplify GCPrologueVisitor
+        https://bugs.webkit.org/show_bug.cgi?id=99819
+
+        Reviewed by Kentaro Hara.
+
+        Previously, GCPrologueVisitor used a complicated traits-based template
+        design. That's not necessary. We can just implement it directly without
+        template magic.
+
+        The one subtly here is that MessagePort is not actually a subclass of
+        ActiveDOMObject. The next stage of this cleanup is to make MessagePort
+        inherit from ActiveDOMObject and remove this special case entirely.
+
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::EnsureWeakDOMNodeVisitor::visitDOMWrapper):
+        (WebCore):
+        (WebCore::ActiveDOMObjectPrologueVisitor::visitDOMWrapper):
+        (WebCore::NodeVisitor::visitDOMWrapper):
+        (WebCore::V8GCController::gcPrologue):
+
 2012-10-19  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Saving HAR, snapshots and timeline data do not work in remote debugging mode

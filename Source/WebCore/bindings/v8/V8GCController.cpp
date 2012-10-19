@@ -70,60 +70,34 @@ namespace WebCore {
 
 class EnsureWeakDOMNodeVisitor : public DOMWrapperMap<Node>::Visitor {
 public:
-    void visitDOMWrapper(DOMDataStore* store, Node* object, v8::Persistent<v8::Object> wrapper)
+    void visitDOMWrapper(DOMDataStore*, Node*, v8::Persistent<v8::Object> wrapper)
     {
-        UNUSED_PARAM(object);
         ASSERT(wrapper.IsWeak());
     }
 };
 
 #endif // NDEBUG
 
-class SpecialCasePrologueObjectHandler {
+template<typename T>
+class ActiveDOMObjectPrologueVisitor : public DOMWrapperMap<T>::Visitor {
 public:
-    static bool process(void* object, v8::Persistent<v8::Object> wrapper, WrapperTypeInfo* typeInfo)
-    {
-        // Additional handling of message port ensuring that entangled ports also
-        // have their wrappers entangled. This should ideally be handled when the
-        // ports are actually entangled in MessagePort::entangle, but to avoid
-        // forking MessagePort.* this is postponed to GC time. Having this postponed
-        // has the drawback that the wrappers are "entangled/unentangled" for each
-        // GC even though their entaglement most likely is still the same.
-        if (V8MessagePort::info.equals(typeInfo)) {
-            // Mark each port as in-use if it's entangled. For simplicity's sake, we assume all ports are remotely entangled,
-            // since the Chromium port implementation can't tell the difference.
-            MessagePort* port1 = static_cast<MessagePort*>(object);
-            if (port1->isEntangled() || port1->hasPendingActivity())
-                wrapper.ClearWeak();
-            return true;
-        }
-        return false;
-    }
-};
-
-class SpecialCasePrologueNodeHandler {
-public:
-    static bool process(Node* object, v8::Persistent<v8::Object> wrapper, WrapperTypeInfo* typeInfo)
-    {
-        UNUSED_PARAM(object);
-        UNUSED_PARAM(wrapper);
-        UNUSED_PARAM(typeInfo);
-        return false;
-    }
-};
-
-template<typename T, typename S>
-class GCPrologueVisitor : public DOMWrapperMap<T>::Visitor {
-public:
-    void visitDOMWrapper(DOMDataStore* store, T* object, v8::Persistent<v8::Object> wrapper)
+    void visitDOMWrapper(DOMDataStore*, T* object, v8::Persistent<v8::Object> wrapper)
     {
         WrapperTypeInfo* typeInfo = V8DOMWrapper::domWrapperType(wrapper);  
 
-        if (!S::process(object, wrapper, typeInfo)) {
-            ActiveDOMObject* activeDOMObject = typeInfo->toActiveDOMObject(wrapper);
-            if (activeDOMObject && activeDOMObject->hasPendingActivity())
+        if (V8MessagePort::info.equals(typeInfo)) {
+            // Mark each port as in-use if it's entangled. For simplicity's sake,
+            // we assume all ports are remotely entangled, since the Chromium port
+            // implementation can't tell the difference.
+            MessagePort* port = reinterpret_cast<MessagePort*>(object);
+            if (port->isEntangled() || port->hasPendingActivity())
                 wrapper.ClearWeak();
+            return;
         }
+
+        ActiveDOMObject* activeDOMObject = typeInfo->toActiveDOMObject(wrapper);
+        if (activeDOMObject && activeDOMObject->hasPendingActivity())
+            wrapper.ClearWeak();
     }
 };
 
@@ -254,7 +228,7 @@ public:
 
 class NodeVisitor : public DOMWrapperMap<Node>::Visitor {
 public:
-    void visitDOMWrapper(DOMDataStore* store, Node* node, v8::Persistent<v8::Object> wrapper)
+    void visitDOMWrapper(DOMDataStore*, Node* node, v8::Persistent<v8::Object> wrapper)
     {
         if (node->hasEventListeners()) {
             Vector<v8::Persistent<v8::Value> > listeners;
@@ -329,12 +303,10 @@ void V8GCController::gcPrologue()
 
     v8::HandleScope scope;
 
-    // Run through all objects with possible pending activity making their
-    // wrappers non weak if there is pending activity.
-    GCPrologueVisitor<void, SpecialCasePrologueObjectHandler> prologueObjectVisitor;
-    visitActiveDOMObjects(&prologueObjectVisitor);
-    GCPrologueVisitor<Node, SpecialCasePrologueNodeHandler> prologueNodeVisitor;
-    visitActiveDOMNodes(&prologueNodeVisitor);
+    ActiveDOMObjectPrologueVisitor<void> activeObjectVisitor;
+    visitActiveDOMObjects(&activeObjectVisitor);
+    ActiveDOMObjectPrologueVisitor<Node> activeNodeVisitor;
+    visitActiveDOMNodes(&activeNodeVisitor);
 
     NodeVisitor nodeVisitor;
     visitDOMNodes(&nodeVisitor);
