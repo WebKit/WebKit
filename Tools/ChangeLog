@@ -1,3 +1,15 @@
+2012-10-18  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        Fix build warning.
+        https://bugs.webkit.org/show_bug.cgi?id=99788
+
+        Reviewed by Kentaro Hara.
+
+        Use return value of mktemp() for removing -Wunused-result.
+
+        * MiniBrowser/efl/main.c:
+        (on_download_request):
+
 2012-10-18  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2] WebKit2 does not build without PLUGIN_PROCESS on Mac

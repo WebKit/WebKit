@@ -619,6 +619,8 @@ TransformationMatrix RenderLayer::currentTransform(RenderStyle::ApplyTransformOr
         makeMatrixRenderable(currTransform, canRender3DTransforms());
         return currTransform;
     }
+#else
+    UNUSED_PARAM(applyOrigin);
 #endif
 
     return *m_transform;

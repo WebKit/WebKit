@@ -300,8 +300,7 @@ on_download_request(void *user_data, Evas_Object *webview, void *event_info)
     else {
         // Generate a unique file name since no name was suggested.
         char unique_path[] = "/tmp/downloaded-file.XXXXXX";
-        mktemp(unique_path);
-        eina_strbuf_append(destination_path, unique_path);
+        eina_strbuf_append(destination_path, mktemp(unique_path));
     }
 
     ewk_download_job_destination_set(download, eina_strbuf_string_get(destination_path));
