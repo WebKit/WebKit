@@ -26,7 +26,6 @@
 #include "config.h"
 #include "MessageReceiverMap.h"
 
-#include "MessageDecoder.h"
 #include "MessageReceiver.h"
 
 namespace CoreIPC {
@@ -37,12 +36,6 @@ MessageReceiverMap::MessageReceiverMap()
 
 MessageReceiverMap::~MessageReceiverMap()
 {
-}
-
-void MessageReceiverMap::addMessageReceiver(StringReference messageReceiverName, MessageReceiver* messageReceiver)
-{
-    ASSERT(!m_globalMessageReceivers.contains(messageReceiverName));
-    m_globalMessageReceivers.set(messageReceiverName, messageReceiver);
 }
 
 void MessageReceiverMap::deprecatedAddMessageReceiver(MessageClass messageClass, MessageReceiver* messageReceiver)
@@ -58,11 +51,6 @@ void MessageReceiverMap::invalidate()
 
 bool MessageReceiverMap::dispatchMessage(Connection* connection, MessageID messageID, MessageDecoder& decoder)
 {
-    if (MessageReceiver* messageReceiver = m_globalMessageReceivers.get(decoder.messageReceiverName())) {
-        messageReceiver->didReceiveMessage(connection, messageID, decoder);
-        return true;
-    }
-
     if (MessageReceiver* messageReceiver = m_deprecatedGlobalMessageReceivers.get(messageID.messageClass())) {
         messageReceiver->didReceiveMessage(connection, messageID, decoder);
         return true;

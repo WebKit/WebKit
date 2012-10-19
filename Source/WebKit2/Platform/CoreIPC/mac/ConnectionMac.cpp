@@ -112,7 +112,7 @@ bool Connection::open()
         m_isConnected = true;
         
         // Send the initialize message, which contains a send right for the server to use.
-        OwnPtr<MessageEncoder> encoder = MessageEncoder::create("IPC", "", 0);
+        OwnPtr<MessageEncoder> encoder = MessageEncoder::create("", "", 0);
         encoder->encode(MachPort(m_receivePort, MACH_MSG_TYPE_MAKE_SEND));
 
         sendMessage(MessageID(CoreIPCMessage::InitializeConnection), encoder.release());
@@ -131,7 +131,7 @@ bool Connection::open()
     if (m_exceptionPort) {
         m_connectionQueue.registerMachPortEventHandler(m_exceptionPort, WorkQueue::MachPortDataAvailable, bind(&Connection::exceptionSourceEventHandler, this));
 
-        OwnPtr<MessageEncoder> encoder = MessageEncoder::create("IPC", "", 0);
+        OwnPtr<MessageEncoder> encoder = MessageEncoder::create("", "", 0);
         encoder->encode(MachPort(m_exceptionPort, MACH_MSG_TYPE_MAKE_SEND));
 
         sendMessage(MessageID(CoreIPCMessage::SetExceptionPort), encoder.release());

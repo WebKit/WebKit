@@ -127,7 +127,6 @@ SET(WebKit2_SOURCES
     Platform/CoreIPC/MessageDecoder.cpp
     Platform/CoreIPC/MessageEncoder.cpp
     Platform/CoreIPC/MessageReceiverMap.cpp
-    Platform/CoreIPC/StringReference.cpp
 
     PluginProcess/PluginControllerProxy.cpp
     PluginProcess/PluginCreationParameters.cpp

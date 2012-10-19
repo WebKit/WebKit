@@ -27,7 +27,6 @@
 #define MessageReceiverMap_h
 
 #include "MessageID.h"
-#include "StringReference.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
 
@@ -43,8 +42,6 @@ public:
     MessageReceiverMap();
     ~MessageReceiverMap();
 
-    void addMessageReceiver(StringReference messageReceiverName, MessageReceiver*);
-
     // FIXME: Stop using this deprecated function and get rid of it.
     void deprecatedAddMessageReceiver(MessageClass, MessageReceiver*);
 
@@ -56,8 +53,6 @@ public:
 private:
     // Message receivers that don't require a destination ID.
     HashMap<unsigned, MessageReceiver*> m_deprecatedGlobalMessageReceivers;
-
-    HashMap<StringReference, MessageReceiver*> m_globalMessageReceivers;
 };
 
 };

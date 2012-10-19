@@ -191,7 +191,7 @@ public:
     template<typename T> bool sendSync(const T& message, const typename T::Reply& reply, uint64_t destinationID, double timeout = NoTimeout, unsigned syncSendFlags = 0);
     template<typename T> bool waitForAndDispatchImmediately(uint64_t destinationID, double timeout);
 
-    PassOwnPtr<MessageEncoder> createSyncMessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID);
+    PassOwnPtr<MessageEncoder> createSyncMessageEncoder(const CString& messageReceiverName, const CString& messageName, uint64_t destinationID, uint64_t& syncRequestID);
     bool sendMessage(MessageID, PassOwnPtr<MessageEncoder>, unsigned messageSendFlags = 0);
     bool sendSyncReply(PassOwnPtr<MessageEncoder>);
 
@@ -450,7 +450,7 @@ template<typename E, typename T, typename U>
 inline bool Connection::deprecatedSendSync(E messageID, uint64_t destinationID, const T& arguments, const U& reply, double timeout)
 {
     uint64_t syncRequestID = 0;
-    OwnPtr<MessageEncoder> encoder = createSyncMessageEncoder(CoreIPC::MessageKindTraits<E>::messageReceiverName(), "", destinationID, syncRequestID);
+    OwnPtr<MessageEncoder> encoder = createSyncMessageEncoder("", "", destinationID, syncRequestID);
 
     // Encode the input arguments.
     encoder->encode(arguments);
@@ -467,7 +467,7 @@ inline bool Connection::deprecatedSendSync(E messageID, uint64_t destinationID, 
 template<typename E, typename T>
 bool Connection::deprecatedSend(E messageID, uint64_t destinationID, const T& arguments)
 {
-    OwnPtr<MessageEncoder> encoder = MessageEncoder::create(CoreIPC::MessageKindTraits<E>::messageReceiverName(), "", destinationID);
+    OwnPtr<MessageEncoder> encoder = MessageEncoder::create("", "", destinationID);
     encoder->encode(arguments);
 
     return sendMessage(MessageID(messageID), encoder.release());

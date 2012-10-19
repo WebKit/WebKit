@@ -4129,14 +4129,6 @@
 					RelativePath="..\Platform\CoreIPC\MessageSender.h"
 					>
 				</File>
-				<File
-					RelativePath="..\Platform\CoreIPC\StringReference.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Platform\CoreIPC\StringReference.h"
-					>
-				</File>
 				<Filter
 					Name="win"
 					>

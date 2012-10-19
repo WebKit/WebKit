@@ -31,15 +31,13 @@
 
 namespace CoreIPC {
 
-class StringReference;
-
 class MessageEncoder : public ArgumentEncoder {
 public:
-    static PassOwnPtr<MessageEncoder> create(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID);
+    static PassOwnPtr<MessageEncoder> create(const CString& messageReceiverName, const CString& messageName, uint64_t destinationID);
     virtual ~MessageEncoder();
 
 private:
-    MessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID);
+    MessageEncoder(const CString& messageReceiverName, const CString& messageName, uint64_t destinationID);
 
 };
 
