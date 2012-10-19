@@ -1,3 +1,16 @@
+2012-10-18  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Styles] Property considered overridden if it is non-inherited important property in inherited style
+        https://bugs.webkit.org/show_bug.cgi?id=99720
+
+        Reviewed by Yury Semikhatsky.
+
+        Non-inherited properties are now disregarded in inherited styles.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._refreshStyleRules):
+        (WebInspector.StylesSidebarPane.prototype._markUsedProperties):
+
 2012-10-18  Adam Barth  <abarth@webkit.org>
 
         [V8] GrouperVisitor is secretly two entirely separate objects

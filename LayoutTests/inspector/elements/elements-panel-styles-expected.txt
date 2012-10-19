@@ -5,19 +5,20 @@ Foo
 -webkit-font-smoothing: subpixel-antialiased;
     element.style - subpixel-antialiased 
 border-bottom-left-radius: 5px;
-    .foo - 5px elements-panel-styles.css:14
+    .foo - 5px elements-panel-styles.css:16
 border-bottom-right-radius: 5px;
-    .foo - 5px elements-panel-styles.css:14
+    .foo - 5px elements-panel-styles.css:16
 border-top-left-radius: 5px;
-    .foo - 5px elements-panel-styles.css:14
+    .foo - 5px elements-panel-styles.css:16
 border-top-right-radius: 5px;
-    .foo - 5px elements-panel-styles.css:14
+    .foo - 5px elements-panel-styles.css:16
 color: rgb(0, 0, 255);
-    .foo, .foo::before - blue elements-panel-styles.css:24
-    /-- overloaded --/ .foo - black elements-panel-styles.css:14
+    .foo, .foo::before - blue elements-panel-styles.css:28
+    /-- overloaded --/ .foo - black elements-panel-styles.css:16
+    /-- overloaded --/ #container - red elements-panel-styles.css:5
 display: block;
     /-- overloaded --/ element.style - none 
-    .foo, .foo::before - block !important elements-panel-styles.css:24
+    .foo, .foo::before - block !important elements-panel-styles.css:28
     /-- overloaded --/ div - block user agent stylesheet
 font-family: serif;
     #container - serif elements-panel-styles.css:5
@@ -25,19 +26,27 @@ font-size: 14px;
     #container - 14px elements-panel-styles.css:5
     /-- overloaded --/ body - 12px elements-panel-styles.css:1
 font-style: italic;
-    #container .foo - italic !important elements-panel-styles.css:10
-    /-- overloaded --/ .foo - normal !important elements-panel-styles.css:14
+    #container .foo - italic !important elements-panel-styles.css:12
+    /-- overloaded --/ .foo - normal !important elements-panel-styles.css:16
 font-weight: normal;
-    .foo - normal !important elements-panel-styles.css:14
-    /-- overloaded --/ .foo - bold elements-panel-styles.css:14
+    .foo - normal !important elements-panel-styles.css:16
+    /-- overloaded --/ .foo - bold elements-panel-styles.css:16
 margin-bottom: 2px;
-    .foo - 2px elements-panel-styles.css:14
+    .foo - 2px elements-panel-styles.css:16
 margin-left: 0px;
-    .foo - 1px elements-panel-styles.css:14
+    .foo - 1px elements-panel-styles.css:16
 margin-right: 0px;
-    .foo - 0px elements-panel-styles.css:14
+    .foo - 0px elements-panel-styles.css:16
 margin-top: 10px;
-    .foo - 10px elements-panel-styles.css:14
+    .foo - 10px elements-panel-styles.css:16
+padding-bottom: 4px;
+    .foo - 4px elements-panel-styles.css:16
+padding-left: 4px;
+    .foo - 4px elements-panel-styles.css:16
+padding-right: 1px;
+    .foo - 1px elements-panel-styles.css:16
+padding-top: 4px;
+    .foo - 4px elements-panel-styles.css:16
 text-align: -webkit-left;
     div[Attributes Style] - -webkit-left 
 
@@ -48,20 +57,20 @@ element.style  { ()
 
 ======== Matched CSS Rules ========
 [expanded] 
-#container .foo  { (elements-panel-styles.css:10)
+#container .foo  { (elements-panel-styles.css:12)
 font-style: italic !important;
 
 [expanded] 
-.foo  { (elements-panel-styles.css:43)
+.foo  { (elements-panel-styles.css:47)
 
 [expanded] 
-.foo, .foo::before  { (elements-panel-styles.css:24)
+.foo, .foo::before  { (elements-panel-styles.css:28)
 content: "[before Foo]";
 color: blue;
 display: block !important;
 
 [expanded] 
-.foo  { (elements-panel-styles.css:14)
+.foo  { (elements-panel-styles.css:16)
 /-- overloaded --/ color: black;
 margin-left: 1px;
 margin: 10px 0 2px;
@@ -77,6 +86,12 @@ border-radius: 5px;
 /-- overloaded --/ font-style: normal !important;
 font-weight: normal !important;
 /-- overloaded --/ font-weight: bold;
+padding: 4px;
+    padding-top: 4px;
+    padding-right: 1px;
+    padding-bottom: 4px;
+    padding-left: 4px;
+padding-right: 1px;
 
 [expanded] 
 div[Attributes Style]  { ()
@@ -91,6 +106,7 @@ div  { (user agent stylesheet)
 #container  { (elements-panel-styles.css:5)
 font-family: serif;
 font-size: 14px;
+/-- overloaded --/ color: red;
 
 ======== Inherited from body ========
 [expanded] 
@@ -100,14 +116,14 @@ body  { (elements-panel-styles.css:1)
 
 ======== Pseudo ::before element ========
 [expanded] 
-.foo::before  { (elements-panel-styles.css:47)
+.foo::before  { (elements-panel-styles.css:51)
 
 [expanded] 
-.foo::before  { (elements-panel-styles.css:30)
+.foo::before  { (elements-panel-styles.css:34)
 color: red;
 
 [expanded] 
-.foo, .foo::before  { (elements-panel-styles.css:24)
+.foo, .foo::before  { (elements-panel-styles.css:28)
 content: "[before Foo]";
 /-- overloaded --/ color: blue;
 display: block !important;
@@ -115,12 +131,12 @@ display: block !important;
 
 ======== Pseudo ::after element ========
 [expanded] 
-.foo::after  { (elements-panel-styles.css:38)
+.foo::after  { (elements-panel-styles.css:42)
 font-family: courier;
 content: "[after Foo 2]";
 
 [expanded] 
-.foo::after  { (elements-panel-styles.css:34)
+.foo::after  { (elements-panel-styles.css:38)
 /-- overloaded --/ content: "[after Foo]";
 color: green;
 

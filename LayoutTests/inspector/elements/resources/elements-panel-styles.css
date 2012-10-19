@@ -5,6 +5,8 @@ body {
 #container {
     font-family: serif;
     font-size: 14px;
+    color: red;
+    padding: 2px !important;
 }
 
 #container .foo {
@@ -19,6 +21,8 @@ body {
     font-style: normal !important;
     font-weight: normal !important;
     font-weight: bold;
+    padding: 4px;
+    padding-right: 1px;
 }
 
 .foo, .foo::before {
