@@ -66,9 +66,6 @@
 
 namespace WebCore {
 
-typedef HashMap<Node*, v8::Object*> DOMNodeMap;
-typedef HashMap<void*, v8::Object*> DOMObjectMap;
-
 #ifndef NDEBUG
 
 class DOMObjectVisitor : public DOMWrapperMap<void>::Visitor {
