@@ -1,3 +1,22 @@
+2012-10-18  Anders Carlsson  <andersca@apple.com>
+
+        Clean up RegExpKey
+        https://bugs.webkit.org/show_bug.cgi?id=99798
+
+        Reviewed by Darin Adler.
+
+        RegExpHash doesn't need to be a class template specialization when the class template is specialized
+        for JSC::RegExpKey only. Make it a nested class of RegExp instead. Also, make operator== a friend function
+        so Hash::equal can see it.
+
+        * runtime/RegExpKey.h:
+        (JSC::RegExpKey::RegExpKey):
+        (JSC::RegExpKey::operator==):
+        (RegExpKey):
+        (JSC::RegExpKey::Hash::hash):
+        (JSC::RegExpKey::Hash::equal):
+        (Hash):
+
 2012-10-19  Mark Lam  <mark.lam@apple.com>
 
         Bot greening: Follow up to r131877 to fix the Windows build.

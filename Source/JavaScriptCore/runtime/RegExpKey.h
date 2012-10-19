@@ -73,9 +73,17 @@ struct RegExpKey {
         , pattern(pattern)
     {
     }
+
+    friend inline bool operator==(const RegExpKey& a, const RegExpKey& b);
+
+    struct Hash {
+        static unsigned hash(const RegExpKey& key) { return key.pattern->hash(); }
+        static bool equal(const RegExpKey& a, const RegExpKey& b) { return a == b; }
+        static const bool safeToCompareToEmptyOrDeleted = false;
+    };
 };
 
-inline bool operator==(const RegExpKey& a, const RegExpKey& b) 
+inline bool operator==(const RegExpKey& a, const RegExpKey& b)
 {
     if (a.flagsValue != b.flagsValue)
         return false;
@@ -90,16 +98,9 @@ inline bool operator==(const RegExpKey& a, const RegExpKey& b)
 
 namespace WTF {
 template<typename T> struct DefaultHash;
-template<typename T> struct RegExpHash;
-
-template<> struct RegExpHash<JSC::RegExpKey> {
-    static unsigned hash(const JSC::RegExpKey& key) { return key.pattern->hash(); }
-    static bool equal(const JSC::RegExpKey& a, const JSC::RegExpKey& b) { return a == b; }
-    static const bool safeToCompareToEmptyOrDeleted = false;
-};
 
 template<> struct DefaultHash<JSC::RegExpKey> {
-    typedef RegExpHash<JSC::RegExpKey> Hash;
+    typedef JSC::RegExpKey::Hash Hash;
 };
 
 template<> struct HashTraits<JSC::RegExpKey> : GenericHashTraits<JSC::RegExpKey> {
