@@ -1,3 +1,17 @@
+2012-10-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        REGRESSION(r131844): It broke the build on !ENABLE(NETSCAPE_PLUGIN_API) platforms
+        https://bugs.webkit.org/show_bug.cgi?id=99820
+
+        Reviewed by Jocelyn Turcotte.
+
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        (WebKit::ProcessLauncher::launchProcess): Add missing ENABLE(PLUGIN_PROCESS) guard.
+        * UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp: The whole file should be ENABLE(NETSCAPE_PLUGIN_API) guarded as the PluginInfoStore class.
+        (WebKit::PluginInfoStore::getPluginInfo):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin): Eliminate the unused webPage variable (build fail with -Werror) if !(PLATFORM(MAC)||ENABLE(NETSCAPE_PLUGIN_API)).
+
 2012-10-19  Huang Dongsung  <luxtella@company100.net>
 
         Build fix after r131741 for !ENABLE(CSS_SHADERS) platforms.

@@ -1314,10 +1314,8 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& url, const Strin
 PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugInElement* pluginElement, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
     ASSERT(paramNames.size() == paramValues.size());
-    
-    WebPage* webPage = m_frame->page();
-    ASSERT(webPage);
-    
+    ASSERT(m_frame->page());
+
     Plugin::Parameters parameters;
     parameters.url = url;
     parameters.names = paramNames;
@@ -1326,7 +1324,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugIn
     parameters.isFullFramePlugin = loadManually;
     parameters.shouldUseManualLoader = parameters.isFullFramePlugin && !m_frameCameFromPageCache;
 #if PLATFORM(MAC)
-    parameters.layerHostingMode = webPage->layerHostingMode();
+    parameters.layerHostingMode = m_frame->page()->layerHostingMode();
 #endif
 
 #if PLUGIN_ARCHITECTURE(X11)
@@ -1347,7 +1345,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugIn
 #endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    RefPtr<Plugin> plugin = webPage->createPlugin(m_frame, pluginElement, parameters);
+    RefPtr<Plugin> plugin = m_frame->page()->createPlugin(m_frame, pluginElement, parameters);
     if (!plugin)
         return 0;
 

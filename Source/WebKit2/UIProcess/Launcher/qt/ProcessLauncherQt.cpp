@@ -113,9 +113,11 @@ void ProcessLauncher::launchProcess()
     if (m_launchOptions.processType == WebProcess) {
         QByteArray webProcessPrefix = qgetenv("QT_WEBKIT2_WP_CMD_PREFIX");
         commandLine = commandLine.arg(QLatin1String(webProcessPrefix.constData())).arg(QString(executablePathOfWebProcess()));
+#if ENABLE(PLUGIN_PROCESS)
     } else if (m_launchOptions.processType == PluginProcess) {
         QByteArray pluginProcessPrefix = qgetenv("QT_WEBKIT2_PP_CMD_PREFIX");
         commandLine = commandLine.arg(QLatin1String(pluginProcessPrefix.constData())).arg(QString(executablePathOfPluginProcess()));
+#endif
     } else
         ASSERT_NOT_REACHED();
 

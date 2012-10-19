@@ -26,6 +26,9 @@
 // Note: this file is only for UNIX. On other platforms we can reuse the native implementation.
 
 #include "config.h"
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 #include "PluginInfoStore.h"
 
 #include "NetscapePluginModule.h"
@@ -95,13 +98,7 @@ Vector<String> PluginInfoStore::individualPluginPaths()
 
 bool PluginInfoStore::getPluginInfo(const String& pluginPath, PluginModuleInfo& plugin)
 {
-#if ENABLE(NETSCAPE_PLUGIN_API)
     return NetscapePluginModule::getPluginInfo(pluginPath, plugin);
-#else
-    UNUSED_PARAM(pluginPath);
-    UNUSED_PARAM(plugin);
-    return false;
-#endif
 }
 
 bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& /*alreadyLoadedPlugins*/, const PluginModuleInfo& /*plugin*/)
@@ -111,3 +108,5 @@ bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& /*alreadyLoadedP
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
