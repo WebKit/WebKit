@@ -1,3 +1,36 @@
+2012-10-19  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=99768
+        We should limit the tile cache coverage when a page can't take 
+        advantage of fast tile scrolling anyway
+
+        Reviewed by Simon Fraser.
+
+        When sites can't use fast-scrolling, there is no need to inflate the 
+        tile cache. In fact, we get a performance boost by keeping it small 
+        on painting-intensive sites. 
+
+        Instead of just looking a whether or not the FrameView 
+        canHaveScrollbar(), consult 
+        shouldUpdateScrollLayerPositionOnMainThread().
+        * page/FrameView.cpp:
+        (WebCore::FrameView::performPostLayoutTasks):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+        
+        Expose shouldUpdateScrollLayerPositionOnMainThread().
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::hasNonLayerFixedObjects):
+        (WebCore::ScrollingCoordinator::shouldUpdateScrollLayerPositionOnMainThread):
+        (WebCore):
+        (WebCore::ScrollingCoordinator::updateShouldUpdateScrollLayerPositionOnMainThread):
+        * page/scrolling/ScrollingCoordinator.h:
+        (ScrollingCoordinator):
+
+        Bug fix. Should be bitwise and.
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::tileCoverageRect):
+
 2012-10-19  Mark Lam  <mark.lam@apple.com>
 
         Added WTF::StackStats mechanism.

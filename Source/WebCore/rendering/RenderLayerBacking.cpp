@@ -125,7 +125,10 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
             if (TiledBacking* tiledBacking = m_graphicsLayer->tiledBacking()) {
                 Frame* frame = renderer()->frame();
                 tiledBacking->setIsInWindow(page->isOnscreen());
-                tiledBacking->setTileCoverage(frame->view()->canHaveScrollbars() ? TiledBacking::CoverageForScrolling : TiledBacking::CoverageForVisibleArea);
+                if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator()) {
+                    bool shouldLimitTileCoverage = !frame->view()->canHaveScrollbars() || scrollingCoordinator->shouldUpdateScrollLayerPositionOnMainThread();
+                    tiledBacking->setTileCoverage(shouldLimitTileCoverage ? TiledBacking::CoverageForVisibleArea : TiledBacking::CoverageForScrolling);
+                }
                 tiledBacking->setScrollingPerformanceLoggingEnabled(frame->settings() && frame->settings()->scrollingPerformanceLoggingEnabled());
             }
         }

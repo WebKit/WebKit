@@ -315,10 +315,10 @@ IntRect TileCache::tileCoverageRect() const
         // Inflate the coverage rect so that it covers 2x of the visible width and 3x of the visible height.
         // These values were chosen because it's more common to have tall pages and to scroll vertically,
         // so we keep more tiles above and below the current area.
-        if (m_tileCoverage && CoverageForHorizontalScrolling)
+        if (m_tileCoverage & CoverageForHorizontalScrolling)
             tileCoverageRect.inflateX(tileCoverageRect.width() / 2);
 
-        if (m_tileCoverage && CoverageForVerticalScrolling)
+        if (m_tileCoverage & CoverageForVerticalScrolling)
             tileCoverageRect.inflateY(tileCoverageRect.height());
     }
 

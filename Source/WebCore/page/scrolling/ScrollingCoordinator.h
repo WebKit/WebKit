@@ -127,6 +127,9 @@ public:
         IsImageDocument = 1 << 4
     };
 
+    MainThreadScrollingReasons mainThreadScrollingReasons() const;
+    bool shouldUpdateScrollLayerPositionOnMainThread() const { return mainThreadScrollingReasons() != 0; }
+
     // These virtual functions are currently unique to Chromium's WebLayer approach. Their meaningful
     // implementations are in ScrollingCoordinatorChromium.
     virtual void frameViewHorizontalScrollbarLayerDidChange(FrameView*, GraphicsLayer*) { }
@@ -148,7 +151,7 @@ private:
     virtual void recomputeWheelEventHandlerCountForFrameView(FrameView*) { }
     virtual void setShouldUpdateScrollLayerPositionOnMainThread(MainThreadScrollingReasons) { }
 
-    bool hasNonLayerFixedObjects(FrameView*);
+    bool hasNonLayerFixedObjects(FrameView*) const;
     void updateShouldUpdateScrollLayerPositionOnMainThread();
 
     bool m_forceMainThreadScrollLayerPositionUpdates;
