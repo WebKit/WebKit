@@ -42,7 +42,7 @@ WebBatteryManagerProxy::WebBatteryManagerProxy(WebContext* context)
     : m_isUpdating(false)
     , m_context(context)
 {
-    m_context->addMessageReceiver(CoreIPC::MessageClassWebBatteryManagerProxy, this);
+    m_context->deprecatedAddMessageReceiver(CoreIPC::MessageClassWebBatteryManagerProxy, this);
 }
 
 WebBatteryManagerProxy::~WebBatteryManagerProxy()

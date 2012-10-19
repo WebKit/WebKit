@@ -1,3 +1,20 @@
+2012-10-18  Ryuan Choi  <ryuan.choi@gmail.com>
+
+        Attempt to fix the WebKit2/Efl build after r131841.
+
+        Unreviewed build fix.
+
+        Rename addMessageReceiver to deprecatedAddMessageReceiver.
+
+        * UIProcess/WebBatteryManagerProxy.cpp:
+        (WebKit::WebBatteryManagerProxy::WebBatteryManagerProxy):
+        * UIProcess/WebNetworkInfoManagerProxy.cpp:
+        (WebKit::WebNetworkInfoManagerProxy::WebNetworkInfoManagerProxy):
+        * UIProcess/WebVibrationProxy.cpp:
+        (WebKit::WebVibrationProxy::WebVibrationProxy):
+        * UIProcess/soup/WebSoupRequestManagerProxy.cpp:
+        (WebKit::WebSoupRequestManagerProxy::WebSoupRequestManagerProxy):
+
 2012-10-18  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2] WebKit2 does not build without PLUGIN_PROCESS on Mac

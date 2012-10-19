@@ -43,7 +43,7 @@ WebNetworkInfoManagerProxy::WebNetworkInfoManagerProxy(WebContext* context)
     : m_isUpdating(false)
     , m_context(context)
 {
-    m_context->addMessageReceiver(CoreIPC::MessageClassWebNetworkInfoManagerProxy, this);
+    m_context->deprecatedAddMessageReceiver(CoreIPC::MessageClassWebNetworkInfoManagerProxy, this);
 }
 
 WebNetworkInfoManagerProxy::~WebNetworkInfoManagerProxy()
