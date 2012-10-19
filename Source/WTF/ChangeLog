@@ -1,5 +1,11 @@
 2012-10-19  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Unreviewed buildfix, use C-style comment instead of C++
+
+        * wtf/Platform.h:
+
+2012-10-19  Csaba Osztrogonác  <ossy@webkit.org>
+
         REGRESSION(r131822): It made 500+ tests crash on 32 bit platforms
         https://bugs.webkit.org/show_bug.cgi?id=99814
 
