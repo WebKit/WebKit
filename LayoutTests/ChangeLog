@@ -1,3 +1,23 @@
+2012-10-18  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: labelForElement is slow when there are a lot of DOM elements
+        https://bugs.webkit.org/show_bug.cgi?id=97825
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds two new tests for titleUIElement that run on both Mac and
+        Chromium. One tests correctness, the other tests speed.
+
+        Fixes one test so that it passes on Chromium.
+        Enables other tests that now pass on Chromium.
+
+        * accessibility/secure-textfield-title-ui.html:
+        * accessibility/title-ui-element-correctness-expected.txt: Added.
+        * accessibility/title-ui-element-correctness.html: Added.
+        * perf/accessibility-title-ui-element-expected.txt: Added.
+        * perf/accessibility-title-ui-element.html: Added.
+        * platform/chromium/TestExpectations:
+
 2012-10-18  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Styles] Property considered overridden if it is non-inherited important property in inherited style

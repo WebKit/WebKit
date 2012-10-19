@@ -315,6 +315,7 @@ public:
     void updateId(const AtomicString& oldId, const AtomicString& newId);
     void updateId(TreeScope*, const AtomicString& oldId, const AtomicString& newId);
     void updateName(const AtomicString& oldName, const AtomicString& newName);
+    void updateLabel(TreeScope*, const AtomicString& oldForAttributeValue, const AtomicString& newForAttributeValue);
 
     void removeCachedHTMLCollection(HTMLCollection*, CollectionType);
 

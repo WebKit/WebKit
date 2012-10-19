@@ -1,3 +1,47 @@
+2012-10-18  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: labelForElement is slow when there are a lot of DOM elements
+        https://bugs.webkit.org/show_bug.cgi?id=97825
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds a DocumentOrderedMap to TreeScope that allows accessibility to
+        quickly map from an id to the label for that id. This speeds up
+        AccessibilityNode::labelForElement, which was a bottleneck in Chromium
+        when accessibility was on.
+
+        Tests: accessibility/title-ui-element-correctness.html
+               perf/accessibility-title-ui-element.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::labelForElement):
+        * dom/DocumentOrderedMap.cpp:
+        (WebCore::keyMatchesLabelForAttribute):
+        (WebCore):
+        (WebCore::DocumentOrderedMap::get):
+        (WebCore::DocumentOrderedMap::getElementByLabelForAttribute):
+        * dom/DocumentOrderedMap.h:
+        (DocumentOrderedMap):
+        * dom/Element.cpp:
+        (WebCore::Element::insertedInto):
+        (WebCore::Element::removedFrom):
+        (WebCore::Element::updateLabel):
+        (WebCore):
+        (WebCore::Element::willModifyAttribute):
+        * dom/Element.h:
+        (Element):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::TreeScope):
+        (WebCore::TreeScope::destroyTreeScopeData):
+        (WebCore::TreeScope::addLabel):
+        (WebCore):
+        (WebCore::TreeScope::removeLabel):
+        (WebCore::TreeScope::labelElementForId):
+        * dom/TreeScope.h:
+        (WebCore):
+        (TreeScope):
+        (WebCore::TreeScope::shouldCacheLabelsByForAttribute):
+
 2012-10-19  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Update localizedStrings.js

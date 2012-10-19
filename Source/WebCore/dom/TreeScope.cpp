@@ -36,6 +36,7 @@
 #include "Frame.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTMLLabelElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"
 #include "IdTargetObserverRegistry.h"
@@ -55,6 +56,7 @@ using namespace HTMLNames;
 TreeScope::TreeScope(ContainerNode* rootNode)
     : m_rootNode(rootNode)
     , m_parentTreeScope(0)
+    , m_shouldCacheLabelsByForAttribute(false)
     , m_idTargetObserverRegistry(IdTargetObserverRegistry::create())
 {
     ASSERT(rootNode);
@@ -72,6 +74,7 @@ void TreeScope::destroyTreeScopeData()
 {
     m_elementsById.clear();
     m_imageMapsByName.clear();
+    m_labelsByForAttribute.clear();
 }
 
 void TreeScope::setParentTreeScope(TreeScope* newParentScope)
@@ -142,6 +145,36 @@ HTMLMapElement* TreeScope::getImageMap(const String& url) const
     if (rootNode()->document()->isHTMLDocument())
         return static_cast<HTMLMapElement*>(m_imageMapsByName.getElementByLowercasedMapName(AtomicString(name.lower()).impl(), this));
     return static_cast<HTMLMapElement*>(m_imageMapsByName.getElementByMapName(AtomicString(name).impl(), this));
+}
+
+void TreeScope::addLabel(const AtomicString& forAttributeValue, HTMLLabelElement* element)
+{
+    m_labelsByForAttribute.add(forAttributeValue.impl(), element);
+}
+
+void TreeScope::removeLabel(const AtomicString& forAttributeValue, HTMLLabelElement* element)
+{
+    m_labelsByForAttribute.remove(forAttributeValue.impl(), element);
+}
+
+HTMLLabelElement* TreeScope::labelElementForId(const AtomicString& forAttributeValue)
+{
+    if (!m_shouldCacheLabelsByForAttribute) {
+        m_shouldCacheLabelsByForAttribute = true;
+        for (Node* node = rootNode(); node; node = node->traverseNextNode()) {
+            if (node->hasTagName(labelTag)) {
+                HTMLLabelElement* label = static_cast<HTMLLabelElement*>(node);
+                const AtomicString& forValue = label->fastGetAttribute(forAttr);
+                if (!forValue.isEmpty())
+                    addLabel(forValue, label);
+            }
+        }
+    }
+
+    if (forAttributeValue.isEmpty())
+        return 0;
+
+    return static_cast<HTMLLabelElement*>(m_labelsByForAttribute.getElementByLabelForAttribute(forAttributeValue.impl(), this));
 }
 
 DOMSelection* TreeScope::getSelection() const
