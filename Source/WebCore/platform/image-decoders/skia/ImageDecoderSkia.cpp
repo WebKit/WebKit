@@ -81,6 +81,7 @@ bool ImageFrame::copyBitmapData(const ImageFrame& other)
     if (this == &other)
         return true;
 
+    m_hasAlpha = other.m_hasAlpha;
     m_bitmap.bitmap().reset();
     const NativeImageSkia& otherBitmap = other.m_bitmap;
     return otherBitmap.bitmap().copyTo(&m_bitmap.bitmap(), otherBitmap.bitmap().config());

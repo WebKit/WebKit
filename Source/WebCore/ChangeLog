@@ -1,3 +1,16 @@
+2012-10-18  Peter Kasting  <pkasting@google.com>
+
+        [Skia] Set m_hasAlpha correctly in ImageFrame::copyBitmapData.
+        https://bugs.webkit.org/show_bug.cgi?id=99781
+
+        Reviewed by Adam Barth.
+
+        No tests, since the actual effects of this bug are fickle and it's not
+        clear how to extract and check particular subframes of an animated GIF.
+
+        * platform/image-decoders/skia/ImageDecoderSkia.cpp:
+        (WebCore::ImageFrame::copyBitmapData):
+
 2012-10-18  Pan Deng  <pan.deng@intel.com>
 
         [Resource Timing]Implementation of resource timing buffer size restriction functionality
