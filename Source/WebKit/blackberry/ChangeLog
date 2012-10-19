@@ -1,3 +1,23 @@
+2012-10-19  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Move all keyboard type calculations into InputHandler.
+        https://bugs.webkit.org/show_bug.cgi?id=99847
+
+        Reviewed by Yong Li.
+
+        PR 227381.
+
+        Move all keyboard type calculations into webkit and avoid passing type
+        information to the webview.
+
+        Reviewed Internally by Nima Ghanavatian.
+
+        * Api/WebPageClient.h:
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::convertInputTypeToVKBType):
+        (WebKit):
+        (BlackBerry::WebKit::InputHandler::setElementFocused):
+
 2012-10-19  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Page viewport aspect ratio not kept on navigating back

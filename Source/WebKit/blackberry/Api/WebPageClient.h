@@ -139,7 +139,7 @@ public:
     virtual void notifyContentRendered(const Platform::IntRect&) = 0;
     virtual void resizeSurfaceIfNeeded() = 0;
 
-    virtual void inputFocusGained(Platform::BlackBerryInputType, int inputStyle, Platform::VirtualKeyboardType, Platform::VirtualKeyboardEnterKeyType) = 0;
+    virtual void inputFocusGained(int inputStyle, Platform::VirtualKeyboardType, Platform::VirtualKeyboardEnterKeyType) = 0;
     virtual void inputFocusLost() = 0;
     virtual void inputTextChanged() = 0;
     virtual void inputSelectionChanged(unsigned selectionStart, unsigned selectionEnd) = 0;

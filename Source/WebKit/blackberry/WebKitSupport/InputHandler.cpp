@@ -242,6 +242,26 @@ static int inputStyle(BlackBerryInputType type, const Element* element)
     return DEFAULT_STYLE;
 }
 
+static VirtualKeyboardType convertInputTypeToVKBType(BlackBerryInputType inputType)
+{
+    switch (inputType) {
+    case InputTypeURL:
+        return VKBTypeUrl;
+    case InputTypeEmail:
+        return VKBTypeEmail;
+    case InputTypeTelephone:
+        return VKBTypePhone;
+    case InputTypePassword:
+        return VKBTypePassword;
+    case InputTypeNumber:
+    case InputTypeHexadecimal:
+        return VKBTypePin;
+    default:
+        // All other types are text based use default keyboard.
+        return VKBTypeDefault;
+    }
+}
+
 static VirtualKeyboardType convertStringToKeyboardType(const AtomicString& string)
 {
     DEFINE_STATIC_LOCAL(AtomicString, Default, ("default"));
@@ -812,6 +832,9 @@ void InputHandler::setElementFocused(Element* element)
     m_currentFocusElementTextEditMask = inputStyle(type, element);
 
     VirtualKeyboardType keyboardType = keyboardTypeAttribute(element);
+    if (keyboardType == VKBTypeNotSet)
+        keyboardType = convertInputTypeToVKBType(type);
+
     VirtualKeyboardEnterKeyType enterKeyType = keyboardEnterKeyTypeAttribute(element);
 
     if (enterKeyType == VKBEnterKeyNotSet && type != InputTypeTextArea) {
@@ -823,7 +846,7 @@ void InputHandler::setElementFocused(Element* element)
     }
 
     FocusLog(LogLevelInfo, "InputHandler::setElementFocused, Type=%d, Style=%d, Keyboard Type=%d, Enter Key=%d", type, m_currentFocusElementTextEditMask, keyboardType, enterKeyType);
-    m_webPage->m_client->inputFocusGained(type, m_currentFocusElementTextEditMask, keyboardType, enterKeyType);
+    m_webPage->m_client->inputFocusGained(m_currentFocusElementTextEditMask, keyboardType, enterKeyType);
 
     handleInputLocaleChanged(m_webPage->m_webSettings->isWritingDirectionRTL());
 
