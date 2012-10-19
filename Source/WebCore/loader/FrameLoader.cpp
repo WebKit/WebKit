@@ -1699,6 +1699,9 @@ void FrameLoader::commitProvisionalLoad()
         prepareForCachedPageRestore();
         cachedPage->restore(m_frame->page());
 
+        // The page should be removed from the cache immediately after a restoration in order for the PageCache to be consistent.
+        pageCache()->remove(history()->currentItem());
+
         dispatchDidCommitLoad();
 
         // If we have a title let the WebView know about it. 
@@ -1707,8 +1710,11 @@ void FrameLoader::commitProvisionalLoad()
             m_client->dispatchDidReceiveTitle(title);
 
         checkCompleted();
-    } else
+    } else {
+        if (cachedPage)
+            pageCache()->remove(history()->currentItem());
         didOpenURL();
+    }
 
     LOG(Loading, "WebCoreLoading %s: Finished committing provisional load to URL %s", m_frame->tree()->uniqueName().string().utf8().data(),
         m_frame->document() ? m_frame->document()->url().string().utf8().data() : "");
@@ -1736,8 +1742,6 @@ void FrameLoader::commitProvisionalLoad()
             // Could be an issue with a giant local file.
             notifier()->sendRemainingDelegateMessages(m_documentLoader.get(), identifier, response, 0, static_cast<int>(response.expectedContentLength()), 0, error);
         }
-        
-        pageCache()->remove(history()->currentItem());
 
         // FIXME: Why only this frame and not parent frames?
         checkLoadCompleteForThisFrame();

@@ -1,3 +1,20 @@
+2012-10-19  Dima Gorbik  <dgorbik@apple.com>
+
+        Page should be removed from the cache right after restore was called.
+        https://bugs.webkit.org/show_bug.cgi?id=99737
+
+        Reviewed by Brady Eidson.
+
+        The pageCache was inconsistent after the restoration for a period of time because the cachedFrame is being nulled,
+        but the page is still in the Cache. Now the page is being removed from the cache right after the restoration.
+        This issue was spotted in a custom built application using WebKit and unfortunately there is no way to test this
+        behavior in LayoutTests. All the current tests that exercise the page cache do pass.
+
+        No new tests.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+
 2012-10-19  Max Vujovic  <mvujovic@adobe.com>
 
         [WebGL] getUniformLocation fails for uniform array name without array brackets
