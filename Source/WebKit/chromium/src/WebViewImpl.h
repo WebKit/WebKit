@@ -202,6 +202,7 @@ public:
     virtual bool isActive() const;
     virtual void setIsActive(bool value);
     virtual void setDomainRelaxationForbidden(bool, const WebString& scheme);
+    virtual void setCompositorImplThread(WebThread*);
     virtual bool dispatchBeforeUnloadEvent();
     virtual void dispatchUnloadEvent();
     virtual WebFrame* mainFrame();
@@ -840,6 +841,7 @@ private:
     bool m_compositorSurfaceReady;
     float m_deviceScaleInCompositor;
     int m_inputHandlerIdentifier;
+    WebThread* m_compositorImplThread;
 #endif
     static const WebInputEvent* m_currentInputEvent;
 

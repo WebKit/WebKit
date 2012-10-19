@@ -741,6 +741,7 @@ WebViewHost* TestShell::createNewWindow(const WebKit::WebURL& url, DRTDevToolsAg
 {
     WebViewHost* host = new WebViewHost(this);
     WebView* view = WebView::create(host);
+    view->setCompositorImplThread(m_webCompositorThread.get());
     view->setPermissionClient(webPermissions());
     view->setDevToolsAgentClient(devToolsAgent);
     host->setWebWidget(view);

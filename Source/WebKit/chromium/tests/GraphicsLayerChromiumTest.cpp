@@ -66,7 +66,7 @@ public:
         Platform::current()->compositorSupport()->initialize(0);
         m_graphicsLayer = static_pointer_cast<GraphicsLayerChromium>(GraphicsLayer::create(&m_client));
         m_platformLayer = m_graphicsLayer->platformLayer();
-        m_layerTreeView = adoptPtr(Platform::current()->compositorSupport()->createLayerTreeView(&m_layerTreeViewClient, *m_platformLayer, WebLayerTreeView::Settings()));
+        m_layerTreeView = adoptPtr(Platform::current()->compositorSupport()->createLayerTreeView(&m_layerTreeViewClient, *m_platformLayer, WebLayerTreeView::Settings(), 0));
         m_layerTreeView->setViewportSize(WebSize(1, 1), WebSize(1, 1));
     }
 
