@@ -87,11 +87,11 @@
                 '<(chromium_src_dir)',
                 '<(source_dir)/WebKit/chromium/public',
                 '<(DEPTH)',
-                '../chromium/TestRunner',
+                '../chromium/TestRunner/src',
             ],
             'direct_dependent_settings': {
                 'include_dirs': [
-                    '../chromium/TestRunner',
+                    '../chromium/TestRunner/src',
                 ],
             },
             'sources': [

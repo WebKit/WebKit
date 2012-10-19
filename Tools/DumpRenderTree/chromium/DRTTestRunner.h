@@ -42,7 +42,7 @@
 #ifndef DRTTestRunner_h
 #define DRTTestRunner_h
 
-#include "TestRunner/TestRunner.h"
+#include "TestRunner/src/TestRunner.h"
 
 class TestShell;
 

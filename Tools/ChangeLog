@@ -1,3 +1,37 @@
+2012-10-18  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] move TestRunner files into a src/ sub directory
+        https://bugs.webkit.org/show_bug.cgi?id=99776
+
+        Reviewed by Adam Barth.
+
+        This is in preparation of adding a public API to the TestRunner library.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        * DumpRenderTree/chromium/TestRunner/src/AccessibilityControllerChromium.cpp: Renamed from Tools/DumpRenderTree/chromium/TestRunner/AccessibilityControllerChromium.cpp.
+        * DumpRenderTree/chromium/TestRunner/src/AccessibilityControllerChromium.h: Renamed from Tools/DumpRenderTree/chromium/TestRunner/AccessibilityControllerChromium.h.
+        * DumpRenderTree/chromium/TestRunner/src/AccessibilityUIElementChromium.cpp: Renamed from Tools/DumpRenderTree/chromium/TestRunner/AccessibilityUIElementChromium.cpp.
+        * DumpRenderTree/chromium/TestRunner/src/AccessibilityUIElementChromium.h: Renamed from Tools/DumpRenderTree/chromium/TestRunner/AccessibilityUIElementChromium.h.
+        * DumpRenderTree/chromium/TestRunner/src/CppBoundClass.cpp: Renamed from Tools/DumpRenderTree/chromium/TestRunner/CppBoundClass.cpp.
+        * DumpRenderTree/chromium/TestRunner/src/CppBoundClass.h: Renamed from Tools/DumpRenderTree/chromium/TestRunner/CppBoundClass.h.
+        * DumpRenderTree/chromium/TestRunner/src/CppVariant.cpp: Renamed from Tools/DumpRenderTree/chromium/TestRunner/CppVariant.cpp.
+        * DumpRenderTree/chromium/TestRunner/src/CppVariant.h: Renamed from Tools/DumpRenderTree/chromium/TestRunner/CppVariant.h.
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.cpp: Renamed from Tools/DumpRenderTree/chromium/TestRunner/EventSender.cpp.
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.h: Renamed from Tools/DumpRenderTree/chromium/TestRunner/EventSender.h.
+        * DumpRenderTree/chromium/TestRunner/src/GamepadController.cpp: Renamed from Tools/DumpRenderTree/chromium/TestRunner/GamepadController.cpp.
+        * DumpRenderTree/chromium/TestRunner/src/GamepadController.h: Renamed from Tools/DumpRenderTree/chromium/TestRunner/GamepadController.h.
+        * DumpRenderTree/chromium/TestRunner/src/Task.cpp: Renamed from Tools/DumpRenderTree/chromium/TestRunner/Task.cpp.
+        * DumpRenderTree/chromium/TestRunner/src/Task.h: Renamed from Tools/DumpRenderTree/chromium/TestRunner/Task.h.
+        * DumpRenderTree/chromium/TestRunner/src/TestDelegate.h: Renamed from Tools/DumpRenderTree/chromium/TestRunner/TestDelegate.h.
+        * DumpRenderTree/chromium/TestRunner/src/TestInterfaces.cpp: Renamed from Tools/DumpRenderTree/chromium/TestRunner/TestInterfaces.cpp.
+        * DumpRenderTree/chromium/TestRunner/src/TestInterfaces.h: Renamed from Tools/DumpRenderTree/chromium/TestRunner/TestInterfaces.h.
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp: Renamed from Tools/DumpRenderTree/chromium/TestRunner/TestRunner.cpp.
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h: Renamed from Tools/DumpRenderTree/chromium/TestRunner/TestRunner.h.
+        * DumpRenderTree/chromium/TestRunner/src/TextInputController.cpp: Renamed from Tools/DumpRenderTree/chromium/TestRunner/TextInputController.cpp.
+        * DumpRenderTree/chromium/TestRunner/src/TextInputController.h: Renamed from Tools/DumpRenderTree/chromium/TestRunner/TextInputController.h.
+
 2012-10-18  Dirk Pranke  <dpranke@chromium.org>
 
         [chromium] garden-o-matic should ignore the 10.8 Tests bot
