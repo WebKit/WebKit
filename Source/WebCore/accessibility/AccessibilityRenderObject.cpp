@@ -79,6 +79,7 @@
 #include "RenderedPosition.h"
 #include "Text.h"
 #include "TextControlInnerElements.h"
+#include "TextIterator.h"
 #include "htmlediting.h"
 #include "visible_units.h"
 #include <wtf/StdLibExtras.h>
@@ -598,6 +599,19 @@ String AccessibilityRenderObject::helpText() const
     return String();
 }
 
+static TextIteratorBehavior textIteratorBehaviorForTextRange()
+{
+    TextIteratorBehavior behavior = TextIteratorIgnoresStyleVisibility;
+
+#if PLATFORM(GTK)
+    // We need to emit replaced elements for GTK, and present
+    // them with the 'object replacement character' (0xFFFC).
+    behavior = static_cast<TextIteratorBehavior>(behavior | TextIteratorEmitsObjectReplacementCharacters);
+#endif
+
+    return behavior;
+}
+
 String AccessibilityRenderObject::textUnderElement() const
 {
     if (!m_renderer)
@@ -1021,17 +1035,10 @@ AccessibilityObjectInclusion AccessibilityRenderObject::accessibilityIsIgnoredBa
 {
     // The following cases can apply to any element that's a subclass of AccessibilityRenderObject.
     
-    if (!m_renderer)
+    // Ignore invisible elements.
+    if (!m_renderer || m_renderer->style()->visibility() != VISIBLE)
         return IgnoreObject;
 
-    if (m_renderer->style()->visibility() != VISIBLE) {
-        // aria-hidden is meant to override visibility as the determinant in AX hierarchy inclusion.
-        if (equalIgnoringCase(getAttribute(aria_hiddenAttr), "false"))
-            return DefaultBehavior;
-        
-        return IgnoreObject;
-    }
-    
     // Anything marked as aria-hidden or a child of something aria-hidden must be hidden.
     if (ariaIsHidden())
         return IgnoreObject;
@@ -2644,59 +2651,6 @@ void AccessibilityRenderObject::updateAttachmentViewParents()
 }
 #endif
 
-// Hidden children are those that are not rendered or visible, but are specifically marked as aria-hidden=false,
-// meaning that they should be exposed to the AX hierarchy.
-void AccessibilityRenderObject::addHiddenChildren()
-{
-    Node* node = this->node();
-    if (!node)
-        return;
-    
-    // First do a quick run through to determine if we have any hidden nodes (most often we will not).
-    // If we do have hidden nodes, we need to determine where to insert them so they match DOM order as close as possible.
-    bool shouldInsertHiddenNodes = false;
-    for (Node* child = node->firstChild(); child; child = child->nextSibling()) {
-        if (!child->renderer() && isNodeAriaVisible(child)) {
-            shouldInsertHiddenNodes = true;
-            break;
-        }
-    }
-    
-    if (!shouldInsertHiddenNodes)
-        return;
-    
-    // Iterate through all of the children, including those that may have already been added, and
-    // try to insert hidden nodes in the correct place in the DOM order.
-    unsigned insertionIndex = 0;
-    for (Node* child = node->firstChild(); child; child = child->nextSibling()) {
-        if (child->renderer()) {
-            // Find out where the last render sibling is located within m_children.
-            AccessibilityObject* childObject = axObjectCache()->get(child->renderer());
-            if (childObject && childObject->accessibilityIsIgnored()) {
-                AccessibilityChildrenVector children = childObject->children();
-                if (children.size())
-                    childObject = children.last().get();
-                else
-                    childObject = 0;
-            }
-
-            if (childObject)
-                insertionIndex = m_children.find(childObject) + 1;
-            continue;
-        }
-
-        if (!isNodeAriaVisible(child))
-            continue;
-        
-        unsigned previousSize = m_children.size();
-        if (insertionIndex > previousSize)
-            insertionIndex = previousSize;
-        
-        insertChild(axObjectCache()->getOrCreate(child), insertionIndex);
-        insertionIndex += (m_children.size() - previousSize);
-    }
-}
-    
 void AccessibilityRenderObject::addChildren()
 {
     // If the need to add more children in addition to existing children arises, 
@@ -2708,10 +2662,24 @@ void AccessibilityRenderObject::addChildren()
     if (!canHaveChildren())
         return;
     
-    for (RefPtr<AccessibilityObject> obj = firstChild(); obj; obj = obj->nextSibling())
-        addChild(obj.get());
+    // add all unignored acc children
+    for (RefPtr<AccessibilityObject> obj = firstChild(); obj; obj = obj->nextSibling()) {
+        // If the parent is asking for this child's children, then either it's the first time (and clearing is a no-op), 
+        // or its visibility has changed. In the latter case, this child may have a stale child cached. 
+        // This can prevent aria-hidden changes from working correctly. Hence, whenever a parent is getting children, ensure data is not stale.
+        obj->clearChildren();
+
+        if (obj->accessibilityIsIgnored()) {
+            AccessibilityChildrenVector children = obj->children();
+            unsigned length = children.size();
+            for (unsigned i = 0; i < length; ++i)
+                m_children.append(children[i]);
+        } else {
+            ASSERT(obj->parentObject() == this);
+            m_children.append(obj);
+        }
+    }
     
-    addHiddenChildren();
     addAttachmentChildren();
     addImageMapChildren();
     addTextFieldChildren();

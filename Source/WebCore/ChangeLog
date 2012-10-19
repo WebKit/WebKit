@@ -1,3 +1,38 @@
+2012-10-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, rolling out r131915.
+        http://trac.webkit.org/changeset/131915
+        https://bugs.webkit.org/show_bug.cgi?id=98787
+
+        It broke the build on platforms with \!HAVE(ACCESSIBILITY)
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::getOrCreate):
+        (WebCore::AXObjectCache::nodeIsTextControl):
+        * accessibility/AXObjectCache.h:
+        (WebCore):
+        * accessibility/AccessibilityARIAGrid.cpp:
+        (WebCore::AccessibilityARIAGrid::addChild):
+        (WebCore::AccessibilityARIAGrid::addChildren):
+        * accessibility/AccessibilityARIAGrid.h:
+        (AccessibilityARIAGrid):
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::elementRect):
+        (WebCore::AccessibilityNodeObject::addChildren):
+        (WebCore::AccessibilityNodeObject::textUnderElement):
+        * accessibility/AccessibilityNodeObject.h:
+        (AccessibilityNodeObject):
+        * accessibility/AccessibilityObject.cpp:
+        * accessibility/AccessibilityObject.h:
+        (AccessibilityObject):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::textIteratorBehaviorForTextRange):
+        (WebCore):
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnoredBase):
+        (WebCore::AccessibilityRenderObject::addChildren):
+        * accessibility/AccessibilityRenderObject.h:
+        (AccessibilityRenderObject):
+
 2012-10-19  Tony Chang  <tony@chromium.org>
 
         Unreviewed, rolling out r131936.

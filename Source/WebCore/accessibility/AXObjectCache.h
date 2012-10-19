@@ -208,9 +208,7 @@ private:
 };
 
 bool nodeHasRole(Node*, const String& role);
-// This will let you know if aria-hidden was explicitly set to false.
-bool isNodeAriaVisible(Node*);
-    
+
 #if !HAVE(ACCESSIBILITY)
 inline AXObjectCache::AXObjectCache(const Document* doc) : m_document(const_cast<Document*>(doc)), m_notificationPostTimer(this, 0) { }
 inline AXObjectCache::~AXObjectCache() { }

@@ -246,7 +246,6 @@ private:
     bool isDescendantOfElementType(const QualifiedName& tagName) const;
     // This returns true if it's focusable but it's not content editable and it's not a control or ARIA control.
 
-    void addHiddenChildren();
     void addTextFieldChildren();
     void addImageMapChildren();
     void addCanvasChildren();

@@ -316,14 +316,8 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
     if (node->renderer())
         return getOrCreate(node->renderer());
 
-    if (!node->parentElement())
-        return 0;
-    
     // It's only allowed to create an AccessibilityObject from a Node if it's in a canvas subtree.
-    // Or if it's a hidden element, but we still want to expose it because of other ARIA attributes.
-    bool inCanvasSubtree = node->parentElement()->isInCanvasSubtree();
-    bool isHidden = !node->renderer() && isNodeAriaVisible(node);
-    if (!inCanvasSubtree && !isHidden)
+    if (!node->parentElement() || !node->parentElement()->isInCanvasSubtree())
         return 0;
 
     RefPtr<AccessibilityObject> newObj = createFromNode(node);
@@ -788,17 +782,6 @@ bool AXObjectCache::nodeIsTextControl(const Node* node)
 
     const AccessibilityObject* axObject = getOrCreate(const_cast<Node*>(node));
     return axObject && axObject->isTextControl();
-}
-    
-bool isNodeAriaVisible(Node* node)
-{
-    if (!node)
-        return false;
-    
-    if (!node->isElementNode())
-        return false;
-    
-    return equalIgnoringCase(toElement(node)->getAttribute(aria_hiddenAttr), "false");
 }
 
 } // namespace WebCore
