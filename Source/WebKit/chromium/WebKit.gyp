@@ -879,7 +879,7 @@
                 'public/WebTestingSupport.h',
             ],
             'conditions': [
-                ['inside_chromium_build==0 or component!="shared_library"', {
+                ['inside_chromium_build==1 and component=="shared_library"', {
                     'type': 'none',
                 }],
             ],

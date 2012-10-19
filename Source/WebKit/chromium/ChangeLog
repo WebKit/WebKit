@@ -1,5 +1,16 @@
 2012-10-19  Jochen Eisinger  <jochen@chromium.org>
 
+        [chromium] fix the fix
+
+        Unreviewed build fix.
+
+        Forgot to invert the condition when to set the type to none in the
+        previous attempt.
+
+        * WebKit.gyp:
+
+2012-10-19  Jochen Eisinger  <jochen@chromium.org>
+
         [chromium] Fix inside chromium build on Mac
 
         Unreviewed build fix.
