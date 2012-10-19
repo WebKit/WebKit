@@ -1,3 +1,33 @@
+2012-10-19  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed gardening.
+
+        * platform/chromium-mac-lion/compositing/shadows: Added.
+        * platform/chromium-mac-lion/compositing/shadows/shadow-drawing-expected.png: Added.
+        * platform/chromium-mac-lion/css2.1: Added.
+        * platform/chromium-mac-lion/css2.1/t0804-c5509-padn-l-03-f-g-expected.png: Added.
+        * platform/chromium-mac-lion/css2.1/t090501-c414-flt-03-b-g-expected.png: Added.
+        * platform/chromium-mac-lion/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.png: Added.
+        * platform/chromium-mac-lion/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt: Added.
+        * platform/chromium-mac-lion/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.png: Added.
+        * platform/chromium-mac-lion/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/block/float/032-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/input-baseline-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/input-placeholder-paint-order-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/placeholder-position-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/searchfield-heights-expected.png: Added.
+        * platform/chromium-mac-lion/fast/inline-block: Added.
+        * platform/chromium-mac-lion/fast/inline-block/contenteditable-baseline-expected.png: Added.
+        * platform/chromium-mac-lion/platform: Added.
+        * platform/chromium-mac-lion/platform/chromium: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/shadows: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug2479-4-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug30692-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla_expected_failures/bugs/bug2479-5-expected.png: Added.
+
 2012-10-19  Dongwoo Joshua Im  <dw.im@samsung.com>
 
         Rename ENABLE_CSS3_TEXT_DECORATION to ENABLE_CSS3_TEXT
