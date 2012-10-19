@@ -293,7 +293,8 @@ EXPORTS
         ?moveWindowBy@InspectorFrontendClientLocal@WebCore@@UAEXMM@Z
         ?open@DOMWindow@WebCore@@QAE?AV?$PassRefPtr@VDOMWindow@WebCore@@@WTF@@ABVString@4@ABVAtomicString@4@0PAV12@2@Z
         ?openInNewTab@InspectorFrontendClientLocal@WebCore@@UAEXABVString@WTF@@@Z
-        ?requestSetDockSide@InspectorFrontendClientLocal@WebCore@@UAEXW4DockSide@InspectorFrontendClient@2@@Z
+        ?requestAttachWindow@InspectorFrontendClientLocal@WebCore@@UAEXXZ
+        ?requestDetachWindow@InspectorFrontendClientLocal@WebCore@@UAEXXZ
         ?sendMessageToBackend@InspectorFrontendClientLocal@WebCore@@UAEXABVString@WTF@@@Z
         ?setInspectorFrontendClient@InspectorController@WebCore@@QAEXV?$PassOwnPtr@VInspectorFrontendClient@WebCore@@@WTF@@@Z
         ?setProperty@Settings@InspectorFrontendClientLocal@WebCore@@UAEXABVString@WTF@@0@Z

@@ -62,7 +62,9 @@ public:
     virtual void bringToFront();
     virtual void closeWindow();
 
-    virtual void requestSetDockSide(DockSide);
+    virtual void requestAttachWindow();
+    virtual void requestDetachWindow();
+    virtual void requestSetDockSide(const String&);
     virtual void changeAttachedWindowHeight(unsigned);
 
     virtual void openInNewTab(const String& url);

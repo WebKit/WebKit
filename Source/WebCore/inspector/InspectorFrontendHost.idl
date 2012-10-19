@@ -39,6 +39,8 @@
     void setZoomFactor(in float zoom);
     void inspectedURLChanged(in DOMString newURL);
 
+    void requestAttachWindow();
+    void requestDetachWindow();
     void requestSetDockSide(in DOMString side);
     void setAttachedWindowHeight(in unsigned long height);
     void moveWindowBy(in float x, in float y);

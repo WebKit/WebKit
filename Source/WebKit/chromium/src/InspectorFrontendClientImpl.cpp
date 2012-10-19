@@ -103,15 +103,19 @@ void InspectorFrontendClientImpl::closeWindow()
     m_client->closeWindow();
 }
 
-void InspectorFrontendClientImpl::requestSetDockSide(DockSide side)
+void InspectorFrontendClientImpl::requestAttachWindow()
 {
-    String sideString = "undocked";
-    switch (side) {
-    case DOCKED_TO_RIGHT: sideString = "right"; break;
-    case DOCKED_TO_BOTTOM: sideString = "bottom"; break;
-    case UNDOCKED: sideString = "undocked"; break;
-    }
-    m_client->requestSetDockSide(sideString);
+    m_client->requestDockWindow();
+}
+
+void InspectorFrontendClientImpl::requestDetachWindow()
+{
+    m_client->requestUndockWindow();
+}
+
+void InspectorFrontendClientImpl::requestSetDockSide(const String& side)
+{
+    m_client->requestSetDockSide(side);
 }
 
 void InspectorFrontendClientImpl::changeAttachedWindowHeight(unsigned)
