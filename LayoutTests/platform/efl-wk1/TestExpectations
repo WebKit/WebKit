@@ -253,12 +253,10 @@ http/tests/misc/redirect-to-external-url.html
 http/tests/loading/basic-auth-resend-wrong-credentials.html
 
 # BUG: wrong test results that need investigation
-editing/execCommand/crash-extend-selection-forward.html [ Failure ]
 editing/selection/5825350-1.html [ Failure ]
 editing/selection/5825350-2.html [ Failure ]
 editing/selection/directionality-after-undo-replace.html [ Failure ]
 editing/selection/doubleclick-beside-cr-span.html [ Failure ]
-editing/selection/doubleclick-whitespace-img-crash.html [ Failure ]
 editing/selection/doubleclick-whitespace.html [ Failure ]
 editing/selection/extend-selection-after-double-click.html [ Failure ]
 editing/selection/mixed-editability-10.html [ Failure ]
