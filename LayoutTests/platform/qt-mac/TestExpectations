@@ -1518,7 +1518,6 @@ fast/css/position-negative-top-margin.html
 fast/css/preserve-user-specified-zoom-level-on-reload.html
 fast/css/pseudo-cache-stale.html
 fast/css/pseudo-element-line-break.html
-fast/css/quirk-orphaned-units.html
 fast/css/rem-dynamic-scaling.html
 fast/css/rem-units-on-root.html
 fast/css/resize-corner-tracking-transformed.html
