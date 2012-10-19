@@ -1,3 +1,14 @@
+2012-10-18  Anand Chakravarty  <anandc@google.com>
+
+        Use of uninitialized variable in Media Source API test.
+        https://bugs.webkit.org/show_bug.cgi?id=99387
+
+        Reviewed by Eric Carlson.
+
+        Set value of seekTime to 1 before using it.
+
+        * http/tests/media/media-source/video-media-source-state-changes.html:
+
 2012-10-18  Dirk Pranke  <dpranke@chromium.org>
 
         De-dup expectations for chromium mountainlion
