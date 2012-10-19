@@ -564,7 +564,7 @@ macro putToBaseVariableBody(variableOffset, scratch1, scratch2, scratch3)
         loadConstantOrVariable(scratch2, scratch3)
         moveJSValueFromRegisterWithoutProfiling(scratch3, scratch1, variableOffset)
     else
-        loadConstantOrVariable(scratch2, scratch3, scratch2) # scratch3=tag, scratch2=payload
+        loadConstantOrVariable2Reg(scratch2, scratch3, scratch2) # scratch3=tag, scratch2=payload
         moveJSValueFromRegistersWithoutProfiling(scratch3, scratch2, scratch1, variableOffset)
     end
 end

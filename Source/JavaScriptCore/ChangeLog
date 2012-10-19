@@ -1,3 +1,14 @@
+2012-10-19  Oliver Hunt  <oliver@apple.com>
+
+        REGRESSION(r131822): It made 500+ tests crash on 32 bit platforms
+        https://bugs.webkit.org/show_bug.cgi?id=99814
+
+        Reviewed by Filip Pizlo.
+
+        Call the correct macro in 32bit. 
+
+        * llint/LowLevelInterpreter.asm:
+
 2012-10-19  Dongwoo Joshua Im  <dw.im@samsung.com>
 
         Rename ENABLE_CSS3_TEXT_DECORATION to ENABLE_CSS3_TEXT
