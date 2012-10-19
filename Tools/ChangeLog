@@ -1,3 +1,33 @@
+2012-10-18  Dirk Pranke  <dpranke@chromium.org>
+
+        make move_overwritten_baselines_to work again while rebaselining
+        https://bugs.webkit.org/show_bug.cgi?id=99793
+
+        Reviewed by Ojan Vafai.
+
+        We used to have code that would help when rebaselining results
+        for new ports (e.g., when moving from Lion to Mountain Lion) but
+        it appears that code bitrotted during all the refactoring since
+        the last time we needed this. This patch makes things work
+        again, adds more tests that will hopefully make clearer what
+        is supposed to work, and renames various parameters to be
+        consistent.
+
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+        (move_overwritten_baselines_to):
+        (builder_path_for_port_name):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineTest.__init__):
+        (RebaselineTest._copy_existing_baseline):
+        (RebaselineTest._rebaseline_test):
+        (RebaselineTest.execute):
+        (AbstractParallelRebaselineCommand._rebaseline_commands):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (test_rebaseline_json_with_move_overwritten_baselines_to):
+        (test_rebaseline_test_internal_with_move_overwritten_baselines_to):
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+        (GardeningServerTest.test_rebaselineall):
+
 2012-10-18  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Skip really old flaky failing jscore date test. 

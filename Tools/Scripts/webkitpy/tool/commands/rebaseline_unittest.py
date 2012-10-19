@@ -456,3 +456,60 @@ MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', 'wav,txt,png', 'm
 
         finally:
             builders._exact_matches = old_exact_matches
+
+    def test_rebaseline_json_with_move_overwritten_baselines_to(self):
+        old_exact_matches = builders._exact_matches
+        try:
+            builders._exact_matches = {
+                "MOCK builder": {"port_name": "test-mac-leopard", "specifiers": set(["mock-specifier"])},
+                "MOCK builder2": {"port_name": "test-mac-snowleopard", "specifiers": set(["mock-specifier2"]),
+                                  "move_overwritten_baselines_to": ["test-mac-leopard"]},
+            }
+
+            command = Rebaseline()
+            tool = MockTool()
+            tool.executive = MockExecutive(should_log=True)
+            command.bind_to_tool(tool)
+
+            expected_stdout = """rebaseline-json: {'mock/path/to/test.html': {'MOCK builder2': ['txt', 'png']}}\n"""
+            expected_stderr = """MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder2', '--test', 'mock/path/to/test.html', '--move-overwritten-baselines-to', 'test-mac-leopard'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', 'txt,png', 'mock/path/to/test.html'], cwd=/mock-checkout
+"""
+
+            options = MockOptions(optimize=True, builders=["MOCK builder2"], suffixes=["txt,png"], verbose=True)
+            OutputCapture().assert_outputs(self, command.execute, [options, ["mock/path/to/test.html"], tool],
+                expected_stdout=expected_stdout, expected_stderr=expected_stderr)
+        finally:
+            builders._exact_matches = old_exact_matches
+
+    def test_rebaseline_test_internal_with_move_overwritten_baselines_to(self):
+        old_exact_matches = builders._exact_matches
+        try:
+            builders._exact_matches = {
+                "MOCK Leopard": {"port_name": "test-mac-leopard", "specifiers": set(["mock-specifier"])},
+                "MOCK SnowLeopard": {"port_name": "test-mac-snowleopard", "specifiers": set(["mock-specifier"])},
+            }
+
+            command = RebaselineTest()
+            tool = MockTool()
+            tool.executive = MockExecutive(should_log=True)
+            command.bind_to_tool(tool)
+
+            port = tool.port_factory.get('test-mac-snowleopard')
+            tool.filesystem.write_text_file(tool.filesystem.join(port.baseline_version_dir(), 'failures', 'expected', 'image-expected.txt'), '')
+
+            options = MockOptions(optimize=True, builder="MOCK SnowLeopard", suffixes="txt",
+                move_overwritten_baselines_to=["test-mac-leopard"], verbose=True, test="failures/expected/image.html")
+
+            oc = OutputCapture()
+            oc.capture_output()
+            try:
+                logs = ''
+                command.execute(options, [], tool)
+            finally:
+                _, _, logs = oc.restore_output()
+
+            self.assertTrue("Copying baseline from /test.checkout/LayoutTests/platform/test-mac-snowleopard/failures/expected/image-expected.txt to /test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image-expected.txt.\n" in logs)
+
+        finally:
+            builders._exact_matches = old_exact_matches

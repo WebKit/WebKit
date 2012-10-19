@@ -74,7 +74,8 @@ class RebaselineTest(AbstractRebaseliningCommand):
     def __init__(self):
         options = [
             optparse.make_option("--builder", help="Builder to pull new baselines from"),
-            optparse.make_option("--platform-to-move-to", help="Platform to move existing baselines to before rebaselining. This is for dealing with bringing up new ports that interact with non-tree portions of the fallback graph."),
+            optparse.make_option("--move-overwritten-baselines-to", action="append", default=[],
+                help="Platform to move existing baselines to before rebaselining. This is for bringing up new ports."),
             optparse.make_option("--test", help="Test to rebaseline"),
         ]
         AbstractRebaseliningCommand.__init__(self, options=options)
@@ -90,13 +91,13 @@ class RebaselineTest(AbstractRebaseliningCommand):
             return self._tool.filesystem.join(port.layout_tests_dir(), 'platform', override_dir)
         return port.baseline_version_dir()
 
-    def _copy_existing_baseline(self, platforms_to_move_existing_baselines_to, test_name, suffix):
+    def _copy_existing_baseline(self, move_overwritten_baselines_to, test_name, suffix):
         old_baselines = []
         new_baselines = []
 
         # Need to gather all the baseline paths before modifying the filesystem since
         # the modifications can affect the results of port.expected_filename.
-        for platform in platforms_to_move_existing_baselines_to:
+        for platform in move_overwritten_baselines_to:
             port = self._tool.port_factory.get(platform)
             old_baseline = port.expected_filename(test_name, "." + suffix)
             if not self._tool.filesystem.exists(old_baseline):
@@ -152,15 +153,15 @@ class RebaselineTest(AbstractRebaseliningCommand):
     def _file_name_for_expected_result(self, test_name, suffix):
         return "%s-expected.%s" % (self._test_root(test_name), suffix)
 
-    def _rebaseline_test(self, builder_name, test_name, platforms_to_move_existing_baselines_to, suffix):
+    def _rebaseline_test(self, builder_name, test_name, move_overwritten_baselines_to, suffix):
         results_url = self._results_url(builder_name)
         baseline_directory = self._baseline_directory(builder_name)
 
         source_baseline = "%s/%s" % (results_url, self._file_name_for_actual_result(test_name, suffix))
         target_baseline = self._tool.filesystem.join(baseline_directory, self._file_name_for_expected_result(test_name, suffix))
 
-        if platforms_to_move_existing_baselines_to:
-            self._copy_existing_baseline(platforms_to_move_existing_baselines_to, test_name, suffix)
+        if move_overwritten_baselines_to:
+            self._copy_existing_baseline(move_overwritten_baselines_to, test_name, suffix)
 
         _log.info("Retrieving %s." % source_baseline)
         self._save_baseline(self._tool.web.get_binary(source_baseline, convert_404_to_None=True), target_baseline)
@@ -172,7 +173,7 @@ class RebaselineTest(AbstractRebaseliningCommand):
 
     def execute(self, options, args, tool):
         self._baseline_suffix_list = options.suffixes.split(',')
-        self._rebaseline_test_and_update_expectations(options.builder, options.test, options.platform_to_move_to)
+        self._rebaseline_test_and_update_expectations(options.builder, options.test, options.move_overwritten_baselines_to)
         print json.dumps(self._scm_changes)
 
 
@@ -269,6 +270,9 @@ class AbstractParallelRebaselineCommand(AbstractDeclarativeCommand):
             for builder in self._builders_to_fetch_from(test_list[test]):
                 suffixes = ','.join(test_list[test][builder])
                 cmd_line = [path_to_webkit_patch, 'rebaseline-test-internal', '--suffixes', suffixes, '--builder', builder, '--test', test]
+                move_overwritten_baselines_to = builders.move_overwritten_baselines_to(builder)
+                for platform in move_overwritten_baselines_to:
+                    cmd_line.extend(['--move-overwritten-baselines-to', platform])
                 commands.append(tuple([cmd_line, cwd]))
         return commands
 

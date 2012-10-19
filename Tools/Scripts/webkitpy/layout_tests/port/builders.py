@@ -35,6 +35,16 @@ from webkitpy.common.memoized import memoized
 # In this dictionary, each item stores:
 # * port_name -- a fully qualified port name
 # * specifiers -- a set of specifiers, representing configurations covered by this builder.
+# * move_overwritten_baselines_to -- (optional) list of platform directories that we will copy an existing
+#      baseline to before pulling down a new baseline during rebaselining. This is useful
+#      for bringing up a new port, for example when adding a Lion was the most recent Mac version and
+#      we wanted to bring up Mountain Lion, we would want to copy an existing baseline in platform/mac
+#      to platform/mac-mountainlion before updating the platform/mac entry.
+# * rebaseline_override_dir -- (optional) directory to put baselines in instead of where you would normally put them.
+#      This is useful when we don't have bots that cover particular configurations; so, e.g., you might
+#      support mac-mountainlion but not have a mac-mountainlion bot yet, so you'd want to put the mac-lion
+#      results into platform/mac temporarily.
+
 _exact_matches = {
     # These builders are on build.chromium.org.
     "WebKit XP": {"port_name": "chromium-win-xp", "specifiers": set(["xp", "release"])},
@@ -118,6 +128,10 @@ def rebaseline_override_dir(builder_name):
     return _exact_matches[builder_name].get("rebaseline_override_dir", None)
 
 
+def move_overwritten_baselines_to(builder_name):
+    return _exact_matches[builder_name].get("move_overwritten_baselines_to", [])
+
+
 def port_name_for_builder_name(builder_name):
     if builder_name in _exact_matches:
         return _exact_matches[builder_name]["port_name"]
@@ -136,7 +150,3 @@ def builder_name_for_port_name(target_port_name):
 
 def builder_path_for_port_name(port_name):
     builder_path_from_name(builder_name_for_port_name(port_name))
-
-
-def fallback_port_names_for_new_port(builder_name):
-    return _exact_matches[builder_name].get("move_overwritten_baselines_to", [])
