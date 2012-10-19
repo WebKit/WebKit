@@ -28,10 +28,16 @@ EWK2UnitTestEnvironment* environment = 0;
 
 int main(int argc, char** argv)
 {
+    ewk_init();
+
     ::testing::InitGoogleTest(&argc, argv);
 
     environment = new EWK2UnitTestEnvironment();
     testing::AddGlobalTestEnvironment(environment);
 
-    return RUN_ALL_TESTS();
+    int result = RUN_ALL_TESTS();
+
+    ewk_shutdown();
+
+    return result;
 }

@@ -1,3 +1,21 @@
+2012-10-18  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL][WK2] Move ewk_{init,shutdown}() to the main() function of EFL API test.
+        https://bugs.webkit.org/show_bug.cgi?id=99681
+
+        Reviewed by Gyuyoung Kim.
+
+        The ewk_{init,shutdown}() is called whenever processing the each test,
+        so tests can be failed if EFL libraries APIs are called between
+        ewk_shutdown() and next ewk_init().
+        The ewk_{init,shutdown}() should be called once per application.
+
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::EWK2UnitTestBase::SetUp):
+        (EWK2UnitTest::EWK2UnitTestBase::TearDown):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestMain.cpp:
+        (main):
+
 2012-10-18  Byungwoo Lee  <bw80.lee@samsung.com>
 
         Fix build warning.
