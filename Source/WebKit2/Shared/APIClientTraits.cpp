@@ -33,6 +33,7 @@ namespace WebKit {
 
 const size_t APIClientTraits<WKBundlePageLoaderClient>::interfaceSizesByVersion[] = {
     offsetof(WKBundlePageLoaderClient, didLayoutForFrame),
+    offsetof(WKBundlePageLoaderClient, didFinishProgress),
     sizeof(WKBundlePageLoaderClient)
 };
 

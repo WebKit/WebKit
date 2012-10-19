@@ -1,3 +1,13 @@
+2012-10-19  Lucas Forschler  <lforschler@apple.com>
+
+        <rdar://problem/12523419> Use v2 bundle page loader client structure.
+
+        We already had a callback from v2 implemented, so we should update to this version.
+ 
+        * Shared/APIClientTraits.cpp:
+        * Shared/APIClientTraits.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+
 2012-08-31  Timothy Hatcher  <timothy@apple.com>
 
         Merge r127319.

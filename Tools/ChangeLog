@@ -1,3 +1,10 @@
+2012-10-19  Lucas Forschler  <lforschler@apple.com>
+
+        <rdar://problem/12523419> Use v2 bundle page loader client structure.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp: (WTR::InjectedBundlePage::InjectedBundlePage):
+        Updated to v2 bundle page loader client structure, zero initializing a field we don't implement on the branch.
+
 2012-08-31  Timothy Hatcher  <timothy@apple.com>
 
         Merge r127047.
