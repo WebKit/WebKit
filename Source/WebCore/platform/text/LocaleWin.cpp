@@ -735,6 +735,18 @@ String LocaleWin::shortTimeFormat()
     return timeFormat();
 }
 
+const Vector<String>& LocaleWin::shortMonthLabels()
+{
+    ensureShortMonthLabels();
+    return m_shortMonthLabels;
+}
+
+const Vector<String>& LocaleWin::shortStandAloneMonthLabels()
+{
+    // Windows doesn't provide a way to get stand-alone month labels.
+    return shortMonthLabels();
+}
+
 const Vector<String>& LocaleWin::timeAMPMLabels()
 {
     if (m_timeAMPMLabels.isEmpty()) {

@@ -441,6 +441,36 @@ String LocaleICU::shortTimeFormat()
     return m_localizedShortTimeFormatText;
 }
 
+const Vector<String>& LocaleICU::shortMonthLabels()
+{
+    if (!m_shortMonthLabels.isEmpty())
+        return m_shortMonthLabels;
+    if (initializeShortDateFormat()) {
+        if (OwnPtr<Vector<String> > labels = createLabelVector(m_shortDateFormat, UDAT_SHORT_MONTHS, UCAL_JANUARY, 12)) {
+            m_shortMonthLabels = *labels;
+            return m_shortMonthLabels;
+        }
+    }
+    m_shortMonthLabels.reserveCapacity(WTF_ARRAY_LENGTH(WTF::monthName));
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(WTF::monthName); ++i)
+        m_shortMonthLabels.append(WTF::monthName[i]);
+    return m_shortMonthLabels;
+}
+
+const Vector<String>& LocaleICU::shortStandAloneMonthLabels()
+{
+    if (!m_shortStandAloneMonthLabels.isEmpty())
+        return m_shortStandAloneMonthLabels;
+    if (initializeShortDateFormat()) {
+        if (OwnPtr<Vector<String> > labels = createLabelVector(m_shortDateFormat, UDAT_STANDALONE_SHORT_MONTHS, UCAL_JANUARY, 12)) {
+            m_shortStandAloneMonthLabels = *labels;
+            return m_shortStandAloneMonthLabels;
+        }
+    }
+    m_shortStandAloneMonthLabels = shortMonthLabels();
+    return m_shortStandAloneMonthLabels;
+}
+
 const Vector<String>& LocaleICU::timeAMPMLabels()
 {
     initializeDateTimeFormat();

@@ -272,6 +272,37 @@ String LocaleMac::shortTimeFormat()
     return m_localizedShortTimeFormatText;
 }
 
+const Vector<String>& LocaleMac::shortMonthLabels()
+{
+    if (!m_shortMonthLabels.isEmpty())
+        return m_shortMonthLabels;
+    m_shortMonthLabels.reserveCapacity(12);
+    NSArray *array = [shortDateFormatter().get() shortMonthSymbols];
+    if ([array count] == 12) {
+        for (unsigned i = 0; i < 12; ++i)
+            m_shortMonthLabels.append([array objectAtIndex:i]);
+        return m_shortMonthLabels;
+    }
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(WTF::monthName); ++i)
+        m_shortMonthLabels.append(WTF::monthName[i]);
+    return m_shortMonthLabels;
+}
+
+const Vector<String>& LocaleMac::shortStandAloneMonthLabels()
+{
+    if (!m_shortStandAloneMonthLabels.isEmpty())
+        return m_shortStandAloneMonthLabels;
+    NSArray *array = [shortDateFormatter().get() shortStandaloneMonthSymbols];
+    if ([array count] == 12) {
+        m_shortStandAloneMonthLabels.reserveCapacity(12);
+        for (unsigned i = 0; i < 12; ++i)
+            m_shortStandAloneMonthLabels.append([array objectAtIndex:i]);
+        return m_shortStandAloneMonthLabels;
+    }
+    m_shortStandAloneMonthLabels = shortMonthLabels();
+    return m_shortStandAloneMonthLabels;
+}
+
 const Vector<String>& LocaleMac::timeAMPMLabels()
 {
     if (!m_timeAMPMLabels.isEmpty())

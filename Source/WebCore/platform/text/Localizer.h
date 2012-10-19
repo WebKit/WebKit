@@ -83,6 +83,14 @@ public:
     // field.
     String dateTimeFormatWithoutSeconds();
 
+    // Returns a vector of string of which size is 12. The first item is a
+    // localized string of Jan and the last item is a localized string of
+    // Dec. These strings should be short.
+    virtual const Vector<String>& shortMonthLabels() = 0;
+
+    // Stand-alone month version of shortMonthLabels.
+    virtual const Vector<String>& shortStandAloneMonthLabels() = 0;
+
     // Returns localized period field(AM/PM) strings.
     virtual const Vector<String>& timeAMPMLabels();
 #endif

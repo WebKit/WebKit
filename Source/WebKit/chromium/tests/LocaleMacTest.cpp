@@ -138,6 +138,18 @@ protected:
         return locale->shortTimeFormat();
     }
 
+    String shortMonthLabel(const String& localeString, unsigned index)
+    {
+        OwnPtr<LocaleMac> locale = LocaleMac::create(localeString);
+        return locale->shortMonthLabels()[index];
+    }
+
+    String shortStandAloneMonthLabel(const String& localeString, unsigned index)
+    {
+        OwnPtr<LocaleMac> locale = LocaleMac::create(localeString);
+        return locale->shortStandAloneMonthLabels()[index];
+    }
+
     String timeAMPMLabel(const String& localeString, unsigned index)
     {
         OwnPtr<LocaleMac> locale = LocaleMac::create(localeString);
@@ -264,6 +276,29 @@ TEST_F(LocaleMacTest, shortTimeFormat)
     EXPECT_STREQ("h:mm a", shortTimeFormat("en_US").utf8().data());
     EXPECT_STREQ("HH:mm", shortTimeFormat("fr_FR").utf8().data());
     EXPECT_STREQ("H:mm", shortTimeFormat("ja_JP").utf8().data());
+}
+
+TEST_F(LocaleMacTest, shortMonthLabels)
+{
+    EXPECT_STREQ("Jan", shortMonthLabel("en_US", 0).utf8().data());
+    EXPECT_STREQ("Jan", shortStandAloneMonthLabel("en_US", 0).utf8().data());
+    EXPECT_STREQ("Dec", shortMonthLabel("en_US", 11).utf8().data());
+    EXPECT_STREQ("Dec", shortStandAloneMonthLabel("en_US", 11).utf8().data());
+
+    EXPECT_STREQ("janv.", shortMonthLabel("fr_FR", 0).utf8().data());
+    EXPECT_STREQ("janv.", shortStandAloneMonthLabel("fr_FR", 0).utf8().data());
+    EXPECT_STREQ("d\xC3\xA9" "c.", shortMonthLabel("fr_FR", 11).utf8().data());
+    EXPECT_STREQ("d\xC3\xA9" "c.", shortStandAloneMonthLabel("fr_FR", 11).utf8().data());
+
+    EXPECT_STREQ("1\xE6\x9C\x88", shortMonthLabel("ja_JP", 0).utf8().data());
+    EXPECT_STREQ("1\xE6\x9C\x88", shortStandAloneMonthLabel("ja_JP", 0).utf8().data());
+    EXPECT_STREQ("12\xE6\x9C\x88", shortMonthLabel("ja_JP", 11).utf8().data());
+    EXPECT_STREQ("12\xE6\x9C\x88", shortStandAloneMonthLabel("ja_JP", 11).utf8().data());
+
+    EXPECT_STREQ("\xD0\xBC\xD0\xB0\xD1\x80\xD1\x82\xD0\xB0", shortMonthLabel("ru_RU", 2).utf8().data());
+    EXPECT_STREQ("\xD0\x9C\xD0\xB0\xD1\x80\xD1\x82", shortStandAloneMonthLabel("ru_RU", 2).utf8().data());
+    EXPECT_STREQ("\xD0\xBC\xD0\xB0\xD1\x8F", shortMonthLabel("ru_RU", 4).utf8().data());
+    EXPECT_STREQ("\xD0\x9C\xD0\xB0\xD0\xB9", shortStandAloneMonthLabel("ru_RU", 4).utf8().data());
 }
 
 TEST_F(LocaleMacTest, timeAMPMLabels)

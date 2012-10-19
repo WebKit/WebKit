@@ -65,6 +65,8 @@ public:
     virtual String monthFormat() OVERRIDE;
     virtual String timeFormat() OVERRIDE;
     virtual String shortTimeFormat() OVERRIDE;
+    virtual const Vector<String>& shortMonthLabels() OVERRIDE;
+    virtual const Vector<String>& shortStandAloneMonthLabels() OVERRIDE;
     virtual const Vector<String>& timeAMPMLabels() OVERRIDE;
 #endif
 
@@ -88,6 +90,8 @@ private:
     String m_monthFormat;
     String m_localizedTimeFormatText;
     String m_localizedShortTimeFormatText;
+    Vector<String> m_shortMonthLabels;
+    Vector<String> m_shortStandAloneMonthLabels;
     Vector<String> m_timeAMPMLabels;
 #endif
     bool m_didInitializeNumberData;

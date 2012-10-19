@@ -1,3 +1,24 @@
+2012-10-18  Kent Tamura  <tkent@chromium.org>
+
+        Add shortMonthLabels and shortStandAloneMonthLabels to Localizer
+        https://bugs.webkit.org/show_bug.cgi?id=99787
+
+        Reviewed by Kentaro Hara.
+
+        * tests/LocaleMacTest.cpp:
+        (LocaleMacTest::shortMonthLabel): A helper.
+        (LocaleMacTest::shortStandAloneMonthLabel): Ditto.
+        (TEST_F): Added tests for some locales.
+        * tests/LocaleWinTest.cpp:
+        (LocaleWinTest::shortMonthLabel): A helper.
+        (TEST_F): Added tests for some locales. We don't test
+        LocaleWin::shortStandAloneMonthLabels because it is identical to
+        shortMonthLabels.
+        * tests/LocalizedDateICUTest.cpp:
+        (LocalizedDateICUTest::shortMonthLabel): A helper.
+        (LocalizedDateICUTest::shortStandAloneMonthLabel): Ditto.
+        (TEST_F): Added tests for some locales.
+
 2012-10-18  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] Add a webkit_test_support target that WebTestingSupport
