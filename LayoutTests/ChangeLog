@@ -1,3 +1,11 @@
+2012-10-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Remove entries for now-passing tests in chroum-mac-mountainlion.
+
+        Unreviewed, expectations change.
+
+        * platform/chromium-mac-mountainlion/TestExpectations:
+
 2012-10-18  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         Implement value sanitization algorithm for type=datetime
