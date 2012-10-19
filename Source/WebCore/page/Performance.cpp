@@ -49,8 +49,15 @@
 
 namespace WebCore {
 
+#if ENABLE(RESOURCE_TIMING)
+static const size_t defaultResourceTimingBufferSize = 150;
+#endif
+
 Performance::Performance(Frame* frame)
     : DOMWindowProperty(frame)
+#if ENABLE(RESOURCE_TIMING)
+    , m_resourceTimingBufferSize(defaultResourceTimingBufferSize)
+#endif
 {
 }
 
@@ -143,19 +150,29 @@ void Performance::webkitClearResourceTimings()
     m_resourceTimingBuffer.clear();
 }
 
-void Performance::webkitSetResourceTimingBufferSize(unsigned int)
+void Performance::webkitSetResourceTimingBufferSize(unsigned size)
 {
-    // FIXME: Implement this.
+    m_resourceTimingBufferSize = size;
+    if (isResourceTimingBufferFull())
+        dispatchEvent(Event::create(eventNames().webkitresourcetimingbufferfullEvent, false, false));
 }
 
 void Performance::addResourceTiming(const ResourceRequest& request, const ResourceResponse& response, double finishTime, Document* requestingDocument)
 {
-    if (!response.resourceLoadTiming())
+    if (!response.resourceLoadTiming() || isResourceTimingBufferFull())
         return;
 
     RefPtr<PerformanceEntry> entry = PerformanceResourceTiming::create(request, response, finishTime, requestingDocument);
-    // FIXME: Need to enforce buffer limits.
+
     m_resourceTimingBuffer.append(entry);
+
+    if (isResourceTimingBufferFull())
+        dispatchEvent(Event::create(eventNames().webkitresourcetimingbufferfullEvent, false, false));
+}
+
+bool Performance::isResourceTimingBufferFull()
+{
+    return m_resourceTimingBuffer.size() >= m_resourceTimingBufferSize;
 }
 
 #endif // ENABLE(RESOURCE_TIMING)

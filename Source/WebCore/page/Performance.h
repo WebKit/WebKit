@@ -100,6 +100,7 @@ private:
     virtual void derefEventTarget() { deref(); }
     virtual EventTargetData* eventTargetData();
     virtual EventTargetData* ensureEventTargetData();
+    bool isResourceTimingBufferFull();
 
     EventTargetData m_eventTargetData;
 
@@ -108,6 +109,7 @@ private:
 
 #if ENABLE(RESOURCE_TIMING)
     Vector<RefPtr<PerformanceEntry> > m_resourceTimingBuffer;
+    unsigned m_resourceTimingBufferSize;
 #endif
 
 #if ENABLE(USER_TIMING)

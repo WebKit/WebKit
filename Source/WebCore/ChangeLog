@@ -1,3 +1,29 @@
+2012-10-18  Pan Deng  <pan.deng@intel.com>
+
+        [Resource Timing]Implementation of resource timing buffer size restriction functionality
+        https://bugs.webkit.org/show_bug.cgi?id=84885.
+
+        Reviewed by Tony Gentilcore.
+
+        http://www.w3.org/TR/2012/CR-resource-timing-20120522/
+        This patch enable functionality of set buffer size(default is 150 as spec). When buffer is full, resourceTimingBufferFull event will be fired. Incoming entries will be dropped if no more space for them. 
+
+        Tests: http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_buffer_full_when_populate_entries.html
+               http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_buffer_full_when_shrink_buffer_size.html
+               http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_buffer_size_restriction.html
+               http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_clear_resource_timing_functionality.html
+               http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_on_shrink_buffer_size.html
+               http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_store_and_clear_during_callback.html
+
+        * page/Performance.cpp:
+        (WebCore):
+        (WebCore::Performance::Performance):
+        (WebCore::Performance::webkitSetResourceTimingBufferSize):
+        (WebCore::Performance::addResourceTiming):
+        (WebCore::Performance::isResourceTimingBufferFull):
+        * page/Performance.h:
+        (Performance):
+
 2012-10-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r130411): Copying & pasting the first line of text can move caret to the end of text area

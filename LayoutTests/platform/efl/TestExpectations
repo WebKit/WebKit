@@ -2060,3 +2060,6 @@ webkit.org/b/84893 http/tests/w3c/webperf/submission/Intel/user-timing [ Skip ]
 
 # Regression after r131640.
 webkit.org/b/99691 gamepad/gamepad-out-of-range-crasher.html [ Failure ]
+
+# Resource Timing is not enable yet, skip it.
+webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing [ Skip ]

@@ -1,0 +1,7 @@
+Description
+
+This test validates the functionality of setResourceTimingBufferSize method in resource timing.
+
+
+PASS 2 resource timing entries should be stored since buffer size is 2! 
+

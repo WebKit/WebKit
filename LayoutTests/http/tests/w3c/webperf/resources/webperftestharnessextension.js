@@ -174,6 +174,40 @@ PerformanceContext.prototype =
                 this.performanceContext.oGetEntriesByName    ||
                 this.performanceContext.webkitGetEntriesByName)
                 .apply(this.performanceContext, arguments);
+    },
+
+    setResourceTimingBufferSize: function()
+    {
+        return (this.performanceContext.setResourceTimingBufferSize     ||
+                this.performanceContext.mozSetResourceTimingBufferSize  || 
+                this.performanceContext.msSetResourceTimingBufferSize   ||
+                this.performanceContext.oSetResourceTimingBufferSize    ||
+                this.performanceContext.webkitSetResourceTimingBufferSize)
+                .apply(this.performanceContext, arguments);
+    },
+
+    registerResourceTimingBufferFullCallback: function(func)
+    {
+        if (typeof this.performanceContext.onresourcetimingbufferfull !== "undefined")
+            this.performanceContext.onresourcetimingbufferfull = func;
+        else if (typeof this.performanceContext.onmozresourcetimingbufferfull !== "undefined")
+            this.performanceContext.onmozresourcetimingbufferfull = func;
+        else if (typeof this.performanceContext.onmsresourcetimingbufferfull !== "undefined")
+            this.performanceContext.onmsresourcetimingbufferfull = func;
+        else if (typeof this.performanceContext.onoresourcetimingbufferfull !== "undefined")
+            this.performanceContext.onoresourcetimingbufferfull = func;
+        else if (typeof this.performanceContext.onwebkitresourcetimingbufferfull !== "undefined")
+            this.performanceContext.onwebkitresourcetimingbufferfull = func;
+    },
+
+    clearResourceTimings: function()
+    {
+        (this.performanceContext.clearResourceTimings     ||
+         this.performanceContext.mozClearResourceTimings  || 
+         this.performanceContext.msClearResourceTimings   ||
+         this.performanceContext.oClearResourceTimings    ||
+         this.performanceContext.webkitClearResourceTimings)
+        .apply(this.performanceContext, arguments);
     }
 
 };

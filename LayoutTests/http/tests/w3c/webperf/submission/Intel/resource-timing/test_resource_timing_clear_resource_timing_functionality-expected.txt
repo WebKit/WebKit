@@ -1,0 +1,8 @@
+Description
+
+This test validates the functionality of clearResourceTimings method in resource timing.
+
+
+PASS 4 resource timing entries should be stored in this page! 
+PASS No resource timing entries should be stored after clearResourceTimings! 
+

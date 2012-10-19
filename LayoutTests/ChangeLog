@@ -1,3 +1,37 @@
+2012-10-18  Pan Deng  <pan.deng@intel.com>
+
+        [Resource Timing]Test cases for set buffer size functionality and event when buffer full.
+        https://bugs.webkit.org/show_bug.cgi?id=84885.
+
+        Reviewed by Tony Gentilcore.
+
+        Test cases in this patch validate buffer size restriction functionality, clear resource timing functionality and the fired event when buffer full. 
+
+        * http/tests/w3c/webperf/resources/webperftestharnessextension.js:
+        (PerformanceContext.prototype.getEntriesByName):
+        (PerformanceContext.prototype.setResourceTimingBufferSize):
+        (PerformanceContext.prototype.registerResourceTimingBufferFullCallback):
+        (PerformanceContext.prototype.clearResourceTimings):
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_buffer_full_when_populate_entries-expected.txt: Added.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_buffer_full_when_populate_entries.html: Added.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_buffer_full_when_shrink_buffer_size-expected.txt: Added.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_buffer_full_when_shrink_buffer_size.html: Added.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_buffer_size_restriction-expected.txt: Added.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_buffer_size_restriction.html: Added.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_clear_resource_timing_functionality-expected.txt: Added.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_clear_resource_timing_functionality.html: Added.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_on_shrink_buffer_size-expected.txt: Added.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_on_shrink_buffer_size.html: Added.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_store_and_clear_during_callback-expected.txt: Added.
+        * http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_store_and_clear_during_callback.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+
 2012-10-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r130411): Copying & pasting the first line of text can move caret to the end of text area

@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>read and clear resource timing entry in onresourcetimingbufferfull callback</title>
+        <script src="/w3c/webperf/resources/webperftestharnessextension.js"></script>
+        <script>
+            var context = new PerformanceContext(performance);
+            var resource_timing_buffer_size = 1;
+            var global_buffer = [];
+            function store_and_clear()
+            {
+                var entry_list = context.getEntriesByType('resource');
+                for (var i = 0; i < entry_list.length; ++i)
+                    global_buffer.push(entry_list[i]);
+                context.clearResourceTimings();
+            }
+            context.registerResourceTimingBufferFullCallback(store_and_clear);
+            context.setResourceTimingBufferSize(resource_timing_buffer_size);
+        </script>
+        <link rel="author" title="Intel" href="http://www.intel.com/" />
+        <link rel="help" href="http://www.w3.org/TR/resource-timing/#performanceresourcetiming"/>
+        <script src="/w3c/resources/testharness.js"></script>
+        <script src="/w3c/resources/testharnessreport.js"></script>
+        <script src="/w3c/webperf/resources/webperftestharness.js"></script>
+        <script>
+            setup({ explicit_done: true });                
+            function onload_test()
+            {
+                test_equals(context.getEntriesByType('resource').length, 0, "No entry should be stored in resource timing buffer since it's cleared once an item arrived!");
+                test_equals(global_buffer.length, 4, "4 resource timing entries should be moved to global buffer!");
+                done();
+            }
+        </script>
+    </head>
+    <body onload=onload_test()>
+        <h1>Description</h1>
+        <p>This test validates the behavior of read and clear operation in onresourcetimingbufferfull callback of resource timing.</p>
+    </body>
+</html>
