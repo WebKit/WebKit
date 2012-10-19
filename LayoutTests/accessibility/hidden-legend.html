@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+
+<style>	
+#form2 legend {position:absolute; left:-9999px;}
+#form3 legend {display:none;}
+</style>
+
+<form action="#" method="post" id="form1">
+<fieldset tabindex=0 role="group" id="fieldset1">
+<legend>Pick your favourite colour:</legend>
+<input type="radio" name="colours3" value="red3" id="red3"> <label for="red3">red</label>
+<input type="radio" name="colours3" value="yellow3" id="yellow3"> <label for="yellow3">yellow</label>
+</fieldset>
+</form>
+
+<form action="#" method="post" id="form2">
+<fieldset tabindex=0 role="group" id="fieldset2">
+<legend>Pick your favourite colour:</legend>
+<input type="radio" name="colours3" value="red3" id="red3"> <label for="red3">red</label>
+<input type="radio" name="colours3" value="yellow3" id="yellow3"> <label for="yellow3">yellow</label>
+</fieldset>
+</form>
+
+<form action="#" method="post" id="form3">
+<fieldset tabindex=0 role="group" id="fieldset3">
+<legend>Pick your favourite colour:</legend>
+<input type="radio" name="colours3" value="red3" id="red3"> <label for="red3">red</label>
+<input type="radio" name="colours3" value="yellow3" id="yellow3"> <label for="yellow3">yellow</label>
+</fieldset>
+</form>
+
+<div id="console"></div>
+<script>
+description("This tests that the legend is still used as the title UI element even when off-screen (but not when display:none is used)")
+
+if (window.testRunner && window.accessibilityController) {
+
+    // 1st case: testing when a fieldset uses an unmodified legend. The title UI element
+    // should be the legend (which is the first child).
+    document.getElementById('fieldset1').focus();
+    var fieldset1 = accessibilityController.focusedElement;
+    shouldBeTrue("fieldset1.titleUIElement().isEqual(fieldset1.childAtIndex(0))");
+
+    // 2nd case: a hidden legend should still be the title UI element.
+    document.getElementById('fieldset2').focus();
+    var fieldset2 = accessibilityController.focusedElement;
+    shouldBeTrue("fieldset2.titleUIElement().isEqual(fieldset2.childAtIndex(0))");
+
+    // 3rd case: a legend with display:none should not be a title UI element.
+    document.getElementById('fieldset3').focus();
+    var fieldset3 = accessibilityController.focusedElement;
+    shouldBeTrue("fieldset3.titleUIElement() == null || !fieldset3.titleUIElement().isValid");
+}
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

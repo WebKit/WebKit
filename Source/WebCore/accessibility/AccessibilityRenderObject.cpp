@@ -981,7 +981,7 @@ AccessibilityObject* AccessibilityRenderObject::titleUIElement() const
     
     // if isFieldset is true, the renderer is guaranteed to be a RenderFieldset
     if (isFieldset())
-        return axObjectCache()->getOrCreate(toRenderFieldset(m_renderer)->findLegend());
+        return axObjectCache()->getOrCreate(toRenderFieldset(m_renderer)->findLegend(RenderFieldset::IncludeFloatingOrOutOfFlow));
     
     Node* element = m_renderer->node();
     if (!element)

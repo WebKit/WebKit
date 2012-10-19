@@ -123,10 +123,13 @@ RenderObject* RenderFieldset::layoutSpecialExcludedChild(bool relayoutChildren)
     return legend;
 }
 
-RenderBox* RenderFieldset::findLegend() const
+RenderBox* RenderFieldset::findLegend(FindLegendOption option) const
 {
     for (RenderObject* legend = firstChild(); legend; legend = legend->nextSibling()) {
-        if (!legend->isFloatingOrOutOfFlowPositioned() && legend->node() && (legend->node()->hasTagName(legendTag)))
+        if (option == IgnoreFloatingOrOutOfFlow && legend->isFloatingOrOutOfFlowPositioned())
+            continue;
+        
+        if (legend->node() && (legend->node()->hasTagName(legendTag)))
             return toRenderBox(legend);
     }
     return 0;

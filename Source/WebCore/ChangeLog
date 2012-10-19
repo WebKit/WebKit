@@ -1,3 +1,21 @@
+2012-10-19  Chris Fleizach  <cfleizach@apple.com>
+
+        VO issues with hidden <legend> and last explicitly labelled element within a group <fieldset>
+        https://bugs.webkit.org/show_bug.cgi?id=96325
+
+        Reviewed by Beth Dakin.
+
+         When finding a <legend> for accessibility, we need to consider those that are offscreen. This patch
+         modifies the original findLegend method to take a parameter to determine what should be done.
+
+        Test: accessibility/hidden-legend.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::titleUIElement):
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::findLegend):
+        * rendering/RenderFieldset.h:
+
 2012-10-17  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Refactor accessibility name computation so it's more platform independent
