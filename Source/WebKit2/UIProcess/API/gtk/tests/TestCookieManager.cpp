@@ -132,6 +132,17 @@ public:
         return m_domains;
     }
 
+    bool hasDomain(const char* domain)
+    {
+        if (!m_domains)
+            return false;
+
+        for (size_t i = 0; m_domains[i]; ++i)
+            if (g_str_equal(m_domains[i], domain))
+                return true;
+        return false;
+    }
+
     void deleteCookiesForDomain(const char* domain)
     {
         webkit_cookie_manager_delete_cookies_for_domain(m_cookieManager, domain);
@@ -178,8 +189,8 @@ static void testCookieManagerAcceptPolicy(CookieManagerTest* test, gconstpointer
     domains = test->getDomains();
     g_assert(domains);
     g_assert_cmpint(g_strv_length(domains), ==, 2);
-    g_assert_cmpstr(domains[0], ==, kFirstPartyDomain);
-    g_assert_cmpstr(domains[1], ==, kThirdPartyDomain);
+    g_assert(test->hasDomain(kFirstPartyDomain));
+    g_assert(test->hasDomain(kThirdPartyDomain));
     test->deleteAllCookies();
 
     test->setAcceptPolicy(WEBKIT_COOKIE_POLICY_ACCEPT_NEVER);
