@@ -77,3 +77,9 @@ webkit.org/b/98525 plugins/plugin-document-back-forward.html
 webkit.org/b/98525 plugins/reentrant-update-widget-positions.html
 webkit.org/b/98525 plugins/update-widgets-crash.html
 webkit.org/b/98525 plugins/window-open.html
+
+# [Qt] Unidentified pixel failures
+webkit.org/b/99306 fast/images/gif-loop-count.html [ ImageOnlyFailure ]
+webkit.org/b/99306 fast/repaint/background-scaling.html [ ImageOnlyFailure ]
+webkit.org/b/99306 transforms/3d/point-mapping/3d-point-mapping-coplanar.html [ ImageOnlyFailure ]
+webkit.org/b/99306 transitions/suspend-transform-transition.html [ ImageOnlyFailure ]

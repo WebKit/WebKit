@@ -1,3 +1,64 @@
+2012-10-19  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Pixel tests need rebaseline
+        https://bugs.webkit.org/show_bug.cgi?id=99323
+
+        Unreviewed rebaseline.
+
+        Part I.
+        Identifying wrong results, and rebasing some expected png's.
+
+        * platform/qt-5.0-wk1/TestExpectations:
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt-5.0-wk2/fast/borders/border-image-01-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/border-image-border-radius-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/border-image-longhand-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/border-image-massive-scale-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/border-image-outset-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/border-image-outset-in-shorthand-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/border-image-repeat-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/border-image-rotate-transform-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/border-image-scale-transform-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/border-image-scaled-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/border-image-scrambled-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/border-image-side-reduction-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/border-image-source-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/border-mixed-alpha-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/border-radius-complex-inner-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/borders/border-radius-different-width-001-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/box-shadow/shadow-tiling-artifact-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/box-shadow/spread-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/canvas/arc360-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/repaint/iframe-scroll-repaint-expected.png:
+        * platform/qt-5.0-wk2/fast/repaint/selection-after-delete-expected.png:
+        * platform/qt-5.0-wk2/fast/repaint/selection-after-remove-expected.png:
+        * platform/qt-5.0-wk2/fast/repaint/selection-clear-expected.png:
+        * platform/qt-5.0-wk2/fast/repaint/selection-gap-overflow-scroll-2-expected.png:
+        * platform/qt-5.0-wk2/fast/replaced/absolute-image-sizing-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/replaced/image-sizing-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/mask-invalidation-expected.png: Copied from LayoutTests/platform/qt/svg/custom/mask-invalidation-expected.png.
+        * platform/qt-5.0-wk2/svg/custom/relative-sized-image-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/zoom/page/zoom-mask-with-percentages-expected.png: Added.
+        * platform/qt-5.0-wk2/transforms/3d/point-mapping/3d-point-mapping-coplanar-expected.png: Added.
+        * platform/qt-5.0-wk2/transforms/3d/point-mapping/3d-point-mapping-deep-expected.png: Added.
+        * platform/qt-5.0-wk2/transforms/3d/point-mapping/3d-point-mapping-expected.png: Added.
+        * platform/qt-5.0-wk2/transforms/3d/point-mapping/3d-point-mapping-overlapping-expected.png: Added.
+        * platform/qt-5.0-wk2/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.png: Added.
+        * platform/qt-5.0-wk2/transitions/suspend-transform-transition-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/repaint/iframe-scroll-repaint-expected.png.
+        * platform/qt/TestExpectations:
+        * platform/qt/animations/cross-fade-background-image-expected.png:
+        * platform/qt/animations/cross-fade-border-image-source-expected.png:
+        * platform/qt/animations/cross-fade-list-style-image-expected.png:
+        * platform/qt/animations/cross-fade-webkit-mask-image-expected.png:
+        * platform/qt/fast/repaint/line-flow-with-floats-in-regions-expected.png:
+        * platform/qt/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.png:
+        * platform/qt/svg/custom/mask-invalidation-expected.png:
+        * platform/qt/svg/text/remove-text-node-from-tspan-expected.png:
+        * platform/qt/svg/text/remove-tspan-from-text-expected.png:
+        * platform/qt/transforms/3d/point-mapping/3d-point-mapping-coplanar-expected.png: Removed.
+        * platform/qt/transforms/3d/point-mapping/3d-point-mapping-overlapping-expected.png: Removed.
+
 2012-10-19  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Rebaseline pixel expectation that is rendered correctly now.
