@@ -1385,6 +1385,12 @@ webkit.org/b/84893 http/tests/w3c/webperf/submission/Intel/user-timing [ Skip ]
 # Resource Timing is not enable yet, skip it.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing [ Skip ]
 
+webkit.org/b/99824 fast/lists/w3-css3-list-styles-alphabetic.html [ Failure ]
+webkit.org/b/99824 fast/lists/w3-css3-list-styles-fallback-style.html [ Failure ]
+webkit.org/b/99824 fast/lists/w3-list-styles.html [ Failure ]
+
+webkit.org/b/99825 accessibility/title-ui-element-correctness.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
