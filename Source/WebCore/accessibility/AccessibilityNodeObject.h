@@ -158,6 +158,9 @@ protected:
 
     virtual AccessibilityRole determineAccessibilityRole();
     virtual void addChildren();
+    virtual void addChild(AccessibilityObject*);
+    virtual void insertChild(AccessibilityObject*, unsigned index);
+
     virtual bool canHaveChildren() const;
     virtual bool accessibilityIsIgnored() const;
     AccessibilityRole ariaRoleAttribute() const;
@@ -174,6 +177,7 @@ protected:
     void ariaLabeledByElements(Vector<Element*>& elements) const;
     String accessibilityDescriptionForElements(Vector<Element*> &elements) const;
     void elementsFromAttribute(Vector<Element*>& elements, const QualifiedName&) const;
+    virtual LayoutRect boundingBoxRect() const;
     String ariaDescribedByAttribute() const;
     
     Element* menuElementForMenuButton() const;

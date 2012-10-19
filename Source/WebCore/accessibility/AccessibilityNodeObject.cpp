@@ -222,6 +222,26 @@ LayoutRect AccessibilityNodeObject::elementRect() const
 {
     return boundingBoxRect();
 }
+    
+LayoutRect AccessibilityNodeObject::boundingBoxRect() const
+{
+    // AccessibilityNodeObjects have no mechanism yet to return a size or position.
+    // For now, let's return the position of the ancestor that does have a position,
+    // and make it the width of that parent, and about the height of a line of text, so that it's clear the object is a child of the parent.
+    
+    LayoutRect boundingBox;
+    
+    for (AccessibilityObject* positionProvider = parentObject(); positionProvider; positionProvider = positionProvider->parentObject()) {
+        if (positionProvider->isAccessibilityRenderObject()) {
+            LayoutRect parentRect = positionProvider->elementRect();
+            boundingBox.setSize(LayoutSize(parentRect.width(), FractionalLayoutUnit(std::min(10.0f, parentRect.height().toFloat()))));
+            boundingBox.setLocation(parentRect.location());
+            break;
+        }
+    }
+    
+    return boundingBox;
+}
 
 void AccessibilityNodeObject::setNode(Node* node)
 {
@@ -284,6 +304,32 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRole()
     return UnknownRole;
 }
 
+void AccessibilityNodeObject::insertChild(AccessibilityObject* child, unsigned index)
+{
+    if (!child)
+        return;
+    
+    // If the parent is asking for this child's children, then either it's the first time (and clearing is a no-op),
+    // or its visibility has changed. In the latter case, this child may have a stale child cached.
+    // This can prevent aria-hidden changes from working correctly. Hence, whenever a parent is getting children, ensure data is not stale.
+    child->clearChildren();
+    
+    if (child->accessibilityIsIgnored()) {
+        AccessibilityChildrenVector children = child->children();
+        size_t length = children.size();
+        for (size_t i = 0; i < length; ++i)
+            m_children.insert(index + i, children[i]);
+    } else {
+        ASSERT(child->parentObject() == this);
+        m_children.insert(index, child);
+    }
+}
+
+void AccessibilityNodeObject::addChild(AccessibilityObject* child)
+{
+    insertChild(child, m_children.size());
+}
+
 void AccessibilityNodeObject::addChildren()
 {
     // If the need to add more children in addition to existing children arises, 
@@ -299,19 +345,8 @@ void AccessibilityNodeObject::addChildren()
     if (renderer() && !m_node->hasTagName(canvasTag))
         return;
     
-    for (Node* child = m_node->firstChild(); child; child = child->nextSibling()) {
-        RefPtr<AccessibilityObject> obj = axObjectCache()->getOrCreate(child);
-        obj->clearChildren();
-        if (obj->accessibilityIsIgnored()) {
-            AccessibilityChildrenVector children = obj->children();
-            size_t length = children.size();
-            for (size_t i = 0; i < length; ++i)
-                m_children.append(children[i]);
-        } else {
-            ASSERT(obj->parentObject() == this);
-            m_children.append(obj);
-        }
-    }
+    for (Node* child = m_node->firstChild(); child; child = child->nextSibling())
+        addChild(axObjectCache()->getOrCreate(child));
 }
 
 bool AccessibilityNodeObject::canHaveChildren() const
@@ -1400,7 +1435,9 @@ String AccessibilityNodeObject::textUnderElement() const
     // If this could be fixed, it'd be more accurate use TextIterator here.
     if (node->isElementNode())
         return toElement(node)->innerText();
-
+    else if (node->isTextNode())
+        return toText(node)->wholeText();
+    
     return String();
 }
 
