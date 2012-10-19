@@ -1,3 +1,10 @@
+2012-10-18  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update.
+
+        * platform/chromium/TestExpectations: Remove entries for passing *-multiple-fieds tests.
+        * platform/chromium-mac-mountainlion/TestExpectations: Add them.
+
 2012-10-18  Pan Deng  <pan.deng@intel.com>
 
         [Resource Timing]Test cases for set buffer size functionality and event when buffer full.
