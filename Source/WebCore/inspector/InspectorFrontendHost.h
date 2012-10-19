@@ -77,6 +77,7 @@ public:
     bool canSave();
     void save(const String& url, const String& content, bool forceSaveAs);
     void append(const String& url, const String& content);
+    void close(const String& url);
 
     bool canInspectWorkers();
 

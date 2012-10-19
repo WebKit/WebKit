@@ -54,6 +54,7 @@
     boolean canSave();
     void save(in DOMString url, in DOMString content, in boolean forceSaveAs);
     void append(in DOMString url, in DOMString content);
+    void close(in DOMString url);
 
     boolean canInspectWorkers();
 

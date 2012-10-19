@@ -385,6 +385,7 @@ WebInspector.FileOutputStream.prototype = {
         if (this._writeCallbacks.length)
             return;
         WebInspector.fileManager.removeEventListener(WebInspector.FileManager.EventTypes.AppendedToURL, this._onAppendDone, this);
+        WebInspector.fileManager.close(this._fileName);
     },
 
     /**
@@ -395,8 +396,10 @@ WebInspector.FileOutputStream.prototype = {
         if (event.data !== this._fileName)
             return;
         if (!this._writeCallbacks.length) {
-            if (this._closed)
+            if (this._closed) {
                 WebInspector.fileManager.removeEventListener(WebInspector.FileManager.EventTypes.AppendedToURL, this._onAppendDone, this);
+                WebInspector.fileManager.close(this._fileName);
+            }
             return;
         }
         var callback = this._writeCallbacks.shift();

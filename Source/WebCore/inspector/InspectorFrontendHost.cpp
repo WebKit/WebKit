@@ -250,6 +250,10 @@ void InspectorFrontendHost::append(const String& url, const String& content)
         m_client->append(url, content);
 }
 
+void InspectorFrontendHost::close(const String&)
+{
+}
+
 bool InspectorFrontendHost::canInspectWorkers()
 {
 #if ENABLE(WORKERS)

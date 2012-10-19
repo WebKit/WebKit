@@ -1,3 +1,44 @@
+2012-10-19  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Saving HAR, snapshots and timeline data do not work in remote debugging mode
+        https://bugs.webkit.org/show_bug.cgi?id=99179
+
+        Reviewed by Yury Semikhatsky.
+
+        Added method "close" to InspectorFrontendHost.
+        Symantically, this method forces to flush all unsaved buffers for
+        specified file. In native implementation this turns to be no-op.
+
+        In stub implementation "close" causes compilation of blob object an
+        navigating to blob-schema url.
+
+        Removed "canAppend", as appending in now suppurted
+        by all implementations.
+
+        Repaced schema "data" with "blob" in InspectorFrontendHostStub "save"
+        to avoid out-of-memory errors.
+
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::close): Compiles blob object and
+        navigates to blob-object url.
+        (WebCore):
+        * inspector/InspectorFrontendHost.h: Added "close" method.
+        * inspector/InspectorFrontendHost.idl: Ditto.
+        * inspector/front-end/FileManager.js:
+        (WebInspector.FileManager.prototype.close): Proxy to InspectorFrontend.
+        * inspector/front-end/FileUtils.js:
+        (WebInspector.FileOutputStream.prototype.close):
+        Invoke "close" on FileManager.
+        (WebInspector.FileOutputStream.prototype._onAppendDone): Ditto.
+        * inspector/front-end/HandlerRegistry.js: Added mandatory "close" call.
+        * inspector/front-end/HeapSnapshotView.js:
+        (WebInspector.HeapProfileHeader.prototype.canSaveToFile): Fixed check.
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        (.WebInspector.InspectorFrontendHostStub):
+        Added "appendable" behaviour emulation.
+        * inspector/front-end/SourceFrame.js: Added mandatory "close" call.
+        * inspector/front-end/externs.js: Replaced "canAppend" with "close"
+
 2012-10-18  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: labelForElement is slow when there are a lot of DOM elements

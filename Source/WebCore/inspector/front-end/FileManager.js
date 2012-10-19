@@ -51,14 +51,6 @@ WebInspector.FileManager.prototype = {
     },
 
     /**
-     * @return {boolean}
-     */
-    canAppend: function()
-    {
-        return InspectorFrontendHost.canSave() && ("append" in InspectorFrontendHost);
-    },
-
-    /**
      * @param {string} url
      * @param {string} content
      * @param {boolean} forceSaveAs
@@ -100,6 +92,14 @@ WebInspector.FileManager.prototype = {
     append: function(url, content)
     {
         InspectorFrontendHost.append(url, content);
+    },
+
+    /**
+     * @param {string} url
+     */
+    close: function(url)
+    {
+        InspectorFrontendHost.close(url);
     },
 
     /**

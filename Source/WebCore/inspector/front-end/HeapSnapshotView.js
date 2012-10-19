@@ -953,7 +953,7 @@ WebInspector.HeapProfileHeader.prototype = {
      */
     canSaveToFile: function()
     {
-        return !this.fromFile() && this._snapshotProxy && !this._receiver && WebInspector.fileManager.canAppend();
+        return !this.fromFile() && !!this._snapshotProxy && !this._receiver;
     },
 
     /**

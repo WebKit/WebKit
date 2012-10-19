@@ -38,6 +38,7 @@ WebInspector.InspectorFrontendHostStub = function()
 {
     this._attachedWindowHeight = 0;
     this.isStub = true;
+    this._fileBuffers = {};
     WebInspector.documentCopyEventFired = this.documentCopy.bind(this);
 }
 
@@ -143,23 +144,43 @@ WebInspector.InspectorFrontendHostStub.prototype = {
 
     save: function(url, content, forceSaveAs)
     {
-        var blob = new Blob([content], { type: "application/octet-stream" });
+        if (this._fileBuffers[url])
+            throw new Error("Concurrent file modification denied.");
 
-        var fr = new FileReader();
-        fr.onload = function(e) {
-            // Force download
-            window.location = this.result;
-        }
-        fr.readAsDataURL(blob);
-    },
-
-    canAppend: function()
-    {
-        return false;
+        this._fileBuffers[url] = [content];
+        setTimeout(WebInspector.fileManager.savedURL.bind(WebInspector.fileManager, url), 0);
     },
 
     append: function(url, content)
     {
+        var buffer = this._fileBuffers[url];
+        if (!buffer)
+            throw new Error("File is not open for write yet.");
+
+        buffer.push(content);
+        setTimeout(WebInspector.fileManager.appendedToURL.bind(WebInspector.fileManager, url), 0);
+    },
+
+    close: function(url)
+    {
+        var content = this._fileBuffers[url];
+        delete this._fileBuffers[url];
+
+        if (!content)
+            return;
+
+        var lastSlashIndex = url.lastIndexOf("/");
+        var fileNameSuffix = (lastSlashIndex === -1) ? url : url.substring(lastSlashIndex + 1);
+
+        var blob = new Blob(content, { type: "application/octet-stream" });
+        var objectUrl = window.URL.createObjectURL(blob);
+        window.location = objectUrl + "#" + fileNameSuffix;
+
+        function cleanup()
+        {
+            window.URL.revokeObjectURL(objectUrl);
+        }
+        setTimeout(cleanup, 0);
     },
 
     sendMessageToBackend: function(message)
