@@ -1,3 +1,19 @@
+2012-10-19  Justin Novosad  <junov@chromium.org>
+
+        [Chromium] Reduce memory footprint of canvas pattern object with deferred rendering
+        https://bugs.webkit.org/show_bug.cgi?id=99856
+
+        Reviewed by Stephen White.
+
+        Marking internal bitmap copy as immutable to prevent it from being
+        unnecessarily duplicated in skia by SkBitmapHeap.
+
+        No new tests: code path already well covered by existing layout tests 
+        fast/canvas/canvas-pattern-*
+
+        * platform/graphics/skia/PatternSkia.cpp:
+        (WebCore::Pattern::platformPattern):
+
 2012-10-19  Antti Koivisto  <antti@apple.com>
 
         Maintain a list of active CSS stylesheets

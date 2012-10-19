@@ -100,6 +100,7 @@ PlatformPatternPtr Pattern::platformPattern(const AffineTransform& patternTransf
         bm2.eraseARGB(0x00, 0x00, 0x00, 0x00);
         SkCanvas canvas(bm2);
         canvas.drawBitmap(image->bitmap(), 0, 0);
+        bm2.setImmutable();
         m_pattern = SkShader::CreateBitmapShader(bm2, tileModeX, tileModeY);
 
         // Clamp to int, since that's what the adjust function takes.
