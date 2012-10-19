@@ -5,6 +5,135 @@
 
         Unreviewed pixel rebaseline.
 
+        Part 6.
+        Rebaseline pixel results in the svg directory.
+        All of these tests producing correct results, only the expectations
+        were outdated. Most of the differenes was not detectable by looking
+        at the expected and actual results, only ImageDiff sees the difference.
+
+        * platform/qt/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-04-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-05-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-06-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-07-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-09-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-10-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-11-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-12-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-14-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-15-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-16-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-17-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-18-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-19-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/coords-viewattr-03-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/filters-blend-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/filters-color-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/filters-light-01-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/filters-morph-01-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/interact-events-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/interact-order-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/interact-order-02-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/interact-order-03-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/masking-opacity-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/masking-path-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/masking-path-02-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/masking-path-03-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/masking-path-04-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/painting-fill-02-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/painting-fill-03-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/painting-stroke-01-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/painting-stroke-02-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/painting-stroke-03-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/painting-stroke-04-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/pservers-grad-07-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/pservers-grad-09-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/pservers-pattern-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/render-groups-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/render-groups-03-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/script-handle-04-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/struct-dom-04-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/struct-dom-05-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/struct-image-02-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/struct-image-10-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/struct-symbol-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-align-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-align-02-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-align-03-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-align-04-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-align-06-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-altglyph-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-fonts-02-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-path-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-spacing-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-text-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-text-03-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-text-07-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-tselect-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-tspan-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-ws-01-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/text-ws-02-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/types-basicDOM-01-b-expected.png:
+        * platform/qt/svg/animations/animateMotion-additive-2c-expected.png: Added.
+        * platform/qt/svg/animations/animateMotion-additive-2d-expected.png: Added.
+        * platform/qt/svg/as-border-image/svg-as-border-image-expected.png:
+        * platform/qt/svg/as-image/img-preserveAspectRatio-support-1-expected.png:
+        * platform/qt/svg/as-image/img-preserveAspectRatio-support-2-expected.png:
+        * platform/qt/svg/as-object/embedded-svg-immediate-offsetWidth-query-expected.png:
+        * platform/qt/svg/css/text-shadow-multiple-expected.png:
+        * platform/qt/svg/custom/absolute-sized-content-with-resources-expected.png:
+        * platform/qt/svg/custom/altglyph-expected.png:
+        * platform/qt/svg/custom/focus-ring-expected.png:
+        * platform/qt/svg/custom/glyph-selection-lang-attribute-expected.png:
+        * platform/qt/svg/custom/gradient-stroke-width-expected.png:
+        * platform/qt/svg/custom/grayscale-gradient-mask-2-expected.png:
+        * platform/qt/svg/custom/grayscale-gradient-mask-expected.png:
+        * platform/qt/svg/custom/image-rescale-expected.png:
+        * platform/qt/svg/custom/image-small-width-height-expected.png:
+        * platform/qt/svg/custom/relative-sized-image-expected.png:
+        * platform/qt/svg/custom/text-rotation-expected.png:
+        * platform/qt/svg/dom/css-transforms-expected.png:
+        * platform/qt/svg/filters/feDropShadow-expected.png:
+        * platform/qt/svg/filters/filterRes1-expected.png:
+        * platform/qt/svg/filters/filterRes3-expected.png:
+        * platform/qt/svg/hixie/perf/004-expected.png:
+        * platform/qt/svg/hixie/use/002-expected.png:
+        * platform/qt/svg/text/multichar-glyph-expected.png:
+        * platform/qt/svg/text/select-textLength-spacing-squeeze-1-expected.png:
+        * platform/qt/svg/text/select-textLength-spacing-squeeze-2-expected.png:
+        * platform/qt/svg/text/select-textLength-spacing-squeeze-4-expected.png:
+        * platform/qt/svg/text/select-textLength-spacing-stretch-2-expected.png:
+        * platform/qt/svg/text/select-textLength-spacing-stretch-3-expected.png:
+        * platform/qt/svg/text/select-textLength-spacing-stretch-4-expected.png:
+        * platform/qt/svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.png:
+        * platform/qt/svg/text/select-x-list-2-expected.png:
+        * platform/qt/svg/text/select-x-list-3-expected.png:
+        * platform/qt/svg/text/select-x-list-4-expected.png:
+        * platform/qt/svg/text/select-x-list-with-tspans-2-expected.png:
+        * platform/qt/svg/text/select-x-list-with-tspans-3-expected.png:
+        * platform/qt/svg/text/select-x-list-with-tspans-4-expected.png:
+        * platform/qt/svg/text/selection-doubleclick-expected.png:
+        * platform/qt/svg/transforms/text-with-pattern-inside-transformed-html-expected.png:
+        * platform/qt/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+        * platform/qt/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/qt/svg/zoom/page/zoom-mask-with-percentages-expected.png:
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.png:
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+
+2012-10-19  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Pixel tests need rebaseline
+        https://bugs.webkit.org/show_bug.cgi?id=99323
+
+        Unreviewed pixel rebaseline.
+
         Part 5.
         Rebaseline pixel results the rest of the fast directory.
         All of these tests producing correct results, only the expectations
