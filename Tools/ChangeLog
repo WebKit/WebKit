@@ -1,5 +1,14 @@
 2012-10-18  Jochen Eisinger  <jochen@chromium.org>
 
+        [chromium] Add a webkit_test_support target that WebTestingSupport
+        https://bugs.webkit.org/show_bug.cgi?id=99772
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
+2012-10-18  Jochen Eisinger  <jochen@chromium.org>
+
         [chromium] move TestRunner files into a src/ sub directory
         https://bugs.webkit.org/show_bug.cgi?id=99776
 

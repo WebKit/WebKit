@@ -80,6 +80,7 @@
             'dependencies': [
                 'TestRunner_resources',
                 '<(source_dir)/WebKit/chromium/WebKit.gyp:webkit',
+                '<(source_dir)/WebKit/chromium/WebKit.gyp:webkit_test_support',
                 '<(source_dir)/WTF/WTF.gyp/WTF.gyp:wtf',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
             ],
@@ -357,20 +358,6 @@
                     'dependencies': [
                         '<(chromium_src_dir)/webkit/support/setup_third_party.gyp:third_party_headers',
                     ]
-                }],
-                ['inside_chromium_build==0 or component!="shared_library"', {
-                    'dependencies': [
-                        '<(source_dir)/WebCore/WebCore.gyp/WebCore.gyp:webcore_test_support',
-                    ],
-                    'include_dirs': [
-                        # WARNING: Do not view this particular case as a precedent for
-                        # including WebCore headers in DumpRenderTree project.
-                        '<(source_dir)/WebCore/testing/v8', # for WebCoreTestSupport.h, needed to link in window.internals code.
-                    ],
-                    'sources': [
-                        '<(source_dir)/WebKit/chromium/src/WebTestingSupport.cpp',
-                        '<(source_dir)/WebKit/chromium/public/WebTestingSupport.h',
-                    ],
                 }],
             ],
         },
