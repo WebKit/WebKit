@@ -1,3 +1,16 @@
+2012-10-19  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: inspector/styles/styles-history.html is failing Text on Windows and Linux
+        https://bugs.webkit.org/show_bug.cgi?id=99519
+
+        Reviewed by Alexander Pavlov.
+
+        Extracted _styleContentSet callback in a class method to make it sniffable by tests.
+
+        * inspector/front-end/StylesSourceMapping.js:
+        (WebInspector.StyleFile.prototype._commitIncrementalEdit):
+        (WebInspector.StyleFile.prototype._styleContentSet):
+
 2012-10-19  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: add object-src 'none' to the inspector.html

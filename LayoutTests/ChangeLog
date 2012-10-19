@@ -1,3 +1,13 @@
+2012-10-19  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: inspector/styles/styles-history.html is failing Text on Windows and Linux
+        https://bugs.webkit.org/show_bug.cgi?id=99519
+
+        Reviewed by Alexander Pavlov.
+
+        * inspector/styles/styles-history.html:
+        * platform/chromium/TestExpectations:
+
 2012-10-19  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Pixel tests need rebaseline

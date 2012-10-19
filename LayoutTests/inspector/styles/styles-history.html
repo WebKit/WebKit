@@ -31,14 +31,30 @@ function test()
 
             function testSetResourceContentMinor(next)
             {
+                InspectorTest.addSniffer(WebInspector.StyleFile.prototype, "_styleContentSet", styleUpdatedMinor);
                 uiSourceCode.setWorkingCopy("body {\n  margin: 15px;\n  padding: 10px;\n}");
-                dumpHistory(next)();
+
+                function styleUpdatedMinor()
+                {
+                    dumpHistory(next)();
+                }
             },
 
             function testSetResourceContentMajor(next)
             {
+                InspectorTest.addSniffer(WebInspector.StyleFile.prototype, "_styleContentSet", styleUpdatedMinor);
                 uiSourceCode.setWorkingCopy("body {\n  margin: 20px;\n  padding: 10px;\n}");
-                uiSourceCode.commitWorkingCopy(dumpHistory(next));
+
+                function styleUpdatedMinor()
+                {
+                    InspectorTest.addSniffer(WebInspector.StyleFile.prototype, "_styleContentSet", styleUpdatedMajor);
+                    uiSourceCode.commitWorkingCopy(function() { });
+
+                    function styleUpdatedMajor()
+                    {
+                        dumpHistory(next)();
+                    }
+                }
             },
 
             function testSetContentViaModelMinor(next)

@@ -136,17 +136,17 @@ WebInspector.StyleFile.prototype = {
      */
     _commitIncrementalEdit: function(majorChange)
     {
-        /**
-         * @param {?string} error
-         */
-        function callback(error)
-        {
-            if (error)
-                WebInspector.showErrorMessage(error);
-        }
-
         this._clearIncrementalUpdateTimer();
-        WebInspector.styleContentBinding.setStyleContent(this._uiSourceCode, this._uiSourceCode.workingCopy(), majorChange, callback);
+        WebInspector.styleContentBinding.setStyleContent(this._uiSourceCode, this._uiSourceCode.workingCopy(), majorChange, this._styleContentSet.bind(this));
+    },
+
+    /**
+     * @param {?string} error
+     */
+    _styleContentSet: function(error)
+    {
+        if (error)
+            WebInspector.showErrorMessage(error);
     },
 
     _clearIncrementalUpdateTimer: function()
