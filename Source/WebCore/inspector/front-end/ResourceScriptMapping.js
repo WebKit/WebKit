@@ -209,7 +209,6 @@ WebInspector.ResourceScriptMapping.prototype = {
         var isDynamicScript = this._isDynamicScript(script);
         var url = isDynamicScript ? "" : script.sourceURL;
         temporaryUISourceCode = new WebInspector.UISourceCode(url, contentProvider, false);
-        temporaryUISourceCode.isTemporary = true;
         for (var i = 0; i < scripts.length; ++i)
             this._temporaryUISourceCodeForScriptId[scripts[i].scriptId] = temporaryUISourceCode;
         this._bindUISourceCodeToScripts(temporaryUISourceCode, scripts);

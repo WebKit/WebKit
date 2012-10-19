@@ -89,6 +89,7 @@ WebInspector.Project.prototype = {
      */
     addTemporaryUISourceCode: function(uiSourceCode)
     {
+        uiSourceCode.isTemporary = true;
         this._workspace.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.TemporaryUISourceCodeAdded, uiSourceCode);
     },
 

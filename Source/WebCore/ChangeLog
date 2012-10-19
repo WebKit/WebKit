@@ -1,3 +1,25 @@
+2012-10-19  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Get rid of isSnippetEvaluation flag on UISourceCode
+        https://bugs.webkit.org/show_bug.cgi?id=99823
+
+        Reviewed by Yury Semikhatsky.
+
+        Replaced isSnippetEvaluation flag with a pair of isSnippet and isTemporary set.
+
+        * inspector/front-end/ResourceScriptMapping.js:
+        (WebInspector.ResourceScriptMapping.prototype._getOrCreateTemporaryUISourceCode):
+        * inspector/front-end/ScriptSnippetModel.js:
+        (WebInspector.ScriptSnippetModel.prototype._releasedUISourceCodes):
+        (WebInspector.ScriptSnippetModel.prototype._createUISourceCodeForScript):
+        * inspector/front-end/ScriptsNavigator.js:
+        (WebInspector.ScriptsNavigator.prototype._snippetsNavigatorViewForUISourceCode):
+        (WebInspector.ScriptsNavigator.prototype.revealUISourceCode):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._createSourceFrame):
+        * inspector/front-end/Workspace.js:
+        (WebInspector.Project.prototype.addTemporaryUISourceCode):
+
 2012-10-19  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Invalid Regex in SASSSourceMapping/didRequestContent, breaks Support for Sass experiment

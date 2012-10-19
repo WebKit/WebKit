@@ -289,7 +289,7 @@ WebInspector.ScriptSnippetModel.prototype = {
         var result = [];
         for (var scriptId in this._uiSourceCodeForScriptId) {
             var uiSourceCode = this._uiSourceCodeForScriptId[scriptId];
-            if (!uiSourceCode.isSnippet)
+            if (uiSourceCode.isTemporary)
                 result.push(uiSourceCode);
         }
         return result;
@@ -322,10 +322,9 @@ WebInspector.ScriptSnippetModel.prototype = {
     _createUISourceCodeForScript: function(script)
     {
         var uiSourceCode = new WebInspector.UISourceCode(script.sourceURL, script, false);
+        uiSourceCode.isSnippet = true;
+        this._workspace.project().addTemporaryUISourceCode(uiSourceCode);
         uiSourceCode.setSourceMapping(this._snippetScriptMapping);
-        // FIXME: Should be added to workspace as temporary.
-        uiSourceCode.isTemporary = true;
-        uiSourceCode.isSnippetEvaluation = true;
         this._uiSourceCodeForScriptId[script.scriptId] = uiSourceCode;
         this._scriptForUISourceCode.put(uiSourceCode, script);
         script.setSourceMapping(this._snippetScriptMapping);

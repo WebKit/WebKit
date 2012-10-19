@@ -442,7 +442,7 @@ WebInspector.ScriptsPanel.prototype = {
         var sourceFrame;
         switch (uiSourceCode.contentType()) {
         case WebInspector.resourceTypes.Script:
-            if (uiSourceCode.isSnippet)
+            if (uiSourceCode.isSnippet && !uiSourceCode.isTemporary)
                 sourceFrame = new WebInspector.SnippetJavaScriptSourceFrame(this, uiSourceCode);
             else
                 sourceFrame = new WebInspector.JavaScriptSourceFrame(this, uiSourceCode);

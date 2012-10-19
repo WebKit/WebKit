@@ -84,7 +84,7 @@ WebInspector.ScriptsNavigator.prototype = {
     {
         if (uiSourceCode.isContentScript)
             return this._contentScriptsView;
-        else if (uiSourceCode.isSnippet || uiSourceCode.isSnippetEvaluation)
+        else if (uiSourceCode.isSnippet)
             return this._snippetsView;
         else
             return this._scriptsView;
@@ -123,7 +123,7 @@ WebInspector.ScriptsNavigator.prototype = {
         this._snippetsNavigatorViewForUISourceCode(uiSourceCode).revealUISourceCode(uiSourceCode);
         if (uiSourceCode.isContentScript)
             this._tabbedPane.selectTab(WebInspector.ScriptsNavigator.ContentScriptsTab);
-        else if (uiSourceCode.isSnippet || uiSourceCode.isSnippetEvaluation)
+        else if (uiSourceCode.isSnippet)
             this._tabbedPane.selectTab(WebInspector.ScriptsNavigator.SnippetsTab);
         else
             this._tabbedPane.selectTab(WebInspector.ScriptsNavigator.ScriptsTab);
