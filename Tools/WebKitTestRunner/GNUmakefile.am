@@ -42,6 +42,7 @@ Programs_WebKitTestRunner_CPPFLAGS = \
 	-I$(top_builddir)/DerivedSources/WebKit2/include \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags) \
+	$(webcore_cppflags) \
 	$(GLOBALDEPS_CFLAGS) \
 	$(CAIRO_CFLAGS) \
 	$(GTK_CFLAGS) \
@@ -136,6 +137,7 @@ Libraries_libTestRunnerInjectedBundle_la_CPPFLAGS = \
 	-I$(top_builddir)/DerivedSources/WebKit2/include \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags) \
+	$(webcore_cppflags) \
 	$(GLOBALDEPS_CFLAGS) \
 	$(CAIRO_CFLAGS) \
 	$(GLIB_CFLAGS) \

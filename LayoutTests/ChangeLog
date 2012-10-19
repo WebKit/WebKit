@@ -1,3 +1,15 @@
+2012-10-19  Zan Dobersek  <zandobersek@gmail.com>
+
+        [WK2][GTK] Fullscreen tests timing out in bots
+        https://bugs.webkit.org/show_bug.cgi?id=93973
+
+        Reviewed by Philippe Normand.
+
+        Remove failure expectations for the fullscreen tests. They all pass now,
+        with a pass expectation needed for one test to aknowledge that.
+
+        * platform/gtk-wk2/TestExpectations:
+
 2012-10-19  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update
