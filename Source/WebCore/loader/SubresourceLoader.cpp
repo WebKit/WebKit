@@ -128,17 +128,24 @@ void SubresourceLoader::willSendRequest(ResourceRequest& newRequest, const Resou
 {
     // Store the previous URL because the call to ResourceLoader::willSendRequest will modify it.
     KURL previousURL = request().url();
-    
-    ResourceLoader::willSendRequest(newRequest, redirectResponse);
-    if (!previousURL.isNull() && !newRequest.isNull() && previousURL != newRequest.url()) {
-        if (m_documentLoader->cachedResourceLoader()->canRequest(m_resource->type(), newRequest.url())) {
-            if (m_resource->type() != CachedResource::ImageResource || !m_documentLoader->cachedResourceLoader()->shouldDeferImageLoad(newRequest.url())) {
-                m_resource->willSendRequest(newRequest, redirectResponse);
-                return;
-            }
+
+    ASSERT(!newRequest.isNull());
+    if (!previousURL.isNull() && previousURL != newRequest.url()) {
+        if (!m_documentLoader->cachedResourceLoader()->canRequest(m_resource->type(), newRequest.url())) {
+            cancel();
+            return;
         }
-        cancel();
+        if (m_resource->type() == CachedResource::ImageResource && m_documentLoader->cachedResourceLoader()->shouldDeferImageLoad(newRequest.url())) {
+            cancel();
+            return;
+        }
+        m_resource->willSendRequest(newRequest, redirectResponse);
     }
+
+    if (newRequest.isNull() || reachedTerminalState())
+        return;
+
+    ResourceLoader::willSendRequest(newRequest, redirectResponse);
 }
 
 void SubresourceLoader::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
@@ -207,12 +214,11 @@ void SubresourceLoader::didReceiveData(const char* data, int length, long long e
     // Reference the object in this method since the additional processing can do
     // anything including removing the last reference to this object; one example of this is 3266216.
     RefPtr<SubresourceLoader> protect(this);
-    ResourceLoader::didReceiveData(data, length, encodedDataLength, allAtOnce);
-
-    if (m_loadingMultipartContent)
-        return;
-
-    sendDataToResource(data, length);
+    addData(data, length, allAtOnce);
+    if (!m_loadingMultipartContent)
+        sendDataToResource(data, length);
+    if (shouldSendResourceLoadCallbacks() && m_frame)
+        frameLoader()->notifier()->didReceiveData(this, data, length, static_cast<int>(encodedDataLength));
 }
 
 bool SubresourceLoader::checkForHTTPStatusCodeError()

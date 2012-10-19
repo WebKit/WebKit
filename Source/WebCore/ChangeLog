@@ -1,3 +1,29 @@
+2012-10-19  Nate Chapin  <japhet@chromium.org>
+
+        Reorder some functions in SubresourceLoader to permit main resources
+        https://bugs.webkit.org/show_bug.cgi?id=99769
+
+        Reviewed by Adam Barth.
+
+        Most resource types that go through the memory cache (and therefore
+        through SubresourceLoader) are not sensitive to the exact ordering of
+        the callbacks they receive, particularly as it relates to ResourceLoadNotifier
+        calls.  Main resources are not so lenient.  For main resources to be cacheable
+        and maintain the current behavior as precisely as possible, we will need to
+        rearrange SubresourceLoader's willSendRequest() and didReceiveData().
+
+        No new tests, refactor only.
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequest): There are a series of checks that can result
+            in the request being canceled, plus calls to CachedResource::willSendRequest() and
+            ResourceLoader::willSendRequest().  MainResourceLoader (which will be a
+            CachedResourceClient) has work it expects to do before ResourceLoader::willSendRequest()
+            is called, but the calls are out of order for that, so swap those.
+        (WebCore::SubresourceLoader::didReceiveData): We need to populate ResourceLoader::m_resourceData
+            before notifying CachedResource of new data, but we also want to do CachedResourceClients calls
+            before calling ResourceLoadNotifier. This means we can't delegate to ResourceLoader.
+
 2012-10-19  Chris Fleizach  <cfleizach@apple.com>
 
         AX: aria-hidden=false does not work as expected
