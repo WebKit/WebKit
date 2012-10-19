@@ -1,3 +1,18 @@
+2012-10-19  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [Cairo][WTR] Implement the painting of repaint rectangles.
+        https://bugs.webkit.org/show_bug.cgi?id=99839
+
+        Reviewed by Martin Robinson.
+
+        Implement the required code to paint the gray overlay with
+        transparent regions for the repaint rectangles, as other ports
+        already do and as is already done in most WK1 ports.
+
+        * WebKitTestRunner/cairo/TestInvocationCairo.cpp:
+        (WTR::paintRepaintRectOverlay):
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected):
+
 2012-09-08  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Implement deferred image decoding

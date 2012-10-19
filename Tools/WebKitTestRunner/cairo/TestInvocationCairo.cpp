@@ -2,6 +2,7 @@
  * Copyright (C) 2009 Apple Inc. All rights reserved.
  *           (C) 2011 Brent Fulgham <bfulgham@webkit.org>. All rights reserved.
  *           (C) 2010, 2011 Igalia S.L
+ *           (C) 2012 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,9 +78,38 @@ static void dumpBitmap(cairo_surface_t* surface, const char* checksum)
     printPNG(data, dataLength, checksum);
 }
 
-void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef wkImage, WKArrayRef /*repaintRects*/)
+static void paintRepaintRectOverlay(cairo_surface_t* surface, WKArrayRef repaintRects)
+{
+    cairo_t* context = cairo_create(surface);
+
+    cairo_push_group(context);
+
+    // Paint the gray mask over the original image.
+    cairo_set_source_rgba(context, 0, 0, 0, 0.66);
+    cairo_paint(context);
+
+    // Paint transparent rectangles over the mask to show the repainted regions.
+    cairo_set_source_rgba(context, 0, 0, 0, 0);
+    cairo_set_operator(context, CAIRO_OPERATOR_SOURCE);
+    size_t count = WKArrayGetSize(repaintRects);
+    for (size_t i = 0; i < count; ++i) {
+        WKRect rect = WKRectGetValue(static_cast<WKRectRef>(WKArrayGetItemAtIndex(repaintRects, i)));
+        cairo_rectangle(context, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+        cairo_fill(context);
+    }
+
+    cairo_pop_group_to_source(context);
+    cairo_paint(context);
+
+    cairo_destroy(context);
+}
+
+void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef wkImage, WKArrayRef repaintRects)
 {
     cairo_surface_t* surface = WKImageCreateCairoSurface(wkImage);
+
+    if (repaintRects)
+        paintRepaintRectOverlay(surface, repaintRects);
 
     char actualHash[33];
     computeMD5HashStringForCairoSurface(surface, actualHash);
