@@ -270,36 +270,36 @@ namespace JSC {
 #if USE(JSVALUE64)
     ALWAYS_INLINE JSInterfaceJIT::Jump JSInterfaceJIT::emitJumpIfImmediateNumber(RegisterID reg)
     {
-        return branchTestPtr(NonZero, reg, tagTypeNumberRegister);
+        return branchTest64(NonZero, reg, tagTypeNumberRegister);
     }
     ALWAYS_INLINE JSInterfaceJIT::Jump JSInterfaceJIT::emitJumpIfNotImmediateNumber(RegisterID reg)
     {
-        return branchTestPtr(Zero, reg, tagTypeNumberRegister);
+        return branchTest64(Zero, reg, tagTypeNumberRegister);
     }
     inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadJSCell(unsigned virtualRegisterIndex, RegisterID dst)
     {
-        loadPtr(addressFor(virtualRegisterIndex), dst);
-        return branchTestPtr(NonZero, dst, tagMaskRegister);
+        load64(addressFor(virtualRegisterIndex), dst);
+        return branchTest64(NonZero, dst, tagMaskRegister);
     }
     
     inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadInt32(unsigned virtualRegisterIndex, RegisterID dst)
     {
-        loadPtr(addressFor(virtualRegisterIndex), dst);
-        Jump result = branchPtr(Below, dst, tagTypeNumberRegister);
+        load64(addressFor(virtualRegisterIndex), dst);
+        Jump result = branch64(Below, dst, tagTypeNumberRegister);
         zeroExtend32ToPtr(dst, dst);
         return result;
     }
 
     inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadDouble(unsigned virtualRegisterIndex, FPRegisterID dst, RegisterID scratch)
     {
-        loadPtr(addressFor(virtualRegisterIndex), scratch);
+        load64(addressFor(virtualRegisterIndex), scratch);
         Jump notNumber = emitJumpIfNotImmediateNumber(scratch);
-        Jump notInt = branchPtr(Below, scratch, tagTypeNumberRegister);
+        Jump notInt = branch64(Below, scratch, tagTypeNumberRegister);
         convertInt32ToDouble(scratch, dst);
         Jump done = jump();
         notInt.link(this);
-        addPtr(tagTypeNumberRegister, scratch);
-        movePtrToDouble(scratch, dst);
+        add64(tagTypeNumberRegister, scratch);
+        move64ToDouble(scratch, dst);
         done.link(this);
         return notNumber;
     }

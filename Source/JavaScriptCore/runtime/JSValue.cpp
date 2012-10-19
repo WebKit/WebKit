@@ -204,7 +204,7 @@ char* JSValue::description() const
         snprintf(description, size, "Int32: %d", asInt32());
     else if (isDouble()) {
 #if USE(JSVALUE64)
-        snprintf(description, size, "Double: %lx, %lf", reinterpretDoubleToIntptr(asDouble()), asDouble());
+        snprintf(description, size, "Double: %lld, %lf", (long long)reinterpretDoubleToInt64(asDouble()), asDouble());
 #else
         union {
             double asDouble;

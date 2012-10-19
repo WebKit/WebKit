@@ -72,7 +72,7 @@ void JIT::compileLoadVarargs(Instruction* instruction)
 
     if (canOptimize) {
         emitGetVirtualRegister(arguments, regT0);
-        slowCase.append(branchPtr(NotEqual, regT0, TrustedImmPtr(JSValue::encode(JSValue()))));
+        slowCase.append(branch64(NotEqual, regT0, TrustedImm64(JSValue::encode(JSValue()))));
 
         emitGetFromCallFrameHeader32(JSStack::ArgumentCount, regT0);
         slowCase.append(branch32(Above, regT0, TrustedImm32(Arguments::MaxArguments + 1)));
@@ -91,18 +91,18 @@ void JIT::compileLoadVarargs(Instruction* instruction)
 
         // Initialize 'this'.
         emitGetVirtualRegister(thisValue, regT2);
-        storePtr(regT2, Address(regT1, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))));
+        store64(regT2, Address(regT1, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))));
 
         // Copy arguments.
         neg32(regT0);
         signExtend32ToPtr(regT0, regT0);
-        end.append(branchAddPtr(Zero, TrustedImm32(1), regT0));
+        end.append(branchAdd64(Zero, TrustedImm32(1), regT0));
         // regT0: -argumentCount
 
         Label copyLoop = label();
-        loadPtr(BaseIndex(callFrameRegister, regT0, TimesEight, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))), regT2);
-        storePtr(regT2, BaseIndex(regT1, regT0, TimesEight, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))));
-        branchAddPtr(NonZero, TrustedImm32(1), regT0).linkTo(copyLoop, this);
+        load64(BaseIndex(callFrameRegister, regT0, TimesEight, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))), regT2);
+        store64(regT2, BaseIndex(regT1, regT0, TimesEight, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))));
+        branchAdd64(NonZero, TrustedImm32(1), regT0).linkTo(copyLoop, this);
 
         end.append(jump());
     }
@@ -124,7 +124,7 @@ void JIT::compileCallEval()
 {
     JITStubCall stubCall(this, cti_op_call_eval); // Initializes ScopeChain; ReturnPC; CodeBlock.
     stubCall.call();
-    addSlowCase(branchPtr(Equal, regT0, TrustedImmPtr(JSValue::encode(JSValue()))));
+    addSlowCase(branch64(Equal, regT0, TrustedImm64(JSValue::encode(JSValue()))));
     emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, callFrameRegister);
 
     sampleCodeBlock(m_codeBlock);
@@ -134,7 +134,7 @@ void JIT::compileCallEvalSlowCase(Vector<SlowCaseEntry>::iterator& iter)
 {
     linkSlowCase(iter);
 
-    emitGetFromCallFrameHeaderPtr(JSStack::Callee, regT0);
+    emitGetFromCallFrameHeader64(JSStack::Callee, regT0);
     emitNakedCall(m_globalData->jitStubs->ctiVirtualCall());
 
     sampleCodeBlock(m_codeBlock);
@@ -179,8 +179,8 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     store32(TrustedImm32(instruction - m_codeBlock->instructions().begin()), Address(callFrameRegister, JSStack::ArgumentCount * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
     emitGetVirtualRegister(callee, regT0); // regT0 holds callee.
 
-    storePtr(callFrameRegister, Address(regT1, JSStack::CallerFrame * static_cast<int>(sizeof(Register))));
-    storePtr(regT0, Address(regT1, JSStack::Callee * static_cast<int>(sizeof(Register))));
+    store64(callFrameRegister, Address(regT1, JSStack::CallerFrame * static_cast<int>(sizeof(Register))));
+    store64(regT0, Address(regT1, JSStack::Callee * static_cast<int>(sizeof(Register))));
     move(regT1, callFrameRegister);
 
     if (opcodeID == op_call_eval) {
@@ -190,7 +190,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
 
     DataLabelPtr addressOfLinkedFunctionCheck;
     BEGIN_UNINTERRUPTED_SEQUENCE(sequenceOpCall);
-    Jump slowCase = branchPtrWithPatch(NotEqual, regT0, addressOfLinkedFunctionCheck, TrustedImmPtr(JSValue::encode(JSValue())));
+    Jump slowCase = branchPtrWithPatch(NotEqual, regT0, addressOfLinkedFunctionCheck, TrustedImmPtr(0));
     END_UNINTERRUPTED_SEQUENCE(sequenceOpCall);
     addSlowCase(slowCase);
 

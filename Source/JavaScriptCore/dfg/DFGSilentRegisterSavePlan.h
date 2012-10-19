@@ -41,6 +41,7 @@ enum SilentSpillAction {
     Store32Tag,
     Store32Payload,
     StorePtr,
+    Store64,
     StoreDouble
 };
 
@@ -61,6 +62,7 @@ enum SilentFillAction {
     Load32Payload,
     Load32PayloadBoxInt,
     LoadPtr,
+    Load64,
     LoadDouble,
     LoadDoubleBoxDouble,
     LoadJSUnboxDouble

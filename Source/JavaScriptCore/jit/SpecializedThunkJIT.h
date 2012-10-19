@@ -90,9 +90,9 @@ namespace JSC {
         void returnDouble(FPRegisterID src)
         {
 #if USE(JSVALUE64)
-            moveDoubleToPtr(src, regT0);
-            Jump zero = branchTestPtr(Zero, regT0);
-            subPtr(tagTypeNumberRegister, regT0);
+            moveDoubleTo64(src, regT0);
+            Jump zero = branchTest64(Zero, regT0);
+            sub64(tagTypeNumberRegister, regT0);
             Jump done = jump();
             zero.link(this);
             move(tagTypeNumberRegister, regT0);
@@ -151,7 +151,7 @@ namespace JSC {
         void tagReturnAsInt32()
         {
 #if USE(JSVALUE64)
-            orPtr(tagTypeNumberRegister, regT0);
+            or64(tagTypeNumberRegister, regT0);
 #else
             move(TrustedImm32(JSValue::Int32Tag), regT1);
 #endif

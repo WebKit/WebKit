@@ -728,16 +728,6 @@ public:
         return store64WithAddressOffsetPatch(src, address);
     }
 
-    void movePtrToDouble(RegisterID src, FPRegisterID dest)
-    {
-        move64ToDouble(src, dest);
-    }
-
-    void moveDoubleToPtr(FPRegisterID src, RegisterID dest)
-    {
-        moveDoubleTo64(src, dest);
-    }
-
     void comparePtr(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
     {
         compare64(cond, left, right, dest);
@@ -895,14 +885,6 @@ public:
         default: {
             if (value <= 0xff)
                 return false;
-            JSValue jsValue = JSValue::decode(reinterpret_cast<void*>(value));
-            if (jsValue.isInt32())
-                return shouldBlind(Imm32(jsValue.asInt32()));
-            if (jsValue.isDouble() && !shouldBlindDouble(jsValue.asDouble()))
-                return false;
-
-            if (!shouldBlindDouble(bitwise_cast<double>(value)))
-                return false;
         }
         }
         return shouldBlindForSpecificArch(value);
@@ -955,6 +937,14 @@ public:
             return false;
         default: {
             if (value <= 0xff)
+                return false;
+            JSValue jsValue = JSValue::decode(value);
+            if (jsValue.isInt32())
+                return shouldBlind(Imm32(jsValue.asInt32()));
+            if (jsValue.isDouble() && !shouldBlindDouble(jsValue.asDouble()))
+                return false;
+
+            if (!shouldBlindDouble(bitwise_cast<double>(value)))
                 return false;
         }
         }

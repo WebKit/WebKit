@@ -1,3 +1,240 @@
+2012-10-18  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Refactor MacroAssembler interfaces to differentiate the pointer operands from the 64-bit integer operands
+        https://bugs.webkit.org/show_bug.cgi?id=99154
+
+        Reviewed by Gavin Barraclough.
+
+        In current JavaScriptCore implementation for JSVALUE64 platform (i.e.,
+        the X64 platform), we assume that the JSValue size is same to the
+        pointer size, and thus EncodedJSValue is simply type defined as a
+        "void*". In the JIT compiler, we also take this assumption and invoke
+        the same macro assembler interfaces for both JSValue and pointer
+        operands. We need to differentiate the operations on pointers from the
+        operations on JSValues, and let them invoking different macro
+        assembler interfaces. For example, we now use the interface of
+        "loadPtr" to load either a pointer or a JSValue, and we need to switch
+        to using "loadPtr" to load a pointer and some new "load64" interface
+        to load a JSValue. This would help us supporting other JSVALUE64
+        platforms where pointer size is not necessarily 64-bits, for example
+        x32 (bug #99153).
+
+        The major modification I made is to introduce the "*64" interfaces in
+        the MacroAssembler for those operations on JSValues, keep the "*Ptr"
+        interfaces for those operations on real pointers, and go through all
+        the JIT compiler code to correct the usage.
+
+        This is the second part of the work, i.e, to correct the usage of the
+        new MacroAssembler interfaces in the JIT compilers, which also means
+        that now EncodedJSValue is defined as a 64-bit integer, and the "*64"
+        interfaces are used for it.
+
+        * assembler/MacroAssembler.h: JSValue immediates should be in Imm64 instead of ImmPtr.
+        (MacroAssembler):
+        (JSC::MacroAssembler::shouldBlind):
+        * dfg/DFGAssemblyHelpers.cpp: Correct the JIT compilers usage of the new interfaces.
+        (JSC::DFG::AssemblyHelpers::jitAssertIsInt32):
+        (JSC::DFG::AssemblyHelpers::jitAssertIsJSInt32):
+        (JSC::DFG::AssemblyHelpers::jitAssertIsJSNumber):
+        (JSC::DFG::AssemblyHelpers::jitAssertIsJSDouble):
+        (JSC::DFG::AssemblyHelpers::jitAssertIsCell):
+        * dfg/DFGAssemblyHelpers.h:
+        (JSC::DFG::AssemblyHelpers::emitPutToCallFrameHeader):
+        (JSC::DFG::AssemblyHelpers::branchIfNotCell):
+        (JSC::DFG::AssemblyHelpers::debugCall):
+        (JSC::DFG::AssemblyHelpers::boxDouble):
+        (JSC::DFG::AssemblyHelpers::unboxDouble):
+        (JSC::DFG::AssemblyHelpers::emitExceptionCheck):
+        * dfg/DFGCCallHelpers.h:
+        (JSC::DFG::CCallHelpers::setupArgumentsWithExecState):
+        (CCallHelpers):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::generateProtoChainAccessStub):
+        (JSC::DFG::tryCacheGetByID):
+        (JSC::DFG::tryBuildGetByIDList):
+        (JSC::DFG::emitPutReplaceStub):
+        (JSC::DFG::emitPutTransitionStub):
+        * dfg/DFGScratchRegisterAllocator.h:
+        (JSC::DFG::ScratchRegisterAllocator::preserveUsedRegistersToScratchBuffer):
+        (JSC::DFG::ScratchRegisterAllocator::restoreUsedRegistersFromScratchBuffer):
+        * dfg/DFGSilentRegisterSavePlan.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        (JSC::DFG::SpeculativeJIT::compileInt32ToDouble):
+        (JSC::DFG::SpeculativeJIT::compileInstanceOfForObject):
+        (JSC::DFG::SpeculativeJIT::compileInstanceOf):
+        (JSC::DFG::SpeculativeJIT::compileStrictEqForConstant):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnArguments):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::silentSavePlanForGPR):
+        (JSC::DFG::SpeculativeJIT::silentSpill):
+        (JSC::DFG::SpeculativeJIT::silentFill):
+        (JSC::DFG::SpeculativeJIT::spill):
+        (JSC::DFG::SpeculativeJIT::valueOfJSConstantAsImm64):
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (JSC::DFG::SpeculativeJIT::branch64):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillInteger):
+        (JSC::DFG::SpeculativeJIT::fillDouble):
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeValueToNumber):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeValueToInt32):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeUInt32ToNumber):
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompare):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::convertToDouble):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compileDoubleCompare):
+        (JSC::DFG::SpeculativeJIT::compileNonStringCellOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitNonStringCellOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compileContiguousGetByVal):
+        (JSC::DFG::SpeculativeJIT::compileArrayStorageGetByVal):
+        (JSC::DFG::SpeculativeJIT::compileContiguousPutByVal):
+        (JSC::DFG::SpeculativeJIT::compileArrayStoragePutByVal):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+        (JSC::DFG::throwExceptionFromCallSlowPathGenerator):
+        (JSC::DFG::slowPathFor):
+        (JSC::DFG::virtualForThunkGenerator):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::dumpRegisters):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JIT):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_negate):
+        (JSC::JIT::emitSlow_op_negate):
+        (JSC::JIT::emit_op_rshift):
+        (JSC::JIT::emitSlow_op_urshift):
+        (JSC::JIT::emit_compareAndJumpSlow):
+        (JSC::JIT::emit_op_bitand):
+        (JSC::JIT::compileBinaryArithOpSlowCase):
+        (JSC::JIT::emit_op_div):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileLoadVarargs):
+        (JSC::JIT::compileCallEval):
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCall):
+        * jit/JITInlineMethods.h: Have some clean-up work as well.
+        (JSC):
+        (JSC::JIT::emitPutCellToCallFrameHeader):
+        (JSC::JIT::emitPutIntToCallFrameHeader):
+        (JSC::JIT::emitPutToCallFrameHeader):
+        (JSC::JIT::emitGetFromCallFrameHeader32):
+        (JSC::JIT::emitGetFromCallFrameHeader64):
+        (JSC::JIT::emitAllocateJSArray):
+        (JSC::JIT::emitValueProfilingSite):
+        (JSC::JIT::emitGetJITStubArg):
+        (JSC::JIT::emitGetVirtualRegister):
+        (JSC::JIT::emitPutVirtualRegister):
+        (JSC::JIT::emitInitRegister):
+        (JSC::JIT::emitJumpIfJSCell):
+        (JSC::JIT::emitJumpIfBothJSCells):
+        (JSC::JIT::emitJumpIfNotJSCell):
+        (JSC::JIT::emitLoadInt32ToDouble):
+        (JSC::JIT::emitJumpIfImmediateInteger):
+        (JSC::JIT::emitJumpIfNotImmediateInteger):
+        (JSC::JIT::emitJumpIfNotImmediateIntegers):
+        (JSC::JIT::emitFastArithReTagImmediate):
+        (JSC::JIT::emitFastArithIntToImmNoCheck):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        (JSC::JIT::emit_op_mov):
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emit_op_is_undefined):
+        (JSC::JIT::emit_op_is_boolean):
+        (JSC::JIT::emit_op_is_number):
+        (JSC::JIT::emit_op_tear_off_activation):
+        (JSC::JIT::emit_op_not):
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_jtrue):
+        (JSC::JIT::emit_op_bitxor):
+        (JSC::JIT::emit_op_bitor):
+        (JSC::JIT::emit_op_get_pnames):
+        (JSC::JIT::emit_op_next_pname):
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_throw_reference_error):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        (JSC::JIT::emit_op_create_activation):
+        (JSC::JIT::emit_op_create_arguments):
+        (JSC::JIT::emit_op_init_lazy_reg):
+        (JSC::JIT::emitSlow_op_convert_this):
+        (JSC::JIT::emitSlow_op_not):
+        (JSC::JIT::emit_op_get_argument_by_val):
+        (JSC::JIT::emit_op_put_to_base):
+        (JSC::JIT::emit_resolve_operations):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitContiguousGetByVal):
+        (JSC::JIT::emitArrayStorageGetByVal):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::compileGetDirectOffset):
+        (JSC::JIT::emit_op_get_by_pname):
+        (JSC::JIT::emitContiguousPutByVal):
+        (JSC::JIT::emitArrayStoragePutByVal):
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::compilePutDirectOffset):
+        (JSC::JIT::emit_op_init_global_const):
+        (JSC::JIT::emit_op_init_global_const_check):
+        (JSC::JIT::emitIntTypedArrayGetByVal):
+        (JSC::JIT::emitFloatTypedArrayGetByVal):
+        (JSC::JIT::emitFloatTypedArrayPutByVal):
+        * jit/JITStubCall.h:
+        (JITStubCall):
+        (JSC::JITStubCall::JITStubCall):
+        (JSC::JITStubCall::addArgument):
+        (JSC::JITStubCall::call):
+        (JSC::JITStubCall::callWithValueProfiling):
+        * jit/JSInterfaceJIT.h:
+        (JSC::JSInterfaceJIT::emitJumpIfImmediateNumber):
+        (JSC::JSInterfaceJIT::emitJumpIfNotImmediateNumber):
+        (JSC::JSInterfaceJIT::emitLoadJSCell):
+        (JSC::JSInterfaceJIT::emitLoadInt32):
+        (JSC::JSInterfaceJIT::emitLoadDouble):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::returnDouble):
+        (JSC::SpecializedThunkJIT::tagReturnAsInt32):
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::description):
+        * runtime/JSValue.h: Define JSVALUE64 EncodedJSValue as int64_t, which is also unified with JSVALUE32_64.
+        (JSC):
+        * runtime/JSValueInlineMethods.h: New implementation of some JSValue methods to make them more conformant
+        with the new rule that "JSValue is a 64-bit integer rather than a pointer" for JSVALUE64 platforms.
+        (JSC):
+        (JSC::JSValue::JSValue):
+        (JSC::JSValue::operator bool):
+        (JSC::JSValue::operator==):
+        (JSC::JSValue::operator!=):
+        (JSC::reinterpretDoubleToInt64):
+        (JSC::reinterpretInt64ToDouble):
+        (JSC::JSValue::asDouble):
+
 2012-10-18  Michael Saboff  <msaboff@apple.com>
 
         convertUTF8ToUTF16() Should Check for ASCII Input

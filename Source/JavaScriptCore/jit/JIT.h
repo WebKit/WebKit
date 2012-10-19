@@ -592,6 +592,9 @@ namespace JSC {
 #endif
 
 #else // USE(JSVALUE32_64)
+        /* This function is deprecated. */
+        void emitGetJITStubArg(unsigned argumentNumber, RegisterID dst);
+
         void emitGetVirtualRegister(int src, RegisterID dst);
         void emitGetVirtualRegisters(int src1, RegisterID dst1, int src2, RegisterID dst2);
         void emitPutVirtualRegister(unsigned dst, RegisterID from = regT0);
@@ -834,9 +837,6 @@ namespace JSC {
         void emitRightShift(Instruction*, bool isUnsigned);
         void emitRightShiftSlowCase(Instruction*, Vector<SlowCaseEntry>::iterator&, bool isUnsigned);
 
-        /* This function is deprecated. */
-        void emitGetJITStubArg(unsigned argumentNumber, RegisterID dst);
-
         void emitInitRegister(unsigned dst);
 
         void emitPutToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry);
@@ -845,6 +845,9 @@ namespace JSC {
         void emitPutImmediateToCallFrameHeader(void* value, JSStack::CallFrameHeaderEntry);
         void emitGetFromCallFrameHeaderPtr(JSStack::CallFrameHeaderEntry, RegisterID to, RegisterID from = callFrameRegister);
         void emitGetFromCallFrameHeader32(JSStack::CallFrameHeaderEntry, RegisterID to, RegisterID from = callFrameRegister);
+#if USE(JSVALUE64)
+        void emitGetFromCallFrameHeader64(JSStack::CallFrameHeaderEntry, RegisterID to, RegisterID from = callFrameRegister);
+#endif
 
         JSValue getConstantOperand(unsigned src);
         bool isOperandConstantImmediateInt(unsigned src);

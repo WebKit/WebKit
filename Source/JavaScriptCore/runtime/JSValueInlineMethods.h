@@ -140,7 +140,6 @@ namespace JSC {
         *this = JSValue(static_cast<int32_t>(d));
     }
 
-#if USE(JSVALUE32_64)
     inline EncodedJSValue JSValue::encode(JSValue value)
     {
         return value.u.asInt64;
@@ -153,6 +152,7 @@ namespace JSC {
         return v;
     }
 
+#if USE(JSVALUE32_64)
     inline JSValue::JSValue()
     {
         u.asBits.tag = EmptyValueTag;
@@ -333,17 +333,6 @@ namespace JSC {
 
 #else // !USE(JSVALUE32_64) i.e. USE(JSVALUE64)
 
-    // JSValue member functions.
-    inline EncodedJSValue JSValue::encode(JSValue value)
-    {
-        return value.u.ptr;
-    }
-
-    inline JSValue JSValue::decode(EncodedJSValue ptr)
-    {
-        return JSValue(reinterpret_cast<JSCell*>(ptr));
-    }
-
     // 0x0 can never occur naturally because it has a tag of 00, indicating a pointer value, but a payload of 0x0, which is in the (invalid) zero page.
     inline JSValue::JSValue()
     {
@@ -358,27 +347,27 @@ namespace JSC {
 
     inline JSValue::JSValue(JSCell* ptr)
     {
-        u.ptr = ptr;
+        u.asInt64 = reinterpret_cast<uintptr_t>(ptr);
     }
 
     inline JSValue::JSValue(const JSCell* ptr)
     {
-        u.ptr = const_cast<JSCell*>(ptr);
+        u.asInt64 = reinterpret_cast<uintptr_t>(const_cast<JSCell*>(ptr));
     }
 
     inline JSValue::operator bool() const
     {
-        return u.ptr;
+        return u.asInt64;
     }
 
     inline bool JSValue::operator==(const JSValue& other) const
     {
-        return u.ptr == other.u.ptr;
+        return u.asInt64 == other.u.asInt64;
     }
 
     inline bool JSValue::operator!=(const JSValue& other) const
     {
-        return u.ptr != other.u.ptr;
+        return u.asInt64 != other.u.asInt64;
     }
 
     inline bool JSValue::isEmpty() const
@@ -464,18 +453,18 @@ namespace JSC {
         return (u.asInt64 & TagTypeNumber) == TagTypeNumber;
     }
 
-    inline intptr_t reinterpretDoubleToIntptr(double value)
+    inline int64_t reinterpretDoubleToInt64(double value)
     {
-        return bitwise_cast<intptr_t>(value);
+        return bitwise_cast<int64_t>(value);
     }
-    inline double reinterpretIntptrToDouble(intptr_t value)
+    inline double reinterpretInt64ToDouble(int64_t value)
     {
         return bitwise_cast<double>(value);
     }
 
     ALWAYS_INLINE JSValue::JSValue(EncodeAsDoubleTag, double d)
     {
-        u.asInt64 = reinterpretDoubleToIntptr(d) + DoubleEncodeOffset;
+        u.asInt64 = reinterpretDoubleToInt64(d) + DoubleEncodeOffset;
     }
 
     inline JSValue::JSValue(int i)
@@ -486,7 +475,7 @@ namespace JSC {
     inline double JSValue::asDouble() const
     {
         ASSERT(isDouble());
-        return reinterpretIntptrToDouble(u.asInt64 - DoubleEncodeOffset);
+        return reinterpretInt64ToDouble(u.asInt64 - DoubleEncodeOffset);
     }
 
     inline bool JSValue::isNumber() const

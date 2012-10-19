@@ -31,14 +31,6 @@
 
 namespace JSC {
 
-/* Deprecated: Please use JITStubCall instead. */
-
-ALWAYS_INLINE void JIT::emitGetJITStubArg(unsigned argumentNumber, RegisterID dst)
-{
-    unsigned argumentStackOffset = (argumentNumber * (sizeof(JSValue) / sizeof(void*))) + JITSTACKFRAME_ARGS_INDEX;
-    peek(dst, argumentStackOffset);
-}
-
 ALWAYS_INLINE bool JIT::isOperandConstantImmediateDouble(unsigned src)
 {
     return m_codeBlock->isConstantRegisterIndex(src) && getConstantOperand(src).isDouble();
@@ -50,23 +42,33 @@ ALWAYS_INLINE JSValue JIT::getConstantOperand(unsigned src)
     return m_codeBlock->getConstant(src);
 }
 
-ALWAYS_INLINE void JIT::emitPutToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry entry)
-{
-    storePtr(from, payloadFor(entry, callFrameRegister));
-}
-
 ALWAYS_INLINE void JIT::emitPutCellToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry entry)
 {
 #if USE(JSVALUE32_64)
     store32(TrustedImm32(JSValue::CellTag), tagFor(entry, callFrameRegister));
+    store32(from, payloadFor(entry, callFrameRegister));
+#else
+    store64(from, addressFor(entry, callFrameRegister));
 #endif
-    storePtr(from, payloadFor(entry, callFrameRegister));
 }
 
 ALWAYS_INLINE void JIT::emitPutIntToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry entry)
 {
+#if USE(JSVALUE32_64)
     store32(TrustedImm32(Int32Tag), intTagFor(entry, callFrameRegister));
     store32(from, intPayloadFor(entry, callFrameRegister));
+#else
+    store64(from, addressFor(entry, callFrameRegister));
+#endif
+}
+
+ALWAYS_INLINE void JIT::emitPutToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry entry)
+{
+#if USE(JSVALUE32_64)
+    storePtr(from, payloadFor(entry, callFrameRegister));
+#else
+    store64(from, addressFor(entry, callFrameRegister));
+#endif
 }
 
 ALWAYS_INLINE void JIT::emitPutImmediateToCallFrameHeader(void* value, JSStack::CallFrameHeaderEntry entry)
@@ -81,6 +83,22 @@ ALWAYS_INLINE void JIT::emitGetFromCallFrameHeaderPtr(JSStack::CallFrameHeaderEn
     killLastResultRegister();
 #endif
 }
+
+ALWAYS_INLINE void JIT::emitGetFromCallFrameHeader32(JSStack::CallFrameHeaderEntry entry, RegisterID to, RegisterID from)
+{
+    load32(Address(from, entry * sizeof(Register)), to);
+#if USE(JSVALUE64)
+    killLastResultRegister();
+#endif
+}
+
+#if USE(JSVALUE64)
+ALWAYS_INLINE void JIT::emitGetFromCallFrameHeader64(JSStack::CallFrameHeaderEntry entry, RegisterID to, RegisterID from)
+{
+    load64(Address(from, entry * sizeof(Register)), to);
+    killLastResultRegister();
+}
+#endif
 
 ALWAYS_INLINE void JIT::emitLoadCharacterString(RegisterID src, RegisterID dst, JumpList& failures)
 {
@@ -99,14 +117,6 @@ ALWAYS_INLINE void JIT::emitLoadCharacterString(RegisterID src, RegisterID dst, 
     is16Bit.link(this);
     load16(MacroAssembler::Address(dst, 0), dst);
     cont8Bit.link(this);
-}
-
-ALWAYS_INLINE void JIT::emitGetFromCallFrameHeader32(JSStack::CallFrameHeaderEntry entry, RegisterID to, RegisterID from)
-{
-    load32(Address(from, entry * sizeof(Register)), to);
-#if USE(JSVALUE64)
-    killLastResultRegister();
-#endif
 }
 
 ALWAYS_INLINE JIT::Call JIT::emitNakedCall(CodePtr function)
@@ -473,8 +483,8 @@ inline void JIT::emitAllocateJSArray(unsigned valuesRegister, unsigned length, R
     // Store the values we have.
     for (unsigned i = 0; i < length; i++) {
 #if USE(JSVALUE64)
-        loadPtr(Address(callFrameRegister, (valuesRegister + i) * sizeof(Register)), storagePtr);
-        storePtr(storagePtr, Address(storageResult, sizeof(WriteBarrier<Unknown>) * i));
+        load64(Address(callFrameRegister, (valuesRegister + i) * sizeof(Register)), storagePtr);
+        store64(storagePtr, Address(storageResult, sizeof(WriteBarrier<Unknown>) * i));
 #else
         load32(Address(callFrameRegister, (valuesRegister + i) * sizeof(Register)), storagePtr);
         store32(storagePtr, Address(storageResult, sizeof(WriteBarrier<Unknown>) * i));
@@ -500,7 +510,7 @@ inline void JIT::emitValueProfilingSite(ValueProfile* valueProfile)
         // We're in a simple configuration: only one bucket, so we can just do a direct
         // store.
 #if USE(JSVALUE64)
-        storePtr(value, valueProfile->m_buckets);
+        store64(value, valueProfile->m_buckets);
 #else
         EncodedValueDescriptor* descriptor = bitwise_cast<EncodedValueDescriptor*>(valueProfile->m_buckets);
         store32(value, &descriptor->asBits.payload);
@@ -516,7 +526,7 @@ inline void JIT::emitValueProfilingSite(ValueProfile* valueProfile)
     and32(TrustedImm32(ValueProfile::bucketIndexMask), bucketCounterRegister);
     move(TrustedImmPtr(valueProfile->m_buckets), scratch);
 #if USE(JSVALUE64)
-    storePtr(value, BaseIndex(scratch, bucketCounterRegister, TimesEight));
+    store64(value, BaseIndex(scratch, bucketCounterRegister, TimesEight));
 #elif USE(JSVALUE32_64)
     store32(value, BaseIndex(scratch, bucketCounterRegister, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
     store32(valueTag, BaseIndex(scratch, bucketCounterRegister, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
@@ -860,6 +870,14 @@ ALWAYS_INLINE bool JIT::getOperandConstantImmediateInt(unsigned op1, unsigned op
 
 #else // USE(JSVALUE32_64)
 
+/* Deprecated: Please use JITStubCall instead. */
+
+ALWAYS_INLINE void JIT::emitGetJITStubArg(unsigned argumentNumber, RegisterID dst)
+{
+    unsigned argumentStackOffset = (argumentNumber * (sizeof(JSValue) / sizeof(void*))) + JITSTACKFRAME_ARGS_INDEX;
+    peek64(dst, argumentStackOffset);
+}
+
 ALWAYS_INLINE void JIT::killLastResultRegister()
 {
     m_lastResultBytecodeRegister = std::numeric_limits<int>::max();
@@ -874,9 +892,9 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, RegisterID dst)
     if (m_codeBlock->isConstantRegisterIndex(src)) {
         JSValue value = m_codeBlock->getConstant(src);
         if (!value.isNumber())
-            move(TrustedImmPtr(JSValue::encode(value)), dst);
+            move(TrustedImm64(JSValue::encode(value)), dst);
         else
-            move(ImmPtr(JSValue::encode(value)), dst);
+            move(Imm64(JSValue::encode(value)), dst);
         killLastResultRegister();
         return;
     }
@@ -889,7 +907,7 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, RegisterID dst)
         return;
     }
 
-    loadPtr(Address(callFrameRegister, src * sizeof(Register)), dst);
+    load64(Address(callFrameRegister, src * sizeof(Register)), dst);
     killLastResultRegister();
 }
 
@@ -916,28 +934,24 @@ ALWAYS_INLINE bool JIT::isOperandConstantImmediateInt(unsigned src)
 
 ALWAYS_INLINE void JIT::emitPutVirtualRegister(unsigned dst, RegisterID from)
 {
-    storePtr(from, Address(callFrameRegister, dst * sizeof(Register)));
+    store64(from, Address(callFrameRegister, dst * sizeof(Register)));
     m_lastResultBytecodeRegister = (from == cachedResultRegister) ? static_cast<int>(dst) : std::numeric_limits<int>::max();
 }
 
 ALWAYS_INLINE void JIT::emitInitRegister(unsigned dst)
 {
-    storePtr(TrustedImmPtr(JSValue::encode(jsUndefined())), Address(callFrameRegister, dst * sizeof(Register)));
+    store64(TrustedImm64(JSValue::encode(jsUndefined())), Address(callFrameRegister, dst * sizeof(Register)));
 }
 
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfJSCell(RegisterID reg)
 {
-#if USE(JSVALUE64)
-    return branchTestPtr(Zero, reg, tagMaskRegister);
-#else
-    return branchTest32(Zero, reg, TrustedImm32(TagMask));
-#endif
+    return branchTest64(Zero, reg, tagMaskRegister);
 }
 
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfBothJSCells(RegisterID reg1, RegisterID reg2, RegisterID scratch)
 {
     move(reg1, scratch);
-    orPtr(reg2, scratch);
+    or64(reg2, scratch);
     return emitJumpIfJSCell(scratch);
 }
 
@@ -948,11 +962,7 @@ ALWAYS_INLINE void JIT::emitJumpSlowCaseIfJSCell(RegisterID reg)
 
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotJSCell(RegisterID reg)
 {
-#if USE(JSVALUE64)
-    return branchTestPtr(NonZero, reg, tagMaskRegister);
-#else
-    return branchTest32(NonZero, reg, TrustedImm32(TagMask));
-#endif
+    return branchTest64(NonZero, reg, tagMaskRegister);
 }
 
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg)
@@ -965,8 +975,6 @@ ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg, int vReg)
     if (!m_codeBlock->isKnownNotImmediate(vReg))
         emitJumpSlowCaseIfNotJSCell(reg);
 }
-
-#if USE(JSVALUE64)
 
 inline void JIT::emitLoadDouble(int index, FPRegisterID value)
 {
@@ -985,30 +993,21 @@ inline void JIT::emitLoadInt32ToDouble(int index, FPRegisterID value)
     } else
         convertInt32ToDouble(addressFor(index), value);
 }
-#endif
 
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfImmediateInteger(RegisterID reg)
 {
-#if USE(JSVALUE64)
-    return branchPtr(AboveOrEqual, reg, tagTypeNumberRegister);
-#else
-    return branchTest32(NonZero, reg, TrustedImm32(TagTypeNumber));
-#endif
+    return branch64(AboveOrEqual, reg, tagTypeNumberRegister);
 }
 
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotImmediateInteger(RegisterID reg)
 {
-#if USE(JSVALUE64)
-    return branchPtr(Below, reg, tagTypeNumberRegister);
-#else
-    return branchTest32(Zero, reg, TrustedImm32(TagTypeNumber));
-#endif
+    return branch64(Below, reg, tagTypeNumberRegister);
 }
 
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotImmediateIntegers(RegisterID reg1, RegisterID reg2, RegisterID scratch)
 {
     move(reg1, scratch);
-    andPtr(reg2, scratch);
+    and64(reg2, scratch);
     return emitJumpIfNotImmediateInteger(scratch);
 }
 
@@ -1027,41 +1026,17 @@ ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotImmediateNumber(RegisterID reg)
     addSlowCase(emitJumpIfNotImmediateNumber(reg));
 }
 
-#if USE(JSVALUE32_64)
-ALWAYS_INLINE void JIT::emitFastArithDeTagImmediate(RegisterID reg)
-{
-    subPtr(TrustedImm32(TagTypeNumber), reg);
-}
-
-ALWAYS_INLINE JIT::Jump JIT::emitFastArithDeTagImmediateJumpIfZero(RegisterID reg)
-{
-    return branchSubPtr(Zero, TrustedImm32(TagTypeNumber), reg);
-}
-#endif
-
 ALWAYS_INLINE void JIT::emitFastArithReTagImmediate(RegisterID src, RegisterID dest)
 {
-#if USE(JSVALUE64)
     emitFastArithIntToImmNoCheck(src, dest);
-#else
-    if (src != dest)
-        move(src, dest);
-    addPtr(TrustedImm32(TagTypeNumber), dest);
-#endif
 }
 
 // operand is int32_t, must have been zero-extended if register is 64-bit.
 ALWAYS_INLINE void JIT::emitFastArithIntToImmNoCheck(RegisterID src, RegisterID dest)
 {
-#if USE(JSVALUE64)
     if (src != dest)
         move(src, dest);
-    orPtr(tagTypeNumberRegister, dest);
-#else
-    signExtend32ToPtr(src, dest);
-    addPtr(dest, dest);
-    emitFastArithReTagImmediate(dest, dest);
-#endif
+    or64(tagTypeNumberRegister, dest);
 }
 
 ALWAYS_INLINE void JIT::emitTagAsBoolImmediate(RegisterID reg)

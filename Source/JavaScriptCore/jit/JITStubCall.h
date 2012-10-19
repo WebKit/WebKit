@@ -94,15 +94,15 @@ namespace JSC {
         {
         }
 
-#if USE(JSVALUE32_64)
         JITStubCall(JIT* jit, EncodedJSValue (JIT_STUB *stub)(STUB_ARGS_DECLARATION))
             : m_jit(jit)
             , m_stub(stub)
+#if USE(JSVALUE32_64) || !ASSERT_DISABLED
             , m_returnType(Value)
+#endif
             , m_stackIndex(JITSTACKFRAME_ARGS_INDEX)
         {
         }
-#endif
 
         // Arguments are added first to last.
 
@@ -137,7 +137,11 @@ namespace JSC {
 
         void addArgument(JIT::RegisterID argument)
         {
+#if USE(JSVALUE32_64)
             m_jit->poke(argument, m_stackIndex);
+#else
+            m_jit->poke64(argument, m_stackIndex);
+#endif
             m_stackIndex += stackIndexStep;
         }
         
@@ -146,6 +150,18 @@ namespace JSC {
         {
             m_jit->poke(JIT::Imm32(value.payload()), m_stackIndex);
             m_jit->poke(JIT::Imm32(value.tag()), m_stackIndex + 1);
+            m_stackIndex += stackIndexStep;
+        }
+#else
+        void addArgument(JIT::TrustedImm64 argument)
+        {
+            m_jit->poke(argument, m_stackIndex);
+            m_stackIndex += stackIndexStep;
+        }
+
+        void addArgument(JIT::Imm64 argument)
+        {
+            m_jit->poke(argument, m_stackIndex);
             m_stackIndex += stackIndexStep;
         }
 #endif
@@ -179,9 +195,9 @@ namespace JSC {
         void addArgument(unsigned src, JIT::RegisterID scratchRegister) // src is a virtual register.
         {
             if (m_jit->m_codeBlock->isConstantRegisterIndex(src))
-                addArgument(JIT::ImmPtr(JSValue::encode(m_jit->m_codeBlock->getConstant(src))));
+                addArgument(JIT::Imm64(JSValue::encode(m_jit->m_codeBlock->getConstant(src))));
             else {
-                m_jit->loadPtr(JIT::Address(JIT::callFrameRegister, src * sizeof(Register)), scratchRegister);
+                m_jit->load64(JIT::Address(JIT::callFrameRegister, src * sizeof(Register)), scratchRegister);
                 addArgument(scratchRegister);
             }
             m_jit->killLastResultRegister();
@@ -242,7 +258,7 @@ namespace JSC {
 #else
         JIT::Call call(unsigned dst) // dst is a virtual register.
         {
-            ASSERT(m_returnType == VoidPtr || m_returnType == Cell);
+            ASSERT(m_returnType == Value || m_returnType == Cell);
             JIT::Call call = this->call();
             m_jit->emitPutVirtualRegister(dst);
             return call;
@@ -250,7 +266,7 @@ namespace JSC {
         
         JIT::Call callWithValueProfiling(unsigned dst)
         {
-            ASSERT(m_returnType == VoidPtr || m_returnType == Cell);
+            ASSERT(m_returnType == Value || m_returnType == Cell);
             JIT::Call call = this->call();
             ASSERT(JIT::returnValueRegister == JIT::regT0);
             m_jit->emitValueProfilingSite();
@@ -261,10 +277,8 @@ namespace JSC {
 
         JIT::Call call(JIT::RegisterID dst) // dst is a machine register.
         {
-#if USE(JSVALUE32_64)
+#if USE(JSVALUE32_64) || !ASSERT_DISABLED
             ASSERT(m_returnType == Value || m_returnType == VoidPtr || m_returnType == Int || m_returnType == Cell);
-#else
-            ASSERT(m_returnType == VoidPtr || m_returnType == Int || m_returnType == Cell);
 #endif
             JIT::Call call = this->call();
             if (dst != JIT::returnValueRegister)

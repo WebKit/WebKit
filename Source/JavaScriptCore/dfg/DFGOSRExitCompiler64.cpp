@@ -73,12 +73,12 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         switch (recovery->type()) {
         case SpeculativeAdd:
             m_jit.sub32(recovery->src(), recovery->dest());
-            m_jit.orPtr(GPRInfo::tagTypeNumberRegister, recovery->dest());
+            m_jit.or64(GPRInfo::tagTypeNumberRegister, recovery->dest());
             alreadyBoxed = recovery->dest();
             break;
             
         case BooleanSpeculationCheck:
-            m_jit.xorPtr(AssemblyHelpers::TrustedImm32(static_cast<int32_t>(ValueFalse)), recovery->dest());
+            m_jit.xor64(AssemblyHelpers::TrustedImm32(static_cast<int32_t>(ValueFalse)), recovery->dest());
             break;
             
         default:
@@ -98,11 +98,11 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         if (exit.m_jsValueSource.isAddress()) {
             // We can't be sure that we have a spare register. So use the tagTypeNumberRegister,
             // since we know how to restore it.
-            m_jit.loadPtr(AssemblyHelpers::Address(exit.m_jsValueSource.asAddress()), GPRInfo::tagTypeNumberRegister);
-            m_jit.storePtr(GPRInfo::tagTypeNumberRegister, bucket);
-            m_jit.move(AssemblyHelpers::TrustedImmPtr(bitwise_cast<void*>(TagTypeNumber)), GPRInfo::tagTypeNumberRegister);
+            m_jit.load64(AssemblyHelpers::Address(exit.m_jsValueSource.asAddress()), GPRInfo::tagTypeNumberRegister);
+            m_jit.store64(GPRInfo::tagTypeNumberRegister, bucket);
+            m_jit.move(AssemblyHelpers::TrustedImm64(bitwise_cast<int64_t>(TagTypeNumber)), GPRInfo::tagTypeNumberRegister);
         } else
-            m_jit.storePtr(exit.m_jsValueSource.gpr(), bucket);
+            m_jit.store64(exit.m_jsValueSource.gpr(), bucket);
     }
 
     // 4) Figure out how many scratch slots we'll need. We need one for every GPR/FPR
@@ -230,7 +230,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
             switch (recovery.technique()) {
             case UnboxedInt32InGPR:
                 if (recovery.gpr() != alreadyBoxed)
-                    m_jit.orPtr(GPRInfo::tagTypeNumberRegister, recovery.gpr());
+                    m_jit.or64(GPRInfo::tagTypeNumberRegister, recovery.gpr());
                 break;
                 
             case AlreadyInJSStackAsUnboxedInt32:
@@ -252,7 +252,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                 if (addressGPR == recovery.gpr())
                     addressGPR = GPRInfo::regT1;
                 
-                m_jit.storePtr(addressGPR, scratchDataBuffer);
+                m_jit.store64(addressGPR, scratchDataBuffer);
                 m_jit.move(AssemblyHelpers::TrustedImmPtr(scratchDataBuffer + 1), addressGPR);
                 m_jit.storeDouble(FPRInfo::fpRegT0, addressGPR);
                 
@@ -266,12 +266,12 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                 
                 positive.link(&m_jit);
                 
-                m_jit.orPtr(GPRInfo::tagTypeNumberRegister, recovery.gpr());
+                m_jit.or64(GPRInfo::tagTypeNumberRegister, recovery.gpr());
                 
                 done.link(&m_jit);
                 
                 m_jit.loadDouble(addressGPR, FPRInfo::fpRegT0);
-                m_jit.loadPtr(scratchDataBuffer, addressGPR);
+                m_jit.load64(scratchDataBuffer, addressGPR);
                 break;
             }
                 
@@ -296,11 +296,11 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         case UnboxedInt32InGPR:
         case UInt32InGPR:
             if (operands.isVariable(index) && poisonedVirtualRegisters[operands.variableForIndex(index)]) {
-                m_jit.storePtr(recovery.gpr(), scratchDataBuffer + currentPoisonIndex);
+                m_jit.store64(recovery.gpr(), scratchDataBuffer + currentPoisonIndex);
                 m_poisonScratchIndices[operands.variableForIndex(index)] = currentPoisonIndex;
                 currentPoisonIndex++;
             } else
-                m_jit.storePtr(recovery.gpr(), AssemblyHelpers::addressFor((VirtualRegister)operand));
+                m_jit.store64(recovery.gpr(), AssemblyHelpers::addressFor((VirtualRegister)operand));
             break;
         default:
             break;
@@ -330,11 +330,11 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                 continue;
             GPRReg gpr = GPRInfo::toRegister(FPRInfo::toIndex(recovery.fpr()));
             if (operands.isVariable(index) && poisonedVirtualRegisters[operands.variableForIndex(index)]) {
-                m_jit.storePtr(gpr, scratchDataBuffer + currentPoisonIndex);
+                m_jit.store64(gpr, scratchDataBuffer + currentPoisonIndex);
                 m_poisonScratchIndices[operands.variableForIndex(index)] = currentPoisonIndex;
                 currentPoisonIndex++;
             } else
-                m_jit.storePtr(gpr, AssemblyHelpers::addressFor((VirtualRegister)operands.operandForIndex(index)));
+                m_jit.store64(gpr, AssemblyHelpers::addressFor((VirtualRegister)operands.operandForIndex(index)));
         }
     }
     
@@ -348,7 +348,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                 continue;
             m_jit.loadDouble(AssemblyHelpers::addressFor((VirtualRegister)operands.operandForIndex(index)), FPRInfo::fpRegT0);
             m_jit.boxDouble(FPRInfo::fpRegT0, GPRInfo::regT0);
-            m_jit.storePtr(GPRInfo::regT0, AssemblyHelpers::addressFor((VirtualRegister)operands.operandForIndex(index)));
+            m_jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor((VirtualRegister)operands.operandForIndex(index)));
         }
     }
     
@@ -368,20 +368,20 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                 const ValueRecovery& recovery = operands[index];
                 switch (recovery.technique()) {
                 case DisplacedInJSStack:
-                    m_jit.loadPtr(AssemblyHelpers::addressFor(recovery.virtualRegister()), GPRInfo::toRegister(displacementIndex++));
+                    m_jit.load64(AssemblyHelpers::addressFor(recovery.virtualRegister()), GPRInfo::toRegister(displacementIndex++));
                     break;
                     
                 case Int32DisplacedInJSStack: {
                     GPRReg gpr = GPRInfo::toRegister(displacementIndex++);
                     m_jit.load32(AssemblyHelpers::addressFor(recovery.virtualRegister()), gpr);
-                    m_jit.orPtr(GPRInfo::tagTypeNumberRegister, gpr);
+                    m_jit.or64(GPRInfo::tagTypeNumberRegister, gpr);
                     break;
                 }
                     
                 case DoubleDisplacedInJSStack: {
                     GPRReg gpr = GPRInfo::toRegister(displacementIndex++);
-                    m_jit.loadPtr(AssemblyHelpers::addressFor(recovery.virtualRegister()), gpr);
-                    m_jit.subPtr(GPRInfo::tagTypeNumberRegister, gpr);
+                    m_jit.load64(AssemblyHelpers::addressFor(recovery.virtualRegister()), gpr);
+                    m_jit.sub64(GPRInfo::tagTypeNumberRegister, gpr);
                     break;
                 }
                     
@@ -397,7 +397,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                 case DisplacedInJSStack:
                 case Int32DisplacedInJSStack:
                 case DoubleDisplacedInJSStack:
-                    m_jit.storePtr(GPRInfo::toRegister(displacementIndex++), AssemblyHelpers::addressFor((VirtualRegister)operands.operandForIndex(index)));
+                    m_jit.store64(GPRInfo::toRegister(displacementIndex++), AssemblyHelpers::addressFor((VirtualRegister)operands.operandForIndex(index)));
                     break;
                     
                 default:
@@ -428,21 +428,21 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                 
                 switch (recovery.technique()) {
                 case DisplacedInJSStack:
-                    m_jit.loadPtr(AssemblyHelpers::addressFor(recovery.virtualRegister()), GPRInfo::regT0);
-                    m_jit.storePtr(GPRInfo::regT0, scratchDataBuffer + scratchIndex++);
+                    m_jit.load64(AssemblyHelpers::addressFor(recovery.virtualRegister()), GPRInfo::regT0);
+                    m_jit.store64(GPRInfo::regT0, scratchDataBuffer + scratchIndex++);
                     break;
                     
                 case Int32DisplacedInJSStack: {
                     m_jit.load32(AssemblyHelpers::addressFor(recovery.virtualRegister()), GPRInfo::regT0);
-                    m_jit.orPtr(GPRInfo::tagTypeNumberRegister, GPRInfo::regT0);
-                    m_jit.storePtr(GPRInfo::regT0, scratchDataBuffer + scratchIndex++);
+                    m_jit.or64(GPRInfo::tagTypeNumberRegister, GPRInfo::regT0);
+                    m_jit.store64(GPRInfo::regT0, scratchDataBuffer + scratchIndex++);
                     break;
                 }
                     
                 case DoubleDisplacedInJSStack: {
-                    m_jit.loadPtr(AssemblyHelpers::addressFor(recovery.virtualRegister()), GPRInfo::regT0);
-                    m_jit.subPtr(GPRInfo::tagTypeNumberRegister, GPRInfo::regT0);
-                    m_jit.storePtr(GPRInfo::regT0, scratchDataBuffer + scratchIndex++);
+                    m_jit.load64(AssemblyHelpers::addressFor(recovery.virtualRegister()), GPRInfo::regT0);
+                    m_jit.sub64(GPRInfo::tagTypeNumberRegister, GPRInfo::regT0);
+                    m_jit.store64(GPRInfo::regT0, scratchDataBuffer + scratchIndex++);
                     break;
                 }
                     
@@ -458,8 +458,8 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                 case DisplacedInJSStack:
                 case Int32DisplacedInJSStack:
                 case DoubleDisplacedInJSStack:
-                    m_jit.loadPtr(scratchDataBuffer + scratchIndex++, GPRInfo::regT0);
-                    m_jit.storePtr(GPRInfo::regT0, AssemblyHelpers::addressFor((VirtualRegister)operands.operandForIndex(index)));
+                    m_jit.load64(scratchDataBuffer + scratchIndex++, GPRInfo::regT0);
+                    m_jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor((VirtualRegister)operands.operandForIndex(index)));
                     break;
                     
                 default:
@@ -484,8 +484,8 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
             case UnboxedInt32InGPR:
             case UInt32InGPR:
             case InFPR:
-                m_jit.loadPtr(scratchDataBuffer + poisonIndex(virtualRegister), GPRInfo::regT0);
-                m_jit.storePtr(GPRInfo::regT0, AssemblyHelpers::addressFor((VirtualRegister)virtualRegister));
+                m_jit.load64(scratchDataBuffer + poisonIndex(virtualRegister), GPRInfo::regT0);
+                m_jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor((VirtualRegister)virtualRegister));
                 break;
                 
             default:
@@ -499,16 +499,16 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
 
     if (haveConstants) {
         if (haveUndefined)
-            m_jit.move(AssemblyHelpers::TrustedImmPtr(JSValue::encode(jsUndefined())), GPRInfo::regT0);
+            m_jit.move(AssemblyHelpers::TrustedImm64(JSValue::encode(jsUndefined())), GPRInfo::regT0);
         
         for (size_t index = 0; index < operands.size(); ++index) {
             const ValueRecovery& recovery = operands[index];
             if (recovery.technique() != Constant)
                 continue;
             if (recovery.constant().isUndefined())
-                m_jit.storePtr(GPRInfo::regT0, AssemblyHelpers::addressFor((VirtualRegister)operands.operandForIndex(index)));
+                m_jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor((VirtualRegister)operands.operandForIndex(index)));
             else
-                m_jit.storePtr(AssemblyHelpers::TrustedImmPtr(JSValue::encode(recovery.constant())), AssemblyHelpers::addressFor((VirtualRegister)operands.operandForIndex(index)));
+                m_jit.store64(AssemblyHelpers::TrustedImm64(JSValue::encode(recovery.constant())), AssemblyHelpers::addressFor((VirtualRegister)operands.operandForIndex(index)));
         }
     }
     
@@ -576,11 +576,11 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
             callerFrameGPR = GPRInfo::callFrameRegister;
         
         m_jit.storePtr(AssemblyHelpers::TrustedImmPtr(baselineCodeBlock), AssemblyHelpers::addressFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::CodeBlock)));
-        m_jit.storePtr(AssemblyHelpers::TrustedImmPtr(inlineCallFrame->callee->scope()), AssemblyHelpers::addressFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::ScopeChain)));
-        m_jit.storePtr(callerFrameGPR, AssemblyHelpers::addressFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::CallerFrame)));
+        m_jit.store64(AssemblyHelpers::TrustedImm64(JSValue::encode(JSValue(inlineCallFrame->callee->scope()))), AssemblyHelpers::addressFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::ScopeChain)));
+        m_jit.store64(callerFrameGPR, AssemblyHelpers::addressFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::CallerFrame)));
         m_jit.storePtr(AssemblyHelpers::TrustedImmPtr(jumpTarget), AssemblyHelpers::addressFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::ReturnPC)));
         m_jit.store32(AssemblyHelpers::TrustedImm32(inlineCallFrame->arguments.size()), AssemblyHelpers::payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::ArgumentCount)));
-        m_jit.storePtr(AssemblyHelpers::TrustedImmPtr(inlineCallFrame->callee.get()), AssemblyHelpers::addressFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::Callee)));
+        m_jit.store64(AssemblyHelpers::TrustedImm64(JSValue::encode(JSValue(inlineCallFrame->callee.get()))), AssemblyHelpers::addressFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::Callee)));
     }
     
     // 15) Create arguments if necessary and place them into the appropriate aliased
@@ -620,21 +620,22 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                         bitwise_cast<void*>(operationCreateArguments)),
                     GPRInfo::nonArgGPR0);
                 m_jit.call(GPRInfo::nonArgGPR0);
-                m_jit.storePtr(GPRInfo::returnValueGPR, AssemblyHelpers::addressFor(argumentsRegister));
-                m_jit.storePtr(
+                m_jit.store64(GPRInfo::returnValueGPR, AssemblyHelpers::addressFor(argumentsRegister));
+                m_jit.store64(
                     GPRInfo::returnValueGPR,
                     AssemblyHelpers::addressFor(unmodifiedArgumentsRegister(argumentsRegister)));
                 m_jit.move(GPRInfo::returnValueGPR, GPRInfo::regT0); // no-op move on almost all platforms.
             }
 
-            m_jit.loadPtr(AssemblyHelpers::addressFor(argumentsRegister), GPRInfo::regT0);
-            m_jit.storePtr(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
+            m_jit.load64(AssemblyHelpers::addressFor(argumentsRegister), GPRInfo::regT0);
+            m_jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
         }
     }
     
     // 16) Load the result of the last bytecode operation into regT0.
+    
     for (size_t i = 0; i < exit.m_setOperands.size(); i++)
-        m_jit.loadPtr(AssemblyHelpers::addressFor((VirtualRegister)exit.m_setOperands[i]), GPRInfo::cachedResultRegister);
+        m_jit.load64(AssemblyHelpers::addressFor((VirtualRegister)exit.m_setOperands[i]), GPRInfo::cachedResultRegister);
 
     // 17) Adjust the call frame pointer.
     

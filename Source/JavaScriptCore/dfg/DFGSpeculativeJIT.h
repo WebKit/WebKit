@@ -71,6 +71,8 @@ private:
     typedef JITCompiler::Imm32 Imm32;
     typedef JITCompiler::TrustedImmPtr TrustedImmPtr;
     typedef JITCompiler::ImmPtr ImmPtr;
+    typedef JITCompiler::TrustedImm64 TrustedImm64;
+    typedef JITCompiler::Imm64 Imm64;
 
     // These constants are used to set priorities for spill order for
     // the register allocator.
@@ -347,9 +349,11 @@ public:
             ASSERT(info.gpr() == source);
             if (registerFormat == DataFormatInteger)
                 spillAction = Store32Payload;
-            else {
-                ASSERT(registerFormat & DataFormatJS || registerFormat == DataFormatCell || registerFormat == DataFormatStorage);
+            else if (registerFormat == DataFormatCell || registerFormat == DataFormatStorage)
                 spillAction = StorePtr;
+            else {
+                ASSERT(registerFormat & DataFormatJS);
+                spillAction = Store64;
             }
 #elif USE(JSVALUE32_64)
             if (registerFormat & DataFormatJS) {
@@ -414,7 +418,7 @@ public:
                 ASSERT(registerFormat == DataFormatJSDouble);
                 fillAction = LoadDoubleBoxDouble;
             } else
-                fillAction = LoadPtr;
+                fillAction = Load64;
 #else
             ASSERT(info.tagGPR() == source || info.payloadGPR() == source);
             if (node.hasConstant())
@@ -501,6 +505,11 @@ public:
         case StorePtr:
             m_jit.storePtr(plan.gpr(), JITCompiler::addressFor(at(plan.nodeIndex()).virtualRegister()));
             break;
+#if USE(JSVALUE64)
+        case Store64:
+            m_jit.store64(plan.gpr(), JITCompiler::addressFor(at(plan.nodeIndex()).virtualRegister()));
+            break;
+#endif
         case StoreDouble:
             m_jit.storeDouble(plan.fpr(), JITCompiler::addressFor(at(plan.nodeIndex()).virtualRegister()));
             break;
@@ -528,25 +537,25 @@ public:
             break;
 #if USE(JSVALUE64)
         case SetTrustedJSConstant:
-            m_jit.move(valueOfJSConstantAsImmPtr(plan.nodeIndex()).asTrustedImmPtr(), plan.gpr());
+            m_jit.move(valueOfJSConstantAsImm64(plan.nodeIndex()).asTrustedImm64(), plan.gpr());
             break;
         case SetJSConstant:
-            m_jit.move(valueOfJSConstantAsImmPtr(plan.nodeIndex()), plan.gpr());
+            m_jit.move(valueOfJSConstantAsImm64(plan.nodeIndex()), plan.gpr());
             break;
         case SetDoubleConstant:
-            m_jit.move(ImmPtr(bitwise_cast<void*>(valueOfNumberConstant(plan.nodeIndex()))), canTrample);
-            m_jit.movePtrToDouble(canTrample, plan.fpr());
+            m_jit.move(Imm64(valueOfNumberConstant(plan.nodeIndex())), canTrample);
+            m_jit.move64ToDouble(canTrample, plan.fpr());
             break;
         case Load32PayloadBoxInt:
             m_jit.load32(JITCompiler::payloadFor(at(plan.nodeIndex()).virtualRegister()), plan.gpr());
-            m_jit.orPtr(GPRInfo::tagTypeNumberRegister, plan.gpr());
+            m_jit.or64(GPRInfo::tagTypeNumberRegister, plan.gpr());
             break;
         case LoadDoubleBoxDouble:
-            m_jit.loadPtr(JITCompiler::addressFor(at(plan.nodeIndex()).virtualRegister()), plan.gpr());
-            m_jit.subPtr(GPRInfo::tagTypeNumberRegister, plan.gpr());
+            m_jit.load64(JITCompiler::addressFor(at(plan.nodeIndex()).virtualRegister()), plan.gpr());
+            m_jit.sub64(GPRInfo::tagTypeNumberRegister, plan.gpr());
             break;
         case LoadJSUnboxDouble:
-            m_jit.loadPtr(JITCompiler::addressFor(at(plan.nodeIndex()).virtualRegister()), canTrample);
+            m_jit.load64(JITCompiler::addressFor(at(plan.nodeIndex()).virtualRegister()), canTrample);
             unboxDouble(canTrample, plan.fpr());
             break;
 #else
@@ -578,6 +587,11 @@ public:
         case LoadPtr:
             m_jit.loadPtr(JITCompiler::addressFor(at(plan.nodeIndex()).virtualRegister()), plan.gpr());
             break;
+#if USE(JSVALUE64)
+        case Load64:
+            m_jit.load64(JITCompiler::addressFor(at(plan.nodeIndex()).virtualRegister()), plan.gpr());
+            break;
+#endif
         case LoadDouble:
             m_jit.loadDouble(JITCompiler::addressFor(at(plan.nodeIndex()).virtualRegister()), plan.fpr());
             break;
@@ -752,10 +766,10 @@ public:
             // We need to box int32 and cell values ...
             // but on JSVALUE64 boxing a cell is a no-op!
             if (spillFormat == DataFormatInteger)
-                m_jit.orPtr(GPRInfo::tagTypeNumberRegister, reg);
+                m_jit.or64(GPRInfo::tagTypeNumberRegister, reg);
             
             // Spill the value, and record it as spilled in its boxed form.
-            m_jit.storePtr(reg, JITCompiler::addressFor(spillMe));
+            m_jit.store64(reg, JITCompiler::addressFor(spillMe));
             info.spill(*m_stream, spillMe, (DataFormat)(spillFormat | DataFormatJS));
             return;
 #elif USE(JSVALUE32_64)
@@ -875,9 +889,9 @@ public:
 #endif
 
 #if USE(JSVALUE64)
-    MacroAssembler::ImmPtr valueOfJSConstantAsImmPtr(NodeIndex nodeIndex)
+    MacroAssembler::Imm64 valueOfJSConstantAsImm64(NodeIndex nodeIndex)
     {
-        return MacroAssembler::ImmPtr(JSValue::encode(valueOfJSConstant(nodeIndex)));
+        return MacroAssembler::Imm64(JSValue::encode(valueOfJSConstant(nodeIndex)));
     }
 #endif
 
@@ -1359,6 +1373,11 @@ public:
         m_jit.setupArgumentsWithExecState(arg1);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(J_DFGOperation_EJ operation, GPRReg result, GPRReg arg1)
+    {
+        m_jit.setupArgumentsWithExecState(arg1);
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(S_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2);
@@ -1374,14 +1393,19 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(J_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2);
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(J_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1, MacroAssembler::TrustedImm32 imm)
     {
-        m_jit.setupArgumentsWithExecState(arg1, MacroAssembler::TrustedImmPtr(static_cast<const void*>(JSValue::encode(jsNumber(imm.m_value)))));
+        m_jit.setupArgumentsWithExecState(arg1, MacroAssembler::TrustedImm64(JSValue::encode(jsNumber(imm.m_value))));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EJJ operation, GPRReg result, MacroAssembler::TrustedImm32 imm, GPRReg arg2)
     {
-        m_jit.setupArgumentsWithExecState(MacroAssembler::TrustedImmPtr(static_cast<const void*>(JSValue::encode(jsNumber(imm.m_value)))), arg2);
+        m_jit.setupArgumentsWithExecState(MacroAssembler::TrustedImm64(JSValue::encode(jsNumber(imm.m_value))), arg2);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_DFGOperation_ECC operation, GPRReg result, GPRReg arg1, GPRReg arg2)
@@ -2062,6 +2086,20 @@ public:
         addBranch(m_jit.jump(), destination);
         notTaken.link(&m_jit);
     }
+    
+#if USE(JSVALUE64)
+    template<typename T, typename U>
+    void branch64(JITCompiler::RelationalCondition cond, T left, U right, BlockIndex destination)
+    {
+        if (!haveEdgeCodeToEmit(destination))
+            return addBranch(m_jit.branch64(cond, left, right), destination);
+        
+        JITCompiler::Jump notTaken = m_jit.branch64(JITCompiler::invert(cond), left, right);
+        emitEdgeCode(destination);
+        addBranch(m_jit.jump(), destination);
+        notTaken.link(&m_jit);
+    }
+#endif
     
     template<typename T, typename U>
     void branchPtr(JITCompiler::RelationalCondition cond, T left, U right, BlockIndex destination)

@@ -69,11 +69,7 @@ namespace JSC {
     enum PreferredPrimitiveType { NoPreference, PreferNumber, PreferString };
 
 
-#if USE(JSVALUE32_64)
     typedef int64_t EncodedJSValue;
-#else
-    typedef void* EncodedJSValue;
-#endif
     
     union EncodedValueDescriptor {
         int64_t asInt64;
@@ -390,9 +386,9 @@ namespace JSC {
         EncodedValueDescriptor u;
     };
 
-#if USE(JSVALUE32_64)
     typedef IntHash<EncodedJSValue> EncodedJSValueHash;
 
+#if USE(JSVALUE32_64)
     struct EncodedJSValueHashTraits : HashTraits<EncodedJSValue> {
         static const bool emptyValueIsZero = false;
         static EncodedJSValue emptyValue() { return JSValue::encode(JSValue()); }
@@ -400,8 +396,6 @@ namespace JSC {
         static bool isDeletedValue(EncodedJSValue value) { return value == JSValue::encode(JSValue(JSValue::HashTableDeletedValue)); }
     };
 #else
-    typedef PtrHash<EncodedJSValue> EncodedJSValueHash;
-
     struct EncodedJSValueHashTraits : HashTraits<EncodedJSValue> {
         static void constructDeletedValue(EncodedJSValue& slot) { slot = JSValue::encode(JSValue(JSValue::HashTableDeletedValue)); }
         static bool isDeletedValue(EncodedJSValue value) { return value == JSValue::encode(JSValue(JSValue::HashTableDeletedValue)); }
