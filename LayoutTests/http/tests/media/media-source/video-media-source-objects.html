@@ -59,7 +59,7 @@
                     segmentHelper.appendMediaSegment(i);
                 testExpected("mediaSource.sourceBuffers[0].buffered.length", 2);
                 testExpected("mediaSource.sourceBuffers[0].buffered.start(1)", 5);
-                testExpected("mediaSource.sourceBuffers[0].buffered.end(1)", 1, '>');
+                testExpected("mediaSource.sourceBuffers[0].buffered.end(1)", 5, '>');
 
                 consoleWrite("");
                 consoleWrite("Remove SourceBuffer");

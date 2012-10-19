@@ -1,5 +1,17 @@
 2012-10-18  Anand Chakravarty  <anandc@google.com>
 
+        Incorrect check performed in Media Source objects test.
+        https://bugs.webkit.org/show_bug.cgi?id=99390
+
+        Reviewed by Eric Carlson.
+
+        Use an expected value of 5 in the buffered attribute.
+
+        * http/tests/media/media-source/video-media-source-objects-expected.txt:
+        * http/tests/media/media-source/video-media-source-objects.html:
+
+2012-10-18  Anand Chakravarty  <anandc@google.com>
+
         Use of uninitialized variable in Media Source API test.
         https://bugs.webkit.org/show_bug.cgi?id=99387
 

@@ -34,7 +34,7 @@ EXPECTED (segmentHelper.sourceBuffer.timestampOffset == '5') OK
 Append 1 second of data.
 EXPECTED (mediaSource.sourceBuffers[0].buffered.length == '2') OK
 EXPECTED (mediaSource.sourceBuffers[0].buffered.start(1) == '5') OK
-EXPECTED (mediaSource.sourceBuffers[0].buffered.end(1) > '1') OK
+EXPECTED (mediaSource.sourceBuffers[0].buffered.end(1) > '5') OK
 
 Remove SourceBuffer
 RUN(mediaSource.removeSourceBuffer(segmentHelper.sourceBuffer))
