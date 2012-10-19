@@ -1,3 +1,22 @@
+2012-10-19  Michael Saboff  <msaboff@apple.com>
+
+        Lexer should create 8 bit Identifiers for RegularExpressions and ASCII identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=99855
+
+        Reviewed by Filip Pizlo.
+
+        Added makeIdentifier helpers that will always make an 8 bit Identifier or make an
+        Identifier that is the same size as the template parameter.  Used the first in the fast
+        path when looking for a JS identifier and the second when scanning regular expressions.
+
+        * parser/Lexer.cpp:
+        (JSC::::scanRegExp):
+        * parser/Lexer.h:
+        (Lexer):
+        (JSC::::makeIdentifierSameType):
+        (JSC::::makeLCharIdentifier):
+        (JSC::::lexExpectIdentifier):
+
 2012-10-19  Mark Lam  <mark.lam@apple.com>
 
         Added WTF::StackStats mechanism.

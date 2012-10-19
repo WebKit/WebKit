@@ -146,6 +146,9 @@ private:
 
     ALWAYS_INLINE const Identifier* makeIdentifier(const LChar* characters, size_t length);
     ALWAYS_INLINE const Identifier* makeIdentifier(const UChar* characters, size_t length);
+    ALWAYS_INLINE const Identifier* makeLCharIdentifier(const LChar* characters, size_t length);
+    ALWAYS_INLINE const Identifier* makeLCharIdentifier(const UChar* characters, size_t length);
+    ALWAYS_INLINE const Identifier* makeIdentifierSameType(const UChar* characters, size_t length);
     ALWAYS_INLINE const Identifier* makeIdentifierLCharFromUChar(const UChar* characters, size_t length);
 
     ALWAYS_INLINE bool lastTokenWasRestrKeyword() const;
@@ -239,6 +242,18 @@ ALWAYS_INLINE const Identifier* Lexer<T>::makeIdentifier(const UChar* characters
 }
 
 template <>
+ALWAYS_INLINE const Identifier* Lexer<LChar>::makeIdentifierSameType(const UChar* characters, size_t length)
+{
+    return &m_arena->makeIdentifierLCharFromUChar(m_globalData, characters, length);
+}
+
+template <>
+ALWAYS_INLINE const Identifier* Lexer<UChar>::makeIdentifierSameType(const UChar* characters, size_t length)
+{
+    return &m_arena->makeIdentifier(m_globalData, characters, length);
+}
+
+template <>
 ALWAYS_INLINE void Lexer<LChar>::setCodeStart(const StringImpl* sourceString)
 {
     ASSERT(sourceString->is8Bit());
@@ -254,6 +269,18 @@ ALWAYS_INLINE void Lexer<UChar>::setCodeStart(const StringImpl* sourceString)
 
 template <typename T>
 ALWAYS_INLINE const Identifier* Lexer<T>::makeIdentifierLCharFromUChar(const UChar* characters, size_t length)
+{
+    return &m_arena->makeIdentifierLCharFromUChar(m_globalData, characters, length);
+}
+
+template <typename T>
+ALWAYS_INLINE const Identifier* Lexer<T>::makeLCharIdentifier(const LChar* characters, size_t length)
+{
+    return &m_arena->makeIdentifier(m_globalData, characters, length);
+}
+
+template <typename T>
+ALWAYS_INLINE const Identifier* Lexer<T>::makeLCharIdentifier(const UChar* characters, size_t length)
 {
     return &m_arena->makeIdentifierLCharFromUChar(m_globalData, characters, length);
 }
@@ -293,7 +320,7 @@ ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSTokenData* tokenData, 
     if (lexerFlags & LexexFlagsDontBuildKeywords)
         tokenData->ident = 0;
     else
-        tokenData->ident = makeIdentifier(start, ptr - start);
+        tokenData->ident = makeLCharIdentifier(start, ptr - start);
     tokenLocation->line = m_lineNumber;
     tokenLocation->startOffset = start - m_codeStart;
     tokenLocation->endOffset = currentOffset();

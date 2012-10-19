@@ -1617,7 +1617,7 @@ bool Lexer<T>::scanRegExp(const Identifier*& pattern, const Identifier*& flags, 
         }
     }
 
-    pattern = makeIdentifier(m_buffer16.data(), m_buffer16.size());
+    pattern = makeIdentifierSameType(m_buffer16.data(), m_buffer16.size());
     m_buffer16.resize(0);
 
     while (isIdentPart(m_current)) {
@@ -1625,7 +1625,7 @@ bool Lexer<T>::scanRegExp(const Identifier*& pattern, const Identifier*& flags, 
         shift();
     }
 
-    flags = makeIdentifier(m_buffer16.data(), m_buffer16.size());
+    flags = makeIdentifierSameType(m_buffer16.data(), m_buffer16.size());
     m_buffer16.resize(0);
 
     return true;
