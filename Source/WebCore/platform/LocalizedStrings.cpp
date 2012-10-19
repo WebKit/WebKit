@@ -882,6 +882,10 @@ String localizedMediaControlElementHelpText(const String& name)
     if (name == "HideClosedCaptionsButton")
         return WEB_UI_STRING("stop displaying closed captions", "accessibility help text for hide closed captions button");
 
+    // The description of this button is descriptive enough that it doesn't require help text.
+    if (name == "EnterFullscreenButton")
+        return String();
+    
     ASSERT_NOT_REACHED();
     return String();
 }

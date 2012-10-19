@@ -1,3 +1,72 @@
+2012-10-17  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Refactor accessibility name computation so it's more platform independent
+        https://bugs.webkit.org/show_bug.cgi?id=99502
+
+        Reviewed by Beth Dakin.
+
+        The current model of determining the accessible text for an object has a lot of Mac biases built in
+        due to legacy implementation. 
+
+        This change categorizes and orders accessibility text based on WAI-ARIA text computation rules and then
+        allows the platform (only Mac right now) to decide how best to apply that text to its own AX API.
+        http://www.w3.org/TR/wai-aria/roles#textalternativecomputation
+
+        This change tried very hard not to change any test behavior, even though it exposed a number of weird
+        edge cases where we were treating attributes differently based on element type. 
+
+        Future patches will resolve those discrepancies.
+
+        * accessibility/AccessibilityImageMapLink.cpp:
+        (WebCore::AccessibilityImageMapLink::accessibilityText):
+        * accessibility/AccessibilityImageMapLink.h:
+        (AccessibilityImageMapLink):
+        * accessibility/AccessibilityMediaControls.cpp:
+        (WebCore::AccessibilityMediaControl::accessibilityText):
+        * accessibility/AccessibilityMediaControls.h:
+        (AccessibilityMediaControl):
+        (WebCore::AccessibilityMediaTimeDisplay::isMediaControlLabel):
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::titleElementText):
+        (WebCore::AccessibilityNodeObject::accessibilityText):
+        (WebCore::AccessibilityNodeObject::ariaLabeledByText):
+        (WebCore::AccessibilityNodeObject::alternativeText):
+        (WebCore::AccessibilityNodeObject::alternativeTextForWebArea):
+        (WebCore::AccessibilityNodeObject::visibleText):
+        (WebCore::AccessibilityNodeObject::helpText):
+        (WebCore::AccessibilityNodeObject::ariaDescribedByAttribute):
+        * accessibility/AccessibilityNodeObject.h:
+        (AccessibilityNodeObject):
+        * accessibility/AccessibilityObject.h:
+        (AccessibilityText):
+        (WebCore::AccessibilityText::AccessibilityText):
+        (WebCore::AccessibilityObject::isMediaControlLabel):
+        (AccessibilityObject):
+        (WebCore::AccessibilityObject::accessibilityText):
+        (WebCore::AccessibilityObject::setAccessibleName):
+        (WebCore::AccessibilityObject::accessibilityDescription):
+        (WebCore::AccessibilityObject::title):
+        (WebCore::AccessibilityObject::helpText):
+        (WebCore::AccessibilityObject::stringValue):
+        (WebCore::AccessibilityObject::textUnderElement):
+        (WebCore::AccessibilityObject::text):
+        (WebCore::AccessibilityObject::textLength):
+        (WebCore::AccessibilityObject::setRoleValue):
+        (WebCore::AccessibilityObject::roleValue):
+        (WebCore::AccessibilityObject::selection):
+        (WebCore::AccessibilityObject::hierarchicalLevel):
+        * accessibility/AccessibilityRenderObject.cpp:
+        * accessibility/AccessibilityRenderObject.h:
+        (AccessibilityRenderObject):
+        * accessibility/mac/WebAccessibilityObjectWrapper.mm:
+        (-[WebAccessibilityObjectWrapper titleTagShouldBeUsedInDescriptionField]):
+        (-[WebAccessibilityObjectWrapper accessibilityTitle]):
+        (-[WebAccessibilityObjectWrapper accessibilityDescription]):
+        (-[WebAccessibilityObjectWrapper accessibilityHelpText]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * platform/LocalizedStrings.cpp:
+        (WebCore::localizedMediaControlElementHelpText):
+
 2012-10-19  Kent Tamura  <tkent@chromium.org>
 
         Use Localizer::monthFormat to construct input[type=month] UI

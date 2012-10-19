@@ -94,6 +94,21 @@ KURL AccessibilityImageMapLink::url() const
     
     return m_areaElement->href();
 }
+
+void AccessibilityImageMapLink::accessibilityText(Vector<AccessibilityText>& textOrder)
+{
+    String description = accessibilityDescription();
+    if (!description.isEmpty())
+        textOrder.append(AccessibilityText(description, AlternativeText));
+
+    const AtomicString& titleText = getAttribute(titleAttr);
+    if (!titleText.isEmpty())
+        textOrder.append(AccessibilityText(titleText, TitleTagText));
+
+    const AtomicString& summary = getAttribute(summaryAttr);
+    if (!summary.isEmpty())
+        textOrder.append(AccessibilityText(summary, SummaryText));
+}
     
 String AccessibilityImageMapLink::accessibilityDescription() const
 {

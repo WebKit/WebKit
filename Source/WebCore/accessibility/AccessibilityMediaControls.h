@@ -54,6 +54,7 @@ protected:
     explicit AccessibilityMediaControl(RenderObject*);
     MediaControlElementType controlType() const;
     String controlTypeName() const;
+    virtual void accessibilityText(Vector<AccessibilityText>&);
 };
 
 
@@ -107,6 +108,7 @@ public:
 
 private:
     explicit AccessibilityMediaTimeDisplay(RenderObject*);
+    virtual bool isMediaControlLabel() const { return true; }
 };
 
 

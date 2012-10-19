@@ -1826,6 +1826,103 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     return [self remoteAccessibilityParentObject];
 }
 
+// FIXME: Different kinds of elements are putting the title tag to use in different
+// AX fields. This should be rectified, but in the initial patch I want to achieve
+// parity with existing behavior.
+- (BOOL)titleTagShouldBeUsedInDescriptionField
+{
+    return (m_object->isLink() && !m_object->isImageMapLink()) || m_object->isImage();
+}
+
+// This should be the "visible" text that's actually on the screen if possible.
+// If there's alternative text, that can override the title.
+- (NSString *)accessibilityTitle
+{
+    // Static text objects should not have a title. Its content is communicated in its AXValue.
+    if (m_object->roleValue() == StaticTextRole)
+        return [NSString string];
+
+    Vector<AccessibilityText> textOrder;
+    m_object->accessibilityText(textOrder);
+    
+    unsigned length = textOrder.size();
+    for (unsigned k = 0; k < length; k++) {
+        const AccessibilityText& text = textOrder[k];
+        
+        // Once we encounter visible text, or the text from our children that should be used foremost.
+        if (text.textSource == VisibleText || text.textSource == ChildrenText)
+            return text.text;
+        
+        // If there's an element that labels this object and it's not exposed, then we should use
+        // that text as our title.
+        if (text.textSource == LabelByElementText && !m_object->exposesTitleUIElement())
+            return text.text;
+        
+        // FIXME: The title tag is used in certain cases for the title. This usage should
+        // probably be in the description field since it's not "visible".
+        if (text.textSource == TitleTagText && ![self titleTagShouldBeUsedInDescriptionField])
+            return text.text;
+    }
+    
+    return [NSString string];
+}
+
+- (NSString *)accessibilityDescription
+{
+    // Static text objects should not have a description. Its content is communicated in its AXValue.
+    // One exception is the media control labels that have a value and a description. Those are set programatically.
+    if (m_object->roleValue() == StaticTextRole && !m_object->isMediaControlLabel())
+        return [NSString string];
+    
+    Vector<AccessibilityText> textOrder;
+    m_object->accessibilityText(textOrder);
+    
+    unsigned length = textOrder.size();
+    for (unsigned k = 0; k < length; k++) {
+        const AccessibilityText& text = textOrder[k];
+        
+        if (text.textSource == AlternativeText)
+            return text.text;
+        
+        if (text.textSource == TitleTagText && [self titleTagShouldBeUsedInDescriptionField])
+            return text.text;
+    }
+    
+    return [NSString string];
+}
+
+- (NSString *)accessibilityHelpText
+{
+    Vector<AccessibilityText> textOrder;
+    m_object->accessibilityText(textOrder);
+    
+    unsigned length = textOrder.size();
+    bool descriptiveTextAvailable = false;
+    for (unsigned k = 0; k < length; k++) {
+        const AccessibilityText& text = textOrder[k];
+        
+        if (text.textSource == HelpText || text.textSource == SummaryText)
+            return text.text;
+        
+        // If an element does NOT have other descriptive text the title tag should be used as its descriptive text.
+        // But, if those ARE available, then the title tag should be used for help text instead.
+        switch (text.textSource) {
+        case AlternativeText:
+        case VisibleText:
+        case ChildrenText:
+        case LabelByElementText:
+            descriptiveTextAvailable = true;
+        default:
+            break;
+        }
+        
+        if (text.textSource == TitleTagText && descriptiveTextAvailable)
+            return text.text;
+    }
+    
+    return [NSString string];
+}
+
 // FIXME: split up this function in a better way.  
 // suggestions: Use a hash table that maps attribute names to function calls,
 // or maybe pointers to member functions
@@ -1992,7 +2089,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             if ([[[self attachmentView] accessibilityAttributeNames] containsObject:NSAccessibilityTitleAttribute]) 
                 return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityTitleAttribute];
         }
-        return m_object->title();
+        
+        return [self accessibilityTitle];
     }
     
     if ([attributeName isEqualToString: NSAccessibilityDescriptionAttribute]) {
@@ -2000,7 +2098,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             if ([[[self attachmentView] accessibilityAttributeNames] containsObject:NSAccessibilityDescriptionAttribute])
                 return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityDescriptionAttribute];
         }
-        return m_object->accessibilityDescription();
+        return [self accessibilityDescription];
     }
 
     if ([attributeName isEqualToString: NSAccessibilityValueAttribute]) {
@@ -2054,7 +2152,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return [NSNumber numberWithFloat:m_object->maxValueForRange()];
 
     if ([attributeName isEqualToString: NSAccessibilityHelpAttribute])
-        return m_object->helpText();
+        return [self accessibilityHelpText];
 
     if ([attributeName isEqualToString: NSAccessibilityFocusedAttribute])
         return [NSNumber numberWithBool: m_object->isFocused()];

@@ -1,3 +1,14 @@
+2012-10-19  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Refactor accessibility name computation so it's more platform independent
+        https://bugs.webkit.org/show_bug.cgi?id=99502
+
+        Reviewed by Beth Dakin.
+
+        Update a test to reflect change in what shoud be recognized as a title.
+
+        * platform/mac/accessibility/aria-radiobutton-text.html:
+
 2012-10-19  Zan Dobersek  <zandobersek@gmail.com>
 
         [WK2][GTK] Fullscreen tests timing out in bots

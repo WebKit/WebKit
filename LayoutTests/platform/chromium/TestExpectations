@@ -1420,6 +1420,7 @@ crbug.com/10322 accessibility/visible-elements.html [ Skip ]
 
 webkit.org/b/97359 accessibility/svg-bounds.html [ Skip ]
 webkit.org/b/73912 accessibility/aria-checkbox-text.html [ Skip ]
+webkit.org/b/99665 accessibility/loading-iframe-sends-notification.html [ Skip ]
 
 webkit.org/b/73912 accessibility/aria-checkbox-sends-notification.html [ Failure Pass ]
 

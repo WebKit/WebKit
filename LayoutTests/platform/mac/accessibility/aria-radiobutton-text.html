@@ -30,7 +30,9 @@
           var succeeded = obj.childAtIndex(1).title == "AXTitle: Two";
           shouldBe("succeeded", "true");
 
-          var succeeded = obj.childAtIndex(2).title == "AXTitle: Three";
+          // Because the third button uses aria-labelledby, the accessible name
+          // will be inside the description field.
+          var succeeded = obj.childAtIndex(2).description == "AXDescription: Three";
           shouldBe("succeeded", "true");
     }
 

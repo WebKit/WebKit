@@ -1079,6 +1079,215 @@ AccessibilityObject* AccessibilityNodeObject::menuButtonForMenu() const
     return 0;
 }
 
+void AccessibilityNodeObject::titleElementText(Vector<AccessibilityText>& textOrder)
+{
+    Node* node = this->node();
+    if (!node)
+        return;
+    
+    bool isInputTag = node->hasTagName(inputTag);
+    if (isInputTag || AccessibilityObject::isARIAInput(ariaRoleAttribute()) || isControl()) {
+        HTMLLabelElement* label = labelForElement(toElement(node));
+        if (label) {
+            AccessibilityObject* labelObject = axObjectCache()->getOrCreate(label);
+            textOrder.append(AccessibilityText(label->innerText(), LabelByElementText, labelObject));
+            return;
+        }
+    }
+    
+    AccessibilityObject* titleUIElement = this->titleUIElement();
+    if (titleUIElement)
+        textOrder.append(AccessibilityText(String(), LabelByElementText, titleUIElement));
+}
+
+void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrder) const
+{
+    if (isWebArea()) {
+        String webAreaText = alternativeTextForWebArea();
+        if (!webAreaText.isEmpty())
+            textOrder.append(AccessibilityText(webAreaText, AlternativeText));
+        return;
+    }
+    
+    ariaLabeledByText(textOrder);
+    
+    const AtomicString& ariaLabel = getAttribute(aria_labelAttr);
+    if (!ariaLabel.isEmpty())
+        textOrder.append(AccessibilityText(ariaLabel, AlternativeText));
+    
+    if (isImage() || isInputImage() || isNativeImage() || isCanvas()) {
+        // Images should use alt as long as the attribute is present, even if empty.
+        // Otherwise, it should fallback to other methods, like the title attribute.
+        const AtomicString& alt = getAttribute(altAttr);
+        if (!alt.isNull())
+            textOrder.append(AccessibilityText(alt, AlternativeText));
+    }
+    
+#if ENABLE(MATHML)
+    Node* node = this->node();
+    if (node && node->isElementNode() && toElement(node)->isMathMLElement())
+        textOrder.append(AccessibilityText(getAttribute(MathMLNames::alttextAttr), AlternativeText));
+#endif
+}
+
+void AccessibilityNodeObject::visibleText(Vector<AccessibilityText>& textOrder) const
+{
+    Node* node = this->node();
+    if (!node)
+        return;
+    
+    bool isInputTag = node->hasTagName(inputTag);
+    if (isInputTag) {
+        HTMLInputElement* input = static_cast<HTMLInputElement*>(node);
+        if (input->isTextButton()) {
+            textOrder.append(AccessibilityText(input->valueWithDefault(), VisibleText));
+            return;
+        }
+    }
+    
+    // If this node isn't rendered, there's no inner text we can extract from a select element.
+    if (!isAccessibilityRenderObject() && node->hasTagName(selectTag))
+        return;
+    
+    bool useTextUnderElement = false;
+    
+    switch (roleValue()) {
+    case PopUpButtonRole:
+    case ButtonRole:
+    case ToggleButtonRole:
+    case CheckBoxRole:
+    case ListBoxOptionRole:
+    case MenuButtonRole:
+    case MenuItemRole:
+    case RadioButtonRole:
+    case TabRole:
+        useTextUnderElement = true;
+        break;
+    default:
+        break;
+    }
+    
+    // If it's focusable but it's not content editable or a known control type, then it will appear to
+    // the user as a single atomic object, so we should use its text as the default title.
+    if (isHeading() || isLink() || isGenericFocusableElement())
+        useTextUnderElement = true;
+    
+    if (useTextUnderElement) {
+        String text = textUnderElement();
+        if (!text.isEmpty())
+            textOrder.append(AccessibilityText(text, ChildrenText));
+    }
+}
+
+void AccessibilityNodeObject::helpText(Vector<AccessibilityText>& textOrder) const
+{
+    const AtomicString& ariaHelp = getAttribute(aria_helpAttr);
+    if (!ariaHelp.isEmpty())
+        textOrder.append(AccessibilityText(ariaHelp, HelpText));
+    
+    String describedBy = ariaDescribedByAttribute();
+    if (!describedBy.isEmpty())
+        textOrder.append(AccessibilityText(describedBy, SummaryText));
+    
+    // Add help type text that is derived from ancestors.
+    for (Node* curr = node(); curr; curr = curr->parentNode()) {
+        const AtomicString& summary = getAttribute(summaryAttr);
+        if (!summary.isEmpty())
+            textOrder.append(AccessibilityText(summary, SummaryText));
+        
+        // The title attribute should be used as help text unless it is already being used as descriptive text.
+        const AtomicString& title = getAttribute(titleAttr);
+        if (!title.isEmpty())
+            textOrder.append(AccessibilityText(title, TitleTagText));
+        
+        // Only take help text from an ancestor element if its a group or an unknown role. If help was
+        // added to those kinds of elements, it is likely it was meant for a child element.
+        AccessibilityObject* axObj = axObjectCache()->getOrCreate(curr);
+        if (!axObj)
+            return;
+        
+        AccessibilityRole role = axObj->roleValue();
+        if (role != GroupRole && role != UnknownRole)
+            break;
+    }
+}
+
+void AccessibilityNodeObject::accessibilityText(Vector<AccessibilityText>& textOrder)
+{
+    titleElementText(textOrder);
+    alternativeText(textOrder);
+    visibleText(textOrder);
+    helpText(textOrder);
+    
+    String placeholder = placeholderValue();
+    if (!placeholder.isEmpty())
+        textOrder.append(AccessibilityText(placeholder, PlaceholderText));
+}
+    
+void AccessibilityNodeObject::ariaLabeledByText(Vector<AccessibilityText>& textOrder) const
+{
+    String ariaLabeledBy = ariaLabeledByAttribute();
+    if (!ariaLabeledBy.isEmpty()) {
+        Vector<Element*> elements;
+        ariaLabeledByElements(elements);
+        
+        Vector<RefPtr<AccessibilityObject> > axElements;
+        unsigned length = elements.size();
+        for (unsigned k = 0; k < length; k++) {
+            RefPtr<AccessibilityObject> axElement = axObjectCache()->getOrCreate(elements[k]);
+            axElements.append(axElement);
+        }
+        
+        textOrder.append(AccessibilityText(ariaLabeledBy, AlternativeText, axElements));
+    }
+}
+    
+String AccessibilityNodeObject::alternativeTextForWebArea() const
+{
+    // The WebArea description should follow this order:
+    //     aria-label on the <html>
+    //     title on the <html>
+    //     <title> inside the <head> (of it was set through JS)
+    //     name on the <html>
+    // For iframes:
+    //     aria-label on the <iframe>
+    //     title on the <iframe>
+    //     name on the <iframe>
+    
+    Document* document = this->document();
+    if (!document)
+        return String();
+    
+    // Check if the HTML element has an aria-label for the webpage.
+    if (Element* documentElement = document->documentElement()) {
+        const AtomicString& ariaLabel = documentElement->getAttribute(aria_labelAttr);
+        if (!ariaLabel.isEmpty())
+            return ariaLabel;
+    }
+    
+    Node* owner = document->ownerElement();
+    if (owner) {
+        if (owner->hasTagName(frameTag) || owner->hasTagName(iframeTag)) {
+            const AtomicString& title = static_cast<HTMLFrameElementBase*>(owner)->getAttribute(titleAttr);
+            if (!title.isEmpty())
+                return title;
+            return static_cast<HTMLFrameElementBase*>(owner)->getNameAttribute();
+        }
+        if (owner->isHTMLElement())
+            return toHTMLElement(owner)->getNameAttribute();
+    }
+    
+    String documentTitle = document->title();
+    if (!documentTitle.isEmpty())
+        return documentTitle;
+    
+    owner = document->body();
+    if (owner && owner->isHTMLElement())
+        return toHTMLElement(owner)->getNameAttribute();
+    
+    return String();
+}
+    
 String AccessibilityNodeObject::accessibilityDescription() const
 {
     // Static text should not have a description, it should only have a stringValue.
@@ -1344,6 +1553,14 @@ String AccessibilityNodeObject::accessibilityDescriptionForElements(Vector<Eleme
             builder.append(' ');
     }
     return builder.toString();
+}
+
+String AccessibilityNodeObject::ariaDescribedByAttribute() const
+{
+    Vector<Element*> elements;
+    elementsFromAttribute(elements, aria_describedbyAttr);
+    
+    return accessibilityDescriptionForElements(elements);
 }
 
 void AccessibilityNodeObject::elementsFromAttribute(Vector<Element*>& elements, const QualifiedName& attribute) const

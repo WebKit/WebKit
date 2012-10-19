@@ -143,8 +143,6 @@ public:
     virtual PlainTextRange selectedTextRange() const;
     virtual VisibleSelection selection() const;
     virtual String stringValue() const;
-    virtual String ariaDescribedByAttribute() const;
-    virtual String accessibilityDescription() const;
     virtual String helpText() const;
     virtual String textUnderElement() const;
     virtual String text() const;
@@ -261,8 +259,6 @@ private:
     bool elementAttributeValue(const QualifiedName&) const;
     void setElementAttributeValue(const QualifiedName&, bool);
     
-    String webAreaAccessibilityDescription() const;
-
     virtual ESpeak speakProperty() const;
     
     virtual const AtomicString& ariaLiveRegionStatus() const;

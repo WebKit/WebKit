@@ -201,6 +201,41 @@ enum AccessibilityRole {
     WindowRole,
 };
 
+enum AccessibilityTextSource {
+    AlternativeText,
+    ChildrenText,
+    SummaryText,
+    HelpText,
+    VisibleText,
+    TitleTagText,
+    PlaceholderText,
+    LabelByElementText,
+};
+    
+struct AccessibilityText {
+    String text;
+    AccessibilityTextSource textSource;
+    Vector<RefPtr<AccessibilityObject> > textElements;
+    
+    AccessibilityText(const String& t, const AccessibilityTextSource& s)
+    : text(t)
+    , textSource(s)
+    { }
+
+    AccessibilityText(const String& t, const AccessibilityTextSource& s, const Vector<RefPtr<AccessibilityObject> > elements)
+    : text(t)
+    , textSource(s)
+    , textElements(elements)
+    { }
+
+    AccessibilityText(const String& t, const AccessibilityTextSource& s, const RefPtr<AccessibilityObject> element)
+    : text(t)
+    , textSource(s)
+    {
+        textElements.append(element);
+    }
+};
+    
 enum AccessibilityOrientation {
     AccessibilityOrientationVertical,
     AccessibilityOrientationHorizontal,
@@ -371,6 +406,7 @@ public:
     virtual bool isSpinButton() const { return roleValue() == SpinButtonRole; }
     virtual bool isSpinButtonPart() const { return false; }
     virtual bool isMockObject() const { return false; }
+    virtual bool isMediaControlLabel() const { return false; }
     bool isTextControl() const { return roleValue() == TextAreaRole || roleValue() == TextFieldRole; }
     bool isARIATextControl() const;
     bool isTabList() const { return roleValue() == TabListRole; }
@@ -429,9 +465,6 @@ public:
     virtual bool canSetSelectedAttribute() const { return false; }
     virtual bool canSetSelectedChildrenAttribute() const { return false; }
     virtual bool canSetExpandedAttribute() const { return false; }
-    
-    // A programmatic way to set a name on an AccessibleObject.
-    virtual void setAccessibleName(const AtomicString&) { }
     
     virtual Node* node() const { return 0; }
     virtual RenderObject* renderer() const { return 0; }
@@ -501,11 +534,28 @@ public:
     virtual bool isPresentationalChildOfAriaRole() const { return false; }
     virtual bool ariaRoleHasPresentationalChildren() const { return false; }
 
-    void setRoleValue(AccessibilityRole role) { m_role = role; }
-    virtual AccessibilityRole roleValue() const { return m_role; }
+    // Accessibility Text
+    virtual void accessibilityText(Vector<AccessibilityText>&) { };
+
+    // A programmatic way to set a name on an AccessibleObject.
+    virtual void setAccessibleName(const AtomicString&) { }
+
+    // Accessibility Text - (To be deprecated).
+    virtual String accessibilityDescription() const { return String(); }
+    virtual String title() const { return String(); }
+    virtual String helpText() const { return String(); }
+
+    // Methods for determining accessibility text.
+    virtual String stringValue() const { return String(); }
+    virtual String textUnderElement() const { return String(); }
+    virtual String text() const { return String(); }
+    virtual int textLength() const { return 0; }
     virtual String ariaLabeledByAttribute() const { return String(); }
     virtual String ariaDescribedByAttribute() const { return String(); }
-    virtual String accessibilityDescription() const { return String(); }
+    const AtomicString& placeholderValue() const;
+
+    void setRoleValue(AccessibilityRole role) { m_role = role; }
+    virtual AccessibilityRole roleValue() const { return m_role; }
 
     virtual AXObjectCache* axObjectCache() const;
     AXID axObjectID() const { return m_id; }
@@ -529,12 +579,6 @@ public:
     
     virtual KURL url() const { return KURL(); }
     virtual VisibleSelection selection() const { return VisibleSelection(); }
-    virtual String stringValue() const { return String(); }
-    virtual String title() const { return String(); }
-    virtual String helpText() const { return String(); }
-    virtual String textUnderElement() const { return String(); }
-    virtual String text() const { return String(); }
-    virtual int textLength() const { return 0; }
     virtual String selectedText() const { return String(); }
     virtual const AtomicString& accessKey() const { return nullAtom; }
     const String& actionVerb() const;
@@ -546,7 +590,6 @@ public:
     virtual FrameView* documentFrameView() const;
     String language() const;
     virtual unsigned hierarchicalLevel() const { return 0; }
-    const AtomicString& placeholderValue() const;
     
     virtual void setFocused(bool) { }
     virtual void setSelectedText(const String&) { }

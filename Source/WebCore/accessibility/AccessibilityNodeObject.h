@@ -174,13 +174,22 @@ protected:
     void ariaLabeledByElements(Vector<Element*>& elements) const;
     String accessibilityDescriptionForElements(Vector<Element*> &elements) const;
     void elementsFromAttribute(Vector<Element*>& elements, const QualifiedName&) const;
-
+    String ariaDescribedByAttribute() const;
+    
     Element* menuElementForMenuButton() const;
     Element* menuItemElementForMenu() const;
     AccessibilityObject* menuButtonForMenu() const;
 
 private:
     Node* m_node;
+
+    virtual void accessibilityText(Vector<AccessibilityText>&);
+    void titleElementText(Vector<AccessibilityText>&);
+    void alternativeText(Vector<AccessibilityText>&) const;
+    void visibleText(Vector<AccessibilityText>&) const;
+    void helpText(Vector<AccessibilityText>&) const;
+    String alternativeTextForWebArea() const;
+    void ariaLabeledByText(Vector<AccessibilityText>&) const;
 };
 
 inline AccessibilityNodeObject* toAccessibilityNodeObject(AccessibilityObject* object)
