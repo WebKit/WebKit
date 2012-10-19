@@ -1,3 +1,19 @@
+2012-10-18  Kiran Muppala  <cmuppala@apple.com>
+
+        Automatically start plugins created within a user gesture, skipping snapshotting
+        https://bugs.webkit.org/show_bug.cgi?id=99778
+
+        Reviewed by Alexey Proskuryakov.
+
+        If a user gesture is being processed, do not set the display state of
+        HTMLPluginImageElement to WaitingForSnapshot.
+
+        No new tests, since it only affects when plugins switch from snapshot to running
+        state.  Does not affect rendering of other elements.
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::HTMLPlugInImageElement):
+
 2012-10-18  Kent Tamura  <tkent@chromium.org>
 
         Add shortMonthLabels and shortStandAloneMonthLabels to Localizer

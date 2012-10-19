@@ -50,7 +50,9 @@ HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Doc
 {
     setHasCustomCallbacks();
 
-    if (document->page() && document->page()->settings()->plugInSnapshottingEnabled())
+    if (document->page()
+        && document->page()->settings()->plugInSnapshottingEnabled()
+        && !ScriptController::processingUserGesture())
         setDisplayState(WaitingForSnapshot);
 }
 
