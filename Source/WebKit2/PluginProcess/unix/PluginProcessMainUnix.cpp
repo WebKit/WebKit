@@ -28,6 +28,8 @@
 #include "config.h"
 #include "PluginProcessMainUnix.h"
 
+#if ENABLE(PLUGIN_PROCESS)
+
 #include "Logging.h"
 #include "NetscapePlugin.h"
 #include "PluginProcess.h"
@@ -111,3 +113,5 @@ WK_EXPORT int PluginProcessMainUnix(int argc, char* argv[])
 }
 
 } // namespace WebKit
+
+#endif

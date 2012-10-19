@@ -1,3 +1,14 @@
+2012-10-18  Laszlo Gombos  <l.gombos@samsung.com>
+
+        [EFL] Buildfix if Netscape plugin support is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=99757
+
+        Reviewed by Gyuyoung Kim.
+
+        Guard PluginProcessMainUnix.cpp with ENABLE(PLUGIN_PROCESS).
+
+        * PluginProcess/unix/PluginProcessMainUnix.cpp:
+
 2012-10-18  Anders Carlsson  <andersca@apple.com>
 
         Deprecate the current version of MessageReceiverMap::addMessageReceiver
