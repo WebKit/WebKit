@@ -551,7 +551,7 @@ public:
         move(arg2, GPRInfo::argumentGPR2);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
-    
+#if CPU(X86_64)    
     ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, TrustedImm64 arg2)
     {
         move(arg1, GPRInfo::argumentGPR1);
@@ -559,6 +559,13 @@ public:
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
     
+    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm64 arg1, GPRReg arg2)
+    {
+        move(arg2, GPRInfo::argumentGPR2); // Move this first, so setting arg1 does not trample!
+        move(arg1, GPRInfo::argumentGPR1);
+        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    }
+#endif
     ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, TrustedImm32 arg2)
     {
         move(arg1, GPRInfo::argumentGPR1);
@@ -580,13 +587,6 @@ public:
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
     
-    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm64 arg1, GPRReg arg2)
-    {
-        move(arg2, GPRInfo::argumentGPR2); // Move this first, so setting arg1 does not trample!
-        move(arg1, GPRInfo::argumentGPR1);
-        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    }
-
     ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm32 arg1, GPRReg arg2)
     {
         move(arg2, GPRInfo::argumentGPR2); // Move this first, so setting arg1 does not trample!

@@ -1,5 +1,16 @@
 2012-10-18  Yuqiang Xian  <yuqiang.xian@intel.com>
 
+        [Qt] REGRESSION(r131858): It broke the ARM build
+        https://bugs.webkit.org/show_bug.cgi?id=99809
+
+        Reviewed by Csaba Osztrogonác.
+
+        * dfg/DFGCCallHelpers.h:
+        (CCallHelpers):
+        (JSC::DFG::CCallHelpers::setupArgumentsWithExecState):
+
+2012-10-18  Yuqiang Xian  <yuqiang.xian@intel.com>
+
         Refactor MacroAssembler interfaces to differentiate the pointer operands from the 64-bit integer operands
         https://bugs.webkit.org/show_bug.cgi?id=99154
 
