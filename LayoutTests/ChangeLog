@@ -1,3 +1,14 @@
+2012-10-19  Pan Deng  <pan.deng@intel.com>
+
+        Fix incorrect User Timing test case path in TestExpectations of qt-5.0-wk2 platform.
+        https://bugs.webkit.org/show_bug.cgi?id=99811.
+
+        Reviewed by Tony Gentilcore.
+
+        Path 'http/tests/w3c/webperf/proposal/Intel/user-timing' is replaced by 'http/tests/w3c/webperf/submission/Intel/user-timing' in this patch.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+
 2012-10-19  Chris Fleizach  <cfleizach@apple.com>
 
         VO issues with hidden <legend> and last explicitly labelled element within a group <fieldset>

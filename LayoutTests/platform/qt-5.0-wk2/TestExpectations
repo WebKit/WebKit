@@ -617,7 +617,7 @@ webkit.org/b/99152 plugins/plugin-document-back-forward.html
 webkit.org/b/99155 http/tests/navigation/ping-cross-origin-from-https.html
 
 # User Timing is not enabled
-webkit.org/b/84893 http/tests/w3c/webperf/proposal/Intel/user-timing
+webkit.org/b/84893 http/tests/w3c/webperf/submission/Intel/user-timing
 
 # Resource Timing is not enable yet, skip it.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing
