@@ -3868,10 +3868,10 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 #endif
     case CSSPropertyWebkitRtlOrdering:
     case CSSPropertyWebkitTextCombine:
-#if ENABLE(CSS3_TEXT_DECORATION)
+#if ENABLE(CSS3_TEXT)
     case CSSPropertyWebkitTextDecorationLine:
     case CSSPropertyWebkitTextDecorationStyle:
-#endif // CSS3_TEXT_DECORATION
+#endif // CSS3_TEXT
     case CSSPropertyWebkitTextEmphasisColor:
     case CSSPropertyWebkitTextEmphasisPosition:
     case CSSPropertyWebkitTextEmphasisStyle:

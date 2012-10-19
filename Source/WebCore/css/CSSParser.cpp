@@ -2121,7 +2121,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         // none | [ underline || overline || line-through || blink ] | inherit
         return parseTextDecoration(propId, important);
 
-#if ENABLE(CSS3_TEXT_DECORATION)
+#if ENABLE(CSS3_TEXT)
     case CSSPropertyWebkitTextDecorationLine:
         // none | [ underline || overline || line-through ] | inherit
         return parseTextDecoration(propId, important);
@@ -2131,7 +2131,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         if (id == CSSValueSolid || id == CSSValueDouble || id == CSSValueDotted || id == CSSValueDashed || id == CSSValueWavy)
             validPrimitive = true;
         break;
-#endif // CSS3_TEXT_DECORATION
+#endif // CSS3_TEXT
 
     case CSSPropertyZoom:          // normal | reset | document | <number> | <percentage> | inherit
         if (id == CSSValueNormal || id == CSSValueReset || id == CSSValueDocument)
@@ -8033,7 +8033,7 @@ bool CSSParser::parsePerspectiveOrigin(CSSPropertyID propId, CSSPropertyID& prop
 
 void CSSParser::addTextDecorationProperty(CSSPropertyID propId, PassRefPtr<CSSValue> value, bool important)
 {
-#if ENABLE(CSS3_TEXT_DECORATION)
+#if ENABLE(CSS3_TEXT)
     // The text-decoration-line property takes priority over text-decoration, unless the latter has important priority set.
     if (propId == CSSPropertyTextDecoration && !important && m_currentShorthand == CSSPropertyInvalid) {
         for (unsigned i = 0; i < m_parsedProperties->size(); ++i) {
@@ -8041,7 +8041,7 @@ void CSSParser::addTextDecorationProperty(CSSPropertyID propId, PassRefPtr<CSSVa
                 return;
         }
     }
-#endif // CSS3_TEXT_DECORATION
+#endif // CSS3_TEXT
     addProperty(propId, value, important);
 }
 
@@ -8059,11 +8059,11 @@ bool CSSParser::parseTextDecoration(CSSPropertyID propId, bool important)
     while (isValid && value) {
         switch (value->id) {
         case CSSValueBlink:
-#if ENABLE(CSS3_TEXT_DECORATION)
+#if ENABLE(CSS3_TEXT)
             // Blink value is not accepted by -webkit-text-decoration-line.
             isValid = propId != CSSPropertyWebkitTextDecorationLine;
             break;
-#endif // CSS3_TEXT_DECORATION
+#endif // CSS3_TEXT
         case CSSValueUnderline:
         case CSSValueOverline:
         case CSSValueLineThrough:

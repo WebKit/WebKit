@@ -181,10 +181,10 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyTabSize,
     CSSPropertyTextAlign,
     CSSPropertyTextDecoration,
-#if ENABLE(CSS3_TEXT_DECORATION)
+#if ENABLE(CSS3_TEXT)
     CSSPropertyWebkitTextDecorationLine,
     CSSPropertyWebkitTextDecorationStyle,
-#endif // CSS3_TEXT_DECORATION
+#endif // CSS3_TEXT
     CSSPropertyTextIndent,
     CSSPropertyTextRendering,
     CSSPropertyTextShadow,
@@ -1219,7 +1219,7 @@ static PassRefPtr<CSSValue> renderTextDecorationFlagsToCSSValue(int textDecorati
     return list;
 }
 
-#if ENABLE(CSS3_TEXT_DECORATION)
+#if ENABLE(CSS3_TEXT)
 static PassRefPtr<CSSValue> renderTextDecorationStyleFlagsToCSSValue(TextDecorationStyle textDecorationStyle)
 {
     switch (textDecorationStyle) {
@@ -1238,7 +1238,7 @@ static PassRefPtr<CSSValue> renderTextDecorationStyleFlagsToCSSValue(TextDecorat
     ASSERT_NOT_REACHED();
     return cssValuePool().createExplicitInitialValue();
 }
-#endif // CSS3_TEXT_DECORATION
+#endif // CSS3_TEXT
 
 static PassRefPtr<CSSValue> fillRepeatToCSSValue(EFillRepeat xRepeat, EFillRepeat yRepeat)
 {
@@ -2026,12 +2026,12 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             return cssValuePool().createValue(style->textAlign());
         case CSSPropertyTextDecoration:
             return renderTextDecorationFlagsToCSSValue(style->textDecoration());
-#if ENABLE(CSS3_TEXT_DECORATION)
+#if ENABLE(CSS3_TEXT)
         case CSSPropertyWebkitTextDecorationLine:
             return renderTextDecorationFlagsToCSSValue(style->textDecoration());
         case CSSPropertyWebkitTextDecorationStyle:
             return renderTextDecorationStyleFlagsToCSSValue(style->textDecorationStyle());
-#endif // CSS3_TEXT_DECORATION
+#endif // CSS3_TEXT
         case CSSPropertyWebkitTextDecorationsInEffect:
             return renderTextDecorationFlagsToCSSValue(style->textDecorationsInEffect());
         case CSSPropertyWebkitTextFillColor:

@@ -1,3 +1,46 @@
+2012-10-19  Dongwoo Joshua Im  <dw.im@samsung.com>
+
+        Rename ENABLE_CSS3_TEXT_DECORATION to ENABLE_CSS3_TEXT
+        https://bugs.webkit.org/show_bug.cgi?id=99804
+
+        Reviewed by Julien Chaffraix.
+
+        CSS3 text related properties will be implemented under this flag,
+        including text decoration, text-align-last, and text-justify.
+
+        No new functionality, no new test.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.am:
+        * GNUmakefile.features.am:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::addTextDecorationProperty):
+        (WebCore::CSSParser::parseTextDecoration):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/CSSValueKeywords.in:
+        * css/StyleBuilder.cpp:
+        (WebCore::StyleBuilder::StyleBuilder):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+        (StyleRareNonInheritedData):
+
 2012-10-19  Nate Chapin  <japhet@chromium.org>
 
         Reorder some functions in SubresourceLoader to permit main resources

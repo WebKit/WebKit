@@ -2203,7 +2203,7 @@ template<> inline CSSPrimitiveValue::operator ETextDecoration() const
     return TDNONE;
 }
 
-#if ENABLE(CSS3_TEXT_DECORATION)
+#if ENABLE(CSS3_TEXT)
 template<> inline CSSPrimitiveValue::operator TextDecorationStyle() const
 {
     switch (m_value.ident) {
@@ -2222,7 +2222,7 @@ template<> inline CSSPrimitiveValue::operator TextDecorationStyle() const
     ASSERT_NOT_REACHED();
     return TextDecorationStyleSolid;
 }
-#endif // CSS3_TEXT_DECORATION
+#endif // CSS3_TEXT
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ETextSecurity e)
     : CSSValue(PrimitiveClass)

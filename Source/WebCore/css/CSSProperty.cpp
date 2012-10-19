@@ -348,9 +348,9 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
     case CSSPropertyWebkitPrintColorAdjust:
     case CSSPropertyWebkitRtlOrdering:
     case CSSPropertyWebkitTextCombine:
-#if ENABLE(CSS3_TEXT_DECORATION)
+#if ENABLE(CSS3_TEXT)
     case CSSPropertyWebkitTextDecorationLine:
-#endif // CSS3_TEXT_DECORATION
+#endif // CSS3_TEXT
     case CSSPropertyWebkitTextDecorationsInEffect:
     case CSSPropertyWebkitTextEmphasis:
     case CSSPropertyWebkitTextEmphasisColor:
@@ -648,9 +648,9 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
     case CSSPropertyWebkitPerspectiveOrigin:
     case CSSPropertyWebkitPerspectiveOriginX:
     case CSSPropertyWebkitPerspectiveOriginY:
-#if ENABLE(CSS3_TEXT_DECORATION)
+#if ENABLE(CSS3_TEXT)
     case CSSPropertyWebkitTextDecorationStyle:
-#endif // CSS3_TEXT_DECORATION
+#endif // CSS3_TEXT
     case CSSPropertyWebkitTransform:
     case CSSPropertyWebkitTransformOrigin:
     case CSSPropertyWebkitTransformOriginX:

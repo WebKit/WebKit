@@ -50,7 +50,7 @@ my (
     $channelMessagingSupport,
     $cspNextSupport,
     $css3ConditionalRulesSupport,
-    $css3TextDecorationSupport,
+    $css3TextSupport,
     $cssBoxDecorationBreakSupport,
     $cssExclusionsSupport,
     $cssFiltersSupport,
@@ -172,8 +172,8 @@ my @features = (
     { option => "css3-conditional-rules", desc => "Toggle CSS3 Conditional Rules support (i.e. \@supports)",
       define => "ENABLE_CSS3_CONDITIONAL_RULES", default => 0, value => \$css3ConditionalRulesSupport },
 
-    { option => "css3-text-decoration", desc => "Toggle CSS3 Text Decoration support",
-      define => "ENABLE_CSS3_TEXT_DECORATION", default => isEfl(), value => \$css3TextDecorationSupport },
+    { option => "css3-text", desc => "Toggle CSS3 Text support",
+      define => "ENABLE_CSS3_TEXT", default => isEfl(), value => \$css3TextSupport },
 
     { option => "css-hierarchies", desc => "Toggle CSS Hierarchy support",
       define => "ENABLE_CSS_HIERARCHIES", default => 0, value => \$cssHierarchiesSupport },

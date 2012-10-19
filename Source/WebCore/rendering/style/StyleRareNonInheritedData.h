@@ -178,9 +178,9 @@ public:
     unsigned m_borderFit : 1; // EBorderFit
     unsigned m_textCombine : 1; // CSS3 text-combine properties
 
-#if ENABLE(CSS3_TEXT_DECORATION)
+#if ENABLE(CSS3_TEXT)
     unsigned m_textDecorationStyle : 3; // TextDecorationStyle
-#endif // CSS3_TEXT_DECORATION
+#endif // CSS3_TEXT
     unsigned m_wrapFlow: 3; // WrapFlow
     unsigned m_wrapThrough: 1; // WrapThrough
 

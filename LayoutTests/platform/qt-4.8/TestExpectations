@@ -702,7 +702,7 @@ webkit.org/b/85262 fast/css/image-resolution
 # CSS image-orientation is not yet enabled.
 webkit.org/b/89052 fast/css/image-orientation
 
-# CSS3 Text Decoration support is not yet enabled (needs ENABLE_CSS3_TEXT_DECORATION).
+# CSS3 Text support is not yet enabled (needs ENABLE_CSS3_TEXT).
 webkit.org/b/58491 fast/css3-text-decoration
 
 # Needs rebaseline after bug 86441
