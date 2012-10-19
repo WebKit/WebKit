@@ -1,3 +1,22 @@
+2012-10-19  Kent Tamura  <tkent@chromium.org>
+
+        Use Localizer::monthFormat to construct input[type=month] UI
+        https://bugs.webkit.org/show_bug.cgi?id=99818
+
+        Reviewed by Kentaro Hara.
+
+        * fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n-expected.txt: Added.
+        * fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n.html: Added.
+        * fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events-expected.txt:
+        * fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events.html:
+        Updated because symbolic month fields don't support digit-key input.
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n-expected.png: Added.
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-style-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-10-19  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: inspector/styles/styles-history.html is failing Text on Windows and Linux

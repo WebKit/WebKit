@@ -43,16 +43,16 @@ function beginTest(title, value, opt_min, opt_max)
     input.focus();
 }
 
-// We assume the year-month format is MM/yyyy.
+// We assume the year-month format is "MMM yyyy".
 
 beginTest('Digit keys');
-keyDown('9');
-keyDown('2');
+keyDown('s');
+keyDown('rightArrow');
 keyDown('0');
 keyDown('1');
 keyDown('2');
 keyDown('A');
-shouldBeEqualToString('input.value', '2012-09');
+shouldBeEqualToString('input.value', '0012-09');
 
 // FIXME: We should test type ahead time out. When event.leapForward() affects
 // keyboard event time stamp, we can uncomment this fragment.
@@ -106,13 +106,14 @@ keyDown('upArrow');
 shouldBeEqualToString('input.value', '2012-02');
 
 beginTest('Tab key', '2012-09');
-keyDown('\t');
-keyDown('5');
+keyDown('\t'); // -> Sep [2012]
+keyDown('5'); //  -> Sep [0005]
 shouldBeEqualToString('input.value', '0005-09');
-keyDown('\t', ['shiftKey']);
-keyDown('7');
-shouldBeEqualToString('input.value', '0005-07');
-keyDown('\t');
+keyDown('\t', ['shiftKey']); // -> [Sep] [0005]
+keyDown('J'); // -> [Jan] 0005
+shouldBeEqualToString('input.value', '0005-01');
+keyDown('\t'); // -> Jan [0005]
+keyDown('\t'); // -> Jan 0005
 shouldBeEqualToString('document.activeElement.id', 'another');
 
 beginTest('Shfit+Tab key', '2012-09');
@@ -174,14 +175,14 @@ shouldBeEqualToString('input.value', '0002-12');
 // lang-attribute-aware-form-control-UI feature.
 input.setAttribute("lang", "he-il");
 beginTest('RTL Left/Right keys', '2012-09');
-keyDown('1');
-shouldBeEqualToString('input.value', '2012-01');
-keyDown('leftArrow');
-keyDown('2');
-shouldBeEqualToString('input.value', '0002-01');
-keyDown('rightArrow');
-keyDown('3');
-shouldBeEqualToString('input.value', '0002-03');
+keyDown('upArrow'); // -> 2012 [M10]
+shouldBeEqualToString('input.value', '2012-10');
+keyDown('leftArrow'); // -> [2012] M10
+keyDown('2'); //         -> [0002] M10
+shouldBeEqualToString('input.value', '0002-10');
+keyDown('rightArrow'); // -> 0002 [M10]
+keyDown('upArrow'); //    -> 0002 [M11]
+shouldBeEqualToString('input.value', '0002-11');
 input.removeAttribute("lang");
 </script>
 <script src="../../js/resources/js-test-post.js"></script>

@@ -147,6 +147,21 @@ private:
     virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
 };
 
+class DateTimeSymbolicMonthFieldElement : public DateTimeSymbolicFieldElement {
+    WTF_MAKE_NONCOPYABLE(DateTimeSymbolicMonthFieldElement);
+
+public:
+    static PassRefPtr<DateTimeSymbolicMonthFieldElement> create(Document*, FieldOwner&, const Vector<String>&);
+
+private:
+    DateTimeSymbolicMonthFieldElement(Document*, FieldOwner&, const Vector<String>&);
+
+    // DateTimeFieldElement functions.
+    virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
+    virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
+    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
+};
+
 class DateTimeWeekFieldElement : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeWeekFieldElement);
 

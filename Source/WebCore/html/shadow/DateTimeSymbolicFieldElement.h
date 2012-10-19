@@ -38,6 +38,7 @@ class DateTimeSymbolicFieldElement : public DateTimeFieldElement {
 
 protected:
     DateTimeSymbolicFieldElement(Document*, FieldOwner&, const Vector<String>&);
+    size_t symbolsSize() const { return m_symbols.size(); }
     virtual bool hasValue() const OVERRIDE FINAL;
     virtual void setEmptyValue(const DateComponents& dateForReadOnlyField, EventBehavior = DispatchNoEvent) OVERRIDE FINAL;
     virtual void setValueAsInteger(int, EventBehavior = DispatchNoEvent) OVERRIDE FINAL;

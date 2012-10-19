@@ -2795,6 +2795,14 @@ crbug.com/83290 [ Win ] http/tests/misc/link-rel-prefetch-and-subresource.html [
 crbug.com/83504 [ Win ] fast/css/custom-font-xheight.html [ Failure Pass Slow ]
 crbug.com/83504 [ Mac ] fast/css/custom-font-xheight.html [ Failure Pass ]
 
+# Need rebaseline
+webkit.org/b/99818 fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n.html [ Pass ImageOnlyFailure Missing ]
+webkit.org/b/99818 fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic.html [ Pass ImageOnlyFailure ] 
+webkit.org/b/99818 fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes.html [ Pass ImageOnlyFailure ] 
+webkit.org/b/99818 fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements.html [ Pass ImageOnlyFailure ] 
+webkit.org/b/99818 fast/forms/month-multiple-fields/month-multiple-fields-appearance-style.html [ Pass ImageOnlyFailure ] 
+webkit.org/b/99818 [ XP ] fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events.html [ Failure ]
+
 # New tests added in r87121
 webkit.org/b/61169 [ Android Linux Win ] css3/images/optimize-contrast-canvas.html [ ImageOnlyFailure ]
 webkit.org/b/61169 [ Android Linux Win ] css3/images/optimize-contrast-image.html [ ImageOnlyFailure ]

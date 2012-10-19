@@ -1,3 +1,51 @@
+2012-10-19  Kent Tamura  <tkent@chromium.org>
+
+        Use Localizer::monthFormat to construct input[type=month] UI
+        https://bugs.webkit.org/show_bug.cgi?id=99818
+
+        Reviewed by Kentaro Hara.
+
+        Use an LDML format returned by Localizer::monthFormat for
+        input[type=month] UI.
+
+        Because the format may contain symbolic month names and symbolic
+        stand-alone month names, we need to add:
+         - Symbolic/numeric detection in DateTimeEditBuilder
+         - Normal/stand-alone detection in DateTimeEditBuilder
+         - Symbolic edit field for months
+
+        Test: fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n.html,
+              fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events.html
+
+        * html/MonthInputType.cpp:
+        (WebCore::MonthInputType::setupLayoutParameters):
+        Use Localizer::monthFormat.
+
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore::DateTimeEditBuilder::visitField):
+        - If the number of continuous field character is greater than 2, use
+        DateTimeSymbolicMonthFieldElement.
+        - Supports stand-alone month field.
+
+        * html/shadow/DateTimeFieldElements.h:
+        (DateTimeSymbolicMonthFieldElement): Added. A subclass of DateTimeSymbolicFieldElement.
+        * html/shadow/DateTimeFieldElements.cpp:
+        (WebCore::DateTimeSymbolicMonthFieldElement::DateTimeSymbolicMonthFieldElement):
+        Added.
+        (WebCore::DateTimeSymbolicMonthFieldElement::create): Added.
+        (WebCore::DateTimeSymbolicMonthFieldElement::populateDateTimeFieldsState):
+        We need to add 1 because the internal integer representation is 0-based
+        and DateTimeFieldsState uses 1-based month.
+        (WebCore::DateTimeSymbolicMonthFieldElement::setValueAsDate):
+        DateComponents::month is 0-based.
+        (WebCore::DateTimeSymbolicMonthFieldElement::setValueAsDateTimeFieldsState):
+        We need to subtract 1 because the internal integer representation is 0-based
+        and DateTimeFieldsState uses 1-based month.
+
+        * html/shadow/DateTimeSymbolicFieldElement.h:
+        (WebCore::DateTimeSymbolicFieldElement::symbolsSize):
+        Added for DateTimeSymbolicMonthFieldElement::setValueAsDateTimeFieldsState.
+
 2012-10-19  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: inspector/styles/styles-history.html is failing Text on Windows and Linux

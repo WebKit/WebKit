@@ -381,6 +381,50 @@ void DateTimeSecondFieldElement::setValueAsDateTimeFieldsState(const DateTimeFie
 
 // ----------------------------
 
+DateTimeSymbolicMonthFieldElement::DateTimeSymbolicMonthFieldElement(Document* document, FieldOwner& fieldOwner, const Vector<String>& labels)
+    : DateTimeSymbolicFieldElement(document, fieldOwner, labels)
+{
+}
+
+PassRefPtr<DateTimeSymbolicMonthFieldElement> DateTimeSymbolicMonthFieldElement::create(Document* document, FieldOwner& fieldOwner, const Vector<String>& labels)
+{
+    DEFINE_STATIC_LOCAL(AtomicString, monthPsuedoId, ("-webkit-datetime-edit-month-field"));
+    RefPtr<DateTimeSymbolicMonthFieldElement> field = adoptRef(new DateTimeSymbolicMonthFieldElement(document, fieldOwner, labels));
+    field->initialize(monthPsuedoId, AXMonthFieldText());
+    return field.release();
+}
+
+void DateTimeSymbolicMonthFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& dateTimeFieldsState)
+{
+    if (!hasValue())
+        dateTimeFieldsState.setMonth(DateTimeFieldsState::emptyValue);
+    ASSERT(valueAsInteger() < static_cast<int>(symbolsSize()));
+    dateTimeFieldsState.setMonth(valueAsInteger() + 1);
+}
+
+void DateTimeSymbolicMonthFieldElement::setValueAsDate(const DateComponents& date)
+{
+    setValueAsInteger(date.month());
+}
+
+void DateTimeSymbolicMonthFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState, const DateComponents& dateForReadOnlyField)
+{
+    if (!dateTimeFieldsState.hasMonth()) {
+        setEmptyValue(dateForReadOnlyField);
+        return;
+    }
+
+    const unsigned value = dateTimeFieldsState.month() - 1;
+    if (value >= symbolsSize()) {
+        setEmptyValue(dateForReadOnlyField);
+        return;
+    }
+
+    setValueAsInteger(value);
+}
+
+// ----------------------------
+
 DateTimeWeekFieldElement::DateTimeWeekFieldElement(Document* document, FieldOwner& fieldOwner)
     : DateTimeNumericFieldElement(document, fieldOwner, DateComponents::minimumWeekNumber, DateComponents::maximumWeekNumber, "--")
 {

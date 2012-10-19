@@ -154,7 +154,7 @@ String MonthInputType::formatDateTimeFieldsState(const DateTimeFieldsState& date
 
 void MonthInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters& layoutParameters, const DateComponents& date) const
 {
-    layoutParameters.dateTimeFormat = monthFormatInLDML();
+    layoutParameters.dateTimeFormat = layoutParameters.localizer.monthFormat();
     layoutParameters.fallbackDateTimeFormat = "MM/yyyy";
     layoutParameters.minimumYear = fullYear(element()->fastGetAttribute(minAttr));
     layoutParameters.maximumYear = fullYear(element()->fastGetAttribute(maxAttr));

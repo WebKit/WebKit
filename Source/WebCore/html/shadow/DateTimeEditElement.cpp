@@ -90,8 +90,10 @@ bool DateTimeEditBuilder::needMillisecondField() const
         || !stepRange().step().remainder(static_cast<int>(msPerSecond)).isZero();
 }
 
-void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int)
+void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int count)
 {
+    // In LDML, M and MM are numeric, and MMM, MMMM, and MMMMM are symbolic.
+    const int symbolicMonthThreshold = 3;
     Document* const document = m_editElement.document();
 
     switch (fieldType) {
@@ -124,8 +126,19 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int)
     }
 
     case DateTimeFormat::FieldTypeMonth:
-        // We always use "MM", two digits month, even if "M", "MMM", "MMMM", or "MMMMM".
-        m_editElement.addField(DateTimeMonthFieldElement::create(document, m_editElement, m_parameters.placeholderForMonth));
+        if (count >= symbolicMonthThreshold) {
+            // We always use abbreviations.
+            m_editElement.addField(DateTimeSymbolicMonthFieldElement::create(document, m_editElement, m_parameters.localizer.shortMonthLabels()));
+        } else
+            m_editElement.addField(DateTimeMonthFieldElement::create(document, m_editElement, m_parameters.placeholderForMonth));
+        return;
+
+    case DateTimeFormat::FieldTypeMonthStandAlone:
+        if (count >= symbolicMonthThreshold) {
+            // We always use abbreviations.
+            m_editElement.addField(DateTimeSymbolicMonthFieldElement::create(document, m_editElement, m_parameters.localizer.shortStandAloneMonthLabels()));
+        } else
+            m_editElement.addField(DateTimeMonthFieldElement::create(document, m_editElement, m_parameters.placeholderForMonth));
         return;
 
     case DateTimeFormat::FieldTypePeriod:
