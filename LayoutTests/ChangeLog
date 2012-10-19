@@ -1,3 +1,15 @@
+2012-10-19  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Should have a test case where InsertionPoint has a ShadowRoot.
+        https://bugs.webkit.org/show_bug.cgi?id=99822
+
+        Reviewed by Dimitri Glazkov.
+
+        We didn't have a test case where InsertionPoint has a ShadowRoot. Let's have it not to cause a regression.
+
+        * fast/dom/shadow/shadowroot-of-insertionpoint-expected.html: Added.
+        * fast/dom/shadow/shadowroot-of-insertionpoint.html: Added.
+
 2012-10-19  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Refactor accessibility name computation so it's more platform independent
