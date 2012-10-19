@@ -1,3 +1,74 @@
+2012-10-19  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Pixel tests need rebaseline
+        https://bugs.webkit.org/show_bug.cgi?id=99323
+
+        Unreviewed rebaseline.
+
+        Part 2.
+        Rebase pixel results in animations, compositing, css1, css2.1 and css3.
+
+        * platform/qt/animations/cross-fade-border-image-source-expected.png:
+        * platform/qt/compositing/direct-image-compositing-expected.png:
+        * platform/qt/compositing/geometry/bounds-ignores-hidden-dynamic-negzindex-expected.png: Added.
+        * platform/qt/css1/basic/containment-expected.png:
+        * platform/qt/css1/basic/inheritance-expected.png:
+        * platform/qt/css1/box_properties/border-expected.png:
+        * platform/qt/css1/box_properties/border_bottom-expected.png:
+        * platform/qt/css1/box_properties/border_left-expected.png:
+        * platform/qt/css1/box_properties/border_left_width-expected.png:
+        * platform/qt/css1/box_properties/border_right_inline-expected.png:
+        * platform/qt/css1/box_properties/border_right_width-expected.png:
+        * platform/qt/css1/box_properties/border_style-expected.png:
+        * platform/qt/css1/box_properties/border_top-expected.png:
+        * platform/qt/css1/box_properties/clear_float-expected.png:
+        * platform/qt/css1/box_properties/float_margin-expected.png:
+        * platform/qt/css1/box_properties/float_on_text_elements-expected.png:
+        * platform/qt/css1/box_properties/margin_inline-expected.png:
+        * platform/qt/css1/box_properties/margin_left-expected.png:
+        * platform/qt/css1/box_properties/margin_right-expected.png:
+        * platform/qt/css1/box_properties/padding_bottom-expected.png:
+        * platform/qt/css1/box_properties/padding_bottom_inline-expected.png:
+        * platform/qt/css1/box_properties/padding_inline-expected.png:
+        * platform/qt/css1/box_properties/padding_left-expected.png:
+        * platform/qt/css1/box_properties/padding_right-expected.png:
+        * platform/qt/css1/cascade/cascade_order-expected.png:
+        * platform/qt/css1/cascade/important-expected.png:
+        * platform/qt/css1/classification/display-expected.png:
+        * platform/qt/css1/color_and_background/background_position-expected.png:
+        * platform/qt/css1/color_and_background/background_repeat-expected.png:
+        * platform/qt/css1/conformance/forward_compatible_parsing-expected.png:
+        * platform/qt/css1/font_properties/font-expected.png:
+        * platform/qt/css1/formatting_model/inline_elements-expected.png:
+        * platform/qt/css1/formatting_model/vertical_formatting-expected.png:
+        * platform/qt/css1/pseudo/anchor-expected.png:
+        * platform/qt/css1/pseudo/firstletter-expected.png:
+        * platform/qt/css1/pseudo/firstline-expected.png:
+        * platform/qt/css1/pseudo/multiple_pseudo_elements-expected.png:
+        * platform/qt/css1/pseudo/pseudo_elements_in_selectors-expected.png:
+        * platform/qt/css1/text_properties/text_decoration-expected.png:
+        * platform/qt/css1/text_properties/text_indent-expected.png:
+        * platform/qt/css1/text_properties/text_transform-expected.png:
+        * platform/qt/css1/units/urls-expected.png:
+        * platform/qt/css2.1/20110323/c543-txt-decor-000-expected.png:
+        * platform/qt/css2.1/20110323/margin-collapse-clear-016-expected.png: Added.
+        * platform/qt/css2.1/20110323/replaced-min-max-001-expected.png:
+        * platform/qt/css2.1/t051201-c23-first-line-00-b-expected.png:
+        * platform/qt/css2.1/t0602-c13-inh-underlin-00-e-expected.png:
+        * platform/qt/css2.1/t0805-c5517-brdr-s-00-c-expected.png:
+        * platform/qt/css2.1/t1002-c5523-width-02-b-g-expected.png:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-54-d-expected.png:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-64-d-expected.png:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-74-d-expected.png:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-84-d-expected.png:
+        * platform/qt/css3/filters/crash-hw-sw-switch-expected.png:
+        * platform/qt/css3/selectors3/html/css3-modsel-17-expected.png:
+        * platform/qt/css3/selectors3/html/css3-modsel-18a-expected.png:
+        * platform/qt/css3/selectors3/xhtml/css3-modsel-17-expected.png:
+        * platform/qt/css3/selectors3/xhtml/css3-modsel-18a-expected.png:
+        * platform/qt/css3/selectors3/xml/css3-modsel-17-expected.png:
+        * platform/qt/css3/selectors3/xml/css3-modsel-18a-expected.png:
+
 2012-10-19  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [EFL] Gardening to make the bots green
