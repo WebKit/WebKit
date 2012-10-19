@@ -3875,7 +3875,7 @@ void SpeculativeJIT::compile(Node& node)
         
         if (node.structureSet().size() == 1) {
             speculationCheckWithConditionalDirection(
-                BadCache, JSValueRegs(), NoNode,
+                BadCache, JSValueRegs(base.gpr()), NoNode,
                 m_jit.branchWeakPtr(
                     JITCompiler::NotEqual,
                     JITCompiler::Address(base.gpr(), JSCell::structureOffset()),
@@ -3892,7 +3892,7 @@ void SpeculativeJIT::compile(Node& node)
                 done.append(m_jit.branchWeakPtr(JITCompiler::Equal, structure.gpr(), node.structureSet()[i]));
             
             speculationCheckWithConditionalDirection(
-                BadCache, JSValueRegs(), NoNode,
+                BadCache, JSValueRegs(base.gpr()), NoNode,
                 m_jit.branchWeakPtr(
                     JITCompiler::NotEqual, structure.gpr(), node.structureSet().last()),
                 node.op() == ForwardCheckStructure);
@@ -3906,6 +3906,13 @@ void SpeculativeJIT::compile(Node& node)
         
     case StructureTransitionWatchpoint:
     case ForwardStructureTransitionWatchpoint: {
+        // There is a fascinating question here of what to do about array profiling.
+        // We *could* try to tell the OSR exit about where the base of the access is.
+        // The DFG will have kept it alive, though it may not be in a register, and
+        // we shouldn't really load it since that could be a waste. For now though,
+        // we'll just rely on the fact that when a watchpoint fires then that's
+        // quite a hint already.
+        
         m_jit.addWeakReference(node.structure());
         node.structure()->addTransitionWatchpoint(
             speculationWatchpointWithConditionalDirection(

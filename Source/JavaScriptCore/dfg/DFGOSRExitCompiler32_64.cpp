@@ -83,28 +83,85 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
 
     // 3) Refine some value profile, if appropriate.
     
-    if (!!exit.m_jsValueSource && !!exit.m_valueProfile) {
-        EncodedJSValue* bucket = exit.m_valueProfile.getSpecFailBucket(0);
+    if (!!exit.m_jsValueSource) {
+        if (exit.m_kind == BadCache || exit.m_kind == BadIndexingType) {
+            // If the instruction that this originated from has an array profile, then
+            // refine it. If it doesn't, then do nothing. The latter could happen for
+            // hoisted checks, or checks emitted for operations that didn't have array
+            // profiling - either ops that aren't array accesses at all, or weren't
+            // known to be array acceses in the bytecode. The latter case is a FIXME
+            // while the former case is an outcome of a CheckStructure not knowing why
+            // it was emitted (could be either due to an inline cache of a property
+            // property access, or due to an array profile).
+            
+            // Note: We are free to assume that the jsValueSource is already known to
+            // be a cell since both BadCache and BadIndexingType exits occur after
+            // the cell check would have already happened.
+            
+            CodeOrigin codeOrigin = exit.m_codeOriginForExitProfile;
+            if (ArrayProfile* arrayProfile = m_jit.baselineCodeBlockFor(codeOrigin)->getArrayProfile(codeOrigin.bytecodeIndex)) {
+                GPRReg usedRegister1;
+                GPRReg usedRegister2;
+                if (exit.m_jsValueSource.isAddress()) {
+                    usedRegister1 = exit.m_jsValueSource.base();
+                    usedRegister2 = InvalidGPRReg;
+                } else {
+                    usedRegister1 = exit.m_jsValueSource.payloadGPR();
+                    if (exit.m_jsValueSource.hasKnownTag())
+                        usedRegister2 = InvalidGPRReg;
+                    else
+                        usedRegister2 = exit.m_jsValueSource.tagGPR();
+                }
+                
+                GPRReg scratch1;
+                GPRReg scratch2;
+                scratch1 = AssemblyHelpers::selectScratchGPR(usedRegister1, usedRegister2);
+                scratch2 = AssemblyHelpers::selectScratchGPR(usedRegister1, usedRegister2, scratch1);
+                
+                m_jit.push(scratch1);
+                m_jit.push(scratch2);
+                
+                GPRReg value;
+                if (exit.m_jsValueSource.isAddress()) {
+                    value = scratch1;
+                    m_jit.loadPtr(AssemblyHelpers::Address(exit.m_jsValueSource.asAddress()), value);
+                } else
+                    value = exit.m_jsValueSource.payloadGPR();
+                
+                m_jit.loadPtr(AssemblyHelpers::Address(value, JSCell::structureOffset()), scratch1);
+                m_jit.storePtr(scratch1, arrayProfile->addressOfLastSeenStructure());
+                m_jit.load8(AssemblyHelpers::Address(scratch1, Structure::indexingTypeOffset()), scratch1);
+                m_jit.move(AssemblyHelpers::TrustedImm32(1), scratch2);
+                m_jit.lshift32(scratch1, scratch2);
+                m_jit.or32(scratch2, AssemblyHelpers::AbsoluteAddress(arrayProfile->addressOfArrayModes()));
+                
+                m_jit.pop(scratch2);
+                m_jit.pop(scratch1);
+            }
+        }
         
-        if (exit.m_jsValueSource.isAddress()) {
-            // Save a register so we can use it.
-            GPRReg scratch = GPRInfo::regT0;
-            if (scratch == exit.m_jsValueSource.base())
-                scratch = GPRInfo::regT1;
-            ScratchBuffer* scratchBuffer = m_jit.globalData()->scratchBufferForSize(sizeof(uint32_t));
-            EncodedJSValue* scratchDataBuffer = static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer());
-            m_jit.store32(scratch, scratchDataBuffer);
-            m_jit.load32(exit.m_jsValueSource.asAddress(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)), scratch);
-            m_jit.store32(scratch, &bitwise_cast<EncodedValueDescriptor*>(bucket)->asBits.tag);
-            m_jit.load32(exit.m_jsValueSource.asAddress(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)), scratch);
-            m_jit.store32(scratch, &bitwise_cast<EncodedValueDescriptor*>(bucket)->asBits.payload);
-            m_jit.load32(scratchDataBuffer, scratch);
-        } else if (exit.m_jsValueSource.hasKnownTag()) {
-            m_jit.store32(AssemblyHelpers::TrustedImm32(exit.m_jsValueSource.tag()), &bitwise_cast<EncodedValueDescriptor*>(bucket)->asBits.tag);
-            m_jit.store32(exit.m_jsValueSource.payloadGPR(), &bitwise_cast<EncodedValueDescriptor*>(bucket)->asBits.payload);
-        } else {
-            m_jit.store32(exit.m_jsValueSource.tagGPR(), &bitwise_cast<EncodedValueDescriptor*>(bucket)->asBits.tag);
-            m_jit.store32(exit.m_jsValueSource.payloadGPR(), &bitwise_cast<EncodedValueDescriptor*>(bucket)->asBits.payload);
+        if (!!exit.m_valueProfile) {
+            EncodedJSValue* bucket = exit.m_valueProfile.getSpecFailBucket(0);
+        
+            if (exit.m_jsValueSource.isAddress()) {
+                // Save a register so we can use it.
+                GPRReg scratch = AssemblyHelpers::selectScratchGPR(exit.m_jsValueSource.base());
+                
+                m_jit.push(scratch);
+
+                m_jit.load32(exit.m_jsValueSource.asAddress(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)), scratch);
+                m_jit.store32(scratch, &bitwise_cast<EncodedValueDescriptor*>(bucket)->asBits.tag);
+                m_jit.load32(exit.m_jsValueSource.asAddress(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)), scratch);
+                m_jit.store32(scratch, &bitwise_cast<EncodedValueDescriptor*>(bucket)->asBits.payload);
+                
+                m_jit.pop(scratch);
+            } else if (exit.m_jsValueSource.hasKnownTag()) {
+                m_jit.store32(AssemblyHelpers::TrustedImm32(exit.m_jsValueSource.tag()), &bitwise_cast<EncodedValueDescriptor*>(bucket)->asBits.tag);
+                m_jit.store32(exit.m_jsValueSource.payloadGPR(), &bitwise_cast<EncodedValueDescriptor*>(bucket)->asBits.payload);
+            } else {
+                m_jit.store32(exit.m_jsValueSource.tagGPR(), &bitwise_cast<EncodedValueDescriptor*>(bucket)->asBits.tag);
+                m_jit.store32(exit.m_jsValueSource.payloadGPR(), &bitwise_cast<EncodedValueDescriptor*>(bucket)->asBits.payload);
+            }
         }
     }
     

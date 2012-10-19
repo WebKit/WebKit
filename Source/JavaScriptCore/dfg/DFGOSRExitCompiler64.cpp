@@ -86,23 +86,70 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         }
     }
 
-    // 3) Refine some value profile, if appropriate.
+    // 3) Refine some array and/or value profile, if appropriate.
     
-    if (!!exit.m_jsValueSource && !!exit.m_valueProfile) {
-        EncodedJSValue* bucket = exit.m_valueProfile.getSpecFailBucket(0);
+    if (!!exit.m_jsValueSource) {
+        if (exit.m_kind == BadCache || exit.m_kind == BadIndexingType) {
+            // If the instruction that this originated from has an array profile, then
+            // refine it. If it doesn't, then do nothing. The latter could happen for
+            // hoisted checks, or checks emitted for operations that didn't have array
+            // profiling - either ops that aren't array accesses at all, or weren't
+            // known to be array acceses in the bytecode. The latter case is a FIXME
+            // while the former case is an outcome of a CheckStructure not knowing why
+            // it was emitted (could be either due to an inline cache of a property
+            // property access, or due to an array profile).
+            
+            CodeOrigin codeOrigin = exit.m_codeOriginForExitProfile;
+            if (ArrayProfile* arrayProfile = m_jit.baselineCodeBlockFor(codeOrigin)->getArrayProfile(codeOrigin.bytecodeIndex)) {
+                GPRReg usedRegister;
+                if (exit.m_jsValueSource.isAddress())
+                    usedRegister = exit.m_jsValueSource.base();
+                else
+                    usedRegister = exit.m_jsValueSource.gpr();
+                
+                GPRReg scratch1;
+                GPRReg scratch2;
+                scratch1 = AssemblyHelpers::selectScratchGPR(usedRegister);
+                scratch2 = AssemblyHelpers::selectScratchGPR(usedRegister, scratch1);
+                
+                m_jit.push(scratch1);
+                m_jit.push(scratch2);
+                
+                GPRReg value;
+                if (exit.m_jsValueSource.isAddress()) {
+                    value = scratch1;
+                    m_jit.loadPtr(AssemblyHelpers::Address(exit.m_jsValueSource.asAddress()), value);
+                } else
+                    value = exit.m_jsValueSource.gpr();
+                
+                m_jit.loadPtr(AssemblyHelpers::Address(value, JSCell::structureOffset()), scratch1);
+                m_jit.storePtr(scratch1, arrayProfile->addressOfLastSeenStructure());
+                m_jit.load8(AssemblyHelpers::Address(scratch1, Structure::indexingTypeOffset()), scratch1);
+                m_jit.move(AssemblyHelpers::TrustedImm32(1), scratch2);
+                m_jit.lshift32(scratch1, scratch2);
+                m_jit.or32(scratch2, AssemblyHelpers::AbsoluteAddress(arrayProfile->addressOfArrayModes()));
+                
+                m_jit.pop(scratch2);
+                m_jit.pop(scratch1);
+            }
+        }
         
+        if (!!exit.m_valueProfile) {
+            EncodedJSValue* bucket = exit.m_valueProfile.getSpecFailBucket(0);
+            
 #if DFG_ENABLE(VERBOSE_SPECULATION_FAILURE)
-        dataLog("  (have exit profile, bucket %p)  ", bucket);
+            dataLog("  (have exit profile, bucket %p)  ", bucket);
 #endif
             
-        if (exit.m_jsValueSource.isAddress()) {
-            // We can't be sure that we have a spare register. So use the tagTypeNumberRegister,
-            // since we know how to restore it.
-            m_jit.load64(AssemblyHelpers::Address(exit.m_jsValueSource.asAddress()), GPRInfo::tagTypeNumberRegister);
-            m_jit.store64(GPRInfo::tagTypeNumberRegister, bucket);
-            m_jit.move(AssemblyHelpers::TrustedImm64(bitwise_cast<int64_t>(TagTypeNumber)), GPRInfo::tagTypeNumberRegister);
-        } else
-            m_jit.store64(exit.m_jsValueSource.gpr(), bucket);
+            if (exit.m_jsValueSource.isAddress()) {
+                // We can't be sure that we have a spare register. So use the tagTypeNumberRegister,
+                // since we know how to restore it.
+                m_jit.load64(AssemblyHelpers::Address(exit.m_jsValueSource.asAddress()), GPRInfo::tagTypeNumberRegister);
+                m_jit.store64(GPRInfo::tagTypeNumberRegister, bucket);
+                m_jit.move(AssemblyHelpers::TrustedImmPtr(bitwise_cast<void*>(TagTypeNumber)), GPRInfo::tagTypeNumberRegister);
+            } else
+                m_jit.store64(exit.m_jsValueSource.gpr(), bucket);
+        }
     }
 
     // 4) Figure out how many scratch slots we'll need. We need one for every GPR/FPR

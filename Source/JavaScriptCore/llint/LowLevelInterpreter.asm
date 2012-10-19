@@ -239,13 +239,8 @@ macro arrayProfile(structureAndIndexingType, profile, scratch)
     const indexingType = structureAndIndexingType
     if VALUE_PROFILER
         storep structure, ArrayProfile::m_lastSeenStructure[profile]
-        loadb Structure::m_indexingType[structure], indexingType
-        move 1, scratch
-        lshifti indexingType, scratch
-        ori scratch, ArrayProfile::m_observedArrayModes[profile]
-    else
-        loadb Structure::m_indexingType[structure], indexingType
     end
+    loadb Structure::m_indexingType[structure], indexingType
 end
 
 macro checkSwitchToJIT(increment, action)

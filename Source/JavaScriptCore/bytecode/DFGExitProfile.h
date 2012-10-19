@@ -36,6 +36,7 @@ enum ExitKind {
     ExitKindUnset,
     BadType, // We exited because a type prediction was wrong.
     BadCache, // We exited because an inline cache was wrong.
+    BadIndexingType, // We exited because an indexing type was wrong.
     Overflow, // We exited because of overflow.
     NegativeZero, // We exited because we encountered negative zero.
     OutOfBounds, // We had an out-of-bounds access to an array.

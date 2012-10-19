@@ -437,7 +437,7 @@ void SpeculativeJIT::checkArray(Node& node)
             MacroAssembler::Address(baseReg, JSCell::structureOffset()), tempGPR);
         m_jit.load8(MacroAssembler::Address(tempGPR, Structure::indexingTypeOffset()), tempGPR);
         speculationCheck(
-            Uncountable, JSValueRegs(), NoNode,
+            BadIndexingType, JSValueSource::unboxedCell(baseReg), NoNode,
             jumpSlowForUnwantedArrayMode(tempGPR, node.arrayMode()));
         
         noResult(m_compileIndex);
@@ -535,7 +535,7 @@ void SpeculativeJIT::arrayify(Node& node, GPRReg baseReg, GPRReg propertyReg)
     // Next check that the object does not intercept indexed accesses. If it does,
     // then this mode won't work.
     speculationCheck(
-        Uncountable, JSValueRegs(), NoNode,
+        BadIndexingType, JSValueSource::unboxedCell(baseReg), NoNode,
         m_jit.branchTest8(
             MacroAssembler::NonZero,
             MacroAssembler::Address(structureGPR, Structure::typeInfoFlagsOffset()),
@@ -569,7 +569,7 @@ void SpeculativeJIT::arrayify(Node& node, GPRReg baseReg, GPRReg propertyReg)
     m_jit.load8(
         MacroAssembler::Address(structureGPR, Structure::indexingTypeOffset()), structureGPR);
     speculationCheck(
-        Uncountable, JSValueRegs(), NoNode,
+        BadIndexingType, JSValueSource::unboxedCell(baseReg), NoNode,
         jumpSlowForUnwantedArrayMode(structureGPR, desiredArrayMode));
     
     done.link(&m_jit);

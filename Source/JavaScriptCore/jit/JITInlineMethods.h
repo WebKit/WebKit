@@ -548,17 +548,15 @@ inline void JIT::emitValueProfilingSite()
 
 inline void JIT::emitArrayProfilingSite(RegisterID structureAndIndexingType, RegisterID scratch, ArrayProfile* arrayProfile)
 {
+    UNUSED_PARAM(scratch); // We had found this scratch register useful here before, so I will keep it for now.
+    
     RegisterID structure = structureAndIndexingType;
     RegisterID indexingType = structureAndIndexingType;
     
-    if (canBeOptimized()) {
+    if (canBeOptimized())
         storePtr(structure, arrayProfile->addressOfLastSeenStructure());
-        load8(Address(structure, Structure::indexingTypeOffset()), indexingType);
-        move(TrustedImm32(1), scratch);
-        lshift32(indexingType, scratch);
-        or32(scratch, AbsoluteAddress(arrayProfile->addressOfArrayModes()));
-    } else
-        load8(Address(structure, Structure::indexingTypeOffset()), indexingType);
+
+    load8(Address(structure, Structure::indexingTypeOffset()), indexingType);
 }
 
 inline void JIT::emitArrayProfilingSiteForBytecodeIndex(RegisterID structureAndIndexingType, RegisterID scratch, unsigned bytecodeIndex)

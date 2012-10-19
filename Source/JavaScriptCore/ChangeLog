@@ -1,3 +1,51 @@
+2012-10-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Baseline array profiling should be less accurate, and DFG OSR exit should update array profiles on CheckArray and CheckStructure failure
+        https://bugs.webkit.org/show_bug.cgi?id=99261
+
+        Reviewed by Oliver Hunt.
+
+        This makes array profiling stochastic, like value profiling. The point is to avoid
+        noticing one-off indexing types that we'll never see again, but instead to:
+        
+        Notice the big ones: We want the DFG to compile based on the things that happen with
+        high probability. So, this change makes array profiling do like value profiling and
+        only notice a random subsampling of indexing types that flowed through an array
+        access. Prior to this patch array profiles noticed all indexing types and weighted
+        them identically.
+        
+        Bias the recent: Often an array access will see awkward indexing types during the
+        first handful of executions because of artifacts of program startup. So, we want to
+        bias towards the indexing types that we saw most recently. With this change, array
+        profiling does like value profiling and usually tells use a random sampling that
+        is biased to what happened recently.
+        
+        Have a backup plan: The above two things don't work by themselves because our
+        randomness is not that random (nor do we care enough to make it more random), and
+        because some procedures will have a <1/10 probability event that we must handle
+        without bailing because it dominates a hot loop. So, like value profiling, this
+        patch makes array profiling use OSR exits to tell us why we are bailing out, so
+        that we don't make the same mistake again in the future.
+        
+        This change also makes the way that the 32-bit OSR exit compiler snatches scratch
+        registers more uniform. We don't need a scratch buffer when we can push and pop.
+
+        * bytecode/DFGExitProfile.h:
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArray):
+        (JSC::DFG::SpeculativeJIT::arrayify):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitArrayProfilingSite):
+        * llint/LowLevelInterpreter.asm:
+
 2012-10-18  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         [Qt] REGRESSION(r131858): It broke the ARM build
