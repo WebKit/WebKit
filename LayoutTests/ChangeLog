@@ -1,3 +1,184 @@
+2012-10-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Land first batch of Chromium Mac 10.8-specific baselines.
+
+        Unreviewed, gardening.
+
+        * animations/cross-fade-background-image-expected.png: Renamed from LayoutTests/platform/efl/animations/cross-fade-background-image-expected.png.
+        * animations/cross-fade-border-image-source-expected.png: Renamed from LayoutTests/platform/efl/animations/cross-fade-border-image-source-expected.png.
+        * animations/cross-fade-list-style-image-expected.png: Renamed from LayoutTests/platform/efl/animations/cross-fade-list-style-image-expected.png.
+        * animations/cross-fade-webkit-mask-image-expected.png: Renamed from LayoutTests/platform/efl/animations/cross-fade-webkit-mask-image-expected.png.
+        * platform/chromium-mac-lion/animations/3d/change-transform-in-end-event-expected.png: Copied from LayoutTests/platform/chromium-mac/animations/3d/change-transform-in-end-event-expected.png.
+        * platform/chromium-mac-lion/animations/3d/matrix-transform-type-animation-expected.png: Copied from LayoutTests/platform/chromium-mac/animations/3d/matrix-transform-type-animation-expected.png.
+        * platform/chromium-mac-lion/animations/3d/state-at-end-event-transform-expected.png: Copied from LayoutTests/platform/chromium-mac/animations/3d/state-at-end-event-transform-expected.png.
+        * platform/chromium-mac-lion/animations/cross-fade-background-image-expected.png: Copied from LayoutTests/platform/chromium-mac/animations/cross-fade-background-image-expected.png.
+        * platform/chromium-mac-lion/animations/cross-fade-border-image-source-expected.png: Copied from LayoutTests/platform/chromium-mac/animations/cross-fade-border-image-source-expected.png.
+        * platform/chromium-mac-lion/animations/cross-fade-list-style-image-expected.png: Copied from LayoutTests/platform/chromium-mac/animations/cross-fade-list-style-image-expected.png.
+        * platform/chromium-mac-lion/animations/cross-fade-webkit-mask-image-expected.png: Copied from LayoutTests/platform/chromium-mac/animations/cross-fade-webkit-mask-image-expected.png.
+        * platform/chromium-mac-lion/animations/state-at-end-event-expected.png: Copied from LayoutTests/platform/chromium-mac/animations/state-at-end-event-expected.png.
+        * platform/chromium-mac-lion/compositing/animation/state-at-end-event-transform-layer-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/animation/state-at-end-event-transform-layer-expected.png.
+        * platform/chromium-mac-lion/compositing/color-matching/pdf-image-match-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/color-matching/pdf-image-match-expected.png.
+        * platform/chromium-mac-lion/compositing/compositing-visible-descendant-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/compositing-visible-descendant-expected.png.
+        * platform/chromium-mac-lion/compositing/generated-content-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/generated-content-expected.png.
+        * platform/chromium-mac-lion/compositing/geometry/abs-position-inside-opacity-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/geometry/abs-position-inside-opacity-expected.png.
+        * platform/chromium-mac-lion/compositing/geometry/composited-html-size-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/geometry/composited-html-size-expected.png.
+        * platform/chromium-mac-lion/compositing/geometry/fixed-in-composited-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/geometry/fixed-in-composited-expected.png.
+        * platform/chromium-mac-lion/compositing/geometry/fixed-position-composited-page-scale-down-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/geometry/fixed-position-composited-page-scale-down-expected.png.
+        * platform/chromium-mac-lion/compositing/geometry/fixed-position-composited-page-scale-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/geometry/fixed-position-composited-page-scale-expected.png.
+        * platform/chromium-mac-lion/compositing/geometry/fixed-position-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/geometry/fixed-position-expected.png.
+        * platform/chromium-mac-lion/compositing/geometry/fixed-position-iframe-composited-page-scale-down-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/geometry/fixed-position-iframe-composited-page-scale-down-expected.png.
+        * platform/chromium-mac-lion/compositing/geometry/fixed-position-iframe-composited-page-scale-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/geometry/fixed-position-iframe-composited-page-scale-expected.png.
+        * platform/chromium-mac-lion/compositing/geometry/fixed-position-transform-composited-page-scale-down-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/geometry/fixed-position-transform-composited-page-scale-down-expected.png.
+        * platform/chromium-mac-lion/compositing/geometry/fixed-position-transform-composited-page-scale-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/geometry/fixed-position-transform-composited-page-scale-expected.png.
+        * platform/chromium-mac-lion/compositing/geometry/layer-due-to-layer-children-deep-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/geometry/layer-due-to-layer-children-deep-expected.png.
+        * platform/chromium-mac-lion/compositing/geometry/layer-due-to-layer-children-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/geometry/layer-due-to-layer-children-expected.png.
+        * platform/chromium-mac-lion/compositing/geometry/outline-change-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/geometry/outline-change-expected.png.
+        * platform/chromium-mac-lion/compositing/geometry/partial-layout-update-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/geometry/partial-layout-update-expected.png.
+        * platform/chromium-mac-lion/compositing/geometry/root-layer-update-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/geometry/root-layer-update-expected.png.
+        * platform/chromium-mac-lion/compositing/geometry/transfrom-origin-on-zero-size-layer-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/geometry/transfrom-origin-on-zero-size-layer-expected.png.
+        * platform/chromium-mac-lion/compositing/geometry/video-fixed-scrolling-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/geometry/video-fixed-scrolling-expected.png.
+        * platform/chromium-mac-lion/compositing/geometry/video-opacity-overlay-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/geometry/video-opacity-overlay-expected.png.
+        * platform/chromium-mac-lion/compositing/iframes/composited-iframe-alignment-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/iframes/composited-iframe-alignment-expected.png.
+        * platform/chromium-mac-lion/compositing/iframes/iframe-copy-on-scroll-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/iframes/iframe-copy-on-scroll-expected.png.
+        * platform/chromium-mac-lion/compositing/images/direct-image-background-color-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/images/direct-image-background-color-expected.png.
+        * platform/chromium-mac-lion/compositing/layers-inside-overflow-scroll-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/layers-inside-overflow-scroll-expected.png.
+        * platform/chromium-mac-lion/compositing/masks/direct-image-mask-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/masks/direct-image-mask-expected.png.
+        * platform/chromium-mac-lion/compositing/masks/masked-ancestor-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/masks/masked-ancestor-expected.png.
+        * platform/chromium-mac-lion/compositing/masks/multiple-masks-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/masks/multiple-masks-expected.png.
+        * platform/chromium-mac-lion/compositing/masks/simple-composited-mask-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/masks/simple-composited-mask-expected.png.
+        * platform/chromium-mac-lion/compositing/overflow/ancestor-overflow-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/overflow/ancestor-overflow-expected.png.
+        * platform/chromium-mac-lion/compositing/overflow/fixed-position-ancestor-clip-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/overflow/fixed-position-ancestor-clip-expected.png.
+        * platform/chromium-mac-lion/compositing/overflow/nested-scrolling-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/overflow/nested-scrolling-expected.png.
+        * platform/chromium-mac-lion/compositing/overflow/overflow-compositing-descendant-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/overflow/overflow-compositing-descendant-expected.png.
+        * platform/chromium-mac-lion/compositing/overflow/overflow-positioning-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/overflow/overflow-positioning-expected.png.
+        * platform/chromium-mac-lion/compositing/overflow/overflow-scroll-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/overflow/overflow-scroll-expected.png.
+        * platform/chromium-mac-lion/compositing/overflow/parent-overflow-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/overflow/parent-overflow-expected.png.
+        * platform/chromium-mac-lion/compositing/overflow/remove-overflow-crash2-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/overflow/remove-overflow-crash2-expected.png.
+        * platform/chromium-mac-lion/compositing/overflow/scroll-ancestor-update-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/overflow/scroll-ancestor-update-expected.png.
+        * platform/chromium-mac-lion/compositing/overflow/scrollbar-painting-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/overflow/scrollbar-painting-expected.png.
+        * platform/chromium-mac-lion/compositing/overflow/theme-affects-visual-overflow-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/overflow/theme-affects-visual-overflow-expected.png.
+        * platform/chromium-mac-lion/compositing/reflections/animation-inside-reflection-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/reflections/animation-inside-reflection-expected.png.
+        * platform/chromium-mac-lion/compositing/reflections/compositing-change-inside-reflection-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/reflections/compositing-change-inside-reflection-expected.png.
+        * platform/chromium-mac-lion/compositing/reflections/deeply-nested-reflections-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/reflections/deeply-nested-reflections-expected.png.
+        * platform/chromium-mac-lion/compositing/reflections/load-video-in-reflection-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/reflections/load-video-in-reflection-expected.png.
+        * platform/chromium-mac-lion/compositing/reflections/masked-reflection-on-composited-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/reflections/masked-reflection-on-composited-expected.png.
+        * platform/chromium-mac-lion/compositing/reflections/nested-reflection-anchor-point-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/reflections/nested-reflection-anchor-point-expected.png.
+        * platform/chromium-mac-lion/compositing/reflections/nested-reflection-animated-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/reflections/nested-reflection-animated-expected.png.
+        * platform/chromium-mac-lion/compositing/reflections/nested-reflection-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/reflections/nested-reflection-expected.png.
+        * platform/chromium-mac-lion/compositing/reflections/nested-reflection-mask-change-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/reflections/nested-reflection-mask-change-expected.png.
+        * platform/chromium-mac-lion/compositing/reflections/nested-reflection-on-overflow-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/reflections/nested-reflection-on-overflow-expected.png.
+        * platform/chromium-mac-lion/compositing/reflections/nested-reflection-opacity-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/reflections/nested-reflection-opacity-expected.png.
+        * platform/chromium-mac-lion/compositing/reflections/nested-reflection-size-change-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/reflections/nested-reflection-size-change-expected.png.
+        * platform/chromium-mac-lion/compositing/reflections/nested-reflection-transformed-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/reflections/nested-reflection-transformed-expected.png.
+        * platform/chromium-mac-lion/compositing/reflections/nested-reflection-transformed2-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/reflections/nested-reflection-transformed2-expected.png.
+        * platform/chromium-mac-lion/compositing/reflections/nested-reflection-transition-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/reflections/nested-reflection-transition-expected.png.
+        * platform/chromium-mac-lion/compositing/reflections/reflection-in-composited-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/reflections/reflection-in-composited-expected.png.
+        * platform/chromium-mac-lion/compositing/reflections/reflection-on-composited-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/reflections/reflection-on-composited-expected.png.
+        * platform/chromium-mac-lion/compositing/reflections/reflection-ordering-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/reflections/reflection-ordering-expected.png.
+        * platform/chromium-mac-lion/compositing/reflections/reflection-positioning-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/reflections/reflection-positioning-expected.png.
+        * platform/chromium-mac-lion/compositing/reflections/reflection-positioning2-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/reflections/reflection-positioning2-expected.png.
+        * platform/chromium-mac-lion/compositing/reflections/simple-composited-reflections-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/reflections/simple-composited-reflections-expected.png.
+        * platform/chromium-mac-lion/compositing/reflections/transform-inside-reflection-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/reflections/transform-inside-reflection-expected.png.
+        * platform/chromium-mac-lion/compositing/repaint/become-overlay-composited-layer-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/repaint/become-overlay-composited-layer-expected.png.
+        * platform/chromium-mac-lion/compositing/repaint/composited-document-element-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/repaint/composited-document-element-expected.png.
+        * platform/chromium-mac-lion/compositing/repaint/layer-repaint-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/repaint/layer-repaint-expected.png.
+        * platform/chromium-mac-lion/compositing/repaint/layer-repaint-rects-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/repaint/layer-repaint-rects-expected.png.
+        * platform/chromium-mac-lion/compositing/repaint/opacity-between-absolute-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/repaint/opacity-between-absolute-expected.png.
+        * platform/chromium-mac-lion/compositing/repaint/opacity-between-absolute2-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/repaint/opacity-between-absolute2-expected.png.
+        * platform/chromium-mac-lion/compositing/self-painting-layers-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/self-painting-layers-expected.png.
+        * platform/chromium-mac-lion/compositing/sibling-positioning-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/sibling-positioning-expected.png.
+        * platform/chromium-mac-lion/compositing/text-on-large-layer-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/text-on-large-layer-expected.png.
+        * platform/chromium-mac-lion/compositing/transitions/scale-transition-no-start-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/transitions/scale-transition-no-start-expected.png.
+        * platform/chromium-mac-lion/compositing/transitions/singular-scale-transition-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/transitions/singular-scale-transition-expected.png.
+        * platform/chromium-mac-lion/compositing/video/video-controls-layer-creation-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/video/video-controls-layer-creation-expected.png.
+        * platform/chromium-mac-lion/compositing/webgl/webgl-background-color-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/webgl/webgl-background-color-expected.png.
+        * platform/chromium-mac-lion/compositing/webgl/webgl-reflection-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/webgl/webgl-reflection-expected.png.
+        * platform/chromium-mac/animations/3d/change-transform-in-end-event-expected.png:
+        * platform/chromium-mac/animations/3d/matrix-transform-type-animation-expected.png:
+        * platform/chromium-mac/animations/3d/state-at-end-event-transform-expected.png:
+        * platform/chromium-mac/animations/cross-fade-background-image-expected.png:
+        * platform/chromium-mac/animations/cross-fade-border-image-source-expected.png:
+        * platform/chromium-mac/animations/cross-fade-list-style-image-expected.png:
+        * platform/chromium-mac/animations/cross-fade-webkit-mask-image-expected.png:
+        * platform/chromium-mac/animations/state-at-end-event-expected.png:
+        * platform/chromium-mac/compositing/animation/state-at-end-event-transform-layer-expected.png:
+        * platform/chromium-mac/compositing/color-matching/pdf-image-match-expected.png:
+        * platform/chromium-mac/compositing/compositing-visible-descendant-expected.png:
+        * platform/chromium-mac/compositing/generated-content-expected.png:
+        * platform/chromium-mac/compositing/geometry/abs-position-inside-opacity-expected.png:
+        * platform/chromium-mac/compositing/geometry/composited-html-size-expected.png:
+        * platform/chromium-mac/compositing/geometry/fixed-in-composited-expected.png:
+        * platform/chromium-mac/compositing/geometry/fixed-position-composited-page-scale-down-expected.png:
+        * platform/chromium-mac/compositing/geometry/fixed-position-composited-page-scale-expected.png:
+        * platform/chromium-mac/compositing/geometry/fixed-position-expected.png:
+        * platform/chromium-mac/compositing/geometry/fixed-position-iframe-composited-page-scale-down-expected.png:
+        * platform/chromium-mac/compositing/geometry/fixed-position-iframe-composited-page-scale-expected.png:
+        * platform/chromium-mac/compositing/geometry/fixed-position-transform-composited-page-scale-down-expected.png:
+        * platform/chromium-mac/compositing/geometry/fixed-position-transform-composited-page-scale-expected.png:
+        * platform/chromium-mac/compositing/geometry/layer-due-to-layer-children-deep-expected.png:
+        * platform/chromium-mac/compositing/geometry/layer-due-to-layer-children-expected.png:
+        * platform/chromium-mac/compositing/geometry/outline-change-expected.png:
+        * platform/chromium-mac/compositing/geometry/partial-layout-update-expected.png:
+        * platform/chromium-mac/compositing/geometry/root-layer-update-expected.png:
+        * platform/chromium-mac/compositing/geometry/transfrom-origin-on-zero-size-layer-expected.png:
+        * platform/chromium-mac/compositing/geometry/video-fixed-scrolling-expected.png:
+        * platform/chromium-mac/compositing/geometry/video-opacity-overlay-expected.png:
+        * platform/chromium-mac/compositing/iframes/composited-iframe-alignment-expected.png:
+        * platform/chromium-mac/compositing/iframes/iframe-copy-on-scroll-expected.png:
+        * platform/chromium-mac/compositing/images/direct-image-background-color-expected.png:
+        * platform/chromium-mac/compositing/layers-inside-overflow-scroll-expected.png:
+        * platform/chromium-mac/compositing/masks/direct-image-mask-expected.png:
+        * platform/chromium-mac/compositing/masks/masked-ancestor-expected.png:
+        * platform/chromium-mac/compositing/masks/multiple-masks-expected.png:
+        * platform/chromium-mac/compositing/masks/simple-composited-mask-expected.png:
+        * platform/chromium-mac/compositing/overflow/ancestor-overflow-expected.png:
+        * platform/chromium-mac/compositing/overflow/fixed-position-ancestor-clip-expected.png:
+        * platform/chromium-mac/compositing/overflow/nested-scrolling-expected.png:
+        * platform/chromium-mac/compositing/overflow/overflow-compositing-descendant-expected.png:
+        * platform/chromium-mac/compositing/overflow/overflow-positioning-expected.png:
+        * platform/chromium-mac/compositing/overflow/overflow-scroll-expected.png:
+        * platform/chromium-mac/compositing/overflow/parent-overflow-expected.png:
+        * platform/chromium-mac/compositing/overflow/remove-overflow-crash2-expected.png:
+        * platform/chromium-mac/compositing/overflow/scroll-ancestor-update-expected.png:
+        * platform/chromium-mac/compositing/overflow/scrollbar-painting-expected.png:
+        * platform/chromium-mac/compositing/overflow/theme-affects-visual-overflow-expected.png:
+        * platform/chromium-mac/compositing/reflections/animation-inside-reflection-expected.png:
+        * platform/chromium-mac/compositing/reflections/compositing-change-inside-reflection-expected.png:
+        * platform/chromium-mac/compositing/reflections/deeply-nested-reflections-expected.png:
+        * platform/chromium-mac/compositing/reflections/load-video-in-reflection-expected.png:
+        * platform/chromium-mac/compositing/reflections/masked-reflection-on-composited-expected.png:
+        * platform/chromium-mac/compositing/reflections/nested-reflection-anchor-point-expected.png:
+        * platform/chromium-mac/compositing/reflections/nested-reflection-animated-expected.png:
+        * platform/chromium-mac/compositing/reflections/nested-reflection-expected.png:
+        * platform/chromium-mac/compositing/reflections/nested-reflection-mask-change-expected.png:
+        * platform/chromium-mac/compositing/reflections/nested-reflection-on-overflow-expected.png:
+        * platform/chromium-mac/compositing/reflections/nested-reflection-opacity-expected.png:
+        * platform/chromium-mac/compositing/reflections/nested-reflection-size-change-expected.png:
+        * platform/chromium-mac/compositing/reflections/nested-reflection-transformed-expected.png:
+        * platform/chromium-mac/compositing/reflections/nested-reflection-transformed2-expected.png:
+        * platform/chromium-mac/compositing/reflections/nested-reflection-transition-expected.png:
+        * platform/chromium-mac/compositing/reflections/reflection-in-composited-expected.png:
+        * platform/chromium-mac/compositing/reflections/reflection-on-composited-expected.png:
+        * platform/chromium-mac/compositing/reflections/reflection-ordering-expected.png:
+        * platform/chromium-mac/compositing/reflections/reflection-positioning-expected.png:
+        * platform/chromium-mac/compositing/reflections/reflection-positioning2-expected.png:
+        * platform/chromium-mac/compositing/reflections/simple-composited-reflections-expected.png:
+        * platform/chromium-mac/compositing/reflections/transform-inside-reflection-expected.png:
+        * platform/chromium-mac/compositing/repaint/become-overlay-composited-layer-expected.png:
+        * platform/chromium-mac/compositing/repaint/composited-document-element-expected.png:
+        * platform/chromium-mac/compositing/repaint/layer-repaint-expected.png:
+        * platform/chromium-mac/compositing/repaint/layer-repaint-rects-expected.png:
+        * platform/chromium-mac/compositing/repaint/opacity-between-absolute-expected.png:
+        * platform/chromium-mac/compositing/repaint/opacity-between-absolute2-expected.png:
+        * platform/chromium-mac/compositing/self-painting-layers-expected.png:
+        * platform/chromium-mac/compositing/sibling-positioning-expected.png:
+        * platform/chromium-mac/compositing/text-on-large-layer-expected.png:
+        * platform/chromium-mac/compositing/transitions/scale-transition-no-start-expected.png:
+        * platform/chromium-mac/compositing/transitions/singular-scale-transition-expected.png:
+        * platform/chromium-mac/compositing/video/video-controls-layer-creation-expected.png:
+        * platform/chromium-mac/compositing/webgl/webgl-background-color-expected.png:
+        * platform/chromium-mac/compositing/webgl/webgl-reflection-expected.png:
+
 2012-10-18  Anand Chakravarty  <anandc@google.com>
 
         Incorrect check performed in Media Source objects test.
