@@ -1,3 +1,17 @@
+2012-10-19  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Should suspend AnimationController when WebPage becomes invisible.
+        https://bugs.webkit.org/show_bug.cgi?id=99844
+
+        Reviewed by Yong Li.
+        Internally reviewed by Arvid Nilsson & Yong Li.
+
+        Suspend animation controller when the tab becomes invisible,
+        in addition to suspending scripted animations.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setVisible):
+
 2012-10-19  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Don't attempt to auto scroll on input for Fixed Position elements.

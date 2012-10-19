@@ -55,6 +55,7 @@
 #endif
 #include "EditorClientBlackBerry.h"
 #include "FocusController.h"
+#include "Frame.h"
 #include "FrameLoaderClientBlackBerry.h"
 #if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
 #include "GeolocationClientMock.h"
@@ -3199,12 +3200,19 @@ void WebPagePrivate::setPageVisibilityState()
 
 void WebPagePrivate::setVisible(bool visible)
 {
-    m_visible = visible;
+    if (visible != m_visible) {
+        if (visible) {
+            mainFrame()->animation()->resumeAnimations();
+            if (m_page->scriptedAnimationsSuspended())
+                m_page->resumeScriptedAnimations();
+        } else {
+            mainFrame()->animation()->suspendAnimations();
+            if (!m_page->scriptedAnimationsSuspended())
+                m_page->suspendScriptedAnimations();
+        }
 
-    if (visible && m_page->scriptedAnimationsSuspended())
-        m_page->resumeScriptedAnimations();
-    if (!visible && !m_page->scriptedAnimationsSuspended())
-        m_page->suspendScriptedAnimations();
+        m_visible = visible;
+    }
 
 #if ENABLE(PAGE_VISIBILITY_API)
     setPageVisibilityState();
