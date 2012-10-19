@@ -303,3 +303,8 @@ webkit.org/b/87972 fast/encoding/mailto-always-utf-8.html [ Failure ]
 
 # Frame does not get focus as expected
 webkit.org/b/97077 inspector/extensions/extensions-panel.html [ Failure ]
+
+# Fails after r131836
+webkit.org/b/99824 fast/lists/w3-css3-list-styles-alphabetic.html [ Failure ]
+webkit.org/b/99824 fast/lists/w3-css3-list-styles-fallback-style.html [ Failure ]
+webkit.org/b/99824 fast/lists/w3-list-styles.html [ Failure ]
