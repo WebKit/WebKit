@@ -20,6 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#if ENABLE(SHARED_WORKER_PROCESS)
+
 messages -> SharedWorkerProcess {
     # Initializes the shared worker process.
     InitializeSharedWorkerProcess(WebKit::SharedWorkerProcessCreationParameters processCreationParameters)
@@ -29,3 +31,5 @@ messages -> SharedWorkerProcess {
     # a connection identifier.
     CreateWebProcessConnection()
 }
+
+#endif // ENABLE(SHARED_WORKER_PROCESS)

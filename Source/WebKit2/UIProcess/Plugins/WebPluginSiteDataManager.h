@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,8 @@
 
 #ifndef WebPluginSiteDataManagerh
 #define WebPluginSiteDataManager_h
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "APIObject.h"
 #include "Arguments.h"
@@ -84,5 +86,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #endif // WebPluginSiteDataManager_h

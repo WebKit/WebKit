@@ -1,3 +1,13 @@
+2012-10-18  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WK2] WebKit2 does not build without PLUGIN_PROCESS on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=99771
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/mac/MockWebNotificationProvider.mm: The file was not including config.h,
+        effectively breaking feature flags.
+
 2012-10-18  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL][DRT] Make textareas resizable by default.

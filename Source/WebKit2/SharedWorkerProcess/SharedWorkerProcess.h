@@ -26,6 +26,8 @@
 #ifndef SharedWorkerProcess_h
 #define SharedWorkerProcess_h
 
+#if ENABLE(SHARED_WORKER_PROCESS)
+
 #include "ChildProcess.h"
 #include <wtf/Forward.h>
 
@@ -79,5 +81,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(SHARED_WORKER_PROCESS)
 
 #endif // SharedWorkerProcess_h

@@ -56,11 +56,9 @@ static int WebKitMain(const CommandLine& commandLine)
     switch (processType) {
         case ProcessLauncher::WebProcess:
             return WebProcessMain(commandLine);
-        case ProcessLauncher::PluginProcess:
 #if ENABLE(PLUGIN_PROCESS)
+        case ProcessLauncher::PluginProcess:
             return PluginProcessMain(commandLine);
-#else
-            break;
 #endif
         case ProcessLauncher::NetworkProcess:
 #if ENABLE(NETWORK_PROCESS)

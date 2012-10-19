@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,9 +48,13 @@ public:
     
     enum ProcessType {
         WebProcess,
+#if ENABLE(PLUGIN_PROCESS)
         PluginProcess,
+#endif
         NetworkProcess,
+#if ENABLE(SHARED_WORKER_PROCESS)
         SharedWorkerProcess
+#endif
     };
 
     struct LaunchOptions {

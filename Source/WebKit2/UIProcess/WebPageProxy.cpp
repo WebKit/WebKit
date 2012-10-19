@@ -779,11 +779,12 @@ bool WebPageProxy::canShowMIMEType(const String& mimeType) const
     if (MIMETypeRegistry::canShowMIMEType(mimeType))
         return true;
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     String newMimeType = mimeType;
     PluginModuleInfo plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, KURL());
     if (!plugin.path.isNull())
         return true;
-
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
     return false;
 }
 
@@ -3884,13 +3885,14 @@ void WebPageProxy::didFailToInitializePlugin(const String& mimeType)
     m_loaderClient.didFailToInitializePlugin(this, mimeType);
 }
 
+// FIXME: ENABLE(NETSCAPE_PLUGIN_API)
 void WebPageProxy::didBlockInsecurePluginVersion(const String& mimeType, const String& urlString)
 {
     String pluginIdentifier;
     String pluginVersion;
     String newMimeType = mimeType;
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && ENABLE(NETSCAPE_PLUGIN_API)
     PluginModuleInfo plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, KURL(KURL(), urlString));
 
     pluginIdentifier = plugin.bundleIdentifier;

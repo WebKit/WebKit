@@ -32,6 +32,7 @@
 #include "WebURLRequest.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/UnusedParam.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebKit;
@@ -142,7 +143,12 @@ void WKContextSetShouldUseFontSmoothing(WKContextRef contextRef, bool useFontSmo
 
 void WKContextSetAdditionalPluginsDirectory(WKContextRef contextRef, WKStringRef pluginsDirectory)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     toImpl(contextRef)->setAdditionalPluginsDirectory(toImpl(pluginsDirectory)->string());
+#else
+    UNUSED_PARAM(contextRef);
+    UNUSED_PARAM(pluginsDirectory);
+#endif
 }
 
 void WKContextRegisterURLSchemeAsEmptyDocument(WKContextRef contextRef, WKStringRef urlScheme)
@@ -224,7 +230,11 @@ WKNotificationManagerRef WKContextGetNotificationManager(WKContextRef contextRef
 
 WKPluginSiteDataManagerRef WKContextGetPluginSiteDataManager(WKContextRef contextRef)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     return toAPI(toImpl(contextRef)->pluginSiteDataManager());
+#else
+    return 0;
+#endif
 }
 
 WKResourceCacheManagerRef WKContextGetResourceCacheManager(WKContextRef contextRef)

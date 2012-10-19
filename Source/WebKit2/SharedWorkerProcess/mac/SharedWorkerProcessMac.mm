@@ -26,6 +26,8 @@
 #import "config.h"
 #import "SharedWorkerProcess.h"
 
+#if ENABLE(SHARED_WORKER_PROCESS)
+
 #import "SharedWorkerProcessProxyMessages.h"
 #import "SharedWorkerProcessCreationParameters.h"
 #import <WebCore/LocalizedStrings.h>
@@ -72,3 +74,5 @@ void SharedWorkerProcess::platformInitialize(const SharedWorkerProcessCreationPa
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(SHARED_WORKER_PROCESS)

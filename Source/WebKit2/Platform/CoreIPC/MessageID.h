@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,8 +109,10 @@ enum MessageClass {
     // Messages sent by the UI process to the network process.
     MessageClassNetworkProcess,
 
+#if ENABLE(SHARED_WORKER_PROCESS)
     // Messages sent by the UI process to the shared worker process.
     MessageClassSharedWorkerProcess,
+#endif // ENABLE(SHARED_WORKER_PROCESS)
 
     // Messages sent by the shared worker process to the UI process.
     MessageClassSharedWorkerProcessProxy,

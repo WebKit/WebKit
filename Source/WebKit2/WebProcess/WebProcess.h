@@ -276,7 +276,9 @@ private:
     void didReceiveWebProcessMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     void didReceiveWebProcessMessageOnConnectionWorkQueue(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, bool& didHandleMessage);
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     void didGetPlugins(CoreIPC::Connection*, uint64_t requestID, const Vector<WebCore::PluginInfo>&);
+#endif
 
     RefPtr<WebConnectionToUIProcess> m_connection;
 

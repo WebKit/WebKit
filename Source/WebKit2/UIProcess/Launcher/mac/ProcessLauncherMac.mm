@@ -111,14 +111,21 @@ static void addDYLDEnvironmentAdditions(const ProcessLauncher::LaunchOptions& la
     if (isWebKitDevelopmentBuild)
         environmentVariables.appendValue("DYLD_FRAMEWORK_PATH", [frameworksPath fileSystemRepresentation], ':');
 
-    NSString *processPath = [webKit2Bundle pathForAuxiliaryExecutable:(launchOptions.processType == ProcessLauncher::PluginProcess ? @"PluginProcess.app" : @"WebProcess.app")];
-    NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
-
     NSString *processShimPathNSString = nil;
-    if (launchOptions.processType == ProcessLauncher::PluginProcess)
+#if ENABLE(PLUGIN_PROCESS)
+    if (launchOptions.processType == ProcessLauncher::PluginProcess) {
+        NSString *processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"PluginProcess.app"];
+        NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
+
         processShimPathNSString = [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"PluginProcessShim.dylib"];
-    else if (launchOptions.processType == ProcessLauncher::WebProcess)
+    } else
+#endif // ENABLE(PLUGIN_PROCESS)
+    if (launchOptions.processType == ProcessLauncher::WebProcess) {
+        NSString *processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"WebProcess.app"];
+        NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
+
         processShimPathNSString = [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"WebProcessShim.dylib"];
+    }
 
     // Make sure that the shim library file exists and insert it.
     if (processShimPathNSString) {
@@ -372,17 +379,21 @@ static void createProcess(const ProcessLauncher::LaunchOptions& launchOptions, b
     case ProcessLauncher::WebProcess:
         processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"WebProcess.app"];
         break;
+#if ENABLE(PLUGIN_PROCESS)
     case ProcessLauncher::PluginProcess:
         processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"PluginProcess.app"];
         break;
+#endif
 #if ENABLE(NETWORK_PROCESS)
     case ProcessLauncher::NetworkProcess:
         processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"NetworkProcess.app"];
         break;
 #endif
+#if ENABLE(SHARED_WORKER_PROCESS)
     case ProcessLauncher::SharedWorkerProcess:
         processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"SharedWorkerProcess.app"];
         break;
+#endif
     }
 
     NSString *frameworkExecutablePath = [webKit2Bundle executablePath];

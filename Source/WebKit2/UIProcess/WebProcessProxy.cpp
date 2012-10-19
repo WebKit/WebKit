@@ -72,11 +72,13 @@ static uint64_t generatePageID()
     return uniquePageID++;
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 static WorkQueue& pluginWorkQueue()
 {
     DEFINE_STATIC_LOCAL(WorkQueue, queue, ("com.apple.CoreIPC.PluginQueue"));
     return queue;
 }
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 PassRefPtr<WebProcessProxy> WebProcessProxy::create(PassRefPtr<WebContext> context)
 {
@@ -309,6 +311,7 @@ void WebProcessProxy::addBackForwardItem(uint64_t itemID, const String& original
     result.iterator->value->setBackForwardData(backForwardData.data(), backForwardData.size());
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 void WebProcessProxy::sendDidGetPlugins(uint64_t requestID, PassOwnPtr<Vector<PluginInfo> > pluginInfos)
 {
     ASSERT(isMainThread());
@@ -368,6 +371,7 @@ void WebProcessProxy::getPluginPath(const String& mimeType, const String& urlStr
 
     pluginPath = plugin.path;
 }
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #if ENABLE(PLUGIN_PROCESS)
 
@@ -376,7 +380,7 @@ void WebProcessProxy::getPluginProcessConnection(const String& pluginPath, PassR
     PluginProcessManager::shared().getPluginProcessConnection(m_context->pluginInfoStore(), pluginPath, reply);
 }
 
-#else
+#elif ENABLE(NETSCAPE_PLUGIN_API)
 
 void WebProcessProxy::didGetSitesWithPluginData(const Vector<String>& sites, uint64_t callbackID)
 {
@@ -390,10 +394,12 @@ void WebProcessProxy::didClearPluginSiteData(uint64_t callbackID)
 
 #endif
 
+#if ENABLE(SHARED_WORKER_PROCESS)
 void WebProcessProxy::getSharedWorkerProcessConnection(const String& /* url */, const String& /* name */, PassRefPtr<Messages::WebProcessProxy::GetSharedWorkerProcessConnection::DelayedReply>)
 {
     // FIXME: Implement
 }
+#endif // ENABLE(SHARED_WORKER_PROCESS)
 
 void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {

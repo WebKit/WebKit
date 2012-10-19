@@ -26,6 +26,8 @@
 #ifndef SharedWorkerProcessProxy_h
 #define SharedWorkerProcessProxy_h
 
+#if ENABLE(SHARED_WORKER_PROCESS)
+
 #include "Connection.h"
 #include "ProcessLauncher.h"
 #include "WebProcessProxyMessages.h"
@@ -90,5 +92,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(SHARED_WORKER_PROCESS)
 
 #endif // SharedWorkerProcessProxy_h

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include "WebPluginSiteDataManager.h"
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "ImmutableArray.h"
 #include "PluginProcessManager.h"
@@ -291,3 +293,4 @@ void WebPluginSiteDataManager::didClearSiteDataForAllPlugins(uint64_t callbackID
 
 } // namespace WebKit
 
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

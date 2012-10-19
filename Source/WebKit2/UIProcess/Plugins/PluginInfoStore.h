@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,8 @@
 
 #ifndef PluginInfoStore_h
 #define PluginInfoStore_h
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "PluginModuleInfo.h"
 #include <wtf/ThreadingPrimitives.h>
@@ -93,5 +95,7 @@ private:
 };
     
 } // namespace WebKit
+
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #endif // PluginInfoStore_h

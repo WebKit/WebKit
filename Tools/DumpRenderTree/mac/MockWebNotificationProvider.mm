@@ -26,7 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
 #import "MockWebNotificationProvider.h"
+
 #import <WebKit/WebSecurityOriginPrivate.h>
 
 @implementation MockWebNotificationProvider

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "SharedWorkerProcess.h"
 
+#if ENABLE(SHARED_WORKER_PROCESS)
+
 #include "ArgumentCoders.h"
 #include "Attachment.h"
 #include "SharedWorkerProcessCreationParameters.h"
@@ -192,3 +194,5 @@ void SharedWorkerProcess::minimumLifetimeTimerFired()
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(SHARED_WORKER_PROCESS)

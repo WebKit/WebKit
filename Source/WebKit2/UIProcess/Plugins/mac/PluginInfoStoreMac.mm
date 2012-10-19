@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,8 @@
 
 #import "config.h"
 #import "PluginInfoStore.h"
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #import "NetscapePluginModule.h"
 #import "WebKitSystemInterface.h"
@@ -73,13 +75,7 @@ Vector<String> PluginInfoStore::individualPluginPaths()
 
 bool PluginInfoStore::getPluginInfo(const String& pluginPath, PluginModuleInfo& plugin)
 {
-#if ENABLE(NETSCAPE_PLUGIN_API)
     return NetscapePluginModule::getPluginInfo(pluginPath, plugin);
-#else
-    UNUSED_PARAM(pluginPath);
-    UNUSED_PARAM(plugin);
-    return false;
-#endif
 }
 
 static size_t findPluginWithBundleIdentifier(const Vector<PluginModuleInfo>& plugins, const String& bundleIdentifier)
@@ -155,3 +151,5 @@ String PluginInfoStore::getMIMETypeForExtension(const String& extension)
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

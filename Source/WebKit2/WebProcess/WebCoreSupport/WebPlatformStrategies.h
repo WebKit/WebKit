@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,7 +55,6 @@ private:
     // WebCore::PluginStrategy
     virtual void refreshPlugins() OVERRIDE;
     virtual void getPluginInfo(const WebCore::Page*, Vector<WebCore::PluginInfo>&) OVERRIDE;
-    void populatePluginCache();
 
     // WebCore::VisitedLinkStrategy
     virtual bool isLinkVisited(WebCore::Page*, WebCore::LinkHash, const WebCore::KURL& baseURL, const WTF::AtomicString& attributeURL) OVERRIDE;
@@ -80,12 +79,18 @@ private:
     virtual void setStringForType(const String&, const String& pasteboardType, const String& pasteboardName) OVERRIDE;
 #endif
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    // WebCore::PluginStrategy implementation.
+    void populatePluginCache();
     bool m_pluginCacheIsPopulated;
     bool m_shouldRefreshPlugins;
     Vector<WebCore::PluginInfo> m_cachedPlugins;
+#endif // ENABLE(PLUGIN_PROCESS)
 };
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 void handleDidGetPlugins(uint64_t requestID, const Vector<WebCore::PluginInfo>&);
+#endif // ENABLE(PLUGIN_PROCESS)
 
 } // namespace WebKit
 

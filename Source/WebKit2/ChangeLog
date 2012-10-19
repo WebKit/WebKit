@@ -1,3 +1,85 @@
+2012-10-18  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WK2] WebKit2 does not build without PLUGIN_PROCESS on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=99771
+
+        Reviewed by Anders Carlsson.
+
+        Add ENABLE(PLUGIN_PROCESS), ENABLE(SHARED_WORKER_PROCESS) and ENABLE(NETSCAPE_PLUGIN_API)
+        as needed to exclude the code with dependencies on PLUGIN_PROCESS.
+
+        * Platform/CoreIPC/MessageID.h:
+        * Shared/SharedWorkerProcessCreationParameters.cpp:
+        * Shared/SharedWorkerProcessCreationParameters.h:
+        * SharedWorkerProcess/SharedWorkerProcess.cpp:
+        * SharedWorkerProcess/SharedWorkerProcess.h:
+        * SharedWorkerProcess/SharedWorkerProcess.messages.in:
+        * SharedWorkerProcess/mac/SharedWorkerProcessMac.mm:
+        * SharedWorkerProcess/mac/SharedWorkerProcessMainMac.mm:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetAdditionalPluginsDirectory):
+        (WKContextGetPluginSiteDataManager):
+        * UIProcess/API/C/WKPluginSiteDataManager.cpp:
+        (WKPluginSiteDataManagerGetTypeID):
+        (WKPluginSiteDataManagerGetSitesWithData):
+        * UIProcess/Launcher/ProcessLauncher.cpp:
+        (WebKit::ProcessLauncher::processTypeAsString):
+        (WebKit::ProcessLauncher::getProcessTypeFromString):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::createProcess):
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        * UIProcess/Plugins/PluginInfoStore.h:
+        * UIProcess/Plugins/WebPluginSiteDataManager.cpp:
+        * UIProcess/Plugins/WebPluginSiteDataManager.h:
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::getPluginInfo):
+        * UIProcess/SharedWorkers/SharedWorkerProcessManager.cpp:
+        * UIProcess/SharedWorkers/SharedWorkerProcessManager.h:
+        * UIProcess/SharedWorkers/SharedWorkerProcessProxy.cpp:
+        * UIProcess/SharedWorkers/SharedWorkerProcessProxy.h:
+        * UIProcess/SharedWorkers/SharedWorkerProcessProxy.messages.in:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::~WebContext):
+        (WebKit::WebContext::shouldTerminate):
+        (WebKit::WebContext::disconnectProcess):
+        (WebKit):
+        * UIProcess/WebContext.h:
+        (WebContext):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::canShowMIMEType):
+        (WebKit):
+        (WebKit::WebPageProxy::didBlockInsecurePluginVersion):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit):
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebKit2Prefix.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin):
+        (WebKit::WebFrameLoaderClient::recreatePlugin):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::WebPlatformStrategies):
+        (WebKit::WebPlatformStrategies::refreshPlugins):
+        (WebKit::WebPlatformStrategies::getPluginInfo):
+        (WebKit):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        (WebPlatformStrategies):
+        (WebKit):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit):
+        (WebKit::WebPage::createPlugin):
+        (WebKit::canPluginHandleResponse):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        * WebProcess/WebProcess.cpp:
+        (WebKit):
+        * WebProcess/WebProcess.h:
+        (WebProcess):
+        * WebProcess/WebProcess.messages.in:
+
 2012-10-18  Laszlo Gombos  <l.gombos@samsung.com>
 
         [EFL] Buildfix if Netscape plugin support is disabled

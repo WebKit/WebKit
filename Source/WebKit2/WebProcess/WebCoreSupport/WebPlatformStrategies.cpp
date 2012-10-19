@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,8 +56,10 @@ void WebPlatformStrategies::initialize()
 }
 
 WebPlatformStrategies::WebPlatformStrategies()
+#if ENABLE(NETSCAPE_PLUGIN_API)
     : m_pluginCacheIsPopulated(false)
     , m_shouldRefreshPlugins(false)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 {
 }
 
@@ -92,19 +94,24 @@ void WebPlatformStrategies::notifyCookiesChanged()
 
 void WebPlatformStrategies::refreshPlugins()
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     m_cachedPlugins.clear();
     m_pluginCacheIsPopulated = false;
     m_shouldRefreshPlugins = true;
 
     populatePluginCache();
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 }
 
 void WebPlatformStrategies::getPluginInfo(const WebCore::Page*, Vector<WebCore::PluginInfo>& plugins)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     populatePluginCache();
     plugins = m_cachedPlugins;
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 static BlockingResponseMap<Vector<WebCore::PluginInfo> >& responseMap()
 {
     AtomicallyInitializedStatic(BlockingResponseMap<Vector<WebCore::PluginInfo> >&, responseMap = *new BlockingResponseMap<Vector<WebCore::PluginInfo> >);
@@ -138,6 +145,7 @@ void WebPlatformStrategies::populatePluginCache()
     m_shouldRefreshPlugins = false;
     m_pluginCacheIsPopulated = true;
 }
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 // VisitedLinkStrategy
 

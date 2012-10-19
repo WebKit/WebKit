@@ -1,3 +1,13 @@
+2012-10-18  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WK2] WebKit2 does not build without PLUGIN_PROCESS on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=99771
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in: The symbol is used by WebCore Test Support, move it
+        to the general section.
+
 2012-10-18  Adam Barth  <abarth@webkit.org>
 
         [V8] fast/dom/gc-9.html fails for document.styleSheets

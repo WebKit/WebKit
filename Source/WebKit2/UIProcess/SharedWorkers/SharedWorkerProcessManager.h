@@ -26,6 +26,8 @@
 #ifndef SharedWorkerProcessManager_h
 #define SharedWorkerProcessManager_h
 
+#if ENABLE(SHARED_WORKER_PROCESS)
+
 #include "PluginModuleInfo.h"
 #include "WebProcessProxyMessages.h"
 #include <wtf/Forward.h>
@@ -60,5 +62,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(SHARED_WORKER_PROCESS)
 
 #endif // SharedWorkerProcessManager_h

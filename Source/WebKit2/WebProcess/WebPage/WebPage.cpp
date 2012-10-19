@@ -451,6 +451,7 @@ void WebPage::initializeInjectedBundleDiagnosticLoggingClient(WKBundlePageDiagno
     m_logDiagnosticMessageClient.initialize(client);
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* pluginElement, const Plugin::Parameters& parameters)
 {
     String pluginPath;
@@ -488,13 +489,12 @@ PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* plu
 
 #if ENABLE(PLUGIN_PROCESS)
     return PluginProxy::create(pluginPath);
-#elif ENABLE(NETSCAPE_PLUGIN_API)
+#else
     NetscapePlugin::setSetExceptionFunction(NPRuntimeObjectMap::setGlobalException);
     return NetscapePlugin::create(NetscapePluginModule::getOrCreate(pluginPath));
-#else
-    return 0;
 #endif
 }
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 EditorState WebPage::editorState() const
 {
@@ -3446,6 +3446,7 @@ void WebPage::setScrollingPerformanceLoggingEnabled(bool enabled)
 
 static bool canPluginHandleResponse(const ResourceResponse& response)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     String pluginPath;
     bool blocked;
     
@@ -3453,6 +3454,9 @@ static bool canPluginHandleResponse(const ResourceResponse& response)
         return false;
     
     return !blocked && !pluginPath.isEmpty();
+#else
+    return false;
+#endif
 }
 
 bool WebPage::shouldUseCustomRepresentationForResponse(const ResourceResponse& response) const

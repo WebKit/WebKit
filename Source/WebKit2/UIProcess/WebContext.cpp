@@ -150,7 +150,9 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     m_networkInfoManagerProxy = WebNetworkInfoManagerProxy::create(this);
 #endif
     m_notificationManagerProxy = WebNotificationManagerProxy::create(this);
+#if ENABLE(NETSCAPE_PLUGIN_API)
     m_pluginSiteDataManager = WebPluginSiteDataManager::create(this);
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
     m_resourceCacheManagerProxy = WebResourceCacheManagerProxy::create(this);
 #if USE(SOUP)
     m_soupRequestManagerProxy = WebSoupRequestManagerProxy::create(this);
@@ -221,8 +223,10 @@ WebContext::~WebContext()
     m_notificationManagerProxy->invalidate();
     m_notificationManagerProxy->clearContext();
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     m_pluginSiteDataManager->invalidate();
     m_pluginSiteDataManager->clearContext();
+#endif
 
     m_resourceCacheManagerProxy->invalidate();
     m_resourceCacheManagerProxy->clearContext();
@@ -473,8 +477,10 @@ bool WebContext::shouldTerminate(WebProcessProxy* process)
         return false;
     if (!m_mediaCacheManagerProxy->shouldTerminate(process))
         return false;
+#if ENABLE(NETSCAPE_PLUGIN_API)
     if (!m_pluginSiteDataManager->shouldTerminate(process))
         return false;
+#endif
     if (!m_resourceCacheManagerProxy->shouldTerminate(process))
         return false;
 
@@ -551,7 +557,7 @@ void WebContext::disconnectProcess(WebProcessProxy* process)
 
     // When out of process plug-ins are enabled, we don't want to invalidate the plug-in site data
     // manager just because the web process crashes since it's not involved.
-#if !ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API) && !ENABLE(PLUGIN_PROCESS)
     m_pluginSiteDataManager->invalidate();
 #endif
 
@@ -663,6 +669,7 @@ WebContext::Statistics& WebContext::statistics()
     return statistics;
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 void WebContext::setAdditionalPluginsDirectory(const String& directory)
 {
     Vector<String> directories;
@@ -670,6 +677,7 @@ void WebContext::setAdditionalPluginsDirectory(const String& directory)
 
     m_pluginInfoStore.setAdditionalPluginsDirectories(directories);
 }
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 void WebContext::setAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
 {

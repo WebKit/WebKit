@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,12 +73,16 @@ const char* ProcessLauncher::processTypeAsString(ProcessType processType)
     switch (processType) {
     case WebProcess:
         return "webprocess";
+#if ENABLE(PLUGIN_PROCESS)
     case PluginProcess:
         return "pluginprocess";
+#endif
     case NetworkProcess:
         return "networkprocess";
+#if ENABLE(SHARED_WORKER_PROCESS)
     case SharedWorkerProcess:
         return "sharedworkerprocess";
+#endif
     }
 
     ASSERT_NOT_REACHED();
@@ -92,20 +96,24 @@ bool ProcessLauncher::getProcessTypeFromString(const char* string, ProcessType& 
         return true;
     }
 
+#if ENABLE(PLUGIN_PROCESS)
     if (!strcmp(string, "pluginprocess")) {
         processType = PluginProcess;
         return true;
     }
+#endif
 
     if (!strcmp(string, "networkprocess")) {
         processType = NetworkProcess;
         return true;
     }
 
+#if ENABLE(SHARED_WORKER_PROCESS)
     if (!strcmp(string, "sharedworkerprocess")) {
         processType = SharedWorkerProcess;
         return true;
     }
+#endif
 
     return false;
 }

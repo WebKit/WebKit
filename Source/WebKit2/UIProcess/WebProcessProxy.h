@@ -141,19 +141,21 @@ private:
     void shouldTerminate(bool& shouldTerminate);
 
     // Plugins
+#if ENABLE(NETSCAPE_PLUGIN_API)
     void getPlugins(CoreIPC::Connection*, uint64_t requestID, bool refresh);
     void getPluginPath(const String& mimeType, const String& urlString, String& pluginPath, bool& blocked);
+    void handleGetPlugins(uint64_t requestID, bool refresh);
+    void sendDidGetPlugins(uint64_t requestID, PassOwnPtr<Vector<WebCore::PluginInfo> >);
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 #if ENABLE(PLUGIN_PROCESS)
     void getPluginProcessConnection(const String& pluginPath, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>);
-#else
+#elif ENABLE(NETSCAPE_PLUGIN_API)
     void didGetSitesWithPluginData(const Vector<String>& sites, uint64_t callbackID);
     void didClearPluginSiteData(uint64_t callbackID);
 #endif
-
-    void handleGetPlugins(uint64_t requestID, bool refresh);
-    void sendDidGetPlugins(uint64_t requestID, PassOwnPtr<Vector<WebCore::PluginInfo> >);
-
+#if ENABLE(SHARED_WORKER_PROCESS)
     void getSharedWorkerProcessConnection(const String& url, const String& name, PassRefPtr<Messages::WebProcessProxy::GetSharedWorkerProcessConnection::DelayedReply>);
+#endif
 
 #if USE(SECURITY_FRAMEWORK)
     void secItemRequest(CoreIPC::Connection*, uint64_t requestID, const SecItemRequestData&);

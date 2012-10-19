@@ -26,6 +26,8 @@
 #include "config.h"
 #include "SharedWorkerProcessManager.h"
 
+#if ENABLE(SHARED_WORKER_PROCESS)
+
 #include "SharedWorkerProcessProxy.h"
 #include "WebContext.h"
 #include <wtf/StdLibExtras.h>
@@ -70,3 +72,5 @@ SharedWorkerProcessProxy* SharedWorkerProcessManager::getOrCreateSharedWorkerPro
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(SHARED_WORKER_PROCESS)

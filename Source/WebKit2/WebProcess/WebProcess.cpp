@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -832,7 +832,7 @@ void WebProcess::clearApplicationCache()
     cacheStorage().empty();
 }
 
-#if !ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API) && !ENABLE(PLUGIN_PROCESS)
 void WebProcess::getSitesWithPluginData(const Vector<String>& pluginPaths, uint64_t callbackID)
 {
     LocalTerminationDisabler terminationDisabler(*this);
@@ -1093,6 +1093,7 @@ void WebProcess::setTextCheckerState(const TextCheckerState& textCheckerState)
     }
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 void WebProcess::didGetPlugins(CoreIPC::Connection*, uint64_t requestID, const Vector<WebCore::PluginInfo>& plugins)
 {
 #if USE(PLATFORM_STRATEGIES)
@@ -1100,5 +1101,6 @@ void WebProcess::didGetPlugins(CoreIPC::Connection*, uint64_t requestID, const V
     handleDidGetPlugins(requestID, plugins);
 #endif
 }
+#endif // ENABLE(PLUGIN_PROCESS)
 
 } // namespace WebKit

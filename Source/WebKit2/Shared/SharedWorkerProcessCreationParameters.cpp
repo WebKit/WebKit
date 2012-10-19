@@ -26,6 +26,8 @@
 #include "config.h"
 #include "SharedWorkerProcessCreationParameters.h"
 
+#if ENABLE(SHARED_WORKER_PROCESS)
+
 #include "ArgumentCoders.h"
 
 namespace WebKit {
@@ -60,3 +62,5 @@ bool SharedWorkerProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* dec
 
 
 } // namespace WebKit
+
+#endif // ENABLE(SHARED_WORKER_PROCESS)

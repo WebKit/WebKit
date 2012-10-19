@@ -34,16 +34,20 @@ messages -> WebProcessProxy {
     ShouldTerminate() -> (bool shouldTerminate)
 
     # Plugin messages.
+#if ENABLE(NETSCAPE_PLUGIN_API)
     GetPlugins(uint64_t requestID, bool refresh) DispatchOnConnectionQueue
     GetPluginPath(WTF::String mimeType, WTF::String urlString) -> (WTF::String pluginPath, bool blocked)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 #if ENABLE(PLUGIN_PROCESS)
     GetPluginProcessConnection(WTF::String pluginPath) -> (CoreIPC::Attachment connectionHandle, bool supportsAsynchronousInitialization) Delayed
 #endif
-#if !ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API) && !ENABLE(PLUGIN_PROCESS)
     void DidGetSitesWithPluginData(Vector<WTF::String> sites, uint64_t callbackID)
     void DidClearPluginSiteData(uint64_t callbackID)
 #endif
+#if ENABLE(SHARED_WORKER_PROCESS)
     GetSharedWorkerProcessConnection(WTF::String url, WTF::String name) -> (CoreIPC::Attachment connectionHandle) Delayed
+#endif
 
 #if USE(SECURITY_FRAMEWORK)
     SecItemRequest(uint64_t requestID, WebKit::SecItemRequestData request) DispatchOnConnectionQueue

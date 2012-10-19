@@ -26,6 +26,8 @@
 #import "config.h"
 #import "SharedWorkerProcessMain.h"
 
+#if ENABLE(SHARED_WORKER_PROCESS)
+
 #import "CommandLine.h"
 #import "EnvironmentUtilities.h"
 #import "SharedWorkerProcess.h"
@@ -105,3 +107,5 @@ int SharedWorkerProcessMain(const CommandLine& commandLine)
 }
 
 }
+
+#endif // ENABLE(SHARED_WORKER_PROCESS)

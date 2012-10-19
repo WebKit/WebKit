@@ -26,6 +26,8 @@
 #include "config.h"
 #include "SharedWorkerProcessProxy.h"
 
+#if ENABLE(SHARED_WORKER_PROCESS)
+
 #include "SharedWorkerProcessCreationParameters.h"
 #include "SharedWorkerProcessManager.h"
 #include "SharedWorkerProcessMessages.h"
@@ -181,3 +183,5 @@ void SharedWorkerProcessProxy::didCreateWebProcessConnection(const CoreIPC::Atta
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(SHARED_WORKER_PROCESS)

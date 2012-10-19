@@ -130,10 +130,12 @@ public:
     void didReceiveSynchronousMessageFromInjectedBundle(const String&, APIObject*, RefPtr<APIObject>& returnData);
 
     void populateVisitedLinks();
-    
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
     void setAdditionalPluginsDirectory(const String&);
 
     PluginInfoStore& pluginInfoStore() { return m_pluginInfoStore; }
+#endif
     String applicationCacheDirectory();
 
     void setAlwaysUsesComplexTextCodePath(bool);
@@ -195,7 +197,9 @@ public:
     WebNetworkInfoManagerProxy* networkInfoManagerProxy() const { return m_networkInfoManagerProxy.get(); }
 #endif
     WebNotificationManagerProxy* notificationManagerProxy() const { return m_notificationManagerProxy.get(); }
+#if ENABLE(NETSCAPE_PLUGIN_API)
     WebPluginSiteDataManager* pluginSiteDataManager() const { return m_pluginSiteDataManager.get(); }
+#endif
     WebResourceCacheManagerProxy* resourceCacheManagerProxy() const { return m_resourceCacheManagerProxy.get(); }
 #if USE(SOUP)
     WebSoupRequestManagerProxy* soupRequestManagerProxy() const { return m_soupRequestManagerProxy.get(); }
@@ -315,10 +319,12 @@ private:
     WebContextInjectedBundleClient m_injectedBundleClient;
 
     WebContextConnectionClient m_connectionClient;
-    
+
     WebHistoryClient m_historyClient;
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     PluginInfoStore m_pluginInfoStore;
+#endif
     VisitedLinkProvider m_visitedLinkProvider;
         
     HashSet<String> m_schemesToRegisterAsEmptyDocument;
@@ -360,7 +366,9 @@ private:
     RefPtr<WebNetworkInfoManagerProxy> m_networkInfoManagerProxy;
 #endif
     RefPtr<WebNotificationManagerProxy> m_notificationManagerProxy;
+#if ENABLE(NETSCAPE_PLUGIN_API)
     RefPtr<WebPluginSiteDataManager> m_pluginSiteDataManager;
+#endif
     RefPtr<WebResourceCacheManagerProxy> m_resourceCacheManagerProxy;
 #if USE(SOUP)
     RefPtr<WebSoupRequestManagerProxy> m_soupRequestManagerProxy;
