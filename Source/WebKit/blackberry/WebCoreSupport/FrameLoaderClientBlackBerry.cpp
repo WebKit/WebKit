@@ -1097,8 +1097,8 @@ void FrameLoaderClientBlackBerry::restoreViewState()
     if (!scrollChanged && !scaleChanged && !reflowChanged && !orientationChanged)
         return;
 
-    // When rotate happens, only zoom when previous page was zoomToFitScale, otherwise keep old scale.
-    if (orientationChanged && viewState.isZoomToFitScale)
+    // When rotate happens, only zoom when previous page was zoomToFitScale and didn't have virtual viewport, otherwise keep old scale.
+    if (orientationChanged && viewState.isZoomToFitScale && !m_webPagePrivate->hasVirtualViewport())
         scale = BlackBerry::Platform::Graphics::Screen::primaryScreen()->width() * scale / static_cast<double>(BlackBerry::Platform::Graphics::Screen::primaryScreen()->height());
 
     // Don't flash checkerboard before WebPagePrivate::restoreHistoryViewState() finished.
