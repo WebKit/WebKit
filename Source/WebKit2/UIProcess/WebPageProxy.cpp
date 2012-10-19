@@ -782,7 +782,7 @@ bool WebPageProxy::canShowMIMEType(const String& mimeType) const
 #if ENABLE(NETSCAPE_PLUGIN_API)
     String newMimeType = mimeType;
     PluginModuleInfo plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, KURL());
-    if (!plugin.path.isNull())
+    if (!plugin.path.isNull() && m_pageGroup->preferences()->pluginsEnabled())
         return true;
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
     return false;

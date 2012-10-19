@@ -1,3 +1,19 @@
+2012-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebPageProxy::canShowMIMEType() should return false for plugins when they are disabled
+        https://bugs.webkit.org/show_bug.cgi?id=99449
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/gtk/tests/GNUmakefile.am:
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewCanShowMIMEType): Test that
+        webkit_web_view_can_show_mime_type() returns FALSE if plugins are
+        disabled.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::canShowMIMEType): Return false for
+        MIME-Type of plugins if they are disabled.
+
 2012-10-18  Brady Eidson  <beidson@apple.com>
 
         Move ConnectionStack out of WebProcessConnection into its own files.
