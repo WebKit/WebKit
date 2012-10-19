@@ -33,6 +33,7 @@
 #include "FloatQuad.h"
 #include "FractionalLayoutRect.h"
 #include "LayoutTypes.h"
+#include "TextIterator.h"
 #include "VisiblePosition.h"
 #include "VisibleSelection.h"
 #include <wtf/Forward.h>
@@ -573,6 +574,7 @@ public:
     virtual IntPoint clickPoint();
     static IntRect boundingBoxForQuads(RenderObject*, const Vector<FloatQuad>&);
     
+    TextIteratorBehavior textIteratorBehaviorForTextRange() const;
     virtual PlainTextRange selectedTextRange() const { return PlainTextRange(); }
     unsigned selectionStart() const { return selectedTextRange().start; }
     unsigned selectionEnd() const { return selectedTextRange().length; }
@@ -612,6 +614,9 @@ public:
     virtual void updateAccessibilityRole() { }
     const AccessibilityChildrenVector& children();
     virtual void addChildren() { }
+    virtual void addChild(AccessibilityObject*) { }
+    virtual void insertChild(AccessibilityObject*, unsigned) { }
+    
     virtual bool canHaveChildren() const { return true; }
     virtual bool hasChildren() const { return m_haveChildren; }
     virtual void updateChildrenIfNecessary();

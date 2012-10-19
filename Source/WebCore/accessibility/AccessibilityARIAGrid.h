@@ -58,7 +58,7 @@ private:
     virtual bool supportsSelectedRows() { return true; }    
     virtual bool isMultiSelectable() const { return true; }
     
-    bool addChild(AccessibilityObject*, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount);
+    bool addTableCellChild(AccessibilityObject*, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount);
 };
 
 } // namespace WebCore 

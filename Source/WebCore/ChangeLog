@@ -1,3 +1,49 @@
+2012-10-19  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: aria-hidden=false does not work as expected
+        https://bugs.webkit.org/show_bug.cgi?id=98787
+
+        Reviewed by Beth Dakin.
+
+        ARIA requires that aria-hidden=false override an element's native visibility and include that
+        node in the AX hierarchy.
+
+        To accomplish this we have to allow invisible items to be included, as well as items that
+        have no renderers associated with them.
+
+        Test: accessibility/aria-hidden-negates-no-visibility.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::getOrCreate):
+        * accessibility/AccessibilityARIAGrid.cpp:
+        (WebCore::AccessibilityARIAGrid::addTableCellChild):
+        (WebCore::AccessibilityARIAGrid::addChildren):
+        * accessibility/AccessibilityARIAGrid.h:
+        (AccessibilityARIAGrid):
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore):
+       (WebCore::AccessibilityNodeObject::boundingBoxRect):
+        (WebCore::AccessibilityNodeObject::insertChild):
+        (WebCore::AccessibilityNodeObject::addChild):
+        (WebCore::AccessibilityNodeObject::addChildren):
+        (WebCore::AccessibilityNodeObject::textUnderElement):
+        * accessibility/AccessibilityNodeObject.h:
+        (AccessibilityNodeObject):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::textIteratorBehaviorForTextRange):
+        (WebCore):
+        * accessibility/AccessibilityObject.h:
+        (AccessibilityObject):
+        (WebCore::AccessibilityObject::addChild):
+        (WebCore::AccessibilityObject::insertChild):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore):
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnoredBase):
+        (WebCore::AccessibilityRenderObject::addHiddenChildren):
+        (WebCore::AccessibilityRenderObject::addChildren):
+        * accessibility/AccessibilityRenderObject.h:
+        (AccessibilityRenderObject):
+
 2012-10-19  Michael Saboff  <msaboff@apple.com>
 
         Add String version of visitedLinkHash() to properly handle 8-bit URL Strings.

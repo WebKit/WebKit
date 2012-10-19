@@ -208,7 +208,9 @@ private:
 };
 
 bool nodeHasRole(Node*, const String& role);
-
+// This will let you know if aria-hidden was explicitly set to false.
+bool isNodeAriaVisible(Node*);
+    
 #if !HAVE(ACCESSIBILITY)
 inline AXObjectCache::AXObjectCache(const Document* doc) : m_document(const_cast<Document*>(doc)), m_notificationPostTimer(this, 0) { }
 inline AXObjectCache::~AXObjectCache() { }
@@ -224,6 +226,7 @@ inline AccessibilityObject* AXObjectCache::rootObject() { return 0; }
 inline AccessibilityObject* AXObjectCache::rootObjectForFrame(Frame*) { return 0; }
 inline Element* AXObjectCache::rootAXEditableElement(Node*) { return 0; }
 inline bool nodeHasRole(Node*, const String&) { return false; }
+inline bool isNodeAriaVisible(Node*) { return true; }
 inline const Element* AXObjectCache::rootAXEditableElement(const Node*) { return 0; }
 inline void AXObjectCache::attachWrapper(AccessibilityObject*) { }
 inline void AXObjectCache::checkedStateChanged(Node*) { }
