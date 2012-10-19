@@ -1,3 +1,34 @@
+2012-10-19  Max Vujovic  <mvujovic@adobe.com>
+
+        [WebGL] getUniformLocation fails for uniform array name without array brackets
+        https://bugs.webkit.org/show_bug.cgi?id=99854
+
+        Reviewed by Dean Jackson.
+
+        Before this patch, gl.getUniformLocation(program, "array[0]") would return the array
+        location, but gl.getUniformLocation(program, "array") would not. Now, the latter also
+        returns the array location.
+
+        In the process of adding a check to the following Khronos WebGL conformance test:
+        conformance/glsl/misc/glsl-long-variable-names.html
+
+        * platform/graphics/ANGLEWebKitBridge.cpp:
+        (WebCore::getSymbolInfo):
+            Before, we used to check that the symbol size was greater than one to determine that the
+            symbol was an array. However, this doesn't identify arrays of length one. Now, we check
+            if the symbol name ends in "[0]", since ANGLE appends this suffix to array symbol
+            names.
+            If the symbol is an array, we strip off the "[0]" and add a symbol with just the base
+            name. We set the isArray flag on the symbol, so we don't lose the information that it is
+            an array.
+            Then, we create symbols for each array element like before. However, instead of
+            replacing the "0" in array[0]" with each index, we take the base name "array" and
+            append array brackets containing each index (e.g. "array" + "[7]").
+        * platform/graphics/ANGLEWebKitBridge.h:
+        (ANGLEShaderSymbol):
+            Add isArray boolean to ANGLEShaderSymbol. Since array symbols don't end in "[0]"
+            anymore, this is the only way to identify arrays.
+
 2012-10-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, rolling out r131915.

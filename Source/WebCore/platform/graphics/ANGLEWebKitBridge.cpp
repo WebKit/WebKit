@@ -95,21 +95,32 @@ static bool getSymbolInfo(ShHandle compiler, ShShaderInfo symbolType, Vector<ANG
         // is a subset of Latin-1 as specified by the OpenGL ES Shading Language, Section 3.1 and
         // WebGL, Section "Characters Outside the GLSL Source Character Set".
 
-        // If the variable is an array, add symbols for each array element
-        if (symbol.size > 1) {
+        String name = String(nameBuffer.data());
+        String mappedName = String(mappedNameBuffer.data());
+        
+        // ANGLE returns array names in the format "array[0]".
+        // The only way to know if a symbol is an array is to check if it ends with "[0]".
+        // We can't check the size because regular symbols and arrays of length 1 both have a size of 1.
+        symbol.isArray = name.endsWith("[0]") && mappedName.endsWith("[0]");
+        if (symbol.isArray) {
+            // Add a symbol for the array name without the "[0]" suffix.
+            name.truncate(name.length() - 3);
+            mappedName.truncate(mappedName.length() - 3);
+        }
+
+        symbol.name = name;
+        symbol.mappedName = mappedName;
+        symbols.append(symbol);
+    
+        if (symbol.isArray) {
+            // Add symbols for each array element.
+            symbol.isArray = false;
             for (int i = 0; i < symbol.size; i++) {
-                String name = nameBuffer.data();
-                String mappedName = mappedNameBuffer.data();
-                name.replace(name.length() - 2, 1, String::number(i));
-                mappedName.replace(mappedName.length() - 2, 1, String::number(i));
-                symbol.name = name;
-                symbol.mappedName = mappedName;
+                String arrayBrackets = "[" + String::number(i) + "]";
+                symbol.name = name + arrayBrackets;
+                symbol.mappedName = mappedName + arrayBrackets;
                 symbols.append(symbol);
             }
-        } else {
-            symbol.name = String(nameBuffer.data());
-            symbol.mappedName = String(mappedNameBuffer.data());
-            symbols.append(symbol);
         }
     }
     return true;

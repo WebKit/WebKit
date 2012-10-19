@@ -53,6 +53,7 @@ struct ANGLEShaderSymbol {
     String mappedName;
     ShDataType dataType;
     int size;
+    bool isArray;
 
     bool isSampler() const
     {
