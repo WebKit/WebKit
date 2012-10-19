@@ -1,3 +1,136 @@
+2012-10-19  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Pixel tests need rebaseline
+        https://bugs.webkit.org/show_bug.cgi?id=99323
+
+        Unreviewed pixel rebaseline.
+
+        Part 5.
+        Rebaseline pixel results the rest of the fast directory.
+        All of these tests producing correct results, only the expectations
+        were outdated. Most of the differenes was not detectable by looking
+        at the expected and actual results, only ImageDiff sees the difference.
+
+        * platform/qt/fast/dom/Element/class-attribute-whitespace-expected.png:
+        * platform/qt/fast/dom/HTMLLinkElement/pending-stylesheet-count-expected.png:
+        * platform/qt/fast/dom/children-nodes-expected.png:
+        * platform/qt/fast/dom/clone-node-dynamic-style-expected.png:
+        * platform/qt/fast/dynamic/create-renderer-for-whitespace-only-text-expected.png:
+        * platform/qt/fast/dynamic/float-in-trailing-whitespace-after-last-line-break-expected.png:
+        * platform/qt/fast/dynamic/insert-before-table-part-in-continuation-expected.png:
+        * platform/qt/fast/dynamic/selection-highlight-adjust-expected.png:
+        * platform/qt/fast/dynamic/staticY-marking-parents-regression-expected.png:
+        * platform/qt/fast/dynamic/window-resize-scrollbars-test-expected.png:
+        * platform/qt/fast/events/pointer-events-2-expected.png:
+        * platform/qt/fast/forms/listbox-scrollbar-incremental-load-expected.png:
+        * platform/qt/fast/forms/select-change-listbox-size-expected.png:
+        * platform/qt/fast/images/color-jpeg-with-color-profile-expected.png:
+        * platform/qt/fast/images/imagemap-focus-ring-zero-outline-width-expected.png:
+        * platform/qt/fast/inline/br-text-decoration-expected.png:
+        * platform/qt/fast/inline/continuation-outlines-expected.png:
+        * platform/qt/fast/inline/inline-borders-with-bidi-override-expected.png:
+        * platform/qt/fast/inline/inline-box-background-expected.png:
+        * platform/qt/fast/inline/inline-box-background-long-image-expected.png:
+        * platform/qt/fast/inline/inline-box-background-repeat-x-expected.png:
+        * platform/qt/fast/inline/inline-box-background-repeat-y-expected.png:
+        * platform/qt/fast/layers/normal-flow-hit-test-expected.png:
+        * platform/qt/fast/layers/opacity-outline-expected.png:
+        * platform/qt/fast/layers/scroll-rect-to-visible-expected.png:
+        * platform/qt/fast/line-grid/line-grid-contains-value-expected.png:
+        * platform/qt/fast/line-grid/line-grid-inside-columns-expected.png:
+        * platform/qt/fast/line-grid/line-grid-into-columns-expected.png:
+        * platform/qt/fast/lists/003-expected.png:
+        * platform/qt/fast/lists/003-vertical-expected.png:
+        * platform/qt/fast/lists/marker-before-empty-inline-expected.png:
+        * platform/qt/fast/lists/marker-image-error-expected.png:
+        * platform/qt/fast/lists/markers-in-selection-expected.png:
+        * platform/qt/fast/lists/ordered-list-with-no-ol-tag-expected.png:
+        * platform/qt/fast/lists/scrolled-marker-paint-expected.png:
+        * platform/qt/fast/multicol/column-rules-expected.png:
+        * platform/qt/fast/multicol/column-rules-stacking-expected.png:
+        * platform/qt/fast/multicol/columns-shorthand-parsing-expected.png:
+        * platform/qt/fast/multicol/float-multicol-expected.png:
+        * platform/qt/fast/multicol/nested-columns-expected.png:
+        * platform/qt/fast/multicol/overflow-across-columns-percent-height-expected.png:
+        * platform/qt/fast/multicol/positioned-with-constrained-height-expected.png:
+        * platform/qt/fast/multicol/span/anonymous-style-inheritance-expected.png:
+        * platform/qt/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.png:
+        * platform/qt/fast/multicol/span/span-as-immediate-child-generated-content-expected.png:
+        * platform/qt/fast/multicol/span/span-as-immediate-child-property-removal-expected.png:
+        * platform/qt/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.png:
+        * platform/qt/fast/multicol/span/span-as-immediate-columns-child-expected.png:
+        * platform/qt/fast/multicol/span/span-as-immediate-columns-child-removal-expected.png:
+        * platform/qt/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.png:
+        * platform/qt/fast/multicol/span/span-as-nested-columns-child-expected.png:
+        * platform/qt/fast/multicol/span/span-margin-collapsing-expected.png:
+        * platform/qt/fast/multicol/vertical-lr/column-rules-expected.png:
+        * platform/qt/fast/multicol/vertical-lr/float-paginate-complex-expected.png:
+        * platform/qt/fast/multicol/vertical-lr/nested-columns-expected.png:
+        * platform/qt/fast/multicol/vertical-rl/column-rules-expected.png:
+        * platform/qt/fast/multicol/vertical-rl/float-paginate-complex-expected.png:
+        * platform/qt/fast/multicol/vertical-rl/nested-columns-expected.png:
+        * platform/qt/fast/overflow/hit-test-overflow-controls-expected.png:
+        * platform/qt/fast/overflow/image-selection-highlight-expected.png:
+        * platform/qt/fast/overflow/overflow-focus-ring-expected.png:
+        * platform/qt/fast/overflow/overflow-rtl-inline-scrollbar-expected.png:
+        * platform/qt/fast/overflow/paged-x-div-expected.png:
+        * platform/qt/fast/overflow/paged-x-on-root-expected.png:
+        * platform/qt/fast/overflow/paged-y-div-expected.png:
+        * platform/qt/fast/overflow/paged-y-on-root-expected.png:
+        * platform/qt/fast/overflow/position-fixed-transform-clipping-expected.png:
+        * platform/qt/fast/reflections/reflection-direction-expected.png:
+        * platform/qt/fast/reflections/reflection-with-zoom-expected.png:
+        * platform/qt/fast/regions/percentage-margins-mixed-ltr-dominant-regions-expected.png:
+        * platform/qt/fast/regions/percentage-margins-mixed-rtl-dominant-regions-expected.png:
+        * platform/qt/fast/regions/percentage-margins-rtl-variable-width-regions-expected.png:
+        * platform/qt/fast/regions/percentage-margins-variable-width-regions-expected.png:
+        * platform/qt/fast/repaint/float-overflow-expected.png:
+        * platform/qt/fast/repaint/float-overflow-right-expected.png:
+        * platform/qt/fast/repaint/overflow-scroll-body-appear-expected.png:
+        * platform/qt/fast/replaced/001-expected.png:
+        * platform/qt/fast/replaced/002-expected.png:
+        * platform/qt/fast/replaced/003-expected.png:
+        * platform/qt/fast/replaced/absolute-image-sizing-expected.png:
+        * platform/qt/fast/replaced/image-sizing-expected.png:
+        * platform/qt/fast/replaced/inline-box-wrapper-handover-expected.png:
+        * platform/qt/fast/replaced/selection-rect-in-table-cell-expected.png:
+        * platform/qt/fast/ruby/ruby-block-style-not-updated-expected.png: Added.
+        * platform/qt/fast/ruby/ruby-block-style-not-updated-with-before-after-content-expected.png: Added.
+        * platform/qt/fast/ruby/ruby-inline-style-not-updated-expected.png: Added.
+        * platform/qt/fast/ruby/ruby-inline-style-not-updated-with-before-after-content-expected.png: Added.
+        * platform/qt/fast/selectors/166-expected.png:
+        * platform/qt/fast/table/border-collapsing/004-expected.png:
+        * platform/qt/fast/table/border-collapsing/004-vertical-expected.png:
+        * platform/qt/fast/table/border-collapsing/rtl-border-collapsing-expected.png:
+        * platform/qt/fast/table/border-collapsing/rtl-border-collapsing-vertical-expected.png:
+        * platform/qt/fast/table/edge-offsets-expected.png:
+        * platform/qt/fast/table/fixed-with-auto-with-colspan-vertical-expected.png:
+        * platform/qt/fast/table/frame-and-rules-expected.png:
+        * platform/qt/fast/table/prepend-in-anonymous-table-expected.png:
+        * platform/qt/fast/table/table-row-style-not-updated-expected.png: Added.
+        * platform/qt/fast/table/table-row-style-not-updated-with-before-content-expected.png: Added.
+        * platform/qt/fast/table/table-style-not-updated-expected.png: Added.
+        * platform/qt/fast/text/backslash-to-yen-sign-euc-expected.png:
+        * platform/qt/fast/text/break-word-expected.png:
+        * platform/qt/fast/text/capitalize-empty-generated-string-expected.png:
+        * platform/qt/fast/text/capitalize-preserve-nbsp-expected.png:
+        * platform/qt/fast/text/delete-hard-break-character-expected.png:
+        * platform/qt/fast/text/hyphenate-limit-lines-expected.png:
+        * platform/qt/fast/text/midword-break-hang-expected.png:
+        * platform/qt/fast/text/reset-emptyRun-expected.png:
+        * platform/qt/fast/text/selection-hard-linebreak-expected.png:
+        * platform/qt/fast/text/stroking-decorations-expected.png:
+        * platform/qt/fast/text/text-letter-spacing-expected.png:
+        * platform/qt/fast/text/wbr-expected.png:
+        * platform/qt/fast/text/whitespace/018-expected.png:
+        * platform/qt/fast/text/whitespace/normal-after-nowrap-breaking-expected.png:
+        * platform/qt/fast/text/whitespace/pre-wrap-overflow-selection-expected.png:
+        * platform/qt/fast/transforms/shadows-expected.png:
+        * platform/qt/fast/transforms/transformed-caret-expected.png:
+        * platform/qt/fast/transforms/transforms-with-zoom-expected.png:
+        * platform/qt/fast/writing-mode/box-shadow-vertical-rl-expected.png:
+        * platform/qt/fast/writing-mode/english-lr-text-expected.png:
+
 2012-10-19  Kent Tamura  <tkent@chromium.org>
 
         Use Localizer::monthFormat to construct input[type=month] UI
