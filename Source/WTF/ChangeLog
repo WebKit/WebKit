@@ -1,3 +1,26 @@
+2012-10-19  Anders Carlsson  <andersca@apple.com>
+
+        Deque can use std::reverse_iterator for its reverse iterators
+        https://bugs.webkit.org/show_bug.cgi?id=99789
+
+        Reviewed by Andreas Kling.
+
+        Remove DequeReverseIterator and DequeConstReverseIterator and just use std::reverse_iterator directly.
+        Also, remove the DequeIteratorBase<T, inlineCapacity> to Base typedef - We can already use DequeIteratorBase since it's
+        equivalent to the full class template type.
+
+        * wtf/Deque.h:
+        (WTF::Deque::rbegin):
+        (WTF::Deque::rend):
+        (DequeIteratorBase):
+        (WTF::DequeIteratorBase::assign):
+        (DequeIterator):
+        (DequeConstIterator):
+        (WTF::::checkValidity):
+        (WTF::::DequeIteratorBase):
+        (WTF::=):
+        (WTF::::isEqual):
+
 2012-10-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed buildfix, use C-style comment instead of C++

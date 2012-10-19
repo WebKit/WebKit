@@ -33,6 +33,7 @@
 // FIXME: Could move what Vector and Deque share into a separate file.
 // Deque doesn't actually use Vector.
 
+#include <iterator>
 #include <wtf/PassTraits.h>
 #include <wtf/Vector.h>
 
@@ -41,8 +42,6 @@ namespace WTF {
     template<typename T, size_t inlineCapacity> class DequeIteratorBase;
     template<typename T, size_t inlineCapacity> class DequeIterator;
     template<typename T, size_t inlineCapacity> class DequeConstIterator;
-    template<typename T, size_t inlineCapacity> class DequeReverseIterator;
-    template<typename T, size_t inlineCapacity> class DequeConstReverseIterator;
 
     template<typename T, size_t inlineCapacity = 0>
     class Deque {
@@ -50,8 +49,8 @@ namespace WTF {
     public:
         typedef DequeIterator<T, inlineCapacity> iterator;
         typedef DequeConstIterator<T, inlineCapacity> const_iterator;
-        typedef DequeReverseIterator<T, inlineCapacity> reverse_iterator;
-        typedef DequeConstReverseIterator<T, inlineCapacity> const_reverse_iterator;
+        typedef std::reverse_iterator<iterator> reverse_iterator;
+        typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
         typedef PassTraits<T> Pass;
         typedef typename PassTraits<T>::PassType PassType;
 
@@ -69,10 +68,10 @@ namespace WTF {
         iterator end() { return iterator(this, m_end); }
         const_iterator begin() const { return const_iterator(this, m_start); }
         const_iterator end() const { return const_iterator(this, m_end); }
-        reverse_iterator rbegin() { return reverse_iterator(this, m_end); }
-        reverse_iterator rend() { return reverse_iterator(this, m_start); }
-        const_reverse_iterator rbegin() const { return const_reverse_iterator(this, m_end); }
-        const_reverse_iterator rend() const { return const_reverse_iterator(this, m_start); }
+        reverse_iterator rbegin() { return reverse_iterator(end()); }
+        reverse_iterator rend() { return reverse_iterator(begin()); }
+        const_reverse_iterator rbegin() const { return const_reverse_iterator(end()); }
+        const_reverse_iterator rend() const { return const_reverse_iterator(begin()); }
 
         T& first() { ASSERT(m_start != m_end); return m_buffer.buffer()[m_start]; }
         const T& first() const { ASSERT(m_start != m_end); return m_buffer.buffer()[m_start]; }
@@ -117,17 +116,14 @@ namespace WTF {
 
     template<typename T, size_t inlineCapacity = 0>
     class DequeIteratorBase {
-    private:
-        typedef DequeIteratorBase<T, inlineCapacity> Base;
-
     protected:
         DequeIteratorBase();
         DequeIteratorBase(const Deque<T, inlineCapacity>*, size_t);
-        DequeIteratorBase(const Base&);
-        Base& operator=(const Base&);
+        DequeIteratorBase(const DequeIteratorBase&);
+        DequeIteratorBase& operator=(const DequeIteratorBase&);
         ~DequeIteratorBase();
 
-        void assign(const Base& other) { *this = other; }
+        void assign(const DequeIteratorBase& other) { *this = other; }
 
         void increment();
         void decrement();
@@ -135,13 +131,13 @@ namespace WTF {
         T* before() const;
         T* after() const;
 
-        bool isEqual(const Base&) const;
+        bool isEqual(const DequeIteratorBase&) const;
 
     private:
         void addToIteratorsList();
         void removeFromIteratorsList();
         void checkValidity() const;
-        void checkValidity(const Base&) const;
+        void checkValidity(const DequeIteratorBase&) const;
 
         Deque<T, inlineCapacity>* m_deque;
         size_t m_index;
@@ -161,6 +157,12 @@ namespace WTF {
         typedef DequeIterator<T, inlineCapacity> Iterator;
 
     public:
+        typedef ptrdiff_t difference_type;
+        typedef T value_type;
+        typedef T* pointer;
+        typedef T& reference;
+        typedef std::bidirectional_iterator_tag iterator_category;
+
         DequeIterator(Deque<T, inlineCapacity>* deque, size_t index) : Base(deque, index) { }
 
         DequeIterator(const Iterator& other) : Base(other) { }
@@ -186,6 +188,12 @@ namespace WTF {
         typedef DequeIterator<T, inlineCapacity> NonConstIterator;
 
     public:
+        typedef ptrdiff_t difference_type;
+        typedef T value_type;
+        typedef const T* pointer;
+        typedef const T& reference;
+        typedef std::bidirectional_iterator_tag iterator_category;
+
         DequeConstIterator(const Deque<T, inlineCapacity>* deque, size_t index) : Base(deque, index) { }
 
         DequeConstIterator(const Iterator& other) : Base(other) { }
@@ -202,57 +210,6 @@ namespace WTF {
         Iterator& operator++() { Base::increment(); return *this; }
         // postfix ++ intentionally omitted
         Iterator& operator--() { Base::decrement(); return *this; }
-        // postfix -- intentionally omitted
-    };
-
-    template<typename T, size_t inlineCapacity = 0>
-    class DequeReverseIterator : public DequeIteratorBase<T, inlineCapacity> {
-    private:
-        typedef DequeIteratorBase<T, inlineCapacity> Base;
-        typedef DequeReverseIterator<T, inlineCapacity> Iterator;
-
-    public:
-        DequeReverseIterator(const Deque<T, inlineCapacity>* deque, size_t index) : Base(deque, index) { }
-
-        DequeReverseIterator(const Iterator& other) : Base(other) { }
-        DequeReverseIterator& operator=(const Iterator& other) { Base::assign(other); return *this; }
-
-        T& operator*() const { return *Base::before(); }
-        T* operator->() const { return Base::before(); }
-
-        bool operator==(const Iterator& other) const { return Base::isEqual(other); }
-        bool operator!=(const Iterator& other) const { return !Base::isEqual(other); }
-
-        Iterator& operator++() { Base::decrement(); return *this; }
-        // postfix ++ intentionally omitted
-        Iterator& operator--() { Base::increment(); return *this; }
-        // postfix -- intentionally omitted
-    };
-
-    template<typename T, size_t inlineCapacity = 0>
-    class DequeConstReverseIterator : public DequeIteratorBase<T, inlineCapacity> {
-    private:
-        typedef DequeIteratorBase<T, inlineCapacity> Base;
-        typedef DequeConstReverseIterator<T, inlineCapacity> Iterator;
-        typedef DequeReverseIterator<T, inlineCapacity> NonConstIterator;
-
-    public:
-        DequeConstReverseIterator(const Deque<T, inlineCapacity>* deque, size_t index) : Base(deque, index) { }
-
-        DequeConstReverseIterator(const Iterator& other) : Base(other) { }
-        DequeConstReverseIterator(const NonConstIterator& other) : Base(other) { }
-        DequeConstReverseIterator& operator=(const Iterator& other) { Base::assign(other); return *this; }
-        DequeConstReverseIterator& operator=(const NonConstIterator& other) { Base::assign(other); return *this; }
-
-        const T& operator*() const { return *Base::before(); }
-        const T* operator->() const { return Base::before(); }
-
-        bool operator==(const Iterator& other) const { return Base::isEqual(other); }
-        bool operator!=(const Iterator& other) const { return !Base::isEqual(other); }
-
-        Iterator& operator++() { Base::decrement(); return *this; }
-        // postfix ++ intentionally omitted
-        Iterator& operator--() { Base::increment(); return *this; }
         // postfix -- intentionally omitted
     };
 
@@ -540,7 +497,7 @@ namespace WTF {
     }
 
     template<typename T, size_t inlineCapacity>
-    void DequeIteratorBase<T, inlineCapacity>::checkValidity(const Base& other) const
+    void DequeIteratorBase<T, inlineCapacity>::checkValidity(const DequeIteratorBase& other) const
     {
         checkValidity();
         other.checkValidity();
@@ -602,7 +559,7 @@ namespace WTF {
     }
 
     template<typename T, size_t inlineCapacity>
-    inline DequeIteratorBase<T, inlineCapacity>::DequeIteratorBase(const Base& other)
+    inline DequeIteratorBase<T, inlineCapacity>::DequeIteratorBase(const DequeIteratorBase& other)
         : m_deque(other.m_deque)
         , m_index(other.m_index)
     {
@@ -611,7 +568,7 @@ namespace WTF {
     }
 
     template<typename T, size_t inlineCapacity>
-    inline DequeIteratorBase<T, inlineCapacity>& DequeIteratorBase<T, inlineCapacity>::operator=(const Base& other)
+    inline DequeIteratorBase<T, inlineCapacity>& DequeIteratorBase<T, inlineCapacity>::operator=(const DequeIteratorBase& other)
     {
         other.checkValidity();
         removeFromIteratorsList();
@@ -633,7 +590,7 @@ namespace WTF {
     }
 
     template<typename T, size_t inlineCapacity>
-    inline bool DequeIteratorBase<T, inlineCapacity>::isEqual(const Base& other) const
+    inline bool DequeIteratorBase<T, inlineCapacity>::isEqual(const DequeIteratorBase& other) const
     {
         checkValidity(other);
         return m_index == other.m_index;
