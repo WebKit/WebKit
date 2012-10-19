@@ -6,6 +6,20 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		65AFA16F1630B977003D723C /* Copy WTF Headers */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 65AFA2881630B977003D723C /* Build configuration list for PBXAggregateTarget "Copy WTF Headers" */;
+			buildPhases = (
+				65AFA1701630B977003D723C /* Copy WTF Headers */,
+			);
+			dependencies = (
+			);
+			name = "Copy WTF Headers";
+			productName = "Copy WTF Headers";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		0FD81AC5154FB22E00983E72 /* FastBitVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD81AC4154FB22E00983E72 /* FastBitVector.h */; settings = {ATTRIBUTES = (); }; };
 		143F611F1565F0F900DB514A /* RAMSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 143F611D1565F0F900DB514A /* RAMSize.cpp */; };
@@ -341,6 +355,7 @@
 		5D247B7014689C4700E78B76 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		5D247B7314689C4700E78B76 /* WTF.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WTF.xcconfig; sourceTree = "<group>"; };
 		5D247EB11468B01500E78B76 /* HeaderDetection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HeaderDetection.h; path = DerivedSources/WTF/HeaderDetection.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		6541CAF41630DB26006D0DEC /* CopyWTFHeaders.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CopyWTFHeaders.xcconfig; sourceTree = "<group>"; };
 		7E29C33D15FFD79B00516D61 /* ObjcRuntimeExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjcRuntimeExtras.h; sourceTree = "<group>"; };
 		8134013615B092FD001FF0B8 /* Base64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Base64.cpp; sourceTree = "<group>"; };
 		8134013715B092FD001FF0B8 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
@@ -612,6 +627,7 @@
 		5D247B6D14689C4700E78B76 /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
+				6541CAF41630DB26006D0DEC /* CopyWTFHeaders.xcconfig */,
 				5D247B6E14689C4700E78B76 /* Base.xcconfig */,
 				5D247B6F14689C4700E78B76 /* CompilerVersion.xcconfig */,
 				5D247B7014689C4700E78B76 /* DebugRelease.xcconfig */,
@@ -1216,20 +1232,6 @@
 			productReference = 5D247B6214689B8600E78B76 /* libWTF.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		65AFA16F1630B977003D723C /* Copy WTF Headers */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 65AFA2881630B977003D723C /* Build configuration list for PBXNativeTarget "Copy WTF Headers" */;
-			buildPhases = (
-				65AFA1701630B977003D723C /* Copy WTF Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "Copy WTF Headers";
-			productName = "Copy WTF Headers";
-			productType = "com.apple.product-type.tool";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1433,25 +1435,25 @@
 		};
 		65AFA2891630B977003D723C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5D247B7314689C4700E78B76 /* WTF.xcconfig */;
+			baseConfigurationReference = 6541CAF41630DB26006D0DEC /* CopyWTFHeaders.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "WTF copy";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
 		65AFA28A1630B977003D723C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5D247B7314689C4700E78B76 /* WTF.xcconfig */;
+			baseConfigurationReference = 6541CAF41630DB26006D0DEC /* CopyWTFHeaders.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "WTF copy";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
 		65AFA28B1630B977003D723C /* Production */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5D247B7314689C4700E78B76 /* WTF.xcconfig */;
+			baseConfigurationReference = 6541CAF41630DB26006D0DEC /* CopyWTFHeaders.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "WTF copy";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -1478,7 +1480,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
-		65AFA2881630B977003D723C /* Build configuration list for PBXNativeTarget "Copy WTF Headers" */ = {
+		65AFA2881630B977003D723C /* Build configuration list for PBXAggregateTarget "Copy WTF Headers" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				65AFA2891630B977003D723C /* Debug */,

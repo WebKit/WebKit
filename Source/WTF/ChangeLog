@@ -3,6 +3,19 @@
         Mac WTF build checks dependencies before copying header files
         https://bugs.webkit.org/show_bug.cgi?id=99770
 
+        Reviewed by Mark Rowe.
+
+        Fixed up build rules per Mark Rowe. Made new target an Aggregate and removed "WTF copy".
+
+        * Configurations/CopyWTFHeaders.xcconfig: Added.
+        * Configurations/WTF.xcconfig:
+        * WTF.xcodeproj/project.pbxproj:
+
+2012-10-18  Michael Saboff  <msaboff@apple.com>
+
+        Mac WTF build checks dependencies before copying header files
+        https://bugs.webkit.org/show_bug.cgi?id=99770
+
         Reviewed by Geoffrey Garen.
 
         Added a new build target "Copy WTF HEaders" to copy the header files and made that new target a dependency
