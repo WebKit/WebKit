@@ -1,3 +1,898 @@
+2012-10-19  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium rebaseline for r131503.
+
+        * fast/forms/input-baseline-expected.txt: Added.
+        * fast/forms/placeholder-position-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/inline-block: Added.
+        * platform/chromium-linux-x86/fast/inline-block/contenteditable-baseline-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/text/international: Added.
+        * platform/chromium-linux-x86/fast/text/international/vertical-text-glyph-test-expected.txt: Added.
+        * platform/chromium-linux/css2.1/t090501-c414-flt-03-b-g-expected.txt:
+        * platform/chromium-linux/css3/flexbox/flexbox-baseline-expected.png:
+        * platform/chromium-linux/fast/dom/HTMLProgressElement/progress-element-expected.png:
+        * platform/chromium-linux/fast/forms/007-expected.png:
+        * platform/chromium-linux/fast/forms/basic-buttons-expected.png:
+        * platform/chromium-linux/fast/forms/basic-buttons-expected.txt:
+        * platform/chromium-linux/fast/forms/input-baseline-expected.txt:
+        * platform/chromium-linux/fast/forms/input-placeholder-paint-order-expected.png:
+        * platform/chromium-linux/fast/forms/placeholder-position-expected.png:
+        * platform/chromium-linux/fast/forms/search-vertical-alignment-expected.png:
+        * platform/chromium-linux/fast/forms/searchfield-heights-expected.png:
+        * platform/chromium-linux/fast/forms/searchfield-heights-expected.txt:
+        * platform/chromium-linux/fast/html/details-add-child-1-expected.png:
+        * platform/chromium-linux/fast/html/details-add-child-2-expected.png:
+        * platform/chromium-linux/fast/html/details-add-details-child-1-expected.png:
+        * platform/chromium-linux/fast/html/details-add-details-child-2-expected.png:
+        * platform/chromium-linux/fast/html/details-add-summary-1-and-click-expected.png:
+        * platform/chromium-linux/fast/html/details-add-summary-1-expected.png:
+        * platform/chromium-linux/fast/html/details-add-summary-10-and-click-expected.png:
+        * platform/chromium-linux/fast/html/details-add-summary-10-expected.png:
+        * platform/chromium-linux/fast/html/details-add-summary-2-and-click-expected.png:
+        * platform/chromium-linux/fast/html/details-add-summary-2-expected.png:
+        * platform/chromium-linux/fast/html/details-add-summary-3-and-click-expected.png:
+        * platform/chromium-linux/fast/html/details-add-summary-3-expected.png:
+        * platform/chromium-linux/fast/html/details-add-summary-4-and-click-expected.png:
+        * platform/chromium-linux/fast/html/details-add-summary-4-expected.png:
+        * platform/chromium-linux/fast/html/details-add-summary-5-and-click-expected.png:
+        * platform/chromium-linux/fast/html/details-add-summary-5-expected.png:
+        * platform/chromium-linux/fast/html/details-add-summary-6-and-click-expected.png:
+        * platform/chromium-linux/fast/html/details-add-summary-6-expected.png:
+        * platform/chromium-linux/fast/html/details-add-summary-7-and-click-expected.png:
+        * platform/chromium-linux/fast/html/details-add-summary-7-expected.png:
+        * platform/chromium-linux/fast/html/details-add-summary-8-and-click-expected.png:
+        * platform/chromium-linux/fast/html/details-add-summary-8-expected.png:
+        * platform/chromium-linux/fast/html/details-add-summary-9-and-click-expected.png:
+        * platform/chromium-linux/fast/html/details-add-summary-9-expected.png:
+        * platform/chromium-linux/fast/html/details-add-summary-child-1-expected.png:
+        * platform/chromium-linux/fast/html/details-add-summary-child-2-expected.png:
+        * platform/chromium-linux/fast/html/details-marker-style-expected.png:
+        * platform/chromium-linux/fast/html/details-nested-1-expected.png:
+        * platform/chromium-linux/fast/html/details-nested-2-expected.png:
+        * platform/chromium-linux/fast/html/details-no-summary1-expected.png:
+        * platform/chromium-linux/fast/html/details-no-summary2-expected.png:
+        * platform/chromium-linux/fast/html/details-no-summary3-expected.png:
+        * platform/chromium-linux/fast/html/details-no-summary4-expected.png:
+        * platform/chromium-linux/fast/html/details-open-javascript-expected.png:
+        * platform/chromium-linux/fast/html/details-open1-expected.png:
+        * platform/chromium-linux/fast/html/details-open2-expected.png:
+        * platform/chromium-linux/fast/html/details-open3-expected.png:
+        * platform/chromium-linux/fast/html/details-open4-expected.png:
+        * platform/chromium-linux/fast/html/details-open5-expected.png:
+        * platform/chromium-linux/fast/html/details-open6-expected.png:
+        * platform/chromium-linux/fast/html/details-position-expected.png:
+        * platform/chromium-linux/fast/html/details-remove-child-1-expected.png:
+        * platform/chromium-linux/fast/html/details-remove-child-2-expected.png:
+        * platform/chromium-linux/fast/html/details-remove-summary-1-and-click-expected.png:
+        * platform/chromium-linux/fast/html/details-remove-summary-1-expected.png:
+        * platform/chromium-linux/fast/html/details-remove-summary-2-and-click-expected.png:
+        * platform/chromium-linux/fast/html/details-remove-summary-2-expected.png:
+        * platform/chromium-linux/fast/html/details-remove-summary-3-and-click-expected.png:
+        * platform/chromium-linux/fast/html/details-remove-summary-3-expected.png:
+        * platform/chromium-linux/fast/html/details-remove-summary-4-and-click-expected.png:
+        * platform/chromium-linux/fast/html/details-remove-summary-4-expected.png:
+        * platform/chromium-linux/fast/html/details-remove-summary-5-and-click-expected.png:
+        * platform/chromium-linux/fast/html/details-remove-summary-5-expected.png:
+        * platform/chromium-linux/fast/html/details-remove-summary-6-and-click-expected.png:
+        * platform/chromium-linux/fast/html/details-remove-summary-6-expected.png:
+        * platform/chromium-linux/fast/html/details-remove-summary-child-1-expected.png:
+        * platform/chromium-linux/fast/html/details-remove-summary-child-2-expected.png:
+        * platform/chromium-linux/fast/html/details-replace-summary-child-expected.png:
+        * platform/chromium-linux/fast/html/details-replace-summary-child-expected.txt:
+        * platform/chromium-linux/fast/html/details-replace-text-expected.png:
+        * platform/chromium-linux/fast/html/details-replace-text-expected.txt:
+        * platform/chromium-linux/fast/html/details-writing-mode-expected.png:
+        * platform/chromium-linux/fast/images/imagemap-focus-ring-zoom-expected.png:
+        * platform/chromium-linux/fast/inline-block/contenteditable-baseline-expected.txt: Added.
+        * platform/chromium-linux/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-linux/fast/speech/input-appearance-searchandspeech-expected.txt:
+        * platform/chromium-linux/fast/text/international/vertical-text-glyph-test-expected.png: Added.
+        * platform/chromium-linux/fast/text/international/vertical-text-glyph-test-expected.txt: Added.
+        * platform/chromium-linux/fast/writing-mode/fieldsets-expected.png:
+        * platform/chromium-linux/svg/as-border-image/svg-as-border-image-2-expected.png:
+        * platform/chromium-linux/svg/as-border-image/svg-as-border-image-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-background-images-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt:
+        * platform/chromium-mac-lion/css3: Added.
+        * platform/chromium-mac-lion/css3/flexbox: Added.
+        * platform/chromium-mac-lion/css3/flexbox/flexbox-baseline-expected.png: Added.
+        * platform/chromium-mac-lion/editing/selection/3690703-2-expected.png: Added.
+        * platform/chromium-mac-lion/editing/selection/3690703-expected.png: Added.
+        * platform/chromium-mac-lion/editing/selection/3690719-expected.png: Added.
+        * platform/chromium-mac-lion/editing/selection/4397952-expected.png: Added.
+        * platform/chromium-mac-lion/editing/selection/5240265-expected.png: Added.
+        * platform/chromium-mac-lion/editing/selection/selection-button-text-expected.png: Added.
+        * platform/chromium-mac-lion/fast: Added.
+        * platform/chromium-mac-lion/fast/block: Added.
+        * platform/chromium-mac-lion/fast/block/float: Added.
+        * platform/chromium-mac-lion/fast/block/float/float-avoidance-expected.png: Added.
+        * platform/chromium-mac-lion/fast/css: Added.
+        * platform/chromium-mac-lion/fast/css/continuationCrash-expected.png: Added.
+        * platform/chromium-mac-lion/fast/css/margin-top-bottom-dynamic-expected.png: Added.
+        * platform/chromium-mac-lion/fast/css/rtl-ordering-expected.png: Added.
+        * platform/chromium-mac-lion/fast/dom: Added.
+        * platform/chromium-mac-lion/fast/dom/HTMLProgressElement: Added.
+        * platform/chromium-mac-lion/fast/dom/HTMLProgressElement/progress-element-expected.png: Added.
+        * platform/chromium-mac-lion/fast/dom/HTMLProgressElement/progress-element-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/dom/HTMLTextAreaElement: Added.
+        * platform/chromium-mac-lion/fast/dom/HTMLTextAreaElement/reset-textarea-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms: Added.
+        * platform/chromium-mac-lion/fast/forms/001-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/007-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/basic-buttons-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/blankbuttons-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/button-sizes-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/button-style-color-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/button-table-styles-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/button-text-transform-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/control-restrict-line-height-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/date: Added.
+        * platform/chromium-mac-lion/fast/forms/date/date-reset-value-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/file: Added.
+        * platform/chromium-mac-lion/fast/forms/file/file-input-direction-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/file/file-input-disabled-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/file/file-input-pressed-state-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/file/input-file-re-render-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/form-element-geometry-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/formmove3-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/input-button-sizes-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/input-value-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/menulist-clip-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/search-vertical-alignment-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/targeted-frame-submission-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/validation-message-appearance-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-child-1-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-child-2-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-details-child-1-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-details-child-2-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-summary-1-and-click-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-summary-1-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-summary-10-and-click-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-summary-10-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-summary-2-and-click-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-summary-2-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-summary-3-and-click-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-summary-3-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-summary-4-and-click-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-summary-4-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-summary-5-and-click-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-summary-5-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-summary-6-and-click-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-summary-6-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-summary-7-and-click-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-summary-7-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-summary-8-and-click-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-summary-8-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-summary-9-and-click-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-summary-9-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-summary-child-1-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-add-summary-child-2-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-marker-style-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-nested-1-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-nested-2-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-no-summary1-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-no-summary2-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-no-summary3-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-no-summary4-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-open-javascript-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-open1-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-open2-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-open3-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-open4-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-open5-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-open6-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-position-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-remove-child-1-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-remove-child-2-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-remove-summary-1-and-click-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-remove-summary-1-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-remove-summary-2-and-click-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-remove-summary-2-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-remove-summary-3-and-click-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-remove-summary-3-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-remove-summary-4-and-click-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-remove-summary-4-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-remove-summary-5-and-click-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-remove-summary-5-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-remove-summary-6-and-click-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-remove-summary-6-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-remove-summary-child-1-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-remove-summary-child-2-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-replace-summary-child-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-replace-text-expected.png: Added.
+        * platform/chromium-mac-lion/fast/html/details-writing-mode-expected.png: Added.
+        * platform/chromium-mac-lion/fast/images: Added.
+        * platform/chromium-mac-lion/fast/images/imagemap-focus-ring-zoom-expected.png: Added.
+        * platform/chromium-mac-lion/fast/overflow: Added.
+        * platform/chromium-mac-lion/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.png: Added.
+        * platform/chromium-mac-lion/fast/overflow/scrollRevealButton-expected.png: Added.
+        * platform/chromium-mac-lion/fast/replaced: Added.
+        * platform/chromium-mac-lion/fast/replaced/replaced-breaking-expected.png: Added.
+        * platform/chromium-mac-lion/fast/replaced/width100percent-button-expected.png: Added.
+        * platform/chromium-mac-lion/fast/speech: Added.
+        * platform/chromium-mac-lion/fast/sub-pixel: Added.
+        * platform/chromium-mac-lion/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.png: Added.
+        * platform/chromium-mac-lion/fast/text: Added.
+        * platform/chromium-mac-lion/fast/text/international: Added.
+        * platform/chromium-mac-lion/fast/text/international/vertical-text-glyph-test-expected.png: Added.
+        * platform/chromium-mac-lion/fast/text/international/vertical-text-glyph-test-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/text/textIteratorNilRenderer-expected.png: Added.
+        * platform/chromium-mac-lion/fast/writing-mode: Added.
+        * platform/chromium-mac-lion/fast/writing-mode/fieldsets-expected.png: Added.
+        * platform/chromium-mac-lion/http: Added.
+        * platform/chromium-mac-lion/http/tests: Added.
+        * platform/chromium-mac-lion/http/tests/navigation: Added.
+        * platform/chromium-mac-lion/http/tests/navigation/javascriptlink-frames-expected.png: Added.
+        * platform/chromium-mac-lion/svg: Added.
+        * platform/chromium-mac-lion/svg/as-border-image: Added.
+        * platform/chromium-mac-lion/svg/as-border-image/svg-as-border-image-2-expected.png: Added.
+        * platform/chromium-mac-lion/svg/as-border-image/svg-as-border-image-expected.png: Added.
+        * platform/chromium-mac-lion/svg/zoom: Added.
+        * platform/chromium-mac-lion/svg/zoom/page: Added.
+        * platform/chromium-mac-lion/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png: Added.
+        * platform/chromium-mac-lion/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png: Added.
+        * platform/chromium-mac-lion/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png: Added.
+        * platform/chromium-mac-lion/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.png: Added.
+        * platform/chromium-mac-lion/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.png: Added.
+        * platform/chromium-mac-lion/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png: Added.
+        * platform/chromium-mac-lion/tables: Added.
+        * platform/chromium-mac-lion/tables/mozilla: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug1188-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug1318-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug138725-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug18359-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug2479-2-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug2479-3-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug26178-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug28928-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug33855-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug39209-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug4429-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug46368-1-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug46368-2-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug51037-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug51727-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug60749-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug7342-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla/collapsing_borders: Added.
+        * platform/chromium-mac-lion/tables/mozilla/collapsing_borders/bug41262-4-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla/dom: Added.
+        * platform/chromium-mac-lion/tables/mozilla/dom/tableDom-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla/other: Added.
+        * platform/chromium-mac-lion/tables/mozilla/other/move_row-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla_expected_failures: Added.
+        * platform/chromium-mac-lion/tables/mozilla_expected_failures/bugs: Added.
+        * platform/chromium-mac-lion/tables/mozilla_expected_failures/bugs/bug1725-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla_expected_failures/bugs/bug58402-2-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css3/flexbox/flexbox-baseline-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/3690703-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/3690703-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/3690719-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/4397952-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/5240265-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/selection-button-text-expected.png:
+        * platform/chromium-mac-snowleopard/fast/block/float/float-avoidance-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/continuationCrash-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/margin-top-bottom-dynamic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/rtl-ordering-expected.png:
+        * platform/chromium-mac-snowleopard/fast/dom/HTMLProgressElement/progress-element-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/dom/HTMLProgressElement/progress-element-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/dom/HTMLTextAreaElement/reset-textarea-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/001-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/007-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/basic-buttons-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/blankbuttons-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/button-sizes-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/button-style-color-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/button-table-styles-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/button-text-transform-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/control-restrict-line-height-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/date/date-reset-value-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/file/file-input-direction-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/file/file-input-disabled-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/file/file-input-pressed-state-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/file/input-file-re-render-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/form-element-geometry-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/formmove3-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-button-sizes-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-value-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/menulist-clip-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/search-vertical-alignment-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/targeted-frame-submission-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-child-1-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-child-2-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-details-child-1-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-details-child-2-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-summary-1-and-click-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-summary-1-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-summary-10-and-click-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-summary-10-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-summary-2-and-click-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-summary-2-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-summary-3-and-click-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-summary-3-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-summary-4-and-click-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-summary-4-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-summary-5-and-click-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-summary-5-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-summary-6-and-click-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-summary-6-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-summary-7-and-click-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-summary-7-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-summary-8-and-click-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-summary-8-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-summary-9-and-click-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-summary-9-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-summary-child-1-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-add-summary-child-2-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-nested-1-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-nested-2-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-no-summary1-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-no-summary2-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-no-summary3-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-no-summary4-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-open-javascript-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-open1-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-open2-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-open3-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-open4-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-open5-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-open6-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-position-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-remove-child-1-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-remove-child-2-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-remove-summary-1-and-click-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-remove-summary-1-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-remove-summary-2-and-click-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-remove-summary-2-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-remove-summary-3-and-click-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-remove-summary-3-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-remove-summary-4-and-click-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-remove-summary-4-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-remove-summary-5-and-click-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-remove-summary-5-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-remove-summary-6-and-click-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-remove-summary-6-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-remove-summary-child-1-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-remove-summary-child-2-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-replace-summary-child-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-replace-text-expected.png:
+        * platform/chromium-mac-snowleopard/fast/html/details-writing-mode-expected.png:
+        * platform/chromium-mac-snowleopard/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.png:
+        * platform/chromium-mac-snowleopard/fast/overflow/scrollRevealButton-expected.png:
+        * platform/chromium-mac-snowleopard/fast/replaced/replaced-breaking-expected.png:
+        * platform/chromium-mac-snowleopard/fast/replaced/width100percent-button-expected.png:
+        * platform/chromium-mac-snowleopard/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/international/vertical-text-glyph-test-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/international/vertical-text-glyph-test-expected.txt:
+        * platform/chromium-mac-snowleopard/fast/text/textIteratorNilRenderer-expected.png:
+        * platform/chromium-mac-snowleopard/fast/writing-mode/fieldsets-expected.png:
+        * platform/chromium-mac-snowleopard/http/tests/navigation/javascriptlink-frames-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug138725-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug18359-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug2479-2-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug2479-3-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug26178-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug28928-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug33855-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug39209-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug4429-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug46368-1-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug46368-2-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug51037-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug51727-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug60749-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug7342-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/collapsing_borders/bug41262-4-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/dom/tableDom-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/other/move_row-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/bugs/bug1725-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/bugs/bug58402-2-expected.png:
+        * platform/chromium-mac/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-mac/compositing/shadows/shadow-drawing-expected.txt:
+        * platform/chromium-mac/css2.1/t0804-c5509-padn-l-03-f-g-expected.png:
+        * platform/chromium-mac/css2.1/t0804-c5509-padn-l-03-f-g-expected.txt:
+        * platform/chromium-mac/css2.1/t090501-c414-flt-03-b-g-expected.png:
+        * platform/chromium-mac/css2.1/t090501-c414-flt-03-b-g-expected.txt:
+        * platform/chromium-mac/css3/flexbox/flexbox-baseline-expected.png:
+        * platform/chromium-mac/css3/flexbox/flexbox-baseline-expected.txt:
+        * platform/chromium-mac/editing/selection/3690703-2-expected.png:
+        * platform/chromium-mac/editing/selection/3690703-2-expected.txt:
+        * platform/chromium-mac/editing/selection/3690703-expected.png:
+        * platform/chromium-mac/editing/selection/3690703-expected.txt:
+        * platform/chromium-mac/editing/selection/3690719-expected.png:
+        * platform/chromium-mac/editing/selection/3690719-expected.txt:
+        * platform/chromium-mac/editing/selection/4397952-expected.png:
+        * platform/chromium-mac/editing/selection/4397952-expected.txt:
+        * platform/chromium-mac/editing/selection/5240265-expected.png:
+        * platform/chromium-mac/editing/selection/5240265-expected.txt:
+        * platform/chromium-mac/editing/selection/selection-button-text-expected.png:
+        * platform/chromium-mac/editing/selection/selection-button-text-expected.txt:
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.png:
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt:
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.png:
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt:
+        * platform/chromium-mac/fast/block/float/032-expected.png:
+        * platform/chromium-mac/fast/block/float/032-expected.txt:
+        * platform/chromium-mac/fast/block/float/float-avoidance-expected.png:
+        * platform/chromium-mac/fast/block/float/float-avoidance-expected.txt:
+        * platform/chromium-mac/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.png:
+        * platform/chromium-mac/fast/css/continuationCrash-expected.png:
+        * platform/chromium-mac/fast/css/continuationCrash-expected.txt:
+        * platform/chromium-mac/fast/css/margin-top-bottom-dynamic-expected.png:
+        * platform/chromium-mac/fast/css/margin-top-bottom-dynamic-expected.txt:
+        * platform/chromium-mac/fast/css/rtl-ordering-expected.png:
+        * platform/chromium-mac/fast/css/rtl-ordering-expected.txt:
+        * platform/chromium-mac/fast/dom/HTMLTextAreaElement/reset-textarea-expected.png:
+        * platform/chromium-mac/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/chromium-mac/fast/forms/001-expected.png:
+        * platform/chromium-mac/fast/forms/001-expected.txt:
+        * platform/chromium-mac/fast/forms/007-expected.png:
+        * platform/chromium-mac/fast/forms/007-expected.txt:
+        * platform/chromium-mac/fast/forms/basic-buttons-expected.png:
+        * platform/chromium-mac/fast/forms/basic-buttons-expected.txt:
+        * platform/chromium-mac/fast/forms/blankbuttons-expected.png:
+        * platform/chromium-mac/fast/forms/blankbuttons-expected.txt:
+        * platform/chromium-mac/fast/forms/button-sizes-expected.png:
+        * platform/chromium-mac/fast/forms/button-sizes-expected.txt:
+        * platform/chromium-mac/fast/forms/button-style-color-expected.png:
+        * platform/chromium-mac/fast/forms/button-style-color-expected.txt:
+        * platform/chromium-mac/fast/forms/button-table-styles-expected.png:
+        * platform/chromium-mac/fast/forms/button-table-styles-expected.txt:
+        * platform/chromium-mac/fast/forms/button-text-transform-expected.png:
+        * platform/chromium-mac/fast/forms/button-text-transform-expected.txt:
+        * platform/chromium-mac/fast/forms/control-restrict-line-height-expected.png:
+        * platform/chromium-mac/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/chromium-mac/fast/forms/date/date-reset-value-expected.png: Added.
+        * platform/chromium-mac/fast/forms/file/file-input-direction-expected.png:
+        * platform/chromium-mac/fast/forms/file/file-input-direction-expected.txt:
+        * platform/chromium-mac/fast/forms/file/file-input-disabled-expected.png:
+        * platform/chromium-mac/fast/forms/file/file-input-disabled-expected.txt:
+        * platform/chromium-mac/fast/forms/file/file-input-pressed-state-expected.png:
+        * platform/chromium-mac/fast/forms/file/input-file-re-render-expected.png:
+        * platform/chromium-mac/fast/forms/file/input-file-re-render-expected.txt:
+        * platform/chromium-mac/fast/forms/form-element-geometry-expected.png:
+        * platform/chromium-mac/fast/forms/form-element-geometry-expected.txt:
+        * platform/chromium-mac/fast/forms/formmove3-expected.png:
+        * platform/chromium-mac/fast/forms/formmove3-expected.txt:
+        * platform/chromium-mac/fast/forms/input-baseline-expected.png:
+        * platform/chromium-mac/fast/forms/input-button-sizes-expected.png:
+        * platform/chromium-mac/fast/forms/input-button-sizes-expected.txt:
+        * platform/chromium-mac/fast/forms/input-placeholder-paint-order-expected.png:
+        * platform/chromium-mac/fast/forms/input-value-expected.png:
+        * platform/chromium-mac/fast/forms/input-value-expected.txt:
+        * platform/chromium-mac/fast/forms/menulist-clip-expected.png:
+        * platform/chromium-mac/fast/forms/menulist-clip-expected.txt:
+        * platform/chromium-mac/fast/forms/placeholder-position-expected.png:
+        * platform/chromium-mac/fast/forms/search-vertical-alignment-expected.png:
+        * platform/chromium-mac/fast/forms/search-vertical-alignment-expected.txt:
+        * platform/chromium-mac/fast/forms/searchfield-heights-expected.png:
+        * platform/chromium-mac/fast/forms/targeted-frame-submission-expected.png:
+        * platform/chromium-mac/fast/forms/targeted-frame-submission-expected.txt:
+        * platform/chromium-mac/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-mac/fast/forms/validation-message-appearance-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-child-1-expected.png:
+        * platform/chromium-mac/fast/html/details-add-child-1-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-child-2-expected.png:
+        * platform/chromium-mac/fast/html/details-add-child-2-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-details-child-1-expected.png:
+        * platform/chromium-mac/fast/html/details-add-details-child-1-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-details-child-2-expected.png:
+        * platform/chromium-mac/fast/html/details-add-details-child-2-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-summary-1-and-click-expected.png:
+        * platform/chromium-mac/fast/html/details-add-summary-1-and-click-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-summary-1-expected.png:
+        * platform/chromium-mac/fast/html/details-add-summary-1-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-summary-10-and-click-expected.png:
+        * platform/chromium-mac/fast/html/details-add-summary-10-and-click-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-summary-10-expected.png:
+        * platform/chromium-mac/fast/html/details-add-summary-10-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-summary-2-and-click-expected.png:
+        * platform/chromium-mac/fast/html/details-add-summary-2-and-click-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-summary-2-expected.png:
+        * platform/chromium-mac/fast/html/details-add-summary-2-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-summary-3-and-click-expected.png:
+        * platform/chromium-mac/fast/html/details-add-summary-3-and-click-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-summary-3-expected.png:
+        * platform/chromium-mac/fast/html/details-add-summary-3-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-summary-4-and-click-expected.png:
+        * platform/chromium-mac/fast/html/details-add-summary-4-and-click-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-summary-4-expected.png:
+        * platform/chromium-mac/fast/html/details-add-summary-4-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-summary-5-and-click-expected.png:
+        * platform/chromium-mac/fast/html/details-add-summary-5-and-click-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-summary-5-expected.png:
+        * platform/chromium-mac/fast/html/details-add-summary-5-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-summary-6-and-click-expected.png:
+        * platform/chromium-mac/fast/html/details-add-summary-6-and-click-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-summary-6-expected.png:
+        * platform/chromium-mac/fast/html/details-add-summary-6-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-summary-7-and-click-expected.png:
+        * platform/chromium-mac/fast/html/details-add-summary-7-and-click-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-summary-7-expected.png:
+        * platform/chromium-mac/fast/html/details-add-summary-7-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-summary-8-and-click-expected.png:
+        * platform/chromium-mac/fast/html/details-add-summary-8-and-click-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-summary-8-expected.png:
+        * platform/chromium-mac/fast/html/details-add-summary-8-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-summary-9-and-click-expected.png:
+        * platform/chromium-mac/fast/html/details-add-summary-9-and-click-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-summary-9-expected.png:
+        * platform/chromium-mac/fast/html/details-add-summary-9-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-summary-child-1-expected.png:
+        * platform/chromium-mac/fast/html/details-add-summary-child-1-expected.txt:
+        * platform/chromium-mac/fast/html/details-add-summary-child-2-expected.png:
+        * platform/chromium-mac/fast/html/details-add-summary-child-2-expected.txt:
+        * platform/chromium-mac/fast/html/details-marker-style-expected.png:
+        * platform/chromium-mac/fast/html/details-marker-style-expected.txt:
+        * platform/chromium-mac/fast/html/details-nested-1-expected.png:
+        * platform/chromium-mac/fast/html/details-nested-1-expected.txt:
+        * platform/chromium-mac/fast/html/details-nested-2-expected.png:
+        * platform/chromium-mac/fast/html/details-nested-2-expected.txt:
+        * platform/chromium-mac/fast/html/details-no-summary1-expected.png:
+        * platform/chromium-mac/fast/html/details-no-summary1-expected.txt:
+        * platform/chromium-mac/fast/html/details-no-summary2-expected.png:
+        * platform/chromium-mac/fast/html/details-no-summary2-expected.txt:
+        * platform/chromium-mac/fast/html/details-no-summary3-expected.png:
+        * platform/chromium-mac/fast/html/details-no-summary3-expected.txt:
+        * platform/chromium-mac/fast/html/details-no-summary4-expected.png:
+        * platform/chromium-mac/fast/html/details-no-summary4-expected.txt:
+        * platform/chromium-mac/fast/html/details-open-javascript-expected.png:
+        * platform/chromium-mac/fast/html/details-open-javascript-expected.txt:
+        * platform/chromium-mac/fast/html/details-open1-expected.png:
+        * platform/chromium-mac/fast/html/details-open1-expected.txt:
+        * platform/chromium-mac/fast/html/details-open2-expected.png:
+        * platform/chromium-mac/fast/html/details-open2-expected.txt:
+        * platform/chromium-mac/fast/html/details-open3-expected.png:
+        * platform/chromium-mac/fast/html/details-open3-expected.txt:
+        * platform/chromium-mac/fast/html/details-open4-expected.png:
+        * platform/chromium-mac/fast/html/details-open4-expected.txt:
+        * platform/chromium-mac/fast/html/details-open5-expected.png:
+        * platform/chromium-mac/fast/html/details-open5-expected.txt:
+        * platform/chromium-mac/fast/html/details-open6-expected.png:
+        * platform/chromium-mac/fast/html/details-open6-expected.txt:
+        * platform/chromium-mac/fast/html/details-position-expected.png:
+        * platform/chromium-mac/fast/html/details-position-expected.txt:
+        * platform/chromium-mac/fast/html/details-remove-child-1-expected.png:
+        * platform/chromium-mac/fast/html/details-remove-child-1-expected.txt:
+        * platform/chromium-mac/fast/html/details-remove-child-2-expected.png:
+        * platform/chromium-mac/fast/html/details-remove-child-2-expected.txt:
+        * platform/chromium-mac/fast/html/details-remove-summary-1-and-click-expected.png:
+        * platform/chromium-mac/fast/html/details-remove-summary-1-and-click-expected.txt:
+        * platform/chromium-mac/fast/html/details-remove-summary-1-expected.png:
+        * platform/chromium-mac/fast/html/details-remove-summary-1-expected.txt:
+        * platform/chromium-mac/fast/html/details-remove-summary-2-and-click-expected.png:
+        * platform/chromium-mac/fast/html/details-remove-summary-2-and-click-expected.txt:
+        * platform/chromium-mac/fast/html/details-remove-summary-2-expected.png:
+        * platform/chromium-mac/fast/html/details-remove-summary-2-expected.txt:
+        * platform/chromium-mac/fast/html/details-remove-summary-3-and-click-expected.png:
+        * platform/chromium-mac/fast/html/details-remove-summary-3-and-click-expected.txt:
+        * platform/chromium-mac/fast/html/details-remove-summary-3-expected.png:
+        * platform/chromium-mac/fast/html/details-remove-summary-3-expected.txt:
+        * platform/chromium-mac/fast/html/details-remove-summary-4-and-click-expected.png:
+        * platform/chromium-mac/fast/html/details-remove-summary-4-and-click-expected.txt:
+        * platform/chromium-mac/fast/html/details-remove-summary-4-expected.png:
+        * platform/chromium-mac/fast/html/details-remove-summary-4-expected.txt:
+        * platform/chromium-mac/fast/html/details-remove-summary-5-and-click-expected.png:
+        * platform/chromium-mac/fast/html/details-remove-summary-5-and-click-expected.txt:
+        * platform/chromium-mac/fast/html/details-remove-summary-5-expected.png:
+        * platform/chromium-mac/fast/html/details-remove-summary-5-expected.txt:
+        * platform/chromium-mac/fast/html/details-remove-summary-6-and-click-expected.png:
+        * platform/chromium-mac/fast/html/details-remove-summary-6-and-click-expected.txt:
+        * platform/chromium-mac/fast/html/details-remove-summary-6-expected.png:
+        * platform/chromium-mac/fast/html/details-remove-summary-6-expected.txt:
+        * platform/chromium-mac/fast/html/details-remove-summary-child-1-expected.png:
+        * platform/chromium-mac/fast/html/details-remove-summary-child-1-expected.txt:
+        * platform/chromium-mac/fast/html/details-remove-summary-child-2-expected.png:
+        * platform/chromium-mac/fast/html/details-remove-summary-child-2-expected.txt:
+        * platform/chromium-mac/fast/html/details-replace-summary-child-expected.png:
+        * platform/chromium-mac/fast/html/details-replace-summary-child-expected.txt:
+        * platform/chromium-mac/fast/html/details-replace-text-expected.png:
+        * platform/chromium-mac/fast/html/details-replace-text-expected.txt:
+        * platform/chromium-mac/fast/html/details-writing-mode-expected.png:
+        * platform/chromium-mac/fast/html/details-writing-mode-expected.txt:
+        * platform/chromium-mac/fast/images/imagemap-focus-ring-zoom-expected.png:
+        * platform/chromium-mac/fast/images/imagemap-focus-ring-zoom-expected.txt:
+        * platform/chromium-mac/fast/inline-block/contenteditable-baseline-expected.png:
+        * platform/chromium-mac/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.png:
+        * platform/chromium-mac/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.txt:
+        * platform/chromium-mac/fast/overflow/scrollRevealButton-expected.png:
+        * platform/chromium-mac/fast/overflow/scrollRevealButton-expected.txt:
+        * platform/chromium-mac/fast/replaced/replaced-breaking-expected.png:
+        * platform/chromium-mac/fast/replaced/replaced-breaking-expected.txt:
+        * platform/chromium-mac/fast/replaced/width100percent-button-expected.png:
+        * platform/chromium-mac/fast/replaced/width100percent-button-expected.txt:
+        * platform/chromium-mac/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-mac/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.png:
+        * platform/chromium-mac/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.txt:
+        * platform/chromium-mac/fast/text/international/vertical-text-glyph-test-expected.png:
+        * platform/chromium-mac/fast/text/international/vertical-text-glyph-test-expected.txt:
+        * platform/chromium-mac/fast/text/textIteratorNilRenderer-expected.png:
+        * platform/chromium-mac/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/chromium-mac/fast/writing-mode/fieldsets-expected.png:
+        * platform/chromium-mac/fast/writing-mode/fieldsets-expected.txt:
+        * platform/chromium-mac/http/tests/navigation/javascriptlink-frames-expected.png:
+        * platform/chromium-mac/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing-expected.txt:
+        * platform/chromium-mac/svg/as-border-image/svg-as-border-image-2-expected.png:
+        * platform/chromium-mac/svg/as-border-image/svg-as-border-image-2-expected.txt:
+        * platform/chromium-mac/svg/as-border-image/svg-as-border-image-expected.png:
+        * platform/chromium-mac/svg/as-border-image/svg-as-border-image-expected.txt:
+        * platform/chromium-mac/svg/zoom/page/zoom-background-images-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt:
+        * platform/chromium-mac/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.txt:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.txt:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug138725-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug138725-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug18359-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug2479-2-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug2479-2-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug2479-3-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug2479-3-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug2479-4-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug2479-4-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug26178-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug26178-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug28928-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug28928-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug30692-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug30692-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug33855-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug33855-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug39209-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug39209-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4429-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4429-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug46368-1-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug46368-1-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug46368-2-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug46368-2-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug51037-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug51037-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug51727-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug51727-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug60749-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug60749-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug7342-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/chromium-mac/tables/mozilla/collapsing_borders/bug41262-4-expected.png:
+        * platform/chromium-mac/tables/mozilla/collapsing_borders/bug41262-4-expected.txt:
+        * platform/chromium-mac/tables/mozilla/dom/tableDom-expected.png:
+        * platform/chromium-mac/tables/mozilla/dom/tableDom-expected.txt:
+        * platform/chromium-mac/tables/mozilla/other/move_row-expected.png:
+        * platform/chromium-mac/tables/mozilla/other/move_row-expected.txt:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug1725-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug1725-expected.txt:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug2479-5-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug58402-2-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug58402-2-expected.txt:
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.png:
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt:
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.png:
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt:
+        * platform/chromium-win-xp/fast/inline-block/contenteditable-baseline-expected.txt: Added.
+        * platform/chromium-win-xp/fast/text/international/vertical-text-glyph-test-expected.png: Added.
+        * platform/chromium-win-xp/fast/text/international/vertical-text-glyph-test-expected.txt: Added.
+        * platform/chromium-win-xp/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png: Removed.
+        * platform/chromium-win-xp/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png: Removed.
+        * platform/chromium-win-xp/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png: Removed.
+        * platform/chromium-win-xp/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png: Removed.
+        * platform/chromium-win/compositing/shadows/shadow-drawing-expected.txt:
+        * platform/chromium-win/css2.1/t0804-c5509-padn-l-03-f-g-expected.txt:
+        * platform/chromium-win/css2.1/t090501-c414-flt-03-b-g-expected.txt:
+        * platform/chromium-win/css3/flexbox/flexbox-baseline-expected.png:
+        * platform/chromium-win/css3/flexbox/flexbox-baseline-expected.txt:
+        * platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.png:
+        * platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt:
+        * platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.png:
+        * platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt:
+        * platform/chromium-win/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.png:
+        * platform/chromium-win/fast/dom/HTMLProgressElement/progress-element-expected.png:
+        * platform/chromium-win/fast/forms/007-expected.png:
+        * platform/chromium-win/fast/forms/007-expected.txt:
+        * platform/chromium-win/fast/forms/basic-buttons-expected.png:
+        * platform/chromium-win/fast/forms/basic-buttons-expected.txt:
+        * platform/chromium-win/fast/forms/placeholder-position-expected.txt:
+        * platform/chromium-win/fast/forms/search-vertical-alignment-expected.png:
+        * platform/chromium-win/fast/forms/search-vertical-alignment-expected.txt:
+        * platform/chromium-win/fast/forms/searchfield-heights-expected.png:
+        * platform/chromium-win/fast/forms/searchfield-heights-expected.txt:
+        * platform/chromium-win/fast/html/details-add-child-1-expected.png:
+        * platform/chromium-win/fast/html/details-add-child-1-expected.txt:
+        * platform/chromium-win/fast/html/details-add-child-2-expected.png:
+        * platform/chromium-win/fast/html/details-add-child-2-expected.txt:
+        * platform/chromium-win/fast/html/details-add-details-child-1-expected.png:
+        * platform/chromium-win/fast/html/details-add-details-child-1-expected.txt:
+        * platform/chromium-win/fast/html/details-add-details-child-2-expected.png:
+        * platform/chromium-win/fast/html/details-add-details-child-2-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-1-and-click-expected.png:
+        * platform/chromium-win/fast/html/details-add-summary-1-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-1-expected.png:
+        * platform/chromium-win/fast/html/details-add-summary-1-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-10-and-click-expected.png:
+        * platform/chromium-win/fast/html/details-add-summary-10-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-10-expected.png:
+        * platform/chromium-win/fast/html/details-add-summary-10-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-2-and-click-expected.png:
+        * platform/chromium-win/fast/html/details-add-summary-2-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-2-expected.png:
+        * platform/chromium-win/fast/html/details-add-summary-2-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-3-and-click-expected.png:
+        * platform/chromium-win/fast/html/details-add-summary-3-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-3-expected.png:
+        * platform/chromium-win/fast/html/details-add-summary-3-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-4-and-click-expected.png:
+        * platform/chromium-win/fast/html/details-add-summary-4-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-4-expected.png:
+        * platform/chromium-win/fast/html/details-add-summary-4-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-5-and-click-expected.png:
+        * platform/chromium-win/fast/html/details-add-summary-5-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-5-expected.png:
+        * platform/chromium-win/fast/html/details-add-summary-5-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-6-and-click-expected.png:
+        * platform/chromium-win/fast/html/details-add-summary-6-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-6-expected.png:
+        * platform/chromium-win/fast/html/details-add-summary-6-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-7-and-click-expected.png:
+        * platform/chromium-win/fast/html/details-add-summary-7-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-7-expected.png:
+        * platform/chromium-win/fast/html/details-add-summary-7-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-8-and-click-expected.png:
+        * platform/chromium-win/fast/html/details-add-summary-8-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-8-expected.png:
+        * platform/chromium-win/fast/html/details-add-summary-8-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-9-and-click-expected.png:
+        * platform/chromium-win/fast/html/details-add-summary-9-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-9-expected.png:
+        * platform/chromium-win/fast/html/details-add-summary-9-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-child-1-expected.png:
+        * platform/chromium-win/fast/html/details-add-summary-child-1-expected.txt:
+        * platform/chromium-win/fast/html/details-add-summary-child-2-expected.png:
+        * platform/chromium-win/fast/html/details-add-summary-child-2-expected.txt:
+        * platform/chromium-win/fast/html/details-marker-style-expected.png:
+        * platform/chromium-win/fast/html/details-marker-style-expected.txt:
+        * platform/chromium-win/fast/html/details-nested-1-expected.png:
+        * platform/chromium-win/fast/html/details-nested-1-expected.txt:
+        * platform/chromium-win/fast/html/details-nested-2-expected.png:
+        * platform/chromium-win/fast/html/details-nested-2-expected.txt:
+        * platform/chromium-win/fast/html/details-no-summary1-expected.png:
+        * platform/chromium-win/fast/html/details-no-summary1-expected.txt:
+        * platform/chromium-win/fast/html/details-no-summary2-expected.png:
+        * platform/chromium-win/fast/html/details-no-summary2-expected.txt:
+        * platform/chromium-win/fast/html/details-no-summary3-expected.png:
+        * platform/chromium-win/fast/html/details-no-summary3-expected.txt:
+        * platform/chromium-win/fast/html/details-no-summary4-expected.png:
+        * platform/chromium-win/fast/html/details-no-summary4-expected.txt:
+        * platform/chromium-win/fast/html/details-open-javascript-expected.png:
+        * platform/chromium-win/fast/html/details-open-javascript-expected.txt:
+        * platform/chromium-win/fast/html/details-open1-expected.png:
+        * platform/chromium-win/fast/html/details-open1-expected.txt:
+        * platform/chromium-win/fast/html/details-open2-expected.png:
+        * platform/chromium-win/fast/html/details-open2-expected.txt:
+        * platform/chromium-win/fast/html/details-open3-expected.png:
+        * platform/chromium-win/fast/html/details-open3-expected.txt:
+        * platform/chromium-win/fast/html/details-open4-expected.png:
+        * platform/chromium-win/fast/html/details-open4-expected.txt:
+        * platform/chromium-win/fast/html/details-open5-expected.png:
+        * platform/chromium-win/fast/html/details-open5-expected.txt:
+        * platform/chromium-win/fast/html/details-open6-expected.png:
+        * platform/chromium-win/fast/html/details-open6-expected.txt:
+        * platform/chromium-win/fast/html/details-position-expected.png:
+        * platform/chromium-win/fast/html/details-position-expected.txt:
+        * platform/chromium-win/fast/html/details-remove-child-1-expected.png:
+        * platform/chromium-win/fast/html/details-remove-child-1-expected.txt:
+        * platform/chromium-win/fast/html/details-remove-child-2-expected.png:
+        * platform/chromium-win/fast/html/details-remove-child-2-expected.txt:
+        * platform/chromium-win/fast/html/details-remove-summary-1-and-click-expected.png:
+        * platform/chromium-win/fast/html/details-remove-summary-1-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-remove-summary-1-expected.png:
+        * platform/chromium-win/fast/html/details-remove-summary-1-expected.txt:
+        * platform/chromium-win/fast/html/details-remove-summary-2-and-click-expected.png:
+        * platform/chromium-win/fast/html/details-remove-summary-2-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-remove-summary-2-expected.png:
+        * platform/chromium-win/fast/html/details-remove-summary-2-expected.txt:
+        * platform/chromium-win/fast/html/details-remove-summary-3-and-click-expected.png:
+        * platform/chromium-win/fast/html/details-remove-summary-3-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-remove-summary-3-expected.png:
+        * platform/chromium-win/fast/html/details-remove-summary-3-expected.txt:
+        * platform/chromium-win/fast/html/details-remove-summary-4-and-click-expected.png:
+        * platform/chromium-win/fast/html/details-remove-summary-4-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-remove-summary-4-expected.png:
+        * platform/chromium-win/fast/html/details-remove-summary-4-expected.txt:
+        * platform/chromium-win/fast/html/details-remove-summary-5-and-click-expected.png:
+        * platform/chromium-win/fast/html/details-remove-summary-5-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-remove-summary-5-expected.png:
+        * platform/chromium-win/fast/html/details-remove-summary-5-expected.txt:
+        * platform/chromium-win/fast/html/details-remove-summary-6-and-click-expected.png:
+        * platform/chromium-win/fast/html/details-remove-summary-6-and-click-expected.txt:
+        * platform/chromium-win/fast/html/details-remove-summary-6-expected.png:
+        * platform/chromium-win/fast/html/details-remove-summary-6-expected.txt:
+        * platform/chromium-win/fast/html/details-remove-summary-child-1-expected.png:
+        * platform/chromium-win/fast/html/details-remove-summary-child-1-expected.txt:
+        * platform/chromium-win/fast/html/details-remove-summary-child-2-expected.png:
+        * platform/chromium-win/fast/html/details-remove-summary-child-2-expected.txt:
+        * platform/chromium-win/fast/html/details-replace-summary-child-expected.png:
+        * platform/chromium-win/fast/html/details-replace-summary-child-expected.txt:
+        * platform/chromium-win/fast/html/details-replace-text-expected.png:
+        * platform/chromium-win/fast/html/details-replace-text-expected.txt:
+        * platform/chromium-win/fast/html/details-writing-mode-expected.png:
+        * platform/chromium-win/fast/html/details-writing-mode-expected.txt:
+        * platform/chromium-win/fast/images/imagemap-focus-ring-zoom-expected.png:
+        * platform/chromium-win/fast/images/imagemap-focus-ring-zoom-expected.txt:
+        * platform/chromium-win/fast/inline-block/contenteditable-baseline-expected.txt:
+        * platform/chromium-win/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-win/fast/speech/input-appearance-searchandspeech-expected.txt:
+        * platform/chromium-win/fast/text/international/vertical-text-glyph-test-expected.png:
+        * platform/chromium-win/fast/text/international/vertical-text-glyph-test-expected.txt:
+        * platform/chromium-win/fast/writing-mode/fieldsets-expected.png:
+        * platform/chromium-win/fast/writing-mode/fieldsets-expected.txt:
+        * platform/chromium-win/platform/chromium/virtual/softwarecompositing: Added.
+        * platform/chromium-win/platform/chromium/virtual/softwarecompositing/shadows: Added.
+        * platform/chromium-win/platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing-expected.txt: Added.
+        * platform/chromium-win/svg/as-border-image/svg-as-border-image-2-expected.png:
+        * platform/chromium-win/svg/as-border-image/svg-as-border-image-2-expected.txt:
+        * platform/chromium-win/svg/as-border-image/svg-as-border-image-expected.png:
+        * platform/chromium-win/svg/as-border-image/svg-as-border-image-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-background-images-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug30692-expected.txt:
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.txt: Replaced.
+        * platform/chromium/fast/forms/input-baseline-expected.txt: Removed.
+        * platform/chromium/fast/forms/placeholder-position-expected.txt: Removed.
+        * platform/mac/fast/forms/input-baseline-expected.txt: Removed.
+        * platform/mac/fast/forms/placeholder-position-expected.txt: Removed.
+
 2012-10-19  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed gardening. Fixing a lint issue.

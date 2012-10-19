@@ -7,6 +7,6 @@ layer at (50,100) size 700x400
   RenderBlock (positioned) {DIV} at (50,100) size 700x400 [border: (1px solid #808080)]
 layer at (51,141) size 560x320
   RenderBlock (positioned) {DIV} at (1,40) size 561x322 [border: (1px solid #FF0000)]
-    RenderImage {IMG} at (1,1) size 393x319
+    RenderImage {IMG} at (1,0) size 393x319
     RenderText {#text} at (0,0) size 0x0
     RenderText {#text} at (0,0) size 0x0

@@ -23,7 +23,7 @@ layer at (0,0) size 800x197
                         text run at (95,5) width 54: "PNG Image"
                   RenderTableRow {tr} at (0,91) size 491x82
                     RenderTableCell {td} at (1,91) size 244x82 [r=2 c=0 rs=1 cs=1]
-                      RenderEmbeddedObject {object} at (100,5) size 139x70
+                      RenderEmbeddedObject {object} at (100,4) size 139x70
                         layer at (0,0) size 139x69
                           RenderView at (0,0) size 139x69
                         layer at (0,0) size 139x69

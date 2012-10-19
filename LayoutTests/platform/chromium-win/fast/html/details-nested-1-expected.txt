@@ -6,13 +6,13 @@ layer at (0,0) size 800x600
       RenderBlock {DETAILS} at (0,0) size 784x144 [border: (8px solid #555599)]
         RenderBlock {SUMMARY} at (8,8) size 768x108 [border: (8px solid #9999CC)]
           RenderBlock (anonymous) at (8,8) size 752x20
-            RenderDetailsMarker {DIV} at (0,5) size 11x11: down
+            RenderDetailsMarker {DIV} at (0,4) size 11x11: down
             RenderText {#text} at (16,0) size 59x19
               text run at (16,0) width 5: " "
               text run at (20,0) width 55: "summary"
           RenderBlock {DETAILS} at (8,28) size 752x72 [border: (8px solid #995555)]
             RenderBlock {SUMMARY} at (8,8) size 736x36 [border: (8px solid #CC9999)]
-              RenderDetailsMarker {DIV} at (8,13) size 11x11: down
+              RenderDetailsMarker {DIV} at (8,12) size 11x11: down
               RenderText {#text} at (24,8) size 270x19
                 text run at (24,8) width 5: " "
                 text run at (28,8) width 266: "nested summary (summary-deails-summary)"

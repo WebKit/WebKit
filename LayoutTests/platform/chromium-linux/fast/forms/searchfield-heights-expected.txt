@@ -13,24 +13,24 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (65,0) size 5x6
       RenderText {#text} at (79,114) size 4x19
         text run at (79,114) width 4: " "
-      RenderTextControl {INPUT} at (85,104) size 179x40 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderTextControl {INPUT} at (85,103) size 179x41 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderDeprecatedFlexibleBox {DIV} at (3,3) size 173x34
           RenderBlock {DIV} at (0,11) size 1x12
           RenderBlock {DIV} at (1,8) size 159x18
           RenderBlock {DIV} at (160,12) size 10x10
       RenderText {#text} at (266,114) size 4x19
         text run at (266,114) width 4: " "
-      RenderTextControl {INPUT} at (272,20) size 307x200 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderTextControl {INPUT} at (272,19) size 307x201 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderDeprecatedFlexibleBox {DIV} at (3,3) size 301x194
           RenderBlock {DIV} at (0,91) size 1x12
           RenderBlock {DIV} at (1,80) size 278x34
           RenderBlock {DIV} at (279,87) size 19x20
       RenderText {#text} at (0,0) size 0x0
-layer at (97,124) size 159x17
+layer at (97,123) size 159x17
   RenderBlock {DIV} at (0,0) size 159x17
     RenderText {#text} at (0,0) size 35x17
       text run at (0,0) width 35: "small"
-layer at (284,112) size 278x33
+layer at (284,111) size 278x33
   RenderBlock {DIV} at (0,0) size 278x33
     RenderText {#text} at (0,0) size 84x32
       text run at (0,0) width 84: "regular"
