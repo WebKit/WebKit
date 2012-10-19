@@ -337,7 +337,7 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
 #endif
 
     addStylesheetsFromSeamlessParents();
-    appendAuthorStylesheets(0, styleSheetCollection->authorStyleSheets());
+    appendAuthorStyleSheets(0, styleSheetCollection->activeAuthorStyleSheets());
 }
 
 void StyleResolver::addStylesheetsFromSeamlessParents()
@@ -345,14 +345,14 @@ void StyleResolver::addStylesheetsFromSeamlessParents()
     // Build a list of stylesheet lists from our ancestors, and walk that
     // list in reverse order so that the root-most sheets are appended first.
     Document* childDocument = document();
-    Vector<const Vector<RefPtr<StyleSheet> >* > ancestorSheets;
+    Vector<const Vector<RefPtr<CSSStyleSheet> >* > ancestorSheets;
     while (HTMLIFrameElement* parentIFrame = childDocument->seamlessParentIFrame()) {
         Document* parentDocument = parentIFrame->document();
-        ancestorSheets.append(&parentDocument->styleSheetCollection()->authorStyleSheets());
+        ancestorSheets.append(&parentDocument->styleSheetCollection()->activeAuthorStyleSheets());
         childDocument = parentDocument;
     }
     for (int i = ancestorSheets.size() - 1; i >= 0; i--)
-        appendAuthorStylesheets(0, *ancestorSheets[i]);
+        appendAuthorStyleSheets(0, *ancestorSheets[i]);
 }
 
 void StyleResolver::addAuthorRulesAndCollectUserRulesFromSheets(const Vector<RefPtr<CSSStyleSheet> >* userSheets, RuleSet& userStyle)
@@ -405,17 +405,14 @@ void StyleResolver::resetAuthorStyle()
     m_authorStyle->disableAutoShrinkToFit();
 }
 
-void StyleResolver::appendAuthorStylesheets(unsigned firstNew, const Vector<RefPtr<StyleSheet> >& stylesheets)
+void StyleResolver::appendAuthorStyleSheets(unsigned firstNew, const Vector<RefPtr<CSSStyleSheet> >& styleSheets)
 {
     // This handles sheets added to the end of the stylesheet list only. In other cases the style resolver
     // needs to be reconstructed. To handle insertions too the rule order numbers would need to be updated.
-    unsigned size = stylesheets.size();
+    unsigned size = styleSheets.size();
     for (unsigned i = firstNew; i < size; ++i) {
-        if (!stylesheets[i]->isCSSStyleSheet())
-            continue;
-        CSSStyleSheet* cssSheet = static_cast<CSSStyleSheet*>(stylesheets[i].get());
-        if (cssSheet->disabled())
-            continue;
+        CSSStyleSheet* cssSheet = styleSheets[i].get();
+        ASSERT(!cssSheet->disabled());
         if (cssSheet->mediaQueries() && !m_medium->eval(cssSheet->mediaQueries(), this))
             continue;
         StyleSheetContents* sheet = cssSheet->contents();
@@ -2608,13 +2605,10 @@ static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wra
 
 static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wrapperMap, DocumentStyleSheetCollection* styleSheetCollection)
 {
-    const Vector<RefPtr<StyleSheet> >& styleSheets = styleSheetCollection->authorStyleSheets();
-    for (unsigned i = 0; i < styleSheets.size(); ++i) {
-        StyleSheet* styleSheet = styleSheets[i].get();
-        if (!styleSheet->isCSSStyleSheet())
-            continue;
-        collectCSSOMWrappers(wrapperMap, static_cast<CSSStyleSheet*>(styleSheet));
-    }
+    const Vector<RefPtr<CSSStyleSheet> >& styleSheets = styleSheetCollection->activeAuthorStyleSheets();
+    for (unsigned i = 0; i < styleSheets.size(); ++i)
+        collectCSSOMWrappers(wrapperMap, styleSheets[i].get());
+
     collectCSSOMWrappers(wrapperMap, styleSheetCollection->pageUserSheet());
     {
         const Vector<RefPtr<CSSStyleSheet> >* pageGroupUserSheets = styleSheetCollection->pageGroupUserSheets();

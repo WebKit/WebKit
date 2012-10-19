@@ -1,3 +1,38 @@
+2012-10-19  Antti Koivisto  <antti@apple.com>
+
+        Maintain a list of active CSS stylesheets
+        https://bugs.webkit.org/show_bug.cgi?id=99843
+
+        Reviewed by Andreas Kling.
+
+        Currently we maintain a per-document list of stylesheets that matches what is returned by the StyleSheetList DOM API. 
+        This list contains both CSS and XSLT stylesheets which internally have basically nothing in common. Maintaining 
+        a list of active CSS stylesheets separately simplifies code in number of places.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::StyleResolver):
+        (WebCore::StyleResolver::addStylesheetsFromSeamlessParents):
+        (WebCore::StyleResolver::appendAuthorStyleSheets):
+        (WebCore::collectCSSOMWrappers):
+        * css/StyleResolver.h:
+        (StyleResolver):
+        * css/StyleSheetList.cpp:
+        (WebCore::StyleSheetList::styleSheets):
+        (WebCore::StyleSheetList::detachFromDocument):
+        * dom/Document.cpp:
+        (WebCore::Document::setCompatibilityMode):
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::analyzeStyleSheetChange):
+        (WebCore::styleSheetsUseRemUnits):
+        (WebCore::filterEnabledCSSStyleSheets):
+        (WebCore):
+        (WebCore::DocumentStyleSheetCollection::updateActiveStyleSheets):
+        (WebCore::DocumentStyleSheetCollection::reportMemoryUsage):
+        * dom/DocumentStyleSheetCollection.h:
+        (WebCore::DocumentStyleSheetCollection::styleSheetsForStyleSheetList):
+        (DocumentStyleSheetCollection):
+        (WebCore::DocumentStyleSheetCollection::activeAuthorStyleSheets):
+
 2012-09-08  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Implement deferred image decoding

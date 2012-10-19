@@ -374,7 +374,7 @@ bool DocumentStyleSheetCollection::testAddedStyleSheetRequiresStyleRecalc(StyleS
     return false;
 }
 
-void DocumentStyleSheetCollection::analyzeStyleSheetChange(UpdateFlag updateFlag, const Vector<RefPtr<StyleSheet> >& newStylesheets, StyleResolverUpdateType& styleResolverUpdateType, bool& requiresFullStyleRecalc)
+void DocumentStyleSheetCollection::analyzeStyleSheetChange(UpdateFlag updateFlag, const Vector<RefPtr<CSSStyleSheet> >& newStylesheets, StyleResolverUpdateType& styleResolverUpdateType, bool& requiresFullStyleRecalc)
 {
     styleResolverUpdateType = Reconstruct;
     requiresFullStyleRecalc = true;
@@ -398,15 +398,15 @@ void DocumentStyleSheetCollection::analyzeStyleSheetChange(UpdateFlag updateFlag
         return;
 
     // Find out which stylesheets are new.
-    unsigned oldStylesheetCount = m_authorStyleSheets.size();
+    unsigned oldStylesheetCount = m_activeAuthorStyleSheets.size();
     if (newStylesheetCount < oldStylesheetCount)
         return;
-    Vector<StyleSheet*> addedSheets;
+    Vector<CSSStyleSheet*> addedSheets;
     unsigned newIndex = 0;
     for (unsigned oldIndex = 0; oldIndex < oldStylesheetCount; ++oldIndex) {
         if (newIndex >= newStylesheetCount)
             return;
-        while (m_authorStyleSheets[oldIndex] != newStylesheets[newIndex]) {
+        while (m_activeAuthorStyleSheets[oldIndex] != newStylesheets[newIndex]) {
             addedSheets.append(newStylesheets[newIndex].get());
             ++newIndex;
             if (newIndex == newStylesheetCount)
@@ -427,25 +427,30 @@ void DocumentStyleSheetCollection::analyzeStyleSheetChange(UpdateFlag updateFlag
     if (!m_document->body() || m_document->hasNodesWithPlaceholderStyle())
         return;
     for (unsigned i = 0; i < addedSheets.size(); ++i) {
-        if (!addedSheets[i]->isCSSStyleSheet())
-            return;
-        if (addedSheets[i]->disabled())
-            continue;
         if (testAddedStyleSheetRequiresStyleRecalc(static_cast<CSSStyleSheet*>(addedSheets[i])->contents()))
             return;
     }
     requiresFullStyleRecalc = false;
 }
 
-static bool styleSheetsUseRemUnits(const Vector<RefPtr<StyleSheet> >& sheets)
+static bool styleSheetsUseRemUnits(const Vector<RefPtr<CSSStyleSheet> >& sheets)
+{
+    for (unsigned i = 0; i < sheets.size(); ++i) {
+        if (sheets[i]->contents()->usesRemUnits())
+            return true;
+    }
+    return false;
+}
+
+static void filterEnabledCSSStyleSheets(Vector<RefPtr<CSSStyleSheet> >& result, const Vector<RefPtr<StyleSheet> >& sheets)
 {
     for (unsigned i = 0; i < sheets.size(); ++i) {
         if (!sheets[i]->isCSSStyleSheet())
             continue;
-        if (static_cast<CSSStyleSheet*>(sheets[i].get())->contents()->usesRemUnits())
-            return true;
+        if (sheets[i]->disabled())
+            continue;
+        result.append(static_cast<CSSStyleSheet*>(sheets[i].get()));
     }
-    return false;
 }
 
 bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag)
@@ -462,12 +467,15 @@ bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag
     if (!m_document->renderer() || !m_document->attached())
         return false;
 
-    Vector<RefPtr<StyleSheet> > newStylesheets;
-    collectActiveStyleSheets(newStylesheets);
+    Vector<RefPtr<StyleSheet> > activeStyleSheets;
+    collectActiveStyleSheets(activeStyleSheets);
+
+    Vector<RefPtr<CSSStyleSheet> > activeCSSStyleSheets;
+    filterEnabledCSSStyleSheets(activeCSSStyleSheets, activeStyleSheets);
 
     StyleResolverUpdateType styleResolverUpdateType;
     bool requiresFullStyleRecalc;
-    analyzeStyleSheetChange(updateFlag, newStylesheets, styleResolverUpdateType, requiresFullStyleRecalc);
+    analyzeStyleSheetChange(updateFlag, activeCSSStyleSheets, styleResolverUpdateType, requiresFullStyleRecalc);
 
     if (styleResolverUpdateType == Reconstruct)
         m_document->clearStyleResolver();
@@ -475,16 +483,17 @@ bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag
         StyleResolver* styleResolver = m_document->styleResolver();
         if (styleResolverUpdateType == Reset) {
             styleResolver->resetAuthorStyle();
-            styleResolver->appendAuthorStylesheets(0, newStylesheets);
+            styleResolver->appendAuthorStyleSheets(0, activeCSSStyleSheets);
         } else {
             ASSERT(styleResolverUpdateType == Additive);
-            styleResolver->appendAuthorStylesheets(m_authorStyleSheets.size(), newStylesheets);
+            styleResolver->appendAuthorStyleSheets(m_activeAuthorStyleSheets.size(), activeCSSStyleSheets);
         }
         resetCSSFeatureFlags();
     }
-    m_authorStyleSheets.swap(newStylesheets);
+    m_activeAuthorStyleSheets.swap(activeCSSStyleSheets);
+    m_styleSheetsForStyleSheetList.swap(activeStyleSheets);
 
-    m_usesRemUnits = styleSheetsUseRemUnits(m_authorStyleSheets);
+    m_usesRemUnits = styleSheetsUseRemUnits(m_activeAuthorStyleSheets);
     m_needsUpdateActiveStylesheetsOnStyleRecalc = false;
 
     m_document->notifySeamlessChildDocumentsOfStylesheetUpdate();
@@ -498,7 +507,8 @@ void DocumentStyleSheetCollection::reportMemoryUsage(MemoryObjectInfo* memoryObj
     info.addMember(m_pageUserSheet);
     info.addMember(m_pageGroupUserSheets);
     info.addMember(m_userSheets);
-    info.addMember(m_authorStyleSheets);
+    info.addMember(m_activeAuthorStyleSheets);
+    info.addMember(m_styleSheetsForStyleSheetList);
     info.addListHashSet(m_styleSheetCandidateNodes);
     info.addMember(m_preferredStylesheetSetName);
     info.addMember(m_selectedStylesheetSetName);

@@ -45,12 +45,12 @@ inline const Vector<RefPtr<StyleSheet> >& StyleSheetList::styleSheets() const
 {
     if (!m_document)
         return m_detachedStyleSheets;
-    return m_document->styleSheetCollection()->authorStyleSheets();
+    return m_document->styleSheetCollection()->styleSheetsForStyleSheetList();
 }
 
 void StyleSheetList::detachFromDocument()
 {
-    m_detachedStyleSheets = m_document->styleSheetCollection()->authorStyleSheets();
+    m_detachedStyleSheets = m_document->styleSheetCollection()->styleSheetsForStyleSheetList();
     m_document = 0;
 }
 
