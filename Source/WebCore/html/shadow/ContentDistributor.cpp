@@ -58,7 +58,7 @@ void ContentDistributor::distribute(Element* host)
 
     ContentDistribution pool;
     for (Node* node = host->firstChild(); node; node = node->nextSibling()) {
-        if (!isInsertionPoint(node)) {
+        if (!isHTMLContentElement(node)) {
             pool.append(node);
             continue;
         }
@@ -72,6 +72,7 @@ void ContentDistributor::distribute(Element* host)
                 pool.append(fallbackNode);
         }
     }
+
     Vector<bool> distributed(pool.size());
     distributed.fill(false);
 

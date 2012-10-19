@@ -56,6 +56,12 @@ private:
     virtual void parseAttribute(const Attribute&) OVERRIDE;
 };
 
+inline bool isHTMLContentElement(const Node* node)
+{
+    ASSERT(node);
+    return node->hasTagName(HTMLNames::contentTag);
+}
+
 }
 
 #endif

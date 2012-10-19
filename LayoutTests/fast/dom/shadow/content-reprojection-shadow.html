@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+<script src="resources/polyfill.js"></script>
+
+<p>This test ensures that elements distributed to a content element can be taken from a shadow element</p>
+
+<div id="host1">
+    <div>These elements</div>
+    <div>should be</div>
+    <div>reprojected</div>
+</div>
+
+<script>
+var shadowRoot1 = new WebKitShadowRoot(host1);
+shadowRoot1.innerHTML = '<div id="host2"><content></content></div>';
+
+var shadowRoot2 = new WebKitShadowRoot(shadowRoot1.getElementById('host2'));
+shadowRoot2.innerHTML = '<div><shadow></shadow><div>A</div></div>'
+</script>
+
+</html>
