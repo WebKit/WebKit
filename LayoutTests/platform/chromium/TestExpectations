@@ -3126,8 +3126,8 @@ webkit.org/b/80801 fast/js/function-constructor-error.html [ Failure ]
 
 webkit.org/b/81050 fast/forms/file/recover-file-input-in-unposted-form.html [ Failure Pass ]
 
-webkit.org/b/81145 [ Lion ] compositing/plugins/composited-plugin.html [ Failure ]
-webkit.org/b/81145 [ Lion ] platform/chromium/virtual/softwarecompositing/plugins/composited-plugin.html [ Failure ]
+webkit.org/b/81145 [ Lion MountainLion ] compositing/plugins/composited-plugin.html [ Failure ]
+webkit.org/b/81145 [ Lion MountainLion ] platform/chromium/virtual/softwarecompositing/plugins/composited-plugin.html [ Failure ]
 webkit.org/b/81145 [ Lion ] fast/repaint/transform-absolute-in-positioned-container.html [ Failure ]
 webkit.org/b/81145 [ Lion ] animations/cross-fade-webkit-mask-box-image.html [ ImageOnlyFailure ]
 webkit.org/b/81145 [ Lion ] compositing/iframes/iframe-content-flipping.html [ ImageOnlyFailure ]
@@ -4199,3 +4199,5 @@ webkit.org/b/98257 platform/chromium/virtual/gpu/fast/canvas/webgl/oes-element-i
 
 # Resource Timing is not enable yet, skip it.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing [ Skip ]
+
+webkit.org/b/99802 [ MountainLion ] fast/forms/text-control-intrinsic-widths.html [ Failure ]

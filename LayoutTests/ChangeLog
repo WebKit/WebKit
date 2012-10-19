@@ -1,5 +1,15 @@
 2012-10-18  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, expectations and baselines for chromium-mac-mountainlion
+
+        * platform/chromium-mac-lion/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.png: Copied from LayoutTests/platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.png.
+        * platform/chromium-mac-lion/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.txt: Copied from LayoutTests/platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.txt.
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.png:
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.txt:
+        * platform/chromium/TestExpectations:
+
+2012-10-18  Dirk Pranke  <dpranke@chromium.org>
+
         Land first batch of Chromium Mac 10.8-specific baselines.
 
         Unreviewed, gardening.
