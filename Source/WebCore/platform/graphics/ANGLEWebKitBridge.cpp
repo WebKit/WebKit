@@ -173,6 +173,12 @@ bool ANGLEWebKitBridge::compileShaderSource(const char* shaderSource, ANGLEShade
 
     const char* const shaderSourceStrings[] = { shaderSource };
 
+#if !PLATFORM(CHROMIUM)
+    // Chromium does not use the ANGLE bundled in WebKit source, and thus
+    // does not yet have the symbol SH_CLAMP_INDIRECT_ARRAY_BOUNDS.
+    extraCompileOptions |= SH_CLAMP_INDIRECT_ARRAY_BOUNDS;
+#endif
+
     bool validateSuccess = ShCompile(compiler, shaderSourceStrings, 1, SH_OBJECT_CODE | SH_ATTRIBUTES_UNIFORMS | extraCompileOptions);
     if (!validateSuccess) {
         int logSize = getValidationResultValue(compiler, SH_INFO_LOG_LENGTH);

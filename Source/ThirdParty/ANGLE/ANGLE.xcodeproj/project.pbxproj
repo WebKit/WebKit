@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		312BDB0C15FECAC90097EBC7 /* ANGLE.plist in CopyFiles */ = {isa = PBXBuildFile; fileRef = 312BDB0915FEC91E0097EBC7 /* ANGLE.plist */; };
 		312BDB0E15FECAE50097EBC7 /* ANGLE.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 312BDB0A15FECA3A0097EBC7 /* ANGLE.txt */; };
+		3158EA0E1630968D006BE5EE /* ArrayBoundsClamper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3158EA0C1630968D006BE5EE /* ArrayBoundsClamper.cpp */; };
+		3158EA0F1630968D006BE5EE /* ArrayBoundsClamper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3158EA0D1630968D006BE5EE /* ArrayBoundsClamper.h */; };
 		49951C0314B7AAB30060E96E /* length_limits.h in Headers */ = {isa = PBXBuildFile; fileRef = 49951C0214B7AAB30060E96E /* length_limits.h */; };
 		49951C0914B7AAD80060E96E /* BuiltInFunctionEmulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49951C0514B7AAD70060E96E /* BuiltInFunctionEmulator.cpp */; };
 		49951C0A14B7AAD80060E96E /* BuiltInFunctionEmulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 49951C0614B7AAD80060E96E /* BuiltInFunctionEmulator.h */; };
@@ -136,6 +138,8 @@
 /* Begin PBXFileReference section */
 		312BDB0915FEC91E0097EBC7 /* ANGLE.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ANGLE.plist; sourceTree = "<group>"; };
 		312BDB0A15FECA3A0097EBC7 /* ANGLE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ANGLE.txt; sourceTree = "<group>"; };
+		3158EA0C1630968D006BE5EE /* ArrayBoundsClamper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayBoundsClamper.cpp; sourceTree = "<group>"; };
+		3158EA0D1630968D006BE5EE /* ArrayBoundsClamper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayBoundsClamper.h; sourceTree = "<group>"; };
 		49951C0214B7AAB30060E96E /* length_limits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = length_limits.h; sourceTree = "<group>"; };
 		49951C0514B7AAD70060E96E /* BuiltInFunctionEmulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuiltInFunctionEmulator.cpp; sourceTree = "<group>"; };
 		49951C0614B7AAD80060E96E /* BuiltInFunctionEmulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuiltInFunctionEmulator.h; sourceTree = "<group>"; };
@@ -544,6 +548,8 @@
 		FB39D2201200F35A00088E69 /* compiler */ = {
 			isa = PBXGroup;
 			children = (
+				3158EA0C1630968D006BE5EE /* ArrayBoundsClamper.cpp */,
+				3158EA0D1630968D006BE5EE /* ArrayBoundsClamper.h */,
 				FB39D2211200F35A00088E69 /* BaseTypes.h */,
 				49951C0514B7AAD70060E96E /* BuiltInFunctionEmulator.cpp */,
 				49951C0614B7AAD80060E96E /* BuiltInFunctionEmulator.h */,
@@ -712,6 +718,7 @@
 				A265683E159C23E100398539 /* DependencyGraphOutput.h in Headers */,
 				A2656841159C23E100398539 /* RestrictFragmentShaderTiming.h in Headers */,
 				A2656843159C23E100398539 /* RestrictVertexShaderTiming.h in Headers */,
+				3158EA0F1630968D006BE5EE /* ArrayBoundsClamper.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -829,6 +836,7 @@
 				A265683F159C23E100398539 /* DependencyGraphTraverse.cpp in Sources */,
 				A2656840159C23E100398539 /* RestrictFragmentShaderTiming.cpp in Sources */,
 				A2656842159C23E100398539 /* RestrictVertexShaderTiming.cpp in Sources */,
+				3158EA0E1630968D006BE5EE /* ArrayBoundsClamper.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

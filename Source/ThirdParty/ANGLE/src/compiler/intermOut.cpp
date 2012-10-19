@@ -42,7 +42,7 @@ TString TType::getCompleteString() const
     if (qualifier != EvqTemporary && qualifier != EvqGlobal)
         stream << getQualifierString() << " " << getPrecisionString() << " ";
     if (array)
-        stream << "array of ";
+        stream << "array[" << getArraySize() << "] of ";
     if (matrix)
         stream << size << "X" << size << " matrix of ";
     else if (size > 1)

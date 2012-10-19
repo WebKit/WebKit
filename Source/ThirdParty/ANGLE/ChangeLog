@@ -1,3 +1,59 @@
+2012-10-18  Dean Jackson  <dino@apple.com>
+
+        Shader translator needs option to clamp uniform array accesses in vertex shaders
+        https://bugs.webkit.org/show_bug.cgi?id=98977
+        https://code.google.com/p/angleproject/issues/detail?id=49
+
+        Reviewed by Alok Priyadarshi and Ken Russell.
+
+        WebGL does not allow GLSL code to index a uniform array outside its bounds. Add a
+        flag to the ANGLE compiler to insert clamp statements around such indexing.
+        Since it is possible to access vec2/3/4 and mat2/3/4 components by array indexing,
+        they must be similarly clamped.
+
+        Unfortunately, it is currently not possible to always determine that the indexing is
+        operating on a uniform variable. For example, suppose we have "uniform mat4 a". ANGLE
+        is currently not able to tell us that the rvalue of "a[0]" is a uniform, just that
+        it has a size of 4. Therefore, the clamping is done on all indirect array indexing.
+
+        This will have a performance impact. Future enhancements may be able to determine
+        cases where the clamping is not necessary. Currently only direct indexing is skipped
+        (i.e. looking up a value using a constant index).
+
+        The clamp insertion is only performed on the GLSL output. Direct3D already guarantees
+        that out-of-bounds uniform array access returns a zero value.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * include/GLSLANG/ShaderLang.h: New compiler option.
+        * src/compiler/ArrayBoundsClamper.cpp: Added.
+        (ArrayBoundsClamper::ArrayBoundsClamper):
+        (ArrayBoundsClamper::OutputClampingFunctionDefinition): Injects a clamping function for integers into GLSL source.
+        (ArrayBoundsClamper::MarkIndirectArrayBoundsForClamping): Examines the AST looking for non-direct array indexing.
+        * src/compiler/ArrayBoundsClamper.h: Added.
+        (ArrayBoundsClamper):
+        (ArrayBoundsClamper::GetArrayBoundsClampDefinitionNeeded):
+        (ArrayBoundsClamper::SetArrayBoundsClampDefinitionNeeded): Marks the object as needing to output the clamping function.
+        (ArrayBoundsClamper::Cleanup): Resets the state so that subsequent runs start fresh.
+        * src/compiler/Compiler.cpp:
+        (TCompiler::compile): Run the clamping code if the compile option was set.
+        (TCompiler::clearResults):
+        (TCompiler::getArrayBoundsClamper):
+        * src/compiler/OutputGLSLBase.cpp:
+        (TOutputGLSLBase::visitBinary): If the expression has been flagged, insert an appropriate "clamp" statement.
+        * src/compiler/ShHandle.h:
+        (TCompiler):
+        * src/compiler/TranslatorESSL.cpp:
+        (TranslatorESSL::translate):
+        * src/compiler/TranslatorGLSL.cpp:
+        (TranslatorGLSL::translate):
+        * src/compiler/intermOut.cpp:
+        (TType::getCompleteString): Add array size to intermediate tree output.
+        * src/compiler/intermediate.h:
+        (TIntermBinary::setAddIndexClamp): New flag for indicating a binary expression needs clamping.
+        (TIntermBinary::getAddIndexClamp):
+        (TIntermBinary):
+
 2012-09-13  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/12255720> Fix the build with newer Clang

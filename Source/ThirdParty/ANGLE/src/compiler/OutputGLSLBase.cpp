@@ -235,8 +235,37 @@ bool TOutputGLSLBase::visitBinary(Visit visit, TIntermBinary* node)
             break;
 
         case EOpIndexDirect:
-        case EOpIndexIndirect:
             writeTriplet(visit, NULL, "[", "]");
+            break;
+        case EOpIndexIndirect:
+            if (node->getAddIndexClamp())
+            {
+                if (visit == InVisit)
+                {
+                    out << "[webgl_int_clamp(";
+                }
+                else if (visit == PostVisit)
+                {
+                    int maxSize;
+                    TIntermTyped *left = node->getLeft();
+                    TType leftType = left->getType();
+
+                    if (left->isArray())
+                    {
+                        // The shader will fail validation if the array length is not > 0.
+                        maxSize = leftType.getArraySize() - 1;
+                    }
+                    else
+                    {
+                        maxSize = leftType.getNominalSize() - 1;
+                    }
+                    out << ", 0, " << maxSize << ")]";
+                }
+            }
+            else
+            {
+                writeTriplet(visit, NULL, "[", "]");
+            }
             break;
         case EOpIndexDirectStruct:
             if (visit == InVisit)

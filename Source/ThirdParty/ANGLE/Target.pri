@@ -17,6 +17,7 @@ INCLUDEPATH += \
     $$SOURCE_DIR/include
 
 HEADERS += \
+    src/compiler/ArrayBoundsClamper.h \
     src/compiler/BaseTypes.h \
     src/compiler/BuiltInFunctionEmulator.h \
     src/compiler/Common.h \
@@ -90,6 +91,7 @@ HEADERS += \
     src/compiler/VersionGLSL.h
 
 SOURCES += \
+    src/compiler/ArrayBoundsClamper.cpp \
     src/compiler/BuiltInFunctionEmulator.cpp \
     src/compiler/CodeGenGLSL.cpp \
     src/compiler/Compiler.cpp \

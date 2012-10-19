@@ -1,3 +1,19 @@
+2012-10-18  Dean Jackson  <dino@apple.com>
+
+        Shader translator needs option to clamp uniform array accesses in vertex shaders
+        https://bugs.webkit.org/show_bug.cgi?id=98977
+        https://code.google.com/p/angleproject/issues/detail?id=49
+
+        Reviewed by Alok Priyadarshi and Ken Russell.
+
+        WebGL forbids out-of-bounds array access in shaders. Rewrite any shaders to
+        ensure that non-direct array indexing is clamped to the bounds of the array.
+
+        Test: fast/canvas/webgl/array-bounds-clamping.html
+
+        * platform/graphics/ANGLEWebKitBridge.cpp:
+        (WebCore::ANGLEWebKitBridge::compileShaderSource): Pass new compiler option SH_CLAMP_INDIRECT_ARRAY_BOUNDS
+
 2012-10-19  Justin Novosad  <junov@chromium.org>
 
         [Chromium] Reduce memory footprint of canvas pattern object with deferred rendering

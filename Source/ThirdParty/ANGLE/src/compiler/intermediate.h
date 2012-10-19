@@ -400,9 +400,15 @@ public:
     TIntermTyped* getRight() const { return right; }
     bool promote(TInfoSink&);
 
+    void setAddIndexClamp() { addIndexClamp = true; }
+    bool getAddIndexClamp() { return addIndexClamp; }
+
 protected:
     TIntermTyped* left;
     TIntermTyped* right;
+
+    // If set to true, wrap any EOpIndexIndirect with a clamp to bounds.
+    bool addIndexClamp;
 };
 
 //

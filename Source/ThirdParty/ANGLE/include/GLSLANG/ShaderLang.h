@@ -142,7 +142,13 @@ typedef enum {
   // - The shader spec is SH_WEBGL_SPEC.
   // - The compile options contain the SH_TIMING_RESTRICTIONS flag.
   // - The shader type is SH_FRAGMENT_SHADER.
-  SH_DEPENDENCY_GRAPH = 0x0400
+  SH_DEPENDENCY_GRAPH = 0x0400,
+
+  // This flag ensures all indirect (expression-based) array indexing
+  // is clamped to the bounds of the array. This ensures, for example,
+  // that you cannot read off the end of a uniform, whether an array
+  // vec234, or mat234 type.
+  SH_CLAMP_INDIRECT_ARRAY_BOUNDS = 0x0800
 } ShCompileOptions;
 
 //

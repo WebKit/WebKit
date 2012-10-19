@@ -2363,6 +2363,9 @@ crbug.com/60651 [ Win ] platform/chromium/virtual/gpu/fast/canvas/webgl/gl-objec
 crbug.com/60651 fast/canvas/webgl/uniform-location.html [ Failure Timeout ]
 crbug.com/60651 platform/chromium/virtual/gpu/fast/canvas/webgl/uniform-location.html [ Failure Timeout ]
 
+# This will fail in Chromium until the patch is upstreamed to ANGLE
+webkit.org/b/98977 fast/canvas/webgl/array-bounds-clamping.html [ Failure ]
+
 # Flaky since r68438:r68445 or before that.
 webkit.org/b/46693 [ Mac ] fast/repaint/repaint-svg-after-style-change.html [ Failure ]
 
