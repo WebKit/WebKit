@@ -95,7 +95,7 @@ public:
 private:
     class Client : public WTF::MemoryInstrumentationClient {
     public:
-        virtual void countObjectSize(MemoryObjectType objectType, size_t size)
+        virtual void countObjectSize(const void*, MemoryObjectType objectType, size_t size)
         {
             TypeToSizeMap::AddResult result = m_totalSizes.add(objectType, size);
             if (!result.isNewEntry)

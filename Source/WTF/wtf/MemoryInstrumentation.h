@@ -86,7 +86,7 @@ template<typename T> void reportMemoryUsage(const T* const&, MemoryObjectInfo*);
 class MemoryInstrumentationClient {
 public:
     virtual ~MemoryInstrumentationClient() { }
-    virtual void countObjectSize(MemoryObjectType, size_t) = 0;
+    virtual void countObjectSize(const void*, MemoryObjectType, size_t) = 0;
     virtual bool visited(const void*) = 0;
     virtual void checkCountedObject(const void*) = 0;
 };
@@ -110,7 +110,7 @@ protected:
     };
 
 private:
-    void countObjectSize(MemoryObjectType objectType, size_t size) { m_client->countObjectSize(objectType, size); }
+    void countObjectSize(const void* object, MemoryObjectType objectType, size_t size) { m_client->countObjectSize(object, objectType, size); }
     bool visited(const void* pointer) { return m_client->visited(pointer); }
     void checkCountedObject(const void* pointer) { return m_client->checkCountedObject(pointer); }
 
@@ -159,7 +159,7 @@ private:
     {
         if (!buffer || visited(buffer))
             return;
-        countObjectSize(ownerObjectType, size);
+        countObjectSize(buffer, ownerObjectType, size);
     }
 
     template<typename T>
@@ -199,7 +199,7 @@ public:
     template<typename M> void addMember(const M& member) { m_memoryInstrumentation->addObject(member, m_objectType); }
     template<typename ListHashSetType> void addListHashSet(const ListHashSetType& set) { m_memoryInstrumentation->addListHashSet(set, m_objectType, true); }
     void addRawBuffer(const void* const& buffer, size_t size) { m_memoryInstrumentation->addRawBuffer(buffer, m_objectType, size); }
-    void addPrivateBuffer(size_t size) { m_memoryInstrumentation->countObjectSize(m_objectType, size); }
+    void addPrivateBuffer(size_t size) { m_memoryInstrumentation->countObjectSize(0, m_objectType, size); }
 
     void addWeakPointer(void*) { }
 
@@ -232,20 +232,16 @@ void MemoryInstrumentation::addObjectImpl(const T* const& object, MemoryObjectTy
 template<typename T>
 void MemoryInstrumentation::addObjectImpl(const OwnPtr<T>* const& object, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
 {
-    if (owningType == byPointer && !visited(object)) {
-        countObjectSize(ownerObjectType, sizeof(*object));
-        checkCountedObject(object);
-    }
+    if (owningType == byPointer && !visited(object))
+        countObjectSize(object, ownerObjectType, sizeof(*object));
     addObjectImpl(object->get(), ownerObjectType, byPointer);
 }
 
 template<typename T>
 void MemoryInstrumentation::addObjectImpl(const RefPtr<T>* const& object, MemoryObjectType ownerObjectType, MemoryOwningType owningType)
 {
-    if (owningType == byPointer && !visited(object)) {
-        countObjectSize(ownerObjectType, sizeof(*object));
-        checkCountedObject(object);
-    }
+    if (owningType == byPointer && !visited(object))
+        countObjectSize(object, ownerObjectType, sizeof(*object));
     addObjectImpl(object->get(), ownerObjectType, byPointer);
 }
 
@@ -255,7 +251,7 @@ void MemoryInstrumentation::addListHashSet(const ListHashSetType& hashSet, Memor
     if (visited(&hashSet))
         return;
     size_t size = (contentOnly ? 0 : sizeof(ListHashSetType)) + hashSet.capacity() * sizeof(void*) + hashSet.size() * (sizeof(typename ListHashSetType::ValueType) + 2 * sizeof(void*));
-    countObjectSize(ownerObjectType, size);
+    countObjectSize(&hashSet, ownerObjectType, size);
 }
 
 template<typename T>
@@ -263,7 +259,7 @@ void MemoryInstrumentation::InstrumentedPointer<T>::process(MemoryInstrumentatio
 {
     MemoryObjectInfo memoryObjectInfo(memoryInstrumentation, m_ownerObjectType);
     reportMemoryUsage(m_pointer, &memoryObjectInfo);
-    memoryInstrumentation->countObjectSize(memoryObjectInfo.objectType(), memoryObjectInfo.objectSize());
+    memoryInstrumentation->countObjectSize(m_pointer, memoryObjectInfo.objectType(), memoryObjectInfo.objectSize());
 }
 
 // Link time guard for classes with external memory instrumentation.

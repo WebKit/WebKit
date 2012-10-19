@@ -1,3 +1,22 @@
+2012-10-17  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI provide data for mixing with tcmalloc heap dumps.
+        https://bugs.webkit.org/show_bug.cgi?id=99457
+
+        Reviewed by Yury Semikhatsky.
+
+        countObjectSize now accepts ptr as the first argument and saves it into HashMap if the binary was ran with HEAPPROFILE env variable.
+        getProcessMemoryDistribution does snapshot and calls the downstream code with the map of counted objects.
+
+        * wtf/MemoryInstrumentation.h:
+        (MemoryInstrumentationClient):
+        (WTF::MemoryInstrumentation::countObjectSize):
+        (WTF::MemoryInstrumentation::addRawBuffer):
+        (WTF::MemoryClassInfo::addPrivateBuffer):
+        (WTF::MemoryInstrumentation::addObjectImpl):
+        (WTF::MemoryInstrumentation::addListHashSet):
+        (WTF::::process):
+
 2012-10-18  Michael Saboff  <msaboff@apple.com>
 
         convertUTF8ToUTF16() Should Check for ASCII Input

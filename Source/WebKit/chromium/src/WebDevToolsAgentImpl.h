@@ -106,6 +106,7 @@ public:
     virtual void autoZoomPageToFitWidth();
 
     virtual void getAllocatedObjects(HashSet<const void*>&);
+    virtual void dumpUncountedAllocatedObjects(const HashMap<const void*, size_t>&);
 
     int hostId() { return m_hostId; }
 

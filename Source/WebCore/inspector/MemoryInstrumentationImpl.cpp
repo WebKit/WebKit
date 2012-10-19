@@ -58,13 +58,22 @@ TypeNameToSizeMap MemoryInstrumentationClientImpl::sizesMap() const
     return sizesMap;
 }
 
-void MemoryInstrumentationClientImpl::countObjectSize(MemoryObjectType objectType, size_t size)
+void MemoryInstrumentationClientImpl::countObjectSize(const void* object, MemoryObjectType objectType, size_t size)
 {
     ASSERT(objectType);
+
     TypeToSizeMap::AddResult result = m_totalSizes.add(objectType, size);
     if (!result.isNewEntry)
         result.iterator->value += size;
     ++m_totalCountedObjects;
+
+    if (!checkInstrumentedObjects())
+        return;
+
+    if (object) {
+        m_countedObjects.add(object, size);
+        checkCountedObject(object);
+    }
 }
 
 bool MemoryInstrumentationClientImpl::visited(const void* object)
@@ -91,6 +100,7 @@ void MemoryInstrumentationClientImpl::reportMemoryUsage(MemoryObjectInfo* memory
     info.addMember(m_totalSizes);
     info.addMember(m_visitedObjects);
     info.addMember(m_allocatedObjects);
+    info.addMember(m_countedObjects);
 }
 
 void MemoryInstrumentationImpl::processDeferredInstrumentedPointers()

@@ -462,12 +462,13 @@ void WebDevToolsAgentImpl::getAllocatedObjects(HashSet<const void*>& set)
         CountingVisitor() : m_totalObjectsCount(0)
         {
         }
+
         virtual bool visitObject(const void* ptr)
         {
             ++m_totalObjectsCount;
             return true;
         }
-        size_t totalObjectsCount()
+        size_t totalObjectsCount() const
         {
             return m_totalObjectsCount;
         }
@@ -488,7 +489,7 @@ void WebDevToolsAgentImpl::getAllocatedObjects(HashSet<const void*>& set)
             , m_pointers(new const void*[maxObjectsCount])
         {
         }
-        ~PointerCollector()
+        virtual ~PointerCollector()
         {
             delete[] m_pointers;
         }
@@ -529,6 +530,25 @@ void WebDevToolsAgentImpl::getAllocatedObjects(HashSet<const void*>& set)
         }
         estimatedMaxObjectsCount *= 2;
     }
+}
+
+void WebDevToolsAgentImpl::dumpUncountedAllocatedObjects(const HashMap<const void*, size_t>& map)
+{
+    class InstrumentedObjectSizeProvider : public WebDevToolsAgentClient::InstrumentedObjectSizeProvider {
+    public:
+        InstrumentedObjectSizeProvider(const HashMap<const void*, size_t>& map) : m_map(map) { }
+        virtual size_t objectSize(const void* ptr) const
+        {
+            HashMap<const void*, size_t>::const_iterator i = m_map.find(ptr);
+            return i == m_map.end() ? 0 : i->value;
+        }
+
+    private:
+        const HashMap<const void*, size_t>& m_map;
+    };
+
+    InstrumentedObjectSizeProvider provider(map);
+    m_client->dumpUncountedAllocatedObjects(&provider);
 }
 
 void WebDevToolsAgentImpl::dispatchOnInspectorBackend(const WebString& message)

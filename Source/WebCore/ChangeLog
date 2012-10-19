@@ -1,3 +1,27 @@
+2012-10-17  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI provide data for mixing with tcmalloc heap dumps.
+        https://bugs.webkit.org/show_bug.cgi?id=99457
+
+        Reviewed by Yury Semikhatsky.
+
+        countObjectSize now accepts ptr as the first argument and saves it into HashMap if the binary was ran with HEAPPROFILE env variable.
+        getProcessMemoryDistribution does snapshot and calls the downstream code with the map of counted objects.
+
+        * inspector/InspectorClient.h:
+        (WebCore::InspectorClient::dumpUncountedAllocatedObjects):
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore::reportJSHeapInfo):
+        (WebCore::reportRenderTreeInfo):
+        (WebCore):
+        (WebCore::InspectorMemoryAgent::getProcessMemoryDistribution):
+        * inspector/MemoryInstrumentationImpl.cpp:
+        (WebCore::MemoryInstrumentationClientImpl::countObjectSize):
+        (WebCore::MemoryInstrumentationClientImpl::reportMemoryUsage):
+        * inspector/MemoryInstrumentationImpl.h:
+        (MemoryInstrumentationClientImpl):
+        (WebCore::MemoryInstrumentationClientImpl::countedObjects):
+
 2012-10-19  Adam Barth  <abarth@webkit.org>
 
         [V8] DOMObjectVisitor does nothing

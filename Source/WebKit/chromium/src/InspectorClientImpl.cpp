@@ -169,6 +169,12 @@ void InspectorClientImpl::getAllocatedObjects(HashSet<const void*>& set)
         agent->getAllocatedObjects(set);
 }
 
+void InspectorClientImpl::dumpUncountedAllocatedObjects(const HashMap<const void*, size_t>& map)
+{
+    if (WebDevToolsAgentImpl* agent = devToolsAgent())
+        agent->dumpUncountedAllocatedObjects(map);
+}
+
 void InspectorClientImpl::willProcessTask()
 {
     InspectorInstrumentation::willProcessTask(m_inspectedWebView->page());

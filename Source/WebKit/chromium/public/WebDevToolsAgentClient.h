@@ -69,6 +69,14 @@ public:
     };
     virtual void visitAllocatedObjects(AllocatedObjectVisitor*) { }
 
+    class InstrumentedObjectSizeProvider {
+    public:
+        virtual size_t objectSize(const void* ptr) const = 0;
+    protected:
+        virtual ~InstrumentedObjectSizeProvider() { }
+    };
+    virtual void dumpUncountedAllocatedObjects(const InstrumentedObjectSizeProvider*) { }
+
 protected:
     ~WebDevToolsAgentClient() { }
 };

@@ -79,6 +79,7 @@ public:
     virtual bool supportsFrameInstrumentation();
 
     virtual void getAllocatedObjects(HashSet<const void*>&);
+    virtual void dumpUncountedAllocatedObjects(const HashMap<const void*, size_t>&);
 
 private:
     // WebThread::TaskObserver

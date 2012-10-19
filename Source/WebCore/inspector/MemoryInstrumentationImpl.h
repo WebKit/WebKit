@@ -48,6 +48,8 @@ typedef HashMap<String, size_t> TypeNameToSizeMap;
 
 class MemoryInstrumentationClientImpl : public WTF::MemoryInstrumentationClient {
 public:
+    typedef HashMap<const void*, size_t> ObjectToSizeMap;
+
     MemoryInstrumentationClientImpl()
         : m_totalCountedObjects(0)
         , m_totalObjectsNotInAllocatedSet(0)
@@ -69,13 +71,14 @@ public:
 
     TypeNameToSizeMap sizesMap() const;
     VisitedObjects& allocatedObjects() { return m_allocatedObjects; }
+    const ObjectToSizeMap& countedObjects() { return m_countedObjects; }
 
     bool checkInstrumentedObjects() const { return !m_allocatedObjects.isEmpty(); }
     size_t visitedObjects() const { return m_visitedObjects.size(); }
     size_t totalCountedObjects() const { return m_totalCountedObjects; }
     size_t totalObjectsNotInAllocatedSet() const { return m_totalObjectsNotInAllocatedSet; }
 
-    virtual void countObjectSize(MemoryObjectType, size_t) OVERRIDE;
+    virtual void countObjectSize(const void*, MemoryObjectType, size_t) OVERRIDE;
     virtual bool visited(const void*) OVERRIDE;
     virtual void checkCountedObject(const void*) OVERRIDE;
 
@@ -86,6 +89,7 @@ private:
     TypeToSizeMap m_totalSizes;
     VisitedObjects m_visitedObjects;
     VisitedObjects m_allocatedObjects;
+    ObjectToSizeMap m_countedObjects;
     size_t m_totalCountedObjects;
     size_t m_totalObjectsNotInAllocatedSet;
 };

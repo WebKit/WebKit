@@ -436,16 +436,16 @@ static void reportJSHeapInfo(WTF::MemoryInstrumentationClient& memoryInstrumenta
     HeapInfo info;
     ScriptGCEvent::getHeapSize(info);
 
-    memoryInstrumentationClient.countObjectSize(WebCoreMemoryTypes::JSHeapUsed, info.usedJSHeapSize);
-    memoryInstrumentationClient.countObjectSize(WebCoreMemoryTypes::JSHeapUnused, info.totalJSHeapSize - info.usedJSHeapSize);
+    memoryInstrumentationClient.countObjectSize(0, WebCoreMemoryTypes::JSHeapUsed, info.usedJSHeapSize);
+    memoryInstrumentationClient.countObjectSize(0, WebCoreMemoryTypes::JSHeapUnused, info.totalJSHeapSize - info.usedJSHeapSize);
 }
 
 static void reportRenderTreeInfo(WTF::MemoryInstrumentationClient& memoryInstrumentationClient, Page* page)
 {
     ArenaSize arenaSize = page->renderTreeSize();
 
-    memoryInstrumentationClient.countObjectSize(WebCoreMemoryTypes::RenderTreeUsed, arenaSize.treeSize);
-    memoryInstrumentationClient.countObjectSize(WebCoreMemoryTypes::RenderTreeUnused, arenaSize.allocated - arenaSize.treeSize);
+    memoryInstrumentationClient.countObjectSize(0, WebCoreMemoryTypes::RenderTreeUsed, arenaSize.treeSize);
+    memoryInstrumentationClient.countObjectSize(0, WebCoreMemoryTypes::RenderTreeUnused, arenaSize.allocated - arenaSize.treeSize);
 }
 
 namespace {
@@ -540,6 +540,8 @@ void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<Ins
     memoryInstrumentation.addRootObject(this);
     memoryInstrumentation.addRootObject(memoryInstrumentation);
     memoryInstrumentation.addRootObject(memoryInstrumentationClient);
+
+    m_inspectorClient->dumpUncountedAllocatedObjects(memoryInstrumentationClient.countedObjects());
 
     MemoryUsageStatsGenerator statsGenerator(&memoryInstrumentationClient);
     statsGenerator.dump(children.get());

@@ -29,6 +29,7 @@
 
 #include "InspectorStateClient.h"
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 
 namespace WebCore {
@@ -73,6 +74,7 @@ public:
     virtual bool supportsFrameInstrumentation() { return false; }
 
     virtual void getAllocatedObjects(HashSet<const void*>&) { }
+    virtual void dumpUncountedAllocatedObjects(const HashMap<const void*, size_t>&) { }
 
     static bool doDispatchMessageOnFrontendPage(Page* frontendPage, const String& message);
 };

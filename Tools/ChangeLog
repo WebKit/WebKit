@@ -1,3 +1,14 @@
+2012-10-17  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI provide data for mixing with tcmalloc heap dumps.
+        https://bugs.webkit.org/show_bug.cgi?id=99457
+
+        Reviewed by Yury Semikhatsky.
+
+        countObjectSize now requires pointer to object as the first argument.
+
+        * TestWebKitAPI/Tests/WTF/MemoryInstrumentationTest.cpp:
+
 2012-10-18  Dirk Pranke  <dpranke@chromium.org>
 
         make move_overwritten_baselines_to work again while rebaselining
