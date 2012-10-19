@@ -58,7 +58,6 @@ class WebSettings;
 class WebSpellCheckClient;
 class WebString;
 class WebTextFieldDecoratorClient;
-class WebThread;
 class WebViewClient;
 struct WebActiveWheelFlingParameters;
 struct WebMediaPlayerAction;
@@ -467,8 +466,6 @@ public:
     virtual void extendSelectionAndDelete(int before, int after) = 0;
 
     virtual bool isSelectionEditable() const = 0;
-
-    virtual void setCompositorImplThread(WebThread*) = 0;
 
     // Benchmarking support -------------------------------------------------
 

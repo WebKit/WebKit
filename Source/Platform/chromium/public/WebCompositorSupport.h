@@ -74,8 +74,6 @@ public:
     virtual void setPageScalePinchZoomEnabled(bool) { }
 
     // May return 0 if initialization fails.
-    virtual WebLayerTreeView* createLayerTreeView(WebLayerTreeViewClient* client, const WebLayer& root, const WebLayerTreeView::Settings& settings, WebThread* implThread) { return createLayerTreeView(client, root, settings); }
-    // FIXME(aelias): Delete this version when the above is implemented.
     virtual WebLayerTreeView* createLayerTreeView(WebLayerTreeViewClient*, const WebLayer& root, const WebLayerTreeView::Settings&) { return 0; }
 
 

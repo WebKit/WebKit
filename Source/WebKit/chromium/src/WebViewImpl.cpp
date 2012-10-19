@@ -424,7 +424,6 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_compositorSurfaceReady(false)
     , m_deviceScaleInCompositor(1)
     , m_inputHandlerIdentifier(-1)
-    , m_compositorImplThread(0)
 #endif
 #if ENABLE(INPUT_SPEECH)
     , m_speechInputClient(SpeechInputClientImpl::create(client))
@@ -3872,11 +3871,6 @@ void WebViewImpl::paintRootLayer(GraphicsContext& context, const IntRect& conten
     setBackgroundColor(view->documentBackgroundColor());
 }
 
-void WebViewImpl::setCompositorImplThread(WebThread* compositorImplThread)
-{
-    m_compositorImplThread = compositorImplThread;
-}
-
 void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 {
     WebKit::Platform::current()->histogramEnumeration("GPU.setIsAcceleratedCompositingActive", active * 2 + m_isAcceleratedCompositingActive, 4);
@@ -3914,7 +3908,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         m_nonCompositedContentHost->setShowDebugBorders(page()->settings()->showDebugBorders());
         m_nonCompositedContentHost->setOpaque(!isTransparent());
 
-        m_layerTreeView = adoptPtr(Platform::current()->compositorSupport()->createLayerTreeView(this, *m_rootLayer, layerTreeViewSettings, m_compositorImplThread));
+        m_layerTreeView = adoptPtr(Platform::current()->compositorSupport()->createLayerTreeView(this, *m_rootLayer, layerTreeViewSettings));
         if (m_layerTreeView) {
             if (m_webSettings->applyDefaultDeviceScaleFactorInCompositor() && page()->deviceScaleFactor() != 1) {
                 ASSERT(page()->deviceScaleFactor());
