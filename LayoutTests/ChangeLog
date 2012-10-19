@@ -1,3 +1,19 @@
+2012-10-18  Adam Barth  <abarth@webkit.org>
+
+        [V8] fast/dom/gc-9.html fails for document.implementation
+        https://bugs.webkit.org/show_bug.cgi?id=99783
+
+        Reviewed by Kentaro Hara.
+
+        * platform/chromium/TestExpectations:
+            - TestExpectations claims that this test is "brain damaged", but it
+              looks like the test has improved since that comment was written
+              and that this test is actually quite valuable.
+        * platform/chromium/fast/dom/gc-9-expected.txt: Added.
+            - This patch adds a Chromium-specific baseline for this test.
+              Before this patch, we failed the document.implementation
+              subtests.
+
 2012-10-18  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update.

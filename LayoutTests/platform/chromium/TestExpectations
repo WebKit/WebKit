@@ -677,11 +677,6 @@ webkit.org/b/98579 platform/chromium/virtual/softwarecompositing/repaint/require
 # of ResourceHandleClient).  That function is Mac-specific.
 http/tests/misc/willCacheResponse-delegate-callback.html [ WontFix ]
 
-# Checks for very kjs-specific garbage collector
-# behavior. Gc-9 is completely braindamaged; it tests that certain
-# properties are reset by the garbage collector. It looks to pass recently.
-fast/dom/gc-9.html [ WontFix ]
-
 # This test checks that properties of arguments arrays are non-enumerable
 # which is incorrect according to the ES5 spec.
 fast/js/kde/function.html [ WontFix ]

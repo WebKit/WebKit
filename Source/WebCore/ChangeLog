@@ -1,3 +1,18 @@
+2012-10-18  Adam Barth  <abarth@webkit.org>
+
+        [V8] fast/dom/gc-9.html fails for document.implementation
+        https://bugs.webkit.org/show_bug.cgi?id=99783
+
+        Reviewed by Kentaro Hara.
+
+        In order to correctly manage the lifetime of document.implementation,
+        we need to implement GenerateIsReachable=ImplDocument.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateVisitDOMWrapper):
+        * bindings/scripts/IDLAttributes.txt:
+        * dom/DOMImplementation.idl:
+
 2012-10-18  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Crashes in WebProcess at com.apple.WebCore: -[AccessibilityObjectWrapper remoteAccessibilityParentObject] + 78

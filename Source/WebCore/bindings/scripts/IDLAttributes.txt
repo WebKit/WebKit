@@ -53,7 +53,7 @@ DoNotCheckSecurityOnGetter
 DoNotCheckSecurityOnSetter
 EventTarget
 ExtendsDOMGlobalObject
-GenerateIsReachable=ImplElementRoot|ImplBaseRoot
+GenerateIsReachable=ImplDocument|ImplElementRoot|ImplBaseRoot
 Immutable
 ImplementedAs=*
 IndexedGetter
@@ -118,7 +118,7 @@ V8DependentLifetime
 V8DoNotCheckSignature
 V8EnabledAtRuntime=*
 V8EnabledPerContext=*
-V8GenerateIsReachable=ImplElementRoot|ImplOwnerRoot|ImplOwnerNodeRoot|ImplBaseRoot
+V8GenerateIsReachable=ImplDocument|ImplElementRoot|ImplOwnerRoot|ImplOwnerNodeRoot|ImplBaseRoot
 V8MeasureAs=*
 V8ReadOnly
 V8Unforgeable

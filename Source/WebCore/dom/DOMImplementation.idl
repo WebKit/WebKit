@@ -19,8 +19,7 @@
  */
 
 [
-    JSGenerateIsReachable=ImplDocument,
-    V8DependentLifetime
+    GenerateIsReachable=ImplDocument,
 ] interface DOMImplementation {
 
     // DOM Level 1
