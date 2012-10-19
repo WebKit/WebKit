@@ -1,3 +1,18 @@
+2012-10-19  Joshua Bell  <jsbell@chromium.org>
+
+        [V8] IndexedDB: Crash when lazy-indexing Date keys
+        https://bugs.webkit.org/show_bug.cgi?id=99860
+
+        Reviewed by Adam Barth.
+
+        Missing a scope/context needed when digging values out of Date objects
+        in an indexing callback.
+
+        Test: storage/indexeddb/lazy-index-types.html
+
+        * bindings/v8/IDBBindingUtilities.cpp:
+        (WebCore::createIDBKeyFromScriptValueAndKeyPath):
+
 2012-10-18  Dean Jackson  <dino@apple.com>
 
         Shader translator needs option to clamp uniform array accesses in vertex shaders

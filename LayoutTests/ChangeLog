@@ -1,3 +1,21 @@
+2012-10-19  Joshua Bell  <jsbell@chromium.org>
+
+        [V8] IndexedDB: Crash when lazy-indexing Date keys
+        https://bugs.webkit.org/show_bug.cgi?id=99860
+
+        Reviewed by Adam Barth.
+
+        Add test for greedy/lazy indexing all different key types.
+
+        * storage/indexeddb/lazy-index-types-expected.txt: Added.
+        * storage/indexeddb/lazy-index-types.html: Added.
+        * storage/indexeddb/resources/lazy-index-types.js: Added.
+        (test.request.onsuccess):
+        (test):
+        (onSuccess.request.onsuccess):
+        (onSuccess):
+        (onComplete):
+
 2012-10-18  Dean Jackson  <dino@apple.com>
 
         Shader translator needs option to clamp uniform array accesses in vertex shaders
