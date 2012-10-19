@@ -1,5 +1,18 @@
 2012-10-19  Emil A Eklund  <eae@chromium.org>
 
+        Unreviewed gardening.
+
+        * platform/chromium-linux/fast/forms/placeholder-position-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-hixie-mixed-009-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-hixie-mixed-009-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/shadows: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-hixie-mixed-009-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-hixie-mixed-009-expected.txt: Added.
+
+2012-10-19  Emil A Eklund  <eae@chromium.org>
+
         Unreviewed chromium rebaseline for r131503.
 
         * fast/forms/input-baseline-expected.txt: Added.
