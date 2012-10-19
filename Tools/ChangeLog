@@ -1,3 +1,10 @@
+2012-10-18  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Skip really old flaky failing jscore date test. 
+        There's a bug tracking it here: https://bugs.webkit.org/show_bug.cgi?id=53712.
+
+        * Scripts/run-javascriptcore-tests:
+
 2012-10-18  Byungwoo Lee  <bw80.lee@samsung.com>
 
         Fix build warning.
