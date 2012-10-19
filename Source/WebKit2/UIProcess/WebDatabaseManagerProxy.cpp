@@ -94,7 +94,7 @@ PassRefPtr<WebDatabaseManagerProxy> WebDatabaseManagerProxy::create(WebContext* 
 WebDatabaseManagerProxy::WebDatabaseManagerProxy(WebContext* webContext)
     : m_webContext(webContext)
 {
-    m_webContext->addMessageReceiver(CoreIPC::MessageClassWebDatabaseManagerProxy, this);
+    m_webContext->deprecatedAddMessageReceiver(CoreIPC::MessageClassWebDatabaseManagerProxy, this);
 }
 
 WebDatabaseManagerProxy::~WebDatabaseManagerProxy()

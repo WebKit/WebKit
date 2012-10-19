@@ -40,7 +40,7 @@ WebGeolocationManagerProxy::WebGeolocationManagerProxy(WebContext* context)
     : m_isUpdating(false)
     , m_context(context)
 {
-    m_context->addMessageReceiver(CoreIPC::MessageClassWebGeolocationManagerProxy, this);
+    m_context->deprecatedAddMessageReceiver(CoreIPC::MessageClassWebGeolocationManagerProxy, this);
 }
 
 WebGeolocationManagerProxy::~WebGeolocationManagerProxy()

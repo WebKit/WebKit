@@ -174,9 +174,9 @@ public:
     void addQueueClient(QueueClient*);
     void removeQueueClient(QueueClient*);
 
-    void addMessageReceiver(MessageClass messageClass, MessageReceiver* messageReceiver)
+    void deprecatedAddMessageReceiver(MessageClass messageClass, MessageReceiver* messageReceiver)
     {
-        m_messageReceiverMap.addMessageReceiver(messageClass, messageReceiver);
+        m_messageReceiverMap.deprecatedAddMessageReceiver(messageClass, messageReceiver);
     }
 
     bool open();

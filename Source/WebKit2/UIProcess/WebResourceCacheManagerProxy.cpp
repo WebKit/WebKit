@@ -45,7 +45,7 @@ PassRefPtr<WebResourceCacheManagerProxy> WebResourceCacheManagerProxy::create(We
 WebResourceCacheManagerProxy::WebResourceCacheManagerProxy(WebContext* webContext)
     : m_webContext(webContext)
 {
-    m_webContext->addMessageReceiver(CoreIPC::MessageClassWebResourceCacheManagerProxy, this);
+    m_webContext->deprecatedAddMessageReceiver(CoreIPC::MessageClassWebResourceCacheManagerProxy, this);
 }
 
 WebResourceCacheManagerProxy::~WebResourceCacheManagerProxy()

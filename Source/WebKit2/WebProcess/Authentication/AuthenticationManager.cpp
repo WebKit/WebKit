@@ -55,7 +55,7 @@ AuthenticationManager& AuthenticationManager::shared()
 
 AuthenticationManager::AuthenticationManager()
 {
-    WebProcess::shared().connection()->addMessageReceiver(CoreIPC::MessageClassAuthenticationManager, this);
+    WebProcess::shared().connection()->deprecatedAddMessageReceiver(CoreIPC::MessageClassAuthenticationManager, this);
 }
 
 void AuthenticationManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)

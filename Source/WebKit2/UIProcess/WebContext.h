@@ -90,7 +90,7 @@ public:
 
     static const Vector<WebContext*>& allContexts();
 
-    void addMessageReceiver(CoreIPC::MessageClass, CoreIPC::MessageReceiver*);
+    void deprecatedAddMessageReceiver(CoreIPC::MessageClass, CoreIPC::MessageReceiver*);
     bool dispatchMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     bool dispatchSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
 

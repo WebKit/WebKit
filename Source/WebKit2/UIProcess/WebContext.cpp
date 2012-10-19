@@ -129,9 +129,9 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_usesNetworkProcess(false)
 #endif
 {
-    addMessageReceiver(CoreIPC::MessageClassWebContext, this);
-    addMessageReceiver(CoreIPC::MessageClassDownloadProxy, this);
-    addMessageReceiver(CoreIPC::MessageClassWebContextLegacy, this);
+    deprecatedAddMessageReceiver(CoreIPC::MessageClassWebContext, this);
+    deprecatedAddMessageReceiver(CoreIPC::MessageClassDownloadProxy, this);
+    deprecatedAddMessageReceiver(CoreIPC::MessageClassWebContextLegacy, this);
 
     // NOTE: These sub-objects must be initialized after m_messageReceiverMap..
     m_applicationCacheManagerProxy = WebApplicationCacheManagerProxy::create(this);
@@ -777,9 +777,9 @@ HashSet<String, CaseFoldingHash> WebContext::pdfAndPostScriptMIMETypes()
     return mimeTypes;
 }
 
-void WebContext::addMessageReceiver(CoreIPC::MessageClass messageClass, CoreIPC::MessageReceiver* messageReceiver)
+void WebContext::deprecatedAddMessageReceiver(CoreIPC::MessageClass messageClass, CoreIPC::MessageReceiver* messageReceiver)
 {
-    m_messageReceiverMap.addMessageReceiver(messageClass, messageReceiver);
+    m_messageReceiverMap.deprecatedAddMessageReceiver(messageClass, messageReceiver);
 }
 
 bool WebContext::dispatchMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)

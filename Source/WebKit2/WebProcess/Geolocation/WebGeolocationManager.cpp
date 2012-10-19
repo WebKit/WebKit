@@ -57,7 +57,7 @@ void WebGeolocationManager::didReceiveMessage(CoreIPC::Connection* connection, C
 void WebGeolocationManager::registerWebPage(WebPage* page)
 {
     if (!m_didAddMessageReceiver) {
-        m_process->connection()->addMessageReceiver(CoreIPC::MessageClassWebGeolocationManager, this);
+        m_process->connection()->deprecatedAddMessageReceiver(CoreIPC::MessageClassWebGeolocationManager, this);
         m_didAddMessageReceiver = true;
     }
 

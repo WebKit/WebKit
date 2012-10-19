@@ -41,7 +41,7 @@ PassRefPtr<WebKeyValueStorageManagerProxy> WebKeyValueStorageManagerProxy::creat
 WebKeyValueStorageManagerProxy::WebKeyValueStorageManagerProxy(WebContext* context)
     : m_webContext(context)
 {
-    m_webContext->addMessageReceiver(CoreIPC::MessageClassWebKeyValueStorageManagerProxy, this);
+    m_webContext->deprecatedAddMessageReceiver(CoreIPC::MessageClassWebKeyValueStorageManagerProxy, this);
 }
 
 WebKeyValueStorageManagerProxy::~WebKeyValueStorageManagerProxy()

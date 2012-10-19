@@ -38,25 +38,20 @@ MessageReceiverMap::~MessageReceiverMap()
 {
 }
 
-void MessageReceiverMap::addMessageReceiver(MessageClass messageClass, MessageReceiver* messageReceiver)
+void MessageReceiverMap::deprecatedAddMessageReceiver(MessageClass messageClass, MessageReceiver* messageReceiver)
 {
-    ASSERT(!m_globalMessageReceivers.contains(messageClass));
-    m_globalMessageReceivers.set(messageClass, messageReceiver);
+    ASSERT(!m_deprecatedGlobalMessageReceivers.contains(messageClass));
+    m_deprecatedGlobalMessageReceivers.set(messageClass, messageReceiver);
 }
 
 void MessageReceiverMap::invalidate()
 {
-    m_globalMessageReceivers.clear();
-}
-
-bool MessageReceiverMap::knowsHowToHandleMessage(MessageID messageID) const
-{
-    return m_globalMessageReceivers.contains(messageID.messageClass());
+    m_deprecatedGlobalMessageReceivers.clear();
 }
 
 bool MessageReceiverMap::dispatchMessage(Connection* connection, MessageID messageID, MessageDecoder& decoder)
 {
-    if (MessageReceiver* messageReceiver = m_globalMessageReceivers.get(messageID.messageClass())) {
+    if (MessageReceiver* messageReceiver = m_deprecatedGlobalMessageReceivers.get(messageID.messageClass())) {
         messageReceiver->didReceiveMessage(connection, messageID, decoder);
         return true;
     }
@@ -66,7 +61,7 @@ bool MessageReceiverMap::dispatchMessage(Connection* connection, MessageID messa
 
 bool MessageReceiverMap::dispatchSyncMessage(Connection* connection, MessageID messageID, MessageDecoder& decoder, OwnPtr<MessageEncoder>& replyEncoder)
 {
-    if (MessageReceiver* messageReceiver = m_globalMessageReceivers.get(messageID.messageClass())) {
+    if (MessageReceiver* messageReceiver = m_deprecatedGlobalMessageReceivers.get(messageID.messageClass())) {
         messageReceiver->didReceiveSyncMessage(connection, messageID, decoder, replyEncoder);
         return true;
     }
