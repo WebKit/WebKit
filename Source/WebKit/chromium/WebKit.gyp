@@ -874,12 +874,13 @@
                 'public',
                 '../../WebCore/testing/v8', # for WebCoreTestSupport.h, needed to link in window.internals code.
             ],
+            'sources': [
+                'src/WebTestingSupport.cpp',
+                'public/WebTestingSupport.h',
+            ],
             'conditions': [
                 ['inside_chromium_build==0 or component!="shared_library"', {
-                    'sources': [
-                        'src/WebTestingSupport.cpp',
-                        'public/WebTestingSupport.h',
-                    ],
+                    'type': 'none',
                 }],
             ],
         },
