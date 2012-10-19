@@ -1,3 +1,15 @@
+2012-10-19  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Update localizedStrings.js
+        https://bugs.webkit.org/show_bug.cgi?id=99701
+
+        Reviewed by Yury Semikhatsky.
+
+        Fixed most of missing strings and orphans.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/SettingsScreen.js:
+
 2012-10-17  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: NMI provide data for mixing with tcmalloc heap dumps.

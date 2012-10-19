@@ -365,7 +365,7 @@ WebInspector.UserAgentSettingsTab.prototype = {
         var checkboxElement = labelElement.createChild("input");
         checkboxElement.type = "checkbox";
         checkboxElement.checked = !!userAgent;
-        labelElement.appendChild(document.createTextNode("User Agent"));
+        labelElement.appendChild(document.createTextNode(WebInspector.UIString("User Agent")));
         p.appendChild(this._createUserAgentSelectRowElement(checkboxElement));
         return p;
     },
