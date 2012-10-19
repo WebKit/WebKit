@@ -1,3 +1,12 @@
+2012-10-19  Simon Hausmann  <simon.hausmann@digia.com>
+
+        Unreviewed, rolling out r131734.
+        http://trac.webkit.org/changeset/131734
+
+        Broke ANGLE build where we end up with @echo foo && @echo -n
+
+        * qmake/mkspecs/features/default_post.prf:
+
 2012-10-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION (r130640 - r130644): TestCookieManager API test is failing

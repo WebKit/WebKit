@@ -112,8 +112,6 @@ contains(TEMPLATE, derived) {
             eval($${generator}.commands = $${GNUTOOLS} && $$val_escape($${generator}.commands))
         }
 
-        silent: eval($${generator}.commands = @echo generating sources from ${QMAKE_FILE_IN} && $$val_escape($${generator}.commands))
-
         !isEmpty($${generator}.input) {
             # Compiler-style generator
             QMAKE_EXTRA_COMPILERS += $$generator
