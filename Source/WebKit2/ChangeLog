@@ -1,3 +1,15 @@
+2012-10-19  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WTR] renderToOffscreenBuffer should not be set if the real render loop is active
+        https://bugs.webkit.org/show_bug.cgi?id=99831
+
+        Reviewed by Jocelyn Turcotte.
+
+        Update the comment about renderToOffscreenBuffer to better describe its role.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::setNeedsDisplay):
+
 2012-10-19  Yael Aharon  <yael.aharon@intel.com>
 
         [EFL][WK2] Rename EflViewportHandler to PageViewportControllerClientEfl

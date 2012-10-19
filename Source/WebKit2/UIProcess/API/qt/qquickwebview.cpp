@@ -440,7 +440,8 @@ void QQuickWebViewPrivate::setNeedsDisplay()
 {
     Q_Q(QQuickWebView);
     if (renderToOffscreenBuffer()) {
-        // TODO: we can maintain a real image here and use it for pixel tests. Right now this is used only for running the rendering code-path while running tests.
+        // This is used only to mantain the rendering synchronisation between the UI and
+        // the web process when running tests even if the render loop is not active.
         QImage dummyImage(1, 1, QImage::Format_ARGB32);
         QPainter painter(&dummyImage);
         q->page()->d->paint(&painter);

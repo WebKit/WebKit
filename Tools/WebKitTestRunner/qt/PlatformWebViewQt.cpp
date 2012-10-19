@@ -66,6 +66,9 @@ private Q_SLOTS:
             setSurfaceType(OpenGLSurface);
             create();
             QQuickWindowPrivate::get(this)->setRenderWithoutShowing(true);
+        } else {
+            QQuickWebViewExperimental experimental(m_view);
+            experimental.setRenderToOffscreenBuffer(true);
         }
 
         QWindowSystemInterface::handleWindowActivated(this);
@@ -82,8 +85,6 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
     , m_windowIsKey(true)
     , m_modalEventLoop(0)
 {
-    QQuickWebViewExperimental experimental(m_view);
-    experimental.setRenderToOffscreenBuffer(true);
     m_view->setAllowAnyHTTPSCertificateForLocalHost(true);
     m_view->componentComplete();
 }
@@ -164,6 +165,8 @@ WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
 
 bool PlatformWebView::windowShapshotEnabled()
 {
+    // We need a way to disable UI side rendering for tests because it is
+    // too slow without appropriate hardware.
     static bool result;
     static bool hasChecked = false;
     if (!hasChecked)

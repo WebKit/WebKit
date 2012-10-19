@@ -1,3 +1,19 @@
+2012-10-19  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WTR] renderToOffscreenBuffer should not be set if the real render loop is active
+        https://bugs.webkit.org/show_bug.cgi?id=99831
+
+        Reviewed by Jocelyn Turcotte.
+
+        Do not set renderToOffscreenBuffer if we have called setRenderWithoutShowing.
+        We do not need it in this case and these things are actually conflicting.
+
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::WrapperWindow::handleStatusChanged):
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::windowShapshotEnabled): Added a comment
+        describing why this workaround is needed.
+
 2012-10-19  Zan Dobersek  <zandobersek@gmail.com>
 
         [WK2][GTK] Fullscreen tests timing out in bots
