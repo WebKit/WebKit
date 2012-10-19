@@ -1,3 +1,10 @@
+2012-10-19  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Rebaseline a few pixel expectations now that WK1 also shows the resizer in textareas.
+
+        * platform/efl/fast/forms/basic-textareas-expected.png:
+        * platform/efl/fast/forms/basic-textareas-quirks-expected.png:
+
 2012-10-18  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: labelForElement is slow when there are a lot of DOM elements
