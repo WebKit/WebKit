@@ -23,23 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EflViewportHandler_h
-#define EflViewportHandler_h
+#ifndef PageViewportControllerClientEfl_h
+#define PageViewportControllerClientEfl_h
 
 #if USE(COORDINATED_GRAPHICS)
 
 #include "PageClientImpl.h"
+#include "PageViewportControllerClient.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
 
-class EflViewportHandler {
+class PageViewportControllerClientEfl : public PageViewportControllerClient {
 public:
-    static PassOwnPtr<EflViewportHandler> create(Evas_Object* viewWidget)
+    static PassOwnPtr<PageViewportControllerClientEfl> create(Evas_Object* viewWidget)
     {
-        return adoptPtr(new EflViewportHandler(viewWidget));
+        return adoptPtr(new PageViewportControllerClientEfl(viewWidget));
     }
-    ~EflViewportHandler();
+    ~PageViewportControllerClientEfl();
 
     DrawingAreaProxy* drawingArea() const;
     WebCore::IntSize viewSize() { return m_viewportSize; }
@@ -47,10 +48,20 @@ public:
     void display(const WebCore::IntRect& rect, const WebCore::IntPoint& viewPosition);
     void updateViewportSize(const WebCore::IntSize& viewportSize);
     void setVisibleContentsRect(const WebCore::IntPoint&, float, const WebCore::FloatPoint&);
-    void didChangeContentsSize(const WebCore::IntSize& size);
     void setRendererActive(bool);
+
+    virtual void setViewportPosition(const WebCore::FloatPoint& contentsPoint);
+    virtual void setContentsScale(float, bool treatAsInitialValue);
+
+    virtual void didResumeContent();
+    virtual void didChangeContentsSize(const WebCore::IntSize&);
+    virtual void didChangeVisibleContents();
+    virtual void didChangeViewportAttributes();
+
+    virtual void setController(PageViewportController*);
+
 private:
-    explicit EflViewportHandler(Evas_Object*);
+    explicit PageViewportControllerClientEfl(Evas_Object*);
 
     Evas_Object* m_viewWidget;
     WebCore::IntRect m_visibleContentRect;
@@ -63,4 +74,4 @@ private:
 
 #endif
 
-#endif // EflViewportHandler_h
+#endif // PageViewportControllerClientEfl_h

@@ -75,7 +75,7 @@
 #endif
 
 #if USE(COORDINATED_GRAPHICS)
-#include "EflViewportHandler.h"
+#include "PageViewportControllerClientEfl.h"
 #endif
 
 using namespace WebKit;
@@ -115,7 +115,7 @@ static inline void removeFromPageViewMap(const Evas_Object* ewkView)
 struct Ewk_View_Private_Data {
     OwnPtr<PageClientImpl> pageClient;
 #if USE(COORDINATED_GRAPHICS)
-    OwnPtr<EflViewportHandler> viewportHandler;
+    OwnPtr<PageViewportControllerClientEfl> pageViewportControllerClient;
 #endif
     RefPtr<WebPageProxy> pageProxy;
 
@@ -623,7 +623,7 @@ bool ewk_view_accelerated_compositing_mode_enter(const Evas_Object* ewkView)
         return false;
     }
 
-    priv->viewportHandler->setRendererActive(true);
+    priv->pageViewportControllerClient->setRendererActive(true);
     return true;
 }
 
@@ -667,7 +667,7 @@ static void _ewk_view_smart_calculate(Evas_Object* ewkView)
 
     if (smartData->changed.size) {
 #if USE(COORDINATED_GRAPHICS)
-        priv->viewportHandler->updateViewportSize(IntSize(width, height));
+        priv->pageViewportControllerClient->updateViewportSize(IntSize(width, height));
 #endif
 #if USE(ACCELERATED_COMPOSITING)
         needsNewSurface = priv->evasGlSurface;
@@ -824,7 +824,7 @@ static void _ewk_view_initialize(Evas_Object* ewkView, Ewk_Context* context, WKP
     priv->context = ewk_context_ref(context);
 
 #if USE(COORDINATED_GRAPHICS)
-    priv->viewportHandler = EflViewportHandler::create(ewkView);
+    priv->pageViewportControllerClient = PageViewportControllerClientEfl::create(ewkView);
 #endif
 
     WKPageRef wkPage = toAPI(priv->pageProxy.get());
@@ -1295,7 +1295,7 @@ void ewk_view_display(Evas_Object* ewkView, const IntRect& rect)
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
 
     evas_gl_make_current(priv->evasGl, priv->evasGlSurface, priv->evasGlContext);
-    priv->viewportHandler->display(rect, IntPoint(smartData->view.x, smartData->view.y));
+    priv->pageViewportControllerClient->display(rect, IntPoint(smartData->view.x, smartData->view.y));
 #endif
 
     evas_object_image_data_update_add(smartData->image, rect.x(), rect.y(), rect.width(), rect.height());
@@ -1733,7 +1733,7 @@ void ewk_view_contents_size_changed(const Evas_Object* ewkView, const IntSize& s
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
 
-    priv->viewportHandler->didChangeContentsSize(size);
+    priv->pageViewportControllerClient->didChangeContentsSize(size);
 #else
     UNUSED_PARAM(ewkView);
     UNUSED_PARAM(size);

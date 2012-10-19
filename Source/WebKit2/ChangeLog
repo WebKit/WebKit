@@ -1,3 +1,44 @@
+2012-10-19  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][WK2] Rename EflViewportHandler to PageViewportControllerClientEfl
+        https://bugs.webkit.org/show_bug.cgi?id=99101
+
+        Reviewed by Gyuyoung Kim.
+
+        Rename EFlViewportHandler to PageViewportControllerClientEfl.
+        Also, make it inherit from PageViewportControllerClient. The actual implementation
+        of PageViewportControllerClient for Efl port will come in a separate patch.
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EflViewportHandler.cpp: Removed.
+        * UIProcess/API/efl/EflViewportHandler.h: Removed.
+        * UIProcess/API/efl/PageViewportControllerClientEfl.cpp: Copied from Source/WebKit2/UIProcess/API/efl/EflViewportHandler.cpp.
+        (WebKit::PageViewportControllerClientEfl::PageViewportControllerClientEfl):
+        (WebKit::PageViewportControllerClientEfl::~PageViewportControllerClientEfl):
+        (WebKit::PageViewportControllerClientEfl::drawingArea):
+        (WebKit::PageViewportControllerClientEfl::setRendererActive):
+        (WebKit::PageViewportControllerClientEfl::display):
+        (WebKit::PageViewportControllerClientEfl::updateViewportSize):
+        (WebKit::PageViewportControllerClientEfl::setVisibleContentsRect):
+        (WebKit::PageViewportControllerClientEfl::didChangeContentsSize):
+        (WebKit):
+        (WebKit::PageViewportControllerClientEfl::setViewportPosition):
+        (WebKit::PageViewportControllerClientEfl::setContentsScale):
+        (WebKit::PageViewportControllerClientEfl::didResumeContent):
+        (WebKit::PageViewportControllerClientEfl::didChangeVisibleContents):
+        (WebKit::PageViewportControllerClientEfl::didChangeViewportAttributes):
+        (WebKit::PageViewportControllerClientEfl::setController):
+        * UIProcess/API/efl/PageViewportControllerClientEfl.h: Copied from Source/WebKit2/UIProcess/API/efl/EflViewportHandler.h.
+        (WebKit::PageViewportControllerClientEfl::create):
+        (PageViewportControllerClientEfl):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (Ewk_View_Private_Data):
+        (_ewk_view_initialize):
+        (ewk_view_scale_set):
+        * UIProcess/PageViewportController.cpp:
+        * UIProcess/PageViewportController.h:
+
 2012-10-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(r131844): It broke the build on !ENABLE(NETSCAPE_PLUGIN_API) platforms

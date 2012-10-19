@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "EflViewportHandler.h"
+#include "PageViewportControllerClientEfl.h"
 
 #if USE(COORDINATED_GRAPHICS)
 
@@ -37,28 +37,28 @@ using namespace WebCore;
 
 namespace WebKit {
 
-EflViewportHandler::EflViewportHandler(Evas_Object* viewWidget)
+PageViewportControllerClientEfl::PageViewportControllerClientEfl(Evas_Object* viewWidget)
     : m_viewWidget(viewWidget)
     , m_scaleFactor(1)
 {
     ASSERT(m_viewWidget);
 }
 
-EflViewportHandler::~EflViewportHandler()
+PageViewportControllerClientEfl::~PageViewportControllerClientEfl()
 {
 }
 
-DrawingAreaProxy* EflViewportHandler::drawingArea() const
+DrawingAreaProxy* PageViewportControllerClientEfl::drawingArea() const
 {
     return ewk_view_page_get(m_viewWidget)->drawingArea();
 }
 
-void EflViewportHandler::setRendererActive(bool active)
+void PageViewportControllerClientEfl::setRendererActive(bool active)
 {
     drawingArea()->layerTreeCoordinatorProxy()->layerTreeRenderer()->setActive(active);
 }
 
-void EflViewportHandler::display(const IntRect& rect, const IntPoint& viewPosition)
+void PageViewportControllerClientEfl::display(const IntRect& rect, const IntPoint& viewPosition)
 {
     WebCore::TransformationMatrix matrix;
     matrix.setMatrix(m_scaleFactor, 0, 0, m_scaleFactor, -m_visibleContentRect.x() + viewPosition.x(), -m_visibleContentRect.y() + viewPosition.y());
@@ -71,14 +71,14 @@ void EflViewportHandler::display(const IntRect& rect, const IntPoint& viewPositi
     renderer->paintToCurrentGLContext(matrix, 1, clipRect);
 }
 
-void EflViewportHandler::updateViewportSize(const IntSize& viewportSize)
+void PageViewportControllerClientEfl::updateViewportSize(const IntSize& viewportSize)
 {
     m_viewportSize = viewportSize;
     ewk_view_page_get(m_viewWidget)->setViewportSize(viewportSize);
     setVisibleContentsRect(m_visibleContentRect.location(), m_scaleFactor, FloatPoint());
 }
 
-void EflViewportHandler::setVisibleContentsRect(const IntPoint& newScrollPosition, float newScale, const FloatPoint& trajectory)
+void PageViewportControllerClientEfl::setVisibleContentsRect(const IntPoint& newScrollPosition, float newScale, const FloatPoint& trajectory)
 {
     m_scaleFactor = newScale;
     m_visibleContentRect = IntRect(newScrollPosition, m_viewportSize);
@@ -100,11 +100,35 @@ void EflViewportHandler::setVisibleContentsRect(const IntPoint& newScrollPositio
     drawingArea()->setVisibleContentsRect(enclosingIntRect(mapRectToWebContent), m_scaleFactor, trajectory);
 }
 
-void EflViewportHandler::didChangeContentsSize(const WebCore::IntSize& size)
+void PageViewportControllerClientEfl::didChangeContentsSize(const WebCore::IntSize& size)
 {
     m_contentsSize = size;
     setVisibleContentsRect(m_visibleContentRect.location(), m_scaleFactor, FloatPoint());
     drawingArea()->layerTreeCoordinatorProxy()->setContentsSize(WebCore::FloatSize(size.width(), size.height()));
+}
+
+void PageViewportControllerClientEfl::setViewportPosition(const WebCore::FloatPoint& /*contentsPoint*/)
+{
+}
+
+void PageViewportControllerClientEfl::setContentsScale(float, bool /*treatAsInitialValue*/)
+{
+}
+
+void PageViewportControllerClientEfl::didResumeContent()
+{
+}
+
+void PageViewportControllerClientEfl::didChangeVisibleContents()
+{
+}
+
+void PageViewportControllerClientEfl::didChangeViewportAttributes()
+{
+}
+
+void PageViewportControllerClientEfl::setController(PageViewportController* pageViewportController)
+{
 }
 
 } // namespace WebKit
