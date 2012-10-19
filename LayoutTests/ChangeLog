@@ -1,3 +1,9 @@
+2012-10-19  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, fix lint error in Qt TestExpectations file.
+
+        * platform/qt-5.0-wk1/TestExpectations: Remove duplicate skip entry.
+
 2012-10-19  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed gardening, rebaselining deferred image tests for r131928.
