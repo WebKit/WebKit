@@ -1,3 +1,12 @@
+2012-10-18  Dirk Pranke  <dpranke@chromium.org>
+
+        De-dup expectations for chromium mountainlion
+
+        Unreviewed, expectations update.
+
+        * platform/chromium-mac-mountainlion/TestExpectations:
+        * platform/chromium/TestExpectations:
+
 2012-10-18  Adam Barth  <abarth@webkit.org>
 
         [V8] fast/dom/gc-9.html fails for document.styleSheets
