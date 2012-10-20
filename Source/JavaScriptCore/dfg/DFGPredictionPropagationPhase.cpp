@@ -116,7 +116,21 @@ private:
             return false;
         return !!m_graph.valueOfNumberConstant(nodeIndex);
     }
-    
+
+    SpeculatedType speculatedDoubleTypeForPrediction(SpeculatedType value)
+    {
+        if (!isNumberSpeculation(value))
+            return SpecDouble;
+        if (value & SpecDoubleNaN)
+            return SpecDouble;
+        return SpecDoubleReal;
+    }
+
+    SpeculatedType speculatedDoubleTypeForPredictions(SpeculatedType left, SpeculatedType right)
+    {
+        return speculatedDoubleTypeForPrediction(mergeSpeculations(left, right));
+    }
+
     void propagate(Node& node)
     {
         if (!node.shouldGenerate())
@@ -248,7 +262,7 @@ private:
                     if (m_graph.addShouldSpeculateInteger(node))
                         changed |= mergePrediction(SpecInt32);
                     else
-                        changed |= mergePrediction(SpecDouble);
+                        changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
                 } else if (!(left & SpecNumber) || !(right & SpecNumber)) {
                     // left or right is definitely something other than a number.
                     changed |= mergePrediction(SpecString);
@@ -272,7 +286,7 @@ private:
                 if (m_graph.addShouldSpeculateInteger(node))
                     changed |= mergePrediction(SpecInt32);
                 else
-                    changed |= mergePrediction(SpecDouble);
+                    changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
             }
             
             if (isNotNegZero(node.child1().index()) || isNotNegZero(node.child2().index()))
@@ -291,7 +305,7 @@ private:
                 if (m_graph.addShouldSpeculateInteger(node))
                     changed |= mergePrediction(SpecInt32);
                 else
-                    changed |= mergePrediction(SpecDouble);
+                    changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
             }
 
             if (isNotZero(node.child1().index()) || isNotZero(node.child2().index()))
@@ -307,7 +321,7 @@ private:
                 if (m_graph.negateShouldSpeculateInteger(node))
                     changed |= mergePrediction(SpecInt32);
                 else
-                    changed |= mergePrediction(SpecDouble);
+                    changed |= mergePrediction(speculatedDoubleTypeForPrediction(m_graph[node.child1()].prediction()));
             }
 
             changed |= m_graph[node.child1()].mergeFlags(flags);
@@ -323,7 +337,7 @@ private:
                     && nodeCanSpeculateInteger(node.arithNodeFlags()))
                     changed |= mergePrediction(SpecInt32);
                 else
-                    changed |= mergePrediction(SpecDouble);
+                    changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
             }
 
             flags |= NodeUsedAsNumber;
@@ -340,7 +354,7 @@ private:
                 if (m_graph.mulShouldSpeculateInteger(node))
                     changed |= mergePrediction(SpecInt32);
                 else
-                    changed |= mergePrediction(SpecDouble);
+                    changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
             }
 
             // As soon as a multiply happens, we can easily end up in the part
@@ -388,7 +402,7 @@ private:
             if (nodeCanSpeculateInteger(node.arithNodeFlags()))
                 changed |= mergePrediction(child);
             else
-                changed |= setPrediction(SpecDouble);
+                changed |= setPrediction(speculatedDoubleTypeForPrediction(child));
 
             flags &= ~NodeNeedsNegZero;
             changed |= m_graph[node.child1()].mergeFlags(flags);

@@ -1,3 +1,22 @@
+2012-10-19  Oliver Hunt  <oliver@apple.com>
+
+        Fix some of the regression cause by the non-local variable reworking
+        https://bugs.webkit.org/show_bug.cgi?id=99896
+
+        Reviewed by Filip Pizlo.
+
+        The non0local variable reworking led to some of the optimisations performed by
+        the bytecode generator being dropped.  This in turn put more pressure on the DFG
+        optimisations.  This exposed a short coming in our double speculation propogation.
+        Now we try to distinguish between places where we should SpecDoubleReal vs generic
+        SpecDouble.
+
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (PredictionPropagationPhase):
+        (JSC::DFG::PredictionPropagationPhase::speculatedDoubleTypeForPrediction):
+        (JSC::DFG::PredictionPropagationPhase::speculatedDoubleTypeForPredictions):
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+
 2012-10-19  Michael Saboff  <msaboff@apple.com>
 
         Lexer should create 8 bit Identifiers for RegularExpressions and ASCII identifiers
