@@ -2022,17 +2022,6 @@ webkit.org/b/98666 media/video-empty-source.html [ Failure ]
 webkit.org/b/98666 media/video-no-audio.html [ Failure ]
 webkit.org/b/98666 media/video-zoom-controls.html [ Failure ]
 
-# Regressions after r130699
-webkit.org/b/98729 fast/css/import-style-update.html [ Failure ]
-webkit.org/b/98729 fast/events/attribute-listener-cloned-from-frameless-doc-context-2.html [ Failure ]
-webkit.org/b/98729 fast/events/attribute-listener-cloned-from-frameless-doc-context.html [ Failure ]
-webkit.org/b/98729 fast/events/attribute-listener-extracted-from-frameless-doc-context-2.html [ Failure ]
-webkit.org/b/98729 fast/events/attribute-listener-extracted-from-frameless-doc-context.html [ Failure ]
-webkit.org/b/98729 fast/html/link-rel-stylesheet.html [ Failure ]
-webkit.org/b/98729 fast/loader/data-url-encoding-html.html [ Failure ]
-webkit.org/b/98729 fast/loader/data-url-encoding-svg.html [ Failure ]
-webkit.org/b/98729 fast/spatial-navigation/snav-iframe-nested.html [ Failure ]
-
 # New inspector/profiler/memory-instrumentation-canvas.html fails on JSC platforms
 webkit.org/b/99001 inspector/profiler/memory-instrumentation-canvas.html
 

@@ -1,3 +1,25 @@
+2012-10-20  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [EFL] Unskip the tests about regressions after r130699.
+        https://bugs.webkit.org/show_bug.cgi?id=99910
+
+        Unreviewed EFL gardening.
+
+        Unskip the test cases about regressions after r130699
+        fast/css/import-style-update.html
+        fast/events/attribute-listener-cloned-from-frameless-doc-context-2.html
+        fast/events/attribute-listener-cloned-from-frameless-doc-context.html
+        fast/events/attribute-listener-extracted-from-frameless-doc-context-2.html
+        fast/events/attribute-listener-extracted-from-frameless-doc-context.html
+        fast/html/link-rel-stylesheet.html
+        fast/loader/data-url-encoding-html.html
+        fast/loader/data-url-encoding-svg.html
+        fast/spatial-navigation/snav-iframe-nested.html
+
+        It seems to be passing consistently now.
+
+        * platform/efl/TestExpectations:
+
 2012-10-19  Florin Malita  <fmalita@chromium.org>
 
         Incorrect pattern scaling
