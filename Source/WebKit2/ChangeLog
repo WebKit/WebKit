@@ -1,3 +1,16 @@
+2012-10-19  Seokju Kwon  <seokju.kwon@samsung.com>
+
+        [EFL][WK2] Change the title of inspector window when inspected page is changed
+        https://bugs.webkit.org/show_bug.cgi?id=99684
+
+        Reviewed by Gyuyoung Kim.
+
+        Implement platformInspectedURLChanged() to change the title of inspector window
+        when inspected page is changed.
+
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformInspectedURLChanged):
+
 2012-10-19  Dan Bernstein  <mitz@apple.com>
 
         Add bundle API for hit-testing

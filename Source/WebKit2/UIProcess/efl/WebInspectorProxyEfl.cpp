@@ -133,9 +133,13 @@ bool WebInspectorProxy::platformIsFront()
     return false;
 }
 
-void WebInspectorProxy::platformInspectedURLChanged(const String&)
+void WebInspectorProxy::platformInspectedURLChanged(const String& url)
 {
-    notImplemented();
+    if (!m_inspectorWindow)
+        return;
+
+    String title = "WebInspector - " + url;
+    ecore_evas_title_set(m_inspectorWindow, title.utf8().data());
 }
 
 String WebInspectorProxy::inspectorPageURL() const
