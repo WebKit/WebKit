@@ -167,12 +167,17 @@ bool modeAlreadyChecked(AbstractValue& value, Array::Mode arrayMode)
     case Array::PossiblyArrayWithContiguous:
     case Array::PossiblyArrayWithContiguousToTail:
     case Array::PossiblyArrayWithContiguousOutOfBounds:
+    case Array::ToContiguous:
+        if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(NonArrayWithContiguous) | asArrayModes(ArrayWithContiguous)))
+            return true;
         return value.m_currentKnownStructure.hasSingleton()
             && hasContiguous(value.m_currentKnownStructure.singleton()->indexingType());
         
     case Array::ArrayWithContiguous:
     case Array::ArrayWithContiguousToTail:
     case Array::ArrayWithContiguousOutOfBounds:
+        if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(ArrayWithContiguous)))
+            return true;
         return value.m_currentKnownStructure.hasSingleton()
             && hasContiguous(value.m_currentKnownStructure.singleton()->indexingType())
             && (value.m_currentKnownStructure.singleton()->indexingType() & IsArray);
@@ -183,28 +188,37 @@ bool modeAlreadyChecked(AbstractValue& value, Array::Mode arrayMode)
     case Array::PossiblyArrayWithArrayStorage:
     case Array::PossiblyArrayWithArrayStorageToHole:
     case Array::PossiblyArrayWithArrayStorageOutOfBounds:
+    case Array::ToArrayStorage:
+    case Array::PossiblyArrayToArrayStorage:
+        if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithArrayStorage)))
+            return true;
         return value.m_currentKnownStructure.hasSingleton()
             && hasFastArrayStorage(value.m_currentKnownStructure.singleton()->indexingType());
         
     case Array::SlowPutArrayStorage:
     case Array::PossiblyArrayWithSlowPutArrayStorage:
+    case Array::ToSlowPutArrayStorage:
+        if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage)))
+            return true;
         return value.m_currentKnownStructure.hasSingleton()
             && hasArrayStorage(value.m_currentKnownStructure.singleton()->indexingType());
         
     case Array::ArrayWithArrayStorage:
     case Array::ArrayWithArrayStorageToHole:
     case Array::ArrayWithArrayStorageOutOfBounds:
+    case Array::ArrayToArrayStorage:
+        if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(ArrayWithArrayStorage)))
+            return true;
         return value.m_currentKnownStructure.hasSingleton()
             && hasFastArrayStorage(value.m_currentKnownStructure.singleton()->indexingType())
             && (value.m_currentKnownStructure.singleton()->indexingType() & IsArray);
         
     case Array::ArrayWithSlowPutArrayStorage:
+        if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(ArrayWithArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage)))
+            return true;
         return value.m_currentKnownStructure.hasSingleton()
             && hasArrayStorage(value.m_currentKnownStructure.singleton()->indexingType())
             && (value.m_currentKnownStructure.singleton()->indexingType() & IsArray);
-        
-    case ALL_EFFECTFUL_MODES:
-        return false;
         
     case Array::Arguments:
         return isArgumentsSpeculation(value.m_type);

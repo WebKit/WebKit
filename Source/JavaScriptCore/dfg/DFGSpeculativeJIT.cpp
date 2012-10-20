@@ -579,9 +579,16 @@ void SpeculativeJIT::arrayify(Node& node, GPRReg baseReg, GPRReg propertyReg)
 void SpeculativeJIT::arrayify(Node& node)
 {
     ASSERT(modeIsSpecific(node.arrayMode()));
-    ASSERT(!modeAlreadyChecked(m_state.forNode(node.child1()), node.arrayMode()));
     
     SpeculateCellOperand base(this, node.child1());
+    
+    if (modeAlreadyChecked(m_state.forNode(node.child1()), node.arrayMode())) {
+        GPRTemporary temp(this);
+        m_jit.loadPtr(
+            MacroAssembler::Address(base.gpr(), JSObject::butterflyOffset()), temp.gpr());
+        storageResult(temp.gpr(), m_compileIndex);
+        return;
+    }
     
     if (!node.child2()) {
         arrayify(node, base.gpr(), InvalidGPRReg);

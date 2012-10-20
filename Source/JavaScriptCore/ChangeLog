@@ -1,5 +1,57 @@
 2012-10-19  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should have some facility for recognizing redundant CheckArrays and Arrayifies
+        https://bugs.webkit.org/show_bug.cgi?id=99287
+
+        Reviewed by Mark Hahnenberg.
+
+        Adds reasoning about indexing type sets (i.e. ArrayModes) to AbstractValue, which
+        then enables us to fold away CheckArray's and Arrayify's that are redundant.
+
+        * bytecode/ArrayProfile.cpp:
+        (JSC::arrayModesToString):
+        (JSC):
+        * bytecode/ArrayProfile.h:
+        (JSC):
+        (JSC::mergeArrayModes):
+        (JSC::arrayModesAlreadyChecked):
+        * bytecode/StructureSet.h:
+        (JSC::StructureSet::arrayModesFromStructures):
+        (StructureSet):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::AbstractValue):
+        (JSC::DFG::AbstractValue::clear):
+        (JSC::DFG::AbstractValue::isClear):
+        (JSC::DFG::AbstractValue::makeTop):
+        (JSC::DFG::AbstractValue::clobberStructures):
+        (AbstractValue):
+        (JSC::DFG::AbstractValue::setMostSpecific):
+        (JSC::DFG::AbstractValue::set):
+        (JSC::DFG::AbstractValue::operator==):
+        (JSC::DFG::AbstractValue::merge):
+        (JSC::DFG::AbstractValue::filter):
+        (JSC::DFG::AbstractValue::filterArrayModes):
+        (JSC::DFG::AbstractValue::validate):
+        (JSC::DFG::AbstractValue::checkConsistency):
+        (JSC::DFG::AbstractValue::dump):
+        (JSC::DFG::AbstractValue::clobberArrayModes):
+        (JSC::DFG::AbstractValue::clobberArrayModesSlow):
+        (JSC::DFG::AbstractValue::setFuturePossibleStructure):
+        (JSC::DFG::AbstractValue::filterFuturePossibleStructure):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::modeAlreadyChecked):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::arrayModesFor):
+        (DFG):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::arrayify):
+
+2012-10-19  Filip Pizlo  <fpizlo@apple.com>
+
         Baseline JIT should not inline array allocations, to make them easier to instrument
         https://bugs.webkit.org/show_bug.cgi?id=99905
 

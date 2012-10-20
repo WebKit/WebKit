@@ -40,11 +40,42 @@ class LLIntOffsetsExtractor;
 typedef unsigned ArrayModes;
 
 #define asArrayModes(type) \
-    (1 << static_cast<unsigned>(type))
+    (static_cast<unsigned>(1) << static_cast<unsigned>(type))
+
+#define ALL_NON_ARRAY_ARRAY_MODES                       \
+    (asArrayModes(NonArray)                             \
+     | asArrayModes(NonArrayWithContiguous)             \
+     | asArrayModes(NonArrayWithArrayStorage)           \
+     | asArrayModes(NonArrayWithSlowPutArrayStorage))
+
+#define ALL_ARRAY_ARRAY_MODES                           \
+    (asArrayModes(ArrayClass)                           \
+     | asArrayModes(ArrayWithContiguous)                \
+     | asArrayModes(ArrayWithArrayStorage)              \
+     | asArrayModes(ArrayWithSlowPutArrayStorage))
+
+#define ALL_ARRAY_MODES (ALL_NON_ARRAY_ARRAY_MODES | ALL_ARRAY_ARRAY_MODES)
 
 inline ArrayModes arrayModeFromStructure(Structure* structure)
 {
     return asArrayModes(structure->indexingType());
+}
+
+const char* arrayModesToString(ArrayModes);
+
+inline bool mergeArrayModes(ArrayModes& left, ArrayModes right)
+{
+    ArrayModes newModes = left | right;
+    if (newModes == left)
+        return false;
+    left = newModes;
+    return true;
+}
+
+// Checks if proven is a subset of expected.
+inline bool arrayModesAlreadyChecked(ArrayModes proven, ArrayModes expected)
+{
+    return (expected | proven) == expected;
 }
 
 class ArrayProfile {

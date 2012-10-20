@@ -349,6 +349,51 @@ inline bool isEffectful(Array::Mode mode)
     }
 }
 
+// This returns the set of array modes that will pass filtering of a CheckArray or
+// Arrayify with the given mode.
+inline ArrayModes arrayModesFor(Array::Mode arrayMode)
+{
+    switch (arrayMode) {
+    case Array::Generic:
+        return ALL_ARRAY_MODES;
+    case Array::Contiguous:
+    case Array::ContiguousToTail:
+    case Array::ContiguousOutOfBounds:
+    case Array::ToContiguous:
+        return asArrayModes(NonArrayWithContiguous);
+    case Array::PossiblyArrayWithContiguous:
+    case Array::PossiblyArrayWithContiguousToTail:
+    case Array::PossiblyArrayWithContiguousOutOfBounds:
+        return asArrayModes(NonArrayWithContiguous) | asArrayModes(ArrayWithContiguous);
+    case ARRAY_WITH_CONTIGUOUS_MODES:
+        return asArrayModes(ArrayWithContiguous);
+    case Array::ArrayStorage:
+    case Array::ArrayStorageToHole:
+    case Array::ArrayStorageOutOfBounds:
+    case Array::ToArrayStorage:
+        return asArrayModes(NonArrayWithArrayStorage);
+    case Array::ToSlowPutArrayStorage:
+    case Array::SlowPutArrayStorage:
+        return asArrayModes(NonArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage);
+    case Array::PossiblyArrayWithArrayStorage:
+    case Array::PossiblyArrayWithArrayStorageToHole:
+    case Array::PossiblyArrayWithArrayStorageOutOfBounds:
+    case Array::PossiblyArrayToArrayStorage:
+        return asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithArrayStorage);
+    case Array::PossiblyArrayWithSlowPutArrayStorage:
+        return asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage);
+    case Array::ArrayWithArrayStorage:
+    case Array::ArrayWithArrayStorageToHole:
+    case Array::ArrayWithArrayStorageOutOfBounds:
+    case Array::ArrayToArrayStorage:
+        return asArrayModes(ArrayWithArrayStorage);
+    case Array::ArrayWithSlowPutArrayStorage:
+        return asArrayModes(ArrayWithArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage);
+    default:
+        return asArrayModes(NonArray);
+    }
+}
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

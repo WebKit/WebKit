@@ -26,6 +26,7 @@
 #ifndef StructureSet_h
 #define StructureSet_h
 
+#include "ArrayProfile.h"
 #include "SpeculatedType.h"
 #include "Structure.h"
 #include <stdio.h>
@@ -133,6 +134,16 @@ public:
         
         for (size_t i = 0; i < m_structures.size(); ++i)
             mergeSpeculation(result, speculationFromStructure(m_structures[i]));
+        
+        return result;
+    }
+    
+    ArrayModes arrayModesFromStructures() const
+    {
+        ArrayModes result = 0;
+        
+        for (size_t i = 0; i < m_structures.size(); ++i)
+            mergeArrayModes(result, asArrayModes(m_structures[i]->indexingType()));
         
         return result;
     }

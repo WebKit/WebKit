@@ -102,7 +102,8 @@ private:
                 break;
             }
                 
-            case CheckArray: {
+            case CheckArray:
+            case Arrayify: {
                 if (!modeAlreadyChecked(m_state.forNode(node.child1()), node.arrayMode()))
                     break;
                 ASSERT(node.refCount() == 1);
