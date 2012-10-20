@@ -1,3 +1,16 @@
+2012-10-20  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][AC] Build fix after r131933
+        https://bugs.webkit.org/show_bug.cgi?id=99901
+
+        Reviewed by Kentaro Hara.
+
+        Add ArrayBoundsClamper.cpp to WebCore/CMakeLists.txt.
+
+        No new tests.
+
+        * CMakeLists.txt:
+
 2012-10-19  Adam Barth  <abarth@webkit.org>
 
         [V8] V8DOMWrapper should avoid using its document parameter (so we can remove it soon)
