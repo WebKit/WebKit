@@ -1246,7 +1246,6 @@ webkit.org/b/98569 svg/W3C-SVG-1.1/coords-units-01-b.svg [ Failure Pass ]
 webkit.org/b/98569 svg/W3C-SVG-1.1/pservers-grad-02-b.svg [ Failure Pass ] 
 webkit.org/b/98569 svg/W3C-SVG-1.1/pservers-grad-04-b.svg [ Failure Pass ] 
 webkit.org/b/98569 svg/W3C-SVG-1.1/pservers-grad-05-b.svg [ Failure Pass ] 
-webkit.org/b/98569 svg/W3C-SVG-1.1/pservers-grad-06-b.svg [ Failure Pass ] 
 webkit.org/b/98569 svg/W3C-SVG-1.1/pservers-grad-11-b.svg [ Failure Pass ] 
 webkit.org/b/98569 svg/W3C-SVG-1.1/pservers-grad-12-b.svg [ Failure Pass ]
 webkit.org/b/98569 svg/W3C-SVG-1.1/pservers-grad-13-b.svg [ ImageOnlyFailure Failure Pass ]
@@ -2798,11 +2797,6 @@ crbug.com/83504 [ Win ] fast/css/custom-font-xheight.html [ Failure Pass Slow ]
 crbug.com/83504 [ Mac ] fast/css/custom-font-xheight.html [ Failure Pass ]
 
 # Need rebaselining after 99870
-webkit.org/b/99870 svg/custom/js-late-pattern-creation.svg [ Pass ImageOnlyFailure ]
-webkit.org/b/99870 svg/custom/pattern-skew-transformed.svg [ Pass ImageOnlyFailure ]
-webkit.org/b/99870 svg/custom/pattern-with-transformation.svg [ Pass ImageOnlyFailure ]
-webkit.org/b/99870 svg/transforms/text-with-pattern-inside-transformed-html.xhtml [ Pass ImageOnlyFailure ]
-webkit.org/b/99870 svg/custom/pattern-scaling.svg [ Pass ImageOnlyFailure Missing ]
 
 # Need rebaseline
 webkit.org/b/99818 fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n.html [ Pass ImageOnlyFailure Missing ]
