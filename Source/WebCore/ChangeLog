@@ -1,5 +1,14 @@
 2012-10-19  Simon Fraser  <simon.fraser@apple.com>
 
+        Remove .get() calls in assertions as suggested by Darin Adler.
+        
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayer::appendSublayer):
+        (PlatformCALayer::insertSublayer):
+        (PlatformCALayer::replaceSublayer):
+
+2012-10-19  Simon Fraser  <simon.fraser@apple.com>
+
         Fix a hang when combining tile cache layers with preserve-3d or reflections
         https://bugs.webkit.org/show_bug.cgi?id=99890
         <rdar://problem/12539560>

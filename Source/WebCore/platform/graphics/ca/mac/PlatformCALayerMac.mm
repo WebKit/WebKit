@@ -330,7 +330,7 @@ void PlatformCALayer::removeAllSublayers()
 void PlatformCALayer::appendSublayer(PlatformCALayer* layer)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    ASSERT(m_layer.get() != layer->m_layer.get());
+    ASSERT(m_layer != layer->m_layer);
     [m_layer.get() addSublayer:layer->m_layer.get()];
     END_BLOCK_OBJC_EXCEPTIONS
 }
@@ -338,7 +338,7 @@ void PlatformCALayer::appendSublayer(PlatformCALayer* layer)
 void PlatformCALayer::insertSublayer(PlatformCALayer* layer, size_t index)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    ASSERT(m_layer.get() != layer->m_layer.get());
+    ASSERT(m_layer != layer->m_layer);
     [m_layer.get() insertSublayer:layer->m_layer.get() atIndex:index];
     END_BLOCK_OBJC_EXCEPTIONS
 }
@@ -346,7 +346,7 @@ void PlatformCALayer::insertSublayer(PlatformCALayer* layer, size_t index)
 void PlatformCALayer::replaceSublayer(PlatformCALayer* reference, PlatformCALayer* layer)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    ASSERT(m_layer.get() != layer->m_layer.get());
+    ASSERT(m_layer != layer->m_layer);
     [m_layer.get() replaceSublayer:reference->m_layer.get() with:layer->m_layer.get()];
     END_BLOCK_OBJC_EXCEPTIONS
 }
