@@ -1,3 +1,13 @@
+2012-10-20  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Add missing expectations for some tests in svg/custom.
+
+        * platform/efl/svg/custom/js-late-pattern-creation-expected.png: Added.
+        * platform/efl/svg/custom/js-late-pattern-creation-expected.txt: Added.
+        * platform/efl/svg/custom/pattern-skew-transformed-expected.png: Added.
+        * platform/efl/svg/custom/pattern-with-transformation-expected.png: Added.
+        * platform/efl/svg/custom/pattern-with-transformation-expected.txt: Added.
+
 2012-10-20  Florin Malita  <fmalita@chromium.org>
 
         Unreviewed rebaseline after http://trac.webkit.org/changeset/131974.
