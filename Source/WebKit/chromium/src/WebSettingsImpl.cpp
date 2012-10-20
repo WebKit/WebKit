@@ -57,6 +57,7 @@ WebSettingsImpl::WebSettingsImpl(Settings* settings)
     , m_gestureTapHighlightEnabled(true)
     , m_autoZoomFocusedNodeToLegibleScale(false)
     , m_deferredImageDecodingEnabled(false)
+    , m_doubleTapToZoomEnabled(false)
     , m_defaultTileSize(WebSize(256, 256))
     , m_maxUntiledLayerSize(WebSize(512, 512))
 {
@@ -264,6 +265,11 @@ void WebSettingsImpl::setUsesPageCache(bool usesPageCache)
 void WebSettingsImpl::setPageCacheSupportsPlugins(bool pageCacheSupportsPlugins)
 {
     m_settings->setPageCacheSupportsPlugins(pageCacheSupportsPlugins);
+}
+
+void WebSettingsImpl::setDoubleTapToZoomEnabled(bool doubleTapToZoomEnabled)
+{
+    m_doubleTapToZoomEnabled = doubleTapToZoomEnabled;
 }
 
 void WebSettingsImpl::setDownloadableBinaryFontsEnabled(bool enabled)

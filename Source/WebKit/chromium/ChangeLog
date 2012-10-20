@@ -1,3 +1,25 @@
+2012-10-19  Yusuf Ozuysal  <yusufo@google.com>
+
+        [chromium] Double-tap defaults to zoom (should only do this on Android)
+        https://bugs.webkit.org/show_bug.cgi?id=99600
+
+        Reviewed by Adam Barth.
+
+        Adds a web setting for enabling DoubleTapToZoom on a doubleTap gesture.
+        This gesture was just needed for mobile, and the patch that implemented it caused regressions on other platforms.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::WebSettingsImpl):
+        (WebKit::WebSettingsImpl::setDoubleTapToZoomEnabled):
+        (WebKit):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+        (WebKit::WebSettingsImpl::doubleTapToZoomEnabled):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleGestureEvent):
+        * tests/WebFrameTest.cpp:
+
 2012-10-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r131944.
