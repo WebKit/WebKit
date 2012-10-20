@@ -1,3 +1,17 @@
+2012-10-19  Andreas Kling  <kling@webkit.org>
+
+        Race condition in WebProcessProxy::handleGetPlugins().
+        <http://webkit.org/b/99903>
+        <rdar://problem/12541471>
+
+        Reviewed by Anders Carlsson.
+
+        Scope the Vector<PluginModuleInfo> so that all the destructors are guaranteed
+        to have run when sendDidGetPlugins() executes on the main thread.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::handleGetPlugins):
+
 2012-10-19  Brady Eidson  <beidson@apple.com>
 
         WebProcess should only connect to the NetworkProcess if NetworkProcess is enabled
