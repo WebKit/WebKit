@@ -444,56 +444,6 @@ template <typename T> inline void JIT::emitAllocateJSFinalObject(T structure, Re
     emitAllocateBasicJSObject<JSFinalObject, MarkedBlock::None, T>(structure, result, scratch);
 }
 
-inline void JIT::emitAllocateBasicStorage(size_t size, ptrdiff_t offsetFromBase, RegisterID result)
-{
-    CopiedAllocator* allocator = &m_globalData->heap.storageAllocator();
-
-    loadPtr(&allocator->m_currentRemaining, result);
-    addSlowCase(branchSubPtr(Signed, TrustedImm32(size), result));
-    storePtr(result, &allocator->m_currentRemaining);
-    negPtr(result);
-    addPtr(AbsoluteAddress(&allocator->m_currentPayloadEnd), result);
-    subPtr(TrustedImm32(size - offsetFromBase), result);
-}
-
-inline void JIT::emitAllocateJSArray(unsigned valuesRegister, unsigned length, RegisterID cellResult, RegisterID storageResult, RegisterID storagePtr, RegisterID scratch)
-{
-    unsigned initialLength = std::max(length, BASE_VECTOR_LEN);
-    size_t initialStorage = Butterfly::totalSize(0, 0, true, initialLength * sizeof(EncodedJSValue));
-
-    loadPtr(m_codeBlock->globalObject()->addressOfArrayStructure(), scratch);
-    load8(Address(scratch, Structure::indexingTypeOffset()), storagePtr);
-    and32(TrustedImm32(IndexingShapeMask), storagePtr);
-    addSlowCase(branch32(NotEqual, storagePtr, TrustedImm32(ContiguousShape)));
-
-    // We allocate the backing store first to ensure that garbage collection 
-    // doesn't happen during JSArray initialization.
-    emitAllocateBasicStorage(initialStorage, sizeof(IndexingHeader), storageResult);
-
-    // Allocate the cell for the array.
-    emitAllocateBasicJSObject<JSArray, MarkedBlock::None>(scratch, cellResult, storagePtr);
-
-    // Store all the necessary info in the indexing header.
-    store32(Imm32(length), Address(storageResult, Butterfly::offsetOfPublicLength()));
-    store32(Imm32(initialLength), Address(storageResult, Butterfly::offsetOfVectorLength()));
-
-    // Store the newly allocated ArrayStorage.
-    storePtr(storageResult, Address(cellResult, JSObject::butterflyOffset()));
-
-    // Store the values we have.
-    for (unsigned i = 0; i < length; i++) {
-#if USE(JSVALUE64)
-        load64(Address(callFrameRegister, (valuesRegister + i) * sizeof(Register)), storagePtr);
-        store64(storagePtr, Address(storageResult, sizeof(WriteBarrier<Unknown>) * i));
-#else
-        load32(Address(callFrameRegister, (valuesRegister + i) * sizeof(Register)), storagePtr);
-        store32(storagePtr, Address(storageResult, sizeof(WriteBarrier<Unknown>) * i));
-        load32(Address(callFrameRegister, (valuesRegister + i) * sizeof(Register) + sizeof(uint32_t)), storagePtr);
-        store32(storagePtr, Address(storageResult, sizeof(WriteBarrier<Unknown>) * i + sizeof(uint32_t)));
-#endif
-    }
-}
-
 #if ENABLE(VALUE_PROFILER)
 inline void JIT::emitValueProfilingSite(ValueProfile* valueProfile)
 {

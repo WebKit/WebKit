@@ -1,3 +1,24 @@
+2012-10-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Baseline JIT should not inline array allocations, to make them easier to instrument
+        https://bugs.webkit.org/show_bug.cgi?id=99905
+
+        Reviewed by Mark Hahnenberg.
+
+        This will make it easier to instrument array allocations for the purposes of profiling.
+        It also allows us to kill off a bunch of code. And, this doesn't appear to hurt
+        performance at all. That's expected because these days any hot allocation will end up
+        in the DFG JIT, which does inline these allocations.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        (JIT):
+        * jit/JITInlineMethods.h:
+        (JSC):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_array):
+
 2012-10-19  Oliver Hunt  <oliver@apple.com>
 
         Fix some of the regression cause by the non-local variable reworking

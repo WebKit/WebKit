@@ -1948,34 +1948,6 @@ void JIT::emit_op_new_func_exp(Instruction* currentInstruction)
 
 void JIT::emit_op_new_array(Instruction* currentInstruction)
 {
-    int length = currentInstruction[3].u.operand;
-    if (m_codeBlock->globalObject()->isHavingABadTime()
-        || CopiedSpace::isOversize(Butterfly::totalSize(0, 0, true, ArrayStorage::sizeFor(length)))) {
-        JITStubCall stubCall(this, cti_op_new_array);
-        stubCall.addArgument(TrustedImm32(currentInstruction[2].u.operand));
-        stubCall.addArgument(TrustedImm32(currentInstruction[3].u.operand));
-        stubCall.call(currentInstruction[1].u.operand);
-        return;
-    }
-    int dst = currentInstruction[1].u.operand;
-    int values = currentInstruction[2].u.operand;
-
-    emitAllocateJSArray(values, length, regT0, regT1, regT2, regT3);
-    emitStoreCell(dst, regT0); 
-}
-
-void JIT::emitSlow_op_new_array(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    // If the allocation would be oversize, we will already make the proper stub call above in 
-    // emit_op_new_array.
-    int length = currentInstruction[3].u.operand;
-    if (m_codeBlock->globalObject()->isHavingABadTime()
-        || CopiedSpace::isOversize(Butterfly::totalSize(0, 0, true, ArrayStorage::sizeFor(length))))
-        return;
-    linkSlowCase(iter); // We're having a bad time.
-    linkSlowCase(iter); // Not enough space in CopiedSpace for storage.
-    linkSlowCase(iter); // Not enough space in MarkedSpace for cell.
-
     JITStubCall stubCall(this, cti_op_new_array);
     stubCall.addArgument(TrustedImm32(currentInstruction[2].u.operand));
     stubCall.addArgument(TrustedImm32(currentInstruction[3].u.operand));

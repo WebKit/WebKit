@@ -475,9 +475,7 @@ namespace JSC {
         void emitWriteBarrier(JSCell* owner, RegisterID value, RegisterID scratch, WriteBarrierMode, WriteBarrierUseKind);
 
         template<typename ClassType, MarkedBlock::DestructorType, typename StructureType> void emitAllocateBasicJSObject(StructureType, RegisterID result, RegisterID storagePtr);
-        void emitAllocateBasicStorage(size_t, ptrdiff_t offsetFromBase, RegisterID result);
         template<typename T> void emitAllocateJSFinalObject(T structure, RegisterID result, RegisterID storagePtr);
-        void emitAllocateJSArray(unsigned valuesRegister, unsigned length, RegisterID cellResult, RegisterID storageResult, RegisterID storagePtr, RegisterID scratch);
         
 #if ENABLE(VALUE_PROFILER)
         // This assumes that the value to profile is in regT0 and that regT3 is available for
@@ -826,7 +824,6 @@ namespace JSC {
         void emitSlow_op_to_jsnumber(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_to_primitive(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_urshift(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_new_array(Instruction*, Vector<SlowCaseEntry>::iterator&);
 
         void emitSlow_op_resolve(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_resolve_base(Instruction*, Vector<SlowCaseEntry>::iterator&);
