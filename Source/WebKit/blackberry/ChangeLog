@@ -1,3 +1,19 @@
+2012-10-20  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] m_mainFrame should be null checked before use in WebPagePrivate destructor
+        https://bugs.webkit.org/show_bug.cgi?id=99916
+
+        Reviewed by George Staikos.
+        Internally reviewed by Arvid Nilsson.
+
+        Internal PR228029
+        Add null checks for m_mainFrame for things that happen during
+        WebPage destruction.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setVisible):
+        (BlackBerry::WebKit::WebPagePrivate::setCompositorDrawsRootLayer):
+
 2012-10-19  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Convert input style to int64_t

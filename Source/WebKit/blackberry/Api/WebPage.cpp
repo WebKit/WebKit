@@ -3202,11 +3202,13 @@ void WebPagePrivate::setVisible(bool visible)
 {
     if (visible != m_visible) {
         if (visible) {
-            mainFrame()->animation()->resumeAnimations();
+            if (m_mainFrame)
+                m_mainFrame->animation()->resumeAnimations();
             if (m_page->scriptedAnimationsSuspended())
                 m_page->resumeScriptedAnimations();
         } else {
-            mainFrame()->animation()->suspendAnimations();
+            if (m_mainFrame)
+                m_mainFrame->animation()->suspendAnimations();
             if (!m_page->scriptedAnimationsSuspended())
                 m_page->suspendScriptedAnimations();
         }
@@ -5460,6 +5462,10 @@ void WebPagePrivate::setCompositorDrawsRootLayer(bool compositorDrawsRootLayer)
     // When the BlackBerry port forces compositing mode, the root layer stops
     // painting to window and starts painting to layer instead.
     m_page->settings()->setForceCompositingMode(compositorDrawsRootLayer);
+
+    if (!m_mainFrame)
+        return;
+
     if (FrameView* view = m_mainFrame->view())
         view->updateCompositingLayers();
 #endif
