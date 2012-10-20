@@ -1,3 +1,10 @@
+2012-10-19  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed gardening. Marking platform/chromium/virtual/gpu/fast/canvas/webgl/array-bounds-clamping.html
+        failing on Chromium.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-19  Pablo Flouret  <pablof@motorola.com>
 
         Implement setRangeText() on text controls

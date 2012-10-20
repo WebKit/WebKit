@@ -4041,6 +4041,8 @@ webkit.org/b/98257 platform/chromium/virtual/gpu/fast/canvas/webgl/oes-element-i
 webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing [ Skip ]
 webkit.org/b/99802 [ MountainLion ] fast/forms/text-control-intrinsic-widths.html [ Failure ]
 
+webkit.org/b/99873 platform/chromium/virtual/gpu/fast/canvas/webgl/array-bounds-clamping.html [ Text ]
+
 # These tests are failing already and because of virtual test suite for deferred
 # image decoding they need to be suppressed again.
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/animated-gif-restored-from-bfcache.html [ Failure ]
