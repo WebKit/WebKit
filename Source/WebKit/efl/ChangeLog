@@ -1,3 +1,22 @@
+2012-10-20  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL][DRT] Implement tracking and painting repaint rectangles.
+        https://bugs.webkit.org/show_bug.cgi?id=99838
+
+        Reviewed by Gyuyoung Kim.
+
+        Add the required DumpRenderTreeSupport plumbing functions to
+        interact with FrameView and track/obtain repaint rectangles for
+        DumpRenderTree.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::setSelectTrailingWhitespaceEnabled):
+        (DumpRenderTreeSupportEfl::setTracksRepaints):
+        (DumpRenderTreeSupportEfl::resetTrackedRepaints):
+        (DumpRenderTreeSupportEfl::isTrackingRepaints):
+        (DumpRenderTreeSupportEfl::trackedRepaintRects):
+        * WebCoreSupport/DumpRenderTreeSupportEfl.h:
+
 2012-10-18  Kangil Han  <kangil.han@samsung.com>
 
         [EFL] Add unit test for ewk_frame_source_get.

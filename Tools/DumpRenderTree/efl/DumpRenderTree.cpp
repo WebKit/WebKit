@@ -382,7 +382,8 @@ static void shutdownEfl()
 
 void displayWebView()
 {
-    notImplemented();
+    DumpRenderTreeSupportEfl::setTracksRepaints(browser->mainFrame(), true);
+    DumpRenderTreeSupportEfl::resetTrackedRepaints(browser->mainFrame());
 }
 
 void dump()

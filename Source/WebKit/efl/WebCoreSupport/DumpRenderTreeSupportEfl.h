@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2011 ProFUSION embedded systems
     Copyright (C) 2011 Samsung Electronics
+    Copyright (C) 2012 Intel Corporation. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -82,6 +83,11 @@ public:
     static void setCSSRegionsEnabled(const Evas_Object* ewkView, bool enabled);
     static void setSmartInsertDeleteEnabled(Evas_Object* ewkView, bool enabled);
     static void setSelectTrailingWhitespaceEnabled(Evas_Object* ewkView, bool enabled);
+
+    static void setTracksRepaints(Evas_Object* ewkFrame, bool enabled);
+    static void resetTrackedRepaints(Evas_Object* ewkFrame);
+    static bool isTrackingRepaints(const Evas_Object* ewkFrame);
+    static Eina_List* trackedRepaintRects(const Evas_Object* ewkFrame);
 
     static void garbageCollectorCollect();
     static void garbageCollectorCollectOnAlternateThread(bool waitUntilDone);

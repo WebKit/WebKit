@@ -1,3 +1,20 @@
+2012-10-20  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL][DRT] Implement tracking and painting repaint rectangles.
+        https://bugs.webkit.org/show_bug.cgi?id=99838
+
+        Reviewed by Gyuyoung Kim.
+
+        Implement displayWebView() and start tracking/painting the repaint
+        rectangles for the repaint tests that rely on it.
+
+        * DumpRenderTree/efl/DumpRenderTree.cpp:
+        (displayWebView):
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+        * DumpRenderTree/efl/PixelDumpSupportEfl.cpp:
+        (createBitmapContextFromWebView):
+
 2012-10-19  Dan Bernstein  <mitz@apple.com>
 
         Add bundle API for hit-testing

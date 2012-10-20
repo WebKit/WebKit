@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2011 ProFUSION embedded systems
     Copyright (C) 2011 Samsung Electronics
+    Copyright (C) 2012 Intel Corporation. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -376,6 +377,51 @@ void DumpRenderTreeSupportEfl::setSelectTrailingWhitespaceEnabled(Evas_Object* e
         return;
 
     editorClient->setSelectTrailingWhitespaceEnabled(enabled);
+}
+
+void DumpRenderTreeSupportEfl::setTracksRepaints(Evas_Object* ewkFrame, bool enabled)
+{
+    DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame);
+
+    if (frame->view())
+        frame->view()->setTracksRepaints(enabled);
+}
+
+void DumpRenderTreeSupportEfl::resetTrackedRepaints(Evas_Object* ewkFrame)
+{
+    DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame);
+
+    if (frame->view())
+        frame->view()->resetTrackedRepaints();
+}
+
+bool DumpRenderTreeSupportEfl::isTrackingRepaints(const Evas_Object* ewkFrame)
+{
+    DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame, false);
+
+    if (!frame->view())
+        return false;
+
+    return frame->view()->isTrackingRepaints();
+}
+
+Eina_List* DumpRenderTreeSupportEfl::trackedRepaintRects(const Evas_Object* ewkFrame)
+{
+    DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame, 0);
+
+    if (!frame->view())
+        return 0;
+
+    const Vector<WebCore::IntRect>& repaintRects = frame->view()->trackedRepaintRects();
+    size_t count = repaintRects.size();
+    Eina_List* rectList = 0;
+
+    for (size_t i = 0; i < count; ++i) {
+        Eina_Rectangle* rect = eina_rectangle_new(repaintRects[i].x(), repaintRects[i].y(), repaintRects[i].width(), repaintRects[i].height());
+        rectList = eina_list_append(rectList, rect);
+    }
+
+    return rectList;
 }
 
 void DumpRenderTreeSupportEfl::garbageCollectorCollect()
