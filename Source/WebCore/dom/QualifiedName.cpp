@@ -135,6 +135,12 @@ void QualifiedName::init()
     }
 }
 
+const QualifiedName& nullQName()
+{
+    DEFINE_STATIC_LOCAL(QualifiedName, nullName, (nullAtom, nullAtom, nullAtom));
+    return nullName;
+}
+
 const AtomicString& QualifiedName::localNameUpper() const
 {
     if (!m_impl->m_localNameUpper)
@@ -156,6 +162,12 @@ void QualifiedName::QualifiedNameImpl::reportMemoryUsage(MemoryObjectInfo* memor
     info.addMember(m_localName);
     info.addMember(m_namespace);
     info.addMember(m_localNameUpper);
+}
+
+unsigned QualifiedName::QualifiedNameImpl::computeHash() const
+{
+    QualifiedNameComponents components = { m_prefix.impl(), m_localName.impl(), m_namespace.impl() };
+    return hashComponents(components);
 }
 
 void createQualifiedName(void* targetAddress, const char* name, unsigned nameLength, const AtomicString& nameNamespace)

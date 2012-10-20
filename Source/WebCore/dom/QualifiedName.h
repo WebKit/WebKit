@@ -44,6 +44,9 @@ public:
             return adoptRef(new QualifiedNameImpl(prefix, localName, namespaceURI));
         }
 
+        unsigned computeHash() const;
+
+        mutable unsigned m_existingHash;
         const AtomicString m_prefix;
         const AtomicString m_localName;
         const AtomicString m_namespace;
@@ -53,7 +56,8 @@ public:
 
     private:
         QualifiedNameImpl(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI)
-            : m_prefix(prefix)
+            : m_existingHash(0)
+            , m_prefix(prefix)
             , m_localName(localName)
             , m_namespace(namespaceURI)
         {
@@ -110,6 +114,8 @@ extern const QualifiedName anyName;
 inline const QualifiedName& anyQName() { return anyName; }
 #endif
 
+const QualifiedName& nullQName();
+
 inline bool operator==(const AtomicString& a, const QualifiedName& q) { return a == q.localName(); }
 inline bool operator!=(const AtomicString& a, const QualifiedName& q) { return a != q.localName(); }
 inline bool operator==(const QualifiedName& q, const AtomicString& a) { return a == q.localName(); }
@@ -125,8 +131,9 @@ struct QualifiedNameHash {
 
     static unsigned hash(const QualifiedName::QualifiedNameImpl* name) 
     {
-        QualifiedNameComponents c = { name->m_prefix.impl(), name->m_localName.impl(), name->m_namespace.impl() };
-        return hashComponents(c);
+        if (!name->m_existingHash)
+            name->m_existingHash = name->computeHash();
+        return name->m_existingHash;
     }
 
     static bool equal(const QualifiedName& a, const QualifiedName& b) { return a == b; }
@@ -150,7 +157,7 @@ namespace WTF {
     
     template<> struct HashTraits<WebCore::QualifiedName> : SimpleClassHashTraits<WebCore::QualifiedName> {
         static const bool emptyValueIsZero = false;
-        static WebCore::QualifiedName emptyValue() { return WebCore::QualifiedName(nullAtom, nullAtom, nullAtom); }
+        static WebCore::QualifiedName emptyValue() { return WebCore::nullQName(); }
     };
 }
 

@@ -1,3 +1,35 @@
+2012-10-20  Andreas Kling  <kling@webkit.org>
+
+        Clean up QualifiedName-as-hash-key scenario.
+        <http://webkit.org/b/99394>
+
+        Reviewed by Anders Carlsson.
+
+        Cache the hash on QualifiedNameImpl after the first time it's computed.
+        This grows QualifiedNameImpl by 4 bytes on 32-bit (no change on 64-bit due to base class padding)
+        which I believe is fine, since QualifiedName is a shared object.
+
+        Add a global nullQName() function that returns a QualifiedName(nullAtom, nullAtom, nullAtom)
+        and use this to implement HashTraits<QualifiedName>::emptyValue(). The old implementation would
+        create a new QualifiedName(nullAtom, nullAtom, nullAtom) each time, which had to be hashed,
+        added to  the global QualifiedName cache, etc.
+
+        Finally, don't have SVGAttributeHashTranslator create a temporary QualifiedName just to compute
+        the hash of a (namespace, prefix, localName) tuple, use QualifiedNameComponents and hashComponents()
+        directly instead.
+
+        Altogether this shaves ~100ms off of the RoboHornet svgresize.html benchmark on my MBP.
+
+        * dom/QualifiedName.cpp:
+        (WebCore::nullQName):
+        (WebCore::QualifiedName::QualifiedNameImpl::computeHash):
+        * dom/QualifiedName.h:
+        (QualifiedNameImpl):
+        (WebCore::QualifiedName::QualifiedNameImpl::QualifiedNameImpl):
+        (WebCore::QualifiedNameHash::hash):
+        * svg/SVGElement.h:
+        (WebCore::SVGAttributeHashTranslator::hash):
+
 2012-10-20  Yael Aharon  <yael.aharon@intel.com>
 
         [EFL][AC] Build fix after r131933
