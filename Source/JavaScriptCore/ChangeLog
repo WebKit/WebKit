@@ -1,3 +1,21 @@
+2012-10-20  Filip Pizlo  <fpizlo@apple.com>
+
+        LLInt backends of non-ARM RISC platforms should be able to share code with the existing ARMv7 backend
+        https://bugs.webkit.org/show_bug.cgi?id=99745
+
+        Reviewed by Geoffrey Garen.
+
+        This moves all of the things in armv7.rb that I thought are generally useful out
+        into risc.rb. It also separates some phases (branch ops is separated into one
+        phase that does sensible things, and another that does things that are painfully
+        ARM-specific), and removes ARM assumptions from others by using a callback to
+        drive exactly what lowering must happen. The goal here is to minimize the future
+        maintenance burden of LLInt by ensuring that the various platforms share as much
+        lowering code as possible.
+
+        * offlineasm/armv7.rb:
+        * offlineasm/risc.rb: Added.
+
 2012-10-19  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should have some facility for recognizing redundant CheckArrays and Arrayifies
