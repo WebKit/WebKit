@@ -1,3 +1,10 @@
+2012-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix compile warning.
+
+        * UIProcess/API/gtk/tests/GNUmakefile.am: Pass sourcedir to
+        glib-compile-resource when generating dependencies too.
+
 2012-10-19  Seokju Kwon  <seokju.kwon@samsung.com>
 
         [EFL][WK2] Change the title of inspector window when inspected page is changed

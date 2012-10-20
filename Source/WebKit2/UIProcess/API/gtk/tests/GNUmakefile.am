@@ -58,7 +58,7 @@ webkit2_tests_ldflags = \
 	-no-install \
 	-no-fast-install
 
-DerivedSources/WebKit2/webkit2gtk-tests-resources.gresource: Source/WebKit2/UIProcess/API/gtk/tests/resources/webkit2gtk-tests.gresource.xml $(shell $(GLIB_COMPILE_RESOURCES) --generate-dependencies $(srcdir)/Source/WebKit2/UIProcess/API/gtk/tests/resources/webkit2gtk-tests.gresource.xml)
+DerivedSources/WebKit2/webkit2gtk-tests-resources.gresource: Source/WebKit2/UIProcess/API/gtk/tests/resources/webkit2gtk-tests.gresource.xml $(shell $(GLIB_COMPILE_RESOURCES) --sourcedir=$(srcdir) --generate-dependencies $(srcdir)/Source/WebKit2/UIProcess/API/gtk/tests/resources/webkit2gtk-tests.gresource.xml)
 	$(AM_V_GEN) $(GLIB_COMPILE_RESOURCES) --target=$@ --sourcedir=$(srcdir) $<
 
 DISTCLEANFILES += DerivedSources/WebKit2/webkit2gtk-tests-resources.gresource
