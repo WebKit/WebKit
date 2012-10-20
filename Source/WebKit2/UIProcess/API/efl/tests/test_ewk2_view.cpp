@@ -938,3 +938,24 @@ TEST_F(EWK2UnitTestBase, ewk_view_inspector)
     ASSERT_FALSE(ewk_view_inspector_close(webView()));
 #endif
 }
+
+TEST_F(EWK2UnitTestBase, ewk_view_scale)
+{
+    ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
+
+    // Default scale value is 1.0.
+    ASSERT_FLOAT_EQ(1, ewk_view_scale_get(webView()));
+
+    ASSERT_TRUE(ewk_view_scale_set(webView(), 1.2, 0, 0));
+    // Reload page to check the page scale value.
+    ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
+    ASSERT_FLOAT_EQ(1.2, ewk_view_scale_get(webView()));
+
+    ASSERT_TRUE(ewk_view_scale_set(webView(), 1.5, 0, 0));
+    ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
+    ASSERT_FLOAT_EQ(1.5, ewk_view_scale_get(webView()));
+
+    ASSERT_TRUE(ewk_view_scale_set(webView(), 1, 0, 0));
+    ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
+    ASSERT_FLOAT_EQ(1, ewk_view_scale_get(webView()));
+}

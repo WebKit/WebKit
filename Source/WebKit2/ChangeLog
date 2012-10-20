@@ -1,3 +1,15 @@
+2012-10-19  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Add API unit tests for scaling
+        https://bugs.webkit.org/show_bug.cgi?id=99451
+
+        Reviewed by Gyuyoung Kim.
+
+        Add API unit test for ewk_view_scale_set()/get() APIs.
+
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+
 2012-10-19  KyungTae Kim  <ktf.kim@samsung.com>
 
         [WK2][EFL] Modify ewk_view_scale_set to public API
