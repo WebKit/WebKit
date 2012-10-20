@@ -127,6 +127,10 @@ struct WebProcessCreationParameters {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     HashMap<String, bool> notificationPermissions;
 #endif
+
+#if ENABLE(NETWORK_PROCESS)
+    bool usesNetworkProcess;
+#endif
 };
 
 } // namespace WebKit

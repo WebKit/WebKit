@@ -400,6 +400,10 @@ PassRefPtr<WebProcessProxy> WebContext::createNewWebProcess()
     m_notificationManagerProxy->populateCopyOfNotificationPermissions(parameters.notificationPermissions);
 #endif
 
+#if ENABLE(NETWORK_PROCESS)
+    parameters.usesNetworkProcess = m_usesNetworkProcess;
+#endif
+
     // Add any platform specific parameters
     platformInitializeWebProcess(parameters);
 

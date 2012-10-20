@@ -162,6 +162,9 @@ WebProcess::WebProcess()
     , m_notificationManager(this)
 #endif
     , m_iconDatabaseProxy(this)
+#if ENABLE(NETWORK_PROCESS)
+    , m_usesNetworkProcess(false)
+#endif
 #if USE(SOUP)
     , m_soupRequestManager(this)
 #endif
@@ -261,6 +264,7 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 #endif
 
 #if ENABLE(NETWORK_PROCESS)
+    m_usesNetworkProcess = parameters.usesNetworkProcess;
     ensureNetworkProcessConnection();
 #endif
     setTerminationTimeout(parameters.terminationTimeout);
@@ -269,6 +273,9 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 #if ENABLE(NETWORK_PROCESS)
 void WebProcess::ensureNetworkProcessConnection()
 {
+    if (!m_usesNetworkProcess)
+        return;
+
     if (m_networkProcessConnection)
         return;
 

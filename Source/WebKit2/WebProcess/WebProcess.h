@@ -349,6 +349,7 @@ private:
 #if ENABLE(NETWORK_PROCESS)
     void ensureNetworkProcessConnection();
     RefPtr<NetworkProcessConnection> m_networkProcessConnection;
+    bool m_usesNetworkProcess;
 #endif
 
 #if ENABLE(PLUGIN_PROCESS)

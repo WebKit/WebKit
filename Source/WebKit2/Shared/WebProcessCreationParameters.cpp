@@ -46,6 +46,9 @@ WebProcessCreationParameters::WebProcessCreationParameters()
 #elif PLATFORM(WIN)
     , shouldPaintNativeControls(false)
 #endif
+#if ENABLE(NETWORK_PROCESS)
+    , usesNetworkProcess(false)
+#endif
 {
 }
 
@@ -108,6 +111,10 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     encoder->encode(notificationPermissions);
+#endif
+
+#if ENABLE(NETWORK_PROCESS)
+    encoder->encode(usesNetworkProcess);
 #endif
 }
 
@@ -215,6 +222,11 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     if (!decoder->decode(parameters.notificationPermissions))
+        return false;
+#endif
+
+#if ENABLE(NETWORK_PROCESS)
+    if (!decoder->decode(parameters.usesNetworkProcess))
         return false;
 #endif
 
