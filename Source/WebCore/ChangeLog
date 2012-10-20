@@ -1,5 +1,20 @@
 2012-10-19  Tony Chang  <tony@chromium.org>
 
+        RenderFlexibleBox::preferredMainAxisContentExtentForChild can return a negative value
+        https://bugs.webkit.org/show_bug.cgi?id=97827
+
+        Reviewed by Ojan Vafai.
+
+        I'm pretty sure this isn't possible (logicalHeight and maxPreferredLogicalWidth should always include
+        border and padding), so just add an assert.
+
+        No new tests, the assert is for code clarity.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::preferredMainAxisContentExtentForChild):
+
+2012-10-19  Tony Chang  <tony@chromium.org>
+
         Replace calls to updateLogicalHeight with calls to computeLogicalHeight
         https://bugs.webkit.org/show_bug.cgi?id=99883
 
