@@ -75,6 +75,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> sourc
     , m_cursorFinished(false)
     , m_pendingCursor(0)
     , m_didFireUpgradeNeededEvent(false)
+    , m_preventPropagation(false)
 {
     if (m_transaction) {
         m_transaction->registerRequest(this);
@@ -458,7 +459,7 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
 
     Vector<RefPtr<EventTarget> > targets;
     targets.append(this);
-    if (m_transaction) {
+    if (m_transaction && !m_preventPropagation) {
         targets.append(m_transaction);
         // If there ever are events that are associated with a database but
         // that do not have a transaction, then this will not work and we need

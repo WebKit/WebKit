@@ -1,3 +1,24 @@
+2012-10-19  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Hidden indexing events are visible to script via bubbling/capture
+        https://bugs.webkit.org/show_bug.cgi?id=96566
+
+        Reviewed by Tony Chang.
+
+        Stop propagation of error events fired at internal indexing requests as a result of
+        aborting, as they should not be visible to scripts.
+
+        Test: storage/indexeddb/index-population.html
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::createIndex):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::dispatchEvent):
+        * Modules/indexeddb/IDBRequest.h:
+        (WebCore::IDBRequest::preventPropagation):
+        (IDBRequest):
+
 2012-10-19  Simon Fraser  <simon.fraser@apple.com>
 
         Remove .get() calls in assertions as suggested by Darin Adler.

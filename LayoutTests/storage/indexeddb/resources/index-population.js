@@ -18,6 +18,7 @@ function deleteSuccess()
 {
     request = evalAndLog("indexedDB.open('index-population')");
     request.onsuccess = doSetVersion1;
+    request.onblocked = unexpectedBlockedCallback;
     request.onerror = unexpectedErrorCallback;
 }
 
@@ -28,6 +29,7 @@ function doSetVersion1()
     self.db = evalAndLog("db = event.target.result");
     request = evalAndLog("request = db.setVersion('version 1')");
     request.onsuccess = setVersion1;
+    request.onblocked = unexpectedBlockedCallback;
     request.onerror = unexpectedErrorCallback;
 }
 
@@ -69,6 +71,13 @@ function setVersion2()
     transaction2 = evalAndLog("transaction = request.result");
     transaction2.onabort = setVersion2Abort;
     transaction2.oncomplete = unexpectedCompleteCallback;
+
+    var capturePhase = true;
+    transaction2.addEventListener("error", unexpectedErrorCallback, !capturePhase);
+    transaction2.addEventListener("error", unexpectedErrorCallback, capturePhase);
+    db.addEventListener("error", unexpectedErrorCallback, !capturePhase);
+    db.addEventListener("error", unexpectedErrorCallback, capturePhase);
+
     store = evalAndLog("store = db.createObjectStore('store2')");
     evalAndLog("store.put({data: 'a', indexKey: 10}, 1)");
     evalAndLog("store.put({data: 'b', indexKey: 20}, 2)");

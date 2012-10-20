@@ -61,6 +61,7 @@ public:
     String webkitErrorMessage(ExceptionCode&) const;
     PassRefPtr<IDBAny> source() const;
     PassRefPtr<IDBTransaction> transaction() const;
+    void preventPropagation() { m_preventPropagation = true; }
 
     // Defined in the IDL
     enum ReadyState {
@@ -151,6 +152,7 @@ private:
     RefPtr<IDBKey> m_cursorPrimaryKey;
     ScriptValue m_cursorValue;
     bool m_didFireUpgradeNeededEvent;
+    bool m_preventPropagation;
 
     EventTargetData m_eventTargetData;
 };
