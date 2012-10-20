@@ -111,18 +111,20 @@ PassRefPtr<NodeFilter> V8DOMWrapper::wrapNativeNodeFilter(v8::Handle<v8::Value> 
     return NodeFilter::create(V8NodeFilterCondition::create(filter));
 }
 
-v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(Document* document, WrapperTypeInfo* type, void* impl)
+v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(Document* deprecatedDocument, WrapperTypeInfo* type, void* impl)
 {
     V8PerContextData* perContextData = 0;
 
+    // Please don't add any more uses of deprecatedDocument. We want to remove it.
+
     // If we have a pointer to the frame, we cna get the V8PerContextData
     // directly, which is faster than going through V8.
-    if (document && document->frame())
-        perContextData = perContextDataForCurrentWorld(document->frame());
+    if (deprecatedDocument && deprecatedDocument->frame())
+        perContextData = perContextDataForCurrentWorld(deprecatedDocument->frame());
     else
         perContextData = V8PerContextData::from(v8::Context::GetCurrent());
 
-    v8::Local<v8::Object> instance = perContextData ? perContextData->createWrapperFromCache(type, document) : V8ObjectConstructor::newInstance(type->getTemplate()->GetFunction());
+    v8::Local<v8::Object> instance = perContextData ? perContextData->createWrapperFromCache(type) : V8ObjectConstructor::newInstance(type->getTemplate()->GetFunction());
 
     // Avoid setting the DOM wrapper for failed allocations.
     if (instance.IsEmpty())

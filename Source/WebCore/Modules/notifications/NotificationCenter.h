@@ -85,7 +85,6 @@ public:
     int checkPermission();
     void requestPermission(PassRefPtr<VoidCallback>);
 #endif
-    Document* document() const;
 
     virtual void stop() OVERRIDE;
 

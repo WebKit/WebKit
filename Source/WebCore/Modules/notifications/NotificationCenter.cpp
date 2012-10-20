@@ -55,11 +55,6 @@ NotificationCenter::NotificationCenter(ScriptExecutionContext* context, Notifica
 {
 }
 
-Document* NotificationCenter::document() const {
-    ScriptExecutionContext* context = scriptExecutionContext();
-    return context->isDocument() ? static_cast<Document*>(context) : 0;
-}
-
 #if ENABLE(LEGACY_NOTIFICATIONS)
 int NotificationCenter::checkPermission()
 {

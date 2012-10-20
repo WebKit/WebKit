@@ -1,3 +1,45 @@
+2012-10-19  Adam Barth  <abarth@webkit.org>
+
+        [V8] V8DOMWrapper should avoid using its document parameter (so we can remove it soon)
+        https://bugs.webkit.org/show_bug.cgi?id=99876
+
+        Reviewed by Kentaro Hara.
+
+        We want to remove the document parameter to instantiateV8Object. There
+        isn't always a Document available, so it doesn't make sense to pass it
+        as a parameter. We're just waiting for a V8 API change so we can still
+        construct Node wrappers quickly.
+
+        This patch removes a use of the document that snuck in. Rather than
+        passing the ScriptExecutionContext around, we get it from the
+        CreationContext of the prototype object (and only when we actually need
+        it).
+
+        * Modules/notifications/NotificationCenter.cpp:
+        * Modules/notifications/NotificationCenter.h:
+        (NotificationCenter):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader):
+        (GenerateConstructorGetter):
+        (GenerateImplementation):
+        (GenerateToV8Converters):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::installDOMWindow):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::instantiateV8Object):
+        * bindings/v8/V8PerContextData.cpp:
+        (WebCore::V8PerContextData::createWrapperFromCacheSlowCase):
+        (WebCore::V8PerContextData::constructorForTypeSlowCase):
+        * bindings/v8/V8PerContextData.h:
+        (WebCore::V8PerContextData::createWrapperFromCache):
+        (WebCore::V8PerContextData::constructorForType):
+        (V8PerContextData):
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::initializeIfNeeded):
+        * bindings/v8/WrapperTypeInfo.h:
+        (WebCore):
+        (WebCore::WrapperTypeInfo::installPerContextPrototypeProperties):
+
 2012-10-19  Florin Malita  <fmalita@chromium.org>
 
         Incorrect pattern scaling

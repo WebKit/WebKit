@@ -37,7 +37,6 @@ namespace WebCore {
     
     class ActiveDOMObject;
     class DOMDataStore;
-    class ScriptExecutionContext;
 
     static const int v8DOMWrapperTypeIndex = 0;
     static const int v8DOMWrapperObjectIndex = 1;
@@ -49,7 +48,7 @@ namespace WebCore {
     typedef void (*DerefObjectFunction)(void*);
     typedef ActiveDOMObject* (*ToActiveDOMObjectFunction)(v8::Handle<v8::Object>);
     typedef void (*DOMWrapperVisitorFunction)(DOMDataStore*, void*, v8::Persistent<v8::Object>);
-    typedef void (*InstallPerContextPrototypePropertiesFunction)(v8::Handle<v8::Object>, ScriptExecutionContext*);
+    typedef void (*InstallPerContextPrototypePropertiesFunction)(v8::Handle<v8::Object>);
 
     enum WrapperTypePrototype {
         WrapperTypeObjectPrototype,
@@ -90,10 +89,10 @@ namespace WebCore {
                 derefObjectFunction(object);
         }
         
-        void installPerContextPrototypeProperties(v8::Handle<v8::Object> proto, ScriptExecutionContext* context)
+        void installPerContextPrototypeProperties(v8::Handle<v8::Object> proto)
         {
             if (installPerContextPrototypePropertiesFunction)
-                installPerContextPrototypePropertiesFunction(proto, context);
+                installPerContextPrototypePropertiesFunction(proto);
         }
 
         ActiveDOMObject* toActiveDOMObject(v8::Handle<v8::Object> object)

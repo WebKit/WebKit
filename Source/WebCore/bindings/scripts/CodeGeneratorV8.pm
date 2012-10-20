@@ -483,11 +483,11 @@ END
 
     if (@enabledPerContextFunctions) {
         push(@headerContent, <<END);
-    static void installPerContextPrototypeProperties(v8::Handle<v8::Object>, ScriptExecutionContext*);
+    static void installPerContextPrototypeProperties(v8::Handle<v8::Object>);
 END
     } else {
         push(@headerContent, <<END);
-    static void installPerContextPrototypeProperties(v8::Handle<v8::Object>, ScriptExecutionContext*) { }
+    static void installPerContextPrototypeProperties(v8::Handle<v8::Object>) { }
 END
     }
 
@@ -834,17 +834,7 @@ static v8::Handle<v8::Value> ${implClassName}ConstructorGetter(v8::Local<v8::Str
     V8PerContextData* perContextData = V8PerContextData::from(info.Holder()->CreationContext());
     if (!perContextData)
         return v8Undefined();
-END
-
-    if ($implClassName eq "DOMWindow") {
-        push(@implContentDecls, "    return perContextData->constructorForType(WrapperTypeInfo::unwrap(data), V8DOMWindow::toNative(info.Holder())->document());\n");
-END
-    } elsif ($implClassName eq "WorkerContext") {
-        push(@implContentDecls, "    return perContextData->constructorForType(WrapperTypeInfo::unwrap(data), V8WorkerContext::toNative(info.Holder()));\n")
-    } else {
-        push(@implContentDecls, "    return perContextData->constructorForType(WrapperTypeInfo::unwrap(data), 0);\n");
-    }
-    push(@implContentDecls, <<END);
+    return perContextData->constructorForType(WrapperTypeInfo::unwrap(data));
 }
 END
 }
@@ -3092,15 +3082,16 @@ END
 
     if (@enabledPerContextFunctions) {
         push(@implContent, <<END);
-void ${className}::installPerContextPrototypeProperties(v8::Handle<v8::Object> proto, ScriptExecutionContext* context)
+void ${className}::installPerContextPrototypeProperties(v8::Handle<v8::Object> proto)
 {
     UNUSED_PARAM(proto);
-    UNUSED_PARAM(context);
 END
         # Setup the enable-by-settings functions if we have them
         push(@implContent,  <<END);
     v8::Local<v8::Signature> defaultSignature = v8::Signature::New(GetTemplate());
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
+
+    ScriptExecutionContext* context = toScriptExecutionContext(proto->CreationContext());
 END
 
         foreach my $runtimeFunc (@enabledPerContextFunctions) {
@@ -3433,13 +3424,14 @@ END
     }
 
     push(@implContent, <<END);
-    Document* document = 0;
-    UNUSED_PARAM(document);
+    // Please don't add any more uses of this variable.
+    Document* deprecatedDocument = 0;
+    UNUSED_PARAM(deprecatedDocument);
 END
 
-    if (IsNodeSubType($dataNode) || $interfaceName eq "NotificationCenter") {
+    if (IsNodeSubType($dataNode)) {
         push(@implContent, <<END);
-    document = impl->document(); 
+    deprecatedDocument = impl->document(); 
 END
     }
 
@@ -3454,7 +3446,7 @@ END
         context->Enter();
     }
 
-    wrapper = V8DOMWrapper::instantiateV8Object(document, &info, impl.get());
+    wrapper = V8DOMWrapper::instantiateV8Object(deprecatedDocument, &info, impl.get());
 
     if (!context.IsEmpty())
         context->Exit();
