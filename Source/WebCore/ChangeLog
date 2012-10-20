@@ -1,3 +1,41 @@
+2012-10-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix a hang when combining tile cache layers with preserve-3d or reflections
+        https://bugs.webkit.org/show_bug.cgi?id=99890
+        <rdar://problem/12539560>
+
+        Reviewed by Dean Jackson.
+
+        The new tile cache code added an updateSublayers() call when switching to/from
+        tiled layers. This confused later sublayer rebuilding, causing us to attempt to
+        add a layer as a child of itself, causing a hang in CA.
+        
+        Fix by removing all the explicit calls to updateFoo when updating the structural
+        layer and switching to/from tiled layers. Instead, we set dirty flags, and rely
+        on the fact that these flag-dirtying functions get called before the later functions
+        that process those dirty flags. This is assured by some reordering of the update
+        function calls.
+        
+        A final wrinkle is that ensureStructuralLayer() can change the layer that our
+        parent GraphicsLayer put in its sublayer list. Rather than diddle with that sublayer
+        list directly like we used to, just call noteSublayersChanged() on the parent, and have
+        commitLayerChangesAfterSublayers() check the ChildrenChanged and do a second update
+        of sublayers if necessary (we clear the flag in commitLayerChangesBeforeSublayers(), so
+        only do this work if a sublayer requested it).
+        
+        Tests: compositing/tiling/preserve3d-tiled.html
+               compositing/tiling/reflected-tiled.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::commitLayerChangesAfterSublayers):
+        (WebCore::GraphicsLayerCA::ensureStructuralLayer):
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayer::appendSublayer): Add assertion about adding a layer to itself.
+        (PlatformCALayer::insertSublayer): Ditto.
+        (PlatformCALayer::replaceSublayer): Ditto.
+
 2012-10-19  Chris Fleizach  <cfleizach@apple.com>
 
         AX: aria-hidden=false does not work as expected
