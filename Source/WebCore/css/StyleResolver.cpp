@@ -199,12 +199,6 @@ if (isInitial) { \
     return;\
 }
 
-#define HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(prop, Prop) \
-HANDLE_INHERIT_AND_INITIAL(prop, Prop) \
-if (primitiveValue) \
-    m_style->set##Prop(*primitiveValue);
-
-
 static RuleSet* defaultStyle;
 static RuleSet* defaultQuirksStyle;
 static RuleSet* defaultPrintStyle;
@@ -3538,9 +3532,13 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 
     // CSS Text Layout Module Level 3: Vertical writing support
     case CSSPropertyWebkitWritingMode: {
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(writingMode, WritingMode)
+        HANDLE_INHERIT_AND_INITIAL(writingMode, WritingMode);
+        
+        if (primitiveValue)
+            m_style->setWritingMode(*primitiveValue);
+        
         // FIXME: It is not ok to modify document state while applying style.
-        if (!isInherit && !isInitial && m_element && m_element == m_element->document()->documentElement())
+        if (m_element && m_element == m_element->document()->documentElement())
             m_element->document()->setWritingModeSetOnDocumentElement(true);
         FontDescription fontDescription = m_style->fontDescription();
         fontDescription.setOrientation(m_style->isHorizontalWritingMode() ? Horizontal : Vertical);

@@ -1,3 +1,21 @@
+2012-10-19  Luke Macpherson   <macpherson@chromium.org>
+
+        Remove HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE macro in StyleResolver.
+        https://bugs.webkit.org/show_bug.cgi?id=99782
+
+        Reviewed by Sam Weinig.
+
+        Removes last usage of HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE macro, so that in future there will be no temptation
+        to use it instead of adding a line to StyleBuilder.
+        Also removes redundant checks for inital and inherit (HANDLE_INHERIT_AND_INTIAL already returns in those cases).
+        I don't want to move this code into StyleBuilder until the FIXME that is already there is fixed.
+
+        Covered by many existing writing mode tests (eg. fast/html/details-writing-mode.html)
+
+        * css/StyleResolver.cpp:
+        (WebCore):
+        (WebCore::StyleResolver::applyProperty):
+
 2012-10-19  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Hidden indexing events are visible to script via bubbling/capture
