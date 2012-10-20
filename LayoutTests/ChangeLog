@@ -1,3 +1,33 @@
+2012-10-20  Mike West  <mkwst@chromium.org>
+
+        Cleanup: Move stacktrace tests to a subdirectory.
+        https://bugs.webkit.org/show_bug.cgi?id=99857
+
+        Reviewed by Pavel Feldman.
+
+        I plan on adding more than a few tests checking that stacktraces are
+        associated with console logs. This patch simply moves the four existing
+        tests into a subdirectory so that I don't spam http/tests/inspector with
+        stacktrace tests.
+
+        * http/tests/inspector/stacktraces/csp-injected-content-warning-contains-stacktrace-expected.txt: Renamed from LayoutTests/http/tests/inspector/csp-injected-content-warning-contains-stacktrace-expected.txt.
+        * http/tests/inspector/stacktraces/csp-injected-content-warning-contains-stacktrace.html: Renamed from LayoutTests/http/tests/inspector/csp-injected-content-warning-contains-stacktrace.html.
+        * http/tests/inspector/stacktraces/csp-inline-warning-contains-stacktrace-expected.txt: Renamed from LayoutTests/http/tests/inspector/csp-inline-warning-contains-stacktrace-expected.txt.
+        * http/tests/inspector/stacktraces/csp-inline-warning-contains-stacktrace.html: Renamed from LayoutTests/http/tests/inspector/csp-inline-warning-contains-stacktrace.html.
+        * http/tests/inspector/stacktraces/csp-setInterval-warning-contains-stacktrace-expected.txt: Renamed from LayoutTests/http/tests/inspector/csp-setInterval-warning-contains-stacktrace-expected.txt.
+        * http/tests/inspector/stacktraces/csp-setInterval-warning-contains-stacktrace.html: Renamed from LayoutTests/http/tests/inspector/csp-setInterval-warning-contains-stacktrace.html.
+        * http/tests/inspector/stacktraces/csp-setTimeout-warning-contains-stacktrace-expected.txt: Renamed from LayoutTests/http/tests/inspector/csp-setTimeout-warning-contains-stacktrace-expected.txt.
+        * http/tests/inspector/stacktraces/csp-setTimeout-warning-contains-stacktrace.html: Renamed from LayoutTests/http/tests/inspector/csp-setTimeout-warning-contains-stacktrace.html.
+        * http/tests/inspector/stacktraces/resources/csp-inline-test.js: Renamed from LayoutTests/http/tests/inspector/resources/csp-inline-test.js.
+        (thisTest):
+        * http/tests/inspector/stacktraces/resources/stacktrace-test.js: Renamed from LayoutTests/http/tests/inspector/resources/csp-test.js.
+        (test.addMessage):
+        (test):
+        * platform/chromium/http/tests/inspector/stacktraces/csp-injected-content-warning-contains-stacktrace-expected.txt: Renamed from LayoutTests/platform/chromium/http/tests/inspector/csp-injected-content-warning-contains-stacktrace-expected.txt.
+        * platform/chromium/http/tests/inspector/stacktraces/csp-inline-warning-contains-stacktrace-expected.txt: Renamed from LayoutTests/platform/chromium/http/tests/inspector/csp-inline-warning-contains-stacktrace-expected.txt.
+        * platform/chromium/http/tests/inspector/stacktraces/csp-setInterval-warning-contains-stacktrace-expected.txt: Renamed from LayoutTests/platform/chromium/http/tests/inspector/csp-setInterval-warning-contains-stacktrace-expected.txt.
+        * platform/chromium/http/tests/inspector/stacktraces/csp-setTimeout-warning-contains-stacktrace-expected.txt: Renamed from LayoutTests/platform/chromium/http/tests/inspector/csp-setTimeout-warning-contains-stacktrace-expected.txt.
+
 2012-10-20  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [EFL] Unskip the tests about regressions after r130699.

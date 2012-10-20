@@ -6,7 +6,7 @@ Message[0]: csp-setInterval-warning-contains-stacktrace.html:11 Refused to evalu
 
 Stack Trace:
 
-    0) http://127.0.0.1:8000/inspector/csp-setInterval-warning-contains-stacktrace.html / thisTest / 11 / 26
+    0) http://127.0.0.1:8000/inspector/stacktraces/csp-setInterval-warning-contains-stacktrace.html / thisTest / 11 / 26
     1) (internal script) /  / (line number) / (column number)
     2) (internal script) / InjectedScript._evaluateOn / (line number) / (column number)
     3) (internal script) / InjectedScript._evaluateAndWrap / (line number) / (column number)

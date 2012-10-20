@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="X-WebKit-CSP" content="script-src 'self' 'unsafe-inline'">
-        <script src="/inspector/console-test.js"></script>
-        <script src="/inspector/debugger-test.js"></script>
-        <script src="/inspector/inspector-test.js"></script>
-        <script src="/inspector/resources/csp-test.js"></script>
+        <meta http-equiv='X-WebKit-CSP' content="script-src 'self' 'unsafe-inline'">
+        <script src='/inspector/console-test.js'></script>
+        <script src='/inspector/debugger-test.js'></script>
+        <script src='/inspector/inspector-test.js'></script>
+        <script src='/inspector/stacktraces/resources/stacktrace-test.js'></script>
         <script>
             function thisTest() {
-                var id = setInterval("log('FAIL')", 0);
+                var id = setInterval('log("FAIL")', 0);
                 if (id != 0)
                     log('FAIL: Return value for string (should be 0): ' + id);
                 else
@@ -16,7 +16,7 @@
             }
         </script>
     </head>
-    <body onload="runTest()">
+    <body onload='runTest()'>
         <p>This test attempts to evaluate script via setInterval. The resulting console
         error should contain a stack trace tied to line 11.</p>
     </body>

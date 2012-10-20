@@ -7,12 +7,9 @@ Message[0]: csp-injected-content-warning-contains-stacktrace.html:12 Refused to 
 
 Stack Trace:
 
-    0) http://127.0.0.1:8000/inspector/csp-injected-content-warning-contains-stacktrace.html / thisTest / 12 / 0
-    1) (internal script) / eval code / (line number) / (column number)
-    2) [native code] / eval / 0 / 0
-    3) [native code] / evaluate / 0 / 0
-    4) (internal script) / _evaluateOn / (line number) / (column number)
-    5) (internal script) / _evaluateAndWrap / (line number) / (column number)
-    6) (internal script) / evaluate / (line number) / (column number)
-    7) [native code] /  / 0 / 0
+    0) http://127.0.0.1:8000/inspector/stacktraces/csp-injected-content-warning-contains-stacktrace.html / thisTest / 12 / 25
+    1) (internal script) /  / (line number) / (column number)
+    2) (internal script) / InjectedScript._evaluateOn / (line number) / (column number)
+    3) (internal script) / InjectedScript._evaluateAndWrap / (line number) / (column number)
+    4) (internal script) / InjectedScript.evaluate / (line number) / (column number)
 

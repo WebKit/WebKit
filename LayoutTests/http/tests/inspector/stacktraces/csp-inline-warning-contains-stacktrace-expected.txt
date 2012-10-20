@@ -7,7 +7,7 @@ Message[0]: [native code]:0 Refused to execute inline script because it violates
 Stack Trace:
 
     0) [native code] / appendChild / 0 / 0
-    1) http://127.0.0.1:8000/inspector/resources/csp-inline-test.js / thisTest / 4 / 0
+    1) http://127.0.0.1:8000/inspector/stacktraces/resources/csp-inline-test.js / thisTest / 4 / 0
     2) (internal script) / eval code / (line number) / (column number)
     3) [native code] / eval / 0 / 0
     4) [native code] / evaluate / 0 / 0
