@@ -1,3 +1,14 @@
+2012-10-19  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [WK2][EFL] Modify ewk_view_scale_set to public API
+        https://bugs.webkit.org/show_bug.cgi?id=99902
+
+        Reviewed by Gyuyoung Kim.
+
+        Modify ewk_view_scale_set to public API.
+
+        * UIProcess/API/efl/ewk_view.h:
+
 2012-10-19  Andreas Kling  <kling@webkit.org>
 
         Race condition in WebProcessProxy::handleGetPlugins().

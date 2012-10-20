@@ -526,7 +526,7 @@ EAPI Eina_Bool ewk_view_html_string_load(Evas_Object *o, const char *html, const
  *
  * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
  */
-Eina_Bool ewk_view_scale_set(Evas_Object *o, double scaleFactor, int x, int y);
+EAPI Eina_Bool ewk_view_scale_set(Evas_Object *o, double scaleFactor, int x, int y);
 
 /**
  * Queries the current scale factor of the page.
