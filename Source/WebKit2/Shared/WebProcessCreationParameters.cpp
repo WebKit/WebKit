@@ -103,7 +103,7 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(initialHTTPCookieAcceptPolicy);
 #if USE(CFURLSTORAGESESSIONS)
     CFDataRef storageSession = serializedDefaultStorageSession.get();
-    encoder->encodeBool(storageSession);
+    encoder->encode(static_cast<bool>(storageSession));
     if (storageSession)
         CoreIPC::encode(encoder, storageSession);
 #endif // USE(CFURLSTORAGESESSIONS)

@@ -45,7 +45,7 @@ void QtNetworkReplyData::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encode(m_urlString);
     encoder->encode(m_contentType);
-    encoder->encodeUInt64(m_contentLength);
+    encoder->encode(static_cast<uint64_t>(m_contentLength));
     encoder->encode(m_replyUuid);
     encoder->encode(m_dataHandle);
 }

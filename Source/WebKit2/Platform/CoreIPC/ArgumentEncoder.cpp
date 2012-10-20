@@ -101,62 +101,60 @@ void ArgumentEncoder::encodeFixedLengthData(const uint8_t* data, size_t size, un
 
 void ArgumentEncoder::encodeVariableLengthByteArray(const DataReference& dataReference)
 {
-    // Encode the size.
-    encodeUInt64(static_cast<uint64_t>(dataReference.size()));
-
+    encode(static_cast<uint64_t>(dataReference.size()));
     encodeFixedLengthData(dataReference.data(), dataReference.size(), 1);
 }
 
-void ArgumentEncoder::encodeBool(bool n)
+void ArgumentEncoder::encode(bool n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
     
     *reinterpret_cast<bool*>(buffer) = n;
 }
 
-void ArgumentEncoder::encodeUInt16(uint16_t n)
+void ArgumentEncoder::encode(uint16_t n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
 
     *reinterpret_cast<uint16_t*>(buffer) = n;
 }
 
-void ArgumentEncoder::encodeUInt32(uint32_t n)
+void ArgumentEncoder::encode(uint32_t n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
     
     *reinterpret_cast<uint32_t*>(buffer) = n;
 }
 
-void ArgumentEncoder::encodeUInt64(uint64_t n)
+void ArgumentEncoder::encode(uint64_t n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
     
     *reinterpret_cast<uint64_t*>(buffer) = n;
 }
 
-void ArgumentEncoder::encodeInt32(int32_t n)
+void ArgumentEncoder::encode(int32_t n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
     
     *reinterpret_cast<int32_t*>(buffer) = n;
 }
 
-void ArgumentEncoder::encodeInt64(int64_t n)
+void ArgumentEncoder::encode(int64_t n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
     
     *reinterpret_cast<int64_t*>(buffer) = n;
 }
 
-void ArgumentEncoder::encodeFloat(float n)
+void ArgumentEncoder::encode(float n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
 
     *reinterpret_cast<float*>(buffer) = n;
 }
 
-void ArgumentEncoder::encodeDouble(double n)
+void ArgumentEncoder::encode(double n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));
 
@@ -174,14 +172,5 @@ Vector<Attachment> ArgumentEncoder::releaseAttachments()
     newList.swap(m_attachments);
     return newList;
 }
-
-#ifndef NDEBUG
-void ArgumentEncoder::debug()
-{
-    printf("ArgumentEncoder::debug()\n");
-    printf("Number of Attachments: %d\n", (int)m_attachments.size());
-    printf("Size of buffer: %d\n", (int)m_bufferSize);
-}
-#endif
 
 } // namespace CoreIPC

@@ -100,7 +100,7 @@ template<bool fixedSizeElements, typename T> struct VectorArgumentCoder;
 template<typename T> struct VectorArgumentCoder<false, T> {
     static void encode(ArgumentEncoder* encoder, const Vector<T>& vector)
     {
-        encoder->encodeUInt64(vector.size());
+        encoder->encode(static_cast<uint64_t>(vector.size()));
         for (size_t i = 0; i < vector.size(); ++i)
             encoder->encode(vector[i]);
     }
@@ -129,7 +129,7 @@ template<typename T> struct VectorArgumentCoder<false, T> {
 template<typename T> struct VectorArgumentCoder<true, T> {
     static void encode(ArgumentEncoder* encoder, const Vector<T>& vector)
     {
-        encoder->encodeUInt64(vector.size());
+        encoder->encode(static_cast<uint64_t>(vector.size()));
         encoder->encodeFixedLengthData(reinterpret_cast<const uint8_t*>(vector.data()), vector.size() * sizeof(T), __alignof(T));
     }
     
@@ -164,7 +164,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
 
     static void encode(ArgumentEncoder* encoder, const HashMapType& hashMap)
     {
-        encoder->encodeUInt64(hashMap.size());
+        encoder->encode(static_cast<uint64_t>(hashMap.size()));
         for (typename HashMapType::const_iterator it = hashMap.begin(), end = hashMap.end(); it != end; ++it)
             encoder->encode(*it);
     }

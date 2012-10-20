@@ -42,7 +42,7 @@ void DictionaryPopupInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     bool hadOptions = options;
-    encoder->encodeBool(hadOptions);
+    encoder->encode(hadOptions);
     if (hadOptions)
         CoreIPC::encode(encoder, options.get());
 #endif

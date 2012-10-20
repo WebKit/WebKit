@@ -70,12 +70,12 @@ public:
     bool baseEncode(CoreIPC::ArgumentEncoder* encoder, APIObject::Type& type) const 
     {
         if (!m_root) {
-            encoder->encodeUInt32(APIObject::TypeNull);
+            encoder->encode(static_cast<uint32_t>(APIObject::TypeNull));
             return true;
         }
 
         type = m_root->type();
-        encoder->encodeUInt32(type);
+        encoder->encode(static_cast<uint32_t>(type));
 
         switch (type) {
         case APIObject::TypeArray: {

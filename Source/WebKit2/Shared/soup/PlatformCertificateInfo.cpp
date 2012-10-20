@@ -54,18 +54,18 @@ PlatformCertificateInfo::~PlatformCertificateInfo()
 void PlatformCertificateInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     if (!m_certificate) {
-        encoder->encodeBool(false);
+        encoder->encode(false);
         return;
     }
 
     GByteArray* certificateData = 0;
     g_object_get(G_OBJECT(m_certificate.get()), "certificate", &certificateData, NULL);
     if (!certificateData) {
-        encoder->encodeBool(false);
+        encoder->encode(false);
         return;
     }
 
-    encoder->encodeBool(true);
+    encoder->encode(true);
     GRefPtr<GByteArray> certificate = adoptGRef(certificateData);
     encoder->encodeVariableLengthByteArray(CoreIPC::DataReference(certificate->data, certificate->len));
     encoder->encode(static_cast<uint32_t>(m_tlsErrors));

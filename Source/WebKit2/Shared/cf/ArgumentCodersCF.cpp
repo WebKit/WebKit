@@ -247,7 +247,7 @@ void encode(ArgumentEncoder* encoder, CFArrayRef array)
 
     CFArrayGetValues(array, CFRangeMake(0, size), values.data());
 
-    encoder->encodeUInt64(size);
+    encoder->encode(static_cast<uint64_t>(size));
     for (CFIndex i = 0; i < size; ++i) {
         ASSERT(values[i]);
 
@@ -277,7 +277,7 @@ bool decode(ArgumentDecoder* decoder, RetainPtr<CFArrayRef>& result)
 
 void encode(ArgumentEncoder* encoder, CFBooleanRef boolean)
 {
-    encoder->encodeBool(CFBooleanGetValue(boolean));
+    encoder->encode(static_cast<bool>(CFBooleanGetValue(boolean)));
 }
 
 bool decode(ArgumentDecoder* decoder, RetainPtr<CFBooleanRef>& result)
@@ -310,7 +310,7 @@ bool decode(ArgumentDecoder* decoder, RetainPtr<CFDataRef>& result)
 
 void encode(ArgumentEncoder* encoder, CFDateRef date)
 {
-    encoder->encodeDouble(CFDateGetAbsoluteTime(date));
+    encoder->encode(static_cast<double>(CFDateGetAbsoluteTime(date)));
 }
 
 bool decode(ArgumentDecoder* decoder, RetainPtr<CFDateRef>& result)
@@ -331,7 +331,7 @@ void encode(ArgumentEncoder* encoder, CFDictionaryRef dictionary)
     
     CFDictionaryGetKeysAndValues(dictionary, keys.data(), values.data());
 
-    encoder->encodeUInt64(size);
+    encoder->encode(static_cast<uint64_t>(size));
 
     for (CFIndex i = 0; i < size; ++i) {
         ASSERT(keys[i]);
@@ -495,7 +495,7 @@ bool decode(ArgumentDecoder* decoder, RetainPtr<CFStringRef>& result)
 void encode(ArgumentEncoder* encoder, CFURLRef url)
 {
     CFURLRef baseURL = CFURLGetBaseURL(url);
-    encoder->encodeBool(baseURL);
+    encoder->encode(static_cast<bool>(baseURL));
     if (baseURL)
         encode(encoder, baseURL);
 

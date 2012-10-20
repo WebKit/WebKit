@@ -55,7 +55,7 @@ void SecItemRequestData::encode(CoreIPC::ArgumentEncoder* encoder) const
 
     CoreIPC::encode(encoder, m_queryDictionary.get());
 
-    encoder->encodeBool(m_attributesToMatch.get());
+    encoder->encode(static_cast<bool>(m_attributesToMatch));
     if (m_attributesToMatch)
         CoreIPC::encode(encoder, m_attributesToMatch.get());
 }

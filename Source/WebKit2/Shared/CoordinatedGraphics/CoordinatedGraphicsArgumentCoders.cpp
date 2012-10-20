@@ -102,7 +102,7 @@ bool ArgumentCoder<TransformationMatrix>::decode(ArgumentDecoder* decoder, Trans
 #if ENABLE(CSS_FILTERS)
 void ArgumentCoder<WebCore::FilterOperations>::encode(ArgumentEncoder* encoder, const WebCore::FilterOperations& filters)
 {
-    encoder->encodeUInt32(filters.size());
+    encoder->encode(static_cast<uint32_t>(filters.size()));
     for (size_t i = 0; i < filters.size(); ++i) {
         const FilterOperation* filter = filters.at(i);
         FilterOperation::OperationType type = filter->getOperationType();
@@ -112,13 +112,13 @@ void ArgumentCoder<WebCore::FilterOperations>::encode(ArgumentEncoder* encoder, 
         case FilterOperation::SEPIA:
         case FilterOperation::SATURATE:
         case FilterOperation::HUE_ROTATE:
-            encoder->encodeDouble(static_cast<const BasicColorMatrixFilterOperation*>(filter)->amount());
+            encoder->encode(static_cast<double>(static_cast<const BasicColorMatrixFilterOperation*>(filter)->amount()));
             break;
         case FilterOperation::INVERT:
         case FilterOperation::BRIGHTNESS:
         case FilterOperation::CONTRAST:
         case FilterOperation::OPACITY:
-            encoder->encodeDouble(static_cast<const BasicComponentTransferFilterOperation*>(filter)->amount());
+            encoder->encode(static_cast<double>(static_cast<const BasicComponentTransferFilterOperation*>(filter)->amount()));
             break;
         case FilterOperation::BLUR:
             ArgumentCoder<Length>::encode(encoder, static_cast<const BlurFilterOperation*>(filter)->stdDeviation());
@@ -126,7 +126,7 @@ void ArgumentCoder<WebCore::FilterOperations>::encode(ArgumentEncoder* encoder, 
         case FilterOperation::DROP_SHADOW: {
             const DropShadowFilterOperation* shadow = static_cast<const DropShadowFilterOperation*>(filter);
             ArgumentCoder<IntPoint>::encode(encoder, shadow->location());
-            encoder->encodeInt32(shadow->stdDeviation());
+            encoder->encode(static_cast<int32_t>(shadow->stdDeviation()));
             ArgumentCoder<Color>::encode(encoder, shadow->color());
             break;
         }
@@ -146,7 +146,7 @@ void ArgumentCoder<WebCore::FilterOperations>::encode(ArgumentEncoder* encoder, 
             encoder->encodeEnum(mixSettings.compositeOperator);
 
             CustomFilterParameterList parameters = customOperation->parameters();
-            encoder->encodeUInt32(parameters.size());
+            encoder->encode(static_cast<uint32_t>(parameters.size()));
             for (size_t i = 0; i < parameters.size(); ++i) {
                 RefPtr<CustomFilterParameter> parameter = parameters[i];
                 encoder->encode(parameter->name());
@@ -155,14 +155,14 @@ void ArgumentCoder<WebCore::FilterOperations>::encode(ArgumentEncoder* encoder, 
                 switch (parameter->parameterType()) {
                 case CustomFilterParameter::ARRAY: {
                     CustomFilterArrayParameter* arrayParameter = static_cast<CustomFilterArrayParameter*>(parameter.get());
-                    encoder->encodeUInt32(arrayParameter->size());
+                    encoder->encode(static_cast<uint32_t>(arrayParameter->size()));
                     for (size_t j = 0; j < arrayParameter->size(); ++j)
                         encoder->encode(arrayParameter->valueAt(j));
                     break;
                 }
                 case CustomFilterParameter::NUMBER: {
                     CustomFilterNumberParameter* nubmerParameter = static_cast<CustomFilterNumberParameter*>(parameter.get());
-                    encoder->encodeUInt32(nubmerParameter->size());
+                    encoder->encode(static_cast<uint32_t>(nubmerParameter->size()));
                     for (size_t j = 0; j < nubmerParameter->size(); ++j)
                         encoder->encode(nubmerParameter->valueAt(j));
                     break;
@@ -347,7 +347,7 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
 #if ENABLE(CSS_SHADERS)
 void ArgumentCoder<TransformOperations>::encode(ArgumentEncoder* encoder, const TransformOperations& transformOperations)
 {
-    encoder->encodeUInt32(transformOperations.size());
+    encoder->encode(static_cast<uint32_t>(transformOperations.size()));
     for (size_t i = 0; i < transformOperations.size(); ++i) {
         const TransformOperation* operation = transformOperations.at(i);
         encoder->encodeEnum(operation->getOperationType());
@@ -510,11 +510,11 @@ bool ArgumentCoder<TransformOperations>::decode(ArgumentDecoder* decoder, Transf
 void ArgumentCoder<WebCore::GraphicsSurfaceToken>::encode(ArgumentEncoder* encoder, const WebCore::GraphicsSurfaceToken& token)
 {
 #if OS(DARWIN)
-    encoder->encodeUInt32(token.frontBufferHandle);
-    encoder->encodeUInt32(token.backBufferHandle);
+    encoder->encode(static_cast<uint32_t>(token.frontBufferHandle));
+    encoder->encode(static_cast<uint32_t>(token.backBufferHandle));
 #endif
 #if OS(LINUX)
-    encoder->encodeUInt32(token.frontBufferHandle);
+    encoder->encode(static_cast<uint32_t>(token.frontBufferHandle));
 #endif
 }
 

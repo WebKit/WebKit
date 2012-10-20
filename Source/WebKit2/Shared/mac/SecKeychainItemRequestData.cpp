@@ -127,15 +127,15 @@ void SecKeychainItemRequestData::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encodeEnum(m_type);
 
-    encoder->encodeBool(m_keychainItem);
+    encoder->encode(static_cast<bool>(m_keychainItem));
     if (m_keychainItem)
         CoreIPC::encode(encoder, m_keychainItem.get());
 
-    encoder->encodeUInt32(m_keychainAttributes.size());
+    encoder->encode(static_cast<int32_t>(m_keychainAttributes.size()));
     for (size_t i = 0, count = m_keychainAttributes.size(); i < count; ++i)
         CoreIPC::encode(encoder, m_keychainAttributes[i]);
     
-    encoder->encodeUInt64(m_itemClass);
+    encoder->encode(static_cast<uint64_t>(m_itemClass));
     m_dataReference.encode(encoder);
 }
 

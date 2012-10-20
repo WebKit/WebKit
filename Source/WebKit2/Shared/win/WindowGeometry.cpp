@@ -38,7 +38,7 @@ WindowGeometry::WindowGeometry()
 
 void WindowGeometry::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    encoder->encodeUInt64(reinterpret_cast<uint64_t>(window));
+    encoder->encode(reinterpret_cast<uint64_t>(window));
     encoder->encode(visible);
     encoder->encode(frame);
     encoder->encode(clipRect);

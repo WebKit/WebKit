@@ -128,7 +128,7 @@ size_t SandboxExtension::HandleArray::size() const
 
 void SandboxExtension::HandleArray::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    encoder->encodeUInt64(size());
+    encoder->encode(static_cast<uint64_t>(size()));
     for (size_t i = 0; i < m_size; ++i)
         encoder->encode(m_data[i]);
     

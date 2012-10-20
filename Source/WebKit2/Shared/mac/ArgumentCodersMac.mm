@@ -196,11 +196,11 @@ void encode(ArgumentEncoder* encoder, NSAttributedString *string)
         position = NSMaxRange(effectiveRange);
     }
 
-    encoder->encodeUInt64(ranges.size());
+    encoder->encode(static_cast<uint64_t>(ranges.size()));
 
     for (size_t i = 0; i < ranges.size(); ++i) {
-        encoder->encodeUInt64(ranges[i].first.location);
-        encoder->encodeUInt64(ranges[i].first.length);
+        encoder->encode(static_cast<uint64_t>(ranges[i].first.location));
+        encoder->encode(static_cast<uint64_t>(ranges[i].first.length));
         CoreIPC::encode(encoder, ranges[i].second.get());
     }
 }
@@ -267,7 +267,7 @@ void encode(ArgumentEncoder* encoder, NSDictionary *dictionary)
     NSArray *keys = [dictionary allKeys];
     NSArray *values = [dictionary allValues];
 
-    encoder->encodeUInt64(size);
+    encoder->encode(static_cast<uint64_t>(size));
 
     for (NSUInteger i = 0; i < size; ++i) {
         id key = [keys objectAtIndex:i];

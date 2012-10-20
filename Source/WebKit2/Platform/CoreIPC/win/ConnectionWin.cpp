@@ -288,7 +288,7 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<MessageEnco
         return false;
 
     // We put the message ID last.
-    encoder->encodeUInt32(messageID.toInt());
+    encoder->encode(static_cast<uint32_t>(messageID.toInt()));
 
     // Write the outgoing message.
 

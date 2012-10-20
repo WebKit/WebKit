@@ -50,7 +50,7 @@ void ArgumentCoder<CString>::encode(ArgumentEncoder* encoder, const CString& str
 {
     // Special case the null string.
     if (string.isNull()) {
-        encoder->encodeUInt32(std::numeric_limits<uint32_t>::max());
+        encoder->encode(std::numeric_limits<uint32_t>::max());
         return;
     }
 
@@ -91,14 +91,14 @@ void ArgumentCoder<String>::encode(ArgumentEncoder* encoder, const String& strin
 {
     // Special case the null string.
     if (string.isNull()) {
-        encoder->encodeUInt32(std::numeric_limits<uint32_t>::max());
+        encoder->encode(std::numeric_limits<uint32_t>::max());
         return;
     }
 
     uint32_t length = string.length();
     encoder->encode(length);
     bool is8Bit = string.is8Bit();
-    encoder->encodeBool(is8Bit);
+    encoder->encode(is8Bit);
     if (is8Bit)
         encoder->encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.characters8()), length * sizeof(LChar), __alignof(LChar));
     else

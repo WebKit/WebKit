@@ -41,7 +41,7 @@ void ArgumentCoder<WebCore::DragData>::encode(ArgumentEncoder* encoder, const Dr
     encoder->encode((uint64_t)dragData.flags());
 
     bool hasPlatformData = dragData.platformData();
-    encoder->encodeBool(hasPlatformData);
+    encoder->encode(hasPlatformData);
     if (!hasPlatformData)
         return;
 

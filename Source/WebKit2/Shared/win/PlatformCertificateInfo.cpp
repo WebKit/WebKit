@@ -110,12 +110,12 @@ void PlatformCertificateInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     // Special case no certificates
     if (m_certificateChain.isEmpty()) {
-        encoder->encodeUInt64(std::numeric_limits<uint64_t>::max());
+        encoder->encode(std::numeric_limits<uint64_t>::max());
         return;
     }
 
     uint64_t length = m_certificateChain.size();
-    encoder->encodeUInt64(length);
+    encoder->encode(length);
 
     for (size_t i = 0; i < length; ++i)
         encoder->encodeVariableLengthByteArray(CoreIPC::DataReference(static_cast<uint8_t*>(m_certificateChain[i]->pbCertEncoded), m_certificateChain[i]->cbCertEncoded));

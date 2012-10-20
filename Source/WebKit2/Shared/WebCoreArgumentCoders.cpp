@@ -326,11 +326,11 @@ void ArgumentCoder<Cursor>::encode(ArgumentEncoder* encoder, const Cursor& curso
         return;
 
     if (cursor.image()->isNull()) {
-        encoder->encodeBool(false); // There is no valid image being encoded.
+        encoder->encode(false); // There is no valid image being encoded.
         return;
     }
 
-    encoder->encodeBool(true);
+    encoder->encode(true);
     encodeImage(encoder, cursor.image());
     encoder->encode(cursor.hotSpot());
 }
@@ -646,11 +646,11 @@ bool ArgumentCoder<WindowFeatures>::decode(ArgumentDecoder* decoder, WindowFeatu
 void ArgumentCoder<Color>::encode(ArgumentEncoder* encoder, const Color& color)
 {
     if (!color.isValid()) {
-        encoder->encodeBool(false);
+        encoder->encode(false);
         return;
     }
 
-    encoder->encodeBool(true);
+    encoder->encode(true);
     encoder->encode(color.rgb());
 }
 
