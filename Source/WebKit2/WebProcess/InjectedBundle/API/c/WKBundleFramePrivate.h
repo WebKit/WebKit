@@ -55,6 +55,8 @@ WK_EXPORT bool WKBundleFrameContainsAnyFormElements(WKBundleFrameRef frame);
 WK_EXPORT void WKBundleFrameSetTextDirection(WKBundleFrameRef frame, WKStringRef);
 WK_EXPORT bool WKBundleFrameCallShouldCloseOnWebView(WKBundleFrameRef frame);
 
+WK_EXPORT WKBundleHitTestResultRef WKBundleFrameCreateHitTestResult(WKBundleFrameRef frame, WKPoint point);
+
 #ifdef __cplusplus
 }
 #endif

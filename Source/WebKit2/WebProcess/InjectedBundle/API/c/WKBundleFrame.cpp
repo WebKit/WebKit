@@ -27,6 +27,7 @@
 #include "WKBundleFrame.h"
 #include "WKBundleFramePrivate.h"
 
+#include "InjectedBundleHitTestResult.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WKData.h"
@@ -279,4 +280,9 @@ bool WKBundleFrameCallShouldCloseOnWebView(WKBundleFrameRef frameRef)
         return true;
 
     return coreFrame->loader()->shouldClose();
+}
+
+WKBundleHitTestResultRef WKBundleFrameCreateHitTestResult(WKBundleFrameRef frameRef, WKPoint point)
+{
+    return toAPI(toImpl(frameRef)->hitTest(toIntPoint(point)).leakRef());
 }

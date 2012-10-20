@@ -42,6 +42,9 @@
 		37200B9213A16230007A4FAD /* VectorReverse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37200B9113A16230007A4FAD /* VectorReverse.cpp */; };
 		3722C8691461E03E00C45D00 /* RenderedImageFromDOMRange.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3722C8681461E03E00C45D00 /* RenderedImageFromDOMRange.mm */; };
 		3776BC63150946BC0043A66D /* DeviceScaleFactorInDashboardRegions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3776BC62150946BC0043A66D /* DeviceScaleFactorInDashboardRegions.mm */; };
+		378E64731632646D00B6C676 /* InjectedBundleFrameHitTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378E64711632646D00B6C676 /* InjectedBundleFrameHitTest.cpp */; };
+		378E64771632655E00B6C676 /* InjectedBundleFrameHitTest_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378E64751632655D00B6C676 /* InjectedBundleFrameHitTest_Bundle.cpp */; };
+		378E64791632707400B6C676 /* link-with-title.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 378E647816326FDF00B6C676 /* link-with-title.html */; };
 		379028B614FABD92007E6B43 /* AcceptsFirstMouse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 379028B514FABD92007E6B43 /* AcceptsFirstMouse.mm */; };
 		379028B914FAC24C007E6B43 /* acceptsFirstMouse.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 379028B814FABE49007E6B43 /* acceptsFirstMouse.html */; };
 		3799AD3A14120A43005EB0C6 /* StringByEvaluatingJavaScriptFromString.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3799AD3914120A43005EB0C6 /* StringByEvaluatingJavaScriptFromString.mm */; };
@@ -223,6 +226,7 @@
 				33DC8912141955FE00747EF7 /* simple-iframe.html in Copy Resources */,
 				1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */,
 				C07E6CB213FD73930038B22B /* devicePixelRatio.html in Copy Resources */,
+				378E64791632707400B6C676 /* link-with-title.html in Copy Resources */,
 				9361002914DC95A70061379D /* lots-of-iframes.html in Copy Resources */,
 				93AF4ED11506F130007FD57E /* lots-of-images.html in Copy Resources */,
 				930AD402150698D00067970F /* lots-of-text.html in Copy Resources */,
@@ -279,6 +283,9 @@
 		37200B9113A16230007A4FAD /* VectorReverse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VectorReverse.cpp; path = WTF/VectorReverse.cpp; sourceTree = "<group>"; };
 		3722C8681461E03E00C45D00 /* RenderedImageFromDOMRange.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderedImageFromDOMRange.mm; sourceTree = "<group>"; };
 		3776BC62150946BC0043A66D /* DeviceScaleFactorInDashboardRegions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DeviceScaleFactorInDashboardRegions.mm; sourceTree = "<group>"; };
+		378E64711632646D00B6C676 /* InjectedBundleFrameHitTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleFrameHitTest.cpp; sourceTree = "<group>"; };
+		378E64751632655D00B6C676 /* InjectedBundleFrameHitTest_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleFrameHitTest_Bundle.cpp; sourceTree = "<group>"; };
+		378E647816326FDF00B6C676 /* link-with-title.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "link-with-title.html"; sourceTree = "<group>"; };
 		379028B514FABD92007E6B43 /* AcceptsFirstMouse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AcceptsFirstMouse.mm; sourceTree = "<group>"; };
 		379028B814FABE49007E6B43 /* acceptsFirstMouse.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = acceptsFirstMouse.html; sourceTree = "<group>"; };
 		3799AD3914120A43005EB0C6 /* StringByEvaluatingJavaScriptFromString.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StringByEvaluatingJavaScriptFromString.mm; sourceTree = "<group>"; };
@@ -592,6 +599,8 @@
 				4BFDFFA61314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp */,
 				BC575AAC126E83B9006F0F12 /* InjectedBundleBasic.cpp */,
 				BC575AAF126E83C8006F0F12 /* InjectedBundleBasic_Bundle.cpp */,
+				378E64711632646D00B6C676 /* InjectedBundleFrameHitTest.cpp */,
+				378E64751632655D00B6C676 /* InjectedBundleFrameHitTest_Bundle.cpp */,
 				F660AA1215A619C8003A1243 /* InjectedBundleInitializationUserDataCallbackWins.cpp */,
 				F660AA1415A61ABF003A1243 /* InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp */,
 				52CB47401448FB9300873995 /* LoadAlternateHTMLStringWithNonDirectoryURL.cpp */,
@@ -670,9 +679,11 @@
 			isa = PBXGroup;
 			children = (
 				C045F9461385C2F800C0F3CD /* 18-characters.html */,
+				76E182DE15475A8300F1FADD /* auto-submitting-form.html */,
 				BC2D004A12A9FEB300E732A3 /* file-with-anchor.html */,
 				1A02C84B125D4A5E00E3F4BD /* find.html */,
 				BCBD372E125ABBE600D2C29F /* icon.png */,
+				378E647816326FDF00B6C676 /* link-with-title.html */,
 				9361002814DC957B0061379D /* lots-of-iframes.html */,
 				93AF4ECF1506F123007FD57E /* lots-of-images.html */,
 				930AD401150698B30067970F /* lots-of-text.html */,
@@ -684,7 +695,6 @@
 				BCAA485514A021640088FAC4 /* simple-tall.html */,
 				BC909778125571AB00083756 /* simple.html */,
 				C02B7882126615410026BF0F /* spacebar-scrolling.html */,
-				76E182DE15475A8300F1FADD /* auto-submitting-form.html */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -995,6 +1005,7 @@
 				9318778915EEC57700A9CCE3 /* NewFirstVisuallyNonEmptyLayoutForImages.cpp in Sources */,
 				2943BE86161DFEB800999E3D /* UserContentTest.mm in Sources */,
 				4F4D2C0E1626FE2700320FE1 /* MemoryInstrumentationTest.cpp in Sources */,
+				378E64731632646D00B6C676 /* InjectedBundleFrameHitTest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1029,6 +1040,7 @@
 				F6F49C6B15545CA70007F39D /* DOMWindowExtensionNoCache_Bundle.cpp in Sources */,
 				F660AA1115A5F631003A1243 /* GetInjectedBundleInitializationUserDataCallback_Bundle.cpp in Sources */,
 				F660AA1515A61ABF003A1243 /* InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp in Sources */,
+				378E64771632655E00B6C676 /* InjectedBundleFrameHitTest_Bundle.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

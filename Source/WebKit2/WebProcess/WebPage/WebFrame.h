@@ -42,6 +42,7 @@
 namespace WebCore {
 class Frame;
 class HTMLFrameOwnerElement;
+class IntPoint;
 class IntRect;
 #if ENABLE(WEB_INTENTS)
 class Intent;
@@ -51,6 +52,7 @@ class KURL;
 
 namespace WebKit {
 
+class InjectedBundleHitTestResult;
 class InjectedBundleNodeHandle;
 class InjectedBundleRangeHandle;
 class InjectedBundleScriptWorld;
@@ -111,6 +113,7 @@ public:
     WebCore::IntSize scrollOffset() const;
     bool hasHorizontalScrollbar() const;
     bool hasVerticalScrollbar() const;
+    PassRefPtr<InjectedBundleHitTestResult> hitTest(const WebCore::IntPoint) const;
     bool getDocumentBackgroundColor(double* red, double* green, double* blue, double* alpha);
     bool containsAnyFormElements() const;
     void stopLoading();

@@ -1,3 +1,28 @@
+2012-10-19  Dan Bernstein  <mitz@apple.com>
+
+        Add bundle API for hit-testing
+        https://bugs.webkit.org/show_bug.cgi?id=99907
+
+        Reviewed by Sam Weinig.
+
+        Added an API test for WKBundleFrameCreateHitTest().
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Added InjectedBundleFrameHitTest.cpp,
+        InjectedBundleFrameHitTest_bundle.cpp, and link-with-title.html.
+
+        * TestWebKitAPI/Tests/WebKit2/InjectedBundleFrameHitTest.cpp: Added.
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle): Checks that the message contains the
+        title of the link in link-with-title.html.
+        (TestWebKitAPI::setInjectedBundleClient):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/InjectedBundleFrameHitTest_Bundle.cpp: Added.
+        (TestWebKitAPI::InjectedBundleFrameHitTestTest::InjectedBundleFrameHitTestTest):
+        (TestWebKitAPI::didFinishLoadForFrameCallback): Hit tests at (50, 50) and sends the link title
+        from the result back to the UI process.
+        (TestWebKitAPI::InjectedBundleFrameHitTestTest::didCreatePage):
+        (TestWebKitAPI::InjectedBundleFrameHitTestTest::frameLoadFinished):
+        * TestWebKitAPI/Tests/WebKit2/link-with-title.html: Added.
+
 2012-10-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r131944.

@@ -27,6 +27,7 @@
 #include "WebFrame.h"
 
 #include "DownloadManager.h"
+#include "InjectedBundleHitTestResult.h"
 #include "InjectedBundleNodeHandle.h"
 #include "InjectedBundleRangeHandle.h"
 #include "InjectedBundleScriptWorld.h"
@@ -615,6 +616,14 @@ bool WebFrame::hasVerticalScrollbar() const
         return false;
 
     return view->verticalScrollbar();
+}
+
+PassRefPtr<InjectedBundleHitTestResult> WebFrame::hitTest(const IntPoint point) const
+{
+    if (!m_coreFrame)
+        return 0;
+
+    return InjectedBundleHitTestResult::create(m_coreFrame->eventHandler()->hitTestResultAtPoint(point, false, true));
 }
 
 bool WebFrame::getDocumentBackgroundColor(double* red, double* green, double* blue, double* alpha)

@@ -1,3 +1,20 @@
+2012-10-19  Dan Bernstein  <mitz@apple.com>
+
+        Add bundle API for hit-testing
+        https://bugs.webkit.org/show_bug.cgi?id=99907
+
+        Reviewed by Sam Weinig.
+
+        Test: TestWebKitAPI/Tests/WebKit2/InjectedBundleFrameHitTest.cpp
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameCreateHitTestResult): Added this wrapper.
+        * WebProcess/InjectedBundle/API/c/WKBundleFramePrivate.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::hitTest): Added. Hit tests at the given point, ignoring clipping.
+        * WebProcess/WebPage/WebFrame.h:
+        (WebFrame): Declared hitTest.
+
 2012-10-19  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Add API unit tests for scaling
