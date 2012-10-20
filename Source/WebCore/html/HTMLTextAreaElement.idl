@@ -50,6 +50,13 @@ interface HTMLTextAreaElement : HTMLElement {
     attribute long selectionStart;
     attribute long selectionEnd;
     attribute DOMString selectionDirection;
+
+    void setRangeText(in DOMString replacement) raises(DOMException);
+    void setRangeText(in DOMString replacement,
+                        in unsigned long start,
+                        in unsigned long end,
+                        in [Optional=DefaultIsNullString] DOMString selectionMode) raises(DOMException);
+
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     void setSelectionRange(in long start, in long end);
 #else

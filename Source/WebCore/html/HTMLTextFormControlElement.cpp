@@ -229,6 +229,66 @@ static inline bool hasVisibleTextArea(RenderTextControl* textControl, HTMLElemen
     return textControl->style()->visibility() != HIDDEN && innerText && innerText->renderer() && innerText->renderBox()->height();
 }
 
+
+void HTMLTextFormControlElement::setRangeText(const String& replacement, ExceptionCode& ec)
+{
+    setRangeText(replacement, selectionStart(), selectionEnd(), String(), ec);
+}
+
+void HTMLTextFormControlElement::setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode, ExceptionCode& ec)
+{
+    if (start > end) {
+        ec = INDEX_SIZE_ERR;
+        return;
+    }
+
+    String text = innerTextValue();
+    unsigned textLength = text.length();
+    unsigned replacementLength = replacement.length();
+    unsigned newSelectionStart = selectionStart();
+    unsigned newSelectionEnd = selectionEnd();
+
+    start = std::min(start, textLength);
+    end = std::min(end, textLength);
+
+    if (start < end)
+        text.replace(start, end - start, replacement);
+    else
+        text.insert(replacement, start);
+
+    setInnerTextValue(text);
+
+    // FIXME: What should happen to the value (as in value()) if there's no renderer?
+    if (!renderer())
+        return;
+
+    subtreeHasChanged();
+
+    if (equalIgnoringCase(selectionMode, "select")) {
+        newSelectionStart = start;
+        newSelectionEnd = start + replacementLength;
+    } else if (equalIgnoringCase(selectionMode, "start"))
+        newSelectionStart = newSelectionEnd = start;
+    else if (equalIgnoringCase(selectionMode, "end"))
+        newSelectionStart = newSelectionEnd = start + replacementLength;
+    else {
+        // Default is "preserve".
+        long delta = replacementLength - (end - start);
+
+        if (newSelectionStart > end)
+            newSelectionStart += delta;
+        else if (newSelectionStart > start)
+            newSelectionStart = start;
+
+        if (newSelectionEnd > end)
+            newSelectionEnd += delta;
+        else if (newSelectionEnd > start)
+            newSelectionEnd = start + replacementLength;
+    }
+
+    setSelectionRange(newSelectionStart, newSelectionEnd, SelectionHasNoDirection);
+}
+
 void HTMLTextFormControlElement::setSelectionRange(int start, int end, const String& directionString)
 {
     TextFieldSelectionDirection direction = SelectionHasNoDirection;

@@ -55,4 +55,9 @@ bool BaseTextInputType::supportsPlaceholder() const
     return true;
 }
 
+bool BaseTextInputType::supportsSelectionAPI() const
+{
+    return true;
+}
+
 } // namespace WebCore

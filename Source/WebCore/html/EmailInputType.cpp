@@ -93,6 +93,11 @@ bool EmailInputType::isEmailField() const
     return true;
 }
 
+bool EmailInputType::supportsSelectionAPI() const
+{
+    return false;
+}
+
 String EmailInputType::sanitizeValue(const String& proposedValue) const
 {
     String noLineBreakValue = proposedValue.removeCharacters(isHTMLLineBreak);

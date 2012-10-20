@@ -1,3 +1,44 @@
+2012-10-19  Pablo Flouret  <pablof@motorola.com>
+
+        Implement setRangeText() on text controls
+        https://bugs.webkit.org/show_bug.cgi?id=91907
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/color/color-setrangetext-expected.txt: Added.
+        * fast/forms/color/color-setrangetext.html: Added.
+        * fast/forms/date/date-setrangetext-expected.txt: Added.
+        * fast/forms/date/date-setrangetext.html: Added.
+        * fast/forms/datetime/datetime-setrangetext-expected.txt: Added.
+        * fast/forms/datetime/datetime-setrangetext.html: Added.
+        * fast/forms/datetimelocal/datetimelocal-setrangetext-expected.txt: Added.
+        * fast/forms/datetimelocal/datetimelocal-setrangetext.html: Added.
+        * fast/forms/file/file-setrangetext-expected.txt: Added.
+        * fast/forms/file/file-setrangetext.html: Added.
+        * fast/forms/hidden/hidden-setrangetext-expected.txt: Added.
+        * fast/forms/hidden/hidden-setrangetext.html: Added.
+        * fast/forms/image/image-setrangetext-expected.txt: Added.
+        * fast/forms/image/image-setrangetext.html: Added.
+        * fast/forms/month/month-setrangetext-expected.txt: Added.
+        * fast/forms/month/month-setrangetext.html: Added.
+        * fast/forms/number/number-setrangetext-expected.txt: Added.
+        * fast/forms/number/number-setrangetext.html: Added.
+        * fast/forms/range/range-setrangetext-expected.txt: Added.
+        * fast/forms/range/range-setrangetext.html: Added.
+        * fast/forms/resources/common-setrangetext.js: Added.
+        (runTestsShouldPass):
+        (runTestsShouldFail):
+        * fast/forms/search/search-setrangetext-expected.txt: Added.
+        * fast/forms/search/search-setrangetext.html: Added.
+        * fast/forms/setrangetext-expected.txt: Added.
+        * fast/forms/setrangetext.html: Added.
+        * fast/forms/textarea/textarea-setrangetext-expected.txt: Added.
+        * fast/forms/textarea/textarea-setrangetext.html: Added.
+        * fast/forms/time/time-setrangetext-expected.txt: Added.
+        * fast/forms/time/time-setrangetext.html: Added.
+        * fast/forms/week/week-setrangetext-expected.txt: Added.
+        * fast/forms/week/week-setrangetext.html: Added.
+
 2012-10-19  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Hidden indexing events are visible to script via bubbling/capture

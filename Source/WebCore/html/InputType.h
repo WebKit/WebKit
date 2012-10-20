@@ -306,6 +306,8 @@ public:
 
     virtual bool supportsIndeterminateAppearance() const;
 
+    virtual bool supportsSelectionAPI() const;
+
     // Gets width and height of the input element if the type of the
     // element is image. It returns 0 if the element is not image type.
     virtual unsigned height() const;

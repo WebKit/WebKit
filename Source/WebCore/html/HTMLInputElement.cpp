@@ -1877,4 +1877,24 @@ void ListAttributeTargetObserver::idTargetChanged()
 }
 #endif
 
+void HTMLInputElement::setRangeText(const String& replacement, ExceptionCode& ec)
+{
+    if (!m_inputType->supportsSelectionAPI()) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    HTMLTextFormControlElement::setRangeText(replacement, ec);
+}
+
+void HTMLInputElement::setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode, ExceptionCode& ec)
+{
+    if (!m_inputType->supportsSelectionAPI()) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    HTMLTextFormControlElement::setRangeText(replacement, start, end, selectionMode, ec);
+}
+
 } // namespace

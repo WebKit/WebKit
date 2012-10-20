@@ -1,3 +1,77 @@
+2012-10-19  Pablo Flouret  <pablof@motorola.com>
+
+        Implement setRangeText() on text controls
+        https://bugs.webkit.org/show_bug.cgi?id=91907
+
+        Reviewed by Kent Tamura.
+
+        setRangeText() replaces a range of text with some other text, and
+        adjusts the existing selection according to its parameters.
+
+        Spec: http://www.whatwg.org/specs/web-apps/current-work/multipage/association-of-controls-and-forms.html#dom-textarea/input-setrangetext
+
+        Tests: fast/forms/color/color-setrangetext.html
+               fast/forms/date/date-setrangetext.html
+               fast/forms/datetime/datetime-setrangetext.html
+               fast/forms/datetimelocal/datetimelocal-setrangetext.html
+               fast/forms/file/file-setrangetext.html
+               fast/forms/hidden/hidden-setrangetext.html
+               fast/forms/image/image-setrangetext.html
+               fast/forms/month/month-setrangetext.html
+               fast/forms/number/number-setrangetext.html
+               fast/forms/range/range-setrangetext.html
+               fast/forms/search/search-setrangetext.html
+               fast/forms/setrangetext.html
+               fast/forms/textarea/textarea-setrangetext.html
+               fast/forms/time/time-setrangetext.html
+               fast/forms/week/week-setrangetext.html
+
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (SkipFunction):
+            The GObject generator doesn't support function overloads, so skip the
+            version of setRangeText() that has only one argument, its behavior
+            can be emulated with the four-argument version.
+
+        * html/InputType.cpp:
+        (WebCore::InputType::supportsSelectionAPI):
+        (WebCore):
+        * html/InputType.h:
+        (InputType):
+            Add supportsSelectionAPI() which indicates whether the various
+            selection api functions like setRangeText, setSelectionRange, etc.
+            are supported by this input element.
+
+        * html/BaseTextInputType.cpp:
+        (WebCore::BaseTextInputType::supportsSelectionAPI):
+        (WebCore):
+        * html/BaseTextInputType.h:
+        (BaseTextInputType):
+            Text-based input types support the selection APIs.
+
+        * html/EmailInputType.cpp:
+        (WebCore::EmailInputType::supportsSelectionAPI):
+        (WebCore):
+        * html/EmailInputType.h:
+        (EmailInputType):
+            Email inputs don't support the selection APIs.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setRangeText):
+        * html/HTMLInputElement.h:
+        (HTMLInputElement):
+            Add a setRangeText override which checks if it should apply to the
+            input type, and calls the actual implementation on the parent class.
+        * html/HTMLInputElement.idl:
+        * html/HTMLTextAreaElement.idl:
+
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::setRangeText):
+        * html/HTMLTextFormControlElement.h:
+        (HTMLTextFormControlElement):
+            setRangeText implementation.
+
+
 2012-10-19  Luke Macpherson   <macpherson@chromium.org>
 
         Remove HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE macro in StyleResolver.

@@ -45,6 +45,7 @@ private:
     virtual bool isTextType() const OVERRIDE;
     virtual bool patternMismatch(const String&) const OVERRIDE;
     virtual bool supportsPlaceholder() const OVERRIDE;
+    virtual bool supportsSelectionAPI() const OVERRIDE;
 };
 
 } // namespace WebCore

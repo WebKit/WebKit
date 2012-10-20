@@ -934,6 +934,11 @@ bool InputType::supportsIndeterminateAppearance() const
     return false;
 }
 
+bool InputType::supportsSelectionAPI() const
+{
+    return false;
+}
+
 unsigned InputType::height() const
 {
     return 0;
