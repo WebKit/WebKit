@@ -1,3 +1,18 @@
+2012-10-19  Florin Malita  <fmalita@chromium.org>
+
+        Incorrect pattern scaling
+        https://bugs.webkit.org/show_bug.cgi?id=99870
+
+        Reviewed by Dirk Schulze.
+
+        The pattern space transform scale should reflect the tile_size(user space)
+        to tile_image_size ratio, instead of tile_size to absolute_tile_size.
+
+        Test: svg/custom/pattern-scaling.svg
+
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::applyResource):
+
 2012-10-19  Tony Chang  <tony@chromium.org>
 
         RenderFlexibleBox::preferredMainAxisContentExtentForChild can return a negative value

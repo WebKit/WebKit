@@ -126,8 +126,9 @@ bool RenderSVGResourcePattern::applyResource(RenderObject* object, RenderStyle* 
             return false;
 
         // Compute pattern space transformation.
+        const IntSize tileImageSize = tileImage->logicalSize();
         patternData->transform.translate(tileBoundaries.x(), tileBoundaries.y());
-        patternData->transform.scale(tileBoundaries.width() / clampedAbsoluteTileBoundaries.width(), tileBoundaries.height() / clampedAbsoluteTileBoundaries.height());
+        patternData->transform.scale(tileBoundaries.width() / tileImageSize.width(), tileBoundaries.height() / tileImageSize.height());
 
         AffineTransform patternTransform = m_attributes.patternTransform();
         if (!patternTransform.isIdentity())
