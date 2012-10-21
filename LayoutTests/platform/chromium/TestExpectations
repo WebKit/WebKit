@@ -4066,3 +4066,10 @@ webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/support-broken
 
 # Flaky on win7 since at least r162410
 webkit.org/b/99886 [ Win7 ] fast/dom/shadow/input-with-validation.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/99749 [ MountainLion ] compositing/color-matching/image-color-matching.html [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] compositing/direct-image-compositing.html [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] compositing/geometry/clipping-foreground.html [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] fast/canvas/font-update.html [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] platform/chromium/virtual/gpu/fast/canvas/font-update.html [ ImageOnlyFailure ]
+

@@ -1,5 +1,42 @@
 2012-10-21  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, add Chromium ML baselines for fast/hidpi.
+
+        * platform/chromium-mac-lion/fast/hidpi/clip-text-in-hidpi-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/hidpi/clip-text-in-hidpi-expected.png.
+        * platform/chromium-mac-lion/fast/hidpi/gradient-with-scaled-ancestor-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/hidpi/gradient-with-scaled-ancestor-expected.png.
+        * platform/chromium-mac-lion/fast/hidpi/image-set-as-background-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/hidpi/image-set-as-background-expected.png.
+        * platform/chromium-mac-lion/fast/hidpi/image-set-background-dynamic-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/hidpi/image-set-background-dynamic-expected.png.
+        * platform/chromium-mac-lion/fast/hidpi/image-set-background-repeat-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/hidpi/image-set-background-repeat-expected.png.
+        * platform/chromium-mac-lion/fast/hidpi/image-set-background-repeat-without-size-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/hidpi/image-set-background-repeat-without-size-expected.png.
+        * platform/chromium-mac-lion/fast/hidpi/image-set-border-image-comparison-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/hidpi/image-set-border-image-comparison-expected.png.
+        * platform/chromium-mac-lion/fast/hidpi/image-set-border-image-dynamic-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/hidpi/image-set-border-image-dynamic-expected.png.
+        * platform/chromium-mac-lion/fast/hidpi/image-set-border-image-simple-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/hidpi/image-set-border-image-simple-expected.png.
+        * platform/chromium-mac-lion/fast/hidpi/image-set-in-content-dynamic-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/hidpi/image-set-in-content-dynamic-expected.png.
+        * platform/chromium-mac-lion/fast/hidpi/image-set-out-of-order-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/hidpi/image-set-out-of-order-expected.png.
+        * platform/chromium-mac-lion/fast/hidpi/image-set-simple-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/hidpi/image-set-simple-expected.png.
+        * platform/chromium-mac-lion/fast/hidpi/image-set-without-specified-width-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/hidpi/image-set-without-specified-width-expected.png.
+        * platform/chromium-mac-lion/fast/hidpi/resize-corner-hidpi-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/hidpi/resize-corner-hidpi-expected.png.
+        * platform/chromium-mac-lion/fast/hidpi/video-controls-in-hidpi-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/hidpi/video-controls-in-hidpi-expected.png.
+        * platform/chromium-mac-mountainlion/TestExpectations:
+        * platform/chromium-mac/fast/hidpi/clip-text-in-hidpi-expected.png:
+        * platform/chromium-mac/fast/hidpi/gradient-with-scaled-ancestor-expected.png:
+        * platform/chromium-mac/fast/hidpi/image-set-as-background-expected.png:
+        * platform/chromium-mac/fast/hidpi/image-set-background-dynamic-expected.png:
+        * platform/chromium-mac/fast/hidpi/image-set-background-repeat-expected.png:
+        * platform/chromium-mac/fast/hidpi/image-set-background-repeat-without-size-expected.png:
+        * platform/chromium-mac/fast/hidpi/image-set-border-image-comparison-expected.png:
+        * platform/chromium-mac/fast/hidpi/image-set-border-image-dynamic-expected.png:
+        * platform/chromium-mac/fast/hidpi/image-set-border-image-simple-expected.png:
+        * platform/chromium-mac/fast/hidpi/image-set-in-content-dynamic-expected.png:
+        * platform/chromium-mac/fast/hidpi/image-set-out-of-order-expected.png:
+        * platform/chromium-mac/fast/hidpi/image-set-simple-expected.png:
+        * platform/chromium-mac/fast/hidpi/image-set-without-specified-width-expected.png:
+        * platform/chromium-mac/fast/hidpi/resize-corner-hidpi-expected.png:
+        * platform/chromium-mac/fast/hidpi/video-controls-in-hidpi-expected.png:
+        * platform/chromium-win/fast/hidpi/gradient-with-scaled-ancestor-expected.png:
+
+2012-10-21  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, re-adjust Chromium Mac expectations.
 
         * platform/chromium/TestExpectations:
