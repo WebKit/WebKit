@@ -732,6 +732,7 @@ offlineasm_nosources += \
 	Source/JavaScriptCore/offlineasm/opt.rb \
 	Source/JavaScriptCore/offlineasm/parser.rb \
 	Source/JavaScriptCore/offlineasm/registers.rb \
+	Source/JavaScriptCore/offlineasm/risc.rb \
 	Source/JavaScriptCore/offlineasm/self_hash.rb \
 	Source/JavaScriptCore/offlineasm/settings.rb \
 	Source/JavaScriptCore/offlineasm/transform.rb \

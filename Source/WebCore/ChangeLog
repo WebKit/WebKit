@@ -1,3 +1,10 @@
+2012-10-20  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix 'make dist' for the GTK+ port
+
+        * GNUmakefile.am: Add missing files to the source list.
+        * GNUmakefile.list.am: Ditto.
+
 2012-10-20  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/12512710> [mac] Text with zero font size renders as 12px sometimes

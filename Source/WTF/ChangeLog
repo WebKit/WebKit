@@ -1,3 +1,9 @@
+2012-10-20  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix 'make dist' for the GTK+ port
+
+        * GNUmakefile.list.am: Add missing files to the source list.
+
 2012-10-19  Mark Lam  <mark.lam@apple.com>
 
         Added WTF::StackStats mechanism.

@@ -4291,6 +4291,7 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/CrossfadeGeneratedImage.h \
 	Source/WebCore/platform/graphics/ColorSpace.h \
 	Source/WebCore/platform/graphics/DashArray.h \
+	Source/WebCore/platform/graphics/DisplayRefreshMonitor.h \
 	Source/WebCore/platform/graphics/Extensions3D.h \
 	Source/WebCore/platform/graphics/NativeImagePtr.h \
 	Source/WebCore/platform/graphics/cairo/BitmapImageCairo.cpp \
@@ -6169,8 +6170,13 @@ webcore_built_sources += \
 	DerivedSources/ANGLE/glslang_tab.h
 
 webcore_sources += \
+	Source/ThirdParty/ANGLE/include/EGL/egl.h \
+	Source/ThirdParty/ANGLE/include/EGL/eglplatform.h \
 	Source/ThirdParty/ANGLE/include/GLSLANG/ShaderLang.h \
+	Source/ThirdParty/ANGLE/include/KHR/khrplatform.h \
 	Source/ThirdParty/ANGLE/src/common/angleutils.h \
+	Source/ThirdParty/ANGLE/src/compiler/ArrayBoundsClamper.cpp \
+	Source/ThirdParty/ANGLE/src/compiler/ArrayBoundsClamper.h \
 	Source/ThirdParty/ANGLE/src/compiler/BaseTypes.h \
 	Source/ThirdParty/ANGLE/src/compiler/BuiltInFunctionEmulator.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/BuiltInFunctionEmulator.h \

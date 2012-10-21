@@ -1,3 +1,9 @@
+2012-10-20  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix 'make dist' for the GTK+ port
+
+        * GNUmakefile.list.am: Add missing files to the source list.
+
 2012-10-20  Filip Pizlo  <fpizlo@apple.com>
 
         LLInt backends of non-ARM RISC platforms should be able to share code with the existing ARMv7 backend

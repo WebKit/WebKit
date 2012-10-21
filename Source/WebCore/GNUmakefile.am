@@ -739,7 +739,8 @@ EXTRA_DIST += \
 	Source/WebCore/bindings/scripts/preprocessor.pm \
 	Source/WebCore/bindings/scripts/preprocess-idls.pl \
 	Source/WebCore/ChangeLog \
-	Source/WebCore/css/CSSGrammar.y \
+	Source/WebCore/css/CSSGrammar.y.in \
+	Source/WebCore/css/CSSGrammar.y.includes \
 	Source/WebCore/css/CSSPropertyNames.in \
 	Source/WebCore/css/CSSValueKeywords.in \
 	Source/WebCore/dom/DOMExceptions.in \
