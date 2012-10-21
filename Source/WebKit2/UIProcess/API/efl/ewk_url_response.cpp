@@ -31,6 +31,32 @@
 
 using namespace WebKit;
 
+Ewk_Url_Response::Ewk_Url_Response(const WebCore::ResourceResponse& coreResponse)
+    : m_coreResponse(coreResponse)
+    , m_url(AdoptWK, WKURLResponseCopyURL(WebKit::toAPI(coreResponse)))
+    , m_mimeType(AdoptWK, WKURLResponseCopyMIMEType(WebKit::toAPI(coreResponse)))
+{ }
+
+int Ewk_Url_Response::httpStatusCode() const
+{
+    return m_coreResponse.httpStatusCode();
+}
+
+const char* Ewk_Url_Response::url() const
+{
+    return m_url;
+}
+
+const char* Ewk_Url_Response::mimeType() const
+{
+    return m_mimeType;
+}
+
+unsigned long Ewk_Url_Response::contentLength() const
+{
+    return m_coreResponse.expectedContentLength();
+}
+
 Ewk_Url_Response* ewk_url_response_ref(Ewk_Url_Response* response)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(response, 0);
@@ -50,26 +76,26 @@ const char* ewk_url_response_url_get(const Ewk_Url_Response* response)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(response, 0);
 
-    return response->url;
+    return response->url();
 }
 
 int ewk_url_response_status_code_get(const Ewk_Url_Response* response)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(response, 0);
 
-    return response->coreResponse.httpStatusCode();
+    return response->httpStatusCode();
 }
 
 const char* ewk_url_response_mime_type_get(const Ewk_Url_Response* response)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(response, 0);
 
-    return response->mimeType;
+    return response->mimeType();
 }
 
 unsigned long ewk_url_response_content_length_get(const Ewk_Url_Response* response)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(response, 0);
 
-    return response->coreResponse.expectedContentLength();
+    return response->contentLength();
 }

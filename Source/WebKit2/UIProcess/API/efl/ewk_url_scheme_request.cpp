@@ -26,11 +26,51 @@
 #include "config.h"
 #include "ewk_url_scheme_request.h"
 
+#include "GOwnPtrSoup.h"
 #include "WKData.h"
 #include "WKString.h"
 #include "ewk_url_scheme_request_private.h"
 
 using namespace WebKit;
+
+Ewk_Url_Scheme_Request::Ewk_Url_Scheme_Request(WKSoupRequestManagerRef manager, WKURLRef url, uint64_t requestID)
+    : m_wkRequestManager(manager)
+    , m_url(url)
+    , m_requestID(requestID)
+{
+    GOwnPtr<SoupURI> soupURI(soup_uri_new(m_url));
+    m_scheme = soupURI->scheme;
+    m_path = soupURI->path;
+}
+
+uint64_t Ewk_Url_Scheme_Request::id() const
+{
+    return m_requestID;
+}
+
+const char* Ewk_Url_Scheme_Request::url() const
+{
+    return m_url;
+}
+
+const char* Ewk_Url_Scheme_Request::scheme() const
+{
+    return m_scheme;
+}
+
+const char* Ewk_Url_Scheme_Request::path() const
+{
+    return m_path;
+}
+
+void Ewk_Url_Scheme_Request::finish(const void* contentData, uint64_t contentLength, const char* mimeType)
+{
+    WKRetainPtr<WKDataRef> wkData(AdoptWK, WKDataCreate(contentLength ? reinterpret_cast<const unsigned char*>(contentData) : 0, contentLength));
+    WKRetainPtr<WKStringRef> wkMimeType = mimeType ? adoptWK(WKStringCreateWithUTF8CString(mimeType)) : 0;
+
+    // In case of empty reply an empty WKDataRef is sent to the WebProcess.
+    WKSoupRequestManagerDidHandleURIRequest(m_wkRequestManager.get(), wkData.get(), contentLength, wkMimeType.get(), m_requestID);
+}
 
 Ewk_Url_Scheme_Request* ewk_url_scheme_request_ref(Ewk_Url_Scheme_Request* request)
 {
@@ -51,32 +91,28 @@ const char* ewk_url_scheme_request_scheme_get(const Ewk_Url_Scheme_Request* requ
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(request, 0);
 
-    return request->scheme;
+    return request->scheme();
 }
 
 const char* ewk_url_scheme_request_url_get(const Ewk_Url_Scheme_Request* request)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(request, 0);
 
-    return request->url;
+    return request->url();
 }
 
 const char* ewk_url_scheme_request_path_get(const Ewk_Url_Scheme_Request* request)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(request, 0);
 
-    return request->path;
+    return request->path();
 }
 
-Eina_Bool ewk_url_scheme_request_finish(const Ewk_Url_Scheme_Request* request, const void* contentData, unsigned int contentLength, const char* mimeType)
+Eina_Bool ewk_url_scheme_request_finish(Ewk_Url_Scheme_Request* request, const void* contentData, uint64_t contentLength, const char* mimeType)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(request, false);
 
-    WKRetainPtr<WKDataRef> wkData(AdoptWK, WKDataCreate(contentLength ? reinterpret_cast<const unsigned char*>(contentData) : 0, contentLength));
-    WKRetainPtr<WKStringRef> wkMimeType = mimeType ? adoptWK(WKStringCreateWithUTF8CString(mimeType)) : 0;
-
-    // In case of empty reply an empty WKDataRef is sent to the WebProcess.
-    WKSoupRequestManagerDidHandleURIRequest(request->wkRequestManager.get(), wkData.get(), contentLength, wkMimeType.get(), request->requestID);
+    request->finish(contentData, contentLength, mimeType);
 
     return true;
 }

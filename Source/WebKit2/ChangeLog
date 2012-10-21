@@ -1,5 +1,58 @@
 2012-10-21  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL][WK2] Make Ewk_Url_Request, Ewk_Url_Response and Ewk_Url_Scheme_Request members private
+        https://bugs.webkit.org/show_bug.cgi?id=99936
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make wk_Url_Request, Ewk_Url_Response and Ewk_Url_Scheme_Request
+        class members private.
+
+        * UIProcess/API/efl/ewk_context.cpp:
+        (ewk_context_url_scheme_request_received):
+        * UIProcess/API/efl/ewk_download_job.cpp:
+        (Ewk_Download_Job::estimatedProgress):
+        * UIProcess/API/efl/ewk_url_request.cpp:
+        (Ewk_Url_Request::Ewk_Url_Request):
+        (Ewk_Url_Request::url):
+        (Ewk_Url_Request::firstParty):
+        (Ewk_Url_Request::httpMethod):
+        (ewk_url_request_url_get):
+        (ewk_request_cookies_first_party_get):
+        (ewk_url_request_http_method_get):
+        * UIProcess/API/efl/ewk_url_request_private.h:
+        (Ewk_Url_Request):
+        * UIProcess/API/efl/ewk_url_response.cpp:
+        (Ewk_Url_Response::Ewk_Url_Response):
+        (Ewk_Url_Response::httpStatusCode):
+        (Ewk_Url_Response::url):
+        (Ewk_Url_Response::mimeType):
+        (Ewk_Url_Response::contentLength):
+        (ewk_url_response_url_get):
+        (ewk_url_response_status_code_get):
+        (ewk_url_response_mime_type_get):
+        (ewk_url_response_content_length_get):
+        * UIProcess/API/efl/ewk_url_response_private.h:
+        (Ewk_Url_Response):
+        * UIProcess/API/efl/ewk_url_scheme_request.cpp:
+        (Ewk_Url_Scheme_Request::Ewk_Url_Scheme_Request):
+        (Ewk_Url_Scheme_Request::id):
+        (Ewk_Url_Scheme_Request::url):
+        (Ewk_Url_Scheme_Request::scheme):
+        (Ewk_Url_Scheme_Request::path):
+        (Ewk_Url_Scheme_Request::finish):
+        (ewk_url_scheme_request_scheme_get):
+        (ewk_url_scheme_request_url_get):
+        (ewk_url_scheme_request_path_get):
+        (ewk_url_scheme_request_finish):
+        * UIProcess/API/efl/ewk_url_scheme_request.h: Fix ewk_url_scheme_request_finish() declaration
+        so that the request argument is no longer marked as const and so that the content type is of
+        type uint64_t instead of unsigned int.
+        * UIProcess/API/efl/ewk_url_scheme_request_private.h:
+        (Ewk_Url_Scheme_Request):
+
+2012-10-21  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL][WK2] Make Ewk_Form_Submission_Request, Ewk_Navigation_Data and Ewk_Navigation_Policy_Decision members private
         https://bugs.webkit.org/show_bug.cgi?id=99934
 

@@ -30,6 +30,27 @@
 
 using namespace WebKit;
 
+Ewk_Url_Request::Ewk_Url_Request(WKURLRequestRef requestRef)
+    : m_url(AdoptWK, WKURLRequestCopyURL(requestRef))
+    , m_firstParty(AdoptWK, WKURLRequestCopyFirstPartyForCookies(requestRef))
+    , m_httpMethod(AdoptWK, WKURLRequestCopyHTTPMethod(requestRef))
+{ }
+
+const char* Ewk_Url_Request::url() const
+{
+    return m_url;
+}
+
+const char* Ewk_Url_Request::firstParty() const
+{
+    return m_firstParty;
+}
+
+const char* Ewk_Url_Request::httpMethod() const
+{
+    return m_httpMethod;
+}
+
 Ewk_Url_Request* ewk_url_request_ref(Ewk_Url_Request* request)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(request, 0);
@@ -49,19 +70,19 @@ const char* ewk_url_request_url_get(const Ewk_Url_Request* request)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(request, 0);
 
-    return request->url;
+    return request->url();
 }
 
 const char* ewk_request_cookies_first_party_get(const Ewk_Url_Request* request)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(request, 0);
 
-    return request->firstParty;
+    return request->firstParty();
 }
 
 const char* ewk_url_request_http_method_get(const Ewk_Url_Request* request)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(request, 0);
 
-    return request->httpMethod;
+    return request->httpMethod();
 }

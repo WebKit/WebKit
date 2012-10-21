@@ -38,10 +38,6 @@
  */
 class Ewk_Url_Response : public RefCounted<Ewk_Url_Response> {
 public:
-    WebCore::ResourceResponse coreResponse;
-    WKEinaSharedString url;
-    WKEinaSharedString mimeType;
-
     static PassRefPtr<Ewk_Url_Response> create(WKURLResponseRef wkResponse)
     {
         if (!wkResponse)
@@ -50,12 +46,17 @@ public:
         return adoptRef(new Ewk_Url_Response(WebKit::toImpl(wkResponse)->resourceResponse()));
     }
 
+    int httpStatusCode() const;
+    const char* url() const;
+    const char* mimeType() const;
+    unsigned long contentLength() const;
+
 private:
-    explicit Ewk_Url_Response(const WebCore::ResourceResponse& _coreResponse)
-        : coreResponse(_coreResponse)
-        , url(AdoptWK, WKURLResponseCopyURL(WebKit::toAPI(coreResponse)))
-        , mimeType(AdoptWK, WKURLResponseCopyMIMEType(WebKit::toAPI(coreResponse)))
-    { }
+    explicit Ewk_Url_Response(const WebCore::ResourceResponse& coreResponse);
+
+    WebCore::ResourceResponse m_coreResponse;
+    WKEinaSharedString m_url;
+    WKEinaSharedString m_mimeType;
 };
 
 #endif // ewk_url_response_private_h

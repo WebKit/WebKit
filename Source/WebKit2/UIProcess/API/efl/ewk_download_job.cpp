@@ -31,6 +31,7 @@
 #include "WKRetainPtr.h"
 #include "WebURLRequest.h"
 #include "ewk_download_job_private.h"
+#include "ewk_url_response_private.h"
 #include <Ecore.h>
 
 using namespace WebKit;
@@ -188,7 +189,7 @@ double Ewk_Download_Job::estimatedProgress() const
     if (!m_response)
         return 0;
 
-    const unsigned long contentLength = ewk_url_response_content_length_get(m_response.get());
+    const unsigned long contentLength = m_response->contentLength();
     if (!contentLength)
         return 0;
 

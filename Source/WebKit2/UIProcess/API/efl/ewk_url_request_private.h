@@ -38,21 +38,21 @@
  */
 class Ewk_Url_Request : public RefCounted<Ewk_Url_Request> {
 public:
-    WKEinaSharedString url;
-    WKEinaSharedString firstParty;
-    WKEinaSharedString httpMethod;
-
     static PassRefPtr<Ewk_Url_Request> create(WKURLRequestRef requestRef)
     {
         return adoptRef(new Ewk_Url_Request(requestRef));
     }
 
+    const char* url() const;
+    const char* firstParty() const;
+    const char* httpMethod() const;
+
 private:
-    explicit Ewk_Url_Request(WKURLRequestRef requestRef)
-        : url(AdoptWK, WKURLRequestCopyURL(requestRef))
-        , firstParty(AdoptWK, WKURLRequestCopyFirstPartyForCookies(requestRef))
-        , httpMethod(AdoptWK, WKURLRequestCopyHTTPMethod(requestRef))
-    { }
+    explicit Ewk_Url_Request(WKURLRequestRef requestRef);
+
+    WKEinaSharedString m_url;
+    WKEinaSharedString m_firstParty;
+    WKEinaSharedString m_httpMethod;
 };
 
 #endif // ewk_url_request_private_h
