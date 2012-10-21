@@ -1,5 +1,40 @@
 2012-10-21  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL][WK2] Make Ewk_Cookie_Manager members private
+        https://bugs.webkit.org/show_bug.cgi?id=99930
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make Ewk_Cookie_Manager class members private.
+
+        * UIProcess/API/efl/ewk_cookie_manager.cpp:
+        (Ewk_Cookie_Manager::Ewk_Cookie_Manager):
+        (Ewk_Cookie_Manager::~Ewk_Cookie_Manager):
+        (Ewk_Cookie_Manager::setPersistentStorage):
+        (Ewk_Cookie_Manager::setHTTPAcceptPolicy):
+        (Ewk_Cookie_Manager::clearHostnameCookies):
+        (Ewk_Cookie_Manager::clearAllCookies):
+        (Ewk_Cookie_Manager::watchChanges):
+        (Ewk_Cookie_Manager::isWatchingForChanges):
+        (Ewk_Cookie_Manager::getHostNamesWithCookies):
+        (Ewk_Cookie_Manager::getHTTPAcceptPolicy):
+        (Ewk_Cookie_Manager::cookiesDidChange):
+        (ewk_cookie_manager_persistent_storage_set):
+        (ewk_cookie_manager_accept_policy_set):
+        (Get_Policy_Async_Data):
+        (Get_Policy_Async_Data::Get_Policy_Async_Data):
+        (ewk_cookie_manager_async_accept_policy_get):
+        (Get_Hostnames_Async_Data):
+        (Get_Hostnames_Async_Data::Get_Hostnames_Async_Data):
+        (ewk_cookie_manager_async_hostnames_with_cookies_get):
+        (ewk_cookie_manager_hostname_cookies_clear):
+        (ewk_cookie_manager_cookies_clear):
+        (ewk_cookie_manager_changes_watch):
+        * UIProcess/API/efl/ewk_cookie_manager_private.h:
+        (Ewk_Cookie_Manager):
+
+2012-10-21  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL][WK2] Make Ewk intent classes members private
         https://bugs.webkit.org/show_bug.cgi?id=99832
 

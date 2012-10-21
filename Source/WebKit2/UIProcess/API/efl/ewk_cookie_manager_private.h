@@ -26,6 +26,7 @@
 #ifndef ewk_cookie_manager_private_h
 #define ewk_cookie_manager_private_h
 
+#include "SoupCookiePersistentStorageType.h"
 #include "WKCookieManager.h"
 #include "WKRetainPtr.h"
 #include "ewk_cookie_manager.h"
@@ -49,9 +50,6 @@ struct Cookie_Change_Handler {
 
 class Ewk_Cookie_Manager {
 public:
-    WKRetainPtr<WKCookieManagerRef> wkCookieManager;
-    Cookie_Change_Handler changeHandler;
-
     static PassOwnPtr<Ewk_Cookie_Manager> create(WKCookieManagerRef cookieManagerRef)
     {
         return adoptPtr(new Ewk_Cookie_Manager(cookieManagerRef));
@@ -59,8 +57,26 @@ public:
 
     ~Ewk_Cookie_Manager();
 
+    void setPersistentStorage(const String& filename, WebKit::SoupCookiePersistentStorageType storage);
+
+    void getHTTPAcceptPolicy(WKCookieManagerGetHTTPCookieAcceptPolicyFunction callback, void* userData) const;
+    void setHTTPAcceptPolicy(WKHTTPCookieAcceptPolicy policy);
+
+    void clearHostnameCookies(const String& hostname);
+    void clearAllCookies();
+
+    void getHostNamesWithCookies(WKCookieManagerGetCookieHostnamesFunction callback, void* userData) const;
+    void watchChanges(const Cookie_Change_Handler& changeHandler);
+
 private:
     explicit Ewk_Cookie_Manager(WKCookieManagerRef cookieManagerRef);
+
+    bool isWatchingForChanges() const;
+
+    static void cookiesDidChange(WKCookieManagerRef, const void* clientInfo);
+
+    WKRetainPtr<WKCookieManagerRef> m_wkCookieManager;
+    Cookie_Change_Handler m_changeHandler;
 };
 
 #endif // ewk_cookie_manager_private_h
