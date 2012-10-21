@@ -205,7 +205,7 @@ void ewk_context_download_job_add(Ewk_Context* ewkContext, Ewk_Download_Job* ewk
     EINA_SAFETY_ON_NULL_RETURN(ewkContext);
     EINA_SAFETY_ON_NULL_RETURN(ewkDownload);
 
-    uint64_t downloadId = ewk_download_job_id_get(ewkDownload);
+    uint64_t downloadId = ewkDownload->id();
     if (ewkContext->downloadJobs.contains(downloadId))
         return;
 

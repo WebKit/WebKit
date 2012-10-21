@@ -1,3 +1,54 @@
+2012-10-21  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Make Ewk_Download_Job members private and remove private C functions
+        https://bugs.webkit.org/show_bug.cgi?id=99697
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make Ewk_Download_Job private and replace private C functions
+        by class methods. New methods were also added to match the
+        public C API.
+
+        * UIProcess/API/efl/ewk_context.cpp:
+        (ewk_context_download_job_add):
+        * UIProcess/API/efl/ewk_context_download_client.cpp:
+        (decideDestinationWithSuggestedFilename):
+        (didReceiveResponse):
+        (didCreateDestination):
+        (didReceiveData):
+        (didFail):
+        (didCancel):
+        (didFinish):
+        * UIProcess/API/efl/ewk_download_job.cpp:
+        (Ewk_Download_Job::Ewk_Download_Job):
+        (Ewk_Download_Job::id):
+        (Ewk_Download_Job::view):
+        (ewk_download_job_state_get):
+        (Ewk_Download_Job::state):
+        (ewk_download_job_request_get):
+        (Ewk_Download_Job::request):
+        (ewk_download_job_response_get):
+        (Ewk_Download_Job::response):
+        (ewk_download_job_destination_get):
+        (Ewk_Download_Job::destination):
+        (ewk_download_job_destination_set):
+        (Ewk_Download_Job::setDestination):
+        (ewk_download_job_suggested_filename_get):
+        (Ewk_Download_Job::suggestedFileName):
+        (ewk_download_job_cancel):
+        (Ewk_Download_Job::cancel):
+        (ewk_download_job_estimated_progress_get):
+        (Ewk_Download_Job::estimatedProgress):
+        (ewk_download_job_elapsed_time_get):
+        (Ewk_Download_Job::elapsedTime):
+        (Ewk_Download_Job::setResponse):
+        (Ewk_Download_Job::setSuggestedFileName):
+        (Ewk_Download_Job::incrementReceivedData):
+        (Ewk_Download_Job::setState):
+        * UIProcess/API/efl/ewk_download_job.h:
+        * UIProcess/API/efl/ewk_download_job_private.h:
+        (Ewk_Download_Job):
+
 2012-10-19  Anders Carlsson  <andersca@apple.com>
 
         Remove ::encode template specializations and just use overloads

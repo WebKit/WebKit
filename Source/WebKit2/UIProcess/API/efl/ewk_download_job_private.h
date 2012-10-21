@@ -37,46 +37,48 @@ namespace WebKit {
 class DownloadProxy;
 }
 
-/**
- * \struct  Ewk_Download_Job
- * @brief   Contains the download data.
- */
 class Ewk_Download_Job : public RefCounted<Ewk_Download_Job> {
 public:
-    WebKit::DownloadProxy* downloadProxy;
-    Evas_Object* view;
-    Ewk_Download_Job_State state;
-    RefPtr<Ewk_Url_Request> request;
-    RefPtr<Ewk_Url_Response> response;
-    double startTime;
-    double endTime;
-    uint64_t downloaded; /**< length already downloaded */
-    WKEinaSharedString destination;
-    WKEinaSharedString suggestedFilename;
-
     static PassRefPtr<Ewk_Download_Job> create(WebKit::DownloadProxy* download, Evas_Object* ewkView)
     {
         return adoptRef(new Ewk_Download_Job(download, ewkView));
     }
 
+    uint64_t id() const;
+    Evas_Object* view() const;
+
+    Ewk_Download_Job_State state() const;
+    void setState(Ewk_Download_Job_State);
+
+    Ewk_Url_Request* request() const;
+    Ewk_Url_Response* response() const;
+    void setResponse(PassRefPtr<Ewk_Url_Response>);
+
+    const char* destination() const;
+    void setDestination(const char* destination);
+
+    const char* suggestedFileName() const;
+    void setSuggestedFileName(const char* fileName);
+
+    bool cancel();
+
+    double estimatedProgress() const;
+    double elapsedTime() const;
+    void incrementReceivedData(uint64_t length);
+
 private:
-    Ewk_Download_Job(WebKit::DownloadProxy* download, Evas_Object* ewkView)
-        : downloadProxy(download)
-        , view(ewkView)
-        , state(EWK_DOWNLOAD_JOB_STATE_NOT_STARTED)
-        , startTime(-1)
-        , endTime(-1)
-        , downloaded(0)
-    { }
+    Ewk_Download_Job(WebKit::DownloadProxy* download, Evas_Object* ewkView);
+
+    WebKit::DownloadProxy* m_downloadProxy;
+    Evas_Object* m_view;
+    Ewk_Download_Job_State m_state;
+    mutable RefPtr<Ewk_Url_Request> m_request;
+    RefPtr<Ewk_Url_Response> m_response;
+    double m_startTime;
+    double m_endTime;
+    uint64_t m_downloaded; // length already downloaded
+    WKEinaSharedString m_destination;
+    WKEinaSharedString m_suggestedFilename;
 };
-
-typedef struct Ewk_Error Ewk_Error;
-
-uint64_t ewk_download_job_id_get(const Ewk_Download_Job*);
-Evas_Object* ewk_download_job_view_get(const Ewk_Download_Job*);
-void ewk_download_job_state_set(Ewk_Download_Job*, Ewk_Download_Job_State);
-void ewk_download_job_received_data(Ewk_Download_Job*, uint64_t length);
-void ewk_download_job_response_set(Ewk_Download_Job*, PassRefPtr<Ewk_Url_Response>);
-void ewk_download_job_suggested_filename_set(Ewk_Download_Job*, const char* suggestedFilename);
 
 #endif // ewk_download_job_private_h

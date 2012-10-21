@@ -35,6 +35,15 @@
 
 using namespace WebKit;
 
+Ewk_Download_Job::Ewk_Download_Job(WebKit::DownloadProxy* download, Evas_Object* ewkView)
+    : m_downloadProxy(download)
+    , m_view(ewkView)
+    , m_state(EWK_DOWNLOAD_JOB_STATE_NOT_STARTED)
+    , m_startTime(-1)
+    , m_endTime(-1)
+    , m_downloaded(0)
+{ }
+
 Ewk_Download_Job* ewk_download_job_ref(Ewk_Download_Job* download)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(download, 0);
@@ -55,12 +64,9 @@ void ewk_download_job_unref(Ewk_Download_Job* download)
  * @internal
  * Queries the identifier for this download
  */
-uint64_t ewk_download_job_id_get(const Ewk_Download_Job* download)
+uint64_t Ewk_Download_Job::id() const
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(download, 0);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(download->downloadProxy, 0);
-
-    return download->downloadProxy->downloadID();
+    return m_downloadProxy->downloadID();
 }
 
 /**
@@ -68,45 +74,62 @@ uint64_t ewk_download_job_id_get(const Ewk_Download_Job* download)
  * Returns the view this download is attached to.
  * The view is needed to send notification signals.
  */
-Evas_Object* ewk_download_job_view_get(const Ewk_Download_Job* download)
+Evas_Object* Ewk_Download_Job::view() const
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(download, 0);
-
-    return download->view;
+    return m_view;
 }
 
 Ewk_Download_Job_State ewk_download_job_state_get(const Ewk_Download_Job* download)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(download, EWK_DOWNLOAD_JOB_STATE_UNKNOWN);
 
-    return download->state;
+    return download->state();
+}
+
+Ewk_Download_Job_State Ewk_Download_Job::state() const
+{
+    return m_state;
 }
 
 Ewk_Url_Request* ewk_download_job_request_get(const Ewk_Download_Job* download)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(download, 0);
 
-    if (!download->request) {
-        EINA_SAFETY_ON_NULL_RETURN_VAL(download->downloadProxy, 0);
-        WKRetainPtr<WKURLRequestRef> wkURLRequest(AdoptWK, toAPI(WebURLRequest::create(download->downloadProxy->request()).leakRef()));
-        const_cast<Ewk_Download_Job*>(download)->request = Ewk_Url_Request::create(wkURLRequest.get());
+    return download->request();
+}
+
+Ewk_Url_Request* Ewk_Download_Job::request() const
+{
+    if (!m_request) {
+        WKRetainPtr<WKURLRequestRef> wkURLRequest(AdoptWK, toAPI(WebURLRequest::create(m_downloadProxy->request()).leakRef()));
+        m_request = Ewk_Url_Request::create(wkURLRequest.get());
     }
 
-    return download->request.get();
+    return m_request.get();
 }
 
 Ewk_Url_Response* ewk_download_job_response_get(const Ewk_Download_Job* download)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(download, 0);
 
-    return download->response.get();
+    return download->response();
+}
+
+Ewk_Url_Response* Ewk_Download_Job::response() const
+{
+    return m_response.get();
 }
 
 const char* ewk_download_job_destination_get(const Ewk_Download_Job* download)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(download, 0);
 
-    return download->destination;
+    return download->destination();
+}
+
+const char* Ewk_Download_Job::destination() const
+{
+    return m_destination;
 }
 
 Eina_Bool ewk_download_job_destination_set(Ewk_Download_Job* download, const char* destination)
@@ -114,28 +137,42 @@ Eina_Bool ewk_download_job_destination_set(Ewk_Download_Job* download, const cha
     EINA_SAFETY_ON_NULL_RETURN_VAL(download, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(destination, false);
 
-    download->destination = destination;
+    download->setDestination(destination);
 
     return true;
 }
 
-const char *ewk_download_job_suggested_filename_get(const Ewk_Download_Job* download)
+void Ewk_Download_Job::setDestination(const char* destination)
+{
+    m_destination = destination;
+}
+
+const char* ewk_download_job_suggested_filename_get(const Ewk_Download_Job* download)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(download, 0);
 
-    return download->suggestedFilename;
+    return download->suggestedFileName();
+}
+
+const char* Ewk_Download_Job::suggestedFileName() const
+{
+    return m_suggestedFilename;
 }
 
 Eina_Bool ewk_download_job_cancel(Ewk_Download_Job* download)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(download, false);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(download->downloadProxy, false);
 
-    if (download->state != EWK_DOWNLOAD_JOB_STATE_DOWNLOADING)
+    return download->cancel();
+}
+
+bool Ewk_Download_Job::cancel()
+{
+    if (m_state != EWK_DOWNLOAD_JOB_STATE_DOWNLOADING)
         return false;
 
-    download->state = EWK_DOWNLOAD_JOB_STATE_CANCELLING;
-    download->downloadProxy->cancel();
+    m_state = EWK_DOWNLOAD_JOB_STATE_CANCELLING;
+    m_downloadProxy->cancel();
     return true;
 }
 
@@ -143,82 +180,90 @@ double ewk_download_job_estimated_progress_get(const Ewk_Download_Job* download)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(download, 0);
 
-    if (!download->response)
+    return download->estimatedProgress();
+}
+
+double Ewk_Download_Job::estimatedProgress() const
+{
+    if (!m_response)
         return 0;
 
-    const unsigned long contentLength = ewk_url_response_content_length_get(download->response.get());
+    const unsigned long contentLength = ewk_url_response_content_length_get(m_response.get());
     if (!contentLength)
         return 0;
 
-    return static_cast<double>(download->downloaded) / contentLength;
+    return static_cast<double>(m_downloaded) / contentLength;
 }
 
 double ewk_download_job_elapsed_time_get(const Ewk_Download_Job* download)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(download, 0);
 
+    return download->elapsedTime();
+}
+
+double Ewk_Download_Job::elapsedTime() const
+{
     // Download has not started yet.
-    if (download->startTime < 0)
+    if (m_startTime < 0)
         return 0;
 
     // Download had ended, return the time elapsed between the
     // download start and the end event.
-    if (download->endTime >= 0)
-        return download->endTime - download->startTime;
+    if (m_endTime >= 0)
+        return m_endTime - m_startTime;
 
     // Download is still going.
-    return ecore_time_get() - download->startTime;
+    return ecore_time_get() - m_startTime;
 }
 
 /**
  * @internal
  * Sets the URL @a response for this @a download.
  */
-void ewk_download_job_response_set(Ewk_Download_Job* download, PassRefPtr<Ewk_Url_Response> response)
+void Ewk_Download_Job::setResponse(PassRefPtr<Ewk_Url_Response> response)
 {
-    EINA_SAFETY_ON_NULL_RETURN(download);
-    EINA_SAFETY_ON_NULL_RETURN(response);
+    ASSERT(response);
 
-    download->response = response;
+    m_response = response;
 }
 
 /**
  * @internal
  * Sets the suggested file name for this @a download.
  */
-void ewk_download_job_suggested_filename_set(Ewk_Download_Job* download, const char* suggestedFilename)
+void Ewk_Download_Job::setSuggestedFileName(const char* suggestedFilename)
 {
-    EINA_SAFETY_ON_NULL_RETURN(download);
-
-    download->suggestedFilename = suggestedFilename;
+    m_suggestedFilename = suggestedFilename;
 }
 
 /**
  * @internal
  * Report a given amount of data was received.
  */
-void ewk_download_job_received_data(Ewk_Download_Job* download, uint64_t length)
+void Ewk_Download_Job::incrementReceivedData(uint64_t length)
 {
-    EINA_SAFETY_ON_NULL_RETURN(download);
-
-    download->downloaded += length;
+    m_downloaded += length;
 }
 
 /**
  * @internal
  * Sets the state of the download.
  */
-void ewk_download_job_state_set(Ewk_Download_Job* download, Ewk_Download_Job_State state)
+void Ewk_Download_Job::setState(Ewk_Download_Job_State state)
 {
-    download->state = state;
+    m_state = state;
 
-    // Update start time if the download has started
-    if (state == EWK_DOWNLOAD_JOB_STATE_DOWNLOADING)
-        download->startTime = ecore_time_get();
-
-    // Update end time if the download has finished (successfully or not)
-    if (state == EWK_DOWNLOAD_JOB_STATE_FAILED
-        || state == EWK_DOWNLOAD_JOB_STATE_CANCELLED
-        || state == EWK_DOWNLOAD_JOB_STATE_FINISHED)
-        download->endTime = ecore_time_get();
+    switch (state) {
+    case EWK_DOWNLOAD_JOB_STATE_DOWNLOADING:
+        m_startTime = ecore_time_get();
+        break;
+    case EWK_DOWNLOAD_JOB_STATE_FAILED:
+    case EWK_DOWNLOAD_JOB_STATE_CANCELLED:
+    case EWK_DOWNLOAD_JOB_STATE_FINISHED:
+        m_endTime = ecore_time_get();
+        break;
+    default:
+        break;
+    }
 }

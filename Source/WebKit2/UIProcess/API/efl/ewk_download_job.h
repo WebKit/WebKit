@@ -43,7 +43,7 @@
 extern "C" {
 #endif
 
-/** Creates a type name for Ewk_Download_Job_Job */
+/** Creates a type name for Ewk_Download_Job */
 typedef struct Ewk_Download_Job Ewk_Download_Job;
 
 /// Defines the possible states of a download.
