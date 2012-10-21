@@ -33,16 +33,61 @@
 using namespace WebKit;
 
 Ewk_Popup_Menu_Item::Ewk_Popup_Menu_Item(const WebKit::WebPopupItem& item)
-    : type(static_cast<Ewk_Popup_Menu_Item_Type>(item.m_type))
-    , textDirection(static_cast<Ewk_Text_Direction>(item.m_textDirection))
-    , hasTextDirectionOverride(item.m_hasTextDirectionOverride)
-    , isEnabled(item.m_isEnabled)
-    , isLabel(item.m_isLabel)
-    , isSelected(item.m_isSelected)
-    , text(item.m_text.utf8().data())
-    , toolTip(item.m_toolTip.utf8().data())
-    , accessibilityText(item.m_accessibilityText.utf8().data())
+    : m_type(static_cast<Ewk_Popup_Menu_Item_Type>(item.m_type))
+    , m_textDirection(static_cast<Ewk_Text_Direction>(item.m_textDirection))
+    , m_hasTextDirectionOverride(item.m_hasTextDirectionOverride)
+    , m_isEnabled(item.m_isEnabled)
+    , m_isLabel(item.m_isLabel)
+    , m_isSelected(item.m_isSelected)
+    , m_text(item.m_text.utf8().data())
+    , m_tooltipText(item.m_toolTip.utf8().data())
+    , m_accessibilityText(item.m_accessibilityText.utf8().data())
 { }
+
+Ewk_Popup_Menu_Item_Type Ewk_Popup_Menu_Item::type() const
+{
+    return m_type;
+}
+
+Ewk_Text_Direction Ewk_Popup_Menu_Item::textDirection() const
+{
+    return m_textDirection;
+}
+
+const char* Ewk_Popup_Menu_Item::text() const
+{
+    return m_text;
+}
+
+const char* Ewk_Popup_Menu_Item::tooltipText() const
+{
+    return m_tooltipText;
+}
+
+const char* Ewk_Popup_Menu_Item::accessibilityText() const
+{
+    return m_accessibilityText;
+}
+
+bool Ewk_Popup_Menu_Item::hasTextDirectionOverride() const
+{
+    return m_hasTextDirectionOverride;
+}
+
+bool Ewk_Popup_Menu_Item::isEnabled() const
+{
+    return m_isEnabled;
+}
+
+bool Ewk_Popup_Menu_Item::isLabel() const
+{
+    return m_isLabel;
+}
+
+bool Ewk_Popup_Menu_Item::isSelected() const
+{
+    return m_isSelected;
+}
 
 COMPILE_ASSERT_MATCHING_ENUM(EWK_POPUP_MENU_SEPARATOR, WebPopupItem::Separator);
 COMPILE_ASSERT_MATCHING_ENUM(EWK_POPUP_MENU_ITEM, WebPopupItem::Item);
@@ -51,61 +96,61 @@ Ewk_Popup_Menu_Item_Type ewk_popup_menu_item_type_get(const Ewk_Popup_Menu_Item*
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(item, EWK_POPUP_MENU_UNKNOWN);
 
-    return item->type;
+    return item->type();
 }
 
 const char* ewk_popup_menu_item_text_get(const Ewk_Popup_Menu_Item* item)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(item, 0);
 
-    return item->text;
+    return item->text();
 }
 
 Ewk_Text_Direction ewk_popup_menu_item_text_direction_get(const Ewk_Popup_Menu_Item* item)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(item, EWK_TEXT_DIRECTION_LEFT_TO_RIGHT);
 
-    return item->textDirection;
+    return item->textDirection();
 }
 
 Eina_Bool ewk_popup_menu_item_text_direction_override_get(const Ewk_Popup_Menu_Item* item)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(item, false);
 
-    return item->hasTextDirectionOverride;
+    return item->hasTextDirectionOverride();
 }
 
 const char* ewk_popup_menu_item_tooltip_get(const Ewk_Popup_Menu_Item* item)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(item, 0);
 
-    return item->toolTip;
+    return item->tooltipText();
 }
 
 const char* ewk_popup_menu_item_accessibility_text_get(const Ewk_Popup_Menu_Item* item)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(item, 0);
 
-    return item->accessibilityText;
+    return item->accessibilityText();
 }
 
 Eina_Bool ewk_popup_menu_item_enabled_get(const Ewk_Popup_Menu_Item* item)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(item, false);
 
-    return item->isEnabled;
+    return item->isEnabled();
 }
 
 Eina_Bool ewk_popup_menu_item_is_label_get(const Ewk_Popup_Menu_Item* item)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(item, false);
 
-    return item->isLabel;
+    return item->isLabel();
 }
 
 Eina_Bool ewk_popup_menu_item_selected_get(const Ewk_Popup_Menu_Item* item)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(item, false);
 
-    return item->isSelected;
+    return item->isSelected();
 }

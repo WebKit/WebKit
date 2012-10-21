@@ -37,28 +37,42 @@ using namespace WebCore;
 using namespace WebKit;
 
 Ewk_Error::Ewk_Error(WKErrorRef errorRef)
-    : wkError(errorRef)
-    , url(AdoptWK, WKErrorCopyFailingURL(errorRef))
-    , description(AdoptWK, WKErrorCopyLocalizedDescription(errorRef))
+    : m_wkError(errorRef)
+    , m_url(AdoptWK, WKErrorCopyFailingURL(errorRef))
+    , m_description(AdoptWK, WKErrorCopyLocalizedDescription(errorRef))
 { }
 
-#define EWK_ERROR_WK_GET_OR_RETURN(error, wkError_, ...)    \
-    if (!(error)) {                                           \
-        EINA_LOG_CRIT("error is NULL.");                      \
-        return __VA_ARGS__;                                    \
-    }                                                          \
-    if (!(error)->wkError) {                                 \
-        EINA_LOG_CRIT("error->wkError is NULL.");            \
-        return __VA_ARGS__;                                    \
-    }                                                          \
-    WKErrorRef wkError_ = (error)->wkError.get()
+const char* Ewk_Error::url() const
+{
+    return m_url;
+}
+
+const char* Ewk_Error::description() const
+{
+    return m_description;
+}
+
+String Ewk_Error::domain() const
+{
+    WKRetainPtr<WKStringRef> wkDomain(AdoptWK, WKErrorCopyDomain(m_wkError.get()));
+    return toWTFString(wkDomain.get());
+}
+
+int Ewk_Error::errorCode() const
+{
+    return WKErrorGetErrorCode(m_wkError.get());
+}
+
+bool Ewk_Error::isCancellation() const
+{
+    return toImpl(m_wkError.get())->platformError().isCancellation();
+}
 
 Ewk_Error_Type ewk_error_type_get(const Ewk_Error* error)
 {
-    EWK_ERROR_WK_GET_OR_RETURN(error, wkError, EWK_ERROR_TYPE_NONE);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(error, EWK_ERROR_TYPE_NONE);
 
-    WKRetainPtr<WKStringRef> wkDomain(AdoptWK, WKErrorCopyDomain(wkError));
-    WTF::String errorDomain = toWTFString(wkDomain.get());
+    String errorDomain = error->domain();
 
     if (errorDomain == errorDomainNetwork)
         return EWK_ERROR_TYPE_NETWORK;
@@ -77,26 +91,26 @@ const char* ewk_error_url_get(const Ewk_Error* error)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(error, 0);
 
-    return error->url;
+    return error->url();
 }
 
 int ewk_error_code_get(const Ewk_Error* error)
 {
-    EWK_ERROR_WK_GET_OR_RETURN(error, wkError, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(error, 0);
 
-    return WKErrorGetErrorCode(wkError);
+    return error->errorCode();
 }
 
 const char* ewk_error_description_get(const Ewk_Error* error)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(error, 0);
 
-    return error->description;
+    return error->description();
 }
 
 Eina_Bool ewk_error_cancellation_get(const Ewk_Error* error)
 {
-    EWK_ERROR_WK_GET_OR_RETURN(error, wkError, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(error, false);
 
-    return toImpl(wkError)->platformError().isCancellation();
+    return error->isCancellation();
 }

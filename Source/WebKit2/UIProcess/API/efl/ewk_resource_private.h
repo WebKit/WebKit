@@ -35,19 +35,19 @@
 
 class Ewk_Resource : public RefCounted<Ewk_Resource> {
 public:
-    WKEinaSharedString url;
-    bool isMainResource;
-
     static PassRefPtr<Ewk_Resource> create(WKURLRef url, bool isMainResource)
     {
         return adoptRef(new Ewk_Resource(url, isMainResource));
     }
 
+    const char* url() const;
+    bool isMainResource() const;
+
 private:
-    Ewk_Resource(WKURLRef url, bool isMainResource)
-        : url(url)
-        , isMainResource(isMainResource)
-    { }
+    Ewk_Resource(WKURLRef url, bool isMainResource);
+
+    WKEinaSharedString m_url;
+    bool m_isMainResource;
 };
 
 #endif // ewk_resource_private_h

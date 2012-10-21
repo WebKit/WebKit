@@ -30,13 +30,10 @@
 #include <WKError.h>
 #include <WKRetainPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/WTFString.h>
 
 class Ewk_Error {
 public:
-    WKRetainPtr<WKErrorRef> wkError;
-    WKEinaSharedString url;
-    WKEinaSharedString description;
-
     static PassOwnPtr<Ewk_Error> create(WKErrorRef errorRef)
     {
         if (!errorRef)
@@ -45,8 +42,18 @@ public:
         return adoptPtr(new Ewk_Error(errorRef));
     }
 
+    const char* url() const;
+    const char* description() const;
+    String domain() const;
+    int errorCode() const;
+    bool isCancellation() const;
+
 private:
     explicit Ewk_Error(WKErrorRef errorRef);
+
+    WKRetainPtr<WKErrorRef> m_wkError;
+    WKEinaSharedString m_url;
+    WKEinaSharedString m_description;
 };
 
 #endif // ewk_error_private_h

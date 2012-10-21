@@ -29,6 +29,21 @@
 #include "ewk_resource_private.h"
 #include <wtf/text/CString.h>
 
+Ewk_Resource::Ewk_Resource(WKURLRef url, bool isMainResource)
+    : m_url(url)
+    , m_isMainResource(isMainResource)
+{ }
+
+const char* Ewk_Resource::url() const
+{
+    return m_url;
+}
+
+bool Ewk_Resource::isMainResource() const
+{
+    return m_isMainResource;
+}
+
 Ewk_Resource* ewk_resource_ref(Ewk_Resource* resource)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(resource, 0);
@@ -49,12 +64,12 @@ const char* ewk_resource_url_get(const Ewk_Resource* resource)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(resource, 0);
 
-    return resource->url;
+    return resource->url();
 }
 
 Eina_Bool ewk_resource_main_resource_get(const Ewk_Resource* resource)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(resource, false);
 
-    return resource->isMainResource;
+    return resource->isMainResource();
 }

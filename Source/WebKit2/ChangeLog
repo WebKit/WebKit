@@ -1,5 +1,60 @@
 2012-10-21  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL][WK2] Make Ewk_Error, Ewk_Resource and Ewk_Popup_Menu_Item members private
+        https://bugs.webkit.org/show_bug.cgi?id=99931
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make Ewk_Error, Ewk_Resource and Ewk_Popup_Menu_Item class
+        members private.
+
+        * UIProcess/API/efl/ewk_error.cpp:
+        (Ewk_Error::Ewk_Error):
+        (Ewk_Error::url):
+        (Ewk_Error::description):
+        (Ewk_Error::domain):
+        (Ewk_Error::errorCode):
+        (Ewk_Error::isCancellation):
+        (ewk_error_type_get):
+        (ewk_error_url_get):
+        (ewk_error_code_get):
+        (ewk_error_description_get):
+        (ewk_error_cancellation_get):
+        * UIProcess/API/efl/ewk_error_private.h:
+        (Ewk_Error):
+        * UIProcess/API/efl/ewk_popup_menu_item.cpp:
+        (Ewk_Popup_Menu_Item::Ewk_Popup_Menu_Item):
+        (Ewk_Popup_Menu_Item::type):
+        (Ewk_Popup_Menu_Item::textDirection):
+        (Ewk_Popup_Menu_Item::text):
+        (Ewk_Popup_Menu_Item::tooltipText):
+        (Ewk_Popup_Menu_Item::accessibilityText):
+        (Ewk_Popup_Menu_Item::hasTextDirectionOverride):
+        (Ewk_Popup_Menu_Item::isEnabled):
+        (Ewk_Popup_Menu_Item::isLabel):
+        (Ewk_Popup_Menu_Item::isSelected):
+        (ewk_popup_menu_item_type_get):
+        (ewk_popup_menu_item_text_get):
+        (ewk_popup_menu_item_text_direction_get):
+        (ewk_popup_menu_item_text_direction_override_get):
+        (ewk_popup_menu_item_tooltip_get):
+        (ewk_popup_menu_item_accessibility_text_get):
+        (ewk_popup_menu_item_enabled_get):
+        (ewk_popup_menu_item_is_label_get):
+        (ewk_popup_menu_item_selected_get):
+        * UIProcess/API/efl/ewk_popup_menu_item_private.h:
+        (Ewk_Popup_Menu_Item):
+        * UIProcess/API/efl/ewk_resource.cpp:
+        (Ewk_Resource::Ewk_Resource):
+        (Ewk_Resource::url):
+        (Ewk_Resource::isMainResource):
+        (ewk_resource_url_get):
+        (ewk_resource_main_resource_get):
+        * UIProcess/API/efl/ewk_resource_private.h:
+        (Ewk_Resource):
+
+2012-10-21  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL][WK2] Make Ewk_Url_Request, Ewk_Url_Response and Ewk_Url_Scheme_Request members private
         https://bugs.webkit.org/show_bug.cgi?id=99936
 
