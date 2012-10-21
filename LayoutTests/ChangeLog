@@ -1,5 +1,11 @@
 2012-10-21  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, re-adjust Chromium Mac expectations.
+
+        * platform/chromium/TestExpectations:
+
+2012-10-21  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, new Chromium ML baselines for fast/canvas.
 
         * fast/canvas/canvas-incremental-repaint-expected.png: Renamed from LayoutTests/platform/efl/fast/canvas/canvas-incremental-repaint-expected.png.

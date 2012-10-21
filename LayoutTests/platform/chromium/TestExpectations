@@ -2274,7 +2274,7 @@ crbug.com/47083 [ Linux Win ] fast/text/hyphens.html [ Failure ]
 crbug.com/47083 [ Linux Win ] fast/text/hyphenate-character.html [ Failure ]
 crbug.com/47083 [ Linux Win ] fast/text/hyphenate-first-word.html [ Failure ]
 crbug.com/47083 fast/text/hyphenate-limit-lines.html [ Failure ImageOnlyFailure ]
-crbug.com/47083 [ Linux Win ] fast/text/hyphenate-limit-before-after.html [ Failure ]
+crbug.com/47083 [ Linux Win SnowLeopard ] fast/text/hyphenate-limit-before-after.html [ Failure ]
 crbug.com/47083 fast/text/hyphenate-locale.html [ Failure ]
 
 crbug.com/48239 fast/js/function-apply.html [ Failure ]
@@ -3649,6 +3649,7 @@ webkit.org/b/85856 fast/block/float/028.html [ Failure ImageOnlyFailure ]
 webkit.org/b/85856 fast/block/float/026.html [ Failure ImageOnlyFailure ]
 webkit.org/b/85856 fast/overflow/unreachable-overflow-rtl-bug.html [ Failure ImageOnlyFailure ]
 webkit.org/b/85856 [ Linux Win SnowLeopard ] scrollbars/rtl/div-absolute.html [ Failure ]
+webkit.org/b/85856 [ Lion MountainLion ] scrollbars/rtl/div-absolute.html [ Failure Pass ]
 webkit.org/b/85856 scrollbars/rtl/div-horizontal.html [ Failure ]
 
 # Bug 93148 changed this to a testRunner test and it started timing out on Mac.
