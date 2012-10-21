@@ -2404,6 +2404,14 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
                 trailingObjects.clear();
                 lineInfo.setPreviousLineBrokeCleanly(true);
 
+                // A <br> with clearance always needs a linebox in case the lines below it get dirtied later and 
+                // need to check for floats to clear - so if we're ignoring spaces, stop ignoring them and add a
+                // run for this object.
+                if (ignoringSpaces && currentStyle->clear() != CNONE) {
+                    addMidpoint(lineMidpointState, InlineIterator(0, current.m_obj, 0)); // Stop ignoring spaces.
+                    addMidpoint(lineMidpointState, InlineIterator(0, current.m_obj, 0)); // Start ignoring again.
+                }
+
                 if (!lineInfo.isEmpty())
                     m_clear = currentStyle->clear();
             }

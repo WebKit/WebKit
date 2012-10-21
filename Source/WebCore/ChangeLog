@@ -1,5 +1,21 @@
 2012-10-08  Robert Hogan  <robert@webkit.org>
 
+        In some float situations, the original layout is wrong and only corrects itself on repaint
+        https://bugs.webkit.org/show_bug.cgi?id=18939
+
+        Reviewed by Levi Weintraub.
+
+        A <br> that follows collapsing spaces and has clearance set always needs to get a run and a linebox of its own.
+        This allows the line below it to check for clearance from the <br> if it gets dirtied but the line with the <br>
+        does not.
+
+        Test: fast/block/br-with-clearance-after-collapsing-space.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak):
+
+2012-10-08  Robert Hogan  <robert@webkit.org>
+
         floated element with negative margin causes text wrap bug
         https://bugs.webkit.org/show_bug.cgi?id=94825
 
