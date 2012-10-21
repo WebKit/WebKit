@@ -1,3 +1,13 @@
+2012-10-20  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/12512710> [mac] Text with zero font size renders as 12px sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=99918
+
+        Reviewed by Geoff Garen.
+
+        * fast/text/zero-font-size-2-expected.html: Added.
+        * fast/text/zero-font-size-2.html: Added.
+
 2012-10-20  Florin Malita  <fmalita@chromium.org>
 
         [Chromium] Unreviewed rebaselines after http://trac.webkit.org/changeset/131974, take two.

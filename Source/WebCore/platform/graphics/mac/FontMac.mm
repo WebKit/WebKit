@@ -139,6 +139,9 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const SimpleFontData
 
 void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point) const
 {
+    if (!font->platformData().size())
+        return;
+
     CGContextRef cgContext = context->platformContext();
 
     bool shouldSmoothFonts = true;
