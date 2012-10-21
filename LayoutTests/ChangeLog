@@ -1,3 +1,26 @@
+2012-10-20  Florin Malita  <fmalita@chromium.org>
+
+        [Chromium] Unreviewed rebaselines after http://trac.webkit.org/changeset/131974, take two.
+
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt: Copied from LayoutTests/platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt: Copied from LayoutTests/platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt.
+        * platform/chromium-mac-lion/svg/custom/pattern-scaling-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/svg/custom/pattern-scaling-expected.txt: Added.
+        * platform/chromium-mac/svg/custom/pattern-scaling-expected.txt: Added.
+        * platform/chromium-win-xp/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.png: Removed.
+        * platform/chromium-win-xp/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt: Copied from LayoutTests/platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt.
+        * platform/chromium-win-xp/svg/custom/js-late-pattern-creation-expected.png: Removed.
+        * platform/chromium-win-xp/svg/custom/pattern-scaling-expected.txt: Added.
+        * platform/chromium-win-xp/svg/custom/pattern-with-transformation-expected.png: Removed.
+        * platform/chromium-win-xp/svg/transforms/text-with-pattern-inside-transformed-html-expected.png: Removed.
+        * platform/chromium-win-xp/svg/transforms/text-with-pattern-with-svg-transform-expected.png: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt:
+        * platform/chromium-win/svg/custom/js-late-pattern-creation-expected.png:
+        * platform/chromium-win/svg/custom/pattern-with-transformation-expected.png:
+        * platform/chromium-win/svg/transforms/text-with-pattern-inside-transformed-html-expected.png:
+        * platform/chromium-win/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+
 2012-10-20  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Add missing expectations for some tests in svg/custom.
