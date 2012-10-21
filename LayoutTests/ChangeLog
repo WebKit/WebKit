@@ -1,5 +1,12 @@
 2012-10-21  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, expectations update for Chromium.
+
+        * platform/chromium-mac-mountainlion/TestExpectations:
+        * platform/chromium/TestExpectations:
+
+2012-10-21  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, update Chromium ML baselines for LayoutTests/css1 and optimize.
 
         * css1/formatting_model/floating_elements-expected.png: Renamed from LayoutTests/platform/efl/css1/formatting_model/floating_elements-expected.png.
