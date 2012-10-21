@@ -30,6 +30,27 @@
 
 using namespace WebKit;
 
+Ewk_Navigation_Data::Ewk_Navigation_Data(WKNavigationDataRef dataRef)
+    : m_request(Ewk_Url_Request::create(adoptWK(WKNavigationDataCopyOriginalRequest(dataRef)).get()))
+    , m_title(AdoptWK, WKNavigationDataCopyTitle(dataRef))
+    , m_url(AdoptWK, WKNavigationDataCopyURL(dataRef))
+{ }
+
+Ewk_Url_Request* Ewk_Navigation_Data::originalRequest() const
+{
+    return m_request.get();
+}
+
+const char* Ewk_Navigation_Data::title() const
+{
+    return m_title;
+}
+
+const char* Ewk_Navigation_Data::url() const
+{
+    return m_url;
+}
+
 Ewk_Navigation_Data* ewk_navigation_data_ref(Ewk_Navigation_Data* data)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(data, 0);
@@ -50,19 +71,19 @@ const char* ewk_navigation_data_title_get(const Ewk_Navigation_Data* data)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(data, 0);
 
-    return data->title;
+    return data->title();
 }
 
 Ewk_Url_Request* ewk_navigation_data_original_request_get(const Ewk_Navigation_Data* data)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(data, 0);
 
-    return data->request.get();
+    return data->originalRequest();
 }
 
 const char* ewk_navigation_data_url_get(const Ewk_Navigation_Data* data)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(data, 0);
 
-    return data->url;
+    return data->url();
 }

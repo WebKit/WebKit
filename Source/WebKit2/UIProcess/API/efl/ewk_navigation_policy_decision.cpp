@@ -32,6 +32,66 @@
 
 using namespace WebKit;
 
+Ewk_Navigation_Policy_Decision::Ewk_Navigation_Policy_Decision(WKFramePolicyListenerRef listener, Ewk_Navigation_Type navigationType, Event_Mouse_Button mouseButton, Event_Modifier_Keys modifiers, PassRefPtr<Ewk_Url_Request> request, const char* frameName)
+    : m_listener(listener)
+    , m_actedUponByClient(false)
+    , m_navigationType(navigationType)
+    , m_mouseButton(mouseButton)
+    , m_modifiers(modifiers)
+    , m_request(request)
+    , m_frameName(frameName)
+{ }
+
+Ewk_Navigation_Policy_Decision::~Ewk_Navigation_Policy_Decision()
+{
+    // This is the default choice for all policy decisions in WebPageProxy.cpp.
+    if (!m_actedUponByClient)
+        WKFramePolicyListenerUse(m_listener.get());
+}
+
+Ewk_Navigation_Type Ewk_Navigation_Policy_Decision::navigationType() const
+{
+    return m_navigationType;
+}
+
+Event_Mouse_Button Ewk_Navigation_Policy_Decision::mouseButton() const
+{
+    return m_mouseButton;
+}
+
+Event_Modifier_Keys Ewk_Navigation_Policy_Decision::modifiers() const
+{
+    return m_modifiers;
+}
+
+const char* Ewk_Navigation_Policy_Decision::frameName() const
+{
+    return m_frameName;
+}
+
+Ewk_Url_Request* Ewk_Navigation_Policy_Decision::request() const
+{
+    return m_request.get();
+}
+
+void Ewk_Navigation_Policy_Decision::accept()
+{
+    WKFramePolicyListenerUse(m_listener.get());
+    m_actedUponByClient = true;
+}
+
+void Ewk_Navigation_Policy_Decision::reject()
+{
+    WKFramePolicyListenerIgnore(m_listener.get());
+    m_actedUponByClient = true;
+}
+
+void Ewk_Navigation_Policy_Decision::download()
+{
+    WKFramePolicyListenerDownload(m_listener.get());
+    m_actedUponByClient = true;
+}
+
 Ewk_Navigation_Policy_Decision* ewk_navigation_policy_decision_ref(Ewk_Navigation_Policy_Decision* decision)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(decision, 0);
@@ -52,59 +112,56 @@ Ewk_Navigation_Type ewk_navigation_policy_navigation_type_get(const Ewk_Navigati
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(decision, EWK_NAVIGATION_TYPE_OTHER);
 
-    return decision->navigationType;
+    return decision->navigationType();
 }
 
 Event_Mouse_Button ewk_navigation_policy_mouse_button_get(const Ewk_Navigation_Policy_Decision* decision)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(decision, EVENT_MOUSE_BUTTON_NONE);
 
-    return decision->mouseButton;
+    return decision->mouseButton();
 }
 
 Event_Modifier_Keys ewk_navigation_policy_modifiers_get(const Ewk_Navigation_Policy_Decision* decision)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(decision, static_cast<Event_Modifier_Keys>(0));
 
-    return decision->modifiers;
+    return decision->modifiers();
 }
 
 const char* ewk_navigation_policy_frame_name_get(const Ewk_Navigation_Policy_Decision* decision)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(decision, 0);
 
-    return decision->frameName;
+    return decision->frameName();
 }
 
 Ewk_Url_Request* ewk_navigation_policy_request_get(const Ewk_Navigation_Policy_Decision* decision)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(decision, 0);
 
-    return decision->request.get();
+    return decision->request();
 }
 
 void ewk_navigation_policy_decision_accept(Ewk_Navigation_Policy_Decision* decision)
 {
     EINA_SAFETY_ON_NULL_RETURN(decision);
 
-    WKFramePolicyListenerUse(decision->listener.get());
-    decision->actedUponByClient = true;
+    decision->accept();
 }
 
 void ewk_navigation_policy_decision_reject(Ewk_Navigation_Policy_Decision* decision)
 {
     EINA_SAFETY_ON_NULL_RETURN(decision);
 
-    WKFramePolicyListenerIgnore(decision->listener.get());
-    decision->actedUponByClient = true;
+    decision->reject();
 }
 
 void ewk_navigation_policy_decision_download(Ewk_Navigation_Policy_Decision* decision)
 {
     EINA_SAFETY_ON_NULL_RETURN(decision);
 
-    WKFramePolicyListenerDownload(decision->listener.get());
-    decision->actedUponByClient = true;
+    decision->download();
 }
 
 // Ewk_Navigation_Type enum validation

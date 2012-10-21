@@ -35,6 +35,39 @@
 
 using namespace WebKit;
 
+Ewk_Form_Submission_Request::Ewk_Form_Submission_Request(WKDictionaryRef values, WKFormSubmissionListenerRef listener)
+    : m_wkValues(values)
+    , m_wkListener(listener)
+    , m_handledRequest(false)
+{ }
+
+Ewk_Form_Submission_Request::~Ewk_Form_Submission_Request()
+{
+    // Make sure the request is always handled before destroying.
+    if (!m_handledRequest)
+        WKFormSubmissionListenerContinue(m_wkListener.get());
+}
+
+String Ewk_Form_Submission_Request::fieldValue(const String& fieldName) const
+{
+    ASSERT(fieldName);
+    WKRetainPtr<WKStringRef> wkFieldName = toCopiedAPI(fieldName);
+    WKStringRef wkValue = static_cast<WKStringRef>(WKDictionaryGetItemForKey(m_wkValues.get(), wkFieldName.get()));
+
+    return wkValue ? toImpl(wkValue)->string() : String();
+}
+
+WKRetainPtr<WKArrayRef> Ewk_Form_Submission_Request::fieldNames() const
+{
+    return adoptWK(WKDictionaryCopyKeys(m_wkValues.get()));
+}
+
+void Ewk_Form_Submission_Request::submit()
+{
+    WKFormSubmissionListenerContinue(m_wkListener.get());
+    m_handledRequest = true;
+}
+
 Ewk_Form_Submission_Request* ewk_form_submission_request_ref(Ewk_Form_Submission_Request* request)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(request, 0);
@@ -56,7 +89,7 @@ Eina_List* ewk_form_submission_request_field_names_get(Ewk_Form_Submission_Reque
 
     Eina_List* names = 0;
 
-    WKRetainPtr<WKArrayRef> wkKeys(AdoptWK, WKDictionaryCopyKeys(request->wkValues.get()));
+    WKRetainPtr<WKArrayRef> wkKeys = request->fieldNames();
     const size_t numKeys = WKArrayGetSize(wkKeys.get());
     for (size_t i = 0; i < numKeys; ++i) {
         WKStringRef wkKey = static_cast<WKStringRef>(WKArrayGetItemAtIndex(wkKeys.get(), i));
@@ -71,18 +104,16 @@ const char* ewk_form_submission_request_field_value_get(Ewk_Form_Submission_Requ
     EINA_SAFETY_ON_NULL_RETURN_VAL(request, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(name, 0);
 
-    WKRetainPtr<WKStringRef> wkKey(AdoptWK, WKStringCreateWithUTF8CString(name));
-    WKStringRef wkValue = static_cast<WKStringRef>(WKDictionaryGetItemForKey(request->wkValues.get(), wkKey.get()));
+    String value = request->fieldValue(String::fromUTF8(name));
 
-    return wkValue ? eina_stringshare_add(toImpl(wkValue)->string().utf8().data()) : 0;
+    return value.isNull() ?  0 : eina_stringshare_add(value.utf8().data());
 }
 
 Eina_Bool ewk_form_submission_request_submit(Ewk_Form_Submission_Request* request)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(request, false);
 
-    WKFormSubmissionListenerContinue(request->wkListener.get());
-    request->handledRequest = true;
+    request->submit();
 
     return true;
 }

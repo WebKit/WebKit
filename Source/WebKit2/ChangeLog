@@ -1,5 +1,58 @@
 2012-10-21  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL][WK2] Make Ewk_Form_Submission_Request, Ewk_Navigation_Data and Ewk_Navigation_Policy_Decision members private
+        https://bugs.webkit.org/show_bug.cgi?id=99934
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make Ewk_Form_Submission_Request, Ewk_Navigation_Data and
+        Ewk_Navigation_Policy_Decision class members private.
+
+        * UIProcess/API/efl/ewk_form_submission_request.cpp:
+        (Ewk_Form_Submission_Request::Ewk_Form_Submission_Request):
+        (Ewk_Form_Submission_Request::~Ewk_Form_Submission_Request):
+        (Ewk_Form_Submission_Request::fieldValue):
+        (Ewk_Form_Submission_Request::fieldNames):
+        (Ewk_Form_Submission_Request::submit):
+        (ewk_form_submission_request_field_names_get):
+        (ewk_form_submission_request_field_value_get):
+        (ewk_form_submission_request_submit):
+        * UIProcess/API/efl/ewk_form_submission_request_private.h:
+        (Ewk_Form_Submission_Request):
+        * UIProcess/API/efl/ewk_navigation_data.cpp:
+        (Ewk_Navigation_Data::Ewk_Navigation_Data):
+        (Ewk_Navigation_Data::originalRequest):
+        (Ewk_Navigation_Data::title):
+        (Ewk_Navigation_Data::url):
+        (ewk_navigation_data_title_get):
+        (ewk_navigation_data_original_request_get):
+        (ewk_navigation_data_url_get):
+        * UIProcess/API/efl/ewk_navigation_data_private.h:
+        (Ewk_Navigation_Data):
+        * UIProcess/API/efl/ewk_navigation_policy_decision.cpp:
+        (Ewk_Navigation_Policy_Decision::Ewk_Navigation_Policy_Decision):
+        (Ewk_Navigation_Policy_Decision::~Ewk_Navigation_Policy_Decision):
+        (Ewk_Navigation_Policy_Decision::navigationType):
+        (Ewk_Navigation_Policy_Decision::mouseButton):
+        (Ewk_Navigation_Policy_Decision::modifiers):
+        (Ewk_Navigation_Policy_Decision::frameName):
+        (Ewk_Navigation_Policy_Decision::request):
+        (Ewk_Navigation_Policy_Decision::accept):
+        (Ewk_Navigation_Policy_Decision::reject):
+        (Ewk_Navigation_Policy_Decision::download):
+        (ewk_navigation_policy_navigation_type_get):
+        (ewk_navigation_policy_mouse_button_get):
+        (ewk_navigation_policy_modifiers_get):
+        (ewk_navigation_policy_frame_name_get):
+        (ewk_navigation_policy_request_get):
+        (ewk_navigation_policy_decision_accept):
+        (ewk_navigation_policy_decision_reject):
+        (ewk_navigation_policy_decision_download):
+        * UIProcess/API/efl/ewk_navigation_policy_decision_private.h:
+        (Ewk_Navigation_Policy_Decision):
+
+2012-10-21  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL][WK2] Make Ewk_Favicon_Database members private
         https://bugs.webkit.org/show_bug.cgi?id=99932
 

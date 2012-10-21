@@ -41,21 +41,22 @@
  */
 class Ewk_Navigation_Data : public RefCounted<Ewk_Navigation_Data> {
 public:
-    RefPtr<Ewk_Url_Request> request;
-    WKEinaSharedString title;
-    WKEinaSharedString url;
-
     static PassRefPtr<Ewk_Navigation_Data> create(WKNavigationDataRef dataRef)
     {
         return adoptRef(new Ewk_Navigation_Data(dataRef));
     }
 
+    Ewk_Url_Request* originalRequest() const;
+
+    const char* title() const;
+    const char* url() const;
+
 private:
-    explicit Ewk_Navigation_Data(WKNavigationDataRef dataRef)
-        : request(Ewk_Url_Request::create(adoptWK(WKNavigationDataCopyOriginalRequest(dataRef)).get()))
-        , title(AdoptWK, WKNavigationDataCopyTitle(dataRef))
-        , url(AdoptWK, WKNavigationDataCopyURL(dataRef))
-    { }
+    explicit Ewk_Navigation_Data(WKNavigationDataRef dataRef);
+
+    RefPtr<Ewk_Url_Request> m_request;
+    WKEinaSharedString m_title;
+    WKEinaSharedString m_url;
 };
 
 #endif // ewk_navigation_data_private_h
