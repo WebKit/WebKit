@@ -1,3 +1,20 @@
+2012-10-08  Robert Hogan  <robert@webkit.org>
+
+        floated element with negative margin causes text wrap bug
+        https://bugs.webkit.org/show_bug.cgi?id=94825
+
+        Reviewed by Levi Weintraub.
+
+        Avoid over-estimating the available width on the line by ensuring that the offset taken to avoid
+        floats on the line is at least as much as the offset given by border, margin and padding. This only
+        happens when a negative margin on the float brings its edge back before the offset
+        given by the border, margin and padding of its parents.
+
+        Test: fast/block/float/float-on-line-obeys-container-padding.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineWidth::shrinkAvailableWidthForNewFloatIfNeeded):
+
 2012-10-20  Martin Robinson  <mrobinson@igalia.com>
 
         Fix 'make dist' for the GTK+ port

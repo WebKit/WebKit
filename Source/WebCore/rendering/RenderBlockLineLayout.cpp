@@ -177,13 +177,15 @@ inline void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(RenderBlock::Floa
         return;
 
     if (newFloat->type() == RenderBlock::FloatingObject::FloatLeft) {
-        m_left = m_block->pixelSnappedLogicalRightForFloat(newFloat);
+        float newLeft = m_block->pixelSnappedLogicalRightForFloat(newFloat);
         if (m_isFirstLine && m_block->style()->isLeftToRightDirection())
-            m_left += floorToInt(m_block->textIndentOffset());
+            newLeft += floorToInt(m_block->textIndentOffset());
+        m_left = max<float>(m_left, newLeft);
     } else {
-        m_right = m_block->pixelSnappedLogicalLeftForFloat(newFloat);
+        float newRight = m_block->pixelSnappedLogicalLeftForFloat(newFloat);
         if (m_isFirstLine && !m_block->style()->isLeftToRightDirection())
-            m_right -= floorToInt(m_block->textIndentOffset());
+            newRight -= floorToInt(m_block->textIndentOffset());
+        m_right = min<float>(m_right, newRight);
     }
 
     computeAvailableWidthFromLeftAndRight();

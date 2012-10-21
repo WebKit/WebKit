@@ -1,3 +1,13 @@
+2012-10-08  Robert Hogan  <robert@webkit.org>
+
+        floated element with negative margin causes text wrap bug
+        https://bugs.webkit.org/show_bug.cgi?id=94825
+
+        Reviewed by Levi Weintraub.
+
+        * fast/block/float/float-on-line-obeys-container-padding.html: Added.
+        * fast/block/float/float-on-line-obeys-container-padding-expected.html: Added.
+
 2012-10-20  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/12512710> [mac] Text with zero font size renders as 12px sometimes
