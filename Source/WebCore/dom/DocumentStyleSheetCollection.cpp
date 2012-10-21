@@ -41,6 +41,7 @@
 #include "SVGStyleElement.h"
 #include "SelectorChecker.h"
 #include "Settings.h"
+#include "StyleInvalidationAnalysis.h"
 #include "StyleResolver.h"
 #include "StyleSheetContents.h"
 #include "StyleSheetList.h"
@@ -347,33 +348,6 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
     }
 }
 
-bool DocumentStyleSheetCollection::testAddedStyleSheetRequiresStyleRecalc(StyleSheetContents* stylesheet)
-{
-    // See if all rules on the sheet are scoped to some specific ids or classes.
-    // Then test if we actually have any of those in the tree at the moment.
-    HashSet<AtomicStringImpl*> idScopes; 
-    HashSet<AtomicStringImpl*> classScopes;
-    if (!StyleResolver::determineStylesheetSelectorScopes(stylesheet, idScopes, classScopes))
-        return true;
-    // Invalidate the subtrees that match the scopes.
-    Node* node = m_document->firstChild();
-    while (node) {
-        if (!node->isStyledElement()) {
-            node = node->traverseNextNode();
-            continue;
-        }
-        StyledElement* element = static_cast<StyledElement*>(node);
-        if (SelectorChecker::elementMatchesSelectorScopes(element, idScopes, classScopes)) {
-            element->setNeedsStyleRecalc();
-            // The whole subtree is now invalidated, we can skip to the next sibling.
-            node = node->traverseNextSibling();
-            continue;
-        }
-        node = node->traverseNextNode();
-    }
-    return false;
-}
-
 void DocumentStyleSheetCollection::analyzeStyleSheetChange(UpdateFlag updateFlag, const Vector<RefPtr<CSSStyleSheet> >& newStylesheets, StyleResolverUpdateType& styleResolverUpdateType, bool& requiresFullStyleRecalc)
 {
     styleResolverUpdateType = Reconstruct;
@@ -401,13 +375,13 @@ void DocumentStyleSheetCollection::analyzeStyleSheetChange(UpdateFlag updateFlag
     unsigned oldStylesheetCount = m_activeAuthorStyleSheets.size();
     if (newStylesheetCount < oldStylesheetCount)
         return;
-    Vector<CSSStyleSheet*> addedSheets;
+    Vector<StyleSheetContents*> addedSheets;
     unsigned newIndex = 0;
     for (unsigned oldIndex = 0; oldIndex < oldStylesheetCount; ++oldIndex) {
         if (newIndex >= newStylesheetCount)
             return;
         while (m_activeAuthorStyleSheets[oldIndex] != newStylesheets[newIndex]) {
-            addedSheets.append(newStylesheets[newIndex].get());
+            addedSheets.append(newStylesheets[newIndex]->contents());
             ++newIndex;
             if (newIndex == newStylesheetCount)
                 return;
@@ -416,7 +390,7 @@ void DocumentStyleSheetCollection::analyzeStyleSheetChange(UpdateFlag updateFlag
     }
     bool hasInsertions = !addedSheets.isEmpty();
     while (newIndex < newStylesheetCount) {
-        addedSheets.append(newStylesheets[newIndex].get());
+        addedSheets.append(newStylesheets[newIndex]->contents());
         ++newIndex;
     }
     // If all new sheets were added at the end of the list we can just add them to existing StyleResolver.
@@ -426,10 +400,10 @@ void DocumentStyleSheetCollection::analyzeStyleSheetChange(UpdateFlag updateFlag
     // If we are already parsing the body and so may have significant amount of elements, put some effort into trying to avoid style recalcs.
     if (!m_document->body() || m_document->hasNodesWithPlaceholderStyle())
         return;
-    for (unsigned i = 0; i < addedSheets.size(); ++i) {
-        if (testAddedStyleSheetRequiresStyleRecalc(static_cast<CSSStyleSheet*>(addedSheets[i])->contents()))
-            return;
-    }
+    StyleInvalidationAnalysis invalidationAnalysis(addedSheets);
+    if (invalidationAnalysis.dirtiesAllStyle())
+        return;
+    invalidationAnalysis.invalidateStyle(m_document);
     requiresFullStyleRecalc = false;
 }
 

@@ -2642,6 +2642,8 @@ webcore_sources += \
 	Source/WebCore/css/SiblingTraversalStrategies.h \
 	Source/WebCore/css/StyleBuilder.cpp \
 	Source/WebCore/css/StyleBuilder.h \
+	Source/WebCore/css/StyleInvalidationAnalysis.cpp \
+	Source/WebCore/css/StyleInvalidationAnalysis.h \
 	Source/WebCore/css/StyleMedia.cpp \
 	Source/WebCore/css/StyleMedia.h \
 	Source/WebCore/css/StylePropertySet.cpp \

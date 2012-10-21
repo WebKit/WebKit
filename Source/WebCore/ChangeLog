@@ -1,3 +1,48 @@
+2012-10-21  Antti Koivisto  <antti@apple.com>
+
+        Factor stylesheet invalidation analysis code into a class
+        https://bugs.webkit.org/show_bug.cgi?id=99933
+
+        Reviewed by Sam Weinig.
+
+        Currently the stylesheet analysis code is all over the place. It should be factored into a class to make
+        further progress easier.
+
+        The patch adds StyleInvalidationAnalysis class and moves a bunch of code from SelectorChecker, StyleResolver
+        and DocumentStyleSheetCollection there. No functional changes.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/SelectorChecker.cpp:
+        (WebCore):
+        * css/SelectorChecker.h:
+        (WebCore):
+        * css/StyleInvalidationAnalysis.cpp: Added.
+        (WebCore):
+        (WebCore::StyleInvalidationAnalysis::StyleInvalidationAnalysis):
+        (WebCore::StyleInvalidationAnalysis::create):
+        (WebCore::determineSelectorScopes):
+        (WebCore::StyleInvalidationAnalysis::analyzeStyleSheet):
+        (WebCore::elementMatchesSelectorScopes):
+        (WebCore::StyleInvalidationAnalysis::invalidateStyle):
+        * css/StyleInvalidationAnalysis.h: Added.
+        (WebCore):
+        (StyleInvalidationAnalysis):
+        (WebCore::StyleInvalidationAnalysis::dirtiesAllStyle):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::checkRegionSelector):
+        * css/StyleResolver.h:
+        (StyleResolver):
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore):
+        (WebCore::DocumentStyleSheetCollection::analyzeStyleSheetChange):
+        * dom/DocumentStyleSheetCollection.h:
+        (DocumentStyleSheetCollection):
+
 2012-10-08  Robert Hogan  <robert@webkit.org>
 
         In some float situations, the original layout is wrong and only corrects itself on repaint

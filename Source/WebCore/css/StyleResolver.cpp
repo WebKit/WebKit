@@ -2203,33 +2203,6 @@ bool StyleResolver::checkRegionSelector(CSSSelector* regionSelector, Element* re
 
     return false;
 }
-    
-bool StyleResolver::determineStylesheetSelectorScopes(StyleSheetContents* stylesheet, HashSet<AtomicStringImpl*>& idScopes, HashSet<AtomicStringImpl*>& classScopes)
-{
-    ASSERT(!stylesheet->isLoading());
-
-    const Vector<RefPtr<StyleRuleImport> >& importRules = stylesheet->importRules();
-    for (unsigned i = 0; i < importRules.size(); ++i) {
-        if (!importRules[i]->styleSheet())
-            continue;
-        if (!determineStylesheetSelectorScopes(importRules[i]->styleSheet(), idScopes, classScopes))
-            return false;
-    }
-
-    const Vector<RefPtr<StyleRuleBase> >& rules = stylesheet->childRules();
-    for (unsigned i = 0; i < rules.size(); i++) {
-        StyleRuleBase* rule = rules[i].get();
-        if (rule->isStyleRule()) {
-            StyleRule* styleRule = static_cast<StyleRule*>(rule);
-            if (!SelectorChecker::determineSelectorScopes(styleRule->selectorList(), idScopes, classScopes))
-                return false;
-            continue;
-        } 
-        // FIXME: Media rules and maybe some others could be allowed.
-        return false;
-    }
-    return true;
-}
 
 // -------------------------------------------------------------------------------------
 // this is mostly boring stuff on how to apply a certain rule to the renderstyle...

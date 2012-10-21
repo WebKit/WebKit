@@ -37786,6 +37786,14 @@
 				RelativePath="..\css\StyleBuilder.h"
 				>
 			</File>
+            <File
+				RelativePath="..\css\StyleInvalidationAnalysis.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\StyleInvalidationAnalysis.h"
+				>
+			</File>
 			<File
 				RelativePath="..\css\StyleMedia.cpp"
 				>

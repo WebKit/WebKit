@@ -1080,6 +1080,7 @@ SET(WebCore_SOURCES
     css/SelectorChecker.cpp
     css/ShadowValue.cpp
     css/StyleBuilder.cpp
+    css/StyleInvalidationAnalysis.cpp
     css/StyleMedia.cpp
     css/StylePropertySet.cpp
     css/StylePropertyShorthand.cpp

@@ -2637,6 +2637,8 @@
             'css/SiblingTraversalStrategies.h',
             'css/StyleBuilder.cpp',
             'css/StyleBuilder.h',
+            'css/StyleInvalidationAnalysis.cpp',
+            'css/StyleInvalidationAnalysis.h',
             'css/StyleMedia.cpp',
             'css/StyleMedia.h',
             'css/StylePropertySet.cpp',

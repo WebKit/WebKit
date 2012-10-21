@@ -103,7 +103,6 @@ public:
 
 private:
     void collectActiveStyleSheets(Vector<RefPtr<StyleSheet> >&);
-    bool testAddedStyleSheetRequiresStyleRecalc(StyleSheetContents*);
     enum StyleResolverUpdateType {
         Reconstruct,
         Reset,

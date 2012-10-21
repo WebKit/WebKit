@@ -318,6 +318,7 @@ SOURCES += \
     css/SelectorChecker.cpp \
     css/ShadowValue.cpp \
     css/StyleBuilder.cpp \
+    css/StyleInvalidationAnalysis.cpp \
     css/StyleMedia.cpp \
     css/StylePropertySet.cpp \
     css/StylePropertyShorthand.cpp \
@@ -1490,6 +1491,7 @@ HEADERS += \
     css/SiblingTraversalStrategies.h \
     css/StyleMedia.h \
     css/StyleBuilder.h \
+    css/StyleInvalidationAnalysis.h \
     css/StylePropertySet.h \
     css/StylePropertyShorthand.h \
     css/StyleResolver.h \
