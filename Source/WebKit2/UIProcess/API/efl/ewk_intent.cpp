@@ -36,16 +36,52 @@
 
 using namespace WebKit;
 
-#define EWK_INTENT_WK_GET_OR_RETURN(intent, wkIntent_, ...)    \
-    if (!(intent)) {                                           \
-        EINA_LOG_CRIT("intent is NULL.");                      \
-        return __VA_ARGS__;                                    \
-    }                                                          \
-    if (!(intent)->wkIntent) {                                 \
-        EINA_LOG_CRIT("intent->wkIntent is NULL.");            \
-        return __VA_ARGS__;                                    \
-    }                                                          \
-    WKIntentDataRef wkIntent_ = (intent)->wkIntent.get()
+#if ENABLE(WEB_INTENTS)
+Ewk_Intent::Ewk_Intent(WKIntentDataRef intentRef)
+    : m_wkIntent(intentRef)
+    , m_action(AdoptWK, WKIntentDataCopyAction(intentRef))
+    , m_type(AdoptWK, WKIntentDataCopyType(intentRef))
+    , m_service(AdoptWK, WKIntentDataCopyService(intentRef))
+{ }
+
+WebIntentData* Ewk_Intent::webIntentData() const
+{
+    return toImpl(m_wkIntent.get());
+}
+
+const char* Ewk_Intent::action() const
+{
+    return m_action;
+}
+
+const char* Ewk_Intent::type() const
+{
+    return m_type;
+}
+
+const char* Ewk_Intent::service() const
+{
+    return m_service;
+}
+
+WKRetainPtr<WKArrayRef> Ewk_Intent::suggestions() const
+{
+    return adoptWK(WKIntentDataCopySuggestions(m_wkIntent.get()));
+}
+
+String Ewk_Intent::extra(const char* key) const
+{
+    WKRetainPtr<WKStringRef> keyRef = adoptWK(WKStringCreateWithUTF8CString(key));
+    WKRetainPtr<WKStringRef> wkValue(AdoptWK, WKIntentDataCopyExtraValue(m_wkIntent.get(), keyRef.get()));
+    return toImpl(wkValue.get())->string();
+}
+
+WKRetainPtr<WKArrayRef> Ewk_Intent::extraKeys() const
+{
+    WKRetainPtr<WKDictionaryRef> wkExtras(AdoptWK, WKIntentDataCopyExtras(m_wkIntent.get()));
+    return adoptWK(WKDictionaryCopyKeys(wkExtras.get()));
+}
+#endif
 
 Ewk_Intent* ewk_intent_ref(Ewk_Intent* intent)
 {
@@ -71,30 +107,36 @@ const char* ewk_intent_action_get(const Ewk_Intent* intent)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(intent, 0);
 
-    return intent->action;
+#if ENABLE(WEB_INTENTS)
+    return intent->action();
+#endif
 }
 
 const char* ewk_intent_type_get(const Ewk_Intent* intent)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(intent, 0);
 
-    return intent->type;
+#if ENABLE(WEB_INTENTS)
+    return intent->type();
+#endif
 }
 
 const char* ewk_intent_service_get(const Ewk_Intent* intent)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(intent, 0);
 
-    return intent->service;
+#if ENABLE(WEB_INTENTS)
+    return intent->service();
+#endif
 }
 
 Eina_List* ewk_intent_suggestions_get(const Ewk_Intent* intent)
 {
-#if ENABLE(WEB_INTENTS)
-    EWK_INTENT_WK_GET_OR_RETURN(intent, wkIntent, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(intent, 0);
 
+#if ENABLE(WEB_INTENTS)
     Eina_List* listOfSuggestions = 0;
-    WKRetainPtr<WKArrayRef> wkSuggestions(AdoptWK, WKIntentDataCopySuggestions(wkIntent));
+    WKRetainPtr<WKArrayRef> wkSuggestions = intent->suggestions();
     const size_t numSuggestions = WKArrayGetSize(wkSuggestions.get());
     for (size_t i = 0; i < numSuggestions; ++i) {
         WKURLRef wkSuggestion = static_cast<WKURLRef>(WKArrayGetItemAtIndex(wkSuggestions.get(), i));
@@ -102,6 +144,7 @@ Eina_List* ewk_intent_suggestions_get(const Ewk_Intent* intent)
     }
 
     return listOfSuggestions;
+
 #else
     return 0;
 #endif
@@ -109,12 +152,11 @@ Eina_List* ewk_intent_suggestions_get(const Ewk_Intent* intent)
 
 const char* ewk_intent_extra_get(const Ewk_Intent* intent, const char* key)
 {
-#if ENABLE(WEB_INTENTS)
-    EWK_INTENT_WK_GET_OR_RETURN(intent, wkIntent, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(intent, 0);
 
-    WKRetainPtr<WKStringRef> keyRef = adoptWK(WKStringCreateWithUTF8CString(key));
-    WKRetainPtr<WKStringRef> wkValue(AdoptWK, WKIntentDataCopyExtraValue(wkIntent, keyRef.get()));
-    String value = toImpl(wkValue.get())->string();
+#if ENABLE(WEB_INTENTS)
+    String value = intent->extra(key);
+
     if (value.isEmpty())
         return 0;
 
@@ -126,12 +168,11 @@ const char* ewk_intent_extra_get(const Ewk_Intent* intent, const char* key)
 
 Eina_List* ewk_intent_extra_names_get(const Ewk_Intent* intent)
 {
-#if ENABLE(WEB_INTENTS)
-    EWK_INTENT_WK_GET_OR_RETURN(intent, wkIntent, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(intent, 0);
 
+#if ENABLE(WEB_INTENTS)
     Eina_List* listOfKeys = 0;
-    WKRetainPtr<WKDictionaryRef> wkExtras(AdoptWK, WKIntentDataCopyExtras(wkIntent));
-    WKRetainPtr<WKArrayRef> wkKeys(AdoptWK, WKDictionaryCopyKeys(wkExtras.get()));
+    WKRetainPtr<WKArrayRef> wkKeys = intent->extraKeys();
     const size_t numKeys = WKArrayGetSize(wkKeys.get());
     for (size_t i = 0; i < numKeys; ++i) {
         WKStringRef wkKey = static_cast<WKStringRef>(WKArrayGetItemAtIndex(wkKeys.get(), i));

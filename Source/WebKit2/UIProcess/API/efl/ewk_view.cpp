@@ -1429,7 +1429,7 @@ Eina_Bool ewk_view_intent_deliver(Evas_Object* ewkView, Ewk_Intent* intent)
     EINA_SAFETY_ON_NULL_RETURN_VAL(intent, false);
 
     WebPageProxy* page = priv->pageProxy.get();
-    page->deliverIntentToFrame(page->mainFrame(), toImpl(intent->wkIntent.get()));
+    page->deliverIntentToFrame(page->mainFrame(), intent->webIntentData());
 
     return true;
 #else

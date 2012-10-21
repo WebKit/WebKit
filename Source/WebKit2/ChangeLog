@@ -1,5 +1,50 @@
 2012-10-21  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL][WK2] Make Ewk intent classes members private
+        https://bugs.webkit.org/show_bug.cgi?id=99832
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make Ewk_Intent and Ewk_Intent_Service members
+        private and add class methods to get them.
+
+        * UIProcess/API/efl/ewk_intent.cpp:
+        (Ewk_Intent::Ewk_Intent):
+        (Ewk_Intent::webIntentData):
+        (Ewk_Intent::action):
+        (Ewk_Intent::type):
+        (Ewk_Intent::service):
+        (Ewk_Intent::suggestions):
+        (Ewk_Intent::extra):
+        (Ewk_Intent::extraKeys):
+        (ewk_intent_action_get):
+        (ewk_intent_type_get):
+        (ewk_intent_service_get):
+        (ewk_intent_suggestions_get):
+        (ewk_intent_extra_get):
+        (ewk_intent_extra_names_get):
+        * UIProcess/API/efl/ewk_intent_private.h:
+        (WebKit):
+        (Ewk_Intent):
+        * UIProcess/API/efl/ewk_intent_service.cpp:
+        (Ewk_Intent_Service::Ewk_Intent_Service):
+        (Ewk_Intent_Service::action):
+        (Ewk_Intent_Service::type):
+        (Ewk_Intent_Service::href):
+        (Ewk_Intent_Service::title):
+        (Ewk_Intent_Service::disposition):
+        (ewk_intent_service_action_get):
+        (ewk_intent_service_type_get):
+        (ewk_intent_service_href_get):
+        (ewk_intent_service_title_get):
+        (ewk_intent_service_disposition_get):
+        * UIProcess/API/efl/ewk_intent_service_private.h:
+        (Ewk_Intent_Service):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_intent_deliver):
+
+2012-10-21  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL][WK2] Make Ewk_Download_Job members private and remove private C functions
         https://bugs.webkit.org/show_bug.cgi?id=99697
 

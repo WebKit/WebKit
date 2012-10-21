@@ -35,6 +35,41 @@
 
 using namespace WebKit;
 
+#if ENABLE(WEB_INTENTS_TAG)
+Ewk_Intent_Service::Ewk_Intent_Service(WKIntentServiceInfoRef serviceRef)
+    : m_action(AdoptWK, WKIntentServiceInfoCopyAction(serviceRef))
+    , m_type(AdoptWK, WKIntentServiceInfoCopyType(serviceRef))
+    , m_href(AdoptWK, WKIntentServiceInfoCopyHref(serviceRef))
+    , m_title(AdoptWK, WKIntentServiceInfoCopyTitle(serviceRef))
+    , m_disposition(AdoptWK, WKIntentServiceInfoCopyDisposition(serviceRef))
+{ }
+
+const char* Ewk_Intent_Service::action() const
+{
+    return m_action;
+}
+
+const char* Ewk_Intent_Service::type() const
+{
+    return m_type;
+}
+
+const char* Ewk_Intent_Service::href() const
+{
+    return m_href;
+}
+
+const char* Ewk_Intent_Service::title() const
+{
+    return m_title;
+}
+
+const char* Ewk_Intent_Service::disposition() const
+{
+    return m_disposition;
+}
+#endif
+
 Ewk_Intent_Service* ewk_intent_service_ref(Ewk_Intent_Service* service)
 {
 #if ENABLE(WEB_INTENTS_TAG)
@@ -58,33 +93,43 @@ const char* ewk_intent_service_action_get(const Ewk_Intent_Service* service)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(service, 0);
 
-    return service->action;
+#if ENABLE(WEB_INTENTS_TAG)
+    return service->action();
+#endif
 }
 
 const char* ewk_intent_service_type_get(const Ewk_Intent_Service* service)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(service, 0);
 
-    return service->type;
+#if ENABLE(WEB_INTENTS_TAG)
+    return service->type();
+#endif
 }
 
 const char* ewk_intent_service_href_get(const Ewk_Intent_Service* service)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(service, 0);
 
-    return service->href;
+#if ENABLE(WEB_INTENTS_TAG)
+    return service->href();
+#endif
 }
 
 const char* ewk_intent_service_title_get(const Ewk_Intent_Service* service)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(service, 0);
 
-    return service->title;
+#if ENABLE(WEB_INTENTS_TAG)
+    return service->title();
+#endif
 }
 
 const char* ewk_intent_service_disposition_get(const Ewk_Intent_Service* service)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(service, 0);
 
-    return service->disposition;
+#if ENABLE(WEB_INTENTS_TAG)
+    return service->disposition();
+#endif
 }
