@@ -36,20 +36,30 @@ typedef HashMap<WKBackForwardListItemRef, RefPtr<Ewk_Back_Forward_List_Item> > I
 
 class Ewk_Back_Forward_List {
 public:
-    WKRetainPtr<WKBackForwardListRef> wkList;
-    mutable ItemsMap wrapperCache;
-
     static PassOwnPtr<Ewk_Back_Forward_List> create(WKBackForwardListRef listRef)
     {
         return adoptPtr(new Ewk_Back_Forward_List(listRef));
     }
 
-private:
-    explicit Ewk_Back_Forward_List(WKBackForwardListRef listRef)
-        : wkList(listRef)
-    { }
-};
+    Ewk_Back_Forward_List_Item* previousItem() const;
+    Ewk_Back_Forward_List_Item* currentItem() const;
+    Ewk_Back_Forward_List_Item* nextItem() const;
+    Ewk_Back_Forward_List_Item* itemAt(int index) const;
 
-void ewk_back_forward_list_changed(Ewk_Back_Forward_List*, WKBackForwardListItemRef wkAddedItem, WKArrayRef wkRemovedItems);
+    WKRetainPtr<WKArrayRef> backList(int limit = -1) const;
+    WKRetainPtr<WKArrayRef> forwardList(int limit = -1) const;
+    unsigned size() const;
+
+    void update(WKBackForwardListItemRef wkAddedItem, WKArrayRef wkRemovedItems);
+    Eina_List* createEinaList(WKArrayRef wkList) const;
+
+private:
+    explicit Ewk_Back_Forward_List(WKBackForwardListRef listRef);
+
+    Ewk_Back_Forward_List_Item* getFromCacheOrCreate(WKBackForwardListItemRef wkItem) const;
+
+    WKRetainPtr<WKBackForwardListRef> m_wkList;
+    mutable ItemsMap m_wrapperCache;
+};
 
 #endif // ewk_back_forward_list_private_h

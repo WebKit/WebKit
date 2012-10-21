@@ -126,7 +126,10 @@ static void didChangeBackForwardList(WKPageRef, WKBackForwardListItemRef addedIt
     Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
     ASSERT(ewkView);
 
-    ewk_back_forward_list_changed(ewk_view_back_forward_list_get(ewkView), addedItem, removedItems);
+    Ewk_Back_Forward_List* list = ewk_view_back_forward_list_get(ewkView);
+    ASSERT(list);
+    list->update(addedItem, removedItems);
+
     ewk_view_back_forward_list_changed(ewkView);
 }
 

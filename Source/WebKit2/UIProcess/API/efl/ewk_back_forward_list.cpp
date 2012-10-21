@@ -34,33 +34,70 @@
 
 using namespace WebKit;
 
-#define EWK_BACK_FORWARD_LIST_WK_GET_OR_RETURN(list, wkList_, ...)  \
-    if (!(list)) {                                             \
-        EINA_LOG_CRIT("list is NULL.");                        \
-        return __VA_ARGS__;                                    \
-    }                                                          \
-    if (!(list)->wkList) {                                     \
-        EINA_LOG_CRIT("list->wkList is NULL.");                \
-        return __VA_ARGS__;                                    \
-    }                                                          \
-    WKBackForwardListRef wkList_ = (list)->wkList.get()
+Ewk_Back_Forward_List::Ewk_Back_Forward_List(WKBackForwardListRef listRef)
+    : m_wkList(listRef)
+{ }
 
-
-static inline Ewk_Back_Forward_List_Item* addItemToWrapperCache(const Ewk_Back_Forward_List* list, WKBackForwardListItemRef wkItem)
+Ewk_Back_Forward_List_Item* Ewk_Back_Forward_List::nextItem() const
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(list, 0);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(wkItem, 0);
+    return getFromCacheOrCreate(WKBackForwardListGetForwardItem(m_wkList.get()));
+}
 
-    RefPtr<Ewk_Back_Forward_List_Item> item = list->wrapperCache.get(wkItem);
+Ewk_Back_Forward_List_Item* Ewk_Back_Forward_List::previousItem() const
+{
+    return getFromCacheOrCreate(WKBackForwardListGetBackItem(m_wkList.get()));
+}
+
+Ewk_Back_Forward_List_Item* Ewk_Back_Forward_List::currentItem() const
+{
+    return getFromCacheOrCreate(WKBackForwardListGetCurrentItem(m_wkList.get()));
+}
+
+Ewk_Back_Forward_List_Item* Ewk_Back_Forward_List::itemAt(int index) const
+{
+    return getFromCacheOrCreate(WKBackForwardListGetItemAtIndex(m_wkList.get(), index));
+}
+
+unsigned Ewk_Back_Forward_List::size() const
+{
+    const unsigned currentItem = WKBackForwardListGetCurrentItem(m_wkList.get()) ? 1 : 0;
+
+    return WKBackForwardListGetBackListCount(m_wkList.get()) + WKBackForwardListGetForwardListCount(m_wkList.get()) + currentItem;
+}
+
+WKRetainPtr<WKArrayRef> Ewk_Back_Forward_List::backList(int limit) const
+{
+    if (limit == -1)
+        limit = WKBackForwardListGetBackListCount(m_wkList.get());
+    ASSERT(limit >= 0);
+
+    return adoptWK(WKBackForwardListCopyBackListWithLimit(m_wkList.get(), limit));
+}
+
+WKRetainPtr<WKArrayRef> Ewk_Back_Forward_List::forwardList(int limit) const
+{
+    if (limit == -1)
+        limit = WKBackForwardListGetForwardListCount(m_wkList.get());
+    ASSERT(limit >= 0);
+
+    return adoptWK(WKBackForwardListCopyForwardListWithLimit(m_wkList.get(), limit));
+}
+
+Ewk_Back_Forward_List_Item* Ewk_Back_Forward_List::getFromCacheOrCreate(WKBackForwardListItemRef wkItem) const
+{
+    if (!wkItem)
+        return 0;
+
+    RefPtr<Ewk_Back_Forward_List_Item> item = m_wrapperCache.get(wkItem);
     if (!item) {
         item = Ewk_Back_Forward_List_Item::create(wkItem);
-        list->wrapperCache.set(wkItem, item);
+        m_wrapperCache.set(wkItem, item);
     }
 
     return item.get();
 }
 
-static inline Eina_List* createEinaList(const Ewk_Back_Forward_List* list, WKArrayRef wkList)
+Eina_List* Ewk_Back_Forward_List::createEinaList(WKArrayRef wkList) const
 {
     if (!wkList)
         return 0;
@@ -70,86 +107,80 @@ static inline Eina_List* createEinaList(const Ewk_Back_Forward_List* list, WKArr
     const size_t count = WKArrayGetSize(wkList);
     for (size_t i = 0; i < count; ++i) {
         WKBackForwardListItemRef wkItem = static_cast<WKBackForwardListItemRef>(WKArrayGetItemAtIndex(wkList, i));
-        Ewk_Back_Forward_List_Item* item = addItemToWrapperCache(list, wkItem);
+        Ewk_Back_Forward_List_Item* item = getFromCacheOrCreate(wkItem);
         result = eina_list_append(result, ewk_back_forward_list_item_ref(item));
     }
 
     return result;
 }
 
-Ewk_Back_Forward_List_Item* ewk_back_forward_list_current_item_get(const Ewk_Back_Forward_List* list)
-{
-    EWK_BACK_FORWARD_LIST_WK_GET_OR_RETURN(list, wkList, 0);
-
-    return addItemToWrapperCache(list, WKBackForwardListGetCurrentItem(wkList));
-}
-
-Ewk_Back_Forward_List_Item* ewk_back_forward_list_previous_item_get(const Ewk_Back_Forward_List* list)
-{
-    EWK_BACK_FORWARD_LIST_WK_GET_OR_RETURN(list, wkList, 0);
-
-    return addItemToWrapperCache(list, WKBackForwardListGetBackItem(wkList));
-}
-
-Ewk_Back_Forward_List_Item* ewk_back_forward_list_next_item_get(const Ewk_Back_Forward_List* list)
-{
-    EWK_BACK_FORWARD_LIST_WK_GET_OR_RETURN(list, wkList, 0);
-
-    return addItemToWrapperCache(list, WKBackForwardListGetForwardItem(wkList));
-}
-
-Ewk_Back_Forward_List_Item* ewk_back_forward_list_item_at_index_get(const Ewk_Back_Forward_List* list, int index)
-{
-    EWK_BACK_FORWARD_LIST_WK_GET_OR_RETURN(list, wkList, 0);
-
-    return addItemToWrapperCache(list, WKBackForwardListGetItemAtIndex(wkList, index));
-}
-
-unsigned ewk_back_forward_list_count(Ewk_Back_Forward_List* list)
-{
-    EWK_BACK_FORWARD_LIST_WK_GET_OR_RETURN(list, wkList, 0);
-
-    const unsigned currentItem = ewk_back_forward_list_current_item_get(list) ? 1 : 0;
-
-    return WKBackForwardListGetBackListCount(wkList) + WKBackForwardListGetForwardListCount(wkList) + currentItem;
-}
-
-Eina_List* ewk_back_forward_list_n_back_items_copy(const Ewk_Back_Forward_List* list, int limit)
-{
-    EWK_BACK_FORWARD_LIST_WK_GET_OR_RETURN(list, wkList, 0);
-
-    if (limit == -1)
-        limit = WKBackForwardListGetBackListCount(wkList);
-    EINA_SAFETY_ON_FALSE_RETURN_VAL(limit >= 0, 0);
-    WKRetainPtr<WKArrayRef> backList(AdoptWK, WKBackForwardListCopyBackListWithLimit(wkList, limit));
-
-    return createEinaList(list, backList.get());
-}
-
-Eina_List* ewk_back_forward_list_n_forward_items_copy(const Ewk_Back_Forward_List* list, int limit)
-{
-    EWK_BACK_FORWARD_LIST_WK_GET_OR_RETURN(list, wkList, 0);
-
-    if (limit == -1)
-        limit = WKBackForwardListGetForwardListCount(wkList);
-    EINA_SAFETY_ON_FALSE_RETURN_VAL(limit >= 0, 0);
-    WKRetainPtr<WKArrayRef> forwardList(AdoptWK, WKBackForwardListCopyForwardListWithLimit(wkList, limit));
-
-    return createEinaList(list, forwardList.get());
-}
-
 /**
  * @internal
  * Updates items cache.
  */
-void ewk_back_forward_list_changed(Ewk_Back_Forward_List* list, WKBackForwardListItemRef wkAddedItem, WKArrayRef wkRemovedItems)
+void Ewk_Back_Forward_List::update(WKBackForwardListItemRef wkAddedItem, WKArrayRef wkRemovedItems)
 {
     if (wkAddedItem) // Checking also here to avoid EINA_SAFETY_ON_NULL_RETURN_VAL warnings.
-        addItemToWrapperCache(list, wkAddedItem); // Puts new item to the cache.
+        getFromCacheOrCreate(wkAddedItem); // Puts new item to the cache.
 
     const size_t removedItemsSize = wkRemovedItems ? WKArrayGetSize(wkRemovedItems) : 0;
     for (size_t i = 0; i < removedItemsSize; ++i) {
         WKBackForwardListItemRef wkItem = static_cast<WKBackForwardListItemRef>(WKArrayGetItemAtIndex(wkRemovedItems, i));
-        list->wrapperCache.remove(wkItem);
+        m_wrapperCache.remove(wkItem);
     }
+}
+
+Ewk_Back_Forward_List_Item* ewk_back_forward_list_current_item_get(const Ewk_Back_Forward_List* list)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(list, 0);
+
+    return list->currentItem();
+}
+
+Ewk_Back_Forward_List_Item* ewk_back_forward_list_previous_item_get(const Ewk_Back_Forward_List* list)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(list, 0);
+
+    return list->previousItem();
+}
+
+Ewk_Back_Forward_List_Item* ewk_back_forward_list_next_item_get(const Ewk_Back_Forward_List* list)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(list, 0);
+
+    return list->nextItem();
+}
+
+Ewk_Back_Forward_List_Item* ewk_back_forward_list_item_at_index_get(const Ewk_Back_Forward_List* list, int index)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(list, 0);
+
+    return list->itemAt(index);
+}
+
+unsigned ewk_back_forward_list_count(Ewk_Back_Forward_List* list)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(list, 0);
+
+    return list->size();
+}
+
+Eina_List* ewk_back_forward_list_n_back_items_copy(const Ewk_Back_Forward_List* list, int limit)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(list, 0);
+    EINA_SAFETY_ON_FALSE_RETURN_VAL(limit == -1 || limit > 0, 0);
+
+    WKRetainPtr<WKArrayRef> backList = list->backList(limit);
+
+    return list->createEinaList(backList.get());
+}
+
+Eina_List* ewk_back_forward_list_n_forward_items_copy(const Ewk_Back_Forward_List* list, int limit)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(list, 0);
+    EINA_SAFETY_ON_FALSE_RETURN_VAL(limit == -1 || limit > 0, 0);
+
+    WKRetainPtr<WKArrayRef> forwardList = list->forwardList(limit);
+
+    return list->createEinaList(forwardList.get());
 }

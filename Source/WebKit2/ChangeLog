@@ -1,5 +1,49 @@
 2012-10-21  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL][WK2] Make Ewk back / forward list classes members private and remove private C functions
+        https://bugs.webkit.org/show_bug.cgi?id=99929
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make Ewk_Back_Forward_List and Ewk_Back_Forward_List_Item members
+        private and remove private C functions.
+
+        * UIProcess/API/efl/ewk_back_forward_list.cpp:
+        (Ewk_Back_Forward_List::Ewk_Back_Forward_List):
+        (Ewk_Back_Forward_List::nextItem):
+        (Ewk_Back_Forward_List::previousItem):
+        (Ewk_Back_Forward_List::currentItem):
+        (Ewk_Back_Forward_List::itemAt):
+        (Ewk_Back_Forward_List::size):
+        (Ewk_Back_Forward_List::backList):
+        (Ewk_Back_Forward_List::forwardList):
+        (Ewk_Back_Forward_List::getFromCacheOrCreate):
+        (Ewk_Back_Forward_List::createEinaList):
+        (Ewk_Back_Forward_List::update):
+        (ewk_back_forward_list_current_item_get):
+        (ewk_back_forward_list_previous_item_get):
+        (ewk_back_forward_list_next_item_get):
+        (ewk_back_forward_list_item_at_index_get):
+        (ewk_back_forward_list_count):
+        (ewk_back_forward_list_n_back_items_copy):
+        (ewk_back_forward_list_n_forward_items_copy):
+        * UIProcess/API/efl/ewk_back_forward_list_item.cpp:
+        (Ewk_Back_Forward_List_Item::Ewk_Back_Forward_List_Item):
+        (Ewk_Back_Forward_List_Item::url):
+        (Ewk_Back_Forward_List_Item::title):
+        (Ewk_Back_Forward_List_Item::originalURL):
+        (ewk_back_forward_list_item_url_get):
+        (ewk_back_forward_list_item_title_get):
+        (ewk_back_forward_list_item_original_url_get):
+        * UIProcess/API/efl/ewk_back_forward_list_item_private.h:
+        (Ewk_Back_Forward_List_Item):
+        * UIProcess/API/efl/ewk_back_forward_list_private.h:
+        (Ewk_Back_Forward_List):
+        * UIProcess/API/efl/ewk_view_loader_client.cpp:
+        (didChangeBackForwardList):
+
+2012-10-21  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL][WK2] Make Ewk_Cookie_Manager members private
         https://bugs.webkit.org/show_bug.cgi?id=99930
 

@@ -37,20 +37,22 @@
  */
 class Ewk_Back_Forward_List_Item : public RefCounted<Ewk_Back_Forward_List_Item> {
 public:
-    WKRetainPtr<WKBackForwardListItemRef> wkItem;
-    mutable WKEinaSharedString url;
-    mutable WKEinaSharedString title;
-    mutable WKEinaSharedString originalURL;
-
     static PassRefPtr<Ewk_Back_Forward_List_Item> create(WKBackForwardListItemRef itemRef)
     {
         return adoptRef(new Ewk_Back_Forward_List_Item(itemRef));
     }
 
+    const char* url() const;
+    const char* title() const;
+    const char* originalURL() const;
+
 private:
-    explicit Ewk_Back_Forward_List_Item(WKBackForwardListItemRef itemRef)
-        : wkItem(itemRef)
-    { }
+    explicit Ewk_Back_Forward_List_Item(WKBackForwardListItemRef itemRef);
+
+    WKRetainPtr<WKBackForwardListItemRef> m_wkItem;
+    mutable WKEinaSharedString m_url;
+    mutable WKEinaSharedString m_title;
+    mutable WKEinaSharedString m_originalURL;
 };
 
 #endif // ewk_back_forward_list_private_h

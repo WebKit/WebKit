@@ -32,16 +32,30 @@
 
 using namespace WebKit;
 
-#define EWK_BACK_FORWARD_LIST_ITEM_WK_GET_OR_RETURN(item, wkItem_, ...)    \
-    if (!(item)) {                                                         \
-        EINA_LOG_CRIT("item is NULL.");                                    \
-        return __VA_ARGS__;                                                \
-    }                                                                      \
-    if (!(item)->wkItem) {                                                 \
-        EINA_LOG_CRIT("item->wkItem is NULL.");                            \
-        return __VA_ARGS__;                                                \
-    }                                                                      \
-    WKBackForwardListItemRef wkItem_ = (item)->wkItem.get()
+Ewk_Back_Forward_List_Item::Ewk_Back_Forward_List_Item(WKBackForwardListItemRef itemRef)
+    : m_wkItem(itemRef)
+{ }
+
+const char* Ewk_Back_Forward_List_Item::url() const
+{
+    m_url = WKEinaSharedString(AdoptWK, WKBackForwardListItemCopyURL(m_wkItem.get()));
+
+    return m_url;
+}
+
+const char* Ewk_Back_Forward_List_Item::title() const
+{
+    m_title = WKEinaSharedString(AdoptWK, WKBackForwardListItemCopyTitle(m_wkItem.get()));
+
+    return m_title;
+}
+
+const char* Ewk_Back_Forward_List_Item::originalURL() const
+{
+    m_originalURL = WKEinaSharedString(AdoptWK, WKBackForwardListItemCopyOriginalURL(m_wkItem.get()));
+
+    return m_originalURL;
+}
 
 Ewk_Back_Forward_List_Item* ewk_back_forward_list_item_ref(Ewk_Back_Forward_List_Item* item)
 {
@@ -60,27 +74,21 @@ void ewk_back_forward_list_item_unref(Ewk_Back_Forward_List_Item* item)
 
 const char* ewk_back_forward_list_item_url_get(const Ewk_Back_Forward_List_Item* item)
 {
-    EWK_BACK_FORWARD_LIST_ITEM_WK_GET_OR_RETURN(item, wkItem, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(item, 0);
 
-    item->url = WKEinaSharedString(AdoptWK, WKBackForwardListItemCopyURL(wkItem));
-
-    return item->url;
+    return item->url();
 }
 
 const char* ewk_back_forward_list_item_title_get(const Ewk_Back_Forward_List_Item* item)
 {
-    EWK_BACK_FORWARD_LIST_ITEM_WK_GET_OR_RETURN(item, wkItem, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(item, 0);
 
-    item->title = WKEinaSharedString(AdoptWK, WKBackForwardListItemCopyTitle(wkItem));
-
-    return item->title;
+    return item->title();
 }
 
 const char* ewk_back_forward_list_item_original_url_get(const Ewk_Back_Forward_List_Item* item)
 {
-    EWK_BACK_FORWARD_LIST_ITEM_WK_GET_OR_RETURN(item, wkItem, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(item, 0);
 
-    item->originalURL = WKEinaSharedString(AdoptWK, WKBackForwardListItemCopyOriginalURL(wkItem));
-
-    return item->originalURL;
+    return item->originalURL();
 }
