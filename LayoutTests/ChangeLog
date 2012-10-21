@@ -1,5 +1,84 @@
 2012-10-21  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, new Chromium ML baselines for fast/canvas.
+
+        * fast/canvas/canvas-incremental-repaint-expected.png: Renamed from LayoutTests/platform/efl/fast/canvas/canvas-incremental-repaint-expected.png.
+        * fast/canvas/canvas-size-change-after-layout-expected.png: Renamed from LayoutTests/platform/mac/fast/canvas/canvas-size-change-after-layout-expected.png.
+        * fast/canvas/canvasDrawingIntoSelf-expected.png: Renamed from LayoutTests/platform/mac/fast/canvas/canvasDrawingIntoSelf-expected.png.
+        * fast/canvas/drawImage-expected.png: Renamed from LayoutTests/platform/mac/fast/canvas/drawImage-expected.png.
+        * fast/canvas/shadow-offset-1-expected.png: Renamed from LayoutTests/platform/mac/fast/canvas/shadow-offset-1-expected.png.
+        * fast/canvas/shadow-offset-2-expected.png: Renamed from LayoutTests/platform/mac/fast/canvas/shadow-offset-2-expected.png.
+        * fast/canvas/shadow-offset-3-expected.png: Renamed from LayoutTests/platform/mac/fast/canvas/shadow-offset-3-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/arc360-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/arc360-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/canvas-before-css-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/canvas-before-css-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/canvas-bg-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/canvas-bg-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/canvas-composite-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/canvas-composite-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/canvas-incremental-repaint-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/canvas-incremental-repaint-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/canvas-resize-reset-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/canvas-resize-reset-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/canvas-size-change-after-layout-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/canvas-size-change-after-layout-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/canvas-text-alignment-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/canvas-text-alignment-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/canvas-text-baseline-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/canvas-text-baseline-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/canvas-transforms-during-path-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/canvas-transforms-during-path-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/canvas-zoom-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/canvas-zoom-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/canvasDrawingIntoSelf-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/canvasDrawingIntoSelf-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/check-stale-putImageData-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/check-stale-putImageData-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/drawImage-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/drawImage-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/drawImage-with-globalAlpha-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/drawImage-with-globalAlpha-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/fill-stroke-clip-reset-path-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/fill-stroke-clip-reset-path-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/fillrect-gradient-zero-stops-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/fillrect-gradient-zero-stops-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/fillrect_gradient-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/fillrect_gradient-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/image-object-in-canvas-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/image-object-in-canvas-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/image-pattern-rotate-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/image-pattern-rotate-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/patternfill-repeat-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/patternfill-repeat-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/quadraticCurveTo-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/quadraticCurveTo-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/setWidthResetAfterForcedRender-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/setWidthResetAfterForcedRender-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/shadow-offset-1-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/shadow-offset-1-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/shadow-offset-2-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/shadow-offset-2-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/shadow-offset-3-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/shadow-offset-3-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/shadow-offset-4-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/shadow-offset-4-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/shadow-offset-5-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/shadow-offset-5-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/shadow-offset-6-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/shadow-offset-6-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/shadow-offset-7-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/shadow-offset-7-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/toDataURL-alpha-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/toDataURL-alpha-expected.png.
+        * platform/chromium-mac-lion/fast/canvas/zero-size-fill-rect-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/zero-size-fill-rect-expected.png.
+        * platform/chromium-mac-mountainlion/TestExpectations:
+        * platform/chromium-mac/fast/canvas/arc360-expected.png:
+        * platform/chromium-mac/fast/canvas/canvas-before-css-expected.png:
+        * platform/chromium-mac/fast/canvas/canvas-bg-expected.png:
+        * platform/chromium-mac/fast/canvas/canvas-composite-expected.png:
+        * platform/chromium-mac/fast/canvas/canvas-incremental-repaint-expected.png:
+        * platform/chromium-mac/fast/canvas/canvas-resize-reset-expected.png:
+        * platform/chromium-mac/fast/canvas/canvas-size-change-after-layout-expected.png:
+        * platform/chromium-mac/fast/canvas/canvas-text-alignment-expected.png:
+        * platform/chromium-mac/fast/canvas/canvas-text-baseline-expected.png:
+        * platform/chromium-mac/fast/canvas/canvas-transforms-during-path-expected.png:
+        * platform/chromium-mac/fast/canvas/canvas-zoom-expected.png:
+        * platform/chromium-mac/fast/canvas/canvasDrawingIntoSelf-expected.png:
+        * platform/chromium-mac/fast/canvas/check-stale-putImageData-expected.png:
+        * platform/chromium-mac/fast/canvas/drawImage-expected.png:
+        * platform/chromium-mac/fast/canvas/drawImage-with-globalAlpha-expected.png:
+        * platform/chromium-mac/fast/canvas/fill-stroke-clip-reset-path-expected.png:
+        * platform/chromium-mac/fast/canvas/fillrect-gradient-zero-stops-expected.png:
+        * platform/chromium-mac/fast/canvas/fillrect_gradient-expected.png:
+        * platform/chromium-mac/fast/canvas/image-object-in-canvas-expected.png:
+        * platform/chromium-mac/fast/canvas/image-pattern-rotate-expected.png:
+        * platform/chromium-mac/fast/canvas/patternfill-repeat-expected.png:
+        * platform/chromium-mac/fast/canvas/quadraticCurveTo-expected.png:
+        * platform/chromium-mac/fast/canvas/setWidthResetAfterForcedRender-expected.png:
+        * platform/chromium-mac/fast/canvas/shadow-offset-1-expected.png:
+        * platform/chromium-mac/fast/canvas/shadow-offset-2-expected.png:
+        * platform/chromium-mac/fast/canvas/shadow-offset-3-expected.png:
+        * platform/chromium-mac/fast/canvas/shadow-offset-4-expected.png:
+        * platform/chromium-mac/fast/canvas/shadow-offset-5-expected.png:
+        * platform/chromium-mac/fast/canvas/shadow-offset-6-expected.png:
+        * platform/chromium-mac/fast/canvas/shadow-offset-7-expected.png:
+        * platform/chromium-mac/fast/canvas/toDataURL-alpha-expected.png:
+        * platform/chromium-mac/fast/canvas/zero-size-fill-rect-expected.png:
+        * platform/chromium/TestExpectations:
+        * platform/gtk/fast/canvas/canvas-incremental-repaint-expected.png: Removed.
+
+2012-10-21  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, expectations update for Chromium.
 
         * platform/chromium-mac-mountainlion/TestExpectations:
