@@ -71,17 +71,28 @@ typedef HashMap<String /* pageURL */, PendingIconRequestVector> PendingIconReque
 
 class Ewk_Favicon_Database {
 public:
-    WKRetainPtr<WKIconDatabaseRef> wkIconDatabase;
-    ChangeListenerMap changeListeners;
-    PendingIconRequestMap iconRequests;
-
     static PassOwnPtr<Ewk_Favicon_Database> create(WKIconDatabaseRef iconDatabaseRef)
     {
         return adoptPtr(new Ewk_Favicon_Database(iconDatabaseRef));
     }
 
+    String iconURLForPageURL(const String& pageURL) const;
+    void iconForPageURL(const String& pageURL, const IconRequestCallbackData& callbackData);
+
+    void watchChanges(const IconChangeCallbackData& callbackData);
+    void unwatchChanges(Ewk_Favicon_Database_Icon_Change_Cb callback);
+
 private:
     explicit Ewk_Favicon_Database(WKIconDatabaseRef iconDatabaseRef);
+
+    PassRefPtr<cairo_surface_t> getIconSurfaceSynchronously(const String& pageURL) const;
+
+    static void didChangeIconForPageURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL, const void* clientInfo);
+    static void iconDataReadyForPageURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL, const void* clientInfo);
+
+    WKRetainPtr<WKIconDatabaseRef> m_wkIconDatabase;
+    ChangeListenerMap m_changeListeners;
+    PendingIconRequestMap m_iconRequests;
 };
 
 #endif // ewk_favicon_database_private_h

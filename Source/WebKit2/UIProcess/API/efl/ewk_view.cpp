@@ -41,6 +41,7 @@
 #include "ewk_back_forward_list_private.h"
 #include "ewk_context.h"
 #include "ewk_context_private.h"
+#include "ewk_favicon_database_private.h"
 #include "ewk_intent_private.h"
 #include "ewk_popup_menu_item.h"
 #include "ewk_popup_menu_item_private.h"
@@ -171,7 +172,7 @@ struct Ewk_View_Private_Data {
     {
         /* Unregister icon change callback */
         Ewk_Favicon_Database* iconDatabase = ewk_context_favicon_database_get(context);
-        ewk_favicon_database_icon_change_callback_del(iconDatabase, _ewk_view_on_favicon_changed);
+        iconDatabase->unwatchChanges(_ewk_view_on_favicon_changed);
 
         void* item;
         EINA_LIST_FREE(popupMenuItems, item)
@@ -841,7 +842,7 @@ static void _ewk_view_initialize(Evas_Object* ewkView, Ewk_Context* context, WKP
 
     /* Listen for favicon changes */
     Ewk_Favicon_Database* iconDatabase = ewk_context_favicon_database_get(priv->context);
-    ewk_favicon_database_icon_change_callback_add(iconDatabase, _ewk_view_on_favicon_changed, ewkView);
+    iconDatabase->watchChanges(IconChangeCallbackData(_ewk_view_on_favicon_changed, ewkView));
 }
 
 static Evas_Object* _ewk_view_add_with_smart(Evas* canvas, Evas_Smart* smart)
