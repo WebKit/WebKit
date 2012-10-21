@@ -324,6 +324,7 @@ IF (ENABLE_LLINT)
         offlineasm/opt.rb
         offlineasm/parser.rb
         offlineasm/registers.rb
+        offlineasm/risc.rb
         offlineasm/self_hash.rb
         offlineasm/settings.rb
         offlineasm/transform.rb

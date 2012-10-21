@@ -4,6 +4,18 @@
 
         * GNUmakefile.list.am: Add missing files to the source list.
 
+2012-10-21  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [CMake][JSC] Depend on risc.rb to decide when to run the LLInt scripts.
+        https://bugs.webkit.org/show_bug.cgi?id=99917
+
+        Reviewed by Geoffrey Garen.
+
+        Depend on the newly-added risc.rb to make sure we always run the
+        LLInt scripts when one of them changes.
+
+        * CMakeLists.txt:
+
 2012-10-20  Filip Pizlo  <fpizlo@apple.com>
 
         LLInt backends of non-ARM RISC platforms should be able to share code with the existing ARMv7 backend
