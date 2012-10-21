@@ -1,3 +1,11 @@
+2012-10-21  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, chromium expectations update to remove passing tests.
+
+
+        * platform/chromium-mac-mountainlion/TestExpectations:
+        * platform/chromium/TestExpectations:
+
 2012-10-08  Robert Hogan  <robert@webkit.org>
 
         In some float situations, the original layout is wrong and only corrects itself on repaint
