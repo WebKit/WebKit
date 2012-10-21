@@ -1,5 +1,247 @@
 2012-10-21  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, update Chromium ML baselines for LayoutTests/css1 and optimize.
+
+        * css1/formatting_model/floating_elements-expected.png: Renamed from LayoutTests/platform/efl/css1/formatting_model/floating_elements-expected.png.
+        * platform/chromium-linux-x86/css1/basic/class_as_selector-expected.png: Removed.
+        * platform/chromium-linux-x86/css1/basic/id_as_selector-expected.png: Removed.
+        * platform/chromium-linux-x86/css1/box_properties/border_bottom-expected.png: Removed.
+        * platform/chromium-linux-x86/css1/box_properties/margin_left-expected.png: Removed.
+        * platform/chromium-linux-x86/css1/box_properties/padding_right-expected.png: Removed.
+        * platform/chromium-linux-x86/css1/pseudo/anchor-expected.png: Removed.
+        * platform/chromium-mac-lion/css1/basic/class_as_selector-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/basic/class_as_selector-expected.png.
+        * platform/chromium-mac-lion/css1/basic/comments-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/basic/comments-expected.png.
+        * platform/chromium-mac-lion/css1/basic/containment-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/basic/containment-expected.png.
+        * platform/chromium-mac-lion/css1/basic/contextual_selectors-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/basic/contextual_selectors-expected.png.
+        * platform/chromium-mac-lion/css1/basic/grouping-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/basic/grouping-expected.png.
+        * platform/chromium-mac-lion/css1/basic/id_as_selector-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/basic/id_as_selector-expected.png.
+        * platform/chromium-mac-lion/css1/basic/inheritance-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/basic/inheritance-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/acid_test-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/acid_test-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/border-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/border-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/border_bottom-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/border_bottom-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/border_bottom_inline-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/border_bottom_inline-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/border_bottom_width-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/border_bottom_width-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/border_bottom_width_inline-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/border_bottom_width_inline-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/border_color-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/border_color-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/border_color_inline-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/border_color_inline-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/border_inline-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/border_inline-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/border_left-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/border_left-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/border_left_inline-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/border_left_inline-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/border_left_width-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/border_left_width-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/border_left_width_inline-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/border_left_width_inline-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/border_right-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/border_right-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/border_right_inline-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/border_right_inline-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/border_right_width-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/border_right_width-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/border_right_width_inline-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/border_right_width_inline-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/border_style-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/border_style-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/border_style_inline-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/border_style_inline-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/border_top-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/border_top-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/border_top_inline-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/border_top_inline-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/border_top_width-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/border_top_width-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/border_top_width_inline-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/border_top_width_inline-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/border_width-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/border_width-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/border_width_inline-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/border_width_inline-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/clear-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/clear-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/clear_float-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/clear_float-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/float-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/float-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/float_elements_in_series-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/float_elements_in_series-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/float_margin-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/float_margin-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/float_on_text_elements-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/float_on_text_elements-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/height-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/height-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/margin-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/margin-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/margin_bottom-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/margin_bottom-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/margin_bottom_inline-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/margin_bottom_inline-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/margin_inline-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/margin_inline-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/margin_left-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/margin_left-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/margin_left_inline-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/margin_left_inline-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/margin_right-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/margin_right-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/margin_right_inline-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/margin_right_inline-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/margin_top-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/margin_top-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/margin_top_inline-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/margin_top_inline-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/padding-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/padding-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/padding_bottom-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/padding_bottom-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/padding_bottom_inline-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/padding_bottom_inline-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/padding_inline-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/padding_inline-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/padding_left-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/padding_left-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/padding_left_inline-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/padding_left_inline-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/padding_right-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/padding_right-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/padding_right_inline-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/padding_right_inline-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/padding_top-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/padding_top-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/padding_top_inline-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/padding_top_inline-expected.png.
+        * platform/chromium-mac-lion/css1/box_properties/width-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/box_properties/width-expected.png.
+        * platform/chromium-mac-lion/css1/cascade/cascade_order-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/cascade/cascade_order-expected.png.
+        * platform/chromium-mac-lion/css1/cascade/important-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/cascade/important-expected.png.
+        * platform/chromium-mac-lion/css1/classification/display-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/classification/display-expected.png.
+        * platform/chromium-mac-lion/css1/classification/list_style-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/classification/list_style-expected.png.
+        * platform/chromium-mac-lion/css1/classification/list_style_image-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/classification/list_style_image-expected.png.
+        * platform/chromium-mac-lion/css1/classification/list_style_position-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/classification/list_style_position-expected.png.
+        * platform/chromium-mac-lion/css1/classification/list_style_type-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/classification/list_style_type-expected.png.
+        * platform/chromium-mac-lion/css1/classification/white_space-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/classification/white_space-expected.png.
+        * platform/chromium-mac-lion/css1/color_and_background/background-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/color_and_background/background-expected.png.
+        * platform/chromium-mac-lion/css1/color_and_background/background_attachment-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/color_and_background/background_attachment-expected.png.
+        * platform/chromium-mac-lion/css1/color_and_background/background_color-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/color_and_background/background_color-expected.png.
+        * platform/chromium-mac-lion/css1/color_and_background/background_image-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/color_and_background/background_image-expected.png.
+        * platform/chromium-mac-lion/css1/color_and_background/background_position-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/color_and_background/background_position-expected.png.
+        * platform/chromium-mac-lion/css1/color_and_background/background_repeat-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/color_and_background/background_repeat-expected.png.
+        * platform/chromium-mac-lion/css1/color_and_background/color-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/color_and_background/color-expected.png.
+        * platform/chromium-mac-lion/css1/conformance/forward_compatible_parsing-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/conformance/forward_compatible_parsing-expected.png.
+        * platform/chromium-mac-lion/css1/font_properties/font-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/font_properties/font-expected.png.
+        * platform/chromium-mac-lion/css1/font_properties/font_family-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/font_properties/font_family-expected.png.
+        * platform/chromium-mac-lion/css1/font_properties/font_size-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/font_properties/font_size-expected.png.
+        * platform/chromium-mac-lion/css1/font_properties/font_style-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/font_properties/font_style-expected.png.
+        * platform/chromium-mac-lion/css1/font_properties/font_variant-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/font_properties/font_variant-expected.png.
+        * platform/chromium-mac-lion/css1/font_properties/font_weight-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/font_properties/font_weight-expected.png.
+        * platform/chromium-mac-lion/css1/formatting_model/canvas-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/formatting_model/canvas-expected.png.
+        * platform/chromium-mac-lion/css1/formatting_model/floating_elements-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/formatting_model/floating_elements-expected.png.
+        * platform/chromium-mac-lion/css1/formatting_model/height_of_lines-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/formatting_model/height_of_lines-expected.png.
+        * platform/chromium-mac-lion/css1/formatting_model/horizontal_formatting-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/formatting_model/horizontal_formatting-expected.png.
+        * platform/chromium-mac-lion/css1/formatting_model/inline_elements-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/formatting_model/inline_elements-expected.png.
+        * platform/chromium-mac-lion/css1/formatting_model/replaced_elements-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/formatting_model/replaced_elements-expected.png.
+        * platform/chromium-mac-lion/css1/formatting_model/vertical_formatting-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/formatting_model/vertical_formatting-expected.png.
+        * platform/chromium-mac-lion/css1/pseudo/anchor-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/pseudo/anchor-expected.png.
+        * platform/chromium-mac-lion/css1/pseudo/firstletter-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/pseudo/firstletter-expected.png.
+        * platform/chromium-mac-lion/css1/pseudo/firstline-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/pseudo/firstline-expected.png.
+        * platform/chromium-mac-lion/css1/pseudo/multiple_pseudo_elements-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/pseudo/multiple_pseudo_elements-expected.png.
+        * platform/chromium-mac-lion/css1/pseudo/pseudo_elements_in_selectors-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/pseudo/pseudo_elements_in_selectors-expected.png.
+        * platform/chromium-mac-lion/css1/text_properties/letter_spacing-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/text_properties/letter_spacing-expected.png.
+        * platform/chromium-mac-lion/css1/text_properties/line_height-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/text_properties/line_height-expected.png.
+        * platform/chromium-mac-lion/css1/text_properties/text_align-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/text_properties/text_align-expected.png.
+        * platform/chromium-mac-lion/css1/text_properties/text_decoration-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/text_properties/text_decoration-expected.png.
+        * platform/chromium-mac-lion/css1/text_properties/text_indent-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/text_properties/text_indent-expected.png.
+        * platform/chromium-mac-lion/css1/text_properties/text_transform-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/text_properties/text_transform-expected.png.
+        * platform/chromium-mac-lion/css1/text_properties/vertical_align-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/text_properties/vertical_align-expected.png.
+        * platform/chromium-mac-lion/css1/text_properties/word_spacing-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/text_properties/word_spacing-expected.png.
+        * platform/chromium-mac-lion/css1/units/color_units-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/units/color_units-expected.png.
+        * platform/chromium-mac-lion/css1/units/length_units-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/units/length_units-expected.png.
+        * platform/chromium-mac-lion/css1/units/percentage_units-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/units/percentage_units-expected.png.
+        * platform/chromium-mac-lion/css1/units/urls-expected.png: Copied from LayoutTests/platform/chromium-mac/css1/units/urls-expected.png.
+        * platform/chromium-mac-mountainlion/TestExpectations:
+        * platform/chromium-mac/css1/basic/class_as_selector-expected.png:
+        * platform/chromium-mac/css1/basic/comments-expected.png:
+        * platform/chromium-mac/css1/basic/containment-expected.png:
+        * platform/chromium-mac/css1/basic/contextual_selectors-expected.png:
+        * platform/chromium-mac/css1/basic/grouping-expected.png:
+        * platform/chromium-mac/css1/basic/id_as_selector-expected.png:
+        * platform/chromium-mac/css1/basic/inheritance-expected.png:
+        * platform/chromium-mac/css1/box_properties/acid_test-expected.png:
+        * platform/chromium-mac/css1/box_properties/border-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_bottom-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_bottom_inline-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_bottom_width-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_bottom_width_inline-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_color-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_color_inline-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_inline-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_left-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_left_inline-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_left_width-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_left_width_inline-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_right-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_right_inline-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_right_width-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_right_width_inline-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_style-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_style_inline-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_top-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_top_inline-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_top_width-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_top_width_inline-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_width-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_width_inline-expected.png:
+        * platform/chromium-mac/css1/box_properties/clear-expected.png:
+        * platform/chromium-mac/css1/box_properties/clear_float-expected.png:
+        * platform/chromium-mac/css1/box_properties/float-expected.png:
+        * platform/chromium-mac/css1/box_properties/float_elements_in_series-expected.png:
+        * platform/chromium-mac/css1/box_properties/float_margin-expected.png:
+        * platform/chromium-mac/css1/box_properties/float_on_text_elements-expected.png:
+        * platform/chromium-mac/css1/box_properties/height-expected.png:
+        * platform/chromium-mac/css1/box_properties/margin-expected.png:
+        * platform/chromium-mac/css1/box_properties/margin_bottom-expected.png:
+        * platform/chromium-mac/css1/box_properties/margin_bottom_inline-expected.png:
+        * platform/chromium-mac/css1/box_properties/margin_inline-expected.png:
+        * platform/chromium-mac/css1/box_properties/margin_left-expected.png:
+        * platform/chromium-mac/css1/box_properties/margin_left_inline-expected.png:
+        * platform/chromium-mac/css1/box_properties/margin_right-expected.png:
+        * platform/chromium-mac/css1/box_properties/margin_right_inline-expected.png:
+        * platform/chromium-mac/css1/box_properties/margin_top-expected.png:
+        * platform/chromium-mac/css1/box_properties/margin_top_inline-expected.png:
+        * platform/chromium-mac/css1/box_properties/padding-expected.png:
+        * platform/chromium-mac/css1/box_properties/padding_bottom-expected.png:
+        * platform/chromium-mac/css1/box_properties/padding_bottom_inline-expected.png:
+        * platform/chromium-mac/css1/box_properties/padding_inline-expected.png:
+        * platform/chromium-mac/css1/box_properties/padding_left-expected.png:
+        * platform/chromium-mac/css1/box_properties/padding_left_inline-expected.png:
+        * platform/chromium-mac/css1/box_properties/padding_right-expected.png:
+        * platform/chromium-mac/css1/box_properties/padding_right_inline-expected.png:
+        * platform/chromium-mac/css1/box_properties/padding_top-expected.png:
+        * platform/chromium-mac/css1/box_properties/padding_top_inline-expected.png:
+        * platform/chromium-mac/css1/box_properties/width-expected.png:
+        * platform/chromium-mac/css1/cascade/cascade_order-expected.png:
+        * platform/chromium-mac/css1/cascade/important-expected.png:
+        * platform/chromium-mac/css1/classification/display-expected.png:
+        * platform/chromium-mac/css1/classification/list_style-expected.png:
+        * platform/chromium-mac/css1/classification/list_style_image-expected.png:
+        * platform/chromium-mac/css1/classification/list_style_position-expected.png:
+        * platform/chromium-mac/css1/classification/list_style_type-expected.png:
+        * platform/chromium-mac/css1/classification/white_space-expected.png:
+        * platform/chromium-mac/css1/color_and_background/background-expected.png:
+        * platform/chromium-mac/css1/color_and_background/background_attachment-expected.png:
+        * platform/chromium-mac/css1/color_and_background/background_color-expected.png:
+        * platform/chromium-mac/css1/color_and_background/background_image-expected.png:
+        * platform/chromium-mac/css1/color_and_background/background_position-expected.png:
+        * platform/chromium-mac/css1/color_and_background/background_repeat-expected.png:
+        * platform/chromium-mac/css1/color_and_background/color-expected.png:
+        * platform/chromium-mac/css1/conformance/forward_compatible_parsing-expected.png:
+        * platform/chromium-mac/css1/font_properties/font-expected.png:
+        * platform/chromium-mac/css1/font_properties/font_family-expected.png:
+        * platform/chromium-mac/css1/font_properties/font_size-expected.png:
+        * platform/chromium-mac/css1/font_properties/font_style-expected.png:
+        * platform/chromium-mac/css1/font_properties/font_variant-expected.png:
+        * platform/chromium-mac/css1/font_properties/font_weight-expected.png:
+        * platform/chromium-mac/css1/formatting_model/canvas-expected.png:
+        * platform/chromium-mac/css1/formatting_model/floating_elements-expected.png:
+        * platform/chromium-mac/css1/formatting_model/height_of_lines-expected.png:
+        * platform/chromium-mac/css1/formatting_model/horizontal_formatting-expected.png:
+        * platform/chromium-mac/css1/formatting_model/inline_elements-expected.png:
+        * platform/chromium-mac/css1/formatting_model/replaced_elements-expected.png:
+        * platform/chromium-mac/css1/formatting_model/vertical_formatting-expected.png:
+        * platform/chromium-mac/css1/pseudo/anchor-expected.png:
+        * platform/chromium-mac/css1/pseudo/firstletter-expected.png:
+        * platform/chromium-mac/css1/pseudo/firstline-expected.png:
+        * platform/chromium-mac/css1/pseudo/multiple_pseudo_elements-expected.png:
+        * platform/chromium-mac/css1/pseudo/pseudo_elements_in_selectors-expected.png:
+        * platform/chromium-mac/css1/text_properties/letter_spacing-expected.png:
+        * platform/chromium-mac/css1/text_properties/line_height-expected.png:
+        * platform/chromium-mac/css1/text_properties/text_align-expected.png:
+        * platform/chromium-mac/css1/text_properties/text_decoration-expected.png:
+        * platform/chromium-mac/css1/text_properties/text_indent-expected.png:
+        * platform/chromium-mac/css1/text_properties/text_transform-expected.png:
+        * platform/chromium-mac/css1/text_properties/vertical_align-expected.png:
+        * platform/chromium-mac/css1/text_properties/word_spacing-expected.png:
+        * platform/chromium-mac/css1/units/color_units-expected.png:
+        * platform/chromium-mac/css1/units/length_units-expected.png:
+        * platform/chromium-mac/css1/units/percentage_units-expected.png:
+        * platform/chromium-mac/css1/units/urls-expected.png:
+        * platform/chromium-win-xp/css1/basic/class_as_selector-expected.png: Removed.
+        * platform/chromium-win-xp/css1/basic/containment-expected.png: Removed.
+        * platform/chromium-win-xp/css1/basic/id_as_selector-expected.png: Removed.
+        * platform/chromium-win-xp/css1/box_properties/border_bottom-expected.png: Removed.
+        * platform/chromium-win-xp/css1/box_properties/border_left-expected.png: Removed.
+        * platform/chromium-win-xp/css1/box_properties/border_right_inline-expected.png: Removed.
+        * platform/chromium-win-xp/css1/box_properties/border_top-expected.png: Removed.
+        * platform/chromium-win-xp/css1/box_properties/clear_float-expected.png: Removed.
+        * platform/chromium-win-xp/css1/box_properties/margin_left-expected.png: Removed.
+        * platform/chromium-win-xp/css1/box_properties/margin_right-expected.png: Removed.
+        * platform/chromium-win-xp/css1/box_properties/padding_left-expected.png: Removed.
+        * platform/chromium-win-xp/css1/box_properties/padding_right-expected.png: Removed.
+        * platform/chromium-win-xp/css1/cascade/cascade_order-expected.png: Removed.
+        * platform/chromium-win-xp/css1/classification/list_style_type-expected.png: Removed.
+        * platform/chromium-win-xp/css1/formatting_model/floating_elements-expected.png: Removed.
+        * platform/chromium-win-xp/css1/pseudo/anchor-expected.png: Removed.
+        * platform/gtk/css1/formatting_model/floating_elements-expected.png: Removed.
+
+2012-10-21  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, chromium expectations update to remove passing tests.
 
 
