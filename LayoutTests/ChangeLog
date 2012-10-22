@@ -1,3 +1,14 @@
+2012-10-22  Keishi Hattori  <keishi@webkit.org>
+
+        Test date-suggestion-picker-reset-value-after-reload.html will timeout when running with other tests
+        https://bugs.webkit.org/show_bug.cgi?id=99969
+
+        Reviewed by Kent Tamura.
+
+        When running with other tests the iframe onload event seems to fire before the script tag is parsed.
+
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-reset-value-after-reload.html:
+
 2012-10-22  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Handle GET of blob URLs.

@@ -6,19 +6,16 @@
 <script src="resources/suggestion-picker-common.js"></script>
 </head>
 <body>
-<iframe id=iframe srcdoc="<input type=date id=test1 list=suggestions><input type=date id=test2 value=2002-02-02 list=suggestions><datalist id=suggestions><option>2012-01-01</option></datalist>"></iframe>
 <script>
 description('Checks reloading page resets input values');
 
-var iframe = document.getElementById('iframe');
+var iframe;
 var testInput1;
 var testInput2;
 
-iframe.onload = function() {
-    openPicker(iframe.contentDocument.getElementById('test1'), runOnOpenPopup1);
-};
-
 function runOnOpenPopup1() {
+    iframe = document.getElementById('iframe');
+
     popupWindow.focus();
 
     shouldBeNull('highlightedEntry()');
@@ -55,6 +52,7 @@ function runOnIFrameLoad()
     finishJSTest();
 }
 </script>
+<iframe id=iframe onload="openPicker(event.target.contentDocument.getElementById('test1'), runOnOpenPopup1);" srcdoc="<input type=date id=test1 list=suggestions><input type=date id=test2 value=2002-02-02 list=suggestions><datalist id=suggestions><option>2012-01-01</option></datalist>"></iframe>
 <script src="../../../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
