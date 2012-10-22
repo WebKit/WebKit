@@ -1,3 +1,9 @@
+2012-10-22  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Fix compilation after r132059.
+
+        * TestWebKitAPI/Tests/WTF/MemoryInstrumentationTest.cpp:
+
 2012-10-22  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         Adding Cairo and Harfbuzz watchlist entries

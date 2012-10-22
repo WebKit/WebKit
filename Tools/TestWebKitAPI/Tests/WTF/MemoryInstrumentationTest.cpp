@@ -747,9 +747,10 @@ TEST(MemoryInstrumentationTest, instrumentedWithMultipleAncestors)
 {
     InstrumentationTestHelper helper;
     OwnPtr<ClassWithTwoAncestors> instance = adoptPtr(new ClassWithTwoAncestors());
-    InstrumentedOwner<ClassWithTwoAncestors*> descendantPointerOwner(instance.get());
-    Instrumented* ancestorPointer = instance.get();
-    InstrumentedOwner<Instrumented*> ancestorPointerOwner(ancestorPointerOwner);
+    ClassWithTwoAncestors* descendantPointer = instance.get();
+    InstrumentedOwner<ClassWithTwoAncestors*> descendantPointerOwner(descendantPointer);
+    Instrumented* ancestorPointer = descendantPointer;
+    InstrumentedOwner<Instrumented*> ancestorPointerOwner(ancestorPointer);
     helper.addRootObject(descendantPointerOwner);
     helper.addRootObject(ancestorPointerOwner);
     EXPECT_EQ(sizeof(ClassWithTwoAncestors), helper.reportedSizeForAllTypes());
