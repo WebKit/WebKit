@@ -2422,7 +2422,6 @@ __ZN12PluginWidgetD0Ev
 -[WebView estimatedProgress]
 +[WebView canShowMIMEType:]
 -[WebFrame(WebPrivate) _loadType]
--[WebView(WebPrivate) _setJavaScriptURLsAreAllowed:]
 -[WebView(WebPendingPublic) addVisitedLinks:]
 -[WebHistoryItem(WebPrivate) _transientPropertyForKey:]
 -[WebElementDictionary _targetWebFrame]

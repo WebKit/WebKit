@@ -1,3 +1,27 @@
+2012-10-21  Andreas Kling  <kling@webkit.org>
+
+        Remove Page::javaScriptURLsAreAllowed setting.
+        <http://webkit.org/b/99944>
+
+        Reviewed by Anders Carlsson.
+
+        This setting was exposed through internal WebView API in Apple's WebKit1.
+        There are no longer any clients of that API.
+
+        This is a step towards preventing elements from modifying their own attributes
+        below attributeChanged().
+
+        * WebCore.exp.in:
+        * WebCore.order:
+        * bindings/ScriptControllerBase.cpp:
+        (WebCore::ScriptController::executeIfJavaScriptURL):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseAttribute):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (Page):
+
 2012-10-21  Hyungchan Kim  <hyungchan2.kim@lge.com>
 
         Add a separate flag for rgb swizzling whether it can be modified or not

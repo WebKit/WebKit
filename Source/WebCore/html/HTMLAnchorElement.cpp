@@ -35,7 +35,6 @@
 #include "HTMLParserIdioms.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
-#include "Page.h"
 #include "PingLoader.h"
 #include "RenderImage.h"
 #include "SecurityOrigin.h"
@@ -226,12 +225,6 @@ void HTMLAnchorElement::parseAttribute(const Attribute& attribute)
             if (document()->isDNSPrefetchEnabled()) {
                 if (protocolIs(parsedURL, "http") || protocolIs(parsedURL, "https") || parsedURL.startsWith("//"))
                     prefetchDNS(document()->completeURL(parsedURL).host());
-            }
-            if (document()->page() && !document()->page()->javaScriptURLsAreAllowed() && protocolIsJavaScript(parsedURL)) {
-                clearIsLink();
-                // FIXME: This is horribly factored.
-                if (Attribute* hrefAttribute = getAttributeItem(hrefAttr))
-                    hrefAttribute->setValue(nullAtom);
             }
         }
         invalidateCachedVisitedLinkHash();

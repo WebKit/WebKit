@@ -147,7 +147,6 @@ Page::Page(PageClients& pageClients)
     , m_pageScaleFactor(1)
     , m_deviceScaleFactor(1)
     , m_suppressScrollbarAnimations(false)
-    , m_javaScriptURLsAreAllowed(true)
     , m_didLoadUserStyleSheet(false)
     , m_userStyleSheetModificationTime(0)
     , m_group(0)
@@ -1000,16 +999,6 @@ void Page::setMemoryCacheClientCallsEnabled(bool enabled)
 
     for (RefPtr<Frame> frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
         frame->loader()->tellClientAboutPastMemoryCacheLoads();
-}
-
-void Page::setJavaScriptURLsAreAllowed(bool areAllowed)
-{
-    m_javaScriptURLsAreAllowed = areAllowed;
-}
-
-bool Page::javaScriptURLsAreAllowed() const
-{
-    return m_javaScriptURLsAreAllowed;
 }
 
 void Page::setMinimumTimerInterval(double minimumTimerInterval)

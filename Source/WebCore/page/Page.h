@@ -308,9 +308,6 @@ namespace WebCore {
         void setMemoryCacheClientCallsEnabled(bool);
         bool areMemoryCacheClientCallsEnabled() const { return m_areMemoryCacheClientCallsEnabled; }
 
-        void setJavaScriptURLsAreAllowed(bool);
-        bool javaScriptURLsAreAllowed() const;
-
         // Don't allow more than a certain number of frames in a page.
         // This seems like a reasonable upper bound, and otherwise mutually
         // recursive frameset pages can quickly bring the program to its knees
@@ -430,8 +427,6 @@ namespace WebCore {
         bool m_suppressScrollbarAnimations;
 
         Pagination m_pagination;
-
-        bool m_javaScriptURLsAreAllowed;
 
         String m_userStyleSheetPath;
         mutable String m_userStyleSheet;

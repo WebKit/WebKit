@@ -1,3 +1,16 @@
+2012-10-21  Andreas Kling  <kling@webkit.org>
+
+        Remove Page::javaScriptURLsAreAllowed setting.
+        <http://webkit.org/b/99944>
+
+        Reviewed by Anders Carlsson.
+
+        Have WebView::setJavaScriptURLsAreAllowed() do nothing and return E_NOTIMPL
+        to prevent COM ABI breakage.
+
+        * WebView.cpp:
+        (WebView::setJavaScriptURLsAreAllowed):
+
 2012-10-18  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Build fix after r131701 and r131777.

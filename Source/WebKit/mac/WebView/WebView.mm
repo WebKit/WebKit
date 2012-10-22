@@ -2474,11 +2474,6 @@ static inline IMP getMethod(id o, SEL s)
     return _private->page->areMemoryCacheClientCallsEnabled();
 }
 
-- (void)_setJavaScriptURLsAreAllowed:(BOOL)areAllowed
-{
-    _private->page->setJavaScriptURLsAreAllowed(areAllowed);
-}
-
 + (NSCursor *)_pointingHandCursor
 {
     return handCursor().platformCursor();

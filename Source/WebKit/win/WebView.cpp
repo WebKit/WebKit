@@ -6175,10 +6175,9 @@ HRESULT WebView::setMemoryCacheDelegateCallsEnabled(BOOL enabled)
     return S_OK;
 }
 
-HRESULT WebView::setJavaScriptURLsAreAllowed(BOOL areAllowed)
+HRESULT WebView::setJavaScriptURLsAreAllowed(BOOL)
 {
-    m_page->setJavaScriptURLsAreAllowed(areAllowed);
-    return S_OK;
+    return E_NOTIMPL;
 }
 
 HRESULT WebView::setCanStartPlugins(BOOL canStartPlugins)
