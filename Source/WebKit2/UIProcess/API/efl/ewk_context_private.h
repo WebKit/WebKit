@@ -20,95 +20,22 @@
 #ifndef ewk_context_private_h
 #define ewk_context_private_h
 
-#include "WKAPICast.h"
-#include "WKRetainPtr.h"
-#include "ewk_context_history_client_private.h"
+#include <WebKit2/WKBase.h>
 
-class Ewk_Download_Job;
-class Ewk_Url_Scheme_Request;
-class Ewk_Cookie_Manager;
-class Ewk_Favicon_Database;
-#if ENABLE(BATTERY_STATUS)
-class BatteryProvider;
-#endif
-#if ENABLE(NETWORK_INFO)
-class NetworkInfoProvider;
-#endif
-#if ENABLE(VIBRATION)
-class VibrationProvider;
-#endif
+typedef struct Ewk_Context Ewk_Context;
+typedef struct Ewk_Download_Job Ewk_Download_Job;
+typedef struct Ewk_Url_Scheme_Request Ewk_Url_Scheme_Request;
+typedef struct Ewk_Context_History_Client Ewk_Context_History_Client;
 
-class Ewk_Context : public RefCounted<Ewk_Context> {
-public:
-    static PassRefPtr<Ewk_Context> create(WKContextRef context)
-    {
-        return adoptRef(new Ewk_Context(context));
-    }
+WKContextRef ewk_context_WKContext_get(const Ewk_Context*);
+Ewk_Context* ewk_context_new_from_WKContext(WKContextRef);
+WKSoupRequestManagerRef ewk_context_request_manager_get(const Ewk_Context*);
+void ewk_context_url_scheme_request_received(Ewk_Context*, Ewk_Url_Scheme_Request*);
 
-    static PassRefPtr<Ewk_Context> create()
-    {
-        return adoptRef(new Ewk_Context(adoptWK(WKContextCreate()).get()));
-    }
+void ewk_context_download_job_add(Ewk_Context*, Ewk_Download_Job*);
+Ewk_Download_Job* ewk_context_download_job_get(const Ewk_Context*, uint64_t downloadId);
+void ewk_context_download_job_remove(Ewk_Context*, uint64_t downloadId);
 
-    static PassRefPtr<Ewk_Context> create(const String& injectedBundlePath);
-
-    static PassRefPtr<Ewk_Context> defaultContext();
-
-    ~Ewk_Context();
-
-    Ewk_Cookie_Manager* cookieManager();
-
-    Ewk_Favicon_Database* faviconDatabase();
-
-    bool registerURLScheme(const String& scheme, Ewk_Url_Scheme_Request_Cb callback, void* userData);
-
-#if ENABLE(VIBRATION)
-    PassRefPtr<VibrationProvider> vibrationProvider();
-#endif
-
-    void addVisitedLink(const String& visitedURL);
-
-    void setCacheModel(Ewk_Cache_Model);
-
-    Ewk_Cache_Model cacheModel() const;
-
-    WKContextRef wkContext();
-
-    WKSoupRequestManagerRef requestManager();
-
-    void urlSchemeRequestReceived(Ewk_Url_Scheme_Request*);
-
-    void addDownloadJob(Ewk_Download_Job*);
-    Ewk_Download_Job* downloadJob(uint64_t downloadId);
-    void removeDownloadJob(uint64_t downloadId);
-
-    const Ewk_Context_History_Client& historyClient() const  { return m_historyClient; }
-    Ewk_Context_History_Client& historyClient() { return m_historyClient; }
-
-private:
-    explicit Ewk_Context(WKContextRef);
-
-    WKRetainPtr<WKContextRef> m_context;
-
-    OwnPtr<Ewk_Cookie_Manager> m_cookieManager;
-    OwnPtr<Ewk_Favicon_Database> m_faviconDatabase;
-#if ENABLE(BATTERY_STATUS)
-    RefPtr<BatteryProvider> m_batteryProvider;
-#endif
-#if ENABLE(NETWORK_INFO)
-    RefPtr<NetworkInfoProvider> m_networkInfoProvider;
-#endif
-#if ENABLE(VIBRATION)
-    RefPtr<VibrationProvider> m_vibrationProvider;
-#endif
-    HashMap<uint64_t, RefPtr<Ewk_Download_Job> > m_downloadJobs;
-
-    WKRetainPtr<WKSoupRequestManagerRef> m_requestManager;
-
-    typedef HashMap<String, class Ewk_Url_Scheme_Handler> URLSchemeHandlerMap;
-    URLSchemeHandlerMap m_urlSchemeHandlers;
-
-    Ewk_Context_History_Client m_historyClient;
-};
+const Ewk_Context_History_Client* ewk_context_history_client_get(const Ewk_Context*);
 
 #endif // ewk_context_private_h

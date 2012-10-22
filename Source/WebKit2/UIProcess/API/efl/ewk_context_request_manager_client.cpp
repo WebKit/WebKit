@@ -41,7 +41,7 @@ static inline Ewk_Context* toEwkContext(const void* clientInfo)
 static void didReceiveURIRequest(WKSoupRequestManagerRef soupRequestManagerRef, WKURLRef urlRef, WKPageRef, uint64_t requestID, const void* clientInfo)
 {
     RefPtr<Ewk_Url_Scheme_Request> schemeRequest = Ewk_Url_Scheme_Request::create(soupRequestManagerRef, urlRef, requestID);
-    toEwkContext(clientInfo)->urlSchemeRequestReceived(schemeRequest.get());
+    ewk_context_url_scheme_request_received(toEwkContext(clientInfo), schemeRequest.get());
 }
 
 void ewk_context_request_manager_client_attach(Ewk_Context* context)
@@ -53,5 +53,5 @@ void ewk_context_request_manager_client_attach(Ewk_Context* context)
     wkRequestManagerClient.clientInfo = context;
     wkRequestManagerClient.didReceiveURIRequest = didReceiveURIRequest;
 
-    WKSoupRequestManagerSetClient(context->requestManager(), &wkRequestManagerClient);
+    WKSoupRequestManagerSetClient(ewk_context_request_manager_get(context), &wkRequestManagerClient);
 }

@@ -284,7 +284,7 @@ void PageClientImpl::countStringMatchesInCustomRepresentation(const String&, Fin
 void PageClientImpl::handleDownloadRequest(DownloadProxy* download)
 {
     RefPtr<Ewk_Download_Job> ewkDownload = Ewk_Download_Job::create(download, m_viewWidget);
-    ewk_view_context_get(m_viewWidget)->addDownloadJob(ewkDownload.get());
+    ewk_context_download_job_add(ewk_view_context_get(m_viewWidget), ewkDownload.get());
 }
 
 #if USE(TILED_BACKING_STORE)

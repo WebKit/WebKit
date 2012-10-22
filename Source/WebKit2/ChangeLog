@@ -1,3 +1,70 @@
+2012-10-22  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r132072.
+        http://trac.webkit.org/changeset/132072
+        https://bugs.webkit.org/show_bug.cgi?id=100011
+
+        Made most of the tests crash on the WK2 bot. (Requested by
+        rakuco on #webkit).
+
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::handleDownloadRequest):
+        * UIProcess/API/efl/ewk_context.cpp:
+        (Ewk_Context):
+        (Ewk_Context::Ewk_Context):
+        (ewk_context_ref):
+        (ewk_context_unref):
+        (ewk_context_cookie_manager_get):
+        (ewk_context_favicon_database_get):
+        (ewk_context_WKContext_get):
+        (ewk_context_new_from_WKContext):
+        (ewk_context_download_job_add):
+        (ewk_context_download_job_get):
+        (ewk_context_download_job_remove):
+        (ewk_context_request_manager_get):
+        (ewk_context_url_scheme_request_received):
+        (ewk_context_default_get):
+        (ewk_context_new):
+        (ewk_context_new_with_injected_bundle_path):
+        (ewk_context_url_scheme_register):
+        (ewk_context_vibration_client_callbacks_set):
+        (ewk_context_history_callbacks_set):
+        (ewk_context_history_client_get):
+        (ewk_context_visited_link_add):
+        (ewk_context_cache_model_set):
+        (ewk_context_cache_model_get):
+        * UIProcess/API/efl/ewk_context_download_client.cpp:
+        (decideDestinationWithSuggestedFilename):
+        (didReceiveResponse):
+        (didCreateDestination):
+        (didReceiveData):
+        (didFail):
+        (didCancel):
+        (didFinish):
+        (ewk_context_download_client_attach):
+        * UIProcess/API/efl/ewk_context_history_client.cpp:
+        (getEwkHistoryDelegate):
+        (didNavigateWithNavigationData):
+        (didPerformClientRedirect):
+        (didPerformServerRedirect):
+        (didUpdateHistoryTitle):
+        (populateVisitedLinks):
+        (ewk_context_history_client_attach):
+        * UIProcess/API/efl/ewk_context_private.h:
+        * UIProcess/API/efl/ewk_context_request_manager_client.cpp:
+        (didReceiveURIRequest):
+        (ewk_context_request_manager_client_attach):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (Ewk_View_Private_Data):
+        (Ewk_View_Private_Data::Ewk_View_Private_Data):
+        (Ewk_View_Private_Data::~Ewk_View_Private_Data):
+        (_ewk_view_priv_del):
+        (_ewk_view_initialize):
+        (ewk_view_base_add):
+        (ewk_view_add_with_context):
+        (ewk_view_context_get):
+        (ewk_view_update_icon):
+
 2012-10-22  Darin Adler  <darin@apple.com>
 
         * UIProcess/API/mac/WKView.mm:
