@@ -1,3 +1,18 @@
+2012-10-21  Seokju Kwon  <seokju.kwon@samsung.com>
+
+        [EFL] Fix failure to access the inspector resources
+        https://bugs.webkit.org/show_bug.cgi?id=99816
+
+        Reviewed by Gyuyoung Kim.
+
+        access() returns -1, if path has a file protocol like "file://".
+        And I have removed it from the first argument of access().
+        If not, inspectorBaseURL() or inspectorFilesPath() always returns WEB_INSPECTOR_DIR.
+        Then all layout test related to inspector can fail after installing webkit package.
+
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::inspectorBaseURL):
+
 2012-10-21  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Make Ewk_Error, Ewk_Resource and Ewk_Popup_Menu_Item members private

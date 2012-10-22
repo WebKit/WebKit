@@ -153,11 +153,11 @@ String WebInspectorProxy::inspectorPageURL() const
 
 String WebInspectorProxy::inspectorBaseURL() const
 {
-    String inspectorFilesPath = ASCIILiteral("file://" WEB_INSPECTOR_INSTALL_DIR);
+    String inspectorFilesPath = WEB_INSPECTOR_INSTALL_DIR;
     if (access(inspectorFilesPath.utf8().data(), R_OK))
-        inspectorFilesPath = ASCIILiteral("file://" WEB_INSPECTOR_DIR);
+        inspectorFilesPath = WEB_INSPECTOR_DIR;
 
-    return inspectorFilesPath;
+    return "file://" + inspectorFilesPath;
 }
 
 unsigned WebInspectorProxy::platformInspectedWindowHeight()

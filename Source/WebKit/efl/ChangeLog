@@ -1,3 +1,18 @@
+2012-10-21  Seokju Kwon  <seokju.kwon@samsung.com>
+
+        [EFL] Fix failure to access the inspector resources
+        https://bugs.webkit.org/show_bug.cgi?id=99816
+
+        Reviewed by Gyuyoung Kim.
+
+        access() returns -1, if path has a file protocol like "file://".
+        And I have removed it from the first argument of access().
+        If not, inspectorBaseURL() or inspectorFilesPath() always returns WEB_INSPECTOR_DIR.
+        Then all layout test related to inspector can fail after installing webkit package.
+
+        * WebCoreSupport/InspectorClientEfl.cpp:
+        (WebCore::InspectorClientEfl::inspectorFilesPath):
+
 2012-10-20  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL][DRT] Implement tracking and painting repaint rectangles.

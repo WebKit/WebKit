@@ -140,11 +140,11 @@ void InspectorClientEfl::releaseFrontendPage()
 
 String InspectorClientEfl::inspectorFilesPath()
 {
-    String inspectorFilesPath = "file://" + String(WEB_INSPECTOR_INSTALL_DIR);
+    String inspectorFilesPath = WEB_INSPECTOR_INSTALL_DIR;
     if (access(inspectorFilesPath.utf8().data(), R_OK))
-        inspectorFilesPath = "file://" + String(WEB_INSPECTOR_DIR);
+        inspectorFilesPath = WEB_INSPECTOR_DIR;
 
-    return inspectorFilesPath;
+    return "file://" + inspectorFilesPath;
 }
 
 InspectorFrontendClientEfl::InspectorFrontendClientEfl(Evas_Object* inspectedView, Evas_Object* inspectorView, InspectorClientEfl* inspectorClient)
