@@ -1,3 +1,9 @@
+2012-10-22  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, updating skipped tests that moved.
+
+        * platform/win/TestExpectations:
+
 2012-10-22  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Don't use deprecated AccessibilityObject methods after r99502
