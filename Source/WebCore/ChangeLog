@@ -1,3 +1,38 @@
+2012-10-22  Emil A Eklund  <eae@chromium.org>
+
+        Modify LayoutState ASSERTS to support SATURATED_LAYOUT_ARITHMETIC
+        https://bugs.webkit.org/show_bug.cgi?id=98692
+
+        Reviewed by Dan Bernstein.
+
+        We currently overflow/wrap when computing the delta in
+        RenderBlock::setLogicalTopForChild in cases where we have an
+        element with a width or height exceeding maxLayoutUnit. When
+        the delta is later added back in RenderBlock::layoutBlockChild
+        the number wraps again getting us back to the correct value.
+
+        With SATURATED_LAYOUT_ARITHMETIC enabled the values no longer
+        wraps, which seems like the correct thing to do however this
+        causes the compare to fail for obvious reasons. By accounting
+        for this we can keep the asserts (which have proven very
+        helpful) even when SATURATED_LAYOUT_ARITHMETIC is turned on.
+
+        No new tests, covered by existing tests.
+
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/LayoutState.h:
+        (WebCore::LayoutState::LayoutState):
+        (LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlockChild):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::layout):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::addLayoutDelta):
+        (RenderView):
+        (WebCore::RenderView::layoutDeltaMatches):
+
 2012-10-22  Tony Chang  <tony@chromium.org>
 
         Fix some baseline flexbox alignment

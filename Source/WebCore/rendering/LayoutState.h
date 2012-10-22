@@ -48,6 +48,10 @@ public:
     LayoutState()
         : m_clipped(false)
         , m_isPaginated(false)
+#if !ASSERT_DISABLED && ENABLE(SATURATED_LAYOUT_ARITHMETIC)
+        , m_layoutDeltaXSaturated(false)
+        , m_layoutDeltaYSaturated(false)
+#endif
         , m_pageLogicalHeight(0)
         , m_pageLogicalHeightChanged(false)
         , m_columnInfo(0)
@@ -109,6 +113,10 @@ private:
 public:
     bool m_clipped;
     bool m_isPaginated;
+#if !ASSERT_DISABLED && ENABLE(SATURATED_LAYOUT_ARITHMETIC)
+    bool m_layoutDeltaXSaturated;
+    bool m_layoutDeltaYSaturated;
+#endif
     LayoutRect m_clipRect;
     
     // x/y offset from container. Includes relative positioning and scroll offsets.

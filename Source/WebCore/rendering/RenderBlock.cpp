@@ -2567,7 +2567,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, Lay
             setLogicalHeight(newHeight);
     }
 
-    ASSERT(oldLayoutDelta == view()->layoutDelta());
+    ASSERT(view()->layoutDeltaMatches(oldLayoutDelta));
 }
 
 void RenderBlock::simplifiedNormalFlowLayout()
