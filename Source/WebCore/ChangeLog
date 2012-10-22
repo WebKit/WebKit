@@ -1,3 +1,9 @@
+2012-10-22  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed Chromium build fix following r132074.
+
+        * WebCore.gypi:
+
 2012-10-22  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Don't use deprecated AccessibilityObject methods after r99502
