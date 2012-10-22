@@ -183,6 +183,12 @@
                         r"|.*\w+\.cmake"
                         r"|Source/cmake/",
         },
+        "Selectors": {
+            "filename": r"Source/WebCore/css/CSSSelector*"
+                        r"|Source/WebCore/css/SelectorChecker.*"
+                        r"|Source/WebCore/css/StyleResolver.*"
+                        r"|Source/WebCore/dom/SelectorQuery.*",
+        },
         "SoupNetwork": {
             "filename": r"Source/WebCore/platform/network/soup/",
         },
@@ -286,7 +292,7 @@
         "BlackBerry": [ "mifenton@rim.com", "rwlbuis@gmail.com", "tonikitoo@webkit.org" ],
         "Cairo": [ "dominik.rottsches@intel.com" ],
         "CMake": [ "rakuco@webkit.org", "gyuyoung.kim@samsung.com" ],
-        "CSS": [ "alexis@webkit.org", "macpherson@chromium.org", "cmarcelo@webkit.org", "allan.jensen@digia.com" ],
+        "CSS": [ "alexis@webkit.org", "macpherson@chromium.org", "cmarcelo@webkit.org"],
         "ChromiumGraphics": [ "jamesr@chromium.org", "cc-bugs@chromium.org" ],
         "ChromiumPublicApi": [ "abarth@webkit.org", "dglazkov@chromium.org", "fishd@chromium.org", "jamesr@chromium.org", "tkent+wkapi@chromium.org" ],
         "DOMAttributes": [ "cmarcelo@webkit.org", ],
@@ -316,6 +322,7 @@
         "ScrollingCoordinator": [ "andersca@apple.com", "jamesr@chromium.org", "tonikitoo@webkit.org" ],
         "SecurityCritical": [ "abarth@webkit.org" ],
         "SkiaGraphics": [ "senorblanco@chromium.org" ],
+        "Selectors": [ "allan.jensen@digia.com" ],
         "SoupNetwork": [ "rakuco@webkit.org", "gns@gnome.org", "mrobinson@webkit.org", "danw@gnome.org" ],
         "StyleChecker": [ "levin@chromium.org", ],
         "TestFailures": [ "abarth@webkit.org", "dglazkov@chromium.org" ],

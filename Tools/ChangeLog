@@ -1,3 +1,11 @@
+2012-10-22  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        I now only watch Selectors instead of all of CSS.
+
+        Unreviewed update of watchlist.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-10-22  Yury Semikhatsky  <yurys@chromium.org>
 
         Make sure base and derived class pointers are different in MemoryInstrumentationTest.instrumentedWithMultipleAncestors
