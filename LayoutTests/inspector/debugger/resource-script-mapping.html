@@ -30,14 +30,17 @@ function test()
                 resourceScriptMapping.addScript(script);
                 
                 InspectorTest.waitForWorkspaceTemporaryUISourceCodeAddedEvent(temporaryUISourceCodeAdded);
+                var temporaryUISourceCode;
                 script.rawLocationToUILocation(0, 5);
 
                 function temporaryUISourceCodeAdded(uiSourceCode)
                 {
-                    InspectorTest.checkUILocation(uiSourceCode, 0, 5, script.rawLocationToUILocation(0, 5));
-                    InspectorTest.checkRawLocation(script, 10, 0, uiSourceCode.uiLocationToRawLocation(10, 0));
-                    InspectorTest.dumpUISourceCode(uiSourceCode, step2);
+                    temporaryUISourceCode = uiSourceCode;
                 }
+
+                InspectorTest.checkUILocation(temporaryUISourceCode, 0, 5, script.rawLocationToUILocation(0, 5));
+                InspectorTest.checkRawLocation(script, 10, 0, temporaryUISourceCode.uiLocationToRawLocation(10, 0));
+                InspectorTest.dumpUISourceCode(temporaryUISourceCode, step2);
             }
 
             function step2()
@@ -105,14 +108,17 @@ function test()
                 resourceScriptMapping.addScript(script1);
                 
                 InspectorTest.waitForWorkspaceTemporaryUISourceCodeAddedEvent(temporaryUISourceCodeAdded);
+                var temporaryUISourceCode;
                 script1.rawLocationToUILocation(0, 5);
 
                 function temporaryUISourceCodeAdded(uiSourceCode)
                 {
-                    InspectorTest.checkUILocation(uiSourceCode, 0, 5, script1.rawLocationToUILocation(0, 5));
-                    InspectorTest.checkRawLocation(script1, 10, 0, uiSourceCode.uiLocationToRawLocation(10, 0));
-                    InspectorTest.dumpUISourceCode(uiSourceCode, step2);
+                    temporaryUISourceCode = uiSourceCode;
                 }
+
+                InspectorTest.checkUILocation(temporaryUISourceCode, 0, 5, script1.rawLocationToUILocation(0, 5));
+                InspectorTest.checkRawLocation(script1, 10, 0, temporaryUISourceCode.uiLocationToRawLocation(10, 0));
+                InspectorTest.dumpUISourceCode(temporaryUISourceCode, step2);
             }
 
             function step2()
@@ -121,14 +127,17 @@ function test()
                 script2 = InspectorTest.createScriptMock(url, 0, 45, false, "<script source 2>");
                 InspectorTest.waitForWorkspaceTemporaryUISourceCodeRemovedEvent(function() { });
                 InspectorTest.waitForWorkspaceTemporaryUISourceCodeAddedEvent(temporaryUISourceCodeAdded);
+                var temporaryUISourceCode;
                 resourceScriptMapping.addScript(script2);
 
                 function temporaryUISourceCodeAdded(uiSourceCode)
                 {
-                    InspectorTest.checkUILocation(uiSourceCode, 0, 5, script2.rawLocationToUILocation(0, 5));
-                    InspectorTest.checkRawLocation(script1, 10, 0, uiSourceCode.uiLocationToRawLocation(10, 0));
-                    InspectorTest.dumpUISourceCode(uiSourceCode, step3);
+                    temporaryUISourceCode = uiSourceCode;
                 }
+
+                InspectorTest.checkUILocation(temporaryUISourceCode, 0, 5, script2.rawLocationToUILocation(0, 5));
+                InspectorTest.checkRawLocation(script1, 10, 0, temporaryUISourceCode.uiLocationToRawLocation(10, 0));
+                InspectorTest.dumpUISourceCode(temporaryUISourceCode, step3);
             }
 
             function step3()

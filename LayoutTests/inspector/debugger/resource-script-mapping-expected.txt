@@ -4,7 +4,7 @@ Tests ResourceScriptMapping class.
 Running: testScriptWithPendingResource
 Adding script for pending request.
 UISourceCode: foo.js
-UISourceCode is editable: false
+UISourceCode is editable: true
 UISourceCode is content script: true
 Mime type: text/javascript
 UISourceCode content: <content script source>

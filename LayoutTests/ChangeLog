@@ -1,3 +1,20 @@
+2012-10-22  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Treat dynamic anonymous scripts as other anonymous and fix anonymous script editing and breakpoints.
+        https://bugs.webkit.org/show_bug.cgi?id=99989
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector-enabled/dynamic-scripts-expected.txt:
+        * http/tests/inspector/debugger-test.js:
+        (initialize_DebuggerTest):
+        * inspector/debugger/dynamic-script-tag-expected.txt:
+        * inspector/debugger/dynamic-scripts-expected.txt:
+        * inspector/debugger/live-edit-breakpoints-expected.txt:
+        * inspector/debugger/live-edit-breakpoints.html:
+        * inspector/debugger/resource-script-mapping-expected.txt:
+        * inspector/debugger/resource-script-mapping.html:
+
 2012-10-22  Emil A Eklund  <eae@chromium.org>
 
         Convert fast/sub-pixel/float-containing-block-with-margin.html to text test

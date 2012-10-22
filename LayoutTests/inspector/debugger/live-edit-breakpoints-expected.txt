@@ -13,11 +13,13 @@ Setting breakpoint:
 Editing source:
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.addBreakpoint(lineNumber = 2, disabled = true)
+    OriginalTextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
         edit-me.js:2, enabled:true
     Dumping breakpoint locations
         url: edit-me.js, lineNumber: 2, isTemporary: true
 Undoing source editing:
+    OriginalTextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
@@ -40,11 +42,13 @@ Setting breakpoint:
 Editing source:
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.addBreakpoint(lineNumber = 2, disabled = true)
+    OriginalTextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
         edit-me.js:2, enabled:true
     Dumping breakpoint locations
         url: edit-me.js, lineNumber: 2, isTemporary: true
 Committing edited source:
+    OriginalTextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
@@ -67,6 +71,7 @@ Setting breakpoint:
 Editing source:
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.addBreakpoint(lineNumber = 2, disabled = true)
+    OriginalTextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
         edit-me.js:2, enabled:true
     Dumping breakpoint locations
@@ -82,6 +87,7 @@ Editing source again so that live edit could succeed:
     Dumping breakpoint locations
         url: edit-me.js, lineNumber: 2, isTemporary: true
 Committing edited source again:
+    OriginalTextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
@@ -104,6 +110,7 @@ Setting breakpoint:
 Editing source:
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.addBreakpoint(lineNumber = 2, disabled = true)
+    OriginalTextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
         edit-me.js:2, enabled:true
     Dumping breakpoint locations
@@ -119,6 +126,7 @@ Undoing source editing:
     Dumping breakpoint locations
         url: edit-me.js, lineNumber: 2, isTemporary: true
 Committing edited source again:
+    OriginalTextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
@@ -126,6 +134,72 @@ Committing edited source again:
         edit-me.js:2, enabled:true
     Dumping breakpoint locations
         url: edit-me.js, lineNumber: 2, isTemporary: false
+Finally removing breakpoint:
+    TextEditor.removeBreakpoint(lineNumber = 2)
+    Dumping breakpoint storage
+    Dumping breakpoint locations
+
+Running: testEditAnonymousUndo
+Set timer for test function.
+Script execution paused.
+Script execution resumed.
+Showing script source:
+Setting breakpoint:
+    TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
+    Dumping breakpoint storage
+        :2, enabled:true
+    Dumping breakpoint locations
+        url: , lineNumber: 2, isTemporary: true
+Editing source:
+    TextEditor.removeBreakpoint(lineNumber = 2)
+    TextEditor.addBreakpoint(lineNumber = 2, disabled = true)
+    OriginalTextEditor.addBreakpoint(lineNumber = 2, disabled = false)
+    Dumping breakpoint storage
+        :2, enabled:true
+    Dumping breakpoint locations
+        url: , lineNumber: 2, isTemporary: true
+Undoing source editing:
+    OriginalTextEditor.removeBreakpoint(lineNumber = 2)
+    TextEditor.removeBreakpoint(lineNumber = 2)
+    TextEditor.removeBreakpoint(lineNumber = 2)
+    TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
+    Dumping breakpoint storage
+        :2, enabled:true
+    Dumping breakpoint locations
+        url: , lineNumber: 2, isTemporary: true
+Finally removing breakpoint:
+    TextEditor.removeBreakpoint(lineNumber = 2)
+    Dumping breakpoint storage
+    Dumping breakpoint locations
+
+Running: testEditDynamicAnonymousUndo
+Set timer for test function.
+Script execution paused.
+Script execution resumed.
+Showing script source:
+Setting breakpoint:
+    TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
+    Dumping breakpoint storage
+        :2, enabled:true
+    Dumping breakpoint locations
+        url: , lineNumber: 2, isTemporary: true
+Editing source:
+    TextEditor.removeBreakpoint(lineNumber = 2)
+    TextEditor.addBreakpoint(lineNumber = 2, disabled = true)
+    OriginalTextEditor.addBreakpoint(lineNumber = 2, disabled = false)
+    Dumping breakpoint storage
+        :2, enabled:true
+    Dumping breakpoint locations
+        url: , lineNumber: 2, isTemporary: true
+Undoing source editing:
+    OriginalTextEditor.removeBreakpoint(lineNumber = 2)
+    TextEditor.removeBreakpoint(lineNumber = 2)
+    TextEditor.removeBreakpoint(lineNumber = 2)
+    TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
+    Dumping breakpoint storage
+        :2, enabled:true
+    Dumping breakpoint locations
+        url: , lineNumber: 2, isTemporary: true
 Finally removing breakpoint:
     TextEditor.removeBreakpoint(lineNumber = 2)
     Dumping breakpoint storage

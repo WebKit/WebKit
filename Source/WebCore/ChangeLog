@@ -1,3 +1,35 @@
+2012-10-22  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Treat dynamic anonymous scripts as other anonymous and fix anonymous script editing and breakpoints.
+        https://bugs.webkit.org/show_bug.cgi?id=99989
+
+        Reviewed by Pavel Feldman.
+
+        Dynamic anonymous scripts are now mapped to anonymous temporary uiSourceCodes.
+        ResourceScriptMapping now supports two types of temporary uiSourceCodes:
+         - original uiSourceCodes represent scripts while main uiSourceCodes are diverged;
+         - temporary uiSourceCodes represent scripts for which resources are not yet loaded.
+
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.breakpointStorageId):
+        (WebInspector.BreakpointManager.Storage.prototype._updateBreakpoint):
+        * inspector/front-end/NetworkUISourceCodeProvider.js:
+        (WebInspector.NetworkUISourceCodeProvider.prototype._parsedScriptSource):
+        * inspector/front-end/ResourceScriptMapping.js:
+        (WebInspector.ResourceScriptMapping):
+        (WebInspector.ResourceScriptMapping.prototype.rawLocationToUILocation):
+        (WebInspector.ResourceScriptMapping.prototype._hasMergedToVM):
+        (WebInspector.ResourceScriptMapping.prototype.addScript):
+        (WebInspector.ResourceScriptMapping.prototype._deleteOriginalUISourceCodeForScripts):
+        (WebInspector.ResourceScriptMapping.prototype._deleteTemporaryUISourceCodeForScripts):
+        (WebInspector.ResourceScriptMapping.prototype._bindUISourceCodeToScripts):
+        (WebInspector.ResourceScriptMapping.prototype._createUISourceCode):
+        (WebInspector.ResourceScriptMapping.prototype._getOrCreateTemporaryUISourceCode):
+        (WebInspector.ResourceScriptMapping.prototype._getOrCreateOriginalUISourceCode):
+        (WebInspector.ResourceScriptMapping.prototype._uiSourceCodeAddedToWorkspace):
+        (WebInspector.ResourceScriptMapping.prototype._scriptsForUISourceCode.get if):
+        (WebInspector.ResourceScriptMapping.prototype._reset):
+
 2012-10-22  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [css3-text] Add rendering support for -webkit-text-decoration-style

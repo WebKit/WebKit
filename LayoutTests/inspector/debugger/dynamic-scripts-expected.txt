@@ -7,8 +7,6 @@ UISourceCodes:
     debugger-test.js
     dynamic-script.js
     dynamic-scripts.html
-    dynamic-scripts.html (1)
-    dynamic-scripts.html (2)
     evalSourceURL.js
     inspector-test.js
     scriptElementContentSourceURL.js

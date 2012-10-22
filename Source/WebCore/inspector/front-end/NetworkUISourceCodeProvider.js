@@ -72,13 +72,9 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
         // Only add uiSourceCodes for
         // - content scripts;
         // - scripts with explicit sourceURL comment;
-        // - dynamic anonymous scripts (script elements without src attribute);
         // - dynamic scripts (script elements with src attribute) when inspector is opened after the script was loaded.
         if (!script.hasSourceURL && !script.isContentScript) {
-            var resource = WebInspector.resourceForURL(script.sourceURL);
-            if (resource && resource.contentType() === WebInspector.resourceTypes.Document)
-                isDynamicAnonymousScript = true;
-            else if (resource || WebInspector.networkLog.requestForURL(script.sourceURL))
+            if (WebInspector.resourceForURL(script.sourceURL) || WebInspector.networkLog.requestForURL(script.sourceURL))
                 return;
         }
         // Filter out embedder injected content scripts.
@@ -87,15 +83,9 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
             if (!parsedURL.host)
                 return;
         }
-        if (this._uiSourceCodeForResource[script.sourceURL] && !isDynamicAnonymousScript)
+        if (this._uiSourceCodeForResource[script.sourceURL])
             return;
-        var url = script.sourceURL;
-        if (isDynamicAnonymousScript) {
-            var dynamicAnonymousScriptIndex = (this._lastDynamicAnonymousScriptIndexForURL[url] || 0) + 1;
-            this._lastDynamicAnonymousScriptIndexForURL[url] = dynamicAnonymousScriptIndex;
-            url += " (" + dynamicAnonymousScriptIndex + ")";
-        }
-        var uiSourceCode = new WebInspector.UISourceCode(url, script, true);
+        var uiSourceCode = new WebInspector.UISourceCode(script.sourceURL, script, true);
         this._uiSourceCodeForResource[script.sourceURL] = uiSourceCode;
         this._workspace.project().addUISourceCode(uiSourceCode);
     },
