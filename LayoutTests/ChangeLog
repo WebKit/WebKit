@@ -1,3 +1,15 @@
+2012-10-22  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding flaky crashing expectations for fast/dom/gc-acid3.html
+        and http/tests/misc/acid3.html.
+        Removing timeout expectations for tests that were fixed in r131942.
+        Reclassifying svg/animations/animate-css-xml-attributeType.html
+        as a non-flaky failure.
+
+        * platform/gtk/TestExpectations:
+
 2012-10-22  Anton Muhin  <antonm@chromium.org>
 
         Unreviewed Chromium rebaselines.

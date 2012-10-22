@@ -462,6 +462,9 @@ webkit.org/b/99020 [ Debug ] fast/css/style-scoped/style-scoped-attach.html [ Cr
 
 webkit.org/b/99452 [ Debug ] platform/gtk/fonts/font-face-with-complex-text.html [ Crash ]
 
+webkit.org/b/98722 [ Debug ] fast/dom/gc-acid3.html [ Crash Pass ]
+webkit.org/b/98722 [ Debug ] http/tests/misc/acid3.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -526,8 +529,6 @@ webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-81-t.svg [ Failure Pas
 webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-82-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-85-t.svg [ Failure Pass ]
 webkit.org/b/89650 svg/W3C-SVG-1.1/struct-dom-06-b.svg [ Failure Pass ]
-
-webkit.org/b/98718 svg/animations/animate-css-xml-attributeType.html [ Failure Pass ]
 
 webkit.org/b/80158 plugins/netscape-plugin-page-cache-works.html [ Failure Pass ]
 
@@ -646,11 +647,6 @@ webkit.org/b/98350 accessibility/aria-invalid.html [ Timeout ]
 webkit.org/b/73003 [ Release ] editing/spelling/spellcheck-async.html [ Timeout ]
 webkit.org/b/73003 [ Release ] editing/spelling/spellcheck-paste.html [ Timeout ]
 webkit.org/b/50740 [ Release ] editing/spelling/spellcheck-queue.html [ Timeout ]
-
-webkit.org/b/98729 fast/events/attribute-listener-cloned-from-frameless-doc-context.html [ Timeout ]
-webkit.org/b/98729 fast/events/attribute-listener-cloned-from-frameless-doc-context-2.html [ Timeout ]
-webkit.org/b/98729 fast/events/attribute-listener-extracted-from-frameless-doc-context.html [ Timeout ]
-webkit.org/b/98729 fast/events/attribute-listener-extracted-from-frameless-doc-context-2.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -1390,6 +1386,8 @@ webkit.org/b/99824 fast/lists/w3-css3-list-styles-fallback-style.html [ Failure 
 webkit.org/b/99824 fast/lists/w3-list-styles.html [ Failure ]
 
 webkit.org/b/99825 accessibility/title-ui-element-correctness.html [ Failure ]
+
+webkit.org/b/98718 svg/animations/animate-css-xml-attributeType.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
