@@ -88,8 +88,9 @@ namespace WebCore {
 
         void init();
         void setView(PassRefPtr<FrameView>);
-        void createView(const IntSize&, const Color&, bool, const IntSize&, bool,
-            ScrollbarMode = ScrollbarAuto, bool horizontalLock = false,
+        void createView(const IntSize&, const Color&, bool,
+            const IntSize& fixedLayoutSize = IntSize(), const IntRect& fixedVisibleContentRect = IntRect(),
+            bool useFixedLayout = false, ScrollbarMode = ScrollbarAuto, bool horizontalLock = false,
             ScrollbarMode = ScrollbarAuto, bool verticalLock = false);
 
         ~Frame();

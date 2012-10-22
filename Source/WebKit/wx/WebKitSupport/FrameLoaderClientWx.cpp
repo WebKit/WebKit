@@ -976,7 +976,7 @@ void FrameLoaderClientWx::transitionToCommittedForNewPage()
     Color backgroundColor = transparent ? WebCore::Color::transparent : WebCore::Color::white;
     
     if (m_frame)
-        m_frame->createView(size, backgroundColor, transparent, IntSize(), false); 
+        m_frame->createView(size, backgroundColor, transparent);
 }
 
 void FrameLoaderClientWx::didSaveToPageCache()

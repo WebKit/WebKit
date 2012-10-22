@@ -777,11 +777,10 @@ PassRefPtr<Range> Frame::rangeForPoint(const IntPoint& framePoint)
     return 0;
 }
 
-void Frame::createView(const IntSize& viewportSize,
-                       const Color& backgroundColor, bool transparent,
-                       const IntSize& fixedLayoutSize, bool useFixedLayout,
-                       ScrollbarMode horizontalScrollbarMode, bool horizontalLock,
-                       ScrollbarMode verticalScrollbarMode, bool verticalLock)
+void Frame::createView(const IntSize& viewportSize, const Color& backgroundColor, bool transparent,
+    const IntSize& fixedLayoutSize, const IntRect& fixedVisibleContentRect ,
+    bool useFixedLayout, ScrollbarMode horizontalScrollbarMode, bool horizontalLock,
+    ScrollbarMode verticalScrollbarMode, bool verticalLock)
 {
     ASSERT(this);
     ASSERT(m_page);
@@ -797,6 +796,7 @@ void Frame::createView(const IntSize& viewportSize,
     if (isMainFrame) {
         frameView = FrameView::create(this, viewportSize);
         frameView->setFixedLayoutSize(fixedLayoutSize);
+        frameView->setFixedVisibleContentRect(fixedVisibleContentRect);
         frameView->setUseFixedLayout(useFixedLayout);
     } else
         frameView = FrameView::create(this);

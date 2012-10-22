@@ -448,6 +448,7 @@ void FrameLoaderClientBlackBerry::transitionToCommittedForNewPage()
                         backgroundColor.hasAlpha(),            /* is transparent */
                         m_webPagePrivate->actualVisibleSize(), /* fixed reported size */
                         m_webPagePrivate->fixedLayoutSize(),   /* fixed layout size */
+                        IntRect(),                             /* fixed visible content rect */
                         m_webPagePrivate->useFixedLayout(),    /* use fixed layout */
                         ScrollbarAlwaysOff,                    /* hor mode */
                         true,                                  /* lock the mode */

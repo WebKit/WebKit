@@ -1,3 +1,14 @@
+2012-10-22  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Fix "ASSERTION FAILED: !document->inPageCache()" when loading a page
+        https://bugs.webkit.org/show_bug.cgi?id=98514
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage): Use FrameView::fixedVisibleContentRect
+        instead of WebFrame::visibleContentBounds as the source to always keep the correct state.
+
 2012-10-22  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: merge "docked" state into the "dock side" enum.

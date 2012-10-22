@@ -1621,7 +1621,7 @@ void ewk_frame_view_create_for_view(Evas_Object* ewkFrame, Evas_Object* view)
     else
         background = WebCore::Color(red * 255 / alpha, green * 255 / alpha, blue * 255 / alpha, alpha);
 
-    smartData->frame->createView(size, background, !alpha, WebCore::IntSize(), false);
+    smartData->frame->createView(size, background, !alpha);
     if (!smartData->frame->view())
         return;
 

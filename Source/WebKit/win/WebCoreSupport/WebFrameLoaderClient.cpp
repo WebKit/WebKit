@@ -724,7 +724,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     view->frameRect(&rect);
     bool transparent = view->transparent();
     Color backgroundColor = transparent ? Color::transparent : Color::white;
-    core(m_webFrame)->createView(IntRect(rect).size(), backgroundColor, transparent, IntSize(), false);
+    core(m_webFrame)->createView(IntRect(rect).size(), backgroundColor, transparent);
 }
 
 void WebFrameLoaderClient::didSaveToPageCache()

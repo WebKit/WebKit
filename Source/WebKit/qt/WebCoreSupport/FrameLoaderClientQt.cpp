@@ -272,11 +272,13 @@ void FrameLoaderClientQt::transitionToCommittedForNewPage()
     bool hLock = hScrollbar != ScrollbarAuto;
     bool vLock = vScrollbar != ScrollbarAuto;
 
-    IntSize currentVisibleContentSize = m_frame->view() ? m_frame->view()->visibleContentRect().size() : IntSize();
+    // The HistoryController will update the scroll position later if needed.
+    IntRect currentVisibleContentRect = m_frame->view() ? IntRect(IntPoint::zero(), m_frame->view()->fixedVisibleContentRect().size()) : IntRect();
 
     m_frame->createView(m_webFrame->page()->viewportSize(),
                         backgroundColor, !backgroundColor.alpha(),
                         preferredLayoutSize.isValid() ? IntSize(preferredLayoutSize) : IntSize(),
+                        currentVisibleContentRect,
                         preferredLayoutSize.isValid(),
                         hScrollbar, hLock,
                         vScrollbar, vLock);
@@ -284,13 +286,8 @@ void FrameLoaderClientQt::transitionToCommittedForNewPage()
     bool isMainFrame = m_frame == m_frame->page()->mainFrame();
     if (isMainFrame && page->d->client) {
         bool resizesToContents = page->d->client->viewResizesToContentsEnabled();
-
         m_frame->view()->setPaintsEntireContents(resizesToContents);
         m_frame->view()->setDelegatesScrolling(resizesToContents);
-
-        // The HistoryController will update the scroll position later if needed.
-        IntRect rect = resizesToContents ? IntRect(IntPoint::zero(), currentVisibleContentSize) : IntRect();
-        m_frame->view()->setFixedVisibleContentRect(rect);
     }
 }
 
