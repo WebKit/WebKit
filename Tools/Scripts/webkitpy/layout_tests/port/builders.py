@@ -57,6 +57,7 @@ _exact_matches = {
     "WebKit Mac10.6": {"port_name": "chromium-mac-snowleopard", "specifiers": set(["snowleopard"])},
     "WebKit Mac10.6 (dbg)": {"port_name": "chromium-mac-snowleopard", "specifiers": set(["snowleopard", "debug"])},
     "WebKit Mac10.7": {"port_name": "chromium-mac-lion", "specifiers": set(["lion", "release"])},
+    "WebKit Mac10.7 (dbg)": {"port_name": "chromium-mac-lion", "specifiers": set(["lion", "debug"])},
     "WebKit Mac10.8": {"port_name": "chromium-mac-mountainlion", "specifiers": set(["mountainlion", "release"])},
 
     # These builders are on build.webkit.org.

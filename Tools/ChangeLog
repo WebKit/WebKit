@@ -1,3 +1,14 @@
+2012-10-22  Tony Chang  <tony@chromium.org>
+
+        [chromium] Add Mac 10.7 Debug bot since it's on the waterfall
+        https://bugs.webkit.org/show_bug.cgi?id=100028
+
+        Reviewed by Eric Seidel.
+
+        garden-o-matic can't baseline without this entry.
+
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+
 2012-10-22  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] introduce WebTask to the TestRunner library
