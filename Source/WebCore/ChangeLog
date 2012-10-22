@@ -1,5 +1,38 @@
 2012-10-22  Pan Deng  <pan.deng@intel.com>
 
+        [User Timing]Integrate with Perforamnce Timeline.
+        https://bugs.webkit.org/show_bug.cgi?id=91072.
+
+        Reviewed by Tony Gentilcore.
+
+        This patch expose user timing entries via performance timeline interface. JavaScriptCore custom binding will be another patch
+
+        No new tests, user timing test cases have been landed.
+
+        * page/Performance.cpp:
+        (WebCore::Performance::Performance):
+        (WebCore::Performance::webkitGetEntries):
+        (WebCore::Performance::webkitGetEntriesByType):
+        (WebCore::Performance::webkitGetEntriesByName):
+        * page/PerformanceEntry.h:
+        (WebCore::PerformanceEntry::startTimeCompareLessThan):
+        (PerformanceEntry):
+        * page/PerformanceEntryList.cpp:
+        (WebCore::PerformanceEntryList::sort):
+        (WebCore):
+        * page/PerformanceEntryList.h:
+        (PerformanceEntryList):
+        * page/PerformanceUserTiming.cpp:
+        (WebCore::convertToEntrySequence):
+        (WebCore):
+        (WebCore::getEntrySequenceByName):
+        (WebCore::UserTiming::getMarks):
+        (WebCore::UserTiming::getMeasures):
+        * page/PerformanceUserTiming.h:
+        (UserTiming):
+
+2012-10-22  Pan Deng  <pan.deng@intel.com>
+
         Modify obsolete code in User Timing
         https://bugs.webkit.org/show_bug.cgi?id=99851
 

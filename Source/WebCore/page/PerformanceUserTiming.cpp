@@ -162,6 +162,47 @@ void UserTiming::clearMeasures(const String& measureName)
     clearPeformanceEntries(m_measuresMap, measureName);
 }
 
+static Vector<RefPtr<PerformanceEntry> > convertToEntrySequence(const PerformanceEntryMap& performanceEntryMap)
+{
+    Vector<RefPtr<PerformanceEntry> > entries;
+
+    for (PerformanceEntryMap::const_iterator it = performanceEntryMap.begin(); it != performanceEntryMap.end(); ++it)
+        entries.append(it->value);
+
+    return entries;
+}
+
+static Vector<RefPtr<PerformanceEntry> > getEntrySequenceByName(const PerformanceEntryMap& performanceEntryMap, const String& name)
+{
+    Vector<RefPtr<PerformanceEntry> > entries;
+
+    PerformanceEntryMap::const_iterator it = performanceEntryMap.find(name);
+    if (it != performanceEntryMap.end())
+        entries.append(it->value);
+
+    return entries;
+}
+
+Vector<RefPtr<PerformanceEntry> > UserTiming::getMarks() const
+{
+    return convertToEntrySequence(m_marksMap);
+}
+
+Vector<RefPtr<PerformanceEntry> > UserTiming::getMarks(const String& name) const
+{
+    return getEntrySequenceByName(m_marksMap, name);
+}
+
+Vector<RefPtr<PerformanceEntry> > UserTiming::getMeasures() const
+{
+    return convertToEntrySequence(m_measuresMap);
+}
+
+Vector<RefPtr<PerformanceEntry> > UserTiming::getMeasures(const String& name) const
+{
+    return getEntrySequenceByName(m_measuresMap, name);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(USER_TIMING)

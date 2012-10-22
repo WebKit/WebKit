@@ -55,6 +55,12 @@ public:
     void measure(const String& measureName, const String& startMark, const String& endMark, ExceptionCode&);
     void clearMeasures(const String& measureName);
 
+    Vector<RefPtr<PerformanceEntry> > getMarks() const;
+    Vector<RefPtr<PerformanceEntry> > getMeasures() const;
+
+    Vector<RefPtr<PerformanceEntry> > getMarks(const String& name) const;
+    Vector<RefPtr<PerformanceEntry> > getMeasures(const String& name) const;
+
 private:
     explicit UserTiming(Performance*);
     static HashMap<String, NavigationTimingFunction> m_restrictedKeyMap;
