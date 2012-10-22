@@ -1,3 +1,48 @@
+2012-10-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Rebaseline pixel expectations after r131941 and r131991, part 4.
+
+        * platform/efl/svg/as-background-image/svg-background-partial-redraw-expected.png:
+        * platform/efl/svg/as-image/animated-svg-as-image-expected.png:
+        * platform/efl/svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size-expected.png:
+        * platform/efl/svg/as-image/animated-svg-as-image-same-image-expected.png:
+        * platform/efl/svg/as-image/svg-image-change-content-size-expected.png:
+        * platform/efl/svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-1-expected.png:
+        * platform/efl/svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-2-expected.png:
+        * platform/efl/svg/as-object/embedded-svg-immediate-offsetWidth-query-expected.png:
+        * platform/efl/svg/as-object/embedded-svg-size-changes-expected.png:
+        * platform/efl/svg/as-object/embedded-svg-size-changes-no-layout-triggers-expected.png:
+        * platform/efl/svg/as-object/nested-embedded-svg-size-changes-expected.png:
+        * platform/efl/svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-1-expected.png:
+        * platform/efl/svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-2-expected.png:
+        * platform/efl/svg/carto.net/tabgroup-expected.png:
+        * platform/efl/svg/carto.net/window-expected.png:
+        * platform/efl/svg/css/shadow-changes-expected.png:
+        * platform/efl/svg/dom/SVGPathSegList-segment-modification-expected.png:
+        * platform/efl/svg/dom/SVGPathSegList-xml-dom-synchronization-expected.png:
+        * platform/efl/svg/dom/SVGPathSegList-xml-dom-synchronization2-expected.png:
+        * platform/efl/svg/dom/SVGRectElement/rect-modify-rx-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGCircleElement-dom-cx-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGCircleElement-dom-cy-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGCircleElement-dom-r-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGCircleElement-dom-requiredFeatures-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGCircleElement-svgdom-cx-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGCircleElement-svgdom-cy-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGCircleElement-svgdom-r-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGCircleElement-svgdom-requiredFeatures-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGClipPath-influences-hitTesting-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGClipPathElement-css-transform-influences-hitTesting-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGClipPathElement-dom-clipPathUnits-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGClipPathElement-svgdom-clipPathUnits-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGClipPathElement-transform-influences-hitTesting-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGCursorElement-dom-x-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGCursorElement-dom-y-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGCursorElement-svgdom-x-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGCursorElement-svgdom-y-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGEllipseElement-dom-cx-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGEllipseElement-dom-cy-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGEllipseElement-dom-requiredFeatures-expected.png:
+
 2012-10-22  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed gardening.
