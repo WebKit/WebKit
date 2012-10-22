@@ -102,7 +102,7 @@ struct WebLocalizedString {
         ValidationValueMissingForMultipleFile,
         ValidationValueMissingForRadio,
         ValidationValueMissingForSelect,
-        WeekFormatInLDML,
+        WeekFormatTemplate,
     };
 };
 

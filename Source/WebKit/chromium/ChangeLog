@@ -1,3 +1,13 @@
+2012-10-22  Keishi Hattori  <keishi@webkit.org>
+
+        [Chromium] Rename WeekFormatInLDML to WeekFormatTemplate
+        https://bugs.webkit.org/show_bug.cgi?id=99972
+
+        Reviewed by Kent Tamura.
+
+        * src/LocalizedStrings.cpp:
+        (WebCore::weekFormatInLDML):
+
 2012-10-22  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Fix "ASSERTION FAILED: !document->inPageCache()" when loading a page

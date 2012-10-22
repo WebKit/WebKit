@@ -275,7 +275,7 @@ String monthFormatInLDML()
 
 String weekFormatInLDML()
 {
-    return query(WebLocalizedString::WeekFormatInLDML);
+    return query(WebLocalizedString::WeekFormatTemplate);
 }
 
 #endif
