@@ -1,3 +1,13 @@
+2012-10-22  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Revisions should not be restored and persisted for anonymous uiSourceCodes.
+        https://bugs.webkit.org/show_bug.cgi?id=99991
+
+        Reviewed by Alexander Pavlov.
+
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode):
+
 2012-10-22  Florin Malita  <fmalita@chromium.org>
 
         Incorrect embedded SVG image sizing on first load

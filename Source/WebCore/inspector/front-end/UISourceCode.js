@@ -61,7 +61,7 @@ WebInspector.UISourceCode = function(url, contentProvider, isEditable)
      * @type {Array.<WebInspector.Revision>}
      */
     this.history = [];
-    if (this.isEditable())
+    if (this.isEditable() && this._url)
         this._restoreRevisionHistory();
     this._formatterMapping = new WebInspector.IdentityFormatterSourceMapping();
 }
@@ -850,7 +850,7 @@ WebInspector.Revision.prototype = {
             return;
 
         var url = this.contentURL();
-        if (url.startsWith("inspector://"))
+        if (!url || url.startsWith("inspector://"))
             return;
 
         var loaderId = WebInspector.resourceTreeModel.mainFrame.loaderId;
