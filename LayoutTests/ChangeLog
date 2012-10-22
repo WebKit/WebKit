@@ -1,3 +1,15 @@
+2012-10-22  Michael Saboff  <msaboff@apple.com>
+
+        Regression(r131655): Crash in StringImpl::findIgnoringCase
+        https://bugs.webkit.org/show_bug.cgi?id=99753
+
+        Reviewed by Geoffrey Garen.
+
+        New regression test.
+
+        * fast/js/find-ignoring-case-regress-99753-expected.txt: Added.
+        * fast/js/find-ignoring-case-regress-99753.html: Added.
+
 2012-10-22  Tony Chang  <tony@chromium.org>
 
         Unreviewed, land render tree results for css3/flexbox pixel test that

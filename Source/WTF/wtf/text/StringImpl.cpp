@@ -1082,14 +1082,14 @@ size_t StringImpl::findIgnoringCase(StringImpl* matchString, unsigned index)
 
     if (is8Bit()) {
         if (matchString->is8Bit())
-            return findIgnoringCaseInner(characters8() + index, matchString->characters8(), index, length(), matchLength);
-        return findIgnoringCaseInner(characters8() + index, matchString->characters16(), index, length(), matchLength);
+            return findIgnoringCaseInner(characters8() + index, matchString->characters8(), index, searchLength, matchLength);
+        return findIgnoringCaseInner(characters8() + index, matchString->characters16(), index, searchLength, matchLength);
     }
 
     if (matchString->is8Bit())
-        return findIgnoringCaseInner(characters16() + index, matchString->characters8(), index, length(), matchLength);
+        return findIgnoringCaseInner(characters16() + index, matchString->characters8(), index, searchLength, matchLength);
 
-    return findIgnoringCaseInner(characters16() + index, matchString->characters16(), index, length(), matchLength);
+    return findIgnoringCaseInner(characters16() + index, matchString->characters16(), index, searchLength, matchLength);
 }
 
 size_t StringImpl::reverseFind(UChar c, unsigned index)

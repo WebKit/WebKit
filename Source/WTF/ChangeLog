@@ -1,3 +1,17 @@
+2012-10-22  Michael Saboff  <msaboff@apple.com>
+
+        Regression(r131655): Crash in StringImpl::findIgnoringCase
+        https://bugs.webkit.org/show_bug.cgi?id=99753
+
+        Reviewed by Geoffrey Garen.
+
+        Fixed to use the searchLength to take into account the start index.
+
+        Added LayoutTests/fast/js/find-ignoring-case-regress-99753.html
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::findIgnoringCase):
+
 2012-10-22  Simon Hausmann  <simon.hausmann@digia.com>
 
         Unreviewed: Re-enable LLINT on Qt/Linux after r131932.
