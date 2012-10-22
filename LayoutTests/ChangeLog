@@ -1,3 +1,83 @@
+2012-10-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Rebaseline pixel expectations after r131941 and r131991, part 7.
+
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-dom-dy-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-dom-in-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-dom-stdDeviation-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dx-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dy-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-in-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-stdDeviation-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEFloodElement-dom-flood-color-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEFloodElement-dom-flood-opacity-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEFloodElement-inherit-flood-color-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEFloodElement-svgdom-flood-color-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEFloodElement-svgdom-flood-opacity-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-in-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-call-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEGaussianBlurElement-svgdom-in-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEMergeNodeElement-dom-in-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEMergeNodeElement-svgdom-in-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEMorphologyElement-dom-in-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEMorphologyElement-dom-operator-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEMorphologyElement-dom-radius-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEMorphologyElement-svgdom-in-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEMorphologyElement-svgdom-operator-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEMorphologyElement-svgdom-radius-call-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEOffsetElement-dom-dx-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEOffsetElement-dom-dy-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEOffsetElement-dom-in-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEOffsetElement-svgdom-dx-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEOffsetElement-svgdom-dy-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEOffsetElement-svgdom-in-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEPointLightElement-dom-x-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEPointLightElement-dom-y-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEPointLightElement-dom-z-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEPointLightElement-svgdom-x-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEPointLightElement-svgdom-y-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEPointLightElement-svgdom-z-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpecularLightingElement-inherit-lighting-color-css-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpecularLightingElement-lighting-color-css-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpotLightElement-dom-limitingConeAngle-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtX-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtY-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtZ-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpotLightElement-dom-specularExponent-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpotLightElement-dom-x-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpotLightElement-dom-y-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpotLightElement-dom-z-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpotLightElement-svgdom-limitingConeAngle-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtX-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtY-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtZ-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpotLightElement-svgdom-specularExponent-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpotLightElement-svgdom-x-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpotLightElement-svgdom-y-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFESpotLightElement-svgdom-z-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFETileElement-dom-in-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFETileElement-svgdom-in-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFETurbulenceElement-dom-numOctaves-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFETurbulenceElement-dom-seed-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFETurbulenceElement-dom-stitchTiles-attr-expected.png:
+
 2012-10-22  Tony Chang  <tony@chromium.org>
 
         WebKit does not support 'flex-wrap: nowrap'
