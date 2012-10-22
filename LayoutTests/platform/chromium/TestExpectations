@@ -4087,4 +4087,3 @@ Bug(dpranke) [ Win ] webaudio/codec-tests/vorbis/vbr-70kbps-44khz.html [ Failure
 Bug(dpranke) [ Win ] webaudio/codec-tests/vorbis/vbr-96kbps-44khz.html [ Failure ]
 Bug(dpranke) [ Win ] webaudio/codec-tests/vorbis/vbr-128kbps-44khz.html [ Failure ]
 
-webkit.org/b/99953 [ Win7 ] fast/hidpi/gradient-with-scaled-ancestor.html [ ImageOnlyFailure ]
