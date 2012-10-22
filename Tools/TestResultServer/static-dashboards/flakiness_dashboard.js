@@ -1860,7 +1860,7 @@ function maybeAddPngChecksum(expectationDiv, pngUrl)
 {
     // pngUrl gets served from the browser cache since we just loaded it in an
     // <img> tag.
-    request(pngUrl,
+    loader.request(pngUrl,
         function(xhr) {
             // Convert the first 2k of the response to a byte string.
             var bytes = xhr.responseText.substring(0, 2048);
@@ -1954,7 +1954,7 @@ function addExpectationItem(expectationsContainers, parentContainer, platform, p
         if (!isImage)
             childContainer.appendChild(dummyNode);
     } else {
-        request(url,
+        loader.request(url,
             function(xhr) {
                 var item = document.createElement('pre');
                 item.innerText = xhr.responseText;

@@ -1,3 +1,44 @@
+2012-10-22  Zan Dobersek  <zandobersek@gmail.com>
+
+        [TestResultServer] Move the resource loading into a dedicated class
+        https://bugs.webkit.org/show_bug.cgi?id=99246
+
+        Reviewed by Ojan Vafai.
+
+        A new 'loader' namespace is created, containing the request method (previously located in dashboard_base.js)
+        and the new Loader object, which handles the loading of all the necessary data the dashboard might require.
+
+        * TestResultServer/static-dashboards/aggregate_results.html: Include the loader.js source file.
+        * TestResultServer/static-dashboards/builders.js:
+        (requestBuilderList): Use the request method located in the loader namespace instead of the removed doXHR method.
+        (onBuilderListLoad): Now parses the response text of the passed-in XHR. When all the builder lists are loaded the
+        resource loader object is notified appropriately.
+        (onErrorLoadingBuilderList): The partial function that calls this function also adds an XHR parameter.
+        * TestResultServer/static-dashboards/dashboard_base.js: Much of the resource loading-related code is moved to loader.js.
+        The Loader object is now used to load all the required resources.
+        (parseParameters): Don't push the 'builder' parameter into the current state if the unit tests are being run.
+        (resourceLoadingComplete): This method gets called when all the resources are loaded and the dashboard should
+        proceed with generating the page.
+        (handleLocationChange):
+        * TestResultServer/static-dashboards/flakiness_dashboard.html: Include the loader.js source file.
+        * TestResultServer/static-dashboards/flakiness_dashboard.js: The request method has been relocated to the loader namespace.
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js: The affected test cases are modified appropriately.
+        (test):
+        * TestResultServer/static-dashboards/loader.js: Added.
+        (.): A new namespace is introduced, publicly exporting the request method that performs an XHR operation and a Loader object
+        which oversees resource loading. The loading is done in steps, first loading the builders list, after that the results files
+        the current dashboard needs, and lastly the TestExpectations files if they are required by the dashboard. When done the loader
+        calls the resourceLoadingComplete method located in dashboard_base.js. This signals the dashboard all resources are available
+        and it can proceed with generating the dashboard page.
+        * TestResultServer/static-dashboards/loader_unittests.js: Added. Contains unit tests for the Loader object, covering the
+        incremental loading and the loading of results files and TestExpectations files. The builders list loading is currently not
+        tested as the unit tests page overrides related methods that possibly affect other tests' behavior.
+        * TestResultServer/static-dashboards/run-unittests.html: Now includes the loader.js and loader_unittests.js source file.
+        Refactors the code a bit due to changes in how onBuilderListLoad behaves.
+        * TestResultServer/static-dashboards/timeline_explorer.html: Now includes the loader.js source file.
+        * TestResultServer/static-dashboards/treemap.html: Ditto. Also refactors the code to take into account
+        that all the test files are now loaded before generating the dashboard page.
+
 2012-10-21  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] introduce a public API for the TestRunner library

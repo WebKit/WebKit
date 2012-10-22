@@ -122,26 +122,13 @@ function associateBuildersWithMaster(builders, master)
     });
 }
 
-function doXHR(url, onLoad, builderGroups, groupName)
-{
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
-    xhr.onload = function() {
-        if (xhr.status == 200)
-            onLoad(JSON.parse(xhr.response));
-        else
-            onErrorLoadingBuilderList(url, builderGroups, groupName);
-    };
-    xhr.onerror = function() { onErrorLoadingBuilderList(url, builderGroups, groupName); };
-    xhr.send();
-}
-
 function requestBuilderList(builderGroups, builderFilter, master, groupName, builderGroup)
 {
     if (!builderGroups[groupName])
         builderGroups[groupName] = builderGroup;
-    var onLoad = partial(onBuilderListLoad, builderGroups, builderFilter, master, groupName);
-    doXHR(master.builderJsonPath(), onLoad, builderGroups, groupName);
+    loader.request(master.builderJsonPath(),
+                   partial(onBuilderListLoad, builderGroups, builderFilter, master, groupName),
+                   partial(onErrorLoadingBuilderList, master.builderJsonPath(), builderGroups, groupName));
     builderGroups[groupName].expectedGroups += 1;
 }
 
@@ -220,16 +207,16 @@ function generateBuildersFromBuilderList(builderList, filter)
     });
 }
 
-function onBuilderListLoad(builderGroups, builderFilter, master, groupName, json)
+function onBuilderListLoad(builderGroups, builderFilter, master, groupName, xhr)
 {
-    var builders = generateBuildersFromBuilderList(Object.keys(json), builderFilter);
+    var builders = generateBuildersFromBuilderList(Object.keys(JSON.parse(xhr.responseText)), builderFilter);
     associateBuildersWithMaster(builders, master);
     builderGroups[groupName].append(builders);
     if (builderGroups[groupName].loaded())
-        g_handleBuildersListLoaded();
+        g_resourceLoader.buildersListLoaded();
 }
 
-function onErrorLoadingBuilderList(url, builderGroups, groupName)
+function onErrorLoadingBuilderList(url, builderGroups, groupName, xhr)
 {
     builderGroups[groupName].groups += 1;
     console.log('Could not load list of builders from ' + url + '. Try reloading.');

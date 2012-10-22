@@ -387,6 +387,11 @@ test('htmlForIndividualTestOnAllBuildersWithResultsLinks', 1, function() {
             '</tr></thead>' +
             '<tbody></tbody>' +
         '</table>' +
+        '<div>The following builders either don\'t run this test (e.g. it\'s skipped) or all runs passed:</div>' +
+        '<div class=skipped-builder-list>' +
+            '<div class=skipped-builder>WebKit Linux</div><div class=skipped-builder>WebKit Linux (dbg)</div>' +
+            '<div class=skipped-builder>WebKit Mac10.7</div><div class=skipped-builder>WebKit Win</div>' +
+        '</div>' +
         '<div class=expectations test=dummytest.html>' +
             '<div><span class=link onclick="setQueryParameter(\'showExpectations\', true)">Show results</span> | ' +
             '<span class=link onclick="setQueryParameter(\'showLargeExpectations\', true)">Show large thumbnails</span> | ' +
@@ -412,6 +417,11 @@ test('htmlForIndividualTestOnAllBuildersWithResultsLinksWebkitMaster', 1, functi
             '</tr></thead>' +
             '<tbody></tbody>' +
         '</table>' +
+        '<div>The following builders either don\'t run this test (e.g. it\'s skipped) or all runs passed:</div>' +
+        '<div class=skipped-builder-list>' +
+            '<div class=skipped-builder>WebKit Linux</div><div class=skipped-builder>WebKit Linux (dbg)</div>' +
+            '<div class=skipped-builder>WebKit Mac10.7</div><div class=skipped-builder>WebKit Win</div>' +
+        '</div>' +
         '<div class=expectations test=dummytest.html>' +
             '<div><span class=link onclick="setQueryParameter(\'showExpectations\', true)">Show results</span> | ' +
             '<span class=link onclick="setQueryParameter(\'showLargeExpectations\', true)">Show large thumbnails</span>' +
@@ -642,9 +652,9 @@ test('builderGroupIsToTWebKitAttribute', 2, function() {
     testBuilderGroups['@DEPS - dummy.org'].expectedGroups = 1;
 
     var testJSONData = "{ \"Dummy Builder 1\": null, \"Dummy Builder 2\": null }";
-    onBuilderListLoad(testBuilderGroups, function() { return true; }, dummyMaster, '@ToT - dummy.org', JSON.parse(testJSONData));
+    onBuilderListLoad(testBuilderGroups, function() { return true; }, dummyMaster, '@ToT - dummy.org', {responseText: testJSONData});
     equal(testBuilderGroups['@ToT - dummy.org'].isToTWebKit, true);
-    onBuilderListLoad(testBuilderGroups, function() { return true; }, dummyMaster, '@DEPS - dummy.org', JSON.parse(testJSONData));
+    onBuilderListLoad(testBuilderGroups, function() { return true; }, dummyMaster, '@DEPS - dummy.org', {responseText: testJSONData});
     equal(testBuilderGroups['@DEPS - dummy.org'].isToTWebKit, false);
 });
 
@@ -657,10 +667,10 @@ test('builderGroupExpectedGroups', 4, function() {
 
     var testJSONData = "{ \"Dummy Builder 1\": null }";
     equal(testBuilderGroups['@ToT - dummy.org'].expectedGroups, 3);
-    onBuilderListLoad(testBuilderGroups,  function() { return true; }, dummyMaster, '@ToT - dummy.org', JSON.parse(testJSONData));
+    onBuilderListLoad(testBuilderGroups,  function() { return true; }, dummyMaster, '@ToT - dummy.org', {responseText: testJSONData});
     equal(testBuilderGroups['@ToT - dummy.org'].groups, 1);
     var testJSONData = "{ \"Dummy Builder 2\": null }";
-    onBuilderListLoad(testBuilderGroups,  function() { return true; }, dummyMaster, '@ToT - dummy.org', JSON.parse(testJSONData));
+    onBuilderListLoad(testBuilderGroups,  function() { return true; }, dummyMaster, '@ToT - dummy.org', {responseText: testJSONData});
     equal(testBuilderGroups['@ToT - dummy.org'].groups, 2);
     onErrorLoadingBuilderList('http://build.dummy.org', testBuilderGroups,  '@ToT - dummy.org');
     equal(testBuilderGroups['@ToT - dummy.org'].groups, 3);
@@ -669,9 +679,10 @@ test('builderGroupExpectedGroups', 4, function() {
 test('requestBuilderListAddsBuilderGroupEntry', 2, function() {
     var testBuilderGroups = { '@ToT - dummy.org': null };
 
-    var oldDoXHR = doXHR;
+    var requestFunction = loader.request;
+    loader.request = function() {};
+
     try {
-        doXHR = function() {};
         var builderFilter = null;
         var master = { builderJsonPath: function() {} };
         var groupName = '@ToT - dummy.org';
@@ -681,7 +692,7 @@ test('requestBuilderListAddsBuilderGroupEntry', 2, function() {
         equal(testBuilderGroups['@ToT - dummy.org'], builderGroup);
         equal(testBuilderGroups['@ToT - dummy.org'].expectedGroups, 1);
     } finally {
-        doXHR = oldDoXHR;
+        loader.request = requestFunction;
     }
 })
 

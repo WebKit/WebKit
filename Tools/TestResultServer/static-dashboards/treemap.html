@@ -108,6 +108,7 @@ td {
 }
 </style>
 <script src="builders.js"></script>
+<script src="loader.js"></script>
 <script src="dashboard_base.js"></script>
 <script src='webtreemap.js'></script>
 
@@ -223,35 +224,12 @@ function showAverages()
     map.parentNode.replaceChild(table, map);
 }
 
-var g_resultsByBuilder = {};
-
-function ADD_RESULTS(data)
-{
-    // FIXME: We should probably include the builderName in the JSON
-    // rather than relying on only loading one JSON file per page.
-    if (!g_resultsByBuilder[g_currentState.builder])
-        g_resultsByBuilder[g_currentState.builder] = data;
-
-    handleLocationChange();
-}
-
-function g_handleBuildersListLoaded() {
-    g_buildersListLoaded = true;
-    initBuilders(g_currentState);
-    $('header-container').innerHTML = htmlForTestTypeSwitcher();
-    parseParameters();
-    appendJSONScriptElementFor(g_currentState.builder);
-}
-
 var g_isGeneratingPage = false;
 var g_webTree;
 
 function generatePage()
 {
-    if (!g_resultsByBuilder[g_currentState.builder]) {
-        handleResourceLoadError(g_currentState.builder);
-        return;
-    }
+    $('header-container').innerHTML = htmlForTestTypeSwitcher();
 
     g_isGeneratingPage = true;
 
@@ -319,12 +297,6 @@ g_defaultDashboardSpecificStateValues = {
 
 function handleQueryParameterChange(params)
 {
-    if (!g_buildersListLoaded)
-        return false;
-
-    if (!g_resultsByBuilder[g_currentState.builder])
-        appendJSONScriptElementFor(g_currentState.builder);
-
     for (var param in params) {
         if (param != 'treemapfocus') {
             $('map').innerHTML = 'Loading...';
@@ -373,7 +345,7 @@ function handleFocus(tree)
         tree.extraDom.className = 'extra-dom';
         tree.dom.appendChild(tree.extraDom);
 
-        request(TEST_URL_BASE_PATH + name,
+        loader.request(TEST_URL_BASE_PATH + name,
             function(xhr) {
                 tree.extraDom.onmousedown = function(e) {
                     e.stopPropagation();

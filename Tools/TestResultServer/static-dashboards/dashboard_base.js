@@ -33,6 +33,7 @@
 // The calling page is expected to implement the following "abstract"
 // functions/objects:
 var g_pageLoadStartTime = Date.now();
+var g_resourceLoader;
 
 // Generates the contents of the dashboard. The page should override this with
 // a function that generates the page assuming all resources have loaded.
@@ -159,8 +160,6 @@ var RLE = {
     VALUE: 1
 }
 
-var TEST_RESULTS_SERVER = 'http://test-results.appspot.com/';
-
 function isFailingResult(value)
 {
     return 'FSTOCIZ'.indexOf(value) != -1;
@@ -262,24 +261,6 @@ function collapseWhitespace(str)
     return str.replace(/\s+/g, ' ');
 }
 
-function request(url, success, error, opt_isBinaryData)
-{
-    console.log('XMLHttpRequest: ' + url);
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
-    if (opt_isBinaryData)
-        xhr.overrideMimeType('text/plain; charset=x-user-defined');
-    xhr.onreadystatechange = function(e) {
-        if (xhr.readyState == 4) {
-            if (xhr.status == 200)
-                success(xhr);
-            else
-                error(xhr);
-        }
-    }
-    xhr.send();
-}
-
 function validateParameter(state, key, value, validateFn)
 {
     if (validateFn())
@@ -359,7 +340,8 @@ function parseParameters()
     var dashboardSpecificDiffState = diffStates(oldDashboardSpecificState, g_currentState);
 
     fillMissingValues(g_currentState, g_defaultDashboardSpecificStateValues);
-    fillMissingValues(g_currentState, {'builder': g_defaultBuilderName});
+    if (!g_crossDashboardState.useTestData)
+        fillMissingValues(g_currentState, {'builder': g_defaultBuilderName});
 
     // FIXME: dashboard_base shouldn't know anything about specific dashboard specific keys.
     if (dashboardSpecificDiffState.builder)
@@ -410,34 +392,10 @@ function fillMissingValues(to, from)
     }
 }
 
-// Load a script.
-// @param {string} path Path to the script to load.
-// @param {Function=} opt_onError Optional function to call if the script
-//         does not load.
-// @param {Function=} opt_onLoad Optional function to call when the script
-//         is loaded.    Called with the script element as its 1st argument.
-function appendScript(path, opt_onError, opt_onLoad)
-{
-    var script = document.createElement('script');
-    script.src = path;
-    if (opt_onLoad) {
-        script.onreadystatechange = function() {
-            if (this.readyState == 'complete')
-                opt_onLoad(script);
-        };
-        script.onload = function() { opt_onLoad(script); };
-    }
-    if (opt_onError)
-        script.onerror = opt_onError;
-    document.getElementsByTagName('head')[0].appendChild(script);
-}
-
 // FIXME: Rename this to g_dashboardSpecificState;
 var g_currentState = {};
 var g_crossDashboardState = {};
-var g_waitingOnExpectations;
 parseCrossDashboardParameters();
-loadBuildersList(g_crossDashboardState.group, g_crossDashboardState.testType);
 
 function isLayoutTestResults()
 {
@@ -498,32 +456,6 @@ var g_expectationsByPlatform = {};
 var g_staleBuilders = [];
 var g_buildersThatFailedToLoad = [];
 
-function ADD_RESULTS(builds)
-{
-    var json_version = builds['version'];
-    for (var builderName in builds) {
-        if (builderName == 'version')
-            continue;
-
-        // If a test suite stops being run on a given builder, we don't want to show it.
-        // Assume any builder without a run in two weeks for a given test suite isn't
-        // running that suite anymore.
-        // FIXME: Grab which bots run which tests directly from the buildbot JSON instead.
-        var lastRunSeconds = builds[builderName].secondsSinceEpoch[0];
-        if ((Date.now() / 1000) - lastRunSeconds > ONE_WEEK_SECONDS)
-            continue;
-
-        if ((Date.now() / 1000) - lastRunSeconds > ONE_DAY_SECONDS)
-            g_staleBuilders.push(builderName);
-
-        if (json_version >= 4)
-            builds[builderName][TESTS_KEY] = flattenTrie(builds[builderName][TESTS_KEY]);
-        g_resultsByBuilder[builderName] = builds[builderName];
-    }
-
-    handleResourceLoad();
-}
-
 // TODO(aboxhall): figure out whether this is a performance bottleneck and
 // change calling code to understand the trie structure instead if necessary.
 function flattenTrie(trie, prefix)
@@ -544,44 +476,6 @@ function flattenTrie(trie, prefix)
     return result;
 }
 
-function pathToBuilderResultsFile(builderName)
-{
-    return TEST_RESULTS_SERVER + 'testfile?builder=' + builderName +
-            '&master=' + builderMaster(builderName).name +
-            '&testtype=' + g_crossDashboardState.testType + '&name=';
-}
-
-function requestExpectationsFiles()
-{
-    var expectationsFilesToRequest = {};
-    traversePlatformsTree(function(platform, platformName) {
-        if (platform.fallbackPlatforms)
-            platform.fallbackPlatforms.forEach(function(fallbackPlatform) {
-                var fallbackPlatformObject = platformObjectForName(fallbackPlatform);
-                if (fallbackPlatformObject.expectationsDirectory && !(fallbackPlatform in expectationsFilesToRequest))
-                    expectationsFilesToRequest[fallbackPlatform] = EXPECTATIONS_URL_BASE_PATH + fallbackPlatformObject.expectationsDirectory + '/TestExpectations';
-            });
-
-        if (platform.expectationsDirectory)
-            expectationsFilesToRequest[platformName] = EXPECTATIONS_URL_BASE_PATH + platform.expectationsDirectory + '/TestExpectations';
-    });
-
-    for (platformWithExpectations in expectationsFilesToRequest)
-        request(expectationsFilesToRequest[platformWithExpectations],
-                partial(function(platformName, xhr) {
-                    g_expectationsByPlatform[platformName] = getParsedExpectations(xhr.responseText);
-
-                    delete expectationsFilesToRequest[platformName];
-                    if (!Object.keys(expectationsFilesToRequest).length) {
-                        g_waitingOnExpectations = false;
-                        handleResourceLoad();
-                    }
-                }, platformWithExpectations),
-                partial(function(platformName, xhr) {
-                    console.error('Could not load expectations file for ' + platformName);
-                }, platformWithExpectations));
-}
-
 function isTreeMap()
 {
     return endsWith(window.location.pathname, 'treemap.html');
@@ -592,105 +486,9 @@ function isFlakinessDashboard()
     return endsWith(window.location.pathname, 'flakiness_dashboard.html');
 }
 
-function appendJSONScriptElementFor(builderName)
-{
-    var resultsFilename;
-    if (isTreeMap())
-        resultsFilename = 'times_ms.json';
-    else if (g_crossDashboardState.showAllRuns)
-        resultsFilename = 'results.json';
-    else
-        resultsFilename = 'results-small.json';
-
-    appendScript(pathToBuilderResultsFile(builderName) + resultsFilename + '&callback=ADD_RESULTS',
-            partial(handleResourceLoadError, builderName),
-            partial(handleScriptLoaded, builderName));
-}
-
-function appendJSONScriptElements()
-{
-    clearErrors();
-
-    if (isTreeMap())
-        return;
-
-    parseParameters();
-
-    if (g_crossDashboardState.useTestData)
-        return;
-
-    for (var builderName in g_builders)
-        appendJSONScriptElementFor(builderName);
-
-    g_waitingOnExpectations = isLayoutTestResults() && isFlakinessDashboard();
-    if (g_waitingOnExpectations)
-        requestExpectationsFiles();
-}
-
 var g_hasDoneInitialPageGeneration = false;
 // String of error messages to display to the user.
 var g_errorMessages = '';
-
-function handleResourceLoad()
-{
-    // In case we load a results.json that's not in the list of builders,
-    // make sure to only call handleLocationChange once from the resource loads.
-    if (!g_hasDoneInitialPageGeneration)
-        handleLocationChange();
-}
-
-function handleScriptLoaded(builderName, script)
-{
-    // We need this work-around for webkit.org/b/50589.
-    if (!g_resultsByBuilder[builderName]) {
-        var error = new Error("Builder data was empty");
-        error.target = script;
-        handleResourceLoadError(builderName, error);
-    }
-}
-
-// Handle resource loading errors - 404s, 500s, etc.    Recover from the error to
-// still show as much data as possible, but show some UI about the failure, and
-// do not try using this resource again until user refreshes.
-//
-// @param {string} builderName Name of builder that the resource failed for.
-// @param {Event} e The error event.
-function handleResourceLoadError(builderName, e)
-{
-    var error = e.target.src + ' failed to load for ' + builderName + '.';
-
-    if (isLayoutTestResults()) {
-        console.error(error);
-        g_buildersThatFailedToLoad.push(builderName);
-    } else {
-        // Avoid to show error/warning messages for non-layout tests. We may be
-        // checking the builders that are not running the tests.
-        console.info('info:' + error);
-    }
-
-    // Remove this builder from builders, so we don't try to use the
-    // data that isn't there.
-    delete g_builders[builderName];
-
-    // Change the default builder name if it has been deleted.
-    if (g_defaultBuilderName == builderName) {
-        g_defaultBuilderName = null;
-        for (var availableBuilderName in g_builders) {
-            g_defaultBuilderName = availableBuilderName;
-            g_defaultDashboardSpecificStateValues.builder = availableBuilderName;
-            break;
-        }
-        if (!g_defaultBuilderName) {
-            var error = 'No tests results found for ' + g_crossDashboardState.testType + '. Reload the page to try fetching it again.';
-            console.error(error);
-            addError(error);
-        }
-    }
-
-    // Proceed as if the resource had loaded.
-    handleResourceLoad();
-}
-
 
 // Record a new error message.
 // @param {string} errorMsg The message to show to the user.
@@ -726,25 +524,6 @@ function showErrors()
     errors.innerHTML = g_errorMessages;
 }
 
-// @return {boolean} Whether the json files have all completed loading.
-function haveJsonFilesLoaded()
-{
-    if (!currentBuilderGroup())
-        return false;
-
-    if (g_waitingOnExpectations)
-        return false;
-
-    if (isTreeMap())
-        return true;
-
-    for (var builder in g_builders) {
-        if (!g_resultsByBuilder[builder])
-            return false;
-    }
-    return true;
-}
-
 function addBuilderLoadErrors()
 {
     if (g_hasDoneInitialPageGeneration)
@@ -757,11 +536,14 @@ function addBuilderLoadErrors()
         addError('ERROR: Data from ' + g_staleBuilders.toString() + ' is more than 1 day stale.');
 }
 
+function resourceLoadingComplete()
+{
+    g_resourceLoader = null;
+    handleLocationChange();
+}
+
 function handleLocationChange()
 {
-    if(!haveJsonFilesLoaded())
-        return;
-
     addBuilderLoadErrors();
     g_hasDoneInitialPageGeneration = true;
 
@@ -1117,13 +899,6 @@ function decompressResults(builderResults)
     };
 }
 
-function g_handleBuildersListLoaded() {
-    if (!currentBuilderGroup())
-        return;
-    initBuilders();
-    appendJSONScriptElements();
-}
-
 document.addEventListener('mousedown', function(e) {
     // Clear the open popup, unless the click was inside the popup.
     var popup = $('popup');
@@ -1135,4 +910,6 @@ window.addEventListener('load', function() {
     // This doesn't seem totally accurate as there is a race between
     // onload firing and the last script tag being executed.
     logTime('Time to load JS', g_pageLoadStartTime);
+    g_resourceLoader = new loader.Loader();
+    g_resourceLoader.load();
 }, false);

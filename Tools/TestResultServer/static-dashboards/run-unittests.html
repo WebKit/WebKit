@@ -44,23 +44,24 @@ THE POSSIBILITY OF SUCH DAMAGE.
 <script>
 // Don't request the actual builders off the bots when running unittests.
 function loadBuildersList() {};
-function g_handleBuildersListLoaded() {};
 </script>
 
 <script src="dashboard_base.js"></script>
+<script src="loader.js"></script>
 <script src="flakiness_dashboard.js"></script>
 
 <script>
 window.location.href = '#useTestData=true';
 var groupName = '@ToT - chromium.org';
-var builders = {'Webkit Linux': '', 'Webkit Linux (dbg)': '', 'Webkit Mac10.7': '', 'Webkit Win': ''};
+var builders = '{"WebKit Linux": true, "WebKit Linux (dbg)": true, "WebKit Mac10.7": true, "WebKit Win": true}';
 LAYOUT_TESTS_BUILDER_GROUPS[groupName] = new BuilderGroup(BuilderGroup.TOT_WEBKIT);
 LAYOUT_TESTS_BUILDER_GROUPS[groupName].expectedGroups = 4;
-onBuilderListLoad(LAYOUT_TESTS_BUILDER_GROUPS, isChromiumWebkitTipOfTreeTestRunner, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, BuilderGroup.TOT_WEBKIT, builders);
+onBuilderListLoad(LAYOUT_TESTS_BUILDER_GROUPS, isChromiumWebkitTipOfTreeTestRunner, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, {responseText: builders});
 initBuilders();
 </script>
 
 <!-- FIXME: Split this up into multiple unittest.js, e.g. one for builders.js and one for dashboard_base.js. -->
 <script src="flakiness_dashboard_unittests.js"></script>
+<script src="loader_unittests.js"></script>
 </body>
 </html>
