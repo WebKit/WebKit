@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TestDelegate_h
-#define TestDelegate_h
+#ifndef WebTestDelegate_h
+#define WebTestDelegate_h
 
 #include "platform/WebString.h"
 #include "platform/WebVector.h"
@@ -39,7 +39,9 @@ struct WebContextMenuData;
 class WebGamepads;
 }
 
-class TestDelegate {
+namespace WebTestRunner {
+
+class WebTestDelegate {
 public:
     virtual void clearContextMenuData() = 0;
     virtual void clearEditCommand() = 0;
@@ -49,4 +51,6 @@ public:
     virtual void setGamepadData(const WebKit::WebGamepads&) = 0;
 };
 
-#endif // TestDelegate_h
+}
+
+#endif // WebTestDelegate_h

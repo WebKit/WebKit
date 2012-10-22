@@ -28,25 +28,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TestDelegate_h
-#define TestDelegate_h
+#include "config.h"
+#include "WebAccessibilityController.h"
 
-#include "platform/WebString.h"
-#include "platform/WebVector.h"
+#include "AccessibilityControllerChromium.h"
 
-namespace WebKit {
-struct WebContextMenuData;
-class WebGamepads;
+using WebKit::WebAccessibilityObject;
+
+namespace WebTestRunner {
+
+WebAccessibilityController::WebAccessibilityController(AccessibilityController* controller)
+    : m_private(controller)
+{
 }
 
-class TestDelegate {
-public:
-    virtual void clearContextMenuData() = 0;
-    virtual void clearEditCommand() = 0;
-    virtual void fillSpellingSuggestionList(const WebKit::WebString& word, WebKit::WebVector<WebKit::WebString>* suggestions) = 0;
-    virtual void setEditCommand(const std::string& name, const std::string& value) = 0;
-    virtual WebKit::WebContextMenuData* lastContextMenuData() const = 0;
-    virtual void setGamepadData(const WebKit::WebGamepads&) = 0;
-};
+void WebAccessibilityController::setFocusedElement(const WebAccessibilityObject& object)
+{
+    m_private->setFocusedElement(object);
+}
 
-#endif // TestDelegate_h
+void WebAccessibilityController::notificationReceived(const WebAccessibilityObject& target, const char* notificationName)
+{
+    m_private->notificationReceived(target, notificationName);
+}
+
+bool WebAccessibilityController::shouldLogAccessibilityEvents()
+{
+    return m_private->shouldLogAccessibilityEvents();
+}
+
+}

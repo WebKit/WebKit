@@ -28,7 +28,7 @@
 
 #if ENABLE(SCRIPTED_SPEECH)
 
-#include "Task.h"
+#include "TestRunner/src/Task.h"
 #include "WebSpeechRecognizer.h"
 #include <wtf/Compiler.h>
 #include <wtf/PassOwnPtr.h>

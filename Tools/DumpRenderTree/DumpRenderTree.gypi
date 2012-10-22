@@ -64,6 +64,10 @@
             'chromium/WebViewHostSoftwareOutputDevice.h',
         ],
         'test_runner_files': [
+            'chromium/TestRunner/public/WebAccessibilityController.h',
+            'chromium/TestRunner/public/WebTestDelegate.h',
+            'chromium/TestRunner/public/WebEventSender.h',
+            'chromium/TestRunner/public/WebTestInterfaces.h',
             'chromium/TestRunner/src/AccessibilityControllerChromium.cpp',
             'chromium/TestRunner/src/AccessibilityControllerChromium.h',
             'chromium/TestRunner/src/AccessibilityUIElementChromium.cpp',
@@ -84,6 +88,9 @@
             'chromium/TestRunner/src/TextInputController.h',
             'chromium/TestRunner/src/TestRunner.cpp',
             'chromium/TestRunner/src/TestRunner.h',
+            'chromium/TestRunner/src/WebAccessibilityController.cpp',
+            'chromium/TestRunner/src/WebEventSender.cpp',
+            'chromium/TestRunner/src/WebTestInterfaces.cpp',
         ],
         'test_plugin_files': [
             'TestNetscapePlugIn/PluginObject.cpp',

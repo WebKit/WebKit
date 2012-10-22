@@ -31,13 +31,11 @@
 #ifndef MockSpellCheck_h
 #define MockSpellCheck_h
 
+#include "platform/WebString.h"
+#include "platform/WebVector.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
-
-namespace WebKit {
-class WebString;
-}
 
 // A mock implementation of a spell-checker used for WebKit tests.
 // This class only implements the minimal functionarities required by WebKit
@@ -62,7 +60,7 @@ public:
                         int* misspelledOffset,
                         int* misspelledLength);
 
-    void fillSuggestionList(const WebKit::WebString& word, Vector<WebKit::WebString>* suggestions);
+    void fillSuggestionList(const WebKit::WebString& word, WebKit::WebVector<WebKit::WebString>* suggestions);
 
 private:
     // Initialize the internal resources if we need to initialize it.

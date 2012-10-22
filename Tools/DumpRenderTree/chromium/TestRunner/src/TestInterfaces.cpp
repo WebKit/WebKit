@@ -37,6 +37,8 @@
 #include "TextInputController.h"
 #include "platform/WebString.h"
 
+using WebTestRunner::AccessibilityController;
+using WebTestRunner::EventSender;
 using WebKit::WebFrame;
 using WebKit::WebString;
 using WebKit::WebView;

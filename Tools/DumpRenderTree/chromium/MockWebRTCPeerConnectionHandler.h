@@ -33,7 +33,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "Task.h"
+#include "TestRunner/src/Task.h"
 #include <public/WebRTCDataChannel.h>
 #include <public/WebRTCPeerConnectionHandler.h>
 #include <public/WebRTCSessionDescription.h>

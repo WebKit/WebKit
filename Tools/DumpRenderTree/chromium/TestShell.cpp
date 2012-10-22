@@ -154,7 +154,7 @@ TestShell::TestShell()
 void TestShell::initialize()
 {
     m_webPermissions = adoptPtr(new WebPermissions(this));
-    m_testInterfaces = adoptPtr(new TestInterfaces());
+    m_testInterfaces = adoptPtr(new WebTestRunner::WebTestInterfaces());
     m_testRunner = adoptPtr(new DRTTestRunner(this));
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_notificationPresenter = adoptPtr(new NotificationPresenter(this));

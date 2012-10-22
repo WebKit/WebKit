@@ -28,25 +28,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TestDelegate_h
-#define TestDelegate_h
-
-#include "platform/WebString.h"
-#include "platform/WebVector.h"
+#ifndef WebTestInterfaces_h
+#define WebTestInterfaces_h
 
 namespace WebKit {
-struct WebContextMenuData;
-class WebGamepads;
+class WebFrame;
+class WebView;
 }
 
-class TestDelegate {
+namespace WebTestRunner {
+
+class WebAccessibilityController;
+class WebEventSender;
+class WebTestDelegate;
+
+class WebTestInterfaces {
 public:
-    virtual void clearContextMenuData() = 0;
-    virtual void clearEditCommand() = 0;
-    virtual void fillSpellingSuggestionList(const WebKit::WebString& word, WebKit::WebVector<WebKit::WebString>* suggestions) = 0;
-    virtual void setEditCommand(const std::string& name, const std::string& value) = 0;
-    virtual WebKit::WebContextMenuData* lastContextMenuData() const = 0;
-    virtual void setGamepadData(const WebKit::WebGamepads&) = 0;
+    WebTestInterfaces();
+    ~WebTestInterfaces();
+
+    void setWebView(WebKit::WebView*);
+    void setDelegate(WebTestDelegate*);
+    void bindTo(WebKit::WebFrame*);
+    void resetAll();
+
+    WebAccessibilityController* accessibilityController();
+    WebEventSender* eventSender();
+
+private:
+    class Internal;
+    Internal* m_internal;
 };
 
-#endif // TestDelegate_h
+}
+
+#endif // WebTestInterfaces_h

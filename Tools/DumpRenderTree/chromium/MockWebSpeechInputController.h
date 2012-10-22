@@ -28,7 +28,7 @@
 
 #if ENABLE(INPUT_SPEECH)
 
-#include "Task.h"
+#include "TestRunner/src/Task.h"
 #include "platform/WebRect.h"
 #include "WebSpeechInputController.h"
 #include "WebSpeechInputResult.h"

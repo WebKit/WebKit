@@ -32,13 +32,14 @@
 #include "WebViewHost.h"
 
 #include "DRTTestRunner.h"
-#include "EventSender.h"
 #include "MockGrammarCheck.h"
 #include "MockWebSpeechInputController.h"
 #include "MockWebSpeechRecognizer.h"
 #include "TestNavigationController.h"
 #include "TestShell.h"
 #include "TestWebPlugin.h"
+#include "WebAccessibilityController.h"
+#include "WebAccessibilityObject.h"
 #include "WebConsoleMessage.h"
 #include "WebContextMenuData.h"
 #include "WebDOMMessageEvent.h"
@@ -46,6 +47,7 @@
 #include "WebDeviceOrientationClientMock.h"
 #include "WebDocument.h"
 #include "WebElement.h"
+#include "WebEventSender.h"
 #include "WebFrame.h"
 #include "WebGeolocationClientMock.h"
 #include "WebHistoryItem.h"
@@ -525,7 +527,7 @@ void WebViewHost::finishLastTextCheck()
         m_spellcheck.spellCheckWord(WebString(text.characters(), text.length()), &misspelledPosition, &misspelledLength);
         if (!misspelledLength)
             break;
-        Vector<WebString> suggestions;
+        WebVector<WebString> suggestions;
         m_spellcheck.fillSuggestionList(WebString(text.characters() + misspelledPosition, misspelledLength), &suggestions);
         results.append(WebTextCheckingResult(WebTextCheckingTypeSpelling, offset + misspelledPosition, misspelledLength,
                                              suggestions.isEmpty() ? WebString() : suggestions[0]));
@@ -772,7 +774,7 @@ MockSpellCheck* WebViewHost::mockSpellCheck()
     return &m_spellcheck;
 }
 
-void WebViewHost::fillSpellingSuggestionList(const WebKit::WebString& word, Vector<WebKit::WebString>* suggestions)
+void WebViewHost::fillSpellingSuggestionList(const WebKit::WebString& word, WebKit::WebVector<WebKit::WebString>* suggestions)
 {
     mockSpellCheck()->fillSuggestionList(word, suggestions);
 }

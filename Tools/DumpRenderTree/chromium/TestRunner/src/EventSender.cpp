@@ -64,9 +64,13 @@
 using namespace std;
 using namespace WebKit;
 
+namespace WebTestRunner {
+
 WebPoint EventSender::lastMousePos;
 WebMouseEvent::Button EventSender::pressedButton = WebMouseEvent::ButtonNone;
 WebMouseEvent::Button EventSender::lastButtonType = WebMouseEvent::ButtonNone;
+
+namespace {
 
 struct SavedEvent {
     enum SavedEventType {
@@ -87,27 +91,27 @@ struct SavedEvent {
         , milliseconds(0) { }
 };
 
-static WebDragData currentDragData;
-static WebDragOperation currentDragEffect;
-static WebDragOperationsMask currentDragEffectsAllowed;
-static bool replayingSavedEvents = false;
-static Deque<SavedEvent> mouseEventQueue;
-static int touchModifiers;
-static Vector<WebTouchPoint> touchPoints;
+WebDragData currentDragData;
+WebDragOperation currentDragEffect;
+WebDragOperationsMask currentDragEffectsAllowed;
+bool replayingSavedEvents = false;
+Deque<SavedEvent> mouseEventQueue;
+int touchModifiers;
+Vector<WebTouchPoint> touchPoints;
 
 // Time and place of the last mouse up event.
-static double lastClickTimeSec = 0;
-static WebPoint lastClickPos;
-static int clickCount = 0;
+double lastClickTimeSec = 0;
+WebPoint lastClickPos;
+int clickCount = 0;
 
 // maximum distance (in space and time) for a mouse click
 // to register as a double or triple click
-static const double multipleClickTimeSec = 1;
-static const int multipleClickRadiusPixels = 5;
+const double multipleClickTimeSec = 1;
+const int multipleClickRadiusPixels = 5;
 
 // How much we should scroll per event - the value here is chosen to
 // match the WebKit impl and layout test results.
-static const float scrollbarPixelsPerTick = 40.0f;
+const float scrollbarPixelsPerTick = 40.0f;
 
 inline bool outsideMultiClickRadius(const WebPoint& a, const WebPoint& b)
 {
@@ -118,20 +122,19 @@ inline bool outsideMultiClickRadius(const WebPoint& a, const WebPoint& b)
 // Used to offset the time the event hander things an event happened. This is
 // done so tests can run without a delay, but bypass checks that are time
 // dependent (e.g., dragging has a timeout vs selection).
-static uint32 timeOffsetMs = 0;
+uint32 timeOffsetMs = 0;
 
-static double getCurrentEventTimeSec()
+double getCurrentEventTimeSec()
 {
     return (webkit_support::GetCurrentTimeInMillisecond() + timeOffsetMs) / 1000.0;
 }
 
-static void advanceEventTime(int32_t deltaMs)
+void advanceEventTime(int32_t deltaMs)
 {
     timeOffsetMs += deltaMs;
 }
 
-static void initMouseEvent(WebInputEvent::Type t, WebMouseEvent::Button b,
-                           const WebPoint& pos, WebMouseEvent* e)
+void initMouseEvent(WebInputEvent::Type t, WebMouseEvent::Button b, const WebPoint& pos, WebMouseEvent* e)
 {
     e->type = t;
     e->button = b;
@@ -145,7 +148,7 @@ static void initMouseEvent(WebInputEvent::Type t, WebMouseEvent::Button b,
 }
 
 // Returns true if the specified key is the system key.
-static bool applyKeyModifier(const string& modifierName, WebInputEvent* event)
+bool applyKeyModifier(const string& modifierName, WebInputEvent* event)
 {
     bool isSystemKey = false;
     const char* characters = modifierName.c_str();
@@ -182,7 +185,7 @@ static bool applyKeyModifier(const string& modifierName, WebInputEvent* event)
     return isSystemKey;
 }
 
-static bool applyKeyModifiers(const CppVariant* argument, WebInputEvent* event)
+bool applyKeyModifiers(const CppVariant* argument, WebInputEvent* event)
 {
     bool isSystemKey = false;
     if (argument->isObject()) {
@@ -243,6 +246,8 @@ enum KeyLocationCode {
     DOMKeyLocationRight         = 0x02,
     DOMKeyLocationNumpad        = 0x03
 };
+
+}
 
 EventSender::EventSender()
     : m_delegate(0)
@@ -812,7 +817,7 @@ static Vector<WebString> makeMenuItemStringsFor(WebContextMenuData* contextMenu,
     if (contextMenu->isEditable) {
         for (const char** item = editableMenuStrings; *item; ++item) 
             strings.append(WebString::fromUTF8(*item));
-        Vector<WebString> suggestions;
+        WebVector<WebString> suggestions;
         delegate->fillSpellingSuggestionList(contextMenu->misspelledWord, &suggestions);
         for (size_t i = 0; i < suggestions.size(); ++i) 
             strings.append(suggestions[i]);
@@ -1268,4 +1273,6 @@ void EventSender::fireKeyboardEventsToElement(const CppArgumentList&, CppVariant
 void EventSender::clearKillRing(const CppArgumentList&, CppVariant* result)
 {
     result->setNull();
+}
+
 }

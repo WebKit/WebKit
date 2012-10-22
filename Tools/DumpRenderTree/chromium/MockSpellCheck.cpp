@@ -31,7 +31,6 @@
 #include "config.h"
 #include "MockSpellCheck.h"
 
-#include "platform/WebString.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
 #include <wtf/text/WTFString.h>
@@ -99,10 +98,15 @@ bool MockSpellCheck::spellCheckWord(const WebString& text, int* misspelledOffset
     return false;
 }
 
-void MockSpellCheck::fillSuggestionList(const WebString& word, Vector<WebString>* suggestions)
+void MockSpellCheck::fillSuggestionList(const WebString& word, WebVector<WebString>* suggestions)
 {
-    if (word == WebString::fromUTF8("wellcome"))
-        suggestions->append(WebString::fromUTF8("welcome"));
+    if (word == WebString::fromUTF8("wellcome")) {
+        WebVector<WebString> result(suggestions->size() + 1);
+        for (size_t i = 0; i < suggestions->size(); ++i)
+            result[i] = (*suggestions)[i];
+        result[suggestions->size()] = WebString::fromUTF8("welcome");
+        suggestions->swap(result);
+    }
 }
 
 bool MockSpellCheck::initializeIfNeeded()

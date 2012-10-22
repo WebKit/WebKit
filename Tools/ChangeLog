@@ -1,3 +1,102 @@
+2012-10-21  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] introduce a public API for the TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=99904
+
+        Reviewed by Adam Barth.
+
+        The API decouples the public API from the underlying implementation, so
+        embedders can depend on it. I'm also changing DRT to consume the
+        TestRunner API through the public API, except for DRTTestRunner and all
+        places that require Task.h. These two will be migrated in later changes.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/DRTDevToolsAgent.h:
+        * DumpRenderTree/chromium/DRTDevToolsClient.h:
+        * DumpRenderTree/chromium/MockSpellCheck.cpp:
+        (MockSpellCheck::fillSuggestionList):
+        * DumpRenderTree/chromium/MockSpellCheck.h:
+        (MockSpellCheck):
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.h:
+        * DumpRenderTree/chromium/MockWebSpeechInputController.h:
+        * DumpRenderTree/chromium/MockWebSpeechRecognizer.h:
+        * DumpRenderTree/chromium/TestRunner/public/WebAccessibilityController.h: Copied from Tools/DumpRenderTree/chromium/TestRunner/src/TestDelegate.h.
+        (WebKit):
+        (WebTestRunner):
+        (WebAccessibilityController):
+        * DumpRenderTree/chromium/TestRunner/public/WebEventSender.h: Copied from Tools/DumpRenderTree/chromium/TestRunner/src/TestDelegate.h.
+        (WebKit):
+        (WebTestRunner):
+        (WebEventSender):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h: Copied from Tools/DumpRenderTree/chromium/TestRunner/src/TestDelegate.h.
+        (WebKit):
+        (WebTestRunner):
+        (WebTestDelegate):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestInterfaces.h: Copied from Tools/DumpRenderTree/chromium/TestRunner/src/TestInterfaces.h.
+        (WebKit):
+        (WebTestRunner):
+        (WebTestInterfaces):
+        * DumpRenderTree/chromium/TestRunner/src/AccessibilityControllerChromium.cpp:
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/AccessibilityControllerChromium.h:
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.cpp:
+        (WebTestRunner):
+        (WebTestRunner::makeMenuItemStringsFor):
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.h:
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/TestDelegate.h:
+        (TestDelegate):
+        * DumpRenderTree/chromium/TestRunner/src/TestInterfaces.cpp:
+        * DumpRenderTree/chromium/TestRunner/src/TestInterfaces.h:
+        (TestInterfaces):
+        * DumpRenderTree/chromium/TestRunner/src/WebAccessibilityController.cpp: Copied from Tools/DumpRenderTree/chromium/TestRunner/src/TestDelegate.h.
+        (WebTestRunner):
+        (WebTestRunner::WebAccessibilityController::WebAccessibilityController):
+        (WebTestRunner::WebAccessibilityController::setFocusedElement):
+        (WebTestRunner::WebAccessibilityController::notificationReceived):
+        (WebTestRunner::WebAccessibilityController::shouldLogAccessibilityEvents):
+        * DumpRenderTree/chromium/TestRunner/src/WebEventSender.cpp: Copied from Tools/DumpRenderTree/chromium/TestRunner/src/TestDelegate.h.
+        (WebTestRunner):
+        (WebTestRunner::WebEventSender::WebEventSender):
+        (WebTestRunner::WebEventSender::doDragDrop):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestInterfaces.cpp: Added.
+        (WebTestRunner):
+        (WebTestInterfaces::Internal):
+        (WebTestRunner::WebTestInterfaces::Internal::testInterfaces):
+        (WebTestRunner::WebTestInterfaces::Internal::accessibilityController):
+        (WebTestRunner::WebTestInterfaces::Internal::eventSender):
+        (WebTestRunner::WebTestInterfaces::Internal::Internal):
+        (WebTestRunner::WebTestInterfaces::Internal::~Internal):
+        (WebTestRunner::WebTestInterfaces::Internal::setDelegate):
+        (WebTestRunner::WebTestInterfaces::Internal::clearContextMenuData):
+        (WebTestRunner::WebTestInterfaces::Internal::clearEditCommand):
+        (WebTestRunner::WebTestInterfaces::Internal::fillSpellingSuggestionList):
+        (WebTestRunner::WebTestInterfaces::Internal::setEditCommand):
+        (WebTestRunner::WebTestInterfaces::Internal::lastContextMenuData):
+        (WebTestRunner::WebTestInterfaces::Internal::setGamepadData):
+        (WebTestRunner::WebTestInterfaces::WebTestInterfaces):
+        (WebTestRunner::WebTestInterfaces::~WebTestInterfaces):
+        (WebTestRunner::WebTestInterfaces::setWebView):
+        (WebTestRunner::WebTestInterfaces::setDelegate):
+        (WebTestRunner::WebTestInterfaces::bindTo):
+        (WebTestRunner::WebTestInterfaces::resetAll):
+        (WebTestRunner::WebTestInterfaces::accessibilityController):
+        (WebTestRunner::WebTestInterfaces::eventSender):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::initialize):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::eventSender):
+        (TestShell::accessibilityController):
+        (TestShell):
+        * DumpRenderTree/chromium/WebUserMediaClientMock.h:
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::finishLastTextCheck):
+        (WebViewHost::fillSpellingSuggestionList):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2012-10-21  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
 
         Unreviewed. Updating my emails.

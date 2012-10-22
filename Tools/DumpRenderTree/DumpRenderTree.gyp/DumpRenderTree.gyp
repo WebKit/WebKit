@@ -77,6 +77,9 @@
         {
             'target_name': 'TestRunner',
             'type': 'static_library',
+            'defines': [
+                'WEBTESTRUNNER_IMPLEMENTATION=1',
+            ],
             'dependencies': [
                 'TestRunner_resources',
                 '<(source_dir)/WebKit/chromium/WebKit.gyp:webkit',
@@ -88,11 +91,12 @@
                 '<(chromium_src_dir)',
                 '<(source_dir)/WebKit/chromium/public',
                 '<(DEPTH)',
+                '../chromium/TestRunner/public',
                 '../chromium/TestRunner/src',
             ],
             'direct_dependent_settings': {
                 'include_dirs': [
-                    '../chromium/TestRunner/src',
+                    '../chromium/TestRunner/public',
                 ],
             },
             'sources': [

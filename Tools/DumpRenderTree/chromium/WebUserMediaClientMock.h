@@ -33,7 +33,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "Task.h"
+#include "TestRunner/src/Task.h"
 #include "WebUserMediaClient.h"
 #include "webkit/support/test_media_stream_client.h"
 #include <public/WebCommon.h>

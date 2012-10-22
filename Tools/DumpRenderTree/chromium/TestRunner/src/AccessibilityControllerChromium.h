@@ -40,6 +40,8 @@ class WebFrame;
 class WebView;
 }
 
+namespace WebTestRunner {
+
 class AccessibilityController : public CppBoundClass {
 public:
     AccessibilityController();
@@ -84,5 +86,7 @@ private:
 
     WebKit::WebView* m_webView;
 };
+
+}
 
 #endif // AccessibilityControllerChromium_h

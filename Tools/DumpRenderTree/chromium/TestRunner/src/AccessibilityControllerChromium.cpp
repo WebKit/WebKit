@@ -40,6 +40,8 @@
 
 using namespace WebKit;
 
+namespace WebTestRunner {
+
 AccessibilityController::AccessibilityController()
     : m_logAccessibilityEvents(false)
 {
@@ -198,4 +200,6 @@ void AccessibilityController::fallbackCallback(const CppArgumentList&, CppVarian
     printf("CONSOLE MESSAGE: JavaScript ERROR: unknown method called on "
            "AccessibilityController\n");
     result->setNull();
+}
+
 }

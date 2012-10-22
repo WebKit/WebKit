@@ -28,25 +28,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TestDelegate_h
-#define TestDelegate_h
+#ifndef WebEventSender_h
+#define WebEventSender_h
 
-#include "platform/WebString.h"
-#include "platform/WebVector.h"
+#include "WebDragOperation.h"
 
 namespace WebKit {
-struct WebContextMenuData;
-class WebGamepads;
+class WebDragData;
 }
 
-class TestDelegate {
+namespace WebTestRunner {
+
+class EventSender;
+
+class WebEventSender {
 public:
-    virtual void clearContextMenuData() = 0;
-    virtual void clearEditCommand() = 0;
-    virtual void fillSpellingSuggestionList(const WebKit::WebString& word, WebKit::WebVector<WebKit::WebString>* suggestions) = 0;
-    virtual void setEditCommand(const std::string& name, const std::string& value) = 0;
-    virtual WebKit::WebContextMenuData* lastContextMenuData() const = 0;
-    virtual void setGamepadData(const WebKit::WebGamepads&) = 0;
+#if WEBTESTRUNNER_IMPLEMENTATION
+    explicit WebEventSender(EventSender*);
+#endif
+
+    // Simulate drag&drop system call.
+    void doDragDrop(const WebKit::WebDragData&, WebKit::WebDragOperationsMask);
+
+private:
+    EventSender* m_private;
 };
 
-#endif // TestDelegate_h
+}
+
+#endif // WebEventSender_h

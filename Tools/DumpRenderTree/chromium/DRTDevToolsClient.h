@@ -31,7 +31,7 @@
 #ifndef DRTDevToolsClient_h
 #define DRTDevToolsClient_h
 
-#include "Task.h"
+#include "TestRunner/src/Task.h"
 #include "WebDevToolsFrontendClient.h"
 #include "platform/WebString.h"
 #include <wtf/Noncopyable.h>

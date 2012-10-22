@@ -50,6 +50,8 @@ class WebView;
 
 class TestDelegate;
 
+namespace WebTestRunner {
+
 class EventSender : public CppBoundClass {
 public:
     EventSender();
@@ -182,5 +184,7 @@ private:
     // increment or not.
     static WebKit::WebMouseEvent::Button lastButtonType;
 };
+
+}
 
 #endif // EventSender_h

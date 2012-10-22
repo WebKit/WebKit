@@ -32,15 +32,15 @@
 #define WebViewHost_h
 
 #include "MockSpellCheck.h"
-#include "Task.h"
-#include "TestDelegate.h"
 #include "TestNavigationController.h"
+#include "TestRunner/src/Task.h"
 #include "WebAccessibilityNotification.h"
 #include "WebCursorInfo.h"
 #include "WebFrameClient.h"
 #include "WebIntentRequest.h"
 #include "WebPrerendererClient.h"
 #include "WebSpellCheckClient.h"
+#include "WebTestDelegate.h"
 #include "WebViewClient.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -79,7 +79,7 @@ class TestMediaStreamClient;
 
 class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient, public NavigationHost,
                     public WebKit::WebPrerendererClient, public WebKit::WebSpellCheckClient,
-                    public TestDelegate {
+                    public WebTestRunner::WebTestDelegate {
  public:
     WebViewHost(TestShell*);
     virtual ~WebViewHost();
@@ -281,7 +281,7 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     // Spellcheck related helper APIs
     MockSpellCheck* mockSpellCheck();
     void finishLastTextCheck();
-    virtual void fillSpellingSuggestionList(const WebKit::WebString& word, Vector<WebKit::WebString>* suggestions) OVERRIDE;
+    virtual void fillSpellingSuggestionList(const WebKit::WebString& word, WebKit::WebVector<WebKit::WebString>* suggestions) OVERRIDE;
 
     // Geolocation client mocks for DRTTestRunner
     WebKit::WebGeolocationClientMock* geolocationClientMock();
