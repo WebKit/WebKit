@@ -1,3 +1,15 @@
+2012-10-22  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, land render tree results for css3/flexbox pixel test that
+        landed earlier this morning. The results were pulled from the bots.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/css3/flexbox/flexbox-baseline-margins-expected.txt: Added.
+        * platform/mac/TestExpectations:
+        * platform/mac/css3/flexbox/flexbox-baseline-margins-expected.txt: Added.
+        * platform/qt/TestExpectations:
+        * platform/qt/css3/flexbox/flexbox-baseline-margins-expected.txt: Added.
+
 2012-10-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Rebaseline another test after r131941 and r131991.
