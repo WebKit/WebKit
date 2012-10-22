@@ -1,3 +1,10 @@
+2012-10-22  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, more Chromium ML expectation updating.
+
+        * platform/chromium-mac-mountainlion/TestExpectations:
+        * platform/chromium/TestExpectations:
+
 2012-10-22  Michael Saboff  <msaboff@apple.com>
 
         Regression(r131655): Crash in StringImpl::findIgnoringCase
