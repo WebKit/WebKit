@@ -39,6 +39,7 @@
 #include "IDBTransaction.h"
 #include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
+#include <limits>
 
 namespace WebCore {
 
@@ -156,7 +157,7 @@ PassRefPtr<IDBRequest> IDBCursor::update(ScriptExecutionContext* context, Script
     return objectStore->put(IDBObjectStoreBackendInterface::CursorUpdate, IDBAny::create(this), context, value, m_currentPrimaryKey, ec);
 }
 
-void IDBCursor::advance(long count, ExceptionCode& ec)
+void IDBCursor::advance(long long count, ExceptionCode& ec)
 {
     IDB_TRACE("IDBCursor::advance");
     if (!m_gotValue) {
@@ -170,8 +171,7 @@ void IDBCursor::advance(long count, ExceptionCode& ec)
     }
 
     // FIXME: This should only need to check for 0 once webkit.org/b/96798 lands.
-    const int64_t maxECMAScriptInteger = 0x20000000000000LL - 1;
-    if (count < 1 || count > maxECMAScriptInteger) {
+    if (count < 1 || count > UINT_MAX) {
         ec = NATIVE_TYPE_ERR;
         return;
     }

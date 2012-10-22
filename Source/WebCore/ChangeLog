@@ -1,3 +1,24 @@
+2012-10-22  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Bounds check for IDBCursor.advance() incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=100014
+
+        Reviewed by Tony Chang.
+
+        Fix introduced by trac.webkit.org/changeset/131658 restricted cursor.advance()'s argument
+        as [EnforceRange] unsigned long long, but it's typed as [EnforceRange] unsigned long; the
+        useless comparison was caught by a clang check.
+
+        In lieu of webkit.org/b/96798 make it long long and correct the range check.
+
+        Test: storage/indexeddb/cursor-advance.html
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::advance):
+        * Modules/indexeddb/IDBCursor.h:
+        (IDBCursor):
+        * Modules/indexeddb/IDBCursor.idl:
+
 2012-10-22  Tony Chang  <tony@chromium.org>
 
         WebKit does not support 'flex-wrap: nowrap'

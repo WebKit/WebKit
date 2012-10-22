@@ -76,7 +76,8 @@ public:
     IDBAny* source() const;
 
     PassRefPtr<IDBRequest> update(ScriptExecutionContext*, ScriptValue&, ExceptionCode&);
-    void advance(long, ExceptionCode&);
+    // FIXME: Make this unsigned long once webkit.org/b/96798 lands.
+    void advance(long long, ExceptionCode&);
     void continueFunction(PassRefPtr<IDBKey>, ExceptionCode&);
     PassRefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCode&);
 

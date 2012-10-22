@@ -1,3 +1,19 @@
+2012-10-22  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Bounds check for IDBCursor.advance() incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=100014
+
+        Reviewed by Tony Chang.
+
+        Assert that advance(2^32) throws and advance(2^32-1) does not, per WebIDL.
+
+        * storage/indexeddb/cursor-advance-expected.txt:
+        * storage/indexeddb/resources/cursor-advance.js:
+        (testBadAdvance.advanceBadly):
+        (testBadAdvance):
+        (testEdges.request.onsuccess):
+        (testEdges):
+
 2012-10-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Rebaseline pixel expectations after r131941 and r131991, part 7.

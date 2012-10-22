@@ -331,12 +331,38 @@ function testBadAdvance()
 
         evalAndExpectExceptionClass("cursor.advance(0)", "TypeError");
         evalAndExpectExceptionClass("cursor.advance(-1)", "TypeError");
+        evalAndExpectExceptionClass("cursor.advance(0x100000000)", "TypeError");
         evalAndExpectExceptionClass("cursor.advance(0x20000000000000)", "TypeError");
-        testDelete();
+        testEdges();
     }
     request.onsuccess = advanceBadly;
     request.onerror = unexpectedErrorCallback;
+}
 
+function testEdges()
+{
+    preamble();
+    evalAndLog("trans = db.transaction(objectStoreName, 'readonly')");
+    trans.onabort = unexpectedAbortCallback;
+
+    objectStore = evalAndLog("objectStore = trans.objectStore(objectStoreName)");
+    evalAndLog("request = objectStore.openCursor()");
+    request.onerror = unexpectedErrorCallback;
+
+    firstSuccess = true;
+    request.onsuccess = function onSuccess(evt) {
+        preamble(event);
+        evalAndLog("cursor = event.target.result");
+        if (firstSuccess) {
+            shouldBeNonNull("cursor");
+            firstSuccess = false;
+            evalAndLog("cursor.advance(0xffffffff)");
+        } else {
+            shouldBeNull("cursor");
+        }
+    };
+
+    trans.oncomplete = testDelete;
 }
 
 function testDelete()

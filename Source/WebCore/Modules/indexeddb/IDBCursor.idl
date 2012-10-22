@@ -40,7 +40,7 @@
     [CallWith=ScriptExecutionContext] IDBRequest update(in any value)
         raises (IDBDatabaseException);
     // FIXME: Make this [EnforceRange] unsigned long once webkit.org/b/96798 lands.
-    void advance(in long count)
+    void advance(in long long count)
         raises (IDBDatabaseException);
     [ImplementedAs=continueFunction] void continue(in [Optional] IDBKey key)
         raises (IDBDatabaseException);
