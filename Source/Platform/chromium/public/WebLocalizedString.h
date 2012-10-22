@@ -69,7 +69,6 @@ struct WebLocalizedString {
         KeygenMenuHighGradeKeySize,
         KeygenMenuMediumGradeKeySize,
         MissingPluginText,
-        MonthFormatInLDML,
         MultipleFileUploadText,
         OtherColorLabel,
         OtherDateLabel,

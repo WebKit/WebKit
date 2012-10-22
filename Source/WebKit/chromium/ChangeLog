@@ -1,5 +1,14 @@
 2012-10-22  Keishi Hattori  <keishi@webkit.org>
 
+        Remove monthFormatInLDML
+        https://bugs.webkit.org/show_bug.cgi?id=99971
+
+        Reviewed by Kent Tamura.
+
+        * src/LocalizedStrings.cpp:
+
+2012-10-22  Keishi Hattori  <keishi@webkit.org>
+
         [Chromium] Rename WeekFormatInLDML to WeekFormatTemplate
         https://bugs.webkit.org/show_bug.cgi?id=99972
 

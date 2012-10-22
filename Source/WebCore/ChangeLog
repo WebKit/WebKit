@@ -1,3 +1,17 @@
+2012-10-22  Keishi Hattori  <keishi@webkit.org>
+
+        Remove monthFormatInLDML
+        https://bugs.webkit.org/show_bug.cgi?id=99971
+
+        Reviewed by Kent Tamura.
+
+        Removing monthFormatInLDML from localized strings because Localizer class now provides the same functionality.
+
+        No new tests. Just removing unused code.
+
+        * platform/LocalizedStrings.h:
+        (WebCore):
+
 2012-10-22  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] Enable Microdata DOM API
