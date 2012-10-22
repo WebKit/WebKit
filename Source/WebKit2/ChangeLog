@@ -1,3 +1,16 @@
+2012-10-22  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [EFL][WK2] ewk_view_color_picker_color_set() is leaking
+        https://bugs.webkit.org/show_bug.cgi?id=100007
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix a leak in ewk_view_color_picker_color_set() by adopting WKStringRef
+        returned by WKStringCreateWithUTF8CString().
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_color_picker_color_set):
+
 2012-10-22  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Make the resource load client a C++ class

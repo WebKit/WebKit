@@ -1912,8 +1912,8 @@ Eina_Bool ewk_view_color_picker_color_set(Evas_Object* ewkView, int r, int g, in
     EINA_SAFETY_ON_NULL_RETURN_VAL(priv->colorPickerResultListener, false);
 
     WebCore::Color color = WebCore::Color(r, g, b, a);
-    const WKStringRef colorString = WKStringCreateWithUTF8CString(color.serialized().utf8().data());
-    WKColorPickerResultListenerSetColor(priv->colorPickerResultListener.get(), colorString);
+    WKRetainPtr<WKStringRef> colorString(AdoptWK, WKStringCreateWithUTF8CString(color.serialized().utf8().data()));
+    WKColorPickerResultListenerSetColor(priv->colorPickerResultListener.get(), colorString.get());
     priv->colorPickerResultListener.clear();
 
     return true;
