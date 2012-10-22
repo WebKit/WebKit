@@ -1,3 +1,15 @@
+2012-10-22  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Skip plugins/npruntime/remove-property.html
+        https://bugs.webkit.org/show_bug.cgi?id=99978
+
+        Unreviewed EFL gardening.
+
+        Skip plugins/npruntime/remove-property.html which started
+        failing after r131990.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-10-22  Dongwoo Joshua Im  <dw.im@samsung.com>
 
         Change the path of the include files in the text decoration test cases.
