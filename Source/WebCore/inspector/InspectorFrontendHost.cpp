@@ -149,22 +149,16 @@ void InspectorFrontendHost::loaded()
         m_client->frontendLoaded();
 }
 
-void InspectorFrontendHost::requestAttachWindow()
-{
-    if (m_client)
-        m_client->requestAttachWindow();
-}
-
-void InspectorFrontendHost::requestDetachWindow()
-{
-    if (m_client)
-        m_client->requestDetachWindow();
-}
-
 void InspectorFrontendHost::requestSetDockSide(const String& side)
 {
-    if (m_client)
-        m_client->requestSetDockSide(side);
+    if (!m_client)
+        return;
+    if (side == "undocked")
+        m_client->requestSetDockSide(InspectorFrontendClient::UNDOCKED);
+    else if (side == "right")
+        m_client->requestSetDockSide(InspectorFrontendClient::DOCKED_TO_RIGHT);
+    else if (side == "bottom")
+        m_client->requestSetDockSide(InspectorFrontendClient::DOCKED_TO_BOTTOM);
 }
 
 void InspectorFrontendHost::closeWindow()

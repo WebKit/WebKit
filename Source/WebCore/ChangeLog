@@ -1,3 +1,37 @@
+2012-10-22  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: merge "docked" state into the "dock side" enum.
+        https://bugs.webkit.org/show_bug.cgi?id=99717
+
+        Reviewed by Vsevolod Vlasov.
+
+        Otherwise, it is hard to manage these inter-dependent flags.
+
+        * WebCore.exp.in:
+        * inspector/InspectorFrontendClient.h:
+        (InspectorFrontendClient):
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::requestSetDockSide):
+        (WebCore::InspectorFrontendClientLocal::setAttachedWindow):
+        * inspector/InspectorFrontendClientLocal.h:
+        (InspectorFrontendClientLocal):
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::requestSetDockSide):
+        * inspector/InspectorFrontendHost.h:
+        (InspectorFrontendHost):
+        * inspector/InspectorFrontendHost.idl:
+        * inspector/front-end/DockController.js:
+        (WebInspector.DockController):
+        (WebInspector.DockController.prototype._updateUI.get sides):
+        (WebInspector.DockController.prototype._updateUI):
+        (WebInspector.DockController.prototype._toggleDockState):
+        * inspector/front-end/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.setAttachedWindow):
+        (InspectorFrontendAPI.setDockSide):
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        (.WebInspector.InspectorFrontendHostStub.prototype.requestSetDockSide):
+        * inspector/front-end/externs.js:
+
 2012-10-22  MORITA Hajime  <morrita@google.com>
 
         Unreviewed follow up to update test result after r132033.

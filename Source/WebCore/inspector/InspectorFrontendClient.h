@@ -41,6 +41,12 @@ class Event;
 
 class InspectorFrontendClient {
 public:
+    enum DockSide {
+        UNDOCKED = 0,
+        DOCKED_TO_RIGHT,
+        DOCKED_TO_BOTTOM
+    };
+
     virtual ~InspectorFrontendClient() { }
 
     virtual void windowObjectCleared() = 0;
@@ -54,9 +60,7 @@ public:
     virtual void bringToFront() = 0;
     virtual void closeWindow() = 0;
 
-    virtual void requestAttachWindow() = 0;
-    virtual void requestDetachWindow() = 0;
-    virtual void requestSetDockSide(const String&) = 0;
+    virtual void requestSetDockSide(DockSide) = 0;
     virtual void changeAttachedWindowHeight(unsigned) = 0;
     virtual void openInNewTab(const String& url) = 0;
     virtual bool canSave() = 0;

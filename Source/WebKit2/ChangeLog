@@ -1,3 +1,13 @@
+2012-10-22  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: merge "docked" state into the "dock side" enum.
+        https://bugs.webkit.org/show_bug.cgi?id=99717
+
+        Reviewed by Vsevolod Vlasov.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-10-21  Milian Wolff  <milian.wolff@kdab.com>
 
         [Qt] QNX build fails when building against Qt without clipboard support
@@ -728,17 +738,6 @@
         (WebKit):
         (WebProcess):
         * WebProcess/WebProcess.messages.in:
-
-2012-10-19  Tony Chang  <tony@chromium.org>
-
-        Unreviewed, rolling out r131936.
-        http://trac.webkit.org/changeset/131936
-        https://bugs.webkit.org/show_bug.cgi?id=99717
-
-        Broke the clang build
-
-        * win/WebKit2.def:
-        * win/WebKit2CFLite.def:
 
 2012-10-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 

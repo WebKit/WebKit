@@ -57,8 +57,6 @@ public:
     void disconnectClient();
 
     void loaded();
-    void requestAttachWindow();
-    void requestDetachWindow();
     void requestSetDockSide(const String&);
     void closeWindow();
     void bringToFront();
