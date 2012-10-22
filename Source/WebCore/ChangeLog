@@ -1,3 +1,31 @@
+2012-10-22  Chris Rogers  <crogers@google.com>
+
+        Update some AudioContext create() method names to latest Web Audio spec
+        https://bugs.webkit.org/show_bug.cgi?id=99888
+
+        Reviewed by Adam Barth.
+
+        The following AudioContext method names are being changed, with legacy support for the old names:
+        createGainNode -> createGain
+        createDelayNode -> createDelay
+        createJavaScriptNode -> createScriptProcessor
+
+        For details:
+        https://www.w3.org/Bugs/Public/show_bug.cgi?id=18332
+
+        Tests changed: webaudio/delaynode.html, webaudio/gain.html, webaudio/javascriptaudionode.html
+        to test coverage of the new names.
+
+        * Modules/webaudio/AudioBufferSourceNode.idl:
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createScriptProcessor):
+        (WebCore::AudioContext::createGain):
+        (WebCore::AudioContext::createDelay):
+        * Modules/webaudio/AudioContext.h:
+        (AudioContext):
+        * Modules/webaudio/AudioContext.idl:
+        * page/FeatureObserver.h:
+
 2012-10-22  Varun Jain  <varunjain@chromium.org>
 
         Context menu generated from touch gestures on textareas has

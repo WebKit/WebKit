@@ -420,19 +420,19 @@ PassRefPtr<MediaStreamAudioSourceNode> AudioContext::createMediaStreamSource(Med
 }
 #endif
 
-PassRefPtr<ScriptProcessorNode> AudioContext::createJavaScriptNode(size_t bufferSize, ExceptionCode& ec)
+PassRefPtr<ScriptProcessorNode> AudioContext::createScriptProcessor(size_t bufferSize, ExceptionCode& ec)
 {
     // Set number of input/output channels to stereo by default.
-    return createJavaScriptNode(bufferSize, 2, 2, ec);
+    return createScriptProcessor(bufferSize, 2, 2, ec);
 }
 
-PassRefPtr<ScriptProcessorNode> AudioContext::createJavaScriptNode(size_t bufferSize, size_t numberOfInputChannels, ExceptionCode& ec)
+PassRefPtr<ScriptProcessorNode> AudioContext::createScriptProcessor(size_t bufferSize, size_t numberOfInputChannels, ExceptionCode& ec)
 {
     // Set number of output channels to stereo by default.
-    return createJavaScriptNode(bufferSize, numberOfInputChannels, 2, ec);
+    return createScriptProcessor(bufferSize, numberOfInputChannels, 2, ec);
 }
 
-PassRefPtr<ScriptProcessorNode> AudioContext::createJavaScriptNode(size_t bufferSize, size_t numberOfInputChannels, size_t numberOfOutputChannels, ExceptionCode& ec)
+PassRefPtr<ScriptProcessorNode> AudioContext::createScriptProcessor(size_t bufferSize, size_t numberOfInputChannels, size_t numberOfOutputChannels, ExceptionCode& ec)
 {
     ASSERT(isMainThread());
     lazyInitialize();
@@ -489,20 +489,20 @@ PassRefPtr<AnalyserNode> AudioContext::createAnalyser()
     return AnalyserNode::create(this, m_destinationNode->sampleRate());
 }
 
-PassRefPtr<GainNode> AudioContext::createGainNode()
+PassRefPtr<GainNode> AudioContext::createGain()
 {
     ASSERT(isMainThread());
     lazyInitialize();
     return GainNode::create(this, m_destinationNode->sampleRate());
 }
 
-PassRefPtr<DelayNode> AudioContext::createDelayNode()
+PassRefPtr<DelayNode> AudioContext::createDelay()
 {
     const double defaultMaxDelayTime = 1;
-    return createDelayNode(defaultMaxDelayTime);
+    return createDelay(defaultMaxDelayTime);
 }
 
-PassRefPtr<DelayNode> AudioContext::createDelayNode(double maxDelayTime)
+PassRefPtr<DelayNode> AudioContext::createDelay(double maxDelayTime)
 {
     ASSERT(isMainThread());
     lazyInitialize();

@@ -69,15 +69,15 @@
 #endif
 
     // Processing nodes
-    GainNode createGainNode();
-    DelayNode createDelayNode(in [Optional] double maxDelayTime);
+    GainNode createGain();
+    DelayNode createDelay(in [Optional] double maxDelayTime);
     BiquadFilterNode createBiquadFilter();
     WaveShaperNode createWaveShaper();
     PannerNode createPanner();
     ConvolverNode createConvolver();
     DynamicsCompressorNode createDynamicsCompressor();
     AnalyserNode createAnalyser();
-    ScriptProcessorNode createJavaScriptNode(in unsigned long bufferSize, in [Optional] unsigned long numberOfInputChannels, in [Optional] unsigned long numberOfOutputChannels)
+    ScriptProcessorNode createScriptProcessor(in unsigned long bufferSize, in [Optional] unsigned long numberOfInputChannels, in [Optional] unsigned long numberOfOutputChannels)
         raises(DOMException);
     OscillatorNode createOscillator();
     WaveTable createWaveTable(in Float32Array real, in Float32Array imag)
@@ -93,4 +93,13 @@
     // void prepareOfflineBufferRendering(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate);
     attribute EventListener oncomplete;
     void startRendering();
+
+#if defined(ENABLE_LEGACY_WEB_AUDIO) && ENABLE_LEGACY_WEB_AUDIO
+    [V8MeasureAs=LegacyWebAudio, ImplementedAs=createGain] GainNode createGainNode();
+    [V8MeasureAs=LegacyWebAudio, ImplementedAs=createDelay] DelayNode createDelayNode(in [Optional] double maxDelayTime);
+
+    [V8MeasureAs=LegacyWebAudio, ImplementedAs=createScriptProcessor] ScriptProcessorNode createJavaScriptNode(in unsigned long bufferSize, in [Optional] unsigned long numberOfInputChannels, in [Optional] unsigned long numberOfOutputChannels)
+        raises(DOMException);
+#endif
+
 };

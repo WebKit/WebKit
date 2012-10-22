@@ -11,12 +11,12 @@
 <div id="console"></div>
 
 <script>
-description("Tests JavaScriptAudioNode.");
+description("Tests ScriptProcessorNode.");
 
 var sampleRate = 44100.0;
 var outputChannels = 6;
 
-// For the current implementation of JavaScriptAudioNode, when it works with OfflineAudioContext (which runs much faster
+// For the current implementation of ScriptProcessorNode, when it works with OfflineAudioContext (which runs much faster
 // than real-time) the event.inputBuffer might be overwrite again before onaudioprocess ever get chance to be called.
 // We carefully arrange the renderLengthInFrames and bufferSize to have exactly the same value to avoid this issue.
 var renderLengthInFrames = 512;
@@ -68,10 +68,10 @@ function processAudioData(event) {
 
 function doBufferSizeTest(size) {
     try {
-        var jsnode = context.createJavaScriptNode(size, 1, 1);
-        testPassed("Successfully created JavaScriptAudioNode with bufferSize = " + size + ".");
+        var jsnode = context.createScriptProcessor(size, 1, 1);
+        testPassed("Successfully created ScriptProcessorNode with bufferSize = " + size + ".");
     } catch(e) {
-        testFailed("Failed to create JavaScriptAudioNode with bufferSize = " + size + ".");
+        testFailed("Failed to create ScriptProcessorNode with bufferSize = " + size + ".");
     }
 }
 
@@ -87,42 +87,42 @@ function runTest() {
     context = new webkitAudioContext(2, renderLengthInFrames, sampleRate);
 
     try {
-        var jsnode = context.createJavaScriptNode(512, 0, 0);
+        var jsnode = context.createScriptProcessor(512, 0, 0);
         testFailed("Exception should be thrown when both numberOfInputChannels and numberOfOutputChannels are zero.");
     } catch(e) {
         testPassed("Exception was thrown when both numberOfInputChannels and numberOfOutputChannels are zero.");
     }
     
     try {
-        var jsnode = context.createJavaScriptNode(512, 1, 0);
-        testPassed("Successfully created JavaScriptAudioNode with numberOfInputChannels = 1 and numberOfOutputChannels = 0.");
+        var jsnode = context.createScriptProcessor(512, 1, 0);
+        testPassed("Successfully created ScriptProcessorNode with numberOfInputChannels = 1 and numberOfOutputChannels = 0.");
     } catch(e) {
         testFailed("Exception should not be thrown when numberOfInputChannels = 1 and numberOfOutputChannels = 0.");
     }
     
     try {
-        var jsnode = context.createJavaScriptNode(512, 2, 0);
-        testPassed("Successfully created JavaScriptAudioNode with numberOfInputChannels = 2 and numberOfOutputChannels = 0.");
+        var jsnode = context.createScriptProcessor(512, 2, 0);
+        testPassed("Successfully created ScriptProcessorNode with numberOfInputChannels = 2 and numberOfOutputChannels = 0.");
     } catch(e) {
         testFailed("Exception should not be thrown when numberOfInputChannels = 2 and numberOfOutputChannels = 0.");
     }
     
     try {
-        var jsnode = context.createJavaScriptNode(512, 0, 1);
-        testPassed("Successfully created JavaScriptAudioNode with numberOfInputChannels = 0 and numberOfOutputChannels = 1.");
+        var jsnode = context.createScriptProcessor(512, 0, 1);
+        testPassed("Successfully created ScriptProcessorNode with numberOfInputChannels = 0 and numberOfOutputChannels = 1.");
     } catch(e) {
         testFailed("Exception should not be thrown when numberOfInputChannels = 0 and numberOfOutputChannels = 1.");
     }
     
     try {
-        var jsnode = context.createJavaScriptNode(512, 0, 2);
-        testPassed("Successfully created JavaScriptAudioNode with numberOfInputChannels = 0 and numberOfOutputChannels = 2.");
+        var jsnode = context.createScriptProcessor(512, 0, 2);
+        testPassed("Successfully created ScriptProcessorNode with numberOfInputChannels = 0 and numberOfOutputChannels = 2.");
     } catch(e) {
         testFailed("Exception should not be thrown when numberOfInputChannels = 0 and numberOfOutputChannels = 2.");
     }
     
     try {
-        var jsnode = context.createJavaScriptNode(511, 1, 1);
+        var jsnode = context.createScriptProcessor(511, 1, 1);
         testFailed("Exception should be thrown for illegal bufferSize.");
     } catch(e) {
         testPassed("Exception was thrown for illegal bufferSize.");
@@ -141,7 +141,7 @@ function runTest() {
     var bufferSource = context.createBufferSource();
     bufferSource.buffer = sourceBuffer;
 
-    var jsnode = context.createJavaScriptNode(bufferSize, 2, outputChannels);
+    var jsnode = context.createScriptProcessor(bufferSize, 2, outputChannels);
 
     bufferSource.connect(jsnode);
     jsnode.connect(context.destination);

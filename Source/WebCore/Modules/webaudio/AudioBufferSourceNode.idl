@@ -48,8 +48,8 @@
     void stop(in double when);
 
 #if defined(ENABLE_LEGACY_WEB_AUDIO) && ENABLE_LEGACY_WEB_AUDIO
-    [V8MeasureAs=LegacyWebAudioNoteOn] void noteOn(in double when);
-    [V8MeasureAs=LegacyWebAudioNoteOn] void noteGrainOn(in double when, in double grainOffset, in double grainDuration);
+    [V8MeasureAs=LegacyWebAudio] void noteOn(in double when);
+    [V8MeasureAs=LegacyWebAudio] void noteGrainOn(in double when, in double grainOffset, in double grainDuration);
     void noteOff(in double when);
 #endif
 };

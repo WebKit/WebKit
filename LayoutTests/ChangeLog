@@ -1,3 +1,16 @@
+2012-10-22  Chris Rogers  <crogers@google.com>
+
+        Update some AudioContext create() method names to latest Web Audio spec
+        https://bugs.webkit.org/show_bug.cgi?id=99888
+
+        Reviewed by Adam Barth.
+
+        * webaudio/delaynode-expected.txt:
+        * webaudio/delaynode.html:
+        * webaudio/gain.html:
+        * webaudio/javascriptaudionode-expected.txt:
+        * webaudio/javascriptaudionode.html:
+
 2012-10-22  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed gardening. Baselines following r132112.

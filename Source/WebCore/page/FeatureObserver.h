@@ -45,7 +45,7 @@ public:
         PrefixedIndexedDB,
         WorkerStart,
         SharedWorkerStart,
-        LegacyWebAudioNoteOn,
+        LegacyWebAudio,
         WebAudioStart,
         PrefixedContentSecurityPolicy,
         UnprefixedIndexedDB,

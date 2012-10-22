@@ -119,18 +119,18 @@ public:
 #if ENABLE(MEDIA_STREAM)
     PassRefPtr<MediaStreamAudioSourceNode> createMediaStreamSource(MediaStream*, ExceptionCode&);
 #endif
-    PassRefPtr<GainNode> createGainNode();
+    PassRefPtr<GainNode> createGain();
     PassRefPtr<BiquadFilterNode> createBiquadFilter();
     PassRefPtr<WaveShaperNode> createWaveShaper();
-    PassRefPtr<DelayNode> createDelayNode();
-    PassRefPtr<DelayNode> createDelayNode(double maxDelayTime);
+    PassRefPtr<DelayNode> createDelay();
+    PassRefPtr<DelayNode> createDelay(double maxDelayTime);
     PassRefPtr<PannerNode> createPanner();
     PassRefPtr<ConvolverNode> createConvolver();
     PassRefPtr<DynamicsCompressorNode> createDynamicsCompressor();    
     PassRefPtr<AnalyserNode> createAnalyser();
-    PassRefPtr<ScriptProcessorNode> createJavaScriptNode(size_t bufferSize, ExceptionCode&);
-    PassRefPtr<ScriptProcessorNode> createJavaScriptNode(size_t bufferSize, size_t numberOfInputChannels, ExceptionCode&);
-    PassRefPtr<ScriptProcessorNode> createJavaScriptNode(size_t bufferSize, size_t numberOfInputChannels, size_t numberOfOutputChannels, ExceptionCode&);
+    PassRefPtr<ScriptProcessorNode> createScriptProcessor(size_t bufferSize, ExceptionCode&);
+    PassRefPtr<ScriptProcessorNode> createScriptProcessor(size_t bufferSize, size_t numberOfInputChannels, ExceptionCode&);
+    PassRefPtr<ScriptProcessorNode> createScriptProcessor(size_t bufferSize, size_t numberOfInputChannels, size_t numberOfOutputChannels, ExceptionCode&);
     PassRefPtr<ChannelSplitterNode> createChannelSplitter(ExceptionCode&);
     PassRefPtr<ChannelSplitterNode> createChannelSplitter(size_t numberOfOutputs, ExceptionCode&);
     PassRefPtr<ChannelMergerNode> createChannelMerger(ExceptionCode&);

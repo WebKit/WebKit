@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <!--
-Tests that AudioGainNode is properly scaling the gain.
+Tests that GainNode is properly scaling the gain.
 We'll render 11 notes, starting at a gain of 1.0, decreasing in gain by 0.1.
 The 11th note will be of gain 0.0, so it should be silent (at the end in the rendered output).
 -->
@@ -45,7 +45,7 @@ function playNote(time, gain) {
     var source = context.createBufferSource();
     source.buffer = sinWaveBuffer;
 
-    var gainNode = context.createGainNode();
+    var gainNode = context.createGain();
     gainNode.gain.value = gain;
 
     source.connect(gainNode);

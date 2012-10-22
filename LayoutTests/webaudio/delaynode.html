@@ -13,7 +13,7 @@
 <div id="console"></div>
 
 <script>
-description("Tests attribute and basic functionality of DelayNode.");
+description("Tests attribute and basic functionality of Delay.");
 
 function runTest() {
     if (window.testRunner) {
@@ -30,7 +30,7 @@ function runTest() {
     var bufferSource = context.createBufferSource();
     bufferSource.buffer = toneBuffer;
 
-    var delay = context.createDelayNode();
+    var delay = context.createDelay();
     
     window.delay = delay;
     shouldBeTrue("delay.numberOfInputs === 1");
