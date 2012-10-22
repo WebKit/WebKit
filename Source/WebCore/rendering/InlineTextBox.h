@@ -85,7 +85,7 @@ public:
 
     static inline bool compareByStart(const InlineTextBox* first, const InlineTextBox* second) { return first->start() < second->start(); }
 
-    virtual LayoutUnit baselinePosition(FontBaseline) const;
+    virtual int baselinePosition(FontBaseline) const;
     virtual LayoutUnit lineHeight() const;
 
     bool getEmphasisMarkPosition(RenderStyle*, TextEmphasisPosition&) const;

@@ -198,7 +198,7 @@ LayoutUnit RenderMathMLBlock::preferredLogicalHeightAfterSizing(RenderObject* ch
     return child->style()->fontSize();
 }
 
-LayoutUnit RenderMathMLBlock::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
+int RenderMathMLBlock::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     // mathml.css sets math { -webkit-line-box-contain: glyphs replaced; line-height: 0; }, so when linePositionMode == PositionOfInteriorLineBoxes we want to
     // return 0 here to match our line-height. This matters when RootInlineBox::ascentAndDescentForBox is called on a RootInlineBox for an inline-block.
@@ -259,7 +259,7 @@ void RenderMathMLBlock::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 }
 #endif // ENABLE(DEBUG_MATH_LAYOUT)
 
-LayoutUnit RenderMathMLTable::firstLineBoxBaseline() const
+int RenderMathMLTable::firstLineBoxBaseline() const
 {
     // In legal MathML, we'll have a MathML parent. That RenderFlexibleBox parent will use our firstLineBoxBaseline() for baseline alignment, per
     // http://dev.w3.org/csswg/css3-flexbox/#flex-baselines. We want to vertically center an <mtable>, such as a matrix. Essentially the whole <mtable> element fits on a

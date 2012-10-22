@@ -38,7 +38,7 @@ public:
     
     virtual RenderMathMLOperator* unembellishedOperator();
 
-    virtual LayoutUnit firstLineBoxBaseline() const OVERRIDE;
+    virtual int firstLineBoxBaseline() const OVERRIDE;
     
 private:
     virtual const char* renderName() const { return "RenderMathMLUnderOver"; }

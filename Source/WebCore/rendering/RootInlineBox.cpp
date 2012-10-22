@@ -100,7 +100,7 @@ bool RootInlineBox::isHyphenated() const
     return false;
 }
 
-LayoutUnit RootInlineBox::baselinePosition(FontBaseline baselineType) const
+int RootInlineBox::baselinePosition(FontBaseline baselineType) const
 {
     return boxModelObject()->baselinePosition(baselineType, isFirstLineStyle(), isHorizontal() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
 }
@@ -261,8 +261,8 @@ LayoutUnit RootInlineBox::alignBoxesInBlockDirection(LayoutUnit heightOfBlock, G
 
     LayoutUnit maxPositionTop = 0;
     LayoutUnit maxPositionBottom = 0;
-    LayoutUnit maxAscent = 0;
-    LayoutUnit maxDescent = 0;
+    int maxAscent = 0;
+    int maxDescent = 0;
     bool setMaxAscent = false;
     bool setMaxDescent = false;
 

@@ -882,12 +882,12 @@ void RenderTableSection::recalcOuterBorder()
     m_outerBorderEnd = calcOuterBorderEnd();
 }
 
-LayoutUnit RenderTableSection::firstLineBoxBaseline() const
+int RenderTableSection::firstLineBoxBaseline() const
 {
     if (!m_grid.size())
         return -1;
 
-    LayoutUnit firstLineBaseline = m_grid[0].baseline;
+    int firstLineBaseline = m_grid[0].baseline;
     if (firstLineBaseline)
         return firstLineBaseline + m_rowPos[0];
 
@@ -898,7 +898,7 @@ LayoutUnit RenderTableSection::firstLineBoxBaseline() const
         const RenderTableCell* cell = cs.primaryCell();
         // Only cells with content have a baseline
         if (cell && cell->contentLogicalHeight())
-            firstLineBaseline = max(firstLineBaseline, cell->logicalTop() + cell->paddingBefore() + cell->borderBefore() + cell->contentLogicalHeight());
+            firstLineBaseline = max<int>(firstLineBaseline, cell->logicalTop() + cell->paddingBefore() + cell->borderBefore() + cell->contentLogicalHeight());
     }
 
     return firstLineBaseline;

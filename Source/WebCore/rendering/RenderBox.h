@@ -472,8 +472,8 @@ public:
     
     RenderLayer* enclosingFloatPaintingLayer() const;
     
-    virtual LayoutUnit firstLineBoxBaseline() const { return -1; }
-    virtual LayoutUnit inlineBlockBaseline(LineDirectionMode) const { return -1; } // Returns -1 if we should skip this box when computing the baseline of an inline-block.
+    virtual int firstLineBoxBaseline() const { return -1; }
+    virtual int inlineBlockBaseline(LineDirectionMode) const { return -1; } // Returns -1 if we should skip this box when computing the baseline of an inline-block.
 
     bool shrinkToAvoidFloats() const;
     virtual bool avoidsFloats() const;
@@ -485,7 +485,7 @@ public:
     bool isDeprecatedFlexItem() const { return !isInline() && !isFloatingOrOutOfFlowPositioned() && parent() && parent()->isDeprecatedFlexibleBox(); }
     
     virtual LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
-    virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
+    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const OVERRIDE;
 
     virtual LayoutUnit offsetLeft() const OVERRIDE;
     virtual LayoutUnit offsetTop() const OVERRIDE;

@@ -49,9 +49,9 @@ public:
     virtual void computePreferredLogicalWidths() OVERRIDE;
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) OVERRIDE;
 
-    virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const OVERRIDE;
-    virtual LayoutUnit firstLineBoxBaseline() const OVERRIDE;
-    virtual LayoutUnit inlineBlockBaseline(LineDirectionMode) const OVERRIDE;
+    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const OVERRIDE;
+    virtual int firstLineBoxBaseline() const OVERRIDE;
+    virtual int inlineBlockBaseline(LineDirectionMode) const OVERRIDE;
 
     virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) OVERRIDE;
 

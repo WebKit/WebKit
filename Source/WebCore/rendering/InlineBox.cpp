@@ -159,7 +159,7 @@ float InlineBox::logicalHeight() const
     return result;
 }
 
-LayoutUnit InlineBox::baselinePosition(FontBaseline baselineType) const
+int InlineBox::baselinePosition(FontBaseline baselineType) const
 {
     return boxModelObject()->baselinePosition(baselineType, m_bitfields.firstLine(), isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine);
 }

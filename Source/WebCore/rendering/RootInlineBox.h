@@ -109,7 +109,7 @@ public:
 
     bool isHyphenated() const;
 
-    virtual LayoutUnit baselinePosition(FontBaseline baselineType) const;
+    virtual int baselinePosition(FontBaseline baselineType) const;
     virtual LayoutUnit lineHeight() const;
 
 #if PLATFORM(MAC)

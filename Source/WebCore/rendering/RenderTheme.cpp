@@ -639,7 +639,7 @@ CString RenderTheme::extraCalendarPickerStyleSheet()
 }
 #endif
 
-LayoutUnit RenderTheme::baselinePosition(const RenderObject* o) const
+int RenderTheme::baselinePosition(const RenderObject* o) const
 {
     if (!o->isBox())
         return 0;

@@ -57,7 +57,7 @@ RenderMathMLOperator* RenderMathMLUnderOver::unembellishedOperator()
     return toRenderMathMLBlock(base)->unembellishedOperator();
 }
 
-LayoutUnit RenderMathMLUnderOver::firstLineBoxBaseline() const
+int RenderMathMLUnderOver::firstLineBoxBaseline() const
 {
     RenderBox* base = firstChildBox();
     if (!base)

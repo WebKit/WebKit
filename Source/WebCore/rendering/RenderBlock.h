@@ -93,7 +93,7 @@ public:
 
     // These two functions are overridden for inline-block.
     virtual LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
-    virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
+    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
 
     RenderLineBoxList* lineBoxes() { return &m_lineBoxes; }
     const RenderLineBoxList* lineBoxes() const { return &m_lineBoxes; }
@@ -463,9 +463,9 @@ protected:
 
     virtual void computePreferredLogicalWidths();
 
-    virtual LayoutUnit firstLineBoxBaseline() const;
-    virtual LayoutUnit inlineBlockBaseline(LineDirectionMode) const OVERRIDE;
-    LayoutUnit lastLineBoxBaseline(LineDirectionMode) const;
+    virtual int firstLineBoxBaseline() const;
+    virtual int inlineBlockBaseline(LineDirectionMode) const OVERRIDE;
+    int lastLineBoxBaseline(LineDirectionMode) const;
 
     virtual void updateHitTestResult(HitTestResult&, const LayoutPoint&);
 

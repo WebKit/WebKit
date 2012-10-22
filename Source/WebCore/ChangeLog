@@ -1,5 +1,121 @@
 2012-10-22  Emil A Eklund  <eae@chromium.org>
 
+        Change baselinePosition and maxAscent/maxDescent to int
+        https://bugs.webkit.org/show_bug.cgi?id=99767
+
+        Reviewed by Levi Weintraub.
+
+        Currently baselinePostion, maxAscent and maxDescent are
+        LayoutUnits while ascent, descent and m_lineHeight are ints.
+        This can lead to subtle alignment and rounding problems.
+
+        Change baselinePosition and maxAscent/maxDescent to int to avoid
+        these issues.
+
+        Test: fast/sub-pixel/replaced-element-baseline.html
+
+        * editing/FrameSelection.cpp:
+        (WebCore::repaintRectForCaret):
+        Inflate Y dimension just like we do for X to ensure that the
+        repaint rect fully contains the caret.
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::baselinePosition):
+        * rendering/InlineBox.h:
+        (InlineBox):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::adjustMaxAscentAndDescent):
+        (WebCore::InlineFlowBox::computeLogicalBoxHeights):
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        Change maxAscent/maxDescent to int to match ascent/descent.
+        
+        * rendering/InlineFlowBox.h:
+        (InlineFlowBox):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::baselinePosition):
+        * rendering/InlineTextBox.h:
+        (InlineTextBox):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::baselinePosition):
+        (WebCore::RenderBlock::firstLineBoxBaseline):
+        (WebCore::RenderBlock::lastLineBoxBaseline):
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::baselinePosition):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::firstLineBoxBaseline):
+        (WebCore::RenderBox::lastLineBoxBaseline):
+        (RenderBox):
+        * rendering/RenderBoxModelObject.h:
+        (RenderBoxModelObject):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::baselinePosition):
+        (WebCore::RenderFlexibleBox::firstLineBoxBaseline):
+        * rendering/RenderFlexibleBox.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::baselinePosition):
+        * rendering/RenderInline.h:
+        (RenderInline):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::baselinePosition):
+        * rendering/RenderListBox.h:
+        (RenderListBox):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::baselinePosition):
+        * rendering/RenderListMarker.h:
+        (RenderListMarker):
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::baselinePosition):
+        * rendering/RenderSlider.h:
+        (RenderSlider):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::baselinePosition):
+        (WebCore::RenderTable::lastLineBoxBaseline):
+        (WebCore::RenderTable::firstLineBoxBaseline):
+        * rendering/RenderTable.h:
+        (RenderTable):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::firstLineBoxBaseline):
+        * rendering/RenderTableSection.h:
+        (RenderTableSection):
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::baselinePosition):
+        * rendering/RenderTextControlMultiLine.h:
+        (RenderTextControlMultiLine):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::baselinePosition):
+        * rendering/RenderTheme.h:
+        (RenderTheme):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::baselinePosition):
+        * rendering/RenderThemeSafari.h:
+        (RenderThemeSafari):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::baselinePosition):
+        (WebCore::RootInlineBox::alignBoxesInBlockDirection):
+        * rendering/RootInlineBox.h:
+        (RootInlineBox):
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::baselinePosition):
+        (WebCore::RenderMathMLTable::firstLineBoxBaseline):
+        * rendering/mathml/RenderMathMLBlock.h:
+        (RenderMathMLBlock):
+        (RenderMathMLTable):
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::firstLineBoxBaseline):
+        * rendering/mathml/RenderMathMLFraction.h:
+        (RenderMathMLFraction):
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::firstLineBoxBaseline):
+        * rendering/mathml/RenderMathMLOperator.h:
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::firstLineBoxBaseline):
+        * rendering/mathml/RenderMathMLUnderOver.h:
+        (RenderMathMLUnderOver):
+
+2012-10-22  Emil A Eklund  <eae@chromium.org>
+
         Modify LayoutState ASSERTS to support SATURATED_LAYOUT_ARITHMETIC
         https://bugs.webkit.org/show_bug.cgi?id=98692
 

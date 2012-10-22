@@ -643,7 +643,7 @@ bool RenderThemeEfl::controlSupportsTints(const RenderObject* object) const
     return isEnabled(object);
 }
 
-LayoutUnit RenderThemeEfl::baselinePosition(const RenderObject* object) const
+int RenderThemeEfl::baselinePosition(const RenderObject* object) const
 {
     if (!object->isBox())
         return 0;

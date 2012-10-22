@@ -177,7 +177,7 @@ bool RenderThemeQt::supportsFocusRing(const RenderStyle* style) const
     }
 }
 
-LayoutUnit RenderThemeQt::baselinePosition(const RenderObject* o) const
+int RenderThemeQt::baselinePosition(const RenderObject* o) const
 {
     if (!o->isBox())
         return 0;

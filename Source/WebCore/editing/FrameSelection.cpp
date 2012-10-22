@@ -1280,6 +1280,7 @@ static LayoutRect repaintRectForCaret(LayoutRect caret)
     // Ensure that the dirty rect intersects the block that paints the caret even in the case where
     // the caret itself is just outside the block. See <https://bugs.webkit.org/show_bug.cgi?id=19086>.
     caret.inflateX(1);
+    caret.inflateY(1);
     return caret;
 }
 

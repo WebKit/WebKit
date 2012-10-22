@@ -6182,7 +6182,7 @@ LayoutUnit RenderBlock::lineHeight(bool firstLine, LineDirectionMode direction, 
     return m_lineHeight;
 }
 
-LayoutUnit RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
+int RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     // Inline blocks are replaced elements. Otherwise, just pass off to
     // the base class.  If we're being queried as though we're the root line
@@ -6205,7 +6205,7 @@ LayoutUnit RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLi
         bool ignoreBaseline = (layer() && (layer()->marquee() || (direction == HorizontalLine ? (layer()->verticalScrollbar() || layer()->scrollYOffset() != 0)
             : (layer()->horizontalScrollbar() || layer()->scrollXOffset() != 0)))) || (isWritingModeRoot() && !isRubyRun());
         
-        LayoutUnit baselinePos = ignoreBaseline ? static_cast<LayoutUnit>(-1) : inlineBlockBaseline(direction);
+        int baselinePos = ignoreBaseline ? -1 : inlineBlockBaseline(direction);
         
         LayoutUnit bottomOfContent = direction == HorizontalLine ? borderTop() + paddingTop() + contentHeight() : borderRight() + paddingRight() + contentWidth();
         if (baselinePos != -1 && baselinePos <= bottomOfContent)
@@ -6218,7 +6218,7 @@ LayoutUnit RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLi
     return fontMetrics.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.height()) / 2;
 }
 
-LayoutUnit RenderBlock::firstLineBoxBaseline() const
+int RenderBlock::firstLineBoxBaseline() const
 {
     if (!isBlockFlow() || (isWritingModeRoot() && !isRubyRun()))
         return -1;
@@ -6232,7 +6232,7 @@ LayoutUnit RenderBlock::firstLineBoxBaseline() const
     else {
         for (RenderBox* curr = firstChildBox(); curr; curr = curr->nextSiblingBox()) {
             if (!curr->isFloatingOrOutOfFlowPositioned()) {
-                LayoutUnit result = curr->firstLineBoxBaseline();
+                int result = curr->firstLineBoxBaseline();
                 if (result != -1)
                     return curr->logicalTop() + result; // Translate to our coordinate space.
             }
@@ -6242,12 +6242,12 @@ LayoutUnit RenderBlock::firstLineBoxBaseline() const
     return -1;
 }
 
-LayoutUnit RenderBlock::inlineBlockBaseline(LineDirectionMode direction) const
+int RenderBlock::inlineBlockBaseline(LineDirectionMode direction) const
 {
     return lastLineBoxBaseline(direction);
 }
 
-LayoutUnit RenderBlock::lastLineBoxBaseline(LineDirectionMode lineDirection) const
+int RenderBlock::lastLineBoxBaseline(LineDirectionMode lineDirection) const
 {
     if (!isBlockFlow() || (isWritingModeRoot() && !isRubyRun()))
         return -1;
@@ -6267,7 +6267,7 @@ LayoutUnit RenderBlock::lastLineBoxBaseline(LineDirectionMode lineDirection) con
         for (RenderBox* curr = lastChildBox(); curr; curr = curr->previousSiblingBox()) {
             if (!curr->isFloatingOrOutOfFlowPositioned()) {
                 haveNormalFlowChild = true;
-                LayoutUnit result = curr->inlineBlockBaseline(lineDirection);
+                int result = curr->inlineBlockBaseline(lineDirection);
                 if (result != -1)
                     return curr->logicalTop() + result; // Translate to our coordinate space.
             }

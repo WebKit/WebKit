@@ -1220,7 +1220,7 @@ void RenderTable::updateFirstLetter()
 {
 }
 
-LayoutUnit RenderTable::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
+int RenderTable::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     LayoutUnit baseline = firstLineBoxBaseline();
     if (baseline != -1)
@@ -1229,13 +1229,13 @@ LayoutUnit RenderTable::baselinePosition(FontBaseline baselineType, bool firstLi
     return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
 }
 
-LayoutUnit RenderTable::inlineBlockBaseline(LineDirectionMode) const
+int RenderTable::inlineBlockBaseline(LineDirectionMode) const
 {
     // Tables are skipped when computing an inline-block's baseline.
     return -1;
 }
 
-LayoutUnit RenderTable::firstLineBoxBaseline() const
+int RenderTable::firstLineBoxBaseline() const
 {
     // The baseline of a 'table' is the same as the 'inline-table' baseline per CSS 3 Flexbox (CSS 2.1
     // doesn't define the baseline of a 'table' only an 'inline-table').
@@ -1250,7 +1250,7 @@ LayoutUnit RenderTable::firstLineBoxBaseline() const
     if (!topNonEmptySection)
         return -1;
 
-    LayoutUnit baseline = topNonEmptySection->firstLineBoxBaseline();
+    int baseline = topNonEmptySection->firstLineBoxBaseline();
     if (baseline > 0)
         return topNonEmptySection->logicalTop() + baseline;
 

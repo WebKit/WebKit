@@ -39,7 +39,7 @@ private:
     virtual float getAvgCharWidth(AtomicString family);
     virtual LayoutUnit preferredContentWidth(float charWidth) const;
     virtual LayoutUnit computeControlHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const OVERRIDE;
-    virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
+    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
 
     virtual RenderStyle* textBaseStyle() const;
     virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const;

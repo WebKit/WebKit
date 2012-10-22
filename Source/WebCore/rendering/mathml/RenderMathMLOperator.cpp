@@ -381,7 +381,7 @@ RenderBlock* RenderMathMLOperator::createGlyph(UChar glyph, int lineHeight, int 
     return container;
 }
 
-LayoutUnit RenderMathMLOperator::firstLineBoxBaseline() const
+int RenderMathMLOperator::firstLineBoxBaseline() const
 {
     if (m_isStacked)
         return m_stretchHeight * 2 / 3 - (m_stretchHeight - static_cast<int>(m_stretchHeight / gOperatorExpansion)) / 2;    

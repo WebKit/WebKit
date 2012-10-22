@@ -7,6 +7,51 @@
 
 2012-10-22  Emil A Eklund  <eae@chromium.org>
 
+        Change baselinePosition and maxAscent/maxDescent to int
+        https://bugs.webkit.org/show_bug.cgi?id=99767
+
+        Reviewed by Levi Weintraub.
+        
+        Add test for alignment of replaced elements. Update existing
+        tests to account for rounding differences in alignment.
+
+        * fast/sub-pixel/replaced-element-baseline-expected.txt: Added.
+        * fast/sub-pixel/replaced-element-baseline.html: Added.
+        * platform/chromium-linux/css1/text_properties/vertical_align-expected.png:
+        * platform/chromium-linux/fast/forms/datalist/input-appearance-range-with-datalist-zoomed-expected.png:
+        * platform/chromium-linux/fast/inline/vertical-align-text-bottom-expected.png:
+        * platform/chromium-linux/fast/multicol/table-vertical-align-expected.txt:
+        * platform/chromium-linux/fast/repaint/4774354-expected.png:
+        * platform/chromium-linux/fast/repaint/4776765-expected.png:
+        * platform/chromium-linux/fast/repaint/caret-outside-block-expected.png:
+        * platform/chromium-linux/fast/repaint/repaint-across-writing-mode-boundary-expected.png:
+        * platform/chromium-linux/fast/repaint/selection-rl-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug14323-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug43854-2-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4427-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug6404-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug1647-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug56024-expected.png:
+        * platform/chromium-win/css1/text_properties/vertical_align-expected.txt:
+        * platform/chromium-win/fast/css/acid2-expected.txt:
+        * platform/chromium-win/fast/css/acid2-pixel-expected.txt:
+        * platform/chromium-win/fast/inline/002-expected.txt:
+        * platform/chromium-win/fast/inline/vertical-align-text-bottom-expected.txt:
+        * platform/chromium-win/http/tests/misc/acid2-expected.txt:
+        * platform/chromium-win/http/tests/misc/acid2-pixel-expected.txt:
+        * platform/chromium-win/svg/transforms/svg-css-transforms-clip-path-expected.txt:
+        * platform/chromium-win/svg/transforms/svg-css-transforms-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug14323-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug43854-2-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug4427-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug6404-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug131020-3-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug1647-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug56024-expected.txt:
+        * platform/chromium-win/transforms/svg-vs-css-expected.txt:
+
+2012-10-22  Emil A Eklund  <eae@chromium.org>
+
         Unreviewed gardening, marking fast/sub-pixel/file-upload-control-at-fractional-offset.html as failing on LION for now.
 
         * platform/chromium/TestExpectations:

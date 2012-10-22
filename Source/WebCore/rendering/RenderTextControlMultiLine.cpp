@@ -76,7 +76,7 @@ LayoutUnit RenderTextControlMultiLine::computeControlHeight(LayoutUnit lineHeigh
     return lineHeight * static_cast<HTMLTextAreaElement*>(node())->rows() + nonContentHeight;
 }
 
-LayoutUnit RenderTextControlMultiLine::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
+int RenderTextControlMultiLine::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
 }

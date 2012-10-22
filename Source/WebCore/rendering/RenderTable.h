@@ -277,9 +277,9 @@ private:
     virtual void computePreferredLogicalWidths();
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
 
-    virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const OVERRIDE;
-    virtual LayoutUnit firstLineBoxBaseline() const OVERRIDE;
-    virtual LayoutUnit inlineBlockBaseline(LineDirectionMode) const OVERRIDE;
+    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const OVERRIDE;
+    virtual int firstLineBoxBaseline() const OVERRIDE;
+    virtual int inlineBlockBaseline(LineDirectionMode) const OVERRIDE;
 
     RenderTableCol* slowColElement(unsigned col, bool* startEdge, bool* endEdge) const;
 

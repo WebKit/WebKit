@@ -312,7 +312,7 @@ IntRect RenderThemeSafari::inflateRect(const IntRect& r, const IntSize& size, co
     return result;
 }
 
-LayoutUnit RenderThemeSafari::baselinePosition(const RenderObject* o) const
+int RenderThemeSafari::baselinePosition(const RenderObject* o) const
 {
     if (!o->isBox())
         return 0;

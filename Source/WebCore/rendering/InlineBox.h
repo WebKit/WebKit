@@ -246,7 +246,7 @@ public:
 
     FloatRect logicalFrameRect() const { return isHorizontal() ? FloatRect(m_topLeft.x(), m_topLeft.y(), m_logicalWidth, logicalHeight()) : FloatRect(m_topLeft.y(), m_topLeft.x(), m_logicalWidth, logicalHeight()); }
 
-    virtual LayoutUnit baselinePosition(FontBaseline baselineType) const;
+    virtual int baselinePosition(FontBaseline baselineType) const;
     virtual LayoutUnit lineHeight() const;
 
     virtual int caretMinOffset() const;

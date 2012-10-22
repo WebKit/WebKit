@@ -43,7 +43,7 @@ private:
     virtual bool isSlider() const { return true; }
     virtual bool canBeReplacedWithInlineRunIn() const OVERRIDE;
 
-    virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
+    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
     virtual void computePreferredLogicalWidths();
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
     virtual void layout();

@@ -1301,7 +1301,7 @@ LayoutUnit RenderInline::lineHeight(bool firstLine, LineDirectionMode /*directio
     return style()->computedLineHeight(view());
 }
 
-LayoutUnit RenderInline::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
+int RenderInline::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     const FontMetrics& fontMetrics = style(firstLine)->fontMetrics();
     return fontMetrics.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.height()) / 2;

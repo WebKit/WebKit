@@ -102,7 +102,7 @@ public:
     // A method to obtain the baseline position for a "leaf" control.  This will only be used if a baseline
     // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of
     // controls that need to do this.
-    virtual LayoutUnit baselinePosition(const RenderObject*) const;
+    virtual int baselinePosition(const RenderObject*) const;
 
     // A method for asking if a control is a container or not.  Leaf controls have to have some special behavior (like
     // the baseline position API above).

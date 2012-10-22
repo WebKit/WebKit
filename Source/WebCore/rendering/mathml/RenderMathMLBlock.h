@@ -78,7 +78,7 @@ public:
     // computePreferredLogicalWidths() in derived classes must ensure m_preferredLogicalHeight is set to < 0 or its correct value.
     virtual void computePreferredLogicalWidths() OVERRIDE;
     
-    virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const OVERRIDE;
+    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const OVERRIDE;
     
 #if ENABLE(DEBUG_MATH_LAYOUT)
     virtual void paint(PaintInfo&, const LayoutPoint&);
@@ -124,7 +124,7 @@ class RenderMathMLTable : public RenderTable {
 public:
     explicit RenderMathMLTable(Node* node) : RenderTable(node) { }
     
-    virtual LayoutUnit firstLineBoxBaseline() const OVERRIDE;
+    virtual int firstLineBoxBaseline() const OVERRIDE;
     
 private:
     virtual const char* renderName() const OVERRIDE { return "RenderMathMLTable"; }

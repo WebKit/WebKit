@@ -41,7 +41,7 @@ public:
     
     virtual RenderMathMLOperator* unembellishedOperator();
     
-    virtual LayoutUnit firstLineBoxBaseline() const OVERRIDE;
+    virtual int firstLineBoxBaseline() const OVERRIDE;
     virtual void paint(PaintInfo&, const LayoutPoint&);
 protected:
     virtual void layout();

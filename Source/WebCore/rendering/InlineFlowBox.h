@@ -175,11 +175,11 @@ public:
     LayoutUnit getFlowSpacingLogicalWidth();
     float placeBoxesInInlineDirection(float logicalLeft, bool& needsWordSpacing, GlyphOverflowAndFallbackFontsMap&);
     void computeLogicalBoxHeights(RootInlineBox*, LayoutUnit& maxPositionTop, LayoutUnit& maxPositionBottom,
-                                  LayoutUnit& maxAscent, LayoutUnit& maxDescent, bool& setMaxAscent, bool& setMaxDescent,
+                                  int& maxAscent, int& maxDescent, bool& setMaxAscent, bool& setMaxDescent,
                                   bool strictMode, GlyphOverflowAndFallbackFontsMap&, FontBaseline, VerticalPositionCache&);
-    void adjustMaxAscentAndDescent(LayoutUnit& maxAscent, LayoutUnit& maxDescent,
-                                   LayoutUnit maxPositionTop, LayoutUnit maxPositionBottom);
-    void placeBoxesInBlockDirection(LayoutUnit logicalTop, LayoutUnit maxHeight, LayoutUnit maxAscent, bool strictMode, LayoutUnit& lineTop, LayoutUnit& lineBottom, bool& setLineTop,
+    void adjustMaxAscentAndDescent(int& maxAscent, int& maxDescent,
+                                   int maxPositionTop, int maxPositionBottom);
+    void placeBoxesInBlockDirection(LayoutUnit logicalTop, LayoutUnit maxHeight, int maxAscent, bool strictMode, LayoutUnit& lineTop, LayoutUnit& lineBottom, bool& setLineTop,
                                     LayoutUnit& lineTopIncludingMargins, LayoutUnit& lineBottomIncludingMargins, bool& hasAnnotationsBefore, bool& hasAnnotationsAfter, FontBaseline);
     void flipLinesInBlockDirection(LayoutUnit lineTop, LayoutUnit lineBottom);
     bool requiresIdeographicBaseline(const GlyphOverflowAndFallbackFontsMap&) const;
