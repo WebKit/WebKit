@@ -73,7 +73,7 @@ void TextureMapperSurfaceBackingStore::setSurface(PassRefPtr<GraphicsSurface> su
 }
 #endif
 
-void TextureMapperTile::updateContents(TextureMapper* textureMapper, Image* image, const IntRect& dirtyRect)
+void TextureMapperTile::updateContents(TextureMapper* textureMapper, Image* image, const IntRect& dirtyRect, BitmapTexture::UpdateContentsFlag updateContentsFlag)
 {
     IntRect targetRect = enclosingIntRect(m_rect);
     targetRect.intersect(dirtyRect);
@@ -91,7 +91,7 @@ void TextureMapperTile::updateContents(TextureMapper* textureMapper, Image* imag
         m_texture->reset(targetRect.size(), image->currentFrameHasAlpha() ? BitmapTexture::SupportsAlpha : 0);
     }
 
-    m_texture->updateContents(image, targetRect, sourceOffset);
+    m_texture->updateContents(image, targetRect, sourceOffset, updateContentsFlag);
 }
 
 void TextureMapperTile::paint(TextureMapper* textureMapper, const TransformationMatrix& transform, float opacity, BitmapTexture* mask, const unsigned exposedEdges)
@@ -110,7 +110,7 @@ void TextureMapperTiledBackingStore::updateContentsFromImageIfNeeded(TextureMapp
     if (!m_image)
         return;
 
-    updateContents(textureMapper, m_image.get());
+    updateContents(textureMapper, m_image.get(), BitmapTexture::UpdateCannotModifyOriginalImageData);
     m_image.clear();
 }
 
@@ -204,11 +204,11 @@ void TextureMapperTiledBackingStore::createOrDestroyTilesIfNeeded(const FloatSiz
         m_tiles.remove(tileIndicesToRemove[i]);
 }
 
-void TextureMapperTiledBackingStore::updateContents(TextureMapper* textureMapper, Image* image, const FloatSize& totalSize, const IntRect& dirtyRect)
+void TextureMapperTiledBackingStore::updateContents(TextureMapper* textureMapper, Image* image, const FloatSize& totalSize, const IntRect& dirtyRect, BitmapTexture::UpdateContentsFlag updateContentsFlag)
 {
     createOrDestroyTilesIfNeeded(totalSize, textureMapper->maxTextureSize(), image->currentFrameHasAlpha());
     for (size_t i = 0; i < m_tiles.size(); ++i)
-        m_tiles[i].updateContents(textureMapper, image, dirtyRect);
+        m_tiles[i].updateContents(textureMapper, image, dirtyRect, updateContentsFlag);
 }
 
 PassRefPtr<BitmapTexture> TextureMapperTiledBackingStore::texture() const

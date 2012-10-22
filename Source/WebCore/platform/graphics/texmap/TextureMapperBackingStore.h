@@ -77,7 +77,7 @@ public:
     inline void setTexture(BitmapTexture* texture) { m_texture = texture; }
     inline void setRect(const FloatRect& rect) { m_rect = rect; }
 
-    void updateContents(TextureMapper*, Image*, const IntRect&);
+    void updateContents(TextureMapper*, Image*, const IntRect&, BitmapTexture::UpdateContentsFlag UpdateCanModifyOriginalImageData);
     virtual void paint(TextureMapper*, const TransformationMatrix&, float, BitmapTexture*, const unsigned exposedEdges);
     virtual ~TextureMapperTile() { }
 
@@ -97,8 +97,8 @@ public:
     virtual ~TextureMapperTiledBackingStore() { }
     virtual void paintToTextureMapper(TextureMapper*, const FloatRect&, const TransformationMatrix&, float, BitmapTexture*);
     virtual PassRefPtr<BitmapTexture> texture() const;
-    void updateContents(TextureMapper*, Image*, const FloatSize&, const IntRect&);
-    void updateContents(TextureMapper* textureMapper, Image* image) { updateContents(textureMapper, image, image->size(), image->rect()); }
+    void updateContents(TextureMapper*, Image*, const FloatSize&, const IntRect&, BitmapTexture::UpdateContentsFlag);
+    void updateContents(TextureMapper* textureMapper, Image* image, BitmapTexture::UpdateContentsFlag updateContentsFlag) { updateContents(textureMapper, image, image->size(), image->rect(), updateContentsFlag); }
     inline FloatRect rect() const { return FloatRect(FloatPoint::zero(), m_size); }
     static PassRefPtr<TextureMapperTiledBackingStore> create() { return adoptRef(new TextureMapperTiledBackingStore); }
     void setContentsToImage(Image* image) { m_image = image; }

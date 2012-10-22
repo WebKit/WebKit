@@ -342,7 +342,7 @@ void TextureMapperGL::drawRepaintCounter(int value, int pointSize, const FloatPo
 
     RefPtr<BitmapTexture> texture = acquireTextureFromPool(size);
     const uchar* bits = image.bits();
-    texture->updateContents(bits, sourceRect, IntPoint::zero(), image.bytesPerLine());
+    texture->updateContents(bits, sourceRect, IntPoint::zero(), image.bytesPerLine(), BitmapTexture::UpdateCanModifyOriginalImageData);
     drawTexture(*texture, targetRect, modelViewMatrix, 1.0f, 0, AllEdges);
 #else
     UNUSED_PARAM(value);
@@ -636,38 +636,44 @@ void BitmapTextureGL::didReset()
     m_context3D->texImage2DDirect(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, m_textureSize.width(), m_textureSize.height(), 0, format, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, 0);
 }
 
-
-void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect, const IntPoint& sourceOffset, int bytesPerLine)
+void BitmapTextureGL::updateContents(const void* srcData, const IntRect& targetRect, const IntPoint& sourceOffset, int bytesPerLine, UpdateContentsFlag updateContentsFlag)
 {
     Platform3DObject glFormat = GraphicsContext3D::RGBA;
     m_context3D->bindTexture(GraphicsContext3D::TEXTURE_2D, m_id);
 
     const unsigned bytesPerPixel = 4;
-    if (driverSupportsBGRASwizzling())
-        glFormat = GraphicsContext3D::BGRA;
-    else
-        swizzleBGRAToRGBA(reinterpret_cast<uint32_t*>(const_cast<void*>(data)), IntRect(sourceOffset, targetRect.size()), bytesPerLine / bytesPerPixel);
+    char* data = reinterpret_cast<char*>(const_cast<void*>(srcData));
+    Vector<char> temporaryData;
 
-    if (bytesPerLine == targetRect.width() * bytesPerPixel && sourceOffset == IntPoint::zero()) {
-        m_context3D->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, (const char*)data);
-        return;
-    }
-
-    // For ES drivers that don't support sub-images.
-    if (!driverSupportsSubImage()) {
-        const char* bits = static_cast<const char*>(data);
+    // prepare temporaryData if necessary
+    if ((!driverSupportsBGRASwizzling() && updateContentsFlag == UpdateCannotModifyOriginalImageData)
+        || !driverSupportsSubImage()) {
+        temporaryData.resize(targetRect.width() * targetRect.height() * bytesPerPixel);
+        data = temporaryData.data();
+        const char* bits = static_cast<const char*>(srcData);
         const char* src = bits + sourceOffset.y() * bytesPerLine + sourceOffset.x() * bytesPerPixel;
-        Vector<char> temporaryData(targetRect.width() * targetRect.height() * bytesPerPixel);
-        char* dst = temporaryData.data();
-
+        char* dst = data;
         const int targetBytesPerLine = targetRect.width() * bytesPerPixel;
         for (int y = 0; y < targetRect.height(); ++y) {
             memcpy(dst, src, targetBytesPerLine);
             src += bytesPerLine;
             dst += targetBytesPerLine;
         }
+    }
 
-        m_context3D->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, temporaryData.data());
+    if (driverSupportsBGRASwizzling())
+        glFormat = GraphicsContext3D::BGRA;
+    else
+        swizzleBGRAToRGBA(reinterpret_cast<uint32_t*>(data), IntRect(sourceOffset, targetRect.size()), bytesPerLine / bytesPerPixel);
+
+    if (bytesPerLine == targetRect.width() * bytesPerPixel && sourceOffset == IntPoint::zero()) {
+        m_context3D->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, data);
+        return;
+    }
+
+    // For ES drivers that don't support sub-images.
+    if (!driverSupportsSubImage()) {
+        m_context3D->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, data);
         return;
     }
 
@@ -676,14 +682,14 @@ void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect
     m_context3D->pixelStorei(GL_UNPACK_ROW_LENGTH, bytesPerLine / bytesPerPixel);
     m_context3D->pixelStorei(GL_UNPACK_SKIP_ROWS, sourceOffset.y());
     m_context3D->pixelStorei(GL_UNPACK_SKIP_PIXELS, sourceOffset.x());
-    m_context3D->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, (const char*)data);
+    m_context3D->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, data);
     m_context3D->pixelStorei(GL_UNPACK_ROW_LENGTH, 0);
     m_context3D->pixelStorei(GL_UNPACK_SKIP_ROWS, 0);
     m_context3D->pixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
 #endif
 }
 
-void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, const IntPoint& offset)
+void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, const IntPoint& offset, UpdateContentsFlag updateContentsFlag)
 {
     if (!image)
         return;
@@ -704,7 +710,7 @@ void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, co
     bytesPerLine = cairo_image_surface_get_stride(surface);
 #endif
 
-    updateContents(imageData, targetRect, offset, bytesPerLine);
+    updateContents(imageData, targetRect, offset, bytesPerLine, updateContentsFlag);
 }
 
 #if ENABLE(CSS_FILTERS)

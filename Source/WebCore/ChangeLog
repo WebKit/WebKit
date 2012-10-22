@@ -1,3 +1,42 @@
+2012-10-21  Hyungchan Kim  <hyungchan2.kim@lge.com>
+
+        Add a separate flag for rgb swizzling whether it can be modified or not
+        https://bugs.webkit.org/show_bug.cgi?id=98728
+
+        BitmapTexture swizzles the source image if the OpenGL driver
+        doesn't support the BGRA extension.
+        In case of directly composited images, the source image should not
+        be modified.
+
+        http://www.satine.org/research/webkit/snowleopard/snowstack.html
+
+        Reviewed by Noam Rosenthal.
+
+        No new tests as this is only testable on specific hardware and
+        currently not avaiable in the bots.
+
+        * platform/graphics/texmap/TextureMapper.h:
+        (BitmapTexture):
+        * platform/graphics/texmap/TextureMapperBackingStore.cpp:
+        (WebCore::TextureMapperTile::updateContents):
+        (WebCore::TextureMapperTiledBackingStore::updateContentsFromImageIfNeeded):
+        (WebCore::TextureMapperTiledBackingStore::updateContents):
+        * platform/graphics/texmap/TextureMapperBackingStore.h:
+        (TextureMapperTile):
+        (TextureMapperTiledBackingStore):
+        (WebCore::TextureMapperTiledBackingStore::updateContents):
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::drawRepaintCounter):
+        (WebCore::BitmapTextureGL::updateContents):
+        * platform/graphics/texmap/TextureMapperGL.h:
+        (BitmapTextureGL):
+        * platform/graphics/texmap/TextureMapperImageBuffer.cpp:
+        (WebCore::BitmapTextureImageBuffer::updateContents):
+        * platform/graphics/texmap/TextureMapperImageBuffer.h:
+        (BitmapTextureImageBuffer):
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::updateBackingStore):
+
 2012-10-21  Antti Koivisto  <antti@apple.com>
 
         Factor stylesheet invalidation analysis code into a class

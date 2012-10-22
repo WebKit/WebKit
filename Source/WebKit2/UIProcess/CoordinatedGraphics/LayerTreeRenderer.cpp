@@ -360,7 +360,7 @@ void LayerTreeRenderer::createImage(int64_t imageID, PassRefPtr<ShareableBitmap>
     RefPtr<ShareableBitmap> bitmap = weakBitmap;
     RefPtr<TextureMapperTiledBackingStore> backingStore = TextureMapperTiledBackingStore::create();
     m_directlyCompositedImages.set(imageID, backingStore);
-    backingStore->updateContents(m_textureMapper.get(), bitmap->createImage().get());
+    backingStore->updateContents(m_textureMapper.get(), bitmap->createImage().get(), BitmapTexture::UpdateCannotModifyOriginalImageData);
 }
 
 void LayerTreeRenderer::destroyImage(int64_t imageID)

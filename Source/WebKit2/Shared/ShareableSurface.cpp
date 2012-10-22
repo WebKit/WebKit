@@ -196,13 +196,13 @@ void ShareableSurface::copyToTexture(PassRefPtr<WebCore::BitmapTexture> passText
         }
 
         RefPtr<Image> image = m_graphicsSurface->createReadOnlyImage(IntRect(sourceOffset, target.size()));
-        texture->updateContents(image.get(), target, IntPoint::zero());
+        texture->updateContents(image.get(), target, IntPoint::zero(), BitmapTexture::UpdateCanModifyOriginalImageData);
     }
 #endif
 
     ASSERT(m_bitmap);
     RefPtr<Image> image = m_bitmap->createImage();
-    texture->updateContents(image.get(), target, sourceOffset);
+    texture->updateContents(image.get(), target, sourceOffset, BitmapTexture::UpdateCanModifyOriginalImageData);
     return;
 }
 #endif // USE(TEXTURE_MAPPER)

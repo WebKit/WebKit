@@ -139,8 +139,8 @@ public:
     virtual uint32_t id() const { return m_id; }
     uint32_t textureTarget() const { return GraphicsContext3D::TEXTURE_2D; }
     IntSize textureSize() const { return m_textureSize; }
-    void updateContents(Image*, const IntRect&, const IntPoint&);
-    virtual void updateContents(const void*, const IntRect& target, const IntPoint& sourceOffset, int bytesPerLine);
+    void updateContents(Image*, const IntRect&, const IntPoint&, UpdateContentsFlag);
+    virtual void updateContents(const void*, const IntRect& target, const IntPoint& sourceOffset, int bytesPerLine, UpdateContentsFlag);
     virtual bool isBackedByOpenGL() const { return true; }
 
 #if ENABLE(CSS_FILTERS)

@@ -136,7 +136,7 @@ void TextureMapperLayer::updateBackingStore(TextureMapper* textureMapper, Graphi
 
     RefPtr<Image> image = imageBuffer->copyImage(DontCopyBackingStore);
     TextureMapperTiledBackingStore* backingStore = static_cast<TextureMapperTiledBackingStore*>(m_backingStore.get());
-    backingStore->updateContents(textureMapper, image.get(), m_size, dirtyRect);
+    backingStore->updateContents(textureMapper, image.get(), m_size, dirtyRect, BitmapTexture::UpdateCanModifyOriginalImageData);
 
     backingStore->setShowDebugBorders(layer->showDebugBorders());
     backingStore->setDebugBorder(m_debugBorderColor, m_debugBorderWidth);

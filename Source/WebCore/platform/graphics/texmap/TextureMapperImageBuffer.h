@@ -34,8 +34,8 @@ public:
     virtual void didReset();
     virtual bool isValid() const { return m_image; }
     inline GraphicsContext* graphicsContext() { return m_image ? m_image->context() : 0; }
-    virtual void updateContents(Image*, const IntRect&, const IntPoint&);
-    virtual void updateContents(const void*, const IntRect& target, const IntPoint& sourceOffset, int bytesPerLine);
+    virtual void updateContents(Image*, const IntRect&, const IntPoint&, UpdateContentsFlag);
+    virtual void updateContents(const void*, const IntRect& target, const IntPoint& sourceOffset, int bytesPerLine, UpdateContentsFlag);
 #if ENABLE(CSS_FILTERS)
     PassRefPtr<BitmapTexture> applyFilters(TextureMapper*, const BitmapTexture&, const FilterOperations&);
 #endif
