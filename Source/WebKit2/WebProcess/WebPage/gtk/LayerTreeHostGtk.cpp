@@ -315,7 +315,6 @@ void LayerTreeHostGtk::compositeLayersToContext(CompositePurpose purpose)
     m_textureMapper->endPainting();
 
     context->swapBuffers();
-    m_webPage->invalidateWidget();
 }
 
 void LayerTreeHostGtk::flushAndRenderLayers()
