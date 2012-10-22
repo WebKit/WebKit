@@ -1,3 +1,22 @@
+2012-10-22  Tor Arne Vestbø  <tor.arne.vestbo@digia.com>
+
+        [Qt] Move OBJECTS_DIR and friends to default_pre.prf
+
+        The introduction of load(qt_build_config) in .qmake.conf meant
+        that we started loading qtmodule.pri, which in turn set both
+        MOC_DIR, RCC_DIR, and OBJECTS_DIR.
+
+        We were setting OBJECTS_DIR in default_post under a isEmpty() guard
+        so that project files could override the objects dir. Instead of
+        using the isEmpty() check we move it to defaul_pre, which will
+        override the qtmodule.pri settings, but still allow project files
+        to override it.
+
+        Reviewed by Ossy.
+
+        * qmake/mkspecs/features/default_post.prf:
+        * qmake/mkspecs/features/default_pre.prf:
+
 2012-10-22  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         WebKitTestRunner needs testRunner.queueLoadingScript and testRunner.queueNonLoadingScript

@@ -28,11 +28,6 @@ root_project_file: finalizeConfigure()
     }
 }
 
-# Help keep the build tree clean
-MOC_DIR = moc
-RCC_DIR = rcc
-isEmpty(OBJECTS_DIR): OBJECTS_DIR = obj/$$activeBuildConfig()
-
 # General default build tweaks
 DEFINES += \
     BUILDING_QT__=1
