@@ -108,6 +108,9 @@ public:
     void willPaint(const LayoutRect&, Frame*);
     void didPaint();
 
+    void willScroll(Frame*);
+    void didScroll();
+
     void willComposite();
     void didComposite();
 

@@ -1,3 +1,14 @@
+2012-10-16  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: add timeline instrumentation for scrolling of a layer
+        https://bugs.webkit.org/show_bug.cgi?id=99461
+
+        Reviewed by Pavel Feldman.
+
+        - added Scroll record type;
+
+        * inspector/timeline/timeline-enum-stability-expected.txt:
+
 2012-10-22  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Prepare mappings to moving uiSourceCodes creation out of them to workspace.

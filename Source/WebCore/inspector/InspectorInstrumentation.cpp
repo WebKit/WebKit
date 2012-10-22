@@ -515,6 +515,18 @@ void InspectorInstrumentation::didPaintImpl(const InspectorInstrumentationCookie
         pageAgent->didPaint();
 }
 
+void InspectorInstrumentation::willScrollLayerImpl(InstrumentingAgents* instrumentingAgents, Frame* frame)
+{
+    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
+        timelineAgent->willScroll(frame);
+}
+
+void InspectorInstrumentation::didScrollLayerImpl(InstrumentingAgents* instrumentingAgents)
+{
+    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
+        timelineAgent->didScroll();
+}
+
 void InspectorInstrumentation::willCompositeImpl(InstrumentingAgents* instrumentingAgents)
 {
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())

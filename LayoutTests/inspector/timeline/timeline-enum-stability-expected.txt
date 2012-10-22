@@ -29,6 +29,7 @@ Applications outside of WebKit depend on the stability of the mapping of these t
     Root : "Root"
     ScheduleResourceRequest : "ScheduleResourceRequest"
     ScheduleStyleRecalculation : "ScheduleStyleRecalculation"
+    ScrollLayer : "ScrollLayer"
     Time : "Time"
     TimeEnd : "TimeEnd"
     TimeStamp : "TimeStamp"

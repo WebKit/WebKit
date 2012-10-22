@@ -1,3 +1,37 @@
+2012-10-16  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: add timeline instrumentation for scrolling of a layer
+        https://bugs.webkit.org/show_bug.cgi?id=99461
+
+        Reviewed by Pavel Feldman.
+
+        - added timeline instrumentation for scrolling of a layer;
+        - added TRACE_EVENT for ScrollableArea::scrollPositionChanged()
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        (WebCore::InspectorInstrumentation::willScrollLayerImpl):
+        (WebCore::InspectorInstrumentation::didScrollLayerImpl):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::willScrollLayer):
+        (WebCore):
+        (WebCore::InspectorInstrumentation::didScrollLayer):
+        * inspector/InspectorTimelineAgent.cpp:
+        (TimelineRecordType):
+        (WebCore::InspectorTimelineAgent::willScroll):
+        (WebCore):
+        (WebCore::InspectorTimelineAgent::didScroll):
+        * inspector/InspectorTimelineAgent.h:
+        (InspectorTimelineAgent):
+        * inspector/front-end/TimelineModel.js:
+        * inspector/front-end/TimelinePresentationModel.js:
+        (WebInspector.TimelinePresentationModel._initRecordStyles):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo):
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::scrollPositionChanged):
+
 2012-10-22  Jan Keromnes  <janx@linux.com>
 
         Moved cmdevtools.js to folder cm/

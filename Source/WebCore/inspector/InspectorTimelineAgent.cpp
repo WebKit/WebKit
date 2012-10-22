@@ -73,6 +73,7 @@ static const char RecalculateStyles[] = "RecalculateStyles";
 static const char InvalidateLayout[] = "InvalidateLayout";
 static const char Layout[] = "Layout";
 static const char Paint[] = "Paint";
+static const char ScrollLayer[] = "ScrollLayer";
 static const char DecodeImage[] = "DecodeImage";
 static const char ResizeImage[] = "ResizeImage";
 static const char CompositeLayers[] = "CompositeLayers";
@@ -276,6 +277,16 @@ void InspectorTimelineAgent::willPaint(const LayoutRect& rect, Frame* frame)
 void InspectorTimelineAgent::didPaint()
 {
     didCompleteCurrentRecord(TimelineRecordType::Paint);
+}
+
+void InspectorTimelineAgent::willScroll(Frame* frame)
+{
+    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::ScrollLayer, false, frame);
+}
+
+void InspectorTimelineAgent::didScroll()
+{
+    didCompleteCurrentRecord(TimelineRecordType::ScrollLayer);
 }
 
 void InspectorTimelineAgent::willDecodeImage(const String& imageType)
