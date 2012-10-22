@@ -3057,8 +3057,9 @@ END
 void ${className}::installPerContextProperties(v8::Handle<v8::Object> instance, ${nativeType}* impl)
 {
     v8::Local<v8::Object> proto = v8::Local<v8::Object>::Cast(instance->GetPrototype());
+    ScriptExecutionContext* context = toScriptExecutionContext(proto->CreationContext());
     // When building QtWebkit with V8 this variable is unused when none of the features are enabled.
-    UNUSED_PARAM(proto);
+    UNUSED_PARAM(context);
 END
 
         # Setup the enable-by-settings attrs if we have them
@@ -3066,7 +3067,7 @@ END
             my $enableFunction = GetContextEnableFunction($runtimeAttr->signature);
             my $conditionalString = $codeGenerator->GenerateConditionalString($runtimeAttr->signature);
             push(@implContent, "\n#if ${conditionalString}\n") if $conditionalString;
-            push(@implContent, "    if (${enableFunction}(impl->document())) {\n");
+            push(@implContent, "    if (context && context->isDocument() && ${enableFunction}(static_cast<Document*>(context))) {\n");
             push(@implContent, "        static const V8DOMConfiguration::BatchedAttribute attrData =\\\n");
             GenerateSingleBatchedAttribute($interfaceName, $runtimeAttr, ";", "    ");
             push(@implContent, <<END);
