@@ -81,13 +81,13 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 16x19
                 text run at (2,2) width 16: "1. "
             RenderTableCell {TD} at (22,1) size 229x84 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 65x20
+              RenderText {#text} at (2,2) size 65x19
                 text run at (2,2) width 65: "Some One"
               RenderBR {BR} at (67,17) size 0x0
-              RenderText {#text} at (2,22) size 69x20
+              RenderText {#text} at (2,22) size 69x19
                 text run at (2,22) width 69: "Joe Banker"
               RenderBR {BR} at (71,37) size 0x0
-              RenderText {#text} at (2,42) size 126x20
+              RenderText {#text} at (2,42) size 126x19
                 text run at (2,42) width 126: "4633 Ocean Avenue"
               RenderBR {BR} at (128,57) size 0x0
               RenderText {#text} at (2,62) size 172x19
@@ -115,11 +115,11 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 16x19
                 text run at (2,2) width 16: "2. "
             RenderTableCell {TD} at (22,112) size 229x104 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 216x40
+              RenderText {#text} at (2,2) size 216x39
                 text run at (2,2) width 216: "FORECLOSURES AAA HOMES"
                 text run at (2,22) width 112: "UP TO 50% OFF"
               RenderBR {BR} at (114,37) size 0x0
-              RenderText {#text} at (2,42) size 123x20
+              RenderText {#text} at (2,42) size 123x19
                 text run at (2,42) width 123: "Real Estate Services"
               RenderBR {BR} at (125,57) size 0x0
               RenderText {#text} at (2,62) size 74x19

@@ -32,7 +32,7 @@ layer at (0,0) size 800x600
                 text run at (1,81) width 46: "instead "
                 text run at (47,81) width 112: "but this is simpler)."
             RenderTableCell {TD} at (305,26) size 477x162 [bgcolor=#9999FF] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 433x40
+              RenderText {#text} at (1,1) size 433x39
                 text run at (1,1) width 433: "Try shrinking this table to ~250px wide. The left hand (gold) column will"
                 text run at (1,21) width 156: "suddenly expand in width."
               RenderBR {BR} at (157,36) size 0x0

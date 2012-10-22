@@ -15,7 +15,7 @@ layer at (0,0) size 800x454
         RenderText {#text} at (0,-2) size 12x12
           text run at (0,-2) width 12: "      "
         RenderText {#text} at (0,0) size 0x0
-        RenderEmbeddedObject {OBJECT} at (9,-1) size 121x38 [bgcolor=#FF0000] [border: (5px solid #0000FF)]
+        RenderEmbeddedObject {OBJECT} at (9,-1) size 121x39 [bgcolor=#FF0000] [border: (5px solid #0000FF)]
           layer at (0,0) size 110x28
             RenderView at (0,0) size 110x28
           layer at (0,0) size 110x28

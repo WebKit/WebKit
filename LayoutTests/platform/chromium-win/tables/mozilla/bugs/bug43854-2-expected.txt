@@ -41,7 +41,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 8x19
                   text run at (0,0) width 8: "2"
               RenderBlock (anonymous) at (2,22) size 109x20
-                RenderText {#text} at (0,0) size 92x20
+                RenderText {#text} at (0,0) size 92x19
                   text run at (0,0) width 92: "Althea Halliday"
                 RenderBR {BR} at (92,15) size 0x0
           RenderTableRow {TR} at (0,66) size 783x83
@@ -50,7 +50,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 8x19
                   text run at (0,0) width 8: "3"
               RenderBlock (anonymous) at (2,22) size 108x60
-                RenderText {#text} at (0,0) size 63x20
+                RenderText {#text} at (0,0) size 63x19
                   text run at (0,0) width 63: "CHORTle"
                 RenderBR {BR} at (63,15) size 0x0
                 RenderText {#text} at (0,20) size 63x39
@@ -107,7 +107,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 16x19
                   text run at (0,0) width 16: "10"
               RenderBlock (anonymous) at (2,22) size 108x20
-                RenderText {#text} at (0,0) size 95x20
+                RenderText {#text} at (0,0) size 95x19
                   text run at (0,0) width 95: "Christmas party"
                 RenderBR {BR} at (95,15) size 0x0
             RenderTableCell {TD} at (111,149) size 112x43 [border: (1px solid #005A8C)] [r=3 c=1 rs=1 cs=1]
@@ -149,7 +149,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 16x19
                   text run at (0,0) width 16: "16"
               RenderBlock (anonymous) at (2,22) size 109x20
-                RenderText {#text} at (0,0) size 62x20
+                RenderText {#text} at (0,0) size 62x19
                   text run at (0,0) width 62: "Paul Goltz"
                 RenderBR {BR} at (62,15) size 0x0
           RenderTableRow {TR} at (0,232) size 783x63
@@ -197,7 +197,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 16x19
                   text run at (0,0) width 16: "23"
               RenderBlock (anonymous) at (2,22) size 109x40
-                RenderText {#text} at (0,0) size 69x40
+                RenderText {#text} at (0,0) size 69x39
                   text run at (0,0) width 60: "Christmas"
                   text run at (0,20) width 69: "programme"
                 RenderBR {BR} at (69,35) size 0x0
@@ -213,7 +213,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 16x19
                   text run at (0,0) width 16: "25"
               RenderBlock (anonymous) at (2,22) size 109x20
-                RenderText {#text} at (0,0) size 86x20
+                RenderText {#text} at (0,0) size 86x19
                   text run at (0,0) width 86: "Christmas day"
                 RenderBR {BR} at (86,15) size 0x0
             RenderTableCell {TD} at (223,295) size 112x43 [border: (1px solid #005A8C)] [r=5 c=2 rs=1 cs=1]
@@ -221,7 +221,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 16x19
                   text run at (0,0) width 16: "26"
               RenderBlock (anonymous) at (2,22) size 109x20
-                RenderText {#text} at (0,0) size 68x20
+                RenderText {#text} at (0,0) size 68x19
                   text run at (0,0) width 68: "Boxing day"
                 RenderBR {BR} at (68,15) size 0x0
             RenderTableCell {TD} at (335,295) size 112x43 [border: (1px solid #005A8C)] [r=5 c=3 rs=1 cs=1]
@@ -248,7 +248,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 16x19
                   text run at (0,0) width 16: "30"
               RenderBlock (anonymous) at (2,22) size 109x20
-                RenderText {#text} at (0,0) size 87x20
+                RenderText {#text} at (0,0) size 87x19
                   text run at (0,0) width 87: "David Holman"
                 RenderBR {BR} at (87,15) size 0x0
           RenderTableRow {TR} at (0,338) size 783x43
