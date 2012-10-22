@@ -1,3 +1,15 @@
+2012-10-22  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r131686): Crash in NSToolTipManager mouseEnteredToolTip
+        <rdar://problem/12527528> and https://bugs.webkit.org/show_bug.cgi?id=99792
+
+        Roll out the tool tip part of r131686 since it still seems to be causing trouble.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView view:stringForToolTip:point:userData:]): Added this method back.
+        (-[WKView _wk_toolTipChangedFrom:to:]): Use self as owner again, eliminating the
+        separate WKToolTipDelegate object.
+
 2012-10-22  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Memory leak in Ewk_Form_Submission_Request::fieldValue()

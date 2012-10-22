@@ -26,11 +26,6 @@
 #import "config.h"
 #import "WKView.h"
 
-#if USE(DICTATION_ALTERNATIVES) 
-#import <AppKit/NSTextAlternatives.h> 
-#import <AppKit/NSAttributedString.h> 
-#endif
-
 #import "AttributedString.h"
 #import "ColorSpaceData.h"
 #import "DataReference.h"
@@ -90,6 +85,10 @@
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 
+#if USE(DICTATION_ALTERNATIVES)
+#import <AppKit/NSTextAlternatives.h>
+#endif
+
 @interface NSApplication (WKNSApplicationDetails)
 - (void)speakString:(NSString *)string;
 - (void)_setCurrentEvent:(NSEvent *)event;
@@ -137,12 +136,6 @@ struct WKViewInterpretKeyEventsParameters {
 - (void)_wk_postFakeMouseMovedEventForFlagsChangedEvent:(NSEvent *)flagsChangedEvent;
 - (void)_wk_setDrawingAreaSize:(NSSize)size;
 - (void)_wk_setPluginComplexTextInputState:(PluginComplexTextInputState)pluginComplexTextInputState;
-@end
-
-@interface WKToolTipDelegate : NSObject {
-    RefPtr<WebPageProxy> _page;
-}
-- (id)initWithPage:(WebPageProxy *)page;
 @end
 
 @interface WKViewData : NSObject {
@@ -217,7 +210,6 @@ struct WKViewInterpretKeyEventsParameters {
     String _promisedFilename;
     String _promisedURL;
 
-    RetainPtr<WKToolTipDelegate> _toolTipDelegate;
     RetainPtr<NSMutableArray> _observers;
 }
 
@@ -2520,6 +2512,11 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     [_data->_trackingRectOwner mouseEntered:fakeEvent];
 }
 
+- (NSString *)view:(NSView *)view stringForToolTip:(NSToolTipTag)tag point:(NSPoint)point userData:(void *)data
+{
+    return nsStringFromWebCoreString(_page->toolTip());
+}
+
 - (void)_wk_toolTipChangedFrom:(NSString *)oldToolTip to:(NSString *)newToolTip
 {
     if (oldToolTip)
@@ -2529,9 +2526,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
         // See radar 3500217 for why we remove all tooltips rather than just the single one we created.
         [self removeAllToolTips];
         NSRect wideOpenRect = NSMakeRect(-100000, -100000, 200000, 200000);
-        if (!_data->_toolTipDelegate)
-            _data->_toolTipDelegate = adoptNS([[WKToolTipDelegate alloc] initWithPage:_data->_page.get()]);
-        _data->_lastToolTipTag = [self addToolTipRect:wideOpenRect owner:_data->_toolTipDelegate.get() userData:NULL];
+        _data->_lastToolTipTag = [self addToolTipRect:wideOpenRect owner:self userData:NULL];
         [self _wk_sendToolTipMouseEntered];
     }
 }
@@ -3195,24 +3190,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 {
     _didReceiveUnhandledCommand = true;
     return YES;
-}
-
-@end
-
-@implementation WKToolTipDelegate
-
-- (id)initWithPage:(WebPageProxy *)page
-{
-    self = [super init];
-    if (!self)
-        return nil;
-    _page = page;
-    return self;
-}
-
-- (NSString *)view:(NSView *)view stringForToolTip:(NSToolTipTag)tag point:(NSPoint)point userData:(void *)data
-{
-    return nsStringFromWebCoreString(_page->toolTip());
 }
 
 @end
