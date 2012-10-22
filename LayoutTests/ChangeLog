@@ -1,5 +1,19 @@
 2012-10-22  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
+        [Qt] Handle GET of blob URLs.
+        https://bugs.webkit.org/show_bug.cgi?id=99053
+
+        Reviewed by Simon Hausmann.
+
+        Unskip tests working after we handle GET of Blob URLs. Unfortunately they require beginDragWithFiles, 
+        and thus only work in DRT.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/qt/fast/files/workers/worker-read-blob-async-actual.txt: Added.
+
+2012-10-22  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
         [Qt] Basic gesture event handling
         https://bugs.webkit.org/show_bug.cgi?id=66173
 

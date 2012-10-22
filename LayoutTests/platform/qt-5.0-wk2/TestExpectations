@@ -76,6 +76,7 @@ fast/events/file-input-hidden-in-ondrop.html
 fast/events/input-element-display-none-in-dragleave-crash.html
 fast/events/prevent-drag-to-navigate.html
 fast/files/apply-blob-url-to-img.html
+fast/files/apply-blob-url-to-xhr.html
 fast/files/file-list-test.html
 fast/files/file-reader-abort.html
 fast/files/file-reader-directory-crash.html
@@ -83,6 +84,8 @@ fast/files/file-reader-event-listener.html
 fast/files/read-blob-async.html
 fast/files/read-file-async.html
 fast/files/null-origin-string.html
+fast/files/workers/worker-apply-blob-url-to-xhr.html
+fast/files/workers/worker-read-blob-async.html
 fast/files/workers/worker-read-blob-sync.html
 fast/files/workers/worker-read-file-async.html
 fast/files/workers/worker-read-file-sync.html
