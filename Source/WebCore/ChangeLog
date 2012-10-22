@@ -1,3 +1,99 @@
+2012-10-22  Marja Hölttä  <marja@chromium.org>
+
+        Refactor CachedResourceLoader: add CachedResourceRequest
+        https://bugs.webkit.org/show_bug.cgi?id=99736
+
+        Reviewed by Adam Barth.
+
+        For fixing bugs 84883 and 92761,
+        CachedResourceLoader::requestResource should take as parameter
+        information about who initiated the request. But the parameter
+        list was already long. This gathers all the parameters into a
+        separate class, CachedResourceRequest. The next step is to add
+        information about who initiated the request into
+        CachedResourceRequest.
+
+        No new tests because no changes in functionality, just moving code
+        around.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::cachedFont):
+        * css/CSSImageSetValue.cpp:
+        (WebCore::CSSImageSetValue::cachedImageSet):
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::cachedImage):
+        * css/StyleRuleImport.cpp:
+        (WebCore::StyleRuleImport::requestStyleSheet):
+        * css/WebKitCSSSVGDocumentValue.cpp:
+        (WebCore::WebKitCSSSVGDocumentValue::load):
+        * css/WebKitCSSShaderValue.cpp:
+        (WebCore::WebKitCSSShaderValue::cachedShader):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::requestScript):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement):
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::loadLink):
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::load):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestImage):
+        (WebCore::CachedResourceLoader::requestFont):
+        (WebCore::CachedResourceLoader::requestTextTrack):
+        (WebCore::CachedResourceLoader::requestShader):
+        (WebCore::CachedResourceLoader::requestCSSStyleSheet):
+        (WebCore::CachedResourceLoader::requestUserCSSStyleSheet):
+        (WebCore::CachedResourceLoader::requestScript):
+        (WebCore::CachedResourceLoader::requestXSLStyleSheet):
+        (WebCore::CachedResourceLoader::requestSVGDocument):
+        (WebCore::CachedResourceLoader::requestLinkResource):
+        (WebCore::CachedResourceLoader::requestRawResource):
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::requestPreload):
+        (WebCore::CachedResourceLoader::defaultCachedResourceOptions):
+        (WebCore):
+        * loader/cache/CachedResourceLoader.h:
+        (WebCore):
+        (CachedResourceLoader):
+        * loader/cache/CachedResourceRequest.cpp: Added.
+        (WebCore):
+        (WebCore::CachedResourceRequest::CachedResourceRequest):
+        * loader/cache/CachedResourceRequest.h: Added.
+        (WebCore):
+        (CachedResourceRequest):
+        (WebCore::CachedResourceRequest::mutableResourceRequest):
+        (WebCore::CachedResourceRequest::resourceRequest):
+        (WebCore::CachedResourceRequest::charset):
+        (WebCore::CachedResourceRequest::setCharset):
+        (WebCore::CachedResourceRequest::options):
+        (WebCore::CachedResourceRequest::priority):
+        (WebCore::CachedResourceRequest::forPreload):
+        (WebCore::CachedResourceRequest::setForPreload):
+        (WebCore::CachedResourceRequest::defer):
+        (WebCore::CachedResourceRequest::setDefer):
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::requestImageResource):
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::loadFont):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::svgAttributeChanged):
+        * xml/XSLImportRule.cpp:
+        (WebCore::XSLImportRule::loadSheet):
+
 2012-10-22  Adam Barth  <abarth@webkit.org>
 
         [V8] ASSERT that removeAllDOMObjects() is called only on worker threads

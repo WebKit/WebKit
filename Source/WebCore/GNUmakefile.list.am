@@ -3845,6 +3845,8 @@ webcore_sources += \
 	Source/WebCore/loader/cache/CachedResourceHandle.h \
 	Source/WebCore/loader/cache/CachedResourceLoader.cpp \
 	Source/WebCore/loader/cache/CachedResourceLoader.h \
+	Source/WebCore/loader/cache/CachedResourceRequest.cpp \
+	Source/WebCore/loader/cache/CachedResourceRequest.h \
 	Source/WebCore/loader/cache/CachedScript.cpp \
 	Source/WebCore/loader/cache/CachedScript.h \
 	Source/WebCore/loader/cache/CachedShader.cpp \

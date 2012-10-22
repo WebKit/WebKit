@@ -29,6 +29,7 @@
 #include "CachedCSSStyleSheet.h"
 #include "CachedResource.h"
 #include "CachedResourceLoader.h"
+#include "CachedResourceRequest.h"
 #include "Document.h"
 #include "DocumentStyleSheetCollection.h"
 #include "EventSender.h"
@@ -220,8 +221,8 @@ void HTMLLinkElement::process()
 
         // Load stylesheets that are not needed for the rendering immediately with low priority.
         ResourceLoadPriority priority = blocking ? ResourceLoadPriorityUnresolved : ResourceLoadPriorityVeryLow;
-        ResourceRequest request(document()->completeURL(m_url));
-        m_cachedSheet = document()->cachedResourceLoader()->requestCSSStyleSheet(request, charset, priority);
+        CachedResourceRequest request(ResourceRequest(document()->completeURL(m_url)), charset, priority);
+        m_cachedSheet = document()->cachedResourceLoader()->requestCSSStyleSheet(request);
         
         if (m_cachedSheet)
             m_cachedSheet->addClient(this);

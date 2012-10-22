@@ -30,6 +30,7 @@
 #include "TextTrackLoader.h"
 
 #include "CachedResourceLoader.h"
+#include "CachedResourceRequest.h"
 #include "CachedTextTrack.h"
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
@@ -153,12 +154,12 @@ bool TextTrackLoader::load(const KURL& url, const String& crossOriginMode)
 
     ASSERT(m_scriptExecutionContext->isDocument());
     Document* document = static_cast<Document*>(m_scriptExecutionContext);
-    ResourceRequest cueRequest(document->completeURL(url));
+    CachedResourceRequest cueRequest(ResourceRequest(document->completeURL(url)));
 
     if (!crossOriginMode.isNull()) {
         m_crossOriginMode = crossOriginMode;
         StoredCredentials allowCredentials = equalIgnoringCase(crossOriginMode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials;
-        updateRequestForAccessControl(cueRequest, document->securityOrigin(), allowCredentials);
+        updateRequestForAccessControl(cueRequest.mutableResourceRequest(), document->securityOrigin(), allowCredentials);
     } else {
         // Cross-origin resources that are not suitably CORS-enabled may not load.
         if (!document->securityOrigin()->canRequest(url)) {

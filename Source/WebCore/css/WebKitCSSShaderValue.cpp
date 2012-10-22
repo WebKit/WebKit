@@ -32,8 +32,9 @@
 #if ENABLE(CSS_SHADERS)
 #include "WebKitCSSShaderValue.h"
 
-#include "CachedResourceLoader.h"
 #include "CSSParser.h"
+#include "CachedResourceLoader.h"
+#include "CachedResourceRequest.h"
 #include "Document.h"
 #include "StyleCachedShader.h"
 #include "StylePendingShader.h"
@@ -59,7 +60,7 @@ StyleCachedShader* WebKitCSSShaderValue::cachedShader(CachedResourceLoader* load
     if (!m_accessedShader) {
         m_accessedShader = true;
 
-        ResourceRequest request(loader->document()->completeURL(m_url));
+        CachedResourceRequest request(ResourceRequest(loader->document()->completeURL(m_url)));
         if (CachedResourceHandle<CachedShader> cachedShader = loader->requestShader(request))
             m_shader = StyleCachedShader::create(cachedShader.get());
     }

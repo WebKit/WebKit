@@ -26,6 +26,7 @@
 
 #include "CachedXSLStyleSheet.h"
 #include "CachedResourceLoader.h"
+#include "CachedResourceRequest.h"
 #include "Document.h"
 #include "XSLStyleSheet.h"
 
@@ -98,7 +99,7 @@ void XSLImportRule::loadSheet()
             return;
     }
     
-    ResourceRequest request(cachedResourceLoader->document()->completeURL(absHref));
+    CachedResourceRequest request(ResourceRequest(cachedResourceLoader->document()->completeURL(absHref)));
     m_cachedSheet = cachedResourceLoader->requestXSLStyleSheet(request);
     
     if (m_cachedSheet) {

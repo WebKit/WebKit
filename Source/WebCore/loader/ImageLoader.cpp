@@ -24,6 +24,7 @@
 
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
+#include "CachedResourceRequest.h"
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
 #include "Element.h"
@@ -177,18 +178,18 @@ void ImageLoader::updateFromElement()
     // an empty string.
     CachedResourceHandle<CachedImage> newImage = 0;
     if (!attr.isNull() && !stripLeadingAndTrailingHTMLSpaces(attr).isEmpty()) {
-        ResourceRequest request = ResourceRequest(document()->completeURL(sourceURI(attr)));
+        CachedResourceRequest request(ResourceRequest(document()->completeURL(sourceURI(attr))));
 
         String crossOriginMode = client()->sourceElement()->fastGetAttribute(HTMLNames::crossoriginAttr);
         if (!crossOriginMode.isNull()) {
             StoredCredentials allowCredentials = equalIgnoringCase(crossOriginMode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials;
-            updateRequestForAccessControl(request, document()->securityOrigin(), allowCredentials);
+            updateRequestForAccessControl(request.mutableResourceRequest(), document()->securityOrigin(), allowCredentials);
         }
 
         if (m_loadManually) {
             bool autoLoadOtherImages = document()->cachedResourceLoader()->autoLoadImages();
             document()->cachedResourceLoader()->setAutoLoadImages(false);
-            newImage = new CachedImage(request);
+            newImage = new CachedImage(request.resourceRequest());
             newImage->setLoading(true);
             newImage->setOwningCachedResourceLoader(document()->cachedResourceLoader());
             document()->cachedResourceLoader()->m_documentResources.set(newImage->url(), newImage.get());

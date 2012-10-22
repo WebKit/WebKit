@@ -29,6 +29,7 @@
 
 #include "Attribute.h"
 #include "CachedResourceLoader.h"
+#include "CachedResourceRequest.h"
 #include "Document.h"
 #include "ElementShadow.h"
 #include "Event.h"
@@ -254,7 +255,7 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
         if (isExternalReference) {
             KURL url = document()->completeURL(href());
             if (url.hasFragmentIdentifier()) {
-                ResourceRequest request(url.string());
+                CachedResourceRequest request(ResourceRequest(url.string()));
                 m_cachedDocument = document()->cachedResourceLoader()->requestSVGDocument(request);
                 if (m_cachedDocument)
                     m_cachedDocument->addClient(this);

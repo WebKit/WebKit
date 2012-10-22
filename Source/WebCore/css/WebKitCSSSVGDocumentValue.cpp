@@ -29,6 +29,7 @@
 
 #include "CSSParser.h"
 #include "CachedResourceLoader.h"
+#include "CachedResourceRequest.h"
 #include "Document.h"
 #include "WebCoreMemoryInstrumentation.h"
 
@@ -52,7 +53,7 @@ CachedSVGDocument* WebKitCSSSVGDocumentValue::load(CachedResourceLoader* loader)
     if (!m_loadRequested) {
         m_loadRequested = true;
 
-        ResourceRequest request(loader->document()->completeURL(m_url));
+        CachedResourceRequest request(ResourceRequest(loader->document()->completeURL(m_url)));
         m_document = loader->requestSVGDocument(request);
     }
 

@@ -35,6 +35,7 @@
 #include "CSSStyleSheet.h"
 #include "CachedCSSStyleSheet.h"
 #include "CachedResourceLoader.h"
+#include "CachedResourceRequest.h"
 #include "ContainerNode.h"
 #include "DNS.h"
 #include "Document.h"
@@ -119,13 +120,13 @@ bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const String& ty
             priority = ResourceLoadPriorityLow;
             type = CachedResource::LinkSubresource;
         }
-        ResourceRequest linkRequest(document->completeURL(href));
+        CachedResourceRequest linkRequest(ResourceRequest(document->completeURL(href)), priority);
         
         if (m_cachedLinkResource) {
             m_cachedLinkResource->removeClient(this);
             m_cachedLinkResource = 0;
         }
-        m_cachedLinkResource = document->cachedResourceLoader()->requestLinkResource(type, linkRequest, priority);
+        m_cachedLinkResource = document->cachedResourceLoader()->requestLinkResource(type, linkRequest);
         if (m_cachedLinkResource)
             m_cachedLinkResource->addClient(this);
     }

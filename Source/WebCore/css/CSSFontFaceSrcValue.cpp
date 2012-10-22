@@ -27,6 +27,7 @@
 #include "CSSFontFaceSrcValue.h"
 #include "CachedFont.h"
 #include "CachedResourceLoader.h"
+#include "CachedResourceRequest.h"
 #include "Document.h"
 #include "FontCustomPlatformData.h"
 #include "Node.h"
@@ -95,7 +96,7 @@ bool CSSFontFaceSrcValue::hasFailedOrCanceledSubresources() const
 CachedFont* CSSFontFaceSrcValue::cachedFont(Document* document)
 {
     if (!m_cachedFont) {
-        ResourceRequest request(document->completeURL(m_resource));
+        CachedResourceRequest request(ResourceRequest(document->completeURL(m_resource)));
         m_cachedFont = document->cachedResourceLoader()->requestFont(request);
     }
     return m_cachedFont.get();
@@ -113,4 +114,3 @@ void CSSFontFaceSrcValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryOb
 }
 
 }
-

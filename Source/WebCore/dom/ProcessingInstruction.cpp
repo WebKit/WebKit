@@ -24,6 +24,7 @@
 #include "CSSStyleSheet.h"
 #include "CachedCSSStyleSheet.h"
 #include "CachedResourceLoader.h"
+#include "CachedResourceRequest.h"
 #include "CachedXSLStyleSheet.h"
 #include "Document.h"
 #include "DocumentStyleSheetCollection.h"
@@ -163,7 +164,7 @@ void ProcessingInstruction::checkStyleSheet()
             m_loading = true;
             document()->styleSheetCollection()->addPendingSheet();
             
-            ResourceRequest request(document()->completeURL(href));
+            CachedResourceRequest request(ResourceRequest(document()->completeURL(href)));
 #if ENABLE(XSLT)
             if (m_isXSL)
                 m_cachedSheet = document()->cachedResourceLoader()->requestXSLStyleSheet(request);
@@ -173,8 +174,9 @@ void ProcessingInstruction::checkStyleSheet()
                 String charset = attrs.get("charset");
                 if (charset.isEmpty())
                     charset = document()->charset();
+                request.setCharset(charset);
 
-                m_cachedSheet = document()->cachedResourceLoader()->requestCSSStyleSheet(request, charset);
+                m_cachedSheet = document()->cachedResourceLoader()->requestCSSStyleSheet(request);
             }
             if (m_cachedSheet)
                 m_cachedSheet->addClient(this);

@@ -26,6 +26,7 @@
 #include "CSSValueKeywords.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
+#include "CachedResourceRequest.h"
 #include "Document.h"
 #include "MemoryCache.h"
 #include "StyleCachedImage.h"
@@ -82,7 +83,7 @@ StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader, const
     if (!m_accessedImage) {
         m_accessedImage = true;
 
-        ResourceRequest request(loader->document()->completeURL(url));
+        CachedResourceRequest request(ResourceRequest(loader->document()->completeURL(url)));
         if (CachedResourceHandle<CachedImage> cachedImage = loader->requestImage(request))
             m_image = StyleCachedImage::create(cachedImage.get());
     }

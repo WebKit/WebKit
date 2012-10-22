@@ -28,6 +28,7 @@
 
 #include "CachedRawResource.h"
 #include "CachedResourceLoader.h"
+#include "CachedResourceRequest.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -59,14 +60,14 @@ void IconLoader::startLoading()
     if (m_resource || !m_frame->document())
         return;
 
-    ResourceRequest resourceRequest(m_frame->loader()->icon()->url());
-#if PLATFORM(BLACKBERRY)
-    resourceRequest.setTargetType(ResourceRequest::TargetIsFavicon);
-#endif
-    resourceRequest.setPriority(ResourceLoadPriorityLow);
+    CachedResourceRequest request(ResourceRequest(m_frame->loader()->icon()->url()), ResourceLoaderOptions(SendCallbacks, SniffContent, BufferData, DoNotAllowStoredCredentials, DoNotAskClientForCrossOriginCredentials, DoSecurityCheck));
 
-    m_resource = m_frame->document()->cachedResourceLoader()->requestRawResource(resourceRequest,
-        ResourceLoaderOptions(SendCallbacks, SniffContent, BufferData, DoNotAllowStoredCredentials, DoNotAskClientForCrossOriginCredentials, DoSecurityCheck));
+#if PLATFORM(BLACKBERRY)
+    request.mutableResourceRequest().setTargetType(ResourceRequest::TargetIsFavicon);
+#endif
+    request.mutableResourceRequest().setPriority(ResourceLoadPriorityLow);
+
+    m_resource = m_frame->document()->cachedResourceLoader()->requestRawResource(request);
     if (m_resource)
         m_resource->addClient(this);
     else

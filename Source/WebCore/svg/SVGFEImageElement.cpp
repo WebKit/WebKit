@@ -27,6 +27,7 @@
 #include "Attr.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
+#include "CachedResourceRequest.h"
 #include "ColorSpace.h"
 #include "Document.h"
 #include "Image.h"
@@ -80,7 +81,7 @@ void SVGFEImageElement::clearResourceReferences()
 
 void SVGFEImageElement::requestImageResource()
 {
-    ResourceRequest request(ownerDocument()->completeURL(href()));
+    CachedResourceRequest request(ResourceRequest(ownerDocument()->completeURL(href())));
     m_cachedImage = document()->cachedResourceLoader()->requestImage(request);
 
     if (m_cachedImage)

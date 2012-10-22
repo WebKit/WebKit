@@ -26,6 +26,7 @@
 
 #include "CachedScript.h"
 #include "CachedResourceLoader.h"
+#include "CachedResourceRequest.h"
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
@@ -256,16 +257,17 @@ bool ScriptElement::requestScript(const String& sourceUrl)
 
     ASSERT(!m_cachedScript);
     if (!stripLeadingAndTrailingHTMLSpaces(sourceUrl).isEmpty()) {
-        ResourceRequest request = ResourceRequest(m_element->document()->completeURL(sourceUrl));
+        CachedResourceRequest request(ResourceRequest(m_element->document()->completeURL(sourceUrl)));
 
         String crossOriginMode = m_element->fastGetAttribute(HTMLNames::crossoriginAttr);
         if (!crossOriginMode.isNull()) {
             m_requestUsesAccessControl = true;
             StoredCredentials allowCredentials = equalIgnoringCase(crossOriginMode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials;
-            updateRequestForAccessControl(request, m_element->document()->securityOrigin(), allowCredentials);
+            updateRequestForAccessControl(request.mutableResourceRequest(), m_element->document()->securityOrigin(), allowCredentials);
         }
+        request.setCharset(scriptCharset());
 
-        m_cachedScript = m_element->document()->cachedResourceLoader()->requestScript(request, scriptCharset());
+        m_cachedScript = m_element->document()->cachedResourceLoader()->requestScript(request);
         m_isExternalScript = true;
     }
 

@@ -25,6 +25,7 @@
 #include "CSSStyleSheet.h"
 #include "CachedCSSStyleSheet.h"
 #include "CachedResourceLoader.h"
+#include "CachedResourceRequest.h"
 #include "Document.h"
 #include "SecurityOrigin.h"
 #include "StyleSheetContents.h"
@@ -115,11 +116,11 @@ void StyleRuleImport::requestStyleSheet()
         rootSheet = sheet;
     }
 
-    ResourceRequest request(absURL);
+    CachedResourceRequest request(ResourceRequest(absURL), m_parentStyleSheet->charset());
     if (m_parentStyleSheet->isUserStyleSheet())
-        m_cachedSheet = cachedResourceLoader->requestUserCSSStyleSheet(request, m_parentStyleSheet->charset());
+        m_cachedSheet = cachedResourceLoader->requestUserCSSStyleSheet(request);
     else
-        m_cachedSheet = cachedResourceLoader->requestCSSStyleSheet(request, m_parentStyleSheet->charset());
+        m_cachedSheet = cachedResourceLoader->requestCSSStyleSheet(request);
     if (m_cachedSheet) {
         // if the import rule is issued dynamically, the sheet may be
         // removed from the pending sheet count, so let the doc know

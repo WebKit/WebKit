@@ -44,6 +44,7 @@ class CachedSVGDocument;
 class CachedFont;
 class CachedImage;
 class CachedRawResource;
+class CachedResourceRequest;
 class CachedScript;
 class CachedShader;
 class CachedTextTrack;
@@ -68,30 +69,31 @@ friend class ImageLoader;
 friend class ResourceCacheValidationSuppressor;
 
 public:
+    enum DeferOption { NoDefer, DeferredByClient };
     static PassRefPtr<CachedResourceLoader> create(DocumentLoader* documentLoader) { return adoptRef(new CachedResourceLoader(documentLoader)); }
     ~CachedResourceLoader();
 
-    CachedResourceHandle<CachedImage> requestImage(ResourceRequest&);
-    CachedResourceHandle<CachedCSSStyleSheet> requestCSSStyleSheet(ResourceRequest&, const String& charset, ResourceLoadPriority = ResourceLoadPriorityUnresolved);
-    CachedResourceHandle<CachedCSSStyleSheet> requestUserCSSStyleSheet(ResourceRequest&, const String& charset);
-    CachedResourceHandle<CachedScript> requestScript(ResourceRequest&, const String& charset);
-    CachedResourceHandle<CachedFont> requestFont(ResourceRequest&);
-    CachedResourceHandle<CachedRawResource> requestRawResource(ResourceRequest&, const ResourceLoaderOptions&);
+    CachedResourceHandle<CachedImage> requestImage(CachedResourceRequest&);
+    CachedResourceHandle<CachedCSSStyleSheet> requestCSSStyleSheet(CachedResourceRequest&);
+    CachedResourceHandle<CachedCSSStyleSheet> requestUserCSSStyleSheet(CachedResourceRequest&);
+    CachedResourceHandle<CachedScript> requestScript(CachedResourceRequest&);
+    CachedResourceHandle<CachedFont> requestFont(CachedResourceRequest&);
+    CachedResourceHandle<CachedRawResource> requestRawResource(CachedResourceRequest&);
 
 #if ENABLE(SVG)
-    CachedResourceHandle<CachedSVGDocument> requestSVGDocument(ResourceRequest&);
+    CachedResourceHandle<CachedSVGDocument> requestSVGDocument(CachedResourceRequest&);
 #endif
 #if ENABLE(XSLT)
-    CachedResourceHandle<CachedXSLStyleSheet> requestXSLStyleSheet(ResourceRequest&);
+    CachedResourceHandle<CachedXSLStyleSheet> requestXSLStyleSheet(CachedResourceRequest&);
 #endif
 #if ENABLE(LINK_PREFETCH)
-    CachedResourceHandle<CachedResource> requestLinkResource(CachedResource::Type, ResourceRequest&, ResourceLoadPriority = ResourceLoadPriorityUnresolved);
+    CachedResourceHandle<CachedResource> requestLinkResource(CachedResource::Type, CachedResourceRequest&);
 #endif
 #if ENABLE(VIDEO_TRACK)
-    CachedResourceHandle<CachedTextTrack> requestTextTrack(ResourceRequest&);
+    CachedResourceHandle<CachedTextTrack> requestTextTrack(CachedResourceRequest&);
 #endif
 #if ENABLE(CSS_SHADERS)
-    CachedResourceHandle<CachedShader> requestShader(ResourceRequest&);
+    CachedResourceHandle<CachedShader> requestShader(CachedResourceRequest&);
 #endif
 
     // Logs an access denied message to the console for the specified URL.
@@ -135,11 +137,12 @@ public:
     
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
+    static const ResourceLoaderOptions& defaultCachedResourceOptions();
+
 private:
     explicit CachedResourceLoader(DocumentLoader*);
 
-    enum DeferOption { NoDefer, DeferredByClient };
-    CachedResourceHandle<CachedResource> requestResource(CachedResource::Type, ResourceRequest&, const String& charset, const ResourceLoaderOptions&, ResourceLoadPriority = ResourceLoadPriorityUnresolved, bool isPreload = false, DeferOption = NoDefer);
+    CachedResourceHandle<CachedResource> requestResource(CachedResource::Type, CachedResourceRequest&);
     CachedResourceHandle<CachedResource> revalidateResource(CachedResource*);
     CachedResourceHandle<CachedResource> loadResource(CachedResource::Type, ResourceRequest&, const String& charset);
     void requestPreload(CachedResource::Type, ResourceRequest&, const String& charset);
