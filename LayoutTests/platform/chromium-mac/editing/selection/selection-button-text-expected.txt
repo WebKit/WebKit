@@ -13,7 +13,7 @@ layer at (0,0) size 800x138
           RenderBR {BR} at (49,0) size 0x18
           RenderText {#text} at (0,19) size 59x18
             text run at (0,19) width 59: "with text "
-          RenderButton {INPUT} at (61,19) size 62x19 [bgcolor=#C0C0C0]
+          RenderButton {INPUT} at (61,20) size 62x18 [bgcolor=#C0C0C0]
             RenderBlock (anonymous) at (8,2) size 46x14
               RenderText at (0,0) size 46x13
                 text run at (0,0) width 46: "too little"
@@ -22,7 +22,7 @@ layer at (0,0) size 800x138
         RenderBlock {DIV} at (0,40) size 784x22
           RenderText {#text} at (0,1) size 54x18
             text run at (0,1) width 54: "and text "
-          RenderButton {INPUT} at (56,1) size 67x19 [bgcolor=#C0C0C0]
+          RenderButton {INPUT} at (56,2) size 67x18 [bgcolor=#C0C0C0]
             RenderBlock (anonymous) at (8,2) size 51x14
               RenderText at (0,0) size 51x13
                 text run at (0,0) width 51: "too much"

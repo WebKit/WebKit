@@ -30,7 +30,7 @@ layer at (0,0) size 785x1188
               RenderBlock {DIV} at (0,18) size 135x500
               RenderBlock (anonymous) at (0,518) size 135x40
                 RenderBR {BR} at (0,0) size 0x18
-                RenderButton {INPUT} at (2,19) size 51x19 [bgcolor=#C0C0C0]
+                RenderButton {INPUT} at (2,20) size 51x18 [bgcolor=#C0C0C0]
                   RenderBlock (anonymous) at (8,2) size 35x14
                     RenderText at (0,0) size 35x13
                       text run at (0,0) width 35: "Button"
@@ -38,5 +38,5 @@ layer at (0,0) size 785x1188
               RenderBlock {DIV} at (0,558) size 135x300
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,672) size 769x500
-scrolled to 0,5
-frame 'fr' scrolled to 0,90
+scrolled to 0,4
+frame 'fr' scrolled to 0,91
