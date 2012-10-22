@@ -409,7 +409,8 @@ double AccessibilityUIElement::maxValue()
 
 JSStringRef AccessibilityUIElement::valueDescription()
 {
-    // FIXME: implement
+    // FIXME: implement after it has been implemented in ATK.
+    // See: https://bugzilla.gnome.org/show_bug.cgi?id=684576
     return JSStringCreateWithCharacters(0, 0);
 }
 
