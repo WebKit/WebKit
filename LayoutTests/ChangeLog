@@ -1,3 +1,48 @@
+2012-10-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Rebaseline pixel expectations after r131941 and r131991, part 5.
+
+        * platform/efl/svg/dynamic-updates/SVGEllipseElement-dom-rx-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGEllipseElement-dom-ry-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGEllipseElement-svgdom-cx-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGEllipseElement-svgdom-cy-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGEllipseElement-svgdom-requiredFeatures-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGEllipseElement-svgdom-rx-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGEllipseElement-svgdom-ry-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEColorMatrixElement-dom-in-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEColorMatrixElement-dom-type-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEColorMatrixElement-dom-values-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-in-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-type-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-dom-amplitude-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-dom-exponent-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-dom-intercept-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-dom-offset-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-dom-slope-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-dom-type-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-amplitude-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-exponent-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-intercept-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-offset-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-slope-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-type-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFECompositeElement-dom-in-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-expected.png:
+
 2012-10-22  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed chromium test expectations update.
