@@ -1,3 +1,17 @@
+2012-10-22  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Memory leak in Ewk_Form_Submission_Request::fieldValue()
+        https://bugs.webkit.org/show_bug.cgi?id=99993
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Adopt the WKStringRef returned by toCopiedAPI() in
+        Ewk_Form_Submission_Request::fieldValue() to avoid
+        a memory leak.
+
+        * UIProcess/API/efl/ewk_form_submission_request.cpp:
+        (Ewk_Form_Submission_Request::fieldValue):
+
 2012-10-22  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Refactor Ewk_Context

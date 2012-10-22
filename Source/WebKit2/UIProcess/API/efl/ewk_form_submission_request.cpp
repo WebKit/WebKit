@@ -51,7 +51,7 @@ Ewk_Form_Submission_Request::~Ewk_Form_Submission_Request()
 String Ewk_Form_Submission_Request::fieldValue(const String& fieldName) const
 {
     ASSERT(fieldName);
-    WKRetainPtr<WKStringRef> wkFieldName = toCopiedAPI(fieldName);
+    WKRetainPtr<WKStringRef> wkFieldName = adoptWK(toCopiedAPI(fieldName));
     WKStringRef wkValue = static_cast<WKStringRef>(WKDictionaryGetItemForKey(m_wkValues.get(), wkFieldName.get()));
 
     return wkValue ? toImpl(wkValue)->string() : String();
