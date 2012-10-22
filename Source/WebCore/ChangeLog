@@ -1,3 +1,10 @@
+2012-10-22  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed follow up to update test result after r132033.
+
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::V8TestObj::installPerContextProperties):
+
 2012-10-21  MORITA Hajime  <morrita@google.com>
 
         [V8] V8EnablePerContext shouldn't require document() accessor to the native object.
