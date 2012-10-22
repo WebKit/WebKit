@@ -148,14 +148,14 @@ CSSStyleDeclaration* StyledElement::style()
     return ensureInlineStyle()->ensureInlineCSSStyleDeclaration(this);
 }
 
-void StyledElement::attributeChanged(const Attribute& attribute)
+void StyledElement::attributeChanged(const QualifiedName& name, const AtomicString& newValue)
 {
-    if (isPresentationAttribute(attribute.name())) {
+    if (isPresentationAttribute(name)) {
         setAttributeStyleDirty();
         setNeedsStyleRecalc(InlineStyleChange);
     }
 
-    Element::attributeChanged(attribute);
+    Element::attributeChanged(name, newValue);
 }
 
 void StyledElement::styleAttributeChanged(const AtomicString& newStyleString, ShouldReparseStyleAttribute shouldReparse)

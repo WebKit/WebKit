@@ -126,7 +126,7 @@ protected:
     virtual void parseAttribute(const Attribute&) OVERRIDE;
 
     virtual void finishParsingChildren();
-    virtual void attributeChanged(const Attribute&) OVERRIDE;
+    virtual void attributeChanged(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const OVERRIDE;
     
     virtual void removedFrom(ContainerNode*) OVERRIDE;

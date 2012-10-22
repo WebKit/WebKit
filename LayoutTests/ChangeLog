@@ -1,3 +1,13 @@
+2012-10-22  Andreas Kling  <kling@webkit.org>
+
+        REGRESSION(r131104): Heap-use-after-free in WebCore::Element::attributeChanged
+        <http://webkit.org/b/99937>
+
+        Reviewed by Anders Carlsson.
+
+        * fast/html/input-type-change-crash-expected.txt: Added.
+        * fast/html/input-type-change-crash.html: Added.
+
 2012-10-22  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Bounds check for IDBCursor.advance() incorrect

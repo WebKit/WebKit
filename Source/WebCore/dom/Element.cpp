@@ -692,61 +692,60 @@ inline void Element::setAttributeInternal(size_t index, const QualifiedName& nam
         existingAttribute->setValue(newValue);
 
     if (!inSynchronizationOfLazyAttribute)
-        didModifyAttribute(*existingAttribute);
+        didModifyAttribute(name, newValue);
 }
 
-void Element::attributeChanged(const Attribute& attribute)
+void Element::attributeChanged(const QualifiedName& name, const AtomicString& newValue)
 {
-    parseAttribute(attribute);
+    parseAttribute(Attribute(name, newValue));
 
     document()->incDOMTreeVersion();
 
-    if (isIdAttributeName(attribute.name())) {
-        if (attribute.value() != attributeData()->idForStyleResolution()) {
-            if (attribute.isNull())
+    if (isIdAttributeName(name)) {
+        if (newValue != attributeData()->idForStyleResolution()) {
+            if (newValue.isNull())
                 attributeData()->setIdForStyleResolution(nullAtom);
             else if (document()->inQuirksMode())
-                attributeData()->setIdForStyleResolution(attribute.value().lower());
+                attributeData()->setIdForStyleResolution(newValue.lower());
             else
-                attributeData()->setIdForStyleResolution(attribute.value());
+                attributeData()->setIdForStyleResolution(newValue);
             setNeedsStyleRecalc();
         }
-    } else if (attribute.name() == HTMLNames::nameAttr)
-        setHasName(!attribute.isNull());
+    } else if (name == HTMLNames::nameAttr)
+        setHasName(!newValue.isNull());
 
     if (!needsStyleRecalc() && document()->attached()) {
         StyleResolver* styleResolver = document()->styleResolverIfExists();
-        if (!styleResolver || styleResolver->hasSelectorForAttribute(attribute.name().localName()))
+        if (!styleResolver || styleResolver->hasSelectorForAttribute(name.localName()))
             setNeedsStyleRecalc();
     }
 
-    invalidateNodeListCachesInAncestors(&attribute.name(), this);
+    invalidateNodeListCachesInAncestors(&name, this);
 
     if (!AXObjectCache::accessibilityEnabled())
         return;
 
-    const QualifiedName& attrName = attribute.name();
-    if (attrName == aria_activedescendantAttr) {
+    if (name == aria_activedescendantAttr) {
         // any change to aria-activedescendant attribute triggers accessibility focus change, but document focus remains intact
         document()->axObjectCache()->handleActiveDescendantChanged(this);
-    } else if (attrName == roleAttr) {
+    } else if (name == roleAttr) {
         // the role attribute can change at any time, and the AccessibilityObject must pick up these changes
         document()->axObjectCache()->handleAriaRoleChanged(this);
-    } else if (attrName == aria_valuenowAttr) {
+    } else if (name == aria_valuenowAttr) {
         // If the valuenow attribute changes, AX clients need to be notified.
         document()->axObjectCache()->postNotification(this, AXObjectCache::AXValueChanged, true);
-    } else if (attrName == aria_labelAttr || attrName == aria_labeledbyAttr || attrName == altAttr || attrName == titleAttr) {
+    } else if (name == aria_labelAttr || name == aria_labeledbyAttr || name == altAttr || name == titleAttr) {
         // If the content of an element changes due to an attribute change, notify accessibility.
         document()->axObjectCache()->contentChanged(this);
-    } else if (attrName == aria_checkedAttr)
+    } else if (name == aria_checkedAttr)
         document()->axObjectCache()->checkedStateChanged(this);
-    else if (attrName == aria_selectedAttr)
+    else if (name == aria_selectedAttr)
         document()->axObjectCache()->selectedChildrenChanged(this);
-    else if (attrName == aria_expandedAttr)
+    else if (name == aria_expandedAttr)
         document()->axObjectCache()->handleAriaExpandedChange(this);
-    else if (attrName == aria_hiddenAttr)
+    else if (name == aria_hiddenAttr)
         document()->axObjectCache()->childrenChanged(this);
-    else if (attrName == aria_invalidAttr)
+    else if (name == aria_invalidAttr)
         document()->axObjectCache()->postNotification(this, AXObjectCache::AXInvalidStatusChanged, true);
 }
 
@@ -854,7 +853,7 @@ void Element::parserSetAttributes(const Vector<Attribute>& attributeVector, Frag
     // attributeChanged mutates m_attributeData.
     // FIXME: Find a way so we don't have to do this.
     for (unsigned i = 0; i < filteredAttributes.size(); ++i)
-        attributeChanged(filteredAttributes[i]);
+        attributeChanged(filteredAttributes[i].name(), filteredAttributes[i].value());
 }
 
 bool Element::hasAttributes() const
@@ -1565,7 +1564,7 @@ void Element::addAttributeInternal(const QualifiedName& name, const AtomicString
         willModifyAttribute(name, nullAtom, value);
     m_attributeData->addAttribute(Attribute(name, value));
     if (!inSynchronizationOfLazyAttribute)
-        didAddAttribute(Attribute(name, value));
+        didAddAttribute(name, value);
 }
 
 void Element::removeAttribute(const AtomicString& name)
@@ -2181,23 +2180,23 @@ void Element::willModifyAttribute(const QualifiedName& name, const AtomicString&
 #endif
 }
 
-void Element::didAddAttribute(const Attribute& attribute)
+void Element::didAddAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    attributeChanged(attribute);
-    InspectorInstrumentation::didModifyDOMAttr(document(), this, attribute.localName(), attribute.value());
+    attributeChanged(name, value);
+    InspectorInstrumentation::didModifyDOMAttr(document(), this, name.localName(), value);
     dispatchSubtreeModifiedEvent();
 }
 
-void Element::didModifyAttribute(const Attribute& attribute)
+void Element::didModifyAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    attributeChanged(attribute);
-    InspectorInstrumentation::didModifyDOMAttr(document(), this, attribute.localName(), attribute.value());
+    attributeChanged(name, value);
+    InspectorInstrumentation::didModifyDOMAttr(document(), this, name.localName(), value);
     // Do not dispatch a DOMSubtreeModified event here; see bug 81141.
 }
 
 void Element::didRemoveAttribute(const QualifiedName& name)
 {
-    attributeChanged(Attribute(name, nullAtom));
+    attributeChanged(name, nullAtom);
     InspectorInstrumentation::didRemoveDOMAttr(document(), this, name.localName());
     dispatchSubtreeModifiedEvent();
 }

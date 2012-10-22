@@ -62,7 +62,7 @@ public:
 protected:
     StyledElement(const QualifiedName&, Document*, ConstructionType);
 
-    virtual void attributeChanged(const Attribute&) OVERRIDE;
+    virtual void attributeChanged(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual void parseAttribute(const Attribute&) OVERRIDE;
 
     virtual bool isPresentationAttribute(const QualifiedName&) const { return false; }

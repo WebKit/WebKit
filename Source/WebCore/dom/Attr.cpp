@@ -130,7 +130,7 @@ void Attr::setValue(const AtomicString& value, ExceptionCode&)
     setValue(value);
 
     if (m_element)
-        m_element->didModifyAttribute(elementAttribute());
+        m_element->didModifyAttribute(qualifiedName(), value);
 }
 
 void Attr::setNodeValue(const String& v, ExceptionCode& ec)
@@ -182,7 +182,7 @@ void Attr::childrenChanged(bool, Node*, Node*, int)
         m_standaloneValue = newValue;
 
     if (m_element)
-        m_element->attributeChanged(elementAttribute());
+        m_element->attributeChanged(qualifiedName(), newValue);
 }
 
 bool Attr::isId() const

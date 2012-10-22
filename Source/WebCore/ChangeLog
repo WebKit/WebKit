@@ -1,3 +1,49 @@
+2012-10-22  Andreas Kling  <kling@webkit.org>
+
+        REGRESSION(r131104): Heap-use-after-free in WebCore::Element::attributeChanged
+        <http://webkit.org/b/99937>
+
+        Reviewed by Anders Carlsson.
+
+        Setting the "type" attribute on an HTMLInputElement that has no "value" attribute set will cause the
+        input type changing mechanism to write a value attribute onto the element. This happens in
+        HTMLInputElement::updateType(), below parseAttribute().
+
+        It's done via Element::setAttribute(), so we end up re-entering Element::setAttributeInternal()
+        where the 'existingAttribute' pointer may now be invalid if adding the "value" attribute caused
+        a reallocation in the ElementAttributeData's underlying Vector<Attribute>.
+
+        To make it harder to introduce this kind of bug in the future, I changed almost all functions that take
+        a "const Attribute&" to take a QualifiedName/AtomicString couple instead (the idea being that the 
+        fewer references into the attribute store we have, the better.)
+
+        Test: fast/html/input-type-change-crash.html
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::setValue):
+        (WebCore::Attr::childrenChanged):
+        * dom/Element.cpp:
+        (WebCore::Element::setAttributeInternal):
+        (WebCore::Element::attributeChanged):
+        (WebCore::Element::parserSetAttributes):
+        (WebCore::Element::addAttributeInternal):
+        (WebCore::Element::didAddAttribute):
+        (WebCore::Element::didModifyAttribute):
+        (WebCore::Element::didRemoveAttribute):
+        * dom/Element.h:
+        (Element):
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::cloneDataFrom):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged):
+        * dom/StyledElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::attributeChanged):
+        * svg/SVGElement.h:
+        (SVGElement):
+
 2012-10-22  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Bounds check for IDBCursor.advance() incorrect
