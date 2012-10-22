@@ -544,6 +544,9 @@ function resourceLoadingComplete()
 
 function handleLocationChange()
 {
+    if (g_resourceLoader)
+        return;
+
     addBuilderLoadErrors();
     g_hasDoneInitialPageGeneration = true;
 

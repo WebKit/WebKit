@@ -1,5 +1,13 @@
 2012-10-22  Zan Dobersek  <zandobersek@gmail.com>
 
+        Unreviewed, a follow-up to r132034 where I forgot to address
+        Ojan's review comment about the race condition in handleLocationChange.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (handleLocationChange):
+
+2012-10-22  Zan Dobersek  <zandobersek@gmail.com>
+
         [TestResultServer] Move the resource loading into a dedicated class
         https://bugs.webkit.org/show_bug.cgi?id=99246
 
