@@ -76214,6 +76214,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\cm\cmdevtools.css"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\cm\codemirror.css"
 					>
 				</File>
@@ -76235,10 +76239,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\cm\xml.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\cmdevtools.css"
 					>
 				</File>
 				<File

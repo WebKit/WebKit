@@ -36,6 +36,7 @@
     <file>CSSNamedFlowView.js</file>
     <file>CSSSelectorProfileView.js</file>
     <file>CSSStyleModel.js</file>
+    <file>cm/cmdevtools.css</file>
     <file>cm/codemirror.css</file>
     <file>cm/codemirror.js</file>
     <file>cm/css.js</file>
@@ -220,7 +221,6 @@
     <file>canvasProfiler.css</file>
     <file>cssNamedFlows.css</file>
     <file>dataGrid.css</file>
-    <file>cmdevtools.css</file>
     <file>dialog.css</file>
     <file>elementsPanel.css</file>
     <file>filteredItemSelectionDialog.css</file>

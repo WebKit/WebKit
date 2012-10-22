@@ -1,3 +1,51 @@
+2012-10-22  Jan Keromnes  <janx@linux.com>
+
+        Moved cmdevtools.js to folder cm/
+
+        Web Inspector: Move file `cmdevtools.css` to `cm/`
+        https://bugs.webkit.org/show_bug.cgi?id=99956
+
+        Reviewed by Pavel Feldman.
+
+        The file cmdevtools.js belongs to the CodeMirror editor experiment in cm/.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/cm/cmdevtools.css: Renamed from Source/WebCore/inspector/front-end/cmdevtools.css.
+        (.CodeMirror):
+        (.CodeMirror-scroll):
+        (.cm-highlight):
+        (@-webkit-keyframes fadeout):
+        (to):
+        (.cm-breakpoint):
+        (.cm-breakpoint-disabled):
+        (.cm-breakpoint-conditional):
+        (.cm-execution-line):
+        (.cm-s-web-inspector-js span.cm-keyword):
+        (.cm-s-web-inspector-js span.cm-number):
+        (.cm-s-web-inspector-js span.cm-comment):
+        (.cm-s-web-inspector-js span.cm-string):
+        (.cm-s-web-inspector-js span.cm-string-2):
+        (.cm-s-web-inspector-css span.cm-keyword):
+        (.cm-s-web-inspector-css span.cm-number):
+        (.cm-s-web-inspector-css span.cm-comment):
+        (.cm-s-web-inspector-css span.cm-string):
+        (.cm-s-web-inspector-css span.cm-string-2):
+        (.cm-s-web-inspector-css span.cm-link):
+        (.cm-s-web-inspector-css span.cm-variable):
+        (.cm-s-web-inspector-html span.cm-meta):
+        (.cm-s-web-inspector-html span.cm-comment):
+        (.cm-s-web-inspector-html span.cm-string):
+        (.cm-s-web-inspector-html span.cm-tag):
+        (.cm-s-web-inspector-html span.cm-attribute):
+        (.cm-s-web-inspector-html span.cm-link):
+        (.webkit-html-message-bubble):
+        (.webkit-html-warning-message):
+        (.webkit-html-error-message):
+        (.webkit-html-message-line):
+        (.webkit-html-message-line-hover):
+
 2012-10-22  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Prepare mappings to moving uiSourceCodes creation out of them to workspace.

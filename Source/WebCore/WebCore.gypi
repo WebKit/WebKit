@@ -6510,9 +6510,9 @@
         'webinspector_standalone_css_files': [
             'inspector/front-end/auditsPanel.css',
             'inspector/front-end/breadcrumbList.css',
+            'inspector/front-end/cm/cmdevtools.css',
             'inspector/front-end/cm/codemirror.css',
             'inspector/front-end/cssNamedFlows.css',
-            'inspector/front-end/cmdevtools.css',
             'inspector/front-end/dataGrid.css',
             'inspector/front-end/elementsPanel.css',
             'inspector/front-end/filteredItemSelectionDialog.css',
