@@ -44,7 +44,6 @@ TEST SUCCEEDED: The value was the empty string. [tested HTMLAreaElement.href]
 TEST SUCCEEDED: The value was the empty string. [tested HTMLAreaElement.shape]
 TEST SUCCEEDED: The value was the empty string. [tested HTMLAreaElement.target]
 
-TEST SUCCEEDED: The value was the empty string. [tested HTMLBaseElement.href]
 TEST SUCCEEDED: The value was the empty string. [tested HTMLBaseElement.target]
 
 TEST SUCCEEDED: The value was the empty string. [tested HTMLBaseFontElement.color]

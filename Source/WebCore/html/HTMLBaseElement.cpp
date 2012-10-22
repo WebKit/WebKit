@@ -26,6 +26,8 @@
 #include "Attribute.h"
 #include "Document.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
+#include "TextResourceDecoder.h"
 
 namespace WebCore {
 
@@ -73,6 +75,31 @@ bool HTMLBaseElement::isURLAttribute(const Attribute& attribute) const
 String HTMLBaseElement::target() const
 {
     return fastGetAttribute(targetAttr);
+}
+
+KURL HTMLBaseElement::href() const
+{
+    // This does not use the getURLAttribute function because that will resolve relative to the document's base URL;
+    // base elements like this one can be used to set that base URL. Thus we need to resolve relative to the document's
+    // URL and ignore the base URL.
+
+    const AtomicString& attributeValue = fastGetAttribute(hrefAttr);
+    if (attributeValue.isNull())
+        return document()->url();
+
+    KURL url = !document()->decoder() ?
+        KURL(document()->url(), stripLeadingAndTrailingHTMLSpaces(attributeValue)) :
+        KURL(document()->url(), stripLeadingAndTrailingHTMLSpaces(attributeValue), document()->decoder()->encoding());
+
+    if (!url.isValid())
+        return KURL();
+
+    return url;
+}
+
+void HTMLBaseElement::setHref(const AtomicString& value)
+{
+    setAttribute(hrefAttr, value);
 }
 
 }

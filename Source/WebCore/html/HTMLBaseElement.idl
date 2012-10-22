@@ -18,7 +18,6 @@
  */
 
 interface HTMLBaseElement : HTMLElement {
-    [Reflect, URL] attribute DOMString href;
+    [TreatNullAs=NullString] attribute DOMString href;
     [Reflect] attribute DOMString target;
 };
-
