@@ -1,5 +1,17 @@
 2012-10-22  Yury Semikhatsky  <yurys@chromium.org>
 
+        Make sure base and derived class pointers are different in MemoryInstrumentationTest.instrumentedWithMultipleAncestors
+        https://bugs.webkit.org/show_bug.cgi?id=99987
+
+        Reviewed by Alexander Pavlov.
+
+        * TestWebKitAPI/Tests/WTF/MemoryInstrumentationTest.cpp: changed first parent
+        class in the list so that it has virtual table as well as the second one. This
+        way we may be sure that pointer to the second ancestor class will differ from
+        the pointer to the derived class.
+
+2012-10-22  Yury Semikhatsky  <yurys@chromium.org>
+
         Unreviewed. Fix compilation after r132059.
 
         * TestWebKitAPI/Tests/WTF/MemoryInstrumentationTest.cpp:
