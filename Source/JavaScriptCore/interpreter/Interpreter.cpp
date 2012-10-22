@@ -67,6 +67,7 @@
 #include <stdio.h>
 #include <wtf/StackStats.h>
 #include <wtf/Threading.h>
+#include <wtf/WTFThreadData.h>
 #include <wtf/text/StringBuilder.h>
 
 #if ENABLE(JIT)
@@ -78,6 +79,123 @@
 using namespace std;
 
 namespace JSC {
+
+Interpreter::ErrorHandlingMode::ErrorHandlingMode(ExecState *exec)
+    : m_interpreter(*exec->interpreter())
+{
+    if (!m_interpreter.m_errorHandlingModeReentry)
+        m_interpreter.stack().enableErrorStackReserve();
+    m_interpreter.m_errorHandlingModeReentry++;
+}
+
+Interpreter::ErrorHandlingMode::~ErrorHandlingMode()
+{
+    m_interpreter.m_errorHandlingModeReentry--;
+    ASSERT(m_interpreter.m_errorHandlingModeReentry >= 0);
+    if (!m_interpreter.m_errorHandlingModeReentry)
+        m_interpreter.stack().disableErrorStackReserve();
+}
+
+
+// The Interpreter::StackPolicy class is used to compute a stack capacity
+// requirement to ensure that we have enough room on the native stack for:
+// 1. the max cummulative stack used by the interpreter and all code
+//    paths sub of it up till leaf functions.
+// 2. the max cummulative stack used by the interpreter before it reaches
+//    the next checkpoint (execute...() function) in the interpreter.
+// 
+// The interpreter can be run on different threads and hence, different
+// native stacks (with different sizes) before exiting out of the first
+// frame. Hence, the required capacity needs to be re-computed on every
+// entry into the interpreter.
+//
+// Currently the requiredStack is computed based on a policy. See comments
+// in StackPolicy::StackPolicy() for details.
+
+Interpreter::StackPolicy::StackPolicy(Interpreter& interpreter, const StackBounds& stack)
+    : m_interpreter(interpreter)
+{
+    int size = stack.size();
+
+    const int DEFAULT_REQUIRED_STACK = 1024 * 1024;
+    const int DEFAULT_MINIMUM_USEABLE_STACK = 128 * 1024;
+    const int DEFAULT_ERROR_MODE_REQUIRED_STACK = 32 * 1024;
+
+    // Here's the policy in a nutshell:
+    //
+    // 1. If we have a large stack, let JS use as much stack as possible
+    //    but require that we have at least DEFAULT_REQUIRED_STACK capacity
+    //    remaining on the stack:
+    //
+    //    stack grows this way -->   
+    //    ---------------------------------------------------------
+    //    |         ... | <-- DEFAULT_REQUIRED_STACK --> | ...
+    //    ---------------------------------------------------------
+    //    ^             ^
+    //    start         current sp
+    //
+    // 2. In event that we're re-entering the interpreter to handle
+    //    exceptions (in error mode), we'll be a little more generous and
+    //    require less stack capacity for the interpreter to be re-entered.
+    //
+    //    This is needed because we may have just detected an eminent stack
+    //    overflow based on the normally computed required stack capacity.
+    //    However, the normal required capacity far exceeds what is needed
+    //    for exception handling work. Hence, in error mode, we only require
+    //    DEFAULT_ERROR_MODE_REQUIRED_STACK capacity.
+    //
+    //    stack grows this way -->   
+    //    -----------------------------------------------------------------
+    //    |         ... | <-- DEFAULT_ERROR_MODE_REQUIRED_STACK --> | ...
+    //    -----------------------------------------------------------------
+    //    ^             ^
+    //    start         current sp
+    //
+    //    This smaller requried capacity also means that we won't re-trigger
+    //    a stack overflow for processing the exception caused by the original
+    //    StackOverflowError.
+    //
+    // 3. If the stack is not large enough, give JS at least a minimum
+    //    amount of useable stack:
+    //
+    //    stack grows this way -->   
+    //    --------------------------------------------------------------------
+    //    | <-- DEFAULT_MINIMUM_USEABLE_STACK --> | <-- requiredCapacity --> |
+    //    --------------------------------------------------------------------
+    //    ^             ^
+    //    start         current sp
+    //
+    //    The minimum useable capacity is DEFAULT_MINIMUM_USEABLE_STACK.
+    //    In this case, the requiredCapacity is whatever is left of the
+    //    total stack capacity after we have give JS its minimum stack
+    //    i.e. requiredCapcity can even be 0 if there's not enough stack.
+
+
+    // Policy 1: Normal mode: required = DEFAULT_REQUIRED_STACK.
+    // Policy 2: Erro mode: required = DEFAULT_ERROR_MODE_REQUIRED_STACK.
+    int requiredCapacity = !m_interpreter.m_errorHandlingModeReentry ?
+        DEFAULT_REQUIRED_STACK : DEFAULT_ERROR_MODE_REQUIRED_STACK;
+
+    int useableStack = size - requiredCapacity;
+
+    // Policy 3: Ensure the useable stack is not too small:
+    if (useableStack < DEFAULT_MINIMUM_USEABLE_STACK)
+        useableStack = DEFAULT_MINIMUM_USEABLE_STACK;
+
+    // Sanity check: Make sure we do not use more space than the stack's
+    // total capacity:
+    if (useableStack > size)
+        useableStack = size;
+
+    // Re-compute the requiredCapacity based on the adjusted useable stack
+    // size:
+    // interpreter stack checks:
+    requiredCapacity = size - useableStack;
+    ASSERT((requiredCapacity >= 0) && (requiredCapacity < size));
+
+    m_requiredCapacity = requiredCapacity;    
+}
+
 
 static CallFrame* getCallerInfo(JSGlobalData*, CallFrame*, int& lineNumber, unsigned& bytecodeOffset);
 
@@ -247,7 +365,7 @@ CallFrame* loadVarargs(CallFrame* callFrame, JSStack* stack, JSValue thisValue, 
 
 Interpreter::Interpreter()
     : m_sampleEntryDepth(0)
-    , m_reentryDepth(0)
+    , m_errorHandlingModeReentry(0)
 #if !ASSERT_DISABLED
     , m_initialized(false)
 #endif
@@ -754,7 +872,9 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, J
         CRASH();
 
     StackStats::CheckPoint stackCheckPoint;
-    if (m_reentryDepth >= MaxSmallThreadReentryDepth && m_reentryDepth >= callFrame->globalData().maxReentryDepth)
+    const StackBounds& nativeStack = wtfThreadData().stack();
+    StackPolicy policy(*this, nativeStack);
+    if (!nativeStack.isSafeToRecurse(policy.requiredCapacity()))
         return checkedReturn(throwStackOverflowError(callFrame));
 
     // First check if the "program" is actually just a JSON object. If so,
@@ -890,14 +1010,11 @@ failedJSONP:
     {
         SamplingTool::CallRecord callRecord(m_sampler.get());
 
-        m_reentryDepth++;
 #if ENABLE(LLINT_C_LOOP)
         result = LLInt::CLoop::execute(newCallFrame, llint_program_prologue);
 #elif ENABLE(JIT)
         result = program->generatedJITCode().execute(&m_stack, newCallFrame, scope->globalData());
 #endif // ENABLE(JIT)
-
-        m_reentryDepth--;
     }
 
     if (Profiler* profiler = callFrame->globalData().enabledProfiler())
@@ -917,7 +1034,9 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
         return jsNull();
 
     StackStats::CheckPoint stackCheckPoint;
-    if (m_reentryDepth >= MaxSmallThreadReentryDepth && m_reentryDepth >= callFrame->globalData().maxReentryDepth)
+    const StackBounds& nativeStack = wtfThreadData().stack();
+    StackPolicy policy(*this, nativeStack);
+    if (!nativeStack.isSafeToRecurse(policy.requiredCapacity()))
         return checkedReturn(throwStackOverflowError(callFrame));
 
     Register* oldEnd = m_stack.end();
@@ -962,14 +1081,11 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
         {
             SamplingTool::CallRecord callRecord(m_sampler.get());
 
-            m_reentryDepth++;  
 #if ENABLE(LLINT_C_LOOP)
             result = LLInt::CLoop::execute(newCallFrame, llint_function_for_call_prologue);
 #elif ENABLE(JIT)
             result = callData.js.functionExecutable->generatedJITCodeForCall().execute(&m_stack, newCallFrame, callDataScope->globalData());
 #endif // ENABLE(JIT)
-
-            m_reentryDepth--;
         }
 
         if (Profiler* profiler = callFrame->globalData().enabledProfiler())
@@ -1013,7 +1129,9 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
         return checkedReturn(throwStackOverflowError(callFrame));
 
     StackStats::CheckPoint stackCheckPoint;
-    if (m_reentryDepth >= MaxSmallThreadReentryDepth && m_reentryDepth >= callFrame->globalData().maxReentryDepth)
+    const StackBounds& nativeStack = wtfThreadData().stack();
+    StackPolicy policy(*this, nativeStack);
+    if (!nativeStack.isSafeToRecurse(policy.requiredCapacity()))
         return checkedReturn(throwStackOverflowError(callFrame));
 
     Register* oldEnd = m_stack.end();
@@ -1057,13 +1175,11 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
         {
             SamplingTool::CallRecord callRecord(m_sampler.get());
 
-            m_reentryDepth++;  
 #if ENABLE(LLINT_C_LOOP)
             result = LLInt::CLoop::execute(newCallFrame, llint_function_for_construct_prologue);
 #elif ENABLE(JIT)
             result = constructData.js.functionExecutable->generatedJITCodeForConstruct().execute(&m_stack, newCallFrame, constructDataScope->globalData());
 #endif // ENABLE(JIT)
-            m_reentryDepth--;
         }
 
         if (Profiler* profiler = callFrame->globalData().enabledProfiler())
@@ -1111,7 +1227,9 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionE
         return CallFrameClosure();
 
     StackStats::CheckPoint stackCheckPoint;
-    if (m_reentryDepth >= MaxSmallThreadReentryDepth && m_reentryDepth >= callFrame->globalData().maxReentryDepth) {
+    const StackBounds& nativeStack = wtfThreadData().stack();
+    StackPolicy policy(*this, nativeStack);
+    if (!nativeStack.isSafeToRecurse(policy.requiredCapacity())) {
         throwStackOverflowError(callFrame);
         return CallFrameClosure();
     }
@@ -1164,13 +1282,11 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
     {
         SamplingTool::CallRecord callRecord(m_sampler.get());
         
-        m_reentryDepth++;  
 #if ENABLE(LLINT_C_LOOP)
         result = LLInt::CLoop::execute(closure.newCallFrame, llint_function_for_call_prologue);
 #elif ENABLE(JIT)
         result = closure.functionExecutable->generatedJITCodeForCall().execute(&m_stack, closure.newCallFrame, closure.globalData);
 #endif // ENABLE(JIT)
-        m_reentryDepth--;
     }
 
     if (Profiler* profiler = closure.oldCallFrame->globalData().enabledProfiler())
@@ -1197,7 +1313,9 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     DynamicGlobalObjectScope globalObjectScope(*scope->globalData(), scope->globalObject());
 
     StackStats::CheckPoint stackCheckPoint;
-    if (m_reentryDepth >= MaxSmallThreadReentryDepth && m_reentryDepth >= callFrame->globalData().maxReentryDepth)
+    const StackBounds& nativeStack = wtfThreadData().stack();
+    StackPolicy policy(*this, nativeStack);
+    if (!nativeStack.isSafeToRecurse(policy.requiredCapacity()))
         return checkedReturn(throwStackOverflowError(callFrame));
 
     JSObject* compileError = eval->compile(callFrame, scope);
@@ -1258,15 +1376,12 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     JSValue result;
     {
         SamplingTool::CallRecord callRecord(m_sampler.get());
-
-        m_reentryDepth++;
         
 #if ENABLE(LLINT_C_LOOP)
         result = LLInt::CLoop::execute(newCallFrame, llint_eval_prologue);
 #elif ENABLE(JIT)
         result = eval->generatedJITCode().execute(&m_stack, newCallFrame, scope->globalData());
 #endif // ENABLE(JIT)
-        m_reentryDepth--;
     }
 
     if (Profiler* profiler = callFrame->globalData().enabledProfiler())

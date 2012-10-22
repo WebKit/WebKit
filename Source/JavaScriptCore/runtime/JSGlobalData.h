@@ -104,11 +104,6 @@ namespace JSC {
         double increment;
     };
 
-    enum ThreadStackType {
-        ThreadStackTypeLarge,
-        ThreadStackTypeSmall
-    };
-
 #if ENABLE(DFG_JIT)
     class ConservativeRoots;
 
@@ -164,9 +159,9 @@ namespace JSC {
         static bool sharedInstanceExists();
         JS_EXPORT_PRIVATE static JSGlobalData& sharedInstance();
 
-        JS_EXPORT_PRIVATE static PassRefPtr<JSGlobalData> create(ThreadStackType, HeapType = SmallHeap);
-        JS_EXPORT_PRIVATE static PassRefPtr<JSGlobalData> createLeaked(ThreadStackType, HeapType = SmallHeap);
-        static PassRefPtr<JSGlobalData> createContextGroup(ThreadStackType, HeapType = SmallHeap);
+        JS_EXPORT_PRIVATE static PassRefPtr<JSGlobalData> create(HeapType = SmallHeap);
+        JS_EXPORT_PRIVATE static PassRefPtr<JSGlobalData> createLeaked(HeapType = SmallHeap);
+        static PassRefPtr<JSGlobalData> createContextGroup(HeapType = SmallHeap);
         JS_EXPORT_PRIVATE ~JSGlobalData();
 
         void makeUsableFromMultipleThreads() { heap.machineThreads().makeUsableFromMultipleThreads(); }
@@ -346,8 +341,6 @@ namespace JSC {
         String cachedDateString;
         double cachedDateStringValue;
 
-        int maxReentryDepth;
-
         Profiler* m_enabledProfiler;
         RegExpCache* m_regExpCache;
         BumpPointerAllocator m_regExpAllocator;
@@ -447,7 +440,7 @@ namespace JSC {
     private:
         friend class LLIntOffsetsExtractor;
         
-        JSGlobalData(GlobalDataType, ThreadStackType, HeapType);
+        JSGlobalData(GlobalDataType, HeapType);
         static JSGlobalData*& sharedInstanceInternal();
         void createNativeThunk();
 #if ENABLE(ASSEMBLER)

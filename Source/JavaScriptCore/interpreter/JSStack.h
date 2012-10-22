@@ -82,26 +82,27 @@ namespace JSC {
             return &m_end;
         }
 
+        void enableErrorStackReserve();
+        void disableErrorStackReserve();
+
     private:
         friend class LLIntOffsetsExtractor;
+
+        Register* reservationEnd() const
+        {
+            char* base = static_cast<char*>(m_reservation.base());
+            char* reservationEnd = base + m_reservation.size();
+            return reinterpret_cast<Register*>(reservationEnd);
+        }
 
         bool growSlowCase(Register*);
         void releaseExcessCapacity();
         void addToCommittedByteCount(long);
         Register* m_end;
         Register* m_commitEnd;
+        Register* m_useableEnd;
         PageReservation m_reservation;
     };
-
-    inline JSStack::JSStack(size_t capacity)
-        : m_end(0)
-    {
-        ASSERT(capacity && isPageAligned(capacity));
-
-        m_reservation = PageReservation::reserve(roundUpAllocationSize(capacity * sizeof(Register), commitSize), OSAllocator::JSVMStackPages);
-        m_end = static_cast<Register*>(m_reservation.base());
-        m_commitEnd = static_cast<Register*>(m_reservation.base());
-    }
 
     inline void JSStack::shrink(Register* newEnd)
     {

@@ -1,3 +1,20 @@
+2012-10-22  Mark Lam  <mark.lam@apple.com>
+
+        Change stack recursion checks to be based on stack availability.
+        https://bugs.webkit.org/show_bug.cgi?id=99872.
+
+        Reviewed by Filip Pizlo and Geoffrey Garen.
+
+        Removed the use of ThreadStackType. Enabled the reserved JSStack space
+        for error processing before doing work in reportException().
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::reportException):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::commonJSGlobalData):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::WorkerScriptController):
+
 2012-10-22  Andreas Kling  <kling@webkit.org>
 
         REGRESSION(r131104): Heap-use-after-free in WebCore::Element::attributeChanged

@@ -498,7 +498,7 @@ static void parseArguments(int argc, char** argv, CommandLine& options)
 
 int realMain(int argc, char** argv)
 {
-    RefPtr<JSGlobalData> globalData = JSGlobalData::create(ThreadStackTypeLarge, LargeHeap);
+    RefPtr<JSGlobalData> globalData = JSGlobalData::create(LargeHeap);
     JSLockHolder lock(globalData.get());
 
     CommandLine options;

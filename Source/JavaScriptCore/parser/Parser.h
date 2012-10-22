@@ -896,6 +896,7 @@ private:
     OwnPtr<LexerType> m_lexer;
     
     StackBounds m_stack;
+    bool m_hasStackOverflow;
     bool m_error;
     String m_errorMessage;
     JSToken m_token;
@@ -987,7 +988,7 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(JSGlobalObject* lexicalGlobalObj
         // we ran out of stack while parsing. If we see an error while parsing eval or program
         // code we assume that it was a syntax error since running out of stack is much less
         // likely, and we are currently unable to distinguish between the two cases.
-        if (isFunctionBodyNode(static_cast<ParsedNode*>(0)))
+        if (isFunctionBodyNode(static_cast<ParsedNode*>(0)) || m_hasStackOverflow)
             *exception = createStackOverflowError(lexicalGlobalObject);
         else if (isEvalNode<ParsedNode>())
             *exception = createSyntaxError(lexicalGlobalObject, errMsg);

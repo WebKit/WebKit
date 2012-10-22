@@ -130,7 +130,7 @@ static bool enableAssembler(ExecutableAllocator& executableAllocator)
 }
 #endif // ENABLE(!ASSEMBLER)
 
-JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType threadStackType, HeapType heapType)
+JSGlobalData::JSGlobalData(GlobalDataType globalDataType, HeapType heapType)
     :
 #if ENABLE(ASSEMBLER)
       executableAllocator(*this),
@@ -171,7 +171,6 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
 #endif
     , dynamicGlobalObject(0)
     , cachedUTCOffset(std::numeric_limits<double>::quiet_NaN())
-    , maxReentryDepth(threadStackType == ThreadStackTypeSmall ? MaxSmallThreadReentryDepth : MaxLargeThreadReentryDepth)
     , m_enabledProfiler(0)
     , m_regExpCache(new RegExpCache(this))
 #if ENABLE(REGEXP_TRACING)
@@ -310,19 +309,19 @@ JSGlobalData::~JSGlobalData()
 #endif
 }
 
-PassRefPtr<JSGlobalData> JSGlobalData::createContextGroup(ThreadStackType type, HeapType heapType)
+PassRefPtr<JSGlobalData> JSGlobalData::createContextGroup(HeapType heapType)
 {
-    return adoptRef(new JSGlobalData(APIContextGroup, type, heapType));
+    return adoptRef(new JSGlobalData(APIContextGroup, heapType));
 }
 
-PassRefPtr<JSGlobalData> JSGlobalData::create(ThreadStackType type, HeapType heapType)
+PassRefPtr<JSGlobalData> JSGlobalData::create(HeapType heapType)
 {
-    return adoptRef(new JSGlobalData(Default, type, heapType));
+    return adoptRef(new JSGlobalData(Default, heapType));
 }
 
-PassRefPtr<JSGlobalData> JSGlobalData::createLeaked(ThreadStackType type, HeapType heapType)
+PassRefPtr<JSGlobalData> JSGlobalData::createLeaked(HeapType heapType)
 {
-    return create(type, heapType);
+    return create(heapType);
 }
 
 bool JSGlobalData::sharedInstanceExists()
@@ -335,7 +334,7 @@ JSGlobalData& JSGlobalData::sharedInstance()
     GlobalJSLock globalLock;
     JSGlobalData*& instance = sharedInstanceInternal();
     if (!instance) {
-        instance = adoptRef(new JSGlobalData(APIShared, ThreadStackTypeSmall, SmallHeap)).leakRef();
+        instance = adoptRef(new JSGlobalData(APIShared, SmallHeap)).leakRef();
         instance->makeUsableFromMultipleThreads();
     }
     return *instance;

@@ -1,3 +1,78 @@
+2012-10-22  Mark Lam  <mark.lam@apple.com>
+
+        Change stack recursion checks to be based on stack availability.
+        https://bugs.webkit.org/show_bug.cgi?id=99872.
+
+        Reviewed by Filip Pizlo and Geoffrey Garen.
+
+        - Remove m_reentryDepth, ThreadStackType which are now obsolete.
+        - Replaced the reentryDepth checks with a StackBounds check.
+        - Added the Interpreter::StackPolicy class to compute a reasonable
+          stack capacity requirement given the native stack that the
+          interpreter is executing on at that time.
+        - Reserved an amount of JSStack space for the use of error handling
+          and enable its use (using Interpreter::ErrorHandlingMode) when
+          we're about to throw or report an exception.
+        - Interpreter::StackPolicy also allows more native stack space
+          to be used when in ErrorHandlingMode. This is needed in the case
+          of native stack overflows.
+        - Fixed the parser so that it throws a StackOverflowError instead of
+          a SyntaxError when it encounters a stack overflow.
+
+        * API/JSContextRef.cpp:
+        (JSContextGroupCreate):
+        (JSGlobalContextCreateInGroup):
+        * JavaScriptCore.order:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::ErrorHandlingMode::ErrorHandlingMode):
+        (JSC):
+        (JSC::Interpreter::ErrorHandlingMode::~ErrorHandlingMode):
+        (JSC::Interpreter::StackPolicy::StackPolicy):
+        (JSC::Interpreter::Interpreter):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        * interpreter/Interpreter.h:
+        (JSC):
+        (Interpreter):
+        (ErrorHandlingMode):
+        (StackPolicy):
+        (JSC::Interpreter::StackPolicy::requiredCapacity):
+        * interpreter/JSStack.cpp:
+        (JSC):
+        (JSC::JSStack::JSStack):
+        (JSC::JSStack::growSlowCase):
+        (JSC::JSStack::enableErrorStackReserve):
+        (JSC::JSStack::disableErrorStackReserve):
+        * interpreter/JSStack.h:
+        (JSStack):
+        (JSC::JSStack::reservationEnd):
+        (JSC):
+        * jsc.cpp:
+        (jscmain):
+        * parser/Parser.cpp:
+        (JSC::::Parser):
+        * parser/Parser.h:
+        (Parser):
+        (JSC::::parse):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::throwStackOverflowError):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::createContextGroup):
+        (JSC::JSGlobalData::create):
+        (JSC::JSGlobalData::createLeaked):
+        (JSC::JSGlobalData::sharedInstance):
+        * runtime/JSGlobalData.h:
+        (JSC):
+        (JSGlobalData):
+        * runtime/StringRecursionChecker.h:
+        (JSC::StringRecursionChecker::performCheck):
+        * testRegExp.cpp:
+        (realMain):
+
 2012-10-20  Martin Robinson  <mrobinson@igalia.com>
 
         Fix 'make dist' for the GTK+ port

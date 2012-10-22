@@ -1,3 +1,15 @@
+2012-10-22  Mark Lam  <mark.lam@apple.com>
+
+        Change stack recursion checks to be based on stack availability.
+        https://bugs.webkit.org/show_bug.cgi?id=99872.
+
+        Reviewed by Filip Pizlo and Geoffrey Garen.
+
+        Updated test baseline.
+
+        * fast/js/global-recursion-on-full-stack-expected.txt:
+        * fast/xmlhttprequest/xmlhttprequest-recursive-sync-event-expected.txt:
+
 2012-10-22  Andreas Kling  <kling@webkit.org>
 
         REGRESSION(r131104): Heap-use-after-free in WebCore::Element::attributeChanged

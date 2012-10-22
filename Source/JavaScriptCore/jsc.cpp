@@ -746,7 +746,7 @@ int jscmain(int argc, char** argv)
     // Note that the options parsing can affect JSGlobalData creation, and thus
     // comes first.
     CommandLine options(argc, argv);
-    RefPtr<JSGlobalData> globalData = JSGlobalData::create(ThreadStackTypeLarge, LargeHeap);
+    RefPtr<JSGlobalData> globalData = JSGlobalData::create(LargeHeap);
     JSLockHolder lock(globalData.get());
     int result;
 

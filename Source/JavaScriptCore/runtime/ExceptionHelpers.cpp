@@ -163,6 +163,7 @@ JSObject* throwOutOfMemoryError(ExecState* exec)
 
 JSObject* throwStackOverflowError(ExecState* exec)
 {
+    Interpreter::ErrorHandlingMode mode(exec);
     return throwError(exec, createStackOverflowError(exec));
 }
 

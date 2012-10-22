@@ -31,6 +31,7 @@
 #include "JSDOMWindowCustom.h"
 #include "JSExceptionBase.h"
 #include "ScriptCallStack.h"
+#include <interpreter/Interpreter.h>
 #include <runtime/DateInstance.h>
 #include <runtime/Error.h>
 #include <runtime/ExceptionHelpers.h>
@@ -149,6 +150,7 @@ void reportException(ExecState* exec, JSValue exception)
     if (isTerminatedExecutionException(exception))
         return;
 
+    Interpreter::ErrorHandlingMode mode(exec);
     String errorMessage = exception.toString(exec)->value(exec);
     JSObject* exceptionObject = exception.toObject(exec);
     int lineNumber = exceptionObject->get(exec, Identifier(exec, "line")).toInt32(exec);

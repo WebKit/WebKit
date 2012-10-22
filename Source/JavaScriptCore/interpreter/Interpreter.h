@@ -170,20 +170,21 @@ namespace JSC {
         }
     };
 
-    // We use a smaller reentrancy limit on iPhone because of the high amount of
-    // stack space required on the web thread.
-#if PLATFORM(IOS)
-    enum { MaxLargeThreadReentryDepth = 64, MaxSmallThreadReentryDepth = 16 };
-#else
-    enum { MaxLargeThreadReentryDepth = 256, MaxSmallThreadReentryDepth = 16 };
-#endif // PLATFORM(IOS)
-
     class Interpreter {
         WTF_MAKE_FAST_ALLOCATED;
         friend class CachedCall;
         friend class LLIntOffsetsExtractor;
         friend class JIT;
+
     public:
+        class ErrorHandlingMode {
+        public:
+            JS_EXPORT_PRIVATE ErrorHandlingMode(ExecState*);
+            JS_EXPORT_PRIVATE ~ErrorHandlingMode();
+        private:
+            Interpreter& m_interpreter;
+        };
+
         Interpreter();
         ~Interpreter();
         
@@ -241,6 +242,16 @@ namespace JSC {
         JS_EXPORT_PRIVATE void dumpCallFrame(CallFrame*);
 
     private:
+        class StackPolicy {
+        public:
+            StackPolicy(Interpreter&, const StackBounds&);
+            inline size_t requiredCapacity() { return m_requiredCapacity; }
+
+        private:
+            Interpreter& m_interpreter;
+            size_t m_requiredCapacity;
+        };
+
         enum ExecutionFlag { Normal, InitializeAndReturn };
 
         CallFrameClosure prepareForRepeatCall(FunctionExecutable*, CallFrame*, JSFunction*, int argumentCountIncludingThis, JSScope*);
@@ -261,9 +272,8 @@ namespace JSC {
         int m_sampleEntryDepth;
         OwnPtr<SamplingTool> m_sampler;
 
-        int m_reentryDepth;
-
         JSStack m_stack;
+        int m_errorHandlingModeReentry;
         
 #if ENABLE(COMPUTED_GOTO_OPCODES) && ENABLE(LLINT)
         Opcode* m_opcodeTable; // Maps OpcodeID => Opcode for compiling

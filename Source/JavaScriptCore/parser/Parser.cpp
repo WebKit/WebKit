@@ -39,6 +39,7 @@
 #define failWithToken(tok) do { if (!m_error) updateErrorMessage(tok); return 0; } while (0)
 #define failWithMessage(msg) do { if (!m_error) updateErrorMessage(msg); return 0; } while (0)
 #define failWithNameAndMessage(before, name, after) do { if (!m_error) updateErrorWithNameAndMessage(before, name, after); return 0; } while (0)
+#define failWithStackOverflow() do { m_error = true; m_hasStackOverflow = true; return 0; } while (0)
 #define failIfFalse(cond) do { if (!(cond)) fail(); } while (0)
 #define failIfFalseWithMessage(cond, msg) do { if (!(cond)) failWithMessage(msg); } while (0)
 #define failIfFalseWithNameAndMessage(cond, before, name, msg) do { if (!(cond)) failWithNameAndMessage(before, name, msg); } while (0)
@@ -54,7 +55,7 @@
 #define consumeOrFail(tokenType) do { if (!consume(tokenType)) failWithToken(tokenType); } while (0)
 #define consumeOrFailWithFlags(tokenType, flags) do { if (!consume(tokenType, flags)) failWithToken(tokenType); } while (0)
 #define matchOrFail(tokenType) do { if (!match(tokenType)) failWithToken(tokenType); } while (0)
-#define failIfStackOverflow() do { failIfFalseWithMessage(canRecurse(), "Code nested too deeply."); } while (0)
+#define failIfStackOverflow() do { if (!canRecurse()) failWithStackOverflow(); } while (0)
 
 using namespace std;
 
@@ -65,6 +66,7 @@ Parser<LexerType>::Parser(JSGlobalData* globalData, const SourceCode& source, Fu
     : m_globalData(globalData)
     , m_source(&source)
     , m_stack(wtfThreadData().stack())
+    , m_hasStackOverflow(false)
     , m_error(false)
     , m_errorMessage("Parse error")
     , m_allowsIn(true)
