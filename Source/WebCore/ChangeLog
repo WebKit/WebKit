@@ -1,3 +1,20 @@
+2012-10-22  Pan Deng  <pan.deng@intel.com>
+
+        Modify obsolete code in User Timing
+        https://bugs.webkit.org/show_bug.cgi?id=99851
+
+        Reviewed by Tony Gentilcore.
+
+        Modify user timing implementation as PlatformString.h, prefix of webkitNow is removed, etc.
+
+        No new tests.
+
+        * page/PerformanceUserTiming.cpp:
+        (WebCore::insertPerformanceEntry):
+        (WebCore::UserTiming::mark):
+        (WebCore::UserTiming::measure):
+        * page/PerformanceUserTiming.h:
+
 2012-10-22  Mark Lam  <mark.lam@apple.com>
 
         Change stack recursion checks to be based on stack availability.

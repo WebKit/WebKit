@@ -83,7 +83,7 @@ static void insertPerformanceEntry(PerformanceEntryMap& performanceEntryMap, Pas
     RefPtr<PerformanceEntry> entry = performanceEntry;
     PerformanceEntryMap::iterator it = performanceEntryMap.find(entry->name());
     if (it != performanceEntryMap.end())
-        it->second.append(entry);
+        it->value.append(entry);
     else {
         Vector<RefPtr<PerformanceEntry> > v(1);
         v[0] = entry;
@@ -110,7 +110,7 @@ void UserTiming::mark(const String& markName, ExceptionCode& ec)
         return;
     }
 
-    double startTime = m_performance->webkitNow();
+    double startTime = m_performance->now();
     insertPerformanceEntry(m_marksMap, PerformanceMark::create(markName, startTime));
 }
 
@@ -139,9 +139,9 @@ void UserTiming::measure(const String& measureName, const String& startMark, con
     double endTime = 0.0;
 
     if (startMark.isNull())
-        endTime = m_performance->webkitNow();
+        endTime = m_performance->now();
     else if (endMark.isNull()) {
-        endTime = m_performance->webkitNow();
+        endTime = m_performance->now();
         startTime = findExistingMarkStartTime(startMark, ec);
         if (ec)
             return;

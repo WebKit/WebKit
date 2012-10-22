@@ -32,7 +32,6 @@
 #include "ExceptionCode.h"
 #include "Performance.h"
 #include "PerformanceTiming.h"
-#include "PlatformString.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
