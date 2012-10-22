@@ -1,3 +1,221 @@
+2012-10-22  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed gardening.
+
+        * platform/chromium-mac-lion/editing/selection/3690703-2-expected.png:
+        * platform/chromium-mac-lion/editing/selection/3690703-2-expected.txt: Added.
+        * platform/chromium-mac-lion/editing/selection/3690703-expected.png:
+        * platform/chromium-mac-lion/editing/selection/3690703-expected.txt: Added.
+        * platform/chromium-mac-lion/editing/selection/3690719-expected.png:
+        * platform/chromium-mac-lion/editing/selection/3690719-expected.txt: Added.
+        * platform/chromium-mac-lion/editing/selection/4397952-expected.png:
+        * platform/chromium-mac-lion/editing/selection/4397952-expected.txt: Added.
+        * platform/chromium-mac-lion/editing/selection/5240265-expected.png:
+        * platform/chromium-mac-lion/editing/selection/5240265-expected.txt: Added.
+        * platform/chromium-mac-lion/editing/selection/selection-button-text-expected.png:
+        * platform/chromium-mac-lion/editing/selection/selection-button-text-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/block/float/032-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/block/float/float-avoidance-expected.png:
+        * platform/chromium-mac-lion/fast/block/float/float-avoidance-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/css/continuationCrash-expected.png:
+        * platform/chromium-mac-lion/fast/css/continuationCrash-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/css/margin-top-bottom-dynamic-expected.png:
+        * platform/chromium-mac-lion/fast/css/margin-top-bottom-dynamic-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/css/rtl-ordering-expected.png:
+        * platform/chromium-mac-lion/fast/css/rtl-ordering-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/dom/HTMLTextAreaElement/reset-textarea-expected.png:
+        * platform/chromium-mac-lion/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/forms/001-expected.png:
+        * platform/chromium-mac-lion/fast/forms/001-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/forms/blankbuttons-expected.png:
+        * platform/chromium-mac-lion/fast/forms/blankbuttons-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/forms/box-shadow-override-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/box-shadow-override-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/forms/button-sizes-expected.png:
+        * platform/chromium-mac-lion/fast/forms/button-sizes-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/forms/button-style-color-expected.png:
+        * platform/chromium-mac-lion/fast/forms/button-style-color-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/forms/button-table-styles-expected.png:
+        * platform/chromium-mac-lion/fast/forms/button-text-transform-expected.png:
+        * platform/chromium-mac-lion/fast/forms/button-text-transform-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/forms/control-restrict-line-height-expected.png:
+        * platform/chromium-mac-lion/fast/forms/control-restrict-line-height-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/forms/date-multiple-fields: Added.
+        * platform/chromium-mac-lion/fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/file/file-input-direction-expected.png:
+        * platform/chromium-mac-lion/fast/forms/file/file-input-direction-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/forms/file/file-input-disabled-expected.png:
+        * platform/chromium-mac-lion/fast/forms/file/file-input-disabled-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/forms/file/file-input-pressed-state-expected.png:
+        * platform/chromium-mac-lion/fast/forms/file/input-file-re-render-expected.png:
+        * platform/chromium-mac-lion/fast/forms/file/input-file-re-render-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/forms/form-element-geometry-expected.png:
+        * platform/chromium-mac-lion/fast/forms/form-element-geometry-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/forms/formmove3-expected.png:
+        * platform/chromium-mac-lion/fast/forms/formmove3-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/forms/input-button-sizes-expected.png:
+        * platform/chromium-mac-lion/fast/forms/input-button-sizes-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/forms/input-value-expected.png:
+        * platform/chromium-mac-lion/fast/forms/input-value-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/forms/menulist-clip-expected.png:
+        * platform/chromium-mac-lion/fast/forms/menulist-clip-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/forms/targeted-frame-submission-expected.png:
+        * platform/chromium-mac-lion/fast/forms/targeted-frame-submission-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/forms/time-multiple-fields: Added.
+        * platform/chromium-mac-lion/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-mac-lion/fast/forms/validation-message-appearance-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/forms/week-multiple-fields: Added.
+        * platform/chromium-mac-lion/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png: Added.
+        * platform/chromium-mac-lion/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.png:
+        * platform/chromium-mac-lion/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/overflow/scrollRevealButton-expected.png:
+        * platform/chromium-mac-lion/fast/overflow/scrollRevealButton-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/replaced/replaced-breaking-expected.png:
+        * platform/chromium-mac-lion/fast/replaced/replaced-breaking-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/replaced/width100percent-button-expected.png:
+        * platform/chromium-mac-lion/fast/replaced/width100percent-button-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/speech/input-appearance-searchandspeech-expected.png: Added.
+        * platform/chromium-mac-lion/fast/speech/input-appearance-searchandspeech-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/text/international/text-spliced-font-expected.png: Added.
+        * platform/chromium-mac-lion/fast/text/international/text-spliced-font-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/text/international/vertical-text-glyph-test-expected.png:
+        * platform/chromium-mac-lion/fast/text/international/vertical-text-glyph-test-expected.txt:
+        * platform/chromium-mac-lion/fast/text/textIteratorNilRenderer-expected.png:
+        * platform/chromium-mac-lion/fast/text/textIteratorNilRenderer-expected.txt: Added.
+        * platform/chromium-mac-lion/http/tests/navigation/javascriptlink-frames-expected.png:
+        * platform/chromium-mac-lion/http/tests/navigation/javascriptlink-frames-expected.txt: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug1188-expected.txt: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug1318-expected.txt: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug138725-expected.png:
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug138725-expected.txt: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug18359-expected.png:
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug18359-expected.txt: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug2479-2-expected.png:
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug2479-2-expected.txt: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug2479-3-expected.png:
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug2479-3-expected.txt: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug2479-4-expected.txt: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug26178-expected.png:
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug26178-expected.txt: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug28928-expected.png:
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug28928-expected.txt: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug33855-expected.png:
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug33855-expected.txt: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug39209-expected.png:
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug39209-expected.txt: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug4429-expected.png:
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug4429-expected.txt: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug46368-1-expected.png:
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug46368-1-expected.txt: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug46368-2-expected.png:
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug46368-2-expected.txt: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug51037-expected.png:
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug51037-expected.txt: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug51727-expected.png:
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug51727-expected.txt: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug60749-expected.png:
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug60749-expected.txt: Added.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug7342-expected.png:
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug7342-expected.txt: Added.
+        * platform/chromium-mac-lion/tables/mozilla/collapsing_borders/bug41262-4-expected.png:
+        * platform/chromium-mac-lion/tables/mozilla/collapsing_borders/bug41262-4-expected.txt: Added.
+        * platform/chromium-mac-lion/tables/mozilla/dom/tableDom-expected.png:
+        * platform/chromium-mac-lion/tables/mozilla/dom/tableDom-expected.txt: Added.
+        * platform/chromium-mac-lion/tables/mozilla/other/move_row-expected.png:
+        * platform/chromium-mac-lion/tables/mozilla/other/move_row-expected.txt: Added.
+        * platform/chromium-mac-lion/tables/mozilla_expected_failures/bugs/bug1725-expected.png:
+        * platform/chromium-mac-lion/tables/mozilla_expected_failures/bugs/bug1725-expected.txt: Added.
+        * platform/chromium-mac-lion/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt: Added.
+        * platform/chromium-mac-lion/tables/mozilla_expected_failures/bugs/bug58402-2-expected.png:
+        * platform/chromium-mac-lion/tables/mozilla_expected_failures/bugs/bug58402-2-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/editing/selection/3690703-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/3690703-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/3690719-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/4397952-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/5240265-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/selection-button-text-expected.png:
+        * platform/chromium-mac-snowleopard/fast/block/float/float-avoidance-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/continuationCrash-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/margin-top-bottom-dynamic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/rtl-ordering-expected.png:
+        * platform/chromium-mac-snowleopard/fast/dom/HTMLTextAreaElement/reset-textarea-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/001-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/blankbuttons-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/box-shadow-override-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/button-sizes-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/button-style-color-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/button-table-styles-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/button-text-transform-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/control-restrict-line-height-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/file/file-input-direction-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/file/file-input-disabled-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/file/file-input-pressed-state-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/file/input-file-re-render-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/form-element-geometry-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/formmove3-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-button-sizes-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-value-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/menulist-clip-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/targeted-frame-submission-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-mac-snowleopard/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.png:
+        * platform/chromium-mac-snowleopard/fast/overflow/scrollRevealButton-expected.png:
+        * platform/chromium-mac-snowleopard/fast/replaced/replaced-breaking-expected.png:
+        * platform/chromium-mac-snowleopard/fast/replaced/width100percent-button-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/international/text-spliced-font-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/international/text-spliced-font-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/text/international/vertical-text-glyph-test-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/international/vertical-text-glyph-test-expected.txt:
+        * platform/chromium-mac-snowleopard/fast/text/textIteratorNilRenderer-expected.png:
+        * platform/chromium-mac-snowleopard/http/tests/navigation/javascriptlink-frames-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug138725-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug18359-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug2479-2-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug2479-3-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug26178-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug28928-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug33855-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug39209-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug4429-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug46368-1-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug46368-2-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug51037-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug51727-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug60749-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug7342-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/collapsing_borders/bug41262-4-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/dom/tableDom-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/other/move_row-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/bugs/bug1725-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/bugs/bug58402-2-expected.png:
+        * platform/chromium-win-xp/fast/text/international/text-spliced-font-expected.png: Removed.
+
 2012-10-22  Aaron Colwell  <acolwell@chromium.org>
 
         webkitsourceopen event doesn't always fire
