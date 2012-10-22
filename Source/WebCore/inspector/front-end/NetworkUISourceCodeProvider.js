@@ -40,7 +40,7 @@ WebInspector.NetworkUISourceCodeProvider = function(workspace)
     this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectDidReset, this._projectDidReset, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, this._parsedScriptSource, this);
 
-    this._uiSourceCodeForResource = {};
+    this._processedURLs = {};
     this._lastDynamicAnonymousScriptIndexForURL = {};
 }
 
@@ -83,11 +83,7 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
             if (!parsedURL.host)
                 return;
         }
-        if (this._uiSourceCodeForResource[script.sourceURL])
-            return;
-        var uiSourceCode = new WebInspector.UISourceCode(script.sourceURL, script, true);
-        this._uiSourceCodeForResource[script.sourceURL] = uiSourceCode;
-        this._workspace.project().addUISourceCode(uiSourceCode);
+        this._addUISourceCode(script.sourceURL, script);
     },
 
     /**
@@ -96,29 +92,28 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
     _resourceAdded: function(event)
     {
         var resource = /** @type {WebInspector.Resource} */ event.data;
-        if (this._uiSourceCodeForResource[resource.url])
+        this._addUISourceCode(resource.url, resource);
+    },
+
+    /**
+     * @param {WebInspector.ContentProvider} contentProvider
+     */
+    _addUISourceCode: function(url, contentProvider)
+    {
+        var type = contentProvider.contentType();
+        if (type !== WebInspector.resourceTypes.Stylesheet && type !== WebInspector.resourceTypes.Document && type !== WebInspector.resourceTypes.Script)
             return;
-        var uiSourceCode;
-        switch (resource.type) {
-        case WebInspector.resourceTypes.Stylesheet:
-            uiSourceCode = new WebInspector.UISourceCode(resource.url, resource, true);
-            break;
-        case WebInspector.resourceTypes.Document:
-            uiSourceCode = new WebInspector.UISourceCode(resource.url, resource, false);
-            break;
-        case WebInspector.resourceTypes.Script:
-            uiSourceCode = new WebInspector.UISourceCode(resource.url, resource, true);
-            break;
-        }
-        if (uiSourceCode) {
-            this._uiSourceCodeForResource[resource.url] = uiSourceCode;
-            this._workspace.project().addUISourceCode(uiSourceCode);
-        }
+        if (this._processedURLs[url])
+            return;
+        this._processedURLs[url] = true;
+        var isEditable = type !== WebInspector.resourceTypes.Document;
+        var uiSourceCode = new WebInspector.UISourceCode(url, contentProvider, isEditable);
+        this._workspace.project().addUISourceCode(uiSourceCode);
     },
 
     _projectWillReset: function()
     {
-        this._uiSourceCodeForResource = {};
+        this._processedURLs = {};
         this._lastDynamicAnonymousScriptIndexForURL = {};
     },
 

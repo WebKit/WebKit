@@ -1,3 +1,30 @@
+2012-10-22  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Prepare mappings to moving uiSourceCodes creation out of them to workspace.
+        https://bugs.webkit.org/show_bug.cgi?id=99997
+
+        Reviewed by Pavel Feldman.
+
+        Source mappings could now store a link to temporary uiSourceCodes only.
+        Otherwise it should retrieve uiSourceCodes from workspace by URL.
+        Original uiSourceCodes are now temporary in CompilerScriptMapping.
+
+        * inspector/front-end/CompilerScriptMapping.js:
+        (WebInspector.CompilerScriptMapping):
+        (WebInspector.CompilerScriptMapping.prototype.rawLocationToUILocation):
+        (WebInspector.CompilerScriptMapping.prototype.loadSourceMapForScript):
+        (WebInspector.CompilerScriptMapping.prototype._reset):
+        * inspector/front-end/NetworkUISourceCodeProvider.js:
+        (WebInspector.NetworkUISourceCodeProvider):
+        (WebInspector.NetworkUISourceCodeProvider.prototype._parsedScriptSource):
+        (WebInspector.NetworkUISourceCodeProvider.prototype._resourceAdded):
+        (WebInspector.NetworkUISourceCodeProvider.prototype._addUISourceCode):
+        (WebInspector.NetworkUISourceCodeProvider.prototype._projectWillReset):
+        * inspector/front-end/SASSSourceMapping.js:
+        (WebInspector.SASSSourceMapping):
+        (_bindUISourceCode):
+        (_reset):
+
 2012-10-22  Nicolas Dufresne <nicolas.dufresne@collabora.com>
 
         Gstreamer 1.0 not working

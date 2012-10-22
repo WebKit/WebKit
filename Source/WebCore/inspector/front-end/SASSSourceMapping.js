@@ -36,7 +36,6 @@
 WebInspector.SASSSourceMapping = function(workspace)
 {
     this._workspace = workspace;
-    this._uiSourceCodeForURL = {};
     this._uiLocations = {};
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._resourceAdded, this);
     this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._reset, this);
@@ -112,12 +111,11 @@ WebInspector.SASSSourceMapping.prototype = {
      */
     _bindUISourceCode: function(url, line, rawURL, rawLine)
     {
-        var uiSourceCode = this._uiSourceCodeForURL[url];
+        var uiSourceCode = this._workspace.uiSourceCodeForURL(url);
         if (!uiSourceCode) {
             var content = InspectorFrontendHost.loadResourceSynchronously(url);
             var contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Stylesheet, content, "text/x-scss");
             uiSourceCode = new WebInspector.UISourceCode(url, contentProvider, true);
-            this._uiSourceCodeForURL[url] = uiSourceCode;
             this._workspace.project().addUISourceCode(uiSourceCode);
             WebInspector.cssModel.setSourceMapping(rawURL, this);
         }
@@ -154,7 +152,6 @@ WebInspector.SASSSourceMapping.prototype = {
 
     _reset: function()
     {
-        this._uiSourceCodeForURL = {};
         this._uiLocations = {};
         this._populate();
     }

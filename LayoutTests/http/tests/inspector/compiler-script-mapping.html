@@ -142,11 +142,12 @@ function test()
 
             function step1()
             {
-                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(originalUISourceCodeAdded);
+                InspectorTest.waitForWorkspaceTemporaryUISourceCodeAddedEvent(originalUISourceCodeAdded);
                 script = InspectorTest.createScriptMock("compiled.js", 0, 0, true, "");
                 script.sourceMapURL = "http://localhost:8000/inspector/resources/source-map.json";
                 script.setSourceMapping(mapping);
                 mapping.addScript(script);
+                afterScriptAdded();
             }
 
             function originalUISourceCodeAdded(uiSourceCode)
@@ -165,10 +166,12 @@ function test()
                 InspectorTest.addMockUISourceCodeToWorkspace("compiled.js", WebInspector.resourceTypes.Script, "");
             }
 
-            function originalResourceUISourceCodeAdded(uiSourceCode)
+            function originalResourceUISourceCodeAdded(uiSourceCode) { }
+
+            function afterScriptAdded(uiSourceCode)
             {
-                var uiSourceCode1 = mapping._uiSourceCodeByURL["http://localhost:8000/inspector/resources/source1.js"];
-                var uiSourceCode2 = mapping._uiSourceCodeByURL["http://localhost:8000/inspector/resources/source2.js"];
+                var uiSourceCode1 = InspectorTest.testWorkspace.uiSourceCodeForURL("http://localhost:8000/inspector/resources/source1.js");
+                var uiSourceCode2 = InspectorTest.testWorkspace.uiSourceCodeForURL("http://localhost:8000/inspector/resources/source2.js");
                 var originalUISourceCode = mapping._originalUISourceCodeForScriptId[script.scriptId];
 
                 InspectorTest.checkUILocation(uiSourceCode1, 4, 4, script.rawLocationToUILocation(0, 81));
@@ -211,7 +214,7 @@ function test()
             script.sourceMapURL = "data:application/json;base64," + btoa(JSON.stringify(sourceMap));
             mapping.addScript(script);
 
-            var uiSourceCode = mapping._uiSourceCodeByURL["source.js"];
+            var uiSourceCode = workspace.uiSourceCodeForURL("source.js");
 
             InspectorTest.checkUILocation(uiSourceCode, 2, 4, mapping.rawLocationToUILocation(WebInspector.debuggerModel.createRawLocation(script, 0, 18)));
             InspectorTest.checkRawLocation(script, 0, 18, mapping.uiLocationToRawLocation(uiSourceCode, 2, 4));
