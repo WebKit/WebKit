@@ -1,5 +1,11 @@
 2012-10-21  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, new Chromium ML baselines for editing/deleting, editing/execCommand, and editing/selection
+
+        (long list of new baselines omitted).
+
+2012-10-21  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, new Chromium ML baselines for platform/chromium/virtual/gpu/fast/hidpi.
 
         * platform/chromium-mac-lion/platform/chromium/virtual/gpu/fast/canvas/canvas-bg-expected.png: Copied from LayoutTests/platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/canvas-bg-expected.png.
