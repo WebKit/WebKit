@@ -1,3 +1,49 @@
+2012-10-22  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Make the resource load client a C++ class
+        https://bugs.webkit.org/show_bug.cgi?id=99982
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Create a C++ class for the resource load client and
+        move the id <-> resource mapping from the Ewk_View
+        to ResourceLoadClientEfl for better a cleaner
+        separation.
+
+        The resource load client code was also moved out of
+        UIProcess/API/efl to UIProcess/efl since this is not
+        part of the WK2 EFL API.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (Ewk_View_Private_Data):
+        (_ewk_view_initialize):
+        (ewk_view_wkpage_get):
+        (ewk_view_resource_load_initiated):
+        (ewk_view_resource_load_response):
+        (ewk_view_resource_load_failed):
+        (ewk_view_resource_load_finished):
+        (ewk_view_resource_request_sent):
+        (ewk_view_load_provisional_started):
+        * UIProcess/API/efl/ewk_view_private.h:
+        * UIProcess/API/efl/ewk_view_resource_load_client.cpp: Removed.
+        * UIProcess/API/efl/ewk_view_resource_load_client_private.h: Removed.
+        * UIProcess/efl/ResourceLoadClientEfl.cpp: Added.
+        (WebKit):
+        (WebKit::toResourceLoadClientEfl):
+        (WebKit::ResourceLoadClientEfl::didInitiateLoadForResource):
+        (WebKit::ResourceLoadClientEfl::didSendRequestForResource):
+        (WebKit::ResourceLoadClientEfl::didReceiveResponseForResource):
+        (WebKit::ResourceLoadClientEfl::didFinishLoadForResource):
+        (WebKit::ResourceLoadClientEfl::didFailLoadForResource):
+        (WebKit::ResourceLoadClientEfl::onViewProvisionalLoadStarted):
+        (WebKit::ResourceLoadClientEfl::ResourceLoadClientEfl):
+        (WebKit::ResourceLoadClientEfl::~ResourceLoadClientEfl):
+        * UIProcess/efl/ResourceLoadClientEfl.h: Added.
+        (WebKit):
+        (ResourceLoadClientEfl):
+        (WebKit::ResourceLoadClientEfl::create):
+
 2012-10-22  Anders Carlsson  <andersca@apple.com>
 
         [WK2] Regression(r131990): plugins/npruntime/remove-property.html started failing

@@ -26,6 +26,7 @@
 #include "NativeWebWheelEvent.h"
 #include "PageClientImpl.h"
 #include "RefPtrEfl.h"
+#include "ResourceLoadClientEfl.h"
 #include "WKAPICast.h"
 #include "WKColorPickerResultListener.h"
 #include "WKEinaSharedString.h"
@@ -54,7 +55,6 @@
 #include "ewk_view_loader_client_private.h"
 #include "ewk_view_policy_client_private.h"
 #include "ewk_view_private.h"
-#include "ewk_view_resource_load_client_private.h"
 #include "ewk_view_ui_client_private.h"
 #include <Ecore_Evas.h>
 #include <Edje.h>
@@ -86,7 +86,6 @@ static const char EWK_VIEW_TYPE_STR[] = "EWK2_View";
 
 static const int defaultCursorSize = 16;
 
-typedef HashMap< uint64_t, RefPtr<Ewk_Resource> > LoadingResourcesMap;
 static void _ewk_view_on_favicon_changed(const char* pageURL, void* eventInfo);
 
 typedef HashMap<const WebPageProxy*, const Evas_Object*> PageViewMap;
@@ -119,6 +118,7 @@ struct Ewk_View_Private_Data {
     OwnPtr<PageViewportControllerClientEfl> pageViewportControllerClient;
 #endif
     RefPtr<WebPageProxy> pageProxy;
+    OwnPtr<ResourceLoadClientEfl> resourceLoadClient;
 
     WKEinaSharedString url;
     WKEinaSharedString title;
@@ -127,7 +127,6 @@ struct Ewk_View_Private_Data {
     WKEinaSharedString cursorGroup;
     WKEinaSharedString faviconURL;
     RefPtr<Evas_Object> cursorObject;
-    LoadingResourcesMap loadingResourcesMap;
     OwnPtr<Ewk_Back_Forward_List> backForwardList;
     OwnPtr<Ewk_Settings> settings;
     bool areMouseEventsEnabled;
@@ -828,17 +827,18 @@ static void _ewk_view_initialize(Evas_Object* ewkView, Ewk_Context* context, WKP
     priv->pageViewportControllerClient = PageViewportControllerClientEfl::create(ewkView);
 #endif
 
+    // Initialize page clients.
     WKPageRef wkPage = toAPI(priv->pageProxy.get());
     ewk_view_find_client_attach(wkPage, ewkView);
     ewk_view_form_client_attach(wkPage, ewkView);
     ewk_view_loader_client_attach(wkPage, ewkView);
     ewk_view_policy_client_attach(wkPage, ewkView);
-    ewk_view_resource_load_client_attach(wkPage, ewkView);
     ewk_view_ui_client_attach(wkPage, ewkView);
 #if ENABLE(FULLSCREEN_API)
     priv->pageProxy->fullScreenManager()->setWebView(ewkView);
     ewk_settings_fullscreen_enabled_set(priv->settings.get(), true);
 #endif
+    priv->resourceLoadClient = ResourceLoadClientEfl::create(ewkView);
 
     /* Listen for favicon changes */
     Ewk_Favicon_Database* iconDatabase = ewk_context_favicon_database_get(priv->context);
@@ -1015,19 +1015,25 @@ Ewk_Settings* ewk_view_settings_get(const Evas_Object* ewkView)
 
 /**
  * @internal
+ * Retrieves the internal WKPage for this view.
+ */
+WKPageRef ewk_view_wkpage_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
+
+    return toAPI(priv->pageProxy.get());
+}
+
+/**
+ * @internal
  * Load was initiated for a resource in the view.
  *
  * Emits signal: "resource,request,new" with pointer to resource request.
  */
-void ewk_view_resource_load_initiated(Evas_Object* ewkView, uint64_t resourceIdentifier, Ewk_Resource* resource, Ewk_Url_Request* request)
+void ewk_view_resource_load_initiated(Evas_Object* ewkView, Ewk_Resource* resource, Ewk_Url_Request* request)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
-
     Ewk_Resource_Request resourceRequest = {resource, request, 0};
-
-    // Keep the resource internally to reuse it later.
-    priv->loadingResourcesMap.add(resourceIdentifier, resource);
 
     evas_object_smart_callback_call(ewkView, "resource,request,new", &resourceRequest);
 }
@@ -1038,16 +1044,9 @@ void ewk_view_resource_load_initiated(Evas_Object* ewkView, uint64_t resourceIde
  *
  * Emits signal: "resource,request,response" with pointer to resource response.
  */
-void ewk_view_resource_load_response(Evas_Object* ewkView, uint64_t resourceIdentifier, Ewk_Url_Response* response)
+void ewk_view_resource_load_response(Evas_Object* ewkView, Ewk_Resource* resource, Ewk_Url_Response* response)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
-
-    if (!priv->loadingResourcesMap.contains(resourceIdentifier))
-        return;
-
-    RefPtr<Ewk_Resource> resource = priv->loadingResourcesMap.get(resourceIdentifier);
-    Ewk_Resource_Load_Response resourceLoadResponse = {resource.get(), response};
+    Ewk_Resource_Load_Response resourceLoadResponse = {resource, response};
     evas_object_smart_callback_call(ewkView, "resource,request,response", &resourceLoadResponse);
 }
 
@@ -1057,16 +1056,9 @@ void ewk_view_resource_load_response(Evas_Object* ewkView, uint64_t resourceIden
  *
  * Emits signal: "resource,request,finished" with pointer to the resource load error.
  */
-void ewk_view_resource_load_failed(Evas_Object* ewkView, uint64_t resourceIdentifier, Ewk_Error* error)
+void ewk_view_resource_load_failed(Evas_Object* ewkView, Ewk_Resource* resource, Ewk_Error* error)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
-
-    if (!priv->loadingResourcesMap.contains(resourceIdentifier))
-        return;
-
-    RefPtr<Ewk_Resource> resource = priv->loadingResourcesMap.get(resourceIdentifier);
-    Ewk_Resource_Load_Error resourceLoadError = {resource.get(), error};
+    Ewk_Resource_Load_Error resourceLoadError = {resource, error};
     evas_object_smart_callback_call(ewkView, "resource,request,failed", &resourceLoadError);
 }
 
@@ -1076,16 +1068,9 @@ void ewk_view_resource_load_failed(Evas_Object* ewkView, uint64_t resourceIdenti
  *
  * Emits signal: "resource,request,finished" with pointer to the resource.
  */
-void ewk_view_resource_load_finished(Evas_Object* ewkView, uint64_t resourceIdentifier)
+void ewk_view_resource_load_finished(Evas_Object* ewkView, Ewk_Resource* resource)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
-
-    if (!priv->loadingResourcesMap.contains(resourceIdentifier))
-        return;
-
-    RefPtr<Ewk_Resource> resource = priv->loadingResourcesMap.take(resourceIdentifier);
-    evas_object_smart_callback_call(ewkView, "resource,request,finished", resource.get());
+    evas_object_smart_callback_call(ewkView, "resource,request,finished", resource);
 }
 
 /**
@@ -1094,17 +1079,9 @@ void ewk_view_resource_load_finished(Evas_Object* ewkView, uint64_t resourceIden
  *
  * Emits signal: "resource,request,sent" with pointer to resource request and possible redirect response.
  */
-void ewk_view_resource_request_sent(Evas_Object* ewkView, uint64_t resourceIdentifier, Ewk_Url_Request* request, Ewk_Url_Response* redirectResponse)
+void ewk_view_resource_request_sent(Evas_Object* ewkView, Ewk_Resource* resource, Ewk_Url_Request* request, Ewk_Url_Response* redirectResponse)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
-
-    if (!priv->loadingResourcesMap.contains(resourceIdentifier))
-        return;
-
-    RefPtr<Ewk_Resource> resource = priv->loadingResourcesMap.get(resourceIdentifier);
-    Ewk_Resource_Request resourceRequest = {resource.get(), request, redirectResponse};
-
+    Ewk_Resource_Request resourceRequest = {resource, request, redirectResponse};
     evas_object_smart_callback_call(ewkView, "resource,request,sent", &resourceRequest);
 }
 
@@ -1538,13 +1515,6 @@ void ewk_view_load_provisional_redirect(Evas_Object* ewkView)
  */
 void ewk_view_load_provisional_started(Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
-
-    // The main frame started provisional load, we should clear
-    // the loadingResources HashMap to start clean.
-    priv->loadingResourcesMap.clear();
-
     ewk_view_url_update(ewkView);
     evas_object_smart_callback_call(ewkView, "load,provisional,started", 0);
 }
