@@ -1,3 +1,74 @@
+2012-10-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Rebaseline pixel expectations after r131941 and r131991, part 10.
+
+        * platform/efl/svg/dynamic-updates/SVGPatternElement-dom-patternUnits-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGPatternElement-dom-width-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGPatternElement-dom-x-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGPatternElement-dom-y-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGPatternElement-svgdom-height-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGPatternElement-svgdom-patternContentUnits-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGPatternElement-svgdom-patternTransform-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGPatternElement-svgdom-patternUnits-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGPatternElement-svgdom-width-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGPatternElement-svgdom-x-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGPatternElement-svgdom-y-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGPolygonElement-dom-requiredFeatures-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGPolygonElement-svgdom-requiredFeatures-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGPolylineElement-dom-requiredFeatures-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGPolylineElement-svgdom-requiredFeatures-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGRadialGradientElement-dom-cx-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGRadialGradientElement-dom-cy-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGRadialGradientElement-dom-fx-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGRadialGradientElement-dom-fy-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGRadialGradientElement-dom-gradientTransform-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGRadialGradientElement-dom-gradientUnits-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGRadialGradientElement-dom-r-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGRadialGradientElement-svgdom-cx-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGRadialGradientElement-svgdom-cy-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGRadialGradientElement-svgdom-fx-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGRadialGradientElement-svgdom-fy-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGRadialGradientElement-svgdom-gradientTransform-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGRadialGradientElement-svgdom-gradientUnits-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGRadialGradientElement-svgdom-r-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGRectElement-dom-height-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGRectElement-dom-requiredFeatures-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGRectElement-dom-width-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGRectElement-dom-x-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGRectElement-dom-y-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGRectElement-svgdom-height-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGRectElement-svgdom-requiredFeatures-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGRectElement-svgdom-width-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGRectElement-svgdom-x-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGRectElement-svgdom-y-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGSVGElement-dom-requiredFeatures-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGSVGElement-svgdom-requiredFeatures-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGTRefElement-dom-href-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGTextElement-dom-dx-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGTextElement-dom-dy-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGTextElement-dom-lengthAdjust-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGTextElement-dom-requiredFeatures-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGTextElement-dom-rotate-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGTextElement-dom-textLength-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGTextElement-dom-transform-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGTextElement-dom-x-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGTextElement-dom-y-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGTextElement-svgdom-dx-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGTextElement-svgdom-dy-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGTextElement-svgdom-lengthAdjust-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGTextElement-svgdom-requiredFeatures-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGTextElement-svgdom-textLength-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGTextElement-svgdom-transform-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGTextElement-svgdom-x-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGTextElement-svgdom-y-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGUseElement-dom-href1-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGUseElement-dom-href2-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGUseElement-dom-requiredFeatures-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGUseElement-svgdom-href1-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGUseElement-svgdom-href2-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGUseElement-svgdom-requiredFeatures-expected.png:
+
 2012-10-22  Julien Chaffraix  <jchaffraix@webkit.org>
 
         RenderTableCol::computePreferredLogicalWidths and RenderTableCol::layout should never be called
