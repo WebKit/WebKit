@@ -58,7 +58,7 @@ TestInterfaces::~TestInterfaces()
     // m_gamepadController doesn't depend on WebView.
     m_textInputController->setWebView(0);
 
-    // m_accessibilityController doesn't depend on TestDelegate.
+    m_accessibilityController->setDelegate(0);
     m_eventSender->setDelegate(0);
     m_gamepadController->setDelegate(0);
     // m_textInputController doesn't depend on TestDelegate.
@@ -74,7 +74,7 @@ void TestInterfaces::setWebView(WebView* webView)
 
 void TestInterfaces::setDelegate(TestDelegate* delegate)
 {
-    // m_accessibilityController doesn't depend on TestDelegate.
+    m_accessibilityController->setDelegate(delegate);
     m_eventSender->setDelegate(delegate);
     m_gamepadController->setDelegate(delegate);
     // m_textInputController doesn't depend on TestDelegate.

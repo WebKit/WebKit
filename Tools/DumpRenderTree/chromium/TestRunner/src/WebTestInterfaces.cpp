@@ -63,6 +63,7 @@ public:
     virtual void setEditCommand(const std::string& name, const std::string& value);
     virtual WebContextMenuData* lastContextMenuData() const;
     virtual void setGamepadData(const WebGamepads&);
+    virtual void printMessage(const std::string& message) const;
 
 private:
     TestInterfaces m_interfaces;
@@ -121,6 +122,11 @@ WebContextMenuData* WebTestInterfaces::Internal::lastContextMenuData() const
 void WebTestInterfaces::Internal::setGamepadData(const WebGamepads& pads)
 {
     m_delegate->setGamepadData(pads);
+}
+
+void WebTestInterfaces::Internal::printMessage(const std::string& message) const
+{
+    m_delegate->printMessage(message);
 }
 
 WebTestInterfaces::WebTestInterfaces()

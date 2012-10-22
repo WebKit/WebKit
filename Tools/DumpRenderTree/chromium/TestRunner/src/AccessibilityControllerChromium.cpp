@@ -31,6 +31,7 @@
 #include "config.h"
 #include "AccessibilityControllerChromium.h"
 
+#include "TestDelegate.h"
 #include "WebAccessibilityObject.h"
 #include "WebElement.h"
 #include "WebFrame.h"
@@ -197,8 +198,7 @@ void AccessibilityController::accessibleElementByIdGetterCallback(const CppArgum
 
 void AccessibilityController::fallbackCallback(const CppArgumentList&, CppVariant* result)
 {
-    printf("CONSOLE MESSAGE: JavaScript ERROR: unknown method called on "
-           "AccessibilityController\n");
+    m_delegate->printMessage("CONSOLE MESSAGE: JavaScript ERROR: unknown method called on AccessibilityController\n");
     result->setNull();
 }
 

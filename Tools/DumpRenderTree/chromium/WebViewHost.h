@@ -95,12 +95,8 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     WebKit::WebFrame* topLoadingFrame() { return m_topLoadingFrame; }
     void setBlockRedirects(bool block) { m_blocksRedirects = block; }
     void setRequestReturnNull(bool returnNull) { m_requestReturnNull = returnNull; }
-    virtual void setEditCommand(const std::string& name, const std::string& value) OVERRIDE;
-    virtual void clearEditCommand() OVERRIDE;
     void setPendingExtraData(PassOwnPtr<TestShellExtraData>);
     void setDeviceScaleFactor(float);
-
-    virtual void setGamepadData(const WebKit::WebGamepads&);
 
     void paintRect(const WebKit::WebRect&);
     void updatePaintRect(const WebKit::WebRect&);
@@ -115,9 +111,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     void addClearHeader(const WTF::String& header) { m_clearHeaders.add(header); }
     const HashSet<WTF::String>& clearHeaders() const { return m_clearHeaders; }
     void closeWidget();
-
-    virtual WebKit::WebContextMenuData* lastContextMenuData() const OVERRIDE;
-    virtual void clearContextMenuData() OVERRIDE;
 
 #if ENABLE(INPUT_SPEECH)
     MockWebSpeechInputController* speechInputControllerMock() { return m_speechInputControllerMock.get(); }
@@ -134,6 +127,15 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     void setPointerLockWillRespondAsynchronously() { m_pointerLockPlannedResult = PointerLockWillRespondAsync; }
     void setPointerLockWillFailSynchronously() { m_pointerLockPlannedResult = PointerLockWillFailSync; }
 #endif
+
+    // WebTestDelegate.
+    virtual WebKit::WebContextMenuData* lastContextMenuData() const OVERRIDE;
+    virtual void clearContextMenuData() OVERRIDE;
+    virtual void setEditCommand(const std::string& name, const std::string& value) OVERRIDE;
+    virtual void clearEditCommand() OVERRIDE;
+    virtual void fillSpellingSuggestionList(const WebKit::WebString& word, WebKit::WebVector<WebKit::WebString>* suggestions) OVERRIDE;
+    virtual void setGamepadData(const WebKit::WebGamepads&) OVERRIDE;
+    virtual void printMessage(const std::string& message) const OVERRIDE;
 
     // NavigationHost
     virtual bool navigate(const TestNavigationEntry&, bool reload);
@@ -281,7 +283,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     // Spellcheck related helper APIs
     MockSpellCheck* mockSpellCheck();
     void finishLastTextCheck();
-    virtual void fillSpellingSuggestionList(const WebKit::WebString& word, WebKit::WebVector<WebKit::WebString>* suggestions) OVERRIDE;
 
     // Geolocation client mocks for DRTTestRunner
     WebKit::WebGeolocationClientMock* geolocationClientMock();

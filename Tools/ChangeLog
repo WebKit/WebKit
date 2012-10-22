@@ -1,3 +1,53 @@
+2012-10-22  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] add a method for printing message to the WebTestDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=99960
+
+        Reviewed by Adam Barth.
+
+        When using the TestRunner library from the content_shell, we can't print
+        message directly but need to send them to the browser process.
+
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        (WebTestDelegate):
+        * DumpRenderTree/chromium/TestRunner/src/AccessibilityControllerChromium.cpp:
+        (WebTestRunner::AccessibilityController::fallbackCallback):
+        * DumpRenderTree/chromium/TestRunner/src/AccessibilityControllerChromium.h:
+        (WebTestRunner::AccessibilityController::setDelegate):
+        (AccessibilityController):
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.cpp:
+        (WebTestRunner):
+        (WebTestRunner::EventSender::dumpFilenameBeingDragged):
+        * DumpRenderTree/chromium/TestRunner/src/GamepadController.cpp:
+        (GamepadController::connect):
+        (GamepadController::disconnect):
+        (GamepadController::setId):
+        (GamepadController::setButtonCount):
+        (GamepadController::setButtonData):
+        (GamepadController::setAxisCount):
+        (GamepadController::setAxisData):
+        (GamepadController::fallbackCallback):
+        * DumpRenderTree/chromium/TestRunner/src/TestDelegate.h:
+        (TestDelegate):
+        * DumpRenderTree/chromium/TestRunner/src/TestInterfaces.cpp:
+        (TestInterfaces::~TestInterfaces):
+        (TestInterfaces::setDelegate):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestInterfaces.cpp:
+        (WebTestInterfaces::Internal):
+        (WebTestRunner::WebTestInterfaces::Internal::printMessage):
+        (WebTestRunner):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::didBeginEditing):
+        (WebViewHost::lastContextMenuData):
+        (WebViewHost::clearContextMenuData):
+        (WebViewHost::setEditCommand):
+        (WebViewHost::clearEditCommand):
+        (WebViewHost::fillSpellingSuggestionList):
+        (WebViewHost::setGamepadData):
+        (WebViewHost::printMessage):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2012-10-22  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         I now only watch Selectors instead of all of CSS.

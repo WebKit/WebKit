@@ -67,7 +67,7 @@ void GamepadController::reset()
 void GamepadController::connect(const CppArgumentList& args, CppVariant* result)
 {
     if (args.size() < 1) {
-        printf("Invalid args");
+        m_delegate->printMessage("Invalid args");
         return;
     }
     int index = args[0].toInt32();
@@ -85,7 +85,7 @@ void GamepadController::connect(const CppArgumentList& args, CppVariant* result)
 void GamepadController::disconnect(const CppArgumentList& args, CppVariant* result)
 {
     if (args.size() < 1) {
-        printf("Invalid args");
+        m_delegate->printMessage("Invalid args");
         return;
     }
     int index = args[0].toInt32();
@@ -103,7 +103,7 @@ void GamepadController::disconnect(const CppArgumentList& args, CppVariant* resu
 void GamepadController::setId(const CppArgumentList& args, CppVariant* result)
 {
     if (args.size() < 2) {
-        printf("Invalid args");
+        m_delegate->printMessage("Invalid args");
         return;
     }
     int index = args[0].toInt32();
@@ -121,7 +121,7 @@ void GamepadController::setId(const CppArgumentList& args, CppVariant* result)
 void GamepadController::setButtonCount(const CppArgumentList& args, CppVariant* result)
 {
     if (args.size() < 2) {
-        printf("Invalid args");
+        m_delegate->printMessage("Invalid args");
         return;
     }
     int index = args[0].toInt32();
@@ -138,7 +138,7 @@ void GamepadController::setButtonCount(const CppArgumentList& args, CppVariant* 
 void GamepadController::setButtonData(const CppArgumentList& args, CppVariant* result)
 {
     if (args.size() < 3) {
-        printf("Invalid args");
+        m_delegate->printMessage("Invalid args");
         return;
     }
     int index = args[0].toInt32();
@@ -156,7 +156,7 @@ void GamepadController::setButtonData(const CppArgumentList& args, CppVariant* r
 void GamepadController::setAxisCount(const CppArgumentList& args, CppVariant* result)
 {
     if (args.size() < 2) {
-        printf("Invalid args");
+        m_delegate->printMessage("Invalid args");
         return;
     }
     int index = args[0].toInt32();
@@ -173,7 +173,7 @@ void GamepadController::setAxisCount(const CppArgumentList& args, CppVariant* re
 void GamepadController::setAxisData(const CppArgumentList& args, CppVariant* result)
 {
     if (args.size() < 3) {
-        printf("Invalid args");
+        m_delegate->printMessage("Invalid args");
         return;
     }
     int index = args[0].toInt32();
@@ -190,7 +190,6 @@ void GamepadController::setAxisData(const CppArgumentList& args, CppVariant* res
 
 void GamepadController::fallbackCallback(const CppArgumentList&, CppVariant* result)
 {
-    printf("CONSOLE MESSAGE: JavaScript ERROR: unknown method called on "
-           "GamepadController\n");
+    m_delegate->printMessage("CONSOLE MESSAGE: JavaScript ERROR: unknown method called on GamepadController\n");
     result->setNull();
 }

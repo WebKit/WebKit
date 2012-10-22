@@ -369,7 +369,7 @@ void EventSender::dumpFilenameBeingDragged(const CppArgumentList&, CppVariant*)
             break;
         }
     }
-    printf("Filename being dragged: %s\n", filename.utf8().data());
+    m_delegate->printMessage(std::string("Filename being dragged: ") + filename.utf8().data() + "\n");
 }
 
 WebMouseEvent::Button EventSender::getButtonTypeFromButtonNumber(int buttonCode)
