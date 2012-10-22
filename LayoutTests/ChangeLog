@@ -1,3 +1,44 @@
+2012-10-19  Emil A Eklund  <eae@chromium.org>
+
+        Convert fast/sub-pixel/file-upload-control-at-fractional-offset-expected.html to ref test
+        https://bugs.webkit.org/show_bug.cgi?id=99869
+
+        Reviewed by Eric Seidel.
+
+        fast/sub-pixel/file-upload-control-at-fractional-offset-expected.html is currently a pixel test, convert it to a ref test instead.
+
+        * fast/sub-pixel/file-upload-control-at-fractional-offset-expected.html: Added.
+        * platform/chromium-linux/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.png: Removed.
+        * platform/chromium-linux/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.txt: Removed.
+        * platform/chromium-mac-lion/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.png: Removed.
+        * platform/chromium-mac/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.png: Removed.
+        * platform/chromium-mac/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.txt: Removed.
+        * platform/chromium-win/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.png: Removed.
+        * platform/chromium-win/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.txt: Removed.
+        * platform/gtk/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.png: Removed.
+        * platform/gtk/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.txt: Removed.
+
+<<<<<<< .mine
+2012-10-22  Emil A Eklund  <eae@chromium.org>
+
+        Convert fast/sub-pixel/file-upload-control-at-fractional-offset-expected.html to ref test
+        https://bugs.webkit.org/show_bug.cgi?id=99869
+
+        Reviewed by Eric Seidel.
+
+        * fast/sub-pixel/file-upload-control-at-fractional-offset-expected.html: Added.
+        * platform/chromium-linux/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.png: Removed.
+        * platform/chromium-linux/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.png: Removed.
+        * platform/chromium-mac/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.png: Removed.
+        * platform/chromium-mac/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.txt: Removed.
+        * platform/chromium-win/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.png: Removed.
+        * platform/chromium-win/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.txt: Removed.
+        * platform/gtk/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.png: Removed.
+        * platform/gtk/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.txt: Removed.
+
+=======
 2012-10-16  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: add timeline instrumentation for scrolling of a layer
@@ -9,6 +50,7 @@
 
         * inspector/timeline/timeline-enum-stability-expected.txt:
 
+>>>>>>> .r132088
 2012-10-22  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Prepare mappings to moving uiSourceCodes creation out of them to workspace.
