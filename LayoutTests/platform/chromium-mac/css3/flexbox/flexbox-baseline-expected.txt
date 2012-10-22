@@ -35,7 +35,7 @@ layer at (0,0) size 800x494
     RenderBlock {DIV} at (0,100) size 800x72
       RenderText {#text} at (0,32) size 71x18
         text run at (0,32) width 71: "before text "
-      RenderFlexibleBox {DIV} at (71,4) size 152x68 [bgcolor=#D3D3D3]
+      RenderFlexibleBox {DIV} at (71,5) size 152x68 [bgcolor=#D3D3D3]
         RenderBlock {H2} at (0,19) size 114x29
           RenderText {#text} at (0,0) size 114x28
             text run at (0,0) width 114: "h2 baseline"
