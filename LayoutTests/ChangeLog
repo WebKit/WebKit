@@ -1,3 +1,10 @@
+2012-10-22  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed, further Apple Mac baselines for shadow DOM changes to RenderSlider.
+
+        * platform/mac/fast/forms/input-appearance-height-expected.txt:
+        * platform/mac/media/controls-without-preload-expected.txt:
+
 2012-10-22  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed gardening, marking fast/sub-pixel/file-upload-control-at-fractional-offset.html as failing on LION for now.
