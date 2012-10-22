@@ -1,5 +1,65 @@
 2012-10-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        [EFL] Rebaseline pixel expectations after r131941 and r131991, part 2.
+
+        * platform/efl/fast/repaint/body-background-image-expected.png:
+        * platform/efl/fast/repaint/layout-state-only-positioned-expected.png:
+        * platform/efl/fast/repaint/layout-state-relative-expected.png:
+        * platform/efl/fast/repaint/layout-state-scrolloffset-expected.png:
+        * platform/efl/fast/repaint/layout-state-scrolloffset2-expected.png:
+        * platform/efl/fast/repaint/layout-state-scrolloffset3-expected.png:
+        * platform/efl/fast/repaint/line-flow-with-floats-1-expected.png:
+        * platform/efl/fast/repaint/line-flow-with-floats-10-expected.png:
+        * platform/efl/fast/repaint/line-flow-with-floats-2-expected.png:
+        * platform/efl/fast/repaint/line-flow-with-floats-3-expected.png:
+        * platform/efl/fast/repaint/line-flow-with-floats-4-expected.png:
+        * platform/efl/fast/repaint/line-flow-with-floats-5-expected.png:
+        * platform/efl/fast/repaint/line-flow-with-floats-6-expected.png:
+        * platform/efl/fast/repaint/line-flow-with-floats-7-expected.png:
+        * platform/efl/fast/repaint/line-flow-with-floats-8-expected.png:
+        * platform/efl/fast/repaint/line-flow-with-floats-9-expected.png:
+        * platform/efl/fast/repaint/line-flow-with-floats-in-regions-expected.png:
+        * platform/efl/fast/repaint/line-in-scrolled-clipped-block-expected.png:
+        * platform/efl/fast/repaint/line-overflow-expected.png:
+        * platform/efl/fast/repaint/lines-with-layout-delta-expected.png:
+        * platform/efl/fast/repaint/list-marker-2-expected.png:
+        * platform/efl/fast/repaint/make-children-non-inline-expected.png:
+        * platform/efl/fast/repaint/moving-shadow-on-path-expected.png:
+        * platform/efl/fast/repaint/multicol-repaint-expected.png:
+        * platform/efl/fast/repaint/nested-iframe-scroll-inner-expected.png:
+        * platform/efl/fast/repaint/nested-iframe-scroll-outer-expected.png:
+        * platform/efl/fast/repaint/no-caret-repaint-in-non-content-editable-element-expected.png:
+        * platform/efl/fast/repaint/opacity-change-on-overflow-float-expected.png:
+        * platform/efl/fast/repaint/outline-child-repaint-expected.png:
+        * platform/efl/fast/repaint/outline-inset-expected.png:
+        * platform/efl/fast/repaint/outline-repaint-glitch-expected.png:
+        * platform/efl/fast/repaint/outline-shrinking-expected.png:
+        * platform/efl/fast/repaint/overflow-auto-in-overflow-auto-scrolled-expected.png:
+        * platform/efl/fast/repaint/overflow-clip-subtree-layout-expected.png: Added.
+        * platform/efl/fast/repaint/overflow-delete-line-expected.png:
+        * platform/efl/fast/repaint/overflow-flipped-writing-mode-block-in-regions-expected.png:
+        * platform/efl/fast/repaint/overflow-hidden-in-overflow-hidden-scrolled-expected.png:
+        * platform/efl/fast/repaint/overflow-hide-expected.png:
+        * platform/efl/fast/repaint/overflow-into-content-expected.png:
+        * platform/efl/fast/repaint/overflow-outline-repaint-expected.png:
+        * platform/efl/fast/repaint/overflow-scroll-delete-expected.png:
+        * platform/efl/fast/repaint/overflow-scroll-in-overflow-scroll-scrolled-expected.png:
+        * platform/efl/fast/repaint/overflow-show-expected.png:
+        * platform/efl/fast/repaint/reflection-redraw-expected.png:
+        * platform/efl/fast/repaint/reflection-repaint-test-expected.png:
+        * platform/efl/fast/repaint/region-painting-invalidation-expected.png:
+        * platform/efl/fast/repaint/region-painting-via-layout-expected.png:
+        * platform/efl/fast/repaint/rel-positioned-inline-with-overflow-expected.png:
+        * platform/efl/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.png:
+        * platform/efl/fast/repaint/repaint-across-writing-mode-boundary-expected.png:
+        * platform/efl/fast/repaint/repaint-during-scroll-expected.png:
+        * platform/efl/fast/repaint/repaint-during-scroll-with-zoom-expected.png:
+        * platform/efl/fast/repaint/repaint-resized-overflow-expected.png:
+        * platform/efl/fast/repaint/scroll-absolute-layer-with-reflection-expected.png:
+        * platform/efl/fast/repaint/scroll-fixed-layer-with-no-visible-content-expected.png:
+
+2012-10-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         [EFL] Rebaseline pixel expectations after r131941 and r131991, part 1.
 
         * platform/efl/fast/repaint/4774354-expected.png:
