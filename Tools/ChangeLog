@@ -1,3 +1,9 @@
+2012-10-21  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
+
+        Unreviewed. Updating my emails.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-10-20  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL][DRT] Implement tracking and painting repaint rectangles.

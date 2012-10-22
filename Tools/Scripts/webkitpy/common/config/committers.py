@@ -390,7 +390,7 @@ committers_unable_to_review = [
     Committer("Trey Matteson", "trey@usa.net", "trey"),
     Committer("Tristan O'Tierney", ["tristan@otierney.net", "tristan@apple.com"]),
     Committer("Vangelis Kokkevis", "vangelis@chromium.org", "vangelis"),
-    Committer("Viatcheslav Ostapenko", "ostapenko.viatcheslav@nokia.com", "ostap"),
+    Committer("Viatcheslav Ostapenko", ["ostap73@gmail.com", "v.ostapenko@samsung.com", "v.ostapenko@sisa.samsung.com"], "ostap"),
     Committer("Victor Carbune", "victor@rosedu.org", "vcarbune"),
     Committer("Victor Wang", "victorw@chromium.org", "victorw"),
     Committer("Victoria Kirst", ["vrk@chromium.org", "vrk@google.com"], "vrk"),
