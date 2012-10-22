@@ -1,3 +1,84 @@
+2012-10-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Rebaseline pixel expectations after r131941 and r131991, part 1.
+
+        * platform/efl/fast/repaint/4774354-expected.png:
+        * platform/efl/fast/repaint/4776765-expected.png:
+        * platform/efl/fast/repaint/absolute-position-changed-expected.png:
+        * platform/efl/fast/repaint/add-table-overpaint-expected.png: Removed.
+        * platform/efl/fast/repaint/background-generated-expected.png:
+        * platform/efl/fast/repaint/background-misaligned-expected.png:
+        * platform/efl/fast/repaint/backgroundSizeRepaint-expected.png:
+        * platform/efl/fast/repaint/block-layout-inline-children-float-positioned-expected.png:
+        * platform/efl/fast/repaint/block-layout-inline-children-replaced-expected.png:
+        * platform/efl/fast/repaint/block-no-inflow-children-expected.png:
+        * platform/efl/fast/repaint/block-selection-gap-in-composited-layer-expected.png:
+        * platform/efl/fast/repaint/block-selection-gap-in-table-cell-expected.png:
+        * platform/efl/fast/repaint/block-selection-gap-stale-cache-2-expected.png:
+        * platform/efl/fast/repaint/block-selection-gap-stale-cache-expected.png:
+        * platform/efl/fast/repaint/border-fit-lines-expected.png:
+        * platform/efl/fast/repaint/border-radius-repaint-expected.png:
+        * platform/efl/fast/repaint/border-repaint-glitch-expected.png:
+        * platform/efl/fast/repaint/box-shadow-dynamic-expected.png:
+        * platform/efl/fast/repaint/box-shadow-inset-repaint-expected.png:
+        * platform/efl/fast/repaint/bugzilla-3509-expected.png:
+        * platform/efl/fast/repaint/bugzilla-5699-expected.png:
+        * platform/efl/fast/repaint/bugzilla-6278-expected.png:
+        * platform/efl/fast/repaint/bugzilla-6388-expected.png:
+        * platform/efl/fast/repaint/bugzilla-6473-expected.png:
+        * platform/efl/fast/repaint/bugzilla-7235-expected.png:
+        * platform/efl/fast/repaint/button-spurious-layout-hint-expected.png:
+        * platform/efl/fast/repaint/canvas-putImageData-expected.png:
+        * platform/efl/fast/repaint/caret-outside-block-expected.png:
+        * platform/efl/fast/repaint/change-transform-expected.png:
+        * platform/efl/fast/repaint/clip-with-layout-delta-expected.png:
+        * platform/efl/fast/repaint/clipped-relative-expected.png:
+        * platform/efl/fast/repaint/containing-block-position-change-expected.png:
+        * platform/efl/fast/repaint/content-into-overflow-expected.png:
+        * platform/efl/fast/repaint/continuation-after-outline-expected.png:
+        * platform/efl/fast/repaint/control-clip-expected.png:
+        * platform/efl/fast/repaint/create-layer-repaint-expected.png:
+        * platform/efl/fast/repaint/delete-into-nested-block-expected.png:
+        * platform/efl/fast/repaint/dynamic-table-vertical-alignment-change-expected.png:
+        * platform/efl/fast/repaint/erase-overflow-expected.png:
+        * platform/efl/fast/repaint/fixed-after-scroll-expected.png:
+        * platform/efl/fast/repaint/fixed-and-absolute-position-scrolled-expected.png:
+        * platform/efl/fast/repaint/fixed-child-move-after-scroll-expected.png:
+        * platform/efl/fast/repaint/fixed-child-of-fixed-move-after-scroll-expected.png:
+        * platform/efl/fast/repaint/fixed-child-of-transformed-move-after-scroll-expected.png:
+        * platform/efl/fast/repaint/fixed-expected.png:
+        * platform/efl/fast/repaint/fixed-move-after-keyboard-scroll-expected.png:
+        * platform/efl/fast/repaint/fixed-move-after-scroll-expected.png:
+        * platform/efl/fast/repaint/fixed-position-transparency-with-overflow-expected.png:
+        * platform/efl/fast/repaint/fixed-scale-expected.png:
+        * platform/efl/fast/repaint/fixed-scroll-simple-expected.png:
+        * platform/efl/fast/repaint/fixed-table-cell-expected.png:
+        * platform/efl/fast/repaint/fixed-table-overflow-expected.png:
+        * platform/efl/fast/repaint/fixed-table-overflow-zindex-expected.png:
+        * platform/efl/fast/repaint/fixed-tranformed-expected.png:
+        * platform/efl/fast/repaint/float-in-new-block-with-layout-delta-expected.png:
+        * platform/efl/fast/repaint/float-move-during-layout-expected.png:
+        * platform/efl/fast/repaint/float-new-in-block-expected.png:
+        * platform/efl/fast/repaint/float-overflow-expected.png: Added.
+        * platform/efl/fast/repaint/float-overflow-right-expected.png: Added.
+        * platform/efl/fast/repaint/gradients-em-stops-repaint-expected.png:
+        * platform/efl/fast/repaint/iframe-scroll-repaint-expected.png:
+        * platform/efl/fast/repaint/inline-block-resize-expected.png:
+        * platform/efl/fast/repaint/inline-color-change-expected.png:
+        * platform/efl/fast/repaint/inline-horizontal-bt-overflow-expected.png:
+        * platform/efl/fast/repaint/inline-outline-repaint-expected.png:
+        * platform/efl/fast/repaint/inline-vertical-lr-overflow-expected.png:
+        * platform/efl/fast/repaint/inline-vertical-rl-overflow-expected.png:
+        * platform/efl/fast/repaint/intermediate-layout-position-clip-expected.png:
+        * platform/efl/fast/repaint/intermediate-layout-position-expected.png:
+        * platform/efl/fast/repaint/invisible-objects-expected.png:
+        * platform/efl/fast/repaint/japanese-rl-selection-clear-expected.png:
+        * platform/efl/fast/repaint/japanese-rl-selection-repaint-expected.png:
+        * platform/efl/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png:
+        * platform/efl/fast/repaint/layer-full-repaint-expected.png:
+        * platform/efl/fast/repaint/layer-hide-when-needs-layout-expected.png:
+        * platform/efl/fast/repaint/layer-visibility-expected.png:
+
 2012-10-22  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
