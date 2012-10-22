@@ -241,13 +241,13 @@ void ExclusionPolygon::computeEdgeIntersections(float y1, float y2, Vector<Exclu
     sortExclusionIntervals(result);
 }
 
-void ExclusionPolygon::getExcludedIntervals(float logicalTop, float logicalBottom, SegmentList& result) const
+void ExclusionPolygon::getExcludedIntervals(float logicalTop, float logicalHeight, SegmentList& result) const
 {
     if (isEmpty())
         return;
 
-    float y1 = minYForLogicalLine(logicalTop, logicalBottom);
-    float y2 = maxYForLogicalLine(logicalTop, logicalBottom);
+    float y1 = minYForLogicalLine(logicalTop, logicalHeight);
+    float y2 = maxYForLogicalLine(logicalTop, logicalHeight);
 
     Vector<ExclusionInterval> y1XIntervals, y2XIntervals;
     computeXIntersections(y1, y1XIntervals);
@@ -268,13 +268,13 @@ void ExclusionPolygon::getExcludedIntervals(float logicalTop, float logicalBotto
     }
 }
 
-void ExclusionPolygon::getIncludedIntervals(float logicalTop, float logicalBottom, SegmentList& result) const
+void ExclusionPolygon::getIncludedIntervals(float logicalTop, float logicalHeight, SegmentList& result) const
 {
     if (isEmpty())
         return;
 
-    float y1 = minYForLogicalLine(logicalTop, logicalBottom);
-    float y2 = maxYForLogicalLine(logicalTop, logicalBottom);
+    float y1 = minYForLogicalLine(logicalTop, logicalHeight);
+    float y2 = maxYForLogicalLine(logicalTop, logicalHeight);
 
     Vector<ExclusionInterval> y1XIntervals, y2XIntervals;
     computeXIntersections(y1, y1XIntervals);

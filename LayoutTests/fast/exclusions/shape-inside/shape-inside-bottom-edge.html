@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.internals)
+        window.internals.settings.setCSSExclusionsEnabled(true);
+</script>
+<style>
+.shape-inside {
+    position: absolute;
+    left: 0px;
+    width: 600px;
+    height: 200px;
+    -webkit-shape-inside: rectangle(50px, 50px, 400px, 100px);
+}
+
+.shape-background {
+    position: absolute;
+    left: 50px;
+    width: 400px;
+    height: 100px;
+    background-color: green;
+}
+
+#shape-background-no-overlap {
+    top: 50px;
+}
+
+#shape-inside-no-overlap {
+    top: 0px;
+    padding-top: 150px;
+}
+
+#shape-background-overlap {
+    top: 250px;
+}
+
+#shape-inside-overlap {
+    top: 200px;
+    padding-top: 149.9px;
+}
+</style>
+</head>
+
+<body>
+  <div id="shape-background-no-overlap" class="shape-background"></div>
+  <div id="shape-inside-no-overlap" class="shape-inside">This text should appear below and to the left of the green rectangle.</div>
+
+  <div id="shape-background-overlap" class="shape-background"></div>
+  <div id="shape-inside-overlap" class="shape-inside">This text should directly appear below the green rectangle.</div>
+</body>
+</html>

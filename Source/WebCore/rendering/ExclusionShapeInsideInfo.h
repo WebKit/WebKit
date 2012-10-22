@@ -73,7 +73,7 @@ public:
         ASSERT(hasSegments());
         return m_segments;
     }
-    bool computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineBottom);
+    bool computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight);
     bool lineOverlapsShapeBounds() const;
     void computeShapeSize(LayoutUnit logicalWidth, LayoutUnit logicalHeight);
     void dirtyShapeSize() { m_shapeSizeDirty = true; }
@@ -85,7 +85,7 @@ private:
     OwnPtr<ExclusionShape> m_shape;
 
     LayoutUnit m_lineTop;
-    LayoutUnit m_lineBottom;
+    LayoutUnit m_lineHeight;
     LayoutUnit m_logicalWidth;
     LayoutUnit m_logicalHeight;
 
@@ -97,7 +97,7 @@ inline bool ExclusionShapeInsideInfo::lineOverlapsShapeBounds() const
 {
     ASSERT(m_shape);
     FloatRect shapeBounds = m_shape->shapeLogicalBoundingBox();
-    return m_lineTop <= shapeBounds.maxY() && m_lineBottom >= shapeBounds.y();
+    return m_lineTop < shapeBounds.maxY() && m_lineTop + m_lineHeight >= shapeBounds.y();
 }
 
 }

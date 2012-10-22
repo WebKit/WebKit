@@ -39,14 +39,14 @@
 namespace WebCore {
 
 struct LineSegment {
-    float logicalLeft;
-    float logicalRight;
-
     LineSegment(float logicalLeft, float logicalRight)
         : logicalLeft(logicalLeft)
         , logicalRight(logicalRight)
     {
     }
+
+    float logicalLeft;
+    float logicalRight;
 };
 
 typedef Vector<LineSegment> SegmentList;
@@ -64,14 +64,13 @@ public:
     virtual ~ExclusionShape() { }
 
     virtual FloatRect shapeLogicalBoundingBox() const = 0;
-    virtual FloatRect shapeBoundingBox() const { return m_boundingBox; }
-    virtual void getIncludedIntervals(float logicalTop, float logicalBottom, SegmentList&) const = 0;
-    virtual void getExcludedIntervals(float logicalTop, float logicalBottom, SegmentList&) const = 0;
     virtual bool isEmpty() const = 0;
+    virtual void getIncludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const = 0;
+    virtual void getExcludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const = 0;
 
 protected:
-    float minYForLogicalLine(float logicalTop, float logicalBottom) const { return (m_writingMode == RightToLeftWritingMode) ? m_logicalBoxHeight - logicalBottom : logicalTop; }
-    float maxYForLogicalLine(float logicalTop, float logicalBottom) const { return (m_writingMode == RightToLeftWritingMode) ? m_logicalBoxHeight - logicalTop : logicalBottom; }
+    float minYForLogicalLine(float logicalTop, float logicalHeight) const { return (m_writingMode == RightToLeftWritingMode) ? m_logicalBoxHeight - logicalTop - logicalHeight : logicalTop; }
+    float maxYForLogicalLine(float logicalTop, float logicalHeight) const { return (m_writingMode == RightToLeftWritingMode) ? m_logicalBoxHeight - logicalTop : logicalTop + logicalHeight; }
     FloatRect internalToLogicalBoundingBox(FloatRect r) const { return (m_writingMode == RightToLeftWritingMode) ? FloatRect(r.x(), m_logicalBoxHeight - r.maxY(), r.width(), r.height()) : r; }
 
 private:

@@ -100,16 +100,16 @@ void ExclusionShapeInsideInfo::computeShapeSize(LayoutUnit logicalWidth, LayoutU
     ASSERT(m_shape);
 }
 
-bool ExclusionShapeInsideInfo::computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineBottom)
+bool ExclusionShapeInsideInfo::computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight)
 {
-    ASSERT(lineTop <= lineBottom);
+    ASSERT(lineHeight >= 0);
     m_lineTop = lineTop;
-    m_lineBottom = lineBottom;
+    m_lineHeight = lineHeight;
     m_segments.clear();
 
     if (lineOverlapsShapeBounds()) {
         ASSERT(m_shape);
-        m_shape->getIncludedIntervals(lineTop, std::min(lineBottom, shapeLogicalBottom()), m_segments);
+        m_shape->getIncludedIntervals(lineTop, std::min(lineHeight, shapeLogicalBottom() - lineTop), m_segments);
     }
     return m_segments.size();
 }

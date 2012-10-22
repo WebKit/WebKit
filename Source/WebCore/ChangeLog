@@ -1,3 +1,39 @@
+2012-10-22  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] Points on the bottom and right edges of an exclusion shape should be classified as "outside"
+        https://bugs.webkit.org/show_bug.cgi?id=98967
+
+        Reviewed by Dirk Schulze.
+
+        Changed the way lines are represented in the ExclusionShapeInsideInfo and ExclusionShape classes
+        so that they're consistent with the rendering code that depends on them.  Lines are now defined
+        by logicalTop, logicalHeight, instead of logicalTop,logicalBottom.  This a clean-up, not a change
+        in functionality. It's already covered by the existing fast/exclusions LayoutTests.
+
+        Test: fast/exclusions/shape-inside/shape-inside-bottom-edge.html
+
+        * rendering/ExclusionPolygon.cpp:
+        (WebCore::ExclusionPolygon::getExcludedIntervals):
+        (WebCore::ExclusionPolygon::getIncludedIntervals):
+        * rendering/ExclusionPolygon.h:
+        * rendering/ExclusionRectangle.cpp:
+        (WebCore::ExclusionRectangle::getExcludedIntervals):
+        (WebCore::ExclusionRectangle::getIncludedIntervals):
+        * rendering/ExclusionRectangle.h:
+        * rendering/ExclusionShape.h:
+        (LineSegment): Moved the struct fields below the constructor per webkit style.
+        (ExclusionShape):
+        (WebCore::ExclusionShape::minYForLogicalLine):
+        (WebCore::ExclusionShape::maxYForLogicalLine):
+        * rendering/ExclusionShapeInsideInfo.cpp:
+        (WebCore::ExclusionShapeInsideInfo::computeSegmentsForLine):
+        * rendering/ExclusionShapeInsideInfo.h:
+        (ExclusionShapeInsideInfo):
+        (WebCore::ExclusionShapeInsideInfo::lineOverlapsShapeBounds): Changed the test to not include
+            lines whose logicalTop is equal to the shape's top+height.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange):
+
 2012-10-22  Chris Rogers  <crogers@google.com>
 
         Update some AudioContext create() method names to latest Web Audio spec

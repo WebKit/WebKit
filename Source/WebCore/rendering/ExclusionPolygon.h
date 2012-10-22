@@ -60,9 +60,9 @@ public:
     WindRule fillRule() const { return m_fillRule; }
 
     virtual FloatRect shapeLogicalBoundingBox() const OVERRIDE { return internalToLogicalBoundingBox(m_boundingBox); }
-    virtual void getExcludedIntervals(float logicalTop, float logicalBottom, SegmentList&) const OVERRIDE;
-    virtual void getIncludedIntervals(float logicalTop, float logicalBottom, SegmentList&) const OVERRIDE;
     virtual bool isEmpty() const OVERRIDE { return m_empty; }
+    virtual void getExcludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const OVERRIDE;
+    virtual void getIncludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const OVERRIDE;
 
 private:
     float rightVertexY(unsigned) const;
