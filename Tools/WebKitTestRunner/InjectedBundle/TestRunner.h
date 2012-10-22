@@ -265,6 +265,8 @@ public:
     void queueBackNavigation(unsigned howFarBackward);
     void queueLoad(JSStringRef url, JSStringRef target);
     void queueReload();
+    void queueLoadingScript(JSStringRef script);
+    void queueNonLoadingScript(JSStringRef script);
 
 private:
     static const double waitToDumpWatchdogTimerInterval;

@@ -507,4 +507,20 @@ void InjectedBundle::queueReload()
     WKBundlePostMessage(m_bundle, messageName.get(), 0);
 }
 
+void InjectedBundle::queueLoadingScript(WKStringRef script)
+{
+    m_useWorkQueue = true;
+
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("QueueLoadingScript"));
+    WKBundlePostMessage(m_bundle, messageName.get(), script);
+}
+
+void InjectedBundle::queueNonLoadingScript(WKStringRef script)
+{
+    m_useWorkQueue = true;
+
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("QueueNonLoadingScript"));
+    WKBundlePostMessage(m_bundle, messageName.get(), script);
+}
+
 } // namespace WTR

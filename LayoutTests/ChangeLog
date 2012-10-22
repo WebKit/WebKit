@@ -1,3 +1,15 @@
+2012-10-22  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        WebKitTestRunner needs testRunner.queueLoadingScript and testRunner.queueNonLoadingScript
+        https://bugs.webkit.org/show_bug.cgi?id=42675
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskipped corresponding test cases for WK2. Put those which still fail to appropriate
+        groups.
+
+        * platform/wk2/TestExpectations:
+
 2012-10-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Rebaseline pixel expectations after r131941 and r131991, part 2.

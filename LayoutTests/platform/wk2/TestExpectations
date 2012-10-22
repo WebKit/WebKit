@@ -293,34 +293,9 @@ svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard.html
 svg/custom/manually-parsed-svg-allowed-in-dashboard.html
 svg/custom/svg-allowed-in-dashboard-object.html
 
-# WebKitTestRunner needs testRunner.queueNonLoadingScript
-# <https://bugs.webkit.org/show_bug.cgi?id=98141>
-http/tests/navigation/anchor-goback.html
-http/tests/navigation/error404-goback.html
-http/tests/navigation/javascriptlink-goback.html
-http/tests/navigation/metaredirect-goback.html
-http/tests/navigation/post-goback2.html
-http/tests/navigation/postredirect-basic.html
-http/tests/navigation/postredirect-frames.html
-http/tests/navigation/postredirect-goback1.html
-http/tests/navigation/postredirect-goback2.html
-http/tests/navigation/redirect302-goback.html
-http/tests/navigation/relativeanchor-basic.html
-http/tests/navigation/relativeanchor-frames.html
-http/tests/navigation/relativeanchor-goback.html
-http/tests/navigation/restore-form-state-https.html
-http/tests/navigation/success200-frames-loadsame.html
-http/tests/navigation/success200-goback.html
-http/tests/navigation/success200-loadsame.html
-http/tests/navigation/success200-reload.html
-http/tests/navigation/timerredirect-goback.html
-
-# WebKitTestRunner needs testRunner.queueLoadingScript
-# <https://bugs.webkit.org/show_bug.cgi?id=42675>
+# WebKitTestRunner needs testRunner.queueForwardNavigation
+# <https://bugs.webkit.org/show_bug.cgi?id=99700>
 http/tests/cache/subresource-failover-to-network.html
-http/tests/navigation/forward-and-cancel.html
-http/tests/navigation/post-goback-same-url.html
-http/tests/navigation/postredirect-reload.html
 
 # WebKitTestRunner needs layoutTestController.setCacheModel
 # <https://bugs.webkit.org/show_bug.cgi?id=42684>
@@ -748,6 +723,13 @@ http/tests/navigation/redirect302-subframeload.html
 http/tests/navigation/response204.html
 http/tests/navigation/success200-subframeload.html
 http/tests/navigation/timerredirect-subframeload.html
+
+# Redirected to unexpected page. Might be EFL port specific issue.
+http/tests/navigation/postredirect-basic.html
+http/tests/navigation/postredirect-goback1.html
+
+# Unexpected output from scrolling. Might be EFL port specific issue.
+http/tests/navigation/relativeanchor-frames.html
 
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################

@@ -29,6 +29,7 @@
 #include "PlatformWebView.h"
 #include "TestController.h"
 #include <WebKit2/WKPage.h>
+#include <WebKit2/WKRetainPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/CString.h>
 
@@ -53,8 +54,45 @@ static inline bool goToItemAtIndex(int index)
     return true;
 }
 
+class WorkQueueItem {
+public:
+    enum Type {
+        Loading,
+        NonLoading
+    };
+
+    virtual ~WorkQueueItem() { }
+    virtual Type invoke() const = 0;
+};
+
+// Required by WKPageRunJavaScriptInMainFrame().
+static void runJavaScriptFunction(WKSerializedScriptValueRef, WKErrorRef, void*)
+{
+}
+
+template <WorkQueueItem::Type type>
+class ScriptItem : public WorkQueueItem {
+public:
+    explicit ScriptItem(const String& script)
+        : m_script(AdoptWK, WKStringCreateWithUTF8CString(script.utf8().data()))
+    {
+    }
+
+    WorkQueueItem::Type invoke() const
+    {
+        WKPageRunJavaScriptInMainFrame(mainPage(), m_script.get(), 0, runJavaScriptFunction);
+        return type;
+    }
+
+    WKRetainPtr<WKStringRef> m_script;
+};
+
 WorkQueueManager::WorkQueueManager()
     : m_processing(false)
+{
+}
+
+WorkQueueManager::~WorkQueueManager()
 {
 }
 
@@ -69,7 +107,7 @@ bool WorkQueueManager::processWorkQueue()
     m_processing = false;
     while (!m_processing && !m_workQueue.isEmpty()) {
         OwnPtr<WorkQueueItem> item(m_workQueue.takeFirst());
-        m_processing = item->invoke();
+        m_processing = (item->invoke() == WorkQueueItem::Loading);
     }
 
     return !m_processing;
@@ -85,15 +123,15 @@ void WorkQueueManager::queueLoad(const String& url, const String& target)
         {
         }
 
-        bool invoke() const
+        WorkQueueItem::Type invoke() const
         {
             if (!m_target.isEmpty()) {
                 // FIXME: Use target. Some layout tests cannot pass as they rely on this functionality.
                 fprintf(stderr, "queueLoad for a specific target is not implemented.\n");
-                return false;
+                return WorkQueueItem::NonLoading;
             }
             WKPageLoadURL(mainPage(), m_url.get());
-            return true;
+            return WorkQueueItem::Loading;
         }
 
         WKRetainPtr<WKURLRef> m_url;
@@ -107,9 +145,9 @@ void WorkQueueManager::queueBackNavigation(unsigned howFarBackward)
 {
     class BackNavigationItem : public WorkQueueItem {
     public:
-        BackNavigationItem(unsigned howFarBackward) : m_howFarBackward(howFarBackward) { }
+        explicit BackNavigationItem(unsigned howFarBackward) : m_howFarBackward(howFarBackward) { }
 
-        bool invoke() const { return goToItemAtIndex(-m_howFarBackward); }
+        WorkQueueItem::Type invoke() const { return goToItemAtIndex(-m_howFarBackward) ? WorkQueueItem::Loading : WorkQueueItem::NonLoading; }
 
         unsigned m_howFarBackward;
     };
@@ -121,14 +159,24 @@ void WorkQueueManager::queueReload()
 {
     class ReloadItem : public WorkQueueItem {
     public:
-        bool invoke() const
+        WorkQueueItem::Type invoke() const
         {
             WKPageReload(mainPage());
-            return true;
+            return WorkQueueItem::Loading;
         }
     };
 
     enqueue(new ReloadItem());
+}
+
+void WorkQueueManager::queueLoadingScript(const String& script)
+{
+    enqueue(new ScriptItem<WorkQueueItem::Loading>(script));
+}
+
+void WorkQueueManager::queueNonLoadingScript(const String& script)
+{
+    enqueue(new ScriptItem<WorkQueueItem::NonLoading>(script));
 }
 
 void WorkQueueManager::enqueue(WorkQueueItem* item)

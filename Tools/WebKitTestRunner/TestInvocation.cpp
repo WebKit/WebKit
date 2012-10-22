@@ -466,6 +466,20 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "QueueLoadingScript")) {
+        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
+        WKStringRef script = static_cast<WKStringRef>(messageBody);
+        TestController::shared().workQueueManager().queueLoadingScript(toWTFString(script));
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "QueueNonLoadingScript")) {
+        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
+        WKStringRef script = static_cast<WKStringRef>(messageBody);
+        TestController::shared().workQueueManager().queueNonLoadingScript(toWTFString(script));
+        return;
+    }
+
     ASSERT_NOT_REACHED();
 }
 

@@ -852,4 +852,16 @@ void TestRunner::queueReload()
     InjectedBundle::shared().queueReload();
 }
 
+void TestRunner::queueLoadingScript(JSStringRef script)
+{
+    WKRetainPtr<WKStringRef> scriptWK = toWK(script);
+    InjectedBundle::shared().queueLoadingScript(scriptWK.get());
+}
+
+void TestRunner::queueNonLoadingScript(JSStringRef script)
+{
+    WKRetainPtr<WKStringRef> scriptWK = toWK(script);
+    InjectedBundle::shared().queueNonLoadingScript(scriptWK.get());
+}
+
 } // namespace WTR

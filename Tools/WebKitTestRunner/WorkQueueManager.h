@@ -26,7 +26,6 @@
 #ifndef WorkQueueManager_h
 #define WorkQueueManager_h
 
-#include <WebKit2/WKRetainPtr.h>
 #include <wtf/Deque.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/text/WTFString.h>
@@ -37,6 +36,7 @@ class WorkQueueManager {
     WTF_MAKE_NONCOPYABLE(WorkQueueManager);
 public:
     WorkQueueManager();
+    ~WorkQueueManager();
 
     bool isWorkQueueEmpty() const { return m_workQueue.isEmpty(); }
     void clearWorkQueue();
@@ -45,14 +45,11 @@ public:
     void queueLoad(const String& url, const String& target);
     void queueBackNavigation(unsigned howFarBackward);
     void queueReload();
+    void queueLoadingScript(const String& script);
+    void queueNonLoadingScript(const String& script);
 
-private:
-    class WorkQueueItem {
-    public:
-        virtual ~WorkQueueItem() { }
-        virtual bool invoke() const = 0; // Returns 'true' if this started a load.
-    };    
-    typedef Deque<OwnPtr<WorkQueueItem> > WorkQueue;
+private:    
+    typedef Deque<OwnPtr<class WorkQueueItem> > WorkQueue;
 
     void enqueue(WorkQueueItem*); // Adopts pointer.
 

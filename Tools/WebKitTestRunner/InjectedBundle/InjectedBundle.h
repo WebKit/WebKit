@@ -104,6 +104,8 @@ public:
     void queueBackNavigation(unsigned howFarBackward);
     void queueLoad(WKStringRef url, WKStringRef target);
     void queueReload();
+    void queueLoadingScript(WKStringRef script);
+    void queueNonLoadingScript(WKStringRef script);
 
 private:
     InjectedBundle();
