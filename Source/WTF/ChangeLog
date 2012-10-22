@@ -1,3 +1,9 @@
+2012-10-22  Simon Hausmann  <simon.hausmann@digia.com>
+
+        Unreviewed: Re-enable LLINT on Qt/Linux after r131932.
+
+        * wtf/Platform.h:
+
 2012-10-22  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: do not double count memory of objects with multiple ancestors

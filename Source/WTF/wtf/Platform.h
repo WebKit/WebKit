@@ -907,12 +907,6 @@
 #define ENABLE_LLINT 0
 #endif
 
-/* REGRESSION(r131822): It made 500+ tests crash on 32 bit platforms
- * https://bugs.webkit.org/show_bug.cgi?id=99814 */
-#if (PLATFORM(QT) && CPU(X86))
-#define ENABLE_LLINT 0
-#endif
-
 /* On some of the platforms where we have a JIT, we want to also have the 
    low-level interpreter. */
 #if !defined(ENABLE_LLINT) \
