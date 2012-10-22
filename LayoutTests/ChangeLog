@@ -1,3 +1,10 @@
+2012-10-22  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed gardening. Baselines following r132112.
+
+        * platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.png:
+        * platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt:
+
 2012-10-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Rebaseline pixel expectations after r131941 and r131991, part 4.
