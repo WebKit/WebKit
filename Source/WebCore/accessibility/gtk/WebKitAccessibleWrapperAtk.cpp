@@ -555,6 +555,8 @@ static AtkRole atkRole(AccessibilityRole role)
         return ATK_ROLE_CANVAS;
     case HorizontalRuleRole:
         return ATK_ROLE_SEPARATOR;
+    case SpinButtonRole:
+        return ATK_ROLE_SPIN_BUTTON;
     default:
         return ATK_ROLE_UNKNOWN;
     }
@@ -923,7 +925,7 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
         interfaceMask |= 1 << WAI_DOCUMENT;
 
     // Value
-    if (role == SliderRole)
+    if (role == SliderRole || role == SpinButtonRole)
         interfaceMask |= 1 << WAI_VALUE;
 
     return interfaceMask;

@@ -1,5 +1,18 @@
 2012-09-21  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        REGRESSION (r127882): accessibility/spinbutton-value.html failing on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=96196
+
+        Reviewed by Martin Robinson.
+
+        The "regression" is that a new test was added but the support was missing
+        in the Gtk port for spin buttons.
+
+        * platform/gtk/TestExpectations: Unskip the new test.
+        * platform/gtk/accessibility/spinbutton-value-expected.txt: Added.
+
+2012-09-21  Joanmarie Diggs  <jdiggs@igalia.com>
+
         [GTK] [Stable] Infinite recursion in WebCore::AXObjectCache::getOrCreate
         https://bugs.webkit.org/show_bug.cgi?id=96932
 
