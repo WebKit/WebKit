@@ -1,3 +1,26 @@
+2012-10-22  Adam Barth  <abarth@webkit.org>
+
+        [V8] Vastly simplify V8GCController's NodeVisitor
+        https://bugs.webkit.org/show_bug.cgi?id=99884
+
+        Reviewed by Kentaro Hara.
+
+        NodeVisitor was vastly more complicated than necessary.
+
+        This patch improve performance on these new gc benchmarks:
+
+        gc-forest: 1.14% better
+        gc-mini-tree: 5.09% better
+        gc-tree: 4.60% better
+
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::ObjectVisitor::visitDOMWrapper):
+        (WebCore::addImplicitReferencesForNodeWithEventListeners):
+        (WebCore::rootForGC):
+        (WebCore::NodeVisitor::visitDOMWrapper):
+        (WebCore::NodeVisitor::applyGrouping):
+        (NodeVisitor):
+
 2012-10-22  Emil A Eklund  <eae@chromium.org>
 
         Change baselinePosition and maxAscent/maxDescent to int

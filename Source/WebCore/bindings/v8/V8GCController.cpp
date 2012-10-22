@@ -101,123 +101,6 @@ public:
     }
 };
 
-// Implements v8::RetainedObjectInfo.
-class UnspecifiedGroup : public RetainedObjectInfo {
-public:
-    explicit UnspecifiedGroup(void* object)
-        : m_object(object)
-    {
-        ASSERT(m_object);
-    }
-    
-    virtual void Dispose() { delete this; }
-  
-    virtual bool IsEquivalent(v8::RetainedObjectInfo* other)
-    {
-        ASSERT(other);
-        return other == this || static_cast<WebCore::RetainedObjectInfo*>(other)->GetEquivalenceClass() == this->GetEquivalenceClass();
-    }
-
-    virtual intptr_t GetHash()
-    {
-        return PtrHash<void*>::hash(m_object);
-    }
-    
-    virtual const char* GetLabel()
-    {
-        return "Object group";
-    }
-
-    virtual intptr_t GetEquivalenceClass()
-    {
-        return reinterpret_cast<intptr_t>(m_object);
-    }
-
-private:
-    void* m_object;
-};
-
-class GroupId {
-public:
-    GroupId() : m_type(NullType), m_groupId(0) {}
-    GroupId(Node* node) : m_type(NodeType), m_node(node) {}
-    GroupId(void* other) : m_type(OtherType), m_other(other) {}
-    bool operator!() const { return m_type == NullType; }
-    uintptr_t groupId() const { return m_groupId; }
-    RetainedObjectInfo* createRetainedObjectInfo() const
-    {
-        switch (m_type) {
-        case NullType:
-            return 0;
-        case NodeType:
-            return new RetainedDOMInfo(m_node);
-        case OtherType:
-            return new UnspecifiedGroup(m_other);
-        default:
-            return 0;
-        }
-    }
-    
-private:
-    enum Type {
-        NullType,
-        NodeType,
-        OtherType
-    };
-    Type m_type;
-    union {
-        uintptr_t m_groupId;
-        Node* m_node;
-        void* m_other;
-    };
-};
-
-class GrouperItem {
-public:
-    GrouperItem(GroupId groupId, v8::Persistent<v8::Object> wrapper) : m_groupId(groupId), m_wrapper(wrapper) {}
-    uintptr_t groupId() const { return m_groupId.groupId(); }
-    RetainedObjectInfo* createRetainedObjectInfo() const { return m_groupId.createRetainedObjectInfo(); }
-    v8::Persistent<v8::Object> wrapper() const { return m_wrapper; }
-
-private:
-    GroupId m_groupId;
-    v8::Persistent<v8::Object> m_wrapper;
-};
-
-bool operator<(const GrouperItem& a, const GrouperItem& b)
-{
-    return a.groupId() < b.groupId();
-}
-
-typedef Vector<GrouperItem> GrouperList;
-
-// If the node is in document, put it in the ownerDocument's object group.
-//
-// If an image element was created by JavaScript "new Image",
-// it is not in a document. However, if the load event has not
-// been fired (still onloading), it is treated as in the document.
-//
-// Otherwise, the node is put in an object group identified by the root
-// element of the tree to which it belongs.
-static GroupId calculateGroupId(Node* node)
-{
-    if (node->inDocument() || (node->hasTagName(HTMLNames::imgTag) && static_cast<HTMLImageElement*>(node)->hasPendingActivity()))
-        return GroupId(node->document());
-
-    Node* root = node;
-    if (node->isAttributeNode()) {
-        root = static_cast<Attr*>(node)->ownerElement();
-        // If the attribute has no element, no need to put it in the group,
-        // because it'll always be a group of 1.
-        if (!root)
-            return GroupId();
-    }
-    while (Node* parent = root->parentOrHostNode())
-        root = parent;
-
-    return GroupId(root);
-}
-
 class ObjectVisitor : public DOMWrapperMap<void>::Visitor {
 public:
     void visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)
@@ -226,74 +109,100 @@ public:
     }
 };
 
+static void addImplicitReferencesForNodeWithEventListeners(Node* node, v8::Persistent<v8::Object> wrapper)
+{
+    ASSERT(node->hasEventListeners());
+
+    Vector<v8::Persistent<v8::Value> > listeners;
+
+    EventListenerIterator iterator(node);
+    while (EventListener* listener = iterator.nextListener()) {
+        if (listener->type() != EventListener::JSEventListenerType)
+            continue;
+        V8AbstractEventListener* v8listener = static_cast<V8AbstractEventListener*>(listener);
+        if (!v8listener->hasExistingListenerObject())
+            continue;
+        listeners.append(v8listener->existingListenerObjectPersistentHandle());
+    }
+
+    if (listeners.isEmpty())
+        return;
+
+    v8::V8::AddImplicitReferences(wrapper, listeners.data(), listeners.size());
+}
+
+static Node* rootForGC(Node* node)
+{
+    if (node->inDocument() || (node->hasTagName(HTMLNames::imgTag) && static_cast<HTMLImageElement*>(node)->hasPendingActivity()))
+        return node->document();
+
+    if (node->isAttributeNode()) {
+        node = static_cast<Attr*>(node)->ownerElement();
+        if (!node)
+            return 0;
+    }
+
+    while (Node* parent = node->parentOrHostNode())
+        node = parent;
+
+    return node;
+}
+
+class ImplicitConnection {
+public:
+    ImplicitConnection(Node* root, v8::Persistent<v8::Value> wrapper)
+        : m_root(root)
+        , m_wrapper(wrapper)
+    {
+    }
+
+    Node* root() const { return m_root; }
+    v8::Persistent<v8::Value> wrapper() const { return m_wrapper; }
+
+public:
+    Node* m_root;
+    v8::Persistent<v8::Value> m_wrapper;
+};
+
+bool operator<(const ImplicitConnection& left, const ImplicitConnection& right)
+{
+    return left.root() < right.root();
+}
+
 class NodeVisitor : public DOMWrapperMap<Node>::Visitor {
 public:
     void visitDOMWrapper(DOMDataStore*, Node* node, v8::Persistent<v8::Object> wrapper)
     {
-        if (node->hasEventListeners()) {
-            Vector<v8::Persistent<v8::Value> > listeners;
-            EventListenerIterator iterator(node);
-            while (EventListener* listener = iterator.nextListener()) {
-                if (listener->type() != EventListener::JSEventListenerType)
-                    continue;
-                V8AbstractEventListener* v8listener = static_cast<V8AbstractEventListener*>(listener);
-                if (!v8listener->hasExistingListenerObject())
-                    continue;
-                listeners.append(v8listener->existingListenerObjectPersistentHandle());
-            }
-            if (!listeners.isEmpty())
-                v8::V8::AddImplicitReferences(wrapper, listeners.data(), listeners.size());
-        }
+        if (node->hasEventListeners())
+            addImplicitReferencesForNodeWithEventListeners(node, wrapper);
 
-        GroupId groupId = calculateGroupId(node);
-        if (!groupId)
+        Node* root = rootForGC(node);
+        if (!root)
             return;
-        m_grouper.append(GrouperItem(groupId, wrapper));
+        m_connections.append(ImplicitConnection(root, wrapper));
     }
 
     void applyGrouping()
     {
-        // Group by sorting by the group id.
-        std::sort(m_grouper.begin(), m_grouper.end());
+        std::sort(m_connections.begin(), m_connections.end());
+        Vector<v8::Persistent<v8::Value> > group;
+        size_t i = 0;
+        while (i < m_connections.size()) {
+            Node* root = m_connections[i].root();
 
-        for (size_t i = 0; i < m_grouper.size(); ) {
-            // Seek to the next key (or the end of the list).
-            size_t nextKeyIndex = m_grouper.size();
-            for (size_t j = i; j < m_grouper.size(); ++j) {
-                if (m_grouper[i].groupId() != m_grouper[j].groupId()) {
-                    nextKeyIndex = j;
-                    break;
-                }
-            }
-
-            ASSERT(nextKeyIndex > i);
-
-            // We only care about a group if it has more than one object. If it only
-            // has one object, it has nothing else that needs to be kept alive.
-            if (nextKeyIndex - i <= 1) {
-                i = nextKeyIndex;
-                continue;
-            }
-
-            size_t rootIndex = i;
-            
-            Vector<v8::Persistent<v8::Value> > group;
-            group.reserveCapacity(nextKeyIndex - i);
-            for (; i < nextKeyIndex; ++i) {
-                v8::Persistent<v8::Value> wrapper = m_grouper[i].wrapper();
-                if (!wrapper.IsEmpty())
-                    group.append(wrapper);
-            }
+            do {
+                group.append(m_connections[i++].wrapper());
+            } while (i < m_connections.size() && root == m_connections[i].root());
 
             if (group.size() > 1)
-                v8::V8::AddObjectGroup(&group[0], group.size(), m_grouper[rootIndex].createRetainedObjectInfo());
+                v8::V8::AddObjectGroup(group.data(), group.size(), new RetainedDOMInfo(root));
 
-            ASSERT(i == nextKeyIndex);
+            group.shrink(0);
         }
     }
 
 private:
-    GrouperList m_grouper;
+    Vector<ImplicitConnection> m_connections;
 };
 
 // Create object groups for DOM tree nodes.

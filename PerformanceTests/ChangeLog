@@ -1,3 +1,16 @@
+2012-10-22  Adam Barth  <abarth@webkit.org>
+
+        [V8] Vastly simplify V8GCController's NodeVisitor
+        https://bugs.webkit.org/show_bug.cgi?id=99884
+
+        Reviewed by Kentaro Hara.
+
+        Adds some performance tests for the garbage collector.
+
+        * Bindings/gc-forest.html: Added.
+        * Bindings/gc-mini-tree.html: Added.
+        * Bindings/gc-tree.html: Added.
+
 2012-10-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Bump up the number of iterations of html5-full-render to 5
