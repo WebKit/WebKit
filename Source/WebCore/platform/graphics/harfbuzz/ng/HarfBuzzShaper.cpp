@@ -234,8 +234,8 @@ bool HarfBuzzShaper::shape(GlyphBuffer* glyphBuffer)
         return false;
     m_totalWidth = roundf(m_totalWidth);
 
-    if (glyphBuffer)
-        fillGlyphBuffer(glyphBuffer);
+    if (glyphBuffer && !fillGlyphBuffer(glyphBuffer))
+        return false;
 
     return true;
 }
@@ -432,7 +432,7 @@ void HarfBuzzShaper::fillGlyphBufferFromHarfBuzzRun(GlyphBuffer* glyphBuffer, Ha
     }
 }
 
-void HarfBuzzShaper::fillGlyphBuffer(GlyphBuffer* glyphBuffer)
+bool HarfBuzzShaper::fillGlyphBuffer(GlyphBuffer* glyphBuffer)
 {
     unsigned numRuns = m_harfbuzzRuns.size();
     if (m_run.rtl()) {
@@ -450,6 +450,7 @@ void HarfBuzzShaper::fillGlyphBuffer(GlyphBuffer* glyphBuffer)
             fillGlyphBufferFromHarfBuzzRun(glyphBuffer, currentRun, firstOffsetOfNextRun);
         }
     }
+    return glyphBuffer->size();
 }
 
 int HarfBuzzShaper::offsetForPosition(float targetX)

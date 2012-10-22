@@ -1,3 +1,20 @@
+2012-10-22  Kenichi Ishibashi  <bashi@chromium.org>
+
+        HarfBuzzShaper::shape() should return false when it adds no glyph to GlyphBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=99966
+
+        Reviewed by Kent Tamura.
+
+        If no glyph is added to GlyphBuffer, HarfBuzzShaper::shape() returns false.
+
+        No new tests. Confirmed the fix by using Address Sanitizer.
+
+        * platform/graphics/harfbuzz/ng/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::shape):
+        (WebCore::HarfBuzzShaper::fillGlyphBuffer): Returns false when glyphBuffer.size() == 0
+        * platform/graphics/harfbuzz/ng/HarfBuzzShaper.h:
+        (HarfBuzzShaper):
+
 2012-10-22  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] ASSERT triggered when we try reprojecting fallback elements.

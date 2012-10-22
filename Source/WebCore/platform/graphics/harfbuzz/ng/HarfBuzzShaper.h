@@ -103,7 +103,7 @@ private:
 
     bool collectHarfBuzzRuns();
     bool shapeHarfBuzzRuns();
-    void fillGlyphBuffer(GlyphBuffer*);
+    bool fillGlyphBuffer(GlyphBuffer*);
     void fillGlyphBufferFromHarfBuzzRun(GlyphBuffer*, HarfBuzzRun*, FloatPoint& firstOffsetOfNextRun);
     void setGlyphPositionsForHarfBuzzRun(HarfBuzzRun*, hb_buffer_t*);
 
