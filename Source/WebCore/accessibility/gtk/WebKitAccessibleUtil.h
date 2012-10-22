@@ -37,6 +37,10 @@ void contentsRelativeToAtkCoordinateType(WebCore::AccessibilityObject*, AtkCoord
 
 const char* returnString(const String&);
 
+String accessibilityTitle(WebCore::AccessibilityObject*);
+
+String accessibilityDescription(WebCore::AccessibilityObject*);
+
 bool selectionBelongsToObject(WebCore::AccessibilityObject*, WebCore::VisibleSelection&);
 
 #endif // WebKitAccessibleUtil_h

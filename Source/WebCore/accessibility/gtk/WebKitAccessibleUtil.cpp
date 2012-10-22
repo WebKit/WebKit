@@ -85,6 +85,65 @@ const char* returnString(const String& str)
     return returnedString.data();
 }
 
+// FIXME: Different kinds of elements are putting the title tag to use
+// in different AX fields. This might not be 100% correct but we will
+// keep it now in order to achieve consistency with previous behavior.
+static bool titleTagShouldBeUsedInDescriptionField(AccessibilityObject* coreObject)
+{
+    return (coreObject->isLink() && !coreObject->isImageMapLink()) || coreObject->isImage();
+}
+
+// This should be the "visible" text that's actually on the screen if possible.
+// If there's alternative text, that can override the title.
+String accessibilityTitle(AccessibilityObject* coreObject)
+{
+    Vector<AccessibilityText> textOrder;
+    coreObject->accessibilityText(textOrder);
+
+    unsigned length = textOrder.size();
+    for (unsigned k = 0; k < length; k++) {
+        const AccessibilityText& text = textOrder[k];
+
+        // Once we encounter visible text, or the text from our children that should be used foremost.
+        if (text.textSource == VisibleText || text.textSource == ChildrenText)
+            return text.text;
+
+        // If there's an element that labels this object and it's not exposed, then we should use
+        // that text as our title.
+        if (text.textSource == LabelByElementText && !coreObject->exposesTitleUIElement())
+            return text.text;
+
+        // Elements of role ToolbarRole will return its title as AlternativeText.
+        if (coreObject->roleValue() == ToolbarRole && text.textSource == AlternativeText)
+            return text.text;
+
+        // FIXME: The title tag is used in certain cases for the title. This usage should
+        // probably be in the description field since it's not "visible".
+        if (text.textSource == TitleTagText && !titleTagShouldBeUsedInDescriptionField(coreObject))
+            return text.text;
+    }
+    return String();
+}
+
+String accessibilityDescription(AccessibilityObject* coreObject)
+{
+    Vector<AccessibilityText> textOrder;
+    coreObject->accessibilityText(textOrder);
+
+    unsigned length = textOrder.size();
+    for (unsigned k = 0; k < length; k++) {
+        const AccessibilityText& text = textOrder[k];
+
+        if (text.textSource == AlternativeText)
+            return text.text;
+
+        if (text.textSource == TitleTagText && titleTagShouldBeUsedInDescriptionField(coreObject))
+            return text.text;
+    }
+
+    return String();
+}
+
 bool selectionBelongsToObject(AccessibilityObject* coreObject, VisibleSelection& selection)
 {
     if (!coreObject || !coreObject->isAccessibilityRenderObject())

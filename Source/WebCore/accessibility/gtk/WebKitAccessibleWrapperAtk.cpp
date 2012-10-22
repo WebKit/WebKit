@@ -141,7 +141,7 @@ static const gchar* webkitAccessibleGetName(AtkObject* object)
 
     // Nothing worked so far, try with the AccessibilityObject's
     // title() before going ahead with stringValue().
-    String axTitle = coreObject->title();
+    String axTitle = accessibilityTitle(coreObject);
     if (!axTitle.isEmpty())
         return returnString(axTitle);
 
@@ -155,7 +155,7 @@ static const gchar* webkitAccessibleGetDescription(AtkObject* object)
     if (coreObject->isAccessibilityRenderObject())
         node = coreObject->node();
     if (!node || !node->isHTMLElement() || coreObject->ariaRoleAttribute() != UnknownRole)
-        return returnString(coreObject->accessibilityDescription());
+        return returnString(accessibilityDescription(coreObject));
 
     // atk_table_get_summary returns an AtkObject. We have no summary object, so expose summary here.
     if (coreObject->roleValue() == TableRole) {
@@ -170,7 +170,7 @@ static const gchar* webkitAccessibleGetDescription(AtkObject* object)
     if (!title.isEmpty())
         return returnString(title);
 
-    return returnString(coreObject->accessibilityDescription());
+    return returnString(accessibilityDescription(coreObject));
 }
 
 static void setAtkRelationSetFromCoreObject(AccessibilityObject* coreObject, AtkRelationSet* relationSet)

@@ -1,3 +1,31 @@
+2012-10-22  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Don't use deprecated AccessibilityObject methods after r99502
+        https://bugs.webkit.org/show_bug.cgi?id=99985
+
+        Reviewed by Chris Fleizach.
+
+        Update callers for AccessibilityObject's title() and
+        accessibilityDescription() so they now use AccessibilityText.
+
+        * accessibility/gtk/WebKitAccessibleUtil.cpp:
+        (titleTagShouldBeUsedInDescriptionField): Internal helper function.
+        (accessibilityTitle): New helper function, returns an String with
+        the title for a AccessibilityObject, using AccessibleText.
+        (accessibilityDescription): New helper function, returns an String with
+        the description for a AccessibilityObject, using AccessibleText.
+        * accessibility/gtk/WebKitAccessibleUtil.h: Added public
+        declarations for accessibilityTitle and accessibilityDescription.
+
+        * accessibility/gtk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetName): Use new helpers for retrieving the title.
+        (webkitAccessibleGetDescription): Use new helpers for retrieving
+        the title and description.
+
+        * accessibility/gtk/WebKitAccessibleInterfaceImage.cpp:
+        (webkitAccessibleImageGetImageDescription): Use new helpers for
+        retrieving the title.
+
 2012-10-16  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: add timeline instrumentation for scrolling of a layer

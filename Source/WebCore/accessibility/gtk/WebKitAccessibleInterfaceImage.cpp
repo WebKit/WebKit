@@ -54,7 +54,7 @@ static void webkitAccessibleImageGetImagePosition(AtkImage* image, gint* x, gint
 
 static const gchar* webkitAccessibleImageGetImageDescription(AtkImage* image)
 {
-    return returnString(core(image)->accessibilityDescription());
+    return returnString(accessibilityDescription(core(image)));
 }
 
 static void webkitAccessibleImageGetImageSize(AtkImage* image, gint* width, gint* height)
