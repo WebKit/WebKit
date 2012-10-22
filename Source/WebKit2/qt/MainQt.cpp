@@ -24,7 +24,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <qglobal.h>
+
+#if defined(QT_NO_WIDGETS)
+#include <QGuiApplication>
+typedef QGuiApplication ApplicationType;
+#else
 #include <QApplication>
+typedef QApplication ApplicationType;
+#endif
 
 #include <stdio.h>
 #if !defined(NDEBUG) && defined(Q_OS_UNIX)
@@ -84,5 +92,5 @@ int main(int argc, char** argv)
     if (!suppressOutput.isEmpty() && suppressOutput != "0")
         qInstallMessageHandler(messageHandler);
 
-    return WebKit::WebProcessMainQt(new QApplication(argc, argv));
+    return WebKit::WebProcessMainQt(new ApplicationType(argc, argv));
 }

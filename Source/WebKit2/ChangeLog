@@ -1,3 +1,17 @@
+2012-10-22  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Fix build without QtWidgets
+        https://bugs.webkit.org/show_bug.cgi?id=99981
+
+        Reviewed by Tor Arne Vestbø.
+
+        Make it possible to compile WebProcess without QtWidgets by instantiating a
+        QGuiApplication instead of a QApplication if we're built without widgets.
+
+        * WebProcess.pro:
+        * qt/MainQt.cpp:
+        (main):
+
 2012-10-22  Ryuan Choi  <ryuan.choi@gmail.com>
 
         [EFL] pc files should use DATA_INSTALL_DIR for datadir

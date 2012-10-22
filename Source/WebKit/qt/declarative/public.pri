@@ -24,7 +24,7 @@ contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
 
 wince*:LIBS += $$QMAKE_LIBS_GUI
 
-QT += webkitwidgets webkitwidgets-private widgets quick quick-private
+QT += webkitwidgets webkitwidgets-private quick quick-private
 
 WEBKIT += wtf
 
