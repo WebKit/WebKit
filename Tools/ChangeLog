@@ -1,3 +1,16 @@
+2012-10-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [WTR] Properly initialize TestRunner::m_dumpSelectionRect.
+        https://bugs.webkit.org/show_bug.cgi?id=99970
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Follow-up to r131476: actually initialize m_dumpSelectionRect to
+        some value to avoid some flakyness in the tests.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::TestRunner):
+
 2012-10-22  Tor Arne Vestbø  <tor.arne.vestbo@digia.com>
 
         [Qt] Don't build any of the tools in production_build
