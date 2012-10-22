@@ -1,3 +1,11 @@
+2012-10-22  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Fixing expectations for fast/dom/gc-acid3.html to pass the linting.
+
+        * platform/gtk/TestExpectations:
+
 2012-10-22  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Treat dynamic anonymous scripts as other anonymous and fix anonymous script editing and breakpoints.

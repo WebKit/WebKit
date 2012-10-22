@@ -457,7 +457,7 @@ webkit.org/b/99020 [ Debug ] fast/css/style-scoped/style-scoped-attach.html [ Cr
 webkit.org/b/99452 [ Debug ] platform/gtk/fonts/font-face-with-complex-text.html [ Crash ]
 
 webkit.org/b/98722 [ Debug ] fast/dom/gc-acid3.html [ Crash Pass ]
-webkit.org/b/98722 [ Debug ] http/tests/misc/acid3.html [ Crash Pass ]
+webkit.org/b/98722 [ Debug ] http/tests/misc/acid3.html [ Crash Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -772,7 +772,7 @@ Bug(rdar6727495) http/tests/loading/text-content-type-with-binary-extension.html
 Bug(GTK) http/tests/media/video-play-stall-seek.html [ Skip ]
 Bug(GTK) http/tests/media/video-play-stall.html [ Failure Slow ]
 
-Bug(GTK) http/tests/misc/acid3.html [ Failure ]
+Bug(GTK) [ Release ] http/tests/misc/acid3.html [ Failure ]
 Bug(GTK) http/tests/misc/policy-delegate-called-twice.html [ Failure ]
 Bug(GTK) http/tests/misc/redirect-to-external-url.html [ Failure ]
 Bug(GTK) http/tests/misc/window-dot-stop.html [ Failure ]
