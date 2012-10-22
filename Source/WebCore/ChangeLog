@@ -1,3 +1,16 @@
+2012-10-22  Michael Saboff  <msaboff@apple.com>
+
+        r131955 is has improper function call in LinkHashChromium.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=100008
+
+        Reviewed by Alexey Proskuryakov.
+
+        Followup fix to r131955 for chromium platform.  Added call to 
+        (const UChar*, unsigned) version of visitedLinkHash from String& version.
+
+        * platform/chromium/LinkHashChromium.cpp:
+        (WebCore::visitedLinkHash):
+
 2012-10-22  Aaron Colwell  <acolwell@chromium.org>
 
         webkitsourceopen event doesn't always fire
