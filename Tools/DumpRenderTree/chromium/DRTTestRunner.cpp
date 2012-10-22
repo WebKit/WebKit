@@ -36,6 +36,7 @@
 #include "DRTDevToolsAgent.h"
 #include "MockWebSpeechInputController.h"
 #include "MockWebSpeechRecognizer.h"
+#include "Task.h"
 #include "TestShell.h"
 #include "WebAnimationController.h"
 #include "WebBindings.h"
@@ -83,6 +84,7 @@
 
 using namespace WebCore;
 using namespace WebKit;
+using namespace WebTestRunner;
 using namespace std;
 
 class EmptyWebDeliveredIntentClient : public WebKit::WebDeliveredIntentClient {
@@ -2114,10 +2116,10 @@ void DRTTestRunner::setTextSubpixelPositioning(const CppArgumentList& arguments,
     result->setNull();
 }
 
-class InvokeCallbackTask : public MethodTask<DRTTestRunner> {
+class InvokeCallbackTask : public WebMethodTask<DRTTestRunner> {
 public:
     InvokeCallbackTask(DRTTestRunner* object, PassOwnArrayPtr<CppVariant> callbackArguments, uint32_t numberOfArguments)
-        : MethodTask<DRTTestRunner>(object)
+        : WebMethodTask<DRTTestRunner>(object)
         , m_callbackArguments(callbackArguments)
         , m_numberOfArguments(numberOfArguments)
     {

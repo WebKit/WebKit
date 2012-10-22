@@ -38,9 +38,9 @@
 #define EventSender_h
 
 #include "CppBoundClass.h"
-#include "Task.h"
 #include "WebDragOperation.h"
 #include "WebInputEvent.h"
+#include "WebTask.h"
 #include "platform/WebPoint.h"
 
 namespace WebKit {
@@ -131,7 +131,7 @@ public:
     CppVariant wmSysDeadChar;
 #endif
 
-    TaskList* taskList() { return &m_taskList; }
+    WebTaskList* taskList() { return &m_taskList; }
 
 private:
     WebKit::WebView* webview() { return m_webView; }
@@ -165,7 +165,7 @@ private:
     // Handle a request to send a wheel event.
     void handleMouseWheel(const CppArgumentList&, CppVariant*, bool continuous);
 
-    TaskList m_taskList;
+    WebTaskList m_taskList;
 
     TestDelegate* m_delegate;
     WebKit::WebView* m_webView;

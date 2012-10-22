@@ -31,8 +31,8 @@
 #ifndef DRTDevToolsClient_h
 #define DRTDevToolsClient_h
 
-#include "TestRunner/src/Task.h"
 #include "WebDevToolsFrontendClient.h"
+#include "WebTask.h"
 #include "platform/WebString.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
@@ -64,21 +64,21 @@ public:
     void asyncCall(const WebKit::WebString& args);
 
     void allMessagesProcessed();
-    TaskList* taskList() { return &m_taskList; }
+    WebTestRunner::WebTaskList* taskList() { return &m_taskList; }
 
  private:
     void call(const WebKit::WebString& args);
-    class AsyncCallTask: public MethodTask<DRTDevToolsClient> {
+    class AsyncCallTask: public WebTestRunner::WebMethodTask<DRTDevToolsClient> {
     public:
         AsyncCallTask(DRTDevToolsClient* object, const WebKit::WebString& args)
-            : MethodTask<DRTDevToolsClient>(object), m_args(args) { }
+            : WebTestRunner::WebMethodTask<DRTDevToolsClient>(object), m_args(args) { }
         virtual void runIfValid() { m_object->call(m_args); }
 
     private:
         WebKit::WebString m_args;
     };
 
-    TaskList m_taskList;
+    WebTestRunner::WebTaskList m_taskList;
     WebKit::WebView* m_webView;
     DRTDevToolsAgent* m_drtDevToolsAgent;
     WTF::OwnPtr<WebKit::WebDevToolsFrontend> m_webDevToolsFrontend;

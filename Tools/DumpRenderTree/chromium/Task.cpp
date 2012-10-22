@@ -32,48 +32,48 @@
 #include "Task.h"
 
 #include "WebKit.h"
+#include "WebTask.h"
 #include "platform/WebKitPlatformSupport.h"
+#include "webkit/support/webkit_support.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
-WebTask::WebTask(TaskList* list)
-    : m_taskList(list)
-{
-    m_taskList->registerTask(this);
-}
+using namespace WebKit;
+using namespace WebTestRunner;
 
-WebTask::~WebTask()
-{
-    if (m_taskList)
-        m_taskList->unregisterTask(this);
-}
+namespace {
 
-void TaskList::unregisterTask(WebTask* task)
-{
-    size_t index = m_tasks.find(task);
-    if (index != notFound)
-        m_tasks.remove(index);
-}
-
-void TaskList::revokeAll()
-{
-    while (!m_tasks.isEmpty())
-        m_tasks[0]->cancel();
-}
-
-static void invokeTask(void* context)
+void invokeTask(void* context)
 {
     WebTask* task = static_cast<WebTask*>(context);
     task->run();
     delete task;
 }
 
+class TaskWrapper : public webkit_support::TaskAdaptor {
+public:
+    explicit TaskWrapper(WebTask* task)
+        : m_task(adoptPtr(task))
+    {
+    }
+    virtual ~TaskWrapper() { }
+    virtual void Run()
+    {
+        m_task->run();
+    }
+
+private:
+    OwnPtr<WebTask> m_task;
+};
+
+}
+
 void postTask(WebTask* task)
 {
-    WebKit::webKitPlatformSupport()->callOnMainThread(invokeTask, static_cast<void*>(task));
+    webKitPlatformSupport()->callOnMainThread(invokeTask, static_cast<void*>(task));
 }
 
-void postDelayedTask(WebTask* task, int64_t ms)
+void postDelayedTask(WebTask* task, long long ms)
 {
-    webkit_support::PostDelayedTask(task, ms);
+    webkit_support::PostDelayedTask(new TaskWrapper(task), ms);
 }
-
-

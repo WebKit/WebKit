@@ -35,6 +35,7 @@
 #include "MockGrammarCheck.h"
 #include "MockWebSpeechInputController.h"
 #include "MockWebSpeechRecognizer.h"
+#include "Task.h"
 #include "TestNavigationController.h"
 #include "TestShell.h"
 #include "TestWebPlugin.h"
@@ -88,6 +89,7 @@
 
 using namespace WebCore;
 using namespace WebKit;
+using namespace WebTestRunner;
 using namespace std;
 
 static const int screenWidth = 1920;
@@ -1481,6 +1483,16 @@ void WebViewHost::setGamepadData(const WebGamepads& pads)
 void WebViewHost::printMessage(const std::string& message) const
 {
     printf("%s", message.c_str());
+}
+
+void WebViewHost::postTask(WebTask* task)
+{
+    ::postTask(task);
+}
+
+void WebViewHost::postDelayedTask(WebTask* task, long long ms)
+{
+    ::postDelayedTask(task, ms);
 }
 
 // Public functions -----------------------------------------------------------

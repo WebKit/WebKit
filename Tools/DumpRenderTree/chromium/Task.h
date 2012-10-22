@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,37 +28,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebTestDelegate_h
-#define WebTestDelegate_h
-
-#include "platform/WebString.h"
-#include "platform/WebVector.h"
-
-namespace WebKit {
-struct WebContextMenuData;
-class WebGamepads;
-}
+#ifndef Task_h
+#define Task_h
 
 namespace WebTestRunner {
-
 class WebTask;
-
-class WebTestDelegate {
-public:
-    virtual void clearContextMenuData() = 0;
-    virtual void clearEditCommand() = 0;
-    virtual void fillSpellingSuggestionList(const WebKit::WebString& word, WebKit::WebVector<WebKit::WebString>* suggestions) = 0;
-    virtual void setEditCommand(const std::string& name, const std::string& value) = 0;
-    virtual WebKit::WebContextMenuData* lastContextMenuData() const = 0;
-    virtual void setGamepadData(const WebKit::WebGamepads&) = 0;
-    virtual void printMessage(const std::string& message) const = 0;
-
-    // The delegate takes ownership of the WebTask objects and is responsible
-    // for deleting them.
-    virtual void postTask(WebTask*) = 0;
-    virtual void postDelayedTask(WebTask*, long long ms) = 0;
-};
-
 }
 
-#endif // WebTestDelegate_h
+void postTask(WebTestRunner::WebTask*);
+void postDelayedTask(WebTestRunner::WebTask*, long long ms);
+
+#endif // Task_h

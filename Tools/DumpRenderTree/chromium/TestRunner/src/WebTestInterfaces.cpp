@@ -64,6 +64,8 @@ public:
     virtual WebContextMenuData* lastContextMenuData() const;
     virtual void setGamepadData(const WebGamepads&);
     virtual void printMessage(const std::string& message) const;
+    virtual void postTask(WebTask*);
+    virtual void postDelayedTask(WebTask*, long long ms);
 
 private:
     TestInterfaces m_interfaces;
@@ -127,6 +129,16 @@ void WebTestInterfaces::Internal::setGamepadData(const WebGamepads& pads)
 void WebTestInterfaces::Internal::printMessage(const std::string& message) const
 {
     m_delegate->printMessage(message);
+}
+
+void WebTestInterfaces::Internal::postTask(WebTask* task)
+{
+    m_delegate->postTask(task);
+}
+
+void WebTestInterfaces::Internal::postDelayedTask(WebTask* task, long long ms)
+{
+    m_delegate->postDelayedTask(task, ms);
 }
 
 WebTestInterfaces::WebTestInterfaces()

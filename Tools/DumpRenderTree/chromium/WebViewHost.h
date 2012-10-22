@@ -33,13 +33,13 @@
 
 #include "MockSpellCheck.h"
 #include "TestNavigationController.h"
-#include "TestRunner/src/Task.h"
 #include "WebAccessibilityNotification.h"
 #include "WebCursorInfo.h"
 #include "WebFrameClient.h"
 #include "WebIntentRequest.h"
 #include "WebPrerendererClient.h"
 #include "WebSpellCheckClient.h"
+#include "WebTask.h"
 #include "WebTestDelegate.h"
 #include "WebViewClient.h"
 #include <wtf/HashMap.h>
@@ -136,6 +136,8 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void fillSpellingSuggestionList(const WebKit::WebString& word, WebKit::WebVector<WebKit::WebString>* suggestions) OVERRIDE;
     virtual void setGamepadData(const WebKit::WebGamepads&) OVERRIDE;
     virtual void printMessage(const std::string& message) const OVERRIDE;
+    virtual void postTask(WebTestRunner::WebTask*) OVERRIDE;
+    virtual void postDelayedTask(WebTestRunner::WebTask*, long long ms) OVERRIDE;
 
     // NavigationHost
     virtual bool navigate(const TestNavigationEntry&, bool reload);
@@ -287,19 +289,19 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     // Geolocation client mocks for DRTTestRunner
     WebKit::WebGeolocationClientMock* geolocationClientMock();
 
-    // Pending task list, Note taht the method is referred from MethodTask class.
-    TaskList* taskList() { return &m_taskList; }
+    // Pending task list, Note taht the method is referred from WebMethodTask class.
+    WebTestRunner::WebTaskList* taskList() { return &m_taskList; }
 
     // The current web intents request.
     WebKit::WebIntentRequest* currentIntentRequest() { return &m_currentRequest; }
 
 private:
 
-    class HostMethodTask : public MethodTask<WebViewHost> {
+    class HostMethodTask : public WebTestRunner::WebMethodTask<WebViewHost> {
     public:
         typedef void (WebViewHost::*CallbackMethodType)();
         HostMethodTask(WebViewHost* object, CallbackMethodType callback)
-            : MethodTask<WebViewHost>(object)
+            : WebTestRunner::WebMethodTask<WebViewHost>(object)
             , m_callback(callback)
         { }
 
@@ -442,7 +444,7 @@ private:
     WebKit::WebString m_lastRequestedTextCheckString;
     WebKit::WebTextCheckingCompletion* m_lastRequestedTextCheckingCompletion;
 
-    TaskList m_taskList;
+    WebTestRunner::WebTaskList m_taskList;
     Vector<WebKit::WebWidget*> m_popupmenus;
 
 #if ENABLE(POINTER_LOCK)

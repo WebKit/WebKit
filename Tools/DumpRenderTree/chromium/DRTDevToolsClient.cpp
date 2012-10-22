@@ -32,6 +32,7 @@
 #include "DRTDevToolsClient.h"
 
 #include "DRTDevToolsAgent.h"
+#include "Task.h"
 #include "WebDevToolsAgent.h"
 #include "WebDevToolsFrontend.h"
 #include "WebFrame.h"
@@ -41,6 +42,7 @@
 #include <wtf/PassOwnPtr.h>
 
 using namespace WebKit;
+using namespace WebTestRunner;
 
 DRTDevToolsClient::DRTDevToolsClient(DRTDevToolsAgent* agent, WebView* webView)
     : m_webView(webView)

@@ -31,8 +31,8 @@
 #ifndef DRTDevToolsAgent_h
 #define DRTDevToolsAgent_h
 
-#include "TestRunner/src/Task.h"
 #include "WebDevToolsAgentClient.h"
+#include "WebTask.h"
 #include "platform/WebString.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -69,23 +69,23 @@ public:
     void detach();
 
     bool evaluateInWebInspector(long callID, const std::string& script);
-    TaskList* taskList() { return &m_taskList; }
+    WebTestRunner::WebTaskList* taskList() { return &m_taskList; }
 
 private:
     void call(const WebKit::WebString& args);
     WebKit::WebDevToolsAgent* webDevToolsAgent();
 
-    class AsyncCallTask: public MethodTask<DRTDevToolsAgent> {
+    class AsyncCallTask: public WebTestRunner::WebMethodTask<DRTDevToolsAgent> {
     public:
         AsyncCallTask(DRTDevToolsAgent* object, const WebKit::WebString& args)
-            : MethodTask<DRTDevToolsAgent>(object), m_args(args) { }
+            : WebTestRunner::WebMethodTask<DRTDevToolsAgent>(object), m_args(args) { }
         virtual void runIfValid() { m_object->call(m_args); }
 
     private:
         WebKit::WebString m_args;
     };
 
-    TaskList m_taskList;
+    WebTestRunner::WebTaskList m_taskList;
     DRTDevToolsClient* m_drtDevToolsClient;
     int m_routingID;
     WebKit::WebView* m_webView;

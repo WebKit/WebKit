@@ -28,7 +28,7 @@
 
 #if ENABLE(INPUT_SPEECH)
 
-#include "TestRunner/src/Task.h"
+#include "WebTask.h"
 #include "platform/WebRect.h"
 #include "WebSpeechInputController.h"
 #include "WebSpeechInputResult.h"
@@ -58,13 +58,13 @@ public:
     virtual void cancelRecognition(int requestId) OVERRIDE;
     virtual void stopRecording(int requestId) OVERRIDE;
 
-    TaskList* taskList() { return &m_taskList; }
+    WebTestRunner::WebTaskList* taskList() { return &m_taskList; }
 
 private:
     MockWebSpeechInputController(WebKit::WebSpeechInputListener*);
     void speechTaskFired();
 
-    class SpeechTask : public MethodTask<MockWebSpeechInputController> {
+    class SpeechTask : public WebTestRunner::WebMethodTask<MockWebSpeechInputController> {
     public:
         SpeechTask(MockWebSpeechInputController*);
         void stop();
@@ -75,7 +75,7 @@ private:
 
     WebKit::WebSpeechInputListener* m_listener;
 
-    TaskList m_taskList;
+    WebTestRunner::WebTaskList m_taskList;
     SpeechTask* m_speechTask;
 
     bool m_recording;

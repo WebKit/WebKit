@@ -34,6 +34,7 @@
 #include "WebUserMediaClientMock.h"
 
 #include "MockConstraints.h"
+#include "Task.h"
 #include "WebDocument.h"
 #include "WebMediaStreamRegistry.h"
 #include "WebUserMediaRequest.h"
@@ -44,11 +45,12 @@
 #include <wtf/Assertions.h>
 
 using namespace WebKit;
+using namespace WebTestRunner;
 
-class UserMediaRequestTask : public MethodTask<WebUserMediaClientMock> {
+class UserMediaRequestTask : public WebMethodTask<WebUserMediaClientMock> {
 public:
     UserMediaRequestTask(WebUserMediaClientMock* object, const WebUserMediaRequest& request, const WebMediaStreamDescriptor result)
-        : MethodTask<WebUserMediaClientMock>(object)
+        : WebMethodTask<WebUserMediaClientMock>(object)
         , m_request(request)
         , m_result(result)
     {

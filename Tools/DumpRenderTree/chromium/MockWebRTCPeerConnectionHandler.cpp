@@ -34,6 +34,7 @@
 #include "MockWebRTCPeerConnectionHandler.h"
 
 #include "MockConstraints.h"
+#include "Task.h"
 #include <public/WebMediaConstraints.h>
 #include <public/WebMediaStreamComponent.h>
 #include <public/WebMediaStreamDescriptor.h>
@@ -48,11 +49,12 @@
 #include <wtf/DateMath.h>
 
 using namespace WebKit;
+using namespace WebTestRunner;
 
-class RTCSessionDescriptionRequestSuccededTask : public MethodTask<MockWebRTCPeerConnectionHandler> {
+class RTCSessionDescriptionRequestSuccededTask : public WebMethodTask<MockWebRTCPeerConnectionHandler> {
 public:
     RTCSessionDescriptionRequestSuccededTask(MockWebRTCPeerConnectionHandler* object, const WebRTCSessionDescriptionRequest& request, const WebRTCSessionDescription& result)
-        : MethodTask<MockWebRTCPeerConnectionHandler>(object)
+        : WebMethodTask<MockWebRTCPeerConnectionHandler>(object)
         , m_request(request)
         , m_result(result)
     {
@@ -68,10 +70,10 @@ private:
     WebRTCSessionDescription m_result;
 };
 
-class RTCSessionDescriptionRequestFailedTask : public MethodTask<MockWebRTCPeerConnectionHandler> {
+class RTCSessionDescriptionRequestFailedTask : public WebMethodTask<MockWebRTCPeerConnectionHandler> {
 public:
     RTCSessionDescriptionRequestFailedTask(MockWebRTCPeerConnectionHandler* object, const WebRTCSessionDescriptionRequest& request)
-        : MethodTask<MockWebRTCPeerConnectionHandler>(object)
+        : WebMethodTask<MockWebRTCPeerConnectionHandler>(object)
         , m_request(request)
     {
     }
@@ -85,10 +87,10 @@ private:
     WebRTCSessionDescriptionRequest m_request;
 };
 
-class RTCStatsRequestSucceededTask : public MethodTask<MockWebRTCPeerConnectionHandler> {
+class RTCStatsRequestSucceededTask : public WebMethodTask<MockWebRTCPeerConnectionHandler> {
 public:
     RTCStatsRequestSucceededTask(MockWebRTCPeerConnectionHandler* object, const WebKit::WebRTCStatsRequest& request, const WebKit::WebRTCStatsResponse& response)
-        : MethodTask<MockWebRTCPeerConnectionHandler>(object)
+        : WebMethodTask<MockWebRTCPeerConnectionHandler>(object)
         , m_request(request)
         , m_response(response)
     {
@@ -104,10 +106,10 @@ private:
     WebKit::WebRTCStatsResponse m_response;
 };
 
-class RTCVoidRequestTask : public MethodTask<MockWebRTCPeerConnectionHandler> {
+class RTCVoidRequestTask : public WebMethodTask<MockWebRTCPeerConnectionHandler> {
 public:
     RTCVoidRequestTask(MockWebRTCPeerConnectionHandler* object, const WebRTCVoidRequest& request, bool succeeded)
-        : MethodTask<MockWebRTCPeerConnectionHandler>(object)
+        : WebMethodTask<MockWebRTCPeerConnectionHandler>(object)
         , m_request(request)
         , m_succeeded(succeeded)
     {
@@ -126,10 +128,10 @@ private:
     bool m_succeeded;
 };
 
-class StringDataTask : public MethodTask<MockWebRTCPeerConnectionHandler> {
+class StringDataTask : public WebMethodTask<MockWebRTCPeerConnectionHandler> {
 public:
     StringDataTask(MockWebRTCPeerConnectionHandler* object, const WebRTCDataChannel& dataChannel, const WebString& data)
-        : MethodTask<MockWebRTCPeerConnectionHandler>(object)
+        : WebMethodTask<MockWebRTCPeerConnectionHandler>(object)
         , m_dataChannel(dataChannel)
         , m_data(data)
     {
@@ -145,10 +147,10 @@ private:
     WebString m_data;
 };
 
-class CharPtrDataTask : public MethodTask<MockWebRTCPeerConnectionHandler> {
+class CharPtrDataTask : public WebMethodTask<MockWebRTCPeerConnectionHandler> {
 public:
     CharPtrDataTask(MockWebRTCPeerConnectionHandler* object, const WebRTCDataChannel& dataChannel, const char* data, size_t length)
-        : MethodTask<MockWebRTCPeerConnectionHandler>(object)
+        : WebMethodTask<MockWebRTCPeerConnectionHandler>(object)
         , m_dataChannel(dataChannel)
         , m_length(length)
     {
@@ -168,10 +170,10 @@ private:
     size_t m_length;
 };
 
-class DataChannelReadyStateTask : public MethodTask<MockWebRTCPeerConnectionHandler> {
+class DataChannelReadyStateTask : public WebMethodTask<MockWebRTCPeerConnectionHandler> {
 public:
     DataChannelReadyStateTask(MockWebRTCPeerConnectionHandler* object, const WebRTCDataChannel& dataChannel, WebRTCDataChannel::ReadyState state)
-        : MethodTask<MockWebRTCPeerConnectionHandler>(object)
+        : WebMethodTask<MockWebRTCPeerConnectionHandler>(object)
         , m_dataChannel(dataChannel)
         , m_state(state)
     {
@@ -187,10 +189,10 @@ private:
     WebRTCDataChannel::ReadyState m_state;
 };
 
-class RTCPeerConnectionReadyStateTask : public MethodTask<MockWebRTCPeerConnectionHandler> {
+class RTCPeerConnectionReadyStateTask : public WebMethodTask<MockWebRTCPeerConnectionHandler> {
 public:
     RTCPeerConnectionReadyStateTask(MockWebRTCPeerConnectionHandler* object, WebRTCPeerConnectionHandlerClient* client, WebRTCPeerConnectionHandlerClient::ReadyState state)
-        : MethodTask<MockWebRTCPeerConnectionHandler>(object)
+        : WebMethodTask<MockWebRTCPeerConnectionHandler>(object)
         , m_client(client)
         , m_state(state)
     {

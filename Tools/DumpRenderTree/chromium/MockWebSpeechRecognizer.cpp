@@ -28,10 +28,12 @@
 
 #if ENABLE(SCRIPTED_SPEECH)
 
+#include "Task.h"
 #include "WebSpeechRecognitionResult.h"
 #include "WebSpeechRecognizerClient.h"
 
 using namespace WebKit;
+using namespace WebTestRunner;
 
 namespace {
 

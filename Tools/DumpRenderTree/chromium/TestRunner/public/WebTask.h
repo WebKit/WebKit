@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,37 +28,75 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebTestDelegate_h
-#define WebTestDelegate_h
-
-#include "platform/WebString.h"
-#include "platform/WebVector.h"
-
-namespace WebKit {
-struct WebContextMenuData;
-class WebGamepads;
-}
+#ifndef WebTask_h
+#define WebTask_h
 
 namespace WebTestRunner {
 
-class WebTask;
+class WebTaskList;
 
-class WebTestDelegate {
+// WebTask represents a task which can run by WebTestDelegate::postTask() or
+// WebTestDelegate::postDelayedTask().
+class WebTask {
 public:
-    virtual void clearContextMenuData() = 0;
-    virtual void clearEditCommand() = 0;
-    virtual void fillSpellingSuggestionList(const WebKit::WebString& word, WebKit::WebVector<WebKit::WebString>* suggestions) = 0;
-    virtual void setEditCommand(const std::string& name, const std::string& value) = 0;
-    virtual WebKit::WebContextMenuData* lastContextMenuData() const = 0;
-    virtual void setGamepadData(const WebKit::WebGamepads&) = 0;
-    virtual void printMessage(const std::string& message) const = 0;
+    explicit WebTask(WebTaskList*);
+    virtual ~WebTask();
 
-    // The delegate takes ownership of the WebTask objects and is responsible
-    // for deleting them.
-    virtual void postTask(WebTask*) = 0;
-    virtual void postDelayedTask(WebTask*, long long ms) = 0;
+    // The main code of this task.
+    // An implementation of run() should return immediately if cancel() was called.
+    virtual void run() = 0;
+    virtual void cancel() = 0;
+
+protected:
+    WebTaskList* m_taskList;
+};
+
+class WebTaskList {
+public:
+    WebTaskList();
+    ~WebTaskList();
+    void registerTask(WebTask*);
+    void unregisterTask(WebTask*);
+    void revokeAll();
+
+private:
+    class Private;
+    Private* m_private;
+};
+
+// A task containing an object pointer of class T. Derived classes should
+// override runIfValid() which in turn can safely invoke methods on the
+// m_object. The Class T must have "WebTaskList* taskList()".
+template<class T>
+class WebMethodTask : public WebTask {
+public:
+    explicit WebMethodTask(T* object)
+        : WebTask(object->taskList())
+        , m_object(object)
+    {
+    }
+
+    virtual ~WebMethodTask() { }
+
+    virtual void run()
+    {
+        if (m_object)
+            runIfValid();
+    }
+
+    virtual void cancel()
+    {
+        m_object = 0;
+        m_taskList->unregisterTask(this);
+        m_taskList = 0;
+    }
+
+    virtual void runIfValid() = 0;
+
+protected:
+    T* m_object;
 };
 
 }
 
-#endif // WebTestDelegate_h
+#endif // WebTask_h

@@ -68,6 +68,7 @@
 
 
 using namespace WebKit;
+using namespace WebTestRunner;
 using namespace std;
 
 // Content area size for newly created windows.
@@ -154,7 +155,7 @@ TestShell::TestShell()
 void TestShell::initialize()
 {
     m_webPermissions = adoptPtr(new WebPermissions(this));
-    m_testInterfaces = adoptPtr(new WebTestRunner::WebTestInterfaces());
+    m_testInterfaces = adoptPtr(new WebTestInterfaces());
     m_testRunner = adoptPtr(new DRTTestRunner(this));
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_notificationPresenter = adoptPtr(new NotificationPresenter(this));

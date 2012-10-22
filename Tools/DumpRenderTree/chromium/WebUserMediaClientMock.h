@@ -33,7 +33,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "TestRunner/src/Task.h"
+#include "WebTask.h"
 #include "WebUserMediaClient.h"
 #include "webkit/support/test_media_stream_client.h"
 #include <public/WebCommon.h>
@@ -50,12 +50,12 @@ public:
     virtual void cancelUserMediaRequest(const WebKit::WebUserMediaRequest&);
 
     // Task related methods
-    TaskList* taskList() { return &m_taskList; }
+    WebTestRunner::WebTaskList* taskList() { return &m_taskList; }
 
 private:
     WebUserMediaClientMock() { }
 
-    TaskList m_taskList;
+    WebTestRunner::WebTaskList m_taskList;
 };
 
 #endif // ENABLE(MEDIA_STREAM)

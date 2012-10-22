@@ -33,12 +33,14 @@
 
 #include "DRTDevToolsClient.h"
 
+#include "Task.h"
 #include "platform/WebCString.h"
 #include "WebDevToolsAgent.h"
 #include "WebView.h"
 #include "webkit/support/webkit_support.h"
 
 using namespace WebKit;
+using namespace WebTestRunner;
 
 DRTDevToolsAgent::DRTDevToolsAgent()
     : m_drtDevToolsClient(0)

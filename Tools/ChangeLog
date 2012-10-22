@@ -1,3 +1,111 @@
+2012-10-22  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] introduce WebTask to the TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=99964
+
+        Reviewed by Adam Barth.
+
+        I'm also removing the dependency on webkit_support, and instead go
+        through the WebTestDelegate interface.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/DRTDevToolsAgent.cpp:
+        * DumpRenderTree/chromium/DRTDevToolsAgent.h:
+        (DRTDevToolsAgent::taskList):
+        * DumpRenderTree/chromium/DRTDevToolsClient.cpp:
+        * DumpRenderTree/chromium/DRTDevToolsClient.h:
+        (DRTDevToolsClient::taskList):
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (InvokeCallbackTask::InvokeCallbackTask):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner::taskList):
+        (DRTTestRunner::WorkQueue::taskList):
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.cpp:
+        (RTCSessionDescriptionRequestSuccededTask::RTCSessionDescriptionRequestSuccededTask):
+        (RTCSessionDescriptionRequestFailedTask::RTCSessionDescriptionRequestFailedTask):
+        (RTCStatsRequestSucceededTask::RTCStatsRequestSucceededTask):
+        (RTCVoidRequestTask::RTCVoidRequestTask):
+        (StringDataTask::StringDataTask):
+        (CharPtrDataTask::CharPtrDataTask):
+        (DataChannelReadyStateTask::DataChannelReadyStateTask):
+        (RTCPeerConnectionReadyStateTask::RTCPeerConnectionReadyStateTask):
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.h:
+        (MockWebRTCPeerConnectionHandler):
+        (MockWebRTCPeerConnectionHandler::taskList):
+        * DumpRenderTree/chromium/MockWebSpeechInputController.cpp:
+        (MockWebSpeechInputController::SpeechTask::SpeechTask):
+        * DumpRenderTree/chromium/MockWebSpeechInputController.h:
+        (MockWebSpeechInputController::taskList):
+        (MockWebSpeechInputController):
+        * DumpRenderTree/chromium/MockWebSpeechRecognizer.cpp:
+        * DumpRenderTree/chromium/MockWebSpeechRecognizer.h:
+        (MockWebSpeechRecognizer::taskList):
+        (MockWebSpeechRecognizer):
+        (MockWebSpeechRecognizer::StepTask::StepTask):
+        * DumpRenderTree/chromium/Task.cpp: Copied from Tools/DumpRenderTree/chromium/TestRunner/src/Task.cpp.
+        (WebTestRunner):
+        (WebTestRunner::invokeTask):
+        (TaskWrapper):
+        (WebTestRunner::TaskWrapper::TaskWrapper):
+        (WebTestRunner::TaskWrapper::~TaskWrapper):
+        (WebTestRunner::TaskWrapper::Run):
+        (postTask):
+        (postDelayedTask):
+        * DumpRenderTree/chromium/Task.h: Copied from Tools/DumpRenderTree/chromium/TestRunner/src/TestRunner.h.
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestRunner/public/WebTask.h: Renamed from Tools/DumpRenderTree/chromium/TestRunner/src/Task.h.
+        (WebTestRunner):
+        (WebTask):
+        (WebTaskList):
+        (WebMethodTask):
+        (WebTestRunner::WebMethodTask::WebMethodTask):
+        (WebTestRunner::WebMethodTask::~WebMethodTask):
+        (WebTestRunner::WebMethodTask::run):
+        (WebTestRunner::WebMethodTask::cancel):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        (WebTestRunner):
+        (WebTestDelegate):
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.cpp:
+        (WebTestRunner):
+        (WebTestRunner::EventSender::scheduleAsynchronousClick):
+        (WebTestRunner::KeyDownTask::KeyDownTask):
+        (WebTestRunner::EventSender::scheduleAsynchronousKeyDown):
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.h:
+        (WebTestRunner::EventSender::taskList):
+        (EventSender):
+        * DumpRenderTree/chromium/TestRunner/src/TestDelegate.h:
+        (WebTestRunner):
+        (TestDelegate):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        * DumpRenderTree/chromium/TestRunner/src/WebTask.cpp: Renamed from Tools/DumpRenderTree/chromium/TestRunner/src/Task.cpp.
+        (WebTestRunner):
+        (WebTestRunner::WebTask::WebTask):
+        (WebTestRunner::WebTask::~WebTask):
+        (WebTestRunner::WebTaskList::WebTaskList):
+        (WebTestRunner::WebTaskList::~WebTaskList):
+        (WebTestRunner::WebTaskList::registerTask):
+        (WebTestRunner::WebTaskList::unregisterTask):
+        (WebTestRunner::WebTaskList::revokeAll):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestInterfaces.cpp:
+        (WebTestInterfaces::Internal):
+        (WebTestRunner::WebTestInterfaces::Internal::postTask):
+        (WebTestRunner):
+        (WebTestRunner::WebTestInterfaces::Internal::postDelayedTask):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::initialize):
+        * DumpRenderTree/chromium/WebUserMediaClientMock.cpp:
+        (UserMediaRequestTask::UserMediaRequestTask):
+        * DumpRenderTree/chromium/WebUserMediaClientMock.h:
+        (WebUserMediaClientMock::taskList):
+        (WebUserMediaClientMock):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::postTask):
+        (WebViewHost::postDelayedTask):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+        (WebViewHost::taskList):
+        (WebViewHost::HostMethodTask::HostMethodTask):
+
 2012-10-22  Ojan Vafai  <ojan@chromium.org>
 
         Update flakiness dashboard to match the state of the builders.

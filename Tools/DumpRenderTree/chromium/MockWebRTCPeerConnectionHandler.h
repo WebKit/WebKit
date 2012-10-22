@@ -33,7 +33,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "TestRunner/src/Task.h"
+#include "WebTask.h"
 #include <public/WebRTCDataChannel.h>
 #include <public/WebRTCPeerConnectionHandler.h>
 #include <public/WebRTCSessionDescription.h>
@@ -68,15 +68,15 @@ public:
     virtual bool sendRawData(const WebKit::WebRTCDataChannel&, const char*, size_t) OVERRIDE;
     virtual void closeDataChannel(const WebKit::WebRTCDataChannel&) OVERRIDE;
 
-    // Task related methods
-    TaskList* taskList() { return &m_taskList; }
+    // WebTask related methods
+    WebTestRunner::WebTaskList* taskList() { return &m_taskList; }
 
 private:
     MockWebRTCPeerConnectionHandler() { }
 
     WebKit::WebRTCPeerConnectionHandlerClient* m_client;
     bool m_stopped;
-    TaskList m_taskList;
+    WebTestRunner::WebTaskList m_taskList;
     WebKit::WebRTCSessionDescription m_localDescription;
     WebKit::WebRTCSessionDescription m_remoteDescription;
     int m_streamCount;

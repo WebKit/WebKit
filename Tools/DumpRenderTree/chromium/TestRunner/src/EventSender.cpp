@@ -854,20 +854,20 @@ void EventSender::contextClick(const CppArgumentList& arguments, CppVariant* res
     result->set(WebBindings::makeStringArray(makeMenuItemStringsFor(lastContextMenu, m_delegate)));
 }
 
-class MouseDownTask: public MethodTask<EventSender> {
+class MouseDownTask: public WebMethodTask<EventSender> {
 public:
     MouseDownTask(EventSender* obj, const CppArgumentList& arg)
-        : MethodTask<EventSender>(obj), m_arguments(arg) { }
+        : WebMethodTask<EventSender>(obj), m_arguments(arg) { }
     virtual void runIfValid() { m_object->mouseDown(m_arguments, 0); }
 
 private:
     CppArgumentList m_arguments;
 };
 
-class MouseUpTask: public MethodTask<EventSender> {
+class MouseUpTask: public WebMethodTask<EventSender> {
 public:
     MouseUpTask(EventSender* obj, const CppArgumentList& arg)
-        : MethodTask<EventSender>(obj), m_arguments(arg) { }
+        : WebMethodTask<EventSender>(obj), m_arguments(arg) { }
     virtual void runIfValid() { m_object->mouseUp(m_arguments, 0); }
 
 private:
@@ -877,14 +877,14 @@ private:
 void EventSender::scheduleAsynchronousClick(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
-    postTask(new MouseDownTask(this, arguments));
-    postTask(new MouseUpTask(this, arguments));
+    m_delegate->postTask(new MouseDownTask(this, arguments));
+    m_delegate->postTask(new MouseUpTask(this, arguments));
 }
 
-class KeyDownTask : public MethodTask<EventSender> {
+class KeyDownTask : public WebMethodTask<EventSender> {
 public:
     KeyDownTask(EventSender* obj, const CppArgumentList& arg)
-        : MethodTask<EventSender>(obj), m_arguments(arg) { }
+        : WebMethodTask<EventSender>(obj), m_arguments(arg) { }
     virtual void runIfValid() { m_object->keyDown(m_arguments, 0); }
 
 private:
@@ -894,7 +894,7 @@ private:
 void EventSender::scheduleAsynchronousKeyDown(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
-    postTask(new KeyDownTask(this, arguments));
+    m_delegate->postTask(new KeyDownTask(this, arguments));
 }
 
 void EventSender::beginDragWithFiles(const CppArgumentList& arguments, CppVariant* result)

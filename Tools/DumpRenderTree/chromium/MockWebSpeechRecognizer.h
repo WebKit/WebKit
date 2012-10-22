@@ -28,8 +28,8 @@
 
 #if ENABLE(SCRIPTED_SPEECH)
 
-#include "TestRunner/src/Task.h"
 #include "WebSpeechRecognizer.h"
+#include "WebTask.h"
 #include <wtf/Compiler.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
@@ -58,7 +58,7 @@ public:
     // Methods accessed from Task objects:
     WebKit::WebSpeechRecognizerClient* client() { return m_client; }
     WebKit::WebSpeechRecognitionHandle& handle() { return m_handle; }
-    TaskList* taskList() { return &m_taskList; }
+    WebTestRunner::WebTaskList* taskList() { return &m_taskList; }
 
     class Task {
     public:
@@ -74,7 +74,7 @@ private:
     void startTaskQueue();
     void clearTaskQueue();
 
-    TaskList m_taskList;
+    WebTestRunner::WebTaskList m_taskList;
     WebKit::WebSpeechRecognitionHandle m_handle;
     WebKit::WebSpeechRecognizerClient* m_client;
     Vector<WebKit::WebString> m_mockTranscripts;
@@ -86,9 +86,9 @@ private:
     bool m_taskQueueRunning;
 
     // Task for stepping the queue.
-    class StepTask : public MethodTask<MockWebSpeechRecognizer> {
+    class StepTask : public WebTestRunner::WebMethodTask<MockWebSpeechRecognizer> {
     public:
-        StepTask(MockWebSpeechRecognizer* object) : MethodTask<MockWebSpeechRecognizer>(object) { }
+        StepTask(MockWebSpeechRecognizer* object) : WebTestRunner::WebMethodTask<MockWebSpeechRecognizer>(object) { }
         virtual void runIfValid() OVERRIDE;
     };
 };

@@ -28,69 +28,56 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Task_h
-#define Task_h
+#include "config.h"
+#include "WebTask.h"
 
-#include "webkit/support/webkit_support.h"
-#include <wtf/OwnPtr.h>
+#include "WebKit.h"
 #include <wtf/Vector.h>
 
-class TaskList;
+namespace WebTestRunner {
 
-// WebTask represents a task which can run by postTask() or postDelayedTask().
-// it is named "WebTask", not "Task", to avoid conflist with base/task.h.
-class WebTask : public webkit_support::TaskAdaptor {
-public:
-    WebTask(TaskList*);
-    // The main code of this task.
-    // An implementation of run() should return immediately if cancel() was called.
-    virtual void run() = 0;
-    virtual void cancel() = 0;
-    virtual ~WebTask();
+WebTask::WebTask(WebTaskList* list)
+    : m_taskList(list)
+{
+    m_taskList->registerTask(this);
+}
 
-private:
-    virtual void Run() { run(); }
-
-protected:
-    TaskList* m_taskList;
-};
-
-class TaskList {
-public:
-    TaskList() { }
-    ~TaskList() { revokeAll(); }
-    void registerTask(WebTask* task) { m_tasks.append(task); }
-    void unregisterTask(WebTask*);
-    void revokeAll();
-
-private:
-    Vector<WebTask*> m_tasks;
-};
-
-// A task containing an object pointer of class T. Is is supposed that
-// runifValid() calls a member function of the object pointer.
-// Class T must have "TaskList* taskList()".
-template<class T> class MethodTask: public WebTask {
-public:
-    MethodTask(T* object): WebTask(object->taskList()), m_object(object) { }
-    virtual void run()
-    {
-        if (m_object)
-            runIfValid();
-    }
-    virtual void cancel()
-    {
-        m_object = 0;
+WebTask::~WebTask()
+{
+    if (m_taskList)
         m_taskList->unregisterTask(this);
-        m_taskList = 0;
-    }
-    virtual void runIfValid() = 0;
+}
 
-protected:
-    T* m_object;
+class WebTaskList::Private : public Vector<WebTask*> {
 };
 
-void postTask(WebTask*);
-void postDelayedTask(WebTask*, int64_t ms);
+WebTaskList::WebTaskList()
+    : m_private(new Private)
+{
+}
 
-#endif // Task_h
+WebTaskList::~WebTaskList()
+{
+    revokeAll();
+    delete m_private;
+}
+
+void WebTaskList::registerTask(WebTask* task)
+{
+    m_private->append(task);
+}
+
+void WebTaskList::unregisterTask(WebTask* task)
+{
+    size_t index = m_private->find(task);
+    if (index != notFound)
+        m_private->remove(index);
+}
+
+void WebTaskList::revokeAll()
+{
+    while (!m_private->isEmpty())
+        (*m_private)[0]->cancel();
+}
+
+}
