@@ -229,7 +229,6 @@ static int64_t inputStyle(BlackBerryInputType type, const Element* element)
             // with autocorrect disabled explicitly. Only enable predictions.
             return NO_AUTO_TEXT | NO_AUTO_CORRECTION;
         }
-    case InputTypeIsIndex:
     case InputTypePassword:
     case InputTypeNumber:
     case InputTypeTelephone:
@@ -394,12 +393,6 @@ WTF::String InputHandler::elementText()
 
 BlackBerryInputType InputHandler::elementType(Element* element) const
 {
-    // <isIndex> is bundled with input so we need to check the formControlName
-    // first to differentiate it from input which is essentially the same as
-    // isIndex has been deprecated.
-    if (element->formControlName() == HTMLNames::isindexTag)
-        return InputTypeIsIndex;
-
     if (const HTMLInputElement* inputElement = static_cast<const HTMLInputElement*>(element->toInputElement()))
         return convertInputType(inputElement);
 
