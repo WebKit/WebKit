@@ -1,5 +1,11 @@
 2012-10-22  Darin Adler  <darin@apple.com>
 
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView view:stringForToolTip:point:userData:]): Fix build. Forgot to save file
+        before committing.
+
+2012-10-22  Darin Adler  <darin@apple.com>
+
         REGRESSION (r131686): Crash in NSToolTipManager mouseEnteredToolTip
         <rdar://problem/12527528> and https://bugs.webkit.org/show_bug.cgi?id=99792
 

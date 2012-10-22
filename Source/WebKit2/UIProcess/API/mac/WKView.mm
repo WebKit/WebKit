@@ -2514,7 +2514,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (NSString *)view:(NSView *)view stringForToolTip:(NSToolTipTag)tag point:(NSPoint)point userData:(void *)data
 {
-    return nsStringFromWebCoreString(_page->toolTip());
+    return nsStringFromWebCoreString(_data->_page->toolTip());
 }
 
 - (void)_wk_toolTipChangedFrom:(NSString *)oldToolTip to:(NSString *)newToolTip
