@@ -1,3 +1,26 @@
+2012-10-21  Kent Tamura  <tkent@chromium.org>
+
+        Page popup: Fix crash by events after closing
+        https://bugs.webkit.org/show_bug.cgi?id=99951
+
+        Reviewed by Hajime Morita.
+
+        - We should not handle events after closePopup call.
+        - We should uninstall a DOMWindowPagePopup supplement in closePopup.
+
+        * src/WebPagePopupImpl.cpp:
+        (WebKit::WebPagePopupImpl::WebPagePopupImpl):
+        Initialize m_closing.
+        (WebKit::WebPagePopupImpl::handleGestureEvent):
+        Don't handle events if m_closing.
+        (WebKit::WebPagePopupImpl::handleInputEvent): Ditto.
+        (WebKit::WebPagePopupImpl::handleKeyEvent): Ditto.
+        (WebKit::WebPagePopupImpl::closePopup):
+        - Uninstall a DOMWindowPagePopup supplement.
+        - Set m_closing.
+        * src/WebPagePopupImpl.h:
+        (WebPagePopupImpl): Declare m_closing.
+
 2012-10-21  Terry Anderson  <tdanderson@chromium.org>
 
         [chromium] Storing the enclosing rect dimensions of the first finger for a two finger tap

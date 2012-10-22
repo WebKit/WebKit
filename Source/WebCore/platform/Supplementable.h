@@ -64,6 +64,11 @@ public:
         m_supplements.set(key, supplement);
     }
 
+    void removeSupplement(const AtomicString& key)
+    {
+        m_supplements.remove(key);
+    }
+
     Supplement<T>* requireSupplement(const AtomicString& key)
     {
         return m_supplements.get(key);

@@ -1,3 +1,22 @@
+2012-10-21  Kent Tamura  <tkent@chromium.org>
+
+        Page popup: Fix crash by events after closing
+        https://bugs.webkit.org/show_bug.cgi?id=99951
+
+        Reviewed by Hajime Morita.
+
+        WebCore should provide a way to uninstall a DOMWindowPagePopup supplement.
+
+        No new tests. The bug is timing-dependent.
+
+        * page/DOMWindowPagePopup.cpp:
+        (WebCore::DOMWindowPagePopup::uninstall):
+        Added. Calls Supplementable::removeSupplement.
+        * page/DOMWindowPagePopup.h:
+        (DOMWindowPagePopup): Declare uninstall.
+        * platform/Supplementable.h:
+        (WebCore::Supplementable::removeSupplement): Added.
+
 2012-10-21  Keishi Hattori  <keishi@webkit.org>
 
         Refactor picker tests to fix flakiness and share code

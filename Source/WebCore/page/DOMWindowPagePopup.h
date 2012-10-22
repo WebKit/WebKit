@@ -44,6 +44,7 @@ class DOMWindowPagePopup : public Supplement<DOMWindow> {
 public:
     static PagePopupController* pagePopupController(DOMWindow*);
     static void install(DOMWindow*, PagePopupClient*);
+    static void uninstall(DOMWindow*);
     ~DOMWindowPagePopup();
 
 private:

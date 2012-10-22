@@ -67,5 +67,11 @@ void DOMWindowPagePopup::install(DOMWindow* window, PagePopupClient* popupClient
     provideTo(window, supplementName(), adoptPtr(new DOMWindowPagePopup(popupClient)));
 }
 
+void DOMWindowPagePopup::uninstall(DOMWindow* window)
+{
+    ASSERT(window);
+    window->removeSupplement(supplementName());
+}
+
 }
 #endif

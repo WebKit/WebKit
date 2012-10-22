@@ -94,6 +94,7 @@ private:
     OwnPtr<WebCore::Page> m_page;
     OwnPtr<PagePopupChromeClient> m_chromeClient;
     WebCore::PagePopupClient* m_popupClient;
+    bool m_closing;
 
     friend class WebPagePopup;
     friend class PagePopupChromeClient;
