@@ -425,7 +425,7 @@ bool RenderFlexibleBox::isLeftToRightFlow() const
 
 bool RenderFlexibleBox::isMultiline() const
 {
-    return style()->flexWrap() != FlexWrapNone;
+    return style()->flexWrap() != FlexNoWrap;
 }
 
 Length RenderFlexibleBox::flexBasisForChild(RenderBox* child) const

@@ -292,7 +292,7 @@ rect: style.getPropertyValue(-webkit-align-self) : stretch
 rect: style.getPropertyCSSValue(-webkit-align-self) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-flex-direction) : row
 rect: style.getPropertyCSSValue(-webkit-flex-direction) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-flex-wrap) : none
+rect: style.getPropertyValue(-webkit-flex-wrap) : nowrap
 rect: style.getPropertyCSSValue(-webkit-flex-wrap) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-justify-content) : flex-start
 rect: style.getPropertyCSSValue(-webkit-justify-content) : [object CSSPrimitiveValue]
@@ -794,7 +794,7 @@ g: style.getPropertyValue(-webkit-align-self) : stretch
 g: style.getPropertyCSSValue(-webkit-align-self) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-flex-direction) : row
 g: style.getPropertyCSSValue(-webkit-flex-direction) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-flex-wrap) : none
+g: style.getPropertyValue(-webkit-flex-wrap) : nowrap
 g: style.getPropertyCSSValue(-webkit-flex-wrap) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-justify-content) : flex-start
 g: style.getPropertyCSSValue(-webkit-justify-content) : [object CSSPrimitiveValue]

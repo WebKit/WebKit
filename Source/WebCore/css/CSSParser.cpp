@@ -806,7 +806,7 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
             return true;
         break;
     case CSSPropertyWebkitFlexWrap:
-        if (valueID == CSSValueNone || valueID == CSSValueWrap || valueID == CSSValueWrapReverse)
+        if (valueID == CSSValueNowrap || valueID == CSSValueWrap || valueID == CSSValueWrapReverse)
              return true;
         break;
     case CSSPropertyWebkitJustifyContent:
