@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<p>
+This test checks that on a long press or a two finger tap gesture in a text area,
+the cursor is first set to the right position (this is done by sending a right
+mouse button down event just before long press).
+</p>
+<textarea id="text" rows="5" cols="31">
+This test checks that on a long press or a two finger tap gesture in a text area,
+the cursor is first set to the right position (this is done by sending a right
+mouse button down event just before long press).
+</textarea>
+<div id="text">Testing</div>
+<div id="result">FAIL</div>
+<script>
+function setCursorPosition(position)
+{
+    var text = document.getElementById("text");
+    text.focus();
+    text.setSelectionRange(position, position);
+}
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var text = document.getElementById("text");
+
+setCursorPosition(0);
+
+var longPressTested = false;
+document.oncontextmenu = function() {
+    if (longPressTested && text.selectionStart == 61)
+        document.getElementById("result").innerHTML = "PASS";
+
+    if (!longPressTested && text.selectionStart == 59) {
+        setCursorPosition(0);
+        longPressTested = true;
+    }
+}
+
+var text = document.getElementById("text");
+
+var x = text.offsetLeft + 10;
+var y = text.offsetTop + 40;
+
+if (window.eventSender) {
+    if (eventSender.gestureLongPress)
+        eventSender.gestureLongPress(x, y);
+    else
+        debug("gestureLongPress not implemented by this platform");
+
+    if (eventSender.gestureTwoFingerTap)
+        eventSender.gestureTwoFingerTap(x + 20, y);
+    else
+        debug("gestureTwoFingerTap not implemented by this platform");
+}
+</script>
+</body>
+</html>
