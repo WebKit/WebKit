@@ -1,3 +1,9 @@
+2012-10-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Update configure.ac and the NEWS in preparation for the 1.10.1 release.
+
+        * NEWS: Update the NEWS file.
+
 2012-10-09  Daniel Drake  <dsd@laptop.org>
 
         [GTK] Plugins don't display

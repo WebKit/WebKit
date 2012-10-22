@@ -1,3 +1,9 @@
+2012-10-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Update configure.ac and the NEWS in preparation for the 1.10.1 release.
+
+        * configure.ac: Update the version.
+
 2012-09-26  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Use XDamage to simplify RedirectedXCompositeWindow

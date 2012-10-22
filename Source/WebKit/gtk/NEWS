@@ -1,4 +1,19 @@
 =================
+WebKitGTK+ 1.10.1
+=================
+
+What's new in WebKitGTK+ 1.10.1?
+
+  - Fix an infinite recursive loop in the accessibility code when browsing
+    pages with ARIA.
+  - Fix the MinGW build in the spellchecker.
+  - Restore support for Geode processors.
+  - Use XDamage to improve accelerated compositing performance.
+  - Fix a crash when accelerated compositing is disabled.
+  - Fix a bug causing plugins to be invisible.
+  - Fix accelerated content visibility issues on ATI drivers.
+
+=================
 WebKitGTK+ 1.10.0
 =================
 
