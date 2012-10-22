@@ -1,3 +1,16 @@
+2012-10-22  Dongwoo Joshua Im  <dw.im@samsung.com>
+
+        Change the path of the include files in the text decoration test cases.
+        https://bugs.webkit.org/show_bug.cgi?id=99974
+
+        Reviewed by Gyuyoung Kim.
+
+        The include path is differentiated by http://trac.webkit.org/changeset/132043
+
+        * fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-line.html:
+        * fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-style.html:
+        * fast/css3-text/css3-text-decoration/repaint/repaint-text-decoration-line.html:
+
 2012-10-22  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] Enable Microdata DOM API
