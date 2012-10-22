@@ -59,12 +59,33 @@ WebPlatformTouchPoint::WebPlatformTouchPoint(unsigned id, TouchPointState state,
 
 void WebPlatformTouchPoint::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    encoder->encode(CoreIPC::In(m_id, m_state, m_screenPosition, m_position, m_radius, m_rotationAngle, m_force));
+    encoder->encode(m_id);
+    encoder->encode(m_state);
+    encoder->encode(m_screenPosition);
+    encoder->encode(m_position);
+    encoder->encode(m_radius);
+    encoder->encode(m_rotationAngle);
+    encoder->encode(m_force);
 }
 
-bool WebPlatformTouchPoint::decode(CoreIPC::ArgumentDecoder* decoder, WebPlatformTouchPoint& t)
+bool WebPlatformTouchPoint::decode(CoreIPC::ArgumentDecoder* decoder, WebPlatformTouchPoint& result)
 {
-    return decoder->decode(CoreIPC::Out(t.m_id, t.m_state, t.m_screenPosition, t.m_position, t.m_radius, t.m_rotationAngle, t.m_force));
+    if (!decoder->decode(result.m_id))
+        return false;
+    if (!decoder->decode(result.m_state))
+        return false;
+    if (!decoder->decode(result.m_screenPosition))
+        return false;
+    if (!decoder->decode(result.m_position))
+        return false;
+    if (!decoder->decode(result.m_radius))
+        return false;
+    if (!decoder->decode(result.m_rotationAngle))
+        return false;
+    if (!decoder->decode(result.m_force))
+        return false;
+
+    return true;
 }
 
 } // namespace WebKit

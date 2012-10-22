@@ -72,7 +72,7 @@ bool SharedMemory::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle& han
         return false;
 
     CoreIPC::MachPort machPort;
-    if (!decoder->decode(CoreIPC::Out(machPort)))
+    if (!decoder->decode(machPort))
         return false;
     
     handle.m_size = size;

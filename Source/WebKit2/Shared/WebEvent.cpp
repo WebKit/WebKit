@@ -48,12 +48,20 @@ WebEvent::WebEvent(Type type, Modifiers modifiers, double timestamp)
 
 void WebEvent::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    encoder->encode(CoreIPC::In(m_type, m_modifiers, m_timestamp));
+    encoder->encode(m_type);
+    encoder->encode(m_modifiers);
+    encoder->encode(m_timestamp);
 }
 
-bool WebEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebEvent& t)
+bool WebEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebEvent& result)
 {
-    return decoder->decode(CoreIPC::Out(t.m_type, t.m_modifiers, t.m_timestamp));
+    if (!decoder->decode(result.m_type))
+        return false;
+    if (!decoder->decode(result.m_modifiers))
+        return false;
+    if (!decoder->decode(result.m_timestamp))
+        return false;
+    return true;
 }
     
 } // namespace WebKit

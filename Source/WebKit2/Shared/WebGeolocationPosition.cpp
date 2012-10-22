@@ -53,15 +53,12 @@ WebGeolocationPosition::~WebGeolocationPosition()
 
 void WebGeolocationPosition::Data::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    encoder->encode(CoreIPC::In(timestamp, latitude, longitude, accuracy, canProvideAltitude, altitude, canProvideAltitudeAccuracy, altitudeAccuracy, canProvideHeading, heading));
-    encoder->encode(CoreIPC::In(canProvideSpeed, speed));
+    CoreIPC::SimpleArgumentCoder<WebGeolocationPosition::Data>::encode(encoder, *this);
 }
 
 bool WebGeolocationPosition::Data::decode(CoreIPC::ArgumentDecoder* decoder, Data& data)
 {
-    if (!decoder->decode(CoreIPC::Out(data.timestamp, data.latitude, data.longitude, data.accuracy, data.canProvideAltitude, data.altitude, data.canProvideAltitudeAccuracy, data.altitudeAccuracy, data.canProvideHeading, data.heading)))
-        return false;
-    return decoder->decode(CoreIPC::Out(data.canProvideSpeed, data.speed));
+    return CoreIPC::SimpleArgumentCoder<WebGeolocationPosition::Data>::decode(decoder, data);
 }
 
 } // namespace WebKit

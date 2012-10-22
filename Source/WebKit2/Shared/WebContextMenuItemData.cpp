@@ -106,29 +106,48 @@ void WebContextMenuItemData::setUserData(APIObject* userData)
     
 void WebContextMenuItemData::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    encoder->encode(CoreIPC::In(static_cast<uint32_t>(m_type), static_cast<uint32_t>(m_action), m_title, m_checked, m_enabled, m_submenu));
+    encoder->encodeEnum(m_type);
+    encoder->encodeEnum(m_action);
+    encoder->encode(m_title);
+    encoder->encode(m_checked);
+    encoder->encode(m_enabled);
+    encoder->encode(m_submenu);
 }
 
 bool WebContextMenuItemData::decode(CoreIPC::ArgumentDecoder* decoder, WebContextMenuItemData& item)
 {
-    uint32_t type;
-    uint32_t action;
-    String title;
-    bool checked;
-    bool enabled;
-    Vector<WebContextMenuItemData> submenu;
+    WebCore::ContextMenuItemType type;
+    if (!decoder->decodeEnum(type))
+        return false;
 
-    if (!decoder->decode(CoreIPC::Out(type, action, title, checked, enabled, submenu)))
+    WebCore::ContextMenuAction action;
+    if (!decoder->decodeEnum(action))
+        return false;
+
+    String title;
+    if (!decoder->decode(title))
+        return false;
+
+    bool checked;
+    if (!decoder->decode(checked))
+        return false;
+
+    bool enabled;
+    if (!decoder->decode(enabled))
+        return false;
+
+    Vector<WebContextMenuItemData> submenu;
+    if (!decoder->decode(submenu))
         return false;
 
     switch (type) {
     case WebCore::ActionType:
     case WebCore::SeparatorType:
     case WebCore::CheckableActionType:
-        item = WebContextMenuItemData(static_cast<WebCore::ContextMenuItemType>(type), static_cast<WebCore::ContextMenuAction>(action), title, enabled, checked);
+        item = WebContextMenuItemData(type, action, title, enabled, checked);
         break;
     case WebCore::SubmenuType:
-        item = WebContextMenuItemData(static_cast<WebCore::ContextMenuAction>(action), title, enabled, submenu);
+        item = WebContextMenuItemData(action, title, enabled, submenu);
         break;
     default:
         ASSERT_NOT_REACHED();

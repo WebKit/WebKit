@@ -1,5 +1,56 @@
 2012-10-22  Anders Carlsson  <andersca@apple.com>
 
+        More Argument coder cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=100022
+
+        Reviewed by Andreas Kling.
+
+        Remove the ArgumentDecoder::decode overload that takes a const reference - if the call to decode ends up creating a temporary
+        we'll encode into it and then destroy it. Since this decode overload was mostly used with the CoreIPC::Out functions, remove them
+        (and CoreIPC::In) as well. Clean up a couple of ArgumentCoders as well.
+
+        * Platform/CoreIPC/ArgumentCoders.h:
+        * Platform/CoreIPC/ArgumentDecoder.h:
+        * Platform/CoreIPC/Arguments.h:
+        * Platform/CoreIPC/Connection.h:
+        (Connection):
+        * Platform/mac/SharedMemoryMac.cpp:
+        (WebKit::SharedMemory::Handle::decode):
+        * Shared/PrintInfo.cpp:
+        (WebKit::PrintInfo::encode):
+        (WebKit::PrintInfo::decode):
+        * Shared/WebContextMenuItemData.cpp:
+        (WebKit::WebContextMenuItemData::encode):
+        (WebKit::WebContextMenuItemData::decode):
+        * Shared/WebEvent.cpp:
+        (WebKit::WebEvent::encode):
+        (WebKit::WebEvent::decode):
+        * Shared/WebGeolocationPosition.cpp:
+        (WebKit::WebGeolocationPosition::Data::encode):
+        (WebKit::WebGeolocationPosition::Data::decode):
+        * Shared/WebMouseEvent.cpp:
+        (WebKit::WebMouseEvent::encode):
+        (WebKit::WebMouseEvent::decode):
+        * Shared/WebPopupItem.cpp:
+        (WebKit::WebPopupItem::encode):
+        (WebKit::WebPopupItem::decode):
+        * UIProcess/WebConnectionToWebProcess.cpp:
+        (WebKit::WebConnectionToWebProcess::decodeMessageBody):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::didReceiveMessage):
+        (WebKit::WebContext::didReceiveSyncMessage):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::postMessage):
+        (WebKit::InjectedBundle::postSynchronousMessage):
+        * WebProcess/WebConnectionToUIProcess.cpp:
+        (WebKit::WebConnectionToUIProcess::decodeMessageBody):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::postInjectedBundleMessage):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::postInjectedBundleMessage):
+
+2012-10-22  Anders Carlsson  <andersca@apple.com>
+
         Remove MessageReceiverMap::deprecatedAddMessageReceiver
         https://bugs.webkit.org/show_bug.cgi?id=100012
 

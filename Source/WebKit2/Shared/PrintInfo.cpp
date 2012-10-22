@@ -45,7 +45,10 @@ PrintInfo::PrintInfo()
 
 void PrintInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    encoder->encode(CoreIPC::In(pageSetupScaleFactor, availablePaperWidth, availablePaperHeight));
+    encoder->encode(pageSetupScaleFactor);
+    encoder->encode(availablePaperWidth);
+    encoder->encode(availablePaperHeight);
+
 #if PLATFORM(GTK)
     CoreIPC::encode(encoder, printSettings.get());
     CoreIPC::encode(encoder, pageSetup.get());
@@ -54,7 +57,11 @@ void PrintInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
 
 bool PrintInfo::decode(CoreIPC::ArgumentDecoder* decoder, PrintInfo& info)
 {
-    if (!decoder->decode(CoreIPC::Out(info.pageSetupScaleFactor, info.availablePaperWidth, info.availablePaperHeight)))
+    if (!decoder->decode(info.pageSetupScaleFactor))
+        return false;
+    if (!decoder->decode(info.availablePaperWidth))
+        return false;
+    if (!decoder->decode(info.availablePaperHeight))
         return false;
 
 #if PLATFORM(GTK)

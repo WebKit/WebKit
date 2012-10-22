@@ -90,13 +90,6 @@ public:
         return ArgumentCoder<T>::decode(this, t);
     }
 
-    // This overload exists so we can pass temporaries to decode. In the Star Trek future, it 
-    // can take an rvalue reference instead.
-    template<typename T> bool decode(const T& t)
-    {
-        return decode(const_cast<T&>(t));
-    }
-
     bool removeAttachment(Attachment&);
 
 #ifndef NDEBUG

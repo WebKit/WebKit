@@ -59,7 +59,9 @@ void WebConnectionToWebProcess::encodeMessageBody(CoreIPC::ArgumentEncoder& enco
 
 bool WebConnectionToWebProcess::decodeMessageBody(CoreIPC::ArgumentDecoder& decoder, RefPtr<APIObject>& messageBody)
 {
-    if (!decoder.decode(WebContextUserMessageDecoder(messageBody, m_process)))
+    WebContextUserMessageDecoder messageBodyDecoder(messageBody, m_process);
+
+    if (!decoder.decode(messageBodyDecoder))
         return false;
 
     return true;

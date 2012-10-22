@@ -1067,7 +1067,8 @@ void WebProcess::postInjectedBundleMessage(const CoreIPC::DataReference& message
         return;
 
     RefPtr<APIObject> messageBody;
-    if (!decoder->decode(InjectedBundleUserMessageDecoder(messageBody)))
+    InjectedBundleUserMessageDecoder messageBodyDecoder(messageBody);
+    if (!decoder->decode(messageBodyDecoder))
         return;
 
     injectedBundle->didReceiveMessage(messageName, messageBody.get());

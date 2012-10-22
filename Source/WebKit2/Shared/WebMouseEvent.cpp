@@ -82,25 +82,44 @@ void WebMouseEvent::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     WebEvent::encode(encoder);
 
+    encoder->encode(m_button);
+    encoder->encode(m_position);
+    encoder->encode(m_globalPosition);
+    encoder->encode(m_deltaX);
+    encoder->encode(m_deltaY);
+    encoder->encode(m_deltaZ);
+    encoder->encode(m_clickCount);
+
 #if PLATFORM(WIN)
-    // Include m_didActivateWebView on Windows.
-    encoder->encode(CoreIPC::In(m_button, m_position, m_globalPosition, m_deltaX, m_deltaY, m_deltaZ, m_clickCount, m_didActivateWebView));
-#else
-    encoder->encode(CoreIPC::In(m_button, m_position, m_globalPosition, m_deltaX, m_deltaY, m_deltaZ, m_clickCount));
+    encoder->encode(m_didActivateWebView);
 #endif
 }
 
-bool WebMouseEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebMouseEvent& t)
+bool WebMouseEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebMouseEvent& result)
 {
-    if (!WebEvent::decode(decoder, t))
+    if (!WebEvent::decode(decoder, result))
         return false;
 
+    if (!decoder->decode(result.m_button))
+        return false;
+    if (!decoder->decode(result.m_position))
+        return false;
+    if (!decoder->decode(result.m_globalPosition))
+        return false;
+    if (!decoder->decode(result.m_deltaX))
+        return false;
+    if (!decoder->decode(result.m_deltaY))
+        return false;
+    if (!decoder->decode(result.m_deltaZ))
+        return false;
+    if (!decoder->decode(result.m_clickCount))
+        return false;
 #if PLATFORM(WIN)
-    // Include m_didActivateWebView on Windows.
-    return decoder->decode(CoreIPC::Out(t.m_button, t.m_position, t.m_globalPosition, t.m_deltaX, t.m_deltaY, t.m_deltaZ, t.m_clickCount, t.m_didActivateWebView));
-#else
-    return decoder->decode(CoreIPC::Out(t.m_button, t.m_position, t.m_globalPosition, t.m_deltaX, t.m_deltaY, t.m_deltaZ, t.m_clickCount));
+    if (!decoder->decode(result.m_didActivateWebView))
+        return false;
 #endif
+
+    return true;
 }
 
 bool WebMouseEvent::isMouseEventType(Type type)

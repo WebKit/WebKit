@@ -93,20 +93,27 @@ void InjectedBundle::initializeClient(WKBundleClient* client)
 
 void InjectedBundle::postMessage(const String& messageName, APIObject* messageBody)
 {
-    WebProcess::shared().connection()->deprecatedSend(WebContextLegacyMessage::PostMessage, 0, CoreIPC::In(messageName, InjectedBundleUserMessageEncoder(messageBody)));
+    OwnPtr<CoreIPC::MessageEncoder> encoder = CoreIPC::MessageEncoder::create(CoreIPC::MessageKindTraits<WebContextLegacyMessage::Kind>::messageReceiverName(), "", 0);
+    encoder->encode(messageName);
+    encoder->encode(InjectedBundleUserMessageEncoder(messageBody));
+
+    WebProcess::shared().connection()->sendMessage(CoreIPC::MessageID(WebContextLegacyMessage::PostMessage), encoder.release());
 }
 
 void InjectedBundle::postSynchronousMessage(const String& messageName, APIObject* messageBody, RefPtr<APIObject>& returnData)
 {
-    RefPtr<APIObject> returnDataTmp;
-    InjectedBundleUserMessageDecoder messageDecoder(returnDataTmp);
-    
-    bool succeeded = WebProcess::shared().connection()->deprecatedSendSync(WebContextLegacyMessage::PostSynchronousMessage, 0, CoreIPC::In(messageName, InjectedBundleUserMessageEncoder(messageBody)), CoreIPC::Out(messageDecoder));
+    InjectedBundleUserMessageDecoder messageDecoder(returnData);
 
-    if (!succeeded)
+    uint64_t syncRequestID;
+    OwnPtr<CoreIPC::MessageEncoder> encoder = WebProcess::shared().connection()->createSyncMessageEncoder(CoreIPC::MessageKindTraits<WebContextLegacyMessage::Kind>::messageReceiverName(), "", 0, syncRequestID);
+    encoder->encode(messageName);
+    encoder->encode(InjectedBundleUserMessageEncoder(messageBody));
+
+    OwnPtr<CoreIPC::MessageDecoder> replyDecoder = WebProcess::shared().connection()->sendSyncMessage(CoreIPC::MessageID(WebContextLegacyMessage::PostSynchronousMessage), syncRequestID, encoder.release(), CoreIPC::Connection::NoTimeout);
+    if (!replyDecoder || !replyDecoder->decode(messageDecoder)) {
+        returnData = nullptr;
         return;
-
-    returnData = returnDataTmp;
+    }
 }
 
 WebConnection* InjectedBundle::webConnectionToUIProcess() const

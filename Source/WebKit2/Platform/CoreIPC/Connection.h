@@ -187,6 +187,7 @@ public:
 
     PassOwnPtr<MessageEncoder> createSyncMessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID);
     bool sendMessage(MessageID, PassOwnPtr<MessageEncoder>, unsigned messageSendFlags = 0);
+    PassOwnPtr<MessageDecoder> sendSyncMessage(MessageID, uint64_t syncRequestID, PassOwnPtr<MessageEncoder>, double timeout, unsigned syncSendFlags = 0);
     bool sendSyncReply(PassOwnPtr<MessageEncoder>);
 
     // FIXME: These variants of send, sendSync and waitFor are all deprecated.
@@ -248,7 +249,6 @@ private:
     
     PassOwnPtr<MessageDecoder> waitForMessage(MessageID, uint64_t destinationID, double timeout);
     
-    PassOwnPtr<MessageDecoder> sendSyncMessage(MessageID, uint64_t syncRequestID, PassOwnPtr<MessageEncoder>, double timeout, unsigned syncSendFlags = 0);
     PassOwnPtr<MessageDecoder> waitForSyncReply(uint64_t syncRequestID, double timeout, unsigned syncSendFlags);
 
     // Called on the connection work queue.

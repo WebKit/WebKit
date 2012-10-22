@@ -44,15 +44,18 @@ void WebTouchEvent::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     WebEvent::encode(encoder);
 
-    encoder->encode(CoreIPC::In(m_touchPoints));
+    encoder->encode(m_touchPoints);
 }
 
-bool WebTouchEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebTouchEvent& t)
+bool WebTouchEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebTouchEvent& result)
 {
-    if (!WebEvent::decode(decoder, t))
+    if (!WebEvent::decode(decoder, result))
         return false;
 
-    return decoder->decode(CoreIPC::Out(t.m_touchPoints));
+    if (!decoder->decode(result.m_touchPoints))
+        return false;
+
+    return true;
 }
 
 bool WebTouchEvent::isTouchEventType(Type type)

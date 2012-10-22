@@ -68,29 +68,56 @@ WebPopupItem::WebPopupItem(Type type, const String& text, TextDirection textDire
 
 void WebPopupItem::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    encoder->encode(CoreIPC::In(static_cast<uint32_t>(m_type), m_text, static_cast<uint64_t>(m_textDirection), m_hasTextDirectionOverride, m_toolTip, m_accessibilityText, m_isEnabled, m_isLabel));
-    encoder->encode(CoreIPC::In(m_isSelected));
+    encoder->encodeEnum(m_type);
+    encoder->encode(m_text);
+    encoder->encodeEnum(m_textDirection);
+    encoder->encode(m_hasTextDirectionOverride);
+    encoder->encode(m_toolTip);
+    encoder->encode(m_accessibilityText);
+    encoder->encode(m_isEnabled);
+    encoder->encode(m_isLabel);
+    encoder->encode(m_isSelected);
 }
 
 bool WebPopupItem::decode(CoreIPC::ArgumentDecoder* decoder, WebPopupItem& item)
 {
-    uint32_t type;
+    Type type;
+    if (!decoder->decodeEnum(type))
+        return false;
+
     String text;
-    uint64_t textDirection;
+    if (!decoder->decode(text))
+        return false;
+    
+    TextDirection textDirection;
+    if (!decoder->decodeEnum(textDirection))
+        return false;
+
     bool hasTextDirectionOverride;
+    if (!decoder->decode(hasTextDirectionOverride))
+        return false;
+
     String toolTip;
+    if (!decoder->decode(toolTip))
+        return false;
+
     String accessibilityText;
+    if (!decoder->decode(accessibilityText))
+        return false;
+
     bool isEnabled;
+    if (!decoder->decode(isEnabled))
+        return false;
+
     bool isLabel;
+    if (!decoder->decode(isLabel))
+        return false;
+
     bool isSelected;
-
-    if (!decoder->decode(CoreIPC::Out(type, text, textDirection, hasTextDirectionOverride, toolTip, accessibilityText, isEnabled, isLabel)))
+    if (!decoder->decode(isSelected))
         return false;
 
-    if (!decoder->decode(CoreIPC::Out(isSelected)))
-        return false;
-
-    item = WebPopupItem(static_cast<Type>(type), text, static_cast<TextDirection>(textDirection), hasTextDirectionOverride, toolTip, accessibilityText, isEnabled, isLabel, isSelected);
+    item = WebPopupItem(type, text, textDirection, hasTextDirectionOverride, toolTip, accessibilityText, isEnabled, isLabel, isSelected);
     return true;
 }
 

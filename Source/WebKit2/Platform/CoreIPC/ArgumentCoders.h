@@ -213,4 +213,4 @@ template<> struct ArgumentCoder<String> {
 
 } // namespace CoreIPC
 
-#endif // SimpleArgumentCoder_h
+#endif // ArgumentCoders_h

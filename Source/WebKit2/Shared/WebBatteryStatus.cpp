@@ -47,12 +47,24 @@ WebBatteryStatus::~WebBatteryStatus()
 
 void WebBatteryStatus::Data::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    encoder->encode(CoreIPC::In(isCharging, chargingTime, dischargingTime, level));
+    encoder->encode(isCharging);
+    encoder->encode(chargingTime);
+    encoder->encode(dischargingTime);
+    encoder->encode(level);
 }
 
-bool WebBatteryStatus::Data::decode(CoreIPC::ArgumentDecoder* decoder, Data& data)
+bool WebBatteryStatus::Data::decode(CoreIPC::ArgumentDecoder* decoder, Data& result)
 {
-    return decoder->decode(CoreIPC::Out(data.isCharging, data.chargingTime, data.dischargingTime, data.level));
+    if (!decoder->decode(result.isCharging))
+        return false;
+    if (!decoder->decode(result.chargingTime))
+        return false;
+    if (!decoder->decode(result.dischargingTime))
+        return false;
+    if (!decoder->decode(result.level))
+        return false;
+
+    return true;
 }
 
 } // namespace WebKit

@@ -818,10 +818,12 @@ void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         case WebContextLegacyMessage::PostMessage: {
             String messageName;
             RefPtr<APIObject> messageBody;
-            WebContextUserMessageDecoder messageDecoder(messageBody, WebProcessProxy::fromConnection(connection));
-            if (!decoder.decode(CoreIPC::Out(messageName, messageDecoder)))
+            WebContextUserMessageDecoder messageBodyDecoder(messageBody, WebProcessProxy::fromConnection(connection));
+            if (!decoder.decode(messageName))
                 return;
-
+            if (!decoder.decode(messageBodyDecoder))
+                return;
+            
             didReceiveMessageFromInjectedBundle(messageName, messageBody.get());
             return;
         }
@@ -851,13 +853,15 @@ void WebContext::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC:
 
             String messageName;
             RefPtr<APIObject> messageBody;
-            WebContextUserMessageDecoder messageDecoder(messageBody, WebProcessProxy::fromConnection(connection));
-            if (!decoder.decode(CoreIPC::Out(messageName, messageDecoder)))
+            WebContextUserMessageDecoder messageBodyDecoder(messageBody, WebProcessProxy::fromConnection(connection));
+            if (!decoder.decode(messageName))
+                return;
+            if (!decoder.decode(messageBodyDecoder))
                 return;
 
             RefPtr<APIObject> returnData;
             didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody.get(), returnData);
-            replyEncoder->encode(CoreIPC::In(WebContextUserMessageEncoder(returnData.get())));
+            replyEncoder->encode(WebContextUserMessageEncoder(returnData.get()));
             return;
         }
         case WebContextLegacyMessage::PostMessage:
