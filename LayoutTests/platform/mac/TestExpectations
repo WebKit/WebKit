@@ -1298,6 +1298,8 @@ webkit.org/b/80394 fast/block/margin-collapse/block-inside-inline/025.html [ Fai
 # css3-conditionals support is not yet enabled.
 webkit.org/b/86146 css3/supports.html
 
+webkit.org/b/99878 css3/flexbox/flexbox-baseline-margins.html [ Missing ImageOnlyFailure ]
+
 # Asserts in MessagePort::contextDestroyed, but the assert usually gets attributed to later tests.
 webkit.org/b/94458 fast/events/message-port-constructor-for-deleted-document.html
 

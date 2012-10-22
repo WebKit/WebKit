@@ -1,5 +1,26 @@
 2012-10-22  Tony Chang  <tony@chromium.org>
 
+        Fix some baseline flexbox alignment
+        https://bugs.webkit.org/show_bug.cgi?id=99879
+
+        Reviewed by Ojan Vafai.
+
+        Additional test cases for baseline aligning flexbox.
+
+        * css3/flexbox/flexbox-baseline-margins.html: Added.
+        * css3/flexbox/resources/flexbox.css:
+        (.flex-one): New cross browser value.
+        * platform/chromium-linux/css3/flexbox/flexbox-baseline-margins-expected.png: Added.
+        * platform/chromium-linux/css3/flexbox/flexbox-baseline-margins-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+
+2012-10-22  Tony Chang  <tony@chromium.org>
+
         Unreviewed, updating skipped tests that moved.
 
         * platform/win/TestExpectations:

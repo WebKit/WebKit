@@ -1966,6 +1966,8 @@ webkit.org/b/97968 media/unsupported-rtsp.html [ Failure ]
 
 webkit.org/b/98587 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ ImageOnlyFailure ]
 
+webkit.org/b/99878 css3/flexbox/flexbox-baseline-margins.html [ Missing ImageOnlyFailure ]
+
 # Needs rebaseline eventually
 webkit.org/b/97990 mathml/presentation/attributes.xhtml [ Failure ]
 webkit.org/b/97990 mathml/presentation/fractions.xhtml [ Failure ]

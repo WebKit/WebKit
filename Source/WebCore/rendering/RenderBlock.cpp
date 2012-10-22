@@ -6205,7 +6205,7 @@ LayoutUnit RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLi
         bool ignoreBaseline = (layer() && (layer()->marquee() || (direction == HorizontalLine ? (layer()->verticalScrollbar() || layer()->scrollYOffset() != 0)
             : (layer()->horizontalScrollbar() || layer()->scrollXOffset() != 0)))) || (isWritingModeRoot() && !isRubyRun());
         
-        LayoutUnit baselinePos = ignoreBaseline ? static_cast<LayoutUnit>(-1) : lastLineBoxBaseline();
+        LayoutUnit baselinePos = ignoreBaseline ? static_cast<LayoutUnit>(-1) : inlineBlockBaseline(direction);
         
         LayoutUnit bottomOfContent = direction == HorizontalLine ? borderTop() + paddingTop() + contentHeight() : borderRight() + paddingRight() + contentWidth();
         if (baselinePos != -1 && baselinePos <= bottomOfContent)
@@ -6242,12 +6242,15 @@ LayoutUnit RenderBlock::firstLineBoxBaseline() const
     return -1;
 }
 
-LayoutUnit RenderBlock::lastLineBoxBaseline() const
+LayoutUnit RenderBlock::inlineBlockBaseline(LineDirectionMode direction) const
+{
+    return lastLineBoxBaseline(direction);
+}
+
+LayoutUnit RenderBlock::lastLineBoxBaseline(LineDirectionMode lineDirection) const
 {
     if (!isBlockFlow() || (isWritingModeRoot() && !isRubyRun()))
         return -1;
-
-    LineDirectionMode lineDirection = isHorizontalWritingMode() ? HorizontalLine : VerticalLine;
 
     if (childrenInline()) {
         if (!firstLineBox() && hasLineIfEmpty()) {
@@ -6264,7 +6267,7 @@ LayoutUnit RenderBlock::lastLineBoxBaseline() const
         for (RenderBox* curr = lastChildBox(); curr; curr = curr->previousSiblingBox()) {
             if (!curr->isFloatingOrOutOfFlowPositioned()) {
                 haveNormalFlowChild = true;
-                LayoutUnit result = curr->lastLineBoxBaseline();
+                LayoutUnit result = curr->inlineBlockBaseline(lineDirection);
                 if (result != -1)
                     return curr->logicalTop() + result; // Translate to our coordinate space.
             }

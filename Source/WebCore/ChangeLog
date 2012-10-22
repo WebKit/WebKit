@@ -1,3 +1,37 @@
+2012-10-22  Tony Chang  <tony@chromium.org>
+
+        Fix some baseline flexbox alignment
+        https://bugs.webkit.org/show_bug.cgi?id=99879
+
+        Reviewed by Ojan Vafai.
+
+        Fix a bug where we weren't handling margin properly on inline-flexbox.
+        Fix a bug where we weren't getting the edge of the content box properly when synthesizing
+        a baseline.
+
+        Test: css3/flexbox/flexbox-baseline-margins.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::baselinePosition):
+        (WebCore::RenderBlock::inlineBlockBaseline): Add a new method that is used when calculating an inline-block's
+        baseline. Previously we would use lastLineBoxBaseline.
+        (WebCore::RenderBlock::lastLineBoxBaseline): Pass in direction and when searching children, use inlineBlockBaseline.
+        * rendering/RenderBlock.h:
+        (RenderBlock): Make lastLineBoxBaseline non-virtual.
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::inlineBlockBaseline): Replace lastLineBoxBaseline with inlineBlockBaseline.
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::synthesizedBaselineFromContentBox): Helper method for getting the baseline from the content box.
+        (WebCore::RenderFlexibleBox::baselinePosition): Always include the margin. This fixes the inline-flexbox case.
+        (WebCore::RenderFlexibleBox::firstLineBoxBaseline): Fix a case where we didn't synthesize a baseline.  Returning -1 means there is no baseline, but we can
+        synthesize a baseline if we have a flexitem without text.
+        (WebCore::RenderFlexibleBox::inlineBlockBaseline):
+        * rendering/RenderFlexibleBox.h:
+        * rendering/RenderTable.cpp: Replace lastLineBoxBaseline with inlineBlockBaseline.
+        (WebCore::RenderTable::inlineBlockBaseline): Try to make comment more direct.
+        * rendering/RenderTable.h:
+        (RenderTable): Replace lastLineBoxBaseline with inlineBlockBaseline.
+
 2012-10-22  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed Chromium build fix following r132074.

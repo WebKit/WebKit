@@ -1357,6 +1357,8 @@ webkit.org/b/98585 fast/exclusions/shape-inside/shape-inside-rounded-rectangle-0
 
 webkit.org/b/98587 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ ImageOnlyFailure ]
 
+webkit.org/b/99878 css3/flexbox/flexbox-baseline-margins.html [ Missing ImageOnlyFailure ]
+
 webkit.org/b/98612 [ Release ] fast/dom/gc-dom-tree-lifetime.html [ Failure ]
 
 webkit.org/b/98613 css3/masking/clip-path-reference-userSpaceOnUse.html [ ImageOnlyFailure ]

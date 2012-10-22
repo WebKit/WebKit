@@ -279,7 +279,7 @@ private:
 
     virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const OVERRIDE;
     virtual LayoutUnit firstLineBoxBaseline() const OVERRIDE;
-    virtual LayoutUnit lastLineBoxBaseline() const OVERRIDE;
+    virtual LayoutUnit inlineBlockBaseline(LineDirectionMode) const OVERRIDE;
 
     RenderTableCol* slowColElement(unsigned col, bool* startEdge, bool* endEdge) const;
 

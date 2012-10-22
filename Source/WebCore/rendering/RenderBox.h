@@ -473,7 +473,7 @@ public:
     RenderLayer* enclosingFloatPaintingLayer() const;
     
     virtual LayoutUnit firstLineBoxBaseline() const { return -1; }
-    virtual LayoutUnit lastLineBoxBaseline() const { return -1; }
+    virtual LayoutUnit inlineBlockBaseline(LineDirectionMode) const { return -1; } // Returns -1 if we should skip this box when computing the baseline of an inline-block.
 
     bool shrinkToAvoidFloats() const;
     virtual bool avoidsFloats() const;

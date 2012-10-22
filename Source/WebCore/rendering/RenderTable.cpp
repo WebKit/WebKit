@@ -1229,9 +1229,9 @@ LayoutUnit RenderTable::baselinePosition(FontBaseline baselineType, bool firstLi
     return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
 }
 
-LayoutUnit RenderTable::lastLineBoxBaseline() const
+LayoutUnit RenderTable::inlineBlockBaseline(LineDirectionMode) const
 {
-    // Tables don't contribute their baseline towards the computation of an inline-block's baseline.
+    // Tables are skipped when computing an inline-block's baseline.
     return -1;
 }
 

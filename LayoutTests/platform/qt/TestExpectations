@@ -2414,6 +2414,8 @@ webkit.org/b/90007 http/tests/security/mixedContent/insecure-audio-video-in-main
 # Skip tests in fast/text/shaping
 webkit.org/b/90951 fast/text/shaping
 
+webkit.org/b/99878 css3/flexbox/flexbox-baseline-margins.html [ Missing ImageOnlyFailure ]
+
 # Flaky tests
 webkit.org/b/91376 http/tests/security/sandboxed-iframe-modify-self.html [ Failure Pass ]
 webkit.org/b/91379 http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html [ Failure Pass ]

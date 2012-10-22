@@ -15,6 +15,10 @@
     -webkit-flex: auto;
     -moz-flex: auto;
 }
+.flex-one {
+    -webkit-flex: 1;
+    -moz-flex: 1;
+}
 
 .row {
     -webkit-flex-direction: row;
