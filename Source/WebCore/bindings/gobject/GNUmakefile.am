@@ -173,6 +173,8 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMHTMLParamElementPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLPreElement.cpp \
 	DerivedSources/webkit/WebKitDOMHTMLPreElementPrivate.h \
+	DerivedSources/webkit/WebKitDOMHTMLPropertiesCollection.cpp \
+	DerivedSources/webkit/WebKitDOMHTMLPropertiesCollectionPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLQuoteElement.cpp \
 	DerivedSources/webkit/WebKitDOMHTMLQuoteElementPrivate.h \
 	DerivedSources/webkit/WebKitDOMHTMLScriptElement.cpp \
@@ -211,6 +213,8 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMMemoryInfoPrivate.h \
 	DerivedSources/webkit/WebKitDOMMessagePort.cpp \
 	DerivedSources/webkit/WebKitDOMMessagePortPrivate.h \
+	DerivedSources/webkit/WebKitDOMMicroDataItemValue.cpp \
+	DerivedSources/webkit/WebKitDOMMicroDataItemValuePrivate.h \
 	DerivedSources/webkit/WebKitDOMMouseEvent.cpp \
 	DerivedSources/webkit/WebKitDOMMouseEventPrivate.h \
 	DerivedSources/webkit/WebKitDOMNamedNodeMap.cpp \
@@ -227,6 +231,8 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMNodePrivate.h \
 	DerivedSources/webkit/WebKitDOMProcessingInstruction.cpp \
 	DerivedSources/webkit/WebKitDOMProcessingInstructionPrivate.h \
+	DerivedSources/webkit/WebKitDOMPropertyNodeList.cpp \
+	DerivedSources/webkit/WebKitDOMPropertyNodeListPrivate.h \
 	DerivedSources/webkit/WebKitDOMRange.cpp \
 	DerivedSources/webkit/WebKitDOMRangePrivate.h \
 	DerivedSources/webkit/WebKitDOMScreen.cpp \
@@ -357,6 +363,7 @@ webkitgtk_built_h_api += \
 	DerivedSources/webkit/WebKitDOMHTMLParagraphElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLParamElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLPreElement.h \
+	DerivedSources/webkit/WebKitDOMHTMLPropertiesCollection.h \
 	DerivedSources/webkit/WebKitDOMHTMLQuoteElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLScriptElement.h \
 	DerivedSources/webkit/WebKitDOMHTMLSelectElement.h \
@@ -383,8 +390,10 @@ webkitgtk_built_h_api += \
 	DerivedSources/webkit/WebKitDOMHistory.h \
 	DerivedSources/webkit/WebKitDOMLocation.h \
 	DerivedSources/webkit/WebKitDOMMemoryInfo.h \
+	DerivedSources/webkit/WebKitDOMMicroDataItemValue.h \
 	DerivedSources/webkit/WebKitDOMObject.h \
 	DerivedSources/webkit/WebKitDOMNavigator.h \
+	DerivedSources/webkit/WebKitDOMPropertyNodeList.h \
 	DerivedSources/webkit/WebKitDOMScreen.h \
 	DerivedSources/webkit/WebKitDOMWebKitAnimation.h \
 	DerivedSources/webkit/WebKitDOMWebKitAnimationList.h \

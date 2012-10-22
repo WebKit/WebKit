@@ -1,5 +1,16 @@
 2012-10-22  Zan Dobersek  <zandobersek@gmail.com>
 
+        [GTK] Enable Microdata DOM API
+        https://bugs.webkit.org/show_bug.cgi?id=99033
+
+        Reviewed by Martin Robinson.
+
+        Unskip the Microdata tests, they all pass now that the feature has been enabled.
+
+        * platform/gtk/TestExpectations:
+
+2012-10-22  Zan Dobersek  <zandobersek@gmail.com>
+
         [GTK] Enable CSP 1.1
         https://bugs.webkit.org/show_bug.cgi?id=99064
 

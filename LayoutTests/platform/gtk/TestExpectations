@@ -328,9 +328,6 @@ webkit.org/b/99031 java [ Skip ]
 # Directory upload is not enabled.
 webkit.org/b/99032 fast/forms/file/input-file-directory-upload.html [ Skip ]
 
-# Microdata DOM API is not yet enabled.
-webkit.org/b/99033 fast/dom/MicroData [ Skip ]
-
 # Web Intents is not yet enabled.
 webkit.org/b/99035 webintents [ Skip ]
 

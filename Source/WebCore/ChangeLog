@@ -1,5 +1,22 @@
 2012-10-22  Zan Dobersek  <zandobersek@gmail.com>
 
+        [GTK] Enable Microdata DOM API
+        https://bugs.webkit.org/show_bug.cgi?id=99033
+
+        Reviewed by Martin Robinson.
+
+        Enable the Microdata DOM API, but still disable it when the unstable
+        features should be disabled (for instance in release builds).
+
+        No new tests - related tests are being unskipped and are expected to pass.
+
+        * GNUmakefile.am:
+        * GNUmakefile.features.am:
+        * bindings/gobject/GNUmakefile.am: Add the required files so the Microdata
+        API GObject bindings are generated and built.
+
+2012-10-22  Zan Dobersek  <zandobersek@gmail.com>
+
         [GTK] Enable CSP 1.1
         https://bugs.webkit.org/show_bug.cgi?id=99064
 
