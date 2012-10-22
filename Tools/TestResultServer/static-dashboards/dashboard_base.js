@@ -114,8 +114,6 @@ var ONE_WEEK_SECONDS = ONE_DAY_SECONDS * 7;
 // These should match the testtype uploaded to test-results.appspot.com.
 // See http://test-results.appspot.com/testfile.
 var TEST_TYPES = [
-    'aura_unittests',
-    'aura_shell_unittests',
     'base_unittests',
     'browser_tests',
     'cacheinvalidation_unittests',
@@ -136,7 +134,6 @@ var TEST_TYPES = [
     'layout-tests',
     'media_unittests',
     'mini_installer_test',
-    'nacl_ui_tests',
     'net_unittests',
     'printing_unittests',
     'remoting_unittests',

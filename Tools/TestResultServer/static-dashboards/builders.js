@@ -45,7 +45,6 @@ BuilderMaster.prototype.builderJsonPath = function()
     return this.basePath + 'json/builders';
 };
 
-CHROMIUM_BUILDER_MASTER = new BuilderMaster('Chromium', 'http://build.chromium.org/p/chromium/');
 CHROMIUM_WIN_BUILDER_MASTER = new BuilderMaster('ChromiumWin', 'http://build.chromium.org/p/chromium.win/');
 CHROMIUM_MAC_BUILDER_MASTER = new BuilderMaster('ChromiumMac', 'http://build.chromium.org/p/chromium.mac/');
 CHROMIUM_LINUX_BUILDER_MASTER = new BuilderMaster('ChromiumLinux', 'http://build.chromium.org/p/chromium.linux/');
@@ -178,7 +177,7 @@ function isChromiumWebkitDepsTestRunner(builder)
 
 function isChromiumDepsGTestRunner(builder)
 {
-    return (builder.indexOf('Tests') != -1 || builder.indexOf('Sync') != -1) && builder.indexOf('Chrome Frame') == -1;
+    return builder.indexOf('Builder') == -1;
 }
 
 function isChromiumDepsCrosGTestRunner(builder)
@@ -289,7 +288,6 @@ function loadBuildersList(groupName, testType) {
         switch(groupName) {
         case '@DEPS - chromium.org':
             var builderGroup = new BuilderGroup(BuilderGroup.DEPS_WEBKIT);
-            requestBuilderList(CHROMIUM_GTESTS_BUILDER_GROUPS, isChromiumDepsGTestRunner, CHROMIUM_BUILDER_MASTER, groupName, builderGroup);
             requestBuilderList(CHROMIUM_GTESTS_BUILDER_GROUPS, isChromiumDepsGTestRunner, CHROMIUM_WIN_BUILDER_MASTER, groupName, builderGroup);
             requestBuilderList(CHROMIUM_GTESTS_BUILDER_GROUPS, isChromiumDepsGTestRunner, CHROMIUM_MAC_BUILDER_MASTER, groupName, builderGroup);
             requestBuilderList(CHROMIUM_GTESTS_BUILDER_GROUPS, isChromiumDepsGTestRunner, CHROMIUM_LINUX_BUILDER_MASTER, groupName, builderGroup);

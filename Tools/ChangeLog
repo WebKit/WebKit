@@ -1,3 +1,14 @@
+2012-10-22  Ojan Vafai  <ojan@chromium.org>
+
+        Update flakiness dashboard to match the state of the builders.
+        * TestResultServer/static-dashboards/builders.js:
+        (isChromiumDepsGTestRunner):
+        Broaden the filter since Chromium naming scheme is not consistent.
+        (loadBuildersList):
+        The main Chromium master now only runs builders, no tests.
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        Remove test suites that no longer run on any of these masters.
+
 2012-10-22  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] add a method for printing message to the WebTestDelegate
