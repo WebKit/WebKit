@@ -1,3 +1,14 @@
+2012-10-21  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Web Inspector: Shadow DOM: Node removal doesn't reflect.
+        https://bugs.webkit.org/show_bug.cgi?id=99567
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/elements/update-shadowdom-expected.txt: Added.
+        * inspector/elements/update-shadowdom.html: Added.
+        * platform/mac/TestExpectations:
+
 2012-10-21  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, more Chromium ML baselining minor cleanups.

@@ -1,3 +1,18 @@
+2012-10-21  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Web Inspector: Shadow DOM: Node removal doesn't reflect.
+        https://bugs.webkit.org/show_bug.cgi?id=99567
+
+        Reviewed by Pavel Feldman.
+
+        We have to call InspectorInstrumentation::willRemoveDOMNode() even if a node is in a shadow tree.
+        Otherwise, node won't be removed from the inspector.
+
+        Test: inspector/elements/update-shadowdom.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::dispatchChildRemovalEvents):
+
 2012-10-21  Andreas Kling  <kling@webkit.org>
 
         Remove Page::javaScriptURLsAreAllowed setting.

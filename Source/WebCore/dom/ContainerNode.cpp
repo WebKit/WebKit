@@ -976,8 +976,10 @@ static void dispatchChildInsertionEvents(Node* child)
 
 static void dispatchChildRemovalEvents(Node* child)
 {
-    if (child->isInShadowTree())
+    if (child->isInShadowTree()) {
+        InspectorInstrumentation::willRemoveDOMNode(child->document(), child);
         return;
+    }
 
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
 
