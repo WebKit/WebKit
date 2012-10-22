@@ -1,5 +1,45 @@
 2012-10-21  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, new Chromium ML baselines for platform/chromium/virtual/gpu/fast/hidpi.
+
+        * platform/chromium-mac-lion/platform/chromium/virtual/gpu/fast/canvas/canvas-bg-expected.png: Copied from LayoutTests/platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/canvas-bg-expected.png.
+        * platform/chromium-mac-lion/platform/chromium/virtual/gpu/fast/canvas/canvas-composite-expected.png: Copied from LayoutTests/platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/canvas-composite-expected.png.
+        * platform/chromium-mac-lion/platform/chromium/virtual/gpu/fast/canvas/canvas-text-alignment-expected.png: Copied from LayoutTests/platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/canvas-text-alignment-expected.png.
+        * platform/chromium-mac-lion/platform/chromium/virtual/gpu/fast/canvas/canvas-text-baseline-expected.png: Copied from LayoutTests/platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/canvas-text-baseline-expected.png.
+        * platform/chromium-mac-lion/platform/chromium/virtual/gpu/fast/canvas/canvas-transforms-during-path-expected.png: Copied from LayoutTests/platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/canvas-transforms-during-path-expected.png.
+        * platform/chromium-mac-lion/platform/chromium/virtual/gpu/fast/canvas/fillrect-gradient-zero-stops-expected.png: Copied from LayoutTests/platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/fillrect-gradient-zero-stops-expected.png.
+        * platform/chromium-mac-lion/platform/chromium/virtual/gpu/fast/canvas/fillrect_gradient-expected.png: Copied from LayoutTests/platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/fillrect_gradient-expected.png.
+        * platform/chromium-mac-lion/platform/chromium/virtual/gpu/fast/canvas/image-object-in-canvas-expected.png: Copied from LayoutTests/platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/image-object-in-canvas-expected.png.
+        * platform/chromium-mac-lion/platform/chromium/virtual/gpu/fast/canvas/image-pattern-rotate-expected.png: Copied from LayoutTests/platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/image-pattern-rotate-expected.png.
+        * platform/chromium-mac-lion/platform/chromium/virtual/gpu/fast/canvas/patternfill-repeat-expected.png: Copied from LayoutTests/platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/patternfill-repeat-expected.png.
+        * platform/chromium-mac-lion/platform/chromium/virtual/gpu/fast/canvas/quadraticCurveTo-expected.png: Copied from LayoutTests/platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/quadraticCurveTo-expected.png.
+        * platform/chromium-mac-lion/platform/chromium/virtual/gpu/fast/canvas/setWidthResetAfterForcedRender-expected.png: Copied from LayoutTests/platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/setWidthResetAfterForcedRender-expected.png.
+        * platform/chromium-mac-lion/platform/chromium/virtual/gpu/fast/canvas/shadow-offset-4-expected.png: Copied from LayoutTests/platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/shadow-offset-4-expected.png.
+        * platform/chromium-mac-lion/platform/chromium/virtual/gpu/fast/canvas/shadow-offset-5-expected.png: Copied from LayoutTests/platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/shadow-offset-5-expected.png.
+        * platform/chromium-mac-lion/platform/chromium/virtual/gpu/fast/canvas/shadow-offset-6-expected.png: Copied from LayoutTests/platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/shadow-offset-6-expected.png.
+        * platform/chromium-mac-lion/platform/chromium/virtual/gpu/fast/canvas/shadow-offset-7-expected.png: Copied from LayoutTests/platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/shadow-offset-7-expected.png.
+        * platform/chromium-mac-lion/platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi-expected.png: Copied from LayoutTests/platform/chromium-mac/platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi-expected.png.
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/canvas-bg-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/canvas-composite-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/canvas-text-alignment-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/canvas-text-baseline-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/canvas-transforms-during-path-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/fillrect-gradient-zero-stops-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/fillrect_gradient-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/image-object-in-canvas-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/image-pattern-rotate-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/patternfill-repeat-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/quadraticCurveTo-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/setWidthResetAfterForcedRender-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/shadow-offset-4-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/shadow-offset-5-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/shadow-offset-6-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/shadow-offset-7-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi-expected.png:
+        * platform/chromium/TestExpectations:
+
+2012-10-21  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, add Chromium ML baselines for fast/hidpi.
 
         * platform/chromium-mac-lion/fast/hidpi/clip-text-in-hidpi-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/hidpi/clip-text-in-hidpi-expected.png.
