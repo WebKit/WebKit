@@ -269,6 +269,12 @@
             "filename": r"Source/WebCore/accessibility"
                         r"|LayoutTests/.*accessibility",
         },
+        "Cairo": {
+            "filename": r"Source/WebCore/platform/graphics/cairo",
+        },
+        "Harfbuzz": {
+            "filename": r"Source/WebCore/platform/graphics/harfbuzz",
+        }
     },
     "CC_RULES": {
         # Note: All email addresses listed must be registered with bugzilla.
@@ -278,6 +284,7 @@
         "AppleMacPublicApi": [ "timothy@apple.com" ],
         "Battery": [ "gyuyoung.kim@samsung.com" ],
         "BlackBerry": [ "mifenton@rim.com", "rwlbuis@gmail.com", "tonikitoo@webkit.org" ],
+        "Cairo": [ "dominik.rottsches@intel.com" ],
         "CMake": [ "rakuco@webkit.org", "gyuyoung.kim@samsung.com" ],
         "CSS": [ "alexis@webkit.org", "macpherson@chromium.org", "cmarcelo@webkit.org", "allan.jensen@digia.com" ],
         "ChromiumGraphics": [ "jamesr@chromium.org", "cc-bugs@chromium.org" ],
@@ -292,6 +299,7 @@
         "FrameLoader": [ "abarth@webkit.org", "japhet@chromium.org" ],
         "GStreamerGraphics": [ "alexis@webkit.org", "pnormand@igalia.com", "gns@gnome.org", "mrobinson@webkit.org" ],
         "GtkWebKit2PublicAPI": [ "cgarcia@igalia.com", "gns@gnome.org", "mrobinson@webkit.org" ],
+        "Harfbuzz": [ "dominik.rottsches@intel.com" ],
         "Loader": [ "japhet@chromium.org" ],
         "MathML": [ "dbarton@mathscribe.com" ],
         "Media": [ "feature-media-reviews@chromium.org", "eric.carlson@apple.com" ],
@@ -303,7 +311,7 @@
         "QtWebKit2PlatformSpecific": [ "alexis@webkit.org", "cmarcelo@webkit.org", "abecsi@webkit.org" ],
         "QtWebKit2PublicAPI": [ "alexis@webkit.org", "cmarcelo@webkit.org", "abecsi@webkit.org" ],
         "Rendering": [ "eric@webkit.org" ],
-        "SVG": ["schenney@chromium.org", "pdr@google.com", "fmalita@chromium.org" ],
+        "SVG": ["schenney@chromium.org", "pdr@google.com", "fmalita@chromium.org", "dominik.rottsches@intel.com" ],
         "SVNScripts": [ "dbates@webkit.org" ],
         "ScrollingCoordinator": [ "andersca@apple.com", "jamesr@chromium.org", "tonikitoo@webkit.org" ],
         "SecurityCritical": [ "abarth@webkit.org" ],
