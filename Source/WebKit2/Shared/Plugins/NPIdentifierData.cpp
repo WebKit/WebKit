@@ -73,7 +73,7 @@ void NPIdentifierData::encode(CoreIPC::ArgumentEncoder* encoder) const
     if (m_isString)
         encoder->encode(m_string);
     else
-        encoder->encode(static_cast<int32_t>(m_number));
+        encoder->encode(m_number);
 }
 
 bool NPIdentifierData::decode(CoreIPC::ArgumentDecoder* decoder, NPIdentifierData& result)
@@ -84,7 +84,7 @@ bool NPIdentifierData::decode(CoreIPC::ArgumentDecoder* decoder, NPIdentifierDat
     if (result.m_isString)
         return decoder->decode(result.m_string);
 
-    return decoder->decode(static_cast<int32_t>(result.m_number));
+    return decoder->decode(result.m_number);
 }
 
 } // namespace WebKit
