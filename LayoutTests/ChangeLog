@@ -1,3 +1,19 @@
+2012-10-21  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed. More chromium baseline cleanup after r132022.
+
+        * platform/chromium-mac-lion/editing/selection/iframe-expected.png: Added.
+        * platform/chromium-mac-lion/editing/selection/move-by-line-001-expected.png: Added.
+        * platform/chromium-mac-lion/svg/custom/pattern-scaling-expected.png: Removed.
+        * platform/chromium-mac-lion/svg/custom/pattern-scaling-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/pattern-scaling-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/pattern-scaling-expected.txt: Removed.
+        * platform/chromium-mac/svg/custom/pattern-scaling-expected.txt: Removed.
+        * platform/chromium-win-xp/svg/custom/pattern-scaling-expected.png: Removed.
+        * platform/chromium-win-xp/svg/custom/pattern-scaling-expected.txt: Removed.
+        * platform/chromium-win/svg/custom/pattern-scaling-expected.png: Renamed from LayoutTests/platform/chromium-linux/svg/custom/pattern-scaling-expected.png.
+        * platform/chromium/svg/custom/pattern-scaling-expected.txt: Renamed from LayoutTests/platform/chromium-linux/svg/custom/pattern-scaling-expected.txt.
+
 2012-10-21  Shinya Kawanaka  <shinyak@chromium.org>
 
         Web Inspector: Shadow DOM: Node removal doesn't reflect.
