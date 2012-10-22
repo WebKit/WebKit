@@ -43,7 +43,7 @@ struct _WebKitSpellCheckerEnchantPrivate {
     OwnPtr<TextCheckerEnchant> textCheckerEnchant;
 };
 
-static void webkit_spell_checker_enchant_spell_checker_interface_init(WebKitSpellCheckerInterface* interface);
+static void webkit_spell_checker_enchant_spell_checker_interface_init(WebKitSpellCheckerInterface* checkerInterface);
 
 G_DEFINE_TYPE_WITH_CODE(WebKitSpellCheckerEnchant, webkit_spell_checker_enchant, G_TYPE_OBJECT,
                         G_IMPLEMENT_INTERFACE(WEBKIT_TYPE_SPELL_CHECKER,
@@ -122,14 +122,14 @@ static void ignoreWord(WebKitSpellChecker* checker, const char* word)
     priv->textCheckerEnchant->ignoreWord(String::fromUTF8(word));
 }
 
-static void webkit_spell_checker_enchant_spell_checker_interface_init(WebKitSpellCheckerInterface* interface)
+static void webkit_spell_checker_enchant_spell_checker_interface_init(WebKitSpellCheckerInterface* checkerInterface)
 {
-    interface->check_spelling_of_string = checkSpellingOfString;
-    interface->get_guesses_for_word = getGuessesForWord;
-    interface->update_spell_checking_languages = updateSpellCheckingLanguages;
-    interface->get_autocorrect_suggestions_for_misspelled_word = getAutocorrectSuggestionsForMisspelledWord;
-    interface->learn_word = learnWord;
-    interface->ignore_word = ignoreWord;
+    checkerInterface->check_spelling_of_string = checkSpellingOfString;
+    checkerInterface->get_guesses_for_word = getGuessesForWord;
+    checkerInterface->update_spell_checking_languages = updateSpellCheckingLanguages;
+    checkerInterface->get_autocorrect_suggestions_for_misspelled_word = getAutocorrectSuggestionsForMisspelledWord;
+    checkerInterface->learn_word = learnWord;
+    checkerInterface->ignore_word = ignoreWord;
 }
 
 #endif /* ENABLE(SPELLCHECK) */
