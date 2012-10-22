@@ -1,3 +1,14 @@
+2012-10-22  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] Enable CSP 1.1
+        https://bugs.webkit.org/show_bug.cgi?id=99064
+
+        Reviewed by Martin Robinson.
+
+        Unskip the CSP 1.1 layout tests as they all pass with the feature enabled.
+
+        * platform/gtk/TestExpectations:
+
 2012-10-22  Keishi Hattori  <keishi@webkit.org>
 
         Test date-suggestion-picker-reset-value-after-reload.html will timeout when running with other tests

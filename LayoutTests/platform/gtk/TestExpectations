@@ -407,9 +407,6 @@ webkit.org/b/31508 storage/websql/transaction-callback-isolated-world.html [ Ski
 webkit.org/b/31508 storage/websql/transaction-error-callback-isolated-world.html [ Skip ]
 webkit.org/b/31508 storage/websql/transaction-success-callback-isolated-world.html [ Skip ]
 
-# Content Security Policy 1.1 (ENABLE_CSP_NEXT) is not enabled
-webkit.org/b/99064 http/tests/security/contentSecurityPolicy/1.1 [ Skip ]
-
 # Text Autosizing is not yet enabled.
 webkit.org/b/99063 fast/text-autosizing
 
