@@ -1,5 +1,19 @@
 2012-10-22  Adam Barth  <abarth@webkit.org>
 
+        [V8] ASSERT that removeAllDOMObjects() is called only on worker threads
+        https://bugs.webkit.org/show_bug.cgi?id=100046
+
+        Reviewed by Eric Seidel.
+
+        This function is called only on worker threads. We should ASSERT that
+        fact and remove the dead code that tries to handle the main thread
+        case.
+
+        * bindings/v8/V8DOMMap.cpp:
+        (WebCore::removeAllDOMObjects):
+
+2012-10-22  Adam Barth  <abarth@webkit.org>
+
         [V8] We should call the faster v8::Integer::New APIs
         https://bugs.webkit.org/show_bug.cgi?id=100016
 

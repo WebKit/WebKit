@@ -77,20 +77,10 @@ void removeAllDOMObjects()
     DOMDataStore& store = DOMData::getCurrentStore();
 
     v8::HandleScope scope;
+    ASSERT(!isMainThread());
 
-    // The DOM objects with the following types only exist on the main thread.
-    if (isMainThread()) {
-        // Remove all DOM nodes.
-        DOMData::removeObjectsFromWrapperMap<Node>(&store, store.domNodeMap());
-
-        // Remove all active DOM nodes.
-        DOMData::removeObjectsFromWrapperMap<Node>(&store, store.activeDomNodeMap());
-    }
-
-    // Remove all DOM objects in the wrapper map.
+    // Note: We skip the Node wrapper maps because they exist only on the main thread.
     DOMData::removeObjectsFromWrapperMap<void>(&store, store.domObjectMap());
-
-    // Remove all active DOM objects in the wrapper map.
     DOMData::removeObjectsFromWrapperMap<void>(&store, store.activeDomObjectMap());
 }
 
