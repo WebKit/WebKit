@@ -1,3 +1,9 @@
+2012-10-22  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed gardening, marking fast/sub-pixel/file-upload-control-at-fractional-offset.html as failing on LION for now.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-22  Tony Chang  <tony@chromium.org>
 
         Fix some baseline flexbox alignment
