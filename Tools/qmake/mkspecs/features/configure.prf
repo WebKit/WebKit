@@ -11,6 +11,14 @@
 load(features)
 load(configure)
 
+WEBKIT_TOOLS_CONFIG = \
+    build_drt \
+    build_wtr \
+    build_imagediff \
+    build_test_npapi \
+    build_testbrowser \
+    build_minibrowser
+
 defineTest(runConfigure) {
     !webkit_configured:!print_defaults {
         log($${EOL}Running configure tests...$${EOL}$${EOL})
@@ -41,9 +49,8 @@ defineTest(runConfigure) {
     WEBKIT_CONFIG += \
         build_webkit1 \
         build_webkit2 \
-        build_drt \
-        build_wtr \
-        build_tests
+        build_tests \
+        $$WEBKIT_TOOLS_CONFIG
 
     # Sanatize WebKit1/WebKit2, as WebKit.pro uses these two options
     # to determine which pro-files to include. The remaining sanitazion
@@ -86,12 +93,14 @@ defineTest(finalizeConfigure) {
         WEBKIT_CONFIG -= build_drt build_wtr build_tests
     }
 
+    win32|!enable?(NETSCAPE_PLUGIN_API): WEBKIT_CONFIG -= build_test_npapi
+
     wince* {
         WEBKIT_CONFIG -= build_drt
     }
 
     production_build {
-        WEBKIT_CONFIG -= build_drt build_wtr build_tests
+        WEBKIT_CONFIG -= $$WEBKIT_TOOLS_CONFIG build_tests
     }
 
     print_defaults {

@@ -1,5 +1,14 @@
 2012-10-22  Tor Arne Vestbø  <tor.arne.vestbo@digia.com>
 
+        [Qt] Don't build any of the tools in production_build
+
+        Reviewed by Simon Hausmann.
+
+        * Tools.pro:
+        * qmake/mkspecs/features/configure.prf:
+
+2012-10-22  Tor Arne Vestbø  <tor.arne.vestbo@digia.com>
+
         [Qt] Move OBJECTS_DIR and friends to default_pre.prf
 
         The introduction of load(qt_build_config) in .qmake.conf meant

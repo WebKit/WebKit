@@ -8,22 +8,22 @@ TEMPLATE = subdirs
 CONFIG += ordered
 
 build?(webkit1) {
-    SUBDIRS += QtTestBrowser/QtTestBrowser.pro
+    build?(testbrowser): SUBDIRS += QtTestBrowser/QtTestBrowser.pro
     build?(drt): SUBDIRS += DumpRenderTree/qt/DumpRenderTree.pro
-    SUBDIRS += DumpRenderTree/qt/ImageDiff.pro
+    build?(imagediff): SUBDIRS += DumpRenderTree/qt/ImageDiff.pro
 }
 
 build?(webkit2) {
     # WTR's InjectedBundle depends currently on WK1's DumpRenderTreeSupport
     build?(webkit1):build?(wtr):have?(QTQUICK): SUBDIRS += WebKitTestRunner/WebKitTestRunner.pro
 
-    have?(QTQUICK): SUBDIRS += MiniBrowser/qt/MiniBrowser.pro
-    SUBDIRS += MiniBrowser/qt/raw/MiniBrowserRaw.pro
+    build?(minibrowser) {
+        have?(QTQUICK): SUBDIRS += MiniBrowser/qt/MiniBrowser.pro
+        SUBDIRS += MiniBrowser/qt/raw/MiniBrowserRaw.pro
+    }
 }
 
-!win32:enable?(NETSCAPE_PLUGIN_API) {
-    SUBDIRS += DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro
-}
+build?(test_npapi): SUBDIRS += DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro
 
 OTHER_FILES = \
     Scripts/* \
