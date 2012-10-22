@@ -1,3 +1,13 @@
+2012-10-22  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Roll Chromium DEPS to get new version of V8
+        https://bugs.webkit.org/show_bug.cgi?id=100015
+
+        Unreviewed.
+
+        * DEPS:
+            - Bigger is better.
+
 2012-10-22  Keishi Hattori  <keishi@webkit.org>
 
         Remove monthFormatInLDML
