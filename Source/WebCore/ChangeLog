@@ -1,3 +1,26 @@
+2012-10-22  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Use the DNS resolve queue
+        https://bugs.webkit.org/show_bug.cgi?id=99994
+
+        Reviewed by Simon Hausmann.
+
+        Use the DNS resolve queue, to ensure we can prefetch more than just the first 10 hostname encountered
+        during parsing. It also ensure each hostname is only appears once in the queue.
+
+        * Target.pri:
+        * platform/network/qt/DNSQt.cpp: Added.
+        (DnsPrefetchHelper):
+        (WebCore::DnsPrefetchHelper::DnsPrefetchHelper):
+        (WebCore::DnsPrefetchHelper::lookup):
+        (WebCore::DnsPrefetchHelper::lookedUp):
+        (WebCore::prefetchDNS):
+        (WebCore::DNSResolveQueue::platformProxyIsEnabledInSystemPreferences):
+        (WebCore::DNSResolveQueue::platformResolve):
+        * platform/network/qt/DnsPrefetchHelper.cpp: Removed.
+        * platform/network/qt/DnsPrefetchHelper.h: Removed.
+        (DnsPrefetchHelper):
+
 2012-10-22  Erik Arvidsson  <arv@chromium.org>
 
         HTMLBaseElement href attribute binding returns wrong URL
