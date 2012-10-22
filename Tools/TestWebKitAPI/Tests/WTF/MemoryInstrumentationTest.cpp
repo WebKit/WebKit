@@ -734,5 +734,27 @@ TEST(MemoryInstrumentationTest, arrayBuffer)
     EXPECT_EQ(2u, helper.visitedObjects());
 }
 
+class ClassWithTwoAncestors : public NotInstrumented, public Instrumented {
+public:
+    virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+    {
+        MemoryClassInfo info(memoryObjectInfo, this, TestType);
+    }
+};
+
+
+TEST(MemoryInstrumentationTest, instrumentedWithMultipleAncestors)
+{
+    InstrumentationTestHelper helper;
+    OwnPtr<ClassWithTwoAncestors> instance = adoptPtr(new ClassWithTwoAncestors());
+    InstrumentedOwner<ClassWithTwoAncestors*> descendantPointerOwner(instance.get());
+    Instrumented* ancestorPointer = instance.get();
+    InstrumentedOwner<Instrumented*> ancestorPointerOwner(ancestorPointerOwner);
+    helper.addRootObject(descendantPointerOwner);
+    helper.addRootObject(ancestorPointerOwner);
+    EXPECT_EQ(sizeof(ClassWithTwoAncestors), helper.reportedSizeForAllTypes());
+    EXPECT_EQ(1u, helper.visitedObjects());
+}
+
 } // namespace
 

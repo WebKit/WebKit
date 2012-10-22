@@ -1,3 +1,13 @@
+2012-10-22  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: do not double count memory of objects with multiple ancestors
+        https://bugs.webkit.org/show_bug.cgi?id=99958
+
+        Reviewed by Alexander Pavlov.
+
+        * TestWebKitAPI/Tests/WTF/MemoryInstrumentationTest.cpp: Test that there
+        is no double counting in case of multiple inheritance.
+
 2012-10-22  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Basic gesture event handling

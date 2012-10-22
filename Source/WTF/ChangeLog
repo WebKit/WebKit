@@ -1,3 +1,27 @@
+2012-10-22  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: do not double count memory of objects with multiple ancestors
+        https://bugs.webkit.org/show_bug.cgi?id=99958
+
+        Reviewed by Alexander Pavlov.
+
+        Make sure memory occupied by objects of classes with multiple inheritance is
+        not double counted.
+
+        * wtf/MemoryInstrumentation.h:
+        (WTF::MemoryObjectInfo::MemoryObjectInfo):
+        (WTF::MemoryObjectInfo::reportedPointer):
+        (WTF::MemoryObjectInfo::reportObjectInfo): 1) Store actual pointer to the instrumented
+        object as it may differ from the original pointer by which it was reported. 2) Make
+        the method non-template and calculate object size on the caller side.
+        (MemoryObjectInfo):
+        (WTF::MemoryInstrumentation::reportObjectMemoryUsage):
+        (WTF::MemoryClassInfo::MemoryClassInfo):
+        (WTF::MemoryInstrumentation::InstrumentedPointer::process): use adjusted pointer
+        returned by reportMemoryUsage to check if the object has already been visited when
+        the pointer differs from the orinal one(it may happen if the object was reported
+        by a pointer to one of its base classes).
+
 2012-10-20  Martin Robinson  <mrobinson@igalia.com>
 
         Fix 'make dist' for the GTK+ port
