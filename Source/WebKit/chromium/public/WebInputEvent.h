@@ -379,38 +379,43 @@ public:
     int globalY;
 
     union {
-      struct {
-        int tapCount;
-        int width;
-        int height;
-      } tap;
+        struct {
+            int tapCount;
+            int width;
+            int height;
+        } tap;
 
-      struct {
-        int width;
-        int height;
-      } tapDown;
+        struct {
+            int width;
+            int height;
+        } tapDown;
 
-      struct {
-        int width;
-        int height;
-      } longPress;
+        struct {
+            int width;
+            int height;
+        } longPress;
 
-      struct {
-        float deltaX;
-        float deltaY;
-        float velocityX;
-        float velocityY;
-      } scrollUpdate;
+        struct {
+            int firstFingerWidth;
+            int firstFingerHeight;
+        } twoFingerTap;
 
-      struct {
-        float velocityX;
-        float velocityY;
-        SourceDevice sourceDevice;
-      } flingStart;
+        struct {
+            float deltaX;
+            float deltaY;
+            float velocityX;
+            float velocityY;
+        } scrollUpdate;
 
-      struct {
-        float scale;
-      } pinchUpdate;
+        struct {
+            float velocityX;
+            float velocityY;
+            SourceDevice sourceDevice;
+        } flingStart;
+
+        struct {
+            float scale;
+        } pinchUpdate;
     } data; 
 
     WebGestureEvent(unsigned sizeParam = sizeof(WebGestureEvent))

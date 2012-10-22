@@ -1,3 +1,22 @@
+2012-10-21  Terry Anderson  <tdanderson@chromium.org>
+
+        [chromium] Storing the enclosing rect dimensions of the first finger for a two finger tap
+        https://bugs.webkit.org/show_bug.cgi?id=99763
+
+        Reviewed by Adam Barth.
+
+        Add a struct |twoFingerTap| inside the union |data| of a WebGestureEvent. The fields |firstFingerWidth| 
+        and |firstFingerHeight| will represent the dimensions of the enclosing rectangle corresponding to the 
+        first touch point in the gesture. These will be used in a future CL to perform target fuzzing on a 
+        two-finger tap gesture.
+
+        Note: I chose not to name the two fields |width| and |height| so that they aren't confused with the 
+        width and height of the gesture's bounding box, which contains the enclosing rectangles of both touch 
+        points. My future fuzzing CL will only be concerned with the location and enclosing rectangle of the 
+        first touch point.
+
+        * public/WebInputEvent.h:
+
 2012-10-19  Yusuf Ozuysal  <yusufo@google.com>
 
         [chromium] Double-tap defaults to zoom (should only do this on Android)
