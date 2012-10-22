@@ -1,23 +1,22 @@
 <!DOCTYPE html>
-<body>
-<script src="resources/calendar-picker-common.js"></script>
-<input type=date id=date value="10000-12-31">
+<html>
+<head>
 <script>
-function finishTest() {
-    console.log(popupWindow.pagePopupController);
-    popupWindow.removeEventListener('resize', finishTest);
-    setTimeout(function() {testRunner.notifyDone();}, 0);
-}
-
-console.log('Check if window.pagePopupController exists for a page-popup window.');
-testRunner.dumpAsText(true);
-testRunner.waitUntilDone();
-
-window.onload = function() {
-    var dateInput = document.getElementById('date');
-    openPicker(dateInput);
-    popupWindow.addEventListener('resize', finishTest, false);
-};
+window.enablePixelTesting = true;
 </script>
-</body>
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
+<script src="resources/calendar-picker-common.js"></script>
+</head>
+<body>
+<input type=date id=date value="10000-12-31">
 
+<p id="description" style="opacity: 0"></p>
+<div id="console" style="opacity: 0"></div>
+
+<script>
+openPicker(document.getElementById('date'), finishJSTest);
+</script>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

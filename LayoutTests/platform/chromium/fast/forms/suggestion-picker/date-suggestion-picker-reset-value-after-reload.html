@@ -2,9 +2,10 @@
 <html>
 <head>
 <script src="../../../../../fast/js/resources/js-test-pre.js"></script>
-<script src="suggestion-picker-common.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
+<script src="resources/suggestion-picker-common.js"></script>
 </head>
-<body onload="runBodyLoaded()">
+<body>
 <iframe id=iframe srcdoc="<input type=date id=test1 list=suggestions><input type=date id=test2 value=2002-02-02 list=suggestions><datalist id=suggestions><option>2012-01-01</option></datalist>"></iframe>
 <script>
 description('Checks reloading page resets input values');
@@ -13,7 +14,7 @@ var iframe = document.getElementById('iframe');
 var testInput1;
 var testInput2;
 
-window.onload = function() {
+iframe.onload = function() {
     openPicker(iframe.contentDocument.getElementById('test1'), runOnOpenPopup1);
 };
 

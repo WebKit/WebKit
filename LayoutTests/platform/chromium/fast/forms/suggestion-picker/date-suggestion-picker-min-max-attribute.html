@@ -2,7 +2,8 @@
 <html>
 <head>
 <script src="../../../../../fast/js/resources/js-test-pre.js"></script>
-<script src="suggestion-picker-common.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
+<script src="resources/suggestion-picker-common.js"></script>
 </head>
 <body style="background-color: #bbbbbb;">
 <p id="description"></p>
@@ -26,9 +27,7 @@ description('Tests that min/max attributes filter out suggestions as expected.')
 debug('Check that page popup doesn\'t exist at first.');
 shouldBeNull('document.getElementById("mock-page-popup")');
 
-window.onload = function() {
-    openPicker(document.getElementById('date'), test);
-};
+openPicker(document.getElementById('date'), test);
 
 function test() {
     popupWindow.focus();

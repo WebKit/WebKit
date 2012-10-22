@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
 <script src="resources/calendar-picker-common.js"></script>
 </head>
 <body>
@@ -14,13 +15,9 @@ description("Tests if calendar picker key bindings work as expected.");
 debug('Check that page popup doesn\'t exist at first.');
 shouldBeNull('document.getElementById("mock-page-popup")');
 
-openPicker(document.getElementById('date'));
-
-popupWindow.addEventListener("resize", test1, false);
+openPicker(document.getElementById('date'), test1);
 
 function test1() {
-    popupWindow.removeEventListener("resize", test1, false);
-
     debug('Check that page popup exists.');
     shouldBe('popupWindow.pagePopupController.toString()', '"[object PagePopupController]"');
 
@@ -91,26 +88,23 @@ function test1() {
     shouldBeNull('document.getElementById("mock-page-popup")');
     shouldBe('document.getElementById("date").value', '"1999-12-26"');
 
-    openPicker(document.getElementById('date'));
-    popupWindow.addEventListener("resize", test2, false);
+    openPicker(document.getElementById('date'), test2);
 }
 
 function test2() {
-    popupWindow.removeEventListener("resize", test2, false);
-
     // Test twice in case midnight.
     shouldBeTrue('testToday() || testToday()');
 
     debug('Check if tabbing works.');
     shouldBe('focusedElement()', '".days-area-container"');
     eventSender.keyDown('\t');
-    shouldBe('focusedElement()', '".today-button[value=Today]"');
+    shouldBe('focusedElement()', '".today-button[value=<<CalendarToday>>]"');
     eventSender.keyDown('\t');
-    shouldBe('focusedElement()', '".clear-button[value=Clear]"');
+    shouldBe('focusedElement()', '".clear-button[value=<<CalendarClear>>]"');
     eventSender.keyDown('\t');
     shouldBe('focusedElement()', '".year-month-button[value=<<]"');
     eventSender.keyDown('\t', ['shiftKey']);
-    shouldBe('focusedElement()', '".clear-button[value=Clear]"');
+    shouldBe('focusedElement()', '".clear-button[value=<<CalendarClear>>]"');
 
     eventSender.keyDown('\x1B');
     shouldBeNull('document.getElementById("mock-page-popup")');
@@ -151,4 +145,4 @@ function focusedElement() {
 </script>
 <script src="../../../../../fast/js/resources/js-test-post.js"></script>
 </body>
-
+</html>

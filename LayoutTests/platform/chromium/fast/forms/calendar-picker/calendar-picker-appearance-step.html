@@ -1,20 +1,23 @@
 <!DOCTYPE html>
-<body>
-<script src="resources/calendar-picker-common.js"></script>
-<!-- Check if step attribute reflects the appearance of the calendar picker.  -->
-<input type="date" id="date" value="2012-12-31" step="3">
+<html>
+<head>
 <script>
-function finishTest() {
-    popupWindow.removeEventListener('resize', finishTest);
-    setTimeout(function() { testRunner.notifyDone(); }, 0);
-}
-
-testRunner.dumpAsText(true);
-testRunner.waitUntilDone();
-
-window.onload = function() {
-    openPicker(document.getElementById('date'));
-    popupWindow.addEventListener('resize', finishTest, false);
-};
+window.enablePixelTesting = true;
 </script>
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
+<script src="resources/calendar-picker-common.js"></script>
+</head>
+<body>
+<!-- Check if step attribute is reflected in the appearance of the calendar picker.  -->
+<input type="date" id="date" value="2012-12-31" step="3">
+
+<p id="description" style="opacity: 0"></p>
+<div id="console" style="opacity: 0"></div>
+
+<script>
+openPicker(document.getElementById('date'), finishJSTest);
+</script>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
 </body>
+</html>

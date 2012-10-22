@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="suggestion-picker-common.js"></script>
+<script>
+window.enablePixelTesting = true;
+</script>
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
+<script src="resources/suggestion-picker-common.js"></script>
 </head>
 <body style="background-color: #eeffff;">
 <input type=time id=time value="12:31" list="suggestions" style="width: 200px;" step="0.001">
@@ -30,23 +35,19 @@
     <option>01:19</option>
     <option>01:20</option>
 </datalist>
+
+<p id="description" style="opacity: 0"></p>
+<div id="console" style="opacity: 0"></div>
+
 <script>
+openPicker(document.getElementById('time'), finishTest);
+
 function finishTest() {
-    popupWindow.removeEventListener('resize', finishTest);
     popupWindow.focus();
     eventSender.keyDown('downArrow');
-    setTimeout(function() {testRunner.notifyDone();}, 0);
+    finishJSTest();
 }
-
-testRunner.dumpAsText(true);
-testRunner.waitUntilDone();
-
-window.onload = function() {
-    var dateInput = document.getElementById('time');
-    dateInput.offsetTop;
-    openPicker(dateInput);
-    popupWindow.addEventListener('resize', finishTest, false);
-};
 </script>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

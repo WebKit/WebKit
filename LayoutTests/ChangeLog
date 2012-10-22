@@ -1,3 +1,66 @@
+2012-10-21  Keishi Hattori  <keishi@webkit.org>
+
+        Refactor picker tests to fix flakiness and share code
+        https://bugs.webkit.org/show_bug.cgi?id=99671
+
+        Reviewed by Kent Tamura.
+
+        Refactored so picker tests share code and structure.
+
+        * fast/forms/resources/picker-common.js: Shared by all picker tests. Requires js-test-pre.js. Sets up an asynchronous test.
+        (openPicker): Opens the picker for the given input and calls the callback when the picker did open.
+        (popupOpenCallbackWrapper):
+        (sendKey):
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.png:
+        * platform/chromium/TestExpectations: Marked all tests as not flaky. Marked all pixel tests as need rebaseline.
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.txt:
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.txt:
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step.html:
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance.html:
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations.html:
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-mouse-operations.html:
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-pre-100-year.html:
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-with-step-expected.txt:
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-with-step.html:
+        * platform/chromium/fast/forms/calendar-picker/resources/calendar-picker-common.js:
+        * platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.txt:
+        * platform/chromium/fast/forms/color/color-suggestion-picker-appearance.html:
+        * platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance-expected.txt:
+        * platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance.html:
+        * platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance-expected.txt:
+        * platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance.html:
+        * platform/chromium/fast/forms/color/color-suggestion-picker-with-scrollbar-appearance-expected.txt:
+        * platform/chromium/fast/forms/color/color-suggestion-picker-with-scrollbar-appearance.html:
+        * platform/chromium/fast/forms/page-popup/page-popup-adjust-rect.html:
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-expected.txt:
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-rtl-expected.txt:
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-rtl.html:
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-with-scroll-bar-expected.txt:
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-with-scroll-bar.html:
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance.html:
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-key-operations-expected.txt:
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-key-operations.html:
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-min-max-attribute.html:
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-mouse-operations.html:
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-reset-value-after-reload.html:
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-step-attribute-expected.txt:
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-step-attribute.html:
+        * platform/chromium/fast/forms/suggestion-picker/resources/suggestion-picker-common.js: Moved to resource directory like all other js files.
+        (valueForEntry):
+        (highlightedEntry):
+        (entryValues):
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-expected.txt:
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-rtl-expected.txt:
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-rtl.html:
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-with-scroll-bar-expected.txt:
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-with-scroll-bar.html:
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance.html:
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-key-operations.html:
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-min-max-attribute.html:
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-mouse-operations.html:
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-step-attribute.html:
+
 2012-10-21  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, could've sworn this was in the previous patch ...

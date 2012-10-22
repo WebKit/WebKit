@@ -1,6 +1,15 @@
 <!DOCTYPE html>
+<html>
+<head>
+<script>
+window.enablePixelTesting = true;
+</script>
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
+<script src="resources/suggestion-picker-common.js"></script>
+</head>
 <body style="background-color: #eeffff;">
-<script src="suggestion-picker-common.js"></script>
+<script src="resources/suggestion-picker-common.js"></script>
 <input type=date id=date value="10000-12-31" list="suggestions" style="width: 100px;">
 <datalist id=suggestions>
     <option label="Today">2012-01-01</option>
@@ -45,21 +54,19 @@
     <option>2012-02-09</option>
     <option>2012-02-10</option>
 </datalist>
+
+<p id="description" style="opacity: 0"></p>
+<div id="console" style="opacity: 0"></div>
+
 <script>
+openPicker(document.getElementById('date'), finishTest);
+
 function finishTest() {
-    popupWindow.removeEventListener('resize', finishTest);
     popupWindow.focus();
     eventSender.keyDown('pageDown');
-    setTimeout(function() {testRunner.notifyDone();}, 0);
+    finishJSTest();
 }
-
-testRunner.dumpAsText(true);
-testRunner.waitUntilDone();
-
-window.onload = function() {
-    var dateInput = document.getElementById('date');
-    openPicker(dateInput);
-    popupWindow.addEventListener('resize', finishTest, false);
-};
 </script>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
 </body>
+</html>

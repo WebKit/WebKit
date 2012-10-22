@@ -4,7 +4,8 @@
 <script src="../../../../../fast/js/resources/js-test-pre.js"></script>
 <script src="../../../../../fast/forms/resources/common.js"></script>
 <script src="../../../../../fast/forms/resources/common-wheel-event.js"></script>
-<script src="suggestion-picker-common.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
+<script src="resources/suggestion-picker-common.js"></script>
 </head>
 <body style="background-color: #bbbbbb;">
 <p id="description"></p>
@@ -86,10 +87,7 @@
 debug('Check that page popup doesn\'t exist at first.');
 shouldBeNull('$("mock-page-popup")');
 
-window.onload = function() {
-    openPicker($('date'), test1);
-};
-
+openPicker($('date'), test1);
 
 function test1() {
     debug('Check that page popup exists.');

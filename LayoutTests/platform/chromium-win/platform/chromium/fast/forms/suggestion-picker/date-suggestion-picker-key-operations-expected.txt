@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 89: null
 Tests that key bindings work as expected.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

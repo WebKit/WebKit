@@ -219,3 +219,8 @@ body {
 .cancel-button {
     float: right;
 }
+
+.preparing .available,
+.preparing .unavailable {
+    -webkit-transition: none;
+}

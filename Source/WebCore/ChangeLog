@@ -1,3 +1,21 @@
+2012-10-21  Keishi Hattori  <keishi@webkit.org>
+
+        Refactor picker tests to fix flakiness and share code
+        https://bugs.webkit.org/show_bug.cgi?id=99671
+
+        Reviewed by Kent Tamura.
+
+        Disable transitions until the picker is fully ready. This should fix flakiness.
+
+        No new tests.
+
+        * Resources/pagepopups/calendarPicker.css:
+        (.preparing .unavailable): Disable transitions.
+        (.preparing .available): Disable transitions.
+        * Resources/pagepopups/calendarPicker.js:
+        (CalendarPicker): Set "preparing" class.
+        (CalendarPicker.prototype._handleWindowResize): Remove the "preparing" class when the window finishes resizing.
+
 2012-10-21  Shinya Kawanaka  <shinyak@chromium.org>
 
         Web Inspector: Shadow DOM: Node removal doesn't reflect.

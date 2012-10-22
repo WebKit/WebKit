@@ -7,4 +7,7 @@ Step without min.
 PASS availableDatesInCurrentMonth().join(",") is ["2011-05-08", "2011-05-17", "2011-05-26"].join(",")
 Step when min is set.
 PASS availableDatesInCurrentMonth().join(",") is ["2011-05-01", "2011-05-10", "2011-05-19", "2011-05-28"].join(",")
+PASS successfullyParsed is true
+
+TEST COMPLETE
  

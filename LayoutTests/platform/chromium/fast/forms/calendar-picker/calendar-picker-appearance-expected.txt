@@ -1,3 +1,5 @@
-CONSOLE MESSAGE: line 12: Check if window.pagePopupController exists for a page-popup window.
-CONSOLE MESSAGE: line 7: [object PagePopupController]
- 
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

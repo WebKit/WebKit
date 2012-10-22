@@ -1,4 +1,12 @@
 <!DOCTYPE html>
+<html>
+<head>
+<script>
+window.enablePixelTesting = true;
+</script>
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
+</head>
 <body>
 <input type=color id=color value="#ff0000" list=gray focus>
 <datalist id=gray>
@@ -21,27 +29,24 @@
     <option>#F00</option> <!--invalid-->
     <option>red</option> <!--invalid-->
 </datalist>
-<script>
-console.log('Check if window.pagePopupController exists for a page-popup window.');
-testRunner.dumpAsText(true);
-testRunner.waitUntilDone();
-if (window.internals)
-    internals.settings.setEnableMockPagePopup(true);
 
-document.getElementById('color').focus();
-if (window.eventSender)
-    eventSender.keyDown(' ');
-var pickerWindow = document.getElementById('mock-page-popup').contentWindow;
-pickerWindow.onresize = function() {
-    console.log(pickerWindow.pagePopupController);
-    pickerWindow.focus();
+<p id="description" style="opacity: 0"></p>
+<div id="console" style="opacity: 0"></div>
+
+<script>
+openPicker(document.getElementById('color'), test);
+
+function test() {
+    popupWindow.focus();
     eventSender.keyDown('downArrow');
     eventSender.keyDown('downArrow');
     eventSender.keyDown('downArrow');
     eventSender.keyDown('leftArrow');
     eventSender.keyDown('upArrow');
     eventSender.keyDown('rightArrow');
-    setTimeout(function() {testRunner.notifyDone();}, 0);
+    finishJSTest();
 }
 </script>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
 </body>
+</html>

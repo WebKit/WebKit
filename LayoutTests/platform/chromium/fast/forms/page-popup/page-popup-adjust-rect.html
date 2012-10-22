@@ -3,6 +3,7 @@
 <head>
 <script src="../../../../../fast/js/resources/js-test-pre.js"></script>
 <script src="../../../../../fast/forms/resources/common.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
 <script src="../calendar-picker/resources/calendar-picker-common.js"></script>
 </head>
 <body>
@@ -14,9 +15,7 @@
 <script>
 description('Test for child elements of a datalist element.');
 
-openPicker(document.getElementById('date'));
-
-popupWindow.addEventListener("resize", test, false);
+openPicker(document.getElementById('date'), test);
 
 function makeRect(x, y, width, height) {
     return {

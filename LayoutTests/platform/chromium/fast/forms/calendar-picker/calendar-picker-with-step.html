@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
 <script src="resources/calendar-picker-common.js"></script>
 </head>
 <body>
@@ -13,32 +14,25 @@
 <script>
 description('Test if step limits available dates in calendar picker.');
 
-var dateInput = document.getElementById('date');
-window.onload = function() {
-    openPicker(dateInput);
-    popupWindow.addEventListener('resize', test1, false);
-};
+openPicker(document.getElementById('date'), test1);
 
 function test1() {
     debug("Step without min.");
     shouldBe('availableDatesInCurrentMonth().join(",")', '["2011-05-08", "2011-05-17", "2011-05-26"].join(",")');
-    popupWindow.removeEventListener('resize', test1);
 
     // Close popup
     eventSender.keyDown('\x1B');
 
-    dateInput.min = "2011-05-01";
+    document.getElementById('date').min = "2011-05-01";
     
     // Reopen popup
-    openPicker(dateInput);
-    popupWindow.addEventListener("resize", test2, false);
+    openPicker(document.getElementById('date'), test2);
 }
 
 function test2() {
     debug("Step when min is set.");
     shouldBe('availableDatesInCurrentMonth().join(",")', '["2011-05-01", "2011-05-10", "2011-05-19", "2011-05-28"].join(",")');
-    popupWindow.removeEventListener('resize', test2);
-    testRunner.notifyDone();
+    finishJSTest();
 }
 
 function availableDatesInCurrentMonth() {
@@ -46,7 +40,6 @@ function availableDatesInCurrentMonth() {
         return element.dataset.submitValue;
     }).sort();
 }
-
 
 </script>
 <script src="../../../../../fast/js/resources/js-test-post.js"></script>

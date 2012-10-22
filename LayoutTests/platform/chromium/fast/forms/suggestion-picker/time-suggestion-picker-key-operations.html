@@ -2,8 +2,8 @@
 <html>
 <head>
 <script src="../../../../../fast/js/resources/js-test-pre.js"></script>
-<script src="../../../../../fast/forms/resources/common.js"></script>
-<script src="suggestion-picker-common.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
+<script src="resources/suggestion-picker-common.js"></script>
 </head>
 <body style="background-color: #bbbbbb;">
 <p id="description"></p>
@@ -83,17 +83,8 @@
 debug('Check that page popup doesn\'t exist at first.');
 shouldBeNull('document.getElementById("mock-page-popup")');
 
-window.onload = function() {
-    openPicker(document.getElementById('time'));
-    shouldBe('popupWindow.pagePopupController.toString()', '"[object PagePopupController]"');
-
-    popupWindow.addEventListener("resize", test1, false);
-};
-
-var timeoutTimer = setTimeout(function() {
-    testFailed("Test timed out.");
-    finishJSTest();
-}, 5000);
+openPicker(document.getElementById('time'), test1);
+shouldBe('popupWindow.pagePopupController.toString()', '"[object PagePopupController]"');
 
 function test1() {
     debug('Check that page popup exists.');
@@ -159,7 +150,6 @@ function test2() {
     if (document.getElementById('mock-page-popup'))
         testPassed("F4 opened picker.");
 
-    clearTimeout(timeoutTimer);
     finishJSTest();
 }
 

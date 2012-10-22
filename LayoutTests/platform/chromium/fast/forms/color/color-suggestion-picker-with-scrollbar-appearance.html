@@ -1,4 +1,12 @@
 <!DOCTYPE html>
+<html>
+<head>
+<script>
+window.enablePixelTesting = true;
+</script>
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
+</head>
 <body>
 <input type=color id=color value="#ff0000" list=many focus>
 <datalist id=many>
@@ -39,18 +47,13 @@
     <option>#f7f7f7</option>
     <option>#ffffff</option>
 </datalist>
-<script>
-testRunner.dumpAsText(true)
-testRunner.waitUntilDone();
-if (window.internals)
-    internals.settings.setEnableMockPagePopup(true);
 
-document.getElementById('color').focus();
-if (window.eventSender)
-    eventSender.keyDown(' ');
-var pickerWindow = document.getElementById('mock-page-popup').contentWindow;
-pickerWindow.onresize = function() {
-    testRunner.notifyDone();
-}
+<p id="description" style="opacity: 0"></p>
+<div id="console" style="opacity: 0"></div>
+
+<script>
+openPicker(document.getElementById('color'), finishJSTest);
 </script>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
 </body>
+</html>

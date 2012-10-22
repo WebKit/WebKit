@@ -2809,9 +2809,6 @@ webkit.org/b/99818 [ SNOWLEOPARD XP ] fast/forms/month-multiple-fields/month-mul
 webkit.org/b/61169 [ Android Linux Win ] css3/images/optimize-contrast-canvas.html [ ImageOnlyFailure ]
 webkit.org/b/61169 [ Android Linux Win ] css3/images/optimize-contrast-image.html [ ImageOnlyFailure ]
 
-webkit.org/b/92710 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance.html [ ImageOnlyFailure Pass ]
-webkit.org/b/92710 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/96720 fast/forms/time-multiple-fields/time-multiple-fields-preserve-value-after-history-back.html [ Pass Timeout ]
 webkit.org/b/96720 fast/forms/date-multiple-fields/date-multiple-fields-preserve-value-after-history-back.html [ Pass Timeout ]
 
@@ -4023,7 +4020,19 @@ webkit.org/b/99134 platform/chromium/compositing/tiny-layer-rotated.html [ Pass 
 
 webkit.org/b/99138 [ SnowLeopard ] svg/custom/foreign-object-skew.svg [ Pass ImageOnlyFailure ]
 
-webkit.org/b/99466 platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations.html [ Text ]
+# Needs rebaseline
+webkit.org/b/99421 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step.html [ Pass ImageOnlyFailure ]
+webkit.org/b/99421 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance.html [ Pass ImageOnlyFailure ]
+webkit.org/b/99421 platform/chromium/fast/forms/color/color-suggestion-picker-appearance.html [ Pass ImageOnlyFailure ]
+webkit.org/b/99421 platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance.html [ Pass ImageOnlyFailure ]
+webkit.org/b/99421 platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance.html [ Pass ImageOnlyFailure ]
+webkit.org/b/99421 platform/chromium/fast/forms/color/color-suggestion-picker-with-scrollbar-appearance.html [ Pass ImageOnlyFailure ]
+webkit.org/b/99421 platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-rtl.html [ Pass ImageOnlyFailure ]
+webkit.org/b/99421 platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-with-scroll-bar.html [ Pass ImageOnlyFailure ]
+webkit.org/b/99421 platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance.html [ Pass ImageOnlyFailure ]
+webkit.org/b/99421 platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-rtl.html [ Pass ImageOnlyFailure ]
+webkit.org/b/99421 platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-with-scroll-bar.html [ Pass ImageOnlyFailure ]
+webkit.org/b/99421 platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance.html [ Pass ImageOnlyFailure ]
 
 # Flaky crashing on debug
 webkit.org/b/99604 [ Mac Win ] http/tests/workers/text-encoding.html [ Pass Crash ]

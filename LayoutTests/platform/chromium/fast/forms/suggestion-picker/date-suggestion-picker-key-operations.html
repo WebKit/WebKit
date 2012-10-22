@@ -2,7 +2,8 @@
 <html>
 <head>
 <script src="../../../../../fast/js/resources/js-test-pre.js"></script>
-<script src="suggestion-picker-common.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
+<script src="resources/suggestion-picker-common.js"></script>
 </head>
 <body style="background-color: #bbbbbb;">
 <p id="description"></p>
@@ -29,7 +30,7 @@
     <option>2012-01-18</option>
     <option>2012-01-19</option>
     <option>2012-01-20</option>
-    <option label="-">2012-01-21</option>
+    <option>2012-01-21</option>
     <option>2012-01-22</option>
     <option>2012-01-23</option>
     <option>2012-01-24</option>
@@ -49,7 +50,7 @@
     <option>2012-02-07</option>
     <option>2012-02-08</option>
     <option>2012-02-09</option>
-    <option label="-">2012-02-10</option>
+    <option>2012-02-10</option>
     <option>2012-02-11</option>
     <option>2012-02-12</option>
     <option>2012-02-13</option>
@@ -86,17 +87,7 @@ description("Tests that key bindings work as expected.");
 debug('Check that page popup doesn\'t exist at first.');
 shouldBeNull('document.getElementById("mock-page-popup")');
 
-console.log(document.getElementById('mock-page-popup'));
-
-window.onload = function() {
-    openPicker(document.getElementById('date'), 'Down');
-    popupWindow.addEventListener("resize", test1, false);
-}
-
-var timeoutTimer = setTimeout(function() {
-    testFailed("Test timed out.");
-    finishJSTest();
-}, 10000);
+openPicker(document.getElementById('date'), test1);
 
 function test1() {
     debug('Check that page popup exists.');
@@ -178,21 +169,7 @@ function test3() {
     if (document.getElementById('mock-page-popup'))
         testPassed("F4 opened picker.");
 
-    clearTimeout(timeoutTimer);
     finishJSTest();
-}
-
-function highlightedEntry() {
-    var activeElement = popupWindow.document.activeElement;
-    if (!activeElement)
-        return null;
-    var value = activeElement.dataset.value;
-    if (typeof value === "string")
-        return value;
-    var action = activeElement.dataset.action;
-    if (typeof action === "string")
-        return "@" + action;
-    return null;
 }
 
 </script>

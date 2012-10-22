@@ -3,6 +3,7 @@
 <head>
 <script src="../../../../../fast/js/resources/js-test-pre.js"></script>
 <script src="../../../../../fast/forms/resources/common.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
 <script src="resources/calendar-picker-common.js"></script>
 </head>
 <body>
@@ -15,13 +16,9 @@ description("Tests if calendar picker key bindings work as expected.");
 debug('Check that page popup doesn\'t exist at first.');
 shouldBeNull('document.getElementById("mock-page-popup")');
 
-openPicker(document.getElementById('date'));
-
-popupWindow.addEventListener("resize", test, false);
+openPicker(document.getElementById('date'), test);
 
 function test() {
-    popupWindow.removeEventListener("resize", test, false);
-
     shouldBe('selectedDate()', '"2000-01-02"');
     shouldBe('currentMonth()', '"2000-0"');
 
@@ -53,4 +50,4 @@ function test() {
 </script>
 <script src="../../../../../fast/js/resources/js-test-post.js"></script>
 </body>
-
+</html>

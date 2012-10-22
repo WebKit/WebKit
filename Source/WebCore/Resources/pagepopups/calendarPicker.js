@@ -310,6 +310,9 @@ function openCalendarPicker() {
 function CalendarPicker(element, config) {
     Picker.call(this, element, config);
     this._element.classList.add("calendar-picker");
+    this._element.classList.add("preparing");
+    this._handleWindowResizeBound = this._handleWindowResize.bind(this);
+    window.addEventListener("resize", this._handleWindowResizeBound, false);
     // We assume this._config.min is a valid date.
     this.minimumDate = (typeof this._config.min !== "undefined") ? parseDateString(this._config.min) : CalendarPicker.MinimumPossibleDate;
     // We assume this._config.max is a valid date.
@@ -338,6 +341,10 @@ CalendarPicker.MaximumPossibleDate = new Date(8640000000000000.0);
 // See WebCore/html/DateInputType.cpp.
 CalendarPicker.DefaultStepScaleFactor = 86400000;
 CalendarPicker.DefaultStepBase = 0.0;
+
+CalendarPicker.prototype._handleWindowResize = function() {
+    this._element.classList.remove("preparing");
+};
 
 CalendarPicker.prototype.cleanup = function() {
     document.body.removeEventListener("keydown", this._handleBodyKeyDownBound, false);

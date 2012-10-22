@@ -1,9 +1,3 @@
-window.jsTestIsAsync = true;
-if (window.internals)
-    internals.settings.setEnableMockPagePopup(true);
-
-var popupWindow = null;
-
 function currentMonth() {
     var element = popupWindow.document.querySelector(".selected-month-year");
     if (!element)
@@ -28,16 +22,4 @@ function selectedDates() {
     return Array.prototype.map.call(popupWindow.document.querySelectorAll(".day.day-selected"), function(element) {
         return element.dataset.submitValue;
     }).sort();
-}
-
-function openPicker(input) {
-    input.offsetTop; // Force to lay out
-    sendKey(input, "Down", false, true);
-    popupWindow = document.getElementById('mock-page-popup').contentWindow;
-}
-
-function sendKey(input, keyName, ctrlKey, altKey) {
-    var event = document.createEvent('KeyboardEvent');
-    event.initKeyboardEvent('keydown', true, true, document.defaultView, keyName, 0, ctrlKey, altKey);
-    input.dispatchEvent(event);
 }
