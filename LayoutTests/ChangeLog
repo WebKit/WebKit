@@ -1,5 +1,11 @@
 2012-10-21  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, rebaseline remaining Chromium ML editing tests.
+
+        (long list of new baselines omitted).
+
+2012-10-21  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, new Chromium ML expectations for editing/inserting and editing/pasteboard.
 
         (long list of new baselines omitted).
