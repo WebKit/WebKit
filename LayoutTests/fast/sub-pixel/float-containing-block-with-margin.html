@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <script src="../js/resources/js-test-pre.js"></script>
         <style>
             ul > li { float: right; background: skyblue; }
             ul > li > a { display: block; margin: 10.5px; text-decoration: none; }
         </style>
-        <script>
-            if (window.testRunner)
-                testRunner.dumpAsText(true);
-        </script>
     </head>
     <body>
         <ul>
@@ -17,5 +14,18 @@
             <li><a href="#">consectetur adipiscing elit</a></li>
         </ul>
         Links to the right should not wrap.
+        
+        <script>
+            var elements = document.getElementsByTagName('li');
+            function getItemHeight(i)
+            {
+                return elements[i].getBoundingClientRect().top;
+            }
+            
+            if (getItemHeight(0) == getItemHeight(1) && getItemHeight(0) == getItemHeight(2))
+                testPassed('All list items are on the same line');
+            else
+                testFailed('Expected all list items to be on the same line.');
+        </script>
     </body>
 </html>

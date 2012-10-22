@@ -1,3 +1,4 @@
+PASS All list items are on the same line
 Lorem ipsum
 dolor sit amet
 consectetur adipiscing elit

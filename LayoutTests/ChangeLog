@@ -1,3 +1,21 @@
+2012-10-22  Emil A Eklund  <eae@chromium.org>
+
+        Convert fast/sub-pixel/float-containing-block-with-margin.html to text test
+        https://bugs.webkit.org/show_bug.cgi?id=99866
+
+        Reviewed by Eric Seidel.
+
+        fast/sub-pixel/float-containing-block-with-margin.html doesn't
+        need to be a pixel test, convert it to a text one.
+
+        * fast/sub-pixel/float-containing-block-with-margin-expected.txt:
+        * fast/sub-pixel/float-containing-block-with-margin.html:
+        * platform/chromium-linux/fast/sub-pixel/float-containing-block-with-margin-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/sub-pixel: Removed.
+        * platform/chromium-mac-snowleopard/fast/sub-pixel/float-containing-block-with-margin-expected.png: Removed.
+        * platform/chromium-mac/fast/sub-pixel/float-containing-block-with-margin-expected.png: Removed.
+        * platform/chromium-win/fast/sub-pixel/float-containing-block-with-margin-expected.png: Removed.
+
 2012-10-22  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [css3-text] Add rendering support for -webkit-text-decoration-style
