@@ -1,0 +1,8 @@
+Tests that webkitsourceopen event fires even if garbage collection happens between setting video.src & the webkitsourceopen event.
+
+Setting webkitsourceopen event listener.
+Running garbage collector.
+Setting video.src to object URL.
+onSourceOpen called.
+END OF TEST
+

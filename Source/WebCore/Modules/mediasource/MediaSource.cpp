@@ -42,11 +42,13 @@ namespace WebCore {
 
 PassRefPtr<MediaSource> MediaSource::create(ScriptExecutionContext* context)
 {
-    return adoptRef(new MediaSource(context));
+    RefPtr<MediaSource> mediaSource(adoptRef(new MediaSource(context)));
+    mediaSource->suspendIfNeeded();
+    return mediaSource.release();
 }
 
 MediaSource::MediaSource(ScriptExecutionContext* context)
-    : ContextDestructionObserver(context)
+    : ActiveDOMObject(context, this)
     , m_readyState(closedKeyword())
     , m_player(0)
     , m_asyncEventQueue(GenericEventQueue::create(this))
@@ -325,7 +327,19 @@ const AtomicString& MediaSource::interfaceName() const
 
 ScriptExecutionContext* MediaSource::scriptExecutionContext() const
 {
-    return ContextDestructionObserver::scriptExecutionContext();
+    return ActiveDOMObject::scriptExecutionContext();
+}
+
+bool MediaSource::hasPendingActivity() const
+{
+    return m_player || m_asyncEventQueue->hasPendingEvents()
+        || ActiveDOMObject::hasPendingActivity();
+}
+
+void MediaSource::stop()
+{
+    m_player = 0;
+    m_asyncEventQueue->cancelAllEvents();
 }
 
 EventTargetData* MediaSource::eventTargetData()

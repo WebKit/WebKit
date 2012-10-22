@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="/media-resources/video-test.js"></script>
+    </head>
+    <body>
+        <video autoplay controls="controls" id='vid'></video>
+        <p>Tests that webkitsourceopen event fires even if garbage collection happens between setting video.src &amp; the webkitsourceopen event.</p>
+        <script type="text/javascript">
+            function createMediaSourceURL()
+            {
+                var mediaSource = new WebKitMediaSource();
+                var onSourceOpen = function (e)
+                {
+                    sourceOpened = true;
+                    consoleWrite("onSourceOpen called.");
+                    endTest();
+                };
+                consoleWrite("Setting webkitsourceopen event listener.");
+                mediaSource.addEventListener('webkitsourceopen', onSourceOpen);
+                return window.URL.createObjectURL(mediaSource);
+            }
+
+            function start()
+            {
+                var video = document.getElementById('vid');
+                var sourceOpened = false;
+                var onStalled = function (e)
+                {
+                    if (sourceOpened)
+                        return;
+
+                    failTest('stalled event fired before webkitsourceopen');
+                };
+                video.addEventListener('stalled', onStalled);
+
+                var url = createMediaSourceURL();
+                consoleWrite("Running garbage collector.");
+                gc();
+
+                consoleWrite("Setting video.src to object URL.");
+                video.src = url;
+            }
+            start();
+        </script>
+    </body>
+</html>

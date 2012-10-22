@@ -1,3 +1,29 @@
+2012-10-22  Aaron Colwell  <acolwell@chromium.org>
+
+        webkitsourceopen event doesn't always fire
+        https://bugs.webkit.org/show_bug.cgi?id=99868
+
+        Reviewed by Adam Barth.
+
+        Changed MediaSource to derive from ActiveDOMObject so that event listeners
+        will still fire even if all references to the object go out of scope.
+
+        Test: http/tests/media/media-source/video-media-source-garbage-collection-before-sourceopen.html
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::create):
+        (WebCore::MediaSource::MediaSource):
+        (WebCore::MediaSource::scriptExecutionContext):
+        (WebCore):
+        (WebCore::MediaSource::hasPendingActivity):
+        (WebCore::MediaSource::stop): Clears m_player & m_asyncEventQueue so they don't indicate pending activity anymore.
+        * Modules/mediasource/MediaSource.h:
+        (MediaSource):
+        * Modules/mediasource/MediaSource.idl:
+        * Modules/mediasource/MediaSourceRegistry.cpp:
+        (WebCore::MediaSourceRegistry::registerMediaSourceURL): Added setPendingActivity() call so the MediaSource object stays active while in the registry.
+        (WebCore::MediaSourceRegistry::unregisterMediaSourceURL): Added unsetPendingActivity() call so the MediaSource object can become inactive after being removed from the registry.
+
 2012-10-22  Adam Barth  <abarth@webkit.org>
 
         [V8] Vastly simplify V8GCController's NodeVisitor

@@ -33,7 +33,7 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
-#include "ContextDestructionObserver.h"
+#include "ActiveDOMObject.h"
 #include "GenericEventQueue.h"
 #include "MediaPlayer.h"
 #include "SourceBuffer.h"
@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-class MediaSource : public RefCounted<MediaSource>, public EventTarget, public ContextDestructionObserver {
+class MediaSource : public RefCounted<MediaSource>, public EventTarget, public ActiveDOMObject {
 public:
     static const String& openKeyword();
     static const String& closedKeyword();
@@ -75,6 +75,10 @@ public:
     // EventTarget interface
     virtual const AtomicString& interfaceName() const OVERRIDE;
     virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
+
+    // ActiveDOMObject interface
+    virtual bool hasPendingActivity() const OVERRIDE;
+    virtual void stop() OVERRIDE;
 
     using RefCounted<MediaSource>::ref;
     using RefCounted<MediaSource>::deref;

@@ -49,13 +49,24 @@ MediaSourceRegistry& MediaSourceRegistry::registry()
 void MediaSourceRegistry::registerMediaSourceURL(const KURL& url, PassRefPtr<MediaSource> source)
 {
     ASSERT(isMainThread());
+
+    source->setPendingActivity(source.get());
+
     m_mediaSources.set(url.string(), source);
 }
 
 void MediaSourceRegistry::unregisterMediaSourceURL(const KURL& url)
 {
     ASSERT(isMainThread());
-    m_mediaSources.remove(url.string());
+    HashMap<String, RefPtr<MediaSource> >::iterator iter = m_mediaSources.find(url.string());
+    if (iter == m_mediaSources.end())
+        return;
+
+    RefPtr<MediaSource> source = iter->value;
+    m_mediaSources.remove(iter);
+
+    // Remove the pending activity added in registerMediaSourceURL().
+    source->unsetPendingActivity(source.get());
 }
 
 MediaSource* MediaSourceRegistry::lookupMediaSource(const String& url)
