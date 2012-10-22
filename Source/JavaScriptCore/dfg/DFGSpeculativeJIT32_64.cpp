@@ -2653,7 +2653,7 @@ void SpeculativeJIT::compile(Node& node)
 
     case GetByVal: {
         switch (node.arrayMode()) {
-        case Array::Undecided:
+        case Array::SelectUsingPredictions:
         case Array::ForceExit:
             ASSERT_NOT_REACHED();
             terminateSpeculativeExecution(InadequateCoverage, JSValueRegs(), NoNode);
@@ -2833,7 +2833,7 @@ void SpeculativeJIT::compile(Node& node)
         bool alreadyHandled = false;
         
         switch (arrayMode) {
-        case Array::Undecided:
+        case Array::SelectUsingPredictions:
         case Array::ForceExit:
             ASSERT_NOT_REACHED();
             terminateSpeculativeExecution(InadequateCoverage, JSValueRegs(), NoNode);

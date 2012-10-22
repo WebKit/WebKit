@@ -497,7 +497,7 @@ void SpeculativeJIT::arrayify(Node& node, GPRReg baseReg, GPRReg propertyReg)
         break;
     default:
         CRASH();
-        desiredArrayMode = Array::Undecided;
+        desiredArrayMode = Array::ForceExit;
         break;
     }
     

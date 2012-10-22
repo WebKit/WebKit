@@ -47,7 +47,7 @@ enum Action {
 };
 
 enum Mode {
-    Undecided, // Implies that we need predictions to decide. We will never get to the backend in this mode.
+    SelectUsingPredictions, // Implies that we need predictions to decide. We will never get to the backend in this mode.
     Unprofiled, // Implies that array profiling didn't see anything. But that could be because the operands didn't comply with basic type assumptions (base is cell, property is int). This either becomes Generic or ForceExit depending on value profiling.
     ForceExit, // Implies that we have no idea how to execute this operation, so we should just give up.
     Generic,
@@ -266,7 +266,7 @@ inline bool mayStoreToHole(Array::Mode arrayMode)
 inline bool canCSEStorage(Array::Mode arrayMode)
 {
     switch (arrayMode) {
-    case Array::Undecided:
+    case Array::SelectUsingPredictions:
     case Array::Unprofiled:
     case Array::ForceExit:
     case Array::Generic:
@@ -299,7 +299,7 @@ inline Array::Mode modeForPut(Array::Mode arrayMode)
 inline bool modeIsSpecific(Array::Mode mode)
 {
     switch (mode) {
-    case Array::Undecided:
+    case Array::SelectUsingPredictions:
     case Array::Unprofiled:
     case Array::ForceExit:
     case Array::Generic:
@@ -312,7 +312,7 @@ inline bool modeIsSpecific(Array::Mode mode)
 inline bool modeSupportsLength(Array::Mode mode)
 {
     switch (mode) {
-    case Array::Undecided:
+    case Array::SelectUsingPredictions:
     case Array::Unprofiled:
     case Array::ForceExit:
     case Array::Generic:
@@ -329,7 +329,7 @@ inline bool benefitsFromStructureCheck(Array::Mode mode)
 {
     switch (mode) {
     case ALL_EFFECTFUL_MODES:
-    case Array::Undecided:
+    case Array::SelectUsingPredictions:
     case Array::Unprofiled:
     case Array::ForceExit:
     case Array::Generic:

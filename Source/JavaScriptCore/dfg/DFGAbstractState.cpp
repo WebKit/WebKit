@@ -840,7 +840,7 @@ bool AbstractState::execute(unsigned indexInBlock)
     case GetByVal: {
         node.setCanExit(true);
         switch (node.arrayMode()) {
-        case Array::Undecided:
+        case Array::SelectUsingPredictions:
         case Array::Unprofiled:
             ASSERT_NOT_REACHED();
             break;

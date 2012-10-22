@@ -86,7 +86,7 @@ private:
             ArrayProfile* arrayProfile = 
                 m_graph.baselineCodeBlockFor(nodePtr->codeOrigin)->getArrayProfile(
                     nodePtr->codeOrigin.bytecodeIndex);
-            Array::Mode arrayMode = Array::Undecided;
+            Array::Mode arrayMode = Array::SelectUsingPredictions;
             if (arrayProfile) {
                 arrayProfile->computeUpdatedPrediction();
                 arrayMode = refineArrayMode(
@@ -436,7 +436,7 @@ private:
             return;
         }
             
-        case Array::Undecided:
+        case Array::SelectUsingPredictions:
         case Array::Unprofiled:
             ASSERT_NOT_REACHED();
             return;
