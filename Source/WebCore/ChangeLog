@@ -1,3 +1,19 @@
+2012-10-22  Florin Malita  <fmalita@chromium.org>
+
+        Incorrect embedded SVG image sizing on first load
+        https://bugs.webkit.org/show_bug.cgi?id=99489
+
+        Reviewed by Nikolas Zimmermann.
+
+        RenderSVGImage::updateImageViewport() must be called after the image loader is finished,
+        to ensure that a SVGImageCache::SizeAndScalesMap entry is created even if layout has
+        already been performed.
+
+        Test: svg/custom/svg-image-initial-size.html
+
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::imageChanged):
+
 2012-10-22  Keishi Hattori  <keishi@webkit.org>
 
         Remove monthFormatInLDML
