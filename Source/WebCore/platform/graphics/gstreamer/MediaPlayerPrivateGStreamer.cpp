@@ -857,7 +857,11 @@ gboolean MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
     case GST_MESSAGE_BUFFERING:
         processBufferingStats(message);
         break;
+#ifdef GST_API_VERSION_1
+    case GST_MESSAGE_DURATION_CHANGED:
+#else
     case GST_MESSAGE_DURATION:
+#endif
         LOG_MEDIA_MESSAGE("Duration changed");
         durationChanged();
         break;

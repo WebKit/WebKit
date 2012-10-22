@@ -40,10 +40,7 @@ GRefPtr<GstCaps> webkitGstGetPadCaps(GstPad* pad)
         return 0;
 
 #ifdef GST_API_VERSION_1
-    GstCaps* caps = gst_pad_get_current_caps(pad);
-    if (!caps)
-        caps = gst_pad_query_caps(pad, 0);
-    return adoptGRef(caps); // gst_pad_query_caps and gst_pad_get_current_caps return a new reference.
+    return adoptGRef(gst_pad_get_current_caps(pad)); // gst_pad_get_current_caps return a new reference.
 #else
     return GST_PAD_CAPS(pad);
 #endif

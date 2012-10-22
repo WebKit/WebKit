@@ -1,3 +1,24 @@
+2012-10-22  Nicolas Dufresne <nicolas.dufresne@collabora.com>
+
+        Gstreamer 1.0 not working
+        https://bugs.webkit.org/show_bug.cgi?id=99852
+
+        Reviewed by Philippe Normand.
+
+        There was a series of trivial issue, g_object_is_floating() was called
+        on type GstCaps (which is not a GObject), webkitGstGetPadCaps() was
+        returning non-fixed caps and GST_MESSAGE_DURATION has been renamed
+        to GST_MESSAGE_DURATION_CHANGED.
+
+        Most failing test passes now.
+
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp:
+        (WTF::adoptGRef):
+        * platform/graphics/gstreamer/GStreamerVersioning.cpp:
+        (webkitGstGetPadCaps):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+
 2012-10-22  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Treat dynamic anonymous scripts as other anonymous and fix anonymous script editing and breakpoints.

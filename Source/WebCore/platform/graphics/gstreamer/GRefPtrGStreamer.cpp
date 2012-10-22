@@ -88,7 +88,6 @@ template <> void derefGPtr<GstPadTemplate>(GstPadTemplate* ptr)
 
 template <> GRefPtr<GstCaps> adoptGRef(GstCaps* ptr)
 {
-    ASSERT(!ptr || !gstObjectIsFloating(GST_OBJECT(ptr)));
     return GRefPtr<GstCaps>(ptr, GRefPtrAdopt);
 }
 
