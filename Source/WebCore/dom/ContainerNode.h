@@ -126,7 +126,6 @@ public:
 
     void attachAsNode();
     void attachChildren();
-    void attachChildrenIfNeeded();
     void attachChildrenLazily();
     void detachChildren();
     void detachChildrenIfNeeded();
@@ -175,6 +174,10 @@ private:
     Node* m_lastChild;
 };
 
+#ifndef NDEBUG
+bool childAttachedAllowedWhenAttachingChildren(ContainerNode*);
+#endif
+
 inline ContainerNode* toContainerNode(Node* node)
 {
     ASSERT(!node || node->isContainerNode());
@@ -204,13 +207,8 @@ inline void ContainerNode::attachAsNode()
 
 inline void ContainerNode::attachChildren()
 {
-    for (Node* child = firstChild(); child; child = child->nextSibling())
-        child->attach();
-}
-
-inline void ContainerNode::attachChildrenIfNeeded()
-{
     for (Node* child = firstChild(); child; child = child->nextSibling()) {
+        ASSERT(!child->attached() || childAttachedAllowedWhenAttachingChildren(this));
         if (!child->attached())
             child->attach();
     }

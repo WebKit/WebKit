@@ -1016,7 +1016,7 @@ void Element::attach()
     if (ElementShadow* shadow = this->shadow()) {
         parentPusher.push();
         shadow->attach();
-        attachChildrenIfNeeded();
+        attachChildren();
         attachAsNode();
     } else {
         if (firstChild())

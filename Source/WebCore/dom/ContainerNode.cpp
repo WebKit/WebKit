@@ -33,6 +33,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "InlineTextBox.h"
+#include "InsertionPoint.h"
 #include "InspectorInstrumentation.h"
 #include "MemoryCache.h"
 #include "MutationEvent.h"
@@ -1031,5 +1032,21 @@ static void updateTreeAfterInsertion(ContainerNode* parent, Node* child, bool sh
 
     dispatchChildInsertionEvents(child);
 }
+
+#ifndef NDEBUG
+bool childAttachedAllowedWhenAttachingChildren(ContainerNode* node)
+{
+    if (node->isShadowRoot())
+        return true;
+
+    if (isInsertionPoint(node))
+        return true;
+
+    if (node->isElementNode() && toElement(node)->shadow())
+        return true;
+
+    return false;
+}
+#endif
 
 } // namespace WebCore

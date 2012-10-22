@@ -1,3 +1,42 @@
+2012-10-22  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] ASSERT triggered when we try reprojecting fallback elements.
+        https://bugs.webkit.org/show_bug.cgi?id=99815
+
+        Reviewed by Hajime Morita.
+
+        When fallback elements of InsertionPoint is reprojected, they were attached twice.
+        We have to skip attaching them if they are attached. We also add a few ASSERT not to
+        allow attaching twice if not necessary.
+
+        We have confirmed that this patch does not regress the performance. The summary of the
+        performance test is the following:
+
+        Dromaeo/dom-modify.html [runs/s]:
+                               median stdev    min    max
+           without this patch:   3928   184   3655   4361
+           with this patch   :   3925   178   3652   4350
+
+        Parser/html5-full-render.html [s]:
+                               median stdev    min    max
+           without this patch:   3821    17   3811   3850
+           with this patch   :   3838   4.4   3833   3844
+
+        Test: fast/dom/shadow/content-reprojection-fallback-crash.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore):
+        (WebCore::childAttachedAllowedWhenAttachingChildren): If true, children of this node might
+        be attached in advance because of ShadowDOM attaching process.
+        * dom/ContainerNode.h:
+        (ContainerNode):
+        (WebCore):
+        (WebCore::ContainerNode::attachChildren):
+        * dom/Element.cpp:
+        (WebCore::Element::attach):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::attach):
+
 2012-10-22  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: merge "docked" state into the "dock side" enum.

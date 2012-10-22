@@ -1,3 +1,13 @@
+2012-10-22  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] ASSERT triggered when we try reprojecting fallback elements.
+        https://bugs.webkit.org/show_bug.cgi?id=99815
+
+        Reviewed by Hajime Morita.
+
+        * fast/dom/shadow/content-reprojection-fallback-crash-expected.txt: Added.
+        * fast/dom/shadow/content-reprojection-fallback-crash.html: Added.
+
 2012-10-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Rebaseline pixel expectations after r131941 and r131991, part 3.

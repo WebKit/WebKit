@@ -1,0 +1,8 @@
+A crash should not happen when fallback elements are reprojected.
+
+PASS distributedNodes.item(0) is shadowRoot1.getElementById("fallback")
+PASS distributedNodes.item(1) is shadowRoot1.getElementById("div")
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

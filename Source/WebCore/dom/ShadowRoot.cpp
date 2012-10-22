@@ -215,7 +215,7 @@ void ShadowRoot::attach()
 {
     StyleResolver* styleResolver = document()->styleResolver();
     styleResolver->pushParentShadowRoot(this);
-    attachChildrenIfNeeded();
+    attachChildren();
     attachAsNode();
     styleResolver->popParentShadowRoot(this);
 }
