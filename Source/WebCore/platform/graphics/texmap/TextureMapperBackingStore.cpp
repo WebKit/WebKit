@@ -44,7 +44,7 @@ void TextureMapperSurfaceBackingStore::setGraphicsSurface(const GraphicsSurfaceT
     }
 
     RefPtr<WebCore::GraphicsSurface> surface = graphicsSurface();
-    if (surface->frontBuffer() != frontBuffer)
+    if (surface && surface->frontBuffer() != frontBuffer)
         surface->swapBuffers();
 
 }
@@ -58,7 +58,8 @@ PassRefPtr<BitmapTexture> TextureMapperSurfaceBackingStore::texture() const
 
 void TextureMapperSurfaceBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
 {
-    m_graphicsSurface->paintToTextureMapper(textureMapper, targetRect, transform, opacity, mask);
+    if (m_graphicsSurface)
+        m_graphicsSurface->paintToTextureMapper(textureMapper, targetRect, transform, opacity, mask);
 }
 
 void TextureMapperSurfaceBackingStore::setSurface(PassRefPtr<GraphicsSurface> surface)

@@ -1,3 +1,16 @@
+2012-10-22  Zeno Albisser  <zeno@webkit.org>
+
+        TextureMapperSurfaceBackingStore should check if GraphicsSurface is valid.
+        https://bugs.webkit.org/show_bug.cgi?id=100002
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * platform/graphics/texmap/TextureMapperBackingStore.cpp:
+        (WebCore::TextureMapperSurfaceBackingStore::setGraphicsSurface):
+            Check if a surface has been created before accessing the pointer.
+        (WebCore::TextureMapperSurfaceBackingStore::paintToTextureMapper):
+            Check if m_graphicsSurface is a valid pointer before dereferencing it.
+
 2012-10-22  Michael Saboff  <msaboff@apple.com>
 
         r131955 is has improper function call in LinkHashChromium.cpp
