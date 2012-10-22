@@ -1,3 +1,15 @@
+2012-10-22  Tony Chang  <tony@chromium.org>
+
+        [chromium] Unreviewed, Win and Mac baselines for css3/flexbox/flexbox-baseline-margins.html.
+
+        * platform/chromium-mac-lion/css3/flexbox/flexbox-baseline-margins-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css3/flexbox/flexbox-baseline-margins-expected.png: Added.
+        * platform/chromium-mac/css3/flexbox/flexbox-baseline-margins-expected.png: Added.
+        * platform/chromium-mac/css3/flexbox/flexbox-baseline-margins-expected.txt: Added.
+        * platform/chromium-win/css3/flexbox/flexbox-baseline-margins-expected.png: Added.
+        * platform/chromium-win/css3/flexbox/flexbox-baseline-margins-expected.txt: Renamed from LayoutTests/platform/chromium-linux/css3/flexbox/flexbox-baseline-margins-expected.txt.
+        * platform/chromium/TestExpectations:
+
 2012-10-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Rebaseline pixel expectations after r131941 and r131991, part 6.
