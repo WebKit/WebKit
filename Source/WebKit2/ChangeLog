@@ -1,3 +1,16 @@
+2012-10-21  Milian Wolff  <milian.wolff@kdab.com>
+
+        [Qt] QNX build fails when building against Qt without clipboard support
+        https://bugs.webkit.org/show_bug.cgi?id=98040
+
+        Reviewed by Simon Hausmann.
+
+        Gracefully handle QT_NO_CLIPBOARD and do not try to access qApp->clipboard()
+        in such cases. Instead, return false to indicate global selection is unsupported.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::supportsGlobalSelection):
+
 2012-10-21  Hyungchan Kim  <hyungchan2.kim@lge.com>
 
         Add a separate flag for rgb swizzling whether it can be modified or not

@@ -484,7 +484,7 @@ void WebEditorClient::requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheck
 
 bool WebEditorClient::supportsGlobalSelection()
 {
-#if PLATFORM(QT)
+#if PLATFORM(QT) && !defined(QT_NO_CLIPBOARD)
     return qApp->clipboard()->supportsSelection();
 #elif PLATFORM(GTK) && PLATFORM(X11)
     return true;
