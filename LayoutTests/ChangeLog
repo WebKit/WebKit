@@ -1,5 +1,68 @@
 2012-10-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        [EFL] Rebaseline pixel expectations after r131941 and r131991, part 11.
+
+        Finally finish rebaselining the SVG tests!
+
+        * platform/efl/svg/filters/animate-fill-expected.png:
+        * platform/efl/svg/filters/feImage-animated-transform-on-target-rect-expected.png:
+        * platform/efl/svg/filters/feImage-change-target-id-expected.png:
+        * platform/efl/svg/filters/feImage-multiple-targets-id-change-expected.png:
+        * platform/efl/svg/filters/feImage-reference-invalidation-expected.png:
+        * platform/efl/svg/filters/feImage-remove-target-expected.png:
+        * platform/efl/svg/filters/feImage-target-add-to-document-expected.png:
+        * platform/efl/svg/filters/feImage-target-attribute-change-expected.png:
+        * platform/efl/svg/filters/feImage-target-attribute-change-with-use-indirection-2-expected.png:
+        * platform/efl/svg/filters/feImage-target-attribute-change-with-use-indirection-expected.png:
+        * platform/efl/svg/filters/feImage-target-changes-id-expected.png:
+        * platform/efl/svg/filters/feImage-target-id-change-expected.png:
+        * platform/efl/svg/filters/feImage-target-inline-style-change-expected.png:
+        * platform/efl/svg/filters/feImage-target-property-change-expected.png:
+        * platform/efl/svg/filters/feImage-target-reappend-to-document-expected.png:
+        * platform/efl/svg/filters/feImage-target-remove-from-document-expected.png:
+        * platform/efl/svg/filters/feImage-target-style-change-expected.png:
+        * platform/efl/svg/filters/filter-refresh-expected.png:
+        * platform/efl/svg/filters/filter-width-update-expected.png: Added.
+        * platform/efl/svg/filters/invalidate-on-child-layout-expected.png:
+        * platform/efl/svg/hixie/perf/001-expected.png:
+        * platform/efl/svg/hixie/perf/002-expected.png:
+        * platform/efl/svg/hixie/perf/003-expected.png:
+        * platform/efl/svg/hixie/perf/004-expected.png:
+        * platform/efl/svg/hixie/perf/005-expected.png:
+        * platform/efl/svg/hixie/perf/006-expected.png:
+        * platform/efl/svg/hixie/perf/007-expected.png:
+        * platform/efl/svg/repaint/filter-child-repaint-expected.png:
+        * platform/efl/svg/repaint/image-href-change-expected.png:
+        * platform/efl/svg/repaint/image-with-clip-path-expected.png:
+        * platform/efl/svg/repaint/inner-svg-change-viewBox-contract-expected.png:
+        * platform/efl/svg/repaint/inner-svg-change-viewBox-expected.png:
+        * platform/efl/svg/repaint/inner-svg-change-viewPort-relative-expected.png:
+        * platform/efl/svg/repaint/mask-clip-target-transform-expected.png:
+        * platform/efl/svg/repaint/repainting-after-animation-element-removal-expected.png:
+        * platform/efl/svg/repaint/text-mask-update-expected.png:
+        * platform/efl/svg/text/append-text-node-to-tspan-expected.png:
+        * platform/efl/svg/text/ems-display-none-expected.png:
+        * platform/efl/svg/text/exs-display-none-expected.png:
+        * platform/efl/svg/text/modify-text-node-in-tspan-expected.png:
+        * platform/efl/svg/text/remove-text-node-from-tspan-expected.png:
+        * platform/efl/svg/text/remove-tspan-from-text-expected.png:
+        * platform/efl/svg/text/text-rescale-expected.png:
+        * platform/efl/svg/text/text-text-05-t-expected.png:
+        * platform/efl/svg/text/text-viewbox-rescale-expected.png:
+        * platform/efl/svg/text/tspan-dynamic-positioning-expected.png:
+        * platform/efl/svg/transforms/animated-path-inside-transformed-html-expected.png:
+        * platform/efl/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+        * platform/efl/svg/zoom/page/absolute-sized-document-no-scrollbars-expected.png:
+        * platform/efl/svg/zoom/page/relative-sized-document-scrollbars-expected.png:
+        * platform/efl/svg/zoom/page/zoom-mask-with-percentages-expected.png:
+        * platform/efl/svg/zoom/text/absolute-sized-document-no-scrollbars-expected.png:
+        * platform/efl/svg/zoom/text/absolute-sized-document-scrollbars-expected.png:
+        * platform/efl/svg/zoom/text/relative-sized-document-scrollbars-expected.png:
+        * platform/efl/svg/zoom/text/zoom-coords-viewattr-01-b-expected.png:
+        * platform/efl/svg/zoom/text/zoom-foreignObject-expected.png:
+
+2012-10-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         [EFL] Rebaseline pixel expectations after r131941 and r131991, part 10.
 
         * platform/efl/svg/dynamic-updates/SVGPatternElement-dom-patternUnits-attr-expected.png:
