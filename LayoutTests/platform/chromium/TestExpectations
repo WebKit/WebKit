@@ -1555,8 +1555,6 @@ crbug.com/23473 [ Mac ] fast/repaint/table-extra-bottom-grow.html [ ImageOnlyFai
 # Win/Linux also failed after r83514.
 crbug.com/23473 [ Mac ] fast/repaint/transform-replaced-shadows.html [ ImageOnlyFailure ]
 
-webkit.org/b/93439 [ Mac ] fast/forms/file/file-appearance-transform-no-effects.html [ ImageOnlyFailure ]
-
 # -----------------------------------------------------------------
 # END MAC PORT TESTS
 # -----------------------------------------------------------------
@@ -2084,9 +2082,6 @@ webkit.org/b/ http/tests/appcache/origin-usage.html
 # LayoutTestController::setAutomaticLinkDetectionEnabled isn't implemented
 webkit.org/b/85463 editing/inserting/typing-space-to-trigger-smart-link.html
 
-# Failures from WebKit merge 51711:51724
-crbug.com/32003 fast/js/string-property-deletion.html [ Failure ]
-
 # These tests got very flaky (failing 8/10 runs!) after
 # http://src.chromium.org/viewvc/chrome?view=rev&revision=34610
 # The only relevant change there is that we now sort tests purely
@@ -2270,11 +2265,11 @@ crbug.com/47035 [ Win Debug ] fast/loader/stateobjects/document-destroyed-naviga
 
 # CSS3 Hyphenation landed in http://trac.webkit.org/changeset/61548
 # We don't implement it yet.
-crbug.com/47083 [ Linux Win ] fast/text/hyphens.html [ Failure ]
-crbug.com/47083 [ Linux Win ] fast/text/hyphenate-character.html [ Failure ]
-crbug.com/47083 [ Linux Win ] fast/text/hyphenate-first-word.html [ Failure ]
+crbug.com/47083 fast/text/hyphens.html [ Failure ]
+crbug.com/47083 fast/text/hyphenate-character.html [ Failure ]
+crbug.com/47083 fast/text/hyphenate-first-word.html [ Failure ]
 crbug.com/47083 fast/text/hyphenate-limit-lines.html [ Failure ImageOnlyFailure ]
-crbug.com/47083 [ Linux Win SnowLeopard ] fast/text/hyphenate-limit-before-after.html [ Failure ]
+crbug.com/47083 fast/text/hyphenate-limit-before-after.html [ Failure ]
 crbug.com/47083 fast/text/hyphenate-locale.html [ Failure ]
 
 crbug.com/48239 fast/js/function-apply.html [ Failure ]
@@ -2609,7 +2604,6 @@ webkit.org/b/54322 [ SnowLeopard ] fast/text/international/text-combine-image-te
 webkit.org/b/54322 [ SnowLeopard ] fast/loader/loadInProgress.html [ Pass Slow ]
 webkit.org/b/54322 [ SnowLeopard ] transitions/transition-end-event-rendering.html [ Failure Pass ]
 
-code.google.com/p/v8/issues/detail?id=1168 fast/js/mozilla/strict/10.6.html [ Failure ]
 code.google.com/p/v8/issues/detail?id=1168 fast/js/mozilla/strict/15.5.5.2.html [ Failure ]
 code.google.com/p/v8/issues/detail?id=1168 fast/js/mozilla/strict/B.1.2.html [ Failure ]
 
@@ -2899,7 +2893,7 @@ webkit.org/b/68196 fast/clip/overflow-border-radius-composited.html [ ImageOnlyF
 # Caused by r92618
 webkit.org/b/65874 fast/js/preventExtensions.html [ Failure ]
 
-webkit.org/b/66417 [ Android Linux Lion Win ] fast/text/midword-break-before-surrogate-pair-2.html [ Failure ]
+webkit.org/b/66417 fast/text/midword-break-before-surrogate-pair-2.html [ Failure ]
 
 webkit.org/b/66419 http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html [ Failure ]
 webkit.org/b/66419 http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html [ Failure ]
@@ -3535,7 +3529,7 @@ webkit.org/b/89812 [ Debug ] fast/parser/parser-yield-timing.html [ Failure Pass
 # Flaky
 webkit.org/b/89813 [ Android Linux Debug ] fast/js/large-expressions.html [ Pass Timeout ]
 
-webkit.org/b/89820 [ Linux Win ] fast/text/hyphen-min-preferred-width.html [ ImageOnlyFailure ]
+webkit.org/b/89820 fast/text/hyphen-min-preferred-width.html [ ImageOnlyFailure ]
 
 # Kerning seems disabled for some reason.
 webkit.org/b/89936 [ XP ] fast/text/atsui-kerning-and-ligatures.html [ ImageOnlyFailure ]
@@ -3867,7 +3861,7 @@ webkit.org/b/96833 svg/carto.net/selectionlist.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/96833 svg/carto.net/combobox.svg [ ImageOnlyFailure Pass ]
 
 webkit.org/b/96549 [ Android ] platform/chromium/virtual/gpu/fast/hidpi/focus-rings.html [ ImageOnlyFailure ]
-webkit.org/b/96628 [ Lion ] fast/frames/calculate-order.html [ Failure Pass ]
+webkit.org/b/96628 [ Lion MountainLion ] fast/frames/calculate-order.html [ Failure Pass ]
 webkit.org/b/96550 http/tests/media/media-source/seek-to-end-after-duration-change.html [ Pass Timeout ]
 webkit.org/b/96725 [ Linux Mac Win ] http/tests/media/media-source/video-media-source-state-changes.html [ Failure Pass ]
 crbug.com/63921 platform/chromium/virtual/gpu/fast/canvas/canvas-fillPath-shadow.html [ Failure ]
