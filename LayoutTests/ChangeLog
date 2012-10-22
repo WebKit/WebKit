@@ -1,3 +1,15 @@
+2012-10-22  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        RenderTableCol::computePreferredLogicalWidths and RenderTableCol::layout should never be called
+        https://bugs.webkit.org/show_bug.cgi?id=99861
+
+        Reviewed by Ojan Vafai.
+
+        Added this test as the code in RenderTableCol::updateFromElement wasn't properly covered.
+
+        * fast/table/col-span-change-relayout-expected.txt: Added.
+        * fast/table/col-span-change-relayout.html: Added.
+
 2012-10-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Rebaseline pixel expectations after r131941 and r131991, part 9.

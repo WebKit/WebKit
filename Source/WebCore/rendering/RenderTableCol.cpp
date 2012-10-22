@@ -49,6 +49,9 @@ void RenderTableCol::styleDidChange(StyleDifference diff, const RenderStyle* old
 {
     RenderBox::styleDidChange(diff, oldStyle);
 
+    if (diff == StyleDifferenceLayout)
+        propagateLayoutCueToTable();
+
     // If border was changed, notify table.
     if (parent()) {
         RenderTable* table = this->table();
@@ -66,8 +69,9 @@ void RenderTableCol::updateFromElement()
         m_span = tc->span();
     } else
         m_span = !(style() && style()->display() == TABLE_COLUMN_GROUP);
-    if (m_span != oldSpan && style() && parent())
-        setNeedsLayoutAndPrefWidthsRecalc();
+
+    if (m_span != oldSpan && style())
+        propagateLayoutCueToTable();
 }
 
 void RenderTableCol::willBeRemovedFromTree()
@@ -114,10 +118,25 @@ void RenderTableCol::imageChanged(WrappedImagePtr, const IntRect*)
 
 void RenderTableCol::computePreferredLogicalWidths()
 {
-    setPreferredLogicalWidthsDirty(false);
+    // <col> and <colgroup> don't have preferred logical widths as they have
+    // no content so computing our preferred logical widths is wasteful.
+    ASSERT_NOT_REACHED();
+}
 
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling())
-        child->setPreferredLogicalWidthsDirty(false);
+void RenderTableCol::layout()
+{
+    // There is no need to layout table <col> or <colgroup> as they have no content.
+    ASSERT_NOT_REACHED();
+}
+
+void RenderTableCol::propagateLayoutCueToTable() const
+{
+    // Forward any layout hint to the table: this is required as the table is
+    // the one to layout / compute preferred logical widths on all the cells.
+    if (RenderTable* table = this->table()) {
+        table->setChildNeedsLayout(true);
+        table->setPreferredLogicalWidthsDirty(true);
+    }
 }
 
 RenderTable* RenderTableCol::table() const

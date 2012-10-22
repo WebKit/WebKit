@@ -378,20 +378,15 @@ void RenderTable::layout()
 
     bool collapsing = collapseBorders();
 
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->isTableSection()) {
-            RenderTableSection* section = toRenderTableSection(child);
-            if (m_columnLogicalWidthChanged)
-                section->setChildNeedsLayout(true, MarkOnlyThis);
-            section->layoutIfNeeded();
-            totalSectionLogicalHeight += section->calcRowLogicalHeight();
-            if (collapsing)
-                section->recalcOuterBorder();
-            ASSERT(!section->needsLayout());
-        } else if (child->isRenderTableCol()) {
-            child->layoutIfNeeded();
-            ASSERT(!child->needsLayout());
-        }
+    // We ignore table col / colgroup in this iteration as they are only used to size the cell's widths during auto / fixed table layout.
+    for (RenderTableSection* section = topSection(); section; section = sectionBelow(section)) {
+        if (m_columnLogicalWidthChanged)
+            section->setChildNeedsLayout(true, MarkOnlyThis);
+        section->layoutIfNeeded();
+        totalSectionLogicalHeight += section->calcRowLogicalHeight();
+        if (collapsing)
+            section->recalcOuterBorder();
+        ASSERT(!section->needsLayout());
     }
 
     // If any table section moved vertically, we will just repaint everything from that

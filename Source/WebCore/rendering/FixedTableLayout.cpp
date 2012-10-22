@@ -88,8 +88,6 @@ int FixedTableLayout::calcWidthArray(int)
 
     unsigned currentEffectiveColumn = 0;
     for (RenderTableCol* col = m_table->firstColumn(); col; col = col->nextColumn()) {
-        col->computePreferredLogicalWidths();
-
         // Width specified by column-groups that have column child does not affect column width in fixed layout tables
         if (col->isTableColumnGroupWithColumnChildren())
             continue;
