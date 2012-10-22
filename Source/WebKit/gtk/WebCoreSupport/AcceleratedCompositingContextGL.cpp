@@ -336,6 +336,9 @@ void AcceleratedCompositingContext::flushAndRenderLayers()
         return;
     frame->view()->updateLayoutAndStyleIfNeededRecursive();
 
+    if (!enabled())
+        return;
+
     GLContext* context = m_redirectedWindow->context();
     if (context && !context->makeContextCurrent())
         return;
