@@ -1,3 +1,54 @@
+2012-10-22  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [css3-text] Add rendering support for -webkit-text-decoration-style
+        https://bugs.webkit.org/show_bug.cgi?id=94094
+
+        Reviewed by Julien Chaffraix.
+
+        This patch implements the "text-decoration-style" property rendering as
+        specified in CSS3 working draft, with "-webkit-" prefix. The specification can
+        be found here: http://dev.w3.org/csswg/css3-text/#text-decoration-style
+
+        Additionally, Mozilla implementation details can be found here:
+        https://developer.mozilla.org/en/CSS/text-decoration-style
+
+        Tests: fast/css3-text/css3-text-decoration/repaint/repaint-text-decoration-style.html
+               fast/css3-text/css3-text-decoration/text-decoration-style.html
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::setPlatformStrokeStyle):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawLine):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::toQPenStyle):
+        (WebCore::GraphicsContext::drawLine):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::setupPaintForStroking):
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::createPen):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::strokeStyleToWxPenStyle):
+        Added 'DoubleStroke' and 'WavyStroke' to StrokeStyle enum and updated
+        platform-specific stroke handling. Some styles requires
+        platform-specific implementation (handled in bug 92868).
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        (WebCore::textDecorationStyleToStrokeStyle): Added static function that
+        translates text decoration to stroke styles.
+        (WebCore::InlineTextBox::paintDecoration): Text decoration style does
+        not specify a property for line thickness (like border-width does for
+        border style), so we statically set it to 1 for now. The 'double' style
+        implementation simply adds a parallel line (depending if it is
+        underline, overline or line-through) and the space between lines follows
+        the approach used by border's 'double' style.
+        * rendering/InlineTextBox.h:
+        (InlineTextBox):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        Added text decoration style rendering support to
+        InlineTextBox::paintDecoration().
+
 2012-10-22  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Use the DNS resolve queue

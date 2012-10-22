@@ -354,6 +354,10 @@ static PassOwnPtr<HPEN> createPen(const Color& col, double fWidth, StrokeStyle s
     int penStyle = PS_NULL;
     switch (style) {
         case SolidStroke:
+#if ENABLE(CSS3_TEXT)
+        case DoubleStroke:
+        case WavyStroke: // FIXME: https://bugs.webkit.org/show_bug.cgi?id=94114 - Needs platform support.
+#endif // CSS3_TEXT
             penStyle = PS_SOLID;
             break;
         case DottedStroke:  // not supported on Windows CE

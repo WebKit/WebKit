@@ -336,15 +336,15 @@ enum ETextDecoration {
 inline ETextDecoration operator|(ETextDecoration a, ETextDecoration b) { return ETextDecoration(int(a) | int(b)); }
 inline ETextDecoration& operator|=(ETextDecoration& a, ETextDecoration b) { return a = a | b; }
 
-#if ENABLE(CSS3_TEXT)
 enum TextDecorationStyle {
     TextDecorationStyleSolid,
+#if ENABLE(CSS3_TEXT)
     TextDecorationStyleDouble,
     TextDecorationStyleDotted,
     TextDecorationStyleDashed,
     TextDecorationStyleWavy
-};
 #endif // CSS3_TEXT
+};
 
 enum EPageBreak {
     PBAUTO, PBALWAYS, PBAVOID

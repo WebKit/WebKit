@@ -99,6 +99,12 @@ static int strokeStyleToWxPenStyle(int p)
         return wxDOT;
     if (p == DashedStroke)
         return wxLONG_DASH;
+#if ENABLE(CSS3_TEXT)
+    if (p == DoubleStroke)
+        return wxSOLID;
+    if (p == WavyStroke) // FIXME: https://bugs.webkit.org/show_bug.cgi?id=94111 - Needs platform support.
+        return wxSOLID;
+#endif // CSS3_TEXT
     if (p == NoStroke)
         return wxTRANSPARENT;
     

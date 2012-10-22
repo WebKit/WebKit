@@ -1,3 +1,20 @@
+2012-10-22  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [css3-text] Add rendering support for -webkit-text-decoration-style
+        https://bugs.webkit.org/show_bug.cgi?id=94094
+
+        Reviewed by Julien Chaffraix.
+
+        Added paint and repaint layout tests for CSS3 text-decoration-style
+        property. Pixel results are not included due to missing platform support
+        for some decoration styles (handled on bug 93507). These are going
+        to be added when platform support is complete.
+
+        * fast/css3-text/css3-text-decoration/repaint/repaint-text-decoration-style-expected.txt: Added.
+        * fast/css3-text/css3-text-decoration/repaint/repaint-text-decoration-style.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-style-expected.txt: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-style.html: Added.
+
 2012-10-22  Erik Arvidsson  <arv@chromium.org>
 
         HTMLBaseElement href attribute binding returns wrong URL

@@ -156,6 +156,10 @@ static Qt::PenStyle toQPenStyle(StrokeStyle style)
         return Qt::NoPen;
         break;
     case SolidStroke:
+#if ENABLE(CSS3_TEXT)
+    case DoubleStroke:
+    case WavyStroke: // FIXME: https://bugs.webkit.org/show_bug.cgi?id=93507 - Needs platform support.
+#endif
         return Qt::SolidLine;
         break;
     case DottedStroke:
@@ -402,6 +406,10 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     switch (style) {
     case NoStroke:
     case SolidStroke:
+#if ENABLE(CSS3_TEXT)
+    case DoubleStroke:
+    case WavyStroke: // FIXME: https://bugs.webkit.org/show_bug.cgi?id=93507 - Needs platform support.
+#endif
         break;
     case DottedStroke: {
         capStyle = Qt::RoundCap;
