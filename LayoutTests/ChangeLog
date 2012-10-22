@@ -1,5 +1,12 @@
 2012-10-21  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, could've sworn this was in the previous patch ...
+
+        * platform/chromium-win-xp/fast/hidpi/gradient-with-scaled-ancestor-expected.png: Removed.
+        * platform/chromium-win/fast/hidpi/gradient-with-scaled-ancestor-expected.png:
+
+2012-10-21  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed. More chromium baseline cleanup after r132022.
 
         * platform/chromium-mac-lion/editing/selection/iframe-expected.png: Added.
