@@ -1,3 +1,63 @@
+2012-10-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Rebaseline pixel expectations after r131941 and r131991, part 3.
+
+        * platform/efl/fast/repaint/scroll-fixed-layer-with-reflection-expected.png:
+        * platform/efl/fast/repaint/scroll-fixed-layer-with-transformed-parent-layer-expected.png:
+        * platform/efl/fast/repaint/scroll-fixed-reflected-layer-expected.png:
+        * platform/efl/fast/repaint/scroll-in-clipped-layer-expected.png:
+        * platform/efl/fast/repaint/scroll-in-fixed-layer-expected.png:
+        * platform/efl/fast/repaint/scroll-in-transformed-layer-expected.png:
+        * platform/efl/fast/repaint/scroll-inside-table-cell-expected.png:
+        * platform/efl/fast/repaint/scroll-relative-table-inside-table-cell-expected.png:
+        * platform/efl/fast/repaint/scroll-with-transformed-parent-layer-expected.png:
+        * platform/efl/fast/repaint/search-field-cancel-expected.png:
+        * platform/efl/fast/repaint/select-option-background-color-expected.png:
+        * platform/efl/fast/repaint/selected-replaced-expected.png:
+        * platform/efl/fast/repaint/selection-after-delete-expected.png:
+        * platform/efl/fast/repaint/selection-after-remove-expected.png:
+        * platform/efl/fast/repaint/selection-gap-overflow-scroll-2-expected.png:
+        * platform/efl/fast/repaint/selection-gap-overflow-scroll-expected.png:
+        * platform/efl/fast/repaint/selection-rl-expected.png:
+        * platform/efl/fast/repaint/stacked-diacritics-expected.png:
+        * platform/efl/fast/repaint/static-to-positioned-expected.png:
+        * platform/efl/fast/repaint/subtree-layoutstate-transform-expected.png:
+        * platform/efl/fast/repaint/subtree-root-clip-2-expected.png: Added.
+        * platform/efl/fast/repaint/subtree-root-clip-3-expected.png: Added.
+        * platform/efl/fast/repaint/subtree-root-clip-expected.png: Added.
+        * platform/efl/fast/repaint/subtree-root-skipped-expected.png:
+        * platform/efl/fast/repaint/table-cell-collapsed-border-expected.png:
+        * platform/efl/fast/repaint/table-cell-move-expected.png:
+        * platform/efl/fast/repaint/table-col-background-expected.png:
+        * platform/efl/fast/repaint/table-collapsed-border-expected.png:
+        * platform/efl/fast/repaint/table-extra-bottom-grow-expected.png:
+        * platform/efl/fast/repaint/table-outer-border-expected.png:
+        * platform/efl/fast/repaint/table-overflow-auto-in-overflow-auto-scrolled-expected.png:
+        * platform/efl/fast/repaint/table-overflow-hidden-in-overflow-hidden-scrolled-expected.png:
+        * platform/efl/fast/repaint/table-overflow-scroll-in-overflow-scroll-scrolled-expected.png:
+        * platform/efl/fast/repaint/table-row-expected.png:
+        * platform/efl/fast/repaint/table-section-overflow-expected.png:
+        * platform/efl/fast/repaint/table-section-repaint-expected.png:
+        * platform/efl/fast/repaint/table-two-pass-layout-overpaint-expected.png:
+        * platform/efl/fast/repaint/text-append-dirty-lines-expected.png:
+        * platform/efl/fast/repaint/text-selection-rect-in-overflow-2-expected.png:
+        * platform/efl/fast/repaint/text-selection-rect-in-overflow-expected.png:
+        * platform/efl/fast/repaint/textarea-set-disabled-expected.png:
+        * platform/efl/fast/repaint/transform-absolute-child-expected.png:
+        * platform/efl/fast/repaint/transform-absolute-in-positioned-container-expected.png:
+        * platform/efl/fast/repaint/transform-disable-layoutstate-expected.png:
+        * platform/efl/fast/repaint/transform-layout-repaint-expected.png:
+        * platform/efl/fast/repaint/transform-relative-position-expected.png:
+        * platform/efl/fast/repaint/transform-repaint-descendants-expected.png:
+        * platform/efl/fast/repaint/transform-replaced-shadows-expected.png:
+        * platform/efl/fast/repaint/transform-rotate-and-remove-expected.png:
+        * platform/efl/fast/repaint/transform-translate-expected.png:
+        * platform/efl/fast/table/border-collapsing/cached-69296-expected.png:
+        * platform/efl/fast/table/border-collapsing/cached-change-cell-sl-border-color-expected.png: Added.
+        * platform/efl/fast/table/border-collapsing/cached-change-row-border-width-expected.png: Added.
+        * platform/efl/fast/table/border-collapsing/cached-change-tbody-border-width-expected.png: Added.
+        * platform/efl/fast/table/border-collapsing/collapsed-border-with-col-colgroup-span-expected.png: Added.
+
 2012-10-22  Dongwoo Joshua Im  <dw.im@samsung.com>
 
         Move LayoutTests/fast/css3-text-decoration directory into LayoutTests/fast/css3-text directory.
