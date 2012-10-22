@@ -1,5 +1,61 @@
 2012-10-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        [EFL] Rebaseline pixel expectations after r131941 and r131991, part 6.
+
+        * platform/efl/svg/dynamic-updates/SVGFECompositeElement-svgdom-in-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-bias-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-divisor-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-edgeMode-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-in-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelMatrix-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelUnitLength-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-order-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-preserveAlpha-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetX-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetY-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-bias-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-divisor-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-edgeMode-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-in-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-kernelMatrix-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-kernelUnitLength-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-order-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-preserveAlpha-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetX-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetY-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-diffuseConstant-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-in-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-lighting-color-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-surfaceScale-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDiffuseLightingElement-inherit-lighting-color-css-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDiffuseLightingElement-lighting-color-css-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-diffuseConstant-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-in-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-surfaceScale-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-in-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-in2-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-scale-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-xChannelSelector-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-yChannelSelector-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-in-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-in2-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-scale-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-xChannelSelector-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-yChannelSelector-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDistantLightElement-dom-azimuth-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDistantLightElement-dom-elevation-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDistantLightElement-svgdom-azimuth-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDistantLightElement-svgdom-elevation-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFEDropShadowElement-dom-dx-attr-expected.png:
+
+2012-10-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         [EFL] Rebaseline pixel expectations after r131941 and r131991, part 5.
 
         * platform/efl/svg/dynamic-updates/SVGEllipseElement-dom-rx-attr-expected.png:
