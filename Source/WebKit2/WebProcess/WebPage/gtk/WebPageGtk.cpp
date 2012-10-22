@@ -160,11 +160,6 @@ void WebPage::setAcceleratedCompositingWindowId(int64_t nativeWindowHandle)
 {
     m_nativeWindowHandle = nativeWindowHandle;
 }
-
-void WebPage::invalidateWidget()
-{
-    send(Messages::WebPageProxy::InvalidateWidget());
-}
 #endif
 
 bool WebPage::handleMousePressedEvent(const PlatformMouseEvent& platformMouseEvent)
