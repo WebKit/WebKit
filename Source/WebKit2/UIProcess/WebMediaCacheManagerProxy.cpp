@@ -28,6 +28,7 @@
 
 #include "WebContext.h"
 #include "WebMediaCacheManagerMessages.h"
+#include "WebMediaCacheManagerProxyMessages.h"
 #include "WebSecurityOrigin.h"
 
 namespace WebKit {
@@ -40,7 +41,7 @@ PassRefPtr<WebMediaCacheManagerProxy> WebMediaCacheManagerProxy::create(WebConte
 WebMediaCacheManagerProxy::WebMediaCacheManagerProxy(WebContext* context)
     : m_webContext(context)
 {
-    m_webContext->deprecatedAddMessageReceiver(CoreIPC::MessageClassWebMediaCacheManagerProxy, this);
+    m_webContext->addMessageReceiver(Messages::WebMediaCacheManagerProxy::messageReceiverName(), this);
 }
 
 WebMediaCacheManagerProxy::~WebMediaCacheManagerProxy()

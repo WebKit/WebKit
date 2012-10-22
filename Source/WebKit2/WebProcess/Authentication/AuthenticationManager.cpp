@@ -26,6 +26,7 @@
 #include "config.h"
 #include "AuthenticationManager.h"
 
+#include "AuthenticationManagerMessages.h"
 #include "Download.h"
 #include "DownloadProxyMessages.h"
 #include "MessageID.h"
@@ -55,7 +56,7 @@ AuthenticationManager& AuthenticationManager::shared()
 
 AuthenticationManager::AuthenticationManager()
 {
-    WebProcess::shared().connection()->deprecatedAddMessageReceiver(CoreIPC::MessageClassAuthenticationManager, this);
+    WebProcess::shared().addMessageReceiver(Messages::AuthenticationManager::messageReceiverName(), this);
 }
 
 void AuthenticationManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)

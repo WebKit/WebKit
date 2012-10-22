@@ -45,9 +45,6 @@ public:
 
     void addMessageReceiver(StringReference messageReceiverName, MessageReceiver*);
 
-    // FIXME: Stop using this deprecated function and get rid of it.
-    void deprecatedAddMessageReceiver(MessageClass, MessageReceiver*);
-
     void invalidate();
 
     bool dispatchMessage(Connection*, MessageID, MessageDecoder&);
@@ -55,8 +52,6 @@ public:
 
 private:
     // Message receivers that don't require a destination ID.
-    HashMap<unsigned, MessageReceiver*> m_deprecatedGlobalMessageReceivers;
-
     HashMap<StringReference, MessageReceiver*> m_globalMessageReceivers;
 };
 

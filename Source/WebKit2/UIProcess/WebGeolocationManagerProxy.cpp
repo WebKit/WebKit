@@ -28,6 +28,7 @@
 
 #include "WebContext.h"
 #include "WebGeolocationManagerMessages.h"
+#include "WebGeolocationManagerProxyMessages.h"
 
 namespace WebKit {
 
@@ -40,7 +41,7 @@ WebGeolocationManagerProxy::WebGeolocationManagerProxy(WebContext* context)
     : m_isUpdating(false)
     , m_context(context)
 {
-    m_context->deprecatedAddMessageReceiver(CoreIPC::MessageClassWebGeolocationManagerProxy, this);
+    m_context->addMessageReceiver(Messages::WebGeolocationManagerProxy::messageReceiverName(), this);
 }
 
 WebGeolocationManagerProxy::~WebGeolocationManagerProxy()

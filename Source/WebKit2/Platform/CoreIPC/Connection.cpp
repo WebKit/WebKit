@@ -656,10 +656,6 @@ void Connection::enqueueIncomingMessage(IncomingMessage& incomingMessage)
 
 void Connection::dispatchMessage(MessageID messageID, MessageDecoder& decoder)
 {
-    // Try the message receiver map first.
-    if (m_messageReceiverMap.dispatchMessage(this, messageID, decoder))
-        return;
-
     m_client->didReceiveMessage(this, messageID, decoder);
 }
 

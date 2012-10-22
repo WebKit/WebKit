@@ -23,6 +23,7 @@
 #include "WebContext.h"
 #include "WebData.h"
 #include "WebSoupRequestManagerMessages.h"
+#include "WebSoupRequestManagerProxyMessages.h"
 
 namespace WebKit {
 
@@ -35,7 +36,7 @@ WebSoupRequestManagerProxy::WebSoupRequestManagerProxy(WebContext* context)
     : m_webContext(context)
     , m_loadFailed(false)
 {
-    m_webContext->deprecatedAddMessageReceiver(CoreIPC::MessageClassWebSoupRequestManagerProxy, this);
+    m_webContext->addMessageReceiver(Messages::WebSoupRequestManagerProxy::messageReceiverName(), this);
 }
 
 WebSoupRequestManagerProxy::~WebSoupRequestManagerProxy()

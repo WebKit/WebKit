@@ -31,6 +31,7 @@
 #include "SecurityOriginData.h"
 #include "WebContext.h"
 #include "WebResourceCacheManagerMessages.h"
+#include "WebResourceCacheManagerProxyMessages.h"
 #include "WebSecurityOrigin.h"
 
 using namespace WebCore;
@@ -45,7 +46,7 @@ PassRefPtr<WebResourceCacheManagerProxy> WebResourceCacheManagerProxy::create(We
 WebResourceCacheManagerProxy::WebResourceCacheManagerProxy(WebContext* webContext)
     : m_webContext(webContext)
 {
-    m_webContext->deprecatedAddMessageReceiver(CoreIPC::MessageClassWebResourceCacheManagerProxy, this);
+    m_webContext->addMessageReceiver(Messages::WebResourceCacheManagerProxy::messageReceiverName(), this);
 }
 
 WebResourceCacheManagerProxy::~WebResourceCacheManagerProxy()

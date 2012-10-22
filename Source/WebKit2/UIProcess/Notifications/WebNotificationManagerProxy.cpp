@@ -31,6 +31,7 @@
 #include "WebContext.h"
 #include "WebNotification.h"
 #include "WebNotificationManagerMessages.h"
+#include "WebNotificationManagerProxyMessages.h"
 #include "WebPageProxy.h"
 #include "WebSecurityOrigin.h"
 
@@ -47,7 +48,7 @@ PassRefPtr<WebNotificationManagerProxy> WebNotificationManagerProxy::create(WebC
 WebNotificationManagerProxy::WebNotificationManagerProxy(WebContext* context)
     : m_context(context)
 {
-    m_context->deprecatedAddMessageReceiver(CoreIPC::MessageClassWebNotificationManagerProxy, this);
+    m_context->addMessageReceiver(Messages::WebNotificationManagerProxy::messageReceiverName(), this);
 }
 
 void WebNotificationManagerProxy::invalidate()

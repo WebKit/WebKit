@@ -1,3 +1,59 @@
+2012-10-22  Anders Carlsson  <andersca@apple.com>
+
+        Remove MessageReceiverMap::deprecatedAddMessageReceiver
+        https://bugs.webkit.org/show_bug.cgi?id=100012
+
+        Reviewed by Andreas Kling.
+
+        Get rid of MessageReceiverMap::deprecatedAddMessageReceiver and make callers use addMessageReceiver instead.
+        Also, remove the message receiver map inside Connection and add a message receiver map to WebProcess instead.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::dispatchMessage):
+        * Platform/CoreIPC/Connection.h:
+        (Connection):
+        * Platform/CoreIPC/MessageReceiverMap.cpp:
+        (CoreIPC::MessageReceiverMap::invalidate):
+        (CoreIPC::MessageReceiverMap::dispatchMessage):
+        (CoreIPC::MessageReceiverMap::dispatchSyncMessage):
+        * Platform/CoreIPC/MessageReceiverMap.h:
+        (MessageReceiverMap):
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::WebNotificationManagerProxy):
+        * UIProcess/WebApplicationCacheManagerProxy.cpp:
+        (WebKit::WebApplicationCacheManagerProxy::WebApplicationCacheManagerProxy):
+        * UIProcess/WebContext.cpp:
+        * UIProcess/WebContext.h:
+        (WebContext):
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::WebCookieManagerProxy):
+        * UIProcess/WebDatabaseManagerProxy.cpp:
+        (WebKit::WebDatabaseManagerProxy::WebDatabaseManagerProxy):
+        * UIProcess/WebGeolocationManagerProxy.cpp:
+        (WebKit::WebGeolocationManagerProxy::WebGeolocationManagerProxy):
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::WebIconDatabase):
+        * UIProcess/WebKeyValueStorageManagerProxy.cpp:
+        (WebKit::WebKeyValueStorageManagerProxy::WebKeyValueStorageManagerProxy):
+        * UIProcess/WebMediaCacheManagerProxy.cpp:
+        (WebKit::WebMediaCacheManagerProxy::WebMediaCacheManagerProxy):
+        * UIProcess/WebResourceCacheManagerProxy.cpp:
+        (WebKit::WebResourceCacheManagerProxy::WebResourceCacheManagerProxy):
+        * WebProcess/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::AuthenticationManager):
+        * WebProcess/Geolocation/WebGeolocationManager.cpp:
+        (WebKit::WebGeolocationManager::WebGeolocationManager):
+        (WebKit::WebGeolocationManager::registerWebPage):
+        * WebProcess/Geolocation/WebGeolocationManager.h:
+        (WebGeolocationManager):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::addMessageReceiver):
+        (WebKit):
+        (WebKit::WebProcess::didReceiveSyncMessage):
+        (WebKit::WebProcess::didReceiveMessage):
+        * WebProcess/WebProcess.h:
+        (WebProcess):
+
 2012-10-22  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [EFL][WK2] ewk_view_color_picker_color_set() is leaking

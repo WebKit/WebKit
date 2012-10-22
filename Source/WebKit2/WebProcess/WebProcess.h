@@ -30,6 +30,7 @@
 #include "ChildProcess.h"
 #include "DrawingArea.h"
 #include "EventDispatcher.h"
+#include "MessageReceiverMap.h"
 #include "PluginInfoStore.h"
 #include "ResourceCachesToClear.h"
 #include "SandboxExtension.h"
@@ -112,6 +113,8 @@ public:
 
     CoreIPC::Connection* connection() const { return m_connection->connection(); }
     WebCore::RunLoop* runLoop() const { return m_runLoop; }
+
+    void addMessageReceiver(CoreIPC::StringReference messageReceiverName, CoreIPC::MessageReceiver*);
 
     WebConnectionToUIProcess* webConnectionToUIProcess() const { return m_connection.get(); }
 
@@ -292,6 +295,7 @@ private:
 #endif
 
     RefPtr<WebConnectionToUIProcess> m_connection;
+    CoreIPC::MessageReceiverMap m_messageReceiverMap;
 
     HashMap<uint64_t, RefPtr<WebPage> > m_pageMap;
     HashMap<uint64_t, RefPtr<WebPageGroupProxy> > m_pageGroupMap;

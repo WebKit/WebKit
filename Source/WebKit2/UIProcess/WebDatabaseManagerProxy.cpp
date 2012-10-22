@@ -30,8 +30,9 @@
 
 #include "ImmutableArray.h"
 #include "ImmutableDictionary.h"
-#include "WebDatabaseManagerMessages.h"
 #include "WebContext.h"
+#include "WebDatabaseManagerMessages.h"
+#include "WebDatabaseManagerProxyMessages.h"
 #include "WebSecurityOrigin.h"
 
 using namespace WebCore;
@@ -94,7 +95,7 @@ PassRefPtr<WebDatabaseManagerProxy> WebDatabaseManagerProxy::create(WebContext* 
 WebDatabaseManagerProxy::WebDatabaseManagerProxy(WebContext* webContext)
     : m_webContext(webContext)
 {
-    m_webContext->deprecatedAddMessageReceiver(CoreIPC::MessageClassWebDatabaseManagerProxy, this);
+    m_webContext->addMessageReceiver(Messages::WebDatabaseManagerProxy::messageReceiverName(), this);
 }
 
 WebDatabaseManagerProxy::~WebDatabaseManagerProxy()

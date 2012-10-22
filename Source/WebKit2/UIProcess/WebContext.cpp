@@ -790,11 +790,6 @@ void WebContext::addMessageReceiver(CoreIPC::StringReference messageReceiverName
     m_messageReceiverMap.addMessageReceiver(messageReceiverName, messageReceiver);
 }
 
-void WebContext::deprecatedAddMessageReceiver(CoreIPC::MessageClass messageClass, CoreIPC::MessageReceiver* messageReceiver)
-{
-    m_messageReceiverMap.deprecatedAddMessageReceiver(messageClass, messageReceiver);
-}
-
 bool WebContext::dispatchMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
     return m_messageReceiverMap.dispatchMessage(connection, messageID, decoder);

@@ -28,6 +28,7 @@
 
 #include "SecurityOriginData.h"
 #include "WebApplicationCacheManagerMessages.h"
+#include "WebApplicationCacheManagerProxyMessages.h"
 #include "WebContext.h"
 #include "WebSecurityOrigin.h"
 
@@ -41,7 +42,7 @@ PassRefPtr<WebApplicationCacheManagerProxy> WebApplicationCacheManagerProxy::cre
 WebApplicationCacheManagerProxy::WebApplicationCacheManagerProxy(WebContext* context)
     : m_webContext(context)
 {
-    m_webContext->deprecatedAddMessageReceiver(CoreIPC::MessageClassWebApplicationCacheManagerProxy, this);
+    m_webContext->addMessageReceiver(Messages::WebApplicationCacheManagerProxy::messageReceiverName(), this);
 }
 
 WebApplicationCacheManagerProxy::~WebApplicationCacheManagerProxy()

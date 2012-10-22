@@ -194,6 +194,11 @@ void WebProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, Ru
     startRandomCrashThreadIfRequested();
 }
 
+void WebProcess::addMessageReceiver(CoreIPC::StringReference messageReceiverName, CoreIPC::MessageReceiver* messageReceiver)
+{
+    m_messageReceiverMap.addMessageReceiver(messageReceiverName, messageReceiver);
+}
+
 void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parameters, CoreIPC::MessageDecoder& decoder)
 {
     ASSERT(m_pageMap.isEmpty());
@@ -645,7 +650,10 @@ void WebProcess::terminate()
 }
 
 void WebProcess::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
-{   
+{
+    if (m_messageReceiverMap.dispatchSyncMessage(connection, messageID, decoder, replyEncoder))
+        return;
+
     uint64_t pageID = decoder.destinationID();
     if (!pageID)
         return;
@@ -659,6 +667,9 @@ void WebProcess::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC:
 
 void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
+    if (m_messageReceiverMap.dispatchMessage(connection, messageID, decoder))
+        return;
+
     if (messageID.is<CoreIPC::MessageClassWebProcess>()) {
         didReceiveWebProcessMessage(connection, messageID, decoder);
         return;

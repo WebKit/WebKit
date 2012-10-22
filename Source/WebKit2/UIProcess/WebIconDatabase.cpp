@@ -29,6 +29,7 @@
 #include "DataReference.h"
 #include "Logging.h"
 #include "WebContext.h"
+#include "WebIconDatabaseMessages.h"
 #include "WebIconDatabaseProxyMessages.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/IconDatabase.h>
@@ -54,7 +55,7 @@ WebIconDatabase::WebIconDatabase(WebContext* context)
     , m_urlImportCompleted(false)
     , m_databaseCleanupDisabled(false)
 {
-    m_webContext->deprecatedAddMessageReceiver(CoreIPC::MessageClassWebIconDatabase, this);
+    m_webContext->addMessageReceiver(Messages::WebIconDatabase::messageReceiverName(), this);
 }
 
 void WebIconDatabase::invalidate()

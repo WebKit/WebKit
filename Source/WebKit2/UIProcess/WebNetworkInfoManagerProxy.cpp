@@ -31,6 +31,7 @@
 #include "WebContext.h"
 #include "WebNetworkInfo.h"
 #include "WebNetworkInfoManagerMessages.h"
+#include "WebNetworkInfoManagerProxyMessages.h"
 
 namespace WebKit {
 
@@ -43,7 +44,7 @@ WebNetworkInfoManagerProxy::WebNetworkInfoManagerProxy(WebContext* context)
     : m_isUpdating(false)
     , m_context(context)
 {
-    m_context->deprecatedAddMessageReceiver(CoreIPC::MessageClassWebNetworkInfoManagerProxy, this);
+    m_context->addMessageReceiver(Messages::WebNetworkInfoManagerProxy::messageReceiverName(), this);
 }
 
 WebNetworkInfoManagerProxy::~WebNetworkInfoManagerProxy()

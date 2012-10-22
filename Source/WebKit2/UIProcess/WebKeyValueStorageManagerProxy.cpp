@@ -27,8 +27,9 @@
 #include "WebKeyValueStorageManagerProxy.h"
 
 #include "SecurityOriginData.h"
-#include "WebKeyValueStorageManagerMessages.h"
 #include "WebContext.h"
+#include "WebKeyValueStorageManagerMessages.h"
+#include "WebKeyValueStorageManagerProxyMessages.h"
 #include "WebSecurityOrigin.h"
 
 namespace WebKit {
@@ -41,7 +42,7 @@ PassRefPtr<WebKeyValueStorageManagerProxy> WebKeyValueStorageManagerProxy::creat
 WebKeyValueStorageManagerProxy::WebKeyValueStorageManagerProxy(WebContext* context)
     : m_webContext(context)
 {
-    m_webContext->deprecatedAddMessageReceiver(CoreIPC::MessageClassWebKeyValueStorageManagerProxy, this);
+    m_webContext->addMessageReceiver(Messages::WebKeyValueStorageManagerProxy::messageReceiverName(), this);
 }
 
 WebKeyValueStorageManagerProxy::~WebKeyValueStorageManagerProxy()

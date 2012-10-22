@@ -32,7 +32,6 @@
 #include "MessageDecoder.h"
 #include "MessageEncoder.h"
 #include "MessageReceiver.h"
-#include "MessageReceiverMap.h"
 #include "WorkQueue.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/OwnPtr.h>
@@ -174,11 +173,6 @@ public:
     void addQueueClient(QueueClient*);
     void removeQueueClient(QueueClient*);
 
-    void deprecatedAddMessageReceiver(MessageClass messageClass, MessageReceiver* messageReceiver)
-    {
-        m_messageReceiverMap.deprecatedAddMessageReceiver(messageClass, messageReceiver);
-    }
-
     bool open();
     void invalidate();
     void markCurrentlyDispatchedMessageAsInvalid();
@@ -304,8 +298,6 @@ private:
     // Incoming messages.
     Mutex m_incomingMessagesLock;
     Deque<IncomingMessage> m_incomingMessages;
-
-    MessageReceiverMap m_messageReceiverMap;
 
     // Outgoing messages.
     Mutex m_outgoingMessagesLock;
