@@ -1,3 +1,15 @@
+2012-09-21  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] [Stable] Infinite recursion in WebCore::AXObjectCache::getOrCreate
+        https://bugs.webkit.org/show_bug.cgi?id=96932
+
+        Reviewed by Martin Robinson.
+
+        Added a new test which replicates the recursion and crash.
+
+        * platform/gtk/accessibility/remapped-aria-crash-expected.txt: Added.
+        * platform/gtk/accessibility/remapped-aria-crash.html: Added.
+
 2012-09-10  Joanmarie Diggs  <jdiggs@igalia.com>
 
         Properly expose <legend> elements to ATs
