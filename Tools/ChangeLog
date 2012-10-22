@@ -1,3 +1,18 @@
+2012-10-22  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Basic gesture event handling
+        https://bugs.webkit.org/show_bug.cgi?id=66173
+
+        Reviewed by Simon Hausmann.
+
+        Add support for eventSender.gestureLongPress.
+
+        * DumpRenderTree/qt/EventSenderQt.cpp:
+        (EventSender::EventSender):
+        (EventSender::gestureLongPress):
+        * DumpRenderTree/qt/EventSenderQt.h:
+        (EventSender):
+
 2012-10-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [WTR] Properly initialize TestRunner::m_dumpSelectionRect.

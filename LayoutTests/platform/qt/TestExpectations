@@ -430,8 +430,7 @@ fast/mutation/transient-gc-crash.html
 # https://bugs.webkit.org/show_bug.cgi?id=87088
 fast/js/names.html
 
-# Don't have GestureLongPress, GestureTapCancel event types
-touchadjustment/touch-links-longpress.html
+# Don't have GestureTapCancel event type
 touchadjustment/touch-links-active.html
 
 # ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING) is disabled
@@ -1959,7 +1958,6 @@ fast/css/line-height-determined-by-primary-font.html
 fast/dom/HTMLMeterElement/meter-appearances-capacity.html
 fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html
 fast/dynamic/text-combine.html
-fast/events/touch/gesture/context-menu-on-long-press.html
 fast/events/touch/gesture/context-menu-on-two-finger-tap.html
 fast/images/pixel-crack-image-background-webkit-transform-scale.html
 fast/repaint/inline-horizontal-bt-overflow.html

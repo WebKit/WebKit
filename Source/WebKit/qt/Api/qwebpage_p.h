@@ -26,6 +26,7 @@
 #include <qbasictimer.h>
 #include <qnetworkproxy.h>
 #include <qevent.h>
+#include <qgesture.h>
 #include <qgraphicssceneevent.h>
 
 #include "qwebpage.h"
@@ -132,6 +133,8 @@ public:
 
     // Returns whether the default action was cancelled in the JS event handler
     bool touchEvent(QTouchEvent*);
+
+    bool gestureEvent(QGestureEvent*);
 
     class TouchAdjuster {
     public:

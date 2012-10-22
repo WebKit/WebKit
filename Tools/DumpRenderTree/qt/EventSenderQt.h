@@ -88,6 +88,7 @@ public Q_SLOTS:
     void cancelTouchPoint(int index);
 #ifndef QT_NO_GESTURES
     void gestureTap(int x, int y);
+    void gestureLongPress(int x, int y);
 #endif
     void beginDragWithFiles(const QStringList& files);
 
@@ -123,6 +124,7 @@ private:
     Qt::KeyboardModifiers m_touchModifiers;
 #ifndef QT_NO_GESTURES
     QTapGesture m_tapGesture;
+    QTapAndHoldGesture m_tapAndHoldGesture;
     QList<QGesture*> m_gestures;
 #endif
     bool m_touchActive;

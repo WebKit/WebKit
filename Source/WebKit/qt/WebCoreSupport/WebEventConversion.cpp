@@ -22,14 +22,18 @@
 #include "config.h"
 #include "WebEventConversion.h"
 
+#include "PlatformGestureEvent.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformTouchEvent.h"
 #include "PlatformTouchPoint.h"
 #include "PlatformWheelEvent.h"
 #include <QApplication>
+#include <QGesture>
+#include <QGestureEvent>
 #include <QGraphicsSceneMouseEvent>
 #include <QTouchEvent>
 #include <QWheelEvent>
+#include <QWidget>
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {
@@ -302,6 +306,38 @@ WebKitPlatformTouchPoint::WebKitPlatformTouchPoint(const QTouchEvent::TouchPoint
 }
 #endif
 
+#if ENABLE(GESTURE_EVENTS)
+class WebKitPlatformGestureEvent : public PlatformGestureEvent {
+public:
+    WebKitPlatformGestureEvent(const QGestureEvent*, const QGesture*);
+};
+
+WebKitPlatformGestureEvent::WebKitPlatformGestureEvent(const QGestureEvent* event, const QGesture* gesture)
+{
+    switch (gesture->gestureType()) {
+    case Qt::TapGesture: {
+        m_type = PlatformEvent::GestureTap;
+        QPointF globalPos = static_cast<const QTapGesture*>(gesture)->position();
+        m_globalPosition = globalPos.toPoint();
+        m_position = event->widget()->mapFromGlobal(globalPos.toPoint());
+        break;
+    }
+    case Qt::TapAndHoldGesture: {
+        m_type = PlatformEvent::GestureLongPress;
+        QPointF globalPos = static_cast<const QTapAndHoldGesture*>(gesture)->position();
+        m_globalPosition = globalPos.toPoint();
+        m_position = event->widget()->mapFromGlobal(globalPos.toPoint());
+        break;
+    }
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    m_timestamp = WTF::currentTime();
+}
+
+#endif
+
 PlatformWheelEvent convertWheelEvent(QWheelEvent* event)
 {
     return WebKitPlatformWheelEvent(event);
@@ -316,6 +352,13 @@ PlatformWheelEvent convertWheelEvent(QGraphicsSceneWheelEvent* event)
 PlatformTouchEvent convertTouchEvent(QTouchEvent* event)
 {
     return WebKitPlatformTouchEvent(event);
+}
+#endif
+
+#if ENABLE(GESTURE_EVENTS)
+PlatformGestureEvent convertGesture(QGestureEvent* event, QGesture* gesture)
+{
+    return WebKitPlatformGestureEvent(event, gesture);
 }
 #endif
 

@@ -1,3 +1,24 @@
+2012-10-22  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Basic gesture event handling
+        https://bugs.webkit.org/show_bug.cgi?id=66173
+
+        Reviewed by Simon Hausmann.
+
+        Implement basic handling of QGestureEvent converting and forwarding
+        Tap and TapAndHold gestures to WebCore.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::gestureEvent):
+        (QWebPage::event):
+        * Api/qwebpage_p.h:
+        (QWebPagePrivate):
+        * WebCoreSupport/WebEventConversion.cpp:
+        (WebKitPlatformGestureEvent):
+        (WebCore::WebKitPlatformGestureEvent::WebKitPlatformGestureEvent):
+        (WebCore::convertGesture):
+        * WebCoreSupport/WebEventConversion.h:
+
 2012-10-17  Tor Arne Vestbø  <tor.arne.vestbo@digia.com>
 
         [Qt] Modularize documentation for QtWebKit
