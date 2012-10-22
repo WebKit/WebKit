@@ -1,3 +1,15 @@
+2012-10-22  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r132119.
+        http://trac.webkit.org/changeset/132119
+        https://bugs.webkit.org/show_bug.cgi?id=100019
+
+        Fails its own test on Mac platforms. (Requested by leviw on
+        #webkit).
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleGestureEvent):
+
 2012-10-22  Varun Jain  <varunjain@chromium.org>
 
         Context menu generated from touch gestures on textareas has

@@ -1,3 +1,15 @@
+2012-10-22  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r132119.
+        http://trac.webkit.org/changeset/132119
+        https://bugs.webkit.org/show_bug.cgi?id=100019
+
+        Fails its own test on Mac platforms. (Requested by leviw on
+        #webkit).
+
+        * fast/events/touch/gesture/right-click-gestures-set-cursor-at-correct-position.html: Removed.
+        * platform/chromium/fast/events/touch/gesture/right-click-gestures-set-cursor-at-correct-position-expected.txt: Removed.
+
 2012-10-22  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed gardening.
