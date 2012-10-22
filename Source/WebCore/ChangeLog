@@ -1,3 +1,37 @@
+2012-10-22  Adam Barth  <abarth@webkit.org>
+
+        [V8] We should call the faster v8::Integer::New APIs
+        https://bugs.webkit.org/show_bug.cgi?id=100016
+
+        Reviewed by Eric Seidel.
+
+        In working to remove the integer cache, I added some faster APIs for
+        creating v8::Integers. These APIs are faster than the old APIs, but not
+        quite fast enough to replace the integer cache. We should still use
+        them when we miss the integer cache.
+
+        I've also included a small refactoring to V8PerIsolateData to make it
+        clearer when we're calling v8::Isolate::GetCurrent().
+
+        * bindings/v8/DOMData.cpp:
+        (WebCore::DOMData::getCurrentStore):
+        * bindings/v8/V8Binding.h:
+        (WebCore::v8ExternalString):
+        (WebCore::v8Integer):
+        (WebCore::v8UnsignedInteger):
+        * bindings/v8/V8PerIsolateData.h:
+        (WebCore::V8PerIsolateData::current):
+        (WebCore::V8PerIsolateData::from):
+        * bindings/v8/V8ValueCache.cpp:
+        (WebCore::StringCache::v8ExternalStringSlow):
+        (WebCore::IntegerCache::createSmallIntegers):
+        * bindings/v8/V8ValueCache.h:
+        (WebCore::IntegerCache::v8Integer):
+        (WebCore::IntegerCache::v8UnsignedInteger):
+        (IntegerCache):
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp:
+        (WebCore::V8HTMLCanvasElement::getContextCallback):
+
 2012-10-22  Julien Chaffraix  <jchaffraix@webkit.org>
 
         RenderTableCol::computePreferredLogicalWidths and RenderTableCol::layout should never be called

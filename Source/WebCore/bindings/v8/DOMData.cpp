@@ -40,7 +40,9 @@ namespace WebCore {
 DOMDataStore& DOMData::getCurrentStore(v8::Isolate* isolate)
 {
     DEFINE_STATIC_LOCAL(StaticDOMDataStore, defaultStore, ());
-    V8PerIsolateData* data = V8PerIsolateData::current(isolate);
+    if (UNLIKELY(!isolate))
+        isolate = v8::Isolate::GetCurrent();
+    V8PerIsolateData* data = V8PerIsolateData::from(isolate);
     if (UNLIKELY(data->domDataStore() != 0))
         return *data->domDataStore();
     V8DOMWindowShell* context = V8DOMWindowShell::getEntered();

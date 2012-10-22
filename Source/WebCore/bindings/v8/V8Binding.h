@@ -96,9 +96,9 @@ namespace WebCore {
         StringImpl* stringImpl = string.impl();
         if (!stringImpl)
             return isolate ? v8::String::Empty(isolate) : v8::String::Empty();
-
-        V8PerIsolateData* data = V8PerIsolateData::current(isolate);
-        return data->stringCache()->v8ExternalString(stringImpl, isolate);
+        if (UNLIKELY(!isolate))
+            isolate = v8::Isolate::GetCurrent();
+        return V8PerIsolateData::from(isolate)->stringCache()->v8ExternalString(stringImpl, isolate);
     }
 
     // Convert a string to a V8 string.
@@ -109,14 +109,16 @@ namespace WebCore {
 
     inline v8::Handle<v8::Integer> v8Integer(int value, v8::Isolate* isolate = 0)
     {
-        V8PerIsolateData* data = V8PerIsolateData::current(isolate);
-        return data->integerCache()->v8Integer(value);
+        if (UNLIKELY(!isolate))
+            isolate = v8::Isolate::GetCurrent();
+        return V8PerIsolateData::from(isolate)->integerCache()->v8Integer(value, isolate);
     }
 
     inline v8::Handle<v8::Integer> v8UnsignedInteger(unsigned value, v8::Isolate* isolate = 0)
     {
-        V8PerIsolateData* data = V8PerIsolateData::current(isolate);
-        return data->integerCache()->v8UnsignedInteger(value);
+        if (UNLIKELY(!isolate))
+            isolate = v8::Isolate::GetCurrent();
+        return V8PerIsolateData::from(isolate)->integerCache()->v8UnsignedInteger(value, isolate);
     }
 
     inline v8::Handle<v8::Value> v8Undefined()

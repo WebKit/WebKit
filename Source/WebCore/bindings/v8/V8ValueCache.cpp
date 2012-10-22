@@ -61,7 +61,7 @@ void StringCache::remove(StringImpl* stringImpl)
 v8::Local<v8::String> StringCache::v8ExternalStringSlow(StringImpl* stringImpl, v8::Isolate* isolate)
 {
     if (!stringImpl->length())
-        return isolate ? v8::String::Empty(isolate) : v8::String::Empty();
+        return v8::String::Empty(isolate);
 
     v8::String* cachedV8String = m_stringCache.get(stringImpl);
     if (cachedV8String) {
@@ -99,14 +99,14 @@ void WebCoreStringResource::visitStrings(ExternalStringVisitor* visitor)
         visitor->visitJSExternalString(m_atomicString.impl());
 }
 
-void IntegerCache::createSmallIntegers()
+void IntegerCache::createSmallIntegers(v8::Isolate* isolate)
 {
     ASSERT(!m_initialized);
     // We initialize m_smallIntegers not in a constructor but in v8Integer(),
     // because Integer::New() requires a HandleScope. At the point where
     // IntegerCache is constructed, a HandleScope might not exist.
     for (int value = 0; value < numberOfCachedSmallIntegers; value++)
-        m_smallIntegers[value] = v8::Persistent<v8::Integer>::New(v8::Integer::New(value));
+        m_smallIntegers[value] = v8::Persistent<v8::Integer>::New(v8::Integer::New(value, isolate));
     m_initialized = true;
 }
 
