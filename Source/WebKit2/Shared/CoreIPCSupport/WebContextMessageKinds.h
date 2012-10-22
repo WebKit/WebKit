@@ -29,6 +29,7 @@
 // Messages sent from the injected bundle to the WebContext.
 
 #include "MessageID.h"
+#include "StringReference.h"
 
 namespace WebContextLegacyMessage {
 
@@ -43,6 +44,10 @@ namespace CoreIPC {
 
 template<> struct MessageKindTraits<WebContextLegacyMessage::Kind> {
     static const MessageClass messageClass = MessageClassWebContextLegacy;
+    static StringReference messageReceiverName()
+    {
+        return StringReference("WebContextLegacyMessage");
+    }
 };
 
 }

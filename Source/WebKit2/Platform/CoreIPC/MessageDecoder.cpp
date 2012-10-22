@@ -28,7 +28,7 @@
 
 #include "ArgumentCoders.h"
 #include "DataReference.h"
-#include <wtf/text/CString.h>
+#include "StringReference.h"
 
 namespace CoreIPC {
 
@@ -50,12 +50,10 @@ MessageDecoder::~MessageDecoder()
 MessageDecoder::MessageDecoder(const DataReference& buffer, Deque<Attachment>& attachments)
     : ArgumentDecoder(buffer.data(), buffer.size(), attachments)
 {
-    CString messageReceiverName;
-    if (!decode(messageReceiverName))
+    if (!decode(m_messageReceiverName))
         return;
 
-    CString messageName;
-    if (!decode(messageName))
+    if (!decode(m_messageName))
         return;
 
     decodeUInt64(m_destinationID);

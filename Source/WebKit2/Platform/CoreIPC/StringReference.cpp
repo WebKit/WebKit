@@ -23,26 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MessageEncoder_h
-#define MessageEncoder_h
+#include "config.h"
+#include "StringReference.h"
 
+#include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
-#include <wtf/Forward.h>
+#include "DataReference.h"
+#include <wtf/StringHasher.h>
 
 namespace CoreIPC {
 
-class StringReference;
+void StringReference::encode(ArgumentEncoder* encoder) const
+{
+    encoder->encodeVariableLengthByteArray(DataReference(reinterpret_cast<const uint8_t*>(m_data), m_size));
+}
 
-class MessageEncoder : public ArgumentEncoder {
-public:
-    static PassOwnPtr<MessageEncoder> create(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID);
-    virtual ~MessageEncoder();
+bool StringReference::decode(ArgumentDecoder* decoder, StringReference& result)
+{
+    DataReference dataReference;
+    if (!decoder->decodeVariableLengthByteArray(dataReference))
+        return false;
 
-private:
-    MessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID);
+    result.m_data = reinterpret_cast<const char*>(dataReference.data());
+    result.m_size = dataReference.size();
 
-};
+    return true;
+}
+
+unsigned StringReference::Hash::hash(const StringReference& a)
+{
+    return StringHasher::computeHash(reinterpret_cast<const unsigned char*>(a.data()), a.size());
+}
 
 } // namespace CoreIPC
-
-#endif // MessageEncoder_h

@@ -129,8 +129,8 @@ def message_to_struct_declaration(message):
     result.append('struct %s : %s' % (message.name, base_class(message)))
     result.append(' {\n')
     result.append('    static const Kind messageID = %s;\n' % message.id())
-    result.append('    static const char* receiverName() { return messageReceiverName(); }\n')
-    result.append('    static const char* name() { return "%s"; }\n' % message.name)
+    result.append('    static CoreIPC::StringReference receiverName() { return messageReceiverName(); }\n')
+    result.append('    static CoreIPC::StringReference name() { return CoreIPC::StringReference("%s"); }\n' % message.name)
     result.append('\n')
     if message.reply_parameters != None:
         if message.has_attribute(DELAYED_ATTRIBUTE):
@@ -229,6 +229,7 @@ def forward_declarations_and_headers(receiver):
         '"Arguments.h"',
         '"MessageEncoder.h"',
         '"MessageID.h"',
+        '"StringReference.h"',
     ])
 
     for message in receiver.messages:
@@ -284,9 +285,9 @@ def generate_messages_header(file):
 
     result.append('namespace Messages {\nnamespace %s {\n' % receiver.name)
     result.append('\n')
-    result.append('static inline const char* messageReceiverName()\n')
+    result.append('static inline CoreIPC::StringReference messageReceiverName()\n')
     result.append('{\n')
-    result.append('    return "%s";\n' % receiver.name)
+    result.append('    return CoreIPC::StringReference("%s");\n' % receiver.name)
     result.append('}\n')
     result.append('\n')
 

@@ -31,6 +31,7 @@ HEADERS += \
     Platform/CoreIPC/MessageReceiver.h \
     Platform/CoreIPC/MessageReceiverMap.h \
     Platform/CoreIPC/MessageSender.h \
+    Platform/CoreIPC/StringReference.h \
     Platform/Logging.h \
     Platform/Module.h \
     Platform/PlatformProcessIdentifier.h \
@@ -392,6 +393,7 @@ SOURCES += \
     Platform/CoreIPC/MessageDecoder.cpp \
     Platform/CoreIPC/MessageEncoder.cpp \
     Platform/CoreIPC/MessageReceiverMap.cpp \
+    Platform/CoreIPC/StringReference.cpp \
     Platform/Logging.cpp \
     Platform/Module.cpp \
     Platform/WorkQueue.cpp \

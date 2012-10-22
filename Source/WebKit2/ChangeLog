@@ -1,3 +1,80 @@
+2012-10-22  Anders Carlsson  <andersca@apple.com>
+
+        Don't use CStrings for message receiver names and message names
+        https://bugs.webkit.org/show_bug.cgi?id=99853
+
+        Reviewed by Andreas Kling.
+
+        Re-land this with a fix to MessageReceiverMap::dispatchSyncMessage to look in the new global message receivers map.
+
+        Introduce StringReference which is similar to DataReference except it holds a pointer to + length of a char *
+        and can be created from a string literal. Use this in place of CString in MessageEncoder/MessageDecoder and
+        make MessageReceiverMap use a HashMap from StringReferences to MessageReceivers for global message receivers.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::createSyncMessageEncoder):
+        (CoreIPC::Connection::dispatchSyncMessage):
+        * Platform/CoreIPC/Connection.h:
+        (Connection):
+        (CoreIPC::Connection::deprecatedSendSync):
+        (CoreIPC::Connection::deprecatedSend):
+        * Platform/CoreIPC/MessageDecoder.cpp:
+        (CoreIPC::MessageDecoder::MessageDecoder):
+        * Platform/CoreIPC/MessageDecoder.h:
+        (CoreIPC::MessageDecoder::messageReceiverName):
+        (CoreIPC::MessageDecoder::messageName):
+        (MessageDecoder):
+        * Platform/CoreIPC/MessageEncoder.cpp:
+        (CoreIPC::MessageEncoder::create):
+        (CoreIPC::MessageEncoder::MessageEncoder):
+        * Platform/CoreIPC/MessageEncoder.h:
+        (CoreIPC):
+        (MessageEncoder):
+        * Platform/CoreIPC/MessageReceiverMap.cpp:
+        (CoreIPC::MessageReceiverMap::addMessageReceiver):
+        (CoreIPC):
+        (CoreIPC::MessageReceiverMap::dispatchMessage):
+        * Platform/CoreIPC/MessageReceiverMap.h:
+        (MessageReceiverMap):
+        * Platform/CoreIPC/StringReference.cpp: Added.
+        (CoreIPC):
+        (CoreIPC::StringReference::encode):
+        (CoreIPC::StringReference::decode):
+        (CoreIPC::StringReference::Hash::hash):
+        * Platform/CoreIPC/StringReference.h: Added.
+        (CoreIPC):
+        (StringReference):
+        (CoreIPC::StringReference::StringReference):
+        (CoreIPC::StringReference::isEmpty):
+        (CoreIPC::StringReference::size):
+        (CoreIPC::StringReference::data):
+        (CoreIPC::StringReference::operator==):
+        (Hash):
+        (CoreIPC::StringReference::Hash::equal):
+        (WTF):
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::Connection::open):
+        * Scripts/webkit2/messages.py:
+        (message_to_struct_declaration):
+        (forward_declarations_and_headers):
+        (generate_messages_header):
+        * Scripts/webkit2/messages_unittest.py:
+        * Shared/CoreIPCSupport/WebContextMessageKinds.h:
+        * Target.pri:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::addMessageReceiver):
+        (WebKit):
+        * UIProcess/WebContext.h:
+        (WebContext):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::deprecatedSend):
+        (WebKit::WebProcessProxy::send):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
 2012-10-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r132072.

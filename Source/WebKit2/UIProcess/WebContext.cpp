@@ -27,6 +27,7 @@
 #include "WebContext.h"
 
 #include "DownloadProxy.h"
+#include "DownloadProxyMessages.h"
 #include "ImmutableArray.h"
 #include "Logging.h"
 #include "MutableDictionary.h"
@@ -36,6 +37,7 @@
 #include "WKContextPrivate.h"
 #include "WebApplicationCacheManagerProxy.h"
 #include "WebContextMessageKinds.h"
+#include "WebContextMessages.h"
 #include "WebContextUserMessageCoders.h"
 #include "WebCookieManagerProxy.h"
 #include "WebCoreArgumentCoders.h"
@@ -133,9 +135,9 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_usesNetworkProcess(false)
 #endif
 {
-    deprecatedAddMessageReceiver(CoreIPC::MessageClassWebContext, this);
-    deprecatedAddMessageReceiver(CoreIPC::MessageClassDownloadProxy, this);
-    deprecatedAddMessageReceiver(CoreIPC::MessageClassWebContextLegacy, this);
+    addMessageReceiver(Messages::WebContext::messageReceiverName(), this);
+    addMessageReceiver(Messages::DownloadProxy::messageReceiverName(), this);
+    addMessageReceiver(CoreIPC::MessageKindTraits<WebContextLegacyMessage::Kind>::messageReceiverName(), this);
 
     // NOTE: These sub-objects must be initialized after m_messageReceiverMap..
     m_applicationCacheManagerProxy = WebApplicationCacheManagerProxy::create(this);
@@ -781,6 +783,11 @@ HashSet<String, CaseFoldingHash> WebContext::pdfAndPostScriptMIMETypes()
     mimeTypes.add("text/pdf");
     
     return mimeTypes;
+}
+
+void WebContext::addMessageReceiver(CoreIPC::StringReference messageReceiverName, CoreIPC::MessageReceiver* messageReceiver)
+{
+    m_messageReceiverMap.addMessageReceiver(messageReceiverName, messageReceiver);
 }
 
 void WebContext::deprecatedAddMessageReceiver(CoreIPC::MessageClass messageClass, CoreIPC::MessageReceiver* messageReceiver)
