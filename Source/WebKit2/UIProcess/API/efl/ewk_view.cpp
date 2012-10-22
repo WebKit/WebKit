@@ -132,7 +132,7 @@ struct Ewk_View_Private_Data {
     OwnPtr<Ewk_Settings> settings;
     bool areMouseEventsEnabled;
     WKRetainPtr<WKColorPickerResultListenerRef> colorPickerResultListener;
-    Ewk_Context* context;
+    RefPtr<Ewk_Context> context;
 #if ENABLE(TOUCH_EVENTS)
     bool areTouchEventsEnabled;
 #endif
@@ -152,7 +152,6 @@ struct Ewk_View_Private_Data {
 
     Ewk_View_Private_Data()
         : areMouseEventsEnabled(false)
-        , context(0)
 #if ENABLE(TOUCH_EVENTS)
         , areTouchEventsEnabled(false)
 #endif
@@ -171,7 +170,7 @@ struct Ewk_View_Private_Data {
     ~Ewk_View_Private_Data()
     {
         /* Unregister icon change callback */
-        Ewk_Favicon_Database* iconDatabase = ewk_context_favicon_database_get(context);
+        Ewk_Favicon_Database* iconDatabase = context->faviconDatabase();
         iconDatabase->unwatchChanges(_ewk_view_on_favicon_changed);
 
         void* item;
@@ -477,7 +476,6 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 
 static void _ewk_view_priv_del(Ewk_View_Private_Data* priv)
 {
-    ewk_context_unref(priv->context);
     delete priv;
 }
 
@@ -795,7 +793,7 @@ static inline Evas_Smart* _ewk_view_smart_class_new(void)
     return smart;
 }
 
-static void _ewk_view_initialize(Evas_Object* ewkView, Ewk_Context* context, WKPageGroupRef pageGroupRef)
+static void _ewk_view_initialize(Evas_Object* ewkView, PassRefPtr<Ewk_Context> context, WKPageGroupRef pageGroupRef)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
@@ -807,9 +805,9 @@ static void _ewk_view_initialize(Evas_Object* ewkView, Ewk_Context* context, WKP
     priv->pageClient = PageClientImpl::create(ewkView);
 
     if (pageGroupRef)
-        priv->pageProxy = toImpl(ewk_context_WKContext_get(context))->createWebPage(priv->pageClient.get(), toImpl(pageGroupRef));
+        priv->pageProxy = toImpl(context->wkContext())->createWebPage(priv->pageClient.get(), toImpl(pageGroupRef));
     else
-        priv->pageProxy = toImpl(ewk_context_WKContext_get(context))->createWebPage(priv->pageClient.get(), WebPageGroup::create().get());
+        priv->pageProxy = toImpl(context->wkContext())->createWebPage(priv->pageClient.get(), WebPageGroup::create().get());
 
     addToPageViewMap(ewkView);
 
@@ -822,7 +820,7 @@ static void _ewk_view_initialize(Evas_Object* ewkView, Ewk_Context* context, WKP
 
     priv->backForwardList = Ewk_Back_Forward_List::create(toAPI(priv->pageProxy->backForwardList()));
     priv->settings = adoptPtr(new Ewk_Settings(WKPageGroupGetPreferences(WKPageGetPageGroup(toAPI(priv->pageProxy.get())))));
-    priv->context = ewk_context_ref(context);
+    priv->context = context;
 
 #if USE(COORDINATED_GRAPHICS)
     priv->pageViewportControllerClient = PageViewportControllerClientEfl::create(ewkView);
@@ -841,7 +839,7 @@ static void _ewk_view_initialize(Evas_Object* ewkView, Ewk_Context* context, WKP
 #endif
 
     /* Listen for favicon changes */
-    Ewk_Favicon_Database* iconDatabase = ewk_context_favicon_database_get(priv->context);
+    Ewk_Favicon_Database* iconDatabase = priv->context->faviconDatabase();
     iconDatabase->watchChanges(IconChangeCallbackData(_ewk_view_on_favicon_changed, ewkView));
 }
 
@@ -881,7 +879,7 @@ Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef contextRef, WKPageGrou
     if (!ewkView)
         return 0;
 
-    _ewk_view_initialize(ewkView, ewk_context_new_from_WKContext(contextRef), pageGroupRef);
+    _ewk_view_initialize(ewkView, Ewk_Context::create(contextRef), pageGroupRef);
 
     return ewkView;
 }
@@ -903,6 +901,7 @@ Evas_Object* ewk_view_smart_add(Evas* canvas, Evas_Smart* smart, Ewk_Context* co
 
 Evas_Object* ewk_view_add_with_context(Evas* canvas, Ewk_Context* context)
 {
+    EINA_SAFETY_ON_NULL_RETURN_VAL(context, 0);
     return ewk_view_smart_add(canvas, _ewk_view_smart_class_new(), context);
 }
 
@@ -916,7 +915,7 @@ Ewk_Context* ewk_view_context_get(const Evas_Object* ewkView)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
 
-    return priv->context;
+    return priv->context.get();
 }
 
 /**
@@ -1573,7 +1572,7 @@ void ewk_view_update_icon(Evas_Object* ewkView)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
 
-    Ewk_Favicon_Database* iconDatabase = ewk_context_favicon_database_get(priv->context);
+    Ewk_Favicon_Database* iconDatabase = priv->context->faviconDatabase();
     ASSERT(iconDatabase);
 
     priv->faviconURL = ewk_favicon_database_icon_url_get(iconDatabase, priv->url);
