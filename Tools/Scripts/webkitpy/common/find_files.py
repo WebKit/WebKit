@@ -44,13 +44,6 @@ If a callback is passed in, it will be called for the each file and the file
 will be included into the result if the callback returns True.
 The callback has to take three arguments: filesystem, dirname and filename."""
 
-import time
-
-from webkitpy.common.system import logutils
-
-
-_log = logutils.get_logger(__file__)
-
 
 def find(filesystem, base_dir, paths=None, skipped_directories=None, file_filter=None):
     """Finds the set of tests under a given list of sub-paths.
@@ -78,7 +71,6 @@ def _normalized_find(filesystem, paths, skipped_directories, file_filter):
       paths: a list of absolute path expressions to search.
           Glob patterns are ok.
     """
-    gather_start_time = time.time()
     paths_to_walk = set()
 
     for path in paths:
@@ -94,8 +86,5 @@ def _normalized_find(filesystem, paths, skipped_directories, file_filter):
     for path in paths_to_walk:
         files = filesystem.files_under(path, skipped_directories, file_filter)
         all_files.update(set(files))
-
-    gather_time = time.time() - gather_start_time
-    _log.debug("Test gathering took %f seconds" % gather_time)
 
     return all_files
