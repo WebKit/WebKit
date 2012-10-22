@@ -1,5 +1,11 @@
 2012-10-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        [EFL] Rebaseline another test after r131941 and r131991.
+
+        * platform/efl/fast/css3-text/css3-text-decoration/repaint/repaint-text-decoration-line-expected.png:
+
+2012-10-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         [EFL] Add some missing SVG expectations.
 
         * platform/efl/svg/transforms/svg-css-transforms-clip-path-expected.txt: Added.
