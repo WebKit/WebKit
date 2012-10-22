@@ -4073,3 +4073,7 @@ webkit.org/b/99749 [ MountainLion ] compositing/geometry/clipping-foreground.htm
 webkit.org/b/99749 [ MountainLion ] fast/canvas/font-update.html [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] platform/chromium/virtual/gpu/fast/canvas/font-update.html [ ImageOnlyFailure ]
 
+Bug(dpranke) [ Linux ] fast/text/zero-font-size-2.html [ ImageOnlyFailure ]
+Bug(dpranke) [ Win ] webaudio/codec-tests/vorbis/vbr-70kbps-44khz.html [ Failure ]
+Bug(dpranke) [ Win ] webaudio/codec-tests/vorbis/vbr-96kbps-44khz.html [ Failure ]
+Bug(dpranke) [ Win ] webaudio/codec-tests/vorbis/vbr-128kbps-44khz.html [ Failure ]

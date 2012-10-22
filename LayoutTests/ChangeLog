@@ -1,5 +1,16 @@
 2012-10-21  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, more Chromium ML baselining minor cleanups.
+
+        * platform/chromium-mac-lion/editing/pasteboard/drag-selected-image-to-contenteditable-expected.png: Copied from LayoutTests/platform/chromium-mac/editing/pasteboard/drag-selected-image-to-contenteditable-expected.png.
+        * platform/chromium-mac/editing/pasteboard/drag-selected-image-to-contenteditable-expected.png:
+        * platform/chromium-mac/editing/selection/iframe-expected.png:
+        * platform/chromium-mac/editing/selection/move-by-line-001-expected.png:
+        * platform/chromium-win-xp/fast/hidpi/gradient-with-scaled-ancestor-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
+2012-10-21  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, rebaseline remaining Chromium ML editing tests.
 
         (long list of new baselines omitted).
