@@ -1,3 +1,63 @@
+2012-10-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Rebaseline pixel expectations after r131941 and r131991, part 8.
+
+        * platform/efl/svg/dynamic-updates/SVGFETurbulenceElement-dom-type-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-numOctaves-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-seed-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-stitchTiles-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-type-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterElement-dom-filterRes-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterElement-dom-filterUnits-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterElement-dom-height-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterElement-dom-primitiveUnits-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterElement-dom-width-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterElement-dom-x-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterElement-dom-y-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterElement-svgdom-filterRes-call-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterElement-svgdom-filterResX-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterElement-svgdom-filterResY-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterElement-svgdom-filterUnits-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterElement-svgdom-height-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterElement-svgdom-primitiveUnits-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterElement-svgdom-width-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterElement-svgdom-x-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterElement-svgdom-y-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-dom-height-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-dom-result-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-dom-width-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-dom-x-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-dom-y-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-height-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-result-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-width-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-x-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-y-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGForeignObjectElement-dom-height-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGForeignObjectElement-dom-requiredFeatures-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGForeignObjectElement-dom-width-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGForeignObjectElement-dom-x-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGForeignObjectElement-dom-y-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGForeignObjectElement-svgdom-height-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGForeignObjectElement-svgdom-requiredFeatures-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGForeignObjectElement-svgdom-width-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGForeignObjectElement-svgdom-x-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGForeignObjectElement-svgdom-y-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGGElement-dom-requiredFeatures-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGGElement-svgdom-requiredFeatures-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGImageElement-dom-height-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGImageElement-dom-requiredFeatures-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGImageElement-dom-width-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGImageElement-dom-x-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGImageElement-dom-y-attr-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGImageElement-svgdom-height-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGImageElement-svgdom-requiredFeatures-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGImageElement-svgdom-width-prop-expected.png:
+        * platform/efl/svg/dynamic-updates/SVGImageElement-svgdom-x-prop-expected.png:
+
 2012-10-22  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, update more Chromium ML expectations.
