@@ -63,6 +63,7 @@ WebInspector.NetworkManager._MIMETypes = {
     "text/css":                    {"stylesheet": true},
     "text/xsl":                    {"stylesheet": true},
     "image/jpeg":                  {"image": true},
+    "image/pjpeg":                 {"image": true},
     "image/png":                   {"image": true},
     "image/gif":                   {"image": true},
     "image/bmp":                   {"image": true},
