@@ -36,12 +36,7 @@
 namespace WebCore {
 
 LayoutState::LayoutState(LayoutState* prev, RenderBox* renderer, const LayoutSize& offset, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged, ColumnInfo* columnInfo)
-    : m_clipped(false)
-#if !ASSERT_DISABLED && ENABLE(SATURATED_LAYOUT_ARITHMETIC)
-    , m_layoutDeltaXSaturated(false)
-    , m_layoutDeltaYSaturated(false)
-#endif
-    , m_columnInfo(columnInfo)
+    : m_columnInfo(columnInfo)
     , m_lineGrid(0)
     , m_next(prev)
 #ifndef NDEBUG
