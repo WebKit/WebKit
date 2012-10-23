@@ -1,3 +1,18 @@
+2012-10-23  Jussi Kukkonen  <jussi.kukkonen@intel.com>
+
+        [EFL] Make plugin process debugging easier (PLUGIN_PROCESS_COMMAND_PREFIX)
+        https://bugs.webkit.org/show_bug.cgi?id=99297
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add support for PLUGIN_PROCESS_COMMAND_PREFIX environment variable, to allow easier
+        plugin debugging with e.g.:
+        $ PLUGIN_PROCESS_COMMAND_PREFIX="xterm gdb --args" MiniBrowser
+
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp:
+        (WebKit::PluginProcessProxy::platformInitializeLaunchOptions):
+        (WebKit):
+
 2012-10-23  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Make Policy client a C++ class
