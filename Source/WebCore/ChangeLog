@@ -1,3 +1,33 @@
+2012-10-23  Benjamin Poulain  <benjamin@webkit.org>
+
+        [Mac] Remove extraneous conversion to String->NSString
+        https://bugs.webkit.org/show_bug.cgi?id=100044
+
+        Reviewed by Darin Adler.
+
+        Improve some unfortunate use of String->NSString.
+
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postPlatformNotification): The variable macNotification is ultimately
+        needed as NSString, and all its value are or can be NSString.
+        Convert the last 3 char* values to NSString literal and use NSString* all the way.
+
+        * loader/mac/LoaderNSURLExtras.h:
+        * loader/mac/LoaderNSURLExtras.mm:
+        (suggestedFilenameWithMIMEType):
+        We converted the String to NSString to pass to suggestedFilenameWithMIMEType. There is no need
+        for the string to be a NSSTring there, we can leave it in its original type.
+
+        The case checking for a nil MIMEType was dead code because the implicit conversion never returns nil.
+
+        * platform/mac/DragImageMac.mm:
+        (WebCore::createDragImageForLink):
+        Use String's nsStringNilIfEmpty().
+
+        * platform/mac/HTMLConverter.mm:
+        (-[WebHTMLConverter _addAttachmentForElement:URL:needsParagraph:usePlaceholder:]):
+        Fix the coding style. Do the conversion to NSString only when needed.
+
 2012-10-23  Roger Fong  <roger_fong@apple.com>
 
         [Win] Popup menus positioning needs to take multiple monitors into account.

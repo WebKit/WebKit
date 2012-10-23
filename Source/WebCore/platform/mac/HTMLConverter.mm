@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -798,11 +798,15 @@ static inline NSShadow *_shadowForShadowStyle(NSString *shadowStyle)
     }
     if (!fileWrapper) {
         RefPtr<ArchiveResource> resource = dataSource->subresource(url);
-        if (!resource) resource = dataSource->subresource(url);
-        if (flag && resource && [@"text/html" isEqual:resource->mimeType()]) notFound = YES;
+        if (!resource)
+            resource = dataSource->subresource(url);
+
+        const String& mimeType = resource->mimeType();
+        if (flag && resource && mimeType == "text/html")
+            notFound = YES;
         if (resource && !notFound) {
             fileWrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:[resource->data()->createNSData() autorelease]] autorelease];
-            [fileWrapper setPreferredFilename:suggestedFilenameWithMIMEType(url, resource->mimeType())];
+            [fileWrapper setPreferredFilename:suggestedFilenameWithMIMEType(url, mimeType)];
         }
     }
     if (!fileWrapper && !notFound) {

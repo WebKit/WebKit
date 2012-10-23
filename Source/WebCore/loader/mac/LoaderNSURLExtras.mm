@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2008, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,7 +49,7 @@ static bool vectorContainsString(const Vector<String>& vector, const String& str
     return false;
 }
 
-NSString *suggestedFilenameWithMIMEType(NSURL *url, NSString *MIMEType)
+NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType)
 {
     // Get the filename from the URL. Try the lastPathComponent first.
     NSString *lastPathComponent = [[url path] lastPathComponent];
@@ -70,14 +70,9 @@ NSString *suggestedFilenameWithMIMEType(NSURL *url, NSString *MIMEType)
         extension = [filename pathExtension];
     }
 
-    // No mime type reported. Just return the filename we have now.
-    if (!MIMEType) {
-        return filename;
-    }
-
     // Do not correct filenames that are reported with a mime type of tar, and 
     // have a filename which has .tar in it or ends in .tgz
-    if (([MIMEType isEqualToString:@"application/tar"] || [MIMEType isEqualToString:@"application/x-tar"]) 
+    if ((mimeType == "application/tar" || mimeType == "application/x-tar")
         && (hasCaseInsensitiveSubstring(filename, @".tar")
         || hasCaseInsensitiveSuffix(filename, @".tgz"))) {
         return filename;
@@ -85,12 +80,12 @@ NSString *suggestedFilenameWithMIMEType(NSURL *url, NSString *MIMEType)
 
     // I don't think we need to worry about this for the image case
     // If the type is known, check the extension and correct it if necessary.
-    if (![MIMEType isEqualToString:@"application/octet-stream"] && ![MIMEType isEqualToString:@"text/plain"]) {
-        Vector<String> extensions = MIMETypeRegistry::getExtensionsForMIMEType(MIMEType);
+    if (mimeType != "application/octet-stream" && mimeType != "text/plain") {
+        Vector<String> extensions = MIMETypeRegistry::getExtensionsForMIMEType(mimeType);
 
         if (extensions.isEmpty() || !vectorContainsString(extensions, extension)) {
             // The extension doesn't match the MIME type. Correct this.
-            NSString *correctExtension = MIMETypeRegistry::getPreferredExtensionForMIMEType(MIMEType);
+            NSString *correctExtension = MIMETypeRegistry::getPreferredExtensionForMIMEType(mimeType);
             if ([correctExtension length] != 0) {
                 // Append the correct extension.
                 filename = [filename stringByAppendingPathExtension:correctExtension];

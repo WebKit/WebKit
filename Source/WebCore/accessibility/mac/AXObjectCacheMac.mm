@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2008, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,7 +61,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
         return;
     
     // Some notifications are unique to Safari and do not have NSAccessibility equivalents.
-    String macNotification;
+    NSString *macNotification;
     switch (notification) {
         case AXActiveDescendantChanged:
             // An active descendant change for trees means a selected rows change.
@@ -81,13 +81,13 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
             macNotification = NSAccessibilityFocusedUIElementChangedNotification;
             break;
         case AXLayoutComplete:
-            macNotification = "AXLayoutComplete";
+            macNotification = @"AXLayoutComplete";
             break;
         case AXLoadComplete:
-            macNotification = "AXLoadComplete";
+            macNotification = @"AXLoadComplete";
             break;
         case AXInvalidStatusChanged:
-            macNotification = "AXInvalidStatusChanged";
+            macNotification = @"AXInvalidStatusChanged";
             break;
         case AXSelectedChildrenChanged:
             if (obj->isAccessibilityTable())
