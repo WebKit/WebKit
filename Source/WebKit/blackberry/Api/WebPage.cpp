@@ -432,6 +432,8 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_deferredTasksTimer(this, &WebPagePrivate::deferredTasksTimerFired)
     , m_selectPopup(0)
     , m_autofillManager(AutofillManager::create(this))
+    , m_documentStyleRecalcPostponed(false)
+    , m_documentChildNeedsStyleRecalc(false)
 {
     static bool isInitialized = false;
     if (!isInitialized) {
@@ -441,6 +443,7 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     }
 
     AuthenticationChallengeManager::instance()->pageCreated(this);
+    clearCachedHitTestResult();
 }
 
 WebPage::WebPage(WebPageClient* client, const BlackBerry::Platform::String& pageGroupName, const Platform::IntRect& rect)
@@ -4074,6 +4077,9 @@ bool WebPage::touchEvent(const Platform::TouchEvent& event)
     else if (tEvent.m_type == Platform::TouchEvent::TouchStart || tEvent.m_type == Platform::TouchEvent::TouchCancel)
         d->m_pluginMayOpenNewTab = false;
 
+    if (tEvent.m_type == Platform::TouchEvent::TouchStart)
+        d->clearCachedHitTestResult();
+
     bool handled = false;
 
     if (d->m_needTouchEvents && !event.hasGesture(Platform::Gesture::Injected))
@@ -4110,9 +4116,11 @@ void WebPagePrivate::setScrollOriginPoint(const Platform::IntPoint& point)
     if (!m_hasInRegionScrollableAreas)
         return;
 
+    postponeDocumentStyleRecalc();
     m_inRegionScroller->d->calculateInRegionScrollableAreasForPoint(point);
     if (!m_inRegionScroller->d->activeInRegionScrollableAreas().empty())
         m_client->notifyInRegionScrollableAreasChanged(m_inRegionScroller->d->activeInRegionScrollableAreas());
+    resumeDocumentStyleRecalc();
 }
 
 void WebPage::setScrollOriginPoint(const Platform::IntPoint& point)
@@ -6325,6 +6333,46 @@ void WebPagePrivate::restoreHistoryViewState(Platform::IntSize contentsSize, Pla
 IntSize WebPagePrivate::screenSize() const
 {
     return Platform::Graphics::Screen::primaryScreen()->size();
+}
+
+bool WebPagePrivate::postponeDocumentStyleRecalc()
+{
+    if (Document* document = m_mainFrame->document()) {
+        m_documentChildNeedsStyleRecalc = document->childNeedsStyleRecalc();
+        document->clearChildNeedsStyleRecalc();
+
+        m_documentStyleRecalcPostponed = document->isPendingStyleRecalc();
+        document->unscheduleStyleRecalc();
+    }
+}
+
+void WebPagePrivate::resumeDocumentStyleRecalc()
+{
+    if (Document* document = m_mainFrame->document()) {
+        if (m_documentChildNeedsStyleRecalc)
+            document->setChildNeedsStyleRecalc();
+
+        if (m_documentStyleRecalcPostponed)
+            document->scheduleStyleRecalc();
+    }
+
+    m_documentChildNeedsStyleRecalc = false;
+    m_documentStyleRecalcPostponed = false;
+}
+
+const HitTestResult& WebPagePrivate::hitTestResult(const IntPoint& contentPos)
+{
+    if (m_cachedHitTestContentPos != contentPos) {
+        m_cachedHitTestContentPos = contentPos;
+        m_cachedHitTestResult = m_mainFrame->eventHandler()->hitTestResultAtPoint(m_cachedHitTestContentPos, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowShadowContent);
+    }
+
+    return m_cachedHitTestResult;
+}
+
+void WebPagePrivate::clearCachedHitTestResult()
+{
+    m_cachedHitTestContentPos = WebCore::IntPoint(-1, -1);
 }
 
 }

@@ -1,3 +1,43 @@
+2012-10-23  Mike Lattanzio  <mlattanzio@rim.com>
+
+        [BlackBerry] Cache TouchDown HitTestResult to avoid calling RenderLayer::hitTest unnecessarily
+        https://bugs.webkit.org/show_bug.cgi?id=99649
+
+        Reviewed by George Staikos.
+
+        Random latency before scroll starts on sites like http://pintrest.com
+        Internal PR225398
+
+        The chief problem here is the all the hit testing that we do for
+        touch events and simulated mouse events. If the render tree is dirty
+        hit tests can take a long time in Document::recalcStyle(). Masking
+        the flags that force style recalculations will make them fast, at the
+        expense that they might be happening on stale data.
+
+        Since we are only using these hit tests to look for event handlers -
+        we're not actually modifying anything, it is better to skip the
+        Document::recalcStyle() and save ourselves tons of time.
+
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScrollerPrivate::calculateInRegionScrollableAreasForPoint):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPage::touchEvent):
+        (BlackBerry::WebKit::WebPagePrivate::setScrollOriginPoint):
+        (BlackBerry::WebKit::WebPagePrivate::postponeDocumentStyleRecalc):
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::resumeDocumentStyleRecalc):
+        (BlackBerry::WebKit::WebPagePrivate::hitTestResult):
+        (BlackBerry::WebKit::WebPagePrivate::clearCachedHitTestResult):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::findBestPoint):
+        (BlackBerry::WebKit::FatFingers::getRelevantInfoFromCachedHitTest):
+        * WebKitSupport/FatFingers.h:
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::handleTouchPoint):
+
 2012-10-23  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Make selection in search input box not overlap cancel button

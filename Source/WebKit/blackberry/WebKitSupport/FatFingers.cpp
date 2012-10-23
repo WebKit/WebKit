@@ -181,7 +181,7 @@ const FatFingersResult FatFingers::findBestPoint()
     // targable is actually found by ::findIntersectingRegions, then we might replace what we just set below later on.
     Element* elementUnderPoint;
     Element* clickableElementUnderPoint;
-    getRelevantInfoFromPoint(m_webPage->m_mainFrame->document(), m_contentPos, elementUnderPoint, clickableElementUnderPoint);
+    getRelevantInfoFromCachedHitTest(elementUnderPoint, clickableElementUnderPoint);
 
     if (elementUnderPoint) {
         result.m_nodeUnderFatFinger = elementUnderPoint;
@@ -500,15 +500,12 @@ void FatFingers::getNodesFromRect(Document* document, const IntPoint& contentPos
     m_cachedRectHitTestResults.add(document, intersectedNodes);
 }
 
-void FatFingers::getRelevantInfoFromPoint(Document* document, const IntPoint& contentPos, Element*& elementUnderPoint, Element*& clickableElementUnderPoint) const
+void FatFingers::getRelevantInfoFromCachedHitTest(Element*& elementUnderPoint, Element*& clickableElementUnderPoint) const
 {
     elementUnderPoint = 0;
     clickableElementUnderPoint = 0;
 
-    if (!document || !document->renderer() || !document->frame())
-        return;
-
-    HitTestResult result  = document->frame()->eventHandler()->hitTestResultAtPoint(contentPos, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowShadowContent);
+    const HitTestResult& result = m_webPage->hitTestResult(m_contentPos);
     Node* node = result.innerNode();
     while (node && !node->isElementNode())
         node = node->parentNode();

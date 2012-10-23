@@ -20,6 +20,7 @@
 #define WebPage_p_h
 
 #include "ChromeClient.h"
+#include "HitTestResult.h"
 #include "InRegionScroller.h"
 #include "InspectorClientBlackBerry.h"
 #include "InspectorOverlay.h"
@@ -460,6 +461,12 @@ public:
     void applySizeOverride(int overrideWidth, int overrideHeight);
     void setTextZoomFactor(float);
 
+    bool postponeDocumentStyleRecalc();
+    void resumeDocumentStyleRecalc();
+
+    const WebCore::HitTestResult& hitTestResult(const WebCore::IntPoint& contentPos);
+    void clearCachedHitTestResult();
+
     WebCore::IntSize screenSize() const;
 
     WebPage* m_webPage;
@@ -637,6 +644,12 @@ public:
     WebCore::PagePopupBlackBerry* m_selectPopup;
 
     RefPtr<WebCore::AutofillManager> m_autofillManager;
+
+    bool m_documentStyleRecalcPostponed;
+    bool m_documentChildNeedsStyleRecalc;
+
+    WebCore::IntPoint m_cachedHitTestContentPos;
+    WebCore::HitTestResult m_cachedHitTestResult;
 protected:
     virtual ~WebPagePrivate();
 };

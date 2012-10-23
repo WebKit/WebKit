@@ -199,6 +199,7 @@ bool TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point, bool useFa
 
             IntPoint contentPos(m_webPage->mapFromViewportToContents(point.m_pos));
 
+            m_webPage->postponeDocumentStyleRecalc();
             m_lastFatFingersResult = FatFingers(m_webPage, contentPos, FatFingers::ClickableElement).findBestPoint();
 
             Element* elementUnderFatFinger = 0;
@@ -213,6 +214,8 @@ bool TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point, bool useFa
 
             if (!possibleTargetNodeForMouseMoveEvents || (!possibleTargetNodeForMouseMoveEvents->hasEventListeners(eventNames().touchmoveEvent) && !m_convertTouchToMouse))
                 m_webPage->client()->notifyNoMouseMoveOrTouchMoveHandlers();
+
+            m_webPage->resumeDocumentStyleRecalc();
 
             if (elementUnderFatFinger)
                 drawTapHighlight();
