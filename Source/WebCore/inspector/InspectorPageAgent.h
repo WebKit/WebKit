@@ -136,8 +136,7 @@ public:
     void loaderDetachedFromFrame(DocumentLoader*);
     void applyScreenWidthOverride(long*);
     void applyScreenHeightOverride(long*);
-    void willPaint(GraphicsContext*, const LayoutRect&);
-    void didPaint();
+    void didPaint(GraphicsContext*, const LayoutRect&);
     void didLayout();
     void didScroll();
 
@@ -179,8 +178,6 @@ private:
     HashMap<Frame*, String> m_frameToIdentifier;
     HashMap<String, Frame*> m_identifierToFrame;
     HashMap<DocumentLoader*, String> m_loaderToIdentifier;
-    GraphicsContext* m_lastPaintContext;
-    LayoutRect m_lastPaintRect;
     bool m_didLoadEventFire;
     bool m_geolocationOverridden;
     RefPtr<GeolocationPosition> m_geolocationPosition;

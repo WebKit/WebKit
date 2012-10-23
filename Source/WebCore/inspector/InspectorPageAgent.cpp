@@ -328,7 +328,6 @@ InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents,
     , m_frontend(0)
     , m_overlay(overlay)
     , m_lastScriptIdentifier(0)
-    , m_lastPaintContext(0)
     , m_didLoadEventFire(false)
     , m_geolocationOverridden(false)
 {
@@ -876,18 +875,9 @@ void InspectorPageAgent::applyScreenHeightOverride(long* height)
         *height = heightOverride;
 }
 
-void InspectorPageAgent::willPaint(GraphicsContext* context, const LayoutRect& rect)
+void InspectorPageAgent::didPaint(GraphicsContext* context, const LayoutRect& rect)
 {
-    if (m_state->getBoolean(PageAgentState::showPaintRects)) {
-        m_lastPaintContext = context;
-        m_lastPaintRect = rect;
-        m_lastPaintRect.inflate(-1);
-    }
-}
-
-void InspectorPageAgent::didPaint()
-{
-    if (!m_lastPaintContext || !m_state->getBoolean(PageAgentState::showPaintRects))
+    if (!m_state->getBoolean(PageAgentState::showPaintRects))
         return;
 
     static int colorSelector = 0;
@@ -897,9 +887,9 @@ void InspectorPageAgent::didPaint()
         Color(0, 0, 0xFF, 0x3F),
     };
 
-    m_overlay->drawOutline(m_lastPaintContext, m_lastPaintRect, colors[colorSelector++ % WTF_ARRAY_LENGTH(colors)]);
-
-    m_lastPaintContext = 0;
+    LayoutRect inflatedRect(rect);
+    inflatedRect.inflate(-1);
+    m_overlay->drawOutline(context, inflatedRect, colors[colorSelector++ % WTF_ARRAY_LENGTH(colors)]);
 }
 
 void InspectorPageAgent::didLayout()

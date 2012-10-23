@@ -170,13 +170,6 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createReceiveResourceData(con
     return data.release();
 }
     
-PassRefPtr<InspectorObject> TimelineRecordFactory::createPaintData(const LayoutRect& rect)
-{
-    RefPtr<InspectorObject> data = InspectorObject::create();
-    addRectData(data.get(), rect);
-    return data.release();
-}
-
 PassRefPtr<InspectorObject> TimelineRecordFactory::createDecodeImageData(const String& imageType)
 {
     RefPtr<InspectorObject> data = InspectorObject::create();
