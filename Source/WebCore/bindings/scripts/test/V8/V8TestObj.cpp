@@ -2326,16 +2326,15 @@ bool V8TestObj::HasInstance(v8::Handle<v8::Value> value)
 void V8TestObj::installPerContextProperties(v8::Handle<v8::Object> instance, TestObj* impl)
 {
     v8::Local<v8::Object> proto = v8::Local<v8::Object>::Cast(instance->GetPrototype());
-    ScriptExecutionContext* context = toScriptExecutionContext(proto->CreationContext());
     // When building QtWebkit with V8 this variable is unused when none of the features are enabled.
-    UNUSED_PARAM(context);
-    if (context && context->isDocument() && ContextFeatures::enabledPerContextAttr1Enabled(static_cast<Document*>(context))) {
+    UNUSED_PARAM(proto);
+    if (ContextFeatures::enabledPerContextAttr1Enabled(impl->document())) {
         static const V8DOMConfiguration::BatchedAttribute attrData =\
         // Attribute 'enabledPerContextAttr1' (Type: 'attribute' ExtAttr: 'V8EnabledPerContext')
         {"enabledPerContextAttr1", TestObjV8Internal::enabledPerContextAttr1AttrGetter, TestObjV8Internal::enabledPerContextAttr1AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */};
         V8DOMConfiguration::configureAttribute(instance, proto, attrData);
     }
-    if (context && context->isDocument() && ContextFeatures::featureNameEnabled(static_cast<Document*>(context))) {
+    if (ContextFeatures::featureNameEnabled(impl->document())) {
         static const V8DOMConfiguration::BatchedAttribute attrData =\
         // Attribute 'enabledPerContextAttr2' (Type: 'attribute' ExtAttr: 'V8EnabledPerContext')
         {"enabledPerContextAttr2", TestObjV8Internal::enabledPerContextAttr2AttrGetter, TestObjV8Internal::enabledPerContextAttr2AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */};
