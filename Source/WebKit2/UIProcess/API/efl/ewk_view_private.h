@@ -69,6 +69,9 @@ void ewk_view_load_error(Evas_Object* ewkView, const Ewk_Error* error);
 void ewk_view_load_finished(Evas_Object* ewkView);
 void ewk_view_load_progress_changed(Evas_Object* ewkView, double progress);
 void ewk_view_load_provisional_failed(Evas_Object* ewkView, const Ewk_Error* error);
+#if USE(TILED_BACKING_STORE)
+void ewk_view_load_committed(Evas_Object* ewkView);
+#endif
 void ewk_view_load_provisional_redirect(Evas_Object* ewkView);
 void ewk_view_load_provisional_started(Evas_Object* ewkView);
 void ewk_view_navigation_policy_decision(Evas_Object* ewkView, Ewk_Navigation_Policy_Decision* decision);

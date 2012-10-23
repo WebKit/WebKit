@@ -78,7 +78,8 @@
 #include <Evas_GL.h>
 #endif
 
-#if USE(COORDINATED_GRAPHICS)
+#if USE(TILED_BACKING_STORE)
+#include "PageViewportController.h"
 #include "PageViewportControllerClientEfl.h"
 #endif
 
@@ -119,8 +120,9 @@ static inline void removeFromPageViewMap(const Evas_Object* ewkView)
 
 struct Ewk_View_Private_Data {
     OwnPtr<PageClientImpl> pageClient;
-#if USE(COORDINATED_GRAPHICS)
+#if USE(TILED_BACKING_STORE)
     OwnPtr<PageViewportControllerClientEfl> pageViewportControllerClient;
+    OwnPtr<PageViewportController> pageViewportController;
 #endif
     RefPtr<WebPageProxy> pageProxy;
     OwnPtr<PageLoadClientEfl> pageLoadClient;
@@ -289,12 +291,30 @@ static Eina_Bool _ewk_view_smart_focus_out(Ewk_View_Smart_Data* smartData)
     return true;
 }
 
+#if USE(TILED_BACKING_STORE)
+static Evas_Coord_Point mapToWebContent(Ewk_View_Smart_Data* smartData, Evas_Coord_Point point)
+{
+    Evas_Coord_Point result;
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, result);
+
+    result.x = (point.x  - smartData->view.x) / priv->pageViewportControllerClient->scaleFactor() + smartData->view.x + priv->pageViewportControllerClient->scrollPosition().x();
+    result.y = (point.y - smartData->view.y) / priv->pageViewportControllerClient->scaleFactor() + smartData->view.y + priv->pageViewportControllerClient->scrollPosition().y();
+    return result;
+}
+#endif
+
 static Eina_Bool _ewk_view_smart_mouse_wheel(Ewk_View_Smart_Data* smartData, const Evas_Event_Mouse_Wheel* wheelEvent)
 {
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
 
     Evas_Point position = {smartData->view.x, smartData->view.y};
+#if USE(TILED_BACKING_STORE)
+    Evas_Event_Mouse_Wheel event(*wheelEvent);
+    event.canvas = mapToWebContent(smartData, event.canvas);
+    priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(&event, &position));
+#else
     priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(wheelEvent, &position));
+#endif
     return true;
 }
 
@@ -303,7 +323,13 @@ static Eina_Bool _ewk_view_smart_mouse_down(Ewk_View_Smart_Data* smartData, cons
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
 
     Evas_Point position = {smartData->view.x, smartData->view.y};
+#if USE(TILED_BACKING_STORE)
+    Evas_Event_Mouse_Down event(*downEvent);
+    event.canvas = mapToWebContent(smartData, event.canvas);
+    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(&event, &position));
+#else
     priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(downEvent, &position));
+#endif
     return true;
 }
 
@@ -312,7 +338,13 @@ static Eina_Bool _ewk_view_smart_mouse_up(Ewk_View_Smart_Data* smartData, const 
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
 
     Evas_Point position = {smartData->view.x, smartData->view.y};
+#if USE(TILED_BACKING_STORE)
+    Evas_Event_Mouse_Up event(*upEvent);
+    event.canvas = mapToWebContent(smartData, event.canvas);
+    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(&event, &position));
+#else
     priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(upEvent, &position));
+#endif
 
     if (priv->imfContext)
         ecore_imf_context_reset(priv->imfContext);
@@ -325,7 +357,13 @@ static Eina_Bool _ewk_view_smart_mouse_move(Ewk_View_Smart_Data* smartData, cons
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
 
     Evas_Point position = {smartData->view.x, smartData->view.y};
+#if USE(TILED_BACKING_STORE)
+    Evas_Event_Mouse_Move event(*moveEvent);
+    event.cur.canvas = mapToWebContent(smartData, event.cur.canvas);
+    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(&event, &position));
+#else
     priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(moveEvent, &position));
+#endif
     return true;
 }
 
@@ -879,8 +917,10 @@ static void _ewk_view_initialize(Evas_Object* ewkView, PassRefPtr<Ewk_Context> c
     priv->settings = adoptPtr(new Ewk_Settings(WKPageGroupGetPreferences(WKPageGetPageGroup(toAPI(priv->pageProxy.get())))));
     priv->context = context;
 
-#if USE(COORDINATED_GRAPHICS)
+#if USE(TILED_BACKING_STORE)
     priv->pageViewportControllerClient = PageViewportControllerClientEfl::create(ewkView);
+    priv->pageViewportController = adoptPtr(new PageViewportController(priv->pageProxy.get(), priv->pageViewportControllerClient.get()));
+    priv->pageClient->setPageViewportController(priv->pageViewportController.get());
 #endif
 
     // Initialize page clients.
@@ -1616,6 +1656,16 @@ void ewk_view_load_provisional_failed(Evas_Object* ewkView, const Ewk_Error* err
     evas_object_smart_callback_call(ewkView, "load,provisional,failed", const_cast<Ewk_Error*>(error));
 }
 
+#if USE(TILED_BACKING_STORE)
+void ewk_view_load_committed(Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    priv->pageViewportController->didCommitLoad();
+}
+#endif
+
 /**
  * @internal
  * Reports view received redirect for provisional load.
@@ -2051,6 +2101,8 @@ Eina_Bool ewk_view_feed_touch_event(Evas_Object* ewkView, Ewk_Touch_Event_Type t
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
 
     Evas_Point position = { smartData->view.x, smartData->view.y };
+    // FIXME: Touch points do not take scroll position and scale into account when 
+    // TILED_BACKING_STORE is enabled.
     priv->pageProxy->handleTouchEvent(NativeWebTouchEvent(type, points, modifiers, &position, ecore_time_get()));
 
     return true;

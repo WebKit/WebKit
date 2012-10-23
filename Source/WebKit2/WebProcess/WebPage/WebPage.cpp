@@ -1854,7 +1854,7 @@ void WebPage::didStartPageTransition()
 
 void WebPage::didCompletePageTransition()
 {
-#if PLATFORM(QT)
+#if USE(TILED_BACKING_STORE)
     if (m_mainFrame->coreFrame()->view()->delegatesScrolling())
         // Wait until the UI process sent us the visible rect it wants rendered.
         send(Messages::WebPageProxy::PageTransitionViewportReady());

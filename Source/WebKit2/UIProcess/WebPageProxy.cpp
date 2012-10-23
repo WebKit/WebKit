@@ -2675,6 +2675,17 @@ void WebPageProxy::pageDidRequestScroll(const IntPoint& point)
 {
     m_pageClient->pageDidRequestScroll(point);
 }
+
+void WebPageProxy::pageTransitionViewportReady()
+{
+    m_pageClient->pageTransitionViewportReady();
+}
+
+void WebPageProxy::didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect)
+{
+    m_pageClient->didRenderFrame(contentsSize, coveredRect);
+}
+
 #endif
 
 void WebPageProxy::didChangeViewportProperties(const ViewportAttributes& attr)

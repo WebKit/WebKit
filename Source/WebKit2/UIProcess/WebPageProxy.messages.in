@@ -75,9 +75,9 @@ messages -> WebPageProxy {
 
 #if USE(TILED_BACKING_STORE)
     PageDidRequestScroll(WebCore::IntPoint point)
+    PageTransitionViewportReady()
 #endif
 #if PLATFORM(QT)
-    PageTransitionViewportReady()
     DidFindZoomableArea(WebCore::IntPoint target, WebCore::IntRect area)
     AuthenticationRequiredRequest(WTF::String hostname, WTF::String realm, WTF::String prefilledUsername) -> (WTF::String username, WTF::String password)
     CertificateVerificationRequest(WTF::String hostname) -> (bool ignoreErrors)

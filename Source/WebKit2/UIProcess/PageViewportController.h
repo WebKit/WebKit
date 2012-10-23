@@ -22,6 +22,8 @@
 #ifndef PageViewportController_h
 #define PageViewportController_h
 
+#if USE(TILED_BACKING_STORE)
+
 #include <WebCore/FloatPoint.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FloatSize.h>
@@ -139,5 +141,7 @@ private:
 bool fuzzyCompare(float, float, float epsilon);
 
 } // namespace WebKit
+
+#endif
 
 #endif // PageViewportController_h

@@ -32,6 +32,8 @@
 
 namespace WebKit {
 
+class PageViewportController;
+
 class PageClientImpl : public PageClient {
 public:
     static PassOwnPtr<PageClientImpl> create(Evas_Object* viewWidget)
@@ -41,7 +43,9 @@ public:
     ~PageClientImpl();
 
     Evas_Object* viewWidget() const { return m_viewWidget; }
-
+#if USE(TILED_BACKING_STORE)
+    void setPageViewportController(PageViewportController* controller) { m_pageViewportController = controller; }
+#endif
 
 private:
     explicit PageClientImpl(Evas_Object*);
@@ -115,9 +119,17 @@ private:
 
     virtual void didChangeContentsSize(const WebCore::IntSize&);
 
+#if USE(TILED_BACKING_STORE)
+    virtual void didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect);
+    virtual void pageTransitionViewportReady();
+#endif
+
 private:
     Evas_Object* m_viewWidget;
     DefaultUndoController m_undoController;
+#if USE(TILED_BACKING_STORE)
+    PageViewportController* m_pageViewportController;
+#endif
 };
 
 } // namespace WebKit

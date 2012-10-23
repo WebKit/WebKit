@@ -42,6 +42,10 @@
 #include "ewk_view.h"
 #include "ewk_view_private.h"
 
+#if USE(TILED_BACKING_STORE)
+#include "PageViewportController.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -138,9 +142,13 @@ void PageClientImpl::setCursorHiddenUntilMouseMoves(bool)
     notImplemented();
 }
 
-void PageClientImpl::didChangeViewportProperties(const WebCore::ViewportAttributes&)
+void PageClientImpl::didChangeViewportProperties(const WebCore::ViewportAttributes& attr)
 {
-    notImplemented();
+#if USE(TILED_BACKING_STORE)
+    m_pageViewportController->didChangeViewportAttributes(attr);
+#else
+    UNUSED_PARAM(attr);
+#endif
 }
 
 void PageClientImpl::registerEditCommand(PassRefPtr<WebEditCommandProxy> command, WebPageProxy::UndoOrRedo undoOrRedo)
@@ -293,15 +301,31 @@ void PageClientImpl::handleDownloadRequest(DownloadProxy* download)
 }
 
 #if USE(TILED_BACKING_STORE)
-void PageClientImpl::pageDidRequestScroll(const IntPoint&)
+void PageClientImpl::pageDidRequestScroll(const IntPoint& position)
 {
-    notImplemented();
+    m_pageViewportController->pageDidRequestScroll(position);
 }
 #endif
 
 void PageClientImpl::didChangeContentsSize(const WebCore::IntSize& size)
 {
+#if USE(TILED_BACKING_STORE)
+    m_pageViewportController->didChangeContentsSize(size);
+#else
     ewk_view_contents_size_changed(m_viewWidget, size);
+#endif
 }
+
+#if USE(TILED_BACKING_STORE)
+void PageClientImpl::didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect)
+{
+    m_pageViewportController->didRenderFrame(contentsSize, coveredRect);
+}
+
+void PageClientImpl::pageTransitionViewportReady()
+{
+    m_pageViewportController->pageTransitionViewportReady();
+}
+#endif
 
 } // namespace WebKit

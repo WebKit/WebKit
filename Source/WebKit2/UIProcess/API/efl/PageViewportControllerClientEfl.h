@@ -26,7 +26,7 @@
 #ifndef PageViewportControllerClientEfl_h
 #define PageViewportControllerClientEfl_h
 
-#if USE(COORDINATED_GRAPHICS)
+#if USE(TILED_BACKING_STORE)
 
 #include "PageClientImpl.h"
 #include "PageViewportControllerClient.h"
@@ -44,6 +44,8 @@ public:
 
     DrawingAreaProxy* drawingArea() const;
     WebCore::IntSize viewSize() { return m_viewportSize; }
+    float scaleFactor() const { return m_scaleFactor; }
+    WebCore::IntPoint scrollPosition() { return m_scrollPosition; }
 
     void display(const WebCore::IntRect& rect, const WebCore::IntPoint& viewPosition);
     void updateViewportSize(const WebCore::IntSize& viewportSize);
@@ -64,10 +66,11 @@ private:
     explicit PageViewportControllerClientEfl(Evas_Object*);
 
     Evas_Object* m_viewWidget;
-    WebCore::IntRect m_visibleContentRect;
     WebCore::IntSize m_contentsSize;
     WebCore::IntSize m_viewportSize;
+    WebCore::IntPoint m_scrollPosition;
     float m_scaleFactor;
+    PageViewportController* m_pageViewportController;
 };
 
 } // namespace WebKit

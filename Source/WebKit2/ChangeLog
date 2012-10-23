@@ -1,3 +1,78 @@
+2012-10-23  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][WK2] Use the port independent PageViewportController
+        https://bugs.webkit.org/show_bug.cgi?id=99850
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Take PageViewportController into use, and rely on it to calculate
+        scroll position and zoom level.
+        With this patch, we can do intra page navigation and use the scrollwheel
+        to scroll, when WTF_USE_TILED_BACKING_STORE and all related flags are enabled.
+
+        * CMakeLists.txt:
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::didChangeViewportProperties):
+        (WebKit::PageClientImpl::pageDidRequestScroll):
+        (WebKit::PageClientImpl::didChangeContentsSize):
+        (WebKit):
+        (WebKit::PageClientImpl::didRenderFrame):
+        (WebKit::PageClientImpl::pageTransitionViewportReady):
+        * UIProcess/API/efl/PageClientImpl.h:
+        (WebKit):
+        (PageClientImpl):
+        (WebKit::PageClientImpl::setPageViewportController):
+        * UIProcess/API/efl/PageViewportControllerClientEfl.cpp:
+        (WebKit::PageViewportControllerClientEfl::PageViewportControllerClientEfl):
+        (WebKit::PageViewportControllerClientEfl::display):
+        (WebKit::PageViewportControllerClientEfl::updateViewportSize):
+        (WebKit::PageViewportControllerClientEfl::setVisibleContentsRect):
+        (WebKit::PageViewportControllerClientEfl::didChangeContentsSize):
+        (WebKit::PageViewportControllerClientEfl::setViewportPosition):
+        (WebKit::PageViewportControllerClientEfl::setContentsScale):
+        (WebKit::PageViewportControllerClientEfl::didResumeContent):
+        (WebKit::PageViewportControllerClientEfl::didChangeVisibleContents):
+        (WebKit::PageViewportControllerClientEfl::setController):
+        * UIProcess/API/efl/PageViewportControllerClientEfl.h:
+        (WebKit::PageViewportControllerClientEfl::scaleFactor):
+        (WebKit::PageViewportControllerClientEfl::scrollPosition):
+        (PageViewportControllerClientEfl):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (Ewk_View_Private_Data):
+        (mapToWebContent):
+        (_ewk_view_smart_mouse_wheel):
+        (_ewk_view_smart_mouse_down):
+        (_ewk_view_smart_mouse_up):
+        (_ewk_view_smart_mouse_move):
+        (_ewk_view_initialize):
+        (ewk_view_load_committed):
+        (ewk_view_feed_touch_event):
+        * UIProcess/API/efl/ewk_view_private.h:
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp:
+        (WebKit::LayerTreeCoordinatorProxy::didRenderFrame):
+        * UIProcess/PageClient.h:
+        (PageClient):
+        * UIProcess/PageViewportController.cpp:
+        * UIProcess/PageViewportController.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit):
+        (WebKit::WebPageProxy::pageTransitionViewportReady):
+        (WebKit::WebPageProxy::didRenderFrame):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/efl/PageLoadClientEfl.cpp:
+        (WebKit):
+        (WebKit::PageLoadClientEfl::didCommitLoadForFrame):
+        (WebKit::PageLoadClientEfl::PageLoadClientEfl):
+        * UIProcess/efl/PageLoadClientEfl.h:
+        (PageLoadClientEfl):
+        * UIProcess/qt/WebPageProxyQt.cpp:
+        (WebKit):
+        (WebKit::WebPageProxy::setUserScripts):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCompletePageTransition):
+
 2012-10-16  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Add support for resolution media query

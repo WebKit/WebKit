@@ -237,6 +237,7 @@ SET(WebKit2_SOURCES
     UIProcess/GeolocationPermissionRequestManagerProxy.cpp
     UIProcess/GeolocationPermissionRequestProxy.cpp
 
+    UIProcess/PageViewportController.cpp
     UIProcess/ResponsivenessTimer.cpp
     UIProcess/VisitedLinkProvider.cpp
     UIProcess/WebApplicationCacheManagerProxy.cpp

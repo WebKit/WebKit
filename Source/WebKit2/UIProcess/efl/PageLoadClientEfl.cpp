@@ -122,6 +122,17 @@ void PageLoadClientEfl::didFailProvisionalLoadWithErrorForFrame(WKPageRef, WKFra
     ewk_view_load_provisional_failed(ewkView, ewkError.get());
 }
 
+#if USE(TILED_BACKING_STORE)
+void PageLoadClientEfl::didCommitLoadForFrame(WKPageRef, WKFrameRef frame, WKTypeRef, const void* clientInfo)
+{
+    if (!WKFrameIsMainFrame(frame))
+        return;
+
+    Evas_Object* ewkView = toPageLoadClientEfl(clientInfo)->view();
+    ewk_view_load_committed(ewkView);
+}
+#endif
+
 void PageLoadClientEfl::didChangeBackForwardList(WKPageRef, WKBackForwardListItemRef addedItem, WKArrayRef removedItems, const void* clientInfo)
 {
     Evas_Object* ewkView = toPageLoadClientEfl(clientInfo)->view();
@@ -168,6 +179,9 @@ PageLoadClientEfl::PageLoadClientEfl(Evas_Object* view)
     loadClient.didStartProvisionalLoadForFrame = didStartProvisionalLoadForFrame;
     loadClient.didReceiveServerRedirectForProvisionalLoadForFrame = didReceiveServerRedirectForProvisionalLoadForFrame;
     loadClient.didFailProvisionalLoadWithErrorForFrame = didFailProvisionalLoadWithErrorForFrame;
+#if USE(TILED_BACKING_STORE)
+    loadClient.didCommitLoadForFrame = didCommitLoadForFrame;
+#endif
     loadClient.didChangeBackForwardList = didChangeBackForwardList;
     loadClient.didSameDocumentNavigationForFrame = didSameDocumentNavigationForFrame;
     WKPageSetPageLoaderClient(pageRef, &loadClient);

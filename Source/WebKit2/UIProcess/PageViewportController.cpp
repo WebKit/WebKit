@@ -22,6 +22,8 @@
 #include "config.h"
 #include "PageViewportController.h"
 
+#if USE(TILED_BACKING_STORE)
+
 #include "PageViewportControllerClient.h"
 #include "WebPageProxy.h"
 #include <WebCore/FloatRect.h>
@@ -289,3 +291,5 @@ void PageViewportController::updateMinimumScaleToFit()
 }
 
 } // namespace WebKit
+
+#endif

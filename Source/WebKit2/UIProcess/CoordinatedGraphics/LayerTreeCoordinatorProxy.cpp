@@ -120,7 +120,7 @@ void LayerTreeCoordinatorProxy::didRenderFrame(const WebCore::IntSize& contentsS
 {
     dispatchUpdate(bind(&LayerTreeRenderer::flushLayerChanges, m_renderer.get()));
     updateViewport();
-#if PLATFORM(QT)
+#if USE(TILED_BACKING_STORE)
     m_drawingAreaProxy->page()->didRenderFrame(contentsSize, coveredRect);
 #else
     UNUSED_PARAM(contentsSize);
