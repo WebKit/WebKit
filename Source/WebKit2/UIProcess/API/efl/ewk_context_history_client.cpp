@@ -41,75 +41,70 @@
 
 using namespace WebKit;
 
-static inline const Ewk_Context_History_Client* getEwkHistoryDelegate(const void* clientInfo)
+static inline const Ewk_Context_History_Client& getEwkHistoryClient(const void* clientInfo)
 {
     ASSERT(clientInfo);
-    return ewk_context_history_client_get(static_cast<const Ewk_Context*>(clientInfo));
+    return static_cast<const Ewk_Context*>(clientInfo)->historyClient();
 }
 
 static void didNavigateWithNavigationData(WKContextRef, WKPageRef page, WKNavigationDataRef navigationData, WKFrameRef, const void* clientInfo)
 {
-    const Ewk_Context_History_Client* historyDelegate = getEwkHistoryDelegate(clientInfo);
-    ASSERT(historyDelegate);
+    const Ewk_Context_History_Client& historyClient = getEwkHistoryClient(clientInfo);
 
-    if (!historyDelegate->navigate_func)
+    if (!historyClient.navigate_func)
         return;
 
     RefPtr<Ewk_Navigation_Data> navigationDataEwk = Ewk_Navigation_Data::create(navigationData);
-    historyDelegate->navigate_func(ewk_view_from_page_get(toImpl(page)), navigationDataEwk.get(), historyDelegate->user_data);
+    historyClient.navigate_func(ewk_view_from_page_get(toImpl(page)), navigationDataEwk.get(), historyClient.user_data);
 }
 
 static void didPerformClientRedirect(WKContextRef, WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef, const void* clientInfo)
 {
-    const Ewk_Context_History_Client* historyDelegate = getEwkHistoryDelegate(clientInfo);
-    ASSERT(historyDelegate);
+    const Ewk_Context_History_Client& historyClient = getEwkHistoryClient(clientInfo);
 
-    if (!historyDelegate->client_redirect_func)
+    if (!historyClient.client_redirect_func)
         return;
 
     WKEinaSharedString sourceURLString(sourceURL);
     WKEinaSharedString destinationURLString(destinationURL);
 
-    historyDelegate->client_redirect_func(ewk_view_from_page_get(toImpl(page)), sourceURLString, destinationURLString, historyDelegate->user_data);
+    historyClient.client_redirect_func(ewk_view_from_page_get(toImpl(page)), sourceURLString, destinationURLString, historyClient.user_data);
 }
 
 static void didPerformServerRedirect(WKContextRef, WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef, const void* clientInfo)
 {
-    const Ewk_Context_History_Client* historyDelegate = getEwkHistoryDelegate(clientInfo);
-    ASSERT(historyDelegate);
+    const Ewk_Context_History_Client& historyClient = getEwkHistoryClient(clientInfo);
 
-    if (!historyDelegate->server_redirect_func)
+    if (!historyClient.server_redirect_func)
         return;
 
     WKEinaSharedString sourceURLString(sourceURL);
     WKEinaSharedString destinationURLString(destinationURL);
 
-    historyDelegate->server_redirect_func(ewk_view_from_page_get(toImpl(page)), sourceURLString, destinationURLString, historyDelegate->user_data);
+    historyClient.server_redirect_func(ewk_view_from_page_get(toImpl(page)), sourceURLString, destinationURLString, historyClient.user_data);
 }
 
 static void didUpdateHistoryTitle(WKContextRef, WKPageRef page, WKStringRef title, WKURLRef URL, WKFrameRef, const void* clientInfo)
 {
-    const Ewk_Context_History_Client* historyDelegate = getEwkHistoryDelegate(clientInfo);
-    ASSERT(historyDelegate);
+    const Ewk_Context_History_Client& historyClient = getEwkHistoryClient(clientInfo);
 
-    if (!historyDelegate->title_update_func)
+    if (!historyClient.title_update_func)
         return;
 
     WKEinaSharedString titleString(title);
     WKEinaSharedString stringURL(URL);
 
-    historyDelegate->title_update_func(ewk_view_from_page_get(toImpl(page)), titleString, stringURL, historyDelegate->user_data);
+    historyClient.title_update_func(ewk_view_from_page_get(toImpl(page)), titleString, stringURL, historyClient.user_data);
 }
 
 static void populateVisitedLinks(WKContextRef, const void* clientInfo)
 {
-    const Ewk_Context_History_Client* historyDelegate = getEwkHistoryDelegate(clientInfo);
-    ASSERT(historyDelegate);
+    const Ewk_Context_History_Client& historyClient = getEwkHistoryClient(clientInfo);
 
-    if (!historyDelegate->populate_visited_links_func)
+    if (!historyClient.populate_visited_links_func)
         return;
 
-    historyDelegate->populate_visited_links_func(historyDelegate->user_data);
+    historyClient.populate_visited_links_func(historyClient.user_data);
 }
 
 void ewk_context_history_client_attach(Ewk_Context* ewkContext)
@@ -126,5 +121,5 @@ void ewk_context_history_client_attach(Ewk_Context* ewkContext)
     wkHistoryClient.didUpdateHistoryTitle = didUpdateHistoryTitle;
     wkHistoryClient.populateVisitedLinks = populateVisitedLinks;
 
-    WKContextSetHistoryClient(ewk_context_WKContext_get(ewkContext), &wkHistoryClient);
+    WKContextSetHistoryClient(ewkContext->wkContext(), &wkHistoryClient);
 }

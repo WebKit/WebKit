@@ -50,7 +50,7 @@ static inline Ewk_Context* toEwkContext(const void* clientInfo)
 
 static WKStringRef decideDestinationWithSuggestedFilename(WKContextRef, WKDownloadRef wkDownload, WKStringRef filename, bool* /*allowOverwrite*/, const void* clientInfo)
 {
-    Ewk_Download_Job* download = ewk_context_download_job_get(toEwkContext(clientInfo), toImpl(wkDownload)->downloadID());
+    Ewk_Download_Job* download = toEwkContext(clientInfo)->downloadJob(toImpl(wkDownload)->downloadID());
     ASSERT(download);
 
     download->setSuggestedFileName(toImpl(filename)->string().utf8().data());
@@ -67,14 +67,14 @@ static WKStringRef decideDestinationWithSuggestedFilename(WKContextRef, WKDownlo
 
 static void didReceiveResponse(WKContextRef, WKDownloadRef wkDownload, WKURLResponseRef wkResponse, const void* clientInfo)
 {
-    Ewk_Download_Job* download = ewk_context_download_job_get(toEwkContext(clientInfo), toImpl(wkDownload)->downloadID());
+    Ewk_Download_Job* download = toEwkContext(clientInfo)->downloadJob(toImpl(wkDownload)->downloadID());
     ASSERT(download);
     download->setResponse(Ewk_Url_Response::create(wkResponse));
 }
 
 static void didCreateDestination(WKContextRef, WKDownloadRef wkDownload, WKStringRef /*path*/, const void* clientInfo)
 {
-    Ewk_Download_Job* download = ewk_context_download_job_get(toEwkContext(clientInfo), toImpl(wkDownload)->downloadID());
+    Ewk_Download_Job* download = toEwkContext(clientInfo)->downloadJob(toImpl(wkDownload)->downloadID());
     ASSERT(download);
 
     download->setState(EWK_DOWNLOAD_JOB_STATE_DOWNLOADING);
@@ -82,7 +82,7 @@ static void didCreateDestination(WKContextRef, WKDownloadRef wkDownload, WKStrin
 
 static void didReceiveData(WKContextRef, WKDownloadRef wkDownload, uint64_t length, const void* clientInfo)
 {
-    Ewk_Download_Job* download = ewk_context_download_job_get(toEwkContext(clientInfo), toImpl(wkDownload)->downloadID());
+    Ewk_Download_Job* download = toEwkContext(clientInfo)->downloadJob(toImpl(wkDownload)->downloadID());
     ASSERT(download);
     download->incrementReceivedData(length);
 }
@@ -90,35 +90,35 @@ static void didReceiveData(WKContextRef, WKDownloadRef wkDownload, uint64_t leng
 static void didFail(WKContextRef, WKDownloadRef wkDownload, WKErrorRef error, const void* clientInfo)
 {
     uint64_t downloadId = toImpl(wkDownload)->downloadID();
-    Ewk_Download_Job* download = ewk_context_download_job_get(toEwkContext(clientInfo), downloadId);
+    Ewk_Download_Job* download = toEwkContext(clientInfo)->downloadJob(downloadId);
     ASSERT(download);
 
     OwnPtr<Ewk_Error> ewkError = Ewk_Error::create(error);
     download->setState(EWK_DOWNLOAD_JOB_STATE_FAILED);
     ewk_view_download_job_failed(download->view(), download, ewkError.get());
-    ewk_context_download_job_remove(toEwkContext(clientInfo), downloadId);
+    toEwkContext(clientInfo)->removeDownloadJob(downloadId);
 }
 
 static void didCancel(WKContextRef, WKDownloadRef wkDownload, const void* clientInfo)
 {
     uint64_t downloadId = toImpl(wkDownload)->downloadID();
-    Ewk_Download_Job* download = ewk_context_download_job_get(toEwkContext(clientInfo), downloadId);
+    Ewk_Download_Job* download = toEwkContext(clientInfo)->downloadJob(downloadId);
     ASSERT(download);
 
     download->setState(EWK_DOWNLOAD_JOB_STATE_CANCELLED);
     ewk_view_download_job_cancelled(download->view(), download);
-    ewk_context_download_job_remove(toEwkContext(clientInfo), downloadId);
+    toEwkContext(clientInfo)->removeDownloadJob(downloadId);
 }
 
 static void didFinish(WKContextRef, WKDownloadRef wkDownload, const void* clientInfo)
 {
     uint64_t downloadId = toImpl(wkDownload)->downloadID();
-    Ewk_Download_Job* download = ewk_context_download_job_get(toEwkContext(clientInfo), downloadId);
+    Ewk_Download_Job* download = toEwkContext(clientInfo)->downloadJob(downloadId);
     ASSERT(download);
 
     download->setState(EWK_DOWNLOAD_JOB_STATE_FINISHED);
     ewk_view_download_job_finished(download->view(), download);
-    ewk_context_download_job_remove(toEwkContext(clientInfo), downloadId);
+    toEwkContext(clientInfo)->removeDownloadJob(downloadId);
 }
 
 void ewk_context_download_client_attach(Ewk_Context* ewkContext)
@@ -136,7 +136,7 @@ void ewk_context_download_client_attach(Ewk_Context* ewkContext)
     wkDownloadClient.didFail = didFail;
     wkDownloadClient.didFinish = didFinish;
 
-    WKContextSetDownloadClient(ewk_context_WKContext_get(ewkContext), &wkDownloadClient);
+    WKContextSetDownloadClient(ewkContext->wkContext(), &wkDownloadClient);
 }
 
 

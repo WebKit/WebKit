@@ -1,3 +1,82 @@
+2012-10-23  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Refactor Ewk_Context
+        https://bugs.webkit.org/show_bug.cgi?id=99594
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Ewk_Context is now encapsulated to a C++ class inherited from WTF::RefCounted.
+        Also the same instance of Ewk_Context is returned for the same instance of
+        WKContext, so memory leak in ewk_view is also fixed.
+
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::handleDownloadRequest):
+        * UIProcess/API/efl/ewk_context.cpp:
+        (contextMap):
+        (Ewk_Context::Ewk_Context):
+        (Ewk_Context::~Ewk_Context):
+        (Ewk_Context::create):
+        (Ewk_Context::defaultContext):
+        (Ewk_Context::cookieManager):
+        (Ewk_Context::faviconDatabase):
+        (Ewk_Context::registerURLScheme):
+        (Ewk_Context::vibrationProvider):
+        (Ewk_Context::addVisitedLink):
+        (Ewk_Context::setCacheModel):
+        (Ewk_Context::cacheModel):
+        (ewk_context_ref):
+        (ewk_context_unref):
+        (ewk_context_cookie_manager_get):
+        (ewk_context_favicon_database_get):
+        (Ewk_Context::wkContext):
+        (Ewk_Context::addDownloadJob):
+        (Ewk_Context::downloadJob):
+        (Ewk_Context::removeDownloadJob):
+        (Ewk_Context::requestManager):
+        (Ewk_Context::urlSchemeRequestReceived):
+        (ewk_context_default_get):
+        (ewk_context_new):
+        (ewk_context_new_with_injected_bundle_path):
+        (ewk_context_url_scheme_register):
+        (ewk_context_vibration_client_callbacks_set):
+        (ewk_context_history_callbacks_set):
+        (ewk_context_visited_link_add):
+        (ewk_context_cache_model_set):
+        (ewk_context_cache_model_get):
+        * UIProcess/API/efl/ewk_context_download_client.cpp:
+        (decideDestinationWithSuggestedFilename):
+        (didReceiveResponse):
+        (didCreateDestination):
+        (didReceiveData):
+        (didFail):
+        (didCancel):
+        (didFinish):
+        (ewk_context_download_client_attach):
+        * UIProcess/API/efl/ewk_context_history_client.cpp:
+        (getEwkHistoryClient):
+        (didNavigateWithNavigationData):
+        (didPerformClientRedirect):
+        (didPerformServerRedirect):
+        (didUpdateHistoryTitle):
+        (populateVisitedLinks):
+        (ewk_context_history_client_attach):
+        * UIProcess/API/efl/ewk_context_private.h:
+        (Ewk_Context):
+        (Ewk_Context::historyClient):
+        * UIProcess/API/efl/ewk_context_request_manager_client.cpp:
+        (didReceiveURIRequest):
+        (ewk_context_request_manager_client_attach):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (Ewk_View_Private_Data):
+        (Ewk_View_Private_Data::Ewk_View_Private_Data):
+        (Ewk_View_Private_Data::~Ewk_View_Private_Data):
+        (_ewk_view_priv_del):
+        (_ewk_view_initialize):
+        (ewk_view_base_add):
+        (ewk_view_add_with_context):
+        (ewk_view_context_get):
+        (ewk_view_update_icon):
+
 2012-10-23  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Make page load client a C++ class
