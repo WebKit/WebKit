@@ -178,7 +178,9 @@ String LocaleMac::dateFormatText()
     m_localizedDateFormatText = localizeDateFormat([shortDateFormatter().get() dateFormat]);
     return  m_localizedDateFormatText;
 }
+#endif
 
+#if ENABLE(CALENDAR_PICKER) || ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 const Vector<String>& LocaleMac::monthLabels()
 {
     if (!m_monthLabels.isEmpty())
@@ -194,7 +196,9 @@ const Vector<String>& LocaleMac::monthLabels()
         m_monthLabels.append(WTF::monthFullName[i]);
     return m_monthLabels;
 }
+#endif
 
+#if ENABLE(CALENDAR_PICKER)
 const Vector<String>& LocaleMac::weekDayShortLabels()
 {
     if (!m_weekDayShortLabels.isEmpty())
@@ -286,6 +290,21 @@ const Vector<String>& LocaleMac::shortMonthLabels()
     for (unsigned i = 0; i < WTF_ARRAY_LENGTH(WTF::monthName); ++i)
         m_shortMonthLabels.append(WTF::monthName[i]);
     return m_shortMonthLabels;
+}
+
+const Vector<String>& LocaleMac::standAloneMonthLabels()
+{
+    if (!m_standAloneMonthLabels.isEmpty())
+        return m_standAloneMonthLabels;
+    NSArray *array = [shortDateFormatter().get() standaloneMonthSymbols];
+    if ([array count] == 12) {
+        m_standAloneMonthLabels.reserveCapacity(12);
+        for (unsigned i = 0; i < 12; ++i)
+            m_standAloneMonthLabels.append([array objectAtIndex:i]);
+        return m_standAloneMonthLabels;
+    }
+    m_standAloneMonthLabels = shortMonthLabels();
+    return m_standAloneMonthLabels;
 }
 
 const Vector<String>& LocaleMac::shortStandAloneMonthLabels()

@@ -1,3 +1,64 @@
+2012-10-22  Kent Tamura  <tkent@chromium.org>
+
+        Introduce Localizer::standAloneMonthLabels
+        https://bugs.webkit.org/show_bug.cgi?id=99963
+
+        Reviewed by Kentaro Hara.
+
+        We realized full month names and full stand-alone month names were
+        necessary for input[type=month] UI. We change the compile-flag for
+        Localizer::monthLabels from "ENABLE(CALENDAR_PICKER)" to
+        "ENABLE(CALENDAR_PICKER) || ENABLE(INPUT_MULTIPLE_FIELDS_UI)," and
+        introduce Localizer::standAloneMonthLabels.
+
+        Tests: Add some test cases to Source/WebKit/chromium/LocaleMacTest.cpp
+        and LocalizedDateICUTest.cpp.
+
+        * platform/text/Localizer.h:
+        (Localizer):
+        - Add pure virtual standAloneMonthLabels.
+        - Change the condition for monthLabels.
+
+        * platform/text/LocaleNone.cpp:
+        (LocaleNone): Declare monthLabels, standAloneMonthLabels, and m_monthLabels.
+        (WebCore::LocaleNone::monthLabels):
+        Added. It always returns English month names.
+        (WebCore::LocaleNone::standAloneMonthLabels):
+        Added. Just calls monthLabels.
+
+        * platform/text/LocaleWin.h:
+        (LocaleWin):
+        Declare standAloneMonthLabels, and change the condition for monthLabels.
+        * platform/text/LocaleWin.cpp:
+        (WebCore): Change the condition for monthLabels.
+        (WebCore::LocaleWin::standAloneMonthLabels):
+        Added. Just calls monthLabels.
+
+        * platform/text/mac/LocaleMac.h:
+        (LocaleMac):
+        - Add standAloneMonthLabels and m_standAloneMonthLabels
+        - Change the condition for monthLabels and m_monthLabels.
+        * platform/text/mac/LocaleMac.mm:
+        (WebCore): Change the condition for monthLabels.
+        (WebCore::LocaleMac::standAloneMonthLabels):
+        Added. Get the information with NSDateFormatter::standaloneMonthSymbols.
+
+        * platform/text/LocaleICU.h:
+        (LocaleICU):
+        - Add standAloneMonthLabels and m_standAloneMonthLabels
+        - Change the condition for monthLabels and m_monthLabels.
+        * platform/text/LocaleICU.cpp:
+        (WebCore::LocaleICU::initializeCalendar):
+        Remove m_monthLabels initialization in order to avoid dependecy from monthLabels.
+        (WebCore):
+        (WebCore::createFallbackMonthLabels): Change the compile condition.
+        (WebCore::LocaleICU::monthLabels):
+        - Change the compile condition.
+        - Don't depend on initializeCalendar to make the code for
+        ENABLE(INPUT_MULTIPLE_FIELDS_UI) && !ENABLE(CALENDAR_PICKER) minimal.
+        (WebCore::LocaleICU::standAloneMonthLabels):
+        Added. The code is similar to shortStandAloneMonthLabels.
+
 2012-10-22  Shinya Kawanaka  <shinyak@chromium.org>
 
         Refactoring around ContainerNode::attachChildren

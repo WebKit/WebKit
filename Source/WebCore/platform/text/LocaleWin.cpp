@@ -551,13 +551,15 @@ void LocaleWin::ensureWeekDayShortLabels()
     }
 }
 
-#if ENABLE(CALENDAR_PICKER)
+#if ENABLE(CALENDAR_PICKER) || ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 const Vector<String>& LocaleWin::monthLabels()
 {
     ensureMonthLabels();
     return m_monthLabels;
 }
+#endif
 
+#if ENABLE(CALENDAR_PICKER)
 const Vector<String>& LocaleWin::weekDayShortLabels()
 {
     ensureWeekDayShortLabels();
@@ -739,6 +741,12 @@ const Vector<String>& LocaleWin::shortMonthLabels()
 {
     ensureShortMonthLabels();
     return m_shortMonthLabels;
+}
+
+const Vector<String>& LocaleWin::standAloneMonthLabels()
+{
+    // Windows doesn't provide a way to get stand-alone month labels.
+    return monthLabels();
 }
 
 const Vector<String>& LocaleWin::shortStandAloneMonthLabels()

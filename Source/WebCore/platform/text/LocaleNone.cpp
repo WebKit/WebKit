@@ -41,14 +41,21 @@ private:
     virtual String dateFormatText() OVERRIDE;
     virtual bool isRTL() OVERRIDE;
 #endif
+#if ENABLE(CALENDAR_PICKER) || ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+    virtual const Vector<String>& monthLabels() OVERRIDE;
+#endif
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     virtual String dateFormat() OVERRIDE;
     virtual String monthFormat() OVERRIDE;
     virtual const Vector<String>& shortMonthLabels() OVERRIDE;
+    virtual const Vector<String>& standAloneMonthLabels() OVERRIDE;
     virtual const Vector<String>& shortStandAloneMonthLabels() OVERRIDE;
-#endif
 
     Vector<String> m_shortMonthLabels;
+#endif
+#if ENABLE(CALENDAR_PICKER) || ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+    Vector<String> m_monthLabels;
+#endif
 };
 
 PassOwnPtr<Localizer> Localizer::create(const AtomicString&)
@@ -81,6 +88,18 @@ bool LocaleNone::isRTL()
 }
 #endif
 
+#if ENABLE(CALENDAR_PICKER) || ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+const Vector<String>& LocaleNone::monthLabels()
+{
+    if (!m_monthLabels.isEmpty())
+        return m_monthLabels;
+    m_monthLabels.reserveCapacity(WTF_ARRAY_LENGTH(WTF::monthFullName));
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(WTF::monthFullName); ++i)
+        m_monthLabels.append(WTF::monthFullName[i]);
+    return m_monthLabels;
+}
+#endif
+
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 String LocaleNone::dateFormat()
 {
@@ -105,6 +124,11 @@ const Vector<String>& LocaleNone::shortMonthLabels()
 const Vector<String>& LocaleNone::shortStandAloneMonthLabels()
 {
     return shortMonthLabels();
+}
+
+const Vector<String>& LocaleNone::standAloneMonthLabels()
+{
+    return monthLabels();
 }
 #endif
 

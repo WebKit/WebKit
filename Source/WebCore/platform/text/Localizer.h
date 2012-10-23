@@ -88,6 +88,12 @@ public:
     // Dec. These strings should be short.
     virtual const Vector<String>& shortMonthLabels() = 0;
 
+    // Returns a vector of string of which size is 12. The first item is a
+    // stand-alone localized string of January and the last item is a
+    // stand-alone localized string of December. These strings should not be
+    // abbreviations.
+    virtual const Vector<String>& standAloneMonthLabels() = 0;
+
     // Stand-alone month version of shortMonthLabels.
     virtual const Vector<String>& shortStandAloneMonthLabels() = 0;
 
@@ -95,12 +101,14 @@ public:
     virtual const Vector<String>& timeAMPMLabels();
 #endif
 
-#if ENABLE(CALENDAR_PICKER)
+#if ENABLE(CALENDAR_PICKER) || ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     // Returns a vector of string of which size is 12. The first item is a
     // localized string of January, and the last item is a localized string of
     // December. These strings should not be abbreviations.
     virtual const Vector<String>& monthLabels() = 0;
+#endif
 
+#if ENABLE(CALENDAR_PICKER)
     // Returns a vector of string of which size is 7. The first item is a
     // localized short string of Monday, and the last item is a localized
     // short string of Saturday. These strings should be short.

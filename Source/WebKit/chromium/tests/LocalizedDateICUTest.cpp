@@ -118,6 +118,12 @@ protected:
         return locale->shortStandAloneMonthLabels()[index];
     }
 
+    String standAloneMonthLabel(const char* localeString, unsigned index)
+    {
+        OwnPtr<LocaleICU> locale = LocaleICU::create(localeString);
+        return locale->standAloneMonthLabels()[index];
+    }
+
     Labels timeAMPMLabels(const char* localeString)
     {
         OwnPtr<LocaleICU> locale = LocaleICU::create(localeString);
@@ -164,6 +170,24 @@ TEST_F(LocalizedDateICUTest, localizedShortDateFormatText)
     EXPECT_STREQ("h:mm a", localizedShortDateFormatText("en_US").utf8().data());
     EXPECT_STREQ("HH:mm", localizedShortDateFormatText("fr").utf8().data());
     EXPECT_STREQ("H:mm", localizedShortDateFormatText("ja").utf8().data());
+}
+
+TEST_F(LocalizedDateICUTest, standAloneMonthLabels)
+{
+    EXPECT_STREQ("January", standAloneMonthLabel("en_US", 0).utf8().data());
+    EXPECT_STREQ("June", standAloneMonthLabel("en_US", 5).utf8().data());
+    EXPECT_STREQ("December", standAloneMonthLabel("en_US", 11).utf8().data());
+
+    EXPECT_STREQ("janvier", standAloneMonthLabel("fr_FR", 0).utf8().data());
+    EXPECT_STREQ("juin", standAloneMonthLabel("fr_FR", 5).utf8().data());
+    EXPECT_STREQ("d\xC3\xA9" "cembre", standAloneMonthLabel("fr_FR", 11).utf8().data());
+
+    EXPECT_STREQ("1\xE6\x9C\x88", standAloneMonthLabel("ja_JP", 0).utf8().data());
+    EXPECT_STREQ("6\xE6\x9C\x88", standAloneMonthLabel("ja_JP", 5).utf8().data());
+    EXPECT_STREQ("12\xE6\x9C\x88", standAloneMonthLabel("ja_JP", 11).utf8().data());
+
+    EXPECT_STREQ("\xD0\x9C\xD0\xB0\xD1\x80\xD1\x82", standAloneMonthLabel("ru_RU", 2).utf8().data());
+    EXPECT_STREQ("\xD0\x9C\xD0\xB0\xD0\xB9", standAloneMonthLabel("ru_RU", 4).utf8().data());
 }
 
 TEST_F(LocalizedDateICUTest, shortMonthLabels)
