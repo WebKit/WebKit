@@ -1,3 +1,27 @@
+2012-10-23  Elliott Sprehn  <esprehn@chromium.org>
+
+        Generated should not be supported for things with a shadow
+        https://bugs.webkit.org/show_bug.cgi?id=98836
+
+        Reviewed by Dimitri Glazkov.
+
+        As far as CSS is concerned inputs and things with shadow content inside
+        shouldn't support pseudo elements like :before, :after or :first-letter.
+        Neither Gecko or Presto supports it, and we only accidentally supported
+        it.
+
+        Until the spec tells us what to do we should disable support. This is
+        also neccesary because the new generated content implementation doesn't
+        support shadows.
+
+        Test: fast/forms/pseudo-elements.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter):
+        * rendering/RenderListBox.h: Added missing canHaveGeneratedChildren() that returns false.
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::updateBeforeAfterContent):
+
 2012-10-23  Huang Dongsung  <luxtella@company100.net>
 
         [CSS Shaders] Implement overlay, color-dodge, color-burn, hard-light, soft-light blend modes.

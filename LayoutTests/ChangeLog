@@ -1,3 +1,46 @@
+2012-10-23  Elliott Sprehn  <esprehn@chromium.org>
+
+        Generated should not be supported for things with a shadow
+        https://bugs.webkit.org/show_bug.cgi?id=98836
+
+        Reviewed by Dimitri Glazkov.
+
+        Change all pseudos on <input> tests to be ref tests and clean up the tests.
+        They now make sure we don't support generated content on things with a shadow.
+        Also added another test for the other form control types to ensure they don't
+        support pseudos either.
+
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.html: Added.
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.txt: Removed.
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements.html:
+        * fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.html: Added.
+        * fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.txt: Removed.
+        * fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements.html:
+        * fast/forms/pseudo-elements-expected.html: Added.
+        * fast/forms/pseudo-elements.html: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.html: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.txt: Removed.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements.html:
+        * fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.html: Added.
+        * fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.txt: Removed.
+        * fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements.html:
+        * platform/chromium-linux/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-win/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-win/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-win/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+
 2012-10-23  Huang Dongsung  <luxtella@company100.net>
 
         [CSS Shaders] Implement overlay, color-dodge, color-burn, hard-light, soft-light blend modes.
