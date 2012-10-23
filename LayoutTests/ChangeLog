@@ -1,3 +1,14 @@
+2012-10-22  Dongwoo Joshua Im  <dw.im@samsung.com>
+
+        Include path in the repaint-text-decoration-style.html should be changed.
+        https://bugs.webkit.org/show_bug.cgi?id=100063
+
+        Unreviewed gardening.
+
+        The include path is differentiated by http://trac.webkit.org/changeset/132043
+
+        * fast/css3-text/css3-text-decoration/repaint/repaint-text-decoration-style.html:
+
 2012-10-22  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] Fallback content should also be reprojection.
