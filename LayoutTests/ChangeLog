@@ -1,3 +1,43 @@
+2012-10-23  Dirk Pranke  <dpranke@chromium.org>
+
+        Remove remaining fast/innerHTML pixel test baselines after r131960.
+
+        Unreviewed, expectations change.
+
+        * platform/chromium-linux/fast/innerHTML/002-expected.png: Removed.
+        * platform/chromium-linux/fast/innerHTML/003-expected.png: Removed.
+        * platform/chromium-linux/fast/innerHTML/006-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/innerHTML/001-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/innerHTML/002-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/innerHTML/003-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/innerHTML/006-expected.png: Removed.
+        * platform/chromium-mac/fast/innerHTML/001-expected.png: Removed.
+        * platform/chromium-mac/fast/innerHTML/002-expected.png: Removed.
+        * platform/chromium-mac/fast/innerHTML/003-expected.png: Removed.
+        * platform/chromium-mac/fast/innerHTML/006-expected.png: Removed.
+        * platform/chromium-win/fast/innerHTML/001-expected.png: Removed.
+        * platform/chromium-win/fast/innerHTML/001-expected.txt: Removed.
+        * platform/chromium-win/fast/innerHTML/002-expected.txt: Removed.
+        * platform/chromium-win/fast/innerHTML/003-expected.txt: Removed.
+        * platform/chromium-win/fast/innerHTML/006-expected.txt: Removed.
+        * platform/efl/fast/innerHTML/001-expected.txt: Removed.
+        * platform/efl/fast/innerHTML/002-expected.txt: Removed.
+        * platform/efl/fast/innerHTML/003-expected.txt: Removed.
+        * platform/efl/fast/innerHTML/006-expected.txt: Removed.
+        * platform/gtk/fast/innerHTML/001-expected.txt: Removed.
+        * platform/gtk/fast/innerHTML/002-expected.txt: Removed.
+        * platform/gtk/fast/innerHTML/003-expected.txt: Removed.
+        * platform/gtk/fast/innerHTML/006-expected.txt: Removed.
+        * platform/gtk/fast/innerHTML/innerHTML-iframe-expected.txt: Removed.
+        * platform/mac/fast/innerHTML/001-expected.txt: Removed.
+        * platform/mac/fast/innerHTML/002-expected.txt: Removed.
+        * platform/mac/fast/innerHTML/003-expected.txt: Removed.
+        * platform/mac/fast/innerHTML/006-expected.txt: Removed.
+        * platform/qt/fast/innerHTML/001-expected.txt: Removed.
+        * platform/qt/fast/innerHTML/002-expected.txt: Removed.
+        * platform/qt/fast/innerHTML/003-expected.txt: Removed.
+        * platform/qt/fast/innerHTML/006-expected.txt: Removed.
+
 2012-10-23  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         Add timeout support to XMLHttpRequest
