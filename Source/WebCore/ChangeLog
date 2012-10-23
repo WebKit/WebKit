@@ -1,5 +1,31 @@
 2012-10-23  Mike West  <mkwst@chromium.org>
 
+        Web Inspector: 'data:' URLs should be properly trimmed for readability.
+        https://bugs.webkit.org/show_bug.cgi?id=100083
+
+        Reviewed by Pavel Feldman.
+
+        We recently landed a patch to trim the middle out of long URLs in
+        console messages in order to improve readability. That patch didn't
+        effect 'data:' URLs, as they didn't match the regex in the linkifier.
+        This patch ensures that 'data:' URLs are properly trimmed down to
+        size.
+
+        This problem came to light while resolving a different, smaller issue:
+        'image/jpg' wasn't whitelisted as an image MIME type. That trivial fix
+        is included in this patch.
+
+        Test: http/tests/inspector/network/image-as-text-loading-data-url.html
+
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkManager):
+            Adds 'image/jpg' as a valid image type.
+        * inspector/front-end/ResourceUtils.js:
+        (WebInspector.linkifyStringAsFragmentWithCustomLinkifier):
+            Supports 'data:' URLs in the linkifier's regex.
+
+2012-10-23  Mike West  <mkwst@chromium.org>
+
         Web Inspector: Floated anchor element sometimes overlaps following content.
         https://bugs.webkit.org/show_bug.cgi?id=100105
 

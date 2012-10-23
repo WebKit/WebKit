@@ -1,0 +1,5 @@
+Tests that long data: URLs are correctly trimmed in MIME type console warnings.
+
+Bug 100083  
+Resource interpreted as Image but transferred with MIME type text/plain: "data:text/plain;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/2wBDAAMCAgMCAgMDAwMEAwME…DcdDWnwrOxQAR8I6emHKTSbNFCOyo0Vvg1kVtpCe6dIXZI8TsRC1HbzUoEk/UnDWSXvOdwif/Z". image-as-text-loading-data-url.html:9
+
