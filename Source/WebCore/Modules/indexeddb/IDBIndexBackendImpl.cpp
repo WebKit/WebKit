@@ -43,14 +43,10 @@
 
 namespace WebCore {
 
-IDBIndexBackendImpl::IDBIndexBackendImpl(const IDBDatabaseBackendImpl* database, IDBObjectStoreBackendImpl* objectStoreBackend, int64_t id, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry)
+IDBIndexBackendImpl::IDBIndexBackendImpl(const IDBDatabaseBackendImpl* database, IDBObjectStoreBackendImpl* objectStoreBackend, const IDBIndexMetadata& metadata)
     : m_database(database)
     , m_objectStoreBackend(objectStoreBackend)
-    , m_id(id)
-    , m_name(name)
-    , m_keyPath(keyPath)
-    , m_unique(unique)
-    , m_multiEntry(multiEntry)
+    , m_metadata(metadata)
 {
 }
 
@@ -60,7 +56,7 @@ IDBIndexBackendImpl::~IDBIndexBackendImpl()
 
 IDBIndexMetadata IDBIndexBackendImpl::metadata() const
 {
-    return IDBIndexMetadata(m_name, m_id, m_keyPath, m_unique, m_multiEntry);
+    return m_metadata;
 }
 
 void IDBIndexBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBKeyRange> range, unsigned short untypedDirection, IDBCursorBackendInterface::CursorType cursorType, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendImpl> transaction)

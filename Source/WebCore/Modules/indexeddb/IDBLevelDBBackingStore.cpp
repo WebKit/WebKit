@@ -294,8 +294,9 @@ PassRefPtr<IDBBackingStore> IDBLevelDBBackingStore::open(SecurityOrigin* securit
     return backingStore.release();
 }
 
-void IDBLevelDBBackingStore::getDatabaseNames(Vector<String>& foundNames)
+Vector<String> IDBLevelDBBackingStore::getDatabaseNames()
 {
+    Vector<String> foundNames;
     const Vector<char> startKey = DatabaseNameKey::encodeMinKeyForOrigin(m_identifier);
     const Vector<char> stopKey = DatabaseNameKey::encodeStopKeyForOrigin(m_identifier);
 
@@ -312,6 +313,7 @@ void IDBLevelDBBackingStore::getDatabaseNames(Vector<String>& foundNames)
 
         foundNames.append(databaseNameKey.databaseName());
     }
+    return foundNames;
 }
 
 bool IDBLevelDBBackingStore::getIDBDatabaseMetaData(const String& name, IDBDatabaseMetadata* metadata)
@@ -437,17 +439,12 @@ static bool checkObjectStoreAndMetaDataType(const LevelDBIterator* it, const Vec
     return true;
 }
 
-void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>& foundIds, Vector<String>& foundNames, Vector<IDBKeyPath>& foundKeyPaths, Vector<bool>& foundAutoIncrementFlags, Vector<int64_t>& foundMaxIndexIds)
+Vector<IDBObjectStoreMetadata> IDBLevelDBBackingStore::getObjectStores(int64_t databaseId)
 {
     IDB_TRACE("IDBLevelDBBackingStore::getObjectStores");
+    Vector<IDBObjectStoreMetadata> objectStores;
     const Vector<char> startKey = ObjectStoreMetaDataKey::encode(databaseId, 1, 0);
     const Vector<char> stopKey = ObjectStoreMetaDataKey::encodeMaxKey(databaseId);
-
-    ASSERT(foundIds.isEmpty());
-    ASSERT(foundNames.isEmpty());
-    ASSERT(foundKeyPaths.isEmpty());
-    ASSERT(foundAutoIncrementFlags.isEmpty());
-    ASSERT(foundMaxIndexIds.isEmpty());
 
     OwnPtr<LevelDBIterator> it = m_db->createIterator();
     it->seek(startKey);
@@ -473,33 +470,33 @@ void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>
         it->next();
         if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::KeyPath)) {
             LOG_ERROR("Internal Indexed DB error.");
-            return;
+            break;
         }
         IDBKeyPath keyPath = decodeIDBKeyPath(it->value().begin(), it->value().end());
 
         it->next();
         if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::AutoIncrement)) {
             LOG_ERROR("Internal Indexed DB error.");
-            return;
+            break;
         }
         bool autoIncrement = decodeBool(it->value().begin(), it->value().end());
 
         it->next(); // Is evicatble.
         if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::Evictable)) {
             LOG_ERROR("Internal Indexed DB error.");
-            return;
+            break;
         }
 
         it->next(); // Last version.
         if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::LastVersion)) {
             LOG_ERROR("Internal Indexed DB error.");
-            return;
+            break;
         }
 
         it->next(); // Maximum index id allocated.
         if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::MaxIndexId)) {
             LOG_ERROR("Internal Indexed DB error.");
-            return;
+            break;
         }
         int64_t maxIndexId = decodeInt(it->value().begin(), it->value().end());
 
@@ -512,7 +509,7 @@ void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>
             // So this check is only relevant for string-type keyPaths.
             if (!hasKeyPath && (keyPath.type() == IDBKeyPath::StringType && !keyPath.string().isEmpty())) {
                 LOG_ERROR("Internal Indexed DB error.");
-                return;
+                break;
             }
             if (!hasKeyPath)
                 keyPath = IDBKeyPath();
@@ -528,12 +525,9 @@ void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>
             it->next();
         }
 
-        foundIds.append(objectStoreId);
-        foundNames.append(objectStoreName);
-        foundKeyPaths.append(keyPath);
-        foundAutoIncrementFlags.append(autoIncrement);
-        foundMaxIndexIds.append(maxIndexId);
+        objectStores.append(IDBObjectStoreMetadata(objectStoreName, objectStoreId, keyPath, autoIncrement, maxIndexId));
     }
+    return objectStores;
 }
 
 static bool setMaxObjectStoreId(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId)
@@ -885,17 +879,14 @@ static bool checkIndexAndMetaDataKey(const LevelDBIterator* it, const Vector<cha
 }
 
 
-void IDBLevelDBBackingStore::getIndexes(int64_t databaseId, int64_t objectStoreId, Vector<int64_t>& foundIds, Vector<String>& foundNames, Vector<IDBKeyPath>& foundKeyPaths, Vector<bool>& foundUniqueFlags, Vector<bool>& foundMultiEntryFlags)
+Vector<IDBIndexMetadata> IDBLevelDBBackingStore::getIndexes(int64_t databaseId, int64_t objectStoreId)
 {
     IDB_TRACE("IDBLevelDBBackingStore::getIndexes");
+    Vector<IDBIndexMetadata> indexes;
     const Vector<char> startKey = IndexMetaDataKey::encode(databaseId, objectStoreId, 0, 0);
     const Vector<char> stopKey = IndexMetaDataKey::encode(databaseId, objectStoreId + 1, 0, 0);
 
-    ASSERT(foundIds.isEmpty());
-    ASSERT(foundNames.isEmpty());
-    ASSERT(foundKeyPaths.isEmpty());
-    ASSERT(foundUniqueFlags.isEmpty());
-    ASSERT(foundMultiEntryFlags.isEmpty());
+    ASSERT(indexes.isEmpty());
 
     OwnPtr<LevelDBIterator> it = m_db->createIterator();
     it->seek(startKey);
@@ -920,14 +911,14 @@ void IDBLevelDBBackingStore::getIndexes(int64_t databaseId, int64_t objectStoreI
         it->next(); // unique flag
         if (!checkIndexAndMetaDataKey(it.get(), stopKey, indexId, IndexMetaDataKey::Unique)) {
             LOG_ERROR("Internal Indexed DB error.");
-            return;
+            break;
         }
         bool indexUnique = decodeBool(it->value().begin(), it->value().end());
 
         it->next(); // keyPath
         if (!checkIndexAndMetaDataKey(it.get(), stopKey, indexId, IndexMetaDataKey::KeyPath)) {
             LOG_ERROR("Internal Indexed DB error.");
-            return;
+            break;
         }
         IDBKeyPath keyPath = decodeIDBKeyPath(it->value().begin(), it->value().end());
 
@@ -938,12 +929,9 @@ void IDBLevelDBBackingStore::getIndexes(int64_t databaseId, int64_t objectStoreI
             it->next();
         }
 
-        foundIds.append(indexId);
-        foundNames.append(indexName);
-        foundKeyPaths.append(keyPath);
-        foundUniqueFlags.append(indexUnique);
-        foundMultiEntryFlags.append(indexMultiEntry);
+        indexes.append(IDBIndexMetadata(indexName, indexId, keyPath, indexUnique, indexMultiEntry));
     }
+    return indexes;
 }
 
 static bool setMaxIndexId(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId)

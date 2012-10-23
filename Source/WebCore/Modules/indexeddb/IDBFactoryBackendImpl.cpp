@@ -90,8 +90,7 @@ void IDBFactoryBackendImpl::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks,
 
     RefPtr<DOMStringList> databaseNames = DOMStringList::create();
 
-    Vector<String> foundNames;
-    backingStore->getDatabaseNames(foundNames);
+    Vector<String> foundNames = backingStore->getDatabaseNames();
     for (Vector<String>::const_iterator it = foundNames.begin(); it != foundNames.end(); ++it)
         databaseNames->append(*it);
 

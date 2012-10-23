@@ -30,6 +30,7 @@
 
 #include "IDBCursor.h"
 #include "IDBKeyPath.h"
+#include "IDBMetadata.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -49,14 +50,14 @@ public:
 
     virtual ~IDBBackingStore() {};
 
-    virtual void getDatabaseNames(Vector<String>& foundNames) = 0;
+    virtual Vector<String> getDatabaseNames() = 0;
     virtual bool getIDBDatabaseMetaData(const String& name, IDBDatabaseMetadata* foundMetadata) = 0;
     virtual bool createIDBDatabaseMetaData(const String& name, const String& stringVersion, int64_t intVersion, int64_t& rowId) = 0;
     virtual bool updateIDBDatabaseIntVersion(Transaction*, int64_t rowId, int64_t intVersion) = 0;
     virtual bool updateIDBDatabaseMetaData(Transaction*, int64_t rowId, const String& version) = 0;
     virtual bool deleteDatabase(const String& name) = 0;
 
-    virtual void getObjectStores(int64_t databaseId, Vector<int64_t>& foundIds, Vector<String>& foundNames, Vector<IDBKeyPath>& foundKeyPaths, Vector<bool>& foundAutoIncrementFlags, Vector<int64_t>& foundMaxIndexIds) = 0;
+    virtual Vector<IDBObjectStoreMetadata> getObjectStores(int64_t databaseId) = 0;
     virtual bool createObjectStore(Transaction*, int64_t databaseId, int64_t objectStoreId, const String& name, const IDBKeyPath&, bool autoIncrement) = 0;
     virtual void deleteObjectStore(Transaction*, int64_t databaseId, int64_t objectStoreId) = 0;
 
@@ -82,7 +83,7 @@ public:
     };
     virtual bool forEachObjectStoreRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, ObjectStoreRecordCallback&) = 0;
 
-    virtual void getIndexes(int64_t databaseId, int64_t objectStoreId, Vector<int64_t>& foundIds, Vector<String>& foundNames, Vector<IDBKeyPath>& foundKeyPaths, Vector<bool>& foundUniqueFlags, Vector<bool>& foundMultiEntryFlags) = 0;
+    virtual Vector<IDBIndexMetadata> getIndexes(int64_t databaseId, int64_t objectStoreId) = 0;
     virtual bool createIndex(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const String& name, const IDBKeyPath&, bool isUnique, bool isMultiEntry) = 0;
     virtual void deleteIndex(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId) = 0;
     virtual bool putIndexDataForRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey&, const ObjectStoreRecordIdentifier*) = 0;

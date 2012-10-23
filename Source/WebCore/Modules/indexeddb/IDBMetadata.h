@@ -75,6 +75,7 @@ struct IDBObjectStoreMetadata {
     IDBObjectStoreMetadata() { }
     IDBObjectStoreMetadata(const String& name, int64_t id, const IDBKeyPath& keyPath, bool autoIncrement, int64_t maxIndexId)
         : name(name)
+        , id(id)
         , keyPath(keyPath)
         , autoIncrement(autoIncrement)
         , maxIndexId(maxIndexId)

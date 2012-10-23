@@ -1,3 +1,58 @@
+2012-10-23  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: refactor backend to use IDB*Metadata
+        https://bugs.webkit.org/show_bug.cgi?id=100055
+
+        Reviewed by Tony Chang.
+
+        This further encapsulates the static data in
+        IDBObjectStoreBackendImpl and IDBIndexBackendImp into their
+        respective IDB*Metadata structs, in preparation for
+        https://bugs.webkit.org/show_bug.cgi?id=99774.
+
+        No new tests as this is purely a refactor.
+
+        * Modules/indexeddb/IDBBackingStore.h:
+        (IDBBackingStore):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::createObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::loadObjectStores):
+        * Modules/indexeddb/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::IDBIndexBackendImpl):
+        (WebCore::IDBIndexBackendImpl::metadata):
+        * Modules/indexeddb/IDBIndexBackendImpl.h:
+        (WebCore::IDBIndexBackendImpl::create):
+        (WebCore::IDBIndexBackendImpl::id):
+        (WebCore::IDBIndexBackendImpl::setId):
+        (WebCore::IDBIndexBackendImpl::hasValidId):
+        (WebCore::IDBIndexBackendImpl::name):
+        (WebCore::IDBIndexBackendImpl::keyPath):
+        (WebCore::IDBIndexBackendImpl::unique):
+        (WebCore::IDBIndexBackendImpl::multiEntry):
+        (IDBIndexBackendImpl):
+        * Modules/indexeddb/IDBLevelDBBackingStore.cpp:
+        (WebCore::IDBLevelDBBackingStore::getObjectStores):
+        (WebCore::IDBLevelDBBackingStore::getIndexes):
+        * Modules/indexeddb/IDBLevelDBBackingStore.h:
+        (IDBLevelDBBackingStore):
+        * Modules/indexeddb/IDBMetadata.h:
+        (WebCore::IDBObjectStoreMetadata::IDBObjectStoreMetadata):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::IDBObjectStoreBackendImpl):
+        (WebCore::IDBObjectStoreBackendImpl::metadata):
+        (WebCore::IDBObjectStoreBackendImpl::setIndexKeys):
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+        (WebCore::IDBObjectStoreBackendImpl::createIndex):
+        (WebCore::IDBObjectStoreBackendImpl::loadIndexes):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.h:
+        (WebCore::IDBObjectStoreBackendImpl::create):
+        (WebCore::IDBObjectStoreBackendImpl::id):
+        (WebCore::IDBObjectStoreBackendImpl::setId):
+        (WebCore::IDBObjectStoreBackendImpl::name):
+        (WebCore::IDBObjectStoreBackendImpl::keyPath):
+        (WebCore::IDBObjectStoreBackendImpl::autoIncrement):
+        (IDBObjectStoreBackendImpl):
+
 2012-10-22  Dirk Schulze  <krit@webkit.org>
 
         BasicShapePolygon::path takes width instead of height for boundary calculation

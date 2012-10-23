@@ -175,7 +175,7 @@ PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::createObjectS
 {
     ASSERT(!m_objectStores.contains(name));
 
-    RefPtr<IDBObjectStoreBackendImpl> objectStore = IDBObjectStoreBackendImpl::create(this, id, name, keyPath, autoIncrement, IDBObjectStoreBackendInterface::MinimumIndexId);
+    RefPtr<IDBObjectStoreBackendImpl> objectStore = IDBObjectStoreBackendImpl::create(this, IDBObjectStoreMetadata(name, id, keyPath, autoIncrement, IDBObjectStoreBackendInterface::MinimumIndexId));
     ASSERT(objectStore->name() == name);
 
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
@@ -608,15 +608,10 @@ void IDBDatabaseBackendImpl::loadObjectStores()
     Vector<IDBKeyPath> keyPaths;
     Vector<bool> autoIncrementFlags;
     Vector<int64_t> maxIndexIds;
-    m_backingStore->getObjectStores(m_metadata.id, ids, names, keyPaths, autoIncrementFlags, maxIndexIds);
+    Vector<IDBObjectStoreMetadata> objectStores = m_backingStore->getObjectStores(m_metadata.id);
 
-    ASSERT(names.size() == ids.size());
-    ASSERT(keyPaths.size() == ids.size());
-    ASSERT(autoIncrementFlags.size() == ids.size());
-    ASSERT(maxIndexIds.size() == ids.size());
-
-    for (size_t i = 0; i < ids.size(); i++)
-        m_objectStores.set(names[i], IDBObjectStoreBackendImpl::create(this, ids[i], names[i], keyPaths[i], autoIncrementFlags[i], maxIndexIds[i]));
+    for (size_t i = 0; i < objectStores.size(); i++)
+        m_objectStores.set(objectStores[i].name, IDBObjectStoreBackendImpl::create(this, objectStores[i]));
 }
 
 void IDBDatabaseBackendImpl::removeObjectStoreFromMap(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> prpObjectStore)
