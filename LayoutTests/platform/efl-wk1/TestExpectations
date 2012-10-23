@@ -77,6 +77,8 @@ http/tests/xmlhttprequest/remember-bad-password.html
 # Crash shared with the GTK+ port
 webkit.org/b/30724 [ Debug ] fast/loader/opaque-base-url.html [ Crash ]
 
+webkit.org/b/100065 [ Debug ] fast/events/tabindex-focus-blur-all.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////

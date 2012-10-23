@@ -1,3 +1,15 @@
+2012-10-22  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL] Skip fast/events/tabindex-focus-blur-all.html case.
+        https://bugs.webkit.org/show_bug.cgi?id=100067
+
+        Unreviewed, EFL gardening.
+
+        fast/events/tabindex-focus-blur-all.html case has been crashed due to ASSERT in hashtable.
+        Please refer to BUG 100065 for crash details.
+
+        * platform/efl-wk1/TestExpectations:
+
 2012-10-22  MORITA Hajime  <morrita@google.com>
 
         Assertion failed at WebCore::toInsertionPoint / WebCore::ContentDistributor::distribute
