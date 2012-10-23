@@ -603,8 +603,7 @@ WebInspector.ArrayGroupingTreeElement._populateRanges = function(treeElement, ob
     {
         var count = 0;
         for (var i = fromIndex; i <= toIndex; ++i) {
-            var value = this[i];
-            if (typeof value !== "undefined")
+            if (i in this)
                 ++count;
         }
 
@@ -612,15 +611,14 @@ WebInspector.ArrayGroupingTreeElement._populateRanges = function(treeElement, ob
         if (count <= bucketThreshold)
             bucketSize = count;
         else
-            bucketSize = Math.pow(bucketThreshold, Math.floor(Math.log(count) / Math.log(bucketThreshold)));
+            bucketSize = Math.pow(bucketThreshold, Math.ceil(Math.log(count) / Math.log(bucketThreshold)) - 1);
 
         var ranges = [];
         count = 0;
         var groupStart = -1;
         var groupEnd = 0;
         for (var i = fromIndex; i <= toIndex; ++i) {
-            var value = this[i];
-            if (typeof value === "undefined")
+            if (!(i in this))
                 continue;
 
             if (groupStart === -1)
@@ -678,9 +676,8 @@ WebInspector.ArrayGroupingTreeElement._populateAsFragment = function(treeElement
     {
         var result = Object.create(null);
         for (var i = fromIndex; i <= toIndex; ++i) {
-            var value = this[i];
-            if (typeof value !== "undefined")
-                result[i] = value;
+            if (i in this)
+                result[i] = this[i];
         }
         return result;
     }

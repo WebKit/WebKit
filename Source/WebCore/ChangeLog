@@ -1,3 +1,14 @@
+2012-10-23  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: array grouping does not work for arrays with exactly 10000 elements.
+        https://bugs.webkit.org/show_bug.cgi?id=100131
+
+        Reviewed by Vsevolod Vlasov.
+
+        Using ceil() - 1 instead of floor() in bucket size calculation.
+
+        * inspector/front-end/ObjectPropertiesSection.js:
+
 2012-10-23  Shinya Kawanaka  <shinyak@chromium.org>
 
         The order of resolving distribution in tree composition is wrong.

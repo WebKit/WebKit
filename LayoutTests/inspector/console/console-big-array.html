@@ -14,9 +14,19 @@ function onload()
 
     var b = [];
     for (var i = 0; i < 10; ++i)
-        b[i] = i;
-    b[100] = 100;
+      b[i] = undefined;
     console.dir(b);
+
+    var c = [];
+    for (var i = 0; i < 10; ++i)
+        c[i] = i;
+    c[100] = 100;
+    console.dir(c);
+
+    var d = [];
+    for (var i = 0; i < 405; ++i)
+      d[i] = i;
+    console.dir(d);
 
     runTest();
 }
@@ -44,7 +54,7 @@ function test()
     var populated = false;
     function populateCalled()
     {
-        populated = this._toIndex == 100;
+        populated = this._toIndex == 404;
     }
 
     InspectorTest.runAfterPendingDispatches(expandRecursively);
