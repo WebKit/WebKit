@@ -1,3 +1,30 @@
+2012-10-22  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Remove custom binding code for IDBCursor.value
+        https://bugs.webkit.org/show_bug.cgi?id=100034
+
+        Reviewed by Kentaro Hara.
+
+        Now that we're using ScriptValue instead of SerializedScriptValue we can just expose
+        IDBCursor.value as an |any| (IDL) or |ScriptValue| (C++) to maintain the specified
+        semantics that the object identity is retained across accesses.
+
+        Test: storage/indexeddb/cursor-value.html
+
+        * Modules/indexeddb/IDBCursor.cpp: Remove "dirty" tracking.
+        (WebCore::IDBCursor::IDBCursor):
+        (WebCore::IDBCursor::value):
+        (WebCore::IDBCursor::setValueReady):
+        * Modules/indexeddb/IDBCursor.h: IDBAny -> ScriptValue
+        (IDBCursor):
+        * Modules/indexeddb/IDBCursorWithValue.idl: IDBAny -> any
+        * Modules/indexeddb/IDBObjectStore.cpp: No need to route through IDBAny to get ScriptValue.
+        (WebCore):
+        * UseV8.cmake: Remove references to IDBCustomBindings.cpp
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * bindings/v8/IDBCustomBindings.cpp: Removed.
+
 2012-10-22  Dan Bernstein  <mitz@apple.com>
 
         Font’s fast code path is used for partial runs with kerning and ligatures, but shouldn’t be

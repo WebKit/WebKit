@@ -26,5 +26,5 @@
 [
     Conditional=INDEXED_DATABASE
 ] interface IDBCursorWithValue : IDBCursor {
-    [V8CustomGetter] readonly attribute IDBAny value;
+    readonly attribute any value;
 };

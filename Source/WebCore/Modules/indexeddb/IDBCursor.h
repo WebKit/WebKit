@@ -72,7 +72,7 @@ public:
     const String& direction() const;
     PassRefPtr<IDBKey> key() const;
     PassRefPtr<IDBKey> primaryKey() const;
-    PassRefPtr<IDBAny> value();
+    const ScriptValue& value() const;
     IDBAny* source() const;
 
     PassRefPtr<IDBRequest> update(ScriptExecutionContext*, ScriptValue&, ExceptionCode&);
@@ -84,11 +84,6 @@ public:
     void postSuccessHandlerCallback();
     void close();
     void setValueReady(PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, ScriptValue&);
-
-    // The spec requires that the script object that wraps the value
-    // be unchanged until the value changes as a result of the cursor
-    // advancing.
-    bool valueIsDirty() { return m_valueIsDirty; }
 
 protected:
     IDBCursor(PassRefPtr<IDBCursorBackendInterface>, Direction, IDBRequest*, IDBAny* source, IDBTransaction*);
@@ -108,8 +103,7 @@ private:
     // are still valid for the current success handlers.
     RefPtr<IDBKey> m_currentKey;
     RefPtr<IDBKey> m_currentPrimaryKey;
-    RefPtr<IDBAny> m_currentValue;
-    bool m_valueIsDirty;
+    ScriptValue m_currentValue;
 };
 
 } // namespace WebCore
