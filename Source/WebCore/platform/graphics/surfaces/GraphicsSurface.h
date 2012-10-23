@@ -20,6 +20,8 @@
 #ifndef GraphicsSurface_h
 #define GraphicsSurface_h
 
+#if USE(GRAPHICS_SURFACE)
+
 #include "GraphicsContext.h"
 #include "GraphicsContext3D.h"
 #include "GraphicsSurfaceToken.h"
@@ -28,8 +30,6 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-
-#if USE(GRAPHICS_SURFACE)
 
 #if OS(DARWIN)
 typedef struct __IOSurface* IOSurfaceRef;

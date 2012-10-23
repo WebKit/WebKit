@@ -124,8 +124,11 @@ defineTest(detectFeatures) {
     packagesExist(libudev): WEBKIT_CONFIG += gamepad
 
     # Support for Graphics Surface
-    mac: WEBKIT_CONFIG += use_graphics_surface
-    linux-*:contains(WEBKIT_CONFIG, have_glx):contains(WEBKIT_CONFIG, have_xcomposite):contains(WEBKIT_CONFIG, have_xrender): WEBKIT_CONFIG += use_graphics_surface
+    # GraphicsSurface requires GraphicsContext3D and hence use_3d_graphics
+    use?(3d_graphics) {
+        mac: WEBKIT_CONFIG += use_graphics_surface
+        linux-*:contains(WEBKIT_CONFIG, have_glx):contains(WEBKIT_CONFIG, have_xcomposite):contains(WEBKIT_CONFIG, have_xrender): WEBKIT_CONFIG += use_graphics_surface
+    }
 
     # Slider Touch is sensible to use when compiling WebKit2
     enable?(touch_events): WEBKIT_CONFIG += touch_slider
