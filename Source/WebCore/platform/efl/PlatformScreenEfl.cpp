@@ -48,21 +48,6 @@
 
 namespace WebCore {
 
-#ifdef HAVE_ECORE_X
-
-#define CALL_WITH_ECORE_X(ECORE_X_CALL)                                 \
-    do {                                                                \
-        int success = ecore_x_init(0);                                  \
-        if (success) {                                                  \
-            Ecore_X_Screen* screen = ecore_x_default_screen_get();      \
-            if (screen)                                                 \
-                ECORE_X_CALL;                                           \
-            ecore_x_shutdown();                                         \
-        }                                                               \
-    } while (0)                                                         \
-
-#endif
-
 int screenHorizontalDPI(Widget*)
 {
     notImplemented();
@@ -78,9 +63,7 @@ int screenVerticalDPI(Widget*)
 int screenDepth(Widget*)
 {
 #ifdef HAVE_ECORE_X
-    int depth = 24;
-    CALL_WITH_ECORE_X(depth = ecore_x_default_depth_get(ecore_x_display_get(), screen));
-    return depth;
+    return ecore_x_default_depth_get(ecore_x_display_get(), ecore_x_default_screen_get());
 #else
     return 24;
 #endif
@@ -114,12 +97,12 @@ bool screenIsMonochrome(Widget* widget)
 FloatRect screenRect(Widget* widget)
 {
 #ifdef HAVE_ECORE_X
+    UNUSED_PARAM(widget);
     // Fallback to realistic values if the EcoreX call fails
     // and we cannot accurately detect the screen size.
     int width = 800;
     int height = 600;
-    CALL_WITH_ECORE_X(ecore_x_screen_size_get(screen, &width, &height));
-    UNUSED_PARAM(widget);
+    ecore_x_screen_size_get(ecore_x_default_screen_get(), &width, &height);
     return FloatRect(0, 0, width, height);
 #else
     if (!widget || !widget->evas())

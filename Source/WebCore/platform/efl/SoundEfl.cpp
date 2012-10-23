@@ -39,10 +39,7 @@ namespace WebCore {
 void systemBeep()
 {
 #ifdef HAVE_ECORE_X
-    if (ecore_x_init(0)) {
-        ecore_x_bell(0);
-        ecore_x_shutdown();
-    }
+    ecore_x_bell(0);
 #endif
 }
 

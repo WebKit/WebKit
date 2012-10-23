@@ -41,6 +41,10 @@
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
 
+#ifdef HAVE_ECORE_X
+#include <Ecore_X.h>
+#endif
+
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedGraphicsLayer.h"
 #endif
@@ -60,6 +64,15 @@ WK_EXPORT int WebProcessMainEfl(int argc, char* argv[])
 
     if (!ecore_init()) {
         // Could not init ecore.
+        eina_shutdown();
+        return 1;
+    }
+
+    if (!ecore_x_init(0)) {
+        // Could not init ecore_x.
+        // PlatformScreenEfl and systemBeep() functions
+        // depend on ecore_x functionality.
+        ecore_shutdown();
         eina_shutdown();
         return 1;
     }
@@ -104,6 +117,10 @@ WK_EXPORT int WebProcessMainEfl(int argc, char* argv[])
     soup_cache_flush(soupCache);
     soup_cache_dump(soupCache);
     g_object_unref(soupCache);
+
+    ecore_x_shutdown();
+    ecore_shutdown();
+    eina_shutdown();
 
     return 0;
 

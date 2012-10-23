@@ -1,3 +1,16 @@
+2012-10-23  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        [EFL][WK2] ecore_x should be initialised in WebProcess to avoid re-initialization by PlatformScreenEfl utilities and systemBeep() function
+        https://bugs.webkit.org/show_bug.cgi?id=100110
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        PlatformScreenEfl functions and systemBeep() depend on ecore_x functionality, therefore,
+        ecore_x should be initialized when web process starts to avoid re-initialization.
+
+        * WebProcess/efl/WebProcessMainEfl.cpp:
+        (WebKit::WebProcessMainEfl): Initialized ecore_x module.
+
 2012-10-23  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Add support for IMF composition
