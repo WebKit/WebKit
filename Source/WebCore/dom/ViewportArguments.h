@@ -45,8 +45,6 @@ enum ViewportErrorCode {
 struct ViewportAttributes {
     FloatSize layoutSize;
 
-    float devicePixelRatio;
-
     float initialScale;
     float minimumScale;
     float maximumScale;
@@ -116,9 +114,9 @@ struct ViewportArguments {
 
 ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktopWidth, int deviceWidth, int deviceHeight, float devicePixelRatio, IntSize visibleViewport);
 
-void restrictMinimumScaleFactorToViewportSize(ViewportAttributes& result, IntSize visibleViewport);
+void restrictMinimumScaleFactorToViewportSize(ViewportAttributes& result, IntSize visibleViewport, float devicePixelRatio);
 void restrictScaleFactorToInitialScaleIfNotUserScalable(ViewportAttributes& result);
-float computeMinimumScaleFactorForContentContained(const ViewportAttributes& result, const IntSize& viewportSize, const IntSize& contentSize);
+float computeMinimumScaleFactorForContentContained(const ViewportAttributes& result, const IntSize& viewportSize, const IntSize& contentSize, float devicePixelRatio);
 
 void setViewportFeature(const String& keyString, const String& valueString, Document*, void* data);
 void reportViewportWarning(Document*, ViewportErrorCode, const String& replacement1, const String& replacement2);

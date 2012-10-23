@@ -647,10 +647,11 @@ void ChromeClientImpl::dispatchViewportPropertiesDidChange(const ViewportArgumen
         return;
 
     Settings* settings = m_webView->page()->settings();
+    float devicePixelRatio = dpi / ViewportArguments::deprecatedTargetDPI;
     // Call the common viewport computing logic in ViewportArguments.cpp.
     ViewportAttributes computed = computeViewportAttributes(
         args, settings->layoutFallbackWidth(), deviceRect.width, deviceRect.height,
-        dpi / ViewportArguments::deprecatedTargetDPI, IntSize(deviceRect.width, deviceRect.height));
+        devicePixelRatio, IntSize(deviceRect.width, deviceRect.height));
 
     restrictScaleFactorToInitialScaleIfNotUserScalable(computed);
 
@@ -664,10 +665,10 @@ void ChromeClientImpl::dispatchViewportPropertiesDidChange(const ViewportArgumen
     m_webView->setFixedLayoutSize(IntSize(layoutWidth, layoutHeight));
 
     bool needInitializePageScale = !m_webView->isPageScaleFactorSet();
-    m_webView->setDeviceScaleFactor(computed.devicePixelRatio);
+    m_webView->setDeviceScaleFactor(devicePixelRatio);
     m_webView->setPageScaleFactorLimits(computed.minimumScale, computed.maximumScale);
     if (needInitializePageScale)
-        m_webView->setPageScaleFactorPreservingScrollOffset(computed.initialScale * computed.devicePixelRatio);
+        m_webView->setPageScaleFactorPreservingScrollOffset(computed.initialScale * devicePixelRatio);
 #endif
 }
 

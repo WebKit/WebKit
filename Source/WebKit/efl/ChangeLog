@@ -1,3 +1,14 @@
+2012-10-23  Andras Becsi  <andras.becsi@digia.com>
+
+        Remove devicePixelRatio from ViewportAttributes
+        https://bugs.webkit.org/show_bug.cgi?id=99845
+
+        Reviewed by Adam Barth.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_viewport_attributes_compute):
+        Pass the device pixel ratio as a function argument.
+
 2012-10-22  Ryuan Choi  <ryuan.choi@gmail.com>
 
         [EFL] pc files should use DATA_INSTALL_DIR for datadir

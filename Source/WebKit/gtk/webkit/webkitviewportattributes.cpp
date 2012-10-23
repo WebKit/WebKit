@@ -534,8 +534,9 @@ void webkitViewportAttributesRecompute(WebKitViewportAttributes* viewportAttribu
 
     ViewportArguments arguments = webView->priv->corePage->mainFrame()->document()->viewportArguments();
 
-    ViewportAttributes attributes = computeViewportAttributes(arguments, priv->desktopWidth, priv->deviceWidth, priv->deviceHeight, priv->deviceDPI / ViewportArguments::deprecatedTargetDPI, IntSize(priv->availableWidth, priv->availableHeight));
-    restrictMinimumScaleFactorToViewportSize(attributes, IntSize(priv->availableWidth, priv->availableHeight));
+    float devicePixelRatio = priv->deviceDPI / ViewportArguments::deprecatedTargetDPI;
+    ViewportAttributes attributes = computeViewportAttributes(arguments, priv->desktopWidth, priv->deviceWidth, priv->deviceHeight, devicePixelRatio, IntSize(priv->availableWidth, priv->availableHeight));
+    restrictMinimumScaleFactorToViewportSize(attributes, IntSize(priv->availableWidth, priv->availableHeight), devicePixelRatio);
     restrictScaleFactorToInitialScaleIfNotUserScalable(attributes);
 
     priv->width = attributes.layoutSize.width();
@@ -543,7 +544,7 @@ void webkitViewportAttributesRecompute(WebKitViewportAttributes* viewportAttribu
     priv->initialScaleFactor = attributes.initialScale;
     priv->minimumScaleFactor = attributes.minimumScale;
     priv->maximumScaleFactor = attributes.maximumScale;
-    priv->devicePixelRatio = attributes.devicePixelRatio;
+    priv->devicePixelRatio = devicePixelRatio;
     priv->userScalable = static_cast<bool>(arguments.userScalable);
 
     if (!priv->isValid) {

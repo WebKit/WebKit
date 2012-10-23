@@ -1,3 +1,33 @@
+2012-10-23  Andras Becsi  <andras.becsi@digia.com>
+
+        Remove devicePixelRatio from ViewportAttributes
+        https://bugs.webkit.org/show_bug.cgi?id=99845
+
+        Reviewed by Adam Barth.
+
+        Since r121555 the devicePixelRatio is not calculated any more
+        and the scale factor is stored in Page::m_deviceScaleFactor,
+        thus it can be removed from ViewportAttributes to reduce
+        redundancy and unnecessary client code.
+        Use a new parameter in viewport calculation functions using
+        the visible viewport size (instead of passing the adjusted
+        viewport size) so that after this change clients do not end
+        up using the unadjusted viewport size for calculations.
+
+        No behavioural change, no new tests needed.
+
+        * WebCore.exp.in:
+        * dom/ViewportArguments.cpp:
+        (WebCore::computeViewportAttributes):
+        (WebCore::computeMinimumScaleFactorForContentContained):
+        Add the devicePixelRatio as a parameter.
+        (WebCore::restrictMinimumScaleFactorToViewportSize): Ditto.
+        * dom/ViewportArguments.h:
+        (ViewportAttributes):
+        (WebCore):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::configurationForViewport):
+
 2012-10-23  Kent Tamura  <tkent@chromium.org>
 
         Support full month names in DateTimeEditElement, and use them in input[type=month] by default

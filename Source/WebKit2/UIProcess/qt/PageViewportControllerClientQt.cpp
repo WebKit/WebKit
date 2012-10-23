@@ -493,7 +493,6 @@ void PageViewportControllerClientQt::didChangeVisibleContents()
 
 void PageViewportControllerClientQt::didChangeViewportAttributes()
 {
-    emit m_viewportItem->experimental()->test()->devicePixelRatioChanged();
     emit m_viewportItem->experimental()->test()->viewportChanged();
 }
 

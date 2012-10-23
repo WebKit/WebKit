@@ -2581,8 +2581,10 @@ QWebPage::ViewportAttributes QWebPage::viewportAttributesForSize(const QSize& av
         deviceHeight = size.height();
     }
 
-    WebCore::ViewportAttributes conf = WebCore::computeViewportAttributes(d->viewportArguments(), desktopWidth, deviceWidth, deviceHeight, qt_defaultDpi() / WebCore::ViewportArguments::deprecatedTargetDPI, availableSize);
-    WebCore::restrictMinimumScaleFactorToViewportSize(conf, availableSize);
+    float devicePixelRatio = qt_defaultDpi() / WebCore::ViewportArguments::deprecatedTargetDPI;
+
+    WebCore::ViewportAttributes conf = WebCore::computeViewportAttributes(d->viewportArguments(), desktopWidth, deviceWidth, deviceHeight, devicePixelRatio, availableSize);
+    WebCore::restrictMinimumScaleFactorToViewportSize(conf, availableSize, devicePixelRatio);
     WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(conf);
 
     result.m_isValid = true;
@@ -2590,10 +2592,10 @@ QWebPage::ViewportAttributes QWebPage::viewportAttributesForSize(const QSize& av
     result.m_initialScaleFactor = conf.initialScale;
     result.m_minimumScaleFactor = conf.minimumScale;
     result.m_maximumScaleFactor = conf.maximumScale;
-    result.m_devicePixelRatio = conf.devicePixelRatio;
+    result.m_devicePixelRatio = devicePixelRatio;
     result.m_isUserScalable = static_cast<bool>(conf.userScalable);
 
-    d->page->setDeviceScaleFactor(conf.devicePixelRatio);
+    d->page->setDeviceScaleFactor(devicePixelRatio);
 
     return result;
 }
