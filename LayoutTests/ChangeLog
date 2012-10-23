@@ -1,3 +1,10 @@
+2012-10-22  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium win rebaselines.
+
+        * platform/chromium-win/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-win/fast/speech/input-appearance-searchandspeech-expected.txt:
+
 2012-10-22  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, more Chromium ML expectation updating.
