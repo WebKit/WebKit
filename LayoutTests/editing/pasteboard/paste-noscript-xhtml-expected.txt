@@ -67,6 +67,8 @@ Pasted content:
 |   href=""
 |   id="anchor2"
 |   "Hello"
+| <script>
+| <script>
 | <iframe>
 |   id="iframe1"
 |   src=""

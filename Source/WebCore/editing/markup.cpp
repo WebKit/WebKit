@@ -666,11 +666,10 @@ PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document* document, const 
 {
     // We use a fake body element here to trick the HTML parser to using the InBody insertion mode.
     RefPtr<HTMLBodyElement> fakeBody = HTMLBodyElement::create(document);
-    // Ignore exceptions here since this function is used to parse markup for pasting or for other editing purposes.
-    ExceptionCode ignoredEC;
-    RefPtr<DocumentFragment> fragment = createContextualFragment(markup, fakeBody.get(), scriptingPermission, ignoredEC);
+    RefPtr<DocumentFragment> fragment = DocumentFragment::create(document);
+    fragment->parseHTML(markup, fakeBody.get(), scriptingPermission);
 
-    if (fragment && !baseURL.isEmpty() && baseURL != blankURL() && baseURL != document->baseURL())
+    if (!baseURL.isEmpty() && baseURL != blankURL() && baseURL != document->baseURL())
         completeURLs(fragment.get(), baseURL);
 
     return fragment.release();

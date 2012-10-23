@@ -1,3 +1,21 @@
+2012-10-23  Adam Klein  <adamk@chromium.org>
+
+        Always parse pasted fragments as HTML even on XHTML pages
+        https://bugs.webkit.org/show_bug.cgi?id=99880
+
+        Reviewed by Ojan Vafai.
+
+        Updated existing tests to match new expected behavior.
+
+        * editing/pasteboard/paste-noscript-xhtml-expected.txt: The HTML
+        parser leaves <script> tags in the DOM when pasting, but removes their
+        attributes and children, so this is just as safe as the previous
+        behavior.
+        * platform/mac/editing/pasteboard/paste-xml-expected.txt: Now that we
+        use the HTML parser, parsing the paste succeeds and so we insert DOM
+        instead of plain text. Similar rebaselines may be needed on other
+        platforms.
+
 2012-10-23  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
