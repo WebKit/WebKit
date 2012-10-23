@@ -23,6 +23,7 @@
 
 #include "BatteryProvider.h"
 #include "NetworkInfoProvider.h"
+#include "RequestManagerClientEfl.h"
 #include "VibrationProvider.h"
 #include "WKAPICast.h"
 #include "WKContextSoup.h"
@@ -34,7 +35,6 @@
 #include "WebSoupRequestManagerProxy.h"
 #include "ewk_context_history_client_private.h"
 #include "ewk_context_private.h"
-#include "ewk_context_request_manager_client_private.h"
 #include "ewk_cookie_manager_private.h"
 #include "ewk_favicon_database_private.h"
 #include "ewk_private.h"
@@ -52,21 +52,6 @@
 using namespace WebCore;
 using namespace WebKit;
 
-struct Ewk_Url_Scheme_Handler {
-    Ewk_Url_Scheme_Request_Cb callback;
-    void* userData;
-
-    Ewk_Url_Scheme_Handler()
-        : callback(0)
-        , userData(0)
-    { }
-
-    Ewk_Url_Scheme_Handler(Ewk_Url_Scheme_Request_Cb callback, void* userData)
-        : callback(callback)
-        , userData(userData)
-    { }
-};
-
 typedef HashMap<WKContextRef, Ewk_Context*> ContextMap;
 
 static inline ContextMap& contextMap()
@@ -77,7 +62,6 @@ static inline ContextMap& contextMap()
 
 Ewk_Context::Ewk_Context(WKContextRef context)
     : m_context(context)
-    , m_requestManager(WKContextGetSoupRequestManager(context))
     , m_historyClient()
 {
     ContextMap::AddResult result = contextMap().add(context, this);
@@ -115,9 +99,9 @@ Ewk_Context::Ewk_Context(WKContextRef context)
 #endif
 
     // Initialize WKContext clients.
-    ewk_context_request_manager_client_attach(this);
     ewk_context_history_client_attach(this);
     m_downloadManager = DownloadManagerEfl::create(this);
+    m_requestManagerClient = RequestManagerClientEfl::create(this);
 }
 
 Ewk_Context::~Ewk_Context()
@@ -181,14 +165,9 @@ Ewk_Favicon_Database* Ewk_Context::faviconDatabase()
     return m_faviconDatabase.get();
 }
 
-bool Ewk_Context::registerURLScheme(const String& scheme, Ewk_Url_Scheme_Request_Cb callback, void* userData)
+RequestManagerClientEfl* Ewk_Context::requestManager()
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(callback, false);
-
-    m_urlSchemeHandlers.set(scheme, Ewk_Url_Scheme_Handler(callback, userData));
-    toImpl(m_requestManager.get())->registerURIScheme(scheme);
-
-    return true;
+    return m_requestManagerClient.get();
 }
 
 #if ENABLE(VIBRATION)
@@ -253,34 +232,6 @@ DownloadManagerEfl* Ewk_Context::downloadManager() const
     return m_downloadManager.get();
 }
 
-/**
- * Retrieve the request manager for @a ewkContext.
- *
- * @param ewkContext a #Ewk_Context object.
- */
-WKSoupRequestManagerRef Ewk_Context::requestManager()
-{
-    return m_requestManager.get();
-}
-
-/**
- * @internal
- * A new URL request was received.
- *
- * @param ewkContext a #Ewk_Context object.
- * @param schemeRequest a #Ewk_Url_Scheme_Request object.
- */
-void Ewk_Context::urlSchemeRequestReceived(Ewk_Url_Scheme_Request* schemeRequest)
-{
-    EINA_SAFETY_ON_NULL_RETURN(schemeRequest);
-
-    Ewk_Url_Scheme_Handler handler = m_urlSchemeHandlers.get(schemeRequest->scheme());
-    if (!handler.callback)
-        return;
-
-    handler.callback(schemeRequest, handler.userData);
-}
-
 Ewk_Context* ewk_context_default_get()
 {
     return Ewk_Context::defaultContext().get();
@@ -302,8 +253,11 @@ Eina_Bool ewk_context_url_scheme_register(Ewk_Context* ewkContext, const char* s
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(ewkContext, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(scheme, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(callback, false);
 
-    return ewkContext->registerURLScheme(String::fromUTF8(scheme), callback, userData);
+    ewkContext->requestManager()->registerURLSchemeHandler(String::fromUTF8(scheme), callback, userData);
+
+    return true;
 }
 
 void ewk_context_vibration_client_callbacks_set(Ewk_Context* ewkContext, Ewk_Vibration_Client_Vibrate_Cb vibrate, Ewk_Vibration_Client_Vibration_Cancel_Cb cancel, void* data)

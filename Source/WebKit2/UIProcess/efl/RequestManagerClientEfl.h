@@ -23,11 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ewk_context_request_manager_client_private_h
-#define ewk_context_request_manager_client_private_h
+#ifndef RequestManagerClientEfl_h
+#define RequestManagerClientEfl_h
 
-typedef struct Ewk_Context Ewk_Context;
+#include "WKRetainPtr.h"
+#include "ewk_context.h"
+#include <WebKit2/WKBase.h>
+#include <wtf/HashMap.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/text/WTFString.h>
 
-void ewk_context_request_manager_client_attach(Ewk_Context* context);
+namespace WebKit {
 
-#endif // ewk_context_request_manager_client_private_h
+class RequestManagerClientEfl {
+public:
+    ~RequestManagerClientEfl();
+    static PassOwnPtr<RequestManagerClientEfl> create(Ewk_Context* context)
+    {
+        return adoptPtr(new RequestManagerClientEfl(context));
+    }
+
+    void registerURLSchemeHandler(const String& scheme, Ewk_Url_Scheme_Request_Cb callback, void* userData);
+
+private:
+    explicit RequestManagerClientEfl(Ewk_Context*);
+
+    static void didReceiveURIRequest(WKSoupRequestManagerRef, WKURLRef, WKPageRef, uint64_t requestID, const void* clientInfo);
+
+    WKRetainPtr<WKSoupRequestManagerRef> m_soupRequestManager;
+    HashMap<String, class Ewk_Url_Scheme_Handler> m_urlSchemeHandlers;
+};
+
+} // namespace WebKit
+
+#endif // RequestManagerClientEfl_h

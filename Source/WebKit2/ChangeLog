@@ -1,3 +1,38 @@
+2012-10-23  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Make request manager client a C++ class
+        https://bugs.webkit.org/show_bug.cgi?id=100093
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make EFL's request manager client a C++ class and
+        move URL scheme handling code to it. The new
+        RequestManagerClientEfl is now in UIProcess/efl
+        instead of UIProcess/API/efl since it is not
+        part of the public API.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/ewk_context.cpp:
+        (Ewk_Context::Ewk_Context):
+        (Ewk_Context::requestManager):
+        (ewk_context_url_scheme_register):
+        * UIProcess/API/efl/ewk_context_private.h:
+        (WebKit):
+        (Ewk_Context):
+        * UIProcess/efl/RequestManagerClientEfl.cpp: Renamed from Source/WebKit2/UIProcess/API/efl/ewk_context_request_manager_client.cpp.
+        (WebKit):
+        (Ewk_Url_Scheme_Handler):
+        (WebKit::Ewk_Url_Scheme_Handler::Ewk_Url_Scheme_Handler):
+        (WebKit::toRequestManagerClientEfl):
+        (WebKit::RequestManagerClientEfl::didReceiveURIRequest):
+        (WebKit::RequestManagerClientEfl::RequestManagerClientEfl):
+        (WebKit::RequestManagerClientEfl::~RequestManagerClientEfl):
+        (WebKit::RequestManagerClientEfl::registerURLSchemeHandler):
+        * UIProcess/efl/RequestManagerClientEfl.h: Renamed from Source/WebKit2/UIProcess/API/efl/ewk_context_request_manager_client_private.h.
+        (WebKit):
+        (RequestManagerClientEfl):
+        (WebKit::RequestManagerClientEfl::create):
+
 2012-10-23  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         [EFL][WK2] ecore_x should be initialised in WebProcess to avoid re-initialization by PlatformScreenEfl utilities and systemBeep() function

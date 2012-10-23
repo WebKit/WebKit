@@ -24,34 +24,73 @@
  */
 
 #include "config.h"
+#include "RequestManagerClientEfl.h"
 
-#include "WKBase.h"
+#include "WKContextSoup.h"
 #include "WKSoupRequestManager.h"
-#include "WKURL.h"
+#include "WebSoupRequestManagerProxy.h"
 #include "ewk_context_private.h"
-#include "ewk_context_request_manager_client_private.h"
-#include "ewk_url_scheme_request.h"
 #include "ewk_url_scheme_request_private.h"
 
-static inline Ewk_Context* toEwkContext(const void* clientInfo)
+namespace WebKit {
+
+struct Ewk_Url_Scheme_Handler {
+    Ewk_Url_Scheme_Request_Cb callback;
+    void* userData;
+
+    Ewk_Url_Scheme_Handler()
+        : callback(0)
+        , userData(0)
+    { }
+
+    Ewk_Url_Scheme_Handler(Ewk_Url_Scheme_Request_Cb callback, void* userData)
+        : callback(callback)
+        , userData(userData)
+    { }
+};
+
+static inline RequestManagerClientEfl* toRequestManagerClientEfl(const void* clientInfo)
 {
-    return static_cast<Ewk_Context*>(const_cast<void*>(clientInfo));
+    return static_cast<RequestManagerClientEfl*>(const_cast<void*>(clientInfo));
 }
 
-static void didReceiveURIRequest(WKSoupRequestManagerRef soupRequestManagerRef, WKURLRef urlRef, WKPageRef, uint64_t requestID, const void* clientInfo)
+void RequestManagerClientEfl::didReceiveURIRequest(WKSoupRequestManagerRef soupRequestManagerRef, WKURLRef urlRef, WKPageRef, uint64_t requestID, const void* clientInfo)
 {
+    RequestManagerClientEfl* requestManager = toRequestManagerClientEfl(clientInfo);
+
     RefPtr<Ewk_Url_Scheme_Request> schemeRequest = Ewk_Url_Scheme_Request::create(soupRequestManagerRef, urlRef, requestID);
-    toEwkContext(clientInfo)->urlSchemeRequestReceived(schemeRequest.get());
+    Ewk_Url_Scheme_Handler handler = requestManager->m_urlSchemeHandlers.get(schemeRequest->scheme());
+    if (!handler.callback)
+        return;
+
+    handler.callback(schemeRequest.get(), handler.userData);
 }
 
-void ewk_context_request_manager_client_attach(Ewk_Context* context)
+RequestManagerClientEfl::RequestManagerClientEfl(Ewk_Context* context)
+    : m_soupRequestManager(WKContextGetSoupRequestManager(context->wkContext()))
 {
+    ASSERT(context);
+
     WKSoupRequestManagerClient wkRequestManagerClient;
     memset(&wkRequestManagerClient, 0, sizeof(WKSoupRequestManagerClient));
 
     wkRequestManagerClient.version = kWKSoupRequestManagerClientCurrentVersion;
-    wkRequestManagerClient.clientInfo = context;
+    wkRequestManagerClient.clientInfo = this;
     wkRequestManagerClient.didReceiveURIRequest = didReceiveURIRequest;
 
-    WKSoupRequestManagerSetClient(context->requestManager(), &wkRequestManagerClient);
+    WKSoupRequestManagerSetClient(m_soupRequestManager.get(), &wkRequestManagerClient);
 }
+
+RequestManagerClientEfl::~RequestManagerClientEfl()
+{
+}
+
+void RequestManagerClientEfl::registerURLSchemeHandler(const String& scheme, Ewk_Url_Scheme_Request_Cb callback, void* userData)
+{
+    ASSERT(callback);
+
+    m_urlSchemeHandlers.set(scheme, Ewk_Url_Scheme_Handler(callback, userData));
+    toImpl(m_soupRequestManager.get())->registerURIScheme(scheme);
+}
+
+} // namespace WebKit

@@ -38,6 +38,10 @@ class NetworkInfoProvider;
 class VibrationProvider;
 #endif
 
+namespace WebKit {
+class RequestManagerClientEfl;
+}
+
 class Ewk_Context : public RefCounted<Ewk_Context> {
 public:
     static PassRefPtr<Ewk_Context> create(WKContextRef context);
@@ -52,7 +56,7 @@ public:
 
     Ewk_Favicon_Database* faviconDatabase();
 
-    bool registerURLScheme(const String& scheme, Ewk_Url_Scheme_Request_Cb callback, void* userData);
+    WebKit::RequestManagerClientEfl* requestManager();
 
 #if ENABLE(VIBRATION)
     PassRefPtr<VibrationProvider> vibrationProvider();
@@ -65,8 +69,6 @@ public:
     Ewk_Cache_Model cacheModel() const;
 
     WKContextRef wkContext();
-
-    WKSoupRequestManagerRef requestManager();
 
     void urlSchemeRequestReceived(Ewk_Url_Scheme_Request*);
 
@@ -91,11 +93,8 @@ private:
 #if ENABLE(VIBRATION)
     RefPtr<VibrationProvider> m_vibrationProvider;
 #endif
-    WKRetainPtr<WKSoupRequestManagerRef> m_requestManager;
     OwnPtr<WebKit::DownloadManagerEfl> m_downloadManager;
-
-    typedef HashMap<String, class Ewk_Url_Scheme_Handler> URLSchemeHandlerMap;
-    URLSchemeHandlerMap m_urlSchemeHandlers;
+    OwnPtr<WebKit::RequestManagerClientEfl> m_requestManagerClient;
 
     Ewk_Context_History_Client m_historyClient;
 };
