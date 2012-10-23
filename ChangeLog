@@ -1,3 +1,12 @@
+2012-10-23  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Add support for IMF composition
+        https://bugs.webkit.org/show_bug.cgi?id=89552
+
+        Reviewed by Gyuyoung Kim.
+
+        * Source/cmake/FindEcore.cmake: Checked Ecore_IMF.
+
 2012-10-23  Andras Becsi  <andras.becsi@digia.com>
 
         Remove devicePixelRatio from ViewportAttributes

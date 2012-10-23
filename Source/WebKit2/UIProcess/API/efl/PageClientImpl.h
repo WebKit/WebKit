@@ -76,6 +76,7 @@ private:
     virtual WebCore::IntPoint screenToWindow(const WebCore::IntPoint&);
     virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&);
 
+    void updateTextInputState();
     virtual void handleDownloadRequest(DownloadProxy*);
 
     virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool);

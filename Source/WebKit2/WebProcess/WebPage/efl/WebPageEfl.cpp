@@ -28,6 +28,7 @@
 #include "config.h"
 #include "WebPage.h"
 
+#include "EditorState.h"
 #include "NotImplemented.h"
 #include "WebEvent.h"
 #include "WindowsKeyboardCodes.h"
@@ -150,6 +151,58 @@ void WebPage::setThemePath(const String& themePath)
 {
     WebCore::RenderThemeEfl* theme = static_cast<WebCore::RenderThemeEfl*>(m_page->theme());
     theme->setThemePath(themePath);
+}
+
+static Frame* targetFrameForEditing(WebPage* page)
+{
+    Frame* frame = page->corePage()->focusController()->focusedOrMainFrame();
+    if (!frame)
+        return 0;
+
+    Editor* editor = frame->editor();
+    if (!editor->canEdit())
+        return 0;
+
+    if (editor->hasComposition()) {
+        // We should verify the parent node of this IME composition node are
+        // editable because JavaScript may delete a parent node of the composition
+        // node. In this case, WebKit crashes while deleting texts from the parent
+        // node, which doesn't exist any longer.
+        if (PassRefPtr<Range> range = editor->compositionRange()) {
+            Node* node = range->startContainer();
+            if (!node || !node->isContentEditable())
+                return 0;
+        }
+    }
+
+    return frame;
+}
+
+void WebPage::confirmComposition(const String& compositionString)
+{
+    Frame* targetFrame = targetFrameForEditing(this);
+    if (!targetFrame)
+        return;
+
+    targetFrame->editor()->confirmComposition(compositionString);
+}
+
+void WebPage::setComposition(const String& compositionString, const Vector<WebCore::CompositionUnderline>& underlines, uint64_t cursorPosition)
+{
+    Frame* targetFrame = targetFrameForEditing(this);
+    if (!targetFrame)
+        return;
+
+    targetFrame->editor()->setComposition(compositionString, underlines, cursorPosition, 0);
+}
+
+void WebPage::cancelComposition()
+{
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    frame->editor()->cancelComposition();
 }
 
 } // namespace WebKit

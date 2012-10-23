@@ -57,8 +57,11 @@
 #include "ewk_view_form_client_private.h"
 #include "ewk_view_private.h"
 #include <Ecore_Evas.h>
+#include <Ecore_IMF.h>
+#include <Ecore_IMF_Evas.h>
 #include <Edje.h>
 #include <WebCore/Cursor.h>
+#include <WebCore/Editor.h>
 #include <WebCore/EflScreenUtilities.h>
 #include <WebKit2/WKPageGroup.h>
 #include <wtf/text/CString.h>
@@ -87,6 +90,8 @@ static const char EWK_VIEW_TYPE_STR[] = "EWK2_View";
 static const int defaultCursorSize = 16;
 
 static void _ewk_view_on_favicon_changed(const char* pageURL, void* eventInfo);
+static Ecore_IMF_Context* _ewk_view_imf_context_create(Ewk_View_Smart_Data* smartData);
+static void _ewk_view_imf_context_destroy(Ecore_IMF_Context* imfContext);
 
 typedef HashMap<const WebPageProxy*, const Evas_Object*> PageViewMap;
 
@@ -142,6 +147,9 @@ struct Ewk_View_Private_Data {
     WebPopupMenuProxyEfl* popupMenuProxy;
     Eina_List* popupMenuItems;
 
+    Ecore_IMF_Context* imfContext;
+    bool isImfFocused;
+
 #ifdef HAVE_ECORE_X
     bool isUsingEcoreX;
 #endif
@@ -159,6 +167,8 @@ struct Ewk_View_Private_Data {
 #endif
         , popupMenuProxy(0)
         , popupMenuItems(0)
+        , imfContext(0)
+        , isImfFocused(false)
 #ifdef HAVE_ECORE_X
         , isUsingEcoreX(false)
 #endif
@@ -171,6 +181,8 @@ struct Ewk_View_Private_Data {
 
     ~Ewk_View_Private_Data()
     {
+        _ewk_view_imf_context_destroy(imfContext);
+
         /* Unregister icon change callback */
         Ewk_Favicon_Database* iconDatabase = context->faviconDatabase();
         iconDatabase->unwatchChanges(_ewk_view_on_favicon_changed);
@@ -301,6 +313,10 @@ static Eina_Bool _ewk_view_smart_mouse_up(Ewk_View_Smart_Data* smartData, const 
 
     Evas_Point position = {smartData->view.x, smartData->view.y};
     priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(upEvent, &position));
+
+    if (priv->imfContext)
+        ecore_imf_context_reset(priv->imfContext);
+
     return true;
 }
 
@@ -317,7 +333,15 @@ static Eina_Bool _ewk_view_smart_key_down(Ewk_View_Smart_Data* smartData, const 
 {
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
 
-    priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(downEvent));
+    bool isFiltered = false;
+    if (priv->imfContext) {
+        Ecore_IMF_Event imfEvent;
+        ecore_imf_evas_event_key_down_wrap(const_cast<Evas_Event_Key_Down*>(downEvent), &imfEvent.key_down);
+
+        isFiltered = ecore_imf_context_filter_event(priv->imfContext, ECORE_IMF_EVENT_KEY_DOWN, &imfEvent);
+    }
+
+    priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(downEvent, isFiltered));
     return true;
 }
 
@@ -459,6 +483,35 @@ static void _ewk_view_on_touch_move(void* /* data */, Evas* /* canvas */, Evas_O
 }
 #endif
 
+static void _ewk_view_preedit_changed(void* data, Ecore_IMF_Context* context, void*)
+{
+    Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    if (!priv->pageProxy->focusedFrame() || !priv->isImfFocused)
+        return;
+
+    char* buffer = 0;
+    ecore_imf_context_preedit_string_get(context, &buffer, 0);
+    if (!buffer)
+        return;
+
+    String preeditString = String::fromUTF8(buffer);
+    Vector<CompositionUnderline> underlines;
+    underlines.append(CompositionUnderline(0, preeditString.length(), Color(0, 0, 0), false));
+    priv->pageProxy->setComposition(preeditString, underlines, 0);
+}
+
+static void _ewk_view_commit(void* data, Ecore_IMF_Context*, void* eventInfo)
+{
+    Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+    if (!eventInfo || !priv->isImfFocused)
+        return;
+
+    priv->pageProxy->confirmComposition(String::fromUTF8(static_cast<char*>(eventInfo)));
+}
+
 static Evas_Smart_Class g_parentSmartClass = EVAS_SMART_CLASS_INIT_NULL;
 
 static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
@@ -468,6 +521,8 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
         EINA_LOG_CRIT("could not allocate Ewk_View_Private_Data");
         return 0;
     }
+
+    priv->imfContext = _ewk_view_imf_context_create(smartData);
 
 #ifdef HAVE_ECORE_X
     priv->isUsingEcoreX = WebCore::isUsingEcoreX(smartData->base.evas);
@@ -1107,6 +1162,70 @@ const char* ewk_view_title_get(const Evas_Object* ewkView)
 void ewk_view_text_found(Evas_Object* ewkView, unsigned int matchCount)
 {
     evas_object_smart_callback_call(ewkView, "text,found", &matchCount);
+}
+
+static Ecore_IMF_Context* _ewk_view_imf_context_create(Ewk_View_Smart_Data* smartData)
+{
+    const char* defaultContextID = ecore_imf_context_default_id_get();
+    if (!defaultContextID)
+        return 0;
+
+    Ecore_IMF_Context* imfContext = ecore_imf_context_add(defaultContextID);
+    if (!imfContext)
+        return 0;
+
+    ecore_imf_context_event_callback_add(imfContext, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, _ewk_view_preedit_changed, smartData);
+    ecore_imf_context_event_callback_add(imfContext, ECORE_IMF_CALLBACK_COMMIT, _ewk_view_commit, smartData);
+
+    Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(smartData->base.evas);
+    ecore_imf_context_client_window_set(imfContext, (void*)ecore_evas_window_get(ecoreEvas));
+    ecore_imf_context_client_canvas_set(imfContext, smartData->base.evas);
+
+    return imfContext;
+}
+
+static void _ewk_view_imf_context_destroy(Ecore_IMF_Context* imfContext)
+{
+    if (!imfContext)
+        return;
+
+    ecore_imf_context_event_callback_del(imfContext, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, _ewk_view_preedit_changed);
+    ecore_imf_context_event_callback_del(imfContext, ECORE_IMF_CALLBACK_COMMIT, _ewk_view_commit);
+    ecore_imf_context_del(imfContext);
+}
+
+/**
+ * @internal
+ * The view was requested to update text input state
+ */
+void ewk_view_text_input_state_update(Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    if (!priv->imfContext)
+        return;
+
+    const EditorState& editor = priv->pageProxy->editorState();
+
+    if (editor.isContentEditable) {
+        if (priv->isImfFocused)
+            return;
+
+        ecore_imf_context_reset(priv->imfContext);
+        ecore_imf_context_focus_in(priv->imfContext);
+        priv->isImfFocused = true;
+    } else {
+        if (!priv->isImfFocused)
+            return;
+
+        if (editor.hasComposition)
+            priv->pageProxy->cancelComposition();
+
+        priv->isImfFocused = false;
+        ecore_imf_context_reset(priv->imfContext);
+        ecore_imf_context_focus_out(priv->imfContext);
+    }
 }
 
 /**

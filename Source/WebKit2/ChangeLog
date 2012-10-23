@@ -1,3 +1,66 @@
+2012-10-23  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Add support for IMF composition
+        https://bugs.webkit.org/show_bug.cgi?id=89552
+
+        Reviewed by Gyuyoung Kim.
+
+        Implemented basic IMF support.
+
+        * PlatformEfl.cmake:
+        * Shared/NativeWebKeyboardEvent.h:
+        (NativeWebKeyboardEvent):
+        (WebKit::NativeWebKeyboardEvent::isFiltered):
+        Added to determine whether current keyboard event is compositing.
+        * Shared/efl/NativeWebKeyboardEventEfl.cpp:
+        (WebKit::NativeWebKeyboardEvent::NativeWebKeyboardEvent):
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::updateTextInputState):
+        Added to change input state.
+        * UIProcess/API/efl/PageClientImpl.h:
+        (PageClientImpl):
+        * UIProcess/API/efl/ewk_main.cpp:
+        (ewk_init): Called ecore_imf_init.
+        (ewk_shutdown): Called ecore_imf_shutdown.
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_Ewk_View_Private_Data::_Ewk_View_Private_Data):
+        (_Ewk_View_Private_Data::~_Ewk_View_Private_Data):
+        (_ewk_view_smart_key_down): Modified to send keyboard event to IMF.
+        (_ewk_view_smart_mouse_up): Modified to reset input method context.
+        (_ewk_view_preedit_changed): Added to send composition string.
+        (_ewk_view_commit): Added to send a message that composition is finished.
+        (_ewk_view_imf_context_create): Added to create Ecore_IMF_Context.
+        (_ewk_view_imf_context_destroy): Added to destroy Ecore_IMF_Context.
+        (ewk_view_text_input_state_update): Added to update input state.
+        * UIProcess/API/efl/ewk_view_private.h:
+        * UIProcess/PageClient.h: Moved updateTextInputState() to share with EFL port.
+        (PageClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::editorStateChanged):
+        Added PLATFORM(EFL) to call updateTextInputState()
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+        Added HandleInputMethodKeydown message to determine whether keydown is handled.
+        * UIProcess/efl/WebPageProxyEfl.cpp:
+        (WebKit::WebPageProxy::handleInputMethodKeydown):
+        Added to check whether input method handled keydown.
+        (WebKit::WebPageProxy::confirmComposition): Added to support composition.
+        (WebKit::WebPageProxy::setComposition): Ditto.
+        (WebKit::WebPageProxy::cancelComposition): Ditto.
+        * WebProcess/WebCoreSupport/efl/WebEditorClientEfl.cpp:
+        (WebKit::WebEditorClient::handleInputMethodKeydown):
+        Added to check whether input method handled keydown.
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        * WebProcess/WebPage/WebPage.messages.in: Added messages to support composition.
+        * WebProcess/WebPage/efl/WebPageEfl.cpp:
+        (WebKit::targetFrameForEditing): Referenced from QT port to get focused frame.
+        (WebKit::WebPage::confirmComposition): Added to support composition.
+        (WebKit::WebPage::setComposition): Ditto.
+        (WebKit::WebPage::cancelComposition): Ditto.
+
 2012-10-23  Jussi Kukkonen  <jussi.kukkonen@intel.com>
 
         [EFL] Make plugin process debugging easier (PLUGIN_PROCESS_COMMAND_PREFIX)

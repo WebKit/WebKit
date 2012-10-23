@@ -56,7 +56,7 @@ public:
     NativeWebKeyboardEvent(const NativeWebKeyboardEvent&);
     NativeWebKeyboardEvent(GdkEvent*);
 #elif PLATFORM(EFL)
-    NativeWebKeyboardEvent(const Evas_Event_Key_Down*);
+    NativeWebKeyboardEvent(const Evas_Event_Key_Down*, bool);
     NativeWebKeyboardEvent(const Evas_Event_Key_Up*);
 #endif
 
@@ -70,6 +70,7 @@ public:
     GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #elif PLATFORM(EFL)
     const void* nativeEvent() const { return m_nativeEvent; }
+    bool isFiltered() const { return m_isFiltered; }
 #endif
 
 private:
@@ -83,6 +84,7 @@ private:
     GOwnPtr<GdkEvent> m_nativeEvent;
 #elif PLATFORM(EFL)
     const void* m_nativeEvent;
+    bool m_isFiltered;
 #endif
 };
 

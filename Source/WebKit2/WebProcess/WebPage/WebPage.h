@@ -465,7 +465,10 @@ public:
     void gestureWillBegin(const WebCore::IntPoint&, bool& canBeginPanning);
     void gestureDidScroll(const WebCore::IntSize&);
     void gestureDidEnd();
-
+#elif PLATFORM(EFL)
+    void confirmComposition(const String& compositionString);
+    void setComposition(const WTF::String& compositionString, const WTF::Vector<WebCore::CompositionUnderline>& underlines, uint64_t cursorPosition);
+    void cancelComposition();
 #elif PLATFORM(GTK)
     void updateAccessibilityTree();
 #if USE(TEXTURE_MAPPER_GL)

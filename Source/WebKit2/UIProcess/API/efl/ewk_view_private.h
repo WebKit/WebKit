@@ -83,6 +83,7 @@ void ewk_view_resource_load_initiated(Evas_Object* ewkView, Ewk_Resource* resour
 void ewk_view_resource_load_response(Evas_Object* ewkView, Ewk_Resource* resource, Ewk_Url_Response* response);
 void ewk_view_resource_request_sent(Evas_Object* ewkView, Ewk_Resource* resource, Ewk_Url_Request* request, Ewk_Url_Response* redirectResponse);
 void ewk_view_text_found(Evas_Object* ewkView, unsigned int matchCount);
+void ewk_view_text_input_state_update(Evas_Object* ewkView);
 void ewk_view_url_update(Evas_Object* ewkView);
 void ewk_view_contents_size_changed(const Evas_Object* ewkView, const WebCore::IntSize&);
 void ewk_view_back_forward_list_changed(Evas_Object* ewkView);

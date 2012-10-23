@@ -69,6 +69,10 @@ messages -> WebPageProxy {
     DidBlockInsecurePluginVersion(WTF::String mimeType, WTF::String urlString)
     SetCanShortCircuitHorizontalWheelEvents(bool canShortCircuitHorizontalWheelEvents)
 
+#if PLATFORM(EFL)
+    HandleInputMethodKeydown() -> (bool handled)
+#endif
+
 #if USE(TILED_BACKING_STORE)
     PageDidRequestScroll(WebCore::IntPoint point)
 #endif

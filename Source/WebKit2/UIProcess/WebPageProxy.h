@@ -414,6 +414,12 @@ public:
 
     HWND nativeWindow() const;
 #endif
+#if PLATFORM(EFL)
+    void handleInputMethodKeydown(bool& handled);
+    void confirmComposition(const String&);
+    void setComposition(const String&, Vector<WebCore::CompositionUnderline>&, int);
+    void cancelComposition();
+#endif
 #if USE(CAIRO) && !PLATFORM(WIN_CAIRO)
     PlatformWidget viewWidget();
 #endif

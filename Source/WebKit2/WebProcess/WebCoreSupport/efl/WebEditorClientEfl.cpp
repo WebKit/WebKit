@@ -27,12 +27,15 @@
 #include "WebEditorClient.h"
 
 #include "Frame.h"
+#include "NativeWebKeyboardEvent.h"
 #include "PlatformKeyboardEvent.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
+#include <WebCore/FocusController.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/Page.h>
 
 using namespace WebCore;
 
@@ -44,9 +47,18 @@ void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
         event->setDefaultHandled();
 }
 
-void WebEditorClient::handleInputMethodKeydown(KeyboardEvent*)
+void WebEditorClient::handleInputMethodKeydown(KeyboardEvent* event)
 {
-    notImplemented();
+    Frame* frame = m_page->corePage()->focusController()->focusedOrMainFrame();
+    if (!frame || !frame->editor()->canEdit())
+        return;
+
+    // FIXME: sending sync message might make input lagging.
+    bool handled = false;
+    m_page->sendSync(Messages::WebPageProxy::HandleInputMethodKeydown(), Messages::WebPageProxy::HandleInputMethodKeydown::Reply(handled));
+
+    if (handled)
+        event->setDefaultHandled();
 }
 
 }

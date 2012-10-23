@@ -292,6 +292,11 @@ messages -> WebPage {
     GestureDidScroll(WebCore::IntSize size)
     GestureDidEnd()
 #endif
+#if PLATFORM(EFL)
+    ConfirmComposition(WTF::String compositionString)
+    SetComposition(WTF::String compositionString, WTF::Vector<WebCore::CompositionUnderline> underlines, uint64_t cursorPosition)
+    CancelComposition()
+#endif
 #if PLATFORM(QT)
     FindZoomableAreaForPoint(WebCore::IntPoint point, WebCore::IntSize area)
 #endif

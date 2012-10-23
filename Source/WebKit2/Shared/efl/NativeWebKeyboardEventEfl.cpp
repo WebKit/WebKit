@@ -30,15 +30,17 @@
 
 namespace WebKit {
 
-NativeWebKeyboardEvent::NativeWebKeyboardEvent(const Evas_Event_Key_Down* event)
+NativeWebKeyboardEvent::NativeWebKeyboardEvent(const Evas_Event_Key_Down* event, bool isFiltered)
     : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event))
     , m_nativeEvent(event)
+    , m_isFiltered(isFiltered)
 {
 }
 
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(const Evas_Event_Key_Up* event)
     : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event))
     , m_nativeEvent(event)
+    , m_isFiltered(false)
 {
 }
 

@@ -2899,7 +2899,7 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
 
 #if PLATFORM(MAC)
     m_pageClient->updateTextInputState(couldChangeSecureInputState);
-#elif PLATFORM(QT)
+#elif PLATFORM(QT) || PLATFORM(EFL)
     m_pageClient->updateTextInputState();
 #endif
 }

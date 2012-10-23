@@ -281,6 +281,11 @@ void PageClientImpl::countStringMatchesInCustomRepresentation(const String&, Fin
     notImplemented();
 }
 
+void PageClientImpl::updateTextInputState()
+{
+    ewk_view_text_input_state_update(m_viewWidget);
+}
+
 void PageClientImpl::handleDownloadRequest(DownloadProxy* download)
 {
     Ewk_Context* context = ewk_view_context_get(m_viewWidget);
