@@ -1,3 +1,9 @@
+2012-10-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing header file.
+
 2012-10-23  Mark Lam  <mark.lam@apple.com>
 
         Make topCallFrame reliable.

@@ -377,6 +377,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/interpreter/Interpreter.h \
 	Source/JavaScriptCore/interpreter/JSStack.cpp \
 	Source/JavaScriptCore/interpreter/JSStack.h \
+	Source/JavaScriptCore/interpreter/JSStackInlines.h \
 	Source/JavaScriptCore/interpreter/Register.h \
 	Source/JavaScriptCore/interpreter/VMInspector.cpp \
 	Source/JavaScriptCore/interpreter/VMInspector.h \
