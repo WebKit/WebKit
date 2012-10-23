@@ -20,7 +20,7 @@
 #ifndef qwebpreferences_p_p_h
 #define qwebpreferences_p_p_h
 
-#include "WKPreferences.h"
+#include "WebPreferences.h"
 
 class QQuickWebViewPrivate;
 
@@ -71,7 +71,7 @@ public:
     void setFontSize(FontSizeType type, unsigned size);
     unsigned fontSize(FontSizeType type) const;
 
-    WKPreferencesRef preferencesRef() const;
+    WebKit::WebPreferences* preferences() const;
 
     QQuickWebViewPrivate* webViewPrivate;
 

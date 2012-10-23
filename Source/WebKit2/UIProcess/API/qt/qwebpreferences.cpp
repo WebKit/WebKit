@@ -20,11 +20,8 @@
 #include "config.h"
 #include "qwebpreferences_p.h"
 
-#include "WKPageGroup.h"
-#include "WKPreferences.h"
-#include "WKPreferencesPrivate.h"
-#include "WKRetainPtr.h"
-#include "WKStringQt.h"
+#include "WebPageGroup.h"
+#include "WebPageProxy.h"
 #include "qquickwebview_p_p.h"
 #include "qwebpreferences_p_p.h"
 
@@ -40,40 +37,40 @@ bool QWebPreferencesPrivate::testAttribute(QWebPreferencesPrivate::WebAttribute 
 {
     switch (attr) {
     case AutoLoadImages:
-        return WKPreferencesGetLoadsImagesAutomatically(preferencesRef());
+        return preferences()->loadsImagesAutomatically();
 #if ENABLE(FULLSCREEN_API)
     case FullScreenEnabled:
-        return WKPreferencesGetFullScreenEnabled(preferencesRef());
+        return preferences()->fullScreenEnabled();
 #endif
     case JavascriptEnabled:
-        return WKPreferencesGetJavaScriptEnabled(preferencesRef());
+        return preferences()->javaScriptEnabled();
     case PluginsEnabled:
-        return WKPreferencesGetPluginsEnabled(preferencesRef());
+        return preferences()->pluginsEnabled();
     case OfflineWebApplicationCacheEnabled:
-        return WKPreferencesGetOfflineWebApplicationCacheEnabled(preferencesRef());
+        return preferences()->offlineWebApplicationCacheEnabled();
     case LocalStorageEnabled:
-        return WKPreferencesGetLocalStorageEnabled(preferencesRef());
+        return preferences()->localStorageEnabled();
     case XSSAuditingEnabled:
-        return WKPreferencesGetXSSAuditorEnabled(preferencesRef());
+        return preferences()->xssAuditorEnabled();
     case PrivateBrowsingEnabled:
-        return WKPreferencesGetPrivateBrowsingEnabled(preferencesRef());
+        return preferences()->privateBrowsingEnabled();
     case DnsPrefetchEnabled:
-        return WKPreferencesGetDNSPrefetchingEnabled(preferencesRef());
+        return preferences()->dnsPrefetchingEnabled();
     case FrameFlatteningEnabled:
-        return WKPreferencesGetFrameFlatteningEnabled(preferencesRef());
+        return preferences()->frameFlatteningEnabled();
     case DeveloperExtrasEnabled:
-        return WKPreferencesGetDeveloperExtrasEnabled(preferencesRef());
+        return preferences()->developerExtrasEnabled();
 #if ENABLE(WEBGL)
     case WebGLEnabled:
-        return WKPreferencesGetWebGLEnabled(preferencesRef());
+        return preferences()->webGLEnabled();
 #if ENABLE(CSS_SHADERS)
     case CSSCustomFilterEnabled:
-        return WKPreferencesGetCSSCustomFilterEnabled(preferencesRef());
+        return preferences()->cssCustomFilterEnabled();
 #endif
 #endif
 #if ENABLE(WEB_AUDIO)
     case WebAudioEnabled:
-        return WKPreferencesGetWebAudioEnabled(preferencesRef());
+        return preferences()->webAudioEnabled();
 #endif
     default:
         ASSERT_NOT_REACHED();
@@ -85,52 +82,52 @@ void QWebPreferencesPrivate::setAttribute(QWebPreferencesPrivate::WebAttribute a
 {
     switch (attr) {
     case AutoLoadImages:
-        WKPreferencesSetLoadsImagesAutomatically(preferencesRef(), enable);
+        preferences()->setLoadsImagesAutomatically(enable);
         break;
 #if ENABLE(FULLSCREEN_API)
     case FullScreenEnabled:
-        WKPreferencesSetFullScreenEnabled(preferencesRef(), enable);
+        preferences()->setFullScreenEnabled(enable);
         break;
 #endif
     case JavascriptEnabled:
-        WKPreferencesSetJavaScriptEnabled(preferencesRef(), enable);
+        preferences()->setJavaScriptEnabled(enable);
         break;
     case PluginsEnabled:
-        WKPreferencesSetPluginsEnabled(preferencesRef(), enable);
+        preferences()->setPluginsEnabled(enable);
         break;
     case OfflineWebApplicationCacheEnabled:
-        WKPreferencesSetOfflineWebApplicationCacheEnabled(preferencesRef(), enable);
+        preferences()->setOfflineWebApplicationCacheEnabled(enable);
         break;
     case LocalStorageEnabled:
-        WKPreferencesSetLocalStorageEnabled(preferencesRef(), enable);
+        preferences()->setLocalStorageEnabled(enable);
         break;
     case XSSAuditingEnabled:
-        WKPreferencesSetXSSAuditorEnabled(preferencesRef(), enable);
+        preferences()->setXSSAuditorEnabled(enable);
         break;
     case PrivateBrowsingEnabled:
-        WKPreferencesSetPrivateBrowsingEnabled(preferencesRef(), enable);
+        preferences()->setPrivateBrowsingEnabled(enable);
         break;
     case DnsPrefetchEnabled:
-        WKPreferencesSetDNSPrefetchingEnabled(preferencesRef(), enable);
+        preferences()->setDNSPrefetchingEnabled(enable);
         break;
     case FrameFlatteningEnabled:
-        WKPreferencesSetFrameFlatteningEnabled(preferencesRef(), enable);
+        preferences()->setFrameFlatteningEnabled(enable);
     case DeveloperExtrasEnabled:
-        WKPreferencesSetDeveloperExtrasEnabled(preferencesRef(), enable);
+        preferences()->setDeveloperExtrasEnabled(enable);
         break;
 #if ENABLE(WEBGL)
     case WebGLEnabled:
-        WKPreferencesSetWebGLEnabled(preferencesRef(), enable);
+        preferences()->setWebGLEnabled(enable);
         break;
 #if ENABLE(CSS_SHADERS)
     case CSSCustomFilterEnabled:
-        WKPreferencesSetCSSCustomFilterEnabled(preferencesRef(), enable);
+        preferences()->setCSSCustomFilterEnabled(enable);
         break;
 #endif
 #endif
 #if ENABLE(WEB_AUDIO)
     case WebAudioEnabled:
-        WKPreferencesSetWebAudioEnabled(preferencesRef(), enable);
+        preferences()->setWebAudioEnabled(enable);
         break;
 #endif
     default:
@@ -166,22 +163,22 @@ void QWebPreferencesPrivate::setFontFamily(QWebPreferencesPrivate::FontFamily wh
 {
     switch (which) {
     case StandardFont:
-        WKPreferencesSetStandardFontFamily(preferencesRef(), WKStringCreateWithQString(family));
+        preferences()->setStandardFontFamily(family);
         break;
     case FixedFont:
-        WKPreferencesSetFixedFontFamily(preferencesRef(), WKStringCreateWithQString(family));
+        preferences()->setFixedFontFamily(family);
         break;
     case SerifFont:
-        WKPreferencesSetSerifFontFamily(preferencesRef(), WKStringCreateWithQString(family));
+        preferences()->setSerifFontFamily(family);
         break;
     case SansSerifFont:
-        WKPreferencesSetSansSerifFontFamily(preferencesRef(), WKStringCreateWithQString(family));
+        preferences()->setSansSerifFontFamily(family);
         break;
     case CursiveFont:
-        WKPreferencesSetCursiveFontFamily(preferencesRef(), WKStringCreateWithQString(family));
+        preferences()->setCursiveFontFamily(family);
         break;
     case FantasyFont:
-        WKPreferencesSetFantasyFontFamily(preferencesRef(), WKStringCreateWithQString(family));
+        preferences()->setFantasyFontFamily(family);
         break;
     default:
         break;
@@ -191,30 +188,18 @@ void QWebPreferencesPrivate::setFontFamily(QWebPreferencesPrivate::FontFamily wh
 QString QWebPreferencesPrivate::fontFamily(QWebPreferencesPrivate::FontFamily which) const
 {
     switch (which) {
-    case StandardFont: {
-        WKRetainPtr<WKStringRef> stringRef(AdoptWK, WKPreferencesCopyStandardFontFamily(preferencesRef()));
-        return WKStringCopyQString(stringRef.get());
-    }
-    case FixedFont: {
-        WKRetainPtr<WKStringRef> stringRef(AdoptWK, WKPreferencesCopyFixedFontFamily(preferencesRef()));
-        return WKStringCopyQString(stringRef.get());
-    }
-    case SerifFont: {
-        WKRetainPtr<WKStringRef> stringRef(AdoptWK, WKPreferencesCopySerifFontFamily(preferencesRef()));
-        return WKStringCopyQString(stringRef.get());
-    }
-    case SansSerifFont: {
-        WKRetainPtr<WKStringRef> stringRef(AdoptWK, WKPreferencesCopySansSerifFontFamily(preferencesRef()));
-        return WKStringCopyQString(stringRef.get());
-    }
-    case CursiveFont: {
-        WKRetainPtr<WKStringRef> stringRef(AdoptWK, WKPreferencesCopyCursiveFontFamily(preferencesRef()));
-        return WKStringCopyQString(stringRef.get());
-    }
-    case FantasyFont: {
-        WKRetainPtr<WKStringRef> stringRef(AdoptWK, WKPreferencesCopyFantasyFontFamily(preferencesRef()));
-        return WKStringCopyQString(stringRef.get());
-    }
+    case StandardFont:
+        return preferences()->standardFontFamily();
+    case FixedFont:
+        return preferences()->fixedFontFamily();
+    case SerifFont:
+        return preferences()->serifFontFamily();
+    case SansSerifFont:
+        return preferences()->sansSerifFontFamily();
+    case CursiveFont:
+        return preferences()->cursiveFontFamily();
+    case FantasyFont:
+        return preferences()->fantasyFontFamily();
     default:
         return QString();
     }
@@ -224,14 +209,14 @@ void QWebPreferencesPrivate::setFontSize(QWebPreferencesPrivate::FontSizeType ty
 {
     switch (type) {
     case MinimumFontSize:
-         WKPreferencesSetMinimumFontSize(preferencesRef(), size);
-         break;
+        preferences()->setMinimumFontSize(size);
+        break;
     case DefaultFontSize:
-         WKPreferencesSetDefaultFontSize(preferencesRef(), size);
-         break;
+        preferences()->setDefaultFontSize(size);
+        break;
     case DefaultFixedFontSize:
-         WKPreferencesSetDefaultFixedFontSize(preferencesRef(), size);
-         break;
+        preferences()->setDefaultFixedFontSize(size);
+        break;
     default:
         ASSERT_NOT_REACHED();
     }
@@ -241,11 +226,11 @@ unsigned QWebPreferencesPrivate::fontSize(QWebPreferencesPrivate::FontSizeType t
 {
     switch (type) {
     case MinimumFontSize:
-         return WKPreferencesGetMinimumFontSize(preferencesRef());
+        return preferences()->minimumFontSize();
     case DefaultFontSize:
-         return WKPreferencesGetDefaultFontSize(preferencesRef());
+        return preferences()->defaultFontSize();
     case DefaultFixedFontSize:
-         return WKPreferencesGetDefaultFixedFontSize(preferencesRef());
+        return preferences()->defaultFixedFontSize();
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -541,10 +526,9 @@ void QWebPreferences::setWebAudioEnabled(bool enable)
 #endif
 }
 
-WKPreferencesRef QWebPreferencesPrivate::preferencesRef() const
+WebKit::WebPreferences* QWebPreferencesPrivate::preferences() const
 {
-    WKPageGroupRef pageGroupRef = toAPI(webViewPrivate->webPageProxy->pageGroup());
-    return WKPageGroupGetPreferences(pageGroupRef);
+    return webViewPrivate->webPageProxy->pageGroup()->preferences();
 }
 
 QWebPreferencesPrivate* QWebPreferencesPrivate::get(QWebPreferences* preferences)
