@@ -300,6 +300,8 @@ namespace WebCore {
         void setIgnoreGammaAndColorProfile(bool flag) { m_ignoreGammaAndColorProfile = flag; }
         bool ignoresGammaAndColorProfile() const { return m_ignoreGammaAndColorProfile; }
 
+        ImageOrientation orientation() const { return m_orientation; }
+
         enum { iccColorProfileHeaderLength = 128 };
 
         static bool rgbColorProfile(const char* profileData, unsigned profileLength)
@@ -393,6 +395,7 @@ namespace WebCore {
         Vector<int> m_scaledRows;
         bool m_premultiplyAlpha;
         bool m_ignoreGammaAndColorProfile;
+        ImageOrientation m_orientation;
 
     private:
         // Some code paths compute the size of the image as "width * height * 4"

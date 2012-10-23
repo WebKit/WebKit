@@ -1,3 +1,32 @@
+2012-10-23  Nico Weber  <thakis@chromium.org>
+
+        In the open-source jpeg decoder, read image orientation from the exif data
+        https://bugs.webkit.org/show_bug.cgi?id=100144
+
+        Reviewed by Eric Seidel.
+
+        This will be used to implement the shouldRespectImageOrientation
+        setting (see bug 19688). Currently this isn't hooked up anywhere, so
+        it has no observable effect for now.
+
+        Once it's hooked up, it will be tested by
+        fast/images/exif-orientation.html
+
+        * platform/graphics/BitmapImage.h:
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::orientation):
+        (ImageDecoder):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::readUint16):
+        (WebCore):
+        (WebCore::readUint32):
+        (WebCore::checkExifHeader):
+        (WebCore::readImageOrientation):
+        (WebCore::JPEGImageReader::JPEGImageReader):
+        (WebCore::JPEGImageReader::decode):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        (WebCore::JPEGImageDecoder::setOrientation):
+
 2012-10-23  Chris Rogers  <crogers@google.com>
 
         Fix thread safety issue in AudioParamTimeline

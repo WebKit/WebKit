@@ -54,6 +54,7 @@ namespace WebCore {
         void jpegComplete();
 
         void setColorProfile(const ColorProfile& colorProfile) { m_colorProfile = colorProfile; }
+        void setOrientation(ImageOrientation orientation) { m_orientation = orientation; }
 
     private:
         // Decodes the image.  If |onlySize| is true, stops decoding after

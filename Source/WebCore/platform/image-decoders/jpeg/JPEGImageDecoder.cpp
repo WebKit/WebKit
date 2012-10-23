@@ -97,6 +97,8 @@ inline bool doFancyUpsampling() { return false; }
 inline bool doFancyUpsampling() { return true; }
 #endif
 
+const int exifMarker = JPEG_APP0 + 1;
+
 namespace WebCore {
 
 struct decoder_error_mgr {
@@ -130,6 +132,88 @@ struct decoder_source_mgr {
 
     JPEGImageReader* decoder;
 };
+
+static unsigned readUint16(JOCTET* data, bool isBigEndian)
+{
+    if (isBigEndian)
+        return (GETJOCTET(data[0]) << 8) | GETJOCTET(data[1]);
+    return (GETJOCTET(data[1]) << 8) | GETJOCTET(data[0]);
+}
+
+static unsigned readUint32(JOCTET* data, bool isBigEndian)
+{
+    if (isBigEndian)
+        return (GETJOCTET(data[0]) << 24) | (GETJOCTET(data[1]) << 16) | (GETJOCTET(data[2]) << 8) | GETJOCTET(data[3]);
+    return (GETJOCTET(data[3]) << 24) | (GETJOCTET(data[2]) << 16) | (GETJOCTET(data[1]) << 8) | GETJOCTET(data[0]);
+}
+
+static bool checkExifHeader(jpeg_saved_marker_ptr marker, bool& isBigEndian, unsigned& ifdOffset)
+{
+    // For exif data, the APP1 block is followed by 'E', 'x', 'i', 'f', '\0',
+    // then a fill byte, and then a tiff file that contains the metadata.
+    // A tiff file starts with 'I', 'I' (intel / little endian byte order) or
+    // 'M', 'M' (motorola / big endian byte order), followed by (uint16_t)42,
+    // followed by an uint32_t with the offset to the tag block, relative to the
+    // tiff file start.
+    const unsigned exifHeaderSize = 14;
+    if (!(marker->marker == exifMarker
+        && marker->data_length >= exifHeaderSize
+        && marker->data[0] == 'E'
+        && marker->data[1] == 'x'
+        && marker->data[2] == 'i'
+        && marker->data[3] == 'f'
+        && marker->data[4] == '\0'
+        // data[5] is a fill byte
+        && ((marker->data[6] == 'I' && marker->data[7] == 'I')
+            || (marker->data[6] == 'M' && marker->data[7] == 'M'))))
+        return false;
+
+    isBigEndian = marker->data[6] == 'M';
+    if (readUint16(marker->data + 8, isBigEndian) != 42)
+        return false;
+
+    ifdOffset = readUint32(marker->data + 10, isBigEndian);
+    return true;
+}
+
+static ImageOrientation readImageOrientation(jpeg_decompress_struct* info)
+{
+    const unsigned orientationTag = 0x112;
+    const unsigned shortType = 3;
+    for (jpeg_saved_marker_ptr marker = info->marker_list; marker; marker = marker->next) {
+        bool isBigEndian;
+        unsigned ifdOffset;
+        if (!checkExifHeader(marker, isBigEndian, ifdOffset))
+            continue;
+        ifdOffset += 6; // Account for 'Exif\0<fill byte>' header.
+
+        // The jpeg exif container format contains a tiff block for metadata.
+        // A tiff image file directory (ifd) consists of a uint16_t describing
+        // the number of ifd entries, followed by that many entries.
+        // When touching this code, it's useful to look at the tiff spec:
+        // http://partners.adobe.com/public/developer/en/tiff/TIFF6.pdf
+        JOCTET* ifd = marker->data + ifdOffset;
+        JOCTET* end = marker->data + marker->data_length;
+        if (end - ifd < 2)
+            continue;
+        unsigned tagCount = readUint16(ifd, isBigEndian);
+        ifd += 2; // Skip over the uint16 that was just read.
+
+        // Every ifd entry is 2 bytes of tag, 2 bytes of contents datatype,
+        // 4 bytes of number-of-elements, and 4 bytes of either offset to the
+        // tag data, or if the data is small enough, the inlined data itself.
+        const int ifdEntrySize = 12;
+        for (unsigned i = 0; i < tagCount && end - ifd >= ifdEntrySize; ++i, ifd += ifdEntrySize) {
+            unsigned tag = readUint16(ifd, isBigEndian);
+            unsigned type = readUint16(ifd + 2, isBigEndian);
+            unsigned count = readUint32(ifd + 4, isBigEndian);
+            if (tag == orientationTag && type == shortType && count == 1)
+                return ImageOrientation::fromEXIFValue(readUint16(ifd + 8, isBigEndian));
+        }
+    }
+
+    return ImageOrientation();
+}
 
 static ColorProfile readColorProfile(jpeg_decompress_struct* info)
 {
@@ -206,6 +290,9 @@ public:
         // Retain ICC color profile markers for color management.
         setup_read_icc_profile(&m_info);
 #endif
+
+        // Keep APP1 blocks, for obtaining exif data.
+        jpeg_save_markers(&m_info, exifMarker, 0xFFFF);
     }
 
     ~JPEGImageReader()
@@ -307,6 +394,8 @@ public:
             // We can fill in the size now that the header is available.
             if (!m_decoder->setSize(m_info.image_width, m_info.image_height))
                 return false;
+
+            m_decoder->setOrientation(readImageOrientation(info()));
 
             // Allow color management of the decoded RGBA pixels if possible.
             if (!m_decoder->ignoresGammaAndColorProfile()) {
