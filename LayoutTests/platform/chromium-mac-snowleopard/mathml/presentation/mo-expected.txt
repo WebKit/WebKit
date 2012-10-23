@@ -1,0 +1,396 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x370
+  RenderBlock {html} at (0,0) size 800x370
+    RenderBody {body} at (8,16) size 784x338
+      RenderBlock {p} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 60x18
+          text run at (0,0) width 60: "operator: "
+        RenderMathMLMath {math} at (60,4) size 14x12 [padding: 0 1 0 1]
+          RenderMathMLOperator {mo} at (2,0) size 10x12
+            RenderMathMLBlock (flex) {mo} at (0,0) size 9x12
+              RenderBlock (anonymous) at (0,0) size 9x12
+                RenderText {mo} at (0,-3) size 9x16
+                  text run at (0,-3) width 9: "\x{2211}"
+        RenderText {#text} at (73,0) size 73x18
+          text run at (73,0) width 73: " , operator: "
+        RenderMathMLMath {math} at (145,5) size 13x10 [padding: 0 1 0 1]
+          RenderMathMLOperator {mo} at (2,0) size 9x10
+            RenderMathMLBlock (flex) {mo} at (0,0) size 8x10
+              RenderBlock (anonymous) at (0,0) size 8x10
+                RenderText {mo} at (0,-4) size 8x16
+                  text run at (0,-4) width 8: "B"
+        RenderText {#text} at (157,0) size 115x18
+          text run at (157,0) width 115: " , minus operator: "
+        RenderMathMLMath {math} at (271,9) size 13x6 [padding: 0 1 0 1]
+          RenderMathMLOperator {mo} at (2,0) size 8x6
+            RenderMathMLBlock (flex) {mo} at (0,0) size 7x6
+              RenderBlock (anonymous) at (0,0) size 7x6
+                RenderText {mo} at (0,-8) size 7x16
+                  text run at (0,-8) width 7: "\x{2212}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 60x18
+          text run at (0,0) width 60: "operator: "
+        RenderMathMLMath {math} at (60,1) size 17x15 [padding: 0 1 0 1]
+          RenderMathMLOperator {mo} at (2,0) size 12x15
+            RenderMathMLBlock (flex) {mo} at (0,0) size 11x15
+              RenderBlock (anonymous) at (0,0) size 11x15
+                RenderText {mo} at (0,-4) size 11x21
+                  text run at (0,-4) width 11: "\x{2211}"
+        RenderText {#text} at (76,0) size 73x18
+          text run at (76,0) width 73: " , operator: "
+        RenderMathMLMath {math} at (148,2) size 17x13 [padding: 0 1 0 1]
+          RenderMathMLOperator {mo} at (2,0) size 12x13
+            RenderMathMLBlock (flex) {mo} at (0,0) size 11x13
+              RenderBlock (anonymous) at (0,0) size 11x13
+                RenderText {mo} at (0,-5) size 11x21
+                  text run at (0,-5) width 11: "B"
+        RenderText {#text} at (164,0) size 115x18
+          text run at (164,0) width 115: " , minus operator: "
+        RenderMathMLMath {math} at (278,7) size 15x8 [padding: 0 1 0 1]
+          RenderMathMLOperator {mo} at (2,0) size 10x8
+            RenderMathMLBlock (flex) {mo} at (0,0) size 9x8
+              RenderBlock (anonymous) at (0,0) size 9x8
+                RenderText {mo} at (0,-10) size 9x21
+                  text run at (0,-10) width 9: "\x{2212}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,68) size 784x23
+        RenderText {#text} at (0,5) size 60x18
+          text run at (0,5) width 60: "operator: "
+        RenderMathMLMath {math} at (60,0) size 24x22 [padding: 0 1 0 1]
+          RenderMathMLOperator {mo} at (3,0) size 18x22
+            RenderMathMLBlock (flex) {mo} at (0,0) size 17x22
+              RenderBlock (anonymous) at (0,0) size 17x22
+                RenderText {mo} at (0,-7) size 17x33
+                  text run at (0,-7) width 17: "\x{2211}"
+        RenderText {#text} at (83,5) size 73x18
+          text run at (83,5) width 73: " , operator: "
+        RenderMathMLMath {math} at (155,1) size 24x19 [padding: 0 1 0 1]
+          RenderMathMLOperator {mo} at (3,0) size 17x19
+            RenderMathMLBlock (flex) {mo} at (0,0) size 16x19
+              RenderBlock (anonymous) at (0,0) size 16x19
+                RenderText {mo} at (0,-8) size 16x33
+                  text run at (0,-8) width 16: "B"
+        RenderText {#text} at (178,5) size 115x18
+          text run at (178,5) width 115: " , minus operator: "
+        RenderMathMLMath {math} at (292,9) size 22x11 [padding: 0 1 0 1]
+          RenderMathMLOperator {mo} at (3,0) size 15x11
+            RenderMathMLBlock (flex) {mo} at (0,0) size 14x11
+              RenderBlock (anonymous) at (0,0) size 14x11
+                RenderText {mo} at (0,-16) size 14x33
+                  text run at (0,-16) width 14: "\x{2212}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,107) size 784x23
+        RenderText {#text} at (0,5) size 60x18
+          text run at (0,5) width 60: "operator: "
+        RenderMathMLMath {math} at (60,0) size 53x22 [padding: 0 1 0 1]
+          RenderMathMLOperator {mo} at (2,9) size 10x12
+            RenderMathMLBlock (flex) {mo} at (0,0) size 9x12
+              RenderBlock (anonymous) at (0,0) size 9x12
+                RenderText {mo} at (0,-3) size 9x16
+                  text run at (0,-3) width 9: "\x{2211}"
+          RenderMathMLOperator {mo} at (15,6) size 12x15
+            RenderMathMLBlock (flex) {mo} at (0,0) size 11x15
+              RenderBlock (anonymous) at (0,0) size 11x15
+                RenderText {mo} at (0,-4) size 11x21
+                  text run at (0,-4) width 11: "\x{2211}"
+          RenderMathMLOperator {mo} at (32,0) size 18x22
+            RenderMathMLBlock (flex) {mo} at (0,0) size 17x22
+              RenderBlock (anonymous) at (0,0) size 17x22
+                RenderText {mo} at (0,-7) size 17x33
+                  text run at (0,-7) width 17: "\x{2211}"
+        RenderText {#text} at (112,5) size 73x18
+          text run at (112,5) width 73: " , operator: "
+        RenderMathMLMath {math} at (184,1) size 52x19 [padding: 0 1 0 1]
+          RenderMathMLOperator {mo} at (2,9) size 9x10
+            RenderMathMLBlock (flex) {mo} at (0,0) size 8x10
+              RenderBlock (anonymous) at (0,0) size 8x10
+                RenderText {mo} at (0,-4) size 8x16
+                  text run at (0,-4) width 8: "B"
+          RenderMathMLOperator {mo} at (14,6) size 12x13
+            RenderMathMLBlock (flex) {mo} at (0,0) size 11x13
+              RenderBlock (anonymous) at (0,0) size 11x13
+                RenderText {mo} at (0,-5) size 11x21
+                  text run at (0,-5) width 11: "B"
+          RenderMathMLOperator {mo} at (31,0) size 17x19
+            RenderMathMLBlock (flex) {mo} at (0,0) size 16x19
+              RenderBlock (anonymous) at (0,0) size 16x19
+                RenderText {mo} at (0,-8) size 16x33
+                  text run at (0,-8) width 16: "B"
+        RenderText {#text} at (235,5) size 115x18
+          text run at (235,5) width 115: " , minus operator: "
+        RenderMathMLMath {math} at (349,9) size 46x11 [padding: 0 1 0 1]
+          RenderMathMLOperator {mo} at (2,5) size 8x6
+            RenderMathMLBlock (flex) {mo} at (0,0) size 7x6
+              RenderBlock (anonymous) at (0,0) size 7x6
+                RenderText {mo} at (0,-8) size 7x16
+                  text run at (0,-8) width 7: "\x{2212}"
+          RenderMathMLOperator {mo} at (13,3) size 10x8
+            RenderMathMLBlock (flex) {mo} at (0,0) size 9x8
+              RenderBlock (anonymous) at (0,0) size 9x8
+                RenderText {mo} at (0,-10) size 9x21
+                  text run at (0,-10) width 9: "\x{2212}"
+          RenderMathMLOperator {mo} at (28,0) size 15x11
+            RenderMathMLBlock (flex) {mo} at (0,0) size 14x11
+              RenderBlock (anonymous) at (0,0) size 14x11
+                RenderText {mo} at (0,-16) size 14x33
+                  text run at (0,-16) width 14: "\x{2212}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,146) size 784x61
+        RenderText {#text} at (0,21) size 60x18
+          text run at (0,21) width 60: "operator: "
+        RenderMathMLMath {math} at (60,0) size 180x61 [padding: 0 1 0 1]
+          RenderMathMLOperator {mo} at (2,0) size 17x61
+          RenderMathMLOperator {mo} at (23,0) size 11x61
+          RenderMathMLOperator {mo} at (39,0) size 17x61
+          RenderMathMLOperator {mo} at (62,0) size 17x61
+          RenderBlock {mtext} at (81,0) size 57x51
+            RenderBlock {div} at (2,-1) size 52x53 [border: (1px solid #000000)]
+            RenderText {#text} at (0,0) size 0x0
+          RenderMathMLOperator {mo} at (140,0) size 17x61
+          RenderMathMLOperator {mo} at (161,0) size 17x61
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,223) size 784x115
+        RenderMathMLMath {math} at (0,0) size 148x115 [padding: 0 1 0 1]
+          RenderMathMLOperator {mo} at (5,0) size 49x115
+          RenderMathMLFraction {mfrac} at (59,1) size 30x97
+            RenderMathMLBlock (anonymous, flex) at (0,0) size 29x54
+              RenderBlock {mi} at (5,0) size 19x44
+                RenderText {#text} at (0,-10) size 13x55
+                  text run at (0,-10) width 13: "f"
+            RenderMathMLBlock (anonymous, flex) at (0,53) size 29x44 [padding: 1 0 0 0]
+              RenderBlock {mi} at (0,10) size 29x33
+                RenderText {#text} at (0,-21) size 24x55
+                  text run at (0,-21) width 24: "g"
+          RenderMathMLOperator {mo} at (94,0) size 49x115
+        RenderText {#text} at (0,0) size 0x0
+layer at (71,162) size 16x16 scrollHeight 19
+  RenderMathMLBlock (flex) {mo} at (0,0) size 16x16
+    RenderBlock (anonymous) at (0,0) size 16x16
+      RenderText {mo} at (0,-2) size 16x21
+        text run at (0,-2) width 16: "\x{23AA}"
+layer at (71,178) size 16x15 scrollHeight 19
+  RenderMathMLBlock (flex) {mo} at (0,16) size 16x15
+    RenderBlock (anonymous) at (0,0) size 16x15
+layer at (71,193) size 16x14 scrollHeight 19
+  RenderMathMLBlock (flex) {mo} at (0,31) size 16x14
+    RenderBlock (anonymous) at (0,0) size 16x14
+layer at (71,207) size 16x16 scrollHeight 19
+  RenderMathMLBlock (flex) {mo} at (0,45) size 16x16
+    RenderBlock (anonymous) at (0,0) size 16x16
+layer at (91,162) size 10x15 scrollHeight 17
+  RenderMathMLBlock (flex) {mo} at (0,0) size 10x15
+    RenderBlock (anonymous) at (0,0) size 8x15
+      RenderText {mo} at (0,-4) size 8x21
+        text run at (0,-4) width 8: "\x{2320}"
+layer at (91,177) size 10x15 scrollHeight 17
+  RenderMathMLBlock (flex) {mo} at (0,15) size 10x15
+    RenderBlock (anonymous) at (0,0) size 10x15
+layer at (91,192) size 10x15 scrollHeight 17
+  RenderMathMLBlock (flex) {mo} at (0,30) size 10x15
+    RenderBlock (anonymous) at (0,0) size 10x15
+layer at (91,207) size 10x1 scrollHeight 17
+  RenderMathMLBlock (flex) {mo} at (0,45) size 10x1
+    RenderBlock (anonymous) at (0,0) size 10x1
+layer at (91,208) size 10x15 scrollHeight 17
+  RenderMathMLBlock (flex) {mo} at (0,46) size 10x15
+    RenderBlock (anonymous) at (0,0) size 8x15
+layer at (108,162) size 16x11 scrollHeight 14
+  RenderMathMLBlock (flex) {mo} at (0,0) size 16x11
+    RenderBlock (anonymous) at (0,0) size 16x11
+      RenderText {mo} at (0,-7) size 16x21
+        text run at (0,-7) width 16: "\x{23A7}"
+layer at (108,173) size 16x12 scrollHeight 19
+  RenderMathMLBlock (flex) {mo} at (0,11) size 16x12
+    RenderBlock (anonymous) at (0,0) size 16x12
+layer at (108,185) size 16x15 scrollHeight 19
+  RenderMathMLBlock (flex) {mo} at (0,23) size 16x15
+    RenderBlock (anonymous) at (0,0) size 16x15
+layer at (108,200) size 16x12 scrollHeight 19
+  RenderMathMLBlock (flex) {mo} at (0,38) size 16x12
+    RenderBlock (anonymous) at (0,0) size 16x12
+layer at (108,212) size 16x11 scrollHeight 19
+  RenderMathMLBlock (flex) {mo} at (0,50) size 16x11
+    RenderBlock (anonymous) at (0,0) size 16x11
+layer at (130,162) size 16x15 scrollHeight 18
+  RenderMathMLBlock (flex) {mo} at (0,0) size 16x15
+    RenderBlock (anonymous) at (0,0) size 16x15
+      RenderText {mo} at (0,-3) size 16x21
+        text run at (0,-3) width 16: "\x{23A1}"
+layer at (130,177) size 16x15 scrollHeight 19
+  RenderMathMLBlock (flex) {mo} at (0,15) size 16x15
+    RenderBlock (anonymous) at (0,0) size 16x15
+layer at (130,192) size 16x15 scrollHeight 19
+  RenderMathMLBlock (flex) {mo} at (0,30) size 16x15
+    RenderBlock (anonymous) at (0,0) size 16x15
+layer at (130,207) size 16x1 scrollHeight 19
+  RenderMathMLBlock (flex) {mo} at (0,45) size 16x1
+    RenderBlock (anonymous) at (0,0) size 16x1
+layer at (130,208) size 16x15 scrollHeight 19
+  RenderMathMLBlock (flex) {mo} at (0,46) size 16x15
+    RenderBlock (anonymous) at (0,0) size 16x15
+layer at (209,162) size 16x15 scrollHeight 18
+  RenderMathMLBlock (flex) {mo} at (0,0) size 16x15
+    RenderBlock (anonymous) at (0,0) size 16x15
+      RenderText {mo} at (0,-3) size 16x21
+        text run at (0,-3) width 16: "\x{23A4}"
+layer at (209,177) size 16x15 scrollHeight 19
+  RenderMathMLBlock (flex) {mo} at (0,15) size 16x15
+    RenderBlock (anonymous) at (0,0) size 16x15
+layer at (209,192) size 16x15 scrollHeight 19
+  RenderMathMLBlock (flex) {mo} at (0,30) size 16x15
+    RenderBlock (anonymous) at (0,0) size 16x15
+layer at (209,207) size 16x1 scrollHeight 19
+  RenderMathMLBlock (flex) {mo} at (0,45) size 16x1
+    RenderBlock (anonymous) at (0,0) size 16x1
+layer at (209,208) size 16x15 scrollHeight 19
+  RenderMathMLBlock (flex) {mo} at (0,46) size 16x15
+    RenderBlock (anonymous) at (0,0) size 16x15
+layer at (229,162) size 16x11 scrollHeight 14
+  RenderMathMLBlock (flex) {mo} at (0,0) size 16x11
+    RenderBlock (anonymous) at (0,0) size 16x11
+      RenderText {mo} at (0,-7) size 16x21
+        text run at (0,-7) width 16: "\x{23AB}"
+layer at (229,173) size 16x12 scrollHeight 19
+  RenderMathMLBlock (flex) {mo} at (0,11) size 16x12
+    RenderBlock (anonymous) at (0,0) size 16x12
+layer at (229,185) size 16x15 scrollHeight 19
+  RenderMathMLBlock (flex) {mo} at (0,23) size 16x15
+    RenderBlock (anonymous) at (0,0) size 16x15
+layer at (229,200) size 16x12 scrollHeight 19
+  RenderMathMLBlock (flex) {mo} at (0,38) size 16x12
+    RenderBlock (anonymous) at (0,0) size 16x12
+layer at (229,212) size 16x11 scrollHeight 19
+  RenderMathMLBlock (flex) {mo} at (0,50) size 16x11
+    RenderBlock (anonymous) at (0,0) size 16x11
+layer at (14,239) size 48x48 scrollHeight 56
+  RenderMathMLBlock (flex) {mo} at (0,0) size 48x48
+    RenderBlock (anonymous) at (0,0) size 48x48
+      RenderText {mo} at (0,-8) size 48x64
+        text run at (0,-8) width 48: "\x{23AA}"
+layer at (14,287) size 48x19 scrollHeight 56
+  RenderMathMLBlock (flex) {mo} at (0,48) size 48x19
+    RenderBlock (anonymous) at (0,0) size 48x19
+layer at (14,306) size 48x48 scrollHeight 56
+  RenderMathMLBlock (flex) {mo} at (0,67) size 48x48
+    RenderBlock (anonymous) at (0,0) size 48x48
+layer at (102,239) size 48x48 scrollHeight 56
+  RenderMathMLBlock (flex) {mo} at (0,0) size 48x48
+    RenderBlock (anonymous) at (0,0) size 48x48
+      RenderText {mo} at (0,-8) size 48x64
+        text run at (0,-8) width 48: "\x{23AA}"
+layer at (102,287) size 48x19 scrollHeight 56
+  RenderMathMLBlock (flex) {mo} at (0,48) size 48x19
+    RenderBlock (anonymous) at (0,0) size 48x19
+layer at (102,306) size 48x48 scrollHeight 56
+  RenderMathMLBlock (flex) {mo} at (0,67) size 48x48
+    RenderBlock (anonymous) at (0,0) size 48x48
+layer at (71,177) size 16x17 backgroundClip at (71,178) size 16x15 clip at (71,178) size 16x15 outlineClip at (71,178) size 16x15
+  RenderBlock (relative positioned) {mo} at (0,0) size 16x17
+    RenderText {mo} at (0,-2) size 16x21
+      text run at (0,-2) width 16: "\x{23AA}"
+layer at (71,192) size 16x17 backgroundClip at (71,193) size 16x14 clip at (71,193) size 16x14 outlineClip at (71,193) size 16x14
+  RenderBlock (relative positioned) {mo} at (0,0) size 16x17
+    RenderText {mo} at (0,-2) size 16x21
+      text run at (0,-2) width 16: "\x{23AA}"
+layer at (71,206) size 16x17 backgroundClip at (71,207) size 16x16 clip at (71,207) size 16x16 outlineClip at (71,207) size 16x16
+  RenderBlock (relative positioned) {mo} at (0,0) size 16x17
+    RenderText {mo} at (0,-2) size 16x21
+      text run at (0,-2) width 16: "\x{23AA}"
+layer at (91,176) size 10x17 backgroundClip at (91,177) size 10x15 clip at (91,177) size 10x15 outlineClip at (91,177) size 10x15
+  RenderBlock (relative positioned) {mo} at (0,0) size 10x17
+    RenderText {mo} at (0,-4) size 10x21
+      text run at (0,-4) width 10: "\x{23AE}"
+layer at (91,191) size 10x17 backgroundClip at (91,192) size 10x15 clip at (91,192) size 10x15 outlineClip at (91,192) size 10x15
+  RenderBlock (relative positioned) {mo} at (0,0) size 10x17
+    RenderText {mo} at (0,-4) size 10x21
+      text run at (0,-4) width 10: "\x{23AE}"
+layer at (91,206) size 10x17 backgroundClip at (91,207) size 10x1 clip at (91,207) size 10x1 outlineClip at (91,207) size 10x1
+  RenderBlock (relative positioned) {mo} at (0,0) size 10x17
+    RenderText {mo} at (0,-4) size 10x21
+      text run at (0,-4) width 10: "\x{23AE}"
+layer at (91,207) size 8x17 backgroundClip at (91,208) size 10x15 clip at (91,208) size 10x15 outlineClip at (91,208) size 10x15
+  RenderBlock (relative positioned) {mo} at (0,0) size 8x17
+    RenderText {mo} at (0,-4) size 8x21
+      text run at (0,-4) width 8: "\x{2321}"
+layer at (108,172) size 16x17 backgroundClip at (108,173) size 16x12 clip at (108,173) size 16x12 outlineClip at (108,173) size 16x12
+  RenderBlock (relative positioned) {mo} at (0,0) size 16x17
+    RenderText {mo} at (0,-2) size 16x21
+      text run at (0,-2) width 16: "\x{23AA}"
+layer at (108,184) size 16x17 backgroundClip at (108,185) size 16x15 clip at (108,185) size 16x15 outlineClip at (108,185) size 16x15
+  RenderBlock (relative positioned) {mo} at (0,0) size 16x17
+    RenderText {mo} at (0,-2) size 16x21
+      text run at (0,-2) width 16: "\x{23A8}"
+layer at (108,199) size 16x17 backgroundClip at (108,200) size 16x12 clip at (108,200) size 16x12 outlineClip at (108,200) size 16x12
+  RenderBlock (relative positioned) {mo} at (0,0) size 16x17
+    RenderText {mo} at (0,-2) size 16x21
+      text run at (0,-2) width 16: "\x{23AA}"
+layer at (108,211) size 16x16 backgroundClip at (108,212) size 16x11 clip at (108,212) size 16x11 outlineClip at (108,212) size 16x11
+  RenderBlock (relative positioned) {mo} at (0,0) size 16x16
+    RenderText {mo} at (0,-2) size 16x21
+      text run at (0,-2) width 16: "\x{23A9}"
+layer at (130,176) size 16x17 backgroundClip at (130,177) size 16x15 clip at (130,177) size 16x15 outlineClip at (130,177) size 16x15
+  RenderBlock (relative positioned) {mo} at (0,0) size 16x17
+    RenderText {mo} at (0,-2) size 16x21
+      text run at (0,-2) width 16: "\x{23A2}"
+layer at (130,191) size 16x17 backgroundClip at (130,192) size 16x15 clip at (130,192) size 16x15 outlineClip at (130,192) size 16x15
+  RenderBlock (relative positioned) {mo} at (0,0) size 16x17
+    RenderText {mo} at (0,-2) size 16x21
+      text run at (0,-2) width 16: "\x{23A2}"
+layer at (130,206) size 16x17 backgroundClip at (130,207) size 16x1 clip at (130,207) size 16x1 outlineClip at (130,207) size 16x1
+  RenderBlock (relative positioned) {mo} at (0,0) size 16x17
+    RenderText {mo} at (0,-2) size 16x21
+      text run at (0,-2) width 16: "\x{23A2}"
+layer at (130,207) size 16x17 backgroundClip at (130,208) size 16x15 clip at (130,208) size 16x15 outlineClip at (130,208) size 16x15
+  RenderBlock (relative positioned) {mo} at (0,0) size 16x17
+    RenderText {mo} at (0,-2) size 16x21
+      text run at (0,-2) width 16: "\x{23A3}"
+layer at (209,176) size 16x17 backgroundClip at (209,177) size 16x15 clip at (209,177) size 16x15 outlineClip at (209,177) size 16x15
+  RenderBlock (relative positioned) {mo} at (0,0) size 16x17
+    RenderText {mo} at (0,-2) size 16x21
+      text run at (0,-2) width 16: "\x{23A5}"
+layer at (209,191) size 16x17 backgroundClip at (209,192) size 16x15 clip at (209,192) size 16x15 outlineClip at (209,192) size 16x15
+  RenderBlock (relative positioned) {mo} at (0,0) size 16x17
+    RenderText {mo} at (0,-2) size 16x21
+      text run at (0,-2) width 16: "\x{23A5}"
+layer at (209,206) size 16x17 backgroundClip at (209,207) size 16x1 clip at (209,207) size 16x1 outlineClip at (209,207) size 16x1
+  RenderBlock (relative positioned) {mo} at (0,0) size 16x17
+    RenderText {mo} at (0,-2) size 16x21
+      text run at (0,-2) width 16: "\x{23A5}"
+layer at (209,207) size 16x17 backgroundClip at (209,208) size 16x15 clip at (209,208) size 16x15 outlineClip at (209,208) size 16x15
+  RenderBlock (relative positioned) {mo} at (0,0) size 16x17
+    RenderText {mo} at (0,-2) size 16x21
+      text run at (0,-2) width 16: "\x{23A6}"
+layer at (229,172) size 16x17 backgroundClip at (229,173) size 16x12 clip at (229,173) size 16x12 outlineClip at (229,173) size 16x12
+  RenderBlock (relative positioned) {mo} at (0,0) size 16x17
+    RenderText {mo} at (0,-2) size 16x21
+      text run at (0,-2) width 16: "\x{23AA}"
+layer at (229,184) size 16x17 backgroundClip at (229,185) size 16x15 clip at (229,185) size 16x15 outlineClip at (229,185) size 16x15
+  RenderBlock (relative positioned) {mo} at (0,0) size 16x17
+    RenderText {mo} at (0,-2) size 16x21
+      text run at (0,-2) width 16: "\x{23AC}"
+layer at (229,199) size 16x17 backgroundClip at (229,200) size 16x12 clip at (229,200) size 16x12 outlineClip at (229,200) size 16x12
+  RenderBlock (relative positioned) {mo} at (0,0) size 16x17
+    RenderText {mo} at (0,-2) size 16x21
+      text run at (0,-2) width 16: "\x{23AA}"
+layer at (229,211) size 16x16 backgroundClip at (229,212) size 16x11 clip at (229,212) size 16x11 outlineClip at (229,212) size 16x11
+  RenderBlock (relative positioned) {mo} at (0,0) size 16x16
+    RenderText {mo} at (0,-2) size 16x21
+      text run at (0,-2) width 16: "\x{23AD}"
+layer at (14,286) size 48x49 backgroundClip at (14,287) size 48x19 clip at (14,287) size 48x19 outlineClip at (14,287) size 48x19
+  RenderBlock (relative positioned) {mo} at (0,0) size 48x49
+    RenderText {mo} at (0,-8) size 48x64
+      text run at (0,-8) width 48: "\x{23AA}"
+layer at (14,305) size 48x49 backgroundClip at (14,306) size 48x48 clip at (14,306) size 48x48 outlineClip at (14,306) size 48x48
+  RenderBlock (relative positioned) {mo} at (0,0) size 48x49
+    RenderText {mo} at (0,-8) size 48x64
+      text run at (0,-8) width 48: "\x{23AA}"
+layer at (102,286) size 48x49 backgroundClip at (102,287) size 48x19 clip at (102,287) size 48x19 outlineClip at (102,287) size 48x19
+  RenderBlock (relative positioned) {mo} at (0,0) size 48x49
+    RenderText {mo} at (0,-8) size 48x64
+      text run at (0,-8) width 48: "\x{23AA}"
+layer at (102,305) size 48x49 backgroundClip at (102,306) size 48x48 clip at (102,306) size 48x48 outlineClip at (102,306) size 48x48
+  RenderBlock (relative positioned) {mo} at (0,0) size 48x49
+    RenderText {mo} at (0,-8) size 48x64
+      text run at (0,-8) width 48: "\x{23AA}"

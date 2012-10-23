@@ -1,3 +1,52 @@
+2012-10-23  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed gardening. Updating expectations after r132264.
+
+        * platform/chromium-mac-snowleopard/mathml: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/attributes-expected.png: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/attributes-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/fenced-expected.png: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/fenced-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/fenced-mi-expected.png: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/fenced-mi-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/fractions-expected.png: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/fractions-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/fractions-vertical-alignment-expected.png: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/fractions-vertical-alignment-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/mo-expected.png: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/mo-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/mo-stretch-expected.png: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/mo-stretch-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/mroot-pref-width-expected.png: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/mroot-pref-width-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/over-expected.png: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/over-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/roots-expected.png: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/roots-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/row-alignment-expected.png: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/row-alignment-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/row-expected.png: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/row-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/style-expected.png: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/style-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/sub-expected.png: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/sub-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/subsup-expected.png: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/subsup-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/sup-expected.png: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/sup-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/tables-expected.png: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/tables-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/tokenElements-expected.png: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/tokenElements-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/under-expected.png: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/under-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/underover-expected.png: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/underover-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/mathml/xHeight-expected.png: Added.
+        * platform/chromium-mac-snowleopard/mathml/xHeight-expected.txt: Added.
+
 2012-10-23  Simon Fraser  <simon.fraser@apple.com>
 
         Allow tests to run with a tile cache, and optionally dump the tile cache via layerTreeAsText()
