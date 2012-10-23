@@ -224,12 +224,12 @@ static void getShaderSpec(TextureMapperShaderManager::ShaderKey key, String& ver
         STRINGIFY(
             precision mediump float;
             uniform sampler2DRect s_sampler;
-            uniform lowp vec2 s_samplerSize;
+            uniform lowp vec2 u_samplerSize;
             uniform lowp float u_opacity;
             varying highp vec2 v_sourceTexCoord;
             void main(void)
             {
-                lowp vec4 color = texture2DRect(s_sampler, s_samplerSize * v_sourceTexCoord);
+                lowp vec4 color = texture2DRect(s_sampler, u_samplerSize * v_sourceTexCoord);
                 gl_FragColor = vec4(color.rgb * u_opacity, color.a * u_opacity);
             }
         );

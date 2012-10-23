@@ -381,7 +381,7 @@ void TextureMapperGL::drawTextureRectangleARB(uint32_t texture, Flags flags, con
     m_context3D->uniform1i(program->samplerLocation(), 0);
 
     m_context3D->uniform1f(program->flipLocation(), !!(flags & ShouldFlipTexture));
-    m_context3D->uniform2f(program->textureSizeLocation(), textureSize.width(), textureSize.height());
+    m_context3D->uniform2f(program->samplerSizeLocation(), textureSize.width(), textureSize.height());
     m_context3D->uniform1f(program->opacityLocation(), opacity);
 
     if (maskTexture && maskTexture->isValid()) {
