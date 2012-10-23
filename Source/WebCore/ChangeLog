@@ -1,5 +1,24 @@
 2012-10-23  Huang Dongsung  <luxtella@company100.net>
 
+        [CSS Shaders] Implement overlay, color-dodge, color-burn, hard-light, soft-light blend modes.
+        https://bugs.webkit.org/show_bug.cgi?id=98504
+
+        Reviewed by Dean Jackson.
+
+        Add expressions for the aforementioned blend modes. The expressions are lifted
+        directly from the CSS Compositing and Blending spec [1]. WebKit adds these
+        blending expressions to the author's shader.
+
+        [1]: https://dvcs.w3.org/hg/FXTF/rawfile/tip/compositing/index.html#blendingnormal
+
+        Test: css3/filters/custom/custom-filter-blend-modes.html
+
+        * platform/graphics/filters/CustomFilterValidatedProgram.cpp:
+        (WebCore::CustomFilterValidatedProgram::rewriteMixFragmentShader):
+        (WebCore::CustomFilterValidatedProgram::blendFunctionString):
+
+2012-10-23  Huang Dongsung  <luxtella@company100.net>
+
         [CSS Shaders] Implement all composite operators except destination and lighter.
         https://bugs.webkit.org/show_bug.cgi?id=97859
 
