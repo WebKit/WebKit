@@ -1,3 +1,20 @@
+2012-10-23  Mike West  <mkwst@chromium.org>
+
+        Viewport errors should be slightly friendlier with regard to ';'.
+        https://bugs.webkit.org/show_bug.cgi?id=100003
+
+        Reviewed by Adam Barth.
+
+        This patch scans viewport values that cause errors for ';'. If found,
+        a quick message is appended to the error, noting that semicolons are
+        not valid separators in viewport contents, and that commas would be
+        the proper substitute.
+
+        No functional changes, just a better error message.
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::reportViewportWarning):
+
 2012-10-23  Timothy Hatcher  <timothy@apple.com>
 
         Docking/undocking the Web Inspector does not work correctly in Safari.

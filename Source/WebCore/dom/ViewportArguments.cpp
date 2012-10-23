@@ -363,6 +363,9 @@ void reportViewportWarning(Document* document, ViewportErrorCode errorCode, cons
     if (!replacement2.isNull())
         message.replace("%replacement2", replacement2);
 
+    if ((errorCode == UnrecognizedViewportArgumentValueError || errorCode == TruncatedViewportArgumentValueError) && replacement1.find(';') != WTF::notFound)
+        message.append(" Note that ';' is not a separator in viewport values. The list should be comma-separated.");
+
     document->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, viewportErrorMessageLevel(errorCode), message, document->url().string(), parserLineNumber(document));
 }
 

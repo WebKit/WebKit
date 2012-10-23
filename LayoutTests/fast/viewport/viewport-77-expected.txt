@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: line 3: Viewport argument key ";" not recognized and ignored.
-CONSOLE MESSAGE: line 3: Viewport argument value "yes;" for key "initial-scale" not recognized. Content ignored.
+CONSOLE MESSAGE: line 3: Viewport argument value "yes;" for key "initial-scale" not recognized. Content ignored. Note that ';' is not a separator in viewport values. The list should be comma-separated.
 ALERT: viewport size 1280x1408 scale 0.25 with limits [0.25, 5] and userScalable true
 

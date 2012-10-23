@@ -1,3 +1,20 @@
+2012-10-23  Mike West  <mkwst@chromium.org>
+
+        Viewport errors should be slightly friendlier with regard to ';'.
+        https://bugs.webkit.org/show_bug.cgi?id=100003
+
+        Reviewed by Adam Barth.
+
+        * fast/viewport/viewport-128-expected.txt:
+        * fast/viewport/viewport-133-expected.txt:
+        * fast/viewport/viewport-134-expected.txt:
+        * fast/viewport/viewport-54-expected.txt:
+        * fast/viewport/viewport-65-expected.txt:
+        * fast/viewport/viewport-67-expected.txt:
+        * fast/viewport/viewport-77-expected.txt:
+        * fast/viewport/viewport-warnings-5-expected.txt:
+            Updating tests with new expectations.
+
 2012-10-23  Dan Carney  <dcarney@google.com>
 
         When blocking localStorage, Firefox throws a security exception on access, and maybe so should we
