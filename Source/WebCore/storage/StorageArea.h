@@ -46,15 +46,15 @@ namespace WebCore {
 
         // The HTML5 DOM Storage API
         // FIXME: We should pass Document instead of Frame. Also, that parameter should go first.
-        virtual unsigned length(Frame* sourceFrame) const = 0;
-        virtual String key(unsigned index, Frame* sourceFrame) const = 0;
-        virtual String getItem(const String& key, Frame* sourceFrame) const = 0;
+        virtual unsigned length(ExceptionCode&, Frame* sourceFrame) const = 0;
+        virtual String key(unsigned index, ExceptionCode&, Frame* sourceFrame) const = 0;
+        virtual String getItem(const String& key, ExceptionCode&, Frame* sourceFrame) const = 0;
         virtual void setItem(const String& key, const String& value, ExceptionCode&, Frame* sourceFrame) = 0;
-        virtual void removeItem(const String& key, Frame* sourceFrame) = 0;
-        virtual void clear(Frame* sourceFrame) = 0;
-        virtual bool contains(const String& key, Frame* sourceFrame) const = 0;
+        virtual void removeItem(const String& key, ExceptionCode&, Frame* sourceFrame) = 0;
+        virtual void clear(ExceptionCode&, Frame* sourceFrame) = 0;
+        virtual bool contains(const String& key, ExceptionCode&, Frame* sourceFrame) const = 0;
 
-        virtual bool disabledByPrivateBrowsingInFrame(const Frame* sourceFrame) const = 0;
+        virtual bool canAccessStorage(Frame*) const = 0;
 
         virtual size_t memoryBytesUsedByCache() const = 0;
 

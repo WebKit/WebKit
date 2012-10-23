@@ -44,15 +44,15 @@ namespace WebCore {
         virtual ~StorageAreaImpl();
 
         // The HTML5 DOM Storage API (and contains)
-        virtual unsigned length(Frame* sourceFrame) const;
-        virtual String key(unsigned index, Frame* sourceFrame) const;
-        virtual String getItem(const String& key, Frame* sourceFrame) const;
+        virtual unsigned length(ExceptionCode&, Frame* sourceFrame) const;
+        virtual String key(unsigned index, ExceptionCode&, Frame* sourceFrame) const;
+        virtual String getItem(const String& key, ExceptionCode&, Frame* sourceFrame) const;
         virtual void setItem(const String& key, const String& value, ExceptionCode&, Frame* sourceFrame);
-        virtual void removeItem(const String& key, Frame* sourceFrame);
-        virtual void clear(Frame* sourceFrame);
-        virtual bool contains(const String& key, Frame* sourceFrame) const;
+        virtual void removeItem(const String& key, ExceptionCode&, Frame* sourceFrame);
+        virtual void clear(ExceptionCode&, Frame* sourceFrame);
+        virtual bool contains(const String& key, ExceptionCode&, Frame* sourceFrame) const;
 
-        virtual bool disabledByPrivateBrowsingInFrame(const Frame* sourceFrame) const;
+        virtual bool canAccessStorage(Frame* sourceFrame) const;
 
         virtual size_t memoryBytesUsedByCache() const;
 
@@ -76,6 +76,7 @@ namespace WebCore {
 
         void blockUntilImportComplete() const;
         void closeDatabaseTimerFired(Timer<StorageAreaImpl>*);
+        bool disabledByPrivateBrowsingInFrame(const Frame* sourceFrame) const;
 
         StorageType m_storageType;
         RefPtr<SecurityOrigin> m_securityOrigin;

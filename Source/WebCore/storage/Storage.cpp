@@ -29,7 +29,6 @@
 #include "Frame.h"
 #include "Page.h"
 #include "Settings.h"
-#include "StorageArea.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -54,63 +53,6 @@ Storage::~Storage()
 {
     if (m_storageArea)
         m_storageArea->decrementAccessCount();
-}
-
-unsigned Storage::length() const
-{
-    if (!m_frame || !m_frame->page() || m_storageArea->disabledByPrivateBrowsingInFrame(m_frame))
-        return 0;
-
-    return m_storageArea->length(m_frame);
-}
-
-String Storage::key(unsigned index) const
-{
-    if (!m_frame || !m_frame->page() || m_storageArea->disabledByPrivateBrowsingInFrame(m_frame))
-        return String();
-
-    return m_storageArea->key(index, m_frame);
-}
-
-String Storage::getItem(const String& key) const
-{
-    if (!m_frame || !m_frame->page() || m_storageArea->disabledByPrivateBrowsingInFrame(m_frame))
-        return String();
-
-    return m_storageArea->getItem(key, m_frame);
-}
-
-void Storage::setItem(const String& key, const String& value, ExceptionCode& ec)
-{
-    ec = 0;
-    if (!m_frame)
-        return;
-
-    m_storageArea->setItem(key, value, ec, m_frame);
-}
-
-void Storage::removeItem(const String& key)
-{
-    if (!m_frame)
-        return;
-
-    m_storageArea->removeItem(key, m_frame);
-}
-
-void Storage::clear()
-{
-    if (!m_frame)
-        return;
-
-    m_storageArea->clear(m_frame);
-}
-
-bool Storage::contains(const String& key) const
-{
-    if (!m_frame || !m_frame->page() || m_storageArea->disabledByPrivateBrowsingInFrame(m_frame))
-        return false;
-
-    return m_storageArea->contains(key, m_frame);
 }
 
 }

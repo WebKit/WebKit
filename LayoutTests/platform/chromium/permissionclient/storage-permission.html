@@ -10,6 +10,14 @@ function log(a)
     document.getElementById("logger").innerHTML += a + "<br>";
 }
 
+function openIframe()
+{
+    if (document.createElement && (iframe = document.createElement('iframe'))) {
+        document.body.appendChild(iframe);
+        return iframe;
+    }
+}
+    
 function runTest()
 {
     if (!window.localStorage) {
@@ -37,23 +45,11 @@ function runTest()
     if (window.testRunner && testRunner.setStorageAllowed)
         testRunner.setStorageAllowed(false);
 
-    log("Length is " + localStorage.length);
-    log("Value for FOO is " + localStorage.getItem("FOO"));
-
     try {
-        localStorage.setItem("FOO", "BAZ");
+        log("frame localStorage is accessible " + !!openIframe().contentDocument.defaultView.localStorage);
     } catch(e) {
-        log("Caught exception trying to change item: " + e);
+        log("Caught exception trying to get frame localStorage: " + e);
     }
-    
-    log("Length is " + localStorage.length);
-    log("Value for FOO is " + localStorage.getItem("FOO"));
-    log("Key for index 0 is " + localStorage.key(0));
-    
-    localStorage.removeItem("FOO");
-    
-    log("Length is " + localStorage.length);
-    log("Value for FOO is " + localStorage.getItem("FOO"));
 }
 
 </script>

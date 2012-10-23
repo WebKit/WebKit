@@ -5,12 +5,5 @@ Length is 1
 Value for FOO is BAR
 Key for index 0 is FOO
 Disabling localStorage access.
-Length is 0
-Value for FOO is null
-Caught exception trying to change item: Error: QUOTA_EXCEEDED_ERR: DOM Exception 22
-Length is 0
-Value for FOO is null
-Key for index 0 is null
-Length is 0
-Value for FOO is null
+Caught exception trying to get frame localStorage: Error: SECURITY_ERR: DOM Exception 18
 

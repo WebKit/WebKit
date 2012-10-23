@@ -48,15 +48,15 @@ public:
     virtual ~StorageAreaProxy();
 
     // The HTML5 DOM Storage API
-    virtual unsigned length(Frame* sourceFrame) const;
-    virtual String key(unsigned index, Frame* sourceFrame) const;
-    virtual String getItem(const String& key, Frame* sourceFrame) const;
+    virtual unsigned length(ExceptionCode&, Frame* sourceFrame) const;
+    virtual String key(unsigned index, ExceptionCode&, Frame* sourceFrame) const;
+    virtual String getItem(const String& key, ExceptionCode&, Frame* sourceFrame) const;
     virtual void setItem(const String& key, const String& value, ExceptionCode&, Frame* sourceFrame);
-    virtual void removeItem(const String& key, Frame* sourceFrame);
-    virtual void clear(Frame* sourceFrame);
-    virtual bool contains(const String& key, Frame* sourceFrame) const;
+    virtual void removeItem(const String& key, ExceptionCode&, Frame* sourceFrame);
+    virtual void clear(ExceptionCode&, Frame* sourceFrame);
+    virtual bool contains(const String& key, ExceptionCode&, Frame* sourceFrame) const;
 
-    virtual bool disabledByPrivateBrowsingInFrame(const Frame*) const { return false; }
+    virtual bool canAccessStorage(Frame*) const;
 
     virtual size_t memoryBytesUsedByCache() const;
 
@@ -69,12 +69,12 @@ public:
             WebKit::WebStorageArea* sourceAreaInstance, bool originatedInProcess);
 
 private:
-    bool canAccessStorage(Frame*) const;
-
     static bool isEventSource(Storage*, WebKit::WebStorageArea* sourceAreaInstance);
 
     OwnPtr<WebKit::WebStorageArea> m_storageArea;
     StorageType m_storageType;
+    mutable bool m_canAccessStorageCachedResult;
+    mutable Frame* m_canAccessStorageCachedFrame;
 };
 
 } // namespace WebCore

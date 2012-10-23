@@ -120,11 +120,17 @@ void InspectorDOMStorageAgent::getDOMStorageEntries(ErrorString*, const String& 
     Frame* frame = storageResource->frame();
     if (!frame)
         return;
-        
+
+    // FIXME: Exceptions are not reported here.
+    ExceptionCode ec = 0;
     StorageArea* storageArea = storageResource->storageArea();
-    for (unsigned i = 0; i < storageArea->length(frame); ++i) {
-        String name(storageArea->key(i, frame));
-        String value(storageArea->getItem(name, frame));
+    for (unsigned i = 0; i < storageArea->length(ec, frame); ++i) {
+        String name(storageArea->key(i, ec, frame));
+        if (ec)
+            return;
+        String value(storageArea->getItem(name, ec, frame));
+        if (ec)
+            return;
         RefPtr<TypeBuilder::Array<String> > entry = TypeBuilder::Array<String>::create();
         entry->addItem(name);
         entry->addItem(value);
@@ -147,8 +153,9 @@ void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString*, const String& 
 {
     InspectorDOMStorageResource* storageResource = getDOMStorageResourceForId(storageId);
     if (storageResource) {
-        storageResource->storageArea()->removeItem(key, storageResource->frame());
-        *success = true;
+        ExceptionCode exception = 0;
+        storageResource->storageArea()->removeItem(key, exception, storageResource->frame());
+        *success = !exception;
     } else
         *success = false;
 }

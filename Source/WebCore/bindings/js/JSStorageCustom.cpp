@@ -34,9 +34,12 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSStorage::canGetItemsForName(ExecState*, Storage* impl, PropertyName propertyName)
+bool JSStorage::canGetItemsForName(ExecState* exec, Storage* impl, PropertyName propertyName)
 {
-    return impl->contains(propertyNameToString(propertyName));
+    ExceptionCode ec = 0;
+    bool result = impl->contains(propertyNameToString(propertyName), ec);
+    setDOMException(exec, ec);
+    return result;
 }
 
 JSValue JSStorage::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
@@ -47,7 +50,10 @@ JSValue JSStorage::nameGetter(ExecState* exec, JSValue slotBase, PropertyName pr
     if (prototype.isObject() && asObject(prototype)->hasProperty(exec, propertyName))
         return asObject(prototype)->get(exec, propertyName);
  
-    return jsStringOrNull(exec, thisObj->impl()->getItem(propertyNameToString(propertyName)));
+    ExceptionCode ec = 0;
+    JSValue result = jsStringOrNull(exec, thisObj->impl()->getItem(propertyNameToString(propertyName), ec));
+    setDOMException(exec, ec);
+    return result;
 }
 
 bool JSStorage::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
@@ -64,7 +70,9 @@ bool JSStorage::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prope
     if (prototype.isObject() && asObject(prototype)->hasProperty(exec, propertyName))
         return false;
 
-    thisObject->m_impl->removeItem(propertyNameToString(propertyName));
+    ExceptionCode ec = 0;
+    thisObject->m_impl->removeItem(propertyNameToString(propertyName), ec);
+    setDOMException(exec, ec);
     return true;
 }
 
@@ -76,9 +84,17 @@ bool JSStorage::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned pr
 void JSStorage::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     JSStorage* thisObject = jsCast<JSStorage*>(object);
-    unsigned length = thisObject->m_impl->length();
-    for (unsigned i = 0; i < length; ++i)
-        propertyNames.add(Identifier(exec, thisObject->m_impl->key(i)));
+    ExceptionCode ec = 0;
+    unsigned length = thisObject->m_impl->length(ec);
+    setDOMException(exec, ec);
+    if (exec->hadException())
+        return;
+    for (unsigned i = 0; i < length; ++i) {
+        propertyNames.add(Identifier(exec, thisObject->m_impl->key(i, ec)));
+        setDOMException(exec, ec);
+        if (exec->hadException())
+            return;
+    }
         
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }

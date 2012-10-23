@@ -745,14 +745,23 @@ Storage* DOMWindow::sessionStorage(ExceptionCode& ec) const
         return 0;
     }
 
-    if (m_sessionStorage)
+    if (m_sessionStorage) {
+        if (!m_sessionStorage->area()->canAccessStorage(m_frame)) {
+            ec = SECURITY_ERR;
+            return 0;
+        }
         return m_sessionStorage.get();
+    }
 
     Page* page = document->page();
     if (!page)
         return 0;
 
     RefPtr<StorageArea> storageArea = page->sessionStorage()->storageArea(document->securityOrigin());
+    if (!storageArea->canAccessStorage(m_frame)) {
+        ec = SECURITY_ERR;
+        return 0;
+    }
     InspectorInstrumentation::didUseDOMStorage(page, storageArea.get(), false, m_frame);
 
     m_sessionStorage = Storage::create(m_frame, storageArea.release());
@@ -773,8 +782,13 @@ Storage* DOMWindow::localStorage(ExceptionCode& ec) const
         return 0;
     }
 
-    if (m_localStorage)
+    if (m_localStorage) {
+        if (!m_localStorage->area()->canAccessStorage(m_frame)) {
+            ec = SECURITY_ERR;
+            return 0;
+        }
         return m_localStorage.get();
+    }
 
     Page* page = document->page();
     if (!page)
@@ -784,6 +798,10 @@ Storage* DOMWindow::localStorage(ExceptionCode& ec) const
         return 0;
 
     RefPtr<StorageArea> storageArea = page->group().localStorage()->storageArea(document->securityOrigin());
+    if (!storageArea->canAccessStorage(m_frame)) {
+        ec = SECURITY_ERR;
+        return 0;
+    }
     InspectorInstrumentation::didUseDOMStorage(page, storageArea.get(), true, m_frame);
 
     m_localStorage = Storage::create(m_frame, storageArea.release());

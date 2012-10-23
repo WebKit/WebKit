@@ -53,6 +53,8 @@ namespace WebCore {
 StorageAreaProxy::StorageAreaProxy(WebKit::WebStorageArea* storageArea, StorageType storageType)
     : m_storageArea(adoptPtr(storageArea))
     , m_storageType(storageType)
+    , m_canAccessStorageCachedResult(false)
+    , m_canAccessStorageCachedFrame(0)
 {
 }
 
@@ -60,64 +62,88 @@ StorageAreaProxy::~StorageAreaProxy()
 {
 }
 
-unsigned StorageAreaProxy::length(Frame* frame) const
+unsigned StorageAreaProxy::length(ExceptionCode& ec, Frame* frame) const
 {
-    if (canAccessStorage(frame))
-        return m_storageArea->length();
-    return 0;
+    if (!canAccessStorage(frame)) {
+        ec = SECURITY_ERR;
+        return 0;
+    }
+    ec = 0;
+    return m_storageArea->length();
 }
 
-String StorageAreaProxy::key(unsigned index, Frame* frame) const
+String StorageAreaProxy::key(unsigned index, ExceptionCode& ec, Frame* frame) const
 {
-    if (canAccessStorage(frame))
-        return m_storageArea->key(index);
-    return String();
+    if (!canAccessStorage(frame)) {
+        ec = SECURITY_ERR;
+        return String();
+    }
+    ec = 0;
+    return m_storageArea->key(index);
 }
 
-String StorageAreaProxy::getItem(const String& key, Frame* frame) const
+String StorageAreaProxy::getItem(const String& key, ExceptionCode& ec, Frame* frame) const
 {
-    if (canAccessStorage(frame))
-        return m_storageArea->getItem(key);
-    return String();
+    if (!canAccessStorage(frame)) {
+        ec = SECURITY_ERR;
+        return String();
+    }
+    ec = 0;
+    return m_storageArea->getItem(key);
 }
 
 void StorageAreaProxy::setItem(const String& key, const String& value, ExceptionCode& ec, Frame* frame)
 {
-    if (!canAccessStorage(frame))
-        ec = QUOTA_EXCEEDED_ERR;
-    else {
-        WebKit::WebStorageArea::Result result = WebKit::WebStorageArea::ResultOK;
-        m_storageArea->setItem(key, value, frame->document()->url(), result);
-        ec = (result == WebKit::WebStorageArea::ResultOK) ? 0 : QUOTA_EXCEEDED_ERR;
+    if (!canAccessStorage(frame)) {
+        ec = SECURITY_ERR;
+        return;
     }
+    WebKit::WebStorageArea::Result result = WebKit::WebStorageArea::ResultOK;
+    m_storageArea->setItem(key, value, frame->document()->url(), result);
+    ec = (result == WebKit::WebStorageArea::ResultOK) ? 0 : QUOTA_EXCEEDED_ERR;
 }
 
-void StorageAreaProxy::removeItem(const String& key, Frame* frame)
+void StorageAreaProxy::removeItem(const String& key, ExceptionCode& ec, Frame* frame)
 {
-    if (!canAccessStorage(frame))
+    if (!canAccessStorage(frame)) {
+        ec = SECURITY_ERR;
         return;
+    }
+    ec = 0;
     m_storageArea->removeItem(key, frame->document()->url());
 }
 
-void StorageAreaProxy::clear(Frame* frame)
+void StorageAreaProxy::clear(ExceptionCode& ec, Frame* frame)
 {
-    if (!canAccessStorage(frame))
+    if (!canAccessStorage(frame)) {
+        ec = SECURITY_ERR;
         return;
+    }
+    ec = 0;
     m_storageArea->clear(frame->document()->url());
 }
 
-bool StorageAreaProxy::contains(const String& key, Frame* frame) const
+bool StorageAreaProxy::contains(const String& key, ExceptionCode& ec, Frame* frame) const
 {
-    return !getItem(key, frame).isNull();
+    if (!canAccessStorage(frame)) {
+        ec = SECURITY_ERR;
+        return false;
+    }
+    return !getItem(key, ec, frame).isNull();
 }
 
 bool StorageAreaProxy::canAccessStorage(Frame* frame) const
 {
-    if (!frame->page())
+    if (!frame || !frame->page())
         return false;
+    if (m_canAccessStorageCachedFrame == frame)
+        return m_canAccessStorageCachedResult;
     WebKit::WebFrameImpl* webFrame = WebKit::WebFrameImpl::fromFrame(frame);
     WebKit::WebViewImpl* webView = webFrame->viewImpl();
-    return !webView->permissionClient() || webView->permissionClient()->allowStorage(webFrame, m_storageType == LocalStorage);
+    bool result = !webView->permissionClient() || webView->permissionClient()->allowStorage(webFrame, m_storageType == LocalStorage);
+    m_canAccessStorageCachedFrame = frame;
+    m_canAccessStorageCachedResult = result;
+    return result;
 }
 
 size_t StorageAreaProxy::memoryBytesUsedByCache() const

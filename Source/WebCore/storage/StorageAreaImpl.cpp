@@ -104,10 +104,13 @@ StorageAreaImpl::StorageAreaImpl(StorageAreaImpl* area)
     ASSERT(!m_isShutdown);
 }
 
+bool StorageAreaImpl::canAccessStorage(Frame* frame) const
+{
+    return frame && frame->page();
+}
+
 bool StorageAreaImpl::disabledByPrivateBrowsingInFrame(const Frame* frame) const
 {
-    if (!frame->page())
-        return true;
     if (!frame->page()->settings()->privateBrowsingEnabled())
         return false;
     if (m_storageType != LocalStorage)
@@ -115,24 +118,48 @@ bool StorageAreaImpl::disabledByPrivateBrowsingInFrame(const Frame* frame) const
     return !SchemeRegistry::allowsLocalStorageAccessInPrivateBrowsing(frame->document()->securityOrigin()->protocol());
 }
 
-unsigned StorageAreaImpl::length(Frame*) const
+unsigned StorageAreaImpl::length(ExceptionCode& ec, Frame* frame) const
 {
+    ec = 0;
+    if (!canAccessStorage(frame)) {
+        ec = SECURITY_ERR;
+        return 0;
+    }
+    if (disabledByPrivateBrowsingInFrame(frame))
+        return 0;
+
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
 
     return m_storageMap->length();
 }
 
-String StorageAreaImpl::key(unsigned index, Frame*) const
+String StorageAreaImpl::key(unsigned index, ExceptionCode& ec, Frame* frame) const
 {
+    ec = 0;
+    if (!canAccessStorage(frame)) {
+        ec = SECURITY_ERR;
+        return String();
+    }
+    if (disabledByPrivateBrowsingInFrame(frame))
+        return String();
+
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
 
     return m_storageMap->key(index);
 }
 
-String StorageAreaImpl::getItem(const String& key, Frame*) const
+String StorageAreaImpl::getItem(const String& key, ExceptionCode& ec, Frame* frame) const
 {
+    ec = 0;
+    if (!canAccessStorage(frame)) {
+        ec = SECURITY_ERR;
+        return String();
+    }
+    if (disabledByPrivateBrowsingInFrame(frame))
+        return String();
+
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
 
@@ -141,6 +168,12 @@ String StorageAreaImpl::getItem(const String& key, Frame*) const
 
 void StorageAreaImpl::setItem(const String& key, const String& value, ExceptionCode& ec, Frame* frame)
 {
+    ec = 0;
+    if (!canAccessStorage(frame)) {
+        ec = SECURITY_ERR;
+        return;
+    }
+
     ASSERT(!m_isShutdown);
     ASSERT(!value.isNull());
     blockUntilImportComplete();
@@ -169,8 +202,14 @@ void StorageAreaImpl::setItem(const String& key, const String& value, ExceptionC
     StorageEventDispatcher::dispatch(key, oldValue, value, m_storageType, m_securityOrigin.get(), frame);
 }
 
-void StorageAreaImpl::removeItem(const String& key, Frame* frame)
+void StorageAreaImpl::removeItem(const String& key, ExceptionCode& ec, Frame* frame)
 {
+    ec = 0;
+    if (!canAccessStorage(frame)) {
+        ec = SECURITY_ERR;
+        return;
+    }
+
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
 
@@ -190,8 +229,14 @@ void StorageAreaImpl::removeItem(const String& key, Frame* frame)
     StorageEventDispatcher::dispatch(key, oldValue, String(), m_storageType, m_securityOrigin.get(), frame);
 }
 
-void StorageAreaImpl::clear(Frame* frame)
+void StorageAreaImpl::clear(ExceptionCode& ec, Frame* frame)
 {
+    ec = 0;
+    if (!canAccessStorage(frame)) {
+        ec = SECURITY_ERR;
+        return;
+    }
+
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
 
@@ -209,8 +254,16 @@ void StorageAreaImpl::clear(Frame* frame)
     StorageEventDispatcher::dispatch(String(), String(), String(), m_storageType, m_securityOrigin.get(), frame);
 }
 
-bool StorageAreaImpl::contains(const String& key, Frame*) const
+bool StorageAreaImpl::contains(const String& key, ExceptionCode& ec, Frame* frame) const
 {
+    ec = 0;
+    if (!canAccessStorage(frame)) {
+        ec = SECURITY_ERR;
+        return false;
+    }
+    if (disabledByPrivateBrowsingInFrame(frame))
+        return false;
+
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
 

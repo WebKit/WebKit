@@ -36,19 +36,32 @@
 
 namespace WebCore {
 
+template<class T>
+static v8::Handle<T> setDOMException(ExceptionCode ec, const v8::AccessorInfo& info)
+{
+    setDOMException(ec, info.GetIsolate());
+    return v8::Handle<T>();
+}
+
 // Get an array containing the names of indexed properties in a collection.
 v8::Handle<v8::Array> V8Storage::namedPropertyEnumerator(const v8::AccessorInfo& info)
 {
     Storage* storage = V8Storage::toNative(info.Holder());
-    unsigned int length = storage->length();
+    ExceptionCode ec = 0;
+    unsigned length = storage->length(ec);
+    if (ec)
+        return setDOMException<v8::Array>(ec, info);
     v8::Handle<v8::Array> properties = v8::Array::New(length);
-    for (unsigned int i = 0; i < length; ++i) {
-        String key = storage->key(i);
+    for (unsigned i = 0; i < length; ++i) {
+        String key = storage->key(i, ec);
+        if (ec)
+            return setDOMException<v8::Array>(ec, info);
         ASSERT(!key.isNull());
-        String val = storage->getItem(key);
+        String val = storage->getItem(key, ec);
+        if (ec)
+            return setDOMException<v8::Array>(ec, info);
         properties->Set(v8Integer(i, info.GetIsolate()), v8String(key, info.GetIsolate()));
     }
-
     return properties;
 }
 
@@ -57,10 +70,18 @@ static v8::Handle<v8::Value> storageGetter(v8::Local<v8::String> v8Name, const v
     Storage* storage = V8Storage::toNative(info.Holder());
     String name = toWebCoreString(v8Name);
 
-    if (name != "length" && storage->contains(name))
-        return v8String(storage->getItem(name), info.GetIsolate());
-
-    return v8Undefined();
+    if (name == "length")
+        return v8Undefined();
+    ExceptionCode ec = 0;
+    bool found = storage->contains(name, ec);
+    if (ec)
+        return setDOMException(ec, info.GetIsolate());
+    if (!found)
+        return v8Undefined();
+    String result = storage->getItem(name, ec);
+    if (ec)
+        return setDOMException(ec, info.GetIsolate());
+    return v8String(result, info.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8Storage::indexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
@@ -85,10 +106,15 @@ v8::Handle<v8::Integer> V8Storage::namedPropertyQuery(v8::Local<v8::String> v8Na
     Storage* storage = V8Storage::toNative(info.Holder());
     String name = toWebCoreString(v8Name);
 
-    if (name != "length" && storage->contains(name))
-        return v8Integer(0, info.GetIsolate());
-
-    return v8::Handle<v8::Integer>();
+    if (name == "length")
+        return v8::Handle<v8::Integer>();
+    ExceptionCode ec = 0;
+    bool found = storage->contains(name, ec);
+    if (ec)
+        return setDOMException<v8::Integer>(ec, info);
+    if (!found)
+        return v8::Handle<v8::Integer>();
+    return v8Integer(0, info.GetIsolate());
 }
 
 static v8::Handle<v8::Value> storageSetter(v8::Local<v8::String> v8Name, v8::Local<v8::Value> v8Value, const v8::AccessorInfo& info)
@@ -130,12 +156,16 @@ static v8::Handle<v8::Boolean> storageDeleter(v8::Local<v8::String> v8Name, cons
     Storage* storage = V8Storage::toNative(info.Holder());
     String name = toWebCoreString(v8Name);
     
-    if (storage->contains(name)) {
-        storage->removeItem(name);
-        return v8Boolean(true, info.GetIsolate());
-    }
-
-    return v8::Handle<v8::Boolean>();
+    ExceptionCode ec = 0;
+    bool found = storage->contains(name, ec);
+    if (ec)
+        return setDOMException<v8::Boolean>(ec, info);
+    if (!found)
+        return v8::Handle<v8::Boolean>();
+    storage->removeItem(name, ec);
+    if (ec)
+        return setDOMException<v8::Boolean>(ec, info);
+    return v8Boolean(true, info.GetIsolate());
 }
 
 v8::Handle<v8::Boolean> V8Storage::indexedPropertyDeleter(uint32_t index, const v8::AccessorInfo& info)

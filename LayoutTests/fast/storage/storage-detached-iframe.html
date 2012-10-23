@@ -33,7 +33,11 @@
           var a_localStorage = a.localStorage; // The constructor won't be reachable as window object property after detaching the frame.
 
           t1.outerText = "";
-          a_localStorage.fuzz3_visited="test";
+          try {
+	          a_localStorage.fuzz3_visited="test";
+          } catch (e) {
+              console.log("Expected exception caught.");
+          }
       }
 
       function runTests() {

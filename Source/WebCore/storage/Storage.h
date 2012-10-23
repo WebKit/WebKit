@@ -27,6 +27,7 @@
 #define Storage_h
 
 #include "DOMWindowProperty.h"
+#include "StorageArea.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -34,7 +35,6 @@
 namespace WebCore {
 
     class Frame;
-    class StorageArea;
     typedef int ExceptionCode;
 
     class Storage : public RefCounted<Storage>, public DOMWindowProperty {
@@ -42,14 +42,13 @@ namespace WebCore {
         static PassRefPtr<Storage> create(Frame*, PassRefPtr<StorageArea>);
         ~Storage();
 
-        unsigned length() const;
-        String key(unsigned index) const;
-        String getItem(const String&) const;
-        void setItem(const String& key, const String& value, ExceptionCode&);
-        void removeItem(const String&);
-        void clear();
-
-        bool contains(const String& key) const;
+        unsigned length(ExceptionCode& ec) const { return m_storageArea->length(ec, m_frame); }
+        String key(unsigned index, ExceptionCode& ec) const { return m_storageArea->key(index, ec, m_frame); }
+        String getItem(const String& key, ExceptionCode& ec) const { return m_storageArea->getItem(key, ec, m_frame); }
+        void setItem(const String& key, const String& value, ExceptionCode& ec) { m_storageArea->setItem(key, value, ec, m_frame); }
+        void removeItem(const String& key, ExceptionCode& ec) { m_storageArea->removeItem(key, ec, m_frame); }
+        void clear(ExceptionCode& ec) { m_storageArea->clear(ec, m_frame); }
+        bool contains(const String& key, ExceptionCode& ec) const { return m_storageArea->contains(key, ec, m_frame); }
 
         StorageArea* area() const { return m_storageArea.get(); }
 

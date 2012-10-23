@@ -30,12 +30,16 @@
     CustomEnumerateProperty,
     CustomNamedSetter,
 ] interface Storage {
-    [NotEnumerable] readonly attribute unsigned long length;
-    [NotEnumerable, TreatReturnedNullStringAs=Null] DOMString key(in unsigned long index);
-    [NotEnumerable, TreatReturnedNullStringAs=Null] DOMString getItem(in DOMString key);
+    [NotEnumerable] readonly attribute unsigned long length getter raises(DOMException);
+    [NotEnumerable, TreatReturnedNullStringAs=Null] DOMString key(in unsigned long index)
+        raises(DOMException);
+    [NotEnumerable, TreatReturnedNullStringAs=Null] DOMString getItem(in DOMString key)
+        raises(DOMException);
     [NotEnumerable] void setItem(in DOMString key, in DOMString data) 
         raises(DOMException);
-    [NotEnumerable] void removeItem(in DOMString key);
-    [NotEnumerable] void clear();
+    [NotEnumerable] void removeItem(in DOMString key)
+        raises(DOMException);
+    [NotEnumerable] void clear()
+        raises(DOMException);
 };
 

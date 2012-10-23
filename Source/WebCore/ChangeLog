@@ -1,3 +1,60 @@
+2012-10-23  Dan Carney  <dcarney@google.com>
+
+        When blocking localStorage, Firefox throws a security exception on access, and maybe so should we
+        https://bugs.webkit.org/show_bug.cgi?id=63257
+
+        Reviewed by Jochen Eisinger.
+
+        Throw security exception when local storage is accessed
+        under certain circumstances to match firefox.
+
+        No new tests. Existing tests modified.
+
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::canGetItemsForName):
+        (WebCore::JSStorage::nameGetter):
+        (WebCore::JSStorage::deleteProperty):
+        (WebCore::JSStorage::getOwnPropertyNames):
+        * bindings/v8/custom/V8StorageCustom.cpp:
+        (WebCore):
+        (WebCore::setDOMException):
+        (WebCore::V8Storage::namedPropertyEnumerator):
+        (WebCore::storageGetter):
+        (WebCore::V8Storage::namedPropertyQuery):
+        (WebCore::storageDeleter):
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::getDOMStorageEntries):
+        (WebCore::InspectorDOMStorageAgent::removeDOMStorageItem):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::sessionStorage):
+        (WebCore::DOMWindow::localStorage):
+        * storage/Storage.cpp:
+        * storage/Storage.h:
+        (WebCore):
+        (WebCore::Storage::length):
+        (WebCore::Storage::key):
+        (WebCore::Storage::getItem):
+        (WebCore::Storage::setItem):
+        (WebCore::Storage::removeItem):
+        (WebCore::Storage::clear):
+        (WebCore::Storage::contains):
+        * storage/Storage.idl:
+        * storage/StorageArea.h:
+        (StorageArea):
+        * storage/StorageAreaImpl.cpp:
+        (WebCore::StorageAreaImpl::canAccessStorage): Checks whether access to storage is a security violation.
+        (WebCore):
+        (WebCore::StorageAreaImpl::disabledByPrivateBrowsingInFrame):
+        (WebCore::StorageAreaImpl::length):
+        (WebCore::StorageAreaImpl::key):
+        (WebCore::StorageAreaImpl::getItem):
+        (WebCore::StorageAreaImpl::setItem):
+        (WebCore::StorageAreaImpl::removeItem):
+        (WebCore::StorageAreaImpl::clear):
+        (WebCore::StorageAreaImpl::contains):
+        * storage/StorageAreaImpl.h:
+        (StorageAreaImpl):
+
 2012-10-22  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Remove custom binding code for IDBCursor.value
