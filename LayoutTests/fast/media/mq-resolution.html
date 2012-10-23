@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../js/resources/js-test-pre.js"></script>
+
+<div id="detector"></div>
+
+<style>
+    #detector { width: 10px; }
+    @media (resolution: 1.00dppx) { #detector { width: 10px; } }
+    @media (resolution: 1.50dppx) { #detector { width: 15px; } }
+    @media (resolution: 2.00dppx) { #detector { width: 20px; } }
+    @media (resolution: 2.25dppx) { #detector { width: 23px; } }
+</style>
+
+<script>
+    description("CSS3 media query test: resolution query with dppx. Using style element, @media css rule.")
+
+    if (window.testRunner && window.internals) {
+        window.testRunner.dumpAsText();
+
+        function resolutionFromStyle() {
+            var width = getComputedStyle(document.getElementById("detector")).width;
+            switch (width) {
+                case "10px":
+                    return 1;
+                case "15px":
+                    return 1.5;
+                case "20px":
+                    return 2;
+                case "23px":
+                    return 2.25;
+                default:
+                    return undefined;
+            }
+        }
+
+        shouldBe("matchMedia('(resolution: 0dpi)').matches", "false");
+        shouldBe("matchMedia('(min-resolution: 0dpi)').matches", "false");
+        shouldBe("matchMedia('(max-resolution: 0dpi)').matches", "false");
+
+        window.internals.settings.setResolutionOverride(144, 144);
+        shouldBe("matchMedia('(resolution: 1.5dppx)').matches", "true");
+        shouldBe("resolutionFromStyle()", "1.5");
+
+        window.internals.settings.setResolutionOverride(192, 192);
+        shouldBe("matchMedia('(resolution: 2dppx)').matches", "true");
+        shouldBe("resolutionFromStyle()", "2");
+
+        window.internals.settings.setResolutionOverride(96, 96);
+        shouldBe("matchMedia('(resolution: 1dppx)').matches", "true");
+        shouldBe("resolutionFromStyle()", "1");
+
+        window.internals.settings.setResolutionOverride(216, 216);
+        shouldBe("matchMedia('(resolution: 2.25dppx)').matches", "true");
+        shouldBe("resolutionFromStyle()", "2.25");
+        shouldBe("matchMedia('(resolution)').matches", "true");
+        shouldBe("matchMedia('(resolution: 216dpi)').matches", "true");
+        shouldBe("matchMedia('(min-resolution: 216dpi)').matches", "true");
+        shouldBe("matchMedia('(max-resolution: 216dpi)').matches", "true");
+
+        shouldBe("matchMedia('(resolution: 85dpcm)').matches", "true");
+        shouldBe("matchMedia('(min-resolution: 85dpcm)').matches", "true");
+        shouldBe("matchMedia('(max-resolution: 85dpcm)').matches", "true");
+
+        window.internals.settings.setResolutionOverride(216, 254);
+        // Non-square must never match.
+        shouldBe("matchMedia('(resolution)').matches", "false");
+        shouldBe("matchMedia('(resolution: 216dpi)').matches", "false");
+        shouldBe("matchMedia('(resolution: 254dpi)').matches", "false");
+
+        shouldBe("matchMedia('(min-resolution: 216dpi)').matches", "true");
+        shouldBe("matchMedia('(min-resolution: 254dpi)').matches", "false");
+        shouldBe("matchMedia('(max-resolution: 216dpi)').matches", "false");
+        shouldBe("matchMedia('(max-resolution: 254dpi)').matches", "true");
+
+        // Non-square must never match.
+        shouldBe("matchMedia('(resolution: 85dpcm)').matches", "false");
+        shouldBe("matchMedia('(resolution: 100dpcm)').matches", "false");
+
+        shouldBe("matchMedia('(min-resolution: 85dpcm)').matches", "true");
+        shouldBe("matchMedia('(min-resolution: 100dpcm)').matches", "false");
+        shouldBe("matchMedia('(max-resolution: 85dpcm)').matches", "false");
+        shouldBe("matchMedia('(max-resolution: 100dpcm)').matches", "true");
+    }
+</script>
+
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

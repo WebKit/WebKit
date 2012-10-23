@@ -67,6 +67,16 @@ static inline bool featureWithValidPositiveLenghtOrNumber(const AtomicString& me
         || mediaFeature == MediaFeatureNames::min_device_widthMediaFeature;
 }
 
+static inline bool featureWithValidDensity(const AtomicString& mediaFeature, const CSSParserValue* value)
+{
+    if ((value->unit != CSSPrimitiveValue::CSS_DPPX && value->unit != CSSPrimitiveValue::CSS_DPI && value->unit != CSSPrimitiveValue::CSS_DPCM) || value->fValue <= 0)
+        return false;
+
+    return mediaFeature == MediaFeatureNames::resolutionMediaFeature
+        || mediaFeature == MediaFeatureNames::max_resolutionMediaFeature
+        || mediaFeature == MediaFeatureNames::min_resolutionMediaFeature;
+}
+
 static inline bool featureWithPositiveInteger(const AtomicString& mediaFeature, const CSSParserValue* value)
 {
     if (!value->isInt || value->fValue < 0)
@@ -114,6 +124,7 @@ static inline bool featureWithAspectRatio(const AtomicString& mediaFeature)
 
 static inline bool featureWithoutValue(const AtomicString& mediaFeature)
 {
+    // Media features that are prefixed by min/max cannot be used without a value.
     return mediaFeature == MediaFeatureNames::monochromeMediaFeature
         || mediaFeature == MediaFeatureNames::colorMediaFeature
         || mediaFeature == MediaFeatureNames::gridMediaFeature
@@ -131,7 +142,8 @@ static inline bool featureWithoutValue(const AtomicString& mediaFeature)
         || mediaFeature == MediaFeatureNames::animationMediaFeature
         || mediaFeature == MediaFeatureNames::view_modeMediaFeature
         || mediaFeature == MediaFeatureNames::pointerMediaFeature
-        || mediaFeature == MediaFeatureNames::device_pixel_ratioMediaFeature;
+        || mediaFeature == MediaFeatureNames::device_pixel_ratioMediaFeature
+        || mediaFeature == MediaFeatureNames::resolutionMediaFeature;
 }
 
 inline MediaQueryExp::MediaQueryExp(const AtomicString& mediaFeature, CSSParserValueList* valueList)
@@ -147,6 +159,10 @@ inline MediaQueryExp::MediaQueryExp(const AtomicString& mediaFeature, CSSParserV
             // Media features that use CSSValueIDs.
             if (featureWithCSSValueID(mediaFeature, value))
                 m_value = CSSPrimitiveValue::createIdentifier(value->id);
+
+            // Media features that must have non-negative <density>, ie. dppx, dpi or dpcm.
+            else if (featureWithValidDensity(mediaFeature, value))
+                m_value = CSSPrimitiveValue::create(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit);
 
             // Media features that must have non-negative <lenght> or number value.
             else if (featureWithValidPositiveLenghtOrNumber(mediaFeature, value))

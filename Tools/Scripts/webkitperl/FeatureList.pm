@@ -111,6 +111,7 @@ my (
     $pageVisibilityAPISupport,
     $progressTagSupport,
     $quotaSupport,
+    $resolutionMediaQuerySupport,
     $registerProtocolHandlerSupport,
     $requestAnimationFrameSupport,
     $scriptedSpeechSupport,
@@ -348,6 +349,9 @@ my @features = (
 
     { option => "quota", desc => "Toggle Quota support",
       define => "ENABLE_QUOTA", default => 0, value => \$quotaSupport },
+
+    { option => "resolution-media-query", desc => "Toggle resolution media query support",
+      define => "ENABLE_RESOLUTION_MEDIA_QUERY", default => (isEfl() || isQt()), value => \$resolutionMediaQuerySupport },
 
     { option => "request-animation-frame", desc => "Toggle Request Animation Frame support",
       define => "ENABLE_REQUEST_ANIMATION_FRAME", default => (isAppleMacWebKit() || isGtk() || isEfl() || isBlackBerry()), value => \$requestAnimationFrameSupport },

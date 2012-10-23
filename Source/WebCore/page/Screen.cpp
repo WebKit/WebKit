@@ -35,6 +35,7 @@
 #include "FrameView.h"
 #include "InspectorInstrumentation.h"
 #include "PlatformScreen.h"
+#include "Settings.h"
 #include "Widget.h"
 
 namespace WebCore {
@@ -48,14 +49,41 @@ unsigned Screen::horizontalDPI() const
 {
     if (!m_frame)
         return 0;
-    return static_cast<unsigned>(screenHorizontalDPI(m_frame->view()));
+
+    // Used by the testing system, can be set from internals.
+    IntSize override = m_frame->page()->settings()->resolutionOverride();
+    if (!override.isEmpty())
+        return override.width();
+
+    // These were added in https://bugs.webkit.org/show_bug.cgi?id=70556 for Chromium
+    // but seems unused. Please remove after varifying that this is indeed the case.
+    int platformValue = static_cast<unsigned>(screenHorizontalDPI(m_frame->view()));
+    if (platformValue > 0)
+        return platformValue;
+
+    // The DPI is defined as dots per CSS inch and thus not device inch.
+    return m_frame->page()->deviceScaleFactor() * 96;
 }
 
 unsigned Screen::verticalDPI() const
 {
+    // The DPI is defined as dots per CSS inch and thus not device inch.
     if (!m_frame)
         return 0;
-    return static_cast<unsigned>(screenVerticalDPI(m_frame->view()));
+
+    // Used by the testing system, can be set from internals.
+    IntSize override = m_frame->page()->settings()->resolutionOverride();
+    if (!override.isEmpty())
+        return override.height();
+
+    // These were added in https://bugs.webkit.org/show_bug.cgi?id=70556 for Chromium
+    // but seems unused. Please remove after varifying that this is indeed the case.
+    int platformValue = static_cast<unsigned>(screenVerticalDPI(m_frame->view()));
+    if (platformValue > 0)
+        return platformValue;
+
+    // The DPI is defined as dots per CSS inch and thus not device inch.
+    return m_frame->page()->deviceScaleFactor() * 96;
 }
 
 unsigned Screen::height() const

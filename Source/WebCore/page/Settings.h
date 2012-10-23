@@ -29,6 +29,7 @@
 
 #include "EditingBehaviorTypes.h"
 #include "FontRenderingMode.h"
+#include "IntSize.h"
 #include "KURL.h"
 #include "SecurityOrigin.h"
 #include "Timer.h"
@@ -36,10 +37,6 @@
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/AtomicStringHash.h>
 #include <wtf/unicode/Unicode.h>
-
-#if ENABLE(TEXT_AUTOSIZING)
-#include "IntSize.h"
-#endif
 
 namespace WebCore {
 
@@ -122,6 +119,10 @@ namespace WebCore {
         void setTextAutosizingWindowSizeOverride(const IntSize&);
         const IntSize& textAutosizingWindowSizeOverride() const { return m_textAutosizingWindowSizeOverride; }
 #endif
+
+        // Only set by Layout Tests.
+        void setResolutionOverride(const IntSize&);
+        const IntSize& resolutionOverride() const { return m_resolutionDensityPerInchOverride; }
 
         // Unlike areImagesEnabled, this only suppresses the network load of
         // the image URL.  A cached image will still be rendered if requested.
@@ -686,6 +687,7 @@ namespace WebCore {
         IntSize m_textAutosizingWindowSizeOverride;
         bool m_textAutosizingEnabled : 1;
 #endif
+        IntSize m_resolutionDensityPerInchOverride;
         bool m_isSpatialNavigationEnabled : 1;
         bool m_isJavaEnabled : 1;
         bool m_isJavaEnabledForLocalFiles : 1;

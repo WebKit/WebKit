@@ -27,14 +27,11 @@
 #define InternalSettings_h
 
 #include "EditingBehaviorTypes.h"
+#include "IntSize.h"
 #include "RefCountedSupplement.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
-
-#if ENABLE(TEXT_AUTOSIZING)
-#include "IntSize.h"
-#endif
 
 namespace WebCore {
 
@@ -79,6 +76,7 @@ public:
         IntSize m_originalTextAutosizingWindowSizeOverride;
         float m_originalTextAutosizingFontScaleFactor;
 #endif
+        IntSize m_originalResolutionOverride;
 #if ENABLE(DIALOG_ELEMENT)
         bool m_originalDialogElementEnabled;
 #endif
@@ -127,6 +125,7 @@ public:
     void setTextAutosizingEnabled(bool enabled, ExceptionCode&);
     void setTextAutosizingWindowSizeOverride(int width, int height, ExceptionCode&);
     void setTextAutosizingFontScaleFactor(float fontScaleFactor, ExceptionCode&);
+    void setResolutionOverride(int dotsPerCSSInchHorizontally, int dotsPerCSSInchVertically, ExceptionCode&);
     void setEnableScrollAnimator(bool enabled, ExceptionCode&);
     bool scrollAnimatorEnabled(ExceptionCode&);
     void setCSSExclusionsEnabled(bool enabled, ExceptionCode&);

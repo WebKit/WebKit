@@ -143,7 +143,7 @@ public:
         UTime,
         UFrequency,
         UViewportPercentageLength,
-#if ENABLE(CSS_IMAGE_RESOLUTION)
+#if ENABLE(CSS_IMAGE_RESOLUTION) || ENABLE(RESOLUTION_MEDIA_QUERY)
         UResolution,
 #endif
         UOther
@@ -181,6 +181,10 @@ public:
     bool isCalculated() const { return m_primitiveUnitType == CSS_CALC; }
     bool isCalculatedPercentageWithNumber() const { return primitiveType() == CSS_CALC_PERCENTAGE_WITH_NUMBER; }
     bool isCalculatedPercentageWithLength() const { return primitiveType() == CSS_CALC_PERCENTAGE_WITH_LENGTH; }
+    bool isDotsPerInch() const { return primitiveType() == CSS_DPI; }
+    bool isDotsPerPixel() const { return primitiveType() == CSS_DPPX; }
+    bool isDotsPerCentimeter() const { return primitiveType() == CSS_DPCM; }
+
 #if ENABLE(CSS_VARIABLES)
     bool isVariableName() const { return primitiveType() == CSS_VARIABLE_NAME; }
 #endif

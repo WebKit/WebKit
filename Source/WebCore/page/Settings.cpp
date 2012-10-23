@@ -459,6 +459,15 @@ void Settings::setTextAutosizingFontScaleFactor(float fontScaleFactor)
 
 #endif
 
+void Settings::setResolutionOverride(const IntSize& densityPerInchOverride)
+{
+    if (m_resolutionDensityPerInchOverride == densityPerInchOverride)
+        return;
+
+    m_resolutionDensityPerInchOverride = densityPerInchOverride;
+    m_page->setNeedsRecalcStyleInAllFrames();
+}
+
 void Settings::setLoadsImagesAutomatically(bool loadsImagesAutomatically)
 {
     m_loadsImagesAutomatically = loadsImagesAutomatically;

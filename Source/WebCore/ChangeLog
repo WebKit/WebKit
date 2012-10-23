@@ -1,3 +1,102 @@
+2012-10-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Add support for resolution media query
+        https://bugs.webkit.org/show_bug.cgi?id=99077
+
+        Reviewed by Antti Koivisto.
+
+        Add support for 'resolution' media query feature.
+
+        Background info:
+        http://www.w3.org/blog/CSS/2012/06/14/unprefix-webkit-device-pixel-ratio
+
+        Related spec links:
+        http://www.w3.org/TR/css3-mediaqueries/#resolution (recommendation)
+        http://www.w3.org/TR/css3-values/#resolution (candidate recommentation)
+
+        Add infrastructure to make it testable.
+
+        Test: fast/media/mq-resolution.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::validUnit):
+        (WebCore::CSSParser::createPrimitiveNumericValue):
+        (WebCore::CSSParser::parseValidPrimitive):
+        (WebCore::CSSParser::detectNumberToken):
+        * css/CSSParser.h:
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::isValidCSSUnitTypeForDoubleConversion):
+        (WebCore::unitCategory):
+        (WebCore::CSSPrimitiveValue::canonicalUnitTypeForCategory):
+        (WebCore::CSSPrimitiveValue::customCssText):
+        (WebCore::CSSPrimitiveValue::cloneForCSSOM):
+        * css/CSSPrimitiveValue.h:
+
+            Enable dpi, dpcm and dppx units when RESOLUTION_MEDIA_QUERY
+            is enabled.
+
+        * WebCore.exp.in:
+
+            Export the WebCore::Settings setting.
+
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::isDotsPerInch):
+        (WebCore::CSSPrimitiveValue::isDotsPerPixel):
+        (WebCore::CSSPrimitiveValue::isDotsPerCentimeter):
+        (CSSPrimitiveValue):
+
+            Add function for checking the recently added density types.
+
+        * css/MediaFeatureNames.h:
+        (MediaFeatureNames):
+
+            Add support for resolution, min-resolution and max-resolution.
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::compareResolution): Add methods for comparing resolutions.
+        (WebCore):
+        (WebCore::resolutionMediaFeatureEval):
+        (WebCore::min_resolutionMediaFeatureEval):
+        (WebCore::max_resolutionMediaFeatureEval):
+
+            Implement the resolution method evaluation.
+
+        * css/MediaQueryExp.cpp:
+        (WebCore::featureWithValidPositiveDensity):
+        (WebCore):
+        (WebCore::featureWithoutValue):
+        (WebCore::MediaQueryExp::MediaQueryExp):
+
+            Hook up resolution with the right pre-checks.
+
+       * page/Screen.cpp:
+        (WebCore::Screen::horizontalDPI):
+        (WebCore::Screen::verticalDPI):
+
+            Check whether an override exists, and if so, uses it.
+            If not calculate the value given the device scale factor.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::setResolutionOverride):
+        (WebCore):
+        * page/Settings.h:
+        (Settings):
+        (WebCore::Settings::resolutionOverride):
+
+            Add a resolution override to settings.
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setResolutionOverride):
+        (WebCore):
+        * testing/InternalSettings.h:
+        (Backup):
+        (InternalSettings):
+        * testing/InternalSettings.idl:
+
+            Add a new setResolutionOverride method to internals.settings.
+
 2012-10-23  Filip Spacek  <fspacek@rim.com>
 
         [BlackBerry] Improve the use of stencil buffer during compositing

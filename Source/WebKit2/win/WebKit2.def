@@ -241,6 +241,7 @@ EXPORTS
         ?setStorageBlockingPolicy@Settings@WebCore@@QAEXW4StorageBlockingPolicy@SecurityOrigin@2@@Z
         ?setSuggestedValue@HTMLInputElement@WebCore@@QAEXABVString@WTF@@@Z
         ?setEditingValue@HTMLInputElement@WebCore@@QAEXABVString@WTF@@@Z
+        ?setResolutionOverride@Settings@WebCore@@QAEXABVIntSize@2@@Z
         ?settings@Document@WebCore@@QBEPAVSettings@2@XZ
         ?settings@Frame@WebCore@@QBEPAVSettings@2@XZ
         ?setFixedElementsLayoutRelativeToFrame@Settings@WebCore@@QAEX_N@Z

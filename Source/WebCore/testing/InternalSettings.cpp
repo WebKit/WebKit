@@ -97,6 +97,7 @@ InternalSettings::Backup::Backup(Page* page, Settings* settings)
     , m_originalTextAutosizingWindowSizeOverride(settings->textAutosizingWindowSizeOverride())
     , m_originalTextAutosizingFontScaleFactor(settings->textAutosizingFontScaleFactor())
 #endif
+    , m_originalResolutionOverride(settings->resolutionOverride())
 #if ENABLE(DIALOG_ELEMENT)
     , m_originalDialogElementEnabled(RuntimeEnabledFeatures::dialogElementEnabled())
 #endif
@@ -136,6 +137,7 @@ void InternalSettings::Backup::restoreTo(Page* page, Settings* settings)
     settings->setTextAutosizingWindowSizeOverride(m_originalTextAutosizingWindowSizeOverride);
     settings->setTextAutosizingFontScaleFactor(m_originalTextAutosizingFontScaleFactor);
 #endif
+    settings->setResolutionOverride(m_originalResolutionOverride);
 #if ENABLE(DIALOG_ELEMENT)
     RuntimeEnabledFeatures::setDialogElementEnabled(m_originalDialogElementEnabled);
 #endif
@@ -411,6 +413,13 @@ void InternalSettings::setTextAutosizingWindowSizeOverride(int width, int height
     UNUSED_PARAM(height);
     UNUSED_PARAM(ec);
 #endif
+}
+
+void InternalSettings::setResolutionOverride(int dotsPerCSSInchHorizontally, int dotsPerCSSInchVertically, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    // An empty size resets the override.
+    settings()->setResolutionOverride(IntSize(dotsPerCSSInchHorizontally, dotsPerCSSInchVertically));
 }
 
 void InternalSettings::setTextAutosizingFontScaleFactor(float fontScaleFactor, ExceptionCode& ec)

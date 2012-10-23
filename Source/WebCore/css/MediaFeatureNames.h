@@ -47,6 +47,7 @@ namespace WebCore {
     macro(max_height, "max-height") \
     macro(max_monochrome, "max-monochrome") \
     macro(max_width, "max-width") \
+    macro(max_resolution, "max-resolution") \
     macro(min_color, "min-color") \
     macro(min_aspect_ratio, "min-aspect-ratio") \
     macro(min_device_aspect_ratio, "min-device-aspect-ratio") \
@@ -56,7 +57,9 @@ namespace WebCore {
     macro(min_height, "min-height") \
     macro(min_monochrome, "min-monochrome") \
     macro(min_width, "min-width") \
+    macro(min_resolution, "min-resolution") \
     macro(pointer, "pointer") \
+    macro(resolution, "resolution") \
     macro(transform_2d, "-webkit-transform-2d") \
     macro(transform_3d, "-webkit-transform-3d") \
     macro(transition, "-webkit-transition") \
