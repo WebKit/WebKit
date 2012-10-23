@@ -1015,13 +1015,11 @@ void Element::attach()
     if (ElementShadow* shadow = this->shadow()) {
         parentPusher.push();
         shadow->attach();
-        attachChildren();
-        attachAsNode();
     } else {
         if (firstChild())
             parentPusher.push();
-        ContainerNode::attach();
     }
+    ContainerNode::attach();
 
     if (hasRareData()) {   
         ElementRareData* data = elementRareData();

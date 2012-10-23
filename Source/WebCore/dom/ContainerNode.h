@@ -124,7 +124,6 @@ public:
     // node that is of the type CDATA_SECTION_NODE, TEXT_NODE or COMMENT_NODE has changed its value.
     virtual void childrenChanged(bool createdByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
-    void attachAsNode();
     void attachChildren();
     void attachChildrenLazily();
     void detachChildren();
@@ -198,11 +197,6 @@ inline ContainerNode::ContainerNode(Document* document, ConstructionType type)
     , m_firstChild(0)
     , m_lastChild(0)
 {
-}
-
-inline void ContainerNode::attachAsNode()
-{
-    Node::attach();
 }
 
 inline void ContainerNode::attachChildren()

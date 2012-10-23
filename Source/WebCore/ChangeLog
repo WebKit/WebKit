@@ -1,3 +1,22 @@
+2012-10-22  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Refactoring around ContainerNode::attachChildren
+        https://bugs.webkit.org/show_bug.cgi?id=99968
+
+        Reviewed by Hajime Morita.
+
+        Since ContainerNode::attach() is now equivalent to ContainerNode::attachChildren() + Node::attach(), we should call
+        ContainerNode::attach() instead of calling them.
+
+        No new tests, no change in behavior.
+
+        * dom/ContainerNode.h:
+        (ContainerNode):
+        * dom/Element.cpp:
+        (WebCore::Element::attach):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::attach):
+
 2012-10-22  Michael Saboff  <msaboff@apple.com>
 
         HTML Parser should produce 8 bit strings for doctype, comment and tagName tokens
