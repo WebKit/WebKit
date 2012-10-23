@@ -1,3 +1,18 @@
+2012-10-23  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Possible assertion hit in WebCore::HTMLSelectElement::updateListBoxSelection()
+        https://bugs.webkit.org/show_bug.cgi?id=99967
+
+        Reviewed by Tony Chang.
+
+        Added layout test to reproduce an assertion hit in
+        WebCore::HTMLSelectElement::updateListBoxSelection() when pressing the left
+        button outside a multiselect and then moving the mouse over the multiselect
+        element while holding the button down.
+
+        * fast/dom/HTMLSelectElement/select-selectedIndex-noAnchorIndex-crash-expected.txt: Added.
+        * fast/dom/HTMLSelectElement/select-selectedIndex-noAnchorIndex-crash.html: Added.
+
 2012-10-23  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: array grouping does not work for arrays with exactly 10000 elements.

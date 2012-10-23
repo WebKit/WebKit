@@ -1,3 +1,22 @@
+2012-10-23  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Possible assertion hit in WebCore::HTMLSelectElement::updateListBoxSelection()
+        https://bugs.webkit.org/show_bug.cgi?id=99967
+
+        Reviewed by Tony Chang.
+
+        Fix assertion hit in WebCore::HTMLSelectElement::updateListBoxSelection() when
+        pressing the left mouse button outside a multiselect and then moving the cursor
+        over the multiselect element while holding the button down.
+
+        The issue is that the HTMLSelectElement handler for the mouse move event does
+        not check if there is a selection before trying to extend the selection.
+
+        Test: fast/dom/HTMLSelectElement/select-selectedIndex-noAnchorIndex-crash.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+
 2012-10-23  Adam Barth  <abarth@webkit.org>
 
         [V8] ScriptWrappable should hold the wrapper handle directly (Dromaeo/dom-modify and dom-traverse get ~2.5% faster)

@@ -1314,6 +1314,10 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
         if (listIndex >= 0) {
             if (!disabled()) {
                 if (m_multiple) {
+                    // Only extend selection if there is something selected.
+                    if (m_activeSelectionAnchorIndex < 0)
+                        return;
+
                     setActiveSelectionEndIndex(listIndex);
                     updateListBoxSelection(false);
                 } else {
