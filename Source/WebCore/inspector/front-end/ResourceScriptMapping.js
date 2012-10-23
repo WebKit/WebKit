@@ -148,7 +148,7 @@ WebInspector.ResourceScriptMapping.prototype = {
         }
         if (!originalUISourceCode)
             return;
-        this._workspace.project().removeTemporaryUISourceCode(originalUISourceCode);
+        this._workspace.removeTemporaryUISourceCode(originalUISourceCode);
         this._scriptIdsForOriginalUISourceCode.remove(originalUISourceCode);
     },
 
@@ -165,7 +165,7 @@ WebInspector.ResourceScriptMapping.prototype = {
         }
         if (!temporaryUISourceCode)
             return false;
-        this._workspace.project().removeTemporaryUISourceCode(temporaryUISourceCode);
+        this._workspace.removeTemporaryUISourceCode(temporaryUISourceCode);
         this._scriptIdsForTemporaryUISourceCode.remove(temporaryUISourceCode);
         return true;
     },
@@ -179,7 +179,6 @@ WebInspector.ResourceScriptMapping.prototype = {
         console.assert(scripts.length);
         for (var i = 0; i < scripts.length; ++i)
             scripts[i].setSourceMapping(this);
-        uiSourceCode.isContentScript = scripts[0].isContentScript;
         uiSourceCode.setSourceMapping(this);
         if (uiSourceCode.isEditable()) {
             var scriptFile = new WebInspector.ResourceScriptFile(this, uiSourceCode);
@@ -225,7 +224,7 @@ WebInspector.ResourceScriptMapping.prototype = {
         var contentProvider = script.isInlineScript() ? new WebInspector.ConcatenatedScriptsContentProvider(scripts) : script;
         var isDynamicScript = this._isDynamicScript(script);
         var url = isDynamicScript ? "" : script.sourceURL;
-        var temporaryUISourceCode = new WebInspector.UISourceCode(url, contentProvider, !script.isInlineScript() && !divergedVersion);
+        var temporaryUISourceCode = this._workspace.addTemporaryUISourceCode(url, contentProvider, !script.isInlineScript() && !divergedVersion, script.isContentScript);
         temporaryUISourceCode.divergedVersion = divergedVersion;
         return temporaryUISourceCode;
     },
@@ -248,7 +247,6 @@ WebInspector.ResourceScriptMapping.prototype = {
             scriptIds.push(scripts[i].scriptId);
         }
         this._scriptIdsForTemporaryUISourceCode.put(temporaryUISourceCode, scriptIds);
-        this._workspace.project().addTemporaryUISourceCode(temporaryUISourceCode);
         this._bindUISourceCodeToScripts(temporaryUISourceCode, scripts);
         return temporaryUISourceCode;
     },
@@ -272,7 +270,6 @@ WebInspector.ResourceScriptMapping.prototype = {
             scriptIds.push(scripts[i].scriptId);
         }
         this._scriptIdsForOriginalUISourceCode.put(originalUISourceCode, scriptIds);
-        this._workspace.project().addTemporaryUISourceCode(originalUISourceCode);
         this._bindUISourceCodeToScripts(originalUISourceCode, scripts);
         return originalUISourceCode;
     },

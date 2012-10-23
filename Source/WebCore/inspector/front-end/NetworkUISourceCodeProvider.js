@@ -83,7 +83,7 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
             if (!parsedURL.host)
                 return;
         }
-        this._addUISourceCode(script.sourceURL, script);
+        this._addUISourceCode(script.sourceURL, script, script.isContentScript);
     },
 
     /**
@@ -96,9 +96,11 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
     },
 
     /**
+     * @param {string} url
      * @param {WebInspector.ContentProvider} contentProvider
+     * @param {boolean=} isContentScript
      */
-    _addUISourceCode: function(url, contentProvider)
+    _addUISourceCode: function(url, contentProvider, isContentScript)
     {
         var type = contentProvider.contentType();
         if (type !== WebInspector.resourceTypes.Stylesheet && type !== WebInspector.resourceTypes.Document && type !== WebInspector.resourceTypes.Script)
@@ -107,8 +109,7 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
             return;
         this._processedURLs[url] = true;
         var isEditable = type !== WebInspector.resourceTypes.Document;
-        var uiSourceCode = new WebInspector.UISourceCode(url, contentProvider, isEditable);
-        this._workspace.project().addUISourceCode(uiSourceCode);
+        this._workspace.project().addUISourceCode(url, contentProvider, isEditable, isContentScript);
     },
 
     _projectWillReset: function()

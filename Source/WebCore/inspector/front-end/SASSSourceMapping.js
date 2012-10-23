@@ -115,8 +115,8 @@ WebInspector.SASSSourceMapping.prototype = {
         if (!uiSourceCode) {
             var content = InspectorFrontendHost.loadResourceSynchronously(url);
             var contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Stylesheet, content, "text/x-scss");
-            uiSourceCode = new WebInspector.UISourceCode(url, contentProvider, true);
-            this._workspace.project().addUISourceCode(uiSourceCode);
+            this._workspace.project().addUISourceCode(url, contentProvider, true);
+            uiSourceCode = this._workspace.uiSourceCodeForURL(url);
             WebInspector.cssModel.setSourceMapping(rawURL, this);
         }
         var rawLocationString = rawURL + ":" + (rawLine + 1);  // Next line after mapping metainfo

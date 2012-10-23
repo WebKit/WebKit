@@ -15,47 +15,40 @@ function test()
         set: function(breakpoints) { persistentBreakpoints = breakpoints; }
     };
 
-    var contentProvider = {
-        contentType: function()
-        {
-            return WebInspector.resourceTypes.Script;
-        }
-    }
+    var contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Script, "", "text/javascript");
+    InspectorTest.addSniffer(WebInspector.UISourceCode.prototype, "requestContent", requestContentSniffer, true)
     
-    function createUISouceCode(url)
+    function requestContentSniffer(callback)
     {
-        var uiSourceCode = new WebInspector.UISourceCode(url, contentProvider, false);
-        uiSourceCode.requestContent = function(callback)
-        {
-            InspectorTest.addResult("Source requested for " + url);
-            callback("");
-        };
-        return uiSourceCode;
+        InspectorTest.addResult("Source requested for " + this.url);
+        callback("");
+    }
+
+    function createMockWorkspace()
+    {
+        var workspace = new WebInspector.Workspace();
+        return workspace;
     }
 
     InspectorTest.runTestSuite([
         function testInitialLoad(next)
         {
-            var workspace = new WebInspector.Workspace();
+            var workspace = createMockWorkspace();
             
-            var uiSourceCode = createUISouceCode("foobar.js");
-            var uiSourceCodeFoo = createUISouceCode("foo.js");
-            var uiSourceCodeBar = createUISouceCode("bar.js");
-            var uiSourceCodeBaz = createUISouceCode("baz.js");
-
-            workspace.project().addUISourceCode(uiSourceCode);
+            workspace.project().addUISourceCode("foobar.js", contentProvider, false);
 
             var panel = new WebInspector.ScriptsPanel(workspace);
             panel.show();
 
-            workspace.project().addUISourceCode(uiSourceCodeFoo);
-            workspace.project().addUISourceCode(uiSourceCodeBar);
-            workspace.project().addUISourceCode(uiSourceCodeBaz);
+            workspace.project().addUISourceCode("foo.js", contentProvider, false);
+            workspace.project().addUISourceCode("bar.js", contentProvider, false);
+            workspace.project().addUISourceCode("baz.js", contentProvider, false);
+            
 
             InspectorTest.dumpScriptsNavigator(panel._navigator);
 
             // Select "baz.js".
-            panel._showFile(uiSourceCodeBaz);
+            panel._showFile(workspace.uiSourceCodeForURL("baz.js"));
             panel.detach();
 
             next();
@@ -63,23 +56,19 @@ function test()
 
         function testReset(next)
         {
-            var workspace = new WebInspector.Workspace();
+            var workspace = createMockWorkspace();
             var workspaceController = new WebInspector.WorkspaceController(workspace);
             var panel = new WebInspector.ScriptsPanel(workspace);
             panel.show();
 
-            var uiSourceCodeFoo = createUISouceCode("foo.js");
-            var uiSourceCodeBar = createUISouceCode("bar.js");
-            var uiSourceCodeBaz = createUISouceCode("baz.js");
-
-            workspace.project().addUISourceCode(uiSourceCodeFoo);
-            workspace.project().addUISourceCode(uiSourceCodeBar);
-            workspace.project().addUISourceCode(uiSourceCodeBaz);
+            workspace.project().addUISourceCode("foo.js", contentProvider, false);
+            workspace.project().addUISourceCode("bar.js", contentProvider, false);
+            workspace.project().addUISourceCode("baz.js", contentProvider, false);
 
             InspectorTest.dumpScriptsNavigator(panel._navigator);
 
             workspaceController._mainFrameNavigated();
-            workspace.project().addUISourceCode(uiSourceCodeBar);
+            workspace.project().addUISourceCode("bar.js", contentProvider, false);
             InspectorTest.dumpScriptsNavigator(panel._navigator);
 
             panel.detach();
@@ -88,21 +77,18 @@ function test()
 
         function testTemporaryUISourceCodeAddedAndRemoved(next)
         {
-            var workspace = new WebInspector.Workspace();
+            var workspace = createMockWorkspace();
             var panel = new WebInspector.ScriptsPanel(workspace);
             panel.show();
 
-            var uiSourceCodeFoo = createUISouceCode("foo.js");
-            workspace.project().addUISourceCode(uiSourceCodeFoo);
-            var compiledSourceCode = createUISouceCode("compiled.js");
-            workspace.project().addTemporaryUISourceCode(compiledSourceCode);
+            workspace.project().addUISourceCode("foo.js", contentProvider, false);
+            var temporaryUISourceCode = workspace.addTemporaryUISourceCode("compiled.js", contentProvider);
 
             InspectorTest.dumpScriptsNavigator(panel._navigator);
 
             // Plug compiler source mapping.
-            var sourceSourceCode = createUISouceCode("source.js");
-            workspace.project().addUISourceCode(sourceSourceCode);
-            workspace.project().removeTemporaryUISourceCode(compiledSourceCode);
+            workspace.project().addUISourceCode("source.js", contentProvider, false);
+            workspace.removeTemporaryUISourceCode(temporaryUISourceCode);
 
             InspectorTest.dumpScriptsNavigator(panel._navigator);
             next();

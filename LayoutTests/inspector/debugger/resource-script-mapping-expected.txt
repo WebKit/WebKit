@@ -11,7 +11,7 @@ UISourceCode content: <content script source>
 Adding uiSourceCode for finished resource.
 UISourceCode: foo.js
 UISourceCode is editable: true
-UISourceCode is content script: true
+UISourceCode is content script: false
 Mime type: text/javascript
 UISourceCode content: <content script resource content>
 
