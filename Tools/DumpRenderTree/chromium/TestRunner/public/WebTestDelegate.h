@@ -57,6 +57,8 @@ public:
     // for deleting them.
     virtual void postTask(WebTask*) = 0;
     virtual void postDelayedTask(WebTask*, long long ms) = 0;
+
+    virtual WebKit::WebString registerIsolatedFileSystem(const WebKit::WebVector<WebKit::WebString>& absoluteFilenames) = 0;
 };
 
 }

@@ -1495,6 +1495,11 @@ void WebViewHost::postDelayedTask(WebTask* task, long long ms)
     ::postDelayedTask(task, ms);
 }
 
+WebString WebViewHost::registerIsolatedFileSystem(const WebVector<WebString>& absoluteFilenames)
+{
+    return webkit_support::RegisterIsolatedFileSystem(absoluteFilenames);
+}
+
 // Public functions -----------------------------------------------------------
 
 WebViewHost::WebViewHost(TestShell* shell)

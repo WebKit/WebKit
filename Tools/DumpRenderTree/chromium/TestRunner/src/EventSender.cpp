@@ -51,6 +51,7 @@
 #include "platform/WebDragData.h"
 #include "platform/WebPoint.h"
 #include "platform/WebString.h"
+#include "platform/WebVector.h"
 #include "webkit/support/webkit_support.h"
 #include <wtf/Deque.h>
 #include <wtf/StringExtras.h>
@@ -901,15 +902,15 @@ void EventSender::beginDragWithFiles(const CppArgumentList& arguments, CppVarian
 {
     currentDragData.initialize();
     Vector<string> files = arguments[0].toStringVector();
-    Vector<WebString> absoluteFilenames;
+    WebVector<WebString> absoluteFilenames(files.size());
     for (size_t i = 0; i < files.size(); ++i) {
         WebDragData::Item item;
         item.storageType = WebDragData::Item::StorageTypeFilename;
         item.filenameData = webkit_support::GetAbsoluteWebStringFromUTF8Path(files[i]);
         currentDragData.addItem(item);
-        absoluteFilenames.append(item.filenameData);
+        absoluteFilenames[i] = item.filenameData;
     }
-    currentDragData.setFilesystemId(webkit_support::RegisterIsolatedFileSystem(absoluteFilenames));
+    currentDragData.setFilesystemId(m_delegate->registerIsolatedFileSystem(absoluteFilenames));
     currentDragEffectsAllowed = WebKit::WebDragOperationCopy;
 
     // Provide a drag source.

@@ -66,6 +66,7 @@ public:
     virtual void printMessage(const std::string& message) const;
     virtual void postTask(WebTask*);
     virtual void postDelayedTask(WebTask*, long long ms);
+    virtual WebString registerIsolatedFileSystem(const WebVector<WebString>& absoluteFilenames);
 
 private:
     TestInterfaces m_interfaces;
@@ -139,6 +140,11 @@ void WebTestInterfaces::Internal::postTask(WebTask* task)
 void WebTestInterfaces::Internal::postDelayedTask(WebTask* task, long long ms)
 {
     m_delegate->postDelayedTask(task, ms);
+}
+
+WebString WebTestInterfaces::Internal::registerIsolatedFileSystem(const WebVector<WebString>& absoluteFilenames)
+{
+    return m_delegate->registerIsolatedFileSystem(absoluteFilenames);
 }
 
 WebTestInterfaces::WebTestInterfaces()

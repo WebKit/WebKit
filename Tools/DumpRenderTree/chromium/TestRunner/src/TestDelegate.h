@@ -54,6 +54,7 @@ public:
     virtual void printMessage(const std::string& message) const = 0;
     virtual void postTask(WebTestRunner::WebTask*) = 0;
     virtual void postDelayedTask(WebTestRunner::WebTask*, long long ms) = 0;
+    virtual WebKit::WebString registerIsolatedFileSystem(const WebKit::WebVector<WebKit::WebString>& absoluteFilenames) = 0;
 };
 
 #endif // TestDelegate_h
