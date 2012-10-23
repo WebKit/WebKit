@@ -1,3 +1,78 @@
+2012-10-23  Mark Lam  <mark.lam@apple.com>
+
+        Make topCallFrame reliable.
+        https://bugs.webkit.org/show_bug.cgi?id=98928.
+
+        Reviewed by Geoffrey Garen.
+
+        - VM entry points and the GC now uses topCallFrame.
+        - The callerFrame value in CallFrames are now always the previous
+          frame on the stack, except for the first frame which has a
+          callerFrame of 0 (not counting the HostCallFrameFlag).
+          Hence, we can now traverse every frame on the stack all the way
+          back to the first frame.
+        - GlobalExec's will no longer be used as the callerFrame values in
+          call frames.
+        - Added fences and traps for debugging the JSStack in debug builds.
+
+        * bytecode/SamplingTool.h:
+        (SamplingTool):
+        (JSC::SamplingTool::CallRecord::CallRecord):
+        * dfg/DFGOperations.cpp:
+        - Fixed 2 DFG helper functions to flush topCallFrame as expected.
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::prepareForExternalCall):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::callerFrameNoFlags):
+        (ExecState):
+        (JSC::ExecState::argIndexForRegister):
+        (JSC::ExecState::getArgumentUnsafe):
+        * interpreter/CallFrameClosure.h:
+        (CallFrameClosure):
+        * interpreter/Interpreter.cpp:
+        (JSC):
+        (JSC::eval):
+        (JSC::Interpreter::Interpreter):
+        (JSC::Interpreter::throwException):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        (JSC::Interpreter::endRepeatCall):
+        * interpreter/Interpreter.h:
+        (JSC):
+        (Interpreter):
+        * interpreter/JSStack.cpp:
+        (JSC::JSStack::JSStack):
+        (JSC::JSStack::gatherConservativeRoots):
+        (JSC::JSStack::disableErrorStackReserve):
+        * interpreter/JSStack.h:
+        (JSC):
+        (JSStack):
+        (JSC::JSStack::installFence):
+        (JSC::JSStack::validateFence):
+        (JSC::JSStack::installTrapsAfterFrame):
+        * interpreter/JSStackInlines.h: Added.
+        (JSC):
+        (JSC::JSStack::getTopOfFrame):
+        (JSC::JSStack::getTopOfStack):
+        (JSC::JSStack::getStartOfFrame):
+        (JSC::JSStack::pushFrame):
+        (JSC::JSStack::popFrame):
+        (JSC::JSStack::generateFenceValue):
+        (JSC::JSStack::installFence):
+        (JSC::JSStack::validateFence):
+        (JSC::JSStack::installTrapsAfterFrame):
+        * jit/JITStubs.cpp:
+        (JSC::jitCompileFor):
+        (JSC::lazyLinkFor):
+        - Set frame->codeBlock to 0 for both the above because they are called
+          with partially intitialized frames (cb uninitialized), but may
+          trigger a GC.
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+
 2012-10-22  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::Array::Undecided should be called DFG::Array::SelectUsingPredictions

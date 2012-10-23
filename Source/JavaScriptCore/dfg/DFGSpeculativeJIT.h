@@ -1925,6 +1925,15 @@ public:
 #if !defined(NDEBUG) && !CPU(ARM)
     void prepareForExternalCall()
     {
+        // We're about to call out to a "native" helper function. The helper
+        // function is expected to set topCallFrame itself with the ExecState
+        // that is passed to it.
+        //
+        // We explicitly trash topCallFrame here so that we'll know if some of
+        // the helper functions are not setting topCallFrame when they should
+        // be doing so. Note: the previous value in topcallFrame was not valid
+        // anyway since it was not being updated by JIT'ed code by design.
+
         for (unsigned i = 0; i < sizeof(void*) / 4; i++)
             m_jit.store32(TrustedImm32(0xbadbeef), reinterpret_cast<char*>(&m_jit.globalData()->topCallFrame) + i * 4);
     }

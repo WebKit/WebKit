@@ -14,5 +14,4 @@ Stack Trace:
     4) (internal script) / _evaluateOn / (line number) / (column number)
     5) (internal script) / _evaluateAndWrap / (line number) / (column number)
     6) (internal script) / evaluate / (line number) / (column number)
-    7) [native code] /  / 0 / 0
 

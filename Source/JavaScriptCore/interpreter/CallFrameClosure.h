@@ -34,7 +34,6 @@ struct CallFrameClosure {
     JSFunction* function;
     FunctionExecutable* functionExecutable;
     JSGlobalData* globalData;
-    Register* oldEnd;
     JSScope* scope;
     int parameterCountIncludingThis;
     int argumentCountIncludingThis;

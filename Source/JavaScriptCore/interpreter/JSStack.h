@@ -35,11 +35,17 @@
 #include <wtf/PageReservation.h>
 #include <wtf/VMTags.h>
 
+#if !defined(NDEBUG) && !defined(ENABLE_DEBUG_JSSTACK)
+#define ENABLE_DEBUG_JSSTACK 1
+#endif
+
 namespace JSC {
 
     class ConservativeRoots;
     class DFGCodeBlocks;
+    class ExecState;
     class JITStubRoutineSet;
+    class JSGlobalData;
     class LLIntOffsetsExtractor;
 
     class JSStack {
@@ -61,7 +67,7 @@ namespace JSC {
         // Allow 8k of excess registers before we start trying to reap the stack
         static const ptrdiff_t maxExcessCapacity = 8 * 1024;
 
-        JSStack(size_t capacity = defaultCapacity);
+        JSStack(JSGlobalData&, size_t capacity = defaultCapacity);
         ~JSStack();
         
         void gatherConservativeRoots(ConservativeRoots&);
@@ -72,7 +78,6 @@ namespace JSC {
         size_t size() const { return end() - begin(); }
 
         bool grow(Register*);
-        void shrink(Register*);
         
         static size_t committedByteCount();
         static void initializeThreading();
@@ -82,12 +87,28 @@ namespace JSC {
             return &m_end;
         }
 
+        Register* getTopOfFrame(CallFrame*);
+        Register* getStartOfFrame(CallFrame*);
+        Register* getTopOfStack();
+
+        CallFrame* pushFrame(CallFrame* callerFrame, class CodeBlock*,
+            JSScope*, int argsCount, JSObject* callee);
+
+        void popFrame(CallFrame*);
+
         void enableErrorStackReserve();
         void disableErrorStackReserve();
 
-    private:
-        friend class LLIntOffsetsExtractor;
+#if ENABLE(DEBUG_JSSTACK)
+        void installFence(CallFrame*, const char *function = "", int lineNo = 0);
+        void validateFence(CallFrame*, const char *function = "", int lineNo = 0);
+        static const int FenceSize = 4;
+#else // !ENABLE(DEBUG_JSSTACK)
+        void installFence(CallFrame*, const char* = "", int = 0) { }
+        void validateFence(CallFrame*, const char* = "", int = 0) { }
+#endif // !ENABLE(DEBUG_JSSTACK)
 
+    private:
         Register* reservationEnd() const
         {
             char* base = static_cast<char*>(m_reservation.base());
@@ -95,13 +116,25 @@ namespace JSC {
             return reinterpret_cast<Register*>(reservationEnd);
         }
 
+#if ENABLE(DEBUG_JSSTACK)
+        static JSValue generateFenceValue(size_t argIndex);
+        void installTrapsAfterFrame(CallFrame*);
+#else
+        void installTrapsAfterFrame(CallFrame*) { }
+#endif
+
         bool growSlowCase(Register*);
+        void shrink(Register*);
         void releaseExcessCapacity();
         void addToCommittedByteCount(long);
+
         Register* m_end;
         Register* m_commitEnd;
         Register* m_useableEnd;
         PageReservation m_reservation;
+        CallFrame*& m_topCallFrame;
+
+        friend class LLIntOffsetsExtractor;
     };
 
     inline void JSStack::shrink(Register* newEnd)

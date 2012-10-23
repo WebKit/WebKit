@@ -1165,20 +1165,24 @@ JSCell* DFG_OPERATION operationCreateActivation(ExecState* exec)
 
 JSCell* DFG_OPERATION operationCreateArguments(ExecState* exec)
 {
+    JSGlobalData& globalData = exec->globalData();
+    NativeCallFrameTracer tracer(&globalData, exec);
     // NB: This needs to be exceedingly careful with top call frame tracking, since it
     // may be called from OSR exit, while the state of the call stack is bizarre.
-    Arguments* result = Arguments::create(exec->globalData(), exec);
-    ASSERT(!exec->globalData().exception);
+    Arguments* result = Arguments::create(globalData, exec);
+    ASSERT(!globalData.exception);
     return result;
 }
 
 JSCell* DFG_OPERATION operationCreateInlinedArguments(
     ExecState* exec, InlineCallFrame* inlineCallFrame)
 {
+    JSGlobalData& globalData = exec->globalData();
+    NativeCallFrameTracer tracer(&globalData, exec);
     // NB: This needs to be exceedingly careful with top call frame tracking, since it
     // may be called from OSR exit, while the state of the call stack is bizarre.
-    Arguments* result = Arguments::create(exec->globalData(), exec, inlineCallFrame);
-    ASSERT(!exec->globalData().exception);
+    Arguments* result = Arguments::create(globalData, exec, inlineCallFrame);
+    ASSERT(!globalData.exception);
     return result;
 }
 

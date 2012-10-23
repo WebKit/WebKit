@@ -28,6 +28,7 @@
 
 #include "config.h"
 #include "JSStack.h"
+#include "JSStackInlines.h"
 
 #include "ConservativeRoots.h"
 #include "Interpreter.h"
@@ -42,8 +43,9 @@ static Mutex& stackStatisticsMutex()
     return staticMutex;
 }    
 
-JSStack::JSStack(size_t capacity)
+JSStack::JSStack(JSGlobalData& globalData, size_t capacity)
     : m_end(0)
+    , m_topCallFrame(globalData.topCallFrame)
 {
     ASSERT(capacity && isPageAligned(capacity));
 
@@ -52,6 +54,8 @@ JSStack::JSStack(size_t capacity)
     m_commitEnd = static_cast<Register*>(m_reservation.base());
 
     disableErrorStackReserve();
+
+    m_topCallFrame = 0;
 }
 
 JSStack::~JSStack()
@@ -89,12 +93,12 @@ bool JSStack::growSlowCase(Register* newEnd)
 
 void JSStack::gatherConservativeRoots(ConservativeRoots& conservativeRoots)
 {
-    conservativeRoots.add(begin(), end());
+    conservativeRoots.add(begin(), getTopOfStack());
 }
 
 void JSStack::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, DFGCodeBlocks& dfgCodeBlocks)
 {
-    conservativeRoots.add(begin(), end(), jitStubRoutines, dfgCodeBlocks);
+    conservativeRoots.add(begin(), getTopOfStack(), jitStubRoutines, dfgCodeBlocks);
 }
 
 void JSStack::releaseExcessCapacity()
@@ -138,8 +142,10 @@ void JSStack::disableErrorStackReserve()
     // place. That means the stack space beyond m_useableEnd before we
     // enabled the reserve was not previously in use. Hence, it is safe to
     // shrink back to that m_useableEnd.
-    if (m_end > m_useableEnd)
+    if (m_end > m_useableEnd) {
+        ASSERT(m_topCallFrame->frameExtent() <= m_useableEnd);
         shrink(m_useableEnd);
+    }
 }
 
 } // namespace JSC

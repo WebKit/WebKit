@@ -197,7 +197,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, HeapType heapType)
 #endif
     , m_inDefineOwnProperty(false)
 {
-    interpreter = new Interpreter;
+    interpreter = new Interpreter(*this);
 
     // Need to be careful to keep everything consistent here
     JSLockHolder lock(this);

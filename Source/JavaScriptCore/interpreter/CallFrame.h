@@ -256,6 +256,7 @@ namespace JSC  {
         
         CodeBlock* someCodeBlockForPossiblyInlinedCode() { return codeBlock(); }
 #endif
+        CallFrame* callerFrameNoFlags() { return callerFrame()->removeHostCallFrameFlag(); }
         
         // Call this to get the true call frame (accounted for inlining and any
         // other optimizations), when you have entered into VM code through one
@@ -281,6 +282,36 @@ namespace JSC  {
         ExecState();
         ~ExecState();
 
+        // The following are for internal use in debugging and verification
+        // code only and not meant as an API for general usage:
+
+        size_t argIndexForRegister(Register* reg)
+        {
+            // The register at 'offset' number of slots from the frame pointer
+            // i.e.
+            //       reg = frame[offset];
+            //   ==> reg = frame + offset;
+            //   ==> offset = reg - frame;
+            int offset = reg - this->registers();
+
+            // The offset is defined (based on argumentOffset()) to be:
+            //       offset = s_firstArgumentOffset - argIndex;
+            // Hence:
+            //       argIndex = s_firstArgumentOffset - offset;
+            size_t argIndex = s_firstArgumentOffset - offset;
+            return argIndex;
+        }
+
+        JSValue getArgumentUnsafe(size_t argIndex)
+        {
+            // User beware! This method does not verify that there is a valid
+            // argument at the specified argIndex. This is used for debugging
+            // and verification code only. The caller is expected to know what
+            // he/she is doing when calling this method.
+            return this[argumentOffset(argIndex)].jsValue();
+        }
+
+        friend class JSStack;
         friend class VMInspector;
     };
 

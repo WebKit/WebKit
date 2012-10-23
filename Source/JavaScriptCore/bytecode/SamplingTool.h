@@ -230,17 +230,18 @@ namespace JSC {
     class SamplingTool {
     public:
         friend struct CallRecord;
-        friend class HostCallRecord;
         
 #if ENABLE(OPCODE_SAMPLING)
         class CallRecord {
             WTF_MAKE_NONCOPYABLE(CallRecord);
         public:
-            CallRecord(SamplingTool* samplingTool)
+            CallRecord(SamplingTool* samplingTool, bool isHostCall = false)
                 : m_samplingTool(samplingTool)
                 , m_savedSample(samplingTool->m_sample)
                 , m_savedCodeBlock(samplingTool->m_codeBlock)
             {
+                if (isHostcall)
+                    samplingTool->m_sample |= 0x1;
             }
 
             ~CallRecord()
@@ -254,32 +255,15 @@ namespace JSC {
             intptr_t m_savedSample;
             CodeBlock* m_savedCodeBlock;
         };
-        
-        class HostCallRecord : public CallRecord {
-        public:
-            HostCallRecord(SamplingTool* samplingTool)
-                : CallRecord(samplingTool)
-            {
-                samplingTool->m_sample |= 0x1;
-            }
-        };
 #else
         class CallRecord {
             WTF_MAKE_NONCOPYABLE(CallRecord);
         public:
-            CallRecord(SamplingTool*)
+            CallRecord(SamplingTool*, bool = false)
             {
             }
         };
-
-        class HostCallRecord : public CallRecord {
-        public:
-            HostCallRecord(SamplingTool* samplingTool)
-                : CallRecord(samplingTool)
-            {
-            }
-        };
-#endif        
+#endif
 
         SamplingTool(Interpreter* interpreter)
             : m_interpreter(interpreter)

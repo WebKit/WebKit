@@ -2142,6 +2142,23 @@ DEFINE_STUB_FUNCTION(JSObject*, op_new_func)
 
 inline void* jitCompileFor(CallFrame* callFrame, CodeSpecializationKind kind)
 {
+    // This function is called by cti_op_call_jitCompile() and
+    // cti_op_construct_jitCompile() JIT glue trampolines to compile the
+    // callee function that we want to call. Both cti glue trampolines are
+    // called by JIT'ed code which has pushed a frame and initialized most of
+    // the frame content except for the codeBlock.
+    //
+    // Normally, the prologue of the callee is supposed to set the frame's cb
+    // pointer to the cb of the callee. But in this case, the callee code does
+    // not exist yet until it is compiled below. The compilation process will
+    // allocate memory which may trigger a GC. The GC, in turn, will scan the
+    // JSStack, and will expect the frame's cb to either be valid or 0. If
+    // we don't initialize it, the GC will be accessing invalid memory and may
+    // crash.
+    //
+    // Hence, we should nullify it here before proceeding with the compilation.
+    callFrame->setCodeBlock(0);
+
     JSFunction* function = jsCast<JSFunction*>(callFrame->callee());
     ASSERT(!function->isHostFunction());
     FunctionExecutable* executable = function->jsExecutable();
@@ -2222,6 +2239,23 @@ inline void* lazyLinkFor(CallFrame* callFrame, CodeSpecializationKind kind)
     CodeBlock* codeBlock = 0;
     CallLinkInfo* callLinkInfo = &callFrame->callerFrame()->codeBlock()->getCallLinkInfo(callFrame->returnPC());
 
+    // This function is called by cti_vm_lazyLinkCall() and
+    // cti_lazyLinkConstruct JIT glue trampolines to link the callee function
+    // that we want to call. Both cti glue trampolines are called by JIT'ed
+    // code which has pushed a frame and initialized most of the frame content
+    // except for the codeBlock.
+    //
+    // Normally, the prologue of the callee is supposed to set the frame's cb
+    // field to the cb of the callee. But in this case, the callee may not
+    // exist yet, and if not, it will be generated in the compilation below.
+    // The compilation will allocate memory which may trigger a GC. The GC, in
+    // turn, will scan the JSStack, and will expect the frame's cb to be valid
+    // or 0. If we don't initialize it, the GC will be accessing invalid
+    // memory and may crash.
+    //
+    // Hence, we should nullify it here before proceeding with the compilation.
+    callFrame->setCodeBlock(0);
+
     if (executable->isHostFunction())
         codePtr = executable->generatedJITCodeFor(kind).addressForCall();
     else {
@@ -2298,7 +2332,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_call_NotJSFunction)
 
     EncodedJSValue returnValue;
     {
-        SamplingTool::HostCallRecord callRecord(CTI_SAMPLER);
+        SamplingTool::CallRecord callRecord(CTI_SAMPLER, true);
         returnValue = callData.native.function(callFrame);
     }
 
@@ -2424,7 +2458,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_construct_NotJSConstruct)
 
     EncodedJSValue returnValue;
     {
-        SamplingTool::HostCallRecord callRecord(CTI_SAMPLER);
+        SamplingTool::CallRecord callRecord(CTI_SAMPLER, true);
         returnValue = constructData.native.function(callFrame);
     }
 

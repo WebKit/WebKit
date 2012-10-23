@@ -48,6 +48,7 @@ namespace JSC {
     class EvalExecutable;
     class ExecutableBase;
     class FunctionExecutable;
+    class JSGlobalData;
     class JSGlobalObject;
     class LLIntOffsetsExtractor;
     class ProgramExecutable;
@@ -185,7 +186,7 @@ namespace JSC {
             Interpreter& m_interpreter;
         };
 
-        Interpreter();
+        Interpreter(JSGlobalData &);
         ~Interpreter();
         
         void initialize(bool canUseJIT);
@@ -219,7 +220,6 @@ namespace JSC {
         JSValue executeCall(CallFrame*, JSObject* function, CallType, const CallData&, JSValue thisValue, const ArgList&);
         JSObject* executeConstruct(CallFrame*, JSObject* function, ConstructType, const ConstructData&, const ArgList&);
         JSValue execute(EvalExecutable*, CallFrame*, JSValue thisValue, JSScope*);
-        JSValue execute(EvalExecutable*, CallFrame*, JSValue thisValue, JSScope*, int globalRegisterOffset);
 
         JSValue retrieveArgumentsFromVMCode(CallFrame*, JSFunction*) const;
         JSValue retrieveCallerFromVMCode(CallFrame*, JSFunction*) const;
@@ -260,8 +260,6 @@ namespace JSC {
 
         NEVER_INLINE bool unwindCallFrame(CallFrame*&, JSValue, unsigned& bytecodeOffset, CodeBlock*&);
 
-        static ALWAYS_INLINE CallFrame* slideRegisterWindowForCall(CodeBlock*, JSStack*, CallFrame*, size_t registerOffset, int argc);
-
         static CallFrame* findFunctionCallFrameFromVMCode(CallFrame*, JSFunction*);
 
         void dumpRegisters(CallFrame*);
@@ -289,11 +287,6 @@ namespace JSC {
     inline bool isValidThisObject(JSValue thisValue, ExecState* exec)
     {
         return !thisValue.isObject() || thisValue.toThisObject(exec) == thisValue;
-    }
-
-    inline JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue thisValue, JSScope* scope)
-    {
-        return execute(eval, callFrame, thisValue, scope, m_stack.size() + 1 + JSStack::CallFrameHeaderSize);
     }
 
     JSValue eval(CallFrame*);
