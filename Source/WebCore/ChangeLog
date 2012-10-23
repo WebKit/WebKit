@@ -1,3 +1,18 @@
+2012-10-22  Tony Chang  <tony@chromium.org>
+
+        margin-top/bottom has no effect for child nodes of flex items
+        https://bugs.webkit.org/show_bug.cgi?id=99923
+
+        Reviewed by Ojan Vafai.
+
+        Flexitems, like table cells, shouldn't collapse margins.
+
+        Test: css3/flexbox/flexitem-no-margin-collapsing.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::MarginInfo::MarginInfo): Check to see if the parent is a flexible box.
+        We should always have a parent if we make it this far in the check.
+
 2012-10-22  Marja Hölttä  <marja@chromium.org>
 
         Refactor CachedResourceLoader: add CachedResourceRequest

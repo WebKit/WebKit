@@ -1,3 +1,16 @@
+2012-10-22  Tony Chang  <tony@chromium.org>
+
+        margin-top/bottom has no effect for child nodes of flex items
+        https://bugs.webkit.org/show_bug.cgi?id=99923
+
+        Reviewed by Ojan Vafai.
+
+        Add a test to make sure we don't collapse margins in flex items.
+
+        * css3/flexbox/flexitem-no-margin-collapsing-expected.txt: Added.
+        * css3/flexbox/flexitem-no-margin-collapsing.html: Added.
+        * css3/flexbox/repaint.html:
+
 2012-10-22  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed chromium win rebaselines.
