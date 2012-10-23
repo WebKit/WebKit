@@ -254,9 +254,9 @@ String LocaleMac::monthFormat()
 {
     if (!m_monthFormat.isNull())
         return m_monthFormat;
-    // Gets a format for "MMM", not "MM" because Windows API always provides
-    // formats for "MMM".
-    m_monthFormat = [NSDateFormatter dateFormatFromTemplate:@"yyyyMMM" options:0 locale:m_locale.get()];
+    // Gets a format for "MMMM" because Windows API always provides formats for
+    // "MMMM" in some locales.
+    m_monthFormat = [NSDateFormatter dateFormatFromTemplate:@"yyyyMMMM" options:0 locale:m_locale.get()];
     return m_monthFormat;
 }
 

@@ -1,3 +1,27 @@
+2012-10-23  Kent Tamura  <tkent@chromium.org>
+
+        Support full month names in DateTimeEditElement, and use them in input[type=month] by default
+        https://bugs.webkit.org/show_bug.cgi?id=100060
+
+        Reviewed by Kentaro Hara.
+
+        According to https://plus.google.com/104770450049736549185/posts/4zsoeHoa7SM
+        no one wants to show abbreviated month names for input[type=month].
+        This change add support for full month names in DateTimeEditELement, and
+        LocaleICU and LocaleMac retun month formats with full month names. Note
+        that LocaleWin::monthFormat returns formats for full month names.
+
+        No new tests. Covered by fast/forms/month-multiple-fields/month-multiple-fields-appearance-*.html
+
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore::DateTimeEditBuilder::visitField):
+        If count is 4, use Localizer::monthLabels or standAloneMonthLabels.
+        * platform/text/LocaleICU.cpp:
+        (WebCore::LocaleICU::monthFormat):
+        Returns a format for full month names.
+        * platform/text/mac/LocaleMac.mm:
+        (WebCore::LocaleMac::monthFormat): Ditto.
+
 2012-10-23  Mike West  <mkwst@chromium.org>
 
         Viewport errors should be slightly friendlier with regard to ';'.

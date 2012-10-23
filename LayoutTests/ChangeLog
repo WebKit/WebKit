@@ -1,3 +1,17 @@
+2012-10-23  Kent Tamura  <tkent@chromium.org>
+
+        Support full month names in DateTimeEditElement, and use them in input[type=month] by default
+        https://bugs.webkit.org/show_bug.cgi?id=100060
+
+        Reviewed by Kentaro Hara.
+
+        Note: Other affected tests are already marked in TestExpectations.
+
+        * fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n.html:
+         Add max attributes to show appearance in typical usage.
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n-expected.png:
+        Updated.
+
 2012-10-23  Mike West  <mkwst@chromium.org>
 
         Viewport errors should be slightly friendlier with regard to ';'.

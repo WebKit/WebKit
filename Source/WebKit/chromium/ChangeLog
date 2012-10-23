@@ -1,3 +1,15 @@
+2012-10-23  Kent Tamura  <tkent@chromium.org>
+
+        Support full month names in DateTimeEditElement, and use them in input[type=month] by default
+        https://bugs.webkit.org/show_bug.cgi?id=100060
+
+        Reviewed by Kentaro Hara.
+
+        * tests/LocaleMacTest.cpp:
+        (TEST_F): Follow LocaleMac::monthFormat change.
+        * tests/LocalizedDateICUTest.cpp:
+        (TEST_F): Follow LocaleICU::monthFormat change.
+
 2012-10-23  Dan Carney  <dcarney@google.com>
 
         When blocking localStorage, Firefox throws a security exception on access, and maybe so should we

@@ -429,9 +429,9 @@ String LocaleICU::monthFormat()
 {
     if (!m_monthFormat.isNull())
         return m_monthFormat;
-    // Gets a format for "MMM", not "MM" because Windows API always provides
-    // formats for "MMM".
-    m_monthFormat = getFormatForSkeleton(m_locale.data(), ASCIILiteral("yyyyMMM"));
+    // Gets a format for "MMMM" because Windows API always provides formats for
+    // "MMMM" in some locales.
+    m_monthFormat = getFormatForSkeleton(m_locale.data(), ASCIILiteral("yyyyMMMM"));
     return m_monthFormat;
 }
 
