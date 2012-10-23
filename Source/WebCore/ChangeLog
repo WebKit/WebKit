@@ -1,3 +1,17 @@
+2012-10-23  Adam Barth  <abarth@webkit.org>
+
+        [V8] Remove unused function from DOM wrapper visitor
+        https://bugs.webkit.org/show_bug.cgi?id=100163
+
+        Reviewed by Eric Seidel.
+
+        No one overrides these virtual functions. They were added in
+        http://trac.webkit.org/changeset/73491, but we don't use them in the GC
+        controller anymore.
+
+        * bindings/v8/V8DOMMap.h:
+        (WebCore::WeakReferenceMap::visit):
+
 2012-10-23  Aaron Colwell  <acolwell@chromium.org>
 
         Clear m_mediaSource reference when the MediaSource is closed
