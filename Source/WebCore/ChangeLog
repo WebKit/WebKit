@@ -1,3 +1,22 @@
+2012-10-22  Dan Bernstein  <mitz@apple.com>
+
+        Font’s fast code path is used for partial runs with kerning and ligatures, but shouldn’t be
+        https://bugs.webkit.org/show_bug.cgi?id=100068
+
+        Reviewed by Sam Weinig.
+
+        As described in <http://webkit.org/b/100050>, the fast code path doesn’t handle partial runs
+        correctly when kerning or ligatures are enabled. Since the partial-run case is uncommon,
+        for now just use the complex code path in this case.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::drawText): Changed to use the complex path for partial runs if there are any
+        typesetting features.
+        (WebCore::Font::drawEmphasisMarks): Ditto.
+        (WebCore::Font::selectionRectForText): Ditto.
+        (WebCore::Font::offsetForPosition): Changed to use the complex path if there are any
+        typesetting features.
+
 2012-10-22  Peter Wang  <peter.wang@torchmobile.com.cn>
 
         [BlackBerry] Missing some cookies in HTTP response header when set several cookies in one "Set-Cookie" header.
