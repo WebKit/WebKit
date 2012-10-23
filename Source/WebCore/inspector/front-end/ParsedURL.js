@@ -44,12 +44,12 @@ WebInspector.ParsedURL = function(url)
     this.lastPathComponent = "";
 
     // RegExp groups:
-    // 1 - scheme
+    // 1 - scheme (using the RFC3986 grammar)
     // 2 - hostname
     // 3 - ?port
     // 4 - ?path
     // 5 - ?fragment
-    var match = url.match(/^([^:]+):\/\/([^\/:]*)(?::([\d]+))?(?:(\/[^#]*)(?:#(.*))?)?$/i);
+    var match = url.match(/^([A-Za-z][A-Za-z0-9+.-]*):\/\/([^\/:]*)(?::([\d]+))?(?:(\/[^#]*)(?:#(.*))?)?$/i);
     if (match) {
         this.isValid = true;
         this.scheme = match[1].toLowerCase();

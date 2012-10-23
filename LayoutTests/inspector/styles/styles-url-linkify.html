@@ -30,6 +30,7 @@ function test()
     completeURL("http://example.com/foo?c=/d/e", "?a=b");
     completeURL("http://example.com/foo?c=/d/e", "cat.jpeg");
     completeURL("http://example.com/foo#anchor", "cat.jpeg");
+    completeURL("http://example.com/", "/foo?bar=http://otherexample.com");
 
     const dataURL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEIAAABCAgMAAACeOuh7AAAABGdBTUEAAK/INwWK6QAAAAlQTFRF////AAAA////fu+PTwAAAAF0Uk5TAEDm2GYAAACHSURBVDjLxdLbDYAgDAVQGELn0R3oEHYf2KGdUqtE46OFRCP3oyTng1xCnWsaD5JRRtCkQ2YmkBkHRXqWJBn0j0TICbrsWVoWhRShCdcGyZCtHxMaUnVPRZ9KSbmBJdsX2vJVnwqRD0Rb4rpzgIbE/AI5NTnWAMvy5l0dXrfuLh5OCe5BmmYGXhTUxlQ5xJ8AAAAASUVORK5CYII=";
     const blobURL = "blob:http%3A//example.com/f91b7b00-00-0000-0000-3b7c87055d7a";
