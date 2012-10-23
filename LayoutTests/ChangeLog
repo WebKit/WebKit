@@ -1,3 +1,13 @@
+2012-10-22  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Removing failure for an accessibility test that's already passing.
+        Updating and adding expectations for subpixel tests to reflect
+        the current situation.
+
+        * platform/gtk/TestExpectations:
+
 2012-10-22  Kangil Han  <kangil.han@samsung.com>
 
         [EFL] Skip fast/events/tabindex-focus-blur-all.html case.
