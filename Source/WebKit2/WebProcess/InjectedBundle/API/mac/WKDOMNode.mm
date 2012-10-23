@@ -30,6 +30,7 @@
 #import "WKDOMNode.h"
 
 #import "WKDOMInternals.h"
+#import <WebCore/Document.h>
 
 @implementation WKDOMNode
 
@@ -100,6 +101,16 @@
 - (WKDOMNode *)nextSibling
 {
     return WebKit::toWKDOMNode(_impl->nextSibling());
+}
+
+- (NSArray *)textRects
+{
+    _impl->document()->updateLayoutIgnorePendingStylesheets();
+    if (!_impl->renderer())
+        return nil;
+    Vector<WebCore::IntRect> rects;
+    _impl->textRects(rects);
+    return WebKit::toNSArray(rects);
 }
 
 @end

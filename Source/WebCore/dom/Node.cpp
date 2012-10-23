@@ -2841,6 +2841,14 @@ void Node::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
         info.addMember(m_renderer->style());
 }
 
+void Node::textRects(Vector<IntRect>& rects) const
+{
+    RefPtr<Range> range = Range::create(document());
+    WebCore::ExceptionCode ec = 0;
+    range->selectNodeContents(const_cast<Node*>(this), ec);
+    range->textRects(rects);
+}
+
 } // namespace WebCore
 
 #ifndef NDEBUG

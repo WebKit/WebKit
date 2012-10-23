@@ -669,6 +669,8 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
+    void textRects(Vector<IntRect>&) const;
+
 private:
     enum NodeFlags {
         IsTextFlag = 1,

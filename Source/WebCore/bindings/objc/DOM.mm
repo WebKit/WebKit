@@ -379,15 +379,11 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 
 - (NSArray *)textRects
 {
-    // FIXME: Could we move this function to WebCore::Node and autogenerate?
     core(self)->document()->updateLayoutIgnorePendingStylesheets();
     if (!core(self)->renderer())
         return nil;
-    RefPtr<Range> range = Range::create(core(self)->document());
-    WebCore::ExceptionCode ec = 0;
-    range->selectNodeContents(core(self), ec);
     Vector<WebCore::IntRect> rects;
-    range->textRects(rects);
+    core(self)->textRects(rects);
     return kit(rects);
 }
 

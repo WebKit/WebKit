@@ -43,6 +43,7 @@ WK_EXPORT
 @property(readonly) WKDOMNode *lastChild;
 @property(readonly) WKDOMNode *previousSibling;
 @property(readonly) WKDOMNode *nextSibling;
+@property(readonly) NSArray *textRects;
 
 @end
 

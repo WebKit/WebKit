@@ -137,6 +137,14 @@
     return _impl->collapsed(ec);
 }
 
+- (NSArray *)textRects
+{
+    _impl->ownerDocument()->updateLayoutIgnorePendingStylesheets();
+    Vector<WebCore::IntRect> rects;
+    _impl->textRects(rects);
+    return WebKit::toNSArray(rects);
+}
+
 @end
 
 #endif // defined(__LP64__) && defined(__clang__)

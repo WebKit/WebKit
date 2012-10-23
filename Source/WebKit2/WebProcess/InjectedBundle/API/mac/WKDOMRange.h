@@ -47,6 +47,7 @@ WK_EXPORT
 @property(readonly) NSInteger endOffset;
 @property(readonly, copy) NSString *text;
 @property(readonly) BOOL isCollapsed;
+@property(readonly) NSArray *textRects;
 
 @end
 

@@ -1,3 +1,20 @@
+2012-10-23  Andy Estes  <aestes@apple.com>
+
+        [WebKit2 API] Add properties to get textRects from a WKDOMRange or WKDOMNode
+        https://bugs.webkit.org/show_bug.cgi?id=100162
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMInternals.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMInternals.mm:
+        (WebKit::toNSArray): Added a helper function to convert a Vector of IntRects to an NSArray.
+        * WebProcess/InjectedBundle/API/mac/WKDOMNode.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMNode.mm:
+        (-[WKDOMNode textRects]):
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.mm:
+        (-[WKDOMRange textRects]):
+
 2012-10-23  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Coordinated Graphics: Enable threaded/IPC animations

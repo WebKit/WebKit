@@ -165,6 +165,15 @@ static WKDOMType toWKDOMType(WebCoreType impl, DOMCache<WebCoreType, WKDOMType>&
     return [wrapper autorelease];
 }
 
+NSArray *toNSArray(const Vector<WebCore::IntRect>& rects)
+{
+    size_t size = rects.size();
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:size];
+    for (size_t i = 0; i < size; ++i)
+        [array addObject:[NSValue valueWithRect:rects[i]]];
+    return array;
+}
+
 } // namespace WebKit
 
 #endif // defined(__LP64__) && defined(__clang__)
