@@ -1,0 +1,10 @@
+Description
+
+This test validates that the XHR2 timeout property behaves as expected in in a worker context.
+
+
+PASS XHR2 Timeout Property Tests in Worker 
+PASS XHR2 Timeout Property Tests in Worker 1 
+PASS XHR2 Timeout Property Tests in Worker 2 
+PASS XHR2 Timeout Property Tests in Worker 3 
+

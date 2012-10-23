@@ -1,3 +1,78 @@
+2012-10-23  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        Add timeout support to XMLHttpRequest
+        https://bugs.webkit.org/show_bug.cgi?id=74802
+
+        Reviewed by Nate Chapin.
+
+        XHR2 timeout tests were initially written by Mozilla's Alex Vincent's. He granted
+        permission to reuse them under PD/BSD license
+        in https://bugzilla.mozilla.org/show_bug.cgi?id=525816#c86 - big thanks!
+        I adapted them for W3C testharness.js and split them into groups with shorter test running time
+        so that they can be used as WebKit layout tests. Each individual test should
+        complete in less than 20 seconds.
+
+        The case of late updates to the timeout property, changing the timeout value after send()
+        is not supported yet and handled separately in bug 98156. Tests that are testing this feature
+        are commented out until this bug is tackled.
+
+        The suffix of the html test filename matches the groups in xmlhttprequest-timeout.js which contains
+        all tests that are run. The result of assertions is reported back to testharness.js.
+
+        For example, the "overrides" group is currently not run yet since all tests in that group are cases
+        of late updates, see above. Once late updates are supported we can add a file
+        xmlhttprequest-timeout-overrides.html to run them.
+
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-aborted-expected.txt: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-aborted.html: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-abortedonmain-expected.txt: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-abortedonmain.html: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-overridesexpires-expected.txt: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-overridesexpires.html: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-runner.js: Added. Distinguishes which group of tests to run based on filename suffix.
+        (testResultCallbackHandler.return):
+        (groupFromLocation):
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-simple-expected.txt: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-simple.html: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-synconmain-expected.txt: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-synconmain.html: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-twice-expected.txt: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-twice.html: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-aborted-expected.txt: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-aborted.html: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-overridesexpires-expected.txt: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-overridesexpires.html: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-simple-expected.txt: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-simple.html: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-synconworker-expected.txt: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-synconworker.html: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-twice-expected.txt: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-twice.html: Added.
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout.js: Added. Contains test cases for all individual test html files.
+        (message): Wrapper for postMessage in worker and document context case.
+        (is),
+        (ok): Assertion functions.
+        (RequestTracker): Class for variations of the regular timeout case.
+        (RequestTracker.prototype.startXHR.handleEvent):
+        (RequestTracker.prototype.startXHR):
+        (RequestTracker.prototype.getMessage):
+        (RequestTracker.prototype.handleEvent):
+        (AbortedRequest): Class for testing timeout event vs. abort events.
+        (AbortedRequest.prototype.startXHR.handleEvent):
+        (AbortedRequest.prototype.startXHR.abortReq):
+        (AbortedRequest.prototype.startXHR.else):
+        (AbortedRequest.prototype.startXHR):
+        (AbortedRequest.prototype.noEventsFired):
+        (AbortedRequest.prototype.getMessage):
+        (AbortedRequest.prototype.handleEvent):
+        (SyncRequestSettingTimeoutAfterOpen.startXHR),
+        (SyncRequestSettingTimeoutBeforeOpen.startXHR): Test classes for synchronous XHR cases.
+        (TestCounter.testComplete),
+        (TestCounter.next): Used for cycling through tests.
+        * platform/chromium/TestExpectations: Skipping XHR timeout cases since setTimeoutInterval is not supported in Chromium's HTTP stack.
+        * platform/gtk/TestExpectations: Marking XHR timeout cases as slow in order to run them with a longer test timeout threshold.
+        * platform/qt/TestExpectations: Skipping XHR timeout cases since setTimeoutInterval is not supported in Chromium's HTTP stack.
+
 2012-10-23  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed gardening. css3/filters/blur-filter-page-scroll-self.html is crashing

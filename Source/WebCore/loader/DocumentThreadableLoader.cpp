@@ -309,6 +309,8 @@ void DocumentThreadableLoader::notifyFinished(CachedResource* resource)
         ResourceError error("Network Request Failed", 0, m_resource->url(), "Resource failed to load");
         if (m_resource->wasCanceled())
             error.setIsCancellation(true);
+        if (m_resource->timedOut())
+            error.setIsTimeout(true);
         didFail(error);
     } else
         didFinishLoading(m_resource->identifier(), m_resource->loadFinishTime());

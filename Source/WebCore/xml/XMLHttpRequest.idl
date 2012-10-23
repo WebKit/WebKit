@@ -43,6 +43,7 @@
     attribute EventListener onloadend;
     attribute EventListener onloadstart;
     attribute EventListener onprogress;
+    attribute EventListener ontimeout;
 
     // event handler attributes
     attribute EventListener onreadystatechange;
@@ -54,6 +55,8 @@
     const unsigned short LOADING = 3;
     const unsigned short DONE = 4;
 
+    attribute unsigned long timeout
+        setter raises(DOMException);
     readonly attribute unsigned short readyState;
 
     attribute boolean withCredentials
@@ -117,4 +120,3 @@
     boolean dispatchEvent(in Event evt)
         raises(EventException);
 };
-

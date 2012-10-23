@@ -283,7 +283,10 @@ void SubresourceLoader::didFail(const ResourceError& error)
     RefPtr<SubresourceLoader> protect(this);
     CachedResourceHandle<CachedResource> protectResource(m_resource);
     m_state = Finishing;
-    m_resource->error(CachedResource::LoadError);
+    if (error.isTimeout())
+        m_resource->error(CachedResource::TimeoutError);
+    else
+        m_resource->error(CachedResource::LoadError);
     if (!m_resource->isPreloaded())
         memoryCache()->remove(m_resource);
     ResourceLoader::didFail(error);

@@ -90,6 +90,7 @@ public:
         Cached,       // regular case
         Canceled,
         LoadError,
+        TimeoutError,
         DecodeError
     };
 
@@ -207,8 +208,9 @@ public:
     void setAccept(const String& accept) { m_accept = accept; }
 
     bool wasCanceled() const { return m_status == Canceled; }
-    bool errorOccurred() const { return (m_status == LoadError || m_status == DecodeError); }
-    bool loadFailedOrCanceled() { return m_status == Canceled || m_status == LoadError; }
+    bool errorOccurred() const { return (m_status == LoadError || m_status == DecodeError || m_status == TimeoutError); }
+    bool loadFailedOrCanceled() { return m_status == Canceled || m_status == LoadError || m_status == TimeoutError; }
+    bool timedOut() const { return m_status == TimeoutError; }
 
     bool shouldSendResourceLoadCallbacks() const { return m_options.sendLoadCallbacks == SendCallbacks; }
     

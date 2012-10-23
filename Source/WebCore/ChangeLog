@@ -1,3 +1,59 @@
+2012-10-23  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        Add timeout support to XMLHttpRequest
+        https://bugs.webkit.org/show_bug.cgi?id=74802
+
+        Reviewed by Nate Chapin.
+
+        An implementation of XHR2 timeouts by using ResourceRequest's setTimeoutInterval.
+        This made several changes necessary in CachedResource and SubresourceLoader in order
+        to distinguish and forward the timeout case from there.
+
+        The case of late updates to the timeout property, changing the timeout value after send()
+        is not supported yet and handled separately in bug 98156.
+
+        XHR2 timeout tests were initially written by Mozilla's Alex Vincent's. He granted
+        permission to reuse them under PD/BSD license
+        in https://bugzilla.mozilla.org/show_bug.cgi?id=525816#c86 - big thanks!
+        I adapted them for W3C testharness.js and split them into groups with shorter test running time
+        so that they can be used as WebKit layout tests.
+
+        Tests: http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-aborted.html
+               http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-abortedonmain.html
+               http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-overridesexpires.html
+               http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-simple.html
+               http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-synconmain.html
+               http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-twice.html
+               http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-aborted.html
+               http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-overridesexpires.html
+               http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-simple.html
+               http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-synconworker.html
+               http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-twice.html
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::notifyFinished): Forward information about timeout case.
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didFail): Distinguish timeout case when informing client.
+        * loader/cache/CachedResource.h: Distinguishing timeout case for errors.
+        (WebCore::CachedResource::errorOccurred):
+        (WebCore::CachedResource::loadFailedOrCanceled):
+        (WebCore::CachedResource::timedOut):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest): Initializing m_timeout value to zero.
+        (WebCore::XMLHttpRequest::setTimeout): Setter function, possibly raising JS exception.
+        (WebCore):
+        (WebCore::XMLHttpRequest::open): Open call may raise exception for synchronous requests when timeout value is set.
+        (WebCore::XMLHttpRequest::createRequest): Assigning timeout value to ResourceRequest.
+        (WebCore::XMLHttpRequest::didFail): Handling timeout case separately.
+        (WebCore::XMLHttpRequest::didTimeout): Timeout case state transisition and event firing as spec'ed.
+        * xml/XMLHttpRequest.h: New event listener, member and callback for handling timeout.
+        (WebCore::XMLHttpRequest::timeout):
+        (XMLHttpRequest):
+        * xml/XMLHttpRequest.idl: New event listener and property added.
+        * xml/XMLHttpRequestException.cpp:
+        * xml/XMLHttpRequestException.h: Added an exception value for the timeout case.
+
+
 2012-10-23  Christophe Dumez  <christophe.dumez@intel.com>
 
         Possible assertion hit in WebCore::HTMLSelectElement::updateListBoxSelection()

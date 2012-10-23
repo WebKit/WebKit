@@ -616,6 +616,18 @@ Bug(GTK) [ Debug ] sputnik/Unicode/Unicode_218/S7.6_A5.3_T1.html [ Pass Slow ]
 Bug(GTK) [ Debug ] sputnik/Unicode/Unicode_218/S7.6_A5.3_T2.html [ Pass Slow ]
 Bug(GTK) tables/mozilla/other/slashlogo.html [ Pass Slow ]
 
+Bug(GTK) http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-aborted.html [ Pass Slow ] 
+Bug(GTK) http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-abortedonmain.html [ Pass Slow ] 
+Bug(GTK) http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-overridesexpires.html [ Pass Slow ] 
+Bug(GTK) http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-simple.html [ Pass Slow ] 
+Bug(GTK) http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-synconmain.html [ Pass Slow ] 
+Bug(GTK) http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-twice.html [ Pass Slow ] 
+Bug(GTK) http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-aborted.html [ Pass Slow ] 
+Bug(GTK) http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-overridesexpires.html [ Pass Slow ] 
+Bug(GTK) http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-simple.html [ Pass Slow ] 
+Bug(GTK) http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-synconworker.html [ Pass Slow ] 
+Bug(GTK) http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-twice.html [ Pass Slow ] 
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of slow tests
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -2,6 +2,7 @@
  *  Copyright (C) 2003, 2006, 2008 Apple Inc. All rights reserved.
  *  Copyright (C) 2005, 2006 Alexey Proskuryakov <ap@nypop.com>
  *  Copyright (C) 2011 Google Inc. All rights reserved.
+ *  Copyright (C) 2012 Intel Corporation
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -69,6 +70,7 @@ public:
     };
 
     virtual void contextDestroyed();
+    virtual void didTimeout();
     virtual bool canSuspend() const;
     virtual void suspend(ReasonForSuspension);
     virtual void resume();
@@ -104,6 +106,8 @@ public:
     Document* optionalResponseXML() const { return m_responseDocument.get(); }
     Blob* responseBlob(ExceptionCode&);
     Blob* optionalResponseBlob() const { return m_responseBlob.get(); }
+    unsigned long timeout() const { return m_timeoutMilliseconds; }
+    void setTimeout(unsigned long timeout, ExceptionCode&);
 
     void sendFromInspector(PassRefPtr<FormData>, ExceptionCode&);
 
@@ -133,6 +137,7 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(loadend);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(loadstart);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(progress);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(timeout);
 
     using RefCounted<XMLHttpRequest>::ref;
     using RefCounted<XMLHttpRequest>::deref;
@@ -191,6 +196,7 @@ private:
     String m_mimeTypeOverride;
     bool m_async;
     bool m_includeCredentials;
+    unsigned long m_timeoutMilliseconds;
     RefPtr<Blob> m_responseBlob;
 
     RefPtr<ThreadableLoader> m_loader;

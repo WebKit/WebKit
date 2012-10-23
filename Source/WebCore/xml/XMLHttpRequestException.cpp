@@ -36,7 +36,8 @@ static struct XMLHttpRequestExceptionNameDescription {
     const char* const description;
 } exceptions[] = {
     { "NETWORK_ERR", "A network error occurred in synchronous requests." },
-    { "ABORT_ERR", "The user aborted a request in synchronous requests." }
+    { "ABORT_ERR", "The user aborted a request in synchronous requests." },
+    { "TIMEOUT_ERR", "A timeout error occured in synchronous requests." }
 };
 
 bool XMLHttpRequestException::initializeDescription(ExceptionCode ec, ExceptionCodeDescription* description)
