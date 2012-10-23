@@ -1480,7 +1480,7 @@ void WebViewHost::setGamepadData(const WebGamepads& pads)
     webkit_support::SetGamepadData(pads);
 }
 
-void WebViewHost::printMessage(const std::string& message) const
+void WebViewHost::printMessage(const std::string& message)
 {
     printf("%s", message.c_str());
 }

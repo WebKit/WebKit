@@ -1,3 +1,25 @@
+2012-10-23  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] remove the const qualifier from WebTestDelegate::printMessage
+        https://bugs.webkit.org/show_bug.cgi?id=100082
+
+        Reviewed by Adam Barth.
+
+        There's no reason the method should be const, and indeed for
+        content_shell we want to send an IPC which is a non-const operation.
+
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        (WebTestDelegate):
+        * DumpRenderTree/chromium/TestRunner/src/TestDelegate.h:
+        (TestDelegate):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestInterfaces.cpp:
+        (WebTestInterfaces::Internal):
+        (WebTestRunner::WebTestInterfaces::Internal::printMessage):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::printMessage):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2012-10-23  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Add support for resolution media query

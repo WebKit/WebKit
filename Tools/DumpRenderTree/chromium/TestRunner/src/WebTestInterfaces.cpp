@@ -63,7 +63,7 @@ public:
     virtual void setEditCommand(const std::string& name, const std::string& value);
     virtual WebContextMenuData* lastContextMenuData() const;
     virtual void setGamepadData(const WebGamepads&);
-    virtual void printMessage(const std::string& message) const;
+    virtual void printMessage(const std::string& message);
     virtual void postTask(WebTask*);
     virtual void postDelayedTask(WebTask*, long long ms);
     virtual WebString registerIsolatedFileSystem(const WebVector<WebString>& absoluteFilenames);
@@ -127,7 +127,7 @@ void WebTestInterfaces::Internal::setGamepadData(const WebGamepads& pads)
     m_delegate->setGamepadData(pads);
 }
 
-void WebTestInterfaces::Internal::printMessage(const std::string& message) const
+void WebTestInterfaces::Internal::printMessage(const std::string& message)
 {
     m_delegate->printMessage(message);
 }

@@ -51,7 +51,7 @@ public:
     virtual void setEditCommand(const std::string& name, const std::string& value) = 0;
     virtual WebKit::WebContextMenuData* lastContextMenuData() const = 0;
     virtual void setGamepadData(const WebKit::WebGamepads&) = 0;
-    virtual void printMessage(const std::string& message) const = 0;
+    virtual void printMessage(const std::string& message) = 0;
 
     // The delegate takes ownership of the WebTask objects and is responsible
     // for deleting them.
