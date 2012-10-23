@@ -256,6 +256,8 @@ private:
         skipLeading<characterPredicate>();
         if (start == m_current)
             return String();
+        if (isAll8BitData())
+            return String::make8BitFrom16BitSource(start, m_current - start);
         return String(start, m_current - start);
     }
 

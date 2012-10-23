@@ -98,7 +98,6 @@ public:
         m_baseOffset = 0;
         m_data.clear();
         m_orAllData = 0;
-        m_convertTo8BitIfPossible = false;
     }
 
     bool isUninitialized() { return m_type == TypeSet::Uninitialized; }
@@ -132,10 +131,10 @@ public:
         m_attributes.clear();
 
         m_data.append(character);
+        m_orAllData |= character;
     }
 
-    template<typename T>
-    void beginEndTag(T characters)
+    void beginEndTag(LChar character)
     {
         ASSERT(m_type == TypeSet::Uninitialized);
         m_type = TypeSet::EndTag;
@@ -143,7 +142,18 @@ public:
         m_currentAttribute = 0;
         m_attributes.clear();
 
-        m_data.append(characters);
+        m_data.append(character);
+    }
+
+    void beginEndTag(Vector<LChar, 32> characters)
+    {
+        ASSERT(m_type == TypeSet::Uninitialized);
+        m_type = TypeSet::EndTag;
+        m_selfClosing = false;
+        m_currentAttribute = 0;
+        m_attributes.clear();
+
+        m_data.appendVector(characters);
     }
 
     // Starting a character token works slightly differently than starting
@@ -172,6 +182,7 @@ public:
         ASSERT(character);
         beginDOCTYPE();
         m_data.append(character);
+        m_orAllData |= character;
     }
 
     void appendToCharacter(char character)
@@ -198,6 +209,7 @@ public:
         ASSERT(character);
         ASSERT(m_type == TypeSet::Comment);
         m_data.append(character);
+        m_orAllData |= character;
     }
 
     void addNewAttribute()
@@ -373,11 +385,21 @@ protected:
     {
         ASSERT(character);
         m_data.append(character);
+        m_orAllData |= character;
     }
-    
+
     inline const DataVector& name() const
     {
         return m_data;
+    }
+
+    inline const String nameString() const
+    {
+        if (!m_data.size())
+            return emptyString();
+        if (isAll8BitData())
+            return String::make8BitFrom16BitSource(m_data.data(), m_data.size());
+        return String(m_data.data(), m_data.size());
     }
 
     // FIXME: I'm not sure what the final relationship between MarkupTokenBase and
@@ -391,7 +413,6 @@ protected:
     int m_baseOffset;
     DataVector m_data;
     UChar m_orAllData;
-    bool m_convertTo8BitIfPossible;
 
     // For DOCTYPE
     OwnPtr<DoctypeData> m_doctypeData;
@@ -418,7 +439,7 @@ public:
             ASSERT_NOT_REACHED();
             break;
         case Token::Type::DOCTYPE:
-            m_name = AtomicString(token->name().data(), token->name().size());
+            m_name = AtomicString(token->nameString());
             m_doctypeData = token->m_doctypeData.release();
             break;
         case Token::Type::EndOfFile:
@@ -426,12 +447,15 @@ public:
         case Token::Type::StartTag:
         case Token::Type::EndTag: {
             m_selfClosing = token->selfClosing();
-            m_name = AtomicString(token->name().data(), token->name().size());
+            m_name = AtomicString(token->nameString());
             initializeAttributes(token->attributes());
             break;
         }
         case Token::Type::Comment:
-            m_data = String(token->comment().data(), token->comment().size());
+            if (token->isAll8BitData())
+                m_data = String::make8BitFrom16BitSource(token->comment().data(), token->comment().size());
+            else
+                m_data = String(token->comment().data(), token->comment().size());
             break;
         case Token::Type::Character:
             m_externalCharacters = &token->characters();

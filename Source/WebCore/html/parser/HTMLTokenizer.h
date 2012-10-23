@@ -194,7 +194,7 @@ private:
     // Sometimes we speculatively consume input characters and we don't
     // know whether they represent end tags or RCDATA, etc. These
     // functions help manage these state.
-    inline void addToPossibleEndTag(UChar cc);
+    inline void addToPossibleEndTag(LChar cc);
 
     inline void saveEndTagNameIfNeeded()
     {
@@ -214,7 +214,7 @@ private:
     // We occationally want to emit both a character token and an end tag
     // token (e.g., when lexing script). We buffer the name of the end tag
     // token here so we remember it next time we re-enter the tokenizer.
-    Vector<UChar, 32> m_bufferedEndTagName;
+    Vector<LChar, 32> m_bufferedEndTagName;
 
     bool m_usePreHTML5ParserQuirks;
 };
