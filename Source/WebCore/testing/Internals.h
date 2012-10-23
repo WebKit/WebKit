@@ -188,7 +188,10 @@ public:
     void resumeAnimations(Document*, ExceptionCode&) const;
 
     enum {
-        LAYER_TREE_INCLUDES_VISIBLE_RECTS = 1 // Values need to kept in sync with Internals.idl.
+        // Values need to be kept in sync with Internals.idl.
+        LAYER_TREE_INCLUDES_VISIBLE_RECTS = 1,
+        LAYER_TREE_INCLUDES_TILE_CACHES = 2
+        
     };
     String layerTreeAsText(Document*, unsigned flags, ExceptionCode&) const;
     String layerTreeAsText(Document*, ExceptionCode&) const;

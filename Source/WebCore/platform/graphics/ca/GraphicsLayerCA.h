@@ -134,7 +134,7 @@ public:
     virtual void flushCompositingState(const FloatRect&);
     virtual void flushCompositingStateForThisLayerOnly();
 
-    virtual TiledBacking* tiledBacking() OVERRIDE;
+    virtual TiledBacking* tiledBacking() const OVERRIDE;
 
     bool allowTiledLayer() const { return m_allowTiledLayer; }
     virtual void setAllowTiledLayer(bool b);

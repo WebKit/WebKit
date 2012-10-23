@@ -1,3 +1,47 @@
+2012-10-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow tests to run with a tile cache, and optionally dump the tile cache via layerTreeAsText()
+        https://bugs.webkit.org/show_bug.cgi?id=100159
+
+        Reviewed by Tim Horton.
+
+        Make WebKitTestRunner use a WKView with a tile cache for tests run in a directory
+        whose path includes "tiled-drawing". It does this by passing around a WKDictionary 
+        of options, and if the current PlatformWebView doesn't support those options, it will
+        create a new one.
+
+        * WebKitTestRunner/PlatformWebView.h:
+        (PlatformWebView): Add a WKDictionaryRef options dictionary argument.
+        (WTR::PlatformWebView::viewSupportsOptions): Returns true if the view
+        supports the options in the WKDictionaryRef.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize): Call createWebViewWithOptions() with
+        no options in the normal case.
+        (WTR::TestController::createWebViewWithOptions): Moved code into this fuction
+        so we can call it in two places.
+        (WTR::TestController::ensureViewSupportsOptions): If the current view
+        doesn't support the given options, throw it away and makea  new one that does.
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::shouldUseTiledDrawing): Return true if the directory contains "tiled-drawing".
+        (WTR::updateTiledDrawingForCurrentTest): Tell the TestController to check whether
+        the view supports the given options. No-op for non-Mac platforms.
+        (WTR::TestInvocation::invoke): Call updateTiledDrawingForCurrentTest().
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp:
+        (WTR::PlatformWebView::PlatformWebView): New constructor parameter.
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::PlatformWebView):  New constructor parameter.
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (-[TestRunnerWKView initWithFrame:contextRef:pageGroupRef:useTiledDrawing:]):
+        (-[TestRunnerWKView _shouldUseTiledDrawingArea]): Subclass the WKView so we can return
+        a custom value from this method.
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::viewSupportsOptions):
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::PlatformWebView::PlatformWebView): New constructor parameter.
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+        (WTR::PlatformWebView::PlatformWebView): New constructor parameter.
+
 2012-10-23  David Barton  <dbarton@mathscribe.com>
 
         [MathML] Symbol font uses greek letters for roman ones on linux and Windows

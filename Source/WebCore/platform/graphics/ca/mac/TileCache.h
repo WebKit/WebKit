@@ -89,6 +89,8 @@ private:
     virtual void forceRepaint() OVERRIDE;
     virtual void setScrollingPerformanceLoggingEnabled(bool flag) OVERRIDE { m_scrollingPerformanceLoggingEnabled = flag; }
     virtual bool scrollingPerformanceLoggingEnabled() const OVERRIDE { return m_scrollingPerformanceLoggingEnabled; }
+
+    virtual IntRect tileCoverageRect() const { return m_tileCoverageRect; }
     
     IntRect bounds() const;
 
@@ -96,7 +98,7 @@ private:
     IntRect rectForTileIndex(const TileIndex&) const;
     void getTileIndexRangeForRect(const IntRect&, TileIndex& topLeft, TileIndex& bottomRight);
 
-    IntRect tileCoverageRect() const;
+    IntRect computeTileCoverageRect() const;
 
     void scheduleTileRevalidation(double interval);
     void tileRevalidationTimerFired(Timer<TileCache>*);

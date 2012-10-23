@@ -57,6 +57,8 @@ public:
     PlatformWebView* mainWebView() { return m_mainWebView.get(); }
     WKContextRef context() { return m_context.get(); }
 
+    void ensureViewSupportsOptions(WKDictionaryRef options);
+    
     // Runs the run loop until `done` is true or the timeout elapses.
     enum TimeoutDuration { ShortTimeout, LongTimeout, NoTimeout };
     bool useWaitToDumpWatchdogTimer() { return m_useWaitToDumpWatchdogTimer; }
@@ -83,6 +85,7 @@ public:
 
 private:
     void initialize(int argc, const char* argv[]);
+    void createWebViewWithOptions(WKDictionaryRef);
     void run();
 
     void runTestingServerLoop();
