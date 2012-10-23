@@ -20,11 +20,11 @@
 #ifndef ewk_context_private_h
 #define ewk_context_private_h
 
+#include "DownloadManagerEfl.h"
 #include "WKAPICast.h"
 #include "WKRetainPtr.h"
 #include "ewk_context_history_client_private.h"
 
-class Ewk_Download_Job;
 class Ewk_Url_Scheme_Request;
 class Ewk_Cookie_Manager;
 class Ewk_Favicon_Database;
@@ -70,9 +70,7 @@ public:
 
     void urlSchemeRequestReceived(Ewk_Url_Scheme_Request*);
 
-    void addDownloadJob(Ewk_Download_Job*);
-    Ewk_Download_Job* downloadJob(uint64_t downloadId);
-    void removeDownloadJob(uint64_t downloadId);
+    WebKit::DownloadManagerEfl* downloadManager() const;
 
     const Ewk_Context_History_Client& historyClient() const  { return m_historyClient; }
     Ewk_Context_History_Client& historyClient() { return m_historyClient; }
@@ -93,9 +91,8 @@ private:
 #if ENABLE(VIBRATION)
     RefPtr<VibrationProvider> m_vibrationProvider;
 #endif
-    HashMap<uint64_t, RefPtr<Ewk_Download_Job> > m_downloadJobs;
-
     WKRetainPtr<WKSoupRequestManagerRef> m_requestManager;
+    OwnPtr<WebKit::DownloadManagerEfl> m_downloadManager;
 
     typedef HashMap<String, class Ewk_Url_Scheme_Handler> URLSchemeHandlerMap;
     URLSchemeHandlerMap m_urlSchemeHandlers;

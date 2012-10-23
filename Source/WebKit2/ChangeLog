@@ -1,3 +1,47 @@
+2012-10-23  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Make a download client a C++ class
+        https://bugs.webkit.org/show_bug.cgi?id=100005
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make EFL's Download client a C++ class and move
+        the id <-> download mapping from Ewk_Context to
+        DownloadManagerEfl.
+
+        The Download client was also moved to
+        UIProcess/efl/ instead of UIProcess/API/efl/
+        since it is not part of the public API.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::handleDownloadRequest):
+        * UIProcess/API/efl/ewk_context.cpp:
+        (Ewk_Context::Ewk_Context):
+        (Ewk_Context::downloadManager):
+        * UIProcess/API/efl/ewk_context_download_client_private.h: Removed.
+        * UIProcess/API/efl/ewk_context_private.h:
+        (Ewk_Context):
+        * UIProcess/API/efl/ewk_download_job_private.h:
+        * UIProcess/efl/DownloadManagerEfl.cpp: Renamed from Source/WebKit2/UIProcess/API/efl/ewk_context_download_client.cpp.
+        (WebKit):
+        (WebKit::toDownloadManagerEfl):
+        (WebKit::DownloadManagerEfl::decideDestinationWithSuggestedFilename):
+        (WebKit::DownloadManagerEfl::didReceiveResponse):
+        (WebKit::DownloadManagerEfl::didCreateDestination):
+        (WebKit::DownloadManagerEfl::didReceiveData):
+        (WebKit::DownloadManagerEfl::didFail):
+        (WebKit::DownloadManagerEfl::didCancel):
+        (WebKit::DownloadManagerEfl::didFinish):
+        (WebKit::DownloadManagerEfl::DownloadManagerEfl):
+        (WebKit::DownloadManagerEfl::registerDownload):
+        (WebKit::DownloadManagerEfl::downloadJob):
+        (WebKit::DownloadManagerEfl::unregisterDownloadJob):
+        * UIProcess/efl/DownloadManagerEfl.h: Added.
+        (WebKit):
+        (DownloadManagerEfl):
+        (WebKit::DownloadManagerEfl::create):
+
 2012-10-23  Andras Becsi  <andras.becsi@digia.com>
 
         Remove devicePixelRatio from ViewportAttributes

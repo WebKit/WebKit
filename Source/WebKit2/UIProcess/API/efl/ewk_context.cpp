@@ -32,13 +32,10 @@
 #include "WebContext.h"
 #include "WebIconDatabase.h"
 #include "WebSoupRequestManagerProxy.h"
-#include "ewk_context_download_client_private.h"
 #include "ewk_context_history_client_private.h"
 #include "ewk_context_private.h"
 #include "ewk_context_request_manager_client_private.h"
 #include "ewk_cookie_manager_private.h"
-#include "ewk_download_job.h"
-#include "ewk_download_job_private.h"
 #include "ewk_favicon_database_private.h"
 #include "ewk_private.h"
 #include "ewk_url_scheme_request_private.h"
@@ -117,9 +114,10 @@ Ewk_Context::Ewk_Context(WKContextRef context)
     }
 #endif
 
+    // Initialize WKContext clients.
     ewk_context_request_manager_client_attach(this);
-    ewk_context_download_client_attach(this);
     ewk_context_history_client_attach(this);
+    m_downloadManager = DownloadManagerEfl::create(this);
 }
 
 Ewk_Context::~Ewk_Context()
@@ -250,39 +248,9 @@ WKContextRef Ewk_Context::wkContext()
     return m_context.get();
 }
 
-/**
- * @internal
- * Registers that a new download has been requested.
- */
-void Ewk_Context::addDownloadJob(Ewk_Download_Job* ewkDownload)
+DownloadManagerEfl* Ewk_Context::downloadManager() const
 {
-    EINA_SAFETY_ON_NULL_RETURN(ewkDownload);
-
-    uint64_t downloadId = ewkDownload->id();
-    if (m_downloadJobs.contains(downloadId))
-        return;
-
-    m_downloadJobs.add(downloadId, ewkDownload);
-}
-
-/**
- * @internal
- * Returns the #Ewk_Download_Job with the given @a downloadId, or
- * @c 0 in case of failure.
- */
-Ewk_Download_Job* Ewk_Context::downloadJob(uint64_t downloadId)
-{
-    return m_downloadJobs.get(downloadId).get();
-}
-
-/**
- * @internal
- * Removes the #Ewk_Download_Job with the given @a downloadId from the internal
- * HashMap.
- */
-void Ewk_Context::removeDownloadJob(uint64_t downloadId)
-{
-    m_downloadJobs.remove(downloadId);
+    return m_downloadManager.get();
 }
 
 /**
