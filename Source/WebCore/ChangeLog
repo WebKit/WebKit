@@ -1,3 +1,20 @@
+2012-10-23  Aaron Colwell  <acolwell@chromium.org>
+
+        Clear m_mediaSource reference when the MediaSource is closed
+        https://bugs.webkit.org/show_bug.cgi?id=100047
+
+        Reviewed by Eric Carlson.
+
+        The m_mediaSource object shouldn't be accessed after the object
+        transitions to closed so this change simply clears the reference
+        when that transition happens.
+
+        No new tests because the change isn't visible to JavaScript.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource): Removed a closed transition that is actually dead code.
+        (WebCore::HTMLMediaElement::setSourceState): Clear the m_mediaSource reference on closed transition.
+
 2012-10-23  Simon Fraser  <simon.fraser@apple.com>
 
         Allow tests to run with a tile cache, and optionally dump the tile cache via layerTreeAsText()

@@ -925,10 +925,9 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
     }
     
 #if ENABLE(MEDIA_SOURCE)
-    if (url.protocolIs(mediaSourceBlobProtocol)) {
-        if (m_mediaSource)
-            m_mediaSource->setReadyState(MediaSource::closedKeyword());
+    ASSERT(!m_mediaSource);
 
+    if (url.protocolIs(mediaSourceBlobProtocol)) {
         m_mediaSource = MediaSourceRegistry::registry().lookupMediaSource(url.string());
 
         if (m_mediaSource) {
@@ -2396,6 +2395,8 @@ void HTMLMediaElement::setSourceState(const String& state)
          return;
 
     m_mediaSource->setReadyState(state);
+    if (state == MediaSource::closedKeyword())
+        m_mediaSource = 0;
 }
 #endif
 
