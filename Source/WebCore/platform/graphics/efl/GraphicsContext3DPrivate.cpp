@@ -122,7 +122,8 @@ bool GraphicsContext3DPrivate::createSurface(PageClientEfl* pageClient, bool ren
         EVAS_GL_RGBA_8888,
         EVAS_GL_DEPTH_BIT_8,
         EVAS_GL_STENCIL_NONE, // FIXME: set EVAS_GL_STENCIL_BIT_8 after fixing Evas_GL bug.
-        EVAS_GL_OPTIONS_NONE
+        EVAS_GL_OPTIONS_NONE,
+        EVAS_GL_MULTISAMPLE_NONE
     };
 
     // Create a new Evas_GL_Surface object
