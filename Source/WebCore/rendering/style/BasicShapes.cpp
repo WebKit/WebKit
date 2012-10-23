@@ -83,10 +83,10 @@ void BasicShapePolygon::path(Path& path, const FloatRect& boundingBox)
         return;
 
     path.moveTo(FloatPoint(floatValueForLength(m_values.at(0), boundingBox.width()) + boundingBox.x(),
-                           floatValueForLength(m_values.at(1), boundingBox.width()) + boundingBox.y()));
+        floatValueForLength(m_values.at(1), boundingBox.height()) + boundingBox.y()));
     for (size_t i = 2; i < length; i = i + 2) {
         path.addLineTo(FloatPoint(floatValueForLength(m_values.at(i), boundingBox.width()) + boundingBox.x(),
-                                  floatValueForLength(m_values.at(i + 1), boundingBox.width()) + boundingBox.y()));
+            floatValueForLength(m_values.at(i + 1), boundingBox.height()) + boundingBox.y()));
     }
     path.closeSubpath();
 }

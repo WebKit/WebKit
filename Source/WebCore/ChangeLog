@@ -1,3 +1,19 @@
+2012-10-22  Dirk Schulze  <krit@webkit.org>
+
+        BasicShapePolygon::path takes width instead of height for boundary calculation
+        https://bugs.webkit.org/show_bug.cgi?id=99919
+
+        Reviewed by Darin Adler.
+
+        The 'y' parameters of polygon were calculated by the with of the bounding box of the object.
+        This caused problems on percentage values for point positions. 
+        Changed it to the height of the bounding box.
+
+        Test: css3/masking/clip-path-polygon-percentage.html
+
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShapePolygon::path):
+
 2012-10-23  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         Add timeout support to XMLHttpRequest

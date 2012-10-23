@@ -1,3 +1,15 @@
+2012-10-22  Dirk Schulze  <krit@webkit.org>
+
+        BasicShapePolygon::path takes width instead of height for boundary calculation
+        https://bugs.webkit.org/show_bug.cgi?id=99919
+
+        Reviewed by Darin Adler.
+
+        Test that the correct relation is used for calculating point position of an polygon.
+
+        * css3/masking/clip-path-polygon-percentage-expected.html: Added.
+        * css3/masking/clip-path-polygon-percentage.html: Added.
+
 2012-10-23  Dirk Pranke  <dpranke@chromium.org>
 
         Remove remaining fast/innerHTML pixel test baselines after r131960.
