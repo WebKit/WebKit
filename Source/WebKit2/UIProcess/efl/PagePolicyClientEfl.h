@@ -23,12 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ewk_view_policy_client_private_h
-#define ewk_view_policy_client_private_h
+#ifndef PagePolicyClientEfl_h
+#define PagePolicyClientEfl_h
 
-#include <Evas.h>
-#include <WebKit2/WKBase.h>
+#include "ewk_view_private.h"
+#include <wtf/PassOwnPtr.h>
 
-void ewk_view_policy_client_attach(WKPageRef pageRef, Evas_Object* ewkView);
+namespace WebKit {
 
-#endif // ewk_view_policy_client_private_h
+class PagePolicyClientEfl {
+public:
+    static PassOwnPtr<PagePolicyClientEfl> create(Evas_Object* view)
+    {
+        return adoptPtr(new PagePolicyClientEfl(view));
+    }
+
+private:
+    explicit PagePolicyClientEfl(Evas_Object* view);
+
+    static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKURLRequestRef, WKFramePolicyListenerRef, WKTypeRef, const void*);
+    static void decidePolicyForNewWindowAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKURLRequestRef, WKStringRef, WKFramePolicyListenerRef, WKTypeRef, const void*);
+    static void decidePolicyForResponseCallback(WKPageRef, WKFrameRef, WKURLResponseRef, WKURLRequestRef, WKFramePolicyListenerRef, WKTypeRef, const void*);
+
+    Evas_Object* m_view;
+};
+
+} // namespace WebKit
+
+#endif // PagePolicyClientEfl_h

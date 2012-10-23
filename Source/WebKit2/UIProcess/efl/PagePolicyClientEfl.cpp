@@ -24,38 +24,37 @@
  */
 
 #include "config.h"
+#include "PagePolicyClientEfl.h"
 
 #include "WKFrame.h"
 #include "WKFramePolicyListener.h"
 #include "ewk_navigation_policy_decision.h"
 #include "ewk_navigation_policy_decision_private.h"
-#include "ewk_view_policy_client_private.h"
-#include "ewk_view_private.h"
 #include <WebCore/HTTPStatusCodes.h>
-#include <wtf/text/CString.h>
 
-using namespace WebCore;
-using namespace WebKit;
+namespace WebKit {
 
-static inline Evas_Object* toEwkView(const void* clientInfo)
+static inline PagePolicyClientEfl* toPagePolicyClientEfl(const void* clientInfo)
 {
-    return static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
+    return static_cast<PagePolicyClientEfl*>(const_cast<void*>(clientInfo));
 }
 
-static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef /*userData*/, const void* clientInfo)
+void PagePolicyClientEfl::decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef /*userData*/, const void* clientInfo)
 {
     RefPtr<Ewk_Navigation_Policy_Decision> decision = Ewk_Navigation_Policy_Decision::create(navigationType, mouseButton, modifiers, request, 0, listener);
-    ewk_view_navigation_policy_decision(toEwkView(clientInfo), decision.get());
+    ewk_view_navigation_policy_decision(toPagePolicyClientEfl(clientInfo)->m_view, decision.get());
 }
 
-static void decidePolicyForNewWindowAction(WKPageRef, WKFrameRef, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKStringRef frameName, WKFramePolicyListenerRef listener, WKTypeRef /*userData*/, const void* clientInfo)
+void PagePolicyClientEfl::decidePolicyForNewWindowAction(WKPageRef, WKFrameRef, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKStringRef frameName, WKFramePolicyListenerRef listener, WKTypeRef /*userData*/, const void* clientInfo)
 {
     RefPtr<Ewk_Navigation_Policy_Decision> decision = Ewk_Navigation_Policy_Decision::create(navigationType, mouseButton, modifiers, request, toImpl(frameName)->string().utf8().data(), listener);
-    ewk_view_new_window_policy_decision(toEwkView(clientInfo), decision.get());
+    ewk_view_new_window_policy_decision(toPagePolicyClientEfl(clientInfo)->m_view, decision.get());
 }
 
-static void decidePolicyForResponseCallback(WKPageRef, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef, WKFramePolicyListenerRef listener, WKTypeRef /*userData*/, const void* /*clientInfo*/)
+void PagePolicyClientEfl::decidePolicyForResponseCallback(WKPageRef, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef, WKFramePolicyListenerRef listener, WKTypeRef /*userData*/, const void* /*clientInfo*/)
 {
+    using namespace WebCore;
+
     const ResourceResponse resourceResponse = toImpl(response)->resourceResponse();
 
     // Ignore responses with an HTTP status code of 204 (No Content)
@@ -94,15 +93,21 @@ static void decidePolicyForResponseCallback(WKPageRef, WKFrameRef frame, WKURLRe
     WKFramePolicyListenerUse(listener);
 }
 
-void ewk_view_policy_client_attach(WKPageRef pageRef, Evas_Object* ewkView)
+PagePolicyClientEfl::PagePolicyClientEfl(Evas_Object* view)
+    : m_view(view)
 {
+    WKPageRef pageRef = ewk_view_wkpage_get(m_view);
+    ASSERT(pageRef);
+
     WKPagePolicyClient policyClient;
     memset(&policyClient, 0, sizeof(WKPagePolicyClient));
     policyClient.version = kWKPagePolicyClientCurrentVersion;
-    policyClient.clientInfo = ewkView;
+    policyClient.clientInfo = this;
     policyClient.decidePolicyForNavigationAction = decidePolicyForNavigationAction;
     policyClient.decidePolicyForNewWindowAction = decidePolicyForNewWindowAction;
     policyClient.decidePolicyForResponse = decidePolicyForResponseCallback;
 
     WKPageSetPagePolicyClient(pageRef, &policyClient);
 }
+
+} // namespace WebKit
