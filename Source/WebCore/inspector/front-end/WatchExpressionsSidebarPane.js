@@ -52,16 +52,18 @@ WebInspector.WatchExpressionsSidebarPane.prototype = {
 
         this.section = new WebInspector.WatchExpressionsSection();
         this.bodyElement.appendChild(this.section.element);
-    
+
         var refreshButton = document.createElement("button");
         refreshButton.className = "pane-title-button refresh";
         refreshButton.addEventListener("click", this._refreshButtonClicked.bind(this), false);
+        refreshButton.title = WebInspector.UIString("Refresh");
         this.titleElement.appendChild(refreshButton);
-    
+
         var addButton = document.createElement("button");
         addButton.className = "pane-title-button add";
         addButton.addEventListener("click", this._addButtonClicked.bind(this), false);
         this.titleElement.appendChild(addButton);
+        addButton.title = WebInspector.UIString("Add watch expression");
         this._requiresUpdate = true;
 
         if (WebInspector.settings.watchExpressions.get().length > 0)
@@ -143,6 +145,7 @@ WebInspector.WatchExpressionsSection = function()
     this.element.addEventListener("mousemove", this._mouseMove.bind(this), true);
     this.element.addEventListener("mouseout", this._mouseOut.bind(this), true);
     this.element.addEventListener("dblclick", this._sectionDoubleClick.bind(this), false);
+    this.emptyElement.addEventListener("contextmenu", this._emptyElementContextMenu.bind(this), false);
 }
 
 WebInspector.WatchExpressionsSection.NewWatchExpression = "\xA0";
@@ -326,6 +329,13 @@ WebInspector.WatchExpressionsSection.prototype = {
         this._lastMouseMovePageY = pageY;
     },
 
+    _emptyElementContextMenu: function(event)
+    {
+        var contextMenu = new WebInspector.ContextMenu();
+        contextMenu.appendItem(WebInspector.UIString("Add watch expression"), this.addNewExpressionAndEdit.bind(this));
+        contextMenu.show(event);
+    },
+
     __proto__: WebInspector.ObjectPropertiesSection.prototype
 }
 
@@ -390,14 +400,17 @@ WebInspector.WatchExpressionTreeElement.prototype = {
         this.listItemElement.addEventListener("contextmenu", this._contextMenu.bind(this), false);
         this.listItemElement.insertBefore(deleteButton, this.listItemElement.firstChild);
     },
-    
+
     /**
      * @param {WebInspector.ContextMenu} contextMenu
      * @override
      */
     populateContextMenu: function(contextMenu)
     {
-        contextMenu.appendItem(WebInspector.UIString("Delete watch expression"), this._deleteButtonClicked.bind(this));
+        if (!this.isEditing()) {
+            contextMenu.appendItem(WebInspector.UIString("Add watch expression"), this.treeOutline.section.addNewExpressionAndEdit.bind(this.treeOutline.section));
+            contextMenu.appendItem(WebInspector.UIString("Delete watch expression"), this._deleteButtonClicked.bind(this));
+        }
         if (this.treeOutline.section.watchExpressions.length > 1)
             contextMenu.appendItem(WebInspector.UIString("Delete all watch expressions"), this._deleteAllButtonClicked.bind(this));
     },
@@ -408,7 +421,7 @@ WebInspector.WatchExpressionTreeElement.prototype = {
         this.populateContextMenu(contextMenu);
         contextMenu.show(event);
     },
-    
+
     _deleteAllButtonClicked: function()
     {
         this.treeOutline.section._deleteAllExpressions();

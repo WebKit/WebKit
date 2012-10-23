@@ -1,3 +1,25 @@
+2012-10-23  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Elaborate source panel sidebar context menus.
+        https://bugs.webkit.org/show_bug.cgi?id=99980
+
+        Reviewed by Vsevolod Vlasov.
+
+        - Watches: add "Add watch expression" item to items and empty element
+        - Watches: hide "Remove watch expression" from editing prompt context menu
+        - Watches: add titles to header buttons
+        - XHR Breakpoints: add "Add Breakpoint" item to items and empty element
+        - XHR Breakpoints: add "Remove all breakpoints" item to items (when >1)
+        - XHR Breakpoints: add title to header button
+        - JS Breakpoints: hide "Remove/(De)Activate breakpoints" when only 1 item present
+        - JS Breakpoints: add "(De)Activate breakpoints" to empty element context menu
+
+        * English.lproj/localizedStrings.js: Added corresponding strings.
+        * inspector/front-end/BreakpointsSidebarPane.js: Adjusted context menu.
+        (WebInspector.XHRBreakpointsSidebarPane): Ditto.
+        * inspector/front-end/ObjectPropertiesSection.js: Added "isEditing()"
+        * inspector/front-end/WatchExpressionsSidebarPane.js: Adjusted context menu.
+
 2012-10-23  Kent Tamura  <tkent@chromium.org>
 
         Update binding test results for r132194

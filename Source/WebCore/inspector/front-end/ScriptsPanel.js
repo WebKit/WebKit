@@ -734,11 +734,11 @@ WebInspector.ScriptsPanel.prototype = {
         var active = event.data;
         this._toggleBreakpointsButton.toggled = active;
         if (active) {
-            this._toggleBreakpointsButton.title = WebInspector.UIString("Deactivate all breakpoints.");
+            this._toggleBreakpointsButton.title = WebInspector.UIString("Deactivate breakpoints.");
             WebInspector.inspectorView.element.removeStyleClass("breakpoints-deactivated");
             this.sidebarPanes.jsBreakpoints.listElement.removeStyleClass("breakpoints-list-deactivated");
         } else {
-            this._toggleBreakpointsButton.title = WebInspector.UIString("Activate all breakpoints.");
+            this._toggleBreakpointsButton.title = WebInspector.UIString("Activate breakpoints.");
             WebInspector.inspectorView.element.addStyleClass("breakpoints-deactivated");
             this.sidebarPanes.jsBreakpoints.listElement.addStyleClass("breakpoints-list-deactivated");
         }
@@ -795,7 +795,7 @@ WebInspector.ScriptsPanel.prototype = {
         this.stepOutButton = this._createButtonAndRegisterShortcuts(section, "scripts-step-out", title, handler, shortcuts, WebInspector.UIString("Step out"));
         debugToolbar.appendChild(this.stepOutButton);
 
-        this._toggleBreakpointsButton = new WebInspector.StatusBarButton(WebInspector.UIString("Deactivate all breakpoints."), "toggle-breakpoints");
+        this._toggleBreakpointsButton = new WebInspector.StatusBarButton(WebInspector.UIString("Deactivate breakpoints."), "toggle-breakpoints");
         this._toggleBreakpointsButton.toggled = true;
         this._toggleBreakpointsButton.addEventListener("click", this._toggleBreakpointsClicked, this);
         debugToolbar.appendChild(this._toggleBreakpointsButton.element);

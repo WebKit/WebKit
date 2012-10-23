@@ -319,6 +319,14 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         proxyElement.addEventListener("keydown", this._promptKeyDown.bind(this, context), false);
     },
 
+    /**
+     * @return {boolean}
+     */
+    isEditing: function()
+    {
+        return !!this._prompt;
+    },
+
     editingEnded: function(context)
     {
         this._prompt.detach();
