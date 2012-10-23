@@ -1,5 +1,27 @@
 2012-10-22  Anders Carlsson  <andersca@apple.com>
 
+        Handle ArgumentCoder template specializations that take the ArgumentEncoder as a reference
+        https://bugs.webkit.org/show_bug.cgi?id=100056
+
+        Reviewed by Andreas Kling.
+
+        Use template magic to make it possible to have ArgumentCoder specializations where the encode
+        function takes the ArgumentEncoder object as a reference instead of as a pointer. Also, add an
+        operator<< to ArgumentEncoder and change the string related ArgumentCoder specializations over to taking
+        the encoder as a reference and using stream operators.
+
+        * Platform/CoreIPC/ArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        * Platform/CoreIPC/ArgumentCoders.h:
+        * Platform/CoreIPC/ArgumentEncoder.h:
+        (ArgumentEncoder):
+        (UsesDeprecatedEncodeFunction):
+        (NoType):
+        (CoreIPC::ArgumentEncoder::encode):
+        (CoreIPC::ArgumentEncoder::operator<<):
+
+2012-10-22  Anders Carlsson  <andersca@apple.com>
+
         More Argument coder cleanup
         https://bugs.webkit.org/show_bug.cgi?id=100022
 

@@ -197,17 +197,17 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
 };
 
 template<> struct ArgumentCoder<AtomicString> {
-    static void encode(ArgumentEncoder*, const AtomicString&);
+    static void encode(ArgumentEncoder&, const AtomicString&);
     static bool decode(ArgumentDecoder*, AtomicString&);
 };
 
 template<> struct ArgumentCoder<CString> {
-    static void encode(ArgumentEncoder*, const CString&);
+    static void encode(ArgumentEncoder&, const CString&);
     static bool decode(ArgumentDecoder*, CString&);
 };
 
 template<> struct ArgumentCoder<String> {
-    static void encode(ArgumentEncoder*, const String&);
+    static void encode(ArgumentEncoder&, const String&);
     static bool decode(ArgumentDecoder*, String&);
 };
 

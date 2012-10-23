@@ -26,14 +26,15 @@
 #include "config.h"
 #include "ArgumentCoders.h"
 
+#include "DataReference.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 namespace CoreIPC {
 
-void ArgumentCoder<AtomicString>::encode(ArgumentEncoder* encoder, const AtomicString& atomicString)
+void ArgumentCoder<AtomicString>::encode(ArgumentEncoder& encoder, const AtomicString& atomicString)
 {
-    encoder->encode(atomicString.string());
+    encoder << atomicString.string();
 }
 
 bool ArgumentCoder<AtomicString>::decode(ArgumentDecoder* decoder, AtomicString& atomicString)
@@ -46,17 +47,16 @@ bool ArgumentCoder<AtomicString>::decode(ArgumentDecoder* decoder, AtomicString&
     return true;
 }
 
-void ArgumentCoder<CString>::encode(ArgumentEncoder* encoder, const CString& string)
+void ArgumentCoder<CString>::encode(ArgumentEncoder& encoder, const CString& string)
 {
     // Special case the null string.
     if (string.isNull()) {
-        encoder->encode(std::numeric_limits<uint32_t>::max());
+        encoder << std::numeric_limits<uint32_t>::max();
         return;
     }
 
     uint32_t length = string.length();
-    encoder->encode(length);
-    encoder->encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.data()), length, 1);
+    encoder << length << CoreIPC::DataReference(reinterpret_cast<const uint8_t*>(string.data()), length);
 }
 
 bool ArgumentCoder<CString>::decode(ArgumentDecoder* decoder, CString& result)
@@ -87,22 +87,23 @@ bool ArgumentCoder<CString>::decode(ArgumentDecoder* decoder, CString& result)
 }
 
 
-void ArgumentCoder<String>::encode(ArgumentEncoder* encoder, const String& string)
+void ArgumentCoder<String>::encode(ArgumentEncoder& encoder, const String& string)
 {
     // Special case the null string.
     if (string.isNull()) {
-        encoder->encode(std::numeric_limits<uint32_t>::max());
+        encoder << std::numeric_limits<uint32_t>::max();
         return;
     }
 
     uint32_t length = string.length();
-    encoder->encode(length);
     bool is8Bit = string.is8Bit();
-    encoder->encode(is8Bit);
+
+    encoder << length << is8Bit;
+
     if (is8Bit)
-        encoder->encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.characters8()), length * sizeof(LChar), __alignof(LChar));
+        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.characters8()), length * sizeof(LChar), __alignof(LChar));
     else
-        encoder->encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.characters16()), length * sizeof(UChar), __alignof(UChar));
+        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.characters16()), length * sizeof(UChar), __alignof(UChar));
 }
 
 template <typename CharacterType>
