@@ -422,6 +422,9 @@ webkit.org/b/99059 fast/dom/timer-throttling-hidden-page.html [ Skip ]
 # css3-conditionals support is not yet enabled.
 webkit.org/b/86146 css3/supports.html
 
+# Requires Resolution Media Query support
+webkit.org/b/100137 fast/media/mq-resolution.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1017,7 +1020,7 @@ Bug(GTK) fast/events/drag-in-frames.html [ Failure ]
 Bug(GTK) http/tests/misc/bubble-drag-events.html [ Failure ]
 
 # Fails with "Received error from worker: ReferenceError: Can't find variable: revokeObjectURL
-Bug(GTK) fast/files/workers/worker-apply-blob-url-to-xhr.html [ Failure ]
+webkit.org/b/100136 fast/files/workers/worker-apply-blob-url-to-xhr.html [ Failure ]
 
 # Dragging images and links results in a DataTransfer object containing a non-empty files array
 webkit.org/b/52094 editing/pasteboard/files-during-page-drags.html [ Failure ]

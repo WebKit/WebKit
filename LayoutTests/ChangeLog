@@ -1,3 +1,13 @@
+2012-10-23  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding failure expectation for fast/media/mq-resolution.html, it relies
+        on the Resolution Media Query feature being enabled.
+        Adding a proper bug modifier for fast/files/workers/worker-apply-blob-url-to-xhr.html.
+
+        * platform/gtk/TestExpectations:
+
 2012-10-23  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Move UISourceCode creation out of mappings to workspace.
