@@ -26,6 +26,7 @@
 #include "NativeWebWheelEvent.h"
 #include "PageClientImpl.h"
 #include "PageLoadClientEfl.h"
+#include "PageUIClientEfl.h"
 #include "RefPtrEfl.h"
 #include "ResourceLoadClientEfl.h"
 #include "WKAPICast.h"
@@ -55,7 +56,6 @@
 #include "ewk_view_form_client_private.h"
 #include "ewk_view_policy_client_private.h"
 #include "ewk_view_private.h"
-#include "ewk_view_ui_client_private.h"
 #include <Ecore_Evas.h>
 #include <Edje.h>
 #include <WebCore/Cursor.h>
@@ -119,6 +119,7 @@ struct Ewk_View_Private_Data {
 #endif
     RefPtr<WebPageProxy> pageProxy;
     OwnPtr<PageLoadClientEfl> pageLoadClient;
+    OwnPtr<PageUIClientEfl> pageUIClient;
     OwnPtr<ResourceLoadClientEfl> resourceLoadClient;
 
     WKEinaSharedString url;
@@ -831,12 +832,12 @@ static void _ewk_view_initialize(Evas_Object* ewkView, PassRefPtr<Ewk_Context> c
     ewk_view_find_client_attach(wkPage, ewkView);
     ewk_view_form_client_attach(wkPage, ewkView);
     ewk_view_policy_client_attach(wkPage, ewkView);
-    ewk_view_ui_client_attach(wkPage, ewkView);
 #if ENABLE(FULLSCREEN_API)
     priv->pageProxy->fullScreenManager()->setWebView(ewkView);
     ewk_settings_fullscreen_enabled_set(priv->settings.get(), true);
 #endif
     priv->pageLoadClient = PageLoadClientEfl::create(ewkView);
+    priv->pageUIClient = PageUIClientEfl::create(ewkView);
     priv->resourceLoadClient = ResourceLoadClientEfl::create(ewkView);
 
     /* Listen for favicon changes */

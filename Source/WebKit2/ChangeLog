@@ -1,3 +1,40 @@
+2012-10-23  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Make UI client a C++ class
+        https://bugs.webkit.org/show_bug.cgi?id=100099
+
+        Reviewed by Gyuyoung Kim.
+
+        Made page UI client a C++ class and removed it from API directory.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (Ewk_View_Private_Data):
+        (_ewk_view_initialize):
+        * UIProcess/API/efl/ewk_view_ui_client.cpp: Removed.
+        * UIProcess/API/efl/ewk_view_ui_client_private.h: Removed.
+        * UIProcess/efl/PageUIClientEfl.cpp: Added.
+        (WebKit):
+        (WebKit::toPageUIClientEfl):
+        (WebKit::PageUIClientEfl::closePage):
+        (WebKit::PageUIClientEfl::createNewPage):
+        (WebKit::PageUIClientEfl::runJavaScriptAlert):
+        (WebKit::PageUIClientEfl::runJavaScriptConfirm):
+        (WebKit::PageUIClientEfl::runJavaScriptPrompt):
+        (WebKit::PageUIClientEfl::showColorPicker):
+        (WebKit::PageUIClientEfl::hideColorPicker):
+        (WebKit::PageUIClientEfl::exceededDatabaseQuota):
+        (WebKit::PageUIClientEfl::focus):
+        (WebKit::PageUIClientEfl::unfocus):
+        (WebKit::PageUIClientEfl::takeFocus):
+        (WebKit::PageUIClientEfl::getWindowFrame):
+        (WebKit::PageUIClientEfl::setWindowFrame):
+        (WebKit::PageUIClientEfl::PageUIClientEfl):
+        * UIProcess/efl/PageUIClientEfl.h: Added.
+        (WebKit):
+        (PageUIClientEfl):
+        (WebKit::PageUIClientEfl::create):
+
 2012-10-23  Andreas Kling  <kling@webkit.org>
 
         [WK2] REGRESSION(r132169): It broke all plugin related test.
