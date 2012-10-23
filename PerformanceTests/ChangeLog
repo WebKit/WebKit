@@ -1,3 +1,18 @@
+2012-10-23  Zoltan Horvath  <zoltan@webkit.org>
+
+        Add measurePageLoadTime function to PerfTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=100029
+
+        Reviewed by Ryosuke Niwa.
+
+        Adopt chunk based loading logic from html5-full-render.html into measurePageLoadTime function,
+        this is needed to measure the performance and the memory consumption of the PageLoadTests as
+        we do it for all other performancetests.
+
+        * Parser/html5-full-render.html: Move the behavior to runner.js.
+        * resources/runner.js:
+        (.): Add measurePageLoadTime function.
+
 2012-10-22  Adam Barth  <abarth@webkit.org>
 
         [V8] Vastly simplify V8GCController's NodeVisitor

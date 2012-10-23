@@ -2,54 +2,11 @@
 <body>
 <script src="../resources/runner.js"></script>
 <script>
-var spec = PerfTestRunner.loadFile("resources/html5.html");
-
-var chunks = [];
-// The smaller the chunks the more style resolves we do.
-// Smaller chunk sizes will show more samples in style resolution.
-// Larger chunk sizes will show more samples in line layout.
-// Smaller chunk sizes run slower overall, as the per-chunk overhead is high.
-// Testing on my machine has shown that we need 10-15 chunks before style resolution is always the top sample.
-var chunkSize = 500000; // 6.09mb / 500k = approx 13 chunks (thus 13 forced layouts/style resolves).
-var chunkCount = Math.ceil(spec.length / chunkSize);
-for (var chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++) {
-    var chunk = spec.substr(chunkIndex * chunkSize, chunkSize);
-    chunks.push(chunk);
-}
-
-PerfTestRunner.logInfo("Testing " + spec.length + " byte document in " + chunkCount + " " + chunkSize + " byte chunks.");
-
-function loadChunkedSpecIntoIframe(iframe) {
-    // Note: We've inlined the stylesheets in html5.html.  Before we did that, it seemed to be
-    // random as to whether style resolution would show up at all in the samples.
-    // Talking with Hyatt and jamesr we believe this may be the ignorePendingStylesheets
-    // logic which is triggered off of a timer which is fired after the load completes.
-    // By inlining the stylesheets we're avoiding this race condition.
-    iframe.sandbox = '';  // Prevent external loads which could cause write() to return before completing the parse.
-    iframe.style.width = "600px"; // Have a reasonable size so we're not line-breaking on every character.
-    iframe.style.height = "800px";
-    iframe.contentDocument.open();
-
-    for (var chunkIndex = 0; chunkIndex < chunks.length; chunkIndex++) {
-        iframe.contentDocument.write(chunks[chunkIndex]);
-        // Note that we won't cause a style resolve until we've encountered the <body> element.
-        // Thus the number of chunks counted above is not exactly equal to the number of style resolves.
-        if (iframe.contentDocument.body)
-            iframe.contentDocument.body.clientHeight; // Force a full layout/style-resolve.
-    }
-
-    iframe.contentDocument.close();
-}
-
 // Running from the onload callback just makes the UI nicer as it shows the logs before starting the test.
 window.onload = function() {
-    // Depending on the chosen chunk size, iterations can take over 60s to run on a fast machine, so we only run 2.
-    PerfTestRunner.measureTime({run: function() {
-        var iframe = document.createElement("iframe");
-        document.body.appendChild(iframe);
-        loadChunkedSpecIntoIframe(iframe);
-        document.body.removeChild(iframe);
-    }, runCount: 5});
+    PerfTestRunner.measurePageLoadTime({path: "resources/html5.html",
+    chunkSize: 500000, // 6.09mb / 500k = approx 13 chunks (thus 13 forced layouts/style resolves).
+    runCount: 5 }); // Depending on the chosen chunk size, iterations can take over 60s to run on a fast machine, so we only run 5.
 }
 
 </script>

@@ -303,5 +303,50 @@ if (window.testRunner) {
         return PerfTestRunner.now() - startTime;
     }
 
+
+    PerfTestRunner.measurePageLoadTime = function(test) {
+        test.run = function() {
+            var chunks = [];
+            // The smaller the chunks the more style resolves we do.
+            // Smaller chunk sizes will show more samples in style resolution.
+            // Larger chunk sizes will show more samples in line layout.
+            // Smaller chunk sizes run slower overall, as the per-chunk overhead is high.
+            var chunkCount = Math.ceil(this.file.length / this.chunkSize);
+            for (var chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++) {
+                var chunk = this.file.substr(chunkIndex * this.chunkSize, this.chunkSize);
+                chunks.push(chunk);
+            }
+
+            PerfTestRunner.logInfo("Testing " + this.file.length + " byte document in " + chunkCount + " " + this.chunkSize + " byte chunks.");
+
+            var iframe = document.createElement("iframe");
+            document.body.appendChild(iframe);
+
+            iframe.sandbox = '';  // Prevent external loads which could cause write() to return before completing the parse.
+            iframe.style.width = "600px"; // Have a reasonable size so we're not line-breaking on every character.
+            iframe.style.height = "800px";
+            iframe.contentDocument.open();
+
+            for (var chunkIndex = 0; chunkIndex < chunks.length; chunkIndex++) {
+                iframe.contentDocument.write(chunks[chunkIndex]);
+                // Note that we won't cause a style resolve until we've encountered the <body> element.
+                // Thus the number of chunks counted above is not exactly equal to the number of style resolves.
+                if (iframe.contentDocument.body)
+                    iframe.contentDocument.body.clientHeight; // Force a full layout/style-resolve.
+                else if (iframe.documentElement.localName == 'html')
+                    iframe.contentDocument.documentElement.offsetWidth; // Force the painting.
+            }
+
+            iframe.contentDocument.close();
+            document.body.removeChild(iframe);
+        };
+
+        this.file = PerfTestRunner.loadFile(test.path);
+        if (!test.chunkSize)
+            this.chunkSize = 50000;
+
+        PerfTestRunner.measureTime(test);
+    }
+
     window.PerfTestRunner = PerfTestRunner;
 })();
