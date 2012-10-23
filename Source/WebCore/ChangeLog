@@ -1,3 +1,18 @@
+2012-10-22  Peter Wang  <peter.wang@torchmobile.com.cn>
+
+        [BlackBerry] Missing some cookies in HTTP response header when set several cookies in one "Set-Cookie" header.
+        https://bugs.webkit.org/show_bug.cgi?id=99950
+
+        Reviewed by George Staikos.
+
+        In "NetworkJob::handleNotifyHeaderReceived", if there are several "Set-Cookie" headers, 
+        we should combine the following ones with the first.
+
+        No new test case.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::handleNotifyHeaderReceived):
+
 2012-10-22  MORITA Hajime  <morrita@google.com>
 
         Assertion failed at WebCore::toInsertionPoint / WebCore::ContentDistributor::distribute

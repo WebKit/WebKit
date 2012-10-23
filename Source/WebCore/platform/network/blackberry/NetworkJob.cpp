@@ -333,12 +333,13 @@ void NetworkJob::handleNotifyHeaderReceived(const String& key, const String& val
         // For now we check for this explicitly by checking m_frame->page(). But we should find out why the network job hasn't been cancelled when the frame was detached.
         // See RIM PR 134207
         if (m_frame && m_frame->page() && m_frame->loader() && m_frame->loader()->client()
-            && static_cast<FrameLoaderClientBlackBerry*>(m_frame->loader()->client())->cookiesEnabled())
+            && static_cast<FrameLoaderClientBlackBerry*>(m_frame->loader()->client())->cookiesEnabled()) {
             handleSetCookieHeader(value);
-
-        if (m_response.httpHeaderFields().contains("Set-Cookie")) {
-            m_response.setHTTPHeaderField(key, m_response.httpHeaderField(key) + "\r\n" + value);
-            return;
+            // If there are several "Set-Cookie" headers, we should combine the following ones with the first.
+            if (m_response.httpHeaderFields().contains("Set-Cookie")) {
+                m_response.setHTTPHeaderField(key, m_response.httpHeaderField(key) + ", " + value);
+                return;
+            }
         }
     } else if (equalIgnoringCase(key, BlackBerry::Platform::NetworkRequest::HEADER_BLACKBERRY_FTP))
         handleFTPHeader(value);
