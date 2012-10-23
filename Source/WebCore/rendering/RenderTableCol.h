@@ -40,6 +40,8 @@ public:
     const RenderObjectChildList* children() const { return &m_children; }
     RenderObjectChildList* children() { return &m_children; }
 
+    virtual void computePreferredLogicalWidths();
+
     unsigned span() const { return m_span; }
     void setSpan(unsigned span) { m_span = span; }
 
@@ -75,9 +77,6 @@ private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }
 
-    virtual void computePreferredLogicalWidths() OVERRIDE;
-    virtual void layout() OVERRIDE;
-
     virtual const char* renderName() const { return "RenderTableCol"; }
     virtual bool isRenderTableCol() const OVERRIDE { return true; }
     virtual void updateFromElement();
@@ -92,8 +91,6 @@ private:
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
-
-    void propagateLayoutCueToTable() const;
 
     RenderTable* table() const;
 
