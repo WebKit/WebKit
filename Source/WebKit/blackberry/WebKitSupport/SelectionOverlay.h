@@ -26,21 +26,21 @@
 #include "Color.h"
 #include "GraphicsLayerClient.h"
 #include "WebOverlay.h"
-#include "WebSelectionOverlay.h"
 
 #include <BlackBerryPlatformIntRectRegion.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace BlackBerry {
 namespace WebKit {
 
 class WebPagePrivate;
 
-class SelectionOverlay : public WebSelectionOverlay, public WebCore::GraphicsLayerClient {
+class SelectionOverlay : public WebCore::GraphicsLayerClient {
 public:
-    static SelectionOverlay* create(WebPagePrivate* page)
+    static PassOwnPtr<SelectionOverlay> create(WebPagePrivate* page)
     {
-        return new SelectionOverlay(page);
+        return adoptPtr(new SelectionOverlay(page));
     }
 
     virtual ~SelectionOverlay();
@@ -61,7 +61,6 @@ private:
     WebPagePrivate* m_page;
     OwnPtr<WebOverlay> m_overlay;
     BlackBerry::Platform::IntRectRegion m_region;
-    bool m_hideDispatched;
 };
 
 } // namespace WebKit

@@ -73,7 +73,6 @@ class WebPageClient;
 class WebPageCompositor;
 class WebPageGroupLoadDeferrer;
 class WebPagePrivate;
-class WebSelectionOverlay;
 class WebSettings;
 class WebTapHighlight;
 class WebViewportArguments;
@@ -365,9 +364,6 @@ public:
     void resetUserViewportArguments();
 
     WebTapHighlight* tapHighlight() const;
-    void setTapHighlight(WebTapHighlight*);
-
-    WebSelectionOverlay* selectionOverlay() const;
 
     // Adds an overlay that can be modified on the WebKit thread, and
     // whose attributes can be overridden on the compositing thread.

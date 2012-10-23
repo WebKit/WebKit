@@ -1,3 +1,42 @@
+2012-10-23  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Let WebKit manage the SelectionOverlay
+        https://bugs.webkit.org/show_bug.cgi?id=99585
+
+        Reviewed by Rob Buis.
+
+        The SelectionOverlay was exposed to clients of the BlackBerry::WebKit
+        API. However, all the information and notifications necessary to manage
+        the SelectionOverlay are available within WebKit, so the client does
+        not have to shoulder this responsibility.
+
+        Remove WebSelection and all the related plumbing. Now that nobody is
+        using the class from the user interface thread, remove the message
+        related code in SelectionOverlay.
+
+        Add two calls to SelectionOverlay::hide() that are necessary now that
+        the client is no longer responsible for hiding it.
+
+        RIM PR: 225789
+
+        Reviewed internally by Mike Fenton.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::~WebPagePrivate):
+        * Api/WebPage.h:
+        (WebKit):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * Api/WebSelectionOverlay.h: Removed.
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::cancelSelection): Hide the overlay here, because state is reset and selection mode is no longer active
+        (BlackBerry::WebKit::SelectionHandler::selectionPositionChanged): Also hide overlay here, to go with the call to cancelSelectionVisuals
+        * WebKitSupport/SelectionOverlay.cpp:
+        (BlackBerry::WebKit::SelectionOverlay::SelectionOverlay):
+        * WebKitSupport/SelectionOverlay.h:
+        (BlackBerry::WebKit::SelectionOverlay::create):
+        (SelectionOverlay):
+
 2012-10-22  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Remove specialized handling for isIndex fields.

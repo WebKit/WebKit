@@ -493,11 +493,6 @@ WebPagePrivate::~WebPagePrivate()
     delete m_dumpRenderTree;
     m_dumpRenderTree = 0;
 #endif
-
-#if USE(ACCELERATED_COMPOSITING)
-    deleteGuardedObject(m_selectionOverlay);
-    m_selectionOverlay = 0;
-#endif
 }
 
 WebPage::~WebPage()
@@ -6197,16 +6192,6 @@ const BlackBerry::Platform::String& WebPagePrivate::defaultUserAgent()
 WebTapHighlight* WebPage::tapHighlight() const
 {
     return d->m_tapHighlight.get();
-}
-
-void WebPage::setTapHighlight(WebTapHighlight* tapHighlight)
-{
-    d->m_tapHighlight = adoptPtr(tapHighlight);
-}
-
-WebSelectionOverlay* WebPage::selectionOverlay() const
-{
-    return d->m_selectionOverlay;
 }
 
 void WebPage::addOverlay(WebOverlay* overlay)

@@ -29,10 +29,10 @@
 #include "HitTestResult.h"
 #include "InputHandler.h"
 #include "IntRect.h"
+#include "SelectionOverlay.h"
 #include "TouchEventHandler.h"
 #include "WebPageClient.h"
 #include "WebPage_p.h"
-#include "WebSelectionOverlay.h"
 
 #include "htmlediting.h"
 #include "visible_units.h"
@@ -82,6 +82,9 @@ void SelectionHandler::cancelSelection()
 {
     m_selectionActive = false;
     m_lastSelectionRegion = IntRectRegion();
+
+    if (m_webPage->m_selectionOverlay)
+        m_webPage->m_selectionOverlay->hide();
 
     SelectionLog(LogLevelInfo, "SelectionHandler::cancelSelection");
 
@@ -859,6 +862,8 @@ void SelectionHandler::selectionPositionChanged(bool forceUpdateWithoutChange)
         return;
 
     if (m_webPage->m_inputHandler->isInputMode() && m_webPage->m_inputHandler->processingChange()) {
+        if (m_webPage->m_selectionOverlay)
+            m_webPage->m_selectionOverlay->hide();
         m_webPage->m_client->cancelSelectionVisuals();
 
         // Since we're not calling notifyCaretPositionChangedIfNeeded now, we have to do so at the end of processing

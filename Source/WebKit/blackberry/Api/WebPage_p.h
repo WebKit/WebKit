@@ -33,6 +33,7 @@
 #include "PageClientBlackBerry.h"
 #include "PlatformMouseEvent.h"
 #include "ScriptSourceCode.h"
+#include "SelectionOverlay.h"
 #include "Timer.h"
 #include "ViewportArguments.h"
 #include "WebPage.h"
@@ -470,7 +471,7 @@ public:
     WebSettings* m_webSettings;
     WebCookieJar* m_cookieJar;
     OwnPtr<WebTapHighlight> m_tapHighlight;
-    WebSelectionOverlay* m_selectionOverlay;
+    OwnPtr<SelectionOverlay> m_selectionOverlay;
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     OwnPtr<WebCore::JavaScriptDebuggerBlackBerry> m_scriptDebugger;
