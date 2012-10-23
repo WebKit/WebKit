@@ -62,6 +62,8 @@ public:
     virtual void detach();
     virtual bool isInsertionPoint() const OVERRIDE { return true; }
 
+    bool shouldUseFallbackElements() const;
+
     size_t indexOf(Node* node) const { return m_distribution.find(node); }
     bool contains(const Node* node) const { return m_distribution.contains(const_cast<Node*>(node)) || (node->isShadowRoot() && toShadowRoot(node)->assignedTo() == this); }
     size_t size() const { return m_distribution.size(); }
@@ -116,6 +118,19 @@ inline bool isLowerEncapsulationBoundary(Node* node)
     if (!isInsertionPoint(node))
         return false;
     return toInsertionPoint(node)->isShadowBoundary();
+}
+
+inline Element* parentElementForDistribution(const Node* node)
+{
+    ASSERT(node);
+    if (Element* parent = node->parentElement()) {
+        if (isInsertionPoint(parent) && toInsertionPoint(parent)->shouldUseFallbackElements())
+            return parent->parentElement();
+
+        return parent;
+    }
+
+    return 0;
 }
 
 } // namespace WebCore

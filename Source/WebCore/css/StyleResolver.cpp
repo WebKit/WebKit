@@ -75,6 +75,7 @@
 #include "HTMLProgressElement.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTextAreaElement.h"
+#include "InsertionPoint.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeList.h"
 #include "LinkHash.h"
@@ -961,8 +962,9 @@ inline bool shouldResetStyleInheritance(NodeRenderingContext& context)
     InsertionPoint* insertionPoint = context.insertionPoint();
     if (!insertionPoint)
         return false;
-    ASSERT(context.node()->parentElement());
-    ElementShadow* shadow = context.node()->parentElement()->shadow();
+
+    ASSERT(parentElementForDistribution(context.node()));
+    ElementShadow* shadow = parentElementForDistribution(context.node())->shadow();
     ASSERT(shadow);
 
     for ( ; insertionPoint; ) {

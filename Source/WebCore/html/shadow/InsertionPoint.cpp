@@ -69,6 +69,11 @@ void InsertionPoint::detach()
     HTMLElement::detach();
 }
 
+bool InsertionPoint::shouldUseFallbackElements() const
+{
+    return isActive() && !hasDistribution();
+}
+
 bool InsertionPoint::isShadowBoundary() const
 {
     return treeScope()->rootNode()->isShadowRoot() && isActive();

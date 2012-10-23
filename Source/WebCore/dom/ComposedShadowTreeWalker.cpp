@@ -30,6 +30,7 @@
 #include "ContentDistributor.h"
 #include "Element.h"
 #include "ElementShadow.h"
+#include "HTMLContentElement.h"
 #include "InsertionPoint.h"
 
 namespace WebCore {
@@ -51,11 +52,22 @@ static inline ElementShadow* shadowOfParent(const Node* node)
     return 0;
 }
 
+static inline ElementShadow* shadowOfParentForDistribution(const Node* node)
+{
+    if (!node)
+        return 0;
+
+    if (Element* parent = parentElementForDistribution(node))
+        return parent->shadow();
+
+    return 0;    
+}
+
 static inline InsertionPoint* resolveReprojection(const Node* node)
 {
     InsertionPoint* insertionPoint = 0;
     const Node* current = node;
-    while (ElementShadow* shadow = shadowOfParent(current)) {
+    while (ElementShadow* shadow = shadowOfParentForDistribution(current)) {
         shadow->ensureDistribution();
         if (InsertionPoint* insertedTo = shadow->insertionPointFor(node)) {
             current = insertedTo;
@@ -260,7 +272,7 @@ Node* ComposedShadowTreeWalker::traverseParent(const Node* node, ParentTraversal
         ASSERT(toShadowRoot(node)->isYoungest());
         return 0;
     }
-    if (ElementShadow* shadow = shadowOfParent(node)) {
+    if (ElementShadow* shadow = shadowOfParentForDistribution(node)) {
         shadow->ensureDistribution();
         if (InsertionPoint* insertionPoint = resolveReprojection(node)) {
             if (details)

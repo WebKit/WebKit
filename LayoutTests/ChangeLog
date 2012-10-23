@@ -1,3 +1,15 @@
+2012-10-22  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] Fallback content should also be reprojection.
+        https://bugs.webkit.org/show_bug.cgi?id=99750
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/content-reprojection-fallback-expected.html: Added.
+        * fast/dom/shadow/content-reprojection-fallback-reprojection-expected.html: Added.
+        * fast/dom/shadow/content-reprojection-fallback-reprojection.html: Added.
+        * fast/dom/shadow/content-reprojection-fallback.html: Added.
+
 2012-10-22  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, more Chromium ML expectation updating.
