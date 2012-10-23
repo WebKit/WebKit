@@ -60,6 +60,9 @@
 
 #if ENABLE(CSS_FILTERS)
 #include "FilterEffectRenderer.h"
+#if ENABLE(CSS_SHADERS)
+#include "CustomFilterOperation.h"
+#endif
 #endif
 
 #if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)
@@ -254,6 +257,18 @@ void RenderLayerBacking::updateTransform(const RenderStyle* style)
 #if ENABLE(CSS_FILTERS)
 void RenderLayerBacking::updateFilters(const RenderStyle* style)
 {
+#if ENABLE(CSS_SHADERS)
+    const FilterOperations& filters = style->filter();
+    if (filters.hasCustomFilter()) {
+        const CustomFilterOperation* customOperation;
+        for (size_t i = 0; i < filters.size(); ++i) {
+            customOperation = static_cast<const CustomFilterOperation*>(filters.at(i));
+            // We have to wait until the program of CSS Shaders is loaded before setting it on the layer.
+            if (customOperation->getOperationType() == FilterOperation::CUSTOM && !customOperation->program()->isLoaded())
+                return;
+        }
+    }
+#endif
     m_canCompositeFilters = m_graphicsLayer->setFilters(style->filter());
 }
 #endif
