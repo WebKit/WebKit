@@ -1747,7 +1747,6 @@ fast/text/whitespace/016.html
 fast/text/whitespace/024.html
 fast/text/wide-zero-width-space.html
 fast/text/word-break-soft-hyphen.html
-fast/text/word-space.html
 
 # ------- failures due to missing support for particular XSLT features
 # xsl:output
@@ -1866,10 +1865,6 @@ fast/writing-mode/vertical-subst-font-vert-no-dflt.html
 # [Qt] fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=98751
 fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
-
-# [Qt] REGRESSION (r130851): fast/text/word-space-with-kerning.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=98876
-fast/text/word-space-with-kerning.html
 
 # ============================================================================= #
 # failing security tests

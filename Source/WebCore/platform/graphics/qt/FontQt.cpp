@@ -210,7 +210,10 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
     QTextLine line = setupLayout(&layout, run);
     float x1 = line.cursorToX(0);
     float x2 = line.cursorToX(run.length());
-    const float width = qAbs(x2 - x1);
+    float width = qAbs(x2 - x1);
+    // RenderBlockLineLayout expects us to only add word-spacing for trailing spaces, not for leading spaces.
+    if (treatAsSpace(run[0]))
+        width -= m_wordSpacing;
 
     return width + run.expansion();
 }
