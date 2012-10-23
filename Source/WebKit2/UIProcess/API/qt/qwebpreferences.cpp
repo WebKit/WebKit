@@ -72,6 +72,10 @@ bool QWebPreferencesPrivate::testAttribute(QWebPreferencesPrivate::WebAttribute 
     case WebAudioEnabled:
         return preferences()->webAudioEnabled();
 #endif
+#if ENABLE(SMOOTH_SCROLLING)
+    case ScrollAnimatorEnabled:
+        return preferences()->scrollAnimatorEnabled();
+#endif
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -128,6 +132,11 @@ void QWebPreferencesPrivate::setAttribute(QWebPreferencesPrivate::WebAttribute a
 #if ENABLE(WEB_AUDIO)
     case WebAudioEnabled:
         preferences()->setWebAudioEnabled(enable);
+        break;
+#endif
+#if ENABLE(SMOOTH_SCROLLING)
+    case ScrollAnimatorEnabled:
+        preferences()->setScrollAnimatorEnabled(enable);
         break;
 #endif
     default:
@@ -521,6 +530,25 @@ void QWebPreferences::setWebAudioEnabled(bool enable)
 #if ENABLE(WEB_AUDIO)
     d->setAttribute(QWebPreferencesPrivate::WebAudioEnabled, enable);
     emit webAudioEnabledChanged();
+#else
+    UNUSED_PARAM(enable);
+#endif
+}
+
+bool QWebPreferences::scrollAnimatorEnabled() const
+{
+#if ENABLE(SMOOTH_SCROLLING)
+    return d->testAttribute(QWebPreferencesPrivate::ScrollAnimatorEnabled);
+#else
+    return false;
+#endif
+}
+
+void QWebPreferences::setScrollAnimatorEnabled(bool enable)
+{
+#if ENABLE(SMOOTH_SCROLLING)
+    d->setAttribute(QWebPreferencesPrivate::ScrollAnimatorEnabled, enable);
+    emit scrollAnimatorEnabledChanged();
 #else
     UNUSED_PARAM(enable);
 #endif

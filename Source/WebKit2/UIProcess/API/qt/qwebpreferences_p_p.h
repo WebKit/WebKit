@@ -41,7 +41,8 @@ public:
         DeveloperExtrasEnabled,
         WebGLEnabled,
         CSSCustomFilterEnabled,
-        WebAudioEnabled
+        WebAudioEnabled,
+        ScrollAnimatorEnabled
     };
 
     enum FontFamily {

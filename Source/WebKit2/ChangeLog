@@ -1,3 +1,20 @@
+2012-10-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt][WK2] Add preference for enabling scroll animators
+        https://bugs.webkit.org/show_bug.cgi?id=100124
+
+        Reviewed by Jocelyn Turcotte.
+
+        Expose the ScollAnimatorEnabled setting in QWebPreferences.
+
+        * UIProcess/API/qt/qwebpreferences.cpp:
+        (QWebPreferencesPrivate::testAttribute):
+        (QWebPreferencesPrivate::setAttribute):
+        (QWebPreferences::scrollAnimatorEnabled):
+        (QWebPreferences::setScrollAnimatorEnabled):
+        * UIProcess/API/qt/qwebpreferences_p.h:
+        * UIProcess/API/qt/qwebpreferences_p_p.h:
+
 2012-10-23  Yael Aharon  <yael.aharon@intel.com>
 
         [EFL][WK2] Use the port independent PageViewportController
