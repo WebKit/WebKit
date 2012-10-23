@@ -866,7 +866,9 @@ body.platform-linux .monospace, body.platform-linux .source-code {
 }
 
 #console-prompt {
+    clear: right;
     position: relative;
+    border-top: 1px solid rgb(240, 240, 240);
     padding: 1px 22px 1px 0px;
     margin-left: 24px;
     min-height: 16px;
@@ -883,11 +885,16 @@ body.platform-linux .monospace, body.platform-linux .source-code {
 }
 
 .console-message, .console-user-command {
+    clear: right;
     position: relative;
-    border-bottom: 1px solid rgb(240, 240, 240);
+    border-top: 1px solid rgb(240, 240, 240);
     padding: 1px 22px 1px 0px;
     margin-left: 24px;
     min-height: 16px;
+}
+
+.console-mesage:first-child {
+    border-top: none;
 }
 
 .console-adjacent-user-command-result {
