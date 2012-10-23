@@ -49,6 +49,11 @@ public:
     virtual void setBoundsContainPageScale(bool) = 0;
     virtual bool boundsContainPageScale() const = 0;
 
+    // Allow the compositor to determine the scale at which the layer should
+    // be rasterized based on the layer's hierarchy and transform. This defaults
+    // to false.
+    virtual void setAutomaticallyComputeRasterScale(bool) { }
+
     // Set to render text in this layer with LCD antialiasing. Only set if you know that this layer will be
     // drawn in a way where this makes sense - i.e. opaque background, not rotated or scaled, etc.
     // Defaults to false;
