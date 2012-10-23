@@ -139,6 +139,24 @@
         (WebCore::IDBObjectStoreBackendImpl::autoIncrement):
         (IDBObjectStoreBackendImpl):
 
+2012-10-19  Roger Fong  <roger_fong@apple.com>
+
+        [WebGL] conformance/textures/texture-size.html is failing on Apple Mountain Lion
+        https://bugs.webkit.org/show_bug.cgi?id=94041
+
+        Reviewed by Dean Jackson.
+
+        When binding a texture to GL_TEXTURE_2D when GL_ACTIVE_TEXTURE is 0, we set m_boundTexture0 to the texture unit. 
+        However when we delete the texture, we need to be setting m_boundTexture0 to 0.
+        Otherwise when we draw to the screen we bind m_boundTexture0 in the prepareTexture() method and since the associated texture 
+        has already been deleted we end up in an error state.
+
+        Tested using Khronos WebGL conformance suite:
+        conformance/textures/texture-size.html
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::deleteTexture):
+
 2012-10-22  Dirk Schulze  <krit@webkit.org>
 
         BasicShapePolygon::path takes width instead of height for boundary calculation

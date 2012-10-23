@@ -1406,6 +1406,8 @@ void GraphicsContext3D::deleteShader(Platform3DObject shader)
 void GraphicsContext3D::deleteTexture(Platform3DObject texture)
 {
     makeContextCurrent();
+    if (m_boundTexture0 == texture)
+        m_boundTexture0 = 0;
     glDeleteTextures(1, &texture);
 }
 
