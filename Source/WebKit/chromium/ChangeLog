@@ -1,3 +1,31 @@
+2012-10-22  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Suppress compositor invalidations during FrameView recreation in force-compositing-mode
+        https://bugs.webkit.org/show_bug.cgi?id=99882
+
+        Reviewed by Adrienne Walker.
+
+        In force compositing mode, page navigation temporarily takes us in and out of compositing mode because the
+        root GraphicsLayer is owned by the FrameView which is destroyed and recreated. These changes generate
+        invalidations on the WebViewClient that trigger frames but aren't actually terribly useful. WebCore suppresses
+        repaints too early during page load to avoid flashing white or mostly white and to avoid impacting page load time.
+
+        This suppresses compositor invalidations during FrameView recreation.
+
+        Covered by chromium's page cycler performance tests.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::commitDocumentData):
+        (WebKit::WebFrameImpl::createFrameView):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::suppressInvalidations):
+        (WebKit):
+        (WebKit::WebViewImpl::setRootGraphicsLayer):
+        (WebKit::WebViewImpl::scheduleComposite):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-10-22  Kent Tamura  <tkent@chromium.org>
 
         Introduce Localizer::standAloneMonthLabels

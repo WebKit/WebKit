@@ -1114,7 +1114,15 @@ WebURLLoader* WebFrameImpl::createAssociatedURLLoader(const WebURLLoaderOptions&
 
 void WebFrameImpl::commitDocumentData(const char* data, size_t length)
 {
+    WebViewImpl* webView = viewImpl();
+    bool isMainFrame = webView->mainFrameImpl()->frame() == frame();
+    if (isMainFrame)
+        webView->suppressInvalidations(true);
+
     frame()->loader()->documentLoader()->commitData(data, length);
+
+    if (isMainFrame)
+        webView->suppressInvalidations(false);
 }
 
 unsigned WebFrameImpl::unloadListenerCount() const
@@ -2271,10 +2279,16 @@ void WebFrameImpl::createFrameView()
 
     WebViewImpl* webView = viewImpl();
     bool isMainFrame = webView->mainFrameImpl()->frame() == frame();
+    if (isMainFrame)
+        webView->suppressInvalidations(true);
+ 
     frame()->createView(webView->size(), Color::white, webView->isTransparent(), webView->fixedLayoutSize(), IntRect(), isMainFrame ? webView->isFixedLayoutModeEnabled() : 0);
     if (webView->shouldAutoResize() && isMainFrame)
         frame()->view()->enableAutoSizeMode(true, webView->minAutoSize(), webView->maxAutoSize());
 
+    if (isMainFrame)
+        webView->suppressInvalidations(false);
+ 
     if (isMainFrame && webView->devToolsAgentPrivate())
         webView->devToolsAgentPrivate()->mainFrameViewCreated(this);
 }

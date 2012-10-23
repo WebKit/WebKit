@@ -445,6 +445,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 #endif
     , m_flingModifier(0)
     , m_validationMessage(ValidationMessageClientImpl::create(*client))
+    , m_suppressInvalidations(false)
 {
     // WebKit/win/WebView.cpp does the same thing, except they call the
     // KJS specific wrapper around this method. We need to have threading
@@ -3766,6 +3767,11 @@ bool WebViewImpl::tabsToLinks() const
     return m_tabsToLinks;
 }
 
+void WebViewImpl::suppressInvalidations(bool enable)
+{
+    m_suppressInvalidations = enable;
+}
+
 #if USE(ACCELERATED_COMPOSITING)
 bool WebViewImpl::allowsAcceleratedCompositing()
 {
@@ -3774,6 +3780,8 @@ bool WebViewImpl::allowsAcceleratedCompositing()
 
 void WebViewImpl::setRootGraphicsLayer(GraphicsLayer* layer)
 {
+    TemporaryChange<bool> change(m_suppressInvalidations, true);
+
     m_rootGraphicsLayer = layer;
     m_rootLayer = layer ? layer->platformLayer() : 0;
 
@@ -3797,7 +3805,7 @@ void WebViewImpl::setRootGraphicsLayer(GraphicsLayer* layer)
     }
 
     IntRect damagedRect(0, 0, m_size.width, m_size.height);
-    if (!m_isAcceleratedCompositingActive)
+    if (!m_isAcceleratedCompositingActive && !m_suppressInvalidations)
         m_client->didInvalidateRect(damagedRect);
 }
 
@@ -4096,6 +4104,11 @@ void WebViewImpl::didRecreateOutputSurface(bool success)
 
 void WebViewImpl::scheduleComposite()
 {
+    if  (m_suppressInvalidations) {
+        TRACE_EVENT0("webkit", "WebViewImpl invalidations suppressed");
+        return;
+    }
+
     ASSERT(!Platform::current()->compositorSupport()->isThreadingEnabled());
     m_client->scheduleComposite();
 }

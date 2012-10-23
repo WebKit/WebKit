@@ -325,6 +325,8 @@ public:
 
     // WebViewImpl
 
+    void suppressInvalidations(bool enable);
+
     void setIgnoreInputEvents(bool newValue);
     WebDevToolsAgentPrivate* devToolsAgentPrivate() { return m_devToolsAgent.get(); }
 
@@ -872,6 +874,8 @@ private:
     OwnPtr<LinkHighlight> m_linkHighlight;
 #endif
     OwnPtr<ValidationMessageClientImpl> m_validationMessage;
+
+    bool m_suppressInvalidations;
 };
 
 } // namespace WebKit
