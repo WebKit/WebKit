@@ -122,8 +122,8 @@ void WorkerContextExecutionProxy::initIsolate()
     v8::V8::IgnoreOutOfMemoryException();
     v8::V8::SetFatalErrorHandler(reportFatalErrorInV8);
 
-    v8::V8::SetGlobalGCPrologueCallback(&V8GCController::gcPrologue);
-    v8::V8::SetGlobalGCEpilogueCallback(&V8GCController::gcEpilogue);
+    v8::V8::AddGCPrologueCallback(&V8GCController::gcPrologue);
+    v8::V8::AddGCEpilogueCallback(&V8GCController::gcEpilogue);
 
     // FIXME: Remove the following 2 lines when V8 default has changed.
     const char es5ReadonlyFlag[] = "--es5_readonly";

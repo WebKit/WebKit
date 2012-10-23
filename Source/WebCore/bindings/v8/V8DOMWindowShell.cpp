@@ -150,8 +150,8 @@ static void initializeV8IfNeeded()
 
     v8::V8::IgnoreOutOfMemoryException();
     v8::V8::SetFatalErrorHandler(reportFatalError);
-    v8::V8::SetGlobalGCPrologueCallback(&V8GCController::gcPrologue);
-    v8::V8::SetGlobalGCEpilogueCallback(&V8GCController::gcEpilogue);
+    v8::V8::AddGCPrologueCallback(&V8GCController::gcPrologue);
+    v8::V8::AddGCEpilogueCallback(&V8GCController::gcEpilogue);
     v8::V8::AddMessageListener(&reportUncaughtException);
     v8::V8::SetFailedAccessCheckCallbackFunction(reportUnsafeJavaScriptAccess);
 #if ENABLE(JAVASCRIPT_DEBUGGER)

@@ -205,8 +205,20 @@ private:
     Vector<ImplicitConnection> m_connections;
 };
 
+void V8GCController::gcPrologue(v8::GCType type, v8::GCCallbackFlags flags)
+{
+    if (type == v8::kGCTypeScavenge)
+        minorGCPrologue();
+    else if (type == v8::kGCTypeMarkSweepCompact)
+        majorGCPrologue();
+}
+
+void V8GCController::minorGCPrologue()
+{
+}
+
 // Create object groups for DOM tree nodes.
-void V8GCController::gcPrologue()
+void V8GCController::majorGCPrologue()
 {
     TRACE_EVENT_BEGIN0("v8", "GC");
 
@@ -287,7 +299,19 @@ static Mutex& workingSetEstimateMBMutex()
 }
 #endif
 
-void V8GCController::gcEpilogue()
+void V8GCController::gcEpilogue(v8::GCType type, v8::GCCallbackFlags flags)
+{
+    if (type == v8::kGCTypeScavenge)
+        minorGCEpilogue();
+    else if (type == v8::kGCTypeMarkSweepCompact)
+        majorGCEpilogue();
+}
+
+void V8GCController::minorGCEpilogue()
+{
+}
+
+void V8GCController::majorGCEpilogue()
 {
     v8::HandleScope scope;
 
