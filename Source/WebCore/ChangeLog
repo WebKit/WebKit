@@ -1,3 +1,38 @@
+2012-10-23  Huang Dongsung  <luxtella@company100.net>
+
+        [CSS Shaders] Implement all composite operators except destination and lighter.
+        https://bugs.webkit.org/show_bug.cgi?id=97859
+
+        Reviewed by Dean Jackson.
+
+        Add expressions for all composite operators except destination and
+        lighter. The expressions are lifted directly from the CSS Compositing
+        and Blending spec [1]. WebKit adds these compositing expressions to the
+        author's shader.
+
+        [1]: https://dvcs.w3.org/hg/FXTF/rawfile/tip/compositing/index.html#advancedcompositing
+
+        Test: css3/filters/custom/custom-filter-composite-operators.html
+
+        * platform/graphics/filters/CustomFilterCompiledProgram.cpp:
+        (WebCore::CustomFilterCompiledProgram::initializeParameterLocations):
+            Remove ASSERTION checking if glGetUniformLocation returns negative,
+            because ASSERTION can fail with clear and copy composite operations.
+            Clear and copy composite operations do not need "css_u_texture"
+            representing the DOM element texture. If the driver compiler is
+            smart, "css_u_texture" is not regarded as an active uniform, so
+            glGetuniformLocation returns -1. glGetAttribLocation ditto.
+        * platform/graphics/filters/CustomFilterValidatedProgram.cpp:
+        (WebCore::CustomFilterValidatedProgram::compiledProgram):
+            Move the above ASSERTION in CustomFilterCompiledProgram to here.
+            ASSERTION checks if m_samplerLocation is not -1 when the author
+            shader needs an input texture.
+        (WebCore::CustomFilterValidatedProgram::needsInputTexture):
+        (WebCore):
+        (WebCore::CustomFilterValidatedProgram::compositeFunctionString):
+        * platform/graphics/filters/CustomFilterValidatedProgram.h:
+        (CustomFilterValidatedProgram):
+
 2012-10-23  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Shaders] Changing the blend mode in CSS doesn't update the custom filter rendering

@@ -103,6 +103,8 @@ private:
     void rewriteMixVertexShader();
     void rewriteMixFragmentShader();
 
+    bool needsInputTexture() const;
+
     CustomFilterGlobalContext* m_globalContext;
     CustomFilterProgramInfo m_programInfo;
 

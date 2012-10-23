@@ -134,10 +134,6 @@ void CustomFilterCompiledProgram::initializeParameterLocations(CustomFilterProgr
         // One of them, css_u_texture, references the texture of the element.
         m_samplerLocation = m_context->getUniformLocation(m_program, "css_u_texture");
         m_internalTexCoordAttribLocation = m_context->getAttribLocation(m_program, "css_a_texCoord");
-
-        // These internal symbols should have been added to the validated shaders.
-        ASSERT(m_samplerLocation != -1);
-        ASSERT(m_internalTexCoordAttribLocation != -1);
     }
 }
 

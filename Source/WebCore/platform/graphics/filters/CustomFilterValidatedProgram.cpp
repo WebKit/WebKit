@@ -171,9 +171,18 @@ CustomFilterValidatedProgram::CustomFilterValidatedProgram(CustomFilterGlobalCon
 PassRefPtr<CustomFilterCompiledProgram> CustomFilterValidatedProgram::compiledProgram()
 {
     ASSERT(m_isInitialized && m_globalContext && !m_validatedVertexShader.isNull() && !m_validatedFragmentShader.isNull());
-    if (!m_compiledProgram)
+    if (!m_compiledProgram) {
         m_compiledProgram = CustomFilterCompiledProgram::create(m_globalContext->context(), m_validatedVertexShader, m_validatedFragmentShader, m_programInfo.programType());
+        ASSERT(m_compiledProgram->samplerLocation() != -1 || !needsInputTexture());
+    }
     return m_compiledProgram;
+}
+
+bool CustomFilterValidatedProgram::needsInputTexture() const
+{
+    return m_programInfo.programType() == PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE
+        && m_programInfo.mixSettings().compositeOperator != CompositeClear
+        && m_programInfo.mixSettings().compositeOperator != CompositeCopy;
 }
 
 void CustomFilterValidatedProgram::rewriteMixVertexShader()
@@ -298,15 +307,45 @@ String CustomFilterValidatedProgram::compositeFunctionString(CompositeOperator c
         Fb = "1.0 - as";
         break;
     case CompositeClear:
+        Fa = "0.0";
+        Fb = "0.0";
+        break;
     case CompositeCopy:
+        Fa = "1.0";
+        Fb = "0.0";
+        break;
     case CompositeSourceOver:
+        Fa = "1.0";
+        Fb = "1.0 - as";
+        break;
     case CompositeSourceIn:
+        Fa = "ab";
+        Fb = "0.0";
+        break;
     case CompositeSourceOut:
+        Fa = "1.0 - ab";
+        Fb = "0.0";
+        break;
     case CompositeDestinationOver:
+        Fa = "1.0 - ab";
+        Fb = "1.0";
+        break;
     case CompositeDestinationIn:
+        Fa = "0.0";
+        Fb = "as";
+        break;
     case CompositeDestinationOut:
+        Fa = "0.0";
+        Fb = "1.0 - as";
+        break;
     case CompositeDestinationAtop:
+        Fa = "1.0 - ab";
+        Fb = "as";
+        break;
     case CompositeXOR:
+        Fa = "1.0 - ab";
+        Fb = "1.0 - as";
+        break;
     case CompositePlusLighter:
         notImplemented();
         return String();
