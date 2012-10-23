@@ -1,3 +1,10 @@
+2012-10-23  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed gardening. Properly skipping http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout*
+        tests, as was the author's intention.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-22  Dirk Schulze  <krit@webkit.org>
 
         BasicShapePolygon::path takes width instead of height for boundary calculation
