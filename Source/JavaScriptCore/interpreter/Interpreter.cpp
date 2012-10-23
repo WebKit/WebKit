@@ -100,9 +100,9 @@ Interpreter::ErrorHandlingMode::~ErrorHandlingMode()
 
 // The Interpreter::StackPolicy class is used to compute a stack capacity
 // requirement to ensure that we have enough room on the native stack for:
-// 1. the max cummulative stack used by the interpreter and all code
+// 1. the max cumulative stack used by the interpreter and all code
 //    paths sub of it up till leaf functions.
-// 2. the max cummulative stack used by the interpreter before it reaches
+// 2. the max cumulative stack used by the interpreter before it reaches
 //    the next checkpoint (execute...() function) in the interpreter.
 // 
 // The interpreter can be run on different threads and hence, different
@@ -116,11 +116,11 @@ Interpreter::ErrorHandlingMode::~ErrorHandlingMode()
 Interpreter::StackPolicy::StackPolicy(Interpreter& interpreter, const StackBounds& stack)
     : m_interpreter(interpreter)
 {
-    int size = stack.size();
+    const size_t size = stack.size();
 
-    const int DEFAULT_REQUIRED_STACK = 1024 * 1024;
-    const int DEFAULT_MINIMUM_USEABLE_STACK = 128 * 1024;
-    const int DEFAULT_ERROR_MODE_REQUIRED_STACK = 32 * 1024;
+    const size_t DEFAULT_REQUIRED_STACK = 1024 * 1024;
+    const size_t DEFAULT_MINIMUM_USEABLE_STACK = 128 * 1024;
+    const size_t DEFAULT_ERROR_MODE_REQUIRED_STACK = 32 * 1024;
 
     // Here's the policy in a nutshell:
     //
@@ -152,7 +152,7 @@ Interpreter::StackPolicy::StackPolicy(Interpreter& interpreter, const StackBound
     //    ^             ^
     //    start         current sp
     //
-    //    This smaller requried capacity also means that we won't re-trigger
+    //    This smaller required capacity also means that we won't re-trigger
     //    a stack overflow for processing the exception caused by the original
     //    StackOverflowError.
     //
@@ -169,15 +169,16 @@ Interpreter::StackPolicy::StackPolicy(Interpreter& interpreter, const StackBound
     //    The minimum useable capacity is DEFAULT_MINIMUM_USEABLE_STACK.
     //    In this case, the requiredCapacity is whatever is left of the
     //    total stack capacity after we have give JS its minimum stack
-    //    i.e. requiredCapcity can even be 0 if there's not enough stack.
+    //    i.e. requiredCapacity can even be 0 if there's not enough stack.
 
 
     // Policy 1: Normal mode: required = DEFAULT_REQUIRED_STACK.
-    // Policy 2: Erro mode: required = DEFAULT_ERROR_MODE_REQUIRED_STACK.
-    int requiredCapacity = !m_interpreter.m_errorHandlingModeReentry ?
+    // Policy 2: Error mode: required = DEFAULT_ERROR_MODE_REQUIRED_STACK.
+    size_t requiredCapacity = !m_interpreter.m_errorHandlingModeReentry ?
         DEFAULT_REQUIRED_STACK : DEFAULT_ERROR_MODE_REQUIRED_STACK;
 
-    int useableStack = size - requiredCapacity;
+    size_t useableStack = (requiredCapacity <= size) ?
+        size - requiredCapacity : DEFAULT_MINIMUM_USEABLE_STACK;
 
     // Policy 3: Ensure the useable stack is not too small:
     if (useableStack < DEFAULT_MINIMUM_USEABLE_STACK)
@@ -190,9 +191,8 @@ Interpreter::StackPolicy::StackPolicy(Interpreter& interpreter, const StackBound
 
     // Re-compute the requiredCapacity based on the adjusted useable stack
     // size:
-    // interpreter stack checks:
     requiredCapacity = size - useableStack;
-    ASSERT((requiredCapacity >= 0) && (requiredCapacity < size));
+    ASSERT(requiredCapacity < size);
 
     m_requiredCapacity = requiredCapacity;    
 }
