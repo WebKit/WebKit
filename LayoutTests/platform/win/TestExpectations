@@ -1027,6 +1027,7 @@ fast/media/media-query-list-04.html
 fast/media/media-query-list-05.html
 fast/media/media-query-list-06.html
 fast/media/media-query-list-07.html
+fast/media/mq-resolution.html
 
 # Need expectations. See https://bugs.webkit.org/show_bug.cgi?id=36461
 fast/repaint/overflow-scroll-body-appear.html

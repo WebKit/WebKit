@@ -1,3 +1,14 @@
+2012-10-23  Yael Aharon  <yael.aharon@intel.com>
+
+        [WIN7] Skip fast/media/mq-resolution.html.
+        https://bugs.webkit.org/show_bug.cgi?id=100143.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The feature is not yet implemented.
+
+        * platform/win/TestExpectations:
+
 2012-10-23  Christophe Dumez  <christophe.dumez@intel.com>
 
         Possible assertion hit in WebCore::HTMLSelectElement::updateListBoxSelection()
