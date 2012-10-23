@@ -1,3 +1,37 @@
+2012-10-23  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2] [WTR] WebKitTestRunner needs testRunner.queueForwardNavigation
+        https://bugs.webkit.org/show_bug.cgi?id=99700
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implemented testRunner.queueForwardNavigation, made little refactoring in Work Queue
+        to obviate code duplication.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::queueBackNavigation):
+        (WTR):
+        (WTR::InjectedBundle::queueForwardNavigation):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        (InjectedBundle):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::queueForwardNavigation):
+        (WTR):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (TestRunner):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        * WebKitTestRunner/WorkQueueManager.cpp:
+        (NavigationItem):
+        (WTR::NavigationItem::NavigationItem):
+        (WTR::NavigationItem::invoke):
+        (WTR):
+        (WTR::WorkQueueManager::queueBackNavigation):
+        (WTR::WorkQueueManager::queueForwardNavigation):
+        * WebKitTestRunner/WorkQueueManager.h:
+        (WorkQueueManager):
+
 2012-10-23  Simon Hausmann  <simon.hausmann@digia.com>
 
         Unreviewed trivial Qt build fix: Fix build without USE_3D_GRAPHICS

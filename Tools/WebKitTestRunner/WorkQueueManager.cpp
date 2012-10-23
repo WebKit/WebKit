@@ -87,6 +87,18 @@ public:
     WKRetainPtr<WKStringRef> m_script;
 };
 
+class NavigationItem : public WorkQueueItem {
+public:
+    explicit NavigationItem(int index) : m_index(index) { }
+
+    WorkQueueItem::Type invoke() const
+    {
+        return goToItemAtIndex(m_index) ? WorkQueueItem::Loading : WorkQueueItem::NonLoading;
+    }
+
+    unsigned m_index;
+};
+
 WorkQueueManager::WorkQueueManager()
     : m_processing(false)
 {
@@ -143,16 +155,12 @@ void WorkQueueManager::queueLoad(const String& url, const String& target)
 
 void WorkQueueManager::queueBackNavigation(unsigned howFarBackward)
 {
-    class BackNavigationItem : public WorkQueueItem {
-    public:
-        explicit BackNavigationItem(unsigned howFarBackward) : m_howFarBackward(howFarBackward) { }
+    enqueue(new NavigationItem(-howFarBackward));
+}
 
-        WorkQueueItem::Type invoke() const { return goToItemAtIndex(-m_howFarBackward) ? WorkQueueItem::Loading : WorkQueueItem::NonLoading; }
-
-        unsigned m_howFarBackward;
-    };
-
-    enqueue(new BackNavigationItem(howFarBackward));
+void WorkQueueManager::queueForwardNavigation(unsigned howFarForward)
+{
+    enqueue(new NavigationItem(howFarForward));
 }
 
 void WorkQueueManager::queueReload()

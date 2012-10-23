@@ -479,7 +479,16 @@ void InjectedBundle::queueBackNavigation(unsigned howFarBackward)
 
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("QueueBackNavigation"));
     WKRetainPtr<WKUInt64Ref> messageBody(AdoptWK, WKUInt64Create(howFarBackward));
-    WKBundlePostMessage(m_bundle, messageName.get(),  messageBody.get());
+    WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
+}
+
+void InjectedBundle::queueForwardNavigation(unsigned howFarForward)
+{
+    m_useWorkQueue = true;
+
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("QueueForwardNavigation"));
+    WKRetainPtr<WKUInt64Ref> messageBody(AdoptWK, WKUInt64Create(howFarForward));
+    WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
 }
 
 void InjectedBundle::queueLoad(WKStringRef url, WKStringRef target)

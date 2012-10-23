@@ -293,10 +293,6 @@ svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard.html
 svg/custom/manually-parsed-svg-allowed-in-dashboard.html
 svg/custom/svg-allowed-in-dashboard-object.html
 
-# WebKitTestRunner needs testRunner.queueForwardNavigation
-# <https://bugs.webkit.org/show_bug.cgi?id=99700>
-http/tests/cache/subresource-failover-to-network.html
-
 # WebKitTestRunner needs layoutTestController.setCacheModel
 # <https://bugs.webkit.org/show_bug.cgi?id=42684>
 fast/dom/HTMLScriptElement/nested-execution.html

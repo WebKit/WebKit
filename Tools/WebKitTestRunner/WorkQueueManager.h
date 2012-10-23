@@ -44,6 +44,7 @@ public:
 
     void queueLoad(const String& url, const String& target);
     void queueBackNavigation(unsigned howFarBackward);
+    void queueForwardNavigation(unsigned howFarForward);
     void queueReload();
     void queueLoadingScript(const String& script);
     void queueNonLoadingScript(const String& script);

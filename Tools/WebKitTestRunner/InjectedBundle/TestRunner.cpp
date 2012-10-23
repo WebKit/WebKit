@@ -839,6 +839,11 @@ void TestRunner::queueBackNavigation(unsigned howFarBackward)
     InjectedBundle::shared().queueBackNavigation(howFarBackward);
 }
 
+void TestRunner::queueForwardNavigation(unsigned howFarForward)
+{
+    InjectedBundle::shared().queueForwardNavigation(howFarForward);
+}
+
 void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
 {
     WKRetainPtr<WKURLRef> baseURLWK(AdoptWK, WKBundleFrameCopyURL(WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page())));

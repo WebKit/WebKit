@@ -1,3 +1,14 @@
+2012-10-23  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2] [WTR] WebKitTestRunner needs testRunner.queueForwardNavigation
+        https://bugs.webkit.org/show_bug.cgi?id=99700
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskipped http/tests/cache/subresource-failover-to-network.html for WK2 ports.
+
+        * platform/wk2/TestExpectations:
+
 2012-10-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] REGRESSION (r130851): fast/text/word-space-with-kerning.html fails
