@@ -556,8 +556,11 @@ inline v8::Handle<v8::Value> toV8Fast(Node* node, const v8::AccessorInfo& info, 
     // whether the holder's inline wrapper is the same wrapper we see in the
     // v8::AccessorInfo.
     v8::Handle<v8::Object> holderWrapper = info.Holder();
-    if (holder->wrapper() && *holder->wrapper() == holderWrapper && node->wrapper())
-        return *node->wrapper();
+    if (holder->wrapper() == holderWrapper) {
+        v8::Handle<v8::Object> wrapper = node->wrapper();
+        if (!wrapper.IsEmpty())
+            return wrapper;
+    }
     return toV8Slow(node, holderWrapper, info.GetIsolate());
 }
 END

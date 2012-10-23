@@ -52,8 +52,8 @@ public:
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
 private:
-    IntrusiveDOMWrapperMap m_staticDomNodeMap;
-    IntrusiveDOMWrapperMap m_staticActiveDomNodeMap;
+    DOMNodeWrapperMap m_staticDomNodeMap;
+    ActiveDOMNodeWrapperMap m_staticActiveDomNodeMap;
     DOMWrapperMap<void> m_staticDomObjectMap;
     DOMWrapperMap<void> m_staticActiveDomObjectMap;
 };

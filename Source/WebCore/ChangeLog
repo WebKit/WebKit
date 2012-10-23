@@ -1,3 +1,40 @@
+2012-10-23  Adam Barth  <abarth@webkit.org>
+
+        [V8] ScriptWrappable should hold the wrapper handle directly (Dromaeo/dom-modify and dom-traverse get ~2.5% faster)
+        https://bugs.webkit.org/show_bug.cgi?id=97974
+
+        Reviewed by Eric Seidel.
+
+        Previously, we stored a pointer to a handle to a wrapper in Node. That
+        is an extra layer of indirection that slows down finding the wrapper
+        for the node. A handle is just a pointer, so we might as we just store
+        the handle in the Node directly. That speeds up dom-modify and
+        dom-traverse by about 2.5%.
+
+        This change also lets us get rid of the ChunkedTable we were using to
+        store all the wrappers because they're now stored in the Nodes
+        directly.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader):
+        * bindings/v8/IntrusiveDOMWrapperMap.h:
+        (WebCore::IntrusiveDOMWrapperMap::IntrusiveDOMWrapperMap):
+        (WebCore::IntrusiveDOMWrapperMap::get):
+        (WebCore::IntrusiveDOMWrapperMap::set):
+        (WebCore::IntrusiveDOMWrapperMap::contains):
+        (WebCore::IntrusiveDOMWrapperMap::visit):
+        (WebCore::IntrusiveDOMWrapperMap::removeIfPresent):
+        (WebCore::IntrusiveDOMWrapperMap::clear):
+        * bindings/v8/ScriptWrappable.h:
+        (WebCore::ScriptWrappable::ScriptWrappable):
+        (WebCore::ScriptWrappable::wrapper):
+        (WebCore::ScriptWrappable::setWrapper):
+        (WebCore::ScriptWrappable::disposeWrapper):
+        (WebCore::ScriptWrappable::reportMemoryUsage):
+        (ScriptWrappable):
+        * bindings/v8/V8DOMWrapper.h:
+        (WebCore::V8DOMWrapper::getCachedWrapper):
+
 2012-10-23  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Replace SetGlobalGCPrologueCallback() with AddGCPrologueCallback()
