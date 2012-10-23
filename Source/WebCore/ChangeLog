@@ -1,3 +1,43 @@
+2012-10-23  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] Changing the blend mode in CSS doesn't update the custom filter rendering
+        https://bugs.webkit.org/show_bug.cgi?id=99887
+
+        Reviewed by Dirk Schulze.
+
+        Before this patch, WebKit would not recompute an element's style when just its custom filter
+        blend mode changed.
+
+        For example, suppose an element initially has the style:
+        -webkit-filter: custom(none mix(url(shader.fs) multiply source-atop));
+
+        Then, we change the blend mode from "multiply" to "normal":
+        -webkit-filter: custom(none mix(url(shader.fs) normal source-atop));
+
+        WebKit now detects this change and recomputes the style.
+
+        CustomFilterProgram now has an equals operator that considers the program type and the mix
+        settings. The mix settings contain the blend mode.
+
+        Test: css3/filters/custom/custom-filter-change-blend-mode.html
+
+        * platform/graphics/filters/CustomFilterProgram.cpp:
+        (WebCore::CustomFilterProgram::operator==):
+            Previously, the equals operator was pure virtual in CustomFilterProgram. Now,
+            CustomFilterProgram implements it and compares the program type and mix settings, if
+            appropriate.
+        (WebCore):
+        * platform/graphics/filters/CustomFilterProgram.h:
+        * platform/graphics/filters/CustomFilterProgramInfo.cpp:
+        (WebCore::CustomFilterProgramInfo::hash):
+            Refactor a repeated condition into a boolean to improve readability.
+        (WebCore::CustomFilterProgramInfo::operator==):
+            Refactor repeated conditions to improve readability. Reorder the conditions so the less
+            expensive ones occur first.
+        * rendering/style/StyleCustomFilterProgram.h:
+        (WebCore::StyleCustomFilterProgram::operator==):
+            Call the base class's equals operator.
+
 2012-10-23  David Barton  <dbarton@mathscribe.com>
 
         [MathML] Symbol font uses greek letters for roman ones on linux and Windows

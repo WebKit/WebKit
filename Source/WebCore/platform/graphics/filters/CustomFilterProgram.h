@@ -62,7 +62,7 @@ public:
 
     // StyleCustomFilterProgram has the only implementation for the following method. That means, it casts to StyleCustomFilterProgram
     // withouth checking the type. If you add another implementation, also add a mechanism to check for the correct type.
-    virtual bool operator==(const CustomFilterProgram&) const = 0;
+    virtual bool operator==(const CustomFilterProgram&) const;
     bool operator!=(const CustomFilterProgram& o) const { return !(*this == o); }
 protected:
     // StyleCustomFilterProgram can notify the clients that the cached resources are

@@ -1,3 +1,18 @@
+2012-10-23  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] Changing the blend mode in CSS doesn't update the custom filter rendering
+        https://bugs.webkit.org/show_bug.cgi?id=99887
+
+        Reviewed by Dirk Schulze.
+
+        Add a test that resolves a custom filter's style with the "multiply" blend mode and then
+        changes the blend mode to "normal". The test makes sure not to change any other parameters
+        besides the blend mode, since the other parameters can trigger style recalculations on their
+        own.
+
+        * css3/filters/custom/custom-filter-change-blend-mode-expected.html: Added.
+        * css3/filters/custom/custom-filter-change-blend-mode.html: Added.
+
 2012-10-23  David Barton  <dbarton@mathscribe.com>
 
         [MathML] Symbol font uses greek letters for roman ones on linux and Windows

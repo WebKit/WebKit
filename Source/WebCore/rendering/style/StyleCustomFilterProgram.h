@@ -120,6 +120,10 @@ public:
     
     virtual bool operator==(const CustomFilterProgram& o) const 
     {
+        // We don't use the != operator because that would recursively call this method.
+        if (!CustomFilterProgram::operator==(o))
+            return false;
+
         // The following cast is ugly, but StyleCustomFilterProgram is the single implementation of CustomFilterProgram.
         const StyleCustomFilterProgram* other = static_cast<const StyleCustomFilterProgram*>(&o);
         return cachedVertexShader() == other->cachedVertexShader() && cachedFragmentShader() == other->cachedFragmentShader();
