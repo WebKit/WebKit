@@ -259,8 +259,9 @@
             "filename": r"Source/WebCore/svg"
                         r"|Source/WebCore/rendering/svg",
         },
-        "WebInspectorProtocol": {
-            "filename": r"Source/WebCore/inspector/Inspector.json",
+        "WebInspectorAPI": {
+            "filename": r"Source/WebCore/inspector/*.json"
+                        r"|Source/WebCore/inspector/*.idl",
         },
         "WebSocket": {
             "filename": r"Source/WebCore/Modules/websockets"
@@ -334,7 +335,7 @@
         "WatchListScript": [ "levin+watchlist@chromium.org", ],
         "WebGL": [ "dino@apple.com" ],
         "WebIDL": [ "abarth@webkit.org", "ojan@chromium.org" ],
-        "WebInspectorProtocol": [ "timothy@apple.com", "joepeck@webkit.org" ],
+        "WebInspectorAPI": [ "timothy@apple.com", "joepeck@webkit.org" ],
         "WebKitGTKTranslations": [ "gns@gnome.org", "mrobinson@webkit.org" ],
         "WebSocket": [ "yutak@chromium.org" ],
         "XSS": [ "dbates@webkit.org" ],

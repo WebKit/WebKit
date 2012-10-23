@@ -1,3 +1,9 @@
+2012-10-23  Timothy Hatcher  <timothy@apple.com>
+
+        Unreviewed watchlist change to monitor Inspector IDLs.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-10-23  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2] [WTR] WebKitTestRunner needs testRunner.queueForwardNavigation
