@@ -1,3 +1,10 @@
+2012-10-22  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, more Chromium ML expectation updating.
+
+        * platform/chromium-mac-mountainlion/TestExpectations:
+        * platform/chromium/TestExpectations:
+
 2012-10-22  Tony Chang  <tony@chromium.org>
 
         margin-top/bottom has no effect for child nodes of flex items

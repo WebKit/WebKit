@@ -1256,8 +1256,8 @@ webkit.org/b/99505 css3/selectors3/xml/css3-modsel-120.xml [ ImageOnlyFailure ]
 webkit.org/b/99505 css3/selectors3/xml/css3-modsel-121.xml [ ImageOnlyFailure ]
 webkit.org/b/99505 css3/selectors3/xml/css3-modsel-122.xml [ ImageOnlyFailure ]
 webkit.org/b/99505 css3/selectors3/xml/css3-modsel-123.xml [ ImageOnlyFailure ]
-webkit.org/b/99505 css3/selectors3/xml/css3-modsel-123b.xml [ Failure ImageOnlyFailure ]  # flaky?
-webkit.org/b/99505 css3/selectors3/xml/css3-modsel-124.xml [ Failure ImageOnlyFailure ]  # flaky?
+webkit.org/b/99505 css3/selectors3/xml/css3-modsel-123b.xml [ ImageOnlyFailure ]  # flaky Failure until retry
+webkit.org/b/99505 css3/selectors3/xml/css3-modsel-124.xml [ ImageOnlyFailure ]  # flaky Failure until retry
 webkit.org/b/99505 css3/selectors3/xml/css3-modsel-124b.xml [ ImageOnlyFailure ]
 webkit.org/b/99505 css3/selectors3/xml/css3-modsel-125.xml [ ImageOnlyFailure ]
 webkit.org/b/99505 css3/selectors3/xml/css3-modsel-125b.xml [ ImageOnlyFailure ]
@@ -1277,9 +1277,9 @@ webkit.org/b/99505 css3/selectors3/xml/css3-modsel-131b.xml [ ImageOnlyFailure ]
 webkit.org/b/99505 css3/selectors3/xml/css3-modsel-132.xml [ ImageOnlyFailure ]
 webkit.org/b/99505 css3/selectors3/xml/css3-modsel-132b.xml [ ImageOnlyFailure ]
 webkit.org/b/99505 css3/selectors3/xml/css3-modsel-133.xml [ ImageOnlyFailure ]
-webkit.org/b/99505 css3/selectors3/xml/css3-modsel-133b.xml [ ImageOnlyFailure ]
+webkit.org/b/99505 css3/selectors3/xml/css3-modsel-133b.xml [ ImageOnlyFailure ]  # flaky Failure until retry
 webkit.org/b/99505 css3/selectors3/xml/css3-modsel-134.xml [ ImageOnlyFailure ]
-webkit.org/b/99505 css3/selectors3/xml/css3-modsel-134b.xml [ ImageOnlyFailure ]  # flaky?
+webkit.org/b/99505 css3/selectors3/xml/css3-modsel-134b.xml [ ImageOnlyFailure ]  # flaky Failure until retry
 webkit.org/b/99505 css3/selectors3/xml/css3-modsel-135.xml [ ImageOnlyFailure ]
 webkit.org/b/99505 css3/selectors3/xml/css3-modsel-135b.xml [ ImageOnlyFailure ]
 webkit.org/b/99505 css3/selectors3/xml/css3-modsel-136.xml [ ImageOnlyFailure ]
@@ -1490,9 +1490,9 @@ webkit.org/b/99505 css3/selectors3/xml/css3-modsel-90b.xml [ ImageOnlyFailure ]
 webkit.org/b/99505 css3/selectors3/xml/css3-modsel-91.xml [ ImageOnlyFailure ]
 webkit.org/b/99505 css3/selectors3/xml/css3-modsel-92.xml [ ImageOnlyFailure ]
 webkit.org/b/99505 css3/selectors3/xml/css3-modsel-93.xml [ ImageOnlyFailure ]
-webkit.org/b/99505 css3/selectors3/xml/css3-modsel-94.xml [ ImageOnlyFailure ]
+webkit.org/b/99505 css3/selectors3/xml/css3-modsel-94.xml [ ImageOnlyFailure ]  # flaky Failure until retry
 webkit.org/b/99505 css3/selectors3/xml/css3-modsel-94b.xml [ ImageOnlyFailure ]
-webkit.org/b/99505 css3/selectors3/xml/css3-modsel-95.xml [ Failure ImageOnlyFailure ]  # flaky?
+webkit.org/b/99505 css3/selectors3/xml/css3-modsel-95.xml [ ImageOnlyFailure ]  # flaky Failure until retry
 webkit.org/b/99505 css3/selectors3/xml/css3-modsel-96.xml [ ImageOnlyFailure ]
 webkit.org/b/99505 css3/selectors3/xml/css3-modsel-96b.xml [ ImageOnlyFailure ]
 webkit.org/b/99505 css3/selectors3/xml/css3-modsel-97.xml [ ImageOnlyFailure ]
