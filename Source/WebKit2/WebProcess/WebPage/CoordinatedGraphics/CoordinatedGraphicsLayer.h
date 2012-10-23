@@ -42,6 +42,7 @@
 #if USE(COORDINATED_GRAPHICS)
 namespace WebCore {
 class CoordinatedGraphicsLayer;
+class GraphicsLayerAnimations;
 }
 
 namespace WebKit {
@@ -66,8 +67,7 @@ public:
     virtual void syncCanvas(WebLayerID, const WebCore::IntSize& canvasSize, const WebCore::GraphicsSurfaceToken&, uint32_t frontBuffer) = 0;
 #endif
 
-    virtual void setLayerAnimatedOpacity(WebLayerID, float) = 0;
-    virtual void setLayerAnimatedTransform(WebLayerID, const WebCore::TransformationMatrix&) = 0;
+    virtual void setLayerAnimations(WebLayerID, const WebCore::GraphicsLayerAnimations&) = 0;
 
     virtual void attachLayer(WebCore::CoordinatedGraphicsLayer*) = 0;
     virtual void detachLayer(WebCore::CoordinatedGraphicsLayer*) = 0;
@@ -79,9 +79,8 @@ public:
 namespace WebCore {
 
 class CoordinatedGraphicsLayer : public WebCore::GraphicsLayer
-                       , public TiledBackingStoreClient
-                       , public WebKit::CoordinatedTileClient
-                       , public GraphicsLayerAnimation::Client {
+    , public TiledBackingStoreClient
+    , public WebKit::CoordinatedTileClient {
 public:
     CoordinatedGraphicsLayer(GraphicsLayerClient*);
     virtual ~CoordinatedGraphicsLayer();
@@ -166,10 +165,7 @@ public:
     bool isReadyForTileBufferSwap() const;
     void updateContentBuffers();
     void purgeBackingStores();
-
-    // GraphicsLayerAnimation::Client
-    virtual void setAnimatedTransform(const TransformationMatrix&);
-    virtual void setAnimatedOpacity(float);
+    bool hasPendingVisibleChanges();
 
     virtual bool addAnimation(const KeyframeValueList&, const IntSize&, const Animation*, const String&, double);
     virtual void pauseAnimation(const String&, double);
@@ -188,12 +184,12 @@ private:
     bool m_shouldSyncLayerState: 1;
     bool m_shouldSyncChildren: 1;
     bool m_shouldSyncFilters: 1;
-    bool m_shouldSyncAnimatedProperties: 1;
+    bool m_shouldSyncAnimations: 1;
     bool m_fixedToViewport : 1;
     bool m_canvasNeedsDisplay : 1;
 
     void notifyChange();
-    void didChangeAnimatedProperties();
+    void didChangeAnimations();
     void didChangeGeometry();
     void didChangeLayerState();
     void didChangeChildren();
@@ -211,7 +207,7 @@ private:
     void adjustContentsScale();
     void computeTransformedVisibleRect();
     void syncLayerParameters();
-    void syncAnimatedProperties();
+    void syncAnimations();
     void setShouldUpdateVisibleRect();
     float effectiveContentsScale();
 

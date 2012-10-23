@@ -81,6 +81,7 @@ public:
     virtual bool addAnimation(const KeyframeValueList&, const IntSize&, const Animation*, const String&, double);
     virtual void pauseAnimation(const String&, double);
     virtual void removeAnimation(const String&);
+    void setAnimations(const GraphicsLayerAnimations&);
 
     TextureMapperLayer* layer() const { return m_layer.get(); }
     TextureMapperPlatformLayer* contentsLayer() const { return m_contentsLayer; }

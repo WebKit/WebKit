@@ -132,6 +132,7 @@ public:
     void setScrollPositionDeltaIfNeeded(const FloatSize&);
 
     void setDebugBorder(const Color&, float width);
+    void applyAnimationsRecursively();
 
 private:
     TextureMapperLayer* rootLayer();

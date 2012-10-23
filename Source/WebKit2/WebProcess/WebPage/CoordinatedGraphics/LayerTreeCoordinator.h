@@ -84,8 +84,7 @@ public:
 
     virtual void syncLayerState(WebLayerID, const WebLayerInfo&);
     virtual void syncLayerChildren(WebLayerID, const Vector<WebLayerID>&);
-    virtual void setLayerAnimatedOpacity(WebLayerID, float);
-    virtual void setLayerAnimatedTransform(WebLayerID, const WebCore::TransformationMatrix&);
+    virtual void setLayerAnimations(WebLayerID, const WebCore::GraphicsLayerAnimations&);
 #if ENABLE(CSS_FILTERS)
     virtual void syncLayerFilters(WebLayerID, const WebCore::FilterOperations&);
 #endif
@@ -121,6 +120,8 @@ private:
     void performScheduledLayerFlush();
     void didPerformScheduledLayerFlush();
     void syncDisplayState();
+    void lockAnimations();
+    void unlockAnimations();
 
     void layerFlushTimerFired(WebCore::Timer<LayerTreeCoordinator>*);
 
@@ -156,6 +157,7 @@ private:
     WebCore::Timer<LayerTreeCoordinator> m_releaseInactiveAtlasesTimer;
     bool m_layerFlushSchedulingEnabled;
     uint64_t m_forceRepaintAsyncCallbackID;
+    bool m_animationsLocked;
 };
 
 }

@@ -510,6 +510,13 @@ bool TextureMapperLayer::descendantsOrSelfHaveRunningAnimations() const
     return false;
 }
 
+void TextureMapperLayer::applyAnimationsRecursively()
+{
+    syncAnimations();
+    for (size_t i = 0; i < m_children.size(); ++i)
+        m_children[i]->applyAnimationsRecursively();
+}
+
 void TextureMapperLayer::syncAnimations()
 {
     m_animations.apply(this);

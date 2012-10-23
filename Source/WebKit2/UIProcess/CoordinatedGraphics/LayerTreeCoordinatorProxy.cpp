@@ -144,14 +144,14 @@ void LayerTreeCoordinatorProxy::setContentsSize(const FloatSize& contentsSize)
     dispatchUpdate(bind(&LayerTreeRenderer::setContentsSize, m_renderer.get(), contentsSize));
 }
 
-void LayerTreeCoordinatorProxy::setLayerAnimatedOpacity(uint32_t id, float opacity)
+void LayerTreeCoordinatorProxy::setLayerAnimations(WebLayerID id, const GraphicsLayerAnimations& animations)
 {
-    dispatchUpdate(bind(&LayerTreeRenderer::setAnimatedOpacity, m_renderer.get(), id, opacity));
+    dispatchUpdate(bind(&LayerTreeRenderer::setLayerAnimations, m_renderer.get(), id, animations));
 }
 
-void LayerTreeCoordinatorProxy::setLayerAnimatedTransform(uint32_t id, const WebCore::TransformationMatrix& transform)
+void LayerTreeCoordinatorProxy::setAnimationsLocked(bool locked)
 {
-    dispatchUpdate(bind(&LayerTreeRenderer::setAnimatedTransform, m_renderer.get(), id, transform));
+    dispatchUpdate(bind(&LayerTreeRenderer::setAnimationsLocked, m_renderer.get(), locked));
 }
 
 void LayerTreeCoordinatorProxy::setVisibleContentsRect(const FloatRect& rect, float scale, const FloatPoint& trajectoryVector)

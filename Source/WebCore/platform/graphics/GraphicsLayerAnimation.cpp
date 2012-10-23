@@ -156,13 +156,13 @@ static TransformationMatrix applyTransformAnimation(const TransformOperations* f
 }
 
 
-GraphicsLayerAnimation::GraphicsLayerAnimation(const String& name, const KeyframeValueList& keyframes, const IntSize& boxSize, const Animation* animation, double timeOffset, bool listsMatch)
+GraphicsLayerAnimation::GraphicsLayerAnimation(const String& name, const KeyframeValueList& keyframes, const IntSize& boxSize, const Animation* animation, double startTime, bool listsMatch)
     : m_keyframes(keyframes)
     , m_boxSize(boxSize)
     , m_animation(Animation::create(animation))
     , m_name(name)
     , m_listsMatch(listsMatch)
-    , m_startTime(WTF::currentTime() - timeOffset)
+    , m_startTime(startTime)
     , m_pauseTime(0)
     , m_state(PlayingState)
 {
@@ -285,6 +285,15 @@ void GraphicsLayerAnimations::apply(GraphicsLayerAnimation::Client* client)
         m_animations[i].apply(client);
 }
 
+GraphicsLayerAnimations GraphicsLayerAnimations::getActiveAnimations() const
+{
+    GraphicsLayerAnimations active;
+    for (size_t i = 0; i < m_animations.size(); ++i) {
+        if (m_animations[i].isActive())
+            active.add(m_animations[i]);
+    }
+    return active;
+}
 }
 #endif
 

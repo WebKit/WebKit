@@ -1,3 +1,51 @@
+2012-10-23  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Coordinated Graphics: Enable threaded/IPC animations
+        https://bugs.webkit.org/show_bug.cgi?id=93146
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add enablers to TextureMapper and GraphicsLayerAnimation so that they could be used
+        across processes with IPC. Added some public accessors to GraphicsLayerAnimation,
+        and allowed a GraphicsLayerTextureMapper to receive a full list of animations.
+
+        Covered by existing animation and compositing tests.
+
+        * platform/graphics/GraphicsLayerAnimation.cpp:
+        (WebCore::GraphicsLayerAnimation::GraphicsLayerAnimation):
+            Initialize the animation with the startTime instead of the offset.
+
+        (WebCore::GraphicsLayerAnimations::getActiveAnimations):
+        * platform/graphics/GraphicsLayerAnimation.h:
+        (WebCore::GraphicsLayerAnimation::setState):
+            Allow setting the pause time as well.
+
+        (WebCore::GraphicsLayerAnimation::boxSize):
+        (WebCore::GraphicsLayerAnimation::startTime):
+        (WebCore::GraphicsLayerAnimation::pauseTime):
+        (WebCore::GraphicsLayerAnimation::animation):
+        (WebCore::GraphicsLayerAnimation::keyframes):
+        (WebCore::GraphicsLayerAnimation::listsMatch):
+        (WebCore::GraphicsLayerAnimations::size):
+        (WebCore::GraphicsLayerAnimations::animations):
+            Add public accessors to GraphicsLayerAnimation properties.
+
+        (GraphicsLayerAnimation):
+        (GraphicsLayerAnimations):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::addAnimation):
+        (WebCore::GraphicsLayerTextureMapper::setAnimations):
+            Allow replacing the entire list of animations.
+
+        (WebCore):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        (GraphicsLayerTextureMapper):
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::applyAnimationsRecursively):
+        (WebCore):
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        (TextureMapperLayer):
+
 2012-10-23  Chris Rogers  <crogers@google.com>
 
         Change setTargetValueAtTime() to setTargetAtTime()

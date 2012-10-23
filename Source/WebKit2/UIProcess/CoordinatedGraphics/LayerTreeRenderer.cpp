@@ -88,6 +88,7 @@ LayerTreeRenderer::LayerTreeRenderer(LayerTreeCoordinatorProxy* layerTreeCoordin
     : m_layerTreeCoordinatorProxy(layerTreeCoordinatorProxy)
     , m_rootLayerID(InvalidWebLayerID)
     , m_isActive(false)
+    , m_animationsLocked(false)
 {
 }
 
@@ -120,6 +121,8 @@ void LayerTreeRenderer::paintToCurrentGLContext(const TransformationMatrix& matr
         return;
 
     layer->setTextureMapper(m_textureMapper.get());
+    if (!m_animationsLocked)
+        layer->applyAnimationsRecursively();
     m_textureMapper->beginPainting(PaintFlags);
     m_textureMapper->beginClip(TransformationMatrix(), clipRect);
 
@@ -132,6 +135,9 @@ void LayerTreeRenderer::paintToCurrentGLContext(const TransformationMatrix& matr
     layer->paint();
     m_textureMapper->endClip();
     m_textureMapper->endPainting();
+
+    if (layer->descendantsOrSelfHaveRunningAnimations())
+        dispatchOnMainThread(bind(&LayerTreeRenderer::updateViewport, this));
 }
 
 void LayerTreeRenderer::paintToGraphicsContext(BackingStore::PlatformGraphicsContext painter)
@@ -393,6 +399,9 @@ void LayerTreeRenderer::flushLayerChanges()
 {
     m_renderedContentsScrollPosition = m_pendingRenderedContentsScrollPosition;
 
+    // Since the frame has now been rendered, we can safely unlock the animations until the next layout.
+    setAnimationsLocked(false);
+
     m_rootLayer->flushCompositingState(FloatRect());
     commitTileOperations();
 
@@ -461,20 +470,17 @@ void LayerTreeRenderer::purgeGLResources()
     dispatchOnMainThread(bind(&LayerTreeRenderer::purgeBackingStores, this));
 }
 
-void LayerTreeRenderer::setAnimatedOpacity(uint32_t id, float opacity)
+void LayerTreeRenderer::setLayerAnimations(WebLayerID id, const GraphicsLayerAnimations& animations)
 {
-    GraphicsLayer* layer = layerByID(id);
-    ASSERT(layer);
-
-    layer->setOpacity(opacity);
+    GraphicsLayerTextureMapper* layer = toGraphicsLayerTextureMapper(layerByID(id));
+    if (!layer)
+        return;
+    layer->setAnimations(animations);
 }
 
-void LayerTreeRenderer::setAnimatedTransform(uint32_t id, const WebCore::TransformationMatrix& transform)
+void LayerTreeRenderer::setAnimationsLocked(bool locked)
 {
-    GraphicsLayer* layer = layerByID(id);
-    ASSERT(layer);
-
-    layer->setTransform(transform);
+    m_animationsLocked = locked;
 }
 
 void LayerTreeRenderer::purgeBackingStores()

@@ -28,6 +28,7 @@
 #include "WebLayerTreeInfo.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
+#include <WebCore/GraphicsLayerAnimation.h>
 #include <WebCore/GraphicsSurface.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSize.h>
@@ -91,8 +92,8 @@ public:
     void flushLayerChanges();
     void createImage(int64_t, PassRefPtr<ShareableBitmap>);
     void destroyImage(int64_t);
-    void setAnimatedOpacity(uint32_t, float);
-    void setAnimatedTransform(uint32_t, const WebCore::TransformationMatrix&);
+    void setLayerAnimations(WebLayerID, const WebCore::GraphicsLayerAnimations&);
+    void setAnimationsLocked(bool);
 
 private:
     PassOwnPtr<WebCore::GraphicsLayer> createLayer(WebLayerID);
@@ -147,6 +148,7 @@ private:
     WebCore::IntPoint m_renderedContentsScrollPosition;
     WebCore::IntPoint m_pendingRenderedContentsScrollPosition;
     bool m_isActive;
+    bool m_animationsLocked;
 };
 
 };

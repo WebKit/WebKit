@@ -82,6 +82,7 @@ LayerTreeCoordinator::LayerTreeCoordinator(WebPage* webPage)
     , m_releaseInactiveAtlasesTimer(this, &LayerTreeCoordinator::releaseInactiveAtlasesTimerFired)
     , m_layerFlushSchedulingEnabled(true)
     , m_forceRepaintAsyncCallbackID(0)
+    , m_animationsLocked(false)
 {
     // Create a root layer.
     m_rootLayer = GraphicsLayer::create(this, this);
@@ -387,12 +388,36 @@ void LayerTreeCoordinator::syncFixedLayers()
         updateOffsetFromViewportForLayer(rootRenderLayer->firstChild());
 }
 
+void LayerTreeCoordinator::lockAnimations()
+{
+    m_animationsLocked = true;
+    m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetAnimationsLocked(true));
+}
+
+void LayerTreeCoordinator::unlockAnimations()
+{
+    if (!m_animationsLocked)
+        return;
+
+    m_animationsLocked = false;
+    m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetAnimationsLocked(false));
+}
+
 void LayerTreeCoordinator::performScheduledLayerFlush()
 {
     if (m_isSuspended || m_waitingForUIProcess)
         return;
 
+    // We lock the animations while performing layout, to avoid flickers caused by animations continuing in the UI process while
+    // the web process layout wants to cancel them.
+    lockAnimations();
     syncDisplayState();
+
+    // We can unlock the animations before flushing if there are no visible changes, for example if there are content updates
+    // in a layer with opacity 0.
+    bool canUnlockBeforeFlush = !m_isValid || !toCoordinatedGraphicsLayer(m_rootLayer.get())->hasPendingVisibleChanges();
+    if (canUnlockBeforeFlush)
+        unlockAnimations();
 
     if (!m_isValid)
         return;
@@ -580,16 +605,10 @@ WebCore::IntRect LayerTreeCoordinator::visibleContentsRect() const
 }
 
 
-void LayerTreeCoordinator::setLayerAnimatedOpacity(WebLayerID id, float opacity)
+void LayerTreeCoordinator::setLayerAnimations(WebLayerID layerID, const GraphicsLayerAnimations& animations)
 {
     m_shouldSyncFrame = true;
-    m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetLayerAnimatedOpacity(id, opacity));
-}
-
-void LayerTreeCoordinator::setLayerAnimatedTransform(WebLayerID id, const TransformationMatrix& transform)
-{
-    m_shouldSyncFrame = true;
-    m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetLayerAnimatedTransform(id, transform));
+    m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetLayerAnimations(layerID, animations.getActiveAnimations()));
 }
 
 void LayerTreeCoordinator::setVisibleContentsRect(const IntRect& rect, float scale, const FloatPoint& trajectoryVector)

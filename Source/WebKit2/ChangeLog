@@ -1,3 +1,88 @@
+2012-10-23  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Coordinated Graphics: Enable threaded/IPC animations
+        https://bugs.webkit.org/show_bug.cgi?id=93146
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Re-enable UI-process animations for Coordinated-Graphics/TextureMapper.
+        - Added an argument coder for GraphicsLayerAnimations.
+        - Allow LayerTreeCoordinator to manage the animations per layer with the proxy,
+          as opposed to applying the animation values in the web process as before.
+        - LayerTreeRenderer now calls updateViewport() after painting when an animation is active.
+
+        To overcome the problem we've had in the past with synchronizing UI-side and web-side
+        animations, we now lock the animations in the UI process when a frame starts rendering,
+        and unlock it when the frame finishes rendering, or if after the layout there is no visible
+        changes pending on the screen.
+
+        * Scripts/webkit2/messages.py:
+        (headers_for_type):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC):
+        (CoreIPC::encodeTimingFunction):
+        (CoreIPC::decodeTimingFunction):
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.h:
+        (WebCore):
+            Added argument coders for GraphicsLayerAnimations.
+
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp:
+        (WebKit::LayerTreeCoordinatorProxy::setLayerAnimations):
+        (WebKit::LayerTreeCoordinatorProxy::setAnimationsLocked):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.h:
+        (LayerTreeCoordinatorProxy):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.messages.in:
+            Added an option to sync the layer's animations, and also to lock/unlock animations.
+
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::LayerTreeRenderer):
+        (WebKit::LayerTreeRenderer::paintToCurrentGLContext):
+            Sync animations if they're not locked, and call updateViewport() if we have animations.
+
+        (WebKit::LayerTreeRenderer::flushLayerChanges):
+        (WebKit::LayerTreeRenderer::setLayerAnimations):
+        (WebKit::LayerTreeRenderer::setAnimationsLocked):
+
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h:
+        (LayerTreeRenderer):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::didChangeAnimations):
+        (WebCore::CoordinatedGraphicsLayer::setShouldUpdateVisibleRect):
+        (WebCore::CoordinatedGraphicsLayer::CoordinatedGraphicsLayer):
+        (WebCore::CoordinatedGraphicsLayer::syncLayerState):
+        (WebCore::CoordinatedGraphicsLayer::syncAnimations):
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly):
+        (WebCore::CoordinatedGraphicsLayer::addAnimation):
+        (WebCore::CoordinatedGraphicsLayer::pauseAnimation):
+        (WebCore::CoordinatedGraphicsLayer::removeAnimation):
+        (WebCore::CoordinatedGraphicsLayer::animationStartedTimerFired):
+        (WebCore):
+            Pass the animation info to the UI process instead of applying it in the web process.
+
+        (WebCore::CoordinatedGraphicsLayer::hasPendingVisibleChanges):
+            Compute whether a layer tree might have sync issues or flickers if rendered while
+            background animations are ongoing.
+
+        (WebCore::CoordinatedGraphicsLayer::computeTransformedVisibleRect):
+        (WebCore::CoordinatedGraphicsLayer::selfOrAncestorHaveNonAffineTransforms):
+            Don't allow progressive tiling for layers with animations.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        (WebCore):
+        (CoordinatedGraphicsLayerClient):
+        (CoordinatedGraphicsLayer):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::LayerTreeCoordinator):
+        (WebKit::LayerTreeCoordinator::lockAnimations):
+        (WebKit):
+        (WebKit::LayerTreeCoordinator::unlockAnimations):
+        (WebKit::LayerTreeCoordinator::performScheduledLayerFlush):
+        (WebKit::LayerTreeCoordinator::setLayerAnimations):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h:
+        (LayerTreeCoordinator):
+
 2012-10-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt][WK2] Add preference for enabling scroll animators

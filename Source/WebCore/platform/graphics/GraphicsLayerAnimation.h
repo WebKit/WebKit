@@ -45,10 +45,20 @@ public:
     void apply(Client*);
     void pause(double);
     AnimationState state() const { return m_state; }
-    void setState(AnimationState s) { m_state = s; }
+    void setState(AnimationState s, double pauseTime = 0)
+    {
+        m_state = s;
+        m_pauseTime = pauseTime;
+    }
     AnimatedPropertyID property() const { return m_keyframes.property(); }
     bool isActive() const;
     String name() const { return m_name; }
+    IntSize boxSize() const { return m_boxSize; }
+    double startTime() const { return m_startTime; }
+    double pauseTime() const { return m_pauseTime; }
+    PassRefPtr<Animation> animation() const { return m_animation.get(); }
+    const KeyframeValueList& keyframes() const { return m_keyframes; }
+    bool listsMatch() const { return m_listsMatch; }
 
 private:
     void applyInternal(Client*, const AnimationValue* from, const AnimationValue* to, float progress);
@@ -57,7 +67,6 @@ private:
     RefPtr<Animation> m_animation;
     String m_name;
     bool m_listsMatch;
-    bool m_hasBigRotation;
     double m_startTime;
     double m_pauseTime;
     AnimationState m_state;
@@ -72,9 +81,14 @@ public:
     void pause(const String&, double);
     void apply(GraphicsLayerAnimation::Client*);
     bool isEmpty() const { return m_animations.isEmpty(); }
+    size_t size() const { return m_animations.size(); }
+    const Vector<GraphicsLayerAnimation>& animations() const { return m_animations; }
+    Vector<GraphicsLayerAnimation>& animations() { return m_animations; }
 
     bool hasRunningAnimations() const;
     bool hasActiveAnimationsOfType(AnimatedPropertyID type) const;
+
+    GraphicsLayerAnimations getActiveAnimations() const;
 
 private:
     Vector<GraphicsLayerAnimation> m_animations;

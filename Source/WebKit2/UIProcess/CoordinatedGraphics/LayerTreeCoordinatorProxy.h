@@ -30,6 +30,7 @@
 #include "WebLayerTreeInfo.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
+#include <WebCore/GraphicsLayerAnimation.h>
 #include <WebCore/GraphicsSurfaceToken.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSize.h>
@@ -80,8 +81,8 @@ public:
 #endif
     void purgeBackingStores();
     LayerTreeRenderer* layerTreeRenderer() const { return m_renderer.get(); }
-    void setLayerAnimatedOpacity(uint32_t, float);
-    void setLayerAnimatedTransform(uint32_t, const WebCore::TransformationMatrix&);
+    void setLayerAnimations(WebLayerID, const WebCore::GraphicsLayerAnimations&);
+    void setAnimationsLocked(bool);
 
 protected:
     void dispatchUpdate(const Function<void()>&);
