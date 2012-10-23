@@ -1,3 +1,15 @@
+2012-10-23  Chris Rogers  <crogers@google.com>
+
+        Fix thread safety issue in AudioParamTimeline
+        https://bugs.webkit.org/show_bug.cgi?id=100154
+
+        Reviewed by Kenneth Russell.
+
+        Add appropriate locking in AudioParamTimeline::valueForContextTime()
+
+        * Modules/webaudio/AudioParamTimeline.cpp:
+        (WebCore::AudioParamTimeline::valueForContextTime):
+
 2012-10-23  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: refactor backend to use IDB*Metadata

@@ -117,9 +117,12 @@ float AudioParamTimeline::valueForContextTime(AudioContext* context, float defau
 {
     ASSERT(context);
 
-    if (!context || !m_events.size() || context->currentTime() < m_events[0].time()) {
-        hasValue = false;
-        return defaultValue;
+    {
+        MutexTryLocker tryLocker(m_eventsLock);
+        if (!tryLocker.locked() || !context || !m_events.size() || context->currentTime() < m_events[0].time()) {
+            hasValue = false;
+            return defaultValue;
+        }
     }
 
     // Ask for just a single value.
