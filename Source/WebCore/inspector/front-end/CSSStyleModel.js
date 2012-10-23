@@ -35,6 +35,8 @@
 WebInspector.CSSStyleModel = function()
 {
     this._pendingCommandsMajorState = [];
+    /** @type {Array.<WebInspector.CSSStyleModel.LiveLocation>} */
+    this._locations = [];
     this._sourceMappings = {};
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.UndoRedoRequested, this._undoRedoRequested, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.UndoRedoCompleted, this._undoRedoCompleted, this);
@@ -481,6 +483,7 @@ WebInspector.CSSStyleModel.prototype = {
     setSourceMapping: function(url, sourceMapping)
     {
         this._sourceMappings[url] = sourceMapping;
+        this._updateLocations();
     },
 
     resetSourceMappings: function()
@@ -491,6 +494,28 @@ WebInspector.CSSStyleModel.prototype = {
     _resetNamedFlowCollections: function()
     {
         this._namedFlowCollections = {};
+    },
+
+    _updateLocations: function()
+    {
+        for (var i = 0; i < this._locations.length; ++i)
+            this._locations[i].update();
+    },
+
+    /**
+     * @param {function(WebInspector.UILocation):(boolean|undefined)} updateDelegate
+     * @return {?WebInspector.LiveLocation}
+     */
+    createLiveLocation: function(cssRule, updateDelegate)
+    {
+        if (!cssRule._rawLocation)
+            return null;
+        var location = new WebInspector.CSSStyleModel.LiveLocation(cssRule._rawLocation, updateDelegate);
+        if (!location.uiLocation())
+            return null;
+        this._locations.push(location);
+        location.update();
+        return location;
     },
 
     /**
@@ -504,6 +529,38 @@ WebInspector.CSSStyleModel.prototype = {
     },
 
     __proto__: WebInspector.Object.prototype
+}
+
+/**
+ * @constructor
+ * @extends {WebInspector.LiveLocation}
+ * @param {WebInspector.CSSLocation} rawLocation
+ * @param {function(WebInspector.UILocation):(boolean|undefined)} updateDelegate
+ */
+WebInspector.CSSStyleModel.LiveLocation = function(rawLocation, updateDelegate)
+{
+    WebInspector.LiveLocation.call(this, rawLocation, updateDelegate);
+}
+
+WebInspector.CSSStyleModel.LiveLocation.prototype = {
+    /**
+     * @return {WebInspector.UILocation}
+     */
+    uiLocation: function()
+    {
+        var cssLocation = /** @type WebInspector.CSSLocation */ this.rawLocation();
+        return WebInspector.cssModel._rawLocationToUILocation(cssLocation);
+    },
+
+    dispose: function()
+    {
+        WebInspector.LiveLocation.prototype.dispose.call(this);
+        var locations = WebInspector.cssModel._locations;
+        if (locations)
+            locations.remove(this);
+    },
+
+    __proto__: WebInspector.LiveLocation.prototype
 }
 
 /**
@@ -785,16 +842,6 @@ WebInspector.CSSRule.prototype = {
     get isRegular()
     {
         return this.origin === "regular";
-    },
-
-    /**
-     * @return {?WebInspector.UILocation}
-     */
-    uiLocation: function()
-    {
-        if (!this._rawLocation)
-            return null;
-        return WebInspector.cssModel._rawLocationToUILocation(this._rawLocation);
     }
 }
 

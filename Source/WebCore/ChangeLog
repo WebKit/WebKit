@@ -1,3 +1,36 @@
+2012-10-23  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Sass can only resolve same folder paths
+        https://bugs.webkit.org/show_bug.cgi?id=99259
+
+        Reviewed by Vsevolod Vlasov.
+
+        The actual reason is that the rule source location linkifier tries to linkify a resource (*.scss), which does not exist,
+        and falls back to just stripping the main page URL prefix from the rule location URL. This change introduces LiveLocations
+        for CSSRule locations and makes sure they are linkified using uiSourceCode's parsedURL.displayName.
+
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel): Introduced LiveLocation management for CSSRules.
+        (WebInspector.CSSStyleModel.prototype.setSourceMapping):
+        (WebInspector.CSSStyleModel.prototype._updateLocations):
+        (WebInspector.CSSStyleModel.prototype.createLiveLocation):
+        (WebInspector.CSSStyleModel.prototype.updateLocations):
+        (WebInspector.CSSStyleModel.LiveLocation): A LiveLocation for the CSS domain.
+        (WebInspector.CSSStyleModel.LiveLocation.prototype.uiLocation):
+        (WebInspector.CSSStyleModel.LiveLocation.prototype.dispose):
+        * inspector/front-end/Linkifier.js:
+        (WebInspector.Linkifier.prototype.linkifyCSSRuleLocation): CSSRule LiveLocation-based link builder.
+        (WebInspector.Linkifier.DefaultFormatter.prototype.formatLiveAnchor): Add a title for anchors.
+        (WebInspector.Linkifier.DefaultCSSFormatter): Formatter for CSS location links.
+        (WebInspector.Linkifier.DefaultCSSFormatter.prototype.formatLiveAnchor):
+        * inspector/front-end/ResourceUtils.js:
+        (WebInspector.displayNameForURL): Use parsedURL.displayName if uiSourceCode is present for the specified URL.
+        * inspector/front-end/SASSSourceMapping.js:
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane):
+        (WebInspector.StylesSidebarPane.prototype._innerRebuildUpdate):
+        * inspector/front-end/inspector.html:
+
 2012-10-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r132149.
