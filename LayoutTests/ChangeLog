@@ -1,5 +1,57 @@
 2012-10-23  Levi Weintraub  <leviw@chromium.org>
 
+        The rest of the baselines have landed! Should green the Mac bots for MathML after r132264.
+
+        * platform/chromium-mac-lion/mathml: Added.
+        * platform/chromium-mac-lion/mathml/presentation: Added.
+        * platform/chromium-mac-lion/mathml/presentation/attributes-expected.png: Added.
+        * platform/chromium-mac-lion/mathml/presentation/fenced-mi-expected.png: Added.
+        * platform/chromium-mac-lion/mathml/presentation/fractions-expected.png: Added.
+        * platform/chromium-mac-lion/mathml/presentation/fractions-vertical-alignment-expected.png: Added.
+        * platform/chromium-mac-lion/mathml/presentation/mo-expected.png: Added.
+        * platform/chromium-mac-lion/mathml/presentation/mo-stretch-expected.png: Added.
+        * platform/chromium-mac-lion/mathml/presentation/mroot-pref-width-expected.png: Added.
+        * platform/chromium-mac-lion/mathml/presentation/over-expected.png: Added.
+        * platform/chromium-mac-lion/mathml/presentation/roots-expected.png: Added.
+        * platform/chromium-mac-lion/mathml/presentation/row-alignment-expected.png: Added.
+        * platform/chromium-mac-lion/mathml/presentation/row-expected.png: Added.
+        * platform/chromium-mac-lion/mathml/presentation/style-expected.png: Added.
+        * platform/chromium-mac-lion/mathml/presentation/sub-expected.png: Added.
+        * platform/chromium-mac-lion/mathml/presentation/subsup-expected.png: Added.
+        * platform/chromium-mac-lion/mathml/presentation/subsup-expected.txt: Added.
+        * platform/chromium-mac-lion/mathml/presentation/sup-expected.png: Added.
+        * platform/chromium-mac-lion/mathml/presentation/tables-expected.png: Added.
+        * platform/chromium-mac-lion/mathml/presentation/tokenElements-expected.png: Added.
+        * platform/chromium-mac-lion/mathml/presentation/under-expected.png: Added.
+        * platform/chromium-mac-lion/mathml/presentation/underover-expected.png: Added.
+        * platform/chromium-mac-lion/mathml/xHeight-expected.png: Added.
+        * platform/chromium-mac/mathml: Added.
+        * platform/chromium-mac/mathml/presentation: Added.
+        * platform/chromium-mac/mathml/presentation/attributes-expected.png: Added.
+        * platform/chromium-mac/mathml/presentation/fenced-expected.png: Added.
+        * platform/chromium-mac/mathml/presentation/fenced-mi-expected.png: Added.
+        * platform/chromium-mac/mathml/presentation/fractions-expected.png: Added.
+        * platform/chromium-mac/mathml/presentation/fractions-vertical-alignment-expected.png: Added.
+        * platform/chromium-mac/mathml/presentation/mo-expected.png: Added.
+        * platform/chromium-mac/mathml/presentation/mo-stretch-expected.png: Added.
+        * platform/chromium-mac/mathml/presentation/mroot-pref-width-expected.png: Added.
+        * platform/chromium-mac/mathml/presentation/over-expected.png: Added.
+        * platform/chromium-mac/mathml/presentation/roots-expected.png: Added.
+        * platform/chromium-mac/mathml/presentation/row-alignment-expected.png: Added.
+        * platform/chromium-mac/mathml/presentation/row-expected.png: Added.
+        * platform/chromium-mac/mathml/presentation/style-expected.png: Added.
+        * platform/chromium-mac/mathml/presentation/sub-expected.png: Added.
+        * platform/chromium-mac/mathml/presentation/subsup-expected.png: Added.
+        * platform/chromium-mac/mathml/presentation/subsup-expected.txt: Added.
+        * platform/chromium-mac/mathml/presentation/sup-expected.png: Added.
+        * platform/chromium-mac/mathml/presentation/tables-expected.png: Added.
+        * platform/chromium-mac/mathml/presentation/tokenElements-expected.png: Added.
+        * platform/chromium-mac/mathml/presentation/under-expected.png: Added.
+        * platform/chromium-mac/mathml/presentation/underover-expected.png: Added.
+        * platform/chromium-mac/mathml/xHeight-expected.png: Added.
+
+2012-10-23  Levi Weintraub  <leviw@chromium.org>
+
         Unreviewed gardening. Updating expectations after r132264.
 
         * platform/chromium-mac-snowleopard/mathml: Added.
