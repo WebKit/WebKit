@@ -1,3 +1,10 @@
+2012-10-23  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Roll chromium DEPS r163297:163557
+        https://bugs.webkit.org/show_bug.cgi?id=100146
+
+        Reviewed by Adrienne Walker.
+
 2012-10-23  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Add support for resolution media query
