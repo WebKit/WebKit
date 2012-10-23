@@ -1,3 +1,13 @@
+2012-10-23  Andreas Kling  <kling@webkit.org>
+
+        [WK2] REGRESSION(r132169): It broke all plugin related test.
+        <http://webkit.org/b/100094>
+
+        Unreviewed test fix, make the CoreIPC encode/decode functions for CString match again.
+
+        * Platform/CoreIPC/ArgumentCoders.cpp:
+        (CoreIPC::::encode):
+
 2012-10-23  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Make a download client a C++ class

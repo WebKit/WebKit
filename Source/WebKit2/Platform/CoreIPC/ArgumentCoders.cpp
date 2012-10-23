@@ -56,7 +56,8 @@ void ArgumentCoder<CString>::encode(ArgumentEncoder& encoder, const CString& str
     }
 
     uint32_t length = string.length();
-    encoder << length << CoreIPC::DataReference(reinterpret_cast<const uint8_t*>(string.data()), length);
+    encoder << length;
+    encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.data()), length, 1);
 }
 
 bool ArgumentCoder<CString>::decode(ArgumentDecoder* decoder, CString& result)
