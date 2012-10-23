@@ -24,106 +24,107 @@
  */
 
 #include "config.h"
-#include "ewk_view.h"
+#include "PageLoadClientEfl.h"
 
 #include "WKFrame.h"
+#include "WKPage.h"
 #include "ewk_back_forward_list_private.h"
 #include "ewk_error_private.h"
-#include "ewk_intent.h"
 #include "ewk_intent_private.h"
-#include "ewk_intent_service.h"
 #include "ewk_intent_service_private.h"
-#include "ewk_view_loader_client_private.h"
-#include "ewk_view_private.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/text/CString.h>
+#include "ewk_view.h"
 
-using namespace WebKit;
+namespace WebKit {
 
-static void didReceiveTitleForFrame(WKPageRef, WKStringRef title, WKFrameRef frame, WKTypeRef, const void* clientInfo)
+static inline PageLoadClientEfl* toPageLoadClientEfl(const void* clientInfo)
+{
+    return static_cast<PageLoadClientEfl*>(const_cast<void*>(clientInfo));
+}
+
+void PageLoadClientEfl::didReceiveTitleForFrame(WKPageRef, WKStringRef title, WKFrameRef frame, WKTypeRef, const void* clientInfo)
 {
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
+    Evas_Object* ewkView = toPageLoadClientEfl(clientInfo)->view();
     ewk_view_title_changed(ewkView, toImpl(title)->string().utf8().data());
 }
 
 #if ENABLE(WEB_INTENTS)
-static void didReceiveIntentForFrame(WKPageRef, WKFrameRef, WKIntentDataRef intent, WKTypeRef, const void* clientInfo)
+void PageLoadClientEfl::didReceiveIntentForFrame(WKPageRef, WKFrameRef, WKIntentDataRef intent, WKTypeRef, const void* clientInfo)
 {
-    Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
+    Evas_Object* ewkView = toPageLoadClientEfl(clientInfo)->view();
     RefPtr<Ewk_Intent> ewkIntent = Ewk_Intent::create(intent);
     ewk_view_intent_request_new(ewkView, ewkIntent.get());
 }
 #endif
 
 #if ENABLE(WEB_INTENTS_TAG)
-static void registerIntentServiceForFrame(WKPageRef, WKFrameRef, WKIntentServiceInfoRef serviceInfo, WKTypeRef, const void *clientInfo)
+void PageLoadClientEfl::registerIntentServiceForFrame(WKPageRef, WKFrameRef, WKIntentServiceInfoRef serviceInfo, WKTypeRef, const void* clientInfo)
 {
-    Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
+    Evas_Object* ewkView = toPageLoadClientEfl(clientInfo)->view();
     RefPtr<Ewk_Intent_Service> ewkIntentService = Ewk_Intent_Service::create(serviceInfo);
     ewk_view_intent_service_register(ewkView, ewkIntentService.get());
 }
 #endif
 
-static void didChangeProgress(WKPageRef page, const void* clientInfo)
+void PageLoadClientEfl::didChangeProgress(WKPageRef page, const void* clientInfo)
 {
-    Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
+    Evas_Object* ewkView = toPageLoadClientEfl(clientInfo)->view();
     ewk_view_load_progress_changed(ewkView, WKPageGetEstimatedProgress(page));
 }
 
-static void didFinishLoadForFrame(WKPageRef, WKFrameRef frame, WKTypeRef /*userData*/, const void *clientInfo)
+void PageLoadClientEfl::didFinishLoadForFrame(WKPageRef, WKFrameRef frame, WKTypeRef /*userData*/, const void* clientInfo)
 {
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
+    Evas_Object* ewkView = toPageLoadClientEfl(clientInfo)->view();
     ewk_view_load_finished(ewkView);
 }
 
-static void didFailLoadWithErrorForFrame(WKPageRef, WKFrameRef frame, WKErrorRef error, WKTypeRef, const void *clientInfo)
+void PageLoadClientEfl::didFailLoadWithErrorForFrame(WKPageRef, WKFrameRef frame, WKErrorRef error, WKTypeRef, const void* clientInfo)
 {
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
+    Evas_Object* ewkView = toPageLoadClientEfl(clientInfo)->view();
     OwnPtr<Ewk_Error> ewkError = Ewk_Error::create(error);
     ewk_view_load_error(ewkView, ewkError.get());
     ewk_view_load_finished(ewkView);
 }
 
-static void didStartProvisionalLoadForFrame(WKPageRef, WKFrameRef frame, WKTypeRef /*userData*/, const void* clientInfo)
+void PageLoadClientEfl::didStartProvisionalLoadForFrame(WKPageRef, WKFrameRef frame, WKTypeRef /*userData*/, const void* clientInfo)
 {
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
+    Evas_Object* ewkView = toPageLoadClientEfl(clientInfo)->view();
     ewk_view_load_provisional_started(ewkView);
 }
 
-static void didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef, WKFrameRef frame, WKTypeRef /*userData*/, const void* clientInfo)
+void PageLoadClientEfl::didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef, WKFrameRef frame, WKTypeRef /*userData*/, const void* clientInfo)
 {
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
+    Evas_Object* ewkView = toPageLoadClientEfl(clientInfo)->view();
     ewk_view_load_provisional_redirect(ewkView);
 }
 
-static void didFailProvisionalLoadWithErrorForFrame(WKPageRef, WKFrameRef frame, WKErrorRef error, WKTypeRef, const void* clientInfo)
+void PageLoadClientEfl::didFailProvisionalLoadWithErrorForFrame(WKPageRef, WKFrameRef frame, WKErrorRef error, WKTypeRef, const void* clientInfo)
 {
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
+    Evas_Object* ewkView = toPageLoadClientEfl(clientInfo)->view();
     OwnPtr<Ewk_Error> ewkError = Ewk_Error::create(error);
     ewk_view_load_provisional_failed(ewkView, ewkError.get());
 }
 
-static void didChangeBackForwardList(WKPageRef, WKBackForwardListItemRef addedItem, WKArrayRef removedItems, const void* clientInfo)
+void PageLoadClientEfl::didChangeBackForwardList(WKPageRef, WKBackForwardListItemRef addedItem, WKArrayRef removedItems, const void* clientInfo)
 {
-    Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
+    Evas_Object* ewkView = toPageLoadClientEfl(clientInfo)->view();
     ASSERT(ewkView);
 
     Ewk_Back_Forward_List* list = ewk_view_back_forward_list_get(ewkView);
@@ -133,21 +134,25 @@ static void didChangeBackForwardList(WKPageRef, WKBackForwardListItemRef addedIt
     ewk_view_back_forward_list_changed(ewkView);
 }
 
-static void didSameDocumentNavigationForFrame(WKPageRef, WKFrameRef frame, WKSameDocumentNavigationType, WKTypeRef, const void* clientInfo)
+void PageLoadClientEfl::didSameDocumentNavigationForFrame(WKPageRef, WKFrameRef frame, WKSameDocumentNavigationType, WKTypeRef, const void* clientInfo)
 {
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
+    Evas_Object* ewkView = toPageLoadClientEfl(clientInfo)->view();
     ewk_view_url_update(ewkView);
 }
 
-void ewk_view_loader_client_attach(WKPageRef pageRef, Evas_Object* ewkView)
+PageLoadClientEfl::PageLoadClientEfl(Evas_Object* view)
+    : m_view(view)
 {
+    WKPageRef pageRef = ewk_view_wkpage_get(m_view);
+    ASSERT(pageRef);
+
     WKPageLoaderClient loadClient;
     memset(&loadClient, 0, sizeof(WKPageLoaderClient));
     loadClient.version = kWKPageLoaderClientCurrentVersion;
-    loadClient.clientInfo = ewkView;
+    loadClient.clientInfo = this;
     loadClient.didReceiveTitleForFrame = didReceiveTitleForFrame;
 #if ENABLE(WEB_INTENTS)
     loadClient.didReceiveIntentForFrame = didReceiveIntentForFrame;
@@ -167,3 +172,5 @@ void ewk_view_loader_client_attach(WKPageRef pageRef, Evas_Object* ewkView)
     loadClient.didSameDocumentNavigationForFrame = didSameDocumentNavigationForFrame;
     WKPageSetPageLoaderClient(pageRef, &loadClient);
 }
+
+} // namespace WebKit

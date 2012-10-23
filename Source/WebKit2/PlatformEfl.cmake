@@ -73,12 +73,12 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/API/efl/ewk_view.cpp
     UIProcess/API/efl/ewk_view_find_client.cpp
     UIProcess/API/efl/ewk_view_form_client.cpp
-    UIProcess/API/efl/ewk_view_loader_client.cpp
     UIProcess/API/efl/ewk_view_policy_client.cpp
     UIProcess/API/efl/ewk_view_ui_client.cpp
 
     UIProcess/cairo/BackingStoreCairo.cpp
 
+    UIProcess/efl/PageLoadClientEfl.cpp
     UIProcess/efl/ResourceLoadClientEfl.cpp
     UIProcess/efl/TextCheckerEfl.cpp
     UIProcess/efl/WebContextEfl.cpp

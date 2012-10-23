@@ -1,3 +1,40 @@
+2012-10-23  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Make page load client a C++ class
+        https://bugs.webkit.org/show_bug.cgi?id=100081
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make page load client a C++ class and move it
+        up to UIProcess/efl since it is not really part
+        of the public API.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (Ewk_View_Private_Data):
+        (_ewk_view_initialize):
+        * UIProcess/API/efl/ewk_view_loader_client_private.h: Removed.
+        * UIProcess/efl/PageLoadClientEfl.cpp: Renamed from Source/WebKit2/UIProcess/API/efl/ewk_view_loader_client.cpp.
+        (WebKit):
+        (WebKit::toPageLoadClientEfl):
+        (WebKit::PageLoadClientEfl::didReceiveTitleForFrame):
+        (WebKit::PageLoadClientEfl::didReceiveIntentForFrame):
+        (WebKit::PageLoadClientEfl::registerIntentServiceForFrame):
+        (WebKit::PageLoadClientEfl::didChangeProgress):
+        (WebKit::PageLoadClientEfl::didFinishLoadForFrame):
+        (WebKit::PageLoadClientEfl::didFailLoadWithErrorForFrame):
+        (WebKit::PageLoadClientEfl::didStartProvisionalLoadForFrame):
+        (WebKit::PageLoadClientEfl::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::PageLoadClientEfl::didFailProvisionalLoadWithErrorForFrame):
+        (WebKit::PageLoadClientEfl::didChangeBackForwardList):
+        (WebKit::PageLoadClientEfl::didSameDocumentNavigationForFrame):
+        (WebKit::PageLoadClientEfl::PageLoadClientEfl):
+        * UIProcess/efl/PageLoadClientEfl.h: Added.
+        (WebKit):
+        (PageLoadClientEfl):
+        (WebKit::PageLoadClientEfl::create):
+        (WebKit::PageLoadClientEfl::view):
+
 2012-10-22  Anders Carlsson  <andersca@apple.com>
 
         Handle ArgumentCoder template specializations that take the ArgumentEncoder as a reference
