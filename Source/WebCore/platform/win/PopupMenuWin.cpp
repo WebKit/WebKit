@@ -378,7 +378,7 @@ void PopupMenuWin::calculatePositionAndSize(const IntRect& r, FrameView* v)
     }
 
     // Check that we don't go off the screen horizontally
-    if (popupRect.x() + popupRect.width() > screen.width())
+    if (popupRect.x() + popupRect.width() > screen.width() + screen.x())
         popupRect.setX(screen.x() + screen.width() - popupRect.width());
     if (popupRect.x() < screen.x())
         popupRect.setX(screen.x());
