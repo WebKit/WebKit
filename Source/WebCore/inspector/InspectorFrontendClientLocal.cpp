@@ -211,7 +211,7 @@ void InspectorFrontendClientLocal::moveWindowBy(float x, float y)
 
 void InspectorFrontendClientLocal::setAttachedWindow(bool attached)
 {
-    evaluateOnLoad(String::format("[\"setDockSide\", %s]", attached ? "bottom" : "undocked"));
+    evaluateOnLoad(String::format("[\"setDockSide\", \"%s\"]", attached ? "bottom" : "undocked"));
 }
 
 void InspectorFrontendClientLocal::restoreAttachedWindowHeight()

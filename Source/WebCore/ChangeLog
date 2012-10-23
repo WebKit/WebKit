@@ -1,3 +1,16 @@
+2012-10-23  Timothy Hatcher  <timothy@apple.com>
+
+        Docking/undocking the Web Inspector does not work correctly in Safari.
+
+        The "docked" and "bottom" strings need quoted instead of being passed as identifiers.
+
+        https://bugs.webkit.org/show_bug.cgi?id=100080
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::setAttachedWindow): Put quotes around the %s.
+
 2012-10-23  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [EFL][WK2] Compilation warning in GraphicsContext3DPrivate.cpp when AC is enabled
