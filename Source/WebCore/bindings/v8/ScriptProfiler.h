@@ -43,7 +43,7 @@ namespace WebCore {
 
 class ExternalArrayVisitor;
 class ExternalStringVisitor;
-class NodeWrapperVisitor;
+class WrappedNodeVisitor;
 class Page;
 class ScriptObject;
 class ScriptValue;
@@ -79,7 +79,7 @@ public:
     static bool isSampling() { return true; }
     static bool hasHeapProfiler() { return true; }
     static void initialize();
-    static void visitNodeWrappers(NodeWrapperVisitor*);
+    static void visitNodeWrappers(WrappedNodeVisitor*);
     static void visitExternalStrings(ExternalStringVisitor*);
     static void visitExternalArrays(ExternalArrayVisitor*);
     static void collectBindingMemoryInfo(MemoryInstrumentation*);

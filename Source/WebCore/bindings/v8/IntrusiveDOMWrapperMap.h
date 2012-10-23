@@ -149,6 +149,7 @@ public:
     {
         ASSERT(obj);
         ASSERT(!obj->wrapper());
+        ASSERT(wrapper.WrapperClassId() == v8DOMSubtreeClassId);
         v8::Persistent<v8::Object>* entry = m_table.add(wrapper);
         obj->setWrapper(entry);
         wrapper.MakeWeak(obj, weakReferenceCallback());

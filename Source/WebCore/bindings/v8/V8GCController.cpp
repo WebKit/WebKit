@@ -169,9 +169,9 @@ bool operator<(const ImplicitConnection& left, const ImplicitConnection& right)
     return left.root() < right.root();
 }
 
-class NodeVisitor : public DOMWrapperMap<Node>::Visitor {
+class NodeVisitor : public NodeWrapperVisitor {
 public:
-    void visitDOMWrapper(DOMDataStore*, Node* node, v8::Persistent<v8::Object> wrapper)
+    void visitNodeWrapper(Node* node, v8::Persistent<v8::Object> wrapper)
     {
         if (node->hasEventListeners())
             addImplicitReferencesForNodeWithEventListeners(node, wrapper);
@@ -218,8 +218,7 @@ void V8GCController::gcPrologue()
     visitActiveDOMNodes(&activeNodeVisitor);
 
     NodeVisitor nodeVisitor;
-    visitDOMNodes(&nodeVisitor);
-    visitActiveDOMNodes(&nodeVisitor);
+    visitAllDOMNodes(&nodeVisitor);
     nodeVisitor.applyGrouping();
 
     ObjectVisitor objectVisitor;
@@ -305,11 +304,6 @@ void V8GCController::gcEpilogue()
         MutexLocker locker(workingSetEstimateMBMutex());
         workingSetEstimateMB = MemoryUsageSupport::actualMemoryUsageMB();
     }
-#endif
-
-#ifndef NDEBUG
-    EnsureWeakDOMNodeVisitor weakDOMNodeVisitor;
-    visitDOMNodes(&weakDOMNodeVisitor);
 #endif
 
     TRACE_EVENT_END0("v8", "GC");

@@ -38,11 +38,11 @@ namespace WebCore {
 
 class Node;
 
-class NodeWrapperVisitor {
+class WrappedNodeVisitor {
 public:
     virtual void visitNode(Node*) = 0;
 protected:
-    virtual ~NodeWrapperVisitor() { }
+    virtual ~WrappedNodeVisitor() { }
 };
 
 class ExternalStringVisitor {

@@ -3455,19 +3455,9 @@ END
         return wrapper;
 
     installPerContextProperties(wrapper, impl.get());
-END
-
-    push(@implContent, <<END);
     v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::setJSWrapperFor${domMapName}(impl, wrapper, isolate);
     if (!hasDependentLifetime)
         wrapperHandle.MarkIndependent();
-END
-    if (IsNodeSubType($dataNode)) {
-        push(@implContent, <<END);
-    wrapperHandle.SetWrapperClassId(v8DOMSubtreeClassId);
-END
-    }
-    push(@implContent, <<END);
     return wrapper;
 }
 END

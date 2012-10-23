@@ -276,7 +276,7 @@ private:
     CharacterDataStatistics& m_characterDataStatistics;
 };
 
-class CounterVisitor : public NodeWrapperVisitor, public ExternalStringVisitor {
+class CounterVisitor : public WrappedNodeVisitor, public ExternalStringVisitor {
 public:
     CounterVisitor(Page* page)
         : m_page(page)
@@ -450,7 +450,7 @@ static void reportRenderTreeInfo(WTF::MemoryInstrumentationClient& memoryInstrum
 
 namespace {
 
-class DOMTreesIterator : public NodeWrapperVisitor {
+class DOMTreesIterator : public WrappedNodeVisitor {
 public:
     DOMTreesIterator(MemoryInstrumentationImpl& memoryInstrumentation, Page* page)
         : m_page(page)

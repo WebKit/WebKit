@@ -52,6 +52,10 @@ DOMDataStoreHandle::~DOMDataStoreHandle()
         V8PerIsolateData::current()->unregisterDOMDataStore(m_store.get());
 }
 
+NodeWrapperVisitor::~NodeWrapperVisitor()
+{
+}
+
 DOMNodeMapping& getDOMNodeMap(v8::Isolate* isolate)
 {
     return DOMData::getCurrentStore(isolate).domNodeMap();
@@ -84,16 +88,33 @@ void removeAllDOMObjects()
     DOMData::removeObjectsFromWrapperMap<void>(&store, store.activeDomObjectMap());
 }
 
-void visitDOMNodes(DOMWrapperMap<Node>::Visitor* visitor)
+void visitAllDOMNodes(NodeWrapperVisitor* visitor)
 {
     v8::HandleScope scope;
 
-    DOMDataList& list = DOMDataStore::allStores();
-    for (size_t i = 0; i < list.size(); ++i) {
-        DOMDataStore* store = list[i];
+    class VisitorAdapter : public v8::PersistentHandleVisitor {
+    public:
+        explicit VisitorAdapter(NodeWrapperVisitor* visitor)
+            : m_visitor(visitor)
+        {
+        }
 
-        store->domNodeMap().visit(store, visitor);
-    }
+        virtual void VisitPersistentHandle(v8::Persistent<v8::Value> value, uint16_t classId)
+        {
+            if (classId != v8DOMSubtreeClassId)
+                return;
+            ASSERT(V8Node::HasInstance(value));
+            ASSERT(value->IsObject());
+            ASSERT(!value.IsIndependent());
+            v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::Cast(value);
+            m_visitor->visitNodeWrapper(V8Node::toNative(wrapper), wrapper);
+        }
+
+    private:
+        NodeWrapperVisitor* m_visitor;
+    } visitorAdapter(visitor);
+
+    v8::V8::VisitHandlesWithClassIds(&visitorAdapter);
 }
 
 void visitActiveDOMNodes(DOMWrapperMap<Node>::Visitor* visitor)

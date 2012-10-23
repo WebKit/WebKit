@@ -1,3 +1,49 @@
+2012-10-23  Adam Barth  <abarth@webkit.org>
+
+        [V8] Enumerate Nodes via the V8 heap rather than via a list in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=100033
+
+        Reviewed by Eric Seidel.
+
+        This patch changes how we enumerate nodes during garbage collection.
+        After this patch, we use V8's list of open handles to enumerate node
+        wrappers rather than using a separate list that we maintain in WebCore
+        for this purpose. A future patch will remove the list in WebCore for a
+        DOM performance gain.
+
+        * bindings/js/ScriptProfiler.h:
+        (WebCore):
+        (WebCore::ScriptProfiler::visitNodeWrappers):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateToV8Converters):
+        * bindings/scripts/test/V8/V8TestNode.cpp:
+        (WebCore::V8TestNode::wrapSlow):
+        * bindings/v8/IntrusiveDOMWrapperMap.h:
+        (WebCore::IntrusiveDOMWrapperMap::set):
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::visitNodeWrappers):
+        * bindings/v8/ScriptProfiler.h:
+        (WebCore):
+        (ScriptProfiler):
+        * bindings/v8/V8DOMMap.cpp:
+        (WebCore::NodeWrapperVisitor::~NodeWrapperVisitor):
+        (WebCore):
+        (WebCore::visitAllDOMNodes):
+        * bindings/v8/V8DOMMap.h:
+        (WebCore):
+        (NodeWrapperVisitor):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::setJSWrapperForDOMNode):
+        (WebCore::V8DOMWrapper::setJSWrapperForActiveDOMNode):
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::NodeVisitor::visitNodeWrapper):
+        (WebCore::V8GCController::gcPrologue):
+        (WebCore::V8GCController::gcEpilogue):
+        * inspector/BindingVisitors.h:
+        (WebCore::WrappedNodeVisitor::~WrappedNodeVisitor):
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore):
+
 2012-10-22  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: paint rectangles are incorrectly shown in case subframes are present

@@ -138,7 +138,6 @@ v8::Handle<v8::Object> V8TestNode::wrapSlow(PassRefPtr<TestNode> impl, v8::Handl
     v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::setJSWrapperForDOMNode(impl, wrapper, isolate);
     if (!hasDependentLifetime)
         wrapperHandle.MarkIndependent();
-    wrapperHandle.SetWrapperClassId(v8DOMSubtreeClassId);
     return wrapper;
 }
 

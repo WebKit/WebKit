@@ -38,7 +38,7 @@ namespace WebCore {
 
 class ExternalArrayVisitor;
 class ExternalStringVisitor;
-class NodeWrapperVisitor;
+class WrappedNodeVisitor;
 class Page;
 class ScriptObject;
 class ScriptValue;
@@ -74,7 +74,7 @@ public:
     static bool isSampling() { return false; }
     static bool hasHeapProfiler() { return false; }
     // FIXME: Implement this counter for JSC. See bug 73936 for more details.
-    static void visitNodeWrappers(NodeWrapperVisitor*) { }
+    static void visitNodeWrappers(WrappedNodeVisitor*) { }
     // FIXME: Support these methods for JSC. See bug 90358.
     static void visitExternalStrings(ExternalStringVisitor*) { }
     static void visitExternalArrays(ExternalArrayVisitor*) { }
