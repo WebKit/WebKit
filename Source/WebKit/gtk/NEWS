@@ -1,4 +1,74 @@
 =================
+WebKitGTK+ 1.11.1
+=================
+
+What's new in WebKitGTK+ 1.11.1?
+
+  - Make WebKitWebView work again inside a GtkOverlay by not using a
+    native window for Accelerated Compositing implementation.
+  - Use XDamage to improve accelerated compositing performance.
+  - Enable the edge distance anti-aliasing for accelerated compositing
+    layers.
+  - Add support to build with EGL OpenGL backend.
+  - Add support for WebAudio.
+  - Fix several API breaks in DOM bindings introduced in 1.9.6.
+  - Save the original URI for downloaded files as GIO metadata of the
+    destination file.
+  - Add API for controlling the user agent to WebKit2.
+  - Add API to WebKit2 to allow running JavaScripts from a
+    WebKitWebView using a GResource containing the script.
+  - Add Undo/Redo and SelectAll predefined editing commands to WebKit2
+    GTK+ API.
+  - Add a setting to enable/disable smooth scrolling to WebKit2 GTK+
+    API.
+  - Add API to get the web view that initiated a custom URI request to
+    WebKit2 GTK+.
+  - Implement ViewState methods of WebKitWebView in WebKit2.
+  - Add API to get/set the security policy of a given URI scheme to
+    WebKit2 GTK+.
+  - Add WebKitWebView:is-loading property to WebKit2 GTK+ API.
+  - Change spellchecker languages API in WebKit2 to use a GStrv for
+    the list of languages to make the API more consistent and
+    convenient to use.
+  - Add destroy notify parameter to
+    webkit_web_context_register_uri_scheme in WebKit2 GTK+ API.
+  - Replace webkit_web_view_replace_content with
+    webkit_web_view_load_alternate_html in WebKit2 GTK+ API.
+  - Rename WebKitWebView "print-requested" signal to "print" in
+    WebKit2 GTK+ API for consistenty.
+  - Add API to set preferred languages to WebKit2 GTK+.
+  - Add webkit_uri_response_get_suggested_filename to WebKit2 GTK+
+    API.
+  - Add API to save a web page in MHTML format to WebKit2 GTK+.
+  - Implement smart separators for context menu in WebKit2 GTK+.
+  - Sanitize the suggested filename when building the download
+    destination URI in WebKit2.
+  - Fix disk cache in WebKit2 to actually dump the contents to disk.
+  - Fix a crash in WebKit2 when navigating between pages in the
+    history cache.
+  - Fix a crash in WebKit2 when a download initiated by the policy
+    checker fails.
+  - Fix a crash in network backend with non-UTF8 HTTP header names.
+  - Properly close audio device after playing sound.
+  - Purge unused favicons from IconDatabase after 30 days.
+  - Properly expose <legend> elements to ATs.
+  - The new accessibility CanvasRole is now mapped to ATK_ROLE_CANVAS.
+  - Fix an infinite loop in accessibility code.
+  - Fix a crash in
+    AccessibilityObject::accessibilityPlatformIncludesObject().
+  - Fix a crash in WebCore::HTMLSelectElement::selectedIndex().
+  - Fix caret-moved events not emitted for certain content.
+  - Fix incorrect/unexpected characters in the text of certain
+    accessibles.
+  - Implement AccessibilityUIElement::titleUIElement() and
+    AccessibilityUIElement::stringValue().
+  - Expose ROLE_TOGGLE_BUTTON instead of ROLE_PUSH_BUTTON when
+    aria-pressed is present.
+  - Fix LLint build with -g -02.
+  - Properly process GDK_SMOOTH_SCROLL events.
+  - Fix several memory leaks.
+
+=================
 WebKitGTK+ 1.9.6
 =================
 
