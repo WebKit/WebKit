@@ -320,10 +320,10 @@ void KURL::removePort()
     m_urlImpl->m_parsedURL.removePort();
 }
 
-void KURL::setPort(unsigned short)
+void KURL::setPort(unsigned short newPort)
 {
     detach(m_urlImpl);
-    // FIXME: Add WTFURL Implementation.
+    m_urlImpl->m_parsedURL.replacePort(newPort);
 }
 
 void KURL::setHostAndPort(const String&)

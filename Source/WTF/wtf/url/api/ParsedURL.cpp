@@ -34,6 +34,7 @@
 #include <wtf/URLComponent.h>
 #include <wtf/URLUtil.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringImpl.h>
 
 namespace WTF {
 
@@ -169,6 +170,84 @@ bool ParsedURL::hasPort() const
 String ParsedURL::port() const
 {
     return segment(m_segments.port);
+}
+
+template<typename CharacterType>
+static inline String generateNewSpecWithPort(const String& spec, unsigned newSpecLength, unsigned portDelimiterPosition, const LChar* portString, unsigned portStringLength, unsigned postPortPositionInSource)
+{
+    ASSERT(newSpecLength == portDelimiterPosition + 1 + portStringLength + (spec.length() - postPortPositionInSource));
+
+    CharacterType* buffer;
+    String newSpec = StringImpl::createUninitialized(newSpecLength, buffer);
+
+    // Copy everything prior to the port posisiton.
+    ASSERT(buffer + portDelimiterPosition < buffer + newSpecLength);
+    StringImpl::copyChars(buffer, spec.getCharacters<CharacterType>(), portDelimiterPosition);
+
+    // Add the new port from the position.
+    buffer[portDelimiterPosition] = ':';
+    unsigned portPosition = portDelimiterPosition + 1;
+    ASSERT(buffer + portPosition + portStringLength <= buffer + newSpecLength);
+    StringImpl::copyChars(buffer + portPosition, portString, portStringLength);
+
+    // Copy the character post-port from the source.
+    unsigned remainingComponentsPositionInDestination = portPosition + portStringLength;
+    ASSERT(buffer + remainingComponentsPositionInDestination + (spec.length() - postPortPositionInSource) == buffer + newSpecLength);
+    StringImpl::copyChars(buffer + remainingComponentsPositionInDestination, &(spec.getCharacters<CharacterType>()[postPortPositionInSource]), spec.length() - postPortPositionInSource);
+
+    return newSpec;
+}
+
+static inline void replacePortWithString(String& spec, URLSegments& segments, const LChar* portString, unsigned portStringLength)
+{
+    // Compute the new spec length.
+    int lengthDifference;
+    const URLComponent oldPortComponent = segments.port;
+    if (oldPortComponent.isValid())
+        lengthDifference = portStringLength - oldPortComponent.length();
+    else
+        lengthDifference = 1 + portStringLength;
+    unsigned newLength = spec.length() + lengthDifference;
+
+    // Find the substring positions for the generator template.
+    int portDelimiterPosition = segments.charactersBefore(URLSegments::Port, URLSegments::DelimiterIncluded);
+    ASSERT(portDelimiterPosition > 0);
+
+    unsigned postPortPositionInSource;
+    if (oldPortComponent.isValid())
+        postPortPositionInSource = oldPortComponent.end();
+    else
+        postPortPositionInSource = portDelimiterPosition;
+
+    // Create the new spec with portString.
+    if (spec.is8Bit())
+        spec = generateNewSpecWithPort<LChar>(spec, newLength, static_cast<unsigned>(portDelimiterPosition), portString, portStringLength, postPortPositionInSource);
+    else
+        spec = generateNewSpecWithPort<UChar>(spec, newLength, static_cast<unsigned>(portDelimiterPosition), portString, portStringLength, postPortPositionInSource);
+
+    // Update the URL components.
+    unsigned portPosition = portDelimiterPosition + 1;
+    segments.port.setBegin(portPosition);
+    segments.port.setLength(portStringLength);
+    segments.moveFromComponentBy(URLSegments::Path, lengthDifference);
+}
+
+
+void ParsedURL::replacePort(unsigned short newPort)
+{
+    ASSERT(hasStandardScheme());
+
+    // Generate a char* string for the port number.
+    LChar buf[5];
+    LChar* end = buf + WTF_ARRAY_LENGTH(buf);
+    LChar* p = end;
+    do {
+        *--p = static_cast<LChar>((newPort % 10) + '0');
+        newPort /= 10;
+    } while (newPort);
+    const unsigned portStringLength = end - p;
+
+    replacePortWithString(m_spec.m_string, m_segments, p, portStringLength);
 }
 
 void ParsedURL::removePort()

@@ -62,6 +62,7 @@ public:
 
     WTF_EXPORT_PRIVATE bool hasPort() const;
     WTF_EXPORT_PRIVATE String port() const;
+    WTF_EXPORT_PRIVATE void replacePort(unsigned short newPort);
     WTF_EXPORT_PRIVATE void removePort();
 
     WTF_EXPORT_PRIVATE String path() const;

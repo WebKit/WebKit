@@ -1,3 +1,23 @@
+2012-10-23  Benjamin Poulain  <benjamin@webkit.org>
+
+        WTFURL: Implement KURL::setPort()
+        https://bugs.webkit.org/show_bug.cgi?id=99898
+
+        Reviewed by Adam Barth.
+
+        Add an efficient implementation for remplacing the port component
+        in an URL. This will be the base for replacing other components
+        efficiently.
+
+        The testing is covered by fast/dom/HTMLAnchorElement/set-href-attribute-port.html
+
+        * wtf/url/api/ParsedURL.cpp:
+        (WTF::generateNewSpecWithPort):
+        (WTF::replacePortWithString):
+        (WTF::ParsedURL::replacePort):
+        * wtf/url/api/ParsedURL.h:
+        (ParsedURL):
+
 2012-10-22  Michael Saboff  <msaboff@apple.com>
 
         Regression(r131655): Crash in StringImpl::findIgnoringCase
