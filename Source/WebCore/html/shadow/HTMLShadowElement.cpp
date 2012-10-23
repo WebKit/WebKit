@@ -60,15 +60,6 @@ const AtomicString& HTMLShadowElement::select() const
      return nullAtom;
 }
 
-bool HTMLShadowElement::doesSelectFromHostChildren() const
-{
-    TreeScope* scope = treeScope();
-
-    if (scope->rootNode()->isShadowRoot())
-        return toShadowRoot(scope->rootNode())->isOldest();
-    return false;
-}
-
 Node::InsertionNotificationRequest HTMLShadowElement::insertedInto(ContainerNode* insertionPoint)
 {
     InsertionPoint::insertedInto(insertionPoint);

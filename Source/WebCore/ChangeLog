@@ -1,3 +1,28 @@
+2012-10-23  Shinya Kawanaka  <shinyak@chromium.org>
+
+        The order of resolving distribution in tree composition is wrong.
+        https://bugs.webkit.org/show_bug.cgi?id=99552
+
+        Reviewed by Dimitri Glazkov.
+
+        According to the current ShadowDOM spec, we have to resolve <content> first, then resolve <shadow>.
+        However, the order of resolution is now the mixed tree order of <content> and <shadow>.
+
+        Test: fast/dom/shadow/content-reprojection-order.html
+
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ContentDistributor::distribute): We should resolve <content> before <shadow>.
+        Only the first active shadow insertion point can select the rest of contents.
+        * html/shadow/HTMLContentElement.h:
+        (HTMLContentElement):
+        * html/shadow/HTMLShadowElement.cpp:
+        * html/shadow/HTMLShadowElement.h:
+        (WebCore::isHTMLShadowElement):
+        (WebCore):
+        (WebCore::toHTMLShadowElement):
+        * html/shadow/InsertionPoint.h:
+        (InsertionPoint): We don't need doesSelectFromHostChildren() anymore.
+
 2012-10-23  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Move UISourceCode creation out of mappings to workspace.

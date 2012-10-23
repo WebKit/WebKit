@@ -48,8 +48,6 @@ public:
     void setSelect(const AtomicString&);
     virtual bool isSelectValid() const;
 
-    bool doesSelectFromHostChildren() const { return true; }
-
 protected:
     HTMLContentElement(const QualifiedName&, Document*);
 

@@ -53,7 +53,6 @@ public:
 
     virtual const AtomicString& select() const = 0;
     virtual bool isSelectValid() const = 0;
-    virtual bool doesSelectFromHostChildren() const = 0;
 
     bool resetStyleInheritance() const;
     void setResetStyleInheritance(bool);

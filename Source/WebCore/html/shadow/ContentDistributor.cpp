@@ -30,6 +30,7 @@
 #include "ContentSelectorQuery.h"
 #include "ElementShadow.h"
 #include "HTMLContentElement.h"
+#include "HTMLShadowElement.h"
 #include "ShadowRoot.h"
 
 
@@ -76,6 +77,7 @@ void ContentDistributor::distribute(Element* host)
     Vector<bool> distributed(pool.size());
     distributed.fill(false);
 
+    HTMLShadowElement* firstActiveShadowInsertionPointInOldestShadowRoot = 0;
     for (ShadowRoot* root = host->youngestShadowRoot(); root; root = root->olderShadowRoot()) {
         for (Node* node = root; node; node = node->traverseNextNode(root)) {
             if (!isInsertionPoint(node))
@@ -83,17 +85,27 @@ void ContentDistributor::distribute(Element* host)
             InsertionPoint* point = toInsertionPoint(node);
             if (!point->isActive())
                 continue;
-            ShadowRoot* older = root->olderShadowRoot();
-            if (point->doesSelectFromHostChildren())
-                distributeSelectionsTo(point, pool, distributed);
-            else if (older && !older->assignedTo()) {
-                distributeNodeChildrenTo(point, older);
-                older->setAssignedTo(point);
-            }
 
-            if (ElementShadow* shadow = node->parentNode()->isElementNode() ? toElement(node->parentNode())->shadow() : 0)
-                shadow->invalidateDistribution();
+            if (isHTMLShadowElement(node)) {
+                if (root->olderShadowRoot()) {
+                    if (!root->olderShadowRoot()->assignedTo()) {
+                        distributeNodeChildrenTo(point, root->olderShadowRoot());
+                        root->olderShadowRoot()->setAssignedTo(point);
+                    }
+                } else if (!firstActiveShadowInsertionPointInOldestShadowRoot)
+                    firstActiveShadowInsertionPointInOldestShadowRoot = toHTMLShadowElement(node);
+            } else {
+                distributeSelectionsTo(point, pool, distributed);
+                if (ElementShadow* shadow = node->parentNode()->isElementNode() ? toElement(node->parentNode())->shadow() : 0)
+                    shadow->invalidateDistribution();
+            }
         }
+    }
+
+    if (firstActiveShadowInsertionPointInOldestShadowRoot) {
+        distributeSelectionsTo(firstActiveShadowInsertionPointInOldestShadowRoot, pool, distributed);
+        if (ElementShadow* shadow = firstActiveShadowInsertionPointInOldestShadowRoot->parentNode()->isElementNode() ? toElement(firstActiveShadowInsertionPointInOldestShadowRoot->parentNode())->shadow() : 0)
+            shadow->invalidateDistribution();
     }
 }
 

@@ -92,7 +92,7 @@ testFuncs.push(function renderingMixedOfFallbackAndNonFallback(callIfDone) {
 
 testFuncs.push(function renderingShadowRootBeforeContent(callIfDone) {
     document.getElementById('expect-container').innerHTML =
-        "<div><span>BEFORE</span><span>MID</span><span>M 1</span><span>CONTENT FALLBACK</span><span>M 2</span><span>AFTER</span></div>";
+        "<div><span>BEFORE</span><span>SHADOW FALLBACK</span><span>M 1</span><span>MID</span><span>M 2</span><span>AFTER</span></div>";
 
     var root = document.createElement('div');
     root.appendChild(createSpanWithText('MID'));

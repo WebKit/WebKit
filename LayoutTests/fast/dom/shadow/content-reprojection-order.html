@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<html>
+<body>
+
+<script src="resources/polyfill.js"></script>
+
+<div id="host">
+    <div class="a ab">A</div>
+    <div class="b ab">B</div>
+    <div class="c">C</div>
+</div>
+
+<script>
+var shadowRoot = new WebKitShadowRoot(host);
+
+shadowRoot.innerHTML =
+    '<shadow id="id1"></shadow><hr>' + 
+    '<content id="id2" select=".b"></content><hr>' + 
+    '<div><content id="id3" select=".ab"></content></div><hr>' +
+    '<shadow id="id4"><div>D</div></shadow>'
+</script>
+
+</body>
+</html>

@@ -44,7 +44,6 @@ public:
 
     const AtomicString& select() const;
     bool isSelectValid() const OVERRIDE { return true; }
-    bool doesSelectFromHostChildren() const;
 
 protected:
     virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
@@ -55,6 +54,18 @@ private:
 
     bool m_registeredWithShadowRoot;
 };
+
+inline bool isHTMLShadowElement(const Node* node)
+{
+    ASSERT(node);
+    return node->hasTagName(HTMLNames::shadowTag);
+}
+
+inline HTMLShadowElement* toHTMLShadowElement(Node* node)
+{
+    ASSERT(!node || isHTMLShadowElement(node));
+    return static_cast<HTMLShadowElement*>(node);
+}
 
 } // namespace WebCore
 
