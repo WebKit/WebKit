@@ -11,10 +11,10 @@
 <div id="console"></div>
 
 <script>
-description("Test AudioParam setTargetValueAtTime() functionality.");
+description("Test AudioParam setTargetAtTime() functionality.");
 
 // Play a long DC signal out through an AudioGainNode, and call setValueAtTime() and
-// setTargetValueAtTime at regular intervals to set the starting value and the target
+// setTargetAtTime at regular intervals to set the starting value and the target
 // value. Each time interval has a ramp with a different starting and target value so that
 // there is a discontinuity at each time interval boundary.  The discontinuity is for testing
 // timing.  Also, we alternate between an increasing and decreasing ramp for each interval.
@@ -37,8 +37,8 @@ function setValue(value, time)
 // Generate an exponential approach starting at |startTime| with a target value of |value|.
 function automation(value, startTime, endTime)
 {
-    // endTime is not used for setTargetValueAtTime.
-    gainNode.gain.setTargetValueAtTime(value, startTime, timeConstant)
+    // endTime is not used for setTargetAtTime.
+    gainNode.gain.setTargetAtTime(value, startTime, timeConstant)
 }
 
 function runTest()
@@ -47,7 +47,7 @@ function runTest()
                             initialValue,
                             setValue,
                             automation,
-                            "setTargetValueAtTime()",
+                            "setTargetAtTime()",
                             maxAllowedError,
                             createExponentialApproachArray);
 }

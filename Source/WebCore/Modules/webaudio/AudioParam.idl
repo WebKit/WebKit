@@ -44,8 +44,8 @@
     void linearRampToValueAtTime(in float value, in float time);
     void exponentialRampToValueAtTime(in float value, in float time);
 
-    // Exponentially approach the target value with a rate having the given time constant.
-    void setTargetValueAtTime(in float targetValue, in float time, in float timeConstant);
+    // Exponentially approach the target with a rate having the given time constant.
+    void setTargetAtTime(in float target, in float time, in float timeConstant);
 
     // Sets an array of arbitrary parameter values starting at time for the given duration.
     // The number of values will be scaled to fit into the desired duration.
@@ -53,4 +53,9 @@
 
     // Cancels all scheduled parameter changes with times greater than or equal to startTime.
     void cancelScheduledValues(in float startTime);
+
+#if defined(ENABLE_LEGACY_WEB_AUDIO) && ENABLE_LEGACY_WEB_AUDIO
+    [V8MeasureAs=LegacyWebAudio, ImplementedAs=setTargetAtTime] void setTargetValueAtTime(in float targetValue, in float time, in float timeConstant);
+#endif
+
 };

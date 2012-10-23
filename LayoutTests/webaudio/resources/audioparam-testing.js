@@ -20,7 +20,7 @@ var discontinuityThreshold;
 var timeInterval = .03;
 
 // Some suitable time constant so that we can see a significant change over a timeInterval.  This is
-// only needed by setTargetValueAtTime() which needs a time constant.
+// only needed by setTargetAtTime() which needs a time constant.
 var timeConstant = timeInterval / 3;
 
 var gainNode;

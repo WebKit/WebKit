@@ -88,7 +88,7 @@ public:
     void setValueAtTime(float value, float time) { m_timeline.setValueAtTime(value, time); }
     void linearRampToValueAtTime(float value, float time) { m_timeline.linearRampToValueAtTime(value, time); }
     void exponentialRampToValueAtTime(float value, float time) { m_timeline.exponentialRampToValueAtTime(value, time); }
-    void setTargetValueAtTime(float targetValue, float time, float timeConstant) { m_timeline.setTargetValueAtTime(targetValue, time, timeConstant); }
+    void setTargetAtTime(float target, float time, float timeConstant) { m_timeline.setTargetAtTime(target, time, timeConstant); }
     void setValueCurveAtTime(Float32Array* curve, float time, float duration) { m_timeline.setValueCurveAtTime(curve, time, duration); }
     void cancelScheduledValues(float startTime) { m_timeline.cancelScheduledValues(startTime); }
 

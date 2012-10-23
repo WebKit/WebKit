@@ -47,7 +47,7 @@ public:
     void setValueAtTime(float value, float time);
     void linearRampToValueAtTime(float value, float time);
     void exponentialRampToValueAtTime(float value, float time);
-    void setTargetValueAtTime(float targetValue, float time, float timeConstant);
+    void setTargetAtTime(float target, float time, float timeConstant);
     void setValueCurveAtTime(Float32Array* curve, float time, float duration);
     void cancelScheduledValues(float startTime);
 
@@ -71,7 +71,7 @@ private:
             SetValue,
             LinearRampToValue,
             ExponentialRampToValue,
-            SetTargetValue,
+            SetTarget,
             SetValueCurve,
             LastType
         };

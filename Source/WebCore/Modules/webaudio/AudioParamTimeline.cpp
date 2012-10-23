@@ -53,9 +53,9 @@ void AudioParamTimeline::exponentialRampToValueAtTime(float value, float time)
     insertEvent(ParamEvent(ParamEvent::ExponentialRampToValue, value, time, 0, 0, 0));
 }
 
-void AudioParamTimeline::setTargetValueAtTime(float targetValue, float time, float timeConstant)
+void AudioParamTimeline::setTargetAtTime(float target, float time, float timeConstant)
 {
-    insertEvent(ParamEvent(ParamEvent::SetTargetValue, targetValue, time, timeConstant, 0, 0));
+    insertEvent(ParamEvent(ParamEvent::SetTarget, target, time, timeConstant, 0, 0));
 }
 
 void AudioParamTimeline::setValueCurveAtTime(Float32Array* curve, float time, float duration)
@@ -274,18 +274,18 @@ float AudioParamTimeline::valuesForTimeRangeImpl(float startTime,
                     break;
                 }
 
-            case ParamEvent::SetTargetValue:
+            case ParamEvent::SetTarget:
                 {
                     currentTime = fillToTime;
 
                     // Exponential approach to target value with given time constant.
-                    float targetValue = event.value();
+                    float target = event.value();
                     float timeConstant = event.timeConstant();
                     float discreteTimeConstant = static_cast<float>(AudioUtilities::discreteTimeConstantForSampleRate(timeConstant, controlRate));
 
                     for (; writeIndex < fillToFrame; ++writeIndex) {
                         values[writeIndex] = value;
-                        value += (targetValue - value) * discreteTimeConstant;
+                        value += (target - value) * discreteTimeConstant;
                     }
 
                     break;
