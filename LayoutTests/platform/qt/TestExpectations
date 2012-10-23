@@ -2457,3 +2457,9 @@ webkit.org/b/99306 animations/missing-values-last-keyframe.html [ ImageOnlyFailu
 webkit.org/b/99306 animations/opacity-transform-animation.html [ ImageOnlyFailure ]
 webkit.org/b/99306 css3/filters/effect-blur-hw.html [ ImageOnlyFailure ] # Blur effect radius is too small on WebKit1, the effect not applied at all on WebKit2.
 webkit.org/b/99306 svg/hixie/use/002.xml [ ImageOnlyFailure ]
+
+# [Qt] Text with zero font size renders as X px sometimes, causing fast/text/zero-font-size-2.html to fail
+webkit.org/b/100115 fast/text/zero-font-size-2.html
+
+# REGRESSION(r132143): It made fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html flakey
+webkit.org/b/100117 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html

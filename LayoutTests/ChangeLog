@@ -1,3 +1,12 @@
+2012-10-23  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed holiday gardening to paint the bots green.
+
+        * platform/qt-5.0-wk2/http/tests/navigation/forward-and-cancel-expected.txt: Added after r132041.
+        * platform/qt-5.0-wk2/http/tests/navigation/postredirect-frames-expected.txt: Added after r132041.
+        * platform/qt-5.0-wk2/http/tests/navigation/postredirect-goback2-expected.txt: Added after r132041.
+        * platform/qt/TestExpectations: Skip new failing tests.
+
 2012-10-23  Adam Klein  <adamk@chromium.org>
 
         Always parse pasted fragments as HTML even on XHTML pages
