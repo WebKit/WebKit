@@ -1,3 +1,12 @@
+2012-10-23  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Fixing failure expectation for fast/sub-pixel/file-upload-control-at-fractional-offset.html,
+        the test is a reftest so the expectation should be ImageOnlyFailure.
+
+        * platform/gtk/TestExpectations:
+
 2012-10-23  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2] [WTR] WebKitTestRunner needs testRunner.queueForwardNavigation
