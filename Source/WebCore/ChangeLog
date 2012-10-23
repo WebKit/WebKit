@@ -1,3 +1,22 @@
+2012-10-22  MORITA Hajime  <morrita@google.com>
+
+        Assertion failed at WebCore::toInsertionPoint / WebCore::ContentDistributor::distribute
+        https://bugs.webkit.org/show_bug.cgi?id=100038
+
+        Reviewed by Kent Tamura.
+
+        isHTMLContentElement() assumes that the content element always has
+        a tag name "content" but it doesn't when Shadow DOM feature is
+        disabled. This fix let the function see the correct tag name.
+
+        Test: fast/dom/shadow/insertion-points-with-shadow-disabled.html
+
+        * html/shadow/HTMLContentElement.cpp:
+        (WebCore::HTMLContentElement::contentTagName):
+        * html/shadow/HTMLContentElement.h:
+        (HTMLContentElement):
+        (WebCore::isHTMLContentElement):
+
 2012-10-22  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] Fallback content should also be reprojection.

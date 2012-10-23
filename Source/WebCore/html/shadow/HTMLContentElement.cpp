@@ -40,7 +40,7 @@ namespace WebCore {
 
 using HTMLNames::selectAttr;
 
-static const QualifiedName& contentTagName(Document*)
+const QualifiedName& HTMLContentElement::contentTagName(Document*)
 {
 #if ENABLE(SHADOW_DOM)
     if (!RuntimeEnabledFeatures::shadowDOMEnabled())

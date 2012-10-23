@@ -1,3 +1,13 @@
+2012-10-22  MORITA Hajime  <morrita@google.com>
+
+        Assertion failed at WebCore::toInsertionPoint / WebCore::ContentDistributor::distribute
+        https://bugs.webkit.org/show_bug.cgi?id=100038
+
+        Reviewed by Kent Tamura.
+
+        * fast/dom/shadow/insertion-points-with-shadow-disabled-expected.txt: Added.
+        * fast/dom/shadow/insertion-points-with-shadow-disabled.html: Added.
+
 2012-10-22  Dongwoo Joshua Im  <dw.im@samsung.com>
 
         Include path in the repaint-text-decoration-style.html should be changed.

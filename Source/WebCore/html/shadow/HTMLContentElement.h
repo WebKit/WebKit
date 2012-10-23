@@ -38,6 +38,7 @@ namespace WebCore {
 
 class HTMLContentElement : public InsertionPoint {
 public:
+    static const QualifiedName& contentTagName(Document*);
     static PassRefPtr<HTMLContentElement> create(const QualifiedName&, Document*);
     static PassRefPtr<HTMLContentElement> create(Document*);
 
@@ -59,7 +60,7 @@ private:
 inline bool isHTMLContentElement(const Node* node)
 {
     ASSERT(node);
-    return node->hasTagName(HTMLNames::contentTag);
+    return node->hasTagName(HTMLContentElement::contentTagName(node->document()));
 }
 
 }
