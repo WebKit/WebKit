@@ -47,8 +47,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-#define ENABLE_SCISSOR 1
-
 #define DEBUG_LAYER_ANIMATIONS 0 // Show running animations as green.
 #define DEBUG_CLIPPING 0
 
@@ -159,6 +157,7 @@ LayerRenderer::LayerRenderer(GLES2Context* context)
     , m_context(context)
     , m_isRobustnessSupported(false)
     , m_needsCommit(false)
+    , m_stencilCleared(false)
 {
     if (makeContextCurrent()) {
         m_isRobustnessSupported = String(reinterpret_cast<const char*>(::glGetString(GL_EXTENSIONS))).contains("GL_EXT_robustness");
@@ -279,7 +278,7 @@ void LayerRenderer::setViewport(const IntRect& targetRect, const IntRect& clipRe
     glActiveTexture(GL_TEXTURE0);
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
-    glEnable(GL_STENCIL_TEST);
+    glDisable(GL_STENCIL_TEST);
 
     // If culling is enabled then we will cull the backface.
     glCullFace(GL_BACK);
@@ -300,21 +299,18 @@ void LayerRenderer::setViewport(const IntRect& targetRect, const IntRect& clipRe
 
     glViewport(m_viewport.x(), m_viewport.y(), m_viewport.width(), m_viewport.height());
 
-#if ENABLE_SCISSOR
     glEnable(GL_SCISSOR_TEST);
 #if DEBUG_CLIPPING
     printf("LayerRenderer::compositeLayers(): clipping to (%d,%d %dx%d)\n", m_scissorRect.x(), m_scissorRect.y(), m_scissorRect.width(), m_scissorRect.height());
     fflush(stdout);
 #endif
     glScissor(m_scissorRect.x(), m_scissorRect.y(), m_scissorRect.width(), m_scissorRect.height());
-#endif
 
-    glClearStencil(0);
-    glClearColor(0, 0, 0, 0);
-    GLenum buffersToClear = GL_STENCIL_BUFFER_BIT;
-    if (m_clearSurfaceOnDrawLayers)
-        buffersToClear |= GL_COLOR_BUFFER_BIT;
-    glClear(buffersToClear);
+    if (m_clearSurfaceOnDrawLayers) {
+        glClearColor(0, 0, 0, 0);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+    m_stencilCleared = false;
 }
 
 void LayerRenderer::compositeLayers(const TransformationMatrix& matrix, LayerCompositingThread* rootLayer)
@@ -378,9 +374,7 @@ void LayerRenderer::compositeLayers(const TransformationMatrix& matrix, LayerCom
 
     m_context->swapBuffers();
 
-#if ENABLE_SCISSOR
     glDisable(GL_SCISSOR_TEST);
-#endif
     glDisable(GL_STENCIL_TEST);
 
     // PR 147254, the EGL implementation crashes when the last bound texture
@@ -523,10 +517,8 @@ void LayerRenderer::drawLayersOnSurfaces(const Vector<RefPtr<LayerCompositingThr
     // Otherwise, we just need to set viewport.
     if (surfaceLayers.size()) {
         useSurface(0);
-#if ENABLE_SCISSOR
         glEnable(GL_SCISSOR_TEST);
         glScissor(m_scissorRect.x(), m_scissorRect.y(), m_scissorRect.width(), m_scissorRect.height());
-#endif
     }
 }
 
@@ -851,15 +843,17 @@ void LayerRenderer::compositeLayersRecursive(LayerCompositingThread* layer, int 
 
     layer->setVisible(layerVisible);
 
-    glStencilFunc(GL_EQUAL, stencilValue, 0xff);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-
     // Note that there are two types of layers:
     // 1. Layers that have their own GraphicsContext and can draw their contents on demand (layer->drawsContent() == true).
     // 2. Layers that are just containers of images/video/etc that don't own a GraphicsContext (layer->contents() == true).
 
     if ((layer->needsTexture() || layer->layerRendererSurface()) && layerVisible) {
         updateScissorIfNeeded(clipRect);
+
+        if (stencilValue) {
+            glStencilFunc(GL_EQUAL, stencilValue, 0xff);
+            glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+        }
 
         if (layer->doubleSided())
             glDisable(GL_CULL_FACE);
@@ -918,13 +912,16 @@ void LayerRenderer::compositeLayersRecursive(LayerCompositingThread* layer, int 
 
     // If we need to mask to bounds but the transformation has a rotational component
     // to it, scissoring is not enough and we need to use the stencil buffer for clipping.
-#if ENABLE_SCISSOR
     bool stencilClip = layer->masksToBounds() && hasRotationalComponent(layer->drawTransform());
-#else
-    bool stencilClip = layer->masksToBounds();
-#endif
 
     if (stencilClip) {
+        if (!m_stencilCleared) {
+            glClearStencil(0);
+            glClear(GL_STENCIL_BUFFER_BIT);
+            m_stencilCleared = true;
+        }
+
+        glEnable(GL_STENCIL_TEST);
         glStencilFunc(GL_EQUAL, stencilValue, 0xff);
         glStencilOp(GL_KEEP, GL_INCR, GL_INCR);
 
@@ -977,12 +974,14 @@ void LayerRenderer::compositeLayersRecursive(LayerCompositingThread* layer, int 
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, &layer->getTransformedBounds());
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+
+        if (!stencilValue)
+            glDisable(GL_STENCIL_TEST);
     }
 }
 
 void LayerRenderer::updateScissorIfNeeded(const FloatRect& clipRect)
 {
-#if ENABLE_SCISSOR
 #if DEBUG_CLIPPING
     printf("LayerRenderer::updateScissorIfNeeded(): clipRect=(%.2f,%.2f %.2fx%.2f)\n", clipRect.x(), clipRect.y(), clipRect.width(), clipRect.height());
     fflush(stdout);
@@ -997,7 +996,6 @@ void LayerRenderer::updateScissorIfNeeded(const FloatRect& clipRect)
     fflush(stdout);
 #endif
     glScissor(m_scissorRect.x(), m_scissorRect.y(), m_scissorRect.width(), m_scissorRect.height());
-#endif
 }
 
 bool LayerRenderer::makeContextCurrent()

@@ -212,6 +212,7 @@ private:
 
     LayerRenderingResults m_lastRenderingResults;
     bool m_needsCommit;
+    bool m_stencilCleared;
 };
 
 }
