@@ -1,3 +1,19 @@
+2012-10-22  Keishi Hattori  <keishi@webkit.org>
+
+        Label position is wrong in the suggestion picker when all the suggestions have labels
+        https://bugs.webkit.org/show_bug.cgi?id=99965
+
+        Reviewed by Kent Tamura.
+
+        Somehow the scrollbar was appearing and so the label element was being wrapped to the next line.
+
+        No new tests. Can't reproduce in layout test.
+
+        * Resources/pagepopups/suggestionPicker.css:
+        (.suggestion-list):
+        * Resources/pagepopups/suggestionPicker.js:
+        (SuggestionPicker.prototype._fixWindowSize): Explicitly show the scroll bar.
+
 2012-10-22  MORITA Hajime  <morrita@google.com>
 
         [Chromium] Needs to track ShadowRoot usage

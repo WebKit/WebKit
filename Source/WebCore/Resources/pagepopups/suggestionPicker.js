@@ -155,6 +155,7 @@ SuggestionPicker.prototype._fixWindowSize = function() {
         this._containerElement.style.maxHeight = (maxHeight - ListBorder) + "px";
         desiredWindowWidth += getScrollbarWidth();
         desiredWindowHeight = maxHeight;
+        this._containerElement.style.overflowY = "scroll";
     }
 
     var windowRect = adjustWindowRect(desiredWindowWidth, desiredWindowHeight, desiredWindowWidth, 0);
