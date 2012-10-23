@@ -38,6 +38,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLTextAreaElement.h"
+#include "HistogramSupport.h"
 #include "InsertionPoint.h"
 #include "NodeRareData.h"
 #include "RuntimeEnabledFeatures.h"
@@ -86,8 +87,28 @@ static bool allowsAuthorShadowRoot(Element* element)
     return element->areAuthorShadowsAllowed();
 }
 
+enum ShadowRootUsageOriginType {
+    ShadowRootUsageOriginWeb = 0,
+    ShadowRootUsageOriginNotWeb,
+    ShadowRootUsageOriginTypes
+};
+
+static inline ShadowRootUsageOriginType determineUsageType(Element* host)
+{
+    // Enables only on CHROMIUM since this cost won't worth paying for platforms which don't collect this metrics.
+#if PLATFORM(CHROMIUM)
+    if (!host)
+        return ShadowRootUsageOriginWeb;
+    return host->document()->url().string().startsWith("http") ? ShadowRootUsageOriginWeb : ShadowRootUsageOriginNotWeb;
+#else
+    UNUSED_PARAM(host);
+    return ShadowRootUsageOriginWeb;
+#endif
+}
+
 PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ExceptionCode& ec)
 {
+    HistogramSupport::histogramEnumeration("WebCore.ShadowRoot.constructor", determineUsageType(element), ShadowRootUsageOriginTypes);
     return create(element, AuthorShadowRoot, ec);
 }
 

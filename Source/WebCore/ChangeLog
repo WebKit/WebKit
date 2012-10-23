@@ -1,3 +1,17 @@
+2012-10-22  MORITA Hajime  <morrita@google.com>
+
+        [Chromium] Needs to track ShadowRoot usage
+        https://bugs.webkit.org/show_bug.cgi?id=99955
+
+        Reviewed by Dimitri Glazkov.
+
+        Added an UMA instrumentation.
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::determineUsageType):
+        (WebCore):
+        (WebCore::ShadowRoot::create):
+
 2012-10-22  Kent Tamura  <tkent@chromium.org>
 
         Introduce Localizer::standAloneMonthLabels
