@@ -1,3 +1,10 @@
+2012-10-23  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed gardening. css3/filters/blur-filter-page-scroll-self.html is crashing
+        now as well as generating incorrect image results :(
+
+        * platform/chromium/TestExpectations:
+
 2012-10-23  Yael Aharon  <yael.aharon@intel.com>
 
         [WIN7] Skip fast/media/mq-resolution.html.
