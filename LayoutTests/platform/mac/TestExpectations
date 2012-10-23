@@ -1298,6 +1298,15 @@ webkit.org/b/80394 fast/block/margin-collapse/empty-clear-blocks.html [ Failure 
 webkit.org/b/80394 fast/block/margin-collapse/025.html [ Failure ]
 webkit.org/b/80394 fast/block/margin-collapse/block-inside-inline/025.html [ Failure ]
 
+# Needs rebaselining after bug 99921
+webkit.org/b/99921 mathml/presentation/fenced.xhtml [ Failure ]
+webkit.org/b/99921 mathml/presentation/mo.xhtml [ Failure ]
+webkit.org/b/99921 mathml/presentation/mo-stretch.html [ Failure ]
+webkit.org/b/99921 mathml/presentation/over.xhtml [ Failure ]
+webkit.org/b/99921 mathml/presentation/row.xhtml [ Failure ]
+webkit.org/b/99921 mathml/presentation/row-alignment.xhtml [ Failure ]
+webkit.org/b/99921 mathml/presentation/subsup.xhtml [ Failure ]
+
 # css3-conditionals support is not yet enabled.
 webkit.org/b/86146 css3/supports.html
 

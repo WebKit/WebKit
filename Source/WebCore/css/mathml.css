@@ -8,8 +8,16 @@ mtext {
     line-height: 1.0;
 }
 
+/* Keep font-family and other defaults here consistent with http://mxr.mozilla.org/mozilla-central/source/layout/mathml/mathml.css and feedback from www-math. */
+math, mfenced > * {
+    font-family: MathJax_Main, STIXGeneral, "DejaVu Serif", Cambria, "Cambria Math", Times, serif;
+}
+mo, mfenced {
+    font-family: MathJax_Main, STIXGeneral, STIXSizeOneSym, "DejaVu Sans", "DejaVu Serif", Cambria, "Cambria Math",
+        "Lucida Sans Unicode", "Arial Unicode MS", "Lucida Grande", OpenSymbol, "Standard Symbols L", sans-serif;
+}
+
 math {
-    font-family: STIXGeneral, Symbol, "Times New Roman", sans-serif;
     display: -webkit-inline-flex !important;
     padding-left: 1px;
     padding-right: 1px;

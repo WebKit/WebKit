@@ -1,3 +1,17 @@
+2012-10-23  David Barton  <dbarton@mathscribe.com>
+
+        [MathML] Symbol font uses greek letters for roman ones on linux and Windows
+        https://bugs.webkit.org/show_bug.cgi?id=99921
+
+        Reviewed by Eric Seidel.
+
+        Enable the STIXSizeOneSym font for testing.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (allowedFontFamilySet):
+        * WebKitTestRunner/InjectedBundle/mac/ActivateFonts.mm:
+        (WTR::allowedFontFamilySet):
+
 2012-10-23  Tony Chang  <tony@chromium.org>
 
         [chromium] Chromium window build system does not rebuild correctly when enabling/disabling a feature

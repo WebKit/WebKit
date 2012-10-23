@@ -1,3 +1,58 @@
+2012-10-23  David Barton  <dbarton@mathscribe.com>
+
+        [MathML] Symbol font uses greek letters for roman ones on linux and Windows
+        https://bugs.webkit.org/show_bug.cgi?id=99921
+
+        Reviewed by Eric Seidel.
+
+        * mathml/presentation/mo.xhtml:
+        * platform/chromium/TestExpectations:
+        * platform/chromium/mathml/presentation/attributes-expected.png: Modified property svn:mime-type.
+        * platform/chromium/mathml/presentation/attributes-expected.txt:
+        * platform/chromium/mathml/presentation/fenced-expected.png: Modified property svn:mime-type.
+        * platform/chromium/mathml/presentation/fenced-expected.txt:
+        * platform/chromium/mathml/presentation/fenced-mi-expected.png: Modified property svn:mime-type.
+        * platform/chromium/mathml/presentation/fenced-mi-expected.txt:
+        * platform/chromium/mathml/presentation/fractions-expected.png: Modified property svn:mime-type.
+        * platform/chromium/mathml/presentation/fractions-expected.txt:
+        * platform/chromium/mathml/presentation/fractions-vertical-alignment-expected.png: Modified property svn:mime-type.
+        * platform/chromium/mathml/presentation/fractions-vertical-alignment-expected.txt:
+        * platform/chromium/mathml/presentation/mo-expected.png: Modified property svn:mime-type.
+        * platform/chromium/mathml/presentation/mo-expected.txt:
+        * platform/chromium/mathml/presentation/mo-stretch-expected.png: Modified property svn:mime-type.
+        * platform/chromium/mathml/presentation/mo-stretch-expected.txt:
+        * platform/chromium/mathml/presentation/mroot-pref-width-expected.png: Modified property svn:mime-type.
+        * platform/chromium/mathml/presentation/mroot-pref-width-expected.txt:
+        * platform/chromium/mathml/presentation/over-expected.png: Modified property svn:mime-type.
+        * platform/chromium/mathml/presentation/over-expected.txt:
+        * platform/chromium/mathml/presentation/roots-expected.png: Modified property svn:mime-type.
+        * platform/chromium/mathml/presentation/roots-expected.txt:
+        * platform/chromium/mathml/presentation/row-alignment-expected.png: Modified property svn:mime-type.
+        * platform/chromium/mathml/presentation/row-alignment-expected.txt:
+        * platform/chromium/mathml/presentation/row-expected.png: Modified property svn:mime-type.
+        * platform/chromium/mathml/presentation/row-expected.txt:
+        * platform/chromium/mathml/presentation/style-expected.png: Modified property svn:mime-type.
+        * platform/chromium/mathml/presentation/style-expected.txt:
+        * platform/chromium/mathml/presentation/sub-expected.png: Modified property svn:mime-type.
+        * platform/chromium/mathml/presentation/sub-expected.txt:
+        * platform/chromium/mathml/presentation/subsup-expected.png: Modified property svn:mime-type.
+        * platform/chromium/mathml/presentation/subsup-expected.txt:
+        * platform/chromium/mathml/presentation/sup-expected.png: Modified property svn:mime-type.
+        * platform/chromium/mathml/presentation/sup-expected.txt:
+        * platform/chromium/mathml/presentation/tables-expected.png: Modified property svn:mime-type.
+        * platform/chromium/mathml/presentation/tables-expected.txt:
+        * platform/chromium/mathml/presentation/tokenElements-expected.png: Modified property svn:mime-type.
+        * platform/chromium/mathml/presentation/tokenElements-expected.txt:
+        * platform/chromium/mathml/presentation/under-expected.png: Modified property svn:mime-type.
+        * platform/chromium/mathml/presentation/under-expected.txt:
+        * platform/chromium/mathml/presentation/underover-expected.png: Modified property svn:mime-type.
+        * platform/chromium/mathml/presentation/underover-expected.txt:
+        * platform/chromium/mathml/xHeight-expected.png: Modified property svn:mime-type.
+        * platform/chromium/mathml/xHeight-expected.txt:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2012-10-23  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed gardening. Properly skipping http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout*

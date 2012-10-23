@@ -49,14 +49,13 @@ public:
         
 protected:
     virtual void computePreferredLogicalWidths() OVERRIDE;
-    PassRefPtr<RenderStyle> createStackableStyle(int lineHeight, int maxHeightForRenderer, int topRelative);
-    RenderBlock* createGlyph(UChar glyph, int lineHeight, int maxHeightForRenderer = 0, int charRelative = 0, int topRelative = 0);
+    PassRefPtr<RenderStyle> createStackableStyle(int maxHeightForRenderer);
+    RenderBlock* createGlyph(UChar glyph, int maxHeightForRenderer, int charRelative);
     
 private:
     virtual const char* renderName() const { return isAnonymous() ? "RenderMathMLOperator (anonymous)" : "RenderMathMLOperator"; }
 
     int glyphHeightForCharacter(UChar);
-    int lineHeightForCharacter(UChar);
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
 

@@ -2002,8 +2002,8 @@ crbug.com/22526 fast/js/Object-defineProperty.html [ Failure ]
 # WebKit merge 48500:48585, due to newly added support for MathML.
 # crbug.com/22554 mathml
 # The mathml pixel tests will be changing for a few days. They'll need rebaseline after that.
-webkit.org/b/96960 mathml/xHeight.xhtml [ Pass Failure ImageOnlyFailure ]
-webkit.org/b/96960 mathml/presentation [ Pass Failure ImageOnlyFailure ]
+webkit.org/b/96960 [ Android Linux Win ] mathml/xHeight.xhtml [ Pass Failure ImageOnlyFailure ]
+webkit.org/b/96960 [ Android Linux Win ] mathml/presentation [ Pass Failure ImageOnlyFailure ]
 # Once chromium decides to definitely enable MathML, we can delete the old platform/chromium baseline for this:
 webkit.org/b/96960 http/tests/xmlviewer/dumpAsText/mathml.xml [ Pass Failure ]
 

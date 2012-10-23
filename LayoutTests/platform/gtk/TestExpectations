@@ -422,6 +422,14 @@ webkit.org/b/99059 fast/dom/timer-throttling-hidden-page.html [ Skip ]
 # css3-conditionals support is not yet enabled.
 webkit.org/b/86146 css3/supports.html
 
+# MathML layout is being tuned/reworked.
+webkit.org/b/99921 mathml/presentation/fenced.xhtml [ Failure ]
+webkit.org/b/99921 mathml/presentation/mo.xhtml [ Failure ]
+webkit.org/b/99921 mathml/presentation/mo-stretch.html [ Failure ]
+webkit.org/b/99921 mathml/presentation/over.xhtml [ Failure ]
+webkit.org/b/99921 mathml/presentation/row.xhtml [ Failure ]
+webkit.org/b/99921 mathml/presentation/row-alignment.xhtml [ Failure ]
+
 # Requires Resolution Media Query support
 webkit.org/b/100137 fast/media/mq-resolution.html [ Failure ]
 

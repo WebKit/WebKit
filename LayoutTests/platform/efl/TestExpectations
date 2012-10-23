@@ -1976,6 +1976,7 @@ webkit.org/b/97990 mathml/presentation/mo-stretch.html [ Failure ]
 webkit.org/b/97990 mathml/presentation/roots.xhtml [ Failure ]
 webkit.org/b/97990 mathml/presentation/row-alignment.xhtml [ Failure ]
 webkit.org/b/97990 mathml/presentation/subsup.xhtml [ Failure ]
+webkit.org/b/99921 mathml/presentation/fenced.xhtml [ Failure ]
 
 # css3-conditionals support is not yet enabled.
 webkit.org/b/86146 css3/supports.html

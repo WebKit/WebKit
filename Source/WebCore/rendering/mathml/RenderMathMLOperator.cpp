@@ -57,7 +57,6 @@ bool RenderMathMLOperator::isChildAllowed(RenderObject*, RenderStyle*) const
     return false;
 }
 
-static const float gOperatorSpacer = 0.1f;
 static const float gOperatorExpansion = 1.2f;
 
 void RenderMathMLOperator::stretchToHeight(int height)
@@ -108,54 +107,18 @@ static struct StretchyCharacter {
     { 0x2309, 0x23a4, 0x23a5, 0x23a5, 0x0    }, // right ceiling
     { 0x230b, 0x23a5, 0x23a5, 0x23a6, 0x0    }, // right floor
     { 0x7b  , 0x23a7, 0x23aa, 0x23a9, 0x23a8 }, // left curly bracket
-    { 0x7c  , 0x23d0, 0x23d0, 0x23d0, 0x0    }, // vertical bar
+    { 0x7c  , 0x23aa, 0x23aa, 0x23aa, 0x0    }, // vertical bar
     { 0x2016, 0x2016, 0x2016, 0x2016, 0x0    }, // double vertical line
     { 0x7d  , 0x23ab, 0x23aa, 0x23ad, 0x23ac }, // right curly bracket
     { 0x222b, 0x2320, 0x23ae, 0x2321, 0x0    } // integral sign
 };
 
-// We stack glyphs using a 14px height with a displayed glyph height
-// of 10px.  The line height is set to less than the 14px so that there
-// are no blank spaces between the stacked glyphs.
-//
-// Certain glyphs (e.g. middle and bottom) need to be adjusted upwards
-// in the stack so that there isn't a gap.
-//
-// All of these settings are represented in the constants below.
-
-// FIXME: use fractions of style()->fontSize() for proper zooming/resizing.
-// FIXME: None of this should be hard-coded. Not only does this cause problems
-// with zooming, but it also sets up assumptions that break when a font contains
-// a glyph that is smaller than expected. For example, the STIX vertical bar
-// glyph is smaller than expected, and glyphHeightForCharacter() and
-// lineHeightForCharacter() were added to make smaller glyphs work in this system.
-// Really, the system should just be reconsidered.
-static const int gGlyphFontSize = 14;
-static const int gGlyphLineHeight = 11;
-static const int gMinimumStretchHeight = 24;
-static const int gGlyphHeight = 10;
-static const int gTopGlyphTopAdjust = 1;
-static const int gMiddleGlyphTopAdjust = -1;
-static const int gBottomGlyphTopAdjust = -3;
-static const float gMinimumRatioForStretch = 0.10f;
-
-// This should always be called instead of accessing gGlyphHeight directly.
+// Note glyphHeightForCharacter truncates its result to an int.
 int RenderMathMLOperator::glyphHeightForCharacter(UChar character)
 {
     GlyphData data = style()->font().glyphDataForCharacter(character, false);
     FloatRect glyphBounds = data.fontData->boundsForGlyph(data.glyph);
-    if (glyphBounds.height() && glyphBounds.height() < gGlyphHeight)
-        return glyphBounds.height();
-    return gGlyphHeight;
-}
-
-// This should always be called instead of accessing gGlyphLineHeight directly.
-int RenderMathMLOperator::lineHeightForCharacter(UChar character)
-{
-    int glyphHeight = glyphHeightForCharacter(character);
-    if (glyphHeight < gGlyphHeight)
-        return (glyphHeight - 1) > 0 ? glyphHeight - 1 : 1;
-    return gGlyphLineHeight;
+    return glyphBounds.height();
 }
 
 // FIXME: It's cleaner to only call updateFromElement when an attribute has changed. The body of
@@ -213,11 +176,25 @@ void RenderMathMLOperator::updateFromElement()
         }
     }
     
-    // We only stretch character if the stretch height is larger than a minimum size (e.g. 24px).
-    bool shouldStretch = isStretchy && m_stretchHeight>gMinimumStretchHeight;
+    // We only stack glyphs if the stretch height is larger than a minimum size.
+    bool shouldStack = isStretchy && m_stretchHeight > style()->fontSize();
+    struct StretchyCharacter* partsData = 0;
+    int topGlyphHeight = 0;
+    int extensionGlyphHeight = 0;
+    int bottomGlyphHeight = 0;
+    int middleGlyphHeight = 0;
+    if (shouldStack) {
+        partsData = &stretchyCharacters[index];
+        topGlyphHeight = glyphHeightForCharacter(partsData->topGlyph);
+        extensionGlyphHeight = glyphHeightForCharacter(partsData->extensionGlyph) - 1;
+        bottomGlyphHeight = glyphHeightForCharacter(partsData->bottomGlyph);
+        if (partsData->middleGlyph)
+            middleGlyphHeight = glyphHeightForCharacter(partsData->middleGlyph) - 1;
+        shouldStack = m_stretchHeight >= topGlyphHeight + middleGlyphHeight + bottomGlyphHeight;
+    }
     
     // Either stretch is disabled or we don't have a stretchable character over the minimum height
-    if (stretchDisabled || !shouldStretch) {
+    if (stretchDisabled || !shouldStack) {
         m_isStacked = false;
         RenderBlock* container = new (renderArena()) RenderMathMLBlock(node());
         
@@ -225,10 +202,8 @@ void RenderMathMLOperator::updateFromElement()
         newStyle->inheritFrom(style());
         newStyle->setDisplay(FLEX);
         
-        // Check for a stretchable character that is under the minimum height and use the
-        // font size to adjust the glyph size.
-        int currentFontSize = style()->fontSize();
-        if (!stretchDisabled && isStretchy && m_stretchHeight > 0 && m_stretchHeight <= gMinimumStretchHeight  && m_stretchHeight > currentFontSize) {
+        // Check for a stretchable character that is under the minimum height.
+        if (!stretchDisabled && isStretchy && m_stretchHeight > style()->fontSize()) {
             FontDescription desc = style()->fontDescription();
             desc.setIsAbsoluteSize(true);
             desc.setSpecifiedSize(m_stretchHeight);
@@ -257,110 +232,64 @@ void RenderMathMLOperator::updateFromElement()
     } else {
         // Build stretchable characters as a stack of glyphs.
         m_isStacked = true;
-    
-        int extensionGlyphLineHeight = lineHeightForCharacter(stretchyCharacters[index].extensionGlyph);
-        int topGlyphLineHeight = lineHeightForCharacter(stretchyCharacters[index].topGlyph);
-        int bottomGlyphLineHeight = lineHeightForCharacter(stretchyCharacters[index].bottomGlyph);
         
-        if (stretchyCharacters[index].middleGlyph) {
+        // To avoid gaps, we position glyphs after the top glyph upward by 1px. We also truncate
+        // glyph heights to ints, and then reduce all but the top & bottom such heights by 1px.
+        
+        int remaining = m_stretchHeight - topGlyphHeight - bottomGlyphHeight;
+        createGlyph(partsData->topGlyph, topGlyphHeight, 0);
+        if (partsData->middleGlyph) {
             // We have a middle glyph (e.g. a curly bracket) that requires special processing.
-            int glyphHeight = glyphHeightForCharacter(stretchyCharacters[index].middleGlyph);
-            int middleGlyphLineHeight = lineHeightForCharacter(stretchyCharacters[index].middleGlyph);
-            int half = (m_stretchHeight - glyphHeight) / 2;
-            if (half <= glyphHeight) {
-                // We only have enough space for a single middle glyph.
-                createGlyph(stretchyCharacters[index].topGlyph, topGlyphLineHeight, half, gTopGlyphTopAdjust);
-                createGlyph(stretchyCharacters[index].middleGlyph, middleGlyphLineHeight, glyphHeight, gMiddleGlyphTopAdjust);
-                createGlyph(stretchyCharacters[index].bottomGlyph, bottomGlyphLineHeight, 0, gBottomGlyphTopAdjust);
-            } else {
-                // We have to extend both the top and bottom to the middle.
-                createGlyph(stretchyCharacters[index].topGlyph, topGlyphLineHeight, glyphHeight, gTopGlyphTopAdjust);
-                int remaining = half - glyphHeight;
-                while (remaining > 0) {
-                    if (remaining < glyphHeight) {
-                        createGlyph(stretchyCharacters[index].extensionGlyph, extensionGlyphLineHeight, remaining);
-                        remaining = 0;
-                    } else {
-                        createGlyph(stretchyCharacters[index].extensionGlyph, extensionGlyphLineHeight, glyphHeight);
-                        remaining -= glyphHeight;
-                    }
-                }
-                
-                // The middle glyph in the stack.
-                createGlyph(stretchyCharacters[index].middleGlyph, middleGlyphLineHeight, glyphHeight, gMiddleGlyphTopAdjust);
-                
-                // The remaining is the top half minus the middle glyph height.
-                remaining = half - glyphHeight;
-                // We need to make sure we have the full height in case the height is odd.
-                if (m_stretchHeight % 2 == 1)
-                    remaining++;
-                
-                // Extend to the bottom glyph.
-                while (remaining > 0) {
-                    if (remaining < glyphHeight) {
-                        createGlyph(stretchyCharacters[index].extensionGlyph, extensionGlyphLineHeight, remaining);
-                        remaining = 0;
-                    } else {
-                        createGlyph(stretchyCharacters[index].extensionGlyph, extensionGlyphLineHeight, glyphHeight);
-                        remaining -= glyphHeight;
-                    }
-                }
-                
-                // The bottom glyph in the stack.
-                createGlyph(stretchyCharacters[index].bottomGlyph, bottomGlyphLineHeight, 0, gBottomGlyphTopAdjust);
+            remaining -= middleGlyphHeight;
+            int half = (remaining + 1) / 2;
+            remaining -= half;
+            while (remaining > 0) {
+                int height = std::min<int>(remaining, extensionGlyphHeight);
+                createGlyph(partsData->extensionGlyph, height, -1);
+                remaining -= height;
+            }
+            
+            // The middle glyph in the stack.
+            createGlyph(partsData->middleGlyph, middleGlyphHeight, -1);
+            
+            remaining = half;
+            while (remaining > 0) {
+                int height = std::min<int>(remaining, extensionGlyphHeight);
+                createGlyph(partsData->extensionGlyph, height, -1);
+                remaining -= height;
             }
         } else {
             // We do not have a middle glyph and so we just extend from the top to the bottom glyph.
-            int glyphHeight = glyphHeightForCharacter(stretchyCharacters[index].extensionGlyph);
-            int remaining = m_stretchHeight - 2 * glyphHeight;
-            createGlyph(stretchyCharacters[index].topGlyph, topGlyphLineHeight, glyphHeight, gTopGlyphTopAdjust);
             while (remaining > 0) {
-                if (remaining < glyphHeight) {
-                    createGlyph(stretchyCharacters[index].extensionGlyph, extensionGlyphLineHeight, remaining);
-                    remaining = 0;
-                } else {
-                    createGlyph(stretchyCharacters[index].extensionGlyph, extensionGlyphLineHeight, glyphHeight);
-                    remaining -= glyphHeight;
-                }
+                int height = std::min<int>(remaining, extensionGlyphHeight);
+                createGlyph(partsData->extensionGlyph, height, -1);
+                remaining -= height;
             }
-            createGlyph(stretchyCharacters[index].bottomGlyph, bottomGlyphLineHeight, 0, gBottomGlyphTopAdjust);
         }
+        createGlyph(partsData->bottomGlyph, bottomGlyphHeight, -1);
     }
     
     setNeedsLayoutAndPrefWidthsRecalc();
 }
 
-PassRefPtr<RenderStyle> RenderMathMLOperator::createStackableStyle(int /* lineHeight */, int maxHeightForRenderer, int topRelative)
+PassRefPtr<RenderStyle> RenderMathMLOperator::createStackableStyle(int maxHeightForRenderer)
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::create();
     newStyle->inheritFrom(style());
     newStyle->setDisplay(FLEX);
     
-    FontDescription desc = style()->fontDescription();
-    desc.setIsAbsoluteSize(true);
-    desc.setSpecifiedSize(gGlyphFontSize);
-    desc.setComputedSize(gGlyphFontSize);
-    newStyle->setFontDescription(desc);
-    newStyle->font().update(style()->font().fontSelector());
-    // FIXME: With -webkit-line-box-contain, this method's lineHeight argument is no longer used. It should be removed in a future patch.
-
-    if (maxHeightForRenderer > 0)
-        newStyle->setMaxHeight(Length(maxHeightForRenderer, Fixed));
+    newStyle->setMaxHeight(Length(maxHeightForRenderer, Fixed));
     
     newStyle->setOverflowY(OHIDDEN);
     newStyle->setOverflowX(OHIDDEN);
-    if (topRelative) {
-        newStyle->setTop(Length(topRelative, Fixed));
-        newStyle->setPosition(RelativePosition);
-    }
 
     return newStyle.release();
 }
 
-RenderBlock* RenderMathMLOperator::createGlyph(UChar glyph, int lineHeight, int maxHeightForRenderer, int charRelative, int topRelative)
+RenderBlock* RenderMathMLOperator::createGlyph(UChar glyph, int maxHeightForRenderer, int charRelative)
 {
     RenderBlock* container = new (renderArena()) RenderMathMLBlock(node());
-    container->setStyle(createStackableStyle(lineHeight, maxHeightForRenderer, topRelative));
+    container->setStyle(createStackableStyle(maxHeightForRenderer));
     addChild(container);
     RenderBlock* parent = container;
     if (charRelative) {

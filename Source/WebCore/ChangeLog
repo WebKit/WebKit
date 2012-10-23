@@ -1,3 +1,38 @@
+2012-10-23  David Barton  <dbarton@mathscribe.com>
+
+        [MathML] Symbol font uses greek letters for roman ones on linux and Windows
+        https://bugs.webkit.org/show_bug.cgi?id=99921
+
+        Reviewed by Eric Seidel.
+
+        For parts of stretched parentheses and brackets, mathml.css currently uses the Symbol font,
+        which on linux and Windows has greek letters at roman code points. To fix this, we switch
+        to the STIXSizeOneSym font when available. However, this can cause vertical gaps between
+        glyph parts, because of hard-coded constants in RenderMathMLOperator.cpp. We eliminate all
+        these constants. We also shift glyphs upward by 1px and truncate them to avoid the gaps.
+
+        Tested by existing tests, and one test added to LayoutTests/mathml/presentation/mo.xhtml.
+
+        * css/mathml.css:
+        (math, mfenced > *):
+            - Set font-family for mn, mi, etc.
+        (mo, mfenced):
+            - Set font-family for mo and anonymous operators, including extension glyphs for
+              stretched operators like parentheses and brackets.
+        (math):
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore):
+            - Change 0x23d0 to 0x23aa for STIX & Cambria Math fonts.
+        (WebCore::RenderMathMLOperator::glyphHeightForCharacter):
+        (WebCore::RenderMathMLOperator::updateFromElement):
+        (WebCore::RenderMathMLOperator::createStackableStyle):
+            - Eliminate unused lineHeight and topRelative parameters, and the hard-coded font size
+              of 14.
+        (WebCore::RenderMathMLOperator::createGlyph):
+            - Eliminate unused lineHeight and topRelative parameters.
+        * rendering/mathml/RenderMathMLOperator.h:
+        (RenderMathMLOperator):
+
 2012-10-23  Benjamin Poulain  <benjamin@webkit.org>
 
         WTFURL: Implement KURL::setPort()

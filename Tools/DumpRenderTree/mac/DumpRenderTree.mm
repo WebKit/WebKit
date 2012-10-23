@@ -328,6 +328,7 @@ static NSSet *allowedFontFamilySet()
         @"STFangsong",
         @"STHeiti",
         @"STIXGeneral",
+        @"STIXSizeOneSym",
         @"STKaiti",
         @"STSong",
         @"Symbol",

@@ -7,20 +7,20 @@ layer at (0,0) size 800x87
         RenderText {#text} at (0,0) size 405x18
           text run at (0,0) width 405: "The table cell border should go around the mroot, not through it:"
       RenderBlock (anonymous) at (0,34) size 784x29
-        RenderMathMLMath {math} at (0,0) size 88x29 [padding: 0 1 0 1]
-          RenderMathMLTable {mtable} at (1,0) size 86x29
-            RenderTableSection (anonymous) at (0,0) size 86x29
-              RenderTableRow {mtr} at (0,0) size 86x29
-                RenderTableCell {mtd} at (0,0) size 86x29 [border: (3px solid #000000)] [r=0 c=0 rs=1 cs=1]
+        RenderMathMLMath {math} at (0,0) size 91x29 [padding: 0 1 0 1]
+          RenderMathMLTable {mtable} at (1,0) size 89x29
+            RenderTableSection (anonymous) at (0,0) size 89x29
+              RenderTableRow {mtr} at (0,0) size 89x29
+                RenderTableCell {mtd} at (0,0) size 89x29 [border: (3px solid #000000)] [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (15,56) size 74x17
-  RenderMathMLRoot {mroot} at (6,6) size 74x17 [intrinsic padding: 8 0 0 66]
-    RenderMathMLRow (anonymous) at (66,8) size 8x9
-      RenderBlock {mi} at (0,0) size 8x9
+layer at (16,56) size 75x17
+  RenderMathMLRoot {mroot} at (6,6) size 77x17 [intrinsic padding: 8 0 0 67]
+    RenderMathMLRow (anonymous) at (67,8) size 9x9
+      RenderBlock {mi} at (0,0) size 9x9
         RenderText {#text} at (0,-9) size 7x24
           text run at (0,-9) width 7: "x"
-layer at (15,56) size 66x14
-  RenderBlock (positioned) {mn} at (0,0) size 66x14
+layer at (16,56) size 67x14
+  RenderBlock (positioned) {mn} at (0,0) size 68x15
     RenderText {#text} at (2,-4) size 60x18
       text run at (2,-4) width 60: "1234567890"
