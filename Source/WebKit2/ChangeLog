@@ -1,3 +1,21 @@
+2012-10-23  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL][WK2] Convert WebEvent's timestamp from millisecond to second.
+        https://bugs.webkit.org/show_bug.cgi?id=100101
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Convert timestamp to second to create WebEvent from Evas event because
+        the unit of timestamp from Evas Event is millisecond, but the unit of
+        timestamp for WebEvent is second.
+
+        * Shared/efl/WebEventFactory.cpp:
+        (WebKit::convertMillisecondToSecond):
+        (WebKit):
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+
 2012-10-23  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Make request manager client a C++ class
