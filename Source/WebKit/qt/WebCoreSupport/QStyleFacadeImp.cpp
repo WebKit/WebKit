@@ -30,9 +30,6 @@
 #include <QMacStyle>
 #include <QPainter>
 #include <QPushButton>
-#ifndef QT_NO_STYLE_PLASTIQUE
-#include <QPlastiqueStyle>
-#endif
 #include <QStyleFactory>
 #include <QStyleOption>
 
@@ -371,13 +368,6 @@ void QStyleFacadeImp::paintInnerSpinButton(QPainter* painter, const QStyleFacade
         // Render mini aqua spin buttons for QMacStyle to fit nicely into
         // the editor area, like Chromium.
         option.state |= QStyle::State_Mini;
-    }
-#endif
-#if !defined(QT_NO_STYLE_PLASTIQUE)
-    // QPlastiqueStyle looks best when the spin buttons are flush with the frame's edge.
-    if (qobject_cast<QPlastiqueStyle*>(style())) {
-        inflateX = 0;
-        inflateY = 0;
     }
 #endif
 

@@ -1,3 +1,14 @@
+2012-10-23  Simon Hausmann  <simon.hausmann@digia.com>
+
+        Unreviewed build fix with newer Qt 5.
+
+        QPlastiqueStyle has been removed, but as pointed out by Jens it's also not
+        maintained anymore and hence safe to remove. We can do tweaks with the new
+        fusion style if required.
+
+        * WebCoreSupport/QStyleFacadeImp.cpp:
+        (WebKit::QStyleFacadeImp::paintInnerSpinButton):
+
 2012-10-22  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Fix build without QtWidgets
