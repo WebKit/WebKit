@@ -1,3 +1,15 @@
+2012-10-23  Tony Chang  <tony@chromium.org>
+
+        [chromium] Chromium window build system does not rebuild correctly when enabling/disabling a feature
+        https://bugs.webkit.org/show_bug.cgi?id=38926
+
+        Reviewed by Eric Seidel.
+
+        Remove hack for clobbering build when features.gypi changes. Now that
+        Chromium requires VS2010 or newer, this bug has gone away.
+
+        * Scripts/update-webkit:
+
 2012-10-23  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] remove the const qualifier from WebTestDelegate::printMessage

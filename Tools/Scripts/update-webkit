@@ -34,7 +34,6 @@ use strict;
 use FindBin;
 use lib $FindBin::Bin;
 use File::Basename;
-use File::Path;
 use File::Spec;
 use Getopt::Long;
 use VCSUtils;
@@ -87,8 +86,6 @@ if ($useNinja) {
     $ENV{"GYP_GENERATORS"} = "ninja";
 }
 
-my $startTime = time();
-
 my @svnOptions = ();
 push @svnOptions, '-q' if $quiet;
 
@@ -105,13 +102,6 @@ if (-d "../Internal") {
     runSvnUpdate() if isSVNDirectory(".");
     runGitUpdate() if isGitDirectory(".");
 } elsif (isChromium()) {
-    # Workaround for https://bugs.webkit.org/show_bug.cgi?id=38926
-    # We should remove the following "if" block when we find a right fix.
-    if ((isCygwin() || isWindows()) && (stat("WebKit/chromium/features.gypi"))[9] >= $startTime) {
-        print "features.gypi has been updated. Cleaning the build directories.\n";
-        rmtree(["WebKit/chromium/Debug", "WebKit/chromium/Release"]);
-    }
-
     my @chromiumUpdateArgs = ("perl", "Tools/Scripts/update-webkit-chromium");
     push @chromiumUpdateArgs, "--chromium-android" if isChromiumAndroid();
     push @chromiumUpdateArgs, "--force" if forceChromiumUpdate();
