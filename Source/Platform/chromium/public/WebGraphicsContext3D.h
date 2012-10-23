@@ -451,6 +451,10 @@ public:
     virtual WGC3Dboolean isVertexArrayOES(WebGLId array) { return false; }
     virtual void bindVertexArrayOES(WebGLId array) { }
 
+    // GL_CHROMIUM_texture_from_image
+    virtual void bindTexImage2DCHROMIUM(WGC3Denum target, WGC3Dint imageId) { }
+    virtual void releaseTexImage2DCHROMIUM(WGC3Denum target, WGC3Dint imageId) { }
+
     GrGLInterface* createGrGLInterface();
 
 protected:
