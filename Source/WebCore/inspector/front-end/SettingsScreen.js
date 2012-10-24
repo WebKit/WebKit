@@ -276,6 +276,8 @@ WebInspector.GenericSettingsTab = function()
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show folders"), WebInspector.settings.showScriptFolders));
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Search in content scripts"), WebInspector.settings.searchInContentScripts));
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Enable source maps"), WebInspector.settings.sourceMapsEnabled));
+    if (WebInspector.experimentsSettings.isEnabled("sass"))
+        p.appendChild(this._createCSSAutoReloadControls());
     p.appendChild(this._createSelectSetting(WebInspector.UIString("Indentation"), [
             [ WebInspector.UIString("2 spaces"), WebInspector.TextEditorModel.Indent.TwoSpaces ],
             [ WebInspector.UIString("4 spaces"), WebInspector.TextEditorModel.Indent.FourSpaces ],
@@ -331,6 +333,46 @@ WebInspector.GenericSettingsTab.prototype = {
     {
         // We need to manually update the checkbox state, since enabling JavaScript in the page can actually uncover the "forbidden" state.
         PageAgent.setScriptExecutionDisabled(WebInspector.settings.javaScriptDisabled.get(), this._updateScriptDisabledCheckbox.bind(this));
+    },
+
+    _createCSSAutoReloadControls: function()
+    {
+        var fragment = document.createDocumentFragment();
+        var labelElement = fragment.createChild("label");
+        var checkboxElement = labelElement.createChild("input");
+        checkboxElement.type = "checkbox";
+        checkboxElement.checked = WebInspector.settings.cssReloadEnabled.get();
+        checkboxElement.addEventListener("click", checkboxClicked, false);
+        labelElement.appendChild(document.createTextNode(WebInspector.UIString("Auto-reload CSS upon SASS save")));
+
+        var fieldsetElement = fragment.createChild("fieldset");
+        fieldsetElement.disabled = !checkboxElement.checked;
+        var p = fieldsetElement.createChild("p");
+        p.appendChild(document.createTextNode(WebInspector.UIString("Timeout (ms)")));
+        p.appendChild(document.createTextNode(" "));
+        var timeoutInput = p.createChild("input");
+        timeoutInput.value = WebInspector.settings.cssReloadTimeout.get();
+        timeoutInput.style.width = "60px";
+        timeoutInput.maxLength = 8;
+        timeoutInput.addEventListener("blur", blurListener, false);
+        return fragment;
+
+        function checkboxClicked()
+        {
+            var reloadEnabled = checkboxElement.checked;
+            WebInspector.settings.cssReloadEnabled.set(reloadEnabled);
+            fieldsetElement.disabled = !reloadEnabled;
+        }
+
+        function blurListener()
+        {
+            var value = timeoutInput.value;
+            if (!isFinite(value) || value <= 0) {
+                timeoutInput.value = WebInspector.settings.cssReloadTimeout.get();
+                return;
+            }
+            WebInspector.settings.cssReloadTimeout.set(Number(value));
+        }
     },
 
     __proto__: WebInspector.SettingsTab.prototype

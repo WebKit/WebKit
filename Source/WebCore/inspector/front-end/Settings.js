@@ -105,6 +105,8 @@ WebInspector.Settings = function()
     this.searchInContentScripts = this.createSetting("searchInContentScripts", false);
     this.textEditorIndent = this.createSetting("textEditorIndent", "    ");
     this.lastDockState = this.createSetting("lastDockState", "");
+    this.cssReloadEnabled = this.createSetting("cssReloadEnabled", false);
+    this.cssReloadTimeout = this.createSetting("cssReloadTimeout", 1000);
 
     // If there are too many breakpoints in a storage, it is likely due to a recent bug that caused
     // periodical breakpoints duplication leading to inspector slowness.

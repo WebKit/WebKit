@@ -1,3 +1,25 @@
+2012-10-24  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Implement CSS reload upon related SASS resource saving
+        https://bugs.webkit.org/show_bug.cgi?id=98024
+
+        Reviewed by Vsevolod Vlasov.
+
+        SASS-generated debug info in CSS is parsed to find out which SASS files contributed to this stylesheet.
+        Upon SASS file save in the Sources panel, all affected external CSS stylesheets are reloaded to update
+        the page styles (presuming that SASS is running in the "watch" mode during the development cycle).
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/SASSSourceMapping.js:
+        (WebInspector.SASSSourceMapping):
+        (WebInspector.SASSSourceMapping.prototype._fileSaveFinished.callback):
+        (WebInspector.SASSSourceMapping.prototype._reloadCSS):
+        (_bindUISourceCode):
+        (_addCSSURLforSASSURL):
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.GenericSettingsTab):
+
 2012-10-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Memory instrumentation: don't count agent-specific front-ends separately

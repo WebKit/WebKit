@@ -37,7 +37,10 @@ WebInspector.SASSSourceMapping = function(workspace)
 {
     this._workspace = workspace;
     this._uiLocations = {};
+    this._cssURLsForSASSURL = {};
+    this._timeoutForURL = {};
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._resourceAdded, this);
+    WebInspector.fileManager.addEventListener(WebInspector.FileManager.EventTypes.SavedURL, this._fileSaveFinished, this);
     this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._reset, this);
 }
 
@@ -55,6 +58,43 @@ WebInspector.SASSSourceMapping.prototype = {
         }
 
         populateFrame.call(this, WebInspector.resourceTreeModel.mainFrame);
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _fileSaveFinished: function(event)
+    {
+        var sassURL = /** @type {string} */ event.data;
+        function callback()
+        {
+            delete this._timeoutForURL[sassURL];
+            var cssURLs = this._cssURLsForSASSURL[sassURL];
+            if (!cssURLs)
+                return;
+            for (var i = 0; i < cssURLs.length; ++i)
+                this._reloadCSS(cssURLs[i]);
+        }
+
+        var timer = this._timeoutForURL[sassURL];
+        if (timer) {
+            clearTimeout(timer);
+            delete this._timeoutForURL[sassURL];
+        }
+        if (!WebInspector.settings.cssReloadEnabled.get() || !this._cssURLsForSASSURL[sassURL])
+            return;
+        var timeout = WebInspector.settings.cssReloadTimeout.get();
+        if (timeout && isFinite(timeout))
+            this._timeoutForURL[sassURL] = setTimeout(callback.bind(this), Number(timeout));
+    },
+
+    _reloadCSS: function(url)
+    {
+        var uiSourceCode = this._workspace.uiSourceCodeForURL(url);
+        if (!uiSourceCode)
+            return;
+        var newContent = InspectorFrontendHost.loadResourceSynchronously(url);
+        uiSourceCode.addRevision(newContent);
     },
 
     /**
@@ -121,6 +161,24 @@ WebInspector.SASSSourceMapping.prototype = {
         }
         var rawLocationString = rawURL + ":" + (rawLine + 1);  // Next line after mapping metainfo
         this._uiLocations[rawLocationString] = new WebInspector.UILocation(uiSourceCode, line - 1, 0);
+        this._addCSSURLforSASSURL(rawURL, url);
+    },
+
+    /**
+     * @param {string} cssURL
+     * @param {string} sassURL
+     */
+    _addCSSURLforSASSURL: function(cssURL, sassURL)
+    {
+        var cssURLs;
+        if (this._cssURLsForSASSURL.hasOwnProperty(sassURL))
+            cssURLs = this._cssURLsForSASSURL[sassURL];
+        else {
+            cssURLs = [];
+            this._cssURLsForSASSURL[sassURL] = cssURLs;
+        }
+        if (cssURLs.indexOf(cssURL) === -1)
+            cssURLs.push(cssURL);
     },
 
     /**
