@@ -1,3 +1,24 @@
+2012-10-24  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry][Fullscreen] Roll out changes to fullscreen which rely on viewport size change
+        https://bugs.webkit.org/show_bug.cgi?id=100259
+
+        Reviewed by Rob Buis.
+
+        PR: 219666
+        Roll out r130392 and r129909.
+        The patches rely on the viewport size change of the client side to
+        update the scale and scroll position of the video. However, some client
+        sides don't need or wish to resize the WebKit viewport at all.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+        (BlackBerry::WebKit::WebPagePrivate::enterFullScreenForElement):
+        (BlackBerry::WebKit::WebPagePrivate::exitFullScreenForElement):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2012-10-24  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Rename GeolocationControllerClientBlackBerry to GeolocationClientBlackBerry

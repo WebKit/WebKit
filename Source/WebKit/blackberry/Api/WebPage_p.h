@@ -530,7 +530,7 @@ public:
 #if ENABLE(FULLSCREEN_API)
 #if ENABLE(VIDEO)
     double m_scaleBeforeFullScreen;
-    WebCore::IntPoint m_scrollOffsetBeforeFullScreen;
+    int m_xScrollOffsetBeforeFullScreen;
 #endif
     bool m_isTogglingFullScreenState;
 #endif
