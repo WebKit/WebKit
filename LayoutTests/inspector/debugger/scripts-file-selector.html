@@ -12,16 +12,9 @@ function test()
     WebInspector.showPanel("scripts");
     var navigatorFileSelector = new WebInspector.ScriptsNavigator();
 
-    var contentProvider = {
-        contentType: function()
-        {
-            return WebInspector.resourceTypes.Script;
-        }
-    }
-
     function addUISourceCode(url, isContentScript)
     {
-        var uiSourceCode = new WebInspector.UISourceCode(url, contentProvider, null);
+        var uiSourceCode = new WebInspector.UISourceCode(WebInspector.workspace, url, WebInspector.resourceTypes.Script, null);
         uiSourceCode.isContentScript = isContentScript;
         navigatorFileSelector.addUISourceCode(uiSourceCode);
     }

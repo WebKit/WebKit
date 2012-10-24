@@ -112,8 +112,7 @@ function test()
     WorkspaceMock.prototype = {
         _addUISourceCode: function(url)
         {
-            var mockContentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Script, "");
-            var uiSourceCode = new WebInspector.UISourceCode(url, mockContentProvider, false);
+            var uiSourceCode = new WebInspector.UISourceCode(this, url, WebInspector.resourceTypes.Script, false);
             uiSourceCode.setSourceMapping(defaultMapping);
             uiSourceCodes[url] = uiSourceCode;
             this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCode);
@@ -122,9 +121,8 @@ function test()
 
         _addTemporaryUISourceCode: function(url)
         {
-            var mockContentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Script, "");
-            var uiSourceCode = new WebInspector.UISourceCode(url, mockContentProvider, false);
-            uiSourceCode.qq = 345;
+            var uiSourceCode = new WebInspector.UISourceCode(this, url, WebInspector.resourceTypes.Script, false);
+            uiSourceCode.isTemporary = true;
             uiSourceCode.setSourceMapping(defaultMapping);
             uiSourceCodes[url] = uiSourceCode;
             temporaryUISourceCodes[url] = uiSourceCode;

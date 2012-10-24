@@ -16,17 +16,15 @@ function test()
     };
 
     var contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Script, "", "text/javascript");
-    InspectorTest.addSniffer(WebInspector.UISourceCode.prototype, "requestContent", requestContentSniffer, true)
-    
-    function requestContentSniffer(callback)
-    {
-        InspectorTest.addResult("Source requested for " + this.url);
-        callback("");
-    }
 
     function createMockWorkspace()
     {
         var workspace = new WebInspector.Workspace();
+        workspace.requestFileContent = function(uiSourceCode, callback)
+        {
+            InspectorTest.addResult("Source requested for " + uiSourceCode.url);
+            callback("");
+        };
         return workspace;
     }
 
@@ -34,7 +32,7 @@ function test()
         function testInitialLoad(next)
         {
             var workspace = createMockWorkspace();
-            
+
             workspace.project().addUISourceCode("foobar.js", contentProvider, false);
 
             var panel = new WebInspector.ScriptsPanel(workspace);
@@ -43,7 +41,6 @@ function test()
             workspace.project().addUISourceCode("foo.js", contentProvider, false);
             workspace.project().addUISourceCode("bar.js", contentProvider, false);
             workspace.project().addUISourceCode("baz.js", contentProvider, false);
-            
 
             InspectorTest.dumpScriptsNavigator(panel._navigator);
 

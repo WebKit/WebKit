@@ -21,7 +21,7 @@ var test = function()
     function didShowScriptSource(frame)
     {
         scriptSource = frame._uiSourceCode;
-        InspectorTest.addSniffer(scriptSource._contentProvider, "requestContent", requestContentSniffer);
+        InspectorTest.addSniffer(scriptSource._workspace, "requestFileContent", requestContentSniffer);
         scriptSource.searchInContent("margic-string", true, false, dump1);
     }
 

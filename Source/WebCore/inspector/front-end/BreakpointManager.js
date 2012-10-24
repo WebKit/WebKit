@@ -60,8 +60,6 @@ WebInspector.BreakpointManager.Events = {
 
 WebInspector.BreakpointManager.breakpointStorageId = function(uiSourceCode)
 {
-    if (uiSourceCode.isTemporary)
-        return "";
     return uiSourceCode.formatted() ? "deobfuscated:" + uiSourceCode.url : uiSourceCode.url;
 }
 

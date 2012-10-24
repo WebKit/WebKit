@@ -202,8 +202,7 @@ function test()
         function testInlinedSourceMap(next)
         {
             WebInspector.debuggerModel._reset();
-            var workspace = new WebInspector.Workspace();
-            var mapping = new WebInspector.CompilerScriptMapping(workspace);
+            var mapping = createCompilerScriptMapping();
             var script = InspectorTest.createScriptMock("http://example.com/compiled.js", 0, 0, true, "");
             var sourceMap = {
                 "file":"compiled.js",
@@ -212,9 +211,18 @@ function test()
                 "sourcesContent":["<source content>"]
             };
             script.sourceMapURL = "data:application/json;base64," + btoa(JSON.stringify(sourceMap));
+            InspectorTest.waitForWorkspaceTemporaryUISourceCodeAddedEvent(originalUISourceCodeAdded);
+
+            function originalUISourceCodeAdded(uiSourceCode)
+            {
+                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(compiledUISourceCodeAdded);
+            }
+
+            function compiledUISourceCodeAdded(uiSourceCode) { }
+            
             mapping.addScript(script);
 
-            var uiSourceCode = workspace.uiSourceCodeForURL("source.js");
+            var uiSourceCode = InspectorTest.testWorkspace.uiSourceCodeForURL("source.js");
 
             InspectorTest.checkUILocation(uiSourceCode, 2, 4, mapping.rawLocationToUILocation(WebInspector.debuggerModel.createRawLocation(script, 0, 18)));
             InspectorTest.checkRawLocation(script, 0, 18, mapping.uiLocationToRawLocation(uiSourceCode, 2, 4));
