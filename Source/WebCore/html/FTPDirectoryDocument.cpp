@@ -431,7 +431,7 @@ void FTPDirectoryDocumentParser::finish()
 FTPDirectoryDocument::FTPDirectoryDocument(Frame* frame, const KURL& url)
     : HTMLDocument(frame, url)
 {
-#ifndef NDEBUG
+#if !LOG_DISABLED
     LogFTP.state = WTFLogChannelOn;
 #endif
 }
