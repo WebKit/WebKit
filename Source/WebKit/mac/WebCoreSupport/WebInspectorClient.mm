@@ -201,6 +201,7 @@ void WebInspectorFrontendClient::bringToFront()
 {
     updateWindowTitle();
     [m_windowController.get() showWindow:nil];
+    [[m_windowController.get() window] makeFirstResponder:[m_windowController.get() webView]];
 }
 
 void WebInspectorFrontendClient::closeWindow()
