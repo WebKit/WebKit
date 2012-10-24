@@ -521,16 +521,16 @@ static void encodeTimingFunction(ArgumentEncoder* encoder, const TimingFunction*
         break;
     case TimingFunction::CubicBezierFunction: {
         const CubicBezierTimingFunction* cubic = static_cast<const CubicBezierTimingFunction*>(timingFunction);
-        encoder->encodeDouble(cubic->x1());
-        encoder->encodeDouble(cubic->y1());
-        encoder->encodeDouble(cubic->x2());
-        encoder->encodeDouble(cubic->y2());
+        encoder->encode(cubic->x1());
+        encoder->encode(cubic->y1());
+        encoder->encode(cubic->x2());
+        encoder->encode(cubic->y2());
         break;
     }
     case TimingFunction::StepsFunction: {
         const StepsTimingFunction* steps = static_cast<const StepsTimingFunction*>(timingFunction);
-        encoder->encodeInt32(steps->numberOfSteps());
-        encoder->encodeBool(steps->stepAtStart());
+        encoder->encode(static_cast<uint32_t>(steps->numberOfSteps()));
+        encoder->encode(steps->stepAtStart());
         break;
     }
     }
@@ -564,9 +564,9 @@ bool decodeTimingFunction(ArgumentDecoder* decoder, RefPtr<TimingFunction>& timi
         return true;
     }
     case TimingFunction::StepsFunction: {
-        int numberOfSteps;
+        uint32_t numberOfSteps;
         bool stepAtStart;
-        if (!decoder->decodeInt32(numberOfSteps))
+        if (!decoder->decodeUInt32(numberOfSteps))
             return false;
         if (!decoder->decodeBool(stepAtStart))
             return false;
@@ -584,27 +584,27 @@ void ArgumentCoder<GraphicsLayerAnimation>::encode(ArgumentEncoder* encoder, con
     encoder->encode(animation.name());
     encoder->encode(animation.boxSize());
     encoder->encodeEnum(animation.state());
-    encoder->encodeDouble(animation.startTime());
-    encoder->encodeDouble(animation.pauseTime());
-    encoder->encodeBool(animation.listsMatch());
+    encoder->encode(animation.startTime());
+    encoder->encode(animation.pauseTime());
+    encoder->encode(animation.listsMatch());
 
     RefPtr<Animation> animationObject = animation.animation();
     encoder->encodeEnum(animationObject->direction());
-    encoder->encodeUInt32(animationObject->fillMode());
-    encoder->encodeDouble(animationObject->duration());
-    encoder->encodeDouble(animationObject->iterationCount());
+    encoder->encode(static_cast<uint32_t>(animationObject->fillMode()));
+    encoder->encode(animationObject->duration());
+    encoder->encode(animationObject->iterationCount());
     encodeTimingFunction(encoder, animationObject->timingFunction().get());
 
     const KeyframeValueList& keyframes = animation.keyframes();
     encoder->encodeEnum(keyframes.property());
-    encoder->encodeUInt32(keyframes.size());
+    encoder->encode(static_cast<uint32_t>(keyframes.size()));
     for (size_t i = 0; i < keyframes.size(); ++i) {
         const AnimationValue* value = keyframes.at(i);
-        encoder->encodeFloat(value->keyTime());
+        encoder->encode(value->keyTime());
         encodeTimingFunction(encoder, value->timingFunction());
         switch (keyframes.property()) {
         case AnimatedPropertyOpacity:
-            encoder->encodeFloat(static_cast<const FloatAnimationValue*>(value)->value());
+            encoder->encode(static_cast<const FloatAnimationValue*>(value)->value());
             break;
         case AnimatedPropertyWebkitTransform:
             encoder->encode(*static_cast<const TransformAnimationValue*>(value)->value());

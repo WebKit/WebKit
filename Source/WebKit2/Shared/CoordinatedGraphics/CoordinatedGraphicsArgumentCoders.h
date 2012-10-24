@@ -36,14 +36,11 @@ class FloatPoint3D;
 class GraphicsLayerAnimation;
 class GraphicsLayerAnimations;
 class TransformationMatrix;
+class TransformOperations;
 struct Length;
 
 #if ENABLE(CSS_FILTERS)
 class FilterOperations;
-#endif
-
-#if ENABLE(CSS_SHADERS)
-class TransformOperations;
 #endif
 
 #if USE(GRAPHICS_SURFACE)
