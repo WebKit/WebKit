@@ -1,3 +1,26 @@
+2012-10-24  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] WebKitTestRunner needs to turn on 'setContinuousSpellCheckingEnabled'
+        https://bugs.webkit.org/show_bug.cgi?id=93611
+
+        Reviewed by Hajime Morita.
+
+        When WebKitTestRunner turns on the spelling feature with the resetStateToConsistentValues() method,
+        it happens that the WebProcess is still not launched (although it is already created).
+        In this case, isValid() method returns false.
+
+        This fix sends a message to the WebProcess messages queue, and the message
+        will be handled once the WebProcess is ready.
+
+        * Target.pri:
+        Adds missing files to compile spellcheking feature for WebKit2-Qt
+        to use WebKit C API from WKTextChecker.h.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::updateTextCheckerState):
+        Uses canSendMessage() method instead of isValid() to check whether the message to
+        the WebProcess can be sent.
+
 2012-10-24  Yael Aharon  <yael.aharon@intel.com>
 
         [EFL][WK2][AC] Black screen in web inspector window with AC on
