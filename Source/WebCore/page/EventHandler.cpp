@@ -2523,6 +2523,8 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
         return handleGestureTapDown();
     case PlatformEvent::GestureLongPress:
         return handleGestureLongPress(gestureEvent);
+    case PlatformEvent::GestureTwoFingerTap:
+        return handleGestureTwoFingerTap(gestureEvent);
     case PlatformEvent::GestureDoubleTap:
     case PlatformEvent::GesturePinchBegin:
     case PlatformEvent::GesturePinchEnd:
@@ -2582,6 +2584,15 @@ bool EventHandler::handleGestureLongPress(const PlatformGestureEvent& gestureEve
             return true;
     }
 #endif
+#if ENABLE(CONTEXT_MENUS)
+    return sendContextMenuEventForGesture(gestureEvent);
+#else
+    return false;
+#endif
+}
+
+bool EventHandler::handleGestureTwoFingerTap(const PlatformGestureEvent& gestureEvent)
+{
 #if ENABLE(CONTEXT_MENUS)
     return sendContextMenuEventForGesture(gestureEvent);
 #else
@@ -2785,7 +2796,12 @@ bool EventHandler::sendContextMenuEventForGesture(const PlatformGestureEvent& ev
         adjustGesturePosition(event, adjustedPoint);
 #endif
     PlatformMouseEvent mouseEvent(adjustedPoint, event.globalPosition(), RightButton, eventType, 1, false, false, false, false, WTF::currentTime());
+    // To simulate right-click behavior, we send a right mouse down and then
+    // context menu event.
+    handleMousePressEvent(mouseEvent);
     return sendContextMenuEvent(mouseEvent);
+    // We do not need to send a corresponding mouse release because in case of
+    // right-click, the context menu takes capture and consumes all events.
 }
 #endif // ENABLE(GESTURE_EVENTS)
 #endif // ENABLE(CONTEXT_MENUS)
