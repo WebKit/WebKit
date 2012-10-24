@@ -105,7 +105,8 @@ static Ecore_IMF_Context* _ewk_view_imf_context_create(Ewk_View_Smart_Data* smar
 }
 
 EwkViewImpl::EwkViewImpl(Evas_Object* view)
-    : areMouseEventsEnabled(false)
+    : settings(adoptPtr(new Ewk_Settings(this)))
+    , areMouseEventsEnabled(false)
 #if ENABLE(TOUCH_EVENTS)
     , areTouchEventsEnabled(false)
 #endif

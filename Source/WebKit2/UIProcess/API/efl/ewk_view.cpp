@@ -778,7 +778,7 @@ static void _ewk_view_initialize(Evas_Object* ewkView, PassRefPtr<Ewk_Context> c
     priv->pageProxy->initializeWebPage();
 
     priv->backForwardList = Ewk_Back_Forward_List::create(toAPI(priv->pageProxy->backForwardList()));
-    priv->settings = adoptPtr(new Ewk_Settings(WKPageGroupGetPreferences(WKPageGetPageGroup(toAPI(priv->pageProxy.get())))));
+
     priv->context = context;
 
 #if USE(TILED_BACKING_STORE)
@@ -789,7 +789,7 @@ static void _ewk_view_initialize(Evas_Object* ewkView, PassRefPtr<Ewk_Context> c
 
 #if ENABLE(FULLSCREEN_API)
     priv->pageProxy->fullScreenManager()->setWebView(ewkView);
-    ewk_settings_fullscreen_enabled_set(priv->settings.get(), true);
+    priv->pageProxy->pageGroup()->preferences()->setFullScreenEnabled(true);
 #endif
 
     // Initialize page clients.

@@ -1,3 +1,38 @@
+2012-10-24  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Ewk_Settings refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=100233
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Ewk_Settings private implementation is now C++ class which allows direct internal
+        access to WebKit::WebPreferences.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::EwkViewImpl):
+        * UIProcess/API/efl/ewk_settings.cpp:
+        (Ewk_Settings::preferences):
+        (ewk_settings_fullscreen_enabled_set):
+        (ewk_settings_fullscreen_enabled_get):
+        (ewk_settings_javascript_enabled_set):
+        (ewk_settings_javascript_enabled_get):
+        (ewk_settings_loads_images_automatically_set):
+        (ewk_settings_loads_images_automatically_get):
+        (ewk_settings_developer_extras_enabled_set):
+        (ewk_settings_developer_extras_enabled_get):
+        (ewk_settings_file_access_from_file_urls_allowed_set):
+        (ewk_settings_file_access_from_file_urls_allowed_get):
+        (ewk_settings_frame_flattening_enabled_set):
+        (ewk_settings_frame_flattening_enabled_get):
+        (ewk_settings_dns_prefetching_enabled_set):
+        (ewk_settings_dns_prefetching_enabled_get):
+        * UIProcess/API/efl/ewk_settings_private.h:
+        (WebKit):
+        (Ewk_Settings):
+        (Ewk_Settings::Ewk_Settings):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_initialize):
+
 2012-10-24  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [EFL][AC] Fix build break when AC is enabled

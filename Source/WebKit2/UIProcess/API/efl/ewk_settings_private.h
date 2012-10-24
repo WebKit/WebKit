@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Samsung Electronics
+ * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,21 +27,29 @@
 #ifndef ewk_settings_private_h
 #define ewk_settings_private_h
 
-#include "ewk_settings.h"
-#include <WebKit2/WKPreferences.h>
-#include <WebKit2/WKRetainPtr.h>
-#include <wtf/PassOwnPtr.h>
+#include <wtf/RefPtr.h>
 
+namespace WebKit {
+class WebPreferences;
+}
+class EwkViewImpl;
 /**
  * \struct  Ewk_Settings
  * @brief   Contains the settings data.
  */
-struct Ewk_Settings {
-    WKRetainPtr<WKPreferencesRef> preferences;
+class Ewk_Settings {
+public:
+    explicit Ewk_Settings(EwkViewImpl* viewImpl)
+        : m_viewImpl(viewImpl)
+    {
+        ASSERT(m_viewImpl);
+    }
 
-    explicit Ewk_Settings(WKPreferencesRef wkPreferences)
-        : preferences(wkPreferences)
-    { }
+    const WebKit::WebPreferences* preferences() const;
+    WebKit::WebPreferences* preferences();
+
+private:
+    EwkViewImpl* m_viewImpl;
 };
 
 #endif // ewk_settings_private_h
