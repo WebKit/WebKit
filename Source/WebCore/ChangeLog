@@ -1,3 +1,22 @@
+2012-10-24  Jae Hyun Park  <jae.park@company100.net>
+
+        loaderRunLoop() should use synchronization instead of while loop
+        https://bugs.webkit.org/show_bug.cgi?id=55402
+
+        Reviewed by Alexey Proskuryakov.
+
+        Originally, loaderRunLoop() sleeps until a thread has started and set
+        the loaderRunLoopObject static variable. This patch uses
+        ThreadCondition to synchronize instead of a while loop.
+
+        No new tests (No behavior change).
+
+        * platform/network/cf/LoaderRunLoopCF.cpp:
+        (WebCore::runLoaderThread):
+        (WebCore::loaderRunLoop):
+        * platform/network/cf/LoaderRunLoopCF.h:
+        (WebCore):
+
 2012-10-24  Sailesh Agrawal  <sail@chromium.org>
 
         Incorrect keycodes for numpad /, -, +, .
