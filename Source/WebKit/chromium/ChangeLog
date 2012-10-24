@@ -1,3 +1,21 @@
+2012-10-24  Eric Uhrhane  <ericu@chromium.org>
+
+        https://bugs.webkit.org/show_bug.cgi?id=99202
+        [Chromium] shift-click fails to spawn new window with target=_blank
+
+        Reviewed by Adam Barth
+
+        No new tests in WebKit-land--see
+        https://codereview.chromium.org/11235048/ for tests that I'll submit
+        once this lands.
+
+        * src/ChromeClientImpl.cpp:
+        Change currentEventShouldCauseBackgroundTab to updatePolicyForEvent; we
+        were looking up the right policy, then throwing it away if it wasn't
+        forcing a background tab.
+        (WebKit::ChromeClientImpl::updatePolicyForEvent):
+        (WebKit::ChromeClientImpl::getNavigationPolicy):
+
 2012-10-24  Ben Wagner  <bungeman@chromium.org>
 
         Create skia_webkit.gyp to improve rebaselining.

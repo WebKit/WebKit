@@ -265,17 +265,13 @@ Page* ChromeClientImpl::createWindow(
     return newView->page();
 }
 
-static inline bool currentEventShouldCauseBackgroundTab(const WebInputEvent* inputEvent)
+static inline void updatePolicyForEvent(const WebInputEvent* inputEvent, WebNavigationPolicy* policy)
 {
-    if (!inputEvent)
-        return false;
-
-    if (inputEvent->type != WebInputEvent::MouseUp)
-        return false;
+    if (!inputEvent || inputEvent->type != WebInputEvent::MouseUp)
+        return;
 
     const WebMouseEvent* mouseEvent = static_cast<const WebMouseEvent*>(inputEvent);
 
-    WebNavigationPolicy policy;
     unsigned short buttonNumber;
     switch (mouseEvent->button) {
     case WebMouseEvent::ButtonLeft:
@@ -288,17 +284,14 @@ static inline bool currentEventShouldCauseBackgroundTab(const WebInputEvent* inp
         buttonNumber = 2;
         break;
     default:
-        return false;
+        return;
     }
     bool ctrl = mouseEvent->modifiers & WebMouseEvent::ControlKey;
     bool shift = mouseEvent->modifiers & WebMouseEvent::ShiftKey;
     bool alt = mouseEvent->modifiers & WebMouseEvent::AltKey;
     bool meta = mouseEvent->modifiers & WebMouseEvent::MetaKey;
 
-    if (!WebViewImpl::navigationPolicyFromMouseEvent(buttonNumber, ctrl, shift, alt, meta, &policy))
-        return false;
-
-    return policy == WebNavigationPolicyNewBackgroundTab;
+    WebViewImpl::navigationPolicyFromMouseEvent(buttonNumber, ctrl, shift, alt, meta, policy);
 }
 
 WebNavigationPolicy ChromeClientImpl::getNavigationPolicy()
@@ -315,8 +308,8 @@ WebNavigationPolicy ChromeClientImpl::getNavigationPolicy()
     WebNavigationPolicy policy = WebNavigationPolicyNewForegroundTab;
     if (asPopup)
         policy = WebNavigationPolicyNewPopup;
-    if (currentEventShouldCauseBackgroundTab(WebViewImpl::currentInputEvent()))
-        policy = WebNavigationPolicyNewBackgroundTab;
+    updatePolicyForEvent(WebViewImpl::currentInputEvent(), &policy);
+
     return policy;
 }
 
