@@ -1,3 +1,24 @@
+2012-10-24  Parth Patel  <parpatel@rim.com>
+
+        [BlackBerry] Extending existing ThreadUnsafe singletons in webkit to
+        Generic ThreadUnsafe Singleton
+        https://bugs.webkit.org/show_bug.cgi?id=100145
+
+        Reviewed by Rob Buis.
+
+        Extending the singletons to generic singleton and changing
+        getInstance() in IconDatabaseClientBlackBerry to instance()
+        to match the generic singleton template.
+
+        Reviewed Internally by Yong Li.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::initializeIconDataBase):
+        * WebCoreSupport/IconDatabaseClientBlackBerry.cpp:
+        (WebCore):
+        * WebCoreSupport/IconDatabaseClientBlackBerry.h:
+        (IconDatabaseClientBlackBerry):
+
 2012-10-23  Robin Cao  <robin.cao@torchmobile.com.cn>
 
         [BlackBerry] Web page renders at the wrong zoom level after viewport changes

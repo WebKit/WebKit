@@ -1,3 +1,23 @@
+2012-10-24  Parth Patel  <parpatel@rim.com>
+
+        [BlackBerry] Extending existing ThreadUnsafe singletons in webkit to
+        Generic ThreadUnsafe Singleton
+        https://bugs.webkit.org/show_bug.cgi?id=100145
+
+        Reviewed by Rob Buis.
+
+        Extending the singletons to generic singleton and changing
+        getInstance() in IconDatabaseClientBlackBerry to instance()
+        to match the generic singleton template.
+
+        Reviewed Internally by Yong Li.
+
+        Tests are not modified and added as there was no behavioural change.
+
+        * platform/blackberry/SharedTimerBlackBerry.cpp:
+        (SharedTimerBlackBerry):
+        (WebCore):
+
 2012-10-24  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: NMI add instrumentation for ResourceBuffer. It gives us 10mb on gmail

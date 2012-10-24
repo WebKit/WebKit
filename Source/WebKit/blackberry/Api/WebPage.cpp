@@ -1731,7 +1731,7 @@ double WebPage::initialScale() const
 
 void WebPage::initializeIconDataBase()
 {
-    IconDatabaseClientBlackBerry::getInstance()->initIconDatabase(d->m_webSettings);
+    IconDatabaseClientBlackBerry::instance()->initIconDatabase(d->m_webSettings);
 }
 
 bool WebPage::isUserScalable() const

@@ -19,18 +19,17 @@
 #include "config.h"
 #include "SharedTimer.h"
 
-#include <wtf/CurrentTime.h>
-
+#include <BlackBerryPlatformSingleton.h>
 #include <BlackBerryPlatformTimer.h>
+#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 
-class SharedTimerBlackBerry {
+class SharedTimerBlackBerry : public BlackBerry::Platform::ThreadUnsafeSingleton<SharedTimerBlackBerry> {
     friend void setSharedTimerFiredFunction(void (*f)());
+    SINGLETON_DEFINITION_THREADUNSAFE(SharedTimerBlackBerry)
 
 public:
-    static SharedTimerBlackBerry* instance();
-
     void start(double);
     void stop();
 
@@ -42,6 +41,8 @@ private:
     void (*m_timerFunction)();
 };
 
+SINGLETON_INITIALIZER_THREADUNSAFE(SharedTimerBlackBerry)
+
 SharedTimerBlackBerry::SharedTimerBlackBerry()
     : m_started(false)
     , m_timerFunction(0)
@@ -52,14 +53,6 @@ SharedTimerBlackBerry::~SharedTimerBlackBerry()
 {
     if (m_started)
         stop();
-}
-
-SharedTimerBlackBerry* SharedTimerBlackBerry::instance()
-{
-    static SharedTimerBlackBerry* timer = 0;
-    if (!timer)
-        timer = new SharedTimerBlackBerry;
-    return timer;
 }
 
 void SharedTimerBlackBerry::start(double interval)
