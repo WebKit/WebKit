@@ -54,6 +54,10 @@ public:
 
     virtual void setScrollingPerformanceLoggingEnabled(bool) = 0;
     virtual bool scrollingPerformanceLoggingEnabled() const = 0;
+    
+    // Exposed for testing
+    virtual IntRect tileCoverageRect() const = 0;
+
 };
 
 } // namespace WebCore

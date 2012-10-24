@@ -1237,6 +1237,8 @@ String Internals::layerTreeAsText(Document* document, unsigned flags, ExceptionC
     LayerTreeFlags layerTreeFlags = 0;
     if (flags & LAYER_TREE_INCLUDES_VISIBLE_RECTS)
         layerTreeFlags |= LayerTreeFlagsIncludeVisibleRects;
+    if (flags & LAYER_TREE_INCLUDES_TILE_CACHES)
+        layerTreeFlags |= LayerTreeFlagsIncludeTileCaches;
 
     return document->frame()->layerTreeAsText(layerTreeFlags);
 }

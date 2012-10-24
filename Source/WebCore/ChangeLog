@@ -1,5 +1,41 @@
 2012-10-23  Simon Fraser  <simon.fraser@apple.com>
 
+        Allow tests to run with a tile cache, and optionally dump the tile cache via layerTreeAsText()
+        https://bugs.webkit.org/show_bug.cgi?id=100159
+
+        Reviewed by Tim Horton.
+
+        Add a LAYER_TREE_INCLUDES_PAGE_TILE_CACHE flag for layerTreeAsText(), and plumb it
+        through to GraphicsLayerCA, which dumps the TiledBacking tile coverage rect.
+
+        Test: platform/mac/tiled-drawing/use-tiled-drawing.html
+
+        * page/Frame.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        (showGraphicsLayerTree):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::tiledBacking):
+        * platform/graphics/TiledBacking.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::tiledBacking):
+        (WebCore::GraphicsLayerCA::dumpAdditionalProperties):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (GraphicsLayerCA):
+        * platform/graphics/ca/mac/TileCache.h:
+        (WebCore::TileCache::tileCoverageRect):
+        (TileCache):
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::computeTileCoverageRect):
+        (WebCore::TileCache::revalidateTiles):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerTreeAsText):
+        * testing/Internals.cpp:
+        (WebCore::Internals::layerTreeAsText):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+2012-10-23  Simon Fraser  <simon.fraser@apple.com>
+
         Flush pending GraphicsLayer changes when reattaching compositing layers if necessary
         https://bugs.webkit.org/show_bug.cgi?id=100187
         <rdar://problem/12546770>

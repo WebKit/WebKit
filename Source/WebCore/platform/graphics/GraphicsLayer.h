@@ -48,6 +48,7 @@ enum LayerTreeAsTextBehaviorFlags {
     LayerTreeAsTextBehaviorNormal = 0,
     LayerTreeAsTextDebug = 1 << 0, // Dump extra debugging info like layer addresses.
     LayerTreeAsTextIncludeVisibleRects = 1 << 1,
+    LayerTreeAsTextIncludeTileCaches = 1 << 2
 };
 typedef unsigned LayerTreeAsTextBehavior;
 
@@ -401,7 +402,7 @@ public:
 
     bool usingTiledLayer() const { return m_usingTiledLayer; }
 
-    virtual TiledBacking* tiledBacking() { return 0; }
+    virtual TiledBacking* tiledBacking() const { return 0; }
 
 #if PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
     // This allows several alternative GraphicsLayer implementations in the same port,

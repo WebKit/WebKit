@@ -78,7 +78,8 @@ namespace WebCore {
 
     enum {
         LayerTreeFlagsIncludeDebugInfo = 1 << 0,
-        LayerTreeFlagsIncludeVisibleRects = 1 << 2
+        LayerTreeFlagsIncludeVisibleRects = 1 << 1,
+        LayerTreeFlagsIncludeTileCaches = 1 << 2
     };
     typedef unsigned LayerTreeFlags;
 
