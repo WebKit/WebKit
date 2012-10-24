@@ -1,3 +1,22 @@
+2012-10-24  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] run-webkit-tests writes garbage on stderr when running on Xvfb
+        https://bugs.webkit.org/show_bug.cgi?id=100243
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        These errors generate noise on the reports and in some cases, like when
+        running perf tests, makes the test fail. By using Xext, we can add a
+        dummy handler to ignore these errors.
+
+        We could have added this handler on the top level EWK API, but that
+        would be intrusive and could override handlers defined by the user.
+
+        * WebKitTestRunner/PlatformEfl.cmake:
+        * WebKitTestRunner/efl/main.cpp:
+        (dummyExtensionErrorHandler):
+        (main):
+
 2012-10-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix the GTK+ build.

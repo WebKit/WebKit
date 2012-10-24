@@ -43,6 +43,13 @@
 
 #ifdef HAVE_ECORE_X
 #include <Ecore_X.h>
+#include <X11/Xlib.h>
+#include <X11/extensions/Xext.h>
+
+static int dummyExtensionErrorHandler(Display*, _Xconst char*, _Xconst char*)
+{
+    return 0;
+}
 #endif
 
 #if USE(COORDINATED_GRAPHICS)
@@ -68,6 +75,9 @@ WK_EXPORT int WebProcessMainEfl(int argc, char* argv[])
         return 1;
     }
 
+#ifdef HAVE_ECORE_X
+    XSetExtensionErrorHandler(dummyExtensionErrorHandler);
+
     if (!ecore_x_init(0)) {
         // Could not init ecore_x.
         // PlatformScreenEfl and systemBeep() functions
@@ -76,6 +86,7 @@ WK_EXPORT int WebProcessMainEfl(int argc, char* argv[])
         eina_shutdown();
         return 1;
     }
+#endif
 
 #if ENABLE(GLIB_SUPPORT)
     g_type_init();

@@ -24,9 +24,23 @@
 #include <wtf/Assertions.h>
 #include <stdlib.h>
 
+#ifdef HAVE_ECORE_X
+#include <X11/Xlib.h>
+#include <X11/extensions/Xext.h>
+
+static int dummyExtensionErrorHandler(Display*, _Xconst char*, _Xconst char*)
+{
+    return 0;
+}
+#endif
+
 int main(int argc, char** argv)
 {
     WTFInstallReportBacktraceOnCrashHook();
+
+#ifdef HAVE_ECORE_X
+    XSetExtensionErrorHandler(dummyExtensionErrorHandler);
+#endif
 
     if (!ewk_init())
         return 1;

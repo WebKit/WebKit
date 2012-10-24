@@ -103,6 +103,11 @@ WEBKIT_OPTION_END()
 
 OPTION(ENABLE_ECORE_X "Enable Ecore_X specific usage (cursor, bell)" ON)
 IF (ENABLE_ECORE_X)
+    # We need Xext.h to disable Xlib error messages  when running WTR on Xvfb.
+    # These errors are dumped on stderr and makes the test driver thinks that
+    # the test case has failed.
+    FIND_PACKAGE(X11 REQUIRED)
+
     LIST(APPEND ECORE_ADDITIONAL_COMPONENTS X)
     ADD_DEFINITIONS(-DHAVE_ECORE_X)
 ENDIF ()
