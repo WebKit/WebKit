@@ -1,3 +1,12 @@
+2012-10-24  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Rebaselining two Video Track tests after r132349.
+
+        * platform/gtk/media/track/track-cue-rendering-horizontal-expected.txt:
+        * platform/gtk/media/track/track-cue-rendering-vertical-expected.txt:
+
 2012-10-24  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebKit exposes abstract ARIA role range as AXSlider; should be generic AXGroup
