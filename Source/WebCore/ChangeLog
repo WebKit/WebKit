@@ -1,3 +1,16 @@
+2012-10-23  Andreas Kling  <kling@webkit.org>
+
+        Remove specialized hash traits for GlyphPages.
+        <http://webkit.org/b/100185>
+
+        Reviewed by Dan Bernstein.
+
+        Now that the default minimum table size has been lowered for all tables, there's no need
+        for this specialization anymore.
+
+        * platform/graphics/FontFallbackList.h:
+        (FontFallbackList):
+
 2012-10-23  Kent Tamura  <tkent@chromium.org>
 
         Multiple fields input UI: Don't use CSS properties for physical direction
