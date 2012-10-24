@@ -1,3 +1,14 @@
+2012-10-24  Dongwoo Joshua Im  <dw.im@samsung.com>
+
+        [GTK] Fix build break - undefined reference to 'gtk_init'
+        https://bugs.webkit.org/show_bug.cgi?id=100221
+
+        Unreviewed build fix.
+
+        GTK_LIBS is needed for TestWTF.
+
+        * TestWebKitAPI/GNUmakefile.am:
+
 2012-10-24  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         WebKitTestRunner needs to turn on 'setContinuousSpellCheckingEnabled'

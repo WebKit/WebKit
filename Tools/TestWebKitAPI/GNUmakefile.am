@@ -37,6 +37,7 @@ Programs_TestWebKitAPI_TestWTF_LDADD = \
 	Libraries/libTestWebKitAPIMain.la \
 	Libraries/libgtest.la \
 	libWTF.la \
+	$(GTK_LIBS) \
 	$(GLIB_LIBS)
 
 Programs_TestWebKitAPI_TestWTF_LDFLAGS = \
