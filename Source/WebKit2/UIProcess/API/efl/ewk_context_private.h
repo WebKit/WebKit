@@ -23,7 +23,7 @@
 #include "DownloadManagerEfl.h"
 #include "WKAPICast.h"
 #include "WKRetainPtr.h"
-#include "ewk_context_history_client_private.h"
+#include "ewk_context.h"
 
 class Ewk_Url_Scheme_Request;
 class Ewk_Cookie_Manager;
@@ -39,6 +39,7 @@ class VibrationProvider;
 #endif
 
 namespace WebKit {
+class ContextHistoryClientEfl;
 class RequestManagerClientEfl;
 }
 
@@ -74,8 +75,7 @@ public:
 
     WebKit::DownloadManagerEfl* downloadManager() const;
 
-    const Ewk_Context_History_Client& historyClient() const  { return m_historyClient; }
-    Ewk_Context_History_Client& historyClient() { return m_historyClient; }
+    WebKit::ContextHistoryClientEfl* historyClient();
 
 private:
     explicit Ewk_Context(WKContextRef);
@@ -96,7 +96,7 @@ private:
     OwnPtr<WebKit::DownloadManagerEfl> m_downloadManager;
     OwnPtr<WebKit::RequestManagerClientEfl> m_requestManagerClient;
 
-    Ewk_Context_History_Client m_historyClient;
+    OwnPtr<WebKit::ContextHistoryClientEfl> m_historyClient;
 };
 
 #endif // ewk_context_private_h

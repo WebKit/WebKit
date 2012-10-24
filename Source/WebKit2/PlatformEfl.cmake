@@ -50,7 +50,6 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/API/efl/ewk_back_forward_list.cpp
     UIProcess/API/efl/ewk_back_forward_list_item.cpp
     UIProcess/API/efl/ewk_context.cpp
-    UIProcess/API/efl/ewk_context_history_client.cpp
     UIProcess/API/efl/ewk_cookie_manager.cpp
     UIProcess/API/efl/ewk_download_job.cpp
     UIProcess/API/efl/ewk_error.cpp
@@ -74,6 +73,7 @@ LIST(APPEND WebKit2_SOURCES
 
     UIProcess/cairo/BackingStoreCairo.cpp
 
+    UIProcess/efl/ContextHistoryClientEfl.cpp
     UIProcess/efl/DownloadManagerEfl.cpp
     UIProcess/efl/PageLoadClientEfl.cpp
     UIProcess/efl/PagePolicyClientEfl.cpp

@@ -22,6 +22,7 @@
 #include "ewk_context.h"
 
 #include "BatteryProvider.h"
+#include "ContextHistoryClientEfl.h"
 #include "NetworkInfoProvider.h"
 #include "RequestManagerClientEfl.h"
 #include "VibrationProvider.h"
@@ -33,7 +34,6 @@
 #include "WebContext.h"
 #include "WebIconDatabase.h"
 #include "WebSoupRequestManagerProxy.h"
-#include "ewk_context_history_client_private.h"
 #include "ewk_context_private.h"
 #include "ewk_cookie_manager_private.h"
 #include "ewk_favicon_database_private.h"
@@ -62,7 +62,7 @@ static inline ContextMap& contextMap()
 
 Ewk_Context::Ewk_Context(WKContextRef context)
     : m_context(context)
-    , m_historyClient()
+    , m_historyClient(ContextHistoryClientEfl::create(context))
 {
     ContextMap::AddResult result = contextMap().add(context, this);
     ASSERT_UNUSED(result, result.isNewEntry);
@@ -99,7 +99,6 @@ Ewk_Context::Ewk_Context(WKContextRef context)
 #endif
 
     // Initialize WKContext clients.
-    ewk_context_history_client_attach(this);
     m_downloadManager = DownloadManagerEfl::create(this);
     m_requestManagerClient = RequestManagerClientEfl::create(this);
 }
@@ -232,6 +231,11 @@ DownloadManagerEfl* Ewk_Context::downloadManager() const
     return m_downloadManager.get();
 }
 
+ContextHistoryClientEfl* Ewk_Context::historyClient()
+{
+    return m_historyClient.get();
+}
+
 Ewk_Context* ewk_context_default_get()
 {
     return Ewk_Context::defaultContext().get();
@@ -273,15 +277,8 @@ void ewk_context_history_callbacks_set(Ewk_Context* ewkContext, Ewk_History_Navi
 {
     EINA_SAFETY_ON_NULL_RETURN(ewkContext);
 
-    Ewk_Context_History_Client& historyClient = ewkContext->historyClient();
-    historyClient.navigate_func = navigate;
-    historyClient.client_redirect_func = clientRedirect;
-    historyClient.server_redirect_func = serverRedirect;
-    historyClient.title_update_func = titleUpdate;
-    historyClient.populate_visited_links_func = populateVisitedLinks;
-    historyClient.user_data = data;
+    ewkContext->historyClient()->setCallbacks(navigate, clientRedirect, serverRedirect, titleUpdate, populateVisitedLinks, data);
 }
-
 
 void ewk_context_visited_link_add(Ewk_Context* ewkContext, const char* visitedURL)
 {

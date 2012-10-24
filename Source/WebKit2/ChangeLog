@@ -1,3 +1,36 @@
+2012-10-24  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Make History client a C++ class
+        https://bugs.webkit.org/show_bug.cgi?id=100104
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Created ContextHistoryClientEfl class to encapsulate history client code for EFL.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/ewk_context.cpp:
+        (Ewk_Context::Ewk_Context):
+        (ewk_context_history_callbacks_set):
+        * UIProcess/API/efl/ewk_context_history_client.cpp: Removed.
+        * UIProcess/API/efl/ewk_context_history_client_private.h: Removed.
+        * UIProcess/API/efl/ewk_context_private.h:
+        (WebKit):
+        (Ewk_Context):
+        * UIProcess/efl/ContextHistoryClientEfl.cpp: Added.
+        (WebKit):
+        (WebKit::toContextHistoryClientEfl):
+        (WebKit::ContextHistoryClientEfl::didNavigateWithNavigationData):
+        (WebKit::ContextHistoryClientEfl::didPerformClientRedirect):
+        (WebKit::ContextHistoryClientEfl::didPerformServerRedirect):
+        (WebKit::ContextHistoryClientEfl::didUpdateHistoryTitle):
+        (WebKit::ContextHistoryClientEfl::populateVisitedLinks):
+        (WebKit::ContextHistoryClientEfl::ContextHistoryClientEfl):
+        (WebKit::ContextHistoryClientEfl::setCallbacks):
+        * UIProcess/efl/ContextHistoryClientEfl.h: Added.
+        (WebKit):
+        (ContextHistoryClientEfl):
+        (WebKit::ContextHistoryClientEfl::create):
+
 2012-10-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to get the WebKitWebView associated to a WebKitDownload to WebKit2 GTK+
