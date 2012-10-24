@@ -190,7 +190,7 @@ void RenderMathMLOperator::updateFromElement()
         bottomGlyphHeight = glyphHeightForCharacter(partsData->bottomGlyph);
         if (partsData->middleGlyph)
             middleGlyphHeight = glyphHeightForCharacter(partsData->middleGlyph) - 1;
-        shouldStack = m_stretchHeight >= topGlyphHeight + middleGlyphHeight + bottomGlyphHeight;
+        shouldStack = m_stretchHeight >= topGlyphHeight + middleGlyphHeight + bottomGlyphHeight && extensionGlyphHeight > 0;
     }
     
     // Either stretch is disabled or we don't have a stretchable character over the minimum height

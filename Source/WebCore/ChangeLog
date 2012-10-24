@@ -1,3 +1,19 @@
+2012-10-24  David Barton  <dbarton@mathscribe.com>
+
+        [MathML] Timeouts on linux after r132264
+        https://bugs.webkit.org/show_bug.cgi?id=100202
+
+        Reviewed by Eric Seidel.
+
+        When building a stretched operator, such as a large parenthesis or bracket, we need to
+        check that the extension glyph's height is > 0, to avoid an infinite loop. The 0 height
+        can occur if the glyph is missing on the host system.
+
+        Tested by existing tests.
+
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::updateFromElement):
+
 2012-10-24  Parth Patel  <parpatel@rim.com>
 
         [BlackBerry] Extending existing ThreadUnsafe singletons in webkit to

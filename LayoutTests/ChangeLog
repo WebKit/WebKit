@@ -1,3 +1,14 @@
+2012-10-24  David Barton  <dbarton@mathscribe.com>
+
+        [MathML] Timeouts on linux after r132264
+        https://bugs.webkit.org/show_bug.cgi?id=100202
+
+        Reviewed by Eric Seidel.
+
+        The failing tests no longer timeout.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-24  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         CSS3 Media Queries - add resolution tests to W3C test suite
