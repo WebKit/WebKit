@@ -1194,6 +1194,7 @@ GNUmakefile
 
 AC_CONFIG_FILES([
 Source/WebKit/gtk/webkit/webkitversion.h
+Source/WebKit/gtk/po/POTFILES
 DerivedSources/WebCore/UserAgentGtk.h:Source/WebCore/platform/gtk/UserAgentGtk.h.in
 ])
 

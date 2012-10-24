@@ -1,3 +1,14 @@
+2012-10-23  Martin Robinson  <mrobinson@igalia.com>
+
+        POTFILES.in/.skip need updates for translators
+        https://bugs.webkit.org/show_bug.cgi?id=67580
+
+        Reviewed by Xan Lopez.
+
+        Now process POTFILES.in during configuration.
+
+        * configure.ac:
+
 2012-10-23  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Add support for resolution media query

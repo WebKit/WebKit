@@ -1,3 +1,19 @@
+2012-10-23  Martin Robinson  <mrobinson@igalia.com>
+
+        POTFILES.in/.skip need updates for translators
+        https://bugs.webkit.org/show_bug.cgi?id=67580
+
+        Reviewed by Xan Lopez.
+
+        Move POTFILES to POTFILES.in to satisfy intltools-update and also update
+        the list of files with translations. Since the way the path is calculated
+        is different now, we also need to change the gettext invocation in
+        GNUmakefile.am.
+
+        * GNUmakefile.am:
+        * POTFILES: Removed.
+        * POTFILES.in: Added.
+
 2012-06-11  Arnaud Renevier  <arno@renevier.net>
 
         Replace obsolete mkdir_p variables with MKDIR_P
