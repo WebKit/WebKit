@@ -74,6 +74,8 @@ public:
     CFDataRef createCFData();
 #endif
 
+    void reportMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     ResourceBuffer();
     ResourceBuffer(const char*, int);
