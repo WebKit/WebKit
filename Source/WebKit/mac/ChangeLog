@@ -1,3 +1,15 @@
+2012-10-23  Dan Bernstein  <mitz@apple.com>
+
+        WebKit/mac part of <rdar://problem/2966974> [mac] Kerning and ligatures are not enabled by default
+        https://bugs.webkit.org/show_bug.cgi?id=100188
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebView.mm:
+        (+[WebView initialize]): Added a local variable to hold the standard user defaults. Added
+        code to register a value of YES for the WebKitKerningAndLigaturesEnabledByDefault user
+        default. Changed to refer to that default key by name.
+
 2012-10-23  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Add support for resolution media query

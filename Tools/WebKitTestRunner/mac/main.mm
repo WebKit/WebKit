@@ -31,6 +31,7 @@ int main(int argc, const char* argv[])
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [NSApplication sharedApplication];
+    [[NSUserDefaults standardUserDefaults] setVolatileDomain:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:NO] forKey:@"WebKitKerningAndLigaturesEnabledByDefault"] forName:NSArgumentDomain];
     {
         WTR::TestController controller(argc, argv);
     }

@@ -1,3 +1,19 @@
+2012-10-23  Dan Bernstein  <mitz@apple.com>
+
+        Tools changes for <rdar://problem/2966974> [mac] Kerning and ligatures are not enabled by default
+        https://bugs.webkit.org/show_bug.cgi?id=100188
+
+        Reviewed by Sam Weinig.
+
+        Disable kerning and ligatures by default when running the tests.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues): Set a value of NO for the
+        WebKitKerningAndLigaturesEnabledByDefault user default.
+        * WebKitTestRunner/mac/main.mm:
+        (main): Register a value of NO for the WebKitKerningAndLigaturesEnabledByDefault user
+        default.
+
 2012-10-23  Simon Fraser  <simon.fraser@apple.com>
 
         Allow tests to run with a tile cache, and optionally dump the tile cache via layerTreeAsText()

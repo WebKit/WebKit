@@ -615,6 +615,8 @@ static void resetDefaultsToConsistentValues()
     [defaults setObject:[path stringByAppendingPathComponent:@"LocalStorage"] forKey:WebStorageDirectoryDefaultsKey];
     [defaults setObject:[path stringByAppendingPathComponent:@"LocalCache"] forKey:WebKitLocalCacheDefaultsKey];
 
+    [defaults setBool:NO forKey:@"WebKitKerningAndLigaturesEnabledByDefault"];
+
     WebPreferences *preferences = [WebPreferences standardPreferences];
 
     [preferences setAllowUniversalAccessFromFileURLs:YES];

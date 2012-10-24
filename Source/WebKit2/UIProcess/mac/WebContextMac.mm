@@ -43,6 +43,7 @@ using namespace WebCore;
 NSString *WebDatabaseDirectoryDefaultsKey = @"WebDatabaseDirectory";
 NSString *WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
 NSString *WebStorageDirectoryDefaultsKey = @"WebKitLocalStorageDatabasePathPreferenceKey";
+NSString *WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey = @"WebKitKerningAndLigaturesEnabledByDefault";
 
 static NSString *WebKitApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification = @"NSApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification";
 
@@ -73,6 +74,17 @@ String WebContext::applicationCacheDirectory()
     return [cacheDir stringByAppendingPathComponent:appName];
 }
 
+static void registerUserDefaultsIfNeeded()
+{
+    static bool didRegister;
+    if (didRegister)
+        return;
+
+    didRegister = true;
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    [[NSUserDefaults standardUserDefaults] registerDefaults:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey]];
+#endif
+}
 
 void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
@@ -84,10 +96,11 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     parameters.nsURLCacheMemoryCapacity = [urlCache memoryCapacity];
     parameters.nsURLCacheDiskCapacity = [urlCache diskCapacity];
 
+    registerUserDefaultsIfNeeded();
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     parameters.shouldForceScreenFontSubstitution = [[NSUserDefaults standardUserDefaults] boolForKey:@"NSFontDefaultScreenFontSubstitutionEnabled"];
 #endif
-    parameters.shouldEnableKerningAndLigaturesByDefault = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitKerningAndLigaturesEnabledByDefault"];
+    parameters.shouldEnableKerningAndLigaturesByDefault = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey];
 
 #if USE(ACCELERATED_COMPOSITING) && HAVE(HOSTED_CORE_ANIMATION)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
