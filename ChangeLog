@@ -1,3 +1,14 @@
+2012-10-24  Michael Carmody  <mcarmody@rim.com>
+
+        [BlackBerry] change CMAKE_<CCXX|C>_FLAGS_<RELEASE|DEBUG> from enviroment flags
+        https://bugs.webkit.org/show_bug.cgi?id=100256
+
+        Reviewed by Rob Buis.
+
+        This allow override of compile flags without having to edit CMake files.
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+
 2012-10-24  Priit Laes  <plaes@plaes.org>
 
         [GTK] ./configure output for CSS Shaders is broken
