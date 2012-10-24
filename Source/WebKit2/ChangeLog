@@ -1,3 +1,20 @@
+2012-10-23  Sam Weinig  <sam@webkit.org>
+
+        Stop using NSHomeDirectory() to get the home directory, it doesn't always return what we want
+        https://bugs.webkit.org/show_bug.cgi?id=100180
+
+        Reviewed by Anders Carlsson.
+
+        NSHomeDirectory() doesn't return the real home directory if the host process
+        is App Sandboxed, so drop down and use getpwuid_r instead.
+
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::appendReadwriteSandboxDirectory):
+        There is no reason anymore to try to create the directory.
+
+        (WebKit::WebProcess::initializeSandbox):
+        Switch to getpwuid_r.
+
 2012-10-23  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][Soup] Implement the default authentication dialog via WebCoreSupport
