@@ -482,7 +482,8 @@ input[type="date"] {
     -webkit-align-items: stretch;
     display: -webkit-inline-flex;
     font-family: monospace;
-    padding: 0 0 0 1px;
+    padding: 0;
+    -webkit-padding-start: 1px;
 }
 #endif
 #if defined(ENABLE_INPUT_TYPE_DATETIME) && ENABLE_INPUT_TYPE_DATETIME
@@ -490,7 +491,8 @@ input[type="datetime"] {
     -webkit-align-items: stretch;
     display: -webkit-inline-flex;
     font-family: monospace;
-    padding: 0 0 0 1px;
+    padding: 0;
+    -webkit-padding-start: 1px;
 }
 #endif
 #if defined(ENABLE_INPUT_TYPE_DATETIMELOCAL) && ENABLE_INPUT_TYPE_DATETIMELOCAL
@@ -498,7 +500,8 @@ input[type="datetime-local"] {
     -webkit-align-items: stretch;
     display: -webkit-inline-flex;
     font-family: monospace;
-    padding: 0 0 0 1px;
+    padding: 0;
+    -webkit-padding-start: 1px;
 }
 #endif
 #if defined(ENABLE_INPUT_TYPE_MONTH) && ENABLE_INPUT_TYPE_MONTH
@@ -506,7 +509,8 @@ input[type="month"] {
     -webkit-align-items: stretch;
     display: -webkit-inline-flex;
     font-family: monospace;
-    padding: 0 0 0 1px;
+    padding: 0;
+    -webkit-padding-start: 1px;
 }
 #endif
 #if defined(ENABLE_INPUT_TYPE_TIME) && ENABLE_INPUT_TYPE_TIME
@@ -514,7 +518,8 @@ input[type="time"] {
     -webkit-align-items: stretch;
     display: -webkit-inline-flex;
     font-family: monospace;
-    padding: 0 0 0 1px;
+    padding: 0;
+    -webkit-padding-start: 1px;
 }
 #endif
 #if defined(ENABLE_INPUT_TYPE_WEEK) && ENABLE_INPUT_TYPE_WEEK
@@ -522,7 +527,8 @@ input[type="week"] {
     -webkit-align-items: stretch;
     display: -webkit-inline-flex;
     font-family: monospace;
-    padding: 0 0 0 1px;
+    padding: 0;
+    -webkit-padding-start: 1px;
 }
 #endif
 
@@ -648,8 +654,8 @@ input[type="month"]::-webkit-inner-spin-button,
 input[type="time"]::-webkit-inner-spin-button,
 input[type="week"]::-webkit-inner-spin-button {
     display: inline-block;
-    margin-left: 0.2em;
     position: static;
+    -webkit-margin-start: 2px;
 }
 #endif
 

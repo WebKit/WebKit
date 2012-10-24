@@ -1,5 +1,15 @@
 2012-10-23  Kent Tamura  <tkent@chromium.org>
 
+        Multiple fields input UI: Don't use CSS properties for physical direction
+        https://bugs.webkit.org/show_bug.cgi?id=100195
+
+        Reviewed by Kentaro Hara.
+
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.png:
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n-expected.png:
+
+2012-10-23  Kent Tamura  <tkent@chromium.org>
+
         [Chromium] Rebaseline for r132291
         https://bugs.webkit.org/show_bug.cgi?id=100088
 
