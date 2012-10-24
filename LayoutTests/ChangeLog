@@ -1,3 +1,11 @@
+2012-10-24  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update
+
+        * platform/chromium/TestExpectations:
+         - exif-orientation-css.html is ImageOnlyFailure.
+         - Still need rebaseline for calendar-picker-appearance-step.html on Windows?
+
 2012-10-12  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] Skip tests that depend on disabling accelerated compositing

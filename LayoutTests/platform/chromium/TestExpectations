@@ -2787,6 +2787,7 @@ crbug.com/83504 [ Win ] fast/css/custom-font-xheight.html [ Failure Pass Slow ]
 crbug.com/83504 [ Mac ] fast/css/custom-font-xheight.html [ Failure Pass ]
 
 webkit.org/b/99818 [ SNOWLEOPARD XP ] fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events.html [ Failure ]
+webkit.org/b/99421 [ Win ] platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step.html [ ImageOnlyFailure ]
 
 # New tests added in r87121
 webkit.org/b/61169 [ Android Linux Win ] css3/images/optimize-contrast-canvas.html [ ImageOnlyFailure ]
@@ -4021,7 +4022,7 @@ webkit.org/b/99873 platform/chromium/virtual/gpu/fast/canvas/webgl/array-bounds-
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/animated-gif-restored-from-bfcache.html [ Failure ]
 webkit.org/b/94240 [ Linux Win ] platform/chromium/virtual/deferred/fast/images/color-jpeg-with-color-profile.html [ ImageOnlyFailure ]
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/embed-image.html [ Failure ]
-webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/exif-orientation-css.html [ Failure ]
+webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/exif-orientation-css.html [ ImageOnlyFailure ]
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/exif-orientation.html [ Failure ]
 webkit.org/b/94240 [ Linux Win SnowLeopard ] platform/chromium/virtual/deferred/fast/images/favicon-as-image.html [ Failure ]
 webkit.org/b/94240 [ Linux Win SnowLeopard MountainLion ] platform/chromium/virtual/deferred/fast/images/gif-large-checkerboard.html [ ImageOnlyFailure ]
