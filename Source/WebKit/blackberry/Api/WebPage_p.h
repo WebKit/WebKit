@@ -53,7 +53,7 @@ class DOMWrapperWorld;
 class Document;
 class Element;
 class Frame;
-class GeolocationControllerClientBlackBerry;
+class GeolocationClientBlackBerry;
 class GraphicsLayerBlackBerry;
 class JavaScriptDebuggerBlackBerry;
 class LayerWebKitThread;

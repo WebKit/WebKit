@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef GeolocationControllerClientBlackBerry_h
-#define GeolocationControllerClientBlackBerry_h
+#ifndef GeolocationClientBlackBerry_h
+#define GeolocationClientBlackBerry_h
 
 #include <BlackBerryPlatformGeoTracker.h>
 #include <BlackBerryPlatformGeoTrackerListener.h>
@@ -32,9 +32,9 @@ class WebPagePrivate;
 
 namespace WebCore {
 
-class GeolocationControllerClientBlackBerry : public GeolocationClient, public BlackBerry::Platform::GeoTrackerListener {
+class GeolocationClientBlackBerry : public GeolocationClient, public BlackBerry::Platform::GeoTrackerListener {
 public:
-    GeolocationControllerClientBlackBerry(BlackBerry::WebKit::WebPagePrivate*);
+    GeolocationClientBlackBerry(BlackBerry::WebKit::WebPagePrivate*);
 
     virtual void geolocationDestroyed();
     virtual void startUpdating();
@@ -58,4 +58,4 @@ private:
 };
 }
 
-#endif // GeolocationControllerClientBlackBerry_h
+#endif // GeolocationClientBlackBerry_h

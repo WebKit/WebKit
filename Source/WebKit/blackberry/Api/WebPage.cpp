@@ -60,7 +60,7 @@
 #if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
 #include "GeolocationClientMock.h"
 #endif
-#include "GeolocationControllerClientBlackBerry.h"
+#include "GeolocationClientBlackBerry.h"
 #include "GroupSettings.h"
 #include "HTMLAreaElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -542,9 +542,8 @@ void WebPagePrivate::init(const BlackBerry::Platform::String& pageGroupName)
         WebCore::provideGeolocationTo(m_page, mock);
         mock->setController(WebCore::GeolocationController::from(m_page));
     } else
-#else
-        WebCore::provideGeolocationTo(m_page, new GeolocationControllerClientBlackBerry(this));
 #endif
+        WebCore::provideGeolocationTo(m_page, new GeolocationClientBlackBerry(this));
 #if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
     if (getenv("drtRun"))
         WebCore::provideDeviceOrientationTo(m_page, new DeviceOrientationClientMock);

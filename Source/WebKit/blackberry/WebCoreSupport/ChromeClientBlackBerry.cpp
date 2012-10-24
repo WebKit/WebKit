@@ -34,7 +34,7 @@
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "Geolocation.h"
-#include "GeolocationControllerClientBlackBerry.h"
+#include "GeolocationClientBlackBerry.h"
 #include "GraphicsLayer.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"

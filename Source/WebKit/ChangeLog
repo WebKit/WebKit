@@ -1,3 +1,17 @@
+2012-10-24  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Rename GeolocationControllerClientBlackBerry to GeolocationClientBlackBerry
+        https://bugs.webkit.org/show_bug.cgi?id=100250
+
+        Reviewed by Rob Buis.
+
+        Rename GeolocationControllerClientBlackBerry to GeolocationClientBlackBerry
+        to prevent confusion.
+
+        PR 230196
+
+        * PlatformBlackBerry.cmake:
+
 2012-10-23  Hyowon Kim  <hw1008.kim@samsung.com>
 
         [Texmap][EFL] Add AcceleratedCompositingContextEfl to the build system.

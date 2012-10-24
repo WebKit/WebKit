@@ -1,3 +1,38 @@
+2012-10-24  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Rename GeolocationControllerClientBlackBerry to GeolocationClientBlackBerry
+        https://bugs.webkit.org/show_bug.cgi?id=100250
+
+        Reviewed by Rob Buis.
+
+        Rename GeolocationControllerClientBlackBerry to GeolocationClientBlackBerry
+        to prevent confusion.
+        PR 230196
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        * Api/WebPage_p.h:
+        (WebCore):
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        * WebCoreSupport/GeolocationClientBlackBerry.cpp: Renamed from Source/WebKit/blackberry/WebCoreSupport/GeolocationControllerClientBlackBerry.cpp.
+        (frameOrigin):
+        (GeolocationClientBlackBerry::GeolocationClientBlackBerry):
+        (GeolocationClientBlackBerry::geolocationDestroyed):
+        (GeolocationClientBlackBerry::startUpdating):
+        (GeolocationClientBlackBerry::stopUpdating):
+        (GeolocationClientBlackBerry::lastPosition):
+        (GeolocationClientBlackBerry::requestPermission):
+        (GeolocationClientBlackBerry::cancelPermissionRequest):
+        (GeolocationClientBlackBerry::onLocationUpdate):
+        (GeolocationClientBlackBerry::onLocationError):
+        (GeolocationClientBlackBerry::onPermission):
+        (GeolocationClientBlackBerry::setEnableHighAccuracy):
+        * WebCoreSupport/GeolocationClientBlackBerry.h: Renamed from Source/WebKit/blackberry/WebCoreSupport/GeolocationControllerClientBlackBerry.h.
+        (WebKit):
+        (WebCore):
+        (GeolocationClientBlackBerry):
+        (WebCore::GeolocationClientBlackBerry::tracker):
+
 2012-10-24  Parth Patel  <parpatel@rim.com>
 
         [BlackBerry] Extending existing ThreadUnsafe singletons in webkit to

@@ -17,7 +17,7 @@
  */
 
 #include "config.h"
-#include "GeolocationControllerClientBlackBerry.h"
+#include "GeolocationClientBlackBerry.h"
 
 #include "Chrome.h"
 #include "Geolocation.h"
@@ -28,21 +28,29 @@
 
 using namespace WebCore;
 
-GeolocationControllerClientBlackBerry::GeolocationControllerClientBlackBerry(BlackBerry::WebKit::WebPagePrivate* webPagePrivate)
+static CString frameOrigin(Frame* frame)
+{
+    DOMWindow* window = frame->document()->domWindow();
+    SecurityOrigin* origin = window->document()->securityOrigin();
+    CString latinOrigin = origin->toString().latin1();
+    return latinOrigin;
+}
+
+GeolocationClientBlackBerry::GeolocationClientBlackBerry(BlackBerry::WebKit::WebPagePrivate* webPagePrivate)
     : m_webPagePrivate(webPagePrivate)
     , m_tracker(0)
     , m_accuracy(false)
 {
 }
 
-void GeolocationControllerClientBlackBerry::geolocationDestroyed()
+void GeolocationClientBlackBerry::geolocationDestroyed()
 {
     if (m_tracker)
         m_tracker->destroy();
     delete this;
 }
 
-void GeolocationControllerClientBlackBerry::startUpdating()
+void GeolocationClientBlackBerry::startUpdating()
 {
     if (m_tracker)
         m_tracker->resume();
@@ -50,18 +58,18 @@ void GeolocationControllerClientBlackBerry::startUpdating()
         m_tracker = BlackBerry::Platform::GeoTracker::create(this, m_accuracy);
 }
 
-void GeolocationControllerClientBlackBerry::stopUpdating()
+void GeolocationClientBlackBerry::stopUpdating()
 {
     if (m_tracker)
         m_tracker->suspend();
 }
 
-GeolocationPosition* GeolocationControllerClientBlackBerry::lastPosition()
+GeolocationPosition* GeolocationClientBlackBerry::lastPosition()
 {
     return m_lastPosition.get();
 }
 
-void GeolocationControllerClientBlackBerry::requestPermission(Geolocation* location)
+void GeolocationClientBlackBerry::requestPermission(Geolocation* location)
 {
     Frame* frame = location->frame();
     if (!frame)
@@ -69,7 +77,7 @@ void GeolocationControllerClientBlackBerry::requestPermission(Geolocation* locat
     m_webPagePrivate->m_page->chrome()->client()->requestGeolocationPermissionForFrame(frame, location);
 }
 
-void GeolocationControllerClientBlackBerry::cancelPermissionRequest(Geolocation* location)
+void GeolocationClientBlackBerry::cancelPermissionRequest(Geolocation* location)
 {
     Frame* frame = location->frame();
     if (!frame)
@@ -77,7 +85,7 @@ void GeolocationControllerClientBlackBerry::cancelPermissionRequest(Geolocation*
     m_webPagePrivate->m_page->chrome()->client()->cancelGeolocationPermissionRequestForFrame(frame, location);
 }
 
-void GeolocationControllerClientBlackBerry::onLocationUpdate(double timestamp, double latitude, double longitude, double accuracy, double altitude, bool altitudeValid,
+void GeolocationClientBlackBerry::onLocationUpdate(double timestamp, double latitude, double longitude, double accuracy, double altitude, bool altitudeValid,
                                                              double altitudeAccuracy, bool altitudeAccuracyValid, double speed, bool speedValid, double heading, bool headingValid)
 {
     m_lastPosition = GeolocationPosition::create(timestamp, latitude, longitude, accuracy, altitudeValid, altitude, altitudeAccuracyValid,
@@ -85,19 +93,19 @@ void GeolocationControllerClientBlackBerry::onLocationUpdate(double timestamp, d
     GeolocationController::from(m_webPagePrivate->m_page)->positionChanged(m_lastPosition.get());
 }
 
-void GeolocationControllerClientBlackBerry::onLocationError(const char* errorStr)
+void GeolocationClientBlackBerry::onLocationError(const char* errorStr)
 {
     RefPtr<GeolocationError> error = GeolocationError::create(GeolocationError::PositionUnavailable, String::fromUTF8(errorStr));
     GeolocationController::from(m_webPagePrivate->m_page)->errorOccurred(error.get());
 }
 
-void GeolocationControllerClientBlackBerry::onPermission(void* context, bool isAllowed)
+void GeolocationClientBlackBerry::onPermission(void* context, bool isAllowed)
 {
     Geolocation* position = static_cast<Geolocation*>(context);
     position->setIsAllowed(isAllowed);
 }
 
-void GeolocationControllerClientBlackBerry::setEnableHighAccuracy(bool newAccuracy)
+void GeolocationClientBlackBerry::setEnableHighAccuracy(bool newAccuracy)
 {
     if (m_accuracy == newAccuracy)
         return;

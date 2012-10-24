@@ -109,7 +109,7 @@ LIST(APPEND WebKit_SOURCES
     blackberry/WebCoreSupport/EditorClientBlackBerry.cpp
     blackberry/WebCoreSupport/FrameLoaderClientBlackBerry.cpp
     blackberry/WebCoreSupport/FrameNetworkingContextBlackBerry.cpp
-    blackberry/WebCoreSupport/GeolocationControllerClientBlackBerry.cpp
+    blackberry/WebCoreSupport/GeolocationClientBlackBerry.cpp
     blackberry/WebCoreSupport/IconDatabaseClientBlackBerry.cpp
     blackberry/WebCoreSupport/InspectorClientBlackBerry.cpp
     blackberry/WebCoreSupport/JavaScriptDebuggerBlackBerry.cpp
