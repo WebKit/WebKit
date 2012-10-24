@@ -1,3 +1,85 @@
+2012-10-23  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Rebaseline for r132291
+        https://bugs.webkit.org/show_bug.cgi?id=100088
+
+        * platform/chromium-linux/fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-linux/fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.png:
+        * platform/chromium-linux/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-linux/fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-linux/fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-linux/fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n-expected.png: Added.
+        * platform/chromium-linux/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-linux/fast/forms/month-multiple-fields/month-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png:
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-linux/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-linux/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-linux/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-mac-lion/fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac-lion/fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.png:
+        * platform/chromium-mac-lion/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-lion/fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-mac-lion/fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/month-multiple-fields/month-multiple-fields-appearance-style-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac-lion/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png:
+        * platform/chromium-mac-lion/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-mac-lion/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac-lion/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-lion/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.png:
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png:
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-mac/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-win-xp/fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.png:
+        * platform/chromium-win-xp/fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n-expected.png: Added.
+        * platform/chromium-win/fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-win/fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.png:
+        * platform/chromium-win/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-win/fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-win/fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-win/fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n-expected.png: Added.
+        * platform/chromium-win/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-win/fast/forms/month-multiple-fields/month-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png:
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-win/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-win/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-win/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png:
+
 2012-10-23  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed nightly gardening, skip new failing tests.
