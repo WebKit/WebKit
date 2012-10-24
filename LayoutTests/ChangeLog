@@ -1,3 +1,15 @@
+2012-10-23  Tony Chang  <tony@chromium.org>
+
+        [chromium] Remove duplicate platform/mac entries
+        https://bugs.webkit.org/show_bug.cgi?id=100167
+
+        Reviewed by Dirk Pranke.
+
+        We intentionally don't run platform/mac tests in Chromium.  Remove lines
+        that duplicate the directory WontFix.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-23  Takashi Sakamoto  <tasak@google.com>
 
         [Shadow DOM] Needs @host rule for ShadowDOM styling
