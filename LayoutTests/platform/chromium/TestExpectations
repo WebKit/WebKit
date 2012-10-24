@@ -91,6 +91,10 @@ webkit.org/b/90488 [ Linux Win Debug ] inspector [ Pass Slow ]
 webkit.org/b/90488 [ Linux Win Debug ] http/tests/inspector [ Pass Slow ]
 webkit.org/b/90488 [ Linux Win Debug ] http/tests/inspector-enabled [ Pass Slow ]
 
+# Chromium r163873 slowed down these tests
+webkit.org/b/100287 [ Linux Win Mac ] compositing/culling/filter-occlusion-blur-large.html [ Pass Slow ]
+webkit.org/b/66989 transforms/3d/point-mapping/3d-point-mapping-deep.html [ Failure ImageOnlyFailure Slow ]
+
 # The test has been timing out since landed in r130587.
 webkit.org/b/98659 [ Debug ] fast/dom/gc-dom-tree-lifetime.html [ Pass Timeout ]
 
@@ -2920,7 +2924,6 @@ webkit.org/b/66974 [ Debug ] fast/events/keydown-1.html [ Pass Timeout ]
 webkit.org/b/66989 transforms/3d/general/perspective-non-layer.html [ Failure ImageOnlyFailure ]
 webkit.org/b/66989 transforms/3d/general/transform-origin-z-change.html [ Failure ImageOnlyFailure ]
 webkit.org/b/66989 transforms/3d/point-mapping/3d-point-mapping-2.html [ Failure ImageOnlyFailure ]
-webkit.org/b/66989 transforms/3d/point-mapping/3d-point-mapping-deep.html [ Failure ImageOnlyFailure ]
 webkit.org/b/66989 transforms/3d/point-mapping/3d-point-mapping-coplanar.html [ Failure ImageOnlyFailure ]
 
 # We don't seem to load this glyph on windows
