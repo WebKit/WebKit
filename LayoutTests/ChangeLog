@@ -1,3 +1,11 @@
+2012-10-24  Nandor Huszka  <hnandor@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        Skipping a test because of r132303. Now ENABLE(SHADOW_DOM) is disabled on Qt.
+
+        * platform/qt/TestExpectations:
+
 2012-10-24  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [EFL] Unskip fast/events/tabindex-focus-blur-all.html.
