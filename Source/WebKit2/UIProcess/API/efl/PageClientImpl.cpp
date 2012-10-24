@@ -119,7 +119,9 @@ void PageClientImpl::processDidCrash()
 
 void PageClientImpl::didRelaunchProcess()
 {
-    notImplemented();
+    const char* themePath = ewk_view_theme_get(m_viewWidget);
+    if (themePath)
+        ewk_view_page_get(m_viewWidget)->setThemePath(themePath);
 }
 
 void PageClientImpl::pageClosed()
