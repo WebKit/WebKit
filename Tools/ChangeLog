@@ -1,3 +1,16 @@
+2012-10-24  Dirk Pranke  <dpranke@chromium.org>
+
+        tweak debug logging in webkit-patch optimize-baselines
+        https://bugs.webkit.org/show_bug.cgi?id=100294
+
+        Reviewed by Ojan Vafai.
+
+        This changes the logging to print out the baselines found
+        (and their checksums) even when we don't do anything.
+
+        * Scripts/webkitpy/common/checkout/baselineoptimizer.py:
+        (BaselineOptimizer.optimize):
+
 2012-10-24  Sailesh Agrawal  <sail@chromium.org>
 
         Incorrect keycodes for numpad /, -, +, .

@@ -235,15 +235,22 @@ class BaselineOptimizer(object):
         return _invert_dictionary(results_by_directory)
 
     def optimize(self, baseline_name):
+        basename = self._filesystem.basename(baseline_name)
         results_by_directory, new_results_by_directory = self._find_optimal_result_placement(baseline_name)
         self.new_results_by_directory = new_results_by_directory
         if new_results_by_directory == results_by_directory:
-            _log.debug("No optimization found, optimal?")
+            if new_results_by_directory:
+                _log.debug("No optimization found for %s, optimal?" % basename)
+                for path, result in results_by_directory.items():
+                    _log.debug("  %s: %s" % (self._filesystem.relpath(path, self._scm.checkout_root).replace(baseline_name, ''), result[0:6]))
+            else:
+                _log.debug("No baselines found for %s" % basename)
             return True
         if self._filtered_results_by_port_name(results_by_directory) != self._filtered_results_by_port_name(new_results_by_directory):
             _log.warning("Optimization failed")
             return False
 
+        _log.debug("Optimizing %s" % basename)
         _log.debug("before: ")
         for path, result in results_by_directory.items():
             _log.debug("  %s: %s" % (self._filesystem.relpath(path, self._scm.checkout_root).replace(baseline_name, ''), result[0:6]))
