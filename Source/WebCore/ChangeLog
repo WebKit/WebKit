@@ -1,3 +1,18 @@
+2012-10-23  Andreas Kling  <kling@webkit.org>
+
+        Shrink immutable ElementAttributeData and StylePropertySet by one pointer each.
+        <http://webkit.org/b/100123>
+
+        Reviewed by Anders Carlsson.
+
+        Remove one pointer of unintentional padding in the immutable versions of these objects.
+        583kB progression on Membuster3.
+
+        * css/StylePropertySet.cpp:
+        (WebCore::immutableStylePropertySetSize):
+        * dom/ElementAttributeData.cpp:
+        (WebCore::immutableElementAttributeDataSize):
+
 2012-10-23  Nate Chapin  <japhet@chromium.org>
 
         Crash in WebCore::SubresourceLoader::willSendRequest.

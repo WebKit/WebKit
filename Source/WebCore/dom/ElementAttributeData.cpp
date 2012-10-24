@@ -37,7 +37,7 @@ namespace WebCore {
 
 static size_t immutableElementAttributeDataSize(unsigned count)
 {
-    return sizeof(ImmutableElementAttributeData) + sizeof(Attribute) * count;
+    return sizeof(ElementAttributeData) + sizeof(Attribute) * count;
 }
 
 PassRefPtr<ElementAttributeData> ElementAttributeData::createImmutable(const Vector<Attribute>& attributes)

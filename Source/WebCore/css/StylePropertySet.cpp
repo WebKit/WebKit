@@ -53,7 +53,7 @@ static PropertySetCSSOMWrapperMap& propertySetCSSOMWrapperMap()
 
 static size_t immutableStylePropertySetSize(unsigned count)
 {
-    return sizeof(ImmutableStylePropertySet) + sizeof(CSSProperty) * count;
+    return sizeof(StylePropertySet) + sizeof(CSSProperty) * count;
 }
 
 PassRefPtr<StylePropertySet> StylePropertySet::createImmutable(const CSSProperty* properties, unsigned count, CSSParserMode cssParserMode)
