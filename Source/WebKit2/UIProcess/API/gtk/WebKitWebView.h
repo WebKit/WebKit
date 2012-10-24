@@ -371,6 +371,10 @@ webkit_web_view_save_to_file_finish                  (WebKitWebView             
                                                       GAsyncResult              *result,
                                                       GError                   **error);
 
+WEBKIT_API WebKitDownload *
+webkit_web_view_download_uri                         (WebKitWebView             *web_view,
+                                                      const char                *uri);
+
 G_END_DECLS
 
 #endif

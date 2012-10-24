@@ -103,6 +103,8 @@ private:
     virtual double customRepresentationZoomFactor();
     virtual void setCustomRepresentationZoomFactor(double);
 
+    virtual void handleDownloadRequest(DownloadProxy*);
+
     // Members of PageClientImpl class
     GtkWidget* m_viewWidget;
     WebCore::KeyBindingTranslator m_keyBindingTranslator;

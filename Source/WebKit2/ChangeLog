@@ -1,3 +1,64 @@
+2012-10-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to get the WebKitWebView associated to a WebKitDownload to WebKit2 GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=99836
+
+        Reviewed by Martin Robinson.
+
+        Add webkit_download_get_web_view() to get the WebKitWebView that
+        initiated the download and webkit_web_view_download_uri() to start
+        a new download associated to a WebKitWebView.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::handleDownloadRequest): Call
+        webkitWebViewBaseHandleDownloadRequest().
+        * UIProcess/API/gtk/PageClientImpl.h:
+        (PageClientImpl): Add handleDownloadRequest().
+        * UIProcess/API/gtk/WebKitDownload.cpp:
+        (webkitDownloadSetWebView): Set the WebKitWebView associated to
+        the download.
+        (webkit_download_get_web_view): Public method to get the
+        WebKitWebView associated to the download.
+        * UIProcess/API/gtk/WebKitDownload.h:
+        * UIProcess/API/gtk/WebKitDownloadPrivate.h:
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_download_uri): Use the new helper
+        webkitWebContextStartDownload().
+        (webkitWebContextStartDownload): Helper function to start a new
+        download that is also used by WebKitWebView.
+        * UIProcess/API/gtk/WebKitWebContextPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewHandleDownloadRequest): Call
+        webkitDownloadSetWebView() to associate the download with the
+        WebKitWebView.
+        (webkitWebViewConstructed): Set a download request handler.
+        (webkit_web_view_download_uri): Public method to start a new
+        download associated to the web view.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseSetDownloadRequestHandler): Set a function
+        pointer to be called when a new download is request for the web
+        view.
+        (webkitWebViewBaseHandleDownloadRequest): Call the download
+        request handler if any.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/tests/TestDownloads.cpp:
+        (testDownloadLocalFile):
+        (testDownloadLocalFileError):
+        (testDownloadRemoteFile):
+        (testDownloadRemoteFileError):
+        (testWebViewDownloadURI):
+        (testPolicyResponseDownload):
+        (beforeAll):
+        * UIProcess/PageClient.h:
+        (PageClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+
 2012-10-23  Dan Bernstein  <mitz@apple.com>
 
         WebKit2 part of <rdar://problem/2966974> [mac] Kerning and ligatures are not enabled by default

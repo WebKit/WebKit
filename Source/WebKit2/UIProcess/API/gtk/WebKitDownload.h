@@ -81,7 +81,10 @@ WEBKIT_API gdouble
 webkit_download_get_elapsed_time         (WebKitDownload *download);
 
 WEBKIT_API guint64
-webkit_download_get_received_data_length (WebKitDownload* download);
+webkit_download_get_received_data_length (WebKitDownload *download);
+
+WEBKIT_API WebKitWebView *
+webkit_download_get_web_view             (WebKitDownload *download);
 
 G_END_DECLS
 

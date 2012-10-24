@@ -28,6 +28,7 @@
 WebKitDownload* webkitDownloadCreate(WebKit::DownloadProxy*);
 bool webkitDownloadIsCancelled(WebKitDownload*);
 void webkitDownloadSetResponse(WebKitDownload*, WebKitURIResponse*);
+void webkitDownloadSetWebView(WebKitDownload*, WebKitWebView*);
 void webkitDownloadNotifyProgress(WebKitDownload*, guint64 bytesReceived);
 void webkitDownloadFailed(WebKitDownload*, const WebCore::ResourceError&);
 void webkitDownloadCancelled(WebKitDownload*);

@@ -290,7 +290,10 @@ static DownloadsMap& downloadsMap()
  * @context: a #WebKitWebContext
  * @uri: the URI to download
  *
- * Requests downloading of the specified URI string.
+ * Requests downloading of the specified URI string. The download operation
+ * will not be associated to any #WebKitWebView, if you are interested in
+ * starting a download from a particular #WebKitWebView use
+ * webkit_web_view_download_uri() instead.
  *
  * Returns: (transfer full): a new #WebKitDownload representing the
  *    the download operation.
@@ -300,10 +303,7 @@ WebKitDownload* webkit_web_context_download_uri(WebKitWebContext* context, const
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), 0);
     g_return_val_if_fail(uri, 0);
 
-    DownloadProxy* downloadProxy = context->priv->context->download(0, WebCore::ResourceRequest(String::fromUTF8(uri)));
-    WebKitDownload* download = webkitDownloadCreate(downloadProxy);
-    downloadsMap().set(downloadProxy, download);
-    return download;
+    return webkitWebContextStartDownload(context, uri, 0);
 }
 
 /**
@@ -693,6 +693,14 @@ WebKitDownload* webkitWebContextGetOrCreateDownload(DownloadProxy* downloadProxy
     download = adoptGRef(webkitDownloadCreate(downloadProxy));
     downloadsMap().set(downloadProxy, download.get());
     return download.get();
+}
+
+WebKitDownload* webkitWebContextStartDownload(WebKitWebContext* context, const char* uri, WebPageProxy* initiatingPage)
+{
+    DownloadProxy* downloadProxy = context->priv->context->download(initiatingPage, WebCore::ResourceRequest(String::fromUTF8(uri)));
+    WebKitDownload* download = webkitDownloadCreate(downloadProxy);
+    downloadsMap().set(downloadProxy, download);
+    return download;
 }
 
 void webkitWebContextRemoveDownload(DownloadProxy* downloadProxy)

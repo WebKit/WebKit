@@ -19,8 +19,8 @@
 
 #include "config.h"
 
-#include "TestMain.h"
 #include "WebKitTestServer.h"
+#include "WebViewTest.h"
 #include <glib/gstdio.h>
 #include <gtk/gtk.h>
 #include <libsoup/soup.h>
@@ -184,6 +184,7 @@ static void testDownloadLocalFile(DownloadTest* test, gconstpointer)
     GRefPtr<WebKitDownload> download = adoptGRef(webkit_web_context_download_uri(test->m_webContext, sourceURI.get()));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(download.get()));
     test->waitUntilDownloadFinishes();
+    g_assert(!webkit_download_get_web_view(download.get()));
 
     Vector<DownloadTest::DownloadEvent>& events = test->m_downloadEvents;
     g_assert_cmpint(events.size(), ==, 5);
@@ -248,6 +249,7 @@ static void testDownloadLocalFileError(DownloadErrorTest* test, gconstpointer)
     GRefPtr<WebKitDownload> download = adoptGRef(webkit_web_context_download_uri(test->m_webContext, "file:///foo/bar"));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(download.get()));
     test->waitUntilDownloadFinishes();
+    g_assert(!webkit_download_get_web_view(download.get()));
 
     Vector<DownloadTest::DownloadEvent>& events = test->m_downloadEvents;
     g_assert_cmpint(events.size(), ==, 3);
@@ -264,6 +266,7 @@ static void testDownloadLocalFileError(DownloadErrorTest* test, gconstpointer)
     download = adoptGRef(webkit_web_context_download_uri(test->m_webContext, uri.get()));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(download.get()));
     test->waitUntilDownloadFinishes();
+    g_assert(!webkit_download_get_web_view(download.get()));
 
     events = test->m_downloadEvents;
     g_assert_cmpint(events.size(), ==, 4);
@@ -279,6 +282,7 @@ static void testDownloadLocalFileError(DownloadErrorTest* test, gconstpointer)
     download = adoptGRef(webkit_web_context_download_uri(test->m_webContext, uri.get()));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(download.get()));
     test->waitUntilDownloadFinishes();
+    g_assert(!webkit_download_get_web_view(download.get()));
 
     events = test->m_downloadEvents;
     g_assert_cmpint(events.size(), ==, 4);
@@ -324,6 +328,7 @@ static void testDownloadRemoteFile(DownloadTest* test, gconstpointer)
     GRefPtr<WebKitDownload> download = adoptGRef(webkit_web_context_download_uri(test->m_webContext, kServer->getURIForPath("/test.pdf").data()));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(download.get()));
     test->waitUntilDownloadFinishes();
+    g_assert(!webkit_download_get_web_view(download.get()));
 
     Vector<DownloadTest::DownloadEvent>& events = test->m_downloadEvents;
     g_assert_cmpint(events.size(), ==, 5);
@@ -351,6 +356,7 @@ static void testDownloadRemoteFileError(DownloadErrorTest* test, gconstpointer)
                                                                                  kServer->getURIForPath("/foo").data()));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(download.get()));
     test->waitUntilDownloadFinishes();
+    g_assert(!webkit_download_get_web_view(download.get()));
 
     Vector<DownloadTest::DownloadEvent>& events = test->m_downloadEvents;
     g_assert_cmpint(events.size(), ==, 4);
@@ -367,6 +373,7 @@ static void testDownloadRemoteFileError(DownloadErrorTest* test, gconstpointer)
     download = adoptGRef(webkit_web_context_download_uri(test->m_webContext, kServer->getURIForPath("/test.pdf").data()));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(download.get()));
     test->waitUntilDownloadFinishes();
+    g_assert(!webkit_download_get_web_view(download.get()));
 
     events = test->m_downloadEvents;
     g_assert_cmpint(events.size(), ==, 4);
@@ -382,6 +389,7 @@ static void testDownloadRemoteFileError(DownloadErrorTest* test, gconstpointer)
     download = adoptGRef(webkit_web_context_download_uri(test->m_webContext, kServer->getURIForPath("/test.pdf").data()));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(download.get()));
     test->waitUntilDownloadFinishes();
+    g_assert(!webkit_download_get_web_view(download.get()));
 
     events = test->m_downloadEvents;
     g_assert_cmpint(events.size(), ==, 4);
@@ -392,6 +400,110 @@ static void testDownloadRemoteFileError(DownloadErrorTest* test, gconstpointer)
     events.clear();
     g_assert_cmpfloat(webkit_download_get_estimated_progress(download.get()), <, 1);
     test->checkDestinationAndDeleteFile(download.get(), kServerSuggestedFilename);
+}
+
+class WebViewDownloadTest: public WebViewTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(WebViewDownloadTest);
+
+    static void downloadStartedCallback(WebKitWebContext* context, WebKitDownload* download, WebViewDownloadTest* test)
+    {
+        test->m_download = download;
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(download));
+        test->quitMainLoop();
+    }
+
+    WebViewDownloadTest()
+    {
+        g_signal_connect(webkit_web_view_get_context(m_webView), "download-started", G_CALLBACK(downloadStartedCallback), this);
+    }
+
+    ~WebViewDownloadTest()
+    {
+        g_signal_handlers_disconnect_matched(webkit_web_view_get_context(m_webView), G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
+    }
+
+    void waitUntilDownloadStarted()
+    {
+        m_download = 0;
+        g_main_loop_run(m_mainLoop);
+        g_assert(m_download.get());
+    }
+
+    static gboolean downloadDecideDestinationCallback(WebKitDownload* download, const gchar* suggestedFilename, WebViewDownloadTest* test)
+    {
+        GOwnPtr<char> destination(g_build_filename(kTempDirectory, suggestedFilename, NULL));
+        GOwnPtr<char> destinationURI(g_filename_to_uri(destination.get(), 0, 0));
+        webkit_download_set_destination(download, destinationURI.get());
+        return TRUE;
+    }
+
+    static void downloadFinishedCallback(WebKitDownload* download, WebViewDownloadTest* test)
+    {
+        test->quitMainLoop();
+    }
+
+    void waitUntilDownloadFinished()
+    {
+        g_signal_connect(m_download.get(), "decide-destination", G_CALLBACK(downloadDecideDestinationCallback), this);
+        g_signal_connect(m_download.get(), "finished", G_CALLBACK(downloadFinishedCallback), this);
+        g_main_loop_run(m_mainLoop);
+    }
+
+    GRefPtr<WebKitDownload> m_download;
+};
+
+static void testWebViewDownloadURI(WebViewDownloadTest* test, gconstpointer)
+{
+    GRefPtr<WebKitDownload> download = adoptGRef(webkit_web_view_download_uri(test->m_webView, kServer->getURIForPath("/test.pdf").data()));
+    test->waitUntilDownloadStarted();
+    g_assert(test->m_webView == webkit_download_get_web_view(download.get()));
+    test->waitUntilDownloadFinished();
+
+    GRefPtr<GFile> downloadFile = adoptGRef(g_file_new_for_uri(webkit_download_get_destination(download.get())));
+    GRefPtr<GFileInfo> downloadFileInfo = adoptGRef(g_file_query_info(downloadFile.get(), G_FILE_ATTRIBUTE_STANDARD_SIZE, static_cast<GFileQueryInfoFlags>(0), 0, 0));
+    g_assert_cmpint(g_file_info_get_size(downloadFileInfo.get()), >, 0);
+    g_file_delete(downloadFile.get(), 0, 0);
+}
+
+class PolicyResponseDownloadTest: public WebViewDownloadTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(PolicyResponseDownloadTest);
+
+    static gboolean decidePolicyCallback(WebKitWebView* webView, WebKitPolicyDecision* decision, WebKitPolicyDecisionType type, PolicyResponseDownloadTest* test)
+    {
+        if (type != WEBKIT_POLICY_DECISION_TYPE_RESPONSE)
+            return FALSE;
+
+        webkit_policy_decision_download(decision);
+        return TRUE;
+    }
+
+    PolicyResponseDownloadTest()
+    {
+        g_signal_connect(m_webView, "decide-policy", G_CALLBACK(decidePolicyCallback), this);
+    }
+
+    ~PolicyResponseDownloadTest()
+    {
+        g_signal_handlers_disconnect_matched(m_webView, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
+    }
+
+    void cancelDownloadAndWaitUntilFinished()
+    {
+        webkit_download_cancel(m_download.get());
+        waitUntilDownloadFinished();
+        m_download = 0;
+    }
+};
+
+static void testPolicyResponseDownload(PolicyResponseDownloadTest* test, gconstpointer)
+{
+    // Test that a download started by the the policy checker contains the web view.
+    test->loadURI(kServer->getURIForPath("/test.pdf").data());
+    test->waitUntilDownloadStarted();
+    g_assert(test->m_webView == webkit_download_get_web_view(test->m_download.get()));
+    test->cancelDownloadAndWaitUntilFinished();
 }
 
 void beforeAll()
@@ -406,6 +518,8 @@ void beforeAll()
     DownloadErrorTest::add("Downloads", "local-file-error", testDownloadLocalFileError);
     DownloadTest::add("Downloads", "remote-file", testDownloadRemoteFile);
     DownloadErrorTest::add("Downloads", "remote-file-error", testDownloadRemoteFileError);
+    WebViewDownloadTest::add("WebKitWebView", "download-uri", testWebViewDownloadURI);
+    PolicyResponseDownloadTest::add("Downloads", "policy-decision-download", testPolicyResponseDownload);
 }
 
 void afterAll()

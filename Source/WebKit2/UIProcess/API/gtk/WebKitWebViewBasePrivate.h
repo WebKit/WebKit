@@ -60,4 +60,8 @@ bool webkitWebViewBaseIsFocused(WebKitWebViewBase*);
 bool webkitWebViewBaseIsVisible(WebKitWebViewBase*);
 bool webkitWebViewBaseIsInWindow(WebKitWebViewBase*);
 
+typedef void (*WebKitWebViewBaseDownloadRequestHandler) (WebKitWebViewBase*, WebKit::DownloadProxy*);
+void webkitWebViewBaseSetDownloadRequestHandler(WebKitWebViewBase*, WebKitWebViewBaseDownloadRequestHandler);
+void webkitWebViewBaseHandleDownloadRequest(WebKitWebViewBase*, WebKit::DownloadProxy*);
+
 #endif // WebKitWebViewBasePrivate_h

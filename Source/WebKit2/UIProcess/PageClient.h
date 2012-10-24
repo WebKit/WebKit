@@ -129,8 +129,11 @@ public:
 
 #if PLATFORM(QT) || PLATFORM(EFL)
     virtual void updateTextInputState() = 0;
-    virtual void handleDownloadRequest(DownloadProxy*) = 0;
 #endif // PLATFORM(QT) || PLATFORM(EFL)
+
+#if PLATFORM(QT) || PLATFORM(EFL) || PLATFORM(GTK)
+    virtual void handleDownloadRequest(DownloadProxy*) = 0;
+#endif // PLATFORM(QT) || PLATFORM(EFL) || PLATFORM(GTK)
 
 #if PLATFORM(QT) || PLATFORM(EFL)
     virtual void didChangeContentsSize(const WebCore::IntSize&) = 0;

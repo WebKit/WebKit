@@ -28,6 +28,7 @@
 #include "WebKitContextMenuClient.h"
 #include "WebKitContextMenuItemPrivate.h"
 #include "WebKitContextMenuPrivate.h"
+#include "WebKitDownloadPrivate.h"
 #include "WebKitEnumTypes.h"
 #include "WebKitError.h"
 #include "WebKitFaviconDatabasePrivate.h"
@@ -390,6 +391,12 @@ static gboolean webkitWebViewRunFileChooser(WebKitWebView* webView, WebKitFileCh
     return TRUE;
 }
 
+static void webkitWebViewHandleDownloadRequest(WebKitWebViewBase* webViewBase, DownloadProxy* downloadProxy)
+{
+    GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(downloadProxy);
+    webkitDownloadSetWebView(download.get(), WEBKIT_WEB_VIEW(webViewBase));
+}
+
 static void webkitWebViewConstructed(GObject* object)
 {
     if (G_OBJECT_CLASS(webkit_web_view_parent_class)->constructed)
@@ -400,6 +407,7 @@ static void webkitWebViewConstructed(GObject* object)
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(webView);
 
     webkitWebViewBaseCreateWebPage(webViewBase, webkitWebContextGetContext(priv->context), 0);
+    webkitWebViewBaseSetDownloadRequestHandler(webViewBase, webkitWebViewHandleDownloadRequest);
 
     attachLoaderClientToView(webView);
     attachUIClientToView(webView);
@@ -2757,4 +2765,25 @@ gboolean webkit_web_view_save_to_file_finish(WebKitWebView* webView, GAsyncResul
         return FALSE;
 
     return TRUE;
+}
+
+/**
+ * webkit_web_view_download_uri:
+ * @web_view: a #WebKitWebView
+ * @uri: the URI to download
+ *
+ * Requests downloading of the specified URI string for @web_view.
+ *
+ * Returns: (transfer full): a new #WebKitDownload representing the
+ *    the download operation.
+ */
+WebKitDownload* webkit_web_view_download_uri(WebKitWebView* webView, const char* uri)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+    g_return_val_if_fail(uri, 0);
+
+    WebKitDownload* download = webkitWebContextStartDownload(webView->priv->context, uri, getPage(webView));
+    webkitDownloadSetWebView(download, webView);
+
+    return download;
 }

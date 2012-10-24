@@ -122,6 +122,7 @@ webkit_web_view_save
 webkit_web_view_save_finish
 webkit_web_view_save_to_file
 webkit_web_view_save_to_file_finish
+webkit_web_view_download_uri
 
 <SUBSECTION WebKitJavascriptResult>
 WebKitJavascriptResult
@@ -395,6 +396,7 @@ webkit_download_cancel
 webkit_download_get_estimated_progress
 webkit_download_get_elapsed_time
 webkit_download_get_received_data_length
+webkit_download_get_web_view
 
 <SUBSECTION Standard>
 WebKitDownloadClass

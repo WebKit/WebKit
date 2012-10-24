@@ -306,4 +306,9 @@ void PageClientImpl::startDrag(const WebCore::DragData& dragData, PassRefPtr<Sha
     webkitWebViewBaseStartDrag(WEBKIT_WEB_VIEW_BASE(m_viewWidget), dragData, dragImage);
 }
 
+void PageClientImpl::handleDownloadRequest(DownloadProxy* download)
+{
+    webkitWebViewBaseHandleDownloadRequest(WEBKIT_WEB_VIEW_BASE(m_viewWidget), download);
+}
+
 } // namespace WebKit

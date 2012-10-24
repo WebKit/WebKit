@@ -35,6 +35,7 @@
 
 WebKit::WebContext* webkitWebContextGetContext(WebKitWebContext*);
 WebKitDownload* webkitWebContextGetOrCreateDownload(WebKit::DownloadProxy*);
+WebKitDownload* webkitWebContextStartDownload(WebKitWebContext*, const char* uri, WebKit::WebPageProxy*);
 void webkitWebContextRemoveDownload(WebKit::DownloadProxy*);
 void webkitWebContextDownloadStarted(WebKitWebContext*, WebKitDownload*);
 WebKit::WebSoupRequestManagerProxy* webkitWebContextGetRequestManager(WebKitWebContext*);

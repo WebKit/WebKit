@@ -108,6 +108,8 @@ struct _WebKitWebViewBasePrivate {
     bool isFocused : 1;
     bool isVisible : 1;
 
+    WebKitWebViewBaseDownloadRequestHandler downloadHandler;
+
 #if ENABLE(FULLSCREEN_API)
     bool fullScreenModeActive;
     WebFullScreenClientGtk fullScreenClient;
@@ -977,4 +979,15 @@ bool webkitWebViewBaseIsVisible(WebKitWebViewBase* webViewBase)
 bool webkitWebViewBaseIsInWindow(WebKitWebViewBase* webViewBase)
 {
     return webViewBase->priv->toplevelOnScreenWindow;
+}
+
+void webkitWebViewBaseSetDownloadRequestHandler(WebKitWebViewBase* webViewBase, WebKitWebViewBaseDownloadRequestHandler downloadHandler)
+{
+    webViewBase->priv->downloadHandler = downloadHandler;
+}
+
+void webkitWebViewBaseHandleDownloadRequest(WebKitWebViewBase* webViewBase, DownloadProxy* download)
+{
+    if (webViewBase->priv->downloadHandler)
+        webViewBase->priv->downloadHandler(webViewBase, download);
 }

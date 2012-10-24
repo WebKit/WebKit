@@ -57,6 +57,7 @@ struct _WebKitDownloadPrivate {
 
     GRefPtr<WebKitURIRequest> request;
     GRefPtr<WebKitURIResponse> response;
+    WebKitWebView* webView;
     CString destinationURI;
     guint64 currentSize;
     bool isCancelled;
@@ -71,7 +72,10 @@ G_DEFINE_TYPE(WebKitDownload, webkit_download, G_TYPE_OBJECT)
 
 static void webkitDownloadFinalize(GObject* object)
 {
-    WEBKIT_DOWNLOAD(object)->priv->~WebKitDownloadPrivate();
+    WebKitDownloadPrivate* priv = WEBKIT_DOWNLOAD(object)->priv;
+    if (priv->webView)
+        g_object_remove_weak_pointer(G_OBJECT(priv->webView), reinterpret_cast<void**>(&priv->webView));
+    priv->~WebKitDownloadPrivate();
     G_OBJECT_CLASS(webkit_download_parent_class)->finalize(object);
 }
 
@@ -276,6 +280,12 @@ void webkitDownloadSetResponse(WebKitDownload* download, WebKitURIResponse* resp
 {
     download->priv->response = response;
     g_object_notify(G_OBJECT(download), "response");
+}
+
+void webkitDownloadSetWebView(WebKitDownload* download, WebKitWebView* webView)
+{
+    download->priv->webView = webView;
+    g_object_add_weak_pointer(G_OBJECT(webView), reinterpret_cast<void**>(&download->priv->webView));
 }
 
 bool webkitDownloadIsCancelled(WebKitDownload* download)
@@ -529,4 +539,20 @@ guint64 webkit_download_get_received_data_length(WebKitDownload* download)
     g_return_val_if_fail(WEBKIT_IS_DOWNLOAD(download), 0);
 
     return download->priv->currentSize;
+}
+
+/**
+ * webkit_download_get_web_view:
+ * @download: a #WebKitDownload
+ *
+ * Get the #WebKitWebView that initiated the download.
+ *
+ * Returns: (transfer none): the #WebKitWebView that initiated @download,
+ *    or %NULL if @download was not initiated by a #WebKitWebView.
+ */
+WebKitWebView* webkit_download_get_web_view(WebKitDownload* download)
+{
+    g_return_val_if_fail(WEBKIT_IS_DOWNLOAD(download), 0);
+
+    return download->priv->webView;
 }
