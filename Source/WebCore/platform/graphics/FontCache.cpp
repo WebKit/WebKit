@@ -293,8 +293,8 @@ static FontDataCache* gFontDataCache = 0;
 const int cMaxInactiveFontData = 250;
 const int cTargetInactiveFontData = 200;
 #else
-const int cMaxInactiveFontData = 50; // Pretty Low Threshold
-const int cTargetInactiveFontData = 30;
+const int cMaxInactiveFontData = 225;
+const int cTargetInactiveFontData = 200;
 #endif
 static ListHashSet<RefPtr<SimpleFontData> >* gInactiveFontData = 0;
 

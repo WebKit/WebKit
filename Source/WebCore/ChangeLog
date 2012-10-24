@@ -1,3 +1,19 @@
+2012-10-23  Dan Bernstein  <mitz@apple.com>
+
+        The font cache evicts inactive font data too aggressively when not under memory pressure
+        https://bugs.webkit.org/show_bug.cgi?id=100194
+
+        Reviewed by Sam Weinig.
+
+        Increasing the number of inactive font data objects the cache may hold increases the hit
+        rate, leading to improved page load performance. When memory pressure is detected,
+        MemoryPressureHandler evicts all inactive objects, regardless of the limits we are
+        increasing here.
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore): Increased the maximum number of inactive font data objects in the cache from 50
+        to 225, and the number of objects to evict once the limit is met from 20 to 25.
+
 2012-10-23  Takashi Sakamoto  <tasak@google.com>
 
         [Shadow DOM] Needs @host rule for ShadowDOM styling
