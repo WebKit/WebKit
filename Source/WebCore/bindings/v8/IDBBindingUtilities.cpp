@@ -266,6 +266,15 @@ bool canInjectIDBKeyIntoScriptValue(const ScriptValue& scriptValue, const IDBKey
     return canInjectNthValueOnKeyPath(v8Value, keyPathElements, keyPathElements.size() - 1);
 }
 
+ScriptValue idbKeyToScriptValue(ScriptExecutionContext* scriptContext, PassRefPtr<IDBKey> key)
+{
+    v8::HandleScope handleScope;
+    v8::Context::Scope contextScope(toV8Context(scriptContext, UseCurrentWorld));
+
+    v8::Handle<v8::Value> v8Value(toV8(key.get()));
+    return ScriptValue(v8Value);
+}
+
 } // namespace WebCore
 
 #endif

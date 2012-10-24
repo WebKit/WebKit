@@ -325,7 +325,7 @@ private:
             cursor->continueFunction(ec);
             ASSERT(!ec);
 
-            RefPtr<IDBKey> primaryKey = cursor->primaryKey();
+            RefPtr<IDBKey> primaryKey = cursor->idbPrimaryKey();
             ScriptValue value = cursor->value();
 
             IDBObjectStore::IndexKeys indexKeys;

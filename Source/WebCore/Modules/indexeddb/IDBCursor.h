@@ -70,8 +70,8 @@ public:
 
     // Implement the IDL
     const String& direction() const;
-    PassRefPtr<IDBKey> key() const;
-    PassRefPtr<IDBKey> primaryKey() const;
+    const ScriptValue& key() const;
+    const ScriptValue& primaryKey() const;
     const ScriptValue& value() const;
     IDBAny* source() const;
 
@@ -83,7 +83,8 @@ public:
 
     void postSuccessHandlerCallback();
     void close();
-    void setValueReady(PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, ScriptValue&);
+    void setValueReady(ScriptExecutionContext*, PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, ScriptValue&);
+    PassRefPtr<IDBKey> idbPrimaryKey() { return m_currentPrimaryKey; }
 
 protected:
     IDBCursor(PassRefPtr<IDBCursorBackendInterface>, Direction, IDBRequest*, IDBAny* source, IDBTransaction*);
@@ -101,6 +102,8 @@ private:
     bool m_gotValue;
     // These values are held because m_backend may advance while they
     // are still valid for the current success handlers.
+    ScriptValue m_currentKeyValue;
+    ScriptValue m_currentPrimaryKeyValue;
     RefPtr<IDBKey> m_currentKey;
     RefPtr<IDBKey> m_currentPrimaryKey;
     ScriptValue m_currentValue;

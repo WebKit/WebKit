@@ -472,8 +472,10 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     RefPtr<IDBCursor> cursorToNotify;
     if (event->type() == eventNames().successEvent) {
         cursorToNotify = getResultCursor();
-        if (cursorToNotify)
-            cursorToNotify->setValueReady(m_cursorKey.release(), m_cursorPrimaryKey.release(), m_cursorValue);
+        if (cursorToNotify) {
+            cursorToNotify->setValueReady(scriptExecutionContext(), m_cursorKey.release(), m_cursorPrimaryKey.release(), m_cursorValue);
+            m_cursorValue.clear();
+        }
     }
 
     if (event->type() == eventNames().upgradeneededEvent) {

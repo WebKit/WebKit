@@ -101,16 +101,16 @@ const String& IDBCursor::direction() const
     return direction;
 }
 
-PassRefPtr<IDBKey> IDBCursor::key() const
+const ScriptValue& IDBCursor::key() const
 {
     IDB_TRACE("IDBCursor::key");
-    return m_currentKey;
+    return m_currentKeyValue;
 }
 
-PassRefPtr<IDBKey> IDBCursor::primaryKey() const
+const ScriptValue& IDBCursor::primaryKey() const
 {
     IDB_TRACE("IDBCursor::primaryKey");
-    return m_currentPrimaryKey;
+    return m_currentPrimaryKeyValue;
 }
 
 const ScriptValue& IDBCursor::value() const
@@ -257,10 +257,13 @@ void IDBCursor::close()
     }
 }
 
-void IDBCursor::setValueReady(PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, ScriptValue& value)
+void IDBCursor::setValueReady(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, ScriptValue& value)
 {
     m_currentKey = key;
+    m_currentKeyValue = idbKeyToScriptValue(context, m_currentKey);
+
     m_currentPrimaryKey = primaryKey;
+    m_currentPrimaryKeyValue = idbKeyToScriptValue(context, m_currentPrimaryKey);
 
     if (!isKeyCursor()) {
         RefPtr<IDBObjectStore> objectStore = effectiveObjectStore();

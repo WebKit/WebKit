@@ -44,6 +44,7 @@ bool injectIDBKeyIntoScriptValue(PassRefPtr<IDBKey>, ScriptValue&, const IDBKeyP
 PassRefPtr<IDBKey> createIDBKeyFromScriptValueAndKeyPath(const ScriptValue&, const IDBKeyPath&);
 bool canInjectIDBKeyIntoScriptValue(const ScriptValue&, const IDBKeyPath&);
 ScriptValue deserializeIDBValue(ScriptExecutionContext*, PassRefPtr<SerializedScriptValue>);
+ScriptValue idbKeyToScriptValue(ScriptExecutionContext*, PassRefPtr<IDBKey>);
 
 }
 

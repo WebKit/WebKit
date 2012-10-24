@@ -33,8 +33,8 @@
     const unsigned short PREV_NO_DUPLICATE = 3;
 
     readonly attribute DOMString direction;
-    readonly attribute IDBKey key;
-    readonly attribute IDBKey primaryKey;
+    readonly attribute any key;
+    readonly attribute any primaryKey;
     readonly attribute IDBAny source;
 
     [CallWith=ScriptExecutionContext] IDBRequest update(in any value)

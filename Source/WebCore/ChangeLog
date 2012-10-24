@@ -1,3 +1,36 @@
+2012-10-24  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Cursor property value identities should be preserved
+        https://bugs.webkit.org/show_bug.cgi?id=100051
+
+        Reviewed by Tony Chang.
+
+        Some W3C test submissions point out that subsequent accesses to cursor properties should
+        yield the same value until the cursor advances. We handled this with custom binding code for
+        IDBCursor.value but not IDBCursor.key or IDBCursor.primaryKey. The custom value code is
+        being removed in webkit.org/b/100034 in favor of returning ScriptValue and the same fix can
+        be applied to key/primaryKey.
+
+        Test: storage/indexeddb/cursor-properties.html
+
+        * Modules/indexeddb/IDBCursor.cpp: Compute/store/serve up ScriptValues instead of IDBKeys
+        (WebCore::IDBCursor::key):
+        (WebCore::IDBCursor::primaryKey):
+        (WebCore::IDBCursor::setValueReady):
+        * Modules/indexeddb/IDBCursor.h:
+        (IDBCursor):
+        (WebCore::IDBCursor::idbPrimaryKey): Expose this for callers that need access to the IDBKey
+        * Modules/indexeddb/IDBCursor.idl:
+        * Modules/indexeddb/IDBObjectStore.cpp: ... like this one.
+        (WebCore):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::dispatchEvent): Pass along script context, for the conversion.
+        * bindings/v8/IDBBindingUtilities.cpp:
+        (WebCore::idbKeyToScriptValue): New method for explicit conversion.
+        (WebCore):
+        * bindings/v8/IDBBindingUtilities.h:
+        (WebCore):
+
 2012-10-24  Ami Fischman  <fischman@chromium.org>
 
         call to setNeedsLayout during RenderVideo::paintReplaced

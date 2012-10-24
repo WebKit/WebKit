@@ -1,3 +1,22 @@
+2012-10-24  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Cursor property value identities should be preserved
+        https://bugs.webkit.org/show_bug.cgi?id=100051
+
+        Reviewed by Tony Chang.
+
+        Add tests to verify identity/read-only/mutability of cursor properties.
+
+        * storage/indexeddb/cursor-properties-expected.txt: Added.
+        * storage/indexeddb/cursor-properties.html: Added.
+        * storage/indexeddb/resources/cursor-properties.js: Added.
+        (test.request.onsuccess):
+        (test):
+        (onUpgradeNeeded):
+        (onOpenSuccess.request.onsuccess):
+        (onOpenSuccess):
+        (checkProperty):
+
 2012-10-24  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed gardening. Updating slow expectations for two tests following a Chromium
