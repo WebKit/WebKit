@@ -1,5 +1,12 @@
 2012-10-24  Levi Weintraub  <leviw@chromium.org>
 
+        Unreviewed gardening. Marking the software compositing version of
+        compositing/tiling/backface-preserve-3d-tiled.html as failing as well.
+
+        * platform/chromium/TestExpectations:
+
+2012-10-24  Levi Weintraub  <leviw@chromium.org>
+
         Unreviewed gardening. Marking 2 more mathml tests as flaky crashers on debug.
 
         * platform/chromium/TestExpectations:
