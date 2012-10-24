@@ -91,6 +91,18 @@ using namespace HTMLNames;
 
 #ifndef NDEBUG
 static void* baseOfRenderObjectBeingDeleted;
+
+RenderObject::SetLayoutNeededForbiddenScope::SetLayoutNeededForbiddenScope(RenderObject* renderObject)
+    : m_renderObject(renderObject)
+    , m_preexistingForbidden(m_renderObject->isSetNeedsLayoutForbidden())
+{
+    m_renderObject->setNeedsLayoutIsForbidden(true);
+}
+
+RenderObject::SetLayoutNeededForbiddenScope::~SetLayoutNeededForbiddenScope()
+{
+    m_renderObject->setNeedsLayoutIsForbidden(m_preexistingForbidden);
+}
 #endif
 
 struct SameSizeAsRenderObject {

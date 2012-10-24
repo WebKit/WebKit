@@ -3242,6 +3242,10 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
     RenderObject* eltRenderer = m_nodeToDraw ? m_nodeToDraw->renderer() : 0;
     RenderLayer* rootLayer = root->layer();
 
+#ifndef NDEBUG
+    RenderObject::SetLayoutNeededForbiddenScope forbidSetNeedsLayout(rootLayer->renderer());
+#endif
+
     rootLayer->paint(p, rect, m_paintBehavior, eltRenderer);
 
     if (rootLayer->containsDirtyOverlayScrollbars())

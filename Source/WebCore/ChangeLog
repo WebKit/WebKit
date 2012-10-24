@@ -1,3 +1,27 @@
+2012-10-24  Ami Fischman  <fischman@chromium.org>
+
+        call to setNeedsLayout during RenderVideo::paintReplaced
+        https://bugs.webkit.org/show_bug.cgi?id=100265
+
+        Reviewed by Eric Carlson.
+
+        Removed unnecessary call and added new defensive guards to catch erroneous setNeedsLayout() calls
+        during paints earlier (so the offending calls are in the emitted stacktrace).
+
+        No new tests - new defensive checks are triggered by existing tests.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContents): forbid setNeedsLayout() during painting
+        * rendering/RenderObject.cpp:
+        (WebCore):
+        (WebCore::RenderObject::SetLayoutNeededForbiddenScope::SetLayoutNeededForbiddenScope):
+        (WebCore::RenderObject::SetLayoutNeededForbiddenScope::~SetLayoutNeededForbiddenScope):
+        * rendering/RenderObject.h:
+        (RenderObject):
+        (SetLayoutNeededForbiddenScope): added helper class for forbidding setNeedsLayout() in a scope.
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::paintReplaced): drop the offending & unnecessary call to updatePlayer().
+
 2012-10-24  Adam Barth  <abarth@webkit.org>
 
         [V8] ActiveDOMObjectEpilogueVisitor is unnecessary and can be deleted

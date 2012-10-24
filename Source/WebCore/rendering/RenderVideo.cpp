@@ -195,13 +195,10 @@ void RenderVideo::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     if (Frame* frame = this->frame())
         page = frame->page();
 
-    if (!displayingPoster) {
-        if (!mediaPlayer) {
-            if (page && paintInfo.phase == PaintPhaseForeground)
-                page->addRelevantUnpaintedObject(this, visualOverflowRect());
-            return;
-        }
-        updatePlayer();
+    if (!displayingPoster && !mediaPlayer) {
+        if (page && paintInfo.phase == PaintPhaseForeground)
+            page->addRelevantUnpaintedObject(this, visualOverflowRect());
+        return;
     }
 
     LayoutRect rect = videoBox();
