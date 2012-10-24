@@ -44,6 +44,7 @@
 #include "Settings.h"
 #include "WebInputEventConversion.h"
 #include "WebPagePopup.h"
+#include "WebViewClient.h"
 #include "WebViewImpl.h"
 #include "WebWidgetClient.h"
 
@@ -54,7 +55,7 @@ namespace WebKit {
 
 #if ENABLE(PAGE_POPUP)
 
-class PagePopupChromeClient : public EmptyChromeClient {
+class PagePopupChromeClient : public EmptyChromeClient, public WebCore::PageClientChromium {
     WTF_MAKE_NONCOPYABLE(PagePopupChromeClient);
     WTF_MAKE_FAST_ALLOCATED;
 
@@ -122,6 +123,17 @@ private:
     virtual FloatSize minimumWindowSize() const OVERRIDE
     {
         return FloatSize(0, 0);
+    }
+
+    virtual PlatformPageClient platformPageClient() const OVERRIDE
+    {
+        return PlatformPageClient(this);
+    }
+
+    // PageClientChromium methods:
+    virtual WebKit::WebScreenInfo screenInfo() OVERRIDE
+    {
+        return m_popup->m_webView->client()->screenInfo();
     }
 
     WebPagePopupImpl* m_popup;

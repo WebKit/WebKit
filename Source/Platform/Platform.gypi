@@ -119,6 +119,7 @@
             'chromium/public/WebRect.h',
             'chromium/public/WebReferrerPolicy.h',
             'chromium/public/WebRenderingStats.h',
+            'chromium/public/WebScreenInfo.h',
             'chromium/public/WebScrollbar.h',
             'chromium/public/WebScrollbarLayer.h',
             'chromium/public/WebScrollbarThemeGeometry.h',

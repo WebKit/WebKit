@@ -4702,6 +4702,7 @@
             'platform/chromium/LinkHashChromium.cpp',
             'platform/chromium/MemoryUsageSupportChromium.cpp',
             'platform/chromium/MIMETypeRegistryChromium.cpp',
+            'platform/chromium/PageClientChromium.h',
             'platform/chromium/PasteboardChromium.cpp',
             'platform/chromium/PlatformCursor.h',
             'platform/chromium/PlatformKeyboardEventChromium.cpp',

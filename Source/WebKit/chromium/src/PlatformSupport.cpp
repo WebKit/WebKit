@@ -100,30 +100,6 @@ using namespace WebKit;
 
 namespace WebCore {
 
-static WebWidgetClient* toWebWidgetClient(Widget* widget)
-{
-    if (!widget)
-        return 0;
-
-    FrameView* view;
-    if (widget->isFrameView())
-        view = static_cast<FrameView*>(widget);
-    else if (widget->parent() && widget->parent()->isFrameView())
-        view = static_cast<FrameView*>(widget->parent());
-    else
-        return 0;
-
-    Page* page = view->frame() ? view->frame()->page() : 0;
-    if (!page)
-        return 0;
-
-    void* webView = page->chrome()->client()->webView();
-    if (!webView)
-        return 0;
-
-    return static_cast<WebViewImpl*>(webView)->client();
-}
-
 static WebCookieJar* getCookieJar(const Document* document)
 {
     WebFrameImpl* frameImpl = WebFrameImpl::fromFrame(document->frame());
@@ -329,62 +305,6 @@ void PlatformSupport::paintProgressBar(
 // These are temporary methods that the WebKit layer can use to call to the
 // Glue layer. Once the Glue layer moves entirely into the WebKit layer, these
 // methods will be deleted.
-
-int PlatformSupport::screenHorizontalDPI(Widget* widget)
-{
-    WebWidgetClient* client = toWebWidgetClient(widget);
-    if (!client)
-        return 0;
-    return client->screenInfo().horizontalDPI;
-}
-
-int PlatformSupport::screenVerticalDPI(Widget* widget)
-{
-    WebWidgetClient* client = toWebWidgetClient(widget);
-    if (!client)
-        return 0;
-    return client->screenInfo().verticalDPI;
-}
-
-int PlatformSupport::screenDepth(Widget* widget)
-{
-    WebWidgetClient* client = toWebWidgetClient(widget);
-    if (!client)
-        return 0;
-    return client->screenInfo().depth;
-}
-
-int PlatformSupport::screenDepthPerComponent(Widget* widget)
-{
-    WebWidgetClient* client = toWebWidgetClient(widget);
-    if (!client)
-        return 0;
-    return client->screenInfo().depthPerComponent;
-}
-
-bool PlatformSupport::screenIsMonochrome(Widget* widget)
-{
-    WebWidgetClient* client = toWebWidgetClient(widget);
-    if (!client)
-        return 0;
-    return client->screenInfo().isMonochrome;
-}
-
-IntRect PlatformSupport::screenRect(Widget* widget)
-{
-    WebWidgetClient* client = toWebWidgetClient(widget);
-    if (!client)
-        return IntRect();
-    return client->screenInfo().rect;
-}
-
-IntRect PlatformSupport::screenAvailableRect(Widget* widget)
-{
-    WebWidgetClient* client = toWebWidgetClient(widget);
-    if (!client)
-        return IntRect();
-    return client->screenInfo().availableRect;
-}
 
 #if ENABLE(WORKERS)
 WorkerContextProxy* WorkerContextProxy::create(Worker* worker)
