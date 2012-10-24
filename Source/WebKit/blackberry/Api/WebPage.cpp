@@ -1289,6 +1289,8 @@ bool WebPagePrivate::zoomAboutPoint(double unclampedScale, const FloatPoint& anc
         m_backingStore->d->clearVisibleZoom();
     }
 
+    m_client->zoomChanged(m_webPage->isMinZoomed(), m_webPage->isMaxZoomed(), !shouldZoomOnEscape(), currentScale());
+
     // Clear window to make sure there are no artifacts.
     if (shouldRender) {
         // Resume all screen updates to the backingstore and render+blit visible contents to screen.
@@ -1297,8 +1299,6 @@ bool WebPagePrivate::zoomAboutPoint(double unclampedScale, const FloatPoint& anc
         // Resume all screen updates to the backingstore but do not blit to the screen because we not rendering.
         m_backingStore->d->resumeScreenAndBackingStoreUpdates(BackingStore::None);
     }
-
-    m_client->zoomChanged(m_webPage->isMinZoomed(), m_webPage->isMaxZoomed(), !shouldZoomOnEscape(), currentScale());
 
     return true;
 }
@@ -3054,8 +3054,8 @@ void WebPagePrivate::zoomBlock()
     }
 
     notifyTransformChanged();
-    m_backingStore->d->resumeScreenAndBackingStoreUpdates(BackingStore::RenderAndBlit);
     m_client->zoomChanged(m_webPage->isMinZoomed(), m_webPage->isMaxZoomed(), !shouldZoomOnEscape(), currentScale());
+    m_backingStore->d->resumeScreenAndBackingStoreUpdates(BackingStore::RenderAndBlit);
 }
 
 void WebPage::blockZoomAnimationFinished()

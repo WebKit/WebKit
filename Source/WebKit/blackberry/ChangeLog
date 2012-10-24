@@ -1,3 +1,22 @@
+2012-10-23  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        [BlackBerry] Web page renders at the wrong zoom level after viewport changes
+        https://bugs.webkit.org/show_bug.cgi?id=100096
+
+        Reviewed by Rob Buis.
+
+        Notify the client of the zoom level change before resuming screen updates.
+        Otherwise, the user interface thread may blit the content at the wrong
+        zoom level in some cases. This can also prevent potential flickering.
+
+        Reviewed internally by Arvid Nilsson.
+
+        PR #225741
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::zoomAboutPoint):
+        (BlackBerry::WebKit::WebPagePrivate::zoomBlock):
+
 2012-10-23  Mike Lattanzio  <mlattanzio@rim.com>
 
         [BlackBerry] Cache TouchDown HitTestResult to avoid calling RenderLayer::hitTest unnecessarily
