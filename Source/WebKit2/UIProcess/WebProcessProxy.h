@@ -118,9 +118,6 @@ public:
 
     static bool fullKeyboardAccessEnabled();
 
-    // FIXME: This variant of send is deprecated. All clients should move to an overload that take a message type.
-    template<typename E, typename T> bool deprecatedSend(E messageID, uint64_t destinationID, const T& arguments);
-
 private:
     explicit WebProcessProxy(PassRefPtr<WebContext>);
 
@@ -217,15 +214,6 @@ private:
     WebFrameProxyMap m_frameMap;
     WebBackForwardListItemMap m_backForwardListItemMap;
 };
-
-template<typename E, typename T>
-bool WebProcessProxy::deprecatedSend(E messageID, uint64_t destinationID, const T& arguments)
-{
-    OwnPtr<CoreIPC::MessageEncoder> encoder = CoreIPC::MessageEncoder::create(CoreIPC::MessageKindTraits<E>::messageReceiverName(), "", destinationID);
-    encoder->encode(arguments);
-
-    return sendMessage(CoreIPC::MessageID(messageID), encoder.release(), 0);
-}
 
 template<typename T>
 bool WebProcessProxy::send(const T& message, uint64_t destinationID, unsigned messageSendFlags)

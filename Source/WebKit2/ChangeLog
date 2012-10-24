@@ -1,3 +1,17 @@
+2012-10-23  Anders Carlsson  <andersca@apple.com>
+
+        Remove deprecatedSend
+        https://bugs.webkit.org/show_bug.cgi?id=100127
+
+        Reviewed by Andreas Kling.
+
+        deprecatedSend is no longer used anywhere, remove it.
+
+        * Platform/CoreIPC/Connection.h:
+        (Connection):
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+
 2012-10-23  Andy Estes  <aestes@apple.com>
 
         [WebKit2 API] Add properties to get textRects from a WKDOMRange or WKDOMNode
