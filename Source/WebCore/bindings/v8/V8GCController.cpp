@@ -101,6 +101,45 @@ public:
     }
 };
 
+template<typename T>
+class ActiveDOMObjectEpilogueVisitor : public DOMWrapperMap<T>::Visitor {
+public:
+    explicit ActiveDOMObjectEpilogueVisitor(v8::WeakReferenceCallback callback)
+        : m_callback(callback)
+    {
+    }
+
+    void visitDOMWrapper(DOMDataStore*, T* object, v8::Persistent<v8::Object> wrapper)
+    {
+        WrapperTypeInfo* typeInfo = V8DOMWrapper::domWrapperType(wrapper);
+
+        if (V8MessagePort::info.equals(typeInfo)) {
+            // We marked this port as reachable in ActiveDOMObjectPrologueVisitor.
+            // Undo this now since the port could be not reachable in the future
+            // if it gets disentangled (and also ActiveDOMObjectPrologueVisitor
+            // expects to see all handles marked as weak).
+            MessagePort* port = reinterpret_cast<MessagePort*>(object);
+            if ((!wrapper.IsWeak() && !wrapper.IsNearDeath()) || port->hasPendingActivity())
+                wrapper.MakeWeak(port, m_callback);
+            return;
+        }
+
+        ActiveDOMObject* activeDOMObject = typeInfo->toActiveDOMObject(wrapper);
+        if (activeDOMObject && activeDOMObject->hasPendingActivity()) {
+            ASSERT(!wrapper.IsWeak());
+            // NOTE: To re-enable weak status of the active object we use
+            // |object| from the map and not |activeDOMObject|. The latter
+            // may be a different pointer (in case ActiveDOMObject is not
+            // the main base class of the object's class) and pointer
+            // identity is required by DOM map functions.
+            wrapper.MakeWeak(object, m_callback);
+        }
+    }
+
+private:
+    v8::WeakReferenceCallback m_callback;
+};
+
 class ObjectVisitor : public DOMWrapperMap<void>::Visitor {
 public:
     void visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)
@@ -217,7 +256,6 @@ void V8GCController::minorGCPrologue()
 {
 }
 
-// Create object groups for DOM tree nodes.
 void V8GCController::majorGCPrologue()
 {
     TRACE_EVENT_BEGIN0("v8", "GC");
@@ -239,55 +277,6 @@ void V8GCController::majorGCPrologue()
     V8PerIsolateData* data = V8PerIsolateData::current();
     data->stringCache()->clearOnGC();
 }
-
-class SpecialCaseEpilogueObjectHandler {
-public:
-    static bool process(void* object, v8::Persistent<v8::Object> wrapper, WrapperTypeInfo* typeInfo)
-    {
-        if (V8MessagePort::info.equals(typeInfo)) {
-            MessagePort* port1 = static_cast<MessagePort*>(object);
-            // We marked this port as reachable in GCPrologueVisitor.  Undo this now since the
-            // port could be not reachable in the future if it gets disentangled (and also
-            // GCPrologueVisitor expects to see all handles marked as weak).
-            if ((!wrapper.IsWeak() && !wrapper.IsNearDeath()) || port1->hasPendingActivity())
-                wrapper.MakeWeak(port1, &DOMDataStore::weakActiveDOMObjectCallback);
-            return true;
-        }
-        return false;
-    }
-};
-
-class SpecialCaseEpilogueNodeHandler {
-public:
-    static bool process(Node* object, v8::Persistent<v8::Object> wrapper, WrapperTypeInfo* typeInfo)
-    {
-        UNUSED_PARAM(object);
-        UNUSED_PARAM(wrapper);
-        UNUSED_PARAM(typeInfo);
-        return false;
-    }
-};
-
-template<typename T, typename S, v8::WeakReferenceCallback callback>
-class GCEpilogueVisitor : public DOMWrapperMap<T>::Visitor {
-public:
-    void visitDOMWrapper(DOMDataStore* store, T* object, v8::Persistent<v8::Object> wrapper)
-    {
-        WrapperTypeInfo* typeInfo = V8DOMWrapper::domWrapperType(wrapper);
-        if (!S::process(object, wrapper, typeInfo)) {
-            ActiveDOMObject* activeDOMObject = typeInfo->toActiveDOMObject(wrapper);
-            if (activeDOMObject && activeDOMObject->hasPendingActivity()) {
-                ASSERT(!wrapper.IsWeak());
-                // NOTE: To re-enable weak status of the active object we use
-                // |object| from the map and not |activeDOMObject|. The latter
-                // may be a different pointer (in case ActiveDOMObject is not
-                // the main base class of the object's class) and pointer
-                // identity is required by DOM map functions.
-                wrapper.MakeWeak(object, callback);
-            }
-        }
-    }
-};
 
 #if PLATFORM(CHROMIUM)
 static int workingSetEstimateMB = 0;
@@ -315,12 +304,10 @@ void V8GCController::majorGCEpilogue()
 {
     v8::HandleScope scope;
 
-    // Run through all objects with pending activity making their wrappers weak
-    // again.
-    GCEpilogueVisitor<void, SpecialCaseEpilogueObjectHandler, &DOMDataStore::weakActiveDOMObjectCallback> epilogueObjectVisitor;
-    visitActiveDOMObjects(&epilogueObjectVisitor);
-    GCEpilogueVisitor<Node, SpecialCaseEpilogueNodeHandler, &DOMDataStore::weakNodeCallback> epilogueNodeVisitor;
-    visitActiveDOMNodes(&epilogueNodeVisitor);
+    ActiveDOMObjectEpilogueVisitor<void> activeObjectVisitor(&DOMDataStore::weakActiveDOMObjectCallback);
+    visitActiveDOMObjects(&activeObjectVisitor);
+    ActiveDOMObjectEpilogueVisitor<Node> activeNodeVisitor(&DOMDataStore::weakNodeCallback);
+    visitActiveDOMNodes(&activeNodeVisitor);
 
 #if PLATFORM(CHROMIUM)
     // The GC can happen on multiple threads in case of dedicated workers which run in-process.
