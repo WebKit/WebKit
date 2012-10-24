@@ -231,11 +231,6 @@ static SoupSession* sessionFromContext(NetworkingContext* context)
     return (context && context->isValid()) ? context->soupSession() : ResourceHandle::defaultSession();
 }
 
-uint64_t ResourceHandleInternal::initiatingPageID()
-{
-    return (m_context && m_context->isValid()) ? m_context->initiatingPageID() : 0;
-}
-
 ResourceHandle::~ResourceHandle()
 {
     cleanupSoupRequestOperation(this, true);
@@ -674,13 +669,13 @@ static void networkEventCallback(SoupMessage*, GSocketClientEvent event, GIOStre
 
 static const char* gSoupRequestInitiaingPageIDKey = "wk-soup-request-initiaing-page-id";
 
-static void setSoupRequestInitiaingPageID(SoupRequest* request, uint64_t initiatingPageID)
+static void setSoupRequestInitiaingPageIDFromNetworkingContext(SoupRequest* request, NetworkingContext* context)
 {
-    if (!initiatingPageID)
+    if (!context || !context->isValid())
         return;
 
     uint64_t* initiatingPageIDPtr = static_cast<uint64_t*>(fastMalloc(sizeof(uint64_t)));
-    *initiatingPageIDPtr = initiatingPageID;
+    *initiatingPageIDPtr = context->initiatingPageID();
     g_object_set_data_full(G_OBJECT(request), g_intern_static_string(gSoupRequestInitiaingPageIDKey), initiatingPageIDPtr, fastFree);
 }
 
@@ -698,6 +693,7 @@ static bool createSoupMessageForHandleAndRequest(ResourceHandle* handle, const R
     SoupMessage* soupMessage = d->m_soupMessage.get();
     request.updateSoupMessage(soupMessage);
 
+    g_object_set_data(G_OBJECT(soupMessage), "handle", handle);
     if (!handle->shouldContentSniff())
         soup_message_disable_feature(soupMessage, SOUP_TYPE_CONTENT_SNIFFER);
 
@@ -736,7 +732,6 @@ static bool createSoupMessageForHandleAndRequest(ResourceHandle* handle, const R
     d->m_response.setResourceLoadTiming(ResourceLoadTiming::create());
     g_signal_connect(d->m_soupMessage.get(), "network-event", G_CALLBACK(networkEventCallback), handle);
     g_signal_connect(d->m_soupMessage.get(), "wrote-body", G_CALLBACK(wroteBodyCallback), handle);
-    g_object_set_data(G_OBJECT(d->m_soupMessage.get()), "handle", handle);
 #endif
 
     return true;
@@ -776,6 +771,9 @@ bool ResourceHandle::start(NetworkingContext* context)
     if (context && !context->isValid())
         return false;
 
+    // Used to set the keep track of custom SoupSessions for ports that support it (EFL).
+    d->m_context = context;
+
     if (!(d->m_user.isEmpty() || d->m_pass.isEmpty())) {
         // If credentials were specified for this request, add them to the url,
         // so that they will be passed to NetworkRequest.
@@ -784,9 +782,6 @@ bool ResourceHandle::start(NetworkingContext* context)
         urlWithCredentials.setPass(d->m_pass);
         d->m_firstRequest.setURL(urlWithCredentials);
     }
-
-    // Used to set the authentication dialog toplevel; may be NULL
-    d->m_context = context;
 
     // Only allow the POST and GET methods for non-HTTP requests.
     const ResourceRequest& request = firstRequest();
@@ -801,7 +796,7 @@ bool ResourceHandle::start(NetworkingContext* context)
         return true;
     }
 
-    setSoupRequestInitiaingPageID(d->m_soupRequest.get(), d->initiatingPageID());
+    setSoupRequestInitiaingPageIDFromNetworkingContext(d->m_soupRequest.get(), context);
 
     // Send the request only if it's not been explicitly deferred.
     if (!d->m_defersLoading)
@@ -854,6 +849,18 @@ void ResourceHandle::setIgnoreSSLErrors(bool ignoreSSLErrors)
 {
     gIgnoreSSLErrors = ignoreSSLErrors;
 }
+
+#if PLATFORM(GTK)
+void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
+{
+    if (client())
+        client()->didReceiveAuthenticationChallenge(this, challenge);
+}
+
+void ResourceHandle::receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&)
+{
+}
+#endif
 
 static bool waitingToSendRequest(ResourceHandle* handle)
 {
@@ -1007,6 +1014,19 @@ static gboolean requestTimeoutCallback(gpointer data)
     return FALSE;
 }
 
+#if PLATFORM(GTK)
+static void authenicateCallback(SoupSession* session, SoupMessage* soupMessage, SoupAuth* soupAuth, gboolean retrying)
+{
+    RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(g_object_get_data(G_OBJECT(soupMessage), "handle"));
+    if (!handle)
+        return;
+
+    // We don't need to pass a client here, because GTK+ does not yet use the AuthenticationClient to
+    // respond to the AuthenticationChallenge -- instead dealing with the Soup objects directly.
+    handle->didReceiveAuthenticationChallenge(AuthenticationChallenge(session, soupMessage, soupAuth, retrying, 0));
+}
+#endif
+
 SoupSession* ResourceHandle::defaultSession()
 {
     static SoupSession* session = 0;
@@ -1027,8 +1047,12 @@ SoupSession* ResourceHandle::defaultSession()
                      SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_PROXY_RESOLVER_DEFAULT,
                      SOUP_SESSION_USE_THREAD_CONTEXT, TRUE,
                      NULL);
+#if PLATFORM(GTK)
+        g_signal_connect(session, "authenticate", G_CALLBACK(authenicateCallback), 0);
+#endif
+
 #if ENABLE(WEB_TIMING)
-        g_signal_connect(G_OBJECT(session), "request-started", G_CALLBACK(requestStartedCallback), 0);
+        g_signal_connect(session, "request-started", G_CALLBACK(requestStartedCallback), 0);
 #endif
     }
 

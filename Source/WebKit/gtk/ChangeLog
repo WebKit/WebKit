@@ -1,3 +1,20 @@
+2012-10-23  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK][Soup] Implement the default authentication dialog via WebCoreSupport
+        https://bugs.webkit.org/show_bug.cgi?id=99351
+
+        Reviewed by Carlos Garcia Campos.
+
+        Instead of using a custom SoupSessionFeature to show the authentication dialog,
+        show it using the corresponding WebCore message.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        Show the dialog when we need to authenticate. Also, so not show the dialog
+        if we are in DRT mode.
+        * webkit/webkitglobals.cpp:
+        (webkitInit): No longer install our SoupFeature.
+
 2012-10-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update NEWS and configure.ac for 1.11.1 release

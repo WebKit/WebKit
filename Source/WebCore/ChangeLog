@@ -1,3 +1,45 @@
+2012-10-23  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK][Soup] Implement the default authentication dialog via WebCoreSupport
+        https://bugs.webkit.org/show_bug.cgi?id=99351
+
+        Reviewed by Carlos Garcia Campos.
+
+        Instead of connecting to the SoupSession::authenticate signal in the API layer
+        via a SoupSessionFeature, route the message through the typical WebCore authentication
+        mechanism. This is a step on the path to having full-blown support for authentication
+        in the API allowing for custom authentication dialogs and behavior in clients.
+
+        No new tests. This should not change behavior.
+
+        * GNUmakefile.list.am: Add the new implementation file for the AuthenticationChallenge.
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didReceiveAuthenticationChallenge): Include GTK+ here as well.
+        * platform/gtk/GtkAuthenticationDialog.cpp: Instead of carrying a raw pointer to a SoupAuth
+        carry a GRefPtr which will allow the dialog to be used even after the AuthenticationChallenge
+        is destroyed.
+        * platform/gtk/GtkAuthenticationDialog.h: ditto.
+        * platform/network/ResourceHandle.h: Add a didReceiveAuthenticationChallenge method.
+        * platform/network/ResourceHandleInternal.h:
+        (ResourceHandleInternal): Remove the getter for the initiating page ID.
+        * platform/network/soup/AuthenticationChallenge.h: Added an implementation of AuthenticationChallenge
+        that takes a bit of data from the handle including SoupMessage, SoupAuth, and SoupSession.
+        * platform/network/soup/AuthenticationChallengeSoup.cpp: Added. Ditto.
+        * platform/network/soup/ResourceError.h:
+        (ResourceError): Added a factory for authentication errors.
+        * platform/network/soup/ResourceErrorSoup.cpp: Ditto.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::setSoupRequestInitiaingPageID): Just get the page directly from the NetworkingContext.
+        (WebCore::createSoupMessageForHandleAndRequest): Always set the "handle" data on the message.
+        It's always used now.
+        (WebCore::ResourceHandle::start): Get the initiating page ID directly from the NetworkingContext.
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge): Added this method which routes
+        the authentication challenge to the client.
+        (WebCore::ResourceHandle::receivedRequestToContinueWithoutCredential): Added a stub for this method.
+        (WebCore::ResourceHandle::loadResourceSynchronously): Don't pass the session to the loader.
+        (WebCore::authenicateCallback): Added.
+        (WebCore::ResourceHandle::defaultSession): Connect the authenticate callback.
+
 2012-10-23  Adam Barth  <abarth@webkit.org>
 
         [V8] Simplify GCEpilogueVisitor along the same lines as GCPrologueVisitor

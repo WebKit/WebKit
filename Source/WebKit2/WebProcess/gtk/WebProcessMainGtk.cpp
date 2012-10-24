@@ -29,9 +29,7 @@
 
 #define LIBSOUP_USE_UNSTABLE_REQUEST_API
 
-#include "WebAuthDialog.h"
 #include "WKBase.h"
-#include <WebCore/GtkAuthenticationDialog.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/RunLoop.h>
 #include <WebKit2/WebProcess.h>
@@ -66,12 +64,10 @@ WK_EXPORT int WebProcessMainGtk(int argc, char* argv[])
     int socket = atoi(argv[1]);
     WebProcess::shared().initialize(socket, RunLoop::main());
 
-    SoupSession* session = WebCore::ResourceHandle::defaultSession();
-    soup_session_add_feature_by_type(session, WEB_TYPE_AUTH_DIALOG);
-
     // Despite using system CAs to validate certificates we're
     // accepting invalid certificates by default. New API will be
     // added later to let client accept/discard invalid certificates.
+    SoupSession* session = WebCore::ResourceHandle::defaultSession();
     g_object_set(session, SOUP_SESSION_SSL_USE_SYSTEM_CA_FILE, TRUE,
                  SOUP_SESSION_SSL_STRICT, FALSE, NULL);
 

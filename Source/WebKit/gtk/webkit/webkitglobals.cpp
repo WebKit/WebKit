@@ -25,7 +25,6 @@
 #include "Chrome.h"
 #include "ContextMenuItem.h"
 #include "FrameNetworkingContextGtk.h"
-#include "GtkUtilities.h"
 #include "IconDatabase.h"
 #include "Logging.h"
 #include "MemoryCache.h"
@@ -45,7 +44,6 @@
 #include "webkitfavicondatabase.h"
 #include "webkitglobalsprivate.h"
 #include "webkiticondatabase.h"
-#include "webkitsoupauthdialog.h"
 #include "webkitspellchecker.h"
 #include "webkitspellcheckerenchant.h"
 #include "webkitwebdatabase.h"
@@ -205,32 +203,6 @@ WebKitWebPluginDatabase* webkit_get_web_plugin_database()
         database = webkit_web_plugin_database_new();
 
     return database;
-}
-
-
-static GtkWidget* currentToplevelCallback(WebKitSoupAuthDialog* feature, SoupMessage* message, gpointer userData)
-{
-    gpointer messageData = g_object_get_data(G_OBJECT(message), "resourceHandle");
-    if (!messageData)
-        return NULL;
-
-    ResourceHandle* handle = static_cast<ResourceHandle*>(messageData);
-    if (!handle)
-        return NULL;
-
-    ResourceHandleInternal* d = handle->getInternal();
-    if (!d)
-        return NULL;
-
-    WebKit::FrameNetworkingContextGtk* context = static_cast<WebKit::FrameNetworkingContextGtk*>(d->m_context.get());
-    if (!context)
-        return NULL;
-
-    if (!context->coreFrame())
-        return NULL;
-
-    GtkWidget* toplevel =  gtk_widget_get_toplevel(GTK_WIDGET(context->coreFrame()->page()->chrome()->platformPageClient()));
-    return widgetIsOnscreenToplevelWindow(toplevel) ? toplevel : 0;
 }
 
 /**
@@ -589,13 +561,6 @@ void webkitInit()
 
     GOwnPtr<gchar> iconDatabasePath(g_build_filename(g_get_user_data_dir(), "webkit", "icondatabase", NULL));
     webkit_icon_database_set_path(webkit_get_icon_database(), iconDatabasePath.get());
-
-    SoupSession* session = webkit_get_default_session();
-
-    SoupSessionFeature* authDialog = static_cast<SoupSessionFeature*>(g_object_new(WEBKIT_TYPE_SOUP_AUTH_DIALOG, NULL));
-    g_signal_connect(authDialog, "current-toplevel", G_CALLBACK(currentToplevelCallback), NULL);
-    soup_session_add_feature(session, authDialog);
-    g_object_unref(authDialog);
 
     WebCore::ResourceHandle::setIgnoreSSLErrors(true);
 

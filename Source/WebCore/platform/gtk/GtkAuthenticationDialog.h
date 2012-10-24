@@ -55,7 +55,7 @@ private:
     GtkWidget* m_dialog;
     SoupSession* m_session;
     GRefPtr<SoupMessage> m_message;
-    SoupAuth* m_auth;
+    GRefPtr<SoupAuth> m_auth;
 
     GtkWidget* m_loginEntry;
     GtkWidget* m_passwordEntry;

@@ -201,6 +201,7 @@ bool WebFrameLoaderClient::shouldUseCredentialStorage(DocumentLoader*, unsigned 
     return webPage->injectedBundleResourceLoadClient().shouldUseCredentialStorage(webPage, m_frame, identifier);
 }
 
+#if !PLATFORM(GTK)
 void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long, const AuthenticationChallenge& challenge)
 {
     // FIXME: Authentication is a per-resource concept, but we don't do per-resource handling in the UIProcess at the API level quite yet.
@@ -212,6 +213,7 @@ void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoa
 
     AuthenticationManager::shared().didReceiveAuthenticationChallenge(m_frame, challenge);
 }
+#endif
 
 void WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge(DocumentLoader*, unsigned long /*identifier*/, const AuthenticationChallenge&)    
 {

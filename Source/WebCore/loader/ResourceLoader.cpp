@@ -483,7 +483,7 @@ void ResourceLoader::didReceiveAuthenticationChallenge(const AuthenticationChall
     }
     // Only these platforms provide a way to continue without credentials.
     // If we can't continue with credentials, we need to cancel the load altogether.
-#if PLATFORM(MAC) || USE(CFNETWORK) || USE(CURL)
+#if PLATFORM(MAC) || USE(CFNETWORK) || USE(CURL) || PLATFORM(GTK)
     handle()->receivedRequestToContinueWithoutCredential(challenge);
     ASSERT(!handle()->hasAuthenticationChallenge());
 #else

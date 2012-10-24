@@ -53,6 +53,7 @@ public:
     static ResourceError genericIOError(GError*, SoupRequest*);
     static ResourceError tlsError(SoupRequest*, unsigned tlsErrors, GTlsCertificate*);
     static ResourceError timeoutError(const String& failingURL);
+    static ResourceError authenticationError(SoupMessage*);
 
     unsigned tlsErrors() const { return m_tlsErrors; }
     GTlsCertificate* certificate() const { return m_certificate.get(); }

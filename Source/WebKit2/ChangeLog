@@ -1,3 +1,25 @@
+2012-10-23  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK][Soup] Implement the default authentication dialog via WebCoreSupport
+        https://bugs.webkit.org/show_bug.cgi?id=99351
+
+        Reviewed by Carlos Garcia Campos.
+
+        Instead of using a custom SoupSessionFeature to show the authentication
+        dialog, show it using the corresponding WebCore message.
+
+        * GNUmakefile.list.am: Removed the SoupSessionFeature files.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit): Only use the default dispatchDidReceiveAuthenticationChallenge
+        for non-GTK+ ports.
+        * WebProcess/WebCoreSupport/gtk/WebFrameLoaderClientGtk.cpp: Added.
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge): Added
+        a GTK+-specific implementation that shows the GtkAuthenticationDialog.
+        * WebProcess/gtk/WebAuthDialog.cpp: Removed.
+        * WebProcess/gtk/WebAuthDialog.h: Removed.
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+        (WebKit::WebProcessMainGtk): Don't install the custom session feature.
+
 2012-10-23  Anders Carlsson  <andersca@apple.com>
 
         Remove deprecatedSend

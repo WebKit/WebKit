@@ -645,10 +645,6 @@ static void setDefaultsToConsistentStateValuesForTesting()
 {
     resetDefaultsToConsistentValues();
 
-    /* Disable the default auth dialog for testing */
-    SoupSession* session = webkit_get_default_session();
-    soup_session_remove_feature_by_type(session, WEBKIT_TYPE_SOUP_AUTH_DIALOG);
-
 #if PLATFORM(X11)
     webkit_web_settings_add_extra_plugin_directory(webView, TEST_PLUGIN_DIR);
 #endif

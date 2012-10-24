@@ -138,7 +138,7 @@ GtkAuthenticationDialog::GtkAuthenticationDialog(GtkWindow* parentWindow, SoupSe
     gtk_alignment_set_padding(GTK_ALIGNMENT(entryContainer), 0, 0, 0, 0);
     gtk_box_pack_start(GTK_BOX(vBox), entryContainer, FALSE, FALSE, 0);
 
-    const char* realm = soup_auth_get_realm(m_auth);
+    const char* realm = soup_auth_get_realm(m_auth.get());
     // Checking that realm is not an empty string.
     bool hasRealm = (realm && realm[0] != '\0');
 
@@ -222,7 +222,7 @@ void GtkAuthenticationDialog::show()
 {
     const char* username = 0;
     const char* password = 0;
-    bool haveSavedLogin = getSavedLogin(m_auth, &username, &password);
+    bool haveSavedLogin = getSavedLogin(m_auth.get(), &username, &password);
     soup_session_pause_message(m_session, m_message.get());
     gtk_entry_set_text(GTK_ENTRY(m_loginEntry), username ? username : "");
     gtk_entry_set_text(GTK_ENTRY(m_passwordEntry), password ? password : "");
@@ -262,7 +262,7 @@ void GtkAuthenticationDialog::savePassword()
 
     // Anything but 401 and 5xx means the password was accepted.
     if (m_message.get()->status_code != 401 && m_message.get()->status_code < 500)
-        soup_auth_save_password(m_auth, m_username.data(), m_password.data());
+        soup_auth_save_password(m_auth.get(), m_username.data(), m_password.data());
 
     // Disconnect the callback. If the authentication succeeded we are done,
     // and if it failed we'll create a new GtkAuthenticationDialog and we'll
@@ -278,7 +278,7 @@ void GtkAuthenticationDialog::authenticate()
 {
     const char *username = gtk_entry_get_text(GTK_ENTRY(m_loginEntry));
     const char *password = gtk_entry_get_text(GTK_ENTRY(m_passwordEntry));
-    soup_auth_authenticate(m_auth, username, password);
+    soup_auth_authenticate(m_auth.get(), username, password);
 
 #ifdef SOUP_TYPE_PASSWORD_MANAGER
     if (m_rememberCheckButton && gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_rememberCheckButton))) {

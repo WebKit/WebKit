@@ -28,6 +28,9 @@
 #include "AuthenticationChallengeBase.h"
 #include "AuthenticationClient.h"
 
+typedef struct _SoupAuth SoupAuth;
+typedef struct _SoupMessage SoupMessage;
+
 namespace WebCore {
 
 class AuthenticationChallenge : public AuthenticationChallengeBase {
@@ -41,8 +44,17 @@ public:
     {
     }
 
-    AuthenticationClient* authenticationClient() const { return m_authenticationClient.get(); }
+    AuthenticationChallenge(SoupSession*, SoupMessage*, SoupAuth*, bool retrying, AuthenticationClient*);
 
+    AuthenticationClient* authenticationClient() const { return m_authenticationClient.get(); }
+    SoupSession* soupSession() const { return m_soupSession.get(); }
+    SoupMessage* soupMessage() const { return m_soupMessage.get(); }
+    SoupAuth* soupAuth() const { return m_soupAuth.get(); }
+
+private:
+    GRefPtr<SoupSession> m_soupSession;
+    GRefPtr<SoupMessage> m_soupMessage;
+    GRefPtr<SoupAuth> m_soupAuth;
     RefPtr<AuthenticationClient> m_authenticationClient;
 };
 

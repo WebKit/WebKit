@@ -174,6 +174,11 @@ public:
     static void setHostAllowsAnyHTTPSCertificate(const String&);
     static void setClientCertificate(const String& host, GTlsCertificate*);
     static void setIgnoreSSLErrors(bool);
+
+#if PLATFORM(GTK)
+    void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
+    virtual void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&);
+#endif
 #endif
 
     // Used to work around the fact that you don't get any more NSURLConnection callbacks until you return from the one you're in.

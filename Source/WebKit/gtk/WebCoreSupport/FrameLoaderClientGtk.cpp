@@ -32,6 +32,7 @@
 #include "DOMObjectCache.h"
 #include "DocumentLoader.h"
 #include "DocumentLoaderGtk.h"
+#include "DumpRenderTreeSupportGtk.h"
 #include "ErrorsGtk.h"
 #include "FileSystem.h"
 #include "FormState.h"
@@ -39,7 +40,9 @@
 #include "FrameNetworkingContextGtk.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "GtkAuthenticationDialog.h"
 #include "GtkPluginWidget.h"
+#include "GtkUtilities.h"
 #include "HTMLAppletElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameElement.h"
@@ -196,9 +199,15 @@ FrameLoaderClient::shouldUseCredentialStorage(WebCore::DocumentLoader*, unsigned
     return false;
 }
 
-void FrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(WebCore::DocumentLoader*, unsigned long  identifier, const AuthenticationChallenge&)
+void FrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(WebCore::DocumentLoader*, unsigned long  identifier, const AuthenticationChallenge& challenge)
 {
-    notImplemented();
+    if (DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled())
+        return;
+
+    GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(webkit_web_frame_get_web_view(m_frame)));
+    GtkWindow* toplevelWindow = widgetIsOnscreenToplevelWindow(toplevel) ? GTK_WINDOW(toplevel) : 0;
+    GtkAuthenticationDialog* dialog = new GtkAuthenticationDialog(toplevelWindow, challenge.soupSession(), challenge.soupMessage(), challenge.soupAuth());
+    dialog->show();
 }
 
 void FrameLoaderClient::dispatchDidCancelAuthenticationChallenge(WebCore::DocumentLoader*, unsigned long  identifier, const AuthenticationChallenge&)
