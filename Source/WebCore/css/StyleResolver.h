@@ -175,7 +175,15 @@ private:
 #if ENABLE(STYLE_SCOPED) || ENABLE(SHADOW_DOM)
     StyleScopeResolver* ensureScopeResolver()
     {
+#if ENABLE(STYLE_SCOPED)
+#if ENABLE(SHADOW_DOM)
         ASSERT(RuntimeEnabledFeatures::shadowDOMEnabled() || RuntimeEnabledFeatures::styleScopedEnabled());
+#else
+        ASSERT(RuntimeEnabledFeatures::styleScopedEnabled());
+#endif
+#else
+        ASSERT(RuntimeEnabledFeatures::shadowDOMEnabled());
+#endif
         if (!m_scopeResolver)
             m_scopeResolver = adoptPtr(new StyleScopeResolver());
         return m_scopeResolver.get();
