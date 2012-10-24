@@ -1,3 +1,18 @@
+2012-10-23  Nate Chapin  <japhet@chromium.org>
+
+        Crash in WebCore::SubresourceLoader::willSendRequest.
+        https://bugs.webkit.org/show_bug.cgi?id=100147
+
+        Reviewed by Abhishek Arya.
+
+        No new tests. There is a test case that should cover this, but it doesn't
+        work correctly on many platforms due to its use of testRunner.addURLToRedirect().
+        See http/tests/loading/cross-origin-XHR-willLoadRequest.html.
+        Tested manually on http://www.nick.co.uk/shows/spongebob
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequest):
+
 2012-10-23  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][Soup] Implement the default authentication dialog via WebCoreSupport
