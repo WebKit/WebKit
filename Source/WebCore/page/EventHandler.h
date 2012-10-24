@@ -365,6 +365,7 @@ private:
 #if ENABLE(GESTURE_EVENTS)
     bool handleGestureScrollCore(const PlatformGestureEvent&, PlatformWheelEventGranularity, bool latchedWheel);
     bool handleGestureTapDown();
+    bool handleGestureForTextSelectionOrContextMenu(const PlatformGestureEvent&);
 #endif
 
     Frame* m_frame;

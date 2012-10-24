@@ -1,3 +1,16 @@
+2012-10-24  Terry Anderson  <tdanderson@chromium.org>
+
+        Handle two-finger tap gestures in the same way as long-press gestures
+        https://bugs.webkit.org/show_bug.cgi?id=99947
+
+        Reviewed by Adam Barth.
+
+        Set the area of a two-finger tap gesture to be the area of the enclosing
+        rectangle for the first finger down.
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit::PlatformGestureEventBuilder::PlatformGestureEventBuilder):
+
 2012-10-24  Eric Uhrhane  <ericu@chromium.org>
 
         https://bugs.webkit.org/show_bug.cgi?id=99202

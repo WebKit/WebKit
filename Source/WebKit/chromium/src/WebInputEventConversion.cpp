@@ -171,6 +171,7 @@ PlatformGestureEventBuilder::PlatformGestureEventBuilder(Widget* widget, const W
         break;
     case WebInputEvent::GestureTwoFingerTap:
         m_type = PlatformEvent::GestureTwoFingerTap;
+        m_area = IntSize(e.data.twoFingerTap.firstFingerWidth, e.data.twoFingerTap.firstFingerHeight);
         break;
     case WebInputEvent::GestureLongPress:
         m_type = PlatformEvent::GestureLongPress;

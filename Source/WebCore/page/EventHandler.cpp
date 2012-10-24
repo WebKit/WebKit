@@ -2574,6 +2574,11 @@ bool EventHandler::handleGestureTap(const PlatformGestureEvent& gestureEvent)
 
 bool EventHandler::handleGestureLongPress(const PlatformGestureEvent& gestureEvent)
 {
+    return handleGestureForTextSelectionOrContextMenu(gestureEvent);
+}
+
+bool EventHandler::handleGestureForTextSelectionOrContextMenu(const PlatformGestureEvent& gestureEvent)
+{
 #if OS(ANDROID)
     IntPoint hitTestPoint = m_frame->view()->windowToContents(gestureEvent.position());
     HitTestResult result = hitTestResultAtPoint(hitTestPoint, true);
@@ -2593,11 +2598,7 @@ bool EventHandler::handleGestureLongPress(const PlatformGestureEvent& gestureEve
 
 bool EventHandler::handleGestureTwoFingerTap(const PlatformGestureEvent& gestureEvent)
 {
-#if ENABLE(CONTEXT_MENUS)
-    return sendContextMenuEventForGesture(gestureEvent);
-#else
-    return false;
-#endif
+    return handleGestureForTextSelectionOrContextMenu(gestureEvent);
 }
 
 bool EventHandler::handleGestureScrollUpdate(const PlatformGestureEvent& gestureEvent)
@@ -2670,6 +2671,7 @@ bool EventHandler::adjustGesturePosition(const PlatformGestureEvent& gestureEven
         bestClickableNodeForTouchPoint(gestureEvent.position(), IntSize(gestureEvent.area().width() / 2, gestureEvent.area().height() / 2), adjustedPoint, targetNode);
         break;
     case PlatformEvent::GestureLongPress:
+    case PlatformEvent::GestureTwoFingerTap:
         bestContextMenuNodeForTouchPoint(gestureEvent.position(), IntSize(gestureEvent.area().width() / 2, gestureEvent.area().height() / 2), adjustedPoint, targetNode);
         break;
     default:
