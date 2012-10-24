@@ -1983,7 +1983,8 @@ crbug.com/22526 fast/js/Object-defineProperty.html [ Failure ]
 # crbug.com/22554 mathml
 # The mathml pixel tests will be changing for a few days. They'll need rebaseline after that.
 webkit.org/b/96960 [ Android Linux Win ] mathml/xHeight.xhtml [ Pass Failure ImageOnlyFailure ]
-webkit.org/b/96960 [ Android Linux Win ] mathml/presentation [ Pass Failure ImageOnlyFailure ]
+webkit.org/b/96960 [ Android Linux Win ] mathml/presentation [ Pass Failure ImageOnlyFailure Timeout ]
+webkit.org/b/100202 [ Linux ] mathml/operator-hijacks-fenced-node.xhtml [ Pass Timeout ]
 # Once chromium decides to definitely enable MathML, we can delete the old platform/chromium baseline for this:
 webkit.org/b/96960 http/tests/xmlviewer/dumpAsText/mathml.xml [ Pass Failure ]
 

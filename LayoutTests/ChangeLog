@@ -1,3 +1,9 @@
+2012-10-23  David Barton  <dbarton@mathscribe.com>
+
+        Unreviewed gardening. Some linux MathML tests are timing out - see webkit.org/b/100202.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-23  Kent Tamura  <tkent@chromium.org>
 
         Multiple fields input UI: Don't use CSS properties for physical direction
