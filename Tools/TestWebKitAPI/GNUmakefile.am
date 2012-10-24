@@ -23,7 +23,8 @@ Libraries_libTestWebKitAPIMain_la_CPPFLAGS = \
 	-I$(srcdir)/Source/ThirdParty/gtest/include \
 	-I$(top_builddir)/DerivedSources/WebKit2/include \
 	$(global_cppflags) \
-	$(javascriptcore_cppflags)
+	$(javascriptcore_cppflags) \
+	$(GTK_CFLAGS)
 
 noinst_PROGRAMS += \
 	Programs/TestWebKitAPI/TestWTF
@@ -70,6 +71,8 @@ noinst_PROGRAMS += \
 
 Programs_TestWebKitAPI_TestGtk_CPPFLAGS = \
 	$(Programs_TestWebKitAPI_TestWTF_CPPFLAGS) \
+	$(webcore_cppflags) \
+	$(webcoregtk_cppflags) \
 	$(GLIB_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(LIBSOUP_CFLAGS)
