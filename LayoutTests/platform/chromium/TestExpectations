@@ -1753,10 +1753,6 @@ webkit.org/b/98765 [ Android ] media/video-source-error.html [ Crash Timeout Pas
 webkit.org/b/98765 [ Android ] http/tests/media/media-source/video-media-source-duration-changed.html
 webkit.org/b/98765 [ Android ] http/tests/media/video-buffered-range-contains-currentTime.html
 
-# [Chromium-Android] Subtitles (and video) do not work on Android
-webkit.org/b/98766 [ Android ] media/track/track-cue-rendering-vertical.html [ Failure ]
-webkit.org/b/98766 [ Android ] media/track/track-cue-rendering-horizontal.html [ Failure ]
-
 # [Chromium-Android] Fullscreen mode is not working correctly
 webkit.org/b/98767 [ Android ] fullscreen/full-screen-iframe-legacy.html [ Failure ]
 
@@ -1989,6 +1985,9 @@ webkit.org/b/97390 [ Mac ] mathml/presentation/subsup.xhtml [ Failure Pass ]
 webkit.org/b/97390 [ Mac ] mathml/presentation/msubsup-base-changed.xhtml [ ImageOnlyFailure Pass ]
 # Once chromium decides to definitely enable MathML, we can delete the old platform/chromium baseline for this:
 webkit.org/b/96960 http/tests/xmlviewer/dumpAsText/mathml.xml [ Pass Failure ]
+# These two tests are flaky crashers on Mac Debug bots
+webkit.org/b/100268 [ Mac Debug ] mathml/presentation/row.xhtml [ Pass Crash ]
+webkit.org/b/100268 [ Mac Debug ] mathml/presentation/mo-stretch.html [ Pass Crash ]
 
 # WebKit update 48796:48820
 # Test #9 throws an exception.
@@ -3986,10 +3985,13 @@ webkit.org/b/95121 fast/borders/border-image-side-reduction.html [ ImageOnlyFail
 # css3-conditionals support is not yet enabled.
 webkit.org/b/86146 css3/supports.html
 
- # Require rebaselining after webkit.org/b/97800
- webkit.org/b/89167 media/track/track-cue-rendering-horizontal.html [ Failure ]
- webkit.org/b/89167 media/track/track-cue-rendering-vertical.html [ Failure ]
- webkit.org/b/89167 media/track/track-cue-rendering.html [ Failure ]
+# Require rebaselining after webkit.org/b/97800
+webkit.org/b/89167 media/track/track-cue-rendering-horizontal.html [ Failure ]
+webkit.org/b/89167 media/track/track-cue-rendering-vertical.html [ Failure ]
+webkit.org/b/89167 media/track/track-cue-rendering.html [ Failure ]
+# [Chromium-Android] Subtitles (and video) do not work on Android (Disabled to make linter happy)
+#webkit.org/b/98766 [ Android ] media/track/track-cue-rendering-vertical.html [ Failure ]
+#webkit.org/b/98766 [ Android ] media/track/track-cue-rendering-horizontal.html [ Failure ]
 
 webkit.org/b/98686 editing/pasteboard/data-transfer-items.html [ Failure ]
 

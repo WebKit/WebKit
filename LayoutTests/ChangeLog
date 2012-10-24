@@ -1,3 +1,11 @@
+2012-10-24  Levi Weintraub  <leviw@chromium.org>
+
+        Unreveiewed gardening. Fixing linter, marking 2 mathml tests as flaky crashers on debug,
+        and adding passing Lion expectations for a third mathml test.
+
+        * platform/chromium/TestExpectations:
+        * platform/chromium-mac-lion/mathml/presentation/fenced-expected.png: Modified.
+
 2012-10-24  Toni Barzic  <tbarzic@chromium.org>
 
         Crash when trying to write exception message to null console
