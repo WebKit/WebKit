@@ -303,7 +303,11 @@ float CaptionUserPreferencesMac::captionFontSizeScale() const
     if (!wkCaptionAppearanceGetRelativeCharacterSize(&scaleAdjustment))
         return characterScale;
     
+#if defined(__LP64__) && __LP64__
     return narrowPrecisionToFloat(scaleAdjustment * characterScale);
+#else
+    return scaleAdjustment * characterScale;
+#endif
 }
 
 void CaptionUserPreferencesMac::captionPreferencesChanged()
