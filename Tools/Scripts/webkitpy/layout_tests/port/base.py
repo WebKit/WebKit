@@ -697,11 +697,8 @@ class Port(object):
         return self._filesystem.abspath(self.path_from_webkit_base('.'))
 
     def skipped_layout_tests(self, test_list):
-        """Returns the set of tests found in Skipped files. Does *not* include tests marked as SKIP in expectations files."""
-        tests_to_skip = set(self._expectations_from_skipped_files(self._skipped_file_search_paths()))
-        tests_to_skip.update(self._tests_for_other_platforms())
-        tests_to_skip.update(self._skipped_tests_for_unsupported_features(test_list))
-        return tests_to_skip
+        """Returns tests skipped outside of the TestExpectations files."""
+        return set(self._tests_for_other_platforms()).union(self._skipped_tests_for_unsupported_features(test_list))
 
     def _tests_from_skipped_file_contents(self, skipped_file_contents):
         tests_to_skip = []
@@ -1030,8 +1027,20 @@ class Port(object):
         return expectations
 
     def expectations_files(self):
-        # FIXME: see comment in path_to_expectations_file().
-        return [self.path_to_test_expectations_file()]
+        # Unlike baseline_search_path, we only want to search [WK2-PORT, PORT-VERSION, PORT] and any directories
+        # included via --additional-platform-directory, not the full casade.
+        search_paths = [self.port_name]
+        if self.name() != self.port_name:
+            search_paths.append(self.name())
+
+        if self.get_option('webkit_test_runner'):
+            # Because nearly all of the skipped tests for WebKit 2 are due to cross-platform
+            # issues, all wk2 ports share a skipped list under platform/wk2.
+            search_paths.extend([self._wk2_port_name(), "wk2"])
+
+        search_paths.extend(self.get_option("additional_platform_directory", []))
+
+        return [self._filesystem.join(self._webkit_baseline_path(d), 'TestExpectations') for d in search_paths]
 
     def repository_paths(self):
         """Returns a list of (repository_name, repository_path) tuples of its depending code base.
@@ -1487,26 +1496,6 @@ class Port(object):
         # By current convention, the WebKit2 name is always mac-wk2, win-wk2, not mac-leopard-wk2, etc,
         # except for Qt because WebKit2 is only supported by Qt 5.0 (therefore: qt-5.0-wk2).
         return "%s-wk2" % self.port_name
-
-    def _skipped_file_search_paths(self):
-        # Unlike baseline_search_path, we only want to search [WK2-PORT, PORT-VERSION, PORT] and any directories
-        # included via --additional-platform-directory, not the full casade.
-        # Note order doesn't matter since the Skipped file contents are all combined; however
-        # we use this order explicitly so we can re-use it for TestExpectations files.
-        # FIXME: Update this when we get rid of Skipped files altogether.
-
-        search_paths = set([self.port_name])
-        if 'future' not in self.name():
-            search_paths.add(self.name())
-
-        if self.get_option('webkit_test_runner'):
-            # Because nearly all of the skipped tests for WebKit 2 are due to cross-platform
-            # issues, all wk2 ports share a skipped list under platform/wk2.
-            search_paths.update([self._wk2_port_name(), "wk2"])
-
-        search_paths.update(self.get_option("additional_platform_directory", []))
-
-        return search_paths
 
 
 class VirtualTestSuite(object):

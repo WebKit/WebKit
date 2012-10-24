@@ -502,15 +502,22 @@ class PortTestCase(unittest.TestCase):
     def test_skipped_layout_tests(self):
         self.assertEqual(TestWebKitPort(None, None).skipped_layout_tests(test_list=[]), set(['media']))
 
-    def test_skipped_file_search_paths(self):
+    def test_expectations_files(self):
         port = TestWebKitPort()
-        self.assertEqual(port._skipped_file_search_paths(), set(['testwebkitport']))
+
+        def platform_dirs(port):
+            return [port.host.filesystem.basename(port.host.filesystem.dirname(f)) for f in port.expectations_files()]
+
+        self.assertEqual(platform_dirs(port), ['testwebkitport'])
+
         port._name = "testwebkitport-version"
-        self.assertEqual(port._skipped_file_search_paths(), set(['testwebkitport', 'testwebkitport-version']))
+        self.assertEqual(platform_dirs(port), ['testwebkitport', 'testwebkitport-version'])
+
         port._options = MockOptions(webkit_test_runner=True)
-        self.assertEqual(port._skipped_file_search_paths(), set(['testwebkitport', 'testwebkitport-version', 'testwebkitport-wk2', 'wk2']))
+        self.assertEqual(platform_dirs(port), ['testwebkitport', 'testwebkitport-version', 'testwebkitport-wk2', 'wk2'])
+
         port._options = MockOptions(additional_platform_directory=["internal-testwebkitport"])
-        self.assertEqual(port._skipped_file_search_paths(), set(['testwebkitport', 'testwebkitport-version', 'internal-testwebkitport']))
+        self.assertEqual(platform_dirs(port), ['testwebkitport', 'testwebkitport-version', 'internal-testwebkitport'])
 
     def test_root_option(self):
         port = TestWebKitPort()

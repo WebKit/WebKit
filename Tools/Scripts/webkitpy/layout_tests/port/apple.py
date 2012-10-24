@@ -98,6 +98,3 @@ class ApplePort(Port):
                 for architecture in self.ARCHITECTURES:
                     configurations.append(TestConfiguration(version=self._strip_port_name_prefix(port_name), architecture=architecture, build_type=build_type))
         return configurations
-
-    def expectations_files(self):
-        return [self._filesystem.join(self._webkit_baseline_path(d), 'TestExpectations') for d in self._skipped_file_search_paths()]

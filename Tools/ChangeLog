@@ -1,3 +1,28 @@
+2012-10-24  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: clean up references to Skipped files
+        https://bugs.webkit.org/show_bug.cgi?id=100045
+
+        Reviewed by Ojan Vafai.
+
+        Since they are no longer used or needed ...
+
+        * Scripts/webkitpy/layout_tests/port/apple.py:
+        (ApplePort._generate_all_test_configurations):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.skipped_layout_tests):
+        (Port.expectations_files):
+        (Port._wk2_port_name):
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort):
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        (MacTest.test_default_timeout_ms):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (test_expectations_files):
+        (test_expectations_files.platform_dirs):
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort.__init__):
+
 2012-10-24  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] Use include paths relative to Source/ in the TestRunner's public API

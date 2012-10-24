@@ -62,7 +62,7 @@ class QtPort(Port):
     def __init__(self, host, port_name, **kwargs):
         super(QtPort, self).__init__(host, port_name, **kwargs)
 
-        # FIXME: This will allow Port.baseline_search_path and Port._skipped_file_search_paths
+        # FIXME: This will allow Port.baseline_search_path
         # to do the right thing, but doesn't include support for qt-4.8 or qt-arm (seen in LayoutTests/platform) yet.
         self._operating_system = port_name.replace('qt-', '')
 
@@ -115,8 +115,6 @@ class QtPort(Port):
         return version
 
     def _search_paths(self):
-        # Qt port uses same paths for baseline_search_path and _skipped_file_search_paths
-        #
         # qt-5.0-wk1    qt-5.0-wk2
         #            \/
         #         qt-5.0    qt-4.8
