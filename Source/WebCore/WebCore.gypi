@@ -6432,6 +6432,7 @@
             'inspector/front-end/NetworkLog.js',
             'inspector/front-end/NetworkPanelDescriptor.js',
             'inspector/front-end/NetworkRequest.js',
+            'inspector/front-end/NetworkWorkspaceProvider.js',
             'inspector/front-end/NetworkUISourceCodeProvider.js',
             'inspector/front-end/Object.js',
             'inspector/front-end/ObjectPopoverHelper.js',

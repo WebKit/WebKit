@@ -32,10 +32,12 @@
  * @constructor
  * @implements {WebInspector.SourceMapping}
  * @param {WebInspector.Workspace} workspace
+ * @param {WebInspector.NetworkWorkspaceProvider} networkWorkspaceProvider
  */
-WebInspector.SASSSourceMapping = function(workspace)
+WebInspector.SASSSourceMapping = function(workspace, networkWorkspaceProvider)
 {
     this._workspace = workspace;
+    this._networkWorkspaceProvider = networkWorkspaceProvider;
     this._uiLocations = {};
     this._cssURLsForSASSURL = {};
     this._timeoutForURL = {};
@@ -155,7 +157,7 @@ WebInspector.SASSSourceMapping.prototype = {
         if (!uiSourceCode) {
             var content = InspectorFrontendHost.loadResourceSynchronously(url);
             var contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Stylesheet, content, "text/x-scss");
-            this._workspace.project().addUISourceCode(url, contentProvider, true);
+            this._networkWorkspaceProvider.addFile(url, contentProvider, true);
             uiSourceCode = this._workspace.uiSourceCodeForURL(url);
             WebInspector.cssModel.setSourceMapping(rawURL, this);
         }

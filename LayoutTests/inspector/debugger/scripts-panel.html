@@ -19,12 +19,15 @@ function test()
 
     function createMockWorkspace()
     {
+        var networkWorkspaceProvider = new WebInspector.NetworkWorkspaceProvider();
         var workspace = new WebInspector.Workspace();
+        workspace.addProject("network", networkWorkspaceProvider);
         workspace.requestFileContent = function(uiSourceCode, callback)
         {
             InspectorTest.addResult("Source requested for " + uiSourceCode.url);
             callback("");
         };
+        workspace.networkWorkspaceProvider = networkWorkspaceProvider;
         return workspace;
     }
 
@@ -33,14 +36,14 @@ function test()
         {
             var workspace = createMockWorkspace();
 
-            workspace.project().addUISourceCode("foobar.js", contentProvider, false);
+            workspace.networkWorkspaceProvider.addFile("foobar.js", contentProvider, false);
 
             var panel = new WebInspector.ScriptsPanel(workspace);
             panel.show();
 
-            workspace.project().addUISourceCode("foo.js", contentProvider, false);
-            workspace.project().addUISourceCode("bar.js", contentProvider, false);
-            workspace.project().addUISourceCode("baz.js", contentProvider, false);
+            workspace.networkWorkspaceProvider.addFile("foo.js", contentProvider, false);
+            workspace.networkWorkspaceProvider.addFile("bar.js", contentProvider, false);
+            workspace.networkWorkspaceProvider.addFile("baz.js", contentProvider, false);
 
             InspectorTest.dumpScriptsNavigator(panel._navigator);
 
@@ -58,14 +61,14 @@ function test()
             var panel = new WebInspector.ScriptsPanel(workspace);
             panel.show();
 
-            workspace.project().addUISourceCode("foo.js", contentProvider, false);
-            workspace.project().addUISourceCode("bar.js", contentProvider, false);
-            workspace.project().addUISourceCode("baz.js", contentProvider, false);
+            workspace.networkWorkspaceProvider.addFile("foo.js", contentProvider, false);
+            workspace.networkWorkspaceProvider.addFile("bar.js", contentProvider, false);
+            workspace.networkWorkspaceProvider.addFile("baz.js", contentProvider, false);
 
             InspectorTest.dumpScriptsNavigator(panel._navigator);
 
             workspaceController._mainFrameNavigated();
-            workspace.project().addUISourceCode("bar.js", contentProvider, false);
+            workspace.networkWorkspaceProvider.addFile("bar.js", contentProvider, false);
             InspectorTest.dumpScriptsNavigator(panel._navigator);
 
             panel.detach();
@@ -78,13 +81,13 @@ function test()
             var panel = new WebInspector.ScriptsPanel(workspace);
             panel.show();
 
-            workspace.project().addUISourceCode("foo.js", contentProvider, false);
+            workspace.networkWorkspaceProvider.addFile("foo.js", contentProvider, false);
             var temporaryUISourceCode = workspace.addTemporaryUISourceCode("compiled.js", contentProvider);
 
             InspectorTest.dumpScriptsNavigator(panel._navigator);
 
             // Plug compiler source mapping.
-            workspace.project().addUISourceCode("source.js", contentProvider, false);
+            workspace.networkWorkspaceProvider.addFile("source.js", contentProvider, false);
             workspace.removeTemporaryUISourceCode(temporaryUISourceCode);
 
             InspectorTest.dumpScriptsNavigator(panel._navigator);

@@ -14,9 +14,12 @@ function test()
     // FIXME: Remove once snippets are taken out of experiments.
     WebInspector.experimentsSettings.snippetsSupport = {};
     WebInspector.experimentsSettings.snippetsSupport.isEnabled = function() { return true; };
+    var networkWorkspaceProvider = new WebInspector.NetworkWorkspaceProvider();
     var workspace = new WebInspector.Workspace();
+    workspace.addProject("network", networkWorkspaceProvider);
     var workspaceController = new WebInspector.WorkspaceController(workspace);
-    WebInspector.scriptSnippetModel = new WebInspector.ScriptSnippetModel(workspace);
+    WebInspector.scriptSnippetModel = new WebInspector.ScriptSnippetModel(workspace, networkWorkspaceProvider);
+    
     InspectorTest.runDebuggerTestSuite([
         function testWorkspaceReset(next)
         {

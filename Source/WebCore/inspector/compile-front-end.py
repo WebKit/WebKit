@@ -84,6 +84,7 @@ modules = [
             "Linkifier.js",
             "NetworkLog.js",
             "NetworkUISourceCodeProvider.js",
+            "NetworkWorkspaceProvider.js",
             "PresentationConsoleMessageHelper.js",
             "RuntimeModel.js",
             "SASSSourceMapping.js",

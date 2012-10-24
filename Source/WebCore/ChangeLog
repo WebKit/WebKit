@@ -1,3 +1,59 @@
+2012-10-24  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Introduce workspace provider as a content providing backend for project.
+        https://bugs.webkit.org/show_bug.cgi?id=100244
+
+        Reviewed by Pavel Feldman.
+
+        Introduced WorkspaceProvider interface as a content providing backend for project.
+        Added NetworkWorkspaceProvider as a network based (default) implementation.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.py:
+        * inspector/front-end/CompilerScriptMapping.js:
+        (WebInspector.CompilerScriptMapping):
+        * inspector/front-end/DebuggerScriptMapping.js:
+        (WebInspector.DebuggerScriptMapping):
+        * inspector/front-end/NetworkUISourceCodeProvider.js:
+        (WebInspector.NetworkUISourceCodeProvider):
+        (WebInspector.NetworkUISourceCodeProvider.prototype._parsedScriptSource):
+        (WebInspector.NetworkUISourceCodeProvider.prototype._resourceAdded):
+        (WebInspector.NetworkUISourceCodeProvider.prototype._addFile):
+        * inspector/front-end/NetworkWorkspaceProvider.js: Added.
+        (WebInspector.NetworkWorkspaceProvider):
+        (WebInspector.NetworkWorkspaceProvider.prototype.requestFileContent):
+        (WebInspector.NetworkWorkspaceProvider.prototype.setFileContent):
+        (WebInspector.NetworkWorkspaceProvider.prototype.searchInFileContent):
+        (WebInspector.NetworkWorkspaceProvider.prototype.addFile):
+        (WebInspector.NetworkWorkspaceProvider.prototype.removeFile):
+        (WebInspector.NetworkWorkspaceProvider.prototype.reset):
+        * inspector/front-end/SASSSourceMapping.js:
+        (WebInspector.SASSSourceMapping):
+        (_bindUISourceCode):
+        * inspector/front-end/ScriptSnippetModel.js:
+        (WebInspector.ScriptSnippetModel):
+        (WebInspector.ScriptSnippetModel.prototype._addScriptSnippet):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/Workspace.js:
+        (WebInspector.FileDescriptor):
+        (WebInspector.WorkspaceProvider):
+        (WebInspector.WorkspaceProvider.prototype.requestFileContent):
+        (WebInspector.WorkspaceProvider.prototype.searchInFileContent):
+        (WebInspector.WorkspaceProvider.prototype.addEventListener):
+        (WebInspector.WorkspaceProvider.prototype.removeEventListener):
+        (WebInspector.Project):
+        (WebInspector.Project.prototype.reset):
+        (WebInspector.Project.prototype._fileAdded):
+        (WebInspector.Project.prototype._fileRemoved):
+        (WebInspector.Project.prototype.requestFileContent):
+        (WebInspector.Project.prototype.searchInFileContent):
+        (WebInspector.Workspace):
+        (WebInspector.Workspace.prototype.addProject):
+        (WebInspector.Workspace.prototype.project):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+
 2012-10-24  Nikita Vasilyev  <me@elv1s.ru>
 
         Web Inspector: Styles pane: Don't select whole value when I select just a part

@@ -1,5 +1,21 @@
 2012-10-24  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Web Inspector: Introduce workspace provider as a content providing backend for project.
+        https://bugs.webkit.org/show_bug.cgi?id=100244
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/compiler-script-mapping.html:
+        * http/tests/inspector/workspace-test.js:
+        (initialize_WorkspaceTest.InspectorTest.createWorkspace):
+        (initialize_WorkspaceTest.InspectorTest.addMockUISourceCodeToWorkspace):
+        * inspector/debugger/network-uisourcecode-provider.html:
+        * inspector/debugger/script-snippet-model.html:
+        * inspector/debugger/scripts-panel.html:
+        * inspector/uisourcecode-revisions.html:
+
+2012-10-24  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: UiSourceCode should rely on the workspace as a content provider.
         https://bugs.webkit.org/show_bug.cgi?id=100216
 

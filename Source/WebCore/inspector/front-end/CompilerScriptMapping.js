@@ -32,10 +32,12 @@
  * @constructor
  * @implements {WebInspector.SourceMapping}
  * @param {WebInspector.Workspace} workspace
+ * @param {WebInspector.NetworkWorkspaceProvider} networkWorkspaceProvider
  */
-WebInspector.CompilerScriptMapping = function(workspace)
+WebInspector.CompilerScriptMapping = function(workspace, networkWorkspaceProvider)
 {
     this._workspace = workspace;
+    this._networkWorkspaceProvider = networkWorkspaceProvider;
     /** @type {Object.<string, WebInspector.SourceMapParser>} */
     this._sourceMapForSourceMapURL = {};
     /** @type {Object.<string, WebInspector.SourceMapParser>} */
@@ -117,7 +119,7 @@ WebInspector.CompilerScriptMapping.prototype = {
                 contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Script, sourceContent);
             else
                 contentProvider = new WebInspector.CompilerSourceMappingContentProvider(sourceURL);
-            this._workspace.project().addUISourceCode(sourceURL, contentProvider, true);
+            this._networkWorkspaceProvider.addFile(sourceURL, contentProvider, true);
             var uiSourceCode = this._workspace.uiSourceCodeForURL(sourceURL);
             uiSourceCode.setSourceMapping(this);
             uiSourceCode.isContentScript = script.isContentScript;

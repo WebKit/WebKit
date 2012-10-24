@@ -76546,11 +76546,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\NetworkRequest.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\NetworkUISourceCodeProvider.js"
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\NetworkRequest.js"
+					RelativePath="..\inspector\front-end\NetworkWorkspaceProvider.js"
 					>
 				</File>
 				<File

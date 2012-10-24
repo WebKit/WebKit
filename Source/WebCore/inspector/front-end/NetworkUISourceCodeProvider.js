@@ -31,10 +31,12 @@
 /**
  * @constructor
  * @param {WebInspector.Workspace} workspace
+ * @param {WebInspector.NetworkWorkspaceProvider} networkWorkspaceProvider
  */
-WebInspector.NetworkUISourceCodeProvider = function(workspace)
+WebInspector.NetworkUISourceCodeProvider = function(workspace, networkWorkspaceProvider)
 {
     this._workspace = workspace;
+    this._networkWorkspaceProvider = networkWorkspaceProvider;
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._resourceAdded, this);
     this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._projectWillReset, this);
     this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectDidReset, this._projectDidReset, this);
@@ -83,7 +85,7 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
             if (!parsedURL.host)
                 return;
         }
-        this._addUISourceCode(script.sourceURL, script, script.isContentScript);
+        this._addFile(script.sourceURL, script, script.isContentScript);
     },
 
     /**
@@ -92,7 +94,7 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
     _resourceAdded: function(event)
     {
         var resource = /** @type {WebInspector.Resource} */ event.data;
-        this._addUISourceCode(resource.url, resource);
+        this._addFile(resource.url, resource);
     },
 
     /**
@@ -100,7 +102,7 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
      * @param {WebInspector.ContentProvider} contentProvider
      * @param {boolean=} isContentScript
      */
-    _addUISourceCode: function(url, contentProvider, isContentScript)
+    _addFile: function(url, contentProvider, isContentScript)
     {
         var type = contentProvider.contentType();
         if (type !== WebInspector.resourceTypes.Stylesheet && type !== WebInspector.resourceTypes.Document && type !== WebInspector.resourceTypes.Script)
@@ -109,7 +111,7 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
             return;
         this._processedURLs[url] = true;
         var isEditable = type !== WebInspector.resourceTypes.Document;
-        this._workspace.project().addUISourceCode(url, contentProvider, isEditable, isContentScript);
+        this._networkWorkspaceProvider.addFile(url, contentProvider, isEditable, isContentScript);
     },
 
     _projectWillReset: function()

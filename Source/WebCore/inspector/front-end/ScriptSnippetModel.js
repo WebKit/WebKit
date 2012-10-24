@@ -32,10 +32,12 @@
  * @constructor
  * @extends {WebInspector.Object}
  * @param {WebInspector.Workspace} workspace
+ * @param {WebInspector.NetworkWorkspaceProvider} networkWorkspaceProvider
  */
-WebInspector.ScriptSnippetModel = function(workspace)
+WebInspector.ScriptSnippetModel = function(workspace, networkWorkspaceProvider)
 {
     this._workspace = workspace;
+    this._networkWorkspaceProvider = networkWorkspaceProvider;
     this._uiSourceCodeForScriptId = {};
     this._scriptForUISourceCode = new Map();
     this._uiSourceCodeForSnippetId = {};
@@ -82,7 +84,7 @@ WebInspector.ScriptSnippetModel.prototype = {
      */
     _addScriptSnippet: function(snippet)
     {
-        this._workspace.project().addUISourceCode(snippet.name, new WebInspector.SnippetContentProvider(snippet), true, false, true);
+        this._networkWorkspaceProvider.addFile(snippet.name, new WebInspector.SnippetContentProvider(snippet), true, false, true);
         var uiSourceCode = this._workspace.uiSourceCodeForURL(snippet.name);
         var scriptFile = new WebInspector.SnippetScriptFile(this, uiSourceCode);
         uiSourceCode.setScriptFile(scriptFile);
@@ -104,7 +106,7 @@ WebInspector.ScriptSnippetModel.prototype = {
         this._releaseSnippetScript(uiSourceCode);
         delete this._uiSourceCodeForSnippetId[snippet.id];
         this._snippetIdForUISourceCode.remove(uiSourceCode);
-        this._workspace.project().removeUISourceCode(snippet.name);
+        this._networkWorkspaceProvider.removeFile(snippet.name);
     },
 
     /**

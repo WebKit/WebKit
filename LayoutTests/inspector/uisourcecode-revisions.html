@@ -8,7 +8,9 @@ function test()
 
     function createMockWorkspace()
     {
+        var networkWorkspaceProvider = new WebInspector.NetworkWorkspaceProvider();
         var workspace = new WebInspector.Workspace();
+        workspace.addProject("network", networkWorkspaceProvider);
         workspace.requestFileContent = function(path, callback)
         {
             callback("<script content>", false, "text/javascript");

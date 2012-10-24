@@ -423,18 +423,20 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this.openAnchorLocationRegistry = new WebInspector.HandlerRegistry(openAnchorLocationSetting);
     this.openAnchorLocationRegistry.registerHandler(autoselectPanel, function() { return false; });
 
+    this.networkWorkspaceProvider = new WebInspector.NetworkWorkspaceProvider();
     this.workspace = new WebInspector.Workspace();
+    this.workspace.addProject("network", this.networkWorkspaceProvider);
     this.workspaceController = new WebInspector.WorkspaceController(this.workspace);
 
     this.breakpointManager = new WebInspector.BreakpointManager(WebInspector.settings.breakpoints, this.debuggerModel, this.workspace);
 
-    this.scriptSnippetModel = new WebInspector.ScriptSnippetModel(this.workspace);
-    new WebInspector.DebuggerScriptMapping(this.workspace);
+    this.scriptSnippetModel = new WebInspector.ScriptSnippetModel(this.workspace, this.networkWorkspaceProvider);
+    new WebInspector.DebuggerScriptMapping(this.workspace, this.networkWorkspaceProvider);
     this.styleContentBinding = new WebInspector.StyleContentBinding(this.cssModel);
-    new WebInspector.NetworkUISourceCodeProvider(this.workspace);
+    new WebInspector.NetworkUISourceCodeProvider(this.workspace, this.networkWorkspaceProvider);
     new WebInspector.StylesSourceMapping(this.workspace);
     if (WebInspector.experimentsSettings.sass.isEnabled())
-        new WebInspector.SASSSourceMapping(this.workspace);
+        new WebInspector.SASSSourceMapping(this.workspace, this.networkWorkspaceProvider);
 
     new WebInspector.PresentationConsoleMessageHelper(this.workspace);
 

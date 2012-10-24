@@ -112,11 +112,12 @@
     <file>NavigatorView.js</file>
     <file>NetworkItemView.js</file>
     <file>NetworkLog.js</file>
-    <file>NetworkUISourceCodeProvider.js</file>
     <file>NetworkManager.js</file>
     <file>NetworkPanel.js</file>
     <file>NetworkPanelDescriptor.js</file>
     <file>NetworkRequest.js</file>
+    <file>NetworkUISourceCodeProvider.js</file>
+    <file>NetworkWorkspaceProvider.js</file>
     <file>Object.js</file>
     <file>ObjectPopoverHelper.js</file>
     <file>ObjectPropertiesSection.js</file>
