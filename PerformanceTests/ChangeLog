@@ -1,5 +1,18 @@
 2012-10-23  Zoltan Horvath  <zoltan@webkit.org>
 
+        Store the loaded file locally in measurePageLoadTime
+        https://bugs.webkit.org/show_bug.cgi?id=100172
+
+        Reviewed by Csaba Osztrogonác.
+
+        Store the loaded file as a local variable instead of attaching it to the test object.
+        Handle chunkSize inside test.run.
+
+        * resources/runner.js:
+        (.):
+
+2012-10-23  Zoltan Horvath  <zoltan@webkit.org>
+
         Add measurePageLoadTime function to PerfTestRunner
         https://bugs.webkit.org/show_bug.cgi?id=100029
 

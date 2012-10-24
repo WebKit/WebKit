@@ -306,18 +306,22 @@ if (window.testRunner) {
 
     PerfTestRunner.measurePageLoadTime = function(test) {
         test.run = function() {
+            var file = PerfTestRunner.loadFile(test.path);
+            if (!test.chunkSize)
+                this.chunkSize = 50000;
+
             var chunks = [];
             // The smaller the chunks the more style resolves we do.
             // Smaller chunk sizes will show more samples in style resolution.
             // Larger chunk sizes will show more samples in line layout.
             // Smaller chunk sizes run slower overall, as the per-chunk overhead is high.
-            var chunkCount = Math.ceil(this.file.length / this.chunkSize);
+            var chunkCount = Math.ceil(file.length / this.chunkSize);
             for (var chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++) {
-                var chunk = this.file.substr(chunkIndex * this.chunkSize, this.chunkSize);
+                var chunk = file.substr(chunkIndex * this.chunkSize, this.chunkSize);
                 chunks.push(chunk);
             }
 
-            PerfTestRunner.logInfo("Testing " + this.file.length + " byte document in " + chunkCount + " " + this.chunkSize + " byte chunks.");
+            PerfTestRunner.logInfo("Testing " + file.length + " byte document in " + chunkCount + " " + this.chunkSize + " byte chunks.");
 
             var iframe = document.createElement("iframe");
             document.body.appendChild(iframe);
@@ -340,10 +344,6 @@ if (window.testRunner) {
             iframe.contentDocument.close();
             document.body.removeChild(iframe);
         };
-
-        this.file = PerfTestRunner.loadFile(test.path);
-        if (!test.chunkSize)
-            this.chunkSize = 50000;
 
         PerfTestRunner.measureTime(test);
     }
