@@ -37,7 +37,7 @@ class SurfaceUpdateInfo {
 public:
     SurfaceUpdateInfo() { }
 
-    void encode(CoreIPC::ArgumentEncoder*) const;
+    void encode(CoreIPC::ArgumentEncoder&) const;
     static bool decode(CoreIPC::ArgumentDecoder*, SurfaceUpdateInfo&);
 
     // The rect to be updated.

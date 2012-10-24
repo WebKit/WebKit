@@ -82,7 +82,7 @@ public:
     void dispose();
 #endif
 
-    void encode(ArgumentEncoder*) const;
+    void encode(ArgumentEncoder&) const;
     static bool decode(ArgumentDecoder*, Attachment&);
     
 private:

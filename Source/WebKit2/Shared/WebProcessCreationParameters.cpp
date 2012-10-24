@@ -52,69 +52,69 @@ WebProcessCreationParameters::WebProcessCreationParameters()
 {
 }
 
-void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) const
+void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder->encode(injectedBundlePath);
-    encoder->encode(injectedBundlePathExtensionHandle);
-    encoder->encode(applicationCacheDirectory);
-    encoder->encode(applicationCacheDirectoryExtensionHandle);
-    encoder->encode(databaseDirectory);
-    encoder->encode(databaseDirectoryExtensionHandle);
-    encoder->encode(localStorageDirectory);
-    encoder->encode(localStorageDirectoryExtensionHandle);
-    encoder->encode(diskCacheDirectory);
-    encoder->encode(diskCacheDirectoryExtensionHandle);
-    encoder->encode(cookieStorageDirectory);
-    encoder->encode(cookieStorageDirectoryExtensionHandle);
-    encoder->encode(urlSchemesRegistererdAsEmptyDocument);
-    encoder->encode(urlSchemesRegisteredAsSecure);
-    encoder->encode(urlSchemesForWhichDomainRelaxationIsForbidden);
-    encoder->encode(urlSchemesRegisteredAsLocal);
-    encoder->encode(urlSchemesRegisteredAsNoAccess);
-    encoder->encode(urlSchemesRegisteredAsDisplayIsolated);
-    encoder->encode(urlSchemesRegisteredAsCORSEnabled);
-    encoder->encodeEnum(cacheModel);
-    encoder->encode(shouldTrackVisitedLinks);
-    encoder->encode(shouldAlwaysUseComplexTextCodePath);
-    encoder->encode(shouldUseFontSmoothing);
-    encoder->encode(iconDatabaseEnabled);
-    encoder->encode(terminationTimeout);
-    encoder->encode(languages);
-    encoder->encode(textCheckerState);
-    encoder->encode(fullKeyboardAccessEnabled);
-    encoder->encode(defaultRequestTimeoutInterval);
+    encoder.encode(injectedBundlePath);
+    encoder.encode(injectedBundlePathExtensionHandle);
+    encoder.encode(applicationCacheDirectory);
+    encoder.encode(applicationCacheDirectoryExtensionHandle);
+    encoder.encode(databaseDirectory);
+    encoder.encode(databaseDirectoryExtensionHandle);
+    encoder.encode(localStorageDirectory);
+    encoder.encode(localStorageDirectoryExtensionHandle);
+    encoder.encode(diskCacheDirectory);
+    encoder.encode(diskCacheDirectoryExtensionHandle);
+    encoder.encode(cookieStorageDirectory);
+    encoder.encode(cookieStorageDirectoryExtensionHandle);
+    encoder.encode(urlSchemesRegistererdAsEmptyDocument);
+    encoder.encode(urlSchemesRegisteredAsSecure);
+    encoder.encode(urlSchemesForWhichDomainRelaxationIsForbidden);
+    encoder.encode(urlSchemesRegisteredAsLocal);
+    encoder.encode(urlSchemesRegisteredAsNoAccess);
+    encoder.encode(urlSchemesRegisteredAsDisplayIsolated);
+    encoder.encode(urlSchemesRegisteredAsCORSEnabled);
+    encoder.encodeEnum(cacheModel);
+    encoder.encode(shouldTrackVisitedLinks);
+    encoder.encode(shouldAlwaysUseComplexTextCodePath);
+    encoder.encode(shouldUseFontSmoothing);
+    encoder.encode(iconDatabaseEnabled);
+    encoder.encode(terminationTimeout);
+    encoder.encode(languages);
+    encoder.encode(textCheckerState);
+    encoder.encode(fullKeyboardAccessEnabled);
+    encoder.encode(defaultRequestTimeoutInterval);
 #if PLATFORM(MAC) || USE(CFURLSTORAGESESSIONS)
-    encoder->encode(uiProcessBundleIdentifier);
+    encoder.encode(uiProcessBundleIdentifier);
 #endif
 #if PLATFORM(MAC)
-    encoder->encode(parentProcessName);
-    encoder->encode(presenterApplicationPid);
-    encoder->encode(nsURLCacheMemoryCapacity);
-    encoder->encode(nsURLCacheDiskCapacity);
-    encoder->encode(acceleratedCompositingPort);
-    encoder->encode(uiProcessBundleResourcePath);
-    encoder->encode(uiProcessBundleResourcePathExtensionHandle);
-    encoder->encode(shouldForceScreenFontSubstitution);
-    encoder->encode(shouldEnableKerningAndLigaturesByDefault);
+    encoder.encode(parentProcessName);
+    encoder.encode(presenterApplicationPid);
+    encoder.encode(nsURLCacheMemoryCapacity);
+    encoder.encode(nsURLCacheDiskCapacity);
+    encoder.encode(acceleratedCompositingPort);
+    encoder.encode(uiProcessBundleResourcePath);
+    encoder.encode(uiProcessBundleResourcePathExtensionHandle);
+    encoder.encode(shouldForceScreenFontSubstitution);
+    encoder.encode(shouldEnableKerningAndLigaturesByDefault);
 #elif PLATFORM(WIN)
-    encoder->encode(shouldPaintNativeControls);
-    encoder->encode(cfURLCacheDiskCapacity);
-    encoder->encode(cfURLCacheMemoryCapacity);
-    encoder->encode(initialHTTPCookieAcceptPolicy);
+    encoder.encode(shouldPaintNativeControls);
+    encoder.encode(cfURLCacheDiskCapacity);
+    encoder.encode(cfURLCacheMemoryCapacity);
+    encoder.encode(initialHTTPCookieAcceptPolicy);
 #if USE(CFURLSTORAGESESSIONS)
     CFDataRef storageSession = serializedDefaultStorageSession.get();
-    encoder->encode(static_cast<bool>(storageSession));
+    encoder.encode(static_cast<bool>(storageSession));
     if (storageSession)
-        CoreIPC::encode(encoder, storageSession);
+        CoreIPC::encode(&encoder, storageSession);
 #endif // USE(CFURLSTORAGESESSIONS)
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    encoder->encode(notificationPermissions);
+    encoder.encode(notificationPermissions);
 #endif
 
 #if ENABLE(NETWORK_PROCESS)
-    encoder->encode(usesNetworkProcess);
+    encoder.encode(usesNetworkProcess);
 #endif
 }
 

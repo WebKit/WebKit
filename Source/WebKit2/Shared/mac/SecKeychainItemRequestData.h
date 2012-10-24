@@ -58,7 +58,7 @@ public:
     SecKeychainItemRequestData(Type, SecItemClass, SecKeychainAttributeList*, UInt32 length, const void* data);
     ~SecKeychainItemRequestData();
 
-    void encode(CoreIPC::ArgumentEncoder*) const;
+    void encode(CoreIPC::ArgumentEncoder&) const;
     static bool decode(CoreIPC::ArgumentDecoder*, SecKeychainItemRequestData&);
 
     Type type() const { return m_type; }

@@ -100,7 +100,7 @@ public:
         return m_remoteNPObjectIDValue;
     }
 
-    void encode(CoreIPC::ArgumentEncoder*) const;
+    void encode(CoreIPC::ArgumentEncoder&) const;
     static bool decode(CoreIPC::ArgumentDecoder*, NPVariantData&);
 
 private:

@@ -58,7 +58,7 @@ public:
         Handle();
         ~Handle();
 
-        void encode(CoreIPC::ArgumentEncoder*) const;
+        void encode(CoreIPC::ArgumentEncoder&) const;
         static bool decode(CoreIPC::ArgumentDecoder*, Handle&);
 
     private:
@@ -78,7 +78,7 @@ public:
         Handle& operator[](size_t i);
         const Handle& operator[](size_t i) const;
         size_t size() const;
-        void encode(CoreIPC::ArgumentEncoder*) const;
+        void encode(CoreIPC::ArgumentEncoder&) const;
         static bool decode(CoreIPC::ArgumentDecoder*, HandleArray&);
        
     private:
@@ -114,7 +114,7 @@ private:
 #if !ENABLE(WEB_PROCESS_SANDBOX)
 inline SandboxExtension::Handle::Handle() { }
 inline SandboxExtension::Handle::~Handle() { }
-inline void SandboxExtension::Handle::encode(CoreIPC::ArgumentEncoder*) const { }
+inline void SandboxExtension::Handle::encode(CoreIPC::ArgumentEncoder&) const { }
 inline bool SandboxExtension::Handle::decode(CoreIPC::ArgumentDecoder*, Handle&) { return true; }
 inline SandboxExtension::HandleArray::HandleArray() { }
 inline SandboxExtension::HandleArray::~HandleArray() { }
@@ -122,7 +122,7 @@ inline void SandboxExtension::HandleArray::allocate(size_t) { }
 inline size_t SandboxExtension::HandleArray::size() const { return 0; }    
 inline const SandboxExtension::Handle& SandboxExtension::HandleArray::operator[](size_t) const { return m_emptyHandle; }
 inline SandboxExtension::Handle& SandboxExtension::HandleArray::operator[](size_t) { return m_emptyHandle; }
-inline void SandboxExtension::HandleArray::encode(CoreIPC::ArgumentEncoder*) const { }
+inline void SandboxExtension::HandleArray::encode(CoreIPC::ArgumentEncoder&) const { }
 inline bool SandboxExtension::HandleArray::decode(CoreIPC::ArgumentDecoder*, HandleArray&) { return true; }
 inline PassRefPtr<SandboxExtension> SandboxExtension::create(const Handle&) { return 0; }
 inline void SandboxExtension::createHandle(const String&, Type, Handle&) { }

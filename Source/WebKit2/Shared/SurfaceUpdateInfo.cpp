@@ -24,12 +24,12 @@
 
 namespace WebKit {
 
-void SurfaceUpdateInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
+void SurfaceUpdateInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder->encode(updateRect);
-    encoder->encode(scaleFactor);
-    encoder->encode(surfaceHandle);
-    encoder->encode(surfaceOffset);
+    encoder.encode(updateRect);
+    encoder.encode(scaleFactor);
+    encoder.encode(surfaceHandle);
+    encoder.encode(surfaceOffset);
 }
 
 bool SurfaceUpdateInfo::decode(CoreIPC::ArgumentDecoder* decoder, SurfaceUpdateInfo& result)

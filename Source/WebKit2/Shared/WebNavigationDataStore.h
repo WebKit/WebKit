@@ -35,11 +35,11 @@
 namespace WebKit {
 
 struct WebNavigationDataStore {
-    void encode(CoreIPC::ArgumentEncoder* encoder) const
+    void encode(CoreIPC::ArgumentEncoder& encoder) const
     {
-        encoder->encode(url);
-        encoder->encode(title);
-        encoder->encode(originalRequest);
+        encoder.encode(url);
+        encoder.encode(title);
+        encoder.encode(originalRequest);
     }
 
     static bool decode(CoreIPC::ArgumentDecoder* decoder, WebNavigationDataStore& store)

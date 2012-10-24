@@ -1,3 +1,209 @@
+2012-10-23  Anders Carlsson  <andersca@apple.com>
+
+        encode should take an ArgumentEncoder reference
+        https://bugs.webkit.org/show_bug.cgi?id=100183
+
+        Reviewed by Jessie Berlin.
+
+        * Platform/CoreIPC/ArgumentCoder.h:
+        (CoreIPC::ArgumentCoder::encode):
+        * Platform/CoreIPC/Arguments.h:
+        (CoreIPC::Arguments0::encode):
+        (CoreIPC::Arguments1::encode):
+        (CoreIPC::Arguments2::encode):
+        (CoreIPC::Arguments3::encode):
+        (CoreIPC::Arguments4::encode):
+        (CoreIPC::Arguments5::encode):
+        (CoreIPC::Arguments6::encode):
+        (CoreIPC::Arguments7::encode):
+        (CoreIPC::Arguments8::encode):
+        (CoreIPC::Arguments10::encode):
+        * Platform/CoreIPC/Attachment.cpp:
+        (CoreIPC::Attachment::encode):
+        * Platform/CoreIPC/Attachment.h:
+        (Attachment):
+        * Platform/CoreIPC/DataReference.cpp:
+        (CoreIPC::DataReference::encode):
+        * Platform/CoreIPC/DataReference.h:
+        (DataReference):
+        * Platform/CoreIPC/StringReference.cpp:
+        (CoreIPC::StringReference::encode):
+        * Platform/CoreIPC/StringReference.h:
+        (StringReference):
+        * Platform/CoreIPC/mac/MachPort.h:
+        (CoreIPC::MachPort::encode):
+        * Platform/SharedMemory.h:
+        (Handle):
+        * Platform/mac/SharedMemoryMac.cpp:
+        (WebKit::SharedMemory::Handle::encode):
+        * PluginProcess/PluginCreationParameters.cpp:
+        (WebKit::PluginCreationParameters::encode):
+        * PluginProcess/PluginCreationParameters.h:
+        (PluginCreationParameters):
+        * Shared/DictionaryPopupInfo.cpp:
+        (WebKit::DictionaryPopupInfo::encode):
+        * Shared/DictionaryPopupInfo.h:
+        (DictionaryPopupInfo):
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::encode):
+        * Shared/EditorState.h:
+        (EditorState):
+        * Shared/FontInfo.cpp:
+        (WebKit::FontInfo::encode):
+        * Shared/FontInfo.h:
+        (FontInfo):
+        * Shared/LayerTreeContext.h:
+        (LayerTreeContext):
+        * Shared/Network/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode):
+        * Shared/Network/NetworkProcessCreationParameters.h:
+        (NetworkProcessCreationParameters):
+        * Shared/OriginAndDatabases.cpp:
+        (WebKit::OriginAndDatabases::encode):
+        * Shared/OriginAndDatabases.h:
+        (OriginAndDatabases):
+        * Shared/PlatformPopupMenuData.cpp:
+        (WebKit::PlatformPopupMenuData::encode):
+        * Shared/PlatformPopupMenuData.h:
+        (PlatformPopupMenuData):
+        * Shared/Plugins/NPIdentifierData.cpp:
+        (WebKit::NPIdentifierData::encode):
+        * Shared/Plugins/NPIdentifierData.h:
+        (NPIdentifierData):
+        * Shared/Plugins/NPVariantData.cpp:
+        (WebKit::NPVariantData::encode):
+        * Shared/Plugins/NPVariantData.h:
+        (NPVariantData):
+        * Shared/Plugins/PluginProcessCreationParameters.cpp:
+        (WebKit::PluginProcessCreationParameters::encode):
+        * Shared/Plugins/PluginProcessCreationParameters.h:
+        (PluginProcessCreationParameters):
+        * Shared/PrintInfo.cpp:
+        (WebKit::PrintInfo::encode):
+        * Shared/PrintInfo.h:
+        (PrintInfo):
+        * Shared/SandboxExtension.h:
+        (Handle):
+        (HandleArray):
+        * Shared/SecurityOriginData.cpp:
+        (WebKit::SecurityOriginData::encode):
+        * Shared/SecurityOriginData.h:
+        (SecurityOriginData):
+        * Shared/SessionState.cpp:
+        (WebKit::SessionState::encode):
+        * Shared/SessionState.h:
+        (SessionState):
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::Handle::encode):
+        * Shared/ShareableBitmap.h:
+        (Handle):
+        * Shared/SharedWorkerProcessCreationParameters.cpp:
+        (WebKit::SharedWorkerProcessCreationParameters::encode):
+        * Shared/SharedWorkerProcessCreationParameters.h:
+        (SharedWorkerProcessCreationParameters):
+        * Shared/StatisticsData.cpp:
+        (WebKit::StatisticsData::encode):
+        * Shared/StatisticsData.h:
+        (StatisticsData):
+        * Shared/StringPairVector.h:
+        (WebKit::StringPairVector::encode):
+        * Shared/UpdateInfo.cpp:
+        (WebKit::UpdateInfo::encode):
+        * Shared/UpdateInfo.h:
+        (UpdateInfo):
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        * Shared/WebContextMenuItemData.cpp:
+        (WebKit::WebContextMenuItemData::encode):
+        * Shared/WebContextMenuItemData.h:
+        (WebContextMenuItemData):
+        * Shared/WebEvent.cpp:
+        (WebKit::WebEvent::encode):
+        * Shared/WebEvent.h:
+        (WebEvent):
+        (WebMouseEvent):
+        (WebWheelEvent):
+        (WebKeyboardEvent):
+        (WebGestureEvent):
+        (WebPlatformTouchPoint):
+        (WebTouchEvent):
+        * Shared/WebGeolocationPosition.cpp:
+        (WebKit::WebGeolocationPosition::Data::encode):
+        * Shared/WebGeolocationPosition.h:
+        (Data):
+        * Shared/WebGestureEvent.cpp:
+        (WebKit::WebGestureEvent::encode):
+        * Shared/WebHitTestResult.cpp:
+        (WebKit::WebHitTestResult::Data::encode):
+        * Shared/WebHitTestResult.h:
+        (Data):
+        * Shared/WebKeyboardEvent.cpp:
+        (WebKit::WebKeyboardEvent::encode):
+        * Shared/WebMouseEvent.cpp:
+        (WebKit::WebMouseEvent::encode):
+        * Shared/WebNavigationDataStore.h:
+        (WebKit::WebNavigationDataStore::encode):
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        * Shared/WebPageCreationParameters.h:
+        (WebPageCreationParameters):
+        * Shared/WebPageGroupData.cpp:
+        (WebKit::WebPageGroupData::encode):
+        * Shared/WebPageGroupData.h:
+        (WebPageGroupData):
+        * Shared/WebPopupItem.cpp:
+        (WebKit::WebPopupItem::encode):
+        * Shared/WebPopupItem.h:
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::encode):
+        * Shared/WebPreferencesStore.h:
+        (WebPreferencesStore):
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        * Shared/WebProcessCreationParameters.h:
+        (WebProcessCreationParameters):
+        * Shared/WebWheelEvent.cpp:
+        (WebKit::WebWheelEvent::encode):
+        * Shared/mac/AttributedString.h:
+        (AttributedString):
+        * Shared/mac/AttributedString.mm:
+        (WebKit::AttributedString::encode):
+        * Shared/mac/ColorSpaceData.h:
+        (ColorSpaceData):
+        * Shared/mac/ColorSpaceData.mm:
+        (WebKit::ColorSpaceData::encode):
+        * Shared/mac/LayerTreeContextMac.mm:
+        (WebKit::LayerTreeContext::encode):
+        * Shared/mac/PlatformCertificateInfo.h:
+        (PlatformCertificateInfo):
+        * Shared/mac/PlatformCertificateInfo.mm:
+        (WebKit::PlatformCertificateInfo::encode):
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtension::Handle::encode):
+        (WebKit::SandboxExtension::HandleArray::encode):
+        * Shared/mac/SecItemRequestData.cpp:
+        (WebKit::SecItemRequestData::encode):
+        * Shared/mac/SecItemRequestData.h:
+        * Shared/mac/SecItemResponseData.cpp:
+        (WebKit::SecItemResponseData::encode):
+        * Shared/mac/SecItemResponseData.h:
+        (SecItemResponseData):
+        * Shared/mac/SecKeychainItemRequestData.cpp:
+        (WebKit::SecKeychainItemRequestData::encode):
+        * Shared/mac/SecKeychainItemRequestData.h:
+        * Shared/mac/SecKeychainItemResponseData.cpp:
+        (WebKit::SecKeychainItemResponseData::encode):
+        * Shared/mac/SecKeychainItemResponseData.h:
+        (SecKeychainItemResponseData):
+        * UIProcess/WebContextUserMessageCoders.h:
+        (WebKit::WebContextUserMessageEncoder::encode):
+        * WebProcess/InjectedBundle/InjectedBundleUserMessageCoders.h:
+        (WebKit::InjectedBundleUserMessageEncoder::encode):
+        * WebProcess/Plugins/Plugin.cpp:
+        (WebKit::Plugin::Parameters::encode):
+        * WebProcess/Plugins/Plugin.h:
+        (Parameters):
+
 2012-10-24  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Move the QQuickWebViewExperimental pointer to QQuickWebViewPrivate

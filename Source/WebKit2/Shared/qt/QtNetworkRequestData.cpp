@@ -50,11 +50,11 @@ QtNetworkRequestData::QtNetworkRequestData(const QNetworkRequest& request, QNetw
     m_replyUuid = QUuid::createUuid().toString();
 }
 
-void QtNetworkRequestData::encode(CoreIPC::ArgumentEncoder* encoder) const
+void QtNetworkRequestData::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder->encode(m_scheme);
-    encoder->encode(m_urlString);
-    encoder->encode(m_replyUuid);
+    encoder.encode(m_scheme);
+    encoder.encode(m_urlString);
+    encoder.encode(m_replyUuid);
 }
 
 bool QtNetworkRequestData::decode(CoreIPC::ArgumentDecoder* decoder, QtNetworkRequestData& destination)

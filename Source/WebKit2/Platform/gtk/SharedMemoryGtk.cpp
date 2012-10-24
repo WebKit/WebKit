@@ -41,7 +41,7 @@ SharedMemory::Handle::~Handle()
     notImplemented();
 }
 
-void SharedMemory::Handle::encode(CoreIPC::ArgumentEncoder* encoder) const
+void SharedMemory::Handle::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     notImplemented();
 }

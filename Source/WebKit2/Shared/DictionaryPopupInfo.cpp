@@ -34,17 +34,17 @@
 
 namespace WebKit {
 
-void DictionaryPopupInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
+void DictionaryPopupInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder->encode(origin);
-    encoder->encode(fontInfo);
-    encoder->encodeEnum(type);
+    encoder.encode(origin);
+    encoder.encode(fontInfo);
+    encoder.encodeEnum(type);
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     bool hadOptions = options;
-    encoder->encode(hadOptions);
+    encoder.encode(hadOptions);
     if (hadOptions)
-        CoreIPC::encode(encoder, options.get());
+        CoreIPC::encode(&encoder, options.get());
 #endif
 }
 

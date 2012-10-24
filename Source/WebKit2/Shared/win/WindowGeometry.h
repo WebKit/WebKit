@@ -38,7 +38,7 @@ namespace WebKit {
 struct WindowGeometry {
     WindowGeometry();
 
-    void encode(CoreIPC::ArgumentEncoder*) const;
+    void encode(CoreIPC::ArgumentEncoder&) const;
     static bool decode(CoreIPC::ArgumentDecoder*, WindowGeometry&);
 
     HWND window;

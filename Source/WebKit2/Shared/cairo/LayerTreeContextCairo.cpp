@@ -40,7 +40,7 @@ LayerTreeContext::~LayerTreeContext()
     notImplemented();
 }
 
-void LayerTreeContext::encode(CoreIPC::ArgumentEncoder*) const
+void LayerTreeContext::encode(CoreIPC::ArgumentEncoder&) const
 {
     notImplemented();
 }

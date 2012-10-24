@@ -63,7 +63,7 @@ struct PrintInfo {
     GRefPtr<GtkPageSetup> pageSetup;
 #endif
 
-    void encode(CoreIPC::ArgumentEncoder*) const;
+    void encode(CoreIPC::ArgumentEncoder&) const;
     static bool decode(CoreIPC::ArgumentDecoder*, PrintInfo&);
 };
 

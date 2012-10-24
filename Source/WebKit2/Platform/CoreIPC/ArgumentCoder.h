@@ -34,7 +34,7 @@ class ArgumentDecoder;
 class ArgumentEncoder;
     
 template<typename T> struct ArgumentCoder {
-    static void encode(ArgumentEncoder* encoder, const T& t)
+    static void encode(ArgumentEncoder& encoder, const T& t)
     {
         t.encode(encoder);
     }

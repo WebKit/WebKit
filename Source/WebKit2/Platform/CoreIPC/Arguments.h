@@ -35,7 +35,7 @@ namespace CoreIPC {
 struct Arguments0 {
     typedef Arguments0 ValueType;
 
-    void encode(ArgumentEncoder*) const 
+    void encode(ArgumentEncoder&) const 
     {
     }
 
@@ -57,9 +57,9 @@ template<typename T1> struct Arguments1 {
     {
     }
 
-    void encode(ArgumentEncoder* encoder) const 
+    void encode(ArgumentEncoder& encoder) const
     {
-        encoder->encode(argument1);
+        encoder.encode(argument1);
     }
 
     static bool decode(ArgumentDecoder* decoder, Arguments1& result)
@@ -84,10 +84,10 @@ template<typename T1, typename T2> struct Arguments2 : Arguments1<T1> {
     {
     }
 
-    void encode(ArgumentEncoder* encoder) const 
+    void encode(ArgumentEncoder& encoder) const
     {
         Arguments1<T1>::encode(encoder);
-        encoder->encode(argument2);
+        encoder.encode(argument2);
     }
 
     static bool decode(ArgumentDecoder* decoder, Arguments2& result)
@@ -116,10 +116,10 @@ template<typename T1, typename T2, typename T3> struct Arguments3 : Arguments2<T
     {
     }
 
-    void encode(ArgumentEncoder* encoder) const 
+    void encode(ArgumentEncoder& encoder) const
     {
         Arguments2<T1, T2>::encode(encoder);
-        encoder->encode(argument3);
+        encoder.encode(argument3);
     }
 
     static bool decode(ArgumentDecoder* decoder, Arguments3& result)
@@ -149,10 +149,10 @@ template<typename T1, typename T2, typename T3, typename T4> struct Arguments4 :
     {
     }
 
-    void encode(ArgumentEncoder* encoder) const
+    void encode(ArgumentEncoder& encoder) const
     {
         Arguments3<T1, T2, T3>::encode(encoder);
-        encoder->encode(argument4);
+        encoder.encode(argument4);
     }
     
     static bool decode(ArgumentDecoder* decoder, Arguments4& result)
@@ -183,10 +183,10 @@ template<typename T1, typename T2, typename T3, typename T4, typename T5> struct
     {
     }
 
-    void encode(ArgumentEncoder* encoder) const
+    void encode(ArgumentEncoder& encoder) const
     {
         Arguments4<T1, T2, T3, T4>::encode(encoder);
-        encoder->encode(argument5);
+        encoder.encode(argument5);
     }
     
     static bool decode(ArgumentDecoder* decoder, Arguments5& result)
@@ -218,10 +218,10 @@ template<typename T1, typename T2, typename T3, typename T4, typename T5, typena
     {
     }
 
-    void encode(ArgumentEncoder* encoder) const
+    void encode(ArgumentEncoder& encoder) const
     {
         Arguments5<T1, T2, T3, T4, T5>::encode(encoder);
-        encoder->encode(argument6);
+        encoder.encode(argument6);
     }
     
     static bool decode(ArgumentDecoder* decoder, Arguments6& result)
@@ -254,10 +254,10 @@ template<typename T1, typename T2, typename T3, typename T4, typename T5, typena
     {
     }
 
-    void encode(ArgumentEncoder* encoder) const
+    void encode(ArgumentEncoder& encoder) const
     {
         Arguments6<T1, T2, T3, T4, T5, T6>::encode(encoder);
-        encoder->encode(argument7);
+        encoder.encode(argument7);
     }
     
     static bool decode(ArgumentDecoder* decoder, Arguments7& result)
@@ -289,10 +289,10 @@ template<typename T1, typename T2, typename T3, typename T4, typename T5, typena
     {
     }
 
-    void encode(ArgumentEncoder* encoder) const
+    void encode(ArgumentEncoder& encoder) const
     {
         Arguments7<T1, T2, T3, T4, T5, T6, T7>::encode(encoder);
-        encoder->encode(argument8);
+        encoder.encode(argument8);
     }
 
     static bool decode(ArgumentDecoder* decoder, Arguments8& result)
@@ -327,11 +327,11 @@ template<typename T1, typename T2, typename T3, typename T4, typename T5, typena
     {
     }
 
-    void encode(ArgumentEncoder* encoder) const
+    void encode(ArgumentEncoder& encoder) const
     {
         Arguments8<T1, T2, T3, T4, T5, T6, T7, T8>::encode(encoder);
-        encoder->encode(argument9);
-        encoder->encode(argument10);
+        encoder.encode(argument9);
+        encoder.encode(argument10);
     }
 
     static bool decode(ArgumentDecoder* decoder, Arguments10& result)

@@ -30,42 +30,42 @@
 
 namespace WebKit {
 
-void WebPageCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) const
+void WebPageCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder->encode(viewSize);
-    encoder->encode(isActive);
-    encoder->encode(isFocused);
-    encoder->encode(isVisible);
-    encoder->encode(isInWindow);
+    encoder.encode(viewSize);
+    encoder.encode(isActive);
+    encoder.encode(isFocused);
+    encoder.encode(isVisible);
+    encoder.encode(isInWindow);
 
-    encoder->encode(store);
-    encoder->encodeEnum(drawingAreaType);
-    encoder->encode(pageGroupData);
-    encoder->encode(drawsBackground);
-    encoder->encode(drawsTransparentBackground);
-    encoder->encode(areMemoryCacheClientCallsEnabled);
-    encoder->encode(useFixedLayout);
-    encoder->encode(fixedLayoutSize);
-    encoder->encodeEnum(paginationMode);
-    encoder->encode(paginationBehavesLikeColumns);
-    encoder->encode(pageLength);
-    encoder->encode(gapBetweenPages);
-    encoder->encode(userAgent);
-    encoder->encode(sessionState);
-    encoder->encode(highestUsedBackForwardItemID);
-    encoder->encode(canRunBeforeUnloadConfirmPanel);
-    encoder->encode(canRunModal);
-    encoder->encode(deviceScaleFactor);
-    encoder->encode(mediaVolume);
+    encoder.encode(store);
+    encoder.encodeEnum(drawingAreaType);
+    encoder.encode(pageGroupData);
+    encoder.encode(drawsBackground);
+    encoder.encode(drawsTransparentBackground);
+    encoder.encode(areMemoryCacheClientCallsEnabled);
+    encoder.encode(useFixedLayout);
+    encoder.encode(fixedLayoutSize);
+    encoder.encodeEnum(paginationMode);
+    encoder.encode(paginationBehavesLikeColumns);
+    encoder.encode(pageLength);
+    encoder.encode(gapBetweenPages);
+    encoder.encode(userAgent);
+    encoder.encode(sessionState);
+    encoder.encode(highestUsedBackForwardItemID);
+    encoder.encode(canRunBeforeUnloadConfirmPanel);
+    encoder.encode(canRunModal);
+    encoder.encode(deviceScaleFactor);
+    encoder.encode(mediaVolume);
 
 #if PLATFORM(MAC)
-    encoder->encode(isSmartInsertDeleteEnabled);
-    encoder->encodeEnum(layerHostingMode);
-    encoder->encode(colorSpace);
+    encoder.encode(isSmartInsertDeleteEnabled);
+    encoder.encodeEnum(layerHostingMode);
+    encoder.encode(colorSpace);
 #endif
 
 #if PLATFORM(WIN)
-    encoder->encode(reinterpret_cast<uint64_t>(nativeWindow));
+    encoder.encode(reinterpret_cast<uint64_t>(nativeWindow));
 #endif
 }
 

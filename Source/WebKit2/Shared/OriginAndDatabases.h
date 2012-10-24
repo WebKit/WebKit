@@ -40,7 +40,7 @@ namespace CoreIPC {
 namespace WebKit {
 
 struct OriginAndDatabases {
-    void encode(CoreIPC::ArgumentEncoder*) const;
+    void encode(CoreIPC::ArgumentEncoder&) const;
     static bool decode(CoreIPC::ArgumentDecoder*, OriginAndDatabases&);
 
     String originIdentifier;

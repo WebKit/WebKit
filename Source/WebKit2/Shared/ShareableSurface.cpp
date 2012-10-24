@@ -37,16 +37,16 @@ ShareableSurface::Handle::Handle()
 {
 }
 
-void ShareableSurface::Handle::encode(CoreIPC::ArgumentEncoder* encoder) const
+void ShareableSurface::Handle::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder->encode(m_size);
-    encoder->encode(m_flags);
+    encoder.encode(m_size);
+    encoder.encode(m_flags);
 #if USE(GRAPHICS_SURFACE)
-    encoder->encode(m_graphicsSurfaceToken);
+    encoder.encode(m_graphicsSurfaceToken);
     if (m_graphicsSurfaceToken.isValid())
         return;
 #endif
-    encoder->encode(m_bitmapHandle);
+    encoder.encode(m_bitmapHandle);
 }
 
 bool ShareableSurface::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle& handle)

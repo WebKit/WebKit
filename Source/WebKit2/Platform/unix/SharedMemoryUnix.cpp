@@ -63,9 +63,9 @@ bool SharedMemory::Handle::isNull() const
     return m_fileDescriptor == -1;
 }
 
-void SharedMemory::Handle::encode(CoreIPC::ArgumentEncoder* encoder) const
+void SharedMemory::Handle::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder->encode(releaseToAttachment());
+    encoder.encode(releaseToAttachment());
 }
 
 bool SharedMemory::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle& handle)

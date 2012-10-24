@@ -38,26 +38,26 @@ enum EncodedDataType {
     Data,
 };
 
-void ColorSpaceData::encode(CoreIPC::ArgumentEncoder* encoder) const
+void ColorSpaceData::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     if (cgColorSpace) {
         // Try to encode the name.
         if (RetainPtr<CFStringRef> name = adoptCF(CGColorSpaceCopyName(cgColorSpace.get()))) {
-            encoder->encodeEnum(Name);
-            CoreIPC::encode(encoder, name.get());
+            encoder.encodeEnum(Name);
+            CoreIPC::encode(&encoder, name.get());
             return;
         }
 
         // Failing that, just encode the ICC data.
         if (RetainPtr<CFDataRef> profileData = adoptCF(CGColorSpaceCopyICCProfile(cgColorSpace.get()))) {
-            encoder->encodeEnum(Data);
-            CoreIPC::encode(encoder, profileData.get());
+            encoder.encodeEnum(Data);
+            CoreIPC::encode(&encoder, profileData.get());
             return;
         }
     }
 
     // The color space was null or failed to be encoded.
-    encoder->encodeEnum(Null);
+    encoder.encodeEnum(Null);
 }
 
 bool ColorSpaceData::decode(CoreIPC::ArgumentDecoder* decoder, ColorSpaceData& colorSpaceData)

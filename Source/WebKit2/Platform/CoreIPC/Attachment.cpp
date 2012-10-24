@@ -59,9 +59,9 @@ void Attachment::release()
 }
 #endif
 
-void Attachment::encode(ArgumentEncoder* encoder) const
+void Attachment::encode(ArgumentEncoder& encoder) const
 {
-    encoder->addAttachment(*this);
+    encoder.addAttachment(*this);
 }
 
 bool Attachment::decode(ArgumentDecoder* decoder, Attachment& attachment)

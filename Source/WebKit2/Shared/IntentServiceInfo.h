@@ -40,7 +40,7 @@ class ArgumentEncoder;
 namespace WebKit {
 
 struct IntentServiceInfo {
-    void encode(CoreIPC::ArgumentEncoder*) const;
+    void encode(CoreIPC::ArgumentEncoder&) const;
     static bool decode(CoreIPC::ArgumentDecoder*, IntentServiceInfo&);
 
     String action;

@@ -64,10 +64,10 @@ bool SessionState::isEmpty() const
     return m_list.isEmpty();
 }
     
-void SessionState::encode(CoreIPC::ArgumentEncoder* encoder) const
+void SessionState::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder->encode(m_list);
-    encoder->encode(m_currentIndex);
+    encoder.encode(m_list);
+    encoder.encode(m_currentIndex);
 }
 
 bool SessionState::decode(CoreIPC::ArgumentDecoder* decoder, SessionState& state)

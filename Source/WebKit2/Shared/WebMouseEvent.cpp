@@ -78,20 +78,20 @@ WebMouseEvent::WebMouseEvent(Type type, Button button, const IntPoint& position,
 }
 #endif
 
-void WebMouseEvent::encode(CoreIPC::ArgumentEncoder* encoder) const
+void WebMouseEvent::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     WebEvent::encode(encoder);
 
-    encoder->encode(m_button);
-    encoder->encode(m_position);
-    encoder->encode(m_globalPosition);
-    encoder->encode(m_deltaX);
-    encoder->encode(m_deltaY);
-    encoder->encode(m_deltaZ);
-    encoder->encode(m_clickCount);
+    encoder.encode(m_button);
+    encoder.encode(m_position);
+    encoder.encode(m_globalPosition);
+    encoder.encode(m_deltaX);
+    encoder.encode(m_deltaY);
+    encoder.encode(m_deltaZ);
+    encoder.encode(m_clickCount);
 
 #if PLATFORM(WIN)
-    encoder->encode(m_didActivateWebView);
+    encoder.encode(m_didActivateWebView);
 #endif
 }
 

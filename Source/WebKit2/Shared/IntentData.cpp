@@ -56,15 +56,15 @@ IntentData::IntentData(Intent* coreIntent)
     }
 }
 
-void IntentData::encode(CoreIPC::ArgumentEncoder* encoder) const
+void IntentData::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder->encode(action);
-    encoder->encode(type);
-    encoder->encode(service);
-    encoder->encode(CoreIPC::DataReference(data));
-    encoder->encode(extras);
-    encoder->encode(suggestions);
-    encoder->encode(messagePorts);
+    encoder.encode(action);
+    encoder.encode(type);
+    encoder.encode(service);
+    encoder.encode(CoreIPC::DataReference(data));
+    encoder.encode(extras);
+    encoder.encode(suggestions);
+    encoder.encode(messagePorts);
 }
 
 bool IntentData::decode(CoreIPC::ArgumentDecoder* decoder, IntentData& intentData)

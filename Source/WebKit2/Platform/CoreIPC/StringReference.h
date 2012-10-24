@@ -64,7 +64,7 @@ public:
         return a.m_size == b.m_size && !memcmp(a.m_data, b.m_data, a.m_size);
     }
 
-    void encode(ArgumentEncoder*) const;
+    void encode(ArgumentEncoder&) const;
     static bool decode(ArgumentDecoder*, StringReference&);
 
     struct Hash {

@@ -118,31 +118,31 @@ NPVariantData NPVariantData::makeRemoteNPObjectID(uint64_t value)
     return npVariantData;
 }
 
-void NPVariantData::encode(CoreIPC::ArgumentEncoder* encoder) const
+void NPVariantData::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder->encode(m_type);
+    encoder.encode(m_type);
 
     switch (type()) {
     case NPVariantData::Void:
     case NPVariantData::Null:
         break;
     case NPVariantData::Bool:
-        encoder->encode(boolValue());
+        encoder.encode(boolValue());
         break;
     case NPVariantData::Int32:
-        encoder->encode(int32Value());
+        encoder.encode(int32Value());
         break;
     case NPVariantData::Double:
-        encoder->encode(doubleValue());
+        encoder.encode(doubleValue());
         break;
     case NPVariantData::String:
-        encoder->encode(stringValue());
+        encoder.encode(stringValue());
         break;
     case NPVariantData::LocalNPObjectID:
-        encoder->encode(localNPObjectIDValue());
+        encoder.encode(localNPObjectIDValue());
         break;
     case NPVariantData::RemoteNPObjectID:
-        encoder->encode(remoteNPObjectIDValue());
+        encoder.encode(remoteNPObjectIDValue());
         break;
     }
 }

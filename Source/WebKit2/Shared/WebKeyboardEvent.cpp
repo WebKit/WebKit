@@ -45,19 +45,19 @@ WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& 
     ASSERT(isKeyboardEventType(type));
 }
 
-void WebKeyboardEvent::encode(CoreIPC::ArgumentEncoder* encoder) const
+void WebKeyboardEvent::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     WebEvent::encode(encoder);
 
-    encoder->encode(m_text);
-    encoder->encode(m_unmodifiedText);
-    encoder->encode(m_keyIdentifier);
-    encoder->encode(m_windowsVirtualKeyCode);
-    encoder->encode(m_nativeVirtualKeyCode);
-    encoder->encode(m_macCharCode);
-    encoder->encode(m_isAutoRepeat);
-    encoder->encode(m_isKeypad);
-    encoder->encode(m_isSystemKey);
+    encoder.encode(m_text);
+    encoder.encode(m_unmodifiedText);
+    encoder.encode(m_keyIdentifier);
+    encoder.encode(m_windowsVirtualKeyCode);
+    encoder.encode(m_nativeVirtualKeyCode);
+    encoder.encode(m_macCharCode);
+    encoder.encode(m_isAutoRepeat);
+    encoder.encode(m_isKeypad);
+    encoder.encode(m_isSystemKey);
 }
 
 bool WebKeyboardEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebKeyboardEvent& result)

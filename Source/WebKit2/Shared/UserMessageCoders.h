@@ -67,119 +67,119 @@ namespace WebKit {
 template<typename Owner>
 class UserMessageEncoder {
 public:
-    bool baseEncode(CoreIPC::ArgumentEncoder* encoder, APIObject::Type& type) const 
+    bool baseEncode(CoreIPC::ArgumentEncoder& encoder, APIObject::Type& type) const
     {
         if (!m_root) {
-            encoder->encode(static_cast<uint32_t>(APIObject::TypeNull));
+            encoder.encode(static_cast<uint32_t>(APIObject::TypeNull));
             return true;
         }
 
         type = m_root->type();
-        encoder->encode(static_cast<uint32_t>(type));
+        encoder.encode(static_cast<uint32_t>(type));
 
         switch (type) {
         case APIObject::TypeArray: {
             ImmutableArray* array = static_cast<ImmutableArray*>(m_root);
-            encoder->encode(static_cast<uint64_t>(array->size()));
+            encoder.encode(static_cast<uint64_t>(array->size()));
             for (size_t i = 0; i < array->size(); ++i)
-                encoder->encode(Owner(array->at(i)));
+                encoder.encode(Owner(array->at(i)));
             return true;
         }
         case APIObject::TypeDictionary: {
             ImmutableDictionary* dictionary = static_cast<ImmutableDictionary*>(m_root);
             const ImmutableDictionary::MapType& map = dictionary->map();
-            encoder->encode(static_cast<uint64_t>(map.size()));
+            encoder.encode(static_cast<uint64_t>(map.size()));
 
             ImmutableDictionary::MapType::const_iterator it = map.begin();
             ImmutableDictionary::MapType::const_iterator end = map.end();
             for (; it != end; ++it) {
-                encoder->encode(it->key);
-                encoder->encode(Owner(it->value.get()));
+                encoder.encode(it->key);
+                encoder.encode(Owner(it->value.get()));
             }
             return true;
         }
         case APIObject::TypeString: {
             WebString* string = static_cast<WebString*>(m_root);
-            encoder->encode(string->string());
+            encoder.encode(string->string());
             return true;
         }
         case APIObject::TypeSerializedScriptValue: {
             WebSerializedScriptValue* scriptValue = static_cast<WebSerializedScriptValue*>(m_root);
-            encoder->encodeVariableLengthByteArray(scriptValue->dataReference());
+            encoder.encodeVariableLengthByteArray(scriptValue->dataReference());
             return true;
         }
         case APIObject::TypeBoolean: {
             WebBoolean* booleanObject = static_cast<WebBoolean*>(m_root);
-            encoder->encode(booleanObject->value());
+            encoder.encode(booleanObject->value());
             return true;
         }
         case APIObject::TypeDouble: {
             WebDouble* doubleObject = static_cast<WebDouble*>(m_root);
-            encoder->encode(doubleObject->value());
+            encoder.encode(doubleObject->value());
             return true;
         }
         case APIObject::TypeUInt64: {
             WebUInt64* uint64Object = static_cast<WebUInt64*>(m_root);
-            encoder->encode(uint64Object->value());
+            encoder.encode(uint64Object->value());
             return true;
         }
         case APIObject::TypePoint: {
             WebPoint* pointObject = static_cast<WebPoint*>(m_root);
-            encoder->encode(pointObject->point().x);
-            encoder->encode(pointObject->point().y);
+            encoder.encode(pointObject->point().x);
+            encoder.encode(pointObject->point().y);
             return true;
         }
         case APIObject::TypeSize: {
             WebSize* sizeObject = static_cast<WebSize*>(m_root);
-            encoder->encode(sizeObject->size().width);
-            encoder->encode(sizeObject->size().height);
+            encoder.encode(sizeObject->size().width);
+            encoder.encode(sizeObject->size().height);
             return true;
         }
         case APIObject::TypeRect: {
             WebRect* rectObject = static_cast<WebRect*>(m_root);
-            encoder->encode(rectObject->rect().origin.x);
-            encoder->encode(rectObject->rect().origin.y);
-            encoder->encode(rectObject->rect().size.width);
-            encoder->encode(rectObject->rect().size.height);
+            encoder.encode(rectObject->rect().origin.x);
+            encoder.encode(rectObject->rect().origin.y);
+            encoder.encode(rectObject->rect().size.width);
+            encoder.encode(rectObject->rect().size.height);
             return true;
         }
         case APIObject::TypeRenderLayer: {
             WebRenderLayer* renderLayer = static_cast<WebRenderLayer*>(m_root);
-            encoder->encode(Owner(renderLayer->renderer()));
-            encoder->encode(renderLayer->isReflection());
-            encoder->encode(renderLayer->isClipping());
-            encoder->encode(renderLayer->isClipped());
-            encoder->encode(static_cast<uint32_t>(renderLayer->compositingLayerType()));
-            encoder->encode(renderLayer->absoluteBoundingBox());
-            encoder->encode(Owner(renderLayer->negativeZOrderList()));
-            encoder->encode(Owner(renderLayer->normalFlowList()));
-            encoder->encode(Owner(renderLayer->positiveZOrderList()));
+            encoder.encode(Owner(renderLayer->renderer()));
+            encoder.encode(renderLayer->isReflection());
+            encoder.encode(renderLayer->isClipping());
+            encoder.encode(renderLayer->isClipped());
+            encoder.encode(static_cast<uint32_t>(renderLayer->compositingLayerType()));
+            encoder.encode(renderLayer->absoluteBoundingBox());
+            encoder.encode(Owner(renderLayer->negativeZOrderList()));
+            encoder.encode(Owner(renderLayer->normalFlowList()));
+            encoder.encode(Owner(renderLayer->positiveZOrderList()));
             return true;
         }
         case APIObject::TypeRenderObject: {
             WebRenderObject* renderObject = static_cast<WebRenderObject*>(m_root);
-            encoder->encode(renderObject->name());
-            encoder->encode(renderObject->elementTagName());
-            encoder->encode(renderObject->elementID());
-            encoder->encode(Owner(renderObject->elementClassNames()));
-            encoder->encode(renderObject->absolutePosition());
-            encoder->encode(renderObject->frameRect());
-            encoder->encode(Owner(renderObject->children().get()));
+            encoder.encode(renderObject->name());
+            encoder.encode(renderObject->elementTagName());
+            encoder.encode(renderObject->elementID());
+            encoder.encode(Owner(renderObject->elementClassNames()));
+            encoder.encode(renderObject->absolutePosition());
+            encoder.encode(renderObject->frameRect());
+            encoder.encode(Owner(renderObject->children().get()));
             return true;
         }
         case APIObject::TypeURL: {
             WebURL* urlObject = static_cast<WebURL*>(m_root);
-            encoder->encode(urlObject->string());
+            encoder.encode(urlObject->string());
             return true;
         }
         case APIObject::TypeURLRequest: {
             WebURLRequest* urlRequestObject = static_cast<WebURLRequest*>(m_root);
-            encoder->encode(urlRequestObject->resourceRequest());
+            encoder.encode(urlRequestObject->resourceRequest());
             return true;
         }
         case APIObject::TypeUserContentURLPattern: {
             WebUserContentURLPattern* urlPattern = static_cast<WebUserContentURLPattern*>(m_root);
-            encoder->encode(urlPattern->patternString());
+            encoder.encode(urlPattern->patternString());
             return true;
         }
         case APIObject::TypeImage: {
@@ -189,24 +189,24 @@ public:
             ASSERT(!image->bitmap() || image->bitmap()->isBackedBySharedMemory());            
             if (!image->bitmap() || !image->bitmap()->isBackedBySharedMemory() || !image->bitmap()->createHandle(handle)) {
                 // Initial false indicates no allocated bitmap or is not shareable.
-                encoder->encode(false);
+                encoder.encode(false);
                 return true;
             }
 
             // Initial true indicates a bitmap was allocated and is shareable.
-            encoder->encode(true);
+            encoder.encode(true);
 
-            encoder->encode(handle);
+            encoder.encode(handle);
             return true;
         }
         case APIObject::TypeData: {
             WebData* data = static_cast<WebData*>(m_root);
-            encoder->encodeVariableLengthByteArray(data->dataReference());
+            encoder.encodeVariableLengthByteArray(data->dataReference());
             return true;
         }
         case APIObject::TypeCertificateInfo: {
             WebCertificateInfo* certificateInfo = static_cast<WebCertificateInfo*>(m_root);
-            encoder->encode(certificateInfo->platformCertificateInfo());
+            encoder.encode(certificateInfo->platformCertificateInfo());
             return true;
         }
         default:

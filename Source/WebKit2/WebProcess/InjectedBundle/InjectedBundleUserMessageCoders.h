@@ -49,7 +49,7 @@ public:
     {
     }
 
-    void encode(CoreIPC::ArgumentEncoder* encoder) const 
+    void encode(CoreIPC::ArgumentEncoder& encoder) const
     {
         APIObject::Type type = APIObject::TypeNull;
         if (baseEncode(encoder, type))
@@ -58,17 +58,17 @@ public:
         switch (type) {
         case APIObject::TypeBundlePage: {
             WebPage* page = static_cast<WebPage*>(m_root);
-            encoder->encode(page->pageID());
+            encoder.encode(page->pageID());
             break;
         }
         case APIObject::TypeBundleFrame: {
             WebFrame* frame = static_cast<WebFrame*>(m_root);
-            encoder->encode(frame->frameID());
+            encoder.encode(frame->frameID());
             break;
         }
         case APIObject::TypeBundlePageGroup: {
             WebPageGroupProxy* pageGroup = static_cast<WebPageGroupProxy*>(m_root);
-            encoder->encode(pageGroup->pageGroupID());
+            encoder.encode(pageGroup->pageGroupID());
             break;
         }
         default:

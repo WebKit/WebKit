@@ -106,19 +106,19 @@ PlatformCertificateInfo& PlatformCertificateInfo::operator=(const PlatformCertif
     return *this;
 }
 
-void PlatformCertificateInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
+void PlatformCertificateInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     // Special case no certificates
     if (m_certificateChain.isEmpty()) {
-        encoder->encode(std::numeric_limits<uint64_t>::max());
+        encoder.encode(std::numeric_limits<uint64_t>::max());
         return;
     }
 
     uint64_t length = m_certificateChain.size();
-    encoder->encode(length);
+    encoder.encode(length);
 
     for (size_t i = 0; i < length; ++i)
-        encoder->encodeVariableLengthByteArray(CoreIPC::DataReference(static_cast<uint8_t*>(m_certificateChain[i]->pbCertEncoded), m_certificateChain[i]->cbCertEncoded));
+        encoder.encodeVariableLengthByteArray(CoreIPC::DataReference(static_cast<uint8_t*>(m_certificateChain[i]->pbCertEncoded), m_certificateChain[i]->cbCertEncoded));
 }
 
 bool PlatformCertificateInfo::decode(CoreIPC::ArgumentDecoder* decoder, PlatformCertificateInfo& c)

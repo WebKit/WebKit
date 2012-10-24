@@ -53,14 +53,14 @@ WebGestureEvent::WebGestureEvent(Type type, const IntPoint& position, const IntP
     ASSERT(isGestureEventType(type));
 }
 
-void WebGestureEvent::encode(CoreIPC::ArgumentEncoder* encoder) const
+void WebGestureEvent::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     WebEvent::encode(encoder);
 
-    encoder->encode(m_position);
-    encoder->encode(m_globalPosition);
-    encoder->encode(m_area);
-    encoder->encode(m_delta);
+    encoder.encode(m_position);
+    encoder.encode(m_globalPosition);
+    encoder.encode(m_area);
+    encoder.encode(m_delta);
 }
 
 bool WebGestureEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebGestureEvent& t)

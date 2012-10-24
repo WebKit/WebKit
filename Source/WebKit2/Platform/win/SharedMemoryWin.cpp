@@ -51,18 +51,18 @@ bool SharedMemory::Handle::isNull() const
     return !m_handle;
 }
 
-void SharedMemory::Handle::encode(CoreIPC::ArgumentEncoder* encoder) const
+void SharedMemory::Handle::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder->encode(static_cast<uint64_t>(m_size));
+    encoder.encode(static_cast<uint64_t>(m_size));
 
     // Hand off ownership of our HANDLE to the receiving process. It will close it for us.
     // FIXME: If the receiving process crashes before it receives the memory, the memory will be
     // leaked. See <http://webkit.org/b/47502>.
-    encoder->encode(reinterpret_cast<uint64_t>(m_handle));
+    encoder.encode(reinterpret_cast<uint64_t>(m_handle));
     m_handle = 0;
 
     // Send along our PID so that the receiving process can duplicate the HANDLE for its own use.
-    encoder->encode(static_cast<uint32_t>(::GetCurrentProcessId()));
+    encoder.encode(static_cast<uint32_t>(::GetCurrentProcessId()));
 }
 
 static bool getDuplicatedHandle(HANDLE sourceHandle, DWORD sourcePID, HANDLE& duplicatedHandle)

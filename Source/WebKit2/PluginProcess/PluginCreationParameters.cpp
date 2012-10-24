@@ -45,19 +45,19 @@ PluginCreationParameters::PluginCreationParameters()
 {
 }
 
-void PluginCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) const
+void PluginCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder->encode(pluginInstanceID);
-    encoder->encode(windowNPObjectID);
-    encoder->encode(parameters);
-    encoder->encode(userAgent);
-    encoder->encode(contentsScaleFactor);
-    encoder->encode(isPrivateBrowsingEnabled);
-    encoder->encode(asynchronousCreationIncomplete);
-    encoder->encode(artificialPluginInitializationDelayEnabled);
+    encoder.encode(pluginInstanceID);
+    encoder.encode(windowNPObjectID);
+    encoder.encode(parameters);
+    encoder.encode(userAgent);
+    encoder.encode(contentsScaleFactor);
+    encoder.encode(isPrivateBrowsingEnabled);
+    encoder.encode(asynchronousCreationIncomplete);
+    encoder.encode(artificialPluginInitializationDelayEnabled);
 
 #if USE(ACCELERATED_COMPOSITING)
-    encoder->encode(isAcceleratedCompositingEnabled);
+    encoder.encode(isAcceleratedCompositingEnabled);
 #endif
 }
 

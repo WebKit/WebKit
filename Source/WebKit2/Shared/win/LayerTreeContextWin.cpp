@@ -39,9 +39,9 @@ LayerTreeContext::~LayerTreeContext()
 {
 }
 
-void LayerTreeContext::encode(CoreIPC::ArgumentEncoder* encoder) const
+void LayerTreeContext::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder->encode(reinterpret_cast<uint64_t>(window));
+    encoder.encode(reinterpret_cast<uint64_t>(window));
 }
 
 bool LayerTreeContext::decode(CoreIPC::ArgumentDecoder* decoder, LayerTreeContext& context)

@@ -44,7 +44,7 @@ namespace WebKit {
 struct PluginProcessCreationParameters {
     PluginProcessCreationParameters();
 
-    void encode(CoreIPC::ArgumentEncoder*) const;
+    void encode(CoreIPC::ArgumentEncoder&) const;
     static bool decode(CoreIPC::ArgumentDecoder*, PluginProcessCreationParameters&);
 
     String pluginPath;

@@ -38,7 +38,7 @@ public:
     static const Type APIType = TypeGeolocationPosition;
 
     struct Data {
-        void encode(CoreIPC::ArgumentEncoder*) const;
+        void encode(CoreIPC::ArgumentEncoder&) const;
         static bool decode(CoreIPC::ArgumentDecoder*, Data&);
 
         double timestamp;

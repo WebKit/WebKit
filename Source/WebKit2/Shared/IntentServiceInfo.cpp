@@ -35,13 +35,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void IntentServiceInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
+void IntentServiceInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder->encode(action);
-    encoder->encode(type);
-    encoder->encode(href);
-    encoder->encode(title);
-    encoder->encode(disposition);
+    encoder.encode(action);
+    encoder.encode(type);
+    encoder.encode(href);
+    encoder.encode(title);
+    encoder.encode(disposition);
 }
 
 bool IntentServiceInfo::decode(CoreIPC::ArgumentDecoder* decoder, IntentServiceInfo& intentServiceInfo)

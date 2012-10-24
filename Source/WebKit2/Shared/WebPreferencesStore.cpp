@@ -59,13 +59,13 @@ WebPreferencesStore::WebPreferencesStore()
 {
 }
 
-void WebPreferencesStore::encode(CoreIPC::ArgumentEncoder* encoder) const
+void WebPreferencesStore::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder->encode(m_stringValues);
-    encoder->encode(m_boolValues);
-    encoder->encode(m_uint32Values);
-    encoder->encode(m_doubleValues);
-    encoder->encode(m_floatValues);
+    encoder.encode(m_stringValues);
+    encoder.encode(m_boolValues);
+    encoder.encode(m_uint32Values);
+    encoder.encode(m_doubleValues);
+    encoder.encode(m_floatValues);
 }
 
 bool WebPreferencesStore::decode(CoreIPC::ArgumentDecoder* decoder, WebPreferencesStore& result)

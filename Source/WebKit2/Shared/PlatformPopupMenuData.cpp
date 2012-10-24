@@ -44,28 +44,28 @@ PlatformPopupMenuData::PlatformPopupMenuData()
 {
 }
 
-void PlatformPopupMenuData::encode(CoreIPC::ArgumentEncoder* encoder) const
+void PlatformPopupMenuData::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
 #if PLATFORM(WIN)
-    encoder->encode(m_clientPaddingLeft);
-    encoder->encode(m_clientPaddingRight);
-    encoder->encode(m_clientInsetLeft);
-    encoder->encode(m_clientInsetRight);
-    encoder->encode(m_popupWidth);
-    encoder->encode(m_itemHeight);
+    encoder.encode(m_clientPaddingLeft);
+    encoder.encode(m_clientPaddingRight);
+    encoder.encode(m_clientInsetLeft);
+    encoder.encode(m_clientInsetRight);
+    encoder.encode(m_popupWidth);
+    encoder.encode(m_itemHeight);
 
     ShareableBitmap::Handle notSelectedBackingStoreHandle;
     m_notSelectedBackingStore->createHandle(notSelectedBackingStoreHandle);
-    encoder->encode(notSelectedBackingStoreHandle);
+    encoder.encode(notSelectedBackingStoreHandle);
 
     ShareableBitmap::Handle selectedBackingStoreHandle;
     m_selectedBackingStore->createHandle(selectedBackingStoreHandle);
-    encoder->encode(selectedBackingStoreHandle);
+    encoder.encode(selectedBackingStoreHandle);
 #elif PLATFORM(MAC)
-    encoder->encode(fontInfo);
-    encoder->encode(shouldPopOver);
+    encoder.encode(fontInfo);
+    encoder.encode(shouldPopOver);
 #elif PLATFORM(QT)
-    encoder->encode(multipleSelections);
+    encoder.encode(multipleSelections);
 #else
     UNUSED_PARAM(encoder);
 #endif

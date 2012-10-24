@@ -66,17 +66,17 @@ WebPopupItem::WebPopupItem(Type type, const String& text, TextDirection textDire
 {
 }
 
-void WebPopupItem::encode(CoreIPC::ArgumentEncoder* encoder) const
+void WebPopupItem::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder->encodeEnum(m_type);
-    encoder->encode(m_text);
-    encoder->encodeEnum(m_textDirection);
-    encoder->encode(m_hasTextDirectionOverride);
-    encoder->encode(m_toolTip);
-    encoder->encode(m_accessibilityText);
-    encoder->encode(m_isEnabled);
-    encoder->encode(m_isLabel);
-    encoder->encode(m_isSelected);
+    encoder.encodeEnum(m_type);
+    encoder.encode(m_text);
+    encoder.encodeEnum(m_textDirection);
+    encoder.encode(m_hasTextDirectionOverride);
+    encoder.encode(m_toolTip);
+    encoder.encode(m_accessibilityText);
+    encoder.encode(m_isEnabled);
+    encoder.encode(m_isLabel);
+    encoder.encode(m_isSelected);
 }
 
 bool WebPopupItem::decode(CoreIPC::ArgumentDecoder* decoder, WebPopupItem& item)

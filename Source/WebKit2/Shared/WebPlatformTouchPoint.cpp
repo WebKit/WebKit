@@ -57,15 +57,15 @@ WebPlatformTouchPoint::WebPlatformTouchPoint(unsigned id, TouchPointState state,
 {
 }
 
-void WebPlatformTouchPoint::encode(CoreIPC::ArgumentEncoder* encoder) const
+void WebPlatformTouchPoint::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder->encode(m_id);
-    encoder->encode(m_state);
-    encoder->encode(m_screenPosition);
-    encoder->encode(m_position);
-    encoder->encode(m_radius);
-    encoder->encode(m_rotationAngle);
-    encoder->encode(m_force);
+    encoder.encode(m_id);
+    encoder.encode(m_state);
+    encoder.encode(m_screenPosition);
+    encoder.encode(m_position);
+    encoder.encode(m_radius);
+    encoder.encode(m_rotationAngle);
+    encoder.encode(m_force);
 }
 
 bool WebPlatformTouchPoint::decode(CoreIPC::ArgumentDecoder* decoder, WebPlatformTouchPoint& result)

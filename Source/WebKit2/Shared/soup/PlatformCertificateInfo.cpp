@@ -51,24 +51,24 @@ PlatformCertificateInfo::~PlatformCertificateInfo()
 {
 }
 
-void PlatformCertificateInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
+void PlatformCertificateInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     if (!m_certificate) {
-        encoder->encode(false);
+        encoder.encode(false);
         return;
     }
 
     GByteArray* certificateData = 0;
     g_object_get(G_OBJECT(m_certificate.get()), "certificate", &certificateData, NULL);
     if (!certificateData) {
-        encoder->encode(false);
+        encoder.encode(false);
         return;
     }
 
-    encoder->encode(true);
+    encoder.encode(true);
     GRefPtr<GByteArray> certificate = adoptGRef(certificateData);
-    encoder->encodeVariableLengthByteArray(CoreIPC::DataReference(certificate->data, certificate->len));
-    encoder->encode(static_cast<uint32_t>(m_tlsErrors));
+    encoder.encodeVariableLengthByteArray(CoreIPC::DataReference(certificate->data, certificate->len));
+    encoder.encode(static_cast<uint32_t>(m_tlsErrors));
 }
 
 bool PlatformCertificateInfo::decode(CoreIPC::ArgumentDecoder* decoder, PlatformCertificateInfo& certificateInfo)

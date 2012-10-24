@@ -39,11 +39,11 @@ ShareableBitmap::Handle::Handle()
 {
 }
 
-void ShareableBitmap::Handle::encode(CoreIPC::ArgumentEncoder* encoder) const
+void ShareableBitmap::Handle::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder->encode(m_handle);
-    encoder->encode(m_size);
-    encoder->encode(m_flags);
+    encoder.encode(m_handle);
+    encoder.encode(m_size);
+    encoder.encode(m_flags);
 }
 
 bool ShareableBitmap::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle& handle)

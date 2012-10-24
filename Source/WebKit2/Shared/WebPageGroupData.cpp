@@ -30,14 +30,14 @@
 
 namespace WebKit {
 
-void WebPageGroupData::encode(CoreIPC::ArgumentEncoder* encoder) const
+void WebPageGroupData::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder->encode(identifer);
-    encoder->encode(pageGroupID);
-    encoder->encode(visibleToInjectedBundle);
-    encoder->encode(visibleToHistoryClient);
-    encoder->encode(userStyleSheets);
-    encoder->encode(userScripts);
+    encoder.encode(identifer);
+    encoder.encode(pageGroupID);
+    encoder.encode(visibleToInjectedBundle);
+    encoder.encode(visibleToHistoryClient);
+    encoder.encode(userStyleSheets);
+    encoder.encode(userScripts);
 }
 
 bool WebPageGroupData::decode(CoreIPC::ArgumentDecoder* decoder, WebPageGroupData& data)

@@ -72,7 +72,7 @@ public:
         return result;
     }
 
-    void encode(ArgumentEncoder* encoder) const;
+    void encode(ArgumentEncoder&) const;
     static bool decode(ArgumentDecoder* decoder, DataReference& dataReference);
 
 private:
