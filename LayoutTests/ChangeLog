@@ -1,3 +1,10 @@
+2012-10-24  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed gardening. Marking fast/media/w3c/test_media_queries.html as slow on
+        Chromium debug bots following r132352. It may still timeout...
+
+        * platform/chromium/TestExpectations:
+
 2012-10-24  Florin Malita  <fmalita@chromium.org>
 
         [Chromium] SVG repaint issues
