@@ -1,3 +1,22 @@
+2012-10-24  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt-on-Mac] GraphicsSurfaces should not create a global IOSurface handle
+        https://bugs.webkit.org/show_bug.cgi?id=89885
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Use mach_port instead of global tokens for IOSurfaces.
+        Global IOSurfaces are accessible from other processes using their handle, while mach_ports
+        can only be shared directly via IPC.
+
+        Tested by existing WebGL tests.
+
+        * platform/graphics/surfaces/GraphicsSurfaceToken.h:
+        (GraphicsSurfaceToken):
+        * platform/graphics/surfaces/mac/GraphicsSurfaceMac.cpp:
+        (WebCore::GraphicsSurfacePrivate::GraphicsSurfacePrivate):
+        (WebCore::GraphicsSurfacePrivate::~GraphicsSurfacePrivate):
+
 2012-10-24  Rick Byers  <rbyers@chromium.org>
 
         image-set doesn't round-trip properly with cssText

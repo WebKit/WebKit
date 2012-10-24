@@ -29,6 +29,7 @@
 #include <IOSurface/IOSurface.h>
 #include <OpenGL/OpenGL.h>
 #include <OpenGL/gl.h>
+#include <mach/mach.h>
 
 #if PLATFORM(QT)
 #include <QGuiApplication>
@@ -79,8 +80,8 @@ public:
         , m_readFbo(0)
         , m_drawFbo(0)
     {
-        m_frontBuffer = IOSurfaceLookup(m_token.frontBufferHandle);
-        m_backBuffer = IOSurfaceLookup(m_token.backBufferHandle);
+        m_frontBuffer = IOSurfaceLookupFromMachPort(m_token.frontBufferHandle);
+        m_backBuffer = IOSurfaceLookupFromMachPort(m_token.backBufferHandle);
     }
 
     GraphicsSurfacePrivate(const PlatformGraphicsContext3D shareContext, const IntSize& size, GraphicsSurface::Flags flags)
@@ -127,8 +128,8 @@ public:
         if (!allocSize)
             return;
 
-        const void *keys[7];
-        const void *values[7];
+        const void *keys[6];
+        const void *values[6];
         keys[0] = kIOSurfaceWidth;
         values[0] = CFNumberCreate(0, kCFNumberIntType, &width);
         keys[1] = kIOSurfaceHeight;
@@ -141,17 +142,18 @@ public:
         values[4] = CFNumberCreate(0, kCFNumberLongType, &bytesPerRow);
         keys[5] = kIOSurfaceAllocSize;
         values[5] = CFNumberCreate(0, kCFNumberLongType, &allocSize);
-        keys[6] = kIOSurfaceIsGlobal;
-        values[6] = (flags & GraphicsSurface::SupportsSharing) ? kCFBooleanTrue : kCFBooleanFalse;
 
-        CFDictionaryRef dict = CFDictionaryCreate(0, keys, values, 7, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-        for (unsigned i = 0; i < 7; i++)
+        CFDictionaryRef dict = CFDictionaryCreate(0, keys, values, 6, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+        for (unsigned i = 0; i < 6; i++)
             CFRelease(values[i]);
 
         m_frontBuffer = IOSurfaceCreate(dict);
         m_backBuffer = IOSurfaceCreate(dict);
 
-        m_token = GraphicsSurfaceToken(IOSurfaceGetID(m_frontBuffer), IOSurfaceGetID(m_backBuffer));
+        if (!(flags & GraphicsSurface::SupportsSharing))
+            return;
+
+        m_token = GraphicsSurfaceToken(IOSurfaceCreateMachPort(m_frontBuffer), IOSurfaceCreateMachPort(m_backBuffer));
     }
 
     ~GraphicsSurfacePrivate()
@@ -176,6 +178,11 @@ public:
 
         if (m_context)
             CGLReleaseContext(m_context);
+
+        if (m_token.frontBufferHandle)
+            mach_port_deallocate(mach_task_self(), m_token.frontBufferHandle);
+        if (m_token.backBufferHandle)
+            mach_port_deallocate(mach_task_self(), m_token.backBufferHandle);
 
     }
 

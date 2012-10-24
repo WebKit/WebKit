@@ -717,28 +717,20 @@ bool ArgumentCoder<GraphicsLayerAnimations>::decode(ArgumentDecoder* decoder, Gr
 void ArgumentCoder<WebCore::GraphicsSurfaceToken>::encode(ArgumentEncoder* encoder, const WebCore::GraphicsSurfaceToken& token)
 {
 #if OS(DARWIN)
-    encoder->encode(token.frontBufferHandle);
-    encoder->encode(token.backBufferHandle);
-#endif
-#if OS(WINDOWS)
+    encoder->encode(Attachment(token.frontBufferHandle, MACH_MSG_TYPE_MOVE_SEND));
+    encoder->encode(Attachment(token.backBufferHandle, MACH_MSG_TYPE_MOVE_SEND));
+#elif OS(WINDOWS)
     uint64_t frontBuffer = reinterpret_cast<uintptr_t>(token.frontBufferHandle);
     encoder->encode(frontBuffer);
     uint64_t backBuffer = reinterpret_cast<uintptr_t>(token.backBufferHandle);
     encoder->encode(backBuffer);
-#endif
-#if OS(LINUX)
+#elif OS(LINUX)
     encoder->encode(token.frontBufferHandle);
 #endif
 }
 
 bool ArgumentCoder<WebCore::GraphicsSurfaceToken>::decode(ArgumentDecoder* decoder, WebCore::GraphicsSurfaceToken& token)
 {
-#if OS(DARWIN)
-    if (!decoder->decode(token.frontBufferHandle))
-        return false;
-    if (!decoder->decode(token.backBufferHandle))
-        return false;
-#endif
 #if OS(WINDOWS)
     uint64_t frontBufferHandle;
     if (!decoder->decode(frontBufferHandle))
@@ -748,8 +740,15 @@ bool ArgumentCoder<WebCore::GraphicsSurfaceToken>::decode(ArgumentDecoder* decod
     if (!decoder->decode(backBufferHandle))
         return false;
     token.backBufferHandle = reinterpret_cast<GraphicsSurfaceToken::BufferHandle>(backBufferHandle);
-#endif
-#if OS(LINUX)
+#elif OS(DARWIN)
+    Attachment frontAttachment, backAttachment;
+    if (!decoder->decode(frontAttachment))
+        return false;
+    if (!decoder->decode(backAttachment))
+        return false;
+
+    token = GraphicsSurfaceToken(frontAttachment.port(), backAttachment.port());
+#elif OS(LINUX)
     if (!decoder->decode(token.frontBufferHandle))
         return false;
 #endif

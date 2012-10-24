@@ -33,10 +33,11 @@ namespace WebCore {
 
 struct GraphicsSurfaceToken {
 
-#if OS(DARWIN) || OS(LINUX)
+#if OS(DARWIN)
+    typedef mach_port_t BufferHandle;
+#elif OS(LINUX)
     typedef uint32_t BufferHandle;
-#endif
-#if OS(WINDOWS)
+#elif OS(WINDOWS)
     typedef HANDLE BufferHandle;
 #endif
 
