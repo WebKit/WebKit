@@ -1,3 +1,17 @@
+2012-10-24  Rick Byers  <rbyers@chromium.org>
+
+        image-set doesn't round-trip properly with cssText
+        https://bugs.webkit.org/show_bug.cgi?id=99725
+
+        Reviewed by Beth Dakin.
+
+        Update image-set-setting test to expect the css text to round-trip properly.
+
+        * fast/css/image-set-setting-expected.txt:
+        * fast/css/script-tests/image-set-setting.js:
+        (testComputedStyle):
+        (testImageSetRule):
+
 2012-10-24  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

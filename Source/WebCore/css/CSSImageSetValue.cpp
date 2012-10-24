@@ -140,7 +140,32 @@ StyleImage* CSSImageSetValue::cachedOrPendingImageSet(Document* document)
 
 String CSSImageSetValue::customCssText() const
 {
-    return "-webkit-image-set(" + CSSValueList::customCssText() + ")";
+    StringBuilder result;
+    result.append("-webkit-image-set(");
+
+    size_t length = this->length();
+    size_t i = 0;
+    while (i < length) {
+        if (i > 0)
+            result.append(", ");
+
+        const CSSValue* imageValue = item(i);
+        result.append(imageValue->cssText());
+        result.append(' ');
+
+        ++i;
+        ASSERT(i < length);
+        const CSSValue* scaleFactorValue = item(i);
+        result.append(scaleFactorValue->cssText());
+        // FIXME: Eventually the scale factor should contain it's own unit http://wkb.ug/100120.
+        // For now 'x' is hard-coded in the parser, so we hard-code it here too.
+        result.append('x');
+
+        ++i;
+    }
+
+    result.append(")");
+    return result.toString();
 }
 
 bool CSSImageSetValue::hasFailedOrCanceledSubresources() const
