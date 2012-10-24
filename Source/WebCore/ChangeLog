@@ -1,3 +1,18 @@
+2012-10-24  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] Credentials not re-used for a redirected request to the same domain
+        https://bugs.webkit.org/show_bug.cgi?id=100193
+
+        Reviewed by George Staikos.
+
+        We should store the credentials in the redirection response handler, if the request is challenged.
+        Because the redirect response suggests the authentication succeeds. 
+
+        Test: http://browsertest01.rim.net/authbasic
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::handleRedirect):
+
 2012-10-24  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Implement CSS reload upon related SASS resource saving

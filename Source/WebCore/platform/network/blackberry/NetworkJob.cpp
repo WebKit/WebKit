@@ -618,8 +618,12 @@ bool NetworkJob::handleRedirect()
         newRequest.clearHTTPContentType();
     }
 
-    // Do not send existing credentials with the new request.
-    m_handle->getInternal()->m_currentWebChallenge.nullify();
+    if (!m_handle->getInternal()->m_currentWebChallenge.isNull()) {
+        // If this request is challenged, store the credentials now because the credential is correct (otherwise, it won't get here).
+        storeCredentials();
+        // Do not send existing credentials with the new request.
+        m_handle->getInternal()->m_currentWebChallenge.nullify();
+    }
 
     return startNewJobWithRequest(newRequest, true);
 }
