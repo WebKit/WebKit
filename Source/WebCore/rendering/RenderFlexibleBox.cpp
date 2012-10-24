@@ -661,10 +661,21 @@ LayoutPoint RenderFlexibleBox::flowAwareLocationForChild(RenderBox* child) const
 
 void RenderFlexibleBox::setFlowAwareLocationForChild(RenderBox* child, const LayoutPoint& location)
 {
+    LayoutRect oldFrameRect = child->frameRect();
+
     if (isHorizontalFlow())
         child->setLocation(location);
     else
         child->setLocation(location.transposedPoint());
+
+    // If the child moved, we have to repaint it as well as any floating/positioned
+    // descendants. An exception is if we need a layout. In this case, we know we're going to
+    // repaint ourselves (and the child) anyway.
+    // FIXME: In some cases, we might overpaint as we move a child multiple times. We could reduce
+    // overpainting by keeping track of the original position of a child and running this check on
+    // the final position.
+    if (!selfNeedsLayout() && child->checkForRepaintDuringLayout())
+        child->repaintDuringLayoutIfMoved(oldFrameRect);
 }
 
 LayoutUnit RenderFlexibleBox::mainAxisBorderAndPaddingExtentForChild(RenderBox* child) const
@@ -1142,10 +1153,7 @@ void RenderFlexibleBox::layoutColumnReverse(const OrderedFlexItemList& children,
         }
         mainAxisOffset -= mainAxisExtentForChild(child) + flowAwareMarginEndForChild(child);
 
-        LayoutRect oldRect = child->frameRect();
         setFlowAwareLocationForChild(child, LayoutPoint(mainAxisOffset, crossAxisOffset + flowAwareMarginBeforeForChild(child)));
-        if (!selfNeedsLayout() && child->checkForRepaintDuringLayout())
-            child->repaintDuringLayoutIfMoved(oldRect);
 
         mainAxisOffset -= flowAwareMarginStartForChild(child);
 
@@ -1216,14 +1224,7 @@ void RenderFlexibleBox::adjustAlignmentForChild(RenderBox* child, LayoutUnit del
         return;
     }
 
-    LayoutRect oldRect = child->frameRect();
     setFlowAwareLocationForChild(child, flowAwareLocationForChild(child) + LayoutSize(0, delta));
-
-    // If the child moved, we have to repaint it as well as any floating/positioned
-    // descendants. An exception is if we need a layout. In this case, we know we're going to
-    // repaint ourselves (and the child) anyway.
-    if (!selfNeedsLayout() && child->checkForRepaintDuringLayout())
-        child->repaintDuringLayoutIfMoved(oldRect);
 }
 
 void RenderFlexibleBox::alignChildren(OrderIterator& iterator, const WTF::Vector<LineContext>& lineContexts)

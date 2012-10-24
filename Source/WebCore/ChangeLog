@@ -1,3 +1,20 @@
+2012-10-24  Tony Chang  <tony@chromium.org>
+
+        Setting width of a flexitem causes the adjacent flex item to be displayed poorly.
+        https://bugs.webkit.org/show_bug.cgi?id=99925
+
+        Reviewed by Ojan Vafai.
+
+        Make sure that we always repaint when moving a child. This is similar to what RenderDeprecatedFlexibleBox does.
+
+        Test: css3/flexbox/repaint-during-resize-no-flex.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::setFlowAwareLocationForChild): Move logic for repaining into the helper method
+        for setting the location of a child.
+        (WebCore::RenderFlexibleBox::layoutColumnReverse): Remove code for repaint since it's now in setFlowAwareLocationForChild.
+        (WebCore::RenderFlexibleBox::adjustAlignmentForChild): Remove code for repaint since it's now in setFlowAwareLocationForChild.
+
 2012-10-24  Simon Fraser  <simon.fraser@apple.com>
 
         Fix CALayer hiearchy when combining tiling with preserve-3d
