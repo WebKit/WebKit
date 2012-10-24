@@ -1,3 +1,18 @@
+2012-10-24  Chris Fleizach  <cfleizach@apple.com>
+
+        AX:When aria-label is used, the text under an element is still appearing as the AXTitle
+        https://bugs.webkit.org/show_bug.cgi?id=98167
+
+        Reviewed by Beth Dakin.
+
+        According to WAI-ARIA text computation, the presence of aria-label and alternative text
+        should override the visible text within an element.
+
+        Test: platform/mac/accessibility/aria-label-overrides-visible-text.html
+
+        * accessibility/mac/WebAccessibilityObjectWrapper.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityTitle]):
+
 2012-10-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r132303 and r132312.

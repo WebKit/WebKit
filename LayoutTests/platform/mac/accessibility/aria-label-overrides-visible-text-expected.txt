@@ -1,0 +1,14 @@
+test1 test1
+This tests ensures that if aria-label is used, the AXTitle will not expose its children on Mac.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS link1.description is 'AXDescription: '
+PASS link1.title is 'AXTitle: test1'
+PASS link2.description is 'AXDescription: LINK'
+PASS link2.title is 'AXTitle: '
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

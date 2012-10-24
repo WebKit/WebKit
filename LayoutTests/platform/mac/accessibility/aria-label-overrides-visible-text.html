@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+
+<a tabindex="0" id="link1" href="#">test1</a>
+<a tabindex="0" id="link2" href="#" aria-label="LINK">test1</a>
+
+<div id="console"></div>
+<script>
+description("This tests ensures that if aria-label is used, the AXTitle will not expose its children on Mac.")
+
+if (window.testRunner && window.accessibilityController) {
+   var link1 = accessibilityController.accessibleElementById("link1");
+   shouldBe("link1.description", "'AXDescription: '");
+   shouldBe("link1.title", "'AXTitle: test1'");
+
+   var link2 = accessibilityController.accessibleElementById("link2");
+   shouldBe("link2.description", "'AXDescription: LINK'");
+   shouldBe("link2.title", "'AXTitle: '");
+}
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

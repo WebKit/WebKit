@@ -1849,6 +1849,10 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     for (unsigned k = 0; k < length; k++) {
         const AccessibilityText& text = textOrder[k];
         
+        // If we have alternative text, then we should not expose a title.
+        if (text.textSource == AlternativeText)
+            break;
+        
         // Once we encounter visible text, or the text from our children that should be used foremost.
         if (text.textSource == VisibleText || text.textSource == ChildrenText)
             return text.text;
