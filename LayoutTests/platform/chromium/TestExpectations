@@ -4046,8 +4046,6 @@ webkit.org/b/99802 [ MountainLion ] fast/forms/text-control-intrinsic-widths.htm
 
 webkit.org/b/99873 platform/chromium/virtual/gpu/fast/canvas/webgl/array-bounds-clamping.html [ Text ]
 
-webkit.org/b/99925 [ Win Mac ] css3/flexbox/repaint-during-resize-no-flex.html [ Missing ImageOnlyFailure ]
-
 # These tests are failing already and because of virtual test suite for deferred
 # image decoding they need to be suppressed again.
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/animated-gif-restored-from-bfcache.html [ Failure ]

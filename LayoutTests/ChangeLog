@@ -1,3 +1,11 @@
+2012-10-24  Tony Chang  <tony@chromium.org>
+
+        [chromium] Unreviewed, land pixel results on Win/Mac for a new repaint test.
+
+        * platform/chromium-mac/css3/flexbox/repaint-during-resize-no-flex-expected.png: Added.
+        * platform/chromium-win/css3/flexbox/repaint-during-resize-no-flex-expected.png: Renamed from LayoutTests/platform/chromium-linux/css3/flexbox/repaint-during-resize-no-flex-expected.png.
+        * platform/chromium/TestExpectations:
+
 2012-10-24  Sailesh Agrawal  <sail@chromium.org>
 
         Incorrect keycodes for numpad /, -, +, .
