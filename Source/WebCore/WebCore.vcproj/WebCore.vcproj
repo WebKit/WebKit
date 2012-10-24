@@ -28759,10 +28759,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\SharedWorkerStrategy.h"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\Sound.h"
 				>
 			</File>
@@ -55712,6 +55708,10 @@
 			</File>
 			<File
 				RelativePath="..\workers\SharedWorkerRepository.h"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\SharedWorkerStrategy.h"
 				>
 			</File>
 			<File

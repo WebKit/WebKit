@@ -1,3 +1,9 @@
+2012-10-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Fixed Windows path for SharedWorkerStrategy.h - it's in workers/, not platform/.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2012-10-24  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebKit exposes abstract ARIA role range as AXSlider; should be generic AXGroup
