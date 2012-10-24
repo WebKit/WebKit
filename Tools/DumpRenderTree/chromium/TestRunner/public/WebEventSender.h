@@ -31,7 +31,7 @@
 #ifndef WebEventSender_h
 #define WebEventSender_h
 
-#include "WebDragOperation.h"
+#include "WebKit/chromium/public/WebDragOperation.h"
 
 namespace WebKit {
 class WebDragData;

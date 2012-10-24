@@ -1,3 +1,20 @@
+2012-10-24  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] Use include paths relative to Source/ in the TestRunner's public API
+        https://bugs.webkit.org/show_bug.cgi?id=100079
+
+        Reviewed by Adam Barth.
+
+        For a inside-chromium build, we usually don't add the WebKit API paths
+        as include paths, so including files by name only does not work.
+
+        Eventually we might want to move to a model where all includes are
+        relative to Source/, so we're using that here already now.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * DumpRenderTree/chromium/TestRunner/public/WebEventSender.h:
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+
 2012-10-24  Ojan Vafai  <ojan@chromium.org>
 
         Show an error when there are no completed builds in the past 20 runs

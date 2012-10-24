@@ -31,8 +31,8 @@
 #ifndef WebTestDelegate_h
 #define WebTestDelegate_h
 
-#include "platform/WebString.h"
-#include "platform/WebVector.h"
+#include "Platform/chromium/public/WebString.h"
+#include "Platform/chromium/public/WebVector.h"
 
 namespace WebKit {
 struct WebContextMenuData;
