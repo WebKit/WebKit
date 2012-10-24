@@ -17,6 +17,23 @@
 <script type="text/javascript">
 setup({ "explicit_done": true });
 
+function assert_false_wrapper(fnc) {
+    try {
+      assert_false(fnc);
+    } catch (e) {
+      throw {message: e.message, stack: undefined};
+    }
+}
+
+function assert_true_wrapper(fnc) {
+    try {
+      assert_true(fnc);
+    } catch (e) {
+      throw {message: e.message, stack: undefined};
+    }
+}
+
+
 function run() {
     var subdoc = document.getElementById("subdoc").contentDocument;
     var subwin = document.getElementById("subdoc").contentWindow;
@@ -31,13 +48,13 @@ function run() {
 
     function should_apply(q, message) {
       test(function() {
-        assert_true(query_applies(q));
+        assert_true_wrapper(query_applies(q));
       }, (message !== undefined ? message : q) + " should apply");
     }
 
     function should_not_apply(q, message) {
       test(function() {
-        assert_false(query_applies(q));
+        assert_false_wrapper(query_applies(q));
       }, (message !== undefined ? message : q) + " should not apply");
     }
 
@@ -66,13 +83,13 @@ function run() {
 
     function query_should_be_parseable(q) {
       test(function() {
-        assert_true(query_is_parseable(q))
+        assert_true_wrapper(query_is_parseable(q))
       },"query " + q + " should be parseable");
     }
 
     function query_should_not_be_parseable(q) {
       test(function() {
-        assert_false(query_is_parseable(q))
+        assert_false_wrapper(query_is_parseable(q))
       },"query " + q + " should not be parseable");
     }
 
@@ -86,13 +103,13 @@ function run() {
 
     function expression_should_be_parseable(e) {
       test(function() {
-        assert_true(expression_is_parseable(e));
+        assert_true_wrapper(expression_is_parseable(e));
       },"expression " + e + " should be parseable");
     }
 
     function expression_should_not_be_parseable(e) {
       test(function() {
-        assert_false(expression_is_parseable(e));
+        assert_false_wrapper(expression_is_parseable(e));
       },"expression " + e + " should not be parseable");
     }
 
@@ -301,7 +318,7 @@ function run() {
       }
     } while (query_applies(depth_query("min-", ++depth)));
     test(function() {
-      assert_false(50 < depth);
+      assert_false_wrapper(50 < depth);
     }, "find_depth");
     --depth;
 
@@ -333,6 +350,50 @@ function run() {
       expression_should_not_be_parseable(feature + ": -1");
       expression_should_not_be_parseable(feature + ": 1/1");
     }
+
+    // Find the resolution using max-resolution
+    var resolution = 0;
+    do {
+      ++resolution;
+      if (resolution > 10000) {
+        break;
+      }
+    } while (!query_applies("(max-resolution: " + resolution + "dpi)"));
+    test(function() {
+      assert_false_wrapper(10000 < resolution);
+    }, "find_resolution");
+
+    // resolution should now be Math.ceil() of the actual resolution.
+    var dpi_high;
+    var dpi_low = resolution - 1;
+    var dpi_low_str = "dpi - 1";
+    var dpi_high_str = "dpi + 1";
+    if (query_applies("(min-resolution: " + resolution + "dpi)")) {
+      // It's exact!
+      should_apply("(resolution: " + resolution + "dpi)", "(resolution: dpi)");
+      should_not_apply("(resolution: " + (resolution + 1) + "dpi)", "(resolution: dpi + 1)");
+      should_not_apply("(resolution: " + (resolution - 1) + "dpi)", "(resolution: dpi - 1)");
+      dpi_high = resolution + 1;
+    } else {
+	  // We have no way to test resolution applying since it need not be
+	  // an integer.
+      should_not_apply("(resolution: " + resolution + "dpi)", "(resolution: dpi)");
+      should_not_apply("(resolution: " + (resolution - 1) + "dpi)", "(resolution: dpi + 1)");
+      dpi_high = resolution;
+    }
+
+    should_apply("(min-resolution: " + dpi_low + "dpi)", "(min-resolution: " + dpi_low_str + " )");
+    should_not_apply("not all and (min-resolution: " + dpi_low + "dpi)", "not all and (min-resolution: " + dpi_low_str + " )");
+    should_apply("not all and (min-resolution: " + dpi_high + "dpi)", "not all and (min-resolution: " + dpi_high_str + " )");
+    should_not_apply("all and (min-resolution: " + dpi_high + "dpi)", "all and (min-resolution: " + dpi_high_str + " )");
+
+    // Test dpcm units based on what we computed in dpi.
+    var dpcm_high = Math.ceil(dpi_high / 2.54);
+    var dpcm_low = Math.floor(dpi_low / 2.54);
+    should_apply("(min-resolution: " + dpcm_low + "dpcm)", "(min-resolution: dpcm (" + dpi_low_str + ") )");
+    should_apply("(max-resolution: " + dpcm_high + "dpcm)", "(max-resolution: dpcm  (" + dpi_high_str + ") )");
+    should_not_apply("(max-resolution: " + dpcm_low + "dpcm)", "(max-resolution: dpcm  (" + dpi_low_str + ") )");
+    should_apply("not all and (min-resolution: " + dpcm_high + "dpcm)", "not all and (min-resolution: dpcm  (" + dpi_high_str + ") )");
 
     expression_should_be_parseable("grid");
     expression_should_be_parseable("grid: 0");

@@ -1,3 +1,24 @@
+2012-10-24  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        CSS3 Media Queries - add resolution tests to W3C test suite
+        https://bugs.webkit.org/show_bug.cgi?id=100231
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Resolution media feature was implemented, therefore,
+        W3C tests are added back to the test suite.
+
+        * fast/media/w3c/test_media_queries-expected.txt:
+        * fast/media/w3c/test_media_queries.html:
+
+        Created platform specific expectations for the platforms that have RESOLUTION_MEDIA_QUERY disabled.
+
+        * platform/blackberry/fast/media/w3c/test_media_queries-expected.txt: Added.
+        * platform/chromium/fast/media/w3c/test_media_queries-expected.txt: Added.
+        * platform/gtk/fast/media/w3c/test_media_queries-expected.txt: Added.
+        * platform/mac/fast/media/w3c/test_media_queries-expected.txt: Added.
+        * platform/win/fast/media/w3c/test_media_queries-expected.txt: Added.
+
 2012-10-24  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] Unreviewed gardening.
