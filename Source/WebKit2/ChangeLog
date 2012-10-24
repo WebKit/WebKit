@@ -1,3 +1,18 @@
+2012-10-24  Ryuan Choi  <ryuan.choi@gmail.com>
+
+        [EFL][WK2] Crash when passing NULL instead of ewk_view instance
+        https://bugs.webkit.org/show_bug.cgi?id=100078
+
+        Reviewed by Gyuyoung Kim.
+
+        Although applications should pass valid ewk_view to call ewk_view_XXX,
+        ewk_view_XXX should not be crashed.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        Checked null and early exited from EWK_VIEW_TYPE_CHECK if error occured.
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp: Added test case.
+        (TEST_F):
+
 2012-10-24  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Make find and form clients C++ classes

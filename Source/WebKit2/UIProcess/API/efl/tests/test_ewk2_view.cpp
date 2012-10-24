@@ -38,6 +38,14 @@ using namespace EWK2UnitTest;
 extern EWK2UnitTestEnvironment* environment;
 bool fullScreenCallbackCalled;
 
+TEST_F(EWK2UnitTestBase, ewk_view_type_check)
+{
+    ASSERT_FALSE(ewk_view_context_get(0));
+
+    Evas_Object* rectangle = evas_object_rectangle_add(canvas());
+    ASSERT_FALSE(ewk_view_url_set(rectangle, 0));
+}
+
 static void onLoadFinishedForRedirection(void* userData, Evas_Object*, void*)
 {
     int* countLoadFinished = static_cast<int*>(userData);

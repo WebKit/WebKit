@@ -200,6 +200,11 @@ struct Ewk_View_Private_Data {
 #define EWK_VIEW_TYPE_CHECK(ewkView, result)                                   \
     bool result = true;                                                        \
     do {                                                                       \
+        if (!ewkView) {                                                        \
+            EINA_LOG_CRIT("null is not a ewk_view");                           \
+            result = false;                                                    \
+            break;                                                             \
+        }                                                                      \
         const char* _tmp_otype = evas_object_type_get(ewkView);                \
         const Evas_Smart* _tmp_s = evas_object_smart_smart_get(ewkView);       \
         if (EINA_UNLIKELY(!_tmp_s)) {                                          \
@@ -207,6 +212,7 @@ struct Ewk_View_Private_Data {
                 ("%p (%s) is not a smart object!",                             \
                  ewkView, _tmp_otype ? _tmp_otype : "(null)");                 \
             result = false;                                                    \
+            break;                                                             \
         }                                                                      \
         const Evas_Smart_Class* _tmp_sc = evas_smart_class_get(_tmp_s);        \
         if (EINA_UNLIKELY(!_tmp_sc)) {                                         \
@@ -214,6 +220,7 @@ struct Ewk_View_Private_Data {
                 ("%p (%s) is not a smart object!",                             \
                  ewkView, _tmp_otype ? _tmp_otype : "(null)");                 \
             result = false;                                                    \
+            break;                                                             \
         }                                                                      \
         if (EINA_UNLIKELY(_tmp_sc->data != EWK_VIEW_TYPE_STR)) {               \
             EINA_LOG_CRIT                                                      \
