@@ -1,3 +1,36 @@
+2012-10-24  Anders Carlsson  <andersca@apple.com>
+
+        Add per destination ID message receivers
+        https://bugs.webkit.org/show_bug.cgi?id=100276
+
+        Reviewed by Andreas Kling.
+
+        Extend MessageReceiverMap to handle adding message receivers for a given destinationID/receiver name pair.
+        Use this to make every WebPage object a message receiver.
+
+        * Platform/CoreIPC/MessageReceiverMap.cpp:
+        (CoreIPC::MessageReceiverMap::addMessageReceiver):
+        (CoreIPC):
+        (CoreIPC::MessageReceiverMap::removeMessageReceiver):
+        (CoreIPC::MessageReceiverMap::invalidate):
+        (CoreIPC::MessageReceiverMap::dispatchMessage):
+        (CoreIPC::MessageReceiverMap::dispatchSyncMessage):
+        * Platform/CoreIPC/MessageReceiverMap.h:
+        (MessageReceiverMap):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::~WebPage):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::addMessageReceiver):
+        (WebKit):
+        (WebKit::WebProcess::removeMessageReceiver):
+        (WebKit::WebProcess::didReceiveSyncMessage):
+        (WebKit::WebProcess::didReceiveMessage):
+        * WebProcess/WebProcess.h:
+        (WebProcess):
+
 2012-10-24  Timothy Hatcher  <timothy@apple.com>
 
         Make the Inspector WKView/WebView become the first responder when bringToFront is called.

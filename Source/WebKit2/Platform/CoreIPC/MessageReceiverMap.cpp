@@ -45,14 +45,44 @@ void MessageReceiverMap::addMessageReceiver(StringReference messageReceiverName,
     m_globalMessageReceivers.set(messageReceiverName, messageReceiver);
 }
 
+void MessageReceiverMap::addMessageReceiver(StringReference messageReceiverName, uint64_t destinationID, MessageReceiver* messageReceiver)
+{
+    ASSERT(!m_messageReceivers.contains(std::make_pair(messageReceiverName, destinationID)));
+    ASSERT(!m_globalMessageReceivers.contains(messageReceiverName));
+
+    m_messageReceivers.set(std::make_pair(messageReceiverName, destinationID), messageReceiver);
+}
+
+void MessageReceiverMap::removeMessageReceiver(StringReference messageReceiverName)
+{
+    ASSERT(m_globalMessageReceivers.contains(messageReceiverName));
+
+    m_globalMessageReceivers.remove(messageReceiverName);
+}
+
+void MessageReceiverMap::removeMessageReceiver(StringReference messageReceiverName, uint64_t destinationID)
+{
+    ASSERT(m_messageReceivers.contains(std::make_pair(messageReceiverName, destinationID)));
+
+    m_messageReceivers.remove(std::make_pair(messageReceiverName, destinationID));
+}
+
 void MessageReceiverMap::invalidate()
 {
     m_globalMessageReceivers.clear();
+    m_messageReceivers.clear();
 }
 
 bool MessageReceiverMap::dispatchMessage(Connection* connection, MessageID messageID, MessageDecoder& decoder)
 {
     if (MessageReceiver* messageReceiver = m_globalMessageReceivers.get(decoder.messageReceiverName())) {
+        ASSERT(!decoder.destinationID());
+
+        messageReceiver->didReceiveMessage(connection, messageID, decoder);
+        return true;
+    }
+
+    if (MessageReceiver* messageReceiver = m_messageReceivers.get(std::make_pair(decoder.messageReceiverName(), decoder.destinationID()))) {
         messageReceiver->didReceiveMessage(connection, messageID, decoder);
         return true;
     }
@@ -63,6 +93,13 @@ bool MessageReceiverMap::dispatchMessage(Connection* connection, MessageID messa
 bool MessageReceiverMap::dispatchSyncMessage(Connection* connection, MessageID messageID, MessageDecoder& decoder, OwnPtr<MessageEncoder>& replyEncoder)
 {
     if (MessageReceiver* messageReceiver = m_globalMessageReceivers.get(decoder.messageReceiverName())) {
+        ASSERT(!decoder.destinationID());
+
+        messageReceiver->didReceiveSyncMessage(connection, messageID, decoder, replyEncoder);
+        return true;
+    }
+
+    if (MessageReceiver* messageReceiver = m_messageReceivers.get(std::make_pair(decoder.messageReceiverName(), decoder.destinationID()))) {
         messageReceiver->didReceiveSyncMessage(connection, messageID, decoder, replyEncoder);
         return true;
     }

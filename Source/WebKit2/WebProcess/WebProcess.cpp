@@ -199,6 +199,16 @@ void WebProcess::addMessageReceiver(CoreIPC::StringReference messageReceiverName
     m_messageReceiverMap.addMessageReceiver(messageReceiverName, messageReceiver);
 }
 
+void WebProcess::addMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID, CoreIPC::MessageReceiver* messageReceiver)
+{
+    m_messageReceiverMap.addMessageReceiver(messageReceiverName, destinationID, messageReceiver);
+}
+
+void WebProcess::removeMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID)
+{
+    m_messageReceiverMap.removeMessageReceiver(messageReceiverName, destinationID);
+}
+
 void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parameters, CoreIPC::MessageDecoder& decoder)
 {
     ASSERT(m_pageMap.isEmpty());
@@ -651,18 +661,8 @@ void WebProcess::terminate()
 
 void WebProcess::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
-    if (m_messageReceiverMap.dispatchSyncMessage(connection, messageID, decoder, replyEncoder))
+    m_messageReceiverMap.dispatchSyncMessage(connection, messageID, decoder, replyEncoder);
         return;
-
-    uint64_t pageID = decoder.destinationID();
-    if (!pageID)
-        return;
-    
-    WebPage* page = webPage(pageID);
-    if (!page)
-        return;
-    
-    page->didReceiveSyncMessage(connection, messageID, decoder, replyEncoder);
 }
 
 void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
@@ -718,16 +718,6 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         
         pageGroupProxy->didReceiveMessage(connection, messageID, decoder);
     }
-
-    uint64_t pageID = decoder.destinationID();
-    if (!pageID)
-        return;
-    
-    WebPage* page = webPage(pageID);
-    if (!page)
-        return;
-    
-    page->didReceiveMessage(connection, messageID, decoder);
 }
 
 void WebProcess::didClose(CoreIPC::Connection*)

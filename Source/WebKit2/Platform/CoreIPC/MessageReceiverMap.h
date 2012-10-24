@@ -44,6 +44,10 @@ public:
     ~MessageReceiverMap();
 
     void addMessageReceiver(StringReference messageReceiverName, MessageReceiver*);
+    void addMessageReceiver(StringReference messageReceiverName, uint64_t destinationID, MessageReceiver*);
+
+    void removeMessageReceiver(StringReference messageReceiverName);
+    void removeMessageReceiver(StringReference messageReceiverName, uint64_t destinationID);
 
     void invalidate();
 
@@ -53,6 +57,8 @@ public:
 private:
     // Message receivers that don't require a destination ID.
     HashMap<StringReference, MessageReceiver*> m_globalMessageReceivers;
+
+    HashMap<std::pair<StringReference, uint64_t>, MessageReceiver*> m_messageReceivers;
 };
 
 };

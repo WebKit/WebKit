@@ -31,6 +31,7 @@
 #include "DataReference.h"
 #include "DecoderAdapter.h"
 #include "DrawingArea.h"
+#include "DrawingAreaMessages.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleBackForwardList.h"
 #include "InjectedBundleUserMessageCoders.h"
@@ -60,15 +61,18 @@
 #include "WebEventConversion.h"
 #include "WebFrame.h"
 #include "WebFullScreenManager.h"
+#include "WebFullScreenManagerMessages.h"
 #include "WebGeolocationClient.h"
 #include "WebGeometry.h"
 #include "WebImage.h"
 #include "WebInspector.h"
 #include "WebInspectorClient.h"
+#include "WebInspectorMessages.h"
 #include "WebNotificationClient.h"
 #include "WebOpenPanelResultListener.h"
 #include "WebPageCreationParameters.h"
 #include "WebPageGroupProxy.h"
+#include "WebPageMessages.h"
 #include "WebPageProxyMessages.h"
 #include "WebPopupMenu.h"
 #include "WebPreferencesStore.h"
@@ -174,6 +178,10 @@
 
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
+#endif
+
+#if USE(COORDINATED_GRAPHICS)
+#include "LayerTreeCoordinatorMessages.h"
 #endif
 
 using namespace JSC;
@@ -355,6 +363,20 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     
     setMediaVolume(parameters.mediaVolume);
 
+    WebProcess::shared().addMessageReceiver(Messages::WebPage::messageReceiverName(), m_pageID, this);
+
+    // FIXME: This should be done in the object constructors, and the objects themselves should be message receivers.
+    WebProcess::shared().addMessageReceiver(Messages::DrawingArea::messageReceiverName(), m_pageID, this);
+#if USE(COORDINATED_GRAPHICS)
+    WebProcess::shared().addMessageReceiver(Messages::LayerTreeCoordinator::messageReceiverName(), m_pageID, this);
+#endif
+#if ENABLE(INSPECTOR)
+    WebProcess::shared().addMessageReceiver(Messages::WebInspector::messageReceiverName(), m_pageID, this);
+#endif
+#if ENABLE(FULLSCREEN_API)
+    WebProcess::shared().addMessageReceiver(Messages::WebFullScreenManager::messageReceiverName(), m_pageID, this);
+#endif
+
 #ifndef NDEBUG
     webPageCounter.increment();
 #endif
@@ -371,6 +393,20 @@ WebPage::~WebPage()
 
     for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
         (*it)->webPageDestroyed();
+
+    WebProcess::shared().removeMessageReceiver(Messages::WebPage::messageReceiverName(), m_pageID);
+
+    // FIXME: This should be done in the object destructors, and the objects themselves should be message receivers.
+    WebProcess::shared().removeMessageReceiver(Messages::DrawingArea::messageReceiverName(), m_pageID);
+#if USE(COORDINATED_GRAPHICS)
+    WebProcess::shared().removeMessageReceiver(Messages::LayerTreeCoordinator::messageReceiverName(), m_pageID);
+#endif
+#if ENABLE(INSPECTOR)
+    WebProcess::shared().removeMessageReceiver(Messages::WebInspector::messageReceiverName(), m_pageID);
+#endif
+#if ENABLE(FULLSCREEN_API)
+    WebProcess::shared().removeMessageReceiver(Messages::WebFullScreenManager::messageReceiverName(), m_pageID);
+#endif
 
 #ifndef NDEBUG
     webPageCounter.decrement();

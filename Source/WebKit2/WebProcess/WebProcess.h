@@ -115,6 +115,9 @@ public:
     WebCore::RunLoop* runLoop() const { return m_runLoop; }
 
     void addMessageReceiver(CoreIPC::StringReference messageReceiverName, CoreIPC::MessageReceiver*);
+    void addMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID, CoreIPC::MessageReceiver*);
+
+    void removeMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID);
 
     WebConnectionToUIProcess* webConnectionToUIProcess() const { return m_connection.get(); }
 
