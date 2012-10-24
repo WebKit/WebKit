@@ -81,6 +81,11 @@ public:
 template<typename T>
 class ActiveDOMObjectPrologueVisitor : public DOMWrapperMap<T>::Visitor {
 public:
+    explicit ActiveDOMObjectPrologueVisitor(Vector<v8::Persistent<v8::Value> >* liveObjects)
+        : m_liveObjects(liveObjects)
+    {
+    }
+
     void visitDOMWrapper(DOMDataStore*, T* object, v8::Persistent<v8::Object> wrapper)
     {
         WrapperTypeInfo* typeInfo = V8DOMWrapper::domWrapperType(wrapper);  
@@ -91,53 +96,17 @@ public:
             // implementation can't tell the difference.
             MessagePort* port = reinterpret_cast<MessagePort*>(object);
             if (port->isEntangled() || port->hasPendingActivity())
-                wrapper.ClearWeak();
+                m_liveObjects->append(wrapper);
             return;
         }
 
         ActiveDOMObject* activeDOMObject = typeInfo->toActiveDOMObject(wrapper);
         if (activeDOMObject && activeDOMObject->hasPendingActivity())
-            wrapper.ClearWeak();
-    }
-};
-
-template<typename T>
-class ActiveDOMObjectEpilogueVisitor : public DOMWrapperMap<T>::Visitor {
-public:
-    explicit ActiveDOMObjectEpilogueVisitor(v8::WeakReferenceCallback callback)
-        : m_callback(callback)
-    {
-    }
-
-    void visitDOMWrapper(DOMDataStore*, T* object, v8::Persistent<v8::Object> wrapper)
-    {
-        WrapperTypeInfo* typeInfo = V8DOMWrapper::domWrapperType(wrapper);
-
-        if (V8MessagePort::info.equals(typeInfo)) {
-            // We marked this port as reachable in ActiveDOMObjectPrologueVisitor.
-            // Undo this now since the port could be not reachable in the future
-            // if it gets disentangled (and also ActiveDOMObjectPrologueVisitor
-            // expects to see all handles marked as weak).
-            MessagePort* port = reinterpret_cast<MessagePort*>(object);
-            if ((!wrapper.IsWeak() && !wrapper.IsNearDeath()) || port->hasPendingActivity())
-                wrapper.MakeWeak(port, m_callback);
-            return;
-        }
-
-        ActiveDOMObject* activeDOMObject = typeInfo->toActiveDOMObject(wrapper);
-        if (activeDOMObject && activeDOMObject->hasPendingActivity()) {
-            ASSERT(!wrapper.IsWeak());
-            // NOTE: To re-enable weak status of the active object we use
-            // |object| from the map and not |activeDOMObject|. The latter
-            // may be a different pointer (in case ActiveDOMObject is not
-            // the main base class of the object's class) and pointer
-            // identity is required by DOM map functions.
-            wrapper.MakeWeak(object, m_callback);
-        }
+            m_liveObjects->append(wrapper);
     }
 
 private:
-    v8::WeakReferenceCallback m_callback;
+    Vector<v8::Persistent<v8::Value> >* m_liveObjects;
 };
 
 class ObjectVisitor : public DOMWrapperMap<void>::Visitor {
@@ -262,10 +231,13 @@ void V8GCController::majorGCPrologue()
 
     v8::HandleScope scope;
 
-    ActiveDOMObjectPrologueVisitor<void> activeObjectVisitor;
+    Vector<v8::Persistent<v8::Value> > liveObjects;
+    liveObjects.append(V8PerIsolateData::current()->ensureLiveRoot());
+    ActiveDOMObjectPrologueVisitor<void> activeObjectVisitor(&liveObjects);
     visitActiveDOMObjects(&activeObjectVisitor);
-    ActiveDOMObjectPrologueVisitor<Node> activeNodeVisitor;
+    ActiveDOMObjectPrologueVisitor<Node> activeNodeVisitor(&liveObjects);
     visitActiveDOMNodes(&activeNodeVisitor);
+    v8::V8::AddObjectGroup(liveObjects.data(), liveObjects.size());
 
     NodeVisitor nodeVisitor;
     visitAllDOMNodes(&nodeVisitor);
@@ -303,11 +275,6 @@ void V8GCController::minorGCEpilogue()
 void V8GCController::majorGCEpilogue()
 {
     v8::HandleScope scope;
-
-    ActiveDOMObjectEpilogueVisitor<void> activeObjectVisitor(&DOMDataStore::weakActiveDOMObjectCallback);
-    visitActiveDOMObjects(&activeObjectVisitor);
-    ActiveDOMObjectEpilogueVisitor<Node> activeNodeVisitor(&DOMDataStore::weakNodeCallback);
-    visitActiveDOMNodes(&activeNodeVisitor);
 
 #if PLATFORM(CHROMIUM)
     // The GC can happen on multiple threads in case of dedicated workers which run in-process.

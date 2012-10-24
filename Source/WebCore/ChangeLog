@@ -1,3 +1,32 @@
+2012-10-24  Adam Barth  <abarth@webkit.org>
+
+        [V8] ActiveDOMObjectEpilogueVisitor is unnecessary and can be deleted
+        https://bugs.webkit.org/show_bug.cgi?id=100208
+
+        Reviewed by Eric Seidel.
+
+        Rather than clearing and re-establishing the weak callback for
+        ActiveDOMObjects during every GC, this patch puts all the
+        ActiveDOMObjects with pending activity into an object group with a live
+        object, causing them not to be garbage collected.
+
+        In addition to simplifying this code, this patch makes the patch in
+        https://bugs.webkit.org/show_bug.cgi?id=100175 much easier because
+        V8GCController no longer needs to know how to configure the weak
+        callbacks for these objects.
+
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::ActiveDOMObjectPrologueVisitor::ActiveDOMObjectPrologueVisitor):
+        (ActiveDOMObjectPrologueVisitor):
+        (WebCore::ActiveDOMObjectPrologueVisitor::visitDOMWrapper):
+        (WebCore::V8GCController::majorGCPrologue):
+        (WebCore::V8GCController::majorGCEpilogue):
+        * bindings/v8/V8PerIsolateData.cpp:
+        (WebCore::V8PerIsolateData::V8PerIsolateData):
+        * bindings/v8/V8PerIsolateData.h:
+        (WebCore::V8PerIsolateData::liveRoot):
+        (V8PerIsolateData):
+
 2012-10-24  Brady Eidson  <beidson@apple.com>
 
         Add a strategy for loader customization.

@@ -69,6 +69,13 @@ void V8PerIsolateData::ensureInitialized(v8::Isolate* isolate)
         create(isolate);
 }
 
+v8::Persistent<v8::Value> V8PerIsolateData::ensureLiveRoot()
+{
+    if (m_liveRoot.isEmpty())
+        m_liveRoot.set(v8::Null());
+    return m_liveRoot.get();
+}
+
 void V8PerIsolateData::dispose(v8::Isolate* isolate)
 {
     void* data = isolate->GetData();

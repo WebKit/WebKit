@@ -78,6 +78,8 @@ public:
     StringCache* stringCache() { return m_stringCache.get(); }
     IntegerCache* integerCache() { return m_integerCache.get(); }
 
+    v8::Persistent<v8::Value> ensureLiveRoot();
+
 #if ENABLE(INSPECTOR)
     void visitExternalStrings(ExternalStringVisitor*);
 #endif
@@ -142,6 +144,7 @@ private:
     DOMDataStore* m_domDataStore;
 
     OwnPtr<V8HiddenPropertyName> m_hiddenPropertyName;
+    ScopedPersistent<v8::Value> m_liveRoot;
     ScopedPersistent<v8::Context> m_auxiliaryContext;
 
     bool m_constructorMode;
