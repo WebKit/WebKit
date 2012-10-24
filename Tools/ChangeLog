@@ -1,3 +1,17 @@
+2012-10-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r132333.
+        http://trac.webkit.org/changeset/132333
+        https://bugs.webkit.org/show_bug.cgi?id=100234
+
+        Crashes many tests on the EFL-WK2 bot. (Requested by rakuco on
+        #webkit).
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        * WebKitTestRunner/efl/TestControllerEfl.cpp:
+        (WTR::TestController::platformInitializeContext):
+
 2012-10-24  Dongwoo Joshua Im  <dw.im@samsung.com>
 
         [GTK] Fix build break - undefined reference to 'gtk_init'

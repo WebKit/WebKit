@@ -28,13 +28,6 @@
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
-editing/spelling/design-mode-spellcheck-off.html [ Pass ]
-editing/spelling/spellcheck-api-crash.html [ Pass ]
-editing/spelling/spellcheck-attribute.html [ Pass ]
-editing/spelling/spelling-attribute-at-child.html [ Pass ]
-editing/spelling/spelling-attribute-change.html [ Pass ]
-editing/spelling/spelling-hasspellingmarker.html [ Pass ]
-editing/spelling/spelling-linebreak.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # TESTS EXPECTED TO FAIL
@@ -195,13 +188,6 @@ Bug(EFL) fast/media/media-query-list-06.html [ Failure ]
 Bug(EFL) fast/media/media-query-list-07.html [ Failure ]
 Bug(EFL) fast/media/view-mode-media-feature.html [ Failure ]
 
-# Needs grammar checking
-Bug(EFL) editing/spelling/grammar-edit-word.html [ Failure ]
-Bug(EFL) editing/spelling/markers.html [ Failure ]
-
-# Unified text checking is failing
-Bug(EFL) editing/spelling/spelling-unified-emulation.html [ Failure ]
-
 # WebKitTestRunner needs an implementation for eventSender.scheduleAsynchronousKeyDown
 webkit.org/b/93979 fast/mutation/end-of-task-delivery.html [ Failure ]
 
@@ -275,3 +261,6 @@ webkit.org/b/98739 plugins/npruntime/embed-property-equality.html [ Failure ]
 
 # Flaky on EFL port.
 webkit.org/b/96641 media/video-seek-past-end-playing.html [ Failure ]
+
+# EFL WK2 does not support the spellchecker feature
+webkit.org/b/91854 editing/spelling [ Skip ]

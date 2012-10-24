@@ -27,11 +27,6 @@
 #include <wtf/Platform.h>
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(SPELLCHECK)
-#include <WebKit2/ewk_settings.h>
-#include <WebKit2/ewk_text_checker_private.h>
-#endif
-
 namespace WTR {
 
 static Ecore_Timer* timer = 0;
@@ -101,11 +96,6 @@ void TestController::initializeTestPluginDirectory()
 
 void TestController::platformInitializeContext()
 {
-#if ENABLE(SPELLCHECK)
-    ewk_text_checker_client_attach();
-    // Loads the default language (en_US) to pass the spelling tests.
-    ewk_settings_spell_checking_languages_set(0);
-#endif
 }
 
 void TestController::runModal(PlatformWebView*)

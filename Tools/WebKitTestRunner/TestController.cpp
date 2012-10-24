@@ -53,10 +53,6 @@
 #include "EventSenderProxy.h"
 #endif
 
-#if !PLATFORM(MAC)
-#include <WebKit2/WKTextChecker.h>
-#endif
-
 namespace WTR {
 
 // defaultLongTimeout + defaultShortTimeout should be less than 80,
@@ -534,9 +530,6 @@ bool TestController::resetStateToConsistentValues()
 #endif
     WKPreferencesSetScreenFontSubstitutionEnabled(preferences, true);
     WKPreferencesSetInspectorUsesWebKitUserInterface(preferences, true);
-#if !PLATFORM(MAC)
-    WKTextCheckerContinuousSpellCheckingEnabledStateChanged(true);
-#endif
 
     // in the case that a test using the chrome input field failed, be sure to clean up for the next test
     m_mainWebView->removeChromeInputField();

@@ -170,7 +170,6 @@ HEADERS += \
     UIProcess/API/C/WKGeolocationManager.h \
     UIProcess/API/C/WKGeolocationPermissionRequest.h \
     UIProcess/API/C/WKGeolocationPosition.h \
-    UIProcess/API/C/WKGrammarDetail.h \
     UIProcess/API/C/WKHitTestResult.h \
     UIProcess/API/C/WKIconDatabase.h \
     UIProcess/API/C/WKInspector.h \
@@ -193,7 +192,6 @@ HEADERS += \
     UIProcess/API/C/WKPreferencesPrivate.h \
     UIProcess/API/C/WKProtectionSpace.h \
     UIProcess/API/C/WKProtectionSpaceTypes.h \
-    UIProcess/API/C/WKTextChecker.h \
     UIProcess/API/C/WKVibration.h \
     UIProcess/API/C/WebKit2_C.h \
     UIProcess/API/C/qt/WKNativeEvent.h \
@@ -261,7 +259,6 @@ HEADERS += \
     UIProcess/WebFullScreenManagerProxy.h \
     UIProcess/WebGeolocationManagerProxy.h \
     UIProcess/WebGeolocationProvider.h \
-    UIProcess/WebGrammarDetail.h \
     UIProcess/WebHistoryClient.h \
     UIProcess/WebIconDatabase.h \
     UIProcess/WebIconDatabaseClient.h \
@@ -280,8 +277,6 @@ HEADERS += \
     UIProcess/WebProcessProxy.h \
     UIProcess/WebResourceCacheManagerProxy.h \
     UIProcess/WebResourceLoadClient.h \
-    UIProcess/WebTextChecker.h \
-    UIProcess/WebTextCheckerClient.h \
     UIProcess/WebUIClient.h \
     UIProcess/WebVibrationProvider.h \
     UIProcess/WebVibrationProxy.h \
@@ -532,7 +527,6 @@ SOURCES += \
     UIProcess/API/C/WKGeolocationManager.cpp \
     UIProcess/API/C/WKGeolocationPermissionRequest.cpp \
     UIProcess/API/C/WKGeolocationPosition.cpp \
-    UIProcess/API/C/WKGrammarDetail.cpp \
     UIProcess/API/C/WKHitTestResult.cpp \
     UIProcess/API/C/WKIconDatabase.cpp \
     UIProcess/API/C/WKInspector.cpp \
@@ -552,7 +546,6 @@ SOURCES += \
     UIProcess/API/C/WKPreferences.cpp \
     UIProcess/API/C/WKProtectionSpace.cpp \
     UIProcess/API/C/WKResourceCacheManager.cpp \
-    UIProcess/API/C/WKTextChecker.cpp \
     UIProcess/API/C/WKVibration.cpp \
     UIProcess/API/cpp/qt/WKStringQt.cpp \
     UIProcess/API/cpp/qt/WKURLQt.cpp \
@@ -615,7 +608,6 @@ SOURCES += \
     UIProcess/WebFullScreenManagerProxy.cpp \
     UIProcess/WebGeolocationManagerProxy.cpp \
     UIProcess/WebGeolocationProvider.cpp \
-    UIProcess/WebGrammarDetail.cpp \
     UIProcess/WebHistoryClient.cpp \
     UIProcess/WebIconDatabase.cpp \
     UIProcess/WebIconDatabaseClient.cpp \
@@ -636,8 +628,6 @@ SOURCES += \
     UIProcess/WebProcessProxy.cpp \
     UIProcess/WebResourceCacheManagerProxy.cpp \
     UIProcess/WebResourceLoadClient.cpp \
-    UIProcess/WebTextChecker.cpp \
-    UIProcess/WebTextCheckerClient.cpp \
     UIProcess/WebUIClient.cpp \
     UIProcess/WebVibrationProvider.cpp \
     UIProcess/WebVibrationProxy.cpp \

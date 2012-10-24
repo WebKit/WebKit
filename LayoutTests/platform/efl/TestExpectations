@@ -917,6 +917,8 @@ editing/selection/vertical-rl-rtl-extend-line-forward-p.html [ Missing ]
 editing/selection/word-granularity.html [ Missing ]
 editing/selection/wrapped-line-caret-1.html [ Missing ]
 editing/selection/wrapped-line-caret-2.html [ Missing ]
+editing/spelling/inline_spelling_markers.html [ Missing ]
+editing/spelling/spelling.html [ Missing ]
 editing/style/4916887.html [ Missing ]
 editing/style/5017613-1.html [ Missing ]
 editing/style/5017613-2.html [ Missing ]
@@ -1773,6 +1775,19 @@ webkit.org/b/86615 editing/deleting/regional-indicators.html [ Failure ]
 
 # Tests failing due to rounding problems in colors inside pixman
 webkit.org/b/49964 fast/canvas/canvas-fillPath-shadow.html [ Failure ]
+
+# Missing spell checking support (Efl's port does not support spell checking, Gtk port uses Enchant library https://bugs.webkit.org/show_bug.cgi?id=61787)
+webkit.org/b/86637 editing/spelling/grammar.html [ Failure ]
+webkit.org/b/86637 editing/spelling/grammar-paste.html [ Failure ]
+webkit.org/b/86637 editing/spelling/markers.html [ Failure ]
+webkit.org/b/86633 editing/spelling/spellcheck-attribute.html [ Failure ]
+webkit.org/b/86633 editing/spelling/spelling-attribute-at-child.html [ Failure ]
+webkit.org/b/86633 editing/spelling/spelling-attribute-change.html [ Failure ]
+webkit.org/b/86633 editing/spelling/spelling-backspace-between-lines.html [ Failure ]
+webkit.org/b/86633 editing/spelling/spelling-hasspellingmarker.html [ Failure ]
+webkit.org/b/86633 editing/spelling/spelling-insert-html.html [ Failure ]
+webkit.org/b/86633 editing/spelling/spelling-linebreak.html [ Failure ]
+webkit.org/b/86633 editing/spelling/spelling-unified-emulation.html [ Failure ]
 
 # EFL's LayoutTestController does not support setSubpixelTextPositioning()
 webkit.org/b/91341 fast/text/descent-clip-in-scaled-page.html [ ImageOnlyFailure ]

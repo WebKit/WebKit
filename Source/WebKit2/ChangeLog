@@ -1,3 +1,16 @@
+2012-10-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r132333.
+        http://trac.webkit.org/changeset/132333
+        https://bugs.webkit.org/show_bug.cgi?id=100234
+
+        Crashes many tests on the EFL-WK2 bot. (Requested by rakuco on
+        #webkit).
+
+        * Target.pri:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::updateTextCheckerState):
+
 2012-10-24  Christophe Dumez  <christophe.dumez@intel.com> and Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Move Ewk_View_Private_Data out of ewk_view.cpp
