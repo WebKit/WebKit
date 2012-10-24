@@ -78,7 +78,15 @@ IF (ENABLE_NAVIGATOR_CONTENT_UTILS)
   )
 ENDIF ()
 
+IF (WTF_USE_TEXTURE_MAPPER_GL)
+  LIST(APPEND WebKit_INCLUDE_DIRECTORIES
+    "${WEBCORE_DIR}/platform/graphics/texmap"
+    "${THIRDPARTY_DIR}/ANGLE/include/GLSLANG"
+  )
+ENDIF ()
+
 LIST(APPEND WebKit_SOURCES
+    efl/WebCoreSupport/AcceleratedCompositingContextEfl.cpp
     efl/WebCoreSupport/AssertMatchingEnums.cpp
     efl/WebCoreSupport/BatteryClientEfl.cpp
     efl/WebCoreSupport/ChromeClientEfl.cpp
