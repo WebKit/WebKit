@@ -1,3 +1,21 @@
+2012-10-24  Michael Saboff  <msaboff@apple.com>
+
+        Code cleanup after r132165
+        https://bugs.webkit.org/show_bug.cgi?id=100135
+
+        Reviewed by Geoffrey Garen.
+
+        Fixed up some unneccesary and inefficient constructs in MarkupTokenBase.h.
+
+        Code clean up without functional changes, therefore no new tests.
+
+        * xml/parser/MarkupTokenBase.h:
+        (WebCore::MarkupTokenBase::beginEndTag): Changed argument to be const Vector<LChar, 32>&.
+        (WebCore::MarkupTokenBase::appendToCharacter): Changed argument to be const Vector<LChar, 32>&.
+        (WebCore::MarkupTokenBase::appendToName): Elimintated inline.
+        (WebCore::MarkupTokenBase::name): Elimintated inline.
+        (WebCore::MarkupTokenBase::nameString): Elimintated inline.
+
 2012-10-24  Toni Barzic  <tbarzic@chromium.org>
 
         Crash when trying to write exception message to null console

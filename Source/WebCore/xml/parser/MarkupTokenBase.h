@@ -145,7 +145,7 @@ public:
         m_data.append(character);
     }
 
-    void beginEndTag(Vector<LChar, 32> characters)
+    void beginEndTag(const Vector<LChar, 32>& characters)
     {
         ASSERT(m_type == TypeSet::Uninitialized);
         m_type = TypeSet::EndTag;
@@ -198,7 +198,7 @@ public:
         m_orAllData |= character;
     }
 
-    void appendToCharacter(Vector<LChar, 32> characters)
+    void appendToCharacter(const Vector<LChar, 32>& characters)
     {
         ASSERT(m_type == TypeSet::Character);
         m_data.appendVector(characters);
@@ -381,19 +381,19 @@ protected:
     }
 #endif // NDEBUG
 
-    inline void appendToName(UChar character)
+    void appendToName(UChar character)
     {
         ASSERT(character);
         m_data.append(character);
         m_orAllData |= character;
     }
 
-    inline const DataVector& name() const
+    const DataVector& name() const
     {
         return m_data;
     }
 
-    inline const String nameString() const
+    String nameString() const
     {
         if (!m_data.size())
             return emptyString();
