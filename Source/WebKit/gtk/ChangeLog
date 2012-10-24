@@ -1,3 +1,15 @@
+2012-10-24  Priit Laes  <plaes@plaes.org>
+
+        [GTK] Typos in user-visible strings: "coordintate"
+        https://bugs.webkit.org/show_bug.cgi?id=100252
+
+        Reviewed by Martin Robinson.
+
+        s/coordintate/coordinate
+
+        * webkit/webkithittestresult.cpp:
+        (webkit_hit_test_result_class_init):
+
 2012-10-23  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][Soup] Implement the default authentication dialog via WebCoreSupport
