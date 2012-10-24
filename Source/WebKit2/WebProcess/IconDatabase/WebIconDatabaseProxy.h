@@ -27,33 +27,25 @@
 #define WebIconDatabaseProxy_h
 
 #include "APIObject.h"
-
+#include "MessageReceiver.h"
 #include <WebCore/IconDatabaseBase.h>
-
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
-namespace CoreIPC {
-class Connection;
-class MessageDecoder;
-class MessageID;
-}
-
 namespace WebKit {
 
 class WebProcess;
 
-class WebIconDatabaseProxy : public WebCore::IconDatabaseBase {
+class WebIconDatabaseProxy : public WebCore::IconDatabaseBase, private CoreIPC::MessageReceiver {
 public:
     explicit WebIconDatabaseProxy(WebProcess*);
     virtual ~WebIconDatabaseProxy();
 
     virtual bool isEnabled() const;
     void setEnabled(bool);
-    
-    
+
     virtual void retainIconForPageURL(const String&);
     virtual void releaseIconForPageURL(const String&);
     virtual void setIconURLForPageURL(const String&, const String&);
@@ -69,10 +61,12 @@ public:
     virtual void loadDecisionForIconURL(const String&, PassRefPtr<WebCore::IconLoadDecisionCallback>);
     void receivedIconLoadDecision(int decision, uint64_t callbackID);
     virtual void iconDataForIconURL(const String&, PassRefPtr<WebCore::IconDataCallback>);
-        
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
-    
+
 private:
+    // CoreIPC::MessageReceiver
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
+
+    // Implemented in generated WebIconDatabaseProxyMessageReceiver.cpp
     void didReceiveWebIconDatabaseProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     
     // Callbacks from the UIProcess

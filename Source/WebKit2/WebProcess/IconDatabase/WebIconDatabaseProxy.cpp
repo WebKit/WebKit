@@ -27,8 +27,8 @@
 #include "WebIconDatabaseProxy.h"
 
 #include "DataReference.h"
-#include "MessageID.h"
 #include "WebIconDatabaseMessages.h"
+#include "WebIconDatabaseProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/SharedBuffer.h>
 #include <wtf/text/WTFString.h>
@@ -45,6 +45,7 @@ WebIconDatabaseProxy::WebIconDatabaseProxy(WebProcess* process)
     : m_isEnabled(false)
     , m_process(process)
 {
+    m_process->addMessageReceiver(Messages::WebIconDatabaseProxy::messageReceiverName(), this);
 }
 
 bool WebIconDatabaseProxy::isEnabled() const
@@ -60,7 +61,6 @@ void WebIconDatabaseProxy::setEnabled(bool enabled)
     m_isEnabled = enabled;
     setGlobalIconDatabase(enabled ? this : 0);
 }
-
 
 void WebIconDatabaseProxy::retainIconForPageURL(const String& pageURL)
 {

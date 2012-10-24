@@ -27,6 +27,7 @@
 #include "WebKitSoupRequestInputStream.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
+#include "WebSoupRequestManagerMessages.h"
 #include "WebSoupRequestManagerProxyMessages.h"
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceRequest.h>
@@ -80,6 +81,7 @@ WebSoupRequestManager::WebSoupRequestManager(WebProcess* process)
     : m_process(process)
     , m_schemes(adoptGRef(g_ptr_array_new_with_free_func(g_free)))
 {
+    m_process->addMessageReceiver(Messages::WebSoupRequestManager::messageReceiverName(), this);
 }
 
 WebSoupRequestManager::~WebSoupRequestManager()

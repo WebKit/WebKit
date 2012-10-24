@@ -26,18 +26,13 @@
 #ifndef WebNotificationManager_h
 #define WebNotificationManager_h
 
-#include "MessageID.h"
+#include "MessageReceiver.h"
 #include <WebCore/NotificationClient.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
-
-namespace CoreIPC {
-class Connection;
-class MessageDecoder;
-}
 
 namespace WebCore {
 class Notification;
@@ -49,7 +44,7 @@ namespace WebKit {
 class WebPage;
 class WebProcess;
 
-class WebNotificationManager {
+class WebNotificationManager : private CoreIPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebNotificationManager);
 public:
     explicit WebNotificationManager(WebProcess*);
@@ -63,7 +58,6 @@ public:
     // This callback comes from WebCore, not messaged from the UI process.
     void didDestroyNotification(WebCore::Notification*, WebPage*);
 
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     void didUpdateNotificationDecision(const String& originString, bool allowed);
 
     // Looks in local cache for permission. If not found, returns DefaultDenied.
@@ -73,6 +67,9 @@ public:
     uint64_t notificationIDForTesting(WebCore::Notification*);
 
 private:
+    // CoreIPC::MessageReceiver
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
+
     // Implemented in generated WebNotificationManagerMessageReceiver.cpp
     void didReceiveWebNotificationManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     

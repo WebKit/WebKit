@@ -28,6 +28,7 @@
 
 #if ENABLE(BATTERY_STATUS)
 
+#include "WebBatteryManagerMessages.h"
 #include "WebBatteryManagerProxyMessages.h"
 #include "WebPage.h"
 #include "WebProcess.h"
@@ -42,6 +43,7 @@ namespace WebKit {
 WebBatteryManager::WebBatteryManager(WebProcess* process)
     : m_process(process)
 {
+    m_process->addMessageReceiver(Messages::WebBatteryManager::messageReceiverName(), this);
 }
 
 WebBatteryManager::~WebBatteryManager()

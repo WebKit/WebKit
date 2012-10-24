@@ -31,6 +31,7 @@
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include "WebNotification.h"
+#include "WebNotificationManagerMessages.h"
 #include "WebNotificationManagerProxyMessages.h"
 #include "WebPageProxyMessages.h"
 #include <WebCore/Document.h>
@@ -57,6 +58,9 @@ static uint64_t generateNotificationID()
 WebNotificationManager::WebNotificationManager(WebProcess* process)
     : m_process(process)
 {
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+    m_process->addMessageReceiver(Messages::WebNotificationManager::messageReceiverName(), this);
+#endif
 }
 
 WebNotificationManager::~WebNotificationManager()
