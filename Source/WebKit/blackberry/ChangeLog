@@ -1,5 +1,29 @@
 2012-10-24  Jacky Jiang  <zhajiang@rim.com>
 
+        [BlackBerry][Fullscreen] Roll out changes to fullscreen which rely on viewport size change [Part II]
+        https://bugs.webkit.org/show_bug.cgi?id=100259
+
+        Reviewed by Rob Buis.
+
+        PR: 219666
+        Revert "[BlackBerry] [FullScreen] entering/leaving fullscreen results in temporary glitches on the screen"
+        This rolls out r128772.
+        The patches relies on the viewport size change of the client side to
+        resume the screen and backing store updates. However, some client
+        sides don't need or wish to resize the WebKit viewport at all which
+        will result in upexpected screen and backing store suspensions.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::enterFullScreenForElement):
+        (WebCore::ChromeClientBlackBerry::exitFullScreenForElement):
+
+2012-10-24  Jacky Jiang  <zhajiang@rim.com>
+
         [BlackBerry][Fullscreen] Roll out changes to fullscreen which rely on viewport size change
         https://bugs.webkit.org/show_bug.cgi?id=100259
 

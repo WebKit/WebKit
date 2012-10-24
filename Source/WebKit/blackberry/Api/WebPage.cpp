@@ -398,12 +398,9 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_cursorEventMode(ProcessedCursorEvents)
     , m_touchEventMode(ProcessedTouchEvents)
 #endif
-#if ENABLE(FULLSCREEN_API)
-#if ENABLE(VIDEO)
+#if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO)
     , m_scaleBeforeFullScreen(-1.0)
     , m_xScrollOffsetBeforeFullScreen(-1)
-#endif
-    , m_isTogglingFullScreenState(false)
 #endif
     , m_currentCursor(Platform::CursorNone)
     , m_dumpRenderTree(0) // Lazy initialization.
@@ -3849,13 +3846,6 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
         // If we need layout then render and blit, otherwise just blit as our viewport has changed.
         m_backingStore->d->resumeScreenAndBackingStoreUpdates(needsLayout ? BackingStore::RenderAndBlit : BackingStore::Blit);
     }
-
-#if ENABLE(FULLSCREEN_API)
-    if (m_isTogglingFullScreenState) {
-        m_backingStore->d->resumeScreenAndBackingStoreUpdates(BackingStore::RenderAndBlit);
-        m_isTogglingFullScreenState = false;
-    }
-#endif
 }
 
 void WebPage::setViewportSize(const Platform::IntSize& viewportSize, bool ensureFocusElementVisible)

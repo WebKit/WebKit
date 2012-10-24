@@ -532,7 +532,6 @@ public:
     double m_scaleBeforeFullScreen;
     int m_xScrollOffsetBeforeFullScreen;
 #endif
-    bool m_isTogglingFullScreenState;
 #endif
 
     Platform::BlackBerryCursor m_currentCursor;
