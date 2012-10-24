@@ -1,3 +1,20 @@
+2012-10-24  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] The mesh should be specified using <column, row> order
+        https://bugs.webkit.org/show_bug.cgi?id=96285
+
+        Reviewed by Dean Jackson.
+
+        Add a test verifying that WebKit interprets the CSS mesh values in column, row order.
+        Update existing tests for u_meshSize and u_tileSize to expect column, row order.
+
+        * css3/filters/custom/custom-filter-mesh-column-row-order-expected.html: Added.
+        * css3/filters/custom/custom-filter-mesh-column-row-order.html: Added.
+        * css3/filters/resources/checkerboard.vs: Added.
+        * css3/filters/resources/u-mesh-size.fs:
+        * css3/filters/resources/u-tile-size.fs:
+        * css3/filters/resources/varying-mix-color.fs: Added.
+
 2012-10-24  Tony Chang  <tony@chromium.org>
 
         [chromium] Unreviewed, land pixel results on Win/Mac for a new repaint test.

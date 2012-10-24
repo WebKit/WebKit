@@ -15,5 +15,5 @@ bool areVectorsEqual(vec2 a, vec2 b)
 
 void main()
 {
-    gl_FragColor = areVectorsEqual(u_meshSize, vec2(20.0, 10.0)) ? vec4(0.0, 1.0, 0.0, 1.0) : vec4(1.0, 0.0, 0.0, 1.0);
+    gl_FragColor = areVectorsEqual(u_meshSize, vec2(10.0, 20.0)) ? vec4(0.0, 1.0, 0.0, 1.0) : vec4(1.0, 0.0, 0.0, 1.0);
 }

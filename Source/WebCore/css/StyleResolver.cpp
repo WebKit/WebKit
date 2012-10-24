@@ -4816,14 +4816,14 @@ PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperation(Web
             if (primitiveValue->isNumber()) {
                 // If only one integer value is specified, it will set both
                 // the rows and the columns.
-                meshRows = meshColumns = primitiveValue->getIntValue();
+                meshColumns = meshRows = primitiveValue->getIntValue();
                 iterator.advance();
                 
-                // Try to match another number for the columns.
+                // Try to match another number for the rows.
                 if (iterator.hasMore() && iterator.isPrimitiveValue()) {
                     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(iterator.value());
                     if (primitiveValue->isNumber()) {
-                        meshColumns = primitiveValue->getIntValue();
+                        meshRows = primitiveValue->getIntValue();
                         iterator.advance();
                     }
                 }

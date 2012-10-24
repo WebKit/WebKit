@@ -1,3 +1,23 @@
+2012-10-24  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] The mesh should be specified using <column, row> order
+        https://bugs.webkit.org/show_bug.cgi?id=96285
+
+        Reviewed by Dean Jackson.
+
+        Change StyleResolver and CSSComputedStyleDeclaration to handle the mesh parameters in
+        column, row order.
+
+        Test: css3/filters/custom/custom-filter-mesh-column-row-order.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::valueForFilter):
+            Append the number of columns before the number of rows in the meshParameters
+            CSSValueList.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::createCustomFilterOperation):
+            Store the second mesh parameter in meshRows instead of meshColumns.
+
 2012-10-24  Jae Hyun Park  <jae.park@company100.net>
 
         loaderRunLoop() should use synchronization instead of while loop
