@@ -1,3 +1,16 @@
+2012-10-24  Nico Weber  <thakis@chromium.org>
+
+        [chromium] Respect image orientation in image dragging code
+        https://bugs.webkit.org/show_bug.cgi?id=100200
+
+        Reviewed by Tony Chang.
+
+        Based on the corresponding code in DragImageMac.mm.  The image
+        rotation code isn't hooked up yet, so no observable effect for now.
+
+        * platform/chromium/DragImageChromiumSkia.cpp:
+        (WebCore::createDragImageFromImage):
+
 2012-10-24  Michael Saboff  <msaboff@apple.com>
 
         Code cleanup after r132165

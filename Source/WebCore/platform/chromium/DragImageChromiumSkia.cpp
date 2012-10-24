@@ -31,10 +31,15 @@
 #include "config.h"
 #include "DragImage.h"
 
+#include "AffineTransform.h"
+#include "BitmapImage.h"
+#include "FloatRect.h"
 #include "Image.h"
 #include "NativeImageSkia.h"
 #include "NotImplemented.h"
 #include "SkBitmap.h"
+#include "SkCanvas.h"
+#include "SkMatrix.h"
 
 #include "skia/ext/image_operations.h"
 
@@ -95,7 +100,7 @@ DragImageRef dissolveDragImageToFraction(DragImageRef image, float fraction)
     return image;
 }
 
-DragImageRef createDragImageFromImage(Image* image, RespectImageOrientationEnum)
+DragImageRef createDragImageFromImage(Image* image, RespectImageOrientationEnum shouldRespectImageOrientation)
 {
     if (!image)
         return 0;
@@ -104,11 +109,38 @@ DragImageRef createDragImageFromImage(Image* image, RespectImageOrientationEnum)
     if (!bitmap)
         return 0;
 
-    SkBitmap* dragImage = new SkBitmap();
-    bitmap->bitmap().copyTo(dragImage, SkBitmap::kARGB_8888_Config);
     DragImageChromium* dragImageChromium = new DragImageChromium;
-    dragImageChromium->bitmap = dragImage;
+    dragImageChromium->bitmap = new SkBitmap();
     dragImageChromium->resolutionScale = bitmap->resolutionScale();
+
+    if (image->isBitmapImage()) {
+        ImageOrientation orientation = DefaultImageOrientation;
+        BitmapImage* bitmapImage = static_cast<BitmapImage*>(image);
+        IntSize sizeRespectingOrientation = bitmapImage->sizeRespectingOrientation();
+
+        if (shouldRespectImageOrientation == RespectImageOrientation)
+            orientation = bitmapImage->currentFrameOrientation();
+
+        if (orientation != DefaultImageOrientation) {
+            // Construct a correctly-rotated copy of the image to use as the drag image.
+            dragImageChromium->bitmap->setConfig(
+                SkBitmap::kARGB_8888_Config, sizeRespectingOrientation.width(), sizeRespectingOrientation.height());
+            dragImageChromium->bitmap->allocPixels();
+
+            SkCanvas canvas(*dragImageChromium->bitmap);
+            SkMatrix transform = orientation.transformFromDefault(sizeRespectingOrientation);
+            canvas.concat(transform);
+
+            FloatRect destRect(FloatPoint(), sizeRespectingOrientation);
+            if (orientation.usesWidthAsHeight())
+                destRect = FloatRect(destRect.x(), destRect.y(), destRect.height(), destRect.width());
+
+            canvas.drawBitmapRect(bitmap->bitmap(), 0, destRect);
+            return dragImageChromium;
+        }
+    }
+
+    bitmap->bitmap().copyTo(dragImageChromium->bitmap, SkBitmap::kARGB_8888_Config);
     return dragImageChromium;
 }
 
