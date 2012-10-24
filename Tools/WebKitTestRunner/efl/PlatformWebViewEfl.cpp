@@ -40,7 +40,7 @@ static Ecore_Evas* initEcoreEvas()
     return ecoreEvas;
 }
 
-PlatformWebView::PlatformWebView(WKContextRef context, WKPageGroupRef pageGroup, WKDictionaryRef /*options*/)
+PlatformWebView::PlatformWebView(WKContextRef context, WKPageGroupRef pageGroup)
 {
     m_window = initEcoreEvas();
     Evas* evas = ecore_evas_get(m_window);

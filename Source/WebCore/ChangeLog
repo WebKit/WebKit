@@ -1,3 +1,34 @@
+2012-10-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r132276.
+        http://trac.webkit.org/changeset/132276
+        https://bugs.webkit.org/show_bug.cgi?id=100189
+
+        It broke the Qt-WK2 build intentionally (Requested by
+        Ossy_night on #webkit).
+
+        * page/Frame.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        (showGraphicsLayerTree):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::tiledBacking):
+        * platform/graphics/TiledBacking.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::tiledBacking):
+        (WebCore::GraphicsLayerCA::dumpAdditionalProperties):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (GraphicsLayerCA):
+        * platform/graphics/ca/mac/TileCache.h:
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::tileCoverageRect):
+        (WebCore::TileCache::revalidateTiles):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerTreeAsText):
+        * testing/Internals.cpp:
+        (WebCore::Internals::layerTreeAsText):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2012-10-23  Philip Rogers  <pdr@google.com>
 
         Add extra check for data() in PageSerializer.

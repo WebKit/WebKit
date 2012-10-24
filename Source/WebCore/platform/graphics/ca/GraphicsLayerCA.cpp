@@ -910,7 +910,7 @@ void GraphicsLayerCA::flushCompositingStateForThisLayerOnly()
     commitLayerChangesAfterSublayers();
 }
 
-TiledBacking* GraphicsLayerCA::tiledBacking() const
+TiledBacking* GraphicsLayerCA::tiledBacking()
 {
     return m_layer->tiledBacking();
 }
@@ -2521,12 +2521,6 @@ void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, int inden
     if (behavior & LayerTreeAsTextIncludeVisibleRects) {
         writeIndent(textStream, indent + 1);
         textStream << "(visible rect " << m_visibleRect.x() << ", " << m_visibleRect.y() << " " << m_visibleRect.width() << " x " << m_visibleRect.height() << ")\n";
-    }
-
-    if (tiledBacking() && (behavior & LayerTreeAsTextIncludeTileCaches)) {
-        writeIndent(textStream, indent + 1);
-        IntRect tileCoverageRect = tiledBacking()->tileCoverageRect();
-        textStream << "(tile cache coverage " << tileCoverageRect.x() << ", " << tileCoverageRect.y() << " " << tileCoverageRect.width() << " x " << tileCoverageRect.height() << ")\n";
     }
 }
 

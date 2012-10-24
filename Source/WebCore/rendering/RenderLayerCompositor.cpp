@@ -1137,9 +1137,7 @@ String RenderLayerCompositor::layerTreeAsText(LayerTreeFlags flags)
         layerTreeBehavior |= LayerTreeAsTextDebug;
     if (flags & LayerTreeFlagsIncludeVisibleRects)
         layerTreeBehavior |= LayerTreeAsTextIncludeVisibleRects;
-    if (flags & LayerTreeFlagsIncludeTileCaches)
-        layerTreeBehavior |= LayerTreeAsTextIncludeTileCaches;
-
+    
     // We skip dumping the scroll and clip layers to keep layerTreeAsText output
     // similar between platforms.
     return m_rootContentLayer->layerTreeAsText(layerTreeBehavior);

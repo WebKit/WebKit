@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "PlatformWebView.h"
-#include "TestController.h"
 
 #import <WebKit2/WKImageCG.h>
 #import <WebKit2/WKViewPrivate.h>
@@ -36,32 +35,6 @@
     NSPoint _fakeOrigin;
 }
 @property (nonatomic, assign) WTR::PlatformWebView* platformWebView;
-@end
-
-@interface TestRunnerWKView : WKView {
-    BOOL _useTiledDrawing;
-}
-
-- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)context pageGroupRef:(WKPageGroupRef)pageGroup useTiledDrawing:(BOOL)useTiledDrawing;
-
-@property (nonatomic, assign) BOOL useTiledDrawing;
-@end
-
-@implementation TestRunnerWKView
-
-@synthesize useTiledDrawing = _useTiledDrawing;
-
-- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)context pageGroupRef:(WKPageGroupRef)pageGroup useTiledDrawing:(BOOL)useTiledDrawing
-{
-    _useTiledDrawing = useTiledDrawing;
-    return [super initWithFrame:frame contextRef:context pageGroupRef:pageGroup];
-}
-
-- (BOOL)_shouldUseTiledDrawingArea
-{
-    return _useTiledDrawing;
-}
-
 @end
 
 @implementation WebKitTestRunnerWindow
@@ -105,14 +78,11 @@
 
 namespace WTR {
 
-PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef, WKDictionaryRef options)
+PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
     : m_windowIsKey(true)
 {
-    WKRetainPtr<WKStringRef> useTiledDrawingKey(AdoptWK, WKStringCreateWithUTF8CString("TiledDrawing"));
-    bool useTiledDrawing = options ? WKBooleanGetValue(static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(options, useTiledDrawingKey.get()))) : false;
-
     NSRect rect = NSMakeRect(0, 0, 800, 600);
-    m_view = [[TestRunnerWKView alloc] initWithFrame:rect contextRef:contextRef pageGroupRef:pageGroupRef useTiledDrawing:useTiledDrawing];
+    m_view = [[WKView alloc] initWithFrame:rect contextRef:contextRef pageGroupRef:pageGroupRef];
 
     NSRect windowRect = NSOffsetRect(rect, -10000, [(NSScreen *)[[NSScreen screens] objectAtIndex:0] frame].size.height - rect.size.height + 10000);
     m_window = [[WebKitTestRunnerWindow alloc] initWithContentRect:windowRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
@@ -196,14 +166,6 @@ WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
 
     // windowSnapshotImage will be in GenericRGB, as we've set the main display's color space to GenericRGB.
     return adoptWK(WKImageCreateFromCGImage(windowSnapshotImage.get(), 0));
-}
-
-bool PlatformWebView::viewSupportsOptions(WKDictionaryRef options) const
-{
-    WKRetainPtr<WKStringRef> useTiledDrawingKey(AdoptWK, WKStringCreateWithUTF8CString("TiledDrawing"));
-    bool useTiledDrawing = WKBooleanGetValue(static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(options, useTiledDrawingKey.get())));
-
-    return useTiledDrawing == [(TestRunnerWKView *)m_view useTiledDrawing];
 }
 
 } // namespace WTR

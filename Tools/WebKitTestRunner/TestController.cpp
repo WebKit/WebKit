@@ -343,12 +343,8 @@ void TestController::initialize(int argc, const char* argv[])
     if (testPluginDirectory())
         WKContextSetAdditionalPluginsDirectory(m_context.get(), testPluginDirectory());
 
-    createWebViewWithOptions(0);
-}
+    m_mainWebView = adoptPtr(new PlatformWebView(m_context.get(), m_pageGroup.get()));
 
-void TestController::createWebViewWithOptions(WKDictionaryRef options)
-{
-    m_mainWebView = adoptPtr(new PlatformWebView(m_context.get(), m_pageGroup.get(), options));
     WKPageUIClient pageUIClient = {
         kWKPageUIClientCurrentVersion,
         m_mainWebView.get(),
@@ -448,21 +444,6 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
         0, // unableToImplementPolicy
     };
     WKPageSetPagePolicyClient(m_mainWebView->page(), &pagePolicyClient);
-}
-
-void TestController::ensureViewSupportsOptions(WKDictionaryRef options)
-{
-    if (m_mainWebView && !m_mainWebView->viewSupportsOptions(options)) {
-        WKPageSetPageUIClient(m_mainWebView->page(), 0);
-        WKPageSetPageLoaderClient(m_mainWebView->page(), 0);
-        WKPageSetPagePolicyClient(m_mainWebView->page(), 0);
-        WKPageClose(m_mainWebView->page());
-        
-        m_mainWebView = nullptr;
-
-        createWebViewWithOptions(options);
-        resetStateToConsistentValues();
-    }
 }
 
 bool TestController::resetStateToConsistentValues()

@@ -79,7 +79,7 @@ private:
     QQuickWebView* m_view;
 };
 
-PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef, WKDictionaryRef /*options*/)
+PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
     : m_view(new QQuickWebView(contextRef, pageGroupRef))
     , m_window(new WrapperWindow(m_view))
     , m_windowIsKey(true)

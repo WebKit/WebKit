@@ -1,3 +1,32 @@
+2012-10-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r132276.
+        http://trac.webkit.org/changeset/132276
+        https://bugs.webkit.org/show_bug.cgi?id=100189
+
+        It broke the Qt-WK2 build intentionally (Requested by
+        Ossy_night on #webkit).
+
+        * WebKitTestRunner/PlatformWebView.h:
+        (PlatformWebView):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        * WebKitTestRunner/TestController.h:
+        (TestController):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR):
+        (WTR::TestInvocation::invoke):
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::PlatformWebView):
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+
 2012-10-23  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK][Soup] Implement the default authentication dialog via WebCoreSupport

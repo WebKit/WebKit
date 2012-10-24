@@ -143,31 +143,9 @@ static bool shouldOpenWebInspector(const char* pathOrURL)
 }
 #endif
 
-#if PLATFORM(MAC)
-static bool shouldUseTiledDrawing(const char* pathOrURL)
-{
-    return strstr(pathOrURL, "tiled-drawing/") || strstr(pathOrURL, "tiled-drawing\\");
-}
-#endif
-
-static void updateTiledDrawingForCurrentTest(const char* pathOrURL)
-{
-#if PLATFORM(MAC)
-    WKRetainPtr<WKMutableDictionaryRef> viewOptions = adoptWK(WKMutableDictionaryCreate());
-    WKRetainPtr<WKStringRef> useTiledDrawingKey = adoptWK(WKStringCreateWithUTF8CString("TiledDrawing"));
-    WKRetainPtr<WKBooleanRef> useTiledDrawingValue = adoptWK(WKBooleanCreate(shouldUseTiledDrawing(pathOrURL)));
-    WKDictionaryAddItem(viewOptions.get(), useTiledDrawingKey.get(), useTiledDrawingValue.get());
-
-    TestController::shared().ensureViewSupportsOptions(viewOptions.get());
-#else
-    UNUSED_PARAM(pathOrURL);
-#endif
-}
-
 void TestInvocation::invoke()
 {
     sizeWebViewForCurrentTest(m_pathOrURL.c_str());
-    updateTiledDrawingForCurrentTest(m_pathOrURL.c_str());
 
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("BeginTest"));
     WKRetainPtr<WKMutableDictionaryRef> beginTestMessageBody = adoptWK(WKMutableDictionaryCreate());

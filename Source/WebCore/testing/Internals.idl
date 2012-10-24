@@ -158,7 +158,6 @@
 
     // Flags for layerTreeAsText.
     const unsigned short LAYER_TREE_INCLUDES_VISIBLE_RECTS = 1;
-    const unsigned short LAYER_TREE_INCLUDES_TILE_CACHES = 2;
     DOMString layerTreeAsText(in Document document, in [Optional] unsigned short flags) raises (DOMException);
 
     void garbageCollectDocumentResources(in Document document) raises (DOMException);

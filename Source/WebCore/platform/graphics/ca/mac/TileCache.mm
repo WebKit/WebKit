@@ -304,7 +304,7 @@ void TileCache::getTileIndexRangeForRect(const IntRect& rect, TileIndex& topLeft
     bottomRight.setY(max(clampedRect.maxY() / m_tileSize.height(), 0));
 }
 
-IntRect TileCache::computeTileCoverageRect() const
+IntRect TileCache::tileCoverageRect() const
 {
     IntRect tileCoverageRect = m_visibleRect;
 
@@ -377,7 +377,7 @@ void TileCache::revalidateTiles()
     if (m_visibleRect.isEmpty() || bounds().isEmpty())
         return;
 
-    IntRect tileCoverageRect = computeTileCoverageRect();
+    IntRect tileCoverageRect = this->tileCoverageRect();
 
     Vector<TileIndex> tilesToRemove;
 
