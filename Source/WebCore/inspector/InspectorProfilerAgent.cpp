@@ -490,7 +490,7 @@ void InspectorProfilerAgent::reportMemoryUsage(MemoryObjectInfo* memoryObjectInf
     InspectorBaseAgent<InspectorProfilerAgent>::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_consoleAgent);
     info.addMember(m_injectedScriptManager);
-    info.addMember(m_frontend);
+    info.addWeakPointer(m_frontend);
     info.addMember(m_profiles);
     info.addMember(m_snapshots);
 

@@ -1,3 +1,23 @@
+2012-10-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Memory instrumentation: don't count agent-specific front-ends separately
+        https://bugs.webkit.org/show_bug.cgi?id=100087
+
+        Reviewed by Alexander Pavlov.
+
+        Pointers to domain-specific inspector front-end interfaces are reported as
+        weak pointers instead of members to avoid double-counting.
+
+        Test by comparing set of reported instrumented objects with the set of objects
+        allocated by tcmalloc.
+
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::reportMemoryUsage):
+        * inspector/InspectorDOMStorageResource.cpp:
+        (WebCore::InspectorDOMStorageResource::reportMemoryUsage):
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::reportMemoryUsage):
+
 2012-10-23  Christophe Dumez  <christophe.dumez@intel.com>
 
         Regression(r132303) Broke debug build when SHADOW_DOM is enabled but STYLE_SCOPED is disabled

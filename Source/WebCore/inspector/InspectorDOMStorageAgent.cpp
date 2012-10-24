@@ -228,7 +228,7 @@ void InspectorDOMStorageAgent::reportMemoryUsage(MemoryObjectInfo* memoryObjectI
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::InspectorDOMStorageAgent);
     InspectorBaseAgent<InspectorDOMStorageAgent>::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_resources);
-    info.addMember(m_frontend);
+    info.addWeakPointer(m_frontend);
 }
 
 } // namespace WebCore
