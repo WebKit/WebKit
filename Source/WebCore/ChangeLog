@@ -1,3 +1,19 @@
+2012-10-24  Sailesh Agrawal  <sail@chromium.org>
+
+        Incorrect keycodes for numpad /, -, +, .
+        https://bugs.webkit.org/show_bug.cgi?id=99188
+
+        Reviewed by Tony Chang.
+
+        In r57951 we switched to mapping keys by character code.
+        This regressed the numpad keys which no longer match the Windows virtual key codes.
+        This CL fixes this by never mapping numpad keys by character code.
+
+        Test: platform/mac/fast/events/numpad-keycode-mapping.html
+
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::windowsKeyCodeForKeyEvent):
+
 2012-10-24  Simon Fraser  <simon.fraser@apple.com>
 
         Null-check the RenderView in ocument::windowScreenDidChange to fix a crash when saving PDFs

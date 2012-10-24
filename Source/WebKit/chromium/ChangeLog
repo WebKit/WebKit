@@ -1,3 +1,19 @@
+2012-10-24  Sailesh Agrawal  <sail@chromium.org>
+
+        Incorrect keycodes for numpad /, -, +, .
+        https://bugs.webkit.org/show_bug.cgi?id=99188
+
+        Reviewed by Tony Chang.
+
+        In r57951 we switched to mapping keys by character code.
+        This regressed the numpad keys which no longer match the Windows virtual key codes.
+        This CL fixes this by never mapping numpad keys by character code.
+
+        * src/mac/WebInputEventFactory.mm: Disallow mapping numpad keys by character code.
+        (WebKit::windowsKeyCodeForKeyEvent):
+        * tests/WebInputEventFactoryTestMac.mm: Test to verify that all numpad keys are correctly mapped.
+        (TEST):
+
 2012-10-24  Terry Anderson  <tdanderson@chromium.org>
 
         Handle two-finger tap gestures in the same way as long-press gestures

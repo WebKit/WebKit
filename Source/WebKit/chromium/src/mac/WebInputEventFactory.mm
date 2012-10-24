@@ -169,7 +169,7 @@ static int windowsKeyCodeForKeyEvent(NSEvent* event)
     // 2. Keys for which there is no known Mac virtual key codes, like PrintScreen.
     // 3. Certain punctuation keys. On Windows, these are also remapped depending on current keyboard layout,
     //    but see comment in windowsKeyCodeForCharCode().
-    if ([event type] == NSKeyDown || [event type] == NSKeyUp) {
+    if (!isKeypadEvent(event) && ([event type] == NSKeyDown || [event type] == NSKeyUp)) {
         // Cmd switches Roman letters for Dvorak-QWERTY layout, so try modified characters first.
         NSString* s = [event characters];
         code = [s length] > 0 ? WebCore::windowsKeyCodeForCharCode([s characterAtIndex:0]) : 0;

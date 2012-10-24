@@ -1,3 +1,16 @@
+2012-10-24  Sailesh Agrawal  <sail@chromium.org>
+
+        Incorrect keycodes for numpad /, -, +, .
+        https://bugs.webkit.org/show_bug.cgi?id=99188
+
+        Reviewed by Tony Chang.
+
+        Add key mappings for all numpad keys.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (KeyMappingEntry):
+        (-[EventSendingController keyDown:withModifiers:withLocation:]): Added all numpad keys.
+
 2012-10-24  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: clean up references to Skipped files

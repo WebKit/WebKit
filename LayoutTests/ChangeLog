@@ -1,3 +1,15 @@
+2012-10-24  Sailesh Agrawal  <sail@chromium.org>
+
+        Incorrect keycodes for numpad /, -, +, .
+        https://bugs.webkit.org/show_bug.cgi?id=99188
+
+        Reviewed by Tony Chang.
+
+        Added test to map numpad keys to windows virtual keycodes. This test is for the Mac port only. DumpRenderTree in the chromium-mac port doesn't use Mac keycodes so this can't be tested on that platform.
+
+        * platform/mac/fast/events/numpad-keycode-mapping-expected.txt: Added.
+        * platform/mac/fast/events/numpad-keycode-mapping.html: Added.
+
 2012-10-24  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed gardening. Marking the software compositing version of

@@ -36,11 +36,18 @@
 #include "KeyboardEvent.h"
 #include "WebInputEvent.h"
 #include "WebInputEventFactory.h"
+#include "WindowsKeyboardCodes.h"
 
 using WebKit::WebInputEventFactory;
 using WebKit::WebKeyboardEvent;
 
 namespace {
+
+struct KeyMappingEntry {
+    int macKeyCode;
+    unichar character;
+    int windowsKeyCode;
+};
 
 NSEvent* BuildFakeKeyEvent(NSUInteger keyCode, unichar character, NSUInteger modifierFlags)
 {
@@ -81,4 +88,36 @@ TEST(WebInputEventFactoryTestMac, ArrowKeyNumPad)
     macEvent = BuildFakeKeyEvent(0x7E, NSUpArrowFunctionKey, NSNumericPadKeyMask);
     webEvent = WebInputEventFactory::keyboardEvent(macEvent);
     EXPECT_EQ(0, webEvent.modifiers);
+}
+
+// Test that numpad keys get mapped correctly.
+TEST(WebInputEventFactoryTestMac, NumPadMapping)
+{
+    KeyMappingEntry table[] =
+    {
+        {65, '.', VK_DECIMAL},
+        {67, '*', VK_MULTIPLY},
+        {69, '+', VK_ADD},
+        {71, NSClearLineFunctionKey, VK_CLEAR},
+        {75, '/', VK_DIVIDE},
+        {76, 3,   VK_RETURN},
+        {78, '-', VK_SUBTRACT},
+        {81, '=', VK_OEM_PLUS},
+        {82, '0', VK_NUMPAD0},
+        {83, '1', VK_NUMPAD1},
+        {84, '2', VK_NUMPAD2},
+        {85, '3', VK_NUMPAD3},
+        {86, '4', VK_NUMPAD4},
+        {87, '5', VK_NUMPAD5},
+        {88, '6', VK_NUMPAD6},
+        {89, '7', VK_NUMPAD7},
+        {91, '8', VK_NUMPAD8},
+        {92, '9', VK_NUMPAD9},
+    };
+
+    for (size_t i = 0; i < arraysize(table); ++i) {
+        NSEvent* macEvent = BuildFakeKeyEvent(table[i].macKeyCode, table[i].character, 0);
+        WebKeyboardEvent webEvent = WebInputEventFactory::keyboardEvent(macEvent);
+        EXPECT_EQ(table[i].windowsKeyCode, webEvent.windowsKeyCode);
+    }
 }

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("Test that Mac numpad keys are mapped to the correct Windows virtual keycodes.");
+
+var lastKeyboardEvent;
+document.onkeydown = function(event) {
+    lastKeyboardEvent = event;
+}
+
+function getKeyCode(keyName) {
+    var numpadLocation = 3;
+    eventSender.keyDown(keyName, 0, numpadLocation);
+    return lastKeyboardEvent.keyCode;
+}
+
+if (window.eventSender) {
+    shouldBe("getKeyCode('.')", "0x6E");
+    shouldBe("getKeyCode('*')", "0x6A");
+    shouldBe("getKeyCode('+')", "0x6B");
+    shouldBe("getKeyCode('clear')", "0x0C");
+    shouldBe("getKeyCode('/')", "0x6F");
+    shouldBe("getKeyCode('enter')", "0x0D");
+    shouldBe("getKeyCode('-')", "0x6D");
+    shouldBe("getKeyCode('=')", "0xBB");
+    shouldBe("getKeyCode('0')", "0x60");
+    shouldBe("getKeyCode('1')", "0x61");
+    shouldBe("getKeyCode('2')", "0x62");
+    shouldBe("getKeyCode('3')", "0x63");
+    shouldBe("getKeyCode('4')", "0x64");
+    shouldBe("getKeyCode('5')", "0x65");
+    shouldBe("getKeyCode('6')", "0x66");
+    shouldBe("getKeyCode('7')", "0x67");
+    shouldBe("getKeyCode('8')", "0x68");
+    shouldBe("getKeyCode('9')", "0x69");
+}
+
+</script>
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
