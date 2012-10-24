@@ -1,3 +1,19 @@
+2012-10-24  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Explicitly disable accelerated animations in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=100241
+
+        Reviewed by Adrienne Walker.
+
+        Disable accelerated animations by default in DRT.        
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::setAcceleratedAnimationEnabled):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell):
+
 2012-10-24  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Move the QQuickWebViewExperimental pointer to QQuickWebViewPrivate

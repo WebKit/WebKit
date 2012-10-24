@@ -141,6 +141,7 @@ int main(int argc, char* argv[])
     string javaScriptFlags;
     bool encodeBinary = false;
     bool noTimeout = false;
+    bool acceleratedAnimationEnabled = false;
     for (int i = 1; i < argc; ++i) {
         string argument(argv[i]);
         if (argument == "-")
@@ -225,6 +226,7 @@ int main(int argc, char* argv[])
         shell.setAccelerated2dCanvasEnabled(accelerated2DCanvasEnabled);
         shell.setDeferred2dCanvasEnabled(deferred2DCanvasEnabled);
         shell.setAcceleratedPaintingEnabled(acceleratedPaintingEnabled);
+        shell.setAcceleratedAnimationEnabled(acceleratedAnimationEnabled);
         shell.setPerTilePaintingEnabled(perTilePaintingEnabled);
         shell.setDeferredImageDecodingEnabled(deferredImageDecodingEnabled);
         shell.setJavaScriptFlags(javaScriptFlags);

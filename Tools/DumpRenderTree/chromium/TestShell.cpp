@@ -387,6 +387,11 @@ void TestShell::setPerTilePaintingEnabled(bool enabled)
     Platform::current()->compositorSupport()->setPerTilePaintingEnabled(enabled);
 }
 
+void TestShell::setAcceleratedAnimationEnabled(bool enabled)
+{
+    Platform::current()->compositorSupport()->setAcceleratedAnimationEnabled(enabled);
+}
+
 static string dumpDocumentText(WebFrame* frame)
 {
     // We use the document element's text instead of the body text here because
