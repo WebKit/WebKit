@@ -1,3 +1,20 @@
+2012-10-23  Andreas Kling  <kling@webkit.org>
+
+        CodeBlock: Give m_putToBaseOperations an inline capacity.
+        <http://webkit.org/b/100190>
+        <rdar://problem/12562466>
+
+        Reviewed by Oliver Hunt.
+
+        Since the CodeBlock constructor always inserts a single PutToBaseOperation, but there's no
+        guarantee that more will follow, give the m_putToBaseOperations vector an inline capacity of 1.
+        There are 4009 of these Vectors on Membuster3, and only 126 of them have more than a single entry.
+
+        This change yields a 1.90MB reduction in memory usage.
+
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+
 2012-10-23  Christophe Dumez  <christophe.dumez@intel.com>
 
         Regression(r132143): Assertion hit in JSC::Interpreter::StackPolicy::StackPolicy(JSC::Interpreter&, const WTF::StackBounds&)

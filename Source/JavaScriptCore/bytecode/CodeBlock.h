@@ -1410,7 +1410,7 @@ namespace JSC {
         size_t m_bytecodeCommentIterator;
 #endif
         Vector<ResolveOperations> m_resolveOperations;
-        Vector<PutToBaseOperation> m_putToBaseOperations;
+        Vector<PutToBaseOperation, 1> m_putToBaseOperations;
 
         struct RareData {
            WTF_MAKE_FAST_ALLOCATED;
