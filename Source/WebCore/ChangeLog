@@ -1,3 +1,19 @@
+2012-10-23  Philip Rogers  <pdr@google.com>
+
+        Add extra check for data() in PageSerializer.
+        https://bugs.webkit.org/show_bug.cgi?id=99102
+
+        Reviewed by Eric Seidel.
+
+        The image returned from imageForRenderer() does not contain the raw SVG data
+        so this patch adds a check for image->image()->data() before writing SVG
+        in PageSerializer::addImageToResources.
+
+        Covered by existing test WebPageNewSerializeTest.SVGImageDontCrash.
+
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::addImageToResources):
+
 2012-10-23  Kent Tamura  <tkent@chromium.org>
 
         Move appendAsLDMLLiteral in LocaleWin.cpp to a common place

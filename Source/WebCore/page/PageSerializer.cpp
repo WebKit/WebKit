@@ -298,12 +298,15 @@ void PageSerializer::addImageToResources(CachedImage* image, RenderObject* image
     if (!image || image->image() == Image::nullImage())
         return;
 
-    RefPtr<SharedBuffer> data = imageRenderer ? image->imageForRenderer(imageRenderer)->data() : image->image()->data();
+    RefPtr<SharedBuffer> data = imageRenderer ? image->imageForRenderer(imageRenderer)->data() : 0;
+    if (!data)
+        data = image->image()->data();
+
     if (!data) {
-        // SVG images don't return data at this point. Bug 99102.
         LOG_ERROR("No data for image %s", url.string().utf8().data());
         return;
     }
+
     String mimeType = image->response().mimeType();
     m_resources->append(Resource(url, mimeType, data));
     m_resourceURLs.add(url);
