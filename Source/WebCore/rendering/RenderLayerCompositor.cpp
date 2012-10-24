@@ -186,6 +186,7 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView* renderView)
     , m_compositing(false)
     , m_compositingLayersNeedRebuild(false)
     , m_flushingLayers(false)
+    , m_shouldFlushOnReattach(false)
     , m_forceCompositingMode(false)
     , m_rootLayerAttachment(RootLayerUnattached)
 #if !LOG_DISABLED
@@ -283,8 +284,10 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
     if (!isFlushRoot && rootLayerAttachment() == RootLayerAttachedViaEnclosingFrame)
         return;
     
-    if (rootLayerAttachment() == RootLayerUnattached)
+    if (rootLayerAttachment() == RootLayerUnattached) {
+        m_shouldFlushOnReattach = true;
         return;
+    }
 
     AnimationUpdateBlock animationUpdateBlock(m_renderView->frameView()->frame()->animation());
 
@@ -2332,6 +2335,11 @@ void RenderLayerCompositor::attachRootLayer(RootLayerAttachment attachment)
 
     m_rootLayerAttachment = attachment;
     rootLayerAttachmentChanged();
+    
+    if (m_shouldFlushOnReattach) {
+        flushPendingLayerChanges(true);
+        m_shouldFlushOnReattach = false;
+    }
 }
 
 void RenderLayerCompositor::detachRootLayer()

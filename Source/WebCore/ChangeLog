@@ -1,3 +1,31 @@
+2012-10-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Flush pending GraphicsLayer changes when reattaching compositing layers if necessary
+        https://bugs.webkit.org/show_bug.cgi?id=100187
+        <rdar://problem/12546770>
+
+        Reviewed by Dan Bernstein.
+
+        Fix a regression from r131940. That revision changed RenderLayerCompositor::flushPendingLayerChanges()
+        to bail if the root layer is unattached, which indicates that we're in the page cache, or in a
+        background tab. However, that dropped the layer flush on the floor, so that any subsequent changes
+        to GraphicsLayerCAs would just pile up and never get flushed. This was most evident on pages
+        that require frequent flushing, such as those running animated GIFs.
+        
+        Fix by setting a flag in flushPendingLayerChanges() if we're unattached. Consult the flag
+        when re-attaching the root layer, and if it's set, flush the GraphicsLayers.
+        
+        Not testable because we can't test detaching and re-adding web views in DRT/WTR.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::RenderLayerCompositor): Initialize m_shouldFlushOnReattach to false.
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges): If the root layer attachment
+        is RootLayerUnattached, set the m_shouldFlushOnReattach flag before returning.
+        (WebCore::RenderLayerCompositor::attachRootLayer): If m_shouldFlushOnReattach, flush the layers,
+        saying that we're the flush root.
+        * rendering/RenderLayerCompositor.h:
+        (RenderLayerCompositor): Add m_shouldFlushOnReattach flag.
+
 2012-10-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r132276.
