@@ -86,7 +86,12 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
 {
     ASSERT(m_page);
 
+#if USE(ACCELERATED_COMPOSITING) && defined HAVE_ECORE_X
+    const char* engine = "opengl_x11";
+    m_inspectorWindow = ecore_evas_new(engine, 0, 0, initialWindowWidth, initialWindowHeight, 0);
+#else
     m_inspectorWindow = ecore_evas_new(0, 0, 0, initialWindowWidth, initialWindowHeight, 0);
+#endif
     if (!m_inspectorWindow)
         return 0;
 

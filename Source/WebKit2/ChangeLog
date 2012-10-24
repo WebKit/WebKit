@@ -1,3 +1,17 @@
+2012-10-24  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][WK2][AC] Black screen in web inspector window with AC on
+        https://bugs.webkit.org/show_bug.cgi?id=100168
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        When ACCELERATED_COMPOSITING flag is turned on, and using X11,
+        pass "opengl_x11" engine name to ecore_evas_new when creating a
+        web inspector window. It is guaranteed to be available, because
+        we wouldn't be able to create a main window if it wasn't.
+
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+
 2012-10-24  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Make History client a C++ class
