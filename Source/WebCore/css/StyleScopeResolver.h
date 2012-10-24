@@ -37,8 +37,11 @@ namespace WebCore {
 
 class ContainerNode;
 class CSSStyleSheet;
+class Element;
 class RuleSet;
 class RuleFeatureSet;
+class ShadowRoot;
+class StyleRuleHost;
 
 #if ENABLE(STYLE_SCOPED) || ENABLE(SHADOW_DOM)
 
@@ -72,12 +75,18 @@ public:
     bool matchesStyleBounds(const StackFrame& frame) const { return frame.m_authorStyleBoundsIndex == m_stackParentBoundsIndex; }
     void collectFeaturesTo(RuleFeatureSet&);
 
+    void addHostRule(StyleRuleHost*, bool hasDocumentSecurityOrigin, const ContainerNode* scope);
+    bool styleSharingCandidateMatchesHostRules(const Element*);
+    void matchHostRules(const Element*, Vector<RuleSet*>& matchedRules);
+
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     RuleSet* ruleSetFor(const ContainerNode* scope) const;
     void setupStack(const ContainerNode*);
     bool stackIsConsistent(const ContainerNode* parent) const { return parent && parent == m_stackParent; }
+    RuleSet* ensureAtHostRuleSetFor(const ShadowRoot*);
+    RuleSet* atHostRuleSetFor(const ShadowRoot*) const;
 
     ScopedRuleSetMap m_authorStyles;
 
@@ -88,6 +97,8 @@ private:
     // This is used to decide whether m_scopingElementStack is consistent, separately from SelectorChecker::m_parentStack.
     const ContainerNode* m_stackParent;
     int m_stackParentBoundsIndex;
+
+    ScopedRuleSetMap m_atHostRules;
 };
 
 inline bool StyleScopeResolver::ensureStackConsistency(ContainerNode* parent)

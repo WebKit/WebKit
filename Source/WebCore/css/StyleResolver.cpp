@@ -117,7 +117,6 @@
 #include "StylePendingImage.h"
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
-#include "StyleScopeResolver.h"
 #include "StyleSheetContents.h"
 #include "StyleSheetList.h"
 #include "Text.h"
@@ -372,7 +371,7 @@ static PassOwnPtr<RuleSet> makeRuleSet(const Vector<RuleFeature>& rules)
         return nullptr;
     OwnPtr<RuleSet> ruleSet = RuleSet::create();
     for (size_t i = 0; i < size; ++i)
-        ruleSet->addRule(rules[i].rule, rules[i].selectorIndex, rules[i].hasDocumentSecurityOrigin, false);
+        ruleSet->addRule(rules[i].rule, rules[i].selectorIndex, rules[i].hasDocumentSecurityOrigin ? RuleHasDocumentSecurityOrigin : RuleHasNoSpecialState);
     ruleSet->shrinkToFit();
     return ruleSet.release();
 }
@@ -411,12 +410,12 @@ void StyleResolver::appendAuthorStyleSheets(unsigned firstNew, const Vector<RefP
         if (cssSheet->mediaQueries() && !m_medium->eval(cssSheet->mediaQueries(), this))
             continue;
         StyleSheetContents* sheet = cssSheet->contents();
+#if ENABLE(STYLE_SCOPED)
         if (const ContainerNode* scope = StyleScopeResolver::scopeFor(cssSheet)) {
-            if (!m_scopeResolver)
-                m_scopeResolver = adoptPtr(new StyleScopeResolver());
-            m_scopeResolver->ensureRuleSetFor(scope)->addRulesFromSheet(sheet, *m_medium, this, scope);
+            ensureScopeResolver()->ensureRuleSetFor(scope)->addRulesFromSheet(sheet, *m_medium, this, scope);
             continue;
         }
+#endif
 
         m_authorStyle->addRulesFromSheet(sheet, *m_medium, this);
         if (!m_styleRuleToCSSOMWrapperMap.isEmpty())
@@ -710,7 +709,12 @@ void StyleResolver::sortAndTransferMatchedRules(MatchResult& result)
 void StyleResolver::matchScopedAuthorRules(MatchResult& result, bool includeEmptyRules)
 {
 #if ENABLE(STYLE_SCOPED) || ENABLE(SHADOW_DOM)
-    if (!m_scopeResolver || !m_scopeResolver->hasScopedStyles())
+    if (!m_scopeResolver)
+        return;
+
+    matchHostRules(result, includeEmptyRules);
+
+    if (!m_scopeResolver->hasScopedStyles())
         return;
 
     // Match scoped author rules by traversing the scoped element stack (rebuild it if it got inconsistent).
@@ -736,6 +740,35 @@ void StyleResolver::matchScopedAuthorRules(MatchResult& result, bool includeEmpt
         collectMatchingRulesForRegion(frame.m_ruleSet, result.ranges.firstAuthorRule, result.ranges.lastAuthorRule, options);
     }
 
+#else
+    UNUSED_PARAM(result);
+    UNUSED_PARAM(includeEmptyRules);
+#endif
+}
+
+inline bool StyleResolver::styleSharingCandidateMatchesHostRules()
+{
+#if ENABLE(SHADOW_DOM)
+    return m_scopeResolver && m_scopeResolver->styleSharingCandidateMatchesHostRules(m_element);
+#else
+    return false;
+#endif
+}
+
+void StyleResolver::matchHostRules(MatchResult& result, bool includeEmptyRules)
+{
+#if ENABLE(SHADOW_DOM)
+    ASSERT(m_scopeResolver);
+
+    Vector<RuleSet*> matchedRules;
+    m_scopeResolver->matchHostRules(m_element, matchedRules);
+    if (matchedRules.isEmpty())
+        return;
+
+    MatchOptions options(includeEmptyRules);
+    options.scope = m_element;
+    for (unsigned i = matchedRules.size(); i > 0; --i)
+        collectMatchingRules(matchedRules.at(i-1), result.ranges.firstAuthorRule, result.ranges.lastAuthorRule, options);
 #else
     UNUSED_PARAM(result);
     UNUSED_PARAM(includeEmptyRules);
@@ -1331,6 +1364,9 @@ RenderStyle* StyleResolver::locateSharedStyle()
         return 0;
     // Can't share if attribute rules apply.
     if (styleSharingCandidateMatchesRuleSet(m_uncommonAttributeRuleSet.get()))
+        return 0;
+    // Can't share if @host @-rules apply.
+    if (styleSharingCandidateMatchesHostRules())
         return 0;
     // Tracking child index requires unique style for each node. This may get set by the sibling rule match above.
     if (parentStylePreventsSharing(m_parentStyle))

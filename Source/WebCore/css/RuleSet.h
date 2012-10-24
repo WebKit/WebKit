@@ -31,6 +31,14 @@
 
 namespace WebCore {
 
+enum AddRuleFlags {
+    RuleHasNoSpecialState         = 0,
+    RuleHasDocumentSecurityOrigin = 1,
+    RuleCanUseFastCheckSelector   = 1 << 1,
+    RuleIsInRegionRule            = 1 << 2,
+    RuleIsHostRule                = 1 << 3,
+};
+
 class CSSSelector;
 class ContainerNode;
 class MediaQueryEvaluator;
@@ -40,7 +48,7 @@ class StyleSheetContents;
 
 class RuleData {
 public:
-    RuleData(StyleRule*, unsigned selectorIndex, unsigned position, bool hasDocumentSecurityOrigin, bool canUseFastCheckSelector, bool inRegionRule);
+    RuleData(StyleRule*, unsigned selectorIndex, unsigned position, AddRuleFlags);
 
     unsigned position() const { return m_position; }
     StyleRule* rule() const { return m_rule; }
@@ -55,6 +63,7 @@ public:
     unsigned linkMatchType() const { return m_linkMatchType; }
     bool hasDocumentSecurityOrigin() const { return m_hasDocumentSecurityOrigin; }
     bool isInRegionRule() const { return m_isInRegionRule; }
+    void increaseSpecificity(unsigned value) { m_specificity += value; }
 
     // Try to balance between memory usage (there can be lots of RuleData objects) and good filtering performance.
     static const unsigned maximumIdentifierCount = 4;
@@ -98,8 +107,8 @@ public:
 
     void addRulesFromSheet(StyleSheetContents*, const MediaQueryEvaluator&, StyleResolver* = 0, const ContainerNode* = 0);
 
-    void addStyleRule(StyleRule*, bool hasDocumentSecurityOrigin, bool canUseFastCheckSelector, bool isInRegionRule = false);
-    void addRule(StyleRule*, unsigned selectorIndex, bool hasDocumentSecurityOrigin, bool canUseFastCheckSelector, bool isInRegionRule = false);
+    void addStyleRule(StyleRule*, AddRuleFlags);
+    void addRule(StyleRule*, unsigned selectorIndex, AddRuleFlags);
     void addPageRule(StyleRulePage*);
     void addToRuleSet(AtomicStringImpl* key, AtomRuleMap&, const RuleData&);
     void addRegionRule(StyleRuleRegion*, bool hasDocumentSecurityOrigin);

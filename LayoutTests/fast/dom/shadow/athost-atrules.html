@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#host {
+  color: gray;
+}
+</style>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/polyfill.js"></script>
+<script>
+function dumpComputedStyle(node)
+{
+    debug(node.id + ": " + document.defaultView.getComputedStyle(node, null).getPropertyValue('color'));
+}
+
+function preprocessForTest()
+{
+    var parent = document.getElementById("parent");
+    parent.innerHTML = '<div id="host"><span>Hello</span></div>';
+}
+
+function testSimpleContentCase()
+{
+    preprocessForTest();
+    var host = document.getElementById("host");
+    var shadow = new WebKitShadowRoot(host);
+    shadow.innerHTML = "<style>@host { div { color: red; } }</style><content></content>";
+    dumpComputedStyle(host);
+}
+
+function testSimpleShadowCase()
+{
+    preprocessForTest();
+    var host = document.getElementById("host");
+    var shadow = new WebKitShadowRoot(host);
+    shadow.innerHTML = "<style>@host { div { color: red; } }</style><shadow></shadow>";
+    dumpComputedStyle(host);
+}
+
+function testHostWithSelector()
+{
+    var parent = document.getElementById("parent");
+    parent.innerHTML = "<style scoped> .host { color: gray };</style>"
+        + "<div id='hostA' class='host'><span>Hello</span></div>"
+        + "<span id='hostB' class='host'><span>World</span></span>";
+
+    var hostA = document.getElementById("hostA");
+    var shadowA = new WebKitShadowRoot(hostA);
+    var style = "<style>@host { div { color: red; } span { color: blue; } }</style>";
+    shadowA.innerHTML = style + "<shadow></shadow>";
+
+    var hostB = document.getElementById("hostB");
+    var shadowB = new WebKitShadowRoot(hostB);
+    shadowB.innerHTML = style + "<shadow></shadow>";
+
+    dumpComputedStyle(hostA);
+    dumpComputedStyle(hostB);
+}
+
+function testPseudoHostWithScoped()
+{
+    preprocessForTest();
+    var host = document.getElementById("host");
+    var shadow = new WebKitShadowRoot(host);
+    shadow.innerHTML = "<div><style scoped>@host { div { color: red; } }</style><shadow></shadow><div><style scoped>@host { div { color: blue; } }</style></div></div>";
+    dumpComputedStyle(host);
+}
+
+function testPseudoHostWithFallbackShadow()
+{
+    preprocessForTest();
+    var host = document.getElementById("host");
+    var oldestShadow = new WebKitShadowRoot(host);
+    var youngestShadow = new WebKitShadowRoot(host);
+    oldestShadow.innerHTML = "<style>@host { div { color: red; } }</style><content></content>";
+    youngestShadow.innerHTML = "<content><shadow></shadow></content>";
+    dumpComputedStyle(host);
+}
+
+function testTwoShadowRootsCase()
+{
+    preprocessForTest();
+    var host = document.getElementById("host");
+    var oldestShadow = new WebKitShadowRoot(host);
+    var youngestShadow = new WebKitShadowRoot(host);
+    oldestShadow.innerHTML = "<style>@host { div { color: red; } }</style><content></content>";
+    youngestShadow.innerHTML = "<style>@host { div { color: blue; } }</style><shadow></shadow>";
+    dumpComputedStyle(host);
+}
+
+function testTwoShadowRootsCreatingDifferentOrderCase()
+{
+    preprocessForTest();
+    var host = document.getElementById("host");
+    var oldestShadow = new WebKitShadowRoot(host);
+    var youngestShadow = new WebKitShadowRoot(host);
+    youngestShadow.innerHTML = "<style>@host { div { color: blue; } }</style><shadow></shadow>";
+    oldestShadow.innerHTML = "<style>@host { div { color: red; } }</style><content></content>";
+    dumpComputedStyle(host);
+}
+
+function testMultipleShadowRootsWithInertShadowContent()
+{
+    preprocessForTest();
+    var host = document.getElementById("host");
+    var oldestShadow = new WebKitShadowRoot(host);
+    var olderShadow = new WebKitShadowRoot(host);
+    var youngerShadow = new WebKitShadowRoot(host);
+    var youngestShadow = new WebKitShadowRoot(host);
+
+    youngestShadow.innerHTML = "<shadow></shadow>";
+    youngerShadow.innerHTML = "<content></content>";
+    olderShadow.innerHTML = "<style>@host { div { color: green; } }</style><shadow></shadow>";
+    oldestShadow.innerHTML = "<style>@host { div { color: red; } }</style><content></content>";
+    dumpComputedStyle(host);
+}
+
+function testMultipleShadowRootsWithInertShadow()
+{
+    preprocessForTest();
+    var host = document.getElementById("host");
+    var oldestShadow = new WebKitShadowRoot(host);
+    var olderShadow = new WebKitShadowRoot(host);
+    var youngerShadow = new WebKitShadowRoot(host);
+    var youngestShadow = new WebKitShadowRoot(host);
+
+    youngestShadow.innerHTML = "<style>@host { div { color: yellow; } }</style><shadow></shadow>";
+    youngerShadow.innerHTML = "<style>@host { div { color: blue; } }</style><div>inert</div>";
+    olderShadow.innerHTML = "<style>@host { div { color: green; } }</style><shadow></shadow>";
+    oldestShadow.innerHTML = "<style>@host { div { color: red; } }</style><content></content>";
+    dumpComputedStyle(host);
+}
+
+function testNestedCase()
+{
+    preprocessForTest();
+    var host = document.getElementById("host");
+    var outerShadow = new WebKitShadowRoot(host);
+    outerShadow.innerHTML = '<style>@host { div { color: red; } }</style><div id="nestedHost">InnerShadow</div>';
+    var nested = outerShadow.getElementById("nestedHost");
+    var innerShadow = new WebKitShadowRoot(nested);
+    innerShadow.innerHTML = '<style>@host { div { color: blue; } }</style>Show <shadow></shadow> in outer.';
+    dumpComputedStyle(host);
+    dumpComputedStyle(nested);
+}
+
+function testHostVsScopedStyle()
+{
+    preprocessForTest();
+    var host = document.getElementById("host");
+    host.innerHTML = "<style scoped>#host { color: yellow; }</style><span>Hello</span>";
+    var shadow = new WebKitShadowRoot(host);
+    shadow.innerHTML = "<style>@host { #host { color: red; } }</style><content></content>";
+    dumpComputedStyle(host);
+}
+
+function testHostVsInlineStyle()
+{
+    preprocessForTest();
+    var host = document.getElementById("host");
+    host.style.color = "yellow";
+    host.innerHTML = "<span>Hello</span>";
+    var shadow = new WebKitShadowRoot(host);
+    shadow.innerHTML = "<style>@host { div { color: red; } }</style><content></content>";
+    dumpComputedStyle(host);
+}
+
+function runTests()
+{
+    testSimpleContentCase();
+    testSimpleShadowCase();
+    testHostWithSelector();
+    testPseudoHostWithScoped();
+    testPseudoHostWithFallbackShadow();
+    testTwoShadowRootsCase();
+    testTwoShadowRootsCreatingDifferentOrderCase();
+    testMultipleShadowRootsWithInertShadowContent();
+    testMultipleShadowRootsWithInertShadow();
+    testNestedCase();
+    testHostVsScopedStyle();
+    testHostVsInlineStyle();
+}
+</script>
+</head>
+<body onload="runTests()">
+  <div id="parent">
+  </div>
+</body>
+</html>

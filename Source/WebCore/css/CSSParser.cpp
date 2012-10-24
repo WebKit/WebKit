@@ -9185,6 +9185,13 @@ inline void CSSParser::detectAtToken(int length, bool hasEscape)
             m_token = FONT_FACE_SYM;
         return;
 
+#if ENABLE(SHADOW_DOM)
+    case 'h':
+        if (length == 5 && isEqualToCSSIdentifier(name + 2, "ost"))
+            m_token = HOST_SYM;
+        return;
+#endif
+
     case 'i':
         if (length == 7 && isEqualToCSSIdentifier(name + 2, "mport")) {
             m_parsingMode = MediaQueryMode;
@@ -10016,6 +10023,24 @@ StyleRuleBase* CSSParser::createFontFaceRule()
     processAndAddNewRuleToSourceTreeIfNeeded();
     return result;
 }
+
+#if ENABLE(SHADOW_DOM)
+StyleRuleBase* CSSParser::createHostRule(RuleList* rules)
+{
+    m_allowImportRules = m_allowNamespaceDeclarations = false;
+    RefPtr<StyleRuleHost> rule;
+    if (rules)
+        rule = StyleRuleHost::create(*rules);
+    else {
+        RuleList emptyRules;
+        rule = StyleRuleHost::create(emptyRules);
+    }
+    StyleRuleHost* result = rule.get();
+    m_parsedRules.append(rule.release());
+    processAndAddNewRuleToSourceTreeIfNeeded();
+    return result;
+}
+#endif
 
 void CSSParser::addNamespace(const AtomicString& prefix, const AtomicString& uri)
 {

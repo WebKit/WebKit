@@ -107,18 +107,18 @@ static inline bool containsUncommonAttributeSelector(const CSSSelector* selector
     return false;
 }
 
-RuleData::RuleData(StyleRule* rule, unsigned selectorIndex, unsigned position, bool hasDocumentSecurityOrigin, bool canUseFastCheckSelector, bool inRegionRule)
+RuleData::RuleData(StyleRule* rule, unsigned selectorIndex, unsigned position, AddRuleFlags addRuleFlags)
     : m_rule(rule)
     , m_selectorIndex(selectorIndex)
     , m_position(position)
     , m_specificity(selector()->specificity())
-    , m_hasFastCheckableSelector(canUseFastCheckSelector && SelectorChecker::isFastCheckableSelector(selector()))
+    , m_hasFastCheckableSelector((addRuleFlags & RuleCanUseFastCheckSelector) && SelectorChecker::isFastCheckableSelector(selector()))
     , m_hasMultipartSelector(!!selector()->tagHistory())
     , m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash(isSelectorMatchingHTMLBasedOnRuleHash(selector()))
     , m_containsUncommonAttributeSelector(WebCore::containsUncommonAttributeSelector(selector()))
     , m_linkMatchType(SelectorChecker::determineLinkMatchType(selector()))
-    , m_hasDocumentSecurityOrigin(hasDocumentSecurityOrigin)
-    , m_isInRegionRule(inRegionRule)
+    , m_hasDocumentSecurityOrigin(addRuleFlags & RuleHasDocumentSecurityOrigin)
+    , m_isInRegionRule(addRuleFlags & RuleIsInRegionRule)
 {
     ASSERT(m_position == position);
     ASSERT(m_selectorIndex == selectorIndex);
@@ -207,9 +207,14 @@ void RuleSet::addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map, const RuleDa
     rules->append(ruleData);
 }
 
-void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, bool hasDocumentSecurityOrigin, bool canUseFastCheckSelector, bool inRegionRule)
+void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addRuleFlags)
 {
-    RuleData ruleData(rule, selectorIndex, m_ruleCount++, hasDocumentSecurityOrigin, canUseFastCheckSelector, inRegionRule);
+    RuleData ruleData(rule, selectorIndex, m_ruleCount++, addRuleFlags);
+    static const unsigned athostRuleSpecificity = 0x100000;
+
+    if (addRuleFlags & RuleIsHostRule)
+        ruleData.increaseSpecificity(athostRuleSpecificity);
+
     collectFeaturesFromRuleData(m_features, ruleData);
 
     CSSSelector* selector = ruleData.selector();
@@ -264,10 +269,12 @@ void RuleSet::addRegionRule(StyleRuleRegion* regionRule, bool hasDocumentSecurit
 
     // Collect the region rules into a rule set
     const Vector<RefPtr<StyleRuleBase> >& childRules = regionRule->childRules();
+    AddRuleFlags addRuleFlags = hasDocumentSecurityOrigin ? RuleHasDocumentSecurityOrigin : RuleHasNoSpecialState;
+    addRuleFlags = static_cast<AddRuleFlags>(addRuleFlags | RuleCanUseFastCheckSelector | RuleIsInRegionRule);
     for (unsigned i = 0; i < childRules.size(); ++i) {
         StyleRuleBase* regionStylingRule = childRules[i].get();
         if (regionStylingRule->isStyleRule())
-            regionRuleSet->addStyleRule(static_cast<StyleRule*>(regionStylingRule), hasDocumentSecurityOrigin, true, true);
+            regionRuleSet->addStyleRule(static_cast<StyleRule*>(regionStylingRule), addRuleFlags);
     }
     // Update the "global" rule count so that proper order is maintained
     m_ruleCount = regionRuleSet->m_ruleCount;
@@ -286,6 +293,7 @@ void RuleSet::addRulesFromSheet(StyleSheetContents* sheet, const MediaQueryEvalu
             addRulesFromSheet(importRule->styleSheet(), medium, resolver, scope);
     }
     bool hasDocumentSecurityOrigin = resolver && resolver->document()->securityOrigin()->canRequest(sheet->baseURL());
+    AddRuleFlags addRuleFlags = static_cast<AddRuleFlags>((hasDocumentSecurityOrigin ? RuleHasDocumentSecurityOrigin : 0) | (!scope ? RuleCanUseFastCheckSelector : 0));
 
     const Vector<RefPtr<StyleRuleBase> >& rules = sheet->childRules();
     for (unsigned i = 0; i < rules.size(); ++i) {
@@ -293,7 +301,7 @@ void RuleSet::addRulesFromSheet(StyleSheetContents* sheet, const MediaQueryEvalu
 
         ASSERT(!rule->isImportRule());
         if (rule->isStyleRule())
-            addStyleRule(static_cast<StyleRule*>(rule), hasDocumentSecurityOrigin, !scope);
+            addStyleRule(static_cast<StyleRule*>(rule), addRuleFlags);
         else if (rule->isPageRule())
             addPageRule(static_cast<StyleRulePage*>(rule));
         else if (rule->isMediaRule()) {
@@ -305,7 +313,7 @@ void RuleSet::addRulesFromSheet(StyleSheetContents* sheet, const MediaQueryEvalu
                 for (unsigned j = 0; j < childRules.size(); ++j) {
                     StyleRuleBase* childRule = childRules[j].get();
                     if (childRule->isStyleRule())
-                        addStyleRule(static_cast<StyleRule*>(childRule), hasDocumentSecurityOrigin, !scope);
+                        addStyleRule(static_cast<StyleRule*>(childRule), addRuleFlags);
                     else if (childRule->isPageRule())
                         addPageRule(static_cast<StyleRulePage*>(childRule));
                     else if (childRule->isFontFaceRule() && resolver) {
@@ -347,15 +355,19 @@ void RuleSet::addRulesFromSheet(StyleSheetContents* sheet, const MediaQueryEvalu
             addRegionRule(static_cast<StyleRuleRegion*>(rule), hasDocumentSecurityOrigin);
         }
 #endif
+#if ENABLE(SHADOW_DOM)
+        else if (rule->isHostRule())
+            resolver->addHostRule(static_cast<StyleRuleHost*>(rule), hasDocumentSecurityOrigin, scope);
+#endif
     }
     if (m_autoShrinkToFitEnabled)
         shrinkToFit();
 }
 
-void RuleSet::addStyleRule(StyleRule* rule, bool hasDocumentSecurityOrigin, bool canUseFastCheckSelector, bool isInRegionRule)
+void RuleSet::addStyleRule(StyleRule* rule, AddRuleFlags addRuleFlags)
 {
     for (size_t selectorIndex = 0; selectorIndex != notFound; selectorIndex = rule->selectorList().indexOfNextSelectorAfter(selectorIndex))
-        addRule(rule, selectorIndex, hasDocumentSecurityOrigin, canUseFastCheckSelector, isInRegionRule);
+        addRule(rule, selectorIndex, addRuleFlags);
 }
 
 static inline void shrinkMapVectorsToFit(RuleSet::AtomRuleMap& map)

@@ -1,3 +1,13 @@
+2012-10-23  Takashi Sakamoto  <tasak@google.com>
+
+        [Shadow DOM] Needs @host rule for ShadowDOM styling
+        https://bugs.webkit.org/show_bug.cgi?id=88606
+
+        Reviewed by Hajime Morita.
+
+        * fast/dom/shadow/athost-atrules-expected.txt: Added.
+        * fast/dom/shadow/athost-atrules.html: Added.
+
 2012-10-23  Simon Fraser  <simon.fraser@apple.com>
 
         Allow tests to run with a tile cache, and optionally dump the tile cache via layerTreeAsText()

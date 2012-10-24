@@ -282,6 +282,9 @@ public:
     StyleRuleBase* createPageRule(PassOwnPtr<CSSParserSelector> pageSelector);
     StyleRuleBase* createRegionRule(CSSSelectorVector* regionSelector, RuleList* rules);
     StyleRuleBase* createMarginAtRule(CSSSelector::MarginBoxType);
+#if ENABLE(SHADOW_DOM)
+    StyleRuleBase* createHostRule(RuleList* rules);
+#endif
     void startDeclarationsForMarginBox();
     void endDeclarationsForMarginBox();
 

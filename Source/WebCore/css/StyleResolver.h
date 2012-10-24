@@ -29,8 +29,10 @@
 #include "MediaQueryExp.h"
 #include "RenderStyle.h"
 #include "RuleFeature.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SelectorChecker.h"
 #include "StyleInheritedData.h"
+#include "StyleScopeResolver.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
@@ -80,6 +82,7 @@ class StyleKeyframe;
 class StylePendingImage;
 class StylePropertySet;
 class StyleRule;
+class StyleRuleHost;
 class StyleRuleKeyframes;
 class StyleRulePage;
 class StyleRuleRegion;
@@ -137,6 +140,9 @@ public:
     void popParentElement(Element*);
     void pushParentShadowRoot(const ShadowRoot*);
     void popParentShadowRoot(const ShadowRoot*);
+#if ENABLE(SHADOW_DOM)
+    void addHostRule(StyleRuleHost* rule, bool hasDocumentSecurityOrigin, const ContainerNode* scope) { ensureScopeResolver()->addHostRule(rule, hasDocumentSecurityOrigin, scope); }
+#endif
 
     PassRefPtr<RenderStyle> styleForElement(Element*, RenderStyle* parentStyle = 0, StyleSharingBehavior = AllowStyleSharing,
         RuleMatchingBehavior = MatchAllRules, RenderRegion* regionForStyling = 0);
@@ -166,11 +172,22 @@ public:
     void appendAuthorStyleSheets(unsigned firstNew, const Vector<RefPtr<CSSStyleSheet> >&);
 
 private:
+#if ENABLE(STYLE_SCOPED) || ENABLE(SHADOW_DOM)
+    StyleScopeResolver* ensureScopeResolver()
+    {
+        ASSERT(RuntimeEnabledFeatures::shadowDOMEnabled() || RuntimeEnabledFeatures::styleScopedEnabled());
+        if (!m_scopeResolver)
+            m_scopeResolver = adoptPtr(new StyleScopeResolver());
+        return m_scopeResolver.get();
+    }
+#endif
+
     void initForStyleResolve(Element*, RenderStyle* parentStyle = 0, PseudoId = NOPSEUDO);
     void initElement(Element*);
     void collectFeatures();
     RenderStyle* locateSharedStyle();
     bool styleSharingCandidateMatchesRuleSet(RuleSet*);
+    bool styleSharingCandidateMatchesHostRules();
     Node* locateCousinList(Element* parent, unsigned& visitedNodeCount) const;
     StyledElement* findSiblingForStyleSharing(Node*, unsigned& count) const;
     bool canShareStyleWithElement(StyledElement*) const;
@@ -323,6 +340,7 @@ private:
     void matchAuthorRules(MatchResult&, bool includeEmptyRules);
     void matchUserRules(MatchResult&, bool includeEmptyRules);
     void matchScopedAuthorRules(MatchResult&, bool includeEmptyRules);
+    void matchHostRules(MatchResult&, bool includeEmptyRules);
     void collectMatchingRules(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, const MatchOptions&);
     void collectMatchingRulesForRegion(RuleSet*, int& firstRuleIndex, int& lastRuleIndex, const MatchOptions&);
     void collectMatchingRulesForList(const Vector<RuleData>*, int& firstRuleIndex, int& lastRuleIndex, const MatchOptions&);
