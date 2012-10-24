@@ -308,3 +308,8 @@ webkit.org/b/97077 inspector/extensions/extensions-panel.html [ Failure ]
 webkit.org/b/99824 fast/lists/w3-css3-list-styles-alphabetic.html [ Failure ]
 webkit.org/b/99824 fast/lists/w3-css3-list-styles-fallback-style.html [ Failure ]
 webkit.org/b/99824 fast/lists/w3-list-styles.html [ Failure ]
+
+# Failing after r132303
+webkit.org/b/100246 fast/dom/shadow/shadowdom-dynamic-styling.html [ Failure ] 
+webkit.org/b/100246 fast/dom/shadow/style-scoped-not-enabled.html [ Failure ] 
+webkit.org/b/100246 fast/dom/shadow/athost-atrules.html [ Crash ]

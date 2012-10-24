@@ -1,3 +1,10 @@
+2012-10-24  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] Unreviewed gardening.
+
+        * platform/efl-wk1/TestExpectations: Marking shadow-dom failures after r132303
+        * platform/efl-wk2/TestExpectations: Marking focus failure after r132342 and drag-select failure between r132333-r132343.
+
 2012-10-24  Eric Carlson  <eric.carlson@apple.com>
 
         Allow ports to override text track rendering style
