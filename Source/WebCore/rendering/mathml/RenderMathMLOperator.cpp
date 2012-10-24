@@ -30,6 +30,7 @@
 
 #include "RenderMathMLOperator.h"
 
+#include "FontCache.h"
 #include "FontSelector.h"
 #include "MathMLNames.h"
 #include "RenderText.h"
@@ -185,6 +186,9 @@ void RenderMathMLOperator::updateFromElement()
     int middleGlyphHeight = 0;
     if (shouldStack) {
         partsData = &stretchyCharacters[index];
+        
+        FontCachePurgePreventer fontCachePurgePreventer;
+        
         topGlyphHeight = glyphHeightForCharacter(partsData->topGlyph);
         extensionGlyphHeight = glyphHeightForCharacter(partsData->extensionGlyph) - 1;
         bottomGlyphHeight = glyphHeightForCharacter(partsData->bottomGlyph);
