@@ -1,3 +1,17 @@
+2012-10-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Null-check the RenderView in ocument::windowScreenDidChange to fix a crash when saving PDFs
+        https://bugs.webkit.org/show_bug.cgi?id=100141
+        <rdar://problem/12559147>
+
+        Reviewed by Tim Horton.
+
+        For PDF documents the RenderView is null, so null-check it to avoid a crash
+        when saving PDFs.
+
+        * dom/Document.cpp:
+        (WebCore::Document::windowScreenDidChange):
+
 2012-10-24  Terry Anderson  <tdanderson@chromium.org>
 
         Handle two-finger tap gestures in the same way as long-press gestures

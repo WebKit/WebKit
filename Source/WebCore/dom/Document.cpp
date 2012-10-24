@@ -4977,8 +4977,10 @@ void Document::windowScreenDidChange(PlatformDisplayID displayID)
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (renderView()->usesCompositing())
-        renderView()->compositor()->windowScreenDidChange(displayID);
+    if (RenderView* view = renderView()) {
+        if (view->usesCompositing())
+            view->compositor()->windowScreenDidChange(displayID);
+    }
 #endif
 }
 
