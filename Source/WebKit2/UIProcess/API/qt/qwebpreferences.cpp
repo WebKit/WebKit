@@ -76,6 +76,10 @@ bool QWebPreferencesPrivate::testAttribute(QWebPreferencesPrivate::WebAttribute 
     case ScrollAnimatorEnabled:
         return preferences()->scrollAnimatorEnabled();
 #endif
+    case CaretBrowsingEnabled:
+        return preferences()->caretBrowsingEnabled();
+    case NotificationsEnabled:
+        return preferences()->notificationsEnabled();
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -139,6 +143,13 @@ void QWebPreferencesPrivate::setAttribute(QWebPreferencesPrivate::WebAttribute a
         preferences()->setScrollAnimatorEnabled(enable);
         break;
 #endif
+    case CaretBrowsingEnabled:
+        // FIXME: Caret browsing doesn't make much sense in touch mode.
+        preferences()->setCaretBrowsingEnabled(enable);
+        break;
+    case NotificationsEnabled:
+        preferences()->setNotificationsEnabled(enable);
+        break;
     default:
         ASSERT_NOT_REACHED();
     }
@@ -552,6 +563,28 @@ void QWebPreferences::setScrollAnimatorEnabled(bool enable)
 #else
     UNUSED_PARAM(enable);
 #endif
+}
+
+bool QWebPreferences::caretBrowsingEnabled() const
+{
+    return d->testAttribute(QWebPreferencesPrivate::CaretBrowsingEnabled);
+}
+
+void QWebPreferences::setCaretBrowsingEnabled(bool enable)
+{
+    d->setAttribute(QWebPreferencesPrivate::CaretBrowsingEnabled, enable);
+    emit caretBrowsingEnabledChanged();
+}
+
+bool QWebPreferences::notificationsEnabled() const
+{
+    return d->testAttribute(QWebPreferencesPrivate::NotificationsEnabled);
+}
+
+void QWebPreferences::setNotificationsEnabled(bool enable)
+{
+    d->setAttribute(QWebPreferencesPrivate::NotificationsEnabled, enable);
+    emit notificationsEnabledChanged();
 }
 
 WebKit::WebPreferences* QWebPreferencesPrivate::preferences() const

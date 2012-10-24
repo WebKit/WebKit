@@ -267,6 +267,14 @@ void QWebSettingsPrivate::apply()
         settings->setEnableScrollAnimator(value);
 #endif
 
+        value = attributes.value(QWebSettings::CaretBrowsingEnabled,
+                                      global->attributes.value(QWebSettings::CaretBrowsingEnabled));
+        settings->setCaretBrowsingEnabled(value);
+
+        value = attributes.value(QWebSettings::NotificationsEnabled,
+                                      global->attributes.value(QWebSettings::NotificationsEnabled));
+        settings->setNotificationsEnabled(value);
+
         value = attributes.value(QWebSettings::SiteSpecificQuirksEnabled,
                                       global->attributes.value(QWebSettings::SiteSpecificQuirksEnabled));
         settings->setNeedsSiteSpecificQuirks(value);
@@ -480,6 +488,9 @@ QWebSettings* QWebSettings::globalSettings()
     \value SiteSpecificQuirksEnabled This setting enables WebKit's workaround for broken sites. It is
         enabled by default.
     \value ScrollAnimatorEnabled This setting enables animated scrolling. It is disabled by default.
+    \value CaretBrowsingEnabled This setting enables caret browsing. It is disabled by default.
+    \value NotificationsEnabled Specifies whether support for the HTML 5 web notifications is enabled
+        or not. This is enabled by default.
 */
 
 /*!
@@ -532,6 +543,8 @@ QWebSettings::QWebSettings()
     d->attributes.insert(QWebSettings::FrameFlatteningEnabled, false);
     d->attributes.insert(QWebSettings::SiteSpecificQuirksEnabled, true);
     d->attributes.insert(QWebSettings::ScrollAnimatorEnabled, false);
+    d->attributes.insert(QWebSettings::CaretBrowsingEnabled, false);
+    d->attributes.insert(QWebSettings::NotificationsEnabled, true);
     d->offlineStorageDefaultQuota = 5 * 1024 * 1024;
     d->defaultTextEncoding = QLatin1String("iso-8859-1");
     d->thirdPartyCookiePolicy = AlwaysAllowThirdPartyCookies;

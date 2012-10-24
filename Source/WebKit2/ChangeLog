@@ -1,3 +1,22 @@
+2012-10-24  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Expose useful WebCore::Settings
+        https://bugs.webkit.org/show_bug.cgi?id=100239
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Expose the two settings CaretBrowsingEnabled and NotificationsEnabled.
+
+        * UIProcess/API/qt/qwebpreferences.cpp:
+        (QWebPreferencesPrivate::testAttribute):
+        (QWebPreferencesPrivate::setAttribute):
+        (QWebPreferences::caretBrowsingEnabled):
+        (QWebPreferences::setCaretBrowsingEnabled):
+        (QWebPreferences::notificationsEnabled):
+        (QWebPreferences::setNotificationsEnabled):
+        * UIProcess/API/qt/qwebpreferences_p.h:
+        * UIProcess/API/qt/qwebpreferences_p_p.h:
+
 2012-10-24  Zeno Albisser  <zeno@webkit.org>
 
         Implement GraphicsSurface for Windows.

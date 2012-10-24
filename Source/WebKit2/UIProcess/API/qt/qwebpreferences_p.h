@@ -46,6 +46,8 @@ public:
     Q_PROPERTY(bool webGLEnabled READ webGLEnabled WRITE setWebGLEnabled NOTIFY webGLEnabledChanged FINAL)
     Q_PROPERTY(bool webAudioEnabled READ webAudioEnabled WRITE setWebAudioEnabled NOTIFY webAudioEnabledChanged FINAL)
     Q_PROPERTY(bool scrollAnimatorEnabled READ scrollAnimatorEnabled WRITE setScrollAnimatorEnabled NOTIFY scrollAnimatorEnabledChanged FINAL)
+    Q_PROPERTY(bool caretBrowsingEnabled READ caretBrowsingEnabled WRITE setCaretBrowsingEnabled NOTIFY caretBrowsingEnabledChanged FINAL)
+    Q_PROPERTY(bool notificationsEnabled READ notificationsEnabled WRITE setNotificationsEnabled NOTIFY notificationsEnabledChanged FINAL)
 
     Q_PROPERTY(QString standardFontFamily READ standardFontFamily WRITE setStandardFontFamily NOTIFY standardFontFamilyChanged FINAL)
     Q_PROPERTY(QString fixedFontFamily READ fixedFontFamily WRITE setFixedFontFamily NOTIFY fixedFontFamilyChanged FINAL)
@@ -103,6 +105,12 @@ public:
     bool scrollAnimatorEnabled() const;
     void setScrollAnimatorEnabled(bool enable);
 
+    bool caretBrowsingEnabled() const;
+    void setCaretBrowsingEnabled(bool enable);
+
+    bool notificationsEnabled() const;
+    void setNotificationsEnabled(bool enable);
+
     QString standardFontFamily() const;
     void setStandardFontFamily(const QString& family);
 
@@ -146,6 +154,8 @@ Q_SIGNALS:
     void webGLEnabledChanged();
     void webAudioEnabledChanged();
     void scrollAnimatorEnabledChanged();
+    void caretBrowsingEnabledChanged();
+    void notificationsEnabledChanged();
 
     void standardFontFamilyChanged();
     void fixedFontFamilyChanged();

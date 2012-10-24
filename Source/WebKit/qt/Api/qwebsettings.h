@@ -80,7 +80,9 @@ public:
         CSSRegionsEnabled,
         HyperlinkAuditingEnabled,
         CSSGridLayoutEnabled,
-        ScrollAnimatorEnabled
+        ScrollAnimatorEnabled,
+        CaretBrowsingEnabled,
+        NotificationsEnabled
     };
     enum WebGraphic {
         MissingImageGraphic,
