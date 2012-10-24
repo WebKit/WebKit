@@ -1,3 +1,15 @@
+2012-10-12  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] Skip tests that depend on disabling accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=99167
+
+        Rubber-stamped by Simon Hausmann.
+
+        Skip those tests because we don't support the non-accelerated
+        rendering path.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+
 2012-10-24  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Rebaseline for r132310.

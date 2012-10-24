@@ -613,6 +613,25 @@ http/tests/security/cookies/third-party-cookie-blocking-user-action.html
 http/tests/security/cookies/third-party-cookie-blocking-xslt.xml
 http/tests/security/cookies/third-party-cookie-blocking.html
 
+# [Qt][WK2] Skip tests that depend on disabling accelerated compositing
+webkit.org/b/99167 css3/filters/effect-blur.html
+webkit.org/b/99167 css3/filters/effect-brightness.html
+webkit.org/b/99167 css3/filters/effect-sepia.html
+webkit.org/b/99167 css3/filters/blur-filter-page-scroll.html
+webkit.org/b/99167 css3/filters/blur-filter-page-scroll-self.html
+webkit.org/b/99167 css3/filters/filter-repaint.html
+webkit.org/b/99167 css3/filters/effect-drop-shadow.html
+webkit.org/b/99167 css3/filters/effect-grayscale.html
+webkit.org/b/99167 css3/filters/effect-saturate.html
+webkit.org/b/99167 css3/filters/blur-filter-page-scroll-parents.html
+webkit.org/b/99167 css3/filters/effect-hue-rotate.html
+webkit.org/b/99167 css3/filters/effect-contrast.html
+webkit.org/b/99167 css3/filters/effect-combined.html
+webkit.org/b/99167 css3/filters/effect-brightness-clamping.html
+webkit.org/b/99167 css3/filters/effect-opacity.html
+webkit.org/b/99167 css3/filters/effect-invert.html
+webkit.org/b/99167 css3/filters/null-effect-check.html
+
 # [Qt][WK2] http/tests/misc/willCacheResponse-delegate-callback.html fails
 webkit.org/b/99148 http/tests/misc/willCacheResponse-delegate-callback.html
 
