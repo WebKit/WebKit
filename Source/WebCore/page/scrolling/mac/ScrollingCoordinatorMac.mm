@@ -183,12 +183,13 @@ bool ScrollingCoordinatorMac::requestScrollPositionUpdate(FrameView* frameView, 
     if (!coordinatesScrollingForFrameView(frameView))
         return false;
 
-    if (frameView->frame()->document()->inPageCache()) {
-        // If this frame view's document is being put into the page cache, we don't want to update our
-        // main frame scroll position. Just let the FrameView think that we did.
+    if (frameView->inProgrammaticScroll() || frameView->frame()->document()->inPageCache())
         updateMainFrameScrollPosition(scrollPosition, frameView->inProgrammaticScroll());
+
+    // If this frame view's document is being put into the page cache, we don't want to update our
+    // main frame scroll position. Just let the FrameView think that we did.
+    if (frameView->frame()->document()->inPageCache())
         return true;
-    }
 
     ScrollingStateScrollingNode* stateNode = stateNodeForID(frameView->scrollLayerID());
     if (!stateNode)

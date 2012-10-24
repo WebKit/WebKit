@@ -1,3 +1,20 @@
+2012-10-24  Tim Horton  <timothy_horton@apple.com>
+
+        Update main frame scroll position immediately for programmatic scrolls
+        https://bugs.webkit.org/show_bug.cgi?id=98074
+
+        Reviewed by Simon Fraser.
+
+        Immediately update the main frame scroll position after a programmatic scroll,
+        so that performing a scrollBy or scrollTo will be instantly reflected in
+        all of the scroll offset accessors.
+
+        No new tests; this will be tested by many scrolling tests once WebKitTestRunner
+        can use threaded scrolling.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::requestScrollPositionUpdate):
+
 2012-10-24  Mihai Parparita  <mihaip@chromium.org>
 
         [Chromium] Allow pushState and related history APIs to be disabled per context
