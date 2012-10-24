@@ -36,13 +36,13 @@ class FloatSize;
 enum ImageOrientationEnum {
     // "TopLeft" means that the 0 row starts at the Top, the 0 column starts at the Left.
     OriginTopLeft = 1, // default
-    OriginTopRight = 2, // mirror along y-axes
+    OriginTopRight = 2, // mirror along y-axis
     OriginBottomRight = 3, // 180 degree rotation
-    OriginBottomLeft = 4, // mirror along the x-axes
-    OriginLeftTop = 5, // -90 degree rotation + mirror along x-axes
-    OriginRightTop = 6, // 90 degree rotation
-    OriginRightBottom = 7, // 90 degree rotation + mirror along x-axes
-    OriginLeftBottom = 8, // -90 degree rotation
+    OriginBottomLeft = 4, // mirror along the x-axis
+    OriginRightBottom = 5, // mirror along x-axis + 270 degree CW rotation
+    OriginLeftBottom = 6, // 90 degree CW rotation
+    OriginLeftTop = 7, // mirror along x-axis + 90 degree CW rotation
+    OriginRightTop = 8, // 270 degree CW rotation
     // All other values are "reserved" as of EXIF 2.2
     DefaultImageOrientation = OriginTopLeft,
 };
@@ -62,7 +62,7 @@ public:
     bool usesWidthAsHeight() const
     {
         // Values 5 through 8 all flip the width/height.
-        return m_orientation >= OriginLeftTop;
+        return m_orientation >= OriginRightBottom;
     }
 
     // ImageOrientationEnum currently matches EXIF values, however code outside
@@ -70,7 +70,7 @@ public:
     static ImageOrientation fromEXIFValue(int exifValue)
     {
         // Values direct from images may be invalid, in which case we use the default.
-        if (exifValue < OriginTopLeft || exifValue > OriginLeftBottom)
+        if (exifValue < OriginTopLeft || exifValue > OriginRightTop)
             return DefaultImageOrientation;
         return static_cast<ImageOrientationEnum>(exifValue);
     }

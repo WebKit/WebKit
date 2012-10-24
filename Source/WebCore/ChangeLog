@@ -1,3 +1,34 @@
+2012-10-24  Nico Weber  <thakis@chromium.org>
+
+        Honor image orientation in GraphicsContextSkia
+        https://bugs.webkit.org/show_bug.cgi?id=100179
+
+        Reviewed by Stephen White.
+
+        Also fix a bug in ImageOrientation.h: Some of the values were
+        switched. They now match the description in the exif spec at
+        http://www.exif.org/Exif2-2.PDF page 18, and the notes at
+        http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/EXIF.html and
+        the picture at http://www.80sidea.com/archives/2316.
+
+        They showed up correctly in Safari because the orientation transform
+        was done after flipping Y. Let the flipping happen later. I verified
+        that flipping transformation order and fixing the exif enum cancelled
+        each other out, so this has no effect on the apple port.
+
+        Not hooked up yet, so no observable difference.
+
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/ImageOrientation.h:
+        (WebCore::ImageOrientation::usesWidthAsHeight):
+        (WebCore::ImageOrientation::fromEXIFValue):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawNativeImage):
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::paintSkBitmap):
+        (WebCore::BitmapImage::draw):
+        (WebCore):
+
 2012-10-24  Alexey Proskuryakov  <ap@apple.com>
 
         Fixed Windows path for SharedWorkerStrategy.h - it's in workers/, not platform/.

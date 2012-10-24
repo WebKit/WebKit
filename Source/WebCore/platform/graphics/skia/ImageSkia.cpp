@@ -389,9 +389,9 @@ static void paintSkBitmap(PlatformContextSkia* platformContext, const NativeImag
     }
 
     if (resampling == RESAMPLE_NONE) {
-      // FIXME: This is to not break tests (it results in the filter bitmap flag
-      // being set to true). We need to decide if we respect RESAMPLE_NONE
-      // being returned from computeResamplingMode.
+        // FIXME: This is to not break tests (it results in the filter bitmap flag
+        // being set to true). We need to decide if we respect RESAMPLE_NONE
+        // being returned from computeResamplingMode.
         resampling = RESAMPLE_LINEAR;
     }
     resampling = limitResamplingMode(platformContext, resampling);
@@ -582,8 +582,12 @@ void BitmapImage::checkForSolidColor()
     }
 }
 
-void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect,
-                       const FloatRect& srcRect, ColorSpace colorSpace, CompositeOperator compositeOp)
+void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace colorSpace, CompositeOperator compositeOp)
+{
+    draw(ctxt, dstRect, srcRect, colorSpace, compositeOp, DoNotRespectImageOrientation);
+}
+
+void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace colorSpace, CompositeOperator compositeOp, RespectImageOrientationEnum shouldRespectImageOrientation)
 {
     if (!m_source.initialized())
         return;
@@ -602,6 +606,21 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect,
 
     if (normSrcRect.isEmpty() || normDstRect.isEmpty())
         return; // Nothing to draw.
+
+    ImageOrientation orientation = DefaultImageOrientation;
+    if (shouldRespectImageOrientation == RespectImageOrientation)
+        orientation = frameOrientationAtIndex(m_currentFrame);
+
+    GraphicsContextStateSaver saveContext(*ctxt, false);
+    if (orientation != DefaultImageOrientation) {
+        saveContext.save();
+        ctxt->concatCTM(orientation.transformFromDefault(normDstRect.size()));
+        if (orientation.usesWidthAsHeight()) {
+            // The destination rect will have it's width and height already reversed for the orientation of
+            // the image, as it was needed for page layout, so we need to reverse it back here.
+            normDstRect = FloatRect(normDstRect.x(), normDstRect.y(), normDstRect.height(), normDstRect.width());
+        }
+    }
 
     paintSkBitmap(ctxt->platformContext(),
         *bm,
