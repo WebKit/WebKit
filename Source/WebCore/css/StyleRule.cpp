@@ -79,9 +79,6 @@ void StyleRuleBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     case Keyframes:
         static_cast<const StyleRuleKeyframes*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
         return;
-    case Host:
-        static_cast<const StyleRuleBlock*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
-        return;
     case Unknown:
     case Charset:
     case Keyframe:
@@ -120,9 +117,6 @@ void StyleRuleBase::destroy()
     case Keyframes:
         delete static_cast<StyleRuleKeyframes*>(this);
         return;
-    case Host:
-        delete static_cast<StyleRuleHost*>(this);
-        return;
     case Unknown:
     case Charset:
     case Keyframe:
@@ -156,8 +150,6 @@ PassRefPtr<StyleRuleBase> StyleRuleBase::copy() const
         return 0;
     case Keyframes:
         return static_cast<const StyleRuleKeyframes*>(this)->copy();
-    case Host:
-        return static_cast<const StyleRuleHost*>(this)->copy();
     case Unknown:
     case Charset:
     case Keyframe:
@@ -199,7 +191,6 @@ PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet
     case Keyframes:
         rule = WebKitCSSKeyframesRule::create(static_cast<StyleRuleKeyframes*>(self), parentSheet);
         break;
-    case Host:
     case Unknown:
     case Charset:
     case Keyframe:

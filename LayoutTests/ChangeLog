@@ -1,3 +1,16 @@
+2012-10-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r132303 and r132312.
+        http://trac.webkit.org/changeset/132303
+        http://trac.webkit.org/changeset/132312
+        https://bugs.webkit.org/show_bug.cgi?id=100287
+
+        Triggering crashes on many popular websites (Requested by
+        leviw|gardening on #webkit).
+
+        * fast/dom/shadow/athost-atrules-expected.txt: Removed.
+        * fast/dom/shadow/athost-atrules.html: Removed.
+
 2012-10-24  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Cursor property value identities should be preserved

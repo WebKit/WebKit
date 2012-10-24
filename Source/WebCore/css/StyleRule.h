@@ -46,7 +46,6 @@ public:
         Page,
         Keyframes,
         Keyframe, // Not used. These are internally non-rule StyleKeyframe objects.
-        Host,
         Region = 16
     };
     Type type() const { return static_cast<Type>(m_type); }
@@ -59,7 +58,6 @@ public:
     bool isStyleRule() const { return type() == Style; }
     bool isRegionRule() const { return type() == Region; }
     bool isImportRule() const { return type() == Import; }
-    bool isHostRule() const { return type() == Host; }
 
     PassRefPtr<StyleRuleBase> copy() const;
 
@@ -223,20 +221,6 @@ private:
     StyleRuleRegion(const StyleRuleRegion&);
     
     CSSSelectorList m_selectorList;
-};
-
-class StyleRuleHost : public StyleRuleBlock {
-public:
-    static PassRefPtr<StyleRuleHost> create(Vector<RefPtr<StyleRuleBase> >& adoptRules)
-    {
-        return adoptRef(new StyleRuleHost(adoptRules));
-    }
-
-    PassRefPtr<StyleRuleHost> copy() const { return adoptRef(new StyleRuleHost(*this)); }
-
-private:
-    StyleRuleHost(Vector<RefPtr<StyleRuleBase> >& adoptRules) : StyleRuleBlock(Host, adoptRules) { }
-    StyleRuleHost(const StyleRuleHost& o) : StyleRuleBlock(o) { }
 };
 
 } // namespace WebCore

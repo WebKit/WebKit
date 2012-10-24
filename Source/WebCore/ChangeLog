@@ -1,3 +1,48 @@
+2012-10-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r132303 and r132312.
+        http://trac.webkit.org/changeset/132303
+        http://trac.webkit.org/changeset/132312
+        https://bugs.webkit.org/show_bug.cgi?id=100287
+
+        Triggering crashes on many popular websites (Requested by
+        leviw|gardening on #webkit).
+
+        * css/CSSGrammar.y.in:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::detectAtToken):
+        * css/CSSParser.h:
+        * css/CSSPropertySourceData.h:
+        * css/RuleSet.cpp:
+        (WebCore::RuleData::RuleData):
+        (WebCore::RuleSet::addRule):
+        (WebCore::RuleSet::addRegionRule):
+        (WebCore::RuleSet::addRulesFromSheet):
+        (WebCore::RuleSet::addStyleRule):
+        * css/RuleSet.h:
+        (RuleData):
+        (RuleSet):
+        * css/StyleResolver.cpp:
+        (WebCore::makeRuleSet):
+        (WebCore::StyleResolver::appendAuthorStyleSheets):
+        (WebCore::StyleResolver::matchScopedAuthorRules):
+        (WebCore::StyleResolver::locateSharedStyle):
+        * css/StyleResolver.h:
+        (StyleResolver):
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::reportMemoryUsage):
+        (WebCore::StyleRuleBase::destroy):
+        (WebCore::StyleRuleBase::copy):
+        (WebCore::StyleRuleBase::createCSSOMWrapper):
+        * css/StyleRule.h:
+        * css/StyleScopeResolver.cpp:
+        (WebCore::StyleScopeResolver::reportMemoryUsage):
+        * css/StyleScopeResolver.h:
+        (WebCore):
+        (StyleScopeResolver):
+        * css/StyleSheetContents.cpp:
+        (WebCore::childRulesHaveFailedOrCanceledSubresources):
+
 2012-10-24  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Cursor property value identities should be preserved
