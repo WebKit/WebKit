@@ -49,7 +49,11 @@ namespace WebCore {
     struct WrapperTypeInfo;
 
     struct WorkerContextExecutionState {
-        WorkerContextExecutionState() : hadException(false), lineNumber(0) { }
+        WorkerContextExecutionState()
+            : hadException(false)
+            , lineNumber(0)
+        {
+        }
 
         bool hadException;
         ScriptValue exception;
@@ -60,13 +64,8 @@ namespace WebCore {
 
     class WorkerContextExecutionProxy {
     public:
-        WorkerContextExecutionProxy(WorkerContext*);
+        explicit WorkerContextExecutionProxy(WorkerContext*);
         ~WorkerContextExecutionProxy();
-
-        // Track the event so that we can detach it from the JS wrapper when a worker
-        // terminates. This is needed because we need to be able to dispose these
-        // events and releases references to their event targets: WorkerContext.
-        void trackEvent(Event*);
 
         // Alow use of eval() and is equivalents in scripts.
         void setEvalAllowed(bool enable, const String& errorMessage);
@@ -82,17 +81,11 @@ namespace WebCore {
         bool initializeIfNeeded();
         void dispose();
 
-        static bool forgetV8EventObject(Event*);
-
         static const int kWorkerMaxStackSize = 500 * 1024;
 
         WorkerContext* m_workerContext;
         v8::Persistent<v8::Context> m_context;
-
-        Vector<Event*> m_events;
-
         OwnPtr<V8PerContextData> m_perContextData;
-
         String m_disableEvalPending;
     };
 

@@ -1,3 +1,24 @@
+2012-10-24  Adam Barth  <abarth@webkit.org>
+
+        [V8] WorkerContextExecutionProxy doesn't need to track events
+        https://bugs.webkit.org/show_bug.cgi?id=100295
+
+        Reviewed by Eric Seidel.
+
+        This code was added when this code was originally upstreamed as part of
+        the Chromium port. There doesn't appear to be any reason why
+        WorkerContextExecutionProxy needs to keep a Vector of raw event
+        pointers. Those points are likely to become dangling, making the rest
+        of what this code does very sketchy.
+
+        * bindings/v8/V8WorkerContextEventListener.cpp:
+        (WebCore::V8WorkerContextEventListener::callListenerFunction):
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::dispose):
+        * bindings/v8/WorkerContextExecutionProxy.h:
+        (WebCore::WorkerContextExecutionState::WorkerContextExecutionState):
+        (WorkerContextExecutionProxy):
+
 2012-10-24  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Shaders] The mesh should be specified using <column, row> order

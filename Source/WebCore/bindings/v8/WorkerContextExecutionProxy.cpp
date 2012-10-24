@@ -99,14 +99,6 @@ WorkerContextExecutionProxy::~WorkerContextExecutionProxy()
 
 void WorkerContextExecutionProxy::dispose()
 {
-    // Detach all events from their JS wrappers.
-    for (size_t eventIndex = 0; eventIndex < m_events.size(); ++eventIndex) {
-        Event* event = m_events[eventIndex];
-        if (forgetV8EventObject(event))
-          event->deref();
-    }
-    m_events.clear();
-
     m_perContextData.clear();
 
     // Dispose the context.
@@ -195,15 +187,6 @@ bool WorkerContextExecutionProxy::initializeIfNeeded()
     return true;
 }
 
-bool WorkerContextExecutionProxy::forgetV8EventObject(Event* event)
-{
-    if (getDOMObjectMap().contains(event)) {
-        getDOMObjectMap().forget(event);
-        return true;
-    }
-    return false;
-}
-
 ScriptValue WorkerContextExecutionProxy::evaluate(const String& script, const String& fileName, const TextPosition& scriptStartPosition, WorkerContextExecutionState* state)
 {
     V8GCController::checkMemoryUsage();
@@ -256,11 +239,6 @@ ScriptValue WorkerContextExecutionProxy::evaluate(const String& script, const St
 void WorkerContextExecutionProxy::setEvalAllowed(bool enable, const String& errorMessage)
 {
     m_disableEvalPending = enable ? String() : errorMessage;
-}
-
-void WorkerContextExecutionProxy::trackEvent(Event* event)
-{
-    m_events.append(event);
 }
 
 } // namespace WebCore

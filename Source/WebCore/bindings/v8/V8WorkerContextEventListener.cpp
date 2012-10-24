@@ -110,9 +110,6 @@ v8::Local<v8::Value> V8WorkerContextEventListener::callListenerFunction(ScriptEx
     V8RecursionScope recursionScope(context);
     v8::Local<v8::Value> result = handlerFunction->Call(receiver, 1, parameters);
 
-    if (WorkerContextExecutionProxy* proxy = workerProxy(context))
-        proxy->trackEvent(event);
-
     InspectorInstrumentation::didCallFunction(cookie);
 
     return result;
