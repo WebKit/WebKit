@@ -2,6 +2,13 @@
 
         [Chromium] Test expectation update
 
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.png:
+        * platform/chromium/TestExpectations:
+
+2012-10-24  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update
+
         * platform/chromium/TestExpectations:
          - exif-orientation-css.html is ImageOnlyFailure.
          - Still need rebaseline for calendar-picker-appearance-step.html on Windows?
