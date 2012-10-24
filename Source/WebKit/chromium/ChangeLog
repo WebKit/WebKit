@@ -1,3 +1,14 @@
+2012-10-24  Ben Wagner  <bungeman@chromium.org>
+
+        Create skia_webkit.gyp to improve rebaselining.
+        https://bugs.webkit.org/show_bug.cgi?id=99759
+
+        Reviewed by Dirk Pranke.
+
+        This allows for code suppressions to be lifted atomically with new baselines.
+
+        * skia_webkit.gyp: Added.
+
 2012-09-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: provide memory instrumentation for ListHashSet
