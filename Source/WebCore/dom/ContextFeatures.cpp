@@ -107,6 +107,11 @@ bool ContextFeatures::mutationEventsEnabled(Document* document)
     return document->contextFeatures()->isEnabled(document, MutationEvents, true);
 }
 
+bool ContextFeatures::pushStateEnabled(Document* document)
+{
+    return document->contextFeatures()->isEnabled(document, PushState, true);
+}
+
 void provideContextFeaturesTo(Page* page, ContextFeaturesClient* client)
 {
     RefCountedSupplement<Page, ContextFeatures>::provideTo(page, ContextFeatures::supplementName(), ContextFeatures::create(client));

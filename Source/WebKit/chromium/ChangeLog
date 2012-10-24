@@ -1,3 +1,18 @@
+2012-10-24  Mihai Parparita  <mihaip@chromium.org>
+
+        [Chromium] Allow pushState and related history APIs to be disabled per context
+        https://bugs.webkit.org/show_bug.cgi?id=99780
+
+        Reviewed by Adam Barth.
+
+        Add pushState context feature.
+
+        * public/WebPermissionClient.h:
+        (WebPermissionClient):
+        (WebKit::WebPermissionClient::allowPushState):
+        * src/ContextFeaturesClientImpl.cpp:
+        (WebKit::ContextFeaturesClientImpl::askIfIsEnabled):
+
 2012-10-24  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Remove screen-related functions from PlatformSupport

@@ -1,3 +1,24 @@
+2012-10-24  Mihai Parparita  <mihaip@chromium.org>
+
+        [Chromium] Allow pushState and related history APIs to be disabled per context
+        https://bugs.webkit.org/show_bug.cgi?id=99780
+
+        Reviewed by Adam Barth.
+
+        Chrome Apps do not support the history API (or navigation in general).
+        Since pushState is generally feature detected, it's cleanest to disable
+        it via a V8 per-context feature, so that applications can have the
+        appropriate fallback behavior (other history APIs are re-mapped to throw
+        exceptions, since history.back() and the link are not feature detected).
+
+        * dom/ContextFeatures.cpp:
+        (WebCore::ContextFeatures::pushStateEnabled):
+        (WebCore):
+        * dom/ContextFeatures.h:
+        * dom/Document.cpp:
+        (WebCore::Document::enqueuePopstateEvent):
+        * page/History.idl:
+
 2012-10-24  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Make sure all events are dispatched asynchronously
