@@ -134,6 +134,7 @@ RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext* context, PassRefPtr
     , m_iceState(IceStateClosed)
     , m_localStreams(MediaStreamList::create())
     , m_remoteStreams(MediaStreamList::create())
+    , m_scheduledEventTimer(this, &RTCPeerConnection::scheduledEventTimerFired)
 {
     ASSERT(m_scriptExecutionContext->isDocument());
     Document* document = static_cast<Document*>(m_scriptExecutionContext);
@@ -441,17 +442,17 @@ void RTCPeerConnection::close(ExceptionCode& ec)
 
 void RTCPeerConnection::negotiationNeeded()
 {
-    dispatchEvent(Event::create(eventNames().negotiationneededEvent, false, false));
+    scheduleDispatchEvent(Event::create(eventNames().negotiationneededEvent, false, false));
 }
 
 void RTCPeerConnection::didGenerateIceCandidate(PassRefPtr<RTCIceCandidateDescriptor> iceCandidateDescriptor)
 {
     ASSERT(scriptExecutionContext()->isContextThread());
     if (!iceCandidateDescriptor)
-        dispatchEvent(RTCIceCandidateEvent::create(false, false, 0));
+        scheduleDispatchEvent(RTCIceCandidateEvent::create(false, false, 0));
     else {
         RefPtr<RTCIceCandidate> iceCandidate = RTCIceCandidate::create(iceCandidateDescriptor);
-        dispatchEvent(RTCIceCandidateEvent::create(false, false, iceCandidate.release()));
+        scheduleDispatchEvent(RTCIceCandidateEvent::create(false, false, iceCandidate.release()));
     }
 }
 
@@ -477,7 +478,7 @@ void RTCPeerConnection::didAddRemoteStream(PassRefPtr<MediaStreamDescriptor> str
     RefPtr<MediaStream> stream = MediaStream::create(scriptExecutionContext(), streamDescriptor);
     m_remoteStreams->append(stream);
 
-    dispatchEvent(MediaStreamEvent::create(eventNames().addstreamEvent, false, false, stream.release()));
+    scheduleDispatchEvent(MediaStreamEvent::create(eventNames().addstreamEvent, false, false, stream.release()));
 }
 
 void RTCPeerConnection::didRemoveRemoteStream(MediaStreamDescriptor* streamDescriptor)
@@ -494,7 +495,7 @@ void RTCPeerConnection::didRemoveRemoteStream(MediaStreamDescriptor* streamDescr
     ASSERT(m_remoteStreams->contains(stream.get()));
     m_remoteStreams->remove(stream.get());
 
-    dispatchEvent(MediaStreamEvent::create(eventNames().removestreamEvent, false, false, stream.release()));
+    scheduleDispatchEvent(MediaStreamEvent::create(eventNames().removestreamEvent, false, false, stream.release()));
 }
 
 void RTCPeerConnection::didAddRemoteDataChannel(PassRefPtr<RTCDataChannelDescriptor> channelDescriptor)
@@ -507,7 +508,7 @@ void RTCPeerConnection::didAddRemoteDataChannel(PassRefPtr<RTCDataChannelDescrip
     RefPtr<RTCDataChannel> channel = RTCDataChannel::create(scriptExecutionContext(), m_peerHandler.get(), channelDescriptor);
     m_dataChannels.append(channel);
 
-    dispatchEvent(RTCDataChannelEvent::create(eventNames().datachannelEvent, false, false, channel.release()));
+    scheduleDispatchEvent(RTCDataChannelEvent::create(eventNames().datachannelEvent, false, false, channel.release()));
 }
 
 const AtomicString& RTCPeerConnection::interfaceName() const
@@ -556,7 +557,7 @@ void RTCPeerConnection::changeReadyState(ReadyState readyState)
     case ReadyStateOpening:
         break;
     case ReadyStateActive:
-        dispatchEvent(Event::create(eventNames().openEvent, false, false));
+        scheduleDispatchEvent(Event::create(eventNames().openEvent, false, false));
         break;
     case ReadyStateClosing:
     case ReadyStateClosed:
@@ -566,7 +567,7 @@ void RTCPeerConnection::changeReadyState(ReadyState readyState)
         break;
     }
 
-    dispatchEvent(Event::create(eventNames().statechangeEvent, false, false));
+    scheduleDispatchEvent(Event::create(eventNames().statechangeEvent, false, false));
 }
 
 void RTCPeerConnection::changeIceState(IceState iceState)
@@ -575,7 +576,27 @@ void RTCPeerConnection::changeIceState(IceState iceState)
         return;
 
     m_iceState = iceState;
-    dispatchEvent(Event::create(eventNames().icechangeEvent, false, false));
+    scheduleDispatchEvent(Event::create(eventNames().icechangeEvent, false, false));
+}
+
+void RTCPeerConnection::scheduleDispatchEvent(PassRefPtr<Event> event)
+{
+    m_scheduledEvents.append(event);
+
+    if (!m_scheduledEventTimer.isActive())
+        m_scheduledEventTimer.startOneShot(0);
+}
+
+void RTCPeerConnection::scheduledEventTimerFired(Timer<RTCPeerConnection>*)
+{
+    Vector<RefPtr<Event> > events;
+    events.swap(m_scheduledEvents);
+
+    Vector<RefPtr<Event> >::iterator it = events.begin();
+    for (; it != events.end(); ++it)
+        dispatchEvent((*it).release());
+
+    events.clear();
 }
 
 } // namespace WebCore

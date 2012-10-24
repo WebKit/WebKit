@@ -1,3 +1,31 @@
+2012-10-24  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Make sure all events are dispatched asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=100286
+
+        Reviewed by Adam Barth.
+
+        This is necessary to safeguard against if the UA uses synchronous UA->WebKit calls,
+        and the web application calls methods on the RTCPeerConnection in the event callbacks.
+
+        Test: fast/mediastream/RTCPeerConnection-events.html
+        Also tested by the chromium webrtc fuzz tests.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::RTCPeerConnection):
+        (WebCore::RTCPeerConnection::negotiationNeeded):
+        (WebCore::RTCPeerConnection::didGenerateIceCandidate):
+        (WebCore::RTCPeerConnection::didAddRemoteStream):
+        (WebCore::RTCPeerConnection::didRemoveRemoteStream):
+        (WebCore::RTCPeerConnection::didAddRemoteDataChannel):
+        (WebCore::RTCPeerConnection::changeReadyState):
+        (WebCore::RTCPeerConnection::changeIceState):
+        (WebCore):
+        (WebCore::RTCPeerConnection::scheduleDispatchEvent):
+        (WebCore::RTCPeerConnection::scheduledEventTimerFired):
+        * Modules/mediastream/RTCPeerConnection.h:
+        (RTCPeerConnection):
+
 2012-10-24  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Remove screen-related functions from PlatformSupport

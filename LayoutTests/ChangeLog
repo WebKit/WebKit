@@ -1,3 +1,15 @@
+2012-10-24  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Make sure all RTCPeerConnection events are dispatched asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=100286
+
+        Reviewed by Adam Barth.
+
+        RTCPeerConnection::close is the only function that dispatches an event directly so only test that.
+
+        * fast/mediastream/RTCPeerConnection-events-expected.txt: Added.
+        * fast/mediastream/RTCPeerConnection-events.html: Added.
+
 2012-10-24  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed gardening. Chromium revision 163873 also made

@@ -42,6 +42,7 @@
 #include "RTCIceCandidate.h"
 #include "RTCPeerConnectionHandler.h"
 #include "RTCPeerConnectionHandlerClient.h"
+#include "Timer.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -125,6 +126,8 @@ private:
     RTCPeerConnection(ScriptExecutionContext*, PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>, ExceptionCode&);
 
     static PassRefPtr<RTCConfiguration> parseConfiguration(const Dictionary& configuration, ExceptionCode&);
+    void scheduleDispatchEvent(PassRefPtr<Event>);
+    void scheduledEventTimerFired(Timer<RTCPeerConnection>*);
 
     // EventTarget implementation.
     virtual EventTargetData* eventTargetData();
@@ -145,6 +148,9 @@ private:
     Vector<RefPtr<RTCDataChannel> > m_dataChannels;
 
     OwnPtr<RTCPeerConnectionHandler> m_peerHandler;
+
+    Timer<RTCPeerConnection> m_scheduledEventTimer;
+    Vector<RefPtr<Event> > m_scheduledEvents;
 };
 
 } // namespace WebCore
