@@ -1,3 +1,23 @@
+2012-10-24  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Move the QQuickWebViewExperimental pointer to QQuickWebViewPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=100253
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        We'll need to avoid placing data in QQuickWebView to preserve
+        its binary compatibility once it's public.
+        Also make the QQuickWebViewExperimental constructor private.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewExperimental::QQuickWebViewExperimental):
+        (QQuickWebView::QQuickWebView):
+        (QQuickWebView::experimental):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+
 2012-10-24  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Ewk_Settings refactoring

@@ -213,9 +213,9 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_onUrlChanged());
     Q_PRIVATE_SLOT(d_func(), void _q_onReceivedResponseFromDownload(QWebDownloadItem*));
     Q_PRIVATE_SLOT(d_func(), void _q_onIconChangedForPageURL(const QString&));
+
     // Hides QObject::d_ptr allowing us to use the convenience macros.
     QScopedPointer<QQuickWebViewPrivate> d_ptr;
-    QQuickWebViewExperimental* m_experimental;
 
     friend class QWebKitTest;
     friend class WebKit::PageViewportControllerClientQt;
@@ -284,7 +284,6 @@ public:
         DownloadRequest = QQuickWebView::IgnoreRequest - 1
     };
 
-    QQuickWebViewExperimental(QQuickWebView* webView);
     virtual ~QQuickWebViewExperimental();
 
     QQmlComponent* alertDialog() const;
@@ -380,6 +379,7 @@ Q_SIGNALS:
     void remoteInspectorUrlChanged();
 
 private:
+    QQuickWebViewExperimental(QQuickWebView* webView, QQuickWebViewPrivate* webViewPrivate);
     QQuickWebView* q_ptr;
     QQuickWebViewPrivate* d_ptr;
     QObject* schemeParent;

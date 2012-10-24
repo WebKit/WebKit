@@ -258,6 +258,7 @@ QPointF QQuickWebViewPrivate::FlickableAxisLocker::adjust(const QPointF& positio
 
 QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     : q_ptr(viewport)
+    , experimental(new QQuickWebViewExperimental(viewport, this))
     , alertDialog(0)
     , confirmDialog(0)
     , promptDialog(0)
@@ -897,12 +898,12 @@ void QQuickWebViewFlickablePrivate::handleMouseEvent(QMouseEvent* event)
     pageView->eventHandler()->handleInputEvent(event);
 }
 
-QQuickWebViewExperimental::QQuickWebViewExperimental(QQuickWebView *webView)
+QQuickWebViewExperimental::QQuickWebViewExperimental(QQuickWebView *webView, QQuickWebViewPrivate* webViewPrivate)
     : QObject(webView)
     , q_ptr(webView)
-    , d_ptr(webView->d_ptr.data())
+    , d_ptr(webViewPrivate)
     , schemeParent(new QObject(this))
-    , m_test(new QWebKitTest(webView->d_ptr.data(), this))
+    , m_test(new QWebKitTest(webViewPrivate, this))
 {
 }
 
@@ -1473,7 +1474,6 @@ QQuickWebPage* QQuickWebViewExperimental::page()
 QQuickWebView::QQuickWebView(QQuickItem* parent)
     : QQuickFlickable(parent)
     , d_ptr(createPrivateObject(this))
-    , m_experimental(new QQuickWebViewExperimental(this))
 {
     Q_D(QQuickWebView);
     d->initialize();
@@ -1482,7 +1482,6 @@ QQuickWebView::QQuickWebView(QQuickItem* parent)
 QQuickWebView::QQuickWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef, QQuickItem* parent)
     : QQuickFlickable(parent)
     , d_ptr(createPrivateObject(this))
-    , m_experimental(new QQuickWebViewExperimental(this))
 {
     Q_D(QQuickWebView);
     d->initialize(contextRef, pageGroupRef);
@@ -1762,7 +1761,8 @@ QVariant QQuickWebView::inputMethodQuery(Qt::InputMethodQuery property) const
 */
 QQuickWebViewExperimental* QQuickWebView::experimental() const
 {
-    return m_experimental;
+    Q_D(const QQuickWebView);
+    return d->experimental;
 }
 
 /*!

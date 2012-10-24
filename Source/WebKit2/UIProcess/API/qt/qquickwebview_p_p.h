@@ -171,6 +171,7 @@ protected:
 
     QScopedPointer<QQuickWebPage> pageView;
     QQuickWebView* q_ptr;
+    QQuickWebViewExperimental* experimental;
 
     FlickableAxisLocker axisLocker;
 

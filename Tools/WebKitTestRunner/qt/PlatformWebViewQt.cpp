@@ -66,10 +66,8 @@ private Q_SLOTS:
             setSurfaceType(OpenGLSurface);
             create();
             QQuickWindowPrivate::get(this)->setRenderWithoutShowing(true);
-        } else {
-            QQuickWebViewExperimental experimental(m_view);
-            experimental.setRenderToOffscreenBuffer(true);
-        }
+        } else
+            m_view->experimental()->setRenderToOffscreenBuffer(true);
 
         QWindowSystemInterface::handleWindowActivated(this);
         m_view->page()->setFocus(true);
