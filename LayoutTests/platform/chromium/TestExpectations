@@ -1990,9 +1990,11 @@ webkit.org/b/97390 [ Mac ] mathml/presentation/subsup.xhtml [ Failure Pass ]
 webkit.org/b/97390 [ Mac ] mathml/presentation/msubsup-base-changed.xhtml [ ImageOnlyFailure Pass ]
 # Once chromium decides to definitely enable MathML, we can delete the old platform/chromium baseline for this:
 webkit.org/b/96960 http/tests/xmlviewer/dumpAsText/mathml.xml [ Pass Failure ]
-# These two tests are flaky crashers on Mac Debug bots
+# Some mathml tests are flaky crashers on Mac Debug bots
 webkit.org/b/100268 [ Mac Debug ] mathml/presentation/row.xhtml [ Pass Crash ]
 webkit.org/b/100268 [ Mac Debug ] mathml/presentation/mo-stretch.html [ Pass Crash ]
+webkit.org/b/100268 [ Mac Debug ] mathml/presentation/mroot-pref-width.html [ Pass Crash ]
+webkit.org/b/100268 [ Mac Debug ] mathml/presentation/style-changed.html [ Pass Crash ]
 
 # WebKit update 48796:48820
 # Test #9 throws an exception.

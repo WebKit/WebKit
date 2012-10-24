@@ -1,3 +1,9 @@
+2012-10-24  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed gardening. Marking 2 more mathml tests as flaky crashers on debug.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-24  Terry Anderson  <tdanderson@chromium.org>
 
         Handle two-finger tap gestures in the same way as long-press gestures
