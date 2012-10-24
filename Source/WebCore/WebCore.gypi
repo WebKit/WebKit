@@ -172,6 +172,7 @@
             'loader/FrameLoadRequest.h',
             'loader/FrameNetworkingContext.h',
             'loader/HistoryController.h',
+            'loader/LoaderStrategy.h',
             'loader/NavigationAction.h',
             'loader/NavigationScheduler.h',
             'loader/NetscapePlugInStreamLoader.h',

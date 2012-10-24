@@ -1,3 +1,20 @@
+2012-10-24  Brady Eidson  <beidson@apple.com>
+
+        Add a strategy for loader customization.
+        https://bugs.webkit.org/show_bug.cgi?id=100278
+
+        Reviewed by Alexey Proskuryakov.
+
+        It's empty for now and does nothing, just like the goggles.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/PlatformStrategies.h:
+        (WebCore::PlatformStrategies::loaderStrategy):
+        (PlatformStrategies):
+        (WebCore::PlatformStrategies::PlatformStrategies):
+
 2012-10-24  Tony Chang  <tony@chromium.org>
 
         Setting width of a flexitem causes the adjacent flex item to be displayed poorly.

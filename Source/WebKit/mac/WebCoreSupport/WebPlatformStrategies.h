@@ -27,13 +27,14 @@
 #define WebPlatformStrategies_h
 
 #include <WebCore/CookiesStrategy.h>
+#include <WebCore/LoaderStrategy.h>
 #include <WebCore/PasteboardStrategy.h>
 #include <WebCore/PlatformStrategies.h>
 #include <WebCore/PluginStrategy.h>
 #include <WebCore/SharedWorkerStrategy.h>
 #include <WebCore/VisitedLinkStrategy.h>
 
-class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::PasteboardStrategy, private WebCore::PluginStrategy, private WebCore::SharedWorkerStrategy, private WebCore::VisitedLinkStrategy {
+class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::LoaderStrategy, private WebCore::PasteboardStrategy, private WebCore::PluginStrategy, private WebCore::SharedWorkerStrategy, private WebCore::VisitedLinkStrategy {
 public:
     static void initialize();
     
@@ -42,6 +43,7 @@ private:
     
     // WebCore::PlatformStrategies
     virtual WebCore::CookiesStrategy* createCookiesStrategy() OVERRIDE;
+    virtual WebCore::LoaderStrategy* createLoaderStrategy() OVERRIDE;
     virtual WebCore::PasteboardStrategy* createPasteboardStrategy() OVERRIDE;
     virtual WebCore::PluginStrategy* createPluginStrategy() OVERRIDE;
     virtual WebCore::SharedWorkerStrategy* createSharedWorkerStrategy() OVERRIDE;

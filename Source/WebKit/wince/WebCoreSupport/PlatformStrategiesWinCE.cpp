@@ -48,6 +48,11 @@ CookiesStrategy* PlatformStrategiesWinCE::createCookiesStrategy()
     return this;
 }
 
+LoaderStrategy* PlatformStrategiesWinCE::createLoaderStrategy()
+{
+    return this;
+}
+
 PasteboardStrategy* PlatformStrategiesWinCE::createPasteboardStrategy()
 {
     return 0;

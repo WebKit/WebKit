@@ -42,6 +42,11 @@ CookiesStrategy* PlatformStrategiesGtk::createCookiesStrategy()
     return this;
 }
 
+LoaderStrategy* PlatformStrategiesGtk::createLoaderStrategy()
+{
+    return this;
+}
+
 PasteboardStrategy* PlatformStrategiesGtk::createPasteboardStrategy()
 {
     // This is currently used only by Mac code.

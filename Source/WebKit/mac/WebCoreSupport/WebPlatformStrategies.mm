@@ -50,6 +50,11 @@ CookiesStrategy* WebPlatformStrategies::createCookiesStrategy()
     return this;
 }
 
+LoaderStrategy* WebPlatformStrategies::createLoaderStrategy()
+{
+    return this;
+}
+
 PasteboardStrategy* WebPlatformStrategies::createPasteboardStrategy()
 {
     return this;

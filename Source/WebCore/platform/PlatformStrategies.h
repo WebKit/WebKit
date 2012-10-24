@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class CookiesStrategy;
+class LoaderStrategy;
 class PasteboardStrategy;
 class PluginStrategy;
 class SharedWorkerStrategy;
@@ -45,6 +46,13 @@ public:
         return m_cookiesStrategy;
     }
 
+    LoaderStrategy* loaderStrategy()
+    {
+        if (!m_loaderStrategy)
+            m_loaderStrategy = createLoaderStrategy();
+        return m_loaderStrategy;
+    }
+    
     PasteboardStrategy* pasteboardStrategy()
     {
         if (!m_pasteboardStrategy)
@@ -76,6 +84,7 @@ public:
 protected:
     PlatformStrategies()
         : m_cookiesStrategy(0)
+        , m_loaderStrategy(0)
         , m_pasteboardStrategy(0)
         , m_pluginStrategy(0)
         , m_sharedWorkerStrategy(0)
@@ -89,12 +98,14 @@ protected:
 
 private:
     virtual CookiesStrategy* createCookiesStrategy() = 0;
+    virtual LoaderStrategy* createLoaderStrategy() = 0;
     virtual PasteboardStrategy* createPasteboardStrategy() = 0;
     virtual PluginStrategy* createPluginStrategy() = 0;
     virtual SharedWorkerStrategy* createSharedWorkerStrategy() = 0;
     virtual VisitedLinkStrategy* createVisitedLinkStrategy() = 0;
 
     CookiesStrategy* m_cookiesStrategy;
+    LoaderStrategy* m_loaderStrategy;
     PasteboardStrategy* m_pasteboardStrategy;
     PluginStrategy* m_pluginStrategy;
     SharedWorkerStrategy* m_sharedWorkerStrategy;

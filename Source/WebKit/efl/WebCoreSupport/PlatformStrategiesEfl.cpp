@@ -49,6 +49,11 @@ CookiesStrategy* PlatformStrategiesEfl::createCookiesStrategy()
     return this;
 }
 
+LoaderStrategy* PlatformStrategiesEfl::createLoaderStrategy()
+{
+    return this;
+}
+
 PasteboardStrategy* PlatformStrategiesEfl::createPasteboardStrategy()
 {
     notImplemented();

@@ -63,6 +63,11 @@ CookiesStrategy* PlatformStrategiesQt::createCookiesStrategy()
     return this;
 }
 
+LoaderStrategy* PlatformStrategiesQt::createLoaderStrategy()
+{
+    return this;
+}
+
 PasteboardStrategy* PlatformStrategiesQt::createPasteboardStrategy()
 {
     return 0;
