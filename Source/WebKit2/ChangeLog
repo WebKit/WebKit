@@ -1,3 +1,16 @@
+2012-10-24  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Coordinated Graphics: Enable threaded/IPC animations
+        https://bugs.webkit.org/show_bug.cgi?id=93146
+
+        Reviewed by Caio Marcelo de Oliveira Filho.
+
+        In some cases there are pending changes in the layers, but no actual changes to the frame.
+        In that case we should unlock the animations.
+
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::flushPendingLayerChanges):
+
 2012-10-24  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt-on-Mac] GraphicsSurfaces should not create a global IOSurface handle
