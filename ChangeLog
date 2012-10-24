@@ -1,3 +1,14 @@
+2012-10-24  Priit Laes  <plaes@plaes.org>
+
+        [GTK] ./configure output for CSS Shaders is broken
+        https://bugs.webkit.org/show_bug.cgi?id=100217
+
+        Reviewed by Martin Robinson.
+
+        Reformat CSS Filters / Shaders check to clean configure output.
+
+        * configure.ac:
+
 2012-10-24  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] run-webkit-tests writes garbage on stderr when running on Xvfb
