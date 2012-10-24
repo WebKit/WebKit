@@ -1,3 +1,11 @@
+2012-10-24  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding crash expectations for tests that started crashing after r132286.
+
+        * platform/gtk/TestExpectations:
+
 2012-10-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r132333.
