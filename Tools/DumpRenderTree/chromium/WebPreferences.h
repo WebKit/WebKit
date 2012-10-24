@@ -113,6 +113,7 @@ struct WebPreferences {
     bool mediaPlaybackRequiresUserGesture;
     bool mockScrollbarsEnabled;
     bool cssCustomFilterEnabled;
+    bool shouldRespectImageOrientation;
 
     WebPreferences() { reset(); }
     void reset();

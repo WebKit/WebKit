@@ -1604,6 +1604,8 @@ void DRTTestRunner::overridePreference(const CppArgumentList& arguments, CppVari
         prefs->allowRunningOfInsecureContent = cppVariantToBool(value);
     else if (key == "WebKitCSSCustomFilterEnabled")
         prefs->cssCustomFilterEnabled = cppVariantToBool(value);
+    else if (key == "WebKitShouldRespectImageOrientation")
+        prefs->shouldRespectImageOrientation = cppVariantToBool(value);
     else if (key == "WebKitWebAudioEnabled") {
         ASSERT(cppVariantToBool(value));
     } else {

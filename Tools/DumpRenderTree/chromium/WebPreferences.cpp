@@ -120,6 +120,7 @@ void WebPreferences::reset()
     mediaPlaybackRequiresUserGesture = false;
     mockScrollbarsEnabled = false;
     cssCustomFilterEnabled = false;
+    shouldRespectImageOrientation = false;
 }
 
 static void setStandardFontFamilyWrapper(WebSettings* settings, const WebKit::WebString& font, UScriptCode script)
@@ -229,6 +230,7 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setMediaPlaybackRequiresUserGesture(mediaPlaybackRequiresUserGesture);
     settings->setMockScrollbarsEnabled(mockScrollbarsEnabled);
     settings->setApplyDefaultDeviceScaleFactorInCompositor(forceCompositingMode);
+    settings->setShouldRespectImageOrientation(shouldRespectImageOrientation);
 
     // Fixed values.
     settings->setTextDirectionSubmenuInclusionBehaviorNeverIncluded();

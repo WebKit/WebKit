@@ -636,6 +636,11 @@ void WebSettingsImpl::setShouldDisplayTextDescriptions(bool enabled)
 #endif
 }
 
+void WebSettingsImpl::setShouldRespectImageOrientation(bool enabled)
+{
+    m_settings->setShouldRespectImageOrientation(enabled);
+}
+
 void WebSettingsImpl::setAcceleratedPaintingEnabled(bool enabled)
 {
     m_settings->setAcceleratedDrawingEnabled(enabled);
