@@ -626,6 +626,11 @@ results.fetchResultsForMostRecentCompletedBuildOnBuilder = function(builderName,
         var resultsCallback = function(buildResults) {
             if ($.isEmptyObject(buildResults)) {
                 ++currentIndex;
+                if (currentIndex >= buildLocations.length) {
+                    callback(null);
+                    return;
+                }
+
                 net.jsonp(buildLocations[currentIndex].url, resultsCallback);
                 return;
             }
@@ -658,7 +663,8 @@ results.fetchResultsByBuilder = function(builderNameList, callback)
                     // FIXME: use RequestTracker
                     ++requestsInFlight;
                     results.fetchResultsForMostRecentCompletedBuildOnBuilder(builderName, function(resultsTree) {
-                        resultsByBuilder[builderName] = resultsTree;
+                        if (resultsTree)
+                            resultsByBuilder[builderName] = resultsTree;
                         --requestsInFlight;
                         if (!requestsInFlight)
                             callback(resultsByBuilder);

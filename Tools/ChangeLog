@@ -1,3 +1,21 @@
+2012-10-24  Ojan Vafai  <ojan@chromium.org>
+
+        Show an error when there are no completed builds in the past 20 runs
+        https://bugs.webkit.org/show_bug.cgi?id=100266
+
+        Reviewed by Dimitri Glazkov.
+
+        Right now we get a cryptic JS error in the console when loading the gtk port. This at least gives an error in
+        the notification stream. We should probably tweak this UI to make it so we can make
+        errors in the notification stream stick out (e.g. make the text red).
+
+        We should also consider making the number of runs to load dynamic (e.g. if 20 runs don't work,
+        try 40).
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/garden-o-matic.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/results.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/results_unittests.js:
+
 2012-10-24  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Explicitly disable accelerated animations in DRT
