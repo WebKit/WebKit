@@ -44,19 +44,7 @@ PlatformStrategiesEfl::PlatformStrategiesEfl()
 {
 }
 
-// CookiesStrategy
 CookiesStrategy* PlatformStrategiesEfl::createCookiesStrategy()
-{
-    return this;
-}
-
-// PluginStrategy
-PluginStrategy* PlatformStrategiesEfl::createPluginStrategy()
-{
-    return this;
-}
-
-VisitedLinkStrategy* PlatformStrategiesEfl::createVisitedLinkStrategy()
 {
     return this;
 }
@@ -65,6 +53,21 @@ PasteboardStrategy* PlatformStrategiesEfl::createPasteboardStrategy()
 {
     notImplemented();
     return 0;
+}
+
+PluginStrategy* PlatformStrategiesEfl::createPluginStrategy()
+{
+    return this;
+}
+
+SharedWorkerStrategy* PlatformStrategiesEfl::createSharedWorkerStrategy()
+{
+    return this;
+}
+
+VisitedLinkStrategy* PlatformStrategiesEfl::createVisitedLinkStrategy()
+{
+    return this;
 }
 
 // CookiesStrategy

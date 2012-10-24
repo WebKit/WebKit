@@ -68,17 +68,22 @@ CookiesStrategy* WebPlatformStrategies::createCookiesStrategy()
     return this;
 }
 
+PasteboardStrategy* WebPlatformStrategies::createPasteboardStrategy()
+{
+    return this;
+}
+
 PluginStrategy* WebPlatformStrategies::createPluginStrategy()
 {
     return this;
 }
 
-VisitedLinkStrategy* WebPlatformStrategies::createVisitedLinkStrategy()
+SharedWorkerStrategy* WebPlatformStrategies::createSharedWorkerStrategy()
 {
     return this;
 }
 
-PasteboardStrategy* WebPlatformStrategies::createPasteboardStrategy()
+VisitedLinkStrategy* WebPlatformStrategies::createVisitedLinkStrategy()
 {
     return this;
 }

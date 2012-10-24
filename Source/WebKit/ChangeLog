@@ -1,3 +1,14 @@
+2012-10-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Add a strategy for shared workers
+        https://bugs.webkit.org/show_bug.cgi?id=100165
+
+        EFL build fix by Christophe Dumez.
+
+        Reviewed by Brady Eidson.
+
+        * CMakeLists.txt: Add WebCore/workers to include paths.
+
 2012-10-24  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Rename GeolocationControllerClientBlackBerry to GeolocationClientBlackBerry

@@ -30,9 +30,10 @@
 #include <WebCore/PasteboardStrategy.h>
 #include <WebCore/PlatformStrategies.h>
 #include <WebCore/PluginStrategy.h>
+#include <WebCore/SharedWorkerStrategy.h>
 #include <WebCore/VisitedLinkStrategy.h>
 
-class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::PluginStrategy, private WebCore::VisitedLinkStrategy, private WebCore::PasteboardStrategy {
+class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::PasteboardStrategy, private WebCore::PluginStrategy, private WebCore::SharedWorkerStrategy, private WebCore::VisitedLinkStrategy {
 public:
     static void initialize();
     
@@ -41,9 +42,10 @@ private:
     
     // WebCore::PlatformStrategies
     virtual WebCore::CookiesStrategy* createCookiesStrategy() OVERRIDE;
-    virtual WebCore::PluginStrategy* createPluginStrategy() OVERRIDE;
-    virtual WebCore::VisitedLinkStrategy* createVisitedLinkStrategy() OVERRIDE;
     virtual WebCore::PasteboardStrategy* createPasteboardStrategy() OVERRIDE;
+    virtual WebCore::PluginStrategy* createPluginStrategy() OVERRIDE;
+    virtual WebCore::SharedWorkerStrategy* createSharedWorkerStrategy() OVERRIDE;
+    virtual WebCore::VisitedLinkStrategy* createVisitedLinkStrategy() OVERRIDE;
 
     // WebCore::CookiesStrategy
     virtual void notifyCookiesChanged() OVERRIDE;
@@ -72,7 +74,6 @@ private:
     virtual void setBufferForType(PassRefPtr<WebCore::SharedBuffer>, const String& pasteboardType, const String& pasteboardName) OVERRIDE;
     virtual void setPathnamesForType(const Vector<String>&, const String& pasteboardType, const String& pasteboardName) OVERRIDE;
     virtual void setStringForType(const String&, const String& pasteboardType, const String& pasteboardName) OVERRIDE;
-    
 };
 
 #endif // WebPlatformStrategies_h

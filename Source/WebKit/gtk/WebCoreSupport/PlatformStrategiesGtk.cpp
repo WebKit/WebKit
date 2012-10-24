@@ -42,7 +42,19 @@ CookiesStrategy* PlatformStrategiesGtk::createCookiesStrategy()
     return this;
 }
 
+PasteboardStrategy* PlatformStrategiesGtk::createPasteboardStrategy()
+{
+    // This is currently used only by Mac code.
+    notImplemented();
+    return 0;
+}
+
 PluginStrategy* PlatformStrategiesGtk::createPluginStrategy()
+{
+    return this;
+}
+
+SharedWorkerStrategy* PlatformStrategiesGtk::createSharedWorkerStrategy()
 {
     return this;
 }
@@ -50,13 +62,6 @@ PluginStrategy* PlatformStrategiesGtk::createPluginStrategy()
 VisitedLinkStrategy* PlatformStrategiesGtk::createVisitedLinkStrategy()
 {
     return this;
-}
-
-PasteboardStrategy* PlatformStrategiesGtk::createPasteboardStrategy()
-{
-    // This is currently used only by mac code.
-    notImplemented();
-    return 0;
 }
 
 // CookiesStrategy

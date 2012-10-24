@@ -47,7 +47,17 @@ CookiesStrategy* WebPlatformStrategies::createCookiesStrategy()
     return this;
 }
 
+PasteboardStrategy* WebPlatformStrategies::createPasteboardStrategy()
+{
+    return 0;
+}
+
 PluginStrategy* WebPlatformStrategies::createPluginStrategy()
+{
+    return this;
+}
+
+SharedWorkerStrategy* WebPlatformStrategies::createSharedWorkerStrategy()
 {
     return this;
 }
@@ -55,11 +65,6 @@ PluginStrategy* WebPlatformStrategies::createPluginStrategy()
 VisitedLinkStrategy* WebPlatformStrategies::createVisitedLinkStrategy()
 {
     return this;
-}
-
-PasteboardStrategy* WebPlatformStrategies::createPasteboardStrategy()
-{
-    return 0;
 }
 
 void WebPlatformStrategies::notifyCookiesChanged()

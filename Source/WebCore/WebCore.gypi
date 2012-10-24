@@ -328,6 +328,7 @@
             'platform/SearchPopupMenu.h',
             'platform/SharedBuffer.h',
             'platform/SharedBufferChunkReader.h',
+            'platform/SharedWorkerStrategy.h',
             'platform/StatsCounter.h',
             'platform/Supplementable.h',
             'platform/SystemTime.h',

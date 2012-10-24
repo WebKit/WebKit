@@ -28,9 +28,10 @@
 #include "CookiesStrategy.h"
 #include "PlatformStrategies.h"
 #include "PluginStrategy.h"
+#include "SharedWorkerStrategy.h"
 #include "VisitedLinkStrategy.h"
 
-class PlatformStrategiesWinCE : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::PluginStrategy, private WebCore::VisitedLinkStrategy {
+class PlatformStrategiesWinCE : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::PluginStrategy, private WebCore::SharedWorkerStrategy, private WebCore::VisitedLinkStrategy {
 public:
     static void initialize();
 
@@ -39,9 +40,10 @@ private:
 
     // WebCore::PlatformStrategies
     virtual WebCore::CookiesStrategy* createCookiesStrategy();
-    virtual WebCore::PluginStrategy* createPluginStrategy();
-    virtual WebCore::VisitedLinkStrategy* createVisitedLinkStrategy();
     virtual WebCore::PasteboardStrategy* createPasteboardStrategy();
+    virtual WebCore::PluginStrategy* createPluginStrategy();
+    virtual WebCore::SharedWorkerStrategy* createSharedWorkerStrategy();
+    virtual WebCore::VisitedLinkStrategy* createVisitedLinkStrategy();
 
     // WebCore::CookiesStrategy
     virtual void notifyCookiesChanged();
