@@ -4869,8 +4869,10 @@ void Document::addMessage(MessageSource source, MessageType type, MessageLevel l
         return;
     }
 
-    if (DOMWindow* window = domWindow())
-        window->console()->addMessage(source, type, level, message, sourceURL, lineNumber, callStack);
+    if (DOMWindow* window = domWindow()) {
+        if (Console* console = window->console())
+            console->addMessage(source, type, level, message, sourceURL, lineNumber, callStack);
+    }
 }
 
 struct PerformTaskContext {

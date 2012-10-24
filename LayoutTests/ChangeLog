@@ -1,3 +1,18 @@
+2012-10-24  Toni Barzic  <tbarzic@chromium.org>
+
+        Crash when trying to write exception message to null console
+        https://bugs.webkit.org/show_bug.cgi?id=99658
+
+        Reviewed by Adam Barth.
+
+        The test creates bunch of workers that throw an exception as soon as they are loaded and then tries to change the current document.
+        The test passes if there is no crash.
+        Unfortuantely, the test is inherently flaky and may produce some false positive results (but should never fail if there is no bug).
+
+        * fast/workers/resources/worker-exception.js: Added.
+        * fast/workers/worker-exception-during-navigation-expected.txt: Added.
+        * fast/workers/worker-exception-during-navigation.html: Added.
+
 2012-10-24  David Barton  <dbarton@mathscribe.com>
 
         [MathML] Timeouts on linux after r132264

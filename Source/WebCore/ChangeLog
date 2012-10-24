@@ -1,3 +1,19 @@
+2012-10-24  Toni Barzic  <tbarzic@chromium.org>
+
+        Crash when trying to write exception message to null console
+        https://bugs.webkit.org/show_bug.cgi?id=99658
+
+        Reviewed by Adam Barth.
+
+        DOMWindow::console may return NULL, so we should do a NULL check before adding message to it.
+        This may happen e.g. if a worker throws an exception just as the document is being replaced in the view.
+        The exception task could be processes after current window in the frame changes, and console in the document window is nulled.
+
+        Test: fast/workers/worker-exception-during-navigation.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::addMessage):
+
 2012-10-24  Cosmin Truta  <ctruta@rim.com>
 
         Incorrect conditional use of LogFTP
