@@ -717,24 +717,40 @@ bool ArgumentCoder<GraphicsLayerAnimations>::decode(ArgumentDecoder* decoder, Gr
 void ArgumentCoder<WebCore::GraphicsSurfaceToken>::encode(ArgumentEncoder* encoder, const WebCore::GraphicsSurfaceToken& token)
 {
 #if OS(DARWIN)
-    encoder->encode(static_cast<uint32_t>(token.frontBufferHandle));
-    encoder->encode(static_cast<uint32_t>(token.backBufferHandle));
+    encoder->encode(token.frontBufferHandle);
+    encoder->encode(token.backBufferHandle);
+#endif
+#if OS(WINDOWS)
+    uint64_t frontBuffer = reinterpret_cast<uintptr_t>(token.frontBufferHandle);
+    encoder->encode(frontBuffer);
+    uint64_t backBuffer = reinterpret_cast<uintptr_t>(token.backBufferHandle);
+    encoder->encode(backBuffer);
 #endif
 #if OS(LINUX)
-    encoder->encode(static_cast<uint32_t>(token.frontBufferHandle));
+    encoder->encode(token.frontBufferHandle);
 #endif
 }
 
 bool ArgumentCoder<WebCore::GraphicsSurfaceToken>::decode(ArgumentDecoder* decoder, WebCore::GraphicsSurfaceToken& token)
 {
 #if OS(DARWIN)
-    if (!decoder->decodeUInt32(token.frontBufferHandle))
+    if (!decoder->decode(token.frontBufferHandle))
         return false;
-    if (!decoder->decodeUInt32(token.backBufferHandle))
+    if (!decoder->decode(token.backBufferHandle))
         return false;
 #endif
+#if OS(WINDOWS)
+    uint64_t frontBufferHandle;
+    if (!decoder->decode(frontBufferHandle))
+        return false;
+    token.frontBufferHandle = reinterpret_cast<GraphicsSurfaceToken::BufferHandle>(frontBufferHandle);
+    uint64_t backBufferHandle;
+    if (!decoder->decode(backBufferHandle))
+        return false;
+    token.backBufferHandle = reinterpret_cast<GraphicsSurfaceToken::BufferHandle>(backBufferHandle);
+#endif
 #if OS(LINUX)
-    if (!decoder->decodeUInt32(token.frontBufferHandle))
+    if (!decoder->decode(token.frontBufferHandle))
         return false;
 #endif
     return true;

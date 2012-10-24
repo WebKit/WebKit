@@ -1,3 +1,14 @@
+2012-10-24  Zeno Albisser  <zeno@webkit.org>
+
+        Implement GraphicsSurface for Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=98147
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * qmake/mkspecs/features/features.prf:
+                Activate GraphicsSurface on windows in case opengles2 (ANGLE)
+                is available in QT_CONFIG.
+
 2012-10-24  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL][WK2] fast/repaint/delete-into-nested-block.html and fast/repaint/4776765.html are flaky

@@ -33,7 +33,12 @@ namespace WebCore {
 
 struct GraphicsSurfaceToken {
 
-typedef uint32_t BufferHandle;
+#if OS(DARWIN) || OS(LINUX)
+    typedef uint32_t BufferHandle;
+#endif
+#if OS(WINDOWS)
+    typedef HANDLE BufferHandle;
+#endif
 
 #if HAVE(GLX)
     GraphicsSurfaceToken(uint32_t windowID = 0)
@@ -52,7 +57,7 @@ typedef uint32_t BufferHandle;
 
 #endif
 
-#if OS(DARWIN)
+#if OS(DARWIN) || OS(WINDOWS)
     GraphicsSurfaceToken(BufferHandle frontBuffer = 0, BufferHandle backBuffer = 0)
         : frontBufferHandle(frontBuffer)
         , backBufferHandle(backBuffer)

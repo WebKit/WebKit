@@ -1,3 +1,90 @@
+2012-10-24  Zeno Albisser  <zeno@webkit.org>
+
+        Implement GraphicsSurface for Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=98147
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Target.pri:
+            Include GraphicsSurfaceWin.cpp in SOURCES on Windows.
+        * platform/graphics/surfaces/GraphicsSurface.h:
+            Add typedef for PlatformGraphicsSurface on Windows.
+        * platform/graphics/surfaces/GraphicsSurfaceToken.h:
+            Add typedef for BufferHandle on Windows.
+        (GraphicsSurfaceToken):
+        * platform/graphics/surfaces/win/GraphicsSurfaceWin.cpp: Added.
+            The GraphicsSurface implementation on Windows relies on the
+            availability of ANGLE and the EGL_ANGLE_query_surface_pointer extension.
+            For Qt this requirements are implicitly satisfied, when Qt is built
+            on Windows and QT_CONFIG contains OpenGLES2.
+            The GraphicsSurface then renders a given texture onto an offscreen
+            pixel buffer surface, queries the surface pointer using the
+            EGL_ANGLE_query_surface_pointer extension, and transmits the received
+            surface pointer (share handle) over IPC.
+            On the UIProcess side, the surface pointer can then be resolved
+            using eglCreatePbufferFromClientBuffer.
+        (WebCore):
+        (WebCore::loadShader):
+            Initialize the shaders needed for drawing onto the GraphicsSurface.
+        (GraphicsSurfacePrivate):
+        (WebCore::GraphicsSurfacePrivate::GraphicsSurfacePrivate):
+            In case of the instance being on the WebProcess side,
+            create an EGLContext that shares the texture objects with the provided
+            share context. Also create two pixel buffer surfaces, one as front- and
+            one as backbuffer.
+            Query the surface pointers for the pixel buffer surfaces and initialize
+            the GraphicsSurfaceToken that can be passed over IPC later.
+        (WebCore::GraphicsSurfacePrivate::~GraphicsSurfacePrivate):
+            Release all aquired resources and destroy the pixel buffer surfaces.
+            Also close the EGL-Display connection.
+        (WebCore::GraphicsSurfacePrivate::copyFromTexture):
+            Make the belonging context current on the back buffer surface
+            and use drawTexture() to draw the provided texture onto the GraphicsSurface.
+        (WebCore::GraphicsSurfacePrivate::makeCurrent):
+            Save the previously current context, then make the context belonging
+            to the GraphicsSurface current.
+        (WebCore::GraphicsSurfacePrivate::doneCurrent):
+            Restore the context that was current before calling makeCurrent().
+        (WebCore::GraphicsSurfacePrivate::swapBuffers):
+            Swap front and back buffer surfaces and handles.
+        (WebCore::GraphicsSurfacePrivate::token):
+        (WebCore::GraphicsSurfacePrivate::frontBufferTextureID):
+            This function is meant to be called from the UIProcess side.
+            If no front buffer surface has been created before for the current
+            front buffer handle, one will be created.
+            Then eglBindTexImage will be used to actually bind the current
+            front buffer surface to a texture as a source for drawing.
+        (WebCore::GraphicsSurfacePrivate::initialFrontBufferShareHandle):
+        (WebCore::GraphicsSurfacePrivate::frontBufferShareHandle):
+        (WebCore::GraphicsSurfacePrivate::backBufferShareHandle):
+        (WebCore::GraphicsSurfacePrivate::releaseFrontBufferTexture):
+            Free the resources related to the front buffer surface.
+            On the UIProcess side we never actually bind the back buffer.
+        (WebCore::GraphicsSurfacePrivate::initializeShaderProgram):
+            Initialize and link the shader programs necessary for drawing
+            onto the GraphicsSurface.
+        (WebCore::GraphicsSurfacePrivate::createSurfaceFromShareHandle):
+            Creates a single pixel buffer surface from a share Handle.
+            This function will be called on the UIProcess side,
+            for the front buffer handle, whenever the buffers have been swapped.
+        (WebCore::GraphicsSurfacePrivate::drawTexture):
+            The WebProcess uses this function to draw a given
+            texture onto the GraphicsSurface's back buffer.
+        (WebCore::GraphicsSurface::platformExport):
+        (WebCore::GraphicsSurface::platformGetTextureID):
+        (WebCore::GraphicsSurface::platformCopyToGLTexture):
+        (WebCore::GraphicsSurface::platformCopyFromTexture):
+        (WebCore::GraphicsSurface::platformPaintToTextureMapper):
+            Uses TextureMapperGL::drawTexture() to draw the front buffer texture
+            to the TextureMapper on the UIProcess side.
+        (WebCore::GraphicsSurface::platformFrontBuffer):
+        (WebCore::GraphicsSurface::platformSwapBuffers):
+        (WebCore::GraphicsSurface::platformCreate):
+        (WebCore::GraphicsSurface::platformImport):
+        (WebCore::GraphicsSurface::platformLock):
+        (WebCore::GraphicsSurface::platformUnlock):
+        (WebCore::GraphicsSurface::platformDestroy):
+
 2012-09-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: provide memory instrumentation for ListHashSet

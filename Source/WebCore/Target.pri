@@ -4062,6 +4062,9 @@ use?(GRAPHICS_SURFACE) {
         SOURCES += platform/graphics/surfaces/mac/GraphicsSurfaceMac.cpp
         INCLUDEPATH += /System/Library/Frameworks/CoreFoundation.framework/Headers
     }
+    win32 {
+        SOURCES += platform/graphics/surfaces/win/GraphicsSurfaceWin.cpp
+    }
     have?(XCOMPOSITE) {
         SOURCES += platform/graphics/surfaces/qt/GraphicsSurfaceGLX.cpp
     }

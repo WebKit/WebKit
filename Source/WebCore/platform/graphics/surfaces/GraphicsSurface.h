@@ -35,8 +35,13 @@
 typedef struct __IOSurface* IOSurfaceRef;
 typedef IOSurfaceRef PlatformGraphicsSurface;
 #endif
+
 #if OS(LINUX)
 typedef uint32_t PlatformGraphicsSurface;
+#endif
+
+#if OS(WINDOWS)
+typedef HANDLE PlatformGraphicsSurface;
 #endif
 
 namespace WebCore {
