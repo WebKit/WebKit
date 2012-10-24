@@ -23,9 +23,7 @@ Libraries_libTestWebKitAPIMain_la_CPPFLAGS = \
 	-I$(srcdir)/Source/ThirdParty/gtest/include \
 	-I$(top_builddir)/DerivedSources/WebKit2/include \
 	$(global_cppflags) \
-	$(javascriptcore_cppflags) \
-	$(GLIB_CFLAGS) \
-	$(GTK_CFLAGS)
+	$(javascriptcore_cppflags)
 
 noinst_PROGRAMS += \
 	Programs/TestWebKitAPI/TestWTF
@@ -33,17 +31,13 @@ noinst_PROGRAMS += \
 Programs_TestWebKitAPI_TestWTF_CPPFLAGS = \
 	$(Libraries_libTestWebKitAPIMain_la_CPPFLAGS) \
 	$(GLIB_LIBS) \
-	$(CAIRO_CFLAGS) \
-	$(LIBSOUP_CFLAGS)
+	$(CAIRO_CFLAGS)
 
 Programs_TestWebKitAPI_TestWTF_LDADD = \
 	Libraries/libTestWebKitAPIMain.la \
 	Libraries/libgtest.la \
 	libWTF.la \
-	$(CAIRO_LIBS) \
-	$(GLIB_LIBS) \
-	$(GTK_LIBS) \
-	$(LIBSOUP_LIBS)
+	$(GLIB_LIBS)
 
 Programs_TestWebKitAPI_TestWTF_LDFLAGS = \
 	-no-install \
@@ -75,15 +69,18 @@ noinst_PROGRAMS += \
 
 Programs_TestWebKitAPI_TestGtk_CPPFLAGS = \
 	$(Programs_TestWebKitAPI_TestWTF_CPPFLAGS) \
-	$(webcore_cppflags) \
-	$(webcoregtk_cppflags) \
-	$(CAIRO_CFLAGS) \
+	$(GLIB_CFLAGS) \
+	$(GTK_CFLAGS) \
 	$(LIBSOUP_CFLAGS)
 
 Programs_TestWebKitAPI_TestGtk_LDADD = \
-	$(Programs_TestWebKitAPI_TestWTF_LDADD) \
+	Libraries/libTestWebKitAPIMain.la \
+	Libraries/libgtest.la \
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
-	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la
+	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	$(GLIB_LIBS) \
+	$(GTK_LIBS) \
+	$(LIBSOUP_LIBS)
 
 Programs_TestWebKitAPI_TestGtk_LDFLAGS = \
 	$(Programs_TestWebKitAPI_TestWTF_LDFLAGS)
@@ -102,12 +99,19 @@ noinst_PROGRAMS += \
 
 Programs_TestWebKitAPI_TestWebKit2_CPPFLAGS = \
 	$(Programs_TestWebKitAPI_TestWTF_CPPFLAGS) \
-	-I$(top_builddir)/DerivedSources/WebKit2/include
+	-I$(top_builddir)/DerivedSources/WebKit2/include \
+	$(GLIB_CFLAGS) \
+	$(GTK_CFLAGS) \
+	$(LIBSOUP_CFLAGS)
 
 Programs_TestWebKitAPI_TestWebKit2_LDADD = \
-	$(Programs_TestWebKitAPI_TestWTF_LDADD) \
+	Libraries/libTestWebKitAPIMain.la \
+	Libraries/libgtest.la \
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
-	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la
+	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	$(GLIB_LIBS) \
+	$(GTK_LIBS) \
+	$(LIBSOUP_LIBS)
 
 Programs_TestWebKitAPI_TestWebKit2_LDFLAGS = \
 	$(Programs_TestWebKitAPI_TestWTF_LDFLAGS)
