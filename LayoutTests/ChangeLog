@@ -1,3 +1,14 @@
+2012-10-24  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [EFL] Unskip fast/events/tabindex-focus-blur-all.html.
+        https://bugs.webkit.org/show_bug.cgi?id=100206
+
+        Unreviewed, EFL gardening.
+
+        The bug webkit.org/b/100065 is fixed and the test is passing now.
+
+        * platform/efl-wk1/TestExpectations:
+
 2012-10-24  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
