@@ -241,6 +241,32 @@ bool DateTimeFormat::parse(const String& source, TokenHandler& tokenHandler)
     return false;
 }
 
+void DateTimeFormat::quoteAndAppendLiteral(const String& literal, StringBuilder& buffer)
+{
+    if (literal.length() <= 0)
+        return;
+    
+    if (literal.find('\'') == notFound) {
+        buffer.append("'");
+        buffer.append(literal);
+        buffer.append("'");
+        return;
+    }
+
+    for (unsigned i = 0; i < literal.length(); ++i) {
+        if (literal[i] == '\'')
+            buffer.append("''");
+        else {
+            String escaped = literal.substring(i);
+            escaped.replace(ASCIILiteral("'"), ASCIILiteral("''"));
+            buffer.append("'");
+            buffer.append(escaped);
+            buffer.append("'");
+            return;
+        }
+    }
+}
+
 } // namespace WebCore
 
 #endif

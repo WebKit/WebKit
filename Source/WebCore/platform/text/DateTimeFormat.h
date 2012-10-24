@@ -27,7 +27,7 @@
 #define DateTimeFormat_h
 
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-#include <wtf/text/WTFString.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -103,6 +103,7 @@ public:
 
     // Returns true if succeeded, false if failed.
     static bool parse(const String&, TokenHandler&);
+    static void quoteAndAppendLiteral(const String&, StringBuilder&);
 };
 
 } // namespace WebCore

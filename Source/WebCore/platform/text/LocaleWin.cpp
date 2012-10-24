@@ -579,39 +579,13 @@ bool LocaleWin::isRTL()
 #endif
 
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-static void appendAsLDMLLiteral(const String& literal, StringBuilder& buffer)
-{
-    if (literal.length() <= 0)
-        return;
-    
-    if (literal.find('\'') == notFound) {
-        buffer.append("'");
-        buffer.append(literal);
-        buffer.append("'");
-        return;
-    }
-
-    for (unsigned i = 0; i < literal.length(); ++i) {
-        if (literal[i] == '\'')
-            buffer.append("''");
-        else {
-            String escaped = literal.substring(i);
-            escaped.replace(ASCIILiteral("'"), ASCIILiteral("''"));
-            buffer.append("'");
-            buffer.append(escaped);
-            buffer.append("'");
-            return;
-        }
-    }
-}
-
 static String convertWindowsDateFormatToLDML(const Vector<DateFormatToken>& tokens)
 {
     StringBuilder buffer;
     for (unsigned i = 0; i < tokens.size(); ++i) {
         switch (tokens[i].type) {
         case DateFormatToken::Literal:
-            appendAsLDMLLiteral(tokens[i].data, buffer);
+            DateTimeFormat::quoteAndAppendLiteral(tokens[i].data, buffer);
             break;
 
         case DateFormatToken::Day2:

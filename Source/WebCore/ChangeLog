@@ -1,5 +1,29 @@
 2012-10-23  Kent Tamura  <tkent@chromium.org>
 
+        Move appendAsLDMLLiteral in LocaleWin.cpp to a common place
+        https://bugs.webkit.org/show_bug.cgi?id=100129
+
+        Reviewed by Kentaro Hara.
+
+        We're going to use appendAsLDMLLiteral in other code, and it is
+        related to DateTimeFormat class.  So we move it to DateTimeFormat
+        class as quoteAndAppendLiteral.
+
+        No new tests because of no behavior change.
+
+        * platform/text/DateTimeFormat.cpp:
+        (WebCore::DateTimeFormat::quoteAndAppendLiteral):
+        Moved from LocaleWin.cpp
+        * platform/text/DateTimeFormat.h:
+        Declare StringBuilder by wtf/Forward.h. It also declares String.
+        (DateTimeFormat): Declare quoteAndAppendLiteral.
+        * platform/text/LocaleWin.cpp:
+        (WebCore): Move appendLDMLLiteral to DateTimeFormat.
+        (WebCore::convertWindowsDateFormatToLDML):
+        Follow the moving.
+
+2012-10-23  Kent Tamura  <tkent@chromium.org>
+
         REGRESSION(r131421): Text baseline is not aligned in some locales
         https://bugs.webkit.org/show_bug.cgi?id=100088
 
