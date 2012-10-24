@@ -1,3 +1,22 @@
+2012-10-24  Kiran Muppala  <cmuppala@apple.com>
+
+        Disable auto termination of WebKit2 processes on mac
+        https://bugs.webkit.org/show_bug.cgi?id=100176
+
+        Reviewed by Alexey Proskuryakov.
+
+        Disable WebKit2 auto termination by taking corresponding assertion
+        until UI process is enhanced to determine when it is safe to enable it.
+
+        * NetworkProcess/mac/NetworkProcessMainMac.mm:
+        (WebKit::NetworkProcessMain):
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        (WebKit::PluginProcessMain):
+        * SharedWorkerProcess/mac/SharedWorkerProcessMainMac.mm:
+        (WebKit::SharedWorkerProcessMain):
+        * WebProcess/mac/WebProcessInitialization.mm:
+        (WebKit::InitializeWebProcess):
+
 2012-10-24  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Get rid of Ewk_View private C API (Part 1)

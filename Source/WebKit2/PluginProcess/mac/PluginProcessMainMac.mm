@@ -117,6 +117,10 @@ int PluginProcessMain(const CommandLine& commandLine)
     WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    [[NSProcessInfo processInfo] disableAutomaticTermination:@"Disable PluginProcess Auto Termination"];
+#endif
+
 #if defined(__i386__)
     // Initialize the shim for 32-bit only.
     PluginProcess::shared().initializeShim();
