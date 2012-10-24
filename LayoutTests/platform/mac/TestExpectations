@@ -1310,6 +1310,10 @@ webkit.org/b/99921 mathml/presentation/subsup.xhtml [ Failure ]
 # css3-conditionals support is not yet enabled.
 webkit.org/b/86146 css3/supports.html
 
+# Hardware accelerated CSS transitions appear pixelated when scaled up using transform
+webkit.org/b/27684 compositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
+webkit.org/b/27684 compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
+
 # Asserts in MessagePort::contextDestroyed, but the assert usually gets attributed to later tests.
 webkit.org/b/94458 fast/events/message-port-constructor-for-deleted-document.html
 

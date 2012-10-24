@@ -2540,6 +2540,13 @@ crbug.com/75238 [ Win ] fast/text/large-text-composed-char.html [ Failure ]
 crbug.com/70686 [ Mac ] fast/text/international/cjk-segmentation.html [ Failure ]
 crbug.com/144529 [ Android ] fast/text/international/cjk-segmentation.html [ Failure ]
 
+# These will pass once 149943 is fixed
+crbug.com/149943 compositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
+crbug.com/149943 compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
+# These should pass too, but the latter might fail due to Skia blending differences.
+crbug.com/149943 platform/chromium/virtual/softwarecompositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
+crbug.com/149943 platform/chromium/virtual/softwarecompositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
+
 # Added by http://trac.webkit.org/changeset/76674
 crbug.com/70882 [ Win ] fast/text/offsetForPosition-complex-fallback.html [ Failure ]
 

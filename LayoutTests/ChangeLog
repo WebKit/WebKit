@@ -1,3 +1,19 @@
+2012-10-24  Dana Jansens  <danakj@chromium.org>
+
+        Layout tests to verify scaled composited layers have crisp text
+        https://bugs.webkit.org/show_bug.cgi?id=96940
+
+        Reviewed by Adrienne Walker.
+
+        Chromium bug: crbug.com/149943
+
+        * compositing/text-on-scaled-layer-expected.html: Added.
+        * compositing/text-on-scaled-layer.html: Added.
+        * compositing/text-on-scaled-surface-expected.html: Added.
+        * compositing/text-on-scaled-surface.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2012-10-24  Levi Weintraub  <leviw@chromium.org>
 
         Unreveiewed gardening. Fixing linter, marking 2 mathml tests as flaky crashers on debug,
