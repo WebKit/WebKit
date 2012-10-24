@@ -1,3 +1,24 @@
+2012-10-24  Florin Malita  <fmalita@chromium.org>
+
+        [Chromium] SVG repaint issues
+        https://bugs.webkit.org/show_bug.cgi?id=99874
+
+        Reviewed by Levi Weintraub.
+
+        RenderSVGRoot::paintReplaced() converts the container offsets to a relative transform,
+        but in doing so it ends up accumulating subpixel rounding deltas twice: first for 
+        adjustedPaintOffset and second in localToParentTransform(). If coordinates are on
+        half-pixel boundaries, the 2x rounding delta yields a full pixel drift and we end up
+        painting at the wrong location.
+
+        This can be avoided by using localToBorderBoxTransform() directly, which (unlike
+        localToParentTransform()) doesn't perform rounding.
+
+        No new tests: existing pixel results cover this change after rebaseline.
+
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paintReplaced):
+
 2012-10-24  Levi Weintraub  <leviw@chromium.org>
 
         Fixing the Chromium build after typo in r132367.

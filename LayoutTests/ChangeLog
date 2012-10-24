@@ -1,3 +1,16 @@
+2012-10-24  Florin Malita  <fmalita@chromium.org>
+
+        [Chromium] SVG repaint issues
+        https://bugs.webkit.org/show_bug.cgi?id=99874
+
+        Reviewed by Levi Weintraub.
+
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-float-border-padding-expected.png:
+        * platform/chromium-linux/svg/zoom/text/zoom-svg-float-border-padding-expected.png:
+        * platform/chromium-win/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.png:
+        * platform/chromium-win/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-10-24  Dana Jansens  <danakj@chromium.org>
 
         Layout tests to verify scaled composited layers have crisp text
