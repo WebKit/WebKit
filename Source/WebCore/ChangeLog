@@ -1,3 +1,15 @@
+2012-10-24  Jonathan Feldstein  <jfeldstein@rim.com>
+
+        BlackBerry fix for webgl-depth-texture.html
+        https://bugs.webkit.org/show_bug.cgi?id=100258
+
+        Reviewed by Yong Li.
+
+        Removed a platform specific define that is unnecessary.
+
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::computeFormatAndTypeParameters):
+
 2012-10-24  Nico Weber  <thakis@chromium.org>
 
         Honor image orientation in GraphicsContextSkia
