@@ -527,18 +527,17 @@ input[type="week"] {
 #endif
 
 input::-webkit-datetime-edit {
-    -webkit-align-items: center;
     -webkit-flex: 1;
     -webkit-user-modify: read-only !important;
-    display: -webkit-flex;
+    display: inline-block;
     white-space: pre;
 }
 
 input::-webkit-datetime-edit-ampm-field {
     -webkit-user-modify: read-only !important;
     border: none;
-    padding: 0.15em;
     display: inline-block;
+    margin: 1px;
     text-align: center;
 }
 
@@ -546,40 +545,40 @@ input::-webkit-datetime-edit-day-field {
     -webkit-user-modify: read-only !important;
     display: inline-block;
     border: none;
+    margin: 1px;
     text-align: center;
-    padding: 0.15em;
 }
 
 input::-webkit-datetime-edit-hour-field {
     -webkit-user-modify: read-only !important;
     display: inline-block;
     border: none;
+    margin: 1px;
     text-align: center;
-    padding: 0.15em;
 }
 
 input::-webkit-datetime-edit-millisecond-field {
     -webkit-user-modify: read-only !important;
     display: inline-block;
     border: none;
+    margin: 1px;
     text-align: center;
-    padding: 0.15em;
 }
 
 input::-webkit-datetime-edit-minute-field {
     -webkit-user-modify: read-only !important;
     display: inline-block;
     border: none;
+    margin: 1px;
     text-align: center;
-    padding: 0.15em;
 }
 
 input::-webkit-datetime-edit-month-field {
     -webkit-user-modify: read-only !important;
     display: inline-block;
     border: none;
+    margin: 1px;
     text-align: center;
-    padding: 0.15em;
 }
 
 /* This selector is used when step >= 3600 second but format contains minute field. */
@@ -591,24 +590,24 @@ input::-webkit-datetime-edit-second-field {
     -webkit-user-modify: read-only !important;
     display: inline-block;
     border: none;
+    margin: 1px;
     text-align: center;
-    padding: 0.15em;
 }
 
 input::-webkit-datetime-edit-week-field {
     -webkit-user-modify: read-only !important;
     display: inline-block;
     border: none;
+    margin: 1px;
     text-align: center;
-    padding: 0.15em;
 }
 
 input::-webkit-datetime-edit-year-field {
     -webkit-user-modify: read-only !important;
     display: inline-block;
     border: none;
+    margin: 1px;
     text-align: center;
-    padding: 0.15em;
 }
 
 input::-webkit-datetime-edit-text {
@@ -616,16 +615,10 @@ input::-webkit-datetime-edit-text {
     display: inline-block;
 }
 
-input::-webkit-datetime-edit-gap {
-    -webkit-flex: 1;
-    -webkit-user-modify: read-only !important;
-    display: inline-block;
-}
-
 input::-webkit-date-and-time-container {
     -webkit-align-items: center;
     -webkit-flex: 1;
-    display: -webkit-flex;
+    display: -webkit-inline-flex;
 }
 
 /* Remove focus ring from fields and use highlight color */

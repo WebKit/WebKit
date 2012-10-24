@@ -1,3 +1,133 @@
+2012-10-23  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r131421): Text baseline is not aligned in some locales
+        https://bugs.webkit.org/show_bug.cgi?id=100088
+
+        Reviewed by Hajime Morita.
+
+        Before this patch, the element with ::-webkit-datetime-edit had
+        -webkit-align-items:center. It was incorrect at all because it
+        ignores baselines of each of inner fields. We need to change it to
+        -webkit-align-items:baseline, or stop using -webkit-flex.
+
+        However -webkit-align-items:baseline doesn't work because a spin
+        button element in the element doesn't have the baseline. If we
+        specified -webkit-align-items:baseline, the spin button would
+        shift up.
+
+        So, we change the element structure for multiple fields input
+        elements. Before this patch, the structure was:
+
+        input
+          |
+           - ::-webkit-date-and-time-container (flex cotainer)
+             |
+             |- ::-webkit-datetime-edit (has flexibility in date-and-time-container, also this is a flex container)
+             |  |- ::-webkit-datetime-edit-foo
+             |  |      :
+             |  |
+             |  |- ::-webkit-date-time-edit-gap  (has flexibility in datetime-edit)
+             |   - ::-webkit-inne-spin-button
+              - ::-webkit-calendar-picker-indicator
+
+        After the patch, the structure will be:
+
+        input
+          |
+           - ::-webkit-date-and-time-container (flexible box)
+             |
+             |- ::-webkit-datetime-edit (has flexibility in date-and-time-container)
+             |  |- ::-webkit-datetime-edit-foo
+             |  |      :
+             |  |
+             |
+             |- ::-webkit-inne-spin-button
+              - ::-webkit-calendar-picker-indicator
+
+        Because the spin button owner is date-and-time-container, we don't
+        need to make the datetime-edit element a flex container.
+
+        Also, we had rounding error by subpixel layout. To avoid it, we
+        stop using fractional paddings.
+
+        In order to implement this, we need to change the SpinButtonOwner
+        interface provider from DateTimeEditElement to
+        BaseMultipleFieldsDateAndTimeInputType.
+
+        No new tests. Covered by month-multiple-fields-appearance-l10n.html.
+
+        * css/html.css:
+        (input::-webkit-datetime-edit): Stop making this a flex
+        container. Inner fields in this use the single baseline.
+        (input::-webkit-datetime-edit-ampm-field):
+        Don't use fractional paddings to avoid rounding erros of subpixel
+        layout.  Use integral margin instead to avoid overwrap of focus
+        ring and background-color of the field.
+        (input::-webkit-datetime-edit-day-field): Ditto.
+        (input::-webkit-datetime-edit-hour-field): Ditto.
+        (input::-webkit-datetime-edit-millisecond-field): Ditto.
+        (input::-webkit-datetime-edit-minute-field): Ditto.
+        (input::-webkit-datetime-edit-month-field): Ditto.
+        (input::-webkit-datetime-edit-second-field): Ditto.
+        (input::-webkit-datetime-edit-week-field): Ditto.
+        (input::-webkit-datetime-edit-year-field): Ditto.
+        (input::-webkit-date-and-time-container): Ditto.
+
+        * html/BaseMultipleFieldsDateAndTimeInputType.h:
+        (BaseMultipleFieldsDateAndTimeInputType): Overrides
+        SpinButtonOwner functions, and add m_spinButtonElement.
+        * html/BaseMultipleFieldsDateAndTimeInputType.cpp:
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::focusAndSelectSpinButtonOwner):
+        Just delegate to DateTimeEditElement::focusIfNoFocus.
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::shouldSpinButtonRespondToMouseEvents):
+        Moved from DateTimeEditElement::shouldSpinButtonRespondToMouseEvents.
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::shouldSpinButtonRespondToWheelEvents):
+        Moved from DateTimeEditElement::shouldSpinButtonRespondToWheelEvents.
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::spinButtonStepDown):
+        Delegate to DateTimeEditElement::stepDown.
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::spinButtonStepUp):
+        Delegate to DateTimeEditElement::stepUp.
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::BaseMultipleFieldsDateAndTimeInputType):
+        Initialize m_spinButtonElement.
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::~BaseMultipleFieldsDateAndTimeInputType):
+        Reset SpinButtonOwner for m_spinButtonElement like the old code of ~DateTimeEditElement.
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::createShadowSubtree):
+        Put a SpinButtonElement between the DateTimeEditElement and the PickerIndicatorElement.
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::forwardEvent):
+        Take care of SpinButtonElement.
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::disabledAttributeChanged):
+        Release capture of SpinButtonElement. This corresponds to the old
+        code of DateTimeEditElement::updateUIState.
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::readonlyAttributeChanged): Ditto.
+
+        * html/TextFieldInputType.h:
+        Make SpinButtonElement::SpinButtonOwner protected to allow overriding.
+
+        * html/shadow/DateTimeEditElement.h:
+        (DateTimeEditElement): Remove SpniButtonOwner implementation,
+        m_spinButton, and rename some functions.
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore::DateTimeEditElement::DateTimeEditElement):
+        Remove m_spinButton.
+        (WebCore::DateTimeEditElement::~DateTimeEditElement): Ditto.
+        (WebCore::DateTimeEditElement::focusIfNoFocus):
+        Renamed from focusAndSelectSpinButtonOwner. This is called
+        BaseMultipleFieldsDateAndTimeInputType::focusAndSelectSpinButtonOwner.
+        (WebCore::DateTimeEditElement::layout):
+        Remove creation code for -webkit-datetime-edit-gap and SpinButtonElement.
+        (WebCore::DateTimeEditElement::defaultEventHandler):
+        Move the code for m_spinButton to
+        BaseMultipleFieldsDateAndTimeInputType::forwardEvent.
+        (WebCore::DateTimeEditElement::hasFocusedField): A helper for
+        BaseMultipleFieldsDateAndTimeInputType::shouldSpinButtonRespondToWheelEvents.
+        (WebCore::DateTimeEditElement::stepDown): A helper for
+        BaseMultipleFieldsDateAndTimeInputType::spinButtonStepDown.
+        (WebCore::DateTimeEditElement::stepUp): A helper for
+        BaseMultipleFieldsDateAndTimeInputType::spinButtonStepUp.
+        (WebCore::DateTimeEditElement::updateUIState): Move the code to
+        BaseMultipleFieldsDateAndTimeInputType::disabledAttributeChanged
+        and readonlyAttributeChanged.
+
 2012-10-23  Andreas Kling  <kling@webkit.org>
 
         Shrink immutable ElementAttributeData and StylePropertySet by one pointer each.

@@ -1,3 +1,17 @@
+2012-10-23  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r131421): Text baseline is not aligned in some locales
+        https://bugs.webkit.org/show_bug.cgi?id=100088
+
+        Reviewed by Hajime Morita.
+
+        Add a pixel image which has notable changes.
+        Input elements in other tests have slightly small height and
+        slightly narrow width.
+
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-10-23  Varun Jain  <varunjain@chromium.org>
 
         Context menu generated from touch gestures on textareas has

@@ -249,7 +249,6 @@ DateTimeEditElement::EditControlOwner::~EditControlOwner()
 DateTimeEditElement::DateTimeEditElement(Document* document, EditControlOwner& editControlOwner)
     : HTMLDivElement(divTag, document)
     , m_editControlOwner(&editControlOwner)
-    , m_spinButton(0)
 {
     DEFINE_STATIC_LOCAL(AtomicString, dateTimeEditPseudoId, ("-webkit-datetime-edit"));
     setShadowPseudoId(dateTimeEditPseudoId);
@@ -259,9 +258,6 @@ DateTimeEditElement::~DateTimeEditElement()
 {
     for (size_t fieldIndex = 0; fieldIndex < m_fields.size(); ++fieldIndex)
         m_fields[fieldIndex]->removeEventHandler();
-
-    if (m_spinButton)
-        m_spinButton->removeSpinButtonOwner();
 }
 
 void DateTimeEditElement::addField(PassRefPtr<DateTimeFieldElement> field)
@@ -315,7 +311,7 @@ size_t DateTimeEditElement::fieldIndexOf(const DateTimeFieldElement& field) cons
     return invalidFieldIndex;
 }
 
-void DateTimeEditElement::focusAndSelectSpinButtonOwner()
+void DateTimeEditElement::focusIfNoFocus()
 {
     if (focusedFieldIndex() != invalidFieldIndex)
         return;
@@ -427,14 +423,6 @@ void DateTimeEditElement::layout(const LayoutParameters& layoutParameters, const
                 break;
         }
     }
-
-    DEFINE_STATIC_LOCAL(AtomicString, gapPseudoId, ("-webkit-datetime-edit-gap", AtomicString::ConstructFromLiteral));
-    RefPtr<HTMLDivElement> gapElement = HTMLDivElement::create(document());
-    gapElement->setShadowPseudoId(gapPseudoId);
-    appendChild(gapElement);
-    RefPtr<SpinButtonElement> spinButton = SpinButtonElement::create(document(), *this);
-    m_spinButton = spinButton.get();
-    appendChild(spinButton);
 }
 
 AtomicString DateTimeEditElement::localeIdentifier() const
@@ -464,12 +452,6 @@ void DateTimeEditElement::defaultEventHandler(Event* event)
             return;
     }
 
-    if (m_spinButton) {
-        m_spinButton->forwardEvent(event);
-        if (event->defaultHandled())
-            return;
-    }
-
     HTMLDivElement::defaultEventHandler(event);
 }
 
@@ -493,26 +475,18 @@ void DateTimeEditElement::setEmptyValue(const LayoutParameters& layoutParameters
         m_fields[fieldIndex]->setEmptyValue(dateForReadOnlyField, DateTimeFieldElement::DispatchNoEvent);
 }
 
-bool DateTimeEditElement::shouldSpinButtonRespondToMouseEvents()
+bool DateTimeEditElement::hasFocusedField()
 {
-    return !isDisabled() && !isReadOnly();
-}
-
-bool DateTimeEditElement::shouldSpinButtonRespondToWheelEvents()
-{
-    if (!shouldSpinButtonRespondToMouseEvents())
-        return false;
-
     return focusedFieldIndex() != invalidFieldIndex;
 }
 
-void DateTimeEditElement::spinButtonStepDown()
+void DateTimeEditElement::stepDown()
 {
     if (DateTimeFieldElement* const field = focusedField())
         field->stepDown();
 }
 
-void DateTimeEditElement::spinButtonStepUp()
+void DateTimeEditElement::stepUp()
 {
     if (DateTimeFieldElement* const field = focusedField())
         field->stepUp();
@@ -521,7 +495,6 @@ void DateTimeEditElement::spinButtonStepUp()
 void DateTimeEditElement::updateUIState()
 {
     if (isDisabled() || isReadOnly()) {
-        m_spinButton->releaseCapture();
         if (DateTimeFieldElement* field = focusedField())
             field->blur();
     }
