@@ -55,6 +55,7 @@
             'wtf/MemoryInstrumentationHashCountedSet.h',
             'wtf/MemoryInstrumentationHashMap.h',
             'wtf/MemoryInstrumentationHashSet.h',
+            'wtf/MemoryInstrumentationListHashSet.h',
             'wtf/MemoryInstrumentationParsedURL.h',
             'wtf/MemoryInstrumentationSequence.h',
             'wtf/MemoryInstrumentationString.h',

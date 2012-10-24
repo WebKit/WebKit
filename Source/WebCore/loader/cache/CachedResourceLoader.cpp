@@ -52,6 +52,7 @@
 #include "Settings.h"
 #include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/MemoryInstrumentationHashSet.h>
+#include <wtf/MemoryInstrumentationListHashSet.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -906,8 +907,7 @@ void CachedResourceLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo)
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Loader);
     info.addMember(m_documentResources);
     info.addMember(m_validatedURLs);
-    if (m_preloads)
-        info.addListHashSet(*m_preloads);
+    info.addMember(m_preloads);
     info.addMember(m_pendingPreloads);
 }
 

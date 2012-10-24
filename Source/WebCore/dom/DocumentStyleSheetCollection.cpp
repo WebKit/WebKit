@@ -47,6 +47,7 @@
 #include "StyleSheetList.h"
 #include "UserContentURLPattern.h"
 #include "WebCoreMemoryInstrumentation.h"
+#include <wtf/MemoryInstrumentationListHashSet.h>
 #include <wtf/MemoryInstrumentationVector.h>
 
 namespace WebCore {
@@ -483,7 +484,7 @@ void DocumentStyleSheetCollection::reportMemoryUsage(MemoryObjectInfo* memoryObj
     info.addMember(m_userSheets);
     info.addMember(m_activeAuthorStyleSheets);
     info.addMember(m_styleSheetsForStyleSheetList);
-    info.addListHashSet(m_styleSheetCandidateNodes);
+    info.addMember(m_styleSheetCandidateNodes);
     info.addMember(m_preferredStylesheetSetName);
     info.addMember(m_selectedStylesheetSetName);
 }

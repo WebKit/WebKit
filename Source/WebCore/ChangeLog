@@ -1,3 +1,20 @@
+2012-09-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: provide memory instrumentation for ListHashSet
+        https://bugs.webkit.org/show_bug.cgi?id=97786
+
+        Reviewed by Vsevolod Vlasov.
+
+        Switched existing usages of addListHashSet to the generic instrumentation mechanism
+        as it should work just just fine now that there is a memory instrumentation of
+        ListHashSet.
+
+        * dom/DocumentEventQueue.cpp:
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::reportMemoryUsage):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::reportMemoryUsage):
+
 2012-10-24  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] Credentials not re-used for a redirected request to the same domain

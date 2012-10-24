@@ -278,6 +278,7 @@
 		A8A47471151A825B004123FF /* URLString.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47362151A825B004123FF /* URLString.h */; };
 		A8A47472151A825B004123FF /* RawURLBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47364151A825B004123FF /* RawURLBuffer.h */; };
 		A8A47473151A825B004123FF /* URLBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47365151A825B004123FF /* URLBuffer.h */; };
+		F3525E2A16149FF400278BC1 /* MemoryInstrumentationListHashSet.h in Headers */ = {isa = PBXBuildFile; fileRef = F3525E2916149FF400278BC1 /* MemoryInstrumentationListHashSet.h */; };
 		A8A47474151A825B004123FF /* URLCharacterTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A47366151A825B004123FF /* URLCharacterTypes.cpp */; };
 		A8A47475151A825B004123FF /* URLCharacterTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47367151A825B004123FF /* URLCharacterTypes.h */; };
 		A8A47476151A825B004123FF /* URLComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47368151A825B004123FF /* URLComponent.h */; };
@@ -564,6 +565,7 @@
 		A8A47349151A825B004123FF /* CharacterNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharacterNames.h; sourceTree = "<group>"; };
 		A8A4734A151A825B004123FF /* Collator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Collator.h; sourceTree = "<group>"; };
 		A8A4734B151A825B004123FF /* CollatorDefault.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollatorDefault.cpp; sourceTree = "<group>"; };
+		F3525E2916149FF400278BC1 /* MemoryInstrumentationListHashSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryInstrumentationListHashSet.h; sourceTree = "<group>"; };
 		A8A47350151A825B004123FF /* CollatorICU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollatorICU.cpp; sourceTree = "<group>"; };
 		A8A47351151A825B004123FF /* UnicodeIcu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnicodeIcu.h; sourceTree = "<group>"; };
 		A8A47354151A825B004123FF /* ScriptCodesFromICU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptCodesFromICU.h; sourceTree = "<group>"; };
@@ -745,6 +747,7 @@
 				F3FBC71D161AF7BF00BB4BD4 /* MemoryInstrumentationHashCountedSet.h */,
 				F3525E451619A4EE00278BC1 /* MemoryInstrumentationHashMap.h */,
 				4F1B2DB5160B44AA00586559 /* MemoryInstrumentationHashSet.h */,
+				F3525E2916149FF400278BC1 /* MemoryInstrumentationListHashSet.h */,
 				4FD2A358161B0EE100EBF236 /* MemoryInstrumentationParsedURL.h */,
 				F3FBC71F161AF7CD00BB4BD4 /* MemoryInstrumentationSequence.h */,
 				4FCF27E016172E8600CBF037 /* MemoryInstrumentationString.h */,
@@ -1209,6 +1212,7 @@
 				A8A4746A151A825B004123FF /* UTF8.h in Headers */,
 				A8A473B9151A825B004123FF /* utils.h in Headers */,
 				A8A4747D151A825B004123FF /* ValueCheck.h in Headers */,
+				F3525E2A16149FF400278BC1 /* MemoryInstrumentationListHashSet.h in Headers */,
 				A8A4747E151A825B004123FF /* Vector.h in Headers */,
 				A8A4747F151A825B004123FF /* VectorTraits.h in Headers */,
 				A8A47480151A825B004123FF /* VMTags.h in Headers */,

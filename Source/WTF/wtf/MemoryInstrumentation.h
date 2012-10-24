@@ -158,7 +158,6 @@ private:
     };
 
     template<typename T> void addObject(const T& t, MemoryObjectType ownerObjectType) { OwningTraits<T>::addObject(this, t, ownerObjectType); }
-    template<typename ListHashSetType> void addListHashSet(const ListHashSetType&, MemoryObjectType, bool contentOnly = false);
     void addRawBuffer(const void* const& buffer, MemoryObjectType ownerObjectType, size_t size)
     {
         if (!buffer || visited(buffer))
@@ -201,7 +200,6 @@ public:
     }
 
     template<typename M> void addMember(const M& member) { m_memoryInstrumentation->addObject(member, m_objectType); }
-    template<typename ListHashSetType> void addListHashSet(const ListHashSetType& set) { m_memoryInstrumentation->addListHashSet(set, m_objectType, true); }
     void addRawBuffer(const void* const& buffer, size_t size) { m_memoryInstrumentation->addRawBuffer(buffer, m_objectType, size); }
     void addPrivateBuffer(size_t size) { m_memoryInstrumentation->countObjectSize(0, m_objectType, size); }
 
@@ -249,15 +247,6 @@ void MemoryInstrumentation::addObjectImpl(const RefPtr<T>* const& object, Memory
     addObjectImpl(object->get(), ownerObjectType, byPointer);
 }
 
-template<typename ListHashSetType>
-void MemoryInstrumentation::addListHashSet(const ListHashSetType& hashSet, MemoryObjectType ownerObjectType, bool contentOnly)
-{
-    if (visited(&hashSet))
-        return;
-    size_t size = (contentOnly ? 0 : sizeof(ListHashSetType)) + hashSet.capacity() * sizeof(void*) + hashSet.size() * (sizeof(typename ListHashSetType::ValueType) + 2 * sizeof(void*));
-    countObjectSize(&hashSet, ownerObjectType, size);
-}
-
 template<typename T>
 void MemoryInstrumentation::InstrumentedPointer<T>::process(MemoryInstrumentation* memoryInstrumentation)
 {
@@ -280,6 +269,9 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
 
 template<typename ValueArg, typename HashArg, typename TraitsArg> class HashCountedSet;
 template<typename ValueArg, typename HashArg, typename TraitsArg> void reportMemoryUsage(const HashCountedSet<ValueArg, HashArg, TraitsArg>* const&, MemoryObjectInfo*);
+
+template<typename ValueArg, size_t inlineCapacity, typename HashArg> class ListHashSet;
+template<typename ValueArg, size_t inlineCapacity, typename HashArg> void reportMemoryUsage(const ListHashSet<ValueArg, inlineCapacity, HashArg>* const&, MemoryObjectInfo*);
 
 class String;
 void reportMemoryUsage(const String* const&, MemoryObjectInfo*);

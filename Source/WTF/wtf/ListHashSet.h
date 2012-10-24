@@ -98,6 +98,8 @@ namespace WTF {
         int capacity() const;
         bool isEmpty() const;
 
+        size_t sizeInBytes() const;
+
         iterator begin();
         iterator end();
         const_iterator begin() const;
@@ -209,14 +211,14 @@ namespace WTF {
             fastFree(node);
         }
 
-    private:
-        Node* pool() { return reinterpret_cast_ptr<Node*>(m_pool.pool); }
-        Node* pastPool() { return pool() + m_poolSize; }
-
         bool inPool(Node* node)
         {
             return node >= pool() && node < pastPool();
         }
+
+    private:
+        Node* pool() { return reinterpret_cast_ptr<Node*>(m_pool.pool); }
+        Node* pastPool() { return pool() + m_poolSize; }
 
         Node* m_freeList;
         bool m_isDoneWithInitialFreeList;
@@ -557,6 +559,18 @@ namespace WTF {
     inline bool ListHashSet<T, inlineCapacity, U>::isEmpty() const
     {
         return m_impl.isEmpty(); 
+    }
+
+    template<typename T, size_t inlineCapacity, typename U>
+    size_t ListHashSet<T, inlineCapacity, U>::sizeInBytes() const
+    {
+        size_t result = sizeof(*this) + sizeof(*m_allocator);
+        result += sizeof(typename ImplType::ValueType) * m_impl.capacity();
+        for (Node* node = m_head; node; node = node->m_next) {
+            if (!m_allocator->inPool(node))
+                result += sizeof(Node);
+        }
+        return result;
     }
 
     template<typename T, size_t inlineCapacity, typename U>

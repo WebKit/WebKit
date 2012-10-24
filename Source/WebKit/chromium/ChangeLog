@@ -1,3 +1,16 @@
+2012-09-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: provide memory instrumentation for ListHashSet
+        https://bugs.webkit.org/show_bug.cgi?id=97786
+
+        Reviewed by Vsevolod Vlasov.
+
+        Added a test for ListHashSet memory instrumentation.
+
+        * tests/MemoryInstrumentationTest.cpp:
+        (WebCore::TEST):
+        (WebCore):
+
 2012-10-24  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Plumb DRT WebkitShouldRespectImageOrientation through to page settings

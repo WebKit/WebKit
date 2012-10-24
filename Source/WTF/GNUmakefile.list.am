@@ -85,6 +85,7 @@ wtf_sources += \
     Source/WTF/wtf/MemoryInstrumentationHashCountedSet.h \
     Source/WTF/wtf/MemoryInstrumentationHashMap.h \
     Source/WTF/wtf/MemoryInstrumentationHashSet.h \
+    Source/WTF/wtf/MemoryInstrumentationListHashSet.h \
     Source/WTF/wtf/MemoryInstrumentationParsedURL.h \
     Source/WTF/wtf/MemoryInstrumentationSequence.h \
     Source/WTF/wtf/MemoryInstrumentationString.h \

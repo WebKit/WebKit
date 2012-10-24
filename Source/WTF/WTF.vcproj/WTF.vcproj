@@ -925,6 +925,10 @@
 			>
 		</File>
 		<File
+		        RelativePath="..\wtf\MemoryInstrumentationListHashSet.h"
+			>
+		</File>
+		<File
 		        RelativePath="..\wtf\MemoryInstrumentationSequence.h"
 			>
 		</File>

@@ -1,3 +1,36 @@
+2012-09-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: provide memory instrumentation for ListHashSet
+        https://bugs.webkit.org/show_bug.cgi?id=97786
+
+        Reviewed by Vsevolod Vlasov.
+
+        Added memory instrumentation for ListHashSet.
+
+        * GNUmakefile.list.am:
+        * WTF.gypi:
+        * WTF.pro:
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/HashSet.h:
+        (WTF):
+        * wtf/ListHashSet.h:
+        (ListHashSet):
+        (ListHashSetNodeAllocator): changed visibility of inPool method to public
+        (WTF::ListHashSetNodeAllocator::pool):
+        (WTF::ListHashSetNodeAllocator::pastPool):
+        (WTF::::sizeInBytes): added a method that returns size of the set in bytes including
+        all its internals but not the content elements.
+        (WTF):
+        * wtf/MemoryInstrumentation.h: removed onsolete method. All clients were updated to
+        use generic addMember instead.
+        (MemoryInstrumentation):
+        (WTF::MemoryClassInfo::addPrivateBuffer):
+        * wtf/MemoryInstrumentationHashSet.h:
+        * wtf/MemoryInstrumentationListHashSet.h: Copied from Source/WTF/wtf/MemoryInstrumentationHashSet.h.
+        (WTF):
+        (WTF::reportMemoryUsage):
+
 2012-10-23  Benjamin Poulain  <benjamin@webkit.org>
 
         WTFURL: Implement KURL::setPort()

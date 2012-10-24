@@ -36,6 +36,7 @@
 #include "SuspendableTimer.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/MemoryInstrumentationHashSet.h>
+#include <wtf/MemoryInstrumentationListHashSet.h>
 
 namespace WebCore {
     
