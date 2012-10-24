@@ -1,3 +1,22 @@
+2012-10-24  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL][WK2] fast/repaint/delete-into-nested-block.html and fast/repaint/4776765.html are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=100010
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Force the main view to receive focus even if Evas already
+        considers it to be focused.
+
+        It might happen that a different frame is focused by a page and
+        the focus change notification does not reach Evas. When another
+        test is run, the main frame is then not considered to be focused
+        by WebCore, and things such as focus rings are not drawn as
+        expected.
+
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp:
+        (WTR::PlatformWebView::focus):
+
 2012-10-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r132333.
