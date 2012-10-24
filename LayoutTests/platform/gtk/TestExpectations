@@ -573,6 +573,8 @@ webkit.org/b/98133 fast/css/sticky/sticky-writing-mode-vertical-rl.html [ ImageO
 
 webkit.org/b/68878 media/video-playing-and-pause.html [ Failure Pass ]
 
+webkit.org/b/100117 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////

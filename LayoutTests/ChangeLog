@@ -1,3 +1,16 @@
+2012-10-24  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+        Marking fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html
+        as flaky after r132143.
+        Adding baselines for tvo SVG Transforms tests required after r132121.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/svg/transforms/svg-css-transforms-clip-path-expected.png: Added.
+        * platform/gtk/svg/transforms/svg-css-transforms-clip-path-expected.txt: Added.
+        * platform/gtk/svg/transforms/svg-css-transforms-expected.png: Added.
+        * platform/gtk/svg/transforms/svg-css-transforms-expected.txt: Added.
+
 2012-10-23  David Barton  <dbarton@mathscribe.com>
 
         Unreviewed gardening. Some linux MathML tests are timing out - see webkit.org/b/100202.
