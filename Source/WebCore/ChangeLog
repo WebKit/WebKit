@@ -1,3 +1,9 @@
+2012-10-24  Levi Weintraub  <leviw@chromium.org>
+
+        Fixing the Chromium build after typo in r132367.
+
+        * WebCore.gypi:
+
 2012-10-24  Nico Weber  <thakis@chromium.org>
 
         [chromium] Respect image orientation in image dragging code
