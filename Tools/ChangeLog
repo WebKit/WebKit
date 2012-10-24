@@ -1,3 +1,15 @@
+2012-10-24  Mario Sanchez Prada  <mario@webkit.org>
+
+        [WK2] [GTK] TestWebKitAccessibility is not being run
+        https://bugs.webkit.org/show_bug.cgi?id=100102
+
+        Reviewed by Carlos Garcia Campos.
+
+        Removed wrong early return in _start_accessibility_daemons().
+
+        * Scripts/run-gtk-tests:
+        (TestRunner._lookup_atspi2_binary): Removed wrong line.
+
 2012-10-24  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Plumb DRT WebkitShouldRespectImageOrientation through to page settings 

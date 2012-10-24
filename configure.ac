@@ -1044,16 +1044,6 @@ if test "$with_acceleration_backend" = "opengl"; then
 fi
 AC_SUBST([OPENGL_LIBS])
 
-# check if atspi2 is available (only needed for Webkit2 unit tests)
-if test "$enable_webkit2" = "yes"; then
-   PKG_CHECK_MODULES([ATSPI2],
-                     [atspi-2 >= $ATSPI2_REQUIRED_VERSION],
-                     [have_atspi2=yes], [have_atspi2=no])
-
-   AC_SUBST([ATSPI2_CFLAGS])
-   AC_SUBST([ATSPI2_LIBS])
-fi
-
 if test "$enable_gamepad" = "yes"; then
    PKG_CHECK_MODULES([GAMEPAD], [gio-unix-2.0 gudev-1.0])
 
@@ -1113,6 +1103,16 @@ AC_SUBST(GTK2_CFLAGS)
 AC_SUBST(GTK2_LIBS)
 
 GTK_DOC_CHECK([1.10])
+
+# We need atspi2 for Webkit2 unit tests
+if test "$enable_webkit2" = "yes"; then
+   PKG_CHECK_MODULES([ATSPI2],
+                     [atspi-2 >= $ATSPI2_REQUIRED_VERSION],
+                     [have_atspi2=yes], [have_atspi2=no])
+
+   AC_SUBST([ATSPI2_CFLAGS])
+   AC_SUBST([ATSPI2_LIBS])
+fi
 
 # OS conditionals
 AM_CONDITIONAL([OS_WIN32],[test "$os_win32" = "yes"])

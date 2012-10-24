@@ -119,7 +119,6 @@ class TestRunner:
         return None
 
     def _start_accessibility_daemons(self):
-        return False
         spi_bus_launcher_path = self._lookup_atspi2_binary('at-spi-bus-launcher')
         spi_registryd_path = self._lookup_atspi2_binary('at-spi2-registryd')
         if not spi_bus_launcher_path or not spi_registryd_path:
