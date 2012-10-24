@@ -124,6 +124,11 @@ namespace WebCore {
 #endif
     };
 
+    // FIXME: This is a workaround because PluginPackageHash is broken and may consider keys with different hashes as equal.
+    struct PluginPackageHashTraits : HashTraits<RefPtr<PluginPackage> > {
+        static const int minimumTableSize = 64;
+    };
+
     struct PluginPackageHash {
         static unsigned hash(const uintptr_t key) { return reinterpret_cast<PluginPackage*>(key)->hash(); }
         static unsigned hash(const RefPtr<PluginPackage>& key) { return key->hash(); }

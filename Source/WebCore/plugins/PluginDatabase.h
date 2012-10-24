@@ -42,7 +42,7 @@ namespace WebCore {
     class PluginDatabaseClient;
     class PluginPackage;
 
-    typedef HashSet<RefPtr<PluginPackage>, PluginPackageHash> PluginSet;
+    typedef HashSet<RefPtr<PluginPackage>, PluginPackageHash, PluginPackageHashTraits> PluginSet;
 
     class PluginDatabase {
         WTF_MAKE_NONCOPYABLE(PluginDatabase); WTF_MAKE_FAST_ALLOCATED;

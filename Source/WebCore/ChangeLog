@@ -1,3 +1,17 @@
+2012-10-23  Andreas Kling  <kling@webkit.org>
+
+        REGRESSION(r130643): ASSERTION FAILED: result.iterator != end() below PluginDatabase::add
+        <http://webkit.org/b/100065>
+
+        Reviewed by Anders Carlsson.
+
+        Restore the pre-r130643 hash table size for PluginDatabase to prevent these easily reproducible
+        collisions. This will need a proper fix at some point.
+
+        * plugins/PluginDatabase.h:
+        * plugins/PluginPackage.h:
+        (PluginPackageHashTraits):
+
 2012-10-23  Simon Fraser  <simon.fraser@apple.com>
 
         Allow tests to run with a tile cache, and optionally dump the tile cache via layerTreeAsText()
