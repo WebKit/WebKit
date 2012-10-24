@@ -192,5 +192,17 @@ void InitWebCoreSystemInterface(void)
         INIT(NSReboundDeltaForElasticDelta);
 #endif
 
+        INIT(CaptionAppearanceHasUserPreferences);
+        INIT(CaptionAppearanceShowCaptionsWhenAvailable);
+        INIT(CaptionAppearanceCopyForegroundColor);
+        INIT(CaptionAppearanceCopyBackgroundColor);
+        INIT(CaptionAppearanceCopyWindowColor);
+        INIT(CaptionAppearanceGetForegroundOpacity);
+        INIT(CaptionAppearanceGetBackgroundOpacity);
+        INIT(CaptionAppearanceGetWindowOpacity);
+        INIT(CaptionAppearanceCopyFontForStyle);
+        INIT(CaptionAppearanceGetRelativeCharacterSize);
+        INIT(CaptionAppearanceGetTextEdgeStyle);
+        INIT(CaptionAppearanceGetSettingsChangedNotification);
     });
 }

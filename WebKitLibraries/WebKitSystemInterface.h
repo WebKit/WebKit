@@ -1,6 +1,6 @@
 /*      
     WebKitSystemInterface.h
-    Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+    Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
 
     Public header file.
 */
@@ -512,6 +512,41 @@ CGFloat WKNSReboundDeltaForElasticDelta(CGFloat delta);
 #if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 Boolean WKJLIsRuntimeAndWebComponentsInstalled(void);
 #endif
+
+typedef enum {
+    WKCaptionFontStyleDefault = 0,
+    WKCaptionFontStyleMonospacedWithSerif,
+    WKCaptionFontStyleProportionalWithSerif,
+    WKCaptionFontStyleMonospacedWithoutSerif,
+    WKCaptionFontStyleProportionalWithoutSerif,
+    WKCaptionFontStyleCasual,
+    WKCaptionFontStyleCursive,
+    WKCaptionFontStyleSmallCapital,
+    WKCaptionFontStyleMax
+} WKCaptionFontStyle;
+
+typedef enum {
+    WKCaptionTextEdgeStyleUndefined = 0,
+    WKCaptionTextEdgeStyleNone,
+    WKCaptionTextEdgeStyleRaised,
+    WKCaptionTextEdgeStyleDepressed,
+    WKCaptionTextEdgeStyleUniform,
+    WKCaptionTextEdgeStyleDropShadow,
+    WKCaptionTextEdgeStyleMax
+} WKCaptionTextEdgeStyle;
+
+bool WKCaptionAppearanceHasUserPreferences(void);
+bool WKCaptionAppearanceShowCaptionsWhenAvailable(void);
+CGColorRef WKCaptionAppearanceCopyForegroundColor(void);
+CGColorRef WKCaptionAppearanceCopyBackgroundColor(void);
+CGColorRef WKCaptionAppearanceCopyWindowColor(void);
+bool WKCaptionAppearanceGetForegroundOpacity(CGFloat*);
+bool WKCaptionAppearanceGetBackgroundOpacity(CGFloat*);
+bool WKCaptionAppearanceGetWindowOpacity(CGFloat*);
+CGFontRef WKCaptionAppearanceCopyFontForStyle(int fontStyle);
+bool WKCaptionAppearanceGetRelativeCharacterSize(CGFloat*);
+int WKCaptionAppearanceGetTextEdgeStyle(void);
+CFStringRef WKCaptionAppearanceGetSettingsChangedNotification(void);
 
 #ifdef __cplusplus
 }

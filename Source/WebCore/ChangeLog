@@ -1,3 +1,106 @@
+2012-10-24  Eric Carlson  <eric.carlson@apple.com>
+
+        Allow ports to override text track rendering style
+        https://bugs.webkit.org/show_bug.cgi?id=97800
+        <rdar://problem/12044964>
+
+        Reviewed by Maciej Stachowiak.
+
+        * WebCore.exp.in: Export new WebkitSystemInterface functions.
+        * WebCore.xcodeproj/project.pbxproj: Add CaptionUserPreferences.h, CaptionUserPreferencesMac.mm,
+            and CaptionUserPreferencesMac.h.
+
+        * css/mediaControls.css: Rearrange the caption CSS so it is possible to style the cue window,
+            background, and text independently.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize m_disableCaptions with theme->userPrefersCaptions().
+        (WebCore::HTMLMediaElement::attach): Register for caption preferences change callbacks.
+        (WebCore::HTMLMediaElement::detach): Unregister for caption preferences change callbacks.
+        (WebCore::HTMLMediaElement::userPrefersCaptions): Return theme->userPrefersCaptions().
+        (WebCore::HTMLMediaElement::userIsInterestedInThisTrackKind): Consider userPrefersCaptions().
+        (WebCore::HTMLMediaElement::setClosedCaptionsVisible): Move the code that marks all tracks as
+            un-configured to markCaptionAndSubtitleTracksAsUnconfigured so it can be reused.
+        (WebCore::HTMLMediaElement::captionPreferencesChanged): New, force a reevaluation of all text tracks.
+        (WebCore::HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured): New, code moved from 
+            setClosedCaptionsVisible
+        * html/HTMLMediaElement.h: Inherit from CaptionPreferencesChangedListener.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateSizes): Get rid of unnecessary member
+            variable. Get caption font scale from theme instead of hard coding.
+        * html/shadow/MediaControlElements.h:
+
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::TextTrack): Change attributes from String to AtomicString.
+        (WebCore::TextTrack::isValidKindKeyword): Ditto.
+        (WebCore::TextTrack::setKind): Ditto.
+        (WebCore::TextTrack::setMode): Ditto.
+        (WebCore::TextTrack::mode): Ditto.
+        * html/track/TextTrack.h:
+        (WebCore::TextTrack::create): Ditto.
+        (WebCore::TextTrack::kind): Ditto.
+        (WebCore::TextTrack::label): Ditto.
+        (WebCore::TextTrack::setLabel): Ditto.
+        (WebCore::TextTrack::language): Ditto.
+        (WebCore::TextTrack::setLanguage): Ditto.
+
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCueBox::TextTrackCueBox): Set the shadow pseudo id.
+        (WebCore::TextTrackCueBox::textTrackCueBoxShadowPseudoId): New, class method to return the 
+            shadow pseudo id so it can be used elsewhere.
+        (WebCore::TextTrackCueBox::shadowPseudoId): Call textTrackCueBoxShadowPseudoId.
+        (WebCore::TextTrackCue::pastNodesShadowPseudoId): New, class method to return the 
+            shadow pseudo id so it can be used elsewhere.
+        (WebCore::TextTrackCue::futureNodesShadowPseudoId): Ditto.
+        (WebCore::TextTrackCue::updateDisplayTree):
+        * html/track/TextTrackCue.h:
+
+        * page/CaptionUserPreferences.h: Added.
+        * page/CaptionUserPreferencesMac.h: Added.
+        * page/CaptionUserPreferencesMac.mm: Added.
+        (WebCore::userCaptionPreferencesChangedNotificationCallback):
+        (WebCore::CaptionUserPreferencesMac::CaptionUserPreferencesMac):
+        (WebCore::CaptionUserPreferencesMac::~CaptionUserPreferencesMac):
+        (WebCore::CaptionUserPreferencesMac::userHasCaptionPreferences): New, passthrough to WKSI function.
+        (WebCore::CaptionUserPreferencesMac::userPrefersCaptions): Ditto.
+        (WebCore::CaptionUserPreferencesMac::captionsWindowColor): Return Color with user's caption window color preference.
+        (WebCore::CaptionUserPreferencesMac::captionsBackgroundColor): Return Color with user's caption 
+            background color preference.
+        (WebCore::CaptionUserPreferencesMac::captionsTextColor): Return Color with user's caption text color preference.
+        (WebCore::CaptionUserPreferencesMac::captionsEdgeColorForTextColor): Return Color for text edge effect.
+        (WebCore::CaptionUserPreferencesMac::cssPropertyWithTextEdgeColor): Return String with CSS to set a text-shadow
+            or webkit-text-stroke property.
+        (WebCore::CaptionUserPreferencesMac::cssColorProperty): Return a String with css to set a property 
+            with a color value.
+        (WebCore::CaptionUserPreferencesMac::captionsTextEdgeStyle): Return a String with css to style caption 
+            text with the user's preferred text edge stye.
+        (WebCore::CaptionUserPreferencesMac::captionsDefaultFont): Return a String with css to style caption
+            text with the user's preferred font.
+        (WebCore::CaptionUserPreferencesMac::captionsStyleSheetOverride): Return a String with css to style captions
+            with the user's preferred style.
+        (WebCore::CaptionUserPreferencesMac::captionFontSizeScale): Return the user's preferred caption font scale.
+        (WebCore::CaptionUserPreferencesMac::captionPreferencesChanged): Notify listeners of caption preference change.
+        (WebCore::CaptionUserPreferencesMac::registerForCaptionPreferencesChangedCallbacks): Add a caption preferences 
+            changes listener.
+        (WebCore::CaptionUserPreferencesMac::unregisterForCaptionPreferencesChangedCallbacks): Remove a caption preferences
+            changes listener.
+        (WebCore::CaptionUserPreferencesMac::updateCaptionStyleSheetOveride): New, if theme has a captions style sheet override,
+            inject it into the current page group, otherwise remove injected sheet.
+
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::captionPreferences):
+        (WebCore::PageGroup::registerForCaptionPreferencesChangedCallbacks): New, passthrough to platform specific function
+            of the same name.
+        (WebCore::PageGroup::unregisterForCaptionPreferencesChangedCallbacks): Ditto.
+        (WebCore::PageGroup::userPrefersCaptions): Ditto.
+        (WebCore::PageGroup::userHasCaptionPreferences): Ditto.
+        (WebCore::PageGroup::captionFontSizeScale): Ditto.
+        * page/PageGroup.h:
+
+        * platform/mac/WebCoreSystemInterface.h: Updated.
+        * platform/mac/WebCoreSystemInterface.mm: Ditto.
+
 2012-10-24  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Introduce workspace provider as a content providing backend for project.

@@ -3984,6 +3984,11 @@ webkit.org/b/95121 fast/borders/border-image-side-reduction.html [ ImageOnlyFail
 # css3-conditionals support is not yet enabled.
 webkit.org/b/86146 css3/supports.html
 
+ # Require rebaselining after webkit.org/b/97800
+ webkit.org/b/89167 media/track/track-cue-rendering-horizontal.html [ Failure ]
+ webkit.org/b/89167 media/track/track-cue-rendering-vertical.html [ Failure ]
+ webkit.org/b/89167 media/track/track-cue-rendering.html [ Failure ]
+
 webkit.org/b/98686 editing/pasteboard/data-transfer-items.html [ Failure ]
 
 webkit.org/b/23166 [ Android Mac Win ] fast/css/background-clip-radius-values.html [ Pass ImageOnlyFailure ]

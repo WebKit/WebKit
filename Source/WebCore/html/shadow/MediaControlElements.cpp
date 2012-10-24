@@ -45,9 +45,11 @@
 #include "HTMLVideoElement.h"
 #include "LayoutRepainter.h"
 #include "LocalizedStrings.h"
+#include "MediaControlRootElement.h"
 #include "MediaControls.h"
 #include "MouseEvent.h"
 #include "Page.h"
+#include "PageGroup.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderInline.h"
 #include "RenderMedia.h"
@@ -1383,22 +1385,18 @@ void MediaControlTextTrackContainerElement::updateDisplay()
     hasChildNodes() ? show() : hide();
 }
 
-static const float mimimumFontSize = 16;
-static const float videoHeightFontSizePercentage = .05;
-static const float trackBottomMultiplier = .9;
-
 void MediaControlTextTrackContainerElement::updateSizes()
 {
     HTMLMediaElement* mediaElement = toParentMediaElement(this);
     if (!mediaElement || !mediaElement->renderer() || !mediaElement->renderer()->isVideo())
         return;
 
-    IntRect videoBox = toRenderVideo(mediaElement->renderer())->videoBox();
-    if (m_videoDisplaySize == videoBox)
+    if (!document()->page())
         return;
-    m_videoDisplaySize = videoBox;
 
-    float fontSize = m_videoDisplaySize.size().height() * videoHeightFontSizePercentage;
+    IntRect videoBox = toRenderVideo(mediaElement->renderer())->videoBox();
+
+    float fontSize = videoBox.size().height() * (document()->page()->group().captionFontSizeScale());
     if (fontSize != m_fontSize) {
         m_fontSize = fontSize;
         setInlineStyleProperty(CSSPropertyFontSize, String::number(fontSize) + "px");
