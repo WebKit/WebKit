@@ -1,3 +1,30 @@
+2012-10-24  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Hopefully finish rebaselining after r131941 and r131991.
+
+        * platform/efl/compositing/clip-change-expected.png: Added.
+        * platform/efl/compositing/geometry/foreground-offset-change-expected.png: Added.
+        * platform/efl/compositing/iframes/fixed-position-iframe-expected.png: Added.
+        * platform/efl/compositing/iframes/iframe-content-flipping-expected.png:
+        * platform/efl/compositing/iframes/repaint-after-losing-scrollbars-expected.png: Added.
+        * platform/efl/compositing/iframes/scroll-fixed-transformed-element-expected.png: Added.
+        * platform/efl/compositing/iframes/scroll-grandchild-iframe-expected.png: Added.
+        * platform/efl/compositing/overflow/repaint-after-losing-scrollbars-expected.png:
+        * platform/efl/compositing/repaint/newly-composited-on-scroll-expected.png:
+        * platform/efl/compositing/repaint/newly-composited-repaint-rect-expected.png:
+        * platform/efl/compositing/repaint/shrink-layer-expected.png: Added.
+        * platform/efl/compositing/repaint/transform-style-change-expected.png: Added.
+        * platform/efl/compositing/rtl: Added.
+        * platform/efl/compositing/rtl/rtl-overflow-invalidation-expected.png: Added.
+        * platform/efl/compositing/video-page-visibility-expected.png:
+        * platform/efl/css3/flexbox/repaint-expected.png:
+        * platform/efl/fast/canvas/canvas-as-image-incremental-repaint-expected.png: Added.
+        * platform/efl/fast/canvas/canvas-composite-fill-repaint-expected.png:
+        * platform/efl/fast/canvas/canvas-incremental-repaint-2-expected.png: Added.
+        * platform/efl/fast/canvas/canvas-incremental-repaint-expected.png: Added.
+        * platform/efl/fast/canvas/canvas-resize-after-paint-without-layout-expected.png:
+        * platform/efl/fast/canvas/setWidthResetAfterForcedRender-expected.png:
+
 2012-10-24  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
