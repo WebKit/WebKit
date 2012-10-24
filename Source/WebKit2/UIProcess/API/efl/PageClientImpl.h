@@ -30,25 +30,27 @@
 #include "PageClient.h"
 #include <Evas.h>
 
+class EwkViewImpl;
+
 namespace WebKit {
 
 class PageViewportController;
 
 class PageClientImpl : public PageClient {
 public:
-    static PassOwnPtr<PageClientImpl> create(Evas_Object* viewWidget)
+    static PassOwnPtr<PageClientImpl> create(EwkViewImpl* viewImpl)
     {
-        return adoptPtr(new PageClientImpl(viewWidget));
+        return adoptPtr(new PageClientImpl(viewImpl));
     }
     ~PageClientImpl();
 
-    Evas_Object* viewWidget() const { return m_viewWidget; }
+    EwkViewImpl* viewImpl() const;
 #if USE(TILED_BACKING_STORE)
     void setPageViewportController(PageViewportController* controller) { m_pageViewportController = controller; }
 #endif
 
 private:
-    explicit PageClientImpl(Evas_Object*);
+    explicit PageClientImpl(EwkViewImpl*);
 
     // PageClient
     virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
@@ -125,7 +127,7 @@ private:
 #endif
 
 private:
-    Evas_Object* m_viewWidget;
+    EwkViewImpl* m_viewImpl;
     DefaultUndoController m_undoController;
 #if USE(TILED_BACKING_STORE)
     PageViewportController* m_pageViewportController;

@@ -22,6 +22,7 @@
 #define ewk_view_private_h
 
 #include "WebPageProxy.h"
+#include "ewk_view.h"
 #include <Evas.h>
 #include <WKEinaSharedString.h>
 #include <WebCore/TextDirection.h>
@@ -29,7 +30,6 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-class Cursor;
 class IntRect;
 class IntSize;
 }
@@ -53,64 +53,15 @@ typedef struct Ewk_Intent Ewk_Intent;
 typedef struct Ewk_Intent_Service Ewk_Intent_Service;
 #endif
 
-void ewk_view_cursor_set(Evas_Object* ewkView, const WebCore::Cursor& cursor);
-void ewk_view_display(Evas_Object* ewkView, const WebCore::IntRect& rect);
-void ewk_view_download_job_cancelled(Evas_Object* ewkView, Ewk_Download_Job*);
-void ewk_view_download_job_failed(Evas_Object* ewkView, Ewk_Download_Job*, Ewk_Error*);
-void ewk_view_download_job_finished(Evas_Object* ewkView, Ewk_Download_Job*);
-void ewk_view_download_job_requested(Evas_Object* ewkView, Ewk_Download_Job*);
-void ewk_view_form_submission_request_new(Evas_Object* ewkView, Ewk_Form_Submission_Request*);
-#if ENABLE(FULLSCREEN_API)
-void ewk_view_full_screen_enter(Evas_Object* ewkView);
-void ewk_view_full_screen_exit(Evas_Object* ewkView);
-#endif
-void ewk_view_image_data_set(Evas_Object* ewkView, void* imageData, const WebCore::IntSize& size);
-void ewk_view_load_error(Evas_Object* ewkView, const Ewk_Error* error);
-void ewk_view_load_finished(Evas_Object* ewkView);
-void ewk_view_load_progress_changed(Evas_Object* ewkView, double progress);
-void ewk_view_load_provisional_failed(Evas_Object* ewkView, const Ewk_Error* error);
-#if USE(TILED_BACKING_STORE)
-void ewk_view_load_committed(Evas_Object* ewkView);
-#endif
-void ewk_view_load_provisional_redirect(Evas_Object* ewkView);
-void ewk_view_load_provisional_started(Evas_Object* ewkView);
-void ewk_view_navigation_policy_decision(Evas_Object* ewkView, Ewk_Navigation_Policy_Decision* decision);
-void ewk_view_new_window_policy_decision(Evas_Object* ewkView, Ewk_Navigation_Policy_Decision* decision);
 void ewk_view_page_close(Evas_Object* ewkView);
 WKPageRef ewk_view_page_create(Evas_Object* ewkView);
-void ewk_view_title_changed(Evas_Object* ewkView, const char* title);
-void ewk_view_tooltip_text_set(Evas_Object* ewkView, const char* text);
-void ewk_view_resource_load_failed(Evas_Object* ewkView, Ewk_Resource* resource, Ewk_Error* error);
-void ewk_view_resource_load_finished(Evas_Object* ewkView, Ewk_Resource* resource);
-void ewk_view_resource_load_initiated(Evas_Object* ewkView, Ewk_Resource* resource, Ewk_Url_Request* request);
-void ewk_view_resource_load_response(Evas_Object* ewkView, Ewk_Resource* resource, Ewk_Url_Response* response);
-void ewk_view_resource_request_sent(Evas_Object* ewkView, Ewk_Resource* resource, Ewk_Url_Request* request, Ewk_Url_Response* redirectResponse);
-void ewk_view_text_found(Evas_Object* ewkView, unsigned int matchCount);
 void ewk_view_text_input_state_update(Evas_Object* ewkView);
 void ewk_view_url_update(Evas_Object* ewkView);
 void ewk_view_contents_size_changed(const Evas_Object* ewkView, const WebCore::IntSize&);
-void ewk_view_back_forward_list_changed(Evas_Object* ewkView);
-void ewk_view_update_icon(Evas_Object* ewkView);
-
-WKPageRef ewk_view_wkpage_get(const Evas_Object* ewkView);
 
 Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef, WKPageGroupRef);
 
-#if ENABLE(WEB_INTENTS)
-void ewk_view_intent_request_new(Evas_Object* ewkView, const Ewk_Intent* ewkIntent);
-#endif
-#if ENABLE(WEB_INTENTS_TAG)
-void ewk_view_intent_service_register(Evas_Object* ewkView, const Ewk_Intent_Service* ewkIntentService);
-#endif
-
 const Evas_Object* ewk_view_from_page_get(const WebKit::WebPageProxy*);
-WebKit::WebPageProxy* ewk_view_page_get(const Evas_Object* ewkView);
-WebCore::IntSize ewk_view_size_get(const Evas_Object* ewkView);
-
-#if USE(ACCELERATED_COMPOSITING)
-bool ewk_view_accelerated_compositing_mode_enter(const Evas_Object* ewkView);
-bool ewk_view_accelerated_compositing_mode_exit(const Evas_Object* ewkView);
-#endif
 
 void ewk_view_popup_menu_request(Evas_Object* ewkView, WebKit::WebPopupMenuProxyEfl* popupMenu, const WebCore::IntRect&, WebCore::TextDirection, double pageScaleFactor, const Vector<WebKit::WebPopupItem>& items, int32_t selectedIndex);
 void ewk_view_webprocess_crashed(Evas_Object* ewkView);
@@ -118,11 +69,6 @@ void ewk_view_webprocess_crashed(Evas_Object* ewkView);
 void ewk_view_run_javascript_alert(Evas_Object* ewkView, const WKEinaSharedString& message);
 bool ewk_view_run_javascript_confirm(Evas_Object* ewkView, const WKEinaSharedString& message);
 WKEinaSharedString ewk_view_run_javascript_prompt(Evas_Object* ewkView, const WKEinaSharedString& message, const WKEinaSharedString& defaultValue);
-
-#if ENABLE(INPUT_TYPE_COLOR)
-void ewk_view_color_picker_request(Evas_Object* ewkView, int r, int g, int b, int a, WKColorPickerResultListenerRef listener);
-void ewk_view_color_picker_dismiss(Evas_Object* ewkView);
-#endif
 
 #if ENABLE(SQL_DATABASE)
 unsigned long long ewk_view_database_quota_exceeded(Evas_Object* ewkView, const char* databaseName, const char* displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage);

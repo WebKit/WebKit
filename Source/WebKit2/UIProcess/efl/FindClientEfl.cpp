@@ -27,6 +27,7 @@
 #include "config.h"
 #include "FindClientEfl.h"
 
+#include "EwkViewImpl.h"
 #include "WKPage.h"
 #include "ewk_view_private.h"
 
@@ -40,19 +41,19 @@ static inline FindClientEfl* toFindClientEfl(const void* clientInfo)
 void FindClientEfl::didFindString(WKPageRef, WKStringRef, unsigned matchCount, const void* clientInfo)
 {
     FindClientEfl* findClient = toFindClientEfl(clientInfo);
-    ewk_view_text_found(findClient->m_view, matchCount);
+    findClient->m_viewImpl->informTextFound(matchCount);
 }
 
 void FindClientEfl::didFailToFindString(WKPageRef, WKStringRef, const void* clientInfo)
 {
     FindClientEfl* findClient = toFindClientEfl(clientInfo);
-    ewk_view_text_found(findClient->m_view, 0);
+    findClient->m_viewImpl->informTextFound(0);
 }
 
-FindClientEfl::FindClientEfl(Evas_Object* view)
-    : m_view(view)
+FindClientEfl::FindClientEfl(EwkViewImpl* viewImpl)
+    : m_viewImpl(viewImpl)
 {
-    WKPageRef pageRef = ewk_view_wkpage_get(m_view);
+    WKPageRef pageRef = m_viewImpl->wkPage();
     ASSERT(pageRef);
 
     WKPageFindClient findClient;

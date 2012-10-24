@@ -26,6 +26,7 @@
 #include "config.h"
 #include "FormClientEfl.h"
 
+#include "EwkViewImpl.h"
 #include "WKPage.h"
 #include "ewk_form_submission_request_private.h"
 #include "ewk_view_private.h"
@@ -42,13 +43,13 @@ void FormClientEfl::willSubmitForm(WKPageRef, WKFrameRef /*frame*/, WKFrameRef /
     FormClientEfl* formClient = toFormClientEfl(clientInfo);
 
     RefPtr<Ewk_Form_Submission_Request> request = Ewk_Form_Submission_Request::create(values, listener);
-    ewk_view_form_submission_request_new(formClient->m_view, request.get());
+    formClient->m_viewImpl->informNewFormSubmissionRequest(request.get());
 }
 
-FormClientEfl::FormClientEfl(Evas_Object* view)
-    : m_view(view)
+FormClientEfl::FormClientEfl(EwkViewImpl* viewImpl)
+    : m_viewImpl(viewImpl)
 {
-    WKPageRef pageRef = ewk_view_wkpage_get(m_view);
+    WKPageRef pageRef = m_viewImpl->wkPage();
     ASSERT(pageRef);
 
     WKPageFormClient formClient;

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PageLoadClientEfl.h"
 
+#include "EwkViewImpl.h"
 #include "WKFrame.h"
 #include "WKPage.h"
 #include "ewk_back_forward_list_private.h"
@@ -46,32 +47,32 @@ void PageLoadClientEfl::didReceiveTitleForFrame(WKPageRef, WKStringRef title, WK
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    Evas_Object* ewkView = toPageLoadClientEfl(clientInfo)->view();
-    ewk_view_title_changed(ewkView, toImpl(title)->string().utf8().data());
+    EwkViewImpl* viewImpl = toPageLoadClientEfl(clientInfo)->viewImpl();
+    viewImpl->informTitleChange(toImpl(title)->string());
 }
 
 #if ENABLE(WEB_INTENTS)
 void PageLoadClientEfl::didReceiveIntentForFrame(WKPageRef, WKFrameRef, WKIntentDataRef intent, WKTypeRef, const void* clientInfo)
 {
-    Evas_Object* ewkView = toPageLoadClientEfl(clientInfo)->view();
+    EwkViewImpl* viewImpl = toPageLoadClientEfl(clientInfo)->viewImpl();
     RefPtr<Ewk_Intent> ewkIntent = Ewk_Intent::create(intent);
-    ewk_view_intent_request_new(ewkView, ewkIntent.get());
+    viewImpl->informIntentRequest(ewkIntent.get());
 }
 #endif
 
 #if ENABLE(WEB_INTENTS_TAG)
 void PageLoadClientEfl::registerIntentServiceForFrame(WKPageRef, WKFrameRef, WKIntentServiceInfoRef serviceInfo, WKTypeRef, const void* clientInfo)
 {
-    Evas_Object* ewkView = toPageLoadClientEfl(clientInfo)->view();
+    EwkViewImpl* viewImpl = toPageLoadClientEfl(clientInfo)->viewImpl();
     RefPtr<Ewk_Intent_Service> ewkIntentService = Ewk_Intent_Service::create(serviceInfo);
-    ewk_view_intent_service_register(ewkView, ewkIntentService.get());
+    viewImpl->informIntentServiceRegistration(ewkIntentService.get());
 }
 #endif
 
 void PageLoadClientEfl::didChangeProgress(WKPageRef page, const void* clientInfo)
 {
-    Evas_Object* ewkView = toPageLoadClientEfl(clientInfo)->view();
-    ewk_view_load_progress_changed(ewkView, WKPageGetEstimatedProgress(page));
+    EwkViewImpl* viewImpl = toPageLoadClientEfl(clientInfo)->viewImpl();
+    viewImpl->informLoadProgress(WKPageGetEstimatedProgress(page));
 }
 
 void PageLoadClientEfl::didFinishLoadForFrame(WKPageRef, WKFrameRef frame, WKTypeRef /*userData*/, const void* clientInfo)
@@ -79,8 +80,8 @@ void PageLoadClientEfl::didFinishLoadForFrame(WKPageRef, WKFrameRef frame, WKTyp
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    Evas_Object* ewkView = toPageLoadClientEfl(clientInfo)->view();
-    ewk_view_load_finished(ewkView);
+    EwkViewImpl* viewImpl = toPageLoadClientEfl(clientInfo)->viewImpl();
+    viewImpl->informLoadFinished();
 }
 
 void PageLoadClientEfl::didFailLoadWithErrorForFrame(WKPageRef, WKFrameRef frame, WKErrorRef error, WKTypeRef, const void* clientInfo)
@@ -88,10 +89,10 @@ void PageLoadClientEfl::didFailLoadWithErrorForFrame(WKPageRef, WKFrameRef frame
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    Evas_Object* ewkView = toPageLoadClientEfl(clientInfo)->view();
+    EwkViewImpl* viewImpl = toPageLoadClientEfl(clientInfo)->viewImpl();
     OwnPtr<Ewk_Error> ewkError = Ewk_Error::create(error);
-    ewk_view_load_error(ewkView, ewkError.get());
-    ewk_view_load_finished(ewkView);
+    viewImpl->informLoadError(ewkError.get());
+    viewImpl->informLoadFinished();
 }
 
 void PageLoadClientEfl::didStartProvisionalLoadForFrame(WKPageRef, WKFrameRef frame, WKTypeRef /*userData*/, const void* clientInfo)
@@ -99,8 +100,8 @@ void PageLoadClientEfl::didStartProvisionalLoadForFrame(WKPageRef, WKFrameRef fr
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    Evas_Object* ewkView = toPageLoadClientEfl(clientInfo)->view();
-    ewk_view_load_provisional_started(ewkView);
+    EwkViewImpl* viewImpl = toPageLoadClientEfl(clientInfo)->viewImpl();
+    viewImpl->informProvisionalLoadStarted();
 }
 
 void PageLoadClientEfl::didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef, WKFrameRef frame, WKTypeRef /*userData*/, const void* clientInfo)
@@ -108,8 +109,8 @@ void PageLoadClientEfl::didReceiveServerRedirectForProvisionalLoadForFrame(WKPag
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    Evas_Object* ewkView = toPageLoadClientEfl(clientInfo)->view();
-    ewk_view_load_provisional_redirect(ewkView);
+    EwkViewImpl* viewImpl = toPageLoadClientEfl(clientInfo)->viewImpl();
+    viewImpl->informProvisionalLoadRedirect();
 }
 
 void PageLoadClientEfl::didFailProvisionalLoadWithErrorForFrame(WKPageRef, WKFrameRef frame, WKErrorRef error, WKTypeRef, const void* clientInfo)
@@ -117,9 +118,9 @@ void PageLoadClientEfl::didFailProvisionalLoadWithErrorForFrame(WKPageRef, WKFra
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    Evas_Object* ewkView = toPageLoadClientEfl(clientInfo)->view();
+    EwkViewImpl* viewImpl = toPageLoadClientEfl(clientInfo)->viewImpl();
     OwnPtr<Ewk_Error> ewkError = Ewk_Error::create(error);
-    ewk_view_load_provisional_failed(ewkView, ewkError.get());
+    viewImpl->informProvisionalLoadFailed(ewkError.get());
 }
 
 #if USE(TILED_BACKING_STORE)
@@ -128,21 +129,21 @@ void PageLoadClientEfl::didCommitLoadForFrame(WKPageRef, WKFrameRef frame, WKTyp
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    Evas_Object* ewkView = toPageLoadClientEfl(clientInfo)->view();
-    ewk_view_load_committed(ewkView);
+    EwkViewImpl* viewImpl = toPageLoadClientEfl(clientInfo)->viewImpl();
+    viewImpl->informLoadCommitted();
 }
 #endif
 
 void PageLoadClientEfl::didChangeBackForwardList(WKPageRef, WKBackForwardListItemRef addedItem, WKArrayRef removedItems, const void* clientInfo)
 {
-    Evas_Object* ewkView = toPageLoadClientEfl(clientInfo)->view();
-    ASSERT(ewkView);
+    EwkViewImpl* viewImpl = toPageLoadClientEfl(clientInfo)->viewImpl();
+    ASSERT(viewImpl);
 
-    Ewk_Back_Forward_List* list = ewk_view_back_forward_list_get(ewkView);
+    Ewk_Back_Forward_List* list = ewk_view_back_forward_list_get(viewImpl->view());
     ASSERT(list);
     list->update(addedItem, removedItems);
 
-    ewk_view_back_forward_list_changed(ewkView);
+    viewImpl->informBackForwardListChange();
 }
 
 void PageLoadClientEfl::didSameDocumentNavigationForFrame(WKPageRef, WKFrameRef frame, WKSameDocumentNavigationType, WKTypeRef, const void* clientInfo)
@@ -150,14 +151,14 @@ void PageLoadClientEfl::didSameDocumentNavigationForFrame(WKPageRef, WKFrameRef 
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    Evas_Object* ewkView = toPageLoadClientEfl(clientInfo)->view();
-    ewk_view_url_update(ewkView);
+    EwkViewImpl* viewImpl = toPageLoadClientEfl(clientInfo)->viewImpl();
+    ewk_view_url_update(viewImpl->view());
 }
 
-PageLoadClientEfl::PageLoadClientEfl(Evas_Object* view)
-    : m_view(view)
+PageLoadClientEfl::PageLoadClientEfl(EwkViewImpl* viewImpl)
+    : m_viewImpl(viewImpl)
 {
-    WKPageRef pageRef = ewk_view_wkpage_get(m_view);
+    WKPageRef pageRef = m_viewImpl->wkPage();
     ASSERT(pageRef);
 
     WKPageLoaderClient loadClient;

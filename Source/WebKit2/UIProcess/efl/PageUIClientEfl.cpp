@@ -27,6 +27,7 @@
 #include "config.h"
 #include "PageUIClientEfl.h"
 
+#include "EwkViewImpl.h"
 #include "WKString.h"
 #include "ewk_view_private.h"
 #include <Ecore_Evas.h>
@@ -40,71 +41,73 @@ static inline PageUIClientEfl* toPageUIClientEfl(const void* clientInfo)
 
 void PageUIClientEfl::closePage(WKPageRef, const void* clientInfo)
 {
-    ewk_view_page_close(toPageUIClientEfl(clientInfo)->m_view);
+    ewk_view_page_close(toPageUIClientEfl(clientInfo)->m_viewImpl->view());
 }
 
 WKPageRef PageUIClientEfl::createNewPage(WKPageRef, WKURLRequestRef, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void* clientInfo)
 {
-    return ewk_view_page_create(toPageUIClientEfl(clientInfo)->m_view);
+    return ewk_view_page_create(toPageUIClientEfl(clientInfo)->m_viewImpl->view());
 }
 
 void PageUIClientEfl::runJavaScriptAlert(WKPageRef, WKStringRef alertText, WKFrameRef, const void* clientInfo)
 {
-    ewk_view_run_javascript_alert(toPageUIClientEfl(clientInfo)->m_view, WKEinaSharedString(alertText));
+    ewk_view_run_javascript_alert(toPageUIClientEfl(clientInfo)->m_viewImpl->view(), WKEinaSharedString(alertText));
 }
 
 bool PageUIClientEfl::runJavaScriptConfirm(WKPageRef, WKStringRef message, WKFrameRef, const void* clientInfo)
 {
-    return ewk_view_run_javascript_confirm(toPageUIClientEfl(clientInfo)->m_view, WKEinaSharedString(message));
+    return ewk_view_run_javascript_confirm(toPageUIClientEfl(clientInfo)->m_viewImpl->view(), WKEinaSharedString(message));
 }
 
 WKStringRef PageUIClientEfl::runJavaScriptPrompt(WKPageRef, WKStringRef message, WKStringRef defaultValue, WKFrameRef, const void* clientInfo)
 {
-    WKEinaSharedString value = ewk_view_run_javascript_prompt(toPageUIClientEfl(clientInfo)->m_view, WKEinaSharedString(message), WKEinaSharedString(defaultValue));
+    WKEinaSharedString value = ewk_view_run_javascript_prompt(toPageUIClientEfl(clientInfo)->m_viewImpl->view(), WKEinaSharedString(message), WKEinaSharedString(defaultValue));
     return value ? WKStringCreateWithUTF8CString(value) : 0;
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
 void PageUIClientEfl::showColorPicker(WKPageRef, WKStringRef initialColor, WKColorPickerResultListenerRef listener, const void* clientInfo)
 {
+    PageUIClientEfl* pageUIClient = toPageUIClientEfl(clientInfo);
     WebCore::Color color = WebCore::Color(WebKit::toWTFString(initialColor));
-    ewk_view_color_picker_request(toPageUIClientEfl(clientInfo)->m_view, color.red(), color.green(), color.blue(), color.alpha(), listener);
+    pageUIClient->m_viewImpl->requestColorPicker(color.red(), color.green(), color.blue(), color.alpha(), listener);
 }
 
 void PageUIClientEfl::hideColorPicker(WKPageRef, const void* clientInfo)
 {
-    ewk_view_color_picker_dismiss(toPageUIClientEfl(clientInfo)->m_view);
+    PageUIClientEfl* pageUIClient = toPageUIClientEfl(clientInfo);
+    pageUIClient->m_viewImpl->dismissColorPicker();
 }
 #endif
 
 #if ENABLE(SQL_DATABASE)
 unsigned long long PageUIClientEfl::exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKStringRef databaseName, WKStringRef displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage, const void* clientInfo)
 {
-    return ewk_view_database_quota_exceeded(toPageUIClientEfl(clientInfo)->m_view, WKEinaSharedString(databaseName), WKEinaSharedString(displayName), currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage);
+    return ewk_view_database_quota_exceeded(toPageUIClientEfl(clientInfo)->m_viewImpl->view(), WKEinaSharedString(databaseName), WKEinaSharedString(displayName), currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage);
 }
 #endif
 
 void PageUIClientEfl::focus(WKPageRef, const void* clientInfo)
 {
-    evas_object_focus_set(toPageUIClientEfl(clientInfo)->m_view, true);
+    evas_object_focus_set(toPageUIClientEfl(clientInfo)->m_viewImpl->view(), true);
 }
 
 void PageUIClientEfl::unfocus(WKPageRef, const void* clientInfo)
 {
-    evas_object_focus_set(toPageUIClientEfl(clientInfo)->m_view, false);
+    evas_object_focus_set(toPageUIClientEfl(clientInfo)->m_viewImpl->view(), false);
 }
 
 void PageUIClientEfl::takeFocus(WKPageRef, WKFocusDirection, const void* clientInfo)
 {
     // FIXME: this is only a partial implementation.
-    evas_object_focus_set(toPageUIClientEfl(clientInfo)->m_view, false);
+    evas_object_focus_set(toPageUIClientEfl(clientInfo)->m_viewImpl->view(), false);
 }
 
 WKRect PageUIClientEfl::getWindowFrame(WKPageRef, const void* clientInfo)
 {
     int x, y, width, height;
 
-    Ecore_Evas* ee = ecore_evas_ecore_evas_get(evas_object_evas_get(toPageUIClientEfl(clientInfo)->m_view));
+    Ecore_Evas* ee = ecore_evas_ecore_evas_get(evas_object_evas_get(toPageUIClientEfl(clientInfo)->m_viewImpl->view()));
     ecore_evas_request_geometry_get(ee, &x, &y, &width, &height);
 
     return WKRectMake(x, y, width, height);
@@ -112,14 +115,14 @@ WKRect PageUIClientEfl::getWindowFrame(WKPageRef, const void* clientInfo)
 
 void PageUIClientEfl::setWindowFrame(WKPageRef, WKRect frame, const void* clientInfo)
 {
-    Ecore_Evas* ee = ecore_evas_ecore_evas_get(evas_object_evas_get(toPageUIClientEfl(clientInfo)->m_view));
+    Ecore_Evas* ee = ecore_evas_ecore_evas_get(evas_object_evas_get(toPageUIClientEfl(clientInfo)->m_viewImpl->view()));
     ecore_evas_move_resize(ee, frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
 }
 
-PageUIClientEfl::PageUIClientEfl(Evas_Object* view)
-    : m_view(view)
+PageUIClientEfl::PageUIClientEfl(EwkViewImpl* viewImpl)
+    : m_viewImpl(viewImpl)
 {
-    WKPageRef pageRef = ewk_view_wkpage_get(m_view);
+    WKPageRef pageRef = m_viewImpl->wkPage();
     ASSERT(pageRef);
 
     WKPageUIClient uiClient;

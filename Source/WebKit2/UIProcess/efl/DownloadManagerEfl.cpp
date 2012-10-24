@@ -27,11 +27,11 @@
 #include "DownloadManagerEfl.h"
 
 #include "DownloadProxy.h"
+#include "EwkViewImpl.h"
 #include "WKContext.h"
 #include "WKString.h"
 #include "ewk_context_private.h"
 #include "ewk_error_private.h"
-#include "ewk_view_private.h"
 
 namespace WebKit {
 
@@ -49,7 +49,7 @@ WKStringRef DownloadManagerEfl::decideDestinationWithSuggestedFilename(WKContext
 
     // We send the new download signal on the Ewk_View only once we have received the response
     // and the suggested file name.
-    ewk_view_download_job_requested(download->view(), download);
+    download->viewImpl()->informDownloadJobRequested(download);
 
     // DownloadSoup expects the destination to be a URL.
     String destination = ASCIILiteral("file://") + String::fromUTF8(download->destination());
@@ -88,7 +88,7 @@ void DownloadManagerEfl::didFail(WKContextRef, WKDownloadRef wkDownload, WKError
 
     OwnPtr<Ewk_Error> ewkError = Ewk_Error::create(error);
     download->setState(EWK_DOWNLOAD_JOB_STATE_FAILED);
-    ewk_view_download_job_failed(download->view(), download, ewkError.get());
+    download->viewImpl()->informDownloadJobFailed(download, ewkError.get());
     downloadManager->unregisterDownloadJob(downloadId);
 }
 
@@ -100,7 +100,7 @@ void DownloadManagerEfl::didCancel(WKContextRef, WKDownloadRef wkDownload, const
     ASSERT(download);
 
     download->setState(EWK_DOWNLOAD_JOB_STATE_CANCELLED);
-    ewk_view_download_job_cancelled(download->view(), download);
+    download->viewImpl()->informDownloadJobCancelled(download);
     downloadManager->unregisterDownloadJob(downloadId);
 }
 
@@ -112,7 +112,7 @@ void DownloadManagerEfl::didFinish(WKContextRef, WKDownloadRef wkDownload, const
     ASSERT(download);
 
     download->setState(EWK_DOWNLOAD_JOB_STATE_FINISHED);
-    ewk_view_download_job_finished(download->view(), download);
+    download->viewImpl()->informDownloadJobFinished(download);
     downloadManager->unregisterDownloadJob(downloadId);
 }
 
@@ -135,13 +135,13 @@ DownloadManagerEfl::DownloadManagerEfl(Ewk_Context* context)
     WKContextSetDownloadClient(context->wkContext(), &wkDownloadClient);
 }
 
-void DownloadManagerEfl::registerDownload(DownloadProxy* download, Evas_Object* view)
+void DownloadManagerEfl::registerDownload(DownloadProxy* download, EwkViewImpl* viewImpl)
 {
     uint64_t downloadId = download->downloadID();
     if (m_downloadJobs.contains(downloadId))
         return;
 
-    RefPtr<Ewk_Download_Job> ewkDownload = Ewk_Download_Job::create(download, view);
+    RefPtr<Ewk_Download_Job> ewkDownload = Ewk_Download_Job::create(download, viewImpl);
     m_downloadJobs.add(downloadId, ewkDownload);
 }
 

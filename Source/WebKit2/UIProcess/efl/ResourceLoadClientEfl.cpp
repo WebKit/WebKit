@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ResourceLoadClientEfl.h"
 
+#include "EwkViewImpl.h"
 #include "WKAPICast.h"
 #include "WKFrame.h"
 #include "WKPage.h"
@@ -55,7 +56,7 @@ void ResourceLoadClientEfl::didInitiateLoadForResource(WKPageRef, WKFrameRef wkF
     resourceLoadClient->m_loadingResourcesMap.add(resourceIdentifier, resource);
 
     RefPtr<Ewk_Url_Request> request = Ewk_Url_Request::create(wkRequest);
-    ewk_view_resource_load_initiated(resourceLoadClient->m_view, resource.get(), request.get());
+    resourceLoadClient->m_viewImpl->informResourceLoadStarted(resource.get(), request.get());
 }
 
 void ResourceLoadClientEfl::didSendRequestForResource(WKPageRef, WKFrameRef, uint64_t resourceIdentifier, WKURLRequestRef wkRequest, WKURLResponseRef wkRedirectResponse, const void* clientInfo)
@@ -69,7 +70,7 @@ void ResourceLoadClientEfl::didSendRequestForResource(WKPageRef, WKFrameRef, uin
 
     RefPtr<Ewk_Url_Request> request = Ewk_Url_Request::create(wkRequest);
     RefPtr<Ewk_Url_Response> redirectResponse = Ewk_Url_Response::create(wkRedirectResponse);
-    ewk_view_resource_request_sent(resourceLoadClient->m_view, resource.get(), request.get(), redirectResponse.get());
+    resourceLoadClient->m_viewImpl->informResourceRequestSent(resource.get(), request.get(), redirectResponse.get());
 }
 
 void ResourceLoadClientEfl::didReceiveResponseForResource(WKPageRef, WKFrameRef, uint64_t resourceIdentifier, WKURLResponseRef wkResponse, const void* clientInfo)
@@ -82,7 +83,7 @@ void ResourceLoadClientEfl::didReceiveResponseForResource(WKPageRef, WKFrameRef,
         return;
 
     RefPtr<Ewk_Url_Response> response = Ewk_Url_Response::create(wkResponse);
-    ewk_view_resource_load_response(resourceLoadClient->m_view, resource.get(), response.get());
+    resourceLoadClient->m_viewImpl->informResourceLoadResponse(resource.get(), response.get());
 }
 
 void ResourceLoadClientEfl::didFinishLoadForResource(WKPageRef, WKFrameRef, uint64_t resourceIdentifier, const void* clientInfo)
@@ -94,7 +95,7 @@ void ResourceLoadClientEfl::didFinishLoadForResource(WKPageRef, WKFrameRef, uint
     if (!resource)
         return;
 
-    ewk_view_resource_load_finished(resourceLoadClient->m_view, resource.get());
+    resourceLoadClient->m_viewImpl->informResourceLoadFinished(resource.get());
 }
 
 void ResourceLoadClientEfl::didFailLoadForResource(WKPageRef, WKFrameRef, uint64_t resourceIdentifier, WKErrorRef wkError, const void* clientInfo)
@@ -107,8 +108,8 @@ void ResourceLoadClientEfl::didFailLoadForResource(WKPageRef, WKFrameRef, uint64
         return;
 
     OwnPtr<Ewk_Error> ewkError = Ewk_Error::create(wkError);
-    ewk_view_resource_load_failed(resourceLoadClient->m_view, resource.get(), ewkError.get());
-    ewk_view_resource_load_finished(resourceLoadClient->m_view, resource.get());
+    resourceLoadClient->m_viewImpl->informResourceLoadFailed(resource.get(), ewkError.get());
+    resourceLoadClient->m_viewImpl->informResourceLoadFinished(resource.get());
 }
 
 void ResourceLoadClientEfl::onViewProvisionalLoadStarted(void* userData, Evas_Object*, void*)
@@ -119,13 +120,13 @@ void ResourceLoadClientEfl::onViewProvisionalLoadStarted(void* userData, Evas_Ob
     resourceLoadClient->m_loadingResourcesMap.clear();
 }
 
-ResourceLoadClientEfl::ResourceLoadClientEfl(Evas_Object* view)
-    : m_view(view)
+ResourceLoadClientEfl::ResourceLoadClientEfl(EwkViewImpl* viewImpl)
+    : m_viewImpl(viewImpl)
 {
     // Listen for "load,provisional,started" on the view to clear internal resources map.
-    evas_object_smart_callback_add(m_view, "load,provisional,started", onViewProvisionalLoadStarted, this);
+    evas_object_smart_callback_add(m_viewImpl->view(), "load,provisional,started", onViewProvisionalLoadStarted, this);
 
-    WKPageRef pageRef = ewk_view_wkpage_get(m_view);
+    WKPageRef pageRef = m_viewImpl->wkPage();
     ASSERT(pageRef);
 
     WKPageResourceLoadClient wkResourceLoadClient;
@@ -143,7 +144,7 @@ ResourceLoadClientEfl::ResourceLoadClientEfl(Evas_Object* view)
 
 ResourceLoadClientEfl::~ResourceLoadClientEfl()
 {
-    evas_object_smart_callback_del(m_view, "load,provisional,started", onViewProvisionalLoadStarted);
+    evas_object_smart_callback_del(m_viewImpl->view(), "load,provisional,started", onViewProvisionalLoadStarted);
 }
 
 } // namespace WebKit

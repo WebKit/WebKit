@@ -29,19 +29,21 @@
 #include "ewk_view_private.h"
 #include <wtf/PassOwnPtr.h>
 
+class EwkViewImpl;
+
 namespace WebKit {
 
 class PageLoadClientEfl {
 public:
-    static PassOwnPtr<PageLoadClientEfl> create(Evas_Object* view)
+    static PassOwnPtr<PageLoadClientEfl> create(EwkViewImpl* viewImpl)
     {
-        return adoptPtr(new PageLoadClientEfl(view));
+        return adoptPtr(new PageLoadClientEfl(viewImpl));
     }
 
 private:
-    explicit PageLoadClientEfl(Evas_Object* view);
+    explicit PageLoadClientEfl(EwkViewImpl*);
 
-    inline Evas_Object* view() const { return m_view; }
+    inline EwkViewImpl* viewImpl() const { return m_viewImpl; }
 
     static void didReceiveTitleForFrame(WKPageRef, WKStringRef title, WKFrameRef, WKTypeRef, const void* clientInfo);
 #if ENABLE(WEB_INTENTS)
@@ -62,7 +64,7 @@ private:
     static void didChangeBackForwardList(WKPageRef, WKBackForwardListItemRef addedItem, WKArrayRef removedItems, const void* clientInfo);
     static void didSameDocumentNavigationForFrame(WKPageRef, WKFrameRef, WKSameDocumentNavigationType, WKTypeRef, const void* clientInfo);
 
-    Evas_Object* m_view;
+    EwkViewImpl* m_viewImpl;
 };
 
 } // namespace WebKit

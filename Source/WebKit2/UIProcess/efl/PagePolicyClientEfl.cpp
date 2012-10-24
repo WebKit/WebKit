@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PagePolicyClientEfl.h"
 
+#include "EwkViewImpl.h"
 #include "WKFrame.h"
 #include "WKFramePolicyListener.h"
 #include "ewk_navigation_policy_decision.h"
@@ -41,14 +42,18 @@ static inline PagePolicyClientEfl* toPagePolicyClientEfl(const void* clientInfo)
 
 void PagePolicyClientEfl::decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef /*userData*/, const void* clientInfo)
 {
+    PagePolicyClientEfl* policyClient = toPagePolicyClientEfl(clientInfo);
+
     RefPtr<Ewk_Navigation_Policy_Decision> decision = Ewk_Navigation_Policy_Decision::create(navigationType, mouseButton, modifiers, request, 0, listener);
-    ewk_view_navigation_policy_decision(toPagePolicyClientEfl(clientInfo)->m_view, decision.get());
+    policyClient->m_viewImpl->informNavigationPolicyDecision(decision.get());
 }
 
 void PagePolicyClientEfl::decidePolicyForNewWindowAction(WKPageRef, WKFrameRef, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKStringRef frameName, WKFramePolicyListenerRef listener, WKTypeRef /*userData*/, const void* clientInfo)
 {
+    PagePolicyClientEfl* policyClient = toPagePolicyClientEfl(clientInfo);
+
     RefPtr<Ewk_Navigation_Policy_Decision> decision = Ewk_Navigation_Policy_Decision::create(navigationType, mouseButton, modifiers, request, toImpl(frameName)->string().utf8().data(), listener);
-    ewk_view_new_window_policy_decision(toPagePolicyClientEfl(clientInfo)->m_view, decision.get());
+    policyClient->m_viewImpl->informNewWindowPolicyDecision(decision.get());
 }
 
 void PagePolicyClientEfl::decidePolicyForResponseCallback(WKPageRef, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef, WKFramePolicyListenerRef listener, WKTypeRef /*userData*/, const void* /*clientInfo*/)
@@ -93,10 +98,10 @@ void PagePolicyClientEfl::decidePolicyForResponseCallback(WKPageRef, WKFrameRef 
     WKFramePolicyListenerUse(listener);
 }
 
-PagePolicyClientEfl::PagePolicyClientEfl(Evas_Object* view)
-    : m_view(view)
+PagePolicyClientEfl::PagePolicyClientEfl(EwkViewImpl* viewImpl)
+    : m_viewImpl(viewImpl)
 {
-    WKPageRef pageRef = ewk_view_wkpage_get(m_view);
+    WKPageRef pageRef = m_viewImpl->wkPage();
     ASSERT(pageRef);
 
     WKPagePolicyClient policyClient;

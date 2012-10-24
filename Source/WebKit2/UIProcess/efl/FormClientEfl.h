@@ -29,21 +29,23 @@
 #include <WebKit2/WKBase.h>
 #include <wtf/PassOwnPtr.h>
 
+class EwkViewImpl;
+
 namespace WebKit {
 
 class FormClientEfl {
 public:
-    static PassOwnPtr<FormClientEfl> create(Evas_Object* view)
+    static PassOwnPtr<FormClientEfl> create(EwkViewImpl* viewImpl)
     {
-        return adoptPtr(new FormClientEfl(view));
+        return adoptPtr(new FormClientEfl(viewImpl));
     }
 
 private:
-    explicit FormClientEfl(Evas_Object* view);
+    explicit FormClientEfl(EwkViewImpl*);
 
     static void willSubmitForm(WKPageRef, WKFrameRef, WKFrameRef, WKDictionaryRef values, WKTypeRef userData, WKFormSubmissionListenerRef, const void* clientInfo);
 
-    Evas_Object* m_view;
+    EwkViewImpl* m_viewImpl;
 };
 
 } // namespace WebKit

@@ -43,7 +43,7 @@ public:
         return adoptPtr(new DownloadManagerEfl(context));
     }
 
-    void registerDownload(DownloadProxy*, Evas_Object* view);
+    void registerDownload(DownloadProxy*, EwkViewImpl*);
 
 private:
     DownloadManagerEfl(Ewk_Context*);

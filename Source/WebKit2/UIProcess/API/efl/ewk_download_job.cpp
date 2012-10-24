@@ -36,9 +36,9 @@
 
 using namespace WebKit;
 
-Ewk_Download_Job::Ewk_Download_Job(WebKit::DownloadProxy* download, Evas_Object* ewkView)
+Ewk_Download_Job::Ewk_Download_Job(WebKit::DownloadProxy* download, EwkViewImpl* viewImpl)
     : m_downloadProxy(download)
-    , m_view(ewkView)
+    , m_viewImpl(viewImpl)
     , m_state(EWK_DOWNLOAD_JOB_STATE_NOT_STARTED)
     , m_startTime(-1)
     , m_endTime(-1)
@@ -75,9 +75,9 @@ uint64_t Ewk_Download_Job::id() const
  * Returns the view this download is attached to.
  * The view is needed to send notification signals.
  */
-Evas_Object* Ewk_Download_Job::view() const
+EwkViewImpl* Ewk_Download_Job::viewImpl() const
 {
-    return m_view;
+    return m_viewImpl;
 }
 
 Ewk_Download_Job_State ewk_download_job_state_get(const Ewk_Download_Job* download)

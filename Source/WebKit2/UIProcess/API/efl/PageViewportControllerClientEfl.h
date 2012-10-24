@@ -32,13 +32,15 @@
 #include "PageViewportControllerClient.h"
 #include <wtf/PassOwnPtr.h>
 
+class EwkViewImpl;
+
 namespace WebKit {
 
 class PageViewportControllerClientEfl : public PageViewportControllerClient {
 public:
-    static PassOwnPtr<PageViewportControllerClientEfl> create(Evas_Object* viewWidget)
+    static PassOwnPtr<PageViewportControllerClientEfl> create(EwkViewImpl* viewImpl)
     {
-        return adoptPtr(new PageViewportControllerClientEfl(viewWidget));
+        return adoptPtr(new PageViewportControllerClientEfl(viewImpl));
     }
     ~PageViewportControllerClientEfl();
 
@@ -63,9 +65,9 @@ public:
     virtual void setController(PageViewportController*);
 
 private:
-    explicit PageViewportControllerClientEfl(Evas_Object*);
+    explicit PageViewportControllerClientEfl(EwkViewImpl*);
 
-    Evas_Object* m_viewWidget;
+    EwkViewImpl* m_viewImpl;
     WebCore::IntSize m_contentsSize;
     WebCore::IntSize m_viewportSize;
     WebCore::IntPoint m_scrollPosition;

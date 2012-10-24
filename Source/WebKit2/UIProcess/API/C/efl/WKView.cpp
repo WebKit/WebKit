@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WKView.h"
 
+#include "EwkViewImpl.h"
 #include "WKAPICast.h"
 #include "ewk_view_private.h"
 
@@ -32,5 +33,7 @@ WKViewRef WKViewCreate(Evas* canvas, WKContextRef contextRef, WKPageGroupRef pag
 
 WKPageRef WKViewGetPage(WKViewRef viewRef)
 {
-    return toAPI(ewk_view_page_get(toImpl(viewRef)));
+    EwkViewImpl* viewImpl = EwkViewImpl::fromEvasObject(toImpl(viewRef));
+
+    return viewImpl->wkPage();
 }

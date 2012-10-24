@@ -28,6 +28,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "EwkViewImpl.h"
 #include "WebProcessProxy.h"
 #include "ewk_settings.h"
 #include "ewk_view.h"
@@ -101,7 +102,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     Ewk_Settings* settings = ewk_view_settings_get(m_inspectorView);
     ewk_settings_file_access_from_file_urls_allowed_set(settings, true);
 
-    return ewk_view_page_get(m_inspectorView);
+    return EwkViewImpl::fromEvasObject(m_inspectorView)->page();
 }
 
 void WebInspectorProxy::platformOpen()

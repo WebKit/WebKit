@@ -30,17 +30,19 @@
 #include "ewk_view_private.h"
 #include <wtf/PassOwnPtr.h>
 
+class EwkViewImpl;
+
 namespace WebKit {
 
 class PageUIClientEfl {
 public:
-    static PassOwnPtr<PageUIClientEfl> create(Evas_Object* view)
+    static PassOwnPtr<PageUIClientEfl> create(EwkViewImpl* viewImpl)
     {
-        return adoptPtr(new PageUIClientEfl(view));
+        return adoptPtr(new PageUIClientEfl(viewImpl));
     }
 
 private:
-    explicit PageUIClientEfl(Evas_Object* view);
+    explicit PageUIClientEfl(EwkViewImpl*);
 
     static void closePage(WKPageRef, const void*);
     static WKPageRef createNewPage(WKPageRef, WKURLRequestRef, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void*);
@@ -60,7 +62,7 @@ private:
     static WKRect getWindowFrame(WKPageRef, const void*);
     static void setWindowFrame(WKPageRef, WKRect, const void*);
 
-    Evas_Object* m_view;
+    EwkViewImpl* m_viewImpl;
 };
 
 } // namespace WebKit

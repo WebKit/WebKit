@@ -25,10 +25,10 @@
 
 #include "config.h"
 #include "WebFullScreenManagerProxy.h"
-#include "ewk_view_private.h"
 
 #if ENABLE(FULLSCREEN_API)
 
+#include "EwkViewImpl.h"
 #include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
@@ -57,7 +57,7 @@ void WebFullScreenManagerProxy::enterFullScreen()
         return;
 
     willEnterFullScreen();
-    ewk_view_full_screen_enter(m_webView);
+    EwkViewImpl::fromEvasObject(m_webView)->enterFullScreen();
     didEnterFullScreen();
 }
 
@@ -66,8 +66,9 @@ void WebFullScreenManagerProxy::exitFullScreen()
     if (!m_webView)
         return;
 
+
     willExitFullScreen();
-    ewk_view_full_screen_exit(m_webView);
+    EwkViewImpl::fromEvasObject(m_webView)->exitFullScreen();
     didExitFullScreen();
 }
 

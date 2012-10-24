@@ -28,6 +28,7 @@
 
 #if USE(TILED_BACKING_STORE)
 
+#include "EwkViewImpl.h"
 #include "LayerTreeCoordinatorProxy.h"
 #include "LayerTreeRenderer.h"
 #include "PageViewportController.h"
@@ -38,8 +39,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PageViewportControllerClientEfl::PageViewportControllerClientEfl(Evas_Object* viewWidget)
-    : m_viewWidget(viewWidget)
+PageViewportControllerClientEfl::PageViewportControllerClientEfl(EwkViewImpl* viewImpl)
+    : m_viewImpl(viewImpl)
     , m_scaleFactor(1)
     , m_pageViewportController(0)
 {
@@ -52,7 +53,7 @@ PageViewportControllerClientEfl::~PageViewportControllerClientEfl()
 
 DrawingAreaProxy* PageViewportControllerClientEfl::drawingArea() const
 {
-    return ewk_view_page_get(m_viewWidget)->drawingArea();
+    return m_viewImpl->page()->drawingArea();
 }
 
 void PageViewportControllerClientEfl::setRendererActive(bool active)
@@ -76,7 +77,7 @@ void PageViewportControllerClientEfl::display(const IntRect& rect, const IntPoin
 void PageViewportControllerClientEfl::updateViewportSize(const IntSize& viewportSize)
 {
     m_viewportSize = viewportSize;
-    ewk_view_page_get(m_viewWidget)->setViewportSize(viewportSize);
+    m_viewImpl->page()->setViewportSize(viewportSize);
     m_pageViewportController->didChangeViewportSize(viewportSize);
 }
 
@@ -91,7 +92,7 @@ void PageViewportControllerClientEfl::didChangeContentsSize(const WebCore::IntSi
 {
     m_contentsSize = size;
     IntRect rect = IntRect(IntPoint(), m_viewportSize);
-    ewk_view_display(m_viewWidget, rect);
+    m_viewImpl->redrawArea(rect);
 }
 
 void PageViewportControllerClientEfl::setViewportPosition(const WebCore::FloatPoint& contentsPoint)
@@ -114,7 +115,7 @@ void PageViewportControllerClientEfl::didResumeContent()
 void PageViewportControllerClientEfl::didChangeVisibleContents()
 {
     IntRect rect = IntRect(IntPoint(), m_viewportSize);
-    ewk_view_display(m_viewWidget, rect);
+    m_viewImpl->redrawArea(rect);
 }
 
 void PageViewportControllerClientEfl::didChangeViewportAttributes()
