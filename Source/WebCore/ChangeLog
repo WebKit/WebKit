@@ -1,3 +1,14 @@
+2012-10-24  Nikita Vasilyev  <me@elv1s.ru>
+
+        Web Inspector: Styles pane: Don't select whole value when I select just a part
+        https://bugs.webkit.org/show_bug.cgi?id=100242
+
+        Reviewed by Alexander Pavlov.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection.prototype._handleEmptySpaceClick):
+        (WebInspector.StylePropertyTreeElement.prototype):
+
 2012-10-24  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: UiSourceCode should rely on the workspace as a content provider.
