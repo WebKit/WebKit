@@ -203,6 +203,7 @@ fast/dom/shadow/content-reprojection-dynamic.html
 fast/dom/shadow/content-reprojection-fallback-crash.html
 fast/dom/shadow/content-reprojection-fallback.html
 fast/dom/shadow/content-reprojection-fallback-reprojection.html
+fast/dom/shadow/content-reprojection-order.html
 fast/dom/shadow/content-reprojection-shadow.html
 fast/dom/shadow/drop-event-for-input-in-shadow.html
 fast/dom/shadow/drop-event-in-shadow.html
@@ -2476,3 +2477,6 @@ webkit.org/b/100115 fast/text/zero-font-size-2.html
 
 # REGRESSION(r132143): It made fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html flakey
 webkit.org/b/100117 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html
+
+# [Qt] New http/tests/inspector/network/image-as-text-loading-data-url.html fails
+webkit.org/b/100196 http/tests/inspector/network/image-as-text-loading-data-url.html

@@ -1,3 +1,9 @@
+2012-10-23  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed nightly gardening, skip new failing tests.
+
+        * platform/qt/TestExpectations:
+
 2012-10-23  Tony Chang  <tony@chromium.org>
 
         [chromium] Remove duplicate platform/mac entries
