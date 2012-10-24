@@ -1,3 +1,35 @@
+2012-10-24  Christophe Dumez  <christophe.dumez@intel.com> and Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Move Ewk_View_Private_Data out of ewk_view.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=100228
+
+        Reviewed by Gyuyoung Kim.
+
+        Move Ewk_View_Private_Data out of ewk_view.cpp and
+        rename it to EwkViewImpl. This is a first step towards
+        getting rid of C'ism in Ewk_View.
+
+        In a future, we will make EwkViewImpl a proper C++
+        class and get rid of the private ewk_view C API so
+        that WebKit code interacts with EwkViewImpl instead
+        of Evas_Object.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EwkViewImpl.cpp: Added.
+        (_ewk_view_commit):
+        (_ewk_view_preedit_changed):
+        (_ewk_view_imf_context_destroy):
+        (_ewk_view_imf_context_create):
+        (EwkViewImpl::EwkViewImpl):
+        (EwkViewImpl::~EwkViewImpl):
+        * UIProcess/API/efl/EwkViewImpl.h: Added.
+        (WebKit):
+        (EwkViewImpl):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_priv_del):
+        (_ewk_view_smart_add):
+        * UIProcess/API/efl/ewk_view.h:
+
 2012-10-24  Ryuan Choi  <ryuan.choi@gmail.com>
 
         [EFL][WK2] Crash when passing NULL instead of ewk_view instance

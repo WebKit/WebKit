@@ -182,7 +182,7 @@ struct Ewk_View_Smart_Class {
  */
 #define EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION(name) EWK_VIEW_SMART_CLASS_INIT(EVAS_SMART_CLASS_INIT_NAME_VERSION(name))
 
-typedef struct Ewk_View_Private_Data Ewk_View_Private_Data;
+typedef struct EwkViewImpl EwkViewImpl;
 /**
  * @brief Contains an internal View data.
  *
@@ -194,7 +194,7 @@ struct Ewk_View_Smart_Data {
     const Ewk_View_Smart_Class* api; /**< reference to casted class instance */
     Evas_Object* self; /**< reference to owner object */
     Evas_Object* image; /**< reference to evas_object_image for drawing web contents */
-    Ewk_View_Private_Data* priv; /**< should never be accessed, c++ stuff */
+    EwkViewImpl* priv; /**< should never be accessed, c++ stuff */
     struct {
         Evas_Coord x, y, w, h; /**< last used viewport */
     } view;

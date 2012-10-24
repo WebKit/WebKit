@@ -21,6 +21,7 @@
 #include "config.h"
 #include "ewk_view.h"
 
+#include "EwkViewImpl.h"
 #include "FindClientEfl.h"
 #include "FormClientEfl.h"
 #include "NativeWebKeyboardEvent.h"
@@ -90,10 +91,6 @@ static const char EWK_VIEW_TYPE_STR[] = "EWK2_View";
 
 static const int defaultCursorSize = 16;
 
-static void _ewk_view_on_favicon_changed(const char* pageURL, void* eventInfo);
-static Ecore_IMF_Context* _ewk_view_imf_context_create(Ewk_View_Smart_Data* smartData);
-static void _ewk_view_imf_context_destroy(Ecore_IMF_Context* imfContext);
-
 typedef HashMap<const WebPageProxy*, const Evas_Object*> PageViewMap;
 
 static inline PageViewMap& pageViewMap()
@@ -117,85 +114,6 @@ static inline void removeFromPageViewMap(const Evas_Object* ewkView)
     ASSERT(pageViewMap().contains(ewk_view_page_get(ewkView)));
     pageViewMap().remove(ewk_view_page_get(ewkView));
 }
-
-struct Ewk_View_Private_Data {
-    OwnPtr<PageClientImpl> pageClient;
-#if USE(TILED_BACKING_STORE)
-    OwnPtr<PageViewportControllerClientEfl> pageViewportControllerClient;
-    OwnPtr<PageViewportController> pageViewportController;
-#endif
-    RefPtr<WebPageProxy> pageProxy;
-    OwnPtr<PageLoadClientEfl> pageLoadClient;
-    OwnPtr<PagePolicyClientEfl> pagePolicyClient;
-    OwnPtr<PageUIClientEfl> pageUIClient;
-    OwnPtr<ResourceLoadClientEfl> resourceLoadClient;
-    OwnPtr<FindClientEfl> findClient;
-    OwnPtr<FormClientEfl> formClient;
-
-    WKEinaSharedString url;
-    WKEinaSharedString title;
-    WKEinaSharedString theme;
-    WKEinaSharedString customEncoding;
-    WKEinaSharedString cursorGroup;
-    WKEinaSharedString faviconURL;
-    RefPtr<Evas_Object> cursorObject;
-    OwnPtr<Ewk_Back_Forward_List> backForwardList;
-    OwnPtr<Ewk_Settings> settings;
-    bool areMouseEventsEnabled;
-    WKRetainPtr<WKColorPickerResultListenerRef> colorPickerResultListener;
-    RefPtr<Ewk_Context> context;
-#if ENABLE(TOUCH_EVENTS)
-    bool areTouchEventsEnabled;
-#endif
-
-    WebPopupMenuProxyEfl* popupMenuProxy;
-    Eina_List* popupMenuItems;
-
-    Ecore_IMF_Context* imfContext;
-    bool isImfFocused;
-
-#ifdef HAVE_ECORE_X
-    bool isUsingEcoreX;
-#endif
-
-#if USE(ACCELERATED_COMPOSITING)
-    Evas_GL* evasGl;
-    Evas_GL_Context* evasGlContext;
-    Evas_GL_Surface* evasGlSurface;
-#endif
-
-    Ewk_View_Private_Data()
-        : areMouseEventsEnabled(false)
-#if ENABLE(TOUCH_EVENTS)
-        , areTouchEventsEnabled(false)
-#endif
-        , popupMenuProxy(0)
-        , popupMenuItems(0)
-        , imfContext(0)
-        , isImfFocused(false)
-#ifdef HAVE_ECORE_X
-        , isUsingEcoreX(false)
-#endif
-#if USE(ACCELERATED_COMPOSITING)
-        , evasGl(0)
-        , evasGlContext(0)
-        , evasGlSurface(0)
-#endif
-    { }
-
-    ~Ewk_View_Private_Data()
-    {
-        _ewk_view_imf_context_destroy(imfContext);
-
-        /* Unregister icon change callback */
-        Ewk_Favicon_Database* iconDatabase = context->faviconDatabase();
-        iconDatabase->unwatchChanges(_ewk_view_on_favicon_changed);
-
-        void* item;
-        EINA_LIST_FREE(popupMenuItems, item)
-            delete static_cast<Ewk_Popup_Menu_Item*>(item);
-    }
-};
 
 #define EWK_VIEW_TYPE_CHECK(ewkView, result)                                   \
     bool result = true;                                                        \
@@ -243,23 +161,6 @@ struct Ewk_View_Private_Data {
         if (!smartData) {                                                      \
             EINA_LOG_CRIT("no smart data for object %p (%s)",                  \
                      ewkView, evas_object_type_get(ewkView));                  \
-            return __VA_ARGS__;                                                \
-        }                                                                      \
-    } while (0)
-
-#define EWK_VIEW_PRIV_GET(smartData, priv)                                     \
-    Ewk_View_Private_Data* priv = smartData->priv
-
-#define EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, ...)                      \
-    if (!smartData) {                                                          \
-        EINA_LOG_CRIT("smart data is null");                                   \
-        return __VA_ARGS__;                                                    \
-    }                                                                          \
-    EWK_VIEW_PRIV_GET(smartData, priv);                                        \
-    do {                                                                       \
-        if (!priv) {                                                           \
-            EINA_LOG_CRIT("no private data for object %p (%s)",                \
-                     smartData->self, evas_object_type_get(smartData->self));  \
             return __VA_ARGS__;                                                \
         }                                                                      \
     } while (0)
@@ -530,56 +431,14 @@ static void _ewk_view_on_touch_move(void* /* data */, Evas* /* canvas */, Evas_O
 }
 #endif
 
-static void _ewk_view_preedit_changed(void* data, Ecore_IMF_Context* context, void*)
-{
-    Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
-
-    if (!priv->pageProxy->focusedFrame() || !priv->isImfFocused)
-        return;
-
-    char* buffer = 0;
-    ecore_imf_context_preedit_string_get(context, &buffer, 0);
-    if (!buffer)
-        return;
-
-    String preeditString = String::fromUTF8(buffer);
-    Vector<CompositionUnderline> underlines;
-    underlines.append(CompositionUnderline(0, preeditString.length(), Color(0, 0, 0), false));
-    priv->pageProxy->setComposition(preeditString, underlines, 0);
-}
-
-static void _ewk_view_commit(void* data, Ecore_IMF_Context*, void* eventInfo)
-{
-    Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
-    if (!eventInfo || !priv->isImfFocused)
-        return;
-
-    priv->pageProxy->confirmComposition(String::fromUTF8(static_cast<char*>(eventInfo)));
-}
-
 static Evas_Smart_Class g_parentSmartClass = EVAS_SMART_CLASS_INIT_NULL;
 
-static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
+static void _ewk_view_priv_del(EwkViewImpl* priv)
 {
-    Ewk_View_Private_Data* priv = new Ewk_View_Private_Data;
-    if (!priv) {
-        EINA_LOG_CRIT("could not allocate Ewk_View_Private_Data");
-        return 0;
-    }
+    /* Unregister icon change callback */
+    Ewk_Favicon_Database* iconDatabase = priv->context->faviconDatabase();
+    iconDatabase->unwatchChanges(_ewk_view_on_favicon_changed);
 
-    priv->imfContext = _ewk_view_imf_context_create(smartData);
-
-#ifdef HAVE_ECORE_X
-    priv->isUsingEcoreX = WebCore::isUsingEcoreX(smartData->base.evas);
-#endif
-
-    return priv;
-}
-
-static void _ewk_view_priv_del(Ewk_View_Private_Data* priv)
-{
     delete priv;
 }
 
@@ -604,9 +463,9 @@ static void _ewk_view_smart_add(Evas_Object* ewkView)
 
     g_parentSmartClass.add(ewkView);
 
-    smartData->priv = _ewk_view_priv_new(smartData);
+    smartData->priv = new EwkViewImpl(ewkView);
     if (!smartData->priv) {
-        EINA_LOG_CRIT("could not allocate Ewk_View_Private_Data");
+        EINA_LOG_CRIT("could not allocate EwkViewImpl");
         evas_object_smart_data_set(ewkView, 0);
         free(smartData);
         return;
@@ -1211,36 +1070,6 @@ const char* ewk_view_title_get(const Evas_Object* ewkView)
 void ewk_view_text_found(Evas_Object* ewkView, unsigned int matchCount)
 {
     evas_object_smart_callback_call(ewkView, "text,found", &matchCount);
-}
-
-static Ecore_IMF_Context* _ewk_view_imf_context_create(Ewk_View_Smart_Data* smartData)
-{
-    const char* defaultContextID = ecore_imf_context_default_id_get();
-    if (!defaultContextID)
-        return 0;
-
-    Ecore_IMF_Context* imfContext = ecore_imf_context_add(defaultContextID);
-    if (!imfContext)
-        return 0;
-
-    ecore_imf_context_event_callback_add(imfContext, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, _ewk_view_preedit_changed, smartData);
-    ecore_imf_context_event_callback_add(imfContext, ECORE_IMF_CALLBACK_COMMIT, _ewk_view_commit, smartData);
-
-    Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(smartData->base.evas);
-    ecore_imf_context_client_window_set(imfContext, (void*)ecore_evas_window_get(ecoreEvas));
-    ecore_imf_context_client_canvas_set(imfContext, smartData->base.evas);
-
-    return imfContext;
-}
-
-static void _ewk_view_imf_context_destroy(Ecore_IMF_Context* imfContext)
-{
-    if (!imfContext)
-        return;
-
-    ecore_imf_context_event_callback_del(imfContext, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, _ewk_view_preedit_changed);
-    ecore_imf_context_event_callback_del(imfContext, ECORE_IMF_CALLBACK_COMMIT, _ewk_view_commit);
-    ecore_imf_context_del(imfContext);
 }
 
 /**
