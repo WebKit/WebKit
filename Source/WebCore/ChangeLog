@@ -1,3 +1,53 @@
+2012-10-23  Zhenyao Mo  <zmo@google.com>
+
+        Update mozilla's CheckedInt.h to the latest version
+        https://bugs.webkit.org/show_bug.cgi?id=100177
+
+        Reviewed by Kenneth Russell.
+
+        * html/canvas/CheckedInt.h: Sync with mozilla's copy with minumum modifications.
+        (detail):
+        (IsSupportedPass2):
+        (IsSupported):
+        (UnsignedType):
+        (IsSigned):
+        (TwiceBiggerType):
+        (PositionOfSignBit):
+        (MinValue):
+        (MaxValue):
+        (WebCore::detail::HasSignBit):
+        (WebCore::detail::BinaryComplement):
+        (WebCore::detail::IsInRange):
+        (WebCore::detail::IsAddValid):
+        (WebCore::detail::IsSubValid):
+        (WebCore::detail::IsMulValid):
+        (WebCore::detail::IsDivValid):
+        (WebCore::detail::OppositeIfSignedImpl::run):
+        (WebCore::detail::OppositeIfSigned):
+        (WebCore):
+        (CheckedInt):
+        (WebCore::CheckedInt::CheckedInt):
+        (WebCore::CheckedInt::value):
+        (WebCore::CheckedInt::isValid):
+        (WebCore::CheckedInt::operator -):
+        (WebCore::CheckedInt::operator ==):
+        (WebCore::CheckedInt::operator++):
+        (WebCore::CheckedInt::operator--):
+        (CastToCheckedIntImpl):
+        (WebCore::detail::CastToCheckedIntImpl::run):
+        (WebCore::castToCheckedInt):
+        (WebCore::operator ==):
+        * html/canvas/DataView.cpp: change valid() to isValid().
+        (WebCore::DataView::create):
+        * html/canvas/WebGLBuffer.cpp: Ditto.
+        (WebCore::WebGLBuffer::associateBufferDataImpl):
+        (WebCore::WebGLBuffer::associateBufferSubDataImpl):
+        * html/canvas/WebGLRenderingContext.cpp: Ditto.
+        (WebCore):
+        (WebCore::WebGLRenderingContext::drawArrays):
+        * platform/graphics/GraphicsContext3D.cpp: Ditto.
+        (WebCore::GraphicsContext3D::computeImageSizeInBytes):
+
 2012-10-24  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt-on-Mac] GraphicsSurfaces should not create a global IOSurface handle

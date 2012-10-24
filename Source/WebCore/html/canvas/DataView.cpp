@@ -56,7 +56,7 @@ PassRefPtr<DataView> DataView::create(PassRefPtr<ArrayBuffer> buffer, unsigned b
     CheckedInt<uint32_t> checkedOffset(byteOffset);
     CheckedInt<uint32_t> checkedLength(byteLength);
     CheckedInt<uint32_t> checkedMax = checkedOffset + checkedLength;
-    if (!checkedMax.valid() || checkedMax.value() > buffer->byteLength())
+    if (!checkedMax.isValid() || checkedMax.value() > buffer->byteLength())
         return 0;
     return adoptRef(new DataView(buffer, byteOffset, byteLength));
 }

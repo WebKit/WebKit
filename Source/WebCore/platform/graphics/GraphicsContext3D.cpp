@@ -147,7 +147,7 @@ GC3Denum GraphicsContext3D::computeImageSizeInBytes(GC3Denum format, GC3Denum ty
     }
     CheckedInt<uint32_t> checkedValue(bytesPerComponent * componentsPerPixel);
     checkedValue *=  width;
-    if (!checkedValue.valid())
+    if (!checkedValue.isValid())
         return GraphicsContext3D::INVALID_VALUE;
     unsigned int validRowSize = checkedValue.value();
     unsigned int padding = 0;
@@ -159,7 +159,7 @@ GC3Denum GraphicsContext3D::computeImageSizeInBytes(GC3Denum format, GC3Denum ty
     // Last row needs no padding.
     checkedValue *= (height - 1);
     checkedValue += validRowSize;
-    if (!checkedValue.valid())
+    if (!checkedValue.isValid())
         return GraphicsContext3D::INVALID_VALUE;
     *imageSizeInBytes = checkedValue.value();
     if (paddingInBytes)

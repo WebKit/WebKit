@@ -1918,7 +1918,7 @@ void WebGLRenderingContext::drawArrays(GC3Denum mode, GC3Dint first, GC3Dsizei c
         CheckedInt<GC3Dint> checkedFirst(first);
         CheckedInt<GC3Dint> checkedCount(count);
         CheckedInt<GC3Dint> checkedSum = checkedFirst + checkedCount;
-        if (!checkedSum.valid() || !validateRenderingState(checkedSum.value())) {
+        if (!checkedSum.isValid() || !validateRenderingState(checkedSum.value())) {
             synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "drawArrays", "attempt to access out of bounds arrays");
             return;
         }

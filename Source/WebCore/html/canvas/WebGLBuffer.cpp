@@ -70,7 +70,7 @@ bool WebGLBuffer::associateBufferDataImpl(ArrayBuffer* array, GC3Dintptr byteOff
         CheckedInt<GC3Dintptr> checkedOffset(byteOffset);
         CheckedInt<GC3Dsizeiptr> checkedLength(byteLength);
         CheckedInt<GC3Dintptr> checkedMax = checkedOffset + checkedLength;
-        if (!checkedMax.valid() || checkedMax.value() > static_cast<int32_t>(array->byteLength()))
+        if (!checkedMax.isValid() || checkedMax.value() > static_cast<int32_t>(array->byteLength()))
             return false;
     }
 
@@ -135,7 +135,7 @@ bool WebGLBuffer::associateBufferSubDataImpl(GC3Dintptr offset, ArrayBuffer* arr
         CheckedInt<GC3Dsizeiptr> checkedLength(byteLength);
         CheckedInt<GC3Dintptr> checkedArrayMax = checkedArrayOffset + checkedLength;
         CheckedInt<GC3Dintptr> checkedBufferMax = checkedBufferOffset + checkedLength;
-        if (!checkedArrayMax.valid() || checkedArrayMax.value() > static_cast<int32_t>(array->byteLength()) || !checkedBufferMax.valid() || checkedBufferMax.value() > m_byteLength)
+        if (!checkedArrayMax.isValid() || checkedArrayMax.value() > static_cast<int32_t>(array->byteLength()) || !checkedBufferMax.isValid() || checkedBufferMax.value() > m_byteLength)
             return false;
     }
 
