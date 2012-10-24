@@ -75,10 +75,6 @@
 #include "WebInspectorProxy.h"
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
-#include <Evas_GL.h>
-#endif
-
 #if USE(TILED_BACKING_STORE)
 #include "PageViewportController.h"
 #include "PageViewportControllerClientEfl.h"

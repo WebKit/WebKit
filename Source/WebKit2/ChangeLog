@@ -1,3 +1,15 @@
+2012-10-24  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [EFL][AC] Fix build break when AC is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=100245
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix build break after r132337.
+
+        * UIProcess/API/efl/EwkViewImpl.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+
 2012-10-24  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] run-webkit-tests writes garbage on stderr when running on Xvfb

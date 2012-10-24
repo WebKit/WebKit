@@ -30,6 +30,10 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
+#if USE(ACCELERATED_COMPOSITING)
+#include <Evas_GL.h>
+#endif
+
 #define EWK_VIEW_PRIV_GET(smartData, priv)                                     \
     EwkViewImpl* priv = smartData->priv
 
