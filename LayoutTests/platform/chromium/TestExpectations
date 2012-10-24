@@ -92,6 +92,7 @@ webkit.org/b/90488 [ Linux Win Debug ] http/tests/inspector [ Pass Slow ]
 webkit.org/b/90488 [ Linux Win Debug ] http/tests/inspector-enabled [ Pass Slow ]
 
 # Chromium r163873 slowed down these tests
+webkit.org/b/100287 [ Linux Win Mac ] platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint.html [ Pass Slow ]
 webkit.org/b/100287 [ Linux Win Mac ] compositing/culling/filter-occlusion-blur-large.html [ Pass Slow ]
 webkit.org/b/66989 transforms/3d/point-mapping/3d-point-mapping-deep.html [ Failure ImageOnlyFailure Slow ]
 

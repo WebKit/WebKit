@@ -1,3 +1,10 @@
+2012-10-24  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed gardening. Chromium revision 163873 also made
+        platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint.html slow.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-24  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Shaders] The mesh should be specified using <column, row> order
