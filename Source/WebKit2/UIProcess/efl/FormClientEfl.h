@@ -23,12 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ewk_view_form_client_private_h
-#define ewk_view_form_client_private_h
+#ifndef FormClientEfl_h
+#define FormClientEfl_h
 
-#include <Evas.h>
 #include <WebKit2/WKBase.h>
+#include <wtf/PassOwnPtr.h>
 
-void ewk_view_form_client_attach(WKPageRef pageRef, Evas_Object* ewkView);
+namespace WebKit {
 
-#endif // ewk_view_form_client_private_h
+class FormClientEfl {
+public:
+    static PassOwnPtr<FormClientEfl> create(Evas_Object* view)
+    {
+        return adoptPtr(new FormClientEfl(view));
+    }
+
+private:
+    explicit FormClientEfl(Evas_Object* view);
+
+    static void willSubmitForm(WKPageRef, WKFrameRef, WKFrameRef, WKDictionaryRef values, WKTypeRef userData, WKFormSubmissionListenerRef, const void* clientInfo);
+
+    Evas_Object* m_view;
+};
+
+} // namespace WebKit
+
+#endif // FormClientEfl_h

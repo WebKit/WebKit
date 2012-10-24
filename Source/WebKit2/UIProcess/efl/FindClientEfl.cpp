@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,27 +25,44 @@
  */
 
 #include "config.h"
+#include "FindClientEfl.h"
 
 #include "WKPage.h"
-#include "ewk_form_submission_request.h"
-#include "ewk_form_submission_request_private.h"
-#include "ewk_view_form_client_private.h"
 #include "ewk_view_private.h"
 
-static void willSubmitForm(WKPageRef, WKFrameRef /*frame*/, WKFrameRef /*sourceFrame*/, WKDictionaryRef values, WKTypeRef /*userData*/, WKFormSubmissionListenerRef listener, const void* clientInfo)
-{
-    Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
+namespace WebKit {
 
-    RefPtr<Ewk_Form_Submission_Request> request = Ewk_Form_Submission_Request::create(values, listener);
-    ewk_view_form_submission_request_new(ewkView, request.get());
+static inline FindClientEfl* toFindClientEfl(const void* clientInfo)
+{
+    return static_cast<FindClientEfl*>(const_cast<void*>(clientInfo));
 }
 
-void ewk_view_form_client_attach(WKPageRef pageRef, Evas_Object* ewkView)
+void FindClientEfl::didFindString(WKPageRef, WKStringRef, unsigned matchCount, const void* clientInfo)
 {
-    WKPageFormClient formClient;
-    memset(&formClient, 0, sizeof(WKPageFormClient));
-    formClient.version = kWKPageFormClientCurrentVersion;
-    formClient.clientInfo = ewkView;
-    formClient.willSubmitForm = willSubmitForm;
-    WKPageSetPageFormClient(pageRef, &formClient);
+    FindClientEfl* findClient = toFindClientEfl(clientInfo);
+    ewk_view_text_found(findClient->m_view, matchCount);
 }
+
+void FindClientEfl::didFailToFindString(WKPageRef, WKStringRef, const void* clientInfo)
+{
+    FindClientEfl* findClient = toFindClientEfl(clientInfo);
+    ewk_view_text_found(findClient->m_view, 0);
+}
+
+FindClientEfl::FindClientEfl(Evas_Object* view)
+    : m_view(view)
+{
+    WKPageRef pageRef = ewk_view_wkpage_get(m_view);
+    ASSERT(pageRef);
+
+    WKPageFindClient findClient;
+    memset(&findClient, 0, sizeof(WKPageFindClient));
+    findClient.version = kWKPageFindClientCurrentVersion;
+    findClient.clientInfo = this;
+    findClient.didFindString = didFindString;
+    findClient.didFailToFindString = didFailToFindString;
+    findClient.didCountStringMatches = didFindString;
+    WKPageSetPageFindClient(pageRef, &findClient);
+}
+
+} // namespace WebKit

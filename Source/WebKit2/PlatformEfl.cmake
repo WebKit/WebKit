@@ -68,13 +68,13 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/API/efl/ewk_url_response.cpp
     UIProcess/API/efl/ewk_url_scheme_request.cpp
     UIProcess/API/efl/ewk_view.cpp
-    UIProcess/API/efl/ewk_view_find_client.cpp
-    UIProcess/API/efl/ewk_view_form_client.cpp
 
     UIProcess/cairo/BackingStoreCairo.cpp
 
     UIProcess/efl/ContextHistoryClientEfl.cpp
     UIProcess/efl/DownloadManagerEfl.cpp
+    UIProcess/efl/FindClientEfl.cpp
+    UIProcess/efl/FormClientEfl.cpp
     UIProcess/efl/PageLoadClientEfl.cpp
     UIProcess/efl/PagePolicyClientEfl.cpp
     UIProcess/efl/PageUIClientEfl.cpp

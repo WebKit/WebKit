@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +24,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ewk_view_find_client_private_h
-#define ewk_view_find_client_private_h
+#ifndef FindClientEfl_h
+#define FindClientEfl_h
 
-#include <Evas.h>
 #include <WebKit2/WKBase.h>
+#include <wtf/PassOwnPtr.h>
 
-void ewk_view_find_client_attach(WKPageRef pageRef, Evas_Object* ewkView);
+namespace WebKit {
 
-#endif // ewk_view_find_client_private_h
+class FindClientEfl {
+public:
+    static PassOwnPtr<FindClientEfl> create(Evas_Object* view)
+    {
+        return adoptPtr(new FindClientEfl(view));
+    }
+
+private:
+    explicit FindClientEfl(Evas_Object* view);
+
+    static void didFindString(WKPageRef, WKStringRef, unsigned matchCount, const void* clientInfo);
+    static void didFailToFindString(WKPageRef, WKStringRef, const void* clientInfo);
+
+    Evas_Object* m_view;
+};
+
+} // namespace WebKit
+
+#endif // FindClientEfl_h

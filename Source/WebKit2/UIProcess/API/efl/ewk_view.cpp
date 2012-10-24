@@ -21,6 +21,8 @@
 #include "config.h"
 #include "ewk_view.h"
 
+#include "FindClientEfl.h"
+#include "FormClientEfl.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
@@ -53,8 +55,6 @@
 #include "ewk_resource.h"
 #include "ewk_resource_private.h"
 #include "ewk_settings_private.h"
-#include "ewk_view_find_client_private.h"
-#include "ewk_view_form_client_private.h"
 #include "ewk_view_private.h"
 #include <Ecore_Evas.h>
 #include <Ecore_IMF.h>
@@ -129,6 +129,8 @@ struct Ewk_View_Private_Data {
     OwnPtr<PagePolicyClientEfl> pagePolicyClient;
     OwnPtr<PageUIClientEfl> pageUIClient;
     OwnPtr<ResourceLoadClientEfl> resourceLoadClient;
+    OwnPtr<FindClientEfl> findClient;
+    OwnPtr<FormClientEfl> formClient;
 
     WKEinaSharedString url;
     WKEinaSharedString title;
@@ -923,18 +925,18 @@ static void _ewk_view_initialize(Evas_Object* ewkView, PassRefPtr<Ewk_Context> c
     priv->pageClient->setPageViewportController(priv->pageViewportController.get());
 #endif
 
-    // Initialize page clients.
-    WKPageRef wkPage = toAPI(priv->pageProxy.get());
-    ewk_view_find_client_attach(wkPage, ewkView);
-    ewk_view_form_client_attach(wkPage, ewkView);
 #if ENABLE(FULLSCREEN_API)
     priv->pageProxy->fullScreenManager()->setWebView(ewkView);
     ewk_settings_fullscreen_enabled_set(priv->settings.get(), true);
 #endif
+
+    // Initialize page clients.
     priv->pageLoadClient = PageLoadClientEfl::create(ewkView);
     priv->pagePolicyClient = PagePolicyClientEfl::create(ewkView);
     priv->pageUIClient = PageUIClientEfl::create(ewkView);
     priv->resourceLoadClient = ResourceLoadClientEfl::create(ewkView);
+    priv->findClient = FindClientEfl::create(ewkView);
+    priv->formClient = FormClientEfl::create(ewkView);
 
     /* Listen for favicon changes */
     Ewk_Favicon_Database* iconDatabase = priv->context->faviconDatabase();

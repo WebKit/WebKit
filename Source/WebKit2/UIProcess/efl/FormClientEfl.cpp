@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,39 +24,39 @@
  */
 
 #include "config.h"
+#include "FormClientEfl.h"
 
 #include "WKPage.h"
-#include "ewk_view_find_client_private.h"
+#include "ewk_form_submission_request_private.h"
 #include "ewk_view_private.h"
 
-static inline Evas_Object* toEwkView(const void* clientInfo)
+namespace WebKit {
+
+static inline FormClientEfl* toFormClientEfl(const void* clientInfo)
 {
-    return static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
+    return static_cast<FormClientEfl*>(const_cast<void*>(clientInfo));
 }
 
-static void didFindString(WKPageRef, WKStringRef, unsigned matchCount, const void* clientInfo)
+void FormClientEfl::willSubmitForm(WKPageRef, WKFrameRef /*frame*/, WKFrameRef /*sourceFrame*/, WKDictionaryRef values, WKTypeRef /*userData*/, WKFormSubmissionListenerRef listener, const void* clientInfo)
 {
-    ewk_view_text_found(toEwkView(clientInfo), matchCount);
+    FormClientEfl* formClient = toFormClientEfl(clientInfo);
+
+    RefPtr<Ewk_Form_Submission_Request> request = Ewk_Form_Submission_Request::create(values, listener);
+    ewk_view_form_submission_request_new(formClient->m_view, request.get());
 }
 
-static void didFailToFindString(WKPageRef, WKStringRef, const void* clientInfo)
+FormClientEfl::FormClientEfl(Evas_Object* view)
+    : m_view(view)
 {
-    ewk_view_text_found(toEwkView(clientInfo), 0);
+    WKPageRef pageRef = ewk_view_wkpage_get(m_view);
+    ASSERT(pageRef);
+
+    WKPageFormClient formClient;
+    memset(&formClient, 0, sizeof(WKPageFormClient));
+    formClient.version = kWKPageFormClientCurrentVersion;
+    formClient.clientInfo = this;
+    formClient.willSubmitForm = willSubmitForm;
+    WKPageSetPageFormClient(pageRef, &formClient);
 }
 
-static void didCountStringMatches(WKPageRef, WKStringRef, unsigned matchCount, const void* clientInfo)
-{
-    ewk_view_text_found(toEwkView(clientInfo), matchCount);
-}
-
-void ewk_view_find_client_attach(WKPageRef pageRef, Evas_Object* ewkView)
-{
-    WKPageFindClient findClient;
-    memset(&findClient, 0, sizeof(WKPageFindClient));
-    findClient.version = kWKPageFindClientCurrentVersion;
-    findClient.clientInfo = ewkView;
-    findClient.didFindString = didFindString;
-    findClient.didFailToFindString = didFailToFindString;
-    findClient.didCountStringMatches = didCountStringMatches;
-    WKPageSetPageFindClient(pageRef, &findClient);
-}
+} // namespace WebKit

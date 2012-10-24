@@ -1,3 +1,39 @@
+2012-10-24  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Make find and form clients C++ classes
+        https://bugs.webkit.org/show_bug.cgi?id=100199
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make form and find client C++ classes to move away
+        from C'ism in WK2 EFL port. The new classes have been
+        moved up to UIProcess/efl instead of UIProcess/API/efl
+        since it is not part of the public API.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (Ewk_View_Private_Data):
+        (_ewk_view_initialize):
+        * UIProcess/efl/FindClientEfl.cpp: Renamed from Source/WebKit2/UIProcess/API/efl/ewk_view_find_client.cpp.
+        (WebKit):
+        (WebKit::toFindClientEfl):
+        (WebKit::FindClientEfl::didFindString):
+        (WebKit::FindClientEfl::didFailToFindString):
+        (WebKit::FindClientEfl::FindClientEfl):
+        * UIProcess/efl/FindClientEfl.h: Renamed from Source/WebKit2/UIProcess/API/efl/ewk_view_find_client_private.h.
+        (WebKit):
+        (FindClientEfl):
+        (WebKit::FindClientEfl::create):
+        * UIProcess/efl/FormClientEfl.cpp: Renamed from Source/WebKit2/UIProcess/API/efl/ewk_view_form_client.cpp.
+        (WebKit):
+        (WebKit::toFormClientEfl):
+        (WebKit::FormClientEfl::willSubmitForm):
+        (WebKit::FormClientEfl::FormClientEfl):
+        * UIProcess/efl/FormClientEfl.h: Renamed from Source/WebKit2/UIProcess/API/efl/ewk_view_form_client_private.h.
+        (WebKit):
+        (FormClientEfl):
+        (WebKit::FormClientEfl::create):
+
 2012-10-24  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL] WebKitTestRunner needs to turn on 'setContinuousSpellCheckingEnabled'
