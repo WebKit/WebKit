@@ -58,3 +58,6 @@ Dromaeo/v8-richards.html
 # Bug 77024 - Web Inspector: tests in PerformanceTests/inspector/ are timing out
 inspector
 
+# Bug 100262 - REGRESSION(r131982): this test is crashing
+SVG/SvgNestedUse.html
+
