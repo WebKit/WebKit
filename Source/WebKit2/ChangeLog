@@ -1,3 +1,25 @@
+2012-10-24  Anders Carlsson  <andersca@apple.com>
+
+        Make it a compile error to send a sync message as async (and vice versa)
+        https://bugs.webkit.org/show_bug.cgi?id=100285
+
+        Reviewed by Sam Weinig.
+
+        Add an "isSync" boolean to each generated message struct and add compile asserts to the message senders.
+
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::send):
+        (CoreIPC::Connection::sendSync):
+        * Platform/CoreIPC/MessageSender.h:
+        (CoreIPC::MessageSender::send):
+        (CoreIPC::MessageSender::sendSync):
+        * Scripts/webkit2/messages.py:
+        (message_to_struct_declaration):
+        * Scripts/webkit2/messages_unittest.py:
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::send):
+        (WebKit::WebProcessProxy::sendSync):
+
 2012-10-24  Kiran Muppala  <cmuppala@apple.com>
 
         Disable auto termination of WebKit2 processes on mac

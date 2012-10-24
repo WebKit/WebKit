@@ -40,6 +40,7 @@ public:
 
     template<typename U> bool send(const U& message, uint64_t destinationID)
     {
+        COMPILE_ASSERT(!U::isSync, AsyncMessageExpected);
         OwnPtr<MessageEncoder> encoder = MessageEncoder::create(U::receiverName(), U::name(), destinationID);
         encoder->encode(message);
         
@@ -56,6 +57,7 @@ public:
 
     template<typename U> bool sendSync(const U& message, const typename U::Reply& reply, double timeout = Connection::NoTimeout)
     {
+        COMPILE_ASSERT(U::isSync, SyncMessageExpected);
         return sendSync(message, reply, static_cast<T*>(this)->destinationID(), timeout);
     }
     

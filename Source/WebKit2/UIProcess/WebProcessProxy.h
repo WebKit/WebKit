@@ -218,6 +218,8 @@ private:
 template<typename T>
 bool WebProcessProxy::send(const T& message, uint64_t destinationID, unsigned messageSendFlags)
 {
+    COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
+
     OwnPtr<CoreIPC::MessageEncoder> encoder = CoreIPC::MessageEncoder::create(T::receiverName(), "", destinationID);
     encoder->encode(message);
 
@@ -227,6 +229,8 @@ bool WebProcessProxy::send(const T& message, uint64_t destinationID, unsigned me
 template<typename U> 
 bool WebProcessProxy::sendSync(const U& message, const typename U::Reply& reply, uint64_t destinationID, double timeout)
 {
+    COMPILE_ASSERT(U::isSync, SyncMessageExpected);
+
     if (!m_connection)
         return false;
 

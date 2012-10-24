@@ -397,6 +397,8 @@ private:
 
 template<typename T> bool Connection::send(const T& message, uint64_t destinationID, unsigned messageSendFlags)
 {
+    COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
+
     OwnPtr<MessageEncoder> encoder = MessageEncoder::create(T::receiverName(), T::name(), destinationID);
     encoder->encode(message);
     
@@ -405,6 +407,8 @@ template<typename T> bool Connection::send(const T& message, uint64_t destinatio
 
 template<typename T> bool Connection::sendSync(const T& message, const typename T::Reply& reply, uint64_t destinationID, double timeout, unsigned syncSendFlags)
 {
+    COMPILE_ASSERT(T::isSync, SyncMessageExpected);
+
     uint64_t syncRequestID = 0;
     OwnPtr<MessageEncoder> encoder = createSyncMessageEncoder(T::receiverName(), T::name(), destinationID, syncRequestID);
     

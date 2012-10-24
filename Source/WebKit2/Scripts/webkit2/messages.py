@@ -131,6 +131,7 @@ def message_to_struct_declaration(message):
     result.append('    static const Kind messageID = %s;\n' % message.id())
     result.append('    static CoreIPC::StringReference receiverName() { return messageReceiverName(); }\n')
     result.append('    static CoreIPC::StringReference name() { return CoreIPC::StringReference("%s"); }\n' % message.name)
+    result.append('    static const bool isSync = %s;\n' % ('false', 'true')[message.reply_parameters != None])
     result.append('\n')
     if message.reply_parameters != None:
         if message.has_attribute(DELAYED_ATTRIBUTE):
