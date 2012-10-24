@@ -311,6 +311,7 @@ committers_unable_to_review = [
     Committer("Kenichi Ishibashi", "bashi@chromium.org", "bashi"),
     Committer("Kenji Imasaki", "imasaki@chromium.org", "imasaki"),
     Committer("Kent Hansen", "kent.hansen@nokia.com", "khansen"),
+    Committer("Kihong Kwon", "kihong.kwon@samsung.com", "kihong"),
     Committer(u"Kim Gr\u00f6nholm", "kim.1.gronholm@nokia.com"),
     Committer("Kimmo Kinnunen", ["kimmo.t.kinnunen@nokia.com", "kimmok@iki.fi", "ktkinnun@webkit.org"], "kimmok"),
     Committer("Kinuko Yasuda", "kinuko@chromium.org", "kinuko"),
