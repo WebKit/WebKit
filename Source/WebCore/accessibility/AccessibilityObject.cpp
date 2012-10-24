@@ -1417,7 +1417,6 @@ static ARIARoleMap* createARIARoleMap()
         { "radiogroup", RadioGroupRole },
         { "region", DocumentRegionRole },
         { "row", RowRole },
-        { "range", SliderRole },
         { "scrollbar", ScrollBarRole },
         { "search", LandmarkSearchRole },
         { "separator", SplitterRole },

@@ -1,3 +1,17 @@
+2012-10-24  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WebKit exposes abstract ARIA role range as AXSlider; should be generic AXGroup
+        https://bugs.webkit.org/show_bug.cgi?id=100204
+
+        Reviewed by Beth Dakin.
+
+        Remove the "range" role as a valid ARIA role.
+
+        Test: platform/mac/accessibility/aria-slider-value.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::createARIARoleMap):
+
 2012-10-24  Florin Malita  <fmalita@chromium.org>
 
         [Chromium] SVG repaint issues

@@ -1,3 +1,21 @@
+2012-10-24  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WebKit exposes abstract ARIA role range as AXSlider; should be generic AXGroup
+        https://bugs.webkit.org/show_bug.cgi?id=100204
+
+        Reviewed by Beth Dakin.
+
+        Remove the aria-range.html test because the same functionality is covered in aria-slider.html
+        Rename aria-range-value to aria-slider-value and use the non-abstract role slider instead (and 
+        move that to the general accessibility platform).
+
+        * accessibility/aria-slider-value-expected.txt: Copied from LayoutTests/platform/mac/accessibility/aria-range-value-expected.txt.
+        * accessibility/aria-slider-value.html: Copied from LayoutTests/platform/mac/accessibility/aria-range-value.html.
+        * platform/mac/accessibility/aria-range-expected.txt: Removed.
+        * platform/mac/accessibility/aria-range-value-expected.txt: Removed.
+        * platform/mac/accessibility/aria-range-value.html: Removed.
+        * platform/mac/accessibility/aria-range.html: Removed.
+
 2012-10-24  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed gardening. Marking fast/media/w3c/test_media_queries.html as slow on
