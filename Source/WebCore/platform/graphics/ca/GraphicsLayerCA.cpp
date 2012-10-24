@@ -1184,54 +1184,47 @@ void GraphicsLayerCA::updateLayerNames()
 
 void GraphicsLayerCA::updateSublayerList()
 {
-    PlatformCALayerList newSublayers;
-    const Vector<GraphicsLayer*>& childLayers = children();
+    const PlatformCALayerList* customSublayers = m_layer->customSublayers();
 
-    if (const PlatformCALayerList* customSublayers = m_layer->customSublayers())
-        newSublayers.appendRange(customSublayers->begin(), customSublayers->end());
-    
-    if (m_structuralLayer || m_contentsLayer || childLayers.size() > 0) {
-        if (m_structuralLayer) {
-            // Add the replica layer first.
-            if (m_replicaLayer)
-                newSublayers.append(static_cast<GraphicsLayerCA*>(m_replicaLayer)->primaryLayer());
-            // Add the primary layer. Even if we have negative z-order children, the primary layer always comes behind.
-            newSublayers.append(m_layer);
-        } else if (m_contentsLayer && m_contentsVisible) {
-            // FIXME: add the contents layer in the correct order with negative z-order children.
-            // This does not cause visible rendering issues because currently contents layers are only used
-            // for replaced elements that don't have children.
-            newSublayers.append(m_contentsLayer);
-        }
-        
-        size_t numChildren = childLayers.size();
-        for (size_t i = 0; i < numChildren; ++i) {
-            GraphicsLayerCA* curChild = static_cast<GraphicsLayerCA*>(childLayers[i]);
-            PlatformCALayer* childLayer = curChild->layerForSuperlayer();
-            newSublayers.append(childLayer);
-        }
+    PlatformCALayerList structuralLayerChildren;
+    PlatformCALayerList primaryLayerChildren;
 
-        for (size_t i = 0; i < newSublayers.size(); --i)
-            newSublayers[i]->removeFromSuperlayer();
-    }
-    
-#ifdef VISIBLE_TILE_WASH
-    if (m_visibleTileWashLayer)
-        newSublayers.append(m_visibleTileWashLayer);
-#endif
+    PlatformCALayerList& childListForSublayers = m_structuralLayer ? structuralLayerChildren : primaryLayerChildren;
+
+    if (customSublayers)
+        primaryLayerChildren.append(*customSublayers);
 
     if (m_structuralLayer) {
-        m_structuralLayer->setSublayers(newSublayers);
+        if (m_replicaLayer)
+            structuralLayerChildren.append(static_cast<GraphicsLayerCA*>(m_replicaLayer)->primaryLayer());
+    
+        structuralLayerChildren.append(m_layer);
+    }
 
-        if (m_contentsLayer) {
-            // If we have a transform layer, then the contents layer is parented in the 
-            // primary layer (which is itself a child of the transform layer).
-            m_layer->removeAllSublayers();
-            if (m_contentsVisible)
-                m_layer->appendSublayer(m_contentsLayer.get());
-        }
-    } else
-        m_layer->setSublayers(newSublayers);
+    if (m_contentsLayer && m_contentsVisible) {
+        // FIXME: add the contents layer in the correct order with negative z-order children.
+        // This does not cause visible rendering issues because currently contents layers are only used
+        // for replaced elements that don't have children.
+        primaryLayerChildren.append(m_contentsLayer);
+    }
+    
+    const Vector<GraphicsLayer*>& childLayers = children();
+    size_t numChildren = childLayers.size();
+    for (size_t i = 0; i < numChildren; ++i) {
+        GraphicsLayerCA* curChild = static_cast<GraphicsLayerCA*>(childLayers[i]);
+        PlatformCALayer* childLayer = curChild->layerForSuperlayer();
+        childListForSublayers.append(childLayer);
+    }
+
+#ifdef VISIBLE_TILE_WASH
+    if (m_visibleTileWashLayer)
+        childListForSublayers.append(m_visibleTileWashLayer);
+#endif
+
+    if (m_structuralLayer)
+        m_structuralLayer->setSublayers(structuralLayerChildren);
+    
+    m_layer->setSublayers(primaryLayerChildren);
 }
 
 void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& positionRelativeToBase)

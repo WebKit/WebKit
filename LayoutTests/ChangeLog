@@ -1,3 +1,18 @@
+2012-10-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix CALayer hiearchy when combining tiling with preserve-3d
+        https://bugs.webkit.org/show_bug.cgi?id=100205
+
+        Reviewed by Dean Jackson.
+
+        Pixel test that tests backface-visibility on a tile cache layer. Mark the test as
+        failing on Chromium.
+
+        * compositing/tiling/backface-preserve-3d-tiled-expected.png: Added.
+        * compositing/tiling/backface-preserve-3d-tiled-expected.txt: Added.
+        * compositing/tiling/backface-preserve-3d-tiled.html: Added.
+        * platform/chromium/TestExpectations:
+
 2012-10-24  Rick Byers  <rbyers@chromium.org>
 
         image-set doesn't round-trip properly with cssText

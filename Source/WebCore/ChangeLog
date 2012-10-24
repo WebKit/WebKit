@@ -1,3 +1,32 @@
+2012-10-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix CALayer hiearchy when combining tiling with preserve-3d
+        https://bugs.webkit.org/show_bug.cgi?id=100205
+
+        Reviewed by Dean Jackson.
+
+        When an element has "transform-style: preserve-3d", its GraphicsLayerCA has a
+        m_structuralLayer which is a CATransformLayer. The primary CALayer which contains rendered
+        content becomes a sublayer of the CATransformLayer. If the element has backface-visibility:hidden,
+        it is the primary layer that is set to be single-sided.
+        
+        In r131940 we started to use TileCaches in place of CATiledLayer. TileCaches work via
+        "customSublayers" returned from the PlatformCALayer, where the custom sublayer is 
+        the tile cache container layer. However, the custom sublayers were being added as
+        children of the structural (CATransformLayer) layer, not of the primary (CALayer) layer,
+        thus they were not affected by the doubleSided property.
+        
+        This change cleans up the confusing code in GraphicsLayerCA::updateSublayerList()
+        by maintaining two vectors of PlatformCALayers, one for sublayers of the structural
+        layer, and one for sublayers of the primary layer. It adds custom sublayers to
+        the latter list, so now the tile cache container layer becomes a sublayer of
+        the primary layer, so is affected by that layer's doubleSided property.
+
+        Test: compositing/tiling/backface-preserve-3d-tiled.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateSublayerList):
+
 2012-10-23  Zhenyao Mo  <zmo@google.com>
 
         Update mozilla's CheckedInt.h to the latest version
