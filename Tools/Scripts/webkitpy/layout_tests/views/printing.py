@@ -73,7 +73,8 @@ class Printer(object):
         self._port = port
         self._options = options
         self._buildbot_stream = buildbot_output
-        self._meter = MeteredStream(regular_output, options.debug_rwt_logging, logger=logger)
+        self._meter = MeteredStream(regular_output, options.debug_rwt_logging, logger=logger,
+                                    number_of_columns=self._port.host.platform.terminal_width())
         self._running_tests = []
         self._completed_tests = []
 

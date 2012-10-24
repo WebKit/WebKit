@@ -52,3 +52,6 @@ class MockPlatformInfo(object):
 
     def total_bytes_memory(self):
         return 3 * 1024 * 1024 * 1024  # 3GB is a reasonable amount of ram to mock.
+
+    def terminal_width(self):
+        return 80

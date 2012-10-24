@@ -79,6 +79,7 @@ class TestPlatformInfo(unittest.TestCase):
         self.assertNotEquals(info.os_version, '')
         self.assertNotEquals(info.display_name(), '')
         self.assertTrue(info.is_mac() or info.is_win() or info.is_linux() or info.is_freebsd())
+        self.assertNotEquals(info.terminal_width(), None)
 
         if info.is_mac():
             self.assertTrue(info.total_bytes_memory() > 0)

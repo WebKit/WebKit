@@ -1,5 +1,30 @@
 2012-10-24  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: truncate meter lines properly on windows
+        https://bugs.webkit.org/show_bug.cgi?id=100062
+
+        Reviewed by Tony Chang.
+
+        This change adds the code to figure out the terminal width
+        on windows (it was already there for Unixen) and moves it
+        to a platform-specific object.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo.terminal_width):
+        * Scripts/webkitpy/common/system/platforminfo_mock.py:
+        (MockPlatformInfo.total_bytes_memory):
+        (MockPlatformInfo):
+        (MockPlatformInfo.terminal_width):
+        * Scripts/webkitpy/layout_tests/views/metered_stream.py:
+        (MeteredStream.__init__):
+        (MeteredStream.number_of_columns):
+        (MeteredStream.flush):
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer.__init__):
+        (Printer._test_status_line):
+
+2012-10-24  Dirk Pranke  <dpranke@chromium.org>
+
         tweak debug logging in webkit-patch optimize-baselines
         https://bugs.webkit.org/show_bug.cgi?id=100294
 
