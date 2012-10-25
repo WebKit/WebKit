@@ -36,8 +36,8 @@
 
 namespace WebCore {
 
-CachedRawResource::CachedRawResource(ResourceRequest& resourceRequest)
-    : CachedResource(resourceRequest, RawResource)
+CachedRawResource::CachedRawResource(ResourceRequest& resourceRequest, Type type)
+    : CachedResource(resourceRequest, type)
     , m_identifier(0)
 {
 }
@@ -129,6 +129,11 @@ void CachedRawResource::setDefersLoading(bool defers)
         m_loader->setDefersLoading(defers);
 }
 
+void CachedRawResource::setShouldBufferData(DataBufferingPolicy shouldBufferData)
+{
+    m_options.shouldBufferData = shouldBufferData;
+}
+
 static bool shouldIgnoreHeaderForCacheReuse(AtomicString headerName)
 {
     // FIXME: This list of headers that don't affect cache policy almost certainly isn't complete.
@@ -182,6 +187,19 @@ bool CachedRawResource::canReuse(const ResourceRequest& newRequest) const
             return false;
     }
     return true;
+}
+
+SubresourceLoader* CachedRawResource::loader() const
+{
+    return m_loader.get();
+}
+
+void CachedRawResource::clear()
+{
+    m_data.clear();
+    setEncodedSize(0);
+    if (m_loader)
+        m_loader->clearResourceData();
 }
 
 void CachedRawResource::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const

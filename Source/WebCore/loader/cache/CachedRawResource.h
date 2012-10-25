@@ -29,18 +29,24 @@
 namespace WebCore {
 class CachedRawResourceCallback;
 class CachedRawResourceClient;
+class SubresourceLoader;
 
 class CachedRawResource : public CachedResource {
 public:
-    CachedRawResource(ResourceRequest&);
+    CachedRawResource(ResourceRequest&, Type);
 
     // FIXME: AssociatedURLLoader shouldn't be a DocumentThreadableLoader and therefore shouldn't
     // use CachedRawResource. However, it is, and it needs to be able to defer loading.
     // This can be fixed by splitting CORS preflighting out of DocumentThreacableLoader.
     virtual void setDefersLoading(bool);
+
+    virtual void setShouldBufferData(DataBufferingPolicy);
     
     // FIXME: This is exposed for the InpsectorInstrumentation for preflights in DocumentThreadableLoader. It's also really lame.
     unsigned long identifier() const { return m_identifier; }
+
+    SubresourceLoader* loader() const;
+    void clear();
 
     bool canReuse(const ResourceRequest&) const;
 

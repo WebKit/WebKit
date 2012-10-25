@@ -54,6 +54,8 @@ inline ResourceLoadPriority toResourceLoadPriority(int priority)
         return ResourceLoadPriorityMedium;
     case 3:
         return ResourceLoadPriorityHigh;
+    case 4:
+        return ResourceLoadPriorityVeryHigh;
     default:
         ASSERT_NOT_REACHED();
         return ResourceLoadPriorityLowest;
@@ -73,6 +75,8 @@ inline int toHTTPPipeliningPriority(ResourceLoadPriority priority)
         return 2;
     case ResourceLoadPriorityHigh:
         return 3;
+    case ResourceLoadPriorityVeryHigh:
+        return 4;
     }
 
     ASSERT_NOT_REACHED();

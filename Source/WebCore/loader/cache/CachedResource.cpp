@@ -63,35 +63,37 @@ namespace WebCore {
 static ResourceLoadPriority defaultPriorityForResourceType(CachedResource::Type type)
 {
     switch (type) {
-        case CachedResource::CSSStyleSheet:
-            return ResourceLoadPriorityHigh;
-        case CachedResource::Script:
-        case CachedResource::FontResource:
-        case CachedResource::RawResource:
-            return ResourceLoadPriorityMedium;
-        case CachedResource::ImageResource:
-            return ResourceLoadPriorityLow;
+    case CachedResource::MainResource:
+        return ResourceLoadPriorityVeryHigh;
+    case CachedResource::CSSStyleSheet:
+        return ResourceLoadPriorityHigh;
+    case CachedResource::Script:
+    case CachedResource::FontResource:
+    case CachedResource::RawResource:
+        return ResourceLoadPriorityMedium;
+    case CachedResource::ImageResource:
+        return ResourceLoadPriorityLow;
 #if ENABLE(XSLT)
-        case CachedResource::XSLStyleSheet:
-            return ResourceLoadPriorityHigh;
+    case CachedResource::XSLStyleSheet:
+        return ResourceLoadPriorityHigh;
 #endif
 #if ENABLE(SVG)
-        case CachedResource::SVGDocumentResource:
-            return ResourceLoadPriorityLow;
+    case CachedResource::SVGDocumentResource:
+        return ResourceLoadPriorityLow;
 #endif
 #if ENABLE(LINK_PREFETCH)
-        case CachedResource::LinkPrefetch:
-            return ResourceLoadPriorityVeryLow;
-        case CachedResource::LinkSubresource:
-            return ResourceLoadPriorityVeryLow;
+    case CachedResource::LinkPrefetch:
+        return ResourceLoadPriorityVeryLow;
+    case CachedResource::LinkSubresource:
+        return ResourceLoadPriorityVeryLow;
 #endif
 #if ENABLE(VIDEO_TRACK)
-        case CachedResource::TextTrackResource:
-            return ResourceLoadPriorityLow;
+    case CachedResource::TextTrackResource:
+        return ResourceLoadPriorityLow;
 #endif
 #if ENABLE(CSS_SHADERS)
-        case CachedResource::ShaderResource:
-            return ResourceLoadPriorityMedium;
+    case CachedResource::ShaderResource:
+        return ResourceLoadPriorityMedium;
 #endif
     }
     ASSERT_NOT_REACHED();
@@ -102,6 +104,8 @@ static ResourceLoadPriority defaultPriorityForResourceType(CachedResource::Type 
 static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource::Type type)
 {
     switch (type) {
+    case CachedResource::MainResource:
+        return ResourceRequest::TargetIsMainFrame;
     case CachedResource::CSSStyleSheet:
 #if ENABLE(XSLT)
     case CachedResource::XSLStyleSheet:
@@ -277,7 +281,9 @@ void CachedResource::load(CachedResourceLoader* cachedResourceLoader, const Reso
         m_resourceRequest.setHTTPHeaderField("Purpose", "prefetch");
 #endif
     m_resourceRequest.setPriority(loadPriority());
-    addAdditionalRequestHeaders(cachedResourceLoader);
+
+    if (type() != MainResource)
+        addAdditionalRequestHeaders(cachedResourceLoader);
 
 #if USE(PLATFORM_STRATEGIES)
     m_loader = platformStrategies()->loaderStrategy()->resourceLoadScheduler()->scheduleSubresourceLoad(cachedResourceLoader->frame(), this, m_resourceRequest, m_resourceRequest.priority(), options);

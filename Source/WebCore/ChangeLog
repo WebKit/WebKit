@@ -1,3 +1,52 @@
+2012-10-25  Nate Chapin  <japhet@chromium.org>
+
+        Add a main resource type to the memory cache
+        https://bugs.webkit.org/show_bug.cgi?id=99864
+
+        Reviewed by Adam Barth.
+
+        No new tests, no functionality change.
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::hasTextContent):
+        (WebCore::InspectorPageAgent::cachedResourceType):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequest):
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        (WebCore::SubresourceLoader::didFail):
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::CachedRawResource):
+        (WebCore::CachedRawResource::addAdditionalRequestHeaders):
+        (WebCore):
+        (WebCore::CachedRawResource::setShouldBufferData):
+        (WebCore::CachedRawResource::loader):
+        (WebCore::CachedRawResource::clear):
+        * loader/cache/CachedRawResource.h:
+        (WebCore):
+        (CachedRawResource):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::defaultPriorityForResourceType):
+        (WebCore::cachedResourceTypeToTargetType):
+        (WebCore::CachedResource::updateResourceRequest):
+        (WebCore):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::setResourceError):
+        (WebCore::CachedResource::resourceError):
+        (CachedResource):
+        (WebCore::CachedResource::ignoreForRequestCount):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource):
+        (WebCore::CachedResourceLoader::requestRawResource):
+        (WebCore::CachedResourceLoader::checkInsecureContent):
+        (WebCore::CachedResourceLoader::canRequest):
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy):
+        * loader/cache/CachedResourceLoader.h:
+        (CachedResourceLoader):
+        * platform/network/ResourceLoadPriority.h:
+        * platform/network/cf/ResourceRequestCFNet.h:
+        (WebCore::toResourceLoadPriority):
+        (WebCore::toHTTPPipeliningPriority):
+
 2012-10-25  Ojan Vafai  <ojan@chromium.org>
 
         [V8] Add histograms to measure V8 work done during window close and navigation

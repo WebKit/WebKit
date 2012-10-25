@@ -35,8 +35,9 @@ enum ResourceLoadPriority {
     ResourceLoadPriorityLow,
     ResourceLoadPriorityMedium,
     ResourceLoadPriorityHigh,
+    ResourceLoadPriorityVeryHigh,
     ResourceLoadPriorityLowest = ResourceLoadPriorityVeryLow,
-    ResourceLoadPriorityHighest = ResourceLoadPriorityHigh,
+    ResourceLoadPriorityHighest = ResourceLoadPriorityVeryHigh,
 };
 
 }
