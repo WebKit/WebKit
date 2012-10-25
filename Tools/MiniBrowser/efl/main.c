@@ -465,6 +465,7 @@ on_javascript_alert(Ewk_View_Smart_Data *smartData, const char *message)
     elm_object_text_set(button, "OK");
     elm_object_part_content_set(alert_popup, "button1", button);
     evas_object_smart_callback_add(button, "clicked", quit_event_loop, NULL);
+    elm_object_focus_set(button, EINA_TRUE);
     evas_object_show(alert_popup);
 
     /* Make modal */
@@ -494,6 +495,7 @@ on_javascript_confirm(Ewk_View_Smart_Data *smartData, const char *message)
     elm_object_text_set(ok_button, "OK");
     elm_object_part_content_set(confirm_popup, "button2", ok_button);
     evas_object_smart_callback_add(ok_button, "clicked", on_ok_clicked, &ok);
+    elm_object_focus_set(ok_button, EINA_TRUE);
     evas_object_show(confirm_popup);
 
     /* Make modal */
@@ -534,9 +536,11 @@ on_javascript_prompt(Ewk_View_Smart_Data *smartData, const char *message, const 
     elm_entry_single_line_set(entry, EINA_TRUE);
     elm_entry_text_style_user_push(entry, "DEFAULT='font_size=18'");
     elm_entry_entry_set(entry, default_value ? default_value : "");
+    elm_entry_select_all(entry);
     evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, 0.0);
     evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, 0.5);
     elm_box_pack_end(box, entry);
+    elm_object_focus_set(entry, EINA_TRUE);
     evas_object_show(entry);
 
     elm_object_content_set(prompt_popup, box);

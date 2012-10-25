@@ -1,3 +1,18 @@
+2012-10-25  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [EFL][WK2] JavaScript popups are not focused when opened
+        https://bugs.webkit.org/show_bug.cgi?id=100354
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Move focus to the JavaScript popups when opened so that the key events
+        are forwarded to the popups instead of web view.
+
+        * MiniBrowser/efl/main.c:
+        (on_javascript_alert):
+        (on_javascript_confirm):
+        (on_javascript_prompt):
+
 2012-10-25  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Fix "check-inspector-strings" script and fix localized strings.
