@@ -486,6 +486,9 @@ webkit.org/b/82886 inspector/styles/override-screen-size.html [ Skip ]
 # LayoutTestController::setAutomaticLinkDetectionEnabled isn't implemented
 webkit.org/b/85463 editing/inserting/typing-space-to-trigger-smart-link.html
 
+# gestureTwoFingerTap not implemented by this platform (introduced in r132406)
+touchadjustment/touch-links-two-finger-tap.html
+
 # =========================================================================== #
 #       Feature not yet supported.                                            #
 # =========================================================================== #

@@ -1,3 +1,9 @@
+2012-10-24  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip a new failing test.
+
+        * platform/qt/TestExpectations:
+
 2012-10-24  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r132291): Crash in BaseMultipleFieldsDateAndTimeInputType
