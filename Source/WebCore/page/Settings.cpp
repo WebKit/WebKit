@@ -703,6 +703,11 @@ void Settings::setDefaultMinDOMTimerInterval(double interval)
     gDefaultMinDOMTimerInterval = interval;
 }
 
+double Settings::defaultMinDOMTimerInterval()
+{
+    return gDefaultMinDOMTimerInterval;
+}
+
 void Settings::setMinDOMTimerInterval(double interval)
 {
     m_page->setMinimumTimerInterval(interval);
@@ -716,6 +721,11 @@ double Settings::minDOMTimerInterval()
 void Settings::setDefaultDOMTimerAlignmentInterval(double interval)
 {
     gDefaultDOMTimerAlignmentInterval = interval;
+}
+
+double Settings::defaultDOMTimerAlignmentInterval()
+{
+    return gDefaultDOMTimerAlignmentInterval;
 }
 
 void Settings::setDOMTimerAlignmentInterval(double interval)

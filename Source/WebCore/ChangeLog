@@ -1,5 +1,19 @@
 2012-10-25  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, fix the build on Mac.
+
+        Putting the getter in the Settings.h caused the global variable to be inlined and needing it to be exported.
+        Instead, put the implementation in the cpp file.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::defaultMinDOMTimerInterval):
+        (WebCore):
+        (WebCore::Settings::defaultDOMTimerAlignmentInterval):
+        * page/Settings.h:
+        (Settings):
+
+2012-10-25  Tony Chang  <tony@chromium.org>
+
         Move default DOM Timer values into Settings
         https://bugs.webkit.org/show_bug.cgi?id=100405
 

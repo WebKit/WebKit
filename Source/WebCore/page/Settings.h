@@ -257,13 +257,13 @@ namespace WebCore {
         bool isDOMPasteAllowed() const { return m_isDOMPasteAllowed; }
         
         static void setDefaultMinDOMTimerInterval(double); // Interval specified in seconds.
-        static double defaultMinDOMTimerInterval() { return gDefaultMinDOMTimerInterval; }
+        static double defaultMinDOMTimerInterval();
         
         void setMinDOMTimerInterval(double); // Per-page; initialized to default value.
         double minDOMTimerInterval();
 
         static void setDefaultDOMTimerAlignmentInterval(double);
-        static double defaultDOMTimerAlignmentInterval() { return gDefaultDOMTimerAlignmentInterval; }
+        static double defaultDOMTimerAlignmentInterval();
 
         void setDOMTimerAlignmentInterval(double);
         double domTimerAlignmentInterval() const;
