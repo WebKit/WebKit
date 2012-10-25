@@ -1,3 +1,37 @@
+2012-10-25  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Pixel tests need rebaseline
+        https://bugs.webkit.org/show_bug.cgi?id=99323
+
+        Unreviewed pixel gardening.
+
+        Rebase some results for qt-5.0-wk2, mark wrong results as expected fail.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt-5.0-wk2/compositing/direct-image-compositing-expected.png:
+        * platform/qt-5.0-wk2/compositing/text-on-scaled-layer-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/text-on-scaled-surface-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/visibility/visibility-simple-video-layer-expected.png: Added.
+        * platform/qt-5.0-wk2/css3/filters/effect-drop-shadow-hw-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/012-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/014-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css-generated-content/hover-style-change-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/css/compare-content-style-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/box-shadow-override-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/inline-block/overflow-clip-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/repaint/line-flow-with-floats-in-regions-expected.png: Added.
+        * platform/qt-5.0-wk2/http/tests/navigation/javascriptlink-frames-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/as-image/img-preserveAspectRatio-support-1-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/js-late-pattern-and-object-creation-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/transforms/text-with-pattern-with-svg-transform-expected.png: Added.
+        * platform/qt/TestExpectations:
+        * platform/qt/ietestcenter/css3/bordersbackgrounds/border-radius-content-edge-001-expected.png:
+
 2012-10-25  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] Gardening after r132394
