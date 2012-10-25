@@ -802,17 +802,17 @@ http/tests/xmlhttprequest/cache-override.html
 http/tests/xmlhttprequest/xmlhttprequest-check-get-readystate-for-404-without-body.html
 
 # ResourceRequest needs to support setTimeoutInterval
-webkit.org/b/98397 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-aborted.html [ Failure ]
-webkit.org/b/98397 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-abortedonmain.html [ Failure ]
-webkit.org/b/98397 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-overridesexpires.html [ Failure ]
-webkit.org/b/98397 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-simple.html [ Failure ]
-webkit.org/b/98397 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-synconmain.html [ Failure ]
-webkit.org/b/98397 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-twice.html [ Failure ]
-webkit.org/b/98397 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-aborted.html [ Failure ]
-webkit.org/b/98397 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-overridesexpires.html [ Failure ]
-webkit.org/b/98397 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-simple.html [ Failure ]
-webkit.org/b/98397 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-synconworker.html [ Failure ]
-webkit.org/b/98397 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-twice.html [ Failure ]
+webkit.org/b/98397 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-aborted.html
+webkit.org/b/98397 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-abortedonmain.html
+webkit.org/b/98397 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-overridesexpires.html
+webkit.org/b/98397 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-simple.html
+webkit.org/b/98397 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-synconmain.html
+webkit.org/b/98397 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-twice.html
+webkit.org/b/98397 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-aborted.html
+webkit.org/b/98397 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-overridesexpires.html
+webkit.org/b/98397 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-simple.html
+webkit.org/b/98397 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-synconworker.html
+webkit.org/b/98397 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-twice.html
 
 # =========================================================================== #
 #       Failing editing/inserting tests.                                      #

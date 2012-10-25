@@ -1,3 +1,9 @@
+2012-10-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip failing tests to speedup testing.
+
+        * platform/qt/TestExpectations:
+
 2012-10-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: inspector tests failing after r132454
