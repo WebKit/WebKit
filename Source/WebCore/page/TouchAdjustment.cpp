@@ -223,6 +223,7 @@ void compileSubtargetList(const NodeList& intersectedNodes, SubtargetGeometryLis
     HashMap<Node*, Node*> responderMap;
     HashSet<Node*> ancestorsToRespondersSet;
     Vector<Node*> candidates;
+    HashSet<Node*> editableAncestors;
 
     // A node matching the NodeFilter is called a responder. Candidate nodes must either be a
     // responder or have an ancestor that is a responder.
@@ -270,7 +271,25 @@ void compileSubtargetList(const NodeList& intersectedNodes, SubtargetGeometryLis
         ASSERT(respondingNode);
         if (ancestorsToRespondersSet.contains(respondingNode))
             continue;
-        appendSubtargetsForNode(candidate, subtargets);
+        // Consolidate bounds for editable content.
+        if (editableAncestors.contains(candidate))
+            continue;
+        if (candidate->isContentEditable()) {
+            Node* replacement = candidate;
+            Node* parent = candidate->parentOrHostNode();
+            while (parent && parent->isContentEditable()) {
+                replacement = parent;
+                if (editableAncestors.contains(replacement)) {
+                    replacement = 0;
+                    break;
+                }
+                editableAncestors.add(replacement);
+                parent = parent->parentOrHostNode();
+            }
+            candidate = replacement;
+        }
+        if (candidate)
+            appendSubtargetsForNode(candidate, subtargets);
     }
 }
 
@@ -320,7 +339,7 @@ float hybridDistanceFunction(const IntPoint& touchHotspot, const IntRect& touchR
     float radiusSquared = 0.25f * (touchRect.size().diagonalLengthSquared());
     float distanceToAdjustScore = rect.distanceSquaredToPoint(touchHotspot) / radiusSquared;
 
-    float targetArea = rect.size().area();
+    float targetArea = max(rect.size().area(), 1);
     rect.intersect(touchRect);
     float intersectArea = rect.size().area();
     float intersectionScore = 1 - intersectArea / targetArea;

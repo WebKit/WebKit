@@ -1,3 +1,17 @@
+2012-10-25  Kevin Ellis  <kevers@chromium.org>
+
+        Can't easily position the cursor on an empty line in a textarea with touch if touch adjustment is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=97576
+
+        Reviewed by Antonio Gomes.
+
+        Add test to verify that touch adjustment is coarse for
+        editable content, being based on the bounds of the
+        editable content and not its children.
+
+        * touchadjustment/editable-content-expected.txt: Added.
+        * touchadjustment/editable-content.html: Added.
+
 2012-10-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip tests because TestRunner::overridePreference()
