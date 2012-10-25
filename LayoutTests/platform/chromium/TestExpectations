@@ -4083,3 +4083,5 @@ Bug(dpranke) [ Win ] webaudio/codec-tests/vorbis/vbr-96kbps-44khz.html [ Failure
 Bug(dpranke) [ Win ] webaudio/codec-tests/vorbis/vbr-128kbps-44khz.html [ Failure ]
 
 webkit.org/b/100023 [ Mac ] fast/sub-pixel/file-upload-control-at-fractional-offset.html [ Failure ImageOnlyFailure ]
+
+Bug(thakis) [ Mac ] css3/filters/custom/effect-custom.html [ Pass ImageOnlyFailure ]
