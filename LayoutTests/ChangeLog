@@ -1,3 +1,10 @@
+2012-10-24  Beth Dakin  <bdakin@apple.com>
+
+        Updated results for https://bugs.webkit.org/show_bug.cgi?id=100312
+        I checked in results that relied on some local changes in WK2.
+
+        * platform/mac/tiled-drawing/tile-coverage-slow-scrolling-expected.txt:
+
 2012-10-24  Simon Fraser  <simon.fraser@apple.com>
 
         Skip tiled drawing tests for WK1
