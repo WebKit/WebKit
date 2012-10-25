@@ -26,14 +26,15 @@
 #include "Page.h"
 #include "WebPage_p.h"
 
+#include <BlackBerryPlatformString.h>
+
 using namespace WebCore;
 
-static CString frameOrigin(Frame* frame)
+static const BlackBerry::Platform::String frameOrigin(Frame* frame)
 {
     DOMWindow* window = frame->document()->domWindow();
     SecurityOrigin* origin = window->document()->securityOrigin();
-    CString latinOrigin = origin->toString().latin1();
-    return latinOrigin;
+    return BlackBerry::Platform::String(origin->toString().utf8().data());
 }
 
 GeolocationClientBlackBerry::GeolocationClientBlackBerry(BlackBerry::WebKit::WebPagePrivate* webPagePrivate)
@@ -74,15 +75,22 @@ void GeolocationClientBlackBerry::requestPermission(Geolocation* location)
     Frame* frame = location->frame();
     if (!frame)
         return;
-    m_webPagePrivate->m_page->chrome()->client()->requestGeolocationPermissionForFrame(frame, location);
+    if (!m_webPagePrivate->m_webSettings->isGeolocationEnabled()) {
+        location->setIsAllowed(false);
+        return;
+    }
+    DOMWindow* window = frame->document()->domWindow();
+    if (!window)
+        return;
+
+    const BlackBerry::Platform::String origin = frameOrigin(frame);
+    m_pendingPermissionGeolocation = location;
+    m_webPagePrivate->m_client->requestGeolocationPermission(this, origin);
 }
 
 void GeolocationClientBlackBerry::cancelPermissionRequest(Geolocation* location)
 {
-    Frame* frame = location->frame();
-    if (!frame)
-        return;
-    m_webPagePrivate->m_page->chrome()->client()->cancelGeolocationPermissionRequestForFrame(frame, location);
+    m_webPagePrivate->m_client->cancelGeolocationPermission();
 }
 
 void GeolocationClientBlackBerry::onLocationUpdate(double timestamp, double latitude, double longitude, double accuracy, double altitude, bool altitudeValid,
@@ -99,10 +107,10 @@ void GeolocationClientBlackBerry::onLocationError(const char* errorStr)
     GeolocationController::from(m_webPagePrivate->m_page)->errorOccurred(error.get());
 }
 
-void GeolocationClientBlackBerry::onPermission(void* context, bool isAllowed)
+void GeolocationClientBlackBerry::onPermission(bool isAllowed)
 {
-    Geolocation* position = static_cast<Geolocation*>(context);
-    position->setIsAllowed(isAllowed);
+    if (m_pendingPermissionGeolocation)
+        m_pendingPermissionGeolocation->setIsAllowed(isAllowed);
 }
 
 void GeolocationClientBlackBerry::setEnableHighAccuracy(bool newAccuracy)

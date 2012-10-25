@@ -157,8 +157,8 @@ public:
 
     virtual void cursorChanged(Platform::CursorType, const char* url, int x, int y) = 0;
 
-    virtual void requestGeolocationPermission(Platform::GeoTrackerListener*, void* context, const char* origin, unsigned originLength) = 0;
-    virtual void cancelGeolocationPermission(Platform::GeoTrackerListener*, void* context) = 0;
+    virtual void requestGeolocationPermission(Platform::GeoTrackerListener*, const BlackBerry::Platform::String& origin) = 0;
+    virtual void cancelGeolocationPermission() = 0;
     virtual Platform::NetworkStreamFactory* networkStreamFactory() = 0;
 
     virtual void handleStringPattern(const unsigned short* pattern, unsigned length) = 0;

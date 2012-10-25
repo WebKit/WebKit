@@ -1,3 +1,28 @@
+2012-10-24  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Geolocation is segfaulting
+        https://bugs.webkit.org/show_bug.cgi?id=100305
+
+        Reviewed by Rob Buis.
+
+        We weren't wrapping the Geolocation object in a RefPtr when we call setIsAllowed in
+        GeolocationClientBlackBerry::onPermission.
+
+        This patch also removes all references of the Geolocation object in WebPageClientImpl.
+        One RefPtr<Geolocation> is used to store the reference of the WebCore object on our port.
+
+        We don't need a mapping between origin -> context of Geolocation because in our port,
+        one WebPage.cpp contains one GeolocationController only. 
+
+        * Api/WebPageClient.h:
+        * WebCoreSupport/GeolocationClientBlackBerry.cpp:
+        (frameOrigin):
+        (GeolocationClientBlackBerry::requestPermission):
+        (GeolocationClientBlackBerry::cancelPermissionRequest):
+        (GeolocationClientBlackBerry::onPermission):
+        * WebCoreSupport/GeolocationClientBlackBerry.h:
+        (GeolocationClientBlackBerry):
+
 2012-10-24  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry][Fullscreen] Roll out changes to fullscreen which rely on viewport size change [Part II]

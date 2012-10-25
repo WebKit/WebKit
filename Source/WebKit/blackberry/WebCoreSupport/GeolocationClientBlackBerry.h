@@ -47,12 +47,13 @@ public:
     virtual void onLocationUpdate(double timestamp, double latitude, double longitude, double accuracy, double altitude, bool altitudeValid, double altitudeAccuracy,
                                   bool altitudeAccuracyValid, double speed, bool speedValid, double heading, bool headingValid);
     virtual void onLocationError(const char* error);
-    virtual void onPermission(void* context, bool isAllowed);
+    virtual void onPermission(bool isAllowed);
     BlackBerry::Platform::GeoTracker* tracker() const { return m_tracker; }
 
 private:
     BlackBerry::WebKit::WebPagePrivate* m_webPagePrivate;
     BlackBerry::Platform::GeoTracker* m_tracker;
+    RefPtr<Geolocation> m_pendingPermissionGeolocation;
     RefPtr<GeolocationPosition> m_lastPosition;
     bool m_accuracy;
 };
