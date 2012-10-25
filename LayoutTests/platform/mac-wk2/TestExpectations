@@ -358,5 +358,11 @@ sputnik/Unicode/Unicode_218/S7.6_A5.2_T1.html
 ### END OF (4) Features that are not supported in WebKit2 and likely never will be
 ########################################
 
+########################################
+### START OF (5) Features that are not supported in WebKit1, so skipped in mac/TestExpectations then re-enabled here
 
+platform/mac/tiled-drawing/ [ Pass ]
+
+### END OF (5) Features that are not supported in WebKit1, so skipped in mac/TestExpectations then re-enabled here
+########################################
 

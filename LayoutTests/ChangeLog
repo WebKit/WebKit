@@ -1,3 +1,16 @@
+2012-10-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Skip tiled drawing tests for WK1
+        https://bugs.webkit.org/show_bug.cgi?id=100312
+
+        Reviewed by Beth Dakin.
+
+        Skip platform/mac/tiled-drawing tests in the main TestExpections file,
+        but re-enable it in the WK2 TestExpections file.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2012-10-24  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, update chromium-mac-mountainlion baselines.
