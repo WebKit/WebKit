@@ -1,3 +1,19 @@
+2012-10-25  Kinuko Yasuda  <kinuko@chromium.org>
+
+        [chromium] External FileSystem should use the root path returned by requestFileSystem
+        https://bugs.webkit.org/show_bug.cgi?id=100372
+
+        Reviewed by Kentaro Hara.
+
+        External FileSystem should use the root path returned by
+        requestFileSystem as other type is doing. Current implementation
+        completely ignore the returned path.
+
+        New tests are to be added in chromium (as the type is only available in chromeos and chrome extensions)
+
+        * Modules/filesystem/chromium/DOMFileSystemChromium.cpp:
+        (WebCore::DOMFileSystemBase::createFileSystemURL):
+
 2012-10-25  Kevin Ellis  <kevers@chromium.org>
 
         Can't easily position the cursor on an empty line in a textarea with touch if touch adjustment is enabled

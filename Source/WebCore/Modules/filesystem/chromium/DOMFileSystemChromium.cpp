@@ -90,7 +90,9 @@ KURL DOMFileSystemBase::createFileSystemURL(const String& fullPath) const
         result.append(securityOrigin()->toString());
         result.append("/");
         result.append(externalPathPrefix);
-        result.append(encodeWithURLEscapeSequences(fullPath));
+        result.append(m_filesystemRootURL.path());
+        // Remove the extra leading slash.
+        result.append(encodeWithURLEscapeSequences(fullPath.substring(1)));
         return KURL(ParsedURLString, result.toString());
     }
 
