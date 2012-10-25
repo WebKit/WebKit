@@ -1,3 +1,44 @@
+2012-10-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r132269.
+        http://trac.webkit.org/changeset/132269
+        https://bugs.webkit.org/show_bug.cgi?id=100412
+
+        "Speculative rollout of r132269 in hopes of fixing a
+        mysterious recalcStyle crasher" (Requested by eseidel on
+        #webkit).
+
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.html: Removed.
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.txt: Added.
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements.html:
+        * fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.html: Removed.
+        * fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.txt: Added.
+        * fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements.html:
+        * fast/forms/pseudo-elements-expected.html: Removed.
+        * fast/forms/pseudo-elements.html: Removed.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.html: Removed.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.txt: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements.html:
+        * fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.html: Removed.
+        * fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.txt: Added.
+        * fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements.html:
+        * platform/chromium-linux/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+        * platform/chromium-linux/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+        * platform/chromium-linux/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+        * platform/chromium-mac/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+        * platform/chromium-win/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+        * platform/chromium-win/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+        * platform/chromium-win/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png: Added.
+
 2012-10-25  Stephen White  <senorblanco@chromium.org>
 
         Add new layout test for reference filters.

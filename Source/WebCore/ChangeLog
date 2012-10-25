@@ -1,3 +1,19 @@
+2012-10-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r132269.
+        http://trac.webkit.org/changeset/132269
+        https://bugs.webkit.org/show_bug.cgi?id=100412
+
+        "Speculative rollout of r132269 in hopes of fixing a
+        mysterious recalcStyle crasher" (Requested by eseidel on
+        #webkit).
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter):
+        * rendering/RenderListBox.h:
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::updateBeforeAfterContent):
+
 2012-10-25  Stephen White  <senorblanco@chromium.org>
 
         Change ReferenceFilterOperations to reference (own) the data passed to
