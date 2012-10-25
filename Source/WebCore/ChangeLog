@@ -1,3 +1,15 @@
+2012-10-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: inspector tests failing after r132454
+        https://bugs.webkit.org/show_bug.cgi?id=100381
+
+        Reviewed by Pavel Feldman.
+
+        Added implementation for DOMNodeWrapperMap::reportMemoryUsage method,
+        otherwise no actual pointer is reported which breaks instrumentation.
+
+        * bindings/v8/IntrusiveDOMWrapperMap.h:
+
 2012-10-25  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         Init timeout flag in ResourceErrorCF

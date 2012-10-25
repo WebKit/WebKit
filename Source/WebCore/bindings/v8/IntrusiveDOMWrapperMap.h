@@ -62,6 +62,7 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
     {
+        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Binding);
     }
 
 private:
