@@ -1,3 +1,20 @@
+2012-10-25  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        Init timeout flag in ResourceErrorCF
+        https://bugs.webkit.org/show_bug.cgi?id=100349
+
+        Reviewed by Alexey Proskuryakov.
+
+        Initialize the timeout property to true if the network error was a timeout error.
+        This is a speculative fix for the XHR timeout test cases failing on Apple Win -
+        I can't verify this on a local machine.
+
+        No new tests, covered by
+        LayoutTests/http/tests/xmlhttprequest/timeout/*
+
+        * platform/network/cf/ResourceErrorCF.cpp:
+        (WebCore::ResourceError::ResourceError): Init m_timeout from error code.
+
 2012-10-25  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         'resolution' MQ: Printing should use use high resolution images when available
