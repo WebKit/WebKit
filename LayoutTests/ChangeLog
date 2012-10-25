@@ -1,3 +1,16 @@
+2012-10-25  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Gardening after r132386
+        https://bugs.webkit.org/show_bug.cgi?id=100362
+
+        Unreviewed gardening.
+
+        Skipped crashing fast/dom/nested-script-exceptions.html, networkinformation/multiple-frames.html, 
+        networkinformation/basic-all-types-of-events.html, networkinformation/updates.html, networkinformation/add-listener-from-callback.html,
+        networkinformation/basic-operation.html, svg/foreignObject/viewport-foreignobject-crash.html for EFL WK2.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-10-25  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         Layout Test fast/media/w3c/test_media_queries.html is slow on Chromium debug bots after r132352
