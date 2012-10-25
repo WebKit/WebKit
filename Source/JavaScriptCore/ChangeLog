@@ -1,3 +1,25 @@
+2012-10-24  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Refactor LLInt64 to distinguish the pointer operations from the 64-bit integer operations
+        https://bugs.webkit.org/show_bug.cgi?id=100321
+
+        Reviewed by Filip Pizlo.
+
+        We have refactored the MacroAssembler and JIT compilers to distinguish
+        the pointer operations from the 64-bit integer operations (see bug #99154).
+        Now we want to do the similar work for LLInt, and the goal is same as
+        the one mentioned in 99154.
+
+        This is the first part of the modification: in the offline assembler,
+        adding the support of the "<foo>q" instructions which will be used for
+        64-bit integer operations.
+
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoop::execute):
+        * offlineasm/cloop.rb:
+        * offlineasm/instructions.rb:
+        * offlineasm/x86.rb:
+
 2012-10-24  Filip Pizlo  <fpizlo@apple.com>
 
         DFG compileBlahBlahByVal methods for Contiguous and ArrayStorage have only one caller and should be removed

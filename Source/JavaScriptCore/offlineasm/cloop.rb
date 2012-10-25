@@ -37,6 +37,8 @@ def cloopMapType(type)
     when :uint;           ".u"
     when :int32;          ".i32"
     when :uint32;         ".u32"
+    when :int64;          ".i64"
+    when :uint64;         ".u64"
     when :int8;           ".i8"
     when :uint8;          ".u8"
     when :int8Ptr;        ".i8p"
@@ -141,9 +143,11 @@ class Immediate
         case type
         when :int8;    "int8_t(#{valueStr})"
         when :int32;   "int32_t(#{valueStr})"
+        when :int64;   "int64_t(#{valueStr})"
         when :int;     "intptr_t(#{valueStr})"
         when :uint8;   "uint8_t(#{valueStr})"
         when :uint32;  "uint32_t(#{valueStr})"
+        when :uint64;  "uint64_t(#{valueStr})"
         when :uint;    "uintptr_t(#{valueStr})"
         else
             raise "Not implemented immediate of type: #{type}" 
@@ -159,9 +163,11 @@ class Address
         case type
         when :int8;         int8MemRef
         when :int32;        int32MemRef
+        when :int64;        int64MemRef
         when :int;          intMemRef
         when :uint8;        uint8MemRef
         when :uint32;       uint32MemRef
+        when :uint64;       uint64MemRef
         when :uint;         uintMemRef
         when :opcode;       opcodeMemRef
         when :nativeFunc;   nativeFuncMemRef
@@ -190,6 +196,9 @@ class Address
     def int32MemRef
         "*CAST<int32_t*>(#{pointerExpr})"
     end
+    def int64MemRef
+        "*CAST<int64_t*>(#{pointerExpr})"
+    end
     def intMemRef
         "*CAST<intptr_t*>(#{pointerExpr})"
     end
@@ -201,6 +210,9 @@ class Address
     end
     def uint32MemRef
         "*CAST<uint32_t*>(#{pointerExpr})"
+    end
+    def uint64MemRef
+        "*CAST<uint64_t*>(#{pointerExpr})"
     end
     def uintMemRef
         "*CAST<uintptr_t*>(#{pointerExpr})"
@@ -224,9 +236,11 @@ class BaseIndex
         case type
         when :int8;       int8MemRef
         when :int32;      int32MemRef
+        when :int64;      int64MemRef
         when :int;        intMemRef
         when :uint8;      uint8MemRef
         when :uint32;     uint32MemRef
+        when :uint64;     uint64MemRef
         when :uint;       uintMemRef
         when :opcode;     opcodeMemRef
         else
@@ -250,6 +264,9 @@ class BaseIndex
     def int32MemRef
         "*CAST<int32_t*>(#{pointerExpr})"
     end
+    def int64MemRef
+        "*CAST<int64_t*>(#{pointerExpr})"
+    end
     def intMemRef
         "*CAST<intptr_t*>(#{pointerExpr})"
     end
@@ -261,6 +278,9 @@ class BaseIndex
     end
     def uint32MemRef
         "*CAST<uint32_t*>(#{pointerExpr})"
+    end
+    def uint64MemRef
+        "*CAST<uint64_t*>(#{pointerExpr})"
     end
     def uintMemRef
         "*CAST<uintptr_t*>(#{pointerExpr})"
@@ -410,6 +430,7 @@ def cloopEmitOpAndBranch(operands, operator, type, conditionTest)
     case type
     when :int;   tempType = "intptr_t"
     when :int32; tempType = "int32_t"
+    when :int64; tempType = "int64_t"
     else
         raise "Unimplemented type"
     end
@@ -512,51 +533,71 @@ class Instruction
         case opcode
         when "addi"
             cloopEmitOperation(operands, :int32, "+")
+        when "addq"
+            cloopEmitOperation(operands, :int64, "+")
         when "addp"
             cloopEmitOperation(operands, :int, "+")
 
         when "andi"
             cloopEmitOperation(operands, :int32, "&")
+        when "andq"
+            cloopEmitOperation(operands, :int64, "&")
         when "andp"
             cloopEmitOperation(operands, :int, "&")
 
         when "ori"
             cloopEmitOperation(operands, :int32, "|")
+        when "orq"
+            cloopEmitOperation(operands, :int64, "|")
         when "orp"
             cloopEmitOperation(operands, :int, "|")
 
         when "xori"
             cloopEmitOperation(operands, :int32, "^")
+        when "xorq"
+            cloopEmitOperation(operands, :int64, "^")
         when "xorp"
             cloopEmitOperation(operands, :int, "^")
 
         when "lshifti"
             cloopEmitShiftOperation(operands, :int32, "<<")
+        when "lshiftq"
+            cloopEmitShiftOperation(operands, :int64, "<<")
         when "lshiftp"
             cloopEmitShiftOperation(operands, :int, "<<")
 
         when "rshifti"
             cloopEmitShiftOperation(operands, :int32, ">>")
+        when "rshiftq"
+            cloopEmitShiftOperation(operands, :int64, ">>")
         when "rshiftp"
             cloopEmitShiftOperation(operands, :int, ">>")
 
         when "urshifti"
             cloopEmitShiftOperation(operands, :uint32, ">>")
+        when "urshiftq"
+            cloopEmitShiftOperation(operands, :uint64, ">>")
         when "urshiftp"
             cloopEmitShiftOperation(operands, :uint, ">>")
 
         when "muli"
             cloopEmitOperation(operands, :int32, "*")
+        when "mulq"
+            cloopEmitOperation(operands, :int64, "*")
         when "mulp"
             cloopEmitOperation(operands, :int, "*")
 
         when "subi"
             cloopEmitOperation(operands, :int32, "-")
+        when "subq"
+            cloopEmitOperation(operands, :int64, "-")
         when "subp"
             cloopEmitOperation(operands, :int, "-")
 
         when "negi"
             $asm.putc "#{operands[0].clValue(:int32)} = -#{operands[0].clValue(:int32)};"
+        when "negq"
+            $asm.putc "#{operands[0].clValue(:int64)} = -#{operands[0].clValue(:int64)};"
         when "negp"
             $asm.putc "#{operands[0].clValue(:int)} = -#{operands[0].clValue(:int)};"
 
@@ -567,10 +608,14 @@ class Instruction
             $asm.putc "#{operands[1].clValue(:int)} = #{operands[0].uint32MemRef};"
         when "loadis"
             $asm.putc "#{operands[1].clValue(:int)} = #{operands[0].int32MemRef};"
+        when "loadq"
+            $asm.putc "#{operands[1].clValue(:int64)} = #{operands[0].int64MemRef};"
         when "loadp"
             $asm.putc "#{operands[1].clValue(:int)} = #{operands[0].intMemRef};"
         when "storei"
             $asm.putc "#{operands[1].int32MemRef} = #{operands[0].clValue(:int32)};"
+        when "storeq"
+            $asm.putc "#{operands[1].int64MemRef} = #{operands[0].clValue(:int64)};"
         when "storep"
             $asm.putc "#{operands[1].intMemRef} = #{operands[0].clValue(:int)};"
         when "loadb"
@@ -647,12 +692,18 @@ class Instruction
             $asm.putc "#{operands[1].clValue(:int)} = #{operands[0].clValue(:int32)};"
         when "zxi2p"
             $asm.putc "#{operands[1].clValue(:uint)} = #{operands[0].clValue(:uint32)};"
+        when "sxi2q"
+            $asm.putc "#{operands[1].clValue(:int64)} = #{operands[0].clValue(:int32)};"
+        when "zxi2q"
+            $asm.putc "#{operands[1].clValue(:uint64)} = #{operands[0].clValue(:uint32)};"
         when "nop"
             $asm.putc "// nop"
         when "bbeq"
             cloopEmitCompareAndBranch(operands, :int8, "==")
         when "bieq"
             cloopEmitCompareAndBranch(operands, :int32, "==")
+        when "bqeq"
+            cloopEmitCompareAndBranch(operands, :int64, "==")
         when "bpeq"
             cloopEmitCompareAndBranch(operands, :int, "==")
 
@@ -660,6 +711,8 @@ class Instruction
             cloopEmitCompareAndBranch(operands, :int8, "!=")
         when "bineq"
             cloopEmitCompareAndBranch(operands, :int32, "!=")
+        when "bqneq"
+            cloopEmitCompareAndBranch(operands, :int64, "!=")
         when "bpneq"
             cloopEmitCompareAndBranch(operands, :int, "!=")
 
@@ -667,6 +720,8 @@ class Instruction
             cloopEmitCompareAndBranch(operands, :uint8, ">")
         when "bia"
             cloopEmitCompareAndBranch(operands, :uint32, ">")
+        when "bqa"
+            cloopEmitCompareAndBranch(operands, :uint64, ">")
         when "bpa"
             cloopEmitCompareAndBranch(operands, :uint, ">")
 
@@ -674,6 +729,8 @@ class Instruction
             cloopEmitCompareAndBranch(operands, :uint8, ">=")
         when "biaeq"
             cloopEmitCompareAndBranch(operands, :uint32, ">=")
+        when "bqaeq"
+            cloopEmitCompareAndBranch(operands, :uint64, ">=")
         when "bpaeq"
             cloopEmitCompareAndBranch(operands, :uint, ">=")
 
@@ -681,6 +738,8 @@ class Instruction
             cloopEmitCompareAndBranch(operands, :uint8, "<")
         when "bib"
             cloopEmitCompareAndBranch(operands, :uint32, "<")
+        when "bqb"
+            cloopEmitCompareAndBranch(operands, :uint64, "<")
         when "bpb"
             cloopEmitCompareAndBranch(operands, :uint, "<")
 
@@ -688,6 +747,8 @@ class Instruction
             cloopEmitCompareAndBranch(operands, :uint8, "<=")
         when "bibeq"
             cloopEmitCompareAndBranch(operands, :uint32, "<=")
+        when "bqbeq"
+            cloopEmitCompareAndBranch(operands, :uint64, "<=")
         when "bpbeq"
             cloopEmitCompareAndBranch(operands, :uint, "<=")
 
@@ -695,6 +756,8 @@ class Instruction
             cloopEmitCompareAndBranch(operands, :int8, ">")
         when "bigt"
             cloopEmitCompareAndBranch(operands, :int32, ">")
+        when "bqgt"
+            cloopEmitCompareAndBranch(operands, :int64, ">")
         when "bpgt"
             cloopEmitCompareAndBranch(operands, :int, ">")
 
@@ -702,6 +765,8 @@ class Instruction
             cloopEmitCompareAndBranch(operands, :int8, ">=")
         when "bigteq"
             cloopEmitCompareAndBranch(operands, :int32, ">=")
+        when "bqgteq"
+            cloopEmitCompareAndBranch(operands, :int64, ">=")
         when "bpgteq"
             cloopEmitCompareAndBranch(operands, :int, ">=")
 
@@ -709,6 +774,8 @@ class Instruction
             cloopEmitCompareAndBranch(operands, :int8, "<")
         when "bilt"
             cloopEmitCompareAndBranch(operands, :int32, "<")
+        when "bqlt"
+            cloopEmitCompareAndBranch(operands, :int64, "<")
         when "bplt"
             cloopEmitCompareAndBranch(operands, :int, "<")
 
@@ -716,6 +783,8 @@ class Instruction
             cloopEmitCompareAndBranch(operands, :int8, "<=")
         when "bilteq"
             cloopEmitCompareAndBranch(operands, :int32, "<=")
+        when "bqlteq"
+            cloopEmitCompareAndBranch(operands, :int64, "<=")
         when "bplteq"
             cloopEmitCompareAndBranch(operands, :int, "<=")
 
@@ -723,6 +792,8 @@ class Instruction
             cloopEmitTestAndBranchIf(operands, :int8, "== 0", operands[-1].cLabel)
         when "btiz"
             cloopEmitTestAndBranchIf(operands, :int32, "== 0", operands[-1].cLabel)
+        when "btqz"
+            cloopEmitTestAndBranchIf(operands, :int64, "== 0", operands[-1].cLabel)
         when "btpz"
             cloopEmitTestAndBranchIf(operands, :int, "== 0", operands[-1].cLabel)
 
@@ -730,6 +801,8 @@ class Instruction
             cloopEmitTestAndBranchIf(operands, :int8, "!= 0", operands[-1].cLabel)
         when "btinz"
             cloopEmitTestAndBranchIf(operands, :int32, "!= 0", operands[-1].cLabel)
+        when "btqnz"
+            cloopEmitTestAndBranchIf(operands, :int64, "!= 0", operands[-1].cLabel)
         when "btpnz"
             cloopEmitTestAndBranchIf(operands, :int, "!= 0", operands[-1].cLabel)
 
@@ -737,6 +810,8 @@ class Instruction
             cloopEmitTestAndBranchIf(operands, :int8, "< 0", operands[-1].cLabel)
         when "btis"
             cloopEmitTestAndBranchIf(operands, :int32, "< 0", operands[-1].cLabel)
+        when "btqs"
+            cloopEmitTestAndBranchIf(operands, :int64, "< 0", operands[-1].cLabel)
         when "btps"
             cloopEmitTestAndBranchIf(operands, :int, "< 0", operands[-1].cLabel)
 
@@ -770,6 +845,8 @@ class Instruction
             cloopEmitCompareAndSet(operands, :uint8, "==")
         when "cieq"
             cloopEmitCompareAndSet(operands, :uint32, "==")
+        when "cqeq"
+            cloopEmitCompareAndSet(operands, :uint64, "==")
         when "cpeq"
             cloopEmitCompareAndSet(operands, :uint, "==")
 
@@ -777,6 +854,8 @@ class Instruction
             cloopEmitCompareAndSet(operands, :uint8, "!=")
         when "cineq"
             cloopEmitCompareAndSet(operands, :uint32, "!=")
+        when "cqneq"
+            cloopEmitCompareAndSet(operands, :uint64, "!=")
         when "cpneq"
             cloopEmitCompareAndSet(operands, :uint, "!=")
 
@@ -784,6 +863,8 @@ class Instruction
             cloopEmitCompareAndSet(operands, :uint8, ">")
         when "cia"
             cloopEmitCompareAndSet(operands, :uint32, ">")
+        when "cqa"
+            cloopEmitCompareAndSet(operands, :uint64, ">")
         when "cpa"
             cloopEmitCompareAndSet(operands, :uint, ">")
 
@@ -791,6 +872,8 @@ class Instruction
             cloopEmitCompareAndSet(operands, :uint8, ">=")
         when "ciaeq"
             cloopEmitCompareAndSet(operands, :uint32, ">=")
+        when "cqaeq"
+            cloopEmitCompareAndSet(operands, :uint64, ">=")
         when "cpaeq"
             cloopEmitCompareAndSet(operands, :uint, ">=")
 
@@ -798,6 +881,8 @@ class Instruction
             cloopEmitCompareAndSet(operands, :uint8, "<")
         when "cib"
             cloopEmitCompareAndSet(operands, :uint32, "<")
+        when "cqb"
+            cloopEmitCompareAndSet(operands, :uint64, "<")
         when "cpb"
             cloopEmitCompareAndSet(operands, :uint, "<")
 
@@ -805,6 +890,8 @@ class Instruction
             cloopEmitCompareAndSet(operands, :uint8, "<=")
         when "cibeq"
             cloopEmitCompareAndSet(operands, :uint32, "<=")
+        when "cqbeq"
+            cloopEmitCompareAndSet(operands, :uint64, "<=")
         when "cpbeq"
             cloopEmitCompareAndSet(operands, :uint, "<=")
 
@@ -812,6 +899,8 @@ class Instruction
             cloopEmitCompareAndSet(operands, :int8, ">")
         when "cigt"
             cloopEmitCompareAndSet(operands, :int32, ">")
+        when "cqgt"
+            cloopEmitCompareAndSet(operands, :int64, ">")
         when "cpgt"
             cloopEmitCompareAndSet(operands, :int, ">")
 
@@ -819,6 +908,8 @@ class Instruction
             cloopEmitCompareAndSet(operands, :int8, ">=")
         when "cigteq"
             cloopEmitCompareAndSet(operands, :int32, ">=")
+        when "cqgteq"
+            cloopEmitCompareAndSet(operands, :int64, ">=")
         when "cpgteq"
             cloopEmitCompareAndSet(operands, :int, ">=")
 
@@ -826,6 +917,8 @@ class Instruction
             cloopEmitCompareAndSet(operands, :int8, "<")
         when "cilt"
             cloopEmitCompareAndSet(operands, :int32, "<")
+        when "cqlt"
+            cloopEmitCompareAndSet(operands, :int64, "<")
         when "cplt"
             cloopEmitCompareAndSet(operands, :int, "<")
 
@@ -833,6 +926,8 @@ class Instruction
             cloopEmitCompareAndSet(operands, :int8, "<=")
         when "cilteq"
             cloopEmitCompareAndSet(operands, :int32, "<=")
+        when "cqlteq"
+            cloopEmitCompareAndSet(operands, :int64, "<=")
         when "cplteq"
             cloopEmitCompareAndSet(operands, :int, "<=")
 
@@ -840,6 +935,8 @@ class Instruction
             cloopEmitTestSet(operands, :int8, "< 0")
         when "tis"
             cloopEmitTestSet(operands, :int32, "< 0")
+        when "tqs"
+            cloopEmitTestSet(operands, :int64, "< 0")
         when "tps"
             cloopEmitTestSet(operands, :int, "< 0")
 
@@ -847,6 +944,8 @@ class Instruction
             cloopEmitTestSet(operands, :int8, "== 0")
         when "tiz"
             cloopEmitTestSet(operands, :int32, "== 0")
+        when "tqz"
+            cloopEmitTestSet(operands, :int64, "== 0")
         when "tpz"
             cloopEmitTestSet(operands, :int, "== 0")
 
@@ -854,6 +953,8 @@ class Instruction
             cloopEmitTestSet(operands, :int8, "!= 0")
         when "tinz"
             cloopEmitTestSet(operands, :int32, "!= 0")
+        when "tqnz"
+            cloopEmitTestSet(operands, :int64, "!= 0")
         when "tpnz"
             cloopEmitTestSet(operands, :int, "!= 0")
 
@@ -897,14 +998,14 @@ class Instruction
         when "fd2ii"
             $asm.putc "Double2Ints(#{operands[0].clValue(:double)}, #{operands[1].clValue}, #{operands[2].clValue});"
 
-        # 64-bit instruction: fp2d int64Op dblOp (based on X64)
+        # 64-bit instruction: fq2d int64Op dblOp (based on X64)
         # Copy a bit-encoded double in a 64-bit int register to a double register.
-        when "fp2d"
+        when "fq2d", "fp2d"
             $asm.putc "#{operands[1].clValue(:double)} = #{operands[0].clValue(:castToDouble)};"
 
-        # 64-bit instruction: fd2p dblOp int64Op (based on X64 instruction set)
+        # 64-bit instruction: fd2q dblOp int64Op (based on X64 instruction set)
         # Copy a double as a bit-encoded double into a 64-bit int register.
-        when "fd2p"
+        when "fd2q", "fd2p"
             $asm.putc "#{operands[1].clValue(:voidPtr)} = #{operands[0].clValue(:castToVoidPtr)};"
 
         when "leai"
@@ -925,6 +1026,13 @@ class Instruction
             cloopEmitOpAndBranch(operands, "+", :int32, "== 0")
         when "baddinz"
             cloopEmitOpAndBranch(operands, "+", :int32, "!= 0")
+
+        when "baddqs"
+            cloopEmitOpAndBranch(operands, "+", :int64, "< 0")
+        when "baddqz"
+            cloopEmitOpAndBranch(operands, "+", :int64, "== 0")
+        when "baddqnz"
+            cloopEmitOpAndBranch(operands, "+", :int64, "!= 0")
 
         when "baddps"
             cloopEmitOpAndBranch(operands, "+", :int, "< 0")

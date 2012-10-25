@@ -178,6 +178,7 @@ JSValue CLoop::execute(CallFrame* callFrame, OpcodeID bootstrapOpcodeId,
         NativeFunction nativeFunc;
 #if USE(JSVALUE64)
         int64_t i64;
+        uint64_t u64;
         EncodedJSValue encodedJSValue;
         double castToDouble;
 #endif
