@@ -4079,3 +4079,7 @@ Bug(dpranke) [ Win ] webaudio/codec-tests/vorbis/vbr-128kbps-44khz.html [ Failur
 webkit.org/b/100023 [ Mac ] fast/sub-pixel/file-upload-control-at-fractional-offset.html [ Failure ImageOnlyFailure ]
 
 Bug(thakis) [ Mac ] css3/filters/custom/effect-custom.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/100381 [ Debug ] inspector/profiler/memory-instrumentation-cached-images.html [ Crash ]
+webkit.org/b/100381 [ Debug ] inspector/profiler/memory-instrumentation-canvas.html [ Crash ]
+
