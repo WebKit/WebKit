@@ -1,3 +1,16 @@
+2012-10-25  Jonathan Backer  <backer@chromium.org>
+
+        CHROMIUM: Add a method to WebLayerTreeView API
+        https://bugs.webkit.org/show_bug.cgi?id=100291
+
+        Reviewed by James Robinson.
+
+        Used to support browser compositor commit locks (crbug.com/136366).
+
+        * chromium/public/WebLayerTreeView.h:
+        (WebLayerTreeView):
+        (WebKit::WebLayerTreeView::setDeferCommits):
+
 2012-10-24  John Sheu  <sheu@google.com>
 
         [chromium] Add textureWidth() and textureHeight() to WebVideoFrame

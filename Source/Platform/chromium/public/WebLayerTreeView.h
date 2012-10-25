@@ -154,6 +154,9 @@ public:
     // This can have a significant performance impact and should be used with care.
     virtual void finishAllRendering() = 0;
 
+    // Prevents updates to layer tree from becoming visible.
+    virtual void setDeferCommits(bool deferCommits) { }
+
     // Debugging / dangerous ---------------------------------------------
 
     // Fills in a WebRenderingStats struct containing information about the state of the compositor.
