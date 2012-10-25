@@ -28,6 +28,7 @@
 #include <Ecore_IMF_Evas.h>
 #include <Evas.h>
 #include <WebCore/TextDirection.h>
+#include <WebCore/Timer.h>
 #include <WebKit2/WKBase.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
@@ -228,10 +229,13 @@ public:
 
 private:
     Ewk_View_Smart_Data* smartData();
+    void displayTimerFired(WebCore::Timer<EwkViewImpl>*);
 
     Evas_Object* m_view;
     typedef HashMap<WKPageRef, const Evas_Object*> PageViewMap;
     static PageViewMap pageViewMap;
+    WebCore::Timer<EwkViewImpl> m_displayTimer;
+    WTF::Vector <WebCore::IntRect> m_dirtyRects;
 };
 
 #endif // EwkViewImpl_h

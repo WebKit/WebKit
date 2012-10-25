@@ -1,3 +1,21 @@
+2012-10-25  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][WK2][AC] Regression(132392) infinite loop when displaying certain animations.
+        https://bugs.webkit.org/show_bug.cgi?id=100288
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        When PageClientImpl::setViewNeedsDisplay is called, start a 0 length timer.
+        That breaks the synchronous loop we were experiencing when ewk_view_display
+        was called directly.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::EwkViewImpl):
+        (EwkViewImpl::displayTimerFired):
+        (EwkViewImpl::redrawRegion):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (EwkViewImpl):
+
 2012-10-25  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         Add setMediaTypeOverride to window.internals.settings
