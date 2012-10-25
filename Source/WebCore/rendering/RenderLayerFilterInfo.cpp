@@ -37,6 +37,7 @@
 
 #if ENABLE(SVG)
 #include "CachedSVGDocument.h"
+#include "CachedSVGDocumentReference.h"
 #include "SVGElement.h"
 #include "SVGFilter.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
@@ -129,7 +130,8 @@ void RenderLayerFilterInfo::updateReferenceFilterClients(const FilterOperations&
         if (filterOperation->getOperationType() != FilterOperation::REFERENCE)
             continue;
         ReferenceFilterOperation* referenceFilterOperation = static_cast<ReferenceFilterOperation*>(filterOperation.get());
-        CachedSVGDocument* cachedSVGDocument = static_cast<CachedSVGDocument*>(referenceFilterOperation->data());
+        CachedSVGDocumentReference* documentReference = static_cast<CachedSVGDocumentReference*>(referenceFilterOperation->data());
+        CachedSVGDocument* cachedSVGDocument = documentReference ? documentReference->document() : 0;
 
         if (cachedSVGDocument) {
             // Reference is external; wait for notifyFinished().

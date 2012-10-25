@@ -54,6 +54,7 @@
 
 #if ENABLE(SVG)
 #include "CachedSVGDocument.h"
+#include "CachedSVGDocumentReference.h"
 #include "SVGElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SourceAlpha.h"
@@ -140,7 +141,8 @@ GraphicsContext* FilterEffectRenderer::inputContext()
 PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(Document* document, PassRefPtr<FilterEffect> previousEffect, ReferenceFilterOperation* op)
 {
 #if ENABLE(SVG)
-    CachedSVGDocument* cachedSVGDocument = static_cast<CachedSVGDocument*>(op->data());
+    CachedSVGDocumentReference* cachedSVGDocumentReference = static_cast<CachedSVGDocumentReference*>(op->data());
+    CachedSVGDocument* cachedSVGDocument = cachedSVGDocumentReference ? cachedSVGDocumentReference->document() : 0;
 
     // If we have an SVG document, this is an external reference. Otherwise
     // we look up the referenced node in the current document.

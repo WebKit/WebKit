@@ -1,3 +1,13 @@
+2012-10-25  Stephen White  <senorblanco@chromium.org>
+
+        Add new layout test for reference filters.
+        https://bugs.webkit.org/show_bug.cgi?id=97715
+
+        Reviewed by Nate Chapin.
+
+        * css3/filters/reference-filter-update-after-remove-expected.txt: Added.
+        * css3/filters/reference-filter-update-after-remove.html: Added.
+
 2012-10-25  Simon Fraser  <simon.fraser@apple.com>
 
         Incorrect tile size in the slow scrolling case

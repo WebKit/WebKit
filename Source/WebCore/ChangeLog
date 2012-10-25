@@ -1,3 +1,44 @@
+2012-10-25  Stephen White  <senorblanco@chromium.org>
+
+        Change ReferenceFilterOperations to reference (own) the data passed to
+        them.
+        https://bugs.webkit.org/show_bug.cgi?id=97715
+
+        Reviewed by Nate Chapin.
+
+        Covered by css3/filters/reference-filter-update-after-remove.html
+
+        * css/CachedSVGDocumentReference.h: Added.
+        (CachedSVGDocumentReference):
+        New class which holds a CachedResourceHandle<CachedSVGDocument>, but
+        can be placed in ReferenceFilterOperation's Data.  It also calls
+        addClient() / removeClient(), in order to keep the CachedSVGDocument
+        alive until the FilterEffectRenderer can get it.
+        (WebCore::CachedSVGDocumentReference::CachedSVGDocumentReference):
+        (WebCore::CachedSVGDocumentReference::~CachedSVGDocumentReference):
+        (WebCore::CachedSVGDocumentReference::document):
+        Accessor for the underlying document.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::loadPendingSVGDocuments):
+        Wrap the CachedSVGDocument handle in a CachedSVGDocumentReference, and
+        transfer ownership to the ReferenceFilterOperation.
+        (WebCore::StyleResolver::createFilterOperations):
+        Same as above.
+        * platform/graphics/filters/FilterOperation.h:
+        (Data):
+        New base class for generic data which can be deleted polymorphically.
+        (WebCore::FilterOperation::ReferenceFilterOperation::data):
+        (WebCore::FilterOperation::ReferenceFilterOperation::setData):
+        Use the above-mentioned Data class, instead of a void *.
+        (WebCore::FilterOperation::ReferenceFilterOperation::ReferenceFilterOperation):
+        Don't initialize data to null; OwnPtr will do that for us.
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::buildReferenceFilter):
+        Extract the cached SVG document from the reference data.
+        * rendering/RenderLayerFilterInfo.cpp:
+        (WebCore::RenderLayerFilterInfo::updateReferenceFilterClients):
+        Extract the cached SVG document from the reference data.
+
 2012-10-25  Simon Fraser  <simon.fraser@apple.com>
 
         Incorrect tile size in the slow scrolling case
