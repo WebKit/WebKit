@@ -1,5 +1,27 @@
 2012-10-24  Kent Tamura  <tkent@chromium.org>
 
+        Minimize CSS rulesets for multiple-fields input
+        https://bugs.webkit.org/show_bug.cgi?id=100198
+
+        Reviewed by Kentaro Hara.
+
+        - Unify rulesets for input::-webkit-datetime-edit-*-field.
+         input::-webkit-datetime-edit-*-field had identical ruleset.
+
+        - Move some rulesets near to related rulesets.
+         Move -webkit-datetime-edit-*-field:focus nearby the new unified ruleset.
+         Move input::-webkit-datetime-edit-second-field[readonly] nearby
+        input::-webkit-datetime-edit-minute-field[readonly].
+
+        No new tests. This shouldn't make any behavior change.
+
+        * css/html.css:
+        (input::-webkit-datetime-edit-year-field):
+        (input::-webkit-datetime-edit-year-field:focus):
+        (input::-webkit-datetime-edit-second-field[readonly]):
+
+2012-10-24  Kent Tamura  <tkent@chromium.org>
+
         REGRESSION(r132291): Crash in BaseMultipleFieldsDateAndTimeInputType
         https://bugs.webkit.org/show_bug.cgi?id=100326
 
