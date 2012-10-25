@@ -60,7 +60,6 @@ public:
     static DOMDataStore* current(v8::Isolate*);
 
     DOMWrapperMap<Node>& domNodeMap() { return *m_domNodeMap; }
-    DOMWrapperMap<Node>& activeDomNodeMap() { return *m_activeDomNodeMap; }
     DOMWrapperMap<void>& domObjectMap() { return *m_domObjectMap; }
     DOMWrapperMap<void>& activeDomObjectMap() { return *m_activeDomObjectMap; }
 
@@ -69,7 +68,6 @@ public:
 protected:
     Type m_type;
     OwnPtr<DOMWrapperMap<Node> > m_domNodeMap;
-    OwnPtr<DOMWrapperMap<Node> > m_activeDomNodeMap;
     OwnPtr<DOMWrapperMap<void> > m_domObjectMap;
     OwnPtr<DOMWrapperMap<void> > m_activeDomObjectMap;
 };

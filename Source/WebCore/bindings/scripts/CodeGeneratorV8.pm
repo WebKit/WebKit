@@ -3480,7 +3480,6 @@ sub GetDomMapName
     my $dataNode = shift;
     my $type = shift;
 
-    return "ActiveDOMNode" if (IsNodeSubType($dataNode) && $dataNode->extendedAttributes->{"ActiveDOMObject"});
     return "DOMNode" if IsNodeSubType($dataNode);
     return "ActiveDOMObject" if $dataNode->extendedAttributes->{"ActiveDOMObject"};
     return "DOMObject";

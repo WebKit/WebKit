@@ -1,3 +1,31 @@
+2012-10-25  Adam Barth  <abarth@webkit.org>
+
+        [V8] ActiveDOMNodes no longer require a separate wrapper map
+        https://bugs.webkit.org/show_bug.cgi?id=100352
+
+        Reviewed by Eric Seidel.
+
+        There is no longer any reason to keep a separate DOM wrapper map for
+        active DOM nodes. We can simply store them in the normal DOM node
+        wrapper map (which is more efficient because it doesn't use a HashMap).
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GetDomMapName):
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::DOMDataStore):
+        (WebCore::DOMDataStore::~DOMDataStore):
+        (WebCore::DOMDataStore::reportMemoryUsage):
+        * bindings/v8/DOMDataStore.h:
+        (DOMDataStore):
+        * bindings/v8/IntrusiveDOMWrapperMap.h:
+        * bindings/v8/V8DOMMap.cpp:
+        * bindings/v8/V8DOMMap.h:
+        (WebCore):
+        * bindings/v8/V8DOMWrapper.cpp:
+        * bindings/v8/V8DOMWrapper.h:
+        (V8DOMWrapper):
+        (WebCore::V8DOMWrapper::getCachedWrapper):
+
 2012-10-25  Tony Chang  <tony@chromium.org>
 
         Unreviewed, fix the build on Mac.

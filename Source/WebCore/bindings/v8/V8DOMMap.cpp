@@ -49,13 +49,6 @@ DOMWrapperMap<Node>& getDOMNodeMap(v8::Isolate* isolate)
     return DOMDataStore::current(isolate)->domNodeMap();
 }
 
-DOMWrapperMap<Node>& getActiveDOMNodeMap(v8::Isolate* isolate)
-{
-    if (!isolate)
-        isolate = v8::Isolate::GetCurrent();
-    return DOMDataStore::current(isolate)->activeDomNodeMap();
-}
-
 DOMWrapperMap<void>& getDOMObjectMap(v8::Isolate* isolate)
 {
     if (!isolate)

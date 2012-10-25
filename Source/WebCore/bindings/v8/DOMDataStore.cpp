@@ -42,16 +42,14 @@ namespace WebCore {
 DOMDataStore::DOMDataStore(Type type)
     : m_type(type)
 {
-    if (type == MainWorld) {
+    if (type == MainWorld)
         m_domNodeMap = adoptPtr(new DOMNodeWrapperMap);
-        m_activeDomNodeMap = adoptPtr(new ActiveDOMNodeWrapperMap);
-    } else {
+    else {
         ASSERT(type == IsolatedWorld || type == Worker);
-        // FIXME: In principle, we shouldn't need to create these
-        // wrapper maps for workers because there are no Nodes on
+        // FIXME: In principle, we shouldn't need to create this
+        // wrapper map for workers because there are no Nodes on
         // worker threads.
         m_domNodeMap = adoptPtr(new DOMWrapperHashMap<Node>);
-        m_activeDomNodeMap = adoptPtr(new DOMWrapperHashMap<Node>);
     }
     m_domObjectMap = adoptPtr(new DOMWrapperHashMap<void>);
     m_activeDomObjectMap = adoptPtr(new DOMWrapperHashMap<void>);
@@ -65,10 +63,8 @@ DOMDataStore::~DOMDataStore()
 
     V8PerIsolateData::current()->unregisterDOMDataStore(this);
 
-    if (m_type == IsolatedWorld) {
+    if (m_type == IsolatedWorld)
         m_domNodeMap->clear();
-        m_activeDomNodeMap->clear();
-    }
     m_domObjectMap->clear();
     m_activeDomObjectMap->clear();
 }
@@ -89,7 +85,6 @@ void DOMDataStore::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Binding);
     info.addMember(m_domNodeMap);
-    info.addMember(m_activeDomNodeMap);
     info.addMember(m_domObjectMap);
     info.addMember(m_activeDomObjectMap);
 }
