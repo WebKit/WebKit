@@ -1,3 +1,16 @@
+2012-10-24  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r132291): Crash in BaseMultipleFieldsDateAndTimeInputType
+        https://bugs.webkit.org/show_bug.cgi?id=100326
+
+        Reviewed by Eric Seidel.
+
+        Test: fast/forms/time-multiple-fields/time-multiple-fields-change-type.html
+
+        * html/BaseMultipleFieldsDateAndTimeInputType.cpp:
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::destroyShadowSubtree):
+        We need to disconnect m_spinButtonElement before destructing the UA shadow tree.
+
 2012-10-24  Adam Barth  <abarth@webkit.org>
 
         [V8] DOMData is no longer needed

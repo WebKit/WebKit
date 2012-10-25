@@ -1,3 +1,13 @@
+2012-10-24  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r132291): Crash in BaseMultipleFieldsDateAndTimeInputType
+        https://bugs.webkit.org/show_bug.cgi?id=100326
+
+        Reviewed by Eric Seidel.
+
+        * fast/forms/time-multiple-fields/time-multiple-fields-change-type-expected.txt: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-change-type.html: Added.
+
 2012-10-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: updating chromium TestExpectations for the roll.

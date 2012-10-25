@@ -197,6 +197,10 @@ void BaseMultipleFieldsDateAndTimeInputType::createShadowSubtree()
 
 void BaseMultipleFieldsDateAndTimeInputType::destroyShadowSubtree()
 {
+    if (m_spinButtonElement) {
+        m_spinButtonElement->removeSpinButtonOwner();
+        m_spinButtonElement = 0;
+    }
     if (m_dateTimeEditElement) {
         m_dateTimeEditElement->removeEditControlOwner();
         m_dateTimeEditElement = 0;
