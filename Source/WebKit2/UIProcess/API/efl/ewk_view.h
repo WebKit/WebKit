@@ -271,6 +271,18 @@ enum Ewk_Find_Options {
 typedef enum Ewk_Find_Options Ewk_Find_Options;
 
 /**
+ * Enum values used to set pagination mode.
+ */
+typedef enum {
+    EWK_PAGINATION_MODE_INVALID = -1, /**< invalid pagination mode that will be returned when error occured. */
+    EWK_PAGINATION_MODE_UNPAGINATED, /**< default mode for pagination. not paginated  */
+    EWK_PAGINATION_MODE_LEFT_TO_RIGHT, /**< go to the next page with scrolling left to right horizontally. */
+    EWK_PAGINATION_MODE_RIGHT_TO_LEFT, /**< go to the next page with scrolling right to left horizontally. */
+    EWK_PAGINATION_MODE_TOP_TO_BOTTOM, /**< go to the next page with scrolling top to bottom vertically. */
+    EWK_PAGINATION_MODE_BOTTOM_TO_TOP /**< go to the next page with scrolling bottom to top vertically. */
+} Ewk_Pagination_Mode;
+
+/**
  * Sets the smart class APIs, enabling view to be inherited.
  *
  * @param api class definition to set, all members with the
@@ -792,6 +804,28 @@ EAPI Eina_Bool ewk_view_inspector_show(Evas_Object *o);
  * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
  */
 EAPI Eina_Bool ewk_view_inspector_close(Evas_Object *o);
+
+/**
+ * Set pagination mode to the current web page.
+ *
+ * @param o view object to set the pagenation mode
+ * @param mode The Ewk_Pagination_Mode to set
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_view_pagination_mode_set(Evas_Object *o, Ewk_Pagination_Mode mode);
+
+/**
+ * Get pagination mode of the current web page. 
+ * 
+ * The default value is EWK_PAGINATION_MODE_UNPAGINATED.
+ * When error occured, EWK_PAGINATION_MODE_INVALID is returned. 
+ *
+ * @param o view object to get the pagination mode
+ *
+ * @return The pagination mode of the current web page
+ */
+EAPI Ewk_Pagination_Mode ewk_view_pagination_mode_get(const Evas_Object *o);
 
 #ifdef __cplusplus
 }

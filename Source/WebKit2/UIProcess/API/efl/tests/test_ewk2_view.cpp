@@ -967,3 +967,32 @@ TEST_F(EWK2UnitTestBase, ewk_view_scale)
     ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
     ASSERT_FLOAT_EQ(1, ewk_view_scale_get(webView()));
 }
+
+TEST_F(EWK2UnitTestBase, ewk_view_pagination)
+{
+    ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
+
+    // Default pagination value is EWK_PAGINATION_MODE_UNPAGINATED
+    ASSERT_EQ(EWK_PAGINATION_MODE_UNPAGINATED, ewk_view_pagination_mode_get(webView()));
+
+    ASSERT_TRUE(ewk_view_pagination_mode_set(webView(), EWK_PAGINATION_MODE_LEFT_TO_RIGHT));
+    // Reload page to check the pagination mode.
+    ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
+    ASSERT_EQ(EWK_PAGINATION_MODE_LEFT_TO_RIGHT, ewk_view_pagination_mode_get(webView()));
+
+    ASSERT_TRUE(ewk_view_pagination_mode_set(webView(), EWK_PAGINATION_MODE_RIGHT_TO_LEFT));
+    ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
+    ASSERT_EQ(EWK_PAGINATION_MODE_RIGHT_TO_LEFT, ewk_view_pagination_mode_get(webView()));
+
+    ASSERT_TRUE(ewk_view_pagination_mode_set(webView(), EWK_PAGINATION_MODE_TOP_TO_BOTTOM));
+    ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
+    ASSERT_EQ(EWK_PAGINATION_MODE_TOP_TO_BOTTOM, ewk_view_pagination_mode_get(webView()));
+
+    ASSERT_TRUE(ewk_view_pagination_mode_set(webView(),  EWK_PAGINATION_MODE_BOTTOM_TO_TOP));
+    ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
+    ASSERT_EQ(EWK_PAGINATION_MODE_BOTTOM_TO_TOP, ewk_view_pagination_mode_get(webView()));
+
+    ASSERT_TRUE(ewk_view_pagination_mode_set(webView(), EWK_PAGINATION_MODE_UNPAGINATED));
+    ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
+    ASSERT_EQ(EWK_PAGINATION_MODE_UNPAGINATED, ewk_view_pagination_mode_get(webView()));
+}

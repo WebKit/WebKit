@@ -1239,3 +1239,28 @@ Eina_Bool ewk_view_inspector_close(Evas_Object* ewkView)
     return false;
 #endif
 }
+
+// Ewk_Pagination_Mode should be matched up orders with WebCore::Pagination::Mode.
+COMPILE_ASSERT_MATCHING_ENUM(EWK_PAGINATION_MODE_UNPAGINATED, WebCore::Pagination::Unpaginated);
+COMPILE_ASSERT_MATCHING_ENUM(EWK_PAGINATION_MODE_LEFT_TO_RIGHT, WebCore::Pagination::LeftToRightPaginated);
+COMPILE_ASSERT_MATCHING_ENUM(EWK_PAGINATION_MODE_RIGHT_TO_LEFT, WebCore::Pagination::RightToLeftPaginated);
+COMPILE_ASSERT_MATCHING_ENUM(EWK_PAGINATION_MODE_TOP_TO_BOTTOM, WebCore::Pagination::TopToBottomPaginated);
+COMPILE_ASSERT_MATCHING_ENUM(EWK_PAGINATION_MODE_BOTTOM_TO_TOP, WebCore::Pagination::BottomToTopPaginated);
+
+Eina_Bool ewk_view_pagination_mode_set(Evas_Object* ewkView, Ewk_Pagination_Mode mode)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_IMPL_GET_OR_RETURN(smartData, impl, false);
+    
+    impl->pageProxy->setPaginationMode(static_cast<WebCore::Pagination::Mode>(mode));
+
+    return true;
+}
+
+Ewk_Pagination_Mode ewk_view_pagination_mode_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, EWK_PAGINATION_MODE_INVALID);
+    EWK_VIEW_IMPL_GET_OR_RETURN(smartData, impl, EWK_PAGINATION_MODE_INVALID);
+
+    return static_cast<Ewk_Pagination_Mode>(impl->pageProxy->paginationMode());
+}

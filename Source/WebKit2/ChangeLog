@@ -1,3 +1,19 @@
+2012-10-25  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [WK2][EFL] Add ewk_view_pagination_mode_set/get() APIs
+        https://bugs.webkit.org/show_bug.cgi?id=100213
+
+        Reviewed by Gyuyoung Kim.
+
+        Add ewk_view_pagination_mode_set/get() APIs for paginated display.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_pagination_mode_set):
+        (ewk_view_pagination_mode_get):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+
 2012-10-25  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [EFL][AC] Fix build break when AC is enabled
