@@ -41,8 +41,6 @@ namespace WebCore {
 static const int maxIntervalForUserGestureForwarding = 1000; // One second matches Gecko.
 static const int maxTimerNestingLevel = 5;
 static const double oneMillisecond = 0.001;
-double DOMTimer::s_minDefaultTimerInterval = 0.010; // 10 milliseconds
-double DOMTimer::s_defaultTimerAlignmentInterval = 0;
 
 static int timerNestingLevel = 0;
     

@@ -257,13 +257,13 @@ namespace WebCore {
         bool isDOMPasteAllowed() const { return m_isDOMPasteAllowed; }
         
         static void setDefaultMinDOMTimerInterval(double); // Interval specified in seconds.
-        static double defaultMinDOMTimerInterval();
+        static double defaultMinDOMTimerInterval() { return gDefaultMinDOMTimerInterval; }
         
         void setMinDOMTimerInterval(double); // Per-page; initialized to default value.
         double minDOMTimerInterval();
 
         static void setDefaultDOMTimerAlignmentInterval(double);
-        static double defaultDOMTimerAlignmentInterval();
+        static double defaultDOMTimerAlignmentInterval() { return gDefaultDOMTimerAlignmentInterval; }
 
         void setDOMTimerAlignmentInterval(double);
         double domTimerAlignmentInterval() const;
@@ -848,6 +848,9 @@ namespace WebCore {
         void imageLoadingSettingsTimerFired(Timer<Settings>*);
 
         double m_incrementalRenderingSuppressionTimeoutInSeconds;
+
+        static double gDefaultMinDOMTimerInterval;
+        static double gDefaultDOMTimerAlignmentInterval;
 
 #if USE(AVFOUNDATION)
         static bool gAVFoundationEnabled;

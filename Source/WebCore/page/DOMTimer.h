@@ -27,6 +27,7 @@
 #ifndef DOMTimer_h
 #define DOMTimer_h
 
+#include "Settings.h"
 #include "SuspendableTimer.h"
 #include "UserGestureIndicator.h"
 #include <wtf/OwnPtr.h>
@@ -35,10 +36,8 @@
 namespace WebCore {
 
     class ScheduledAction;
-    class Settings;
 
     class DOMTimer : public SuspendableTimer {
-        friend class Settings;
     public:
         virtual ~DOMTimer();
         // Creates a new timer owned by specified ScriptExecutionContext, starts it
@@ -62,26 +61,20 @@ namespace WebCore {
         double intervalClampedToMinimum(int timeout, double minimumTimerInterval) const;
 
         // The default minimum allowable timer setting (in seconds, 0.001 == 1 ms).
-        // These are only modified via static methods in Settings.
-        static double defaultMinTimerInterval() { return s_minDefaultTimerInterval; }
-        static void setDefaultMinTimerInterval(double value) { s_minDefaultTimerInterval = value; }
+        static double defaultMinTimerInterval() { return Settings::defaultMinDOMTimerInterval(); }
 
         // Retuns timer fire time rounded to the next multiple of timer alignment interval.
         virtual double alignedFireTime(double) const;
 
         // The default timer alignment interval (in seconds). If non zero, timer fire times
         // will be rounded to a multiple of the alignment interval.
-        // These are only modified via static methods in Settings.
-        static double defaultTimerAlignmentInterval() { return s_defaultTimerAlignmentInterval; }
-        static void setDefaultTimerAlignmentInterval(double value) { s_defaultTimerAlignmentInterval = value; }
+        static double defaultTimerAlignmentInterval() { return Settings::defaultDOMTimerAlignmentInterval(); }
 
         int m_timeoutId;
         int m_nestingLevel;
         OwnPtr<ScheduledAction> m_action;
         int m_originalInterval;
         RefPtr<UserGestureIndicator::Token> m_userGestureToken;
-        static double s_minDefaultTimerInterval;
-        static double s_defaultTimerAlignmentInterval;
     };
 
 } // namespace WebCore
