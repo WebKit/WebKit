@@ -4,14 +4,20 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 
-Single value for background-image : url('http://www.webkit.org/a') 1x
-FAIL testComputedStyle("background-image", "url('http://www.webkit.org/a') 1x") should be -webkit-image-set(url(http://www.webkit.org/a), 1). Was .
+Single value for background-image : url(http://www.webkit.org/a) 1x
+FAIL testComputedStyle("background-image", "-webkit-image-set(url(http://www.webkit.org/a) 1x)") should be -webkit-image-set(url(http://www.webkit.org/a) 1x). Was .
 
-Multiple values for background-image : url('http://www.webkit.org/a') 1x, url('http://www.webkit.org/b') 2x
-FAIL testComputedStyle("background-image", "url('http://www.webkit.org/a') 1x, url('http://www.webkit.org/b') 2x") should be -webkit-image-set(url(http://www.webkit.org/a), 1, url(http://www.webkit.org/b), 2). Was .
+Multiple values for background-image : url(http://www.webkit.org/a) 1x, url(http://www.webkit.org/b) 2x
+FAIL testComputedStyle("background-image", "-webkit-image-set(url(http://www.webkit.org/a) 1x, url(http://www.webkit.org/b) 2x)") should be -webkit-image-set(url(http://www.webkit.org/a) 1x, url(http://www.webkit.org/b) 2x). Was .
 
-Multiple values for background-image, out of order : url('http://www.webkit.org/c') 3x, url('http://www.webkit.org/b') 2x, url('http://www.webkit.org/a') 1x
-FAIL testComputedStyle("background-image", "url('http://www.webkit.org/c') 3x, url('http://www.webkit.org/b') 2x, url('http://www.webkit.org/a') 1x") should be -webkit-image-set(url(http://www.webkit.org/c), 3, url(http://www.webkit.org/b), 2, url(http://www.webkit.org/a), 1). Was .
+Multiple values for background-image, out of order : url(http://www.webkit.org/c) 3x, url(http://www.webkit.org/b) 2x, url(http://www.webkit.org/a) 1x
+FAIL testComputedStyle("background-image", "-webkit-image-set(url(http://www.webkit.org/c) 3x, url(http://www.webkit.org/b) 2x, url(http://www.webkit.org/a) 1x)") should be -webkit-image-set(url(http://www.webkit.org/c) 3x, url(http://www.webkit.org/b) 2x, url(http://www.webkit.org/a) 1x). Was .
+
+Duplicate values for background-image : url(http://www.webkit.org/c) 1x, url(http://www.webkit.org/b) 2x, url(http://www.webkit.org/a) 1x
+FAIL testComputedStyle("background-image", "-webkit-image-set(url(http://www.webkit.org/c) 1x, url(http://www.webkit.org/b) 2x, url(http://www.webkit.org/a) 1x)") should be -webkit-image-set(url(http://www.webkit.org/c) 1x, url(http://www.webkit.org/b) 2x, url(http://www.webkit.org/a) 1x). Was .
+
+Fractional values for background-image : url(http://www.webkit.org/c) 0.2x, url(http://www.webkit.org/b) 2.3x, url(http://www.webkit.org/a) 12.3456x
+FAIL testComputedStyle("background-image", "-webkit-image-set(url(http://www.webkit.org/c) 0.2x, url(http://www.webkit.org/b) 2.3x, url(http://www.webkit.org/a) 12.3456x)") should be -webkit-image-set(url(http://www.webkit.org/c) 0.2x, url(http://www.webkit.org/b) 2.3x, url(http://www.webkit.org/a) 12.3456x). Was .
 PASS successfullyParsed is true
 
 TEST COMPLETE

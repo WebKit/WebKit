@@ -1,3 +1,9 @@
+2012-10-25  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Rebaselining failing expected results for fast/css/image-set-setting.html on Windows after r132388.
+
+        * platform/win/fast/css/image-set-setting-expected.txt:
+
 2012-10-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r132269.
