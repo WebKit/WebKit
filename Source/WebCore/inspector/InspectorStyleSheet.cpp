@@ -883,15 +883,17 @@ bool InspectorStyleSheet::deleteRule(const InspectorCSSId& id, ExceptionCode& ec
         return false;
     }
 
-    styleSheet->deleteRule(id.ordinal(), ec);
-    if (ec)
-        return false;
-
     RefPtr<CSSRuleSourceData> sourceData = ruleSourceDataFor(rule->style());
     if (!sourceData) {
         ec = NOT_FOUND_ERR;
         return false;
     }
+
+    styleSheet->deleteRule(id.ordinal(), ec);
+    // |rule| MAY NOT be addressed after this line!
+
+    if (ec)
+        return false;
 
     String sheetText = m_parsedStyleSheet->text();
     sheetText.remove(sourceData->ruleHeaderRange.start, sourceData->ruleBodyRange.end - sourceData->ruleHeaderRange.start + 1);
