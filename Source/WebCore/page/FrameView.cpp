@@ -931,11 +931,6 @@ bool FrameView::isSoftwareRenderable() const
 
 void FrameView::didMoveOnscreen()
 {
-#if USE(ACCELERATED_COMPOSITING)
-    if (TiledBacking* tiledBacking = this->tiledBacking())
-        tiledBacking->setIsInWindow(true);
-#endif
-
     if (RenderView* root = rootRenderer(this))
         root->didMoveOnscreen();
     contentAreaDidShow();
@@ -943,11 +938,6 @@ void FrameView::didMoveOnscreen()
 
 void FrameView::willMoveOffscreen()
 {
-#if USE(ACCELERATED_COMPOSITING)
-    if (TiledBacking* tiledBacking = this->tiledBacking())
-        tiledBacking->setIsInWindow(false);
-#endif
-
     if (RenderView* root = rootRenderer(this))
         root->willMoveOffscreen();
     contentAreaDidHide();
@@ -2500,13 +2490,9 @@ void FrameView::performPostLayoutTasks()
     }
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (TiledBacking* tiledBacking = this->tiledBacking()) {
-        if (page) {
-            if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator()) {
-                bool shouldLimitTileCoverage = !canHaveScrollbars() || scrollingCoordinator->shouldUpdateScrollLayerPositionOnMainThread();
-                tiledBacking->setTileCoverage(shouldLimitTileCoverage ? TiledBacking::CoverageForVisibleArea : TiledBacking::CoverageForScrolling);
-            }
-        }
+    if (RenderView* root = rootRenderer(this)) {
+        if (root->usesCompositing())
+            root->compositor()->frameViewDidLayout();
     }
 #endif
 

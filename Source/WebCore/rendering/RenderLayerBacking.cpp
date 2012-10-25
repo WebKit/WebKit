@@ -107,7 +107,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
     , m_canCompositeFilters(false)
 #endif
 {
-    if (renderer()->isRenderView()) {
+    if (layer->isRootLayer()) {
         Frame* frame = toRenderView(renderer())->frameView()->frame();
         Page* page = frame ? frame->page() : 0;
         if (page && frame && page->mainFrame() == frame) {
@@ -124,16 +124,12 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
     createPrimaryGraphicsLayer();
 
     if (m_usingTiledCacheLayer) {
+        TiledBacking* tiledBacking = this->tiledBacking();
         if (Page* page = renderer()->frame()->page()) {
-            if (TiledBacking* tiledBacking = m_graphicsLayer->tiledBacking()) {
-                Frame* frame = renderer()->frame();
-                tiledBacking->setIsInWindow(page->isOnscreen());
-                if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator()) {
-                    bool shouldLimitTileCoverage = !frame->view()->canHaveScrollbars() || scrollingCoordinator->shouldUpdateScrollLayerPositionOnMainThread();
-                    tiledBacking->setTileCoverage(shouldLimitTileCoverage ? TiledBacking::CoverageForVisibleArea : TiledBacking::CoverageForScrolling);
-                }
-                tiledBacking->setScrollingPerformanceLoggingEnabled(frame->settings() && frame->settings()->scrollingPerformanceLoggingEnabled());
-            }
+            Frame* frame = renderer()->frame();
+            tiledBacking->setIsInWindow(page->isOnscreen());
+            tiledBacking->setScrollingPerformanceLoggingEnabled(frame->settings() && frame->settings()->scrollingPerformanceLoggingEnabled());
+            adjustTileCacheCoverage();
         }
     }
 }
@@ -174,6 +170,37 @@ PassOwnPtr<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const String& 
 bool RenderLayerBacking::shouldUseTileCache(const GraphicsLayer*) const
 {
     return m_usingTiledCacheLayer && m_creatingPrimaryGraphicsLayer;
+}
+
+TiledBacking* RenderLayerBacking::tiledBacking() const
+{
+    return m_graphicsLayer->tiledBacking();
+}
+
+void RenderLayerBacking::adjustTileCacheCoverage()
+{
+    if (!m_usingTiledCacheLayer)
+        return;
+
+    TiledBacking::TileCoverage tileCoverage = TiledBacking::CoverageForVisibleArea;
+
+    // FIXME: When we use TiledBacking for overflow, this should look at RenderView scrollability.
+    Frame* frame = renderer()->frame();
+    if (frame) {
+        FrameView* frameView = frame->view();
+        if (frameView->horizontalScrollbarMode() != ScrollbarAlwaysOff)
+            tileCoverage |= TiledBacking::CoverageForHorizontalScrolling;
+
+        if (frameView->verticalScrollbarMode() != ScrollbarAlwaysOff)
+            tileCoverage |= TiledBacking::CoverageForVerticalScrolling;
+
+        if (ScrollingCoordinator* scrollingCoordinator = frame->page()->scrollingCoordinator()) {
+            if (scrollingCoordinator->shouldUpdateScrollLayerPositionOnMainThread())
+                tileCoverage |= TiledBacking::CoverageForSlowScrolling;
+        }
+    }
+
+    tiledBacking()->setTileCoverage(tileCoverage);
 }
 
 void RenderLayerBacking::createPrimaryGraphicsLayer()

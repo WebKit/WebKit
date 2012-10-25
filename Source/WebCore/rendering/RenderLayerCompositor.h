@@ -42,6 +42,7 @@ class ScrollingCoordinator;
 #if ENABLE(VIDEO)
 class RenderVideo;
 #endif
+class TiledBacking;
 
 enum CompositingUpdateType {
     CompositingUpdateAfterStyleChange,
@@ -195,6 +196,7 @@ public:
     void frameViewDidChangeLocation(const IntPoint& contentsOffset);
     void frameViewDidChangeSize();
     void frameViewDidScroll();
+    void frameViewDidLayout();
 
     void scrollingLayerDidChange(RenderLayer*);
 
@@ -293,6 +295,7 @@ private:
     bool isFlushingLayers() const { return m_flushingLayers; }
     
     Page* page() const;
+    TiledBacking* pageTiledBacking() const;
 
     GraphicsLayerFactory* graphicsLayerFactory() const;
     ScrollingCoordinator* scrollingCoordinator() const;

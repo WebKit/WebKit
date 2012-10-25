@@ -39,6 +39,7 @@ namespace WebCore {
 
 class KeyframeList;
 class RenderLayerCompositor;
+class TiledBacking;
 
 enum CompositingLayerType {
     NormalCompositingLayer, // non-tiled layer with backing store
@@ -137,7 +138,9 @@ public:
     void positionOverflowControlsLayers(const IntSize& offsetFromRoot);
 
     bool usingTileCache() const { return m_usingTiledCacheLayer; }
-
+    TiledBacking* tiledBacking() const;
+    void adjustTileCacheCoverage();
+    
     // GraphicsLayerClient interface
     virtual bool shouldUseTileCache(const GraphicsLayer*) const OVERRIDE;
     virtual void notifyAnimationStarted(const GraphicsLayer*, double startTime) OVERRIDE;

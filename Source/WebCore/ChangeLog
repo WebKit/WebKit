@@ -1,3 +1,51 @@
+2012-10-25  Simon Fraser  <simon.fraser@apple.com>
+
+        r132427 changed the tiling behavior of tiled layer TileCaches as well as the page tile cache
+        https://bugs.webkit.org/show_bug.cgi?id=100323
+
+        Reviewed by Anders Carlsson.
+
+        r132427 assumed that TileCaches were only used for the page, and changed the tile
+        size behavior of all non-page TileCaches.
+        
+        Fix by giving TiledBacking a new 'CoverageForSlowScrolling' flag which
+        affects the tile size behavior.
+        
+        Consolidated the two places that set TileCoverage into one, and in the process
+        reduced FrameView's direct communication with TiledBacking.
+
+        No new tests because we can't test tile size via tests.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::didMoveOnscreen): Rely on RenderLayerCompositor to
+        call setIsInWindow() on the main page tile cache.
+        (WebCore::FrameView::willMoveOffscreen): Ditto.
+        (WebCore::FrameView::performPostLayoutTasks): Rather than explicitly tell
+        the TiledBacking that it should do stuff, just tell the compositor that
+        layout happened.
+        * platform/graphics/TiledBacking.h: New CoverageForSlowScrolling flag.
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::tileSizeForCoverageRect): Only use one big tile
+        if the CoverageForSlowScrolling flag is set.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking): layer->isRootLayer()
+        is equivalent to renderer()->isRenderView() and clearer.
+        (WebCore::RenderLayerBacking::tiledBacking): Call adjustTileCacheCoverage().
+        It would be nice to move the rest of this TiledBacking code from here somehow.
+        (WebCore::RenderLayerBacking::adjustTileCacheCoverage): Update the TileCoverage
+        flags, taking into account horizontal and vertical scrollability independently,
+        and whether we're in slow scrolling mode.
+        * rendering/RenderLayerBacking.h:
+        (RenderLayerBacking):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::frameViewDidLayout): Have the page
+        tiled backing update it's coverage flags.
+        (WebCore::RenderLayerCompositor::pageTiledBacking): Utility function.
+        (WebCore::RenderLayerCompositor::didMoveOnscreen): Moved from FrameView.
+        (WebCore::RenderLayerCompositor::willMoveOffscreen): Ditto.
+        * rendering/RenderLayerCompositor.h:
+        (RenderLayerCompositor):
+
 2012-10-25  Elliott Sprehn  <esprehn@chromium.org>
 
         Everything that sets RenderObject::m_style should go through setStyleInternal

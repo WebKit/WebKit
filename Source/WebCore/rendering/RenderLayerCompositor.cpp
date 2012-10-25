@@ -1119,6 +1119,13 @@ void RenderLayerCompositor::frameViewDidScroll()
     m_scrollLayer->setPosition(FloatPoint(-scrollPosition.x(), -scrollPosition.y()));
 }
 
+void RenderLayerCompositor::frameViewDidLayout()
+{
+    RenderLayerBacking* renderViewBacking = m_renderView->layer()->backing();
+    if (renderViewBacking)
+        renderViewBacking->adjustTileCacheCoverage();
+}
+
 void RenderLayerCompositor::scrollingLayerDidChange(RenderLayer* layer)
 {
     RenderLayerBacking* backing = layer->backing();
@@ -1350,8 +1357,17 @@ GraphicsLayer* RenderLayerCompositor::scrollLayer() const
     return m_scrollLayer.get();
 }
 
+TiledBacking* RenderLayerCompositor::pageTiledBacking() const
+{
+    RenderLayerBacking* renderViewBacking = m_renderView->layer()->backing();
+    return renderViewBacking ? renderViewBacking->tiledBacking() : 0;
+}
+
 void RenderLayerCompositor::didMoveOnscreen()
 {
+    if (TiledBacking* tiledBacking = pageTiledBacking())
+        tiledBacking->setIsInWindow(true);
+
     if (!inCompositingMode() || m_rootLayerAttachment != RootLayerUnattached)
         return;
 
@@ -1361,6 +1377,9 @@ void RenderLayerCompositor::didMoveOnscreen()
 
 void RenderLayerCompositor::willMoveOffscreen()
 {
+    if (TiledBacking* tiledBacking = pageTiledBacking())
+        tiledBacking->setIsInWindow(false);
+
     if (!inCompositingMode() || m_rootLayerAttachment == RootLayerUnattached)
         return;
 
