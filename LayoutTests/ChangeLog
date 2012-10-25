@@ -1,5 +1,14 @@
 2012-10-24  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, update chromium-mac-mountainlion baselines.
+
+        * platform/chromium-mac-lion/media/track/track-cue-rendering-horizontal-expected.png: Copied from LayoutTests/platform/chromium-mac/media/track/track-cue-rendering-horizontal-expected.png.
+        * platform/chromium-mac-lion/media/track/track-cue-rendering-horizontal-expected.txt: Copied from LayoutTests/platform/chromium-mac/media/track/track-cue-rendering-horizontal-expected.txt.
+        * platform/chromium-mac/media/track/track-cue-rendering-horizontal-expected.png:
+        * platform/chromium-mac/media/track/track-cue-rendering-horizontal-expected.txt:
+
+2012-10-24  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, expectations and baseline cleanup.
 
         Remove some old baselines for a test that was converted to a reftest,
