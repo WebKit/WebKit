@@ -1,3 +1,35 @@
+2012-10-24  Nico Weber  <thakis@chromium.org>
+
+        Pass on exif orientation from ImageSource when using the open-source image decoders
+        https://bugs.webkit.org/show_bug.cgi?id=100164
+
+        Reviewed by Eric Seidel.
+
+        The orientation is honored always for image documents, and optionally
+        for <img> elements if shouldRespectImageOrientation is set (off by
+        default). However, the feature needs port-specific modifications to
+        GraphicsContext (without this, webcore will use the rotated bounds but
+        draw the image as if it hadn't be rotated, resulting in squished
+        pixels), and most ports don't implement these yet -- so put
+        turning this on for image documents behind a port-specific #ifdef.
+
+        No observable behavior change. Once it's hooked up, it will be tested
+        by fast/images/exif-orientation.html.
+
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::size):
+        (WebCore::ImageSource::frameSizeAtIndex):
+        (WebCore::ImageSource::orientationAtIndex):
+        * platform/graphics/chromium/DeferredImageDecoder.cpp:
+        (WebCore::DeferredImageDecoder::orientation):
+        (WebCore):
+        * platform/graphics/chromium/DeferredImageDecoder.h:
+        (DeferredImageDecoder):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::readImageOrientation):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::shouldRespectImageOrientation):
+
 2012-10-24  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=100169

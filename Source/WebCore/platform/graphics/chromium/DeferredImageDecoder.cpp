@@ -151,4 +151,10 @@ unsigned DeferredImageDecoder::frameBytesAtIndex(size_t index) const
     return m_actualDecoder ? m_actualDecoder->frameBytesAtIndex(index) : 0;
 }
 
+ImageOrientation DeferredImageDecoder::orientation() const
+{
+    // FIXME: Make this work with deferred decoding.
+    return m_actualDecoder ? m_actualDecoder->orientation() : DefaultImageOrientation;
+}
+
 } // namespace WebCore

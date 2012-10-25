@@ -178,6 +178,8 @@ static bool checkExifHeader(jpeg_saved_marker_ptr marker, bool& isBigEndian, uns
 
 static ImageOrientation readImageOrientation(jpeg_decompress_struct* info)
 {
+    // The JPEG decoder looks at EXIF metadata.
+    // FIXME: Possibly implement XMP and IPTC support.
     const unsigned orientationTag = 0x112;
     const unsigned shortType = 3;
     for (jpeg_saved_marker_ptr marker = info->marker_list; marker; marker = marker->next) {

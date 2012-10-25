@@ -106,20 +106,19 @@ bool ImageSource::isSizeAvailable()
 
 IntSize ImageSource::size(RespectImageOrientationEnum shouldRespectOrientation) const
 {
-    // The JPEG and TIFF decoders need to be taught how to read EXIF, XMP, or IPTC data.
-    if (shouldRespectOrientation == RespectImageOrientation)
-        notImplemented();
-
-    return m_decoder ? m_decoder->size() : IntSize();
+    return frameSizeAtIndex(0, shouldRespectOrientation);
 }
 
 IntSize ImageSource::frameSizeAtIndex(size_t index, RespectImageOrientationEnum shouldRespectOrientation) const
 {
-    // The JPEG and TIFF decoders need to be taught how to read EXIF, XMP, or IPTC data.
-    if (shouldRespectOrientation == RespectImageOrientation)
-        notImplemented();
+    if (!m_decoder)
+        return IntSize();
 
-    return m_decoder ? m_decoder->frameSizeAtIndex(index) : IntSize();
+    IntSize size = m_decoder->frameSizeAtIndex(index);
+    if ((shouldRespectOrientation == RespectImageOrientation) && m_decoder->orientation().usesWidthAsHeight())
+        return IntSize(size.height(), size.width());
+
+    return size;
 }
 
 bool ImageSource::getHotSpot(IntPoint&) const
@@ -182,9 +181,7 @@ float ImageSource::frameDurationAtIndex(size_t index)
 
 ImageOrientation ImageSource::orientationAtIndex(size_t) const
 {
-    // The JPEG and TIFF decoders need to be taught how to read EXIF, XMP, or IPTC data.
-    notImplemented();
-    return DefaultImageOrientation;
+    return m_decoder ? m_decoder->orientation() : DefaultImageOrientation;
 }
 
 bool ImageSource::frameHasAlphaAtIndex(size_t index)

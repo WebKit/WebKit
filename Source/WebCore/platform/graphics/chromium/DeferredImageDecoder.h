@@ -56,6 +56,7 @@ public:
     void clearFrameBufferCache(size_t);
     bool frameHasAlphaAtIndex(size_t index) const;
     unsigned frameBytesAtIndex(size_t index) const;
+    ImageOrientation orientation() const;
 
 private:
     explicit DeferredImageDecoder(ImageDecoder* actualDecoder);
