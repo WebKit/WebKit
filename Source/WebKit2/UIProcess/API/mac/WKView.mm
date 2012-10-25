@@ -1913,8 +1913,6 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (void)viewDidMoveToWindow
 {
-    [self removeAllToolTips];
-    
     // We want to make sure to update the active state while hidden, so if the view is about to become visible, we
     // update the active state first and then make it visible. If the view is about to be hidden, we hide it first and then
     // update the active state.
